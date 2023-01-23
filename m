@@ -2,141 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FBC5678BCA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 00:08:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68A86678C18
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 00:38:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232238AbjAWXIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 18:08:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42256 "EHLO
+        id S232354AbjAWXiS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 18:38:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229753AbjAWXIL (ORCPT
+        with ESMTP id S232420AbjAWXiP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 18:08:11 -0500
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2082.outbound.protection.outlook.com [40.107.243.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C448EC73;
-        Mon, 23 Jan 2023 15:08:11 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UgmO7e1K1VcG8FZ+YUntzpTCCCEkeeAZsKSMHsBR0s0U4w3Gw4kW9H3sTEWei32QFKqc+G0OVZZ80COJhSVODO+RtEJ+NklBv8txqPhUCldCkL1kUnIcTtx6v3J6hjXnlI4q/SyQBYGXz2XppD3jQBUCsyeEi7D4Tk6W6CKn68UChp3EXjhV0qD2Vss5ZnPkQS8a1LpN6mfNlZixY2Ec+noJOFdeoXjv8LZCyRiSGeqF2V3RENX1j/H7+xb9Sg0EokExUpa5wtIOEBLzQehjOUB098l7PidJlCcQEqFRx45zsxdIlqA3z/uLep8QOpAIK6h6c87He3ms4MI9BGlHbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gyqAItdvtD0oUKdVMUJgMo3x1Pd5nfjwBtDNaMVaJHg=;
- b=TmJd801zvxMT6MOJdnzuYvWzAxmbKlWBOc0RfI55FojeJ9CoPoqTv62FjV7dHm4GH+P34N0Vk3hbwxE6JFmlUW1W13Ma0u7Mc0zpl5xBB44lPzZrRe0c+OAFdQoEmadiSXN3juKeuHzuAlUBiIxT5kBl2Trl1g/rvmsdYB8ZS9fW1Dr2B7HwoWPx7D7Cm7BEJsJrQiYRVAZOHCUBXHqMYJu8KYAYnndaF78UFdN30tFtMYWq8z5rTPwzuBcU7kW5OAeAq6Lj3r8s082BbJ25pkokICTv7RHqAgFj0+JqxZhBqLveE5AXdeRVUjT9kfpQM785ry9Jl2q2Tl6p4Jv8Qw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=suse.cz smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gyqAItdvtD0oUKdVMUJgMo3x1Pd5nfjwBtDNaMVaJHg=;
- b=NSh5X4xdx7SjZUTOI8z9EdpSjW4QjOamVAw1fpwfK4hKyWdY6scFqToamqEXVPr4b/nl4v4ci7xubQPvnik6aLaNVrbt79oJF6yGNj37ICH+KlJ03Nzqtlve88Py2mdZyBVN4aytiQSweF05qljnApLYMD6jf2rkRFD2OpcsQFT2xHP1WyArGzxijhjrQVD0pN+YbuL9OJzKTtyyfHlYfHJBA35iB0k4zxzug5AnPewk3oaGoS8WUswFgjvvSosnht3Tuu7b2C7NSAwLOWTwg/0XKje5wEQDCD+VshxUS1P8KWi5Cc0y0kRkSP29gQRf1f0QNYYGOWh4CUT6ckAmiw==
-Received: from BN0PR04CA0196.namprd04.prod.outlook.com (2603:10b6:408:e9::21)
- by DS7PR12MB5912.namprd12.prod.outlook.com (2603:10b6:8:7d::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.33; Mon, 23 Jan
- 2023 23:08:08 +0000
-Received: from BN8NAM11FT072.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e9:cafe::6e) by BN0PR04CA0196.outlook.office365.com
- (2603:10b6:408:e9::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.33 via Frontend
- Transport; Mon, 23 Jan 2023 23:08:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT072.mail.protection.outlook.com (10.13.176.165) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6023.16 via Frontend Transport; Mon, 23 Jan 2023 23:08:07 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 23 Jan
- 2023 15:07:49 -0800
-Received: from [10.110.48.28] (10.126.230.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 23 Jan
- 2023 15:07:48 -0800
-Message-ID: <c3e0b810-9f17-edb7-de6b-7849273381d0@nvidia.com>
-Date:   Mon, 23 Jan 2023 15:07:48 -0800
+        Mon, 23 Jan 2023 18:38:15 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 455471207B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 15:38:12 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id lp10so9752615pjb.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 15:38:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PDHB0ODlMstmhFdpIes6JLYo5+ikO8l0oYaAPmmlt1c=;
+        b=VkzHwRGnuLzzOCe+jd2+aXAC1B0Pi316N1RkmUx4r6ANqJcx0x+5Q72Z8UUWxTdy1r
+         pG5SCyLEjYuMfqhsFLdkkFHinHiEydOUFzX+r5WNej9OPd87nM0d7yREV+Rq8DkVOrGV
+         NNXVLr+T0ZRr5iz2mMx1Z0IHdQwR/sXaSDOinZlAX/u9O36ljHgPvbEvKqpZSoiKL/Ql
+         2n5bBmNgSGwr5j9NkL7X+hI5ejHfVg7U5tPdlMMUlM5A7mUt0EJEbSqS9aevYAkYpR2i
+         P7CyNcMiBR5cvRjvE+wd+fhWDFEx7SAIHLLtgqKHLWXCd78gvhmYm3A32QaiqopBK3SZ
+         eGPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PDHB0ODlMstmhFdpIes6JLYo5+ikO8l0oYaAPmmlt1c=;
+        b=ogp13hAwpWvjYBnEbYgFrzGWFVDQMsuAaxY6XnfxeHngE4JdKxRFlmZrxS+LWSuAaW
+         EKekby+wGT4kMHtwy87LV0G/5tse007vfJnQUbrTdzXXyGITP5mBr5o2fTFa0Uu3Va3k
+         7AFz9yBSwCcftmHeMnQmd85LrcrrCEM6mqr2FRzz4/PspaXUPyxj4Igr30/6BVOprNtO
+         02eYDevMkiJFzREQDpcTQAtBo4L0/Ce6ax9lOz/X5mM4yOSNWJlII/0NzY6k1XDJkGej
+         Iz0NOtcqSo79w8ArP20qg1vZZAASlGNdxY5rB8ys/qkdgcH/cXk9xGNyXQ5c3yY5DsAU
+         eofQ==
+X-Gm-Message-State: AFqh2kppVSV5dBXkGCPaZyKPOl6EYBC8kStSCDSQrGu0a/Hs18xWFhwU
+        VoriU/oB37LWTWvaf3ZRMwhEzA==
+X-Google-Smtp-Source: AMrXdXtrvJkyeLq8anFSJnOID4b9C3AaKf59uOM0fvrdASPfrf/mhyTzO8Q2iNKbj2o8vaNJGqEopA==
+X-Received: by 2002:a05:6a20:3ca7:b0:b8:c646:b0e2 with SMTP id b39-20020a056a203ca700b000b8c646b0e2mr1004683pzj.3.1674517091557;
+        Mon, 23 Jan 2023 15:38:11 -0800 (PST)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id t6-20020a63b246000000b00499a90cce5bsm102181pgo.50.2023.01.23.15.38.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jan 2023 15:38:10 -0800 (PST)
+Date:   Mon, 23 Jan 2023 23:38:07 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "Hocko, Michal" <mhocko@suse.com>,
+        "tabba@google.com" <tabba@google.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "david@redhat.com" <david@redhat.com>,
+        "michael.roth@amd.com" <michael.roth@amd.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "ddutile@redhat.com" <ddutile@redhat.com>,
+        "rppt@kernel.org" <rppt@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "qperret@google.com" <qperret@google.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Annapurve, Vishal" <vannapurve@google.com>,
+        "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
+        "hughd@google.com" <hughd@google.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "Wang, Wei W" <wei.w.wang@intel.com>,
+        "steven.price@arm.com" <steven.price@arm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linmiaohe@huawei.com" <linmiaohe@huawei.com>
+Subject: Re: [PATCH v10 1/9] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+Message-ID: <Y88aX+MIZeteDQju@google.com>
+References: <20221202061347.1070246-2-chao.p.peng@linux.intel.com>
+ <5c6e2e516f19b0a030eae9bf073d555c57ca1f21.camel@intel.com>
+ <20221219075313.GB1691829@chaop.bj.intel.com>
+ <deba096c85e41c3a15d122f2159986a74b16770f.camel@intel.com>
+ <20221220072228.GA1724933@chaop.bj.intel.com>
+ <126046ce506df070d57e6fe5ab9c92cdaf4cf9b7.camel@intel.com>
+ <20221221133905.GA1766136@chaop.bj.intel.com>
+ <b898e28d7fd7182e5d069646f84b650c748d9ca2.camel@intel.com>
+ <010a330c-a4d5-9c1a-3212-f9107d1c5f4e@suse.cz>
+ <0959c72ec635688f4b6c1b516815f79f52543b31.camel@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v7 2/8] iov_iter: Add a function to extract a page list
- from an iterator
-Content-Language: en-US
-To:     Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>
-CC:     David Hildenbrand <david@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        "Logan Gunthorpe" <logang@deltatee.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, "Christoph Hellwig" <hch@lst.de>,
-        <linux-mm@kvack.org>
-References: <c742e47b-dcc0-1fef-dc8c-3bf85d26b046@redhat.com>
- <7bbcccc9-6ebf-ffab-7425-2a12f217ba15@redhat.com>
- <246ba813-698b-8696-7f4d-400034a3380b@redhat.com>
- <20230120175556.3556978-1-dhowells@redhat.com>
- <20230120175556.3556978-3-dhowells@redhat.com>
- <3814749.1674474663@warthog.procyon.org.uk>
- <3903251.1674479992@warthog.procyon.org.uk>
- <3911637.1674481111@warthog.procyon.org.uk>
- <20230123161114.4jv6hnnbckqyrurs@quack3>
-From:   John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20230123161114.4jv6hnnbckqyrurs@quack3>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.230.37]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT072:EE_|DS7PR12MB5912:EE_
-X-MS-Office365-Filtering-Correlation-Id: 937ff662-3465-4b4b-b52a-08dafd96b0aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tCpwLCLGFR0Ba7TfooSLQYXsEy+wYRo/JaiEsFq0lvi6fyGlntVS6/dJItFLgbRYSlsWxSsWuSwFwvHcY8ZlQWcp/fHieHTj3Q10zO0IZcxHpDVs670mYHu4SRdyjQ99pus+1DG7bmoW/b2ZGLjgPeRUUpPMLCKcxHNRTn8cGcmHY2/OA8cjnTZjzO3bC/rEH92Mxks2WV11hjnJrAuS3OcswuZwiiFCtPyFHonjSX4VZTddutbyKjTMy73bCQSQhHsC9bQxn2FU254BC/jNV/hiNFwrzACGQZWIfwLU3p7aZQePj+nFIb/ZysMfikaRQnFIgB+UoV5g7zCWUkHaz3joRNfJkeJN+djCiAJhtRy/B84N03za2VGbNGK2dBCbDZuQRrqmL1OFIg7AkOqYqdH1m1nRjH9y/MDlZBsQEqOq5pQ4IgWsgIJ10TFr70Sbj4uoH2cBR8NxB5JY3VTBUSQ1Ko1oP6Suy8TsPevfSKcA+oIyzodFmRpQAydnWPcEnzRvacCRyWnz3pqhlvIVTNM47t7DKlQzRaPP7rsc6w0rNx5Uw+WNCMnHo5264+If/hs5ZwRPicUgQD/xAGMYR7gV2jzJr9R1tt7XnfPdtQQko022FiXqDjXYRlPc/iFzyYowYC09VWlrQ7q46sxonKhqwrvfAhs0M7VOD40lizpQNThcDpqp/QHCSAEo4PdbkQil6tDvD8AbZEnnDmHBkFZ9LHeiNXJVzstL7O9xw1g=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(136003)(396003)(346002)(376002)(451199015)(36840700001)(46966006)(40470700004)(36860700001)(36756003)(16576012)(316002)(4326008)(86362001)(70206006)(8676002)(70586007)(54906003)(110136005)(16526019)(186003)(26005)(53546011)(40480700001)(478600001)(356005)(336012)(2616005)(7636003)(31686004)(7416002)(4744005)(5660300002)(47076005)(40460700003)(8936002)(31696002)(41300700001)(2906002)(82740400003)(426003)(82310400005)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2023 23:08:07.5058
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 937ff662-3465-4b4b-b52a-08dafd96b0aa
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT072.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5912
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0959c72ec635688f4b6c1b516815f79f52543b31.camel@intel.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/23/23 08:11, Jan Kara wrote:
->> For cifs RDMA, do I need to make it pass in FOLL_LONGTERM?  And does that need
->> a special cleanup?
+On Mon, Jan 23, 2023, Huang, Kai wrote:
+> On Mon, 2023-01-23 at 15:03 +0100, Vlastimil Babka wrote:
+> > On 12/22/22 01:37, Huang, Kai wrote:
+> > > > > I argue that this page pinning (or page migration prevention) is not
+> > > > > tied to where the page comes from, instead related to how the page will
+> > > > > be used. Whether the page is restrictedmem backed or GUP() backed, once
+> > > > > it's used by current version of TDX then the page pinning is needed. So
+> > > > > such page migration prevention is really TDX thing, even not KVM generic
+> > > > > thing (that's why I think we don't need change the existing logic of
+> > > > > kvm_release_pfn_clean()). 
+> > > > > 
+> > > This essentially boils down to who "owns" page migration handling, and sadly,
+> > > page migration is kinda "owned" by the core-kernel, i.e. KVM cannot handle page
+> > > migration by itself -- it's just a passive receiver.
+> > > 
+> > > For normal pages, page migration is totally done by the core-kernel (i.e. it
+> > > unmaps page from VMA, allocates a new page, and uses migrate_pape() or a_ops-
+> > > > migrate_page() to actually migrate the page).
+> > > In the sense of TDX, conceptually it should be done in the same way. The more
+> > > important thing is: yes KVM can use get_page() to prevent page migration, but
+> > > when KVM wants to support it, KVM cannot just remove get_page(), as the core-
+> > > kernel will still just do migrate_page() which won't work for TDX (given
+> > > restricted_memfd doesn't have a_ops->migrate_page() implemented).
+> > > 
+> > > So I think the restricted_memfd filesystem should own page migration handling,
+> > > (i.e. by implementing a_ops->migrate_page() to either just reject page migration
+> > > or somehow support it).
+> > 
+> > While this thread seems to be settled on refcounts already, 
+> > 
 > 
-> FOLL_LONGTERM doesn't need a special cleanup AFAIK. It should be used
-> whenever there isn't reasonably bound time after which the page is
-> unpinned. So in case CIFS sets up RDMA and then it is up to userspace how
-> long the RDMA is going to be running it should be using FOLL_LONGTERM. The
+> I am not sure but will let Sean/Paolo to decide.
 
-Yes, we have been pretty consistently deciding that RDMA generally
-implies FOLL_LONGTERM. (And furthermore, FOLL_LONGTERM implies
-FOLL_PIN--that one is actually enforced by the gup/pup APIs.)
+My preference is whatever is most performant without being hideous :-)
 
+> > just wanted
+> > to point out that it wouldn't be ideal to prevent migrations by
+> > a_ops->migrate_page() rejecting them. It would mean cputime wasted (i.e.
+> > by memory compaction) by isolating the pages for migration and then
+> > releasing them after the callback rejects it (at least we wouldn't waste
+> > time creating and undoing migration entries in the userspace page tables
+> > as there's no mmap). Elevated refcount on the other hand is detected
+> > very early in compaction so no isolation is attempted, so from that
+> > aspect it's optimal.
+> 
+> I am probably missing something,
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+Heh, me too, I could have sworn that using refcounts was the least efficient way
+to block migration.
+
+> but IIUC the checking of refcount happens at very last stage of page migration too 
