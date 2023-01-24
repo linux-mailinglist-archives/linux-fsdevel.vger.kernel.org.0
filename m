@@ -2,208 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 94645679500
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 11:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7F1A679519
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 11:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232782AbjAXKQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 05:16:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56436 "EHLO
+        id S233298AbjAXKYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 05:24:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjAXKQl (ORCPT
+        with ESMTP id S231544AbjAXKX7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 05:16:41 -0500
-Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54FD840BC4;
-        Tue, 24 Jan 2023 02:16:31 -0800 (PST)
-Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-15b9c93848dso17179840fac.1;
-        Tue, 24 Jan 2023 02:16:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/5WiIONj0PqeupOjNCUoWXxpeYBFDGqt1Kmioz3LF90=;
-        b=e+RWkTufJc7KegDl3Bld1F56EYRwgNr8+jzVZiAArbmeUUDHLUHxEsTlQxpS3kFp7P
-         FyfiwOvfcS2LfKZNDplEX7lV4sA3eigHVkCZDw8tzI0rFt1FjgaPIJ+4vOGkl5KUVjmm
-         LL5JlU47Kkrzy67eeMm/EtQ1KPTJwf7tSlXl5LqyXrT70cec4k52pzxsoaHzPyjl5Z1p
-         SLQhvULYBD95fegidttfKnzP4t6bdThAS9AUw40JQt/BgtQLweMHhNqZdFG//wPLhQln
-         m3zUTpz0O4IKM7htj2m8UBT9BEfCPyHhcFqGVfrxtHzAy6gU8RFwkSsyu8OKkPZUaDJk
-         2w9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/5WiIONj0PqeupOjNCUoWXxpeYBFDGqt1Kmioz3LF90=;
-        b=LoLBijxyg7UubWzChlV9+Lxtqp26aqO5FOt+MS/5a58c7xjQM26Pwa0aNw/PZZ3QwE
-         cqfeUW+hXSbZy4B7k+hP+Ywg9n/yk3LzX2Bv/9kZMTUvs01xNMM7BFqVRngNaxFt3rx7
-         FDv5Cy4yz8n8fHdrSC7yvUjWK0hPgP59tQFx57AeCvpvSCJwbfDPvE+/ZYtg+KCkoNV1
-         ZgxFAKfLt/oikl5fuRqDJDAPhPWRhQYo4ozGk+NKwAwA1QinLwB/mJI9+T5/qbVUkmex
-         +sQP1dnBE4XDzcf/4UJb6slGlZ9G+76LHw43g2BiWhZyeqXXTNBXLfysjw/dVUAsWjK7
-         S+vA==
-X-Gm-Message-State: AO0yUKUvq7cOh+47Y9nzWakL4lVn6qB0yh+YazxUuo4HUX/SGa20Azx2
-        LZDlGCXSqf8aZIBmhl88zmlqhGRSaukcRwm8/gv+8Di8
-X-Google-Smtp-Source: AK7set8gaJfUZINs20aHCgEW8AaCJ13bIBWTnki0UIKMeYGbI1vy+9GxoXIV78MMF1NbYAzDZILjc4S+bxoe+9BBbGs=
-X-Received: by 2002:a05:6870:10d5:b0:163:1dac:5acb with SMTP id
- 21-20020a05687010d500b001631dac5acbmr48049oar.159.1674555390726; Tue, 24 Jan
- 2023 02:16:30 -0800 (PST)
+        Tue, 24 Jan 2023 05:23:59 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EA356E8E;
+        Tue, 24 Jan 2023 02:23:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674555838; x=1706091838;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=61NCGxLzSHjHHBUNqAQPKXIjKCww1YdhsHSX3vKpaAU=;
+  b=PdEcyh7ZC6m2aZgFM961OqF3a0q8EahZUY6S2ZCtHJQIESUR00j8DBF1
+   4DcbfExmA2B5lTklqzgws4nWZhR5I+qOlfairGYbEyk59gDmzOuCKtJHD
+   By6I/Geu2qvbaEmhPr6mAlHWmAOchamwI/QEEG9Vfz87SUKMfFG+kL9qM
+   8pbH4wlY4p3YAS45V9frN44kkWAq6m6Q7MIdkAwhgjEY1YgdZZ+RIxD/L
+   tamKFPwGvbLLkcluEocEbPbqgxH+X1lFuiCZFocvSSnEN4wstbA7+/YHj
+   IgZOUfwebeLi6lIdiZ2vmYDSZfxm7+HOZn8sBJcYvlpFz8k1UNwKXsRbh
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10599"; a="326300343"
+X-IronPort-AV: E=Sophos;i="5.97,242,1669104000"; 
+   d="scan'208";a="326300343"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2023 02:23:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10599"; a="770252842"
+X-IronPort-AV: E=Sophos;i="5.97,242,1669104000"; 
+   d="scan'208";a="770252842"
+Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 24 Jan 2023 02:23:50 -0800
+Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pKGSz-0006Ke-0R;
+        Tue, 24 Jan 2023 10:23:49 +0000
+Date:   Tue, 24 Jan 2023 18:23:20 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>
+Cc:     oe-kbuild-all@lists.linux.dev,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, Greg KH <greg@kroah.com>
+Subject: Re: [PATCH v8 2/4] userfaultfd: split mwriteprotect_range()
+Message-ID: <202301241831.AYRPKsH5-lkp@intel.com>
+References: <20230124084323.1363825-3-usama.anjum@collabora.com>
 MIME-Version: 1.0
-Received: by 2002:a8a:ad6:0:b0:49c:e11d:f815 with HTTP; Tue, 24 Jan 2023
- 02:16:29 -0800 (PST)
-In-Reply-To: <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com>
-References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
- <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
- <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com> <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Tue, 24 Jan 2023 11:16:29 +0100
-Message-ID: <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     viro@zeniv.linux.org.uk, serge@hallyn.com,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230124084323.1363825-3-usama.anjum@collabora.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/23/23, Paul Moore <paul@paul-moore.com> wrote:
-> On Fri, Jan 20, 2023 at 7:50 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
->> On 1/20/23, Paul Moore <paul@paul-moore.com> wrote:
->> > On Mon, Jan 16, 2023 at 4:21 PM Mateusz Guzik <mjguzik@gmail.com>
->> > wrote:
->> >>
->> >> access(2) remains commonly used, for example on exec:
->> >> access("/etc/ld.so.preload", R_OK)
->> >>
->> >> or when running gcc: strace -c gcc empty.c
->> >> % time     seconds  usecs/call     calls    errors syscall
->> >> ------ ----------- ----------- --------- --------- ----------------
->> >>   0.00    0.000000           0        42        26 access
->> >>
->> >> It falls down to do_faccessat without the AT_EACCESS flag, which in
->> >> turn
->> >> results in allocation of new creds in order to modify fsuid/fsgid and
->> >> caps. This is a very expensive process single-threaded and most
->> >> notably
->> >> multi-threaded, with numerous structures getting refed and unrefed on
->> >> imminent new cred destruction.
->> >>
->> >> Turns out for typical consumers the resulting creds would be identical
->> >> and this can be checked upfront, avoiding the hard work.
->> >>
->> >> An access benchmark plugged into will-it-scale running on Cascade Lake
->> >> shows:
->> >> test    proc    before  after
->> >> access1 1       1310582 2908735  (+121%)  # distinct files
->> >> access1 24      4716491 63822173 (+1353%) # distinct files
->> >> access2 24      2378041 5370335  (+125%)  # same file
->> >
->> > Out of curiosity, do you have any measurements of the impact this
->> > patch has on the AT_EACCESS case when the creds do need to be
->> > modified?
->>
->> I could not be arsed to bench that. I'm not saying there is literally 0
->> impact, but it should not be high and the massive win in the case I
->> patched imho justifies it.
->
-> That's one way to respond to an honest question asking if you've done
-> any tests on the other side of the change.  I agree the impact should
-> be less than the advantage you've shown, but sometimes it's nice to
-> see these things.
->
+Hi Muhammad,
 
-So reading this now I do think it was worded in quite a poor manner, so
-apologies for that.
+Thank you for the patch! Yet something to improve:
 
-Wording aside, I don't know whether this is just a passing remark or
-are you genuinely concerned about the other case.
+[auto build test ERROR on shuah-kselftest/next]
+[also build test ERROR on shuah-kselftest/fixes linus/master v6.2-rc5]
+[cannot apply to next-20230124]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If you are, I noted there is an immediately achievable speed up by
-eliminating the get/put ref cycle on creds coming from override_creds +
-put_cred to backpedal from it. This should be enough to cover it, but
-there are cosmetic problems around it I don't want to flame over.
+url:    https://github.com/intel-lab-lkp/linux/commits/Muhammad-Usama-Anjum/userfaultfd-Add-UFFD-WP-Async-support/20230124-164601
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
+patch link:    https://lore.kernel.org/r/20230124084323.1363825-3-usama.anjum%40collabora.com
+patch subject: [PATCH v8 2/4] userfaultfd: split mwriteprotect_range()
+config: i386-tinyconfig (https://download.01.org/0day-ci/archive/20230124/202301241831.AYRPKsH5-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/2806717805539421b82e971890ebbaf83b3deee4
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Muhammad-Usama-Anjum/userfaultfd-Add-UFFD-WP-Async-support/20230124-164601
+        git checkout 2806717805539421b82e971890ebbaf83b3deee4
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=i386 olddefconfig
+        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
 
-Say override_creds_noref gets added doing the usual work, except for
-get_new_cred.
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
 
-Then override_creds would be:
-        validate_creds(new);
-        get_new_cred((struct cred *)new);
-        override_creds_noref(new);
+All errors (new ones prefixed by >>):
 
-But override_creds_noref would retain validate_creds new/old and the
-above would repeat it which would preferably be avoided. Not a problem
-if it is deemed ok to get_new_cred without validate_creds.
-
->> These funcs are literally next to each other, I don't think that is easy
->> to miss. I concede a comment in access_override_creds to take a look at
->> access_need_override_creds would not hurt, but I don't know if a resend
->> to add it is justified.
->
-> Perhaps it's because I have to deal with a fair amount of code getting
-> changed in one place and not another, but I would think that a comment
-> would be the least one could do here and would justify a respin.
->
-
-I'm not going to *insist* on not adding that comment.
-
-Would this work for you?
-
-diff --git a/fs/open.c b/fs/open.c
-index 3c068a38044c..756177b94b04 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -407,6 +407,11 @@ static const struct cred *access_override_creds(void)
-        if (!override_cred)
-                return NULL;
-
-+       /*
-+        * XXX access_need_override_creds performs checks in hopes of
-+        * skipping this work. Make sure it stays in sync if making any
-+        * changes here.
-+        */
-        override_cred->fsuid = override_cred->uid;
-        override_cred->fsgid = override_cred->gid;
-
-if not, can you phrase it however you see fit for me to copy-paste?
-
-> In my opinion a generalized shallow copy approach has more value than
-> a one-off solution that has the potential to fall out of sync and
-> cause a problem in the future (I recognize that you disagree on the
-> likelihood of this happening).
->
-
-To reiterate my stance, the posted patch is trivial to reason about
-and it provides a marked improvement for the most commonly seen case.
-It comes with some extra branches for the less common case, which I
-don't consider to be a big deal.
-
-From the quick toor I took around kernel/cred.c I think the cred code
-is messy and it would be best to sort it out before doing anything
-fancy. I have no interest in doing the clean up.
-
-The shallow copy idea I outlined above looks very simple, but I can't
-help the feeling there are surprises there, so I'm reluctant to roll
-with it as is.
-
-More importantly I can't show any workload which runs into the other
-case, thus if someone asks me to justify the complexity I will have
-nothing, which is mostly why I did not go for it.
-
-That said, if powers to be declare this is the way forward, I can
-spend some time getting it done.
-
-> Ultimately it's a call for the VFS folks as they are responsible for
-> the access() code.
->
-
-Well let's wait and see. :)
+   ld: arch/x86/mm/init_32.o: in function `userfaultfd_wp_async':
+   init_32.c:(.text+0x0): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: arch/x86/mm/init_32.o: in function `wp_range_async':
+>> init_32.c:(.text+0x3): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: arch/x86/mm/fault.o: in function `userfaultfd_wp_async':
+   fault.c:(.text+0x8cd): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: arch/x86/mm/fault.o: in function `wp_range_async':
+   fault.c:(.text+0x8d0): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: arch/x86/mm/pgtable.o: in function `userfaultfd_wp_async':
+   pgtable.c:(.text+0x0): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: arch/x86/mm/pgtable.o: in function `wp_range_async':
+   pgtable.c:(.text+0x3): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: kernel/fork.o: in function `userfaultfd_wp_async':
+   fork.c:(.text+0x5bb): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: kernel/fork.o: in function `wp_range_async':
+   fork.c:(.text+0x5be): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: kernel/sysctl.o: in function `userfaultfd_wp_async':
+   sysctl.c:(.text+0x0): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: kernel/sysctl.o: in function `wp_range_async':
+   sysctl.c:(.text+0x3): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: kernel/sys.o: in function `userfaultfd_wp_async':
+   sys.c:(.text+0xb5e): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: kernel/sys.o: in function `wp_range_async':
+   sys.c:(.text+0xb61): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: kernel/events/core.o: in function `userfaultfd_wp_async':
+   core.c:(.text+0x404c): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: kernel/events/core.o: in function `wp_range_async':
+   core.c:(.text+0x404f): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/filemap.o: in function `userfaultfd_wp_async':
+   filemap.c:(.text+0x7c5): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/filemap.o: in function `wp_range_async':
+   filemap.c:(.text+0x7c8): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/page-writeback.o: in function `userfaultfd_wp_async':
+   page-writeback.c:(.text+0xb69): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/page-writeback.o: in function `wp_range_async':
+   page-writeback.c:(.text+0xb6c): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/folio-compat.o: in function `userfaultfd_wp_async':
+   folio-compat.c:(.text+0xc): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/folio-compat.o: in function `wp_range_async':
+   folio-compat.c:(.text+0xf): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/readahead.o: in function `userfaultfd_wp_async':
+   readahead.c:(.text+0x128): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/readahead.o: in function `wp_range_async':
+   readahead.c:(.text+0x12b): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/swap.o: in function `userfaultfd_wp_async':
+   swap.c:(.text+0x6e5): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/swap.o: in function `wp_range_async':
+   swap.c:(.text+0x6e8): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/vmscan.o: in function `userfaultfd_wp_async':
+   vmscan.c:(.text+0xf96): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/vmscan.o: in function `wp_range_async':
+   vmscan.c:(.text+0xf99): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/shmem.o: in function `userfaultfd_wp_async':
+   shmem.c:(.text+0x91): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/shmem.o: in function `wp_range_async':
+   shmem.c:(.text+0x94): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/util.o: in function `userfaultfd_wp_async':
+   util.c:(.text+0x2b): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/util.o: in function `wp_range_async':
+   util.c:(.text+0x2e): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/vmstat.o: in function `userfaultfd_wp_async':
+   vmstat.c:(.text+0x0): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/vmstat.o: in function `wp_range_async':
+   vmstat.c:(.text+0x3): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/compaction.o: in function `userfaultfd_wp_async':
+   compaction.c:(.text+0x0): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/compaction.o: in function `wp_range_async':
+   compaction.c:(.text+0x3): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/workingset.o: in function `userfaultfd_wp_async':
+   workingset.c:(.text+0x181): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/workingset.o: in function `wp_range_async':
+   workingset.c:(.text+0x184): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/debug.o: in function `userfaultfd_wp_async':
+   debug.c:(.text+0xb9): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/debug.o: in function `wp_range_async':
+   debug.c:(.text+0xbc): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/gup.o: in function `userfaultfd_wp_async':
+   gup.c:(.text+0x2ae): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/gup.o: in function `wp_range_async':
+   gup.c:(.text+0x2b1): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/memory.o: in function `userfaultfd_wp_async':
+   memory.c:(.text+0x737): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/memory.o: in function `wp_range_async':
+   memory.c:(.text+0x73a): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/mincore.o: in function `userfaultfd_wp_async':
+   mincore.c:(.text+0x149): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/mincore.o: in function `wp_range_async':
+   mincore.c:(.text+0x14c): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/mlock.o: in function `userfaultfd_wp_async':
+   mlock.c:(.text+0x90e): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/mlock.o: in function `wp_range_async':
+   mlock.c:(.text+0x911): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/mmap.o: in function `userfaultfd_wp_async':
+   mmap.c:(.text+0x4d8): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/mmap.o: in function `wp_range_async':
+   mmap.c:(.text+0x4db): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/mmu_gather.o: in function `userfaultfd_wp_async':
+   mmu_gather.c:(.text+0x29): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/mmu_gather.o: in function `wp_range_async':
+   mmu_gather.c:(.text+0x2c): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
+   ld: mm/mprotect.o: in function `userfaultfd_wp_async':
+   mprotect.c:(.text+0x45): multiple definition of `userfaultfd_wp_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x3): first defined here
+   ld: mm/mprotect.o: in function `wp_range_async':
+   mprotect.c:(.text+0x48): multiple definition of `wp_range_async'; arch/x86/kernel/setup.o:setup.c:(.text+0x6): first defined here
 
 -- 
-Mateusz Guzik <mjguzik gmail.com>
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
