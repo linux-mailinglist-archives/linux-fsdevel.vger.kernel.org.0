@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7567D678E68
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 03:39:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F0F678E66
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 03:39:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232381AbjAXCj5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 21:39:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54262 "EHLO
+        id S232656AbjAXCjt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 21:39:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232479AbjAXCj2 (ORCPT
+        with ESMTP id S232462AbjAXCj1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 21:39:28 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE4943645B;
+        Mon, 23 Jan 2023 21:39:27 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A8FE39B92;
         Mon, 23 Jan 2023 18:39:18 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 67D6DB80F99;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C8F15611AD;
         Tue, 24 Jan 2023 02:39:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B27FC43445;
-        Tue, 24 Jan 2023 02:39:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B34EC433D2;
+        Tue, 24 Jan 2023 02:39:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674527956;
-        bh=mwpeKRv006PC18eABtcCK4GFwMNFS3Fk5mUgrdToDss=;
+        s=k20201202; t=1674527957;
+        bh=R35j7a+A+ua085wQYKH/cW9sDjYEKNr2+kfZb69JhNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kMfz40343k0/zebkCJjoV+sRSk8Vi1+yrsj+udY3whQfhSqXTn2/5X0fh1ACIamub
-         z4k/teyg31KjOBA1x0UY4zQoh7gWft9EoJVjGwqL0D3EUBiorKFOKphXmr/MxJxrr8
-         72corNpJMDjCA2ZoA6OvwUmF1AAoWfJZjoXD7dIryntCaimZvM99oGJe1HC62mnt1Z
-         akJj/iz3ek63WqXW/vnedcsLzb1610DkWicc8/YmXjhL6uuNsSNKevNdbi0hJ81NAq
-         fomB1DOYSqbTzJ7zaNFLRQDHWKqy4ltVZMuBgrumww3fFfVxJH2i4s13Tdrhdui8Vd
-         yFePQK0tpl8zw==
+        b=KjuSU3LLv3roUT4HD9fauR5bsdtCKyfG+axelFxmkk0jDaF0HQ4pmtlJw8rSD74No
+         iMEUaZq8iUc4aTdDjrDuloUmHBsRa6P1JL2hFSjqs0JuxiL6omywGX21yM0Lj/X13q
+         AcmwBVePcIYTNTWDiCkKpN67hdUfhpmEHRCoo1VAoTYQdtN4GrND6AvnExd7qJX87n
+         osdbPjVC2z282cSYLx6pHziImBeqKDwt07VwLtguvFa6R/HRlIDUB9d52pPh28nzlt
+         ncrbxibS4n8C5E1O3kanhwWQuVGEyTRTpa+/ojg/g32ILEVLLCojOkjr9ad24NWkYh
+         b9fcpNiWFXAvA==
 From:   Eric Van Hensbergen <ericvh@kernel.org>
 To:     v9fs-developer@lists.sourceforge.net, asmadeus@codewreck.org,
         rminnich@gmail.com, lucho@ionkov.net
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux_oss@crudebyte.com, Eric Van Hensbergen <ericvh@kernel.org>
-Subject: [PATCH v3 08/11] Add new mount modes
-Date:   Tue, 24 Jan 2023 02:38:31 +0000
-Message-Id: <20230124023834.106339-9-ericvh@kernel.org>
+Subject: [PATCH v3 09/11] fix error reporting in v9fs_dir_release
+Date:   Tue, 24 Jan 2023 02:38:32 +0000
+Message-Id: <20230124023834.106339-10-ericvh@kernel.org>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230124023834.106339-1-ericvh@kernel.org>
 References: <20221218232217.1713283-1-evanhensbergen@icloud.com>
@@ -55,87 +55,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add some additional mount modes for cache management including
-specifying directio as a mount option and an option for ignore
-qid.version for determining whether or not a file is cacheable.
+Checking the p9_fid_put value allows us to pass back errors
+involved if we end up clunking the fid as part of dir_release.
+
+This can help with more graceful response to errors in writeback
+among other things.
 
 Signed-off-by: Eric Van Hensbergen <ericvh@kernel.org>
 ---
- fs/9p/v9fs.c | 16 ++++++++++++++--
- fs/9p/v9fs.h |  5 ++++-
- 2 files changed, 18 insertions(+), 3 deletions(-)
+ fs/9p/vfs_dir.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-index f8e952c013f9..43d3806150a9 100644
---- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -38,7 +38,7 @@ enum {
- 	/* String options */
- 	Opt_uname, Opt_remotename, Opt_cache, Opt_cachetag,
- 	/* Options that take no arguments */
--	Opt_nodevmap, Opt_noxattr,
-+	Opt_nodevmap, Opt_noxattr, Opt_directio, Opt_ignoreqv,
- 	/* Access options */
- 	Opt_access, Opt_posixacl,
- 	/* Lock timeout option */
-@@ -56,6 +56,8 @@ static const match_table_t tokens = {
- 	{Opt_remotename, "aname=%s"},
- 	{Opt_nodevmap, "nodevmap"},
- 	{Opt_noxattr, "noxattr"},
-+	{Opt_directio, "directio"},
-+	{Opt_ignoreqv, "ignoreqv"},
- 	{Opt_cache, "cache=%s"},
- 	{Opt_cachetag, "cachetag=%s"},
- 	{Opt_access, "access=%s"},
-@@ -125,7 +127,7 @@ int v9fs_show_options(struct seq_file *m, struct dentry *root)
- 	if (v9ses->nodev)
- 		seq_puts(m, ",nodevmap");
- 	if (v9ses->cache)
--		seq_printf(m, ",%s", v9fs_cache_modes[v9ses->cache]);
-+		seq_printf(m, ",cache=%s", v9fs_cache_modes[v9ses->cache]);
- #ifdef CONFIG_9P_FSCACHE
- 	if (v9ses->cachetag && v9ses->cache == CACHE_FSCACHE)
- 		seq_printf(m, ",cachetag=%s", v9ses->cachetag);
-@@ -147,6 +149,10 @@ int v9fs_show_options(struct seq_file *m, struct dentry *root)
- 		break;
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index ec831c27a58e..1fc07bb86e6f 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -197,7 +197,7 @@ static int v9fs_dir_readdir_dotl(struct file *file, struct dir_context *ctx)
+ 
+ 
+ /**
+- * v9fs_dir_release - close a directory
++ * v9fs_dir_release - called on a close of a file or directory
+  * @inode: inode of the directory
+  * @filp: file pointer to a directory
+  *
+@@ -209,6 +209,7 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 	struct p9_fid *fid;
+ 	__le32 version;
+ 	loff_t i_size;
++	int retval = 0;
+ 
+ 	fid = filp->private_data;
+ 	p9_debug(P9_DEBUG_VFS, "inode: %p filp: %p fid: %d\n",
+@@ -226,7 +227,7 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 		spin_lock(&inode->i_lock);
+ 		hlist_del(&fid->ilist);
+ 		spin_unlock(&inode->i_lock);
+-		p9_fid_put(fid);
++		retval = p9_fid_put(fid);
  	}
  
-+	if (v9ses->flags & V9FS_IGNORE_QV)
-+		seq_puts(m, ",ignoreqv");
-+	if (v9ses->flags & V9FS_DIRECT_IO)
-+		seq_puts(m, ",directio");
- 	if (v9ses->flags & V9FS_POSIX_ACL)
- 		seq_puts(m, ",posixacl");
+ 	if ((filp->f_mode & FMODE_WRITE)) {
+@@ -237,7 +238,7 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 	} else {
+ 		fscache_unuse_cookie(v9fs_inode_cookie(v9inode), NULL, NULL);
+ 	}
+-	return 0;
++	return retval;
+ }
  
-@@ -276,6 +282,12 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 		case Opt_noxattr:
- 			v9ses->flags |= V9FS_NO_XATTR;
- 			break;
-+		case Opt_directio:
-+			v9ses->flags |= V9FS_DIRECT_IO;
-+			break;
-+		case Opt_ignoreqv:
-+			v9ses->flags |= V9FS_IGNORE_QV;
-+			break;
- 		case Opt_cachetag:
- #ifdef CONFIG_9P_FSCACHE
- 			kfree(v9ses->cachetag);
-diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
-index a08cf6618c86..c80c318ff31c 100644
---- a/fs/9p/v9fs.h
-+++ b/fs/9p/v9fs.h
-@@ -37,7 +37,10 @@ enum p9_session_flags {
- 	V9FS_ACCESS_USER	= 0x08,
- 	V9FS_ACCESS_CLIENT	= 0x10,
- 	V9FS_POSIX_ACL		= 0x20,
--	V9FS_NO_XATTR		= 0x40
-+	V9FS_NO_XATTR		= 0x40,
-+	V9FS_IGNORE_QV		= 0x80,
-+	V9FS_DIRECT_IO		= 0x100,
-+	V9FS_SYNC			= 0x200
- };
- 
- /* possible values of ->cache */
+ const struct file_operations v9fs_dir_operations = {
 -- 
 2.37.2
 
