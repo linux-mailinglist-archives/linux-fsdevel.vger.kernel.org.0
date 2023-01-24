@@ -2,176 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D3E2679F61
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 18:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F1D9679F6D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 18:02:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234576AbjAXRBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 12:01:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34240 "EHLO
+        id S234627AbjAXRC3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 12:02:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233657AbjAXRA7 (ORCPT
+        with ESMTP id S234138AbjAXRCX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 12:00:59 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D13146D4D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:00:56 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id z4-20020a17090a170400b00226d331390cso14605612pjd.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:00:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NvlI0i6tuIH+cEsFMK651QuzmfDYjvdOyfnJQ4mWPaM=;
-        b=fBCyoy0jsWCHcQ5tg6XSqYXIY6XFpXsrjLZ6mXT3WPizdVoFT6JVhQEWOkpHqjh6wd
-         ngsgH5NdU4lVbh05bTwLfzo8vbU25MvXhkW7NPzn049LZvVCtXWQ38wIYoIYkz3gtNlN
-         5YUbcMG5dqMJh67/3Z3i2GpSIA9l3JSInqAIhpIl1NkXTUjXaFXOqA5dEagK8pD/6z6y
-         x6Uw73dClMjkTkQx0hS/sjlyaxOGmjFopku5JE1XKSHnHHXmK/H3ALIIad9NX0SUR5di
-         ZbiNpEi1Y2sd/fQJ/WSWuycdhMHRhMbsEWnYRwc6HZn8+YIxs2nztaNFQaXsNjVH78uX
-         VF+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NvlI0i6tuIH+cEsFMK651QuzmfDYjvdOyfnJQ4mWPaM=;
-        b=You5z8AOSzwED8WaNxUuCbcVJBxybs0G1c3UazS9xIb5sGPH1oyLPbxr2b5hog3avZ
-         OlTnwYnHdT0tbTXoFL87jUrany+icND6lcAAW9kkXY+fMy+VIa4Kf4JKnHNazKycSRIw
-         3eT6c+cKO/7NvwOS1W0p9+udqvaB883yIVIyoWopphpCedQrGQ1lhreZOUct0uxYM1Z+
-         J0FG68dm7DKKk7f0QjgJ39/JSnWydEK2zXJXQyN4Anng2oohsSFA79EvwJDWBxMsqyrs
-         w+8y5ThPdV6z+KPD7M/9xhveeHYPO2pBp6DsIgv3+ShkBrowGAN675DwfrdMvRxCBJUO
-         cweQ==
-X-Gm-Message-State: AFqh2kqA/OHybbTlbnBUxkYpCW0HIr+Pi7L2raMiwmHvAAApsSZmm+7O
-        SFsfRPmsLD3WFTuwfHJ/YiHGvulkgv9Da6MAHFm//KK3EDcAwfI=
-X-Google-Smtp-Source: AMrXdXs5LwusCrxpDA+RsriJbYMYR5uAig0mVQQF9cpIROxbArDIWF2uu/OmQcjY4r+XZtUpmQv4jd4LezcJvj0+/Zk=
-X-Received: by 2002:a17:90a:17a1:b0:229:9ffe:135b with SMTP id
- q30-20020a17090a17a100b002299ffe135bmr3346473pja.72.1674579655647; Tue, 24
- Jan 2023 09:00:55 -0800 (PST)
+        Tue, 24 Jan 2023 12:02:23 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 770764CE4C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:01:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674579684;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=qV6p9drRgFSkUgt1RrIXIeClxoDJ0Akwk1qfBx8Owr0=;
+        b=hZHqpWyfEVTUZnoLI/Szv+B1S6Mf9OErGdo1Zfk9/c22SKWI958Lt0ban21Wwcut0fhR3j
+        uz2NG3UhPB8NXUWZg3OdRWI0MesQI+/rA/sLdxrdybglPtLpaL5ef0sDp+q+m8mKTqjerc
+        2/Z9auW7kjTK0geeiSKDCZYaMCwWQA4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-373-qbJQq3GwMo2c71YyHqriwg-1; Tue, 24 Jan 2023 12:01:21 -0500
+X-MC-Unique: qbJQq3GwMo2c71YyHqriwg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6A235801779;
+        Tue, 24 Jan 2023 17:01:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.33.36.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D632A53A0;
+        Tue, 24 Jan 2023 17:01:18 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/8] iov_iter: Improve page extraction (pin or just list)
+Date:   Tue, 24 Jan 2023 17:01:00 +0000
+Message-Id: <20230124170108.1070389-1-dhowells@redhat.com>
 MIME-Version: 1.0
-References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
- <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
- <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
- <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com> <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
-In-Reply-To: <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 24 Jan 2023 12:00:46 -0500
-Message-ID: <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, serge@hallyn.com,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 24, 2023 at 5:16 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
-> On 1/23/23, Paul Moore <paul@paul-moore.com> wrote:
-> > On Fri, Jan 20, 2023 at 7:50 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >> On 1/20/23, Paul Moore <paul@paul-moore.com> wrote:
-> >> > On Mon, Jan 16, 2023 at 4:21 PM Mateusz Guzik <mjguzik@gmail.com>
-> >> > wrote:
-> >> >>
-> >> >> access(2) remains commonly used, for example on exec:
-> >> >> access("/etc/ld.so.preload", R_OK)
-> >> >>
-> >> >> or when running gcc: strace -c gcc empty.c
-> >> >> % time     seconds  usecs/call     calls    errors syscall
-> >> >> ------ ----------- ----------- --------- --------- ----------------
-> >> >>   0.00    0.000000           0        42        26 access
-> >> >>
-> >> >> It falls down to do_faccessat without the AT_EACCESS flag, which in
-> >> >> turn
-> >> >> results in allocation of new creds in order to modify fsuid/fsgid and
-> >> >> caps. This is a very expensive process single-threaded and most
-> >> >> notably
-> >> >> multi-threaded, with numerous structures getting refed and unrefed on
-> >> >> imminent new cred destruction.
-> >> >>
-> >> >> Turns out for typical consumers the resulting creds would be identical
-> >> >> and this can be checked upfront, avoiding the hard work.
-> >> >>
-> >> >> An access benchmark plugged into will-it-scale running on Cascade Lake
-> >> >> shows:
-> >> >> test    proc    before  after
-> >> >> access1 1       1310582 2908735  (+121%)  # distinct files
-> >> >> access1 24      4716491 63822173 (+1353%) # distinct files
-> >> >> access2 24      2378041 5370335  (+125%)  # same file
-> >> >
-> >> > Out of curiosity, do you have any measurements of the impact this
-> >> > patch has on the AT_EACCESS case when the creds do need to be
-> >> > modified?
-> >>
-> >> I could not be arsed to bench that. I'm not saying there is literally 0
-> >> impact, but it should not be high and the massive win in the case I
-> >> patched imho justifies it.
-> >
-> > That's one way to respond to an honest question asking if you've done
-> > any tests on the other side of the change.  I agree the impact should
-> > be less than the advantage you've shown, but sometimes it's nice to
-> > see these things.
->
-> So reading this now I do think it was worded in quite a poor manner, so
-> apologies for that.
+Hi Al, Christoph,
 
-Thanks, but no worries.  Work in this space long enough and everyone
-eventually ends up sending a mail or two that could have been worded
-better, myself included.
+Here are patches to provide support for extracting pages from an iov_iter
+and to use this in the extraction functions in the block layer bio code.
 
-> Wording aside, I don't know whether this is just a passing remark or
-> are you genuinely concerned about the other case.
+The patches make the following changes:
 
-My main concern is the duplication between the cred check and the cred
-override functions leading to a bug at some unknown point in the
-future.  Changes to credential checking, and access control in
-general, always gets my attention and due to past bruises I'm very
-sensitive to out-of-sync issues due to code duplication; so your patch
-was a bit of a "perfect storm" of concern for me :)
+ (1) Add a function, iov_iter_extract_pages() to replace
+     iov_iter_get_pages*() that gets refs, pins or just lists the pages as
+     appropriate to the iterator type.
 
-The profiling questions were mainly there as a curiosity since it
-looked like this was part of a larger performance oriented effort and
-I thought you might have more data that didn't make it into the commit
-description.
+     Add a function, iov_iter_extract_will_pin() that will indicate from
+     the iterator type how the cleanup is to be performed, returning true
+     if the pages will need unpinning, false otherwise.
 
-> >> These funcs are literally next to each other, I don't think that is easy
-> >> to miss. I concede a comment in access_override_creds to take a look at
-> >> access_need_override_creds would not hurt, but I don't know if a resend
-> >> to add it is justified.
-> >
-> > Perhaps it's because I have to deal with a fair amount of code getting
-> > changed in one place and not another, but I would think that a comment
-> > would be the least one could do here and would justify a respin.
->
-> I'm not going to *insist* on not adding that comment.
->
-> Would this work for you?
->
-> diff --git a/fs/open.c b/fs/open.c
-> index 3c068a38044c..756177b94b04 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -407,6 +407,11 @@ static const struct cred *access_override_creds(void)
->         if (!override_cred)
->                 return NULL;
->
-> +       /*
-> +        * XXX access_need_override_creds performs checks in hopes of
-> +        * skipping this work. Make sure it stays in sync if making any
-> +        * changes here.
-> +        */
->         override_cred->fsuid = override_cred->uid;
->         override_cred->fsgid = override_cred->gid;
->
-> if not, can you phrase it however you see fit for me to copy-paste?
+ (2) Make the bio struct carry a pair of flags to indicate the cleanup
+     mode.  BIO_NO_PAGE_REF is replaced with BIO_PAGE_REFFED (indicating
+     FOLL_GET was used) and BIO_PAGE_PINNED (indicating FOLL_PIN was used)
+     is added.
 
-That wording looks good to me and would help me feel a bit better
-about this change, thank you.
+     BIO_PAGE_REFFED will go away, but at the moment fs/direct-io.c sets it
+     and this series does not fully address that file.
 
--- 
-paul-moore.com
+ (4) Add a function, bio_release_page(), to release a page appropriately to
+     the cleanup mode indicated by the BIO_PAGE_* flags.
+
+ (5) Make the iter-to-bio code use iov_iter_extract_pages() to retain the
+     pages appropriately and clean them up later.
+
+ (6) Fix bio_flagged() so that it doesn't prevent a gcc optimisation.
+
+I've pushed the patches here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-extract
+
+David
+
+Changes:
+========
+ver #9)
+ - It's now not permitted to use FOLL_PIN outside of mm/, so:
+ - Change iov_iter_extract_mode() into iov_iter_extract_will_pin() and
+   return true/false instead of FOLL_PIN/0.
+ - Drop of folio_put_unpin() and page_put_unpin() and instead call
+   unpin_user_page() (and put_page()) directly as necessary.
+ - Make __bio_release_pages() call bio_release_page() instead of
+   unpin_user_page() as there's no BIO_* -> FOLL_* translation to do.
+ - Drop the FOLL_* renumbering patch.
+ - Change extract_flags to extraction_flags.
+
+ver #8)
+ - Import Christoph Hellwig's changes.
+   - Split the conversion-to-extraction patch.
+   - Drop the extract_flags arg from iov_iter_extract_mode().
+   - Don't default bios to BIO_PAGE_REFFED, but set explicitly.
+ - Switch FOLL_PIN and FOLL_GET when renumbering so PIN is at bit 0.
+ - Switch BIO_PAGE_PINNED and BIO_PAGE_REFFED so PINNED is at bit 0.
+ - We should always be using FOLL_PIN (not FOLL_GET) for DIO, so adjust the
+   patches for that.
+
+ver #7)
+ - For now, drop the parts to pass the I/O direction to iov_iter_*pages*()
+   as it turned out to be a lot more complicated, with places not setting
+   IOCB_WRITE when they should, for example.
+ - Drop all the patches that changed things other then the block layer's
+   bio handling.  The netfslib and cifs changes can go into a separate
+   patchset.
+ - Add support for extracting pages from KVEC-type iterators.
+ - When extracting from BVEC/KVEC, skip over empty vecs at the front.
+
+ver #6)
+ - Fix write() syscall and co. not setting IOCB_WRITE.
+ - Added iocb_is_read() and iocb_is_write() to check IOCB_WRITE.
+ - Use op_is_write() in bio_copy_user_iov().
+ - Drop the iterator direction checks from smbd_recv().
+ - Define FOLL_SOURCE_BUF and FOLL_DEST_BUF and pass them in as part of
+   gup_flags to iov_iter_get/extract_pages*().
+ - Replace iov_iter_get_pages*2() with iov_iter_get_pages*() and remove.
+ - Add back the function to indicate the cleanup mode.
+ - Drop the cleanup_mode return arg to iov_iter_extract_pages().
+ - Provide a helper to clean up a page.
+ - Renumbered FOLL_GET and FOLL_PIN and made BIO_PAGE_REFFED/PINNED have
+   the same numerical values, enforced with an assertion.
+ - Converted AF_ALG, SCSI vhost, generic DIO, FUSE, splice to pipe, 9P and
+   NFS.
+ - Added in the patches to make CIFS do top-to-bottom iterators and use
+   various of the added extraction functions.
+ - Added a pair of work-in-progess patches to make sk_buff fragments store
+   FOLL_GET and FOLL_PIN.
+
+ver #5)
+ - Replace BIO_NO_PAGE_REF with BIO_PAGE_REFFED and split into own patch.
+ - Transcribe FOLL_GET/PIN into BIO_PAGE_REFFED/PINNED flags.
+ - Add patch to allow bio_flagged() to be combined by gcc.
+
+ver #4)
+ - Drop the patch to move the FOLL_* flags to linux/mm_types.h as they're
+   no longer referenced by linux/uio.h.
+ - Add ITER_SOURCE/DEST cleanup patches.
+ - Make iov_iter/netfslib iter extraction patches use ITER_SOURCE/DEST.
+ - Allow additional gup_flags to be passed into iov_iter_extract_pages().
+ - Add struct bio patch.
+
+ver #3)
+ - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
+   to get/pin_user_pages_fast()[1].
+
+ver #2)
+ - Rolled the extraction cleanup mode query function into the extraction
+   function, returning the indication through the argument list.
+ - Fixed patch 4 (extract to scatterlist) to actually use the new
+   extraction API.
+
+Link: https://lore.kernel.org/r/Y3zFzdWnWlEJ8X8/@infradead.org/ [1]
+Link: https://lore.kernel.org/r/166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166722777223.2555743.162508599131141451.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166732024173.3186319.18204305072070871546.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166920902005.1461876.2786264600108839814.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/166997419665.9475.15014699817597102032.stgit@warthog.procyon.org.uk/ # v3
+Link: https://lore.kernel.org/r/167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk/ # v4
+Link: https://lore.kernel.org/r/167344725490.2425628.13771289553670112965.stgit@warthog.procyon.org.uk/ # v5
+Link: https://lore.kernel.org/r/167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk/ # v6
+Link: https://lore.kernel.org/r/20230120175556.3556978-1-dhowells@redhat.com/ # v7
+Link: https://lore.kernel.org/r/20230123173007.325544-1-dhowells@redhat.com/ # v8
+
+Christoph Hellwig (1):
+  block: Replace BIO_NO_PAGE_REF with BIO_PAGE_REFFED with inverted
+    logic
+
+David Howells (7):
+  iov_iter: Define flags to qualify page extraction.
+  iov_iter: Add a function to extract a page list from an iterator
+  iomap: Don't get an reference on ZERO_PAGE for direct I/O block
+    zeroing
+  block: Fix bio_flagged() so that gcc can better optimise it
+  block: Switch to pinning pages.
+  block: Convert bio_iov_iter_get_pages to use iov_iter_extract_pages
+  block: convert bio_map_user_iov to use iov_iter_extract_pages
+
+ block/bio.c               |  32 ++--
+ block/blk-map.c           |  25 ++-
+ block/blk.h               |  21 +++
+ fs/direct-io.c            |   2 +
+ fs/iomap/direct-io.c      |   1 -
+ include/linux/bio.h       |   5 +-
+ include/linux/blk_types.h |   3 +-
+ include/linux/uio.h       |  32 +++-
+ lib/iov_iter.c            | 335 +++++++++++++++++++++++++++++++++++++-
+ 9 files changed, 415 insertions(+), 41 deletions(-)
+
