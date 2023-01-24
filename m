@@ -2,106 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0014667A49C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 22:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB96A67A4CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 22:17:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234631AbjAXVLZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 16:11:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39390 "EHLO
+        id S234727AbjAXVRm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 16:17:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234626AbjAXVLY (ORCPT
+        with ESMTP id S234858AbjAXVRj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 16:11:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD74460BD
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 13:10:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674594639;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+S5IUZHTVF9Pd6bZbdf7wMuVKpNUwM0nLhEcSQAjNaE=;
-        b=gcWOV2ki0yOEcU9hfSEzUXXNGkCEqbAC+g6KC9+lrcwzVrSPQ74mytHOei+RzrvJVnul8s
-        JJx8CP5xOS7Znv4pSj57dLAd4A2DbmaZYKhlo+T2P+8xJ8iX+BnNWfNPWIEL6q8rPkY2iX
-        MuiloTf3VFybLdNFPJgSYCu/cagZSdg=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-496-PXodvBPsPsCCtt8GzvXR7Q-1; Tue, 24 Jan 2023 16:10:34 -0500
-X-MC-Unique: PXodvBPsPsCCtt8GzvXR7Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 24 Jan 2023 16:17:39 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6695945225;
+        Tue, 24 Jan 2023 13:17:02 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CCB132802E24;
-        Tue, 24 Jan 2023 21:10:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DBAAE2166B26;
-        Tue, 24 Jan 2023 21:10:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <4be974aa-2beb-9ae5-3f48-7dde6241b0c7@nvidia.com>
-References: <4be974aa-2beb-9ae5-3f48-7dde6241b0c7@nvidia.com> <20230124170108.1070389-1-dhowells@redhat.com> <20230124170108.1070389-3-dhowells@redhat.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, "Jan Kara" <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Christoph Hellwig" <hch@lst.de>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v9 2/8] iov_iter: Add a function to extract a page list from an iterator
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1353066.1674594631.1@warthog.procyon.org.uk>
-Date:   Tue, 24 Jan 2023 21:10:31 +0000
-Message-ID: <1353067.1674594631@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        by ams.source.kernel.org (Postfix) with ESMTPS id 649DDB81710;
+        Tue, 24 Jan 2023 21:17:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1BB02C4339E;
+        Tue, 24 Jan 2023 21:16:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674595019;
+        bh=pEYX0+MZgf58CJyU0+5oXs+dmwVpMK09+9EkEuczC7E=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=LLgqk8B9/cvTRISTcuMuVRpGicEqq+7awe/wNiZC7fC8up/EGApdzPANmz7/jx2Ct
+         G1w04SZSXhNBTkZVYqz/JbGFulVvuLd9bILPF1ICl+IbKbPN4P/d1uVbM5VpCqlilc
+         aryjbg73Qs+lSgzS4gp8O4cy+QxBBl42QhBlilJLdVHL/6S9Oad2wjHNxY1oZgixV8
+         Ks0Ofd0XY7n3Q7MeCEfnUFfG9nOfcAmXexOvvrjF8AjPeEa1MrBIIOoY6ceVFb77O8
+         v3wpgEC/TLyBKzBDZOEdmzoOAy1IAJZ773Fk5j6ZDIaxqV4k1qLLKHGmFMtv5dS8WT
+         pR0syTOQDyf1w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 04593C5C7D4;
+        Tue, 24 Jan 2023 21:16:59 +0000 (UTC)
+Subject: Re: [GIT PULL] fsverity MAINTAINERS entry update for 6.2-rc6
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <Y88gdkbdscJPOqSX@sol.localdomain>
+References: <Y88gdkbdscJPOqSX@sol.localdomain>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Y88gdkbdscJPOqSX@sol.localdomain>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fsverity/linux.git tags/fsverity-for-linus
+X-PR-Tracked-Commit-Id: ef7592e466ef7b2595fdfdfd23559a779f4b211a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5149394c899808667e0f8444d3d39cba1dfb42f7
+Message-Id: <167459501901.6044.16348460970361042850.pr-tracker-bot@kernel.org>
+Date:   Tue, 24 Jan 2023 21:16:59 +0000
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>, fsverity@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-John Hubbard <jhubbard@nvidia.com> wrote:
+The pull request you sent on Mon, 23 Jan 2023 16:04:06 -0800:
 
-> > +	for (;;) {
-> > +		if (i->nr_segs == 0)
-> > +			return 0;
-> > +		maxsize = min(maxsize, i->bvec->bv_len - skip);
-> > +		if (maxsize)
-> > +			break;
-> > +		i->iov_offset = 0;
-> > +		i->nr_segs--;
-> > +		i->kvec++;
-> > +		skip = 0;
-> > +	}
-> > +
-> > +	skip += i->bvec->bv_offset;
-> > +	page = i->bvec->bv_page + skip / PAGE_SIZE;
-> > +	offset = skip % PAGE_SIZE;
-> > +	*offset0 = offset;
-> > +
-> > +	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
-> > +	if (!maxpages)
-> > +		return -ENOMEM;
-> 
-> Is it OK that the iov_iter position has been advanced, and left that way,
-> in the case of an early -ENOMEM return here?
+> https://git.kernel.org/pub/scm/fs/fsverity/linux.git tags/fsverity-for-linus
 
-I think it should be okay.  The for-loop at the top just skips over empty
-segments, so it doesn't really advance things.  There is an error there,
-though: it should be i->bvec++, not i->kvec++ in the loop.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5149394c899808667e0f8444d3d39cba1dfb42f7
 
-David
+Thank you!
 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
