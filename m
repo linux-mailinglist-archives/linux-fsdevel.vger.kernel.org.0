@@ -2,76 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A27D1679FE4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 18:14:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB8767A020
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 18:27:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234624AbjAXROn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 12:14:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49244 "EHLO
+        id S234040AbjAXR1B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 12:27:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234657AbjAXROk (ORCPT
+        with ESMTP id S233668AbjAXR07 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 12:14:40 -0500
-Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A4132FCF8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:14:35 -0800 (PST)
-Received: by mail-qt1-x830.google.com with SMTP id s4so13642156qtx.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:14:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=spY1Ga4Htt/e4/S3YR+lJ4bQ2N92evKYOkZEiqiKzXc=;
-        b=OdfpXJDvwGfjoa/f0B3U31apaRVO+bHLetpe4JZQeT9jcGD15bvQ0ANB1i2v8cy/0e
-         ZAvaAK8BR5efiy/dEM/Rdur3S8J8CNsF/ZTG/wknYZFmNOY0JTvlRw1ZWLbMnXAuDhB2
-         gcfq49QV6SqUItxv2HJN+/3Z0MAIXynTjELL8=
+        Tue, 24 Jan 2023 12:26:59 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C084CE54
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:26:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674581173;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=x1//lKxOSoW8HByrjyrd9SNUigcEe/d5fAJWdteeAwY=;
+        b=eA4CPmdYLdBkEdb03f5ztZPN2GoIevibFfTKykADN+rSdyfzZPZoEt9Vd/WSUajFVoRhjt
+        Q7GCulxG8Xw5H4cd883tZGKQmZWncQuHjs/16xl5XbPKMSylU0xu6Odpb+hDwmLx59SHn4
+        1Gq6nj7fp3zwUN2bmbjrrw4T8HmF0Xo=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-537-cuiSh1deM9OCacB392ypXQ-1; Tue, 24 Jan 2023 12:26:12 -0500
+X-MC-Unique: cuiSh1deM9OCacB392ypXQ-1
+Received: by mail-yb1-f199.google.com with SMTP id z17-20020a256651000000b007907852ca4dso17049073ybm.16
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:26:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=spY1Ga4Htt/e4/S3YR+lJ4bQ2N92evKYOkZEiqiKzXc=;
-        b=ZQGenW2xELkb+q3YIJ9o3O+EAEYsbb1JUPFuqBby9hNjWhd+5Vrp9Z0eKWNODPSpBc
-         lMteMiX1/yFeXyh9uKckKK+5bUdRZQjmS+aGSFDF5blnFeUoRVRDhw9RL5hZjIVs7G0z
-         oaSWQqnWHMV+PCFhT6OXihTbHIxK7htWXKCrJRFDXuhV5dszqUcykP4GzBRab7UNwlyX
-         b1xQGbljxrkjlAvkciW/ckctY/Uq4pCwix86CTFsx8JY96fksOD1TENfQud8j2eFCh5H
-         7gJd1KJT9550KSTWWlYsBtAsPnpY3Gf3imqk6m9nWDUDBSPs2cjvj/NVkQFEHlWy1jY0
-         upeQ==
-X-Gm-Message-State: AFqh2kpcFHKb705Hh9RJNoTDkTeMs1eRd9VxuAziqpeD5ndd6U8+q5ci
-        /aSy0fkG33EoDNZ90WGp2eIlbS0tpuA1b+sw
-X-Google-Smtp-Source: AMrXdXu0v0OAHPK7+KI/+Ps8FVC9hmbaN9BBJG4gG5t5KyXsmoHSIvpHbrEyRTJ41w4fwI/ymkCUIQ==
-X-Received: by 2002:a05:622a:1a1b:b0:3b6:335a:828c with SMTP id f27-20020a05622a1a1b00b003b6335a828cmr54250090qtb.47.1674580474255;
-        Tue, 24 Jan 2023 09:14:34 -0800 (PST)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com. [209.85.219.52])
-        by smtp.gmail.com with ESMTPSA id j13-20020ac8404d000000b003b644e8e3a3sm1606125qtl.23.2023.01.24.09.14.33
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jan 2023 09:14:34 -0800 (PST)
-Received: by mail-qv1-f52.google.com with SMTP id h10so12100569qvq.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:14:33 -0800 (PST)
-X-Received: by 2002:a05:6214:5f82:b0:534:252f:b091 with SMTP id
- ls2-20020a0562145f8200b00534252fb091mr1278555qvb.130.1674580473657; Tue, 24
- Jan 2023 09:14:33 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x1//lKxOSoW8HByrjyrd9SNUigcEe/d5fAJWdteeAwY=;
+        b=Hy+UZUc5h/4oO4dHmgEagtEWomZ4r8cfMa+1BZqKObzZwxIb9PoKIvIen123btAILE
+         tY/yFOdPXcZME6pX7wm54/Jdw3TCRxcuw+EMGPACqGRqDkT6RWIxuO6ifNKt9OwnzUY6
+         jjoUQ5KRzcyXZEGD5Umt8EsGvr9VvlPivSf9X6ZZ7/gYCsDIO2Csl2byNzPexua07Bv/
+         NoJP4894sD+nF+2UMHaLlq6Wl0hLm64cviVdtbRxtf4fg87oB6tNMmrLFQEdXlL4Jcd1
+         fvuCjQbGcktMoJDK4za9RXjBGnFfG4CS/UMjRVgBqnqiFlbjVIMy7jDRLzILMmyB6wPC
+         oVsw==
+X-Gm-Message-State: AFqh2kr4I73E6L0J++OvbpIx8nEm/fCL/nIK3PGBnfZMT9o+IvhkTECi
+        1WtU3G2sgKLAPIZje/H6WSLOPaFkSZIopyP89NnqjH3799q6apLljjZB5KK+K5K5hxL1HPyCe8Q
+        wMfuTFlchP1Z8DXXSiyL3aQzbeA==
+X-Received: by 2002:a81:8187:0:b0:466:b529:e379 with SMTP id r129-20020a818187000000b00466b529e379mr20203124ywf.27.1674581171809;
+        Tue, 24 Jan 2023 09:26:11 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXuntBE/q4AbbQoO+OesA9EZ1i3Bp0xsn0vakOkRw+wyHlq3Frgixzl4rdgMcorwGfrkChzC1w==
+X-Received: by 2002:a81:8187:0:b0:466:b529:e379 with SMTP id r129-20020a818187000000b00466b529e379mr20203110ywf.27.1674581171581;
+        Tue, 24 Jan 2023 09:26:11 -0800 (PST)
+Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
+        by smtp.gmail.com with ESMTPSA id n22-20020a05620a223600b006fa22f0494bsm1736320qkh.117.2023.01.24.09.26.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jan 2023 09:26:10 -0800 (PST)
+Date:   Tue, 24 Jan 2023 12:26:08 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v7 1/4] userfaultfd: Add UFFD WP Async support
+Message-ID: <Y9AUsCxgitOI2lUA@x1n>
+References: <20230109064519.3555250-1-usama.anjum@collabora.com>
+ <20230109064519.3555250-2-usama.anjum@collabora.com>
+ <Y8gkY8OlnOwvlkj4@x1n>
+ <0bed5911-48b9-0cc2-dfcf-d3bc3b0e8388@collabora.com>
+ <Y8lxW5YtD6MX61WD@x1n>
+ <Y8qq0dKIJBshua+X@x1n>
+ <328f54c1-171f-22a1-10c9-8b7a25bd8027@collabora.com>
 MIME-Version: 1.0
-References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
- <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
- <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
- <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com>
- <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com> <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 24 Jan 2023 09:14:17 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com>
-Message-ID: <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
-        serge@hallyn.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <328f54c1-171f-22a1-10c9-8b7a25bd8027@collabora.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,48 +106,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 24, 2023 at 9:00 AM Paul Moore <paul@paul-moore.com> wrote:
->
-> My main concern is the duplication between the cred check and the cred
-> override functions leading to a bug at some unknown point in the
-> future.
+On Mon, Jan 23, 2023 at 03:11:20PM +0500, Muhammad Usama Anjum wrote:
+> > One thing worth mention is, I think for async wp it doesn't need to be
+> > restricted by UFFD_USER_MODE_ONLY, because comparing to the sync messages
+> > it has no risk of being utilized for malicious purposes.
+> I think with updated handling path updated in do_wp_page() and
+> wp_huge_pmd() in version, UFFD_USER_MODE_ONLY will not affect us.
 
-Yeah, it might be good to try to have some common logic for this,
-although it's kind of messy.
+This is more or less a comment for the design, the new code should work (by
+bypassing handle_userfaultfd(), where this bit was checked).
 
-The access_override_creds() logic is fairly different from the "do I
-need to create new creds" decision, since instead of *testing* whether
-the fs[ug]id and [ug]id matches, it just sets the fs[ug]id to the
-expected values.
+We'll need an man page update if this feature will be merged [1], and if so
+it'll need to be updated for the UFFD_USER_MODE_ONLY section regarding to
+async uffd-wp support too.  I think that can also be worked out after the
+series being accepted first, so just a heads up.
 
-So that part of the test doesn't really exist.
+[1] https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git
 
-And the same is true of the !SECURE_NO_SETUID_FIXUP logic case - the
-current access() override doesn't _test_ those variables for equality,
-it just sets them.
+-- 
+Peter Xu
 
-So Mateusz' patch doesn't really duplicate any actual logic, it just
-has similarities in that it checks "would that new cred that
-access_override_creds() would create be the same as the old one".
-
-So sharing code is hard, because the code is fundamentally not the same.
-
-The new access_need_override_creds() function is right next to the
-pre-existing access_override_creds() one, so at least they are close
-to each other. That may be the best that can be done.
-
-Maybe some of the "is it the root uid" logic could be shared, though.
-Both cases do have this part in common:
-
-        if (!issecure(SECURE_NO_SETUID_FIXUP)) {
-                /* Clear the capabilities if we switch to a non-root user */
-                kuid_t root_uid = make_kuid(override_cred->user_ns, 0);
-                if (!uid_eq(override_cred->uid, root_uid))
-
-and that is arguably the nastiest part of it all.
-
-I don't think it's all that likely to change in the future, though
-(except for possible changes due to user_ns re-orgs, but then changing
-both would be very natural).
-
-               Linus
