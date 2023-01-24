@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CAF567935C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 09:44:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5F1367935F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 09:44:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233129AbjAXIop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 03:44:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59648 "EHLO
+        id S233174AbjAXIo4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 03:44:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232896AbjAXIom (ORCPT
+        with ESMTP id S233165AbjAXIot (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 03:44:42 -0500
+        Tue, 24 Jan 2023 03:44:49 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42C7532533;
-        Tue, 24 Jan 2023 00:44:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3D5432536;
+        Tue, 24 Jan 2023 00:44:47 -0800 (PST)
 Received: from localhost.localdomain (unknown [39.45.186.163])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B4E1D6602E2B;
-        Tue, 24 Jan 2023 08:44:31 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7B4876602E2C;
+        Tue, 24 Jan 2023 08:44:39 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1674549879;
-        bh=m/++XbQn9BatMFvanRp2XUIOa0zCFwRYse69T8hHq3A=;
+        s=mail; t=1674549886;
+        bh=RhznnELLur/OFCYFz9nqeAiw2g/ULL6wGU1+TD5rlvc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WBW0lX/oQGiGf6RmlizOjOfaR7O9XvMYK0Ybxo3oXOnEJr2A80AStD0iglUEUaiE9
-         h6TIqMPwPx0t0gL+dH18QDgZgBgAghyuEI+veHKt7sOKaKKgaAgNviYWQvmpMxbZHl
-         wuddkQF1DzY+FA+zg3B1Qxw9sYPr3cLs2km9v/Q3EFnUCV2++W21yrxVy/sv4ZrHky
-         1tWRq0JlGBvfQMpTBkforZU4Fghyfn0eh6blchhWnyp++sK7SFAkLTXCYPZG8IdW2F
-         K1HKDDhFoSKH7UBSXDAsczZ+Qiw9ioI5FcVOibaRLRwwDeh8JFr0Mu5pGVDyzF+ydK
-         yzbVjt8eJK/mg==
+        b=bUm+6PNenlG1HTsei/j6rwysWnI8TegYAR6iAvi9zzJwK6VPMMr+FplOGi/L1HfUa
+         r3Ll8oFgrop7lH0ZC3hz82Yt7dgmbpgU3SHB6LbQ6Nn13bC5vOs/tYeQ3eJjSxy/UL
+         2Lk/jmcy1sxNNMrKJbiUjDSGXaLeIQHCZuieQZwZpXivOBPp4FL/YB69rofnMAB0F8
+         opwMmSz2c6XWhw9SkuJD+GJoN9zUdGWBBlbDpz2dxAExQrB1XT16iZudardQesIqQV
+         ltsLSpi+vDXhWc+g7NihNtxOqQn7gp6UoaljbWkIzyLMuotx5aXbAnXXBQNyxQOGaY
+         SaDJV/V9WQkHw==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -59,9 +59,9 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
         Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: [PATCH v8 1/4] userfaultfd: Add UFFD WP Async support
-Date:   Tue, 24 Jan 2023 13:43:20 +0500
-Message-Id: <20230124084323.1363825-2-usama.anjum@collabora.com>
+Subject: [PATCH v8 2/4] userfaultfd: split mwriteprotect_range()
+Date:   Tue, 24 Jan 2023 13:43:21 +0500
+Message-Id: <20230124084323.1363825-3-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230124084323.1363825-1-usama.anjum@collabora.com>
 References: <20230124084323.1363825-1-usama.anjum@collabora.com>
@@ -76,163 +76,138 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add new WP Async mode (UFFD_FEATURE_WP_ASYNC) which resolves the page
-faults on its own. It can be used to track that which pages have been
-written-to from the time the pages were write-protected. It is very
-efficient way to track the changes as uffd is by nature pte/pmd based.
+Split mwriteprotect_range() to create a unlocked version. This
+will be used in the next patch to write protect a memory area.
+Add a helper function, wp_range_async() as well.
 
-UFFD synchronous WP sends the page faults to the userspace where the
-pages which have been written-to can be tracked. But it is not efficient.
-This is why this asynchronous version is being added. After setting the
-WP Async, the pages which have been written to can be found in the pagemap
-file or information can be obtained from the PAGEMAP_IOCTL.
-
-Suggested-by: Peter Xu <peterx@redhat.com>
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
 Changes in v7:
-- Remove UFFDIO_WRITEPROTECT_MODE_ASYNC_WP and add UFFD_FEATURE_WP_ASYNC
-- Handle automatic page fault resolution in better way (thanks to Peter)
+- Remove async being set in the PAGEMAP_IOCTL
 ---
- fs/userfaultfd.c                 | 11 +++++++++++
- include/linux/userfaultfd_k.h    |  6 ++++++
- include/uapi/linux/userfaultfd.h |  8 +++++++-
- mm/memory.c                      | 29 +++++++++++++++++++++++++++--
- 4 files changed, 51 insertions(+), 3 deletions(-)
+ fs/userfaultfd.c              | 10 +++++++++
+ include/linux/userfaultfd_k.h | 10 +++++++++
+ mm/userfaultfd.c              | 40 ++++++++++++++++++++++-------------
+ 3 files changed, 45 insertions(+), 15 deletions(-)
 
 diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 15a5bf765d43..b82af02092ce 100644
+index b82af02092ce..cd52c9ee8db9 100644
 --- a/fs/userfaultfd.c
 +++ b/fs/userfaultfd.c
-@@ -1867,6 +1867,10 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
- 	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
- 	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
- 
-+	/* Write protection cannot be disabled in case of aync WP */
-+	if (!mode_wp && (ctx->features & UFFD_FEATURE_WP_ASYNC))
-+		return -EINVAL;
-+
- 	if (mode_wp && mode_dontwake)
- 		return -EINVAL;
- 
-@@ -1950,6 +1954,13 @@ static int userfaultfd_continue(struct userfaultfd_ctx *ctx, unsigned long arg)
- 	return ret;
+@@ -1961,6 +1961,16 @@ int userfaultfd_wp_async(struct vm_area_struct *vma)
+ 	return (ctx && (ctx->features & UFFD_FEATURE_WP_ASYNC));
  }
  
-+int userfaultfd_wp_async(struct vm_area_struct *vma)
++int wp_range_async(struct vm_area_struct *vma, unsigned long start, unsigned long len)
 +{
 +	struct userfaultfd_ctx *ctx = vma->vm_userfaultfd_ctx.ctx;
 +
-+	return (ctx && (ctx->features & UFFD_FEATURE_WP_ASYNC));
++	if (!ctx)
++		return -1;
++
++	return __mwriteprotect_range(ctx->mm, start, len, true, &ctx->mmap_changing);
 +}
 +
  static inline unsigned int uffd_ctx_features(__u64 user_features)
  {
  	/*
 diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index 9df0b9a762cc..5db51fccae1d 100644
+index 5db51fccae1d..40d1d9e8f34d 100644
 --- a/include/linux/userfaultfd_k.h
 +++ b/include/linux/userfaultfd_k.h
-@@ -179,6 +179,7 @@ extern int userfaultfd_unmap_prep(struct mm_struct *mm, unsigned long start,
- 				  unsigned long end, struct list_head *uf);
+@@ -73,6 +73,9 @@ extern ssize_t mcopy_continue(struct mm_struct *dst_mm, unsigned long dst_start,
+ extern int mwriteprotect_range(struct mm_struct *dst_mm,
+ 			       unsigned long start, unsigned long len,
+ 			       bool enable_wp, atomic_t *mmap_changing);
++extern int __mwriteprotect_range(struct mm_struct *dst_mm,
++				 unsigned long start, unsigned long len,
++				 bool enable_wp, atomic_t *mmap_changing);
+ extern void uffd_wp_range(struct mm_struct *dst_mm, struct vm_area_struct *vma,
+ 			  unsigned long start, unsigned long len, bool enable_wp);
+ 
+@@ -180,6 +183,8 @@ extern int userfaultfd_unmap_prep(struct mm_struct *mm, unsigned long start,
  extern void userfaultfd_unmap_complete(struct mm_struct *mm,
  				       struct list_head *uf);
-+extern int userfaultfd_wp_async(struct vm_area_struct *vma);
+ extern int userfaultfd_wp_async(struct vm_area_struct *vma);
++extern int wp_range_async(struct vm_area_struct *vma, unsigned long start,
++			  unsigned long len);
  
  #else /* CONFIG_USERFAULTFD */
  
-@@ -274,6 +275,11 @@ static inline bool uffd_disable_fault_around(struct vm_area_struct *vma)
+@@ -280,6 +285,11 @@ int userfaultfd_wp_async(struct vm_area_struct *vma)
  	return false;
  }
  
-+int userfaultfd_wp_async(struct vm_area_struct *vma)
++int wp_range_async(struct vm_area_struct *vma, unsigned long start, unsigned long len)
 +{
-+	return false;
++	return -1;
 +}
 +
  #endif /* CONFIG_USERFAULTFD */
  
  static inline bool pte_marker_entry_uffd_wp(swp_entry_t entry)
-diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
-index 005e5e306266..f4252ef40071 100644
---- a/include/uapi/linux/userfaultfd.h
-+++ b/include/uapi/linux/userfaultfd.h
-@@ -38,7 +38,8 @@
- 			   UFFD_FEATURE_MINOR_HUGETLBFS |	\
- 			   UFFD_FEATURE_MINOR_SHMEM |		\
- 			   UFFD_FEATURE_EXACT_ADDRESS |		\
--			   UFFD_FEATURE_WP_HUGETLBFS_SHMEM)
-+			   UFFD_FEATURE_WP_HUGETLBFS_SHMEM |	\
-+			   UFFD_FEATURE_WP_ASYNC)
- #define UFFD_API_IOCTLS				\
- 	((__u64)1 << _UFFDIO_REGISTER |		\
- 	 (__u64)1 << _UFFDIO_UNREGISTER |	\
-@@ -203,6 +204,10 @@ struct uffdio_api {
- 	 *
- 	 * UFFD_FEATURE_WP_HUGETLBFS_SHMEM indicates that userfaultfd
- 	 * write-protection mode is supported on both shmem and hugetlbfs.
-+	 *
-+	 * UFFD_FEATURE_WP_ASYNC indicates that userfaultfd write-protection
-+	 * asynchronous mode is supported in which the write fault is automatically
-+	 * resolved and write-protection is un-set.
- 	 */
- #define UFFD_FEATURE_PAGEFAULT_FLAG_WP		(1<<0)
- #define UFFD_FEATURE_EVENT_FORK			(1<<1)
-@@ -217,6 +222,7 @@ struct uffdio_api {
- #define UFFD_FEATURE_MINOR_SHMEM		(1<<10)
- #define UFFD_FEATURE_EXACT_ADDRESS		(1<<11)
- #define UFFD_FEATURE_WP_HUGETLBFS_SHMEM		(1<<12)
-+#define UFFD_FEATURE_WP_ASYNC			(1<<13)
- 	__u64 features;
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 65ad172add27..9d8a43faf764 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -734,25 +734,13 @@ void uffd_wp_range(struct mm_struct *dst_mm, struct vm_area_struct *dst_vma,
+ 	tlb_finish_mmu(&tlb);
+ }
  
- 	__u64 ioctls;
-diff --git a/mm/memory.c b/mm/memory.c
-index 4000e9f017e0..8c03b133d483 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3351,6 +3351,18 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+-int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
+-			unsigned long len, bool enable_wp,
+-			atomic_t *mmap_changing)
++int __mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
++			  unsigned long len, bool enable_wp,
++			  atomic_t *mmap_changing)
+ {
+ 	struct vm_area_struct *dst_vma;
+ 	unsigned long page_mask;
+ 	int err;
+-
+-	/*
+-	 * Sanitize the command parameters:
+-	 */
+-	BUG_ON(start & ~PAGE_MASK);
+-	BUG_ON(len & ~PAGE_MASK);
+-
+-	/* Does the address range wrap, or is the span zero-sized? */
+-	BUG_ON(start + len <= start);
+-
+-	mmap_read_lock(dst_mm);
+-
+ 	/*
+ 	 * If memory mappings are changing because of non-cooperative
+ 	 * operation (e.g. mremap) running in parallel, bail out and
+@@ -783,6 +771,28 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
  
- 	if (likely(!unshare)) {
- 		if (userfaultfd_pte_wp(vma, *vmf->pte)) {
-+			if (userfaultfd_wp_async(vma)) {
-+				/*
-+				 * Nothing needed (cache flush, TLB invalidations,
-+				 * etc.) because we're only removing the uffd-wp bit,
-+				 * which is completely invisible to the user. This
-+				 * falls through to possible CoW.
-+				 */
-+				pte_unmap_unlock(vmf->pte, vmf->ptl);
-+				set_pte_at(vma->vm_mm, vmf->address, vmf->pte,
-+					   pte_clear_uffd_wp(*vmf->pte));
-+				return 0;
-+			}
- 			pte_unmap_unlock(vmf->pte, vmf->ptl);
- 			return handle_userfault(vmf, VM_UFFD_WP);
- 		}
-@@ -4812,8 +4824,21 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
- 
- 	if (vma_is_anonymous(vmf->vma)) {
- 		if (likely(!unshare) &&
--		    userfaultfd_huge_pmd_wp(vmf->vma, vmf->orig_pmd))
--			return handle_userfault(vmf, VM_UFFD_WP);
-+		    userfaultfd_huge_pmd_wp(vmf->vma, vmf->orig_pmd)) {
-+			if (userfaultfd_wp_async(vmf->vma)) {
-+				/*
-+				 * Nothing needed (cache flush, TLB invalidations,
-+				 * etc.) because we're only removing the uffd-wp bit,
-+				 * which is completely invisible to the user. This
-+				 * falls through to possible CoW.
-+				 */
-+				set_pmd_at(vmf->vma->vm_mm, vmf->address, vmf->pmd,
-+					   pmd_clear_uffd_wp(*vmf->pmd));
-+				return 0;
-+			} else {
-+				return handle_userfault(vmf, VM_UFFD_WP);
-+			}
-+		}
- 		return do_huge_pmd_wp_page(vmf);
- 	}
- 
+ 	err = 0;
+ out_unlock:
++	return err;
++}
++
++int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
++			unsigned long len, bool enable_wp,
++			atomic_t *mmap_changing)
++{
++	int err;
++
++	/*
++	 * Sanitize the command parameters:
++	 */
++	BUG_ON(start & ~PAGE_MASK);
++	BUG_ON(len & ~PAGE_MASK);
++
++	/* Does the address range wrap, or is the span zero-sized? */
++	BUG_ON(start + len <= start);
++
++	mmap_read_lock(dst_mm);
++
++	err = __mwriteprotect_range(dst_mm, start, len, enable_wp, mmap_changing);
++
+ 	mmap_read_unlock(dst_mm);
+ 	return err;
+ }
 -- 
 2.30.2
 
