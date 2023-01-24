@@ -2,157 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 822F0679BB9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 15:26:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A22D4679BCB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 15:28:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233640AbjAXO0B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 09:26:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37492 "EHLO
+        id S234436AbjAXO23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 09:28:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233551AbjAXO0A (ORCPT
+        with ESMTP id S233610AbjAXO22 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 09:26:00 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C22748601
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 06:25:41 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D022261299
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 14:25:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 185C6C433D2;
-        Tue, 24 Jan 2023 14:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674570340;
-        bh=fdXxH6MB+iSs16cgCEgq5lSOiFvTvOJ3zpEWw/AGu68=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UmlyJYyJXNfLvq/fhT74vGvcYmafmlSTvG/rr4HNp6PsT7jhNpRG4WV3jmM2/4V0g
-         W4KcIGj0icndf3fGusnD/qfAfwly6zHTj5J8se9iUq2oOe6xnr4RGRkOyCUs9BiBOK
-         l3kq4VvmII8+4pbyflxBqJHZ5cxYzq9HN/eSbtqCahID7t0+aYwCDCZDKX8tox16nt
-         JaDaeXMSvJPaatGsI5E4sDV1AYe/ByKFIFiMIMtW1PtqLPcKJAsjcOx/8xZsxJJlVS
-         aPj4MGjhWklJGHdddoVfaa4Hr6JnTsaoaoe4u4lE8Hki2m3dI7S4CwN9y1RQc/LFR4
-         fLXtkq4+B1DAQ==
-Date:   Tue, 24 Jan 2023 15:25:35 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH] fuse: fixes after adapting to new posix acl api
-Message-ID: <20230124142535.dmc2k2mrqcvj66k5@wittgenstein>
-References: <20230118-fs-fuse-acl-v1-1-a628a9bb55ef@kernel.org>
- <CAJfpegsNZ1F1hhEaBH2Lw20CsqYm-nEFEUAH0k46_ua=5Gp2zw@mail.gmail.com>
+        Tue, 24 Jan 2023 09:28:28 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B88445BCF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 06:27:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674570453;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZyAxobF1qNVquK9cF8yBjkUFIH4Q3hiUITFtn4KIDno=;
+        b=QPA+dw+ekTmjXMrwZVBTZtpb2HHu/kyanInRPFqyPM9GzteWfLnmM1SmF8NXijiqPzAB6I
+        ZOVKaZiuILS6mM5Ucwt4tOZoA74y0DpdnG+X/DoXqWQUS2mCgs72Ycos7UYJP31uN6y8Wb
+        AOjDZqyIcary6cuTudPCrCd3I6WIQOc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-119-79lWI_SHPLmRIO8mIwwJKQ-1; Tue, 24 Jan 2023 09:27:32 -0500
+X-MC-Unique: 79lWI_SHPLmRIO8mIwwJKQ-1
+Received: by mail-wm1-f69.google.com with SMTP id m10-20020a05600c3b0a00b003dafe7451deso9272059wms.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 06:27:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZyAxobF1qNVquK9cF8yBjkUFIH4Q3hiUITFtn4KIDno=;
+        b=yanfILtim7mFlnm578NcOD63UMXAScQfNKcHavt2P5nfQdeADFGcwzL7vmgRirFClS
+         Hq9iXBLFyfbhc+qluAgJ1v+wKUfoTV+nH4TnQmF6IZY8jA48TcnBJXCDxNbtgBlzt9fg
+         EY0sOwEmsVvs2YQRYA/sq/IPpWSzB7VDrt2UatdZjW8rEY19aI/Qv3oPsfRrq054L6T/
+         dNp9z/DYxa046MjE3rB8Cl0skzdl+PutNoaZFn6Rz1BCrgt2WkARnbqTIUceN38JhAk/
+         QBuUJZ4+HAJ5/wpLEsDwRCI7rEJiS8pCSsacU5z10mT2paKmqPaznPBKh4Gu0MIvhvCJ
+         q2Tg==
+X-Gm-Message-State: AO0yUKU2RgGqPRYj57nSq94bhCm4myjJJIOGbjy9hEEzDr40uf6L1mZT
+        OBLg3/h3ovZxmzRwdhFbXBn2jlVn32Rx8iLqbiPZT1L58rszftjZutSAG97oz9evkkyclUYun7h
+        lMhXpxLiIEyzHaSyHbZmxtF0fIw==
+X-Received: by 2002:adf:fe41:0:b0:2bf:b193:a7da with SMTP id m1-20020adffe41000000b002bfb193a7damr1733729wrs.62.1674570451411;
+        Tue, 24 Jan 2023 06:27:31 -0800 (PST)
+X-Google-Smtp-Source: AK7set/EicOHCs/Yau1zOAae6LMmUT+31XWXn0cg9ISoVZqXbXS3/76TT+KTgqLPzXmxMOy4yagRUA==
+X-Received: by 2002:adf:fe41:0:b0:2bf:b193:a7da with SMTP id m1-20020adffe41000000b002bfb193a7damr1733712wrs.62.1674570451100;
+        Tue, 24 Jan 2023 06:27:31 -0800 (PST)
+Received: from ?IPV6:2003:cb:c707:9d00:9303:90ce:6dcb:2bc9? (p200300cbc7079d00930390ce6dcb2bc9.dip0.t-ipconnect.de. [2003:cb:c707:9d00:9303:90ce:6dcb:2bc9])
+        by smtp.gmail.com with ESMTPSA id h17-20020a5d4311000000b002bdfcd8c77csm1964874wrq.101.2023.01.24.06.27.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Jan 2023 06:27:30 -0800 (PST)
+Message-ID: <1b1eb3d8-c6b4-b264-1baa-1b3eb088173d@redhat.com>
+Date:   Tue, 24 Jan 2023 15:27:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsNZ1F1hhEaBH2Lw20CsqYm-nEFEUAH0k46_ua=5Gp2zw@mail.gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v8 02/10] iov_iter: Add a function to extract a page list
+ from an iterator
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org
+References: <20230123173007.325544-1-dhowells@redhat.com>
+ <20230123173007.325544-3-dhowells@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20230123173007.325544-3-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 24, 2023 at 03:07:18PM +0100, Miklos Szeredi wrote:
-> On Fri, 20 Jan 2023 at 12:55, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > This cycle we ported all filesystems to the new posix acl api. While
-> > looking at further simplifications in this area to remove the last
-> > remnants of the generic dummy posix acl handlers we realized that we
-> > regressed fuse daemons that don't set FUSE_POSIX_ACL but still make use
-> > of posix acls.
-> >
-> > With the change to a dedicated posix acl api interacting with posix acls
-> > doesn't go through the old xattr codepaths anymore and instead only
-> > relies the get acl and set acl inode operations.
-> >
-> > Before this change fuse daemons that don't set FUSE_POSIX_ACL were able
-> > to get and set posix acl albeit with two caveats. First, that posix acls
-> > aren't cached. And second, that they aren't used for permission checking
-> > in the vfs.
-> >
-> > We regressed that use-case as we currently refuse to retrieve any posix
-> > acls if they aren't enabled via FUSE_POSIX_ACL. So older fuse daemons
-> > would see a change in behavior.
+On 23.01.23 18:29, David Howells wrote:
+> Add a function, iov_iter_extract_pages(), to extract a list of pages from
+> an iterator.  The pages may be returned with a pin added or nothing,
+> depending on the type of iterator.
 > 
-> This originates commit e45b2546e23c ("fuse: Ensure posix acls are
-> translated outside of init_user_ns") which, disables set/get acl in
-> the problematic case instead of translating them.
+> Add a second function, iov_iter_extract_mode(), to determine how the
+> cleanup should be done.
 > 
-> Not sure if there's a real use case or it's completely theoretical.
-> Does anyone know?
+> There are two cases:
+> 
+>   (1) ITER_IOVEC or ITER_UBUF iterator.
+> 
+>       Extracted pages will have pins (FOLL_PIN) obtained on them so that a
+>       concurrent fork() will forcibly copy the page so that DMA is done
+>       to/from the parent's buffer and is unavailable to/unaffected by the
+>       child process.
+> 
+>       iov_iter_extract_mode() will return FOLL_PIN for this case.  The
+>       caller should use something like folio_put_unpin() to dispose of the
+>       page.
+> 
+>   (2) Any other sort of iterator.
+> 
+>       No refs or pins are obtained on the page, the assumption is made that
+>       the caller will manage page retention.
+> 
+>       iov_iter_extract_mode() will return 0.  The pages don't need
+>       additional disposal.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: Christoph Hellwig <hch@lst.de>
+> cc: John Hubbard <jhubbard@nvidia.com>
+> cc: David Hildenbrand <david@redhat.com>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> ---
+> 
+> Notes:
+>      ver #8)
+>       - It seems that all DIO is supposed to be done under FOLL_PIN now, and not
+>         FOLL_GET, so switch to only using pin_user_pages() for user-backed
+>         iters.
+>       - Wrap an argument in brackets in the iov_iter_extract_mode() macro.
+>       - Drop the extract_flags argument to iov_iter_extract_mode() for now
+>         [hch].
+>      
+>      ver #7)
+>       - Switch to passing in iter-specific flags rather than FOLL_* flags.
+>       - Drop the direction flags for now.
+>       - Use ITER_ALLOW_P2PDMA to request FOLL_PCI_P2PDMA.
+>       - Disallow use of ITER_ALLOW_P2PDMA with non-user-backed iter.
+>       - Add support for extraction from KVEC-type iters.
+>       - Use iov_iter_advance() rather than open-coding it.
+>       - Make BVEC- and KVEC-type skip over initial empty vectors.
+>      
+>      ver #6)
+>       - Add back the function to indicate the cleanup mode.
+>       - Drop the cleanup_mode return arg to iov_iter_extract_pages().
+>       - Pass FOLL_SOURCE/DEST_BUF in gup_flags.  Check this against the iter
+>         data_source.
+>      
+>      ver #4)
+>       - Use ITER_SOURCE/DEST instead of WRITE/READ.
+>       - Allow additional FOLL_* flags, such as FOLL_PCI_P2PDMA to be passed in.
+>      
+>      ver #3)
+>       - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
+>         to get/pin_user_pages_fast()[1].
+> 
+>   include/linux/uio.h |  22 +++
+>   lib/iov_iter.c      | 320 ++++++++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 342 insertions(+)
+> 
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 46d5080314c6..a8165335f8da 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -363,4 +363,26 @@ static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direction,
+>   /* Flags for iov_iter_get/extract_pages*() */
+>   #define ITER_ALLOW_P2PDMA	0x01	/* Allow P2PDMA on the extracted pages */
+>   
+> +ssize_t iov_iter_extract_pages(struct iov_iter *i, struct page ***pages,
+> +			       size_t maxsize, unsigned int maxpages,
+> +			       unsigned int extract_flags, size_t *offset0);
+> +
+> +/**
+> + * iov_iter_extract_mode - Indicate how pages from the iterator will be retained
+> + * @iter: The iterator
+> + *
+> + * Examine the iterator and indicate by returning FOLL_PIN or 0 as to how, if
+> + * at all, pages extracted from the iterator will be retained by the extraction
+> + * function.
+> + *
+> + * FOLL_PIN indicates that the pages will have a pin placed in them that the
+> + * caller must unpin.  This is must be done for DMA/async DIO to force fork()
+> + * to forcibly copy a page for the child (the parent must retain the original
+> + * page).
+> + *
+> + * 0 indicates that no measures are taken and that it's up to the caller to
+> + * retain the pages.
+> + */
+> +#define iov_iter_extract_mode(iter) (user_backed_iter(iter) ? FOLL_PIN : 0)
+> +
 
-After 4+ years without anyone screaming for non-FUSE_POSIX_ACL daemons
-to be able set/get posix acls without permission checking in the vfs
-inside a userns we can continue not enabling this. Even if we now
-actually can.
+Does it make sense to move that to the patch where it is needed? (do we 
+need it at all anymore?)
 
-> 
-> >
-> > We can restore the old behavior in multiple ways. We could change the
-> > new posix acl api and look for a dedicated xattr handler and if we find
-> > one prefer that over the dedicated posix acl api. That would break the
-> > consistency of the new posix acl api so we would very much prefer not to
-> > do that.
-> >
-> > We could introduce a new ACL_*_CACHE sentinel that would instruct the
-> > vfs permission checking codepath to not call into the filesystem and
-> > ignore acls.
-> >
-> > But a more straightforward fix for v6.2 is to do the same thing that
-> > Overlayfs does and give fuse a separate get acl method for permission
-> > checking. Overlayfs uses this to express different needs for vfs
-> > permission lookup and acl based retrieval via the regular system call
-> > path as well. Let fuse do the same for now. This way fuse can continue
-> > to refuse to retrieve posix acls for daemons that don't set
-> > FUSE_POSXI_ACL for permission checking while allowing a fuse server to
-> > retrieve it via the usual system calls.
-> >
-> > In the future, we could extend the get acl inode operation to not just
-> > pass a simple boolean to indicate rcu lookup but instead make it a flag
-> > argument. Then in addition to passing the information that this is an
-> > rcu lookup to the filesystem we could also introduce a flag that tells
-> > the filesystem that this is a request from the vfs to use these acls for
-> > permission checking. Then fuse could refuse the get acl request for
-> > permission checking when the daemon doesn't have FUSE_POSIX_ACL set in
-> > the same get acl method. This would also help Overlayfs and allow us to
-> > remove the second method for it as well.
-> >
-> > But since that change is more invasive as we need to update the get acl
-> > inode operation for multiple filesystems we should not do this as a fix
-> > for v6.2. Instead we will do this for the v6.3 merge window.
-> >
-> > Fwiw, since posix acls are now always correctly translated in the new
-> > posix acl api we could also allow them to be used for daemons without
-> > FUSE_POSIX_ACL that are not mounted on the host. But this is behavioral
-> > change and again if dones should be done for v6.3. For now, let's just
-> > restore the original behavior.
-> 
-> Agreed.
-> 
-> >
-> > A nice side-effect of this change is that for fuse daemons with and
-> > without FUSE_POSIX_ACL the same code is used for posix acls in a
-> > backwards compatible way. This also means we can remove the legacy xattr
-> > handlers completely. We've also added comments to explain the expected
-> > behavior for daemons without FUSE_POSIX_ACL into the code.
-> >
-> > Fixes: 318e66856dde ("xattr: use posix acl api")
-> > Signed-off-by: Seth Forshee (Digital Ocean) <sforshee@kernel.org>
-> > Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> 
-> Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
-> 
-> 
-> > If you're fine with this approach then could you please route this to
-> > Linus during v6.2 still? If you prefer I do it I'm happy to as well.
-> 
-> I don't think I have anything pending for v6.2 in fuse, but if you
-> don't either I can handle the routing.
+-- 
+Thanks,
 
-I don't but if you'd be fine with me taking it it would make my life
-easier for another series.
+David / dhildenb
 
-Thanks!
-Christian
