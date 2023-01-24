@@ -2,66 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8801679790
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 13:18:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB25467979B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 13:18:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233688AbjAXMSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 07:18:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57432 "EHLO
+        id S233727AbjAXMSt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 07:18:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233593AbjAXMST (ORCPT
+        with ESMTP id S233630AbjAXMSZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 07:18:19 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F1E3525E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 04:18:17 -0800 (PST)
+        Tue, 24 Jan 2023 07:18:25 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2DCB44BD7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 04:18:19 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 8D6CD21888;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 9F6531FE51;
         Tue, 24 Jan 2023 12:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1674562695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=196YHvJ19wKMQw6z3X95DukOPQ9j7aYHN0sgl1/Ahlc=;
-        b=bhy3mSakMBJjDpx5XosRnSA5a7VmfGT1ohjYe7R+SdUHwV4k2W7Hjhi0MlipMJG/sBHya7
-        cgEQFu0b2jCENDUJ1dAklKwR4uzZXqrQg0bcjQ+lWgJm3N8JNSxnYUvlaqJKgRebCteras
-        tXOIcqIsJXRRV2YFqqQxAFmFK7R2zyg=
+        bh=/LexzJkYyZdL5w07xtp8eX7kMac/zwtvHB+V69eQ6mI=;
+        b=FFCg81xwFEwDX1dNIKMaferuiGbBEwjcVz4PytqXj4/tj5YxVEsbify6GkqsFfnqEl43uF
+        QtFFnJ7GE5/7wwi09V/Np/RHW3RjW2sxGZwfiDvkfulmLxbBRLNaZqLCjjgofFPs6PJqYm
+        n+S6K/p9WeQLM5mNasGuEaK2mcjg+A8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1674562695;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=196YHvJ19wKMQw6z3X95DukOPQ9j7aYHN0sgl1/Ahlc=;
-        b=HK58xVKnUDt62wF5VrllPIfJ4vAzYqsErgtaGPAgj3/J5Iv42vTcrX9s3kHhdYimLL925B
-        uiRKywwIE1Ms/JBA==
+        bh=/LexzJkYyZdL5w07xtp8eX7kMac/zwtvHB+V69eQ6mI=;
+        b=nETo4woXX683PDV/GNGrgi+6aH5zTM9IlguTIv9V90wJg5uK6DKbpv0I53ThZtB95NX0+q
+        8SwO3uOHPdA2hhDA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 80392139FB;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 90C5D139FB;
         Tue, 24 Jan 2023 12:18:15 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id f/hKH4fMz2P/NwAAMHmgww
+        id mgJUI4fMz2MEOAAAMHmgww
         (envelope-from <jack@suse.cz>); Tue, 24 Jan 2023 12:18:15 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 6AA0AA0707; Tue, 24 Jan 2023 13:18:14 +0100 (CET)
+        id 70E65A0709; Tue, 24 Jan 2023 13:18:14 +0100 (CET)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     Jan Kara <jack@suse.cz>
-Subject: [PATCH 18/22] udf: Protect truncate and file type conversion with invalidate_lock
-Date:   Tue, 24 Jan 2023 13:18:04 +0100
-Message-Id: <20230124121814.25951-18-jack@suse.cz>
+Subject: [PATCH 19/22] udf: Allocate blocks on write page fault
+Date:   Tue, 24 Jan 2023 13:18:05 +0100
+Message-Id: <20230124121814.25951-19-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230124120835.21728-1-jack@suse.cz>
 References: <20230124120835.21728-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2790; i=jack@suse.cz; h=from:subject; bh=mFr59aqWn7clgWTUq5BN0ALZS9t7E1WNUnhUBusUFog=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBjz8x8EvMWq4ZCmgPBGl//0skEQRRgXoCoe/bfIhVy N5PyFMuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCY8/MfAAKCRCcnaoHP2RA2dVZB/ 96ZW99dzQ8f595jtlSGI1v4tzQc1arIoRHV1iJrX5RKHGG5NcSAKsXtIpQK6ch1ekXOXF5K4h0UTy2 SFavAsJrx7noHtdW8TkqQgJHxM4sibxjQ8j1YEjjPpeLdiROgUAOh6gwDBKETydfpd+NycsOrV0Nhk Ja7qClCWj5qrspXo+hrmLE6HUAGfMrM8ElZIAMZmdSHcC+rK91BXa3qICeluslh0rBfC3LnJ1pTSUt O/LowPdR7D6E+vRb9VwynNWeGP+MvMKlXQA91DvBWLuRVk1vlJ+olGKB9A5rXIbcG3ntB1VxJJcY5S uoErA4VTdYj7TZtoDST4pa2wrl/LVG
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4298; i=jack@suse.cz; h=from:subject; bh=9tAb4yLTLO+EwlDOvr7dLHGRtCRctwuLmZopa9FLRyA=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBjz8x91DLpx34IN+Hbc9o3MFLgFKzQWZgKIJc9JTmf sTg5C/mJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCY8/MfQAKCRCcnaoHP2RA2UvzCA CPWK78LvCrgGjeXW6rENaIkT7VNTbFn+DM+gt6qzKtROw22+tjEGy+AfRhz2BflFbk3yO/E46XXcuO y7bxOYEVFPQD4veUsLmmjRbfpzMFVpKy1qh8iWory/tBijs2A6K/71iwX97FM/Lc6zJBxe5pOTiO6n qmUfDIAaVqnwxPmh2NUu5ppJJUhI4y5tAyKIIvSwcOiMP6RRwSfrM+zIMeyqMVgNYb55q/Jrzg8oPY UjS+EK8khogT/qLolxtlGBwCEbA6bOLFspnPjHO3PJg5IQ9slNJp0ekI3cDMDPHYjNIiy1f9NnqDJX X+ONLM2QNWhtLjTQcwWFO/80B4wdTG
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,94 +73,127 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Protect truncate and file type conversion in udf_file_write_iter() with
-invalidate lock. That will allow us to serialize these paths with page
-faults so that the page fault can determine the file type in a racefree
-way.
+Currently if file with holes is mapped, udf allocates blocks for dirtied
+pages during page writeback. This however creates problems when to
+truncate final extent to proper size and currently we leave the last
+extent untruncated which violates UDF standard. So allocate blocks on
+write page fault instead. In that case the last extent gets truncated
+the file is closed and everything is happy.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/udf/file.c  |  2 ++
- fs/udf/inode.c | 15 +++++++++------
- 2 files changed, 11 insertions(+), 6 deletions(-)
+ fs/udf/file.c    | 61 +++++++++++++++++++++++++++++++++++++++++++++++-
+ fs/udf/inode.c   |  1 -
+ fs/udf/udfdecl.h |  1 +
+ 3 files changed, 61 insertions(+), 2 deletions(-)
 
 diff --git a/fs/udf/file.c b/fs/udf/file.c
-index 596d703fb6c8..cf050bdffd9e 100644
+index cf050bdffd9e..322115c8369d 100644
 --- a/fs/udf/file.c
 +++ b/fs/udf/file.c
-@@ -150,7 +150,9 @@ static ssize_t udf_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB &&
- 	    inode->i_sb->s_blocksize < (udf_file_entry_alloc_offset(inode) +
- 				 iocb->ki_pos + iov_iter_count(from))) {
-+		filemap_invalidate_lock(inode->i_mapping);
- 		retval = udf_expand_file_adinicb(inode);
-+		filemap_invalidate_unlock(inode->i_mapping);
- 		if (retval)
- 			goto out;
- 	}
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 3ffeb5651689..7109adcceefe 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -1145,7 +1145,7 @@ struct buffer_head *udf_bread(struct inode *inode, udf_pblk_t block,
+@@ -134,6 +134,57 @@ const struct address_space_operations udf_adinicb_aops = {
+ 	.direct_IO	= udf_adinicb_direct_IO,
+ };
  
- int udf_setsize(struct inode *inode, loff_t newsize)
- {
--	int err;
-+	int err = 0;
- 	struct udf_inode_info *iinfo;
- 	unsigned int bsize = i_blocksize(inode);
- 
-@@ -1155,6 +1155,7 @@ int udf_setsize(struct inode *inode, loff_t newsize)
- 	if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
- 		return -EPERM;
- 
-+	filemap_invalidate_lock(inode->i_mapping);
- 	iinfo = UDF_I(inode);
- 	if (newsize > inode->i_size) {
- 		if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB) {
-@@ -1167,11 +1168,11 @@ int udf_setsize(struct inode *inode, loff_t newsize)
- 			}
- 			err = udf_expand_file_adinicb(inode);
- 			if (err)
--				return err;
-+				goto out_unlock;
- 		}
- 		err = udf_extend_file(inode, newsize);
- 		if (err)
--			return err;
-+			goto out_unlock;
- set_size:
- 		truncate_setsize(inode, newsize);
- 	} else {
-@@ -1189,14 +1190,14 @@ int udf_setsize(struct inode *inode, loff_t newsize)
- 		err = block_truncate_page(inode->i_mapping, newsize,
- 					  udf_get_block);
- 		if (err)
--			return err;
-+			goto out_unlock;
- 		truncate_setsize(inode, newsize);
- 		down_write(&iinfo->i_data_sem);
- 		udf_clear_extent_cache(inode);
- 		err = udf_truncate_extents(inode);
- 		up_write(&iinfo->i_data_sem);
- 		if (err)
--			return err;
-+			goto out_unlock;
- 	}
- update_time:
- 	inode->i_mtime = inode->i_ctime = current_time(inode);
-@@ -1204,7 +1205,9 @@ int udf_setsize(struct inode *inode, loff_t newsize)
- 		udf_sync_inode(inode);
- 	else
- 		mark_inode_dirty(inode);
--	return 0;
++static vm_fault_t udf_page_mkwrite(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	struct inode *inode = file_inode(vma->vm_file);
++	struct address_space *mapping = inode->i_mapping;
++	struct page *page = vmf->page;
++	loff_t size;
++	unsigned int end;
++	vm_fault_t ret = VM_FAULT_LOCKED;
++	int err;
++
++	sb_start_pagefault(inode->i_sb);
++	file_update_time(vma->vm_file);
++	filemap_invalidate_lock_shared(mapping);
++	lock_page(page);
++	size = i_size_read(inode);
++	if (page->mapping != inode->i_mapping || page_offset(page) >= size) {
++		unlock_page(page);
++		ret = VM_FAULT_NOPAGE;
++		goto out_unlock;
++	}
++	/* Space is already allocated for in-ICB file */
++	if (UDF_I(inode)->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB)
++		goto out_dirty;
++	if (page->index == size >> PAGE_SHIFT)
++		end = size & ~PAGE_MASK;
++	else
++		end = PAGE_SIZE;
++	err = __block_write_begin(page, 0, end, udf_get_block);
++	if (!err)
++		err = block_commit_write(page, 0, end);
++	if (err < 0) {
++		unlock_page(page);
++		ret = block_page_mkwrite_return(err);
++		goto out_unlock;
++	}
++out_dirty:
++	set_page_dirty(page);
++	wait_for_stable_page(page);
 +out_unlock:
-+	filemap_invalidate_unlock(inode->i_mapping);
-+	return err;
++	filemap_invalidate_unlock_shared(mapping);
++	sb_end_pagefault(inode->i_sb);
++	return ret;
++}
++
++static const struct vm_operations_struct udf_file_vm_ops = {
++	.fault		= filemap_fault,
++	.map_pages	= filemap_map_pages,
++	.page_mkwrite	= udf_page_mkwrite,
++};
++
+ static ssize_t udf_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	ssize_t retval;
+@@ -238,11 +289,19 @@ static int udf_release_file(struct inode *inode, struct file *filp)
+ 	return 0;
  }
  
- /*
++static int udf_file_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	file_accessed(file);
++	vma->vm_ops = &udf_file_vm_ops;
++
++	return 0;
++}
++
+ const struct file_operations udf_file_operations = {
+ 	.read_iter		= generic_file_read_iter,
+ 	.unlocked_ioctl		= udf_ioctl,
+ 	.open			= generic_file_open,
+-	.mmap			= generic_file_mmap,
++	.mmap			= udf_file_mmap,
+ 	.write_iter		= udf_file_write_iter,
+ 	.release		= udf_release_file,
+ 	.fsync			= generic_file_fsync,
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 7109adcceefe..7fd0aa2439e9 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -68,7 +68,6 @@ static void udf_prealloc_extents(struct inode *, int, int,
+ static void udf_merge_extents(struct inode *, struct kernel_long_ad *, int *);
+ static int udf_update_extents(struct inode *, struct kernel_long_ad *, int,
+ 			      int, struct extent_position *);
+-static int udf_get_block(struct inode *, sector_t, struct buffer_head *, int);
+ 
+ static void __udf_clear_extent_cache(struct inode *inode)
+ {
+diff --git a/fs/udf/udfdecl.h b/fs/udf/udfdecl.h
+index 98b4d89b4368..5ba59ab90d48 100644
+--- a/fs/udf/udfdecl.h
++++ b/fs/udf/udfdecl.h
+@@ -160,6 +160,7 @@ extern void udf_evict_inode(struct inode *);
+ extern int udf_write_inode(struct inode *, struct writeback_control *wbc);
+ extern int8_t inode_bmap(struct inode *, sector_t, struct extent_position *,
+ 			 struct kernel_lb_addr *, uint32_t *, sector_t *);
++int udf_get_block(struct inode *, sector_t, struct buffer_head *, int);
+ extern int udf_setup_indirect_aext(struct inode *inode, udf_pblk_t block,
+ 				   struct extent_position *epos);
+ extern int __udf_add_aext(struct inode *inode, struct extent_position *epos,
 -- 
 2.35.3
 
