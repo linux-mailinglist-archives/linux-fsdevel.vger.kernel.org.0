@@ -2,195 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 192C4678D67
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 02:28:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDD1E678DD7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 03:02:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232116AbjAXB17 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 20:27:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54074 "EHLO
+        id S231661AbjAXCCc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 21:02:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229849AbjAXB15 (ORCPT
+        with ESMTP id S229666AbjAXCCb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 20:27:57 -0500
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B7D312F26
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 17:27:55 -0800 (PST)
-Received: by mail-pf1-x42f.google.com with SMTP id c26so10205722pfp.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 17:27:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8F6hRIomZ2nfgoOl9vt+Mda6mTJjuiQ/nB/OzAXwDSI=;
-        b=H0wzig6HSgCdkJfbnchvpXtWngdQg2CyHZkhgdpFw+HuZ2/LaO4BJx1ZZJ+RRoILq8
-         GuT7pIND31DaoY+FiJSBILYhipQMPqJ7CZUOuz7x71s515bfTFYymuOqj76dpZGGPe0R
-         roYrZDSWF8NxOve8Pxp7cvCd6BZ0axXo2A8t3B8iw98G/r8Tkcv0kcruglI/OT22oEey
-         j/0uWp0hdocKI/BmP7HVj2M7QFhthg3W7d8Q1vm0Us4lX+kWe4jn02BGZ4yej5UdNIiy
-         ekteTmqXj33t26Jyf+JF3RUpU48Qj5o/y07idXkF5Ho4kjJsXeyVErd+MUZWegqHYXVp
-         q16Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8F6hRIomZ2nfgoOl9vt+Mda6mTJjuiQ/nB/OzAXwDSI=;
-        b=MEtyrf/XIVvwnjU21E3berEotmo7rPbzLaT8JRTu8aY5lSBzfRYTaHYHB5th5WDc6i
-         uVNE8wxBjhXgS+ob/U0G1ux6ShshWfK6bheCiqYggLR//oyZXjfwLXvo8ibY7wwmbzI4
-         M0QVBW4h7xKsW/2mRg6OZbKy1xsTX72xQe1Q6EtDznETBhL4wDK0/Qih1mgH/Sgb8JFt
-         5eTA2bOKQJXzpoXAZPsTvi1Mpw9Ug01p5QShkkbK+6wfa/p3DJDuw34btZ0MByLQ0LdT
-         PCk6VYbp4/PAE3MYE9NJX6JRKTxBBn69IpVCF+W2iEXqkTyJ/7u08uzPbbSLKfCjVclS
-         zxKA==
-X-Gm-Message-State: AO0yUKWpUb+biwXuCI7NuKC2gvbjPt6s3EPo2PyLrCsoVJKmuE2FLafK
-        It4GQstZcqbrjC1EZtABwVMPyw==
-X-Google-Smtp-Source: AK7set8oWHW5as5U3Q0r97O5m1dlnRFyFLOsa36pUh2yIP/6nFcX7lH+DqOSXyUNOJ1I4yEcn6HIvg==
-X-Received: by 2002:a05:6a00:b55:b0:576:9252:d06 with SMTP id p21-20020a056a000b5500b0057692520d06mr19319pfo.0.1674523674434;
-        Mon, 23 Jan 2023 17:27:54 -0800 (PST)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id a28-20020aa78e9c000000b00582bdaab584sm238831pfr.81.2023.01.23.17.27.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jan 2023 17:27:53 -0800 (PST)
-Date:   Tue, 24 Jan 2023 01:27:50 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Isaku Yamahata <isaku.yamahata@gmail.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
-Message-ID: <Y880FiYF7YCtsw/i@google.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <Y8H5Z3e4hZkFxAVS@google.com>
- <20230119111308.GC2976263@ls.amr.corp.intel.com>
- <Y8lg1G2lRIrI/hld@google.com>
- <20230119223704.GD2976263@ls.amr.corp.intel.com>
+        Mon, 23 Jan 2023 21:02:31 -0500
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2069.outbound.protection.outlook.com [40.107.94.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B8769037;
+        Mon, 23 Jan 2023 18:02:31 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=W6JVWJPVcEpJvx7ysuF1rZpb3pvJyQyuq+HQVbOG6nvA7nhMAnx3rNUuWflxR2IZ2dOmrQqk8IP7TGR/wC+foJeuVDIGimUyjPzBQJ9bIRNxwSfqV5+rf3LznLahPpG8PMovLOtb1zh9SNfa1Xh5ygCmE96VotVKeAg8jo4NBLCkP1iQ5oxhcfhhz4u9O/qZvRecGVtmngAwgnonk1k+DwfbozFUtMgeD2BgHLf3e4ZMnjlEx2K7YCrb/iQrzeFOMdJ1+SjrqidfAvYnO9fa2YeusON/M8mqzXrVEkgN86/Y7MD3ySeGYqEZLVaYomEcoWnudjbOXc/74mcXAhIsFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HxAUNRE+g2XY8e2/Skjsg3235xTJbp/l8AuBGqDWT1E=;
+ b=UEdiuT7oa0M2ouXk1I1R3GSIOEgPRH+Tcz2goR504o8XgIVpDLVS5jJivqFM49oHWah0CXWRYA3SSUS/eAeZIlU1aL5iRb9YpTTm0l/Bs+vOjXn1ctSPq9ZaZqlYu5z8W94mtEkqTzUVfsP8w3i7PkerskzbgZoYHFkkbkqLHoAbqO5YjZbleMaThFD1idzKnKxxPrxmIRAqHDsNUgsVCCadx+1b/Jf26nbfomyGHXsdpArMbwuFP/s4qbwo8KfUx2SwObdHou4zI1nQXHM2NDc+16ouf6V9KmDvYSxQfxMTL7loxj3nEunadTa8qrtFEq52sxngMG8ADl4cWgw5ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HxAUNRE+g2XY8e2/Skjsg3235xTJbp/l8AuBGqDWT1E=;
+ b=s8rC47I6H5Yg9817KZdqfAHfn1lApG5C6NNdAPyBU1oPjVHZRQfPuWNdy45YG1pm4toSeCywcfXiLNPAH9MAJYoN+nQtGCxVJ8UKcer8/6I6jNA02i8LbGx57HGL5RZ1yx1Osl+1QRAW8tbWFhjoH5Jn9tUArQ4aJCc9KqfP/KW6aJ1R9j1U3KxjA0h049LTlBArYUvAbD6xk1BOGmH04jpHTpqMNxAP/m0KB/Wkgp61K3olO9cVcdsJKq4olU45pbfYziyzszWds66HjMmr562uRXgJcuscRy+2NNaT/V7qSRKNXDlip6VlrB6JMDfCWGkO+m2G/FculsQodFacnw==
+Received: from BN9PR03CA0316.namprd03.prod.outlook.com (2603:10b6:408:112::21)
+ by CH0PR12MB5369.namprd12.prod.outlook.com (2603:10b6:610:d4::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.33; Tue, 24 Jan
+ 2023 02:02:29 +0000
+Received: from BN8NAM11FT111.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:112:cafe::6e) by BN9PR03CA0316.outlook.office365.com
+ (2603:10b6:408:112::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.33 via Frontend
+ Transport; Tue, 24 Jan 2023 02:02:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN8NAM11FT111.mail.protection.outlook.com (10.13.177.54) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6023.16 via Frontend Transport; Tue, 24 Jan 2023 02:02:27 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 23 Jan
+ 2023 18:02:20 -0800
+Received: from [10.110.48.28] (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 23 Jan
+ 2023 18:02:19 -0800
+Message-ID: <aff23352-9808-dd7c-e978-2049ca71321a@nvidia.com>
+Date:   Mon, 23 Jan 2023 18:02:19 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230119223704.GD2976263@ls.amr.corp.intel.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v8 00/10] iov_iter: Improve page extraction (pin or just
+ list)
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+CC:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        "Jan Kara" <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20230123173007.325544-1-dhowells@redhat.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20230123173007.325544-1-dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT111:EE_|CH0PR12MB5369:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f62da8b-f3c5-46ce-ce1d-08dafdaf0b6b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: y9Q5Qoy4LoYBmnL/HZmCfMbpR+F9S6veuKQ165jRpW4bI1/xSOHbo85jPiwj9qcWhzEA9GRJPctsaGDkbk50TdZB2K5D4IhhCHV6tfjcG6IJQrCVf5v+D6okC0784U6e4Wy87cxOH4fDAeMaX9cFLqgmAtPrBJSiNe4EEi9xwiHTO05AnHtOFMU4sBafRWztL3Z/XYJEdG55M+NloEt3kCmjqZ5HIrW5N7FIILmZhWC7CDE4Z0tL0aE0DceEheAxcIpZtqn0yJ9YImwK/+r2Y6syrlkpgiau2E9iNuqDT0rVBq/T3GVwEOLtWBM450TZ1OxNjT3DT/agZhZNsrsrG5jQF922jTMwM6wNPfhsSGM8TDna67p4h3HlhCpvD/AKqLPqnmhaaoKbsSzhKbKEvKWEAIyXvU5c88dNsUynwiUXsx4MHPpv7c+Pzg1Rep5HG/EyFGKo8bhB7w1DBiTqjXCh/s+Vz4483PfaJqfu7bevqXKZ3iJdVT9lSaZNJbE/CXCXypGqXnNvTgCGh/5toN6pCppbiES62wvH4sFwkWYkc3gWmxrmqa1DO+Rbt4bC59nvo/O6hwqdih9g6HrQJldrxbTiuXbGJZEC90vQn6Q0o2DqF5Clw6RkEA7wpQldXQSsLveM2lRi+YEc00Cuku4Po0aiWPN7RRC2txwUFvhTOmzxPLRCyBgjy0rY6vBSFGqJbuXwrQ5cIDaZdsV8kCY2FRinVh0Z23Rh7R2Bwbo=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(39860400002)(136003)(376002)(396003)(451199015)(40470700004)(36840700001)(46966006)(83380400001)(36860700001)(70206006)(86362001)(70586007)(8676002)(4326008)(316002)(53546011)(54906003)(36756003)(16576012)(40480700001)(16526019)(26005)(186003)(110136005)(478600001)(356005)(336012)(2616005)(7636003)(31686004)(47076005)(8936002)(4744005)(7416002)(5660300002)(40460700003)(426003)(31696002)(82740400003)(82310400005)(41300700001)(2906002)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2023 02:02:27.6877
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f62da8b-f3c5-46ce-ce1d-08dafdaf0b6b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT111.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5369
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 19, 2023, Isaku Yamahata wrote:
-> On Thu, Jan 19, 2023 at 03:25:08PM +0000,
-> Sean Christopherson <seanjc@google.com> wrote:
+On 1/23/23 09:29, David Howells wrote:
+> Hi Al, Christoph,
 > 
-> > On Thu, Jan 19, 2023, Isaku Yamahata wrote:
-> > > On Sat, Jan 14, 2023 at 12:37:59AM +0000,
-> > > Sean Christopherson <seanjc@google.com> wrote:
-> > > 
-> > > > On Fri, Dec 02, 2022, Chao Peng wrote:
-> > > > > This patch series implements KVM guest private memory for confidential
-> > > > > computing scenarios like Intel TDX[1]. If a TDX host accesses
-> > > > > TDX-protected guest memory, machine check can happen which can further
-> > > > > crash the running host system, this is terrible for multi-tenant
-> > > > > configurations. The host accesses include those from KVM userspace like
-> > > > > QEMU. This series addresses KVM userspace induced crash by introducing
-> > > > > new mm and KVM interfaces so KVM userspace can still manage guest memory
-> > > > > via a fd-based approach, but it can never access the guest memory
-> > > > > content.
-> > > > > 
-> > > > > The patch series touches both core mm and KVM code. I appreciate
-> > > > > Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
-> > > > > reviews are always welcome.
-> > > > >   - 01: mm change, target for mm tree
-> > > > >   - 02-09: KVM change, target for KVM tree
-> > > > 
-> > > > A version with all of my feedback, plus reworked versions of Vishal's selftest,
-> > > > is available here:
-> > > > 
-> > > >   git@github.com:sean-jc/linux.git x86/upm_base_support
-> > > > 
-> > > > It compiles and passes the selftest, but it's otherwise barely tested.  There are
-> > > > a few todos (2 I think?) and many of the commits need changelogs, i.e. it's still
-> > > > a WIP.
-> > > > 
-> > > > As for next steps, can you (handwaving all of the TDX folks) take a look at what
-> > > > I pushed and see if there's anything horrifically broken, and that it still works
-> > > > for TDX?
-> > > > 
-> > > > Fuad (and pKVM folks) same ask for you with respect to pKVM.  Absolutely no rush
-> > > > (and I mean that).
-> > > > 
-> > > > On my side, the two things on my mind are (a) tests and (b) downstream dependencies
-> > > > (SEV and TDX).  For tests, I want to build a lists of tests that are required for
-> > > > merging so that the criteria for merging are clear, and so that if the list is large
-> > > > (haven't thought much yet), the work of writing and running tests can be distributed.
-> > > > 
-> > > > Regarding downstream dependencies, before this lands, I want to pull in all the
-> > > > TDX and SNP series and see how everything fits together.  Specifically, I want to
-> > > > make sure that we don't end up with a uAPI that necessitates ugly code, and that we
-> > > > don't miss an opportunity to make things simpler.  The patches in the SNP series to
-> > > > add "legacy" SEV support for UPM in particular made me slightly rethink some minor
-> > > > details.  Nothing remotely major, but something that needs attention since it'll
-> > > > be uAPI.
-> > > 
-> > > Although I'm still debuging with TDX KVM, I needed the following.
-> > > kvm_faultin_pfn() is called without mmu_lock held.  the race to change
-> > > private/shared is handled by mmu_seq.  Maybe dedicated function only for
-> > > kvm_faultin_pfn().
-> > 
-> > Gah, you're not on the other thread where this was discussed[*].  Simply deleting
-> > the lockdep assertion is safe, for guest types that rely on the attributes to
-> > define shared vs. private, KVM rechecks the attributes under the protection of
-> > mmu_seq.
-> > 
-> > I'll get a fixed version pushed out today.
-> > 
-> > [*] https://lore.kernel.org/all/Y8gpl+LwSuSgBFks@google.com
+> Here are patches to provide support for extracting pages from an iov_iter
+> and to use this in the extraction functions in the block layer bio code.
 > 
-> Now I have tdx kvm working. I've uploaded at the followings.
-> It's rebased to v6.2-rc3.
->         git@github.com:yamahata/linux.git tdx/upm
->         git@github.com:yamahata/qemu.git tdx/upm
 
-And I finally got a working, building version updated and pushed out (again to):
+Hi David,
 
-  git@github.com:sean-jc/linux.git x86/upm_base_support
+It's great to see this series. I attempted this a few times but got
+caught in a loop of "don't quite see all the pieces, but it almost makes
+sense...Al Viro has spotted major problems (again)...squirrel!"; and
+repeat. :)
 
-Took longer than expected to get the memslot restrictions sussed out.  I'm done
-working on the code for now, my plan is to come back to it+TDX+SNP in 2-3 weeks
-to resolves any remaining todos (that no one else tackles) and to do the whole
-"merge the world" excersise.
+I saw your earlier versions go by and expected that they would end up
+being an iov_iter prerequisite to getting Direct IO converted over to
+FOLL_PIN. But now it looks like you are actually doing the conversion as
+well! That's really excellent.
 
-> kvm_mmu_do_page_fault() needs the following change.
-> kvm_mem_is_private() queries mem_attr_array.  kvm_faultin_pfn() also uses
-> kvm_mem_is_private(). So the shared-private check in kvm_faultin_pfn() doesn't
-> make sense. This change would belong to TDX KVM patches, though.
+I've made a first pass through the series and have some minor notes
+that I'll send out shortly, but it looks nice overall.
 
-Yeah, SNP needs similar treatment.  Sorting that out is high up on the todo list.
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
