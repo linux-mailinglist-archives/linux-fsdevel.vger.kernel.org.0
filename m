@@ -2,67 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 94913679793
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 13:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C96B679795
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 13:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233646AbjAXMSe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 07:18:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57454 "EHLO
+        id S233716AbjAXMSo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 07:18:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233607AbjAXMST (ORCPT
+        with ESMTP id S233571AbjAXMSY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 07:18:19 -0500
+        Tue, 24 Jan 2023 07:18:24 -0500
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE696442EB
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 04:18:18 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22A7544BCA
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 04:18:19 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 453901FE4C;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 5BDBB1FE4D;
         Tue, 24 Jan 2023 12:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1674562695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=UzIT2ogqM6g985qdJPjq2SBXyIwASRSm+gjHhyco+Nc=;
-        b=x/+onkdJP4myHMj6m2B4wmVSPvqTEPaQtNjVZv1wHzBdXNaEzIj8/9RW2YMfRvbVHMretZ
-        4FMFgPyXhIJaiuBDPk2vQRL8I5A4tSQb+8aUrypmulEyWf5Z2nBr2LpOdY3wxPtfBQ2VIq
-        3ejrAmU5u/EZk2E2kDnN+DQgv9FanlY=
+        bh=DuRHlhx2mHjz1hrJYA0ACB01C/AufQqOFLhYM4oFqa4=;
+        b=FNYjaZ0FzHTyDIgrPAy4np5RwRG/0ujjMmyzA9MfiOfmF8s6Sja+kbE1SpaKZ8EShhwL6j
+        3CnLQPDgeoGTTnErHQbtLttl9UDJLSAjs+o2Lqfzt/P/ASHMMfGlAA+BiXT1X4c6a6tew9
+        zwXK6gZQ/+gZuZnDdUfji0wdrUIIDvA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1674562695;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=UzIT2ogqM6g985qdJPjq2SBXyIwASRSm+gjHhyco+Nc=;
-        b=3e0nzqMYGGpr9cNd9AW1CduEAoMqMq+h+YQICsYrc1GLPYlqTUuem0d80dcIxrsydJ22yG
-        qXOsThmosMC//JAg==
+        bh=DuRHlhx2mHjz1hrJYA0ACB01C/AufQqOFLhYM4oFqa4=;
+        b=U6ge9Ga5tsjwwNoyMXQFVZBAvjtW1BGfSy8Mb7DvMxDT1RmyGpPCMY3Ln6gSc7KSTgFcwk
+        k+ww5Pw11f6CAeDQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2BDEE139FB;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4EBF9139FB;
         Tue, 24 Jan 2023 12:18:15 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id nnGzCofMz2PyNwAAMHmgww
+        id Yi05E4fMz2P2NwAAMHmgww
         (envelope-from <jack@suse.cz>); Tue, 24 Jan 2023 12:18:15 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 52C0AA06E3; Tue, 24 Jan 2023 13:18:14 +0100 (CET)
+        id 58614A06F3; Tue, 24 Jan 2023 13:18:14 +0100 (CET)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        syzbot+aebf90eea2671c43112a@syzkaller.appspotmail.com
-Subject: [PATCH 14/22] udf: Protect rename against modification of moved directory
-Date:   Tue, 24 Jan 2023 13:18:00 +0100
-Message-Id: <20230124121814.25951-14-jack@suse.cz>
+Cc:     Jan Kara <jack@suse.cz>
+Subject: [PATCH 15/22] udf: Push i_data_sem locking into udf_expand_file_adinicb()
+Date:   Tue, 24 Jan 2023 13:18:01 +0100
+Message-Id: <20230124121814.25951-15-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230124120835.21728-1-jack@suse.cz>
 References: <20230124120835.21728-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2092; i=jack@suse.cz; h=from:subject; bh=Zu8Vih3EU1Cmz8d/II2LP6vgNBGzt1ICxuXfhJV63EU=; b=owGbwMvMwME4Z+4qdvsUh5uMp9WSGJLPn6mI/zCpmOvx+yv9XXWL7xzf3qwhvq1y344m14qzT6TW HMuS72Q0ZmFg5GCQFVNkWR15UfvaPKOuraEaMjCDWJlApjBwcQrARF5Lsf/PvRY40fK7lp0ak/2aNU pHZ/onfDTc+mWf5Lva9slHS7rWzXj9auWJVS3tXfbrOuSnbhZ5LdbbmNKhuWJHaseqKMmvqZ84Tlkt vfMm4i+jeklBkktlZQeT/IM5t/87O+w+w91yfQPbncUGJ7n5H/9W2tyl0F1Vm7CfPVChlWF2YHrew9 Tl9xsLw3Y3Vf6J+XOy9Ipj5TI7sYrITaXaDya0uWz6djbBQYZxU2Y3C5ujq9givir9lGZf9+QfmQcu n57Xsq3u8Wmm9lQz/3bF64fsG2x5w1ZO+enSN8GtYF5GcZFWVn2STULqk5okERaJeSeEp7WKREdV9a jo3zCZWRv8gzfNJXNCl7bOvD5pAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3436; i=jack@suse.cz; h=from:subject; bh=egCksdVqpUNTMa2JmVa1OO3JlGwu/sZq7LNwywphVOQ=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBjz8x5hbvW1xCK+XuiCOd/sp3kv/lJaYlF3uhY67/H Wzm245qJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCY8/MeQAKCRCcnaoHP2RA2eLbB/ 0W9emDbtPFyu6N6HkxW9kjRFRNlrhj9RuddYGoCw+SLljZRChFLCka0SqlBbCxlWVN1qaw5Z9EFeBh LdWkEIL3paJTeErRHHfKiUwdDvG5IZLQMKZZxqjwN6N9A/RcRx41eUQ85MHdmJ/+epUVkXeIv2jMee QYH3Hw4f9b0bTBQLqKBx1E1PhDfHDvuV3dxZ8rMja3GlpOuK7qIrceiCiE1QeYIaHKcjfylHBx1h09 llZxvVXCsT/vKA8NU2sNfP6y8iMGZgFnJggciuj7IqycD8kHfgqflpi7KAOjyIsR0swBWhDToPF7eQ Wx/YO4/bCdkKvmuO9nbwrdBNXC4hq3
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -74,66 +73,107 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When we are renaming a directory to a different directory, we need to
-update '..' entry in the moved directory. However nothing prevents moved
-directory from being modified and even converted from the in-ICB format
-to the normal format which results in a crash. Fix the problem by
-locking the moved directory.
+The checks we do in udf_setsize() and udf_file_write_iter() are safe to
+do only with i_rwsem locked as it stabilizes both file type and file
+size. Hence we don't need to lock i_data_sem before we enter
+udf_expand_file_adinicb() which simplifies the locking somewhat.
 
-Reported-by: syzbot+aebf90eea2671c43112a@syzkaller.appspotmail.com
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/udf/namei.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ fs/udf/file.c  | 11 +++++------
+ fs/udf/inode.c | 18 ++++++------------
+ 2 files changed, 11 insertions(+), 18 deletions(-)
 
-diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-index 49fab30afff3..1b0f4c600b63 100644
---- a/fs/udf/namei.c
-+++ b/fs/udf/namei.c
-@@ -782,6 +782,11 @@ static int udf_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 			if (!empty_dir(new_inode))
- 				goto out_oiter;
- 		}
-+		/*
-+		 * We need to protect against old_inode getting converted from
-+		 * ICB to normal directory.
-+		 */
-+		inode_lock_nested(old_inode, I_MUTEX_NONDIR2);
- 		retval = udf_fiiter_find_entry(old_inode, &dotdot_name,
- 					       &diriter);
- 		if (retval == -ENOENT) {
-@@ -790,8 +795,10 @@ static int udf_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 				old_inode->i_ino);
- 			retval = -EFSCORRUPTED;
- 		}
--		if (retval)
-+		if (retval) {
-+			inode_unlock(old_inode);
- 			goto out_oiter;
-+		}
- 		has_diriter = true;
- 		tloc = lelb_to_cpu(diriter.fi.icb.extLocation);
- 		if (udf_get_lb_pblock(old_inode->i_sb, &tloc, 0) !=
-@@ -869,6 +876,7 @@ static int udf_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 			       udf_dir_entry_len(&diriter.fi));
- 		udf_fiiter_write_fi(&diriter, NULL);
- 		udf_fiiter_release(&diriter);
-+		inode_unlock(old_inode);
+diff --git a/fs/udf/file.c b/fs/udf/file.c
+index 8be51161f3e5..60524814c594 100644
+--- a/fs/udf/file.c
++++ b/fs/udf/file.c
+@@ -148,7 +148,6 @@ static ssize_t udf_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (retval <= 0)
+ 		goto out;
  
- 		inode_dec_link_count(old_dir);
- 		if (new_inode)
-@@ -880,8 +888,10 @@ static int udf_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 	}
- 	return 0;
- out_oiter:
--	if (has_diriter)
-+	if (has_diriter) {
- 		udf_fiiter_release(&diriter);
-+		inode_unlock(old_inode);
+-	down_write(&iinfo->i_data_sem);
+ 	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB &&
+ 	    inode->i_sb->s_blocksize < (udf_file_entry_alloc_offset(inode) +
+ 				 iocb->ki_pos + iov_iter_count(from))) {
+@@ -158,15 +157,15 @@ static ssize_t udf_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			udf_debug("udf_expand_adinicb: err=%d\n", err);
+ 			return err;
+ 		}
+-	} else
+-		up_write(&iinfo->i_data_sem);
 +	}
- 	udf_fiiter_release(&oiter);
  
- 	return retval;
+ 	retval = __generic_file_write_iter(iocb, from);
+ out:
+-	down_write(&iinfo->i_data_sem);
+-	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB && retval > 0)
++	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB && retval > 0) {
++		down_write(&iinfo->i_data_sem);
+ 		iinfo->i_lenAlloc = inode->i_size;
+-	up_write(&iinfo->i_data_sem);
++		up_write(&iinfo->i_data_sem);
++	}
+ 	inode_unlock(inode);
+ 
+ 	if (retval > 0) {
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 4554d1e54eb3..b13c35335dd1 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -247,7 +247,6 @@ const struct address_space_operations udf_aops = {
+ /*
+  * Expand file stored in ICB to a normal one-block-file
+  *
+- * This function requires i_data_sem for writing and releases it.
+  * This function requires i_mutex held
+  */
+ int udf_expand_file_adinicb(struct inode *inode)
+@@ -259,6 +258,7 @@ int udf_expand_file_adinicb(struct inode *inode)
+ 
+ 	WARN_ON_ONCE(!inode_is_locked(inode));
+ 	if (!iinfo->i_lenAlloc) {
++		down_write(&iinfo->i_data_sem);
+ 		if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_SHORT_AD))
+ 			iinfo->i_alloc_type = ICBTAG_FLAG_AD_SHORT;
+ 		else
+@@ -269,11 +269,6 @@ int udf_expand_file_adinicb(struct inode *inode)
+ 		mark_inode_dirty(inode);
+ 		return 0;
+ 	}
+-	/*
+-	 * Release i_data_sem so that we can lock a page - page lock ranks
+-	 * above i_data_sem. i_mutex still protects us against file changes.
+-	 */
+-	up_write(&iinfo->i_data_sem);
+ 
+ 	page = find_or_create_page(inode->i_mapping, 0, GFP_NOFS);
+ 	if (!page)
+@@ -1160,19 +1155,18 @@ int udf_setsize(struct inode *inode, loff_t newsize)
+ 
+ 	iinfo = UDF_I(inode);
+ 	if (newsize > inode->i_size) {
+-		down_write(&iinfo->i_data_sem);
+ 		if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB) {
+-			if (bsize <
++			if (bsize >=
+ 			    (udf_file_entry_alloc_offset(inode) + newsize)) {
+-				err = udf_expand_file_adinicb(inode);
+-				if (err)
+-					return err;
+ 				down_write(&iinfo->i_data_sem);
+-			} else {
+ 				iinfo->i_lenAlloc = newsize;
+ 				goto set_size;
+ 			}
++			err = udf_expand_file_adinicb(inode);
++			if (err)
++				return err;
+ 		}
++		down_write(&iinfo->i_data_sem);
+ 		err = udf_extend_file(inode, newsize);
+ 		if (err) {
+ 			up_write(&iinfo->i_data_sem);
 -- 
 2.35.3
 
