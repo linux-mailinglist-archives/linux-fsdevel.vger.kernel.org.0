@@ -2,200 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9945367A3CF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 21:26:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F24E367A364
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 20:50:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233689AbjAXU0J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 15:26:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39638 "EHLO
+        id S234799AbjAXTuH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 14:50:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234039AbjAXUZx (ORCPT
+        with ESMTP id S234225AbjAXTuG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 15:25:53 -0500
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2065.outbound.protection.outlook.com [40.107.94.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE3AA4ABE9;
-        Tue, 24 Jan 2023 12:25:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fxGLRBdQegsfNiswyksbnFZAzwIEs7xsqq77RMCEDaGaVhCs0zGm5/jBg7EHvLXwR1EB2FHvDIinpdyCc9m0bUdU+r7QHXMqHoAgZHtAqkbWTrVLyMPxoC+WF69VRz5mGHIK+TclmpSnGEAy9ve14uj3DDOyPjHo790Of/dZXTZmCPbpTOjn/7BnJc1ACY3wk2DJGpEN4CX9tT+nyiovd9mP0XgmnRpSUaIzP57+OxwFpfP3eTPdtua1BRrYIN+xsIpC+sKVvhhT1O/DL4TstBaV7xeMAsVfH0RMhLlsgu+vUa8R/2QLiYuKW82drVpdusJISevotUR9cXOOV1T8Aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tMI1u5r/RYaBF9q378KN/DbUHr9RfUddXU5SXVEvq5g=;
- b=azZpqKWMc0Is2SCb3jvqTD16g8mU9HX88KOlSB1+IqcUDbtf6dKx2wry8QCJ1P9xJu83MDTBdD6C1dMItuE7Yjuw3yz/EztOKy+LIAjPeoA3db9j+Pve+GhH7XDQTnS1OfiApy0AY6H5yQsTKqnXPai0xXhpzLmbysqdge5I+yS8fKQjCgTrr7PHHYEmfQXpIfKXrCFxghF3/XEeu0RJtrwkcR1t74qgk88ZLRvthNHtADFIhf7HAtq+HdYz8GTyhoaFtSvYA8p7cCgl7scG9j9vrtsVgmL3mIYXN9NuA0rEsDCAHi/ozFpe07FqHfI2eIO90UeR5/e3T+b3Sn8r3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tMI1u5r/RYaBF9q378KN/DbUHr9RfUddXU5SXVEvq5g=;
- b=O9mhnniJuiv6sSVpsl/W004IEkZD8jiXCCSo7Fm+Z7v/NaRqY8635w3AmEEYXzg5YYY8m0R0M3X3uwB4SIKfUFYUJEMlTfbHtCnJFRWMWoivoJp0CHDZJdd6zmr4tSO5NOZ2zxdyTfbeCmQW3WEAROjSTv4zFUT23S0A9Sunjc6XKqXmgYp/oBhsdb5ZYjUePZR01o6jU/hBPmmfV8/byaJmTHkl3Le+EaZ4DmiP9//6fq+RyiKlUOdqsQu3uiGLsWRaUAa04gpY0a/Zt3GgNELb4g6tY4/Ooja5ym6Lwef0msPmE1/qI3ZgWDS2dmweOY3lFWwCoGsktoL65fFvVA==
-Received: from BN9P221CA0027.NAMP221.PROD.OUTLOOK.COM (2603:10b6:408:10a::21)
- by BN9PR12MB5036.namprd12.prod.outlook.com (2603:10b6:408:135::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.33; Tue, 24 Jan
- 2023 20:25:39 +0000
-Received: from BN8NAM11FT049.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:10a:cafe::d4) by BN9P221CA0027.outlook.office365.com
- (2603:10b6:408:10a::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.33 via Frontend
- Transport; Tue, 24 Jan 2023 20:25:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT049.mail.protection.outlook.com (10.13.177.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6043.17 via Frontend Transport; Tue, 24 Jan 2023 20:25:39 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 24 Jan
- 2023 11:47:36 -0800
-Received: from [10.110.48.28] (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 24 Jan
- 2023 11:47:35 -0800
-Message-ID: <b7833fd7-eb7d-2365-083d-5a01b9fee464@nvidia.com>
-Date:   Tue, 24 Jan 2023 11:47:35 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v9 5/8] block: Replace BIO_NO_PAGE_REF with
- BIO_PAGE_REFFED with inverted logic
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-CC:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-        "Jan Kara" <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+        Tue, 24 Jan 2023 14:50:06 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE564B746
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 11:49:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674589763;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R85STr6GIhhr+ztwclj6pO6G7kZRrikgcAMPHnfe248=;
+        b=M06EbvZzOFrrtsl6DJguwoL9RZYMvOML/vOPBLNCmhrDd+b1mbdcftNFr+F3rTpWoq9206
+        ySKqVQc+AwJ2mGbj9RlEqGDkpQWeiU4JmU8fLK5ftVJ7PvGWXwwBbK/Ji0CvMjJ8qr2F1m
+        jCMoqPEKPV7USmZNwcidl/OTsme3vWw=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-149-sXn6Q04zOm-Wyc-9oKI0eQ-1; Tue, 24 Jan 2023 14:49:21 -0500
+X-MC-Unique: sXn6Q04zOm-Wyc-9oKI0eQ-1
+Received: by mail-qk1-f199.google.com with SMTP id de37-20020a05620a372500b00707391077b4so11698049qkb.17
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 11:49:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R85STr6GIhhr+ztwclj6pO6G7kZRrikgcAMPHnfe248=;
+        b=x2FaEU4EH0cXVl2087nMG0XcW+dIxUns3YbJSBJriNqVgar9PEVqheXg2F8KIIwFLU
+         LNbsEH9c14ASLs0u+MvFWNb8EkH+GLhP15qbKv2CpxXGn8aiAtbX86p6bH17DC9I2FVi
+         9gV8N3DqC+sxiIexZbpcqHPTEEWrJglnTDDMGjfnPCdD0e8x1ym0Q0Zn97tg5OqVvGsQ
+         OQlpTMkGjil6hr/dN0B9MdmbuAALVPfBY+dmYpLaWv5EmOftaYdYtSes6EsRAowQ+pEB
+         +iuV3PBmQlDEKbro9kmT+/qAeFQQE2y5yKYDjI8ZQlhq/IJtvcdNlIahBTdOqE0F4GVk
+         SpAg==
+X-Gm-Message-State: AFqh2kqL3HR97hbJV6lo/uy+Ibwg1dvszL9YlZ7tZ+4M6Yr2wUr+e456
+        U7VWZK/0jAGQv6qj6/mAEeTz7BsRw8JaI6h/iC5SEIz6KGi3JSWDAzSdlt2ncfNoxBX9wE0lZ0D
+        FqDbhTsvkMbhG1TJry7fcbUTO0g==
+X-Received: by 2002:ac8:4758:0:b0:3b6:36a0:adbe with SMTP id k24-20020ac84758000000b003b636a0adbemr40222113qtp.6.1674589761215;
+        Tue, 24 Jan 2023 11:49:21 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXu1WuGrk9av6WUp2+OZodLHrIX79DJLQmWseM2cM1QbiDQQOkRVcd+zhy6zkWOiNmjgkRdG5Q==
+X-Received: by 2002:ac8:4758:0:b0:3b6:36a0:adbe with SMTP id k24-20020ac84758000000b003b636a0adbemr40222080qtp.6.1674589760880;
+        Tue, 24 Jan 2023 11:49:20 -0800 (PST)
+Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
+        by smtp.gmail.com with ESMTPSA id x12-20020ac87ecc000000b0039cc0fbdb61sm1789700qtj.53.2023.01.24.11.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jan 2023 11:49:20 -0800 (PST)
+Date:   Tue, 24 Jan 2023 14:49:18 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
         David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, "Christoph Hellwig" <hch@lst.de>
-References: <20230124170108.1070389-1-dhowells@redhat.com>
- <20230124170108.1070389-6-dhowells@redhat.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20230124170108.1070389-6-dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.231.37]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT049:EE_|BN9PR12MB5036:EE_
-X-MS-Office365-Filtering-Correlation-Id: a613e488-b483-4c21-a615-08dafe4928cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qUJ8g3GZDzczwZwBxej/naWyPqie9zNHZfljmIDKYBPNGtatxJ3UnirVNeVq3YAHewG0iLkoI3qw0LSiEOoanHNCoXIsUVUUAi4iLuiz2hm4n7jQZ3NRdW9H9w13FV3mFR8Xh1DDQHTXejKIvI+pIYgkgaayvryaaTsLiKSgaR+84C/PL8ZNrwgDV3lubPnGT8X5o0Yzp6JAdKYiC1m9SrDTRFU2b0fXfPVZ7Pczu+bCrKlds4oR8Z5pupDL5nSeJOnu9ZFi5IMlw3t1pdTh1tbTyPdZ9gNbYPnzDjTxW8koKrqis7Ii9IB+6HDqFBOvTbMFZRJvt6Imik5lETyoKRykcF0FGduUDzfM9uLU4RKA+sIRTueq90uX1O/+ubtoCr8h4CAOKFouOWtpg+ancGuws+SdzYTj0Z0zvVP5c23F5twakvbwEZQ/j9WW06hD4OGbr7CeG6rLYYn667HFFKuhRoS2gjZwh9U635/t+pTc1Tt83tB/idi4UhE6+jK8L42N6vPKmNriptGy+2D6LoRGxLioEn90YHrg+CAgyEO3t5HSN3/oezprWUnKRhBtyMSIrQUtoxiMHuNF6FG5W9hw8ufHqhJddWPwrpscrsFh7+NMtWZPi5USCyAfc7VJAoCwmkSlpJHDS4BF9AliGLUMXBBq/kbaFsjdMLkpfVIo4vqxUzmCOmz4BTkXnHEokzrJ9Rt3cMBKIqC4C8YYgrqMQbsHs+dHtRIXi+LyobQ=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(136003)(396003)(346002)(39860400002)(376002)(451199018)(36840700001)(40470700004)(46966006)(7636003)(70586007)(82740400003)(40480700001)(40460700003)(36756003)(356005)(31696002)(110136005)(16576012)(336012)(478600001)(83380400001)(316002)(70206006)(8676002)(4326008)(2616005)(426003)(47076005)(54906003)(31686004)(2906002)(53546011)(86362001)(8936002)(36860700001)(186003)(26005)(41300700001)(5660300002)(7416002)(82310400005)(16526019)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2023 20:25:39.4883
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a613e488-b483-4c21-a615-08dafe4928cc
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT049.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5036
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v7 0/4] Implement IOCTL to get and/or the clear info
+ about PTEs
+Message-ID: <Y9A2PsCS7gfKWfaM@x1n>
+References: <20230109064519.3555250-1-usama.anjum@collabora.com>
+ <Y8hutCGec6je5toG@x1n>
+ <0eb79bb3-7384-11c6-a380-c027f09305f2@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0eb79bb3-7384-11c6-a380-c027f09305f2@collabora.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/24/23 09:01, David Howells wrote:
-> From: Christoph Hellwig <hch@lst.de>
-> 
-> Replace BIO_NO_PAGE_REF with a BIO_PAGE_REFFED flag that has the inverted
-> meaning is only set when a page reference has been acquired that needs to
-> be released by bio_release_pages().
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Al Viro <viro@zeniv.linux.org.uk>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Jan Kara <jack@suse.cz>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: Logan Gunthorpe <logang@deltatee.com>
-> cc: linux-block@vger.kernel.org
-> ---
-> 
-> Notes:
->      ver #8)
->       - Don't default to BIO_PAGE_REFFED [hch].
->      
->      ver #5)
->       - Split from patch that uses iov_iter_extract_pages().
-> 
->   block/bio.c               | 2 +-
->   block/blk-map.c           | 1 +
->   fs/direct-io.c            | 2 ++
->   fs/iomap/direct-io.c      | 1 -
->   include/linux/bio.h       | 2 +-
->   include/linux/blk_types.h | 2 +-
->   6 files changed, 6 insertions(+), 4 deletions(-)
+On Mon, Jan 23, 2023 at 06:15:00PM +0500, Muhammad Usama Anjum wrote:
+> > Firstly, doc update is more than welcomed to explain the new interface
+> > first (before throwing the code..).  That can be done in pagemap.rst on
+> > pagemap changes, or userfaultfd.rst on userfaultfd.
+> Okay. I'll add the documentation in next version or after the series has
+> been accepted. Initially I'd added the documentation. But the code kept on
+> changing so much that I had to spend considerable time on updating the
+> documentation. I know it is better to add documentation with the patches.
+> I'll try to add it.
 
-One documentation nit below, but either way,
+Yes, logically it should be the thing people start looking with.  It'll
+help reviewers to understand how does it work in general if relevant
+description is not in the cover letter, so it can matter even before the
+series is merged.
 
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> > There're four kinds of masks (required/anyof/excluded/return).  Are they
+> > all needed?  Why this is a good interface design?
+> Then, CRIU developers Andrea [1] and Danylo [2], asked to include all these
+> different kinds of masks. I'd thought of these masks as fancy filter inside
+> the kernel. But there wasn't anyone else to review. So I'd included them to
+> move forward. Please let me know your thoughts after reading emails from [1].
 
-> 
-> diff --git a/block/bio.c b/block/bio.c
-> index 683444e6b711..851c23641a0d 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1198,7 +1198,6 @@ void bio_iov_bvec_set(struct bio *bio, struct iov_iter *iter)
->   	bio->bi_io_vec = (struct bio_vec *)iter->bvec;
->   	bio->bi_iter.bi_bvec_done = iter->iov_offset;
->   	bio->bi_iter.bi_size = size;
-> -	bio_set_flag(bio, BIO_NO_PAGE_REF);
->   	bio_set_flag(bio, BIO_CLONED);
->   }
->   
-> @@ -1343,6 +1342,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
->   		return 0;
->   	}
->   
-> +	bio_set_flag(bio, BIO_PAGE_REFFED);
->   	do {
->   		ret = __bio_iov_iter_get_pages(bio, iter);
->   	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
-> diff --git a/block/blk-map.c b/block/blk-map.c
-> index 7db52ad5b2d0..0e2b0a861ba3 100644
-> --- a/block/blk-map.c
-> +++ b/block/blk-map.c
-> @@ -282,6 +282,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
->   	if (blk_queue_pci_p2pdma(rq->q))
->   		extraction_flags |= ITER_ALLOW_P2PDMA;
->   
-> +	bio_set_flag(bio, BIO_PAGE_REFFED);
->   	while (iov_iter_count(iter)) {
->   		struct page **pages, *stack_pages[UIO_FASTIOV];
->   		ssize_t bytes;
-> diff --git a/fs/direct-io.c b/fs/direct-io.c
-> index 03d381377ae1..07810465fc9d 100644
-> --- a/fs/direct-io.c
-> +++ b/fs/direct-io.c
-> @@ -403,6 +403,8 @@ dio_bio_alloc(struct dio *dio, struct dio_submit *sdio,
->   		bio->bi_end_io = dio_bio_end_aio;
->   	else
->   		bio->bi_end_io = dio_bio_end_io;
-> +	/* for now require references for all pages */
+The idea makes sense to me, thanks.  I just hope "moving it forward" is not
+the only reason that you included it.
 
-Maybe just delete this comment?
+Please also consider to attach relevant links to your next cover letter so
+new reviewers can be aware of why the interface is proposed like that.
 
-thanks,
+IMHO it would be also great if the CRIU people can acknowledge the
+interface at some point to make sure it satisfies the needs.  An POC would
+be even better on CRIU, but maybe that's asking too much.
+
 -- 
-John Hubbard
-NVIDIA
+Peter Xu
+
