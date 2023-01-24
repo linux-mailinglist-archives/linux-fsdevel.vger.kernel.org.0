@@ -2,108 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B83F678FFA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 06:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E38B67908B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 06:58:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231652AbjAXFi7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 00:38:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36144 "EHLO
+        id S233023AbjAXF6c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 00:58:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230149AbjAXFi6 (ORCPT
+        with ESMTP id S232977AbjAXF63 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 00:38:58 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56841305C2;
-        Mon, 23 Jan 2023 21:38:50 -0800 (PST)
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1M5wPb-1pLZjb1fdD-007WQY; Tue, 24
- Jan 2023 06:38:45 +0100
-Message-ID: <08def3ca-ccbd-88c7-acda-f155c1359c3b@gmx.com>
-Date:   Tue, 24 Jan 2023 13:38:41 +0800
+        Tue, 24 Jan 2023 00:58:29 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAF6D303C8;
+        Mon, 23 Jan 2023 21:58:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=MWNNRHw2sWxkb7fRYPZPKkDs8yAj4vB10hhJP/CIuZk=; b=KOkZfWHE68/PeSOfME2tee5dDa
+        JkGrAYpWiQ1HobLr3Xq2I7iD3zq0otuz8oGO2tXGm4dJ1IKX2rNc+K7JD28EhK8j2IXdFoNuHyAiP
+        CbvzZ1ajVll/vWzV6Ybsqo4o3C38aGXBqOhWAQY+rmSuV2oKTj0gIiAmP6A4el9dv8wGAEicPjDit
+        SoWBYSIhq/qXQXz2Tn0yGQsh0ijeYSkiy+iZE4/r+MLTq1wnbn/eP2I6mul4Xu2Ri4EEEq18IXh/O
+        TxDDMSA1V8zwm2iTXu11GRC/YevpRlxnxJ7plHMSaizi5/nBVfKGJBKgHCzSoQVSnKtpIUmNVhUM8
+        QmIqEn0g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pKCJi-002T1k-5W; Tue, 24 Jan 2023 05:57:58 +0000
+Date:   Mon, 23 Jan 2023 21:57:58 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v7 2/8] iov_iter: Add a function to extract a page list
+ from an iterator
+Message-ID: <Y89zZofd63LCZYcG@infradead.org>
+References: <c742e47b-dcc0-1fef-dc8c-3bf85d26b046@redhat.com>
+ <7bbcccc9-6ebf-ffab-7425-2a12f217ba15@redhat.com>
+ <246ba813-698b-8696-7f4d-400034a3380b@redhat.com>
+ <20230120175556.3556978-1-dhowells@redhat.com>
+ <20230120175556.3556978-3-dhowells@redhat.com>
+ <3814749.1674474663@warthog.procyon.org.uk>
+ <3903251.1674479992@warthog.procyon.org.uk>
+ <3911637.1674481111@warthog.procyon.org.uk>
+ <20230123161114.4jv6hnnbckqyrurs@quack3>
+ <c3e0b810-9f17-edb7-de6b-7849273381d0@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: What would happen if the block device driver/firmware found some
- block of a bio is corrupted?
-Content-Language: en-US
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-References: <5be2cd86-e535-a4ae-b989-887bf9c2c36d@gmx.com>
- <Y89iSQJEpMFBSd2G@kbusch-mbp.dhcp.thefacebook.com>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-In-Reply-To: <Y89iSQJEpMFBSd2G@kbusch-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:OnHRkK6Ufy+A6GdbA/ZyeDj7v76sAtsb6avQnynhspvGL/K1HVr
- UvsxyTLxn7m5yD9muCMijc06+PFGH0b31QQRyALg+DukHKC7Mk2uh2lQ4N66NtU1czGjafe
- 5VX+omeI/Ekt5vy/z/xOZ7+c3EFXeL65M0Htb04+nVQ/s4C8KUadTa01RTpaIOMOXUU3gC/
- P4wpQ0nelbo8eMhg9TVkQ==
-UI-OutboundReport: notjunk:1;M01:P0:9FBSNmEB+dI=;v9AnZ4eusnuI42yFWm5ZmNDQati
- r/mkOLGGHjndTvZCewXsBCv4wMgGEwbBT9vpdshtoKW/cgQqJuDWNlk+QZriksvWQ2zRlH3Nx
- yiM2kp0LqZSzo0tnuqWUwjinAzED/CajEnKbkXMkgLw2LW0glymiR4bALi9CPAXdLvIaKcr0/
- EWvUQYPm7gjEgv8jQA8EqN5b05+lXsVOgLidZanZJQabjXK1ClFk7RshOA4DruUhumQ3NOQdx
- WKvWv86E7Z3u2g+du/11tTNxWQw6xBcmKClnhTcChlP+JeqL+c4QIF3n+78BcDfByHjW6hSKl
- 0ioK70Su/aDg+7XUZxgFOLsh2Cg2nBortdO3W/YLw8mxk/9haUGCrgDVYc0pFnE46MgJQuC9P
- EhQa1aWLaqBlGX82qJuqqVBDYgQzQcFDUxO1Dligg/KKl4FELM8djkNCeytNBWilufIFpMO+Y
- aEn5+5amEZebRgrwFED3QS4ivL99DwBLr6WmIUwzMvrBYgnehIWDVlijqxhrgZJpX+TWzAoYG
- WZfGzYaH1cfnSmPFhB2o3Q9k7QRETF1e9IMhFuZ6RdriwIf8IccKG0MgfxTZFAeOvMUJ9sQcZ
- cXl9TIuop3QW/VDTk6Y2iQxZU2xZQsTxY5Kjgg6wpnZrAhuC43RkhPo7ojZbO4lkgv/9MrIu2
- Gspk/N+4JvMzLsbinJzSAkGAYXrfKeE9a210xeOLvs6JknRsV7h8mor4epkCUNEnvN6v+QIgT
- MWbhoGD5MYCikakXX++BU7D8KXVi9fcK4tBLuBdAulDNJU8xJoXDjkJben5OLGL7+Dq/CUaX3
- gw6dlNOHs32Ga57d1nJyoTmICjP8Glsz2ZD6omP/oTwUJfv4Cf3fihKdhHOjuJhSvU32CGx4o
- xR+EpzNvTMW8+pvTTSzFYnziGnXmaFOGCj0MsHVBWfor5UqvC78psl9BTYBY8cdwx6wAlF3TQ
- utFIPu5t15z0u9f9WMaLYtYoeg0=
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,FREEMAIL_FROM,
-        NICE_REPLY_A,RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c3e0b810-9f17-edb7-de6b-7849273381d0@nvidia.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2023/1/24 12:44, Keith Busch wrote:
-> On Tue, Jan 24, 2023 at 10:31:47AM +0800, Qu Wenruo wrote:
->> I'm wondering what would happen if we submit a read bio containing multiple
->> sectors, while the block disk driver/firmware has internal checksum and
->> found just one sector is corrupted (mismatch with its internal csum)?
->>
->> For example, we submit a read bio sized 16KiB, and the device is in 4K
->> sector size (like most modern HDD/SSD).
->> The corruption happens at the 2nd sector of the 16KiB.
->>
->> My instinct points to either of them:
->>
->> A) Mark the whole 16KiB bio as BLK_STS_IOERR
->>     This means even we have 3 good sectors, we have to treat them all as
->>     errors.
+On Mon, Jan 23, 2023 at 03:07:48PM -0800, John Hubbard wrote:
+> On 1/23/23 08:11, Jan Kara wrote:
+> > > For cifs RDMA, do I need to make it pass in FOLL_LONGTERM?  And does that need
+> > > a special cleanup?
+> > 
+> > FOLL_LONGTERM doesn't need a special cleanup AFAIK. It should be used
+> > whenever there isn't reasonably bound time after which the page is
+> > unpinned. So in case CIFS sets up RDMA and then it is up to userspace how
+> > long the RDMA is going to be running it should be using FOLL_LONGTERM. The
 > 
-> I believe BLK_STS_MEDIUM is the appropriate status for this scenario,
-> not IOERR. The MEDIUM errno is propogated up as ENODATA.
-> 
-> Finding specific failed sectors makes sense if a partial of the
-> originally requested data is useful. That's application specific, so the
-> retry logic should probably be driven at a higher level than the block
-> layer based on seeing a MEDIUM error.
+> Yes, we have been pretty consistently deciding that RDMA generally
+> implies FOLL_LONGTERM. (And furthermore, FOLL_LONGTERM implies
+> FOLL_PIN--that one is actually enforced by the gup/pup APIs.)
 
-Thanks a lot, that indeed makes more sense.
+That's weird.  For storage or file systems, pages are pinnen just as
+long when using RDMA as when using local DMA, in fact if you do RDMA
+to really fast remote media vs slow local media (e.g. SSD vs disk) you
+might pin it shorter when using RDMA.
 
-The retry for file read is indeed triggered inside VFS, not fs/block/dm 
-layer itself.
-
-Thanks,
-Qu
-> 
-> Some protocols can report partial transfers. If you trust the device,
-> you could know the first unreadable sector and retry from there.
-> 
-> Some protocols like NVMe optionally support querying which sectors are
-> not readable. We're not making use of that in kernel, but these kinds of
-> features exist if you need to know which LBAs to exclude for future
-> retries.
-> 
-> Outside that, you could search for specific unrecoverable LBAs with
-> split retries till you find them all, divide-and-conquer.
+I think FOLL_LONGTERM makes sense for non-ODP user space memory
+registrations for RDMA, which will last basically forever.  It does
+not really make much sense at all for in-kernel memory registration for
+RDMA that are very short term.
