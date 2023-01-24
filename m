@@ -2,103 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23CA0678E44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 03:32:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C93AA678E74
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 03:42:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232250AbjAXCb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 21:31:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51594 "EHLO
+        id S231245AbjAXCmc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 21:42:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbjAXCb6 (ORCPT
+        with ESMTP id S229605AbjAXCmb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 21:31:58 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A0F4CA11;
-        Mon, 23 Jan 2023 18:31:52 -0800 (PST)
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MZktZ-1pDnzm2aGN-00Wiw9; Tue, 24
- Jan 2023 03:31:50 +0100
-Message-ID: <5be2cd86-e535-a4ae-b989-887bf9c2c36d@gmx.com>
-Date:   Tue, 24 Jan 2023 10:31:47 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Content-Language: en-US
-To:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Subject: What would happen if the block device driver/firmware found some
- block of a bio is corrupted?
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Iyx1PrFreA9p+o88m4Se//lm7GE9UXRQDTqAXCMmTaYxZkdfOyp
- wCSYUjE0rScYrmB51TQRU3PQRyVNuxyOu7emeHeS2uK765RrI+sEk7RrxIOFlT31zdo1Tiz
- VkdPCxy+hhXY83fpzHCQ4ONd8BVDs+/Bv2QswjuXH3UgUs5p++0wXxdf+Q8AvBbrB975/71
- txFWodr2XvInANTTINdgA==
-UI-OutboundReport: notjunk:1;M01:P0:LiZ1+r0SKwI=;wIkOBFg+oAlzegDTn1GeIYuKNFr
- 5sNB/Y/7S/t+wvd1pn/0nkzjG+z+KNWoEirah2/iJ6FypCzWttJTrEcQMpMkgEjuv8vr9xYL+
- qKsezxi5KWe31vsV+eVCfV2/TZ7WidCdhs5U4uXo4oRWetiPbgCQ6MiL7TiQ1Y+z0w+YFu4gB
- 0pCNVSN9gXvwgosQi63ZjXgIVpEqSvOx4hyGrAgWZf9AIBgSNvH/7ShPbw1+zizas7D8NCzFE
- KVsysom/e9YLtbryqIokqW1JFTfeKnBKk0wDt0KdJLwHSg4LjUFhGvCfoCk5Z8vxKZ9afY41P
- rgHYRvQ+BYHTwWn+DTVWhl7qq/7LZoKaNEkm+9SXUTSij27mkayNmgGILozzKrGCUzc8w9wcM
- kEl+l9g0AGinEMzOI5dzlNA0h0SlpcsdMLzjNr6bo4yoBMDS1a3HnBjKa75EP0rdKdBrw+VmJ
- W8VFioXyUDSK6RQxXimNWN1niPiQRgR8GkZWzIkJpLgeTTN7s1RWAp9IAo6+bS49PyA5gKwwb
- mOQR3/aZez1uhPFO/ptdeHePNcYayYJ9bJhoACTunZQfpG5CAJIUyK1kRQwf8iKlozn9i/G3o
- FgYcupDhdUTSI0lizOzbWme0vdREHYsWqwe28MrslJzmIs7cAB8Qi4405KKt6zkve3YcE/hEw
- nB+vpcbSW/sMPicq63KKuQDANM5oHUVfekJmYUhH/XPQlINZ2tvxePXinMn1jFl+/ACaVFD5W
- srOI9Slkq/D/+yxvo+TmB2VNcTfF8k3bSsmp1lyaAO9Xqkypibt2SeQzLWyP7nBdRbSHNuWI+
- 4FYbRtKhsLxyCj73nIcuU0P+Bs/oQJQbhKGePZuv142egj4dgjp6ODDlUpuMmpywgL2+ZG8Is
- AkP2PkIJNp9coKzNGdoR0RBHhQhlfNnN8n8jXj4JtEqUJWQ6U4xbzessa83LpMipdBZ0gzubU
- PKK1pZqcsTjBZnKGbWpQb+h+5nY=
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 23 Jan 2023 21:42:31 -0500
+X-Greylist: delayed 479 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 Jan 2023 18:42:00 PST
+Received: from ms11p00im-qufo17282001.me.com (ms11p00im-qufo17282001.me.com [17.58.38.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 271BD3B0E5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 18:42:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+        s=1a1hai; t=1674527639;
+        bh=ZHNbCgWVVT7jpGNkzvsiuGGNtXGpfKi/ODrPRk3Scp4=;
+        h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
+        b=coIbI4uymHXeJssODSrKoxz6FRCUt02w3YoFk/9MPmKjOT/q17DjTXFQtM5TJmbGw
+         cY9v/z5W/epOACJRK3DlD1F4rGYrR9MDoKAT0noB/UdUMO047Rn4/vv3SYQ1QoDhAD
+         x3+PzupR2DQcyRYOb3Mpl3uaQ30HOZjQemcs7jmQuqFcLzKelhYQHPLvQsX3S4fxDu
+         ApKPpST0GDhlkVzcmL2edjLuXaUBZ/9q9GBy1tMCPUlo0Tw7QuOQaALC1EHxO9BHI8
+         Q+2yoYVmFFTwI5nG+b4e8WR6Zr87aXVUKeaZK2LP38J5CBwjGG3VIE8E+jLJYDgEw2
+         Y57G7sS7J8l3g==
+Received: from smtpclient.apple (ms11p00im-dlb-asmtpmailmevip.me.com [17.57.154.19])
+        by ms11p00im-qufo17282001.me.com (Postfix) with ESMTPSA id 5A7091E092A;
+        Tue, 24 Jan 2023 02:33:58 +0000 (UTC)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.300.101.1.3\))
+Subject: Re: [PATCH v2 00/10] Performance fixes for 9p filesystem
+From:   evanhensbergen@icloud.com
+In-Reply-To: <4478705.9R3AOq7agI@silver>
+Date:   Mon, 23 Jan 2023 20:33:46 -0600
+Cc:     Zhengchao Shao via V9fs-developer 
+        <v9fs-developer@lists.sourceforge.net>, asmadeus@codewreck.org,
+        Ron Minnich <rminnich@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CEE93F4D-7C11-4FE3-BB70-A9C865BE5BC2@icloud.com>
+References: <20221217183142.1425132-1-evanhensbergen@icloud.com>
+ <20221218232217.1713283-1-evanhensbergen@icloud.com>
+ <4478705.9R3AOq7agI@silver>
+To:     Christian Schoenebeck <linux_oss@crudebyte.com>
+X-Mailer: Apple Mail (2.3731.300.101.1.3)
+X-Proofpoint-ORIG-GUID: XO9m9q2upogfFOPd73bmfT3B9_AEbpYD
+X-Proofpoint-GUID: XO9m9q2upogfFOPd73bmfT3B9_AEbpYD
+X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c430a71ce266a39bfe25bc?=
+ =?UTF-8?Q?2903e8d5c8f:6.0.425,18.0.572,17.0.605.474.0000000_definitions?=
+ =?UTF-8?Q?=3D2022-01-14=5F01:2022-01-14=5F01,2020-02-14=5F11,2020-01-23?=
+ =?UTF-8?Q?=5F02_signatures=3D0?=
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 suspectscore=0 mlxlogscore=999 spamscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2301240019
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Well timed prompt, sorry =E2=80=94 I had been out of pocket while =
+traveling.  The WIPs in the development branch on GitHub are me working =
+my way through the dir-cache patches (which was intended as the next set =
+of patches after this one) =E2=80=94 but those are complimentary to this =
+set, so I=E2=80=99m about send out a [V3] without those so we can get =
+this into linux-next with enough time for some more exhaustive testing =
+before the next merge window.
 
-I'm wondering what would happen if we submit a read bio containing 
-multiple sectors, while the block disk driver/firmware has internal 
-checksum and found just one sector is corrupted (mismatch with its 
-internal csum)?
+I=E2=80=99m fine with funneling these through Dominique since he=E2=80=99s=
+ currently the active maintainer, but I=E2=80=99ve also re-established =
+kernel.org <http://kernel.org/> credentials so I can field the =
+pull-request if desired.
 
-For example, we submit a read bio sized 16KiB, and the device is in 4K 
-sector size (like most modern HDD/SSD).
-The corruption happens at the 2nd sector of the 16KiB.
-
-My instinct points to either of them:
-
-A) Mark the whole 16KiB bio as BLK_STS_IOERR
-    This means even we have 3 good sectors, we have to treat them all as
-    errors.
-
-B) Ignore the error mark the bio as BLK_STS_OK
-    This means higher layer must have extra ways to verify the contents.
-
-But my concern is, if we go path A), it means after a read bio failure, 
-we should try read again with much smaller block size, until we hit a 
-failure with one sector.
-
-IIRC VFS would do some retry, but otherwise the FS/driver layer needs to 
-do some internal work and hit an error, then they need to do the 
-split-and-retry manually.
-
-On the other hand path B) seems more straightforward, but the problem is 
-also obvious. Thankfully most fses are already doing checksum for their 
-metadata at least.
+          -Eric
 
 
-So what's the common solution in real world for device drivers/firmware?
-Path A/B or some other solution?
+> On Jan 23, 2023, at 10:31 AM, Christian Schoenebeck =
+<linux_oss@crudebyte.com> wrote:
+>=20
+> On Monday, December 19, 2022 12:22:07 AM CET Eric Van Hensbergen =
+wrote:
+>> This is the second version of a patch series which adds a number
+>> of features to improve read/write performance in the 9p filesystem.
+>> Mostly it focuses on fixing caching to help utilize the recently
+>> increased MSIZE limits and also fixes some problematic behavior
+>> within the writeback code.
+>>=20
+>> Altogether, these show roughly 10x speed increases on simple
+>> file transfers.  Future patch sets will improve cache consistency
+>> and directory caching.
+>>=20
+>> These patches are also available on github:
+>> https://github.com/v9fs/linux/tree/ericvh/9p-next
+>>=20
+>> Tested against qemu, cpu, and diod with fsx, dbench, and some
+>> simple benchmarks.
+>>=20
+>> Signed-off-by: Eric Van Hensbergen <evanhensbergen@icloud.com>
+>=20
+> Hi Eric,
+>=20
+> what's your plan on this series? I just had a look at your github repo =
+and saw
+> there is a lot of stuff marked as WIP.
+>=20
+> Best regards,
+> Christian Schoenebeck
+>=20
+>=20
 
-And should the upper layer do extra split-and-retry by themselves?
-I know btrfs scrub code and repair is doing such split-and-retry, but 
-not 100% sure if this is really needed or helpful in real world.
-
-Thanks,
-Qu
