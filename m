@@ -2,131 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A3332679F55
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 17:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D3E2679F61
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 18:01:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234186AbjAXQ7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 11:59:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60462 "EHLO
+        id S234576AbjAXRBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 12:01:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233259AbjAXQ7W (ORCPT
+        with ESMTP id S233657AbjAXRA7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 11:59:22 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBA1145BC1;
-        Tue, 24 Jan 2023 08:59:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=q20iUbFBo/EcilBlEOdYiKbbeE+E9KmIcH2y2ndCPzk=; b=LyEZb98S6B9XMIA36VIxeHHP10
-        CgK2aWuT4/E+GXo1cKuqntP1JpAv1b9g34KBlFRM2yvTpFsyYkjcBFEQED6r7RqnBEGZItbuiOTjB
-        CULh2BtVvwMGEYtPLK2d4sPM+0dGz1hxSG3dC7vm60GOVvXfvnebeUJelkYqEl94Ifcam5USBN+9G
-        LAejGHvl9T+qx/6TR8r3lbuW9Jmkpj1t7tYEadZRYpqmbxSvY1MaeJZeuOYp1vKJq2a+uYurbo0w7
-        /tDZGOdLxq15qt8QRHRtIP2Dp4REGGz+Mhw4Ok5Ad2EwwumdBlXwVJXHZfOkejeV4WZ9LJ10ol5KG
-        A5t+q5OQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pKMdd-004kcJ-Tw; Tue, 24 Jan 2023 16:59:13 +0000
-Date:   Tue, 24 Jan 2023 08:59:13 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v8 07/10] block: Switch to pinning pages.
-Message-ID: <Y9AOYXpU1cRAHfQz@infradead.org>
-References: <Y8/xApRVtqK7IlYT@infradead.org>
- <2431ffa0-4a37-56a2-17fa-74a5f681bcb8@redhat.com>
- <20230123173007.325544-1-dhowells@redhat.com>
- <20230123173007.325544-8-dhowells@redhat.com>
- <874829.1674571671@warthog.procyon.org.uk>
- <875433.1674572633@warthog.procyon.org.uk>
- <Y9AK+yW7mZ2SNMcj@infradead.org>
+        Tue, 24 Jan 2023 12:00:59 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D13146D4D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:00:56 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id z4-20020a17090a170400b00226d331390cso14605612pjd.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:00:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NvlI0i6tuIH+cEsFMK651QuzmfDYjvdOyfnJQ4mWPaM=;
+        b=fBCyoy0jsWCHcQ5tg6XSqYXIY6XFpXsrjLZ6mXT3WPizdVoFT6JVhQEWOkpHqjh6wd
+         ngsgH5NdU4lVbh05bTwLfzo8vbU25MvXhkW7NPzn049LZvVCtXWQ38wIYoIYkz3gtNlN
+         5YUbcMG5dqMJh67/3Z3i2GpSIA9l3JSInqAIhpIl1NkXTUjXaFXOqA5dEagK8pD/6z6y
+         x6Uw73dClMjkTkQx0hS/sjlyaxOGmjFopku5JE1XKSHnHHXmK/H3ALIIad9NX0SUR5di
+         ZbiNpEi1Y2sd/fQJ/WSWuycdhMHRhMbsEWnYRwc6HZn8+YIxs2nztaNFQaXsNjVH78uX
+         VF+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NvlI0i6tuIH+cEsFMK651QuzmfDYjvdOyfnJQ4mWPaM=;
+        b=You5z8AOSzwED8WaNxUuCbcVJBxybs0G1c3UazS9xIb5sGPH1oyLPbxr2b5hog3avZ
+         OlTnwYnHdT0tbTXoFL87jUrany+icND6lcAAW9kkXY+fMy+VIa4Kf4JKnHNazKycSRIw
+         3eT6c+cKO/7NvwOS1W0p9+udqvaB883yIVIyoWopphpCedQrGQ1lhreZOUct0uxYM1Z+
+         J0FG68dm7DKKk7f0QjgJ39/JSnWydEK2zXJXQyN4Anng2oohsSFA79EvwJDWBxMsqyrs
+         w+8y5ThPdV6z+KPD7M/9xhveeHYPO2pBp6DsIgv3+ShkBrowGAN675DwfrdMvRxCBJUO
+         cweQ==
+X-Gm-Message-State: AFqh2kqA/OHybbTlbnBUxkYpCW0HIr+Pi7L2raMiwmHvAAApsSZmm+7O
+        SFsfRPmsLD3WFTuwfHJ/YiHGvulkgv9Da6MAHFm//KK3EDcAwfI=
+X-Google-Smtp-Source: AMrXdXs5LwusCrxpDA+RsriJbYMYR5uAig0mVQQF9cpIROxbArDIWF2uu/OmQcjY4r+XZtUpmQv4jd4LezcJvj0+/Zk=
+X-Received: by 2002:a17:90a:17a1:b0:229:9ffe:135b with SMTP id
+ q30-20020a17090a17a100b002299ffe135bmr3346473pja.72.1674579655647; Tue, 24
+ Jan 2023 09:00:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y9AK+yW7mZ2SNMcj@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
+ <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
+ <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
+ <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com> <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
+In-Reply-To: <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 24 Jan 2023 12:00:46 -0500
+Message-ID: <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, serge@hallyn.com,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the incremental patch.  Doesn't do the FOLL_PIN to bool
-conversion for the extra helper yet, and needs to be folded into the
-original patches still.
+On Tue, Jan 24, 2023 at 5:16 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> On 1/23/23, Paul Moore <paul@paul-moore.com> wrote:
+> > On Fri, Jan 20, 2023 at 7:50 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >> On 1/20/23, Paul Moore <paul@paul-moore.com> wrote:
+> >> > On Mon, Jan 16, 2023 at 4:21 PM Mateusz Guzik <mjguzik@gmail.com>
+> >> > wrote:
+> >> >>
+> >> >> access(2) remains commonly used, for example on exec:
+> >> >> access("/etc/ld.so.preload", R_OK)
+> >> >>
+> >> >> or when running gcc: strace -c gcc empty.c
+> >> >> % time     seconds  usecs/call     calls    errors syscall
+> >> >> ------ ----------- ----------- --------- --------- ----------------
+> >> >>   0.00    0.000000           0        42        26 access
+> >> >>
+> >> >> It falls down to do_faccessat without the AT_EACCESS flag, which in
+> >> >> turn
+> >> >> results in allocation of new creds in order to modify fsuid/fsgid and
+> >> >> caps. This is a very expensive process single-threaded and most
+> >> >> notably
+> >> >> multi-threaded, with numerous structures getting refed and unrefed on
+> >> >> imminent new cred destruction.
+> >> >>
+> >> >> Turns out for typical consumers the resulting creds would be identical
+> >> >> and this can be checked upfront, avoiding the hard work.
+> >> >>
+> >> >> An access benchmark plugged into will-it-scale running on Cascade Lake
+> >> >> shows:
+> >> >> test    proc    before  after
+> >> >> access1 1       1310582 2908735  (+121%)  # distinct files
+> >> >> access1 24      4716491 63822173 (+1353%) # distinct files
+> >> >> access2 24      2378041 5370335  (+125%)  # same file
+> >> >
+> >> > Out of curiosity, do you have any measurements of the impact this
+> >> > patch has on the AT_EACCESS case when the creds do need to be
+> >> > modified?
+> >>
+> >> I could not be arsed to bench that. I'm not saying there is literally 0
+> >> impact, but it should not be high and the massive win in the case I
+> >> patched imho justifies it.
+> >
+> > That's one way to respond to an honest question asking if you've done
+> > any tests on the other side of the change.  I agree the impact should
+> > be less than the advantage you've shown, but sometimes it's nice to
+> > see these things.
+>
+> So reading this now I do think it was worded in quite a poor manner, so
+> apologies for that.
 
+Thanks, but no worries.  Work in this space long enough and everyone
+eventually ends up sending a mail or two that could have been worded
+better, myself included.
 
-diff --git a/block/bio.c b/block/bio.c
-index 6dc54bf3ed27d4..bd8433f3644fd7 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1170,14 +1170,20 @@ bool bio_add_folio(struct bio *bio, struct folio *folio, size_t len,
- 
- void __bio_release_pages(struct bio *bio, bool mark_dirty)
- {
--	unsigned int gup_flags = bio_to_gup_flags(bio);
-+	bool pinned = bio_flagged(bio, BIO_PAGE_PINNED);
-+	bool reffed = bio_flagged(bio, BIO_PAGE_REFFED);
- 	struct bvec_iter_all iter_all;
- 	struct bio_vec *bvec;
- 
- 	bio_for_each_segment_all(bvec, bio, iter_all) {
- 		if (mark_dirty && !PageCompound(bvec->bv_page))
- 			set_page_dirty_lock(bvec->bv_page);
--		page_put_unpin(bvec->bv_page, gup_flags);
-+
-+		if (pinned)
-+			unpin_user_page(bvec->bv_page);
-+		/* this can go away once direct-io.c is converted: */
-+		else if (reffed)
-+			put_page(bvec->bv_page);
- 	}
- }
- EXPORT_SYMBOL_GPL(__bio_release_pages);
-diff --git a/block/blk.h b/block/blk.h
-index 294044d696e09f..a16d4425d2751c 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -430,27 +430,19 @@ int bio_add_hw_page(struct request_queue *q, struct bio *bio,
-  */
- static inline void bio_set_cleanup_mode(struct bio *bio, struct iov_iter *iter)
- {
--	unsigned int cleanup_mode = iov_iter_extract_mode(iter);
--
--	if (cleanup_mode & FOLL_GET)
--		bio_set_flag(bio, BIO_PAGE_REFFED);
--	if (cleanup_mode & FOLL_PIN)
-+	if (iov_iter_extract_mode(iter) & FOLL_PIN)
- 		bio_set_flag(bio, BIO_PAGE_PINNED);
- }
- 
--static inline unsigned int bio_to_gup_flags(struct bio *bio)
--{
--	return (bio_flagged(bio, BIO_PAGE_REFFED) ? FOLL_GET : 0) |
--		(bio_flagged(bio, BIO_PAGE_PINNED) ? FOLL_PIN : 0);
--}
--
- /*
-  * Clean up a page appropriately, where the page may be pinned, may have a
-  * ref taken on it or neither.
-  */
- static inline void bio_release_page(struct bio *bio, struct page *page)
- {
--	page_put_unpin(page, bio_to_gup_flags(bio));
-+	WARN_ON_ONCE(bio_flagged(bio, BIO_PAGE_REFFED));
-+	if (bio_flagged(bio, BIO_PAGE_PINNED))
-+		unpin_user_page(page);
- }
- 
- struct request_queue *blk_alloc_queue(int node_id);
+> Wording aside, I don't know whether this is just a passing remark or
+> are you genuinely concerned about the other case.
+
+My main concern is the duplication between the cred check and the cred
+override functions leading to a bug at some unknown point in the
+future.  Changes to credential checking, and access control in
+general, always gets my attention and due to past bruises I'm very
+sensitive to out-of-sync issues due to code duplication; so your patch
+was a bit of a "perfect storm" of concern for me :)
+
+The profiling questions were mainly there as a curiosity since it
+looked like this was part of a larger performance oriented effort and
+I thought you might have more data that didn't make it into the commit
+description.
+
+> >> These funcs are literally next to each other, I don't think that is easy
+> >> to miss. I concede a comment in access_override_creds to take a look at
+> >> access_need_override_creds would not hurt, but I don't know if a resend
+> >> to add it is justified.
+> >
+> > Perhaps it's because I have to deal with a fair amount of code getting
+> > changed in one place and not another, but I would think that a comment
+> > would be the least one could do here and would justify a respin.
+>
+> I'm not going to *insist* on not adding that comment.
+>
+> Would this work for you?
+>
+> diff --git a/fs/open.c b/fs/open.c
+> index 3c068a38044c..756177b94b04 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -407,6 +407,11 @@ static const struct cred *access_override_creds(void)
+>         if (!override_cred)
+>                 return NULL;
+>
+> +       /*
+> +        * XXX access_need_override_creds performs checks in hopes of
+> +        * skipping this work. Make sure it stays in sync if making any
+> +        * changes here.
+> +        */
+>         override_cred->fsuid = override_cred->uid;
+>         override_cred->fsgid = override_cred->gid;
+>
+> if not, can you phrase it however you see fit for me to copy-paste?
+
+That wording looks good to me and would help me feel a bit better
+about this change, thank you.
+
+-- 
+paul-moore.com
