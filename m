@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AB8767A020
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 18:27:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50F3E67A030
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 18:31:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234040AbjAXR1B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 12:27:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58848 "EHLO
+        id S234367AbjAXRbZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 12:31:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233668AbjAXR07 (ORCPT
+        with ESMTP id S234335AbjAXRbT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 12:26:59 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C084CE54
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:26:14 -0800 (PST)
+        Tue, 24 Jan 2023 12:31:19 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2352485B3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:30:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674581173;
+        s=mimecast20190719; t=1674581438;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=x1//lKxOSoW8HByrjyrd9SNUigcEe/d5fAJWdteeAwY=;
-        b=eA4CPmdYLdBkEdb03f5ztZPN2GoIevibFfTKykADN+rSdyfzZPZoEt9Vd/WSUajFVoRhjt
-        Q7GCulxG8Xw5H4cd883tZGKQmZWncQuHjs/16xl5XbPKMSylU0xu6Odpb+hDwmLx59SHn4
-        1Gq6nj7fp3zwUN2bmbjrrw4T8HmF0Xo=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=VFq/mNBnI/BqcjC2peFCYxWVr3CPoW0svWlbdoxg4JQ=;
+        b=iaVNqMV+o36ot74qp1buCHGxLGj1WVTI1crGPDK3zWTyOVPc2LEoKx8h4fV8WW98zAHzMn
+        PERWH3KNXlrlqPmwPMB0KneJbVBn1/WovaxJmRAoMrFejZEZknbq7/We2rd2ozDszvqj8w
+        PptJ1IvAYMcGx2gf//cjwa3oV9kOkvw=
+Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com
+ [209.85.217.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-537-cuiSh1deM9OCacB392ypXQ-1; Tue, 24 Jan 2023 12:26:12 -0500
-X-MC-Unique: cuiSh1deM9OCacB392ypXQ-1
-Received: by mail-yb1-f199.google.com with SMTP id z17-20020a256651000000b007907852ca4dso17049073ybm.16
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:26:12 -0800 (PST)
+ us-mta-544-ymodDYAcMBef0dcKRhjI1Q-1; Tue, 24 Jan 2023 12:30:36 -0500
+X-MC-Unique: ymodDYAcMBef0dcKRhjI1Q-1
+Received: by mail-vs1-f70.google.com with SMTP id a62-20020a671a41000000b003c08f2a8d7bso3840773vsa.14
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 09:30:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x1//lKxOSoW8HByrjyrd9SNUigcEe/d5fAJWdteeAwY=;
-        b=Hy+UZUc5h/4oO4dHmgEagtEWomZ4r8cfMa+1BZqKObzZwxIb9PoKIvIen123btAILE
-         tY/yFOdPXcZME6pX7wm54/Jdw3TCRxcuw+EMGPACqGRqDkT6RWIxuO6ifNKt9OwnzUY6
-         jjoUQ5KRzcyXZEGD5Umt8EsGvr9VvlPivSf9X6ZZ7/gYCsDIO2Csl2byNzPexua07Bv/
-         NoJP4894sD+nF+2UMHaLlq6Wl0hLm64cviVdtbRxtf4fg87oB6tNMmrLFQEdXlL4Jcd1
-         fvuCjQbGcktMoJDK4za9RXjBGnFfG4CS/UMjRVgBqnqiFlbjVIMy7jDRLzILMmyB6wPC
-         oVsw==
-X-Gm-Message-State: AFqh2kr4I73E6L0J++OvbpIx8nEm/fCL/nIK3PGBnfZMT9o+IvhkTECi
-        1WtU3G2sgKLAPIZje/H6WSLOPaFkSZIopyP89NnqjH3799q6apLljjZB5KK+K5K5hxL1HPyCe8Q
-        wMfuTFlchP1Z8DXXSiyL3aQzbeA==
-X-Received: by 2002:a81:8187:0:b0:466:b529:e379 with SMTP id r129-20020a818187000000b00466b529e379mr20203124ywf.27.1674581171809;
-        Tue, 24 Jan 2023 09:26:11 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXuntBE/q4AbbQoO+OesA9EZ1i3Bp0xsn0vakOkRw+wyHlq3Frgixzl4rdgMcorwGfrkChzC1w==
-X-Received: by 2002:a81:8187:0:b0:466:b529:e379 with SMTP id r129-20020a818187000000b00466b529e379mr20203110ywf.27.1674581171581;
-        Tue, 24 Jan 2023 09:26:11 -0800 (PST)
+        bh=VFq/mNBnI/BqcjC2peFCYxWVr3CPoW0svWlbdoxg4JQ=;
+        b=JxIXFQcEWceTGB8c1kPzbGFfH8ZmJvXF2JdnIITzGdT5wcj+SJ0ftVs0BVEwv30T+F
+         AgnUaVzywouthj3rsdIH48nCyTaYAB2awgyzAiDDuGze2xBRKg9DwivAGuralC+Arjoi
+         x3Fig88pSUO9FcZY/RCKBqJj5ZYVsHqkCuxnTtL2vdZfLDK5PKak60yRTdv7KFJBeck0
+         hwp2c75kaVYpJe8jcgzGzH5+LhP6LewEow5kaR4QW+knY7EQI8dkovkYPkgDrHFI+tBU
+         +cKILFuPURvu2b58SxrosKngy3FcUkn6QTgCWmQLqClkHZtI+V4dddc4cG9jSsZCUv2C
+         FytQ==
+X-Gm-Message-State: AFqh2kqqKPN2jP5bZzcb35j3Ikt0oOjKNIAzVRmEp7BLgJ4u68K3uwiM
+        utV41EJXF7/fHYBZ47MAw4T4XJJWkTsPu1yECDqIilBxndP9BhukXqCLO+Gf6u41EFDei51VsdJ
+        q4baaV9H+07w7+C2l9wGXevTTvw==
+X-Received: by 2002:a05:6102:3d86:b0:3b1:4999:1729 with SMTP id h6-20020a0561023d8600b003b149991729mr18463170vsv.32.1674581435823;
+        Tue, 24 Jan 2023 09:30:35 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXsyS/lviwCEpx4hKAW3VXvWWIWezeP2/jZ5CCZZkaNf6ca5wcGThV91c0/XonyDxlB64+l5aw==
+X-Received: by 2002:a05:6102:3d86:b0:3b1:4999:1729 with SMTP id h6-20020a0561023d8600b003b149991729mr18463141vsv.32.1674581435542;
+        Tue, 24 Jan 2023 09:30:35 -0800 (PST)
 Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
-        by smtp.gmail.com with ESMTPSA id n22-20020a05620a223600b006fa22f0494bsm1736320qkh.117.2023.01.24.09.26.09
+        by smtp.gmail.com with ESMTPSA id s133-20020a37a98b000000b00706afbdeb01sm1799074qke.8.2023.01.24.09.30.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 09:26:10 -0800 (PST)
-Date:   Tue, 24 Jan 2023 12:26:08 -0500
+        Tue, 24 Jan 2023 09:30:34 -0800 (PST)
+Date:   Tue, 24 Jan 2023 12:30:32 -0500
 From:   Peter Xu <peterx@redhat.com>
 To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
 Cc:     David Hildenbrand <david@redhat.com>,
@@ -83,19 +83,17 @@ Cc:     David Hildenbrand <david@redhat.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
         Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v7 1/4] userfaultfd: Add UFFD WP Async support
-Message-ID: <Y9AUsCxgitOI2lUA@x1n>
+Subject: Re: [PATCH v7 3/4] fs/proc/task_mmu: Implement IOCTL to get and/or
+ the clear info about PTEs
+Message-ID: <Y9AVuF63y9UjEYcj@x1n>
 References: <20230109064519.3555250-1-usama.anjum@collabora.com>
- <20230109064519.3555250-2-usama.anjum@collabora.com>
- <Y8gkY8OlnOwvlkj4@x1n>
- <0bed5911-48b9-0cc2-dfcf-d3bc3b0e8388@collabora.com>
- <Y8lxW5YtD6MX61WD@x1n>
- <Y8qq0dKIJBshua+X@x1n>
- <328f54c1-171f-22a1-10c9-8b7a25bd8027@collabora.com>
+ <20230109064519.3555250-4-usama.anjum@collabora.com>
+ <Y8hyqhgx41/ET7bC@x1n>
+ <31b71791-66b0-c2d8-81da-e17eff5ffbe8@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <328f54c1-171f-22a1-10c9-8b7a25bd8027@collabora.com>
+In-Reply-To: <31b71791-66b0-c2d8-81da-e17eff5ffbe8@collabora.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -106,22 +104,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 23, 2023 at 03:11:20PM +0500, Muhammad Usama Anjum wrote:
-> > One thing worth mention is, I think for async wp it doesn't need to be
-> > restricted by UFFD_USER_MODE_ONLY, because comparing to the sync messages
-> > it has no risk of being utilized for malicious purposes.
-> I think with updated handling path updated in do_wp_page() and
-> wp_huge_pmd() in version, UFFD_USER_MODE_ONLY will not affect us.
+On Mon, Jan 23, 2023 at 05:18:13PM +0500, Muhammad Usama Anjum wrote:
+> >> +	if (IS_GET_OP(p) && p->max_pages && (p->found_pages == p->max_pages))
+> >> +		return -ENOSPC;
+> > 
+> > This is the function to test "whether the walker should walk the vma
+> > specified".  This check should IIUC be meaningless because found_pages
+> > doesn't boost during vma switching, while OTOH your pmd walker fn should do
+> > proper check when increasing found_pages and return -ENOSPC properly when
+> > the same condition met.  That should be enough, IMHO.
+> This check is needed in case we want to abort the walk at once. We return
+> negative value from here which aborts the walk. Returning negative value
+> from pmd_entry doesn't abort the walk. So this check is needed in the
+> test_walk.
 
-This is more or less a comment for the design, the new code should work (by
-bypassing handle_userfaultfd(), where this bit was checked).
+Why?  What I see locally is (walk_pmd_range):
 
-We'll need an man page update if this feature will be merged [1], and if so
-it'll need to be updated for the UFFD_USER_MODE_ONLY section regarding to
-async uffd-wp support too.  I think that can also be worked out after the
-series being accepted first, so just a heads up.
+		if (ops->pmd_entry)
+			err = ops->pmd_entry(pmd, addr, next, walk);
+		if (err)
+			break;
 
-[1] https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git
+Thanks,
 
 -- 
 Peter Xu
