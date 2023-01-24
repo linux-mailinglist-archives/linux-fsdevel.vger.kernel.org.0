@@ -2,67 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E00667A1B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 19:46:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80E3467A194
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 19:43:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234152AbjAXSqO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 13:46:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51414 "EHLO
+        id S234085AbjAXSnP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 13:43:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233756AbjAXSqL (ORCPT
+        with ESMTP id S233977AbjAXSnE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 13:46:11 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AE884DE3D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 10:45:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674585912;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dYpdPXdEFf48+Fw8paU8lVXvr14u0ENB9v6e/C9UfnU=;
-        b=ZbEp4uF7gZUGd+hylkGUSsyqqH8bJS0lAKep21jK1AA61YKQANySQqGesgZfz/ONXoktRp
-        3l52CWXdHtw+9dXRBWSuEOqEwF1r3hxc6KSau5DpExJ0+RnBTqXYWO+ryaw+PqXsNZzu15
-        dLOZuhupr2E7skOpzP/OzwwFHL8YiRA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-98-Ddn31EIsP36hlkHGu4IzTA-1; Tue, 24 Jan 2023 13:38:52 -0500
-X-MC-Unique: Ddn31EIsP36hlkHGu4IzTA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2DBFF811E6E;
-        Tue, 24 Jan 2023 18:38:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BFE2AC15BA0;
-        Tue, 24 Jan 2023 18:38:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <2172496c-2cd2-a2c8-9ddb-cd7d56bcfc75@redhat.com>
-References: <2172496c-2cd2-a2c8-9ddb-cd7d56bcfc75@redhat.com> <Y8/xApRVtqK7IlYT@infradead.org> <2431ffa0-4a37-56a2-17fa-74a5f681bcb8@redhat.com> <20230123173007.325544-1-dhowells@redhat.com> <20230123173007.325544-8-dhowells@redhat.com> <874829.1674571671@warthog.procyon.org.uk> <875433.1674572633@warthog.procyon.org.uk> <Y9AK+yW7mZ2SNMcj@infradead.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     dhowells@redhat.com, Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v8 07/10] block: Switch to pinning pages.
+        Tue, 24 Jan 2023 13:43:04 -0500
+Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19209166DE;
+        Tue, 24 Jan 2023 10:42:57 -0800 (PST)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-15b9c93848dso18749142fac.1;
+        Tue, 24 Jan 2023 10:42:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wiC7R/H94hYc1SsjxtFjmBRg+lLwk6SCWMFgpc1MdSs=;
+        b=TWgfRWQ1fiNK9XA0MeyWCulPPMMPqNScBqLHRvlK6asoKbQj9I0w6ySJijKI+mhMT8
+         pRnZDojAvcUNveVWtL1UWkAJ6zTSCUAbo5UNdTdmSaW6AV/Wr33UDUBcr6cO+2pHFkwe
+         G/piuIrO5Vb167eQnFEvCsEi1aq8oJzQSZjLzScoLNLbF5GdveawKeGu0G2+8/tGRMbl
+         E9ajFnwZuXJNlk/ROCjHZzvanQHNAUxvWie/YsD3BvzPxx5DpEoGTePvjKBYSvAbcQEe
+         MLrcimPt1cSVDJ+Q9Detk45kXFYiVobuCsfoRzp3IWBharfpwmF1HBtC87H3MSYidHIG
+         gdag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wiC7R/H94hYc1SsjxtFjmBRg+lLwk6SCWMFgpc1MdSs=;
+        b=0UBYV48mrppEyAaHGAAaa5036iKRK4Kl0D8mbLvPcQcGO7U7+Kf4AmBVG0E5dYSM80
+         GkB9vQDnvgiUW93Yhle3wHkSoUOybHfH1LvDiD6zGzEfgsoQoLBwmdE6fBk03fg7im3n
+         es8AhKSLdz69Ruuvuz9GIcUs6TEm+OEfU/WjB6H4G2cFvKeB721h6ezNKkVWCebvk9/H
+         FOvlybTSx4nv2QUMTCQcxPxiEjLpUhCVwmFy6ej2t7bxuPcHaACsiE8n2o0SZyZAHZQT
+         Go6FDeMNa68soYWyw8tK34XL69GS+qxODHOqM9CUTK44m3Ce8QQjYBTKrS3UlAvKsosD
+         4kDg==
+X-Gm-Message-State: AO0yUKVgFtHjyK+Cm2QAC9bsAaQQQNO8ZrQW2iidzotLT4UIQ/AbgWpj
+        f7w3X/yF02TX+eMuqPrXq45Rc1yAClEH3zMaKEs=
+X-Google-Smtp-Source: AK7set/yUllb1k65k/qoEf6g8aCEBffXa0VIT5A8LJQ/UtfJd94cYwGOrF92P7dAa0f9KBNc/egCyQP7T7Rgfgrct00=
+X-Received: by 2002:a05:6870:1115:b0:163:1d2a:aa5d with SMTP id
+ 21-20020a056870111500b001631d2aaa5dmr124635oaf.81.1674585776376; Tue, 24 Jan
+ 2023 10:42:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1291741.1674585530.1@warthog.procyon.org.uk>
-Date:   Tue, 24 Jan 2023 18:38:50 +0000
-Message-ID: <1291742.1674585530@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+Received: by 2002:a8a:ad6:0:b0:49c:e11d:f815 with HTTP; Tue, 24 Jan 2023
+ 10:42:55 -0800 (PST)
+In-Reply-To: <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com>
+References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
+ <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
+ <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
+ <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com>
+ <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
+ <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com> <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Tue, 24 Jan 2023 19:42:55 +0100
+Message-ID: <CAGudoHG22iS3Bt1rh_kEJDEstj3r1Mj4Z305vqRbP8vBjQZ3dg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
+        serge@hallyn.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,13 +75,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Hildenbrand <david@redhat.com> wrote:
+On 1/24/23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Tue, Jan 24, 2023 at 9:00 AM Paul Moore <paul@paul-moore.com> wrote:
+>>
+>> My main concern is the duplication between the cred check and the cred
+>> override functions leading to a bug at some unknown point in the
+>> future.
+>
+> Yeah, it might be good to try to have some common logic for this,
+> although it's kind of messy.
+>
+> The access_override_creds() logic is fairly different from the "do I
+> need to create new creds" decision, since instead of *testing* whether
+> the fs[ug]id and [ug]id matches, it just sets the fs[ug]id to the
+> expected values.
+>
+> So that part of the test doesn't really exist.
+>
+> And the same is true of the !SECURE_NO_SETUID_FIXUP logic case - the
+> current access() override doesn't _test_ those variables for equality,
+> it just sets them.
+>
+> So Mateusz' patch doesn't really duplicate any actual logic, it just
+> has similarities in that it checks "would that new cred that
+> access_override_creds() would create be the same as the old one".
+>
+> So sharing code is hard, because the code is fundamentally not the same.
+>
+> The new access_need_override_creds() function is right next to the
+> pre-existing access_override_creds() one, so at least they are close
+> to each other. That may be the best that can be done.
+>
+> Maybe some of the "is it the root uid" logic could be shared, though.
+> Both cases do have this part in common:
+>
+>         if (!issecure(SECURE_NO_SETUID_FIXUP)) {
+>                 /* Clear the capabilities if we switch to a non-root user
+> */
+>                 kuid_t root_uid = make_kuid(override_cred->user_ns, 0);
+>                 if (!uid_eq(override_cred->uid, root_uid))
+>
+> and that is arguably the nastiest part of it all.
+>
+> I don't think it's all that likely to change in the future, though
+> (except for possible changes due to user_ns re-orgs, but then changing
+> both would be very natural).
+>
 
-> In case this series gets resend (which I assume), it would be great to CC
-> linux-mm on the whole thing.
+You could dedup make_kuid + uid_eq check, but does it really buy
+anything?
 
-v9 is already posted, but I hadn't added linux-mm to it.  I dropped all the
-bits that touched the mm side of things.
+ns changes which break compilation will find both spots. Similarly
+any grep used to find one should also automagically find the other
+one.
 
-David
+I think this patch generated way more discussion than it warrants,
+especially since I deliberately went for the trivial approach in
+hopes of avoiding this kind of stuff.
 
+So how about I simply respin with the comment I mailed earlier,
+repasted here for reference (with a slight tweak):
+
+diff --git a/fs/open.c b/fs/open.c
+index 3c068a38044c..756177b94b04 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -407,6 +407,11 @@ static const struct cred *access_override_creds(void)
+        if (!override_cred)
+                return NULL;
+
++       /*
++        * XXX access_need_override_creds performs checks in hopes of
++        * skipping this work. Make sure it stays in sync if making any
++        * changes in this routine.
++        */
+        override_cred->fsuid = override_cred->uid;
+        override_cred->fsgid = override_cred->gid;
+
+sounds like a plan?
+
+-- 
+Mateusz Guzik <mjguzik gmail.com>
