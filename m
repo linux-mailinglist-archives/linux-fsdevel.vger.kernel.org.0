@@ -2,78 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED59567A408
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 21:38:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E1AF67A417
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 21:42:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234071AbjAXUh6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 15:37:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48022 "EHLO
+        id S233568AbjAXUmu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 15:42:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233544AbjAXUh4 (ORCPT
+        with ESMTP id S229546AbjAXUmt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 15:37:56 -0500
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B130946D4A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 12:37:54 -0800 (PST)
-Received: by mail-qt1-x82d.google.com with SMTP id s4so14207152qtx.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 12:37:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cZljQXUAv1zGBqD9bK2Eq8FCbMFjab23U5zice80vuU=;
-        b=X002AKiZUf3hGcCKm5944aKx1gFXf+DZmQLKkow8NxeqbeQinBQkAPxXNfzd9giWWq
-         TePtDtrs0p7XlQAKo2pQMD+w5W95gdaCOTzMjQva9NwhVLL7pPqWnJDfCvgtxZ4iqDEV
-         wFUNFn3c5X3JOQuGaOe3xp+xT7JmtXqB7s2jc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cZljQXUAv1zGBqD9bK2Eq8FCbMFjab23U5zice80vuU=;
-        b=BaGSQhsBhmm84y+ajpBZCHyNQnBH5Ami7zZZRsjY1Hz4MtpWjCGX87SD9efLL4gQQV
-         9uKRefMavzYXPU51sBICeZtUT5gA1FjRXqHRyJ9Wp9jYUWSiQNDSoONFP3BgaBbb1Dco
-         +Wh6GnURVxzvxf8R0vdAU2w6Zh2ivpXSBBUP6tYltjLStHD1ChO64YPgKVcpXAE33ExE
-         yRCpZN0yAWqm2d7aNoT8qsmxVWBqY2tU1Bxq0hSGvcQ8aIJm1PMbNEx7aMewZk4PbXaC
-         RA1cP1H6ZaTigWPy22+2HSAJRnWDDHtyksHfExzweYqGhBLWPV26XB6Zg3p2obPopytN
-         qdTQ==
-X-Gm-Message-State: AFqh2kq7dESmBmXIroP34ke2fTtstvuDP87dg7JaivtULA2Rnk+EXw3R
-        qqZCL/nz0ZrnGlrFzoRV16F2Qnfqau7YZe0/
-X-Google-Smtp-Source: AMrXdXvexsNo0fs7E1valIuGRvg87dClt3x2iR0rJ0ORCwKxIDrPWWIqqMULEf4MAWF2JYcXhMwIZQ==
-X-Received: by 2002:ac8:748e:0:b0:3b6:2e37:3394 with SMTP id v14-20020ac8748e000000b003b62e373394mr37676101qtq.27.1674592673581;
-        Tue, 24 Jan 2023 12:37:53 -0800 (PST)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com. [209.85.222.172])
-        by smtp.gmail.com with ESMTPSA id h11-20020ac8776b000000b003b62e9c82ebsm1871277qtu.48.2023.01.24.12.37.52
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jan 2023 12:37:53 -0800 (PST)
-Received: by mail-qk1-f172.google.com with SMTP id x26so8801887qkj.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 12:37:52 -0800 (PST)
-X-Received: by 2002:a37:6387:0:b0:706:92f4:125 with SMTP id
- x129-20020a376387000000b0070692f40125mr1629012qkb.72.1674592672602; Tue, 24
- Jan 2023 12:37:52 -0800 (PST)
+        Tue, 24 Jan 2023 15:42:49 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C68E24DCE7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 12:42:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674592922;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3huE8CdVQlsjcqy3c/Rtnp6KMjNzs41mKKeUkR+HEO0=;
+        b=HJZ5CLiERpClvW6bv14+qfOcgh22keIZmL4gxCLkln1fs9RBj0wAdb1TkVGjZl14NmKxcW
+        kwSxAUlGA6s7SfgBEBD1vXb2lU6fefbBIPxRqjZQbAWIOsd/hB8lRnZgLiHNzSjeZ7ar6q
+        pBlzrIhJLythvg5C/LDCTeWaudWJIe8=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-322-F4JiLlV8Pl66PD56XCXeWg-1; Tue, 24 Jan 2023 15:41:56 -0500
+X-MC-Unique: F4JiLlV8Pl66PD56XCXeWg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2457D3804501;
+        Tue, 24 Jan 2023 20:41:56 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 36309400D795;
+        Tue, 24 Jan 2023 20:41:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y9Aq7eJ/RKSDiliq@infradead.org>
+References: <Y9Aq7eJ/RKSDiliq@infradead.org> <20230124170108.1070389-1-dhowells@redhat.com> <20230124170108.1070389-4-dhowells@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 3/8] iomap: Don't get an reference on ZERO_PAGE for direct I/O block zeroing
 MIME-Version: 1.0
-References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
- <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
- <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
- <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com>
- <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
- <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
- <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com> <CAGudoHG22iS3Bt1rh_kEJDEstj3r1Mj4Z305vqRbP8vBjQZ3dg@mail.gmail.com>
-In-Reply-To: <CAGudoHG22iS3Bt1rh_kEJDEstj3r1Mj4Z305vqRbP8vBjQZ3dg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 24 Jan 2023 12:37:36 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjzniFhDkfXzE4r9NDxsneKD3hkxzq7tHvjfbgr2ZdhEg@mail.gmail.com>
-Message-ID: <CAHk-=wjzniFhDkfXzE4r9NDxsneKD3hkxzq7tHvjfbgr2ZdhEg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
-        serge@hallyn.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1296568.1674592913.1@warthog.procyon.org.uk>
+Date:   Tue, 24 Jan 2023 20:41:53 +0000
+Message-ID: <1296569.1674592913@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,11 +71,17 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 24, 2023 at 10:42 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
->
-> So how about I simply respin with the comment I mailed earlier,
-> repasted here for reference (with a slight tweak):
+Christoph Hellwig <hch@infradead.org> wrote:
 
-Ack, that's probably the way to go,
+> On Tue, Jan 24, 2023 at 05:01:03PM +0000, David Howells wrote:
+> > ZERO_PAGE can't go away, no need to hold an extra reference.
+> > 
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > Reviewed-by: David Hildenbrand <david@redhat.com>
+> 
+> If you send this on this needs your signoff as well, btw.
 
-         Linus
+Um.  You quoted my signoff.  Do you mean your signoff?
+
+David
+
