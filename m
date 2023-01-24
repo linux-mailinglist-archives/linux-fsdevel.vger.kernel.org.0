@@ -2,178 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88B1C679C25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 15:40:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71593679C3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 15:42:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233593AbjAXOku (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 09:40:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52634 "EHLO
+        id S235037AbjAXOms (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 09:42:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231246AbjAXOkt (ORCPT
+        with ESMTP id S234310AbjAXOma (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 09:40:49 -0500
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1067E1BF2;
-        Tue, 24 Jan 2023 06:40:46 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0Va7l73x_1674571240;
-Received: from 172.20.10.3(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Va7l73x_1674571240)
-          by smtp.aliyun-inc.com;
-          Tue, 24 Jan 2023 22:40:42 +0800
-Message-ID: <1d65be2f-6d3a-13c6-4982-66bbb0f9b530@linux.alibaba.com>
-Date:   Tue, 24 Jan 2023 22:40:39 +0800
+        Tue, 24 Jan 2023 09:42:30 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B7D84A203
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 06:41:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674571300;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=d37L5XoD9UmKyFiIbLoq3/jcaRqHcwYhpCXewMHEs3Q=;
+        b=KulrHf7lP+O2hXR7K50RbiDBBbH6nmEw8/fQpA3fZYqdOWRw6FaBsDjFOcUV3ud+3r6m7J
+        kf1sdXtPN2dnHFUTFuwYkONyYxJWdTfapjo2Puq6GSoS0VZElKy3T5UZpTJz0jsOnD8+2D
+        qcOMYn28U6cc4PFdhB38A8K56fRq4s0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-137-jr89MHhgPKaL45ENIVsbsg-1; Tue, 24 Jan 2023 09:41:37 -0500
+X-MC-Unique: jr89MHhgPKaL45ENIVsbsg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CC22D858F09;
+        Tue, 24 Jan 2023 14:41:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D4ED2026D2B;
+        Tue, 24 Jan 2023 14:41:34 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <fc18c4c9-09f2-0ca1-8525-5ce671db36c5@redhat.com>
+References: <fc18c4c9-09f2-0ca1-8525-5ce671db36c5@redhat.com> <20230123173007.325544-1-dhowells@redhat.com> <20230123173007.325544-4-dhowells@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v8 03/10] mm: Provide a helper to drop a pin/ref on a page
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.6.1
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-To:     Alexander Larsson <alexl@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gscrivan@redhat.com, david@fromorbit.com, brauner@kernel.org,
-        viro@zeniv.linux.org.uk, Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-References: <cover.1674227308.git.alexl@redhat.com>
- <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
- <1ea88c8d1e666b85342374ed7c0ddf7d661e0ee1.camel@redhat.com>
- <CAOQ4uxinsBB-LpGh4h44m6Afv0VT5yWRveDG7sNvE2uJyEGOkg@mail.gmail.com>
- <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-11.0 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <874545.1674571293.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 24 Jan 2023 14:41:33 +0000
+Message-ID: <874546.1674571293@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+David Hildenbrand <david@redhat.com> wrote:
 
+> > Provide a helper in the get_user_pages code to drop a pin or a ref on =
+a
+> > page based on being given FOLL_GET or FOLL_PIN in its flags argument o=
+r do
+> > nothing if neither is set.
+> =
 
-On 2023/1/24 21:10, Alexander Larsson wrote:
-> On Tue, 2023-01-24 at 05:24 +0200, Amir Goldstein wrote:
->> On Mon, Jan 23, 2023 at 7:56 PM Alexander Larsson <alexl@redhat.com>
+> Does the FOLL_GET part still apply to this patch set?
 
-...
+Yes.  Christoph insisted that the bio conversion patch be split up.  That
+means there's an interval where you can get FOLL_GET from that.  However,
+since Jason wants to hide FOLL_PUT, this is going to have to be removed an=
+d
+the switching done in the bio code for the bio case (until that reduces to
+just pinning) and the skbuff cleanup code (when that is eventually done - =
+that
+will have the possibility of skbuffs comprising a mix of ref'd, pinned and
+unpinned data, albeit in separate fragments; I've posted patches that
+illustrate this[1]).
 
->>
->> No it is not overlayfs, it is overlayfs+squashfs, please stick to
->> facts.
->> As Gao wrote, squashfs does not optimize directory lookup.
->> You can run a test with ext4 for POC as Gao suggested.
->> I am sure that mkfs.erofs sparse file support can be added if needed.
-> 
-> New measurements follow, they now include also erofs over loopback,
-> although that isn't strictly fair, because that image is much larger
-> due to the fact that it didn't store the files sparsely. It also
-> includes a version where the topmost lower is directly on the backing
-> xfs (i.e. not via loopback). I attached the scripts used to create the
-> images and do the profiling in case anyone wants to reproduce.
-> 
-> Here are the results (on x86-64, xfs base fs):
-> 
-> overlayfs + loopback squashfs - uncached
-> Benchmark 1: ls -lR mnt-ovl
->    Time (mean ± σ):      2.483 s ±  0.029 s    [User: 0.167 s, System: 1.656 s]
->    Range (min … max):    2.427 s …  2.530 s    10 runs
->   
-> overlayfs + loopback squashfs - cached
-> Benchmark 1: ls -lR mnt-ovl
->    Time (mean ± σ):     429.2 ms ±   4.6 ms    [User: 123.6 ms, System: 295.0 ms]
->    Range (min … max):   421.2 ms … 435.3 ms    10 runs
->   
-> overlayfs + loopback ext4 - uncached
-> Benchmark 1: ls -lR mnt-ovl
->    Time (mean ± σ):      4.332 s ±  0.060 s    [User: 0.204 s, System: 3.150 s]
->    Range (min … max):    4.261 s …  4.442 s    10 runs
->   
-> overlayfs + loopback ext4 - cached
-> Benchmark 1: ls -lR mnt-ovl
->    Time (mean ± σ):     528.3 ms ±   4.0 ms    [User: 143.4 ms, System: 381.2 ms]
->    Range (min … max):   521.1 ms … 536.4 ms    10 runs
->   
-> overlayfs + loopback erofs - uncached
-> Benchmark 1: ls -lR mnt-ovl
->    Time (mean ± σ):      3.045 s ±  0.127 s    [User: 0.198 s, System: 1.129 s]
->    Range (min … max):    2.926 s …  3.338 s    10 runs
->   
-> overlayfs + loopback erofs - cached
-> Benchmark 1: ls -lR mnt-ovl
->    Time (mean ± σ):     516.9 ms ±   5.7 ms    [User: 139.4 ms, System: 374.0 ms]
->    Range (min … max):   503.6 ms … 521.9 ms    10 runs
->   
-> overlayfs + direct - uncached
-> Benchmark 1: ls -lR mnt-ovl
->    Time (mean ± σ):      2.562 s ±  0.028 s    [User: 0.199 s, System: 1.129 s]
->    Range (min … max):    2.497 s …  2.585 s    10 runs
->   
-> overlayfs + direct - cached
-> Benchmark 1: ls -lR mnt-ovl
->    Time (mean ± σ):     524.5 ms ±   1.6 ms    [User: 148.7 ms, System: 372.2 ms]
->    Range (min … max):   522.8 ms … 527.8 ms    10 runs
->   
-> composefs - uncached
-> Benchmark 1: ls -lR mnt-fs
->    Time (mean ± σ):     681.4 ms ±  14.1 ms    [User: 154.4 ms, System: 369.9 ms]
->    Range (min … max):   652.5 ms … 703.2 ms    10 runs
->   
-> composefs - cached
-> Benchmark 1: ls -lR mnt-fs
->    Time (mean ± σ):     390.8 ms ±   4.7 ms    [User: 144.7 ms, System: 243.7 ms]
->    Range (min … max):   382.8 ms … 399.1 ms    10 runs
-> 
-> For the uncached case, composefs is still almost four times faster than
-> the fastest overlay combo (squashfs), and the non-squashfs versions are
-> strictly slower. For the cached case the difference is less (10%) but
-> with similar order of performance.
-> 
-> For size comparison, here are the resulting images:
-> 
-> 8.6M large.composefs
-> 2.5G large.erofs
-> 200M large.ext4
-> 2.6M large.squashfs
-Ok, I have to say I'm a bit surprised by these results. Just a wild guess,
-`ls -lR` is a seq-like access, so that compressed data (assumed that you
-use it) is benefited from it.  I cannot think of a proper cause before
-looking into more.  EROFS is impacted since EROFS on-disk inodes are not
-arranged together with the current mkfs.erofs implemenetation (it's just
-a userspace implementation details, if people really care about it, I
-will refine the implementation), and I will also implement such sparse
-files later so that all on-disk inodes won't be impacted as well (I'm on
-vacation, but I will try my best).
+David
 
- From the overall results, I don't really know what's the most bottleneck
-point honestly:
-   maybe just like what you said -- due to overlayfs overhead;
-   or maybe a bottleneck of loopback device.
+https://lore.kernel.org/all/167391047703.2311931.8115712773222260073.stgit=
+@warthog.procyon.org.uk/ [1] Patches 33-34
 
-   so it's much better to show some results of "ls -lR" without overlayfs
-stacked too.
-
-IMHO, Amir's main point is always [1]
-"w.r.t overlayfs, I am not even sure that anything needs to be modified
-  in the driver.
-  overlayfs already supports "metacopy" feature which means that an upper
-  layer could be composed in a way that the file content would be read
-  from an arbitrary path in lower fs, e.g. objects/cc/XXX. "
-
-I think there is nothing wrong with it (except for fsverity). From the
-results, such functionality indeed can already be achieved by overlayfs
-+ some localfs with some user-space adaption. And it was not mentioned
-in RFC and v2.
-
-So without fs-verity requirement, currently your proposal is mainly
-resolving a performance issue of an exist in-kernel approach (except for
-unprivileged mounts).  It's much better to describe in the cover letter
--- The original problem, why overlayfs + (localfs or FUSE for metadata)
-doesn't meet the requirements.  That makes much sense compared with the
-current cover letter.
-
-Thanks,
-Gao Xiang
-
-[1] https://lore.kernel.org/r/CAOQ4uxh34udueT-+Toef6TmTtyLjFUnSJs=882DH=HxADX8pKw@mail.gmail.com/
