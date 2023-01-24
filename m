@@ -2,89 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A793267A489
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 22:04:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0014667A49C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 22:11:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233948AbjAXVEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 16:04:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36532 "EHLO
+        id S234631AbjAXVLZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 16:11:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjAXVEG (ORCPT
+        with ESMTP id S234626AbjAXVLY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 16:04:06 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75F4E05D;
-        Tue, 24 Jan 2023 13:04:04 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 24 Jan 2023 16:11:24 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD74460BD
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 13:10:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674594639;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+S5IUZHTVF9Pd6bZbdf7wMuVKpNUwM0nLhEcSQAjNaE=;
+        b=gcWOV2ki0yOEcU9hfSEzUXXNGkCEqbAC+g6KC9+lrcwzVrSPQ74mytHOei+RzrvJVnul8s
+        JJx8CP5xOS7Znv4pSj57dLAd4A2DbmaZYKhlo+T2P+8xJ8iX+BnNWfNPWIEL6q8rPkY2iX
+        MuiloTf3VFybLdNFPJgSYCu/cagZSdg=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-496-PXodvBPsPsCCtt8GzvXR7Q-1; Tue, 24 Jan 2023 16:10:34 -0500
+X-MC-Unique: PXodvBPsPsCCtt8GzvXR7Q-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9B6D1B816D8;
-        Tue, 24 Jan 2023 21:04:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E31C3C433D2;
-        Tue, 24 Jan 2023 21:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1674594242;
-        bh=zjcANJE6uGzwSR4wTIiOQxcwFMp4+Yz5YqNXXhvxlZw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FqySnI4K96d799gpZOFbX42GtEloF+F2Qd7fEzmx0GhoOLzs+V1i9DTlrU1UKd/02
-         Hjuu/ELjUesERXd5b+wWuorsVm2xPmIA5wtRHvl+GZny+5oN8q9FGbJBg2h57TomCz
-         uzDtXADYIc0ipLpnAPanocU0tIlVbA416ABzGw/Y=
-Date:   Tue, 24 Jan 2023 13:04:01 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     linux-kernel@vger.kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH 4/5] fs: hfs: initialize fsdata in hfs_file_truncate()
-Message-Id: <20230124130401.eb5d453213d557cf3b7a8ed6@linux-foundation.org>
-In-Reply-To: <CAG_fn=WDjw1MVYhEh7K4HOpGNBWsq6YuyG6Xx7XcP4Xpu+KhZg@mail.gmail.com>
-References: <20221121112134.407362-1-glider@google.com>
-        <20221121112134.407362-4-glider@google.com>
-        <CAG_fn=WDjw1MVYhEh7K4HOpGNBWsq6YuyG6Xx7XcP4Xpu+KhZg@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CCB132802E24;
+        Tue, 24 Jan 2023 21:10:33 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DBAAE2166B26;
+        Tue, 24 Jan 2023 21:10:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <4be974aa-2beb-9ae5-3f48-7dde6241b0c7@nvidia.com>
+References: <4be974aa-2beb-9ae5-3f48-7dde6241b0c7@nvidia.com> <20230124170108.1070389-1-dhowells@redhat.com> <20230124170108.1070389-3-dhowells@redhat.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, "Jan Kara" <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Christoph Hellwig" <hch@lst.de>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v9 2/8] iov_iter: Add a function to extract a page list from an iterator
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1353066.1674594631.1@warthog.procyon.org.uk>
+Date:   Tue, 24 Jan 2023 21:10:31 +0000
+Message-ID: <1353067.1674594631@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 24 Jan 2023 11:51:30 +0100 Alexander Potapenko <glider@google.com> wrote:
+John Hubbard <jhubbard@nvidia.com> wrote:
 
-> On Mon, Nov 21, 2022 at 12:21 PM Alexander Potapenko <glider@google.com> wrote:
-> >
-> > When aops->write_begin() does not initialize fsdata, KMSAN may report
-> > an error passing the latter to aops->write_end().
-> >
-> > Fix this by unconditionally initializing fsdata.
-> >
-> > Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Signed-off-by: Alexander Potapenko <glider@google.com>
+> > +	for (;;) {
+> > +		if (i->nr_segs == 0)
+> > +			return 0;
+> > +		maxsize = min(maxsize, i->bvec->bv_len - skip);
+> > +		if (maxsize)
+> > +			break;
+> > +		i->iov_offset = 0;
+> > +		i->nr_segs--;
+> > +		i->kvec++;
+> > +		skip = 0;
+> > +	}
+> > +
+> > +	skip += i->bvec->bv_offset;
+> > +	page = i->bvec->bv_page + skip / PAGE_SIZE;
+> > +	offset = skip % PAGE_SIZE;
+> > +	*offset0 = offset;
+> > +
+> > +	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
+> > +	if (!maxpages)
+> > +		return -ENOMEM;
 > 
-> Dear FS maintainers,
-> 
-> HFS/HFSPLUS are orphaned, can someone take this patch to their tree?
-> Thanks in advance!
-> (same for "fs: hfsplus: initialize fsdata in hfsplus_file_truncate()":
-> https://lore.kernel.org/all/20221121112134.407362-5-glider@google.com/)
+> Is it OK that the iov_iter position has been advanced, and left that way,
+> in the case of an early -ENOMEM return here?
 
-I grabbed both.
+I think it should be okay.  The for-loop at the top just skips over empty
+segments, so it doesn't really advance things.  There is an error there,
+though: it should be i->bvec++, not i->kvec++ in the loop.
 
-I removed the
-
-	Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-
-because that might provoke the backport bots to backport this fix
-across eight years worth of kernels.  Before KMSAN existed!
-
-If you intended that this be backported then please let's come up with a
-more precise Fixes: target and we'll add cc:stable.
+David
 
