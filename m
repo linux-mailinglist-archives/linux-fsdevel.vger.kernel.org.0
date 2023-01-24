@@ -2,92 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47824678E8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 03:50:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 469AA678E92
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Jan 2023 03:51:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232209AbjAXCuF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 21:50:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35536 "EHLO
+        id S231772AbjAXCv1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 21:51:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231589AbjAXCuB (ORCPT
+        with ESMTP id S229930AbjAXCvX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 21:50:01 -0500
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E46093526B;
-        Mon, 23 Jan 2023 18:49:59 -0800 (PST)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 66012C009; Tue, 24 Jan 2023 03:50:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1674528616; bh=sNo2M+vMXVNnmuHmMi9fNsU/T1dxnbKBZtBfGYFBJqc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=auR2LTgbqUESWdQFsOH6G6jdyJZNuEsdbqwj0802ggjGubDemBBcTW19oJHdwERf1
-         KLTj92n6Ak9FVEbsnYXQJ2xOrszyVoz885izMPPYWA4oSwJVyiaj/y9X4ALultB3W9
-         a5wVG0+4SHzuFnT2zpV9ABro5E0Cr+nB1AYh5SYPRJLDEripVC72CTjKLhGtKRdiE+
-         SKBGNpWjdJ1Kb35YzaHH25NuDRGLMjxCchxUiStvUlsTWB3n1kQDG6IeHR5RZjTKFX
-         ZrbYTjf4/pd/KEE5zY0OVsoHcgmJP0Bm8W6jSS0sfjgm9eY+brz/leDX18Q2EfS61o
-         fYShBUznNpRdg==
+        Mon, 23 Jan 2023 21:51:23 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEC2512875;
+        Mon, 23 Jan 2023 18:51:21 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id n7so12565080wrx.5;
+        Mon, 23 Jan 2023 18:51:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gAY8vTZyGk4M83RejMJDWSVQbhO5UIeP+/JnuniVPrg=;
+        b=S2EsGrQuOEU3Y4RGr7uuVf6dI5nPSlI0GiuLVrqgLazzWYX90iOjMzZYyVgMddzVsX
+         w25hR1vptvZlEFwB0eyVraN5Qvzn84zZ8lb9TG3E8lT8wKDXRpBUzLyopqBno9Be3kAu
+         HsJ1gZ60PCggsTDTxlLQ/D8o5TDpJcmshYmhqLneSeHjAOSyU4GNB3nfsfYgPjbzcD9N
+         PrNH+lW9zs8irTLqDMrkXcNHjI0a27JOWm9htzAag+2PFbTHoZSMmoxOstSbPBiLdZbr
+         MStHGVmBFjOlqlj4cVKQmTCLeen9k0uw9biauAa4u0l8JJgxOtx8DQb8shfd9H5ZDECp
+         MQdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gAY8vTZyGk4M83RejMJDWSVQbhO5UIeP+/JnuniVPrg=;
+        b=F+CaRI50BwA2THGPdYkSdt0jm/VauLkQTqYNhoYzD1sQQEZzKkRPtdhZZq/RachUnW
+         mndZbsdmYcdhl1D2Tg0zSSUucOT51cTqMbD3HZ5h+UyK9WyOR0lsqqRjfTHssXAFstHU
+         B98P+jgEKVXFHRTdf9RqoKNpvPuYIxEc2X1HN56TSG4LrkPzlLVrGw+KC2D15G8SrHkc
+         f2e00zUFQACJFCK6V8EQ7b+udj+VNAPV+zA41if4n+s7f34ZklQUz6SN7B+kqp/A2/Xf
+         gDUc1HGhpdujbtgcPIPU/IKoo/53UfMD4J4DfyM4+2C8s8+oaYlAgsn/mXUtt0C/RQjr
+         LXSw==
+X-Gm-Message-State: AFqh2krIOW6KBbdVUz/Z96iIRDp6mwrMx48l389SK1zPWnNlJJQcb93L
+        h2oaEwGFBpo7kL9YYlIsAlrbv69dZdIXWRiBe0M=
+X-Google-Smtp-Source: AMrXdXtE2KHUJeDVXhPQUTYkHKp8SQa1hujduK30aDNEeyEHd80uFa/sA9H62IvvTm5YgT/eugKtTOl8LOGRi8K5uU8=
+X-Received: by 2002:a5d:4851:0:b0:2be:575:2e07 with SMTP id
+ n17-20020a5d4851000000b002be05752e07mr675943wrs.111.1674528680274; Mon, 23
+ Jan 2023 18:51:20 -0800 (PST)
+MIME-Version: 1.0
+References: <20230123032942.18263-1-gregory.price@memverge.com> <20230123032942.18263-4-gregory.price@memverge.com>
+In-Reply-To: <20230123032942.18263-4-gregory.price@memverge.com>
+From:   Andrei Vagin <avagin@gmail.com>
+Date:   Mon, 23 Jan 2023 18:51:07 -0800
+Message-ID: <CANaxB-x86NUAYG1F2+-uOj676weVOdy9aKnmxjaHTuNxek28gg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ptrace,syscall_user_dispatch: add a getter/setter for
+ sud configuration
+To:     Gregory Price <gourry.memverge@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
+        oleg@redhat.com, peterz@infradead.org, ebiederm@xmission.com,
+        akpm@linux-foundation.org, adobriyan@gmail.com, corbet@lwn.net,
+        shuah@kernel.org, Gregory Price <gregory.price@memverge.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id AF6ECC009;
-        Tue, 24 Jan 2023 03:50:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1674528615; bh=sNo2M+vMXVNnmuHmMi9fNsU/T1dxnbKBZtBfGYFBJqc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i16EJ9kBh9jIXmYnudf4BDTdOfKbpABLFv4Ox9v/rl7CDDxWuA6w4A2Icyc6BCcZ9
-         eIPAloZCWtNKPJdUJfn1QNaKdsmGGGtr0mEd4dZCm+vLeb64KnRJuYH2dFVdzbvQlN
-         r2q/wUfbbiKCYCH5iXg85p4zDne3Y++NbNE4IL9I/bMNMW4e9ZtUbB066vcnpHYVqr
-         2ce5q4DuR0WWaAZ1EprZIwszrDXLO8+0T0DKciuigt8VzdjoD8Uwqur1OkXgGO2ryp
-         3fHBgz0PbYy+tONgQqjZuAO7/nEzNJYaZxLTp/9rei9lKyi2IBH3tL7vT7lEA4p3TR
-         l217FDv+lrQfA==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 3239948c;
-        Tue, 24 Jan 2023 02:49:52 +0000 (UTC)
-Date:   Tue, 24 Jan 2023 11:49:37 +0900
-From:   asmadeus@codewreck.org
-To:     evanhensbergen@icloud.com
-Cc:     Christian Schoenebeck <linux_oss@crudebyte.com>,
-        Zhengchao Shao via V9fs-developer 
-        <v9fs-developer@lists.sourceforge.net>,
-        Ron Minnich <rminnich@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] Performance fixes for 9p filesystem
-Message-ID: <Y89HQXu90ea6Ed4r@codewreck.org>
-References: <20221217183142.1425132-1-evanhensbergen@icloud.com>
- <20221218232217.1713283-1-evanhensbergen@icloud.com>
- <4478705.9R3AOq7agI@silver>
- <CEE93F4D-7C11-4FE3-BB70-A9C865BE5BC2@icloud.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CEE93F4D-7C11-4FE3-BB70-A9C865BE5BC2@icloud.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-evanhensbergen@icloud.com wrote on Mon, Jan 23, 2023 at 08:33:46PM -0600:
-> I’m fine with funneling these through Dominique since he’s currently
-> the active maintainer, but I’ve also re-established kernel.org
-> <http://kernel.org/> credentials so I can field the pull-request if
-> desired.
+On Sun, Jan 22, 2023 at 8:22 PM Gregory Price <gourry.memverge@gmail.com> wrote:
+<snip>
+>
+> +#define PTRACE_SET_SYSCALL_USER_DISPATCH_CONFIG 0x4210
+> +#define PTRACE_GET_SYSCALL_USER_DISPATCH_CONFIG 0x4211
+> +struct syscall_user_dispatch_config {
+> +       __u64 mode;
+> +       __s8 *selector;
+> +       __u64 offset;
+> +       __u64 len;
+> +       __u8 on_dispatch;
 
-I'm happy either way; I've had a (too quick to really call review) look
-at the code itself and it mostly makes sense to me, and as you pointed
-out some would warrant a Cc stable@ and not waiting if I had time to do
-this seriously, but I'm not sure I'll make it if this needs to wait for
-me.
+Sorry, I didn't notice this in the previous version. on_dispatch looks
+like an internal
+property and I don't see how we can stop a process with ptrace when on_dispatch
+is set to a non-zero value. I am not sure that we need to expose it to
+user-space.
 
-Do you also have a tree that goes in -next ? I think I asked before but
-lost your reply, sorry.
-If not it'll probably be easier for me to pick it up this cycle, but
-that's about the only reason I'd see for me to take the patches as
-things stand.
+Other than that, the patch looks good to me.
 
--- 
-Dominique
+Thanks,
+Andrei
