@@ -2,55 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B85067AC6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 09:41:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B68767AC7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 09:42:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235401AbjAYIl0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 03:41:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45052 "EHLO
+        id S235306AbjAYImU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 03:42:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235427AbjAYIkM (ORCPT
+        with ESMTP id S235454AbjAYIkP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 03:40:12 -0500
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6082747ED2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 00:39:27 -0800 (PST)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-4fee82718afso149726467b3.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 00:39:27 -0800 (PST)
+        Wed, 25 Jan 2023 03:40:15 -0500
+Received: from mail-ot1-x34a.google.com (mail-ot1-x34a.google.com [IPv6:2607:f8b0:4864:20::34a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69A7B4F379
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 00:39:40 -0800 (PST)
+Received: by mail-ot1-x34a.google.com with SMTP id c13-20020a9d784d000000b006866230a44aso8868821otm.15
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 00:39:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gBh0+9Ej4fdZiBcL1FEtjjBddEyxpct0JkyXcSRf3Wg=;
-        b=lB4btchvNlTfCRHflexrgCXbRXFvyy8g1gFK/OMeKiIJNh1tqeN9E/OUXMnf2U4uji
-         YYT9ZG6Uz9BNIXcJPuB6IBGSNwEdssClBGTD7I8F8xN9feCnsNR77DeUemH49gSW7JIZ
-         i8Fyk+8dX7xmZBgb/4LlxS50DWuY+p/ZAvE5rke3AXUvgG50Y7E3pTP3J2Z3NRLwRPG+
-         tuCoTtjvQeclLyeusopPtZIO8LUuu13+9dnLJ2g+6d0g96WjPTO8eD8l7HbwyilzSGVH
-         oGzLOV4is7gwgAYTgd7llD5IZe+pWMCF81FsE6KNSAjCT9NY1E+DcM18ZvHUvuruVpcX
-         WOLw==
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ralp0YsbeintaJ1+3rV0BJxcsbdnu/jVKuNhvnt0T5Y=;
+        b=FpW3ZfeoZ58NaZWfySIfB+f4+MM7GrKuq9uCXe+gfhjrC0bvKaL2kAypJ/pJdIrezU
+         Ru0cU0KNklRfuYrJ3SKXkdPgNjMfodaxcsFUMH2z2VP+LqiGmmBZi4WNjYcaaYQLe2mC
+         v6uAPWcErh2g6vXcpQB3pwh9XmkkPfWLDi2bI5mgZlrfFBGfjeQ9Wv8iIQeddGuuYJGy
+         vGYSJIu//+24XGZjzB+Q3VYOxZ5pJZ/HCGoJ5h7l6e1K0sxINKIjiYRXApyFQ3GXR7xJ
+         ZclVjCWVjm/7Pu3pZxJbkPLxrnDwpix1sMzuU+AEqB9vICm+UZCWtOUOt5GLju8+nccL
+         rTTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gBh0+9Ej4fdZiBcL1FEtjjBddEyxpct0JkyXcSRf3Wg=;
-        b=Ch0VieukCRud80x6rK1FoC3hlB3meT4X7tvnjSOgh7AJ0YDHZFscJTS5LHlqcEKizJ
-         P7zeYhC9MwSM7Y1G95Z4QU+afCfAKw68p5sHUtH83jQzXrvTLSEnWsW72ZnoAR8ypkEH
-         tLv4rqJC91MXyIOsZ7whMzdKoZNcgGrszJsYgCKft8m0zbiPb3QmFOi0IbkdMR21TOAj
-         PQCuYLPu2jC7b+gAPFYNCfPh8gTI/vDuseGkl93/7Ao9fy2rI3zDgHBlPGt2MT0FYkzO
-         008xmxJDHQNYj57XIBn1fe6pgAShlDcGTTwrAn5q8Ik32IE2N0CY2vZ+sZjlV683eknl
-         TZQg==
-X-Gm-Message-State: AO0yUKUH2N2DdWDtfXOERELNTdJmvTEbQ/YJo3G4K0BJnIVIJKZBMKiN
-        t8UKaubg/IG8GE3LUNH5qBB/DfBwA0k=
-X-Google-Smtp-Source: AMrXdXtLI+TT5dUaC9pRI2aKjkmKt7tjdC79b+se6AwZUh4jJJgCSUqcAubWc2ByjewYclrfSPgwiLKmrmw=
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ralp0YsbeintaJ1+3rV0BJxcsbdnu/jVKuNhvnt0T5Y=;
+        b=WQqkzuUeHWFkSqDf+02TOd92Yii82PLPpwpqnYoBnSIBXeV7Y5mmv6Xq2O4Bs1QHbo
+         EL1KnfFdD7/OaRhxd0GJC9XeR0MD15VMQTz7HE16A/LQK9C5ko4PtLPa/K6eyX9J/0P9
+         Tp9Rwh4Xh4MjHwijvA9jansNnwnq1uBuu8/hB4so7s7noymkj+6/Olk9iGTB6QTK2QwP
+         3a2ER64A4rVdE/s2bUzoghH5fQtd3gd3UcehoB3G0uCb5cxkgSXVnXp2qhT6vu2Rm4h1
+         gRxWF+rPMd8JtIfsK9g6TSP6ITkJr6Wm93TxlV+Ci2JZ/8hteDgXeCY3aZFEyrwJ3uwV
+         clDA==
+X-Gm-Message-State: AFqh2kqX96caEYBhpXJQdIlMHSG4yM400P7+E7gPY3HFWik56xqK/2Yn
+        ivWtG9nHV6RlehY7xgQgftS2itSrQUE=
+X-Google-Smtp-Source: AK7set8/stQqnGGz4OB/vqyDOBLoBX54VTTeagu3mMK0HzymWEEvjI0ujOzPLr/zvAsu1DJMDE0YK80W9/s=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:200:f7b0:20e8:ce66:f98])
- (user=surenb job=sendgmr) by 2002:a05:6902:34f:b0:6f9:7bf9:8fc7 with SMTP id
- e15-20020a056902034f00b006f97bf98fc7mr3373858ybs.279.1674635936246; Wed, 25
- Jan 2023 00:38:56 -0800 (PST)
-Date:   Wed, 25 Jan 2023 00:38:45 -0800
+ (user=surenb job=sendgmr) by 2002:a81:3e07:0:b0:506:6185:4fad with SMTP id
+ l7-20020a813e07000000b0050661854fadmr450398ywa.451.1674635938431; Wed, 25 Jan
+ 2023 00:38:58 -0800 (PST)
+Date:   Wed, 25 Jan 2023 00:38:46 -0800
+In-Reply-To: <20230125083851.27759-1-surenb@google.com>
 Mime-Version: 1.0
+References: <20230125083851.27759-1-surenb@google.com>
 X-Mailer: git-send-email 2.39.1.405.gd4c25cc71f-goog
-Message-ID: <20230125083851.27759-1-surenb@google.com>
-Subject: [PATCH v2 0/6] introduce vm_flags modifier functions
+Message-ID: <20230125083851.27759-2-surenb@google.com>
+Subject: [PATCH v2 1/6] mm: introduce vma->vm_flags modifier functions
 From:   Suren Baghdasaryan <surenb@google.com>
 To:     akpm@linux-foundation.org
 Cc:     michel@lespinasse.org, jglisse@google.com, mhocko@suse.com,
@@ -134,163 +136,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchset was originally published as a part of per-VMA locking [1] and
-was split after suggestion that it's viable on its own and to facilitate
-the review process. It is now a preprequisite for the next version of per-VMA
-lock patchset, which reuses vm_flags modifier functions to lock the VMA when
-vm_flags are being updated.
+vm_flags are among VMA attributes which affect decisions like VMA merging
+and splitting. Therefore all vm_flags modifications are performed after
+taking exclusive mmap_lock to prevent vm_flags updates racing with such
+operations. Introduce modifier functions for vm_flags to be used whenever
+flags are updated. This way we can better check and control correct
+locking behavior during these updates.
 
-VMA vm_flags modifications are usually done under exclusive mmap_lock
-protection because this attrubute affects other decisions like VMA merging
-or splitting and races should be prevented. Introduce vm_flags modifier
-functions to enforce correct locking.
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+---
+ include/linux/mm.h       | 37 +++++++++++++++++++++++++++++++++++++
+ include/linux/mm_types.h |  8 +++++++-
+ 2 files changed, 44 insertions(+), 1 deletion(-)
 
-[1] https://lore.kernel.org/all/20230109205336.3665937-1-surenb@google.com/
-
-The patchset applies cleanly over mm-unstable branch of mm tree.
-
-My apologies for an extremely large distribution list. The patch touches
-lots of files and many are in arch/ and drivers/.
-
-Suren Baghdasaryan (6):
-  mm: introduce vma->vm_flags modifier functions
-  mm: replace VM_LOCKED_CLEAR_MASK with VM_LOCKED_MASK
-  mm: replace vma->vm_flags direct modifications with modifier calls
-  mm: replace vma->vm_flags indirect modification in ksm_madvise
-  mm: introduce mod_vm_flags_nolock and use it in untrack_pfn
-  mm: export dump_mm()
-
- arch/arm/kernel/process.c                     |  2 +-
- arch/ia64/mm/init.c                           |  8 +--
- arch/loongarch/include/asm/tlb.h              |  2 +-
- arch/powerpc/kvm/book3s_hv_uvmem.c            |  5 +-
- arch/powerpc/kvm/book3s_xive_native.c         |  2 +-
- arch/powerpc/mm/book3s64/subpage_prot.c       |  2 +-
- arch/powerpc/platforms/book3s/vas-api.c       |  2 +-
- arch/powerpc/platforms/cell/spufs/file.c      | 14 ++---
- arch/s390/mm/gmap.c                           |  8 +--
- arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
- arch/x86/kernel/cpu/sgx/driver.c              |  2 +-
- arch/x86/kernel/cpu/sgx/virt.c                |  2 +-
- arch/x86/mm/pat/memtype.c                     | 14 +++--
- arch/x86/um/mem_32.c                          |  2 +-
- drivers/acpi/pfr_telemetry.c                  |  2 +-
- drivers/android/binder.c                      |  3 +-
- drivers/char/mspec.c                          |  2 +-
- drivers/crypto/hisilicon/qm.c                 |  2 +-
- drivers/dax/device.c                          |  2 +-
- drivers/dma/idxd/cdev.c                       |  2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c       |  2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_chardev.c      |  4 +-
- drivers/gpu/drm/amd/amdkfd/kfd_doorbell.c     |  4 +-
- drivers/gpu/drm/amd/amdkfd/kfd_events.c       |  4 +-
- drivers/gpu/drm/amd/amdkfd/kfd_process.c      |  4 +-
- drivers/gpu/drm/drm_gem.c                     |  2 +-
- drivers/gpu/drm/drm_gem_dma_helper.c          |  3 +-
- drivers/gpu/drm/drm_gem_shmem_helper.c        |  2 +-
- drivers/gpu/drm/drm_vm.c                      |  8 +--
- drivers/gpu/drm/etnaviv/etnaviv_gem.c         |  2 +-
- drivers/gpu/drm/exynos/exynos_drm_gem.c       |  4 +-
- drivers/gpu/drm/gma500/framebuffer.c          |  2 +-
- drivers/gpu/drm/i810/i810_dma.c               |  2 +-
- drivers/gpu/drm/i915/gem/i915_gem_mman.c      |  4 +-
- drivers/gpu/drm/mediatek/mtk_drm_gem.c        |  2 +-
- drivers/gpu/drm/msm/msm_gem.c                 |  2 +-
- drivers/gpu/drm/omapdrm/omap_gem.c            |  3 +-
- drivers/gpu/drm/rockchip/rockchip_drm_gem.c   |  3 +-
- drivers/gpu/drm/tegra/gem.c                   |  5 +-
- drivers/gpu/drm/ttm/ttm_bo_vm.c               |  3 +-
- drivers/gpu/drm/virtio/virtgpu_vram.c         |  2 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_ttm_glue.c      |  2 +-
- drivers/gpu/drm/xen/xen_drm_front_gem.c       |  3 +-
- drivers/hsi/clients/cmt_speech.c              |  2 +-
- drivers/hwtracing/intel_th/msu.c              |  2 +-
- drivers/hwtracing/stm/core.c                  |  2 +-
- drivers/infiniband/hw/hfi1/file_ops.c         |  4 +-
- drivers/infiniband/hw/mlx5/main.c             |  4 +-
- drivers/infiniband/hw/qib/qib_file_ops.c      | 13 +++--
- drivers/infiniband/hw/usnic/usnic_ib_verbs.c  |  2 +-
- .../infiniband/hw/vmw_pvrdma/pvrdma_verbs.c   |  2 +-
- .../common/videobuf2/videobuf2-dma-contig.c   |  2 +-
- .../common/videobuf2/videobuf2-vmalloc.c      |  2 +-
- drivers/media/v4l2-core/videobuf-dma-contig.c |  2 +-
- drivers/media/v4l2-core/videobuf-dma-sg.c     |  4 +-
- drivers/media/v4l2-core/videobuf-vmalloc.c    |  2 +-
- drivers/misc/cxl/context.c                    |  2 +-
- drivers/misc/habanalabs/common/memory.c       |  2 +-
- drivers/misc/habanalabs/gaudi/gaudi.c         |  4 +-
- drivers/misc/habanalabs/gaudi2/gaudi2.c       |  8 +--
- drivers/misc/habanalabs/goya/goya.c           |  4 +-
- drivers/misc/ocxl/context.c                   |  4 +-
- drivers/misc/ocxl/sysfs.c                     |  2 +-
- drivers/misc/open-dice.c                      |  4 +-
- drivers/misc/sgi-gru/grufile.c                |  4 +-
- drivers/misc/uacce/uacce.c                    |  2 +-
- drivers/sbus/char/oradax.c                    |  2 +-
- drivers/scsi/cxlflash/ocxl_hw.c               |  2 +-
- drivers/scsi/sg.c                             |  2 +-
- .../staging/media/atomisp/pci/hmm/hmm_bo.c    |  2 +-
- drivers/staging/media/deprecated/meye/meye.c  |  4 +-
- .../media/deprecated/stkwebcam/stk-webcam.c   |  2 +-
- drivers/target/target_core_user.c             |  2 +-
- drivers/uio/uio.c                             |  2 +-
- drivers/usb/core/devio.c                      |  3 +-
- drivers/usb/mon/mon_bin.c                     |  3 +-
- drivers/vdpa/vdpa_user/iova_domain.c          |  2 +-
- drivers/vfio/pci/vfio_pci_core.c              |  2 +-
- drivers/vhost/vdpa.c                          |  2 +-
- drivers/video/fbdev/68328fb.c                 |  2 +-
- drivers/video/fbdev/core/fb_defio.c           |  4 +-
- drivers/xen/gntalloc.c                        |  2 +-
- drivers/xen/gntdev.c                          |  4 +-
- drivers/xen/privcmd-buf.c                     |  2 +-
- drivers/xen/privcmd.c                         |  4 +-
- fs/aio.c                                      |  2 +-
- fs/cramfs/inode.c                             |  2 +-
- fs/erofs/data.c                               |  2 +-
- fs/exec.c                                     |  4 +-
- fs/ext4/file.c                                |  2 +-
- fs/fuse/dax.c                                 |  2 +-
- fs/hugetlbfs/inode.c                          |  4 +-
- fs/orangefs/file.c                            |  3 +-
- fs/proc/task_mmu.c                            |  2 +-
- fs/proc/vmcore.c                              |  3 +-
- fs/userfaultfd.c                              |  2 +-
- fs/xfs/xfs_file.c                             |  2 +-
- include/linux/mm.h                            | 51 +++++++++++++++++--
- include/linux/mm_types.h                      |  8 ++-
- include/linux/pgtable.h                       |  5 +-
- kernel/bpf/ringbuf.c                          |  4 +-
- kernel/bpf/syscall.c                          |  4 +-
- kernel/events/core.c                          |  2 +-
- kernel/fork.c                                 |  2 +-
- kernel/kcov.c                                 |  2 +-
- kernel/relay.c                                |  2 +-
- mm/debug.c                                    |  1 +
- mm/hugetlb.c                                  |  4 +-
- mm/khugepaged.c                               |  2 +
- mm/ksm.c                                      |  2 +
- mm/madvise.c                                  |  2 +-
- mm/memory.c                                   | 19 +++----
- mm/memremap.c                                 |  4 +-
- mm/mlock.c                                    | 12 ++---
- mm/mmap.c                                     | 32 +++++++-----
- mm/mprotect.c                                 |  2 +-
- mm/mremap.c                                   |  8 +--
- mm/nommu.c                                    | 11 ++--
- mm/secretmem.c                                |  2 +-
- mm/shmem.c                                    |  2 +-
- mm/vmalloc.c                                  |  2 +-
- net/ipv4/tcp.c                                |  4 +-
- security/selinux/selinuxfs.c                  |  6 +--
- sound/core/oss/pcm_oss.c                      |  2 +-
- sound/core/pcm_native.c                       |  9 ++--
- sound/soc/pxa/mmp-sspa.c                      |  2 +-
- sound/usb/usx2y/us122l.c                      |  4 +-
- sound/usb/usx2y/usX2Yhwdep.c                  |  2 +-
- sound/usb/usx2y/usx2yhwdeppcm.c               |  2 +-
- 129 files changed, 292 insertions(+), 233 deletions(-)
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c2f62bdce134..b71f2809caac 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -627,6 +627,43 @@ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
+ 	INIT_LIST_HEAD(&vma->anon_vma_chain);
+ }
+ 
++/* Use when VMA is not part of the VMA tree and needs no locking */
++static inline void init_vm_flags(struct vm_area_struct *vma,
++				 unsigned long flags)
++{
++	vma->vm_flags = flags;
++}
++
++/* Use when VMA is part of the VMA tree and modifications need coordination */
++static inline void reset_vm_flags(struct vm_area_struct *vma,
++				  unsigned long flags)
++{
++	mmap_assert_write_locked(vma->vm_mm);
++	init_vm_flags(vma, flags);
++}
++
++static inline void set_vm_flags(struct vm_area_struct *vma,
++				unsigned long flags)
++{
++	mmap_assert_write_locked(vma->vm_mm);
++	vma->vm_flags |= flags;
++}
++
++static inline void clear_vm_flags(struct vm_area_struct *vma,
++				  unsigned long flags)
++{
++	mmap_assert_write_locked(vma->vm_mm);
++	vma->vm_flags &= ~flags;
++}
++
++static inline void mod_vm_flags(struct vm_area_struct *vma,
++				unsigned long set, unsigned long clear)
++{
++	mmap_assert_write_locked(vma->vm_mm);
++	vma->vm_flags |= set;
++	vma->vm_flags &= ~clear;
++}
++
+ static inline void vma_set_anonymous(struct vm_area_struct *vma)
+ {
+ 	vma->vm_ops = NULL;
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 2d6d790d9bed..6c7c70bf50dd 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -491,7 +491,13 @@ struct vm_area_struct {
+ 	 * See vmf_insert_mixed_prot() for discussion.
+ 	 */
+ 	pgprot_t vm_page_prot;
+-	unsigned long vm_flags;		/* Flags, see mm.h. */
++
++	/*
++	 * Flags, see mm.h.
++	 * WARNING! Do not modify directly.
++	 * Use {init|reset|set|clear|mod}_vm_flags() functions instead.
++	 */
++	unsigned long vm_flags;
+ 
+ 	/*
+ 	 * For areas with an address space and backing store,
 -- 
 2.39.1
 
