@@ -2,75 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 32D0067AA54
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 07:30:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6AE67AAA0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 07:58:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234599AbjAYGaj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 01:30:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38404 "EHLO
+        id S234642AbjAYG6r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 01:58:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234163AbjAYGai (ORCPT
+        with ESMTP id S229646AbjAYG6q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 01:30:38 -0500
+        Wed, 25 Jan 2023 01:58:46 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAC063C29E;
-        Tue, 24 Jan 2023 22:30:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6239947403;
+        Tue, 24 Jan 2023 22:58:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=r0FuSmIbgkYy4WewyKyVPD9wcDWCGfj1WkmqOviCddk=; b=ihARzO3OK8WC8X+vTJmE+5otl8
-        LZP1ZuRMG3qrzWCWLr4tH9hnsQeyWtOrepDcCtrtfxAZxnvpvzVfhAMtzCO/DX7pYsT464vkm5oYm
-        C5r4hEewgpigvEvUYkh2MDp2gWbcd3Jn75drGz1IIataCn30kMqVUrpu/gVcb7+rvch02c9A++JZ4
-        YhAEPHpLEYDPuz4mFdAAOh4CyY/qe9UuUm/aNKAQlOxaTLGCP5wt6ji7eKAU4FyvHr5ZmfzNiwrk2
-        /wOeqaX3hMpc/jJRBpO2Qy5YOda7852iLJmNMucamNSA+W80370DYMZiU3oar3x8PcOqa4/6d40cL
-        sGRYk8ig==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pKZIi-0067v4-MS; Wed, 25 Jan 2023 06:30:28 +0000
-Date:   Tue, 24 Jan 2023 22:30:28 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v9 6/8] block: Switch to pinning pages.
-Message-ID: <Y9DMhJ4NczaA6HGL@infradead.org>
-References: <Y9ArYfXEix7t3gVI@infradead.org>
- <20230124170108.1070389-1-dhowells@redhat.com>
- <20230124170108.1070389-7-dhowells@redhat.com>
- <1297804.1674593951@warthog.procyon.org.uk>
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=c8uXROnhoRBxz2QSyG58StOt84hyhilFEryXWBXQrqA=; b=SLY5hqs8d4kVTq5O4IZJ1szl2D
+        PIZhkzjdWvwvObikTtxaQoyRDhpv8G1k9eKbDlHMYkD1OHLyiGR7FIsF3XzfODKYbpsybnETTyjB8
+        PO2GdostdXuGf9pJNSfb3ugNblrGgXeXFK8JmNQGRscDcR8a1wp6HrJAQjAaGbT6HJj+nvRk/ZPEV
+        rUW4M6kkPfijJBjRrS5ATFP5kD2a6QAt2V3PO8dY5HRmp1gvwvzFqNmvm/9ljypUwwPusUMd53Z2s
+        VQkWYTA2aYFs8qlKG2hGZfTSI8Oo21u2nRuwi4z1hufrA56yLsDQWhWpzP9SKzOAHSH/eTTictx2C
+        E6Nqe4rA==;
+Received: from [2001:4bb8:19a:27af:97a1:70ca:d917:c407] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pKZk2-006Cdx-5F; Wed, 25 Jan 2023 06:58:42 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: build direct-io.c conditionally
+Date:   Wed, 25 Jan 2023 07:58:37 +0100
+Message-Id: <20230125065839.191256-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1297804.1674593951@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 24, 2023 at 08:59:11PM +0000, David Howells wrote:
-> Christoph Hellwig <hch@infradead.org> wrote:
-> 
-> > > Add BIO_PAGE_PINNED to indicate that the pages in a bio are pinned
-> > > (FOLL_PIN) and that the pin will need removing.
-> > 
-> > The subject is odd when this doesn't actually switch anything,
-> > but just adds the infrastructure to unpin pages.
-> 
-> How about:
-> 
-> 	block: Add BIO_PAGE_PINNED and associated infrastructure
+Hi all,
 
-sounds good.
+this series makes the build of direct-io.c conditional as only
+about a dozen file systems actually use it.
+
+Diffstat:
+ Kconfig          |    4 ++++
+ Makefile         |    3 ++-
+ affs/Kconfig     |    1 +
+ direct-io.c      |   24 ------------------------
+ exfat/Kconfig    |    1 +
+ ext2/Kconfig     |    1 +
+ fat/Kconfig      |    1 +
+ hfs/Kconfig      |    1 +
+ hfsplus/Kconfig  |    1 +
+ internal.h       |    4 +---
+ jfs/Kconfig      |    1 +
+ nilfs2/Kconfig   |    1 +
+ ntfs3/Kconfig    |    1 +
+ ocfs2/Kconfig    |    1 +
+ reiserfs/Kconfig |    1 +
+ super.c          |   24 ++++++++++++++++++++++++
+ udf/Kconfig      |    1 +
+ 17 files changed, 43 insertions(+), 28 deletions(-)
