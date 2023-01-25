@@ -2,72 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 021BF67ABC9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 09:32:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B85067AC6F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 09:41:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235188AbjAYIcs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 03:32:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37796 "EHLO
+        id S235401AbjAYIl0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 03:41:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235115AbjAYIco (ORCPT
+        with ESMTP id S235427AbjAYIkM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 03:32:44 -0500
-Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A68CA5141F;
-        Wed, 25 Jan 2023 00:32:39 -0800 (PST)
-Received: by mail-vs1-xe2d.google.com with SMTP id d66so19027126vsd.9;
-        Wed, 25 Jan 2023 00:32:39 -0800 (PST)
+        Wed, 25 Jan 2023 03:40:12 -0500
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6082747ED2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 00:39:27 -0800 (PST)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-4fee82718afso149726467b3.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 00:39:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+hMKsP+ymQZlCwigldf1lFK1mABYe2GYiPiGIJK3DBs=;
-        b=oE/n3Qi6A4g9N2N1LnzoRIe9h2F2kgqYSrk+Jov3IFh7XmkHbq2/F3dh7Hjz4fVXNN
-         6f+64vbpBkwWEWV2IcwfJ+12jXnVqMiXTHvFsznTw95bjmt3MPzGBRbNI08O3yvzJCqV
-         dAs03D/wEDeu5fo8Trz+cNsJIhkbSgzkfNd9GCRpYUHo6aHDjbIJBrqA23beJ/oL9VVq
-         1z0Nd+YvvqQDmJZcYJace0ADAusjT9FybyjwVgFQTGGXQf9BjFqs6g9hGDYPDv81F8wJ
-         ug9/5NX2+H0lhilqwievcsXf/OVoVmxaWMNOe3cGMOqaygb6n3xNeZY0ydmfE/TA0e+d
-         vrtg==
+        d=google.com; s=20210112;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gBh0+9Ej4fdZiBcL1FEtjjBddEyxpct0JkyXcSRf3Wg=;
+        b=lB4btchvNlTfCRHflexrgCXbRXFvyy8g1gFK/OMeKiIJNh1tqeN9E/OUXMnf2U4uji
+         YYT9ZG6Uz9BNIXcJPuB6IBGSNwEdssClBGTD7I8F8xN9feCnsNR77DeUemH49gSW7JIZ
+         i8Fyk+8dX7xmZBgb/4LlxS50DWuY+p/ZAvE5rke3AXUvgG50Y7E3pTP3J2Z3NRLwRPG+
+         tuCoTtjvQeclLyeusopPtZIO8LUuu13+9dnLJ2g+6d0g96WjPTO8eD8l7HbwyilzSGVH
+         oGzLOV4is7gwgAYTgd7llD5IZe+pWMCF81FsE6KNSAjCT9NY1E+DcM18ZvHUvuruVpcX
+         WOLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+hMKsP+ymQZlCwigldf1lFK1mABYe2GYiPiGIJK3DBs=;
-        b=UaNMNky9GstpQULtaw9cuj/VAEGtICbxCuE24F8xXGy4xvgvIQJxClKnwOPduUWIIb
-         JrIaRFmWGuj9uFDsB17mIkrrc5bRJ3CsT9+TJxUzQtCAAWRIbIidlBSX7JTbuLFhlZBf
-         49DkLxZIzUKLiylU4EqAvphyjBQ3M99wkFR49WXXZdghS9M1R2f9hkdWuIbzTJR2QRqL
-         YPLPmBPtL6YlJGRy4Jx8Wor6B9bwjHp0bsLR5aMsHGwndj2HOD+2duPn5kPtXPWa82oP
-         Ooz0DqR+7BSk/ta8UXLxFGPgvp6MGJ7GbuH9Jkb80cbjhve6Ft00+6QrrGOLw1XLIYBK
-         VBrw==
-X-Gm-Message-State: AFqh2krgCi4WSdJ872zeDkJckRDXekrqCFCd5p7T8mOTo0tUGpXoZnni
-        9fCbLApf7eb8GDnX8EimWtawV7ozyIVFoo3I+64=
-X-Google-Smtp-Source: AMrXdXsQI53bA8DTq3bUyjAoK6HZesr6skL+PgyXRZ7z/qlC7onDSMOXKg2OsNoYjrd5P9P6nAMjeAGx6nQalEzqB4s=
-X-Received: by 2002:a05:6102:5587:b0:3d1:2167:11ad with SMTP id
- dc7-20020a056102558700b003d1216711admr3922488vsb.2.1674635558641; Wed, 25 Jan
- 2023 00:32:38 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1674227308.git.alexl@redhat.com> <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
- <1ea88c8d1e666b85342374ed7c0ddf7d661e0ee1.camel@redhat.com>
- <CAOQ4uxinsBB-LpGh4h44m6Afv0VT5yWRveDG7sNvE2uJyEGOkg@mail.gmail.com>
- <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
- <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com> <20230125041835.GD937597@dread.disaster.area>
-In-Reply-To: <20230125041835.GD937597@dread.disaster.area>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 25 Jan 2023 10:32:26 +0200
-Message-ID: <CAOQ4uxhqdjRbNFs_LohwXdTpE=MaFv-e8J3D2R57FyJxp_f3nA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Alexander Larsson <alexl@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gscrivan@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gBh0+9Ej4fdZiBcL1FEtjjBddEyxpct0JkyXcSRf3Wg=;
+        b=Ch0VieukCRud80x6rK1FoC3hlB3meT4X7tvnjSOgh7AJ0YDHZFscJTS5LHlqcEKizJ
+         P7zeYhC9MwSM7Y1G95Z4QU+afCfAKw68p5sHUtH83jQzXrvTLSEnWsW72ZnoAR8ypkEH
+         tLv4rqJC91MXyIOsZ7whMzdKoZNcgGrszJsYgCKft8m0zbiPb3QmFOi0IbkdMR21TOAj
+         PQCuYLPu2jC7b+gAPFYNCfPh8gTI/vDuseGkl93/7Ao9fy2rI3zDgHBlPGt2MT0FYkzO
+         008xmxJDHQNYj57XIBn1fe6pgAShlDcGTTwrAn5q8Ik32IE2N0CY2vZ+sZjlV683eknl
+         TZQg==
+X-Gm-Message-State: AO0yUKUH2N2DdWDtfXOERELNTdJmvTEbQ/YJo3G4K0BJnIVIJKZBMKiN
+        t8UKaubg/IG8GE3LUNH5qBB/DfBwA0k=
+X-Google-Smtp-Source: AMrXdXtLI+TT5dUaC9pRI2aKjkmKt7tjdC79b+se6AwZUh4jJJgCSUqcAubWc2ByjewYclrfSPgwiLKmrmw=
+X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:200:f7b0:20e8:ce66:f98])
+ (user=surenb job=sendgmr) by 2002:a05:6902:34f:b0:6f9:7bf9:8fc7 with SMTP id
+ e15-20020a056902034f00b006f97bf98fc7mr3373858ybs.279.1674635936246; Wed, 25
+ Jan 2023 00:38:56 -0800 (PST)
+Date:   Wed, 25 Jan 2023 00:38:45 -0800
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.39.1.405.gd4c25cc71f-goog
+Message-ID: <20230125083851.27759-1-surenb@google.com>
+Subject: [PATCH v2 0/6] introduce vm_flags modifier functions
+From:   Suren Baghdasaryan <surenb@google.com>
+To:     akpm@linux-foundation.org
+Cc:     michel@lespinasse.org, jglisse@google.com, mhocko@suse.com,
+        vbabka@suse.cz, hannes@cmpxchg.org, mgorman@techsingularity.net,
+        dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
+        peterz@infradead.org, ldufour@linux.ibm.com, paulmck@kernel.org,
+        luto@kernel.org, songliubraving@fb.com, peterx@redhat.com,
+        david@redhat.com, dhowells@redhat.com, hughd@google.com,
+        bigeasy@linutronix.de, kent.overstreet@linux.dev,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com,
+        peterjung1337@gmail.com, rientjes@google.com,
+        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
+        jannh@google.com, shakeelb@google.com, tatashin@google.com,
+        edumazet@google.com, gthelen@google.com, gurua@google.com,
+        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
+        leewalsh@google.com, posk@google.com, will@kernel.org,
+        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
+        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        qianweili@huawei.com, wangzhou1@hisilicon.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
+        airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, l.stach@pengutronix.de,
+        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
+        matthias.bgg@gmail.com, robdclark@gmail.com,
+        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
+        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
+        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
+        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
+        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
+        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
+        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, miklos@szeredi.hu,
+        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
+        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
+        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
+        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
+        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
+        loongarch@lists.linux.dev, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
+        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
+        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org, kexec@lists.infradead.org,
+        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
+        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
+        kernel-team@android.com, surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,193 +134,163 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 25, 2023 at 6:18 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Tue, Jan 24, 2023 at 09:06:13PM +0200, Amir Goldstein wrote:
-> > On Tue, Jan 24, 2023 at 3:13 PM Alexander Larsson <alexl@redhat.com> wrote:
-> > > On Tue, 2023-01-24 at 05:24 +0200, Amir Goldstein wrote:
-> > > > On Mon, Jan 23, 2023 at 7:56 PM Alexander Larsson <alexl@redhat.com>
-> > > > wrote:
-> > > > > On Fri, 2023-01-20 at 21:44 +0200, Amir Goldstein wrote:
-> > > > > > On Fri, Jan 20, 2023 at 5:30 PM Alexander Larsson
-> > > > > > <alexl@redhat.com>
-> > > > > > wrote:
-> > > I'm not sure why the dentry cache case would be more important?
-> > > Starting a new container will very often not have cached the image.
-> > >
-> > > To me the interesting case is for a new image, but with some existing
-> > > page cache for the backing files directory. That seems to model staring
-> > > a new image in an active container host, but its somewhat hard to test
-> > > that case.
-> > >
-> >
-> > ok, you can argue that faster cold cache ls -lR is important
-> > for starting new images.
-> > I think you will be asked to show a real life container use case where
-> > that benchmark really matters.
->
-> I've already described the real world production system bottlenecks
-> that composefs is designed to overcome in a previous thread.
->
-> Please go back an read this:
->
-> https://lore.kernel.org/linux-fsdevel/20230118002242.GB937597@dread.disaster.area/
->
+This patchset was originally published as a part of per-VMA locking [1] and
+was split after suggestion that it's viable on its own and to facilitate
+the review process. It is now a preprequisite for the next version of per-VMA
+lock patchset, which reuses vm_flags modifier functions to lock the VMA when
+vm_flags are being updated.
 
-I've read it and now re-read it.
-Most of the post talks about the excess time of creating the namespace,
-which is addressed by erofs+overlayfs.
+VMA vm_flags modifications are usually done under exclusive mmap_lock
+protection because this attrubute affects other decisions like VMA merging
+or splitting and races should be prevented. Introduce vm_flags modifier
+functions to enforce correct locking.
 
-I guess you mean this requirement:
-"When you have container instances that might only be needed for a
-few seconds, taking half a minute to set up the container instance
-and then another half a minute to tear it down just isn't viable -
-we need instantiation and teardown times in the order of a second or
-two."
+[1] https://lore.kernel.org/all/20230109205336.3665937-1-surenb@google.com/
 
-Forgive for not being part of the containers world, so I have to ask -
-Which real life use case requires instantiation and teardown times in
-the order of a second?
+The patchset applies cleanly over mm-unstable branch of mm tree.
 
-What is the order of number of files in the manifest of those ephemeral
-images?
+My apologies for an extremely large distribution list. The patch touches
+lots of files and many are in arch/ and drivers/.
 
-The benchmark was done on a 2.6GB centos9 image.
+Suren Baghdasaryan (6):
+  mm: introduce vma->vm_flags modifier functions
+  mm: replace VM_LOCKED_CLEAR_MASK with VM_LOCKED_MASK
+  mm: replace vma->vm_flags direct modifications with modifier calls
+  mm: replace vma->vm_flags indirect modification in ksm_madvise
+  mm: introduce mod_vm_flags_nolock and use it in untrack_pfn
+  mm: export dump_mm()
 
-My very minimal understanding of containers world, is that
-A large centos9 image would be used quite often on a client so it
-would be deployed as created inodes in disk filesystem
-and the ephemeral images are likely to be small changes
-on top of those large base images.
+ arch/arm/kernel/process.c                     |  2 +-
+ arch/ia64/mm/init.c                           |  8 +--
+ arch/loongarch/include/asm/tlb.h              |  2 +-
+ arch/powerpc/kvm/book3s_hv_uvmem.c            |  5 +-
+ arch/powerpc/kvm/book3s_xive_native.c         |  2 +-
+ arch/powerpc/mm/book3s64/subpage_prot.c       |  2 +-
+ arch/powerpc/platforms/book3s/vas-api.c       |  2 +-
+ arch/powerpc/platforms/cell/spufs/file.c      | 14 ++---
+ arch/s390/mm/gmap.c                           |  8 +--
+ arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
+ arch/x86/kernel/cpu/sgx/driver.c              |  2 +-
+ arch/x86/kernel/cpu/sgx/virt.c                |  2 +-
+ arch/x86/mm/pat/memtype.c                     | 14 +++--
+ arch/x86/um/mem_32.c                          |  2 +-
+ drivers/acpi/pfr_telemetry.c                  |  2 +-
+ drivers/android/binder.c                      |  3 +-
+ drivers/char/mspec.c                          |  2 +-
+ drivers/crypto/hisilicon/qm.c                 |  2 +-
+ drivers/dax/device.c                          |  2 +-
+ drivers/dma/idxd/cdev.c                       |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c       |  2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c      |  4 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_doorbell.c     |  4 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_events.c       |  4 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c      |  4 +-
+ drivers/gpu/drm/drm_gem.c                     |  2 +-
+ drivers/gpu/drm/drm_gem_dma_helper.c          |  3 +-
+ drivers/gpu/drm/drm_gem_shmem_helper.c        |  2 +-
+ drivers/gpu/drm/drm_vm.c                      |  8 +--
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c         |  2 +-
+ drivers/gpu/drm/exynos/exynos_drm_gem.c       |  4 +-
+ drivers/gpu/drm/gma500/framebuffer.c          |  2 +-
+ drivers/gpu/drm/i810/i810_dma.c               |  2 +-
+ drivers/gpu/drm/i915/gem/i915_gem_mman.c      |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_gem.c        |  2 +-
+ drivers/gpu/drm/msm/msm_gem.c                 |  2 +-
+ drivers/gpu/drm/omapdrm/omap_gem.c            |  3 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c   |  3 +-
+ drivers/gpu/drm/tegra/gem.c                   |  5 +-
+ drivers/gpu/drm/ttm/ttm_bo_vm.c               |  3 +-
+ drivers/gpu/drm/virtio/virtgpu_vram.c         |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_ttm_glue.c      |  2 +-
+ drivers/gpu/drm/xen/xen_drm_front_gem.c       |  3 +-
+ drivers/hsi/clients/cmt_speech.c              |  2 +-
+ drivers/hwtracing/intel_th/msu.c              |  2 +-
+ drivers/hwtracing/stm/core.c                  |  2 +-
+ drivers/infiniband/hw/hfi1/file_ops.c         |  4 +-
+ drivers/infiniband/hw/mlx5/main.c             |  4 +-
+ drivers/infiniband/hw/qib/qib_file_ops.c      | 13 +++--
+ drivers/infiniband/hw/usnic/usnic_ib_verbs.c  |  2 +-
+ .../infiniband/hw/vmw_pvrdma/pvrdma_verbs.c   |  2 +-
+ .../common/videobuf2/videobuf2-dma-contig.c   |  2 +-
+ .../common/videobuf2/videobuf2-vmalloc.c      |  2 +-
+ drivers/media/v4l2-core/videobuf-dma-contig.c |  2 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c     |  4 +-
+ drivers/media/v4l2-core/videobuf-vmalloc.c    |  2 +-
+ drivers/misc/cxl/context.c                    |  2 +-
+ drivers/misc/habanalabs/common/memory.c       |  2 +-
+ drivers/misc/habanalabs/gaudi/gaudi.c         |  4 +-
+ drivers/misc/habanalabs/gaudi2/gaudi2.c       |  8 +--
+ drivers/misc/habanalabs/goya/goya.c           |  4 +-
+ drivers/misc/ocxl/context.c                   |  4 +-
+ drivers/misc/ocxl/sysfs.c                     |  2 +-
+ drivers/misc/open-dice.c                      |  4 +-
+ drivers/misc/sgi-gru/grufile.c                |  4 +-
+ drivers/misc/uacce/uacce.c                    |  2 +-
+ drivers/sbus/char/oradax.c                    |  2 +-
+ drivers/scsi/cxlflash/ocxl_hw.c               |  2 +-
+ drivers/scsi/sg.c                             |  2 +-
+ .../staging/media/atomisp/pci/hmm/hmm_bo.c    |  2 +-
+ drivers/staging/media/deprecated/meye/meye.c  |  4 +-
+ .../media/deprecated/stkwebcam/stk-webcam.c   |  2 +-
+ drivers/target/target_core_user.c             |  2 +-
+ drivers/uio/uio.c                             |  2 +-
+ drivers/usb/core/devio.c                      |  3 +-
+ drivers/usb/mon/mon_bin.c                     |  3 +-
+ drivers/vdpa/vdpa_user/iova_domain.c          |  2 +-
+ drivers/vfio/pci/vfio_pci_core.c              |  2 +-
+ drivers/vhost/vdpa.c                          |  2 +-
+ drivers/video/fbdev/68328fb.c                 |  2 +-
+ drivers/video/fbdev/core/fb_defio.c           |  4 +-
+ drivers/xen/gntalloc.c                        |  2 +-
+ drivers/xen/gntdev.c                          |  4 +-
+ drivers/xen/privcmd-buf.c                     |  2 +-
+ drivers/xen/privcmd.c                         |  4 +-
+ fs/aio.c                                      |  2 +-
+ fs/cramfs/inode.c                             |  2 +-
+ fs/erofs/data.c                               |  2 +-
+ fs/exec.c                                     |  4 +-
+ fs/ext4/file.c                                |  2 +-
+ fs/fuse/dax.c                                 |  2 +-
+ fs/hugetlbfs/inode.c                          |  4 +-
+ fs/orangefs/file.c                            |  3 +-
+ fs/proc/task_mmu.c                            |  2 +-
+ fs/proc/vmcore.c                              |  3 +-
+ fs/userfaultfd.c                              |  2 +-
+ fs/xfs/xfs_file.c                             |  2 +-
+ include/linux/mm.h                            | 51 +++++++++++++++++--
+ include/linux/mm_types.h                      |  8 ++-
+ include/linux/pgtable.h                       |  5 +-
+ kernel/bpf/ringbuf.c                          |  4 +-
+ kernel/bpf/syscall.c                          |  4 +-
+ kernel/events/core.c                          |  2 +-
+ kernel/fork.c                                 |  2 +-
+ kernel/kcov.c                                 |  2 +-
+ kernel/relay.c                                |  2 +-
+ mm/debug.c                                    |  1 +
+ mm/hugetlb.c                                  |  4 +-
+ mm/khugepaged.c                               |  2 +
+ mm/ksm.c                                      |  2 +
+ mm/madvise.c                                  |  2 +-
+ mm/memory.c                                   | 19 +++----
+ mm/memremap.c                                 |  4 +-
+ mm/mlock.c                                    | 12 ++---
+ mm/mmap.c                                     | 32 +++++++-----
+ mm/mprotect.c                                 |  2 +-
+ mm/mremap.c                                   |  8 +--
+ mm/nommu.c                                    | 11 ++--
+ mm/secretmem.c                                |  2 +-
+ mm/shmem.c                                    |  2 +-
+ mm/vmalloc.c                                  |  2 +-
+ net/ipv4/tcp.c                                |  4 +-
+ security/selinux/selinuxfs.c                  |  6 +--
+ sound/core/oss/pcm_oss.c                      |  2 +-
+ sound/core/pcm_native.c                       |  9 ++--
+ sound/soc/pxa/mmp-sspa.c                      |  2 +-
+ sound/usb/usx2y/us122l.c                      |  4 +-
+ sound/usb/usx2y/usX2Yhwdep.c                  |  2 +-
+ sound/usb/usx2y/usx2yhwdeppcm.c               |  2 +-
+ 129 files changed, 292 insertions(+), 233 deletions(-)
 
-Furthermore, the ephmeral images would likely be composed
-of cenos9 + several layers, so the situation of single composefs
-image as large as centos9 is highly unlikely.
+-- 
+2.39.1
 
-Am I understanding the workflow correctly?
-
-If I am, then I would rather see benchmarks with images
-that correspond with the real life use case that drives composefs,
-such as small manifests and/or composefs in combination with
-overlayfs as it would be used more often.
-
-> Cold cache performance dominates the runtime of short lived
-> containers as well as high density container hosts being run to
-> their container level memory limits. `ls -lR` is just a
-> microbenchmark that demonstrates how much better composefs cold
-> cache behaviour is than the alternatives being proposed....
->
-> This might also help explain why my initial review comments focussed
-> on getting rid of optional format features, straight lining the
-> processing, changing the format or search algorithms so more
-> sequential cacheline accesses occurred resulting in less memory
-> stalls, etc. i.e. reductions in cold cache lookup overhead will
-> directly translate into faster container workload spin up.
->
-
-I agree that this technology is novel and understand why it results
-in faster cold cache lookup.
-I do not know erofs enough to say if similar techniques could be
-applied to optimize erofs lookup at mkfs.erofs time, but I can guess
-that this optimization was never attempted.
-
-> > > > > This isn't all that strange, as overlayfs does a lot more work for
-> > > > > each lookup, including multiple name lookups as well as several
-> > > > > xattr
-> > > > > lookups, whereas composefs just does a single lookup in a pre-
-> > > > > computed
-> > > >
-> > > > Seriously, "multiple name lookups"?
-> > > > Overlayfs does exactly one lookup for anything but first level
-> > > > subdirs
-> > > > and for sparse files it does the exact same lookup in /objects as
-> > > > composefs.
-> > > > Enough with the hand waving please. Stick to hard facts.
-> > >
-> > > With the discussed layout, in a stat() call on a regular file,
-> > > ovl_lookup() will do lookups on both the sparse file and the backing
-> > > file, whereas cfs_dir_lookup() will just map some page cache pages and
-> > > do a binary search.
-> > >
-> > > Of course if you actually open the file, then cfs_open_file() would do
-> > > the equivalent lookups in /objects. But that is often not what happens,
-> > > for example in "ls -l".
-> > >
-> > > Additionally, these extra lookups will cause extra memory use, as you
-> > > need dentries and inodes for the erofs/squashfs inodes in addition to
-> > > the overlay inodes.
-> >
-> > I see. composefs is really very optimized for ls -lR.
->
-> No, composefs is optimised for minimal namespace and inode
-> resolution overhead. 'ls -lR' does a lot of these operations, and
-> therefore you see the efficiency of the design being directly
-> exposed....
->
-> > Now only need to figure out if real users start a container and do ls -lR
-> > without reading many files is a real life use case.
->
-> I've been using 'ls -lR' and 'find . -ctime 1' to benchmark cold
-> cache directory iteration and inode lookup performance for roughly
-> 20 years. The benchmarks I run *never* read file data, nor is that
-> desired - they are pure directory and inode lookup micro-benchmarks
-> used to analyse VFS and filesystem directory and inode lookup
-> performance.
->
-> I have been presenting such measurements and patches improving
-> performance of these microbnechmarks to the XFS and fsdevel lists
-> over 15 years and I have *never* had to justify that what I'm
-> measuring is a "real world workload" to anyone. Ever.
->
-> Complaining about real world relevancy of the presented benchmark
-> might be considered applying a double standard, wouldn't you agree?
->
-
-I disagree.
-Perhaps my comment was misunderstood.
-
-The cold cache benchmark is certainly relevant for composefs
-comparison and I expect to see it in future submissions.
-
-The point I am trying to drive is this:
-There are two alternatives on the table:
-1. Add fs/composefs
-2. Improve erofs and overlayfs
-
-Functionally, I think we all agree that both alternatives should work.
-
-Option #1 will take much less effort from composefs authors, so it is
-understandable that they would do their best to argue in its favor.
-
-Option #2 is prefered for long term maintenance reasons, which is
-why vfs/erofs/overlayfs developers argue in favor of it.
-
-The only factor that remains that could shift the balance inside
-this gray area are the actual performance numbers.
-
-And back to my point: the not so simple decision between the
-two options, by whoever makes this decision, should be based
-on a real life example of performance improvement and not of
-a microbenchamk.
-
-In my limited experience, a real life example means composefs
-as a layer in overlayfs.
-
-I did not see those numbers and it is clear that they will not be
-as impressive as the bare composefs numbers, so proposing
-composefs needs to include those numbers as well.
-
-Alexander did claim that he has real life use cases for bare readonly
-composefs images, but he did not say what the size of the manifests
-in those images are and he did not say whether these use cases
-also require startup and teardown in orders of seconds.
-
-It looks like the different POV are now well understood by all parties
-and that we are in the process of fine tuning the information that
-needs to be presented for making the best decision based on facts.
-
-This discussion, which was on a collision course at the beginning,
-looks like it is in a converging course - this makes me happy.
-
-Thanks,
-Amir.
