@@ -2,72 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B0067AE4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 10:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1293D67AE54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 10:42:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235213AbjAYJmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 04:42:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55100 "EHLO
+        id S235221AbjAYJmR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 04:42:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235016AbjAYJmD (ORCPT
+        with ESMTP id S234783AbjAYJmF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 04:42:03 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8014A2B29F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 01:42:01 -0800 (PST)
+        Wed, 25 Jan 2023 04:42:05 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F399930DF
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 01:42:03 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 38C2421C82;
-        Wed, 25 Jan 2023 09:42:00 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2C30E21C74;
+        Wed, 25 Jan 2023 09:42:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1674639720; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1674639721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=bTexrFokGErC1DDMr8ao4jUpUNu1UsdaZ82C7rmjD58=;
-        b=puwUbTe87RttOHWh+5ArPV5/RqAaqJYWkkahjlp4GjC2V/nmg9xzuou21mpEMONXdqxL30
-        Osxi5FRdTI1UjPs89JObnrEPjU/Bm4cpT+Tx0028qC5GrN0Lo0ig9votKLg/55z7aBgoab
-        vAug5Tp/7KF5qA573yDccCzqLpoqYKk=
+        bh=wFsroFWVQ9Mnyo2w/YZq8LcTL1TArB27vUMXBp9llxE=;
+        b=iTgvfZJuIiocP361KZiLKGvexIG0P/JOYexxyP17JcCpxjrcUS+2JxvibvQOCSFk8CWlPE
+        PaP4kAJndPnGrBA7eY1tsFB4ENirP1gBe1t7GubnDF8QerEsfMCTjCBDaG4HMsYygLUwOi
+        2+fbfabUVT5xeT/72hsE6rNVKotZQqI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1674639720;
+        s=susede2_ed25519; t=1674639721;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=bTexrFokGErC1DDMr8ao4jUpUNu1UsdaZ82C7rmjD58=;
-        b=b+btVccKW12trPBN8ezNGT6i+U0PjlATRDRq3Tx/6e3mmMS6I5VCh0BdC/yCdF0mHVif2R
-        sSb7cTtPNXCXyaAA==
+        bh=wFsroFWVQ9Mnyo2w/YZq8LcTL1TArB27vUMXBp9llxE=;
+        b=M6TVGW7au1jYhh2KTk4rVnxruTWxp+TXWiRjGcYXVnhM/mnf4687C4pTjUjBLcHD2nsDdu
+        ATy9rfzjQ1gD0+CA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2967F13A09;
-        Wed, 25 Jan 2023 09:42:00 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0622E1358F;
+        Wed, 25 Jan 2023 09:42:01 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id BKEHCWj50GMWIgAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 25 Jan 2023 09:42:00 +0000
+        id IVSWAWn50GMkIgAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 25 Jan 2023 09:42:01 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 5060EA06C6; Wed, 25 Jan 2023 10:41:59 +0100 (CET)
+        id 55320A06D0; Wed, 25 Jan 2023 10:41:59 +0100 (CET)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 04/12] udf: Convert in-ICB files to use udf_write_begin()
-Date:   Wed, 25 Jan 2023 10:41:46 +0100
-Message-Id: <20230125094159.10877-4-jack@suse.cz>
+Subject: [PATCH v2 05/12] udf: Convert all file types to use udf_write_end()
+Date:   Wed, 25 Jan 2023 10:41:47 +0100
+Message-Id: <20230125094159.10877-5-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230125093914.24627-1-jack@suse.cz>
 References: <20230125093914.24627-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3688; i=jack@suse.cz; h=from:subject; bh=Q35WItHGUnCNRlRjCs8qc4xP7+XrQgyl03pCdYb76xU=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBj0PlalD8FlrflI4tRJ6J9e8TxzGp36FO0Am4IDUt5 VkEPiZGJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCY9D5WgAKCRCcnaoHP2RA2bY0CA DuCjhkgosDftPsH81fNQE9QqDHHhp2rhd547gNmpzwKeXT0gvBb2p3Gj75mucVH1L3sY+3V3MUh41D qAIoU0hj2KwA9yREETzo3exK7oVnGpR90hgxrcui360A0ox37ej+SUz1ZPVc4jT2UFUrk9IOPBuqU/ c3Ck7D7KYHlDYWjVu57SWW5wMugSSFLKgS03Gs2uK748w4z5ErbmvKYj+oFfv4bXBrZbnvDXVbC1UI 8tx0Ebzi382dxp1qQ7JEJTN9y/bFtu1M7Hcov1om0QEGK1CPpIE1Yp00hg5vQFHSUvPyk22vgcNxH9 yuIxT+bKMQfAN++H84bILte2+mMzk1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3512; i=jack@suse.cz; h=from:subject; bh=d88CriuKCFiUkVD3qyJkIo32zhq3lnVoaV6ED6xbV9E=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBj0PlbSC3ltAvMwQwcPcR5MWAcv6wqCQMp8N75Wve/ fK21E+eJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCY9D5WwAKCRCcnaoHP2RA2a7RB/ 9AYYFirFwvanGXSwqjZSLf7Wb+oMcdlkYohD6EOcteQP5PU2A7yCbN2mFUxBKtETYcHeGu15bsOUEf Rs0fEARhC/YfyzpPDlmhWY4uK/T/N5vI4OLiQBifNeKrTS1bWSjH3jw0LNfR8YRpD9U1YY01IYzcav yfBsU3o5vecQTYt/ZbE2REMa7QWCEexdLqcn4Sz3f9SDrZsp8p9c9JUyUuExZyD8dF4j52K/Scs0tZ /lL8iASK70jySfHSX4om6Y8topDR3XFF5dazhPjS1OKIqYA8FL4OD2YM+7CAwQqRbeHISCksYxTGlI ERVWlvQQ1gd9xymjp5PxdnQqxFOb7B
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -76,106 +76,101 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Switching address_space_operations while a file is used is difficult to
 do in a race-free way. To be able to use single address_space_operations
-in UDF, make in-ICB files use udf_write_begin().
+in UDF, create udf_write_end() function that is able to handle both
+normal and in-ICB files.
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/udf/file.c    | 21 +--------------------
- fs/udf/inode.c   | 24 +++++++++++++++++++-----
+ fs/udf/file.c    | 16 +---------------
+ fs/udf/inode.c   | 22 +++++++++++++++++++++-
  fs/udf/udfdecl.h |  3 +++
- 3 files changed, 23 insertions(+), 25 deletions(-)
+ 3 files changed, 25 insertions(+), 16 deletions(-)
 
 diff --git a/fs/udf/file.c b/fs/udf/file.c
-index 6bab6aa7770a..16aecf4b2387 100644
+index 16aecf4b2387..8a37cd593883 100644
 --- a/fs/udf/file.c
 +++ b/fs/udf/file.c
-@@ -57,25 +57,6 @@ void udf_adinicb_readpage(struct page *page)
+@@ -57,27 +57,13 @@ void udf_adinicb_readpage(struct page *page)
  	kunmap_atomic(kaddr);
  }
  
--static int udf_adinicb_write_begin(struct file *file,
--			struct address_space *mapping, loff_t pos,
--			unsigned len, struct page **pagep,
--			void **fsdata)
+-static int udf_adinicb_write_end(struct file *file, struct address_space *mapping,
+-				 loff_t pos, unsigned len, unsigned copied,
+-				 struct page *page, void *fsdata)
 -{
--	struct page *page;
--
--	if (WARN_ON_ONCE(pos >= PAGE_SIZE))
--		return -EIO;
--	page = grab_cache_page_write_begin(mapping, 0);
--	if (!page)
--		return -ENOMEM;
--	*pagep = page;
--
--	if (!PageUptodate(page))
--		udf_adinicb_readpage(page);
--	return 0;
+-	struct inode *inode = page->mapping->host;
+-	loff_t last_pos = pos + copied;
+-	if (last_pos > inode->i_size)
+-		i_size_write(inode, last_pos);
+-	set_page_dirty(page);
+-	unlock_page(page);
+-	put_page(page);
+-	return copied;
 -}
 -
- static int udf_adinicb_write_end(struct file *file, struct address_space *mapping,
- 				 loff_t pos, unsigned len, unsigned copied,
- 				 struct page *page, void *fsdata)
-@@ -95,7 +76,7 @@ const struct address_space_operations udf_adinicb_aops = {
+ const struct address_space_operations udf_adinicb_aops = {
+ 	.dirty_folio	= block_dirty_folio,
  	.invalidate_folio = block_invalidate_folio,
  	.read_folio	= udf_read_folio,
  	.writepages	= udf_writepages,
--	.write_begin	= udf_adinicb_write_begin,
-+	.write_begin	= udf_write_begin,
- 	.write_end	= udf_adinicb_write_end,
+ 	.write_begin	= udf_write_begin,
+-	.write_end	= udf_adinicb_write_end,
++	.write_end	= udf_write_end,
  	.direct_IO	= udf_direct_IO,
  };
+ 
 diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index dafbc99b78a3..c165dd9714b9 100644
+index c165dd9714b9..ac00f2f5dbe3 100644
 --- a/fs/udf/inode.c
 +++ b/fs/udf/inode.c
-@@ -231,16 +231,30 @@ static void udf_readahead(struct readahead_control *rac)
- 	mpage_readahead(rac, udf_get_block);
+@@ -257,6 +257,26 @@ int udf_write_begin(struct file *file, struct address_space *mapping,
+ 	return 0;
  }
  
--static int udf_write_begin(struct file *file, struct address_space *mapping,
-+int udf_write_begin(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len,
- 			struct page **pagep, void **fsdata)
- {
-+	struct udf_inode_info *iinfo = UDF_I(file_inode(file));
-+	struct page *page;
- 	int ret;
- 
--	ret = block_write_begin(mapping, pos, len, pagep, udf_get_block);
--	if (unlikely(ret))
--		udf_write_failed(mapping, pos + len);
--	return ret;
-+	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
-+		ret = block_write_begin(mapping, pos, len, pagep,
-+					udf_get_block);
-+		if (unlikely(ret))
-+			udf_write_failed(mapping, pos + len);
-+		return ret;
-+	}
-+	if (WARN_ON_ONCE(pos >= PAGE_SIZE))
-+		return -EIO;
-+	page = grab_cache_page_write_begin(mapping, 0);
-+	if (!page)
-+		return -ENOMEM;
-+	*pagep = page;
-+	if (!PageUptodate(page))
-+		udf_adinicb_readpage(page);
-+	return 0;
- }
- 
++int udf_write_end(struct file *file, struct address_space *mapping,
++		  loff_t pos, unsigned len, unsigned copied,
++		  struct page *page, void *fsdata)
++{
++	struct inode *inode = file_inode(file);
++	loff_t last_pos;
++
++	if (UDF_I(inode)->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB)
++		return generic_write_end(file, mapping, pos, len, copied, page,
++					 fsdata);
++	last_pos = pos + copied;
++	if (last_pos > inode->i_size)
++		i_size_write(inode, last_pos);
++	set_page_dirty(page);
++	unlock_page(page);
++	put_page(page);
++
++	return copied;
++}
++
  ssize_t udf_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	struct file *file = iocb->ki_filp;
+@@ -286,7 +306,7 @@ const struct address_space_operations udf_aops = {
+ 	.readahead	= udf_readahead,
+ 	.writepages	= udf_writepages,
+ 	.write_begin	= udf_write_begin,
+-	.write_end	= generic_write_end,
++	.write_end	= udf_write_end,
+ 	.direct_IO	= udf_direct_IO,
+ 	.bmap		= udf_bmap,
+ 	.migrate_folio	= buffer_migrate_folio,
 diff --git a/fs/udf/udfdecl.h b/fs/udf/udfdecl.h
-index a851613465c6..32decf6b6a21 100644
+index 32decf6b6a21..304c2ec81589 100644
 --- a/fs/udf/udfdecl.h
 +++ b/fs/udf/udfdecl.h
-@@ -161,6 +161,9 @@ extern void udf_evict_inode(struct inode *);
- extern int udf_write_inode(struct inode *, struct writeback_control *wbc);
- int udf_read_folio(struct file *file, struct folio *folio);
- int udf_writepages(struct address_space *mapping, struct writeback_control *wbc);
-+int udf_write_begin(struct file *file, struct address_space *mapping,
-+			loff_t pos, unsigned len,
-+			struct page **pagep, void **fsdata);
+@@ -164,6 +164,9 @@ int udf_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ int udf_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+ 			struct page **pagep, void **fsdata);
++int udf_write_end(struct file *file, struct address_space *mapping,
++		  loff_t pos, unsigned len, unsigned copied,
++		  struct page *page, void *fsdata);
  ssize_t udf_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
  extern int8_t inode_bmap(struct inode *, sector_t, struct extent_position *,
  			 struct kernel_lb_addr *, uint32_t *, sector_t *);
