@@ -2,239 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8590167B8E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 18:58:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A4E67B8E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 18:59:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235607AbjAYR6U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 12:58:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40110 "EHLO
+        id S235780AbjAYR7H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 12:59:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236192AbjAYR6P (ORCPT
+        with ESMTP id S229481AbjAYR7G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 12:58:15 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3249C59261;
-        Wed, 25 Jan 2023 09:58:11 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BB4756159E;
-        Wed, 25 Jan 2023 17:58:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A85DBC433EF;
-        Wed, 25 Jan 2023 17:58:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674669490;
-        bh=shsgJHf6tme56I2MYk+WES+vitl4EEg2XPQH/BBXGSg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=LnU1Mpco3dx7BZxywi64lkCc1hxZUNdo9vr90SM7+9T/k18/ozJQKEoa3IZVdH+dK
-         8JOs5GDE9exA2kix5USwfiBhl2RSfRxX8mhGXCVYV62z8X0tKLW0Zlyn2NjNFpzGsb
-         f76Z7agUMLQgq/U+6pZH0BOEuX7pKpvr8Zg1w8RMQKDBKZHQrr+fhSnI7josPuxhHf
-         UycUlEoP+CHJ/S68Ig8HWownImA88FzhRwMw2QVTgPRy1TDngW6ZL2F3kxtCS7mlxF
-         3Rwr3rtFaiOKe8dZweF3at1kVCCM57Cetz6fAj4WD/3qHT8XZ7/0F5/+7g/zD3QUuw
-         4t0n5OaWZgM3Q==
-Message-ID: <4d16f9f9eb678f893d4de695bd7cbff6409c3c5a.camel@kernel.org>
-Subject: Re: replacement i_version counter for xfs
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Wed, 25 Jan 2023 12:58:08 -0500
-In-Reply-To: <Y9FZupBCyPGCMFBd@magnolia>
-References: <57c413ed362c0beab06b5d83b7fc4b930c7662c4.camel@kernel.org>
-         <20230125000227.GM360264@dread.disaster.area>
-         <86f993a69a5be276164c4d3fc1951ff4bde881be.camel@kernel.org>
-         <Y9FZupBCyPGCMFBd@magnolia>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.3 (3.46.3-1.fc37) 
+        Wed, 25 Jan 2023 12:59:06 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1E0AD35;
+        Wed, 25 Jan 2023 09:59:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674669545; x=1706205545;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=TB1usJA6A+0V9D2E8qR5757kQJTtgcSM0SFKk6JJu+Q=;
+  b=F8eQ2bb1NlV9uFHHYA+xzyEJd+AuzhWe5PfRZs7+v1lj8vEZeWD+W7UH
+   loGPqVGoPT8NIB18tYqkZ1MhXm12fCLW0gz3Auq2CHliPGNmORyn6DL51
+   30CrMVnSBw44Tch/d3i+795MhK5ofaP2vE6qwedMgexp9yk5t4LMAD0Dv
+   /lJxnzzlsxAirSjXzWNuUPq/l263a1IS7JyMe91H47jX8ggkfcow0XmBa
+   TTGH4Z4sGvAm9vXqITL31EepN3fuHy0yeGHUYHdix2QEWKG5a1SeWN23u
+   DrZyoxQzhzJv5/sqbeKKGP7QIPcukWPFjpeWuIoD6TQ2+lOv9qAJOiG0a
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10601"; a="325303334"
+X-IronPort-AV: E=Sophos;i="5.97,246,1669104000"; 
+   d="scan'208";a="325303334"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2023 09:59:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10601"; a="694810271"
+X-IronPort-AV: E=Sophos;i="5.97,246,1669104000"; 
+   d="scan'208";a="694810271"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orsmga001.jf.intel.com with ESMTP; 25 Jan 2023 09:59:04 -0800
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Wed, 25 Jan 2023 09:59:03 -0800
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Wed, 25 Jan 2023 09:59:03 -0800
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16 via Frontend Transport; Wed, 25 Jan 2023 09:59:03 -0800
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.177)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.16; Wed, 25 Jan 2023 09:59:01 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IR8xRGgjVLUVCKwsEoZ4FYOzrZwb/ehbgOMpSLWLcWbffOu5wzObdhDe1YdTb5DQ/TDXsAeCWBS+hP+oVsQs5wM0B5t2uJYCDlTOxmnGewaEuIw15CRiUMO74bfIPAIZHA9EnFxIe2L9WeVupx5P/ZKSg+6XLhy08zStPKagfC8/NfAdS5FxJY78wdsqthYyHfaNKBDRu0hrc7y5+ZzXEqhYCBwkV1bniXPpq6H/RabNslLVpjjYOPVqUx1EmVbqxl4ARPP4DGFpv++75zfolGUGPZnOZIbiw+5D3YDgNgzDVt/746dnLDMZsX4erfbNta21DVqI1PYucoDJ983juQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gyQa9Ba2sNpBgfVg6L+J4JLzJIPqQpqkjoH95HYJHkE=;
+ b=QqoQWZ/zdgTJrTIrRRLkinvkf1W1BJ9vv8gPJ7f99IX8I/Tml9KnX+T+gBV6TEBGTxoMAGw+Gx9SrKZYzsJeje57Eig3IOrXLz0JXT9xWR5IZhxe0438AJ9AAcHwMV8HYKRQGvqBUAu5Rfk3ZdNd9pKoeAR6QblZ/OnTMwoMR9bg2gB/Tu8e5FvPdjjH2yyNBCwxUAW1wukSv0qzpKHS/3+LyLeT2gOdq3zLv/KaDCWUiWa/GDNU7BEGl/OJfFtOjrp5EsstF+L6xaCxig+rp/IF6a0hPss29nwUwYbUvpkMR5dp5MU6YeH/DT81hXQ5cCQqeOiou7x6ZpWajPl9KA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by CY8PR11MB6963.namprd11.prod.outlook.com (2603:10b6:930:58::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.20; Wed, 25 Jan
+ 2023 17:59:00 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::421b:865b:f356:7dfc]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::421b:865b:f356:7dfc%5]) with mapi id 15.20.6002.033; Wed, 25 Jan 2023
+ 17:59:00 +0000
+Date:   Wed, 25 Jan 2023 09:58:56 -0800
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        <linux-block@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>
+Subject: RE: [PATCH 1/7] mpage: stop using bdev_{read,write}_page
+Message-ID: <63d16de08ab5e_3a36e52944e@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20230125133436.447864-1-hch@lst.de>
+ <20230125133436.447864-2-hch@lst.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230125133436.447864-2-hch@lst.de>
+X-ClientProxiedBy: CY5PR15CA0142.namprd15.prod.outlook.com
+ (2603:10b6:930:67::8) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CY8PR11MB6963:EE_
+X-MS-Office365-Filtering-Correlation-Id: bfc37a2c-6942-41d6-a1d4-08dafefdd604
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: nAYwSPHtbdk5wlYiC073WQs02vcXvMC2Oauwj1XlOpoCsJJ7W+eiipnTG0Bro5ITMqdWaiOQkLUSg7sizSKX5ZkNVhg0pGt8HAA7mYMXz5JF77X7P3mBbmwwQtuPnPKMmDFMD4gIozCxKiXbQ8pE9FX2PVuUJF8ZcmG3o3DhQfHKjS5356P+gM01B4eIiq9RQSyQBcQu4Kkava8yHoNeKUpFeTg3Dx94dltiBGnGcMahtaK+s1FOWxHYdwxICOyFowfGpHFszac5uhWG380NgajaLKK2Ga51Ku11FFS1A8rKVqUf5odgtQFsXlY82oSJGs2CDImet00oS8Qbl2V1v6wk4PGObUdKrSEf/cG/KXXSFb96wkm/EfQqeOpjybYVOJ6jX/8FmuIAyqYYD2gjbpcLlTnjwQ6ZXNp+xO7zZ1GNBtLJ+a8WAETXt4nQzEdKslefbL43XbP26OZFLUeV91C4fubPaWjzlpH72u8U95W5gU4+ix6aq7bD4DfWD0DP0+utVrlB3HktrXCyaASEM52MKgHEDNr3R9ipH/3iaez27elYpnYbRsaPvvu5qdg9zt7sqplMOdJBpokRAwaAacpKRH592LJFsF84SHAe9aBFLvVJLAfHrgXpN8z+F+VslIRap9UNP65kum3+jMfXuQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(346002)(136003)(396003)(366004)(39860400002)(376002)(451199018)(38100700002)(86362001)(82960400001)(316002)(6636002)(110136005)(478600001)(2906002)(66476007)(41300700001)(66556008)(4326008)(66946007)(8676002)(5660300002)(8936002)(6512007)(26005)(186003)(6506007)(9686003)(83380400001)(6486002)(6666004);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?HC53SR0jliP0KEvHw6BW5VQeuBWV4g7Mj5I56zudVIvmUgpO6mf6inyTCRl+?=
+ =?us-ascii?Q?PaQUNRM8N3svvpK/DzkzeB1ltmXlui25UOcBKRtfLZlwMgG7GhRSP3OLTAKK?=
+ =?us-ascii?Q?mgMejcVs5FGEIASTD2K8b21VqbPimeP5xkEsnREb29yZFIDavEnh6rIt+7yf?=
+ =?us-ascii?Q?+r/qPt4BxIPUwcvr6BHT1hSwaBlGTZ6LmhM6LApFuaFTdPoZXEioBYLB/1Ej?=
+ =?us-ascii?Q?ILpaLJCboAmNNUbh3UbQh9kGGbNg/PRTVGxEzpCRt4lZUboUF0kXmn0cs9X/?=
+ =?us-ascii?Q?MU12L+06q7gs/QGrVUO36N1iYUjdicZkw/Wzhlpds/xpML7/ldYdvhqtZ3ZN?=
+ =?us-ascii?Q?zC3+NhGqTsf8O+I/p7uhQu1Xq8Yf1mwkEl4WXk0NjyfAr8A07YyYnjLU4+pI?=
+ =?us-ascii?Q?6tuvsKYqSr47Yze/IHiR0re9mUcIBxULD0SLWcmPrITNMADJAGsVQhqnVaPg?=
+ =?us-ascii?Q?7dMRkfmK6DPRtZjqnbJMdxORaBdcOW0t1iV9vDfgZ7IoOfTLMwGJvGESIByz?=
+ =?us-ascii?Q?G4wy5dNWXdP2rPyblRoibHqEBGh6u8YLKw2ROHa0dGxBttW7FSlxbiaMhRUA?=
+ =?us-ascii?Q?zmDp1sdsOwwB8hklbcek3YDmKm79k5mXmG8TH/gYiQHR3kynyiTYkQ0Kn4KA?=
+ =?us-ascii?Q?jGo7CkfIjemkiE+Z+o6w6tLjSAFIbTnAllCKVtHebJziz4E2h83tRASHijE7?=
+ =?us-ascii?Q?yl1bxKjStqO52u6LXKwg9lAn8pUkN02DQ9lHN/REb4ymUzJkh/WZL33L80BW?=
+ =?us-ascii?Q?6HY2HCvpdRmidYQJwgP7GeNmP2TWwTN7cTKWimh9A1FfKq5bN3OBVxZ1KOZm?=
+ =?us-ascii?Q?PNBEelT8jXk4Q2jDucM0s/bfConit/I7tTg33JwtAfYxMf76qSB6y+Y+YrqQ?=
+ =?us-ascii?Q?sQg+zeHnjx3Bb2RpoJJ9G3fRpEpwvqkddOZwc38JgLz2KUnPBNCVTerxb8ZD?=
+ =?us-ascii?Q?eg6zPYoxoCke3SnhBiq0CEINmSR3W6udvDiLXPzMvJFS7xzLbILwWsj/CTEW?=
+ =?us-ascii?Q?BNw2ZcARZV5P8lZ9TVWzLMtN2gIBHS2nlpJoOvI+ytkp6YbkPJS/I007IZDx?=
+ =?us-ascii?Q?ppJdH7M1fAJ3hrxxta662I152qt7GYslA55NpbItozY7grKP2u+O4fUA48SF?=
+ =?us-ascii?Q?XoW1VA6iuiPb9BPzYuMpyvaC/5uabBKle726gFP1y2jFsfShxwJkt4GlFnXA?=
+ =?us-ascii?Q?kuYz+0ef+UEkwEqbsQ6JLpuCVmSN78kH2ZSsT841ClvzZMRf67Jpr9QCjhAW?=
+ =?us-ascii?Q?p431PKPaao+WPVOulcbK3sfXbOR+UjJSo+IB+8lB/7UlQUqMAcYFtPOZSiuj?=
+ =?us-ascii?Q?db4xnNQR67oGop3It46XoE0hdBi0ka5PtR9GGajB0GxWCkvLpn5bLKou9j/k?=
+ =?us-ascii?Q?rJ+3ewfdLVf01HO5cAfcCM7mCrgG9FMtFezi1nsDYLvGXsDrAWBXwjN3c+xd?=
+ =?us-ascii?Q?KZ80xqnnRTvS6WMaEn/jDBGrn/6Q9g8ZNZve9zeKOe1cz/DOol1QU0pUWcaS?=
+ =?us-ascii?Q?F0OpFUJxhRjmhAxpL8Btd/UlbHJummaZq/fUpcrsEIYkTXuINZAjssYRk8ps?=
+ =?us-ascii?Q?VhVIraFQRuKbwhWbE8iHij6lP2bvaNjbJg8wNW8y79x9OH29PMu3Ll7E62Fz?=
+ =?us-ascii?Q?ew=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bfc37a2c-6942-41d6-a1d4-08dafefdd604
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jan 2023 17:58:59.9030
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ycE+DctptIMwXxdTc2YQH9vq6v+BNr0s8rloZYGvKJNuc19pIQJAPPFD7iKpLDnrGwiluA6GtQ3sMJuIAdevmORWuPuHDuPczv45zumEsjo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB6963
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-01-25 at 08:32 -0800, Darrick J. Wong wrote:
-> On Wed, Jan 25, 2023 at 06:47:12AM -0500, Jeff Layton wrote:
-> > On Wed, 2023-01-25 at 11:02 +1100, Dave Chinner wrote:
-> > > On Tue, Jan 24, 2023 at 07:56:09AM -0500, Jeff Layton wrote:
-> > > > A few months ago, I posted a patch to make xfs not bump its i_versi=
-on
-> > > > counter on atime updates. Dave Chinner NAK'ed that patch, mentionin=
-g
-> > > > that xfs would need to replace it with an entirely new field as the
-> > > > existing counter is used for other purposes and its semantics are s=
-et in
-> > > > stone.
-> > > >=20
-> > > > Has anything been done toward that end?
-> > >=20
-> > > No, because we don't have official specification of the behaviour
-> > > the nfsd subsystem requires merged into the kernel yet.
-> > >=20
-> >=20
-> > Ok. Hopefully that will be addressed in v6.3.
-> >=20
-> > > > Should I file a bug report or something?
-> > >=20
-> > > There's nothing we can really do until the new specification is set
-> > > in stone. Filing a bug report won't change anything material.
-> > >=20
-> > > As it is, I'm guessing that you desire the behaviour to be as you
-> > > described in the iversion patchset you just posted. That is
-> > > effectively:
-> > >=20
-> > >   * The change attribute (i_version) is mandated by NFSv4 and is most=
-ly for
-> > >   * knfsd, but is also used for other purposes (e.g. IMA). The i_vers=
-ion must
-> > > - * appear different to observers if there was a change to the inode'=
-s data or
-> > > - * metadata since it was last queried.
-> > > + * appear larger to observers if there was an explicit change to the=
- inode's
-> > > + * data or metadata since it was last queried.
-> > >=20
-> > > i.e. the definition is changing from *any* metadata or data change
-> > > to *explicit* metadata/data changes, right? i.e. it should only
-> > > change when ctime changes?
-> > >=20
-> >=20
-> > Yes.
-> >=20
-> > > IIUC the rest of the justification for i_version is that ctime might
-> > > lack the timestamp granularity to disambiguate sub-timestamp
-> > > granularity changes, so i_version is needed to bridge that gap.
-> > >=20
-> > > Given that XFS has nanosecond timestamp resolution in the on-disk
-> > > format, both i_version and ctime changes are journalled, and
-> > > ctime/i_version will always change at exactly the same time in the
-> > > same transactions, there are no inherent sub-timestamp granularity
-> > > problems with ctime within XFS. Any deficiency in ctime resolution
-> > > comes solely from the granularity of the VFS inode timestamp
-> > > functions.
-> > >=20
-> > > And so if current_time() was to provide fine-grained nanosecond
-> > > timestamp resolution for exported XFS filesystems (i.e. use
-> > > ktime_get_real_ts64() conditionally), then it seems to me that the
-> > > nfsd i_version function becomes completely redundant.
-> > >=20
-> > > i.e. we are pretty much guaranteed that ctime on exported
-> > > filesystems will always be different for explicit modifications to
-> > > the same inode, and hence we can just use ctime as the version
-> > > change identifier without needing any on-disk format changes at all.
-> > >=20
-> > > And we can optimise away that overhead when the filesystem is not
-> > > exported by just using the coarse timestamps because there is no
-> > > need for sub-timer-tick disambiguation of single file
-> > > modifications....
-> > >=20
-> >=20
-> > Ok, so conditional on (maybe) a per fstype flag, and whether the
-> > filesystem is exported?
-> >=20
-> > It's not trivial to tell whether something is exported though. We
-> > typically only do that sort of checking within nfsd. That involves an
-> > upcall into mountd, at a minimum.
-> >=20
-> > I don't think you want to be plumbing calls to exportfs into xfs for
-> > this. It may be simpler to just add a new on-disk counter and be done
-> > with it.
->=20
-> Simpler for you, maybe.  Ondisk format changes are a PITA to evaluate
-> and come with a long support burden.  We'd also have to write
-> xfs-specific testcases to ensure that the counter updates according to
-> specification.
->=20
-> Poking the kernel to provide sub-jiffies timestamp granularity when
-> required stays within the existing ondisk format, can be added to any
-> filesystem with sufficient timestamp granularity, and can be the subject
-> of a generic/ vfs test.
->=20
-> I also wonder if it's even necessary to use ktime_get_real_ts64 in all
-> cases -- can we sample the coarse granularity timestamp, and only go for
-> the higher resolution one if the first matches the ctime?
->=20
-> > > Hence it appears to me that with the new i_version specification
-> > > that there's an avenue out of this problem entirely that is "nfsd
-> > > needs to use ctime, not i_version". This solution seems generic
-> > > enough that filesystems with existing on-disk nanosecond timestamp
-> > > granularity would no longer need explicit on-disk support for the
-> > > nfsd i_version functionality, yes?
-> > >=20
-> >=20
-> > Pretty much.
-> >=20
-> > My understanding has always been that it's not the on-disk format that'=
-s
-> > the limiting factor, but the resolution of in-kernel timestamp sources.
-> > If ktime_get_real_ts64 has real ns granularity, then that should be
-> > sufficient (at least for the moment). I'm unclear on the performance
-> > implications with such a change though.
->=20
-> I bet you can find some arm board or something with a terrible
-> clocksource that will take forever to produce high resolution timestamps
-> and get it wrong.
->=20
-> > You had also mentioned a while back that there was some desire for
-> > femtosecond resolution on timestamps. Does that change the calculus her=
-e
-> > at all? Note that the i_version is not subject to any timestamp
-> > granularity issues.
->=20
-> I personally don't care to go enlarge xfs timestamps even further to
-> support sub-ns resolution, but I see the theoretical argument for
-> needing them on an 8GHz Intel i9-13900KS(paceheater)...
->=20
-> > If you want nfsd to start using the ctime for i_version with xfs, then
-> > you can just turn off the SB_I_IVERSION flag. You will need to do some
-> > work though to keep your "special" i_version that also counts atime
-> > updates working once you turn that off. You'll probably want to do that
-> > anyway though since the semantics for xfs's version counter are
-> > different from everyone else's.
-> >=20
-> > If this is what you choose to do for xfs, then the question becomes: wh=
-o
-> > is going to do that timestamp rework?
-> >=20
-> > Note that there are two other lingering issues with i_version. Neither
-> > of these are xfs-specific, but they may inform the changes you want to
-> > make there:
-> >=20
-> > 1/ the ctime and i_version can roll backward on a crash.
-> >=20
-> > 2/ the ctime and i_version are both currently updated before write data
-> > is copied to the pagecache. It would be ideal if that were done
-> > afterward instead. (FWIW, I have some draft patches for btrfs and ext4
-> > for this, but they need a lot more testing.)
->=20
-> You might also want some means for xfs to tell the vfs that it already
-> did the timestamp update (because, say, we had to allocate blocks).
-> I wonder what people will say when we have to run a transaction before
-> the write to peel off suid bits and another one after to update ctime.
->=20
+Christoph Hellwig wrote:
+> These are micro-optimizations for synchronous I/O, which do not matter
+> compared to all the other inefficiencies in the legacy buffer_head
+> based mpage code.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/mpage.c | 10 ----------
+>  1 file changed, 10 deletions(-)
+> 
+> diff --git a/fs/mpage.c b/fs/mpage.c
+> index 0f8ae954a57903..124550cfac4a70 100644
+> --- a/fs/mpage.c
+> +++ b/fs/mpage.c
+> @@ -269,11 +269,6 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+>  
+>  alloc_new:
+>  	if (args->bio == NULL) {
+> -		if (first_hole == blocks_per_page) {
+> -			if (!bdev_read_page(bdev, blocks[0] << (blkbits - 9),
+> -								&folio->page))
+> -				goto out;
+> -		}
+>  		args->bio = bio_alloc(bdev, bio_max_segs(args->nr_pages), opf,
+>  				      gfp);
+>  		if (args->bio == NULL)
+> @@ -579,11 +574,6 @@ static int __mpage_writepage(struct page *page, struct writeback_control *wbc,
+>  
+>  alloc_new:
+>  	if (bio == NULL) {
+> -		if (first_unmapped == blocks_per_page) {
+> -			if (!bdev_write_page(bdev, blocks[0] << (blkbits - 9),
+> -								page, wbc))
+> -				goto out;
+> -		}
+>  		bio = bio_alloc(bdev, BIO_MAX_VECS,
+>  				REQ_OP_WRITE | wbc_to_write_flags(wbc),
+>  				GFP_NOFS);
+> -- 
+> 2.39.0
+> 
 
-That's a great question! There is a related one too once I started
-looking at this in more detail:
+Makes sense,
 
-Most filesystems end up updating the timestamp via a the call to
-file_update_time in __generic_file_write_iter. Today, that's called very
-early in the function and if it fails, the write fails without changing
-anything.
-
-What do we do now if the write succeeds, but update_time fails? We don't
-want to return an error on the write() since the data did get copied in.
-Ignoring it seems wrong too though. There could even be some way to
-exploit that by changing the contents while holding the timestamp and
-version constant.
-
-At this point I'm leaning toward leaving the ctime and i_version to be
-updated before the write, and just bumping the i_version a second time
-after. In most cases the second bump will end up being a no-op, unless
-an i_version query races in between.
---=20
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
