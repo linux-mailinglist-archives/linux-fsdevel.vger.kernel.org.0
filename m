@@ -2,119 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 391F867B2DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 14:01:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF35C67B2F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 14:03:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235265AbjAYNBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 08:01:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43736 "EHLO
+        id S235406AbjAYNDp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 08:03:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235222AbjAYNBa (ORCPT
+        with ESMTP id S235279AbjAYNDo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 08:01:30 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C30846730;
-        Wed, 25 Jan 2023 05:01:29 -0800 (PST)
+        Wed, 25 Jan 2023 08:03:44 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D806942DD1;
+        Wed, 25 Jan 2023 05:03:36 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 1995121A38;
-        Wed, 25 Jan 2023 13:01:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1674651688; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D84AA1FE8C;
+        Wed, 25 Jan 2023 13:03:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1674651814; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=ZHPUEmgHN9HHsele0Ce3YewvjVaFUupPCQ2N9ydCuzU=;
-        b=r+QImpXSov56FLm1H+hELmnDF3ba33PDw9X+GNnrXwjl2eQ+ZuX3YhWChiKOdofziQIIEm
-        lXbb2vLp56dhnNJ7EOBz3awHc1j72nCdmCZWUEIjOJydKML1zstPO/PSZz0O5XA4flp7vX
-        J2LJKE4EyuI1Ln1V1xiBggPmq3RuK7Y=
+        bh=zBKydA/c7e6QhpzyByxg01tKdjQ2ln17ybZrSlmHo0o=;
+        b=S/IuhHjEJm4tUZ1mr/XuYzkJqsgnzab6MpUAWJ+4y9VrpCnjHvq3GU+eH78OmusMVYPfyb
+        J2j98OeGgrn+YKGGwk+PafwgW4mJXic4MrSw7YiA3VeW9E3Cw0/lgxcAZROvJeg/PAq0XL
+        CN++q5uCemBQNKKMmKyBU2fW/nKa+94=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1674651814;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zBKydA/c7e6QhpzyByxg01tKdjQ2ln17ybZrSlmHo0o=;
+        b=ai4c79hxpAqWLyg7ojlbMxss0cQp8SxPwu1mtpkFwchqzOMMq5duRhU90p89xTQz1ScMan
+        PJzz0P2TUYnkpOBw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EF07E1339E;
-        Wed, 25 Jan 2023 13:01:27 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C85FF1339E;
+        Wed, 25 Jan 2023 13:03:34 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id uoscOCco0WNBGAAAMHmgww
-        (envelope-from <mhocko@suse.com>); Wed, 25 Jan 2023 13:01:27 +0000
-Date:   Wed, 25 Jan 2023 14:01:27 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Stefan Roesch <shr@devkernel.io>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, CGEL <cgel.zte@gmail.com>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [RESEND RFC PATCH v1 00/20] mm: process/cgroup ksm support
-Message-ID: <Y9EoJ0jlXMeuJzuY@dhcp22.suse.cz>
-References: <20230123173748.1734238-1-shr@devkernel.io>
- <5844ee9f-1992-a62a-2141-3b694a1e1915@redhat.com>
- <qvqwbkmnj014.fsf@dev0134.prn3.facebook.com>
- <a391e98c-88af-886c-0426-c41c9980afa1@redhat.com>
+        id JYHhMKYo0WOOGQAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 25 Jan 2023 13:03:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 5B13CA06B1; Wed, 25 Jan 2023 14:03:34 +0100 (CET)
+Date:   Wed, 25 Jan 2023 14:03:34 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>, Jan Kara <jack@suse.com>,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 06/12] ext2: drop posix acl handlers
+Message-ID: <20230125130334.offe44nub3js732f@quack3>
+References: <20230125-fs-acl-remove-generic-xattr-handlers-v1-0-6cf155b492b6@kernel.org>
+ <20230125-fs-acl-remove-generic-xattr-handlers-v1-6-6cf155b492b6@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a391e98c-88af-886c-0426-c41c9980afa1@redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+In-Reply-To: <20230125-fs-acl-remove-generic-xattr-handlers-v1-6-6cf155b492b6@kernel.org>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 24-01-23 19:01:49, David Hildenbrand wrote:
-> [...]
+On Wed 25-01-23 12:28:51, Christian Brauner wrote:
+> Last cycle we introduced a new posix acl api. Filesystems now only need
+> to implement the inode operations for posix acls. The generic xattr
+> handlers aren't used anymore by the vfs and will be completely removed.
+> Keeping the handler around is confusing and gives the false impression
+> that the xattr infrastructure of the vfs is used to interact with posix
+> acls when it really isn't anymore.
 > 
-> > > I'm going to point out the security aspect, and that e.g., Windows used to
-> > > enable it system-wide before getting taught by security experts otherwise.
-> > > Details on KSM and security aspects can be found in that thread.
-> > > 
-> > If I'm not mistaken the security aspect exists today. When KSM is
-> > enabled with madvise this is the same.
+> For this to work we simply rework the ->listxattr() inode operation to
+> not rely on the generix posix acl handlers anymore.
 > 
-> Yes, and we mostly only use it for virtual machines -- and to be precise,
-> guest memory only -- where it has to be enabled explicitly on a well
-> documented basis ...
-> 
-> Impossible for an admin to force it on other parts of the hypervisor process
-> that might be more security sensitive. Or on other arbitrary applications,
-> for now.
-> 
-> > 
-> > > Long story short: one has to be very careful with that and only enable it for
-> > > very carefully selected worklads. Letting a workload opt-in on a VMA level is
-> > > most probably safer than an admin blindly turning this on for random processes
-> > > ... >>
-> [...]
-> 
-> > > 
-> > > [1] https://lore.kernel.org/all/20220517092701.1662641-1-xu.xin16@zte.com.cn/
-> > > [2] https://lore.kernel.org/all/20220609055658.703472-1-xu.xin16@zte.com.cn/
-> > > 
-> > My understanding is that there were problems with the patch and how it
-> > exposed KSM. The other objection was the enable-all configuration
-> > option.
-> 
-> I don't remember all the discussions, but one concern was how to handle
-> processes that deliberately want to disable it on some parts of memory.
-> 
-> Anyhow, I cc'ed the relevant parties already.
+> Cc: Jan Kara <jack@suse.com>
+> Cc: <linux-ext4@vger.kernel.org>
+> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
-Thanks! I do not remember all the details from the past discussion
-except it was /proc and later global setting. Neither really were great
-choices. We have discussed pidfd_madvise and prctl IIRC. For the latter
-there was no real argument about when it is desirable to apply merging
-on all existing vmas (e.g. is it really desirable on stack/brk or malloc
-arenas or would user need to opt out for those).
+Looks good to me. Feel free to add:
 
-I have read through your cover letter and it talks about the interface
-but it doesn't really talk about usecases and how they are supposed to
-use this feature - except the prctl based flag gets inherited. So could
-you elaborate some more about those usecases please?
+Acked-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ext2/xattr.c | 60 +++++++++++++++++++++++++++++++++------------------------
+>  1 file changed, 35 insertions(+), 25 deletions(-)
+> 
+> diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+> index 641abfa4b718..86ba6a33349e 100644
+> --- a/fs/ext2/xattr.c
+> +++ b/fs/ext2/xattr.c
+> @@ -98,25 +98,9 @@ static struct buffer_head *ext2_xattr_cache_find(struct inode *,
+>  static void ext2_xattr_rehash(struct ext2_xattr_header *,
+>  			      struct ext2_xattr_entry *);
+>  
+> -static const struct xattr_handler *ext2_xattr_handler_map[] = {
+> -	[EXT2_XATTR_INDEX_USER]		     = &ext2_xattr_user_handler,
+> -#ifdef CONFIG_EXT2_FS_POSIX_ACL
+> -	[EXT2_XATTR_INDEX_POSIX_ACL_ACCESS]  = &posix_acl_access_xattr_handler,
+> -	[EXT2_XATTR_INDEX_POSIX_ACL_DEFAULT] = &posix_acl_default_xattr_handler,
+> -#endif
+> -	[EXT2_XATTR_INDEX_TRUSTED]	     = &ext2_xattr_trusted_handler,
+> -#ifdef CONFIG_EXT2_FS_SECURITY
+> -	[EXT2_XATTR_INDEX_SECURITY]	     = &ext2_xattr_security_handler,
+> -#endif
+> -};
+> -
+>  const struct xattr_handler *ext2_xattr_handlers[] = {
+>  	&ext2_xattr_user_handler,
+>  	&ext2_xattr_trusted_handler,
+> -#ifdef CONFIG_EXT2_FS_POSIX_ACL
+> -	&posix_acl_access_xattr_handler,
+> -	&posix_acl_default_xattr_handler,
+> -#endif
+>  #ifdef CONFIG_EXT2_FS_SECURITY
+>  	&ext2_xattr_security_handler,
+>  #endif
+> @@ -125,14 +109,41 @@ const struct xattr_handler *ext2_xattr_handlers[] = {
+>  
+>  #define EA_BLOCK_CACHE(inode)	(EXT2_SB(inode->i_sb)->s_ea_block_cache)
+>  
+> -static inline const struct xattr_handler *
+> -ext2_xattr_handler(int name_index)
+> +static const char *ext2_xattr_prefix(int xattr_index, struct dentry *dentry)
+>  {
+> +	const char *name = NULL;
+>  	const struct xattr_handler *handler = NULL;
+>  
+> -	if (name_index > 0 && name_index < ARRAY_SIZE(ext2_xattr_handler_map))
+> -		handler = ext2_xattr_handler_map[name_index];
+> -	return handler;
+> +	switch (xattr_index) {
+> +	case EXT2_XATTR_INDEX_USER:
+> +		handler = &ext2_xattr_user_handler;
+> +		break;
+> +	case EXT2_XATTR_INDEX_TRUSTED:
+> +		handler = &ext2_xattr_trusted_handler;
+> +		break;
+> +#ifdef CONFIG_EXT2_FS_SECURITY
+> +	case EXT2_XATTR_INDEX_SECURITY:
+> +		handler = &ext2_xattr_security_handler;
+> +		break;
+> +#endif
+> +#ifdef CONFIG_EXT2_FS_POSIX_ACL
+> +	case EXT2_XATTR_INDEX_POSIX_ACL_ACCESS:
+> +		if (posix_acl_dentry_list(dentry))
+> +			name = XATTR_NAME_POSIX_ACL_ACCESS;
+> +		break;
+> +	case EXT2_XATTR_INDEX_POSIX_ACL_DEFAULT:
+> +		if (posix_acl_dentry_list(dentry))
+> +			name = XATTR_NAME_POSIX_ACL_DEFAULT;
+> +		break;
+> +#endif
+> +	default:
+> +		return NULL;
+> +	}
+> +
+> +	if (xattr_dentry_list(handler, dentry))
+> +		name = xattr_prefix(handler);
+> +
+> +	return name;
+>  }
+>  
+>  static bool
+> @@ -333,11 +344,10 @@ ext2_xattr_list(struct dentry *dentry, char *buffer, size_t buffer_size)
+>  	/* list the attribute names */
+>  	for (entry = FIRST_ENTRY(bh); !IS_LAST_ENTRY(entry);
+>  	     entry = EXT2_XATTR_NEXT(entry)) {
+> -		const struct xattr_handler *handler =
+> -			ext2_xattr_handler(entry->e_name_index);
+> +		const char *prefix;
+>  
+> -		if (handler && (!handler->list || handler->list(dentry))) {
+> -			const char *prefix = handler->prefix ?: handler->name;
+> +		prefix = ext2_xattr_prefix(entry->e_name_index, dentry);
+> +		if (prefix) {
+>  			size_t prefix_len = strlen(prefix);
+>  			size_t size = prefix_len + entry->e_name_len + 1;
+>  
+> 
+> -- 
+> 2.34.1
+> 
 -- 
-Michal Hocko
-SUSE Labs
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
