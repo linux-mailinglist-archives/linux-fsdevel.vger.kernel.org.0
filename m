@@ -2,74 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA6A67B307
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 14:11:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E32067B35B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 14:34:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235581AbjAYNLe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 08:11:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49168 "EHLO
+        id S232999AbjAYNeu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 08:34:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235361AbjAYNLc (ORCPT
+        with ESMTP id S235300AbjAYNes (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 08:11:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FE9753E6A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 05:10:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674652237;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=S4aCTlmusSBeoV7pRyVwlsoOpJeNAMFzR7Diw02ed+A=;
-        b=Guul77biHQdqjcRlGfN2jgq3DsdLvN0lRanCh+Q79QH9b713kHmqN7aDjjme2mvPy+TyG1
-        FG+QJwjwvVNkqnnlDdo5FYTlr4FxGLh74AKYEYkpvq32tT6GfWikr/tqWNNZ65SkCLUivS
-        MwR+0BOlZCwcNqIW6gVKbmVS45DK0sw=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-120-HUe-KsSpMvCcXG6thL8mgA-1; Wed, 25 Jan 2023 08:10:36 -0500
-X-MC-Unique: HUe-KsSpMvCcXG6thL8mgA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EB5E53828886;
-        Wed, 25 Jan 2023 13:10:35 +0000 (UTC)
-Received: from localhost (unknown [10.39.195.120])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 741BD2026D4B;
-        Wed, 25 Jan 2023 13:10:35 +0000 (UTC)
-From:   Giuseppe Scrivano <gscrivan@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Alexander Larsson <alexl@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        brauner@kernel.org, viro@zeniv.linux.org.uk,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-References: <cover.1674227308.git.alexl@redhat.com>
-        <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
-        <1ea88c8d1e666b85342374ed7c0ddf7d661e0ee1.camel@redhat.com>
-        <CAOQ4uxinsBB-LpGh4h44m6Afv0VT5yWRveDG7sNvE2uJyEGOkg@mail.gmail.com>
-        <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
-        <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
-        <20230125041835.GD937597@dread.disaster.area>
-        <CAOQ4uxhqdjRbNFs_LohwXdTpE=MaFv-e8J3D2R57FyJxp_f3nA@mail.gmail.com>
-        <87wn5ac2z6.fsf@redhat.com>
-        <CAOQ4uxiPLHHnr2=XH4gN4bAjizH-=4mbZMe_sx99FKuPo-fDMQ@mail.gmail.com>
-        <87o7qmbxv4.fsf@redhat.com>
-        <CAOQ4uximBLqXDtq9vDhqR__1ctiiOMhMd03HCFUR_Bh_JFE-UQ@mail.gmail.com>
-Date:   Wed, 25 Jan 2023 14:10:33 +0100
-In-Reply-To: <CAOQ4uximBLqXDtq9vDhqR__1ctiiOMhMd03HCFUR_Bh_JFE-UQ@mail.gmail.com>
-        (Amir Goldstein's message of "Wed, 25 Jan 2023 14:46:59 +0200")
-Message-ID: <87fsbybvzq.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.1 (gnu/linux)
+        Wed, 25 Jan 2023 08:34:48 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C23FA366B1;
+        Wed, 25 Jan 2023 05:34:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=ub/NqoO4nrj7/CmhK+7Df7o2NLjdTjVuu2uglnNK6zU=; b=igUi7tuNh2ZEVpsTLWJ2mUfsso
+        /agiH9BlTOdVnjHdC5CP7jvaMLnN0yMuR0L/cUS8cCaVotLH6KMLpU9wMqUK9tg5fLresZQ0ResoO
+        qhgIVJenDLh9+Hq/MxySQTD8U38ChmdA0/wpZjAGnJU+nV/2vA9fQ5kC6DVa50/8eImse5I4lmsjK
+        RvGEtZsA6SjM24gurJTX3ltM16oJEuw2PjJ37+MpvrMzbNTs1nxC+zue1HISRBXKVaQyOFmELIyvL
+        naCxtOCKlEygyT4OQWCOKsE6keEVzXnJ9aD9SVX5/tcHsnVaIVSHzUuR3a9N4FskdJDJPYw7eZijX
+        mpcvweBA==;
+Received: from [2001:4bb8:19a:27af:c78f:9b0d:b95c:d248] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pKfvD-007P0o-SE; Wed, 25 Jan 2023 13:34:40 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>, Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: remove ->rw_page
+Date:   Wed, 25 Jan 2023 14:34:29 +0100
+Message-Id: <20230125133436.447864-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,87 +55,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Amir Goldstein <amir73il@gmail.com> writes:
+Hi all,
 
->> >
->> > Based on Alexander's explanation about the differences between overlayfs
->> > lookup vs. composefs lookup of a regular "metacopy" file, I just need to
->> > point out that the same optimization (lazy lookup of the lower data
->> > file on open)
->> > can be done in overlayfs as well.
->> > (*) currently, overlayfs needs to lookup the lower file also for st_blocks.
->> >
->> > I am not saying that it should be done or that Miklos will agree to make
->> > this change in overlayfs, but that seems to be the major difference.
->> > getxattr may have some extra cost depending on in-inode xattr format
->> > of erofs, but specifically, the metacopy getxattr can be avoided if this
->> > is a special overlayfs RO mount that is marked as EVERYTHING IS
->> > METACOPY.
->> >
->> > I don't expect you guys to now try to hack overlayfs and explore
->> > this path to completion.
->> > My expectation is that this information will be clearly visible to anyone
->> > reviewing future submission, e.g.:
->> >
->> > - This is the comparison we ran...
->> > - This is the reason that composefs gives better results...
->> > - It MAY be possible to optimize erofs/overlayfs to get to similar results,
->> >   but we did not try to do that
->> >
->> > It is especially important IMO to get the ACK of both Gao and Miklos
->> > on your analysis, because remember than when this thread started,
->> > you did not know about the metacopy option and your main argument
->> > was saving the time it takes to create the overlayfs layer files in the
->> > filesystem, because you were missing some technical background on overlayfs.
->>
->> we knew about metacopy, which we already use in our tools to create
->> mapped image copies when idmapped mounts are not available, and also
->> knew about the other new features in overlayfs.  For example, the
->> "volatile" feature which was mentioned in your
->> Overlayfs-containers-lpc-2020 talk, was only submitted upstream after
->> begging Miklos and Vivek for months.  I had a PoC that I used and tested
->> locally and asked for their help to get it integrated at the file
->> system layer, using seccomp for the same purpose would have been more
->> complex and prone to errors when dealing with external bind mounts
->> containing persistent data.
->>
->> The only missing bit, at least from my side, was to consider an image
->> that contains only overlay metadata as something we could distribute.
->>
->
-> I'm glad that I was able to point this out to you, because now the comparison
-> between the overlayfs and composefs options is more fair.
->
->> I previously mentioned my wish of using it from a user namespace, the
->> goal seems more challenging with EROFS or any other block devices.  I
->> don't know about the difficulty of getting overlay metacopy working in a
->> user namespace, even though it would be helpful for other use cases as
->> well.
->>
->
-> There is no restriction of metacopy in user namespace.
-> overlayfs needs to be mounted with -o userxattr and the overlay
-> xattrs needs to use user.overlay. prefix.
+this series removes the ->rw_page block_device_operation, which is an old
+and clumsy attempt at a simple read/write fast path for the block layer.
+It isn't actually used by the fastest block layer operations that we
+support (polled I/O through io_uring), but only used by the mpage buffered
+I/O helpers which are some of the slowest I/O we have and do not make any
+difference there at all, and zram which is a block device abused to
+duplicate the zram functionality.  Given that zram is heavily used we
+need to make sure there is a good replacement for synchronous I/O, so
+this series adds a new flag for drivers that complete I/O synchronously
+and uses that flag to use on-stack bios and synchronous submission for
+them in the swap code.
 
-if I specify both userxattr and metacopy=on then the mount ends up in
-the following check:
-
-if (config->userxattr) {
-	[...]
-	if (config->metacopy && metacopy_opt) {
-		pr_err("conflicting options: userxattr,metacopy=on\n");
-		return -EINVAL;
-	}
-}
-
-to me it looks like it was done on purpose to prevent metacopy from a
-user namespace, but I don't know the reason for sure.
-
-> w.r.t. the implied claim that composefs on-disk format is simple enough
-> so it could be made robust enough to avoid exploits, I will remain
-> silent and let others speak up, but I advise you to take cover,
-> because this is an explosive topic ;)
->
-> Thanks,
-> Amir.
-
+Diffstat:
+ block/bdev.c                  |   78 ------------------
+ drivers/block/brd.c           |   15 ---
+ drivers/block/zram/zram_drv.c |   61 --------------
+ drivers/nvdimm/btt.c          |   16 ---
+ drivers/nvdimm/pmem.c         |   24 -----
+ fs/mpage.c                    |   10 --
+ include/linux/blkdev.h        |   12 +-
+ mm/page_io.c                  |  182 ++++++++++++++++++++++--------------------
+ mm/swap.h                     |    9 --
+ mm/swapfile.c                 |    2 
+ 10 files changed, 114 insertions(+), 295 deletions(-)
