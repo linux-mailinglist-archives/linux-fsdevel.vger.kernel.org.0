@@ -2,70 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA82A67A74F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 01:02:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 049C267A771
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 01:20:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233965AbjAYACg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 19:02:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55132 "EHLO
+        id S233061AbjAYAUi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 19:20:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233778AbjAYACf (ORCPT
+        with ESMTP id S229646AbjAYAUg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 19:02:35 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EBFD2B61B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 16:02:34 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id lp10so13375364pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 16:02:34 -0800 (PST)
+        Tue, 24 Jan 2023 19:20:36 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1555D4B4AF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 16:20:31 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id o13so16853489pjg.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 16:20:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        d=google.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hi8m5esQc2XU8ak0IXpB/fty7rcJ30felRWwotnUs8g=;
-        b=OwZWCuGCV7jqlRnjbWuh5cdIuODdXd9wb7ThROlcP9aNOIDGLc9Xsl7nNOgWi6Hf6C
-         yiN0bNNToPob7BZkL4b9YLIERHy5o/ZU9IPywyqRSKW8un0zQOX+2FSWms12FJm7hh0p
-         z6gD6W8kwfmjattcX5CZlNNqWfsJVXOonLP/ksH4Ql3qoD2zAb0OKgqpxnEmYnkrmeEU
-         d0M94MrgA0OVrQ+K7jxZzKBdun146rtUiYtIcBGkTd05uyHggG/FrAtBt/GXJSF3WlgD
-         +NLlO9N32q6+CafSlujhx0ec8Zu01fmeYkUvP05uNivY2I0L+DWDegd6G4/JwYpQ1aQT
-         kR6w==
+        bh=Vd0fuRLUDjU8rvXBur9NhqOrPTXVZKZJ4oN8G/lkhJI=;
+        b=o+HXYRIxPxQ8KPpGLHKkZdPsJO5M09uHZapYHKFtwuihESZLkI6Zkm4ULLnmfHYxaN
+         z6Bkf5/oL9w9YxifsJFcA+QqHXQpANCQz/OmWBa9Rlyll+JFY8LEgS0okBOrevjCF1S3
+         zR7B+TPDrrG/OfCNb5TJIPizamziaqvNbn8/9CvRZxXi09FQ5URRCGE/FpZIYdJ6T4/N
+         AY4adBiPMnMz+1wL4iuMS9jBXixwStGqund1wI/dbZkKpFhaJDOGRoji+PGQ7Xch442u
+         xgwPTskywSS01/xVU1ilxRAsaLiYsitEfD5ZykZTycKtYgDSWCaIA6Ar69OkijI/Sgc/
+         1/Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Hi8m5esQc2XU8ak0IXpB/fty7rcJ30felRWwotnUs8g=;
-        b=DgZ/ZFqKxZVoaFZ93n0SDAPbaiYCFFwvdglkw7U4Nu4qZVflmWzDZAesvyG3SjkyL0
-         M/ZyZftBjS9OknFHT2ao0oO8MQrgO/iTOtpIJS5aq3pu9FLR4o31gnotlAMA3Ld/g2YW
-         j8VebUdZatxTip1ZghEsvYoD+YPBey/LCe1gqxX3WKwFG6z1D6wH3XB3t7EKkivS70gG
-         wO1mlVks7A0YaFapHWMGGgadfk81aqYnbBdutnJ6ZVM52Jv2EGzadr1Ku/0JAbWEGxCE
-         Cnl2y+eiFE4OFpUCwjXspshY3ftjQOC8pwGYfHnI2JU4EFGKoOMI6G7x3JPxq+dxXqXe
-         HZpQ==
-X-Gm-Message-State: AO0yUKWAmnIifvKP5w2N+p4ZibMqFmGaL+tOvWSDqid1TDMj+ysIF+j7
-        GM2YxfmLduOi+hGuLpD5c236Ug==
-X-Google-Smtp-Source: AK7set+oLzvxKVz2I+I+y6l4Ih2jLF35X4sOcJhacVFUxBLzG/8R1d/WJzUwnT4ID10FRegWh+8bwQ==
-X-Received: by 2002:a17:902:d4c3:b0:196:1787:9c01 with SMTP id o3-20020a170902d4c300b0019617879c01mr4023293plg.51.1674604953967;
-        Tue, 24 Jan 2023 16:02:33 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-60-71.pa.vic.optusnet.com.au. [49.186.60.71])
-        by smtp.gmail.com with ESMTPSA id w10-20020a170902d70a00b0017f73caf588sm2226471ply.218.2023.01.24.16.02.31
+        bh=Vd0fuRLUDjU8rvXBur9NhqOrPTXVZKZJ4oN8G/lkhJI=;
+        b=R2ITAVV8rv/fDNjPG/IzFDNpdH/ImpsEzQKGCDVutjtBjbY1RCkc8hHsDeGxKmuuko
+         bLxMn+wcUZig5Lb6yoXsyqDhBD7K4HdzzSG2W7LvN8CAo2KCY/jgyjtNA9Tv1b56zF64
+         bJmEcoOoITAmmHnPJMKI7+5dAwCbiWG/jgNoHZXdU3Pobbiai6jXQWPsLOMVKgBwI1MQ
+         pgwimoWf077oCpvp2TBr3OdqTYZZ9z1/ESakIgzwe1f+vUTlSUbu5IWcTzYXlKCZJtC3
+         8eYsuh6Nqwk+tGpKMIRgXSvzbUbbYaRnzrutlqlV6YBe22tfQ/TgEC1UKFLz2hsALOph
+         1fpw==
+X-Gm-Message-State: AO0yUKXpr0F/HtdQLGSWY6XDaSR+9z27HDdxECDn7J0XHCuVHOPfeDuk
+        pbO7gu9MGKDmMMJEHqAmao0MzQ==
+X-Google-Smtp-Source: AK7set8DMFuhHtJA8X11WSyZdq14F8cMlJuZ6jde92u/m6yVtA5WC0P8SrmivvZz4XbeH1VArDptDg==
+X-Received: by 2002:a17:90a:690e:b0:22b:b82a:8b5f with SMTP id r14-20020a17090a690e00b0022bb82a8b5fmr436422pjj.2.1674606030366;
+        Tue, 24 Jan 2023 16:20:30 -0800 (PST)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id l8-20020a17090a49c800b0022bae5c3e1esm148419pjm.9.2023.01.24.16.20.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 16:02:32 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pKTFD-0076rs-Sd; Wed, 25 Jan 2023 11:02:27 +1100
-Date:   Wed, 25 Jan 2023 11:02:27 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: replacement i_version counter for xfs
-Message-ID: <20230125000227.GM360264@dread.disaster.area>
-References: <57c413ed362c0beab06b5d83b7fc4b930c7662c4.camel@kernel.org>
+        Tue, 24 Jan 2023 16:20:29 -0800 (PST)
+Date:   Wed, 25 Jan 2023 00:20:26 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Liam Merwick <liam.merwick@oracle.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
+Message-ID: <Y9B1yiRR8DpANAEo@google.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <Y8H5Z3e4hZkFxAVS@google.com>
+ <48953bf2-cee9-f818-dc50-5fb5b9b410bf@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <57c413ed362c0beab06b5d83b7fc4b930c7662c4.camel@kernel.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+In-Reply-To: <48953bf2-cee9-f818-dc50-5fb5b9b410bf@oracle.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,75 +104,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 24, 2023 at 07:56:09AM -0500, Jeff Layton wrote:
-> A few months ago, I posted a patch to make xfs not bump its i_version
-> counter on atime updates. Dave Chinner NAK'ed that patch, mentioning
-> that xfs would need to replace it with an entirely new field as the
-> existing counter is used for other purposes and its semantics are set in
-> stone.
+On Tue, Jan 24, 2023, Liam Merwick wrote:
+> On 14/01/2023 00:37, Sean Christopherson wrote:
+> > On Fri, Dec 02, 2022, Chao Peng wrote:
+> > > This patch series implements KVM guest private memory for confidential
+> > > computing scenarios like Intel TDX[1]. If a TDX host accesses
+> > > TDX-protected guest memory, machine check can happen which can further
+> > > crash the running host system, this is terrible for multi-tenant
+> > > configurations. The host accesses include those from KVM userspace like
+> > > QEMU. This series addresses KVM userspace induced crash by introducing
+> > > new mm and KVM interfaces so KVM userspace can still manage guest memory
+> > > via a fd-based approach, but it can never access the guest memory
+> > > content.
+> > > 
+> > > The patch series touches both core mm and KVM code. I appreciate
+> > > Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
+> > > reviews are always welcome.
+> > >    - 01: mm change, target for mm tree
+> > >    - 02-09: KVM change, target for KVM tree
+> > 
+> > A version with all of my feedback, plus reworked versions of Vishal's selftest,
+> > is available here:
+> > 
+> >    git@github.com:sean-jc/linux.git x86/upm_base_support
+> > 
+> > It compiles and passes the selftest, but it's otherwise barely tested.  There are
+> > a few todos (2 I think?) and many of the commits need changelogs, i.e. it's still
+> > a WIP.
+> > 
 > 
-> Has anything been done toward that end?
+> When running LTP (https://github.com/linux-test-project/ltp) on the v10
+> bits (and also with Sean's branch above) I encounter the following NULL
+> pointer dereference with testcases/kernel/syscalls/madvise/madvise01
+> (100% reproducible).
+> 
+> It appears that in restrictedmem_error_page() inode->i_mapping->private_data
+> is NULL
+> in the list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list)
+> but I don't know why.
 
-No, because we don't have official specification of the behaviour
-the nfsd subsystem requires merged into the kernel yet.
-
-> Should I file a bug report or something?
-
-There's nothing we can really do until the new specification is set
-in stone. Filing a bug report won't change anything material.
-
-As it is, I'm guessing that you desire the behaviour to be as you
-described in the iversion patchset you just posted. That is
-effectively:
-
-  * The change attribute (i_version) is mandated by NFSv4 and is mostly for
-  * knfsd, but is also used for other purposes (e.g. IMA). The i_version must
-- * appear different to observers if there was a change to the inode's data or
-- * metadata since it was last queried.
-+ * appear larger to observers if there was an explicit change to the inode's
-+ * data or metadata since it was last queried.
-
-i.e. the definition is changing from *any* metadata or data change
-to *explicit* metadata/data changes, right? i.e. it should only
-change when ctime changes?
-
-IIUC the rest of the justification for i_version is that ctime might
-lack the timestamp granularity to disambiguate sub-timestamp
-granularity changes, so i_version is needed to bridge that gap.
-
-Given that XFS has nanosecond timestamp resolution in the on-disk
-format, both i_version and ctime changes are journalled, and
-ctime/i_version will always change at exactly the same time in the
-same transactions, there are no inherent sub-timestamp granularity
-problems with ctime within XFS. Any deficiency in ctime resolution
-comes solely from the granularity of the VFS inode timestamp
-functions.
-
-And so if current_time() was to provide fine-grained nanosecond
-timestamp resolution for exported XFS filesystems (i.e. use
-ktime_get_real_ts64() conditionally), then it seems to me that the
-nfsd i_version function becomes completely redundant.
-
-i.e. we are pretty much guaranteed that ctime on exported
-filesystems will always be different for explicit modifications to
-the same inode, and hence we can just use ctime as the version
-change identifier without needing any on-disk format changes at all.
-
-And we can optimise away that overhead when the filesystem is not
-exported by just using the coarse timestamps because there is no
-need for sub-timer-tick disambiguation of single file
-modifications....
-
-Hence it appears to me that with the new i_version specification
-that there's an avenue out of this problem entirely that is "nfsd
-needs to use ctime, not i_version". This solution seems generic
-enough that filesystems with existing on-disk nanosecond timestamp
-granularity would no longer need explicit on-disk support for the
-nfsd i_version functionality, yes?
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Kirill, can you take a look?  Or pass the buck to someone who can? :-)
