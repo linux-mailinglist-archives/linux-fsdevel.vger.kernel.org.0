@@ -2,155 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2B1C67B7FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 18:09:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86F4867B81B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 18:11:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236153AbjAYRJf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 12:09:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60550 "EHLO
+        id S235859AbjAYRL6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 12:11:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236105AbjAYRJK (ORCPT
+        with ESMTP id S236083AbjAYRLn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 12:09:10 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2C2E5AA4D;
-        Wed, 25 Jan 2023 09:08:37 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id C730421CA3;
-        Wed, 25 Jan 2023 17:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1674666487; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FNzsO8QkHd4bwcFXjgFFOOBC/xElVC4T91KIaFtN0Io=;
-        b=D/br1xSsxQfk6apBfZHBB6RWB236iiiYqtOZ2eZ95J8WjWhuYAEVV+tXTEh0QKRmA1b4xH
-        QN55Gxk1acvIRqe6qMTQwSbVuwI9C24RIc9UEoj8Q4rbZSCTfRh25I8IC+VWb1YjIErqcg
-        9b1EbAjGibksBO3NPm+wpmCzLKQPsIY=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7757F1358F;
-        Wed, 25 Jan 2023 17:08:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id T+qcHPdh0WP1JAAAMHmgww
-        (envelope-from <mhocko@suse.com>); Wed, 25 Jan 2023 17:08:07 +0000
-Date:   Wed, 25 Jan 2023 18:08:06 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, michel@lespinasse.org,
-        jglisse@google.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        mgorman@techsingularity.net, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, peterz@infradead.org,
-        ldufour@linux.ibm.com, paulmck@kernel.org, luto@kernel.org,
-        songliubraving@fb.com, peterx@redhat.com, david@redhat.com,
-        dhowells@redhat.com, hughd@google.com, bigeasy@linutronix.de,
-        kent.overstreet@linux.dev, punit.agrawal@bytedance.com,
-        lstoakes@gmail.com, peterjung1337@gmail.com, rientjes@google.com,
-        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
-        jannh@google.com, shakeelb@google.com, tatashin@google.com,
-        edumazet@google.com, gthelen@google.com, gurua@google.com,
-        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
-        leewalsh@google.com, posk@google.com, will@kernel.org,
-        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
-        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        qianweili@huawei.com, wangzhou1@hisilicon.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
-        airlied@gmail.com, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, l.stach@pengutronix.de,
-        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
-        matthias.bgg@gmail.com, robdclark@gmail.com,
-        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
-        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
-        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
-        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
-        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
-        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
-        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, miklos@szeredi.hu,
-        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
-        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
-        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
-        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
-        loongarch@lists.linux.dev, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
-        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
-        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
-        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        devel@lists.orangefs.org, kexec@lists.infradead.org,
-        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
-        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v2 4/6] mm: replace vma->vm_flags indirect modification
- in ksm_madvise
-Message-ID: <Y9Fh9joU3vTCwYbX@dhcp22.suse.cz>
-References: <20230125083851.27759-1-surenb@google.com>
- <20230125083851.27759-5-surenb@google.com>
- <Y9D4rWEsajV/WfNx@dhcp22.suse.cz>
- <CAJuCfpGd2eG0RSMte9OVgsRVWPo+Sj7+t8EOo8o_iKzZoh1MXA@mail.gmail.com>
+        Wed, 25 Jan 2023 12:11:43 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571EE5955A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 09:11:16 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id p24so18450872plw.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 09:11:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ypZpvs8t+ah2+7CS58iyRxO8rfL4b3yK7iRiyGOgkRI=;
+        b=SqB+4KFVPnZDxTftBviccWDNEZbt0/IQ5Wftz/GUJmI9gTQhWKbKuoE5Z3srDsvcke
+         HPJQXAtBj1WMiCHFZChJHrUjLIkrCk3L4I/8MF0phXwdv7GsTeGi2TRWEX7QOxZ5nepn
+         Ap2Z/KwLB4TjVHIO8wlGmwpW+/uVBpFl+fet7eQK9yXqFb3A0kgFDRSD7LCz9T3IVCZw
+         yOFSTwzWsIcIB6q0DIjj8a5MgWGzhunfXOZeORlyJ2qo/npbjeCFjmEIf4zvnjP4AFm+
+         Da/vz1RUdmEGsDvxJ2SzTGpyYUIt6nAv2UFxH2Yhsp7FgzT3oh61TLsQNy8NOUDDqCJM
+         exPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ypZpvs8t+ah2+7CS58iyRxO8rfL4b3yK7iRiyGOgkRI=;
+        b=tFQJnlDv6yYdICZ7iGuQoi01LX4dd+saYmpvVlGmNcVL/eC5lJTn9jpSg6Urt0zCDs
+         USdCoiGqGoAi8kMfB49GxbONGrQ6Em+kTnDFi1f9uovXTvBsUt8B4rlNxqNNV9WfNUzN
+         ctw5d3M0cI0xOI/Xye6Q+duekhOn7pU/mC6m3UHK3H6MxgP0dnRELQZJY5O1QcIb+uk7
+         YesYXowBZ5WKXU/GZUHOR256D1ANrZNKClNs+qrLVc0FYSo2+FC8Ec0ccvVpNFQDrNjT
+         c72mHYXI9HnpyWst+hVVr8tcO4gjA+smgs4oHFiXzXiz49knbAi/lB9zvqPFM7WYLO6T
+         NPTA==
+X-Gm-Message-State: AFqh2kqclXlorvubOefBz0i7EyJrrGJ8AuVykoZAUIpb9CB4ckJIOMRh
+        YGy4vi2j0xQpQdN85n/3SsdcUK1dxTlvpnXopbkD
+X-Google-Smtp-Source: AMrXdXtFfqeRhZW/zOLDggy19BiitwNk/LdYtMGsZagQE79iAnGzkr+nEZtRet993qCwaRR0/psxLj7EzffVz6gvxls=
+X-Received: by 2002:a17:90a:c784:b0:227:202b:8eaa with SMTP id
+ gn4-20020a17090ac78400b00227202b8eaamr4020652pjb.147.1674666671726; Wed, 25
+ Jan 2023 09:11:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpGd2eG0RSMte9OVgsRVWPo+Sj7+t8EOo8o_iKzZoh1MXA@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
+ <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
+ <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
+ <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com>
+ <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
+ <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
+ <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com>
+ <CAHC9VhTg8mMHzdSPbpxvOQCWxuNuXzR7c6FJOg5+XGb-PYemRw@mail.gmail.com>
+ <CAGudoHG-42ziSNT0g8asRj8iGzx-Gn=ETZuXkswER3Daov37=A@mail.gmail.com> <CAGudoHHkeF-ozA-A+7ZcJP-Su02PwE4rfQ79VgD0zw8zS84YwA@mail.gmail.com>
+In-Reply-To: <CAGudoHHkeF-ozA-A+7ZcJP-Su02PwE4rfQ79VgD0zw8zS84YwA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 25 Jan 2023 12:11:00 -0500
+Message-ID: <CAHC9VhTOeGXqqsbfuWXoe+od4YvfCoPPCwyionRGOj2ZaTH4mg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        viro@zeniv.linux.org.uk, serge@hallyn.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 25-01-23 08:57:48, Suren Baghdasaryan wrote:
-> On Wed, Jan 25, 2023 at 1:38 AM 'Michal Hocko' via kernel-team
-> <kernel-team@android.com> wrote:
-> >
-> > On Wed 25-01-23 00:38:49, Suren Baghdasaryan wrote:
-> > > Replace indirect modifications to vma->vm_flags with calls to modifier
-> > > functions to be able to track flag changes and to keep vma locking
-> > > correctness. Add a BUG_ON check in ksm_madvise() to catch indirect
-> > > vm_flags modification attempts.
-> >
-> > Those BUG_ONs scream to much IMHO. KSM is an MM internal code so I
-> > gueess we should be willing to trust it.
-> 
-> Yes, but I really want to prevent an indirect misuse since it was not
-> easy to find these. If you feel strongly about it I will remove them
-> or if you have a better suggestion I'm all for it.
+On Wed, Jan 25, 2023 at 11:17 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> So I posted v3 with the comment, you are CC'ed.
+>
+> I'm not going to further argue about the patch. If you want to write
+> your own variant that's fine with me, feel free to take my bench results
+> and denote they come from a similar version.
 
-You can avoid that by making flags inaccesible directly, right?
+Once again, I see the back-and-forth as more of a discussion, not
+really an argument in the combative sense, but everyone reads their
+email differently I guess.
+
+The comment is an improvement, thanks for that, now it's just a matter
+of hearing from the VFS folks.
 
 -- 
-Michal Hocko
-SUSE Labs
+paul-moore.com
