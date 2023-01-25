@@ -2,35 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68C9867AA4E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 07:28:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 002CF67AA51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 07:30:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234537AbjAYG25 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 01:28:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37382 "EHLO
+        id S234571AbjAYGaT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 01:30:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231563AbjAYG24 (ORCPT
+        with ESMTP id S230334AbjAYGaS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 01:28:56 -0500
+        Wed, 25 Jan 2023 01:30:18 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D62E2F798;
-        Tue, 24 Jan 2023 22:28:55 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8BB32FCEF;
+        Tue, 24 Jan 2023 22:30:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=b1wjOqEZrpOkxHT+1PUvP0AOFeUjYZhKlkU4+S4GB0k=; b=uWEY9WMexKz+9xXeSpSQQ77B2o
-        99rw7YhSRvN4STq0JUdr1YPOz1RTSI6lFRUkjHzXPhv9DNY0z7KCO5yJmpxrSjczZqWbxgUkf0Pw9
-        GMIdHLsKmuuIafYwCktI02lb7llqnzyaZU851zyBR8gHrR9zteVmmiBsMq+q55KoTZwB8OsmrIaIQ
-        60QEZpmO3lI+1Jbk4ELfJVMYSO5Zgltk0/wwh93FqQ2ey2wb37YuqNtK2d9wfw5sUcGdyawPH7xQn
-        jZ9wN+v4XxzvT0XYFzZKG9JU1UqJtxv5NOYsuUx9jVXo34t7QXr01IXmWHt08kO+d1PEtxagOao9I
-        cyklzP9A==;
+        bh=1mLNmezIgSTpYg5+zojMIZAmFtYPS82rFw2cxZKdKLg=; b=S2jOPmP5zmWE26Hv43S8OlSgUc
+        EcJc//M02IXqz5WNTml1JCcdZHtX9L8f3xv/NVyStFmkMKS04rrVXEZgtWbvEXE7X4r8EpdODMXa8
+        m+efRkX/miTMf7BJcvJEGc6EjuDuw9vz9jdSYCMTJdgbBaFc8cDoKQjhBje2EBYCUhR1SzLtTaaON
+        uO+C6U/GqPAmboBOLZe3iNeIemXy5QUWPwW6VsRZ0szTpzw+80HpfTINEfKWxpfBEVYrm3U8TFnLR
+        WgusGjSGd+m4dDSIokx0JxIv65aJq9kiM9JFvskV4x6a7a9tM9W5vxVidZi86ButZZ2Hw9D40oG9z
+        nvBeg3sg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pKZGv-0067kk-0n; Wed, 25 Jan 2023 06:28:37 +0000
-Date:   Tue, 24 Jan 2023 22:28:37 -0800
+        id 1pKZIP-0067rs-3U; Wed, 25 Jan 2023 06:30:09 +0000
+Date:   Tue, 24 Jan 2023 22:30:09 -0800
 From:   Christoph Hellwig <hch@infradead.org>
 To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Matthew Wilcox <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
@@ -39,18 +40,18 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         Jason Gunthorpe <jgg@nvidia.com>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 3/8] iomap: Don't get an reference on ZERO_PAGE for
- direct I/O block zeroing
-Message-ID: <Y9DMFfcBAE3WCKef@infradead.org>
-References: <Y9Aq7eJ/RKSDiliq@infradead.org>
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v9 5/8] block: Replace BIO_NO_PAGE_REF with
+ BIO_PAGE_REFFED with inverted logic
+Message-ID: <Y9DMcThwiDnbVpQe@infradead.org>
+References: <b7833fd7-eb7d-2365-083d-5a01b9fee464@nvidia.com>
  <20230124170108.1070389-1-dhowells@redhat.com>
- <20230124170108.1070389-4-dhowells@redhat.com>
- <1296569.1674592913@warthog.procyon.org.uk>
+ <20230124170108.1070389-6-dhowells@redhat.com>
+ <1353771.1674595077@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1296569.1674592913@warthog.procyon.org.uk>
+In-Reply-To: <1353771.1674595077@warthog.procyon.org.uk>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -61,18 +62,22 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 24, 2023 at 08:41:53PM +0000, David Howells wrote:
-> Christoph Hellwig <hch@infradead.org> wrote:
+On Tue, Jan 24, 2023 at 09:17:57PM +0000, David Howells wrote:
+> John Hubbard <jhubbard@nvidia.com> wrote:
 > 
-> > On Tue, Jan 24, 2023 at 05:01:03PM +0000, David Howells wrote:
-> > > ZERO_PAGE can't go away, no need to hold an extra reference.
-> > > 
-> > > Signed-off-by: David Howells <dhowells@redhat.com>
-> > > Reviewed-by: David Hildenbrand <david@redhat.com>
+> > > +	/* for now require references for all pages */
 > > 
-> > If you send this on this needs your signoff as well, btw.
+> > Maybe just delete this comment?
 > 
-> Um.  You quoted my signoff.  Do you mean your signoff?
+> Christoph added that.  Presumably because this really should move to pinning
+> or be replaced with iomap, but it's not straightforward either way.  Christoph?
 
-Umm, I'm confused because you had my signoff on the last version :)
-The patch is ok as-is.  
+Mostly because it adds the flag when allocating the bio, and not where
+doing the gup.  If John thinks it adds more confusion than it helps, we
+can drop the comment.
+
+That being said you had a conversion in an earlier version of the
+series, and once the current batch of patches is in we should
+resurrected it ASAP as that will allow us to kill BIO_FLAG_REFFED.
+
+
