@@ -2,75 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F60867B50C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 15:45:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C83AD67B54B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 16:00:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235395AbjAYOpw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 09:45:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50502 "EHLO
+        id S235283AbjAYPAW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 10:00:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235469AbjAYOpv (ORCPT
+        with ESMTP id S233235AbjAYPAV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 09:45:51 -0500
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B4AC44A4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 06:45:33 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id l40-20020a25ad68000000b0080b821fbb0fso4191597ybe.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 06:45:33 -0800 (PST)
+        Wed, 25 Jan 2023 10:00:21 -0500
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A89F555B2;
+        Wed, 25 Jan 2023 07:00:20 -0800 (PST)
+Received: by mail-oi1-x236.google.com with SMTP id p185so16469949oif.2;
+        Wed, 25 Jan 2023 07:00:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGfGUjaGLH+8XJ9armKqzpt89zfr+otVnTMhjbMCoI4=;
-        b=rOOvRup5i80rTrCdededOy5eOHDXSOWC4JOHuwbako4X/IP6tSOe4t0Uq6NT9zncrt
-         6pMzQAKz0XS6hSLJ1vnCRioRsOfbndERsOdxfrWcgy1EQgQ2YQyO9+l+nDLm7MiwNV+2
-         O00Pyo/suVmmHuA0IXW65H2rKJ0/CUU0nw7aChk2qLJNlSvnqjwBNmaYg3ib2tVZd39X
-         3q8s8bSmCLgiuetJPB0SxvCvejHEcyEiSNil7W3RYZMXY/jKURm5eZW6aTUFQhs3lcZe
-         1o2/S95mBqBEzagirjGXsYc3TmmxrlkPcfLwgXs/8VPAPwaB0bzNvZfCS06Lbep9Gqta
-         xysQ==
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CNqEmM1BqnUHLQkbq1UQiAc0tOKUii6vXvFzmCvZzUI=;
+        b=MDTs7X+zXow4jkHIKViHp60R/psRLu38Ty/FgLJm3BBZ1CzfK+i0euIccb8chauSLW
+         SfXtjUjHIFz6heApmZqxXFZPrKFQ0Vm2jSOvwcZ+0GDpoECT57XZLCoI0NNTd8zfIs0d
+         aD+FLcgFazvWyXHtjifR0pqUo7CwxWHPhoPb4/HIaa5Q32k080qnJaMl9re07fHliEv5
+         TEmyFV+If3bNEE+zaDBfF2bENIVzGN7ORHSw+E82lGjEbceJNEME5m9Sk1F5DPSjepss
+         H/vTMzuZXmeMJHdnmo/e8RowqWMZch0/pGM2Lyige/2YeV14Nncsu96cx4Rl1SMKgN58
+         J8fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGfGUjaGLH+8XJ9armKqzpt89zfr+otVnTMhjbMCoI4=;
-        b=J0EqtzkZQYQvVI2ZUCgZENrrSue80W/nZDL5NPMf6yvbAu/PfYo+5efeHddPWNvsey
-         24K9RCeofULnJ7SDQH3/zdwabby+N57IxyYf+MjpaLfYMIzvzO0kukUtOwh8aC4AtJoo
-         Do+v5cR2m2+flAp8WbK11p1F7lD1L8F+nMiy9gm787k2hxL09H85nxlghwqgCwX+2etA
-         JZb+R9o5KWuKgvBBnD1xWMuMXaTy0zh3A/SPgupan+Wbxi7N0T0obw1mk7hN1F/AP7s9
-         XiAXMA1K5MmyZpT3wEE7OfV21hLefjhDyPkYf0ZOsQElSEsZKFTUSe2TeaddkG8IifCR
-         Ni7w==
-X-Gm-Message-State: AO0yUKXT15X2KB/lUU7OlFNtMHddV6G70xfDaknySu9ABGB1T04dRNYi
-        Wjd2v+RVNnJUrGhmWuGDgJSO4J59QuG7
-X-Google-Smtp-Source: AK7set/tmTwyZYMl/jIoH2jKvSplFAhH7z4Cf9+VFwkQOG+1wRywqg63gkehHrmk61wsnNB67mOZRJgPfpy9
-X-Received: from mdanylo.waw.corp.google.com ([2a00:79e0:9b:0:1ad0:76d7:3d4b:21e1])
- (user=mdanylo job=sendgmr) by 2002:a81:ac61:0:b0:506:596a:586c with SMTP id
- z33-20020a81ac61000000b00506596a586cmr567812ywj.237.1674657932535; Wed, 25
- Jan 2023 06:45:32 -0800 (PST)
-Date:   Wed, 25 Jan 2023 15:45:29 +0100
-In-Reply-To: <Y9A2PsCS7gfKWfaM@x1n>
-Mime-Version: 1.0
-References: <Y9A2PsCS7gfKWfaM@x1n>
-X-Mailer: git-send-email 2.39.1.405.gd4c25cc71f-goog
-Message-ID: <20230125144529.1630917-1-mdanylo@google.com>
-Subject: Re: [PATCH v7 0/4] Implement IOCTL to get and/or the clear info about PTEs
-From:   Danylo Mocherniuk <mdanylo@google.com>
-To:     peterx@redhat.com
-Cc:     Liam.Howlett@oracle.com, akpm@linux-foundation.org,
-        alex.sierra@amd.com, avagin@gmail.com, axelrasmussen@google.com,
-        brauner@kernel.org, dan.j.williams@intel.com, david@redhat.com,
-        emmir@google.com, gorcunov@gmail.com, gregkh@linuxfoundation.org,
-        gustavoars@kernel.org, kernel@collabora.com,
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CNqEmM1BqnUHLQkbq1UQiAc0tOKUii6vXvFzmCvZzUI=;
+        b=3ZZFzurvHxU+2SUpmj4QOrk5e/Pg9Sk+EsZxoSe5hs7tata9k9QgS0h4T9FCf6mA9P
+         jR6w27giXWEt2Em4U9qJRGYneerw3tcvjFISN8Tl7pfECFAs2iMdXsLr2lvqQmlUkqoa
+         lIuQR7hPJMh0BMco7Bqjkt27Db/hsG9Xuo9d5gQdTREeOdr5a7OVB3Jcm6mD8vs9HWH5
+         a9YOfiYijkJRsskZyLLCoGJewQocdvP5RO3krz4JOnGekIl7+IKmbmKUJM/V0U3jyuVN
+         MFP9Glmew1ySUQd/3u3EQ/3BH6CVZfVKPuxzwvPt6gyLeO+B6lqKZR2Up4qI1IT5T3Mo
+         pZFQ==
+X-Gm-Message-State: AFqh2koFr3y6osLyYMTFl2ObtwB1w4tHy32IiEzGCMS4JHOj5arlieCn
+        ZU/M3Jg3Osnq9bWkRsMMFzmr70psgiiA+PlzM38445i9
+X-Google-Smtp-Source: AMrXdXvAMG/UqKRnUDQDf3YdfLq065w1hSvPgthQ1NkBmOlFpMMtOVDPyuDRS0AsmX99ZiUF/5s5K8zSdwRCghhL2dM=
+X-Received: by 2002:aca:2107:0:b0:365:64a:b3a1 with SMTP id
+ 7-20020aca2107000000b00365064ab3a1mr1270851oiz.81.1674658819855; Wed, 25 Jan
+ 2023 07:00:19 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a8a:ad6:0:b0:49c:e11d:f815 with HTTP; Wed, 25 Jan 2023
+ 07:00:19 -0800 (PST)
+In-Reply-To: <CAHC9VhTg8mMHzdSPbpxvOQCWxuNuXzR7c6FJOg5+XGb-PYemRw@mail.gmail.com>
+References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
+ <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
+ <CAGudoHF+bg0qiq+ByVpysa9t8J=zpF8=d1CqDVS5GmOGpVM9rQ@mail.gmail.com>
+ <CAHC9VhTnpWKnKRu3wFTNfub_qdcDePdEXYZWOpvpqL0fcfS_Uw@mail.gmail.com>
+ <CAGudoHEWQJKMS=pL9Ate4COshgQaC-fjQ2RN3LiYmdS=0MVruA@mail.gmail.com>
+ <CAHC9VhSYg-BbJvNBZd3dayYCf8bzedASoidnX23_i4iK7P-WxQ@mail.gmail.com>
+ <CAHk-=wiG5wdWrx2uXRK3-i31Zp416krnu_KjmBbS3BVkiAUXLQ@mail.gmail.com> <CAHC9VhTg8mMHzdSPbpxvOQCWxuNuXzR7c6FJOg5+XGb-PYemRw@mail.gmail.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Wed, 25 Jan 2023 16:00:19 +0100
+Message-ID: <CAGudoHG-42ziSNT0g8asRj8iGzx-Gn=ETZuXkswER3Daov37=A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        viro@zeniv.linux.org.uk, serge@hallyn.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        mdanylo@google.com, namit@vmware.com, pasha.tatashin@soleen.com,
-        pgofman@codeweavers.com, rppt@kernel.org, shuah@kernel.org,
-        shy828301@gmail.com, surenb@google.com, usama.anjum@collabora.com,
-        vbabka@suse.cz, viro@zeniv.linux.org.uk, willy@infradead.org,
-        yun.zhou@windriver.com
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,43 +77,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 24, 2023 at 8:49 PM Peter Xu <peterx@redhat.com> wrote:
-> On Mon, Jan 23, 2023 at 06:15:00PM +0500, Muhammad Usama Anjum wrote:
-> > > Firstly, doc update is more than welcomed to explain the new interface
-> > first (before throwing the code..).  That can be done in pagemap.rst on
-> > > pagemap changes, or userfaultfd.rst on userfaultfd.
-> > Okay. I'll add the documentation in next version or after the series has
-> > been accepted. Initially I'd added the documentation. But the code kept on
-> > changing so much that I had to spend considerable time on updating the
-> > documentation. I know it is better to add documentation with the patches.
-> > I'll try to add it.
+On 1/24/23, Paul Moore <paul@paul-moore.com> wrote:
+> Although I'm looking at this again and realized that only
+> do_faccessat() calls access_override_creds(), so why not just fold the
+> new access_need_override_creds() logic into access_override_creds()?
+> Just have one function that takes the flag value, and returns an
+> old_cred/NULL pointer (or pass old_cred to the function by reference
+> and return an error code); that should still provide the performance
+> win Mateusz is looking for while providing additional safety against
+> out-of-sync changes.  I would guess the code would be smaller too.
 >
-> Yes, logically it should be the thing people start looking with.  It'll
-> help reviewers to understand how does it work in general if relevant
-> description is not in the cover letter, so it can matter even before the
-> series is merged.
-> > > There're four kinds of masks (required/anyof/excluded/return).  Are they
-> > > all needed?  Why this is a good interface design?
-> > Then, CRIU developers Andrea [1] and Danylo [2], asked to include all these
-> > different kinds of masks. I'd thought of these masks as fancy filter inside
-> > the kernel. But there wasn't anyone else to review. So I'd included them to
-> > move forward. Please let me know your thoughts after reading emails from [1].
-> The idea makes sense to me, thanks.  I just hope "moving it forward" is not
-> the only reason that you included it.
-> Please also consider to attach relevant links to your next cover letter so
-> new reviewers can be aware of why the interface is proposed like that.
-> IMHO it would be also great if the CRIU people can acknowledge the
-> interface at some point to make sure it satisfies the needs.
 
-I acknowledge that this interface looks good for my use case to get interesting
-pages from a big sparse mapping. For Andrei's use case to iteratively dump memory
-it also looks good IMO. 
+It is unclear from the description if you are arguing for moving the new
+func into access_override_creds almost as is just put prior to existing
+code *or* mixing checks with assignments.
 
-> An POC would be even better on CRIU, but maybe that's asking too much.
+static bool *access_override_creds(struct cred **ptr)
+        [snip]
+        if (!uid_eq(cred->fsuid, cred->uid) ||
+            !gid_eq(cred->fsgid, cred->gid))
+                return false;
+        /* remaining checks go here as well */
+        [snip]
 
-Can't promise now, but happy to do this when there'll be a clear signal that this
-patchset is about to be merged. Meanwhile, I'll make some smaller tests with this
-patchset rebased and will get back if there are some problems with that. 
+        override_cred = prepare_creds();
+        if (!override_cred) {
+                *ptr = NULL;
+                return true;
+        }
 
-> -- 
-> Peter Xu
+        override_cred->fsuid = override_cred->uid;
+        override_cred->fsgid = override_cred->gid;
+        [snip]
+
+If this is what you had in mind, I note it retains all the duplication
+except in one func body which I'm confident does not buy anything,
+provided the warning comment is added.
+
+At the same time the downside is that it uglifies error handling at the
+callsite, so I would say a net loss.
+
+Alternatively, if you want to somehow keep tests aroung assignments the
+code gets super hairy.
+
+But maybe you wanted something else?
+
+As I noted in another email this already got more discussion than it
+warrants.
+
+Addition of the warning comment makes sense, but concerns after that
+don't sound legitimate to me.
+
+-- 
+Mateusz Guzik <mjguzik gmail.com>
