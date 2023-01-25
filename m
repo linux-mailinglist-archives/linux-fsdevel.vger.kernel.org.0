@@ -2,49 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A415667AAA4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 07:58:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FF8F67AB1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 08:43:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234939AbjAYG6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 01:58:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49840 "EHLO
+        id S235103AbjAYHni (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 02:43:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234920AbjAYG6v (ORCPT
+        with ESMTP id S229646AbjAYHnh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 01:58:51 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06D8B47403;
-        Tue, 24 Jan 2023 22:58:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=/caBiVGll/6SnclWcFCO9ngnR7ZU07wxLwdfypB6UYE=; b=3SBEaEiZiPSenf6OZy25Ma0Wzh
-        3tYKbH1NuA5bzhunjqOm2SDz21mMlmDlp14sM/OvsHW54cPQ8g8rZ61UvSUbyvItEPs4lDjM51I6M
-        c9aEBVEyfk7HYpJHScrtBJOXYOtf6A+zvzUvjDzAb3125K6Js8XYb/CU2ElRmvfzdZRdkL35ADmun
-        nLQkxjGe952tVNkObt329+FY1dHAsRMnQ95EgAyQxGtP9rhL3VbHogSB4SaiO67qjJRtxuA0EITsb
-        ElUILxlxBVE0sPLt1fsCHeKBcEyd7E5T+OFZrIlezKQ+itggKuJrwrja3v5uvYRD3bBVC7zt2uw5t
-        QmLyBDsg==;
-Received: from [2001:4bb8:19a:27af:97a1:70ca:d917:c407] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pKZk7-006CeX-JQ; Wed, 25 Jan 2023 06:58:48 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] fs: build the legacy direct I/O code conditionally
-Date:   Wed, 25 Jan 2023 07:58:39 +0100
-Message-Id: <20230125065839.191256-3-hch@lst.de>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230125065839.191256-1-hch@lst.de>
-References: <20230125065839.191256-1-hch@lst.de>
+        Wed, 25 Jan 2023 02:43:37 -0500
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28DCA3D0BA;
+        Tue, 24 Jan 2023 23:43:33 -0800 (PST)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30P7egrJ002845;
+        Wed, 25 Jan 2023 07:43:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2022-7-12;
+ bh=MlMHoMW7Wgp8+JHmPfdKUfXlIS3m4deceHGYSXghQwI=;
+ b=a7Gyl/GYOCFALEw01PZgp8E7Z/7X47bnQmX32eLPMJsHE8fNGsCpCKF9SKBUGONufR3N
+ jfTJzKgfCsVhI98ctLUqXqhOk9bDlpc7CFijE9+MsCbvRnu4QL9slMOwQRRmrvRbcwuj
+ AqFSDGAdksVKmVBXxoKmlIviKlbndq8bwGsms68X5R5aUE7fFYgLJJ6TOxN/rHaNhe0O
+ TBId4u45XjJtyUWcB0V+U+dyklDpPmBUOIZZ7y1OtzLPUcLzPPC8NICvu+6KeVv/i/6m
+ slL/r2XAYFlfZc66kO5SVOoPx8RZChhPQm6oOgPlFJ2+h+IAljQkG+lMPtLRW+pTm5si RQ== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3n88kty5ng-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Jan 2023 07:43:16 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 30P6pnuV025236;
+        Wed, 25 Jan 2023 07:43:15 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2041.outbound.protection.outlook.com [104.47.57.41])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3n86g5ms76-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Jan 2023 07:43:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dkh0ije/9dRHCmASIdGFjyYqrSrBHZmTKpEZxCypKQpae0Lbm01nEkwm326scTl7hEj1wgslZjcqbMKvmov5p3XsaVEdOGTPYsWQWq57/4HWsqAuluKOFfNKMdm8BSltKVxtUWvPOjp4pBqJ1JfVBZFPo5LPtFq3qmphaC6CcPEFuzw+Iryed1e9yXDKzQd9nlK2p+3KpMUB62jKlrdjEkhSO3Pt9tC6sMRcjvyr05s5G8Q/jkm4XdzanFDFtz0PE47LE/VPm7ILaWPySGCVpuFMCiCmZOhal7jzL/cOQLf1eOiAXdBy9aVmTZoRceqBC4vg4BjLKGW06JDxhrLrCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MlMHoMW7Wgp8+JHmPfdKUfXlIS3m4deceHGYSXghQwI=;
+ b=DPMUcXSKrhh7UeOogTM1TfKehGnAQbr9LDCX0nWJMpfHB7n+1Pyrmk5B7rlRhOE/LbxPe7ERZFarqvZbvu30ul/aeeuhf8vVr1pUpwlWnLQj2qrr90qiIE9ZoUIR1kl9Tw3hXFhUOgYP6IWEcmh6wpllmI67lbEmt0xbnfYuXLOsM0PhgbzJ1jOqhKDlfZoOheG229EpxmXDWql5S3KpXZbgN0lG6DAmHxiZeYomqf8zJIdF0+gmfvNivaFYy8CrJMRpOCUMNg4mykCOEuT5theT2Vt7u13PZHdRnFhncBL+/xQg9SnUFPPeNwOygZ5HeKfB0A6ywo0ZaBOnB7iviw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MlMHoMW7Wgp8+JHmPfdKUfXlIS3m4deceHGYSXghQwI=;
+ b=VI9mFczJjsMYDXMq9nb/T+biaemaluelKYIUR4Lieh/13ZcsiBSo76E3qBR9oOp+Epk7KELnLiuFTnv2v7buLG+2fsIpee0RrCg1lvFIkCGW0pZJ3rqFZidq974M3sQUV5DvexFdFoEcGEMFpHjnA6UNruzkqlfsoTzwzYL0yow=
+Received: from PH0PR10MB5706.namprd10.prod.outlook.com (2603:10b6:510:148::10)
+ by CH0PR10MB5004.namprd10.prod.outlook.com (2603:10b6:610:de::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.20; Wed, 25 Jan
+ 2023 07:43:08 +0000
+Received: from PH0PR10MB5706.namprd10.prod.outlook.com
+ ([fe80::560e:9c52:a6bd:4036]) by PH0PR10MB5706.namprd10.prod.outlook.com
+ ([fe80::560e:9c52:a6bd:4036%8]) with mapi id 15.20.6043.009; Wed, 25 Jan 2023
+ 07:42:29 +0000
+Message-ID: <8d3e27aa-7b65-e08d-7dc1-a8db2d3f1389@oracle.com>
+Date:   Wed, 25 Jan 2023 15:42:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH 04/34] btrfs: remove the direct I/O read checksum lookup
+ optimization
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230121065031.1139353-1-hch@lst.de>
+ <20230121065031.1139353-5-hch@lst.de>
+ <1f02fc92-18e8-3c68-8a31-36b4e4a07efd@oracle.com>
+ <20230124195531.GA16743@lst.de>
+From:   Anand Jain <anand.jain@oracle.com>
+In-Reply-To: <20230124195531.GA16743@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR01CA0143.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::23) To PH0PR10MB5706.namprd10.prod.outlook.com
+ (2603:10b6:510:148::10)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5706:EE_|CH0PR10MB5004:EE_
+X-MS-Office365-Filtering-Correlation-Id: c5182819-300f-481a-8ec6-08dafea7b5d6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: JbItAKvqHFSfH48ECnETlAw97bM0HXWnvoUsDZop6ohjNUagFA25xSDxSYMJY918EXh99uaqt24PESnX9louON5ZbF7CPZxZwWDAk9HuEj+aAqS0NaBBRtuthoiCnzLphLeWlUyzkzV6lyd1k7AihG+vu7jwkAfGIGD3TZRT38NUvC4QAc+oeGfMRMew5k0I7OxOZZSFMa9fc4ageeN1Kk8HguFhMXPCiqy19YNVFFxzdklkp6OtG4jcjunbNtl1mGrb9DAk+lPNUEzW7H4JSMkGWqrHRXoNKJ4pYjH4c7rKfSXFVGq5AQiVJ/+/K0p3Uw/9YMImgD6xTWMRwhrJ2zhkQLX1nuJkdNHlAePbHLy36pxqKOiVa5oh4A5PVK8Ji7vqrcOVoRcpPpndiwEGPwS6vH+YSlGZQ9qXmtHIHoi6OUhl3oCW2MvmIRUsdWAd18805gtXcJZAuKwZScj7ZYEu7b5cY3MjWcov2kxn9601/M7W+BYirTwjXeI5JG6Y30tkQj+Yr/LhVTeTa/fkmLdzokngeUUUS4Muj8+usylNUzkLIIvsfH0X2KtFItzZN7B1o5TPl8caHEaUMn4rSGSu311skXNyqyeKSKRorP+ys4axyako4pA02ZAHYh+bNXCOuoW0bdMfclAy4s6af/gWBKg8De+x3xqI7UlPsw4XsZv4OzICDI4t2hrubJSnw03HBAfLVGRZM56h2F4PgNm8oX7ZEo6D1wWQV+7RZv8=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5706.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(376002)(346002)(136003)(39860400002)(396003)(366004)(451199018)(2616005)(53546011)(6512007)(26005)(186003)(6506007)(6486002)(478600001)(66476007)(19627235002)(316002)(54906003)(66946007)(66556008)(31686004)(6666004)(83380400001)(8676002)(6916009)(4326008)(41300700001)(5660300002)(7416002)(8936002)(44832011)(2906002)(38100700002)(31696002)(36756003)(86362001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZDdoZEVKVDJnaC9SM1g2YVdRYTl5YkZubmRSMFk0TktFQmY3N0NMbUVra1Bp?=
+ =?utf-8?B?eUhHakRMSitreGpRNVFrUTFrK0xRRERLdElMajNNZ3h0M0RSanIvcjBrZFRV?=
+ =?utf-8?B?U0d6c1ZkMjBlRjZBcHJiVTgydDlNRlhsTDNzT2R3KzZrekJUenpKVFpGUmlB?=
+ =?utf-8?B?S2VYcVJZM3JYR1Vya3A0UFh1RnFUUm8zRWpvak5QVktZYlNyY2dPWmpETEtY?=
+ =?utf-8?B?bDFHWnN1NmNkOGRLelQ0L0UySGZnU1JxM3h6ZkRPS3pWbVdieEg4U2x4UjN1?=
+ =?utf-8?B?ZVRlZUhIN2hiRkxUWktKUUgxWTQ2NWhFTkI3bFdFaHVlOWd2Y2JYUVFBSXZP?=
+ =?utf-8?B?NDFzQ3BPRW44Z3RGeTRPWXRjSjNKakZSTEJ5QUZHUVg5TkhpZW5OZ1RidGQ3?=
+ =?utf-8?B?U2RsMkpNaEFGaXhaZXFXd244Z0R3VjRveXVuWmsvNWw1M3VwRUlKQUtnd1Fs?=
+ =?utf-8?B?eUNzYzZWSDd0SlFLd0JHZ2R0Q082eVYvaGlIVHBuWVVMcmJidldSMGVtbmI4?=
+ =?utf-8?B?T3RhUzdGeHJiODJmaXFoL2NiODY0bmJrM056dExqRHVxUjUvVWpaMGd2OHNo?=
+ =?utf-8?B?RUgwYkl2MlhMTHVMVWhIenFGWVNTMysxRjNPem5rZEdsOWhic0syS2o4aSt1?=
+ =?utf-8?B?VGI0akxwdVNSQktIc3QwckF5ZlFjVjgwMEtGOEZDc2JIcC8wdll3LzNJdmtu?=
+ =?utf-8?B?OGFMZ1FGSjFoOEx4MldBdVJrbnFUdEYzeUg4RVBSU21zZHRFRWtTRUdQNkNS?=
+ =?utf-8?B?aWNQOHhPMXZyaDI3czBRRHhBMjhkT0xvckl4SkppenJaMjMyejhycjRSS1ll?=
+ =?utf-8?B?MlBkN0dtbll2amN0V2pJMGoyY1dzRnJlbnBtYTZrL0ZmSGVFMWtmR1ZpR2xp?=
+ =?utf-8?B?dEUxNnZyM1RCU014Z1dVQnJKNFlLcEhQRW5oYW1hRDNYd0svdGgxYWM1TWpV?=
+ =?utf-8?B?SFRwNlUxS1dnRHE4ZUFFelVyTXZqYXpOYjhKWWVXYTIxRnFoWDB6Y1RGMi9O?=
+ =?utf-8?B?SnlRb01TaE9PeXV4b2NoeTRuRHV2QUNiUGZSK1NxVGFHejMrWEtybExxWnRB?=
+ =?utf-8?B?KzBMcnBRdWxLK3pOekN6bndlQjZIbjRGdUpIR0I0TGtsS0xWZGpDbHp6bDU5?=
+ =?utf-8?B?Yk51NG5tU20wb0taS1FJa01oSTVJWlowZUcvWi9OODhzaE15bmVrNmdLYkxT?=
+ =?utf-8?B?eTNIVUVJREMrN1RPSVpXMWhHbFh0ODBsQmZWa1pLVm5pM3FRbHQ3OGxmNnR4?=
+ =?utf-8?B?VUFUSjJqMzR4VExEZ3VJRUZTZU9yaGorTllKUHRRRjJmTlNKTERHU0FjZFhE?=
+ =?utf-8?B?d2tQd2ZRdjRxeldCSmxwaGYrUStaOFdLR1hrOTU0NjA3Vi9HZTVDZ3U5cUlN?=
+ =?utf-8?B?alUybEFDbTJCL0pkQTNFL0RGSEE0aFQwU3o0b2tOWExDVWpIbitta1VhM29L?=
+ =?utf-8?B?eC9EOGNwUzF6TUk0Zkl1bGY5Ky9yT3hlK05sczAwTjdmTWwwOVcxempIb3Vo?=
+ =?utf-8?B?UDhyRnV3MHZYaGJCMUZvOE5sWEpxY2xobzJQVXNRYVF2SmRqVTBNYy93MjJ1?=
+ =?utf-8?B?SWlld1Bqb1NteWVlLzVmNnVVTCsxRkRwbG8xTDdJbWgxOW5UMEFEd0xFckxo?=
+ =?utf-8?B?LzZxMEMzTWY2UHVOMlVzZUZJa1lPSytPb3pmNVdRamNiUXorQnhMZ29BdkFs?=
+ =?utf-8?B?bUNUdGdidllSNS9zRXNuaDJOWUxJR0dlanlVakk1aTdwWUpWWmpaZW8vMW8y?=
+ =?utf-8?B?WmR0SGFKWDJDcURQRVpaSUF3Nm5vd2hqTnlnQ2xEN2l5bDBLcFdEOVJOOENC?=
+ =?utf-8?B?ajg1amRyMjlyOVlaT3I4UDNsRzRKd0RnR1JlYk5VTXpHRTRaWk1ENzVyRm9S?=
+ =?utf-8?B?MXV0RjZ6YnN0MlpIOTdOTE4ra2IrZjYwMnBndnNHL3YwL0xtVG1CQ3BaOFRY?=
+ =?utf-8?B?ZHgrL3FDTGFuYmdpcUgxblhDTDFhVUxveGRDeVNzSFdjQ3lFTXJFVk02UUF4?=
+ =?utf-8?B?eE5JenZCZE1XaDIybVBSeThhL1F5czJDcmdDKzRseGhELy9ZK1lIc0NHRmJl?=
+ =?utf-8?B?b1V0TTF4SXVHMUNPR2M5SjBybVk5NG9LU055ekZpY1dIYnNTeVpRaHZ2NDFq?=
+ =?utf-8?B?Z3RublM4NFgwN3BLeFFZczlJNTRBR0x1VENYdXNMVDFRYWVjSmZaUXo4cnYx?=
+ =?utf-8?B?MFE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?UUlzMkw1ZzFDc2hGWC8rM3lqNEM2cUthWk9ZQUFHTStsQndmdzRZMm94WFJP?=
+ =?utf-8?B?K2l6YWhnVTQ3b2ZkZzRwc1p2U0dEV3lEVGlCclRHeEtRK1pOTXhtcWFIUWRx?=
+ =?utf-8?B?bDJmVWhvWU1zZ0FaV0QvV1ZQK1ZVYWU5Um83UzR6ck5rVFoyL3BVVERvZktI?=
+ =?utf-8?B?WjBCazk3Q3o3bjNmNXhJbU4xUGNFOGIyYTdVenhaU0ZiKzEzajV0aHVpNUNJ?=
+ =?utf-8?B?dTVrWm1xTHpNYktuU21TY0xXZEJtSC9zbW9BUGhFb0wzNmFEL2duQjRoUmlE?=
+ =?utf-8?B?Rkt0QWdpN1RJcGtGSFlYMjhOMGlQUVNoSUJRSGdINVU0Q0d1bGkyWEZUcTB6?=
+ =?utf-8?B?Q3pvcGVlblRuOW9kZUNDK0g1S1lIMUM5QTlDZ3d6blNjSEdjbkRXTVZjUVBE?=
+ =?utf-8?B?SHBZY0UrVmNwQTBXcnY1ZnFsMk91amNTVTQ2OVhPcE9tZCtidWZJeHozdE8v?=
+ =?utf-8?B?RStJN2FUQkRnbURTbVZHc1RTVW5zRUpjczFTdXc3TzBpekpmU1RBSlg3WmNl?=
+ =?utf-8?B?aDFoeGF5Qk5lVkhsVDlLM3l3LzBPYVBtajY0U0RXVDg2YTRmbXpGQ2ppOUZP?=
+ =?utf-8?B?dVpGQTdLbTkrLy9zTFNqTTFBZkFBdEtqTFRRNkZkbkxvYjZOY0M4S2Q5RVh4?=
+ =?utf-8?B?bS9wYWl1MjBhT3FhS3BodmYzbVhEakp2c2EwNy8xdEIxQWEyZndXMkFzT00r?=
+ =?utf-8?B?TjhuR00vT0hCZ01QWFIxRHdGOGdSMXhaRFhkNEVDMnNjblVDaDZ0QWwvUlBy?=
+ =?utf-8?B?bTFkVHpnK2tqbnVaN29rUHJQUVZkSHJ6WkVEYVFLNVdpYzZIWHhSQ2NQaHZ6?=
+ =?utf-8?B?VmVLaWcxTVl3eE1hMXppVVowcXdscXVadHJ1SS9GSWZ3NUJKcjlNTnZZdWxs?=
+ =?utf-8?B?VUlNNUVPVW42b3pHcGo0amJOQ2FubkpkRHhUNEQyQTJIV210NllkUDh6NVlw?=
+ =?utf-8?B?VnMxYkFOd3hpQ1VHbi9XY1FLdlR2VkZYaEVpWWtMRTBYZnE5NFRtSEVvL21m?=
+ =?utf-8?B?N09maUE4dEZjUHV3U3BBWHlwejRWWTJxS1R4OHVsWUxjNGNNbzRENDRCOThk?=
+ =?utf-8?B?Y09ZUDVuYlY0NDNVUmh1bUd3ZWxlSHpTbWdkemNINFV0WUZyRytRTUhwd1Bh?=
+ =?utf-8?B?b1FEMjlYN1BSVlhBVmtTazhTWjkrZVEwTXNnMTJHNTlFVmwyRytlby91VGtT?=
+ =?utf-8?B?TWx3Rjl2NTdMQ29xclJKNkVyQVNGQmNkdU5ESkVxeWNnaHlobFN1QnZSK1Rx?=
+ =?utf-8?Q?5holNxAsGtJYpER?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5182819-300f-481a-8ec6-08dafea7b5d6
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5706.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jan 2023 07:42:29.3045
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q2dsYAT2vjk1eepxOg6Z3QESYehrgPdkMFQB5YRTnFcldb286H1mWlpPhguY8ZgDW6XpQgmyUcUwUpwI9TQ4cQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5004
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-25_04,2023-01-24_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=853
+ malwarescore=0 mlxscore=0 bulkscore=0 adultscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301250071
+X-Proofpoint-GUID: c7lO5W_n9AEYPsRML2pUE4uMDgulbm6t
+X-Proofpoint-ORIG-GUID: c7lO5W_n9AEYPsRML2pUE4uMDgulbm6t
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,208 +189,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a new LEGACY_DIRECT_IO config symbol that is only selected by the
-file systems that still use the legacy blockdev_direct_IO code, so that
-kernels without support for those file systems don't need to build the
-code.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/Kconfig          | 4 ++++
- fs/Makefile         | 3 ++-
- fs/affs/Kconfig     | 1 +
- fs/exfat/Kconfig    | 1 +
- fs/ext2/Kconfig     | 1 +
- fs/fat/Kconfig      | 1 +
- fs/hfs/Kconfig      | 1 +
- fs/hfsplus/Kconfig  | 1 +
- fs/jfs/Kconfig      | 1 +
- fs/nilfs2/Kconfig   | 1 +
- fs/ntfs3/Kconfig    | 1 +
- fs/ocfs2/Kconfig    | 1 +
- fs/reiserfs/Kconfig | 1 +
- fs/udf/Kconfig      | 1 +
- 14 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 2685a4d0d35318..e99830c650336a 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -18,6 +18,10 @@ config VALIDATE_FS_PARSER
- config FS_IOMAP
- 	bool
- 
-+# old blockdev_direct_IO implementation.  Use iomap for new code instead
-+config LEGACY_DIRECT_IO
-+	bool
-+
- if BLOCK
- 
- source "fs/ext2/Kconfig"
-diff --git a/fs/Makefile b/fs/Makefile
-index 4dea17840761a0..606c029e1c9bc3 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -19,13 +19,14 @@ obj-y :=	open.o read_write.o file_table.o super.o \
- 		kernel_read_file.o remap_range.o
- 
- ifeq ($(CONFIG_BLOCK),y)
--obj-y +=	buffer.o direct-io.o mpage.o
-+obj-y +=	buffer.o mpage.o
- else
- obj-y +=	no-block.o
- endif
- 
- obj-$(CONFIG_PROC_FS) += proc_namespace.o
- 
-+obj-$(CONFIG_LEGACY_DIRECT_IO)	+= direct-io.o
- obj-y				+= notify/
- obj-$(CONFIG_EPOLL)		+= eventpoll.o
- obj-y				+= anon_inodes.o
-diff --git a/fs/affs/Kconfig b/fs/affs/Kconfig
-index eb9d0ab850cb1d..962b86374e1c15 100644
---- a/fs/affs/Kconfig
-+++ b/fs/affs/Kconfig
-@@ -2,6 +2,7 @@
- config AFFS_FS
- 	tristate "Amiga FFS file system support"
- 	depends on BLOCK
-+	select LEGACY_DIRECT_IO
- 	help
- 	  The Fast File System (FFS) is the common file system used on hard
- 	  disks by Amiga(tm) systems since AmigaOS Version 1.3 (34.20).  Say Y
-diff --git a/fs/exfat/Kconfig b/fs/exfat/Kconfig
-index 5a65071b5ecf10..147edeb044691d 100644
---- a/fs/exfat/Kconfig
-+++ b/fs/exfat/Kconfig
-@@ -3,6 +3,7 @@
- config EXFAT_FS
- 	tristate "exFAT filesystem support"
- 	select NLS
-+	select LEGACY_DIRECT_IO
- 	help
- 	  This allows you to mount devices formatted with the exFAT file system.
- 	  exFAT is typically used on SD-Cards or USB sticks.
-diff --git a/fs/ext2/Kconfig b/fs/ext2/Kconfig
-index 1248ff4ef56254..77393fda99af09 100644
---- a/fs/ext2/Kconfig
-+++ b/fs/ext2/Kconfig
-@@ -2,6 +2,7 @@
- config EXT2_FS
- 	tristate "Second extended fs support"
- 	select FS_IOMAP
-+	select LEGACY_DIRECT_IO
- 	help
- 	  Ext2 is a standard Linux file system for hard disks.
- 
-diff --git a/fs/fat/Kconfig b/fs/fat/Kconfig
-index 238cc55f84c429..afe83b4e717280 100644
---- a/fs/fat/Kconfig
-+++ b/fs/fat/Kconfig
-@@ -2,6 +2,7 @@
- config FAT_FS
- 	tristate
- 	select NLS
-+	select LEGACY_DIRECT_IO
- 	help
- 	  If you want to use one of the FAT-based file systems (the MS-DOS and
- 	  VFAT (Windows 95) file systems), then you must say Y or M here
-diff --git a/fs/hfs/Kconfig b/fs/hfs/Kconfig
-index 129926b5142d8f..d985066006d588 100644
---- a/fs/hfs/Kconfig
-+++ b/fs/hfs/Kconfig
-@@ -3,6 +3,7 @@ config HFS_FS
- 	tristate "Apple Macintosh file system support"
- 	depends on BLOCK
- 	select NLS
-+	select LEGACY_DIRECT_IO
- 	help
- 	  If you say Y here, you will be able to mount Macintosh-formatted
- 	  floppy disks and hard drive partitions with full read-write access.
-diff --git a/fs/hfsplus/Kconfig b/fs/hfsplus/Kconfig
-index 7d4229aecec05b..8034e7827a690b 100644
---- a/fs/hfsplus/Kconfig
-+++ b/fs/hfsplus/Kconfig
-@@ -4,6 +4,7 @@ config HFSPLUS_FS
- 	depends on BLOCK
- 	select NLS
- 	select NLS_UTF8
-+	select LEGACY_DIRECT_IO
- 	help
- 	  If you say Y here, you will be able to mount extended format
- 	  Macintosh-formatted hard drive partitions with full read-write access.
-diff --git a/fs/jfs/Kconfig b/fs/jfs/Kconfig
-index 05cb0e8e4382ee..51e856f0e4b8d6 100644
---- a/fs/jfs/Kconfig
-+++ b/fs/jfs/Kconfig
-@@ -3,6 +3,7 @@ config JFS_FS
- 	tristate "JFS filesystem support"
- 	select NLS
- 	select CRC32
-+	select LEGACY_DIRECT_IO
- 	help
- 	  This is a port of IBM's Journaled Filesystem .  More information is
- 	  available in the file <file:Documentation/admin-guide/jfs.rst>.
-diff --git a/fs/nilfs2/Kconfig b/fs/nilfs2/Kconfig
-index 254d102e79c99b..7d59567465e121 100644
---- a/fs/nilfs2/Kconfig
-+++ b/fs/nilfs2/Kconfig
-@@ -2,6 +2,7 @@
- config NILFS2_FS
- 	tristate "NILFS2 file system support"
- 	select CRC32
-+	select LEGACY_DIRECT_IO
- 	help
- 	  NILFS2 is a log-structured file system (LFS) supporting continuous
- 	  snapshotting.  In addition to versioning capability of the entire
-diff --git a/fs/ntfs3/Kconfig b/fs/ntfs3/Kconfig
-index 6e4cbc48ab8e43..96cc236f7f7bd3 100644
---- a/fs/ntfs3/Kconfig
-+++ b/fs/ntfs3/Kconfig
-@@ -2,6 +2,7 @@
- config NTFS3_FS
- 	tristate "NTFS Read-Write file system support"
- 	select NLS
-+	select LEGACY_DIRECT_IO
- 	help
- 	  Windows OS native file system (NTFS) support up to NTFS version 3.1.
- 
-diff --git a/fs/ocfs2/Kconfig b/fs/ocfs2/Kconfig
-index 5d11380d872417..304d12186ccd38 100644
---- a/fs/ocfs2/Kconfig
-+++ b/fs/ocfs2/Kconfig
-@@ -7,6 +7,7 @@ config OCFS2_FS
- 	select QUOTA
- 	select QUOTA_TREE
- 	select FS_POSIX_ACL
-+	select LEGACY_DIRECT_IO
- 	help
- 	  OCFS2 is a general purpose extent based shared disk cluster file
- 	  system with many similarities to ext3. It supports 64 bit inode
-diff --git a/fs/reiserfs/Kconfig b/fs/reiserfs/Kconfig
-index 33c8b0dd07a2e7..4d22ecfe0fab65 100644
---- a/fs/reiserfs/Kconfig
-+++ b/fs/reiserfs/Kconfig
-@@ -2,6 +2,7 @@
- config REISERFS_FS
- 	tristate "Reiserfs support (deprecated)"
- 	select CRC32
-+	select LEGACY_DIRECT_IO
- 	help
- 	  Reiserfs is deprecated and scheduled to be removed from the kernel
- 	  in 2025. If you are still using it, please migrate to another
-diff --git a/fs/udf/Kconfig b/fs/udf/Kconfig
-index 26e1a49f3ba795..82e8bfa2dfd989 100644
---- a/fs/udf/Kconfig
-+++ b/fs/udf/Kconfig
-@@ -3,6 +3,7 @@ config UDF_FS
- 	tristate "UDF file system support"
- 	select CRC_ITU_T
- 	select NLS
-+	select LEGACY_DIRECT_IO
- 	help
- 	  This is a file system used on some CD-ROMs and DVDs. Since the
- 	  file system is supported by multiple operating systems and is more
--- 
-2.39.0
+On 25/01/2023 03:55, Christoph Hellwig wrote:
+> On Tue, Jan 24, 2023 at 10:55:25PM +0800, Anand Jain wrote:
+>>
+>> I was curious about the commit message.
+>> I ran fio to test the performance before and after the change.
+>> The results were similar.
+>>
+>> fio --group_reporting=1 --directory /mnt/test --name dioread --direct=1
+>> --size=1g --rw=read  --runtime=60 --iodepth=1024 --nrfiles=16 --numjobs=16
+>>
+>> before this patch
+>> READ: bw=8208KiB/s (8405kB/s), 8208KiB/s-8208KiB/s (8405kB/s-8405kB/s),
+>> io=481MiB (504MB), run=60017-60017msec
+>>
+>> after this patch
+>> READ: bw=8353KiB/s (8554kB/s), 8353KiB/s-8353KiB/s (8554kB/s-8554kB/s),
+>> io=490MiB (513MB), run=60013-60013msec
+> 
+> That's 4k reads.  The will benefit from the inline csum array in the
+> btrfs_bio, but won't benefit from the existing batching, so this is
+> kind of expected.
+> 
+> The good news is that the final series will still use the inline
+> csum array for small reads, while also only doing a single csum tree
+> lookup for larger reads, so you'll get the best of both worlds.
+> 
+
+Ok. Got this results for the whole series from an aarch64 
+(pagesize=64k); Results finds little improvement/same.
+
+
+Before:
+Last commit:
+b3b1ba7b8c0d btrfs: skip backref walking during fiemap if we know the 
+leaf is shared
+
+---- mkfs.btrfs /dev/vdb ..... :0 ----
+---- mount -o max_inline=0 /dev/vdb /btrfs ..... :0 ----
+---- fio --group_reporting=1 --directory /btrfs --name dioread 
+--direct=1 --size=1g --rw=read --runtime=60 --iodepth=1024 --nrfiles=16 
+--numjobs=16 | egrep "fio|READ" ..... :0 ----
+fio-3.19
+    READ: bw=6052MiB/s (6346MB/s), 6052MiB/s-6052MiB/s 
+(6346MB/s-6346MB/s), io=16.0GiB (17.2GB), run=2707-2707msec
+
+---- mkfs.btrfs /dev/vdb ..... :0 ----
+---- mount -o max_inline=64K /dev/vdb /btrfs ..... :0 ----
+---- fio --group_reporting=1 --directory /btrfs --name dioread 
+--direct=1 --size=1g --rw=read --runtime=60 --iodepth=1024 --nrfiles=16 
+--numjobs=16 | egrep "fio|READ" ..... :0 ----
+fio-3.19
+    READ: bw=6139MiB/s (6437MB/s), 6139MiB/s-6139MiB/s 
+(6437MB/s-6437MB/s), io=16.0GiB (17.2GB), run=2669-2669msec
+
+
+After:
+last commit:
+b488ab9aed15 iomap: remove IOMAP_F_ZONE_APPEND
+
+---- mkfs.btrfs /dev/vdb ..... :0 ----
+---- mount -o max_inline=0 /dev/vdb /btrfs ..... :0 ----
+---- fio --group_reporting=1 --directory /btrfs --name dioread 
+--direct=1 --size=1g --rw=read --runtime=60 --iodepth=1024 --nrfiles=16 
+--numjobs=16 | egrep "fio|READ" ..... :0 ----
+fio-3.19
+    READ: bw=6100MiB/s (6396MB/s), 6100MiB/s-6100MiB/s 
+(6396MB/s-6396MB/s), io=16.0GiB (17.2GB), run=2686-2686msec
+
+---- mkfs.btrfs /dev/vdb ..... :0 ----
+---- mount /dev/vdb /btrfs ..... :0 ----
+---- fio --group_reporting=1 --directory /btrfs --name dioread 
+--direct=1 --size=1g --rw=read --runtime=60 --iodepth=1024 --nrfiles=16 
+--numjobs=16 | egrep "fio|READ" ..... :0 ----
+fio-3.19
+    READ: bw=6157MiB/s (6456MB/s), 6157MiB/s-6157MiB/s 
+(6456MB/s-6456MB/s), io=16.0GiB (17.2GB), run=2661-2661msec
+
+
 
