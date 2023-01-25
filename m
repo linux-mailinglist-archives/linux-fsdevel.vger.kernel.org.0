@@ -2,162 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D94E867AE89
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 10:43:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A020D67AEE1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 10:53:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235409AbjAYJnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 04:43:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56934 "EHLO
+        id S229778AbjAYJxJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 04:53:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235371AbjAYJnh (ORCPT
+        with ESMTP id S234005AbjAYJxH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 04:43:37 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C25D5648B;
-        Wed, 25 Jan 2023 01:43:08 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id DD33E21C75;
-        Wed, 25 Jan 2023 09:43:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1674639786; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/H7fv8j3//amIhsuvsnszBORL7yxYM5gHjte1pGnd6k=;
-        b=cJ84t8+Z/oyAwTTCtaCrRcZJz3vmv0agsy9pwxx1mjpy2wVyb9bbJa/fovrQrusm/Svjk5
-        J6I5Atn+BG/uY1djc0bMaR2EhFHHAjtT6MjckOpioFidRZmoo/SxgZTemFBWI/hmnJ034Z
-        w1GOPFueJOKBcny/L6MDveuVWEd9TYY=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8FA761358F;
-        Wed, 25 Jan 2023 09:43:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id usqPIqr50GPHIgAAMHmgww
-        (envelope-from <mhocko@suse.com>); Wed, 25 Jan 2023 09:43:06 +0000
-Date:   Wed, 25 Jan 2023 10:43:05 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, michel@lespinasse.org,
-        jglisse@google.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        mgorman@techsingularity.net, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, peterz@infradead.org,
-        ldufour@linux.ibm.com, paulmck@kernel.org, luto@kernel.org,
-        songliubraving@fb.com, peterx@redhat.com, david@redhat.com,
-        dhowells@redhat.com, hughd@google.com, bigeasy@linutronix.de,
-        kent.overstreet@linux.dev, punit.agrawal@bytedance.com,
-        lstoakes@gmail.com, peterjung1337@gmail.com, rientjes@google.com,
-        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
-        jannh@google.com, shakeelb@google.com, tatashin@google.com,
-        edumazet@google.com, gthelen@google.com, gurua@google.com,
-        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
-        leewalsh@google.com, posk@google.com, will@kernel.org,
-        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
-        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        qianweili@huawei.com, wangzhou1@hisilicon.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
-        airlied@gmail.com, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, l.stach@pengutronix.de,
-        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
-        matthias.bgg@gmail.com, robdclark@gmail.com,
-        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
-        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
-        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
-        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
-        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
-        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
-        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, miklos@szeredi.hu,
-        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
-        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
-        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
-        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
-        loongarch@lists.linux.dev, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
-        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
-        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
-        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        devel@lists.orangefs.org, kexec@lists.infradead.org,
-        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
-        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v2 6/6] mm: export dump_mm()
-Message-ID: <Y9D5qS02j/fPLP/6@dhcp22.suse.cz>
-References: <20230125083851.27759-1-surenb@google.com>
- <20230125083851.27759-7-surenb@google.com>
+        Wed, 25 Jan 2023 04:53:07 -0500
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CEB65FD9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 01:52:33 -0800 (PST)
+Received: by mail-il1-x133.google.com with SMTP id g16so2679427ilr.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Jan 2023 01:52:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OuciH5zAUURnBDw16GG9WV+6Jm2kIAhFJoGWXvuLyzY=;
+        b=A1AB+qgY+bNcqCoh6g/QPfcTbHSdfM703fBk6MwZVQpdjKXroZK1oH0ns7MrSkqpEh
+         EOFNTevaPYrK/s2JxRXzjpxKJuFDLK0q2y5rZGlM4eYwU42FRyAmNuFKT7Bg1y72UQr6
+         97toi8YHPu1hdYbPDOUE8UH3Qse8M8RNx9XwKsItw/AX5ZjEdGoF6VszDeJWjYB0aicF
+         ydXIqaQhWbVJDKjQyaFJQGQ8Tb4O2relzLKrriy0p8DNZHpby7I/ajeseKccsiM2etXU
+         gc06b1Ly5AKuKaPMG0ZIbCmyoYgFf9iOl8HavzkcQOMATVBkyu4NrQfUDAIvJdVcxVmJ
+         W1Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OuciH5zAUURnBDw16GG9WV+6Jm2kIAhFJoGWXvuLyzY=;
+        b=SBVAVQXOl5w7unGFAH4IoCzJQZg5edhPQV/ILLFXePtQr5iOkXGOelrRbxSc61vg77
+         GfGIlVWExJf48dmgRiiPA1ps24BKyDWe4Ff/QyDAgTUawKEjPabaVdJkZ584w6JLj+tT
+         bE7k1hWuyTHCkQGpmP4xzMt//FBGAOz6LbOMTOZ5NKQ1xDXE04nMI4hCVuzzjyoBlOx5
+         /e8f+hXh17eVxAEZ00apF/WEXdwuG/bTvvKp85XH+m+efndCJbZFSElLMz6+hsWByE2m
+         oHRcFnZGYOEDi++d8/rW4ln9hR3Z+FiU9fpQ/NXSDsYKc3Xmx/JFxboUfO8wGkvF+NiN
+         L58w==
+X-Gm-Message-State: AO0yUKV4X7jycyIw8QV7BBrq7H2gdO+HRjXSKQzcWy6+HW3i/eFyOVmz
+        TMHvbet3nfnUYw1ZLH8fcJORrhcx+8bFMoS3tGUTyw==
+X-Google-Smtp-Source: AK7set/RqxBYpDySUQ4Hf1TOiGHp0yJPE0emZ8yXer/udU2W95b7BNk2ZoGFsf4v/GnYc+LqXkIFjxHDeLUfWqc82qo=
+X-Received: by 2002:a05:6e02:b23:b0:310:9cb4:223d with SMTP id
+ e3-20020a056e020b2300b003109cb4223dmr495004ilu.164.1674640351299; Wed, 25 Jan
+ 2023 01:52:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230125083851.27759-7-surenb@google.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20221121112134.407362-1-glider@google.com> <20221121112134.407362-4-glider@google.com>
+ <CAG_fn=WDjw1MVYhEh7K4HOpGNBWsq6YuyG6Xx7XcP4Xpu+KhZg@mail.gmail.com> <20230124130401.eb5d453213d557cf3b7a8ed6@linux-foundation.org>
+In-Reply-To: <20230124130401.eb5d453213d557cf3b7a8ed6@linux-foundation.org>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Wed, 25 Jan 2023 10:51:54 +0100
+Message-ID: <CAG_fn=XgBL00Oo5v7se5ZyP+uBbFSOaed4KReZVgpg3n8Nu95g@mail.gmail.com>
+Subject: Re: [PATCH 4/5] fs: hfs: initialize fsdata in hfs_file_truncate()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 25-01-23 00:38:51, Suren Baghdasaryan wrote:
-> mmap_assert_write_locked() is used in vm_flags modifiers. Because
-> mmap_assert_write_locked() uses dump_mm() and vm_flags are sometimes
-> modified from from inside a module, it's necessary to export
-> dump_mm() function.
-> 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+On Tue, Jan 24, 2023 at 10:04 PM Andrew Morton
+<akpm@linux-foundation.org> wrote:
+>
+> On Tue, 24 Jan 2023 11:51:30 +0100 Alexander Potapenko <glider@google.com> wrote:
+>
+> > On Mon, Nov 21, 2022 at 12:21 PM Alexander Potapenko <glider@google.com> wrote:
+> > >
+> > > When aops->write_begin() does not initialize fsdata, KMSAN may report
+> > > an error passing the latter to aops->write_end().
+> > >
+> > > Fix this by unconditionally initializing fsdata.
+> > >
+> > > Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > > Signed-off-by: Alexander Potapenko <glider@google.com>
+> >
+> > Dear FS maintainers,
+> >
+> > HFS/HFSPLUS are orphaned, can someone take this patch to their tree?
+> > Thanks in advance!
+> > (same for "fs: hfsplus: initialize fsdata in hfsplus_file_truncate()":
+> > https://lore.kernel.org/all/20221121112134.407362-5-glider@google.com/)
+>
+> I grabbed both.
+>
+> I removed the
+>
+>         Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+>
+> because that might provoke the backport bots to backport this fix
+> across eight years worth of kernels.  Before KMSAN existed!
 
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  mm/debug.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/debug.c b/mm/debug.c
-> index 9d3d893dc7f4..96d594e16292 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -215,6 +215,7 @@ void dump_mm(const struct mm_struct *mm)
->  		mm->def_flags, &mm->def_flags
->  	);
->  }
-> +EXPORT_SYMBOL(dump_mm);
->  
->  static bool page_init_poisoning __read_mostly = true;
->  
-> -- 
-> 2.39.1
-
--- 
-Michal Hocko
-SUSE Labs
+Right, makes sense.
