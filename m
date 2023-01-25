@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55F0F67AFE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 11:43:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 845EC67B103
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 12:20:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235500AbjAYKn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Jan 2023 05:43:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44984 "EHLO
+        id S234768AbjAYLUF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 06:20:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235043AbjAYKnZ (ORCPT
+        with ESMTP id S233135AbjAYLTQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Jan 2023 05:43:25 -0500
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEEA97A9D;
-        Wed, 25 Jan 2023 02:43:23 -0800 (PST)
-Received: by mail-vs1-xe31.google.com with SMTP id i185so19355801vsc.6;
-        Wed, 25 Jan 2023 02:43:23 -0800 (PST)
+        Wed, 25 Jan 2023 06:19:16 -0500
+Received: from mail-vk1-xa34.google.com (mail-vk1-xa34.google.com [IPv6:2607:f8b0:4864:20::a34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B8A21F5E6;
+        Wed, 25 Jan 2023 03:17:53 -0800 (PST)
+Received: by mail-vk1-xa34.google.com with SMTP id bs10so548711vkb.3;
+        Wed, 25 Jan 2023 03:17:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5syxfjTKp4jnhM5s/DjT919ih8t8R4fS/QwMr687tDQ=;
-        b=gF5kBKbwR+Ai+n1WCm8Qf+F9nf5+GdzqemY5pZV+pwJpoP2FZQA/bW4rr0kOc6z8BY
-         jCKhIOTtO3lwtU+1VNErWpu5GUOsEa92M3R34Btt4HgMm9uHu9tpPQhietRncT8WTrX5
-         1l/cS/KO8wtCBgJvFErUsTeIr1uZq6/3oLLOXAse5HqcatAMe9KJ/Rmmjias4L+rUbFx
-         vLUEManRzTC7/YPVRwUIQsyjLSH6LY596kope7oESEEkMbIBnVDqSOmnhBCdcwtc+uEw
-         4yXwGqQr39ipZVpqItaE8yoxpmVOqIJPzfU2hriwcXsox9bW72wPfc3yFKBX89Hb2mcP
-         PIXA==
+        bh=hBL8tLn+UJ9qhT9i2c3LMYqKQzKFOZZnv1ZXlWwYa2I=;
+        b=Pz0YxiP0KxrSrlBmmNII5YbKs/asWOOd88k+CD22ftMojSFAtNsfmEV7iR+6kFc9qt
+         TOBCaEbodyulZZ2ZL79+BNT3aRPV6Wwtkgkgu3IeZZ76cWMoCrEVoN20ETupyQ730jqu
+         GPXmlyoNDN4pO22Y0mHXhZV5VZ6QS7/gVgRVNFihqzV+Aj5L9k28KpOFEX2T9BRJmMo2
+         lj7K836r0cZRmdRl9x0N9vMFGMdOEAj2SY9lZ/eh74+CdTvFZamqJnJkoYsNBlmWkoGV
+         hpcqIi7psn6ufPCfZzXe3BrXykKXAhP27en5QYJ9OBaZxeb9s3sIB+wkKzgWMDyho3NB
+         36LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5syxfjTKp4jnhM5s/DjT919ih8t8R4fS/QwMr687tDQ=;
-        b=H8E8eb5Aqv98zVedTYmuYZtPk7YDkYWags3ZenFInol2o1jRwF8HVpVb6WZom9GH/L
-         wldCPnTxl0+TrLWSpY/BXHi/9vzZ0WY2myCMm201ZBzNb7L+FCg3PG7Waq6oeyd3ynEx
-         mE949VX+6wUpXs3H3Hd/okmRLXSsyzpfC9bQJANLMMFbq4HHtQYz3V1/5vBJ91Vq0sAj
-         lYy+xuNYwO0/pB5xNbloRn8EP84Gz4ceq/IWtGKXiqsYv6A6RK7ox9WqDPLoqazQ13CF
-         9rsK+cygST7b6q8/jrfPKcA1HOdr43VjjMRIIanDUy9EjwOLP0T/u+5y0d4+kUlWWNWB
-         KmQA==
-X-Gm-Message-State: AFqh2kriQDU9j/3ejFRtxWv7Dawi8EbcI8GRF3UiBpAMEzJ0HqgFER7C
-        e283kd2XICPTp2h3sphhN0HEGUsGwQOrzQLYN1g=
-X-Google-Smtp-Source: AMrXdXsMjL3OSFAMkJGJh+3Mfqj1r0cZd52PQV3a5mcJe0OZueFMR/DUitA4Q0kWz+sTk87hu9fMJBWng1LDcyiQOAY=
-X-Received: by 2002:a05:6102:5587:b0:3d1:2167:11ad with SMTP id
- dc7-20020a056102558700b003d1216711admr3958357vsb.2.1674643402914; Wed, 25 Jan
- 2023 02:43:22 -0800 (PST)
+        bh=hBL8tLn+UJ9qhT9i2c3LMYqKQzKFOZZnv1ZXlWwYa2I=;
+        b=zjHShH4L/HjOmvay68JhMWaEhcoMiPPb46lG6YI0ZWK6/w+6waRsB8LDm8QmqBI8cq
+         GtOKbQsFMW1NVuIRAsCcP59Kt0N8UNLzsrzJRCy6WCHVSAEMLxlGPh5Dc/hVPvC3w8FU
+         ovak101ufvAioZvwONTKh7SDZLvE4Z+YulKMv8nJGLxosV/h7gf3JjtBg67tJVH0GUF+
+         1yrEDvX/khhRjY2xt6O6BXBm/OqPbn9BZHcrLjIzN79ueFMe11gbLmoFHNQ7rxTMJqEI
+         cxPxGd7jphzwzzG258FtFUBabQmLsV4KGXgucWwC4O2oJXhZ7AG+tOM8eqdzHAdYtPpw
+         6TSA==
+X-Gm-Message-State: AFqh2kplP6nfvb+9kjkrluGtxLJv9tc98j8jmOckr9zi65kRpVIXrdtF
+        7M1FiCK/n27WCQC6uqhyIeyaYZFY1HaqFEdU6Fc=
+X-Google-Smtp-Source: AMrXdXu1+QItfay9+6PlMBufPzgGSKamLwGfkVnrnoc7TMXLis9kiFI1kEOHE3SW4CK9PVS4HldY6r2UgVmxkh3YV/4=
+X-Received: by 2002:a1f:91d4:0:b0:3db:104:6d13 with SMTP id
+ t203-20020a1f91d4000000b003db01046d13mr4164434vkd.25.1674645472271; Wed, 25
+ Jan 2023 03:17:52 -0800 (PST)
 MIME-Version: 1.0
 References: <cover.1674227308.git.alexl@redhat.com> <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
  <1ea88c8d1e666b85342374ed7c0ddf7d661e0ee1.camel@redhat.com>
@@ -53,16 +53,17 @@ References: <cover.1674227308.git.alexl@redhat.com> <CAOQ4uxgGc33_QVBXMbQTnmbpHi
  <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
  <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
  <20230125041835.GD937597@dread.disaster.area> <CAOQ4uxhqdjRbNFs_LohwXdTpE=MaFv-e8J3D2R57FyJxp_f3nA@mail.gmail.com>
- <ef68afb508f85eebb40fa3926edbff145e831c63.camel@redhat.com>
-In-Reply-To: <ef68afb508f85eebb40fa3926edbff145e831c63.camel@redhat.com>
+ <87wn5ac2z6.fsf@redhat.com>
+In-Reply-To: <87wn5ac2z6.fsf@redhat.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 25 Jan 2023 12:43:10 +0200
-Message-ID: <CAOQ4uxiVLJrMuEWT6oWDoFV3BzrxabvR3A-_K2HLR8V6Taxn4A@mail.gmail.com>
+Date:   Wed, 25 Jan 2023 13:17:40 +0200
+Message-ID: <CAOQ4uxiPLHHnr2=XH4gN4bAjizH-=4mbZMe_sx99FKuPo-fDMQ@mail.gmail.com>
 Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
  image filesystem
-To:     Alexander Larsson <alexl@redhat.com>
-Cc:     Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gscrivan@redhat.com,
+To:     Giuseppe Scrivano <gscrivan@redhat.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Alexander Larsson <alexl@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         brauner@kernel.org, viro@zeniv.linux.org.uk,
         Vivek Goyal <vgoyal@redhat.com>,
         Miklos Szeredi <miklos@szeredi.hu>
@@ -77,25 +78,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 25, 2023 at 12:08 PM Alexander Larsson <alexl@redhat.com> wrote:
+On Wed, Jan 25, 2023 at 12:39 PM Giuseppe Scrivano <gscrivan@redhat.com> wrote:
 >
-> On Wed, 2023-01-25 at 10:32 +0200, Amir Goldstein wrote:
-> > On Wed, Jan 25, 2023 at 6:18 AM Dave Chinner <david@fromorbit.com>
-> > wrote:
-> > >
-> > >
-> > >
-> > > I've already described the real world production system bottlenecks
-> > > that composefs is designed to overcome in a previous thread.
-> > >
-> > > Please go back an read this:
-> > >
-> > > https://lore.kernel.org/linux-fsdevel/20230118002242.GB937597@dread.disaster.area/
-> > >
+> Amir Goldstein <amir73il@gmail.com> writes:
+>
+> > On Wed, Jan 25, 2023 at 6:18 AM Dave Chinner <david@fromorbit.com> wrote:
+> >>
+> >> On Tue, Jan 24, 2023 at 09:06:13PM +0200, Amir Goldstein wrote:
+> >> > On Tue, Jan 24, 2023 at 3:13 PM Alexander Larsson <alexl@redhat.com> wrote:
+> >> > > On Tue, 2023-01-24 at 05:24 +0200, Amir Goldstein wrote:
+> >> > > > On Mon, Jan 23, 2023 at 7:56 PM Alexander Larsson <alexl@redhat.com>
+> >> > > > wrote:
+> >> > > > > On Fri, 2023-01-20 at 21:44 +0200, Amir Goldstein wrote:
+> >> > > > > > On Fri, Jan 20, 2023 at 5:30 PM Alexander Larsson
+> >> > > > > > <alexl@redhat.com>
+> >> > > > > > wrote:
+> >> > > I'm not sure why the dentry cache case would be more important?
+> >> > > Starting a new container will very often not have cached the image.
+> >> > >
+> >> > > To me the interesting case is for a new image, but with some existing
+> >> > > page cache for the backing files directory. That seems to model staring
+> >> > > a new image in an active container host, but its somewhat hard to test
+> >> > > that case.
+> >> > >
+> >> >
+> >> > ok, you can argue that faster cold cache ls -lR is important
+> >> > for starting new images.
+> >> > I think you will be asked to show a real life container use case where
+> >> > that benchmark really matters.
+> >>
+> >> I've already described the real world production system bottlenecks
+> >> that composefs is designed to overcome in a previous thread.
+> >>
+> >> Please go back an read this:
+> >>
+> >> https://lore.kernel.org/linux-fsdevel/20230118002242.GB937597@dread.disaster.area/
+> >>
 > >
 > > I've read it and now re-read it.
-> > Most of the post talks about the excess time of creating the
-> > namespace,
+> > Most of the post talks about the excess time of creating the namespace,
 > > which is addressed by erofs+overlayfs.
 > >
 > > I guess you mean this requirement:
@@ -105,41 +126,15 @@ On Wed, Jan 25, 2023 at 12:08 PM Alexander Larsson <alexl@redhat.com> wrote:
 > > we need instantiation and teardown times in the order of a second or
 > > two."
 > >
-> > Forgive for not being part of the containers world, so I have to ask
-> > -
+> > Forgive for not being part of the containers world, so I have to ask -
 > > Which real life use case requires instantiation and teardown times in
 > > the order of a second?
 > >
-> > What is the order of number of files in the manifest of those
-> > ephemeral
+> > What is the order of number of files in the manifest of those ephemeral
 > > images?
 > >
 > > The benchmark was done on a 2.6GB centos9 image.
->
-> What does this matter? We want to measure a particular kind of
-> operation, so, we use a sample with a lot of those operations. What
-> would it help running some operation on a smaller image that does much
-> less of the critical operations. That would just make it harder to see
-> the data for all the noise. Nobody is saying that reading all the
-> metadata in a 2.6GB image is something a container would do. It is
-> however doing lots of the operations that constrains container startup,
-> and it allows us to compare the performance of these operation between
-> different alternatives.
->
-
-When talking about performance improvements sometimes the
-absolute numbers matter just as well as the percentage.
-You write that:
-"The primary KPI is cold boot performance, because there are
- legal requirements for the entire system to boot in 2 seconds."
-so the size of the image does matter.
-
-If for the automotive use case, a centos9-like image needs to boot
-in 2 seconds and you show that you can accomplish that with
-composefs and cannot accomplish that with overlayfs+composefs
-then you have a pretty strong argument, with very few performance
-numbers ;-)
-
+> >
 > > My very minimal understanding of containers world, is that
 > > A large centos9 image would be used quite often on a client so it
 > > would be deployed as created inodes in disk filesystem
@@ -151,72 +146,25 @@ numbers ;-)
 > > image as large as centos9 is highly unlikely.
 > >
 > > Am I understanding the workflow correctly?
->
-> In a composefs based container storage implementation one would likely
-> not use a layered approach for the "derived" images. Since all file
-> content is shared anyway its more useful to just combine the metadata
-> of the layers into a single composefs image. It is not going to be very
-> large anyway, and it will make lookups much faster as you don't need to
-> do all the negative lookups in the upper layers when looking for files
-> in the base layer.
->
-
-Aha! that is something that wasn't clear to me - that the idea is to
-change the image distribution so that there are many "data layers"
-but the "metadata layers" are merged on the server, so the client
-uses only one.
-
-Maybe I am slow and maybe this part needs to be explained better.
-
+> >
 > > If I am, then I would rather see benchmarks with images
 > > that correspond with the real life use case that drives composefs,
 > > such as small manifests and/or composefs in combination with
 > > overlayfs as it would be used more often.
->
-> I feel like there is a constant moving of the goal post here. I've
-> provided lots of raw performance numbers, and explained that they are
-> important to our usecases, there has to be an end to how detailed they
-> need to be. I'm not interested in implementing a complete container
-> runtime based on overlayfs just to show that it performs poorly.
->
-
-Alexander, be patient. This is the process everyone that wants to
-upstream a new fs/subsystem/feature has to go through and
-everyone that wants to publish an academic paper has to go through.
-
-The reviewers are also in a learning process and you cannot expect
-reviewers to have all the questions ready for you on V1 and not
-have other questions pop up as their understanding of the problem
-space evolves.
-
-Note that my request was conditional to "if my understanding of the
-workflow is correct".
-
-Since you explained that your workflow does not include overlayfs
-you do not need to provide the benchmark of overlayfs+composefs,
-but if you intend to use the argument that
-"It is also quite typical to have shortlived containers in cloud workloads,
- and startup time there is very important."
-then you have to be honest about it and acknowledge that those short
-lived containers are not readonly, so if you want to use this use case
-when arguing for composefs, please do provide the performance
-numbers that correspond with this use case.
-
-
-> > > Cold cache performance dominates the runtime of short lived
-> > > containers as well as high density container hosts being run to
-> > > their container level memory limits. `ls -lR` is just a
-> > > microbenchmark that demonstrates how much better composefs cold
-> > > cache behaviour is than the alternatives being proposed....
-> > >
-> > > This might also help explain why my initial review comments
-> > > focussed
-> > > on getting rid of optional format features, straight lining the
-> > > processing, changing the format or search algorithms so more
-> > > sequential cacheline accesses occurred resulting in less memory
-> > > stalls, etc. i.e. reductions in cold cache lookup overhead will
-> > > directly translate into faster container workload spin up.
-> > >
+> >
+> >> Cold cache performance dominates the runtime of short lived
+> >> containers as well as high density container hosts being run to
+> >> their container level memory limits. `ls -lR` is just a
+> >> microbenchmark that demonstrates how much better composefs cold
+> >> cache behaviour is than the alternatives being proposed....
+> >>
+> >> This might also help explain why my initial review comments focussed
+> >> on getting rid of optional format features, straight lining the
+> >> processing, changing the format or search algorithms so more
+> >> sequential cacheline accesses occurred resulting in less memory
+> >> stalls, etc. i.e. reductions in cold cache lookup overhead will
+> >> directly translate into faster container workload spin up.
+> >>
 > >
 > > I agree that this technology is novel and understand why it results
 > > in faster cold cache lookup.
@@ -224,23 +172,102 @@ numbers that correspond with this use case.
 > > applied to optimize erofs lookup at mkfs.erofs time, but I can guess
 > > that this optimization was never attempted.
 >
-> > > > > >
-> On the contrary, erofs lookup is very similar to composefs. There is
-> nothing magical about it, we're talking about pre-computed, static
-> lists of names. What you do is you sort the names, put them in a
-> compact seek-free form, and then you binary search on them. Composefs
-> v3 has some changes to make larger directories slightly more efficient
-> (no chunking), but the general performance should be comparable.
+> As Dave mentioned, containers in a cluster usually run with low memory
+> limits to increase density of how many containers can run on a single
+
+Good selling point.
+
+> host.  I've done some tests to get some numbers on the memory usage.
 >
-> I believe Gao said that mkfs.erofs could do slightly better at how data
-> arranged so that related things are closer to each other. That may help
-> some, but I don't think this is gonna be a massive difference.
+> Please let me know if you've any comment on the method I've used to read
+> the memory usage, if you've any better suggestion please let me know.
+>
+> I am using a Fedora container image, but I think the image used is not
+> relevant, as the memory used should increase linearly to the image size
+> for both setups.
+>
+> I am using systemd-run --scope to get a new cgroup, the system uses
+> cgroupv2.
+>
+> For this first test I am using a RO mount both for composefs and
+> erofs+overlayfs.
+>
+> # echo 3 > /proc/sys/vm/drop_caches
+> # \time systemd-run --scope sh -c 'ls -lR /mnt/composefs > /dev/null; cat $(cat /proc/self/cgroup | sed -e "s|0::|/sys/fs/cgroup|")/memory.peak'
+> Running scope as unit: run-r482ec1c3024a4a8b9d2a369bf5dc6df3.scope
+> 16367616
+> 0.03user 0.54system 0:00.71elapsed 80%CPU (0avgtext+0avgdata 7552maxresident)k
+> 10592inputs+0outputs (28major+1273minor)pagefaults 0swaps
+>
+> # echo 3 > /proc/sys/vm/drop_caches
+> # \time systemd-run --scope sh -c 'ls -lR /mnt/erofs-overlay > /dev/null; cat $(cat /proc/self/cgroup | sed -e "s|0::|/sys/fs/cgroup|")/memory.peak'
+> Running scope as unit: run-r5f0f599053c349669e5c1ecacaa037b6.scope
+> 48390144
+> 0.04user 1.03system 0:01.81elapsed 59%CPU (0avgtext+0avgdata 7552maxresident)k
+> 30776inputs+0outputs (28major+1269minor)pagefaults 0swaps
+>
+> the erofs+overlay setup takes 2.5 times to complete and it uses 3 times
+> the memory used by composefs.
+>
+> The second test involves a RW mount for composefs.
+>
+> For the erofs+overlay setup I've just added an upperdir and workdir to
+> the overlay mount, while for composefs I create a completely new overlay
+> mount that uses the composefs mount as the lower layer.
+>
+> # echo 3 > /proc/sys/vm/drop_caches
+> # \time systemd-run --scope sh -c 'ls -lR /mnt/composefs-overlay > /dev/null; cat $(cat /proc/self/cgroup | sed -e "s|0::|/sys/fs/cgroup|")/memory.peak'
+> Running scope as unit: run-r23519c8048704e5b84a1355f131d9d93.scope
+> 31014912
+> 0.05user 1.15system 0:01.38elapsed 87%CPU (0avgtext+0avgdata 7552maxresident)k
+> 10944inputs+0outputs (28major+1282minor)pagefaults 0swaps
+>
+> # echo 3 > /proc/sys/vm/drop_caches
+> # \time systemd-run --scope sh -c 'ls -lR /mnt/erofs-overlay > /dev/null; cat $(cat /proc/self/cgroup | sed -e "s|0::|/sys/fs/cgroup|")/memory.peak'
+> Running scope as unit: run-rdbccf045f3124e379cec00273638db08.scope
+> 48308224
+> 0.07user 2.04system 0:03.22elapsed 65%CPU (0avgtext+0avgdata 7424maxresident)k
+> 30720inputs+0outputs (28major+1273minor)pagefaults 0swaps
+>
+> so the erofs+overlay setup still takes more time (almost 2.5 times) and
+> uses more memory (slightly more than 1.5 times)
+>
 
-Cool, so for readonly images, it is down to a performance comparison
-of overlayfs vs. composefs and to be fair overlayfs will also have a single
-upper metadata layer.
+That's an important comparison. Thanks for running it.
 
-May the best fs win!
+Based on Alexander's explanation about the differences between overlayfs
+lookup vs. composefs lookup of a regular "metacopy" file, I just need to
+point out that the same optimization (lazy lookup of the lower data
+file on open)
+can be done in overlayfs as well.
+(*) currently, overlayfs needs to lookup the lower file also for st_blocks.
+
+I am not saying that it should be done or that Miklos will agree to make
+this change in overlayfs, but that seems to be the major difference.
+getxattr may have some extra cost depending on in-inode xattr format
+of erofs, but specifically, the metacopy getxattr can be avoided if this
+is a special overlayfs RO mount that is marked as EVERYTHING IS
+METACOPY.
+
+I don't expect you guys to now try to hack overlayfs and explore
+this path to completion.
+My expectation is that this information will be clearly visible to anyone
+reviewing future submission, e.g.:
+
+- This is the comparison we ran...
+- This is the reason that composefs gives better results...
+- It MAY be possible to optimize erofs/overlayfs to get to similar results,
+  but we did not try to do that
+
+It is especially important IMO to get the ACK of both Gao and Miklos
+on your analysis, because remember than when this thread started,
+you did not know about the metacopy option and your main argument
+was saving the time it takes to create the overlayfs layer files in the
+filesystem, because you were missing some technical background on overlayfs.
+
+I hope that after you are done being annoyed by all the chores we put
+you guys up to, you will realize that they help you build your case for
+the final submission...
 
 Thanks,
 Amir.
