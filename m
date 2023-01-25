@@ -2,101 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 049C267A771
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 01:20:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 339C567A990
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 05:18:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233061AbjAYAUi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 19:20:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33790 "EHLO
+        id S230252AbjAYESo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Jan 2023 23:18:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbjAYAUg (ORCPT
+        with ESMTP id S229528AbjAYESk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 19:20:36 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1555D4B4AF
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 16:20:31 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id o13so16853489pjg.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 16:20:31 -0800 (PST)
+        Tue, 24 Jan 2023 23:18:40 -0500
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B8784A21F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 20:18:39 -0800 (PST)
+Received: by mail-pj1-x1044.google.com with SMTP id n20-20020a17090aab9400b00229ca6a4636so784234pjq.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 20:18:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vd0fuRLUDjU8rvXBur9NhqOrPTXVZKZJ4oN8G/lkhJI=;
-        b=o+HXYRIxPxQ8KPpGLHKkZdPsJO5M09uHZapYHKFtwuihESZLkI6Zkm4ULLnmfHYxaN
-         z6Bkf5/oL9w9YxifsJFcA+QqHXQpANCQz/OmWBa9Rlyll+JFY8LEgS0okBOrevjCF1S3
-         zR7B+TPDrrG/OfCNb5TJIPizamziaqvNbn8/9CvRZxXi09FQ5URRCGE/FpZIYdJ6T4/N
-         AY4adBiPMnMz+1wL4iuMS9jBXixwStGqund1wI/dbZkKpFhaJDOGRoji+PGQ7Xch442u
-         xgwPTskywSS01/xVU1ilxRAsaLiYsitEfD5ZykZTycKtYgDSWCaIA6Ar69OkijI/Sgc/
-         1/Fw==
+        bh=2zm9CTlz+B7NJKOJgLLkEu+O8sHPBZCAAUFTPto5VIk=;
+        b=3C51J7aWxQ6yjnwfiQ3VXcwFzqnYkU0WUSVdQfpEiwhxFLRBH850em1vH7fnmVYmk8
+         ePkxkjpGEjHCZabc0wpfJazxapQfy0X12xtsXrNh0pGqnzdXIBmTTXY6zgEGT400wxp8
+         cdQl7s20rjPfQPhmpjnxj16DWM7uehNCnZMBfXQQsKadteVVBfauCUHr2RUTvYrVRXNe
+         52ExfDxXq3IIQsyWwovxBBIufwOlVpNsrKoAEd1Tg7VfdyJD562Ke9IZzoj+NfwhmnGX
+         +CfTWbf4r0zgp7OL9oxys1olyev6DI4+dvkGlx+9UhhTqyxfAdrS56ujzWqj+BL9OY70
+         akuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Vd0fuRLUDjU8rvXBur9NhqOrPTXVZKZJ4oN8G/lkhJI=;
-        b=R2ITAVV8rv/fDNjPG/IzFDNpdH/ImpsEzQKGCDVutjtBjbY1RCkc8hHsDeGxKmuuko
-         bLxMn+wcUZig5Lb6yoXsyqDhBD7K4HdzzSG2W7LvN8CAo2KCY/jgyjtNA9Tv1b56zF64
-         bJmEcoOoITAmmHnPJMKI7+5dAwCbiWG/jgNoHZXdU3Pobbiai6jXQWPsLOMVKgBwI1MQ
-         pgwimoWf077oCpvp2TBr3OdqTYZZ9z1/ESakIgzwe1f+vUTlSUbu5IWcTzYXlKCZJtC3
-         8eYsuh6Nqwk+tGpKMIRgXSvzbUbbYaRnzrutlqlV6YBe22tfQ/TgEC1UKFLz2hsALOph
-         1fpw==
-X-Gm-Message-State: AO0yUKXpr0F/HtdQLGSWY6XDaSR+9z27HDdxECDn7J0XHCuVHOPfeDuk
-        pbO7gu9MGKDmMMJEHqAmao0MzQ==
-X-Google-Smtp-Source: AK7set8DMFuhHtJA8X11WSyZdq14F8cMlJuZ6jde92u/m6yVtA5WC0P8SrmivvZz4XbeH1VArDptDg==
-X-Received: by 2002:a17:90a:690e:b0:22b:b82a:8b5f with SMTP id r14-20020a17090a690e00b0022bb82a8b5fmr436422pjj.2.1674606030366;
-        Tue, 24 Jan 2023 16:20:30 -0800 (PST)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id l8-20020a17090a49c800b0022bae5c3e1esm148419pjm.9.2023.01.24.16.20.29
+        bh=2zm9CTlz+B7NJKOJgLLkEu+O8sHPBZCAAUFTPto5VIk=;
+        b=cvJthO6K0/GF5J5jnjeSz56SIRBREK0XfV/Jh7VMIlaWeSTEpPBHw1B4vy9B+0HJe5
+         XQ4DY5ExlvYUS0q390TS/Tp/COVVfyeC8/RFDv+Fp+KwUHJVcI2mNMdQFsYaHC5MdBQK
+         oXrlQzBBIspTJ1J7wGOSIJ5ip09xjvFXxz+AtrMEEyXbJ564vfEVDZQdJO32sOxr2xro
+         g8UFA50vB1ih14Dflr91d4/WRgg0vpRdurZfwNEDYZwEZq0foX9ola+rawNEhSQJ5d29
+         IfuATd6O67bpzxR5Rf30rOODN1sIWHft+srY/qKbTrn5gMYarw5r1O3vAWBhq0pB9yQa
+         upgA==
+X-Gm-Message-State: AFqh2kqcF7rxZcyVY7syWnhPiaOW7ONGEkOzAprp2/hIvkhUJ6ssYESJ
+        FEHFDdP6oQBJ2vHque3t9wUiwA==
+X-Google-Smtp-Source: AMrXdXstCbKhe4ltOgpD7q8klZlIBNEMLWnyCNJ+hi2dh29mehTBM6rYD9fpUpFXjA2JNSkjdAovaA==
+X-Received: by 2002:a05:6a20:e610:b0:9d:efbf:787d with SMTP id my16-20020a056a20e61000b0009defbf787dmr31979402pzb.50.1674620319091;
+        Tue, 24 Jan 2023 20:18:39 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-60-71.pa.vic.optusnet.com.au. [49.186.60.71])
+        by smtp.gmail.com with ESMTPSA id s17-20020a639251000000b004cc95c9bd97sm2196890pgn.35.2023.01.24.20.18.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 16:20:29 -0800 (PST)
-Date:   Wed, 25 Jan 2023 00:20:26 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Liam Merwick <liam.merwick@oracle.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
-Message-ID: <Y9B1yiRR8DpANAEo@google.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <Y8H5Z3e4hZkFxAVS@google.com>
- <48953bf2-cee9-f818-dc50-5fb5b9b410bf@oracle.com>
+        Tue, 24 Jan 2023 20:18:38 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pKXF5-007B4H-EB; Wed, 25 Jan 2023 15:18:35 +1100
+Date:   Wed, 25 Jan 2023 15:18:35 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Larsson <alexl@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gscrivan@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
+ image filesystem
+Message-ID: <20230125041835.GD937597@dread.disaster.area>
+References: <cover.1674227308.git.alexl@redhat.com>
+ <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
+ <1ea88c8d1e666b85342374ed7c0ddf7d661e0ee1.camel@redhat.com>
+ <CAOQ4uxinsBB-LpGh4h44m6Afv0VT5yWRveDG7sNvE2uJyEGOkg@mail.gmail.com>
+ <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
+ <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <48953bf2-cee9-f818-dc50-5fb5b9b410bf@oracle.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+In-Reply-To: <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -104,43 +82,101 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 24, 2023, Liam Merwick wrote:
-> On 14/01/2023 00:37, Sean Christopherson wrote:
-> > On Fri, Dec 02, 2022, Chao Peng wrote:
-> > > This patch series implements KVM guest private memory for confidential
-> > > computing scenarios like Intel TDX[1]. If a TDX host accesses
-> > > TDX-protected guest memory, machine check can happen which can further
-> > > crash the running host system, this is terrible for multi-tenant
-> > > configurations. The host accesses include those from KVM userspace like
-> > > QEMU. This series addresses KVM userspace induced crash by introducing
-> > > new mm and KVM interfaces so KVM userspace can still manage guest memory
-> > > via a fd-based approach, but it can never access the guest memory
-> > > content.
-> > > 
-> > > The patch series touches both core mm and KVM code. I appreciate
-> > > Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
-> > > reviews are always welcome.
-> > >    - 01: mm change, target for mm tree
-> > >    - 02-09: KVM change, target for KVM tree
-> > 
-> > A version with all of my feedback, plus reworked versions of Vishal's selftest,
-> > is available here:
-> > 
-> >    git@github.com:sean-jc/linux.git x86/upm_base_support
-> > 
-> > It compiles and passes the selftest, but it's otherwise barely tested.  There are
-> > a few todos (2 I think?) and many of the commits need changelogs, i.e. it's still
-> > a WIP.
-> > 
+On Tue, Jan 24, 2023 at 09:06:13PM +0200, Amir Goldstein wrote:
+> On Tue, Jan 24, 2023 at 3:13 PM Alexander Larsson <alexl@redhat.com> wrote:
+> > On Tue, 2023-01-24 at 05:24 +0200, Amir Goldstein wrote:
+> > > On Mon, Jan 23, 2023 at 7:56 PM Alexander Larsson <alexl@redhat.com>
+> > > wrote:
+> > > > On Fri, 2023-01-20 at 21:44 +0200, Amir Goldstein wrote:
+> > > > > On Fri, Jan 20, 2023 at 5:30 PM Alexander Larsson
+> > > > > <alexl@redhat.com>
+> > > > > wrote:
+> > I'm not sure why the dentry cache case would be more important?
+> > Starting a new container will very often not have cached the image.
+> >
+> > To me the interesting case is for a new image, but with some existing
+> > page cache for the backing files directory. That seems to model staring
+> > a new image in an active container host, but its somewhat hard to test
+> > that case.
+> >
 > 
-> When running LTP (https://github.com/linux-test-project/ltp) on the v10
-> bits (and also with Sean's branch above) I encounter the following NULL
-> pointer dereference with testcases/kernel/syscalls/madvise/madvise01
-> (100% reproducible).
-> 
-> It appears that in restrictedmem_error_page() inode->i_mapping->private_data
-> is NULL
-> in the list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list)
-> but I don't know why.
+> ok, you can argue that faster cold cache ls -lR is important
+> for starting new images.
+> I think you will be asked to show a real life container use case where
+> that benchmark really matters.
 
-Kirill, can you take a look?  Or pass the buck to someone who can? :-)
+I've already described the real world production system bottlenecks
+that composefs is designed to overcome in a previous thread.
+
+Please go back an read this:
+
+https://lore.kernel.org/linux-fsdevel/20230118002242.GB937597@dread.disaster.area/
+
+Cold cache performance dominates the runtime of short lived
+containers as well as high density container hosts being run to
+their container level memory limits. `ls -lR` is just a
+microbenchmark that demonstrates how much better composefs cold
+cache behaviour is than the alternatives being proposed....
+
+This might also help explain why my initial review comments focussed
+on getting rid of optional format features, straight lining the
+processing, changing the format or search algorithms so more
+sequential cacheline accesses occurred resulting in less memory
+stalls, etc. i.e. reductions in cold cache lookup overhead will
+directly translate into faster container workload spin up.
+
+> > > > This isn't all that strange, as overlayfs does a lot more work for
+> > > > each lookup, including multiple name lookups as well as several
+> > > > xattr
+> > > > lookups, whereas composefs just does a single lookup in a pre-
+> > > > computed
+> > >
+> > > Seriously, "multiple name lookups"?
+> > > Overlayfs does exactly one lookup for anything but first level
+> > > subdirs
+> > > and for sparse files it does the exact same lookup in /objects as
+> > > composefs.
+> > > Enough with the hand waving please. Stick to hard facts.
+> >
+> > With the discussed layout, in a stat() call on a regular file,
+> > ovl_lookup() will do lookups on both the sparse file and the backing
+> > file, whereas cfs_dir_lookup() will just map some page cache pages and
+> > do a binary search.
+> >
+> > Of course if you actually open the file, then cfs_open_file() would do
+> > the equivalent lookups in /objects. But that is often not what happens,
+> > for example in "ls -l".
+> >
+> > Additionally, these extra lookups will cause extra memory use, as you
+> > need dentries and inodes for the erofs/squashfs inodes in addition to
+> > the overlay inodes.
+> 
+> I see. composefs is really very optimized for ls -lR.
+
+No, composefs is optimised for minimal namespace and inode
+resolution overhead. 'ls -lR' does a lot of these operations, and
+therefore you see the efficiency of the design being directly
+exposed....
+
+> Now only need to figure out if real users start a container and do ls -lR
+> without reading many files is a real life use case.
+
+I've been using 'ls -lR' and 'find . -ctime 1' to benchmark cold
+cache directory iteration and inode lookup performance for roughly
+20 years. The benchmarks I run *never* read file data, nor is that
+desired - they are pure directory and inode lookup micro-benchmarks
+used to analyse VFS and filesystem directory and inode lookup
+performance.
+
+I have been presenting such measurements and patches improving
+performance of these microbnechmarks to the XFS and fsdevel lists
+over 15 years and I have *never* had to justify that what I'm
+measuring is a "real world workload" to anyone. Ever.
+
+Complaining about real world relevancy of the presented benchmark
+might be considered applying a double standard, wouldn't you agree?
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
