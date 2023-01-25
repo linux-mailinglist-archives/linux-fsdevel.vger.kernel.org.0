@@ -2,181 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 339C567A990
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 05:18:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68C9867AA4E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Jan 2023 07:28:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230252AbjAYESo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Jan 2023 23:18:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35642 "EHLO
+        id S234537AbjAYG25 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Jan 2023 01:28:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbjAYESk (ORCPT
+        with ESMTP id S231563AbjAYG24 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Jan 2023 23:18:40 -0500
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B8784A21F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 20:18:39 -0800 (PST)
-Received: by mail-pj1-x1044.google.com with SMTP id n20-20020a17090aab9400b00229ca6a4636so784234pjq.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Jan 2023 20:18:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2zm9CTlz+B7NJKOJgLLkEu+O8sHPBZCAAUFTPto5VIk=;
-        b=3C51J7aWxQ6yjnwfiQ3VXcwFzqnYkU0WUSVdQfpEiwhxFLRBH850em1vH7fnmVYmk8
-         ePkxkjpGEjHCZabc0wpfJazxapQfy0X12xtsXrNh0pGqnzdXIBmTTXY6zgEGT400wxp8
-         cdQl7s20rjPfQPhmpjnxj16DWM7uehNCnZMBfXQQsKadteVVBfauCUHr2RUTvYrVRXNe
-         52ExfDxXq3IIQsyWwovxBBIufwOlVpNsrKoAEd1Tg7VfdyJD562Ke9IZzoj+NfwhmnGX
-         +CfTWbf4r0zgp7OL9oxys1olyev6DI4+dvkGlx+9UhhTqyxfAdrS56ujzWqj+BL9OY70
-         akuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2zm9CTlz+B7NJKOJgLLkEu+O8sHPBZCAAUFTPto5VIk=;
-        b=cvJthO6K0/GF5J5jnjeSz56SIRBREK0XfV/Jh7VMIlaWeSTEpPBHw1B4vy9B+0HJe5
-         XQ4DY5ExlvYUS0q390TS/Tp/COVVfyeC8/RFDv+Fp+KwUHJVcI2mNMdQFsYaHC5MdBQK
-         oXrlQzBBIspTJ1J7wGOSIJ5ip09xjvFXxz+AtrMEEyXbJ564vfEVDZQdJO32sOxr2xro
-         g8UFA50vB1ih14Dflr91d4/WRgg0vpRdurZfwNEDYZwEZq0foX9ola+rawNEhSQJ5d29
-         IfuATd6O67bpzxR5Rf30rOODN1sIWHft+srY/qKbTrn5gMYarw5r1O3vAWBhq0pB9yQa
-         upgA==
-X-Gm-Message-State: AFqh2kqcF7rxZcyVY7syWnhPiaOW7ONGEkOzAprp2/hIvkhUJ6ssYESJ
-        FEHFDdP6oQBJ2vHque3t9wUiwA==
-X-Google-Smtp-Source: AMrXdXstCbKhe4ltOgpD7q8klZlIBNEMLWnyCNJ+hi2dh29mehTBM6rYD9fpUpFXjA2JNSkjdAovaA==
-X-Received: by 2002:a05:6a20:e610:b0:9d:efbf:787d with SMTP id my16-20020a056a20e61000b0009defbf787dmr31979402pzb.50.1674620319091;
-        Tue, 24 Jan 2023 20:18:39 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-60-71.pa.vic.optusnet.com.au. [49.186.60.71])
-        by smtp.gmail.com with ESMTPSA id s17-20020a639251000000b004cc95c9bd97sm2196890pgn.35.2023.01.24.20.18.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 20:18:38 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pKXF5-007B4H-EB; Wed, 25 Jan 2023 15:18:35 +1100
-Date:   Wed, 25 Jan 2023 15:18:35 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Alexander Larsson <alexl@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gscrivan@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-Message-ID: <20230125041835.GD937597@dread.disaster.area>
-References: <cover.1674227308.git.alexl@redhat.com>
- <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
- <1ea88c8d1e666b85342374ed7c0ddf7d661e0ee1.camel@redhat.com>
- <CAOQ4uxinsBB-LpGh4h44m6Afv0VT5yWRveDG7sNvE2uJyEGOkg@mail.gmail.com>
- <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
- <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
+        Wed, 25 Jan 2023 01:28:56 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D62E2F798;
+        Tue, 24 Jan 2023 22:28:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=b1wjOqEZrpOkxHT+1PUvP0AOFeUjYZhKlkU4+S4GB0k=; b=uWEY9WMexKz+9xXeSpSQQ77B2o
+        99rw7YhSRvN4STq0JUdr1YPOz1RTSI6lFRUkjHzXPhv9DNY0z7KCO5yJmpxrSjczZqWbxgUkf0Pw9
+        GMIdHLsKmuuIafYwCktI02lb7llqnzyaZU851zyBR8gHrR9zteVmmiBsMq+q55KoTZwB8OsmrIaIQ
+        60QEZpmO3lI+1Jbk4ELfJVMYSO5Zgltk0/wwh93FqQ2ey2wb37YuqNtK2d9wfw5sUcGdyawPH7xQn
+        jZ9wN+v4XxzvT0XYFzZKG9JU1UqJtxv5NOYsuUx9jVXo34t7QXr01IXmWHt08kO+d1PEtxagOao9I
+        cyklzP9A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pKZGv-0067kk-0n; Wed, 25 Jan 2023 06:28:37 +0000
+Date:   Tue, 24 Jan 2023 22:28:37 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 3/8] iomap: Don't get an reference on ZERO_PAGE for
+ direct I/O block zeroing
+Message-ID: <Y9DMFfcBAE3WCKef@infradead.org>
+References: <Y9Aq7eJ/RKSDiliq@infradead.org>
+ <20230124170108.1070389-1-dhowells@redhat.com>
+ <20230124170108.1070389-4-dhowells@redhat.com>
+ <1296569.1674592913@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <1296569.1674592913@warthog.procyon.org.uk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 24, 2023 at 09:06:13PM +0200, Amir Goldstein wrote:
-> On Tue, Jan 24, 2023 at 3:13 PM Alexander Larsson <alexl@redhat.com> wrote:
-> > On Tue, 2023-01-24 at 05:24 +0200, Amir Goldstein wrote:
-> > > On Mon, Jan 23, 2023 at 7:56 PM Alexander Larsson <alexl@redhat.com>
-> > > wrote:
-> > > > On Fri, 2023-01-20 at 21:44 +0200, Amir Goldstein wrote:
-> > > > > On Fri, Jan 20, 2023 at 5:30 PM Alexander Larsson
-> > > > > <alexl@redhat.com>
-> > > > > wrote:
-> > I'm not sure why the dentry cache case would be more important?
-> > Starting a new container will very often not have cached the image.
-> >
-> > To me the interesting case is for a new image, but with some existing
-> > page cache for the backing files directory. That seems to model staring
-> > a new image in an active container host, but its somewhat hard to test
-> > that case.
-> >
+On Tue, Jan 24, 2023 at 08:41:53PM +0000, David Howells wrote:
+> Christoph Hellwig <hch@infradead.org> wrote:
 > 
-> ok, you can argue that faster cold cache ls -lR is important
-> for starting new images.
-> I think you will be asked to show a real life container use case where
-> that benchmark really matters.
-
-I've already described the real world production system bottlenecks
-that composefs is designed to overcome in a previous thread.
-
-Please go back an read this:
-
-https://lore.kernel.org/linux-fsdevel/20230118002242.GB937597@dread.disaster.area/
-
-Cold cache performance dominates the runtime of short lived
-containers as well as high density container hosts being run to
-their container level memory limits. `ls -lR` is just a
-microbenchmark that demonstrates how much better composefs cold
-cache behaviour is than the alternatives being proposed....
-
-This might also help explain why my initial review comments focussed
-on getting rid of optional format features, straight lining the
-processing, changing the format or search algorithms so more
-sequential cacheline accesses occurred resulting in less memory
-stalls, etc. i.e. reductions in cold cache lookup overhead will
-directly translate into faster container workload spin up.
-
-> > > > This isn't all that strange, as overlayfs does a lot more work for
-> > > > each lookup, including multiple name lookups as well as several
-> > > > xattr
-> > > > lookups, whereas composefs just does a single lookup in a pre-
-> > > > computed
-> > >
-> > > Seriously, "multiple name lookups"?
-> > > Overlayfs does exactly one lookup for anything but first level
-> > > subdirs
-> > > and for sparse files it does the exact same lookup in /objects as
-> > > composefs.
-> > > Enough with the hand waving please. Stick to hard facts.
-> >
-> > With the discussed layout, in a stat() call on a regular file,
-> > ovl_lookup() will do lookups on both the sparse file and the backing
-> > file, whereas cfs_dir_lookup() will just map some page cache pages and
-> > do a binary search.
-> >
-> > Of course if you actually open the file, then cfs_open_file() would do
-> > the equivalent lookups in /objects. But that is often not what happens,
-> > for example in "ls -l".
-> >
-> > Additionally, these extra lookups will cause extra memory use, as you
-> > need dentries and inodes for the erofs/squashfs inodes in addition to
-> > the overlay inodes.
+> > On Tue, Jan 24, 2023 at 05:01:03PM +0000, David Howells wrote:
+> > > ZERO_PAGE can't go away, no need to hold an extra reference.
+> > > 
+> > > Signed-off-by: David Howells <dhowells@redhat.com>
+> > > Reviewed-by: David Hildenbrand <david@redhat.com>
+> > 
+> > If you send this on this needs your signoff as well, btw.
 > 
-> I see. composefs is really very optimized for ls -lR.
+> Um.  You quoted my signoff.  Do you mean your signoff?
 
-No, composefs is optimised for minimal namespace and inode
-resolution overhead. 'ls -lR' does a lot of these operations, and
-therefore you see the efficiency of the design being directly
-exposed....
-
-> Now only need to figure out if real users start a container and do ls -lR
-> without reading many files is a real life use case.
-
-I've been using 'ls -lR' and 'find . -ctime 1' to benchmark cold
-cache directory iteration and inode lookup performance for roughly
-20 years. The benchmarks I run *never* read file data, nor is that
-desired - they are pure directory and inode lookup micro-benchmarks
-used to analyse VFS and filesystem directory and inode lookup
-performance.
-
-I have been presenting such measurements and patches improving
-performance of these microbnechmarks to the XFS and fsdevel lists
-over 15 years and I have *never* had to justify that what I'm
-measuring is a "real world workload" to anyone. Ever.
-
-Complaining about real world relevancy of the presented benchmark
-might be considered applying a double standard, wouldn't you agree?
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Umm, I'm confused because you had my signoff on the last version :)
+The patch is ok as-is.  
