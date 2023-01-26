@@ -2,170 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B47E67D183
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 17:26:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0C9B67D1BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 17:35:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232755AbjAZQ0s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 11:26:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34410 "EHLO
+        id S231302AbjAZQfz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 11:35:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232723AbjAZQ0J (ORCPT
+        with ESMTP id S229505AbjAZQfx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 11:26:09 -0500
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36DF71674
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 08:25:39 -0800 (PST)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-506609635cbso30194337b3.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 08:25:39 -0800 (PST)
+        Thu, 26 Jan 2023 11:35:53 -0500
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB8D5AA4D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 08:35:51 -0800 (PST)
+Received: by mail-pl1-x62d.google.com with SMTP id jm10so2277207plb.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 08:35:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rUFKXit/Slxp5jNkRtm2qJfbudUdkwg/5ym9L9/2xFg=;
-        b=BrNExWGHbV1NeR+vu2Js5zAqwDKTAmFhHgoWjYZ0a3qbH7rru8W3QViuclznskZkVo
-         6Q5eqrGX7jMOOdvE9K9lsVmJpHX9roidNQoqd4ah6qpZ3z5AR/LzfumpWsF7qxr+L/L7
-         2EeJAw9MATGkA5VBf2UwOc7KCg21F0CUspP8pGqPmL78PHbmYrJgHGcDXuiJf+tpyEq5
-         mYd3qiJmdB/mmqbT25mkgF6e/9yHOLIF4ZmJU2qiUjSg09+a1L9BOQF70sP/z/t1hEtG
-         N3QguNCw23qX8RL/9XVLJb/vAzwIwx19tcG6Myly1SJ+d6fdbBsCbrW+Wp9iSE9SLjFe
-         r7Zw==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dCedkZSub4E7G02ozmeTWJLtnbDkNYV9uv5/ypFjcjs=;
+        b=eVNsUVSbY9fywISASdJ8vOfw38lV1OqgtvUQe/DYuTvRD66m+Qs3gitiyBx71/B0fx
+         biiKsQThZMp1LfHN5EGfeOINKoMSy9g2go3I16WtwwZQpmFQ2IV/8N1oy6n8YhD6UIky
+         WkwjrAgO7QyAPO+kq7hvc2L7BT76y6qkh24as=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rUFKXit/Slxp5jNkRtm2qJfbudUdkwg/5ym9L9/2xFg=;
-        b=BoDQXpxUNi7WukPN6CJHZi/Gl+KFK0xwCAD3PQIHxDvxOmu05cBthglEcXeBAauJjU
-         ZtVKoiTnBsHwbvaXGyGbmVvt/m8T0n8olwJuFFQuSxG1NPRytJOdYnTHOuiusxRN4dyP
-         vmxPU+gkxNMf3AYAk7CiYGHnlBPIPyZGFW/o0CKC4OSWg+xF66G+80R2IyhTqEEjlUKs
-         PeH7edN1M0yx8D/N55eMi80YhYYL1DtAiW/5+4MUYWKNF+Cpym5SUI8cxfxCg8MClikh
-         TL2cGOOnA6vNJNdsW6E8G0/gfeMj46CKs5dHB2+F4GXETRDCoHU2vzbWXRx1VzqIq+ga
-         7d0w==
-X-Gm-Message-State: AFqh2kqaDX+LtQ/YmB2BZIdYGMtvsbvQoOrLgPs/agBibRDRobzrmEAP
-        rU7yFRAHOV6RFmtTqKhxpn43Jkfx24meVcoSOunp0Mvcyl8dkx+vwV/iwA==
-X-Google-Smtp-Source: AMrXdXvRVLeaIi85wIrJBS5zRkOyr5/BQ66PCe0y1aLe9hmWIu7jqHBlhyy2SYPoXbE9x4WotKo1j1aRHLVU6Hd1LsI=
-X-Received: by 2002:a81:1b8b:0:b0:4ff:774b:7ffb with SMTP id
- b133-20020a811b8b000000b004ff774b7ffbmr3541685ywb.218.1674750315051; Thu, 26
- Jan 2023 08:25:15 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dCedkZSub4E7G02ozmeTWJLtnbDkNYV9uv5/ypFjcjs=;
+        b=SwSXYVRJ7bybbwuMfVUP/4wncbXU9WUeM3/bcH5Ots73EBjXQpGiW1LPyxQLKlls5c
+         sSvZbV5RrtNEGYK+BxGq9TxCH+TQMWcsD9CCFmB2uCwHjSyFk1FZpkvunRz56iWKcowK
+         +xmQ17yrLhaAi14XKZAwoLzVFArJ0v+3ePrD8YzVSq7kydC2OqzVwsH3wRiZn0VuQ/1O
+         1phwH4PI1b7f0H7+60BZaQiuUTer6kqoU25nJTE0HYJybwwDkXSqsGJf3T5ogbTlWgco
+         c7cFq6kkXZ1UHDjJK5xBmpQqoH3GZjCz5D2C+8iOT0/E07ZMy7rY8QXNSfadHpR1SXRD
+         k/5g==
+X-Gm-Message-State: AO0yUKVu8fqdG6TBczOZfbOLt3WrEQZHB0NDKtVB+jy1Yr8AMD48AQOv
+        hrxNTHP3jKH+VboRSCyI5kbiDA==
+X-Google-Smtp-Source: AK7set+Avp0tanijMNFBCT+FU9xteiB6gbr+IKCgWeSxaIOPWvlfFL0xvNVSPGxExS539i8F/Vvc1g==
+X-Received: by 2002:a17:902:9a85:b0:196:1d60:b1b1 with SMTP id w5-20020a1709029a8500b001961d60b1b1mr7396425plp.31.1674750950872;
+        Thu, 26 Jan 2023 08:35:50 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l16-20020a170903245000b00192fc9e8552sm1234544pls.0.2023.01.26.08.35.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jan 2023 08:35:50 -0800 (PST)
+Date:   Thu, 26 Jan 2023 08:35:49 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH] fs: Use CHECK_DATA_CORRUPTION() when kernel bugs are
+ detected
+Message-ID: <202301260835.61F1C2CA4D@keescook>
+References: <20230116191425.458864-1-jannh@google.com>
 MIME-Version: 1.0
-References: <20230125083851.27759-1-surenb@google.com> <20230125083851.27759-2-surenb@google.com>
- <Y9JFFYjfJf9uDijE@kernel.org> <Y9KTUw/04FmBVplw@kernel.org> <Y9KXjLaFFUvqqdd4@casper.infradead.org>
-In-Reply-To: <Y9KXjLaFFUvqqdd4@casper.infradead.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Thu, 26 Jan 2023 08:25:03 -0800
-Message-ID: <CAJuCfpHs4wvQpitiAYc+PQX3LnitF=wvm=zVX7CzMozzmnbcnw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] mm: introduce vma->vm_flags modifier functions
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Mike Rapoport <rppt@kernel.org>, akpm@linux-foundation.org,
-        michel@lespinasse.org, jglisse@google.com, mhocko@suse.com,
-        vbabka@suse.cz, hannes@cmpxchg.org, mgorman@techsingularity.net,
-        dave@stgolabs.net, liam.howlett@oracle.com, peterz@infradead.org,
-        ldufour@linux.ibm.com, paulmck@kernel.org, luto@kernel.org,
-        songliubraving@fb.com, peterx@redhat.com, david@redhat.com,
-        dhowells@redhat.com, hughd@google.com, bigeasy@linutronix.de,
-        kent.overstreet@linux.dev, punit.agrawal@bytedance.com,
-        lstoakes@gmail.com, peterjung1337@gmail.com, rientjes@google.com,
-        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
-        jannh@google.com, shakeelb@google.com, tatashin@google.com,
-        edumazet@google.com, gthelen@google.com, gurua@google.com,
-        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
-        leewalsh@google.com, posk@google.com, will@kernel.org,
-        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
-        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        qianweili@huawei.com, wangzhou1@hisilicon.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
-        airlied@gmail.com, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, l.stach@pengutronix.de,
-        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
-        matthias.bgg@gmail.com, robdclark@gmail.com,
-        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
-        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
-        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
-        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
-        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
-        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
-        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, miklos@szeredi.hu,
-        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
-        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
-        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
-        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
-        loongarch@lists.linux.dev, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
-        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
-        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
-        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        devel@lists.orangefs.org, kexec@lists.infradead.org,
-        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
-        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230116191425.458864-1-jannh@google.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 7:09 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Thu, Jan 26, 2023 at 04:50:59PM +0200, Mike Rapoport wrote:
-> > On Thu, Jan 26, 2023 at 11:17:09AM +0200, Mike Rapoport wrote:
-> > > On Wed, Jan 25, 2023 at 12:38:46AM -0800, Suren Baghdasaryan wrote:
-> > > > +/* Use when VMA is not part of the VMA tree and needs no locking */
-> > > > +static inline void init_vm_flags(struct vm_area_struct *vma,
-> > > > +                          unsigned long flags)
-> > >
-> > > I'd suggest to make it vm_flags_init() etc.
-> >
-> > Thinking more about it, it will be even clearer to name these vma_flags_xyz()
->
-> Perhaps vma_VERB_flags()?
->
-> vma_init_flags()
-> vma_reset_flags()
-> vma_set_flags()
-> vma_clear_flags()
-> vma_mod_flags()
+On Mon, Jan 16, 2023 at 08:14:25PM +0100, Jann Horn wrote:
+> Currently, filp_close() and generic_shutdown_super() use printk() to log
+> messages when bugs are detected. This is problematic because infrastructure
+> like syzkaller has no idea that this message indicates a bug.
+> In addition, some people explicitly want their kernels to BUG() when kernel
+> data corruption has been detected (CONFIG_BUG_ON_DATA_CORRUPTION).
+> And finally, when generic_shutdown_super() detects remaining inodes on a
+> system without CONFIG_BUG_ON_DATA_CORRUPTION, it would be nice if later
+> accesses to a busy inode would at least crash somewhat cleanly rather than
+> walking through freed memory.
+> 
+> To address all three, use CHECK_DATA_CORRUPTION() when kernel bugs are
+> detected.
 
-Due to excessive email bouncing I posted the v3 of this patchset using
-the original per-VMA patchset's distribution list. That might have
-dropped Mike from the list. Sorry about that Mike, I'll add you to my
-usual list of suspects :)
-The v3 is here:
-https://lore.kernel.org/all/20230125233554.153109-1-surenb@google.com/
-and Andrew did suggest the same renames, so I'll be posting v4 with
-those changes later today.
-Thanks for the feedback!
+Seems reasonable to me. I'll carry this unless someone else speaks up.
+:)
 
->
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> 
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>  fs/open.c              |  5 +++--
+>  fs/super.c             | 21 +++++++++++++++++----
+>  include/linux/poison.h |  3 +++
+>  3 files changed, 23 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index 82c1a28b3308..ceb88ac0ca3b 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1411,8 +1411,9 @@ int filp_close(struct file *filp, fl_owner_t id)
+>  {
+>  	int retval = 0;
+>  
+> -	if (!file_count(filp)) {
+> -		printk(KERN_ERR "VFS: Close: file count is 0\n");
+> +	if (CHECK_DATA_CORRUPTION(file_count(filp) == 0,
+> +			"VFS: Close: file count is 0 (f_op=%ps)",
+> +			filp->f_op)) {
+>  		return 0;
+>  	}
+>  
+> diff --git a/fs/super.c b/fs/super.c
+> index 12c08cb20405..cf737ec2bd05 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -491,10 +491,23 @@ void generic_shutdown_super(struct super_block *sb)
+>  		if (sop->put_super)
+>  			sop->put_super(sb);
+>  
+> -		if (!list_empty(&sb->s_inodes)) {
+> -			printk("VFS: Busy inodes after unmount of %s. "
+> -			   "Self-destruct in 5 seconds.  Have a nice day...\n",
+> -			   sb->s_id);
+> +		if (CHECK_DATA_CORRUPTION(!list_empty(&sb->s_inodes),
+> +				"VFS: Busy inodes after unmount of %s (%s)",
+> +				sb->s_id, sb->s_type->name)) {
+> +			/*
+> +			 * Adding a proper bailout path here would be hard, but
+> +			 * we can at least make it more likely that a later
+> +			 * iput_final() or such crashes cleanly.
+> +			 */
+> +			struct inode *inode;
+> +
+> +			spin_lock(&sb->s_inode_list_lock);
+> +			list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+> +				inode->i_op = VFS_PTR_POISON;
+> +				inode->i_sb = VFS_PTR_POISON;
+> +				inode->i_mapping = VFS_PTR_POISON;
+> +			}
+> +			spin_unlock(&sb->s_inode_list_lock);
+>  		}
+>  	}
+>  	spin_lock(&sb_lock);
+> diff --git a/include/linux/poison.h b/include/linux/poison.h
+> index 2d3249eb0e62..0e8a1f2ceb2f 100644
+> --- a/include/linux/poison.h
+> +++ b/include/linux/poison.h
+> @@ -84,4 +84,7 @@
+>  /********** kernel/bpf/ **********/
+>  #define BPF_PTR_POISON ((void *)(0xeB9FUL + POISON_POINTER_DELTA))
+>  
+> +/********** VFS **********/
+> +#define VFS_PTR_POISON ((void *)(0xF5 + POISON_POINTER_DELTA))
+> +
+>  #endif
+> 
+> base-commit: 5dc4c995db9eb45f6373a956eb1f69460e69e6d4
+> -- 
+> 2.39.0.314.g84b9a713c41-goog
+> 
+
+-- 
+Kees Cook
