@@ -2,119 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6723E67C8D6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 11:42:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F96967C938
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 11:54:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236949AbjAZKmd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 05:42:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36184 "EHLO
+        id S236938AbjAZKyW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 05:54:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236806AbjAZKmc (ORCPT
+        with ESMTP id S236764AbjAZKyV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 05:42:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 352E311657
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 02:41:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674729704;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nSKGSRAw4zApLqZOZxojx5gSJ8OH2ShG8cSG815Lldg=;
-        b=Y2nMHQP2QM+h4S7fN3EsURiXO0W8AWg1Iz6xu7EiBAP2owrxooH6uOAl1EEZ6tOYyyFK6/
-        n4WRuLt09g2DTXgHCwKjr9GOFGvgctJhunxqZVNCtan0ICPsmfe9IipCZEYJ8N6ohbM4J6
-        XpTTtN2Lvc2+7e7LJ4FBrJT3lJpD7L4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-20-VnhpzoWoMU24Rd-TH395Jg-1; Thu, 26 Jan 2023 05:41:43 -0500
-X-MC-Unique: VnhpzoWoMU24Rd-TH395Jg-1
-Received: by mail-wm1-f69.google.com with SMTP id az37-20020a05600c602500b003da50af44b3so847434wmb.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 02:41:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nSKGSRAw4zApLqZOZxojx5gSJ8OH2ShG8cSG815Lldg=;
-        b=SXwY7WsPB0VYT3yBnBF4aKBZJJMzgaIv+KEF0wtwN1A8OGM0YbtVDw6eQh4wPqEIix
-         k2OmN+tV/esPs1kTCD4ofS/GeIusQrLuoCpyCvSIJBtHMagWi5QSxneixYLtd278+MN2
-         3kDEJDNVrVW1fJKvG21+FZB9C4ifCOdU+sw79VHXIrHonABHXo5+7XBrWqtoFsM3/reJ
-         EuICaWec4IFKTC09msDXRx0yVTVjZ49oT+224AX8jlg0tDxOuAeQWlVwQiG87Ez+1lKr
-         Y4AULQxU4uZIrseZf2LpbcFIeSgfuFaVio8Te9xqGlABJKHRv49Y4t7RpRP9T1KWscbb
-         qkaw==
-X-Gm-Message-State: AFqh2kpbDqdILdg3eyye9tRIlFdZ/g3qs8tYgP0ixu+2P9d7vxS6WDBz
-        i9zt0O0DsuPVlch1B2MYJJK6DvpDw3PIzpLksXY38KmHGSfW0utrdjgmzl8dlLbkXRZqsYFwAKH
-        QcJWDDHcsr2MGwh6vQeyaYQycUQ==
-X-Received: by 2002:a05:600c:1695:b0:3d3:4ae6:a71b with SMTP id k21-20020a05600c169500b003d34ae6a71bmr33303909wmn.2.1674729702025;
-        Thu, 26 Jan 2023 02:41:42 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXvWhy4TGOvCPFAbQoLxK9D8awwiSNTdJq0Nz5MUw3B7wix4cF4N7mvyXVyul/6m5yzASpKTpA==
-X-Received: by 2002:a05:600c:1695:b0:3d3:4ae6:a71b with SMTP id k21-20020a05600c169500b003d34ae6a71bmr33303893wmn.2.1674729701735;
-        Thu, 26 Jan 2023 02:41:41 -0800 (PST)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id u11-20020a05600c19cb00b003d9fb04f658sm4683254wmq.4.2023.01.26.02.41.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jan 2023 02:41:41 -0800 (PST)
-Message-ID: <b8082dcd-632b-bf75-061c-143cca6fa70d@redhat.com>
-Date:   Thu, 26 Jan 2023 11:41:40 +0100
+        Thu, 26 Jan 2023 05:54:21 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 837E35D92A;
+        Thu, 26 Jan 2023 02:54:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 11DA161796;
+        Thu, 26 Jan 2023 10:54:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CDCAC433D2;
+        Thu, 26 Jan 2023 10:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674730459;
+        bh=dwy0Zrz7JiK4sHx1mULpCKxHI9VXysUBBdDC3Dp9Wik=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=PeokaWZAIAV/kmnDdgg270+335Q2ZF3Qo98/lwZXwU74YYW42eIu8MJNo7dWSntuj
+         RXi41cQHRA5sM9rQvvR0gypNwP2ZXXm9AAPvdRzmTWPzCC97wvWvqTn7ljT8WsbPfG
+         4bWrnGTghannhjWjnWKgWvCcfkhYCLIANTgnDmJJW+/VKfxvAV4gxTMg0UoXQZsXyD
+         dVkULu6CgoJ6gkbRWQqEDAN9kQLAI9BA6AZZc+kE6Nh8iYIsr/WIhrCqGj25u5/f/H
+         DLumQzUn+cwHz754j7bYQrPsTMUfwyJnOkYS5HGFqSMlJJCnHJFcQl6cjiphs2c1nN
+         9nDgNqwBNwGvg==
+Message-ID: <3c5cf7c7f9e206a3d7c4253de52015dda97ef41e.camel@kernel.org>
+Subject: Re: [PATCH v8 RESEND 2/8] fs: clarify when the i_version counter
+ must be updated
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, bfields@fieldses.org,
+        brauner@kernel.org, fweimer@redhat.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org, Colin Walters <walters@verbum.org>
+Date:   Thu, 26 Jan 2023 05:54:16 -0500
+In-Reply-To: <20230125160625.zenzybjgie224jf6@quack3>
+References: <20230124193025.185781-1-jlayton@kernel.org>
+         <20230124193025.185781-3-jlayton@kernel.org>
+         <20230125160625.zenzybjgie224jf6@quack3>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.3 (3.46.3-1.fc37) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>
-References: <e7d476d7-e201-86a3-9683-c2a559fc2f5b@redhat.com>
- <af0e448a-9559-32c0-cc59-10b159459495@redhat.com>
- <20230125210657.2335748-1-dhowells@redhat.com>
- <20230125210657.2335748-2-dhowells@redhat.com>
- <2613249.1674726566@warthog.procyon.org.uk>
- <2638928.1674729230@warthog.procyon.org.uk>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH] iov_iter: Use __bitwise with the extraction_flags
-In-Reply-To: <2638928.1674729230@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 26.01.23 11:33, David Howells wrote:
+On Wed, 2023-01-25 at 17:06 +0100, Jan Kara wrote:
+> On Tue 24-01-23 14:30:19, Jeff Layton wrote:
+> > The i_version field in the kernel has had different semantics over
+> > the decades, but NFSv4 has certain expectations. Update the comments
+> > in iversion.h to describe when the i_version must change.
+> >=20
+> > Cc: Colin Walters <walters@verbum.org>
+> > Cc: NeilBrown <neilb@suse.de>
+> > Cc: Trond Myklebust <trondmy@hammerspace.com>
+> > Cc: Dave Chinner <david@fromorbit.com>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>=20
+> Looks good to me. But one note below:
+>=20
+> > diff --git a/include/linux/iversion.h b/include/linux/iversion.h
+> > index 6755d8b4f20b..fced8115a5f4 100644
+> > --- a/include/linux/iversion.h
+> > +++ b/include/linux/iversion.h
+> > @@ -9,8 +9,25 @@
+> >   * ---------------------------
+> >   * The change attribute (i_version) is mandated by NFSv4 and is mostly=
+ for
+> >   * knfsd, but is also used for other purposes (e.g. IMA). The i_versio=
+n must
+> > - * appear different to observers if there was a change to the inode's =
+data or
+> > - * metadata since it was last queried.
+> > + * appear larger to observers if there was an explicit change to the i=
+node's
+> > + * data or metadata since it was last queried.
+> > + *
+> > + * An explicit change is one that would ordinarily result in a change =
+to the
+> > + * inode status change time (aka ctime). i_version must appear to chan=
+ge, even
+> > + * if the ctime does not (since the whole point is to avoid missing up=
+dates due
+> > + * to timestamp granularity). If POSIX or other relevant spec mandates=
+ that the
+> > + * ctime must change due to an operation, then the i_version counter m=
+ust be
+> > + * incremented as well.
+> > + *
+> > + * Making the i_version update completely atomic with the operation it=
+self would
+> > + * be prohibitively expensive. Traditionally the kernel has updated th=
+e times on
+> > + * directories after an operation that changes its contents. For regul=
+ar files,
+> > + * the ctime is usually updated before the data is copied into the cac=
+he for a
+> > + * write. This means that there is a window of time when an observer c=
+an
+> > + * associate a new timestamp with old file contents. Since the purpose=
+ of the
+> > + * i_version is to allow for better cache coherency, the i_version mus=
+t always
+> > + * be updated after the results of the operation are visible. Updating=
+ it before
+> > + * and after a change is also permitted.
+>=20
+> This sounds good but it is not the case for any of the current filesystem=
+s, is
+> it? Perhaps the documentation should mention this so that people are not
+> confused?
+>=20
+> 								Honza
 
-> Interestingly, things like __be32 are __bitwise.  I wonder if that actually
-> makes sense or if it was just convenient so stop people doing arithmetic on
-> them.  I guess doing AND/OR/XOR on them isn't a problem provided both
-> arguments are appropriately byte-swapped.
+Correct. Currently, all filesystems change the times and version before
+a write instead of after. I'm hoping that situation will change soon
+though, as I've been working on a patchset to fix this for tmpfs, ext4
+and btrfs.
 
-I recall that __be32 and friends were one of the early users of 
-__bitwise in the kernel. And the reason IIRC was exactly that: detect 
-when no proper conversion was performed using static code analysis 
-(Sparse). While some operations might make sense, the abuse is much more 
-likely.
+If you still want to see something for this though, what would you
+suggest for verbiage?
 
-
-LGTM, thanks!
-
--- 
 Thanks,
-
-David / dhildenb
-
+--=20
+Jeff Layton <jlayton@kernel.org>
