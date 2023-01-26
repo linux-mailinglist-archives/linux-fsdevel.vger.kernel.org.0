@@ -2,77 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD2D967D5BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 20:55:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E16067D600
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 21:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230172AbjAZTy7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 14:54:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51740 "EHLO
+        id S232593AbjAZUNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 15:13:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjAZTy6 (ORCPT
+        with ESMTP id S232387AbjAZUND (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 14:54:58 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F28D6B9A2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 11:54:57 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DF7346187E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 19:54:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29370C433D2;
-        Thu, 26 Jan 2023 19:54:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1674762896;
-        bh=oPTZwEZrU6jWex90OmxXpLu3hWTN35N0kVKpfMsMsQE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HkEKiXxAHH+F44g4k5EM7zH7qvHlHeBE6M+8X8X0dvYUjUDtUE99141znjplYLuRO
-         qhm/RIy9ng+StyiZZr4xQvuFUsy1FOSqfhhEI2InHM5ILVbBOl8Dz3c17UWp/axPkH
-         P7KHY7srCYhKIra6WDHC1KqdOya80h+DFTnSAmM4=
-Date:   Thu, 26 Jan 2023 11:54:55 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     <linux-fsdevel@vger.kernel.org>,
+        Thu, 26 Jan 2023 15:13:03 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CE0759994
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 12:13:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=Q95PJ/HsnVy3AYjq8GVq9vgQLW9v8UMWZb9EKREwNC0=; b=kBMK9zaWFzObrWzPVnRPhGp347
+        FT4s4WRO6FhtclsQwj13tuBrepuFCU6FMdtMzGQUkQz8lek6iG7FZVA1LFrKuxVDRuYVzD642+AxI
+        ixrsn8+JGg2JWVXzt+1fgkq2P8NN44fwRiSzyBqHhNaNK3n+QS0ul7wFsbjPxofPD4v1PjB3pE2ZY
+        d571kHAus9M3Jb9LYVxd2m9jdSNKx5PNaBFzGX+jFRPUD3iFkLC24tXNvGXXa9VcNWAUfL27UTC8X
+        0otsdzAT2oLk9E2ERv3XgI5f43RnDgPmU5kI2rxyOZCKzy0eyLFUOoXtxRgAcRwX5kTYSUiqwWf5o
+        VZNHAkBg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pL8cD-0073M6-BX; Thu, 26 Jan 2023 20:12:57 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] fs: gracefully handle ->get_block not mapping bh in
- __mpage_writepage
-Message-Id: <20230126115455.296681b67273410e729309b0@linux-foundation.org>
-In-Reply-To: <20230126085155.26395-1-jack@suse.cz>
-References: <20230126085155.26395-1-jack@suse.cz>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH 0/2] Convert writepage_t to use a folio
+Date:   Thu, 26 Jan 2023 20:12:53 +0000
+Message-Id: <20230126201255.1681189-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 26 Jan 2023 09:51:55 +0100 Jan Kara <jack@suse.cz> wrote:
+Against next-20230125.  More folioisation.  I split out the mpage
+work from everything else because it completely dominated the patch,
+but some implementations I just converted outright.
 
-> When filesystem's ->get_block function does not map the buffer head when
-> called from __mpage_writepage(), the function will happily go and pass
+Matthew Wilcox (Oracle) (2):
+  fs: Convert writepage_t callback to pass a folio
+  mpage: Convert __mpage_writepage() to use a folio more fully
 
-"the function" being __mpage_writepage(), not ->get_block()...
+ fs/cifs/file.c            |  8 +++----
+ fs/ext4/inode.c           |  4 ++--
+ fs/ext4/super.c           |  6 ++---
+ fs/fuse/file.c            | 18 +++++++--------
+ fs/iomap/buffered-io.c    |  5 ++---
+ fs/mpage.c                | 46 +++++++++++++++++++--------------------
+ fs/nfs/write.c            |  7 +++---
+ fs/ntfs3/inode.c          |  6 ++---
+ fs/orangefs/inode.c       | 23 ++++++++++----------
+ include/linux/writeback.h |  2 +-
+ mm/page-writeback.c       |  6 ++---
+ 11 files changed, 64 insertions(+), 67 deletions(-)
 
-> bogus bdev and block number to bio allocation routines which leads to
-> crashes sooner or later.
+-- 
+2.35.1
 
-Crashes are unwelcome.  How is this bug triggered?  Should we backport
-the fix?  I assume this is a longstanding thing and that any Fixes:
-target would be ancient?  If ancient, why did it take so long to
-discover?
-
-> E.g. UDF can do this because it doesn't want to
-> allocate blocks from ->writepages callbacks. It allocates blocks on
-> write or page fault but writeback can still spot dirty buffers without
-> underlying blocks allocated e.g. if blocksize < pagesize, the tail page
-> is dirtied (which means all its buffers are dirtied), and truncate
-> extends the file so that some buffer starts to be within i_size.
->
-> ...
