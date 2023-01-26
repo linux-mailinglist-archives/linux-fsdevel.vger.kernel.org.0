@@ -2,97 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0242767D767
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 22:10:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D949E67D77A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 22:14:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232772AbjAZVJ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 16:09:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43138 "EHLO
+        id S232840AbjAZVOV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 16:14:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232949AbjAZVJz (ORCPT
+        with ESMTP id S229448AbjAZVOU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 16:09:55 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC0D22B622;
-        Thu, 26 Jan 2023 13:09:42 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 75D5AB81E0F;
-        Thu, 26 Jan 2023 21:09:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0DE0C433EF;
-        Thu, 26 Jan 2023 21:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674767380;
-        bh=Ivb1qksbftnFFwvDhNXLsTVGImL1pbxAjiwYLOBHQsQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nF6ug6pmpwMcAqKOp/z/tD8sE9npc/WR1N/hE9Y7vQx3dDVnVobGjNK5dTqE5bE1i
-         0YBVBVQom+7UFk+hD/2xL/FGhFiJTuFkq9BfGGdspSYiIf8DCuFHhuib6jq11GlLJy
-         sU4C7ZEMc5g4JnsVWldKWO8o/xtkt5QtyW76SdQY1DNb/GhGmD/nD90U1roBWvM8lr
-         qTuef0W+uUcng+5qUuFTAfLEfISJ5avDNwIDznLsATeN+VEV+BIqU/G55ZMPGKGwWU
-         Cy3qec5Tew/DL1AiukspURbjnllpwFhOeWKMxcxGKA+9d5hHRankRgrqjVUyPLoUTx
-         OqMzjeo4mV3qg==
-Date:   Thu, 26 Jan 2023 13:09:38 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     tytso@mit.edu, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, adilger.kernel@dilger.ca,
-        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
-        linux-ext4@vger.kernel.org, Alexander Potapenko <glider@google.com>
-Subject: Re: [PATCH 3/5] fs: f2fs: initialize fsdata in pagecache_write()
-Message-ID: <Y9LsEgN3ZdmC1aQp@google.com>
-References: <20221121112134.407362-1-glider@google.com>
- <20221121112134.407362-3-glider@google.com>
- <Y3vXL3Lw+DnVkQYC@gmail.com>
- <Y84wVf+pZ7tRwCh8@sol.localdomain>
+        Thu, 26 Jan 2023 16:14:20 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1024C7DB1;
+        Thu, 26 Jan 2023 13:14:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bXlr5GykOqxD+X3a8hCFETo6QgUbIMeWpQ3CTz0QRAQ=; b=ikbjb91IVpobEfKO5j+MoJU9+u
+        WAg8rm++4+ZEBQFdvQOTQ09ll93LWCvvcCVTqmwMsOsbcdEFSIxuBg4KhnUqIKmErFpyGpUMKqCJU
+        ufuSHMbmOxanIH6/aPuHEAHE4KEjWTrzQaxK+OK4XCZpuPLuq8dwiMEXvCMm2cjWxhG1OorSOFxMF
+        iuEwd9zmTPNX/5JMnGxQE2OpjL6FIonpqX7kO49Y9uMx63O2oWueGTB2Daaw0UL4lceawnUci9VTG
+        A9PdlYFkoTz6pFKmYjqlEkC4uJhyHQc2JX5+RJzPgCn28FGFu1ChZ6ybFai2elunJb9+xlE+CQ7Tq
+        6nNPazmQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pL9ZY-004Jkn-2A;
+        Thu, 26 Jan 2023 21:14:16 +0000
+Date:   Thu, 26 Jan 2023 21:14:16 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Rik van Riel <riel@surriel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@meta.com,
+        linux-fsdevel@vger.kernel.org, gscrivan@redhat.com,
+        Chris Mason <clm@meta.com>
+Subject: Re: [PATCH 2/2] ipc,namespace: batch free ipc_namespace structures
+Message-ID: <Y9LtKMC8/qqLNgcZ@ZenIV>
+References: <20230126205721.582612-1-riel@surriel.com>
+ <20230126205721.582612-3-riel@surriel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y84wVf+pZ7tRwCh8@sol.localdomain>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230126205721.582612-3-riel@surriel.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01/22, Eric Biggers wrote:
-> On Mon, Nov 21, 2022 at 07:53:19PM +0000, Eric Biggers wrote:
-> > On Mon, Nov 21, 2022 at 12:21:32PM +0100, Alexander Potapenko wrote:
-> > > When aops->write_begin() does not initialize fsdata, KMSAN may report
-> > > an error passing the latter to aops->write_end().
-> > > 
-> > > Fix this by unconditionally initializing fsdata.
-> > > 
-> > > Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> > > Fixes: 95ae251fe828 ("f2fs: add fs-verity support")
-> > > Signed-off-by: Alexander Potapenko <glider@google.com>
-> > > ---
-> > >  fs/f2fs/verity.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-> > > index c352fff88a5e6..3f4f3295f1c66 100644
-> > > --- a/fs/f2fs/verity.c
-> > > +++ b/fs/f2fs/verity.c
-> > > @@ -81,7 +81,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
-> > >  		size_t n = min_t(size_t, count,
-> > >  				 PAGE_SIZE - offset_in_page(pos));
-> > >  		struct page *page;
-> > > -		void *fsdata;
-> > > +		void *fsdata = NULL;
-> > >  		int res;
-> > >  
-> > >  		res = aops->write_begin(NULL, mapping, pos, n, &page, &fsdata);
-> > 
-> > Reviewed-by: Eric Biggers <ebiggers@google.com>
-> > 
+On Thu, Jan 26, 2023 at 03:57:21PM -0500, Rik van Riel wrote:
+> Instead of waiting for an RCU grace period between each ipc_namespace
+> structure that is being freed, wait an RCU grace period for every batch
+> of ipc_namespace structures.
 > 
-> Jaegeuk, can you please apply this patch?
-
-Yup, applied.
-
+> Thanks to Al Viro for the suggestion of the helper function.
 > 
-> - Eric
+> This speeds up the run time of the test case that allocates ipc_namespaces
+> in a loop from 6 minutes, to a little over 1 second:
+> 
+> real	0m1.192s
+> user	0m0.038s
+> sys	0m1.152s
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Reported-by: Chris Mason <clm@meta.com>
+> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+
+OK, except that I'd rather
+	a) made it
+	if (mnt)
+		real_mount(mnt)->mnt_ns = NULL;
+so that it would treat NULL as no-op and
+	b) made kern_unmount() and kern_unmount_array() use it:
+void kern_unmount(struct vfsmount *mnt)
+{
+        /* release long term mount so mount point can be released */
+        if (!IS_ERR(mnt)) {
+		mnt_make_shorterm(mnt);
+                synchronize_rcu();      /* yecchhh... */
+                mntput(mnt);
+        }
+}
+
+void kern_unmount_array(struct vfsmount *mnt[], unsigned int num)
+{
+        unsigned int i;
+
+        for (i = 0; i < num; i++)
+		mnt_make_shorterm(mnt[i]);
+        synchronize_rcu_expedited();
+        for (i = 0; i < num; i++)
+                mntput(mnt[i]);
+}
