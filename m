@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 310DB67D637
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 21:24:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC6FB67D63D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 21:24:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232844AbjAZUYf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 15:24:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38936 "EHLO
+        id S232855AbjAZUYi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 15:24:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232793AbjAZUYY (ORCPT
+        with ESMTP id S232799AbjAZUYY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 26 Jan 2023 15:24:24 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 914B44B769;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD4EB49954;
         Thu, 26 Jan 2023 12:24:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=UEz9pyzC/zJuznnpiO8NJUu6xULxxn7l/UWQvd4w6/o=; b=dNiswVhYSmAZ7+Adzs5mGBDDtP
-        JSAB134gOg3HJqVvzcGFIn3KACowbmWe6OK43LLubznsY++TrvCorBXSY9ebwha46olxEOFioUGe2
-        i/Qw+QQoygSEJKjYD2yw1BNCSAccHZWa+Oc4IIxSvjkYIeofNRSKj+J+VzDbsUmQKontZBPkpOtAW
-        INGQLZNFeTUND84WTa7kEpKA6X0TSjxxwitXvVonkzbJ+1z0UEKMI8mC8NunJV/1FsLgpzx/JtRUa
-        Oz38l2vGao8DQiYD+4FGnHsUWVm0PDjJ2VZ3AqVSnd6sy5cIpijvChEB9iX5cfwr95cNC72lZ+1Lx
-        HQqtBaHA==;
+        bh=bUmnptUoiyyV9s9VNe8+i6VzP5JZO1CccQPGrLeqfzk=; b=Or9xS/22gf8YWDIrqz0fC3yypQ
+        /cHKtRkxj4qpPiQJd1xbokNjr3oTeMUuhLaXM+KW6Yq2ofUQ14fY+an9D7gRIZ+r/s3Pq1o2YDKBu
+        LBmx/FZ7nMmyLg8nlR+sVY4lISirQ1/hO2XEeLW/s4o/p6t2kddlxXwShyemrpJTn+tJbwYknKIWT
+        e1bFyvQgLa7HCA18CvVvhTMHaddiQ0B6LrIN4Y4zo+n96ZrhN9kfDL3nNN9yV34l18FVibiR68i1d
+        icliu7WbOwpCfbLoAtNHEBxBYWLI20/uXhEITYsnOHDXztfRBkqDn4Yie7btkXUBeoW9lNGsTHYwN
+        ri0jxJIw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pL8nE-0073l5-S6; Thu, 26 Jan 2023 20:24:20 +0000
+        id 1pL8nE-0073lD-Vu; Thu, 26 Jan 2023 20:24:21 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     "Theodore Tso" <tytso@mit.edu>,
         Andreas Dilger <adilger.kernel@dilger.ca>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 22/31] ext4: Convert ext4_page_nomap_can_writeout() to take a folio
-Date:   Thu, 26 Jan 2023 20:24:06 +0000
-Message-Id: <20230126202415.1682629-23-willy@infradead.org>
+Subject: [PATCH 23/31] ext4: Use a folio in ext4_da_write_begin()
+Date:   Thu, 26 Jan 2023 20:24:07 +0000
+Message-Id: <20230126202415.1682629-24-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230126202415.1682629-1-willy@infradead.org>
 References: <20230126202415.1682629-1-willy@infradead.org>
@@ -49,40 +49,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Its one caller is already using a folio.
+Remove a few calls to compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ext4/inode.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/ext4/inode.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 9b2c21d0e1f3..e7e8f2946012 100644
+index e7e8f2946012..8929add6808a 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -2563,11 +2563,11 @@ static int ext4_da_writepages_trans_blocks(struct inode *inode)
+@@ -3046,7 +3046,7 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+ 			       struct page **pagep, void **fsdata)
+ {
+ 	int ret, retries = 0;
+-	struct page *page;
++	struct folio *folio;
+ 	pgoff_t index;
+ 	struct inode *inode = mapping->host;
+ 
+@@ -3073,22 +3073,23 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+ 	}
+ 
+ retry:
+-	page = grab_cache_page_write_begin(mapping, index);
+-	if (!page)
++	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
++			mapping_gfp_mask(mapping));
++	if (!folio)
+ 		return -ENOMEM;
+ 
+-	/* In case writeback began while the page was unlocked */
+-	wait_for_stable_page(page);
++	/* In case writeback began while the folio was unlocked */
++	folio_wait_stable(folio);
+ 
+ #ifdef CONFIG_FS_ENCRYPTION
+-	ret = ext4_block_write_begin(page, pos, len,
++	ret = ext4_block_write_begin(&folio->page, pos, len,
+ 				     ext4_da_get_block_prep);
+ #else
+-	ret = __block_write_begin(page, pos, len, ext4_da_get_block_prep);
++	ret = __block_write_begin(&folio->page, pos, len, ext4_da_get_block_prep);
+ #endif
+ 	if (ret < 0) {
+-		unlock_page(page);
+-		put_page(page);
++		folio_unlock(folio);
++		folio_put(folio);
+ 		/*
+ 		 * block_write_begin may have instantiated a few blocks
+ 		 * outside i_size.  Trim these off again. Don't need
+@@ -3103,7 +3104,7 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+ 		return ret;
+ 	}
+ 
+-	*pagep = page;
++	*pagep = &folio->page;
+ 	return ret;
  }
  
- /* Return true if the page needs to be written as part of transaction commit */
--static bool ext4_page_nomap_can_writeout(struct page *page)
-+static bool ext4_page_nomap_can_writeout(struct folio *folio)
- {
- 	struct buffer_head *bh, *head;
- 
--	bh = head = page_buffers(page);
-+	bh = head = folio_buffers(folio);
- 	do {
- 		if (buffer_dirty(bh) && buffer_mapped(bh) && !buffer_delay(bh))
- 			return true;
-@@ -2683,7 +2683,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
- 			 * modify metadata is simple. Just submit the page.
- 			 */
- 			if (!mpd->can_map) {
--				if (ext4_page_nomap_can_writeout(&folio->page)) {
-+				if (ext4_page_nomap_can_writeout(folio)) {
- 					err = mpage_submit_folio(mpd, folio);
- 					if (err < 0)
- 						goto out;
 -- 
 2.35.1
 
