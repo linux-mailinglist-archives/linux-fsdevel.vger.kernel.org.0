@@ -2,93 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C33867D1ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 17:40:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3613267D1FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 17:42:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232212AbjAZQk4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 11:40:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52284 "EHLO
+        id S232572AbjAZQmk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 11:42:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232067AbjAZQkz (ORCPT
+        with ESMTP id S232342AbjAZQmc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 11:40:55 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00E8159B42;
-        Thu, 26 Jan 2023 08:40:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=St7IrS1mX9F0RKDBGEEFoebKrWt9ulX8fBNwRg7efIc=; b=Eg3hNBdDGz6MmWSRYZAiHki/eE
-        lqofbPItG5HE7VLsezYljzQ1GYuqfgr/xpQ/G5btMaRZLA1Y9KXs4WlRInUMGu6QuUVLsxPqcszh7
-        wkBxk+VAdUw26ftVTdoTBVoM48/XpwfRXNr6x9+1o+vpVQJCz+xENydh9aHYrOg7LGO/Bn+uCk+kZ
-        9VP6oYuzy2VNB4n5jugCQ4H3LhlJltty78aGk0qxW71KhXi/ax2RJvjjXI9+VoHsJR2k4KYIwb3hj
-        B+FIyRAUbWBFqdShQ7cCSoed4oUCdWJ9MtkfMBoVCRSN8nIyT+TP1u+FCs8pf7fyfchlVGPNxcCbn
-        2W3TJ5EA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pL5In-006uHI-SO; Thu, 26 Jan 2023 16:40:41 +0000
-Date:   Thu, 26 Jan 2023 16:40:41 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     lsf-pc@lists.linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org,
-        bpf@vger.kernel.org
-Subject: [LSF/MM/BPF TOPIC] State Of The Page
-Message-ID: <Y9KtCc+4n5uANB2f@casper.infradead.org>
+        Thu, 26 Jan 2023 11:42:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C126561A3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 08:41:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674751297;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/KtFX/q2/0OOZvzDHVqjHXs3eBRAU+KUlsybGLpin4A=;
+        b=SfjOHBTc+BGVCuJ/u8dMvzkwX0WiilIAyCfmm4w3nIpK71Rjxce+Ltleo4ZOVbFOl8htCb
+        PjSH5CKZDSi1/RAwOZtOengZzTNeNm+FE1e6bJIRqKMHT8xG8XuZHVWMYlr7YkTGOXjVaQ
+        GA6sV7G6we4EFHFjrxb+LzfBAgJO4bo=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-199-3lTw8DidPgaiMarBdmojow-1; Thu, 26 Jan 2023 11:41:32 -0500
+X-MC-Unique: 3lTw8DidPgaiMarBdmojow-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BE65B3C38FEF;
+        Thu, 26 Jan 2023 16:41:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 02F4AC15BA0;
+        Thu, 26 Jan 2023 16:41:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <5d0bc437eebb4d5aa4774962a4970095@AcuMS.aculab.com>
+References: <5d0bc437eebb4d5aa4774962a4970095@AcuMS.aculab.com> <0d53a3cc9f9448298bba04d06f51b23d@AcuMS.aculab.com> <20230125214543.2337639-1-dhowells@redhat.com> <20230125214543.2337639-9-dhowells@redhat.com> <2862713.1674747841@warthog.procyon.org.uk>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     dhowells@redhat.com, Steve French <smfrench@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Tom Talpey <tom@talpey.com>,
+        Stefan Metzmacher <metze@samba.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Steve French <sfrench@samba.org>
+Subject: Re: [RFC 08/13] cifs: Add a function to read into an iter from a socket
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2878214.1674751289.1@warthog.procyon.org.uk>
+Date:   Thu, 26 Jan 2023 16:41:29 +0000
+Message-ID: <2878215.1674751289@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I'd like to do another session on how the struct page dismemberment
-is going and what remains to be done.  Given how widely struct page is
-used, I think there will be interest from more than just MM, so I'd
-suggest a plenary session.
+David Laight <David.Laight@ACULAB.COM> wrote:
 
-If I were hosting this session today, topics would include:
+> > It shouldn't matter as the only problematic iterator is ITER_PIPE
+> > (advancing that has side effects) - and splice_read is handled specially
+> > by patch 4.  The problem with splice_read with the way cifs works is that
+> > it likes to subdivide its read/write requests across multiple reqs and
+> > then subsubdivide them if certain types of failure occur.  But you can't
+> > do that with ITER_PIPE.
+> 
+> I was thinking that even if ok at the moment it might be troublesome later.
+> Somewhere I started writing a patch to put the iov_cache[] for user
+> requests into the same structure as the iterator.
+> Copying those might cause oddities.
 
-Splitting out users:
+Well, there is dup_iter(), but that copies the vector table, which isn't what
+we want in a number of cases.  You probably need to come up with a wrapper for
+that.
 
- - slab (done!)
- - netmem (in progress)
- - hugetlb (in akpm)
- - tail pages (in akpm)
- - page tables
- - ZONE_DEVICE
+But we copy iters by assignment in a lot of places.  With regards to msg_hdr,
+it might be worth giving it an iterator pointer rather than its own iterator.
 
-Users that really should have their own types:
+I've just had a go at attempting to modify the code.
+cifs_read_iter_from_socket() wants to copy the iterator and truncate the copy,
+which makes things slightly trickier.  For both of the call sites,
+receive_encrypted_read() and cifs_readv_receive(), it can do the truncation
+before calling cifs_read_iter_from_socket(), I think - but it may have to undo
+the truncation afterwards.
 
- - zsmalloc
- - bootmem
- - percpu
- - buddy
- - vmalloc
+> > I build an ITER_BVEC from ITER_PIPE, ITER_UBUF and ITER_IOVEC in the top
+> > levels with pins inserted as appropriate and hand the ITER_BVEC down.  For
+> > user-backed iterators it has to be done this way because the I/O may get
+> > shuffled off to a different thread.
+> 
+> For sub-page sided transfers it is probably worth doing a bounce buffer
+> copy of user requests - just to save all the complex page pinning code.
 
-Converting filesystems to folios:
+You can't avoid it for async DIO reads.  But that sort of thing I'm intending
+to do in netfslib.
 
- - XFS (done)
- - AFS (done)
- - NFS (in progress)
- - ext4 (in progress)
- - f2fs (in progress)
- - ... others?
+David
 
-Unresolved challenges:
-
- - mapcount
- - AnonExclusive
- - Splitting anon & file folios apart
- - Removing PG_error & PG_private
-
-This will probably all change before May.
-
-I'd like to nominate Vishal Moola & Sidhartha Kumar as invitees based on
-their work to convert various functions from pages to folios.
