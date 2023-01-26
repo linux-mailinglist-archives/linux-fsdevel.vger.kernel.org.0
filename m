@@ -2,98 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A08B567D45B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 19:39:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD2D967D5BF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 20:55:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232142AbjAZSjH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 13:39:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57350 "EHLO
+        id S230172AbjAZTy7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 14:54:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231977AbjAZSjG (ORCPT
+        with ESMTP id S229446AbjAZTy6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 13:39:06 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35CBA45234;
-        Thu, 26 Jan 2023 10:38:49 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 26 Jan 2023 14:54:58 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F28D6B9A2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 11:54:57 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id B30AD1F8A8;
-        Thu, 26 Jan 2023 18:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1674758327;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lRfDjzIgIjwkJhFGfb4//GswabUdzG1fjNXcJDENBhE=;
-        b=RqNSUOjX8IOvluYHUIyusC8t0ZKwYkz1hH9GxUYyDIMxtgfnMmdms72fGl0Xyd1FxP54VG
-        0v51m0+xpCW+WL3XlwTmZ5oFJ++kEj1SEbC6brU2Qo0sAW8n8FA6vFbKNsPggcmEfTGCtl
-        XL8wKCfyqYyNP0WAPhRIjaFBh8mN/Ko=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1674758327;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lRfDjzIgIjwkJhFGfb4//GswabUdzG1fjNXcJDENBhE=;
-        b=POfHEunNH1qXHfxLPhYyB8ikD4MPszz3ji+0CGdqHq+osM97o/5lmD3CUUfi7CM238GI2c
-        eZYcIlbOi+U5+QBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6C42313A09;
-        Thu, 26 Jan 2023 18:38:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id DGlyGbfI0mOCBwAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Thu, 26 Jan 2023 18:38:47 +0000
-Date:   Thu, 26 Jan 2023 19:33:04 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 23/34] btrfs: allow btrfs_submit_bio to split bios
-Message-ID: <20230126183304.GZ11562@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20230121065031.1139353-1-hch@lst.de>
- <20230121065031.1139353-24-hch@lst.de>
- <Y9GkVONZJFXVe8AH@localhost.localdomain>
- <20230126052143.GA28195@lst.de>
- <Y9K7pZq2h9aXiKCJ@localhost.localdomain>
- <20230126174611.GC15999@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230126174611.GC15999@lst.de>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DF7346187E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 19:54:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29370C433D2;
+        Thu, 26 Jan 2023 19:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1674762896;
+        bh=oPTZwEZrU6jWex90OmxXpLu3hWTN35N0kVKpfMsMsQE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HkEKiXxAHH+F44g4k5EM7zH7qvHlHeBE6M+8X8X0dvYUjUDtUE99141znjplYLuRO
+         qhm/RIy9ng+StyiZZr4xQvuFUsy1FOSqfhhEI2InHM5ILVbBOl8Dz3c17UWp/axPkH
+         P7KHY7srCYhKIra6WDHC1KqdOya80h+DFTnSAmM4=
+Date:   Thu, 26 Jan 2023 11:54:55 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] fs: gracefully handle ->get_block not mapping bh in
+ __mpage_writepage
+Message-Id: <20230126115455.296681b67273410e729309b0@linux-foundation.org>
+In-Reply-To: <20230126085155.26395-1-jack@suse.cz>
+References: <20230126085155.26395-1-jack@suse.cz>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-8.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 06:46:11PM +0100, Christoph Hellwig wrote:
-> On Thu, Jan 26, 2023 at 12:43:01PM -0500, Josef Bacik wrote:
-> > I actually hadn't been running 125 because it wasn't in the auto group, Dave
-> > noticed it, I just tried it on this VM and hit it right away.  No worries,
-> > that's why we have the CI stuff, sometimes it just doesn't trigger for us but
-> > will trigger with the CI setup.  Thanks,
-> 
-> Oh, I guess the lack of auto group means I've never tested it.  But
-> it's a fairly bad bug, and I'm surprised nothing in auto hits an
-> error after a bio split.  I'll need to find out if I can find a simpler
-> reproducer as this warrants a regression test.
+On Thu, 26 Jan 2023 09:51:55 +0100 Jan Kara <jack@suse.cz> wrote:
 
-The 'auto' group is good for first tests, I'm running 'check -g all' on
-my VM setups. If this is enough to trigger errors then we probably don't
-need a separate regression test.
+> When filesystem's ->get_block function does not map the buffer head when
+> called from __mpage_writepage(), the function will happily go and pass
+
+"the function" being __mpage_writepage(), not ->get_block()...
+
+> bogus bdev and block number to bio allocation routines which leads to
+> crashes sooner or later.
+
+Crashes are unwelcome.  How is this bug triggered?  Should we backport
+the fix?  I assume this is a longstanding thing and that any Fixes:
+target would be ancient?  If ancient, why did it take so long to
+discover?
+
+> E.g. UDF can do this because it doesn't want to
+> allocate blocks from ->writepages callbacks. It allocates blocks on
+> write or page fault but writeback can still spot dirty buffers without
+> underlying blocks allocated e.g. if blocksize < pagesize, the tail page
+> is dirtied (which means all its buffers are dirtied), and truncate
+> extends the file so that some buffer starts to be within i_size.
+>
+> ...
