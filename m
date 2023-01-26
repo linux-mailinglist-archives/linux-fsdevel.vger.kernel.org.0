@@ -2,113 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9038567CCD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 14:54:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B898067CD5E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 15:16:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231520AbjAZNyM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 08:54:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43424 "EHLO
+        id S230051AbjAZOQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 09:16:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231691AbjAZNyA (ORCPT
+        with ESMTP id S229989AbjAZOQH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 08:54:00 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C14423A9E;
-        Thu, 26 Jan 2023 05:53:30 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5E9C11FF3F;
-        Thu, 26 Jan 2023 13:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1674741183; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TASGaq4D0/aREdW3TlXyuAFoYuyhnqm8PRS04XWyd/E=;
-        b=Gw0CGjbmIFVsrolICd9MoYiF7WTWxS4kNon5ILuTyVlGZwavd7ERkOVY225VMTDxTpp918
-        +/0cn0U8CKvhACMmcDfL0vR7thY2y8Csck4LuuH5JRnGm0+6CiDc9cwP85l8iz152Cmny+
-        Z/ZKXJDciAe3eGxZiApexDmk5FXdotU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1674741183;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TASGaq4D0/aREdW3TlXyuAFoYuyhnqm8PRS04XWyd/E=;
-        b=PfwgB9yATUIkonGA4d+hUa9fZeJTHkeA6XK8y7SyqLOhgidnMPoxz7P0j6WPjdVGxzQBqu
-        +i/P3FDPIpi+1oCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CB15A139B3;
-        Thu, 26 Jan 2023 13:53:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id uFGJMb6F0mO7bwAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 26 Jan 2023 13:53:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 03544A06B4; Thu, 26 Jan 2023 14:52:58 +0100 (CET)
-Date:   Thu, 26 Jan 2023 14:52:58 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Maxim Korotkov <korotkov.maxim.s@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@fb.com>, Tejun Heo <tj@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lvc-project@linuxtesting.org
-Subject: Re: [PATCH] writeback: fix call of incorrect macro
-Message-ID: <20230126135258.zpvyfxc2ffhzzsnx@quack3>
-References: <20230119104443.3002-1-korotkov.maxim.s@gmail.com>
+        Thu, 26 Jan 2023 09:16:07 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71E5741094
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 06:16:06 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id qx13so5304437ejb.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 06:16:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=flwiW/xi72yKzHSqPW2Y3gpNbThE+7pF0t3EWtl4bTY=;
+        b=jN8TuaHh65R0CGmw8VIIjYWOzwSVI9M9W5qy9Kl+nJTMMq7V5lcwTBeRkLF0JehNSc
+         4ooTEyvuCbUkFUFWVPGdLpv2/6u7uoLNm1HX5uh8Vym5AYKkA4DskH9cmazclvzN9PQb
+         hrgSUqnwzejScwKA8O9eE4VTQivc3Fusx6FoI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=flwiW/xi72yKzHSqPW2Y3gpNbThE+7pF0t3EWtl4bTY=;
+        b=FDfJ1Ec/za3BWZtr5Y8bIXBcSD2C5zgwQn7Z5t5l96IAaV0UMC4iaykYj4YdKfDyB2
+         hPECAyllBY8zTMoqp9/hzm5wU5sxojGP4nLT7VzvWzDsMORvpst4W0cu/DsVmzL/c3Mi
+         3u3dTo4xJet6EBA80G2jFfH9nEald15yFpU6Yt4iW4EHcGqwZ/+7T8AfoGBWaTf88xXc
+         doVO7xiqCRSyTxPc1wL7aUBi63H+T47g3xHyIM3WUnI9uu8+w286wDVgo/jg8GEDMSdk
+         ZUfawEMCkV3ZlKJTA9LRKcZn8Xtd0ykBqlEmnDeD/QeVNb2LINwItV8osbH/2B6HFO8T
+         rU7g==
+X-Gm-Message-State: AFqh2kpt6+NsrHRp9ukmT+qrn9PvakaMs/UTbHo5uPa4qm4gCXJ3op64
+        atOhmzyOiGtVbtqpzvWuT4Ajr7SLQU3TUIgiBwJofA==
+X-Google-Smtp-Source: AMrXdXtbG+I0/IvzKg+JicnlRUsGUccM/nFTfXRJLbvMyPyffLDZKCISRrrJp6Zit6/bxr3CYGgdIlH8oiqDwmVlqX0=
+X-Received: by 2002:a17:906:6a8e:b0:86e:3764:4f80 with SMTP id
+ p14-20020a1709066a8e00b0086e37644f80mr3653187ejr.239.1674742565043; Thu, 26
+ Jan 2023 06:16:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230119104443.3002-1-korotkov.maxim.s@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20230109010023.20719-1-rdunlap@infradead.org>
+In-Reply-To: <20230109010023.20719-1-rdunlap@infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 26 Jan 2023 15:15:54 +0100
+Message-ID: <CAJfpegv2DW8toDQ_aUUC_KeE8X=oTv37BjXw3u_8HL-Ky7ba0g@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix all W=1 kernel-doc warnings
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 19-01-23 13:44:43, Maxim Korotkov wrote:
->  the variable 'history' is of type u16, it may be an error 
->  that the hweight32 macro was used for it 
->  I guess macro hweight16 should be used
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 2a81490811d0 ("writeback: implement foreign cgroup inode detection")
-> Signed-off-by: Maxim Korotkov <korotkov.maxim.s@gmail.com>
+On Mon, 9 Jan 2023 at 02:00, Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> Use correct function name in kernel-doc notation. (1)
+> Don't use "/**" to begin non-kernel-doc comments. (3)
+>
+> Fixes these warnings:
+>
+> fs/fuse/cuse.c:272: warning: expecting prototype for cuse_parse_dev_info(). Prototype was for cuse_parse_devinfo() instead
+> fs/fuse/dev.c:212: warning: expecting prototype for A new request is available, wake fiq(). Prototype was for fuse_dev_wake_and_unlock() instead
+> fs/fuse/dir.c:149: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>  * Mark the attributes as stale due to an atime change.  Avoid the invalidate if
+> fs/fuse/file.c:656: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>  * In case of short read, the caller sets 'pos' to the position of
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
 
-Looks good to me, although it is mostly a theoretical issue - I don't see
-how hweight32 could do any harm here. Anyway, feel free to add:
+Applied, thanks.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/fs-writeback.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 6fba5a52127b..fc16123b2405 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -829,7 +829,7 @@ void wbc_detach_inode(struct writeback_control *wbc)
->  		 * is okay.  The main goal is avoiding keeping an inode on
->  		 * the wrong wb for an extended period of time.
->  		 */
-> -		if (hweight32(history) > WB_FRN_HIST_THR_SLOTS)
-> +		if (hweight16(history) > WB_FRN_HIST_THR_SLOTS)
->  			inode_switch_wbs(inode, max_id);
->  	}
->  
-> -- 
-> 2.37.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Miklos
