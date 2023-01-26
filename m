@@ -2,115 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 08CB667D331
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 18:31:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64DD667D36F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 18:43:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230328AbjAZRbc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 12:31:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37024 "EHLO
+        id S232109AbjAZRnJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 12:43:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230366AbjAZRbb (ORCPT
+        with ESMTP id S232056AbjAZRnH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 12:31:31 -0500
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8B5122A06
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 09:31:26 -0800 (PST)
-Received: by mail-io1-xd2b.google.com with SMTP id s26so843733ioa.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 09:31:26 -0800 (PST)
+        Thu, 26 Jan 2023 12:43:07 -0500
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF76AD52E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 09:43:04 -0800 (PST)
+Received: by mail-qt1-x835.google.com with SMTP id h24so1871809qta.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 09:43:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q9BJJQzoDsnrUeYgDKx6LZgv0cypBSRKCQgn69cO5NY=;
-        b=G2rPmK5wUbasPBB9wP26jHgdhIzDTXImqwlPuLi/CKZj4DtdTEcl5ekusISuKLF0bm
-         CUG+8VQfyZpRAS0shgOK00Zq096xreZcdXRz9S2FNduzrL+gpA/BQHiXNi4V5sPtkeWh
-         L8PJDe2KZFuPxIRwzPFys0/cRYOlyhrG9w4gMHQsolWjmXzFaoRoEBhkbamk4PE6vbF9
-         USXYCFowo3wJg1sdq8/s96EEKtgzVx9oGF4PjjkdDQDV0g0Hj/W7Z+OoGjy8w+s6RngN
-         NGPUwhAV1KJjSsYg70jMM2Bekmc4I4PCWRVL3vHEzja7CwgyTkoDGO3HEL7lHDlNdXAQ
-         6pyQ==
+        d=toxicpanda-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1n8f/ZaA0DF1cGBFp+8fWPAvuN+H2UR763MDSJjtLDQ=;
+        b=mqd8oyblK50pqgWM0k7weSQeKHOSmU0YGiwe880FqeeVgbRhYPp4/snCShI5rSB0B9
+         bTFJNqIduG3qpNlPT7Gmp98QQ3/sx884jMM7ivzOUeqseAKdLQ5eNQOnzWkkbvkUhBp9
+         DbGi4I4JtUjseknb5UP5Dsw5n73MCXHCd6vKktEFO7prtkqMSx/sAAd+9MhU3XRi1DAx
+         3eZBXl0fT7vP4byPoNYlrAHPJZf7eVJ1CBh0YFgVl8tcD9jiTjhyib1/h5PoprY49YA0
+         L9+c/2nx8176q9/YMh1XP6TGeNx/I9QMXqJnrHvO8eZtTt3LSQ2spt+D5dUmKcatGXVE
+         4A4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q9BJJQzoDsnrUeYgDKx6LZgv0cypBSRKCQgn69cO5NY=;
-        b=GNvkas2OBX/bcVeI16FbOJFqAZouvP4vFsbwQZkUbqS7gZQ1LF4dfrtUuxKdT0RcDn
-         SDRPj1IX04NgbvaiXbKNCegIKFLLjN+DPN6NiJWPH0peUz4a3mCdOwvjcbMOzx3l8oqi
-         k8r2jl9YKZcsRfu2dZtKAzij+JMFDf1GHq4I5p1RPO9QKc9HqLXvu7jrxeB+bYaqpdoZ
-         cKqYVpKrOxjeUa0M2XN7t40zLeNQYQRo+nPR6xPxIQQ5HIKl26mAWypljaxMCAcCE/U8
-         NXQkfSP3edLrygZeHM/1s4EB54muj4NpsUUf7NV3hh90LtmPLDleXYChyW36NiQp9OZ7
-         Fo6w==
-X-Gm-Message-State: AFqh2konO8jiliGwVStGsAAhX04SxiHEcUO6Y+W+5ZTYeFNHw6LpZMpy
-        EEy5hYOKgxl39O4qOBFFA1Zl0XWY+QrZswHU
-X-Google-Smtp-Source: AMrXdXt9WYOZCub+SRV6z4+V2VsdgVaUgzsgEWT5NgUCzBffkM/vKdVrPBTbP+KBlurR1oo8mG94xw==
-X-Received: by 2002:a5d:9e4d:0:b0:707:6808:45c0 with SMTP id i13-20020a5d9e4d000000b00707680845c0mr4429830ioi.1.1674754285967;
-        Thu, 26 Jan 2023 09:31:25 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id n24-20020a02a198000000b0038a434685dbsm641377jah.102.2023.01.26.09.31.25
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1n8f/ZaA0DF1cGBFp+8fWPAvuN+H2UR763MDSJjtLDQ=;
+        b=EmHVQy8nQp6cz+vhWk2MC2rwPIaOTFcrA9juX2nrrz+VkDmrr2S0FJ5mAoMRC5Ao7U
+         fqU31n+677MPVROHQA6Fijj61EN8K/l/d9TW+G88BLqYO/DCWfqp4Q2vQ5WLcx0NvRIQ
+         qoO8hkEE9WWyXoFShEjO/btVT8psJT7Q3cIAl2CCkw+bPSUsN/5L+5sOhjYk4Kk+9VAY
+         jbYHvF+i09RRvjMNSQ/Mr2ZIT5053riTJT++XpWJFApgsf8Db9kutWKJLzMsh6J/yoyU
+         cVrQhfu4r1QNsm500xknIWnUmV437heB3sUpi7GDzMYCtAsU0YmVW2TYoFesduv4XD96
+         uepA==
+X-Gm-Message-State: AFqh2kosyFeYjWejE5TNsx7RmvOnWec6HVxduL9wwfCXLIJDSqCvofS4
+        FGY6mGdfhL+rDIpvLFPp0boZnw==
+X-Google-Smtp-Source: AMrXdXsJM2cdIc/uwbgYYj6EDGr39yA/dYAmC0FcFl5/idkvEBzBIzOIl9tWHWxrb8ASHTpvFadRYg==
+X-Received: by 2002:a05:622a:5917:b0:3a8:175a:fd48 with SMTP id ga23-20020a05622a591700b003a8175afd48mr58098269qtb.64.1674754983909;
+        Thu, 26 Jan 2023 09:43:03 -0800 (PST)
+Received: from localhost (cpe-174-109-170-245.nc.res.rr.com. [174.109.170.245])
+        by smtp.gmail.com with ESMTPSA id s20-20020a05622a179400b003b81a90f117sm356865qtk.60.2023.01.26.09.43.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jan 2023 09:31:25 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20230125065839.191256-1-hch@lst.de>
-References: <20230125065839.191256-1-hch@lst.de>
-Subject: Re: build direct-io.c conditionally
-Message-Id: <167475428508.707060.7530877439951509379.b4-ty@kernel.dk>
-Date:   Thu, 26 Jan 2023 10:31:25 -0700
+        Thu, 26 Jan 2023 09:43:03 -0800 (PST)
+Date:   Thu, 26 Jan 2023 12:43:01 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 23/34] btrfs: allow btrfs_submit_bio to split bios
+Message-ID: <Y9K7pZq2h9aXiKCJ@localhost.localdomain>
+References: <20230121065031.1139353-1-hch@lst.de>
+ <20230121065031.1139353-24-hch@lst.de>
+ <Y9GkVONZJFXVe8AH@localhost.localdomain>
+ <20230126052143.GA28195@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230126052143.GA28195@lst.de>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On Wed, 25 Jan 2023 07:58:37 +0100, Christoph Hellwig wrote:
-> this series makes the build of direct-io.c conditional as only
-> about a dozen file systems actually use it.
+On Thu, Jan 26, 2023 at 06:21:43AM +0100, Christoph Hellwig wrote:
+> On Wed, Jan 25, 2023 at 04:51:16PM -0500, Josef Bacik wrote:
+> > This is causing a panic in btrfs/125 because you set bbio to
+> > btrfs_bio(split_bio), which has a NULL end_io.  You need something like the
+> > following so that we're ending the correct bbio.  Thanks,
 > 
-> Diffstat:
->  Kconfig          |    4 ++++
->  Makefile         |    3 ++-
->  affs/Kconfig     |    1 +
->  direct-io.c      |   24 ------------------------
->  exfat/Kconfig    |    1 +
->  ext2/Kconfig     |    1 +
->  fat/Kconfig      |    1 +
->  hfs/Kconfig      |    1 +
->  hfsplus/Kconfig  |    1 +
->  internal.h       |    4 +---
->  jfs/Kconfig      |    1 +
->  nilfs2/Kconfig   |    1 +
->  ntfs3/Kconfig    |    1 +
->  ocfs2/Kconfig    |    1 +
->  reiserfs/Kconfig |    1 +
->  super.c          |   24 ++++++++++++++++++++++++
->  udf/Kconfig      |    1 +
->  17 files changed, 43 insertions(+), 28 deletions(-)
+> Just curious, what are the other configuration details as I've never been
+> able to hit it?
 > 
-> [...]
+> The fix itself looks good.
 
-Applied, thanks!
+I reproduced it on the CI setup I've got for us, this was the config
 
-[1/2] fs: move sb_init_dio_done_wq out of direct-io.c
-      commit: 439bc39b3cf0014b1b75075812f7ef0f8baa9674
-[2/2] fs: build the legacy direct I/O code conditionally
-      commit: 9636e650e16f6b01f0044f7662074958c23e4707
+[btrfs_normal_freespacetree]
+TEST_DIR=/mnt/test
+TEST_DEV=/dev/mapper/vg0-lv0
+SCRATCH_DEV_POOL="/dev/mapper/vg0-lv7 /dev/mapper/vg0-lv6 /dev/mapper/vg0-lv5 /dev/mapper/vg0-lv4 /dev/mapper/vg0-lv3 /dev/mapper/vg0-lv2 /dev/mapper/vg0-lv1 "
+SCRATCH_MNT=/mnt/scratch
+LOGWRITES_DEV=/dev/mapper/vg0-lv8
+PERF_CONFIGNAME=jbacik
+MKFS_OPTIONS="-K -f -O ^no-holes"
+MOUNT_OPTIONS="-o space_cache=v2"
+FSTYP=btrfs
 
-Best regards,
--- 
-Jens Axboe
+I actually hadn't been running 125 because it wasn't in the auto group, Dave
+noticed it, I just tried it on this VM and hit it right away.  No worries,
+that's why we have the CI stuff, sometimes it just doesn't trigger for us but
+will trigger with the CI setup.  Thanks,
 
-
-
+Josef
