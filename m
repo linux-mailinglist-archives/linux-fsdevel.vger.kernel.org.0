@@ -2,137 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3365C67D9CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 00:43:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AA0167D9E5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 00:45:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233214AbjAZXm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 18:42:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53988 "EHLO
+        id S233071AbjAZXpl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 18:45:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233561AbjAZXm4 (ORCPT
+        with ESMTP id S232970AbjAZXph (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 18:42:56 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5366C3A91
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 15:42:41 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3B9D66195A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 23:41:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81AE9C433EF;
-        Thu, 26 Jan 2023 23:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1674776513;
-        bh=OiPUHqgirjVxTh2w4QlA9W8nPKtQN2owuoVmFJo9198=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DV+cnCxe/797o4CccJ1fV3SOHCbbRm3ukNPlsCRkf/gNbK0rFM3PaAEL3MPqGVZ9X
-         +HrxhhCzy1CFrNPhlnuioD34+EGhJMb+wOCh89gktVfZAonExcZlhqA25vuSKJDJjj
-         A0fpVNdsadiXiWciz2df0x9H/c8S3ox55lYrm1Gs=
-Date:   Thu, 26 Jan 2023 15:41:52 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Ira Weiny <ira.weiny@intel.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm: Add memcpy_from_file_folio()
-Message-Id: <20230126154152.898a1bdfd7d729627e2a6bf4@linux-foundation.org>
-In-Reply-To: <20230126201552.1681588-1-willy@infradead.org>
-References: <20230126201552.1681588-1-willy@infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 26 Jan 2023 18:45:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6019D2F7AA
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 15:44:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674776653;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PI+Jsv2TxAR9Abf8MJO7xLLwXDlmnNTYN30oeKtKeeI=;
+        b=dIlMMFkFEBFWOVxwhIoC9pT29F+Cz5bsCiPvddrNLaoujetSHGdEIoqPFrlE5+sXfFC2sN
+        5OVmZK11uqE981VTIFapTGuMXSeyVrA4slHX+W5mtZkOQQkGWaEA+f2L55+/+rq34YXuXB
+        wKL4tHICrbE8lF0PvAPq7RzOvmLy6HU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-202-BKb-jtI4MdKbb907OU_R6g-1; Thu, 26 Jan 2023 18:44:11 -0500
+X-MC-Unique: BKb-jtI4MdKbb907OU_R6g-1
+Received: by mail-wm1-f69.google.com with SMTP id l19-20020a05600c1d1300b003dc13fc9e42so1843000wms.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 15:44:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PI+Jsv2TxAR9Abf8MJO7xLLwXDlmnNTYN30oeKtKeeI=;
+        b=YQNQ/mYtzNzHk4NGVAtCwAWlgg4WMCnDIXchwQ6JVtrWPTuCykTCpdksv8r08TqKhc
+         FcWPtpVMzZ89aK0FICpBwY5GlDsOZWpYu3VI8ZuwcfX3uAAwjWruzc4AlYSfKsjGGX5s
+         bNueZSGPJpDHTeH3At2+8v5Mo2I7EF8UhnE2XPDmOd9MiWRISqq4juwbhyH5qokdIioA
+         Y/zm2GZu3JC7u7Tr/N02SBT8qHOCuGXC3YNNqvR8pWDDcUOfq05CLgZ+TarJxHQjLF1L
+         3LgkIBl5w2ih1h+1URyz7Wb5UIcDmWEulwd9JQfQ4AvC7e4f8ZGwsue80s4VSNAbafM7
+         FVyw==
+X-Gm-Message-State: AFqh2kpEoFV0yb+dNut3jgg/7raSs2IwHODvJk6NXQzeeFq1VpTHMZUh
+        YITg1iDXiWserR9JdqksGqVMbqtozbnMdtMAEaXAVPRlXCxY7RZGJ6EPXI4q/WqfgasBEvnUh5M
+        givddUHrXLxJmBltS0GZ0E03DqQ==
+X-Received: by 2002:a05:6000:12cb:b0:2bd:bf44:2427 with SMTP id l11-20020a05600012cb00b002bdbf442427mr35492165wrx.42.1674776650686;
+        Thu, 26 Jan 2023 15:44:10 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXuYtrgOl2m3LqcTWZWXs2ZqSVi93PYCMVoVdhFMM1NnPQJAUnmGCmIU/Ns6kWli+3InjkeYcQ==
+X-Received: by 2002:a05:6000:12cb:b0:2bd:bf44:2427 with SMTP id l11-20020a05600012cb00b002bdbf442427mr35492148wrx.42.1674776650370;
+        Thu, 26 Jan 2023 15:44:10 -0800 (PST)
+Received: from ?IPV6:2003:cb:c707:5e00:9e97:86d:5ed5:bb95? (p200300cbc7075e009e97086d5ed5bb95.dip0.t-ipconnect.de. [2003:cb:c707:5e00:9e97:86d:5ed5:bb95])
+        by smtp.gmail.com with ESMTPSA id d3-20020adfe2c3000000b002bc7fcf08ddsm2385220wrj.103.2023.01.26.15.44.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jan 2023 15:44:09 -0800 (PST)
+Message-ID: <ba3adce1-ddea-98e0-fc3a-1cb660edae4c@redhat.com>
+Date:   Fri, 27 Jan 2023 00:44:08 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v11 2/8] iov_iter: Add a function to extract a page list
+ from an iterator
+Content-Language: en-US
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>
+References: <20230126141626.2809643-1-dhowells@redhat.com>
+ <20230126141626.2809643-3-dhowells@redhat.com> <Y9L3yA+B1rrnrGK8@ZenIV>
+ <Y9MAbYt6DIRFm954@ZenIV>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <Y9MAbYt6DIRFm954@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 26 Jan 2023 20:15:52 +0000 "Matthew Wilcox (Oracle)" <willy@infradead.org> wrote:
-
-> This is the equivalent of memcpy_from_page().  It differs in that it
-> takes the position in a file instead of offset in a folio, it accepts
-> the total number of bytes to be copied (instead of the number of bytes
-> to be copied from this folio) and it returns how many bytes were copied
-> from the folio, rather than making the caller calculate that and then
-> checking if the caller got it right.
+On 26.01.23 23:36, Al Viro wrote:
+> On Thu, Jan 26, 2023 at 09:59:36PM +0000, Al Viro wrote:
+>> On Thu, Jan 26, 2023 at 02:16:20PM +0000, David Howells wrote:
+>>
+>>> +/**
+>>> + * iov_iter_extract_will_pin - Indicate how pages from the iterator will be retained
+>>> + * @iter: The iterator
+>>> + *
+>>> + * Examine the iterator and indicate by returning true or false as to how, if
+>>> + * at all, pages extracted from the iterator will be retained by the extraction
+>>> + * function.
+>>> + *
+>>> + * %true indicates that the pages will have a pin placed in them that the
+>>> + * caller must unpin.  This is must be done for DMA/async DIO to force fork()
+>>> + * to forcibly copy a page for the child (the parent must retain the original
+>>> + * page).
+>>> + *
+>>> + * %false indicates that no measures are taken and that it's up to the caller
+>>> + * to retain the pages.
+>>> + */
+>>> +static inline bool iov_iter_extract_will_pin(const struct iov_iter *iter)
+>>> +{
+>>> +	return user_backed_iter(iter);
+>>> +}
+>>> +
+>>
+>> Wait a sec; why would we want a pin for pages we won't be modifying?
+>> A reference - sure, but...
 > 
-> ...
->
-> --- a/include/linux/highmem.h
-> +++ b/include/linux/highmem.h
-> @@ -413,6 +413,35 @@ static inline void memzero_page(struct page *page, size_t offset, size_t len)
->  	kunmap_local(addr);
->  }
->  
-> +/**
-> + * memcpy_from_file_folio - Copy some bytes from a file folio.
-> + * @to: The destination buffer.
-> + * @folio: The folio to copy from.
-> + * @pos: The position in the file.
-> + * @len: The maximum number of bytes to copy.
-> + *
-> + * Copy up to @len bytes from this folio.  This may be limited by PAGE_SIZE
-> + * if the folio comes from HIGHMEM, and by the size of the folio.
-> + *
-> + * Return: The number of bytes copied from the folio.
-> + */
-> +static inline size_t memcpy_from_file_folio(char *to, struct folio *folio,
-> +		loff_t pos, size_t len)
-> +{
-> +	size_t offset = offset_in_folio(folio, pos);
-> +	char *from = kmap_local_folio(folio, offset);
-> +
-> +	if (folio_test_highmem(folio))
-> +		len = min(len, PAGE_SIZE - offset);
-> +	else
-> +		len = min(len, folio_size(folio) - offset);
+> After having looked through the earlier iterations of the patchset -
+> sorry, but that won't fly for (at least) vmsplice().  There we can't
+> pin those suckers; 
 
-min() blows up on arm allnoconfig.
+We'll need a way to pass FOLL_LONGTERM to pin_user_pages_fast() to 
+handle such long-term pinning as vmsplice() needs. But the release path 
+(unpin) will be the same.
 
-./include/linux/highmem.h: In function 'memcpy_from_file_folio':
-./include/linux/minmax.h:20:35: warning: comparison of distinct pointer types lacks a cast
-   20 |         (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-      |                                   ^~
-./include/linux/minmax.h:26:18: note: in expansion of macro '__typecheck'
-   26 |                 (__typecheck(x, y) && __no_side_effects(x, y))
-      |                  ^~~~~~~~~~~
-./include/linux/minmax.h:36:31: note: in expansion of macro '__safe_cmp'
-   36 |         __builtin_choose_expr(__safe_cmp(x, y), \
-      |                               ^~~~~~~~~~
-./include/linux/minmax.h:67:25: note: in expansion of macro '__careful_cmp'
-   67 | #define min(x, y)       __careful_cmp(x, y, <)
-      |                         ^~~~~~~~~~~~~
-./include/linux/highmem.h:435:23: note: in expansion of macro 'min'
-  435 |                 len = min(len, PAGE_SIZE - offset);
-      |                       ^~~
+-- 
+Thanks,
 
-We could use min_t(), but perhaps and explanatorialy named variable is
-nicer?
-
---- a/include/linux/highmem.h~mm-add-memcpy_from_file_folio-fix
-+++ a/include/linux/highmem.h
-@@ -430,13 +430,14 @@ static inline size_t memcpy_from_file_fo
- {
- 	size_t offset = offset_in_folio(folio, pos);
- 	char *from = kmap_local_folio(folio, offset);
-+	size_t remaining;
- 
- 	if (folio_test_highmem(folio))
--		len = min(len, PAGE_SIZE - offset);
-+		remaining = PAGE_SIZE - offset;
- 	else
--		len = min(len, folio_size(folio) - offset);
-+		remaining = folio_size(folio) - offset;
- 
--	memcpy(to, from, len);
-+	memcpy(to, from, min(len, remaining));
- 	kunmap_local(from);
- 
- 	return len;
-_
+David / dhildenb
 
