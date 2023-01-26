@@ -2,61 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D5F67CA6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 13:02:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E0F867CAF1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 13:31:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237143AbjAZMCi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 07:02:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60286 "EHLO
+        id S237192AbjAZMbB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 07:31:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233130AbjAZMCh (ORCPT
+        with ESMTP id S230233AbjAZMbA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 07:02:37 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF2FA62263;
-        Thu, 26 Jan 2023 04:02:35 -0800 (PST)
+        Thu, 26 Jan 2023 07:31:00 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 337024900B;
+        Thu, 26 Jan 2023 04:31:00 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 75DEF617AD;
-        Thu, 26 Jan 2023 12:02:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E8FC433EF;
-        Thu, 26 Jan 2023 12:02:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A8F256171A;
+        Thu, 26 Jan 2023 12:30:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 414D4C433EF;
+        Thu, 26 Jan 2023 12:30:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674734554;
-        bh=83fTWvpaEiAzVDaeYFz2GUb2OOww4EG+o2MOVi11zGU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lnaSaz9xP7pd9evixsmXaWhTU8ZegXDyqUAlmc8ci4N4ldJSkHKUm/LDiv76C+wI/
-         VAZcsfEFGwsZ7vEiZl7uaRPzO4iAwPwrHIZbX/B7SQmFvkXiIJHI2aFoAgPKXhYVOV
-         vbNYMAKf938rfJ8pPRRdumhaz4o+o8XZXZSRdgSokJWNywdMWrSlJLCRLlbyTT9MiJ
-         MR4EaTs+0pGmTGeZniK12fbJ9Pdob1oQpmaAtdAsEskRxnKSAxlng8HJjseWLnEsGY
-         gfh2g5MSiUQvE/W+va/0RqGUOImd7/r/EVeGwOSNHaNTcJFAUmBSiNg++yhOB+WonH
-         uT5l6ovxjVpeA==
-Message-ID: <5f27d8b64ad64905ada344e299cf00e55b8ac895.camel@kernel.org>
-Subject: Re: [PATCH v8 RESEND 2/8] fs: clarify when the i_version counter
- must be updated
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, bfields@fieldses.org,
-        brauner@kernel.org, fweimer@redhat.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Colin Walters <walters@verbum.org>
-Date:   Thu, 26 Jan 2023 07:02:31 -0500
-In-Reply-To: <20230126113642.eenghs2wvfrlnlak@quack3>
-References: <20230124193025.185781-1-jlayton@kernel.org>
-         <20230124193025.185781-3-jlayton@kernel.org>
-         <20230125160625.zenzybjgie224jf6@quack3>
-         <3c5cf7c7f9e206a3d7c4253de52015dda97ef41e.camel@kernel.org>
-         <20230126113642.eenghs2wvfrlnlak@quack3>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.3 (3.46.3-1.fc37) 
+        s=k20201202; t=1674736259;
+        bh=vREGzkq+bPL/Z76zAsHlWevTeL+rDpASMNvBRnphyuY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FbNtYzGTxfAtX1HH/O/f6F0nhnSDnGlU8hJFQJglyD1N96KI9bOmqPyYG0FYCqF7m
+         /EIS1knBwnhVBQkFwEoaer+G0eVSd5woxF49Nh5jSTnnPpHCXpa8xt094Np9yLx2ED
+         hYCBhQFOgpmSuqi43vPYpc7mhB6TuJGwLwEPJQKHl6ee0N46F9lVJNvCqQdwYmx2hz
+         gQarmSO+7ilgIoQY4a5k9DHCcNEDlw6Ni+yIl6tOgye8JV3/oMJWplqXJafRw5NEHQ
+         nUwPy2p0K+5/6CUdiEfTGQtyfglXEAGTC/YSCRbQSZugSL1yQCL6fkv9mx/P96K+7R
+         eRaJcQCp5Lp0w==
+Date:   Thu, 26 Jan 2023 13:30:53 +0100
+From:   Alexey Gladkov <legion@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, containers@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Val Cowan <vcowan@redhat.com>
+Subject: Re: [RFC PATCH v1 0/6] proc: Add allowlist for procfs files
+Message-ID: <Y9JyfQwAB/M5QmuH@example.org>
+References: <cover.1674660533.git.legion@kernel.org>
+ <20230125153628.43c12cbe05423fef7d44f0dd@linux-foundation.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230125153628.43c12cbe05423fef7d44f0dd@linux-foundation.org>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -66,125 +58,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2023-01-26 at 12:36 +0100, Jan Kara wrote:
-> On Thu 26-01-23 05:54:16, Jeff Layton wrote:
-> > On Wed, 2023-01-25 at 17:06 +0100, Jan Kara wrote:
-> > > On Tue 24-01-23 14:30:19, Jeff Layton wrote:
-> > > > The i_version field in the kernel has had different semantics over
-> > > > the decades, but NFSv4 has certain expectations. Update the comment=
-s
-> > > > in iversion.h to describe when the i_version must change.
-> > > >=20
-> > > > Cc: Colin Walters <walters@verbum.org>
-> > > > Cc: NeilBrown <neilb@suse.de>
-> > > > Cc: Trond Myklebust <trondmy@hammerspace.com>
-> > > > Cc: Dave Chinner <david@fromorbit.com>
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > >=20
-> > > Looks good to me. But one note below:
-> > >=20
-> > > > diff --git a/include/linux/iversion.h b/include/linux/iversion.h
-> > > > index 6755d8b4f20b..fced8115a5f4 100644
-> > > > --- a/include/linux/iversion.h
-> > > > +++ b/include/linux/iversion.h
-> > > > @@ -9,8 +9,25 @@
-> > > >   * ---------------------------
-> > > >   * The change attribute (i_version) is mandated by NFSv4 and is mo=
-stly for
-> > > >   * knfsd, but is also used for other purposes (e.g. IMA). The i_ve=
-rsion must
-> > > > - * appear different to observers if there was a change to the inod=
-e's data or
-> > > > - * metadata since it was last queried.
-> > > > + * appear larger to observers if there was an explicit change to t=
-he inode's
-> > > > + * data or metadata since it was last queried.
-> > > > + *
-> > > > + * An explicit change is one that would ordinarily result in a cha=
-nge to the
-> > > > + * inode status change time (aka ctime). i_version must appear to =
-change, even
-> > > > + * if the ctime does not (since the whole point is to avoid missin=
-g updates due
-> > > > + * to timestamp granularity). If POSIX or other relevant spec mand=
-ates that the
-> > > > + * ctime must change due to an operation, then the i_version count=
-er must be
-> > > > + * incremented as well.
-> > > > + *
-> > > > + * Making the i_version update completely atomic with the operatio=
-n itself would
-> > > > + * be prohibitively expensive. Traditionally the kernel has update=
-d the times on
-> > > > + * directories after an operation that changes its contents. For r=
-egular files,
-> > > > + * the ctime is usually updated before the data is copied into the=
- cache for a
-> > > > + * write. This means that there is a window of time when an observ=
-er can
-> > > > + * associate a new timestamp with old file contents. Since the pur=
-pose of the
-> > > > + * i_version is to allow for better cache coherency, the i_version=
- must always
-> > > > + * be updated after the results of the operation are visible. Upda=
-ting it before
-> > > > + * and after a change is also permitted.
-> > >=20
-> > > This sounds good but it is not the case for any of the current filesy=
-stems, is
-> > > it? Perhaps the documentation should mention this so that people are =
-not
-> > > confused?
-> >=20
-> > Correct. Currently, all filesystems change the times and version before
-> > a write instead of after. I'm hoping that situation will change soon
-> > though, as I've been working on a patchset to fix this for tmpfs, ext4
-> > and btrfs.
->=20
-> That is good but we'll see how long it takes to get merged. AFAIR it is n=
-ot
-> a complete nobrainer ;)
->=20
-> > If you still want to see something for this though, what would you
-> > suggest for verbiage?
->=20
-> Sure:
->=20
-> ... the i_version must a be updated after the results of the operation ar=
-e
-> visible (note that none of the filesystems currently do this, it is a wor=
-k
-> in progress to fix this).
->=20
-> And once your patches are merged, you can also delete this note :).
->=20
-> 								Honza
+On Wed, Jan 25, 2023 at 03:36:28PM -0800, Andrew Morton wrote:
+> On Wed, 25 Jan 2023 16:28:47 +0100 Alexey Gladkov <legion@kernel.org> wrote:
+> 
+> > The patch expands subset= option. If the proc is mounted with the
+> > subset=allowlist option, the /proc/allowlist file will appear. This file
+> > contains the filenames and directories that are allowed for this
+> > mountpoint. By default, /proc/allowlist contains only its own name.
+> > Changing the allowlist is possible as long as it is present in the
+> > allowlist itself.
+> > 
+> > This allowlist is applied in lookup/readdir so files that will create
+> > modules after mounting will not be visible.
+> > 
+> > Compared to the previous patches [1][2], I switched to a special virtual
+> > file from listing filenames in the mount options.
+> > 
+> 
+> Changlog doesn't explain why you think Linux needs this feature.  The
+> [2/6] changelog hints that containers might be involved.  IOW, please
+> fully describe the requirement and use-case(s).
 
-Sounds good, I folded something similar to that into the patch and
-pushed it into the branch I'm feeding into linux-next.=A0I won't bother
-re-posting for just that though:
+Ok. I will.
 
-diff --git a/include/linux/iversion.h b/include/linux/iversion.h
-index fced8115a5f4..f174ff1b59ee 100644
---- a/include/linux/iversion.h
-+++ b/include/linux/iversion.h
-@@ -27,7 +27,8 @@
-  * associate a new timestamp with old file contents. Since the purpose of =
-the
-  * i_version is to allow for better cache coherency, the i_version must al=
-ways
-  * be updated after the results of the operation are visible. Updating it =
-before
-- * and after a change is also permitted.
-+ * and after a change is also permitted. (Note that no filesystems current=
-ly do
-+ * this. Fixing that is a work-in-progress).
-  *
-  * Observers see the i_version as a 64-bit number that never decreases. If=
- it
-  * remains the same since it was last checked, then nothing has changed in=
- the
+Basically, as Christian described, the motivation is to give
+containerization programs (docker, podman, etc.) a way to control the
+content in procfs.
 
-Thanks!
---=20
-Jeff Layton <jlayton@kernel.org>
+Now container tools use a list of dangerous files that they hide with
+overmount. But procfs is not a static filesystem and using a bad list to
+hide dangerous files can't be the solution.
+
+I believe that a container should define a list of files that it considers
+useful within the container, and not try to hide what it considers
+unwanted.
+
+> Also, please describe why /proc/allowlist is made available via a mount
+> option, rather than being permanently present.
+
+Like subset=pid, this file is needed to change the visibility of files in
+the procfs mountpoint.
+
+> And why add to subset=, instead of a separate mount option.
+> 
+> Does /proc/allowlist work in subdirectories?  Like, permit presence of
+> /proc/sys/vm/compact_memory?
+
+Yes. But /proc/allowlist is limited in size to 128K.
+
+> I think the whole thing is misnamed, really.  "allowlist" implies
+> access permissions.  Some of the test here uses "visibility" and other
+> places use "presence", which are better.  "presentlist" and
+> /proc/presentlist might be better.  But why not simply /proc/contents?
+
+I don't hold on to the name allowlist at all :) present list is perfect
+for me. The /proc/contents is confusing to me. 
+
+> Please run these patches through checkpatch and consider the result.
+
+Ok. I will.
+
+-- 
+Rgrds, legion
+
