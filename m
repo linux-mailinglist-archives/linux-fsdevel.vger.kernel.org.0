@@ -1,59 +1,59 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3570D67D83F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 23:15:28 +0100 (CET)
+Received: from out1.vger.email (unknown [IPv6:2620:137:e000::1:20])
+	by mail.lfdr.de (Postfix) with ESMTP id 3697667D854
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 23:27:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231276AbjAZWPZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 17:15:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50808 "EHLO
+        id S232929AbjAZW1V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 17:27:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229654AbjAZWPY (ORCPT
+        with ESMTP id S232921AbjAZW1T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 17:15:24 -0500
+        Thu, 26 Jan 2023 17:27:19 -0500
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B591D42DD5;
-        Thu, 26 Jan 2023 14:15:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A6C5894E;
+        Thu, 26 Jan 2023 14:27:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jd/5WIrcHcZzAYHPugOmZ9o+ttQGJRTdajMdq6eexVQ=; b=poCgIh0b2tUBO/p9HbXoT9N6pJ
-        zx+i2ZI4FFh50Ucj8MSNsEEJO+ir8dAn3D9mfCbSJ9/hghKTWm+vntEsb7hSTR4ZC+k59zRY/3bHA
-        Jvs3efe71mZtbyvytGsKHk4Gah85oxCcnzMlmy2a0Vipjz/0LXhXLHFxEP0jLg5Pj7bwnutTI+Bsr
-        klni0UFu3h603jdMcn+xvTdmOG4Y9x7/NZJJ0FK+42PBt+LcjHCqy8nchhFPYVNi+6PFTrbkaG77u
-        zkRxfm+dNHWlGVSfeunz2AczKYTDikGJPapL9hwGHHk6SzhXMnGiRPsQHaUhB/rYixXLWyNBGIa01
-        aKIUcTcQ==;
+        bh=STYji93U3ACAaGQFYmzFPWVQjHiGVhb+LyWgK4H0YqE=; b=doVxp+d4MftLA/hoq1I/XVGa9k
+        vznOjMNWPk/5xKmfT78tFmvPfpqLZm55p/BDZLhARkzVgjqati18BiuamgW2J9J6i0PASTm2t02i3
+        oFGu+A9yxtL51prBiRJeJm2dCcuwWHZjRBVpcV/H3S2KIlfAyqdRHzMmMHgUT37wIOcxlDx1lNmOe
+        qwfJIAo4C+28FNp8DW9IzxLr7Jr+gwoEc94wC3jhLe+TqcMotyHGewLoBdYFsZR/pitGWlOszRXz9
+        aQTHvlVi/DQcE3vQomIDalXhSF1aR+wAWQ7senFmGvOHTCPVadBxfAW7XCTQX2Pc5R3D+JevZqXFb
+        8vBPfsGA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pLAWX-004KFl-0g;
-        Thu, 26 Jan 2023 22:15:13 +0000
-Date:   Thu, 26 Jan 2023 22:15:13 +0000
+        id 1pLAi3-004KMs-11;
+        Thu, 26 Jan 2023 22:27:07 +0000
+Date:   Thu, 26 Jan 2023 22:27:07 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
+To:     David Howells <dhowells@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
         Jeff Layton <jlayton@kernel.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v7 2/8] iov_iter: Add a function to extract a page list
- from an iterator
-Message-ID: <Y9L7cRFFZh9A7kZY@ZenIV>
-References: <7bbcccc9-6ebf-ffab-7425-2a12f217ba15@redhat.com>
- <246ba813-698b-8696-7f4d-400034a3380b@redhat.com>
- <20230120175556.3556978-1-dhowells@redhat.com>
- <20230120175556.3556978-3-dhowells@redhat.com>
- <3814749.1674474663@warthog.procyon.org.uk>
- <3903251.1674479992@warthog.procyon.org.uk>
- <c742e47b-dcc0-1fef-dc8c-3bf85d26b046@redhat.com>
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH] iov_iter: Use __bitwise with the extraction_flags
+Message-ID: <Y9L+O4V5uJIWFnmI@ZenIV>
+References: <e7d476d7-e201-86a3-9683-c2a559fc2f5b@redhat.com>
+ <af0e448a-9559-32c0-cc59-10b159459495@redhat.com>
+ <20230125210657.2335748-1-dhowells@redhat.com>
+ <20230125210657.2335748-2-dhowells@redhat.com>
+ <2613249.1674726566@warthog.procyon.org.uk>
+ <2638928.1674729230@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c742e47b-dcc0-1fef-dc8c-3bf85d26b046@redhat.com>
+In-Reply-To: <2638928.1674729230@warthog.procyon.org.uk>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -64,35 +64,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 23, 2023 at 02:24:13PM +0100, David Hildenbrand wrote:
-> On 23.01.23 14:19, David Howells wrote:
-> > David Hildenbrand <david@redhat.com> wrote:
-> > 
-> > > Switching from FOLL_GET to FOLL_PIN was in the works by John H. Not sure what
-> > > the status is. Interestingly, Documentation/core-api/pin_user_pages.rst
-> > > already documents that "CASE 1: Direct IO (DIO)" uses FOLL_PIN ... which does,
-> > > unfortunately, no reflect reality yet.
-> > 
-> > Yeah - I just came across that.
-> > 
-> > Should iov_iter.c then switch entirely to using pin_user_pages(), rather than
-> > get_user_pages()?  In which case my patches only need keep track of
-> > pinned/not-pinned and never "got".
+On Thu, Jan 26, 2023 at 10:33:50AM +0000, David Howells wrote:
+> X-Mailer: MH-E 8.6+git; nmh 1.7.1; GNU Emacs 28.2
+> --------
+> David Hildenbrand <david@redhat.com> wrote:
 > 
-> That would be the ideal case: whenever intending to access page content, use
-> FOLL_PIN instead of FOLL_GET.
+> > >> Just a note that the usage of new __bitwise types instead of "unsigned" is
+> > >> encouraged for flags.
 > 
-> The issue that John was trying to sort out was that there are plenty of
-> callsites that do a simple put_page() instead of calling unpin_user_page().
-> IIRC, handling that correctly in existing code -- what was pinned must be
-> released via unpin_user_page() -- was the biggest workitem.
+> Something like the attached?
 > 
-> Not sure how that relates to your work here (that's why I was asking): if
-> you could avoid FOLL_GET, that would be great :)
+> > $ git grep "typedef int" | grep __bitwise | wc -l
+> > 27
+> > $ git grep "typedef unsigned" | grep __bitwise | wc -l
+> > 23
+> 
+> git grep __bitwise | grep typedef | grep __u | wc -l
+> 62
+> 
+> *shrug*
+> 
+> Interestingly, things like __be32 are __bitwise.  I wonder if that actually
+> makes sense or if it was just convenient so stop people doing arithmetic on
+> them.  I guess doing AND/OR/XOR on them isn't a problem provided both
+> arguments are appropriately byte-swapped.
 
-Take a good look at iter_to_pipe().  It does *not* need to pin anything
-(we have an ITER_SOURCE there); with this approach it will.  And it
-will stuff those pinned references into a pipe, where they can sit
-indefinitely.
+Forget the words "byte-swapped".  There are several data types.
+With different memory representations.  Bitwise operations are
+valid between the values of the same type and yield the result
+of that same type.
 
-IOW, I don't believe it's a usable approach.
+The fact that mapping between those representations happens to
+be an involution is an accident; keeping track of the number of
+times you've done a byteswap to the value currently in this
+variable is asking for trouble.  It's really easy to fuck up.
+
+"Am I trying to store the value of type X in variable of type Y
+(presumably having forgotten that I need to use X_to_Y(...)
+to convert)" is much easier to keep track of.
