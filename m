@@ -2,147 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C2E867C721
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 10:26:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D9AA67C737
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 10:28:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236838AbjAZJ0V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 04:26:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35910 "EHLO
+        id S236905AbjAZJ17 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 04:27:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236814AbjAZJ0U (ORCPT
+        with ESMTP id S236733AbjAZJ15 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 04:26:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 211BDE8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 01:25:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674725133;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HJxMbaMUqhqeVp88riEJqy2L3rUVZ+LeaPKhJKipiFU=;
-        b=jQhXjKPYRzRRelPTqx2p4d1tX+3JiMHJE7q3gwtwrPZml76im3TfbV2LDzE+GFVqSeB7j5
-        hRuZgMINhmoT+maX5Uzgvho16mSH6fhndNU5TAIb+U8/mR0fq/2l85vSAz5FfS2VGnfE5J
-        wtIqmwS2el8myPTSjEnw23FxaARFUb8=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-220-prh3jVZSPeGV7d0Q0YIZ0g-1; Thu, 26 Jan 2023 04:25:31 -0500
-X-MC-Unique: prh3jVZSPeGV7d0Q0YIZ0g-1
-Received: by mail-wm1-f70.google.com with SMTP id 9-20020a05600c228900b003daf72fc827so742107wmf.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 01:25:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HJxMbaMUqhqeVp88riEJqy2L3rUVZ+LeaPKhJKipiFU=;
-        b=5QZFTfkT6hWkG2Au1KCUMI4NTucCgLEckuZJeQjXV9zUqZWbkCejUVOOrXvtLA6/Yo
-         /3js2ucW25nkfmq6I5ND4XMyD/JPSRm8ZtQazbVh84bIN7UUGo9I0pC9ah0vthaQUlA9
-         71U3+VEWj8GAusMdf7eq6WbN+rorXQXUJBw0MTq03mCd3mCqCNwK9DffsqASJx6rCxTj
-         OsRGy6uLgy9StSPt/X6gSTdrLawVF9BNzGgygYWSztzPbpcN52rOjbiek7jQuX5LsplU
-         VX9JWcENRkqoit3hYDNzFiiMUbpBC/HRh/32G8UleGNOuHblwbkjV7kIvvCkVg10F2oJ
-         GexA==
-X-Gm-Message-State: AFqh2kpi9omCypA2RANAZdGYFEMfiHjuIYzH89JLxsLLrMS3qjrn0STc
-        peMjjktRt0jpWBHbswDsED1ZdMu5ssFfq9EfNOt+p1RKbaMrN6MqS2aCdWprqi4378Z9nRizpAL
-        t1E53BtGwDJDdkgcpqTzW6OsROA==
-X-Received: by 2002:a05:600c:202:b0:3da:f80d:7230 with SMTP id 2-20020a05600c020200b003daf80d7230mr34631787wmi.8.1674725130560;
-        Thu, 26 Jan 2023 01:25:30 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXsF+CPq/pYLt+G2uzsh9Vpxfez30amaf1R+Ru5j+9YNhRLrWVC7in0V4m/WVq1SfZ43j3OaoQ==
-X-Received: by 2002:a05:600c:202:b0:3da:f80d:7230 with SMTP id 2-20020a05600c020200b003daf80d7230mr34631766wmi.8.1674725130238;
-        Thu, 26 Jan 2023 01:25:30 -0800 (PST)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id x12-20020a05600c2d0c00b003db15b1fb3csm902990wmf.13.2023.01.26.01.25.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jan 2023 01:25:29 -0800 (PST)
-Message-ID: <af0e448a-9559-32c0-cc59-10b159459495@redhat.com>
-Date:   Thu, 26 Jan 2023 10:25:28 +0100
+        Thu, 26 Jan 2023 04:27:57 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC06411EA4;
+        Thu, 26 Jan 2023 01:27:55 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 41B696177A;
+        Thu, 26 Jan 2023 09:27:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3921C433EF;
+        Thu, 26 Jan 2023 09:27:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674725274;
+        bh=SoMuUCKccvLBFFlS2yaoZNAJ6vi8hf11UD5LIFXhHPI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j//Fl5kIolRbc8e9oVCQ2yHwbpz0TuieYLSj+mDFLpa1qwKxXUhf5PJmcO75Ujh3s
+         twG4fOSIQIUcY+3MnnJB2LFgFpgYd/SthHle/+axd8X6B40DgEguPrzEIDstErfxF8
+         ko0Mb6Gc7DtRkgMx2KamDNuuhnb/IfTXyWRUAI8okoWPpJCrU+5VBwHmsXg3EJf5FZ
+         gJ2/jlRLLWN+Ab/FNlmJJeHDKv+eOxzvt50mhgYbacQHyS9BYwkvyF434NJwFVAGsI
+         dA9tzS1LLkbpY2wsykh131+0o90nnu9297soO8LSNeHRZppCk70KOOayN+gSrVyob+
+         3jVum/MlvC8IQ==
+Date:   Thu, 26 Jan 2023 11:26:58 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, michel@lespinasse.org,
+        jglisse@google.com, mhocko@suse.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, mgorman@techsingularity.net, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, peterz@infradead.org,
+        ldufour@linux.ibm.com, paulmck@kernel.org, luto@kernel.org,
+        songliubraving@fb.com, peterx@redhat.com, david@redhat.com,
+        dhowells@redhat.com, hughd@google.com, bigeasy@linutronix.de,
+        kent.overstreet@linux.dev, punit.agrawal@bytedance.com,
+        lstoakes@gmail.com, peterjung1337@gmail.com, rientjes@google.com,
+        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
+        jannh@google.com, shakeelb@google.com, tatashin@google.com,
+        edumazet@google.com, gthelen@google.com, gurua@google.com,
+        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
+        leewalsh@google.com, posk@google.com, will@kernel.org,
+        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
+        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        qianweili@huawei.com, wangzhou1@hisilicon.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
+        airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, l.stach@pengutronix.de,
+        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
+        matthias.bgg@gmail.com, robdclark@gmail.com,
+        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
+        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
+        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
+        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
+        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
+        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
+        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, miklos@szeredi.hu,
+        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
+        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
+        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
+        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
+        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
+        loongarch@lists.linux.dev, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
+        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
+        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org, kexec@lists.infradead.org,
+        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
+        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v2 4/6] mm: replace vma->vm_flags indirect modification
+ in ksm_madvise
+Message-ID: <Y9JHYvihjxGpAFPg@kernel.org>
+References: <20230125083851.27759-1-surenb@google.com>
+ <20230125083851.27759-5-surenb@google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v10 1/8] iov_iter: Define flags to qualify page
- extraction.
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>
-References: <20230125210657.2335748-1-dhowells@redhat.com>
- <20230125210657.2335748-2-dhowells@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20230125210657.2335748-2-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230125083851.27759-5-surenb@google.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 25.01.23 22:06, David Howells wrote:
-> Define flags to qualify page extraction to pass into iov_iter_*_pages*()
-> rather than passing in FOLL_* flags.
+On Wed, Jan 25, 2023 at 12:38:49AM -0800, Suren Baghdasaryan wrote:
+> Replace indirect modifications to vma->vm_flags with calls to modifier
+> functions to be able to track flag changes and to keep vma locking
+> correctness. Add a BUG_ON check in ksm_madvise() to catch indirect
+> vm_flags modification attempts.
 > 
-> For now only a flag to allow peer-to-peer DMA is supported.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> cc: Al Viro <viro@zeniv.linux.org.uk>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Logan Gunthorpe <logang@deltatee.com>
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-block@vger.kernel.org
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+
+Acked-by: Mike Rapoport (IBM) <rppt@kernel.org>
+
 > ---
+>  arch/powerpc/kvm/book3s_hv_uvmem.c | 5 ++++-
+>  arch/s390/mm/gmap.c                | 5 ++++-
+>  mm/khugepaged.c                    | 2 ++
+>  mm/ksm.c                           | 2 ++
+>  4 files changed, 12 insertions(+), 2 deletions(-)
 > 
-[...]
-
-> +++ b/include/linux/uio.h
-> @@ -252,12 +252,12 @@ void iov_iter_xarray(struct iov_iter *i, unsigned int direction, struct xarray *
->   		     loff_t start, size_t count);
->   ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
->   		size_t maxsize, unsigned maxpages, size_t *start,
-> -		unsigned gup_flags);
-> +		unsigned extraction_flags);
->   ssize_t iov_iter_get_pages2(struct iov_iter *i, struct page **pages,
->   			size_t maxsize, unsigned maxpages, size_t *start);
->   ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
->   		struct page ***pages, size_t maxsize, size_t *start,
-> -		unsigned gup_flags);
-> +		unsigned extraction_flags);
->   ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i, struct page ***pages,
->   			size_t maxsize, size_t *start);
->   int iov_iter_npages(const struct iov_iter *i, int maxpages);
-> @@ -360,4 +360,7 @@ static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direction,
->   	};
->   }
->   
-> +/* Flags for iov_iter_get/extract_pages*() */
-> +#define ITER_ALLOW_P2PDMA	0x01	/* Allow P2PDMA on the extracted pages */
-
-Just a note that the usage of new __bitwise types instead of "unsigned" 
-is encouraged for flags.
-
-See rmap_t in include/linux/rmap.h as an example.
-
-Apart from that LGTM.
-
--- 
-Thanks,
-
-David / dhildenb
-
+> diff --git a/arch/powerpc/kvm/book3s_hv_uvmem.c b/arch/powerpc/kvm/book3s_hv_uvmem.c
+> index 1d67baa5557a..325a7a47d348 100644
+> --- a/arch/powerpc/kvm/book3s_hv_uvmem.c
+> +++ b/arch/powerpc/kvm/book3s_hv_uvmem.c
+> @@ -393,6 +393,7 @@ static int kvmppc_memslot_page_merge(struct kvm *kvm,
+>  {
+>  	unsigned long gfn = memslot->base_gfn;
+>  	unsigned long end, start = gfn_to_hva(kvm, gfn);
+> +	unsigned long vm_flags;
+>  	int ret = 0;
+>  	struct vm_area_struct *vma;
+>  	int merge_flag = (merge) ? MADV_MERGEABLE : MADV_UNMERGEABLE;
+> @@ -409,12 +410,14 @@ static int kvmppc_memslot_page_merge(struct kvm *kvm,
+>  			ret = H_STATE;
+>  			break;
+>  		}
+> +		vm_flags = vma->vm_flags;
+>  		ret = ksm_madvise(vma, vma->vm_start, vma->vm_end,
+> -			  merge_flag, &vma->vm_flags);
+> +			  merge_flag, &vm_flags);
+>  		if (ret) {
+>  			ret = H_STATE;
+>  			break;
+>  		}
+> +		reset_vm_flags(vma, vm_flags);
+>  		start = vma->vm_end;
+>  	} while (end > vma->vm_end);
+>  
+> diff --git a/arch/s390/mm/gmap.c b/arch/s390/mm/gmap.c
+> index 3a695b8a1e3c..d5eb47dcdacb 100644
+> --- a/arch/s390/mm/gmap.c
+> +++ b/arch/s390/mm/gmap.c
+> @@ -2587,14 +2587,17 @@ int gmap_mark_unmergeable(void)
+>  {
+>  	struct mm_struct *mm = current->mm;
+>  	struct vm_area_struct *vma;
+> +	unsigned long vm_flags;
+>  	int ret;
+>  	VMA_ITERATOR(vmi, mm, 0);
+>  
+>  	for_each_vma(vmi, vma) {
+> +		vm_flags = vma->vm_flags;
+>  		ret = ksm_madvise(vma, vma->vm_start, vma->vm_end,
+> -				  MADV_UNMERGEABLE, &vma->vm_flags);
+> +				  MADV_UNMERGEABLE, &vm_flags);
+>  		if (ret)
+>  			return ret;
+> +		reset_vm_flags(vma, vm_flags);
+>  	}
+>  	mm->def_flags &= ~VM_MERGEABLE;
+>  	return 0;
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 8abc59345bf2..76b24cd0c179 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -354,6 +354,8 @@ struct attribute_group khugepaged_attr_group = {
+>  int hugepage_madvise(struct vm_area_struct *vma,
+>  		     unsigned long *vm_flags, int advice)
+>  {
+> +	/* vma->vm_flags can be changed only using modifier functions */
+> +	BUG_ON(vm_flags == &vma->vm_flags);
+>  	switch (advice) {
+>  	case MADV_HUGEPAGE:
+>  #ifdef CONFIG_S390
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 04f1c8c2df11..992b2be9f5e6 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -2573,6 +2573,8 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
+>  	struct mm_struct *mm = vma->vm_mm;
+>  	int err;
+>  
+> +	/* vma->vm_flags can be changed only using modifier functions */
+> +	BUG_ON(vm_flags == &vma->vm_flags);
+>  	switch (advice) {
+>  	case MADV_MERGEABLE:
+>  		/*
+> -- 
+> 2.39.1
+> 
+> 
