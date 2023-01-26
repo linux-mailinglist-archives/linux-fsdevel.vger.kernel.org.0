@@ -2,99 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E7767D2F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 18:24:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08CB667D331
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Jan 2023 18:31:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231163AbjAZRYs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 12:24:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58622 "EHLO
+        id S230328AbjAZRbc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 12:31:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjAZRYr (ORCPT
+        with ESMTP id S230366AbjAZRbb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 12:24:47 -0500
-Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECF2FEF9F;
-        Thu, 26 Jan 2023 09:24:46 -0800 (PST)
-Received: by mail-vs1-xe2d.google.com with SMTP id 3so2629967vsq.7;
-        Thu, 26 Jan 2023 09:24:46 -0800 (PST)
+        Thu, 26 Jan 2023 12:31:31 -0500
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8B5122A06
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 09:31:26 -0800 (PST)
+Received: by mail-io1-xd2b.google.com with SMTP id s26so843733ioa.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 09:31:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qHlmTunQ49C1Dpyk77Z4C3k4Cau4j+Xb//Hx9WL7A8k=;
-        b=FcVVUD0R+CepEE82KTwR5p856vdMWJsT8H3faHwVqVudmDdIF4Lcfrg/SHWvuzVpWF
-         KA1kLRC9qaFiYMLpexmhNHDdgVJLefzkTqzrfB096e/Nh7scJpPIASgZfXzCCsgbBObo
-         BTqxf3peJlRY1R6MhO6OJbfFx0Fc5aAcwVL0v0vA9EkBPvf6OfaJbVZgOVqaqXDtAmd+
-         bLwYoW1Us2QDe+hiDLMCAN7ceajba131vdEy/eZtQwB7bSeqLgQdh+6Q6+S2vwIvhii5
-         yyOMBLagGZW37aZdWToQMqAEtPdoBK0EhksXhUNvoEWT6160ijCRlx0xf8Wmnr7UcnYZ
-         WzAQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q9BJJQzoDsnrUeYgDKx6LZgv0cypBSRKCQgn69cO5NY=;
+        b=G2rPmK5wUbasPBB9wP26jHgdhIzDTXImqwlPuLi/CKZj4DtdTEcl5ekusISuKLF0bm
+         CUG+8VQfyZpRAS0shgOK00Zq096xreZcdXRz9S2FNduzrL+gpA/BQHiXNi4V5sPtkeWh
+         L8PJDe2KZFuPxIRwzPFys0/cRYOlyhrG9w4gMHQsolWjmXzFaoRoEBhkbamk4PE6vbF9
+         USXYCFowo3wJg1sdq8/s96EEKtgzVx9oGF4PjjkdDQDV0g0Hj/W7Z+OoGjy8w+s6RngN
+         NGPUwhAV1KJjSsYg70jMM2Bekmc4I4PCWRVL3vHEzja7CwgyTkoDGO3HEL7lHDlNdXAQ
+         6pyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qHlmTunQ49C1Dpyk77Z4C3k4Cau4j+Xb//Hx9WL7A8k=;
-        b=pf8Yytdpg6y1JgNYatU9+FAF8UQgIsELYqqJAfDhyGdep36vFt7yHttlDBvBTo9Ib7
-         g7h1jtRZnX0y7IYwAyP2qaQEHt9EO5hVZeKG6cpi6f7MtcRqOUXHZGFoZ5UGsVBAEYMF
-         AK7mXe8XJfeQsWKDR3S548DDEaZSIhNyjcFyLe6h8M5aq4mo/U3atu4crrRmhB8V20GC
-         tzPVOy468ZPvEWVHF8CyI5rlK1QlddW4URHHoXMZGO3gxnwbmNJuStmH+esEG8AUS92P
-         86hqlXz5moURlSJe08Q6rzL8E0UyVPge1iKa7+ZtfzQvbDHc8pnqzWELJP1f3tlPy7qb
-         aSxw==
-X-Gm-Message-State: AFqh2kowFnTA2Vc2KUgHpFELMxQkp6T20yFsXi5WRS4cLp5UZSaiWWoj
-        ME6ZqQd8h7wVLux88lJ7+LaJJ9pKhGaNIpdiWQlbuTXX8kY=
-X-Google-Smtp-Source: AMrXdXstMx4Lc6leAXpj1VV45UXIVItPQZcy2o9t6/kD/JJrrhSQhYl4SzeJqctMxVoXgA7/dxFlIFpz/owb7AnAd4Y=
-X-Received: by 2002:a05:6102:6c2:b0:3ce:bced:178 with SMTP id
- m2-20020a05610206c200b003cebced0178mr4927618vsg.84.1674753885888; Thu, 26 Jan
- 2023 09:24:45 -0800 (PST)
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q9BJJQzoDsnrUeYgDKx6LZgv0cypBSRKCQgn69cO5NY=;
+        b=GNvkas2OBX/bcVeI16FbOJFqAZouvP4vFsbwQZkUbqS7gZQ1LF4dfrtUuxKdT0RcDn
+         SDRPj1IX04NgbvaiXbKNCegIKFLLjN+DPN6NiJWPH0peUz4a3mCdOwvjcbMOzx3l8oqi
+         k8r2jl9YKZcsRfu2dZtKAzij+JMFDf1GHq4I5p1RPO9QKc9HqLXvu7jrxeB+bYaqpdoZ
+         cKqYVpKrOxjeUa0M2XN7t40zLeNQYQRo+nPR6xPxIQQ5HIKl26mAWypljaxMCAcCE/U8
+         NXQkfSP3edLrygZeHM/1s4EB54muj4NpsUUf7NV3hh90LtmPLDleXYChyW36NiQp9OZ7
+         Fo6w==
+X-Gm-Message-State: AFqh2konO8jiliGwVStGsAAhX04SxiHEcUO6Y+W+5ZTYeFNHw6LpZMpy
+        EEy5hYOKgxl39O4qOBFFA1Zl0XWY+QrZswHU
+X-Google-Smtp-Source: AMrXdXt9WYOZCub+SRV6z4+V2VsdgVaUgzsgEWT5NgUCzBffkM/vKdVrPBTbP+KBlurR1oo8mG94xw==
+X-Received: by 2002:a5d:9e4d:0:b0:707:6808:45c0 with SMTP id i13-20020a5d9e4d000000b00707680845c0mr4429830ioi.1.1674754285967;
+        Thu, 26 Jan 2023 09:31:25 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id n24-20020a02a198000000b0038a434685dbsm641377jah.102.2023.01.26.09.31.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jan 2023 09:31:25 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20230125065839.191256-1-hch@lst.de>
+References: <20230125065839.191256-1-hch@lst.de>
+Subject: Re: build direct-io.c conditionally
+Message-Id: <167475428508.707060.7530877439951509379.b4-ty@kernel.dk>
+Date:   Thu, 26 Jan 2023 10:31:25 -0700
 MIME-Version: 1.0
-References: <20230121065755.1140136-1-hch@lst.de> <20230121065755.1140136-8-hch@lst.de>
-In-Reply-To: <20230121065755.1140136-8-hch@lst.de>
-From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date:   Fri, 27 Jan 2023 02:24:29 +0900
-Message-ID: <CAKFNMonfM+=1vbqKgS3feW7Xyh=P6UdDu0RrnOYQrb+WhN+_Vw@mail.gmail.com>
-Subject: Re: [PATCH 7/7] mm: return an ERR_PTR from __filemap_get_folio
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        cluster-devel@redhat.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nilfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.0
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jan 21, 2023 at 3:59 PM Christoph Hellwig wrote:
->
-> Instead of returning NULL for all errors, distinguish between:
->
->  - no entry found and not asked to allocated (-ENOENT)
->  - failed to allocate memory (-ENOMEM)
->  - would block (-EAGAIN)
->
-> so that callers don't have to guess the error based on the passed
-> in flags.
->
-> Also pass through the error through the direct callers:
-> filemap_get_folio, filemap_lock_folio filemap_grab_folio
-> and filemap_get_incore_folio.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
 
-For
+On Wed, 25 Jan 2023 07:58:37 +0100, Christoph Hellwig wrote:
+> this series makes the build of direct-io.c conditional as only
+> about a dozen file systems actually use it.
+> 
+> Diffstat:
+>  Kconfig          |    4 ++++
+>  Makefile         |    3 ++-
+>  affs/Kconfig     |    1 +
+>  direct-io.c      |   24 ------------------------
+>  exfat/Kconfig    |    1 +
+>  ext2/Kconfig     |    1 +
+>  fat/Kconfig      |    1 +
+>  hfs/Kconfig      |    1 +
+>  hfsplus/Kconfig  |    1 +
+>  internal.h       |    4 +---
+>  jfs/Kconfig      |    1 +
+>  nilfs2/Kconfig   |    1 +
+>  ntfs3/Kconfig    |    1 +
+>  ocfs2/Kconfig    |    1 +
+>  reiserfs/Kconfig |    1 +
+>  super.c          |   24 ++++++++++++++++++++++++
+>  udf/Kconfig      |    1 +
+>  17 files changed, 43 insertions(+), 28 deletions(-)
+> 
+> [...]
 
->  fs/nilfs2/page.c         |  6 +++---
+Applied, thanks!
 
-Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+[1/2] fs: move sb_init_dio_done_wq out of direct-io.c
+      commit: 439bc39b3cf0014b1b75075812f7ef0f8baa9674
+[2/2] fs: build the legacy direct I/O code conditionally
+      commit: 9636e650e16f6b01f0044f7662074958c23e4707
 
-Thanks,
-Ryusuke Konishi
+Best regards,
+-- 
+Jens Axboe
+
+
+
