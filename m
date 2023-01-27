@@ -2,63 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B56A267E1D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 11:39:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8BD567E267
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 11:58:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231975AbjA0KjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Jan 2023 05:39:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47212 "EHLO
+        id S229765AbjA0K6g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Jan 2023 05:58:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232008AbjA0Ki5 (ORCPT
+        with ESMTP id S229696AbjA0K6f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Jan 2023 05:38:57 -0500
-Received: from formenos.hmeau.com (helcar.hmeau.com [216.24.177.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188121735;
-        Fri, 27 Jan 2023 02:38:52 -0800 (PST)
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1pLM7x-004gYD-Ql; Fri, 27 Jan 2023 18:38:38 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 27 Jan 2023 18:38:37 +0800
-Date:   Fri, 27 Jan 2023 18:38:37 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     David Howells <dhowells@redhat.com>
-Cc:     smfrench@gmail.com, viro@zeniv.linux.org.uk,
-        nspmangalore@gmail.com, rohiths.msft@gmail.com, tom@talpey.com,
-        metze@samba.org, hch@infradead.org, willy@infradead.org,
-        jlayton@kernel.org, linux-cifs@vger.kernel.org,
+        Fri, 27 Jan 2023 05:58:35 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFA964EE9;
+        Fri, 27 Jan 2023 02:58:21 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4B71961AC0;
+        Fri, 27 Jan 2023 10:58:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97870C433EF;
+        Fri, 27 Jan 2023 10:58:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674817100;
+        bh=5yeFRjegMFjzUwQix33riQSeMG0naSPmYrlj8IGsT6A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ty/mQCdkfAbrJ6BjTVRqNpIspHZ9G5ptMGC15r09BTJZ9wIuuxRml/R3NfH++3Mt+
+         jdwcYyiaG9l1SlDC1Y7rt9x7nogWsu0YX5MYyI7TwhNY3si/fnNkXk61B5ML41U/Wf
+         m4MzY4SslhuZQAskqNbugyiIkhClTGIY3Vg77v+l1+Z62pukhhk2t6hlXCvgFNzbvJ
+         F2jzWysIlgtV0eiqXeNNPP2ctE5vTwRTIPfuKbBNmBRCL63bnyx6zX1wrmgs3Cm809
+         tU67SVpZZwIkrkz3TPkCSzmCzigaJ54MiZAW2H5TtXuuElHyR2N9PqvafoJiC9zTBV
+         ZEnbHTsDnVxog==
+Date:   Fri, 27 Jan 2023 11:58:15 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jann Horn <jannh@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sfrench@samba.org, linux-crypto@vger.kernel.org
-Subject: Re: [RFC 06/13] cifs: Add a function to Hash the contents of an
- iterator
-Message-ID: <Y9OprbIBseKadiej@gondor.apana.org.au>
-References: <Y9Om95NlPTFiHMSj@gondor.apana.org.au>
- <2957463.1674815638@warthog.procyon.org.uk>
+        linux-hardening@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH] fs: Use CHECK_DATA_CORRUPTION() when kernel bugs are
+ detected
+Message-ID: <20230127105815.adgqe2opfzruxk7e@wittgenstein>
+References: <20230116191425.458864-1-jannh@google.com>
+ <202301260835.61F1C2CA4D@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2957463.1674815638@warthog.procyon.org.uk>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <202301260835.61F1C2CA4D@keescook>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 27, 2023 at 10:33:58AM +0000, David Howells wrote:
-> Herbert Xu <herbert@gondor.apana.org.au> wrote:
+On Thu, Jan 26, 2023 at 08:35:49AM -0800, Kees Cook wrote:
+> On Mon, Jan 16, 2023 at 08:14:25PM +0100, Jann Horn wrote:
+> > Currently, filp_close() and generic_shutdown_super() use printk() to log
+> > messages when bugs are detected. This is problematic because infrastructure
+> > like syzkaller has no idea that this message indicates a bug.
+> > In addition, some people explicitly want their kernels to BUG() when kernel
+> > data corruption has been detected (CONFIG_BUG_ON_DATA_CORRUPTION).
+> > And finally, when generic_shutdown_super() detects remaining inodes on a
+> > system without CONFIG_BUG_ON_DATA_CORRUPTION, it would be nice if later
+> > accesses to a busy inode would at least crash somewhat cleanly rather than
+> > walking through freed memory.
+> > 
+> > To address all three, use CHECK_DATA_CORRUPTION() when kernel bugs are
+> > detected.
 > 
-> > Please convert this to ahash.  The whole point of shash is to
-> > process *small* amounts of data that is not on an SG list.
-> 
-> Is ahash offloaded to another thread or hardware?
+> Seems reasonable to me. I'll carry this unless someone else speaks up.
 
-That's something you can control when you allocate the ahash
-object? You could even restrict it to sync algorithms by setting
-type to 0 and mask to CRYPTO_ALG_SYNC.
+I've already picked this into a branch with other fs changes for coming cycle.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Al, please tell me in case you end up picking this up and I'll drop it ofc.
+
+Christian
