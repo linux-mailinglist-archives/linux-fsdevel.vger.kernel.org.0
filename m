@@ -2,42 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 062CB67F103
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 23:15:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39E0467F155
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 23:45:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232714AbjA0WPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Jan 2023 17:15:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52596 "EHLO
+        id S232087AbjA0WpC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Jan 2023 17:45:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbjA0WPv (ORCPT
+        with ESMTP id S230152AbjA0WpB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Jan 2023 17:15:51 -0500
+        Fri, 27 Jan 2023 17:45:01 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2348661D
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jan 2023 14:15:47 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45D51C599;
+        Fri, 27 Jan 2023 14:44:59 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6B2E061CC5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jan 2023 22:15:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6422C433EF;
-        Fri, 27 Jan 2023 22:15:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 63C6A61DCE;
+        Fri, 27 Jan 2023 22:44:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9990EC433EF;
+        Fri, 27 Jan 2023 22:44:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674857746;
-        bh=nby6qwkp63ZY6a1Um6aeO+ZU/IqyXTEx5svGq8gIjQ4=;
+        s=k20201202; t=1674859498;
+        bh=qmaYywhpGfsp/0wQNY9IGdj460P+vOpZmgs1GHbrg50=;
         h=From:To:Cc:Subject:Date:From;
-        b=cCD6JPF/4WV7GFZZ6rXaKk9s7/V1xRfpE5AdOmyP4l0xe15qqZGq0GXBxtRfXbNAM
-         +H2DflV/hlqP86yEyj8e9mdHJMHUh4jlGzNcQ1Bk1KdM7bhYIN7dyCgP5/oLPhoX3p
-         fvvxRAIOoZ7xsiDjIzuUkITgiP6CcjGYegjIRS79UHxpKKnN2sE1isaPNRDiTSEeTo
-         NWQrYFeIe44l14ZIUNLThgdhOzmqxOjRtj55xXB9W4wgDgW83jK58U78yNxlgVv8OW
-         tijPEpblKi5+93y923mDB1qSUIImyGALMEIGbj4CbB4tJ9g+DGXdLQSpIYzutvHOVV
-         cw22AJlglyrnw==
+        b=Ww57U6DtV90RKWGcGyvPY0dvlo1Mn679oh+SnXJCEJfpI9TT8rfXn8wp2wpwudo6d
+         8q0fzxNDU5GdJUiL60YiKGPPXU5YVS7HMq0lJ9gwaDeUTDKZfGsb5H9+EhQo40ps+3
+         dqJixzUj9n0Fxa9ucA0vMqsYsM6FZMVVKCI7y1lBQDAXtLouxLmR1rmBTt4e+Et6dS
+         iRx4quz9iBqzi9ymdjzvZC/X7NWCCY5fthOfzD6cWr5aiHyYKB1yt8LMjaJGWNyLVa
+         nfhefsSbuOf+zixjbNjO4l/19VKP0kBQb5IyF1M+j/tAAKYKPWn9TxyDHVZ8l8qv6p
+         tr8QTrTV10eUQ==
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     fsverity@lists.linux.dev
-Cc:     linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] fsverity: support verifying data from large folios
-Date:   Fri, 27 Jan 2023 14:15:29 -0800
-Message-Id: <20230127221529.299560-1-ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] fscrypt: support decrypting data from large folios
+Date:   Fri, 27 Jan 2023 14:42:02 -0800
+Message-Id: <20230127224202.355629-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,245 +53,193 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Try to make fs/verity/verify.c aware of large folios.  This includes
-making fsverity_verify_bio() support the case where the bio contains
-large folios, and adding a function fsverity_verify_folio() which is the
-equivalent of fsverity_verify_page().
+Try to make the filesystem-level decryption functions in fs/crypto/
+aware of large folios.  This includes making fscrypt_decrypt_bio()
+support the case where the bio contains large folios, and making
+fscrypt_decrypt_pagecache_blocks() take a folio instead of a page.
 
 There's no way to actually test this with large folios yet, but I've
 tested that this doesn't cause any regressions.
 
+Note that this patch just handles *decryption*, not encryption which
+will be a little more difficult.
+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
+ Documentation/filesystems/fscrypt.rst |  4 ++--
+ fs/buffer.c                           |  4 ++--
+ fs/crypto/bio.c                       | 10 ++++------
+ fs/crypto/crypto.c                    | 28 ++++++++++++++-------------
+ fs/ext4/inode.c                       |  6 ++++--
+ include/linux/fscrypt.h               |  9 ++++-----
+ 6 files changed, 31 insertions(+), 30 deletions(-)
 
-This patch is targeting 6.3, and it applies to
-https://git.kernel.org/pub/scm/fs/fsverity/linux.git/log/?h=for-next
-Note: to avoid a cross-tree dependency, in fs/buffer.c I used
-page_folio(bh->b_page) instead of bh->b_folio.
-
- Documentation/filesystems/fsverity.rst | 20 ++++++------
- fs/buffer.c                            |  3 +-
- fs/verity/verify.c                     | 43 +++++++++++++-------------
- include/linux/fsverity.h               | 15 ++++++---
- 4 files changed, 44 insertions(+), 37 deletions(-)
-
-diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
-index 2d9ef906aa2a3..ede672dedf110 100644
---- a/Documentation/filesystems/fsverity.rst
-+++ b/Documentation/filesystems/fsverity.rst
-@@ -568,22 +568,22 @@ Pagecache
- ~~~~~~~~~
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index ef183387da208..eccd327e6df50 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -1277,8 +1277,8 @@ the file contents themselves, as described below:
  
- For filesystems using Linux's pagecache, the ``->read_folio()`` and
--``->readahead()`` methods must be modified to verify pages before they
--are marked Uptodate.  Merely hooking ``->read_iter()`` would be
-+``->readahead()`` methods must be modified to verify folios before
-+they are marked Uptodate.  Merely hooking ``->read_iter()`` would be
- insufficient, since ``->read_iter()`` is not used for memory maps.
+ For the read path (->read_folio()) of regular files, filesystems can
+ read the ciphertext into the page cache and decrypt it in-place.  The
+-page lock must be held until decryption has finished, to prevent the
+-page from becoming visible to userspace prematurely.
++folio lock must be held until decryption has finished, to prevent the
++folio from becoming visible to userspace prematurely.
  
- Therefore, fs/verity/ provides the function fsverity_verify_blocks()
- which verifies data that has been read into the pagecache of a verity
--inode.  The containing page must still be locked and not Uptodate, so
-+inode.  The containing folio must still be locked and not Uptodate, so
- it's not yet readable by userspace.  As needed to do the verification,
- fsverity_verify_blocks() will call back into the filesystem to read
- hash blocks via fsverity_operations::read_merkle_tree_page().
- 
- fsverity_verify_blocks() returns false if verification failed; in this
--case, the filesystem must not set the page Uptodate.  Following this,
-+case, the filesystem must not set the folio Uptodate.  Following this,
- as per the usual Linux pagecache behavior, attempts by userspace to
--read() from the part of the file containing the page will fail with
--EIO, and accesses to the page within a memory map will raise SIGBUS.
-+read() from the part of the file containing the folio will fail with
-+EIO, and accesses to the folio within a memory map will raise SIGBUS.
- 
- In principle, verifying a data block requires verifying the entire
- path in the Merkle tree from the data block to the root hash.
-@@ -624,8 +624,8 @@ each bio and store it in ``->bi_private``::
- verity, or both is enabled.  After the bio completes, for each needed
- postprocessing step the filesystem enqueues the bio_post_read_ctx on a
- workqueue, and then the workqueue work does the decryption or
--verification.  Finally, pages where no decryption or verity error
--occurred are marked Uptodate, and the pages are unlocked.
-+verification.  Finally, folios where no decryption or verity error
-+occurred are marked Uptodate, and the folios are unlocked.
- 
- On many filesystems, files can contain holes.  Normally,
- ``->readahead()`` simply zeroes hole blocks and considers the
-@@ -791,9 +791,9 @@ weren't already directly answered in other parts of this document.
- :A: There are many reasons why this is not possible or would be very
-     difficult, including the following:
- 
--    - To prevent bypassing verification, pages must not be marked
-+    - To prevent bypassing verification, folios must not be marked
-       Uptodate until they've been verified.  Currently, each
--      filesystem is responsible for marking pages Uptodate via
-+      filesystem is responsible for marking folios Uptodate via
-       ``->readahead()``.  Therefore, currently it's not possible for
-       the VFS to do the verification on its own.  Changing this would
-       require significant changes to the VFS and all filesystems.
+ For the write path (->writepage()) of regular files, filesystems
+ cannot encrypt data in-place in the page cache, since the cached
 diff --git a/fs/buffer.c b/fs/buffer.c
-index 2e65ba2b3919b..8499c79ae13d4 100644
+index d9c6d1fbb6dde..4e7f169acb2ca 100644
 --- a/fs/buffer.c
 +++ b/fs/buffer.c
-@@ -308,7 +308,8 @@ static void verify_bh(struct work_struct *work)
+@@ -307,8 +307,8 @@ static void decrypt_bh(struct work_struct *work)
  	struct buffer_head *bh = ctx->bh;
- 	bool valid;
+ 	int err;
  
--	valid = fsverity_verify_blocks(bh->b_page, bh->b_size, bh_offset(bh));
-+	valid = fsverity_verify_blocks(page_folio(bh->b_page), bh->b_size,
-+				       bh_offset(bh));
- 	end_buffer_async_read(bh, valid);
+-	err = fscrypt_decrypt_pagecache_blocks(bh->b_page, bh->b_size,
+-					       bh_offset(bh));
++	err = fscrypt_decrypt_pagecache_blocks(page_folio(bh->b_page),
++					       bh->b_size, bh_offset(bh));
+ 	end_buffer_async_read(bh, err == 0);
  	kfree(ctx);
  }
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index e59ef9d0e21cf..f50e3b5b52c93 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -266,20 +266,23 @@ verify_data_block(struct inode *inode, struct fsverity_info *vi,
- 
- static bool
- verify_data_blocks(struct inode *inode, struct fsverity_info *vi,
--		   struct ahash_request *req, struct page *data_page,
--		   unsigned int len, unsigned int offset,
--		   unsigned long max_ra_pages)
-+		   struct ahash_request *req, struct folio *data_folio,
-+		   size_t len, size_t offset, unsigned long max_ra_pages)
- {
- 	const unsigned int block_size = vi->tree_params.block_size;
--	u64 pos = (u64)data_page->index << PAGE_SHIFT;
-+	u64 pos = (u64)data_folio->index << PAGE_SHIFT;
- 
- 	if (WARN_ON_ONCE(len <= 0 || !IS_ALIGNED(len | offset, block_size)))
- 		return false;
--	if (WARN_ON_ONCE(!PageLocked(data_page) || PageUptodate(data_page)))
-+	if (WARN_ON_ONCE(!folio_test_locked(data_folio) ||
-+			 folio_test_uptodate(data_folio)))
- 		return false;
- 	do {
--		if (!verify_data_block(inode, vi, req, data_page,
--				       pos + offset, offset, max_ra_pages))
-+		struct page *data_page =
-+			folio_page(data_folio, offset >> PAGE_SHIFT);
-+
-+		if (!verify_data_block(inode, vi, req, data_page, pos + offset,
-+				       offset & ~PAGE_MASK, max_ra_pages))
- 			return false;
- 		offset += block_size;
- 		len -= block_size;
-@@ -288,21 +291,20 @@ verify_data_blocks(struct inode *inode, struct fsverity_info *vi,
- }
- 
- /**
-- * fsverity_verify_blocks() - verify data in a page
-- * @page: the page containing the data to verify
-- * @len: the length of the data to verify in the page
-- * @offset: the offset of the data to verify in the page
-+ * fsverity_verify_blocks() - verify data in a folio
-+ * @folio: the folio containing the data to verify
-+ * @len: the length of the data to verify in the folio
-+ * @offset: the offset of the data to verify in the folio
-  *
-  * Verify data that has just been read from a verity file.  The data must be
-- * located in a pagecache page that is still locked and not yet uptodate.  The
-+ * located in a pagecache folio that is still locked and not yet uptodate.  The
-  * length and offset of the data must be Merkle tree block size aligned.
-  *
-  * Return: %true if the data is valid, else %false.
+diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+index 1b4403136d05c..d57d0a020f71c 100644
+--- a/fs/crypto/bio.c
++++ b/fs/crypto/bio.c
+@@ -30,13 +30,11 @@
   */
--bool fsverity_verify_blocks(struct page *page, unsigned int len,
--			    unsigned int offset)
-+bool fsverity_verify_blocks(struct folio *folio, size_t len, size_t offset)
+ bool fscrypt_decrypt_bio(struct bio *bio)
  {
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = folio->mapping->host;
- 	struct fsverity_info *vi = inode->i_verity_info;
- 	struct ahash_request *req;
- 	bool valid;
-@@ -310,7 +312,7 @@ bool fsverity_verify_blocks(struct page *page, unsigned int len,
- 	/* This allocation never fails, since it's mempool-backed. */
- 	req = fsverity_alloc_hash_request(vi->tree_params.hash_alg, GFP_NOFS);
- 
--	valid = verify_data_blocks(inode, vi, req, page, len, offset, 0);
-+	valid = verify_data_blocks(inode, vi, req, folio, len, offset, 0);
- 
- 	fsverity_free_hash_request(vi->tree_params.hash_alg, req);
- 
-@@ -338,8 +340,7 @@ void fsverity_verify_bio(struct bio *bio)
- 	struct inode *inode = bio_first_page_all(bio)->mapping->host;
- 	struct fsverity_info *vi = inode->i_verity_info;
- 	struct ahash_request *req;
 -	struct bio_vec *bv;
 -	struct bvec_iter_all iter_all;
 +	struct folio_iter fi;
- 	unsigned long max_ra_pages = 0;
- 
- 	/* This allocation never fails, since it's mempool-backed. */
-@@ -358,9 +359,9 @@ void fsverity_verify_bio(struct bio *bio)
- 		max_ra_pages = bio->bi_iter.bi_size >> (PAGE_SHIFT + 2);
- 	}
  
 -	bio_for_each_segment_all(bv, bio, iter_all) {
--		if (!verify_data_blocks(inode, vi, req, bv->bv_page, bv->bv_len,
--					bv->bv_offset, max_ra_pages)) {
+-		struct page *page = bv->bv_page;
+-		int err = fscrypt_decrypt_pagecache_blocks(page, bv->bv_len,
+-							   bv->bv_offset);
 +	bio_for_each_folio_all(fi, bio) {
-+		if (!verify_data_blocks(inode, vi, req, fi.folio, fi.length,
-+					fi.offset, max_ra_pages)) {
- 			bio->bi_status = BLK_STS_IOERR;
- 			break;
- 		}
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 991a444589966..119a3266791fd 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -12,6 +12,7 @@
- #define _LINUX_FSVERITY_H
++		int err = fscrypt_decrypt_pagecache_blocks(fi.folio, fi.length,
++							   fi.offset);
  
- #include <linux/fs.h>
-+#include <linux/mm.h>
- #include <crypto/hash_info.h>
- #include <crypto/sha2.h>
- #include <uapi/linux/fsverity.h>
-@@ -169,8 +170,7 @@ int fsverity_ioctl_read_metadata(struct file *filp, const void __user *uarg);
- 
- /* verify.c */
- 
--bool fsverity_verify_blocks(struct page *page, unsigned int len,
--			    unsigned int offset);
-+bool fsverity_verify_blocks(struct folio *folio, size_t len, size_t offset);
- void fsverity_verify_bio(struct bio *bio);
- void fsverity_enqueue_verify_work(struct work_struct *work);
- 
-@@ -230,8 +230,8 @@ static inline int fsverity_ioctl_read_metadata(struct file *filp,
- 
- /* verify.c */
- 
--static inline bool fsverity_verify_blocks(struct page *page, unsigned int len,
--					  unsigned int offset)
-+static inline bool fsverity_verify_blocks(struct folio *folio, size_t len,
-+					  size_t offset)
- {
- 	WARN_ON(1);
- 	return false;
-@@ -249,9 +249,14 @@ static inline void fsverity_enqueue_verify_work(struct work_struct *work)
- 
- #endif	/* !CONFIG_FS_VERITY */
- 
-+static inline bool fsverity_verify_folio(struct folio *folio)
-+{
-+	return fsverity_verify_blocks(folio, folio_size(folio), 0);
-+}
-+
- static inline bool fsverity_verify_page(struct page *page)
- {
--	return fsverity_verify_blocks(page, PAGE_SIZE, 0);
-+	return fsverity_verify_blocks(page_folio(page), PAGE_SIZE, 0);
- }
+ 		if (err) {
+ 			bio->bi_status = errno_to_blk_status(err);
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index e78be66bbf015..bf642479269a5 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -237,41 +237,43 @@ EXPORT_SYMBOL(fscrypt_encrypt_block_inplace);
  
  /**
+  * fscrypt_decrypt_pagecache_blocks() - Decrypt filesystem blocks in a
+- *					pagecache page
+- * @page:      The locked pagecache page containing the block(s) to decrypt
++ *					pagecache folio
++ * @folio:     The locked pagecache folio containing the block(s) to decrypt
+  * @len:       Total size of the block(s) to decrypt.  Must be a nonzero
+  *		multiple of the filesystem's block size.
+- * @offs:      Byte offset within @page of the first block to decrypt.  Must be
++ * @offs:      Byte offset within @folio of the first block to decrypt.  Must be
+  *		a multiple of the filesystem's block size.
+  *
+- * The specified block(s) are decrypted in-place within the pagecache page,
+- * which must still be locked and not uptodate.  Normally, blocksize ==
+- * PAGE_SIZE and the whole page is decrypted at once.
++ * The specified block(s) are decrypted in-place within the pagecache folio,
++ * which must still be locked and not uptodate.
+  *
+  * This is for use by the filesystem's ->readahead() method.
+  *
+  * Return: 0 on success; -errno on failure
+  */
+-int fscrypt_decrypt_pagecache_blocks(struct page *page, unsigned int len,
+-				     unsigned int offs)
++int fscrypt_decrypt_pagecache_blocks(struct folio *folio, size_t len,
++				     size_t offs)
+ {
+-	const struct inode *inode = page->mapping->host;
++	const struct inode *inode = folio->mapping->host;
+ 	const unsigned int blockbits = inode->i_blkbits;
+ 	const unsigned int blocksize = 1 << blockbits;
+-	u64 lblk_num = ((u64)page->index << (PAGE_SHIFT - blockbits)) +
++	u64 lblk_num = ((u64)folio->index << (PAGE_SHIFT - blockbits)) +
+ 		       (offs >> blockbits);
+-	unsigned int i;
++	size_t i;
+ 	int err;
+ 
+-	if (WARN_ON_ONCE(!PageLocked(page)))
++	if (WARN_ON_ONCE(!folio_test_locked(folio)))
+ 		return -EINVAL;
+ 
+ 	if (WARN_ON_ONCE(len <= 0 || !IS_ALIGNED(len | offs, blocksize)))
+ 		return -EINVAL;
+ 
+ 	for (i = offs; i < offs + len; i += blocksize, lblk_num++) {
++		struct page *page = folio_page(folio, i >> PAGE_SHIFT);
++
+ 		err = fscrypt_crypt_block(inode, FS_DECRYPT, lblk_num, page,
+-					  page, blocksize, i, GFP_NOFS);
++					  page, blocksize, i & ~PAGE_MASK,
++					  GFP_NOFS);
+ 		if (err)
+ 			return err;
+ 	}
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 9d9f414f99fec..0fe1b746fe864 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1136,7 +1136,8 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
+ 		for (i = 0; i < nr_wait; i++) {
+ 			int err2;
+ 
+-			err2 = fscrypt_decrypt_pagecache_blocks(page, blocksize,
++			err2 = fscrypt_decrypt_pagecache_blocks(page_folio(page),
++								blocksize,
+ 								bh_offset(wait[i]));
+ 			if (err2) {
+ 				clear_buffer_uptodate(wait[i]);
+@@ -3858,7 +3859,8 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+ 		if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+ 			/* We expect the key to be set. */
+ 			BUG_ON(!fscrypt_has_encryption_key(inode));
+-			err = fscrypt_decrypt_pagecache_blocks(page, blocksize,
++			err = fscrypt_decrypt_pagecache_blocks(page_folio(page),
++							       blocksize,
+ 							       bh_offset(bh));
+ 			if (err) {
+ 				clear_buffer_uptodate(bh);
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 4f5f8a6512132..433504422d02d 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -257,8 +257,8 @@ int fscrypt_encrypt_block_inplace(const struct inode *inode, struct page *page,
+ 				  unsigned int len, unsigned int offs,
+ 				  u64 lblk_num, gfp_t gfp_flags);
+ 
+-int fscrypt_decrypt_pagecache_blocks(struct page *page, unsigned int len,
+-				     unsigned int offs);
++int fscrypt_decrypt_pagecache_blocks(struct folio *folio, size_t len,
++				     size_t offs);
+ int fscrypt_decrypt_block_inplace(const struct inode *inode, struct page *page,
+ 				  unsigned int len, unsigned int offs,
+ 				  u64 lblk_num);
+@@ -422,9 +422,8 @@ static inline int fscrypt_encrypt_block_inplace(const struct inode *inode,
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static inline int fscrypt_decrypt_pagecache_blocks(struct page *page,
+-						   unsigned int len,
+-						   unsigned int offs)
++static inline int fscrypt_decrypt_pagecache_blocks(struct folio *folio,
++						   size_t len, size_t offs)
+ {
+ 	return -EOPNOTSUPP;
+ }
 
-base-commit: 245edf445c3421584f541307cd7a8cd847c3d8d7
+base-commit: 5dc4c995db9eb45f6373a956eb1f69460e69e6d4
 -- 
 2.39.1
 
