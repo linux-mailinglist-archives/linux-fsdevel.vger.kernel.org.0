@@ -2,88 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E05B67EDE6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 19:57:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84AB067EF13
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 21:03:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233903AbjA0S5U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Jan 2023 13:57:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56810 "EHLO
+        id S232340AbjA0UC7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Jan 2023 15:02:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229757AbjA0S5T (ORCPT
+        with ESMTP id S233085AbjA0UCj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Jan 2023 13:57:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ACAA1BEA
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jan 2023 10:56:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674845791;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=eJGKJEleR9o/IxmSmYsL3dGb9IEIEnukTgdURz3fSls=;
-        b=fyN7Y602bPEWgkBL2ncmzDuNDHVXjOhpdPqEsUu+zgRoLnxXHmy0rsLLdgakT39cUan5Aq
-        7YAWXmlGZOvy38PvzGQud2DqFfncmJFpRHjRnfN4zzEqE4VBqsU9h3ZeUs+g2UOKNDOIo/
-        UNYZiLF6NYCyqblfOBhPft0kL2inA3w=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-489-aG_z81QsOka_4PNufwieVw-1; Fri, 27 Jan 2023 13:56:30 -0500
-X-MC-Unique: aG_z81QsOka_4PNufwieVw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 846EB886469;
-        Fri, 27 Jan 2023 18:56:29 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.73])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 394C81121314;
-        Fri, 27 Jan 2023 18:56:29 +0000 (UTC)
-From:   Giuseppe Scrivano <gscrivan@redhat.com>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        kernel-team@meta.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] ipc,namespace: fix free vs allocation race
-In-Reply-To: <20230127184651.3681682-1-riel@surriel.com> (Rik van Riel's
-        message of "Fri, 27 Jan 2023 13:46:49 -0500")
-References: <20230127184651.3681682-1-riel@surriel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
-Date:   Fri, 27 Jan 2023 19:56:27 +0100
-Message-ID: <87wn57lsbo.fsf@redhat.com>
+        Fri, 27 Jan 2023 15:02:39 -0500
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A0808E17F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jan 2023 12:00:50 -0800 (PST)
+Received: by mail-pl1-x62f.google.com with SMTP id v23so6110769plo.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jan 2023 12:00:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=am+vlnLsg0XsWPedwqTMfueZR+oGnG7UWNBHwR8AcYc=;
+        b=Q0U8C4RtPDRpzAiibd2GVE0E00+3tsbOeaPeNHaMiolmsmk9YV+x/VYoBGp+R5j2L8
+         +lc5XAHQMvX8YDrGROEibXrLzof6cGPZpgv+q3LsrVMN3BMnfa48T1BokWA3LIMH0aI0
+         wP1RJonGnMGPsEJ2H8MBmmF7ZZbqx7Pu6e6cGlhSsr4qXkaxhYmAqCDfarmNVHLNcK82
+         ozQ4gaksTPaJmsZN17hEU2/Hfpk0Fu2DoXPZM0M9GfaLb1GEAkEvV0Dnjr8WyOW/TIS4
+         3dqCV71phS8pxZ+H/QcAw6Boxoo8/ZdHvHiwWEGMsZyWSa36bv/ntULg6yNA7bJsj8Gn
+         O+Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=am+vlnLsg0XsWPedwqTMfueZR+oGnG7UWNBHwR8AcYc=;
+        b=DI9kdhnT/pddZEUDDHptQG1BPHDKgjvlo9nHTZXOkMS160wD+6JfF8VoZIjrDCZXrf
+         hF1wHYnc70hEa0JfoxAqZeMW1fLUiunCzRFOq0Ns9DKjr0WCwzC0jmCay63BuU7BWMtW
+         eCu2Y7bFqIf3awBxIldjgyYdTo9t5ox7cfBt0OxzA/zSVeXmLCQnPRF+aYMRTpckYZK5
+         ewp5R2Mhi2RwaH563b/EHb74AFybA6NzCFvUTyRntlaCnKXIXr71+5FtxjeVbV6FEvqr
+         96du4o3mJUUekY8UZUydWKaxXbB8sVzPKMrfHr4aSyVkNBd0ACJl52md1/MU9f3AYoPN
+         PPNQ==
+X-Gm-Message-State: AFqh2kpgrSNk6x+gGk4C6D9snTyhQTI2+NPQgmM41luboyULsTLBY8H/
+        p0cDCCNJwtOH9jkgbLkQTp4A1KTClRPom1dRfgeR
+X-Google-Smtp-Source: AMrXdXtgDZu6IiaCLCwfyX/1peJyGjLyCaHOG29QZFCt9RV37pAXcnEo7stUTPwkGz0Tc+B2pfdv256KSKwS87gRKSQ=
+X-Received: by 2002:a17:90b:3903:b0:225:de08:b714 with SMTP id
+ ob3-20020a17090b390300b00225de08b714mr4950213pjb.193.1674849648652; Fri, 27
+ Jan 2023 12:00:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <cover.1673989212.git.rgb@redhat.com> <82aba376bfbb9927ab7146e8e2dee8d844a31dc2.1673989212.git.rgb@redhat.com>
+ <5680172.DvuYhMxLoT@x2> <CAHC9VhQbSCxmSbLFJZidAr952uHt-KktfRRJN3Lr+uDSCzHtfQ@mail.gmail.com>
+ <Y9Gn4YmKFBot/R4l@madcap2.tricolour.ca>
+In-Reply-To: <Y9Gn4YmKFBot/R4l@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 27 Jan 2023 15:00:37 -0500
+Message-ID: <CAHC9VhRWDD6Tk6AEmgoobBkcVKRYbVOte7-F0TGJD2dRk7NKxw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] fanotify,audit: Allow audit to use the full
+ permission event response
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rik van Riel <riel@surriel.com> writes:
+On Wed, Jan 25, 2023 at 5:06 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2023-01-20 13:52, Paul Moore wrote:
+> > On Wed, Jan 18, 2023 at 1:34 PM Steve Grubb <sgrubb@redhat.com> wrote:
+> > > Hello Richard,
+> > >
+> > > I built a new kernel and tested this with old and new user space. It is
+> > > working as advertised. The only thing I'm wondering about is why we have 3F
+> > > as the default value when no additional info was sent? Would it be better to
+> > > just make it 0?
+> >
+> > ...
+> >
+> > > On Tuesday, January 17, 2023 4:14:07 PM EST Richard Guy Briggs wrote:
+> > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > > index d1fb821de104..3133c4175c15 100644
+> > > > --- a/kernel/auditsc.c
+> > > > +++ b/kernel/auditsc.c
+> > > > @@ -2877,10 +2878,19 @@ void __audit_log_kern_module(char *name)
+> > > >       context->type = AUDIT_KERN_MODULE;
+> > > >  }
+> > > >
+> > > > -void __audit_fanotify(u32 response)
+> > > > +void __audit_fanotify(u32 response, struct
+> > > > fanotify_response_info_audit_rule *friar) {
+> > > > -     audit_log(audit_context(), GFP_KERNEL,
+> > > > -             AUDIT_FANOTIFY, "resp=%u", response);
+> > > > +     /* {subj,obj}_trust values are {0,1,2}: no,yes,unknown */
+> > > > +     if (friar->hdr.type == FAN_RESPONSE_INFO_NONE) {
+> > > > +             audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
+> > > > +                       "resp=%u fan_type=%u fan_info=3F subj_trust=2
+> > > obj_trust=2",
+> > > > +                       response, FAN_RESPONSE_INFO_NONE);
+> > > > +             return;
+> > > > +     }
+> >
+> > (I'm working under the assumption that the "fan_info=3F" in the record
+> > above is what Steve was referring to in his comment.)
+> >
+> > I vaguely recall Richard commenting on this in the past, although
+> > maybe not ... my thought is that the "3F" is simply the hex encoded
+> > "?" character in ASCII ('man 7 ascii' is your friend).  I suppose the
+> > question is what to do in the FAN_RESPONSE_INFO_NONE case.
+> >
+> > Historically when we had a missing field we would follow the "field=?"
+> > pattern, but I don't recall doing that for a field which was
+> > potentially hex encoded, is there an existing case where we use "?"
+> > for a field that is hex encoded?  If so, we can swap out the "3F" for
+> > a more obvious "?".
+>
+> I was presuming encoding the zero: "30"
 
-> The IPC namespace code frees ipc_namespace structures asynchronously,
-> via a work queue item. This results in ipc_namespace structures being
-> freed very slowly, and the allocation path getting false failures
-> since the to-be-freed ipc_namespace structures have not been freed
-> yet.
->
-> Fix that by having the allocator wait when there are ipc_namespace
-> structures pending to be freed.
->
-> Also speed up the freeing of ipc_namespace structures. We had some
-> discussions about this last year, and ended up trying out various
-> "nicer" ideas that did not work, so I went back to the original,
-> with Al Viro's suggestion for a helper function:
->
-> https://lore.kernel.org/all/Yg8StKzTWh+7FLuA@zeniv-ca.linux.org.uk/
->
-> This series fixes both the false allocation failures, and the slow
-> freeing of ipc_namespace structures.
->
-> v3: remove mq_put_mnt (thank you Giuseppe)
-> v2: a few more fs/namespace.c cleanups suggested by Al Viro (thank you!)
+I'm sorry, but you've lost me here.
 
-Tested-by: Giuseppe Scrivano <gscrivan@redhat.com>
+> > However, another option might be to simply output the current
+> > AUDIT_FANOTIFY record format in the FAN_RESPONSE_INFO_NONE case, e.g.
+> > only "resp=%u".  This is a little against the usual guidance of
+> > "fields should not disappear from a record", but considering that
+> > userspace will always need to support the original resp-only format
+> > for compatibility reasons this may be an option.
+>
+> I don't have a strong opinion.
 
+I'm not sure I care too much either.  I will admit that the "3F" seems
+to be bordering on the "bit too clever" side of things, but it's easy
+to argue it is in keeping with the general idea of using "?" to denote
+absent/unknown fields.
+
+As Steve was the one who raised the question in this latest round, and
+he knows his userspace tools the best, it seems wise to get his input
+on this.
+
+-- 
+paul-moore.com
