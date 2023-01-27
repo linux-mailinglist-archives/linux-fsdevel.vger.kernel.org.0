@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24BCF67DB83
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 02:50:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3259767DB7B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 02:49:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233196AbjA0Bty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 20:49:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32926 "EHLO
+        id S232959AbjA0Bts (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 20:49:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233136AbjA0Btr (ORCPT
+        with ESMTP id S232834AbjA0Btp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 20:49:47 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 46E42751AB
+        Thu, 26 Jan 2023 20:49:45 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6C40074A54
         for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 17:49:41 -0800 (PST)
 Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.53 with ESMTP; 27 Jan 2023 10:19:41 +0900
+        by 156.147.23.52 with ESMTP; 27 Jan 2023 10:19:41 +0900
 X-Original-SENDERIP: 156.147.1.151
 X-Original-MAILFROM: max.byungchul.park@gmail.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
@@ -47,72 +47,57 @@ Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
         42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
         gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
         boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com
-Subject: [PATCH v8 08/25] dept: Apply sdt_might_sleep_{start,end}() to PG_{locked,writeback} wait
-Date:   Fri, 27 Jan 2023 10:19:01 +0900
-Message-Id: <1674782358-25542-9-git-send-email-max.byungchul.park@gmail.com>
+Subject: [PATCH v8 09/25] dept: Apply sdt_might_sleep_{start,end}() to swait
+Date:   Fri, 27 Jan 2023 10:19:02 +0900
+Message-Id: <1674782358-25542-10-git-send-email-max.byungchul.park@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1674782358-25542-1-git-send-email-max.byungchul.park@gmail.com>
 References: <1674782358-25542-1-git-send-email-max.byungchul.park@gmail.com>
 X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
         FORGED_GMAIL_RCVD,FREEMAIL_FROM,NML_ADSP_CUSTOM_MED,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Makes Dept able to track dependencies by PG_{locked,writeback} waits.
+Makes Dept able to track dependencies by swaits.
 
 Signed-off-by: Byungchul Park <max.byungchul.park@gmail.com>
 ---
- mm/filemap.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ include/linux/swait.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index c4d4ace..adc49cb 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -42,6 +42,7 @@
- #include <linux/ramfs.h>
- #include <linux/page_idle.h>
- #include <linux/migrate.h>
+diff --git a/include/linux/swait.h b/include/linux/swait.h
+index 6a8c22b..0284821 100644
+--- a/include/linux/swait.h
++++ b/include/linux/swait.h
+@@ -6,6 +6,7 @@
+ #include <linux/stddef.h>
+ #include <linux/spinlock.h>
+ #include <linux/wait.h>
 +#include <linux/dept_sdt.h>
- #include <asm/pgalloc.h>
- #include <asm/tlbflush.h>
- #include "internal.h"
-@@ -1215,6 +1216,9 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
- /* How many times do we accept lock stealing from under a waiter? */
- int sysctl_page_lock_unfairness = 5;
+ #include <asm/current.h>
  
-+static struct dept_map __maybe_unused PG_locked_map = DEPT_MAP_INITIALIZER(PG_locked_map, NULL);
-+static struct dept_map __maybe_unused PG_writeback_map = DEPT_MAP_INITIALIZER(PG_writeback_map, NULL);
-+
- static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 		int state, enum behavior behavior)
- {
-@@ -1226,6 +1230,11 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 	unsigned long pflags;
- 	bool in_thrashing;
+ /*
+@@ -161,6 +162,7 @@ static inline bool swq_has_sleeper(struct swait_queue_head *wq)
+ 	struct swait_queue __wait;					\
+ 	long __ret = ret;						\
+ 									\
++	sdt_might_sleep_start(NULL);					\
+ 	INIT_LIST_HEAD(&__wait.task_list);				\
+ 	for (;;) {							\
+ 		long __int = prepare_to_swait_event(&wq, &__wait, state);\
+@@ -176,6 +178,7 @@ static inline bool swq_has_sleeper(struct swait_queue_head *wq)
+ 		cmd;							\
+ 	}								\
+ 	finish_swait(&wq, &__wait);					\
++	sdt_might_sleep_end();						\
+ __out:	__ret;								\
+ })
  
-+	if (bit_nr == PG_locked)
-+		sdt_might_sleep_start(&PG_locked_map);
-+	else if (bit_nr == PG_writeback)
-+		sdt_might_sleep_start(&PG_writeback_map);
-+
- 	if (bit_nr == PG_locked &&
- 	    !folio_test_uptodate(folio) && folio_test_workingset(folio)) {
- 		delayacct_thrashing_start(&in_thrashing);
-@@ -1327,6 +1336,8 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 	 */
- 	finish_wait(q, wait);
- 
-+	sdt_might_sleep_end();
-+
- 	if (thrashing) {
- 		delayacct_thrashing_end(&in_thrashing);
- 		psi_memstall_leave(&pflags);
 -- 
 1.9.1
 
