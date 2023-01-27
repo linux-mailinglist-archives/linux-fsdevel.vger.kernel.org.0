@@ -2,99 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88DF167DE62
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 08:18:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA09567E18C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 11:25:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232440AbjA0HR1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Jan 2023 02:17:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39580 "EHLO
+        id S230040AbjA0KZC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Jan 2023 05:25:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjA0HR0 (ORCPT
+        with ESMTP id S229579AbjA0KZC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Jan 2023 02:17:26 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A3B3B0C8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 23:17:25 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id d30so6761426lfv.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 23:17:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t6JX9N8YU0ZRqNe6wufmk02qXuxOtdyVljTACCKEcGg=;
-        b=nCK59OAyOOqOuLFK6Msjex5na6gejqRtW7VDdGlgPWnyiNabSGmrz7xdV4mqU3MqyM
-         v6DJjMDP33gKhfCVwArnR6xC3FzIlt/bymM3F0CX/1HfuciggqhLllB12otkqPBTn8kY
-         4jb075vjMBa+69RYRSSHiElBLHGhX+kLWqEW4oVSyjjCT3zrCGCQV7MRWFLKrcEtVJeM
-         /twxQvRNx4ANELvYUaL18ZlQO+f9MoICnKhERkjgLbk3KGcsbBZ19tI31HJ3/soqvueX
-         U0WegXVbXbx3VP7jTRF2SvYcI1gGZF/DoYzE043MQ7F2xwgcfonn99UaD3YdpD+nOlbF
-         tjFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t6JX9N8YU0ZRqNe6wufmk02qXuxOtdyVljTACCKEcGg=;
-        b=pejns9zSHuvjW2/Y8CdbkgacPbub3glb4JCTywj6dt65KqWvY6kmtQExTX1Hp4l1Hq
-         ENJafZYKeqkvlkIwHNN3+iWlZXC0ajfUy6Z2pZNUBzguHygK9T5WRXrREQj7lXMoVg/6
-         XreqXmi7UGCiTB6BJ2cYD3BLQstMHr6fOlZAQHxgSXLC0tw7lfbTijsdr5vtbp0GjBzq
-         MyOGg9p0dnJOqDPRgq5EKwRUIMHc97t/qV1eCFYIPdDYmeRESOyZ82x5Ezr13Cr3ZMHR
-         +EutYkL96HM4C4qdNuI1BGJQ+kvy9RyayIkZeOpOMf7tZbxOuiqeWZvFbXMlwXOZEvy/
-         b4Ug==
-X-Gm-Message-State: AFqh2kp5L0Wngmd5sVZ5Ea8juKB/ZCEMVT15qXodBSXPRMgPIIWbPb+g
-        3fq7ZG9yAa9hDF4/uPJQusPptxjDkFBqY7VJ6VFxdg==
-X-Google-Smtp-Source: AMrXdXs0v6Ue3yA4k8NUfTIYEvwqIAxkwxmjFuIPuay9e+m8eQqDdhAU2niVaLWNAdVcke53Mmk9l92bsjfzZz2pOUI=
-X-Received: by 2002:ac2:508f:0:b0:4cb:7c2:87ee with SMTP id
- f15-20020ac2508f000000b004cb07c287eemr3927074lfm.165.1674803843191; Thu, 26
- Jan 2023 23:17:23 -0800 (PST)
+        Fri, 27 Jan 2023 05:25:02 -0500
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39848222ED;
+        Fri, 27 Jan 2023 02:25:00 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0VaES2Bn_1674815095;
+Received: from 192.168.1.38(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VaES2Bn_1674815095)
+          by smtp.aliyun-inc.com;
+          Fri, 27 Jan 2023 18:24:57 +0800
+Message-ID: <8ffa28f5-77f6-6bde-5645-5fb799019bca@linux.alibaba.com>
+Date:   Fri, 27 Jan 2023 18:24:55 +0800
 MIME-Version: 1.0
-References: <000000000000e4630c05e974c1eb@google.com> <000000000000defd4b05f2feb35c@google.com>
-In-Reply-To: <000000000000defd4b05f2feb35c@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 27 Jan 2023 08:17:11 +0100
-Message-ID: <CACT4Y+Y7CDqyXq87bh=eXfpQz2Xdu=8HV5pojnNd2Xv6x-4G9Q@mail.gmail.com>
-Subject: Re: [syzbot] BUG: unable to handle kernel paging request in evict
-To:     syzbot <syzbot+6b74cf8fcd7378d8be7c@syzkaller.appspotmail.com>
-Cc:     feldsherov@google.com, hirofumi@mail.parknet.co.jp, jack@suse.cz,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-15.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,SPF_HELO_NONE,
-        SPF_PASS,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.1
+Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
+ image filesystem
+To:     Alexander Larsson <alexl@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gscrivan@redhat.com, david@fromorbit.com, brauner@kernel.org,
+        viro@zeniv.linux.org.uk, Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+References: <cover.1674227308.git.alexl@redhat.com>
+ <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
+ <1ea88c8d1e666b85342374ed7c0ddf7d661e0ee1.camel@redhat.com>
+ <CAOQ4uxinsBB-LpGh4h44m6Afv0VT5yWRveDG7sNvE2uJyEGOkg@mail.gmail.com>
+ <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
+ <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
+ <b8601c976d6e5d3eccf6ef489da9768ad72f9571.camel@redhat.com>
+ <e840d413-c1a7-d047-1a63-468b42571846@linux.alibaba.com>
+ <2ef122849d6f35712b56ffbcc95805672980e185.camel@redhat.com>
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <2ef122849d6f35712b56ffbcc95805672980e185.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-11.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 24 Jan 2023 at 09:57, syzbot
-<syzbot+6b74cf8fcd7378d8be7c@syzkaller.appspotmail.com> wrote:
->
-> syzbot suspects this issue was fixed by commit:
->
-> commit 4e3c51f4e805291b057d12f5dda5aeb50a538dc4
-> Author: Svyatoslav Feldsherov <feldsherov@google.com>
-> Date:   Tue Nov 15 20:20:01 2022 +0000
->
->     fs: do not update freeing inode i_io_list
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=111208cd480000
-> start commit:   b229b6ca5abb Merge tag 'perf-tools-fixes-for-v6.1-2022-10-..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=1d3548a4365ba17d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=6b74cf8fcd7378d8be7c
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1353a3e2880000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16163dce880000
->
-> If the result looks correct, please mark the issue as fixed by replying with:
->
-> #syz fix: fs: do not update freeing inode i_io_list
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Looks reasonable. Let's close the bug report:
 
-#syz fix: fs: do not update freeing inode i_io_list
+On 2023/1/25 18:15, Alexander Larsson wrote:
+> On Wed, 2023-01-25 at 18:05 +0800, Gao Xiang wrote:
+>>
+>>
+>> On 2023/1/25 17:37, Alexander Larsson wrote:
+>>> On Tue, 2023-01-24 at 21:06 +0200, Amir Goldstein wrote:
+>>>> On Tue, Jan 24, 2023 at 3:13 PM Alexander Larsson
+>>>> <alexl@redhat.com>
+>>
+>> ...
+>>
+>>>>>
+>>>>> They are all strictly worse than squashfs in the above testing.
+>>>>>
+>>>>
+>>>> It's interesting to know why and if an optimized mkfs.erofs
+>>>> mkfs.ext4 would have done any improvement.
+>>>
+>>> Even the non-loopback mounted (direct xfs backed) version performed
+>>> worse than the squashfs one. I'm sure a erofs with sparse files
+>>> would
+>>> do better due to a more compact file, but I don't really see how it
+>>> would perform significantly different than the squashfs code. Yes,
+>>> squashfs lookup is linear in directory length, while erofs is
+>>> log(n),
+>>> but the directories are not so huge that this would dominate the
+>>> runtime.
+>>>
+>>> To get an estimate of this I made a broken version of the erofs
+>>> image,
+>>> where the metacopy files are actually 0 byte size rather than
+>>> sparse.
+>>> This made the erofs file 18M instead, and gained 10% in the cold
+>>> cache
+>>> case. This, while good, is not near enough to matter compared to
+>>> the
+>>> others.
+>>>
+>>> I don't think the base performance here is really much dependent on
+>>> the
+>>> backing filesystem. An ls -lR workload is just a measurement of the
+>>> actual (i.e. non-dcache) performance of the filesystem
+>>> implementation
+>>> of lookup and iterate, and overlayfs just has more work to do here,
+>>> especially in terms of the amount of i/o needed.
+>>
+>> I will form a formal mkfs.erofs version in one or two days since
+>> we're
+>> cerebrating Lunar New year now.
+
+I've made a version and did some test, it can be fetched from:
+git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git -b experimental
+
+this feature can be used with -Ededupe or --chunksize=# (assuming
+that all sparse files are holed, so that each file will only has
+one chunk.)
+
+>>
+>> Since you don't have more I/O traces for analysis, I have to do
+>> another
+>> wild guess.
+>>
+>> Could you help benchmark your v2 too? I'm not sure if such
+>> performance also exists in v2.  The reason why I guess as this is
+>> that it seems that you read all dir inode pages when doing the first
+>> lookup, it can benefit to seq dir access.
+>>
+>> I'm not sure if EROFS can make a similar number by doing forcing
+>> readahead on dirs to read all dir data at once as well.
+>>
+>> Apart from that I don't see significant difference, at least
+>> personally
+>> I'd like to know where it could have such huge difference.  I don't
+>> think that is all because of read-only on-disk format differnce.
+> 
+> I think the performance difference between v2 and v3 would be rather
+> minor in this case, because I don't think a lot of the directories are
+> large enough to be split in chunks. I also don't believe erofs and
+> composefs should fundamentally differ much in performance here, given
+> that both use a compact binary searchable layout for dirents. However,
+> the full comparison is "composefs" vs "overlayfs + erofs", and in that
+> case composefs wins.
+
+I'm still on vacation..  I will play with composefs personally to get
+more insights when I'm back,  but it would be much better to provide
+some datasets for this as well (assuming the dataset can be shown in
+public.)
+
+Thanks,
+Gao Xiang
+
+> 
