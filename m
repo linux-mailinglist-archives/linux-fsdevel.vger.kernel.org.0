@@ -2,126 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6894767DC1E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 03:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7211167DC80
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 04:02:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233485AbjA0CGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 21:06:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48814 "EHLO
+        id S229948AbjA0DCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 22:02:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233466AbjA0CGa (ORCPT
+        with ESMTP id S229572AbjA0DCT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 21:06:30 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B320520D31
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 18:04:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CCo6CcOIMdKlo3WLVq6nzoGfLepaU37Js9DWTNsO9Fw=; b=ZubqXbAX/iWh0ihOuMt9SDBHj2
-        Pv4qOw9MHHh4xzYaqfKBBNsurvccE3kkKwwOPI4z/MmIuuhmfA9dL6LOSn2+VelWUoLq2PtvTPOI8
-        I3v2bV6rP0Iqcb87QiPCDj4v1qfF6PrAfsTtV3qjDF9hpgOuF46hafn6pPSY2OzHhePBfUeRPeh38
-        s0G09tEnelzytxV/uFfpJLq8isoxMbA4aJdJXXYipw9pN1JiJ/EU0GSkQUlU7/5r+FlOYMJ2rNSY7
-        1v1O52xCcVoUIagGOnBs4q6+18YPV3aGran5zy2UdX/mabd062q1qfStpID6GgRAGwBCRkcNBBYgJ
-        CyORKCgg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pLE6L-007H43-Fl; Fri, 27 Jan 2023 02:04:25 +0000
-Date:   Fri, 27 Jan 2023 02:04:25 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Ira Weiny <ira.weiny@intel.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm: Add memcpy_from_file_folio()
-Message-ID: <Y9MxKclIVqHMvpmL@casper.infradead.org>
-References: <20230126201552.1681588-1-willy@infradead.org>
- <20230126154152.898a1bdfd7d729627e2a6bf4@linux-foundation.org>
+        Thu, 26 Jan 2023 22:02:19 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F22F32ED41;
+        Thu, 26 Jan 2023 19:02:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 614CEB81F7C;
+        Fri, 27 Jan 2023 03:02:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C8DC433EF;
+        Fri, 27 Jan 2023 03:02:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674788536;
+        bh=51mW/NQ2bd0bv1LqSRI7nTF1Ig/hdRT08p+ujYepq5A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fzU5k8KAOj/5bMbzX7z9ycu8Q0cvEmSIUXgSssWOP5vuN9b5vdYO1XTGxq7Ek/J+Z
+         uBThIoCskiT4FZ/tZTxC/0yjBIrF0UI13V94nwfQ0LEg4W6AEka2mh1WsaUb1pYsef
+         OVwxtzLT7yX97kX/7eMFDiwCF1bi6cN+8HOJUq5eTKZqOTqcOydPK0Hhbwxb9CyP3m
+         TgZAj+QV6nXswBWwkM9jbQEaOYq4AvdUeQfRtvUkRRm2lL84ZRnmdngdObOFiIMfG+
+         4xaOaSCyLgflPN+bCX1QI2OFzUYCLF4wm46WecbIh67lbgtpal0yz5SbbrSDew1If9
+         PinY5U4fPgAGw==
+Date:   Thu, 26 Jan 2023 19:02:14 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 02/31] fscrypt: Add some folio helper functions
+Message-ID: <Y9M+tl5CcNfRScds@sol.localdomain>
+References: <20230126202415.1682629-1-willy@infradead.org>
+ <20230126202415.1682629-3-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230126154152.898a1bdfd7d729627e2a6bf4@linux-foundation.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230126202415.1682629-3-willy@infradead.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 03:41:52PM -0800, Andrew Morton wrote:
-> > + * Return: The number of bytes copied from the folio.
-
-> > +static inline size_t memcpy_from_file_folio(char *to, struct folio *folio,
-> > +		loff_t pos, size_t len)
-> > +{
-> > +	size_t offset = offset_in_folio(folio, pos);
-> > +	char *from = kmap_local_folio(folio, offset);
-> > +
-> > +	if (folio_test_highmem(folio))
-> > +		len = min(len, PAGE_SIZE - offset);
-> > +	else
-> > +		len = min(len, folio_size(folio) - offset);
+On Thu, Jan 26, 2023 at 08:23:46PM +0000, Matthew Wilcox (Oracle) wrote:
+> fscrypt_is_bounce_folio() is the equivalent of fscrypt_is_bounce_page()
+> and fscrypt_pagecache_folio() is the equivalent of fscrypt_pagecache_page().
 > 
-> min() blows up on arm allnoconfig.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  include/linux/fscrypt.h | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
-> ./include/linux/highmem.h: In function 'memcpy_from_file_folio':
-> ./include/linux/minmax.h:20:35: warning: comparison of distinct pointer types lacks a cast
->    20 |         (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
->       |                                   ^~
-> ./include/linux/minmax.h:26:18: note: in expansion of macro '__typecheck'
->    26 |                 (__typecheck(x, y) && __no_side_effects(x, y))
->       |                  ^~~~~~~~~~~
-> ./include/linux/minmax.h:36:31: note: in expansion of macro '__safe_cmp'
->    36 |         __builtin_choose_expr(__safe_cmp(x, y), \
->       |                               ^~~~~~~~~~
-> ./include/linux/minmax.h:67:25: note: in expansion of macro '__careful_cmp'
->    67 | #define min(x, y)       __careful_cmp(x, y, <)
->       |                         ^~~~~~~~~~~~~
-> ./include/linux/highmem.h:435:23: note: in expansion of macro 'min'
->   435 |                 len = min(len, PAGE_SIZE - offset);
->       |                       ^~~
-
-Oh, right, PAGE_SIZE is size_t everywhere except on ARM.
-
-> We could use min_t(), but perhaps and explanatorialy named variable is
-> nicer?
-
-But buggy because we return the number of bytes copied.
-
-> --- a/include/linux/highmem.h~mm-add-memcpy_from_file_folio-fix
-> +++ a/include/linux/highmem.h
-> @@ -430,13 +430,14 @@ static inline size_t memcpy_from_file_fo
->  {
->  	size_t offset = offset_in_folio(folio, pos);
->  	char *from = kmap_local_folio(folio, offset);
-> +	size_t remaining;
+> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+> index 4f5f8a651213..c2c07d36fb3a 100644
+> --- a/include/linux/fscrypt.h
+> +++ b/include/linux/fscrypt.h
+> @@ -273,6 +273,16 @@ static inline struct page *fscrypt_pagecache_page(struct page *bounce_page)
+>  	return (struct page *)page_private(bounce_page);
+>  }
 >  
->  	if (folio_test_highmem(folio))
-> -		len = min(len, PAGE_SIZE - offset);
-> +		remaining = PAGE_SIZE - offset;
->  	else
-> -		len = min(len, folio_size(folio) - offset);
-> +		remaining = folio_size(folio) - offset;
+> +static inline bool fscrypt_is_bounce_folio(struct folio *folio)
+> +{
+> +	return folio->mapping == NULL;
+> +}
+> +
+> +static inline struct folio *fscrypt_pagecache_folio(struct folio *bounce_folio)
+> +{
+> +	return bounce_folio->private;
+> +}
 
-I don't think remaining is a great name for this.  The key thing is
-that for any platform we care about folio_test_highmem() is constant false,
-so this just optimises away the min() call.
+ext4_bio_write_folio() is still doing:
 
-You could salvage this approach by doing
+	bounce_page = fscrypt_encrypt_pagecache_blocks(&folio->page, ...);
 
-	len = min(remaining, len);
-	memcpy(to, from, len);
-	return len;
+Should it be creating a "bounce folio" instead, or is that not in the scope of
+this patchset?
 
-but I think it's probably better to just do min_t on the PAGE_SIZE line.
-Stupid ARM.
-
-> -	memcpy(to, from, len);
-> +	memcpy(to, from, min(len, remaining));
->  	kunmap_local(from);
->  
->  	return len;
-> _
-> 
+- Eric
