@@ -2,73 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6948F67EA20
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 16:59:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1829B67EA6D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 17:08:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234058AbjA0P66 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Jan 2023 10:58:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52266 "EHLO
+        id S233384AbjA0QIe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Jan 2023 11:08:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233907AbjA0P64 (ORCPT
+        with ESMTP id S234370AbjA0QIc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Jan 2023 10:58:56 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B716A24491
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Jan 2023 07:58:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674835085;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=LGMjaKXOqe+JLwIJovTd/9nYCPNTj82aDGnhgP3mX/4=;
-        b=YcItZ/HjTMqdzwjDLlrx8EbLN/WXOffEhq4bwiXq0tPA0NE/0Wn/5NAiMaqfIHpdiaPunx
-        eQWznQyBHItw1XNVL0WXfykLIrnslHiEMRJ7oyf1XVgaSbqm1nSRVSzgyT1cZhG4s3dPPY
-        p+HeJG85NL2EnpjxGKF2XCV+ardrTUE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-279-Gs8p_XAMOpuFQqWlvU8ztQ-1; Fri, 27 Jan 2023 10:58:02 -0500
-X-MC-Unique: Gs8p_XAMOpuFQqWlvU8ztQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E1B78857F82;
-        Fri, 27 Jan 2023 15:58:01 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.32.146])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9382C14171BE;
-        Fri, 27 Jan 2023 15:58:01 +0000 (UTC)
-Received: by fedora.redhat.com (Postfix, from userid 1000)
-        id E09ACF10F2; Fri, 27 Jan 2023 10:57:58 -0500 (EST)
-Date:   Fri, 27 Jan 2023 10:57:58 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Giuseppe Scrivano <gscrivan@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Alexander Larsson <alexl@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        brauner@kernel.org, viro@zeniv.linux.org.uk,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-Message-ID: <Y9P0hhHSFq/OBZjt@redhat.com>
-References: <20230125041835.GD937597@dread.disaster.area>
- <CAOQ4uxhqdjRbNFs_LohwXdTpE=MaFv-e8J3D2R57FyJxp_f3nA@mail.gmail.com>
- <87wn5ac2z6.fsf@redhat.com>
- <CAOQ4uxiPLHHnr2=XH4gN4bAjizH-=4mbZMe_sx99FKuPo-fDMQ@mail.gmail.com>
- <87o7qmbxv4.fsf@redhat.com>
- <CAOQ4uximBLqXDtq9vDhqR__1ctiiOMhMd03HCFUR_Bh_JFE-UQ@mail.gmail.com>
- <87fsbybvzq.fsf@redhat.com>
- <CAOQ4uxgos8m72icX+u2_6Gh7eMmctTTt6XZ=BRt3VzeOZH+UuQ@mail.gmail.com>
- <87wn5a9z4m.fsf@redhat.com>
- <CAOQ4uxi7GHVkaqxsQV6ninD9fhvMAPk1xFRM2aMRFXQZUV-s3Q@mail.gmail.com>
+        Fri, 27 Jan 2023 11:08:32 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D05055CD37;
+        Fri, 27 Jan 2023 08:08:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=H0xktbbCg7yyawJvFqwNEBr7Z282R2k+DgeY+M1reRM=; b=QxQgrczA2jmsCOY7T+s0lb/6Jw
+        kls7TefyCIG7LAnVJnJruPpDd894mKOgoA9zfi3HwVGthinDmFlhLzynbRBSg0I/ZursU5/5hHWR8
+        skEtnmNj8GwiVVivvryFAFYSMoRB3jdGNK7CD6RDjlg5Fh9n1x7ZK3UjvbLp8nYUlXzT0ra+6NnhS
+        U7DKVhezRom7tkyeoRIoqFukPvNlVQH9eBEUbsA9MEB1956WrorAUdPEeTZXXVwK/NUDWAuwtSt/a
+        1eAd4upnktS5EhC5YMffXkZJG6AhuoqQFmmPr3W3/sOjsdLF8ZdcS/kRKyTV/4TVKt44U5e9+4CpB
+        MNu7Wsog==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pLRGp-007r3x-Vf; Fri, 27 Jan 2023 16:08:08 +0000
+Date:   Fri, 27 Jan 2023 16:08:07 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 24/31] ext4: Convert ext4_mpage_readpages() to work on
+ folios
+Message-ID: <Y9P251BErHVfsum5@casper.infradead.org>
+References: <20230126202415.1682629-1-willy@infradead.org>
+ <20230126202415.1682629-25-willy@infradead.org>
+ <Y9NPyMThUWG5hxX6@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxi7GHVkaqxsQV6ninD9fhvMAPk1xFRM2aMRFXQZUV-s3Q@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+In-Reply-To: <Y9NPyMThUWG5hxX6@sol.localdomain>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,76 +52,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 25, 2023 at 10:23:08PM +0200, Amir Goldstein wrote:
-> On Wed, Jan 25, 2023 at 9:45 PM Giuseppe Scrivano <gscrivan@redhat.com> wrote:
-> >
-> > Amir Goldstein <amir73il@gmail.com> writes:
-> >
-> > >> >> I previously mentioned my wish of using it from a user namespace, the
-> > >> >> goal seems more challenging with EROFS or any other block devices.  I
-> > >> >> don't know about the difficulty of getting overlay metacopy working in a
-> > >> >> user namespace, even though it would be helpful for other use cases as
-> > >> >> well.
-> > >> >>
-> > >> >
-> > >> > There is no restriction of metacopy in user namespace.
-> > >> > overlayfs needs to be mounted with -o userxattr and the overlay
-> > >> > xattrs needs to use user.overlay. prefix.
-> > >>
-> > >> if I specify both userxattr and metacopy=on then the mount ends up in
-> > >> the following check:
-> > >>
-> > >> if (config->userxattr) {
-> > >>         [...]
-> > >>         if (config->metacopy && metacopy_opt) {
-> > >>                 pr_err("conflicting options: userxattr,metacopy=on\n");
-> > >>                 return -EINVAL;
-> > >>         }
-> > >> }
-> > >>
-> > >
-> > > Right, my bad.
-> > >
-> > >> to me it looks like it was done on purpose to prevent metacopy from a
-> > >> user namespace, but I don't know the reason for sure.
-> > >>
-> > >
-> > > With hand crafted metacopy, an unpriv user can chmod
-> > > any files to anything by layering another file with different
-> > > mode on top of it....
-> >
-> > I might be missing something obvious about metacopy, so please correct
-> > me if I am wrong, but I don't see how it is any different than just
-> > copying the file and chowning it.  Of course, as long as overlay uses
-> > the same security model so that a file that wasn't originally possible
-> > to access must be still blocked, even if referenced through metacopy.
-> >
+On Thu, Jan 26, 2023 at 08:15:04PM -0800, Eric Biggers wrote:
+> On Thu, Jan 26, 2023 at 08:24:08PM +0000, Matthew Wilcox (Oracle) wrote:
+> >  int ext4_mpage_readpages(struct inode *inode,
+> > -		struct readahead_control *rac, struct page *page)
+> > +		struct readahead_control *rac, struct folio *folio)
+> >  {
+> >  	struct bio *bio = NULL;
+> >  	sector_t last_block_in_bio = 0;
+> > @@ -247,16 +247,15 @@ int ext4_mpage_readpages(struct inode *inode,
+> >  		int fully_mapped = 1;
+> >  		unsigned first_hole = blocks_per_page;
+> >  
+> > -		if (rac) {
+> > -			page = readahead_page(rac);
+> > -			prefetchw(&page->flags);
+> > -		}
+> > +		if (rac)
+> > +			folio = readahead_folio(rac);
+> > +		prefetchw(&folio->flags);
 > 
-> You're right.
-> The reason for mutual exclusion maybe related to the
-> comment in ovl_check_metacopy_xattr() about EACCES.
-> Need to check with Vivek or Miklos.
+> Unlike readahead_page(), readahead_folio() puts the folio immediately.  Is that
+> really safe?
+
+It's safe until we unlock the page.  The page cache holds a refcount,
+and truncation has to lock the page before it can remove it from the
+page cache.
+
+Putting the refcount in readahead_folio() is a transitional step; once
+all filesystems are converted to use readahead_folio(), I'll hoist the
+refcount put to the caller.  Having ->readahead() and ->read_folio()
+with different rules for who puts the folio is a long-standing mistake.
+
+> > @@ -299,11 +298,11 @@ int ext4_mpage_readpages(struct inode *inode,
+> >  
+> >  				if (ext4_map_blocks(NULL, inode, &map, 0) < 0) {
+> >  				set_error_page:
+> > -					SetPageError(page);
+> > -					zero_user_segment(page, 0,
+> > -							  PAGE_SIZE);
+> > -					unlock_page(page);
+> > -					goto next_page;
+> > +					folio_set_error(folio);
+> > +					folio_zero_segment(folio, 0,
+> > +							  folio_size(folio));
+> > +					folio_unlock(folio);
+> > +					continue;
 > 
-> But get this - you do not need metacopy=on to follow lower inode.
-> It should work without metacopy=on.
-> metacopy=on only instructs overlayfs whether to copy up data
-> or only metadata when changing metadata of lower object, so it is
-> not relevant for readonly mount.
+> This is 'continuing' the inner loop, not the outer loop as it should.
 
-I think you might need metacopy=on even to just follow lower inode. I
-see following in ovl_lookup().
-
-                if ((uppermetacopy || d.metacopy) && !ofs->config.metacopy) {
-                        dput(this);
-                        err = -EPERM;
-                        pr_warn_ratelimited("refusing to follow metacopy origin for (%pd2)\n", dentry); 
-                        goto out_put;
-                }
-
-W.r.t allowing metacopy=on from inside userns, I never paid much attention
-to this as I never needed it. But this might be interesting to look into
-it now if it is needed.
-
-Thanks
-Vivek
-
+Oops.  Will fix.  I didn't get any extra failures from xfstests
+with this bug, although I suspect I wasn't testing with block size <
+page size, which is probably needed to make a difference.
