@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A426F67DBB0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 02:51:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80BFC67DB7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Jan 2023 02:50:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233332AbjA0Buv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Jan 2023 20:50:51 -0500
+        id S233223AbjA0Bt7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Jan 2023 20:49:59 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233330AbjA0BuU (ORCPT
+        with ESMTP id S232871AbjA0Bts (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Jan 2023 20:50:20 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5AA7375796
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 17:49:43 -0800 (PST)
+        Thu, 26 Jan 2023 20:49:48 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C236575781
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Jan 2023 17:49:42 -0800 (PST)
 Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.53 with ESMTP; 27 Jan 2023 10:19:41 +0900
+        by 156.147.23.52 with ESMTP; 27 Jan 2023 10:19:42 +0900
 X-Original-SENDERIP: 156.147.1.151
 X-Original-MAILFROM: max.byungchul.park@gmail.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
-        by 156.147.1.151 with ESMTP; 27 Jan 2023 10:19:41 +0900
+        by 156.147.1.151 with ESMTP; 27 Jan 2023 10:19:42 +0900
 X-Original-SENDERIP: 10.177.244.38
 X-Original-MAILFROM: max.byungchul.park@gmail.com
 From:   Byungchul Park <max.byungchul.park@gmail.com>
@@ -47,55 +47,55 @@ Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
         42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
         gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
         boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com
-Subject: [PATCH v8 10/25] dept: Apply sdt_might_sleep_{start,end}() to waitqueue wait
-Date:   Fri, 27 Jan 2023 10:19:03 +0900
-Message-Id: <1674782358-25542-11-git-send-email-max.byungchul.park@gmail.com>
+Subject: [PATCH v8 11/25] dept: Apply sdt_might_sleep_{start,end}() to hashed-waitqueue wait
+Date:   Fri, 27 Jan 2023 10:19:04 +0900
+Message-Id: <1674782358-25542-12-git-send-email-max.byungchul.park@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1674782358-25542-1-git-send-email-max.byungchul.park@gmail.com>
 References: <1674782358-25542-1-git-send-email-max.byungchul.park@gmail.com>
 X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
         FORGED_GMAIL_RCVD,FREEMAIL_FROM,NML_ADSP_CUSTOM_MED,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Makes Dept able to track dependencies by waitqueue waits.
+Makes Dept able to track dependencies by hashed-waitqueue waits.
 
 Signed-off-by: Byungchul Park <max.byungchul.park@gmail.com>
 ---
- include/linux/wait.h | 3 +++
+ include/linux/wait_bit.h | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/wait.h b/include/linux/wait.h
-index a0307b5..ff349e6 100644
---- a/include/linux/wait.h
-+++ b/include/linux/wait.h
-@@ -7,6 +7,7 @@
- #include <linux/list.h>
- #include <linux/stddef.h>
- #include <linux/spinlock.h>
+diff --git a/include/linux/wait_bit.h b/include/linux/wait_bit.h
+index 7725b75..fe89282 100644
+--- a/include/linux/wait_bit.h
++++ b/include/linux/wait_bit.h
+@@ -6,6 +6,7 @@
+  * Linux wait-bit related types and methods:
+  */
+ #include <linux/wait.h>
 +#include <linux/dept_sdt.h>
  
- #include <asm/current.h>
- #include <uapi/linux/wait.h>
-@@ -303,6 +304,7 @@ static inline void wake_up_pollfree(struct wait_queue_head *wq_head)
- 	struct wait_queue_entry __wq_entry;					\
- 	long __ret = ret;	/* explicit shadow */				\
- 										\
-+	sdt_might_sleep_start(NULL);						\
- 	init_wait_entry(&__wq_entry, exclusive ? WQ_FLAG_EXCLUSIVE : 0);	\
- 	for (;;) {								\
- 		long __int = prepare_to_wait_event(&wq_head, &__wq_entry, state);\
-@@ -318,6 +320,7 @@ static inline void wake_up_pollfree(struct wait_queue_head *wq_head)
- 		cmd;								\
- 	}									\
- 	finish_wait(&wq_head, &__wq_entry);					\
-+	sdt_might_sleep_end();							\
- __out:	__ret;									\
+ struct wait_bit_key {
+ 	void			*flags;
+@@ -246,6 +247,7 @@ struct wait_bit_queue_entry {
+ 	struct wait_bit_queue_entry __wbq_entry;			\
+ 	long __ret = ret; /* explicit shadow */				\
+ 									\
++	sdt_might_sleep_start(NULL);					\
+ 	init_wait_var_entry(&__wbq_entry, var,				\
+ 			    exclusive ? WQ_FLAG_EXCLUSIVE : 0);		\
+ 	for (;;) {							\
+@@ -263,6 +265,7 @@ struct wait_bit_queue_entry {
+ 		cmd;							\
+ 	}								\
+ 	finish_wait(__wq_head, &__wbq_entry.wq_entry);			\
++	sdt_might_sleep_end();						\
+ __out:	__ret;								\
  })
  
 -- 
