@@ -2,151 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1472867F882
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Jan 2023 15:09:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D61967F9B1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Jan 2023 17:53:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234726AbjA1OJJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Jan 2023 09:09:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53668 "EHLO
+        id S234699AbjA1Qxv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Jan 2023 11:53:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231181AbjA1OJI (ORCPT
+        with ESMTP id S234675AbjA1Qxt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Jan 2023 09:09:08 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549303AB2;
-        Sat, 28 Jan 2023 06:09:07 -0800 (PST)
+        Sat, 28 Jan 2023 11:53:49 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 345FC2BEC4;
+        Sat, 28 Jan 2023 08:53:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674914947; x=1706450947;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
+  t=1674924827; x=1706460827;
+  h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=jGLKHUiTup0wR3d32S/+noCZxMpThHkENbyPsFWyI2U=;
-  b=hGwlUhaGk4Z3yhFpVFhRkF23YVgK6WYNy+8ykWxxLqPozBhYUuM/HKQh
-   TbwqLe7akLVT0AW/cfxxmRWgHDVj9khl/IYUr7YwvIf23TSDnHyl5v6nX
-   Ein1ypv9Budyw0o3npCbyegSTAdH0ExWClGYLHz+yW0p1KIkxHzOzk67d
-   5YPvRYOFW8fAsdP8zIU1OZqQYhLf7UwuQzLSeLS0f5uBJB+PxcNye42d5
-   uyjwLk5LPYF/kMbelXhV581ApRzBo/oPWYC6hN/O9RBSmLmguEO3XijVo
-   ixhL3sSUUoVuwJbXV+yLWhZSKvjNvKxEK2v/XRftXhgu2IC3V/IjgS36n
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="328579180"
+  bh=+o3QfgICgB0ULTb1/dVk5Tk167jK8QaEZNxbvJhNeQY=;
+  b=U/xYJLfOvtVqoDDuLvfNVdoaoG0YEl0UWkoWjMbt8B1Fv1oS2gvsR5L7
+   3Dx1hHajQKrQCWMltr+yA73o1nTC4XEayfwqbZuAyhKgYfIisE2UEZ/fh
+   AJsWAoOSC1bk6ieyz5pfBawP2oHWJNQnbHJBl+RmHLWV4gbIzTh9bYx7T
+   ljIlX36ahn5v2SRN047haLcZ3uRDfzITonLotuzclTcKGpUlGzmEL1zLk
+   mj8+rSmluOM/vR+tgOtqZ0PKRgB4x8MFawyR4h5INmBubzCEbheNSWbrV
+   xclqD+nBk96f3qUVko9c5jJfbKgJ/Wt/gfSaBVU0NOGnWEX+8ORPBXPA7
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="413530230"
 X-IronPort-AV: E=Sophos;i="5.97,254,1669104000"; 
-   d="scan'208";a="328579180"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2023 06:08:27 -0800
+   d="scan'208";a="413530230"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2023 08:53:46 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="663602794"
+X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="787540586"
 X-IronPort-AV: E=Sophos;i="5.97,254,1669104000"; 
-   d="scan'208";a="663602794"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.105])
-  by orsmga002.jf.intel.com with ESMTP; 28 Jan 2023 06:08:15 -0800
-Date:   Sat, 28 Jan 2023 22:00:30 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v10 9/9] KVM: Enable and expose KVM_MEM_PRIVATE
-Message-ID: <20230128140030.GB700688@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-10-chao.p.peng@linux.intel.com>
- <Y8HwvTik/2avrCOU@google.com>
+   d="scan'208";a="787540586"
+Received: from lkp-server01.sh.intel.com (HELO ffa7f14d1d0f) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 28 Jan 2023 08:53:44 -0800
+Received: from kbuild by ffa7f14d1d0f with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pLoSV-0000vX-1V;
+        Sat, 28 Jan 2023 16:53:43 +0000
+Date:   Sun, 29 Jan 2023 00:53:16 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Cc:     oe-kbuild-all@lists.linux.dev,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 03/31] ext4: Convert ext4_bio_write_page() to use a folio
+Message-ID: <202301290044.oKaK49Hs-lkp@intel.com>
+References: <20230126202415.1682629-4-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y8HwvTik/2avrCOU@google.com>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230126202415.1682629-4-willy@infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jan 14, 2023 at 12:01:01AM +0000, Sean Christopherson wrote:
-> On Fri, Dec 02, 2022, Chao Peng wrote:
-... 
-> Strongly prefer to use similar logic to existing code that detects wraps:
-> 
-> 		mem->restricted_offset + mem->memory_size < mem->restricted_offset
-> 
-> This is also where I'd like to add the "gfn is aligned to offset" check, though
-> my brain is too fried to figure that out right now.
+Hi Matthew,
 
-Used count_trailing_zeros() for this TODO, unsure we have other better
-approach.
+I love your patch! Yet something to improve:
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index afc8c26fa652..fd34c5f7cd2f 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -56,6 +56,7 @@
- #include <asm/processor.h>
- #include <asm/ioctl.h>
- #include <linux/uaccess.h>
-+#include <linux/count_zeros.h>
- 
- #include "coalesced_mmio.h"
- #include "async_pf.h"
-@@ -2087,6 +2088,19 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
- 	return false;
- }
- 
-+/*
-+ * Return true when ALIGNMENT(offset) >= ALIGNMENT(gpa).
-+ */
-+static bool kvm_check_rmem_offset_alignment(u64 offset, u64 gpa)
-+{
-+	if (!offset)
-+		return true;
-+	if (!gpa)
-+		return false;
-+
-+	return !!(count_trailing_zeros(offset) >= count_trailing_zeros(gpa));
-+}
-+
- /*
-  * Allocate some memory and give it an address in the guest physical address
-  * space.
-@@ -2128,7 +2142,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 	if (mem->flags & KVM_MEM_PRIVATE &&
- 	    (mem->restrictedmem_offset & (PAGE_SIZE - 1) ||
- 	     mem->restrictedmem_offset + mem->memory_size < mem->restrictedmem_offset ||
--	     0 /* TODO: require gfn be aligned with restricted offset */))
-+	     !kvm_check_rmem_offset_alignment(mem->restrictedmem_offset,
-+					      mem->guest_phys_addr)))
- 		return -EINVAL;
- 	if (as_id >= kvm_arch_nr_memslot_as_ids(kvm) || id >= KVM_MEM_SLOTS_NUM)
- 		return -EINVAL;
+[auto build test ERROR on next-20230127]
+[cannot apply to tytso-ext4/dev xfs-linux/for-next linus/master v6.2-rc5 v6.2-rc4 v6.2-rc3 v6.2-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/fs-Add-FGP_WRITEBEGIN/20230128-150212
+patch link:    https://lore.kernel.org/r/20230126202415.1682629-4-willy%40infradead.org
+patch subject: [PATCH 03/31] ext4: Convert ext4_bio_write_page() to use a folio
+config: loongarch-randconfig-r001-20230123 (https://download.01.org/0day-ci/archive/20230129/202301290044.oKaK49Hs-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/f6e4c5cfaf2ef7b8ee6c5354bbbd5f1ee758746f
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Matthew-Wilcox-Oracle/fs-Add-FGP_WRITEBEGIN/20230128-150212
+        git checkout f6e4c5cfaf2ef7b8ee6c5354bbbd5f1ee758746f
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=loongarch olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=loongarch SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "bio_add_folio" [fs/ext4/ext4.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
