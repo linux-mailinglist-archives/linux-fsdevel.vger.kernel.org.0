@@ -2,105 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 26E5C67FA56
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Jan 2023 20:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 765D567FC57
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jan 2023 03:29:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231566AbjA1TIx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Jan 2023 14:08:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35026 "EHLO
+        id S231226AbjA2C32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Jan 2023 21:29:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230012AbjA1TIw (ORCPT
+        with ESMTP id S229966AbjA2C30 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Jan 2023 14:08:52 -0500
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084882310A;
-        Sat, 28 Jan 2023 11:08:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674932931; x=1706468931;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CFk2RwypKPF19OyjjF+RmpNKHF1fwEMpHxULIXClvqA=;
-  b=naFQNtmkoEIw6IpwsGIxmn6ciXoH9lq7vIlcVXaQnzI0805gRuXEZRL7
-   lskEEgfPSWsgdFpGgyknKuI4ap1lwbDfmwvcFQHAzd6G8nDO7FMa8C/Pm
-   V8gYmukn7itsozI1V1IRwEQaGI2rNx89ZPKRxn57VaVnHul3Yygt3JXF9
-   SjDjR+yETVyQVI1DYb9SBbe26R+CYgw+crwmo/DbfEtaH0ceqtTdR3XND
-   fLIHPLaT6wp1OvDVELgIer9s9ZYFp4T4WDOVJ+sXwTflp390KXS17sA6j
-   tBupdF0EftxKm6YFQ1Ow+a01M4WiIsAcI8R+I3gL4qq4ExYYYlJHiO4UD
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="391879872"
-X-IronPort-AV: E=Sophos;i="5.97,254,1669104000"; 
-   d="scan'208";a="391879872"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2023 11:08:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10604"; a="656977886"
-X-IronPort-AV: E=Sophos;i="5.97,254,1669104000"; 
-   d="scan'208";a="656977886"
-Received: from lkp-server01.sh.intel.com (HELO ffa7f14d1d0f) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 28 Jan 2023 11:08:48 -0800
-Received: from kbuild by ffa7f14d1d0f with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pLqZD-00010i-1H;
-        Sat, 28 Jan 2023 19:08:47 +0000
-Date:   Sun, 29 Jan 2023 03:07:58 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 03/31] ext4: Convert ext4_bio_write_page() to use a folio
-Message-ID: <202301290216.BcfP0oGK-lkp@intel.com>
-References: <20230126202415.1682629-4-willy@infradead.org>
+        Sat, 28 Jan 2023 21:29:26 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 24346234C3;
+        Sat, 28 Jan 2023 18:29:24 -0800 (PST)
+Received: from loongson.cn (unknown [10.180.13.185])
+        by gateway (Coremail) with SMTP id _____8DxnfAC2tVjNToJAA--.19808S3;
+        Sun, 29 Jan 2023 10:29:22 +0800 (CST)
+Received: from [10.180.13.185] (unknown [10.180.13.185])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxJ7392dVj5uwjAA--.5993S3;
+        Sun, 29 Jan 2023 10:29:18 +0800 (CST)
+Subject: Re: [PATCH v3] pipe: use __pipe_{lock,unlock} instead of spinlock
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        maobibo <maobibo@loongson.cn>,
+        David Howells <dhowells@redhat.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230107012324.30698-1-zhanghongchen@loongson.cn>
+ <9fcb3f80-cb55-9a72-0e74-03ace2408d21@loongson.cn>
+ <4b140bd0-9b7f-50b5-9e3b-16d8afe52a50@loongson.cn>
+ <Y8TUqcSO5VrbYfcM@casper.infradead.org> <Y8W9TR5ifZmRADLB@ZenIV>
+ <20230116141608.a72015bdd8bbbedd5c50cc3e@linux-foundation.org>
+From:   Hongchen Zhang <zhanghongchen@loongson.cn>
+Message-ID: <90dd93c0-d0ed-50c1-9a86-dad5bb3754af@loongson.cn>
+Date:   Sun, 29 Jan 2023 10:29:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230126202415.1682629-4-willy@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230116141608.a72015bdd8bbbedd5c50cc3e@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: AQAAf8DxJ7392dVj5uwjAA--.5993S3
+X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/
+X-Coremail-Antispam: 1Uk129KBjvJXoW7KF4fKr17Ww1kurWUKrWruFg_yoW8ZFyfpF
+        y3JFsFyw4DJr10yrsrt3yIvry8t3yfGF98XFn5KrZ7CFn0qFyFkFW7KFWa9rs3urn3K3Wj
+        kw4jga4xZr1qva7anT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bq8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s
+        1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
+        wVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
+        x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAa
+        w2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44
+        I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2
+        jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62
+        AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCa
+        FVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
+        IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI
+        42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42
+        IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+        aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcbAwUUUUU
+X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
+Hi Andrew,
 
-I love your patch! Yet something to improve:
+Sorry to reply to you so late, because I took a long holiday.
 
-[auto build test ERROR on next-20230127]
-[cannot apply to tytso-ext4/dev xfs-linux/for-next linus/master v6.2-rc5 v6.2-rc4 v6.2-rc3 v6.2-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 2023/1/17 am 6:16, Andrew Morton wrote:
+> On Mon, 16 Jan 2023 21:10:37 +0000 Al Viro <viro@zeniv.linux.org.uk> wrote:
+> 
+>> On Mon, Jan 16, 2023 at 04:38:01AM +0000, Matthew Wilcox wrote:
+>>> On Mon, Jan 16, 2023 at 11:16:13AM +0800, maobibo wrote:
+>>>> Hongchen,
+>>>>
+>>>> I have a glance with this patch, it simply replaces with
+>>>> spinlock_irqsave with mutex lock. There may be performance
+>>>> improvement with two processes competing with pipe, however
+>>>> for N processes, there will be complex context switches
+>>>> and ipi interruptts.
+>>>>
+>>>> Can you find some cases with more than 2 processes competing
+>>>> pipe, rather than only unixbench?
+>>>
+>>> What real applications have pipes with more than 1 writer & 1 reader?
+>>> I'm OK with slowing down the weird cases if the common cases go faster.
+>>
+>> >From commit 0ddad21d3e99c743a3aa473121dc5561679e26bb:
+>>      While this isn't a common occurrence in the traditional "use a pipe as a
+>>      data transport" case, where you typically only have a single reader and
+>>      a single writer process, there is one common special case: using a pipe
+>>      as a source of "locking tokens" rather than for data communication.
+>>      
+>>      In particular, the GNU make jobserver code ends up using a pipe as a way
+>>      to limit parallelism, where each job consumes a token by reading a byte
+>>      from the jobserver pipe, and releases the token by writing a byte back
+>>      to the pipe.
+> 
+> The author has tested this patch with Linus's test code from 0ddad21d3e
+> and the results were OK
+> (https://lkml.kernel.org/r/c3cbede6-f19e-3333-ba0f-d3f005e5d599@loongson.cn).
+> 
+> I've been stalling on this patch until Linus gets back to his desk,
+> which now appears to have happened.
+> 
+> Hongchen, when convenient, please capture this discussion (as well as
+> the testing results with Linus's sample code) in the changelog and send
+> us a v4, with Linus on cc?
+> 
+I will send you a v4 and cc to Linus.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/fs-Add-FGP_WRITEBEGIN/20230128-150212
-patch link:    https://lore.kernel.org/r/20230126202415.1682629-4-willy%40infradead.org
-patch subject: [PATCH 03/31] ext4: Convert ext4_bio_write_page() to use a folio
-config: x86_64-randconfig-a013-20230123 (https://download.01.org/0day-ci/archive/20230129/202301290216.BcfP0oGK-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/f6e4c5cfaf2ef7b8ee6c5354bbbd5f1ee758746f
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Matthew-Wilcox-Oracle/fs-Add-FGP_WRITEBEGIN/20230128-150212
-        git checkout f6e4c5cfaf2ef7b8ee6c5354bbbd5f1ee758746f
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
+Thanks.
+Hongchen Zhang
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "bio_add_folio" [fs/ext4/ext4.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
