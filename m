@@ -2,43 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2384867FCDE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jan 2023 06:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB0067FCE0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jan 2023 06:39:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230325AbjA2FfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 29 Jan 2023 00:35:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56900 "EHLO
+        id S230123AbjA2Fjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 29 Jan 2023 00:39:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjA2FfE (ORCPT
+        with ESMTP id S229436AbjA2Fjf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 29 Jan 2023 00:35:04 -0500
+        Sun, 29 Jan 2023 00:39:35 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B188212AC;
-        Sat, 28 Jan 2023 21:35:01 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8514D20D31
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Jan 2023 21:39:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=VKxlaGMrI0cp0ye3H9Jmx6z3Rmpn9Z9p0OcUfzcS/oA=; b=nbpw9oZ9+eUaa2rK2vTNyKdREg
-        ra/ZABuEmnzsfMygFg2JjR8HqA7CsdnqE6Rut5g7a86By3qnU8k288DbSkuignY6kiHSW6O1IbwYE
-        8Om32g0UTek8t5gusVEU4fN+yY2pl21g78mWnvBf9NErom7t7zNF5iko8sZyvjxOLKJNcz/n89nQF
-        f8GGStR9xGwZ2UpmCU7tBqDHC/13vJ7B42MefmwlsHOPtFj18nERLMlNIjQ0fbxriFqIr0fYE1DaH
-        hKWFGHGOjkm5qoL+eiRiySd1iS7qBLSkQ6zAbd1CN3lB9BmEaLWlWcdG3d67/tjFSvxDhXUa9i2rf
-        SWjUalYQ==;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6WJ9Pu74OAlot46PM38EuI7lj/TpOZqZHOu/KspnF9w=; b=W1O8m0315I48Dl+JTrJxTYwjPh
+        kDwE18XwtobCnIu46KB5V8K+XdIF9blU9FLEx6Z/CUtRwuvwlK7EIjRJOp/U2RokLjuYsDUc+EK9A
+        nfimd2rr1ixP67VA1b6iq0AQem8FkZBWCRemkJh/xJKc5BSQEWXqoWpFUu3xM3FAQdv0KEL/S88ZL
+        MqGB6Ba/5/+nFYxL5X8qaGePByoHkb1zPLPLllmY27zF3BFkRZt+NhckJO0mENtUeaBXAwmmHSiRp
+        tSqPaA6bDQr5EZPGHn6FIgh7BLY5gxMbfxZ/5TRBNricgjFxZVq5zuAiYmKsc5o4/73d2F7bwg1ka
+        +bLW1/Ng==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pM0LA-0014cV-3J; Sun, 29 Jan 2023 05:34:56 +0000
-Date:   Sat, 28 Jan 2023 21:34:56 -0800
+        id 1pM0PY-0014oo-UZ; Sun, 29 Jan 2023 05:39:28 +0000
+Date:   Sat, 28 Jan 2023 21:39:28 -0800
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     lsf-pc@lists.linux-foundation.org
-Cc:     amir73il@gmail.com, a.manzanares@samsung.com,
-        chandan.babu@oracle.com, jlayton@kernel.org, josef@toxicpanda.com,
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     lsf-pc@lists.linux-foundation.org,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        "kbus >> Keith Busch" <kbusch@kernel.org>,
         Pankaj Raghav <p.raghav@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: LSF/MM/BPF BoF: pains / goods with automation with kdevops
-Message-ID: <Y9YFgDXnB9dTZIXA@bombadil.infradead.org>
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: LSF/MM/BPF 2023 IOMAP conversion status update
+Message-ID: <Y9YGkEFH5GNihJk/@bombadil.infradead.org>
+References: <20230129044645.3cb2ayyxwxvxzhah@garbanzo>
+ <Y9X+5wu8AjjPYxTC@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Y9X+5wu8AjjPYxTC@casper.infradead.org>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -50,32 +55,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-More suitable towards a BoF as I don't *think* a larger audience would be
-interested. At the last LSF during our talks about automation it was suggested
-we could share a repo and go to town as we're all adults. That's been done:
+On Sun, Jan 29, 2023 at 05:06:47AM +0000, Matthew Wilcox wrote:
+> There's maybe a
+> separate discussion to be had for "What should the API be for filesystems
+> to access metadata on the block device" because I don't believe the
+> page-cache based APIs are easy for fs authors to use.
 
-https://github.com/linux-kdevops/kdevops
+OK sure, and *why* that would be good, yes sure. Perhaps that should be
+dicussed first though as then it I think may be easier to possibly
+celebrate IOMAP.
 
-At ALPSS folks suggested maybe non-github, best we can do for now is
-gitlab:
+> Maybe some related topics are
+> "What testing should we require for some of these ancient filesystems?"
 
-https://gitlab.com/linux-kdevops/kdevops
+Oh yes....
 
-There's been quite a bit of development from folks on the To list. But
-there's also bugs even on the upstream kernel now that can sometimes erk us.
-One example is 9p is now used to be able to compile Linux on the host
-instead of the guests. Well if you edit a file after boot on the host
-for Linux, the guest won't see the update, so I guess 9p doesn't update
-the guest's copy yet. Guests just have to reboot now. So we have to fix that
-and I guess add 9p to fstests. Or now that we have NFS support thanks to
-Jeff, maybe use that as an option? What's the overhead for automation Vs 9p?
+> "Whose job is it to convert these 35 filesystems anyway, can we just
+> delete some of them?"
 
-We dicussed sharing more archive of results for fstests/blktests. Done.
-What are the other developer's pain points? What would folks like? If
-folks want demos for complex setups let me know and we can just do that
-through zoom and record them / publish online to help as documentation
-(please reply to this thread in private to me and I can set up a
-session). Let's use the time at LSF more for figuring out what is needed
-for the next year.
+> "Is there a lower-performance but easier-to-implement API than iomap
+> for old filesystems that only exist for compatibiity reasons?"
+
+Yes...
 
   Luis
