@@ -2,248 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B77D968008E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jan 2023 18:49:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72ECB6800A9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jan 2023 19:10:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234992AbjA2RtN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 29 Jan 2023 12:49:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59766 "EHLO
+        id S235111AbjA2SKm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 29 Jan 2023 13:10:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230300AbjA2RtM (ORCPT
+        with ESMTP id S229617AbjA2SKl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 29 Jan 2023 12:49:12 -0500
-X-Greylist: delayed 78 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 29 Jan 2023 09:49:08 PST
-Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01CEF1BAF2;
-        Sun, 29 Jan 2023 09:49:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1675014546;
-        bh=Y61RWFCbR13wg6BFep+WVQctLjj8vWW8mlN2SWaoMr8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=J2BguWbhEexvqnNz2dMk2SYbsqa+8kWbcoZHzLliCBz7Wa32ya81J2CDCpv05N4yy
-         ZGi3z6Oj47mYz1/BlJTDe5UIQMjid/a93VlhMKnpjzH4XeFA+eCMvLnBQkbYMpRa5Q
-         sa1bH1H6LunI7oHLobI4tzUlY4Lv5JsdAnOmgCrQ=
-Received: from wen-VirtualBox.lan ([222.182.118.145])
-        by newxmesmtplogicsvrsza2-0.qq.com (NewEsmtp) with SMTP
-        id BEC84CF4; Mon, 30 Jan 2023 01:47:44 +0800
-X-QQ-mid: xmsmtpt1675014467t06e4mn1g
-Message-ID: <tencent_D113D23D99C9FC229F0FAADCA8CF823A2609@qq.com>
-X-QQ-XMAILINFO: NMGzQWUSIfvTWGp3hc87REw5AQmiRShY3adkgN1gxutWh75RtbesjrHJxSj3m/
-         ly7leuSPrmCFWHzCLmOzBl8Xcwl0d05/AzW4qxaCl0LJ8Bf1r81PPOmEU6S7ns22qt1MdUqQf4bx
-         MMEiKwMlDpt6w3wp7+Ef8BdJQtmDUzE/Z4CxftwADe9SgvweitZjLEkIvfdtP1HzQ9CgzZvE9eID
-         P64gv6YMrT+ruHqBHOGlqEsneVPvIuiodUHHUCfS6D+YClCI0HqLSxJawMNH+OUZ1jTCQTraaXJi
-         QOe5cyqoqL7//IZ8XFGZdDUC22U7J/IDaODINFjFm9NMLaWIo39/I4Ko1zeKzkjSNYHVCmcP4due
-         EjrD5XRVCAxuO5HYo0OSRWS11ATxcaEARCbaZtXL15h+r5Hq4rtPxQLN2z43jP5odUg5zLwIVXyH
-         GqOe0NoMXRpbNsU3MzVzKxglQJN3rWf3eOyhprC+XdrZ1z0e45RqTDLbyClmf4qTUHjlwIMzFlca
-         y+1+AxuJ7sSkhVC0AfItMcW96UsJN5zL0VqwkbmWrAmzy4dIeYknZAkLREYPm3w0Shh8v5bacAxA
-         qt1tDDREXSSeQgfcIGlC2yS2+5SAuZvVxYsAhQs2RKfCC8nretTMQwXvA9t7D+KksFwcBQ1tEiaX
-         WYbwwgpAq3ofwQzqYEgcfZa5A7h5At7Ll6kQdhXjqv4QKCs851Q/ljRs+go29lDgx1xvYUQ0YBzR
-         +pQ6RLgjz6uOqJzE4qoQsXhGuGvG2TEJC7eVCac/x5lZtk6m7Z1fBZWnIKCoF0+eb8ProJC6o1kg
-         oIbPHOkC9v3ovpWWu/P9Z5tTNIvjxbvsVV3Kt/dWBw+EE53IX6kP/0E0/IOhcykS8P77MlWeAHrC
-         jeL+z4J+MamohrqW+Yrwxl2W3R3ruA3h+r5xlhJd2/Z1S4brVnFkwoU47O93/qiYmFmKZD3q5Qx6
-         IqHuZ74NY82tvDWyjI1t0++tPG8LmjM8j+DlRiHKvwkaH8vnNYXvP6bnHeUo+ROB5PuaCgzLEaU2
-         WLLlHR0A==
-From:   wenyang.linux@foxmail.com
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Wen Yang <wenyang.linux@foxmail.com>,
-        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] eventfd: support delayed wakeup for non-semaphore eventfd to reduce cpu utilization
-Date:   Mon, 30 Jan 2023 01:47:21 +0800
-X-OQ-MSGID: <20230129174721.18155-2-wenyang.linux@foxmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20230129174721.18155-1-wenyang.linux@foxmail.com>
-References: <20230129174721.18155-1-wenyang.linux@foxmail.com>
+        Sun, 29 Jan 2023 13:10:41 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 685AB1BFC;
+        Sun, 29 Jan 2023 10:10:39 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1974860DE8;
+        Sun, 29 Jan 2023 18:10:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 385F6C433EF;
+        Sun, 29 Jan 2023 18:10:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675015837;
+        bh=QoMQBtNVehDRxSiM9AqCrwTTzEdFEbMs5SmmQcd3b+c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=C87mr9bJcc9R5F+dEIFZCyE3PzkoMJNo05ZhSuxqN4HEcNDuC4YA3GlbSoWViDM5X
+         bhY7FUVCS/LiGcEU/7lKeqABlSmOjPOTdrx1z8LSXEP5mh/X/4B193oFM6dLrvrIls
+         xn3GSGDrJrPkJxV1VngbCJuN+2HwDImd7YgHkY8XtD8CkVxkqnY8i3gjbVmCykrINN
+         +OPhFrNdgwPVfwfvvaY8P+Jbmi43tQKrnQHthZoGxmX8o4XJvcme5vXDGv4q3Xkdkp
+         fhpUl/l/DlAW3hQtqxSB5CR3v8Xvwr1nv1jdgfL8ACB6NxQRSyKsfWzpML2fDWYpqd
+         wqahZHwOuEq3Q==
+Date:   Sun, 29 Jan 2023 10:10:35 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: Copy the memcg information to the ciphertext
+ page
+Message-ID: <Y9a2m8uvmXmCVYvE@sol.localdomain>
+References: <20230129121851.2248378-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        HELO_DYNAMIC_IPADDR,RCVD_IN_DNSWL_NONE,RDNS_DYNAMIC,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230129121851.2248378-1-willy@infradead.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Wen Yang <wenyang.linux@foxmail.com>
+On Sun, Jan 29, 2023 at 12:18:51PM +0000, Matthew Wilcox (Oracle) wrote:
+> Both f2fs and ext4 end up passing the ciphertext page to
+> wbc_account_cgroup_owner().  At the moment, the ciphertext page appears
+> to belong to no cgroup, so it is accounted to the root_mem_cgroup instead
+> of whatever cgroup the original page was in.
+> 
+> It's hard to say how far back this is a bug.  The crypto code shared
+> between ext4 & f2fs was created in May 2015 with commit 0b81d0779072,
+> but neither filesystem did anything with memcg_data before then.  memcg
+> writeback accounting was added to ext4 in July 2015 in commit 001e4a8775f6
+> and it wasn't added to f2fs until January 2018 (commit 578c647879f7).
+> 
+> I'm going with the ext4 commit since this is the first commit where
+> there was a difference in behaviour between encrypted and unencrypted
+> filesystems.
+> 
+> Fixes: 001e4a8775f6 ("ext4: implement cgroup writeback support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/crypto/crypto.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-For the NON SEMAPHORE eventfd, if it's counter has a nonzero value,
-then a read(2) returns 8 bytes containing that value, and the counter's
-value is reset to zero. Therefore, in the NON SEMAPHORE scenario,
-N event_writes vs ONE event_read is possible.
+What is the actual effect of this bug?
 
-However, the current implementation wakes up the read thread immediately
-in eventfd_write so that the cpu utilization increases unnecessarily.
+The bounce pages are short-lived, so surely it doesn't really matter what memory
+cgroup they get charged to?
 
-By adding a configurable delay after eventfd_write, these unnecessary
-wakeup operations are avoided, thereby reducing cpu utilization.
+I guess it's really more about the effect on cgroup writeback?  And that's also
+the reason why this is a problem here but not e.g. in dm-crypt?
 
-We used the following test code:
-https://github.com/w-simon/tests/blob/master/src/test.c
-./test_zmq  > /dev/null
+> diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+> index e78be66bbf01..a4e76f96f291 100644
+> --- a/fs/crypto/crypto.c
+> +++ b/fs/crypto/crypto.c
+> @@ -205,6 +205,9 @@ struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
+>  	}
+>  	SetPagePrivate(ciphertext_page);
+>  	set_page_private(ciphertext_page, (unsigned long)page);
+> +#ifdef CONFIG_MEMCG
+> +	ciphertext_page->memcg_data = page->memcg_data;
+> +#endif
+>  	return ciphertext_page;
+>  }
 
-The cpu usage is as follows:
-12:14:22     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:14:24     all   55.46    0.00    4.78    0.00    0.00    0.96    0.00    0.00    0.00   38.80
-12:14:26     all   56.29    0.00    4.70    0.00    0.00    1.24    0.00    0.00    0.00   37.76
-12:14:28     all   54.97    0.00    5.25    0.00    0.00    0.97    0.00    0.00    0.00   38.81
-12:14:30     all   56.02    0.00    5.26    0.00    0.00    1.24    0.00    0.00    0.00   37.48
-12:14:32     all   55.31    0.00    5.03    0.00    0.00    1.40    0.00    0.00    0.00   38.27
-12:14:34     all   55.46    0.00    5.26    0.00    0.00    1.24    0.00    0.00    0.00   38.04
+Nothing outside mm/ and include/linux/memcontrol.h does anything with memcg_data
+directly.  Are you sure this is the right thing to do here?
 
-Then adjust the new control parameter, as follows:
-echo 5 > /proc/sys/fs/eventfd_write_wake_delay_ms
+Also, this patch causes the following:
 
-The cpu usagen was observed to decrease by more than 30%, as follows:
-12:14:36     all   28.17    0.00    0.93    0.00    0.00    0.00    0.00    0.00    0.00   70.90
-12:14:38     all   24.00    0.00    0.80    0.00    0.00    0.13    0.00    0.00    0.00   75.07
-12:14:40     all   23.57    0.00    0.53    0.00    0.00    0.13    0.00    0.00    0.00   75.77
-12:14:42     all   23.59    0.00    0.40    0.00    0.00    0.00    0.00    0.00    0.00   76.01
-12:14:44     all   23.69    0.00    0.27    0.00    0.00    0.00    0.00    0.00    0.00   76.04
-12:14:46     all   23.20    0.00    0.67    0.00    0.00    0.13    0.00    0.00    0.00   76.00
-12:14:48     all   24.87    0.00    0.66    0.00    0.00    0.00    0.00    0.00    0.00   74.47
-12:14:50     all   24.27    0.00    0.66    0.00    0.00    0.00    0.00    0.00    0.00   75.07
-
-Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Dylan Yudaken <dylany@fb.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- fs/eventfd.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
-
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index c5bda3df4a28..e45436737f9d 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -41,6 +41,9 @@ struct eventfd_ctx {
- 	__u64 count;
- 	unsigned int flags;
- 	int id;
-+#ifdef CONFIG_SYSCTL
-+	struct delayed_work dwork;
-+#endif
- };
- 
- __u64 eventfd_signal_mask(struct eventfd_ctx *ctx, __u64 n, unsigned mask)
-@@ -95,6 +98,9 @@ static void eventfd_free_ctx(struct eventfd_ctx *ctx)
- {
- 	if (ctx->id >= 0)
- 		ida_simple_remove(&eventfd_ida, ctx->id);
-+#ifdef CONFIG_SYSCTL
-+	flush_delayed_work(&ctx->dwork);
-+#endif
- 	kfree(ctx);
- }
- 
-@@ -256,6 +262,28 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
- 	return sizeof(ucnt);
- }
- 
-+#ifdef CONFIG_SYSCTL
-+
-+static unsigned long sysctl_eventfd_write_wake_delay_ms;
-+
-+static void eventfd_delayed_workfn(struct work_struct *work)
-+{
-+	struct delayed_work *dwork = to_delayed_work(work);
-+	struct eventfd_ctx *ctx = container_of(dwork, struct eventfd_ctx, dwork);
-+
-+	spin_lock_irq(&ctx->wqh.lock);
-+	current->in_eventfd = 1;
-+	if (ctx->count) {
-+		/* waitqueue_active is safe because ctx->wqh.lock is being held here. */
-+		if (waitqueue_active(&ctx->wqh))
-+			wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+	}
-+	current->in_eventfd = 0;
-+	spin_unlock_irq(&ctx->wqh.lock);
-+}
-+
-+#endif
-+
- static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t count,
- 			     loff_t *ppos)
- {
-@@ -282,8 +310,26 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
- 	if (likely(res > 0)) {
- 		ctx->count += ucnt;
- 		current->in_eventfd = 1;
--		if (waitqueue_active(&ctx->wqh))
-+
-+		/* waitqueue_active is safe because ctx->wqh.lock is being held here. */
-+		if (waitqueue_active(&ctx->wqh)) {
-+#ifdef CONFIG_SYSCTL
-+			if (ctx->flags & EFD_SEMAPHORE)
-+				wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+			else {
-+				unsigned long delay = sysctl_eventfd_write_wake_delay_ms;
-+
-+				if (delay) {
-+					if (!delayed_work_pending(&ctx->dwork))
-+						queue_delayed_work(system_unbound_wq,
-+								&ctx->dwork, delay);
-+				} else
-+					wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+			}
-+#else
- 			wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+#endif
-+		}
- 		current->in_eventfd = 0;
- 	}
- 	spin_unlock_irq(&ctx->wqh.lock);
-@@ -406,6 +452,9 @@ static int do_eventfd(unsigned int count, int flags)
- 	ctx->count = count;
- 	ctx->flags = flags;
- 	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
-+#ifdef CONFIG_SYSCTL
-+	INIT_DELAYED_WORK(&ctx->dwork, eventfd_delayed_workfn);
-+#endif
- 
- 	flags &= EFD_SHARED_FCNTL_FLAGS;
- 	flags |= O_RDWR;
-@@ -438,3 +487,31 @@ SYSCALL_DEFINE1(eventfd, unsigned int, count)
- 	return do_eventfd(count, 0);
- }
- 
-+#ifdef CONFIG_SYSCTL
-+
-+static unsigned long min_wake_delay;
-+
-+static unsigned long max_wake_delay = HZ / 10;
-+
-+static struct ctl_table fs_eventfd_ctl[] = {
-+	{
-+		.procname      = "eventfd_write_wake_delay_ms",
-+		.data          = &sysctl_eventfd_write_wake_delay_ms,
-+		.maxlen        = sizeof(unsigned long),
-+		.mode          = 0644,
-+		.proc_handler  = proc_doulongvec_ms_jiffies_minmax,
-+		.extra1        = (void *)&min_wake_delay,
-+		.extra2        = (void *)&max_wake_delay,
-+	},
-+	{ }
-+};
-+
-+static int __init init_fs_exec_sysctls(void)
-+{
-+	register_sysctl_init("fs", fs_eventfd_ctl);
-+	return 0;
-+}
-+
-+fs_initcall(init_fs_exec_sysctls);
-+
-+#endif /* CONFIG_SYSCTL */
--- 
-2.37.2
-
+[   16.192276] BUG: Bad page state in process kworker/u4:2  pfn:10798a
+[   16.192919] page:00000000332f5565 refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10798a
+[   16.193848] memcg:ffff88810766c000
+[   16.194186] flags: 0x200000000000000(node=0|zone=2)
+[   16.194642] raw: 0200000000000000 0000000000000000 dead000000000122 0000000000000000
+[   16.195356] raw: 0000000000000000 0000000000000000 00000000ffffffff ffff88810766c000
+[   16.196061] page dumped because: page still charged to cgroup
+[   16.196599] CPU: 0 PID: 33 Comm: kworker/u4:2 Tainted: G                T  6.2.0-rc5-00001-gf84eecbf5db1 #3
+[   16.197494] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS Arch Linux 1.16.1-1-1 04/01/2014
+[   16.198343] Workqueue: ext4-rsv-conversion ext4_end_io_rsv_work
+[   16.198899] Call Trace:
+[   16.199143]  <TASK>
+[   16.199350]  show_stack+0x47/0x56
+[   16.199670]  dump_stack_lvl+0x55/0x72
+[   16.200019]  dump_stack+0x14/0x18
+[   16.200345]  bad_page.cold+0x5e/0x8a
+[   16.200685]  free_page_is_bad_report+0x61/0x70
+[   16.201111]  free_pcp_prepare+0x13f/0x290
+[   16.201486]  free_unref_page+0x27/0x1f0
+[   16.201848]  __free_pages+0xa0/0xc0
+[   16.202186]  mempool_free_pages+0xd/0x20
+[   16.202556]  mempool_free+0x28/0x90
+[   16.202889]  fscrypt_free_bounce_page+0x26/0x40
+[   16.203322]  ext4_finish_bio+0x1ed/0x240
+[   16.203690]  ext4_release_io_end+0x4a/0x100
+[   16.204088]  ext4_end_io_rsv_work+0xa8/0x1b0
+[   16.204492]  process_one_work+0x27f/0x580
+[   16.204874]  worker_thread+0x5a/0x3d0
+[   16.205229]  ? process_one_work+0x580/0x580
+[   16.205621]  kthread+0x102/0x130
+[   16.205929]  ? kthread_exit+0x30/0x30
+[   16.206280]  ret_from_fork+0x1f/0x30
+[   16.206620]  </TASK>
