@@ -2,47 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5770867FED9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jan 2023 13:19:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB5F867FFB1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Jan 2023 15:59:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231446AbjA2MTF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 29 Jan 2023 07:19:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34212 "EHLO
+        id S234891AbjA2O7g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 29 Jan 2023 09:59:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjA2MTE (ORCPT
+        with ESMTP id S234960AbjA2O71 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 29 Jan 2023 07:19:04 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDE2B19F04;
-        Sun, 29 Jan 2023 04:18:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=HThgw7sl6uJJTesezO0n2kqBMrE2goYpe6c6Ta3USks=; b=EefxzS7qsdrMJ33t6t/RxOs1cF
-        FV582ZbD9kbJF1oWPtMVHZZ7x8wivZHz9NBnafc9EQr/0K2vJQU+Z0x7LqcsLDBKk+e5XE+FULm5m
-        ysdDb9I5zBGFpLdZHmgIt+D1JbL8vXQ0/lI3Tmd9NiWQBASUfqnjCFIWJWcvte7Q1yxLxVnbgjD3C
-        hT9MxPZMQLKwITnYkbVY2WgKQpbC0tP1yhBCGCK2cTygOA/QbYOvtLUxyRApWKYorNRdIKmxUUiJe
-        epIgGDbsjR/AiXpV3k+fDCKBFtiSlyugH1dyoHv4LUIeXcSMxiWoQEEh8gcw1SD/cLJRSC0C8yszK
-        p5EULVgg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pM6e5-009QuN-2U; Sun, 29 Jan 2023 12:18:53 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, stable@vger.kernel.org
-Subject: [PATCH] fscrypt: Copy the memcg information to the ciphertext page
-Date:   Sun, 29 Jan 2023 12:18:51 +0000
-Message-Id: <20230129121851.2248378-1-willy@infradead.org>
-X-Mailer: git-send-email 2.37.1
+        Sun, 29 Jan 2023 09:59:27 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D8C1E9C1;
+        Sun, 29 Jan 2023 06:59:05 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A7595B80AFB;
+        Sun, 29 Jan 2023 14:59:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49EBEC433D2;
+        Sun, 29 Jan 2023 14:58:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675004340;
+        bh=7PnkG6cXSgqkthc5IsQqkSUlfwU6Hep2/uLd/k+YrJ8=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=CR2y4HApF/O2D62eJ80aW1ipeS58H8YqfTtaiFxfiB3J/ty3LbhDBqRHuTFnIZvFC
+         T2EkTcm8YS9pALut5rGfOURB4RASDqMRRrvN3iPj/np1jNv49lBA1tuTaaRjf1KsOw
+         ajiz6UTOhERpY8HDcS+7sTnGcOrZaSLzUFU5U7t17j3JPGdmpMWTnI+e5LzB4BsYfp
+         cHQDXugUL3SlTfz6QGDLpYVfD094VBwrajhLQ8IwdNCIglVvBrjnjjTbckWRCaMy5L
+         92jrJ+knnzF5j9bc2p5yWzr57weNhl18vfefUpkoiL7oQHVEK8mOFCm9YTZ1nW5eLR
+         YWOTUD7/iPq1Q==
+Message-ID: <a746c612-7cb0-6085-9250-9ddfde8713df@kernel.org>
+Date:   Sun, 29 Jan 2023 22:58:55 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Content-Language: en-US
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     adobriyan@gmail.com, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230112032720.1855235-1-chao@kernel.org>
+ <20230112144323.2fa71c10876c0f5e0b5321a4@linux-foundation.org>
+From:   Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH] proc: remove mark_inode_dirty() in proc_notify_change()
+In-Reply-To: <20230112144323.2fa71c10876c0f5e0b5321a4@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -50,42 +58,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Both f2fs and ext4 end up passing the ciphertext page to
-wbc_account_cgroup_owner().  At the moment, the ciphertext page appears
-to belong to no cgroup, so it is accounted to the root_mem_cgroup instead
-of whatever cgroup the original page was in.
+Hi Andrew,
 
-It's hard to say how far back this is a bug.  The crypto code shared
-between ext4 & f2fs was created in May 2015 with commit 0b81d0779072,
-but neither filesystem did anything with memcg_data before then.  memcg
-writeback accounting was added to ext4 in July 2015 in commit 001e4a8775f6
-and it wasn't added to f2fs until January 2018 (commit 578c647879f7).
+Sorry for the long delay. :(
 
-I'm going with the ext4 commit since this is the first commit where
-there was a difference in behaviour between encrypted and unencrypted
-filesystems.
+On 2023/1/13 6:43, Andrew Morton wrote:
+> On Thu, 12 Jan 2023 11:27:20 +0800 Chao Yu <chao@kernel.org> wrote:
+> 
+>> proc_notify_change() has updated i_uid, i_gid and i_mode into proc
+>> dirent, we don't need to call mark_inode_dirty() for later writeback,
+>> remove it.
+>>
+>> --- a/fs/proc/generic.c
+>> +++ b/fs/proc/generic.c
+>> @@ -127,7 +127,6 @@ static int proc_notify_change(struct user_namespace *mnt_userns,
+>>   		return error;
+>>   
+>>   	setattr_copy(&init_user_ns, inode, iattr);
+>> -	mark_inode_dirty(inode);
+>>   
+>>   	proc_set_user(de, inode->i_uid, inode->i_gid);
+>>   	de->mode = inode->i_mode;
+> 
+> procfs call mark_inode_dirty() in three places.
 
-Fixes: 001e4a8775f6 ("ext4: implement cgroup writeback support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/crypto/crypto.c | 3 +++
- 1 file changed, 3 insertions(+)
+Correct.
 
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index e78be66bbf01..a4e76f96f291 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -205,6 +205,9 @@ struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
- 	}
- 	SetPagePrivate(ciphertext_page);
- 	set_page_private(ciphertext_page, (unsigned long)page);
-+#ifdef CONFIG_MEMCG
-+	ciphertext_page->memcg_data = page->memcg_data;
-+#endif
- 	return ciphertext_page;
- }
- EXPORT_SYMBOL(fscrypt_encrypt_pagecache_blocks);
--- 
-2.35.1
+> 
+> Does mark_inode_dirty() of a procfs file actually serve any purpose?
 
+I don't see any particular reason that procfs inode needs to be set dirty,
+as an in-memory filesystem, there is no backing device, so all attributes
+should have been updated into procfs dirent directly in .setattr().
+
+In fact, also procfs doesn't implement .dirty_inode, .write_inode or
+.writepage{,s} interfaces which serves delayed inode update, pages writeback
+after inode is set as dirty.
+
+Thanks,
