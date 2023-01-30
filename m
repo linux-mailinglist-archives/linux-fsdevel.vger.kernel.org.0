@@ -2,82 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B92B068172C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 18:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF4A681746
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 18:09:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236545AbjA3RDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Jan 2023 12:03:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59206 "EHLO
+        id S237386AbjA3RJb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Jan 2023 12:09:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230073AbjA3RD3 (ORCPT
+        with ESMTP id S229578AbjA3RJa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Jan 2023 12:03:29 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A727A5D2;
-        Mon, 30 Jan 2023 09:03:28 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CAE36611E6;
-        Mon, 30 Jan 2023 17:03:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A355C433D2;
-        Mon, 30 Jan 2023 17:03:26 +0000 (UTC)
-Date:   Mon, 30 Jan 2023 12:03:24 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Stefan Roesch <shr@devkernel.io>
-Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [RESEND RFC PATCH v1 07/20] mm: add tracepoints to ksm
-Message-ID: <20230130120324.24928c7a@gandalf.local.home>
-In-Reply-To: <20230123173748.1734238-8-shr@devkernel.io>
-References: <20230123173748.1734238-1-shr@devkernel.io>
-        <20230123173748.1734238-8-shr@devkernel.io>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Mon, 30 Jan 2023 12:09:30 -0500
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9B03FF2B;
+        Mon, 30 Jan 2023 09:09:29 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id be8so12290652plb.7;
+        Mon, 30 Jan 2023 09:09:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VcAkkG+7EQ87q1yuQfzrNQ/CVfL1BPFACyrSB5AzC9E=;
+        b=w+5Cau5Utuz+gsMlY/4IbiIdWNbKBkgQ4TrPVBcGE+SToUp0g/A05HkGbJ0FTYbWrP
+         7HMVfgUXpIW+u5zTse9SWNWDyRgonY9hrNypvej9fDylpcs9wAb9JVkG2HsklLrXdaj9
+         cl6J0eDzdmsWCJVz8RhP2TnkRWKmyRxEbZAOwrxGy/5HNpnGlLmc4IMKZg+C9KjWiF2r
+         mJ3HvAjE/Gp/1Ltkk0W7/TNlWDF36YVeMBsfa2cl6snKDRnPCJax248GlvbcFB6ygEOG
+         QZ98lgO/W1rfYmFeagoSmehxPYnKYZ2X+/DSnxrijZv46tR1n3VPe5fmZpnO6snY7Jng
+         fthg==
+X-Gm-Message-State: AFqh2kpwH6xITHx+G85I2f/DjV4Sj43aFIVFcyohQIef5YtYDf32z/pi
+        KoR4et2qMeAMRJlHNdQXWa4=
+X-Google-Smtp-Source: AMrXdXsoThEeXwb5X9zNdrMM/dBzAwAKgsQUh4DVjXEWAVyR5f6ZoR++CGV0u6k+ufH+Ks5WBdnq6g==
+X-Received: by 2002:a17:902:f646:b0:194:46e0:1b61 with SMTP id m6-20020a170902f64600b0019446e01b61mr52496709plg.63.1675098568615;
+        Mon, 30 Jan 2023 09:09:28 -0800 (PST)
+Received: from ?IPV6:2620:15c:211:201:5016:3bcd:59fe:334b? ([2620:15c:211:201:5016:3bcd:59fe:334b])
+        by smtp.gmail.com with ESMTPSA id y16-20020a170902b49000b0019602263feesm8042186plr.90.2023.01.30.09.09.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Jan 2023 09:09:27 -0800 (PST)
+Message-ID: <2bab7050-dec7-3af8-b643-31b414b8c4b4@acm.org>
+Date:   Mon, 30 Jan 2023 09:09:23 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 01/23] block: factor out a bvec_set_page helper
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Xiubo Li <xiubli@redhat.com>, Steve French <sfrench@samba.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        devel@lists.orangefs.org, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20230130092157.1759539-1-hch@lst.de>
+ <20230130092157.1759539-2-hch@lst.de>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20230130092157.1759539-2-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,
-        SUSPICIOUS_RECIPS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 23 Jan 2023 09:37:35 -0800
-Stefan Roesch <shr@devkernel.io> wrote:
+On 1/30/23 01:21, Christoph Hellwig wrote:
+> Add a helper to initialize a bvec based of a page pointer.  This will help
+> removing various open code bvec initializations.
 
-> This adds the following tracepoints to ksm:
-> - start / stop scan
-> - ksm enter / exit
-> - merge a page
-> - merge a page with ksm
-> - remove a page
-> - remove a rmap item
-> 
-> Signed-off-by: Stefan Roesch <shr@devkernel.io>
-> ---
->  MAINTAINERS                |   1 +
->  include/trace/events/ksm.h | 257 +++++++++++++++++++++++++++++++++++++
->  mm/ksm.c                   |  20 ++-
->  3 files changed, 276 insertions(+), 2 deletions(-)
->  create mode 100644 include/trace/events/ksm.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 123216b76534..990a28bdc263 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13482,6 +13482,7 @@ F:	include/linux/memory_hotplug.h
->  F:	include/linux/mm.h
->  F:	include/linux/mmzone.h
->  F:	include/linux/pagewalk.h
-> +F:	include/trace/events/ksm.h
->  F:	mm/
->  F:	tools/testing/selftests/vm/
->  
+Why do you want to remove the open-coded bvec initializations? What is 
+wrong with open-coding bvec initialization? This patch series modifies a 
+lot of code but does not improve code readability. Anyone who encounters 
+code that uses the new function bvec_set_page() has to look up the 
+definition of that function to figure out what it does.
 
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> -	iv = bip->bip_vec + bip->bip_vcnt;
+> -
+>   	if (bip->bip_vcnt &&
+>   	    bvec_gap_to_prev(&bdev_get_queue(bio->bi_bdev)->limits,
+>   			     &bip->bip_vec[bip->bip_vcnt - 1], offset))
+>   		return 0;
+>   
+> -	iv->bv_page = page;
+> -	iv->bv_len = len;
+> -	iv->bv_offset = offset;
+> +	bvec_set_page(&bip->bip_vec[bip->bip_vcnt], page, len, offset);
+>   	bip->bip_vcnt++;
 
--- Steve
+Has it been considered to use structure assignment instead of 
+introducing bvec_set_page(), e.g. as follows?
+
+bip->bip_vec[bip->bip_vcnt] = (struct bio_vec) {
+       .bv_page = page, .bv_len = len, .bv_offset = offset };
+
+Thanks,
+
+Bart.
