@@ -2,106 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F3D9681DDF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 23:15:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F1D681E00
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 23:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231425AbjA3WPr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Jan 2023 17:15:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59398 "EHLO
+        id S230071AbjA3WZG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Jan 2023 17:25:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230098AbjA3WPq (ORCPT
+        with ESMTP id S229476AbjA3WZF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Jan 2023 17:15:46 -0500
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19F128D21
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Jan 2023 14:15:44 -0800 (PST)
-Received: by mail-io1-xd35.google.com with SMTP id e2so2305472iot.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Jan 2023 14:15:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UpRPgXbzyPldfryxFZ4ysKITNhIghKFBROqanj/f/Sk=;
-        b=Rimt7EyQJHAERbMyCMmnlRKfnzUd6ivIuLZcpvfDAKKf1XtrAzyKZgGyH4SsI1VCFl
-         y71zP0cpkkZADufU3KMqa/2ZG7kemElm2dlXFsHsQwBCYQdp9/LMEKIABfWkxUUL24fs
-         nOyHaogacUTLL2qE3KxiNjWzUgstTBfVOGGxj1ot6sSbvHczG4x2gEc06S02JBVFQqw/
-         Zk3AjJ6WbeoqERAzuBWIbsxeQKQs2RwDjQsb6pWpRLl6lHoMSOdPV/+Xz+yX9n9BFKuA
-         +q6AWSjEehghz28No7wOXPpAhkJQIqEVkeiyYYwlAzeLcE2jfwoVSl+BSXAQkNUkoEnX
-         jnmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UpRPgXbzyPldfryxFZ4ysKITNhIghKFBROqanj/f/Sk=;
-        b=aaBHK4AOAL9D943wSBBhR0eQ+kgs5q8pHvetQz7jdDgocjcic9e8TGbwa2mqrt1KWz
-         Jm+WVcHt+fi55/H8kHwhkLzBeXPEs/qFRN/UyPMbcwQZ1KfaZOBI18w9BGtuRUGMnhcL
-         KU6CvGmcn2eIT09R4+/KBLXB4Awd1cgbfWRw5EgqLgcbypAr76mwaMIm9Ki6TkRchpo8
-         toryX1CDixwg7Pp5Lymj78JJ+qPikaDf3IOQGbRZFhARa6h75LmtKUlj73HyZuqHKUjd
-         WevvbgQIvfm+h3IfSLINjFQyzsVtpUqAxrlxAjXYJ5bvybULzBDwkEV0ppA+orIPePJM
-         yvzA==
-X-Gm-Message-State: AO0yUKUK0QJlfDRK93XCCACgpBofJmxUitshz4//V6xk7VfHYD8RIHnM
-        ixGNfgAS6lx2sKaaP/GrmHx11g==
-X-Google-Smtp-Source: AK7set/tqTtKUOkSBhdUWbUnjfzdSsFonAnOVZ3meWLdw53puoZxOKpLq8oYEyvusW9O1BKkg3hUeQ==
-X-Received: by 2002:a5d:9d11:0:b0:718:2fa2:6648 with SMTP id j17-20020a5d9d11000000b007182fa26648mr1422084ioj.2.1675116944142;
-        Mon, 30 Jan 2023 14:15:44 -0800 (PST)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id q22-20020a5d8516000000b0071db3975335sm1082375ion.12.2023.01.30.14.15.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jan 2023 14:15:43 -0800 (PST)
-Message-ID: <f392399b-a4c4-2251-e12b-e89fff351c4d@kernel.dk>
-Date:   Mon, 30 Jan 2023 15:15:42 -0700
+        Mon, 30 Jan 2023 17:25:05 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C277310E3;
+        Mon, 30 Jan 2023 14:25:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=twT5S8u7PW7laIo0LdGU22R/Gr574Yog/UWagHcbgj8=; b=Sei3X+9jhML/yRX6ih1bP9rLzs
+        cldpRi5uk2ROKMT3acOWUN/OCtE7wzGQr5jUB46m3yBSaIPg1s8h3IHhrK0mqEIn4edms40xpIReV
+        3VtC9U//oSbxckotjgqOg0QPc+e4hUS022QfsP7wg71Z2vUy8Mu0w70oJ49gXRFkiIbvPMbbHgAtZ
+        GFfdOJnBkff33ubGgaLln7C+alsEaNVOvR0NMs2uKzNJ/k+VuAQKzkano/Pzp4Uj/tDF28Em3X9UZ
+        PcGllHEAwzn/UiHXmSPnyDoEXdYVWDY+40RpC8kBb0J8x3s8td3eeGM10SgYtpEca5ZLmJSc63nAR
+        L4N5ZnVg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pMcaB-00AkCS-Kd; Mon, 30 Jan 2023 22:24:59 +0000
+Date:   Mon, 30 Jan 2023 22:24:59 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [RFCv2 2/3] iomap: Change uptodate variable name to state
+Message-ID: <Y9hDu8hVBa3qJTNw@casper.infradead.org>
+References: <cover.1675093524.git.ritesh.list@gmail.com>
+ <bf30b7bfb03ef368e6e744b3c63af3dbfa11304d.1675093524.git.ritesh.list@gmail.com>
+ <20230130215623.GP360264@dread.disaster.area>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [GIT PULL] iov_iter: Improve page extraction (pin or just list)
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <e68c5cab-c3a6-1872-98fa-9f909f23be79@nvidia.com>
- <3351099.1675077249@warthog.procyon.org.uk>
- <fd0003a0-a133-3daf-891c-ba7deafad768@kernel.dk>
- <f57ee72f-38e9-6afa-182f-2794638eadcb@kernel.dk>
- <e8480b18-08af-d101-a721-50d213893492@kernel.dk>
- <3520518.1675116740@warthog.procyon.org.uk>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <3520518.1675116740@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230130215623.GP360264@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/30/23 3:12 PM, David Howells wrote:
-> John Hubbard <jhubbard@nvidia.com> wrote:
+On Tue, Jan 31, 2023 at 08:56:23AM +1100, Dave Chinner wrote:
+> > +	spinlock_t		state_lock;
+> > +	unsigned long		state[];
 > 
->> This is something that we say when adding pin_user_pages_fast(),
->> yes. I doubt that I can quickly find the email thread, but we
->> measured it and weren't immediately able to come up with a way
->> to make it faster.
+> I don't realy like this change, nor the followup in the next patch
+> that puts two different state bits somewhere inside a single bitmap.
+
+I think that's due to the open-coding of accesses to those bits.
+Which was why I questioned the wisdom of sending out this patchset
+without having introduced the accessors.
+
+> This is the reason I don't like it - we lose the self-documenting
+> aspect of the code. bitmap_fill(iop->uptodate, nr_blocks) is
+> obviously correct, the new version isn't because "state" has no
+> obvious meaning, and it only gets worse in the next patch where
+> state is changed to have a magic "2 * nr_blocks" length and multiple
+> state bits per block.
+
+Completely agreed.
+
+> Having an obvious setup where there are two bitmaps, one for dirty
+> and one for uptodate, and the same bit in each bitmap corresponds to
+> the state for that sub-block region, it is easy to see that the code
+> is operating on the correct bit, to look at the bitmap and see what
+> bits are set, to compare uptodate and dirty bitmaps side by side,
+> etc. It's a much easier setup to read, code correctly, analyse and
+> debug than putting multiple state bits in the same bitmap array at
+> different indexes.
 > 
-> percpu counters maybe - add them up at the point of viewing?
+> If you are trying to keep this down to a single allocation by using
+> a single bitmap of undefined length, then change the declaration and
+> the structure size calculation away from using array notation and
+> instead just use pointers to the individual bitmap regions within
+> the allocated region.
 
-They are percpu, see my last email. But for every 108 changes (on
-my system), they will do two atomic_long_adds(). So not very
-useful for anything but low frequency modifications.
+Hard to stomach that solution when the bitmap is usually 2 bytes long
+(in Ritesh's case).  Let's see a version of this patchset with
+accessors before rendering judgement.
 
--- 
-Jens Axboe
-
-
+Although to my mind, we still want a solution that scales beyond
+a bitmap.  But a proper set of accessors will abstract that away.
