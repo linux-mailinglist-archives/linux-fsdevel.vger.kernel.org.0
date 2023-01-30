@@ -2,136 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 06488681A7C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 20:28:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F861681B48
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 21:22:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238165AbjA3T2q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Jan 2023 14:28:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55954 "EHLO
+        id S229482AbjA3UWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Jan 2023 15:22:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238133AbjA3T2c (ORCPT
+        with ESMTP id S229437AbjA3UWA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Jan 2023 14:28:32 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF262798D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Jan 2023 11:28:10 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id f7so4813207edw.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Jan 2023 11:28:10 -0800 (PST)
+        Mon, 30 Jan 2023 15:22:00 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE89470AF;
+        Mon, 30 Jan 2023 12:21:55 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id cq16-20020a17090af99000b0022c9791ac39so4357221pjb.4;
+        Mon, 30 Jan 2023 12:21:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=eitmlabs-org.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pde1HtL0jbaSii0M64UiQFU/qnbGbv9/KpkjEUAcgCs=;
-        b=TWVNEU/0hAjW3MpjjnPz0cWL/yot4kqsCxV/7jfjoHxjkEOtTBUeb2P/yoA66RqRIa
-         SAmHwnIZaHuvl9SOPBm3mOdaeVwtrFifxKu6m5kSL/ElyJo5UcJOrhEhlRpIz3phkLpi
-         ixOd/FAnQe9kWf1puy9uSBXk4lTbWjG1IOX/+TL8JmYuYsmsWDR2pJ1du2f8pdw2n9Hz
-         0Ve1I0rr+DaICglug0SuufzQ3VTcDQc74xhodhtm4bKROyuG8Lf4XienJMU14TR2LcLW
-         uT6TIDHidO9VGv7DnWWfIEl1K8aVpoKL/zFREXx0YhBytGpyBRvzSI1c0ikePVJxSFke
-         aQNw==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=29JgEGmO6OyNOmpiy/QTe4G1jO/yNhMzxTaKRpOdeIU=;
+        b=F3DjW7fEdT4AYcTtsZ8N3SNJTvGAoGFNQxJfMFdGkB8Ii5bEw6qmZXisPWrY5clMHO
+         xN1QH7pUQ1aH32XNOW1rDLSDfN2J9W3Hnx1mlQxPCiJJtT+/PTSuTffaxucqJA3xI2Ij
+         4k7x2dUqRwl9a6rJu1K6RrEo8y7mrnAgHLuxAAOC0uxDPuoimdsXx79AadpljUlCtUnE
+         G9wtdNiCFi2CBX/MmBBrs6pXG9W84IGNO9uOFWZaQel/ecCZqpeFcSW8JRjtcxOXaz++
+         u+q0Plq6VLeVjBFYDN+8RafLt+6XVQguGJzpJaulSF4sutTo9O87e+neq6wu9iXIkzKb
+         puig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Pde1HtL0jbaSii0M64UiQFU/qnbGbv9/KpkjEUAcgCs=;
-        b=vy+5z+u0nfBqojBSmLxzlV/NwOeRNBYd1IPJMSRn7mmLXKPNsqDnSgt12i1U4NPud2
-         kcVPItd/utoGBaGBxs6DzhoMbhJRMOpHv9lPj/uGwBGxFkJ8MCI0maOE+z/HcNukdekY
-         ltJP0AHkamTVUCYh9UT3ZnaHE48L4jCNiJQWIgrEI91In8XLHtkY+4GzmpWDziKmFCWO
-         O411o91stYJAHvItZOx5gaGmNsU+RayFCusLZA3LVtmS8N6pYtHEgyTa5qkrxe7cZGtv
-         kqXHlXdwTVi82L1iEC1Sqop4lR2q2PhhuMnYPUPWm/V6y3QlybC+/RfD3XWDhr8ZDGGI
-         PBSQ==
-X-Gm-Message-State: AO0yUKWduxlLzznI6hSLWTajt3WGjIhDh+PgQeKpSCQlrs04JiCnZHHd
-        VVxoFzoDjXgtpBXVtbzHHhKrrS6BUB2GuXizcaU7+w==
-X-Google-Smtp-Source: AK7set+Cbyu/gjwSId0z57qj4f7ODqmywQnBSUV4JGQR6P/djfb+lISYHaaBj+8ytqXxSzZC0HNu79mPM8DJ8vII9aw=
-X-Received: by 2002:a05:6402:2807:b0:4a0:e275:6844 with SMTP id
- h7-20020a056402280700b004a0e2756844mr4935501ede.74.1675106889050; Mon, 30 Jan
- 2023 11:28:09 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=29JgEGmO6OyNOmpiy/QTe4G1jO/yNhMzxTaKRpOdeIU=;
+        b=TFHAyL3kh6y0opWlHpZVWPbQ1WD8NYoJhfH9SY0Hare7i+MggJTAESMjV93ehWlsxq
+         WzQO9tns0e7EkfGlI6MkALBsZU0/c2a+IIQrR8OIp0Dj1tvppb110GiaFc5VYxHMBzJ+
+         MoSwDmCYWZii6hRpulE05tKjNgVWVNkOWDJeHnv3RojV3jhaH8JOA1J2WPLpNSZm5Ix3
+         MrWKeGVMQToVCe7mQ11//V9BuhzncY7tU3SyrGwrdQTIvmVH0D73kPNO1wB7sjJzyvLg
+         3/u8Otrlc/qchO3wV6JI05AbYeFiz9kqcF5uTXde4uFJhs9xvqyrfSSmYEvdNoIuBdkk
+         kWug==
+X-Gm-Message-State: AO0yUKVDGlXascbA62lVhc3BWYzaHMUyNwOkf8mHN1qLOVAXesqfjE/1
+        iUm6J9zq92h4MOx31DcnjJ2hxozP5DA=
+X-Google-Smtp-Source: AK7set8sB2HDWU7OjRDAQmT99Z/HW8p8+MN5aB2kQpZKrRyrTvNil9TA4XgZ7QZlWNmb8SWv2yLljw==
+X-Received: by 2002:a17:90b:3805:b0:22c:4e1:93e with SMTP id mq5-20020a17090b380500b0022c04e1093emr23632477pjb.15.1675110114591;
+        Mon, 30 Jan 2023 12:21:54 -0800 (PST)
+Received: from localhost ([2406:7400:63:1fd8:5041:db86:706c:f96b])
+        by smtp.gmail.com with ESMTPSA id m10-20020a17090a414a00b002270155254csm7410914pjg.24.2023.01.30.12.21.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jan 2023 12:21:54 -0800 (PST)
+Date:   Tue, 31 Jan 2023 01:51:50 +0530
+From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [RFCv2 1/3] iomap: Move creation of iomap_page early in
+ __iomap_write_begin
+Message-ID: <20230130202150.pfohy5yg6dtu64ce@rh-tp>
+References: <cover.1675093524.git.ritesh.list@gmail.com>
+ <d879704250b5f890a755873aefe3171cbd193ae9.1675093524.git.ritesh.list@gmail.com>
+ <Y9f4MFzpFEi73E6P@infradead.org>
 MIME-Version: 1.0
-References: <4B9D76D5-C794-4A49-A76F-3D4C10385EE0@kohlschutter.com>
- <CAJfpegs1Kta-HcikDGFt4=fa_LDttCeRmffKhUjWLr=DxzXg-A@mail.gmail.com>
- <83A29F9C-1A91-4753-953A-0C98E8A9832C@kohlschutter.com> <CAJfpegv5W0CycWCc2-kcn4=UVqk1hP7KrvBpzXHwW-Nmkjx8zA@mail.gmail.com>
- <FFA26FD1-60EF-457E-B914-E1978CCC7B57@kohlschutter.com> <CAJfpeguDAJpLMABsomBFQ=w6Li0=sBW0bFyALv4EJrAmR2BkpQ@mail.gmail.com>
- <A31096BA-C128-4D0B-B27D-C34560844ED0@kohlschutter.com> <CAJfpegvBSCQwkCv=5LJDx1LRCN_ztTh9VMvrTbCyt0zf7W2trw@mail.gmail.com>
- <CAHk-=wjg+xyBwMpQwLx_QWPY7Qf8gUOVek8rXdQccukDyVmE+w@mail.gmail.com>
- <EE5E5841-3561-4530-8813-95C16A36D94A@kohlschutter.com> <CAHk-=wh5V8tQScw9Bgc8OiD0r5XmfVSCPp2OHPEf0p5T3obuZg@mail.gmail.com>
- <CAJfpeguXB9mAk=jwWQmk3rivYnaWoLrju_hq-LwtYyNXG4JOeg@mail.gmail.com>
- <CAHk-=wg+bpP5cvcaBhnmJKzTmAtgx12UhR4qzFXXb52atn9gDw@mail.gmail.com>
- <56E6CAAE-FF25-4898-8F9D-048164582E7B@kohlschutter.com> <490c5026-27bd-1126-65dd-2ec975aae94c@eitmlabs.org>
- <CAJfpegt7CMMapxD0W41n2SdwiBn8+B08vsov-iOpD=eQEiPN1w@mail.gmail.com>
-In-Reply-To: <CAJfpegt7CMMapxD0W41n2SdwiBn8+B08vsov-iOpD=eQEiPN1w@mail.gmail.com>
-Reply-To: jonathan@eitm.org
-From:   Jonathan Katz <jkatz@eitmlabs.org>
-Date:   Mon, 30 Jan 2023 11:27:53 -0800
-Message-ID: <CALKgVmeaPJj4e9sYP7g+v4hZ7XaHKAm6BUNz14gvaBd=sFCs9Q@mail.gmail.com>
-Subject: Re: [PATCH] [REGRESSION] ovl: Handle ENOSYS when fileattr support is
- missing in lower/upper fs
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     =?UTF-8?Q?Christian_Kohlsch=C3=BCtter?= 
-        <christian@kohlschutter.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y9f4MFzpFEi73E6P@infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 5:26 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Wed, 18 Jan 2023 at 04:41, Jonathan Katz <jkatz@eitmlabs.org> wrote:
->
-> > I believe that I am still having issues occur within Ubuntu 22.10 with
-> > the 5.19 version of the kernel that might be associated with this
-> > discussion.  I apologize up front for any faux pas I make in writing
-> > this email.
->
-> No need to apologize.   The fix in question went into v6.0 of the
-> upstream kernel.  So apparently it's still missing from the distro you
-> are using.
-
-Thank you for the reply! ---  I have upgraded the Kernel and it still
-seems to be throwing errors.  Details follow:
-
-Distro: Ubuntu 22.10.
-Upgraded kernel using mainline (mainline --install-latest)
-
-# uname -a
-Linux instance-20220314-1510-fileserver-for-overlay
-6.1.8-060108-generic #202301240742 SMP PREEMPT_DYNAMIC Tue Jan 24
-08:13:53 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
-
-On mount I still get the following notice in syslog (representative):
-Jan 30 19:11:46 instance-20220314-1510-fileserver-for-overlay kernel:
-[   71.613334] overlayfs: null uuid detected in lower fs '/', falling
-back to xino=off,index=off,nfs_export=off.
-
-And on access (via samba) I still see the following errors in the
-syslog (representative):
-Jan 30 19:19:34 instance-20220314-1510-fileserver-for-overlay kernel:
-[  539.181858] overlayfs: failed to retrieve lower fileattr (8020
-MeOHH2O RecoverySample2-20221219-A-JJL-WebinarHilic10C-TOF-TT54-Neg-1722.d/Storage.mcf_idx,
-err=-38)
-
-And on the Windows client, the software still fails with the same symptomology.
-
-
-
-
->
-> > An example error from our syslog:
+On 23/01/30 09:02AM, Christoph Hellwig wrote:
+> On Mon, Jan 30, 2023 at 09:44:11PM +0530, Ritesh Harjani (IBM) wrote:
+> > The problem is that commit[1] moved iop creation later i.e. after checking for
+> > whether the folio is uptodate. And if the folio is uptodate, it simply
+> > returns and doesn't allocate a iop.
+> > Now what can happen is that during __iomap_write_begin() for bs < ps,
+> > there can be a folio which is marked uptodate but does not have a iomap_page
+> > structure allocated.
+> > (I think one of the reason it can happen is due to memory pressure, we
+> > can end up freeing folio->private resource).
 > >
-> > kernel: [2702258.538549] overlayfs: failed to retrieve lower fileattr
-> > (8020 MeOHH2O
-> > RecoverySample2-20221219-A-JJL-WebinarHilic10C-TOF-TT54-Neg-1722.d/analysis.tsf,
-> > err=-38)
+> > Thus the iop structure will only gets allocated at the time of writeback
+> > in iomap_writepage_map(). This I think, was a not problem till now since
+> > we anyway only track uptodate status in iop (no support of tracking
+> > dirty bitmap status which later patches will add), and we also end up
+> > setting all the bits in iomap_page_create(), if the page is uptodate.
 >
-> Yep, looks like the same bug.
->
-> Thanks,
-> Miklos
+> delayed iop allocation is a feature and not a bug.  We might have to
+> refine the criteria for sub-page dirty tracking, but in general having
+> the iop allocates is a memory and performance overhead and should be
+> avoided as much as possible.  In fact I still have some unfinished
+> work to allocate it even more lazily.
+
+So, what I meant here was that the commit[1] chaged the behavior/functionality
+without indenting to. I agree it's not a bug.
+But when I added dirty bitmap tracking support, I couldn't understand for
+sometime on why were we allocating iop only at the time of writeback.
+And it was due to a small line change which somehow slipped into this commit [1].
+Hence I made this as a seperate patch so that it doesn't slip through again w/o
+getting noticed/review.
+
+Thanks for the info on the lazy allocation work. Yes, though it is not a bug, but
+with subpage dirty tracking in iop->state[], if we end up allocating iop only
+at the time of writeback, than that might cause some performance degradation
+compared to, if we allocat iop at ->write_begin() and mark the required dirty
+bit ranges in ->write_end(). Like how we do in this patch series.
+(Ofcourse it is true only for bs < ps use case).
+
+[1]: https://lore.kernel.org/all/20220623175157.1715274-5-shr@fb.com/
+
+
+Thanks again for your quick review!!
+-ritesh
+
