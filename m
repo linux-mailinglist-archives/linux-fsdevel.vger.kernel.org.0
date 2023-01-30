@@ -2,58 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DD656816A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 17:42:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20A816816AC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 17:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237688AbjA3Qma (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Jan 2023 11:42:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42602 "EHLO
+        id S237696AbjA3Qmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Jan 2023 11:42:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237658AbjA3QmY (ORCPT
+        with ESMTP id S237666AbjA3Qm0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Jan 2023 11:42:24 -0500
+        Mon, 30 Jan 2023 11:42:26 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E27E43923;
-        Mon, 30 Jan 2023 08:42:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E829A3E62E;
+        Mon, 30 Jan 2023 08:42:24 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C9C0DB8133B;
-        Mon, 30 Jan 2023 16:42:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227A8C4339E;
-        Mon, 30 Jan 2023 16:42:17 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9800BB81366;
+        Mon, 30 Jan 2023 16:42:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E68F9C4339C;
+        Mon, 30 Jan 2023 16:42:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675096940;
-        bh=3oYsMfsLaMT9L7fO1a3yPbUe+RnsnrcQU6RS6U9J8NE=;
+        s=k20201202; t=1675096942;
+        bh=i0YI8OSddVGPlJSubxQWDiYL1rKWSm2PPvG0VMIn/dk=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=H0HADz2c6yR26hBhNtgSqHd41wMy6VNzONgYZHOzFkT6yVigBfKC1hlB52IWrEM7l
-         UjNLqMeBJpHvQmuNhXj44nyV3vbtesGVtTC6i5x/CfhiosIQeIs3l7CirmiUMZNaZL
-         O19urYv6u2b4uhah3oY0ggMbv9gWThedzEszk4GZ5xXkDaraZOrsUvV/9DetSBap4C
-         TQnX/xT3QhkWU56gKzZ/iB7uhXBdPz4UJwAxu43c2nUcl5oPICaqgvbPYszPVcJs1G
-         JdzRuQXAjecza5jVrx0A3gZg4pO5ZH+fWMAnXk5ZDOWsk9cp4yjS8SyLW9yGRtcXtc
-         X6x+s9mOU1MyQ==
+        b=QUe5t5BQRRCG8AgCUBf1B4XbCTSHbNKb5IoDlb4oLMTL9FQIjjjpHL6PTgANIg0Op
+         Bhw+k71YNfN2fIGUb0A9QlJpeZdRNQmF8TvQO5cJP7TuMg7EJuisGS6TE5zCKqpdFD
+         /ODkNAMFSvNdnIuH5lIDJylswPswB4EZPwvb19e/O5J0xBL4mitUyHpL2D2GAsw3Ha
+         5xc8hwO7S93FL8LNFPsAnryIdrstwhNB91J/RUFhJf6/zFcy+sIQGjrdW43WerqgAt
+         VghgvSi0gSeGb1hrnFbjQ/oJACYGMtP2FshIEu+kprRNa4MVK017zB7+Z4qyAQN2ko
+         IA0768FNsUa4Q==
 From:   Christian Brauner <brauner@kernel.org>
-Date:   Mon, 30 Jan 2023 17:42:02 +0100
-Subject: [PATCH v2 6/8] fs: simplify ->listxattr() implementation
+Date:   Mon, 30 Jan 2023 17:42:03 +0100
+Subject: [PATCH v2 7/8] reiserfs: rework ->listxattr() implementation
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230125-fs-acl-remove-generic-xattr-handlers-v2-6-214cfb88bb56@kernel.org>
+Message-Id: <20230125-fs-acl-remove-generic-xattr-handlers-v2-7-214cfb88bb56@kernel.org>
 References: <20230125-fs-acl-remove-generic-xattr-handlers-v2-0-214cfb88bb56@kernel.org>
 In-Reply-To: <20230125-fs-acl-remove-generic-xattr-handlers-v2-0-214cfb88bb56@kernel.org>
 To:     linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Seth Forshee <sforshee@kernel.org>,
         "Christian Brauner (Microsoft)" <brauner@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-mtd@lists.infradead.org
+        reiserfs-devel@vger.kernel.org
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9018; i=brauner@kernel.org;
- h=from:subject:message-id; bh=3oYsMfsLaMT9L7fO1a3yPbUe+RnsnrcQU6RS6U9J8NE=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSRf/xznbGKh80Yv31vvrZLuxc8vlm36Vb76ufWdhbnMdZfu
- /64S6ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI6i6G/xl3AqbVZTX7+OwW+ym45m
- Q/x9Qft6UuzT+427lP+mbwrm8M//0WHFv0vL1PcEPH9neLirlaTZduNEqP0Gv53ZO2YPfzDVwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4480; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=i0YI8OSddVGPlJSubxQWDiYL1rKWSm2PPvG0VMIn/dk=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSRf/xx3ffGx7KImzVilSxN3vNFIF5ra8YHj8O877X8yw3pW
+ LWqz6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIxz1Gho07dXuf+6tvfutf/ub+c2
+ bZmX5c3rtnRN+LUHnzRaz0ziRGhmZet42VbuwSBY28G54ZM7/d+UFXxGz7gQuvNmqXnm7fywUA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -65,272 +63,145 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The ext{2,4}, erofs, f2fs, and jffs2 filesystems use the same logic to
-check whether a given xattr can be listed. Simplify them and avoid
-open-coding the same check by calling the helper we introduced earlier.
+Rework reiserfs so it doesn't have to rely on the dummy xattr handlers
+in its s_xattr list anymore as this is completely unused for setting and
+getting posix acls. Only leave them around for the sake of ->listxattr().
 
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-erofs@lists.ozlabs.org
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-mtd@lists.infradead.org
+This is somewhat clumsy but reiserfs is marked deprecated and will be
+removed in the future anway so I don't feel too bad about it.
+
+Cc: reiserfs-devel@vger.kernel.org
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 Changes in v2:
-- Christoph Hellwig <hch@lst.de>:
-  - Rework this patch completey by keeping the legacy generic POSIX ACL
-    handlers around so that array-based handler indexing still works.
-    This means way less churn for filesystems.
+- Rework patch to account for reiserfs quirks.
 ---
- fs/erofs/xattr.c |  8 ++------
- fs/erofs/xattr.h | 14 +++++++++++---
- fs/ext2/xattr.c  | 17 ++++++++++-------
- fs/ext4/xattr.c  | 17 ++++++++++-------
- fs/f2fs/xattr.c  | 16 ++++++++++------
- fs/jffs2/xattr.c | 21 ++++++++++++---------
- 6 files changed, 55 insertions(+), 38 deletions(-)
+ fs/reiserfs/reiserfs.h |  2 +-
+ fs/reiserfs/xattr.c    | 70 +++++++++++++++++++++++++++-----------------------
+ 2 files changed, 39 insertions(+), 33 deletions(-)
 
-diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
-index 2c98a15a92ed..4b73be57c9f4 100644
---- a/fs/erofs/xattr.c
-+++ b/fs/erofs/xattr.c
-@@ -492,13 +492,9 @@ static int xattr_entrylist(struct xattr_iter *_it,
- 	unsigned int prefix_len;
- 	const char *prefix;
- 
--	const struct xattr_handler *h =
--		erofs_xattr_handler(entry->e_name_index);
--
--	if (!h || (h->list && !h->list(it->dentry)))
-+	prefix = erofs_xattr_prefix(entry->e_name_index, it->dentry);
-+	if (!prefix)
- 		return 1;
--
--	prefix = xattr_prefix(h);
- 	prefix_len = strlen(prefix);
- 
- 	if (!it->buffer) {
-diff --git a/fs/erofs/xattr.h b/fs/erofs/xattr.h
-index 0a43c9ee9f8f..08658e414c33 100644
---- a/fs/erofs/xattr.h
-+++ b/fs/erofs/xattr.h
-@@ -41,8 +41,11 @@ extern const struct xattr_handler erofs_xattr_user_handler;
- extern const struct xattr_handler erofs_xattr_trusted_handler;
- extern const struct xattr_handler erofs_xattr_security_handler;
- 
--static inline const struct xattr_handler *erofs_xattr_handler(unsigned int idx)
-+static inline const char *erofs_xattr_prefix(unsigned int idx,
-+					     struct dentry *dentry)
- {
-+	const struct xattr_handler *handler = NULL;
-+
- 	static const struct xattr_handler *xattr_handler_map[] = {
- 		[EROFS_XATTR_INDEX_USER] = &erofs_xattr_user_handler,
- #ifdef CONFIG_EROFS_FS_POSIX_ACL
-@@ -57,8 +60,13 @@ static inline const struct xattr_handler *erofs_xattr_handler(unsigned int idx)
- #endif
- 	};
- 
--	return idx && idx < ARRAY_SIZE(xattr_handler_map) ?
--		xattr_handler_map[idx] : NULL;
-+	if (idx && idx < ARRAY_SIZE(xattr_handler_map))
-+		handler = xattr_handler_map[idx];
-+
-+	if (!xattr_handler_can_list(handler, dentry))
-+		return NULL;
-+
-+	return xattr_prefix(handler);
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 3aa928ec527a..14726fd353c4 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -1166,7 +1166,7 @@ static inline int bmap_would_wrap(unsigned bmap_nr)
+ 	return bmap_nr > ((1LL << 16) - 1);
  }
  
- extern const struct xattr_handler *erofs_xattr_handlers[];
-diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
-index 262951ffe8d0..958976f809f5 100644
---- a/fs/ext2/xattr.c
-+++ b/fs/ext2/xattr.c
-@@ -121,14 +121,18 @@ const struct xattr_handler *ext2_xattr_handlers[] = {
+-extern const struct xattr_handler *reiserfs_xattr_handlers[];
++extern const struct xattr_handler **reiserfs_xattr_handlers;
  
- #define EA_BLOCK_CACHE(inode)	(EXT2_SB(inode->i_sb)->s_ea_block_cache)
+ /*
+  * this says about version of key of all items (but stat data) the
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index 2c326b57d4bc..66574fcbe7a9 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -52,6 +52,7 @@
+ #include <linux/quotaops.h>
+ #include <linux/security.h>
+ #include <linux/posix_acl_xattr.h>
++#include <linux/xattr.h>
  
+ #define PRIVROOT_NAME ".reiserfs_priv"
+ #define XAROOT_NAME   "xattrs"
+@@ -770,23 +771,49 @@ reiserfs_xattr_get(struct inode *inode, const char *name, void *buffer,
+ 			(handler) != NULL;			\
+ 			(handler) = *(handlers)++)
+ 
++static const struct xattr_handler *reiserfs_xattr_handlers_max[] = {
++#ifdef CONFIG_REISERFS_FS_POSIX_ACL
++	&posix_acl_access_xattr_handler,
++	&posix_acl_default_xattr_handler,
++#endif
++#ifdef CONFIG_REISERFS_FS_XATTR
++	&reiserfs_xattr_user_handler,
++	&reiserfs_xattr_trusted_handler,
++#endif
++#ifdef CONFIG_REISERFS_FS_SECURITY
++	&reiserfs_xattr_security_handler,
++#endif
++	NULL
++};
++
++/* Actual operations that are exported to VFS-land */
++#ifdef CONFIG_REISERFS_FS_POSIX_ACL
++const struct xattr_handler **reiserfs_xattr_handlers =
++	reiserfs_xattr_handlers_max + 2;
++#else
++const struct xattr_handler **reiserfs_xattr_handlers =
++	reiserfs_xattr_handlers_max;
++#endif
++
+ /* This is the implementation for the xattr plugin infrastructure */
 -static inline const struct xattr_handler *
--ext2_xattr_handler(int name_index)
-+static inline const char *ext2_xattr_prefix(int name_index,
-+					    struct dentry *dentry)
+-find_xattr_handler_prefix(const struct xattr_handler **handlers,
+-			   const char *name)
++static inline bool reiserfs_xattr_list(const char *name, struct dentry *dentry)
  {
- 	const struct xattr_handler *handler = NULL;
+-	const struct xattr_handler *xah;
+-
+-	if (!handlers)
+-		return NULL;
++	const struct xattr_handler *xah = NULL;
++	const struct xattr_handler **handlers = reiserfs_xattr_handlers_max;
  
- 	if (name_index > 0 && name_index < ARRAY_SIZE(ext2_xattr_handler_map))
- 		handler = ext2_xattr_handler_map[name_index];
--	return handler;
+ 	for_each_xattr_handler(handlers, xah) {
+ 		const char *prefix = xattr_prefix(xah);
+-		if (strncmp(prefix, name, strlen(prefix)) == 0)
+-			break;
 +
-+	if (!xattr_handler_can_list(handler, dentry))
-+		return NULL;
++		if (strncmp(prefix, name, strlen(prefix)))
++			continue;
 +
-+	return xattr_prefix(handler);
- }
- 
- static bool
-@@ -329,11 +333,10 @@ ext2_xattr_list(struct dentry *dentry, char *buffer, size_t buffer_size)
- 	/* list the attribute names */
- 	for (entry = FIRST_ENTRY(bh); !IS_LAST_ENTRY(entry);
- 	     entry = EXT2_XATTR_NEXT(entry)) {
--		const struct xattr_handler *handler =
--			ext2_xattr_handler(entry->e_name_index);
-+		const char *prefix;
- 
--		if (handler && (!handler->list || handler->list(dentry))) {
--			const char *prefix = handler->prefix ?: handler->name;
-+		prefix = ext2_xattr_prefix(entry->e_name_index, dentry);
-+		if (prefix) {
- 			size_t prefix_len = strlen(prefix);
- 			size_t size = prefix_len + entry->e_name_len + 1;
- 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index ba7f2557adb8..3fbeeb00fd78 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -169,14 +169,18 @@ static void ext4_xattr_block_csum_set(struct inode *inode,
- 						bh->b_blocknr, BHDR(bh));
- }
- 
--static inline const struct xattr_handler *
--ext4_xattr_handler(int name_index)
-+static inline const char *ext4_xattr_prefix(int name_index,
-+					    struct dentry *dentry)
- {
- 	const struct xattr_handler *handler = NULL;
- 
- 	if (name_index > 0 && name_index < ARRAY_SIZE(ext4_xattr_handler_map))
- 		handler = ext4_xattr_handler_map[name_index];
--	return handler;
++		if (!xattr_handler_can_list(xah, dentry))
++			return false;
 +
-+	if (!xattr_handler_can_list(handler, dentry))
-+		return NULL;
-+
-+	return xattr_prefix(handler);
- }
- 
- static int
-@@ -691,11 +695,10 @@ ext4_xattr_list_entries(struct dentry *dentry, struct ext4_xattr_entry *entry,
- 	size_t rest = buffer_size;
- 
- 	for (; !IS_LAST_ENTRY(entry); entry = EXT4_XATTR_NEXT(entry)) {
--		const struct xattr_handler *handler =
--			ext4_xattr_handler(entry->e_name_index);
-+		const char *prefix;
- 
--		if (handler && (!handler->list || handler->list(dentry))) {
--			const char *prefix = handler->prefix ?: handler->name;
-+		prefix = ext4_xattr_prefix(entry->e_name_index, dentry);
-+		if (prefix) {
- 			size_t prefix_len = strlen(prefix);
- 			size_t size = prefix_len + entry->e_name_len + 1;
- 
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index ccb564e328af..9de984645253 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -212,13 +212,18 @@ const struct xattr_handler *f2fs_xattr_handlers[] = {
- 	NULL,
- };
- 
--static inline const struct xattr_handler *f2fs_xattr_handler(int index)
-+static inline const char *f2fs_xattr_prefix(int index,
-+					    struct dentry *dentry)
- {
- 	const struct xattr_handler *handler = NULL;
- 
- 	if (index > 0 && index < ARRAY_SIZE(f2fs_xattr_handler_map))
- 		handler = f2fs_xattr_handler_map[index];
--	return handler;
-+
-+	if (!xattr_handler_can_list(handler, dentry))
-+		return NULL;
-+
-+	return xattr_prefix(handler);
- }
- 
- static struct f2fs_xattr_entry *__find_xattr(void *base_addr,
-@@ -569,12 +574,12 @@ ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
- 	last_base_addr = (void *)base_addr + XATTR_SIZE(inode);
- 
- 	list_for_each_xattr(entry, base_addr) {
--		const struct xattr_handler *handler =
--			f2fs_xattr_handler(entry->e_name_index);
- 		const char *prefix;
- 		size_t prefix_len;
- 		size_t size;
- 
-+		prefix = f2fs_xattr_prefix(entry->e_name_index, dentry);
-+
- 		if ((void *)(entry) + sizeof(__u32) > last_base_addr ||
- 			(void *)XATTR_NEXT_ENTRY(entry) > last_base_addr) {
- 			f2fs_err(F2FS_I_SB(inode), "inode (%lu) has corrupted xattr",
-@@ -586,10 +591,9 @@ ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
- 			goto cleanup;
- 		}
- 
--		if (!handler || (handler->list && !handler->list(dentry)))
-+		if (!prefix)
- 			continue;
- 
--		prefix = xattr_prefix(handler);
- 		prefix_len = strlen(prefix);
- 		size = prefix_len + entry->e_name_len + 1;
- 		if (buffer) {
-diff --git a/fs/jffs2/xattr.c b/fs/jffs2/xattr.c
-index 0eaec4a0f3b1..1189a70d2007 100644
---- a/fs/jffs2/xattr.c
-+++ b/fs/jffs2/xattr.c
-@@ -924,8 +924,9 @@ const struct xattr_handler *jffs2_xattr_handlers[] = {
- 	NULL
- };
- 
--static const struct xattr_handler *xprefix_to_handler(int xprefix) {
--	const struct xattr_handler *ret;
-+static const char *jffs2_xattr_prefix(int xprefix, struct dentry *dentry)
-+{
-+	const struct xattr_handler *ret = NULL;
- 
- 	switch (xprefix) {
- 	case JFFS2_XPREFIX_USER:
-@@ -948,10 +949,13 @@ static const struct xattr_handler *xprefix_to_handler(int xprefix) {
- 		ret = &jffs2_trusted_xattr_handler;
- 		break;
- 	default:
--		ret = NULL;
--		break;
-+		return NULL;
++		return true;
  	}
--	return ret;
-+
-+	if (!xattr_handler_can_list(ret, dentry))
-+		return NULL;
-+
-+	return xattr_prefix(ret);
+ 
+-	return xah;
++	return false;
  }
  
- ssize_t jffs2_listxattr(struct dentry *dentry, char *buffer, size_t size)
-@@ -962,7 +966,6 @@ ssize_t jffs2_listxattr(struct dentry *dentry, char *buffer, size_t size)
- 	struct jffs2_inode_cache *ic = f->inocache;
- 	struct jffs2_xattr_ref *ref, **pref;
- 	struct jffs2_xattr_datum *xd;
--	const struct xattr_handler *xhandle;
- 	const char *prefix;
- 	ssize_t prefix_len, len, rc;
- 	int retry = 0;
-@@ -994,10 +997,10 @@ ssize_t jffs2_listxattr(struct dentry *dentry, char *buffer, size_t size)
- 					goto out;
- 			}
- 		}
--		xhandle = xprefix_to_handler(xd->xprefix);
--		if (!xhandle || (xhandle->list && !xhandle->list(dentry)))
-+
-+		prefix = jffs2_xattr_prefix(xd->xprefix, dentry);
-+		if (!prefix)
- 			continue;
--		prefix = xhandle->prefix ?: xhandle->name;
- 		prefix_len = strlen(prefix);
- 		rc = prefix_len + xd->name_len + 1;
+ struct listxattr_buf {
+@@ -807,12 +834,7 @@ static bool listxattr_filler(struct dir_context *ctx, const char *name,
  
+ 	if (name[0] != '.' ||
+ 	    (namelen != 1 && (name[1] != '.' || namelen != 2))) {
+-		const struct xattr_handler *handler;
+-
+-		handler = find_xattr_handler_prefix(b->dentry->d_sb->s_xattr,
+-						    name);
+-		if (!handler /* Unsupported xattr name */ ||
+-		    (handler->list && !handler->list(b->dentry)))
++		if (!reiserfs_xattr_list(name, b->dentry))
+ 			return true;
+ 		size = namelen + 1;
+ 		if (b->buf) {
+@@ -902,22 +924,6 @@ void reiserfs_xattr_unregister_handlers(void) {}
+ static int create_privroot(struct dentry *dentry) { return 0; }
+ #endif
+ 
+-/* Actual operations that are exported to VFS-land */
+-const struct xattr_handler *reiserfs_xattr_handlers[] = {
+-#ifdef CONFIG_REISERFS_FS_XATTR
+-	&reiserfs_xattr_user_handler,
+-	&reiserfs_xattr_trusted_handler,
+-#endif
+-#ifdef CONFIG_REISERFS_FS_SECURITY
+-	&reiserfs_xattr_security_handler,
+-#endif
+-#ifdef CONFIG_REISERFS_FS_POSIX_ACL
+-	&posix_acl_access_xattr_handler,
+-	&posix_acl_default_xattr_handler,
+-#endif
+-	NULL
+-};
+-
+ static int xattr_mount_check(struct super_block *s)
+ {
+ 	/*
 
 -- 
 2.34.1
