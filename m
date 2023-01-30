@@ -2,66 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D90BB68084F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 10:16:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09808680878
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 10:23:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236167AbjA3JQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Jan 2023 04:16:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51582 "EHLO
+        id S235665AbjA3JXf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Jan 2023 04:23:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235394AbjA3JQT (ORCPT
+        with ESMTP id S234878AbjA3JXc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Jan 2023 04:16:19 -0500
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 271B91ABD4;
-        Mon, 30 Jan 2023 01:16:19 -0800 (PST)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 524FF68BEB; Mon, 30 Jan 2023 10:16:15 +0100 (CET)
-Date:   Mon, 30 Jan 2023 10:16:15 +0100
+        Mon, 30 Jan 2023 04:23:32 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D701024A;
+        Mon, 30 Jan 2023 01:23:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=lCuBrdiApHtnAzdlL9jd8/orKVtuLY/i0Sero01PH48=; b=gUt9fXuq6v7ElJkjGIu4Bt2k6I
+        aie9JrU1FF7iS8hNoPZplHZMIg/mjCy9+CuXAh/U/DNgLjS6V1ufgxJp2NQMex5tHZQGfnrKiKRKo
+        caqpxM1HRuxRxX61XnnyxOSlZ2/Jq47eap8gN/lH6+L4ZPbDi3w4YLBF5OHjyJWW13xcFRDWCqAUZ
+        NKpMf5yhHzm/uS9x384Srna47NYmLZm+gDq7sZpO/NDG+BHvojVyEMNCK01EInd7TUHZ7+Fo+Bd26
+        ywRu7rwlcWBFPjfGdWJeRjwhamdKyIPJEjKoaPO4rYQ0QXObm0HMjgFoMXTg096Bm2LCYjvYSlGAx
+        FW6FwsxA==;
+Received: from [2001:4bb8:19a:272a:732e:e417:47d7:2f4a] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pMQMS-002nyI-W6; Mon, 30 Jan 2023 09:22:01 +0000
 From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <sforshee@kernel.org>,
-        linux-erofs@lists.ozlabs.org, Jan Kara <jack@suse.com>,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org
-Subject: Re: [PATCH 00/12] acl: remove remaining posix acl handlers
-Message-ID: <20230130091615.GB5178@lst.de>
-References: <20230125-fs-acl-remove-generic-xattr-handlers-v1-0-6cf155b492b6@kernel.org> <20230130091052.72zglqecqvom7hin@wittgenstein>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Xiubo Li <xiubli@redhat.com>, Steve French <sfrench@samba.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        devel@lists.orangefs.org, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: add bvec initialization helpers
+Date:   Mon, 30 Jan 2023 10:21:34 +0100
+Message-Id: <20230130092157.1759539-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230130091052.72zglqecqvom7hin@wittgenstein>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,T_SPF_TEMPERROR autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 30, 2023 at 10:10:52AM +0100, Christian Brauner wrote:
-> However, a few filesystems still rely on the ->list() method of the
-> generix POSIX ACL xattr handlers in their ->listxattr() inode operation.
-> This is a very limited set of filesystems. For most of them there is no
-> dependence on the generic POSIX ACL xattr handler in any way.
-> 
-> In addition, during inode initalization in inode_init_always() the
-> registered xattr handlers in sb->s_xattr are used to raise IOP_XATTR in
-> inode->i_opflags.
-> 
-> With the incoming removal of the legacy POSIX ACL handlers it is at
-> least possible for a filesystem to only implement POSIX ACLs but no
-> other xattrs. If that were to happen we would miss to raise IOP_XATTR
-> because sb->s_xattr would be NULL. While there currently is no such
-> filesystem we should still make sure that this just works should it ever
-> happen in the future.
+Hi all,
 
-Now the real questions is: do we care?  Once Posix ACLs use an
-entirely separate path, nothing should rely on IOP_XATTR for them.
-So instead I think we're better off auditing all users of IOP_XATTR
-and making sure that nothing relies on them for ACLs, as we've very
-much split the VFS concept of ACLs from that from xattrs otherwise.
+this series adds the helpers to initalize a bvec.  These remove open coding of
+bvec internals and help with experimenting with other representations like
+a phys_addr_t instead of page + offset.
+
+Diffstat:
+ block/bio-integrity.c             |    7 ------
+ block/bio.c                       |   12 +----------
+ drivers/block/rbd.c               |    7 ++----
+ drivers/block/virtio_blk.c        |    4 ---
+ drivers/block/zram/zram_drv.c     |   15 +++-----------
+ drivers/nvme/host/core.c          |    4 ---
+ drivers/nvme/target/io-cmd-file.c |   10 +--------
+ drivers/nvme/target/tcp.c         |    5 +---
+ drivers/scsi/sd.c                 |   36 ++++++++++++++++------------------
+ drivers/target/target_core_file.c |   18 +++++------------
+ drivers/vhost/vringh.c            |    5 +---
+ fs/afs/write.c                    |    8 ++-----
+ fs/ceph/file.c                    |   10 ++++-----
+ fs/cifs/connect.c                 |    5 ++--
+ fs/cifs/fscache.c                 |   16 +++++----------
+ fs/cifs/misc.c                    |    5 +---
+ fs/cifs/smb2ops.c                 |    6 ++---
+ fs/coredump.c                     |    7 +-----
+ fs/nfs/fscache.c                  |   16 +++++----------
+ fs/orangefs/inode.c               |   22 ++++++--------------
+ fs/splice.c                       |    5 +---
+ include/linux/bvec.h              |   40 ++++++++++++++++++++++++++++++++++++++
+ io_uring/rsrc.c                   |    4 ---
+ mm/page_io.c                      |    8 +------
+ net/ceph/messenger_v1.c           |    7 +-----
+ net/ceph/messenger_v2.c           |   28 ++++++++++----------------
+ net/rxrpc/rxperf.c                |    8 ++-----
+ net/sunrpc/svcsock.c              |    7 +-----
+ net/sunrpc/xdr.c                  |    5 +---
+ 29 files changed, 143 insertions(+), 187 deletions(-)
