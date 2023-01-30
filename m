@@ -2,73 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6317681727
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 18:03:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B92B068172C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 18:03:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237408AbjA3RDB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Jan 2023 12:03:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58226 "EHLO
+        id S236545AbjA3RDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Jan 2023 12:03:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237345AbjA3RC4 (ORCPT
+        with ESMTP id S230073AbjA3RD3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Jan 2023 12:02:56 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 267CB41B44;
-        Mon, 30 Jan 2023 09:02:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3D2LBhk0ee9VZ1vyd7o7msc10l9KOBjiq+HvWGjHznc=; b=BNn+ghufS26HSDtYA/tcWPDLRS
-        fQ46Kg0vIQbNb5UXgQLVdq5o7/UdmtkF+Qqi2WjwKiOVGAze2QPc9sKwaVohoz+QQxmhhgAeQBPW2
-        OIZ4HgYX2QnuLnsT+dZBw26g//LYYAfUw4VGJbT9kaw18jGehil7dMFAa0/fNw/U/tBRbrK/tAAXn
-        HwPz0xJ4pNudiuRUqm+/FUbWEmBIXyM+FJ/gNz77BiVeiv5nazhwCUtUc6gbuVIxSZ0q7Te8MNsrE
-        8tpxyrRo+dC2WVrlzPpcqGZTdfMddocagic84lds2QMFEA7p2acBQPDGvt0sekIbEtJqCWeJBaICY
-        YGQfXnyA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pMXYG-004MJL-C8; Mon, 30 Jan 2023 17:02:40 +0000
-Date:   Mon, 30 Jan 2023 09:02:40 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Aravinda Herle <araherle@in.ibm.com>
-Subject: Re: [RFCv2 1/3] iomap: Move creation of iomap_page early in
- __iomap_write_begin
-Message-ID: <Y9f4MFzpFEi73E6P@infradead.org>
-References: <cover.1675093524.git.ritesh.list@gmail.com>
- <d879704250b5f890a755873aefe3171cbd193ae9.1675093524.git.ritesh.list@gmail.com>
+        Mon, 30 Jan 2023 12:03:29 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A727A5D2;
+        Mon, 30 Jan 2023 09:03:28 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CAE36611E6;
+        Mon, 30 Jan 2023 17:03:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A355C433D2;
+        Mon, 30 Jan 2023 17:03:26 +0000 (UTC)
+Date:   Mon, 30 Jan 2023 12:03:24 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Stefan Roesch <shr@devkernel.io>
+Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RESEND RFC PATCH v1 07/20] mm: add tracepoints to ksm
+Message-ID: <20230130120324.24928c7a@gandalf.local.home>
+In-Reply-To: <20230123173748.1734238-8-shr@devkernel.io>
+References: <20230123173748.1734238-1-shr@devkernel.io>
+        <20230123173748.1734238-8-shr@devkernel.io>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d879704250b5f890a755873aefe3171cbd193ae9.1675093524.git.ritesh.list@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        T_SPF_TEMPERROR autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,
+        SUSPICIOUS_RECIPS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 30, 2023 at 09:44:11PM +0530, Ritesh Harjani (IBM) wrote:
-> The problem is that commit[1] moved iop creation later i.e. after checking for
-> whether the folio is uptodate. And if the folio is uptodate, it simply
-> returns and doesn't allocate a iop.
-> Now what can happen is that during __iomap_write_begin() for bs < ps,
-> there can be a folio which is marked uptodate but does not have a iomap_page
-> structure allocated.
-> (I think one of the reason it can happen is due to memory pressure, we
-> can end up freeing folio->private resource).
-> 
-> Thus the iop structure will only gets allocated at the time of writeback
-> in iomap_writepage_map(). This I think, was a not problem till now since
-> we anyway only track uptodate status in iop (no support of tracking
-> dirty bitmap status which later patches will add), and we also end up
-> setting all the bits in iomap_page_create(), if the page is uptodate.
+On Mon, 23 Jan 2023 09:37:35 -0800
+Stefan Roesch <shr@devkernel.io> wrote:
 
-delayed iop allocation is a feature and not a bug.  We might have to
-refine the criteria for sub-page dirty tracking, but in general having
-the iop allocates is a memory and performance overhead and should be
-avoided as much as possible.  In fact I still have some unfinished
-work to allocate it even more lazily.
+> This adds the following tracepoints to ksm:
+> - start / stop scan
+> - ksm enter / exit
+> - merge a page
+> - merge a page with ksm
+> - remove a page
+> - remove a rmap item
+> 
+> Signed-off-by: Stefan Roesch <shr@devkernel.io>
+> ---
+>  MAINTAINERS                |   1 +
+>  include/trace/events/ksm.h | 257 +++++++++++++++++++++++++++++++++++++
+>  mm/ksm.c                   |  20 ++-
+>  3 files changed, 276 insertions(+), 2 deletions(-)
+>  create mode 100644 include/trace/events/ksm.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 123216b76534..990a28bdc263 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13482,6 +13482,7 @@ F:	include/linux/memory_hotplug.h
+>  F:	include/linux/mm.h
+>  F:	include/linux/mmzone.h
+>  F:	include/linux/pagewalk.h
+> +F:	include/trace/events/ksm.h
+>  F:	mm/
+>  F:	tools/testing/selftests/vm/
+>  
+
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+-- Steve
