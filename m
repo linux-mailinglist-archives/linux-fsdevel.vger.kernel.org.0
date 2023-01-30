@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 82EDA68161F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 17:15:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 486DF681620
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 17:15:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237306AbjA3QO6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Jan 2023 11:14:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50926 "EHLO
+        id S237412AbjA3QO7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Jan 2023 11:14:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237483AbjA3QOz (ORCPT
+        with ESMTP id S237074AbjA3QO6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Jan 2023 11:14:55 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50ADCA0;
-        Mon, 30 Jan 2023 08:14:54 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id c10-20020a17090a1d0a00b0022e63a94799so1033139pjd.2;
-        Mon, 30 Jan 2023 08:14:54 -0800 (PST)
+        Mon, 30 Jan 2023 11:14:58 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F496A0;
+        Mon, 30 Jan 2023 08:14:57 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id n20-20020a17090aab9400b00229ca6a4636so15993756pjq.0;
+        Mon, 30 Jan 2023 08:14:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VhCJkgKmno3Ehnuu2/UZ2Sk/flUz8J0C2jHe7kwnTK4=;
-        b=GL0ynBl0gGdadbS5zkFARsHT+8kyPonuFb3c8tiGcfOUl3/+EQOlzVbIGwY8dSAaRB
-         tJJEdCRBAoBM2JkqcOYd02wORea2jGZzZQKZ6TeMLaBvYga6hJ/qZ2UUq9XD0XX1hzvu
-         ODuD2dK5LTak2ZUqfTNyq7FebBOABICxZ1tT8lTb/tFfkWxkL/phPga54fTzLASqXUrX
-         /3Hg0VgwTK04jW6K2+nrftEoqn0XdTvC45Wnz/uFxtS8v0Sq7NP8tLy2UztKbMBxpoFW
-         s1Q0OostBp3K9ddNJR6qDn5E3nGLSQiKKjc4px447VU1ezPI6XLvPQqnZyaIckBkIXTs
-         LNjg==
+        bh=vVnQJu5sfmw97epqgNZa/UVQe2bS1bQ24l2zy0fQaR8=;
+        b=eMsJYaljyU4mBXqckYJ7679gMuOoAW39TtZVifzp8OZe8Ry7Cdx2ykc1N2LI+jD+RY
+         KIcuyomKnye6YiqO4oBAWGJzLgrY/E4ekx8bCD9ydjsEhCwOMtLOMFaCh3hB6k/hRyNL
+         37h6+dHEus5bgGQHIiztxOeGCfSMH1+HG2lTP45wNTkvOvv35YijQoLt30LGoTzP2Wgf
+         urfo8wuOkgwNg/n+fQQLqxYAhQ5Wqdzu8ABywMBfJt/MtZrwQ8wlpKoUXzrJy/C09VOK
+         p1dC+GyIcRb/gRs59qwRwUVIPPE022SMggUML0/sMYnNNXlOUzUz8A/USn5/+XUDJXCE
+         gqcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VhCJkgKmno3Ehnuu2/UZ2Sk/flUz8J0C2jHe7kwnTK4=;
-        b=KycJyD0iW3R8NArOHZun4tC8sEfHd+0lTAp7uo41Q7h9VqxlblJR+tqd71k0ufgMTm
-         v6nFDeHKPkIdg+1vRYmi/0S8azsw1SZTqKVtRUToxul/SI99yuw0zPNazbSIYHM06O4Y
-         xkdsLhmW6BwLuaqnFjJGEZ6KgkWIKuyjjwoZ0R/FERtAmut3Kj08lU/4JiINBrFoJL3w
-         YYenuSHC93YvB1dbjfH3cRTTgQ66zQN8bZpEW8sO+Oagq8cx4EKA13Ib9NQyWfLP0VbZ
-         oh31sikkVRuMjeNcRpgRDtmTyMOCjn2qGtyykfp+UlRKoCr1m5BtkPev69DylU0IVoIM
-         yDeg==
-X-Gm-Message-State: AO0yUKWju6xVcquxcLCCTVdrk54GDoSXBMKR6zs+VOwovJ33DkQW9Gqd
-        swpStF8a/AS0vZxU/Jx7fUgrnBgOO14=
-X-Google-Smtp-Source: AK7set+QChc6p40jqgU7RJABjPbrGQ3BFbvNxwrkfk4RjL1SioZBs3aXyorbCh5NlvfRkhopAlN3dw==
-X-Received: by 2002:a17:902:c94e:b0:194:dda9:7b40 with SMTP id i14-20020a170902c94e00b00194dda97b40mr10767578pla.2.1675095293314;
-        Mon, 30 Jan 2023 08:14:53 -0800 (PST)
+        bh=vVnQJu5sfmw97epqgNZa/UVQe2bS1bQ24l2zy0fQaR8=;
+        b=4eEib6UYLpM8YrXQmegJIVNYog5LmXiwMsLmAf3NQ6DJrkOFjP4u1pRduFEVZkZBuf
+         Y3wu9CbKEQcVYrksCgkslqtSlLignvbADai7WHG1vseLhxxEZxNY8MPZb8wbBNtggAh+
+         Imi/jFS98Lp3uDQNnqfu3NP06EmQ20F+eGFQT1MM1bh1cVCeGxje35ltlxjQQGcjj3Xn
+         WJv1vvjkWIyrLZZ/vSWZM8iB8lqxTliVqJd8GWJjxEE9LpjH1KZnppNkzW4b+R1EnkiV
+         ZtFdYQE16GgbvZyKNnNusUuTF3x34PYB1sGgn5t3J/68Huwc9SV5xFrP5FZdXIaha22p
+         /8rQ==
+X-Gm-Message-State: AFqh2kqszFDuiaG4rfxDGs19gw5Bpirek8osP2NV1pPcNP/EuMCTWqGD
+        YKWGRRJ81Rf4Vvikl2Bx1zfnb/EdpsA=
+X-Google-Smtp-Source: AMrXdXslwc1bySRsEQVTpleWdHv2ZGFNzVXvqPujcOQcQUZksEVc9Vq2vfbPi+pwPQxtroccbF8MQA==
+X-Received: by 2002:a05:6a20:d695:b0:af:9391:449 with SMTP id it21-20020a056a20d69500b000af93910449mr53788823pzb.45.1675095296569;
+        Mon, 30 Jan 2023 08:14:56 -0800 (PST)
 Received: from localhost ([2406:7400:63:1fd8:5041:db86:706c:f96b])
-        by smtp.gmail.com with ESMTPSA id a9-20020a170902ecc900b001949ae8c275sm8002937plh.141.2023.01.30.08.14.52
+        by smtp.gmail.com with ESMTPSA id g22-20020a170902869600b00195e8f97e72sm7988369plo.111.2023.01.30.08.14.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jan 2023 08:14:52 -0800 (PST)
+        Mon, 30 Jan 2023 08:14:56 -0800 (PST)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     Aravinda Herle <araherle@in.ibm.com>,
         "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFCv2 1/3] iomap: Move creation of iomap_page early in __iomap_write_begin
-Date:   Mon, 30 Jan 2023 21:44:11 +0530
-Message-Id: <d879704250b5f890a755873aefe3171cbd193ae9.1675093524.git.ritesh.list@gmail.com>
+Subject: [RFCv2 2/3] iomap: Change uptodate variable name to state
+Date:   Mon, 30 Jan 2023 21:44:12 +0530
+Message-Id: <bf30b7bfb03ef368e6e744b3c63af3dbfa11304d.1675093524.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <cover.1675093524.git.ritesh.list@gmail.com>
 References: <cover.1675093524.git.ritesh.list@gmail.com>
@@ -72,52 +72,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Before this commit[1], we used to call iomap_page_create() before
-checking folio_test_uptodate() in __iomap_write_begin().
+This patch just changes the struct iomap_page uptodate & uptodate_lock
+member names to state and state_lock to better reflect their purpose for
+the upcoming patch.
 
-The problem is that commit[1] moved iop creation later i.e. after checking for
-whether the folio is uptodate. And if the folio is uptodate, it simply
-returns and doesn't allocate a iop.
-Now what can happen is that during __iomap_write_begin() for bs < ps,
-there can be a folio which is marked uptodate but does not have a iomap_page
-structure allocated.
-(I think one of the reason it can happen is due to memory pressure, we
-can end up freeing folio->private resource).
-
-Thus the iop structure will only gets allocated at the time of writeback
-in iomap_writepage_map(). This I think, was a not problem till now since
-we anyway only track uptodate status in iop (no support of tracking
-dirty bitmap status which later patches will add), and we also end up
-setting all the bits in iomap_page_create(), if the page is uptodate.
-
-[1]: https://lore.kernel.org/all/20220623175157.1715274-5-shr@fb.com/
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- fs/iomap/buffered-io.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/iomap/buffered-io.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 356193e44cf0..e9c85fcf7a1f 100644
+index e9c85fcf7a1f..faee2852db8f 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -527,7 +527,8 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
- 		size_t len, struct folio *folio)
- {
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
--	struct iomap_page *iop;
-+	struct iomap_page *iop = iomap_page_create(iter->inode, folio,
-+						   iter->flags);
- 	loff_t block_size = i_blocksize(iter->inode);
- 	loff_t block_start = round_down(pos, block_size);
- 	loff_t block_end = round_up(pos + len, block_size);
-@@ -539,7 +540,6 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
- 		return 0;
- 	folio_clear_error(folio);
+@@ -25,13 +25,13 @@
  
--	iop = iomap_page_create(iter->inode, folio, iter->flags);
- 	if ((iter->flags & IOMAP_NOWAIT) && !iop && nr_blocks > 1)
- 		return -EAGAIN;
+ /*
+  * Structure allocated for each folio when block size < folio size
+- * to track sub-folio uptodate status and I/O completions.
++ * to track sub-folio uptodate state and I/O completions.
+  */
+ struct iomap_page {
+ 	atomic_t		read_bytes_pending;
+ 	atomic_t		write_bytes_pending;
+-	spinlock_t		uptodate_lock;
+-	unsigned long		uptodate[];
++	spinlock_t		state_lock;
++	unsigned long		state[];
+ };
  
+ static inline struct iomap_page *to_iomap_page(struct folio *folio)
+@@ -58,12 +58,12 @@ iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
+ 	else
+ 		gfp = GFP_NOFS | __GFP_NOFAIL;
+ 
+-	iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
++	iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(nr_blocks)),
+ 		      gfp);
+ 	if (iop) {
+-		spin_lock_init(&iop->uptodate_lock);
++		spin_lock_init(&iop->state_lock);
+ 		if (folio_test_uptodate(folio))
+-			bitmap_fill(iop->uptodate, nr_blocks);
++			bitmap_fill(iop->state, nr_blocks);
+ 		folio_attach_private(folio, iop);
+ 	}
+ 	return iop;
+@@ -79,7 +79,7 @@ static void iomap_page_release(struct folio *folio)
+ 		return;
+ 	WARN_ON_ONCE(atomic_read(&iop->read_bytes_pending));
+ 	WARN_ON_ONCE(atomic_read(&iop->write_bytes_pending));
+-	WARN_ON_ONCE(bitmap_full(iop->uptodate, nr_blocks) !=
++	WARN_ON_ONCE(bitmap_full(iop->state, nr_blocks) !=
+ 			folio_test_uptodate(folio));
+ 	kfree(iop);
+ }
+@@ -110,7 +110,7 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 
+ 		/* move forward for each leading block marked uptodate */
+ 		for (i = first; i <= last; i++) {
+-			if (!test_bit(i, iop->uptodate))
++			if (!test_bit(i, iop->state))
+ 				break;
+ 			*pos += block_size;
+ 			poff += block_size;
+@@ -120,7 +120,7 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 
+ 		/* truncate len if we find any trailing uptodate block(s) */
+ 		for ( ; i <= last; i++) {
+-			if (test_bit(i, iop->uptodate)) {
++			if (test_bit(i, iop->state)) {
+ 				plen -= (last - i + 1) * block_size;
+ 				last = i - 1;
+ 				break;
+@@ -152,11 +152,11 @@ static void iomap_iop_set_range_uptodate(struct folio *folio,
+ 	unsigned last = (off + len - 1) >> inode->i_blkbits;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&iop->uptodate_lock, flags);
+-	bitmap_set(iop->uptodate, first, last - first + 1);
+-	if (bitmap_full(iop->uptodate, i_blocks_per_folio(inode, folio)))
++	spin_lock_irqsave(&iop->state_lock, flags);
++	bitmap_set(iop->state, first, last - first + 1);
++	if (bitmap_full(iop->state, i_blocks_per_folio(inode, folio)))
+ 		folio_mark_uptodate(folio);
+-	spin_unlock_irqrestore(&iop->uptodate_lock, flags);
++	spin_unlock_irqrestore(&iop->state_lock, flags);
+ }
+ 
+ static void iomap_set_range_uptodate(struct folio *folio,
+@@ -451,7 +451,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
+ 	last = (from + count - 1) >> inode->i_blkbits;
+ 
+ 	for (i = first; i <= last; i++)
+-		if (!test_bit(i, iop->uptodate))
++		if (!test_bit(i, iop->state))
+ 			return false;
+ 	return true;
+ }
+@@ -1606,7 +1606,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	 * invalid, grab a new one.
+ 	 */
+ 	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
+-		if (iop && !test_bit(i, iop->uptodate))
++		if (iop && !test_bit(i, iop->state))
+ 			continue;
+ 
+ 		error = wpc->ops->map_blocks(wpc, inode, pos);
 -- 
 2.39.1
 
