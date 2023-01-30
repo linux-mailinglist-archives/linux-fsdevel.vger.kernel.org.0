@@ -2,362 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CFAD681622
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 17:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 314EB68169D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Jan 2023 17:42:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237439AbjA3QPF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Jan 2023 11:15:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50966 "EHLO
+        id S237656AbjA3QmM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Jan 2023 11:42:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236294AbjA3QPC (ORCPT
+        with ESMTP id S237622AbjA3QmL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Jan 2023 11:15:02 -0500
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF86E6A64;
-        Mon, 30 Jan 2023 08:15:00 -0800 (PST)
-Received: by mail-pf1-x434.google.com with SMTP id n2so8124405pfo.3;
-        Mon, 30 Jan 2023 08:15:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EVFW2L8PRdmpyXP+UlpsFapVZPiXoES6qg+s7zA41Fw=;
-        b=jQWxi9flL3kQMS+w2rBrBQs/69zM7Dk/UGpWDDA/O51nECPATgCPamfmHePcVj/ifY
-         7bgOjHai8gu3n/klPjyerkYrMIjQ6tm6JjR/BpHua6mg4jmCSKN3rDXsISoHzfsJR6G2
-         +ggTrWy3W10QTr9vTW40Jm1KKc5fauiQHF4Xt5xT3q3EjoXKxwykxlUxP/BpgM07VPhr
-         BQSZBaSiabyEqEn64E/Uez4BqB10iNNOCaBAMUAp/ZlfGtW7VTXbptgOzNbe9U0oAXzR
-         xEOHx7R2zkETjeFRhgKC/WAwyf1bFtmFpZ5WVPtpV/JVnijNQOhZ/fzx2C76gEAVoNdd
-         AeKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EVFW2L8PRdmpyXP+UlpsFapVZPiXoES6qg+s7zA41Fw=;
-        b=bCldCmd3miS2H5iOKigeIbXqDsHKnvOErCicK5v+a9hB6R78MvpLr+I/Pv7qcuH++g
-         8FXj0kNdVuyffCpVKlUkETQiHOIBLpxn+NVTEXtl4nT/3wpu32ok9ANdq37rAcOb3xEo
-         kg1nfpXF24MhMi5MIjpuvmZHDrqhhkqdfrWKxJWGtRPuBeWHVdOoiX2+bD2DbKY1wANd
-         Gxs0M0uEI0pxeFM8IKTW5TI6gFhTl2K5O9PEBcGfE/cPg861sbcYd7Gv+VaY1sqTp2ZU
-         senZ391+13YTUPD21YDnyY6AqCfVDkSOrUf+PM9oUo2QVrQeEExyw+aJcJr+vM5a/89k
-         naSw==
-X-Gm-Message-State: AO0yUKXSawx0vn38cs7gidFRgSloRerYKuNJU410MiNCF7wEnDBFzG8I
-        ii0wZz91N/973Cf5cxTxmszuwNNsgIo=
-X-Google-Smtp-Source: AK7set8NUJ2e4RazoGqL8YQDJ/IuWw1yK1R8upq/7Gz2EgBiPp+4p40F/+9hhthZePWzaeXaSM6pXA==
-X-Received: by 2002:a62:1809:0:b0:590:7330:353c with SMTP id 9-20020a621809000000b005907330353cmr8200313pfy.6.1675095299758;
-        Mon, 30 Jan 2023 08:14:59 -0800 (PST)
-Received: from localhost ([2406:7400:63:1fd8:5041:db86:706c:f96b])
-        by smtp.gmail.com with ESMTPSA id a27-20020a056a001d1b00b00593deb1a329sm795227pfx.66.2023.01.30.08.14.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jan 2023 08:14:59 -0800 (PST)
-From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Aravinda Herle <araherle@in.ibm.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFCv2 3/3] iomap: Support subpage size dirty tracking to improve write performance
-Date:   Mon, 30 Jan 2023 21:44:13 +0530
-Message-Id: <5e49fa975ce9d719f5b6f765aa5d3a1d44d98d1d.1675093524.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <cover.1675093524.git.ritesh.list@gmail.com>
-References: <cover.1675093524.git.ritesh.list@gmail.com>
+        Mon, 30 Jan 2023 11:42:11 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 462363D0A3;
+        Mon, 30 Jan 2023 08:42:10 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D2F256117D;
+        Mon, 30 Jan 2023 16:42:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A97B4C433EF;
+        Mon, 30 Jan 2023 16:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675096929;
+        bh=spTKhIOwCpWESMlTwbq6jQvoegfh5VVyof6YCbDvZiA=;
+        h=From:Subject:Date:To:Cc:From;
+        b=W4aXvDhu1PQQoT3TqK3C+78F6hJXpfzMa9MQE1upEWlHVyXyzPaFEUR041ZjPTTBt
+         UBHuMBtmm6h2rTumdkxVHMKbxpgMvQElm+PbKwyG/4rOyyOUrBCTIsmQiVm8Qv/Owa
+         tKVhCJa/VKzEXuE7Royd/+dzxhMgSzXG/aaTnsTmlZRAvAcWwFHkxtzRUgnGBLDeZW
+         lbW5F0Ql0CYG8ANGG9O1F4XIs1Vase0A42lQtA+mwoc1d0c6VcQAAubuf0idMYDyv4
+         nDjQI47YvRTn6xEZ2Azx5NxkGGTvEnszB5e/usgHav1wSsygcKNDdsKxbCHfuaXcgu
+         MGz3AkO5us9hw==
+From:   Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 0/8] acl: remove generic posix acl handlers from all
+ xattr handlers
+Date:   Mon, 30 Jan 2023 17:41:56 +0100
+Message-Id: <20230125-fs-acl-remove-generic-xattr-handlers-v2-0-214cfb88bb56@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFTz12MC/5WOQQ6DIBREr2JY9xulQmxXvUfjAvCjpBaaDyE2x
+ rsXvUGXbzIzeRuLSA4ju1cbI8wuuuAL8EvFzKz8hODGwow3/Nq0XICNoMwChO+QESb0ZW9gVSk
+ RlMG4IEXojMWxF6If+56VK60igiblzXycvVVMSHWWNQcy8mh8CK1bT5HnUHh2MQX6nl65PdI/F
+ XILDUhjWyF0d+NaPl5IHpc60MSGfd9/4XJ8uvsAAAA=
+To:     linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4824; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=spTKhIOwCpWESMlTwbq6jQvoegfh5VVyof6YCbDvZiA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSRf/xy7MHzFC0en5pVbFi3YzJht3qr0faqqWs61Wf67Os8+
+ /qd+v6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiCf4M/3Qlu/9u+8bb5/u4m/OAOP
+ Nz3qxiFY6vm27/V3hv7v/+vBjDPxW2ydktxi/v3JxlO2Hxd6YXV1bfsT68X50lk2OapMH5M/wA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On a 64k pagesize platforms (specially Power and/or aarch64) with 4k
-filesystem blocksize, this patch should improve the performance by doing
-only the subpage dirty data write.
+Hey everyone,
 
-This should also reduce the write amplification since we can now track
-subpage dirty status within state bitmaps. Earlier we had to
-write the entire 64k page even if only a part of it (e.g. 4k) was
-updated.
+after we finished the introduction of the new posix acl api last cycle
+we still left the generic POSIX ACL xattr handlers around in the
+filesystems xattr handler registered at sb->s_xattr for two reasons.
+First, because a few filesystems rely on the ->list() method of the
+generic POSIX ACL xattr handlers in their ->listxattr() inode operation.
+Second, during inode initalization in inode_init_always() the registered
+xattr handlers in sb->s_xattr are used to raise IOP_XATTR in
+inode->i_opflags.
 
-Performance testing of below fio workload reveals ~16x performance
-improvement on nvme with XFS (4k blocksize) on Power (64K pagesize)
-FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
+This series adresses both issues and makes it possible to remove the
+generic POSIX ACL xattr handlers from the sb->s_xattr list of all
+filesystems. This is a crucial step as the generic POSIX ACL xattr
+handlers aren't used for POSIX ACLs anymore. They are never used apart
+from the two cases above.
 
-<test_randwrite.fio>
-[global]
-	ioengine=psync
-	rw=randwrite
-	overwrite=1
-	pre_read=1
-	direct=0
-	bs=4k
-	size=1G
-	dir=./
-	numjobs=8
-	fdatasync=1
-	runtime=60
-	iodepth=64
-	group_reporting=1
+To fix this we make POSIX ACLs independent of IOP_XATTR. For filesystems
+like btrfs or reiserfs that want to disable xattrs and POSIX ACLs for
+some inodes we give them a dedicated IOP_NOACL flag they can raise as
+discussed in the previous iteration.
 
-[fio-run]
+The series also simplifies a the ->listxattr() implementation for all
+filesystems that rely on the ->list() method of the xattr handlers.
 
-Reported-by: Aravinda Herle <araherle@in.ibm.com>
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+After this we've removed the generic POSIX ACL xattr handlers completely
+from sb->s_xattr.
+
+All filesystems with reasonable integration into xfstests have been
+tested with:
+
+        ./check -g acl,attr,cap,idmapped,io_uring,perms,unlink
+
+All tests pass without regression on xfstests for-next branch.
+
+Since erofs doesn't have integration into xfstests yet afaict I have
+tested it with the testuite available in erofs-utils. They also all pass
+without any regressions.
+
+Thanks!
+Christian
+
+[1]: https://lore.kernel.org/lkml/20230125100040.374709-1-brauner@kernel.org
+[2]: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/fs.acl.remove.generic.xattr.handlers.v1
+
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
- fs/gfs2/aops.c         |   2 +-
- fs/iomap/buffered-io.c | 103 +++++++++++++++++++++++++++++++++++++----
- fs/xfs/xfs_aops.c      |   2 +-
- fs/zonefs/super.c      |   2 +-
- include/linux/iomap.h  |   1 +
- 5 files changed, 98 insertions(+), 12 deletions(-)
+Changes in v2:
+- Please see changelogs of the individual patches.
+- Christoph & Christian:
+  Remove SB_I_XATTR and instead introduce IOP_NOACL so filesystems can
+  opt out of POSIX ACLs for specific inodes. Decouple POSIX ACLs from
+  IOP_XATTR.
+- Keep generic posix acl xattr handlers so filesystems that use array
+  based indexing on xattr handlers can continue to do so.
+- Minor fixes.
+- Link to v1: https://lore.kernel.org/r/20230125-fs-acl-remove-generic-xattr-handlers-v1-0-6cf155b492b6@kernel.org
 
-diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index e782b4f1d104..b9c35288a5eb 100644
---- a/fs/gfs2/aops.c
-+++ b/fs/gfs2/aops.c
-@@ -741,7 +741,7 @@ static const struct address_space_operations gfs2_aops = {
- 	.writepages = gfs2_writepages,
- 	.read_folio = gfs2_read_folio,
- 	.readahead = gfs2_readahead,
--	.dirty_folio = filemap_dirty_folio,
-+	.dirty_folio = iomap_dirty_folio,
- 	.release_folio = iomap_release_folio,
- 	.invalidate_folio = iomap_invalidate_folio,
- 	.bmap = gfs2_bmap,
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index faee2852db8f..af3e77276dab 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -44,7 +44,8 @@ static inline struct iomap_page *to_iomap_page(struct folio *folio)
- static struct bio_set iomap_ioend_bioset;
- 
- static struct iomap_page *
--iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
-+iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags,
-+		  bool from_writeback)
- {
- 	struct iomap_page *iop = to_iomap_page(folio);
- 	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
-@@ -58,12 +59,32 @@ iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
- 	else
- 		gfp = GFP_NOFS | __GFP_NOFAIL;
- 
--	iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(nr_blocks)),
-+	iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(2 * nr_blocks)),
- 		      gfp);
- 	if (iop) {
- 		spin_lock_init(&iop->state_lock);
--		if (folio_test_uptodate(folio))
--			bitmap_fill(iop->state, nr_blocks);
-+		/*
-+		 * iomap_page_create can get called from writeback after
-+		 * a truncate_inode_partial_folio operation on a large folio.
-+		 * For large folio the iop structure is freed in
-+		 * iomap_invalidate_folio() to ensure we can split the folio.
-+		 * That means we will have to let go of the optimization of
-+		 * tracking dirty bits here and set all bits as dirty if
-+		 * the folio is marked uptodate.
-+		 */
-+		if (from_writeback && folio_test_uptodate(folio))
-+			bitmap_fill(iop->state, 2 * nr_blocks);
-+		else if (folio_test_uptodate(folio)) {
-+			unsigned start = offset_in_folio(folio,
-+					folio_pos(folio)) >> inode->i_blkbits;
-+			bitmap_set(iop->state, start, nr_blocks);
-+		}
-+		if (folio_test_dirty(folio)) {
-+			unsigned start = offset_in_folio(folio,
-+					folio_pos(folio)) >> inode->i_blkbits;
-+			start = start + nr_blocks;
-+			bitmap_set(iop->state, start, nr_blocks);
-+		}
- 		folio_attach_private(folio, iop);
- 	}
- 	return iop;
-@@ -168,6 +189,48 @@ static void iomap_set_range_uptodate(struct folio *folio,
- 		folio_mark_uptodate(folio);
- }
- 
-+static void iomap_iop_set_range_dirty(struct folio *folio,
-+		struct iomap_page *iop, size_t off, size_t len)
-+{
-+	struct inode *inode = folio->mapping->host;
-+	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
-+	unsigned first = (off >> inode->i_blkbits) + nr_blocks;
-+	unsigned last = ((off + len - 1) >> inode->i_blkbits) + nr_blocks;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&iop->state_lock, flags);
-+	bitmap_set(iop->state, first, last - first + 1);
-+	spin_unlock_irqrestore(&iop->state_lock, flags);
-+}
-+
-+static void iomap_set_range_dirty(struct folio *folio,
-+		struct iomap_page *iop, size_t off, size_t len)
-+{
-+	if (iop)
-+		iomap_iop_set_range_dirty(folio, iop, off, len);
-+}
-+
-+static void iomap_iop_clear_range_dirty(struct folio *folio,
-+		struct iomap_page *iop, size_t off, size_t len)
-+{
-+	struct inode *inode = folio->mapping->host;
-+	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
-+	unsigned first = (off >> inode->i_blkbits) + nr_blocks;
-+	unsigned last = ((off + len - 1) >> inode->i_blkbits) + nr_blocks;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&iop->state_lock, flags);
-+	bitmap_clear(iop->state, first, last - first + 1);
-+	spin_unlock_irqrestore(&iop->state_lock, flags);
-+}
-+
-+static void iomap_clear_range_dirty(struct folio *folio,
-+		struct iomap_page *iop, size_t off, size_t len)
-+{
-+	if (iop)
-+		iomap_iop_clear_range_dirty(folio, iop, off, len);
-+}
-+
- static void iomap_finish_folio_read(struct folio *folio, size_t offset,
- 		size_t len, int error)
- {
-@@ -231,7 +294,7 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
- 	if (WARN_ON_ONCE(size > iomap->length))
- 		return -EIO;
- 	if (offset > 0)
--		iop = iomap_page_create(iter->inode, folio, iter->flags);
-+		iop = iomap_page_create(iter->inode, folio, iter->flags, false);
- 	else
- 		iop = to_iomap_page(folio);
- 
-@@ -269,7 +332,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 		return iomap_read_inline_data(iter, folio);
- 
- 	/* zero post-eof blocks as the page may be mapped */
--	iop = iomap_page_create(iter->inode, folio, iter->flags);
-+	iop = iomap_page_create(iter->inode, folio, iter->flags, false);
- 	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
- 	if (plen == 0)
- 		goto done;
-@@ -497,6 +560,17 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
- }
- EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
- 
-+bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio)
-+{
-+	unsigned int nr_blocks = i_blocks_per_folio(mapping->host, folio);
-+	struct iomap_page *iop = iomap_page_create(mapping->host, folio, 0, false);
-+
-+	iomap_set_range_dirty(folio, iop, offset_in_folio(folio, folio_pos(folio)),
-+			      nr_blocks << mapping->host->i_blkbits);
-+	return filemap_dirty_folio(mapping, folio);
-+}
-+EXPORT_SYMBOL_GPL(iomap_dirty_folio);
-+
- static void
- iomap_write_failed(struct inode *inode, loff_t pos, unsigned len)
- {
-@@ -528,7 +602,7 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
- {
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
- 	struct iomap_page *iop = iomap_page_create(iter->inode, folio,
--						   iter->flags);
-+						   iter->flags, false);
- 	loff_t block_size = i_blocksize(iter->inode);
- 	loff_t block_start = round_down(pos, block_size);
- 	loff_t block_end = round_up(pos + len, block_size);
-@@ -686,6 +760,7 @@ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 	if (unlikely(copied < len && !folio_test_uptodate(folio)))
- 		return 0;
- 	iomap_set_range_uptodate(folio, iop, offset_in_folio(folio, pos), len);
-+	iomap_set_range_dirty(folio, iop, offset_in_folio(folio, pos), len);
- 	filemap_dirty_folio(inode->i_mapping, folio);
- 	return copied;
- }
-@@ -1231,6 +1306,13 @@ static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
- 		block_commit_write(&folio->page, 0, length);
- 	} else {
- 		WARN_ON_ONCE(!folio_test_uptodate(folio));
-+		/*
-+		 * TODO: We need not set range of dirty bits in iop here.
-+		 * This will be taken care by iomap_dirty_folio callback
-+		 * function which gets called from folio_mark_dirty().
-+		 */
-+		iomap_set_range_dirty(folio, to_iomap_page(folio),
-+				offset_in_folio(folio, iter->pos), length);
- 		folio_mark_dirty(folio);
- 	}
- 
-@@ -1590,7 +1672,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct inode *inode,
- 		struct folio *folio, u64 end_pos)
- {
--	struct iomap_page *iop = iomap_page_create(inode, folio, 0);
-+	struct iomap_page *iop = iomap_page_create(inode, folio, 0, true);
- 	struct iomap_ioend *ioend, *next;
- 	unsigned len = i_blocksize(inode);
- 	unsigned nblocks = i_blocks_per_folio(inode, folio);
-@@ -1606,7 +1688,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	 * invalid, grab a new one.
- 	 */
- 	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
--		if (iop && !test_bit(i, iop->state))
-+		if (iop && !test_bit(i + nblocks, iop->state))
- 			continue;
- 
- 		error = wpc->ops->map_blocks(wpc, inode, pos);
-@@ -1650,6 +1732,9 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		}
- 	}
- 
-+	iomap_clear_range_dirty(folio, iop,
-+				offset_in_folio(folio, folio_pos(folio)),
-+				end_pos - folio_pos(folio));
- 	folio_start_writeback(folio);
- 	folio_unlock(folio);
- 
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 41734202796f..7e6c54955b4f 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -571,7 +571,7 @@ const struct address_space_operations xfs_address_space_operations = {
- 	.read_folio		= xfs_vm_read_folio,
- 	.readahead		= xfs_vm_readahead,
- 	.writepages		= xfs_vm_writepages,
--	.dirty_folio		= filemap_dirty_folio,
-+	.dirty_folio		= iomap_dirty_folio,
- 	.release_folio		= iomap_release_folio,
- 	.invalidate_folio	= iomap_invalidate_folio,
- 	.bmap			= xfs_vm_bmap,
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index a9c5c3f720ad..4cefc2af87f3 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -267,7 +267,7 @@ static const struct address_space_operations zonefs_file_aops = {
- 	.read_folio		= zonefs_read_folio,
- 	.readahead		= zonefs_readahead,
- 	.writepages		= zonefs_writepages,
--	.dirty_folio		= filemap_dirty_folio,
-+	.dirty_folio		= iomap_dirty_folio,
- 	.release_folio		= iomap_release_folio,
- 	.invalidate_folio	= iomap_invalidate_folio,
- 	.migrate_folio		= filemap_migrate_folio,
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 0983dfc9a203..b60562a0b893 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -262,6 +262,7 @@ void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
- bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
- bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
- void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len);
-+bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio);
- int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
- 		const struct iomap_ops *ops);
- int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
--- 
-2.39.1
+---
+Christian Brauner (8):
+      fs: don't use IOP_XATTR for posix acls
+      xattr: simplify listxattr helpers
+      xattr: add listxattr helper
+      xattr: remove unused argument
+      fs: drop unused posix acl handlers
+      fs: simplify ->listxattr() implementation
+      reiserfs: rework ->listxattr() implementation
+      fs: rename generic posix acl handlers
+
+ fs/9p/xattr.c                   |   4 --
+ fs/bad_inode.c                  |   3 +-
+ fs/btrfs/inode.c                |   2 +-
+ fs/btrfs/xattr.c                |   4 --
+ fs/ceph/xattr.c                 |   4 --
+ fs/cifs/xattr.c                 |   4 --
+ fs/ecryptfs/inode.c             |   4 --
+ fs/erofs/xattr.c                |  12 +----
+ fs/erofs/xattr.h                |  20 +++++---
+ fs/ext2/xattr.c                 |  25 +++++-----
+ fs/ext4/xattr.c                 |  25 +++++-----
+ fs/f2fs/xattr.c                 |  24 +++++-----
+ fs/gfs2/xattr.c                 |   2 -
+ fs/jffs2/xattr.c                |  29 ++++++------
+ fs/jfs/xattr.c                  |   4 --
+ fs/libfs.c                      |   3 +-
+ fs/nfs/nfs3_fs.h                |   1 -
+ fs/nfs/nfs3acl.c                |   6 ---
+ fs/nfs/nfs3super.c              |   3 --
+ fs/nfsd/nfs4xdr.c               |   3 +-
+ fs/ntfs3/xattr.c                |   4 --
+ fs/ocfs2/xattr.c                |  14 ++----
+ fs/orangefs/xattr.c             |   2 -
+ fs/overlayfs/copy_up.c          |   4 +-
+ fs/overlayfs/super.c            |   8 ----
+ fs/posix_acl.c                  |  53 +++++++++++++++++----
+ fs/reiserfs/inode.c             |   2 +-
+ fs/reiserfs/namei.c             |   4 +-
+ fs/reiserfs/reiserfs.h          |   2 +-
+ fs/reiserfs/xattr.c             |  74 +++++++++++++++--------------
+ fs/xattr.c                      | 101 +++++++++++++++-------------------------
+ fs/xfs/xfs_xattr.c              |   4 --
+ include/linux/fs.h              |   1 +
+ include/linux/posix_acl.h       |   7 +++
+ include/linux/posix_acl_xattr.h |   5 +-
+ include/linux/xattr.h           |  30 +++++++++++-
+ mm/shmem.c                      |   4 --
+ 37 files changed, 245 insertions(+), 256 deletions(-)
+---
+base-commit: ab072681eabe1ce0a9a32d4baa1a27a2d046bc4a
+change-id: 20230125-fs-acl-remove-generic-xattr-handlers-4cfed8558d88
 
