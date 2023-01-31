@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03833682724
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 09:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3688B682728
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 09:44:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231961AbjAaIn2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Jan 2023 03:43:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54422 "EHLO
+        id S230162AbjAaIoa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Jan 2023 03:44:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231515AbjAaImD (ORCPT
+        with ESMTP id S231878AbjAaImg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Jan 2023 03:42:03 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A61CD474E8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 00:40:07 -0800 (PST)
+        Tue, 31 Jan 2023 03:42:36 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 064414861B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 00:40:12 -0800 (PST)
 Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
-        by 156.147.23.52 with ESMTP; 31 Jan 2023 17:40:02 +0900
+        by 156.147.23.51 with ESMTP; 31 Jan 2023 17:40:02 +0900
 X-Original-SENDERIP: 156.147.1.127
 X-Original-MAILFROM: max.byungchul.park@gmail.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
@@ -47,9 +47,9 @@ Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
         42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
         gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
         boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com
-Subject: [PATCH v9 22/25] dept: Apply timeout consideration to dma fence wait
-Date:   Tue, 31 Jan 2023 17:39:51 +0900
-Message-Id: <1675154394-25598-23-git-send-email-max.byungchul.park@gmail.com>
+Subject: [PATCH v9 23/25] dept: Record the latest one out of consecutive waits of the same class
+Date:   Tue, 31 Jan 2023 17:39:52 +0900
+Message-Id: <1675154394-25598-24-git-send-email-max.byungchul.park@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1675154394-25598-1-git-send-email-max.byungchul.park@gmail.com>
 References: <1675154394-25598-1-git-send-email-max.byungchul.park@gmail.com>
@@ -63,36 +63,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that CONFIG_DEPT_AGGRESSIVE_TIMEOUT_WAIT was introduced, apply the
-consideration to dma fence wait.
+The current code records all the waits for later use to track relation
+between waits and events in each context. However, since the same class
+is handled the same way, it'd be okay to record only one on behalf of
+the others if they all have the same class.
+
+Even though it's the ideal to search the whole history buffer for that,
+since it'd cost too high, alternatively, let's keep the latest one at
+least when the same class'ed waits consecutively appear.
 
 Signed-off-by: Byungchul Park <max.byungchul.park@gmail.com>
 ---
- drivers/dma-buf/dma-fence.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/dependency/dept.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma-buf/dma-fence.c b/drivers/dma-buf/dma-fence.c
-index 1db4bc0..a1ede7b46 100644
---- a/drivers/dma-buf/dma-fence.c
-+++ b/drivers/dma-buf/dma-fence.c
-@@ -783,7 +783,7 @@ struct default_wait_cb {
- 	cb.task = current;
- 	list_add(&cb.base.node, &fence->cb_list);
+diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
+index 3ab999f..2887858 100644
+--- a/kernel/dependency/dept.c
++++ b/kernel/dependency/dept.c
+@@ -1522,9 +1522,28 @@ static inline struct dept_wait_hist *new_hist(void)
+ 	return wh;
+ }
  
--	sdt_might_sleep_start(NULL);
-+	sdt_might_sleep_start_timeout(NULL, timeout);
- 	while (!test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags) && ret > 0) {
- 		if (intr)
- 			__set_current_state(TASK_INTERRUPTIBLE);
-@@ -887,7 +887,7 @@ struct default_wait_cb {
- 		}
- 	}
++static inline struct dept_wait_hist *last_hist(void)
++{
++	int pos_n = hist_pos_next();
++	struct dept_wait_hist *wh_n = hist(pos_n);
++
++	/*
++	 * This is the first try.
++	 */
++	if (!pos_n && !wh_n->wait)
++		return NULL;
++
++	return hist(pos_n + DEPT_MAX_WAIT_HIST - 1);
++}
++
+ static void add_hist(struct dept_wait *w, unsigned int wg, unsigned int ctxt_id)
+ {
+-	struct dept_wait_hist *wh = new_hist();
++	struct dept_wait_hist *wh;
++
++	wh = last_hist();
++
++	if (!wh || wh->wait->class != w->class || wh->ctxt_id != ctxt_id)
++		wh = new_hist();
  
--	sdt_might_sleep_start(NULL);
-+	sdt_might_sleep_start_timeout(NULL, timeout);
- 	while (ret > 0) {
- 		if (intr)
- 			set_current_state(TASK_INTERRUPTIBLE);
+ 	if (likely(wh->wait))
+ 		put_wait(wh->wait);
 -- 
 1.9.1
 
