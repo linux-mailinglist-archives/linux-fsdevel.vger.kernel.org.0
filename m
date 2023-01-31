@@ -2,165 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0116B6836F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 21:00:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E181683784
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 21:27:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231657AbjAaUA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Jan 2023 15:00:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59330 "EHLO
+        id S230510AbjAaU0p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Jan 2023 15:26:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229946AbjAaUAZ (ORCPT
+        with ESMTP id S230481AbjAaU0i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Jan 2023 15:00:25 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E53367C0;
-        Tue, 31 Jan 2023 12:00:24 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id cq16-20020a17090af99000b0022c9791ac39so7895287pjb.4;
-        Tue, 31 Jan 2023 12:00:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VQy9Ff+NEVGlrm7wVXyq3Wf3RjzU5BAdjABffeojp70=;
-        b=W61u9o4b9slMDo2AYMkb0JpU2lXs0bKVfemYwXjc4PO74dr7qgy69guHo9pb739wIg
-         o4zClp/RsXSePkmnYeFVJLA+8RqNJFS9xfZE2pFAdGP5rMN2KNTCm/KZNB9Gb6czyTrj
-         W0UMCkBcv8vsljNBGkIpSFsVFLGiy80TaC1EFhfW/jYLK3Q+mINzea8YhXuRFlgEvP5e
-         a9xYR+kwwC8Xq+79t1St1SOscLVH5v05sZcuGUjVLzodzT5BCuwTRnygOiYE3L9i3yW1
-         2B1u/XNgWAyH08MCsxTgZE4ykGll7QM1HcFVfy1CiBHkzYDyUHJi6harTOYUgPhRo40O
-         A8Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VQy9Ff+NEVGlrm7wVXyq3Wf3RjzU5BAdjABffeojp70=;
-        b=YEUh/fGzCT68NYiIxQSZkJ51iHQoMb7bgZ0dZa2wOUkOV0EDRCTmY5I4sT5X0UgtLg
-         bjldBXUTtKYavlHemOQ6s+4CuptHaqBJy/2j7ED9JG2eQWm8VQy1ezBoLZEadNgKnjq+
-         KPFHdoHYBWtpH+cRx2VqV09BWo3moWaVmRnrcMrqkUQ4fc/WL9TkQuiDDTv4jrzqBZYB
-         5UaHvHiEGJyCUR/K5GCCyLThc/k58dBIKUBBXsnTSv/CVPrWebyK7jYyOfaT7NdKj+5/
-         KMh1/QxPVbu4r0dAIj6P8Ns1SxkjfR5FuEvPxYnhL/3B6LYH6jmglgB02HlUj3Otfp/t
-         sQwg==
-X-Gm-Message-State: AO0yUKXxev/fgIeHmLuZ8hJV8gmEpWeDeWtCfpcewQdRTeE2Bpz56YM+
-        96IHfKDTNc1jsDK1Pm8ltB4IXi/Ua4s=
-X-Google-Smtp-Source: AK7set9+HnOY/Slv9lUQ11sPE+F7xU4NWx4YexSHBfu2ReCiYS/yDZ9rZHRVw7ptEua4iD5RZdH3YA==
-X-Received: by 2002:a05:6a20:441a:b0:be:9629:2cbd with SMTP id ce26-20020a056a20441a00b000be96292cbdmr8871276pzb.14.1675195223945;
-        Tue, 31 Jan 2023 12:00:23 -0800 (PST)
-Received: from localhost ([2406:7400:63:1fd8:5041:db86:706c:f96b])
-        by smtp.gmail.com with ESMTPSA id l2-20020a63be02000000b004e25f1bb85csm6494201pgf.54.2023.01.31.12.00.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Jan 2023 12:00:23 -0800 (PST)
-Date:   Wed, 1 Feb 2023 01:30:20 +0530
-From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Aravinda Herle <araherle@in.ibm.com>
-Subject: Re: [RFCv2 1/3] iomap: Move creation of iomap_page early in
- __iomap_write_begin
-Message-ID: <20230131200020.pywjhsvdpeu3lklv@rh-tp>
-References: <cover.1675093524.git.ritesh.list@gmail.com>
- <d879704250b5f890a755873aefe3171cbd193ae9.1675093524.git.ritesh.list@gmail.com>
- <Y9f4MFzpFEi73E6P@infradead.org>
- <20230130202150.pfohy5yg6dtu64ce@rh-tp>
- <Y9gv0YV9V6gR9l3F@casper.infradead.org>
- <20230131183725.m7yoh7st5pplilvq@rh-tp>
- <Y9lihmePkCHWHrlI@casper.infradead.org>
+        Tue, 31 Jan 2023 15:26:38 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C7256ED8;
+        Tue, 31 Jan 2023 12:26:36 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 62CE4615A7;
+        Tue, 31 Jan 2023 20:26:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCA80C433D2;
+        Tue, 31 Jan 2023 20:26:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675196795;
+        bh=gq2zoV3fgp96Ze7JcC1BY/MySF5tsWqOBisbKmRgfYI=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=ccZC3G6ntKeYo84IV6BMZL2L9iGDG+TyMIuIQ3HPttMWnSXSvip7Dlm0dgHSkR2Km
+         Rc8yFFmi2Oas8Ql5d75DKnxSFhyuGaT3u344pexGbv94pg1zh5pIpCgdQnmTPPujRP
+         mTedh3xYPk/OncYTa5PvyZXiae6KchaFvPyMUnE8Pp++ciLfZc1HYT1rl1v6UQyxfV
+         y2Rlw77fSNPo4pbAq/eeeQ+6L11X2TTfYJh0EZn63fDji0+pzNrSR0bFECmQvfwcty
+         1Z1n1fB2f4qG0cC8XA1NyQkAt2tAOX4J+SMvE9NS6uIknVhX+59e9HXlH2Usm7FhA9
+         RZxz60x/7NLAg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id 511B75C0510; Tue, 31 Jan 2023 12:26:35 -0800 (PST)
+Date:   Tue, 31 Jan 2023 12:26:35 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     kernel test robot <yujie.liu@intel.com>
+Cc:     Liam Howlett <liam.howlett@oracle.com>, oe-lkp@lists.linux.dev,
+        lkp@intel.com, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [linus:master] [maple_tree] 120b116208:
+ INFO:task_blocked_for_more_than#seconds
+Message-ID: <20230131202635.GA3019407@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <202301310940.4a37c7af-yujie.liu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y9lihmePkCHWHrlI@casper.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <202301310940.4a37c7af-yujie.liu@intel.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 23/01/31 06:48PM, Matthew Wilcox wrote:
-> On Wed, Feb 01, 2023 at 12:07:25AM +0530, Ritesh Harjani (IBM) wrote:
-> > On 23/01/30 09:00PM, Matthew Wilcox wrote:
-> > > On Tue, Jan 31, 2023 at 01:51:50AM +0530, Ritesh Harjani (IBM) wrote:
-> > > > > > Thus the iop structure will only gets allocated at the time of writeback
-> > > > > > in iomap_writepage_map(). This I think, was a not problem till now since
-> > > > > > we anyway only track uptodate status in iop (no support of tracking
-> > > > > > dirty bitmap status which later patches will add), and we also end up
-> > > > > > setting all the bits in iomap_page_create(), if the page is uptodate.
-> > > > >
-> > > > > delayed iop allocation is a feature and not a bug.  We might have to
-> > > > > refine the criteria for sub-page dirty tracking, but in general having
-> > > > > the iop allocates is a memory and performance overhead and should be
-> > > > > avoided as much as possible.  In fact I still have some unfinished
-> > > > > work to allocate it even more lazily.
-> > > >
-> > > > So, what I meant here was that the commit[1] chaged the behavior/functionality
-> > > > without indenting to. I agree it's not a bug.
-> > >
-> > > It didn't change the behaviour or functionality.  It broke your patches,
-> > > but it certainly doesn't deserve its own commit reverting it -- because
-> > > it's not wrong.
-> > >
-> > > > But when I added dirty bitmap tracking support, I couldn't understand for
-> > > > sometime on why were we allocating iop only at the time of writeback.
-> > > > And it was due to a small line change which somehow slipped into this commit [1].
-> > > > Hence I made this as a seperate patch so that it doesn't slip through again w/o
-> > > > getting noticed/review.
-> > >
-> > > It didn't "slip through".  It was intended.
-> > >
-> > > > Thanks for the info on the lazy allocation work. Yes, though it is not a bug, but
-> > > > with subpage dirty tracking in iop->state[], if we end up allocating iop only
-> > > > at the time of writeback, than that might cause some performance degradation
-> > > > compared to, if we allocat iop at ->write_begin() and mark the required dirty
-> > > > bit ranges in ->write_end(). Like how we do in this patch series.
-> > > > (Ofcourse it is true only for bs < ps use case).
-> > > >
-> > > > [1]: https://lore.kernel.org/all/20220623175157.1715274-5-shr@fb.com/
-> > >
-> > > You absolutely can allocate it in iomap_write_begin, but you can avoid
-> > > allocating it until writeback time if (pos, len) entirely overlap the
-> > > folio.  ie:
-> > >
-> > > 	if (pos > folio_pos(folio) ||
-> > > 	    pos + len < folio_pos(folio) + folio_size(folio))
-> > > 		iop = iomap_page_create(iter->inode, folio, iter->flags, false);
-> >
-> > Thanks for the suggestion. However do you think it will be better if this is
-> > introduced along with lazy allocation changes which Christoph was mentioning
-> > about?
-> > Why I am thinking that is because, with above approach we delay the allocation
-> > of iop until writeback, for entire folio overlap case. But then later
-> > in __iomap_write_begin(), we require iop if folio is not uptodate.
-> > Hence we again will have to do some checks to see if the iop is not allocated
-> > then allocate it (which is for entire folio overlap case).
-> > That somehow looked like an overkill for a very little gain in the context of
-> > this patch series. Kindly let me know your thoughts on this.
->
-> Look at *why* __iomap_write_begin() allocates an iop.  It's to read in the
-> blocks which are going to be partially-overwritten by the write.  If the
-> write overlaps the entire folio, there are no parts which need to be read
-> in, and we can simply return.
+On Tue, Jan 31, 2023 at 03:18:22PM +0800, kernel test robot wrote:
+> Hi Liam,
+> 
+> We caught a "task blocked" dmesg in maple tree test. Not sure if this
+> is expected for maple tree test, so we are sending this report for
+> your information. Thanks.
+> 
+> Greeting,
+> 
+> FYI, we noticed INFO:task_blocked_for_more_than#seconds due to commit (built with clang-14):
+> 
+> commit: 120b116208a0877227fc82e3f0df81e7a3ed4ab1 ("maple_tree: reorganize testing to restore module testing")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> 
+> in testcase: boot
+> 
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> [   17.318428][    T1] calling  maple_tree_seed+0x0/0x15d0 @ 1
+> [   17.319219][    T1] 
+> [   17.319219][    T1] TEST STARTING
+> [   17.319219][    T1] 
+> [  999.249871][   T23] INFO: task rcu_scale_shutd:59 blocked for more than 491 seconds.
+> [  999.253363][   T23]       Not tainted 6.1.0-rc4-00003-g120b116208a0 #1
+> [  999.254249][   T23] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  999.255390][   T23] task:rcu_scale_shutd state:D stack:30968 pid:59    ppid:2      flags:0x00004000
+> [  999.256934][   T23] Call Trace:
+> [  999.257418][   T23]  <TASK>
+> [  999.257900][   T23]  __schedule+0x169b/0x1f90
+> [  999.261677][   T23]  schedule+0x151/0x300
+> [  999.262281][   T23]  ? compute_real+0xe0/0xe0
+> [  999.263364][   T23]  rcu_scale_shutdown+0xdd/0x130
+> [  999.264093][   T23]  ? wake_bit_function+0x2c0/0x2c0
+> [  999.268985][   T23]  kthread+0x309/0x3a0
+> [  999.269958][   T23]  ? compute_real+0xe0/0xe0
+> [  999.270552][   T23]  ? kthread_unuse_mm+0x200/0x200
+> [  999.271281][   T23]  ret_from_fork+0x1f/0x30
+> [  999.272385][   T23]  </TASK>
+> [  999.272865][   T23] 
+> [  999.272865][   T23] Showing all locks held in the system:
+> [  999.273988][   T23] 2 locks held by swapper/0/1:
+> [  999.274684][   T23] 1 lock held by khungtaskd/23:
+> [  999.275400][   T23]  #0: ffffffff88346e00 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x8/0x30
+> [  999.277171][   T23] 
+> [  999.277525][   T23] =============================================
+> [  999.277525][   T23] 
+> [ 1049.050884][    T1] maple_tree: 12610686 of 12610686 tests passed
+> 
+> 
+> If you fix the issue, kindly add following tag
+> | Reported-by: kernel test robot <yujie.liu@intel.com>
+> | Link: https://lore.kernel.org/oe-lkp/202301310940.4a37c7af-yujie.liu@intel.com
 
-Yes that make sense.
+Liam brought this to my attention on IRC, and it looks like the root
+cause is that the rcuscale code does not deal gracefully with grace
+periods that are in much excess of a second in duration.
 
-> Maybe we should make that more obvious:
+Now, it might well be worth looking into why the grace periods were taking
+that long, but if you were running Maple Tree stress tests concurrently
+with rcuscale, this might well be expected behavior.
 
-Yes, I think this maybe required. Because otherwise we might end up using
-uninitialized iop. generic/156 (funshare), can easily trigger that.
-Will spend sometime on the unshare path of iomap.
+So, does the patch below clear this up for you?
 
->
-> 	if (folio_test_uptodate(folio))
-> 		return 0;
-> 	if (pos <= folio_pos(folio) &&
-> 	    pos + len >= folio_pos(folio) + folio_size(folio))
-> 		return 0;
-> 	folio_clear_error(folio);
->
-> (I think pos must always be >= folio_pos(), so that <= could be ==, but
-> it doesn't hurt anything to use <=)
+							Thanx, Paul
 
-Thanks for sharing this.
+------------------------------------------------------------------------
 
--ritesh
+commit 8e44d51e3411994091f7c7c136286d82c5757a4a
+Author: Paul E. McKenney <paulmck@kernel.org>
+Date:   Tue Jan 31 12:08:54 2023 -0800
+
+    rcuscale: Move shutdown from wait_event() to wait_event_idle()
+    
+    The rcu_scale_shutdown() and kfree_scale_shutdown() kthreads/functions
+    use wait_event() to wait for the rcuscale test to complete.  However,
+    each updater thread in such a test waits for at least 100 grace periods.
+    If each grace period takes more than 1.2 seconds, which is long, but
+    not insanely so, this can trigger the hung-task timeout.
+    
+    This commit therefore replaces those wait_event() calls with calls to
+    wait_event_idle(), which do not trigger the hung-task timeout.
+    
+    Reported-by: kernel test robot <yujie.liu@intel.com>
+    Reported-by: Liam Howlett <liam.howlett@oracle.com>
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+
+diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
+index 91fb5905a008f..4120f94030c3c 100644
+--- a/kernel/rcu/rcuscale.c
++++ b/kernel/rcu/rcuscale.c
+@@ -631,8 +631,7 @@ static int compute_real(int n)
+ static int
+ rcu_scale_shutdown(void *arg)
+ {
+-	wait_event(shutdown_wq,
+-		   atomic_read(&n_rcu_scale_writer_finished) >= nrealwriters);
++	wait_event_idle(shutdown_wq, atomic_read(&n_rcu_scale_writer_finished) >= nrealwriters);
+ 	smp_mb(); /* Wake before output. */
+ 	rcu_scale_cleanup();
+ 	kernel_power_off();
+@@ -771,8 +770,8 @@ kfree_scale_cleanup(void)
+ static int
+ kfree_scale_shutdown(void *arg)
+ {
+-	wait_event(shutdown_wq,
+-		   atomic_read(&n_kfree_scale_thread_ended) >= kfree_nrealthreads);
++	wait_event_idle(shutdown_wq,
++			atomic_read(&n_kfree_scale_thread_ended) >= kfree_nrealthreads);
+ 
+ 	smp_mb(); /* Wake before output. */
+ 
