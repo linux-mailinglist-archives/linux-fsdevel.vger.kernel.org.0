@@ -2,115 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EB7A682C56
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 13:14:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33689682C63
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 13:16:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231201AbjAaMO1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Jan 2023 07:14:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36640 "EHLO
+        id S231519AbjAaMQL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Jan 2023 07:16:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbjAaMO0 (ORCPT
+        with ESMTP id S231481AbjAaMQK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Jan 2023 07:14:26 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB69B3F29D;
-        Tue, 31 Jan 2023 04:14:25 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Tue, 31 Jan 2023 07:16:10 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED8BF3FF09
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 04:16:07 -0800 (PST)
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 33B42225E1;
-        Tue, 31 Jan 2023 12:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1675167264; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7CV3uj2kDSVI4fanE/KCToyJxqPWzb+HHyIaNLOcff0=;
-        b=hS3vFGOeOYOeHEzN8r1tg06sON5BlQiZf6cvQxRs2ksL6eevMAofKAsR11sNKSFP9V0Jjb
-        Tb6kZ/Ab2PExoc3kOLr4r8GxQDK0O2msKB5u2ypju6totpu9q/Kaxun4/UTzHDMybRdSLA
-        g7h3tyn7LbK2YTwBtf6UPE11VQVNIQQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1675167264;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7CV3uj2kDSVI4fanE/KCToyJxqPWzb+HHyIaNLOcff0=;
-        b=ilMt3zUfeFK7nbjagjX2p8Y3AtRLyZwBL0tWTYLajp9z/H9os7AxwK5BUbghz8f52sbudZ
-        GvzUS4shzykNL9Bg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 20C0C138E8;
-        Tue, 31 Jan 2023 12:14:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id uQTpByAG2WMeBQAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 31 Jan 2023 12:14:24 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 361E8A06D5; Tue, 31 Jan 2023 13:14:23 +0100 (CET)
-Date:   Tue, 31 Jan 2023 13:14:23 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     syzbot <syzbot+707bba7f823c7b02fa43@syzkaller.appspotmail.com>
-Cc:     almaz.alexandrovich@paragon-software.com, brauner@kernel.org,
-        dchinner@redhat.com, hirofumi@mail.parknet.co.jp, jack@suse.com,
-        jfs-discussion@lists.sourceforge.net, linkinjeon@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, shaggy@kernel.org, sj1557.seo@samsung.com,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Subject: Re: [syzbot] [hfsplus?] [udf?] [fat?] [jfs?] [vfs?] [hfs?] [exfat?]
- [ntfs3?] WARNING in __mpage_writepage
-Message-ID: <20230131121423.pqfogvntzouymzmv@quack3>
-References: <0000000000006b2ca005f38c7aeb@google.com>
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A6AC7414A7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 12:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1675167365;
+        bh=T9pFM0TaSiU75dNwwObnUqA54OKkqExI+JiVpjCtTNY=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=Mfq5S/9XBDHZwf8X9Z5PyvLshiQ4n9APoR30xl6AZZ31VxeO6z3m2oWjZAZ8qKBPb
+         HkanjfsHaOv5P3Hdmr87dYqD3pGnGBvymJnxfNQHWjpVOQj9HvA24B5J2/abvrUW1Q
+         h3tDj9I+JI5BC5QEUU+wsLN5IUAOfmwqFiQ0vUOqw6hbnk8toOWdx5lBDzat3xu8hK
+         aas8hgS/b/4XLeLP8ldHwQZTwPxvJLDl7QfVFelJB1h2GK/zaUaMzJfYONM9lCr3ej
+         qvYnPFlIvVrm7Nvu38rmE8ZlbvklMCGEL+hhajMMljiIZMTcDn2M5O7rXkfrN0YR1S
+         uVZIjZYHFaUhg==
+Received: by mail-ed1-f72.google.com with SMTP id m7-20020a056402510700b00488d1fcdaebso10388843edd.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 04:16:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T9pFM0TaSiU75dNwwObnUqA54OKkqExI+JiVpjCtTNY=;
+        b=PP84IfmVr7O+tIroZtLMVX8zJBFeGFtl943eVnwTEvNEa9hihOrc1Ngjz87Xcmrviq
+         SULn7Kpl7mUVgA1oaX3YPTPmQgsu7uOvXRnJAVAwkzK+lpg2ryDH+9czyFKZ2PeyxQWF
+         1AivHhZvU6aU0Fnc1+k5uD8j0Mg04qpf8amMi/XblXHrtkanuClsLku+ayGa7cr6oze3
+         tedxeAyhNA69Th9mD5a+hiF2iklcWIokMkVMOLeBBzpRMm03Y056G1NWExBP3p4Dg8yS
+         lB1vGckLtLsHuv4YPKCvd9T5dyMdt3MI0+JtUt4970FD93tiqjDJpH/ONhMxF8voUwVH
+         ersA==
+X-Gm-Message-State: AO0yUKXHKa7eU7x6ik1NncJDjRRpDbeZpo7c3agjvNF8TbIqug8MQGto
+        be55wQBOSJwloxqPOYjqqwck+DPn6i3CDbIorMZsc9OKcm2T0lpaOZO9T/LRg+/gYLJQ+saB+rh
+        fidVGibpA98yg95kiaVVxUQP8t+X5pUCNzgBW3zex2vA=
+X-Received: by 2002:a50:9e2f:0:b0:4a1:f49e:48bf with SMTP id z44-20020a509e2f000000b004a1f49e48bfmr18447827ede.7.1675167362836;
+        Tue, 31 Jan 2023 04:16:02 -0800 (PST)
+X-Google-Smtp-Source: AK7set/ypBMfNG1otMzUvh3lwDVgiSjv8iNANEI/lOt7rsQ5LLwFAFauXQGDGD1JtBOLqr1hdn9sVQ==
+X-Received: by 2002:a50:9e2f:0:b0:4a1:f49e:48bf with SMTP id z44-20020a509e2f000000b004a1f49e48bfmr18447817ede.7.1675167362622;
+        Tue, 31 Jan 2023 04:16:02 -0800 (PST)
+Received: from amikhalitsyn.. (ip5f5bf399.dynamic.kabel-deutschland.de. [95.91.243.153])
+        by smtp.gmail.com with ESMTPSA id u20-20020a50a414000000b004a08c52a2f0sm8378432edb.76.2023.01.31.04.16.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Jan 2023 04:16:02 -0800 (PST)
+From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To:     corbet@lwn.net
+Cc:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [PATCH 1/2] docs: filesystems: vfs: actualize struct file_system_type description
+Date:   Tue, 31 Jan 2023 13:15:46 +0100
+Message-Id: <20230131121546.176946-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000006b2ca005f38c7aeb@google.com>
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SORTED_RECIPS,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 31-01-23 02:05:58, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    e2f86c02fdc9 Add linux-next specific files for 20230127
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=156b2101480000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=920c61956db733da
-> dashboard link: https://syzkaller.appspot.com/bug?extid=707bba7f823c7b02fa43
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=118429cd480000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ccb1c1480000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/ff04f1611fad/disk-e2f86c02.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/67928a8622d3/vmlinux-e2f86c02.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/b444a3d78556/bzImage-e2f86c02.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/99c5e7532847/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+707bba7f823c7b02fa43@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 5085 at fs/mpage.c:570 __mpage_writepage+0x138b/0x16f0 fs/mpage.c:570
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ Documentation/filesystems/vfs.rst | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
-This is the warning Willy has added as part of "mpage: convert
-__mpage_writepage() to use a folio more fully" and that warning can indeed
-easily trigger. There's nothing that serializes writeback against racing
-truncate setting new i_size so it is perfectly normal to see pages beyond
-EOF in this place. And the traditional response to such pages is "silently
-do nothing" since they will be soon discarded by truncate_inode_pages().
-
-								Honza
-
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 2c15e7053113..fab3bd702250 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -107,7 +107,7 @@ file /proc/filesystems.
+ struct file_system_type
+ -----------------------
+ 
+-This describes the filesystem.  As of kernel 2.6.39, the following
++This describes the filesystem.  As of kernel 6.1, the following
+ members are defined:
+ 
+ .. code-block:: c
+@@ -115,14 +115,24 @@ members are defined:
+ 	struct file_system_type {
+ 		const char *name;
+ 		int fs_flags;
++		int (*init_fs_context)(struct fs_context *);
++		const struct fs_parameter_spec *parameters;
+ 		struct dentry *(*mount) (struct file_system_type *, int,
+-					 const char *, void *);
++			const char *, void *);
+ 		void (*kill_sb) (struct super_block *);
+ 		struct module *owner;
+ 		struct file_system_type * next;
+-		struct list_head fs_supers;
++		struct hlist_head fs_supers;
++
+ 		struct lock_class_key s_lock_key;
+ 		struct lock_class_key s_umount_key;
++		struct lock_class_key s_vfs_rename_key;
++		struct lock_class_key s_writers_key[SB_FREEZE_LEVELS];
++
++		struct lock_class_key i_lock_key;
++		struct lock_class_key i_mutex_key;
++		struct lock_class_key invalidate_lock_key;
++		struct lock_class_key i_mutex_dir_key;
+ 	};
+ 
+ ``name``
+@@ -132,6 +142,15 @@ members are defined:
+ ``fs_flags``
+ 	various flags (i.e. FS_REQUIRES_DEV, FS_NO_DCACHE, etc.)
+ 
++``init_fs_context``
++	Initializes 'struct fs_context' ->ops and ->fs_private fields with
++	filesystem-specific data.
++
++``parameters``
++	Pointer to the array of filesystem parameters descriptors
++	'struct fs_parameter_spec'.
++	More info in Documentation/filesystems/mount_api.rst.
++
+ ``mount``
+ 	the method to call when a new instance of this filesystem should
+ 	be mounted
+@@ -148,7 +167,8 @@ members are defined:
+ ``next``
+ 	for internal VFS use: you should initialize this to NULL
+ 
+-  s_lock_key, s_umount_key: lockdep-specific
++  s_lock_key, s_umount_key, s_vfs_rename_key, s_writers_key,
++  i_lock_key, i_mutex_key, invalidate_lock_key, i_mutex_dir_key: lockdep-specific
+ 
+ The mount() method has the following arguments:
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
