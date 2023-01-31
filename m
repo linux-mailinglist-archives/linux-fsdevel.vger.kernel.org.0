@@ -2,41 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D57B683535
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 19:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A40C6683534
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 19:29:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231331AbjAaSaG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Jan 2023 13:30:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53842 "EHLO
+        id S231260AbjAaS34 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Jan 2023 13:29:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230315AbjAaS36 (ORCPT
+        with ESMTP id S230007AbjAaS3y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Jan 2023 13:29:58 -0500
+        Tue, 31 Jan 2023 13:29:54 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4D85589A7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 10:29:05 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70CC0589B8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 10:29:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675189744;
+        s=mimecast20190719; t=1675189749;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=1skKAMSOcYitXlHWUQzUa5QecINDy3eBArvxadBodVs=;
-        b=hvKSoI9sGQHS1cCQxo3LVrycTMd4ppbHsnHl1ZXvQWHIlbtgFRTHCusVoz5I+Fwh6DZE5V
-        7Bc7rAGg9E4fKqNFJsyyPQRVIp1gfVBn+goA7jJA1oBTkU5Wj9rTkq4a/bHbdWnG2NvaCX
-        zha0aCHG3qphoXL91DZWcaE1h2Zqfks=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=t3UIPHmqMFH1ajjKP7sH9bM7EYfR1yJADQVx392bk1s=;
+        b=MvplNTb0QjeWzgxC0wvYdjdo+URmQgjBMx+lMbPBkquN8rxUg9c5kgrZ5xBQmUSODs1QQD
+        ZdP9Wfx4UBWQNJLJ53tvPKnZai6YHRv1dS/KfnBY+ilrLjviGmYVQ3ZOeZIKBnNiusT5/w
+        X+mZ0zpVspga/lDKuwuFksm7PWCKu+c=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-606-clOmH5KrPXC5C5_W2nDGGg-1; Tue, 31 Jan 2023 13:29:00 -0500
-X-MC-Unique: clOmH5KrPXC5C5_W2nDGGg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+ us-mta-508-lFqgZSIxMbOwC8PglsK-rQ-1; Tue, 31 Jan 2023 13:29:04 -0500
+X-MC-Unique: lFqgZSIxMbOwC8PglsK-rQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 31BE3811E9C;
-        Tue, 31 Jan 2023 18:29:00 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8FF5329AB445;
+        Tue, 31 Jan 2023 18:29:02 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.33.36.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 86343C15BAD;
-        Tue, 31 Jan 2023 18:28:58 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C3C1A2026D4B;
+        Tue, 31 Jan 2023 18:29:00 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Steve French <smfrench@gmail.com>
 Cc:     David Howells <dhowells@redhat.com>,
@@ -48,13 +49,16 @@ Cc:     David Howells <dhowells@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 00/12] smb3: Use iov_iters down to the network transport and fix DIO page pinning
-Date:   Tue, 31 Jan 2023 18:28:43 +0000
-Message-Id: <20230131182855.4027499-1-dhowells@redhat.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Steve French <sfrench@samba.org>, linux-cachefs@redhat.com
+Subject: [PATCH 01/12] netfs: Add a function to extract a UBUF or IOVEC into a BVEC iterator
+Date:   Tue, 31 Jan 2023 18:28:44 +0000
+Message-Id: <20230131182855.4027499-2-dhowells@redhat.com>
+In-Reply-To: <20230131182855.4027499-1-dhowells@redhat.com>
+References: <20230131182855.4027499-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -65,145 +69,176 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Steve,
+Add a function to extract the pages from a user-space supplied iterator
+(UBUF- or IOVEC-type) into a BVEC-type iterator, retaining the pages by
+getting a pin on them (as FOLL_PIN) as we go.
 
-Here's an updated version of my patchset to make the cifs/smb3 driver pass
-iov_iters down to the lowest layers where they can be passed directly to
-the network transport rather than passing lists of pages around.
+This is useful in three situations:
 
-I've fixed a couple of bugs and rebased on top of a merge of my two
-iov_iter_extract_pages() patches onto your for-next branch.  The merge is
-so that the same commits are used as are in the linux-block tree.
+ (1) A userspace thread may have a sibling that unmaps or remaps the
+     process's VM during the operation, changing the assignment of the
+     pages and potentially causing an error.  Retaining the pages keeps
+     some pages around, even if this occurs; futher, we find out at the
+     point of extraction if EFAULT is going to be incurred.
 
-The series also deals with some other issues:
+ (2) Pages might get swapped out/discarded if not retained, so we want to
+     retain them to avoid the reload causing a deadlock due to a DIO
+     from/to an mmapped region on the same file.
 
- (*) By pinning pages, it fixes the race between concurrent DIO read and
-     fork, whereby the pages containing the DIO read buffer may end up
-     belonging to the child process and not the parent - with the result
-     that the parent might not see the retrieved data.
+ (3) The iterator may get passed to sendmsg() by the filesystem.  If a
+     fault occurs, we may get a short write to a TCP stream that's then
+     tricky to recover from.
 
- (*) cifs shouldn't take refs on pages extracted from non-user-backed
-     iterators (eg. KVEC).  With these changes, cifs will apply the
-     appropriate cleanup.  Note that there is the possibility the network
-     transport might, but that's beyond the scope of this patchset.
+We don't deal with other types of iterator here, leaving it to other
+mechanisms to retain the pages (eg. PG_locked, PG_writeback and the pipe
+lock).
 
- (*) Making it easier to transition to using folios in cifs rather than
-     pages by dealing with them through BVEC and XARRAY iterators.
-
-
-The first couple of patches to provide function to pin or leave unpinned
-the pages from an iterator (and not take a ref on them).
-
- (1) Define qualifying flags for extraction functions.
-
- (2) Define iov_iter_extract_pages() to do the extraction and
-     iov_iter_extract_will_pin() to indicate how it should be cleaned up.
-
-Then there are a couple of patches that add stuff to netfslib that I want
-to use there as well as in cifs:
-
- (3) Add a netfslib function to extract and pin pages from an ITER_IOBUF or
-     ITER_UBUF iterator into an ITER_BVEC iterator.
-
- (4) Add a netfslib function to extract pages from an iterator that's of
-     type ITER_UBUF/IOVEC/BVEC/KVEC/XARRAY and add them to a scatterlist.
-     The cleanup will need to be done as for iov_iter_extract_pages().
-
-     BVEC, KVEC and XARRAY iterators can be rendered into elements that
-     span multiple pages.
-
-Then a fix:
-
- (5) Fix oops due to uncleared server->smbd_conn in reconnect
-
-Then there are some cifs helpers that work with iterators:
-
- (6) Implement cifs_splice_read() to use an ITER_BVEC rather than an
-     ITER_PIPE, bulk-allocating the pages, attaching them to the bvec,
-     doing the I/O and then pushing the pages into the pipe.  This avoids
-     the problem with cifs wanting to split the pipe iterator in a later
-     patch.
-
- (7) Add a function to walk through an ITER_BVEC/KVEC/XARRAY iterator and
-     add elements to an RDMA SGE list.  Only the DMA addresses are stored,
-     and an element may span multiple pages (say if an xarray contains a
-     multipage folio).
-
- (8) Add a function to walk through an ITER_BVEC/KVEC/XARRAY iterator and
-     pass the contents into a shash function.
-
- (9) Add functions to walk through an ITER_XARRAY iterator and perform
-     various sorts of cleanup on the folios held therein, to be used on I/O
-     completion.
-
-(10) Add a function to read from the transport TCP socket directly into an
-     iterator.
-
-Then come the patches that actually do the work of iteratorising cifs:
-
-(11) The main patch.  Replace page lists with iterators.  It extracts the
-     pages from ITER_UBUF and ITER_IOVEC iterators to an ITER_BVEC
-     iterator, pinning or getting refs on them, before passing them down as
-     the I/O may be done from a worker thread.
-
-     The iterator is extracted into a scatterlist in order to talk to the
-     crypto interface or to do RDMA.
-
-(12) In the cifs RDMA code, extract the iterator into an RDMA SGE[] list,
-     removing the scatterlist intermediate - at least for smbd_send().
-     There appear to be other ways for cifs to talk to the RDMA layer that
-     don't go through that that I haven't managed to work out.
-
-(13) Remove a chunk of now-unused code.
-
-(14) Fix a problem with encrypted RDMA data read.
-
-(15) Allow DIO to/from KVEC-type iterators.
-
-I've pushed the patches here also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-cifs
-
-David
-
-Link: https://lore.kernel.org/r/166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk/
-
-David Howells (12):
-  netfs: Add a function to extract a UBUF or IOVEC into a BVEC iterator
-  netfs: Add a function to extract an iterator into a scatterlist
-  cifs: Implement splice_read to pass down ITER_BVEC not ITER_PIPE
-  cifs: Add a function to build an RDMA SGE list from an iterator
-  cifs: Add a function to Hash the contents of an iterator
-  cifs: Add some helper functions
-  cifs: Add a function to read into an iter from a socket
-  cifs: Change the I/O paths to use an iterator rather than a page list
-  cifs: Build the RDMA SGE list directly from an iterator
-  cifs: Remove unused code
-  cifs: Fix problem with encrypted RDMA data read
-  cifs: DIO to/from KVEC-type iterators should now work
-
- fs/cifs/Kconfig       |    1 +
- fs/cifs/cifsencrypt.c |  172 +++-
- fs/cifs/cifsfs.c      |   12 +-
- fs/cifs/cifsfs.h      |    6 +
- fs/cifs/cifsglob.h    |   66 +-
- fs/cifs/cifsproto.h   |   11 +-
- fs/cifs/cifssmb.c     |   15 +-
- fs/cifs/connect.c     |   14 +
- fs/cifs/file.c        | 1848 +++++++++++++++++++----------------------
- fs/cifs/fscache.c     |   22 +-
- fs/cifs/fscache.h     |   10 +-
- fs/cifs/misc.c        |  128 +--
- fs/cifs/smb2ops.c     |  365 ++++----
- fs/cifs/smb2pdu.c     |   53 +-
- fs/cifs/smbdirect.c   |  535 +++++++-----
- fs/cifs/smbdirect.h   |    7 +-
- fs/cifs/transport.c   |   54 +-
- fs/netfs/Makefile     |    1 +
- fs/netfs/iterator.c   |  371 +++++++++
- fs/splice.c           |    1 +
- include/linux/netfs.h |    6 +
- mm/vmalloc.c          |    1 +
- 22 files changed, 2013 insertions(+), 1686 deletions(-)
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: linux-cachefs@redhat.com
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/Makefile     |   1 +
+ fs/netfs/iterator.c   | 102 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/netfs.h |   2 +
+ 3 files changed, 105 insertions(+)
  create mode 100644 fs/netfs/iterator.c
+
+diff --git a/fs/netfs/Makefile b/fs/netfs/Makefile
+index f684c0cd1ec5..386d6fb92793 100644
+--- a/fs/netfs/Makefile
++++ b/fs/netfs/Makefile
+@@ -3,6 +3,7 @@
+ netfs-y := \
+ 	buffered_read.o \
+ 	io.o \
++	iterator.o \
+ 	main.o \
+ 	objects.o
+ 
+diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
+new file mode 100644
+index 000000000000..7b7cdc2863fc
+--- /dev/null
++++ b/fs/netfs/iterator.c
+@@ -0,0 +1,102 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/* Iterator helpers.
++ *
++ * Copyright (C) 2022 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#include <linux/export.h>
++#include <linux/slab.h>
++#include <linux/uio.h>
++#include <linux/netfs.h>
++#include "internal.h"
++
++/**
++ * netfs_extract_user_iter - Extract the pages from a user iterator into a bvec
++ * @orig: The original iterator
++ * @orig_len: The amount of iterator to copy
++ * @new: The iterator to be set up
++ * @extract_flags: Flags to qualify the request
++ *
++ * Extract the page fragments from the given amount of the source iterator and
++ * build up a second iterator that refers to all of those bits.  This allows
++ * the original iterator to disposed of.
++ *
++ * @extract_flags can have ITER_ALLOW_P2PDMA set to request peer-to-peer DMA be
++ * allowed on the pages extracted.
++ *
++ * On success, the number of elements in the bvec is returned, the original
++ * iterator will have been advanced by the amount extracted.
++ *
++ * The iov_iter_extract_mode() function should be used to query how cleanup
++ * should be performed.
++ */
++ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
++				struct iov_iter *new, unsigned int extract_flags)
++{
++	struct bio_vec *bv = NULL;
++	struct page **pages;
++	unsigned int cur_npages;
++	unsigned int max_pages;
++	unsigned int npages = 0;
++	unsigned int i;
++	ssize_t ret;
++	size_t count = orig_len, offset, len;
++	size_t bv_size, pg_size;
++
++	if (WARN_ON_ONCE(!iter_is_ubuf(orig) && !iter_is_iovec(orig)))
++		return -EIO;
++
++	max_pages = iov_iter_npages(orig, INT_MAX);
++	bv_size = array_size(max_pages, sizeof(*bv));
++	bv = kvmalloc(bv_size, GFP_KERNEL);
++	if (!bv)
++		return -ENOMEM;
++
++	/* Put the page list at the end of the bvec list storage.  bvec
++	 * elements are larger than page pointers, so as long as we work
++	 * 0->last, we should be fine.
++	 */
++	pg_size = array_size(max_pages, sizeof(*pages));
++	pages = (void *)bv + bv_size - pg_size;
++
++	while (count && npages < max_pages) {
++		ret = iov_iter_extract_pages(orig, &pages, count,
++					     max_pages - npages, extract_flags,
++					     &offset);
++		if (ret < 0) {
++			pr_err("Couldn't get user pages (rc=%zd)\n", ret);
++			break;
++		}
++
++		if (ret > count) {
++			pr_err("get_pages rc=%zd more than %zu\n", ret, count);
++			break;
++		}
++
++		count -= ret;
++		ret += offset;
++		cur_npages = DIV_ROUND_UP(ret, PAGE_SIZE);
++
++		if (npages + cur_npages > max_pages) {
++			pr_err("Out of bvec array capacity (%u vs %u)\n",
++			       npages + cur_npages, max_pages);
++			break;
++		}
++
++		for (i = 0; i < cur_npages; i++) {
++			len = ret > PAGE_SIZE ? PAGE_SIZE : ret;
++			bv[npages + i].bv_page	 = *pages++;
++			bv[npages + i].bv_offset = offset;
++			bv[npages + i].bv_len	 = len - offset;
++			ret -= len;
++			offset = 0;
++		}
++
++		npages += cur_npages;
++	}
++
++	iov_iter_bvec(new, orig->data_source, bv, npages, orig_len - count);
++	return npages;
++}
++EXPORT_SYMBOL_GPL(netfs_extract_user_iter);
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 4c76ddfb6a67..e8c560131170 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -296,6 +296,8 @@ void netfs_get_subrequest(struct netfs_io_subrequest *subreq,
+ void netfs_put_subrequest(struct netfs_io_subrequest *subreq,
+ 			  bool was_async, enum netfs_sreq_ref_trace what);
+ void netfs_stats_show(struct seq_file *);
++ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
++				struct iov_iter *new, unsigned int extract_flags);
+ 
+ /**
+  * netfs_inode - Get the netfs inode context from the inode
 
