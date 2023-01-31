@@ -2,371 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8880D682FD6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 15:55:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 794856830E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 16:07:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231583AbjAaOzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Jan 2023 09:55:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53588 "EHLO
+        id S232887AbjAaPHg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Jan 2023 10:07:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231660AbjAaOzK (ORCPT
+        with ESMTP id S232922AbjAaPHV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Jan 2023 09:55:10 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4098C23321
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 06:55:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D094C61546
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 14:55:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2190C433EF;
-        Tue, 31 Jan 2023 14:55:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675176906;
-        bh=NLOAbpL8t3hD1V6YF7Q+d3LVix9mGDdoB6bxLi0xucc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PSxMpFyR1xwAIfrd1drG4xP3D3/QoSvcqpMN+C3/YJSNjRNU493MIA3FwjskSV6vK
-         v1hjrYDJgzml+bwhE+dt0myHhUSo93SQjvb16Q2AfPlNusYj9cfj3Ba3aDLzGZPL0Y
-         vgxlrh1Il3+2mSq9IETT4Sy5Ib/5i3RUC8uizFj2T4vCrPwJANPkk72RYY/GrnQAeN
-         HP2/DBDvfiuf8+0+AT84/Mc8r5rXXg5XotFSXhM5xrc6nvLQ5Pmd66TgR+2ee3hzDG
-         VaxhUCMpF49AzoantF27hkl4gUH9+4/sQj6Gq+9SiyS1kHG2f+CGKbvcPZVCu95K3U
-         CrZjYYyp6DGiQ==
-Date:   Tue, 31 Jan 2023 15:55:01 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <sforshee@kernel.org>,
-        Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH v2 1/8] fs: don't use IOP_XATTR for posix acls
-Message-ID: <20230131145501.cscah5qujqh4e36k@wittgenstein>
-References: <20230125-fs-acl-remove-generic-xattr-handlers-v2-0-214cfb88bb56@kernel.org>
- <20230125-fs-acl-remove-generic-xattr-handlers-v2-1-214cfb88bb56@kernel.org>
- <20230130165053.GA8357@lst.de>
- <20230130180902.mo6vfudled25met4@wittgenstein>
- <20230131113642.4ivzuxvnfrfjbmhk@wittgenstein>
+        Tue, 31 Jan 2023 10:07:21 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F6D158655
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 07:03:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1675177348;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xxh3yGM/ZsG6BoXNyGFfgQ/WFqnddub0mxCa53sHlr0=;
+        b=Lol5HEJO6LfzVmqB2iO8UDVY5nakw5KHoC02fLNdMeJ8rB7ko1cwWl+Azw+OrbZSFW2y8n
+        Nd45VnDEVn1hvsN2NBv/tsv0N0pvU5lxP1k4OzRx6JXv8AsLLCqvys+lZvodx4lFyyhsm9
+        OqSMaqgiHKdu+m7uD1PaaEfVpnjUl9g=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-674-cFrfhB_NMFGyFisic31NxQ-1; Tue, 31 Jan 2023 10:02:26 -0500
+X-MC-Unique: cFrfhB_NMFGyFisic31NxQ-1
+Received: by mail-wm1-f69.google.com with SMTP id e38-20020a05600c4ba600b003dc434dabbdso6697393wmp.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 07:02:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xxh3yGM/ZsG6BoXNyGFfgQ/WFqnddub0mxCa53sHlr0=;
+        b=zlYU+r7qpwMSTmBoU9j0BEhlUQ1NBhTa+T27i0UK9wSD/418uUz5v7zLSwFTjyPUih
+         CZlsvpRbN0WRFjVYLaipRXW/W/N5P8NcxIFltcSDlZFHg2haxaracf/TyIpozm8aKh9p
+         0kroKrrzBtyrVPSpQ3S+Vc2Ibe6uJHuEicpJPP5S7uGnfVg92gub06yh/dAfMIns/ZQ3
+         wNtZf3llJw7WDH/N0qcNY3IGJMTnXodOWW70nXEt+ITZcQ35VKUm8FrR3/DfnOjyrJ7s
+         4R4xO5XkPyrAYjVZw1k8zWldixIvVgh10lZdk9t67nI2gy/NDGHpddi9HV9gQPtOPFs5
+         kppA==
+X-Gm-Message-State: AO0yUKXxgnNxgNATINisPibB9vWHKB+HK1SY+dWfcYYIXB44I4SJMq3T
+        vkSdy1CLIyPEfSMG1WGzCovC1gzpy5Vggoh5JYPRrZ3RKCCOOba6nNukohWh9rwsUe9iqRv4/So
+        3MsamR2dxM3iYe9OLh6wBcKTJ/g==
+X-Received: by 2002:a05:600c:12c6:b0:3dc:59a5:afc7 with SMTP id v6-20020a05600c12c600b003dc59a5afc7mr8099368wmd.20.1675177344021;
+        Tue, 31 Jan 2023 07:02:24 -0800 (PST)
+X-Google-Smtp-Source: AK7set/V4yEZEsQrG/ruc8sFzoH9qJbB6K1Fnya6OXei72kF8T6t0smCD8SwpweMLGlQh0L9cOmCbA==
+X-Received: by 2002:a05:600c:12c6:b0:3dc:59a5:afc7 with SMTP id v6-20020a05600c12c600b003dc59a5afc7mr8099330wmd.20.1675177343696;
+        Tue, 31 Jan 2023 07:02:23 -0800 (PST)
+Received: from ?IPV6:2003:d8:2f0a:ca00:f74f:2017:1617:3ec3? (p200300d82f0aca00f74f201716173ec3.dip0.t-ipconnect.de. [2003:d8:2f0a:ca00:f74f:2017:1617:3ec3])
+        by smtp.gmail.com with ESMTPSA id hg6-20020a05600c538600b003dafbd859a6sm19664293wmb.43.2023.01.31.07.02.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Jan 2023 07:02:23 -0800 (PST)
+Message-ID: <7f8f2d0f-4bf2-71aa-c356-c78c6b7fd071@redhat.com>
+Date:   Tue, 31 Jan 2023 16:02:21 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230131113642.4ivzuxvnfrfjbmhk@wittgenstein>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [GIT PULL] iov_iter: Improve page extraction (pin or just list)
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>, David Howells <dhowells@redhat.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Jeff Layton <jlayton@kernel.org>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <040ed7a7-3f4d-dab7-5a49-1cd9933c5445@redhat.com>
+ <e68c5cab-c3a6-1872-98fa-9f909f23be79@nvidia.com>
+ <3351099.1675077249@warthog.procyon.org.uk>
+ <fd0003a0-a133-3daf-891c-ba7deafad768@kernel.dk>
+ <f57ee72f-38e9-6afa-182f-2794638eadcb@kernel.dk>
+ <e8480b18-08af-d101-a721-50d213893492@kernel.dk>
+ <3520518.1675116740@warthog.procyon.org.uk>
+ <f392399b-a4c4-2251-e12b-e89fff351c4d@kernel.dk>
+ <3791872.1675172490@warthog.procyon.org.uk>
+ <88d50843-9aa6-7930-433d-9b488857dc14@redhat.com>
+ <f2fb6cc5-ff95-ca51-b377-5e4bd239d5e8@kernel.dk>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <f2fb6cc5-ff95-ca51-b377-5e4bd239d5e8@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 31, 2023 at 12:36:47PM +0100, Christian Brauner wrote:
-> On Mon, Jan 30, 2023 at 07:09:09PM +0100, Christian Brauner wrote:
-> > On Mon, Jan 30, 2023 at 05:50:53PM +0100, Christoph Hellwig wrote:
-> > > On Mon, Jan 30, 2023 at 05:41:57PM +0100, Christian Brauner wrote:
-> > > > The POSIX ACL api doesn't use the xattr handler infrastructure anymore.
-> > > > If we keep relying on IOP_XATTR we will have to find a way to raise
-> > > > IOP_XATTR during inode_init_always() if a filesystem doesn't implement
-> > > > any xattrs other than POSIX ACLs. That's not done today but is in
-> > > > principle possible. A prior version introduced SB_I_XATTR to this end.
-> > > > Instead of this affecting all filesystems let those filesystems that
-> > > > explicitly disable xattrs for some inodes disable POSIX ACLs by raising
-> > > > IOP_NOACL.
-> > > 
-> > > I'm still a little confused about this, and also about
-> > > inode_xattr_disable.  More below:
-> > > 
-> > > > -	if (!(old->d_inode->i_opflags & IOP_XATTR) ||
-> > > > -	    !(new->d_inode->i_opflags & IOP_XATTR))
-> > > > +	if (inode_xattr_disabled(old->d_inode) ||
-> > > > +	    inode_xattr_disabled(new->d_inode))
-> > > 
-> > > This code shouldn't care about ACLs because the copy up itself
-> > > should be all based around the ACL API, no?
-> > 
-> > The loop copies up all xattrs. It retrieves all xattrs via
-> > vfs_listxattr() then walks through all of them and copies them up. But
-> > it's nothing that we couldn't work around if it buys as less headaches
-> > overall.
-> > 
-> > > 
-> > > > +	if (!(inode->i_opflags & IOP_NOACL))
-> > > >  		error = set_posix_acl(mnt_userns, dentry, acl_type, kacl);
-> > > >  	else if (unlikely(is_bad_inode(inode)))
-> > > >  		error = -EIO;
-> > > > @@ -1205,7 +1205,7 @@ int vfs_remove_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
-> > > >  	if (error)
-> > > >  		goto out_inode_unlock;
-> > > >  
-> > > > -	if (inode->i_opflags & IOP_XATTR)
-> > > > +	if (!(inode->i_opflags & IOP_NOACL))
-> > > >  		error = set_posix_acl(mnt_userns, dentry, acl_type, NULL);
-> > > 
-> > > And here the lack of get/set methods should be all we need unless
-> > > I'm missing something?
-> > 
-> > For setting acl that should work, yes.
-> > 
-> > > 
-> > > > diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-> > > > index c7d1fa526dea..2a7037b165f0 100644
-> > > > --- a/fs/reiserfs/inode.c
-> > > > +++ b/fs/reiserfs/inode.c
-> > > > @@ -2089,7 +2089,7 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
-> > > >  	 */
-> > > >  	if (IS_PRIVATE(dir) || dentry == REISERFS_SB(sb)->priv_root) {
-> > > >  		inode->i_flags |= S_PRIVATE;
-> > > > -		inode->i_opflags &= ~IOP_XATTR;
-> > > > +		inode_xattr_disable(inode);
-> > > 
-> > > I'll need to hear from the reiserfs maintainers, but this also seems
-> > > like something that would be better done based on method presence.
-> > 
-> > I mean, since this is locked I would think we could just:
-> > 
-> > inode->i_op->{g,s}et_acl = NULL
-> > 
-> > and for btrfs it should work to as it uses simple_dir_inode_operations
-> > which doesn't implement get/set posix acl methods.
-> > 
-> > > 
-> > > > diff --git a/fs/xattr.c b/fs/xattr.c
-> > > > index adab9a70b536..89b6c122056d 100644
-> > > > --- a/fs/xattr.c
-> > > > +++ b/fs/xattr.c
-> > > > @@ -468,7 +468,7 @@ vfs_listxattr(struct dentry *dentry, char *list, size_t size)
-> > > >  	error = security_inode_listxattr(dentry);
-> > > >  	if (error)
-> > > >  		return error;
-> > > > -	if (inode->i_op->listxattr && (inode->i_opflags & IOP_XATTR)) {
-> > > > +	if (inode->i_op->listxattr && !inode_xattr_disabled(inode)) {
-> > > >  		error = inode->i_op->listxattr(dentry, list, size);
-> > > 
-> > > So once listing ACLs is moved out of ->listxattr there should be no
-> > > need to check anything for ACLs here either.
-> > 
-> > I think so...
-> > 
-> > But that would mean we'd need to change the ->listxattr() inode
-> > operation to not return POSIX ACLs anymore. Instead vfs_listxattr()
-> > would issue two vfs_get_acl() calls to check whether POSIX ACLs are
+On 31.01.23 15:50, Jens Axboe wrote:
+> On 1/31/23 6:48?AM, David Hildenbrand wrote:
+>> On 31.01.23 14:41, David Howells wrote:
+>>> David Hildenbrand <david@redhat.com> wrote:
+>>>
+>>>>>> percpu counters maybe - add them up at the point of viewing?
+>>>>> They are percpu, see my last email. But for every 108 changes (on
+>>>>> my system), they will do two atomic_long_adds(). So not very
+>>>>> useful for anything but low frequency modifications.
+>>>>>
+>>>>
+>>>> Can we just treat the whole acquired/released accounting as a debug mechanism
+>>>> to detect missing releases and do it only for debug kernels?
+>>>>
+>>>>
+>>>> The pcpu counter is an s8, so we have to flush on a regular basis and cannot
+>>>> really defer it any longer ... but I'm curious if it would be of any help to
+>>>> only have a single PINNED counter that goes into both directions (inc/dec on
+>>>> pin/release), to reduce the flushing.
+>>>>
+>>>> Of course, once we pin/release more than ~108 pages in one go or we switch
+>>>> CPUs frequently it won't be that much of a help ...
+>>>
+>>> What are the stats actually used for?  Is it just debugging, or do we actually
+>>> have users for them (control groups spring to mind)?
+>>
+>> As it's really just "how many pinning events" vs. "how many unpinning
+>> events", I assume it's only for debugging.
+>>
+>> For example, if you pin the same page twice it would not get accounted
+>> as "a single page is pinned".
 > 
-> So I see a few issues with this:
-> * Network filesystems like 9p or cifs retrieve xattrs for ->listxattr()
->   in a batch from the server and dump them into the provided buffer.
->   If we want to stop listing POSIX ACLs in ->listxattr() that would mean
->   we would need to filter them out of the buffer for such filesystems.
->   From a cursory glance this might affect more than just 9p and cifs.
-> * The fuse_listxattr() implementation has different permission
->   requirements than fuse_get_acl() which would mean we would potentially
->   refuse to list POSIX ACLs where we would have before or vica versa.
-> * We risk losing returning a consistent snapshot of all xattr names for
->   a given inode if we split ->listxattr() and POSIX ACLs apart.
+> How about something like the below then? I can send it out as a real
+> patch, will run a sanity check on it first but would be surprised if
+> this doesn't fix it.
 > 
-> So I'm not sure that we can do it this way.
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index f45a3a5be53a..41abb16286ec 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -168,7 +168,9 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
+>   		 */
+>   		smp_mb__after_atomic();
+>   
+> +#ifdef CONFIG_DEBUG_VM
+>   		node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, refs);
+> +#endif
+>   
+>   		return folio;
+>   	}
+> @@ -180,7 +182,9 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
+>   static void gup_put_folio(struct folio *folio, int refs, unsigned int flags)
+>   {
+>   	if (flags & FOLL_PIN) {
+> +#ifdef CONFIG_DEBUG_VM
+>   		node_stat_mod_folio(folio, NR_FOLL_PIN_RELEASED, refs);
+> +#endif
+>   		if (folio_test_large(folio))
+>   			atomic_sub(refs, folio_pincount_ptr(folio));
+>   		else
+> @@ -236,8 +240,9 @@ int __must_check try_grab_page(struct page *page, unsigned int flags)
+>   		} else {
+>   			folio_ref_add(folio, GUP_PIN_COUNTING_BIAS);
+>   		}
+> -
+> +#ifdef CONFIG_DEBUG_VM
+>   		node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, 1);
+> +#endif
+>   	}
+>   
+>   	return 0;
+> 
 
-So I've experimented a bit. Really, the remaining issue to remove the
-dependency of POSIX ACLs on IOP_XATTR is the check in vfs_listxattr()
-for IOP_XATTR. Removing IOP_XATTR from vfs_listxattr() from is really
-only a problem if there is any filesystems that removes IOP_XATTR
-without also assigning a dedicated set of inode_operations that either
-leaves ->listxattr() unimplement or makes it a NOP.
+We might want to hide the counters completely by defining them only with 
+CONFIG_DEBUG_VM.
 
-The only filesystems for which this is true is reiserfs. But I believe
-we can fix this by forcing reiserfs to use a dedicated set of inode
-operations with ->listxattr(), and the POSIX ACL inode operations
-unimplemented.
-
-So here's what I have which would allows us to proceed with the removal.
-@Christoph, do you think that's doable or is there anything I'm still
-missing?:
-
-From 765c56cba40fb42e7e7a319cf3cbcc9d5abd7c11 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 31 Jan 2023 15:13:53 +0100
-Subject: [PATCH 1/3] reiserfs: use simplify IOP_XATTR handling
-
-Reiserfs is the only filesystem that removes IOP_XATTR without also
-using a set of dedicated inode operations at the same time that nop all
-xattr related inode operations. This means we need to have a IOP_XATTR
-check in vfs_listxattr() instead of just being able to check for
-->listxattr() being implemented.
-
-Introduce a dedicated set of nop inode operations that are used when
-IOP_XATTR is removed allowing us to remove that check from
-vfs_listxattr().
-
-Cc: reiserfs-devel@vger.kernel.org
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
- fs/reiserfs/inode.c    |  1 +
- fs/reiserfs/namei.c    | 17 +++++++++++++++++
- fs/reiserfs/reiserfs.h |  1 +
- fs/reiserfs/xattr.c    |  3 +++
- 4 files changed, 22 insertions(+)
-
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index c7d1fa526dea..e293eaaed185 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2090,6 +2090,7 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
- 	if (IS_PRIVATE(dir) || dentry == REISERFS_SB(sb)->priv_root) {
- 		inode->i_flags |= S_PRIVATE;
- 		inode->i_opflags &= ~IOP_XATTR;
-+		inode->i_op = &reiserfs_privdir_inode_operations;
- 	}
- 
- 	if (reiserfs_posixacl(inode->i_sb)) {
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index 0b8aa99749f1..19aca1684fd1 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -384,6 +384,7 @@ static struct dentry *reiserfs_lookup(struct inode *dir, struct dentry *dentry,
- 		if (IS_PRIVATE(dir)) {
- 			inode->i_flags |= S_PRIVATE;
- 			inode->i_opflags &= ~IOP_XATTR;
-+			inode->i_op = &reiserfs_privdir_inode_operations;
- 		}
- 	}
- 	reiserfs_write_unlock(dir->i_sb);
-@@ -1669,6 +1670,22 @@ const struct inode_operations reiserfs_dir_inode_operations = {
- 	.fileattr_set = reiserfs_fileattr_set,
- };
- 
-+const struct inode_operations reiserfs_privdir_inode_operations = {
-+	.create = reiserfs_create,
-+	.lookup = reiserfs_lookup,
-+	.link = reiserfs_link,
-+	.unlink = reiserfs_unlink,
-+	.symlink = reiserfs_symlink,
-+	.mkdir = reiserfs_mkdir,
-+	.rmdir = reiserfs_rmdir,
-+	.mknod = reiserfs_mknod,
-+	.rename = reiserfs_rename,
-+	.setattr = reiserfs_setattr,
-+	.permission = reiserfs_permission,
-+	.fileattr_get = reiserfs_fileattr_get,
-+	.fileattr_set = reiserfs_fileattr_set,
-+};
-+
- /*
-  * symlink operations.. same as page_symlink_inode_operations, with xattr
-  * stuff added
-diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
-index 14726fd353c4..9d3a9c0df43b 100644
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -3160,6 +3160,7 @@ static inline int reiserfs_proc_info_global_done(void)
- 
- /* dir.c */
- extern const struct inode_operations reiserfs_dir_inode_operations;
-+extern const struct inode_operations reiserfs_privdir_inode_operations;
- extern const struct inode_operations reiserfs_symlink_inode_operations;
- extern const struct inode_operations reiserfs_special_inode_operations;
- extern const struct file_operations reiserfs_dir_operations;
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 1864a35853a9..01dc07fb60a4 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -912,6 +912,8 @@ static int create_privroot(struct dentry *dentry)
- 
- 	d_inode(dentry)->i_flags |= S_PRIVATE;
- 	d_inode(dentry)->i_opflags &= ~IOP_XATTR;
-+	d_inode(dentry)->i_op = &reiserfs_privdir_inode_operations;
-+
- 	reiserfs_info(dentry->d_sb, "Created %s - reserved for xattr "
- 		      "storage.\n", PRIVROOT_NAME);
- 
-@@ -984,6 +986,7 @@ int reiserfs_lookup_privroot(struct super_block *s)
- 		if (d_really_is_positive(dentry)) {
- 			d_inode(dentry)->i_flags |= S_PRIVATE;
- 			d_inode(dentry)->i_opflags &= ~IOP_XATTR;
-+			d_inode(dentry)->i_op = &reiserfs_privdir_inode_operations;
- 		}
- 	} else
- 		err = PTR_ERR(dentry);
 -- 
-2.34.1
+Thanks,
 
-From 3002147142b2558f9e642da38a567f7ce1fdd2e5 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 31 Jan 2023 15:17:11 +0100
-Subject: [PATCH 2/3] acl: don't depend on IOP_XATTR
-
-All codepaths that don't want to implement POSIX ACLs should simply not
-implement the associated inode operations instead of relying on
-IOP_XATTR. That's the case for all filesystems today.
-
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
- fs/posix_acl.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 7a4d89897c37..881a7fd1cacb 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -1132,12 +1132,10 @@ int vfs_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	if (error)
- 		goto out_inode_unlock;
- 
--	if (inode->i_opflags & IOP_XATTR)
-+	if (likely(!is_bad_inode(inode)))
- 		error = set_posix_acl(mnt_userns, dentry, acl_type, kacl);
--	else if (unlikely(is_bad_inode(inode)))
--		error = -EIO;
- 	else
--		error = -EOPNOTSUPP;
-+		error = -EIO;
- 	if (!error) {
- 		fsnotify_xattr(dentry);
- 		evm_inode_post_set_acl(dentry, acl_name, kacl);
-@@ -1242,12 +1240,10 @@ int vfs_remove_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	if (error)
- 		goto out_inode_unlock;
- 
--	if (inode->i_opflags & IOP_XATTR)
-+	if (likely(!is_bad_inode(inode)))
- 		error = set_posix_acl(mnt_userns, dentry, acl_type, NULL);
--	else if (unlikely(is_bad_inode(inode)))
--		error = -EIO;
- 	else
--		error = -EOPNOTSUPP;
-+		error = -EIO;
- 	if (!error) {
- 		fsnotify_xattr(dentry);
- 		evm_inode_post_remove_acl(mnt_userns, dentry, acl_name);
--- 
-2.34.1
-
-From 303bcb6a2da513e7d904bc8f9915b992b33ab661 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 31 Jan 2023 15:25:10 +0100
-Subject: [PATCH 3/4] xattr: don't rely on IOP_XATTR in vfs_listxattr()
-
-Filesystems that explicitly turn of xattrs for a given inode all set
-inode->i_op to a dedicated set of inode operations that doesn't
-implement ->listxattr().  Removing this dependency will allow us to
-decouple POSIX ACLs from IOP_XATTR and they can still be listed even if
-no other xattr handlers are implemented.
-
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
- fs/xattr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 8743402a5e8b..aed1cacb97c6 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -466,7 +466,8 @@ vfs_listxattr(struct dentry *dentry, char *list, size_t size)
- 	error = security_inode_listxattr(dentry);
- 	if (error)
- 		return error;
--	if (inode->i_op->listxattr && (inode->i_opflags & IOP_XATTR)) {
-+
-+	if (inode->i_op->listxattr) {
- 		error = inode->i_op->listxattr(dentry, list, size);
- 	} else {
- 		error = security_inode_listsecurity(inode, list, size);
--- 
-2.34.1
+David / dhildenb
 
