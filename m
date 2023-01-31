@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D5040683540
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 19:30:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1F6868353E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 19:30:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231638AbjAaSak (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Jan 2023 13:30:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
+        id S231577AbjAaSag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Jan 2023 13:30:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231137AbjAaSaa (ORCPT
+        with ESMTP id S231512AbjAaSa3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Jan 2023 13:30:30 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1689858955
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 10:29:40 -0800 (PST)
+        Tue, 31 Jan 2023 13:30:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C4BB58970
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 10:29:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675189779;
+        s=mimecast20190719; t=1675189781;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=BZdDXkWVLeSeMrzfC6toZ32lmV7RtpezPBpGycTqzkU=;
-        b=ijSaX8yTWwWyrhT/hc54w65j1Mg4wCtHm1uuzZ0qp7q1/4WamanltmWJTXVWPB9GpA0tkM
-        GOzhyFvaC3eKVwtnLnRY9/32AEKOj2EcBdt6aIQd+AZoYBJJ3l45ulSlhtZttbL3ztZAik
-        6yxkRzL6KsZ4fRS1gczzRqMEwHQXLD8=
+        bh=fK9UANJIw+SgKwPMH1h7QmOCsXxDJO7CfeS4m/u44DQ=;
+        b=IOdhSDvp9VtREcYdvjzPafQxoAN6GwqkhX7oBVTYe0TF0ZMexuGrMXp7NygvDJX4InGZlr
+        7Yf8To3sH+BE6OY+KNVz79P1LBAUi7Q8O1BmRsT8Gtxf1htoRLHc5CHyqLScHKEfwLOwpM
+        qJUpUvxorTTEdSvT6mI5VA+/6XpB7OI=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-302-izf_84U5P9iNa8kXIcHZ2A-1; Tue, 31 Jan 2023 13:29:35 -0500
-X-MC-Unique: izf_84U5P9iNa8kXIcHZ2A-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+ us-mta-455-qIHfuhcfP6KtFfwlJJioYw-1; Tue, 31 Jan 2023 13:29:33 -0500
+X-MC-Unique: qIHfuhcfP6KtFfwlJJioYw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F17DF18A646D;
-        Tue, 31 Jan 2023 18:29:04 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 541D418A650B;
+        Tue, 31 Jan 2023 18:29:07 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.33.36.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B041C16021;
-        Tue, 31 Jan 2023 18:29:03 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AF61C40C2064;
+        Tue, 31 Jan 2023 18:29:05 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Steve French <smfrench@gmail.com>
 Cc:     David Howells <dhowells@redhat.com>,
@@ -50,18 +50,18 @@ Cc:     David Howells <dhowells@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
         Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Steve French <sfrench@samba.org>, linux-cachefs@redhat.com
-Subject: [PATCH 02/12] netfs: Add a function to extract an iterator into a scatterlist
-Date:   Tue, 31 Jan 2023 18:28:45 +0000
-Message-Id: <20230131182855.4027499-3-dhowells@redhat.com>
+        Steve French <sfrench@samba.org>
+Subject: [PATCH 03/12] cifs: Implement splice_read to pass down ITER_BVEC not ITER_PIPE
+Date:   Tue, 31 Jan 2023 18:28:46 +0000
+Message-Id: <20230131182855.4027499-4-dhowells@redhat.com>
 In-Reply-To: <20230131182855.4027499-1-dhowells@redhat.com>
 References: <20230131182855.4027499-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,341 +69,223 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a function for filling in a scatterlist from the list of pages
-contained in an iterator.
+Provide cifs_splice_read() to use a bvec rather than an pipe iterator as
+the latter cannot so easily be split and advanced, which is necessary to
+pass an iterator down to the bottom levels.  Upstream cifs gets around this
+problem by using iov_iter_get_pages() to prefill the pipe and then passing
+the list of pages down.
 
-If the iterator is UBUF- or IOBUF-type, the pages have a pin taken on them
-(as FOLL_PIN).
+This is done by:
 
-If the iterator is BVEC-, KVEC- or XARRAY-type, no pin is taken on the
-pages and it is left to the caller to manage their lifetime.  It cannot be
-assumed that a ref can be validly taken, particularly in the case of a KVEC
-iterator.
+ (1) Bulk-allocate a bunch of pages to carry as much of the requested
+     amount of data as possible, but without overrunning the available
+     slots in the pipe and add them to an ITER_BVEC.
+
+ (2) Synchronously call ->read_iter() to read into the buffer.
+
+ (3) Discard any unused pages.
+
+ (4) Load the remaining pages into the pipe in order and advance the head
+     pointer.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
 cc: Steve French <sfrench@samba.org>
 cc: Shyam Prasad N <nspmangalore@gmail.com>
 cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: linux-cachefs@redhat.com
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Al Viro <viro@zeniv.linux.org.uk>
 cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/iterator.c   | 269 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/netfs.h |   4 +
- mm/vmalloc.c          |   1 +
- 3 files changed, 274 insertions(+)
 
-diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
-index 7b7cdc2863fc..9d198d0a5503 100644
---- a/fs/netfs/iterator.c
-+++ b/fs/netfs/iterator.c
-@@ -7,7 +7,9 @@
- 
- #include <linux/export.h>
- #include <linux/slab.h>
-+#include <linux/mm.h>
- #include <linux/uio.h>
-+#include <linux/scatterlist.h>
- #include <linux/netfs.h>
- #include "internal.h"
- 
-@@ -100,3 +102,270 @@ ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
- 	return npages;
- }
- EXPORT_SYMBOL_GPL(netfs_extract_user_iter);
+Link: https://lore.kernel.org/r/166732028113.3186319.1793644937097301358.stgit@warthog.procyon.org.uk/ # rfc
+---
+ fs/cifs/cifsfs.c | 12 +++----
+ fs/cifs/cifsfs.h |  3 ++
+ fs/cifs/file.c   | 92 ++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/splice.c      |  1 +
+ 4 files changed, 102 insertions(+), 6 deletions(-)
+
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index 10e00c624922..3c57e8b11692 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1358,7 +1358,7 @@ const struct file_operations cifs_file_ops = {
+ 	.fsync = cifs_fsync,
+ 	.flush = cifs_flush,
+ 	.mmap  = cifs_file_mmap,
+-	.splice_read = generic_file_splice_read,
++	.splice_read = cifs_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.llseek = cifs_llseek,
+ 	.unlocked_ioctl	= cifs_ioctl,
+@@ -1378,7 +1378,7 @@ const struct file_operations cifs_file_strict_ops = {
+ 	.fsync = cifs_strict_fsync,
+ 	.flush = cifs_flush,
+ 	.mmap = cifs_file_strict_mmap,
+-	.splice_read = generic_file_splice_read,
++	.splice_read = cifs_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.llseek = cifs_llseek,
+ 	.unlocked_ioctl	= cifs_ioctl,
+@@ -1398,7 +1398,7 @@ const struct file_operations cifs_file_direct_ops = {
+ 	.fsync = cifs_fsync,
+ 	.flush = cifs_flush,
+ 	.mmap = cifs_file_mmap,
+-	.splice_read = generic_file_splice_read,
++	.splice_read = cifs_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.unlocked_ioctl  = cifs_ioctl,
+ 	.copy_file_range = cifs_copy_file_range,
+@@ -1416,7 +1416,7 @@ const struct file_operations cifs_file_nobrl_ops = {
+ 	.fsync = cifs_fsync,
+ 	.flush = cifs_flush,
+ 	.mmap  = cifs_file_mmap,
+-	.splice_read = generic_file_splice_read,
++	.splice_read = cifs_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.llseek = cifs_llseek,
+ 	.unlocked_ioctl	= cifs_ioctl,
+@@ -1434,7 +1434,7 @@ const struct file_operations cifs_file_strict_nobrl_ops = {
+ 	.fsync = cifs_strict_fsync,
+ 	.flush = cifs_flush,
+ 	.mmap = cifs_file_strict_mmap,
+-	.splice_read = generic_file_splice_read,
++	.splice_read = cifs_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.llseek = cifs_llseek,
+ 	.unlocked_ioctl	= cifs_ioctl,
+@@ -1452,7 +1452,7 @@ const struct file_operations cifs_file_direct_nobrl_ops = {
+ 	.fsync = cifs_fsync,
+ 	.flush = cifs_flush,
+ 	.mmap = cifs_file_mmap,
+-	.splice_read = generic_file_splice_read,
++	.splice_read = cifs_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.unlocked_ioctl  = cifs_ioctl,
+ 	.copy_file_range = cifs_copy_file_range,
+diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h
+index 1705c76529d8..2e979d2f4e36 100644
+--- a/fs/cifs/cifsfs.h
++++ b/fs/cifs/cifsfs.h
+@@ -100,6 +100,9 @@ extern ssize_t cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to);
+ extern ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from);
+ extern ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from);
+ extern ssize_t cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from);
++extern ssize_t cifs_splice_read(struct file *in, loff_t *ppos,
++				struct pipe_inode_info *pipe, size_t len,
++				unsigned int flags);
+ extern int cifs_flock(struct file *pfile, int cmd, struct file_lock *plock);
+ extern int cifs_lock(struct file *, int, struct file_lock *);
+ extern int cifs_fsync(struct file *, loff_t, loff_t, int);
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 22dfc1f8b4f1..30d01b236f77 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -5273,3 +5273,95 @@ const struct address_space_operations cifs_addr_ops_smallbuf = {
+ 	.launder_folio = cifs_launder_folio,
+ 	.migrate_folio = filemap_migrate_folio,
+ };
 +
 +/*
-+ * Extract and pin a list of up to sg_max pages from UBUF- or IOVEC-class
-+ * iterators, and add them to the scatterlist.
++ * Splice data from a file into a pipe.
 + */
-+static ssize_t netfs_extract_user_to_sg(struct iov_iter *iter,
-+					ssize_t maxsize,
-+					struct sg_table *sgtable,
-+					unsigned int sg_max,
-+					unsigned int extract_flags)
++ssize_t cifs_splice_read(struct file *file, loff_t *ppos,
++			 struct pipe_inode_info *pipe, size_t len,
++			 unsigned int flags)
 +{
-+	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
-+	struct page **pages;
-+	unsigned int npages;
-+	ssize_t ret = 0, res;
-+	size_t len, off;
++	LIST_HEAD(pages);
++	struct iov_iter to;
++	struct bio_vec *bv;
++	struct kiocb kiocb;
++	struct page *page;
++	unsigned int head;
++	ssize_t ret;
++	size_t used, npages, chunk, remain, reclaim;
++	int i;
 +
-+	/* We decant the page list into the tail of the scatterlist */
-+	pages = (void *)sgtable->sgl + array_size(sg_max, sizeof(struct scatterlist));
-+	pages -= sg_max;
++	/* Work out how much data we can actually add into the pipe */
++	used = pipe_occupancy(pipe->head, pipe->tail);
++	npages = max_t(ssize_t, pipe->max_usage - used, 0);
++	len = min_t(size_t, len, npages * PAGE_SIZE);
++	npages = DIV_ROUND_UP(len, PAGE_SIZE);
 +
-+	do {
-+		res = iov_iter_extract_pages(iter, &pages, maxsize, sg_max,
-+					     extract_flags, &off);
-+		if (res < 0)
-+			goto failed;
++	bv = kmalloc(array_size(npages, sizeof(bv[0])), GFP_KERNEL);
++	if (!bv)
++		return -ENOMEM;
 +
-+		len = res;
-+		maxsize -= len;
-+		ret += len;
-+		npages = DIV_ROUND_UP(off + len, PAGE_SIZE);
-+		sg_max -= npages;
-+
-+		for (; npages < 0; npages--) {
-+			struct page *page = *pages;
-+			size_t seg = min_t(size_t, PAGE_SIZE - off, len);
-+
-+			*pages++ = NULL;
-+			sg_set_page(sg, page, len, off);
-+			sgtable->nents++;
-+			sg++;
-+			len -= seg;
-+			off = 0;
-+		}
-+	} while (maxsize > 0 && sg_max > 0);
-+
-+	return ret;
-+
-+failed:
-+	while (sgtable->nents > sgtable->orig_nents)
-+		put_page(sg_page(&sgtable->sgl[--sgtable->nents]));
-+	return res;
-+}
-+
-+/*
-+ * Extract up to sg_max pages from a BVEC-type iterator and add them to the
-+ * scatterlist.  The pages are not pinned.
-+ */
-+static ssize_t netfs_extract_bvec_to_sg(struct iov_iter *iter,
-+					ssize_t maxsize,
-+					struct sg_table *sgtable,
-+					unsigned int sg_max,
-+					unsigned int extract_flags)
-+{
-+	const struct bio_vec *bv = iter->bvec;
-+	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
-+	unsigned long start = iter->iov_offset;
-+	unsigned int i;
-+	ssize_t ret = 0;
-+
-+	for (i = 0; i < iter->nr_segs; i++) {
-+		size_t off, len;
-+
-+		len = bv[i].bv_len;
-+		if (start >= len) {
-+			start -= len;
-+			continue;
-+		}
-+
-+		len = min_t(size_t, maxsize, len - start);
-+		off = bv[i].bv_offset + start;
-+
-+		sg_set_page(sg, bv[i].bv_page, len, off);
-+		sgtable->nents++;
-+		sg++;
-+		sg_max--;
-+
-+		ret += len;
-+		maxsize -= len;
-+		if (maxsize <= 0 || sg_max == 0)
-+			break;
-+		start = 0;
++	npages = alloc_pages_bulk_list(GFP_USER, npages, &pages);
++	if (!npages) {
++		kfree(bv);
++		return -ENOMEM;
 +	}
 +
-+	if (ret > 0)
-+		iov_iter_advance(iter, ret);
-+	return ret;
-+}
++	remain = len = min_t(size_t, len, npages * PAGE_SIZE);
 +
-+/*
-+ * Extract up to sg_max pages from a KVEC-type iterator and add them to the
-+ * scatterlist.  This can deal with vmalloc'd buffers as well as kmalloc'd or
-+ * static buffers.  The pages are not pinned.
-+ */
-+static ssize_t netfs_extract_kvec_to_sg(struct iov_iter *iter,
-+					ssize_t maxsize,
-+					struct sg_table *sgtable,
-+					unsigned int sg_max,
-+					unsigned int extract_flags)
-+{
-+	const struct kvec *kv = iter->kvec;
-+	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
-+	unsigned long start = iter->iov_offset;
-+	unsigned int i;
-+	ssize_t ret = 0;
-+
-+	for (i = 0; i < iter->nr_segs; i++) {
-+		struct page *page;
-+		unsigned long kaddr;
-+		size_t off, len, seg;
-+
-+		len = kv[i].iov_len;
-+		if (start >= len) {
-+			start -= len;
-+			continue;
-+		}
-+
-+		kaddr = (unsigned long)kv[i].iov_base + start;
-+		off = kaddr & ~PAGE_MASK;
-+		len = min_t(size_t, maxsize, len - start);
-+		kaddr &= PAGE_MASK;
-+
-+		maxsize -= len;
-+		ret += len;
-+		do {
-+			seg = min_t(size_t, len, PAGE_SIZE - off);
-+			if (is_vmalloc_or_module_addr((void *)kaddr))
-+				page = vmalloc_to_page((void *)kaddr);
-+			else
-+				page = virt_to_page(kaddr);
-+
-+			sg_set_page(sg, page, len, off);
-+			sgtable->nents++;
-+			sg++;
-+			sg_max--;
-+
-+			len -= seg;
-+			kaddr += PAGE_SIZE;
-+			off = 0;
-+		} while (len > 0 && sg_max > 0);
-+
-+		if (maxsize <= 0 || sg_max == 0)
-+			break;
-+		start = 0;
++	for (i = 0; i < npages; i++) {
++		chunk = min_t(size_t, PAGE_SIZE, remain);
++		page = list_first_entry(&pages, struct page, lru);
++		list_del_init(&page->lru);
++		bv[i].bv_page = page;
++		bv[i].bv_offset = 0;
++		bv[i].bv_len = chunk;
++		remain -= chunk;
 +	}
 +
-+	if (ret > 0)
-+		iov_iter_advance(iter, ret);
-+	return ret;
-+}
++	/* Do the I/O */
++	iov_iter_bvec(&to, READ, bv, npages, len);
++	init_sync_kiocb(&kiocb, file);
++	kiocb.ki_pos = *ppos;
++	ret = call_read_iter(file, &kiocb, &to);
 +
-+/*
-+ * Extract up to sg_max folios from an XARRAY-type iterator and add them to
-+ * the scatterlist.  The pages are not pinned.
-+ */
-+static ssize_t netfs_extract_xarray_to_sg(struct iov_iter *iter,
-+					  ssize_t maxsize,
-+					  struct sg_table *sgtable,
-+					  unsigned int sg_max,
-+					  unsigned int extract_flags)
-+{
-+	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
-+	struct xarray *xa = iter->xarray;
-+	struct folio *folio;
-+	loff_t start = iter->xarray_start + iter->iov_offset;
-+	pgoff_t index = start / PAGE_SIZE;
-+	ssize_t ret = 0;
-+	size_t offset, len;
-+	XA_STATE(xas, xa, index);
-+
-+	rcu_read_lock();
-+
-+	xas_for_each(&xas, folio, ULONG_MAX) {
-+		if (xas_retry(&xas, folio))
-+			continue;
-+		if (WARN_ON(xa_is_value(folio)))
-+			break;
-+		if (WARN_ON(folio_test_hugetlb(folio)))
-+			break;
-+
-+		offset = offset_in_folio(folio, start);
-+		len = min_t(size_t, maxsize, folio_size(folio) - offset);
-+
-+		sg_set_page(sg, folio_page(folio, 0), len, offset);
-+		sgtable->nents++;
-+		sg++;
-+		sg_max--;
-+
-+		maxsize -= len;
-+		ret += len;
-+		if (maxsize <= 0 || sg_max == 0)
-+			break;
++	reclaim = npages * PAGE_SIZE;
++	remain = 0;
++	if (ret > 0) {
++		reclaim -= ret;
++		remain = ret;
++		*ppos = kiocb.ki_pos;
++		file_accessed(file);
++	} else if (ret < 0) {
++		/*
++		 * callers of ->splice_read() expect -EAGAIN on
++		 * "can't put anything in there", rather than -EFAULT.
++		 */
++		if (ret == -EFAULT)
++			ret = -EAGAIN;
 +	}
 +
-+	rcu_read_unlock();
-+	if (ret > 0)
-+		iov_iter_advance(iter, ret);
++	/* Free any pages that didn't get touched at all. */
++	for (; reclaim >= PAGE_SIZE; reclaim -= PAGE_SIZE)
++		__free_page(bv[--npages].bv_page);
++
++	/* Push the remaining pages into the pipe. */
++	head = pipe->head;
++	for (i = 0; i < npages; i++) {
++		struct pipe_buffer *buf = &pipe->bufs[head & (pipe->ring_size - 1)];
++
++		chunk = min_t(size_t, remain, PAGE_SIZE);
++		*buf = (struct pipe_buffer) {
++			.ops	= &default_pipe_buf_ops,
++			.page	= bv[i].bv_page,
++			.offset	= 0,
++			.len	= chunk,
++		};
++		head++;
++		remain -= chunk;
++	}
++	pipe->head = head;
++
++	kfree(bv);
 +	return ret;
 +}
-+
-+/**
-+ * netfs_extract_iter_to_sg - Extract pages from an iterator and add ot an sglist
-+ * @iter: The iterator to extract from
-+ * @maxsize: The amount of iterator to copy
-+ * @sgtable: The scatterlist table to fill in
-+ * @sg_max: Maximum number of elements in @sgtable that may be filled
-+ * @extract_flags: Flags to qualify the request
-+ *
-+ * Extract the page fragments from the given amount of the source iterator and
-+ * add them to a scatterlist that refers to all of those bits, to a maximum
-+ * addition of @sg_max elements.
-+ *
-+ * The pages referred to by UBUF- and IOVEC-type iterators are extracted and
-+ * pinned; BVEC-, KVEC- and XARRAY-type are extracted but aren't pinned; PIPE-
-+ * and DISCARD-type are not supported.
-+ *
-+ * No end mark is placed on the scatterlist; that's left to the caller.
-+ *
-+ * @extract_flags can have ITER_ALLOW_P2PDMA set to request peer-to-peer DMA be
-+ * allowed on the pages extracted.
-+ *
-+ * If successul, @sgtable->nents is updated to include the number of elements
-+ * added and the number of bytes added is returned.  @sgtable->orig_nents is
-+ * left unaltered.
-+ *
-+ * The iov_iter_extract_mode() function should be used to query how cleanup
-+ * should be performed.
-+ */
-+ssize_t netfs_extract_iter_to_sg(struct iov_iter *iter, size_t maxsize,
-+				 struct sg_table *sgtable, unsigned int sg_max,
-+				 unsigned int extract_flags)
-+{
-+	if (maxsize == 0)
-+		return 0;
-+
-+	switch (iov_iter_type(iter)) {
-+	case ITER_UBUF:
-+	case ITER_IOVEC:
-+		return netfs_extract_user_to_sg(iter, maxsize, sgtable, sg_max,
-+						extract_flags);
-+	case ITER_BVEC:
-+		return netfs_extract_bvec_to_sg(iter, maxsize, sgtable, sg_max,
-+						extract_flags);
-+	case ITER_KVEC:
-+		return netfs_extract_kvec_to_sg(iter, maxsize, sgtable, sg_max,
-+						extract_flags);
-+	case ITER_XARRAY:
-+		return netfs_extract_xarray_to_sg(iter, maxsize, sgtable, sg_max,
-+						  extract_flags);
-+	default:
-+		pr_err("netfs_extract_iter_to_sg(%u) unsupported\n",
-+		       iov_iter_type(iter));
-+		WARN_ON_ONCE(1);
-+		return -EIO;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(netfs_extract_iter_to_sg);
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index e8c560131170..955225be6b75 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -298,6 +298,10 @@ void netfs_put_subrequest(struct netfs_io_subrequest *subreq,
- void netfs_stats_show(struct seq_file *);
- ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
- 				struct iov_iter *new, unsigned int extract_flags);
-+struct sg_table;
-+ssize_t netfs_extract_iter_to_sg(struct iov_iter *iter, size_t len,
-+				 struct sg_table *sgtable, unsigned int sg_max,
-+				 unsigned int extract_flags);
+diff --git a/fs/splice.c b/fs/splice.c
+index 5969b7a1d353..95435b5cca2a 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -330,6 +330,7 @@ const struct pipe_buf_operations default_pipe_buf_ops = {
+ 	.try_steal	= generic_pipe_buf_try_steal,
+ 	.get		= generic_pipe_buf_get,
+ };
++EXPORT_SYMBOL(default_pipe_buf_ops);
  
- /**
-  * netfs_inode - Get the netfs inode context from the inode
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index ca71de7c9d77..61f5bec0f2b6 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -656,6 +656,7 @@ int is_vmalloc_or_module_addr(const void *x)
- #endif
- 	return is_vmalloc_addr(x);
- }
-+EXPORT_SYMBOL_GPL(is_vmalloc_or_module_addr);
- 
- /*
-  * Walk a vmap address to the struct page it maps. Huge vmap mappings will
+ /* Pipe buffer operations for a socket and similar. */
+ const struct pipe_buf_operations nosteal_pipe_buf_ops = {
 
