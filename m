@@ -2,93 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 443E3682674
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 09:33:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3CB768267B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Jan 2023 09:33:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbjAaId1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Jan 2023 03:33:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45286 "EHLO
+        id S231402AbjAaIdu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Jan 2023 03:33:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231287AbjAaIdT (ORCPT
+        with ESMTP id S231296AbjAaIdm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Jan 2023 03:33:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B91521E9F7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 00:32:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675153952;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mXC2zcAxG9G8Isnah+UEIve545QvqxOVfqOZABcZwZc=;
-        b=LpixQl0znFD3GzF6q7LBDJ5jXb8eGScx+JgKxTrf/WNnXTQVrTrYLdUyGY2hKXlHVYIHlB
-        +q6RNk+cb6ODFlf/TrV+yTdYPuOpT8SfTq5ykydaDTyGlYpXwdC64381rG0bIq2odiQm95
-        ufNf+1UHOZb8T9YOXguC/DP717ALMys=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-519-dU62lmNkOeSAzx2StXkIlA-1; Tue, 31 Jan 2023 03:32:31 -0500
-X-MC-Unique: dU62lmNkOeSAzx2StXkIlA-1
-Received: by mail-wm1-f70.google.com with SMTP id o42-20020a05600c512a00b003dc5341afbaso3175493wms.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 00:32:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mXC2zcAxG9G8Isnah+UEIve545QvqxOVfqOZABcZwZc=;
-        b=ZO7kdRyYBSYb+bLtiHD8gW5RArcAfbfdW5aV62FMVZ921V+CEeuHLzmKVt8oB67LUE
-         TBPimjjX7mEvmVdqxyFDi5YaDMK/gMLZgg+oK0LO9cqEkIp6KG6SOWWJykp0ibGEUh4G
-         A++s+JD00B1vvhMWvKY8TaiDDewp83gUkxVbwJ/fnRQC2RfROPucOpRVFsqymOE8Uzdo
-         IJmrfKKZd8LKDqT+qCOn/MPV8ZbH+2Uq8+UEhztmi0RjGmwrI20gD0/JptzbveN1vqEw
-         r95UxeSjuyHlds+C10+TFmK3xAlWQuVdvSj+QjHP/EsQtdg5aVL+Kb0xWLAn73zofJrc
-         kkDw==
-X-Gm-Message-State: AO0yUKXxw7u+JzZpRyy8n7hkm14OsztEV++0zjuXyWoZQM2rnmShD36q
-        qkgXKdNnfJMiOChLX/RCUcjUP6P6URZQQFwYwtLYldHs7Yh2kIUIiUnJrmKXxR+4qhkb+rxa6/t
-        zDQBZhm2tKrOHA39Srl0en4MLow==
-X-Received: by 2002:adf:a491:0:b0:2bf:b394:4f23 with SMTP id g17-20020adfa491000000b002bfb3944f23mr20583268wrb.51.1675153949865;
-        Tue, 31 Jan 2023 00:32:29 -0800 (PST)
-X-Google-Smtp-Source: AK7set+sWw0CLpzPTQgDsOCrke2BcwF/lz4GziC+6IvgWtlAZZxAVafKyoN+GsZbhWORcN9yHV3v8w==
-X-Received: by 2002:adf:a491:0:b0:2bf:b394:4f23 with SMTP id g17-20020adfa491000000b002bfb3944f23mr20583248wrb.51.1675153949544;
-        Tue, 31 Jan 2023 00:32:29 -0800 (PST)
-Received: from ?IPV6:2003:d8:2f0a:ca00:f74f:2017:1617:3ec3? (p200300d82f0aca00f74f201716173ec3.dip0.t-ipconnect.de. [2003:d8:2f0a:ca00:f74f:2017:1617:3ec3])
-        by smtp.gmail.com with ESMTPSA id a13-20020adfeecd000000b002bbedd60a9asm13865885wrp.77.2023.01.31.00.32.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Jan 2023 00:32:28 -0800 (PST)
-Message-ID: <040ed7a7-3f4d-dab7-5a49-1cd9933c5445@redhat.com>
-Date:   Tue, 31 Jan 2023 09:32:27 +0100
+        Tue, 31 Jan 2023 03:33:42 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E243646164;
+        Tue, 31 Jan 2023 00:33:26 -0800 (PST)
+Received: from localhost.localdomain (unknown [39.45.165.226])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3C03B6602EB0;
+        Tue, 31 Jan 2023 08:33:16 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1675154005;
+        bh=KJbGh1Bj17VTFv93jkKBVRsISoOlHjybxqWUawq2KpM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FgmYI6UHF9aE+H/Q9eWdIsL8FW3r28LAZWQNElm3eXbBy43/sDcHD/kQ5TqsN3KbH
+         +VrKH+jmlsPAU9InrYkH0b/hMiqQ+yBrq5xWeaDrDxLvORP3M/FToXn+yAKzZ/BlWN
+         YPp+abd3tSTJDGoIjw0Qv0q3O/sFpJ410vthcreUyVZcX6itZIXep1faELKGYTumCW
+         fST3kqqvg2VzmjZdBkzWO5LNivh/01maQJSAALglRzWqBRpZC+HuYsl8Tl/0XnpnCa
+         zDewz6NMShnGS9Nkw+d9hnxmjpEpjMaCaCjmUl9pw03vaoR7w9yG1JIiQ9o1W7Nzn7
+         7BTt58Ukh0NnA==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: [PATCH v9 0/3] Implement IOCTL to get and/or the clear info about PTEs
+Date:   Tue, 31 Jan 2023 13:32:54 +0500
+Message-Id: <20230131083257.3302830-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, David Howells <dhowells@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <e68c5cab-c3a6-1872-98fa-9f909f23be79@nvidia.com>
- <3351099.1675077249@warthog.procyon.org.uk>
- <fd0003a0-a133-3daf-891c-ba7deafad768@kernel.dk>
- <f57ee72f-38e9-6afa-182f-2794638eadcb@kernel.dk>
- <e8480b18-08af-d101-a721-50d213893492@kernel.dk>
- <3520518.1675116740@warthog.procyon.org.uk>
- <f392399b-a4c4-2251-e12b-e89fff351c4d@kernel.dk>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [GIT PULL] iov_iter: Improve page extraction (pin or just list)
-In-Reply-To: <f392399b-a4c4-2251-e12b-e89fff351c4d@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -96,36 +74,128 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 30.01.23 23:15, Jens Axboe wrote:
-> On 1/30/23 3:12 PM, David Howells wrote:
->> John Hubbard <jhubbard@nvidia.com> wrote:
->>
->>> This is something that we say when adding pin_user_pages_fast(),
->>> yes. I doubt that I can quickly find the email thread, but we
->>> measured it and weren't immediately able to come up with a way
->>> to make it faster.
->>
->> percpu counters maybe - add them up at the point of viewing?
-> 
-> They are percpu, see my last email. But for every 108 changes (on
-> my system), they will do two atomic_long_adds(). So not very
-> useful for anything but low frequency modifications.
-> 
+*Changes in v9:*
+- Correct fault resolution for userfaultfd wp async
+- Fix build warnings and errors which were happening on some configs
+- Simplify pagemap ioctl's code
 
-Can we just treat the whole acquired/released accounting as a debug 
-mechanism to detect missing releases and do it only for debug kernels?
+*Changes in v8:*
+- Update uffd async wp implementation
+- Improve PAGEMAP_IOCTL implementation
 
+*Changes in v7:*
+- Add uffd wp async
+- Update the IOCTL to use uffd under the hood instead of soft-dirty
+  flags
 
-The pcpu counter is an s8, so we have to flush on a regular basis and 
-cannot really defer it any longer ... but I'm curious if it would be of 
-any help to only have a single PINNED counter that goes into both 
-directions (inc/dec on pin/release), to reduce the flushing.
+Hello,
 
-Of course, once we pin/release more than ~108 pages in one go or we 
-switch CPUs frequently it won't be that much of a help ...
+Note:
+Soft-dirty pages and pages which have been written-to are synonyms. As
+kernel already has soft-dirty feature inside which we have given up to
+use, we are using written-to terminology while using UFFD async WP under
+the hood.
+
+This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
+the info about page table entries. The following operations are
+supported in this ioctl:
+- Get the information if the pages have been written-to (PAGE_IS_WRITTEN),
+  file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
+  (PAGE_IS_SWAPPED).
+- Write-protect the pages (PAGEMAP_WP_ENGAGE) to start finding which
+  pages have been written-to.
+- Find pages which have been written-to and write protect the pages
+  (atomic PAGE_IS_WRITTEN + PAGEMAP_WP_ENGAGE)
+
+It is possible to find and clear soft-dirty pages entirely in userspace.
+But it isn't efficient:
+- The mprotect and SIGSEGV handler for bookkeeping
+- The userfaultfd wp (synchronous) with the handler for bookkeeping
+
+Some benchmarks can be seen here[1]. This series adds features that weren't
+present earlier:
+- There is no atomic get soft-dirty/Written-to status and clear present in
+  the kernel.
+- The pages which have been written-to can not be found in accurate way.
+  (Kernel's soft-dirty PTE bit + sof_dirty VMA bit shows more soft-dirty
+  pages than there actually are.)
+
+Historically, soft-dirty PTE bit tracking has been used in the CRIU
+project. The procfs interface is enough for finding the soft-dirty bit
+status and clearing the soft-dirty bit of all the pages of a process.
+We have the use case where we need to track the soft-dirty PTE bit for
+only specific pages on-demand. We need this tracking and clear mechanism
+of a region of memory while the process is running to emulate the
+getWriteWatch() syscall of Windows.
+
+*(Moved to using UFFD instead of soft-dirtyi feature to find pages which
+have been written-to from v7 patch series)*:
+Stop using the soft-dirty flags for finding which pages have been
+written to. It is too delicate and wrong as it shows more soft-dirty
+pages than the actual soft-dirty pages. There is no interest in
+correcting it [2][3] as this is how the feature was written years ago.
+It shouldn't be updated to changed behaviour. Peter Xu has suggested
+using the async version of the UFFD WP [4] as it is based inherently
+on the PTEs.
+
+So in this patch series, I've added a new mode to the UFFD which is
+asynchronous version of the write protect. When this variant of the
+UFFD WP is used, the page faults are resolved automatically by the
+kernel. The pages which have been written-to can be found by reading
+pagemap file (!PM_UFFD_WP). This feature can be used successfully to
+find which pages have been written to from the time the pages were
+write protected. This works just like the soft-dirty flag without
+showing any extra pages which aren't soft-dirty in reality.
+
+The information related to pages if the page is file mapped, present and
+swapped is required for the CRIU project [5][6]. The addition of the
+required mask, any mask, excluded mask and return masks are also required
+for the CRIU project [5].
+
+The IOCTL returns the addresses of the pages which match the specific masks.
+The page addresses are returned in struct page_region in a compact form.
+The max_pages is needed to support a use case where user only wants to get
+a specific number of pages. So there is no need to find all the pages of
+interest in the range when max_pages is specified. The IOCTL returns when
+the maximum number of the pages are found. The max_pages is optional. If
+max_pages is specified, it must be equal or greater than the vec_size.
+This restriction is needed to handle worse case when one page_region only
+contains info of one page and it cannot be compacted. This is needed to
+emulate the Windows getWriteWatch() syscall.
+
+The patch series include the detailed selftest which can be used as an example
+for the uffd async wp test and PAGEMAP_IOCTL. It shows the interface usages as
+well.
+
+[1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
+[2] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
+[3] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
+[4] https://lore.kernel.org/all/Y6Hc2d+7eTKs7AiH@x1n
+[5] https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com/
+[6] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com/
+
+Regards,
+Muhammad Usama Anjum
+
+Muhammad Usama Anjum (3):
+  userfaultfd: Add UFFD WP Async support
+  fs/proc/task_mmu: Implement IOCTL to get and/or the clear info about
+    PTEs
+  selftests: vm: add pagemap ioctl tests
+
+ fs/proc/task_mmu.c                         | 290 +++++++
+ fs/userfaultfd.c                           |  11 +
+ include/linux/userfaultfd_k.h              |   6 +
+ include/uapi/linux/fs.h                    |  50 ++
+ include/uapi/linux/userfaultfd.h           |   8 +-
+ mm/memory.c                                |  23 +-
+ tools/include/uapi/linux/fs.h              |  50 ++
+ tools/testing/selftests/vm/.gitignore      |   1 +
+ tools/testing/selftests/vm/Makefile        |   5 +-
+ tools/testing/selftests/vm/pagemap_ioctl.c | 881 +++++++++++++++++++++
+ 10 files changed, 1319 insertions(+), 6 deletions(-)
+ create mode 100644 tools/testing/selftests/vm/pagemap_ioctl.c
 
 -- 
-Thanks,
-
-David / dhildenb
+2.30.2
 
