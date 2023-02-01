@@ -2,62 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A7CE686103
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 08:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C16B268610C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 08:57:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231992AbjBAHzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Feb 2023 02:55:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48976 "EHLO
+        id S231843AbjBAH5S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Feb 2023 02:57:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231947AbjBAHzB (ORCPT
+        with ESMTP id S230177AbjBAH5R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Feb 2023 02:55:01 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A097974C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 23:55:00 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id bp15so27959634lfb.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 23:55:00 -0800 (PST)
+        Wed, 1 Feb 2023 02:57:17 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0990783EF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 23:57:16 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id cf42so28035822lfb.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 23:57:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AhWiO+p9x9WvJVlyCm4UKDXTp9wp+AugKSgLzsEWkSM=;
-        b=OdJg2J6Fq6RC82L5qiRdzhcICkRaa401c3XJ2z4UaFlMfxJKql91GEJx7wXFlJVWE9
-         0A6Om5ynV19o1g4U4YEgXL3F9N3M2qWRW235OQjFfXjasRJ6/l0jk8NLK0KfiL4rrtdU
-         Pf9qXK4GH8MMjaWRpP7xFI2T5uA1Kq4pPdMej6r+Zd6XVOc3U/u4q8H0oVYNnFUAdLJK
-         kW8F9YgI5S9MNzkGn0k3dA0kbR/dejUsXZF2EpBwuhpXbp6cp+S0JHdpLllffej2Yxv+
-         hrzcJLTbqGW2N53Vy5oy40/ehsFCWUFmVi3Ps7oGUo90bHhBIwfDnTHGH4s0Z3Of5RKH
-         XVoA==
+        bh=3TdS5EBKT4w54gpWVMOxRKi4LaHqPGWUt3EI4RzT6Mc=;
+        b=qGi5XC3ONpLs5pYGPoG5A/gO2bbP4FruNdPm/OXt76kxjMwYy+8zNDdcKPj9zLy6K2
+         wu4rrR+ugBblP1+DSUfD6K5VOhci0OnsXfiCipk9xz33jhggAdcaWVyGLlXciHirc9e+
+         LziBn51lh0Hg17p+fQrogsz2at/ffVCdKg8GU7+tvZ8oMA1fRmesvLdQPF3jlhL2BiR2
+         jrgliar0kdvj/GFCyHvQm229Q95h6dvK45dGadFMPc4QCqXqsiMkk8rtbVoOeDmOFuJb
+         3uW24Bnd2KuasEIhjtLY9ksED8eVP4Dwiw7hBNEpPfho0rb9NY4kalIyAeyO8okntHVF
+         WDTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AhWiO+p9x9WvJVlyCm4UKDXTp9wp+AugKSgLzsEWkSM=;
-        b=B7ySManqmUqDqrSmOsRx9fhCHaVv3ZrFIzPXuJcFZBPBfDCob9MBub0fF2kyDHRBiF
-         JkSqkozCFg44Q9f+ytpmU3aczyV354GSKZD0Zf7ZsPjXErhfSYcKi32Bi0D2qmVHDqgm
-         Tl/PJYgNbL/I1CsZ7VhDq6yv0QgTi23PMsMGmIv+pB7Y0rE6uKTQ3D425RgUpnm/bWFX
-         NMwVsbKzCqX28sTuPyTi87vYtNaQqrBMiu23xjvHj913H+GgdCmzJJt1cbyk/g4AbWrD
-         x166YxzJsXqw/ZMt0ujrF+ha0lOPzMa/iOuOWL0aeJb0GWSiJDDgT33CqZZ+3dIwT8ty
-         bMbA==
-X-Gm-Message-State: AO0yUKUPwrXB9Zz87jSPMp63zYX5vwh1jMKHE9cfCjjddADF0Y6SPanH
-        7xza2EzpIqrFRe39/W4tKzrI96G7PUo4iomkQxZxPw==
-X-Google-Smtp-Source: AK7set8NtXvm0jBebiwKSfALgi6I403BGuRww4o1r00RYIWc+fbOyjqqE766o8ePH49oxCqyY/IBFexla9RPfxtC6LA=
-X-Received: by 2002:ac2:5336:0:b0:4b5:2aed:39be with SMTP id
- f22-20020ac25336000000b004b52aed39bemr206347lfh.195.1675238098213; Tue, 31
- Jan 2023 23:54:58 -0800 (PST)
+        bh=3TdS5EBKT4w54gpWVMOxRKi4LaHqPGWUt3EI4RzT6Mc=;
+        b=SrGOeC6RLTMYk7gaCG+hUvw+/LamCkZBUE/JQyCekVpw88iQm4n+q8fDDmdume6XcS
+         2Zj7Ee03JEqpPOoS7p7eI/cSsLRiy5IDVZSdoJhhF+2dreJvV1+SRkeHusOR5A5YSDK8
+         7D5y7rZWn27qBG7I9bXHxCgWUuHPrH2OY5G8VLw21YTzKyiZuLg85cevDwU1Qztw+/Ku
+         grsS69HFDJory8GpJbLl54sSs6bYrHozUa3zf7TQxTtIydZQHivblxl+fJwafoh3j5VG
+         0x0+tXq9SfICIAsJHIhARBE3Z3qxr6mZ6ZGuv/q0/Jk8m4PgHzV+l+SNayWA7g0liZSP
+         7ydA==
+X-Gm-Message-State: AO0yUKVw15G9Dz9wbFb62id+FEWXaAusfyKohNdcWjQSQ+nGHSu/Y4cK
+        kcDP0H4fLO7nDB24Aa5reFwd4cwTlcNScA1fX2efNGQxWq9V7YlJHgI=
+X-Google-Smtp-Source: AK7set/T9tCY6R0hVSqJUczL9rH2cispGNdz+JU65A6PTPpilbVW3W8A5F9nvwQ7VY+sqRvwZNSQ1yk3tzH/ZJA43z8=
+X-Received: by 2002:a05:6512:12c9:b0:4d4:fcdb:6376 with SMTP id
+ p9-20020a05651212c900b004d4fcdb6376mr318744lfg.218.1675238233996; Tue, 31 Jan
+ 2023 23:57:13 -0800 (PST)
 MIME-Version: 1.0
-References: <000000000000d7eced05f01fa8d0@google.com> <000000000000171a2805f38bf07a@google.com>
-In-Reply-To: <000000000000171a2805f38bf07a@google.com>
+References: <000000000000be147305f0071869@google.com> <00000000000010e01905f381c827@google.com>
+In-Reply-To: <00000000000010e01905f381c827@google.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 1 Feb 2023 08:54:46 +0100
-Message-ID: <CACT4Y+ZRU8PZVNEyuWr_CMqyGHtV8O9vG_kf7zQK3uhbQ=0pKg@mail.gmail.com>
-Subject: Re: [syzbot] KASAN: slab-out-of-bounds Read in mi_find_attr
-To:     syzbot <syzbot+8ebb469b64740648f1c3@syzkaller.appspotmail.com>
-Cc:     almaz.alexandrovich@paragon-software.com, edward.lo@ambergroup.io,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
+Date:   Wed, 1 Feb 2023 08:57:01 +0100
+Message-ID: <CACT4Y+b3gvrcsXq7AaCBScFk2J9cZsaHh7SUSi4Q2KE1PkN5Ew@mail.gmail.com>
+Subject: Re: [syzbot] KASAN: slab-out-of-bounds Read in hfs_cat_keycmp
+To:     syzbot <syzbot+883fa6a25abf9dd035ef@syzkaller.appspotmail.com>
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, slava@dubeyko.com,
+        syzkaller-bugs@googlegroups.com, zhangpeng362@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-15.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
@@ -70,31 +69,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 31 Jan 2023 at 10:27, syzbot
-<syzbot+8ebb469b64740648f1c3@syzkaller.appspotmail.com> wrote:
+On Mon, 30 Jan 2023 at 22:20, syzbot
+<syzbot+883fa6a25abf9dd035ef@syzkaller.appspotmail.com> wrote:
 >
 > syzbot suspects this issue was fixed by commit:
 >
-> commit 4f1dc7d9756e66f3f876839ea174df2e656b7f79
-> Author: Edward Lo <edward.lo@ambergroup.io>
-> Date:   Fri Sep 9 01:04:00 2022 +0000
+> commit c53ed55cb275344086e32a7080a6b19cb183650b
+> Author: ZhangPeng <zhangpeng362@huawei.com>
+> Date:   Fri Dec 2 03:00:38 2022 +0000
 >
->     fs/ntfs3: Validate attribute name offset
+>     hfs: Fix OOB Write in hfs_asc2mac
 >
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12e74535480000
-> start commit:   e2ca6ba6ba01 Merge tag 'mm-stable-2022-12-13' of git://git..
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13294485480000
+> start commit:   3a28c2c89f4b Merge tag 'unsigned-char-6.2-for-linus' of gi..
 > git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a6133b41a9a0f500
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8ebb469b64740648f1c3
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16fb2ad0480000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164513e0480000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f3de84cba2ef4a23
+> dashboard link: https://syzkaller.appspot.com/bug?extid=883fa6a25abf9dd035ef
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1261813b880000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=114306af880000
 >
 > If the result looks correct, please mark the issue as fixed by replying with:
 >
-> #syz fix: fs/ntfs3: Validate attribute name offset
+> #syz fix: hfs: Fix OOB Write in hfs_asc2mac
 >
 > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Looks reasonable, let's close the bug report:
+Hard to say if it's the fix or not, bisection diverged due to an
+unrelated kernel bug. But this bug is probably fixed as well, so
+without having a better candidate, let's close the report:
 
-#syz fix: fs/ntfs3: Validate attribute name offset
+#syz fix: hfs: Fix OOB Write in hfs_asc2mac
