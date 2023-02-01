@@ -2,91 +2,309 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3020C686AE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 16:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9E5686B14
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 17:04:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232920AbjBAPzX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Feb 2023 10:55:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57252 "EHLO
+        id S232862AbjBAQEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Feb 2023 11:04:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232933AbjBAPzI (ORCPT
+        with ESMTP id S232539AbjBAQEn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Feb 2023 10:55:08 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A9477751A
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Feb 2023 07:54:33 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id ud5so52752940ejc.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Feb 2023 07:54:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bXWqBgMOKv5SnbTsUMFlWPl1mxwCaGFXLbhg+69mJBo=;
-        b=Sqps5nHkF4vfpjGc70sbUfCvx2Zc88TDnLNGyx0VmKmTxcv6JhSgWBbqee2E0+Q0KH
-         yEM4HUxIchphwRzb5/SMvgThKH7jdGa7pafz04o1GUcvwGaMyejbgk4PWSeN+stZoGUm
-         XTcTPqYBDzKAwpYXi5GPegLxK/7GH8Bf2kmv0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bXWqBgMOKv5SnbTsUMFlWPl1mxwCaGFXLbhg+69mJBo=;
-        b=4goTU2hYKbgp0+dWqxUaqd8ZQwLDCcajIpo5hhmh9oYXf8ytWDEpQp0B7DN/u5P36m
-         nRmCHq/aryjoaDR/ngP+YGZTKbPwJCJ/aJn3e4nalnPnPE9K5t+x0VwAcPjmZZ05fcP/
-         lG4ZGPT/qqMTlqFnJRYHrFDobyvIvGz0eGO4JdnZeULAVXRIqqUTgoKv32sEkW9b+2hb
-         gs+kDRvePdK0MN8fxqJG6GQ76DAESVhjlBs++rN3OPbR7caYUpjwoS+irKez92dR9HxI
-         8klaXueT1k9uHinEt1vRSAzzS3o9uvPPy0vPb+0kpiGV8f+Id+4Gt2NNbKEKOizddJb+
-         3ClA==
-X-Gm-Message-State: AO0yUKUQ9Va5l+h5+NT0ACLqem15M0r9YMhqyr4pRlaKGoSuU2LdbefA
-        XAoEY9zYzgULRkSaYubEyooG2LSDn7lpPm9zrp8K3w==
-X-Google-Smtp-Source: AK7set8r8OoF7qrGxnNKdUpD+LKehxKmaT8vY+FzeL9YI2CliNZodxhhagWUKTRdSPk3WuV2thOqVJYqKrXrhfb22XI=
-X-Received: by 2002:a17:906:709:b0:88d:5c5d:6a6f with SMTP id
- y9-20020a170906070900b0088d5c5d6a6fmr855247ejb.236.1675266872159; Wed, 01 Feb
- 2023 07:54:32 -0800 (PST)
+        Wed, 1 Feb 2023 11:04:43 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6711E3D92E
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Feb 2023 08:03:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1675267437;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=AiUOCdYZiZ0EhpszTzQvWhcI8sDqoZDTm+/tkKX62Oo=;
+        b=VP5TzDkf9S18e+CqoEBlbpvYRu1JILNva9zV/GxWD2JgohizIlmqPhMhlt8sBgKQAvQC1T
+        zoyz+prHnfS4QtfMS4tvYtXFSJVW72dKr++hBpW9kphsI+ltjy73s7e280m7Af9bwIK120
+        oqY/UE0Z16IYCki4gYzibc7SoylFk6w=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-25-hY-NQHINNpGkAjV3mvyciA-1; Wed, 01 Feb 2023 11:03:54 -0500
+X-MC-Unique: hY-NQHINNpGkAjV3mvyciA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8E1DE38149AB;
+        Wed,  1 Feb 2023 16:03:53 +0000 (UTC)
+Received: from tpad.localdomain (ovpn-112-2.gru2.redhat.com [10.97.112.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9741D404BEC4;
+        Wed,  1 Feb 2023 16:03:52 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+        id 30599403CC75B; Wed,  1 Feb 2023 13:01:47 -0300 (-03)
+Date:   Wed, 1 Feb 2023 13:01:47 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Leonardo Bras <leobras@redhat.com>,
+        Yair Podemsky <ypodemsk@redhat.com>, P J P <ppandit@redhat.com>
+Subject: [PATCH v3] fs/buffer.c: update per-CPU bh_lru cache via RCU
+Message-ID: <Y9qM68F+nDSYfrJ1@tpad>
 MIME-Version: 1.0
-References: <20221111093702.80975-1-zhangjiachen.jaycee@bytedance.com> <CAFQAk7isS3AgkU_nMum8=iqy8NgLdGN5USq4gk_TE8SUzRr4tQ@mail.gmail.com>
-In-Reply-To: <CAFQAk7isS3AgkU_nMum8=iqy8NgLdGN5USq4gk_TE8SUzRr4tQ@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 1 Feb 2023 16:54:21 +0100
-Message-ID: <CAJfpegtqGDt4fnDsLtLEhg3ysw5TtfPamJ18TGSpSJve94KNzQ@mail.gmail.com>
-Subject: Re: [PATCH] fuse: initialize attr_version of new fuse inodes by fc->attr_version
-To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 17 Nov 2022 at 09:52, Jiachen Zhang
-<zhangjiachen.jaycee@bytedance.com> wrote:
->
-> On Fri, Nov 11, 2022 at 5:37 PM Jiachen Zhang
-> <zhangjiachen.jaycee@bytedance.com> wrote:
-> >
-> > The FUSE_READDIRPLUS request reply handler fuse_direntplus_link() might
-> > call fuse_iget() to initialize a new fuse_inode and change its attributes.
-> > But as the new fi->attr_version is always initialized with 0, even if the
-> > attr_version of the FUSE_READDIRPLUS request has become staled, staled attr
-> > may still be set to the new fuse_inode. This may cause file size
-> > inconsistency even when a filesystem backend is mounted with a single FUSE
-> > mountpoint.
-> >
-> > This commit fixes the issue by initializing new fuse_inode attr_versions by
-> > the global fc->attr_version. This may introduce more FUSE_GETATTR but can
-> > avoid weird attributes rollback being seen by users.
-> >
-> > Fixes: 19332138887c ("fuse: initialize attr_version of new fuse inodes by fc->attr_version")
->
-> Ping..., and the Fixes tag should be:
->
-> Fixes: fbee36b92abc ("fuse: fix uninitialized field in fuse_inode")
 
-Do you have a reproducer?
+umount calls invalidate_bh_lrus which IPIs each
+CPU that has non empty per-CPU buffer_head cache:
 
-Thanks,
-Miklos
+       	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
+
+This interrupts CPUs which might be executing code sensitive
+to interferences.
+
+To avoid the IPI, free the per-CPU caches remotely via RCU.
+Two bh_lrus structures for each CPU are allocated: one is being
+used (assigned to per-CPU bh_lru pointer), and the other is
+being freed (or idle).
+
+Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+
+---
+v3: fix CPU hotplug 
+v2: fix sparse warnings (kernel test robot)
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index d9c6d1fbb6dd..0c54ffe9fd62 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1203,7 +1203,21 @@ struct bh_lru {
+ 	struct buffer_head *bhs[BH_LRU_SIZE];
+ };
+ 
+-static DEFINE_PER_CPU(struct bh_lru, bh_lrus) = {{ NULL }};
++
++/*
++ * Allocate two bh_lrus structures for each CPU. bh_lru points to the
++ * one that is currently in use, and the update path does
++ * (consider cpu->bh_lru = bh_lrus[0]).
++ *
++ * cpu->bh_lrup = bh_lrus[1]
++ * synchronize_rcu()
++ * free bh's in bh_lrus[0]
++ */
++static unsigned int bh_lru_idx;
++static DEFINE_PER_CPU(struct bh_lru, bh_lrus[2]) = {{{ NULL }}, {{NULL}}};
++static DEFINE_PER_CPU(struct bh_lru __rcu *, bh_lrup);
++
++static DEFINE_MUTEX(bh_lru_invalidate_mutex);
+ 
+ #ifdef CONFIG_SMP
+ #define bh_lru_lock()	local_irq_disable()
+@@ -1245,16 +1259,19 @@ static void bh_lru_install(struct buffer_head *bh)
+ 		return;
+ 	}
+ 
+-	b = this_cpu_ptr(&bh_lrus);
++	rcu_read_lock();
++	b = rcu_dereference(per_cpu(bh_lrup, smp_processor_id()));
+ 	for (i = 0; i < BH_LRU_SIZE; i++) {
+ 		swap(evictee, b->bhs[i]);
+ 		if (evictee == bh) {
++			rcu_read_unlock();
+ 			bh_lru_unlock();
+ 			return;
+ 		}
+ 	}
+ 
+ 	get_bh(bh);
++	rcu_read_unlock();
+ 	bh_lru_unlock();
+ 	brelse(evictee);
+ }
+@@ -1266,28 +1283,32 @@ static struct buffer_head *
+ lookup_bh_lru(struct block_device *bdev, sector_t block, unsigned size)
+ {
+ 	struct buffer_head *ret = NULL;
++	struct bh_lru *lru;
+ 	unsigned int i;
+ 
+ 	check_irqs_on();
+ 	bh_lru_lock();
++	rcu_read_lock();
++
++	lru = rcu_dereference(per_cpu(bh_lrup, smp_processor_id()));
+ 	for (i = 0; i < BH_LRU_SIZE; i++) {
+-		struct buffer_head *bh = __this_cpu_read(bh_lrus.bhs[i]);
++		struct buffer_head *bh = lru->bhs[i];
+ 
+ 		if (bh && bh->b_blocknr == block && bh->b_bdev == bdev &&
+ 		    bh->b_size == size) {
+ 			if (i) {
+ 				while (i) {
+-					__this_cpu_write(bh_lrus.bhs[i],
+-						__this_cpu_read(bh_lrus.bhs[i - 1]));
++					lru->bhs[i] = lru->bhs[i - 1];
+ 					i--;
+ 				}
+-				__this_cpu_write(bh_lrus.bhs[0], bh);
++				lru->bhs[0] = bh;
+ 			}
+ 			get_bh(bh);
+ 			ret = bh;
+ 			break;
+ 		}
+ 	}
++	rcu_read_unlock();
+ 	bh_lru_unlock();
+ 	return ret;
+ }
+@@ -1381,35 +1402,54 @@ static void __invalidate_bh_lrus(struct bh_lru *b)
+ 		b->bhs[i] = NULL;
+ 	}
+ }
+-/*
+- * invalidate_bh_lrus() is called rarely - but not only at unmount.
+- * This doesn't race because it runs in each cpu either in irq
+- * or with preempt disabled.
+- */
+-static void invalidate_bh_lru(void *arg)
+-{
+-	struct bh_lru *b = &get_cpu_var(bh_lrus);
+-
+-	__invalidate_bh_lrus(b);
+-	put_cpu_var(bh_lrus);
+-}
+ 
+ bool has_bh_in_lru(int cpu, void *dummy)
+ {
+-	struct bh_lru *b = per_cpu_ptr(&bh_lrus, cpu);
++	struct bh_lru *b;
+ 	int i;
+-	
++
++	rcu_read_lock();
++	b = rcu_dereference(per_cpu(bh_lrup, cpu));
+ 	for (i = 0; i < BH_LRU_SIZE; i++) {
+-		if (b->bhs[i])
++		if (b->bhs[i]) {
++			rcu_read_unlock();
+ 			return true;
++		}
+ 	}
+ 
++	rcu_read_unlock();
+ 	return false;
+ }
+ 
++/*
++ * invalidate_bh_lrus() is called rarely - but not only at unmount.
++ */
+ void invalidate_bh_lrus(void)
+ {
+-	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
++	int cpu, oidx;
++
++	mutex_lock(&bh_lru_invalidate_mutex);
++	cpus_read_lock();
++	oidx = bh_lru_idx;
++	bh_lru_idx++;
++	if (bh_lru_idx >= 2)
++		bh_lru_idx = 0;
++
++	/* Assign the per-CPU bh_lru pointer */
++	for_each_online_cpu(cpu)
++		rcu_assign_pointer(per_cpu(bh_lrup, cpu),
++				   per_cpu_ptr(&bh_lrus[bh_lru_idx], cpu));
++	synchronize_rcu_expedited();
++
++	for_each_online_cpu(cpu) {
++		struct bh_lru *b = per_cpu_ptr(&bh_lrus[oidx], cpu);
++
++		bh_lru_lock();
++		__invalidate_bh_lrus(b);
++		bh_lru_unlock();
++	}
++	cpus_read_unlock();
++	mutex_unlock(&bh_lru_invalidate_mutex);
+ }
+ EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
+ 
+@@ -1422,8 +1462,10 @@ void invalidate_bh_lrus_cpu(void)
+ 	struct bh_lru *b;
+ 
+ 	bh_lru_lock();
+-	b = this_cpu_ptr(&bh_lrus);
++	rcu_read_lock();
++	b = rcu_dereference(per_cpu(bh_lrup, smp_processor_id()));
+ 	__invalidate_bh_lrus(b);
++	rcu_read_unlock();
+ 	bh_lru_unlock();
+ }
+ 
+@@ -2920,15 +2962,25 @@ void free_buffer_head(struct buffer_head *bh)
+ }
+ EXPORT_SYMBOL(free_buffer_head);
+ 
++static int buffer_cpu_online(unsigned int cpu)
++{
++	rcu_assign_pointer(per_cpu(bh_lrup, cpu),
++			   per_cpu_ptr(&bh_lrus[bh_lru_idx], cpu));
++	return 0;
++}
++
+ static int buffer_exit_cpu_dead(unsigned int cpu)
+ {
+ 	int i;
+-	struct bh_lru *b = &per_cpu(bh_lrus, cpu);
++	struct bh_lru *b;
+ 
++	rcu_read_lock();
++	b = rcu_dereference(per_cpu(bh_lrup, cpu));
+ 	for (i = 0; i < BH_LRU_SIZE; i++) {
+ 		brelse(b->bhs[i]);
+ 		b->bhs[i] = NULL;
+ 	}
++	rcu_read_unlock();
+ 	this_cpu_add(bh_accounting.nr, per_cpu(bh_accounting, cpu).nr);
+ 	per_cpu(bh_accounting, cpu).nr = 0;
+ 	return 0;
+@@ -3021,7 +3073,7 @@ EXPORT_SYMBOL(__bh_read_batch);
+ void __init buffer_init(void)
+ {
+ 	unsigned long nrpages;
+-	int ret;
++	int ret, cpu;
+ 
+ 	bh_cachep = kmem_cache_create("buffer_head",
+ 			sizeof(struct buffer_head), 0,
+@@ -3029,6 +3081,11 @@ void __init buffer_init(void)
+ 				SLAB_MEM_SPREAD),
+ 				NULL);
+ 
++	cpus_read_lock();
++	for_each_online_cpu(cpu)
++		rcu_assign_pointer(per_cpu(bh_lrup, cpu), per_cpu_ptr(&bh_lrus[0], cpu));
++	cpus_read_unlock();
++
+ 	/*
+ 	 * Limit the bh occupancy to 10% of ZONE_NORMAL
+ 	 */
+@@ -3037,4 +3094,7 @@ void __init buffer_init(void)
+ 	ret = cpuhp_setup_state_nocalls(CPUHP_FS_BUFF_DEAD, "fs/buffer:dead",
+ 					NULL, buffer_exit_cpu_dead);
+ 	WARN_ON(ret < 0);
++	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "fs/buffer:online",
++					NULL, buffer_cpu_online);
++	WARN_ON(ret < 0);
+ }
+
