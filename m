@@ -2,74 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73BEE68631B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 10:47:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA74F68632C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 10:53:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231776AbjBAJrv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Feb 2023 04:47:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34076 "EHLO
+        id S232134AbjBAJxf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Feb 2023 04:53:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231786AbjBAJrs (ORCPT
+        with ESMTP id S231338AbjBAJxc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Feb 2023 04:47:48 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A68499760
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Feb 2023 01:46:59 -0800 (PST)
+        Wed, 1 Feb 2023 04:53:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5781E4B1B6
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Feb 2023 01:52:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675244818;
+        s=mimecast20190719; t=1675245168;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=nX3Sju01yAvnUklbguJHQoTEONurdEPyIljO4LvviIw=;
-        b=S9nXMzPaoY5eRwisC7oFqYfr1xRRehq7eCm3qrLg1/weEd8jz/4u6DqsXzy9G/G3Mb5UvT
-        P9DrngAE+ansfoGNjYCXRDeo+s2MeFkjf6JSau5sD4u3ZWEXULXfh12mzUkAaEQWt4t/A9
-        U8d04A0NxZeOkbZ4EpoY/S1bkQXFyg8=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=vBgaG3upaN8ZH2L2HXxEhx4LvqprmznpfZM80Mr8+0s=;
+        b=XiF4qbXSx9CZpBFNWeAQrjJARK/Qi1MpcwHekDYtXu+WL6TpkbBjD4wVjz2uldvb9JVq0T
+        dxl0afM4CXUAftZByFrQYekLozAfd9OHPqkRCkZrxXY8ktZrUdAH9x6ChDCOauU6Q9Xec4
+        9rMLcrPL5z+vnlHgvEYbnNjq7MgFmE4=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-587-RlcE8CmhP76LRzrNZhzakQ-1; Wed, 01 Feb 2023 04:46:57 -0500
-X-MC-Unique: RlcE8CmhP76LRzrNZhzakQ-1
-Received: by mail-ej1-f69.google.com with SMTP id qc18-20020a170906d8b200b0088e3a3a02b6so366821ejb.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Feb 2023 01:46:57 -0800 (PST)
+ us-mta-516-p84o2ayjMPmAl4IyGdEDdQ-1; Wed, 01 Feb 2023 04:52:47 -0500
+X-MC-Unique: p84o2ayjMPmAl4IyGdEDdQ-1
+Received: by mail-ej1-f70.google.com with SMTP id wu9-20020a170906eec900b0088e1bbefaeeso578726ejb.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Feb 2023 01:52:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nX3Sju01yAvnUklbguJHQoTEONurdEPyIljO4LvviIw=;
-        b=n2AJL9wt8l87xjHM6nMajffVp66uSrnB7RTAdZ4ASeIfDYJfv5yeOusvqXMnrWfv31
-         smKpDlOwTzK5mgFXIQ0tsJmCAE2pffMfrZyQN0tm0LJP9I0s6eILSmK20xfNnPJgKL3F
-         wi9axCB7SlKcWyRssrtxYt30G5SUPxDf9+o1anSO7g2RidzxELo5XJb5mUE8bRBK+uB1
-         PTp+I8FNP5MaUbICAMvYM8LS1ZO7g9ZQvQKpv9FdhTqrCrTYE0/Sg2w+/CcIwWD72xGZ
-         v6djSJgCykXEIKFrQp13Bpy2fka8na44ajzGEjB1TjmN24nC6lWcrqKi3JloJxVRr2qy
-         /yFw==
-X-Gm-Message-State: AO0yUKWwDga1m9q5sQw9baKs1y2CrU6lvuBzVu1HJs8oU0L+hMg9NS6E
-        +SSYBHrhnUtl2h4vn7sXPfwt2SC55JmDKBt3pPfAdi/XKcl0teBrfcRiDVP1uF3Dk5Q2B/9rA47
-        /2ipkuQBzlOJEdgk6+ut+5+HSBg==
-X-Received: by 2002:a17:906:5dcb:b0:877:61e8:915a with SMTP id p11-20020a1709065dcb00b0087761e8915amr1127499ejv.75.1675244816309;
-        Wed, 01 Feb 2023 01:46:56 -0800 (PST)
-X-Google-Smtp-Source: AK7set+5x0GFlMZdMQ7po8ZqDuDaJg67N4TVXFKMI+cgeM+B85VRZVl9KDVVwhGIMA9idUiIFSmcxg==
-X-Received: by 2002:a17:906:5dcb:b0:877:61e8:915a with SMTP id p11-20020a1709065dcb00b0087761e8915amr1127481ejv.75.1675244816095;
-        Wed, 01 Feb 2023 01:46:56 -0800 (PST)
+        bh=vBgaG3upaN8ZH2L2HXxEhx4LvqprmznpfZM80Mr8+0s=;
+        b=qMRvl6Y1gSUKU70qA8Zalc9B+Ofk8pD11WuKodIY0M6hkEA9hUPJ7JW3ANSQWPKnUV
+         bPg71l3NPWLn7IHxnaiJcTwBi44JvpOGePw25pmy1JfqgeF2ZzsSUtJ7xwXu5mzQSVE/
+         CnmdQKLbidXoUpHo+Xt0fdsXN2JtMgIRz/2pQ5ku5DtGZkfAqQrIitGF845An1Zkz+bp
+         5kbpYNju0Tq3UlXHeMjvBlF+YlnsVFkIB/1L8afPkw+oRalsXeMc7D3HwJYxswNmYY3h
+         68BphcZltxzcsXfeXTM0/tVxiVeMb6vXnYWzrf74v9MF6QR/Ejx4UkGp86krqSYfy9u1
+         B0ww==
+X-Gm-Message-State: AO0yUKW9ssIMPTnKmSvfm+qcFk1ol2cyb3Ezjs6dbhVZrHIyly9RWgF9
+        IORKDEY2b8oqaGxIzUPnrqy+mtNAuovn2KVjI5mtNWoBye6scog+/rcxarqqb/ck7S6gCFpTOB/
+        xjuIckKctZP3TawV5nDG+pseCyA==
+X-Received: by 2002:a17:907:8e93:b0:88a:a09d:e650 with SMTP id tx19-20020a1709078e9300b0088aa09de650mr1929682ejc.58.1675245166214;
+        Wed, 01 Feb 2023 01:52:46 -0800 (PST)
+X-Google-Smtp-Source: AK7set8/yOuSqzuyvTXovWMavMzuz2C5b0h7AtGaOh8NawRgFHEv0K3aCkTPBD9eIQ4u+LCBZuLgRg==
+X-Received: by 2002:a17:907:8e93:b0:88a:a09d:e650 with SMTP id tx19-20020a1709078e9300b0088aa09de650mr1929669ejc.58.1675245166056;
+        Wed, 01 Feb 2023 01:52:46 -0800 (PST)
 Received: from greebo.mooo.com (c-e6a5e255.022-110-73746f36.bbcust.telenor.se. [85.226.165.230])
-        by smtp.gmail.com with ESMTPSA id l23-20020a50d6d7000000b004a0b1d7e39csm9584437edj.51.2023.02.01.01.46.55
+        by smtp.gmail.com with ESMTPSA id jr23-20020a170906515700b0086f4b8f9e42sm9775974ejc.65.2023.02.01.01.52.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Feb 2023 01:46:55 -0800 (PST)
-Message-ID: <071074ad149b189661681aada453995741f75039.camel@redhat.com>
+        Wed, 01 Feb 2023 01:52:45 -0800 (PST)
+Message-ID: <bb87534811ecd092bbc6d361df9d02aff35b17ed.camel@redhat.com>
 Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
  image filesystem
 From:   Alexander Larsson <alexl@redhat.com>
 To:     Jingbo Xu <jefflexu@linux.alibaba.com>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>,
-        Amir Goldstein <amir73il@gmail.com>, gscrivan@redhat.com,
-        brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        david@fromorbit.com, viro@zeniv.linux.org.uk,
-        Vivek Goyal <vgoyal@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Gao Xiang <hsiangkao@linux.alibaba.com>, gscrivan@redhat.com,
+        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, david@fromorbit.com,
+        viro@zeniv.linux.org.uk, Vivek Goyal <vgoyal@redhat.com>,
         Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 01 Feb 2023 10:46:54 +0100
-In-Reply-To: <51d9d1b3-2b2a-9b58-2f7f-f3a56c9e04ac@linux.alibaba.com>
+Date:   Wed, 01 Feb 2023 10:52:44 +0100
+In-Reply-To: <ea8819bc-c340-bf4c-ad91-1a520fe3914b@linux.alibaba.com>
 References: <cover.1674227308.git.alexl@redhat.com>
          <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
          <1ea88c8d1e666b85342374ed7c0ddf7d661e0ee1.camel@redhat.com>
@@ -81,13 +80,15 @@ References: <cover.1674227308.git.alexl@redhat.com>
          <2ef122849d6f35712b56ffbcc95805672980e185.camel@redhat.com>
          <8ffa28f5-77f6-6bde-5645-5fb799019bca@linux.alibaba.com>
          <51d9d1b3-2b2a-9b58-2f7f-f3a56c9e04ac@linux.alibaba.com>
+         <CAOQ4uxhzGru2Z8tjcAWvKVi0reNeX9SHMi6cwdyA9Vws8c1ppw@mail.gmail.com>
+         <ea8819bc-c340-bf4c-ad91-1a520fe3914b@linux.alibaba.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.2 (3.46.2-1.fc37) 
 MIME-Version: 1.0
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -95,79 +96,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-02-01 at 12:28 +0800, Jingbo Xu wrote:
-> Hi all,
+On Wed, 2023-02-01 at 16:59 +0800, Jingbo Xu wrote:
 >=20
-> There are some updated performance statistics with different
-> combinations on my test environment if you are interested.
+> I redid the test with suggestion from Amir, with all files inside the
+> erofs layer are redirected to the same lower block, e.g.
+> "/objects/00/014430a0b489d101c8a103ef829dd258448a13eb48b4d1e9ff0731d1
+> e82b92".
 >=20
->=20
-> On 1/27/23 6:24 PM, Gao Xiang wrote:
-> > ...
-> >=20
-> > I've made a version and did some test, it can be fetched from:
-> > git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
-> > -b
-> > experimental
-> >=20
->=20
-> Setup
-> =3D=3D=3D=3D=3D=3D
-> CPU: x86_64 Intel(R) Xeon(R) Platinum 8269CY CPU @ 2.50GHz
-> Disk: 6800 IOPS upper limit
-> OS: Linux v6.2 (with composefs v3 patchset)
-
-For the record, what was the filesystem backing the basedir files?
-
-> I build erofs/squashfs images following the scripts attached on [1],
-> with each file in the rootfs tagged with "metacopy" and "redirect"
-> xattr.
->=20
-> The source rootfs is from the docker image of tensorflow [2].
->=20
-> The erofs images are built with mkfs.erofs with support for sparse
-> file
-> added [3].
->=20
-> [1]
-> https://lore.kernel.org/linux-fsdevel/5fb32a1297821040edd8c19ce796fc05401=
-01653.camel@redhat.com/
-> [2]
-> https://hub.docker.com/layers/tensorflow/tensorflow/2.10.0/images/sha256-=
-7f9f23ce2473eb52d17fe1b465c79c3a3604047343e23acc036296f512071bc9?context=3D=
-explore
-> [3]
-> https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/com=
-mit/?h=3Dexperimental&id=3D7c49e8b195ad90f6ca9dfccce9f6e3e39a8676f6
->=20
->=20
->=20
-> Image size
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 6.4M large.composefs
-> 5.7M large.composefs.w/o.digest (w/o --compute-digest)
-> 6.2M large.erofs
-> 5.2M large.erofs.T0 (with -T0, i.e. w/o nanosecond timestamp)
-> 1.7M large.squashfs
-> 5.8M large.squashfs.uncompressed (with -noI -noD -noF -noX)
->=20
-> (large.erofs.T0 is built without nanosecond timestamp, so that we get
-> smaller disk inode size (same with squashfs).)
->=20
->=20
-> Runtime Perf
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> The "uncached" column is tested with:
-> hyperfine -p "echo 3 > /proc/sys/vm/drop_caches" "ls -lR $MNTPOINT"
->=20
->=20
-> While the "cached" column is tested with:
-> hyperfine -w 1 "ls -lR $MNTPOINT"
->=20
->=20
-> erofs and squashfs are mounted with loopback device.
->=20
+> The result is shown in the fourth line.
 >=20
 > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
@@ -182,36 +118,24 @@ ms)
 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 172
 > erofs (w/o -T0) + overlayfs=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 651=C2=
 =A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 238
-> squashfs (compressed)	            | 538         | 211
-> squashfs (compressed) + overlayfs | 968         | 302
+> erofs (hacked and redirect to one |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|
+> lower block) + overlayfs=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 400=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 230
+>=20
+> It seems that the "lazy lookup" in overlayfs indeed optimizes in this
+> situation.
+>=20
+>=20
+> The performance gap in cached situation (especially comparing
+> composefs
+> and standalone erofs) is still under investigation and I will see if
+> there's any hint by perf diff.
 
-
-Clearly erofs with sparse files is the best fs now for the ro-fs +
-overlay case. But still, we can see that the additional cost of the
-overlayfs layer is not negligible.=C2=A0
-
-According to amir this could be helped by a special composefs-like mode
-in overlayfs, but its unclear what performance that would reach, and
-we're then talking net new development that further complicates the
-overlayfs codebase. Its not clear to me which alternative is easier to
-develop/maintain.
-
-Also, the difference between cached and uncached here is less than in
-my tests. Probably because my test image was larger. With the test
-image I use, the results are:
-
-                                  | uncached(ms)| cached(ms)
-----------------------------------|-------------|-----------
-composefs (with digest)           | 681         | 390
-erofs (w/o -T0) + overlayfs       | 1788        | 532
-squashfs (compressed) + overlayfs | 2547        | 443
-
-
-I gotta say it is weird though that squashfs performed better than
-erofs in the cached case. May be worth looking into. The test data I'm
-using is available here:
- =20
-https://my.owndrive.com/index.php/s/irHJXRpZHtT3a5i
+The fact that plain erofs is faster than composefs uncached, but slower
+cached is very strange. Also, see my other mail where erofs+ovl cached
+is slower than squashfs+ovl cached for me. Something seems to be off
+with the cached erofs case...
 
 
 --=20
@@ -221,8 +145,7 @@ https://my.owndrive.com/index.php/s/irHJXRpZHtT3a5i
  Alexander Larsson                                            Red Hat,
 Inc=20
        alexl@redhat.com            alexander.larsson@gmail.com=20
-He's a lonely flyboy grifter living undercover at Ringling Bros.
-Circus.=20
-She's a virginal thirtysomething former first lady looking for love in=20
-all the wrong places. They fight crime!=20
+He's a sword-wielding alcoholic barbarian She's a pregnant snooty nun
+who=20
+dreams of becoming Elvis. They fight crime!=20
 
