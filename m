@@ -2,59 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7275E686698
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 14:16:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85B8768669B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 14:16:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232207AbjBANQZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Feb 2023 08:16:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43832 "EHLO
+        id S231984AbjBANQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Feb 2023 08:16:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232206AbjBANQK (ORCPT
+        with ESMTP id S232212AbjBANQK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 1 Feb 2023 08:16:10 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9C85646BA
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Feb 2023 05:15:48 -0800 (PST)
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 354DE64DA3;
+        Wed,  1 Feb 2023 05:15:50 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A179DB82171
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Feb 2023 13:15:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25EF2C4339E;
-        Wed,  1 Feb 2023 13:15:44 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 99D92B82180;
+        Wed,  1 Feb 2023 13:15:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC6AC4339C;
+        Wed,  1 Feb 2023 13:15:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675257346;
-        bh=hg2fr8Ft7Ei4dJ/Ao/3kUCrMOL9R+3e13PWgvGR/NBs=;
+        s=k20201202; t=1675257348;
+        bh=KF3hJGEMiNJlxHEZI/jc8UC3mC9TH+U+u0I9wigEUms=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=TWgU1SYU/FNtGYFcK7qnEOq1ttDSG4I+iOPfa0Y61per9FI0i7eNLxjYHOmWQW9fd
-         CgQcFi4uW1eihPz7kk5ys+qrXJeTXQFXJ6M4RWsL2en99jGfHeA7gDuK7Y2+gaCcvo
-         eMWvQL/xmRviLdwaTSp28RAo7fmc6F744CAbp+Ch+Q1xWF2fmrvks1nBNOouVpa9UB
-         tp9Nu4w2Gwd09SyG3V3nx5fLFvdUdsEWo416tyIh53vIthLOZQoqI/f98bsIzrtp3H
-         YOkHNUg+UjPIZ8e5bVWQHIMFFNanc2IwLaOVm6ysDXariyaSAT7RalzJrcXzEBguN3
-         X8fqjkhq8G1JQ==
+        b=Po5JGMv510IkjEddDIeve9sKPxafeTdEsD0tSdRsuDDhUd8Abvrpgi0ZhoTFmzQnQ
+         qALTIcscjGNMhgh2aI57cC4iAiMAzVZFh2AIpiKL1n53MbhflVlM/KYHext8C3BxnD
+         8s8kPwgwu3pnHsQT5LRmDAovaNTLSOYscI4TFH0P+/CRWuObBTglpoIbgNbn/cARDQ
+         qkTshVlKczLf6ZLIvYcC6NYr7X4yEt55lgPfyh7cItnwjY1HFrw0eeCj2d07+taKBK
+         q3k6qBFcsfGOgsMDpGEn/5koFIcaQiZ3+dKY6q7qNw70wWDtP1Gd5w+5LlM54E8f6r
+         5LdTrAN2QDvYA==
 From:   Christian Brauner <brauner@kernel.org>
-Date:   Wed, 01 Feb 2023 14:14:58 +0100
-Subject: [PATCH v3 07/10] fs: rename generic posix acl handlers
+Date:   Wed, 01 Feb 2023 14:14:59 +0100
+Subject: [PATCH v3 08/10] reiserfs: rework priv inode handling
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230125-fs-acl-remove-generic-xattr-handlers-v3-7-f760cc58967d@kernel.org>
+Message-Id: <20230125-fs-acl-remove-generic-xattr-handlers-v3-8-f760cc58967d@kernel.org>
 References: <20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org>
 In-Reply-To: <20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org>
 To:     linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Seth Forshee <sforshee@kernel.org>,
-        "Christian Brauner (Microsoft)" <brauner@kernel.org>
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        reiserfs-devel@vger.kernel.org
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7635; i=brauner@kernel.org;
- h=from:subject:message-id; bh=hg2fr8Ft7Ei4dJ/Ao/3kUCrMOL9R+3e13PWgvGR/NBs=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTfSv10KyzsevtnG7Hnefnc66JevecKfeR0MWrh7k3nihW8
- 1ref6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZgI/z+Gf2qr9O+o22VFm21vXrlz2a
- qj+a9uCJfxxRy9qMkXHnsnMY3hr7jUu9CkxLvHecpeydyZebj2ovxB4fQ9fX/+S7Pvlz5bxAcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6477; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=KF3hJGEMiNJlxHEZI/jc8UC3mC9TH+U+u0I9wigEUms=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTfSv0Urnf235kfYtc2ZGqpqDr7h3Q03I+6GDTpb5PeM4mX
+ D2MVO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACay5h8jwydrxj1H1RMKXti9i/Nzlh
+ AXWD79tfVDfk7jzt3Pu2QvhDP803/KmHzB4eykqZK731aftOzIMxYLm3JpR43lxfbMifxHuAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,187 +63,179 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reflect in their naming and document that they are kept around for
-legacy reasons and shouldn't be used anymore by new code.
+Reiserfs is the only filesystem that removes IOP_XATTR without also
+using a set of dedicated inode operations at the same time that nop all
+xattr related inode operations. This means we need to have a IOP_XATTR
+check in vfs_listxattr() instead of just being able to check for
+->listxatt() being implemented.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Introduce a dedicated set of nop inode operations that are used when
+IOP_XATTR is removed, allowing us to remove that check from
+vfs_listxattr(). This in turn allows us to completely decouple POSIX ACLs from
+IOP_XATTR.
+
+Cc: reiserfs-devel@vger.kernel.org
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
 Changes in v3:
-  - Patch unchanged.
-
-Changes in v2:
 - Patch introduced.
 ---
- fs/erofs/xattr.h                |  6 ++----
- fs/ext2/xattr.c                 |  4 ++--
- fs/ext4/xattr.c                 |  4 ++--
- fs/f2fs/xattr.c                 |  4 ++--
- fs/jffs2/xattr.c                |  4 ++--
- fs/ocfs2/xattr.c                | 12 +++++-------
- fs/posix_acl.c                  | 24 ++++++++++++++++++------
- include/linux/posix_acl_xattr.h |  5 +++--
- 8 files changed, 36 insertions(+), 27 deletions(-)
+ fs/reiserfs/file.c     |  7 +++++++
+ fs/reiserfs/inode.c    |  6 ++----
+ fs/reiserfs/namei.c    | 50 +++++++++++++++++++++++++++++++++++++++++++++-----
+ fs/reiserfs/reiserfs.h |  2 ++
+ fs/reiserfs/xattr.c    |  9 +++------
+ 5 files changed, 59 insertions(+), 15 deletions(-)
 
-diff --git a/fs/erofs/xattr.h b/fs/erofs/xattr.h
-index 08658e414c33..97185cb649b6 100644
---- a/fs/erofs/xattr.h
-+++ b/fs/erofs/xattr.h
-@@ -49,10 +49,8 @@ static inline const char *erofs_xattr_prefix(unsigned int idx,
- 	static const struct xattr_handler *xattr_handler_map[] = {
- 		[EROFS_XATTR_INDEX_USER] = &erofs_xattr_user_handler,
- #ifdef CONFIG_EROFS_FS_POSIX_ACL
--		[EROFS_XATTR_INDEX_POSIX_ACL_ACCESS] =
--			&posix_acl_access_xattr_handler,
--		[EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT] =
--			&posix_acl_default_xattr_handler,
-+		[EROFS_XATTR_INDEX_POSIX_ACL_ACCESS] = &nop_posix_acl_access,
-+		[EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT] = &nop_posix_acl_default,
- #endif
- 		[EROFS_XATTR_INDEX_TRUSTED] = &erofs_xattr_trusted_handler,
- #ifdef CONFIG_EROFS_FS_SECURITY
-diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
-index 958976f809f5..b126af5f8b15 100644
---- a/fs/ext2/xattr.c
-+++ b/fs/ext2/xattr.c
-@@ -101,8 +101,8 @@ static void ext2_xattr_rehash(struct ext2_xattr_header *,
- static const struct xattr_handler *ext2_xattr_handler_map[] = {
- 	[EXT2_XATTR_INDEX_USER]		     = &ext2_xattr_user_handler,
- #ifdef CONFIG_EXT2_FS_POSIX_ACL
--	[EXT2_XATTR_INDEX_POSIX_ACL_ACCESS]  = &posix_acl_access_xattr_handler,
--	[EXT2_XATTR_INDEX_POSIX_ACL_DEFAULT] = &posix_acl_default_xattr_handler,
-+	[EXT2_XATTR_INDEX_POSIX_ACL_ACCESS]  = &nop_posix_acl_access,
-+	[EXT2_XATTR_INDEX_POSIX_ACL_DEFAULT] = &nop_posix_acl_default,
- #endif
- 	[EXT2_XATTR_INDEX_TRUSTED]	     = &ext2_xattr_trusted_handler,
- #ifdef CONFIG_EXT2_FS_SECURITY
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 3fbeeb00fd78..edca79a62bd9 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -88,8 +88,8 @@ static void ext4_xattr_rehash(struct ext4_xattr_header *);
- static const struct xattr_handler * const ext4_xattr_handler_map[] = {
- 	[EXT4_XATTR_INDEX_USER]		     = &ext4_xattr_user_handler,
- #ifdef CONFIG_EXT4_FS_POSIX_ACL
--	[EXT4_XATTR_INDEX_POSIX_ACL_ACCESS]  = &posix_acl_access_xattr_handler,
--	[EXT4_XATTR_INDEX_POSIX_ACL_DEFAULT] = &posix_acl_default_xattr_handler,
-+	[EXT4_XATTR_INDEX_POSIX_ACL_ACCESS]  = &nop_posix_acl_access,
-+	[EXT4_XATTR_INDEX_POSIX_ACL_DEFAULT] = &nop_posix_acl_default,
- #endif
- 	[EXT4_XATTR_INDEX_TRUSTED]	     = &ext4_xattr_trusted_handler,
- #ifdef CONFIG_EXT4_FS_SECURITY
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 9de984645253..7eb9628478c8 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -192,8 +192,8 @@ const struct xattr_handler f2fs_xattr_security_handler = {
- static const struct xattr_handler *f2fs_xattr_handler_map[] = {
- 	[F2FS_XATTR_INDEX_USER] = &f2fs_xattr_user_handler,
- #ifdef CONFIG_F2FS_FS_POSIX_ACL
--	[F2FS_XATTR_INDEX_POSIX_ACL_ACCESS] = &posix_acl_access_xattr_handler,
--	[F2FS_XATTR_INDEX_POSIX_ACL_DEFAULT] = &posix_acl_default_xattr_handler,
-+	[F2FS_XATTR_INDEX_POSIX_ACL_ACCESS] = &nop_posix_acl_access,
-+	[F2FS_XATTR_INDEX_POSIX_ACL_DEFAULT] = &nop_posix_acl_default,
- #endif
- 	[F2FS_XATTR_INDEX_TRUSTED] = &f2fs_xattr_trusted_handler,
- #ifdef CONFIG_F2FS_FS_SECURITY
-diff --git a/fs/jffs2/xattr.c b/fs/jffs2/xattr.c
-index 1189a70d2007..aa4048a27f31 100644
---- a/fs/jffs2/xattr.c
-+++ b/fs/jffs2/xattr.c
-@@ -939,10 +939,10 @@ static const char *jffs2_xattr_prefix(int xprefix, struct dentry *dentry)
- #endif
- #ifdef CONFIG_JFFS2_FS_POSIX_ACL
- 	case JFFS2_XPREFIX_ACL_ACCESS:
--		ret = &posix_acl_access_xattr_handler;
-+		ret = &nop_posix_acl_access;
- 		break;
- 	case JFFS2_XPREFIX_ACL_DEFAULT:
--		ret = &posix_acl_default_xattr_handler;
-+		ret = &nop_posix_acl_default;
- 		break;
- #endif
- 	case JFFS2_XPREFIX_TRUSTED:
-diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-index 482b2ef7ca54..ff85e418d7e3 100644
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -95,13 +95,11 @@ const struct xattr_handler *ocfs2_xattr_handlers[] = {
+diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
+index 467d13da198f..b54cc7048f02 100644
+--- a/fs/reiserfs/file.c
++++ b/fs/reiserfs/file.c
+@@ -261,3 +261,10 @@ const struct inode_operations reiserfs_file_inode_operations = {
+ 	.fileattr_get = reiserfs_fileattr_get,
+ 	.fileattr_set = reiserfs_fileattr_set,
  };
++
++const struct inode_operations reiserfs_priv_file_inode_operations = {
++	.setattr = reiserfs_setattr,
++	.permission = reiserfs_permission,
++	.fileattr_get = reiserfs_fileattr_get,
++	.fileattr_set = reiserfs_fileattr_set,
++};
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index c7d1fa526dea..4ec357919588 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -2087,10 +2087,8 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
+ 	 * Mark it private if we're creating the privroot
+ 	 * or something under it.
+ 	 */
+-	if (IS_PRIVATE(dir) || dentry == REISERFS_SB(sb)->priv_root) {
+-		inode->i_flags |= S_PRIVATE;
+-		inode->i_opflags &= ~IOP_XATTR;
+-	}
++	if (IS_PRIVATE(dir) || dentry == REISERFS_SB(sb)->priv_root)
++		reiserfs_init_priv_inode(inode);
  
- static const struct xattr_handler *ocfs2_xattr_handler_map[OCFS2_XATTR_MAX] = {
--	[OCFS2_XATTR_INDEX_USER]	= &ocfs2_xattr_user_handler,
--	[OCFS2_XATTR_INDEX_POSIX_ACL_ACCESS]
--					= &posix_acl_access_xattr_handler,
--	[OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT]
--					= &posix_acl_default_xattr_handler,
--	[OCFS2_XATTR_INDEX_TRUSTED]	= &ocfs2_xattr_trusted_handler,
--	[OCFS2_XATTR_INDEX_SECURITY]	= &ocfs2_xattr_security_handler,
-+	[OCFS2_XATTR_INDEX_USER]		= &ocfs2_xattr_user_handler,
-+	[OCFS2_XATTR_INDEX_POSIX_ACL_ACCESS]	= &nop_posix_acl_access,
-+	[OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT]	= &nop_posix_acl_default,
-+	[OCFS2_XATTR_INDEX_TRUSTED]		= &ocfs2_xattr_trusted_handler,
-+	[OCFS2_XATTR_INDEX_SECURITY]		= &ocfs2_xattr_security_handler,
- };
+ 	if (reiserfs_posixacl(inode->i_sb)) {
+ 		reiserfs_write_unlock(inode->i_sb);
+diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+index 0b8aa99749f1..2f0c721c8ac9 100644
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -378,13 +378,11 @@ static struct dentry *reiserfs_lookup(struct inode *dir, struct dentry *dentry,
  
- struct ocfs2_xattr_info {
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index c0886dc8e714..7a4d89897c37 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -989,19 +989,31 @@ posix_acl_xattr_list(struct dentry *dentry)
- 	return IS_POSIXACL(d_backing_inode(dentry));
+ 		/*
+ 		 * Propagate the private flag so we know we're
+-		 * in the priv tree.  Also clear IOP_XATTR
++		 * in the priv tree.  Also clear xattr support
+ 		 * since we don't have xattrs on xattr files.
+ 		 */
+-		if (IS_PRIVATE(dir)) {
+-			inode->i_flags |= S_PRIVATE;
+-			inode->i_opflags &= ~IOP_XATTR;
+-		}
++		if (IS_PRIVATE(dir))
++			reiserfs_init_priv_inode(inode);
+ 	}
+ 	reiserfs_write_unlock(dir->i_sb);
+ 	if (retval == IO_ERROR) {
+@@ -1649,6 +1647,48 @@ static int reiserfs_rename(struct user_namespace *mnt_userns,
+ 	return retval;
  }
  
--const struct xattr_handler posix_acl_access_xattr_handler = {
-+/*
-+ * nop_posix_acl_access - legacy xattr handler for access POSIX ACLs
-+ *
-+ * This is the legacy POSIX ACL access xattr handler. It is used by some
-+ * filesystems to implement their ->listxattr() inode operation. New code
-+ * should never use them.
-+ */
-+const struct xattr_handler nop_posix_acl_access = {
- 	.name = XATTR_NAME_POSIX_ACL_ACCESS,
--	.flags = ACL_TYPE_ACCESS,
- 	.list = posix_acl_xattr_list,
- };
--EXPORT_SYMBOL_GPL(posix_acl_access_xattr_handler);
-+EXPORT_SYMBOL_GPL(nop_posix_acl_access);
++static const struct inode_operations reiserfs_priv_dir_inode_operations = {
++	.create = reiserfs_create,
++	.lookup = reiserfs_lookup,
++	.link = reiserfs_link,
++	.unlink = reiserfs_unlink,
++	.symlink = reiserfs_symlink,
++	.mkdir = reiserfs_mkdir,
++	.rmdir = reiserfs_rmdir,
++	.mknod = reiserfs_mknod,
++	.rename = reiserfs_rename,
++	.setattr = reiserfs_setattr,
++	.permission = reiserfs_permission,
++	.fileattr_get = reiserfs_fileattr_get,
++	.fileattr_set = reiserfs_fileattr_set,
++};
++
++static const struct inode_operations reiserfs_priv_symlink_inode_operations = {
++	.get_link	= page_get_link,
++	.setattr = reiserfs_setattr,
++	.permission = reiserfs_permission,
++};
++
++static const struct inode_operations reiserfs_priv_special_inode_operations = {
++	.setattr = reiserfs_setattr,
++	.permission = reiserfs_permission,
++};
++
++void reiserfs_init_priv_inode(struct inode *inode)
++{
++	inode->i_flags |= S_PRIVATE;
++	inode->i_opflags &= ~IOP_XATTR;
++
++	if (S_ISREG(inode->i_mode))
++		inode->i_op = &reiserfs_priv_file_inode_operations;
++	else if (S_ISDIR(inode->i_mode))
++		inode->i_op = &reiserfs_priv_dir_inode_operations;
++	else if (S_ISLNK(inode->i_mode))
++		inode->i_op = &reiserfs_priv_symlink_inode_operations;
++	else
++		inode->i_op = &reiserfs_priv_special_inode_operations;
++}
++
+ /* directories can handle most operations...  */
+ const struct inode_operations reiserfs_dir_inode_operations = {
+ 	.create = reiserfs_create,
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 3aa928ec527a..d4dd39a66d80 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -3106,6 +3106,7 @@ int reiserfs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ int __reiserfs_write_begin(struct page *page, unsigned from, unsigned len);
  
--const struct xattr_handler posix_acl_default_xattr_handler = {
-+/*
-+ * nop_posix_acl_default - legacy xattr handler for default POSIX ACLs
-+ *
-+ * This is the legacy POSIX ACL default xattr handler. It is used by some
-+ * filesystems to implement their ->listxattr() inode operation. New code
-+ * should never use them.
-+ */
-+const struct xattr_handler nop_posix_acl_default = {
- 	.name = XATTR_NAME_POSIX_ACL_DEFAULT,
--	.flags = ACL_TYPE_DEFAULT,
- 	.list = posix_acl_xattr_list,
- };
--EXPORT_SYMBOL_GPL(posix_acl_default_xattr_handler);
-+EXPORT_SYMBOL_GPL(nop_posix_acl_default);
+ /* namei.c */
++void reiserfs_init_priv_inode(struct inode *inode);
+ void set_de_name_and_namelen(struct reiserfs_dir_entry *de);
+ int search_by_entry_key(struct super_block *sb, const struct cpu_key *key,
+ 			struct treepath *path, struct reiserfs_dir_entry *de);
+@@ -3175,6 +3176,7 @@ void reiserfs_unmap_buffer(struct buffer_head *);
  
- int simple_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		   struct posix_acl *acl, int type)
-diff --git a/include/linux/posix_acl_xattr.h b/include/linux/posix_acl_xattr.h
-index 54cd7a14330d..e86f3b731da2 100644
---- a/include/linux/posix_acl_xattr.h
-+++ b/include/linux/posix_acl_xattr.h
-@@ -68,7 +68,8 @@ static inline int posix_acl_type(const char *name)
- 	return -1;
- }
+ /* file.c */
+ extern const struct inode_operations reiserfs_file_inode_operations;
++extern const struct inode_operations reiserfs_priv_file_inode_operations;
+ extern const struct file_operations reiserfs_file_operations;
+ extern const struct address_space_operations reiserfs_address_space_operations;
  
--extern const struct xattr_handler posix_acl_access_xattr_handler;
--extern const struct xattr_handler posix_acl_default_xattr_handler;
-+/* These are legacy handlers. Don't use them for new code. */
-+extern const struct xattr_handler nop_posix_acl_access;
-+extern const struct xattr_handler nop_posix_acl_default;
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index 0b949dc45484..11b32bbd656d 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -896,8 +896,7 @@ static int create_privroot(struct dentry *dentry)
+ 		return -EOPNOTSUPP;
+ 	}
  
- #endif	/* _POSIX_ACL_XATTR_H */
+-	d_inode(dentry)->i_flags |= S_PRIVATE;
+-	d_inode(dentry)->i_opflags &= ~IOP_XATTR;
++	reiserfs_init_priv_inode(d_inode(dentry));
+ 	reiserfs_info(dentry->d_sb, "Created %s - reserved for xattr "
+ 		      "storage.\n", PRIVROOT_NAME);
+ 
+@@ -979,10 +978,8 @@ int reiserfs_lookup_privroot(struct super_block *s)
+ 	if (!IS_ERR(dentry)) {
+ 		REISERFS_SB(s)->priv_root = dentry;
+ 		d_set_d_op(dentry, &xattr_lookup_poison_ops);
+-		if (d_really_is_positive(dentry)) {
+-			d_inode(dentry)->i_flags |= S_PRIVATE;
+-			d_inode(dentry)->i_opflags &= ~IOP_XATTR;
+-		}
++		if (d_really_is_positive(dentry))
++			reiserfs_init_priv_inode(d_inode(dentry));
+ 	} else
+ 		err = PTR_ERR(dentry);
+ 	inode_unlock(d_inode(s->s_root));
 
 -- 
 2.34.1
