@@ -2,149 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B1656868F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 15:53:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EA55686910
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 15:55:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232164AbjBAOxJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Feb 2023 09:53:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56852 "EHLO
+        id S232404AbjBAOz1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Feb 2023 09:55:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232078AbjBAOxF (ORCPT
+        with ESMTP id S232445AbjBAOzZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Feb 2023 09:53:05 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F229A25B;
-        Wed,  1 Feb 2023 06:53:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=Cc:To:From:Date:Message-ID;
-        bh=+XxjRK8o0/jr4I/dPjE/RFZ7ftW0gWsdt6xluJbmr84=; b=isqPG01Tu7HpXho3VZlnTQp+Qd
-        eklUa2ie+bb83GUw8oG+OazlhF+/s7McoVoA1x3jZDzrkRz9dI9X2JXVkROuqora6Vz8kyQhuFf7l
-        +2knwnlRdAXUWWDROZOaOiaNhzMfgpIYXP7eBt9jQwHeRNlMddbTOyUZwrRHFNaZu3NO1E3xtMlpo
-        tQ3fbmZzKZs7P/tcjYG16juglfQjsDt5WVaI8Q4gCxQMj+4IBab69cKLGtfRQ+zAYWmYiVM4dJuOm
-        zi3pp3H2aTkOWRKVKii89M9RCX76+lyJ6CxYVDqfhlPm6E/cs0LSnOWGFnLuNYC3qwJu9Fq+aQ8/9
-        d8UFd/qHpdcfzJmaMa6sFaxxRzcLktQmB9TvgWDWeuSe9Aj9gePPCmZRKUGXTy1ZNPZoS6++AodaF
-        +rUc5+1rONoDr/sXIZ0B7KD1Uv4+g3uSWf5YFtu/xldHO5x2gXkM7+ZQPzn6n6wbNIJpDvCw1KnSR
-        oHesveImMJSZT3ZFEt8vyhxF;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1pNETr-00BFNU-Nh; Wed, 01 Feb 2023 14:52:59 +0000
-Message-ID: <4a43598d-51f0-b7bb-575a-d93f7879741f@samba.org>
-Date:   Wed, 1 Feb 2023 15:52:59 +0100
+        Wed, 1 Feb 2023 09:55:25 -0500
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 083A665F30
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Feb 2023 06:55:24 -0800 (PST)
+Received: by mail-il1-f199.google.com with SMTP id z12-20020a92d6cc000000b00310d4433c8cso8527613ilp.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Feb 2023 06:55:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZHi5bo3BzN4qPZ3mH6tPOGWzgbCBFQ/FU5LJ+gZiS0M=;
+        b=ydxOrzNMpXzNktirSu94bznjSRLi5gWl2eVGgEDvy7F8fRN+qgmtaxlHkaB/FzaBbr
+         OEiRlOPM2IXZpmW9/2Ud1qvRYzBSlOmyV4s35/G7RpdmZs/PfoplUarPxsWxAoSThRpM
+         MxCNKrjgCFeWlWvzfKkTjeOyNG9jlJyBs83CK6ddp/bgzFpvrbVSCWYNpq1BRPmdFAOy
+         A/IMiDRvW82a1BAV54ZnbjcrM/gLAQDPQoRP1v5jgmePe4TXFGmzUBzD+5mJKHC5BnE1
+         vJ+n3hFO5mDDQdIyhqHeMXqeLZ/WaHZSmr8VIb8w8SdY2Q8HtLf6zB8LMCwSlmPgPSue
+         7QoA==
+X-Gm-Message-State: AO0yUKWrMoER+OzSoLIKCm8HjjbxdyNCTfoK6Wl4z9bEz5OpLoJAifHe
+        V1aklU9cc3IbfAOLyFg7iGyU5DDlv7P1Zp8CVBRaQGp5ICJB
+X-Google-Smtp-Source: AK7set+UGIpl3wTKHaXpzg2fKL3h3H9zyaLxeaTVojjCe5oJvNoD9IYP7owJ4jx6i4ZQp7jUcj6Al1H/hidiUGa7GTzzorVtLAFy
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 11/12] cifs: Fix problem with encrypted RDMA data read
-Content-Language: en-US
-From:   Stefan Metzmacher <metze@samba.org>
-To:     David Howells <dhowells@redhat.com>,
-        Steve French <smfrench@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Tom Talpey <tom@talpey.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
+X-Received: by 2002:a02:9468:0:b0:375:c16b:7776 with SMTP id
+ a95-20020a029468000000b00375c16b7776mr540197jai.54.1675263323110; Wed, 01 Feb
+ 2023 06:55:23 -0800 (PST)
+Date:   Wed, 01 Feb 2023 06:55:23 -0800
+In-Reply-To: <000000000000fea8c705e9a732af@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000047848f05f3a4a32f@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: use-after-free Read in hdr_find_e
+From:   syzbot <syzbot+c986d2a447ac6fb27b02@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Long Li <longli@microsoft.com>,
-        Namjae Jeon <linkinjeon@kernel.org>
-References: <20230131182855.4027499-1-dhowells@redhat.com>
- <20230131182855.4027499-12-dhowells@redhat.com>
- <be4dfc12-5593-e93a-3f78-638ee8ea9ad8@samba.org>
-In-Reply-To: <be4dfc12-5593-e93a-3f78-638ee8ea9ad8@samba.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        ntfs3@lists.linux.dev, pjwatson999@gmail.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am 01.02.23 um 15:05 schrieb Stefan Metzmacher:
-> Am 31.01.23 um 19:28 schrieb David Howells:
->> When the cifs client is talking to the ksmbd server by RDMA and the ksmbd
->> server has "smb3 encryption = yes" in its config file, the normal PDU
->> stream is encrypted, but the directly-delivered data isn't in the stream
->> (and isn't encrypted), but is rather delivered by DDP/RDMA packets (at
->> least with IWarp).
->>
->> Currently, the direct delivery fails with:
->>
->>     buf can not contain only a part of read data
->>     WARNING: CPU: 0 PID: 4619 at fs/cifs/smb2ops.c:4731 handle_read_data+0x393/0x405
->>     ...
->>     RIP: 0010:handle_read_data+0x393/0x405
->>     ...
->>      smb3_handle_read_data+0x30/0x37
->>      receive_encrypted_standard+0x141/0x224
->>      cifs_demultiplex_thread+0x21a/0x63b
->>      kthread+0xe7/0xef
->>      ret_from_fork+0x22/0x30
->>
->> The problem apparently stemming from the fact that it's trying to manage
->> the decryption, but the data isn't in the smallbuf, the bigbuf or the page
->> array).
->>
->> This can be fixed simply by inserting an extra case into handle_read_data()
->> that checks to see if use_rdma_mr is true, and if it is, just setting
->> rdata->got_bytes to the length of data delivered and allowing normal
->> continuation.
->>
->> This can be seen in an IWarp packet trace.  With the upstream code, it does
->> a DDP/RDMA packet, which produces the warning above and then retries,
->> retrieving the data inline, spread across several SMBDirect messages that
->> get glued together into a single PDU.  With the patch applied, only the
->> DDP/RDMA packet is seen.
->>
->> Note that this doesn't happen if the server isn't told to encrypt stuff and
->> it does also happen with softRoCE.
->>
->> Signed-off-by: David Howells <dhowells@redhat.com>
->> cc: Steve French <smfrench@gmail.com>
->> cc: Tom Talpey <tom@talpey.com>
->> cc: Long Li <longli@microsoft.com>
->> cc: Namjae Jeon <linkinjeon@kernel.org>
->> cc: Stefan Metzmacher <metze@samba.org>
->> cc: linux-cifs@vger.kernel.org
->>
->> Link: https://lore.kernel.org/r/166855224228.1998592.2212551359609792175.stgit@warthog.procyon.org.uk/ # v1
->> ---
->>   fs/cifs/smb2ops.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
->> index cea578a45ed8..73b66ac86abf 100644
->> --- a/fs/cifs/smb2ops.c
->> +++ b/fs/cifs/smb2ops.c
->> @@ -4733,6 +4733,9 @@ handle_read_data(struct TCP_Server_Info *server, struct mid_q_entry *mid,
->>           if (length < 0)
->>               return length;
->>           rdata->got_bytes = data_len;
->> +    } else if (use_rdma_mr) {
->> +        /* The data was delivered directly by RDMA. */
->> +        rdata->got_bytes = data_len;
-> 
-> I actually don't understand why this would only be a problem with encryption.
-> 
-> I guess there's much more needed and data_offset should most likely be
-> ignored completely in the rdma offload case. So I'd guess its just luck
-> that we don't trigger the below warning/error more often.
+syzbot suspects this issue was fixed by commit:
 
-I guess it might be related to smb3_handle_read_data passing
-server->pdu_size to handle_read_data(), while server->pdu_size is
-the outer size of the transform and not the size of the decrypted pdu.
+commit 0e8235d28f3a0e9eda9f02ff67ee566d5f42b66b
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Mon Oct 10 10:15:33 2022 +0000
 
-Maybe receive_encrypted_standard() needs to reset server->pdu_size
-during this:
+    fs/ntfs3: Check fields while reading
 
-         if (mid_entry && mid_entry->handle)
-                 ret = mid_entry->handle(server, mid_entry);
-         else
-                 ret = cifs_handle_standard(server, mid_entry);
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1268739e480000
+start commit:   55be6084c8e0 Merge tag 'timers-core-2022-10-05' of git://g..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df75278aabf0681a
+dashboard link: https://syzkaller.appspot.com/bug?extid=c986d2a447ac6fb27b02
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164e92a4880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=126f7ac6880000
 
-But this code is so overly complex, that's way to hard to understand...
+If the result looks correct, please mark the issue as fixed by replying with:
 
+#syz fix: fs/ntfs3: Check fields while reading
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
