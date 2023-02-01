@@ -2,77 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9C5683A7A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 00:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66EA6685C94
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 02:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231253AbjAaXb3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Jan 2023 18:31:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33546 "EHLO
+        id S230311AbjBABVK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Jan 2023 20:21:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230511AbjAaXb2 (ORCPT
+        with ESMTP id S229686AbjBABVI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Jan 2023 18:31:28 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 963D84A223
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 15:31:24 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id o13so15681044pjg.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 15:31:24 -0800 (PST)
+        Tue, 31 Jan 2023 20:21:08 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C12424C0F1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 17:21:06 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id g138-20020a25db90000000b0080c27bde887so14516150ybf.18
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Jan 2023 17:21:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+8MB56q9vfvlJA565WpCyEkeIG1X8rQRlw2aoYs4F/4=;
-        b=71r/HeZwPXQZTQevtJlDWtDC0L1YLubXfPRI4A9QxH6b5yi2FlwwZTUTReRs3J1tls
-         cMhwi80p4USqlY5DlRBBMhktY4GC6GlA01jnr3t1y9JsDCzTi8RivxP+JMTB/SfVcA8i
-         HdlrncMs1UjrPoKAwDb4wRUrUD0p3JIb44ug/n0Wbay89qfcbiDj3xeptiJoAYSg8rG4
-         +LESP7lyQsrWexmXkl6m5UDOkXFSk/0FFlXUR68P838cgaJQu6SCLfd3DNqkuKBZfoXH
-         1hOKVARo9CU/GZsxLMb1IlMLDt7LmKCAzHaGrCr99Tc4xMLxxKp3cRr98HjtzADbkSyv
-         tIQA==
+        d=google.com; s=20210112;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PQPTFMW4796/V59Q1M7MQSc/lfM2+0cZRexxlEjw8BE=;
+        b=Rlxgv45bEMAa7iBOa2bNSfcd9vAqA2mYDbs1uj537poWq4Qx7+8PNrMe8lKi2hDj9A
+         mgklECqq4B11oQwcT0fb0MA/FWNcWvgzPQLUbpMtB8kewuH4C14TFtmqwy+tPpRKkQyg
+         omYOITCmP4SYOjNCFZw29MHPTAat0E/5rLNH5L/JR7om54abWiQ0XK228QbovmQdHMc9
+         Q9VRSzkaGhea7Efv7cP3lSA0e+Fs4abVldnJiugWc0d0Y4XXyEoSYDreY0dWSBVck83I
+         Z1zSL/GpR0AdE2M2jWkFcI7uMZKjBTiqS7En0DgUkEaPe9GSt12rketNUH+g/yjy1w78
+         gtog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+8MB56q9vfvlJA565WpCyEkeIG1X8rQRlw2aoYs4F/4=;
-        b=Qu473Rhe9NJyX0xU3G1qCqPGRIEXYGGrUvTU6b2jHSfE3ovonHw9XM/b4FUiwJTCIk
-         COttG9MXOxaZUrv2m4RYDOkmhRxGXKMn0GIzztvcUxS/fZTR8O02EOVYHE533jL0osJ8
-         KzdGOc51+5SiRpwWUiuRP81TmaYyOHwf1/13D87268+8e2CCtFZa4DNVoi/GSvBhk4R5
-         UZhcJw7YIuxTcgEH4jLcs+RzYNUF2hgxd05plreBl9w42fotRaF9AnxyL5XgYJEaw5s0
-         339/xmbuduY+iKwAD9Fh7Vbafoa2CRsyIbGpqPX5CnkEIZWV9bH5kOvUUpi+bMO0q66k
-         Lvzg==
-X-Gm-Message-State: AO0yUKVT648gEvYtNhk1oLFiPbEzKDzcQT2DEMMS+3nu/FljWuGj9nCp
-        Jrbx8A8C+nQNIMnXi42DS4Khyw==
-X-Google-Smtp-Source: AK7set9T8Da2vtUKw8moywVro/lMA7YXIriPTZdEe2MxtY/ftvC98Bdi2cm4LEygyrCh/P/qYliKAQ==
-X-Received: by 2002:a17:90b:17c3:b0:22c:46a2:ab0b with SMTP id me3-20020a17090b17c300b0022c46a2ab0bmr18928578pjb.43.1675207884115;
-        Tue, 31 Jan 2023 15:31:24 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-4-128.pa.nsw.optusnet.com.au. [49.181.4.128])
-        by smtp.gmail.com with ESMTPSA id p6-20020a17090a680600b0022c35f1c576sm8160905pjj.57.2023.01.31.15.31.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Jan 2023 15:31:23 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pN05w-009rls-4w; Wed, 01 Feb 2023 10:31:20 +1100
-Date:   Wed, 1 Feb 2023 10:31:20 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: replacement i_version counter for xfs
-Message-ID: <20230131233120.GR360264@dread.disaster.area>
-References: <57c413ed362c0beab06b5d83b7fc4b930c7662c4.camel@kernel.org>
- <20230125000227.GM360264@dread.disaster.area>
- <86f993a69a5be276164c4d3fc1951ff4bde881be.camel@kernel.org>
- <Y9FZupBCyPGCMFBd@magnolia>
- <4d16f9f9eb678f893d4de695bd7cbff6409c3c5a.camel@kernel.org>
- <20230130020525.GO360264@dread.disaster.area>
- <619f0cd76d739ade3249ea4433943264d1737ab2.camel@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <619f0cd76d739ade3249ea4433943264d1737ab2.camel@kernel.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PQPTFMW4796/V59Q1M7MQSc/lfM2+0cZRexxlEjw8BE=;
+        b=8KhX6oKuJFVJ2H8oPpF+uYC9it7iB1KfO0vxfK/3Jto8/LuoeUIAib44MiBsYBkoYN
+         Qm7Stlh9A4gifcj10aFw1UAhbRhVwzOZ9r/UQnCjR9028GMNCw7kmb49QOfDEU1En0rJ
+         yGk6jYxYaiDfxvhHTZRWzx+o+nzIg7mEJ8jhIPu1E/tUM/k8WIEqu9OEfeC8N7RjBGVJ
+         oXsjB5LXCS+vxVB0JdrWo+T0a0rOE66beVcGSG7Lkg6jDDe/gNG7yvAjE90Uhm2flF3V
+         mzdwdmqs5+2J4zPcFx/ZBlzeCejhWRMtQJTbV841qbwNhvplCye0gJBOM9iaT73MMf73
+         MyGg==
+X-Gm-Message-State: AO0yUKWt9fVzos6quR9JBw7Yhyup7T3+OKD7IMo3CkCmlw34AmwTHvwe
+        nD2MTOiVXRsxw9tZKY6nj98fyIU=
+X-Google-Smtp-Source: AK7set8Emavg/Q15QrAgi/Ft0H4UAeiRd/9XfHtT+24bmtZycjBa2Vb+zpXToXnb1KNA/ehTjOnGEsQ=
+X-Received: from hvdc.svl.corp.google.com ([2620:15c:2d4:203:18c0:a70b:9cf:52a9])
+ (user=xii job=sendgmr) by 2002:a81:4a43:0:b0:510:b7af:7e7c with SMTP id
+ x64-20020a814a43000000b00510b7af7e7cmr51606ywa.70.1675214466009; Tue, 31 Jan
+ 2023 17:21:06 -0800 (PST)
+Date:   Tue, 31 Jan 2023 17:20:32 -0800
+Message-Id: <20230201012032.2874481-1-xii@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.39.1.456.gfc5497dd1b-goog
+Subject: [PATCH] sched: Consider capacity for certain load balancing decisions
+From:   Xi Wang <xii@google.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Ben Segall <bsegall@google.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Xi Wang <xii@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,96 +73,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 31, 2023 at 07:02:56AM -0500, Jeff Layton wrote:
-> On Mon, 2023-01-30 at 13:05 +1100, Dave Chinner wrote:
-> > On Wed, Jan 25, 2023 at 12:58:08PM -0500, Jeff Layton wrote:
-> > > On Wed, 2023-01-25 at 08:32 -0800, Darrick J. Wong wrote:
-> > > > On Wed, Jan 25, 2023 at 06:47:12AM -0500, Jeff Layton wrote:
-> > > > > Note that there are two other lingering issues with i_version. Neither
-> > > > > of these are xfs-specific, but they may inform the changes you want to
-> > > > > make there:
-> > > > > 
-> > > > > 1/ the ctime and i_version can roll backward on a crash.
-> > > > > 
-> > > > > 2/ the ctime and i_version are both currently updated before write data
-> > > > > is copied to the pagecache. It would be ideal if that were done
-> > > > > afterward instead. (FWIW, I have some draft patches for btrfs and ext4
-> > > > > for this, but they need a lot more testing.)
-> > > > 
-> > > > You might also want some means for xfs to tell the vfs that it already
-> > > > did the timestamp update (because, say, we had to allocate blocks).
-> > > > I wonder what people will say when we have to run a transaction before
-> > > > the write to peel off suid bits and another one after to update ctime.
-> > > > 
-> > > 
-> > > That's a great question! There is a related one too once I started
-> > > looking at this in more detail:
-> > > 
-> > > Most filesystems end up updating the timestamp via a the call to
-> > > file_update_time in __generic_file_write_iter. Today, that's called very
-> > > early in the function and if it fails, the write fails without changing
-> > > anything.
-> > > 
-> > > What do we do now if the write succeeds, but update_time fails? We don't
-> > 
-> > On XFS, the timestamp update will either succeed or cause the
-> > filesystem to shutdown as a failure with a dirty transaction is a
-> > fatal, unrecoverable error.
-> > 
-> 
-> Ok. So for xfs, we could move all of this to be afterward. Clearing
-> setuid bits is quite rare, so that would only rarely require a
-> transaction (in principle).
+After load balancing was split into different scenarios, CPU capacity
+is ignored for the "migrate_task" case, which means a thread can stay
+on a softirq heavy cpu for an extended amount of time.
 
-See my response in the other email about XFS and atomic buffered
-write IO. We don't need to do an update after the write because
-reads cannot race between the data copy and the ctime/i_version
-update. Hence we only need one update, and it doesn't matter if it
-is before or after the data copy into the page cache.
+By comparing nr_running/capacity instead of just nr_running we can add
+CPU capacity back into "migrate_task" decisions. This benefits
+workloads running on machines with heavy network traffic. The change
+is unlikely to cause serious problems for other workloads but maybe
+some corner cases still need to be considered.
 
-> > > want to return an error on the write() since the data did get copied in.
-> > > Ignoring it seems wrong too though. There could even be some way to
-> > > exploit that by changing the contents while holding the timestamp and
-> > > version constant.
-> > 
-> > If the filesystem has shut down, it doesn't matter that the data got
-> > copied into the kernel - it's never going to make it to disk and
-> > attempts to read it back will also fail. There's nothing that can be
-> > exploited by such a failure on XFS - it's game over for everyone
-> > once the fs has shut down....
-> > 
-> > > At this point I'm leaning toward leaving the ctime and i_version to be
-> > > updated before the write, and just bumping the i_version a second time
-> > > after. In most cases the second bump will end up being a no-op, unless
-> > > an i_version query races in between.
-> > 
-> > Why not also bump ctime at write completion if a query races with
-> > the write()? Wouldn't that put ns-granularity ctime based change
-> > detection on a par with i_version?
-> > 
-> > Userspace isn't going to notice the difference - the ctime they
-> > observe indicates that it was changed during the syscall. So
-> > who/what is going to care if we bump ctime twice in the syscall
-> > instead of just once in this rare corner case?
-> > 
-> 
-> We could bump the ctime too in this situation, but it would be more
-> costly. In most cases the i_version bump will be a no-op. The only
-> exception would be when a query of i_version races in between the two
-> bumps. That wouldn't be the case with the ctime, which would almost
-> always require a second transaction.
+Signed-off-by: Xi Wang <xii@google.com>
+---
+ kernel/sched/fair.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-You've missed the part where I suggested lifting the "nfsd sampled
-i_version" state into an inode state flag rather than hiding it in
-the i_version field. At that point, we could optimise away the
-secondary ctime updates just like you are proposing we do with the
-i_version updates.  Further, we could also use that state it to
-decide whether we need to use high resolution timestamps when
-recording ctime updates - if the nfsd has not sampled the
-ctime/i_version, we don't need high res timestamps to be recorded
-for ctime....
-
--Dave.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0f8736991427..aad14bc04544 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -10368,8 +10368,9 @@ static struct rq *find_busiest_queue(struct lb_env *env,
+ 			break;
+ 
+ 		case migrate_task:
+-			if (busiest_nr < nr_running) {
++			if (busiest_nr * capacity < nr_running * busiest_capacity) {
+ 				busiest_nr = nr_running;
++				busiest_capacity = capacity;
+ 				busiest = rq;
+ 			}
+ 			break;
 -- 
-Dave Chinner
-david@fromorbit.com
+2.39.1
