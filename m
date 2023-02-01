@@ -2,180 +2,289 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECF6B686EC5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 20:19:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 191F6687141
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Feb 2023 23:52:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231963AbjBATTJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Feb 2023 14:19:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41158 "EHLO
+        id S229932AbjBAWwZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Feb 2023 17:52:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231893AbjBATTH (ORCPT
+        with ESMTP id S230375AbjBAWwX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Feb 2023 14:19:07 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA83820F8;
-        Wed,  1 Feb 2023 11:19:04 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B2CE61926;
-        Wed,  1 Feb 2023 19:19:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5763C43442;
-        Wed,  1 Feb 2023 19:19:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675279143;
-        bh=jKRc5Zq71KzYEnKrs9tsf+c7DuNTErUEdqtV8oGSFp4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=t7EzVYmoeakMCz7I0lw2+MYS1isAQl7bh0uU6qWNrwQaftNjS8xF1n246QxxtmRAv
-         o4VRKq1LSp7ue1Oo5e51Q4C7MaXtdQGLxubdo0VPqsBDsYkLLAQTvUXUy1+JT05XT5
-         Ucg3JyCLILS7bPPLBl87b9jcTPiXirWM2xHtT3mQVrvDYFvFs/7UdSQMU7ajgEEM1S
-         Qzcz6zzbsnQa1PodzbmRiV+Olim0KwLVlvyXeNufqnrtN+/qm+Wm1dKcHTZMMcplpg
-         4zEg7G3y+cTzUnNq+PhK3Und1tdeL44vZ2oE31oIw8KMqEqidsD0FwQ7gu43mY7wb+
-         VbPqJiHr4ZkKg==
-Message-ID: <545a181c7855dde8c71a4e4b98a1107bd85e24e6.camel@kernel.org>
-Subject: Re: replacement i_version counter for xfs
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Wed, 01 Feb 2023 14:19:01 -0500
-In-Reply-To: <20230131233120.GR360264@dread.disaster.area>
-References: <57c413ed362c0beab06b5d83b7fc4b930c7662c4.camel@kernel.org>
-         <20230125000227.GM360264@dread.disaster.area>
-         <86f993a69a5be276164c4d3fc1951ff4bde881be.camel@kernel.org>
-         <Y9FZupBCyPGCMFBd@magnolia>
-         <4d16f9f9eb678f893d4de695bd7cbff6409c3c5a.camel@kernel.org>
-         <20230130020525.GO360264@dread.disaster.area>
-         <619f0cd76d739ade3249ea4433943264d1737ab2.camel@kernel.org>
-         <20230131233120.GR360264@dread.disaster.area>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.3 (3.46.3-1.fc37) 
+        Wed, 1 Feb 2023 17:52:23 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1BA56385D
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Feb 2023 14:51:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1675291900;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XSLskm6AR/RoEO7AKZfXBH2mjiqKgHPTYdoXGz36+6Y=;
+        b=QEa21kbNtStvvrwSiGuhXQuts+Mj6jWjb5eKYGNoso6l0lfjTL1hlxaufiwwtvgQwQ/6Ow
+        h8wFXsW0jF5FA5+88VaCxuXGqBXpwC/OIsUWjHdZlJUyuOMN8w0Uepx/jIaAPmKHdX7TTn
+        epSo+hLpl8ooEpg/xv+wlMq/H7ZJdZ4=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-226-HUvxdIXbNI6lV22rNxqNQw-1; Wed, 01 Feb 2023 17:51:39 -0500
+X-MC-Unique: HUvxdIXbNI6lV22rNxqNQw-1
+Received: by mail-qv1-f69.google.com with SMTP id k15-20020a0cd68f000000b00535261af1b1so11059942qvi.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Feb 2023 14:51:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XSLskm6AR/RoEO7AKZfXBH2mjiqKgHPTYdoXGz36+6Y=;
+        b=VKS+qVpcggmJVrD2//tJcS3O0nI8wXmppoP8DUzw2JCDh/4KAb7wyMdLEevfxkd7Yq
+         Cb7CW9NbETtOocs12/Q19TZYIAJgeiAt+npusxe7g158z6ngj7oL72yMnVqeuIK8Ix6L
+         RNz2Fuk2w3Ut9peFLbzddJQ4x/9NyoXyKDfJIVOkeIlLUEK+Yz5Tnuig0hCtyKncSeGB
+         tHGl5fDRhNkq6qvj+SS7dhSxDBO85zfgcBTqpDsPxLYsYgAOuR5e+hqF9eEi3ubzBY51
+         W2mvLhBAow5P0zkyXsVXl2BulFlEMNc5UklbDv/rqykQpnejiDudsV+U4mcH18mrAybp
+         zt7w==
+X-Gm-Message-State: AO0yUKUHAOSg8UVPVWcih8owfJeYPgvChnSqxlhFrj5uYlj6x7v5sIt+
+        fOwHjVlnCu2ve/SrTdYQWVH7UhOrkLo8ynoGNdhHtiw58+l6FNLwnIOfvT710y/BXQvxhKIzKKQ
+        BuqGl084I/Atv9k1jsYjb2voDFA==
+X-Received: by 2002:ac8:4908:0:b0:3b8:6c6e:4949 with SMTP id e8-20020ac84908000000b003b86c6e4949mr6666854qtq.4.1675291898863;
+        Wed, 01 Feb 2023 14:51:38 -0800 (PST)
+X-Google-Smtp-Source: AK7set9QU/pg3lX447cZDPT+ECjMCN9D89jwTNBjSZqxAR811W/xmquV+vVt3b6u8OCgqafcLR9zUg==
+X-Received: by 2002:ac8:4908:0:b0:3b8:6c6e:4949 with SMTP id e8-20020ac84908000000b003b86c6e4949mr6666813qtq.4.1675291898528;
+        Wed, 01 Feb 2023 14:51:38 -0800 (PST)
+Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
+        by smtp.gmail.com with ESMTPSA id a8-20020ac84348000000b003b86d8ad0c1sm5593624qtn.3.2023.02.01.14.51.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Feb 2023 14:51:37 -0800 (PST)
+Date:   Wed, 1 Feb 2023 17:51:35 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v9 1/3] userfaultfd: Add UFFD WP Async support
+Message-ID: <Y9rs93beOffPHlkt@x1n>
+References: <20230131083257.3302830-1-usama.anjum@collabora.com>
+ <20230131083257.3302830-2-usama.anjum@collabora.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230131083257.3302830-2-usama.anjum@collabora.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-02-01 at 10:31 +1100, Dave Chinner wrote:
-> On Tue, Jan 31, 2023 at 07:02:56AM -0500, Jeff Layton wrote:
-> > On Mon, 2023-01-30 at 13:05 +1100, Dave Chinner wrote:
-> > > On Wed, Jan 25, 2023 at 12:58:08PM -0500, Jeff Layton wrote:
-> > > > On Wed, 2023-01-25 at 08:32 -0800, Darrick J. Wong wrote:
-> > > > > On Wed, Jan 25, 2023 at 06:47:12AM -0500, Jeff Layton wrote:
-> > > > > > Note that there are two other lingering issues with i_version. =
-Neither
-> > > > > > of these are xfs-specific, but they may inform the changes you =
-want to
-> > > > > > make there:
-> > > > > >=20
-> > > > > > 1/ the ctime and i_version can roll backward on a crash.
-> > > > > >=20
-> > > > > > 2/ the ctime and i_version are both currently updated before wr=
-ite data
-> > > > > > is copied to the pagecache. It would be ideal if that were done
-> > > > > > afterward instead. (FWIW, I have some draft patches for btrfs a=
-nd ext4
-> > > > > > for this, but they need a lot more testing.)
-> > > > >=20
-> > > > > You might also want some means for xfs to tell the vfs that it al=
-ready
-> > > > > did the timestamp update (because, say, we had to allocate blocks=
-).
-> > > > > I wonder what people will say when we have to run a transaction b=
-efore
-> > > > > the write to peel off suid bits and another one after to update c=
-time.
-> > > > >=20
-> > > >=20
-> > > > That's a great question! There is a related one too once I started
-> > > > looking at this in more detail:
-> > > >=20
-> > > > Most filesystems end up updating the timestamp via a the call to
-> > > > file_update_time in __generic_file_write_iter. Today, that's called=
- very
-> > > > early in the function and if it fails, the write fails without chan=
-ging
-> > > > anything.
-> > > >=20
-> > > > What do we do now if the write succeeds, but update_time fails? We =
-don't
-> > >=20
-> > > On XFS, the timestamp update will either succeed or cause the
-> > > filesystem to shutdown as a failure with a dirty transaction is a
-> > > fatal, unrecoverable error.
-> > >=20
-> >=20
-> > Ok. So for xfs, we could move all of this to be afterward. Clearing
-> > setuid bits is quite rare, so that would only rarely require a
-> > transaction (in principle).
->=20
-> See my response in the other email about XFS and atomic buffered
-> write IO. We don't need to do an update after the write because
-> reads cannot race between the data copy and the ctime/i_version
-> update. Hence we only need one update, and it doesn't matter if it
-> is before or after the data copy into the page cache.
->=20
+On Tue, Jan 31, 2023 at 01:32:55PM +0500, Muhammad Usama Anjum wrote:
+> Add new WP Async mode (UFFD_FEATURE_WP_ASYNC) which resolves the page
+> faults on its own. It can be used to track that which pages have been
+> written-to from the time the pages were write-protected. It is very
+> efficient way to track the changes as uffd is by nature pte/pmd based.
+> 
+> UFFD synchronous WP sends the page faults to the userspace where the
+> pages which have been written-to can be tracked. But it is not efficient.
+> This is why this asynchronous version is being added. After setting the
+> WP Async, the pages which have been written to can be found in the pagemap
+> file or information can be obtained from the PAGEMAP_IOCTL.
+> 
+> Suggested-by: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+> Changes in v9:
+> - Correct the fault resolution with code contributed by Peter
+> 
+> Changes in v7:
+> - Remove UFFDIO_WRITEPROTECT_MODE_ASYNC_WP and add UFFD_FEATURE_WP_ASYNC
+> - Handle automatic page fault resolution in better way (thanks to Peter)
+> 
+> update to wp async
+> ---
+>  fs/userfaultfd.c                 | 11 +++++++++++
+>  include/linux/userfaultfd_k.h    |  6 ++++++
+>  include/uapi/linux/userfaultfd.h |  8 +++++++-
+>  mm/memory.c                      | 23 ++++++++++++++++++++---
+>  4 files changed, 44 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 15a5bf765d43..c17835a0e842 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -1867,6 +1867,10 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+>  	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
+>  	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
+>  
+> +	/* The unprotection is not supported if in async WP mode */
+> +	if (!mode_wp && (ctx->features & UFFD_FEATURE_WP_ASYNC))
+> +		return -EINVAL;
+> +
+>  	if (mode_wp && mode_dontwake)
+>  		return -EINVAL;
+>  
+> @@ -1950,6 +1954,13 @@ static int userfaultfd_continue(struct userfaultfd_ctx *ctx, unsigned long arg)
+>  	return ret;
+>  }
+>  
+> +int userfaultfd_wp_async(struct vm_area_struct *vma)
+> +{
+> +	struct userfaultfd_ctx *ctx = vma->vm_userfaultfd_ctx.ctx;
+> +
+> +	return (ctx && (ctx->features & UFFD_FEATURE_WP_ASYNC));
+> +}
+> +
+>  static inline unsigned int uffd_ctx_features(__u64 user_features)
+>  {
+>  	/*
+> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+> index 9df0b9a762cc..94dcb4dc1b4a 100644
+> --- a/include/linux/userfaultfd_k.h
+> +++ b/include/linux/userfaultfd_k.h
+> @@ -179,6 +179,7 @@ extern int userfaultfd_unmap_prep(struct mm_struct *mm, unsigned long start,
+>  				  unsigned long end, struct list_head *uf);
+>  extern void userfaultfd_unmap_complete(struct mm_struct *mm,
+>  				       struct list_head *uf);
+> +extern int userfaultfd_wp_async(struct vm_area_struct *vma);
+>  
+>  #else /* CONFIG_USERFAULTFD */
+>  
+> @@ -274,6 +275,11 @@ static inline bool uffd_disable_fault_around(struct vm_area_struct *vma)
+>  	return false;
+>  }
+>  
+> +static inline int userfaultfd_wp_async(struct vm_area_struct *vma)
+> +{
+> +	return false;
+> +}
+> +
+>  #endif /* CONFIG_USERFAULTFD */
+>  
+>  static inline bool pte_marker_entry_uffd_wp(swp_entry_t entry)
+> diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
+> index 005e5e306266..f4252ef40071 100644
+> --- a/include/uapi/linux/userfaultfd.h
+> +++ b/include/uapi/linux/userfaultfd.h
+> @@ -38,7 +38,8 @@
+>  			   UFFD_FEATURE_MINOR_HUGETLBFS |	\
+>  			   UFFD_FEATURE_MINOR_SHMEM |		\
+>  			   UFFD_FEATURE_EXACT_ADDRESS |		\
+> -			   UFFD_FEATURE_WP_HUGETLBFS_SHMEM)
+> +			   UFFD_FEATURE_WP_HUGETLBFS_SHMEM |	\
+> +			   UFFD_FEATURE_WP_ASYNC)
+>  #define UFFD_API_IOCTLS				\
+>  	((__u64)1 << _UFFDIO_REGISTER |		\
+>  	 (__u64)1 << _UFFDIO_UNREGISTER |	\
+> @@ -203,6 +204,10 @@ struct uffdio_api {
+>  	 *
+>  	 * UFFD_FEATURE_WP_HUGETLBFS_SHMEM indicates that userfaultfd
+>  	 * write-protection mode is supported on both shmem and hugetlbfs.
+> +	 *
+> +	 * UFFD_FEATURE_WP_ASYNC indicates that userfaultfd write-protection
+> +	 * asynchronous mode is supported in which the write fault is automatically
+> +	 * resolved and write-protection is un-set.
 
-Yep, I just saw that. Makes sense. It sounds like we won't need to do
-anything extra for that for XFS at all.
+Please mention a few other things:
 
-> > > > want to return an error on the write() since the data did get copie=
-d in.
-> > > > Ignoring it seems wrong too though. There could even be some way to
-> > > > exploit that by changing the contents while holding the timestamp a=
-nd
-> > > > version constant.
-> > >=20
-> > > If the filesystem has shut down, it doesn't matter that the data got
-> > > copied into the kernel - it's never going to make it to disk and
-> > > attempts to read it back will also fail. There's nothing that can be
-> > > exploited by such a failure on XFS - it's game over for everyone
-> > > once the fs has shut down....
-> > >=20
-> > > > At this point I'm leaning toward leaving the ctime and i_version to=
- be
-> > > > updated before the write, and just bumping the i_version a second t=
-ime
-> > > > after. In most cases the second bump will end up being a no-op, unl=
-ess
-> > > > an i_version query races in between.
-> > >=20
-> > > Why not also bump ctime at write completion if a query races with
-> > > the write()? Wouldn't that put ns-granularity ctime based change
-> > > detection on a par with i_version?
-> > >=20
-> > > Userspace isn't going to notice the difference - the ctime they
-> > > observe indicates that it was changed during the syscall. So
-> > > who/what is going to care if we bump ctime twice in the syscall
-> > > instead of just once in this rare corner case?
-> > >=20
-> >=20
-> > We could bump the ctime too in this situation, but it would be more
-> > costly. In most cases the i_version bump will be a no-op. The only
-> > exception would be when a query of i_version races in between the two
-> > bumps. That wouldn't be the case with the ctime, which would almost
-> > always require a second transaction.
->=20
-> You've missed the part where I suggested lifting the "nfsd sampled
-> i_version" state into an inode state flag rather than hiding it in
-> the i_version field. At that point, we could optimise away the
-> secondary ctime updates just like you are proposing we do with the
-> i_version updates.  Further, we could also use that state it to
-> decide whether we need to use high resolution timestamps when
-> recording ctime updates - if the nfsd has not sampled the
-> ctime/i_version, we don't need high res timestamps to be recorded
-> for ctime....
+  - It only supports anon and shmem (so hugetlb is not supported)
 
-Once you move the flag out of the word, we can no longer do this with
-atomic operations and will need to move to locking (probably a
-spinlock). Is it worth it? I'm not sure.
+  - It will only take effect when any vma is registered with wr-protection
+    mode.  Otherwise the flag will be ignored.
 
-It's an interesting proposal, regardless...
---=20
-Jeff Layton <jlayton@kernel.org>
+In userfaultfd_register(), we need to fail the ioctl if anyone tries to
+register any hugetlb vma with this new flag set.
+
+>  	 */
+>  #define UFFD_FEATURE_PAGEFAULT_FLAG_WP		(1<<0)
+>  #define UFFD_FEATURE_EVENT_FORK			(1<<1)
+> @@ -217,6 +222,7 @@ struct uffdio_api {
+>  #define UFFD_FEATURE_MINOR_SHMEM		(1<<10)
+>  #define UFFD_FEATURE_EXACT_ADDRESS		(1<<11)
+>  #define UFFD_FEATURE_WP_HUGETLBFS_SHMEM		(1<<12)
+> +#define UFFD_FEATURE_WP_ASYNC			(1<<13)
+>  	__u64 features;
+>  
+>  	__u64 ioctls;
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 4000e9f017e0..04843e35550e 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -3351,8 +3351,21 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+>  
+>  	if (likely(!unshare)) {
+>  		if (userfaultfd_pte_wp(vma, *vmf->pte)) {
+> -			pte_unmap_unlock(vmf->pte, vmf->ptl);
+> -			return handle_userfault(vmf, VM_UFFD_WP);
+> +			if (userfaultfd_wp_async(vma)) {
+> +				/*
+> +				 * Nothing needed (cache flush, TLB invalidations,
+> +				 * etc.) because we're only removing the uffd-wp bit,
+> +				 * which is completely invisible to the user.
+> +				 */
+> +				pte_t pte = pte_clear_uffd_wp(*vmf->pte);
+> +
+> +				set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
+> +				/* Update this to be prepared for following up CoW handling */
+> +				vmf->orig_pte = pte;
+> +			} else {
+> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
+> +				return handle_userfault(vmf, VM_UFFD_WP);
+> +			}
+>  		}
+>  
+>  		/*
+> @@ -4812,8 +4825,11 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
+>  
+>  	if (vma_is_anonymous(vmf->vma)) {
+>  		if (likely(!unshare) &&
+> -		    userfaultfd_huge_pmd_wp(vmf->vma, vmf->orig_pmd))
+> +		    userfaultfd_huge_pmd_wp(vmf->vma, vmf->orig_pmd)) {
+> +			if (userfaultfd_wp_async(vmf->vma))
+> +				goto split_and_return;
+>  			return handle_userfault(vmf, VM_UFFD_WP);
+> +		}
+>  		return do_huge_pmd_wp_page(vmf);
+>  	}
+>  
+> @@ -4825,6 +4841,7 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
+>  		}
+>  	}
+>  
+> +split_and_return:
+
+The "and_return" is superfluous, IMHO.  Just make it "split"?
+
+>  	/* COW or write-notify handled on pte level: split pmd. */
+>  	__split_huge_pmd(vmf->vma, vmf->pmd, vmf->address, false, NULL);
+
+Would you also update Documentation/admin-guide/mm/userfaultfd.rst in the
+same patch?
+
+Thanks,
+
+-- 
+Peter Xu
+
