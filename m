@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 69B9E687C45
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Feb 2023 12:30:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5C3A687C4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Feb 2023 12:31:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232128AbjBBLax (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Feb 2023 06:30:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55694 "EHLO
+        id S232163AbjBBLbM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Feb 2023 06:31:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232005AbjBBLau (ORCPT
+        with ESMTP id S232014AbjBBLaw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Feb 2023 06:30:50 -0500
+        Thu, 2 Feb 2023 06:30:52 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD69A8A7F8;
-        Thu,  2 Feb 2023 03:30:38 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C546D8C1CB;
+        Thu,  2 Feb 2023 03:30:45 -0800 (PST)
 Received: from localhost.localdomain (unknown [39.45.165.226])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 60CC06602EEE;
-        Thu,  2 Feb 2023 11:30:31 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 424FE6602EF0;
+        Thu,  2 Feb 2023 11:30:38 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1675337437;
-        bh=zVn7sBvVLHh8ZH42O0NkxgKspG2iD3xM/v8ZV3X/K3w=;
+        s=mail; t=1675337444;
+        bh=R/HtdMw3clmiQDnQYYbhMJw9ubwQr8QixF3sE7Xccl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bDht2u3Oaw5ID1K6iazjrTWhs0wKvsuX5yngE8/bvsFv6pY/lTfSiplN9SfaZ8GoR
-         SV70TKknUveuVa6VMhP1AZvYnioQ4tqBabkXLwWhzUwShXNQfYA6MU44Ckz0UhpxRK
-         pcV8FqNZECyjt+mAYm88j4IgomXGJNQ2TTIzS5GOfRe75Qc2D8X0Hn/rQU+uZmhYwn
-         iM/btSPb16GDarClL2bMiVfKClq4zWV74/pTeAOrUSzuVp+n+LLPrYmKOKmNzO5Z0g
-         x4xz5TjaQfMxa4yZ9Qxg5G5jmteg9aDQS86gnc1b9NkUcRQFzLGD/yGzLqJyzgMiAM
-         1ZZpABw3bCH8g==
+        b=frnc3kJSAm9263yyf3cneyAnevRuTQhVNg9A1vtRWxq0iA+/OOXiWeFyYemDntZKB
+         SWtSV5aOwxF3iCIIxxu96ZaKP+xlERfbcgWdb1xIVZYyoEh70GeX9QOWrZBkneUoJY
+         yP1QqSNlPdJikgL/CepS8i/2+dY0+wyDoIXbBAxXJrYletR3SF+jwDlo3jyOA08jPT
+         RM/szZbA9E5EPYrI25GYGYpCf099RCQjly4HHybl7DPWkvA5Ysq0WWLJ2BmT2MGl+9
+         roxFv42F/gOmNYTDjULR4BKUTu+DryK/jFMD9XFAxvYxt9XlFggFGOsPSAoS0Dbxm8
+         fv07vfnsFtEbg==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -59,9 +59,9 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
         Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: [PATCH v10 3/6] fs/proc/task_mmu: Implement IOCTL to get and/or the clear info about PTEs
-Date:   Thu,  2 Feb 2023 16:29:12 +0500
-Message-Id: <20230202112915.867409-4-usama.anjum@collabora.com>
+Subject: [PATCH v10 4/6] tools headers UAPI: Update linux/fs.h with the kernel sources
+Date:   Thu,  2 Feb 2023 16:29:13 +0500
+Message-Id: <20230202112915.867409-5-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230202112915.867409-1-usama.anjum@collabora.com>
 References: <20230202112915.867409-1-usama.anjum@collabora.com>
@@ -76,409 +76,18 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
-the info about page table entries. The following operations are supported
-in this ioctl:
-- Get the information if the pages have been written-to (PAGE_IS_WRITTEN),
-  file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
-  (PAGE_IS_SWAPPED).
-- Write-protect the pages (PAGEMAP_WP_ENGAGE) to start finding which
-  pages have been written-to.
-- Find pages which have been written-to and write protect the pages
-  (atomic PAGE_IS_WRITTEN + PAGEMAP_WP_ENGAGE)
-
-To get information about which pages have been written-to and/or write
-protect the pages, following must be performed first in order:
-- The userfaultfd file descriptor is created with userfaultfd syscall.
-- The UFFD_FEATURE_WP_ASYNC feature is set by UFFDIO_API IOCTL.
-- The memory range is registered with UFFDIO_REGISTER_MODE_WP mode
-  through UFFDIO_REGISTER IOCTL.
-Then the any part of the registered memory or the whole memory region
-can be write protected using the UFFDIO_WRITEPROTECT IOCTL or
-PAGEMAP_SCAN IOCTL.
-
-struct pagemap_scan_args is used as the argument of the IOCTL. In this
-struct:
-- The range is specified through start and len.
-- The output buffer of struct page_region array and size is specified as
-  vec and vec_len.
-- The optional maximum requested pages are specified in the max_pages.
-- The flags can be specified in the flags field. The PAGEMAP_WP_ENGAGE
-  is the only added flag at this time.
-- The masks are specified in required_mask, anyof_mask, excluded_ mask
-  and return_mask.
-
-This IOCTL can be extended to get information about more PTE bits. This
-IOCTL doesn't support hugetlbs at the moment. No information about
-hugetlb can be obtained. This patch has evolved from a basic patch from
-Gabriel Krisman Bertazi.
+New IOCTL and macros has been added in the kernel sources. Update the
+tools header file as well.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
-Changes in v10:
-- move changes in tools/include/uapi/linux/fs.h to separate patch
-- update commit message
+ tools/include/uapi/linux/fs.h | 50 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-Change in v8:
-- Correct is_pte_uffd_wp()
-- Improve readability and error checks
-- Remove some un-needed code
-
-Changes in v7:
-- Rebase on top of latest next
-- Fix some corner cases
-- Base soft-dirty on the uffd wp async
-- Update the terminologies
-- Optimize the memory usage inside the ioctl
-
-Changes in v6:
-- Rename variables and update comments
-- Make IOCTL independent of soft_dirty config
-- Change masks and bitmap type to _u64
-- Improve code quality
-
-Changes in v5:
-- Remove tlb flushing even for clear operation
-
-Changes in v4:
-- Update the interface and implementation
-
-Changes in v3:
-- Tighten the user-kernel interface by using explicit types and add more
-  error checking
-
-Changes in v2:
-- Convert the interface from syscall to ioctl
-- Remove pidfd support as it doesn't make sense in ioctl
----
- fs/proc/task_mmu.c      | 290 ++++++++++++++++++++++++++++++++++++++++
- include/uapi/linux/fs.h |  50 +++++++
- 2 files changed, 340 insertions(+)
-
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index e35a0398db63..c6bde19d63d9 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -19,6 +19,7 @@
- #include <linux/shmem_fs.h>
- #include <linux/uaccess.h>
- #include <linux/pkeys.h>
-+#include <linux/minmax.h>
- 
- #include <asm/elf.h>
- #include <asm/tlb.h>
-@@ -1135,6 +1136,22 @@ static inline void clear_soft_dirty(struct vm_area_struct *vma,
- }
- #endif
- 
-+static inline bool is_pte_uffd_wp(pte_t pte)
-+{
-+	if ((pte_present(pte) && pte_uffd_wp(pte)) ||
-+	    (pte_swp_uffd_wp_any(pte)))
-+		return true;
-+	return false;
-+}
-+
-+static inline bool is_pmd_uffd_wp(pmd_t pmd)
-+{
-+	if ((pmd_present(pmd) && pmd_uffd_wp(pmd)) ||
-+	    (is_swap_pmd(pmd) && pmd_swp_uffd_wp(pmd)))
-+		return true;
-+	return false;
-+}
-+
- #if defined(CONFIG_MEM_SOFT_DIRTY) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
- static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
- 		unsigned long addr, pmd_t *pmdp)
-@@ -1763,11 +1780,284 @@ static int pagemap_release(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
-+#define PAGEMAP_BITS_ALL		(PAGE_IS_WRITTEN | PAGE_IS_FILE |	\
-+					 PAGE_IS_PRESENT | PAGE_IS_SWAPPED)
-+#define PAGEMAP_NON_WRITTEN_BITS	(PAGE_IS_FILE |	PAGE_IS_PRESENT | PAGE_IS_SWAPPED)
-+#define IS_WP_ENGAGE_OP(a)		(a->flags & PAGEMAP_WP_ENGAGE)
-+#define IS_GET_OP(a)			(a->vec)
-+#define HAS_NO_SPACE(p)			(p->max_pages && (p->found_pages == p->max_pages))
-+
-+#define PAGEMAP_SCAN_BITMAP(wt, file, present, swap)	\
-+	(wt | file << 1 | present << 2 | swap << 3)
-+#define IS_WT_REQUIRED(a)				\
-+	((a->required_mask & PAGE_IS_WRITTEN) ||	\
-+	 (a->anyof_mask & PAGE_IS_WRITTEN))
-+
-+struct pagemap_scan_private {
-+	struct page_region *vec;
-+	struct page_region prev;
-+	unsigned long vec_len, vec_index;
-+	unsigned int max_pages, found_pages, flags;
-+	unsigned long required_mask, anyof_mask, excluded_mask, return_mask;
-+};
-+
-+static int pagemap_scan_test_walk(unsigned long start, unsigned long end, struct mm_walk *walk)
-+{
-+	struct pagemap_scan_private *p = walk->private;
-+	struct vm_area_struct *vma = walk->vma;
-+
-+	if (IS_WT_REQUIRED(p) && !userfaultfd_wp(vma) && !userfaultfd_wp_async(vma))
-+		return -EPERM;
-+	if (vma->vm_flags & VM_PFNMAP)
-+		return 1;
-+	return 0;
-+}
-+
-+static inline int pagemap_scan_output(bool wt, bool file, bool pres, bool swap,
-+				      struct pagemap_scan_private *p, unsigned long addr,
-+				      unsigned int len)
-+{
-+	unsigned long bitmap, cur = PAGEMAP_SCAN_BITMAP(wt, file, pres, swap);
-+	bool cpy = true;
-+	struct page_region *prev = &p->prev;
-+
-+	if (HAS_NO_SPACE(p))
-+		return -ENOSPC;
-+
-+	if (p->max_pages && p->found_pages + len >= p->max_pages)
-+		len = p->max_pages - p->found_pages;
-+	if (!len)
-+		return -EINVAL;
-+
-+	if (p->required_mask)
-+		cpy = ((p->required_mask & cur) == p->required_mask);
-+	if (cpy && p->anyof_mask)
-+		cpy = (p->anyof_mask & cur);
-+	if (cpy && p->excluded_mask)
-+		cpy = !(p->excluded_mask & cur);
-+	bitmap = cur & p->return_mask;
-+	if (cpy && bitmap) {
-+		if ((prev->len) && (prev->bitmap == bitmap) &&
-+		    (prev->start + prev->len * PAGE_SIZE == addr)) {
-+			prev->len += len;
-+			p->found_pages += len;
-+		} else if (p->vec_index < p->vec_len) {
-+			if (prev->len) {
-+				memcpy(&p->vec[p->vec_index], prev, sizeof(struct page_region));
-+				p->vec_index++;
-+			}
-+			prev->start = addr;
-+			prev->len = len;
-+			prev->bitmap = bitmap;
-+			p->found_pages += len;
-+		} else {
-+			return -ENOSPC;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static inline int export_prev_to_out(struct pagemap_scan_private *p, struct page_region __user *vec,
-+				     unsigned long *vec_index)
-+{
-+	struct page_region *prev = &p->prev;
-+
-+	if (prev->len) {
-+		if (copy_to_user(&vec[*vec_index], prev, sizeof(struct page_region)))
-+			return -EFAULT;
-+		p->vec_index++;
-+		(*vec_index)++;
-+		prev->len = 0;
-+	}
-+	return 0;
-+}
-+
-+static inline int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
-+					 unsigned long end, struct mm_walk *walk)
-+{
-+	struct pagemap_scan_private *p = walk->private;
-+	struct vm_area_struct *vma = walk->vma;
-+	unsigned long addr = end;
-+	spinlock_t *ptl;
-+	int ret = 0;
-+	pte_t *pte;
-+
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	ptl = pmd_trans_huge_lock(pmd, vma);
-+	if (ptl) {
-+		bool pmd_wt;
-+
-+		pmd_wt = !is_pmd_uffd_wp(*pmd);
-+		/*
-+		 * Break huge page into small pages if operation needs to be performed is
-+		 * on a portion of the huge page.
-+		 */
-+		if (pmd_wt && IS_WP_ENGAGE_OP(p) && (end - start < HPAGE_SIZE)) {
-+			spin_unlock(ptl);
-+			split_huge_pmd(vma, pmd, start);
-+			goto process_smaller_pages;
-+		}
-+		if (IS_GET_OP(p))
-+			ret = pagemap_scan_output(pmd_wt, vma->vm_file, pmd_present(*pmd),
-+						  is_swap_pmd(*pmd), p, start,
-+						  (end - start)/PAGE_SIZE);
-+		spin_unlock(ptl);
-+		if (!ret) {
-+			if (pmd_wt && IS_WP_ENGAGE_OP(p))
-+				uffd_wp_range(walk->mm, vma, start, HPAGE_SIZE, true);
-+		}
-+		return ret;
-+	}
-+process_smaller_pages:
-+	if (pmd_trans_unstable(pmd))
-+		return 0;
-+#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-+
-+	pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
-+	if (IS_GET_OP(p)) {
-+		for (addr = start; addr < end; pte++, addr += PAGE_SIZE) {
-+			ret = pagemap_scan_output(!is_pte_uffd_wp(*pte), vma->vm_file,
-+						  pte_present(*pte), is_swap_pte(*pte), p, addr, 1);
-+			if (ret)
-+				break;
-+		}
-+	}
-+	pte_unmap_unlock(pte - 1, ptl);
-+	if ((!ret || ret == -ENOSPC) && IS_WP_ENGAGE_OP(p) && (addr - start))
-+		uffd_wp_range(walk->mm, vma, start, addr - start, true);
-+
-+	cond_resched();
-+	return ret;
-+}
-+
-+static int pagemap_scan_pte_hole(unsigned long addr, unsigned long end, int depth,
-+				 struct mm_walk *walk)
-+{
-+	struct pagemap_scan_private *p = walk->private;
-+	struct vm_area_struct *vma = walk->vma;
-+	int ret = 0;
-+
-+	if (vma)
-+		ret = pagemap_scan_output(false, vma->vm_file, false, false, p, addr,
-+					  (end - addr)/PAGE_SIZE);
-+	return ret;
-+}
-+
-+/* No hugetlb support is present. */
-+static const struct mm_walk_ops pagemap_scan_ops = {
-+	.test_walk = pagemap_scan_test_walk,
-+	.pmd_entry = pagemap_scan_pmd_entry,
-+	.pte_hole = pagemap_scan_pte_hole,
-+};
-+
-+static long do_pagemap_cmd(struct mm_struct *mm, struct pagemap_scan_arg *arg)
-+{
-+	unsigned long empty_slots, vec_index = 0;
-+	unsigned long __user start, end;
-+	unsigned long __start, __end;
-+	struct page_region __user *vec;
-+	struct pagemap_scan_private p;
-+	int ret = 0;
-+
-+	start = (unsigned long)untagged_addr(arg->start);
-+	vec = (struct page_region *)(unsigned long)untagged_addr(arg->vec);
-+
-+	/* Validate memory ranges */
-+	if ((!IS_ALIGNED(start, PAGE_SIZE)) || (!access_ok((void __user *)start, arg->len)))
-+		return -EINVAL;
-+	if (IS_GET_OP(arg) && ((arg->vec_len == 0) ||
-+	    (!access_ok((void __user *)vec, arg->vec_len * sizeof(struct page_region)))))
-+		return -EINVAL;
-+
-+	/* Detect illegal flags and masks */
-+	if ((arg->flags & ~PAGEMAP_WP_ENGAGE) || (arg->required_mask & ~PAGEMAP_BITS_ALL) ||
-+	    (arg->anyof_mask & ~PAGEMAP_BITS_ALL) || (arg->excluded_mask & ~PAGEMAP_BITS_ALL) ||
-+	    (arg->return_mask & ~PAGEMAP_BITS_ALL))
-+		return -EINVAL;
-+	if (IS_GET_OP(arg) && ((!arg->required_mask && !arg->anyof_mask && !arg->excluded_mask) ||
-+				!arg->return_mask))
-+		return -EINVAL;
-+	/* The non-WT flags cannot be obtained if PAGEMAP_WP_ENGAGE is also specified. */
-+	if (IS_WP_ENGAGE_OP(arg) && ((arg->required_mask & PAGEMAP_NON_WRITTEN_BITS) ||
-+	    (arg->anyof_mask & PAGEMAP_NON_WRITTEN_BITS)))
-+		return -EINVAL;
-+
-+	end = start + arg->len;
-+	p.max_pages = arg->max_pages;
-+	p.found_pages = 0;
-+	p.flags = arg->flags;
-+	p.required_mask = arg->required_mask;
-+	p.anyof_mask = arg->anyof_mask;
-+	p.excluded_mask = arg->excluded_mask;
-+	p.return_mask = arg->return_mask;
-+	p.prev.len = 0;
-+	p.vec_len = (PAGEMAP_WALK_SIZE >> PAGE_SHIFT);
-+
-+	if (IS_GET_OP(arg)) {
-+		p.vec = kmalloc_array(p.vec_len, sizeof(struct page_region), GFP_KERNEL);
-+		if (!p.vec)
-+			return -ENOMEM;
-+	} else {
-+		p.vec = NULL;
-+	}
-+	__start = __end = start;
-+	while (!ret && __end < end) {
-+		p.vec_index = 0;
-+		empty_slots = arg->vec_len - vec_index;
-+		if (p.vec_len > empty_slots)
-+			p.vec_len = empty_slots;
-+
-+		__end = (__start + PAGEMAP_WALK_SIZE) & PAGEMAP_WALK_MASK;
-+		if (__end > end)
-+			__end = end;
-+
-+		mmap_read_lock(mm);
-+		ret = walk_page_range(mm, __start, __end, &pagemap_scan_ops, &p);
-+		mmap_read_unlock(mm);
-+		if (!(!ret || ret == -ENOSPC))
-+			goto free_data;
-+
-+		__start = __end;
-+		if (IS_GET_OP(arg) && p.vec_index) {
-+			if (copy_to_user(&vec[vec_index], p.vec,
-+					 p.vec_index * sizeof(struct page_region))) {
-+				ret = -EFAULT;
-+				goto free_data;
-+			}
-+			vec_index += p.vec_index;
-+		}
-+	}
-+	ret = export_prev_to_out(&p, vec, &vec_index);
-+	if (!ret)
-+		ret = vec_index;
-+free_data:
-+	if (IS_GET_OP(arg))
-+		kfree(p.vec);
-+
-+	return ret;
-+}
-+
-+static long pagemap_scan_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	struct pagemap_scan_arg __user *uarg = (struct pagemap_scan_arg __user *)arg;
-+	struct mm_struct *mm = file->private_data;
-+	struct pagemap_scan_arg argument;
-+
-+	if (cmd == PAGEMAP_SCAN) {
-+		if (copy_from_user(&argument, uarg, sizeof(struct pagemap_scan_arg)))
-+			return -EFAULT;
-+		return do_pagemap_cmd(mm, &argument);
-+	}
-+	return -EINVAL;
-+}
-+
- const struct file_operations proc_pagemap_operations = {
- 	.llseek		= mem_lseek, /* borrow this */
- 	.read		= pagemap_read,
- 	.open		= pagemap_open,
- 	.release	= pagemap_release,
-+	.unlocked_ioctl = pagemap_scan_ioctl,
-+	.compat_ioctl	= pagemap_scan_ioctl,
- };
- #endif /* CONFIG_PROC_PAGE_MONITOR */
- 
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+diff --git a/tools/include/uapi/linux/fs.h b/tools/include/uapi/linux/fs.h
 index b7b56871029c..1ae9a8684b48 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
+--- a/tools/include/uapi/linux/fs.h
++++ b/tools/include/uapi/linux/fs.h
 @@ -305,4 +305,54 @@ typedef int __bitwise __kernel_rwf_t;
  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
  			 RWF_APPEND)
