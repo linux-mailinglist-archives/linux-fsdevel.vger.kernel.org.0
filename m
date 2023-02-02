@@ -2,63 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB91F687A70
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Feb 2023 11:40:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8574687975
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Feb 2023 10:48:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232179AbjBBKkz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Feb 2023 05:40:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39980 "EHLO
+        id S232592AbjBBJse (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Feb 2023 04:48:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231743AbjBBKkx (ORCPT
+        with ESMTP id S232583AbjBBJs0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Feb 2023 05:40:53 -0500
-Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02F796F733
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Feb 2023 02:40:52 -0800 (PST)
-Received: by mail.corrib.pl (Postfix, from userid 1001)
-        id 7B32DA36B4; Thu,  2 Feb 2023 08:46:21 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
-        t=1675327597; bh=X6IEpSISwJiYlJ3uA866lskXve3r+4o2hf4z7VM6m5o=;
-        h=Date:From:To:Subject:From;
-        b=Rh6oJ7tzCVvcIzYXcX4O9AbxG1QGXYcc985pi2gR0SZzf2JGYjvkLc2G2AaCKTwrA
-         3a6ZmezCuwQ6DdXkZnkQcaBrCqFFKkEmJ9mOqXr1OL5HmtHCcbSaI3l0de2RSf6816
-         Qiwfu6dlj05F+y/wQri1mj3+KyXM9wPeAfT4VKhZ2wG0xhtlHk7TWSw3VKKNb4CX0z
-         LWnqNrDOhisG6zP9+Kp/a8eUCbPyCpxkn6cMn4UUWdBgGTUaG5vm6BgwLBmqKfhN90
-         xJMnpUoic4m6ed7fYEj2ykQArc1ZQEnqKP8HZtx+6CxXULHd7N/I+EygjjB+kNCHsz
-         7ppF5jZnUsZ+w==
-Received: by mail.corrib.pl for <linux-fsdevel@vger.kernel.org>; Thu,  2 Feb 2023 08:46:08 GMT
-Message-ID: <20230202074500-0.1.59.dw17.0.js4taipgpa@corrib.pl>
-Date:   Thu,  2 Feb 2023 08:46:08 GMT
-From:   =?UTF-8?Q? "Szczepan_Kie=C5=82basa" ?= 
-        <szczepan.kielbasa@corrib.pl>
-To:     <linux-fsdevel@vger.kernel.org>
-Subject: Faktoring
-X-Mailer: mail.corrib.pl
+        Thu, 2 Feb 2023 04:48:26 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE41AD26
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Feb 2023 01:48:02 -0800 (PST)
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com [209.85.219.199])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0BD53442F0
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Feb 2023 09:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1675331215;
+        bh=j6zWA0cmeZq/Pdujw3e8IyUapMEhl5TgQN8H+c5DyTY=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=GTwdiPbSuSaJMT5L0j2KMlY3lcYYOfdk0g0HHFzHp7uoknkeZ7xc81THDSXctGTst
+         DIMdDM7BLU33V2o16thXOWjI5xJKNPd400bSA051mAHwkN1aEg2+MqNr+tdR/Tx3mj
+         tBLbdoFib9rIGEjljP5fhNFapcdPmoC1yq2qYlOXiwuWIr/TUbhEI77h6D2vdX7H8B
+         TE+FYPYqDv7C2rpHy60fSzvDz0wLdbY6t9QWSp1NgjkR1VhoTQfJkc5vQ+TynoqMFm
+         6Q/71NXleyahCl6CmS0pxKuQfg6vF2OgKjAig0ZakmEMfnFPyAdgNSgKEpx2hwAgh9
+         ex/zNMiI4um7g==
+Received: by mail-yb1-f199.google.com with SMTP id u106-20020a25ab73000000b00843e2d6a2c8so1242825ybi.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Feb 2023 01:46:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j6zWA0cmeZq/Pdujw3e8IyUapMEhl5TgQN8H+c5DyTY=;
+        b=DiwjekD01URNTUMrwOpNooPkKZczZqofJ04XXn7TuKe+6MHOo37iSsQwIHIWX1oD04
+         acw3EPf+zMK0Lc3A8ix7jsfnTi2OB169+cRgo6nRvyjWzwSqsjN99+saLFLnYf39L/u4
+         wnAxK752HsEEcrxpQMqsJMnWM0FaVAoFkleN7UHwUNbAMv7g2hwLjTA07qBiqwFxL/oy
+         JjS9dC3IS/E1ytnfJH0L3FKuf8g+/Kt9ww+PPmui1Hjjts65E7M34jtCDtYa8MKLzTGl
+         F9O6TJvShDcZmxBybUnm6smSY2cYlGJnse/zWo5H6PhG25wh5vr+7wiFADUz/iL84Roj
+         VW4w==
+X-Gm-Message-State: AO0yUKX3bogXB7Jx7kP4GkifhIlbFzZRq7DJ17zYNJaiwD/TvmNSje/c
+        9XpVBplJ3X5xFmGzrqtC6CY34pNZrbM2DnEgVMdtmQGrOHVjni93QJQX0jP3pwkX5AlVrc2fIZc
+        3ZXjs8zlG3gCDv709Q3nLQowbQUaVDPWA9qpXXuK41wrHIXDz4STEjq8ljDk=
+X-Received: by 2002:a81:70c2:0:b0:506:6e1a:9b0 with SMTP id l185-20020a8170c2000000b005066e1a09b0mr631039ywc.277.1675331214116;
+        Thu, 02 Feb 2023 01:46:54 -0800 (PST)
+X-Google-Smtp-Source: AK7set93ZODHHCCQG04l+loQG6KBDQem1oCQB9qjfFasFJzVoB868hVcGOuxhSj0em1uOkSPuerV1TPOuLKFLpPe8Gc=
+X-Received: by 2002:a81:70c2:0:b0:506:6e1a:9b0 with SMTP id
+ l185-20020a8170c2000000b005066e1a09b0mr631035ywc.277.1675331213915; Thu, 02
+ Feb 2023 01:46:53 -0800 (PST)
 MIME-Version: 1.0
+References: <20230131121608.177250-1-aleksandr.mikhalitsyn@canonical.com>
+ <87bkme4gwu.fsf@meer.lwn.net> <CAEivzxfxkWtYP4bqFrmD__3M9WpJNZjTJNx9wp4WQ0_LoGKT6g@mail.gmail.com>
+ <Y9tJPn0a/O27SBuJ@sol.localdomain>
+In-Reply-To: <Y9tJPn0a/O27SBuJ@sol.localdomain>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Thu, 2 Feb 2023 10:46:42 +0100
+Message-ID: <CAEivzxdLUy6CKaQg7Go6P892xgQxi_CEk2M4A3TdVA644DSLqg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] docs: filesystems: vfs: actualize struct
+ super_operations description
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_VALIDITY_RPBL,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Thu, Feb 2, 2023 at 6:25 AM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Tue, Jan 31, 2023 at 10:12:42PM +0100, Aleksandr Mikhalitsyn wrote:
+> > On Tue, Jan 31, 2023 at 8:56 PM Jonathan Corbet <corbet@lwn.net> wrote:
+> > >
+> > > Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com> writes:
+> > >
+> > > > Cc: linux-fsdevel@vger.kernel.org
+> > > > Cc: linux-doc@vger.kernel.org
+> > > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> > > > ---
+> > > >  Documentation/filesystems/vfs.rst | 74 ++++++++++++++++++++++++-------
+> > > >  1 file changed, 59 insertions(+), 15 deletions(-)
+> > >
+> > > Thanks for updating this document!  That said, could I ask you, please,
+> > > to resubmit these with a proper changelog?  I'd also suggest copying Al
+> > > Viro, who will surely have comments on the changes you have made.
+> >
+> > Hi, Jonathan!
+> >
+> > Sure. Have done and of course I've to add Al Viro to CC, but forgot to do that,
+> > cause scripts/get_maintainer.pl have didn't remind me (-:
+> >
+> > >
+> > > > diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> > > > index fab3bd702250..8671eafa745a 100644
+> > > > --- a/Documentation/filesystems/vfs.rst
+> > > > +++ b/Documentation/filesystems/vfs.rst
+> > > > @@ -242,33 +242,42 @@ struct super_operations
+> > > >  -----------------------
+> > > >
+> > > >  This describes how the VFS can manipulate the superblock of your
+> > > > -filesystem.  As of kernel 2.6.22, the following members are defined:
+> > > > +filesystem.  As of kernel 6.1, the following members are defined:
+> > >
+> > > Why not 6.2 while you're at it?  We might as well be as current as we
+> > > can while we're updating things.
+> >
+> > I'm on 6.2, but for some reason decided to put 6.1. Will fix it :)
+> >
+>
+> It would be better to just remove the version number.  Whenever documentation
+> says something like "as of vX.Y.Z", people usually forget to update the version
+> number when updating the documentation.  So then we end up in the situation
+> where the documentation actually describes the latest kernel version, but it
+> claims to be describing an extremely old kernel version.
 
-rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
-ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
-wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
+Hi, Eric!
 
-Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
-stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
-z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
- kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
-adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
-Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
+Agree. Will remove version specifiers in the next resend after Al
+Viro's and other folks reviews. :)
 
+Kind regards,
+Alex
 
-Pozdrawiam
-Szczepan Kie=C5=82basa
+>
+> - Eric
