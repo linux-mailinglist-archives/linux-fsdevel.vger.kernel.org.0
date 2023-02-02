@@ -2,111 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DBDB6877CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Feb 2023 09:47:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB91F687A70
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Feb 2023 11:40:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231276AbjBBIrv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Feb 2023 03:47:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59712 "EHLO
+        id S232179AbjBBKkz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Feb 2023 05:40:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbjBBIru (ORCPT
+        with ESMTP id S231743AbjBBKkx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Feb 2023 03:47:50 -0500
-Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B0B983966;
-        Thu,  2 Feb 2023 00:47:49 -0800 (PST)
-Received: by mail-vk1-xa2e.google.com with SMTP id s76so518659vkb.9;
-        Thu, 02 Feb 2023 00:47:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8jltGU5PEP/8zuh7YjjieGS71K/Iq1B/4kENnhMp90g=;
-        b=AzFT25L7hRsKFB5cbJoScmALOFfvHoplZRE3HEy73xxi5iko5kUBqEcuUiObonr5z0
-         Qy+eZN/PHgsOkRgvm2zaixZ/s5ddKQCuIYlUg8wLtpQ71trBoJ/ixO+F+Dj6Rlt12Tru
-         MSTpMgFk9Q/0cwCNxG9Ka2TIwDrBDIr1yYtH7ybRvabUJhb+1zbTkDjVMMEr26MTnqG2
-         SNJdGB63ZtP2fx0HGOuF9SIDDMnb3gSXZ+eYO7Y/kDPS8Q83IWJ/l9b5p4zugxcefM2u
-         oSpobN59XK8TGPON1ewHV56phizkPEKXnPNIpxHYPRZsgh4K/z9SdjseRCryWDm96GLd
-         j/tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8jltGU5PEP/8zuh7YjjieGS71K/Iq1B/4kENnhMp90g=;
-        b=rDOSftCFDUdEVbM4eNoWhIK14sfB+5gqwWuFMecE6Yq5lcr1Le20odpV9k2RZKhTLC
-         /zCsscVM062SdbG9OO7PjWCx74u4p+XDPE2nMEnXhnSXqnZQXgdnjXdaNsdIwiqxdLAi
-         rRUG8utQZONq48JcQqr3HLwNCBTgUBDdP+B0Vrrhyf7EcXnLOllXP6x5yakwXHAHPLih
-         hSqz+X7NvOtDhmc321goehIFMvC9jwqyxgF30ycITRVh1odoB1hbZLT0hJdlSCgPdZ56
-         UEydWQvRkdjMgFBEmhAfJpVLFULTOfEn2+S0dQP/ZGMkQ+28I8ea73oKEV+yxDOPxatF
-         PfzA==
-X-Gm-Message-State: AO0yUKWmnhvm5GplI86lfFJawNlrLFanbftTVeUFM3w/OsAqvrteo5Oc
-        5lX05nLmXWFiL5zV8c2pcqu9u1xz6kVMTsVouHI=
-X-Google-Smtp-Source: AK7set+odum/96BXUSmaDqKIB8b2b6XGZoasbMzjviqoZJUN++OR+LZo1UWWufoG3tjaNTGS/dFVqhsmqzQhvfit9D4=
-X-Received: by 2002:a1f:de47:0:b0:3e2:446a:18a6 with SMTP id
- v68-20020a1fde47000000b003e2446a18a6mr893548vkg.36.1675327668396; Thu, 02 Feb
- 2023 00:47:48 -0800 (PST)
+        Thu, 2 Feb 2023 05:40:53 -0500
+Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02F796F733
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Feb 2023 02:40:52 -0800 (PST)
+Received: by mail.corrib.pl (Postfix, from userid 1001)
+        id 7B32DA36B4; Thu,  2 Feb 2023 08:46:21 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
+        t=1675327597; bh=X6IEpSISwJiYlJ3uA866lskXve3r+4o2hf4z7VM6m5o=;
+        h=Date:From:To:Subject:From;
+        b=Rh6oJ7tzCVvcIzYXcX4O9AbxG1QGXYcc985pi2gR0SZzf2JGYjvkLc2G2AaCKTwrA
+         3a6ZmezCuwQ6DdXkZnkQcaBrCqFFKkEmJ9mOqXr1OL5HmtHCcbSaI3l0de2RSf6816
+         Qiwfu6dlj05F+y/wQri1mj3+KyXM9wPeAfT4VKhZ2wG0xhtlHk7TWSw3VKKNb4CX0z
+         LWnqNrDOhisG6zP9+Kp/a8eUCbPyCpxkn6cMn4UUWdBgGTUaG5vm6BgwLBmqKfhN90
+         xJMnpUoic4m6ed7fYEj2ykQArc1ZQEnqKP8HZtx+6CxXULHd7N/I+EygjjB+kNCHsz
+         7ppF5jZnUsZ+w==
+Received: by mail.corrib.pl for <linux-fsdevel@vger.kernel.org>; Thu,  2 Feb 2023 08:46:08 GMT
+Message-ID: <20230202074500-0.1.59.dw17.0.js4taipgpa@corrib.pl>
+Date:   Thu,  2 Feb 2023 08:46:08 GMT
+From:   =?UTF-8?Q? "Szczepan_Kie=C5=82basa" ?= 
+        <szczepan.kielbasa@corrib.pl>
+To:     <linux-fsdevel@vger.kernel.org>
+Subject: Faktoring
+X-Mailer: mail.corrib.pl
 MIME-Version: 1.0
-References: <20221122021536.1629178-1-drosen@google.com> <CAOQ4uxiyRxsZjkku_V2dBMvh1AGiKQx-iPjsD5tmGPv1PgJHvQ@mail.gmail.com>
- <CA+PiJmRLTXfjJmgJm9VRBQeLVkWgaqSq0RMrRY1Vj7q6pV+omw@mail.gmail.com> <2dc5e840-0ce8-dae9-99b9-e33d6ccbb016@fastmail.fm>
-In-Reply-To: <2dc5e840-0ce8-dae9-99b9-e33d6ccbb016@fastmail.fm>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 2 Feb 2023 10:47:36 +0200
-Message-ID: <CAOQ4uxiBD5NXLMXFev7vsCLU5-_o8-_H-XcoMY1aqhOwnADo9w@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/21] FUSE BPF: A Stacked Filesystem Extension for FUSE
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     Daniel Rosenberg <drosen@google.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        bpf@vger.kernel.org, kernel-team@android.com,
-        Vivek Goyal <vgoyal@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_VALIDITY_RPBL,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 22, 2022 at 11:23 PM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 11/22/22 21:56, Daniel Rosenberg wrote:
-> > I've been running the generic xfstests against it, with some
-> > modifications to do things like mount/unmount the lower and upper fs
-> > at once. Most of the failures I see there are related to missing
-> > opcodes, like FUSE_SETLK, FUSE_GETLK, and FUSE_IOCTL. The main failure
-> > I have been seeing is generic/126, which is happening due to some
-> > additional checks we're doing in fuse_open_backing. I figured at some
-> > point we'd add some tests into libfuse, and that sounds like a good
-> > place to start.
->
->
-> Here is a branch of xfstests that should work with fuse and should not
-> run "rm -fr /" (we are going to give it more testing this week).
->
-> https://github.com/hbirth/xfstests
->
->
+Dzie=C5=84 dobry,
 
-Bernd, Daniel, Vivek,
+rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
+ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
+wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
 
-Did you see LSFMMBPF 2023 CFP [1]?
+Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
+stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
+z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
+ kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
+adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
+Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
 
-Did you consider requesting an invitation?
-I think it could be a good opportunity to sit in a room and discuss the
-roadmap of "FUSE2" with all the developers involved.
 
-I am on the program committee for the Filesystem track, and I encourage
-you to request an invite if you are interested to attend and/or nominate
-other developers that you think will be valuable for this discussion.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/Y9qBs82f94aV4%2F78@localhost.localdomain/
+Pozdrawiam
+Szczepan Kie=C5=82basa
