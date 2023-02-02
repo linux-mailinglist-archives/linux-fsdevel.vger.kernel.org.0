@@ -2,30 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C76C68764F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Feb 2023 08:18:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92D51687675
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Feb 2023 08:37:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbjBBHSE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Feb 2023 02:18:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55308 "EHLO
+        id S231392AbjBBHhc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Feb 2023 02:37:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230417AbjBBHSC (ORCPT
+        with ESMTP id S230004AbjBBHha (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Feb 2023 02:18:02 -0500
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B2739756;
-        Wed,  1 Feb 2023 23:17:59 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0VajqMs._1675322276;
-Received: from 30.97.49.35(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VajqMs._1675322276)
+        Thu, 2 Feb 2023 02:37:30 -0500
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66FCF83947;
+        Wed,  1 Feb 2023 23:37:25 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0VajzpJw_1675323440;
+Received: from 30.97.49.35(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VajzpJw_1675323440)
           by smtp.aliyun-inc.com;
-          Thu, 02 Feb 2023 15:17:57 +0800
-Message-ID: <9c8e76a3-a60a-90a2-f726-46db39bc6558@linux.alibaba.com>
-Date:   Thu, 2 Feb 2023 15:17:55 +0800
+          Thu, 02 Feb 2023 15:37:21 +0800
+Message-ID: <02edb5d6-a232-eed6-0338-26f9a63cfdb6@linux.alibaba.com>
+Date:   Thu, 2 Feb 2023 15:37:20 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
  Gecko/20100101 Thunderbird/102.6.1
 Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
  image filesystem
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
 To:     Amir Goldstein <amir73il@gmail.com>
 Cc:     Alexander Larsson <alexl@redhat.com>,
         Jingbo Xu <jefflexu@linux.alibaba.com>, gscrivan@redhat.com,
@@ -48,14 +49,14 @@ References: <cover.1674227308.git.alexl@redhat.com>
  <0d2ef9d6-3b0e-364d-ec2f-c61b19d638e2@linux.alibaba.com>
  <de57aefc-30e8-470d-bf61-a1cca6514988@linux.alibaba.com>
  <CAOQ4uxgS+-MxydqgO8+NQfOs9N881bHNbov28uJYX9XpthPPiw@mail.gmail.com>
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAOQ4uxgS+-MxydqgO8+NQfOs9N881bHNbov28uJYX9XpthPPiw@mail.gmail.com>
+ <9c8e76a3-a60a-90a2-f726-46db39bc6558@linux.alibaba.com>
+In-Reply-To: <9c8e76a3-a60a-90a2-f726-46db39bc6558@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -64,166 +65,180 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 2023/2/2 14:37, Amir Goldstein wrote:
-> On Wed, Feb 1, 2023 at 1:22 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>
->>
->>
->> On 2023/2/1 18:01, Gao Xiang wrote:
+On 2023/2/2 15:17, Gao Xiang wrote:
+> 
+> 
+> On 2023/2/2 14:37, Amir Goldstein wrote:
+>> On Wed, Feb 1, 2023 at 1:22 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
 >>>
 >>>
->>> On 2023/2/1 17:46, Alexander Larsson wrote:
 >>>
->>> ...
->>>
+>>> On 2023/2/1 18:01, Gao Xiang wrote:
+>>>>
+>>>>
+>>>> On 2023/2/1 17:46, Alexander Larsson wrote:
+>>>>
+>>>> ...
+>>>>
+>>>>>>
+>>>>>>                                     | uncached(ms)| cached(ms)
+>>>>>> ----------------------------------|-------------|-----------
+>>>>>> composefs (with digest)           | 326         | 135
+>>>>>> erofs (w/o -T0)                   | 264         | 172
+>>>>>> erofs (w/o -T0) + overlayfs       | 651         | 238
+>>>>>> squashfs (compressed)                | 538         | 211
+>>>>>> squashfs (compressed) + overlayfs | 968         | 302
 >>>>>
->>>>>                                     | uncached(ms)| cached(ms)
+>>>>>
+>>>>> Clearly erofs with sparse files is the best fs now for the ro-fs +
+>>>>> overlay case. But still, we can see that the additional cost of the
+>>>>> overlayfs layer is not negligible.
+>>>>>
+>>>>> According to amir this could be helped by a special composefs-like mode
+>>>>> in overlayfs, but its unclear what performance that would reach, and
+>>>>> we're then talking net new development that further complicates the
+>>>>> overlayfs codebase. Its not clear to me which alternative is easier to
+>>>>> develop/maintain.
+>>>>>
+>>>>> Also, the difference between cached and uncached here is less than in
+>>>>> my tests. Probably because my test image was larger. With the test
+>>>>> image I use, the results are:
+>>>>>
+>>>>>                                     | uncached(ms)| cached(ms)
 >>>>> ----------------------------------|-------------|-----------
->>>>> composefs (with digest)           | 326         | 135
->>>>> erofs (w/o -T0)                   | 264         | 172
->>>>> erofs (w/o -T0) + overlayfs       | 651         | 238
->>>>> squashfs (compressed)                | 538         | 211
->>>>> squashfs (compressed) + overlayfs | 968         | 302
+>>>>> composefs (with digest)           | 681         | 390
+>>>>> erofs (w/o -T0) + overlayfs       | 1788        | 532
+>>>>> squashfs (compressed) + overlayfs | 2547        | 443
+>>>>>
+>>>>>
+>>>>> I gotta say it is weird though that squashfs performed better than
+>>>>> erofs in the cached case. May be worth looking into. The test data I'm
+>>>>> using is available here:
 >>>>
+>>>> As another wild guess, cached performance is a just vfs-stuff.
 >>>>
->>>> Clearly erofs with sparse files is the best fs now for the ro-fs +
->>>> overlay case. But still, we can see that the additional cost of the
->>>> overlayfs layer is not negligible.
+>>>> I think the performance difference may be due to ACL (since both
+>>>> composefs and squashfs don't support ACL).  I already asked Jingbo
+>>>> to get more "perf data" to analyze this but he's now busy in another
+>>>> stuff.
 >>>>
->>>> According to amir this could be helped by a special composefs-like mode
->>>> in overlayfs, but its unclear what performance that would reach, and
->>>> we're then talking net new development that further complicates the
->>>> overlayfs codebase. Its not clear to me which alternative is easier to
->>>> develop/maintain.
+>>>> Again, my overall point is quite simple as always, currently
+>>>> composefs is a read-only filesystem with massive symlink-like files.
+>>>> It behaves as a subset of all generic read-only filesystems just
+>>>> for this specific use cases.
 >>>>
->>>> Also, the difference between cached and uncached here is less than in
->>>> my tests. Probably because my test image was larger. With the test
->>>> image I use, the results are:
+>>>> In facts there are many options to improve this (much like Amir
+>>>> said before):
+>>>>     1) improve overlayfs, and then it can be used with any local fs;
 >>>>
->>>>                                     | uncached(ms)| cached(ms)
->>>> ----------------------------------|-------------|-----------
->>>> composefs (with digest)           | 681         | 390
->>>> erofs (w/o -T0) + overlayfs       | 1788        | 532
->>>> squashfs (compressed) + overlayfs | 2547        | 443
+>>>>     2) enhance erofs to support this (even without on-disk change);
 >>>>
+>>>>     3) introduce fs/composefs;
 >>>>
->>>> I gotta say it is weird though that squashfs performed better than
->>>> erofs in the cached case. May be worth looking into. The test data I'm
->>>> using is available here:
+>>>> In addition to option 1), option 2) has many benefits as well, since
+>>>> your manifest files can save real regular files in addition to composefs
+>>>> model.
 >>>
->>> As another wild guess, cached performance is a just vfs-stuff.
+>>> (add some words..)
 >>>
->>> I think the performance difference may be due to ACL (since both
->>> composefs and squashfs don't support ACL).  I already asked Jingbo
->>> to get more "perf data" to analyze this but he's now busy in another
->>> stuff.
+>>> My first response at that time (on Slack) was "kindly request
+>>> Giuseppe to ask in the fsdevel mailing list if this new overlay model
+>>> and use cases is feasable", if so, I'm much happy to integrate in to
+>>> EROFS (in a cooperative way) in several ways:
 >>>
->>> Again, my overall point is quite simple as always, currently
->>> composefs is a read-only filesystem with massive symlink-like files.
->>> It behaves as a subset of all generic read-only filesystems just
->>> for this specific use cases.
+>>>    - just use EROFS symlink layout and open such file in a stacked way;
 >>>
->>> In facts there are many options to improve this (much like Amir
->>> said before):
->>>     1) improve overlayfs, and then it can be used with any local fs;
+>>> or (now)
 >>>
->>>     2) enhance erofs to support this (even without on-disk change);
+>>>    - just identify overlayfs "trusted.overlay.redirect" in EROFS itself
+>>>      and open file so such image can be both used for EROFS only and
+>>>      EROFS + overlayfs.
 >>>
->>>     3) introduce fs/composefs;
+>>> If that happened, then I think the overlayfs "metacopy" option can
+>>> also be shown by other fs community people later (since I'm not an
+>>> overlay expert), but I'm not sure why they becomes impossible finally
+>>> and even not mentioned at all.
 >>>
->>> In addition to option 1), option 2) has many benefits as well, since
->>> your manifest files can save real regular files in addition to composefs
->>> model.
+>>> Or if you guys really don't want to use EROFS for whatever reasons
+>>> (EROFS is completely open-source, used, contributed by many vendors),
+>>> you could improve squashfs, ext4, or other exist local fses with this
+>>> new use cases (since they don't need any on-disk change as well, for
+>>> example, by using some xattr), I don't think it's really hard.
+>>>
 >>
->> (add some words..)
+>> Engineering-wise, merging composefs features into EROFS
+>> would be the simplest option and FWIW, my personal preference.
 >>
->> My first response at that time (on Slack) was "kindly request
->> Giuseppe to ask in the fsdevel mailing list if this new overlay model
->> and use cases is feasable", if so, I'm much happy to integrate in to
->> EROFS (in a cooperative way) in several ways:
->>
->>    - just use EROFS symlink layout and open such file in a stacked way;
->>
->> or (now)
->>
->>    - just identify overlayfs "trusted.overlay.redirect" in EROFS itself
->>      and open file so such image can be both used for EROFS only and
->>      EROFS + overlayfs.
->>
->> If that happened, then I think the overlayfs "metacopy" option can
->> also be shown by other fs community people later (since I'm not an
->> overlay expert), but I'm not sure why they becomes impossible finally
->> and even not mentioned at all.
->>
->> Or if you guys really don't want to use EROFS for whatever reasons
->> (EROFS is completely open-source, used, contributed by many vendors),
->> you could improve squashfs, ext4, or other exist local fses with this
->> new use cases (since they don't need any on-disk change as well, for
->> example, by using some xattr), I don't think it's really hard.
->>
+>> However, you need to be aware that this will bring into EROFS
+>> vfs considerations, such as  s_stack_depth nesting (which AFAICS
+>> is not see incremented composefs?). It's not the end of the world, but this
+>> is no longer plain fs over block game. There's a whole new class of bugs
+>> (that syzbot is very eager to explore) so you need to ask yourself whether
+>> this is a direction you want to lead EROFS towards.
 > 
-> Engineering-wise, merging composefs features into EROFS
-> would be the simplest option and FWIW, my personal preference.
+> I'd like to make a seperated Kconfig for this.  I consider this just because
+> currently composefs is much similar to EROFS but it doesn't have some ability
+> to keep real regular file (even some README, VERSION or Changelog in these
+> images) in its (composefs-called) manifest files. Even its on-disk super block
+> doesn't have a UUID now [1] and some boot sector for booting or some potential
+> hybird formats such as tar + EROFS, cpio + EROFS.
 > 
-> However, you need to be aware that this will bring into EROFS
-> vfs considerations, such as  s_stack_depth nesting (which AFAICS
-> is not see incremented composefs?). It's not the end of the world, but this
-> is no longer plain fs over block game. There's a whole new class of bugs
-> (that syzbot is very eager to explore) so you need to ask yourself whether
-> this is a direction you want to lead EROFS towards.
+> I'm not sure if those potential new on-disk features is unneeded even for
+> future composefs.  But if composefs laterly supports such on-disk features,
+> that makes composefs closer to EROFS even more.  I don't see disadvantage to
+> make these actual on-disk compatible (like ext2 and ext4).
+> 
+> The only difference now is manifest file itself I/O interface -- bio vs file.
+> but EROFS can be distributed to raw block devices as well, composefs can't.
+> 
+> Also, I'd like to seperate core-EROFS from advanced features (or people who
+> are interested to work on this are always welcome) and composefs-like model,
+> if people don't tend to use any EROFS advanced features, it could be disabled
+> from compiling explicitly.
 
-I'd like to make a seperated Kconfig for this.  I consider this just because
-currently composefs is much similar to EROFS but it doesn't have some ability
-to keep real regular file (even some README, VERSION or Changelog in these
-images) in its (composefs-called) manifest files. Even its on-disk super block
-doesn't have a UUID now [1] and some boot sector for booting or some potential
-hybird formats such as tar + EROFS, cpio + EROFS.
+Apart from that, I still fail to get some thoughts (apart from unprivileged
+mounts) how EROFS + overlayfs combination fails on automative real workloads
+aside from "ls -lR" (readdir + stat).
 
-I'm not sure if those potential new on-disk features is unneeded even for
-future composefs.  But if composefs laterly supports such on-disk features,
-that makes composefs closer to EROFS even more.  I don't see disadvantage to
-make these actual on-disk compatible (like ext2 and ext4).
+And eventually we still need overlayfs for most use cases to do writable
+stuffs, anyway, it needs some words to describe why such < 1s difference is
+very very important to the real workload as you already mentioned before.
 
-The only difference now is manifest file itself I/O interface -- bio vs file.
-but EROFS can be distributed to raw block devices as well, composefs can't.
-
-Also, I'd like to seperate core-EROFS from advanced features (or people who
-are interested to work on this are always welcome) and composefs-like model,
-if people don't tend to use any EROFS advanced features, it could be disabled
-from compiling explicitly.
+And with overlayfs lazy lookup, I think it can be close to ~100ms or better.
 
 > 
-> Giuseppe expressed his plans to make use of the composefs method
-> inside userns one day. It is not a hard dependency, but I believe that
-> keeping the "RO efficient verifiable image format" functionality (EROFS)
-> separate from "userns composition of verifiable images" (overlayfs)
-> may benefit the userns mount goal in the long term.
-
-If that is needed, I'm very happy to get more detailed path of this from
-some discussion in LSF/MM/BPF 2023: how we get this (userns) reliably in
-practice.
-
-As of code lines, core EROFS on-disk format is quite simple (I don't think
-total LOC is a barrier), if you see
-   fs/erofs/data.c
-   fs/erofs/namei.c
-   fs/erofs/dir.c
-
-or
-    erofs_super_block
-    erofs_inode_compact
-    erofs_inode_extended
-    erofs_dirent
-
-but for example, fs/erofs/super.c which is just used to enable EROFS advanced
-features is almost 1000LOC now.  But most code is quite trivial, I don't think
-these can cause any difference to userns plan.
-
-Thanks,
-Gao Xiang
-
-[1] https://lore.kernel.org/r/CAOQ4uxjm7i+uO4o4470ACctsft1m18EiUpxBfCeT-Wyqf1FAYg@mail.gmail.com/
-
+>>
+>> Giuseppe expressed his plans to make use of the composefs method
+>> inside userns one day. It is not a hard dependency, but I believe that
+>> keeping the "RO efficient verifiable image format" functionality (EROFS)
+>> separate from "userns composition of verifiable images" (overlayfs)
+>> may benefit the userns mount goal in the long term.
+> 
+> If that is needed, I'm very happy to get more detailed path of this from
+> some discussion in LSF/MM/BPF 2023: how we get this (userns) reliably in
+> practice.
+> 
+> As of code lines, core EROFS on-disk format is quite simple (I don't think
+> total LOC is a barrier), if you see
+>    fs/erofs/data.c
+>    fs/erofs/namei.c
+>    fs/erofs/dir.c
+> 
+> or
+>     erofs_super_block
+>     erofs_inode_compact
+>     erofs_inode_extended
+>     erofs_dirent
+> 
+> but for example, fs/erofs/super.c which is just used to enable EROFS advanced
+> features is almost 1000LOC now.  But most code is quite trivial, I don't think
+> these can cause any difference to userns plan.
 > 
 > Thanks,
-> Amir.
+> Gao Xiang
+> 
+> [1] https://lore.kernel.org/r/CAOQ4uxjm7i+uO4o4470ACctsft1m18EiUpxBfCeT-Wyqf1FAYg@mail.gmail.com/
+> 
+>>
+>> Thanks,
+>> Amir.
