@@ -2,60 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 92D51687675
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Feb 2023 08:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DBDB6877CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Feb 2023 09:47:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231392AbjBBHhc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Feb 2023 02:37:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34850 "EHLO
+        id S231276AbjBBIrv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Feb 2023 03:47:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230004AbjBBHha (ORCPT
+        with ESMTP id S229640AbjBBIru (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Feb 2023 02:37:30 -0500
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66FCF83947;
-        Wed,  1 Feb 2023 23:37:25 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0VajzpJw_1675323440;
-Received: from 30.97.49.35(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VajzpJw_1675323440)
-          by smtp.aliyun-inc.com;
-          Thu, 02 Feb 2023 15:37:21 +0800
-Message-ID: <02edb5d6-a232-eed6-0338-26f9a63cfdb6@linux.alibaba.com>
-Date:   Thu, 2 Feb 2023 15:37:20 +0800
+        Thu, 2 Feb 2023 03:47:50 -0500
+Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B0B983966;
+        Thu,  2 Feb 2023 00:47:49 -0800 (PST)
+Received: by mail-vk1-xa2e.google.com with SMTP id s76so518659vkb.9;
+        Thu, 02 Feb 2023 00:47:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8jltGU5PEP/8zuh7YjjieGS71K/Iq1B/4kENnhMp90g=;
+        b=AzFT25L7hRsKFB5cbJoScmALOFfvHoplZRE3HEy73xxi5iko5kUBqEcuUiObonr5z0
+         Qy+eZN/PHgsOkRgvm2zaixZ/s5ddKQCuIYlUg8wLtpQ71trBoJ/ixO+F+Dj6Rlt12Tru
+         MSTpMgFk9Q/0cwCNxG9Ka2TIwDrBDIr1yYtH7ybRvabUJhb+1zbTkDjVMMEr26MTnqG2
+         SNJdGB63ZtP2fx0HGOuF9SIDDMnb3gSXZ+eYO7Y/kDPS8Q83IWJ/l9b5p4zugxcefM2u
+         oSpobN59XK8TGPON1ewHV56phizkPEKXnPNIpxHYPRZsgh4K/z9SdjseRCryWDm96GLd
+         j/tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8jltGU5PEP/8zuh7YjjieGS71K/Iq1B/4kENnhMp90g=;
+        b=rDOSftCFDUdEVbM4eNoWhIK14sfB+5gqwWuFMecE6Yq5lcr1Le20odpV9k2RZKhTLC
+         /zCsscVM062SdbG9OO7PjWCx74u4p+XDPE2nMEnXhnSXqnZQXgdnjXdaNsdIwiqxdLAi
+         rRUG8utQZONq48JcQqr3HLwNCBTgUBDdP+B0Vrrhyf7EcXnLOllXP6x5yakwXHAHPLih
+         hSqz+X7NvOtDhmc321goehIFMvC9jwqyxgF30ycITRVh1odoB1hbZLT0hJdlSCgPdZ56
+         UEydWQvRkdjMgFBEmhAfJpVLFULTOfEn2+S0dQP/ZGMkQ+28I8ea73oKEV+yxDOPxatF
+         PfzA==
+X-Gm-Message-State: AO0yUKWmnhvm5GplI86lfFJawNlrLFanbftTVeUFM3w/OsAqvrteo5Oc
+        5lX05nLmXWFiL5zV8c2pcqu9u1xz6kVMTsVouHI=
+X-Google-Smtp-Source: AK7set+odum/96BXUSmaDqKIB8b2b6XGZoasbMzjviqoZJUN++OR+LZo1UWWufoG3tjaNTGS/dFVqhsmqzQhvfit9D4=
+X-Received: by 2002:a1f:de47:0:b0:3e2:446a:18a6 with SMTP id
+ v68-20020a1fde47000000b003e2446a18a6mr893548vkg.36.1675327668396; Thu, 02 Feb
+ 2023 00:47:48 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.6.1
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Alexander Larsson <alexl@redhat.com>,
-        Jingbo Xu <jefflexu@linux.alibaba.com>, gscrivan@redhat.com,
-        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, david@fromorbit.com,
-        viro@zeniv.linux.org.uk, Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-References: <cover.1674227308.git.alexl@redhat.com>
- <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
- <1ea88c8d1e666b85342374ed7c0ddf7d661e0ee1.camel@redhat.com>
- <CAOQ4uxinsBB-LpGh4h44m6Afv0VT5yWRveDG7sNvE2uJyEGOkg@mail.gmail.com>
- <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
- <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
- <b8601c976d6e5d3eccf6ef489da9768ad72f9571.camel@redhat.com>
- <e840d413-c1a7-d047-1a63-468b42571846@linux.alibaba.com>
- <2ef122849d6f35712b56ffbcc95805672980e185.camel@redhat.com>
- <8ffa28f5-77f6-6bde-5645-5fb799019bca@linux.alibaba.com>
- <51d9d1b3-2b2a-9b58-2f7f-f3a56c9e04ac@linux.alibaba.com>
- <071074ad149b189661681aada453995741f75039.camel@redhat.com>
- <0d2ef9d6-3b0e-364d-ec2f-c61b19d638e2@linux.alibaba.com>
- <de57aefc-30e8-470d-bf61-a1cca6514988@linux.alibaba.com>
- <CAOQ4uxgS+-MxydqgO8+NQfOs9N881bHNbov28uJYX9XpthPPiw@mail.gmail.com>
- <9c8e76a3-a60a-90a2-f726-46db39bc6558@linux.alibaba.com>
-In-Reply-To: <9c8e76a3-a60a-90a2-f726-46db39bc6558@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
+References: <20221122021536.1629178-1-drosen@google.com> <CAOQ4uxiyRxsZjkku_V2dBMvh1AGiKQx-iPjsD5tmGPv1PgJHvQ@mail.gmail.com>
+ <CA+PiJmRLTXfjJmgJm9VRBQeLVkWgaqSq0RMrRY1Vj7q6pV+omw@mail.gmail.com> <2dc5e840-0ce8-dae9-99b9-e33d6ccbb016@fastmail.fm>
+In-Reply-To: <2dc5e840-0ce8-dae9-99b9-e33d6ccbb016@fastmail.fm>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 2 Feb 2023 10:47:36 +0200
+Message-ID: <CAOQ4uxiBD5NXLMXFev7vsCLU5-_o8-_H-XcoMY1aqhOwnADo9w@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/21] FUSE BPF: A Stacked Filesystem Extension for FUSE
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        bpf@vger.kernel.org, kernel-team@android.com,
+        Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,182 +71,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Nov 22, 2022 at 11:23 PM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 11/22/22 21:56, Daniel Rosenberg wrote:
+> > I've been running the generic xfstests against it, with some
+> > modifications to do things like mount/unmount the lower and upper fs
+> > at once. Most of the failures I see there are related to missing
+> > opcodes, like FUSE_SETLK, FUSE_GETLK, and FUSE_IOCTL. The main failure
+> > I have been seeing is generic/126, which is happening due to some
+> > additional checks we're doing in fuse_open_backing. I figured at some
+> > point we'd add some tests into libfuse, and that sounds like a good
+> > place to start.
+>
+>
+> Here is a branch of xfstests that should work with fuse and should not
+> run "rm -fr /" (we are going to give it more testing this week).
+>
+> https://github.com/hbirth/xfstests
+>
+>
 
+Bernd, Daniel, Vivek,
 
-On 2023/2/2 15:17, Gao Xiang wrote:
-> 
-> 
-> On 2023/2/2 14:37, Amir Goldstein wrote:
->> On Wed, Feb 1, 2023 at 1:22 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>>
->>>
->>>
->>> On 2023/2/1 18:01, Gao Xiang wrote:
->>>>
->>>>
->>>> On 2023/2/1 17:46, Alexander Larsson wrote:
->>>>
->>>> ...
->>>>
->>>>>>
->>>>>>                                     | uncached(ms)| cached(ms)
->>>>>> ----------------------------------|-------------|-----------
->>>>>> composefs (with digest)           | 326         | 135
->>>>>> erofs (w/o -T0)                   | 264         | 172
->>>>>> erofs (w/o -T0) + overlayfs       | 651         | 238
->>>>>> squashfs (compressed)                | 538         | 211
->>>>>> squashfs (compressed) + overlayfs | 968         | 302
->>>>>
->>>>>
->>>>> Clearly erofs with sparse files is the best fs now for the ro-fs +
->>>>> overlay case. But still, we can see that the additional cost of the
->>>>> overlayfs layer is not negligible.
->>>>>
->>>>> According to amir this could be helped by a special composefs-like mode
->>>>> in overlayfs, but its unclear what performance that would reach, and
->>>>> we're then talking net new development that further complicates the
->>>>> overlayfs codebase. Its not clear to me which alternative is easier to
->>>>> develop/maintain.
->>>>>
->>>>> Also, the difference between cached and uncached here is less than in
->>>>> my tests. Probably because my test image was larger. With the test
->>>>> image I use, the results are:
->>>>>
->>>>>                                     | uncached(ms)| cached(ms)
->>>>> ----------------------------------|-------------|-----------
->>>>> composefs (with digest)           | 681         | 390
->>>>> erofs (w/o -T0) + overlayfs       | 1788        | 532
->>>>> squashfs (compressed) + overlayfs | 2547        | 443
->>>>>
->>>>>
->>>>> I gotta say it is weird though that squashfs performed better than
->>>>> erofs in the cached case. May be worth looking into. The test data I'm
->>>>> using is available here:
->>>>
->>>> As another wild guess, cached performance is a just vfs-stuff.
->>>>
->>>> I think the performance difference may be due to ACL (since both
->>>> composefs and squashfs don't support ACL).  I already asked Jingbo
->>>> to get more "perf data" to analyze this but he's now busy in another
->>>> stuff.
->>>>
->>>> Again, my overall point is quite simple as always, currently
->>>> composefs is a read-only filesystem with massive symlink-like files.
->>>> It behaves as a subset of all generic read-only filesystems just
->>>> for this specific use cases.
->>>>
->>>> In facts there are many options to improve this (much like Amir
->>>> said before):
->>>>     1) improve overlayfs, and then it can be used with any local fs;
->>>>
->>>>     2) enhance erofs to support this (even without on-disk change);
->>>>
->>>>     3) introduce fs/composefs;
->>>>
->>>> In addition to option 1), option 2) has many benefits as well, since
->>>> your manifest files can save real regular files in addition to composefs
->>>> model.
->>>
->>> (add some words..)
->>>
->>> My first response at that time (on Slack) was "kindly request
->>> Giuseppe to ask in the fsdevel mailing list if this new overlay model
->>> and use cases is feasable", if so, I'm much happy to integrate in to
->>> EROFS (in a cooperative way) in several ways:
->>>
->>>    - just use EROFS symlink layout and open such file in a stacked way;
->>>
->>> or (now)
->>>
->>>    - just identify overlayfs "trusted.overlay.redirect" in EROFS itself
->>>      and open file so such image can be both used for EROFS only and
->>>      EROFS + overlayfs.
->>>
->>> If that happened, then I think the overlayfs "metacopy" option can
->>> also be shown by other fs community people later (since I'm not an
->>> overlay expert), but I'm not sure why they becomes impossible finally
->>> and even not mentioned at all.
->>>
->>> Or if you guys really don't want to use EROFS for whatever reasons
->>> (EROFS is completely open-source, used, contributed by many vendors),
->>> you could improve squashfs, ext4, or other exist local fses with this
->>> new use cases (since they don't need any on-disk change as well, for
->>> example, by using some xattr), I don't think it's really hard.
->>>
->>
->> Engineering-wise, merging composefs features into EROFS
->> would be the simplest option and FWIW, my personal preference.
->>
->> However, you need to be aware that this will bring into EROFS
->> vfs considerations, such as  s_stack_depth nesting (which AFAICS
->> is not see incremented composefs?). It's not the end of the world, but this
->> is no longer plain fs over block game. There's a whole new class of bugs
->> (that syzbot is very eager to explore) so you need to ask yourself whether
->> this is a direction you want to lead EROFS towards.
-> 
-> I'd like to make a seperated Kconfig for this.  I consider this just because
-> currently composefs is much similar to EROFS but it doesn't have some ability
-> to keep real regular file (even some README, VERSION or Changelog in these
-> images) in its (composefs-called) manifest files. Even its on-disk super block
-> doesn't have a UUID now [1] and some boot sector for booting or some potential
-> hybird formats such as tar + EROFS, cpio + EROFS.
-> 
-> I'm not sure if those potential new on-disk features is unneeded even for
-> future composefs.  But if composefs laterly supports such on-disk features,
-> that makes composefs closer to EROFS even more.  I don't see disadvantage to
-> make these actual on-disk compatible (like ext2 and ext4).
-> 
-> The only difference now is manifest file itself I/O interface -- bio vs file.
-> but EROFS can be distributed to raw block devices as well, composefs can't.
-> 
-> Also, I'd like to seperate core-EROFS from advanced features (or people who
-> are interested to work on this are always welcome) and composefs-like model,
-> if people don't tend to use any EROFS advanced features, it could be disabled
-> from compiling explicitly.
+Did you see LSFMMBPF 2023 CFP [1]?
 
-Apart from that, I still fail to get some thoughts (apart from unprivileged
-mounts) how EROFS + overlayfs combination fails on automative real workloads
-aside from "ls -lR" (readdir + stat).
+Did you consider requesting an invitation?
+I think it could be a good opportunity to sit in a room and discuss the
+roadmap of "FUSE2" with all the developers involved.
 
-And eventually we still need overlayfs for most use cases to do writable
-stuffs, anyway, it needs some words to describe why such < 1s difference is
-very very important to the real workload as you already mentioned before.
+I am on the program committee for the Filesystem track, and I encourage
+you to request an invite if you are interested to attend and/or nominate
+other developers that you think will be valuable for this discussion.
 
-And with overlayfs lazy lookup, I think it can be close to ~100ms or better.
+Thanks,
+Amir.
 
-> 
->>
->> Giuseppe expressed his plans to make use of the composefs method
->> inside userns one day. It is not a hard dependency, but I believe that
->> keeping the "RO efficient verifiable image format" functionality (EROFS)
->> separate from "userns composition of verifiable images" (overlayfs)
->> may benefit the userns mount goal in the long term.
-> 
-> If that is needed, I'm very happy to get more detailed path of this from
-> some discussion in LSF/MM/BPF 2023: how we get this (userns) reliably in
-> practice.
-> 
-> As of code lines, core EROFS on-disk format is quite simple (I don't think
-> total LOC is a barrier), if you see
->    fs/erofs/data.c
->    fs/erofs/namei.c
->    fs/erofs/dir.c
-> 
-> or
->     erofs_super_block
->     erofs_inode_compact
->     erofs_inode_extended
->     erofs_dirent
-> 
-> but for example, fs/erofs/super.c which is just used to enable EROFS advanced
-> features is almost 1000LOC now.  But most code is quite trivial, I don't think
-> these can cause any difference to userns plan.
-> 
-> Thanks,
-> Gao Xiang
-> 
-> [1] https://lore.kernel.org/r/CAOQ4uxjm7i+uO4o4470ACctsft1m18EiUpxBfCeT-Wyqf1FAYg@mail.gmail.com/
-> 
->>
->> Thanks,
->> Amir.
+[1] https://lore.kernel.org/linux-fsdevel/Y9qBs82f94aV4%2F78@localhost.localdomain/
