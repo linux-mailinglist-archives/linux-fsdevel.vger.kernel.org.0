@@ -2,96 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1431568999A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 14:21:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94019689D20
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 16:09:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232560AbjBCNV0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Feb 2023 08:21:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42286 "EHLO
+        id S233845AbjBCPHj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Feb 2023 10:07:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231989AbjBCNVY (ORCPT
+        with ESMTP id S233752AbjBCPHc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Feb 2023 08:21:24 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A356893AE2;
-        Fri,  3 Feb 2023 05:21:21 -0800 (PST)
+        Fri, 3 Feb 2023 10:07:32 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 090CDA0EA5;
+        Fri,  3 Feb 2023 07:07:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2HifOJA9xEveZM8S1gjqMUhg2gHpRif7oy7buFyjGZM=; b=tyPVIsUVRpIoIoazplnubKmX1v
-        VwBTgmYii/7IPUTEh3FWs/+3N1G7cKSAAwVe5uNCqYKeI5R5ip0/9MzqHlwdJQb1C/1gHW0SVBgZD
-        TTNWZnJdMQQ+nx9ncuzJ4NH67LYSnA5bg+XBwru4I25XIPz8EY3tDHScxiFgW3OBr5d+97Or/4Pe8
-        vW784qBalVKSP+hbLlpcQpt3/rC47rVDm3QvjeTJ8u2q9haDI7oHiRDw05qhuodbvBiKedIqGpPAd
-        IvuCLnuK7HNTfy/Txxb8YdoJ6dHlD/16YEZ1SYt+fl7Ryd0Ix8Jzhp8YXQfvgVjMyBHZI43i0mIGF
-        bWT8hCpg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pNw0D-00EKdy-V5; Fri, 03 Feb 2023 13:21:18 +0000
-Date:   Fri, 3 Feb 2023 13:21:17 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Hugh Dickins <hughd@google.com>,
-        linux-kernel@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: [PATCH 0/5] Fix a minor POSIX conformance problem
-Message-ID: <Y90KTSXCKGd8Gaqc@casper.infradead.org>
-References: <20230202204428.3267832-1-willy@infradead.org>
- <DCEDB8BB-8D10-4E17-9C27-AE48718CB82F@dilger.ca>
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=xaXfHvtmirT//H/Mo9JZTCfopwE0ARO2STlU1q4PXIU=; b=LwFg4o7FNRjNvzeL1UIeY+PB30
+        pigk8LO6ghAV/PW8A2diZklP7ONPkf/QuZ1j8F2QHoj76RmFvj/Q8pZxLQNZCU995h2ds4C/fgoU6
+        vJrgHAy3JyTeMQU3sBiEJ2k75Q4WOqSb0agWbK9kpPxrkSUpCMcMfqkAl8xQSVnMiGJsWds5MEA0/
+        ttVela2LE/82AgMzn2QpTZPgzNm+u+iJUJj6KJXJcu0gz4sOsbBmYQNi3tJoXH33FBOPEsxVAF/p5
+        5brK/jfAn9M2GdavX3Sg69iNnol9jENDgRqr7idObKYZRPtBjJSz+TRjAv8KvwNM3XfV2T+AE+LX+
+        QYoCj3mg==;
+Received: from [2001:4bb8:19a:272a:910:bb67:7287:f956] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pNxe8-002abR-B0; Fri, 03 Feb 2023 15:06:36 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Xiubo Li <xiubli@redhat.com>, Steve French <sfrench@samba.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        devel@lists.orangefs.org, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: add bvec initialization helpers v2
+Date:   Fri,  3 Feb 2023 16:06:11 +0100
+Message-Id: <20230203150634.3199647-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DCEDB8BB-8D10-4E17-9C27-AE48718CB82F@dilger.ca>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 02, 2023 at 04:08:49PM -0700, Andreas Dilger wrote:
-> On Feb 2, 2023, at 1:44 PM, Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
-> > 
-> > POSIX requires that on ftruncate() expansion, the new bytes must read
-> > as zeroes.  If someone's mmap()ed the file and stored past EOF, for
-> > most filesystems the bytes in that page will be not-zero.  It's a
-> > pretty minor violation; someone could race you and write to the file
-> > between the ftruncate() call and you reading from it, but it's a bit
-> > of a QOI violation.
-> 
-> Is it possible to have mmap return SIGBUS for the writes beyond EOF?
+Hi all,
 
-Well, no.  The hardware only tells us about accesses on a per-page
-basis.  We could SIGBUS on writes that _start_ after EOF, but this
-test doesn't do that (it starts before EOF and extends past EOF).
-And once the page is mapped writable, there's no page fault taken
-for subsequent writes.
+this series adds the helpers to initalize a bvec.  These remove open coding of
+bvec internals and help with experimenting with other representations like
+a phys_addr_t instead of page + offset.
 
-> On the one hand, that might indicate incorrect behavior of the application,
-> and on the other hand, it seems possible that the application doesn't
-> know it is writing beyond EOF and expects that data to be read back OK?
+Changes since v1:
+ - fix a typo
+ - simplify the code in ceph's __iter_get_bvecs a little bit further
+ - fix two subject prefixes
 
-POSIX says:
-
-"The system shall always zero-fill any partial page at the end of an
-object. Further, the system shall never write out any modified portions
-of the last page of an object which are beyond its end. References
-within the address range starting at pa and continuing for len bytes to
-whole pages following the end of an object shall result in delivery of
-a SIGBUS signal."
-
-https://pubs.opengroup.org/onlinepubs/9699919799/functions/mmap.html
-
-So the application can't expect to read back anything it's written
-(and if you look at page writeback, we currently zero beyond EOF at
-writeback time).
-
-> IMHO, this seems better to stop the root of the problem (mmap() allowing
-> bad writes), rather than trying to fix it after the fact.
-
-That would be nice, but we're rather stuck with the hardware that exists.
-IIUC Cray-1 had byte-granularity range registers, but page-granularity
-is what we have.
-
+Diffstat:
+ block/bio-integrity.c             |    7 ------
+ block/bio.c                       |   12 +----------
+ drivers/block/rbd.c               |    7 ++----
+ drivers/block/virtio_blk.c        |    4 ---
+ drivers/block/zram/zram_drv.c     |   15 +++-----------
+ drivers/nvme/host/core.c          |    4 ---
+ drivers/nvme/target/io-cmd-file.c |   10 +--------
+ drivers/nvme/target/tcp.c         |    5 +---
+ drivers/scsi/sd.c                 |   36 ++++++++++++++++------------------
+ drivers/target/target_core_file.c |   18 +++++------------
+ drivers/vhost/vringh.c            |    5 +---
+ fs/afs/write.c                    |    8 ++-----
+ fs/ceph/file.c                    |   12 +++--------
+ fs/cifs/connect.c                 |    5 ++--
+ fs/cifs/fscache.c                 |   16 +++++----------
+ fs/cifs/misc.c                    |    5 +---
+ fs/cifs/smb2ops.c                 |    6 ++---
+ fs/coredump.c                     |    7 +-----
+ fs/nfs/fscache.c                  |   16 +++++----------
+ fs/orangefs/inode.c               |   22 ++++++--------------
+ fs/splice.c                       |    5 +---
+ include/linux/bvec.h              |   40 ++++++++++++++++++++++++++++++++++++++
+ io_uring/rsrc.c                   |    4 ---
+ mm/page_io.c                      |    8 +------
+ net/ceph/messenger_v1.c           |    7 +-----
+ net/ceph/messenger_v2.c           |   28 ++++++++++----------------
+ net/rxrpc/rxperf.c                |    8 ++-----
+ net/sunrpc/svcsock.c              |    7 +-----
+ net/sunrpc/xdr.c                  |    5 +---
+ 29 files changed, 142 insertions(+), 190 deletions(-)
