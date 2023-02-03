@@ -2,221 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CFFB689F59
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 17:35:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B706268A00F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 18:14:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232502AbjBCQfR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Feb 2023 11:35:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57290 "EHLO
+        id S231819AbjBCROi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Feb 2023 12:14:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231905AbjBCQfQ (ORCPT
+        with ESMTP id S233519AbjBCROg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Feb 2023 11:35:16 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25ECE10D4;
-        Fri,  3 Feb 2023 08:35:15 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B66E861F6F;
-        Fri,  3 Feb 2023 16:35:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1656EC433D2;
-        Fri,  3 Feb 2023 16:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675442114;
-        bh=LAFGFgePgf3ook4iBuOc/zox8M9eHm7XWKurXaYi9tU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=roStwUNZB17qeESPC5wt3x03laInHjWwbx3Ss06y3w9LYsMErvt627S9H7FpxMb1m
-         Og+GQc4Hpj5HsAu8K4dXX0QoT+twn1yLxlSE6JLBp+LjSpNqETOFOCz/KUcqkkQu97
-         2IIYFkvcWCfmrPXr+dppMqQUN7rSSUDrzje8gJz9RqamD68la3WroR4sjygBsewLvj
-         sXxDhRD0pcMI1Lp6yacKN1H0Jq8ak1v01dQ78Ov4xC3Z7W6BAqFbq+DwgO6x7BiP0R
-         mYKw1rfnsJ76aTMAA2yWAI4ZhazhlVOj5D4s+GY4aIaJKi81C2punu2APFLsVghkBa
-         sf7gha6q7Wi6Q==
-Date:   Fri, 3 Feb 2023 08:35:13 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Hugh Dickins <hughd@google.com>,
-        linux-kernel@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: [PATCH 6/5] generic: test ftruncate zeroes bytes after EOF
-Message-ID: <Y903wcB2kAWwyR+2@magnolia>
-References: <20230202204428.3267832-1-willy@infradead.org>
- <20230202204428.3267832-7-willy@infradead.org>
+        Fri, 3 Feb 2023 12:14:36 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2A98D42F;
+        Fri,  3 Feb 2023 09:14:34 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id lu11so17227703ejb.3;
+        Fri, 03 Feb 2023 09:14:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=piXirJB1ocWVRzhs3blzzKk9+m92CHpoGy9Z2k+SCeM=;
+        b=Fb0zwCwCJOeiTQEIlhQwff7G7k9ElObO1R+33i0wPXCrqwIBrpEt840BslhPeWvhej
+         RNm1AhkBApvOqVaG8WlS647E04HIjv8QXHbrx4efowZpI0TaabZ8LMgSoh/aq8KjxxRH
+         ymR8pWmWjw/LsMUWJ9rofMDzzzyZxS3bG6pr5yuXBaSNOMLnBMDA9JK7UsqZLm4fTbdz
+         3JONOsnKCVpep3uis1ESPNXO4PXE5PboF2NqB2yAqmji5Wmfqm6IMWogBRXHCGUo+evy
+         5FIXmxmK0Q+tgY6yH5xQu0jB1ogx5Xoz2NijnyXZiUzSOhVkO+fo8Fi/9WHvdy2fnh/f
+         yg0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=piXirJB1ocWVRzhs3blzzKk9+m92CHpoGy9Z2k+SCeM=;
+        b=jdmnbkrMiyjXQk7PKMylQSXxePDm20sjtJjN0YfXIUoGbcu/Q+SLGejPF3zXgLYmMy
+         cWAxD1LTIOz5kILKRqorGt5Mg4zqonWs6UvUk1vl0RAyFjCMM9MlbeEDee+hA+19L8s0
+         diIzEEqd8eLKqHjmDCny5ScmQ6KF8RUv7Y+WuwPLaD9MqWyV88k8EVNtjmtMiClx79JB
+         /ANrJeyiGsanxGMrQHH1Cue1SBzva+TXbhEg4e/9alVQNIEO/lGXsPltm04uKFKasjMx
+         /vU9kcJVd/QvpB5nO+RhDbIo4CUAI31tLFsyJxWMSAc17ttYKUxVwfg+IcVVBhtXuAyG
+         eipA==
+X-Gm-Message-State: AO0yUKUKIQkAoGv+aEVboqAHc8lyX6KBEvwFhjvLF7OWMvaeJHvFkasU
+        HsRqE0+NWIcin8KsPEhS3OyECsk2vEZOLSLDHQI=
+X-Google-Smtp-Source: AK7set/+j+io9+OTuTc3zxO0OENdkhbzE8/JIAWcegXUIkecBeeVYLPG3d1104QBp1VROkgVOtVScA3k2o3zdZ2WZFo=
+X-Received: by 2002:a17:907:9917:b0:878:5f93:e797 with SMTP id
+ ka23-20020a170907991700b008785f93e797mr2680768ejc.4.1675444473257; Fri, 03
+ Feb 2023 09:14:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230202204428.3267832-7-willy@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20230203150634.3199647-1-hch@lst.de> <20230203150634.3199647-13-hch@lst.de>
+In-Reply-To: <20230203150634.3199647-13-hch@lst.de>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Fri, 3 Feb 2023 18:14:21 +0100
+Message-ID: <CAOi1vP-HNmphq-_KakcGnmGYDY3rWbqmu0vWWS9vmYMLxgj1DQ@mail.gmail.com>
+Subject: Re: [PATCH 12/23] ceph: use bvec_set_page to initialize a bvec
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Xiubo Li <xiubli@redhat.com>, Steve French <sfrench@samba.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        devel@lists.orangefs.org, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 02, 2023 at 08:44:28PM +0000, Matthew Wilcox (Oracle) wrote:
-> https://pubs.opengroup.org/onlinepubs/9699919799/functions/ftruncate.html
-> specifies that "If the file size is increased, the extended area shall
-> appear as if it were zero-filled."  Many filesystems do not currently
-> do this for the portion of the page after EOF.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On Fri, Feb 3, 2023 at 4:07 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Use the bvec_set_page helper to initialize a bvec.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  .gitignore            |  1 +
->  src/Makefile          |  2 +-
->  src/truncate-zero.c   | 50 +++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/707     | 31 +++++++++++++++++++++++++++
->  tests/generic/707.out |  2 ++
->  5 files changed, 85 insertions(+), 1 deletion(-)
->  create mode 100644 src/truncate-zero.c
->  create mode 100755 tests/generic/707
->  create mode 100644 tests/generic/707.out
-> 
-> diff --git a/.gitignore b/.gitignore
-> index a6f433f1..6aa5bca9 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -169,6 +169,7 @@ tags
->  /src/test-nextquota
->  /src/testx
->  /src/trunc
-> +/src/truncate-zero
->  /src/truncfile
->  /src/unwritten_mmap
->  /src/unwritten_sync
-> diff --git a/src/Makefile b/src/Makefile
-> index afdf6b30..83ca11ac 100644
-> --- a/src/Makefile
-> +++ b/src/Makefile
-> @@ -19,7 +19,7 @@ TARGETS = dirstress fill fill2 getpagesize holes lstat64 \
->  	t_ofd_locks t_mmap_collision mmap-write-concurrent \
->  	t_get_file_time t_create_short_dirs t_create_long_dirs t_enospc \
->  	t_mmap_writev_overlap checkpoint_journal mmap-rw-fault allocstale \
-> -	t_mmap_cow_memory_failure fake-dump-rootino
-> +	t_mmap_cow_memory_failure fake-dump-rootino truncate-zero
->  
->  LINUX_TARGETS = xfsctl bstat t_mtab getdevicesize preallo_rw_pattern_reader \
->  	preallo_rw_pattern_writer ftrunc trunc fs_perms testx looptest \
-> diff --git a/src/truncate-zero.c b/src/truncate-zero.c
-> new file mode 100644
-> index 00000000..67f53912
-> --- /dev/null
-> +++ b/src/truncate-zero.c
-> @@ -0,0 +1,50 @@
+>  fs/ceph/file.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 764598e1efd91f..90b2aa7963bf29 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -103,14 +103,10 @@ static ssize_t __iter_get_bvecs(struct iov_iter *iter, size_t maxsize,
+>                 size += bytes;
+>
+>                 for ( ; bytes; idx++, bvec_idx++) {
+> -                       struct bio_vec bv = {
+> -                               .bv_page = pages[idx],
+> -                               .bv_len = min_t(int, bytes, PAGE_SIZE - start),
+> -                               .bv_offset = start,
+> -                       };
+> -
+> -                       bvecs[bvec_idx] = bv;
+> -                       bytes -= bv.bv_len;
+> +                       int len = min_t(int, bytes, PAGE_SIZE - start);
+> +
+> +                       bvec_set_page(&bvecs[bvec_idx], pages[idx], len, start);
+> +                       bytes -= len;
+>                         start = 0;
+>                 }
+>         }
+> --
+> 2.39.0
+>
 
-Needs to have a SPDX header and the customary Oracle copyright.
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
 
-> +#include <fcntl.h>
-> +#include <stdio.h>
-> +#include <string.h>
-> +#include <sys/mman.h>
-> +#include <unistd.h>
-> +
-> +int main(int argc, char **argv)
-> +{
-> +	char *buf;
-> +	int i, fd;
-> +
-> +	if (argc != 2) {
-> +		fprintf(stderr, "Usage: %s <file>\n", argv[0]);
-> +		return 1;
-> +	}
-> +
-> +	fd = open(argv[1], O_RDWR | O_CREAT, 0644);
-> +	if (fd < 0) {
-> +		perror(argv[1]);
-> +		return 1;
-> +	}
-> +
-> +	if (ftruncate(fd, 1) < 0) {
-> +		perror("ftruncate");
-> +		return 1;
-> +	}
-> +
-> +	buf = mmap(NULL, 1024, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-> +	if (buf == MAP_FAILED) {
-> +		perror("mmap");
-> +		return 1;
-> +	}
-> +
-> +	memset(buf, 'a', 10);
-> +
-> +	if (ftruncate(fd, 5) < 0) {
-> +		perror("ftruncate");
-> +		return 1;
-> +	}
-> +
-> +	if (memcmp(buf, "a\0\0\0\0", 5) == 0)
-> +		return 0;
-> +
-> +	fprintf(stderr, "Truncation did not zero new bytes:\n");
-> +	for (i = 0; i < 5; i++)
-> +		fprintf(stderr, "%#x ", buf[i]);
-> +	fputc('\n', stderr);
-> +
-> +	return 2;
-> +}
-> diff --git a/tests/generic/707 b/tests/generic/707
-> new file mode 100755
-> index 00000000..ddc82a9a
-> --- /dev/null
-> +++ b/tests/generic/707
-> @@ -0,0 +1,31 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2023 Matthew Wilcox for Oracle.  All Rights Reserved.
-> +#
-> +# FS QA Test 707
-> +#
-> +# Test whether we obey this part of POSIX-2017 ftruncate:
-> +# "If the file size is increased, the extended area shall appear as if
-> +# it were zero-filled"
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto quick posix
-> +
-> +_supported_fs generic
-> +_require_test
-> +_require_test_program "truncate-zero"
-> +
-> +test_file=$TEST_DIR/test.$seq
-> +
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -f $test_file
-> +}
-> +
-> +$here/src/truncate-zero $test_file > $seqres.full 2>&1 ||
-> +	_fail "truncate zero failed!"
+Thanks,
 
-Omit the _fail here because any extra stdout/stderr output that is not
-in the .out file suffices to record the test as failed.
-
-_fail is only useful if you need to exit the shell script immediately.
-
-> +
-> +echo "Silence is golden"
-
-It's customary (though not required) to put "silence is golden" before
-"but my eyes still see"^W^W^W^W^Wthe test starts running programs.
-
-Other than those minor things, this looks reasonable to me.
-
---D
-
-> +status=0
-> +exit
-> diff --git a/tests/generic/707.out b/tests/generic/707.out
-> new file mode 100644
-> index 00000000..8e57a1d8
-> --- /dev/null
-> +++ b/tests/generic/707.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 707
-> +Silence is golden
-> -- 
-> 2.35.1
-> 
+                Ilya
