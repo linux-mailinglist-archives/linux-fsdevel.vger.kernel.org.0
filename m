@@ -2,79 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3580A68A42D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 22:04:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B189868A42F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 22:04:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233687AbjBCVEb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Feb 2023 16:04:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46058 "EHLO
+        id S233175AbjBCVEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Feb 2023 16:04:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233010AbjBCVCs (ORCPT
+        with ESMTP id S233532AbjBCVCu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Feb 2023 16:02:48 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A2AA9D47
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Feb 2023 13:00:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675458046;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=aKXJEFVHJON2UjnvEtbejGTqV0qCsLQRv/6cKDxwOv0=;
-        b=IYZO9kop/X+TSBucvZqx335IfOpoBcB813cXlamC9+xd6WUbJAjw6sveprapy5G4AYw8qh
-        dFT0rMHi3vEBxLVmOu0xisJJPu2OZAMr5e1g+r1afQuLQBee4Bn4RBIpMrV6/Snaxpo868
-        nkFMItbsb1lYHTFzALB2AHeXf2zJYBk=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-230-9wiaw-oyMxyIbBUIK09_ZA-1; Fri, 03 Feb 2023 16:00:42 -0500
-X-MC-Unique: 9wiaw-oyMxyIbBUIK09_ZA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 3 Feb 2023 16:02:50 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17480AF0DF;
+        Fri,  3 Feb 2023 13:01:16 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8A4C8185A7A4;
-        Fri,  3 Feb 2023 21:00:41 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 815FB492B15;
-        Fri,  3 Feb 2023 21:00:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <Y9sJ7Nuubw1U4M6u@gondor.apana.org.au>
-References: <Y9sJ7Nuubw1U4M6u@gondor.apana.org.au> <Y9ooW52m0Afnhj7Z@gondor.apana.org.au> <312908.1675262203@warthog.procyon.org.uk>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     dhowells@redhat.com, smfrench@gmail.com, viro@zeniv.linux.org.uk,
-        nspmangalore@gmail.com, rohiths.msft@gmail.com, tom@talpey.com,
-        metze@samba.org, hch@infradead.org, willy@infradead.org,
-        jlayton@kernel.org, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sfrench@samba.org, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH 05/12] cifs: Add a function to Hash the contents of an iterator
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C9A705C340;
+        Fri,  3 Feb 2023 21:01:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1675458074; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=x+0e9tz1IP7Pd7ZSPnQKoT68y6e8r1cD0eGR4KpbTTI=;
+        b=cC42ef71/eJlubpX7sZQJQxGixmBkSbhdWGdT4z6hSD+6/cWP38jVXUbo2BwXY8DBFLF3K
+        wTHHBa5mdngYs7kFt1uDYzTIPBGQc5a92C/lPgAykXwDknSxEtxV/KPI9PrM7ffOW5bNPY
+        bkVnGBnkuBYp08VTbbtvxwKmSpwrncc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1675458074;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=x+0e9tz1IP7Pd7ZSPnQKoT68y6e8r1cD0eGR4KpbTTI=;
+        b=8jz6iRF5GZKUDvkeUSg8EWDwfH5qfCbveKwIahpdxixD5kzqKc1Txd6JEF3IScrgAAJTnt
+        Wp4YVOKZh3QclBAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 589891358A;
+        Fri,  3 Feb 2023 21:01:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 4UYICRp23WP6JgAAMHmgww
+        (envelope-from <krisman@suse.de>); Fri, 03 Feb 2023 21:01:14 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     viro@zeniv.linux.org.uk, tytso@mit.edu, jaegeuk@kernel.org,
+        ebiggers@kernel.org, jack@suse.cz
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: [PATCH v2 7/7] f2fs: Enable negative dentries on case-insensitive lookup
+Date:   Fri,  3 Feb 2023 18:00:39 -0300
+Message-Id: <20230203210039.16289-8-krisman@suse.de>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20230203210039.16289-1-krisman@suse.de>
+References: <20230203210039.16289-1-krisman@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2126749.1675458038.1@warthog.procyon.org.uk>
-Date:   Fri, 03 Feb 2023 21:00:38 +0000
-Message-ID: <2126750.1675458038@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Herbert Xu <herbert@gondor.apana.org.au> wrote:
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-> Were you also deleting shash code in another patch that wasn't
-> cc'ed to me?
+Instead of invalidating negative dentries during case-insensitive
+lookups, mark them as such and let them be added to the dcache.
+d_ci_revalidate is able to properly filter them out if necessary based
+on the dentry casefold flag.
 
-No, I don't want to change it this late into the dev cycle.  I can look at it
-after the merge window.
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+---
+ fs/f2fs/namei.c | 23 ++---------------------
+ 1 file changed, 2 insertions(+), 21 deletions(-)
 
-David
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 6032589099ce..558cef6e25fc 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -564,17 +564,8 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 		goto out_iput;
+ 	}
+ out_splice:
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	if (!inode && IS_CASEFOLDED(dir)) {
+-		/* Eventually we want to call d_add_ci(dentry, NULL)
+-		 * for negative dentries in the encoding case as
+-		 * well.  For now, prevent the negative dentry
+-		 * from being cached.
+-		 */
+-		trace_f2fs_lookup_end(dir, dentry, ino, err);
+-		return NULL;
+-	}
+-#endif
++	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
++		d_set_casefold_lookup(dentry);
+ 	new = d_splice_alias(inode, dentry);
+ 	err = PTR_ERR_OR_ZERO(new);
+ 	trace_f2fs_lookup_end(dir, dentry, ino, !new ? -ENOENT : err);
+@@ -627,16 +618,6 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	f2fs_delete_entry(de, page, dir, inode);
+ 	f2fs_unlock_op(sbi);
+ 
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	/* VFS negative dentries are incompatible with Encoding and
+-	 * Case-insensitiveness. Eventually we'll want avoid
+-	 * invalidating the dentries here, alongside with returning the
+-	 * negative dentries at f2fs_lookup(), when it is better
+-	 * supported by the VFS for the CI case.
+-	 */
+-	if (IS_CASEFOLDED(dir))
+-		d_invalidate(dentry);
+-#endif
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
+ fail:
+-- 
+2.35.3
 
