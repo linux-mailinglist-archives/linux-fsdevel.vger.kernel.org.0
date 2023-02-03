@@ -2,99 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F49689461
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 10:51:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4A0E689464
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 10:51:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232940AbjBCJtn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Feb 2023 04:49:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42994 "EHLO
+        id S232085AbjBCJv0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Feb 2023 04:51:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232056AbjBCJtl (ORCPT
+        with ESMTP id S231888AbjBCJvZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Feb 2023 04:49:41 -0500
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D8CE79C90;
-        Fri,  3 Feb 2023 01:49:39 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0VaoUwBD_1675417773;
-Received: from 30.221.129.149(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VaoUwBD_1675417773)
-          by smtp.aliyun-inc.com;
-          Fri, 03 Feb 2023 17:49:35 +0800
-Message-ID: <160b9e99-bff6-e37c-5f16-00157766535e@linux.alibaba.com>
-Date:   Fri, 3 Feb 2023 17:49:33 +0800
+        Fri, 3 Feb 2023 04:51:25 -0500
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE667EDF;
+        Fri,  3 Feb 2023 01:51:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VqJqS6npLKIiNe5AEXZhFQk5R3HIEFJ+u6UVRW2cKIs=; b=isWRl/avDUjmYiGVKnXYTOaLkf
+        /JpiAZU9+DXbhtnv1CKViaTZFQ98RaOUVkhe2586gakIJXalJuXP4rB5rpx7iODOgL8FGtrZmbUUE
+        dJfN9Ah4lC3VEovAHHz8yELe+w9Pep3sZqxxUHZF36xumRdb5nTWIbG3Y0I5Juofgl4caro6baPUD
+        dtQ5kR6F1Dh4NGxy0g02lvgB51iQcEiHuKqIZp0fTEWiauRsaQEUQ6V+BQ7B+FOV9WeMwnlMBS7l4
+        HikiggaZBau2SLkvVfu6Dm4xjqFRuf/KKPbUzl5u/CHLgTdl7N3oFlYCQExj5I9mhTtPBj35G0cP3
+        GAn8w6zg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pNsiJ-005Tl6-2S;
+        Fri, 03 Feb 2023 09:50:36 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F2418300446;
+        Fri,  3 Feb 2023 10:51:09 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CF3202136B38A; Fri,  3 Feb 2023 10:51:09 +0100 (CET)
+Date:   Fri, 3 Feb 2023 10:51:09 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Xi Wang <xii@google.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Ben Segall <bsegall@google.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] sched: Consider capacity for certain load balancing
+ decisions
+Message-ID: <Y9zZDcIua63WOdG7@hirez.programming.kicks-ass.net>
+References: <20230201012032.2874481-1-xii@google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.6.1
-Subject: Re: make alloc_anon_inode more useful
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Vetter <daniel@ffwll.ch>, Nadav Amit <namit@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Nitin Gupta <ngupta@vflare.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20210309155348.974875-1-hch@lst.de>
-From:   Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20210309155348.974875-1-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230201012032.2874481-1-xii@google.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-Sorry for digging...
-
-This patch series seems useful for fs developers.  I'm not sure its
-current status and why it doesn't get merged.
-
-
-On 3/9/21 11:53 PM, Christoph Hellwig wrote:
-> Hi all,
+On Tue, Jan 31, 2023 at 05:20:32PM -0800, Xi Wang wrote:
+> After load balancing was split into different scenarios, CPU capacity
+> is ignored for the "migrate_task" case, which means a thread can stay
+> on a softirq heavy cpu for an extended amount of time.
 > 
-> this series first renames the existing alloc_anon_inode to
-> alloc_anon_inode_sb to clearly mark it as requiring a superblock.
+> By comparing nr_running/capacity instead of just nr_running we can add
+> CPU capacity back into "migrate_task" decisions. This benefits
+> workloads running on machines with heavy network traffic. The change
+> is unlikely to cause serious problems for other workloads but maybe
+> some corner cases still need to be considered.
 > 
-> It then adds a new alloc_anon_inode that works on the anon_inode
-> file system super block, thus removing tons of boilerplate code.
+> Signed-off-by: Xi Wang <xii@google.com>
+> ---
+>  kernel/sched/fair.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> The few remainig callers of alloc_anon_inode_sb all use alloc_file_pseudo
-> later, but might also be ripe for some cleanup.
-> 
-> Diffstat:
->  arch/powerpc/platforms/pseries/cmm.c |   27 +-------------
->  drivers/dma-buf/dma-buf.c            |    2 -
->  drivers/gpu/drm/drm_drv.c            |   64 +----------------------------------
->  drivers/misc/cxl/api.c               |    2 -
->  drivers/misc/vmw_balloon.c           |   24 +------------
->  drivers/scsi/cxlflash/ocxl_hw.c      |    2 -
->  drivers/virtio/virtio_balloon.c      |   30 +---------------
->  fs/aio.c                             |    2 -
->  fs/anon_inodes.c                     |   15 +++++++-
->  fs/libfs.c                           |    2 -
->  include/linux/anon_inodes.h          |    1 
->  include/linux/fs.h                   |    2 -
->  kernel/resource.c                    |   30 ++--------------
->  mm/z3fold.c                          |   38 +-------------------
->  mm/zsmalloc.c                        |   48 +-------------------------
->  15 files changed, 39 insertions(+), 250 deletions(-)
-> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 0f8736991427..aad14bc04544 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -10368,8 +10368,9 @@ static struct rq *find_busiest_queue(struct lb_env *env,
+>  			break;
+>  
+>  		case migrate_task:
+> -			if (busiest_nr < nr_running) {
+> +			if (busiest_nr * capacity < nr_running * busiest_capacity) {
+>  				busiest_nr = nr_running;
+> +				busiest_capacity = capacity;
+>  				busiest = rq;
+>  			}
+>  			break;
 
--- 
-Thanks,
-Jingbo
+I don't think this is correct. The migrate_task case is work-conserving,
+and your change can severely break that I think.
+
