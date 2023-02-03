@@ -2,104 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 92A8E6894BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 11:05:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC76B689909
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 13:49:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233029AbjBCKEJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Feb 2023 05:04:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54320 "EHLO
+        id S232389AbjBCMty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Feb 2023 07:49:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232957AbjBCKEI (ORCPT
+        with ESMTP id S230317AbjBCMtq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Feb 2023 05:04:08 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5043110AA0;
-        Fri,  3 Feb 2023 02:03:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YH/8ltZNkKStUJrvFHYeArjsVizSPTMYIhZUjUhNtIY=; b=RjeqYQeuDIs31bqFuDOVNCpJXy
-        SpNnas9yZLnzPYarE3/z3e3WDDvHc3fZjPegGCVejqoPSEvAdO6tM9i+qeJPWqxks6FUe+3fVl7f4
-        eQn3pkY4Hh65yDr6yK2jG++5WK86Yz5gf2vwUdjDJqSDfJcZlR5hgRa1Lx+f0v4rDPE8aCc090skS
-        zbesIES7PWXubGSCZbntIyLgwn0pRnbuFjGeEws9uXjnYe2Glq+Wjoolll9ad525ijsVTVxSPnulC
-        x2FY8YQQ08BQCGSwlC+xkiJP1OsnN5Jg+7so+8vNHwar2Tv8+QOkJJYhhsI6ETPcb+76oWBMHfGaq
-        9N2l/kgQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pNsuh-00EDRc-Qr; Fri, 03 Feb 2023 10:03:24 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E2ED5300129;
-        Fri,  3 Feb 2023 11:03:21 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 794802136B38A; Fri,  3 Feb 2023 11:03:21 +0100 (CET)
-Date:   Fri, 3 Feb 2023 11:03:21 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Hao Luo <haoluo@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Fri, 3 Feb 2023 07:49:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FBAC9A802
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Feb 2023 04:49:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1675428542;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=u6FdsJyiq+RmJhVtsn85gvD0158vqz/CqvwgLQNLO1g=;
+        b=Px9zf6VntcLjkab2ah0tmCvNNqcXpGgYgJ7Ny+7yC8kVlaePmiFaPiLdynHLDmln8J+Hts
+        LEJz1nd7gLN+MNiE0glZRCStrU1S2W46JY8iMbJclub+F/usqOV3hTRNacYWWP+zlm1Z0i
+        kZOtym7sI3kNeAKmhlIgZggLUIpbq3Y=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-523-4WJnpLtXOfGopeJD3IXWVg-1; Fri, 03 Feb 2023 07:48:59 -0500
+X-MC-Unique: 4WJnpLtXOfGopeJD3IXWVg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9E5B9811E6E;
+        Fri,  3 Feb 2023 12:48:58 +0000 (UTC)
+Received: from tpad.localdomain (ovpn-112-2.gru2.redhat.com [10.97.112.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1FE412166B36;
+        Fri,  3 Feb 2023 12:48:58 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+        id B0FFE401346DD; Thu,  2 Feb 2023 23:04:11 -0300 (-03)
+Date:   Thu, 2 Feb 2023 23:04:11 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [RFC 0/5] mm/bpf/perf: Store build id in file object
-Message-ID: <Y9zb6fUH3mAoPUzz@hirez.programming.kicks-ass.net>
-References: <20230201135737.800527-1-jolsa@kernel.org>
- <CAADnVQ+im7FwSqDcTLmMvfRcT9unwdHBeWG9Snw7W5Q-bcdWvg@mail.gmail.com>
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Leonardo Bras <leobras@redhat.com>,
+        Yair Podemsky <ypodemsk@redhat.com>, P J P <ppandit@redhat.com>
+Subject: Re: [PATCH v3] fs/buffer.c: update per-CPU bh_lru cache via RCU
+Message-ID: <Y9xrm25NlbEReI7n@tpad>
+References: <Y9qM68F+nDSYfrJ1@tpad>
+ <20230202223653.GF937597@dread.disaster.area>
+ <Y9w+b1MJ10uPDROI@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAADnVQ+im7FwSqDcTLmMvfRcT9unwdHBeWG9Snw7W5Q-bcdWvg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y9w+b1MJ10uPDROI@casper.infradead.org>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+        DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 02, 2023 at 03:15:39AM -0800, Alexei Starovoitov wrote:
-> On Wed, Feb 1, 2023 at 5:57 AM Jiri Olsa <jolsa@kernel.org> wrote:
-> >
-> > hi,
-> > we have a use cases for bpf programs to use binary file's build id.
-> >
-> > After some attempts to add helpers/kfuncs [1] [2] Andrii had an idea [3]
-> > to store build id directly in the file object. That would solve our use
-> > case and might be beneficial for other profiling/tracing use cases with
-> > bpf programs.
-> >
-> > This RFC patchset adds new config CONFIG_FILE_BUILD_ID option, which adds
-> > build id object pointer to the file object when enabled. The build id is
-> > read/populated when the file is mmap-ed.
-> >
-> > I also added bpf and perf changes that would benefit from this.
-> >
-> > I'm not sure what's the policy on adding stuff to file object, so apologies
-> > if that's out of line. I'm open to any feedback or suggestions if there's
-> > better place or way to do this.
+On Thu, Feb 02, 2023 at 10:51:27PM +0000, Matthew Wilcox wrote:
+> On Fri, Feb 03, 2023 at 09:36:53AM +1100, Dave Chinner wrote:
+> > On Wed, Feb 01, 2023 at 01:01:47PM -0300, Marcelo Tosatti wrote:
+> > > 
+> > > umount calls invalidate_bh_lrus which IPIs each
+> > 
+> > via invalidate_bdev(). So this is only triggered on unmount of
+> > filesystems that use the block device mapping directly, right?
+
+While executing:
+mount -o loop alpine-standard-3.17.1-x86_64.iso /mnt/loop/
+
+           mount-170027  [004] ...1 53852.213367: invalidate_bdev <-__invalidate_device
+           mount-170027  [004] ...1 53852.213468: invalidate_bdev <-bdev_disk_changed.part.0
+           mount-170027  [000] ...1 53852.222326: invalidate_bh_lrus <-set_blocksize
+           mount-170027  [000] ...1 53852.222398: invalidate_bh_lrus <-set_blocksize
+   systemd-udevd-170031  [011] ...1 53852.239794: invalidate_bh_lrus <-blkdev_flush_mapping
+   systemd-udevd-170029  [004] ...1 53852.240947: invalidate_bh_lrus <-blkdev_flush_mapping
+
+> > 
+> > Or is the problem that userspace is polling the block device (e.g.
+> > udisks, blkid, etc) whilst the filesystem is mounted and populating
+> > the block device mapping with cached pages so invalidate_bdev()
+> > always does work even when the filesystem doesn't actually use the
+> > bdev mapping?
+> > 
+> > > CPU that has non empty per-CPU buffer_head cache:
+> > > 
+> > >        	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
+> > > 
+> > > This interrupts CPUs which might be executing code sensitive
+> > > to interferences.
+> > > 
+> > > To avoid the IPI, free the per-CPU caches remotely via RCU.
+> > > Two bh_lrus structures for each CPU are allocated: one is being
+> > > used (assigned to per-CPU bh_lru pointer), and the other is
+> > > being freed (or idle).
+> > 
+> > Rather than adding more complexity to the legacy bufferhead code,
+> > wouldn't it be better to switch the block device mapping to use
+> > iomap+folios and get rid of the use of bufferheads altogether?
 > 
-> struct file represents all files while build_id is for executables only,
-> and not all executables, but those currently running, so
-> I think it's cleaner to put it into vm_area_struct.
+> Pretty sure ext4's journalling relies on the blockdev using
+> buffer_heads.  At least, I did a conversion of blockdev to use
+> mpage_readahead() and ext4 stopped working.
 
-There can be many vm_area_structs per file, and like for struct file,
-there's vm_area_structs for non-executable ranges too.
+And its actually pretty simple: the new invalidate_bh_lrus should be
+straightforward use of RCU:
 
-Given there's only one buildid per file, struct file seems most
-appropriate to me.
+1. for_each_online(cpu)
+	cpu->bh_lrup = bh_lrus[1]	(or 0)
+
+2. synchronize_rcu_expedited()		(wait for all previous users of
+					 bh_lrup pointer to stop
+					 referencing it).
+
+3. free bh's in bh_lrus[0]		(or 1)
+
+
+
