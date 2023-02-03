@@ -2,125 +2,255 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E02468A41B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 22:03:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 015DF68A414
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Feb 2023 22:03:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233670AbjBCVDX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Feb 2023 16:03:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45994 "EHLO
+        id S233032AbjBCVDM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Feb 2023 16:03:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233380AbjBCVCQ (ORCPT
+        with ESMTP id S233357AbjBCVCK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Feb 2023 16:02:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18C88A1460
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Feb 2023 13:00:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675458005;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vs8FDvoSHno0Q4Sw3oLMb7GUY7XZQhcAIOewFeDot/o=;
-        b=LakirgFBvEG/Yeyv2qEl+7S3aJfWSKHdDdbdgo162EaNSkPREx76JhxrdlfAxK8W5Gt+DG
-        997qxCSF88exmjVwKCMMul0XGW7RmVB0+nRvUowYdP5fmPDbL3yM2VAK6uaMeqvcGtSvHp
-        iZFqtcGYh8I1Vdr0yN7RzGnUfN6YnvY=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-519-XqmJn28SMoyNfM_YxvRYVg-1; Fri, 03 Feb 2023 16:00:01 -0500
-X-MC-Unique: XqmJn28SMoyNfM_YxvRYVg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 3 Feb 2023 16:02:10 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 777D2ADB9E;
+        Fri,  3 Feb 2023 13:00:54 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9CE7B29AA39C;
-        Fri,  3 Feb 2023 21:00:00 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.33.36.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 07FFCC15BA0;
-        Fri,  3 Feb 2023 20:59:58 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Steve French <smfrench@gmail.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Tom Talpey <tom@talpey.com>,
-        Stefan Metzmacher <metze@samba.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Steve French <sfrench@samba.org>
-Subject: [PATCH 11/11] cifs: DIO to/from KVEC-type iterators should now work
-Date:   Fri,  3 Feb 2023 20:59:29 +0000
-Message-Id: <20230203205929.2126634-12-dhowells@redhat.com>
-In-Reply-To: <20230203205929.2126634-1-dhowells@redhat.com>
-References: <20230203205929.2126634-1-dhowells@redhat.com>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id F0ED55C340;
+        Fri,  3 Feb 2023 21:00:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1675458053; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=aPC22QHm6XGBmfoxFvZlvMY0ghDI7BCzikZtAWF5rRY=;
+        b=Ap7nmh84y8F9gwYtJO94l1L2dtLKqdB871gijxrby+u6/VL1b5AOtfYzoN+182fBDIPf3Z
+        AbCG7FRYKE/N9fadf7S08ZloqwKsoENasjwUUXk+vEG2pbUenBu/xyEHBR2pRwFD+ffjA6
+        hZIX7bK1VcvbHnEGtX0YqscbhoBp6D0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1675458053;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=aPC22QHm6XGBmfoxFvZlvMY0ghDI7BCzikZtAWF5rRY=;
+        b=9PL9jYsZ84+KXNpSuewKOkAPE7RqSCg/8kKFXdTAtp6gfFfhgtH5rDh2K4KyeSVZ98ZTKG
+        z1KOBG+fLWrbaaCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 80FF51358A;
+        Fri,  3 Feb 2023 21:00:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id n9rIEgR23WPqJgAAMHmgww
+        (envelope-from <krisman@suse.de>); Fri, 03 Feb 2023 21:00:52 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     viro@zeniv.linux.org.uk, tytso@mit.edu, jaegeuk@kernel.org,
+        ebiggers@kernel.org, jack@suse.cz
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Gabriel krisman Bertazi <krisman@suse.de>
+Subject: [PATCH v2 0/7] Support negative dentries on case-insensitive ext4 and f2fs
+Date:   Fri,  3 Feb 2023 18:00:32 -0300
+Message-Id: <20230203210039.16289-1-krisman@suse.de>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DIO to/from KVEC-type iterators should now work as the iterator is passed
-down to the socket in non-RDMA/non-crypto mode and in RDMA or crypto mode
-care is taken to handle vmap/vmalloc correctly and not take page refs when
-building a scatterlist.
+From: Gabriel krisman Bertazi <krisman@suse.de>
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Tom Talpey <tom@talpey.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
----
- fs/cifs/file.c | 20 --------------------
- 1 file changed, 20 deletions(-)
+This patchset enables negative dentries for case-insensitive directories
+in ext4/f2fs.  It solves the corner cases for this feature, including
+those already tested by fstests (generic/556).  It also solves an
+existing bug with the existing implementation where old negative
+dentries are left behind after a directory conversion to
+case-insensitive.
 
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index ed84104b669d..11875224a917 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -3546,16 +3546,6 @@ static ssize_t __cifs_writev(
- 	struct cifs_aio_ctx *ctx;
- 	int rc;
- 
--	/*
--	 * iov_iter_get_pages_alloc doesn't work with ITER_KVEC.
--	 * In this case, fall back to non-direct write function.
--	 * this could be improved by getting pages directly in ITER_KVEC
--	 */
--	if (direct && iov_iter_is_kvec(from)) {
--		cifs_dbg(FYI, "use non-direct cifs_writev for kvec I/O\n");
--		direct = false;
--	}
--
- 	rc = generic_write_checks(iocb, from);
- 	if (rc <= 0)
- 		return rc;
-@@ -4089,16 +4079,6 @@ static ssize_t __cifs_readv(
- 	loff_t offset = iocb->ki_pos;
- 	struct cifs_aio_ctx *ctx;
- 
--	/*
--	 * iov_iter_get_pages_alloc() doesn't work with ITER_KVEC,
--	 * fall back to data copy read path
--	 * this could be improved by getting pages directly in ITER_KVEC
--	 */
--	if (direct && iov_iter_is_kvec(to)) {
--		cifs_dbg(FYI, "use non-direct cifs_user_readv for kvec I/O\n");
--		direct = false;
--	}
--
- 	len = iov_iter_count(to);
- 	if (!len)
- 		return 0;
+Testing-wise, I ran sanity checks to show it properly uses the created
+negative dentries, observed the expected performance increase of the
+dentry cache hit, and showed it survives the quick group in fstests on
+both f2fs and ext4 without regressions.
+
+* Background
+
+Negative dentries have always been disabled in case-insensitive
+directories because, in their current form, they can't provide enough
+assurances that all the case variations of a filename won't exist in a
+directory, and the name-preserving case-insenstive semantics
+during file creation prevents some negative dentries from being
+instantiated unmodified.
+
+Nevertheless, for the general case, the existing implementation would
+already work with negative dentries, even though they are fully
+disabled. That is: if the original lookup that created the dentry was
+done in a case-insensitive way, the negative dentry can usually be
+validated, since it assures that no other dcache entry exists, *and*
+that no variation of the file exists on disk (since the lookup
+failed). A following lookup would then be executed with the
+case-insensitive-aware d_hash and d_lookup, which would find the right
+negative dentry and use it.
+
+The first corner case arises when a case-insensitive directory has
+negative dentries that were created before the directory was flipped to
+case-insensitive.  A directory must be empty to be converted, but it
+doesn't mean the directory doesn't have negative dentry children.  If
+that happens, the dangling dentries left behind can't assure that no
+case-variation of the name exists. They only mean the exact name
+doesn't exist.  A further lookup would incorrectly validate them.
+
+The code below demonstrates the problem.  In this example $1 and $2 are
+two strings, where:
+
+      (i) $1 != $2
+     (ii) casefold($1) == casefold($2)
+    (iii) hash($1) == hash($2) == hash(casefold($1))
+
+Then, the following sequence could potentially return a ENOENT, even
+though the case-insensitive lookup should exist:
+
+  mkdir  d      <- Case-sensitive directory
+  touch  d/$1
+  touch  d/$2
+  unlink d/$1   <- leaves negative dentry  behind.
+  unlink d/$2   <- leaves *another* negative dentry behind.
+  chattr +F d   <- make 'd' case-insensitive.
+  touch  d/$1   <- Both negative dentries could match. finds one of them,
+		   and instantiate
+  access d/$1   <- Find the other negative dentry, get -ENOENT.
+
+In fact, this is a problem even on the current implementation, where
+negative dentries for CI are disabled.  There was a bug reported by Al
+Viro in 2020, where a directory might end up with dangling negative
+dentries created during a case-sensitive lookup, because they existed
+before the +F attribute was set.
+
+It is hard to trigger the issue, because condition (iii) is hard to test
+on an unmodified kernel.  By hacking the kernel to force the hash
+collision, there are a few ways we can trigger this bizarre behavior in
+case-insensitive directories through the insertion of negative dentries.
+
+Another problem exists when turning a negative dentry to positive.  If
+the negative dentry has a different case than what is currently being
+used for lookup, the dentry cannot be reused without changing its name,
+in order to guarantee filename-preserving semantics to userspace.  We
+need to either change the name or invalidate the dentry. This issue is
+currently avoided in mainline, since the negative dentry mechanism is
+disabled.
+
+* Proposal
+
+The main idea is to differentiate negative dentries created in a
+case-insensitive context from those created during a case-sensitive
+lookup via a new dentry flag, D_CASEFOLD_LOOKUP, set by the filesystem
+the d_lookup hook.  Since the former can be used (except for the
+name-preserving issue), d_revalidate will just check the flag to
+quickly accept or reject the dentry.
+
+A different solution would be to guarantee no negative dentry exists
+during the case-sensitive to case-insensitive directory conversion (the
+other direction is safe).  It has the following problems:
+
+  1) It is not trivial to implement a race-free mechanism to ensure
+  negative dentries won't be recreated immediately after invalidation
+  while converting the directory.
+
+  2) The knowledge whether the negative dentry is valid (i.e. comes from
+  a case-insensitive lookup) is implicit on the fact that we are
+  correctly invalidating dentries when converting the directory.
+
+Having a D_CASEFOLD_LOOKUP avoids both issues, and seems to be a cheap
+solution to the problem.
+
+But, as explained above, due to the filename preserving semantics, we
+cannot just validate based on D_CASEFOLD_LOOKUP.
+
+For that, one solution would be to invalidate the negative dentry when
+it is decided to turn it positive, instead of reusing it. I implemented
+that in the past (2018) but Al Viro made it clear we don't want to incur
+costs on the VFS critical path for filesystems who don't care about
+case-insensitiveness.
+
+Instead, this patch invalidates negative dentries in casefold
+directories in d_revalidate during creation lookups, iff the lookup name
+is not exactly what is cached.  Other kinds of lookups wouldn't need
+this limitation.
+
+* caveats
+
+1) Encryption
+
+Negative dentries on case-insensitive encrypted directories are also
+disabled.  No semantic change for them is intended in
+this patchset; we just bypass the revalidation directly to fscrypt, for
+positive dentries.  Encryption support is future work.
+
+2) revalidate the cached dentry using the name under lookup
+
+Validating based on the lookup name is strange for a cache.  the new
+semantic is implemented by d_revalidate, to stay out of the critical
+path of filesystems who don't care about case-insensitiveness, as much
+as possible.  The only change is the addition of a new flavor of
+d_revalidate.
+
+* Tests
+
+There are a tests in place for most of the corner cases in generic/556.
+They mainly verify the name-preserving semantics.  The invalidation when
+converting the directory is harder to test, because it is hard to force
+the invalidation of specific cached dentries that occlude a dangling
+invalid dentry.  I tested it with forcing the positive dentries to be
+removed, but I'm not sure how to write an upstreamable test.
+
+It also survives fstests quick group regression testing on both ext4 and
+f2fs.
+
+* Performance
+
+The latency of lookups of non-existing files is obviously improved, as
+would be expected.  The following numbers compare the execution time of 10^6
+lookups of a non-existing file in a case-insensitive directory
+pre-populated with 100k files in ext4.
+
+Without the patch: 10.363s / 0.349s / 9.920s  (real/user/sys)
+With the patch:     1.752s / 0.276s / 1.472s  (real/user/sys)
+
+* patchset
+
+Patch 1 introduces a new flavor of d_revalidate to provide the
+filesystem with the name under lookup; Patch 2 introduces the new flag
+to signal the dentry creation context; Patch 3 introduces a libfs helper
+to revalidate negative dentries on case-insensitive directories; Patch 4
+deals with encryption; Patch 5 cleans up the now redundant dentry
+operations for case-insensitive with and without encryption; Finally,
+Patch 6 and 7 enable support on case-insensitive directories
+for ext4 and f2fs, respectively.
+
+Gabriel Krisman Bertazi (7):
+  fs: Expose name under lookup to d_revalidate hook
+  fs: Add DCACHE_CASEFOLD_LOOKUP flag
+  libfs: Validate negative dentries in case-insensitive directories
+  libfs: Support revalidation of encrypted case-insensitive dentries
+  libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
+  ext4: Enable negative dentries on case-insensitive lookup
+  f2fs: Enable negative dentries on case-insensitive lookup
+
+ fs/dcache.c            | 10 +++++-
+ fs/ext4/namei.c        | 34 ++------------------
+ fs/f2fs/namei.c        | 23 ++------------
+ fs/libfs.c             | 72 ++++++++++++++++++++++++------------------
+ fs/namei.c             | 23 ++++++++------
+ include/linux/dcache.h |  9 ++++++
+ 6 files changed, 78 insertions(+), 93 deletions(-)
+
+-- 
+2.35.3
 
