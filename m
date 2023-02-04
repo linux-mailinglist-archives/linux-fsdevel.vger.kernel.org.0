@@ -2,214 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6236768A75F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Feb 2023 01:59:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1DC68A7C6
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Feb 2023 03:23:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232924AbjBDA7O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Feb 2023 19:59:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40212 "EHLO
+        id S232448AbjBDCXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Feb 2023 21:23:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232489AbjBDA7N (ORCPT
+        with ESMTP id S232312AbjBDCXQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Feb 2023 19:59:13 -0500
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2131.outbound.protection.outlook.com [40.107.94.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7423B60C96;
-        Fri,  3 Feb 2023 16:59:11 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Pu7iUdIf36jeZErhBH2xK75Ipq49uEcrexVqWfK6SayKuNpJaYGxmXdyvID/qYRwxwj0v8vHI4T9/Pn6qfkEHioAjt5unujEYTeGMF0koRwVg5Yszhjnf2GVkin5Y7L/geq0bUc3WV+BupiEdGrAkMOpIsBHdA46AKtJitOjyyKRRzSUOH26TAWovkh+110FuEH5YM9BkdmBoreQVm/+gD/cm/2u1OqP0/gJCFrs0gKN2wgc0yDEvcVBpviRzpDi8ckEUPHCDzkUSLrWmm/DT4F8BdYYF5bdQU3vIPgaDpRWB34kY4BwAzmKsaE6YSHF0bwIcVIO6ZMolIeugpROMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aGRF/le5Hhe6MeukxeeGTSHUpYmjALggBqEiXQwFTaY=;
- b=WhvgHBdwF6y9HB0KtS4zjP70T/uass4iBFsid+7vQGpfCCcX/4vjyFTsL6PhJ0XijPYoLI9+n10w1cTaZUH9z6/7iaHCZMb03NOT35J0oMi35sZUlmZayrTbbin2q/T0SDJamWOxQnZvB4CupCo5JZ7JOFsFxSx/Nb+06tXP9fiO5LrPkOm1Phw7qhDpsfVG3EjupcOjQNNxCDvPu94noBIoltsZAxKU76vpDsNiookfSsXUHFUoi76q/eafbLP5kgB9s444haYrL+cK5QWn0k1rh4SUSGXAeci8UhK4e58uyzOsLqCQGDsUCE6oK2VU5Zrb5rcxzz6LIbOZr3PHcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hammerspace.com; dmarc=pass action=none
- header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aGRF/le5Hhe6MeukxeeGTSHUpYmjALggBqEiXQwFTaY=;
- b=EH4Xd1d4DTXVliYb3VYuHO8lyccPrREKIN5qZYU3xdjyU/tNKYgWPiQgIgeWKMYvxbIkpOkt/M2JdQhMJEHgkNwhEIstagQ4SvGwp7ScqRDFc1Mn1bemLnoZybe4Qtu2RuynMn/ECYlSogsumX+K0cLAps2zE3iOEgdU3yS65tE=
-Received: from CH0PR13MB5084.namprd13.prod.outlook.com (2603:10b6:610:111::7)
- by PH0PR13MB5448.namprd13.prod.outlook.com (2603:10b6:510:12b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.29; Sat, 4 Feb
- 2023 00:59:06 +0000
-Received: from CH0PR13MB5084.namprd13.prod.outlook.com
- ([fe80::7007:3376:4f4e:b87b]) by CH0PR13MB5084.namprd13.prod.outlook.com
- ([fe80::7007:3376:4f4e:b87b%5]) with mapi id 15.20.6064.031; Sat, 4 Feb 2023
- 00:59:06 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     Hugh Dickins <hughd@google.com>
-CC:     Charles Edward Lever <chuck.lever@oracle.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Anna Schumaker <anna@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: git regression failures with v6.2-rc NFS client
-Thread-Topic: git regression failures with v6.2-rc NFS client
-Thread-Index: AQHZNbks6EbZ9+Bo00OYN0rzWVADp665E+wAgAEOhICAABzOgIADD6gAgAAJrgCAAAZCAIAAG42AgAANvACAACDsAIAABuIAgAAhzgCAAAx6gIAAC7sAgAAD7YCAAAIvAIAADDeA
-Date:   Sat, 4 Feb 2023 00:59:06 +0000
-Message-ID: <8B4F6A20-D7A4-4A22-914C-59F5EA79D252@hammerspace.com>
-References: <9A4A5673-691D-47EC-BC44-C43BE7E50A48@oracle.com>
- <D0404F55-2692-4DB6-8DD6-CAC004331AC1@redhat.com>
- <5FF4061F-108C-4555-A32D-DDBFA80EE4E7@redhat.com>
- <F1833EA0-263F-46DF-8001-747A871E5757@redhat.com>
- <B90C62F2-1D3A-40E0-8E33-8C349C6FFD3D@oracle.com>
- <44CB1E86-60E0-4CF0-9FD4-BB7E446542B7@redhat.com>
- <1AAC6854-2591-4B21-952A-BC58180B4091@oracle.com>
- <41813D21-95C8-44E3-BB97-1E9C03CE7FE5@redhat.com>
- <79261B77-35D0-4E36-AA29-C7BF9FB734CC@oracle.com>
- <104B6879-5223-485F-B099-767F741EB15B@redhat.com>
- <966AEC32-A7C9-4B97-A4F7-098AF6EF0067@oracle.com>
- <545B5AB7-93A6-496E-924E-AE882BF57B72@hammerspace.com>
- <FA8392E6-DAFC-4462-BDAE-893955F9E1A4@oracle.com>
- <4dd32d-9ea3-4330-454a-36f1189d599@google.com>
- <0D7A0393-EE80-4785-9A83-44CF8269758B@hammerspace.com>
- <ab632691-7e4c-ccbf-99a0-397f1f7d30ec@google.com>
-In-Reply-To: <ab632691-7e4c-ccbf-99a0-397f1f7d30ec@google.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3731.400.51.1.1)
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=hammerspace.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH0PR13MB5084:EE_|PH0PR13MB5448:EE_
-x-ms-office365-filtering-correlation-id: 26632d58-4746-4321-9081-08db064b03fa
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: bdDYbXeMWSXJ+rATEGXKhofv9Y4HGd3Kr6YuY6iKRz6JT/v1iwJ9T+oAMN7THoqkPI3C43bea0NC9+1+DHEfKtawrHruBC6p2c6mnViJfU4Cl28sY1V092mwJY51QunOCaF/eWlpcvAujs/wa1V6GOuQt1s+zODGlWlTP5szPUVsPxcLPxX2fPA1kfSHhOzrnRjf6Eu37dvVwj9RYV8Ctfq3zTl63qxfoOlx3NF+R4VhKH6dhbA/AYHZgXDDiJrDKOBR3MFtqK9x2G8vSru0sExmaohsfZtYSNAVIhWwnp2EmTIiKraP2nOuiGNHRK8JJVUdzf0KCHCr1wcSnn7yk8im+BovXwpsdAnYj+kwzWuJfqkiXC75SCdOCGejUB+GKN2TLiht3gWe8jWdiwPukAhGvLxnLSMjoMNwQCX5Fo1BLt4Y/V4yQDf6ldu9mSxPBR+VHNy1DK0SMGvRuXxKmI+Jfs2/mHLFr5pjyhp42PosVc9oaI9+RKfcByBlH4X4bqka0xbhUf/AxmgEFZmnE2UoCgFg+0Ci+Q01GOTWHXEgAkMI9z6Lv734OfUjE/sgk0GEHubyb8GJhZmLeUBd+aIVhoZ1PLTcmzgFI7QZD9a+NfIkbfHZ9UDyTX1HUMInCbSVu6pSGkVt1soZd1SQipvPYdigBaX+D5B/G6/uLOYeYYHpUrzxOwhTluH7Vweeia6XzO/COaKRysFNKn7L3P3ljASRYgqBzOm2aPFBqDfr6Jo1M6NUW65xsw1rpaxSmCJb0G5U2SKYxOsFVvbmNCquEWM92nQJj9bubivAhYs=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR13MB5084.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(366004)(136003)(346002)(376002)(396003)(39840400004)(451199018)(38100700002)(71200400001)(6486002)(478600001)(186003)(6512007)(26005)(2906002)(64756008)(6506007)(41300700001)(8936002)(8676002)(6916009)(66446008)(53546011)(66476007)(66946007)(66556008)(76116006)(4326008)(5660300002)(54906003)(316002)(122000001)(36756003)(33656002)(86362001)(2616005)(83380400001)(38070700005)(66899018)(45980500001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?N3BBdUdTSWRJTkJ0VytkTTBOdzZDd1hSeHhlVVYzOEg2R29ycTZWMkVpb1JM?=
- =?utf-8?B?UEpBemVYRFREMW9Ycm1BclZjbkJENFNBSGlkMXhNV0ZXdHlvUDA4SThWVk1F?=
- =?utf-8?B?WWpHVFQ5ZGkrRjQ5YTdjcHgvK0dsQjVZZTY0cnJjdmsxS2JsUHdQNnNERTR2?=
- =?utf-8?B?dm1OUDdvODgwMXR2MjBWY2lxaFh6TTUrOUVLZXNBTXY0T2pka0M1a2tiZmx1?=
- =?utf-8?B?akRVVUJxNEFUZnU4NE5uYldHVWhxd1N0cFBDeVZHSi9LWTRva2ZNVUZhL053?=
- =?utf-8?B?YUk3VkowQlFYbGJQbHdVcHJIRE43Wk0vK2NwMHZPd2xXR0dUQVpiZXA3VEp4?=
- =?utf-8?B?WGVHMkllbWRTTFlGbi9HeEplaEJwYi9CYUlISDV3NTh2Q3RGYWgyS0VwNEEx?=
- =?utf-8?B?YzNwVWNLSkYvdVI2NW1kQzdkUTZBenBNeFJaZ01iLytsdjU3ZzNZSm1rc2J0?=
- =?utf-8?B?c0tUZWE2ZXdzTXJuVXloelE4SGs5dDhSQ0Q1T3ZjUmJiV01wcUNGTkxJbVFH?=
- =?utf-8?B?M0YrQ1h5cCtSVEVrVDNDWllDeDliZ1ZzUkZ4cVFRU25YazN3Qld0YW5EaURt?=
- =?utf-8?B?WlV5ZFd0QnorclJlZjdtckZtSUVJTWJXeTlFa29HMDZ3NlYwK0RCYXVlNnpv?=
- =?utf-8?B?VWFpNnJFN2FML052K3lzWm40NEdXbGNQR25CN1N1MGVqcnlwTVhiajR6U0VB?=
- =?utf-8?B?YW53MVh3bzIrbDlHdTJsTng5TkxYQXk1ZmVCYlo2M2lMeVdPVHp3L2FQYkV2?=
- =?utf-8?B?NEhVL005d3hkN1lPdVhLRm00dldvRGl5Q05zNnc1L1dUUTRNZEE4ZXdUcW9r?=
- =?utf-8?B?RFd1N3Zxa1dqQm5VTHVYejJXS0JEdHA3UWpKYW42WDhOdUFiSFZRM0JFN3kr?=
- =?utf-8?B?SmVOZVJBRWNCT09tV0x0MzMyZmJlK3VsNTF3Zm1QdEo1c3FqZEIxVGlJN01y?=
- =?utf-8?B?NTVwVU5lWWRsYi9JVTNWU3RiVlVHMUJxbzkvdE1jMlYrV1ZyN1pqcDViWmtm?=
- =?utf-8?B?eFBDeEMyL29sb0tMejhDYmk3NEwzcXFnenlIUWUyS3U5SVBzL2VUUGZld013?=
- =?utf-8?B?N3k0azM1ZzIwdzg1WUhyY2ZvczVnUDVUY05VdHFvRkViTjlBS3RYOWJ3dFJD?=
- =?utf-8?B?b1lLWURiV0xXOWw5RVhJQ1ZSRGFSTWo4Nnl4NzJOSS9OYy9qL0p6N0d6cm5q?=
- =?utf-8?B?YkJxVGJjN0tieTgwR0VSYXRrMTNBbEhKU2U1b0h3TkZGbXpzMENMc1BXM1dZ?=
- =?utf-8?B?UWI5ZGkwZmxKdzhOT21WdUlocWs0YTlHQ2JUWDJ5NjN0UU5CNEhVQnA5RFlI?=
- =?utf-8?B?VWJJS2RjUDV0UUxmU2tYdEpKcW9CTWZJS2xOMVpVZzZPdHcxR2JxZWdES3BM?=
- =?utf-8?B?a3MwbENSZ2JZNzZIVk55NmFrNnhnNDluZFFwcGZnVlZIN3dCTjluQTIxSnBy?=
- =?utf-8?B?d1dzSjAvd09jZlhyYzgzRmNiQUZaTERCYlpyZ3gzK2hpdzhScDBGTjdPSkxY?=
- =?utf-8?B?UUxyOVBKblY0YjRMamFjOFVrUER0SCtvYlhJSndZQmtmcXRhL2NvY2pXMGd6?=
- =?utf-8?B?SXUwZ0ZGT0Fja2JxSktWN1lpcHdZK3loY1NBRHd0M3Z4MXRVK2pDY2t3WFYr?=
- =?utf-8?B?Z05nSWpNTVlxcjdXUmliWmFvZlNsdDlDa3d5dDdsd2VMdW1JZkpyV1FnRjlv?=
- =?utf-8?B?S3JGVXVuYkNCaDhua0xzcUpodzZwUFFHdml0S3gwV3VlS2ZuWnJSZW1Ya0ZL?=
- =?utf-8?B?TTJxRGJEMnB5SGlBVzJnOG4za3JtaTZrbUJTeEFCSHNQOUdscjBlcEVHTmkv?=
- =?utf-8?B?SnZaNW11ZU02K24weHUyL0Y5SXM4cmRRNjQ2U2FGWHhvQzFXOWFGcjhKMFZG?=
- =?utf-8?B?S2pTdkRjQVJIalZPQ0RtT1VWNU51Um5NcHhQMEk2THBabXY1Y2JweGkyMkhR?=
- =?utf-8?B?MEV4aTl5cUVYb3hDMEpXblZwY2kxakRKMkZvOVVsRHh0VDBKY21SSEl2Zmds?=
- =?utf-8?B?S215ckgvL0lLVXJGdklmTDV1ZUJEcTdhT1FBdjk1bERJZ1ViNC9wWUxncDhK?=
- =?utf-8?B?OHdpd2poc1c0SG5QLzVzQTRBT3ZaeWJxNUUzTzVpNkltOE9yRlZHYzVYdnpn?=
- =?utf-8?B?MXpNKy92dlZkWXBVMkZzdEdxbmI2YlRTUVBPM1J5akt1TEsrK0Y4MnZtNnJW?=
- =?utf-8?B?Y1E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5C5EB8A79513174999424AA1A9F1298A@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 3 Feb 2023 21:23:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10AD249021
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Feb 2023 18:23:14 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C1CCE62041
+        for <linux-fsdevel@vger.kernel.org>; Sat,  4 Feb 2023 02:23:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1885DC433D2;
+        Sat,  4 Feb 2023 02:23:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675477393;
+        bh=3OZx2HDonYsFq1nwRrshbpTvLnjj8qQdC/fmUmuFiOc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LjWhFmIDY+MnWkDZC8bR47JVI3vIlrhENsIvE+MRqi2U3fdDaHUYlIvvCBUBnStja
+         YWr0pxuQNpNNrd9z45HJb/TDdCb/DL0gN11JX6slmc3QhYbZzqA2C1AX68xYi1L5cw
+         xapud3NAh718WSga6VLhwrU8H0y1RM1P1/o87SQJdWPD5b3sGSJxiyvpbV64+LfraA
+         UtbQtQRzBMQgHGXJPJb05dZNwvJ53e3dGrlI3dpoyBnSV9yplDXaniiRwDhxrti0rb
+         Tvqkuphho/xOUpmeHPW5zOmRYwWdNGO4yk+RTTUoWrRVHINOyjTlvcO/NZ4NSo4STF
+         IBdHEQg9EMmBQ==
+Date:   Fri, 3 Feb 2023 18:23:12 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Zbigniew Halas <zhalas@gmail.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Filipe Manana <fdmanana@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
+Subject: Re: FIDEDUPERANGE claims to succeed for non-identical files
+Message-ID: <Y93BkIA4Nd3IJAk+@magnolia>
+References: <CAPr0N2i3mo=SP+AdpMz=qHXejsKWs+JLTPaJVGwrzopaWOfVdA@mail.gmail.com>
+ <CAOQ4uxh8c1=eBVihamhzCCAvRr38j0HCmth9ke3bo_nKsv62=A@mail.gmail.com>
+ <CAPr0N2gtz79Z1fNmOc_UHjQrZfqUwzx2rJ7+4X0jFbMAAoh3-Q@mail.gmail.com>
+ <Y7W2j0yFT3Y0GLR2@magnolia>
+ <CAPr0N2hV0KOmNcu4uvoFnrVS_WcXf_DfRx3j8LACyDaDFemPBQ@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR13MB5084.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26632d58-4746-4321-9081-08db064b03fa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2023 00:59:06.1654
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Cans75U95RmLCExPjN7KWbSR5g4vlzFWbmT3JdEHEHUZjOQi6B5M9NxCqdfs45zbFJ8L7P0F55WgecbIUMByPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR13MB5448
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPr0N2hV0KOmNcu4uvoFnrVS_WcXf_DfRx3j8LACyDaDFemPBQ@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DQoNCj4gT24gRmViIDMsIDIwMjMsIGF0IDE5OjE1LCBIdWdoIERpY2tpbnMgPGh1Z2hkQGdvb2ds
-ZS5jb20+IHdyb3RlOg0KPiANCj4gT24gU2F0LCA0IEZlYiAyMDIzLCBUcm9uZCBNeWtsZWJ1c3Qg
-d3JvdGU6DQo+Pj4gT24gRmViIDMsIDIwMjMsIGF0IDE4OjUzLCBIdWdoIERpY2tpbnMgPGh1Z2hk
-QGdvb2dsZS5jb20+IHdyb3RlOg0KPj4+IE9uIEZyaSwgMyBGZWIgMjAyMywgQ2h1Y2sgTGV2ZXIg
-SUlJIHdyb3RlOg0KPj4+Pj4gT24gRmViIDMsIDIwMjMsIGF0IDU6MjYgUE0sIFRyb25kIE15a2xl
-YnVzdCA8dHJvbmRteUBoYW1tZXJzcGFjZS5jb20+IHdyb3RlOg0KPj4+Pj4gVGhlIGJvdHRvbSBs
-aW5lIGlzIHRoYXQgeW914oCZdmUgYWx3YXlzIGJlZW4gcGxheWluZyB0aGUgbG90dGVyeSB3aGVu
-IG1vdW50aW5nIHRtcGZzIG92ZXIgTkZTLg0KPj4+PiANCj4+Pj4gSSdtIG5vdCBkZWJhdGluZyB0
-aGUgdHJ1dGggb2YgdGhhdC4gSSBqdXN0IGRvbid0IHRoaW5rIHdlIHNob3VsZA0KPj4+PiBiZSBt
-YWtpbmcgdGhhdCBzaXR1YXRpb24gbmVlZGxlc3NseSB3b3JzZS4NCj4+Pj4gDQo+Pj4+IEFuZCBJ
-IHdvdWxkIGJlIG11Y2ggbW9yZSBjb21mb3J0YWJsZSB3aXRoIHRoaXMgaWYgaXQgYXBwZWFyZWQg
-aW4NCj4+Pj4gYSBtYW4gcGFnZSBvciBvbiBvdXIgd2lraSwgb3IgLi4uIEknbSBzb3JyeSwgYnV0
-ICJzb21lIGVtYWlsIGluDQo+Pj4+IDIwMDEiIGlzIG5vdCBkb2N1bWVudGF0aW9uIGEgdXNlciBz
-aG91bGQgYmUgZXhwZWN0ZWQgdG8gZmluZC4NCj4+PiANCj4+PiBJIHZlcnkgbXVjaCBhZ3JlZSB3
-aXRoIHlvdSwgQ2h1Y2suICBNYWtpbmcgc29tZXRoaW5nIGltcGVyZmVjdA0KPj4+IHNpZ25pZmlj
-YW50bHkgd29yc2UgaXMgY2FsbGVkICJhIHJlZ3Jlc3Npb24iLg0KPj4+IA0KPj4+IEFuZCBJIHdv
-dWxkIGV4cGVjdCB0aGUgKGxhdWRhYmxlKSBvcHRpbWl6YXRpb24gd2hpY2ggaW50cm9kdWNlZA0K
-Pj4+IHRoYXQgcmVncmVzc2lvbiB0byBiZSByZXZlcnRlZCBmcm9tIDYuMiBmb3Igbm93LCB1bmxl
-c3MgKEkgaW1hZ2luZQ0KPj4+IG5vdCwgYnV0IGhhdmUgbm8gY2x1ZSkgaXQgY2FuIGJlIGVhc2ls
-eSBjb25kaXRpb25hbGl6ZWQgc29tZWhvdyBvbg0KPj4+IG5vdC10bXBmcyBvciBub3Qtc2ltcGxl
-X2Rpcl9vcGVyYXRpb25zLiAgQnV0IHRoYXQncyBub3QgbXkgY2FsbC4NCj4+PiANCj4+PiBXaGF0
-IGlzIHRoZSBsaWtlbGlob29kIHRoYXQgc2ltcGxlX2Rpcl9vcGVyYXRpb25zIHdpbGwgYmUgZW5o
-YW5jZWQsDQo+Pj4gb3IgYSBzYXRpc2ZhY3RvcnkgY29tcGxpY2F0ZWRfZGlyX29wZXJhdGlvbnMg
-YWRkZWQ/ICBJIGNhbiBhc3N1cmUNCj4+PiB5b3UsIG5ldmVyIGJ5IG1lISAgSWYgQWwgb3IgQW1p
-ciBvciBzb21lIGRjYWNoZS1zYXZ2eSBGUyBmb2xrIGhhdmUNCj4+PiB0aW1lIG9uIHRoZWlyIGhh
-bmRzIGFuZCBhbiB1cmdlIHRvIGFkZCB3aGF0J3Mgd2FudGVkLCBncmVhdDogYnV0DQo+Pj4gdGhh
-dCBzdXJlbHkgd2lsbCBub3QgY29tZSBpbiA2LjIsIGlmIGV2ZXIuDQo+Pj4gDQo+Pj4gTW9yZSBs
-aWtlbHkgdGhhdCBlZmZvcnQgd291bGQgaGF2ZSB0byBjb21lIGZyb20gdGhlIE5GUyhEKSBlbmQs
-DQo+Pj4gd2hvIHdpbGwgc2VlIHRoZSBiZW5lZml0LiAgQW5kIGlmIHRoZXJlJ3Mgc29tZSBsaXR0
-bGUgdHdlYWsgdG8gYmUNCj4+PiBtYWRlIHRvIHNpbXBsZV9kaXJfb3BlcmF0aW9ucywgd2hpY2gg
-d2lsbCBnaXZlIHlvdSB0aGUgaGludCB5b3UgbmVlZA0KPj4+IHRvIGhhbmRsZSBpdCBiZXR0ZXIs
-IEkgZXhwZWN0IGZzZGV2ZWwgd291bGQgd2VsY29tZSBhIHBhdGNoIG9yIHR3by4NCj4+PiANCj4+
-PiBIdWdoDQo+PiANCj4+IA0KPj4gTm8hIElmIGl0IHdhcyBpbXBvc3NpYmxlIHRvIGhpdCB0aGlz
-IHByb2JsZW0gYmVmb3JlIHRoZSBwYXRjaCwgdGhlbiBJIG1pZ2h0IGFncmVlIHdpdGggeW91LiBI
-b3dldmVyIHdoYXQgaXQgZG9lcyBpcyBleHBvc2VzIGEgcHJvYmxlbSB0aGF0IGhhcyBhbHdheXMg
-ZXhpc3RlZCwgYnV0IHdhcyBhIGxvdCBsZXNzIGxpa2VseSB0byBoYXBwZW4gdGltaW5nIHdpc2Ug
-d2hlbiB3ZSB3ZXJlIGFsbG93aW5nIGdsaWJjIHRvIHN1Y2sgaW4gYWxsIDUwMDAwIG9yIHNvIGRp
-cmVjdG9yeSBlbnRyaWVzIGluIG9uZSBndWxwLg0KPj4gDQo+PiBJT1c6IHRoaXMgcGF0Y2ggZG9l
-c27igJl0IGNhdXNlIHRoZSBwcm9ibGVtLCBpdCBqdXN0IG1ha2VzIGl0IGVhc2llciB0byBoaXQg
-d2hlbiB5b3UgYXJlIHVzaW5nIGEgaGlnaCBwZXJmb3JtYW5jZSBzZXR1cCBsaWtlIENodWNrJ3Mu
-IEl0IHdhcyBhbHdheXMgZWFzeSB0byBoaXQgd2hlbiB5b3Ugd2VyZSB1c2luZyBzbG93ZXIgbmV0
-d29ya2luZyBhbmQvb3Igc21hbGxlciByc2l6ZSB2YWx1ZXMgYWdhaW5zdCBhIHJlbW90ZSBzZXJ2
-ZXIgd2l0aCBtdWx0aXBsZSBjbGllbnRzIGNyZWF0aW5nICsgZGVsZXRpbmcgZmlsZXMgaW4gdGhl
-IHNhbWUgTkZTIGV4cG9ydGVkIHRtcGZzIGRpcmVjdG9yeS4NCj4+IF9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXw0KPj4gVHJvbmQgTXlrbGVidXN0DQo+PiBMaW51eCBORlMgY2xpZW50
-IG1haW50YWluZXIsIEhhbW1lcnNwYWNlDQo+PiB0cm9uZC5teWtsZWJ1c3RAaGFtbWVyc3BhY2Uu
-Y29tDQo+IA0KPiBJIGNhbiBvbmx5IHJlcGVhdCwNCj4gbWFraW5nIHNvbWV0aGluZyBpbXBlcmZl
-Y3Qgc2lnbmlmaWNhbnRseSB3b3JzZSBpcyBjYWxsZWQgImEgcmVncmVzc2lvbiIuDQo+IA0KPiBI
-dWdoDQoNCjxyZXNlbmRpbmcgZHVlIHRvIG1haWxpbmcgbGlzdCByZWplY3Rpb24+DQoNCkl0IGlz
-IGV4cG9zaW5nIGEgcHJvYmxlbSB3aGljaCB3YXMgYWx3YXlzIHRoZXJlLiBZb3UgY2Fu4oCZdCBq
-dXN0IHBpY2sgYW5kIGNob29zZSB5b3VyIHRlc3RzIGFuZCBjbGFpbSB0aGF0IG9uZSByZXN1bHQg
-aXMgbW9yZSBzaWduaWZpY2FudCB0aGFuIHRoZSBvdGhlcjogdGhhdOKAmXMgY2FsbGVkIGJpYXMu
-DQoNClRoZSBmdW5jdGlvbmFsIGNoYW5nZSBoZXJlIGlzIHNpbXBseSB0byBjdXQgdGhlIHZlcnkg
-Zmlyc3QgcmVhZGRpciBzaG9ydDogaS5lLiBpdCByZXR1cm5zIGZld2VyIGVudHJpZXMgdGhhbiBw
-cmV2aW91c2x5LiBSZWR1Y2luZyB0aGUgcmVhZGRpciBidWZmZXIgc2l6ZSBzdXBwbGllZCBieSB0
-aGUgdXNlcnNwYWNlIGFwcGxpY2F0aW9uIHdvdWxkIGhhdmUgdGhlIGV4YWN0IHNhbWUgZWZmZWN0
-LiBUaGUgZmFjdCB0aGF0IENodWNr4oCZcyB0ZXN0IGhhcHBlbmVkIHRvIHdvcmsgYmVmb3JlIHRo
-ZSBwYXRjaCB3ZW50IGluLCBpcyBkdWUgdG8gYSBzeXN0ZW1hdGljIGJpYXMgaW4gdGhhdCB0ZXN0
-LiBDaGFuZ2UgdGhlIHN5c3RlbWF0aWMgYmlhcyAoYnkgY2hhbmdpbmcgdGhlIGJ1ZmZlciBzaXpl
-IHN1cHBsaWVkIGJ5IGdsaWJjIGluIHRoZSBzeXNfZ2V0ZGVudHMgY2FsbCkgYW5kIHlvdSBzaG91
-bGQgc2VlIHRoZSBzYW1lIHByb2JsZW0gdGhhdCB0aGlzIHBhdGNoIGV4cG9zZWQuDQoNCg0KX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5G
-UyBjbGllbnQgbWFpbnRhaW5lciwgSGFtbWVyc3BhY2UNCnRyb25kLm15a2xlYnVzdEBoYW1tZXJz
-cGFjZS5jb20NCg0K
+On Wed, Jan 04, 2023 at 08:36:16PM +0100, Zbigniew Halas wrote:
+> On Wed, Jan 4, 2023 at 6:25 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> > On Thu, Dec 22, 2022 at 03:41:30PM +0100, Zbigniew Halas wrote:
+> > > On Thu, Dec 22, 2022 at 9:25 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > >
+> > > > Thanks for the analysis.
+> > > > Would you be interested in trying to fix the bug and writing a test?
+> > > > I can help if you would like.
+> > >
+> > > I can give it a try unless it turns out that some deep VFS changes are
+> > > required, but let's try to narrow down the reasonable API semantics
+> > > first.
+> > >
+> > > > It's hard to follow all the changes since
+> > > > 54dbc1517237 ("vfs: hoist the btrfs deduplication ioctl to the vfs")
+> > > > in v4.5, but it *looks* like this behavior might have been in btrfs,
+> > > > before the ioctl was promoted to vfs.. not sure.
+> > > >
+> > > > We have fstests coverage for the "good" case of same size src/dst
+> > > > (generic/136), but I didn't find a test for the non-same size src/dst.
+> > > >
+> > > > In any case, vfs_dedupe_file_range_one() and ->remap_file_range()
+> > > > do not even have an interface to return the actual bytes_deduped,
+> >
+> > The number of bytes remapped is passed back via the loff_t return value
+> > of ->remap_file_range.  If CAN_SHORTEN is set, the VFS and the fs
+> > implementation are allowed to reduce the @len parameter as much as they
+> > want.  TBH I'm mystified why the original btrfs dedupe ioctl wouldn't
+> > allow deduplication of common prefixes, which means that len only gets
+> > shortened to avoid weird problems when dealing with eof being in the
+> > middle of a block.
+> >
+> > (Or not, since there's clearly a bug.)
+> >
+> > > > so I do not see how any of the REMAP_FILE_CAN_SHORTEN cases
+> > > > are valid, regardless of EOF.
+> > >
+> > > Not sure about this, it looks to me that they are actually returning
+> > > the number of bytes deduped, but the value is not used, but maybe I'm
+> > > missing something.
+> > > Anyway I think there are valid cases when REMAP_FILE_CAN_SHORTEN makes sense.
+> > > For example if a source file content is a prefix of a destination file
+> > > content and we want to dedup the whole range of the source file
+> > > without REMAP_FILE_CAN_SHORTEN,
+> > > then the ioctl will only succeed when the end of the source file is at
+> > > the block boundary, otherwise it will just fail. This will render the
+> > > API very inconsistent.
+> >
+> > <nod> I'll try to figure out where the len adjusting went wrong here and
+> > report back.
+> 
+> Hey Darrick,
+> 
+> Len adjustment happens in generic_remap_checks, specifically here:
+>     if (pos_in + count == size_in &&
+>         (!(remap_flags & REMAP_FILE_DEDUP) || pos_out + count == size_out)) {
+>         bcount = ALIGN(size_in, bs) - pos_in;
+>     } else {
+>         if (!IS_ALIGNED(count, bs))
+>             count = ALIGN_DOWN(count, bs);
+>         bcount = count;
+>     }
+> the problem is that in this particular case length is set to zero, and
+> it makes generic_remap_file_range_prep to succeed.
+> I think that 2 things are needed to make this API behave reasonably:
+> * always use the original length for the file content comparison, not
+> the truncated one (there currently is also a short circuit for zero
+> length that skips comparison, this would need to be revisited as well)
+> - otherwise we may report successful deduplication, despite the ranges
+> being clearly different and only the truncated ranges being the same.
+> * report real, possibly truncated deduplication length to the userland
+
+I was about to send in a patch when git blame told me that Linus was the
+last person to change the last line of this chunk:
+
+		deduped = vfs_dedupe_file_range_one(file, off, dst_file,
+						    info->dest_offset, len,
+						    REMAP_FILE_CAN_SHORTEN);
+		if (deduped == -EBADE)
+			info->status = FILE_DEDUPE_RANGE_DIFFERS;
+		else if (deduped < 0)
+			info->status = deduped;
+		else
+			info->bytes_deduped = len;
+
+And then I remembered that I had totally repressed my entire memory of
+this unpleasant discussion wherein I got the short end of the stick not
+because I'd designed the weird btrfs ioctl that eventually became
+FIDEDUPERANGE but because I was the last person to make any real
+changes:
+https://lore.kernel.org/all/a7c93559-4ba1-df2f-7a85-55a143696405@tu-darmstadt.de/
+
+Originally, btrfs returned the request length, but also didn't do any
+checking or operation length reduction to prevent people from remapping
+a partial EOF block into the middle of a file:
+https://elixir.bootlin.com/linux/v3.19/source/fs/btrfs/ioctl.c#L3018
+
+Dave and I spent a long time adapting XFS to this interface and hoisted
+the generic(ish) parts of the btrfs code to the VFS.  The VFS support
+code returned the number of bytes remapped, though at that point either
+the original request succeeded or it didn't, even if doing so set up
+data corruption:
+https://elixir.bootlin.com/linux/v4.5/source/fs/read_write.c#L1655
+
+Miklos went and committed this change containing no description of why
+it was made.  This patch (AFAICT) was never sent to fsdevel and does not
+seem to have been reviewed by anybody.  The patch sets up the current
+broken behavior where the kernel can dedupe fewer bytes than was asked
+for, yet return the original request length:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5740c99e9d30b81fcc478797e7215c61e241f44e
+
+Five months later I noticed and fixed the problems with remapping
+partial eof blocks into the middle of files and fixed it, but none of us
+noticed there was a logic bomb lurking in bytes_deduped:
+https://lore.kernel.org/linux-fsdevel/153981625504.5568.2708520119290577378.stgit@magnolia/
+
+A different person wrote a test for sub-block dedupe, but even he failed
+to notice the broken behavior:
+https://lore.kernel.org/fstests/20181105111445.11870-1-fdmanana@kernel.org/
+
+Four years later (last summer), someone produced an attempt to fix this
+particular weird discrepancy:
+https://lore.kernel.org/all/b5805118-7e56-3d43-28e9-9e0198ee43f3@tu-darmstadt.de/
+
+Which then Dave asked for a revert because it broke generic/517:
+https://lore.kernel.org/all/20220714223238.GH3600936@dread.disaster.area/
+
+Since then, AFAICT there's been no followup to "We just need a bit of
+time to look at the various major dedupe apps and check that they still
+do the right thing w.r.t. proposed change."  The manpage for
+FIDEDUPERANGE says that bytes_deduped contains the number of bytes
+actually remapped, but that doesn't matter because Linus only cares
+about past kernel behavior.  That behavior is now a mess, since every
+LTS kernel since 4.19 has been over-reporting the number of bytes
+deduped.
+
+Unfortunately, while *I* think the correct behavior is to report bytes
+remapped even if that quantity becomes zero due to alignment issues, we
+can't report zero here because duperemove will go into an infinite loop
+because the author did the usual "len += bytes_deduped" without checking
+for a zero length.  This causes generic/561 to run forever.  One could
+argue that we could return "extents differ" in that case, but then that
+breaks generic/517 and generic/182 which aren't expecting that behavior
+either.
+
+It's probably just time for us to just burn FIEDEDUPERANGE to the ground
+and for me to convert another of my other hobbies into my profession.
+
+--D
+
+> Cheers,
+> Zbigniew
