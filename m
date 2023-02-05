@@ -2,114 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6472868B0FC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Feb 2023 17:38:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BAEA68B111
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Feb 2023 18:11:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjBEQiM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Feb 2023 11:38:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60570 "EHLO
+        id S229534AbjBERLf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Feb 2023 12:11:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbjBEQiL (ORCPT
+        with ESMTP id S229457AbjBERLe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Feb 2023 11:38:11 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81DF413D50;
-        Sun,  5 Feb 2023 08:38:06 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id ba1so4372397wrb.5;
-        Sun, 05 Feb 2023 08:38:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cBS8lQUszEWIyGd6gPYkFsOUKg2VkgciQ57XWIO2J8E=;
-        b=I8DRSWVUk/f1dBE0yr4oIeL9bgoDOSOwPaDEu7lepjK11nMbo6hA418QZX49F1wXFD
-         vJsqD3JO81C2KxCHAH6hoY10fjW9t0q5ja9x6LI9HSfCPJSYJji2beTGBul1+HhcBMI4
-         zSU+igY3lY5afMrZm7OzSJjzImga+bqgLBY2wPvoe32yz0fbVZDviGojgyyYCxYSkF2j
-         OysD2B5eytZZ2Q0A2PO/6TNNYQlnA+qShZQKOyJayOcvv24yyQZ4ZN3/HIEg18G1oM+K
-         MGjYBgi1lOErJQZfMHDGzA2c+hV+rYNybf828jw3Gn3Fw/U+XFC5WmoIFvuizMrON2fW
-         kr3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cBS8lQUszEWIyGd6gPYkFsOUKg2VkgciQ57XWIO2J8E=;
-        b=5BRZQwL/Pw6rc+QrwYfpbU0J4dj5PnZxK/lLyFF86XAUJjiCDygsP4ZTCNG9iZ5suw
-         6IaIwhcQ8ig4wPyr70H+m9xP0vpqeLmIItFhyOWaPU/g0Q+Enysxdz80IBq56McvkPN2
-         my6GNYgaHRjGG1wEOag501vXV7Gaa3R94O6o4Je87xU8Walqwv8mVXYlYyWtCoMpq1CU
-         NJ0TFcer85JEIlBrSaBQfQCVp0QcFgLW/a8b3+NPntdibVLqU21YwBypnDATVoNy0HoY
-         lBoYuGnjEf4uKFqucY9GXQuOBgDfh345it2YpYypVnCScWANFCzo/H8bYiUPVVqqS0/8
-         aS8w==
-X-Gm-Message-State: AO0yUKWjmg94V+ewWc1hSiNGDogdDCXeghtfwn1dYumo+SgZIQ/3V1UV
-        s6aa2bzyBuF9uK8yIDdfeA4QYIEjlx/7Ivh8Osw=
-X-Google-Smtp-Source: AK7set8Thtz9rQI4xrmg28H6KUW+kz/AJjlna344wYct7keepOQaeTmRV6+F1Eybr7fLhrTaR2ZGDEwFSPEJHiMNJp0=
-X-Received: by 2002:a05:6000:18a:b0:2bf:b294:52f8 with SMTP id
- p10-20020a056000018a00b002bfb29452f8mr358051wrx.269.1675615084719; Sun, 05
- Feb 2023 08:38:04 -0800 (PST)
+        Sun, 5 Feb 2023 12:11:34 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5FAD18AB5;
+        Sun,  5 Feb 2023 09:11:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7073160B97;
+        Sun,  5 Feb 2023 17:11:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F94C433EF;
+        Sun,  5 Feb 2023 17:11:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675617092;
+        bh=H9sWkZXnwmhlHUyqD3faF/Ugb/YsbBE3hdJqCnU0mvA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=LObR9Gl/ffQUI3Wy3/RX9p4NbeFHWEnZLMT9YLDlUwQIIv0FbYYG6uCSuP/R70ydk
+         VS0nede13Y2kDPbenJS+xad9MlG+u/pGY74/BpKjELFptiKdBq/HAsbHybGeUYY4Dv
+         anhaSvPc2axJfXPFPfKoocM+uONF6Saeb3qwdjwYVW+MlBzBiyGkUoFkvDN4t19+ak
+         kK0LiqHaATLuW9X6cQjzvA94AbK+Fp+FK0S4CVWM5JxMkec9hf1tjHqZDTxu4+qPom
+         xX47PhAB26mdy6cBQFRegFmV2tX3YANe1ND67kppwhg6Tk4Tvz1gUFdmK/XNHHil/4
+         USoHO8/npptsQ==
+Date:   Sun, 5 Feb 2023 09:11:32 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     djwong@kernel.org
+Cc:     dchinner@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, xu.panda@zte.com.cn,
+        yang.yang29@zte.com.cn
+Subject: [ANNOUNCE] xfs-linux: for-next updated to c85007e2e394
+Message-ID: <167561660451.2288973.14377090401939067406.stg-ugh@magnolia>
 MIME-Version: 1.0
-References: <20221218232217.1713283-1-evanhensbergen@icloud.com>
- <20230124023834.106339-1-ericvh@kernel.org> <2302787.WOG5zRkYfl@silver>
-In-Reply-To: <2302787.WOG5zRkYfl@silver>
-From:   Eric Van Hensbergen <ericvh@gmail.com>
-Date:   Sun, 5 Feb 2023 10:37:53 -0600
-Message-ID: <CAFkjPT=nxuG5rSuJ1seFV9eWvWNkyzw2f45yWqyEQV3+M91MPg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/11] Performance fixes for 9p filesystem
-To:     Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc:     v9fs-developer@lists.sourceforge.net, asmadeus@codewreck.org,
-        rminnich@gmail.com, lucho@ionkov.net,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 2, 2023 at 5:27 AM Christian Schoenebeck
-<linux_oss@crudebyte.com> wrote:
->
-> Looks like this needs more work.
->
-> I only had a glimpse on your patches yet, but made some tests by doing
-> compilations on guest on top of a 9p root fs [1], msize=500k. Under that
-> scenario:
->
-> * loose: this is suprisingly the only mode where I can see some performance
-> increase, over "loose" on master it compiled ~5% faster, but I also got some
-> misbehaviours on guest.
->
+Hi folks,
 
-I was so focused on the bugs that I forgot to respond to the
-performance concerns -- just to be clear, readahead and writeback
-aren't meant to be more performant than loose, they are meant to have
-stronger guarantees of consistency with the server file system.  Loose
-is inclusive of readahead and writeback, and it keeps the caches
-around for longer, and it does some dir caching as well -- so its
-always going to win, but it does so with risk of being more
-inconsistent with the server file system and should only be done when
-the guest/client has exclusive access or the filesystem itself is
-read-only.  I've a design for a "tight" cache, which will also not be
-as performant as loose but will add consistent dir-caching on top of
-readahead and writeback -- once we've properly vetted that it should
-likely be the default cache option and any fscache should be built on
-top of it.  I was also thinking of augmenting "tight" and "loose" with
-a "temporal" cache that works more like NFS and bounds consistency to
-a particular time quanta.  Loose was always a bit of a "hack" for some
-particular use cases and has always been a bit problematic in my mind.
+The for-next branch of the xfs-linux repository at:
 
-So, to make sure we are on the same page, was your performance
-uplifts/penalties versus cache=none or versus legacy cache=loose?  The
-10x perf improvement in the patch series was in streaming reads over
-cache=none.  I'll add the cache=loose datapoints to my performance
-notebook (on github) for the future as points of reference, but I'd
-always expect cache=loose to be the upper bound (although I have seen
-some things in the code to do with directory reads/etc. that could be
-improved there and should benefit from some of the changes I have
-planned once I get to the dir caching).
+git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-          -eric
+has just been updated.
+
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.  There's one bug fix and a number of cleanups here.  I
+merged the first patchset in the online fsck series because all it does
+is rename variables and push pointer arguments down to reduce argument
+boxing and unboxing, and I wanted to make forward progress despite staff
+time being severely limited in January due to new years, sickness, etc.
+
+Dave's very large allocator rework is still pending.  It mostly looked
+good, though I had a few minor questions and comprehension checks.
+Seeing as we're about to pass -rc7 I hope that gets done soon.
+
+The new head of the for-next branch is commit:
+
+c85007e2e394 xfs: don't use BMBT btree split workers for IO completion
+
+10 new commits:
+
+Darrick J. Wong (8):
+[ddccb81b26ec] xfs: pass the xfs_bmbt_irec directly through the log intent code
+[f3ebac4c94c1] xfs: fix confusing variable names in xfs_bmap_item.c
+[72ba455599ad] xfs: pass xfs_extent_free_item directly through the log intent code
+[578c714b215d] xfs: fix confusing xfs_extent_item variable names
+[1534328bb427] xfs: pass rmap space mapping directly through the log intent code
+[ffaa196f6221] xfs: fix confusing variable names in xfs_rmap_item.c
+[0b11553ec54a] xfs: pass refcount intent directly through the log intent code
+[01a3af226b7d] xfs: fix confusing variable names in xfs_refcount_item.c
+
+Dave Chinner (1):
+[c85007e2e394] xfs: don't use BMBT btree split workers for IO completion
+
+Xu Panda (1):
+[8954c44ff477] xfs: use strscpy() to instead of strncpy()
+
+Code Diffstat:
+
+fs/xfs/libxfs/xfs_alloc.c    |  32 +++++-----
+fs/xfs/libxfs/xfs_bmap.c     |  32 +++++-----
+fs/xfs/libxfs/xfs_bmap.h     |   5 +-
+fs/xfs/libxfs/xfs_btree.c    |  18 +++++-
+fs/xfs/libxfs/xfs_refcount.c |  96 +++++++++++++----------------
+fs/xfs/libxfs/xfs_refcount.h |   4 +-
+fs/xfs/libxfs/xfs_rmap.c     |  52 ++++++++--------
+fs/xfs/libxfs/xfs_rmap.h     |   6 +-
+fs/xfs/xfs_bmap_item.c       | 137 ++++++++++++++++++-----------------------
+fs/xfs/xfs_extfree_item.c    |  99 ++++++++++++++++--------------
+fs/xfs/xfs_refcount_item.c   | 110 +++++++++++++++------------------
+fs/xfs/xfs_rmap_item.c       | 142 +++++++++++++++++++++----------------------
+fs/xfs/xfs_trace.h           |  15 ++---
+fs/xfs/xfs_xattr.c           |   4 +-
+14 files changed, 352 insertions(+), 400 deletions(-)
