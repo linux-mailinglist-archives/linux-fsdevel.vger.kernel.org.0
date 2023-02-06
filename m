@@ -2,117 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F043168C5B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Feb 2023 19:25:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F4F468C6D4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Feb 2023 20:32:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbjBFSZZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Feb 2023 13:25:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43032 "EHLO
+        id S229812AbjBFTcb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Feb 2023 14:32:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjBFSZY (ORCPT
+        with ESMTP id S229447AbjBFTca (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Feb 2023 13:25:24 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C14BA18B1A
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Feb 2023 10:25:22 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id mf7so36761700ejc.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Feb 2023 10:25:22 -0800 (PST)
+        Mon, 6 Feb 2023 14:32:30 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4679535A2
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Feb 2023 11:32:29 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id dr8so37209529ejc.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Feb 2023 11:32:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=szeredi.hu; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5pIKYXVcSIwS8veSCH80q2Ai3VYS1M33E7BXdYcwbEw=;
-        b=aNdDScUudD4zj5QHuuNGc76Q/NxYF5rPIqFKxGjjefRpEASyOQ9GoxDr10JcSZD1/z
-         WkODS3TC7fMNPJ5fv0YMZTorOd9tFNAhD/cDDuI2VzFMLMLI+WUPum75HzxuG0rSrKpI
-         uO/6XRPsv4bDxUoH22PMbHJiSswxdvg7Xuov0=
+        bh=Z/2ldZJ25PDZXwhJ16vO/80H+7cdh/CqtwC42vZviYQ=;
+        b=qKBtRH5Teac8nFUMoHFLxSqtrrpPDPleOTN2RvPuzW4R1MfxwXyhZqo3rhc9BK7xIF
+         /6U5clXoJhabWCaiozvN50Wa0sGeU7LR7F6QQUr9zMYDTbd+oIi/MlguNhPW83y+DZs+
+         Y3UXLQXDFF6PQODMbDidFoPJ/dsfcnkCznNZQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5pIKYXVcSIwS8veSCH80q2Ai3VYS1M33E7BXdYcwbEw=;
-        b=hIwLOClOZzRlHgDHYjLlE5LkqVHtMcAD6YnBQB7I1rn9UidEvsCB0oAk3PMNHRoWrm
-         pkWMEsqZWLFbpUiIk/pvxJaI6bSKoD0ono/CodNx+2m/MPEAmZ3AtQYpqJSgaw8K5RfS
-         O2yyD6JpOFvr7X54RG9Qpd6MTxQ+OyQXK2FNOz1fON00gQhxQFRin7bwddJJfo8vBkY9
-         sW56Yu6jyqkFRxl9Ph9T2rybSfjPtVtIWhPwBudY8pQT+IJnkXehkSFWshLmG/LUasVZ
-         w+dNoh16Ub/e8WWQUjyejuxUEQcd9aSSwU4txuzPmT6L+tfRf5dAKfThEZAvd/nIw7kO
-         B/Vg==
-X-Gm-Message-State: AO0yUKWGsTY8PDi+IurT1SDa4viDldSka71mJcgyQDZf8J9oZ8mYx3mL
-        QDLQyhlPlTMn7Qfcl/nbnw+7ruZ4B2rn4Pzc17qvtw==
-X-Google-Smtp-Source: AK7set9/3LfmNACIghu1X4Hkg/Iuy46wHnCxm0J68RV2N0bhP1nBbdPvMpKfZuEVu26HMk1WYtMVlA==
-X-Received: by 2002:a17:907:6d8a:b0:88f:8a5:b4cd with SMTP id sb10-20020a1709076d8a00b0088f08a5b4cdmr474621ejc.1.1675707921163;
-        Mon, 06 Feb 2023 10:25:21 -0800 (PST)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id e6-20020a1709067e0600b0088eb55ed9cbsm5771760ejr.187.2023.02.06.10.25.20
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Feb 2023 10:25:20 -0800 (PST)
-Received: by mail-ej1-f43.google.com with SMTP id dr8so36693269ejc.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Feb 2023 10:25:20 -0800 (PST)
-X-Received: by 2002:a17:906:4e46:b0:87a:7098:ca09 with SMTP id
- g6-20020a1709064e4600b0087a7098ca09mr79649ejw.78.1675707920180; Mon, 06 Feb
- 2023 10:25:20 -0800 (PST)
+        bh=Z/2ldZJ25PDZXwhJ16vO/80H+7cdh/CqtwC42vZviYQ=;
+        b=B5ncom/V914oJgM7D4ECvB6ZkHiOzfA1zDZeYnzZrAt7AQC9iCXTZgJYkqmpGpLuNw
+         ByUwLk9tf3PH1z8GZUyahUklF+nRVxtiDE3Lt97EV163KqVgBKrrXrEd5o5Xr2EGRadR
+         jz45RynMmod9mkdRWlMhD4fK2TNNMF7AJEG1hkiXE0RTW4UHP80OE3EZzsKp23NpjQVD
+         BNREBW2BiFNcr2L8GtT59gOBn/UObJG0V0Pv012hZN5tmAsSsf0Ek8YVBRl3r2GD7zhj
+         JdjYu3U8nRfo4IDWEkC2K5HHuFHLoGUzm8WTAKW6r8VcP+hqhoSj5que7stG3xP6YZl1
+         xWfg==
+X-Gm-Message-State: AO0yUKU49MxmiMjn4ydP4gKlZAgj8upCSCkqc44IFSCagNduqDJ5aSq7
+        FYhCb0wZ2KeIE1ZalGjOzfJl7oYZP6m84a1XdAuD3w==
+X-Google-Smtp-Source: AK7set8ET2HF0RB/HxTmY7RtA1k9SmP6VqIvZdhbv3JFGi1V/ewnfNaUCnezESzTlAKclqA4CzyQIOW4xvur0LsJzgs=
+X-Received: by 2002:a17:906:7242:b0:889:a006:7db5 with SMTP id
+ n2-20020a170906724200b00889a0067db5mr153916ejk.138.1675711947888; Mon, 06 Feb
+ 2023 11:32:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20230129060452.7380-1-zhanghongchen@loongson.cn>
- <CAHk-=wjw-rrT59k6VdeLu4qUarQOzicsZPFGAO5J8TKM=oukUw@mail.gmail.com>
- <Y+EjmnRqpLuBFPX1@bombadil.infradead.org> <4ffbb0c8-c5d0-73b3-7a4e-2da9a7b03669@inria.fr>
- <Y+EupX1jX1c5BAHv@kadam>
-In-Reply-To: <Y+EupX1jX1c5BAHv@kadam>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 6 Feb 2023 10:25:03 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiibPvFEGy_Y=VDRNkBZyBxNB5oo0_4p_g3i2MduRZGig@mail.gmail.com>
-Message-ID: <CAHk-=wiibPvFEGy_Y=VDRNkBZyBxNB5oo0_4p_g3i2MduRZGig@mail.gmail.com>
-Subject: Re: [PATCH v4] pipe: use __pipe_{lock,unlock} instead of spinlock
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Julia Lawall <julia.lawall@inria.fr>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        maobibo <maobibo@loongson.cn>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sedat Dilek <sedat.dilek@gmail.com>
+References: <cover.1674227308.git.alexl@redhat.com> <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
+ <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
+ <b8601c976d6e5d3eccf6ef489da9768ad72f9571.camel@redhat.com>
+ <e840d413-c1a7-d047-1a63-468b42571846@linux.alibaba.com> <2ef122849d6f35712b56ffbcc95805672980e185.camel@redhat.com>
+ <8ffa28f5-77f6-6bde-5645-5fb799019bca@linux.alibaba.com> <51d9d1b3-2b2a-9b58-2f7f-f3a56c9e04ac@linux.alibaba.com>
+ <071074ad149b189661681aada453995741f75039.camel@redhat.com>
+ <0d2ef9d6-3b0e-364d-ec2f-c61b19d638e2@linux.alibaba.com> <de57aefc-30e8-470d-bf61-a1cca6514988@linux.alibaba.com>
+ <CAOQ4uxgS+-MxydqgO8+NQfOs9N881bHNbov28uJYX9XpthPPiw@mail.gmail.com>
+ <9c8e76a3-a60a-90a2-f726-46db39bc6558@linux.alibaba.com> <02edb5d6-a232-eed6-0338-26f9a63cfdb6@linux.alibaba.com>
+ <3d4b17795413a696b373553147935bf1560bb8c0.camel@redhat.com>
+ <CAOQ4uxjNmM81mgKOBJeScnmeR9+jG_aWvDWxAx7w_dGh0XHg3Q@mail.gmail.com>
+ <5fbca304-369d-aeb8-bc60-fdb333ca7a44@linux.alibaba.com> <CAOQ4uximQZ_DL1atbrCg0bQ8GN8JfrEartxDSP+GB_hFvYQOhg@mail.gmail.com>
+ <CAJfpegtRacAoWdhVxCE8gpLVmQege4yz8u11mvXCs2weBBQ4jg@mail.gmail.com>
+ <CAOQ4uxiW0=DJpRAu90pJic0qu=pS6f2Eo7v-Uw3pmd0zsvFuuw@mail.gmail.com>
+ <CAJfpeguczp-qOWJgsnKqx6CjCJLV49j1BOWs0Yxv93VUsTZ9AQ@mail.gmail.com> <CAOQ4uxg=1zSyTBZ-0_q=5PVuqs=4yQiMQJr1tNk7Kytxv=vuvA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxg=1zSyTBZ-0_q=5PVuqs=4yQiMQJr1tNk7Kytxv=vuvA@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 6 Feb 2023 20:32:16 +0100
+Message-ID: <CAJfpeguq2BH_4WQDb=eGkoVGOUVhNhMRicT4b_PN-t6FTBFUoQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
+ image filesystem
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Larsson <alexl@redhat.com>, gscrivan@redhat.com,
+        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, david@fromorbit.com,
+        viro@zeniv.linux.org.uk, Vivek Goyal <vgoyal@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Gao Xiang <hsiangkao@linux.alibaba.com>,
+        Jingbo Xu <jefflexu@linux.alibaba.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 6, 2023 at 8:45 AM Dan Carpenter <error27@gmail.com> wrote:
->
-> You need the cross function database to review these warnings.  [...]
->
-> hl_device_set_debug_mode() take a mutex.  Then you do
-> `smdb.py preempt hl_ctx_fini` and it prints out the call tree which
-> disables preemption.
->
-> cs_ioctl_unreserve_signals() <- disables preempt
-> -> hl_ctx_put()
->    -> hl_ctx_do_release()
->       -> hl_ctx_fini()
->
-> And so on.
+On Mon, 6 Feb 2023 at 18:16, Amir Goldstein <amir73il@gmail.com> wrote:
 
-Hmm. Do you have automation to do that at least for the non-driver (ie
-"core kernel code") ones?
+> it's not overlay{erofs+erofs}
+> it's overlay{erofs+ext4} (or another fs-verity [1] supporting fs)
+> the lower layer is a mutable fs with /objects/ dir containing
+> the blobs.
+>
+> The way to ensure the integrity of erofs is to setup dm-verity at
+> erofs mount time.
+>
+> The way to ensure the integrity of the blobs is to store an fs-verity
+> signature of each blob file in trusted.overlay.verify xattr on the
+> metacopy and for overlayfs to enable fsverity on the blob file before
+> allowing access to the lowerdata.
+>
+> At least this is my understanding of the security model.
 
-They are *hopefully* false positives, but if not they are obviously
-the most interesting.
+So this should work out of the box, right?
 
-And they are presumably not quite as overwhelming as all the driver
-ones, so even if they *are* false positives, maybe they would then be
-the point to start looking at why the tool gives the wrong answer?
-
-                Linus
+Thanks,
+Miklos
