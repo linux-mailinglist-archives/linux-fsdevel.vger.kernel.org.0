@@ -2,85 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 98A8D68C58E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Feb 2023 19:17:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F043168C5B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Feb 2023 19:25:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjBFSRb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Feb 2023 13:17:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38612 "EHLO
+        id S229634AbjBFSZZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Feb 2023 13:25:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230034AbjBFSRa (ORCPT
+        with ESMTP id S229498AbjBFSZY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Feb 2023 13:17:30 -0500
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA19523D92;
-        Mon,  6 Feb 2023 10:17:20 -0800 (PST)
-Received: by mail-vs1-xe31.google.com with SMTP id k4so13606418vsc.4;
-        Mon, 06 Feb 2023 10:17:20 -0800 (PST)
+        Mon, 6 Feb 2023 13:25:24 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C14BA18B1A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Feb 2023 10:25:22 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id mf7so36761700ejc.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Feb 2023 10:25:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linux-foundation.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MDwl+agSBWVQ7d122A4RNEPR6bfEPctuIjqvgbGhfd8=;
-        b=iCP5+tNGdTVVF12Sfh9yseeBlt8N31fMrzXT5iPl5m1sMVjW7vFx4nTmHJZ1lpCpES
-         qnAdi+W2DgPgSQOPA/yfoLEJCM12sva8oaAZsHI4EcHle4yjSwNFNcdv+nToFvtcoepG
-         FrvpYsglF7BzI10weX+U3yMZKoEHXZg6KGT2imqtfVKC5r9xTrMt/V+yTzWBhE/OPbFQ
-         z7MFxThn0JrRaUmy4UMAscO9uRSID/8PQiRQI7BCXlkNEDPI8mpZ4k1l5p29Xd5JX1AL
-         BmdPsfVBA2ugyaLdCRBUVYWUUl7xOhpfk9If1YksPWdw/KWZNOcNH1KBHorAAWY3Y6Vs
-         F5BQ==
+        bh=5pIKYXVcSIwS8veSCH80q2Ai3VYS1M33E7BXdYcwbEw=;
+        b=aNdDScUudD4zj5QHuuNGc76Q/NxYF5rPIqFKxGjjefRpEASyOQ9GoxDr10JcSZD1/z
+         WkODS3TC7fMNPJ5fv0YMZTorOd9tFNAhD/cDDuI2VzFMLMLI+WUPum75HzxuG0rSrKpI
+         uO/6XRPsv4bDxUoH22PMbHJiSswxdvg7Xuov0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MDwl+agSBWVQ7d122A4RNEPR6bfEPctuIjqvgbGhfd8=;
-        b=eM6WvYbIdu3kgqKUNE0eBx98juzP23sshEm0ic/WOXDcSAopd80ZJBvNAgnVd8H/gC
-         ZXF0cu5Pwc5BETMvj35E5iAIXYOQZKkoSse45i8jWqCiP+aCnZHtwOZc/ZBoEunx470j
-         61ccfPWNmIh7oAPPZOIBgwpfV+bbBIxPdyMUuUVtqEVQ0YQEdgSFAkJXq+w4TL3EAwT6
-         b7qn/xBaWz4MGzOgz8EwEPmxYRwMJSlCfR4ca+SswykGfviI8rq9XWDb2Ko8Zi7f++X7
-         EiKQmPq/MoKg06MzUM2kL0fhSYzPdzK7jFzhZPw63ePIn1DUespiuvPH4Q0GPfup6x7j
-         wixQ==
-X-Gm-Message-State: AO0yUKXWXV/eoVrOoqWRUbD7RmE0FYttk80RxZWNbp95WscCKaon8Wvc
-        cG3wEah28uRARrU3O5t9FUStOafbbNOJSR1zFoY=
-X-Google-Smtp-Source: AK7set9o8XiDbTlxHoztDYFURVxQmUGLwgCE0SQQWoxR036UTjrawf+vKWgyTgaM7xeUymNUtNosY8YbR5nyqCQ38VM=
-X-Received: by 2002:a67:a444:0:b0:3e9:6d7f:6f37 with SMTP id
- p4-20020a67a444000000b003e96d7f6f37mr128234vsh.3.1675707439751; Mon, 06 Feb
- 2023 10:17:19 -0800 (PST)
+        bh=5pIKYXVcSIwS8veSCH80q2Ai3VYS1M33E7BXdYcwbEw=;
+        b=hIwLOClOZzRlHgDHYjLlE5LkqVHtMcAD6YnBQB7I1rn9UidEvsCB0oAk3PMNHRoWrm
+         pkWMEsqZWLFbpUiIk/pvxJaI6bSKoD0ono/CodNx+2m/MPEAmZ3AtQYpqJSgaw8K5RfS
+         O2yyD6JpOFvr7X54RG9Qpd6MTxQ+OyQXK2FNOz1fON00gQhxQFRin7bwddJJfo8vBkY9
+         sW56Yu6jyqkFRxl9Ph9T2rybSfjPtVtIWhPwBudY8pQT+IJnkXehkSFWshLmG/LUasVZ
+         w+dNoh16Ub/e8WWQUjyejuxUEQcd9aSSwU4txuzPmT6L+tfRf5dAKfThEZAvd/nIw7kO
+         B/Vg==
+X-Gm-Message-State: AO0yUKWGsTY8PDi+IurT1SDa4viDldSka71mJcgyQDZf8J9oZ8mYx3mL
+        QDLQyhlPlTMn7Qfcl/nbnw+7ruZ4B2rn4Pzc17qvtw==
+X-Google-Smtp-Source: AK7set9/3LfmNACIghu1X4Hkg/Iuy46wHnCxm0J68RV2N0bhP1nBbdPvMpKfZuEVu26HMk1WYtMVlA==
+X-Received: by 2002:a17:907:6d8a:b0:88f:8a5:b4cd with SMTP id sb10-20020a1709076d8a00b0088f08a5b4cdmr474621ejc.1.1675707921163;
+        Mon, 06 Feb 2023 10:25:21 -0800 (PST)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id e6-20020a1709067e0600b0088eb55ed9cbsm5771760ejr.187.2023.02.06.10.25.20
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Feb 2023 10:25:20 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id dr8so36693269ejc.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Feb 2023 10:25:20 -0800 (PST)
+X-Received: by 2002:a17:906:4e46:b0:87a:7098:ca09 with SMTP id
+ g6-20020a1709064e4600b0087a7098ca09mr79649ejw.78.1675707920180; Mon, 06 Feb
+ 2023 10:25:20 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1674227308.git.alexl@redhat.com> <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
- <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
- <b8601c976d6e5d3eccf6ef489da9768ad72f9571.camel@redhat.com>
- <e840d413-c1a7-d047-1a63-468b42571846@linux.alibaba.com> <2ef122849d6f35712b56ffbcc95805672980e185.camel@redhat.com>
- <8ffa28f5-77f6-6bde-5645-5fb799019bca@linux.alibaba.com> <51d9d1b3-2b2a-9b58-2f7f-f3a56c9e04ac@linux.alibaba.com>
- <071074ad149b189661681aada453995741f75039.camel@redhat.com>
- <0d2ef9d6-3b0e-364d-ec2f-c61b19d638e2@linux.alibaba.com> <de57aefc-30e8-470d-bf61-a1cca6514988@linux.alibaba.com>
- <CAOQ4uxgS+-MxydqgO8+NQfOs9N881bHNbov28uJYX9XpthPPiw@mail.gmail.com>
- <9c8e76a3-a60a-90a2-f726-46db39bc6558@linux.alibaba.com> <02edb5d6-a232-eed6-0338-26f9a63cfdb6@linux.alibaba.com>
- <3d4b17795413a696b373553147935bf1560bb8c0.camel@redhat.com>
- <CAOQ4uxjNmM81mgKOBJeScnmeR9+jG_aWvDWxAx7w_dGh0XHg3Q@mail.gmail.com>
- <5fbca304-369d-aeb8-bc60-fdb333ca7a44@linux.alibaba.com> <CAOQ4uximQZ_DL1atbrCg0bQ8GN8JfrEartxDSP+GB_hFvYQOhg@mail.gmail.com>
- <CAJfpegtRacAoWdhVxCE8gpLVmQege4yz8u11mvXCs2weBBQ4jg@mail.gmail.com>
- <CAOQ4uxiW0=DJpRAu90pJic0qu=pS6f2Eo7v-Uw3pmd0zsvFuuw@mail.gmail.com>
- <CAJfpeguczp-qOWJgsnKqx6CjCJLV49j1BOWs0Yxv93VUsTZ9AQ@mail.gmail.com> <CAOQ4uxg=1zSyTBZ-0_q=5PVuqs=4yQiMQJr1tNk7Kytxv=vuvA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxg=1zSyTBZ-0_q=5PVuqs=4yQiMQJr1tNk7Kytxv=vuvA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 6 Feb 2023 20:17:06 +0200
-Message-ID: <CAOQ4uxic6-OE3=+ikb08k2iE0pDPqd3MDGXbfJ6QCwsAgLiU2A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Alexander Larsson <alexl@redhat.com>, gscrivan@redhat.com,
-        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, david@fromorbit.com,
-        viro@zeniv.linux.org.uk, Vivek Goyal <vgoyal@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>,
-        Jingbo Xu <jefflexu@linux.alibaba.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>
+References: <20230129060452.7380-1-zhanghongchen@loongson.cn>
+ <CAHk-=wjw-rrT59k6VdeLu4qUarQOzicsZPFGAO5J8TKM=oukUw@mail.gmail.com>
+ <Y+EjmnRqpLuBFPX1@bombadil.infradead.org> <4ffbb0c8-c5d0-73b3-7a4e-2da9a7b03669@inria.fr>
+ <Y+EupX1jX1c5BAHv@kadam>
+In-Reply-To: <Y+EupX1jX1c5BAHv@kadam>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 6 Feb 2023 10:25:03 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiibPvFEGy_Y=VDRNkBZyBxNB5oo0_4p_g3i2MduRZGig@mail.gmail.com>
+Message-ID: <CAHk-=wiibPvFEGy_Y=VDRNkBZyBxNB5oo0_4p_g3i2MduRZGig@mail.gmail.com>
+Subject: Re: [PATCH v4] pipe: use __pipe_{lock,unlock} instead of spinlock
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Julia Lawall <julia.lawall@inria.fr>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Hongchen Zhang <zhanghongchen@loongson.cn>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        maobibo <maobibo@loongson.cn>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sedat Dilek <sedat.dilek@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -88,129 +90,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[+overlayfs list]
+On Mon, Feb 6, 2023 at 8:45 AM Dan Carpenter <error27@gmail.com> wrote:
+>
+> You need the cross function database to review these warnings.  [...]
+>
+> hl_device_set_debug_mode() take a mutex.  Then you do
+> `smdb.py preempt hl_ctx_fini` and it prints out the call tree which
+> disables preemption.
+>
+> cs_ioctl_unreserve_signals() <- disables preempt
+> -> hl_ctx_put()
+>    -> hl_ctx_do_release()
+>       -> hl_ctx_fini()
+>
+> And so on.
 
-On Mon, Feb 6, 2023 at 7:16 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Mon, Feb 6, 2023 at 6:34 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Mon, 6 Feb 2023 at 14:31, Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > > > > My little request again, could you help benchmark on your real workload
-> > > > > > rather than "ls -lR" stuff?  If your hard KPI is really what as you
-> > > > > > said, why not just benchmark the real workload now and write a detailed
-> > > > > > analysis to everyone to explain it's a _must_ that we should upstream
-> > > > > > a new stacked fs for this?
-> > > > > >
-> > > > >
-> > > > > I agree that benchmarking the actual KPI (boot time) will have
-> > > > > a much stronger impact and help to build a much stronger case
-> > > > > for composefs if you can prove that the boot time difference really matters.
-> > > > >
-> > > > > In order to test boot time on fair grounds, I prepared for you a POC
-> > > > > branch with overlayfs lazy lookup:
-> > > > > https://github.com/amir73il/linux/commits/ovl-lazy-lowerdata
-> > > >
-> > > > Sorry about being late to the party...
-> > > >
-> > > > Can you give a little detail about what exactly this does?
-> > > >
-> > >
-> > > Consider a container image distribution system, with base images
-> > > and derived images and instruction on how to compose these images
-> > > using overlayfs or other methods.
-> > >
-> > > Consider a derived image L3 that depends on images L2, L1.
-> > >
-> > > With the composefs methodology, the image distribution server splits
-> > > each image is split into metadata only (metacopy) images M3, M2, M1
-> > > and their underlying data images containing content addressable blobs
-> > > D3, D2, D1.
-> > >
-> > > The image distribution server goes on to merge the metadata layers
-> > > on the server, so U3 = M3 + M2 + M1.
-> > >
-> > > In order to start image L3, the container client will unpack the data layers
-> > > D3, D2, D1 to local fs normally, but the server merged U3 metadata image
-> > > will be distributed as a read-only fsverity signed image that can be mounted
-> > > by mount -t composefs U3.img (much like mount -t erofs -o loop U3.img).
-> > >
-> > > The composefs image format contains "redirect" instruction to the data blob
-> > > path and an fsverity signature that can be used to verify the redirected data
-> > > content.
-> > >
-> > > When composefs authors proposed to merge composefs, Gao and me
-> > > pointed out that the same functionality can be achieved with minimal changes
-> > > using erofs+overlayfs.
-> > >
-> > > Composefs authors have presented ls -lR time and memory usage benchmarks
-> > > that demonstrate how composefs performs better that erofs+overlayfs in
-> > > this workload and explained that the lookup of the data blobs is what takes
-> > > the extra time and memory in the erofs+overlayfs ls -lR test.
-> > >
-> > > The lazyfollow POC optimizes-out the lowerdata lookup for the ls -lR
-> > > benchmark, so that composefs could be compared to erofs+overlayfs.
-> >
-> > Got it, thanks.
-> >
-> > >
-> > > To answer Alexander's question:
-> > >
-> > > > Cool. I'll play around with this. Does this need to be an opt-in
-> > > > option in the final version? It feels like this could be useful to
-> > > > improve performance in general for overlayfs, for example when
-> > > > metacopy is used in container layers.
-> > >
-> > > I think lazyfollow could be enabled by default after we hashed out
-> > > all the bugs and corner cases and most importantly remove the
-> > > POC limitation of lower-only overlay.
-> > >
-> > > The feedback that composefs authors are asking from you
-> > > is whether you will agree to consider adding the "lazyfollow
-> > > lower data" optimization and "fsverity signature for metacopy"
-> > > feature to overlayfs?
-> > >
-> > > If you do agree, the I think they should invest their resources
-> > > in making those improvements to overlayfs and perhaps
-> > > other improvements to erofs, rather than proposing a new
-> > > specialized filesystem.
-> >
-> > Lazy follow seems to make sense.  Why does it need to be optional?
->
-> It doesn't.
->
-> > Does it have any advantage to *not* do lazy follow?
-> >
->
-> Not that I can think of.
->
-> > Not sure I follow the fsverity requirement.  For overlay+erofs case
-> > itsn't it enough to verify the erofs image?
-> >
->
-> it's not overlay{erofs+erofs}
-> it's overlay{erofs+ext4} (or another fs-verity [1] supporting fs)
-> the lower layer is a mutable fs with /objects/ dir containing
-> the blobs.
->
-> The way to ensure the integrity of erofs is to setup dm-verity at
-> erofs mount time.
->
-> The way to ensure the integrity of the blobs is to store an fs-verity
-> signature of each blob file in trusted.overlay.verify xattr on the
-> metacopy and for overlayfs to enable fsverity on the blob file before
-> allowing access to the lowerdata.
->
+Hmm. Do you have automation to do that at least for the non-driver (ie
+"core kernel code") ones?
 
-Perhaps I should have mentioned that the lower /objects dir, despite
-being mutable (mostly append-only) is shared among several overlays.
+They are *hopefully* false positives, but if not they are obviously
+the most interesting.
 
-This technically breaks the law of no modification to lower layer,
-but the /objects dir itself is a whiteout in the metadata layer, so
-the blobs are only accessible via absolute path redirect and there
-is no /objects overlay dir, so there is no readdir cache to invalidate.
-Naturally, the content addressable blobs are not expected to be
-renamed/unlinked while an overlayfs that references them is mounted.
+And they are presumably not quite as overwhelming as all the driver
+ones, so even if they *are* false positives, maybe they would then be
+the point to start looking at why the tool gives the wrong answer?
 
-Thanks,
-Amir.
+                Linus
