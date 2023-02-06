@@ -2,78 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B415168BE39
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Feb 2023 14:31:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14D7E68BE65
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Feb 2023 14:37:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbjBFNbU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Feb 2023 08:31:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36692 "EHLO
+        id S230001AbjBFNhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Feb 2023 08:37:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229844AbjBFNbO (ORCPT
+        with ESMTP id S229528AbjBFNho (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Feb 2023 08:31:14 -0500
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFDA4241DD;
-        Mon,  6 Feb 2023 05:31:11 -0800 (PST)
-Received: by mail-vs1-xe33.google.com with SMTP id h19so12605602vsv.13;
-        Mon, 06 Feb 2023 05:31:11 -0800 (PST)
+        Mon, 6 Feb 2023 08:37:44 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 871AF40C5;
+        Mon,  6 Feb 2023 05:37:43 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id m16-20020a05600c3b1000b003dc4050c94aso8801843wms.4;
+        Mon, 06 Feb 2023 05:37:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cTghmzthj1eVo6UlIcvmoqs3oAdOAJPrTblnEt4AALI=;
-        b=jux8ze5nNE4HXD4lXcmwv5v6Ss7OTVtDtFSpsT4nJtTYJjLv++LiYnSoluCibfMRSH
-         oGy+l9u/2dcfcIadR0lLmHP3V0Zw91EEqxTmNNjJiD2+TX80E6qm1AYAb0vIsh9ybiz/
-         kKXrHA/LWmFpZCc5YKKD1wt6ImecGpj2iJBj/AItAGK0lZWd5f12YRUv3HJtHIJ3YrLI
-         OXELvnZ0DQ2Oi/kB48ofRZSAsdrIwHUNU4v9g6VkzTyg6AE6ZYZlDVqHfdYKWMLfTMV3
-         oMs1onsehU8RPbPv6FjpKa4bZ5KfUADmUDje9wJh9T6pI/6fHrl/bAWD0tyi4nm+7biU
-         9jnA==
+        bh=JtK8lF6MCOaS/ib0UuQzzKTe2nEq5CKGERbXbVra/oc=;
+        b=UjmmeR5KWDm6CcgY6kipRMuL9ZYkzlfB97msM82Pe4GISbKW2IVY9wvGbtdJhb4VD/
+         syzaLHV7Ek1sGVLY1vU5ioDg9dBdNTN1/hobxh83s5KwM+l+//dkLTkOZm7ZU/AiTMZ9
+         JKXoSIVFZOc5UtmJI7PfN06V1GRo1SvGVbWqv+H+qqboxPvC+C71PIjOFwwtimMLFxRG
+         TpCbZIQ+cLzvU0zhsuFNSHyAfPCvxQrzjyViF/OGUO6mDxgSENfIi/lOBE1w69p+L0zZ
+         DKdDWJ8uW1LrYm4guh29Oa0l2dvPn2Ct3teyurK+8FYjaFfUCuw3NlARYfAllTGuTm2i
+         mVRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cTghmzthj1eVo6UlIcvmoqs3oAdOAJPrTblnEt4AALI=;
-        b=g23kKHUBYLf6/hBlMLCnca3/s/VVyN4Z9WKiN33qoIwmcf8JtVYkskkitMzom1Fh6J
-         7lhxELhfu+wE/6M5gVSVL+YZw6BwnEz4K7glw23fWTK2R1S+DGZQ5Zo2iHBtJwGEzppt
-         O2907p0Bj+XqMwGYB3OkNUQ7C2lgTA0QOf3xVA1eWkN07UIviQIRGhAmonfodI7zegz/
-         nnjIv2SdM1O7APDrAU5BZs67ZohcwWgBJuItrzcoIu7nTYHbOvE1i2UMBvbp3Nl3iNND
-         fEIdAPv+L/+yhbnVho0iVe3fWr4nYDH84myxkEOiDOZrmmiVXDJMOUAtbo9Y9RsJ8bqu
-         vvLw==
-X-Gm-Message-State: AO0yUKV9OH5aov242YCLprXjgxYxpQYWTpSUq5vTLxxE+ZkP6AFucoHr
-        5tDxD9pChlNwAj4HNVNAe9u3wRJ2yYqhADvGubxDmDdDtw8=
-X-Google-Smtp-Source: AK7set/56O2kwBcS7BFgA4V1nIRW3UlBxyYmCBSt5OmgwaqR8/OqXuiidSZCOrmNVExkg7LK+yvoe0zacbG3mHnmYwc=
-X-Received: by 2002:a67:e1cb:0:b0:3e9:6d7f:6f37 with SMTP id
- p11-20020a67e1cb000000b003e96d7f6f37mr3024602vsl.3.1675690270849; Mon, 06 Feb
- 2023 05:31:10 -0800 (PST)
+        bh=JtK8lF6MCOaS/ib0UuQzzKTe2nEq5CKGERbXbVra/oc=;
+        b=HKQBMCqU3YwY8bW7ZSk0vO9gLn/l2dfkM2HsFajBhmx6avgTqafGL6GnhBQVsGXK8j
+         hqeW7uhX2qYcAApCidb3k/y/ngM22Z547rsMeXrmlnvPahRzqTQzm8i1QN1wuMBLJEck
+         ezrE/5wZDP1cUxWCt3r8X1il1hH3I9ZfTDhLNimSqvIFJkQs8CDqnv6MO+U9/LZAXH+X
+         FIeR2j9XJASL5Hb3O0WqIVVv49NBlvtJ3x3eKvyA5wNiwQ7IYnvMXe3EPOVV+AEliYNA
+         zIwMCst1wHh1aXtOlbeoVU5zvgPT65HMVSVaM+yAYJUhQncjbpQ5LBQb9imHtjY9XgN2
+         j+Mg==
+X-Gm-Message-State: AO0yUKVxZUIQefb/L8Jx/6RHocynNAlVZ4XC24xwmYojvRnmH669/f/l
+        Q1tMCjTlN4dnMzZQWnaNzkVUmIZVSBYXpPFZJWU=
+X-Google-Smtp-Source: AK7set9yjLCi6LS32UtkqwUd45F1wNsNY8ZPtU2mX3Rol2LREzaowUWQV3I0wWKKYamifbFHdduQjseQF6lcRBZVL50=
+X-Received: by 2002:a05:600c:354b:b0:3e0:c45:3456 with SMTP id
+ i11-20020a05600c354b00b003e00c453456mr53427wmq.44.1675690661795; Mon, 06 Feb
+ 2023 05:37:41 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1674227308.git.alexl@redhat.com> <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
- <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
- <b8601c976d6e5d3eccf6ef489da9768ad72f9571.camel@redhat.com>
- <e840d413-c1a7-d047-1a63-468b42571846@linux.alibaba.com> <2ef122849d6f35712b56ffbcc95805672980e185.camel@redhat.com>
- <8ffa28f5-77f6-6bde-5645-5fb799019bca@linux.alibaba.com> <51d9d1b3-2b2a-9b58-2f7f-f3a56c9e04ac@linux.alibaba.com>
- <071074ad149b189661681aada453995741f75039.camel@redhat.com>
- <0d2ef9d6-3b0e-364d-ec2f-c61b19d638e2@linux.alibaba.com> <de57aefc-30e8-470d-bf61-a1cca6514988@linux.alibaba.com>
- <CAOQ4uxgS+-MxydqgO8+NQfOs9N881bHNbov28uJYX9XpthPPiw@mail.gmail.com>
- <9c8e76a3-a60a-90a2-f726-46db39bc6558@linux.alibaba.com> <02edb5d6-a232-eed6-0338-26f9a63cfdb6@linux.alibaba.com>
- <3d4b17795413a696b373553147935bf1560bb8c0.camel@redhat.com>
- <CAOQ4uxjNmM81mgKOBJeScnmeR9+jG_aWvDWxAx7w_dGh0XHg3Q@mail.gmail.com>
- <5fbca304-369d-aeb8-bc60-fdb333ca7a44@linux.alibaba.com> <CAOQ4uximQZ_DL1atbrCg0bQ8GN8JfrEartxDSP+GB_hFvYQOhg@mail.gmail.com>
- <CAJfpegtRacAoWdhVxCE8gpLVmQege4yz8u11mvXCs2weBBQ4jg@mail.gmail.com>
-In-Reply-To: <CAJfpegtRacAoWdhVxCE8gpLVmQege4yz8u11mvXCs2weBBQ4jg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 6 Feb 2023 15:30:58 +0200
-Message-ID: <CAOQ4uxiW0=DJpRAu90pJic0qu=pS6f2Eo7v-Uw3pmd0zsvFuuw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Alexander Larsson <alexl@redhat.com>, gscrivan@redhat.com,
-        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, david@fromorbit.com,
-        viro@zeniv.linux.org.uk, Vivek Goyal <vgoyal@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>,
-        Jingbo Xu <jefflexu@linux.alibaba.com>
+References: <20221218232217.1713283-1-evanhensbergen@icloud.com>
+ <2302787.WOG5zRkYfl@silver> <CAFkjPT=nxuG5rSuJ1seFV9eWvWNkyzw2f45yWqyEQV3+M91MPg@mail.gmail.com>
+ <1959073.LTPWMqHWT2@silver>
+In-Reply-To: <1959073.LTPWMqHWT2@silver>
+From:   Eric Van Hensbergen <ericvh@gmail.com>
+Date:   Mon, 6 Feb 2023 07:37:30 -0600
+Message-ID: <CAFkjPTnDfEX4KrTtztcA=eOif6X05r=QAJrfp1wegn=xsgK6nQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] Performance fixes for 9p filesystem
+To:     Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc:     v9fs-developer@lists.sourceforge.net, asmadeus@codewreck.org,
+        rminnich@gmail.com, lucho@ionkov.net,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
@@ -85,81 +71,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > > My little request again, could you help benchmark on your real workload
-> > > rather than "ls -lR" stuff?  If your hard KPI is really what as you
-> > > said, why not just benchmark the real workload now and write a detailed
-> > > analysis to everyone to explain it's a _must_ that we should upstream
-> > > a new stacked fs for this?
-> > >
-> >
-> > I agree that benchmarking the actual KPI (boot time) will have
-> > a much stronger impact and help to build a much stronger case
-> > for composefs if you can prove that the boot time difference really matters.
-> >
-> > In order to test boot time on fair grounds, I prepared for you a POC
-> > branch with overlayfs lazy lookup:
-> > https://github.com/amir73il/linux/commits/ovl-lazy-lowerdata
+On Mon, Feb 6, 2023 at 7:20 AM Christian Schoenebeck
+<linux_oss@crudebyte.com> wrote:
 >
-> Sorry about being late to the party...
+> Okay, that's surprising to me indeed. My expecation was that "loose" would
+> still retain its previous behaviour, i.e. loose consistency cache but without
+> any readahead or writeback. I already wondered about the transitivity you used
+> in code for cache selection with direct `<=` comparison of user's cache
+> option.
 >
-> Can you give a little detail about what exactly this does?
+> Having said that, I wonder whether it would make sense to handle these as
+> options independent of each other (e.g. cache=loose,readahead), but not sure,
+> maybe it would overcomplicate things unnecessarily.
 >
 
-Consider a container image distribution system, with base images
-and derived images and instruction on how to compose these images
-using overlayfs or other methods.
+That's fair and I've considered it, but was waiting until I get to the
+dir cache changes to figure out which way I wanted to go.  I imagine
+the way that would play out is there are three types of caching
+(readahead, writeback, dir) with writeback inclusive of readahead
+still though.  Then there would be three cache policies (tight,
+temporal, loose) and finally there'd be a seperate option for fscache
+(open question as to whether or not fscache with < dir makes sense..I
+think probably not).
 
-Consider a derived image L3 that depends on images L2, L1.
+> > I've a design for a "tight" cache, which will also not be
+> > as performant as loose but will add consistent dir-caching on top of
+> > readahead and writeback -- once we've properly vetted that it should
+> > likely be the default cache option and any fscache should be built on
+> > top of it.  I was also thinking of augmenting "tight" and "loose" with
+> > a "temporal" cache that works more like NFS and bounds consistency to
+> > a particular time quanta.  Loose was always a bit of a "hack" for some
+> > particular use cases and has always been a bit problematic in my mind.
+>
+> Or we could add notifications on file changes from server side, because that's
+> what this is actually about, right?
+>
 
-With the composefs methodology, the image distribution server splits
-each image is split into metadata only (metacopy) images M3, M2, M1
-and their underlying data images containing content addressable blobs
-D3, D2, D1.
+Yeah, that's always an option, but would be tricky to work out the 9p
+model for this as model is explicitly RPC so we'd have to post a read
+for file changes.  We had the same discussion for locks and decided to
+keep it simple for now.  I'm not opposed to exploring this, but we'd
+want to keep it as a invalidate log with a single open posted read --
+could use a synthetic or something similar to the Tauth messages to
+have that.  That's gonna go on the end-of-the-backlog for
+consideration, but happy to review if someone else wants to go after
+it.
 
-The image distribution server goes on to merge the metadata layers
-on the server, so U3 = M3 + M2 + M1.
+> > So, to make sure we are on the same page, was your performance
+> > uplifts/penalties versus cache=none or versus legacy cache=loose?
+>
+> I have not tested cache=none at all, because in the scenario of 9p being a
+> root fs, you need at least cache=mmap, otherwise you won't even be able to
+> boot a minimum system.
+>
 
-In order to start image L3, the container client will unpack the data layers
-D3, D2, D1 to local fs normally, but the server merged U3 metadata image
-will be distributed as a read-only fsverity signed image that can be mounted
-by mount -t composefs U3.img (much like mount -t erofs -o loop U3.img).
+Yeah, understood -- mmap ~= writeback so the writeback issues would
+persist there.  FWIW, I continue to see no problems with cache=none,
+but that makes sense as all the changes are in the cache code.  Will
+keep crunching on getting this fixed.
 
-The composefs image format contains "redirect" instruction to the data blob
-path and an fsverity signature that can be used to verify the redirected data
-content.
+> I compared:
+>
+>   * master(cache=loose) vs. this(cache=loose)
+>
+>   * master(cache=loose) vs. this(cache=readahead)
+>
+>   * master(cache=loose) vs. this(cache=writeback)
+>
+> > The 10x perf improvement in the patch series was in streaming reads over
+> > cache=none.
+>
+> OK, that's an important information to mention in the first place. Because
+> when say you measured a performance plus of x times, I would assume you
+> compared it to at least a somewhat similar setup. I mean cache=loose was
+> always much faster than cache=none before.
+>
 
-When composefs authors proposed to merge composefs, Gao and me
-pointed out that the same functionality can be achieved with minimal changes
-using erofs+overlayfs.
+Sorry that I didn't make that more clear.  The original motivation for
+the patch series was the cpu project that Ron and I have been
+collaborating on and cache==loose was problematic for that use case so
+we wanted something that approached the performance of cache==loose
+but with tighter consistency (in particular the ability to actually do
+read-ahead with open-to-close consistency).  As you pointed out
+though, there was a 5% improvement in loose (probably due to reduction
+of messages associated with management of the writeback_fid).  In any
+case, the hope is to make cache=mmap (and eventually cache=tight) the
+default cache mode versus cache=none -- but have to get this stable
+first.
 
-Composefs authors have presented ls -lR time and memory usage benchmarks
-that demonstrate how composefs performs better that erofs+overlayfs in
-this workload and explained that the lookup of the data blobs is what takes
-the extra time and memory in the erofs+overlayfs ls -lR test.
+As I said, the dir-cache changes in the WIP patch series are expected
+to benefit loose a bit more (particularly around the dir-read pain
+points) and I spotted several cases where loose appears to be
+re-requesting files it already has in cache -- so there may be more to
+it.  But that being said, I don't expected to get 10x out of those
+changes (although depends on the types of operations being performed).
+Will know better when I get further along.
 
-The lazyfollow POC optimizes-out the lowerdata lookup for the ls -lR
-benchmark, so that composefs could be compared to erofs+overlayfs.
-
-To answer Alexander's question:
-
-> Cool. I'll play around with this. Does this need to be an opt-in
-> option in the final version? It feels like this could be useful to
-> improve performance in general for overlayfs, for example when
-> metacopy is used in container layers.
-
-I think lazyfollow could be enabled by default after we hashed out
-all the bugs and corner cases and most importantly remove the
-POC limitation of lower-only overlay.
-
-The feedback that composefs authors are asking from you
-is whether you will agree to consider adding the "lazyfollow
-lower data" optimization and "fsverity signature for metacopy"
-feature to overlayfs?
-
-If you do agree, the I think they should invest their resources
-in making those improvements to overlayfs and perhaps
-other improvements to erofs, rather than proposing a new
-specialized filesystem.
-
-Thanks,
-Amir.
+         -eric
