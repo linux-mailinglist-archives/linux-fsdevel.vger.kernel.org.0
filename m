@@ -2,85 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9636568C742
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Feb 2023 21:06:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E18968C9CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Feb 2023 23:54:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229898AbjBFUGu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Feb 2023 15:06:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46436 "EHLO
+        id S229780AbjBFWyL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Feb 2023 17:54:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbjBFUGt (ORCPT
+        with ESMTP id S229745AbjBFWyK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Feb 2023 15:06:49 -0500
-Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A4361F5DD;
-        Mon,  6 Feb 2023 12:06:49 -0800 (PST)
-Received: by mail-ua1-x934.google.com with SMTP id b11so2375875uae.4;
-        Mon, 06 Feb 2023 12:06:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+xkGpV2J5Cx97bCAdhXVZN95dnWTCs3vHPBvG3vZkgI=;
-        b=GLdhYnDq+SeaOsNFfDPrvckcxwWAkoLiZUGMofqjsmbWPtG4my6gVt93c6khDuyndp
-         h0CvwGAI2hzg3MS+6jRplijyFRghMmphT45tNmdOonin3WpdG0QvNOW/9H8FFmma3iNU
-         FEAVpZeMyL3lkdBAbM1cf8HhwJ+d4/6sIzwMumACkmWXVCGGrPqpFbrcH31Ckan7cANJ
-         WgQYGBJtaO365s9y6gkh0S4AiSMxX08GnqOi8fEkQkkVdegMdlpe1vhdQ9JrcsIq4IwE
-         xpjiFSd7XyKttFONU66daIX82VmELgJ4QZKsgvFarKNxMDXvQp12vfW7BVc5ZB196Dwb
-         AL2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+xkGpV2J5Cx97bCAdhXVZN95dnWTCs3vHPBvG3vZkgI=;
-        b=fvWYAcHGiCyLkgpwtkHYK3rl8W4cQi9JcUNjBCtUo9cQXVmbjwYNM9NFf8fWh4wuJL
-         JSmiW7OuNKTrR0f0o2UHmlMB/Jq7c6PTKWx5QC5j7pCjYBEAHMuSjBw7f7pSadwDqZft
-         iiRzaGhhZIv8qInNvCMp11xJU8Yow4IhZDjflypYWfw+kFaAOeDdO26oDB2RgigtQlo3
-         drVZptf/5RiarcsD5NAbjnJdJWTfGb6Ro4jYtnqQGEn1ZMytdu4JY0OaDzsxO0yscfv3
-         Hi1yudyKKw948BzrAMTWKBx/mjaoAnIX2dz2bCsMr9xdnG/4I+oJrue4xqzw/k3UfFJq
-         RhtA==
-X-Gm-Message-State: AO0yUKW7NnAGmdnomATL01nihpFq5xE/8P5oFw6ttqyGEFePiON3xwXt
-        kDRELCXvy1ap7LZ6E7Ht7FBkRFdFKw1PqpdK8Tk=
-X-Google-Smtp-Source: AK7set8WyoBT5Inpy/MKmFd1oJQhy1sDtq2NeLfQ/J0rms1tT9l3kaPutniAOte6912JclDaYY6wcr0JYv53Ch7ypFU=
-X-Received: by 2002:ab0:7598:0:b0:683:9503:fd65 with SMTP id
- q24-20020ab07598000000b006839503fd65mr121853uap.13.1675714008063; Mon, 06 Feb
- 2023 12:06:48 -0800 (PST)
+        Mon, 6 Feb 2023 17:54:10 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8334193DC
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Feb 2023 14:53:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1675724001;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+u1OHKdh6SWWXlvEFuLIidGMEw5HN4SNIPpsLH0U2KY=;
+        b=ZJHiAq2fJO97FI3XE0laXntR1TLcD09UWoL0W//N4YzUQEyutM3VnbJC6g0bVIOtBvlydI
+        UwPXrY9agenZNO9UhEiMBMsUrHwfwdGz8be49uU82Zz7aSbqDLhpakV9jwERSWrJ5h2h02
+        BlKFITLykxO209Svq5F3uV0f+sX/m5s=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-277-LJNDADelN1u2WiOMFnKnqQ-1; Mon, 06 Feb 2023 17:53:18 -0500
+X-MC-Unique: LJNDADelN1u2WiOMFnKnqQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C7A8E811E6E;
+        Mon,  6 Feb 2023 22:53:17 +0000 (UTC)
+Received: from x2.localnet (unknown [10.22.11.79])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B1129400F756;
+        Mon,  6 Feb 2023 22:52:47 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Richard Guy Briggs <rgb@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Richard Guy Briggs <rgb@redhat.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v7 0/3] fanotify: Allow user space to pass back additional audit
+ info
+Date:   Mon, 06 Feb 2023 17:52:20 -0500
+Message-ID: <12168436.O9o76ZdvQC@x2>
+Organization: Red Hat
+In-Reply-To: <cover.1675373475.git.rgb@redhat.com>
+References: <cover.1675373475.git.rgb@redhat.com>
 MIME-Version: 1.0
-References: <cover.1674227308.git.alexl@redhat.com> <5fb32a1297821040edd8c19ce796fc0540101653.camel@redhat.com>
- <CAOQ4uxhGX9NVxwsiBMP0q21ZRot6-UA0nGPp1wGNjgmKBjjBBA@mail.gmail.com>
- <b8601c976d6e5d3eccf6ef489da9768ad72f9571.camel@redhat.com>
- <e840d413-c1a7-d047-1a63-468b42571846@linux.alibaba.com> <2ef122849d6f35712b56ffbcc95805672980e185.camel@redhat.com>
- <8ffa28f5-77f6-6bde-5645-5fb799019bca@linux.alibaba.com> <51d9d1b3-2b2a-9b58-2f7f-f3a56c9e04ac@linux.alibaba.com>
- <071074ad149b189661681aada453995741f75039.camel@redhat.com>
- <0d2ef9d6-3b0e-364d-ec2f-c61b19d638e2@linux.alibaba.com> <de57aefc-30e8-470d-bf61-a1cca6514988@linux.alibaba.com>
- <CAOQ4uxgS+-MxydqgO8+NQfOs9N881bHNbov28uJYX9XpthPPiw@mail.gmail.com>
- <9c8e76a3-a60a-90a2-f726-46db39bc6558@linux.alibaba.com> <02edb5d6-a232-eed6-0338-26f9a63cfdb6@linux.alibaba.com>
- <3d4b17795413a696b373553147935bf1560bb8c0.camel@redhat.com>
- <CAOQ4uxjNmM81mgKOBJeScnmeR9+jG_aWvDWxAx7w_dGh0XHg3Q@mail.gmail.com>
- <5fbca304-369d-aeb8-bc60-fdb333ca7a44@linux.alibaba.com> <CAOQ4uximQZ_DL1atbrCg0bQ8GN8JfrEartxDSP+GB_hFvYQOhg@mail.gmail.com>
- <CAJfpegtRacAoWdhVxCE8gpLVmQege4yz8u11mvXCs2weBBQ4jg@mail.gmail.com>
- <CAOQ4uxiW0=DJpRAu90pJic0qu=pS6f2Eo7v-Uw3pmd0zsvFuuw@mail.gmail.com>
- <CAJfpeguczp-qOWJgsnKqx6CjCJLV49j1BOWs0Yxv93VUsTZ9AQ@mail.gmail.com>
- <CAOQ4uxg=1zSyTBZ-0_q=5PVuqs=4yQiMQJr1tNk7Kytxv=vuvA@mail.gmail.com> <CAJfpeguq2BH_4WQDb=eGkoVGOUVhNhMRicT4b_PN-t6FTBFUoQ@mail.gmail.com>
-In-Reply-To: <CAJfpeguq2BH_4WQDb=eGkoVGOUVhNhMRicT4b_PN-t6FTBFUoQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 6 Feb 2023 22:06:34 +0200
-Message-ID: <CAOQ4uxhHnvznz_wN7OdaYeF0WSMV-S87Az4uLRoREPe8oTM8eQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Alexander Larsson <alexl@redhat.com>, gscrivan@redhat.com,
-        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, david@fromorbit.com,
-        viro@zeniv.linux.org.uk, Vivek Goyal <vgoyal@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>,
-        Jingbo Xu <jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -88,31 +68,138 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 6, 2023 at 9:32 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Mon, 6 Feb 2023 at 18:16, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > it's not overlay{erofs+erofs}
-> > it's overlay{erofs+ext4} (or another fs-verity [1] supporting fs)
-> > the lower layer is a mutable fs with /objects/ dir containing
-> > the blobs.
-> >
-> > The way to ensure the integrity of erofs is to setup dm-verity at
-> > erofs mount time.
-> >
-> > The way to ensure the integrity of the blobs is to store an fs-verity
-> > signature of each blob file in trusted.overlay.verify xattr on the
-> > metacopy and for overlayfs to enable fsverity on the blob file before
-> > allowing access to the lowerdata.
-> >
-> > At least this is my understanding of the security model.
->
-> So this should work out of the box, right?
->
+Hello Richard,
 
-Mostly. IIUC, overlayfs just needs to verify the signature on
-open to fulfill the chain of trust, see cfs_open_file():
-https://lore.kernel.org/linux-fsdevel/9b799ec7e403ba814e7bc097b1e8bd5f7662d596.1674227308.git.alexl@redhat.com/
+On Friday, February 3, 2023 4:35:13 PM EST Richard Guy Briggs wrote:
+> The Fanotify API can be used for access control by requesting permission
+> event notification. The user space tooling that uses it may have a
+> complicated policy that inherently contains additional context for the
+> decision. If this information were available in the audit trail, policy
+> writers can close the loop on debugging policy. Also, if this additional
+> information were available, it would enable the creation of tools that
+> can suggest changes to the policy similar to how audit2allow can help
+> refine labeled security.
+> 
+> This patchset defines a new flag (FAN_INFO) and new extensions that
+> define additional information which are appended after the response
+> structure returned from user space on a permission event.  The appended
+> information is organized with headers containing a type and size that
+> can be delegated to interested subsystems.  One new information type is
+> defined to audit the triggering rule number.
+> 
+> A newer kernel will work with an older userspace and an older kernel
+> will behave as expected and reject a newer userspace, leaving it up to
+> the newer userspace to test appropriately and adapt as necessary.  This
+> is done by providing a a fully-formed FAN_INFO extension but setting the
+> fd to FAN_NOFD.  On a capable kernel, it will succeed but issue no audit
+> record, whereas on an older kernel it will fail.
 
-Thanks,
-Amir.
+I have taken the patches and built a new kernel. Everything looks good to me 
+on the audit side. It's acting as expected. You can put me down for an ACK or 
+tested-by or whatever is appropriate.
+
+-Steve
+
+> The audit function was updated to log the additional information in the
+> AUDIT_FANOTIFY record. The following are examples of the new record
+> format:
+>   type=FANOTIFY msg=audit(1600385147.372:590): resp=2 fan_type=1
+> fan_info=3137 subj_trust=3 obj_trust=5 type=FANOTIFY
+> msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=0 subj_trust=2
+> obj_trust=2
+> 
+> changelog:
+> v1:
+> - first version by Steve Grubb <sgrubb@redhat.com>
+> Link: https://lore.kernel.org/r/2042449.irdbgypaU6@x2
+> 
+> v2:
+> - enhancements suggested by Jan Kara <jack@suse.cz>
+> - 1/3 change %d to %u in pr_debug
+> - 2/3 change response from __u32 to __u16
+> - mod struct fanotify_response and fanotify_perm_event add extra_info_type,
+> extra_info_buf - extra_info_buf size max FANOTIFY_MAX_RESPONSE_EXTRA_LEN,
+> add struct fanotify_response_audit_rule - extend debug statements
+> - remove unneeded macros
+> - [internal] change interface to finish_permission_event() and
+> process_access_response() - 3/3 update format of extra information
+> - [internal] change interface to audit_fanotify()
+> - change ctx_type= to fan_type=
+> Link: https://lore.kernel.org/r/cover.1651174324.git.rgb@redhat.com
+> 
+> v3:
+> - 1/3 switch {,__}audit_fanotify() from uint to u32
+> - 2/3 re-add fanotify_get_response switch case FAN_DENY: to avoid
+> unnecessary churn - add FAN_EXTRA flag to indicate more info and break
+> with old kernel - change response from u16 to u32 to avoid endian issues
+> - change extra_info_buf to union
+> - move low-cost fd check earlier
+> - change FAN_RESPONSE_INFO_AUDIT_NONE to FAN_RESPONSE_INFO_NONE
+> - switch to u32 for internal and __u32 for uapi
+> Link: https://lore.kernel.org/all/cover.1652730821.git.rgb@redhat.com
+> 
+> v4:
+> - scrap FAN_INVALID_RESPONSE_MASK in favour of original to catch invalid
+> response == 0 - introduce FANOTIFY_RESPONSE_* macros
+> - uapi: remove union
+> - keep original struct fanotify_response, add fan_info infra starting with
+> audit reason - uapi add struct fanotify_response_info_header{type/pad/len}
+> and struct fanotify_response_info_audit_rule{hdr/rule} - rename fan_ctx=
+> to fan_info=, FAN_EXTRA to FAN_INFO
+> - change event struct from type/buf to len/buf
+> - enable multiple info extensions in one message
+> - hex encode fan_info in __audit_fanotify()
+> - record type FANOTIFY extended to "type=FANOTIFY
+> msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=3F" Link:
+> https://lore.kernel.org/all/cover.1659996830.git.rgb@redhat.com
+> 
+> v5:
+> - fixed warnings in p2/4 and p3/4 found by <lkp@intel.com>
+> - restore original behaviour for !FAN_INFO case and fanotify_get_response()
+> - rename member audit_rule to rule_number
+> - eliminate memory leak of info_buf on failure (no longer dynamic)
+> - rename buf:info, count:info_len, c:remain, ib:infop
+> - fix pr_debug
+> - return -ENOENT on FAN_INFO and fd==FAN_NOFD to signal new kernel
+> - fanotify_write() remove redundant size check
+> - add u32 subj_trust obj_trust fields with unknown value "2"
+> - split out to helper process_access_response_info()
+> - restore finish_permission_event() response_struct to u32
+> - assume and enforce one rule to audit, pass struct directly to
+> __audit_fanotify() - change fanotify_perm_event struct to union
+> hdr/audir_rule
+> - add vspace to fanotify_write() and process_access_response_info()
+> - squash 3/4 with 4/4
+> - fix v3 and v4 links
+> Link: https://lore.kernel.org/all/cover.1670606054.git.rgb@redhat.com
+> 
+> v6:
+> - simplify __audit_fanotify() from audit_log_format/audit_log_n_hex to
+> audit_log/%X - add comment to clarify {subj,obj}_trust values
+> - remove fd processing from process_access_response_info()
+> - return info_len immediately from process_access_response() on FAN_NOFD
+> after process_access_response_info() Link:
+> https://lore.kernel.org/all/cover.1673989212.git.rgb@redhat.com
+> 
+> v7:
+> - change non FAN_INFO case to "0"
+> - change from if-return to switch(type)-case, which now ignores non-audit
+> info Link: https://lore.kernel.org/all/cover.1675373475.git.rgb@redhat.com
+> 
+> Richard Guy Briggs (3):
+>   fanotify: Ensure consistent variable type for response
+>   fanotify: define struct members to hold response decision context
+>   fanotify,audit: Allow audit to use the full permission event response
+> 
+>  fs/notify/fanotify/fanotify.c      |  8 ++-
+>  fs/notify/fanotify/fanotify.h      |  6 +-
+>  fs/notify/fanotify/fanotify_user.c | 88 ++++++++++++++++++++++--------
+>  include/linux/audit.h              |  9 +--
+>  include/linux/fanotify.h           |  5 ++
+>  include/uapi/linux/fanotify.h      | 30 +++++++++-
+>  kernel/auditsc.c                   | 18 +++++-
+>  7 files changed, 131 insertions(+), 33 deletions(-)
+
+
+
+
