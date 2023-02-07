@@ -2,206 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DCAF68D629
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 13:09:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A87268D6C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 13:32:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231356AbjBGMJ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Feb 2023 07:09:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44468 "EHLO
+        id S231382AbjBGMb6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Feb 2023 07:31:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbjBGMJZ (ORCPT
+        with ESMTP id S230519AbjBGMb5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Feb 2023 07:09:25 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FB9C28234;
-        Tue,  7 Feb 2023 04:09:23 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 361743E760;
-        Tue,  7 Feb 2023 12:09:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1675771762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QUyJf6TCrq54OIvLnrvfLKhIRU9/0yDRM7YQm7FYDgo=;
-        b=pu3rDGFxJCnpdvBYXUVGahmS6bdRlq332LEcj2IBGnIHjcEs+F9LpHJJgW14/56NBMA0qZ
-        +WM6Mgmyulfj/xxUb8bp/uRmvuASQifhEMbVKiVqtkXEgbrrku377hdBG4iQ3ee1dpqa/2
-        pbCQ+Arf7y1Or4bQ7E2vq84i+OpM+Mc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1675771762;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QUyJf6TCrq54OIvLnrvfLKhIRU9/0yDRM7YQm7FYDgo=;
-        b=v54CC9qQ4s7m4z6LLi1bJmNm+MxgE0DUIpi095ECTnV3SFVJtMEa5wZx3/F6XhhqglSrHm
-        RyJC2mT29zAbkeCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 26DD1139ED;
-        Tue,  7 Feb 2023 12:09:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id x4dzCXI/4mNpTwAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 07 Feb 2023 12:09:22 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9C4CBA06D5; Tue,  7 Feb 2023 13:09:21 +0100 (CET)
-Date:   Tue, 7 Feb 2023 13:09:21 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v7 0/3] fanotify: Allow user space to pass back
- additional audit info
-Message-ID: <20230207120921.7pgh6uxs7ze7hkjo@quack3>
-References: <cover.1675373475.git.rgb@redhat.com>
+        Tue, 7 Feb 2023 07:31:57 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE1F0BBA8
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Feb 2023 04:31:56 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id ud5so42770627ejc.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Feb 2023 04:31:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owltronix-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GRcCIG+dDuJ3w0Yj3VinRqu4Z/wu11q5y8l0oTXpRtw=;
+        b=oiYXST+Sx1KNp7RG1nLg4dousct9D2qsP7Us0W2Xv/L8YbipjmmEuVg0zxguja5TSo
+         2tQwPTpAGFLV8siXf96jcboefcUhT+s9wE9wFLhc0E/1+BQWc9FC1+9Fm1WjBtMgZHLT
+         8Atop+x7gQ+jd4PopUIv1y3RmvGG4PLf1WdWM9PsHLjzL8WeE+aTVEyfVyeHQDmJO9MV
+         /lHjOUJQX8+QflVvFDHv4IqDD2EGp3jyjXoG8NZ2D4aHTvd9oTK6IRp1HnN/TTr6isTK
+         Y/3L8y+FszhqYSuAhTVauYQW/YGal6eAKcFA/+bhe/C/Mt5OqeBtbL6R1pSkPnMKIMFD
+         wghA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GRcCIG+dDuJ3w0Yj3VinRqu4Z/wu11q5y8l0oTXpRtw=;
+        b=SBx97s9sVmVhniBEzB4GmkM4Blg4CSSHoIY/vM6ue325cb+wPTR1lvpYWCTK//Uqkc
+         dMz53bFeofYwV7qcMwz8s3oUZldcZQ7Ow3oOfjZWDc/m9eKGfPk9apN/Tfj/u/gNAsdE
+         nqmQNhJfZOj/algfgzUyg1Ce5iXp0+FAXxiz4TdcYHdTT1QySa6w7HU7cffpMOUbIV9p
+         u5IBmtI2nbs3FYM3JlEUQZGdFFwfwvmPx6p3ceLztlJrgZnoape+W3fihFv3XHnZNqne
+         Vtnv5SBNWChJDdyJ9O52AO4FFuD41xOn4J6J7RKgsYQu6SJAOD+qFM/GPH7ZXrWfFCUq
+         ZD6g==
+X-Gm-Message-State: AO0yUKVdV5llrxM9wdSpWbnMa1dAmsyx+s8HGex4b8CZCTKTo07viRB0
+        r0IYtTA5RlijLNTLmc+ylnCT6idXD8w4n1ddd8XBgw==
+X-Google-Smtp-Source: AK7set/rtoR31FzqMlQZzNJSLVlJpI/fZtwQqGagBnncuuGFbNyCb+V7+VT7RiCd3uPbvQ06bV7z4HgpLUsW5AVSrTc=
+X-Received: by 2002:a17:906:6957:b0:886:73de:3efc with SMTP id
+ c23-20020a170906695700b0088673de3efcmr907769ejs.87.1675773115541; Tue, 07 Feb
+ 2023 04:31:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1675373475.git.rgb@redhat.com>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
+References: <20230206134148.GD6704@gsv> <22843ea8-1668-85db-3ba3-f5b4386bba38@wdc.com>
+In-Reply-To: <22843ea8-1668-85db-3ba3-f5b4386bba38@wdc.com>
+From:   Hans Holmberg <hans@owltronix.com>
+Date:   Tue, 7 Feb 2023 13:31:44 +0100
+Message-ID: <CANr-nt2q-1GjE6wx4W+6cSV9RULd8PKmS2-qyE2NvhRgMNawXQ@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC]: File system data placement for zoned block devices
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc:     Hans Holmberg <Hans.Holmberg@wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <Matias.Bjorling@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Dennis Maisenbacher <dennis.maisenbacher@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Aravind Ramesh <Aravind.Ramesh@wdc.com>,
+        =?UTF-8?Q?J=C3=B8rgen_Hansen?= <Jorgen.Hansen@wdc.com>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "javier@javigon.com" <javier@javigon.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "a.manzanares@samsung.com" <a.manzanares@samsung.com>,
+        "guokuankuan@bytedance.com" <guokuankuan@bytedance.com>,
+        "viacheslav.dubeyko@bytedance.com" <viacheslav.dubeyko@bytedance.com>,
+        "j.granados@samsung.com" <j.granados@samsung.com>,
+        Boris Burkov <boris@bur.io>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 03-02-23 16:35:13, Richard Guy Briggs wrote:
-> The Fanotify API can be used for access control by requesting permission
-> event notification. The user space tooling that uses it may have a
-> complicated policy that inherently contains additional context for the
-> decision. If this information were available in the audit trail, policy
-> writers can close the loop on debugging policy. Also, if this additional
-> information were available, it would enable the creation of tools that
-> can suggest changes to the policy similar to how audit2allow can help
-> refine labeled security.
-> 
-> This patchset defines a new flag (FAN_INFO) and new extensions that
-> define additional information which are appended after the response
-> structure returned from user space on a permission event.  The appended
-> information is organized with headers containing a type and size that
-> can be delegated to interested subsystems.  One new information type is
-> defined to audit the triggering rule number.  
-> 
-> A newer kernel will work with an older userspace and an older kernel
-> will behave as expected and reject a newer userspace, leaving it up to
-> the newer userspace to test appropriately and adapt as necessary.  This
-> is done by providing a a fully-formed FAN_INFO extension but setting the
-> fd to FAN_NOFD.  On a capable kernel, it will succeed but issue no audit
-> record, whereas on an older kernel it will fail.
-> 
-> The audit function was updated to log the additional information in the
-> AUDIT_FANOTIFY record. The following are examples of the new record
-> format:
->   type=FANOTIFY msg=audit(1600385147.372:590): resp=2 fan_type=1 fan_info=3137 subj_trust=3 obj_trust=5
->   type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=0 subj_trust=2 obj_trust=2
+On Mon, Feb 6, 2023 at 3:24 PM Johannes Thumshirn
+<Johannes.Thumshirn@wdc.com> wrote:
+>
+> On 06.02.23 14:41, Hans Holmberg wrote:
+> > Out of the upstream file systems, btrfs and f2fs supports
+> > the zoned block device model. F2fs supports active data placement
+> > by separating cold from hot data which helps in reducing gc,
+> > but there is room for improvement.
+>
+> FYI, there's a patchset [1] from Boris for btrfs which uses different
+> size classes to further parallelize placement. As of now it leaves out
+> ZNS drives, as this can clash with the MOZ/MAZ limits but once active
+> zone tracking is fully bug free^TM we should look into using these
+> allocator hints for ZNS as well.
+>
 
-Thanks! I've applied this series to my tree.
+That looks like a great start!
 
-								Honza
+Via that patch series I also found Josef's fsperf repo [1], which is
+exactly what I have
+been looking for: a set of common tests for file system performance. I hope that
+it can be extended with longer-running tests doing several disk overwrites with
+application-like workloads.
 
-> 
-> changelog:
-> v1:
-> - first version by Steve Grubb <sgrubb@redhat.com>
-> Link: https://lore.kernel.org/r/2042449.irdbgypaU6@x2
-> 
-> v2:
-> - enhancements suggested by Jan Kara <jack@suse.cz>
-> - 1/3 change %d to %u in pr_debug
-> - 2/3 change response from __u32 to __u16
-> - mod struct fanotify_response and fanotify_perm_event add extra_info_type, extra_info_buf
-> - extra_info_buf size max FANOTIFY_MAX_RESPONSE_EXTRA_LEN, add struct fanotify_response_audit_rule
-> - extend debug statements
-> - remove unneeded macros
-> - [internal] change interface to finish_permission_event() and process_access_response()
-> - 3/3 update format of extra information
-> - [internal] change interface to audit_fanotify()
-> - change ctx_type= to fan_type=
-> Link: https://lore.kernel.org/r/cover.1651174324.git.rgb@redhat.com
-> 
-> v3:
-> - 1/3 switch {,__}audit_fanotify() from uint to u32
-> - 2/3 re-add fanotify_get_response switch case FAN_DENY: to avoid unnecessary churn
-> - add FAN_EXTRA flag to indicate more info and break with old kernel
-> - change response from u16 to u32 to avoid endian issues
-> - change extra_info_buf to union
-> - move low-cost fd check earlier
-> - change FAN_RESPONSE_INFO_AUDIT_NONE to FAN_RESPONSE_INFO_NONE
-> - switch to u32 for internal and __u32 for uapi
-> Link: https://lore.kernel.org/all/cover.1652730821.git.rgb@redhat.com
-> 
-> v4:
-> - scrap FAN_INVALID_RESPONSE_MASK in favour of original to catch invalid response == 0
-> - introduce FANOTIFY_RESPONSE_* macros
-> - uapi: remove union
-> - keep original struct fanotify_response, add fan_info infra starting with audit reason
-> - uapi add struct fanotify_response_info_header{type/pad/len} and struct fanotify_response_info_audit_rule{hdr/rule}
-> - rename fan_ctx= to fan_info=, FAN_EXTRA to FAN_INFO
-> - change event struct from type/buf to len/buf
-> - enable multiple info extensions in one message
-> - hex encode fan_info in __audit_fanotify()
-> - record type FANOTIFY extended to "type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=3F"                                                                                                                     
-> Link: https://lore.kernel.org/all/cover.1659996830.git.rgb@redhat.com
-> 
-> v5:
-> - fixed warnings in p2/4 and p3/4 found by <lkp@intel.com>
-> - restore original behaviour for !FAN_INFO case and fanotify_get_response()
-> - rename member audit_rule to rule_number
-> - eliminate memory leak of info_buf on failure (no longer dynamic)
-> - rename buf:info, count:info_len, c:remain, ib:infop
-> - fix pr_debug
-> - return -ENOENT on FAN_INFO and fd==FAN_NOFD to signal new kernel
-> - fanotify_write() remove redundant size check
-> - add u32 subj_trust obj_trust fields with unknown value "2"
-> - split out to helper process_access_response_info()
-> - restore finish_permission_event() response_struct to u32
-> - assume and enforce one rule to audit, pass struct directly to __audit_fanotify()
-> - change fanotify_perm_event struct to union hdr/audir_rule
-> - add vspace to fanotify_write() and process_access_response_info()
-> - squash 3/4 with 4/4
-> - fix v3 and v4 links
-> Link: https://lore.kernel.org/all/cover.1670606054.git.rgb@redhat.com
-> 
-> v6:
-> - simplify __audit_fanotify() from audit_log_format/audit_log_n_hex to audit_log/%X
-> - add comment to clarify {subj,obj}_trust values
-> - remove fd processing from process_access_response_info()
-> - return info_len immediately from process_access_response() on FAN_NOFD after process_access_response_info()
-> Link: https://lore.kernel.org/all/cover.1673989212.git.rgb@redhat.com
-> 
-> v7:
-> - change non FAN_INFO case to "0"
-> - change from if-return to switch(type)-case, which now ignores non-audit info
-> Link: https://lore.kernel.org/all/cover.1675373475.git.rgb@redhat.com
-> 
-> Richard Guy Briggs (3):
->   fanotify: Ensure consistent variable type for response
->   fanotify: define struct members to hold response decision context
->   fanotify,audit: Allow audit to use the full permission event response
-> 
->  fs/notify/fanotify/fanotify.c      |  8 ++-
->  fs/notify/fanotify/fanotify.h      |  6 +-
->  fs/notify/fanotify/fanotify_user.c | 88 ++++++++++++++++++++++--------
->  include/linux/audit.h              |  9 +--
->  include/linux/fanotify.h           |  5 ++
->  include/uapi/linux/fanotify.h      | 30 +++++++++-
->  kernel/auditsc.c                   | 18 +++++-
->  7 files changed, 131 insertions(+), 33 deletions(-)
-> 
-> -- 
-> 2.27.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> The hot/cold data can be a 2nd placement hint, of cause, not just the
+> different size classes of an extent.
+
+Yes. I'll dig into the patches and see if I can figure out how that
+could be done.
+
+Cheers,
+Hans
+
+[1] https://github.com/josefbacik/fsperf
