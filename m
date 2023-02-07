@@ -2,41 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B92D68D98B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 14:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 048A868D98C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 14:40:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232084AbjBGNkS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Feb 2023 08:40:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56112 "EHLO
+        id S231936AbjBGNkT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Feb 2023 08:40:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230132AbjBGNkP (ORCPT
+        with ESMTP id S231558AbjBGNkP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 7 Feb 2023 08:40:15 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F9E23D83
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Feb 2023 05:39:28 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E541821A3F
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Feb 2023 05:39:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675777167;
+        s=mimecast20190719; t=1675777170;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=+ct4EEN1Tx2kpi+pcudcB8r2YKIl9DGh1ohw3MpFlVY=;
-        b=EogV5usZ2Zsv4unCeXk52t9gjqtRlL13wfpnxVOtHbow6VRXwL41HgbQ18X9E+mYqA7x7e
-        6Qu9w4O/jEijJNGPERqPs2Jgho8la4QlpiNJq5zjnrFo1JeTf/ozZYbjJbfDdb+MGT2n9D
-        hhGf3aBhLBvxAE0W4IGIEEzxFLB+71E=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8tPGOe6bSrGHTjccXGBH/EOWbIxN9iyO0od7H26UWmA=;
+        b=cdC17vr6e2m+Fp5KSncfW6L2GdUMrbuBm6P+XRy+Rw9wNlGg9WP+ya9Fm0dMTDMauZm0/l
+        /vX7vPbMfj+4T0R3zRoPQoV9Jl5cta7Oi+febOmxUrwCxQWtr47rybnD2LUN8eBQq8rhpc
+        T3ZNBwjc8oTFLLVtw9HUhA00HPl03D0=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-662-WvHxkaGVM-CnLEd43YiVOQ-1; Tue, 07 Feb 2023 08:39:24 -0500
-X-MC-Unique: WvHxkaGVM-CnLEd43YiVOQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+ us-mta-54-hT7oMmRJOGWd-P2mMPAR5g-1; Tue, 07 Feb 2023 08:39:26 -0500
+X-MC-Unique: hT7oMmRJOGWd-P2mMPAR5g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8D0D6887401;
-        Tue,  7 Feb 2023 13:39:23 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 287881C02D26;
+        Tue,  7 Feb 2023 13:39:26 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.33.36.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A8AE3175AD;
-        Tue,  7 Feb 2023 13:39:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 27F79400DFDB;
+        Tue,  7 Feb 2023 13:39:24 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -48,16 +49,21 @@ Cc:     David Howells <dhowells@redhat.com>,
         Logan Gunthorpe <logang@deltatee.com>,
         Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH 0/2] iomap, splice: Fix DIO/splice_read race memory corruptor and kill off ITER_PIPE
-Date:   Tue,  7 Feb 2023 13:39:14 +0000
-Message-Id: <20230207133916.3109147-1-dhowells@redhat.com>
+        linux-mm@kvack.org,
+        syzbot+a440341a59e3b7142895@syzkaller.appspotmail.com,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 1/2] vfs, iomap: Fix generic_file_splice_read() to avoid reversion of ITER_PIPE
+Date:   Tue,  7 Feb 2023 13:39:15 +0000
+Message-Id: <20230207133916.3109147-2-dhowells@redhat.com>
+In-Reply-To: <20230207133916.3109147-1-dhowells@redhat.com>
+References: <20230207133916.3109147-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -65,57 +71,158 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jens, Christoph, Al,
+With the new iov_iter_extract_pages() function, pages extracted from a
+non-user-backed iterator, such as ITER_PIPE, aren't pinned.
+__iomap_dio_rw(), however, calls iov_iter_revert() to shorten the iterator
+to just the data it is going to use - which causes the pipe buffers to be
+freed, even though they're attached to a bio and may get written to by DMA
+(thanks to Hillf Danton for spotting this[1]).
 
-Syzbot found a bug[1] that my bio/FOLL_PIN code[2] inadvertently
-introduced.  The problem is that with my patches, pages obtained from
-kernel-backed iterators aren't ref'd or pinned when they're extracted and
-thus struct bio doesn't retain them.  A DIO-read from a file through iomap
-that races with truncate may in __iomap_dio_rw() call iov_iter_revert() on
-the iov_iter it was given.
+This then causes massive memory corruption that is particularly noticable
+when the syzbot test[2] is run.  The test boils down to:
 
-Unfortunately, if the iterator is an ITER_PIPE, the reversion has side
-effects: the pages rolled back get released.  Those pages, however, are not
-retained by the uncompleted bio and may get modified after their release.
+	out = creat(argv[1], 0666);
+	ftruncate(out, 0x800);
+	lseek(out, 0x200, SEEK_SET);
+	in = open(argv[1], O_RDONLY | O_DIRECT | O_NOFOLLOW);
+	sendfile(out, in, NULL, 0x1dd00);
 
-The first patch fixes this by switching to bulk allocating all the
-necessary pages up front and adding them to an ITER_BVEC iterator, doing
-the I/O and only then trimming the excess pages.  The remaining pages are
-then pushed into the pipe.  This has the downside (as the code stands) of
-not handling any partial page lurking in the pipe - though that could be
-places as the first element in the bvec.  OTOH, using the bulk allocation
-API should be more efficient.
+run repeatedly in parallel.  What I think is happening is that ftruncate()
+occasionally shortens the DIO read that's about to be made by sendfile's
+splice core by reducing i_size.
 
-As this is the only user of ITER_PIPE, the second patch removes ITER_PIPE
-and all its associated iov_iter helper functions.
+Fix this by replacing the use of an ITER_PIPE iterator with an ITER_BVEC
+iterator for which reversion won't free the buffers.  Bulk allocate all the
+buffers we think we're going to use in advance, do the read synchronously
+and only then trim the buffer down.  The pages we did use get pushed into
+the pipe.
 
-Thanks to Hillf Danton for spotting that iov_iter_revert() was involved[3].
+This is more efficient by virtue of doing a bulk page allocation, but
+slightly less efficient by ignoring any partial page in the pipe.
 
-[!] Jens: Note that there's a window in the linux-block/for-next branch
-    with a memory corruptor bug that someone bisecting might hit.  These
-    two patches would be better pushed to the front of my iov-extract
-    branch to eliminate the window.  Would it be possible for you to
-    replace my branch in your for-next branch at this point?
+Note that this removes the only user of ITER_PIPE.
 
-I've pushed the patches here also:
+Fixes: 920756a3306a ("block: Convert bio_iov_iter_get_pages to use iov_iter_extract_pages")
+Reported-by: syzbot+a440341a59e3b7142895@syzkaller.appspotmail.com
+Signed-off-by: David Howells <dhowells@redhat.com>
+Tested-by: syzbot+a440341a59e3b7142895@syzkaller.appspotmail.com
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: David Hildenbrand <david@redhat.com>
+cc: John Hubbard <jhubbard@nvidia.com>
+cc: Hillf Danton <hdanton@sina.com>
+cc: linux-mm@kvack.org
+cc: linux-block@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20230207094731.1390-1-hdanton@sina.com/ [1]
+Link: https://lore.kernel.org/r/000000000000b0b3c005f3a09383@google.com/ [2]
+---
+ fs/splice.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 68 insertions(+), 8 deletions(-)
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-fixes
-
-David
-
-Link: https://lore.kernel.org/r/000000000000b0b3c005f3a09383@google.com/ [1]
-Link: https://lore.kernel.org/r/20230126141626.2809643-1-dhowells@redhat.com/ [2]
-Link: https://lore.kernel.org/r/20230207094731.1390-1-hdanton@sina.com/ [3]
-
-David Howells (2):
-  vfs, iomap: Fix generic_file_splice_read() to avoid reversion of
-    ITER_PIPE
-  iov_iter: Kill ITER_PIPE
-
- fs/cifs/file.c      |   8 +-
- fs/splice.c         |  76 ++++++-
- include/linux/uio.h |  14 --
- lib/iov_iter.c      | 492 +-------------------------------------------
- mm/filemap.c        |   3 -
- 5 files changed, 72 insertions(+), 521 deletions(-)
+diff --git a/fs/splice.c b/fs/splice.c
+index 5969b7a1d353..51778437f31f 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -295,24 +295,62 @@ void splice_shrink_spd(struct splice_pipe_desc *spd)
+  *    used as long as it has more or less sane ->read_iter().
+  *
+  */
+-ssize_t generic_file_splice_read(struct file *in, loff_t *ppos,
++ssize_t generic_file_splice_read(struct file *file, loff_t *ppos,
+ 				 struct pipe_inode_info *pipe, size_t len,
+ 				 unsigned int flags)
+ {
++	LIST_HEAD(pages);
+ 	struct iov_iter to;
++	struct bio_vec *bv;
+ 	struct kiocb kiocb;
+-	int ret;
++	struct page *page;
++	unsigned int head;
++	ssize_t ret;
++	size_t used, npages, chunk, remain, reclaim;
++	int i;
++
++	/* Work out how much data we can actually add into the pipe */
++	used = pipe_occupancy(pipe->head, pipe->tail);
++	npages = max_t(ssize_t, pipe->max_usage - used, 0);
++	len = min_t(size_t, len, npages * PAGE_SIZE);
++	npages = DIV_ROUND_UP(len, PAGE_SIZE);
++
++	bv = kmalloc(array_size(npages, sizeof(bv[0])), GFP_KERNEL);
++	if (!bv)
++		return -ENOMEM;
++
++	npages = alloc_pages_bulk_list(GFP_USER, npages, &pages);
++	if (!npages) {
++		kfree(bv);
++		return -ENOMEM;
++	}
+ 
+-	iov_iter_pipe(&to, ITER_DEST, pipe, len);
+-	init_sync_kiocb(&kiocb, in);
++	remain = len = min_t(size_t, len, npages * PAGE_SIZE);
++
++	for (i = 0; i < npages; i++) {
++		chunk = min_t(size_t, PAGE_SIZE, remain);
++		page = list_first_entry(&pages, struct page, lru);
++		list_del_init(&page->lru);
++		bv[i].bv_page = page;
++		bv[i].bv_offset = 0;
++		bv[i].bv_len = chunk;
++		remain -= chunk;
++	}
++
++	/* Do the I/O */
++	iov_iter_bvec(&to, ITER_DEST, bv, npages, len);
++	init_sync_kiocb(&kiocb, file);
+ 	kiocb.ki_pos = *ppos;
+-	ret = call_read_iter(in, &kiocb, &to);
++	ret = call_read_iter(file, &kiocb, &to);
++
++	reclaim = npages * PAGE_SIZE;
++	remain = 0;
+ 	if (ret > 0) {
++		reclaim -= ret;
++		remain = ret;
+ 		*ppos = kiocb.ki_pos;
+-		file_accessed(in);
++		file_accessed(file);
+ 	} else if (ret < 0) {
+-		/* free what was emitted */
+-		pipe_discard_from(pipe, to.start_head);
+ 		/*
+ 		 * callers of ->splice_read() expect -EAGAIN on
+ 		 * "can't put anything in there", rather than -EFAULT.
+@@ -321,6 +359,28 @@ ssize_t generic_file_splice_read(struct file *in, loff_t *ppos,
+ 			ret = -EAGAIN;
+ 	}
+ 
++	/* Free any pages that didn't get touched at all. */
++	for (; reclaim >= PAGE_SIZE; reclaim -= PAGE_SIZE)
++		__free_page(bv[--npages].bv_page);
++
++	/* Push the remaining pages into the pipe. */
++	head = pipe->head;
++	for (i = 0; i < npages; i++) {
++		struct pipe_buffer *buf = &pipe->bufs[head & (pipe->ring_size - 1)];
++
++		chunk = min_t(size_t, remain, PAGE_SIZE);
++		*buf = (struct pipe_buffer) {
++			.ops	= &default_pipe_buf_ops,
++			.page	= bv[i].bv_page,
++			.offset	= 0,
++			.len	= chunk,
++		};
++		head++;
++		remain -= chunk;
++	}
++	pipe->head = head;
++
++	kfree(bv);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(generic_file_splice_read);
 
