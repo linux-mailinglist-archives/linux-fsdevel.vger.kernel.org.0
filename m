@@ -2,86 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C39B168D981
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 14:37:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B92D68D98B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 14:40:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231428AbjBGNht (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Feb 2023 08:37:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55128 "EHLO
+        id S232084AbjBGNkS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Feb 2023 08:40:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230510AbjBGNhs (ORCPT
+        with ESMTP id S230132AbjBGNkP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Feb 2023 08:37:48 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A0D421A3F;
-        Tue,  7 Feb 2023 05:37:43 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id j29-20020a05600c1c1d00b003dc52fed235so11494008wms.1;
-        Tue, 07 Feb 2023 05:37:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cm28rj9Az0U5hMacFDsUKTaBeJjioQqU2J6dR3p92Tg=;
-        b=ILJQRtgZd7lX16j/WA8Lj/dGEeLZFfn+iFir7u0IH2rDTltxSs1I8igEN+PwwhbPO2
-         7oPURxm3NDk2RY3SNISQvtkRUUM3c5bE6h0zB2NCiojvedfiaS8DW5sG9d1Hcp1Q8tiv
-         XOIeKIR8X0TsNR76X5xukwz7wjo5zEi2BG8BzOP+uN7HZPiGzvKTESqXoALG1gL1PhCF
-         4Y5UczT+FChIudEsGThZjXUVcVxusV1u1x+N7shOtTig1S7d0i1mZxdNjg33uMScZWe6
-         EdBRncMKieo77OitLf+bN8Tz0GahtSg5H7JnR1o+Thr8GwD/J9VUdlLmPmaWgcrbOU1s
-         TzFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cm28rj9Az0U5hMacFDsUKTaBeJjioQqU2J6dR3p92Tg=;
-        b=Pu3S67pRR5C4XdzIPk5c4NMQfLOAVaPWjOf4/LH/0KcikVC60Xin5r/GPsRbo8/uuE
-         RRVaRrSCi5DzDUYG9ZUIbrXQaz2zcf61wWOcoARm9EKTLNTbSMFNnAK1CKXSWTTYQDrG
-         ZQhPoivhHd2NiwPvDsOJl5HRUP+8+rP19gq0da3Sue4QszswcZlkDv7g90gGv3LOBQVk
-         ooMoiMJevCMD3npVfGZRWV+Dw1jkJeFAcB2mTsXtGKxWCN0eDYy0VipaF+I184IsLR1y
-         2UjzRAVm2Dt5lkGLhskAF5hOvqvFnDprI85biWIlWFg2JSL9/MrvGzM92QiDKXiHB0iP
-         vjng==
-X-Gm-Message-State: AO0yUKWZBucs6b0b4sYH0GnId3H0mYJMmQCi5fNeLmYfVZPDaOGrZVQc
-        NeE805P8A991YEWrGA/w00c=
-X-Google-Smtp-Source: AK7set8RzcALzpamYdyKC4uDj9lXzPUP6SPGeGKJIRGB15faLUk1G6npuUQipZ/Ae90poRqUiAITHA==
-X-Received: by 2002:a05:600c:a291:b0:3dc:55e6:fffd with SMTP id hu17-20020a05600ca29100b003dc55e6fffdmr3188847wmb.15.1675777062052;
-        Tue, 07 Feb 2023 05:37:42 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o7-20020a05600002c700b002be5bdbe40csm12128975wry.27.2023.02.07.05.37.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Feb 2023 05:37:41 -0800 (PST)
-Date:   Tue, 7 Feb 2023 16:37:38 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     xen-devel@lists.xenproject.org
-Cc:     Julia Lawall <julia.lawall@inria.fr>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        maobibo <maobibo@loongson.cn>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sedat Dilek <sedat.dilek@gmail.com>
-Subject: xen: sleeping in atomic warnings
-Message-ID: <Y+JUIl64UDmdkboh@kadam>
-References: <20230129060452.7380-1-zhanghongchen@loongson.cn>
- <CAHk-=wjw-rrT59k6VdeLu4qUarQOzicsZPFGAO5J8TKM=oukUw@mail.gmail.com>
- <Y+EjmnRqpLuBFPX1@bombadil.infradead.org>
- <4ffbb0c8-c5d0-73b3-7a4e-2da9a7b03669@inria.fr>
- <Y+EupX1jX1c5BAHv@kadam>
+        Tue, 7 Feb 2023 08:40:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F9E23D83
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Feb 2023 05:39:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1675777167;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+ct4EEN1Tx2kpi+pcudcB8r2YKIl9DGh1ohw3MpFlVY=;
+        b=EogV5usZ2Zsv4unCeXk52t9gjqtRlL13wfpnxVOtHbow6VRXwL41HgbQ18X9E+mYqA7x7e
+        6Qu9w4O/jEijJNGPERqPs2Jgho8la4QlpiNJq5zjnrFo1JeTf/ozZYbjJbfDdb+MGT2n9D
+        hhGf3aBhLBvxAE0W4IGIEEzxFLB+71E=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-662-WvHxkaGVM-CnLEd43YiVOQ-1; Tue, 07 Feb 2023 08:39:24 -0500
+X-MC-Unique: WvHxkaGVM-CnLEd43YiVOQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8D0D6887401;
+        Tue,  7 Feb 2023 13:39:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.33.36.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A8AE3175AD;
+        Tue,  7 Feb 2023 13:39:20 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH 0/2] iomap, splice: Fix DIO/splice_read race memory corruptor and kill off ITER_PIPE
+Date:   Tue,  7 Feb 2023 13:39:14 +0000
+Message-Id: <20230207133916.3109147-1-dhowells@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y+EupX1jX1c5BAHv@kadam>
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -89,99 +65,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These are static checker warnings from Smatch.  The line numbers are
-based on next-20230207.  To reproduce these warnings then you need to
-have the latest Smatch from git and you need to rebuild the cross
-function probably four times.  I have reviewed most of these and they
-all seem valid to me.  I remember I reported some a while back but never
-heard back.  https://lore.kernel.org/all/20210802144037.GA29540@kili/
+Hi Jens, Christoph, Al,
 
-regards,
-dan carpenter
+Syzbot found a bug[1] that my bio/FOLL_PIN code[2] inadvertently
+introduced.  The problem is that with my patches, pages obtained from
+kernel-backed iterators aren't ref'd or pinned when they're extracted and
+thus struct bio doesn't retain them.  A DIO-read from a file through iomap
+that races with truncate may in __iomap_dio_rw() call iov_iter_revert() on
+the iov_iter it was given.
 
-arch/x86/xen/p2m.c:189 alloc_p2m_page() warn: sleeping in atomic context
-xen_create_contiguous_region() <- disables preempt
-xen_destroy_contiguous_region() <- disables preempt
--> xen_remap_exchanged_ptes()
-   -> set_phys_to_machine()
-      -> xen_alloc_p2m_entry()
-         -> alloc_p2m_pmd()
-xen_alloc_p2m_entry() <duplicate>
-            -> alloc_p2m_page()
+Unfortunately, if the iterator is an ITER_PIPE, the reversion has side
+effects: the pages rolled back get released.  Those pages, however, are not
+retained by the uncompleted bio and may get modified after their release.
 
-drivers/xen/events/events_base.c:1213 bind_evtchn_to_irq_chip() warn: sleeping in atomic context
-pvcalls_front_connect() <- disables preempt
-pvcalls_front_accept() <- disables preempt
--> create_active()
-   -> bind_evtchn_to_irqhandler()
-      -> bind_evtchn_to_irqhandler_chip()
-         -> bind_evtchn_to_irq_chip()
+The first patch fixes this by switching to bulk allocating all the
+necessary pages up front and adding them to an ITER_BVEC iterator, doing
+the I/O and only then trimming the excess pages.  The remaining pages are
+then pushed into the pipe.  This has the downside (as the code stands) of
+not handling any partial page lurking in the pipe - though that could be
+places as the first element in the bvec.  OTOH, using the bulk allocation
+API should be more efficient.
 
-drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c:303 netxen_pcie_sem_lock() warn: sleeping in atomic context
-netxen_nic_hw_write_wx_2M() <- disables preempt
-netxen_nic_hw_read_wx_2M() <- disables preempt
--> netxen_pcie_sem_lock()
+As this is the only user of ITER_PIPE, the second patch removes ITER_PIPE
+and all its associated iov_iter helper functions.
 
-drivers/xen/xen-pciback/pci_stub.c:110 pcistub_device_release() warn: sleeping in atomic context
-pcistub_get_pci_dev_by_slot() <- disables preempt
-pcistub_get_pci_dev() <- disables preempt
--> pcistub_device_get_pci_dev()
-   -> pcistub_device_put()
-      -> pcistub_device_release()
+Thanks to Hillf Danton for spotting that iov_iter_revert() was involved[3].
 
-drivers/xen/xen-scsiback.c:1016 __scsiback_del_translation_entry() warn: sleeping in atomic context
-scsiback_del_translation_entry() <- disables preempt
-scsiback_release_translation_entry() <- disables preempt
--> __scsiback_del_translation_entry()
+[!] Jens: Note that there's a window in the linux-block/for-next branch
+    with a memory corruptor bug that someone bisecting might hit.  These
+    two patches would be better pushed to the front of my iov-extract
+    branch to eliminate the window.  Would it be possible for you to
+    replace my branch in your for-next branch at this point?
 
-drivers/xen/xen-scsiback.c:276 scsiback_free_translation_entry() warn: sleeping in atomic context
-scsiback_del_translation_entry() <- disables preempt
-scsiback_release_translation_entry() <- disables preempt
--> __scsiback_del_translation_entry()
-   -> scsiback_free_translation_entry()
+I've pushed the patches here also:
 
-drivers/xen/events/events_base.c:1427 unbind_from_irq() warn: sleeping in atomic context
-pvcalls_front_connect() <- disables preempt
-pvcalls_front_accept() <- disables preempt
--> create_active()
-   -> bind_evtchn_to_irqhandler()
-      -> bind_evtchn_to_irqhandler_chip()
-         -> unbind_from_irq()
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-fixes
 
-drivers/xen/xenbus/xenbus_client.c:473 xenbus_alloc_evtchn() warn: sleeping in atomic context
-pvcalls_front_connect() <- disables preempt
-pvcalls_front_accept() <- disables preempt
--> create_active()
-   -> xenbus_alloc_evtchn()
+David
 
-drivers/xen/xenbus/xenbus_client.c:321 xenbus_dev_error() warn: sleeping in atomic context
-pvcalls_front_connect() <- disables preempt
-pvcalls_front_accept() <- disables preempt
--> create_active()
-   -> xenbus_free_evtchn()
-      -> xenbus_dev_error()
+Link: https://lore.kernel.org/r/000000000000b0b3c005f3a09383@google.com/ [1]
+Link: https://lore.kernel.org/r/20230126141626.2809643-1-dhowells@redhat.com/ [2]
+Link: https://lore.kernel.org/r/20230207094731.1390-1-hdanton@sina.com/ [3]
 
-drivers/xen/xenbus/xenbus_client.c:342 xenbus_dev_fatal() warn: sleeping in atomic context
-pvcalls_front_connect() <- disables preempt
-pvcalls_front_accept() <- disables preempt
--> create_active()
-   -> xenbus_alloc_evtchn()
-      -> xenbus_dev_fatal()
+David Howells (2):
+  vfs, iomap: Fix generic_file_splice_read() to avoid reversion of
+    ITER_PIPE
+  iov_iter: Kill ITER_PIPE
 
-drivers/xen/xenbus/xenbus_client.c:494 xenbus_free_evtchn() warn: sleeping in atomic context
-pvcalls_front_connect() <- disables preempt
-pvcalls_front_accept() <- disables preempt
--> create_active()
-   -> xenbus_free_evtchn()
-
-drivers/xen/xenbus/xenbus_client.c:290 xenbus_va_dev_error() warn: sleeping in atomic context
-pvcalls_front_connect() <- disables preempt
-pvcalls_front_accept() <- disables preempt
--> create_active()
-   -> xenbus_free_evtchn()
-      -> xenbus_dev_error()
-create_active() <duplicate>
--> xenbus_alloc_evtchn()
-   -> xenbus_dev_fatal()
-         -> xenbus_va_dev_error()
+ fs/cifs/file.c      |   8 +-
+ fs/splice.c         |  76 ++++++-
+ include/linux/uio.h |  14 --
+ lib/iov_iter.c      | 492 +-------------------------------------------
+ mm/filemap.c        |   3 -
+ 5 files changed, 72 insertions(+), 521 deletions(-)
 
