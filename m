@@ -2,120 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C10568E026
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 19:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 028DC68E07F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 19:49:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbjBGSgn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Feb 2023 13:36:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32926 "EHLO
+        id S232291AbjBGSth (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Feb 2023 13:49:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjBGSgR (ORCPT
+        with ESMTP id S230062AbjBGStg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Feb 2023 13:36:17 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACB0B7A89;
-        Tue,  7 Feb 2023 10:36:14 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EFDF0B81A1F;
-        Tue,  7 Feb 2023 18:36:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F13C433EF;
-        Tue,  7 Feb 2023 18:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675794971;
-        bh=+8bPplEj9D+RAhls58hk5WoZAwi96AUPzMSHDnrE+Fg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k9smcMlBp+XFmFCtIS41HEC/3+YPqRFV5QKkU2RKmG92yDjvjQ4n/U8V4MP443gQv
-         fQrjSICWu8vijSTcm/sbaYiHNHOxS1YbCJ7Y+0bIA0D2DNpFy5z6KsRITF6FixqGX1
-         Ayo4mPq1xx5vhS3veyTjKMbTzBwBYDPj8D8Rn0h7gdIp6hNRrzIFprIQeiaqf1vPgW
-         XoBtOCc/tiZoSH17vULIwgYMorkWx+rFRr31+VSCpztQoLx9d0QzCtBkKdUkGO8Ecs
-         ZoH6F61nvs7hJBbdQlbB2fYY9QSgHnoLHcm2SjWOTI9mL9Yiv385mERrE85ocIxrxO
-         waOz9X1OrZr7Q==
-Date:   Tue, 7 Feb 2023 18:36:09 +0000
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Dan Carpenter <error27@gmail.com>, linux-block@vger.kernel.org,
-        Julia Lawall <julia.lawall@inria.fr>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        maobibo <maobibo@loongson.cn>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: block: sleeping in atomic warnings
-Message-ID: <Y+KaGenaX0lwSy9G@gmail.com>
-References: <20230129060452.7380-1-zhanghongchen@loongson.cn>
- <CAHk-=wjw-rrT59k6VdeLu4qUarQOzicsZPFGAO5J8TKM=oukUw@mail.gmail.com>
- <Y+EjmnRqpLuBFPX1@bombadil.infradead.org>
- <4ffbb0c8-c5d0-73b3-7a4e-2da9a7b03669@inria.fr>
- <Y+Ja5SRs886CEz7a@kadam>
- <CAHk-=wg6ohuyrmLJYTfEpDbp2Jwnef54gkcpZ3-BYgy4C6UxRQ@mail.gmail.com>
- <Y+KP/fAQjawSofL1@gmail.com>
- <CAHk-=wgmZDqCOynfiH4NFoL50f4+yUjxjp0sCaWS=xUmy731CQ@mail.gmail.com>
+        Tue, 7 Feb 2023 13:49:36 -0500
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8700218B
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Feb 2023 10:49:34 -0800 (PST)
+Received: by mail-il1-x135.google.com with SMTP id w13so6423829ilv.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Feb 2023 10:49:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bBmufrIpKjI+8mvdDvPBth0aa6lZWSixeneHNMXKRKo=;
+        b=U2nW/kDHyjhF94YUCuaOOTrEUZ/r/LxWEAN0Rkyku8k9pghGOiQC9GB5Ajw8KBX/Zd
+         oiE/P6iV7zENMWEHN5BIjUB6ZsTzIhbgyIxepZ0UpYViCZqLx7nTUeTEv4+yWGkM7Uxy
+         FCmdoZ1C8kOjcGnwCuHp4Rm0t6FnclnPwbkT48MES5BmtU/QyJBUp8YCGE6i41yU/fmJ
+         TVAe0zTK6uovFg2incYacWOlDH1hWk3qcNViESwSJqe4NeWD0kmtKI/7m49bFoYweQKw
+         yNLmEoHVxL14TV9B4uAIC/8CRwkOGdzB1OYtWm/af4w3YGJVONeCuE/4K9kKmzugKMmN
+         sq+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bBmufrIpKjI+8mvdDvPBth0aa6lZWSixeneHNMXKRKo=;
+        b=YR5zVx4vLcKRtrRIT88PEL279TK9f/OMnWCGYB8ljq+Y1SzFy4z3IQD/a7hLhS5mYp
+         AvZyyyV5v1+9SENfSb3Tor7UfvWekIKdHRyjsYtnHn3TZ2GDABDtE+72BRJsVa4VG4u/
+         r4OH+XpfLJVbc5F4ywNkYi0ibJDjaYkhYdGHHnEIVjWn4KRYFAP7gx02/p62QUeqn0aW
+         HE+RExC02cXBcEIb1GH6815BsOnlzViRamcnhTiPrdkfOSpXJec03OYPTIPsqGhtLjsM
+         Dwzx+/WWUqRdKIsqUJE/PiohQsITBTbc+EUhR0pYXbQcG31ZpW8RA7Z+LMVA/Lu+ZdWo
+         pEEg==
+X-Gm-Message-State: AO0yUKXaRmbIy5olk/lkYK1zqKFFY9nyuS4c9J8xYh7xdjZLvRITfcaH
+        85d9YXcUdRbqzePWrb52FVTc2w==
+X-Google-Smtp-Source: AK7set/tAwL3lb3yurbCeVjSHYgxs8++6eMI/PGkEJvuzZ9KDObbhzYc4+Q7jZiXFnMbLg+UqBjBKg==
+X-Received: by 2002:a05:6e02:1b88:b0:313:c5a4:9888 with SMTP id h8-20020a056e021b8800b00313c5a49888mr4759540ili.0.1675795773811;
+        Tue, 07 Feb 2023 10:49:33 -0800 (PST)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id f20-20020a056638119400b003a60da2bf58sm4559086jas.39.2023.02.07.10.49.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Feb 2023 10:49:33 -0800 (PST)
+Message-ID: <88fcfd5a-cf73-f417-cea6-eed5094d71ed@kernel.dk>
+Date:   Tue, 7 Feb 2023 11:49:32 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgmZDqCOynfiH4NFoL50f4+yUjxjp0sCaWS=xUmy731CQ@mail.gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v12 00/10] iov_iter: Improve page extraction (pin or just
+ list)
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20230207171305.3716974-1-dhowells@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230207171305.3716974-1-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 07, 2023 at 10:24:45AM -0800, Linus Torvalds wrote:
-> On Tue, Feb 7, 2023 at 9:53 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > It's a false positive.  See the comment above fscrypt_destroy_keyring()
+On 2/7/23 10:12 AM, David Howells wrote:
+> Hi Jens, Al, Christoph,
 > 
-> Hmm. Ok. Unfortunate.
+> Here are patches to provide support for extracting pages from an iov_iter
+> and to use this in the extraction functions in the block layer bio code.
 > 
-> >  If the filesystem has not been mounted, then the call from __put_super()
-> > is needed, but blk_crypto_evict_key() can never be executed in that case.
+> The patches make the following changes:
 > 
-> It's not all that clear that some *other* error might not have
-> happened to keep the mount from actually succeeding, but after the
-> keys have been instantiated?
+>  (1) Change generic_file_splice_read() to load up an ITER_BVEC iterator
+>      with sufficient pages and use that rather than using an ITER_PIPE.
+>      This avoids a problem[2] when __iomap_dio_rw() calls iov_iter_revert()
+>      to shorten an iterator when it races with truncation.  The reversion
+>      causes the pipe iterator to prematurely release the pages it was
+>      retaining - despite the read still being in progress.  This caused
+>      memory corruption.
 > 
-> IOW, what's the thing that makes "blk_crypto_evict_key() can never be
-> executed in that case" be obvious?
+>  (2) Remove ITER_PIPE and its paraphernalia as generic_file_splice_read()
+>      was the only user.
 > 
-> I think _that_ is what might want a comment, about how we always call
-> generic_shutdown_super() before the last put_super() happens.
+>  (3) Add a function, iov_iter_extract_pages() to replace
+>      iov_iter_get_pages*() that gets refs, pins or just lists the pages as
+>      appropriate to the iterator type.
 > 
-> It does seem like Dan's automated checks could be useful, but if
-> there's no sane way to avoid the false positives, it's always going to
-> be a lot of noise ;(
+>      Add a function, iov_iter_extract_will_pin() that will indicate from
+>      the iterator type how the cleanup is to be performed, returning true
+>      if the pages will need unpinning, false otherwise.
 > 
+>  (4) Make the bio struct carry a pair of flags to indicate the cleanup
+>      mode.  BIO_NO_PAGE_REF is replaced with BIO_PAGE_REFFED (indicating
+>      FOLL_GET was used) and BIO_PAGE_PINNED (indicating FOLL_PIN was used)
+>      is added.
+> 
+>      BIO_PAGE_REFFED will go away, but at the moment fs/direct-io.c sets it
+>      and this series does not fully address that file.
+> 
+>  (5) Add a function, bio_release_page(), to release a page appropriately to
+>      the cleanup mode indicated by the BIO_PAGE_* flags.
+> 
+>  (6) Make the iter-to-bio code use iov_iter_extract_pages() to retain the
+>      pages appropriately and clean them up later.
+> 
+>  (7) Fix bio_flagged() so that it doesn't prevent a gcc optimisation.
 
-blk_crypto_evict_key() only runs if a key was prepared for inline encryption,
-which can only happen if a user does I/O to an encrypted file.  That can only
-happen after the filesystem was successfully mounted.
+I've updated the for-6.3/iov-extract branch and the for-next branch. This
+isn't done to bypass any review, just so we can get some more testing on
+this (and because the old one is known broken).
 
-Also note that keys are normally added using an ioctl, which can only be
-executed after the filesystem was mounted.  The only exception is the key
-associated with the "test_dummy_encryption" mount option.
+-- 
+Jens Axboe
 
-By the way, the following code is in generic_shutdown_super(), and not in
-__put_super(), for a very similar reason:
 
-                if (sb->s_dio_done_wq) {
-                        destroy_workqueue(sb->s_dio_done_wq);
-                        sb->s_dio_done_wq = NULL;
-                }
-
-That code is only needed if there has been user I/O to the filesystem, which
-again can only have happened if the filesystem was successfully mounted.
-
-- Eric
