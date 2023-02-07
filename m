@@ -2,164 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4925368DEAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 18:16:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C7B168DF36
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 18:47:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232128AbjBGRQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Feb 2023 12:16:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50592 "EHLO
+        id S232082AbjBGRrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Feb 2023 12:47:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232314AbjBGRPi (ORCPT
+        with ESMTP id S232088AbjBGRrD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Feb 2023 12:15:38 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5D93E0AD
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Feb 2023 09:13:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675790024;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7RYncx3d2QCFno76YxQ26A3gARIW2WsBk/g5n5z32ew=;
-        b=IoCSlkNOt7CrFrcCpJ6QK5ZwjVHg+hQzjg0+qm5bzRog0pqovQmc79wKjWGeALTidRA+lW
-        mXU5ppj4m3muCXuF4tvfx7rvVGyDp/llePrvAXazxU5l/2/m4jnH77g479DPEWNCWnx2YQ
-        ry4gxn40tj6W6bany9TR4x/Hf5UMkzw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-73-lolXqV_9N4uHxYJn3WqZgg-1; Tue, 07 Feb 2023 12:13:39 -0500
-X-MC-Unique: lolXqV_9N4uHxYJn3WqZgg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AC1C480D0E2;
-        Tue,  7 Feb 2023 17:13:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.33.36.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A3F01121314;
-        Tue,  7 Feb 2023 17:13:36 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v12 10/10] block: convert bio_map_user_iov to use iov_iter_extract_pages
-Date:   Tue,  7 Feb 2023 17:13:05 +0000
-Message-Id: <20230207171305.3716974-11-dhowells@redhat.com>
-In-Reply-To: <20230207171305.3716974-1-dhowells@redhat.com>
-References: <20230207171305.3716974-1-dhowells@redhat.com>
+        Tue, 7 Feb 2023 12:47:03 -0500
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A47D55BE
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Feb 2023 09:46:49 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2DBF15C01DA;
+        Tue,  7 Feb 2023 12:46:49 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 07 Feb 2023 12:46:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bur.io; h=cc:cc
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1675792009; x=1675878409; bh=NJnm3pGiSA
+        1Oouve6EGv630skZ5T3gQkzfZXp699Q/Y=; b=jNuD/X1qmBSDWzBJGF6v4GrCs/
+        sBUq2abR//D6dbcnZYyS7FyrVVCMC0uGI2wYrCBBDKlmqDgM3ToT7ubf5Uc5pvmL
+        fKHobrXb4vBLAZta85NGz8+bkqLjtHP8DaARiHBnLZ5kpFPnYpuss0QdjcYMOqlD
+        sKvnkD/ddGvwWF1IQALQ30endHnzVUDNBbT3eqNCcVWS2XejjAZVGsNku+MPPr2s
+        fA9rLMzGNrgNQR6eusL1mBgQ3guhvpHMbQZEwQcVeWT87P/L6RfrHkr2vU0Rk9V3
+        kdFl15aQL10p5tF7bOINxupBbDjVJFYMVq0lZvo+43ioCaWQwDEkbyc1BejQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1675792009; x=1675878409; bh=NJnm3pGiSA1Oouve6EGv630skZ5T
+        3gQkzfZXp699Q/Y=; b=hdqxZq7vkk+gI35mN1cdGTzjDuc6T3smj+6Kjg0AXqW1
+        vkvyI/vulSBSIgnRNpbzjj9Dvv2gMLc5KmQBx0ujkFxt2lem1ol/LIG2dd9rGP8T
+        +qIztAnaqYo7uOutDKPEFRa3uY+EDIKrmpsTL3l3nUCt1a/QOp6kcpvHnRw0W+/L
+        TEY9zVPrQybATFu6PCvirm9gW02T2iPMmxsOC35tEH0+7etyOG4CMmEXH+dtDQP9
+        sW5khaWzVUpJaBBmvFZHWOyZebX3qoNgbicRrqZy8gdr4+yhCcr29K/HIMYFUpOm
+        i6+cU+tvPVieE14G18c0n3AMlt/BZaWYkCBSTUR6fQ==
+X-ME-Sender: <xms:iI7iYz15_g2tIrhR3W8fjUVoBJBphVf542M-0VH-mQNqICnU_D-VUw>
+    <xme:iI7iYyGJeIgUCsnhI5o9iFxg05Lp1gcPqS7V-rqAQYZ3yuUCZrSCumaJB6-kmRRbY
+    ShYJOVP_sP6Q2cj_t8>
+X-ME-Received: <xmr:iI7iYz5hUmZ2gIBSLA78kH5C0ZFmTZVNLqzThasogtZddJOuNyG6D1jY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudegkedguddtudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhr
+    ihhsuceuuhhrkhhovhcuoegsohhrihhssegsuhhrrdhioheqnecuggftrfgrthhtvghrnh
+    epleffgeevgeetueegledtueeluddtudekhefhudeuheegfeevieehteevieejueetnecu
+    ffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegsohhrihhssegsuhhrrdhioh
+X-ME-Proxy: <xmx:iI7iY42HfEIwZnsXcSNizi1ATszFC2KkbEylYnwYSA1cSu1BFKbRKQ>
+    <xmx:iI7iY2EpDqkkrrPOz-KtRHKitJfG6FduufzwqOpsbKRIIVF2XYMnnw>
+    <xmx:iI7iY59gh3i8sN84cbQz8yFVyt1Oqyu-Et1h88n5cyQDUj25wTFTYg>
+    <xmx:iY7iYzIjMrND-DK5poTSEcfAOLMvoKICIYFfguLEtQRM07QAtU5mXw>
+Feedback-ID: i083147f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Feb 2023 12:46:47 -0500 (EST)
+Date:   Tue, 7 Feb 2023 09:46:46 -0800
+From:   Boris Burkov <boris@bur.io>
+To:     Hans Holmberg <hans@owltronix.com>
+Cc:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Hans Holmberg <Hans.Holmberg@wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <Matias.Bjorling@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Dennis Maisenbacher <dennis.maisenbacher@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Aravind Ramesh <Aravind.Ramesh@wdc.com>,
+        =?iso-8859-1?Q?J=F8rgen?= Hansen <Jorgen.Hansen@wdc.com>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "javier@javigon.com" <javier@javigon.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "a.manzanares@samsung.com" <a.manzanares@samsung.com>,
+        "guokuankuan@bytedance.com" <guokuankuan@bytedance.com>,
+        "viacheslav.dubeyko@bytedance.com" <viacheslav.dubeyko@bytedance.com>,
+        "j.granados@samsung.com" <j.granados@samsung.com>
+Subject: Re: [LSF/MM/BPF TOPIC]: File system data placement for zoned block
+ devices
+Message-ID: <Y+KOhvnMCyi2NRRZ@zen>
+References: <20230206134148.GD6704@gsv>
+ <22843ea8-1668-85db-3ba3-f5b4386bba38@wdc.com>
+ <CANr-nt2q-1GjE6wx4W+6cSV9RULd8PKmS2-qyE2NvhRgMNawXQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANr-nt2q-1GjE6wx4W+6cSV9RULd8PKmS2-qyE2NvhRgMNawXQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This will pin pages or leave them unaltered rather than getting a ref on
-them as appropriate to the iterator.
+On Tue, Feb 07, 2023 at 01:31:44PM +0100, Hans Holmberg wrote:
+> On Mon, Feb 6, 2023 at 3:24 PM Johannes Thumshirn
+> <Johannes.Thumshirn@wdc.com> wrote:
+> >
+> > On 06.02.23 14:41, Hans Holmberg wrote:
+> > > Out of the upstream file systems, btrfs and f2fs supports
+> > > the zoned block device model. F2fs supports active data placement
+> > > by separating cold from hot data which helps in reducing gc,
+> > > but there is room for improvement.
+> >
+> > FYI, there's a patchset [1] from Boris for btrfs which uses different
+> > size classes to further parallelize placement. As of now it leaves out
+> > ZNS drives, as this can clash with the MOZ/MAZ limits but once active
+> > zone tracking is fully bug free^TM we should look into using these
+> > allocator hints for ZNS as well.
+> >
+> 
+> That looks like a great start!
+> 
+> Via that patch series I also found Josef's fsperf repo [1], which is
+> exactly what I have
+> been looking for: a set of common tests for file system performance. I hope that
+> it can be extended with longer-running tests doing several disk overwrites with
+> application-like workloads.
 
-The pages need to be pinned for DIO rather than having refs taken on them
-to prevent VM copy-on-write from malfunctioning during a concurrent fork()
-(the result of the I/O could otherwise end up being visible to/affected by
-the child process).
+It should be relatively straightforward to add more tests to fsperf and
+we are happy to take new workloads! Also, feel free to shoot me any
+questions you run into while working on it and I'm happy to help.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Jan Kara <jack@suse.cz>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Logan Gunthorpe <logang@deltatee.com>
-cc: linux-block@vger.kernel.org
----
+> 
+> > The hot/cold data can be a 2nd placement hint, of cause, not just the
+> > different size classes of an extent.
+> 
+> Yes. I'll dig into the patches and see if I can figure out how that
+> could be done.
 
-Notes:
-    ver #10)
-     - Drop bio_set_cleanup_mode(), open coding it instead.
-    
-    ver #8)
-     - Split the patch up a bit [hch].
-     - We should only be using pinned/non-pinned pages and not ref'd pages,
-       so adjust the comments appropriately.
-    
-    ver #7)
-     - Don't treat BIO_PAGE_REFFED/PINNED as being the same as FOLL_GET/PIN.
-    
-    ver #5)
-     - Transcribe the FOLL_* flags returned by iov_iter_extract_pages() to
-       BIO_* flags and got rid of bi_cleanup_mode.
-     - Replaced BIO_NO_PAGE_REF to BIO_PAGE_REFFED in the preceding patch.
+FWIW, I was working on reducing fragmentation/streamlining reclaim for
+non zoned btrfs. I have another patch set that I am still working on
+which attempts to use a working set concept to make placement
+lifetime/lifecycle a bigger part of the btrfs allocator.
 
- block/blk-map.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+That patch set tries to make btrfs write faster in parallel, which may
+be against what you are going for, that I'm not sure of. Also, I didn't
+take advantage of the lifetime hints because I wanted it to help for the
+general case, but that could be an interesting direction too!
 
-diff --git a/block/blk-map.c b/block/blk-map.c
-index f1f70b50388d..0f1593e144da 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -281,22 +281,21 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 
- 	if (blk_queue_pci_p2pdma(rq->q))
- 		extraction_flags |= ITER_ALLOW_P2PDMA;
-+	if (iov_iter_extract_will_pin(iter))
-+		bio_set_flag(bio, BIO_PAGE_PINNED);
- 
--	bio_set_flag(bio, BIO_PAGE_REFFED);
- 	while (iov_iter_count(iter)) {
--		struct page **pages, *stack_pages[UIO_FASTIOV];
-+		struct page *stack_pages[UIO_FASTIOV];
-+		struct page **pages = stack_pages;
- 		ssize_t bytes;
- 		size_t offs;
- 		int npages;
- 
--		if (nr_vecs <= ARRAY_SIZE(stack_pages)) {
--			pages = stack_pages;
--			bytes = iov_iter_get_pages(iter, pages, LONG_MAX,
--						   nr_vecs, &offs, extraction_flags);
--		} else {
--			bytes = iov_iter_get_pages_alloc(iter, &pages,
--						LONG_MAX, &offs, extraction_flags);
--		}
-+		if (nr_vecs > ARRAY_SIZE(stack_pages))
-+			pages = NULL;
-+
-+		bytes = iov_iter_extract_pages(iter, &pages, LONG_MAX,
-+					       nr_vecs, extraction_flags, &offs);
- 		if (unlikely(bytes <= 0)) {
- 			ret = bytes ? bytes : -EFAULT;
- 			goto out_unmap;
-@@ -318,7 +317,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 				if (!bio_add_hw_page(rq->q, bio, page, n, offs,
- 						     max_sectors, &same_page)) {
- 					if (same_page)
--						put_page(page);
-+						bio_release_page(bio, page);
- 					break;
- 				}
- 
-@@ -330,7 +329,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 		 * release the pages we didn't map into the bio, if any
- 		 */
- 		while (j < npages)
--			put_page(pages[j++]);
-+			bio_release_page(bio, pages[j++]);
- 		if (pages != stack_pages)
- 			kvfree(pages);
- 		/* couldn't stuff something into bio? */
+If you're curious about that work, the current state of the patches is
+in this branch:
+https://github.com/kdave/btrfs-devel/compare/misc-next...boryas:linux:bg-ws
+(Johannes, those are the patches I worked on after you noticed the
+allocator being slow with many disks.)
 
+Boris
+
+> 
+> Cheers,
+> Hans
+> 
+> [1] https://github.com/josefbacik/fsperf
