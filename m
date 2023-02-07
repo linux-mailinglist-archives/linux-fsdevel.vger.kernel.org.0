@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F4B68CDAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 04:53:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3AE68CDAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Feb 2023 04:53:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbjBGDxU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Feb 2023 22:53:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50840 "EHLO
+        id S230024AbjBGDxi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Feb 2023 22:53:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbjBGDxT (ORCPT
+        with ESMTP id S229834AbjBGDxe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Feb 2023 22:53:19 -0500
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746652FCC1;
-        Mon,  6 Feb 2023 19:52:58 -0800 (PST)
-Received: by mail-pl1-x636.google.com with SMTP id b5so14380134plz.5;
-        Mon, 06 Feb 2023 19:52:58 -0800 (PST)
+        Mon, 6 Feb 2023 22:53:34 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8380534C18;
+        Mon,  6 Feb 2023 19:53:11 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id o16-20020a17090ad25000b00230759a8c06so10558922pjw.2;
+        Mon, 06 Feb 2023 19:53:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bo1tneLWwD2RhiZr7s0fNkFVvi/jYX7dsdS6SUFT8xM=;
-        b=JGWqJchBnYVuac0oRm4Gs0CVChNaex/V6id79yjo6Pc49o4y2daSY6qA1Q6KXNfcHU
-         dkBweq6GC/8dy9lcJjk16orPIoGqCkGn6VTu+AjsqPGTdNDmm4HWf8/We9Rhi4NLBVYg
-         HaBMWnPebrPu8F8WkJotpDYqZSXLP19PQyuFmeRX9Wg6gUpQ5r8oKftolWojfhdEuJr6
-         Z4OLASTNlYZIm+xFtUPJhTFo8Ci2y0rmW2pvV7JcvG8VuJRaSEpqBeCqGQxUMuMBjxoV
-         vckW3Gc7QBdhjq4QEcLkQqWgDrUU3Xq4LfhEHtdATQ1Vocx8BgoJKHxsoUtkYZvTVTZ1
-         22CA==
+        bh=bZij7LuvWqAUsc/tDyGKqVPa1LlLe014JzLJaRBVfac=;
+        b=lwCPmEll3sOd5wCDntj64zUMlsIheRAjUYsSQaWXGrPEqqe5HN4xQyzTELcYR8EuUo
+         UUzJtsuAS7oEwIk7LobPrcjseI3GOXqxJ6Ql9s2vibYXBJLETeFhrYgdz5FBuT1maHjz
+         smYCxO1fRZJ0sVU7uY23VbWtRRcdj5GLh90hmDin4Kz6Y35MbZgiujZ2Tb+g9rx72+Ep
+         q5ooXDOByXEEJWEOHbraaoSVRCP+W026b9+2nnOCT6+M2ac7ycU2fAMC6B355Rx1mDSE
+         16dKTc35HJXmCGZUMjhvzoiE/9Crg/rFt+u4yvL0Detc0cbvOFP9nMLl4OsC3eZSnrMj
+         Ivnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bo1tneLWwD2RhiZr7s0fNkFVvi/jYX7dsdS6SUFT8xM=;
-        b=AShGels9TXCLkUNt+fU3JFx5fM3GlC5/HrlTK6sMh7LpITAvAx8Yl+ODc2udsKACEl
-         bkGHZd6IODY+A9wrj/cOWerGOt7il37lIpQ3/x0g1wbrEFqzjZg+TAC4bVGuXZjonFv6
-         om41FiwRPrNx3HkSCwgT6gkkY2H0MkAvTGozs/LP/lYBThwjrmr5AyBi4VJlWtd8L/+1
-         PCNKUCkKe493Nn+N1U+aKEk9hkfF1yCFRU5h57+i6lRzxc0W88IVWT/kn1K22F+NIghO
-         GkWzUKI+gw7tqtnfih4rHsN/LzORMgz9+lT2fEPP1kxQrr7kjd8SqANOu2HAZl2qwtH/
-         Z1uw==
-X-Gm-Message-State: AO0yUKWc8bIWMr4k1eqFW9nR9wch3H7AoKBHI5A/sOdgH5+XMODbl1tL
-        2fmhE9F6EXig2JLfCwBEDRg=
-X-Google-Smtp-Source: AK7set/O7fcqmc6lLHaEVj1xEAfz8V3jwreohn2OTW5/SjFcXEbRoD9lnlHTuhQMmfHw7SNcGwH2HA==
-X-Received: by 2002:a17:902:e5c7:b0:196:8b36:d135 with SMTP id u7-20020a170902e5c700b001968b36d135mr1442730plf.62.1675741977709;
-        Mon, 06 Feb 2023 19:52:57 -0800 (PST)
+        bh=bZij7LuvWqAUsc/tDyGKqVPa1LlLe014JzLJaRBVfac=;
+        b=jjRNIGVgKCh5Hnw35I7Whmlnt+pzHJBsh4446f1MJWDBTjst7KDTJ9DY4R9BOIx7bj
+         Rg3ip5M8gcu1iRG/YV+LZyDOOQr61JE6ufmvi8xhFA7TC2GBQigqqdZ+aSgIf7oTumy7
+         rPbAFcDOdYoHYo9ZgAfjx7rvkdnBgvag8xVoObI6HXgDc0DmUXxSAhtPagdulIyOEtbi
+         AN2IdTN19TrZjmW6+PrM9VAnlrU832rZymhNNn6UG9fsif9yrmVm12oxMM9XcuvxjL8d
+         hiFm8U373TqS/0qYjMko2Wf/KLIEm8jgrrcCMch7StVrCpg5SUoQJZpIlDWIDu7SF6BE
+         NF1A==
+X-Gm-Message-State: AO0yUKUTIh6bxYwrDwtuYds5V3ckx3KQZwb72YIYaowCFDYMz//2077q
+        h46aurr6066iaVxANyNKBcw=
+X-Google-Smtp-Source: AK7set8e20ND70PIGz9eIdz6VNDFMIz/ERt5LiGEHQbdbQ4KvYIrKJ5UCXWnKI0Q4kYNn9Zk/Apy9A==
+X-Received: by 2002:a05:6a20:7f95:b0:c1:2037:554f with SMTP id d21-20020a056a207f9500b000c12037554fmr2308038pzj.62.1675741990219;
+        Mon, 06 Feb 2023 19:53:10 -0800 (PST)
 Received: from strix-laptop.hitronhub.home ([123.110.9.95])
-        by smtp.googlemail.com with ESMTPSA id q4-20020a170902b10400b0019682e27995sm7647655plr.223.2023.02.06.19.52.45
+        by smtp.googlemail.com with ESMTPSA id q4-20020a170902b10400b0019682e27995sm7647655plr.223.2023.02.06.19.52.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Feb 2023 19:52:56 -0800 (PST)
+        Mon, 06 Feb 2023 19:53:09 -0800 (PST)
 From:   Chih-En Lin <shiyn.lin@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Qi Zheng <zhengqi.arch@bytedance.com>,
@@ -104,9 +104,9 @@ Cc:     Steven Rostedt <rostedt@goodmis.org>,
         Jim Huang <jserv@ccns.ncku.edu.tw>,
         Huichun Feng <foxhoundsk.tw@gmail.com>,
         Chih-En Lin <shiyn.lin@gmail.com>
-Subject: [PATCH v4 02/14] mm: Add Copy-On-Write PTE to fork()
-Date:   Tue,  7 Feb 2023 11:51:27 +0800
-Message-Id: <20230207035139.272707-3-shiyn.lin@gmail.com>
+Subject: [PATCH v4 03/14] mm: Add break COW PTE fault and helper functions
+Date:   Tue,  7 Feb 2023 11:51:28 +0800
+Message-Id: <20230207035139.272707-4-shiyn.lin@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230207035139.272707-1-shiyn.lin@gmail.com>
 References: <20230207035139.272707-1-shiyn.lin@gmail.com>
@@ -122,476 +122,531 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add copy_cow_pte_range() and recover_pte_range() for copy-on-write (COW)
-PTE in fork system call. During COW PTE fork, when processing the shared
-PTE, we traverse all the entries to determine current mapped page is
-available to share between processes. If PTE can be shared, account
-those mapped pages and then share the PTE. However, once we find out the
-mapped page is unavailable, e.g., pinned page, we have to copy it via
-copy_present_page(), which means that we will fall back to default path,
-page table copying (copy_pte_range()). And, since we may have already
-processed some COW-ed PTE entries, before starting the default path, we
-have to recover those entries.
+Add the function, handle_cow_pte_fault(), to break (unshare) COW-ed PTE
+with the page fault that will modify the PTE table or the mapped page
+resided in COW-ed PTE (i.e., write, unshared, file read fault).
 
-All the COW PTE behaviors are protected by the pte lock.
-The logic of how we handle nonpresent/present pte entries and error
-in copy_cow_pte_range() is same as copy_pte_range(). But to keep the
-codes clean (e.g., avoiding condition lock), we introduce new functions
-instead of modifying copy_pte_range().
+When breaking COW PTE, it first checks COW-ed PTE's refcount to try to
+reuse it. If COW-ed PTE cannot be reused, allocates new PTE and
+duplicates all pte entries in COW-ed PTE. Moreover, Flush TLB when we
+change the write protection of PTE.
 
-To track the lifetime of COW-ed PTE, introduce the refcount of PTE.
-We reuse the _refcount in struct page for the page table to maintain the
-number of process references to COW-ed PTE table. Doing the fork with
-COW PTE will increase the refcount. And, when someone writes to the
-COW-ed PTE, it will cause the write fault to break COW PTE. If the
-refcount of COW-ed PTE is one, the process that triggers the fault will
-reuse the COW-ed PTE. Otherwise, the process will decrease the refcount
-and duplicate it.
-
-Since we share the PTE between the parent and child, the state of the
-parent's pte entries is different between COW PTE and the normal fork.
-COW PTE handles all the pte entries on the child side which means it
-will clear the dirty and access bit of the parent's pte entry.
-
-And, since some of the architectures, e.g., s390 and powerpc32, don't
-support the PMD entry and PTE table operations, add a new Kconfig,
-COW_PTE. COW_PTE config depends on the (HAVE_ARCH_TRANSPARENT_HUGEPAGE
-&& !PREEMPT_RT) condition, it is same as the TRANSPARENT_HUGEPAGE
-config since most of the operations in COW PTE are depend on it.
+In addition, provide the helper functions, break_cow_pte{,_range}(), to
+let the other features (remap, THP, migration, swapfile, etc) to use.
 
 Signed-off-by: Chih-En Lin <shiyn.lin@gmail.com>
 ---
- include/linux/mm.h |  20 +++
- mm/Kconfig         |   9 ++
- mm/memory.c        | 303 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 332 insertions(+)
+ include/linux/mm.h      |  17 ++
+ include/linux/pgtable.h |   6 +
+ mm/memory.c             | 339 +++++++++++++++++++++++++++++++++++++++-
+ mm/mmap.c               |   4 +
+ mm/mremap.c             |   2 +
+ mm/swapfile.c           |   2 +
+ 6 files changed, 363 insertions(+), 7 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 8f857163ac89..22e1e5804e96 100644
+index 22e1e5804e96..369355e13936 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -2482,6 +2482,23 @@ static inline bool ptlock_init(struct page *page) { return true; }
- static inline void ptlock_free(struct page *page) {}
- #endif /* USE_SPLIT_PTE_PTLOCKS */
+@@ -2020,6 +2020,23 @@ void pagecache_isize_extended(struct inode *inode, loff_t from, loff_t to);
+ void truncate_pagecache_range(struct inode *inode, loff_t offset, loff_t end);
+ int generic_error_remove_page(struct address_space *mapping, struct page *page);
  
 +#ifdef CONFIG_COW_PTE
-+static inline int pmd_get_pte(pmd_t *pmd)
++int break_cow_pte(struct vm_area_struct *vma, pmd_t *pmd, unsigned long addr);
++int break_cow_pte_range(struct vm_area_struct *vma, unsigned long start,
++			unsigned long end);
++#else
++static inline int break_cow_pte(struct vm_area_struct *vma,
++				pmd_t *pmd, unsigned long addr)
 +{
-+	return page_ref_inc_return(pmd_page(*pmd));
++	return 0;
 +}
-+
-+static inline bool pmd_put_pte(pmd_t *pmd)
++static inline int break_cow_pte_range(struct vm_area_struct *vma,
++				      unsigned long start, unsigned long end)
 +{
-+	return page_ref_add_unless(pmd_page(*pmd), -1, 1);
-+}
-+
-+static inline int cow_pte_count(pmd_t *pmd)
-+{
-+	return page_count(pmd_page(*pmd));
++	return 0;
 +}
 +#endif
 +
- static inline void pgtable_init(void)
- {
- 	ptlock_cache_init();
-@@ -2494,6 +2511,9 @@ static inline bool pgtable_pte_page_ctor(struct page *page)
- 		return false;
- 	__SetPageTable(page);
- 	inc_lruvec_page_state(page, NR_PAGETABLE);
-+#ifdef CONFIG_COW_PTE
-+	set_page_count(page, 1);
-+#endif
- 	return true;
- }
- 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index ff7b209dec05..7dcceeb4196b 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -822,6 +822,15 @@ config READ_ONLY_THP_FOR_FS
- 
- endif # TRANSPARENT_HUGEPAGE
- 
-+menuconfig COW_PTE
-+	bool "Copy-on-write PTE table"
-+	depends on HAVE_ARCH_TRANSPARENT_HUGEPAGE && !PREEMPT_RT
-+	help
-+	  Extend the copy-on-write (COW) mechanism to the PTE table
-+	  (the bottom level of the page-table hierarchy). To enable this
-+	  feature, a process must set prctl(PR_SET_COW_PTE) before the
-+	  fork system call.
-+
- #
- # UP and nommu archs use km based percpu allocator
- #
+ #ifdef CONFIG_MMU
+ extern vm_fault_t handle_mm_fault(struct vm_area_struct *vma,
+ 				  unsigned long address, unsigned int flags,
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 1159b25b0542..72ff2a1cee5e 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1406,6 +1406,12 @@ static inline int pmd_none_or_trans_huge_or_clear_bad(pmd_t *pmd)
+ 	if (pmd_none(pmdval) || pmd_trans_huge(pmdval) ||
+ 		(IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION) && !pmd_present(pmdval)))
+ 		return 1;
++	/*
++	 * COW-ed PTE has write protection which can trigger pmd_bad().
++	 * To avoid this, return here if entry is write protection.
++	 */
++	if (!pmd_write(pmdval))
++		return 0;
+ 	if (unlikely(pmd_bad(pmdval))) {
+ 		pmd_clear_bad(pmd);
+ 		return 1;
 diff --git a/mm/memory.c b/mm/memory.c
-index 3e836fecd035..7d2a1d24db56 100644
+index 7d2a1d24db56..465742c6efa2 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -739,11 +739,17 @@ copy_nonpresent_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 		pte_t *dst_pte, pte_t *src_pte, struct vm_area_struct *dst_vma,
- 		struct vm_area_struct *src_vma, unsigned long addr, int *rss)
- {
-+	/* With COW PTE, dst_vma is src_vma. */
- 	unsigned long vm_flags = dst_vma->vm_flags;
- 	pte_t pte = *src_pte;
- 	struct page *page;
- 	swp_entry_t entry = pte_to_swp_entry(pte);
- 
-+	/*
-+	 * If it's COW PTE, parent shares PTE with child. Which means the
-+	 * following modifications of child will also affect parent.
-+	 */
-+
- 	if (likely(!non_swap_entry(entry))) {
- 		if (swap_duplicate(entry) < 0)
- 			return -EIO;
-@@ -886,6 +892,8 @@ copy_present_page(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma
- /*
-  * Copy one pte.  Returns 0 if succeeded, or -EAGAIN if one preallocated page
-  * is required to copy this pte.
-+ * However, if prealloc is NULL, it is COW PTE. We should return and fall back
-+ * to copy the PTE table.
-  */
- static inline int
- copy_present_pte(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
-@@ -909,6 +917,14 @@ copy_present_pte(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 		if (unlikely(page_try_dup_anon_rmap(page, false, src_vma))) {
- 			/* Page maybe pinned, we have to copy. */
- 			put_page(page);
-+			/*
-+			 * If prealloc is NULL, we are processing share page
-+			 * table (COW PTE, in copy_cow_pte_range()). We cannot
-+			 * call copy_present_page() right now, instead, we
-+			 * should fall back to copy_pte_range().
-+			 */
-+			if (!prealloc)
-+				return -EAGAIN;
- 			return copy_present_page(dst_vma, src_vma, dst_pte, src_pte,
- 						 addr, rss, prealloc, page);
- 		}
-@@ -929,6 +945,11 @@ copy_present_pte(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 	}
- 	VM_BUG_ON(page && PageAnon(page) && PageAnonExclusive(page));
- 
-+	/*
-+	 * If it's COW PTE, parent shares PTE with child.
-+	 * Which means the following will also affect parent.
-+	 */
-+
- 	/*
- 	 * If it's a shared mapping, mark it clean in
- 	 * the child
-@@ -937,6 +958,7 @@ copy_present_pte(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 		pte = pte_mkclean(pte);
- 	pte = pte_mkold(pte);
- 
-+	/* For COW PTE, dst_vma is still src_vma. */
- 	if (!userfaultfd_wp(dst_vma))
- 		pte = pte_clear_uffd_wp(pte);
- 
-@@ -963,6 +985,8 @@ page_copy_prealloc(struct mm_struct *src_mm, struct vm_area_struct *vma,
- 	return new_page;
- }
- 
-+
-+/* copy_pte_range() will immediately allocate new page table. */
- static int
- copy_pte_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 	       pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
-@@ -1087,6 +1111,227 @@ copy_pte_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 	return ret;
- }
- 
-+#ifdef CONFIG_COW_PTE
-+/*
-+ * copy_cow_pte_range() will try to share the page table with child.
-+ * The logic of non-present, present and error handling is same as
-+ * copy_pte_range() but dst_vma and dst_pte are src_vma and src_pte.
-+ *
-+ * We cannot preserve soft-dirty information, because PTE will share
-+ * between multiple processes.
-+ */
-+static int
-+copy_cow_pte_range(struct vm_area_struct *dst_vma,
-+		   struct vm_area_struct *src_vma,
-+		   pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
-+		   unsigned long end, unsigned long *recover_end)
-+{
-+	struct mm_struct *dst_mm = dst_vma->vm_mm;
-+	struct mm_struct *src_mm = src_vma->vm_mm;
-+	struct vma_iterator vmi;
-+	struct vm_area_struct *curr = src_vma;
-+	pte_t *src_pte, *orig_src_pte;
-+	spinlock_t *src_ptl;
-+	int ret = 0;
-+	int rss[NR_MM_COUNTERS];
-+	swp_entry_t entry = (swp_entry_t){0};
-+	unsigned long vm_end, orig_addr = addr;
-+	pgtable_t pte_table = pmd_pgtable(*src_pmd);
-+
-+	end = (addr + PMD_SIZE) & PMD_MASK;
-+	addr = addr & PMD_MASK;
-+
-+	/*
-+	 * Increase the refcount to prevent the parent's PTE
-+	 * dropped/reused. Only increace the refcount at first
-+	 * time attached.
-+	 */
-+	src_ptl = pte_lockptr(src_mm, src_pmd);
-+	spin_lock(src_ptl);
-+	pmd_get_pte(src_pmd);
-+	pmd_install(dst_mm, dst_pmd, &pte_table);
-+	spin_unlock(src_ptl);
-+
-+	/*
-+	 * We should handle all of the entries in this PTE at this traversal,
-+	 * since we cannot promise that the next vma will not do the lazy fork.
-+	 * The lazy fork will skip the copying, which may cause the incomplete
-+	 * state of COW-ed PTE.
-+	 */
-+	vma_iter_init(&vmi, src_mm, addr);
-+	for_each_vma_range(vmi, curr, end) {
-+		vm_end = min(end, curr->vm_end);
-+		addr = max(addr, curr->vm_start);
-+
-+		/* We don't share the PTE with VM_DONTCOPY. */
-+		if (curr->vm_flags & VM_DONTCOPY) {
-+			*recover_end = addr;
-+			return -EAGAIN;
-+		}
-+again:
-+		init_rss_vec(rss);
-+		src_pte = pte_offset_map(src_pmd, addr);
-+		src_ptl = pte_lockptr(src_mm, src_pmd);
-+		orig_src_pte = src_pte;
-+		spin_lock(src_ptl);
-+		arch_enter_lazy_mmu_mode();
-+
-+		do {
-+			if (pte_none(*src_pte))
-+				continue;
-+			if (unlikely(!pte_present(*src_pte))) {
-+				/*
-+				 * Although, parent's PTE is COW-ed, we should
-+				 * still need to handle all the swap stuffs.
-+				 */
-+				ret = copy_nonpresent_pte(dst_mm, src_mm,
-+							  src_pte, src_pte,
-+							  curr, curr,
-+							  addr, rss);
-+				if (ret == -EIO) {
-+					entry = pte_to_swp_entry(*src_pte);
-+					break;
-+				} else if (ret == -EBUSY) {
-+					break;
-+				} else if (!ret)
-+					continue;
-+				/*
-+				 * Device exclusive entry restored, continue by
-+				 * copying the now present pte.
-+				 */
-+				WARN_ON_ONCE(ret != -ENOENT);
-+			}
-+			/*
-+			 * copy_present_pte() will determine the mapped page
-+			 * should be COW mapping or not.
-+			 */
-+			ret = copy_present_pte(curr, curr, src_pte, src_pte,
-+					       addr, rss, NULL);
-+			/*
-+			 * If we need a pre-allocated page for this pte,
-+			 * drop the lock, recover all the entries, fall
-+			 * back to copy_pte_range(), and try again.
-+			 */
-+			if (unlikely(ret == -EAGAIN))
-+				break;
-+		} while (src_pte++, addr += PAGE_SIZE, addr != vm_end);
-+
-+		arch_leave_lazy_mmu_mode();
-+		add_mm_rss_vec(dst_mm, rss);
-+		spin_unlock(src_ptl);
-+		pte_unmap(orig_src_pte);
-+		cond_resched();
-+
-+		if (ret == -EIO) {
-+			VM_WARN_ON_ONCE(!entry.val);
-+			if (add_swap_count_continuation(entry, GFP_KERNEL) < 0) {
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+			entry.val = 0;
-+		} else if (ret == -EBUSY) {
-+			goto out;
-+		} else if (ret == -EAGAIN) {
-+			/*
-+			 * We've to allocate the page immediately but first we
-+			 * should recover the processed entries and fall back
-+			 * to copy_pte_range().
-+			 */
-+			*recover_end = addr;
-+			return -EAGAIN;
-+		} else if (ret) {
-+			VM_WARN_ON_ONCE(1);
-+		}
-+
-+		/* We've captured and resolved the error. Reset, try again. */
-+		ret = 0;
-+		if (addr != vm_end)
-+			goto again;
-+	}
-+
-+out:
-+	/*
-+	 * All the pte entries are available to COW mapping.
-+	 * Now, we can share with child (COW PTE).
-+	 */
-+	pmdp_set_wrprotect(src_mm, orig_addr, src_pmd);
-+	set_pmd_at(dst_mm, orig_addr, dst_pmd, pmd_wrprotect(*src_pmd));
-+
-+	return ret;
-+}
-+
-+/* When recovering the pte entries, we should hold the locks entirely. */
-+static int
-+recover_pte_range(struct vm_area_struct *dst_vma,
-+		  struct vm_area_struct *src_vma,
-+		  pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long end)
-+{
-+	struct mm_struct *dst_mm = dst_vma->vm_mm;
-+	struct mm_struct *src_mm = src_vma->vm_mm;
-+	struct vma_iterator vmi;
-+	struct vm_area_struct *curr = src_vma;
-+	pte_t *orig_src_pte, *orig_dst_pte;
-+	pte_t *src_pte, *dst_pte;
-+	spinlock_t *src_ptl, *dst_ptl;
-+	unsigned long vm_end, addr = end & PMD_MASK;
-+	int ret = 0;
-+
-+	/* Before we allocate the new PTE, clear the entry. */
-+	mm_dec_nr_ptes(dst_mm);
-+	pmd_clear(dst_pmd);
-+	if (pte_alloc(dst_mm, dst_pmd))
-+		return -ENOMEM;
-+
-+	/*
-+	 * Traverse all the vmas that cover this PTE table until
-+	 * the end of recover address (unshareable page).
-+	 */
-+	vma_iter_init(&vmi, src_mm, addr);
-+	for_each_vma_range(vmi, curr, end) {
-+		vm_end = min(end, curr->vm_end);
-+		addr = max(addr, curr->vm_start);
-+
-+		orig_dst_pte = dst_pte = pte_offset_map(dst_pmd, addr);
-+		dst_ptl = pte_lockptr(dst_mm, dst_pmd);
-+		spin_lock(dst_ptl);
-+
-+		orig_src_pte = src_pte = pte_offset_map(src_pmd, addr);
-+		src_ptl = pte_lockptr(src_mm, src_pmd);
-+		spin_lock(src_ptl);
-+		arch_enter_lazy_mmu_mode();
-+
-+		do {
-+			if (pte_none(*src_pte))
-+				continue;
-+			/*
-+			 * COW mapping stuffs (e.g., PageAnonExclusive)
-+			 * should already handled by copy_cow_pte_range().
-+			 * We can simply set the entry to the child.
-+			 */
-+			set_pte_at(dst_mm, addr, dst_pte, *src_pte);
-+		} while (dst_pte++, src_pte++, addr += PAGE_SIZE, addr != end);
-+
-+		arch_leave_lazy_mmu_mode();
-+		spin_unlock(src_ptl);
-+		pte_unmap(orig_src_pte);
-+
-+		spin_unlock(dst_ptl);
-+		pte_unmap(orig_dst_pte);
-+	}
-+	/*
-+	 * After recovering the entries, release the holding from child.
-+	 * Parent may still share with others, so don't make it writeable.
-+	 */
-+	spin_lock(src_ptl);
-+	pmd_put_pte(src_pmd);
-+	spin_unlock(src_ptl);
-+
-+	cond_resched();
-+
-+	return ret;
-+}
-+#endif /* CONFIG_COW_PTE */
-+
- static inline int
- copy_pmd_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 	       pud_t *dst_pud, pud_t *src_pud, unsigned long addr,
-@@ -1115,6 +1360,64 @@ copy_pmd_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 				continue;
- 			/* fall through */
- 		}
-+
+@@ -192,6 +192,36 @@ static inline void free_pmd_range(struct mmu_gather *tlb, pud_t *pud,
+ 	pmd = pmd_offset(pud, addr);
+ 	do {
+ 		next = pmd_addr_end(addr, end);
 +#ifdef CONFIG_COW_PTE
 +		/*
-+		 * If MMF_COW_PTE set, copy_pte_range() will try to share
-+		 * the PTE page table first. In other words, it attempts to
-+		 * do COW on PTE (and mapped pages). However, if there has
-+		 * any unshareable page (e.g., pinned page, device private
-+		 * page), it will fall back to the default path, which will
-+		 * copy the page table immediately.
-+		 * In such a case, it stores the address of first unshareable
-+		 * page to recover_end then goes back to the beginning of PTE
-+		 * and recovers the COW-ed PTE entries until it meets the same
-+		 * unshareable page again. During the recovering, because of
-+		 * COW-ed PTE entries are logical same as COW mapping, so it
-+		 * only needs to allocate the new PTE and sets COW-ed PTE
-+		 * entries to new PTE (which will be same as COW mapping).
++		 * For COW-ed PTE, the pte entries still mapping to pages.
++		 * However, we should did de-accounting to all of it. So,
++		 * even if the refcount is not the same as zapping, we
++		 * could still fall back to normal PTE and handle it
++		 * without traversing entries to do the de-accounting.
 +		 */
-+		if (test_bit(MMF_COW_PTE, &src_mm->flags)) {
-+			unsigned long recover_end = 0;
-+			int ret;
++		if (test_bit(MMF_COW_PTE, &tlb->mm->flags)) {
++			if (!pmd_none(*pmd) && !pmd_write(*pmd)) {
++				spinlock_t *ptl = pte_lockptr(tlb->mm, pmd);
 +
-+			/*
-+			 * Setting wrprotect with normal PTE to pmd entry
-+			 * will trigger pmd_bad(). Skip bad checking here.
-+			 */
-+			if (pmd_none(*src_pmd))
-+				continue;
-+			/* Skip if the PTE already did COW PTE this time. */
-+			if (!pmd_none(*dst_pmd) && !pmd_write(*dst_pmd))
-+				continue;
++				spin_lock(ptl);
++				if (!pmd_put_pte(pmd)) {
++					pmd_t new = pmd_mkwrite(*pmd);
 +
-+			ret = copy_cow_pte_range(dst_vma, src_vma,
-+						 dst_pmd, src_pmd,
-+						 addr, next, &recover_end);
-+			if (!ret) {
-+				/* COW PTE succeeded. */
-+				continue;
-+			} else if (ret == -EAGAIN) {
-+				/* fall back to normal copy method. */
-+				if (recover_pte_range(dst_vma, src_vma,
-+						      dst_pmd, src_pmd,
-+						      recover_end))
-+					return -ENOMEM;
-+				/*
-+				 * Since we processed all the entries of PTE
-+				 * table, recover_end may not in the src_vma.
-+				 * If we already handled the src_vma, skip it.
-+				 */
-+				if (!range_in_vma(src_vma, recover_end,
-+						  recover_end + PAGE_SIZE))
++					set_pmd_at(tlb->mm, addr, pmd, new);
++					spin_unlock(ptl);
++					free_pte_range(tlb, pmd, addr);
 +					continue;
-+				else
-+					addr = recover_end;
-+				/* fall through */
-+			} else if (ret)
-+				return -ENOMEM;
++				}
++				spin_unlock(ptl);
++
++				pmd_clear(pmd);
++				mm_dec_nr_ptes(tlb->mm);
++				tlb_flush_pmd_range(tlb, addr, PAGE_SIZE);
++			} else
++				VM_WARN_ON(cow_pte_count(pmd) != 1);
 +		}
-+#endif /* CONFIG_COW_PTE */
- 		if (pmd_none_or_clear_bad(src_pmd))
++#endif
+ 		if (pmd_none_or_clear_bad(pmd))
  			continue;
- 		if (copy_pte_range(dst_vma, src_vma, dst_pmd, src_pmd,
+ 		free_pte_range(tlb, pmd, addr);
+@@ -1654,6 +1684,29 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ 	pte_t *start_pte;
+ 	pte_t *pte;
+ 	swp_entry_t entry;
++	bool pte_is_shared = false;
++
++#ifdef CONFIG_COW_PTE
++	if (test_bit(MMF_COW_PTE, &mm->flags) && !pmd_write(*pmd)) {
++		if (!range_in_vma(vma, addr & PMD_MASK,
++				  (addr + PMD_SIZE) & PMD_MASK)) {
++			/*
++			 * We cannot promise this COW-ed PTE will also be zap
++			 * with the rest of VMAs. So, break COW PTE here.
++			 */
++			break_cow_pte(vma, pmd, addr);
++		} else {
++			start_pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
++			if (cow_pte_count(pmd) == 1) {
++				/* Reuse COW-ed PTE */
++				pmd_t new = pmd_mkwrite(*pmd);
++				set_pmd_at(tlb->mm, addr, pmd, new);
++			} else
++				pte_is_shared = true;
++			pte_unmap_unlock(start_pte, ptl);
++		}
++	}
++#endif
+ 
+ 	tlb_change_page_size(tlb, PAGE_SIZE);
+ again:
+@@ -1678,11 +1731,15 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ 			page = vm_normal_page(vma, addr, ptent);
+ 			if (unlikely(!should_zap_page(details, page)))
+ 				continue;
+-			ptent = ptep_get_and_clear_full(mm, addr, pte,
+-							tlb->fullmm);
++			if (pte_is_shared)
++				ptent = *pte;
++			else
++				ptent = ptep_get_and_clear_full(mm, addr, pte,
++								tlb->fullmm);
+ 			tlb_remove_tlb_entry(tlb, pte, addr);
+-			zap_install_uffd_wp_if_needed(vma, addr, pte, details,
+-						      ptent);
++			if (!pte_is_shared)
++				zap_install_uffd_wp_if_needed(vma, addr, pte,
++							      details, ptent);
+ 			if (unlikely(!page))
+ 				continue;
+ 
+@@ -1754,8 +1811,12 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ 			/* We should have covered all the swap entry types */
+ 			WARN_ON_ONCE(1);
+ 		}
+-		pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
+-		zap_install_uffd_wp_if_needed(vma, addr, pte, details, ptent);
++
++		if (!pte_is_shared) {
++			pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
++			zap_install_uffd_wp_if_needed(vma, addr, pte,
++						      details, ptent);
++		}
+ 	} while (pte++, addr += PAGE_SIZE, addr != end);
+ 
+ 	add_mm_rss_vec(mm, rss);
+@@ -2143,6 +2204,8 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+ 	if (retval)
+ 		goto out;
+ 	retval = -ENOMEM;
++	if (break_cow_pte(vma, NULL, addr))
++		goto out;
+ 	pte = get_locked_pte(vma->vm_mm, addr, &ptl);
+ 	if (!pte)
+ 		goto out;
+@@ -2402,6 +2465,9 @@ static vm_fault_t insert_pfn(struct vm_area_struct *vma, unsigned long addr,
+ 	pte_t *pte, entry;
+ 	spinlock_t *ptl;
+ 
++	if (break_cow_pte(vma, NULL, addr))
++		return VM_FAULT_OOM;
++
+ 	pte = get_locked_pte(mm, addr, &ptl);
+ 	if (!pte)
+ 		return VM_FAULT_OOM;
+@@ -2779,6 +2845,10 @@ int remap_pfn_range_notrack(struct vm_area_struct *vma, unsigned long addr,
+ 	BUG_ON(addr >= end);
+ 	pfn -= addr >> PAGE_SHIFT;
+ 	pgd = pgd_offset(mm, addr);
++
++	if (break_cow_pte_range(vma, addr, end))
++		return -ENOMEM;
++
+ 	flush_cache_range(vma, addr, end);
+ 	do {
+ 		next = pgd_addr_end(addr, end);
+@@ -5159,6 +5229,233 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
+ 	return VM_FAULT_FALLBACK;
+ }
+ 
++#ifdef CONFIG_COW_PTE
++/* Break (unshare) COW PTE */
++static vm_fault_t handle_cow_pte_fault(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	struct mm_struct *mm = vma->vm_mm;
++	pmd_t *pmd = vmf->pmd;
++	unsigned long start, end, addr = vmf->address;
++	struct mmu_notifier_range range;
++	pmd_t cowed_entry;
++	pte_t *orig_dst_pte, *orig_src_pte;
++	pte_t *dst_pte, *src_pte;
++	spinlock_t *dst_ptl, *src_ptl;
++	int ret = 0;
++
++	/*
++	 * Do nothing with the fault that doesn't have PTE yet
++	 * (from lazy fork).
++	 */
++	if (pmd_none(*pmd) || pmd_write(*pmd))
++		return 0;
++	/* COW PTE doesn't handle huge page. */
++	if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd))
++		return 0;
++
++	mmap_assert_write_locked(mm);
++
++	start = addr & PMD_MASK;
++	end = (addr + PMD_SIZE) & PMD_MASK;
++	addr = start;
++
++	mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_PAGE,
++				0, vma, mm, start, end);
++	/*
++	 * Because of the address range is PTE not only for the faulted
++	 * vma, it might have some unmatch situations since mmu notifier
++	 * will only reigster the faulted vma.
++	 * Do we really need to care about this kind of unmatch?
++	 */
++	mmu_notifier_invalidate_range_start(&range);
++	raw_write_seqcount_begin(&mm->write_protect_seq);
++
++	/*
++	 * Fast path, check if we are the only one faulted task
++	 * references to this COW-ed PTE, reuse it.
++	 */
++	src_pte = pte_offset_map_lock(mm, pmd, addr, &src_ptl);
++	if (cow_pte_count(pmd) == 1) {
++		pmd_t new = pmd_mkwrite(*pmd);
++		set_pmd_at(mm, addr, pmd, new);
++		pte_unmap_unlock(src_pte, src_ptl);
++		goto flush_tlb;
++	}
++	/* We don't hold the lock when allocating the new PTE. */
++	pte_unmap_unlock(src_pte, src_ptl);
++
++	/*
++	 * Slow path. Since we already did the accounting and still
++	 * sharing the mapped pages, we can just clone PTE.
++	 */
++
++	cowed_entry = READ_ONCE(*pmd);
++	/* Decrease the pgtable_bytes of COW-ed PTE. */
++	mm_dec_nr_ptes(mm);
++	pmd_clear(pmd);
++	orig_dst_pte = dst_pte = pte_alloc_map_lock(mm, pmd, addr, &dst_ptl);
++	if (unlikely(!dst_pte)) {
++		/* If allocation failed, restore COW-ed PTE. */
++		set_pmd_at(mm, addr, pmd, cowed_entry);
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	/*
++	 * We should hold the lock of COW-ed PTE until all the operations
++	 * have been done, including duplicating, and decrease refcount.
++	 */
++	src_pte = pte_offset_map_lock(mm, &cowed_entry, addr, &src_ptl);
++	orig_src_pte = src_pte;
++	arch_enter_lazy_mmu_mode();
++
++	/*
++	 * All the mapped pages in COW-ed PTE are COW mapping. We can
++	 * set the entries and leave other stuff to handle_pte_fault().
++	 */
++	do {
++		if (pte_none(*src_pte))
++			continue;
++		set_pte_at(mm, addr, dst_pte, *src_pte);
++	} while (dst_pte++, src_pte++, addr += PAGE_SIZE, addr != end);
++
++	arch_leave_lazy_mmu_mode();
++	pte_unmap_unlock(orig_dst_pte, dst_ptl);
++
++	/* Decrease the refcount of COW-ed PTE. */
++	if (!pmd_put_pte(&cowed_entry)) {
++		/*
++		 * COW-ed (old) PTE's refcount is 1. Now we have two PTEs
++		 * with the same content. Free the new one and reuse the
++		 * old one.
++		 */
++		pgtable_t token = pmd_pgtable(*pmd);
++		/* Reuse COW-ed PTE. */
++		pmd_t new = pmd_mkwrite(cowed_entry);
++
++		/* Clear all the entries of new PTE. */
++		addr = start;
++		dst_pte = pte_offset_map_lock(mm, pmd, addr, &dst_ptl);
++		orig_dst_pte = dst_pte;
++		do {
++			if (pte_none(*dst_pte))
++				continue;
++			if (pte_present(*dst_pte))
++				page_table_check_pte_clear(mm, addr, *dst_pte);
++			pte_clear(mm, addr, dst_pte);
++		} while (dst_pte++, addr += PAGE_SIZE, addr != end);
++		pte_unmap_unlock(orig_dst_pte, dst_ptl);
++		/* Now, we can safely free new PTE. */
++		pmd_clear(pmd);
++		pte_free(mm, token);
++		/* Reuse COW-ed PTE */
++		set_pmd_at(mm, start, pmd, new);
++	}
++
++	pte_unmap_unlock(orig_src_pte, src_ptl);
++
++flush_tlb:
++	/*
++	 * If we change the protection, flush TLB.
++	 * flush_tlb_range() will only use vma to get mm, we don't need
++	 * to consider the unmatch address range with vma problem here.
++	 *
++	 * Should we flush TLB when holding the pte lock?
++	 */
++	flush_tlb_range(vma, start, end);
++out:
++	raw_write_seqcount_end(&mm->write_protect_seq);
++	mmu_notifier_invalidate_range_end(&range);
++
++	return ret;
++}
++
++static inline int __break_cow_pte(struct vm_area_struct *vma, pmd_t *pmd,
++				  unsigned long addr)
++{
++	struct vm_fault vmf = {
++		.vma = vma,
++		.address = addr & PAGE_MASK,
++		.pmd = pmd,
++	};
++
++	return handle_cow_pte_fault(&vmf);
++}
++
++/**
++ * break_cow_pte - duplicate/reuse shared, wprotected (COW-ed) PTE
++ * @vma: target vma want to break COW
++ * @pmd: pmd index that maps to the shared PTE
++ * @addr: the address trigger break COW PTE
++ *
++ * Return: zero on success, < 0 otherwise.
++ *
++ * The address needs to be in the range of shared and write portected
++ * PTE that the pmd index mapped. If pmd is NULL, it will get the pmd
++ * from vma. Duplicate COW-ed PTE when some still mapping to it.
++ * Otherwise, reuse COW-ed PTE.
++ */
++int break_cow_pte(struct vm_area_struct *vma, pmd_t *pmd, unsigned long addr)
++{
++	struct mm_struct *mm;
++	pgd_t *pgd;
++	p4d_t *p4d;
++	pud_t *pud;
++
++	if (!vma)
++		return -EINVAL;
++	mm = vma->vm_mm;
++
++	if (!test_bit(MMF_COW_PTE, &mm->flags))
++		return 0;
++
++	if (!pmd) {
++		pgd = pgd_offset(mm, addr);
++		if (pgd_none_or_clear_bad(pgd))
++			return 0;
++		p4d = p4d_offset(pgd, addr);
++		if (p4d_none_or_clear_bad(p4d))
++			return 0;
++		pud = pud_offset(p4d, addr);
++		if (pud_none_or_clear_bad(pud))
++			return 0;
++		pmd = pmd_offset(pud, addr);
++	}
++
++	/* We will check the type of pmd entry later. */
++
++	return __break_cow_pte(vma, pmd, addr);
++}
++
++/**
++ * break_cow_pte_range - duplicate/reuse COW-ed PTE in a given range
++ * @vma: target vma want to break COW
++ * @start: the address of start breaking
++ * @end: the address of end breaking
++ *
++ * Return: zero on success, the number of failed otherwise.
++ */
++int break_cow_pte_range(struct vm_area_struct *vma, unsigned long start,
++			unsigned long end)
++{
++	unsigned long addr, next;
++	int nr_failed = 0;
++
++	if (!range_in_vma(vma, start, end))
++		return -EINVAL;
++
++	addr = start;
++	do {
++		next = pmd_addr_end(addr, end);
++		if (break_cow_pte(vma, NULL, addr))
++			nr_failed++;
++	} while (addr = next, addr != end);
++
++	return nr_failed;
++}
++#endif /* CONFIG_COW_PTE */
++
+ /*
+  * These routines also need to handle stuff like marking pages dirty
+  * and/or accessed for architectures that don't do it in hardware (most
+@@ -5234,8 +5531,13 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
+ 			return do_fault(vmf);
+ 	}
+ 
+-	if (!pte_present(vmf->orig_pte))
++	if (!pte_present(vmf->orig_pte)) {
++#ifdef CONFIG_COW_PTE
++		if (test_bit(MMF_COW_PTE, &vmf->vma->vm_mm->flags))
++			handle_cow_pte_fault(vmf);
++#endif
+ 		return do_swap_page(vmf);
++	}
+ 
+ 	if (pte_protnone(vmf->orig_pte) && vma_is_accessible(vmf->vma))
+ 		return do_numa_page(vmf);
+@@ -5371,8 +5673,31 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+ 				return 0;
+ 			}
+ 		}
++#ifdef CONFIG_COW_PTE
++		/*
++		 * Duplicate COW-ed PTE when page fault will change the
++		 * mapped pages (write or unshared fault) or COW-ed PTE
++		 * (file mapped read fault, see do_read_fault()).
++		 */
++		if ((flags & (FAULT_FLAG_WRITE|FAULT_FLAG_UNSHARE) ||
++		      vma->vm_ops) && test_bit(MMF_COW_PTE, &mm->flags)) {
++			ret = handle_cow_pte_fault(&vmf);
++			if (unlikely(ret == -ENOMEM))
++				return VM_FAULT_OOM;
++		}
++#endif
+ 	}
+ 
++#ifdef CONFIG_COW_PTE
++	/*
++	 * It's definitely will break the kernel when refcount of PTE
++	 * is higher than 1 and it is writeable in PMD entry. But we
++	 * want to see more information so just warning here.
++	 */
++	if (likely(!pmd_none(*vmf.pmd)))
++		VM_WARN_ON(cow_pte_count(vmf.pmd) > 1 && pmd_write(*vmf.pmd));
++#endif
++
+ 	return handle_pte_fault(&vmf);
+ }
+ 
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 425a9349e610..ca16d7abcdb6 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2208,6 +2208,10 @@ int __split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			return err;
+ 	}
+ 
++	err = break_cow_pte(vma, NULL, addr);
++	if (err)
++		return err;
++
+ 	new = vm_area_dup(vma);
+ 	if (!new)
+ 		return -ENOMEM;
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 930f65c315c0..3fbc45e381cc 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -534,6 +534,8 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+ 		old_pmd = get_old_pmd(vma->vm_mm, old_addr);
+ 		if (!old_pmd)
+ 			continue;
++		/* TLB flush twice time here? */
++		break_cow_pte(vma, old_pmd, old_addr);
+ 		new_pmd = alloc_new_pmd(vma->vm_mm, vma, new_addr);
+ 		if (!new_pmd)
+ 			break;
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 4fa440e87cd6..92e39a722100 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1911,6 +1911,8 @@ static inline int unuse_pmd_range(struct vm_area_struct *vma, pud_t *pud,
+ 		next = pmd_addr_end(addr, end);
+ 		if (pmd_none_or_trans_huge_or_clear_bad(pmd))
+ 			continue;
++		if (break_cow_pte(vma, pmd, addr))
++			return -ENOMEM;
+ 		ret = unuse_pte_range(vma, pmd, addr, next, type);
+ 		if (ret)
+ 			return ret;
 -- 
 2.34.1
 
