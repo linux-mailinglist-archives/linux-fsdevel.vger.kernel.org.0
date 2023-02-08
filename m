@@ -2,81 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C75F68EC35
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 10:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A45C968EC6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 11:11:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231139AbjBHJyo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Feb 2023 04:54:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44352 "EHLO
+        id S231178AbjBHKLN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Feb 2023 05:11:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230472AbjBHJyi (ORCPT
+        with ESMTP id S230443AbjBHKLL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Feb 2023 04:54:38 -0500
-Received: from mail-oa1-x33.google.com (mail-oa1-x33.google.com [IPv6:2001:4860:4864:20::33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64A36A7D
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Feb 2023 01:54:37 -0800 (PST)
-Received: by mail-oa1-x33.google.com with SMTP id 586e51a60fabf-1685cf2003aso22496593fac.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Feb 2023 01:54:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:sender:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3oYidZLIIeufrqimC75alngwweIfSpHMuZMsiKxxUjU=;
-        b=SK4yg4hZ1/J9ykxuQXuMJ8wTplmXWZ+rUoPXQmXGHLI17Yz0/3kcyZp0WucDCQdTSS
-         u5RmtTaXcbeSzbE+OIubLf9bmpQ7aKtVQagpWW38EhSFqRQhaXG+K1NbIppcuF3pl1cb
-         JPoQRkqbL5uAiY/dt7zUxvq4LIuJk+rNI4U/NfG7+w68wpdO4H8QiPVgBgpAKCveuzu7
-         +aoXN6t/uOgllbiUygZFQBBAcb4NFciPZJCGRsvawHgl2mFVgNNB8AAYUU9/OdGFFMP9
-         kgunVNRP8DlhCRZfzxfm/BD4SXUccCfD6VNgv0Sfpk669HM1QLl+D7SuMOKtGoHjxaov
-         iCjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:sender:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3oYidZLIIeufrqimC75alngwweIfSpHMuZMsiKxxUjU=;
-        b=Uk8HnWOLn8W4thJawSt14Y+XZfPnSOQTpge7DcazJlNQKgxkqV1ir74Ro7O04050eP
-         f5P02P2ti/S81zZC/7GF2UUPEIGO4EYKy5Ok+rnW0FGRqir7lWKa7Cw8wQnM3qq7PedK
-         AHYYuZIQrdVZScvLl/8BI5qABG7aCVshdXt38wtRTgxaNaxzSXbeAnMN0LHx/BxRdooB
-         bX8877X4mtJ4QMxRkn1K1oe7GqDDBl05dEwrlrXXh06CXVn/+R/nEZn9Bj8Nwv2MoivI
-         pSNmwj4QWAfUTyj1sxvY0AVmcAYyrRLTqZjcZ6f89y0t8OtnppMOx4rqCvVQ3IzJB/Fc
-         +nRA==
-X-Gm-Message-State: AO0yUKVJ2AWAcgi9H3sVk2nBsiceS8+daQiXSDbGfnpghv6whptiMiYO
-        Z0Izpne9hrCgMzTh7fN9EEgA9zbCcA6HEnvUlp0=
-X-Google-Smtp-Source: AK7set9Jv3aoswS5ST5xAwLKayC16Z8shntXJ7qWgscb/LsTffeS1YJG1uw6sxAchHLmAvqU06w1+urcXDQ5wWfnJuE=
-X-Received: by 2002:a05:6870:808d:b0:16a:441:fb14 with SMTP id
- q13-20020a056870808d00b0016a0441fb14mr269664oab.60.1675850077045; Wed, 08 Feb
- 2023 01:54:37 -0800 (PST)
+        Wed, 8 Feb 2023 05:11:11 -0500
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A3B842CFFB;
+        Wed,  8 Feb 2023 02:11:03 -0800 (PST)
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id AA2422055F9C;
+        Wed,  8 Feb 2023 19:11:02 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.17.1.9/8.17.1.9/Debian-2) with ESMTPS id 318AB0tG072967
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Wed, 8 Feb 2023 19:11:01 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.17.1.9/8.17.1.9/Debian-2) with ESMTPS id 318AB0ol317789
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Wed, 8 Feb 2023 19:11:00 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.17.1.9/8.17.1.9/Submit) id 318AAvG8317788;
+        Wed, 8 Feb 2023 19:10:57 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>, "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>, Dave Kleikamp <shaggy@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Christoph Hellwig <hch@infradead.org>,
+        Kari Argillander <kari.argillander@gmail.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>
+Subject: Re: [RFC PATCH v2 01/18] fat: Fix iocharset=utf8 mount option
+In-Reply-To: <20230204105703.pnc6vcy4hvmvvm3b@pali> ("Pali
+ =?iso-8859-1?Q?Roh=E1r=22's?= message of
+        "Sat, 4 Feb 2023 11:57:03 +0100")
+References: <20221226142150.13324-1-pali@kernel.org>
+        <20221226142150.13324-2-pali@kernel.org>
+        <874jsyvje6.fsf@mail.parknet.co.jp>
+        <20230204105703.pnc6vcy4hvmvvm3b@pali>
+Date:   Wed, 08 Feb 2023 19:10:57 +0900
+Message-ID: <874jrwfowe.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-Sender: sbinta301@gmail.com
-Received: by 2002:a05:6358:e493:b0:f4:4cdb:bef6 with HTTP; Wed, 8 Feb 2023
- 01:54:36 -0800 (PST)
-From:   "Mrs. Margaret Christopher" <mrsmargaretchristopher001@gmail.com>
-Date:   Wed, 8 Feb 2023 01:54:36 -0800
-X-Google-Sender-Auth: saYkpXdgGU6i5PXitLQQP8dVHrw
-Message-ID: <CAK8e4Wvp+F0qoKA61acztXR0o9sf6kdkL=QP1Us9TTUMP274zA@mail.gmail.com>
-Subject: Humanitarian Project For Less Privileged.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_HK_NAME_FM_MR_MRS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Pali Rohár <pali@kernel.org> writes:
+
+>> This patch fixes the issue of utf-8 partially only. I think we can't
+>> still recommend only partially working one.
+>
+> With this patch FAT_DEFAULT_IOCHARSET=utf8 is same what was
+> FAT_DEFAULT_UTF8=y without this patch. And option FAT_DEFAULT_UTF8 was
+> recommended in description before "select the next option instead if you
+> would like to use UTF-8 encoded file names by default."
+
+It is not recommending to use UTF-8 as default, right? I wanted to say
+no warning and recommend has big difference, and I can't recommend the
+incompatible behavior that creates the case sensitive filename.
+
+>> Still broken, so I think we still need the warning here (would be
+>> tweaked warning).
+>
+> There was no warning before for utf8=1. And with this patch
+> iocharset=utf8 should have same behavior as what was utf8=1 before this
+> patch.
+>
+> So if we should show some warning for utf8=1 then it is somehow not
+> related to this patch and it should be done separately, possible also to
+> the current codebase and before this patch.
+
+Sure, you are right.
+
+Thanks.
 -- 
-Hello Dear
-
-  Am a dying woman here in the hospital, i was diagnose as a
-Coronavirus patient over 2 months ago. I am A business woman who is
-dealing with Gold Exportation, I Am 59 year old from USA California i
-have a charitable and unfufilling  project that am about to handover
-to you, if you are interested to know more about this project please reply me.
-
- Hope to hear from you
-
-Best Regard
-
-Margaret Christopher
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
