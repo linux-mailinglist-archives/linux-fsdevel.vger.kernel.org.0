@@ -2,107 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A43CF68E60D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 03:28:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0855368E687
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 04:15:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229695AbjBHC24 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Feb 2023 21:28:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46926 "EHLO
+        id S230355AbjBHDPe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Feb 2023 22:15:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbjBHC2z (ORCPT
+        with ESMTP id S230196AbjBHDPd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Feb 2023 21:28:55 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312F52658B
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Feb 2023 18:28:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+FYIJ/QVZlT9R0BZU7C2h00TzB/VrCz1X8cC3mZzul0=; b=FjG7BGHoTqtsjm2YWyK/7zEYFj
-        j9Q4oicPlS/0Di5KBJQ7BR+oEnrRWaxYonXYcbY/K8NRFvOqKW0RCU8+tOnTDXFNlF9mVvgiu/X4b
-        o9L6TPB23brWLoWOp8K5Cx9NGowRMd5zbwGNob5AgNW0PYZ6yU5cLPvkKo09RFqnyi4jgwYUejDS0
-        AGw6tKVec8m/WJUD829gWgOtNiWDkVg5Z3n3o51rdzyBP0prqIhNePZ1XsAmxUYHx6i+zJUe3JEx/
-        01Rsu4lyHnNv4m7tUYQDYx8NjFQDCKO1Y8ly96JjAojlGDsl7KZO3S5KY1CbTbTfdYOFN5LLedJPu
-        AJVvYTtw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pPaCY-000mt8-VE; Wed, 08 Feb 2023 02:28:50 +0000
-Date:   Wed, 8 Feb 2023 02:28:50 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     coolqyj@163.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Qian Yingjin <qian@ddn.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] [PATCH V2] mm/filemap: fix page end in
- filemap_get_read_batch
-Message-ID: <Y+MI4mdGfXYDcp0R@casper.infradead.org>
-References: <20230208022400.28962-1-coolqyj@163.com>
+        Tue, 7 Feb 2023 22:15:33 -0500
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85C9843453;
+        Tue,  7 Feb 2023 19:15:30 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4PBQ9T1Sfgz4f3pGD;
+        Wed,  8 Feb 2023 11:15:25 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+        by APP3 (Coremail) with SMTP id _Ch0CgCnUyHNE+NjSOS3Cw--.37934S3;
+        Wed, 08 Feb 2023 11:15:27 +0800 (CST)
+Subject: Re: block: sleeping in atomic warnings
+To:     Jens Axboe <axboe@kernel.dk>, Dan Carpenter <error27@gmail.com>,
+        linux-block@vger.kernel.org
+Cc:     Julia Lawall <julia.lawall@inria.fr>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Hongchen Zhang <zhanghongchen@loongson.cn>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        maobibo <maobibo@loongson.cn>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        "yukuai (C)" <yukuai3@huawei.com>
+References: <20230129060452.7380-1-zhanghongchen@loongson.cn>
+ <CAHk-=wjw-rrT59k6VdeLu4qUarQOzicsZPFGAO5J8TKM=oukUw@mail.gmail.com>
+ <Y+EjmnRqpLuBFPX1@bombadil.infradead.org>
+ <4ffbb0c8-c5d0-73b3-7a4e-2da9a7b03669@inria.fr> <Y+Ja5SRs886CEz7a@kadam>
+ <4321724d-9a24-926c-5d2d-5d5d902bda72@kernel.dk>
+From:   Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <339bf113-3ac1-7e62-3cca-45bb8b53d291@huaweicloud.com>
+Date:   Wed, 8 Feb 2023 11:15:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230208022400.28962-1-coolqyj@163.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <4321724d-9a24-926c-5d2d-5d5d902bda72@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: _Ch0CgCnUyHNE+NjSOS3Cw--.37934S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYI7kC6x804xWl14x267AKxVW5JVWrJwAF
+        c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+        0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
+        wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+        x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+        64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+        1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
+        c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+        AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+        17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+        IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
+        3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+        nIWIevJa73UjIFyTuYvjxUFDGOUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 08, 2023 at 10:24:00AM +0800, coolqyj@163.com wrote:
-> From: Qian Yingjin <qian@ddn.com>
-> 
-> I was running traces of the read code against an RAID storage
-> system to understand why read requests were being misaligned
-> against the underlying RAID strips. I found that the page end
-> offset calculation in filemap_get_read_batch() was off by one.
-> 
-> When a read is submitted with end offset 1048575, then it
-> calculates the end page for read of 256 when it should be 255.
-> "last_index" is the index of the page beyond the end of the read
-> and it should be skipped when get a batch of pages for read in
-> @filemap_get_read_batch().
-> 
-> The below simple patch fixes the problem. This code was introduced
-> in kernel 5.12.
-> 
-> Fixes: cbd59c48ae2b ("mm/filemap: use head pages in generic_file_buffered_read")
-> Signed-off-by: Qian Yingjin <qian@ddn.com>
+Hi,
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Cc: stable@vger.kernel.org
+在 2023/02/08 2:31, Jens Axboe 写道:
 
-> ---
->  mm/filemap.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>> block/blk-wbt.c:843 wbt_init() warn: sleeping in atomic context
+>> ioc_qos_write() <- disables preempt
+>> -> wbt_enable_default()
+>>     -> wbt_init()
 > 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index c4d4ace9cc70..0e20a8d6dd93 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2588,18 +2588,19 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
->  	struct folio *folio;
->  	int err = 0;
->  
-> +	/* "last_index" is the index of the page beyond the end of the read */
->  	last_index = DIV_ROUND_UP(iocb->ki_pos + iter->count, PAGE_SIZE);
->  retry:
->  	if (fatal_signal_pending(current))
->  		return -EINTR;
->  
-> -	filemap_get_read_batch(mapping, index, last_index, fbatch);
-> +	filemap_get_read_batch(mapping, index, last_index - 1, fbatch);
->  	if (!folio_batch_count(fbatch)) {
->  		if (iocb->ki_flags & IOCB_NOIO)
->  			return -EAGAIN;
->  		page_cache_sync_readahead(mapping, ra, filp, index,
->  				last_index - index);
-> -		filemap_get_read_batch(mapping, index, last_index, fbatch);
-> +		filemap_get_read_batch(mapping, index, last_index - 1, fbatch);
->  	}
->  	if (!folio_batch_count(fbatch)) {
->  		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
-> -- 
-> 2.34.1
+> Also definitely a bug.
 > 
+
+This won't happen currently, wbt_init() will be called while
+initializing device, and later wbt_enable_devault() from iocost won't
+call wbt_init().
+
+However, we might support rq_qos destruction dynamically in the
+future, I'll fix this warning.
+
+Thanks,
+Kuai
+
