@@ -2,65 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7726368EE97
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 13:09:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE95D68EED5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 13:24:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231168AbjBHMJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Feb 2023 07:09:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53348 "EHLO
+        id S231247AbjBHMY0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Feb 2023 07:24:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjBHMJz (ORCPT
+        with ESMTP id S230335AbjBHMYZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Feb 2023 07:09:55 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C96C111651;
-        Wed,  8 Feb 2023 04:09:53 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id bu23so672570wrb.8;
-        Wed, 08 Feb 2023 04:09:53 -0800 (PST)
+        Wed, 8 Feb 2023 07:24:25 -0500
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FC576196;
+        Wed,  8 Feb 2023 04:24:24 -0800 (PST)
+Received: by mail-pl1-x636.google.com with SMTP id r8so19062699pls.2;
+        Wed, 08 Feb 2023 04:24:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rGafubzmHRRH6UHRpA5a7k29P/gBmV50GLONDcRP9tI=;
-        b=OpDwTXHnq1CS8kuQCMMQjoDOIsCRJPxSSN5euXdgkvAdI6f2RwAnHMU4yGwyiQe1dj
-         BvbBCTrgT2rwYozNWozVACkVspwEMzh5uEtMbyhzkWS+HGvEeLdlDyg9NjUyOtRgBeu7
-         tTszt+gJNwH6sfB8tR546UGp651CskoSnzYVPTHXmswascLBcLbyVl8K3qgjw8xMXglL
-         DD6NxerciQGOK71VNZnGvQQWZrWpCcpNBQfxFIyJCpoZZRL7qc2baRKSpxEmODRR8JXd
-         SB1A2XyLnK04w1NOgmYvcR0obO5+M5YRmCp2NphEG9tze+8B3FRRrQP9OMoMYG8/Mae7
-         Dokg==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eww0bGHARNDro+m4qM4alVSDjm0iyW4r5Bw76JD/1d0=;
+        b=UwDzNnVKuF/8eUzNV/aymL9+YcldSIDvjEKmYPNChw9tl/cW29Zad264smZsYHW8Qe
+         3K+A+0a2pom4OZZbxKrjZjNutSB5FHodxpuAzzRchE6kaJcQ+5/lupwMD0s9d0crb4Sa
+         E2m54aLLmCbokqcbW9FYc9zQr3zWZnOqTWppeVRy7ISY2XtRs4xPRjU02s++w/HKJlFl
+         kg04wIBDr54WQd38+rYVn2umHbHARWKII1ybL4idTSuoiziEp1hZqzFvsUqhl59swDNr
+         Yi7r6xIUpqFdwY449R217+sVKup3An5sYZWWhbEK3lIoH3KXY5u5fLczWnZjy4KAyIPb
+         6UgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rGafubzmHRRH6UHRpA5a7k29P/gBmV50GLONDcRP9tI=;
-        b=fyrErsMaaJ3LUA+tXK0F3imxVQgn9tW628RtUpXQsMz6yM05UZ87Aihop5R6mpJ4o8
-         2JXQJdb0SJeACTaH9drNtJ3ocrpHocl0sEM0v1yjtGFzYywuAsdYI29FkBl8WPVCnQxA
-         UN3VmEeQs6ea+Lg42bpcz24hovooOgtRp/Evhd8o2fjtr77M7hsyr9LtyArJCEjCQUiD
-         YewS/JNX1SZGmw79rqq1e66VFLvh0t8mztgTzlvu+zbK4LyQ9mQXAXlIu7eYNknFJGev
-         DtWhrngLxEckm2cARwyjS/e9ecH8YLzhTn7ZKlVZGLTQ1TbfT4gCBuuTNyht4MtTNaKB
-         dpGQ==
-X-Gm-Message-State: AO0yUKUGmpaBJDctBBRBN5xmYQNO7Zr0XJXZ5olFQU2sX2Aqb67QS3z2
-        hoAaJ3vwBuLpooxReQWbGyvkBiMOUa8+Q6uh
-X-Google-Smtp-Source: AK7set/0LdX34TF42BDs2yb6m8k8qFh+7X8TJYxLo5Uy3rR/6EYZgm5w+Xa0tgTmsWrb5fYtkRbe2g==
-X-Received: by 2002:adf:f60f:0:b0:2c3:dc62:e680 with SMTP id t15-20020adff60f000000b002c3dc62e680mr6328158wrp.30.1675858192347;
-        Wed, 08 Feb 2023 04:09:52 -0800 (PST)
-Received: from [192.168.1.107] (pop.92-184-100-160.mobile.abo.orange.fr. [92.184.100.160])
-        by smtp.gmail.com with ESMTPSA id e7-20020adfdbc7000000b002425be3c9e2sm12637824wrj.60.2023.02.08.04.09.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Feb 2023 04:09:51 -0800 (PST)
-Message-ID: <03a87391-1b19-de2d-5c18-581c1d0c47ca@gmail.com>
-Date:   Wed, 8 Feb 2023 13:09:50 +0100
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eww0bGHARNDro+m4qM4alVSDjm0iyW4r5Bw76JD/1d0=;
+        b=FjzxwuIWI+X52Nuap3dhGGh/vwfwuRrfBzK/su18xW7CFjI1MJ4jKhRRRuCd2Z+3lw
+         zL6DOtpoOKwdaCZTO7hKovU1Ay+z+6DUOvJVsk7AhZ/HahxMJ8sQlUzMx+mBa+b2KCYb
+         KAQpGfGxmUwWDDDt73gB1lUMSmkN/x8NeE9ubBiBwp5W5jIKv7/S8ikFO9IHWfS57rlB
+         W/Sx9NBZ32sLNNoHmog2GFTxWToapXLjl9HLmkrvmPQe6wQregd9nmrJJMJhnIe5T50M
+         PQn4gHuRS2vKwPRDYKl4NVC6snL0H3KJFB10jbSftpiYYCd9glH9rZGHh76Pi7mkFTFW
+         rSKA==
+X-Gm-Message-State: AO0yUKU+Qorcaz27nxD8dK2sfh5hecgixfeIGyyQ+cR+eyxqCXAKWVbN
+        uWEfqrGxQzT2BlaHaeUTbpM=
+X-Google-Smtp-Source: AK7set/EW3iOkejUiaBMrPtlYGHcnCsU5yA10F1vOHdYEM6oZRjOqRVew+hXFhEI9WsmU30z7oOHew==
+X-Received: by 2002:a05:6a21:38c8:b0:be:bf28:b7da with SMTP id yk8-20020a056a2138c800b000bebf28b7damr5858337pzb.20.1675859063311;
+        Wed, 08 Feb 2023 04:24:23 -0800 (PST)
+Received: from localhost ([192.55.54.55])
+        by smtp.gmail.com with ESMTPSA id p22-20020aa78616000000b0058d9b68042fsm1546476pfn.14.2023.02.08.04.24.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Feb 2023 04:24:22 -0800 (PST)
+Date:   Wed, 8 Feb 2023 04:24:21 -0800
+From:   Isaku Yamahata <isaku.yamahata@gmail.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Isaku Yamahata <isaku.yamahata@gmail.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
+Message-ID: <20230208122421.GA4175971@ls.amr.corp.intel.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <Y8H5Z3e4hZkFxAVS@google.com>
+ <20230119111308.GC2976263@ls.amr.corp.intel.com>
+ <Y8lg1G2lRIrI/hld@google.com>
+ <20230119223704.GD2976263@ls.amr.corp.intel.com>
+ <Y880FiYF7YCtsw/i@google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.7.2
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-From:   Sebastien Buisson <sbuisson.work@gmail.com>
-Subject: Backup/restore of fscrypt files and directories
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Y880FiYF7YCtsw/i@google.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -71,137 +107,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I am planning to implement backup and restore for fscrypt files and 
-directories and propose the following design, and would welcome feedback 
-on this approach.
+On Tue, Jan 24, 2023 at 01:27:50AM +0000,
+Sean Christopherson <seanjc@google.com> wrote:
 
-There is a need to preserve encrypted file data in case of storage 
-failure and to allow safely moving the data between filesystems and 
-systems without decrypting it, just like we would do for normal files. 
-While backup and restore at the device level is sometimes an option, we 
-need to also be able to carry out back/restore at the ext4 file system 
-level, for instance to allow changing formatting options.
+> On Thu, Jan 19, 2023, Isaku Yamahata wrote:
+> > On Thu, Jan 19, 2023 at 03:25:08PM +0000,
+> > Sean Christopherson <seanjc@google.com> wrote:
+> > 
+> > > On Thu, Jan 19, 2023, Isaku Yamahata wrote:
+> > > > On Sat, Jan 14, 2023 at 12:37:59AM +0000,
+> > > > Sean Christopherson <seanjc@google.com> wrote:
+> > > > 
+> > > > > On Fri, Dec 02, 2022, Chao Peng wrote:
+> > > > > > This patch series implements KVM guest private memory for confidential
+> > > > > > computing scenarios like Intel TDX[1]. If a TDX host accesses
+> > > > > > TDX-protected guest memory, machine check can happen which can further
+> > > > > > crash the running host system, this is terrible for multi-tenant
+> > > > > > configurations. The host accesses include those from KVM userspace like
+> > > > > > QEMU. This series addresses KVM userspace induced crash by introducing
+> > > > > > new mm and KVM interfaces so KVM userspace can still manage guest memory
+> > > > > > via a fd-based approach, but it can never access the guest memory
+> > > > > > content.
+> > > > > > 
+> > > > > > The patch series touches both core mm and KVM code. I appreciate
+> > > > > > Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
+> > > > > > reviews are always welcome.
+> > > > > >   - 01: mm change, target for mm tree
+> > > > > >   - 02-09: KVM change, target for KVM tree
+> > > > > 
+> > > > > A version with all of my feedback, plus reworked versions of Vishal's selftest,
+> > > > > is available here:
+> > > > > 
+> > > > >   git@github.com:sean-jc/linux.git x86/upm_base_support
+> > > > > 
+> > > > > It compiles and passes the selftest, but it's otherwise barely tested.  There are
+> > > > > a few todos (2 I think?) and many of the commits need changelogs, i.e. it's still
+> > > > > a WIP.
+> > > > > 
+> > > > > As for next steps, can you (handwaving all of the TDX folks) take a look at what
+> > > > > I pushed and see if there's anything horrifically broken, and that it still works
+> > > > > for TDX?
+> > > > > 
+> > > > > Fuad (and pKVM folks) same ask for you with respect to pKVM.  Absolutely no rush
+> > > > > (and I mean that).
+> > > > > 
+> > > > > On my side, the two things on my mind are (a) tests and (b) downstream dependencies
+> > > > > (SEV and TDX).  For tests, I want to build a lists of tests that are required for
+> > > > > merging so that the criteria for merging are clear, and so that if the list is large
+> > > > > (haven't thought much yet), the work of writing and running tests can be distributed.
+> > > > > 
+> > > > > Regarding downstream dependencies, before this lands, I want to pull in all the
+> > > > > TDX and SNP series and see how everything fits together.  Specifically, I want to
+> > > > > make sure that we don't end up with a uAPI that necessitates ugly code, and that we
+> > > > > don't miss an opportunity to make things simpler.  The patches in the SNP series to
+> > > > > add "legacy" SEV support for UPM in particular made me slightly rethink some minor
+> > > > > details.  Nothing remotely major, but something that needs attention since it'll
+> > > > > be uAPI.
+> > > > 
+> > > > Although I'm still debuging with TDX KVM, I needed the following.
+> > > > kvm_faultin_pfn() is called without mmu_lock held.  the race to change
+> > > > private/shared is handled by mmu_seq.  Maybe dedicated function only for
+> > > > kvm_faultin_pfn().
+> > > 
+> > > Gah, you're not on the other thread where this was discussed[*].  Simply deleting
+> > > the lockdep assertion is safe, for guest types that rely on the attributes to
+> > > define shared vs. private, KVM rechecks the attributes under the protection of
+> > > mmu_seq.
+> > > 
+> > > I'll get a fixed version pushed out today.
+> > > 
+> > > [*] https://lore.kernel.org/all/Y8gpl+LwSuSgBFks@google.com
+> > 
+> > Now I have tdx kvm working. I've uploaded at the followings.
+> > It's rebased to v6.2-rc3.
+> >         git@github.com:yamahata/linux.git tdx/upm
+> >         git@github.com:yamahata/qemu.git tdx/upm
+> 
+> And I finally got a working, building version updated and pushed out (again to):
+> 
+>   git@github.com:sean-jc/linux.git x86/upm_base_support
+> 
 
-The core principle we want to retain is that we must not make any clear 
-text copy of encrypted files. This means backup/restore must be carried 
-out without the encryption key.
+Ok, I rebased TDX part to the updated branch.
+        git@github.com:yamahata/linux.git tdx/upm
+        git@github.com:yamahata/qemu.git tdx/upm
 
-The first challenge we have to address is to get access to raw encrypted 
-files without the encryption key. By design, fscrypt does not allow such 
-kind of access, and the ext4 file system would not let read or write 
-files flagged as encrypted if the encryption key is not provided. This 
-restriction is not for security reasons, but to avoid applications 
-accidentally accessing the ciphertext. A mechanism must be provided for 
-access to both raw encrypted content, and raw encrypted names.
-
-The second challenge is to deal with the encrypted file's size, when it 
-is accessed with the encryption key vs. when accessed without the 
-encryption key. For the backup operation to retrieve full encrypted 
-content, the encrypted file size should be reported as a multiple of the 
-encryption chunk size when the encryption key is not present. And the 
-clear text file size (size as seen with the encryption key) must be 
-backed up as well in order to properly restore encrypted files later on. 
-This information cannot be inferred by any other means.
-
-The third challenge is to get access to the encryption context of files 
-and directories. By design, fscrypt does not expose this information, 
-internally stored as an extended attribute but with no associated 
-handler. However, making a backup of the encryption context is crucial 
-because it preserves the information needed to later decrypt the file 
-content. And it is also a non-trivial operation to restore the 
-encryption context. Indeed, fscrypt imposes that an encryption context 
-can only be set on a new file or an existing but empty directory.
-
-
-In order to address this need for backup/restore of encrypted files, we 
-propose to make use of a special extended attribute named 
-security.encdata, containing:
-- encoding method used for binary data. Assume name can be up to 255 chars.
-- clear text file data length in bytes (set to 0 for dirs).
-- encryption context. 40 bytes for v2 encryption context.
-- encrypted name. 256 bytes max.
-
-To improve portability if we need to change the on-disk format in the 
-future, and to make the archived data useful over a longer timeframe, 
-the content of the security.encdata xattr is expressed as ASCII text 
-with a "key: value" YAML format. As encryption context and encrypted 
-file name are binary, they need to be encoded.
-So the content of the security.encdata xattr would be something like:
-
-   { encoding: base64url, size: 3012, enc_ctx: YWJjZGVmZ2hpamtsbW
-   5vcHFyc3R1dnd4eXphYmNkZWZnaGlqa2xtbg, enc_name: ZmlsZXdpdGh2ZX
-   J5bG9uZ25hbWVmaWxld2l0aHZlcnlsb25nbmFtZWZpbGV3aXRodmVyeWxvbmdu
-   YW1lZmlsZXdpdGg }
-
-Because base64 encoding has a 33% overhead, this gives us a maximum 
-xattr size of approximately 800 characters.
-This extended attribute would not be shown when listing xattrs, only 
-exposed when fetched explicitly, and unmodified tools would not be able 
-to access the encrypted files in any case. It would not be stored on 
-disk, only computed when fetched.
-
-
-File and file system backups often use the tar utility either directly 
-or under the covers. We propose to modify the tar utility to make it 
-"encryption aware", but the same relatively small changes could be done 
-with other common backup utilities like cpio as needed. When detecting 
-ext4 encrypted files, tar would need to explicitly fetch the 
-security.encdata extended attribute, and store it along with the backup 
-file. Fetching this extended attribute would internally trigger in ext4 
-a mechanism responsible for gathering the required information. Because 
-we must not make any clear text copy of encrypted files, the encryption 
-key must not be present. Tar would also need to use a special flag that 
-would allow reading raw data without the encryption key. Such a flag 
-could be named O_FILE_ENC, and would need to be coupled with O_DIRECT so 
-that the page cache does not see this raw data. O_FILE_ENC could take 
-the value of (O_NOCTTY | O_NDELAY) as they are unlikely to be used in 
-practice and are not harmful if used incorrectly. The name of the 
-backed-up file would be the encoded+digested form returned by fscrypt.
-
-The tar utility would be used to extract a previously created tarball 
-containing encrypted files. When restoring the security.encdata extended 
-attribute, instead of storing the xattr as-is on disk, this would 
-internally trigger in ext4 a mechanism responsible for extracting the 
-required information, and storing them accordingly. Tar would also need 
-to specify the O_FILE_ENC | O_DIRECT flags to write raw data without the 
-encryption key.
-
-To create a valid encrypted file with proper encryption context and 
-encrypted name, we can implement a mechanism where the file is first 
-created with O_TMPFILE in the encrypted directory to avoid triggering 
-the encryption context check before setting the security.encdata xattr, 
-and then atomically linking it to the namespace with the correct 
-encrypted name.
-
-
- From a security standpoint, doing backup and restore of encrypted files 
-must not compromise their security. This is the reason why we want to 
-carry out these operations without the encryption key. It avoids making 
-a clear text copy of encrypted files.
-The security.encdata extended attribute contains the encryption context 
-of the file or directory. This has a 16-byte nonce (per-file random 
-value) that is used along with the master key to derive the per-file key 
-thanks to a KDF function. But the master key is not stored in ext4, so 
-it is not backed up as part of the scenario described above, which makes 
-the backup of the raw encrypted files safe.
-The process of restoring encrypted files must not change the encryption 
-context associated with the files. In particular, setting an encryption 
-context on a file must be possible only once, when the file is restored. 
-And the newly introduced capability of restoring encrypted files must 
-not give the ability to set an arbitrary encryption context on files.
-
-
- From the backup tool point of view, the only changes needed would be to 
-add "O_FILE_ENC" when the open fails with ENOKEY, and then explicitly 
-backup the "security.encdata" xattr with the file.  On restore, if the 
-"security.encdata" xattr is present, then the file should be created in 
-the directory with O_TMPFILE before restoring the xattrs and file data, 
-and then using link() to link the file to the directory with the 
-encrypted filename.
-
- From the filesystem point of view, it needs to generate the encdata 
-xattr on getxattr(), and interpret it correctly on setxattr().  The VFS 
-needs to allow open() and link() on encrypted files with O_FILE_ENC.
-
-If this proposal is OK I can provide a series of patches to implement this.
-
+Now it's v6.2-rc7 based.
+qemu needs more patches to avoid registering memory slot for SMM. 
+-- 
+Isaku Yamahata <isaku.yamahata@gmail.com>
