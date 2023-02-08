@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A56CC68F169
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 15:56:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FD6168F16B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 15:56:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbjBHO4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Feb 2023 09:56:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34124 "EHLO
+        id S230461AbjBHO4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Feb 2023 09:56:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230262AbjBHO43 (ORCPT
+        with ESMTP id S230178AbjBHO43 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 8 Feb 2023 09:56:29 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D6C12850;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA3F212B3;
         Wed,  8 Feb 2023 06:56:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=P8+rJcPo0Fi8EeQaL5ojtZrZIVY5GFF+sRbE8RbykGM=; b=jFB+zuP/GErfB3+KWN8VrM6GCP
-        y+Lkp83XJ744+OM2jyf/Qmdrtb6ObhoSe5sdQ+wx0gN2/g9dJ/1iNRGIC31NbAAelMJpegYDswwC2
-        u00Br5wNVOIPD4wdppYg12n4rKId3hnSJkSRpVePG9OwbnprjAUTj4uc0vRBPp7DMo1YSkqa8GADu
-        eTB2K1phkytHNMgtxFiic62PKkoHRKTGH42Gm8M1JR46xKpM3ePHkuI+uniHuVbMDdP/wam/IDHIA
-        fqFRMYNRoqVaDElgoSphdworh2Wkncu6YZU9KsKaiqOBMahJxVDtIsOra++HVgxXHnJ9N+HSFlePj
-        p8klytRw==;
+        bh=baZ/nm5e+R3XpfQTMaFkd+YUn4nTSX5Qn+q+GEDnUZo=; b=Gx5CVRVtkXGKd05GkNug9twl21
+        3Yfy4xwVgLapq4T07IKuCqXyQ/xIoSY6UQ4BQLUR8utAE97rmLAQ2CHuXDZVdEllbJHNJg7UDEPcb
+        LA3is5r4btsWGjLgp3Vza9VfjjfZ5WPW62mgxbQsW9k1VuAVCdwFsNFoCEKvmqdDwuWcHaA2mNmDp
+        6pwQQpwU5kcZfl5LqI3QUATioxNPHwuWXXxAF9CjI0buFVcvDpWxUCkYCuw4sAn58nellOtfxi/JG
+        JYO6qJ/cfcDsRA8sHH+6gLaYdZ83R6JVkid+OcotN45MCdl2HqzO4gs3NM4B1mLKTJpkbds4kpMlK
+        pp2+c+HQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pPlrp-001I3E-Ck; Wed, 08 Feb 2023 14:56:13 +0000
+        id 1pPlrp-001I3K-Hd; Wed, 08 Feb 2023 14:56:13 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 1/2] cifs: Use a folio in cifs_page_mkwrite()
-Date:   Wed,  8 Feb 2023 14:56:10 +0000
-Message-Id: <20230208145611.307706-2-willy@infradead.org>
+Subject: [PATCH 2/2] filemap: Remove lock_page_killable()
+Date:   Wed,  8 Feb 2023 14:56:11 +0000
+Message-Id: <20230208145611.307706-3-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230208145611.307706-1-willy@infradead.org>
 References: <20230208145611.307706-1-willy@infradead.org>
@@ -48,50 +48,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Avoids many calls to compound_head() and removes calls to various
-compat functions.
+There are no more callers; remove this function before any more appear.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/cifs/file.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ include/linux/pagemap.h | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 5568a5f4bc5a..233ce38ab612 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -4516,23 +4516,22 @@ cifs_read(struct file *file, char *read_data, size_t read_size, loff_t *offset)
-  * If the page is mmap'ed into a process' page tables, then we need to make
-  * sure that it doesn't change while being written back.
-  */
--static vm_fault_t
--cifs_page_mkwrite(struct vm_fault *vmf)
-+static vm_fault_t cifs_page_mkwrite(struct vm_fault *vmf)
- {
--	struct page *page = vmf->page;
-+	struct folio *folio = page_folio(vmf->page);
- 
--	/* Wait for the page to be written to the cache before we allow it to
--	 * be modified.  We then assume the entire page will need writing back.
-+	/* Wait for the folio to be written to the cache before we allow it to
-+	 * be modified.  We then assume the entire folio will need writing back.
- 	 */
- #ifdef CONFIG_CIFS_FSCACHE
--	if (PageFsCache(page) &&
--	    wait_on_page_fscache_killable(page) < 0)
-+	if (folio_test_fscache(folio) &&
-+	    folio_wait_fscache_killable(folio) < 0)
- 		return VM_FAULT_RETRY;
- #endif
- 
--	wait_on_page_writeback(page);
-+	folio_wait_writeback(folio);
- 
--	if (lock_page_killable(page) < 0)
-+	if (folio_lock_killable(folio) < 0)
- 		return VM_FAULT_RETRY;
- 	return VM_FAULT_LOCKED;
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index cf0677419981..51b75b89730e 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -993,16 +993,6 @@ static inline int folio_lock_killable(struct folio *folio)
+ 	return 0;
  }
+ 
+-/*
+- * lock_page_killable is like lock_page but can be interrupted by fatal
+- * signals.  It returns 0 if it locked the page and -EINTR if it was
+- * killed while waiting.
+- */
+-static inline int lock_page_killable(struct page *page)
+-{
+-	return folio_lock_killable(page_folio(page));
+-}
+-
+ /*
+  * folio_lock_or_retry - Lock the folio, unless this would block and the
+  * caller indicated that it can handle a retry.
 -- 
 2.35.1
 
