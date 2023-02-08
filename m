@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C0168FB9F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 00:53:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 655EC68FBC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 00:58:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230092AbjBHXw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Feb 2023 18:52:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
+        id S230161AbjBHX6Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Feb 2023 18:58:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230050AbjBHXwz (ORCPT
+        with ESMTP id S229585AbjBHX6X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Feb 2023 18:52:55 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1588116ADA;
-        Wed,  8 Feb 2023 15:52:54 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id dr8so1584859ejc.12;
-        Wed, 08 Feb 2023 15:52:54 -0800 (PST)
+        Wed, 8 Feb 2023 18:58:23 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24BAB14E8C;
+        Wed,  8 Feb 2023 15:58:21 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id lu11so1723199ejb.3;
+        Wed, 08 Feb 2023 15:58:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g7flmy3/jyFAU4sjWzJzGvCMw9yaMqfZS+04g1NY/TE=;
-        b=Ac19gV4JVm98yvL3KzN2TixhwIUbkj9aMrZn/qmddD9VfS2zkLoJN2p5iZELDdEmCm
-         1nhWn5VXYdY05fShRkrKDumjYjNjvW/EWJwmXqFKVTZZUz/xuhATAw5M8viT0xiLb8iE
-         K0hT9wtXh85YS7T3g9ZbQ34lyS+LmnxNIFRxjrDpYyPTLmYDOKSjUa3hZS3/NLPW7y+Q
-         3YF6sQFlIr0iZZcwlaSyx7ZdbKoUyRGYQSyxwiNTvvHEHoHPil5TSuC2vNBfxKrC2BH/
-         JlQsc+/JynNioS/wKM/98dRwF6lVDEbC9/i9OSG9a58F/vWkKtTgLg5L2dofoIo0Kisu
-         z4Lg==
+        bh=6dBXqx7m0i5N62cmOMYgWT+H5/dGay5h2/d2Tm5ctvs=;
+        b=pM3Osjy+W9hcoEPyID4VEBJuEjF8ESSPBr3OAWUbHAODImoj8JiqAzKqJ3AaUIvDoY
+         xqw0W0Jae3hUAjXwmCnYxqE7/bJdOyIegejjk/KZX+JsgRgUIioyHf+OfjvRUFIVgAkS
+         4hz5AcqFa2ZJIvnQEuTb3AC1az90MCD+1wxaR5cNqGUjVJgxFaIARh7m0vBUshj8GTas
+         LLhFrNuJWAMc0Lqwi5NulqKrn6X1M2hNITcvPLZxzFwTCTLpCaZRbxjMm995pOu2NxBt
+         gDdtghmsfcabeKL7Kvq/kjxaGqkw5tN0Y3+m7aprj3QE/M0YUH46VLsC+yrsCKGnwLjx
+         yvaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g7flmy3/jyFAU4sjWzJzGvCMw9yaMqfZS+04g1NY/TE=;
-        b=WJmDPBdj3GHYoFjNdKmBZHb4Ab8o1TdMF/V6Zr8YmLqjV68fftdB+DY+cvgRViQC0x
-         PxygV2MTieabEfvV+2I6pAjSX8uGsvzoeozF5ap6Fs0O+m6kQFGXJ62JjgHxtTP+Ci0l
-         K/s9JKNjW6d8oFcVXDx2sCeWEdq9l7DfZ2rsJgHVm87oPlkq/ffEXyTDab1Z0O63zfEw
-         9xFJXXVRJ9DlgRzXRo0A9v3IMjRbUXt7/LiR7XF6yjlAejlsZcyLJDi9wC+mlPYHa6gX
-         wOhI9FFKIhlGb34OLynJG/EdNdaLIZ1/QDP61900kORH5OWpa9VA+uGWhUp8c2tu1jv5
-         mTGQ==
-X-Gm-Message-State: AO0yUKUZoyIfXE5xYJtCIoSnNG5fDRo4mbr8ITbIYU6t9W7vrXi2QLij
-        hvKxEOsc9udXqFzcFmnH+c0J2RefYp9q2/N/HEA=
-X-Google-Smtp-Source: AK7set83cYNIyE0vnJy611lFInZnOWMfKBNkj2YIsRgSBoiLIL9IVj9F3ehVTlCCPCJGIuFu+WIQNl29TZr3aodpGB0=
-X-Received: by 2002:a17:906:5a60:b0:8aa:bdec:d9ae with SMTP id
- my32-20020a1709065a6000b008aabdecd9aemr1309150ejc.12.1675900372409; Wed, 08
- Feb 2023 15:52:52 -0800 (PST)
+        bh=6dBXqx7m0i5N62cmOMYgWT+H5/dGay5h2/d2Tm5ctvs=;
+        b=V0o42/+QddOx1jNpV+MXN2lneDjWRQuR0UikZJoEGQSC9ZnbONNvzEJfHrIAJNUmuq
+         KKxW+LuiF3axMJFl8H0p0UHjlAaDhljFNEBLQMsYqNwLJ88WVdJNxUI2SDSwdNXWI/Zc
+         ikg4S4XFyojrP3rTblKnkozpiicQ6bOMNrxzG0zquODZpDys6wtD9+QuPW6bSFWRvxX2
+         PXyYZPmjdrLgLaUFU0WHcIpzStcOxqiHY9WBVhBKu+8I353W00N6DJJT0/jlgSYo06lx
+         3/5h9Bf6zlWyHXfiNlKqSq++Wa3J3uVdn+p0o/e6Zz9d/21lpzmaSMpGNqtagV900UTv
+         GCOg==
+X-Gm-Message-State: AO0yUKVJFBqITHn60k21iydSG2BRoQInReSM1D0KvSC6GELxE9bTvzsk
+        6iux2awkgCkd+GzWS8KUfEODJN1hnXIIWUsA5V4=
+X-Google-Smtp-Source: AK7set90Kx/EAYVWp416fMd6RRZc6394kNjzUQiJ79oRnDf3rPCXU1kjnu0k6xbBAWi3VY4zHGVupHrx4MsGquRgIIM=
+X-Received: by 2002:a17:906:5946:b0:88a:b103:212d with SMTP id
+ g6-20020a170906594600b0088ab103212dmr105028ejr.15.1675900699548; Wed, 08 Feb
+ 2023 15:58:19 -0800 (PST)
 MIME-Version: 1.0
-References: <20230201135737.800527-1-jolsa@kernel.org> <20230201135737.800527-2-jolsa@kernel.org>
-In-Reply-To: <20230201135737.800527-2-jolsa@kernel.org>
+References: <20230201135737.800527-1-jolsa@kernel.org> <20230201135737.800527-5-jolsa@kernel.org>
+In-Reply-To: <20230201135737.800527-5-jolsa@kernel.org>
 From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Wed, 8 Feb 2023 15:52:40 -0800
-Message-ID: <CAEf4BzZHwXiLPuaAwz3vexzaJbBC90p5pCawbrsu4-Rk3XZOYw@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/5] mm: Store build id in file object
+Date:   Wed, 8 Feb 2023 15:58:06 -0800
+Message-ID: <CAEf4BzZ6BVeLV5mG=nB88Ni_8WSYTG0xhFgn-OEM2s6dc14yVA@mail.gmail.com>
+Subject: Re: [PATCH RFC 4/5] selftests/bpf: Add file_build_id test
 To:     Jiri Olsa <jolsa@kernel.org>
 Cc:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -81,243 +81,205 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 1, 2023 at 5:57 AM Jiri Olsa <jolsa@kernel.org> wrote:
+On Wed, Feb 1, 2023 at 5:58 AM Jiri Olsa <jolsa@kernel.org> wrote:
 >
-> Storing build id in file object for elf executable with build
-> id defined. The build id is stored when file is mmaped.
->
-> The build id object assignment to the file is locked with existing
-> file->f_mapping semaphore.
->
-> It's hidden behind new config option CONFIG_FILE_BUILD_ID.
+> The test attaches bpf program to sched_process_exec tracepoint
+> and gets build of executed file from bprm->file object.
 >
 > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
->  fs/file_table.c         |  3 +++
->  include/linux/buildid.h | 17 ++++++++++++++++
->  include/linux/fs.h      |  3 +++
->  lib/buildid.c           | 44 +++++++++++++++++++++++++++++++++++++++++
->  mm/Kconfig              |  7 +++++++
->  mm/mmap.c               | 15 ++++++++++++++
->  6 files changed, 89 insertions(+)
+>  .../selftests/bpf/prog_tests/file_build_id.c  | 70 +++++++++++++++++++
+>  .../selftests/bpf/progs/file_build_id.c       | 34 +++++++++
+>  tools/testing/selftests/bpf/trace_helpers.c   | 35 ++++++++++
+>  tools/testing/selftests/bpf/trace_helpers.h   |  1 +
+>  4 files changed, 140 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/file_build_id.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/file_build_id.c
 >
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index dd88701e54a9..d1c814cdb623 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -28,6 +28,7 @@
->  #include <linux/ima.h>
->  #include <linux/swap.h>
->  #include <linux/kmemleak.h>
-> +#include <linux/buildid.h>
->
->  #include <linux/atomic.h>
->
-> @@ -47,6 +48,7 @@ static void file_free_rcu(struct rcu_head *head)
->  {
->         struct file *f = container_of(head, struct file, f_rcuhead);
->
-> +       file_build_id_free(f);
->         put_cred(f->f_cred);
->         kmem_cache_free(filp_cachep, f);
->  }
-> @@ -412,6 +414,7 @@ void __init files_init(void)
->         filp_cachep = kmem_cache_create("filp", sizeof(struct file), 0,
->                         SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT, NULL);
->         percpu_counter_init(&nr_files, 0, GFP_KERNEL);
-> +       build_id_init();
->  }
->
->  /*
-> diff --git a/include/linux/buildid.h b/include/linux/buildid.h
-> index 3b7a0ff4642f..7c818085ad2c 100644
-> --- a/include/linux/buildid.h
-> +++ b/include/linux/buildid.h
-> @@ -3,9 +3,15 @@
->  #define _LINUX_BUILDID_H
->
->  #include <linux/mm_types.h>
-> +#include <linux/slab.h>
->
->  #define BUILD_ID_SIZE_MAX 20
->
-> +struct build_id {
-> +       u32 sz;
-> +       char data[BUILD_ID_SIZE_MAX];
-
-don't know if 21 vs 24 matters for kmem_cache_create(), but we don't
-need 4 bytes to store build_id size, given max size is 20, so maybe
-use u8 for sz?
-
-> +};
+> diff --git a/tools/testing/selftests/bpf/prog_tests/file_build_id.c b/tools/testing/selftests/bpf/prog_tests/file_build_id.c
+> new file mode 100644
+> index 000000000000..a7b6307cc0f7
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/prog_tests/file_build_id.c
+> @@ -0,0 +1,70 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +
->  int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
->                    __u32 *size);
->  int build_id_parse_buf(const void *buf, unsigned char *build_id, u32 buf_size);
-> @@ -17,4 +23,15 @@ void init_vmlinux_build_id(void);
->  static inline void init_vmlinux_build_id(void) { }
->  #endif
->
-> +#ifdef CONFIG_FILE_BUILD_ID
-> +void __init build_id_init(void);
-> +void build_id_free(struct build_id *bid);
-> +int vma_get_build_id(struct vm_area_struct *vma, struct build_id **bidp);
-> +void file_build_id_free(struct file *f);
-> +#else
-> +static inline void __init build_id_init(void) { }
-> +static inline void build_id_free(struct build_id *bid) { }
-> +static inline void file_build_id_free(struct file *f) { }
-> +#endif /* CONFIG_FILE_BUILD_ID */
+> +#include <unistd.h>
+> +#include <test_progs.h>
+> +#include "file_build_id.skel.h"
+> +#include "trace_helpers.h"
 > +
->  #endif
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c1769a2c5d70..9ad5e5fbf680 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -975,6 +975,9 @@ struct file {
->         struct address_space    *f_mapping;
->         errseq_t                f_wb_err;
->         errseq_t                f_sb_err; /* for syncfs */
-> +#ifdef CONFIG_FILE_BUILD_ID
-> +       struct build_id         *f_bid;
-
-naming nit: anything wrong with f_buildid or f_build_id? all the
-related APIs use fully spelled out "build_id"
-
-> +#endif
->  } __randomize_layout
->    __attribute__((aligned(4))); /* lest something weird decides that 2 is OK */
->
-> diff --git a/lib/buildid.c b/lib/buildid.c
-> index dfc62625cae4..7f6c3ca7b257 100644
-> --- a/lib/buildid.c
-> +++ b/lib/buildid.c
-> @@ -5,6 +5,7 @@
->  #include <linux/elf.h>
->  #include <linux/kernel.h>
->  #include <linux/pagemap.h>
-> +#include <linux/slab.h>
->
->  #define BUILD_ID 3
->
-> @@ -189,3 +190,46 @@ void __init init_vmlinux_build_id(void)
->         build_id_parse_buf(&__start_notes, vmlinux_build_id, size);
->  }
->  #endif
+> +#define BUILDID_STR_SIZE (BPF_BUILD_ID_SIZE*2 + 1)
 > +
-> +#ifdef CONFIG_FILE_BUILD_ID
-> +
-> +/* SLAB cache for build_id structures */
-> +static struct kmem_cache *build_id_cachep;
-> +
-> +int vma_get_build_id(struct vm_area_struct *vma, struct build_id **bidp)
+> +void test_file_build_id(void)
 > +{
-> +       struct build_id *bid;
-> +       int err;
+> +       int go[2], err, child_pid, child_status, c = 1, i;
+> +       char bpf_build_id[BUILDID_STR_SIZE] = {};
+> +       struct file_build_id *skel;
+> +       char *bid = NULL;
 > +
-> +       bid = kmem_cache_alloc(build_id_cachep, GFP_KERNEL);
-> +       if (!bid)
-> +               return -ENOMEM;
-> +       err = build_id_parse(vma, bid->data, &bid->sz);
-> +       if (err) {
-> +               build_id_free(bid);
-> +               /* ignore parsing error */
-> +               return 0;
+> +       skel = file_build_id__open_and_load();
+> +       if (!ASSERT_OK_PTR(skel, "file_build_id__open_and_load"))
+> +               return;
+> +
+> +       if (!ASSERT_OK(pipe(go), "pipe"))
+> +               goto out;
+> +
+> +       child_pid = fork();
+> +       if (child_pid < 0)
+> +               goto out;
+> +
+> +       /* child */
+> +       if (child_pid == 0) {
+> +               /* wait for parent's pid update */
+> +               err = read(go[0], &c, 1);
+> +               if (!ASSERT_EQ(err, 1, "child_read_pipe"))
+> +                       exit(err);
+> +
+> +               execle("/bin/bash", "bash", "-c", "exit 0", NULL, NULL);
+> +               exit(errno);
 > +       }
-> +       *bidp = bid;
+> +
+> +       /* parent, update child's pid and kick it */
+> +       skel->bss->pid = child_pid;
+> +
+> +       err = file_build_id__attach(skel);
+> +       if (!ASSERT_OK(err, "file_build_id__attach"))
+> +               goto out;
+> +
+> +       err = write(go[1], &c, 1);
+> +       if (!ASSERT_EQ(err, 1, "child_write_pipe"))
+> +               goto out;
+> +
+> +       /* wait for child to exit */
+> +       waitpid(child_pid, &child_status, 0);
+> +       if (!ASSERT_EQ(WEXITSTATUS(child_status), 0, "child_exit_value"))
+> +               goto out;
+> +
+> +       if (!ASSERT_OK(read_buildid("/bin/bash", &bid), "read_buildid"))
+
+can we use urandom_read for build_id ? And it would also be nice to
+check that build id fetching works for liburandom_read.so as well.
+
+> +               goto out;
+> +
+> +       ASSERT_EQ(skel->bss->build_id_size, strlen(bid)/2, "build_id_size");
+> +
+> +       /* Convert bpf build id to string, so we can compare it later. */
+> +       for (i = 0; i < skel->bss->build_id_size; i++) {
+> +               sprintf(bpf_build_id + i*2, "%02x",
+> +                       (unsigned char) skel->bss->build_id[i]);
+> +       }
+> +       ASSERT_STREQ(bpf_build_id, bid, "build_id_data");
+> +
+> +out:
+> +       file_build_id__destroy(skel);
+> +       free(bid);
+> +}
+> diff --git a/tools/testing/selftests/bpf/progs/file_build_id.c b/tools/testing/selftests/bpf/progs/file_build_id.c
+> new file mode 100644
+> index 000000000000..639a7217a927
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/file_build_id.c
+> @@ -0,0 +1,34 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include "vmlinux.h"
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +#include <linux/string.h>
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +int pid;
+> +u32 build_id_size;
+> +char build_id[20];
+> +
+> +SEC("tp_btf/sched_process_exec")
+> +int BPF_PROG(prog, struct task_struct *p, pid_t old_pid, struct linux_binprm *bprm)
+> +{
+> +       int cur_pid = bpf_get_current_pid_tgid() >> 32;
+> +       struct build_id *bid;
+> +
+> +       if (pid != cur_pid)
+> +               return 0;
+> +
+> +       if (!bprm->file || !bprm->file->f_bid)
+> +               return 0;
+> +
+> +       bid = bprm->file->f_bid;
+> +       build_id_size = bid->sz;
+> +
+> +       if (build_id_size > 20)
+> +               return 0;
+> +
+> +       memcpy(build_id, bid->data, 20);
 > +       return 0;
 > +}
+> diff --git a/tools/testing/selftests/bpf/trace_helpers.c b/tools/testing/selftests/bpf/trace_helpers.c
+> index 09a16a77bae4..f5557890e383 100644
+> --- a/tools/testing/selftests/bpf/trace_helpers.c
+> +++ b/tools/testing/selftests/bpf/trace_helpers.c
+> @@ -9,6 +9,7 @@
+>  #include <poll.h>
+>  #include <unistd.h>
+>  #include <linux/perf_event.h>
+> +#include <linux/limits.h>
+>  #include <sys/mman.h>
+>  #include "trace_helpers.h"
+>
+> @@ -230,3 +231,37 @@ ssize_t get_rel_offset(uintptr_t addr)
+>         fclose(f);
+>         return -EINVAL;
+>  }
 > +
-> +void file_build_id_free(struct file *f)
+> +int read_buildid(const char *path, char **build_id)
 > +{
-> +       build_id_free(f->f_bid);
-> +}
+> +       char tmp[] = "/tmp/dataXXXXXX";
+> +       char buf[PATH_MAX + 200];
+> +       int err, fd;
+> +       FILE *f;
 > +
-> +void build_id_free(struct build_id *bid)
-> +{
-> +       if (!bid)
-> +               return;
-> +       kmem_cache_free(build_id_cachep, bid);
-> +}
+> +       fd = mkstemp(tmp);
+> +       if (fd == -1)
+> +               return -1;
+> +       close(fd);
 > +
-> +void __init build_id_init(void)
-> +{
-> +       build_id_cachep = kmem_cache_create("build_id", sizeof(struct build_id), 0,
-> +                               SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT, NULL);
-> +}
+> +       snprintf(buf, sizeof(buf),
+> +               "readelf -n %s 2>/dev/null | grep 'Build ID' | awk '{print $3}' > %s",
+> +               path, tmp);
 > +
-> +#endif /* CONFIG_FILE_BUILD_ID */
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index ff7b209dec05..68911c3780c4 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -1183,6 +1183,13 @@ config LRU_GEN_STATS
->           This option has a per-memcg and per-node memory overhead.
->  # }
->
-> +config FILE_BUILD_ID
-> +       bool "Store build id in file object"
-> +       default n
-> +       help
-> +         Store build id in file object for elf executable with build id
-> +         defined. The build id is stored when file is mmaped.
-> +
->  source "mm/damon/Kconfig"
->
->  endmenu
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 425a9349e610..a06f744206e3 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2530,6 +2530,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->         pgoff_t vm_pgoff;
->         int error;
->         MA_STATE(mas, &mm->mm_mt, addr, end - 1);
-> +       struct build_id *bid = NULL;
->
->         /* Check against address space limit. */
->         if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT)) {
-> @@ -2626,6 +2627,13 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->                 if (error)
->                         goto unmap_and_free_vma;
->
-> +#ifdef CONFIG_FILE_BUILD_ID
-> +               if (vma->vm_flags & VM_EXEC && !file->f_bid) {
-> +                       error = vma_get_build_id(vma, &bid);
-> +                       if (error)
-> +                               goto close_and_free_vma;
 
-do we want to fail mmap_region() if we get -ENOMEM from
-vma_get_build_id()? can't we just store ERR_PTR(error) in f_bid field?
-So we'll have f_bid == NULL for non-exec files, ERR_PTR() for when we
-tried and failed to get build ID, and a valid pointer if we succeeded?
+shelling out to readelf for this is unfortunate... maybe let's write a
+libelf-based helper to fetch build ID from .note section?
 
+> +       err = system(buf);
+> +       if (err)
+> +               goto out;
+> +
+> +       f = fopen(tmp, "r");
+> +       if (f) {
+> +               if (fscanf(f, "%ms$*\n", build_id) != 1) {
+> +                       *build_id = NULL;
+> +                       err = -1;
 > +               }
-> +#endif
->                 /*
->                  * Expansion is handled above, merging is handled below.
->                  * Drivers should not alter the address of the VMA.
-> @@ -2699,6 +2707,12 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->                 if (vma->vm_flags & VM_SHARED)
->                         mapping_allow_writable(vma->vm_file->f_mapping);
+> +               fclose(f);
+> +       }
+> +
+> +out:
+> +       unlink(tmp);
+> +       return err;
+> +}
+> diff --git a/tools/testing/selftests/bpf/trace_helpers.h b/tools/testing/selftests/bpf/trace_helpers.h
+> index 53efde0e2998..1a38c808b6c2 100644
+> --- a/tools/testing/selftests/bpf/trace_helpers.h
+> +++ b/tools/testing/selftests/bpf/trace_helpers.h
+> @@ -23,4 +23,5 @@ void read_trace_pipe(void);
+>  ssize_t get_uprobe_offset(const void *addr);
+>  ssize_t get_rel_offset(uintptr_t addr);
 >
-> +#ifdef CONFIG_FILE_BUILD_ID
-> +               if (bid && !file->f_bid)
-> +                       file->f_bid = bid;
-> +               else
-> +                       build_id_free(bid);
-> +#endif
->                 flush_dcache_mmap_lock(vma->vm_file->f_mapping);
->                 vma_interval_tree_insert(vma, &vma->vm_file->f_mapping->i_mmap);
->                 flush_dcache_mmap_unlock(vma->vm_file->f_mapping);
-> @@ -2759,6 +2773,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->                 mapping_unmap_writable(file->f_mapping);
->  free_vma:
->         vm_area_free(vma);
-> +       build_id_free(bid);
->  unacct_error:
->         if (charged)
->                 vm_unacct_memory(charged);
+> +int read_buildid(const char *path, char **build_id);
+>  #endif
 > --
 > 2.39.1
 >
