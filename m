@@ -2,83 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 790B868FA3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 23:29:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38C0168FB9F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 00:53:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230511AbjBHW3A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Feb 2023 17:29:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46236 "EHLO
+        id S230092AbjBHXw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Feb 2023 18:52:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230117AbjBHW27 (ORCPT
+        with ESMTP id S230050AbjBHXwz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Feb 2023 17:28:59 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AE8125BA5
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Feb 2023 14:28:57 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id ud5so1209620ejc.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Feb 2023 14:28:56 -0800 (PST)
+        Wed, 8 Feb 2023 18:52:55 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1588116ADA;
+        Wed,  8 Feb 2023 15:52:54 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id dr8so1584859ejc.12;
+        Wed, 08 Feb 2023 15:52:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ib5c/bsJZ54uWK/+FTg2R7b7k0wvTx5UMSJ7W+JjDFE=;
-        b=YnIBbf4Leim+riPvjYbm3Bga9EgoSnEztXn3WdITtnvrLP+4OwVafCURO2llmIQdMW
-         a/p6VQWTvYv1sGq1xi9DUCoMZhAi3rsXdXbATv4tgqdLkqiBf/VHMT4YjYO9oUvBl4zy
-         /dWDhYvQFnaisKr9s0PmsJEx32aOVXfljukKabsB3fKKf3jAO29qLWa/2B2Gs5OK9oUo
-         WMS0HjJ1BUfgQF+Jbmp9Rgved8cwNqMMmFJswoFD5JWE58EJOGapfr/5+QI+i1gwdFJg
-         OAXiyFrUXHamt7qUwp83s/oKoaAse6CzfK/69BVVOrUYES2t19DCOT689QcKntMhWRHT
-         QiUQ==
+        bh=g7flmy3/jyFAU4sjWzJzGvCMw9yaMqfZS+04g1NY/TE=;
+        b=Ac19gV4JVm98yvL3KzN2TixhwIUbkj9aMrZn/qmddD9VfS2zkLoJN2p5iZELDdEmCm
+         1nhWn5VXYdY05fShRkrKDumjYjNjvW/EWJwmXqFKVTZZUz/xuhATAw5M8viT0xiLb8iE
+         K0hT9wtXh85YS7T3g9ZbQ34lyS+LmnxNIFRxjrDpYyPTLmYDOKSjUa3hZS3/NLPW7y+Q
+         3YF6sQFlIr0iZZcwlaSyx7ZdbKoUyRGYQSyxwiNTvvHEHoHPil5TSuC2vNBfxKrC2BH/
+         JlQsc+/JynNioS/wKM/98dRwF6lVDEbC9/i9OSG9a58F/vWkKtTgLg5L2dofoIo0Kisu
+         z4Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ib5c/bsJZ54uWK/+FTg2R7b7k0wvTx5UMSJ7W+JjDFE=;
-        b=HfoYe9zAoTDBL6FEkRyF0gmRLbKthbrUlHbowPB+lqA0e0TWC1Hq7jMJEL+B5KXaS3
-         pml/X9Nk7pWdLgFX0MhhethBYiTQDf11EUx1DNPFX8KTi5/fxrslQkR8/Bt10sUCBij8
-         0gBz9w3+4E2tHYrF6qRBlAaBSf9xqsREw2rKtLuVEchTD1UyjhzWBS0O3uiFO+JBGmas
-         qV1RM0RpOQihDArjaPyGWnz/xVXVbmqGnOKo3kZnKBKt9rDN/FZKrWlYWHVhyWCwTx9C
-         rfTBE7hf4Tif9cL1TvfFSBPVO5QlBTZXhnY9L/ZQs/wGM40mFkWGMplOHaf6KIU/DyRk
-         1Mpw==
-X-Gm-Message-State: AO0yUKV8f5cKfwmA39FKL3VfO6pYazvQOFsxnu6hBqp1yNNoxCMuARGJ
-        hJS99+vh1DOPDfGcxouzQFAilPkkFgNU4VSbFeoWxA==
-X-Google-Smtp-Source: AK7set/klz+/+K+5uvcdwyOXyPe2jOmD3Ok/dY5y08NmZv/Ti/SqkeQdGPm1gOia1ol8RiSDbyLJ4hq9fKxrW7E4grc=
-X-Received: by 2002:a17:906:37c2:b0:878:7bc7:958a with SMTP id
- o2-20020a17090637c200b008787bc7958amr2132625ejc.220.1675895335302; Wed, 08
- Feb 2023 14:28:55 -0800 (PST)
+        bh=g7flmy3/jyFAU4sjWzJzGvCMw9yaMqfZS+04g1NY/TE=;
+        b=WJmDPBdj3GHYoFjNdKmBZHb4Ab8o1TdMF/V6Zr8YmLqjV68fftdB+DY+cvgRViQC0x
+         PxygV2MTieabEfvV+2I6pAjSX8uGsvzoeozF5ap6Fs0O+m6kQFGXJ62JjgHxtTP+Ci0l
+         K/s9JKNjW6d8oFcVXDx2sCeWEdq9l7DfZ2rsJgHVm87oPlkq/ffEXyTDab1Z0O63zfEw
+         9xFJXXVRJ9DlgRzXRo0A9v3IMjRbUXt7/LiR7XF6yjlAejlsZcyLJDi9wC+mlPYHa6gX
+         wOhI9FFKIhlGb34OLynJG/EdNdaLIZ1/QDP61900kORH5OWpa9VA+uGWhUp8c2tu1jv5
+         mTGQ==
+X-Gm-Message-State: AO0yUKUZoyIfXE5xYJtCIoSnNG5fDRo4mbr8ITbIYU6t9W7vrXi2QLij
+        hvKxEOsc9udXqFzcFmnH+c0J2RefYp9q2/N/HEA=
+X-Google-Smtp-Source: AK7set83cYNIyE0vnJy611lFInZnOWMfKBNkj2YIsRgSBoiLIL9IVj9F3ehVTlCCPCJGIuFu+WIQNl29TZr3aodpGB0=
+X-Received: by 2002:a17:906:5a60:b0:8aa:bdec:d9ae with SMTP id
+ my32-20020a1709065a6000b008aabdecd9aemr1309150ejc.12.1675900372409; Wed, 08
+ Feb 2023 15:52:52 -0800 (PST)
 MIME-Version: 1.0
-References: <20230202233229.3895713-1-yosryahmed@google.com>
- <20230203000057.GS360264@dread.disaster.area> <CAJD7tkazLFO8sc1Ly7+2_SGTxDq2XuPnvxxTnpQyXQELmq+m4A@mail.gmail.com>
- <Y90kK5jnxBbE9tV4@cmpxchg.org> <CAJD7tkZ7H-fGa3x3kbbdKgvzDDRZrGGZ6oazTA-7aNUQ7X1Pmg@mail.gmail.com>
- <20230204002613.f3ao52cpqf6wwxar@google.com>
-In-Reply-To: <20230204002613.f3ao52cpqf6wwxar@google.com>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Wed, 8 Feb 2023 14:28:18 -0800
-Message-ID: <CAJD7tkaQokU0ATVNoYTTwBzfmkrXbM+kx4gP8VdX3ZfxqMnGtQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/2] Ignore non-LRU-based reclaim in memcg reclaim
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Dave Chinner <david@fromorbit.com>,
+References: <20230201135737.800527-1-jolsa@kernel.org> <20230201135737.800527-2-jolsa@kernel.org>
+In-Reply-To: <20230201135737.800527-2-jolsa@kernel.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Wed, 8 Feb 2023 15:52:40 -0800
+Message-ID: <CAEf4BzZHwXiLPuaAwz3vexzaJbBC90p5pCawbrsu4-Rk3XZOYw@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/5] mm: Store build id in file object
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        David Hildenbrand <david@redhat.com>,
-        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,250 +81,243 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 3, 2023 at 4:26 PM Shakeel Butt <shakeelb@google.com> wrote:
+On Wed, Feb 1, 2023 at 5:57 AM Jiri Olsa <jolsa@kernel.org> wrote:
 >
-> On Fri, Feb 03, 2023 at 07:28:49AM -0800, Yosry Ahmed wrote:
-> > On Fri, Feb 3, 2023 at 7:11 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > >
-> > > On Thu, Feb 02, 2023 at 04:17:18PM -0800, Yosry Ahmed wrote:
-> > > > On Thu, Feb 2, 2023 at 4:01 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > > > > Patch 1 is just refactoring updating reclaim_state into a helper
-> > > > > > function, and renames reclaimed_slab to just reclaimed, with a comment
-> > > > > > describing its true purpose.
-> > > > > >
-> > > > > > Patch 2 ignores pages reclaimed outside of LRU reclaim in memcg reclaim.
-> > > > > >
-> > > > > > The original draft was a little bit different. It also kept track of
-> > > > > > uncharged objcg pages, and reported them only in memcg reclaim and only
-> > > > > > if the uncharged memcg is in the subtree of the memcg under reclaim.
-> > > > > > This was an attempt to make reporting of memcg reclaim even more
-> > > > > > accurate, but was dropped due to questionable complexity vs benefit
-> > > > > > tradeoff. It can be revived if there is interest.
-> > > > > >
-> > > > > > Yosry Ahmed (2):
-> > > > > >   mm: vmscan: refactor updating reclaimed pages in reclaim_state
-> > > > > >   mm: vmscan: ignore non-LRU-based reclaim in memcg reclaim
-> > > > > >
-> > > > > >  fs/inode.c           |  3 +--
-> > > > >
-> > > > > Inodes and inode mapping pages are directly charged to the memcg
-> > > > > that allocated them and the shrinker is correctly marked as
-> > > > > SHRINKER_MEMCG_AWARE. Freeing the pages attached to the inode will
-> > > > > account them correctly to the related memcg, regardless of which
-> > > > > memcg is triggering the reclaim.  Hence I'm not sure that skipping
-> > > > > the accounting of the reclaimed memory is even correct in this case;
-> > > >
-> > > > Please note that we are not skipping any accounting here. The pages
-> > > > are still uncharged from the memcgs they are charged to (the allocator
-> > > > memcgs as you pointed out). We just do not report them in the return
-> > > > value of try_to_free_mem_cgroup_pages(), to avoid over-reporting.
-> > >
-> > > I was wondering the same thing as Dave, reading through this. But
-> > > you're right, we'll catch the accounting during uncharge. Can you
-> > > please add a comment on the !cgroup_reclaim() explaining this?
-> >
-> > Sure! If we settle on this implementation I will send another version
-> > with a comment and fix the build problem in patch 2.
-> >
-> > >
-> > > There is one wrinkle with this, though. We have the following
-> > > (simplified) sequence during charging:
-> > >
-> > >         nr_reclaimed = try_to_free_mem_cgroup_pages(mem_over_limit, nr_pages,
-> > >                                                     gfp_mask, reclaim_options);
-> > >
-> > >         if (mem_cgroup_margin(mem_over_limit) >= nr_pages)
-> > >                 goto retry;
-> > >
-> > >         /*
-> > >          * Even though the limit is exceeded at this point, reclaim
-> > >          * may have been able to free some pages.  Retry the charge
-> > >          * before killing the task.
-> > >          *
-> > >          * Only for regular pages, though: huge pages are rather
-> > >          * unlikely to succeed so close to the limit, and we fall back
-> > >          * to regular pages anyway in case of failure.
-> > >          */
-> > >         if (nr_reclaimed && nr_pages <= (1 << PAGE_ALLOC_COSTLY_ORDER))
-> > >                 goto retry;
-> > >
-> > > So in the unlikely scenario where the first call doesn't make the
-> > > necessary headroom, and the shrinkers are the only thing that made
-> > > forward progress, we would OOM prematurely.
-> > >
-> > > Not that an OOM would seem that far away in that scenario, anyway. But I
-> > > remember long discussions with DavidR on probabilistic OOM regressions ;)
-> > >
-> >
-> > Above the if (nr_reclaimed...) check we have:
-> >
-> > if (gfp_mask & __GFP_NORETRY)
-> >     goto nomem;
-> >
-> > , and below it we have:
-> >
-> > if (nr_retries--)
-> >     goto retry;
-> >
-> > So IIUC we only prematurely OOM if we either have __GFP_NORETRY and
-> > cannot reclaim any LRU pages in the first try, or if the scenario
-> > where only shrinkers were successful to reclaim happens in the last
-> > retry. Right?
-> >
+> Storing build id in file object for elf executable with build
+> id defined. The build id is stored when file is mmaped.
 >
-> We don't call oom-killer for __GFP_NORETRY. Also note that the retry
-> (from nr_retries) after the reclaim includes page_counter_try_charge().
-> So, even if try_to_free_mem_cgroup_pages() have returned 0 after
-> reclaiming the slab memory of the memcg, the page_counter_try_charge()
-> should succeed if the reclaimed slab objects have created enough margin.
+> The build id object assignment to the file is locked with existing
+> file->f_mapping semaphore.
 >
-> > > > > I think the code should still be accounting for all pages that
-> > > > > belong to the memcg being scanned that are reclaimed, not ignoring
-> > > > > them altogether...
-> > > >
-> > > > 100% agree. Ideally I would want to:
-> > > > - For pruned inodes: report all freed pages for global reclaim, and
-> > > > only report pages charged to the memcg under reclaim for memcg
-> > > > reclaim.
-> > >
-> > > This only happens on highmem systems at this point, as elsewhere
-> > > populated inodes aren't on the shrinker LRUs anymore. We'd probably be
-> > > ok with a comment noting the inaccuracy in the proactive reclaim stats
-> > > for the time being, until somebody actually cares about that combination.
-> >
-> > Interesting, I did not realize this. I guess in this case we may get
-> > away with just ignoring non-LRU reclaimed pages in memcg reclaim
-> > completely, or go an extra bit and report uncharged objcg pages in
-> > memcg reclaim. See below.
-> >
-> > >
-> > > > - For slab: report all freed pages for global reclaim, and only report
-> > > > uncharged objcg pages from the memcg under reclaim for memcg reclaim.
-> > > >
-> > > > The only problem is that I thought people would think this is too much
-> > > > complexity and not worth it. If people agree this should be the
-> > > > approach to follow, I can prepare patches for this. I originally
-> > > > implemented this for slab pages, but held off on sending it.
-> > >
-> > > I'd be curious to see the code!
-> >
-> > I think it is small enough to paste here. Basically instead of just
-> > ignoring reclaim_state->reclaimed completely in patch 2, I counted
-> > uncharged objcg pages only in memcg reclaim instead of freed slab
-> > pages, and ignored pruned inode pages in memcg reclaim. So I guess we
-> > can go with either:
-> > - Just ignore freed slab pages and pages from pruned inodes in memcg
-> > reclaim (current RFC).
-> > - Ignore pruned inodes in memcg reclaim (as you explain above), and
-> > use the following diff instead of patch 2 for slab.
-> > - Use the following diff for slab AND properly report freed pages from
-> > pruned inodes if they are relevant to the memcg under reclaim.
-> >
-> > Let me know what you think is best.
-> >
+> It's hidden behind new config option CONFIG_FILE_BUILD_ID.
 >
-> I would prefer the currect RFC instead of the other two options. Those
-> options are slowing down (and adding complexity) to the uncharge code
-> path for the accuracy which no one really need or should care about.
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  fs/file_table.c         |  3 +++
+>  include/linux/buildid.h | 17 ++++++++++++++++
+>  include/linux/fs.h      |  3 +++
+>  lib/buildid.c           | 44 +++++++++++++++++++++++++++++++++++++++++
+>  mm/Kconfig              |  7 +++++++
+>  mm/mmap.c               | 15 ++++++++++++++
+>  6 files changed, 89 insertions(+)
 >
-> > diff --git a/include/linux/swap.h b/include/linux/swap.h
-> > index bc1d8b326453..37f799901dfb 100644
-> > --- a/include/linux/swap.h
-> > +++ b/include/linux/swap.h
-> > @@ -162,6 +162,7 @@ struct reclaim_state {
-> >  };
-> >
-> >  void report_freed_pages(unsigned long pages);
-> > +bool report_uncharged_pages(unsigned long pages, struct mem_cgroup *memcg);
-> >
-> >  #ifdef __KERNEL__
-> >
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index ab457f0394ab..a886ace70648 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -3080,6 +3080,13 @@ static void obj_cgroup_uncharge_pages(struct
-> > obj_cgroup *objcg,
-> >         memcg_account_kmem(memcg, -nr_pages);
-> >         refill_stock(memcg, nr_pages);
-> >
-> > +       /*
-> > +        * If undergoing memcg reclaim, report uncharged pages and drain local
-> > +        * stock to update the memcg usage.
-> > +        */
-> > +       if (report_uncharged_pages(nr_pages, memcg))
-> > +               drain_local_stock(NULL);
-> > +
-> >         css_put(&memcg->css);
-> >  }
-> >
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 207998b16e5f..d4eced2b884b 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -204,17 +204,54 @@ static void set_task_reclaim_state(struct
-> > task_struct *task,
-> >         task->reclaim_state = rs;
-> >  }
-> >
-> > +static bool cgroup_reclaim(struct scan_control *sc);
-> > +
-> >  /*
-> >   * reclaim_report_freed_pages: report pages freed outside of LRU-based reclaim
-> >   * @pages: number of pages freed
-> >   *
-> > - * If the current process is undergoing a reclaim operation,
-> > + * If the current process is undergoing a non-cgroup reclaim operation,
-> >   * increment the number of reclaimed pages by @pages.
-> >   */
-> >  void report_freed_pages(unsigned long pages)
-> >  {
-> > -       if (current->reclaim_state)
-> > -               current->reclaim_state->reclaimed += pages;
-> > +       struct reclaim_state *rs = current->reclaim_state;
-> > +       struct scan_control *sc;
-> > +
-> > +       if (!rs)
-> > +               return;
-> > +
-> > +       sc = container_of(rs, struct scan_control, reclaim_state);
-> > +       if (!cgroup_reclaim(sc))
-> > +               rs->reclaimed += pages;
-> > +}
-> > +
-> > +/*
-> > + * report_uncharged_pages: report pages uncharged outside of LRU-based reclaim
-> > + * @pages: number of pages uncharged
-> > + * @memcg: memcg pages were uncharged from
-> > + *
-> > + * If the current process is undergoing a cgroup reclaim operation, increment
-> > + * the number of reclaimed pages by @pages, if the memcg under
-> > reclaim is @memcg
-> > + * or an ancestor of it.
-> > + *
-> > + * Returns true if an update was made.
-> > + */
-> > +bool report_uncharged_pages(unsigned long pages, struct mem_cgroup *memcg)
-> > +{
-> > +       struct reclaim_state *rs = current->reclaim_state;
-> > +       struct scan_control *sc;
-> > +
-> > +       if (!rs)
-> > +               return false;
-> > +
-> > +       sc = container_of(rs, struct scan_control, reclaim_state);
-> > +       if (cgroup_reclaim(sc) &&
-> > +           mem_cgroup_is_descendant(memcg, sc->target_mem_cgroup)) {
-> > +               rs->reclaimed += pages;
-> > +               return true;
-> > +       }
-> > +       return false;
-> >  }
-> >
-> >  LIST_HEAD(shrinker_list);
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index dd88701e54a9..d1c814cdb623 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/ima.h>
+>  #include <linux/swap.h>
+>  #include <linux/kmemleak.h>
+> +#include <linux/buildid.h>
+>
+>  #include <linux/atomic.h>
+>
+> @@ -47,6 +48,7 @@ static void file_free_rcu(struct rcu_head *head)
+>  {
+>         struct file *f = container_of(head, struct file, f_rcuhead);
+>
+> +       file_build_id_free(f);
+>         put_cred(f->f_cred);
+>         kmem_cache_free(filp_cachep, f);
+>  }
+> @@ -412,6 +414,7 @@ void __init files_init(void)
+>         filp_cachep = kmem_cache_create("filp", sizeof(struct file), 0,
+>                         SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT, NULL);
+>         percpu_counter_init(&nr_files, 0, GFP_KERNEL);
+> +       build_id_init();
+>  }
+>
+>  /*
+> diff --git a/include/linux/buildid.h b/include/linux/buildid.h
+> index 3b7a0ff4642f..7c818085ad2c 100644
+> --- a/include/linux/buildid.h
+> +++ b/include/linux/buildid.h
+> @@ -3,9 +3,15 @@
+>  #define _LINUX_BUILDID_H
+>
+>  #include <linux/mm_types.h>
+> +#include <linux/slab.h>
+>
+>  #define BUILD_ID_SIZE_MAX 20
+>
+> +struct build_id {
+> +       u32 sz;
+> +       char data[BUILD_ID_SIZE_MAX];
 
-Any further thoughts on this, whether to refresh the current RFC with
-added comments (based on Johannes's feedback) and exporting
-report_freed_pages() (based on Matthew's feedback), or to send a new
-version with the code above that accurately counts objcg uncharged
-pages in memcg reclaim?
+don't know if 21 vs 24 matters for kmem_cache_create(), but we don't
+need 4 bytes to store build_id size, given max size is 20, so maybe
+use u8 for sz?
+
+> +};
+> +
+>  int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
+>                    __u32 *size);
+>  int build_id_parse_buf(const void *buf, unsigned char *build_id, u32 buf_size);
+> @@ -17,4 +23,15 @@ void init_vmlinux_build_id(void);
+>  static inline void init_vmlinux_build_id(void) { }
+>  #endif
+>
+> +#ifdef CONFIG_FILE_BUILD_ID
+> +void __init build_id_init(void);
+> +void build_id_free(struct build_id *bid);
+> +int vma_get_build_id(struct vm_area_struct *vma, struct build_id **bidp);
+> +void file_build_id_free(struct file *f);
+> +#else
+> +static inline void __init build_id_init(void) { }
+> +static inline void build_id_free(struct build_id *bid) { }
+> +static inline void file_build_id_free(struct file *f) { }
+> +#endif /* CONFIG_FILE_BUILD_ID */
+> +
+>  #endif
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index c1769a2c5d70..9ad5e5fbf680 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -975,6 +975,9 @@ struct file {
+>         struct address_space    *f_mapping;
+>         errseq_t                f_wb_err;
+>         errseq_t                f_sb_err; /* for syncfs */
+> +#ifdef CONFIG_FILE_BUILD_ID
+> +       struct build_id         *f_bid;
+
+naming nit: anything wrong with f_buildid or f_build_id? all the
+related APIs use fully spelled out "build_id"
+
+> +#endif
+>  } __randomize_layout
+>    __attribute__((aligned(4))); /* lest something weird decides that 2 is OK */
+>
+> diff --git a/lib/buildid.c b/lib/buildid.c
+> index dfc62625cae4..7f6c3ca7b257 100644
+> --- a/lib/buildid.c
+> +++ b/lib/buildid.c
+> @@ -5,6 +5,7 @@
+>  #include <linux/elf.h>
+>  #include <linux/kernel.h>
+>  #include <linux/pagemap.h>
+> +#include <linux/slab.h>
+>
+>  #define BUILD_ID 3
+>
+> @@ -189,3 +190,46 @@ void __init init_vmlinux_build_id(void)
+>         build_id_parse_buf(&__start_notes, vmlinux_build_id, size);
+>  }
+>  #endif
+> +
+> +#ifdef CONFIG_FILE_BUILD_ID
+> +
+> +/* SLAB cache for build_id structures */
+> +static struct kmem_cache *build_id_cachep;
+> +
+> +int vma_get_build_id(struct vm_area_struct *vma, struct build_id **bidp)
+> +{
+> +       struct build_id *bid;
+> +       int err;
+> +
+> +       bid = kmem_cache_alloc(build_id_cachep, GFP_KERNEL);
+> +       if (!bid)
+> +               return -ENOMEM;
+> +       err = build_id_parse(vma, bid->data, &bid->sz);
+> +       if (err) {
+> +               build_id_free(bid);
+> +               /* ignore parsing error */
+> +               return 0;
+> +       }
+> +       *bidp = bid;
+> +       return 0;
+> +}
+> +
+> +void file_build_id_free(struct file *f)
+> +{
+> +       build_id_free(f->f_bid);
+> +}
+> +
+> +void build_id_free(struct build_id *bid)
+> +{
+> +       if (!bid)
+> +               return;
+> +       kmem_cache_free(build_id_cachep, bid);
+> +}
+> +
+> +void __init build_id_init(void)
+> +{
+> +       build_id_cachep = kmem_cache_create("build_id", sizeof(struct build_id), 0,
+> +                               SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT, NULL);
+> +}
+> +
+> +#endif /* CONFIG_FILE_BUILD_ID */
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index ff7b209dec05..68911c3780c4 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1183,6 +1183,13 @@ config LRU_GEN_STATS
+>           This option has a per-memcg and per-node memory overhead.
+>  # }
+>
+> +config FILE_BUILD_ID
+> +       bool "Store build id in file object"
+> +       default n
+> +       help
+> +         Store build id in file object for elf executable with build id
+> +         defined. The build id is stored when file is mmaped.
+> +
+>  source "mm/damon/Kconfig"
+>
+>  endmenu
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 425a9349e610..a06f744206e3 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2530,6 +2530,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>         pgoff_t vm_pgoff;
+>         int error;
+>         MA_STATE(mas, &mm->mm_mt, addr, end - 1);
+> +       struct build_id *bid = NULL;
+>
+>         /* Check against address space limit. */
+>         if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT)) {
+> @@ -2626,6 +2627,13 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>                 if (error)
+>                         goto unmap_and_free_vma;
+>
+> +#ifdef CONFIG_FILE_BUILD_ID
+> +               if (vma->vm_flags & VM_EXEC && !file->f_bid) {
+> +                       error = vma_get_build_id(vma, &bid);
+> +                       if (error)
+> +                               goto close_and_free_vma;
+
+do we want to fail mmap_region() if we get -ENOMEM from
+vma_get_build_id()? can't we just store ERR_PTR(error) in f_bid field?
+So we'll have f_bid == NULL for non-exec files, ERR_PTR() for when we
+tried and failed to get build ID, and a valid pointer if we succeeded?
+
+> +               }
+> +#endif
+>                 /*
+>                  * Expansion is handled above, merging is handled below.
+>                  * Drivers should not alter the address of the VMA.
+> @@ -2699,6 +2707,12 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>                 if (vma->vm_flags & VM_SHARED)
+>                         mapping_allow_writable(vma->vm_file->f_mapping);
+>
+> +#ifdef CONFIG_FILE_BUILD_ID
+> +               if (bid && !file->f_bid)
+> +                       file->f_bid = bid;
+> +               else
+> +                       build_id_free(bid);
+> +#endif
+>                 flush_dcache_mmap_lock(vma->vm_file->f_mapping);
+>                 vma_interval_tree_insert(vma, &vma->vm_file->f_mapping->i_mmap);
+>                 flush_dcache_mmap_unlock(vma->vm_file->f_mapping);
+> @@ -2759,6 +2773,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>                 mapping_unmap_writable(file->f_mapping);
+>  free_vma:
+>         vm_area_free(vma);
+> +       build_id_free(bid);
+>  unacct_error:
+>         if (charged)
+>                 vm_unacct_memory(charged);
+> --
+> 2.39.1
+>
