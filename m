@@ -2,45 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9E7B68E824
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 07:21:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4033168E82E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Feb 2023 07:21:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230048AbjBHGVj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Feb 2023 01:21:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
+        id S230209AbjBHGVn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Feb 2023 01:21:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbjBHGVi (ORCPT
+        with ESMTP id S229895AbjBHGVj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Feb 2023 01:21:38 -0500
+        Wed, 8 Feb 2023 01:21:39 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8265F40BFB;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52C1410B7;
         Tue,  7 Feb 2023 22:21:37 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 297F7B81AB4;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7218EB81C0B;
         Wed,  8 Feb 2023 06:21:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D596C433EF;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC55DC433D2;
         Wed,  8 Feb 2023 06:21:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675837294;
-        bh=5/jCW9hCuDP1bPRnmDpSkCHU7uopSOqd4DhFBilNJRU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=I8/gHZ3fzWa+jyUy6KyNSxroGCmJEfpCWfi01Wrqimo7Oqt3gpGOv01fKFG6/kLoJ
-         1Rnd09J0j1RgQK9Le3OI12MScPZM4cbR3ftqtHaEfDcMkLvKaQMul+jEP0FH2INKn+
-         58jvH9LKmqZ6J9YGH8BoYV+Y+h4mRNbPvf+UiMnBgotr85EPqODtNnXa4p8uCK8Fwy
-         VkX8XeauE4V1sE8uVb15qARkYw7T84Se2mRDCv3hlgFDM6Jy1pdSW3ynrEPoZ3eWuw
-         v3dMHo+r18cyKs9JCn04GN4PGAYMDiH4PzDGWz8aacPgzoNjtfGNYtcLTT+/t6ZhBX
-         7isGFDAXEfaRg==
+        s=k20201202; t=1675837295;
+        bh=rXzimvd4PWdjTx5BBrxxERaITqXWUNGccCwAWr6IKjY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bqgr3pjenH4hhu5yGdWxOmuBDTfjE4KLBRmr1eWNY3senk1DChomHChHvaaxF6sbw
+         WFt0IatwITKGVY/itxERVpapqWkjt5alhkueEyIKT84lQoCu0gAZ4T1uEu4FJf33/o
+         heMAhP1Ezd9x0FPiBMslUu7RBEXu3HgMborHvzBMxsapUwcOEVrGe3o0JmYKEwck9m
+         S2m6eg9Fv1O+XZQUCAASPtvuI1I1bozwdJGolV70KdhTahQQadD71tVagZeGiTGqSg
+         zLKtosWgeOdtBPa38BSfliQolz1TEODI3gol34EYGKeYBQmVPlK7+cRjlDgxXc/dC3
+         T73UdOlm3P/mQ==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 0/5] Add the test_dummy_encryption key on-demand
-Date:   Tue,  7 Feb 2023 22:21:02 -0800
-Message-Id: <20230208062107.199831-1-ebiggers@kernel.org>
+Subject: [PATCH 1/5] fscrypt: add the test dummy encryption key on-demand
+Date:   Tue,  7 Feb 2023 22:21:03 -0800
+Message-Id: <20230208062107.199831-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230208062107.199831-1-ebiggers@kernel.org>
+References: <20230208062107.199831-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -53,43 +55,96 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This series eliminates the call to fscrypt_destroy_keyring() from
-__put_super(), which is causing confusion because it looks like (but
-actually isn't) a sleep-in-atomic bug.  See the thread "block: sleeping
-in atomic warnings", i.e.
-https://lore.kernel.org/linux-fsdevel/CAHk-=wg6ohuyrmLJYTfEpDbp2Jwnef54gkcpZ3-BYgy4C6UxRQ@mail.gmail.com
-and its responses.
+From: Eric Biggers <ebiggers@google.com>
 
-To do this, this series makes it so that the key associated with the
-"test_dummy_encryption" mount option is added on-demand when files are
-accessed, instead of immediately when the filesystem is mounted.
+When the key for an inode is not found but the inode is using the
+test_dummy_encryption policy, automatically add the
+test_dummy_encryption key to the filesystem keyring.  This eliminates
+the need for all the individual filesystems to do this at mount time,
+which is a bit tricky to clean up from on failure.
 
-I was going back and forth between this solution and instead having ext4
-and f2fs call fscrypt_destroy_keyring() on ->fill_super failure.  (Or
-using Linus's suggestion of adding the test dummy key as the very last
-step of ->fill_super.)  It does seem ideal to add the key at mount time,
-but I ended up going with this solution instead because it reduces the
-number of things the individual filesystems have to handle.
+Note: this covers the call to fscrypt_find_master_key() from inode key
+setup, but not from the fscrypt ioctls.  So, this isn't *exactly* the
+same as the key being present from the very beginning.  I think we can
+tolerate that, though, since the inode key setup caller is the only one
+that actually matters in the context of test_dummy_encryption.
 
-Eric Biggers (5):
-  fscrypt: add the test dummy encryption key on-demand
-  ext4: stop calling fscrypt_add_test_dummy_key()
-  f2fs: stop calling fscrypt_add_test_dummy_key()
-  fs/super.c: stop calling fscrypt_destroy_keyring() from __put_super()
-  fscrypt: clean up fscrypt_add_test_dummy_key()
-
- fs/crypto/fscrypt_private.h |  4 ++++
- fs/crypto/keyring.c         | 26 +++++++-------------------
- fs/crypto/keysetup.c        | 23 +++++++++++++++++++++--
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/crypto/fscrypt_private.h |  1 +
+ fs/crypto/keysetup.c        | 25 +++++++++++++++++++++++--
  fs/crypto/policy.c          |  3 +--
- fs/ext4/super.c             | 13 +------------
- fs/f2fs/super.c             |  6 ------
- fs/super.c                  |  1 -
- include/linux/fscrypt.h     |  9 ---------
- 8 files changed, 34 insertions(+), 51 deletions(-)
+ 3 files changed, 25 insertions(+), 4 deletions(-)
 
-
-base-commit: 6d796c50f84ca79f1722bb131799e5a5710c4700
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index 316a778cec0ff..17dd33d9a522e 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -651,6 +651,7 @@ bool fscrypt_policies_equal(const union fscrypt_policy *policy1,
+ 			    const union fscrypt_policy *policy2);
+ int fscrypt_policy_to_key_spec(const union fscrypt_policy *policy,
+ 			       struct fscrypt_key_specifier *key_spec);
++const union fscrypt_policy *fscrypt_get_dummy_policy(struct super_block *sb);
+ bool fscrypt_supported_policy(const union fscrypt_policy *policy_u,
+ 			      const struct inode *inode);
+ int fscrypt_policy_from_context(union fscrypt_policy *policy_u,
+diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+index 94757ccd30568..20323c0ba4c5e 100644
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -438,6 +438,7 @@ static int setup_file_encryption_key(struct fscrypt_info *ci,
+ 				     bool need_dirhash_key,
+ 				     struct fscrypt_master_key **mk_ret)
+ {
++	struct super_block *sb = ci->ci_inode->i_sb;
+ 	struct fscrypt_key_specifier mk_spec;
+ 	struct fscrypt_master_key *mk;
+ 	int err;
+@@ -450,8 +451,28 @@ static int setup_file_encryption_key(struct fscrypt_info *ci,
+ 	if (err)
+ 		return err;
+ 
+-	mk = fscrypt_find_master_key(ci->ci_inode->i_sb, &mk_spec);
+-	if (!mk) {
++	mk = fscrypt_find_master_key(sb, &mk_spec);
++	if (unlikely(!mk)) {
++		const union fscrypt_policy *dummy_policy =
++			fscrypt_get_dummy_policy(sb);
++
++		/*
++		 * Add the test_dummy_encryption key on-demand.  In principle,
++		 * it should be added at mount time.  Do it here instead so that
++		 * the individual filesystems don't need to worry about adding
++		 * this key at mount time and cleaning up on mount failure.
++		 */
++		if (dummy_policy &&
++		    fscrypt_policies_equal(dummy_policy, &ci->ci_policy)) {
++			struct fscrypt_dummy_policy tmp = { dummy_policy };
++
++			err = fscrypt_add_test_dummy_key(sb, &tmp);
++			if (err)
++				return err;
++			mk = fscrypt_find_master_key(sb, &mk_spec);
++		}
++	}
++	if (unlikely(!mk)) {
+ 		if (ci->ci_policy.version != FSCRYPT_POLICY_V1)
+ 			return -ENOKEY;
+ 
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index 893661b523769..69dca4ff5f488 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -53,8 +53,7 @@ int fscrypt_policy_to_key_spec(const union fscrypt_policy *policy,
+ 	}
+ }
+ 
+-static const union fscrypt_policy *
+-fscrypt_get_dummy_policy(struct super_block *sb)
++const union fscrypt_policy *fscrypt_get_dummy_policy(struct super_block *sb)
+ {
+ 	if (!sb->s_cop->get_dummy_policy)
+ 		return NULL;
 -- 
 2.39.1
 
