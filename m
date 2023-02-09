@@ -2,125 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CCDC6912D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 22:54:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77642691369
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 23:34:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbjBIVyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 16:54:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45456 "EHLO
+        id S230364AbjBIWea (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 17:34:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjBIVyC (ORCPT
+        with ESMTP id S229945AbjBIWe2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 16:54:02 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6D476312D
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 13:54:01 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id v18-20020a17090ae99200b00230f079dcd9so6688711pjy.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 13:54:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0oX/lGmYsdyx5VnhUGqtR+KDAdmrsp9Y/YPHFCTjwNA=;
-        b=Dka+5DdMdyuJvweTAJtER7ujyyrCUwCe7DZogFEspsK7zh/SU9WcyEFz8K9FPImVEx
-         fVJTz1DCFLQFbRcXrYhMAlDtL42Wzyqv1YdFqNdD4i5wX2o6LFQiHw/Ut3SZ8mSYDaFt
-         ajAqsQ/eWwraRs5nLh46MxwPRfQQkHe9xu3WRyeB2E0nIA9pqT//ImS/ilF3reKnS318
-         s52iLbBbRBMvr91PhWvVABusRn4qwzys1mmvDkN1XyMveU2OpjzikGbARFQy6DbNufEX
-         vmI8ThZrgVJ4hsy8KfZl3B/uOduwMhMaCn3oewsfyEeMuFYZwKkdG+z9Hsi2iiU7xIWN
-         P88A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0oX/lGmYsdyx5VnhUGqtR+KDAdmrsp9Y/YPHFCTjwNA=;
-        b=viXA484HjUbaSmItsjHnyn4Fx7+DDGBbQvLMDnyekANUrB1x/lL8Q99QhM19WZmF7+
-         f02393GZWI75lx5W4oRLxcP9IWqfxOlFZ/eabBr/qXtQjEg2k5SBD1g4CsCnShzkfT+f
-         3FWuevmgWEYBYzUdO5/C/Mpznq4AP07b9O2Ftfa4BRTN4PRCYYIwz/e259oVwftsKCL/
-         ZNHOpehEAWc+ZggO3fE+mx5XJxRdI2s8KvZZeFtcfPrwx4btREcb5s4Cgz7WkQxpssYe
-         b7pazcRtzNU+R78KQ9hfGFADg7pqGjMWbg1uIETs3+MEvdICE8TQVjFUvariA2i1Voe5
-         s23g==
-X-Gm-Message-State: AO0yUKUl5N3M/ucHOetIp1CcmDBxBy6ujKsil3tXYuttb3KA3HS1lbvV
-        1LBlgcc7pxeYau4CUpQuOee3bQ==
-X-Google-Smtp-Source: AK7set+AzVGstAfdK4z0lHZ07rf0XD9ogpNvaI86WtR3MzF0pWUdM+mcOrZ5j7LF7wQNCocTD+G2iQ==
-X-Received: by 2002:a05:6a20:7f8e:b0:c0:b55b:8259 with SMTP id d14-20020a056a207f8e00b000c0b55b8259mr14663046pzj.0.1675979641353;
-        Thu, 09 Feb 2023 13:54:01 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-4-128.pa.nsw.optusnet.com.au. [49.181.4.128])
-        by smtp.gmail.com with ESMTPSA id j16-20020a62e910000000b0058d9a5bac88sm1885080pfh.203.2023.02.09.13.54.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 13:54:00 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pQEre-00DO2z-CV; Fri, 10 Feb 2023 08:53:58 +1100
-Date:   Fri, 10 Feb 2023 08:53:58 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
+        Thu, 9 Feb 2023 17:34:28 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55E1A24C90;
+        Thu,  9 Feb 2023 14:34:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=wPRJFOf9ORgLw15sVlY8kF/QglAmgE41oF0tS8oT+cM=; b=vdG8sFOiH15+Ze4S454DZXNK+r
+        0XATjtq/r/R94pBSNaTwOBYDLr1mM8a7arMMf6Fd4qI3Mf9kH+Z8xY+KdPrrkuqbGXB7E3v5/5GTL
+        PT33gJXDQLd2N1Xla2pIfZeoOq/Qm7RfVk5Mb0fMDsIhosVny+ljHR0flQ0/AsT+Et9DvD14TfeY/
+        3mDGZnBJJqfEl5IjKjh0rP7gBRjlg+OPbihVDrjpjwnCS5hn4jpZFy+ndZkuzasn3ZcFJ6RhilpvY
+        Ja9bsNpv9/es8+MePaGQtfgfkY5EeUFWIlReUOL5x0hUUAv74hemy75FLtV6uVtugOI169zw7LXDL
+        L/j8lUBw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pQFUj-002a3X-5R; Thu, 09 Feb 2023 22:34:21 +0000
+Date:   Thu, 9 Feb 2023 22:34:21 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
 Cc:     "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>
 Subject: Re: [PATCH 1/3] xfs: Remove xfs_filemap_map_pages() wrapper
-Message-ID: <20230209215358.GG360264@dread.disaster.area>
+Message-ID: <Y+V07dcDoxP4mjbJ@casper.infradead.org>
 References: <20230208145335.307287-1-willy@infradead.org>
  <20230208145335.307287-2-willy@infradead.org>
  <Y+PQN8cLdOXST20D@magnolia>
  <Y+PX5tPyOP2KQqoD@casper.infradead.org>
  <20230208215311.GC360264@dread.disaster.area>
  <Y+ReBH8DFxf+Iab4@casper.infradead.org>
+ <20230209215358.GG360264@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y+ReBH8DFxf+Iab4@casper.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <20230209215358.GG360264@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 09, 2023 at 02:44:20AM +0000, Matthew Wilcox wrote:
-> On Thu, Feb 09, 2023 at 08:53:11AM +1100, Dave Chinner wrote:
-> > > If XFS really needs it,
-> > > it can trylock the semaphore and return 0 if it fails, falling back to
-> > > the ->fault path.  But I don't think XFS actually needs it.
-> > >
-> > > The ->map_pages path trylocks the folio, checks the folio->mapping,
-> > > checks uptodate, then checks beyond EOF (not relevant to hole punch).
-> > > Then it takes the page table lock and puts the page(s) into the page
-> > > tables, unlocks the folio and moves on to the next folio.
+On Fri, Feb 10, 2023 at 08:53:58AM +1100, Dave Chinner wrote:
+> On Thu, Feb 09, 2023 at 02:44:20AM +0000, Matthew Wilcox wrote:
+> > On Thu, Feb 09, 2023 at 08:53:11AM +1100, Dave Chinner wrote:
+> > > > If XFS really needs it,
+> > > > it can trylock the semaphore and return 0 if it fails, falling back to
+> > > > the ->fault path.  But I don't think XFS actually needs it.
+> > > >
+> > > > The ->map_pages path trylocks the folio, checks the folio->mapping,
+> > > > checks uptodate, then checks beyond EOF (not relevant to hole punch).
+> > > > Then it takes the page table lock and puts the page(s) into the page
+> > > > tables, unlocks the folio and moves on to the next folio.
+> > > > 
+> > > > The hole-punch path, like the truncate path, takes the folio lock,
+> > > > unmaps the folio (which will take the page table lock) and removes
+> > > > it from the page cache.
+> > > > 
+> > > > So what's the race?
 > > > 
-> > > The hole-punch path, like the truncate path, takes the folio lock,
-> > > unmaps the folio (which will take the page table lock) and removes
-> > > it from the page cache.
-> > > 
-> > > So what's the race?
+> > > Hole punch is a multi-folio operation, so while we are operating on
+> > > invalidating one folio, another folio in the range we've already
+> > > invalidated could be instantiated and mapped, leaving mapped
+> > > up-to-date pages over a range we *require* the page cache to empty.
 > > 
-> > Hole punch is a multi-folio operation, so while we are operating on
-> > invalidating one folio, another folio in the range we've already
-> > invalidated could be instantiated and mapped, leaving mapped
-> > up-to-date pages over a range we *require* the page cache to empty.
+> > Nope.  ->map_pages is defined to _not_ instantiate new pages.
+> > If there are uptodate pages in the page cache, they can be mapped, but
+> > missing pages will be skipped, and left to ->fault to bring in.
 > 
-> Nope.  ->map_pages is defined to _not_ instantiate new pages.
-> If there are uptodate pages in the page cache, they can be mapped, but
-> missing pages will be skipped, and left to ->fault to bring in.
+> Sure, but *at the time this change was made* other operations could
+> instantiate pages whilst an invalidate was running, and then
+> ->map_pages could also find them and map them whilst that
+> invalidation was still running. i.e. the race conditions that
+> existed before the mapping->invalidate_lock was introduced (ie. we
+> couldn't intercept read page faults instantiating pages in the page
+> cache at all) didn't require ->map_pages to instantiate the page for
+> it to be able to expose incorrect data to userspace when page faults
+> raced with an ongoing invalidation operation.
+> 
+> While this may not be able to happen now if everything is using the
+> mapping->invalidate_lock correctly (because read faults are now
+> intercepted before they can instatiate new page cache pages), it
+> doesn't mean it wasn't possible in the past.....
 
-Sure, but *at the time this change was made* other operations could
-instantiate pages whilst an invalidate was running, and then
-->map_pages could also find them and map them whilst that
-invalidation was still running. i.e. the race conditions that
-existed before the mapping->invalidate_lock was introduced (ie. we
-couldn't intercept read page faults instantiating pages in the page
-cache at all) didn't require ->map_pages to instantiate the page for
-it to be able to expose incorrect data to userspace when page faults
-raced with an ongoing invalidation operation.
+Sorry, still not getting it.  Here's the scenario I think you're
+talking about.  We have three threads (probably in different tasks
+or they may end up getting synchronized on the page table locks).
 
-While this may not be able to happen now if everything is using the
-mapping->invalidate_lock correctly (because read faults are now
-intercepted before they can instatiate new page cache pages), it
-doesn't mean it wasn't possible in the past.....
+Thread 1 is calling FALLOC_FL_PUNCH_HOLE over a nice wide range.
+Thread 2 has the file mmaped and takes a read page fault.
+Thread 3 also has the file mmaped and also takes a read page fault.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thread 2 calls filemap_map_pages and finds the pages gone.  It proceeds
+to call xfs_filemap_fault() which calls filemap_fault() without
+taking any XFS locks.  filemap_fault() kicks off some readahead which
+allocates some pages & puts them in the page cache.  It calls into
+xfs_vm_readahead() which calls iomap_readahead() without taking any XFS
+locks.  iomap_readahead() will then call back into xfs_read_iomap_begin()
+which takes the XFS_ILOCK_SHARED.
+
+Since thread 1 is holding XFS_IOLOCK_EXCL, I presume thread 2 will
+block at this point until thread 1 is done.  At this point, the page
+is still not uptodate, so thread 3 will not map the page if it finds it
+in >map_pages.
+
+Or have I misunderstood XFS inode locking?  Entirely possible, it
+seems quite complicated.  Nevertheless, it seems to me that if there's
+locking that's missing, there's ample opportunities for XFS to take those
+missing locks in the (slow) fault path, and not take them in the (fast)
+map_pages path.
