@@ -2,173 +2,424 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E814690B82
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 15:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE596690BAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 15:28:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230416AbjBIOSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 09:18:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43748 "EHLO
+        id S230341AbjBIO2E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 09:28:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbjBIOSc (ORCPT
+        with ESMTP id S229669AbjBIO2D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 09:18:32 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6A82E823;
-        Thu,  9 Feb 2023 06:18:30 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id j29-20020a05600c1c1d00b003dc52fed235so1646194wms.1;
-        Thu, 09 Feb 2023 06:18:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=n6rfU3Snjl72LWDE6qX15Ocps4cU89fmRgYsFNMufWk=;
-        b=ptrgdRIUbWXZm/c9lvzocxPMYQ+eryxsewr3pbMPofs6WTJXzB1Ds06zzWNlpBFdfE
-         y52VbKkz22dnSCkSuVB6Kqy3Bn0EYvx/voJ6fcGkXc58mN+umM38sBmb1NfC6eTgR5/g
-         Qf4APaaY5Q4j3X5wFir1KJ4coiw/6UX1yJdqYkpE8FxOrw5mgdwYIa0ulh3uF+ZoVJ+5
-         ZQwXYAh9ubL1aXAeRfScDXJx+1YpSXNUVuWCwt2sfQeC6U5GThIdQyWV3OUK6IRbji9x
-         ErxpRJynYb6LskLmbQBbz9a93hHFi7tmhPeCzwsN8HHYsmcdIEvrpMGPKtABOHieEgSX
-         jkiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n6rfU3Snjl72LWDE6qX15Ocps4cU89fmRgYsFNMufWk=;
-        b=yf4AAuEn8AoNkJoA6DsVt3yXwDWzQK3iCZDwMlc7gHDCX9GcuULMjmd3AxIBKXW8BK
-         h1svAFYUUJYhBMAnxNQmxRcmHSfTjcOOHPyoLNiYY1QhYL2MnEu7XKlKY003l7jEvM4p
-         MXfixi7HJ0DC34xn4pQD7dhwCc9avFi2Mz4lnFRE9MsrcxOtWpjtTBjBE9L2wT43dXpw
-         4QW+w5E3y80VQYRSmjMUZ5Owhh30HJB7h3dOnAOLC2CdshfM3e4FUwe6mrMzvyEjE+4o
-         H6JpwtIIMgL0+9JXF4y0Tj5e1BwDbAtXnZdocjYIezWnY+1kixuAXvxvAOrxjEZn+cES
-         uVFA==
-X-Gm-Message-State: AO0yUKUnc93qe0TOUt+PEoNyjQnSqeod7S98TQky8gsmOvIokxbLbfB/
-        LrjLNSPjZglkwmz6T5ouUBY=
-X-Google-Smtp-Source: AK7set/oU2MQE6PRrUGZeem/G28nDvWH2jZGBGq/aX3yec9+KFq5SeSvdk3RbW/QsABFEFJLifd0VA==
-X-Received: by 2002:a05:600c:4d21:b0:3de:e447:8025 with SMTP id u33-20020a05600c4d2100b003dee4478025mr9943371wmp.21.1675952309295;
-        Thu, 09 Feb 2023 06:18:29 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id o41-20020a05600c512900b003dc4aae4739sm5886452wms.27.2023.02.09.06.18.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 06:18:28 -0800 (PST)
-From:   Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date:   Thu, 9 Feb 2023 15:18:26 +0100
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Hao Luo <haoluo@google.com>,
+        Thu, 9 Feb 2023 09:28:03 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 70FED5C49C;
+        Thu,  9 Feb 2023 06:28:01 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8EC391477;
+        Thu,  9 Feb 2023 06:28:43 -0800 (PST)
+Received: from e126311.manchester.arm.com (unknown [10.57.75.168])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 93CF23F703;
+        Thu,  9 Feb 2023 06:27:55 -0800 (PST)
+Date:   Thu, 9 Feb 2023 14:27:17 +0000
+From:   Kajetan Puchalski <kajetan.puchalski@arm.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        John Stultz <jstultz@google.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     bpf@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [RFC 0/5] mm/bpf/perf: Store build id in file object
-Message-ID: <Y+UAsr8A+xT0bUY/@krava>
-References: <20230201135737.800527-1-jolsa@kernel.org>
+        Steven Rostedt <rostedt@goodmis.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Qais Yousef <qyousef@google.com>,
+        Daniele Di Proietto <ddiproietto@google.com>
+Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded
+ 16 with TASK_COMM_LEN
+Message-ID: <Y+UCxSktKM0CzMlA@e126311.manchester.arm.com>
+References: <20211120112738.45980-1-laoar.shao@gmail.com>
+ <20211120112738.45980-8-laoar.shao@gmail.com>
+ <Y+QaZtz55LIirsUO@google.com>
+ <CAADnVQ+nf8MmRWP+naWwZEKBFOYr7QkZugETgAVfjKcEVxmOtg@mail.gmail.com>
+ <CANDhNCo_=Q3pWc7h=ruGyHdRVGpsMKRY=C2AtZgLDwtGzRz8Kw@mail.gmail.com>
+ <08e1c9d0-376f-d669-6fe8-559b2fbc2f2b@efficios.com>
+ <CALOAHbBsmajStJ8TrnqEL_pv=UOt-vv0CH30EqThVq=JYXfi8A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230201135737.800527-1-jolsa@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <CALOAHbBsmajStJ8TrnqEL_pv=UOt-vv0CH30EqThVq=JYXfi8A@mail.gmail.com>
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 01, 2023 at 02:57:32PM +0100, Jiri Olsa wrote:
-> hi,
-> we have a use cases for bpf programs to use binary file's build id.
+On Thu, Feb 09, 2023 at 02:20:36PM +0800, Yafang Shao wrote:
+
+[...]
+
+Hi Yafang,
+
+> Many thanks for the detailed analysis. Seems it can work.
 > 
-> After some attempts to add helpers/kfuncs [1] [2] Andrii had an idea [3]
-> to store build id directly in the file object. That would solve our use
-> case and might be beneficial for other profiling/tracing use cases with
-> bpf programs.
+> Hi John,
 > 
-> This RFC patchset adds new config CONFIG_FILE_BUILD_ID option, which adds
-> build id object pointer to the file object when enabled. The build id is
-> read/populated when the file is mmap-ed.
-> 
-> I also added bpf and perf changes that would benefit from this.
-> 
-> I'm not sure what's the policy on adding stuff to file object, so apologies
-> if that's out of line. I'm open to any feedback or suggestions if there's
-> better place or way to do this.
+> Could you pls. try the attached fix ? I have verified it in my test env.
 
-hi,
-Matthew suggested on irc to consider inode for storing build id
+I tested the patch on my environment where I found the issue with newer
+kernels + older Perfetto. The patch does improve things so that's nice.
+It goes from "not working at all" to "mostly working but missing data"
+compared to what happens if I just revert 3087c61ed2c48548b74dd343a5209b87082c682d.
 
-I tried that and it seems to have better stats wrt allocated build
-id objects, because inode is being shared among file objects
+I'm just an end user so can't really speak to the underlying causes but
+for those more familiar with how Perfetto works this is what I'm getting:
 
-I took /proc/slabinfo output after running bpf tests
+Error stats for this trace:
+                                    name                                      idx                                   source                                    value
+---------------------------------------- ---------------------------------------- ---------------------------------------- ----------------------------------------
+mismatched_sched_switch_tids             [NULL]                                   analysis                                                                    11101
+systrace_parse_failure                   [NULL]                                   analysis                                                                    19040
 
-- build id stored in file:
+The trace explorer window ends up containing the ftrace-specific tracks
+but missing the tracks related to Android-specific callbacks and such.
 
-  # name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> : tunables <limit> <batchcount> <sharedfactor> : slabdata <active_slabs> <num_slabs> <sharedavail>
-  build_id             668    775    160   25    1 : tunables    0    0    0 : slabdata     31     31      0
+Debug stats below in case they're relevant:
 
-- build id stored in inode:
+Name	Value	Type
+android_br_parse_errors	0	error (trace)
+android_log_format_invalid	0	error (trace)
+android_log_num_failed	0	error (trace)
+android_log_num_skipped	0	info (trace)
+android_log_num_total	0	info (trace)
+clock_sync_cache_miss	181	info (analysis)
+clock_sync_failure	0	error (analysis)
+compact_sched_has_parse_errors	0	error (trace)
+compact_sched_switch_skipped	0	info (analysis)
+compact_sched_waking_skipped	0	info (analysis)
+counter_events_out_of_order	0	error (analysis)
+deobfuscate_location_parse_error	0	error (trace)
+empty_chrome_metadata	0	error (trace)
+energy_breakdown_missing_values	0	error (analysis)
+energy_descriptor_invalid	0	error (analysis)
+energy_uid_breakdown_missing_values	0	error (analysis)
+flow_duplicate_id	0	error (trace)
+flow_end_without_start	0	info (trace)
+flow_invalid_id	0	error (trace)
+flow_no_enclosing_slice	0	error (trace)
+flow_step_without_start	0	info (trace)
+flow_without_direction	0	error (trace)
+frame_timeline_event_parser_errors	0	info (analysis)
+ftrace_bundle_tokenizer_errors	0	error (analysis)
+ftrace_cpu_bytes_read_begin[0]	0	info (trace)
+ftrace_cpu_bytes_read_begin[1]	264	info (trace)
+ftrace_cpu_bytes_read_begin[2]	0	info (trace)
+ftrace_cpu_bytes_read_begin[3]	224	info (trace)
+ftrace_cpu_bytes_read_begin[4]	0	info (trace)
+ftrace_cpu_bytes_read_begin[5]	0	info (trace)
+ftrace_cpu_bytes_read_begin[6]	0	info (trace)
+ftrace_cpu_bytes_read_begin[7]	0	info (trace)
+ftrace_cpu_bytes_read_delta[0]	6919836	info (trace)
+ftrace_cpu_bytes_read_delta[1]	7197556	info (trace)
+ftrace_cpu_bytes_read_delta[2]	6381828	info (trace)
+ftrace_cpu_bytes_read_delta[3]	5988336	info (trace)
+ftrace_cpu_bytes_read_delta[4]	5933528	info (trace)
+ftrace_cpu_bytes_read_delta[5]	4858400	info (trace)
+ftrace_cpu_bytes_read_delta[6]	6175260	info (trace)
+ftrace_cpu_bytes_read_delta[7]	4633460	info (trace)
+ftrace_cpu_bytes_read_end[0]	6919836	info (trace)
+ftrace_cpu_bytes_read_end[1]	7197820	info (trace)
+ftrace_cpu_bytes_read_end[2]	6381828	info (trace)
+ftrace_cpu_bytes_read_end[3]	5988560	info (trace)
+ftrace_cpu_bytes_read_end[4]	5933528	info (trace)
+ftrace_cpu_bytes_read_end[5]	4858400	info (trace)
+ftrace_cpu_bytes_read_end[6]	6175260	info (trace)
+ftrace_cpu_bytes_read_end[7]	4633460	info (trace)
+ftrace_cpu_commit_overrun_begin[0]	0	info (trace)
+ftrace_cpu_commit_overrun_begin[1]	0	info (trace)
+ftrace_cpu_commit_overrun_begin[2]	0	info (trace)
+ftrace_cpu_commit_overrun_begin[3]	0	info (trace)
+ftrace_cpu_commit_overrun_begin[4]	0	info (trace)
+ftrace_cpu_commit_overrun_begin[5]	0	info (trace)
+ftrace_cpu_commit_overrun_begin[6]	0	info (trace)
+ftrace_cpu_commit_overrun_begin[7]	0	info (trace)
+ftrace_cpu_commit_overrun_delta[0]	0	error (trace)
+ftrace_cpu_commit_overrun_delta[1]	0	error (trace)
+ftrace_cpu_commit_overrun_delta[2]	0	error (trace)
+ftrace_cpu_commit_overrun_delta[3]	0	error (trace)
+ftrace_cpu_commit_overrun_delta[4]	0	error (trace)
+ftrace_cpu_commit_overrun_delta[5]	0	error (trace)
+ftrace_cpu_commit_overrun_delta[6]	0	error (trace)
+ftrace_cpu_commit_overrun_delta[7]	0	error (trace)
+ftrace_cpu_commit_overrun_end[0]	0	info (trace)
+ftrace_cpu_commit_overrun_end[1]	0	info (trace)
+ftrace_cpu_commit_overrun_end[2]	0	info (trace)
+ftrace_cpu_commit_overrun_end[3]	0	info (trace)
+ftrace_cpu_commit_overrun_end[4]	0	info (trace)
+ftrace_cpu_commit_overrun_end[5]	0	info (trace)
+ftrace_cpu_commit_overrun_end[6]	0	info (trace)
+ftrace_cpu_commit_overrun_end[7]	0	info (trace)
+ftrace_cpu_dropped_events_begin[0]	0	info (trace)
+ftrace_cpu_dropped_events_begin[1]	0	info (trace)
+ftrace_cpu_dropped_events_begin[2]	0	info (trace)
+ftrace_cpu_dropped_events_begin[3]	0	info (trace)
+ftrace_cpu_dropped_events_begin[4]	0	info (trace)
+ftrace_cpu_dropped_events_begin[5]	0	info (trace)
+ftrace_cpu_dropped_events_begin[6]	0	info (trace)
+ftrace_cpu_dropped_events_begin[7]	0	info (trace)
+ftrace_cpu_dropped_events_delta[0]	0	error (trace)
+ftrace_cpu_dropped_events_delta[1]	0	error (trace)
+ftrace_cpu_dropped_events_delta[2]	0	error (trace)
+ftrace_cpu_dropped_events_delta[3]	0	error (trace)
+ftrace_cpu_dropped_events_delta[4]	0	error (trace)
+ftrace_cpu_dropped_events_delta[5]	0	error (trace)
+ftrace_cpu_dropped_events_delta[6]	0	error (trace)
+ftrace_cpu_dropped_events_delta[7]	0	error (trace)
+ftrace_cpu_dropped_events_end[0]	0	info (trace)
+ftrace_cpu_dropped_events_end[1]	0	info (trace)
+ftrace_cpu_dropped_events_end[2]	0	info (trace)
+ftrace_cpu_dropped_events_end[3]	0	info (trace)
+ftrace_cpu_dropped_events_end[4]	0	info (trace)
+ftrace_cpu_dropped_events_end[5]	0	info (trace)
+ftrace_cpu_dropped_events_end[6]	0	info (trace)
+ftrace_cpu_dropped_events_end[7]	0	info (trace)
+ftrace_cpu_entries_begin[0]	0	info (trace)
+ftrace_cpu_entries_begin[1]	6	info (trace)
+ftrace_cpu_entries_begin[2]	0	info (trace)
+ftrace_cpu_entries_begin[3]	5	info (trace)
+ftrace_cpu_entries_begin[4]	0	info (trace)
+ftrace_cpu_entries_begin[5]	0	info (trace)
+ftrace_cpu_entries_begin[6]	0	info (trace)
+ftrace_cpu_entries_begin[7]	0	info (trace)
+ftrace_cpu_entries_delta[0]	6	info (trace)
+ftrace_cpu_entries_delta[1]	-6	info (trace)
+ftrace_cpu_entries_delta[2]	0	info (trace)
+ftrace_cpu_entries_delta[3]	2	info (trace)
+ftrace_cpu_entries_delta[4]	0	info (trace)
+ftrace_cpu_entries_delta[5]	0	info (trace)
+ftrace_cpu_entries_delta[6]	0	info (trace)
+ftrace_cpu_entries_delta[7]	0	info (trace)
+ftrace_cpu_entries_end[0]	6	info (trace)
+ftrace_cpu_entries_end[1]	0	info (trace)
+ftrace_cpu_entries_end[2]	0	info (trace)
+ftrace_cpu_entries_end[3]	7	info (trace)
+ftrace_cpu_entries_end[4]	0	info (trace)
+ftrace_cpu_entries_end[5]	0	info (trace)
+ftrace_cpu_entries_end[6]	0	info (trace)
+ftrace_cpu_entries_end[7]	0	info (trace)
+ftrace_cpu_now_ts_begin[0]	93305027000	info (trace)
+ftrace_cpu_now_ts_begin[1]	93305103000	info (trace)
+ftrace_cpu_now_ts_begin[2]	93305159000	info (trace)
+ftrace_cpu_now_ts_begin[3]	93305207000	info (trace)
+ftrace_cpu_now_ts_begin[4]	93305262000	info (trace)
+ftrace_cpu_now_ts_begin[5]	93305312000	info (trace)
+ftrace_cpu_now_ts_begin[6]	93305362000	info (trace)
+ftrace_cpu_now_ts_begin[7]	93305411000	info (trace)
+ftrace_cpu_now_ts_end[0]	282906571000	info (trace)
+ftrace_cpu_now_ts_end[1]	282906676000	info (trace)
+ftrace_cpu_now_ts_end[2]	282906738000	info (trace)
+ftrace_cpu_now_ts_end[3]	282906803000	info (trace)
+ftrace_cpu_now_ts_end[4]	282906863000	info (trace)
+ftrace_cpu_now_ts_end[5]	282906925000	info (trace)
+ftrace_cpu_now_ts_end[6]	282906987000	info (trace)
+ftrace_cpu_now_ts_end[7]	282907048000	info (trace)
+ftrace_cpu_oldest_event_ts_begin[0]	0	info (trace)
+ftrace_cpu_oldest_event_ts_begin[1]	93304642000	info (trace)
+ftrace_cpu_oldest_event_ts_begin[2]	0	info (trace)
+ftrace_cpu_oldest_event_ts_begin[3]	93304876000	info (trace)
+ftrace_cpu_oldest_event_ts_begin[4]	0	info (trace)
+ftrace_cpu_oldest_event_ts_begin[5]	0	info (trace)
+ftrace_cpu_oldest_event_ts_begin[6]	0	info (trace)
+ftrace_cpu_oldest_event_ts_begin[7]	0	info (trace)
+ftrace_cpu_oldest_event_ts_end[0]	282905715000	info (trace)
+ftrace_cpu_oldest_event_ts_end[1]	282903723000	info (trace)
+ftrace_cpu_oldest_event_ts_end[2]	282903881000	info (trace)
+ftrace_cpu_oldest_event_ts_end[3]	282816175000	info (trace)
+ftrace_cpu_oldest_event_ts_end[4]	282896619000	info (trace)
+ftrace_cpu_oldest_event_ts_end[5]	282884168000	info (trace)
+ftrace_cpu_oldest_event_ts_end[6]	282783221000	info (trace)
+ftrace_cpu_oldest_event_ts_end[7]	282880081000	info (trace)
+ftrace_cpu_overrun_begin[0]	0	info (trace)
+ftrace_cpu_overrun_begin[1]	0	info (trace)
+ftrace_cpu_overrun_begin[2]	0	info (trace)
+ftrace_cpu_overrun_begin[3]	0	info (trace)
+ftrace_cpu_overrun_begin[4]	0	info (trace)
+ftrace_cpu_overrun_begin[5]	0	info (trace)
+ftrace_cpu_overrun_begin[6]	0	info (trace)
+ftrace_cpu_overrun_begin[7]	0	info (trace)
+ftrace_cpu_overrun_delta[0]help_outline	0	data_loss (trace)
+ftrace_cpu_overrun_delta[1]help_outline	0	data_loss (trace)
+ftrace_cpu_overrun_delta[2]help_outline	0	data_loss (trace)
+ftrace_cpu_overrun_delta[3]help_outline	0	data_loss (trace)
+ftrace_cpu_overrun_delta[4]help_outline	0	data_loss (trace)
+ftrace_cpu_overrun_delta[5]help_outline	0	data_loss (trace)
+ftrace_cpu_overrun_delta[6]help_outline	0	data_loss (trace)
+ftrace_cpu_overrun_delta[7]help_outline	0	data_loss (trace)
+ftrace_cpu_overrun_end[0]	0	info (trace)
+ftrace_cpu_overrun_end[1]	0	info (trace)
+ftrace_cpu_overrun_end[2]	0	info (trace)
+ftrace_cpu_overrun_end[3]	0	info (trace)
+ftrace_cpu_overrun_end[4]	0	info (trace)
+ftrace_cpu_overrun_end[5]	0	info (trace)
+ftrace_cpu_overrun_end[6]	0	info (trace)
+ftrace_cpu_overrun_end[7]	0	info (trace)
+ftrace_cpu_read_events_begin[0]	0	info (trace)
+ftrace_cpu_read_events_begin[1]	0	info (trace)
+ftrace_cpu_read_events_begin[2]	0	info (trace)
+ftrace_cpu_read_events_begin[3]	0	info (trace)
+ftrace_cpu_read_events_begin[4]	0	info (trace)
+ftrace_cpu_read_events_begin[5]	0	info (trace)
+ftrace_cpu_read_events_begin[6]	0	info (trace)
+ftrace_cpu_read_events_begin[7]	0	info (trace)
+ftrace_cpu_read_events_delta[0]	454848	info (trace)
+ftrace_cpu_read_events_delta[1]	453484	info (trace)
+ftrace_cpu_read_events_delta[2]	386290	info (trace)
+ftrace_cpu_read_events_delta[3]	356432	info (trace)
+ftrace_cpu_read_events_delta[4]	393337	info (trace)
+ftrace_cpu_read_events_delta[5]	325244	info (trace)
+ftrace_cpu_read_events_delta[6]	392637	info (trace)
+ftrace_cpu_read_events_delta[7]	350623	info (trace)
+ftrace_cpu_read_events_end[0]	454848	info (trace)
+ftrace_cpu_read_events_end[1]	453484	info (trace)
+ftrace_cpu_read_events_end[2]	386290	info (trace)
+ftrace_cpu_read_events_end[3]	356432	info (trace)
+ftrace_cpu_read_events_end[4]	393337	info (trace)
+ftrace_cpu_read_events_end[5]	325244	info (trace)
+ftrace_cpu_read_events_end[6]	392637	info (trace)
+ftrace_cpu_read_events_end[7]	350623	info (trace)
+ftrace_packet_before_tracing_starthelp_outline	0	info (analysis)
+ftrace_setup_errorshelp_outline	0	error (trace)
+fuchsia_invalid_event	0	error (analysis)
+fuchsia_non_numeric_counters	0	error (analysis)
+fuchsia_timestamp_overflow	0	error (analysis)
+game_intervention_has_parse_errorshelp_outline	0	error (trace)
+game_intervention_has_read_errorshelp_outline	0	error (trace)
+gpu_counters_invalid_spec	0	error (analysis)
+gpu_counters_missing_spec	0	error (analysis)
+gpu_render_stage_parser_errors	0	error (analysis)
+graphics_frame_event_parser_errors	0	info (analysis)
+guess_trace_type_duration_ns	7654	info (analysis)
+heap_graph_non_finalized_graph	0	error (trace)
+heapprofd_missing_packet	0	error (trace)
+heapprofd_non_finalized_profile	0	error (trace)
+interned_data_tokenizer_errors	0	info (analysis)
+invalid_clock_snapshots	0	error (analysis)
+invalid_cpu_times	0	error (analysis)
+json_display_time_unithelp_outline	0	info (trace)
+json_parser_failure	0	error (trace)
+json_tokenizer_failure	0	error (trace)
+meminfo_unknown_keys	0	error (analysis)
+memory_snapshot_parser_failure	0	error (analysis)
+metatrace_overruns	0	error (trace)
+mismatched_sched_switch_tids	11101	error (analysis)
+misplaced_end_event	0	data_loss (analysis)
+mm_unknown_type	0	error (analysis)
+ninja_parse_errors	0	error (trace)
+packages_list_has_parse_errors	0	error (trace)
+packages_list_has_read_errors	0	error (trace)
+parse_trace_duration_ns	1780589548	info (analysis)
+perf_samples_skipped	0	info (trace)
+perf_samples_skipped_dataloss	0	data_loss (trace)
+power_rail_unknown_index	0	error (trace)
+proc_stat_unknown_counters	0	error (analysis)
+process_tracker_errors	0	error (analysis)
+rss_stat_negative_size	0	info (analysis)
+rss_stat_unknown_keys	0	error (analysis)
+rss_stat_unknown_thread_for_mm_id	0	info (analysis)
+sched_switch_out_of_order	0	error (analysis)
+sched_waking_out_of_order	0	error (analysis)
+slice_out_of_order	0	error (analysis)
+sorter_push_event_out_of_orderhelp_outline	0	error (trace)
+stackprofile_invalid_callstack_id	0	error (trace)
+stackprofile_invalid_frame_id	0	error (trace)
+stackprofile_invalid_mapping_id	0	error (trace)
+stackprofile_invalid_string_id	0	error (trace)
+stackprofile_parser_error	0	error (trace)
+symbolization_tmp_build_id_not_foundhelp_outline	0	error (analysis)
+systrace_parse_failure	19040	error (analysis)
+task_state_invalid	0	error (analysis)
+thread_time_in_state_out_of_order	0	error (analysis)
+thread_time_in_state_unknown_cpu_freq	0	error (analysis)
+tokenizer_skipped_packets	0	info (analysis)
+traced_buf_abi_violations[0]	0	data_loss (trace)
+traced_buf_abi_violations[1]	0	data_loss (trace)
+traced_buf_buffer_size[0]	534773760	info (trace)
+traced_buf_buffer_size[1]	2097152	info (trace)
+traced_buf_bytes_overwritten[0]	0	info (trace)
+traced_buf_bytes_overwritten[1]	0	info (trace)
+traced_buf_bytes_read[0]	78929920	info (trace)
+traced_buf_bytes_read[1]	425984	info (trace)
+traced_buf_bytes_written[0]	78962688	info (trace)
+traced_buf_bytes_written[1]	425984	info (trace)
+traced_buf_chunks_committed_out_of_order[0]	0	info (trace)
+traced_buf_chunks_committed_out_of_order[1]	0	info (trace)
+traced_buf_chunks_discarded[0]	0	info (trace)
+traced_buf_chunks_discarded[1]	0	info (trace)
+traced_buf_chunks_overwritten[0]	0	info (trace)
+traced_buf_chunks_overwritten[1]	0	info (trace)
+traced_buf_chunks_read[0]	2428	info (trace)
+traced_buf_chunks_read[1]	13	info (trace)
+traced_buf_chunks_rewritten[0]	6	info (trace)
+traced_buf_chunks_rewritten[1]	0	info (trace)
+traced_buf_chunks_written[0]	2429	info (trace)
+traced_buf_chunks_written[1]	13	info (trace)
+traced_buf_padding_bytes_cleared[0]	0	info (trace)
+traced_buf_padding_bytes_cleared[1]	0	info (trace)
+traced_buf_padding_bytes_written[0]	0	info (trace)
+traced_buf_padding_bytes_written[1]	0	info (trace)
+traced_buf_patches_failed[0]	0	data_loss (trace)
+traced_buf_patches_failed[1]	0	data_loss (trace)
+traced_buf_patches_succeeded[0]	5633	info (trace)
+traced_buf_patches_succeeded[1]	8	info (trace)
+traced_buf_readaheads_failed[0]	115	info (trace)
+traced_buf_readaheads_failed[1]	18	info (trace)
+traced_buf_readaheads_succeeded[0]	2257	info (trace)
+traced_buf_readaheads_succeeded[1]	6	info (trace)
+traced_buf_trace_writer_packet_loss[0]	0	data_loss (trace)
+traced_buf_trace_writer_packet_loss[1]	0	data_loss (trace)
+traced_buf_write_wrap_count[0]	0	info (trace)
+traced_buf_write_wrap_count[1]	0	info (trace)
+traced_chunks_discarded	0	info (trace)
+traced_data_sources_registered	16	info (trace)
+traced_data_sources_seen	6	info (trace)
+traced_final_flush_failed	0	data_loss (trace)
+traced_final_flush_succeeded	0	info (trace)
+traced_flushes_failed	0	data_loss (trace)
+traced_flushes_requested	0	info (trace)
+traced_flushes_succeeded	0	info (trace)
+traced_patches_discarded	0	info (trace)
+traced_producers_connected	3	info (trace)
+traced_producers_seen	3	info (trace)
+traced_total_buffers	2	info (trace)
+traced_tracing_sessions	1	info (trace)
+track_event_dropped_packets_outside_of_range_of_interesthelp_outline	0	info (analysis)
+track_event_parser_errors	0	info (analysis)
+track_event_thread_invalid_endhelp_outline	0	error (trace)
+track_event_tokenizer_errors	0	info (analysis)
+truncated_sys_write_durationhelp_outline	0	data_loss (analysis)
+unknown_extension_fieldshelp_outline	0	error (trace)
+vmstat_unknown_keys	0	error (analysis)
+vulkan_allocations_invalid_string_id	0	error (trace)
 
-  # name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> : tunables <limit> <batchcount> <sharedfactor> : slabdata <active_slabs> <num_slabs> <sharedavail>
-  build_id             222    225    160   25    1 : tunables    0    0    0 : slabdata      9      9      0
+> --
+> Regards
+> Yafang
 
 
-I'm stranger to inode/fs/mm code so I'll spend some time checking on
-what I possibly broke in there before I send it, but I'd appreciate
-any early feedback ;-)
-
-the code is in here:
-  git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
-  inode_build_id
-
-I'll send another version with inode if there's no objection
-
-thanks,
-jirka
-
-
-> 
-> thanks,
-> jirka
-> 
-> 
-> [1] https://lore.kernel.org/bpf/20221108222027.3409437-1-jolsa@kernel.org/
-> [2] https://lore.kernel.org/bpf/20221128132915.141211-1-jolsa@kernel.org/
-> [3] https://lore.kernel.org/bpf/CAEf4BzaZCUoxN_X2ALXwQeFTCwtL17R4P_B_-hUCcidfyO2xyQ@mail.gmail.com/
-> ---
-> Jiri Olsa (5):
->       mm: Store build id in file object
->       bpf: Use file object build id in stackmap
->       perf: Use file object build id in perf_event_mmap_event
->       selftests/bpf: Add file_build_id test
->       selftests/bpf: Add iter_task_vma_buildid test
-> 
->  fs/file_table.c                                               |  3 +++
->  include/linux/buildid.h                                       | 17 +++++++++++++++++
->  include/linux/fs.h                                            |  3 +++
->  kernel/bpf/stackmap.c                                         |  8 ++++++++
->  kernel/events/core.c                                          | 43 +++++++++++++++++++++++++++++++++++++++----
->  lib/buildid.c                                                 | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  mm/Kconfig                                                    |  7 +++++++
->  mm/mmap.c                                                     | 15 +++++++++++++++
->  tools/testing/selftests/bpf/prog_tests/bpf_iter.c             | 88 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tools/testing/selftests/bpf/prog_tests/file_build_id.c        | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
->  tools/testing/selftests/bpf/progs/file_build_id.c             | 34 ++++++++++++++++++++++++++++++++++
->  tools/testing/selftests/bpf/trace_helpers.c                   | 35 +++++++++++++++++++++++++++++++++++
->  tools/testing/selftests/bpf/trace_helpers.h                   |  1 +
->  14 files changed, 413 insertions(+), 4 deletions(-)
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/file_build_id.c
->  create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
->  create mode 100644 tools/testing/selftests/bpf/progs/file_build_id.c
