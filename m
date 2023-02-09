@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0633F68FD1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 03:29:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC57868FD2C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 03:34:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231964AbjBIC3I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Feb 2023 21:29:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56218 "EHLO
+        id S232034AbjBICdx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Feb 2023 21:33:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231936AbjBIC3G (ORCPT
+        with ESMTP id S232000AbjBICdu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Feb 2023 21:29:06 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E72635AC;
-        Wed,  8 Feb 2023 18:29:05 -0800 (PST)
+        Wed, 8 Feb 2023 21:33:50 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E367D28843;
+        Wed,  8 Feb 2023 18:33:49 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 117B4B81F78;
-        Thu,  9 Feb 2023 02:29:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB0EBC433EF;
-        Thu,  9 Feb 2023 02:28:59 +0000 (UTC)
-Date:   Wed, 8 Feb 2023 21:28:58 -0500
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 634686185A;
+        Thu,  9 Feb 2023 02:33:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDBC0C433EF;
+        Thu,  9 Feb 2023 02:33:45 +0000 (UTC)
+Date:   Wed, 8 Feb 2023 21:33:43 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     John Stultz <jstultz@google.com>
 Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
@@ -54,19 +54,20 @@ Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded
  16 with TASK_COMM_LEN
-Message-ID: <20230208212858.477cd05e@gandalf.local.home>
-In-Reply-To: <CANDhNCo_=Q3pWc7h=ruGyHdRVGpsMKRY=C2AtZgLDwtGzRz8Kw@mail.gmail.com>
+Message-ID: <20230208213343.40ee15a5@gandalf.local.home>
+In-Reply-To: <20230208212858.477cd05e@gandalf.local.home>
 References: <20211120112738.45980-1-laoar.shao@gmail.com>
         <20211120112738.45980-8-laoar.shao@gmail.com>
         <Y+QaZtz55LIirsUO@google.com>
         <CAADnVQ+nf8MmRWP+naWwZEKBFOYr7QkZugETgAVfjKcEVxmOtg@mail.gmail.com>
         <CANDhNCo_=Q3pWc7h=ruGyHdRVGpsMKRY=C2AtZgLDwtGzRz8Kw@mail.gmail.com>
+        <20230208212858.477cd05e@gandalf.local.home>
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,80 +75,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 8 Feb 2023 16:54:03 -0800
-John Stultz <jstultz@google.com> wrote:
+On Wed, 8 Feb 2023 21:28:58 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> > Let me understand what you're saying...
-> >
-> > The commit 3087c61ed2c4 did
-> >
-> > -/* Task command name length: */
-> > -#define TASK_COMM_LEN                  16
-> > +/*
-> > + * Define the task command name length as enum, then it can be visible to
-> > + * BPF programs.
-> > + */
-> > +enum {
-> > +       TASK_COMM_LEN = 16,
-> > +};
-> >
-> >
-> > and that caused:
-> >
-> > cat /sys/kernel/debug/tracing/events/task/task_newtask/format
-> >
-> > to print
-> > field:char comm[TASK_COMM_LEN];    offset:12;    size:16;    signed:0;
+> And this breaks much more than android. It will break trace-cmd, rasdaemon
+> and perf (if it's not using BTF). This change very much "Breaks userspace!"
+> And requires a kernel workaround, not a user space one.
 
-Yes because there's no easy way to automatically convert an enum to a
-number. And this has been a macro for a very long time (so it works,
-because macros convert to numbers).
+OK, so it doesn't break perf, trace-cmd and rasdaemon, because the enum is
+only needed in the print_fmt part. It can handle it in the field portion.
 
-And this breaks much more than android. It will break trace-cmd, rasdaemon
-and perf (if it's not using BTF). This change very much "Breaks userspace!"
-And requires a kernel workaround, not a user space one.
+That is:
 
 
-> > instead of
-> > field:char comm[16];    offset:12;    size:16;    signed:0;
-> >
-> > so the ftrace parsing android tracing tool had to do:
-> >
-> > -  if (Match(type_and_name.c_str(), R"(char [a-zA-Z_]+\[[0-9]+\])")) {
-> > +  if (Match(type_and_name.c_str(),
-> > +            R"(char [a-zA-Z_][a-zA-Z_0-9]*\[[a-zA-Z_0-9]+\])")) {
-> >
-> > to workaround this change.
-> > Right?  
-> 
-> I believe so.
-> 
-> > And what are you proposing?  
-> 
-> I'm not proposing anything. I was just wanting to understand more
-> context around this, as it outwardly appears to be a user-breaking
-> change, and that is usually not done, so I figured it was an issue
-> worth raising.
-> 
-> If the debug/tracing/*/format output is in the murky not-really-abi
-> space, that's fine, but I wanted to know if this was understood as
-> something that may require userland updates or if this was a
-> unexpected side-effect.
+system: sched
+name: sched_switch
+ID: 285
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
 
-Linus has already said that /sys/kernel/tracing/* is an ABI (fyi, getting
-to the tracing directory via debugfs is obsolete).
+	field:char prev_comm[TASK_COMM_LEN];	offset:8;	size:16;	signed:0;
+                             ^^^^^^^^^^^^^^                          ^^
+                            is ignored                             is used
 
-Usually, when a trace event uses an enum, it can do:
 
-TRACE_DEFINE_ENUM(TASK_COMM_LEN);
+	field:pid_t prev_pid;	offset:24;	size:4;	signed:1;
+	field:int prev_prio;	offset:28;	size:4;	signed:1;
+	field:long prev_state;	offset:32;	size:8;	signed:1;
+	field:char next_comm[TASK_COMM_LEN];	offset:40;	size:16;	signed:0;
+	field:pid_t next_pid;	offset:56;	size:4;	signed:1;
+	field:int next_prio;	offset:60;	size:4;	signed:1;
 
-But that's a very common define. It would require it updated for every trace
-event, or the change needs to be reverted.
+print fmt: "prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d", REC->prev_comm, REC->prev_pid, REC->prev_prio, (REC->prev_state & ((((0x00000000 | 0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 | 0x00000040) + 1) << 1) - 1)) ? __print_flags(REC->prev_state & ((((0x00000000 | 0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 | 0x00000040) + 1) << 1) - 1), "|", { 0x00000001, "S" }, { 0x00000002, "D" }, { 0x00000004, "T" }, { 0x00000008, "t" }, { 0x00000010, "X" }, { 0x00000020, "Z" }, { 0x00000040, "P" }, { 0x00000080, "I" }) : "R", REC->prev_state & (((0x00000000 | 0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 | 0x00000040) + 1) << 1) ? "+" : "", REC->next_comm, REC->next_pid, REC->next_prio
 
-Not sure why BTF needs it like this, because it hasn't changed in years.
-Can't it just hard code it?
+   ^^^^^^^
 
-For ftrace to change it, it requires reading the format files at boot up
-and replacing the enums with the numbers, which does impact start up.
+Is what requires the conversions. So I take that back. It only breaks
+perfetto, and that's because it writes its own parser and doesn't use
+libtraceevent.
 
 -- Steve
+
+
