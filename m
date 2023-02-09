@@ -2,503 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 859BE69143F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 00:14:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4413691505
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 01:00:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230315AbjBIXOy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 18:14:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59058 "EHLO
+        id S230170AbjBJAAG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 19:00:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbjBIXOx (ORCPT
+        with ESMTP id S230236AbjBJAAC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 18:14:53 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3248627AF;
-        Thu,  9 Feb 2023 15:14:50 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6CC1F61B30;
-        Thu,  9 Feb 2023 23:14:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF955C433D2;
-        Thu,  9 Feb 2023 23:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675984489;
-        bh=marhPHM64YQ/Cf7P66psxuiCrgCSy0StLtODID4QjvU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=plT23Saz2+mcBa8duU7+RFX1OyyolsFDMuax/Hx3oSjg97Y8htPnheGneqrM1niGP
-         jjOjfFjrxprENddWSSQ7MgKs4hW11eQ+kS7M0FLLSf8v+yBUYlMOGZnQ2ZxIjRasCm
-         sWT2MFFMxFGL6fcD+3MTYd+Fzm7QE9ob1QPNMoG3KDPhtGEvm2QH+50CfOP34Dq1Kb
-         /dfy1Do7vgG/YP2LKiS+vhZrnLe8I/RDQhijKBc5fqSsKYKE4YLvFKSmkuKdJzil7o
-         D2vFyogp+fxn/3RD1vFa0jscm7fOXMmz0W1Q5yo5RBfTw2jQtsT6meK/2N3Wnyz+It
-         /sFDJ9iAVEtuA==
-Date:   Thu, 9 Feb 2023 15:14:49 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Allison Henderson <allison.henderson@oracle.com>
-Cc:     Catherine Hoang <catherine.hoang@oracle.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        Chandan Babu <chandan.babu@oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>
-Subject: Re: [PATCH 07/14] xfs: document pageable kernel memory
-Message-ID: <Y+V+acznpk2LiT6m@magnolia>
-References: <167243825144.682859.12802259329489258661.stgit@magnolia>
- <167243825260.682859.10235142095680268936.stgit@magnolia>
- <50fe53916b09566a2738db3bcba01a96f0a0de1f.camel@oracle.com>
- <Y9xD4LexgdPPeT7N@magnolia>
- <cea28efd65c1fa70b859209b342edafab5fd0fb7.camel@oracle.com>
+        Thu, 9 Feb 2023 19:00:02 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4D36D8CF
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 16:00:00 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id ay1so2442621pfb.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 16:00:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rkMbKSlnqf03fRNpxQRgKnFt0PdnCr4YyYfUcmaKrcQ=;
+        b=rmdVTHpuIjyjugAgRSSFjayyZWuWnKhBESRkR6/PC4cbRl2U7M6cBGVsDNCaE4Km61
+         4hHXt46Z/QWU0U9ExMVhpMhTQLQsi73bdls82Z0SP6wnmd4emKTrGgi68o1hmBhVW6YI
+         ldGBdaPykI1xoqj+YOjbmNh2ey6EnVKnmu9JVEgRgJW28iyRgnCsXmETq9R8dAoZ4oYm
+         Bw99O2Gs1FYvrKj8eLsAMHe0ERU8VNGdtn60iSKVWa18lKjWyq/FL/61+xhxEhkLv1F1
+         0k8sVIwf7oj6vqMsN3dad5vF9jevgyqfhFBDkv4Leag9+zNJ8Us2c4tScw7Gk52BY/rk
+         7aAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rkMbKSlnqf03fRNpxQRgKnFt0PdnCr4YyYfUcmaKrcQ=;
+        b=p4osTQHj9b4+OJNj3biPsT0UJVR43ONctw5f+aZJ4px1amyIrVsgTC7blt8FaLAgND
+         79MTk2IcAxIa6hX4djrzhMxQKrksCivGFt/XxtY4d+RwLt6KKW2Q4xsrPxm6aBl+0jad
+         7zqkubt85buoMey7JkJROM9NRsMFirLprJY9AoN1+nQbe8mwtNbrzRgmyEuG2dmAiDHb
+         37LnBEKKNu9hvT74Vs/WvOlXMrdxUjJjGdtFPof2thA97vLPM4Ev+UAB6F9Qyd1juFJ8
+         9MwRrGgBDdu9qTe3wKR8d51HSGJhZFJ2v7V/FeJhocRa8nRRzIp30KKpwzCLsQqCSs1x
+         Azog==
+X-Gm-Message-State: AO0yUKUOnCW53UDBowdUeLTN23AFlf7/Bl6oq7kHg7NVH6jdHvKsTUGP
+        /j8mK/kOxIYt6DlwInsHNeQE+NVG41domt46
+X-Google-Smtp-Source: AK7set9CzGAd4tb7coOb+C5EUgVnngLccxyHGhgQjb5yGzDntGLcivjsQMd2BxBiu+2TA+wIYOGoag==
+X-Received: by 2002:a05:6a00:c84:b0:5a6:cbdc:2a1a with SMTP id a4-20020a056a000c8400b005a6cbdc2a1amr7505153pfv.2.1675987199663;
+        Thu, 09 Feb 2023 15:59:59 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-4-128.pa.nsw.optusnet.com.au. [49.181.4.128])
+        by smtp.gmail.com with ESMTPSA id s19-20020aa78d53000000b00593a01d93ecsm1961817pfe.208.2023.02.09.15.59.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Feb 2023 15:59:59 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pQGpX-00DQQj-Cu; Fri, 10 Feb 2023 10:59:55 +1100
+Date:   Fri, 10 Feb 2023 10:59:55 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH 1/3] xfs: Remove xfs_filemap_map_pages() wrapper
+Message-ID: <20230209235955.GH360264@dread.disaster.area>
+References: <20230208145335.307287-1-willy@infradead.org>
+ <20230208145335.307287-2-willy@infradead.org>
+ <Y+PQN8cLdOXST20D@magnolia>
+ <Y+PX5tPyOP2KQqoD@casper.infradead.org>
+ <20230208215311.GC360264@dread.disaster.area>
+ <Y+ReBH8DFxf+Iab4@casper.infradead.org>
+ <20230209215358.GG360264@dread.disaster.area>
+ <Y+V07dcDoxP4mjbJ@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cea28efd65c1fa70b859209b342edafab5fd0fb7.camel@oracle.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y+V07dcDoxP4mjbJ@casper.infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 09, 2023 at 05:41:22AM +0000, Allison Henderson wrote:
-> On Thu, 2023-02-02 at 15:14 -0800, Darrick J. Wong wrote:
-> > On Thu, Feb 02, 2023 at 07:14:22AM +0000, Allison Henderson wrote:
-> > > On Fri, 2022-12-30 at 14:10 -0800, Darrick J. Wong wrote:
-> > > > From: Darrick J. Wong <djwong@kernel.org>
+On Thu, Feb 09, 2023 at 10:34:21PM +0000, Matthew Wilcox wrote:
+> On Fri, Feb 10, 2023 at 08:53:58AM +1100, Dave Chinner wrote:
+> > On Thu, Feb 09, 2023 at 02:44:20AM +0000, Matthew Wilcox wrote:
+> > > On Thu, Feb 09, 2023 at 08:53:11AM +1100, Dave Chinner wrote:
+> > > > > If XFS really needs it,
+> > > > > it can trylock the semaphore and return 0 if it fails, falling back to
+> > > > > the ->fault path.  But I don't think XFS actually needs it.
+> > > > >
+> > > > > The ->map_pages path trylocks the folio, checks the folio->mapping,
+> > > > > checks uptodate, then checks beyond EOF (not relevant to hole punch).
+> > > > > Then it takes the page table lock and puts the page(s) into the page
+> > > > > tables, unlocks the folio and moves on to the next folio.
+> > > > > 
+> > > > > The hole-punch path, like the truncate path, takes the folio lock,
+> > > > > unmaps the folio (which will take the page table lock) and removes
+> > > > > it from the page cache.
+> > > > > 
+> > > > > So what's the race?
 > > > > 
-> > > > Add a discussion of pageable kernel memory, since online fsck
-> > > > needs
-> > > > quite a bit more memory than most other parts of the filesystem
-> > > > to
-> > > > stage
-> > > > records and other information.
-> > > > 
-> > > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > > > ---
-> > > >  .../filesystems/xfs-online-fsck-design.rst         |  490
-> > > > ++++++++++++++++++++
-> > > >  1 file changed, 490 insertions(+)
-> > > > 
-> > > > 
-> > > > diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst
-> > > > b/Documentation/filesystems/xfs-online-fsck-design.rst
-> > > > index 419eb54ee200..9d7a2ef1d0dd 100644
-> > > > --- a/Documentation/filesystems/xfs-online-fsck-design.rst
-> > > > +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-> > > > @@ -383,6 +383,8 @@ Algorithms") of Srinivasan.
-> > > >  However, any data structure builder that maintains a resource
-> > > > lock
-> > > > for the
-> > > >  duration of the repair is *always* an offline algorithm.
-> > > >  
-> > > > +.. _secondary_metadata:
-> > > > +
-> > > >  Secondary Metadata
-> > > >  ``````````````````
-> > > >  
-> > > > @@ -1746,3 +1748,491 @@ Scrub teardown disables all static keys
-> > > > obtained by ``xchk_fshooks_enable``.
-> > > >  
-> > > >  For more information, please see the kernel documentation of
-> > > >  Documentation/staging/static-keys.rst.
-> > > > +
-> > > > +.. _xfile:
-> > > > +
-> > > > +Pageable Kernel Memory
-> > > > +----------------------
-> > > > +
-> > > > +Demonstrations of the first few prototypes of online repair
-> > > > revealed
-> > > > new
-> > > > +technical requirements that were not originally identified.
-> > > > +For the first demonstration, the code walked whatever filesystem
-> > > > +metadata it needed to synthesize new records and inserted
-> > > > records
-> > > > into a new
-> > > > +btree as it found them.
-> > > > +This was subpar since any additional corruption or runtime
-> > > > errors
-> > > > encountered
-> > > > +during the walk would shut down the filesystem.
-> > > > +After remount, the blocks containing the half-rebuilt data
-> > > > structure
-> > > > would not
-> > > > +be accessible until another repair was attempted.
-> > > > +Solving the problem of half-rebuilt data structures will be
-> > > > discussed in the
-> > > > +next section.
-> > > > +
-> > > > +For the second demonstration, the synthesized records were
-> > > > instead
-> > > > stored in
-> > > > +kernel slab memory.
-> > > > +Doing so enabled online repair to abort without writing to the
-> > > > filesystem if
-> > > > +the metadata walk failed, which prevented online fsck from
-> > > > making
-> > > > things worse.
-> > > > +However, even this approach needed improving upon.
-> > > > +
-> > > > +There are four reasons why traditional Linux kernel memory
-> > > > management isn't
-> > > > +suitable for storing large datasets:
-> > > > +
-> > > > +1. Although it is tempting to allocate a contiguous block of
-> > > > memory
-> > > > to create a
-> > > > +   C array, this cannot easily be done in the kernel because it
-> > > > cannot be
-> > > > +   relied upon to allocate multiple contiguous memory pages.
-> > > > +
-> > > > +2. While disparate physical pages can be virtually mapped
-> > > > together,
-> > > > installed
-> > > > +   memory might still not be large enough to stage the entire
-> > > > record
-> > > > set in
-> > > > +   memory while constructing a new btree.
-> > > > +
-> > > > +3. To overcome these two difficulties, the implementation was
-> > > > adjusted to use
-> > > > +   doubly linked lists, which means every record object needed
-> > > > two
-> > > > 64-bit list
-> > > > +   head pointers, which is a lot of overhead.
-> > > > +
-> > > > +4. Kernel memory is pinned, which can drive the system out of
-> > > > memory, leading
-> > > > +   to OOM kills of unrelated processes.
-> > > > +
-> > > I think I maybe might just jump to what ever the current plan is
-> > > instead of trying to keep a record of the dev history in the
-> > > document.
-> > > I'm sure we're not done yet, dev really never is, so in order for
-> > > the
-> > > documentation to be maintained, it would just get bigger and bigger
-> > > to
-> > > keep documenting it this way.  It's not that the above isnt
-> > > valuable,
-> > > but maybe a different kind of document really.
+> > > > Hole punch is a multi-folio operation, so while we are operating on
+> > > > invalidating one folio, another folio in the range we've already
+> > > > invalidated could be instantiated and mapped, leaving mapped
+> > > > up-to-date pages over a range we *require* the page cache to empty.
+> > > 
+> > > Nope.  ->map_pages is defined to _not_ instantiate new pages.
+> > > If there are uptodate pages in the page cache, they can be mapped, but
+> > > missing pages will be skipped, and left to ->fault to bring in.
 > > 
-> > OK, I've shortened this introduction to outline the requirements, and
-> > trimmed the historical information to a sidebar:
+> > Sure, but *at the time this change was made* other operations could
+> > instantiate pages whilst an invalidate was running, and then
+> > ->map_pages could also find them and map them whilst that
+> > invalidation was still running. i.e. the race conditions that
+> > existed before the mapping->invalidate_lock was introduced (ie. we
+> > couldn't intercept read page faults instantiating pages in the page
+> > cache at all) didn't require ->map_pages to instantiate the page for
+> > it to be able to expose incorrect data to userspace when page faults
+> > raced with an ongoing invalidation operation.
 > > 
-> > "Some online checking functions work by scanning the filesystem to
-> > build
-> > a shadow copy of an ondisk metadata structure in memory and comparing
-> > the two copies. For online repair to rebuild a metadata structure, it
-> > must compute the record set that will be stored in the new structure
-> > before it can persist that new structure to disk. Ideally, repairs
-> > complete with a single atomic commit that introduces a new data
-> > structure. To meet these goals, the kernel needs to collect a large
-> > amount of information in a place that doesn’t require the correct
-> > operation of the filesystem.
-> > 
-> > "Kernel memory isn’t suitable because:
-> > 
-> > *   Allocating a contiguous region of memory to create a C array is
-> > very
-> >     difficult, especially on 32-bit systems.
-> > 
-> > *   Linked lists of records introduce double pointer overhead which
-> > is
-> >     very high and eliminate the possibility of indexed lookups.
-> > 
-> > *   Kernel memory is pinned, which can drive the system into OOM
-> >     conditions.
-> > 
-> > *   The system might not have sufficient memory to stage all the
-> >     information.
-> > 
-> > "At any given time, online fsck does not need to keep the entire
-> > record
-> > set in memory, which means that individual records can be paged out
-> > if
-> > necessary. Continued development of online fsck demonstrated that the
-> > ability to perform indexed data storage would also be very useful.
-> > Fortunately, the Linux kernel already has a facility for
-> > byte-addressable and pageable storage: tmpfs. In-kernel graphics
-> > drivers
-> > (most notably i915) take advantage of tmpfs files to store
-> > intermediate
-> > data that doesn’t need to be in memory at all times, so that usage
-> > precedent is already established. Hence, the xfile was born!
-> > 
-> > Historical Sidebar
-> > ------------------
-> > 
-> > "The first edition of online repair inserted records into a new btree
-> > as
-> > it found them, which failed because filesystem could shut down with a
-> > built data structure, which would be live after recovery finished.
-> > 
-> > "The second edition solved the half-rebuilt structure problem by
-> > storing
-> > everything in memory, but frequently ran the system out of memory.
-> > 
-> > "The third edition solved the OOM problem by using linked lists, but
-> > the
-> > list overhead was extreme."
-> Ok, I think that's cleaner
+> > While this may not be able to happen now if everything is using the
+> > mapping->invalidate_lock correctly (because read faults are now
+> > intercepted before they can instatiate new page cache pages), it
+> > doesn't mean it wasn't possible in the past.....
 > 
-> > 
-> > > 
-> > > 
-> > > > +For the third iteration, attention swung back to the possibility
-> > > > of
-> > > > using
-> > > 
-> > > Due to the large volume of metadata that needs to be processed,
-> > > ofsck
-> > > uses...
-> > > 
-> > > > +byte-indexed array-like storage to reduce the overhead of in-
-> > > > memory
-> > > > records.
-> > > > +At any given time, online repair does not need to keep the
-> > > > entire
-> > > > record set in
-> > > > +memory, which means that individual records can be paged out.
-> > > > +Creating new temporary files in the XFS filesystem to store
-> > > > intermediate data
-> > > > +was explored and rejected for some types of repairs because a
-> > > > filesystem with
-> > > > +compromised space and inode metadata should never be used to fix
-> > > > compromised
-> > > > +space or inode metadata.
-> > > > +However, the kernel already has a facility for byte-addressable
-> > > > and
-> > > > pageable
-> > > > +storage: shmfs.
-> > > > +In-kernel graphics drivers (most notably i915) take advantage of
-> > > > shmfs files
-> > > > +to store intermediate data that doesn't need to be in memory at
-> > > > all
-> > > > times, so
-> > > > +that usage precedent is already established.
-> > > > +Hence, the ``xfile`` was born!
-> > > > +
-> > > > +xfile Access Models
-> > > > +```````````````````
-> > > > +
-> > > > +A survey of the intended uses of xfiles suggested these use
-> > > > cases:
-> > > > +
-> > > > +1. Arrays of fixed-sized records (space management btrees,
-> > > > directory
-> > > > and
-> > > > +   extended attribute entries)
-> > > > +
-> > > > +2. Sparse arrays of fixed-sized records (quotas and link counts)
-> > > > +
-> > > > +3. Large binary objects (BLOBs) of variable sizes (directory and
-> > > > extended
-> > > > +   attribute names and values)
-> > > > +
-> > > > +4. Staging btrees in memory (reverse mapping btrees)
-> > > > +
-> > > > +5. Arbitrary contents (realtime space management)
-> > > > +
-> > > > +To support the first four use cases, high level data structures
-> > > > wrap
-> > > > the xfile
-> > > > +to share functionality between online fsck functions.
-> > > > +The rest of this section discusses the interfaces that the xfile
-> > > > presents to
-> > > > +four of those five higher level data structures.
-> > > > +The fifth use case is discussed in the :ref:`realtime summary
-> > > > <rtsummary>` case
-> > > > +study.
-> > > > +
-> > > > +The most general storage interface supported by the xfile
-> > > > enables
-> > > > the reading
-> > > > +and writing of arbitrary quantities of data at arbitrary offsets
-> > > > in
-> > > > the xfile.
-> > > > +This capability is provided by ``xfile_pread`` and
-> > > > ``xfile_pwrite``
-> > > > functions,
-> > > > +which behave similarly to their userspace counterparts.
-> > > > +XFS is very record-based, which suggests that the ability to
-> > > > load
-> > > > and store
-> > > > +complete records is important.
-> > > > +To support these cases, a pair of ``xfile_obj_load`` and
-> > > > ``xfile_obj_store``
-> > > > +functions are provided to read and persist objects into an
-> > > > xfile.
-> > > > +They are internally the same as pread and pwrite, except that
-> > > > they
-> > > > treat any
-> > > > +error as an out of memory error.
-> > > > +For online repair, squashing error conditions in this manner is
-> > > > an
-> > > > acceptable
-> > > > +behavior because the only reaction is to abort the operation
-> > > > back to
-> > > > userspace.
-> > > > +All five xfile usecases can be serviced by these four functions.
-> > > > +
-> > > > +However, no discussion of file access idioms is complete without
-> > > > answering the
-> > > > +question, "But what about mmap?"
-> > > I actually wouldn't spend too much time discussing solutions that
-> > > didn't work for what ever reason, unless someones really asking for
-> > > it.
-> > >  I think this section would read just fine to trim off the last
-> > > paragraph here
-> > 
-> > Since I wrote this, I've been experimenting with wiring up the tmpfs
-> > file page cache folios to the xfs buffer cache.  Pinning the folios
-> > in
-> > this manner makes it so that online fsck can (more or less) directly
-> > access the xfile contents.  Much to my surprise, this has actually
-> > held
-> > up in testing, so ... it's no longer a solution that "didn't really
-> > work". :)
-> > 
-> > I also need to s/page/folio/ now that willy has finished that
-> > conversion.  This section has been rewritten as such:
-> > 
-> > "However, no discussion of file access idioms is complete without
-> > answering the question, “But what about mmap?” It is convenient to
-> > access storage directly with pointers, just like userspace code does
-> > with regular memory. Online fsck must not drive the system into OOM
-> > conditions, which means that xfiles must be responsive to memory
-> > reclamation. tmpfs can only push a pagecache folio to the swap cache
-> > if
-> > the folio is neither pinned nor locked, which means the xfile must
-> > not
-> > pin too many folios.
-> > 
-> > "Short term direct access to xfile contents is done by locking the
-> > pagecache folio and mapping it into kernel address space.
-> > Programmatic
-> > access (e.g. pread and pwrite) uses this mechanism. Folio locks are
-> > not
-> > supposed to be held for long periods of time, so long term direct
-> > access
-> > to xfile contents is done by bumping the folio refcount, mapping it
-> > into
-> > kernel address space, and dropping the folio lock. These long term
-> > users
-> > must be responsive to memory reclaim by hooking into the shrinker
-> > infrastructure to know when to release folios.
-> > 
-> > "The xfile_get_page and xfile_put_page functions are provided to
-> > retrieve the (locked) folio that backs part of an xfile and to
-> > release
-> > it. The only code to use these folio lease functions are the xfarray
-> > sorting algorithms and the in-memory btrees."
-> Alrighty, sounds like a good upate then
+> Sorry, still not getting it.  Here's the scenario I think you're
+> talking about.  We have three threads (probably in different tasks
+> or they may end up getting synchronized on the page table locks).
 > 
-> > 
-> > > > +It would be *much* more convenient if kernel code could access
-> > > > pageable kernel
-> > > > +memory with pointers, just like userspace code does with regular
-> > > > memory.
-> > > > +Like any other filesystem that uses the page cache, reads and
-> > > > writes
-> > > > of xfile
-> > > > +data lock the cache page and map it into the kernel address
-> > > > space
-> > > > for the
-> > > > +duration of the operation.
-> > > > +Unfortunately, shmfs can only write a file page to the swap
-> > > > device
-> > > > if the page
-> > > > +is unmapped and unlocked, which means the xfile risks causing
-> > > > OOM
-> > > > problems
-> > > > +unless it is careful not to pin too many pages.
-> > > > +Therefore, the xfile steers most of its users towards
-> > > > programmatic
-> > > > access so
-> > > > +that backing pages are not kept locked in memory for longer than
-> > > > is
-> > > > necessary.
-> > > > +However, for callers performing quick linear scans of xfile
-> > > > data,
-> > > > +``xfile_get_page`` and ``xfile_put_page`` functions are provided
-> > > > to
-> > > > pin a page
-> > > > +in memory.
-> > > > +So far, the only code to use these functions are the xfarray
-> > > > :ref:`sorting
-> > > > +<xfarray_sort>` algorithms.
-> > > > +
-> > > > +xfile Access Coordination
-> > > > +`````````````````````````
-> > > > +
-> > > > +For security reasons, xfiles must be owned privately by the
-> > > > kernel.
-> > > > +They are marked ``S_PRIVATE`` to prevent interference from the
-> > > > security system,
-> > > > +must never be mapped into process file descriptor tables, and
-> > > > their
-> > > > pages must
-> > > > +never be mapped into userspace processes.
-> > > > +
-> > > > +To avoid locking recursion issues with the VFS, all accesses to
-> > > > the
-> > > > shmfs file
-> > > > +are performed by manipulating the page cache directly.
-> > > > +xfile writes call the ``->write_begin`` and ``->write_end``
-> > > > functions of the
-> > > > +xfile's address space to grab writable pages, copy the caller's
-> > > > buffer into the
-> > > > +page, and release the pages.
-> > > > +xfile reads call ``shmem_read_mapping_page_gfp`` to grab pages
-> > > xfile readers
-> > 
-> > OK.
-> > 
-> > > > directly before
-> > > > +copying the contents into the caller's buffer.
-> > > > +In other words, xfiles ignore the VFS read and write code paths
-> > > > to
-> > > > avoid
-> > > > +having to create a dummy ``struct kiocb`` and to avoid taking
-> > > > inode
-> > > > and
-> > > > +freeze locks.
-> > > > +
-> > > > +If an xfile is shared between threads to stage repairs, the
-> > > > caller
-> > > > must provide
-> > > > +its own locks to coordinate access.
-> > > Ofsck threads that share an xfile between stage repairs will use
-> > > their
-> > > own locks to coordinate access with each other.
-> > > 
-> > > ?
-> > 
-> > Hm.  I wonder if there's a misunderstanding here?
-> > 
-> > Online fsck functions themselves are single-threaded, which is to say
-> > that they themselves neither queue workers nor start kthreads. 
-> > However,
-> > an xfile created by a running fsck function can be accessed from
-> > other
-> > thread if the fsck function also hooks itself into filesystem code.
-> > 
-> > The live update section has a nice diagram of how that works:
-> > https://djwong.org/docs/xfs-online-fsck-design/#filesystem-hooks
-> > 
+> Thread 1 is calling FALLOC_FL_PUNCH_HOLE over a nice wide range.
+> Thread 2 has the file mmaped and takes a read page fault.
+> Thread 3 also has the file mmaped and also takes a read page fault.
 > 
-> Oh ok, I think I got hung up on who the callers were.  How about
-> "xfiles shared between threads running from hooked filesystem functions
-> will use their own locks to coordinate access with each other."
+> Thread 2 calls filemap_map_pages and finds the pages gone.  It proceeds
+> to call xfs_filemap_fault() which calls filemap_fault() without
+> taking any XFS locks.  filemap_fault() kicks off some readahead which
+> allocates some pages & puts them in the page cache.  It calls into
+> xfs_vm_readahead() which calls iomap_readahead() without taking any XFS
+> locks.  iomap_readahead() will then call back into xfs_read_iomap_begin()
+> which takes the XFS_ILOCK_SHARED.
+> 
+> Since thread 1 is holding XFS_IOLOCK_EXCL, I presume thread 2 will
+> block at this point until thread 1 is done.
 
-I don't want to mention filesystem hooks before the chapter that
-introduces them.  How about:
+No, because XFS_IOLOCK is not the same lock as XFS_ILOCK.
 
-"For example, if a scrub function stores scan results in an xfile and
-needs other threads to provide updates to the scanned data, the scrub
-function must provide a lock for all threads to share."
+IOLOCK (inode->i_rwsem) and MMAPLOCK(mapping->invalidate_lock)
+serialise user access to user data (i.e. page cache and direct IO).
 
---D
+ILOCK (xfs_inode->i_ilock) serialises access to internal XFS inode
+metadata such as the extent list.
+
+The lock ordering is IOLOCK -> MMAPLOCK -> folio lock -> ILOCK, as
+described in fs/xfs/xfs_inode.c
+
+In the case we are talking about here, operations such as fallocate
+operate directly on the extent map protected by the ILOCK, so they
+first have to serialise user access to the data (i.e. take the
+IOLOCK, MMAPLOCK, run inode_dio_wait() to drain running IOs, run
+break_layouts() to recall remote pNFS access delegations and
+serialise DAX accesses, etc), then flush any remaining dirty cached
+data (which may require allocation and hence taking the ILOCK) and
+then (maybe) invalidate the cached data over the range that is about
+to be operated on.
+
+Only once we hold all these locks and have performed all these user
+data operations whilst holding those locks can we then take the
+ILOCK and directly manipulate the extent map knowing we have locked
+out all avenues of user data modification whilst we modify the
+extent map and change the user data contained in the file.
+
+> At this point, the page
+> is still not uptodate, so thread 3 will not map the page if it finds it
+> in >map_pages.
+> 
+> Or have I misunderstood XFS inode locking?  Entirely possible, it
+> seems quite complicated.
+
+Yes, it is, but as every other filesystem has encountered the same
+problems that XFS has been dealing with since day zero they've grown
+exactly the same locking requirements. Some of these are VFS locks
+(i_rwsem, invalidate_lock) or infrastructure (inode_dio_wait()), but
+over the long term linux filesystems and the VFS have been trending
+towards the original XFS locking model that it inherited from Irix
+30 years ago, not the other way around.
+
+> Nevertheless, it seems to me that if there's
+> locking that's missing, there's ample opportunities for XFS to take those
+> missing locks in the (slow) fault path, and not take them in the (fast)
+> map_pages path.
+
+If you go back to the series that introduced the
+mapping->invalidate_lock and the XFS conversion to use it for the
+MMAPLOCK in commit 2433480a7e1d ("xfs: Convert to use
+invalidate_lock"), that's what pulled filemap_fault() out from under
+the MMAPLOCK.
+
+i.e. we used to run the entire fault path under the MMAPLOCK to try
+to avoid issues with read faults instantiating new pages whilst we
+were invalidating pages in the same mapping.  i.e. we used to
+serialise both the read fault and write fault path entirely against
+invalidation.  The conversion to the invalidate_lock drove the
+locking further into the filemap_fault path, so we didn't need to
+take it for read faults anymore. We still have to the take it for
+write faults (i.e. ->page_mkwrite) because the page cache is already
+populated and we still need to serialise ->page_mkwrite against
+truncate, hole punch, etc.
+
+Maybe we didn't need to lock the ->map_pages() path, but after
+seeing data corruption issues caused by user directed speculative
+page cache readahead via fadvise() and readahead() syscalls racing
+with operations that need exclusive invalidation, I didn't think
+that was a chance worth taking.
+
+So, as I've already said, it's entirely possible that we don't need
+the MMAPLOCK in this path anymore. All I want is a concrete
+explanation of how the page fault and VFS paths now serialise
+against invalidation to prevent these historic invalidation race
+conditions from ever occurring again in the commit message.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
