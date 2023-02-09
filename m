@@ -2,74 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2846E68FBC9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 01:02:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63F5268FBD7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 01:11:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230197AbjBIAB7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Feb 2023 19:01:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48132 "EHLO
+        id S230280AbjBIALO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Feb 2023 19:11:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbjBIAB6 (ORCPT
+        with ESMTP id S229575AbjBIALN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Feb 2023 19:01:58 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E77977B;
-        Wed,  8 Feb 2023 16:01:56 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id dr8so1633349ejc.12;
-        Wed, 08 Feb 2023 16:01:56 -0800 (PST)
+        Wed, 8 Feb 2023 19:11:13 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBBC811EA1;
+        Wed,  8 Feb 2023 16:11:11 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id m8so624588edd.10;
+        Wed, 08 Feb 2023 16:11:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lnRMEps90VBoUvPiX08maYejjp0JR+MirybtrLIIsis=;
-        b=T5vXmkSASESMqX2UeOtjZS2ssxJ4Lud3Ev/pHOB37KxdU7nqMTlccFCoXl5/kuvuJG
-         iDkpBA5yWQbQCdpLjaxzzH1NeGAWyt40CVZ7om44kcl3jk0hFcsfGaGTi5uE3gSjTLaR
-         1FlxNpFlQtTzb37W0EfKYl/NscEUSGyKaji1FuDB1O7PttswoWwqKC3hJyQaU1bFbXF7
-         sgmBCTVfnS3DrW3FdjpXt84YaVliQ1HyppdlPiSFlYVCEA0uONRx1uh2hA4JpxshUMJu
-         q36pYfg3TadiS38JRI3rjpDwWEBv0Q3wn8c62VgYx5nx8B0ygpD2K4eUlRcmv5hEKsPK
-         b7Bw==
+        bh=dOTjgYcWhqkMuhNenPNI1XlMmaNHM0OOaClLZboB/Wg=;
+        b=T83OX4EGnLSsuZ/1Jmo85gnC4KAwJ/j8TzibjPSwXWVdj4nwI3zeuGIoCvSxp02BTW
+         RshIZyAY861CFrHXzK77FTX2kzrdkwR/vluOLyHkxzSFc8e5uPOyFK9yYRoGtWEbox4s
+         A6gZ1ghgDQCpqgGLg/3FKJZyq64z4RE7lCTqPu9GS29CWM07AuPsk4/Zv94ySlXfgpx3
+         ytoKJiluVr90bcEo4hD/jynwQFykTla7UkQ0+iVm/rsMMElH9Wt7trRi+atzFnDPGTI3
+         gLpbBja79tGys+tPZf+E1Ew0ccBS+Bv1d4UrMtuT8Mb14xuuATLgA9DpiG/t05MSrffr
+         EnnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lnRMEps90VBoUvPiX08maYejjp0JR+MirybtrLIIsis=;
-        b=GAUmw7Fr9lF8z/SoJUUFhspIj4+Fkp0npkHBqPreWC0Y9jZipAr46wPkkKznzFuorz
-         eGMdQilWPT8mcdLGjsRMqPW9yuGva7v1L2rgY76YJw9ogPfcFaTrYbHKPOzWS3V21RQW
-         Jq44gu5NPEGftpeU52lbJz8Sto7TSRdYT88cHDOQnZbWb8tzBqkmbbsb0FGNLrlt4pcd
-         l+ht/NY8u4NXr8E7ZZGvdMQv1YsYYGJVn1t+3VLx57AHoyBP1Y3wYD1It0srNgVDWhzo
-         WrN5OQiE7Cd28l89G5U98kg2aGCIvN+8vAiPQM44KC0l6z1WBZexMLnEMY+la95ybva7
-         f+jQ==
-X-Gm-Message-State: AO0yUKX7Lr8JsBTF/g9ra7KGy9IQKXOO/wa2Lyp2nIbnPZmEhzSwiDXo
-        +CmdCzPJOtLzzBeVbFZi2mkgr6PmyNbDZtn4vqQ=
-X-Google-Smtp-Source: AK7set9eTP3Th07NxSDOa0p2NHCLdt7oO6rrdgVRBu4RBAY5MQEs4rGjBczC0SNe48hctP7Rz+XK23kCSuAIK9BlgnA=
-X-Received: by 2002:a17:906:4c43:b0:8ab:3d5a:bb3b with SMTP id
- d3-20020a1709064c4300b008ab3d5abb3bmr101265ejw.2.1675900915310; Wed, 08 Feb
- 2023 16:01:55 -0800 (PST)
+        bh=dOTjgYcWhqkMuhNenPNI1XlMmaNHM0OOaClLZboB/Wg=;
+        b=MX5aaqPXZmnpSFrFELVhGWe5Kheb/hnbgppsKyhG9kSm+ynxgcKCotaXVMfcgvHYK4
+         we174NP0ad7dEYBvSRastqf7D1T98jAOo4rAN1wJLpOQUlD/YBDkKL0Iqg5MYD+OMOmB
+         gxKHALi3omBeHUNLFXKEtkMNViuOAcWn1+54I9OBriS30UAitnAI6bfLCnhtg2xi8q50
+         1cU1ZJsbtxBapKb6y9zP6Q5si1d2JPoaSEDQMKm+K2Lw8P2JGlIZMAPbZiqVn5STfEqR
+         Ak7uc8yZTdRdj5akfWZ4SuSD9WGXaB3UGJ3FcGFx0nZ0UHdyuD882PwpKoNJmtptkPRG
+         azTA==
+X-Gm-Message-State: AO0yUKWZsVVPeGf444edRjxKaoDI83JzKC9r+DFsWC3wcg3jEPdR3uRl
+        sjzanFUeHTMrpaUD4Uw8l7SaQHlfO2MlGpUUKmFMhWVrxCM=
+X-Google-Smtp-Source: AK7set8WGUS985JMz7z6vFLrlEJRzZJTSTm0/SygyG7AOs5OLC2GbWPDFFSscHF6uKvNYoysgu3zyt3I2z9+U9IhvvA=
+X-Received: by 2002:a50:d717:0:b0:4aa:a4e6:b323 with SMTP id
+ t23-20020a50d717000000b004aaa4e6b323mr2388298edi.34.1675901470226; Wed, 08
+ Feb 2023 16:11:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20230201135737.800527-1-jolsa@kernel.org> <20230201135737.800527-6-jolsa@kernel.org>
-In-Reply-To: <20230201135737.800527-6-jolsa@kernel.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Wed, 8 Feb 2023 16:01:42 -0800
-Message-ID: <CAEf4BzYGQGdydeVbZf5YTnDTvGduA_wbeQ=t5nSc6Wi=S17+=A@mail.gmail.com>
-Subject: Re: [PATCH RFC 5/5] selftests/bpf: Add iter_task_vma_buildid test
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Hao Luo <haoluo@google.com>,
+References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-8-laoar.shao@gmail.com>
+ <Y+QaZtz55LIirsUO@google.com>
+In-Reply-To: <Y+QaZtz55LIirsUO@google.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 8 Feb 2023 16:10:59 -0800
+Message-ID: <CAADnVQ+nf8MmRWP+naWwZEKBFOYr7QkZugETgAVfjKcEVxmOtg@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded 16
+ with TASK_COMM_LEN
+To:     John Stultz <jstultz@google.com>
+Cc:     Yafang Shao <laoar.shao@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        bpf@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
+        Steven Rostedt <rostedt@goodmis.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Kajetan Puchalski <kajetan.puchalski@arm.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Qais Yousef <qyousef@google.com>,
+        Daniele Di Proietto <ddiproietto@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
@@ -81,205 +93,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 1, 2023 at 5:58 AM Jiri Olsa <jolsa@kernel.org> wrote:
+On Wed, Feb 8, 2023 at 2:01 PM John Stultz <jstultz@google.com> wrote:
 >
-> Testing iterator access to build id in vma->vm_file object
-> by storing each binary with buildid into map and checking
-> it against buildid retrieved in user space.
+> On Sat, Nov 20, 2021 at 11:27:38AM +0000, Yafang Shao wrote:
+> > As the sched:sched_switch tracepoint args are derived from the kernel,
+> > we'd better make it same with the kernel. So the macro TASK_COMM_LEN is
+> > converted to type enum, then all the BPF programs can get it through BTF.
+> >
+> > The BPF program which wants to use TASK_COMM_LEN should include the header
+> > vmlinux.h. Regarding the test_stacktrace_map and test_tracepoint, as the
+> > type defined in linux/bpf.h are also defined in vmlinux.h, so we don't
+> > need to include linux/bpf.h again.
+> >
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Petr Mladek <pmladek@suse.com>
+> > ---
+> >  include/linux/sched.h                                   | 9 +++++++--
+> >  tools/testing/selftests/bpf/progs/test_stacktrace_map.c | 6 +++---
+> >  tools/testing/selftests/bpf/progs/test_tracepoint.c     | 6 +++---
+> >  3 files changed, 13 insertions(+), 8 deletions(-)
 >
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  .../selftests/bpf/prog_tests/bpf_iter.c       | 88 +++++++++++++++++++
->  .../bpf/progs/bpf_iter_task_vma_buildid.c     | 49 +++++++++++
->  2 files changed, 137 insertions(+)
->  create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+> Hey all,
+>   I know this is a little late, but I recently got a report that
+> this change was causiing older versions of perfetto to stop
+> working.
 >
-> diff --git a/tools/testing/selftests/bpf/prog_tests/bpf_iter.c b/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-> index 3af6450763e9..fd3217b68c2e 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-> @@ -33,6 +33,7 @@
->  #include "bpf_iter_bpf_link.skel.h"
->  #include "bpf_iter_ksym.skel.h"
->  #include "bpf_iter_sockmap.skel.h"
-> +#include "bpf_iter_task_vma_buildid.skel.h"
+> Apparently newer versions of perfetto has worked around this
+> via the following changes:
+>   https://android.googlesource.com/platform/external/perfetto/+/c717c93131b1b6e3705a11092a70ac47c78b731d%5E%21/
+>   https://android.googlesource.com/platform/external/perfetto/+/160a504ad5c91a227e55f84d3e5d3fe22af7c2bb%5E%21/
 >
->  static int duration;
+> But for older versions of perfetto, reverting upstream commit
+> 3087c61ed2c4 ("tools/testing/selftests/bpf: replace open-coded 16
+> with TASK_COMM_LEN") is necessary to get it back to working.
 >
-> @@ -1536,6 +1537,91 @@ static void test_task_vma_dead_task(void)
->         bpf_iter_task_vma__destroy(skel);
->  }
+> I haven't dug very far into the details, and obviously this doesn't
+> break with the updated perfetto, but from a high level this does
+> seem to be a breaking-userland regression.
 >
-> +#define D_PATH_BUF_SIZE                1024
-> +#define BUILD_ID_SIZE_MAX      20
-> +
-> +struct build_id {
-> +       u32 sz;
-> +       char data[BUILD_ID_SIZE_MAX];
-> +};
-> +
-> +#define BUILDID_STR_SIZE (BPF_BUILD_ID_SIZE*2 + 1)
-> +
-> +static void test_task_vma_buildid(void)
-> +{
-> +       int err, iter_fd = -1, proc_maps_fd = -1;
-> +       struct bpf_iter_task_vma_buildid *skel;
-> +       char key[D_PATH_BUF_SIZE], *prev_key;
-> +       char bpf_build_id[BUILDID_STR_SIZE];
-> +       int len, files_fd, i, cnt = 0;
-> +       struct build_id val;
-> +       char *build_id;
-> +       char c;
-> +
-> +       skel = bpf_iter_task_vma_buildid__open();
-> +       if (!ASSERT_OK_PTR(skel, "bpf_iter_task_vma_buildid__open"))
-> +               return;
-> +
-> +       err = bpf_iter_task_vma_buildid__load(skel);
-> +       if (!ASSERT_OK(err, "bpf_iter_task_vma_buildid__load"))
-> +               goto out;
+> So I wanted to reach out to see if there was more context for this
+> breakage? I don't want to raise a unnecessary stink if this was
+> an unfortuante but forced situation.
 
-minor: you can do __open_and_load() in one step
+Let me understand what you're saying...
 
-> +
-> +       skel->links.proc_maps = bpf_program__attach_iter(
-> +               skel->progs.proc_maps, NULL);
-> +
-> +       if (!ASSERT_OK_PTR(skel->links.proc_maps, "bpf_program__attach_iter")) {
-> +               skel->links.proc_maps = NULL;
-> +               goto out;
-> +       }
-> +
-> +       iter_fd = bpf_iter_create(bpf_link__fd(skel->links.proc_maps));
-> +       if (!ASSERT_GE(iter_fd, 0, "create_iter"))
-> +               goto out;
-> +
-> +       /* trigger the iterator, there's no output, just map */
-> +       len = read(iter_fd, &c, 1);
-> +       ASSERT_EQ(len, 0, "len_check");
-> +
-> +       files_fd = bpf_map__fd(skel->maps.files);
-> +
-> +       prev_key = NULL;
-> +
-> +       while (true) {
-> +               err = bpf_map_get_next_key(files_fd, prev_key, &key);
-> +               if (err) {
-> +                       if (errno == ENOENT)
-> +                               err = 0;
-> +                       break;
-> +               }
-> +               if (bpf_map_lookup_elem(files_fd, key, &val))
-> +                       break;
-> +               if (!ASSERT_LE(val.sz, BUILD_ID_SIZE_MAX, "buildid_size"))
-> +                       break;
-> +
-> +               memset(bpf_build_id, 0x0, sizeof(bpf_build_id));
-> +               for (i = 0; i < val.sz; i++) {
-> +                       sprintf(bpf_build_id + i*2, "%02x",
-> +                               (unsigned char) val.data[i]);
-> +               }
-> +
-> +               if (!ASSERT_OK(read_buildid(key, &build_id), "read_buildid"))
-> +                       break;
-> +
-> +               printf("BUILDID %s %s %s\n", bpf_build_id, build_id, key);
+The commit 3087c61ed2c4 did
 
-debugging leftover or intentional?
+-/* Task command name length: */
+-#define TASK_COMM_LEN                  16
++/*
++ * Define the task command name length as enum, then it can be visible to
++ * BPF programs.
++ */
++enum {
++       TASK_COMM_LEN = 16,
++};
 
-> +               ASSERT_OK(strncmp(bpf_build_id, build_id, strlen(bpf_build_id)), "buildid_cmp");
-> +
-> +               free(build_id);
-> +               prev_key = key;
-> +               cnt++;
-> +       }
-> +
-> +       printf("checked %d files\n", cnt);
 
-ditto
+and that caused:
 
-> +out:
-> +       close(proc_maps_fd);
-> +       close(iter_fd);
-> +       bpf_iter_task_vma_buildid__destroy(skel);
-> +}
-> +
->  void test_bpf_sockmap_map_iter_fd(void)
->  {
->         struct bpf_iter_sockmap *skel;
-> @@ -1659,6 +1745,8 @@ void test_bpf_iter(void)
->                 test_task_vma();
->         if (test__start_subtest("task_vma_dead_task"))
->                 test_task_vma_dead_task();
-> +       if (test__start_subtest("task_vma_buildid"))
-> +               test_task_vma_buildid();
->         if (test__start_subtest("task_btf"))
->                 test_task_btf();
->         if (test__start_subtest("tcp4"))
-> diff --git a/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
-> new file mode 100644
-> index 000000000000..25e2179ae5f4
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
-> @@ -0,0 +1,49 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include "bpf_iter.h"
-> +#include <bpf/bpf_helpers.h>
-> +#include <string.h>
-> +
-> +char _license[] SEC("license") = "GPL";
-> +
-> +#define VM_EXEC                0x00000004
-> +#define D_PATH_BUF_SIZE        1024
-> +
-> +struct {
-> +       __uint(type, BPF_MAP_TYPE_HASH);
-> +       __uint(max_entries, 10000);
-> +       __type(key, char[D_PATH_BUF_SIZE]);
-> +       __type(value, struct build_id);
-> +} files SEC(".maps");
-> +
-> +static char tmp_key[D_PATH_BUF_SIZE];
-> +static struct build_id tmp_data;
-> +
-> +SEC("iter/task_vma") int proc_maps(struct bpf_iter__task_vma *ctx)
+cat /sys/kernel/debug/tracing/events/task/task_newtask/format
 
-nit: let's keep SEC() on separate line from function itself
+to print
+field:char comm[TASK_COMM_LEN];    offset:12;    size:16;    signed:0;
+instead of
+field:char comm[16];    offset:12;    size:16;    signed:0;
 
-> +{
-> +       struct vm_area_struct *vma = ctx->vma;
-> +       struct seq_file *seq = ctx->meta->seq;
-> +       struct task_struct *task = ctx->task;
-> +       unsigned long file_key;
-> +       struct file *file;
-> +
-> +       if (task == (void *)0 || vma == (void *)0)
-> +               return 0;
-> +
-> +       if (!(vma->vm_flags & VM_EXEC))
-> +               return 0;
-> +
-> +       file = vma->vm_file;
-> +       if (!file)
-> +               return 0;
-> +
-> +       memset(tmp_key, 0x0, D_PATH_BUF_SIZE);
+so the ftrace parsing android tracing tool had to do:
 
-__builtin_memset() to not rely on compiler optimization?
+-  if (Match(type_and_name.c_str(), R"(char [a-zA-Z_]+\[[0-9]+\])")) {
++  if (Match(type_and_name.c_str(),
++            R"(char [a-zA-Z_][a-zA-Z_0-9]*\[[a-zA-Z_0-9]+\])")) {
 
-> +       bpf_d_path(&file->f_path, (char *) &tmp_key, D_PATH_BUF_SIZE);
-> +
-> +       if (bpf_map_lookup_elem(&files, &tmp_key))
-> +               return 0;
-> +
-> +       memcpy(&tmp_data, file->f_bid, sizeof(*file->f_bid));
+to workaround this change.
+Right?
 
-same about __builtin_memcpy()
-
-> +       bpf_map_update_elem(&files, &tmp_key, &tmp_data, 0);
-> +       return 0;
-> +}
-> --
-> 2.39.1
->
+And what are you proposing?
