@@ -2,41 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B72546904CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 11:30:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC986904D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 11:31:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230005AbjBIKaw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 05:30:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50626 "EHLO
+        id S230145AbjBIKbr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 05:31:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbjBIKat (ORCPT
+        with ESMTP id S230023AbjBIKaz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 05:30:49 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6888109
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 02:30:03 -0800 (PST)
+        Thu, 9 Feb 2023 05:30:55 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48751AD35
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 02:30:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675938603;
+        s=mimecast20190719; t=1675938608;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=4vEba/OySlTdZtDzfMG6AafJ/oXIhw8IMMkEOxChx5k=;
-        b=fiGAb1zESqLPLipEGSPkU2KPQPL8T0Qdt0Gmc1PtaKiOFdl7snYg26JNGyGplsl38CsZKm
-        tdZI4UZnE7QkyO0xoHXlOnWbmB+TXxxWzgvW70aEyCms8+0CuG4q/WTMQq2dORH185ye9+
-        01c9oBLW9Dg49eCiM1OO4yJjyK1DjMs=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zsYNekVz+lznQWi+DyiWbMmMgsK+xoFDa6MvvOVfs9k=;
+        b=LfB3wO7Sikhc3XLw7SPcLcB7j+k08yNao8foid9fgCeHQjX8VLEjEpg8Rtvs5SaXlkPBOM
+        3foSfHxLQ7sOc0ANzRDbstBhyVDt9XhrUm2j+w7sFzTsP6DyWazef3sIbQhu3BANt0Ow8G
+        I4gh6XXNRZU4SgJy4hoq6EZIDb9KXNY=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-373-xHjHRdNPOaW_fhnnvVrgtw-1; Thu, 09 Feb 2023 05:29:59 -0500
-X-MC-Unique: xHjHRdNPOaW_fhnnvVrgtw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+ us-mta-324-svCu24HANLy3Imi4GjyZKQ-1; Thu, 09 Feb 2023 05:30:02 -0500
+X-MC-Unique: svCu24HANLy3Imi4GjyZKQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E13353C10233;
-        Thu,  9 Feb 2023 10:29:58 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8BAD52806041;
+        Thu,  9 Feb 2023 10:30:01 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ECAE61410F36;
-        Thu,  9 Feb 2023 10:29:56 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 849DB403D0C5;
+        Thu,  9 Feb 2023 10:29:59 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -48,16 +49,21 @@ Cc:     David Howells <dhowells@redhat.com>,
         Logan Gunthorpe <logang@deltatee.com>,
         Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH v13 00/12] iov_iter: Improve page extraction (pin or just list)
-Date:   Thu,  9 Feb 2023 10:29:42 +0000
-Message-Id: <20230209102954.528942-1-dhowells@redhat.com>
+        linux-mm@kvack.org,
+        syzbot+a440341a59e3b7142895@syzkaller.appspotmail.com,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v13 01/12] splice: Fix O_DIRECT file read splice to avoid reversion of ITER_PIPE
+Date:   Thu,  9 Feb 2023 10:29:43 +0000
+Message-Id: <20230209102954.528942-2-dhowells@redhat.com>
+In-Reply-To: <20230209102954.528942-1-dhowells@redhat.com>
+References: <20230209102954.528942-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -65,215 +71,172 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jens, Al, Christoph,
+With the upcoming iov_iter_extract_pages() function, pages extracted from a
+non-user-backed iterator such as ITER_PIPE aren't pinned.
+__iomap_dio_rw(), however, calls iov_iter_revert() to shorten the iterator
+to just the bufferage it is going to use - which has the side-effect of
+freeing the excess pipe buffers, even though they're attached to a bio and
+may get written to by DMA (thanks to Hillf Danton for spotting this[1]).
 
-Here are patches to provide support for extracting pages from an iov_iter
-and to use this in the extraction functions in the block layer bio code.
+This then causes memory corruption that is particularly noticable when the
+syzbot test[2] is run.  The test boils down to:
 
-The patches make the following changes:
+	out = creat(argv[1], 0666);
+	ftruncate(out, 0x800);
+	lseek(out, 0x200, SEEK_SET);
+	in = open(argv[1], O_RDONLY | O_DIRECT | O_NOFOLLOW);
+	sendfile(out, in, NULL, 0x1dd00);
 
- (1) Change generic_file_splice_read() to no longer use ITER_PIPE for doing
-     a read from an O_DIRECT file fd, but rather load up an ITER_BVEC
-     iterator with sufficient pages and use that rather than using an
-     ITER_PIPE.  This avoids a problem[2] when __iomap_dio_rw() calls
-     iov_iter_revert() to shorten an iterator when it races with
-     truncation.  The reversion causes the pipe iterator to prematurely
-     release the pages it was retaining - despite the read still being in
-     progress.  This caused memory corruption.
+run repeatedly in parallel.  What I think is happening is that ftruncate()
+occasionally shortens the DIO read that's about to be made by sendfile's
+splice core by reducing i_size.
 
- (2) Change generic_file_splice_read() to no longer use ITER_PIPE for doing
-     a read from a buffered file fd, but rather get pages directly from the
-     pagecache using filemap_get_pages() do all the readahead, reading,
-     waiting and extraction, and then feed the pages directly into the
-     pipe.
+Fix this by splitting the handling of a splice from an O_DIRECT file fd off
+from that of non-DIO and in this case, replacing the use of an ITER_PIPE
+iterator with an ITER_BVEC iterator for which reversion won't free the
+buffers.  The DIO-specific code bulk allocates all the buffers it thinks it
+is going to use in advance, does the read synchronously and only then trims
+the buffer down.  The pages we did use get pushed into the pipe.
 
- (3) filemap_get_pages() is altered so that it doesn't take an iterator
-     (which we don't have in (2)), but rather the count and a flag
-     indicating if we can handle partially uptodate pages are passed in and
-     down to its subsidiary functions.
+This should be more efficient for DIO read by virtue of doing a bulk page
+allocation, but slightly less efficient by ignoring any partial page in the
+pipe.
 
- (4) Remove ITER_PIPE and its paraphernalia as generic_file_splice_read()
-     was the only user.
-
- (5) Add a function, iov_iter_extract_pages() to replace
-     iov_iter_get_pages*() that gets refs, pins or just lists the pages as
-     appropriate to the iterator type.
-
-     Add a function, iov_iter_extract_will_pin() that will indicate from
-     the iterator type how the cleanup is to be performed, returning true
-     if the pages will need unpinning, false otherwise.
-
- (6) Make the bio struct carry a pair of flags to indicate the cleanup
-     mode.  BIO_NO_PAGE_REF is replaced with BIO_PAGE_REFFED (indicating
-     FOLL_GET was used) and BIO_PAGE_PINNED (indicating FOLL_PIN was used)
-     is added.
-
-     BIO_PAGE_REFFED will go away, but at the moment fs/direct-io.c sets it
-     and this series does not fully address that file.
-
- (7) Add a function, bio_release_page(), to release a page appropriately to
-     the cleanup mode indicated by the BIO_PAGE_* flags.
-
- (8) Make the iter-to-bio code use iov_iter_extract_pages() to retain the
-     pages appropriately and clean them up later.
-
- (9) Fix bio_flagged() so that it doesn't prevent a gcc optimisation.
-
-I've pushed the patches here also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-extract
-
-David
-
-Changes:
-========
-ver #13)
- - Only use allocation in advance and ITER_BVEC for DIO read-splice.
- - Make buffered read-splice get pages directly from the pagecache.
- - Alter filemap_get_pages() & co. so that it doesn't need an iterator.
-
-ver #12)
- - Added the missing __bitwise on the iov_iter_extraction_t typedef.
- - Rebased on -rc7.
- - Don't specify FOLL_PIN to pin_user_pages_fast().
- - Inserted patch at front to fix race between DIO read and truncation that
-   caused memory corruption when iov_iter_revert() got called on an
-   ITER_PIPE iterator[2].
- - Inserted a patch after that to remove the now-unused ITER_PIPE and its
-   helper functions.
- - Removed the ITER_PIPE bits from iov_iter_extract_pages().
-
-ver #11)
- - Fix iov_iter_extract_kvec_pages() to include the offset into the page in
-   the returned starting offset.
- - Use __bitwise for the extraction flags
-
-ver #10)
- - Fix use of i->kvec in iov_iter_extract_bvec_pages() to be i->bvec.
- - Drop bio_set_cleanup_mode(), open coding it instead.
-
-ver #9)
- - It's now not permitted to use FOLL_PIN outside of mm/, so:
- - Change iov_iter_extract_mode() into iov_iter_extract_will_pin() and
-   return true/false instead of FOLL_PIN/0.
- - Drop of folio_put_unpin() and page_put_unpin() and instead call
-   unpin_user_page() (and put_page()) directly as necessary.
- - Make __bio_release_pages() call bio_release_page() instead of
-   unpin_user_page() as there's no BIO_* -> FOLL_* translation to do.
- - Drop the FOLL_* renumbering patch.
- - Change extract_flags to extraction_flags.
-
-ver #8)
- - Import Christoph Hellwig's changes.
-   - Split the conversion-to-extraction patch.
-   - Drop the extract_flags arg from iov_iter_extract_mode().
-   - Don't default bios to BIO_PAGE_REFFED, but set explicitly.
- - Switch FOLL_PIN and FOLL_GET when renumbering so PIN is at bit 0.
- - Switch BIO_PAGE_PINNED and BIO_PAGE_REFFED so PINNED is at bit 0.
- - We should always be using FOLL_PIN (not FOLL_GET) for DIO, so adjust the
-   patches for that.
-
-ver #7)
- - For now, drop the parts to pass the I/O direction to iov_iter_*pages*()
-   as it turned out to be a lot more complicated, with places not setting
-   IOCB_WRITE when they should, for example.
- - Drop all the patches that changed things other then the block layer's
-   bio handling.  The netfslib and cifs changes can go into a separate
-   patchset.
- - Add support for extracting pages from KVEC-type iterators.
- - When extracting from BVEC/KVEC, skip over empty vecs at the front.
-
-ver #6)
- - Fix write() syscall and co. not setting IOCB_WRITE.
- - Added iocb_is_read() and iocb_is_write() to check IOCB_WRITE.
- - Use op_is_write() in bio_copy_user_iov().
- - Drop the iterator direction checks from smbd_recv().
- - Define FOLL_SOURCE_BUF and FOLL_DEST_BUF and pass them in as part of
-   gup_flags to iov_iter_get/extract_pages*().
- - Replace iov_iter_get_pages*2() with iov_iter_get_pages*() and remove.
- - Add back the function to indicate the cleanup mode.
- - Drop the cleanup_mode return arg to iov_iter_extract_pages().
- - Provide a helper to clean up a page.
- - Renumbered FOLL_GET and FOLL_PIN and made BIO_PAGE_REFFED/PINNED have
-   the same numerical values, enforced with an assertion.
- - Converted AF_ALG, SCSI vhost, generic DIO, FUSE, splice to pipe, 9P and
-   NFS.
- - Added in the patches to make CIFS do top-to-bottom iterators and use
-   various of the added extraction functions.
- - Added a pair of work-in-progess patches to make sk_buff fragments store
-   FOLL_GET and FOLL_PIN.
-
-ver #5)
- - Replace BIO_NO_PAGE_REF with BIO_PAGE_REFFED and split into own patch.
- - Transcribe FOLL_GET/PIN into BIO_PAGE_REFFED/PINNED flags.
- - Add patch to allow bio_flagged() to be combined by gcc.
-
-ver #4)
- - Drop the patch to move the FOLL_* flags to linux/mm_types.h as they're
-   no longer referenced by linux/uio.h.
- - Add ITER_SOURCE/DEST cleanup patches.
- - Make iov_iter/netfslib iter extraction patches use ITER_SOURCE/DEST.
- - Allow additional gup_flags to be passed into iov_iter_extract_pages().
- - Add struct bio patch.
-
-ver #3)
- - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
-   to get/pin_user_pages_fast()[1].
-
-ver #2)
- - Rolled the extraction cleanup mode query function into the extraction
-   function, returning the indication through the argument list.
- - Fixed patch 4 (extract to scatterlist) to actually use the new
-   extraction API.
-
-Link: https://lore.kernel.org/r/Y3zFzdWnWlEJ8X8/@infradead.org/ [1]
+Fixes: 920756a3306a ("block: Convert bio_iov_iter_get_pages to use iov_iter_extract_pages")
+Reported-by: syzbot+a440341a59e3b7142895@syzkaller.appspotmail.com
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: David Hildenbrand <david@redhat.com>
+cc: John Hubbard <jhubbard@nvidia.com>
+cc: linux-mm@kvack.org
+cc: linux-block@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20230207094731.1390-1-hdanton@sina.com/ [1]
 Link: https://lore.kernel.org/r/000000000000b0b3c005f3a09383@google.com/ [2]
-Link: https://lore.kernel.org/r/166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166722777223.2555743.162508599131141451.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166732024173.3186319.18204305072070871546.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166920902005.1461876.2786264600108839814.stgit@warthog.procyon.org.uk/ # v2
-Link: https://lore.kernel.org/r/166997419665.9475.15014699817597102032.stgit@warthog.procyon.org.uk/ # v3
-Link: https://lore.kernel.org/r/167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk/ # v4
-Link: https://lore.kernel.org/r/167344725490.2425628.13771289553670112965.stgit@warthog.procyon.org.uk/ # v5
-Link: https://lore.kernel.org/r/167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk/ # v6
-Link: https://lore.kernel.org/r/20230120175556.3556978-1-dhowells@redhat.com/ # v7
-Link: https://lore.kernel.org/r/20230123173007.325544-1-dhowells@redhat.com/ # v8
-Link: https://lore.kernel.org/r/20230124170108.1070389-1-dhowells@redhat.com/ # v9
-Link: https://lore.kernel.org/r/20230125210657.2335748-1-dhowells@redhat.com/ # v10
-Link: https://lore.kernel.org/r/20230126141626.2809643-1-dhowells@redhat.com/ # v11
-Link: https://lore.kernel.org/r/20230207171305.3716974-1-dhowells@redhat.com/ # v12
+---
 
-Christoph Hellwig (1):
-  block: Replace BIO_NO_PAGE_REF with BIO_PAGE_REFFED with inverted
-    logic
+Notes:
+    ver #13)
+     - Don't completely replace generic_file_splice_read(), but rather only use
+       this if we're doing a splicing from an O_DIRECT file fd.
 
-David Howells (11):
-  splice: Fix O_DIRECT file read splice to avoid reversion of ITER_PIPE
-  mm: Pass info, not iter, into filemap_get_pages() and unstatic it
-  splice: Do splice read from a buffered file without using ITER_PIPE
-  iov_iter: Kill ITER_PIPE
-  iov_iter: Define flags to qualify page extraction.
-  iov_iter: Add a function to extract a page list from an iterator
-  iomap: Don't get an reference on ZERO_PAGE for direct I/O block
-    zeroing
-  block: Fix bio_flagged() so that gcc can better optimise it
-  block: Add BIO_PAGE_PINNED and associated infrastructure
-  block: Convert bio_iov_iter_get_pages to use iov_iter_extract_pages
-  block: convert bio_map_user_iov to use iov_iter_extract_pages
+ fs/splice.c | 96 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
 
- block/bio.c               |  33 +-
- block/blk-map.c           |  26 +-
- block/blk.h               |  12 +
- fs/cifs/file.c            |   8 +-
- fs/direct-io.c            |   2 +
- fs/iomap/direct-io.c      |   1 -
- fs/splice.c               | 245 ++++++++++++-
- include/linux/bio.h       |   5 +-
- include/linux/blk_types.h |   3 +-
- include/linux/pagemap.h   |   2 +
- include/linux/uio.h       |  49 ++-
- lib/iov_iter.c            | 713 +++++++++++++++-----------------------
- mm/filemap.c              |  30 +-
- 13 files changed, 603 insertions(+), 526 deletions(-)
+diff --git a/fs/splice.c b/fs/splice.c
+index 5969b7a1d353..b4be6fc314a1 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -282,6 +282,99 @@ void splice_shrink_spd(struct splice_pipe_desc *spd)
+ 	kfree(spd->partial);
+ }
+ 
++/*
++ * Splice data from an O_DIRECT file into pages and then add them to the output
++ * pipe.
++ */
++static ssize_t generic_file_direct_splice_read(struct file *in, loff_t *ppos,
++					       struct pipe_inode_info *pipe,
++					       size_t len, unsigned int flags)
++{
++	LIST_HEAD(pages);
++	struct iov_iter to;
++	struct bio_vec *bv;
++	struct kiocb kiocb;
++	struct page *page;
++	unsigned int head;
++	ssize_t ret;
++	size_t used, npages, chunk, remain, reclaim;
++	int i;
++
++	/* Work out how much data we can actually add into the pipe */
++	used = pipe_occupancy(pipe->head, pipe->tail);
++	npages = max_t(ssize_t, pipe->max_usage - used, 0);
++	len = min_t(size_t, len, npages * PAGE_SIZE);
++	npages = DIV_ROUND_UP(len, PAGE_SIZE);
++
++	bv = kmalloc(array_size(npages, sizeof(bv[0])), GFP_KERNEL);
++	if (!bv)
++		return -ENOMEM;
++
++	npages = alloc_pages_bulk_list(GFP_USER, npages, &pages);
++	if (!npages) {
++		kfree(bv);
++		return -ENOMEM;
++	}
++
++	remain = len = min_t(size_t, len, npages * PAGE_SIZE);
++
++	for (i = 0; i < npages; i++) {
++		chunk = min_t(size_t, PAGE_SIZE, remain);
++		page = list_first_entry(&pages, struct page, lru);
++		list_del_init(&page->lru);
++		bv[i].bv_page = page;
++		bv[i].bv_offset = 0;
++		bv[i].bv_len = chunk;
++		remain -= chunk;
++	}
++
++	/* Do the I/O */
++	iov_iter_bvec(&to, ITER_DEST, bv, npages, len);
++	init_sync_kiocb(&kiocb, in);
++	kiocb.ki_pos = *ppos;
++	ret = call_read_iter(in, &kiocb, &to);
++
++	reclaim = npages * PAGE_SIZE;
++	remain = 0;
++	if (ret > 0) {
++		reclaim -= ret;
++		remain = ret;
++		*ppos = kiocb.ki_pos;
++		file_accessed(in);
++	} else if (ret < 0) {
++		/*
++		 * callers of ->splice_read() expect -EAGAIN on
++		 * "can't put anything in there", rather than -EFAULT.
++		 */
++		if (ret == -EFAULT)
++			ret = -EAGAIN;
++	}
++
++	/* Free any pages that didn't get touched at all. */
++	for (; reclaim >= PAGE_SIZE; reclaim -= PAGE_SIZE)
++		__free_page(bv[--npages].bv_page);
++
++	/* Push the remaining pages into the pipe. */
++	head = pipe->head;
++	for (i = 0; i < npages; i++) {
++		struct pipe_buffer *buf = &pipe->bufs[head & (pipe->ring_size - 1)];
++
++		chunk = min_t(size_t, remain, PAGE_SIZE);
++		*buf = (struct pipe_buffer) {
++			.ops	= &default_pipe_buf_ops,
++			.page	= bv[i].bv_page,
++			.offset	= 0,
++			.len	= chunk,
++		};
++		head++;
++		remain -= chunk;
++	}
++	pipe->head = head;
++
++	kfree(bv);
++	return ret;
++}
++
+ /**
+  * generic_file_splice_read - splice data from file to a pipe
+  * @in:		file to splice from
+@@ -303,6 +396,9 @@ ssize_t generic_file_splice_read(struct file *in, loff_t *ppos,
+ 	struct kiocb kiocb;
+ 	int ret;
+ 
++	if (in->f_flags & O_DIRECT)
++		return generic_file_direct_splice_read(in, ppos, pipe, len, flags);
++
+ 	iov_iter_pipe(&to, ITER_DEST, pipe, len);
+ 	init_sync_kiocb(&kiocb, in);
+ 	kiocb.ki_pos = *ppos;
 
