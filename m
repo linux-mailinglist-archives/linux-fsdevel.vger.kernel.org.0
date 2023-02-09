@@ -2,168 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E37ED69013A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 08:25:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C7966902E1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 10:08:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbjBIHZw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 02:25:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38370 "EHLO
+        id S229892AbjBIJH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 04:07:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbjBIHZv (ORCPT
+        with ESMTP id S229882AbjBIJHy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 02:25:51 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2397B4A1E7;
-        Wed,  8 Feb 2023 23:25:34 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id f16-20020a17090a9b1000b0023058bbd7b2so1510230pjp.0;
-        Wed, 08 Feb 2023 23:25:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rmVDDhkBD33dRebxUB6WkABikP1v8rHGLOz9oy+lzOw=;
-        b=Qqsr8VuFj/cb61lWwBfIJiwftaSsXtTbIODDj9kMRlVfS2CUTcXAcnkVENwaHeFXCc
-         eXeZ9Y66+6ildCk3obb8k3r83H0DWVz4TJzYVPAXagF7GXjgZ3GxGOCw/EF1i0/rp5IN
-         pgGJSBfHppwSSxlu/WOaFOQm7D96GzMtKBjclGwqHDQYZ8V5NNbTw5oahMvkY62J4Bcv
-         xvuULTn8M1jB7ooQLdS2tItxTCRS2SNix0Lv5msweEF06EcK/+YQoovw+ALLc950AbCO
-         dNuYMGg/puoIQ39KxeNIBvRe2lqaJj+1rlej0C5Dhe4aDgkWXgpDufZzv1pwpPPiB1NX
-         cjLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rmVDDhkBD33dRebxUB6WkABikP1v8rHGLOz9oy+lzOw=;
-        b=fHXlptSQsRUIKjFOT0E54fTp1M+fvo+LmopMDezQsQHAn6O3yItgPd6wha0MAtwNfJ
-         x/l9YYNkKXSuGmCE1RZSsBDBnXOFT7kAkZNsqbk43WbGeCRz253O+M9bb/xW1tnENivI
-         1HJOwn1i9ZX9vT8fPO2T/SKFiS5sYLBB4RkHOT9V2HW5ECBZKOgWxzpAhOKhjnLxHROL
-         epm5IGwUv518/FakgSCJEESeUhecWtzSVn3pNHy9sAToKeK4G5uO97NFvWcfYJGi0YuD
-         E6kcc7GHWGPqUmDTtJThXgq+XjZcVvAtFlErpICSAhSXRgYwqBhh8BsHE+tuaBNz1bow
-         dumQ==
-X-Gm-Message-State: AO0yUKXgkW/Sozgb++k19n79YWzZq5yPISWh2L0SC+g1QeRJGC6rpyod
-        BE1Cw23FZZKuorxonuRCDl4=
-X-Google-Smtp-Source: AK7set81TKZAFzmOrFzSNHYZptbc1qRIgjmsCDass4PkbAdTYVS+WfbfkwETMnLWvQHYBCaWiFrNHA==
-X-Received: by 2002:a17:902:f2c9:b0:19a:6098:103a with SMTP id h9-20020a170902f2c900b0019a6098103amr325179plc.23.1675927531617;
-        Wed, 08 Feb 2023 23:25:31 -0800 (PST)
-Received: from localhost ([192.55.54.55])
-        by smtp.gmail.com with ESMTPSA id n20-20020a170902d0d400b0019948184c33sm664782pln.243.2023.02.08.23.25.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Feb 2023 23:25:30 -0800 (PST)
-Date:   Wed, 8 Feb 2023 23:25:29 -0800
-From:   Isaku Yamahata <isaku.yamahata@gmail.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com, isaku.yamahata@gmail.com
-Subject: Re: [PATCH v10 2/9] KVM: Introduce per-page memory attributes
-Message-ID: <20230209072529.GB4175971@ls.amr.corp.intel.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-3-chao.p.peng@linux.intel.com>
+        Thu, 9 Feb 2023 04:07:54 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7909564B2;
+        Thu,  9 Feb 2023 01:07:52 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 5C27C5C53E;
+        Thu,  9 Feb 2023 09:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1675933671; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CU3m83OXbTgSKoJXrcQdDx76tP8O5uzz+pn2OeaAdZw=;
+        b=xNoBE+lwnVUOfPb0zDl+OFfEhjR5FvJXwjcM1KGhzHDounpReRjFnbuR9n6upD40EI2i01
+        cwaOAtP0Xvq1oMGZEw7Re+YEy61VDXgD0LW9bEQNatNBEgPOWDr69FfpAXcttkYkWaeEqn
+        G0CwmdWGvhQM9Kh6BVyIjaYmmpKw+ac=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1675933671;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CU3m83OXbTgSKoJXrcQdDx76tP8O5uzz+pn2OeaAdZw=;
+        b=yFiGhdQ5QoCsgxvN6+hnz4ITZQD+Yxwc5mjKJNuH5yq/m/yu1qYx1Ehgxaf+DcdRj1WLjc
+        fFI3EjFXOj4NomCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4CBA61339E;
+        Thu,  9 Feb 2023 09:07:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id niyuEue35GP+IgAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 09 Feb 2023 09:07:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id CA87BA06D8; Thu,  9 Feb 2023 10:07:50 +0100 (CET)
+Date:   Thu, 9 Feb 2023 10:07:50 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Jan Kara <jack@suse.cz>, Richard Guy Briggs <rgb@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v7 0/3] fanotify: Allow user space to pass back
+ additional audit info
+Message-ID: <20230209090750.lx32p57jtul7pnv5@quack3>
+References: <cover.1675373475.git.rgb@redhat.com>
+ <20230207120921.7pgh6uxs7ze7hkjo@quack3>
+ <CAHC9VhQuD0UMYd12x9kOMwruDmQsyUFxQ8gJ3Q_qF6a58Lu+2Q@mail.gmail.com>
+ <20230208120816.2qhck3sb7u67vsib@quack3>
+ <CAHC9VhSumNxmoYQ9JPtBgV0dc1fgR38Lqbo0w4PRxhvBdS=W_w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221202061347.1070246-3-chao.p.peng@linux.intel.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <CAHC9VhSumNxmoYQ9JPtBgV0dc1fgR38Lqbo0w4PRxhvBdS=W_w@mail.gmail.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 02, 2022 at 02:13:40PM +0800,
-Chao Peng <chao.p.peng@linux.intel.com> wrote:
+On Wed 08-02-23 10:03:24, Paul Moore wrote:
+> On Wed, Feb 8, 2023 at 7:08 AM Jan Kara <jack@suse.cz> wrote:
+> > On Tue 07-02-23 09:54:11, Paul Moore wrote:
+> > > On Tue, Feb 7, 2023 at 7:09 AM Jan Kara <jack@suse.cz> wrote:
+> > > > On Fri 03-02-23 16:35:13, Richard Guy Briggs wrote:
+> > > > > The Fanotify API can be used for access control by requesting permission
+> > > > > event notification. The user space tooling that uses it may have a
+> > > > > complicated policy that inherently contains additional context for the
+> > > > > decision. If this information were available in the audit trail, policy
+> > > > > writers can close the loop on debugging policy. Also, if this additional
+> > > > > information were available, it would enable the creation of tools that
+> > > > > can suggest changes to the policy similar to how audit2allow can help
+> > > > > refine labeled security.
+> > > > >
+> > > > > This patchset defines a new flag (FAN_INFO) and new extensions that
+> > > > > define additional information which are appended after the response
+> > > > > structure returned from user space on a permission event.  The appended
+> > > > > information is organized with headers containing a type and size that
+> > > > > can be delegated to interested subsystems.  One new information type is
+> > > > > defined to audit the triggering rule number.
+> > > > >
+> > > > > A newer kernel will work with an older userspace and an older kernel
+> > > > > will behave as expected and reject a newer userspace, leaving it up to
+> > > > > the newer userspace to test appropriately and adapt as necessary.  This
+> > > > > is done by providing a a fully-formed FAN_INFO extension but setting the
+> > > > > fd to FAN_NOFD.  On a capable kernel, it will succeed but issue no audit
+> > > > > record, whereas on an older kernel it will fail.
+> > > > >
+> > > > > The audit function was updated to log the additional information in the
+> > > > > AUDIT_FANOTIFY record. The following are examples of the new record
+> > > > > format:
+> > > > >   type=FANOTIFY msg=audit(1600385147.372:590): resp=2 fan_type=1 fan_info=3137 subj_trust=3 obj_trust=5
+> > > > >   type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=0 subj_trust=2 obj_trust=2
+> > > >
+> > > > Thanks! I've applied this series to my tree.
+> > >
+> > > While I think this version of the patchset is fine, for future
+> > > reference it would have been nice if you had waited for my ACK on
+> > > patch 3/3; while Steve maintains his userspace tools, I'm the one
+> > > responsible for maintaining the Linux Kernel's audit subsystem.
+> >
+> > Aha, I'm sorry for that. I had the impression that on the last version of
+> > the series you've said you don't see anything for which the series should
+> > be respun so once Steve's objections where addressed and you were silent
+> > for a few days, I thought you consider the thing settled... My bad.
+> 
+> That's understandable, especially given inconsistencies across
+> subsystems.  If it helps, if I'm going to ACK something I make it
+> explicit with a proper 'Acked-by: ...' line in my reply; if I say
+> something looks good but there is no explicit ACK, there is usually
+> something outstanding that needs to be resolved, e.g. questions,
+> additional testing, etc.
 
-> +static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
-> +					   struct kvm_memory_attributes *attrs)
-> +{
-> +	gfn_t start, end;
-> +	unsigned long i;
-> +	void *entry;
-> +	u64 supported_attrs = kvm_supported_mem_attributes(kvm);
-> +
-> +	/* flags is currently not used. */
-> +	if (attrs->flags)
-> +		return -EINVAL;
-> +	if (attrs->attributes & ~supported_attrs)
-> +		return -EINVAL;
-> +	if (attrs->size == 0 || attrs->address + attrs->size < attrs->address)
-> +		return -EINVAL;
-> +	if (!PAGE_ALIGNED(attrs->address) || !PAGE_ALIGNED(attrs->size))
-> +		return -EINVAL;
-> +
-> +	start = attrs->address >> PAGE_SHIFT;
-> +	end = (attrs->address + attrs->size - 1 + PAGE_SIZE) >> PAGE_SHIFT;
-> +
-> +	entry = attrs->attributes ? xa_mk_value(attrs->attributes) : NULL;
-> +
-> +	mutex_lock(&kvm->lock);
-> +	for (i = start; i < end; i++)
-> +		if (xa_err(xa_store(&kvm->mem_attr_array, i, entry,
-> +				    GFP_KERNEL_ACCOUNT)))
-> +			break;
-> +	mutex_unlock(&kvm->lock);
-> +
-> +	attrs->address = i << PAGE_SHIFT;
-> +	attrs->size = (end - i) << PAGE_SHIFT;
-> +
-> +	return 0;
-> +}
-> +#endif /* CONFIG_HAVE_KVM_MEMORY_ATTRIBUTES */
-> +
+Ok, thanks for letting me now. Next time I'll wait for an explicit ack from
+you. This time, since everybody is fine with the actual patch, let's just
+move on ;).
 
-If memslot isn't private, it should return error if private attribute is set.
-Something like following check is needed.
-
-+       if (attrs->flags & KVM_MEM_PRIVATE) {
-+               /* non-private memory slot doesn't allow KVM_MEM_PRIVATE */
-+               for (i = 0; i < kvm_arch_nr_memslot_as_ids(kvm); i++) {
-+                       struct kvm_memslot_iter iter;
-+                       struct kvm_memslots *slots;
-+
-+                       slots = __kvm_memslots(kvm, i);
-+                       kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
-+                               if (!kvm_slot_can_be_private(iter.slot)) {
-+                                       mutex_unlock(&kvm->slots_lock);
-+                                       return -EINVAL;
-+                               }
-+                       }
-+               }
-+       }
-+
-
-
+								Honza
 -- 
-Isaku Yamahata <isaku.yamahata@gmail.com>
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
