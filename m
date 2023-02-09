@@ -2,75 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1D2E690E85
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 17:41:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2FD2690EFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 18:17:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229810AbjBIQl0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 11:41:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49190 "EHLO
+        id S229870AbjBIRRD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 12:17:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjBIQlY (ORCPT
+        with ESMTP id S229479AbjBIRRC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 11:41:24 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F6A25EA34
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 08:41:22 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id bg5-20020a05600c3c8500b003e00c739ce4so1971893wmb.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 08:41:22 -0800 (PST)
+        Thu, 9 Feb 2023 12:17:02 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58BF4658F2;
+        Thu,  9 Feb 2023 09:17:00 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id dr8so8381634ejc.12;
+        Thu, 09 Feb 2023 09:17:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fy6WnIEU71GZIY+z6R8euSa0ykjzlE8UhDlJ4MZussw=;
-        b=BE70cdxkY3AgPoEHUcFgMZpAC9ic7dlcWAKhGi3scRl1Pn7eiBcymtvC9zINwVF5N5
-         itL5ACiOnUl+CIZkJGJ3QdHdvojuUGU7zpNOTC1z9XWJfGk2fkuZ0eCKWQsNGKhKiawJ
-         x/XSTLzMhoiVWMdPVv3WV8MzmMnSahA8b0lYs=
+        bh=hOaWLeC8ipHRmcLbRfn6JATZO77iIGtuyhLGc5wCYsg=;
+        b=eMz4/BTebHTthy7QIrMrF8piEjMCHk5gkyR04gPH0mQnoNxtk+juSI73WZpFmbv2gf
+         FuQFYTsppEmm2CuV586y5L0Zop+4pJCnUHDtqT3b1tZbv9JE4w8f8tC43Bd7PWCBOhlA
+         AsdznGOUVVgd38zrLID94UUU38wQwt+tzDz5OCKpX0LKf0HG/twtUODLrFm2TzC4gIbn
+         eKt3ivD976xMgctdzkH8i6UWi2e8vGsJhFXzQSHSRHiNdET92IQNqFeDURxJh9zasCwY
+         ba/IBqZzqb1CVIjc4JYx/HTf8p3zctAx4W8wNNb3BsvxutDM41yczWIevc6TIF0h5mL3
+         NXgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Fy6WnIEU71GZIY+z6R8euSa0ykjzlE8UhDlJ4MZussw=;
-        b=pIeuUq/BHUqPygZ1hr6vzDUVVQI3goW0kza3cdLvSpe5iZBo68NkSmMslwovNh8EIu
-         Gg3ihBW2fg4GpPejKIhqio8fjX1txQ+uGYVYMglOeG1+Ln2O7I5bhQlFaHC2jgj0ph/O
-         EttWnZkRDWyvvSEj+chiyURloAW23Az8R+QMim9sSy5EHlPc0aWNwlZfOINNWQEnV2bH
-         DFJLRm2Z6BpbJ15/YKDfclFxEby4eR7ox/06Zctrh66kj0cV1FY+LGZ4S6u2X5xkBqqw
-         PtiSQgTErQQOidOOR4HWbYDyMOL1n2BbAMV0X3PCAxvuY3v/Z6El2nAovs0PRoykhYar
-         Nv7w==
-X-Gm-Message-State: AO0yUKV0dkl02KhfJWTXQ00wKgnkEWkzrOOeCK28L/N+4mNNi2RZ/v1g
-        2h8BpjAm3hK32H/+gQJY6ZAJiS+uiBoYVk6ou+Q=
-X-Google-Smtp-Source: AK7set/miG4MCU+B/EdUQVHKUkR/8GPDRgDkVfYswUO5f/k4/qxGsOWFYTG/LWAmVQrp+QJNThQvIg==
-X-Received: by 2002:a05:600c:4d21:b0:3dc:561a:79e7 with SMTP id u33-20020a05600c4d2100b003dc561a79e7mr10629917wmp.2.1675960880708;
-        Thu, 09 Feb 2023 08:41:20 -0800 (PST)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id i16-20020a05600c4b1000b003dc4fd6e624sm2240303wmp.19.2023.02.09.08.41.20
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Feb 2023 08:41:20 -0800 (PST)
-Received: by mail-ej1-f48.google.com with SMTP id lu11so8154156ejb.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 08:41:20 -0800 (PST)
-X-Received: by 2002:a17:906:4e46:b0:87a:7098:ca09 with SMTP id
- g6-20020a1709064e4600b0087a7098ca09mr2346945ejw.78.1675960879649; Thu, 09 Feb
- 2023 08:41:19 -0800 (PST)
+        bh=hOaWLeC8ipHRmcLbRfn6JATZO77iIGtuyhLGc5wCYsg=;
+        b=0pUZQ55hzkDuZUQDSU1Cu85hM34JD8q+yA0PiU5/e11hUApwWxY0543MFG+NFQ2drB
+         9bB3YfeiYdLQ0lk398v9UAU7hvu1yyRRgfv7Cuz8LnFXmyRFBCjZqS5P4kWQq9eEEqFA
+         Tn4pKK9o3I0Y+7sH985vA5KTiHkGNp6MkB7kkIyO35D4CANDMkwVev0AXwDDyoHS37cJ
+         UcmITOcfRseiyweQFAjoIP6Izo2Wies+wRLtwkiSwy6b6IEOIhK+mxzkspnq7yIU6dWf
+         YSV/QVqDN9iLg0WzQJbfYA+W1AneU9LZjAbTZBov0gP9kPDmCw7LQwXJ8N8Wdeqv4xKI
+         BrWA==
+X-Gm-Message-State: AO0yUKUIp7sAZgQaxd1aWMsWCpcsEIHEOqofqDtO98CvlkcbdWT4Pst1
+        eMXiiwMbOv4gCXYMF00QqyROnF/7SgqD7K2wOjE=
+X-Google-Smtp-Source: AK7set+twhKV+Ooh2gn/db6SF56f0jFgx/U8eC4Rup6g9uqGZ3eD9dYBHu34t+9OvtxJPnu0EFSQVSdwEy9TKbvAPXM=
+X-Received: by 2002:a17:906:aec1:b0:889:8f1a:a153 with SMTP id
+ me1-20020a170906aec100b008898f1aa153mr660783ejb.15.1675963018825; Thu, 09 Feb
+ 2023 09:16:58 -0800 (PST)
 MIME-Version: 1.0
-References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
-In-Reply-To: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 9 Feb 2023 08:41:02 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
-Message-ID: <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
-Subject: Re: copy on write for splice() from file to pipe?
-To:     Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
+References: <20230201135737.800527-1-jolsa@kernel.org> <20230201135737.800527-6-jolsa@kernel.org>
+ <CAEf4BzYGQGdydeVbZf5YTnDTvGduA_wbeQ=t5nSc6Wi=S17+=A@mail.gmail.com> <Y+T9XNkDWla1+3NV@krava>
+In-Reply-To: <Y+T9XNkDWla1+3NV@krava>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Thu, 9 Feb 2023 09:16:46 -0800
+Message-ID: <CAEf4BzZ0yWJX0iNHEeSmWMmy_SiSCvhPjJdfcaET-3RHeb38Hg@mail.gmail.com>
+Subject: Re: [PATCH RFC 5/5] selftests/bpf: Add iter_task_vma_buildid test
+To:     Jiri Olsa <olsajiri@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,88 +82,140 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adding Jens, because he's one of the main splice people. You do seem
-to be stepping on his work ;)
-
-Jens, see
-
-  https://lore.kernel.org/lkml/0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org
-
-On Thu, Feb 9, 2023 at 5:56 AM Stefan Metzmacher <metze@samba.org> wrote:
+On Thu, Feb 9, 2023 at 6:04 AM Jiri Olsa <olsajiri@gmail.com> wrote:
 >
-> So we have two cases:
+> On Wed, Feb 08, 2023 at 04:01:42PM -0800, Andrii Nakryiko wrote:
 >
-> 1. network -> socket -> splice -> pipe -> splice -> file -> storage
+> SNIP
 >
-> 2. storage -> file -> splice -> pipe -> splice -> socket -> network
+> > > +static void test_task_vma_buildid(void)
+> > > +{
+> > > +       int err, iter_fd = -1, proc_maps_fd = -1;
+> > > +       struct bpf_iter_task_vma_buildid *skel;
+> > > +       char key[D_PATH_BUF_SIZE], *prev_key;
+> > > +       char bpf_build_id[BUILDID_STR_SIZE];
+> > > +       int len, files_fd, i, cnt = 0;
+> > > +       struct build_id val;
+> > > +       char *build_id;
+> > > +       char c;
+> > > +
+> > > +       skel = bpf_iter_task_vma_buildid__open();
+> > > +       if (!ASSERT_OK_PTR(skel, "bpf_iter_task_vma_buildid__open"))
+> > > +               return;
+> > > +
+> > > +       err = bpf_iter_task_vma_buildid__load(skel);
+> > > +       if (!ASSERT_OK(err, "bpf_iter_task_vma_buildid__load"))
+> > > +               goto out;
+> >
+> > minor: you can do __open_and_load() in one step
 >
-> With 1. I guess everything can work reliable [..]
+> right, I copied that from another test, but removed all the
+> setup in between, so we can actually call just __open_and_load
 >
-> But with 2. there's a problem, as the pages from the file,
-> which are spliced into the pipe are still shared without
-> copy on write with the file(system).
+> SNIP
+>
+> > > +               memset(bpf_build_id, 0x0, sizeof(bpf_build_id));
+> > > +               for (i = 0; i < val.sz; i++) {
+> > > +                       sprintf(bpf_build_id + i*2, "%02x",
+> > > +                               (unsigned char) val.data[i]);
+> > > +               }
+> > > +
+> > > +               if (!ASSERT_OK(read_buildid(key, &build_id), "read_buildid"))
+> > > +                       break;
+> > > +
+> > > +               printf("BUILDID %s %s %s\n", bpf_build_id, build_id, key);
+> >
+> > debugging leftover or intentional?
+> >
+> > > +               ASSERT_OK(strncmp(bpf_build_id, build_id, strlen(bpf_build_id)), "buildid_cmp");
+> > > +
+> > > +               free(build_id);
+> > > +               prev_key = key;
+> > > +               cnt++;
+> > > +       }
+> > > +
+> > > +       printf("checked %d files\n", cnt);
+> >
+> > ditto
+>
+> both intentional, first one can go out I guess, but the
+> number of checked files seemed interesting to me ;-)
+>
+> SNIP
+>
+> > > diff --git a/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+> > > new file mode 100644
+> > > index 000000000000..25e2179ae5f4
+> > > --- /dev/null
+> > > +++ b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+> > > @@ -0,0 +1,49 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +#include "bpf_iter.h"
+> > > +#include <bpf/bpf_helpers.h>
+> > > +#include <string.h>
+> > > +
+> > > +char _license[] SEC("license") = "GPL";
+> > > +
+> > > +#define VM_EXEC                0x00000004
+> > > +#define D_PATH_BUF_SIZE        1024
+> > > +
+> > > +struct {
+> > > +       __uint(type, BPF_MAP_TYPE_HASH);
+> > > +       __uint(max_entries, 10000);
+> > > +       __type(key, char[D_PATH_BUF_SIZE]);
+> > > +       __type(value, struct build_id);
+> > > +} files SEC(".maps");
+> > > +
+> > > +static char tmp_key[D_PATH_BUF_SIZE];
+> > > +static struct build_id tmp_data;
+> > > +
+> > > +SEC("iter/task_vma") int proc_maps(struct bpf_iter__task_vma *ctx)
+> >
+> > nit: let's keep SEC() on separate line from function itself
+>
+> ok
+>
+> >
+> > > +{
+> > > +       struct vm_area_struct *vma = ctx->vma;
+> > > +       struct seq_file *seq = ctx->meta->seq;
+> > > +       struct task_struct *task = ctx->task;
+> > > +       unsigned long file_key;
+> > > +       struct file *file;
+> > > +
+> > > +       if (task == (void *)0 || vma == (void *)0)
+> > > +               return 0;
+> > > +
+> > > +       if (!(vma->vm_flags & VM_EXEC))
+> > > +               return 0;
+> > > +
+> > > +       file = vma->vm_file;
+> > > +       if (!file)
+> > > +               return 0;
+> > > +
+> > > +       memset(tmp_key, 0x0, D_PATH_BUF_SIZE);
+> >
+> > __builtin_memset() to not rely on compiler optimization?
+> >
+> > > +       bpf_d_path(&file->f_path, (char *) &tmp_key, D_PATH_BUF_SIZE);
+> > > +
+> > > +       if (bpf_map_lookup_elem(&files, &tmp_key))
+> > > +               return 0;
+> > > +
+> > > +       memcpy(&tmp_data, file->f_bid, sizeof(*file->f_bid));
+> >
+> > same about __builtin_memcpy()
+>
+> ah ok, did not know that, will check.. curious what could
+> go wrong by using not '__builtin_...' version?
 
-Well, honestly, that's really the whole point of splice. It was
-designed to be a way to share the storage data without having to go
-through a copy.
+if compiler doesn't optimize it into __builtin_memcpy() (which results
+in just explicit assembly code to copy/set data word-by-word), then
+BPF program will do actual call to memset(), which with C rules would
+be inferred as extern symbol, which would fail BPF object loading with
+error along the lines of "couldn't resolve memset extern".
 
-> I'm wondering if there's a possible way out of this, maybe triggered by a new
-> flag passed to splice.
-
-Not really.
-
-So basically, you cannot do "copy on write" on a page cache page,
-because that breaks sharing.
-
-You *want* the sharing to break, but that's because you're violating
-what splice() was for, but think about all the cases where somebody is
-just using mmap() and expects to see the file changes.
-
-You also aren't thinking of the case where the page is already mapped
-writably, and user processes may be changing the data at any time.
-
-> I looked through the code and noticed the existence of IOMAP_F_SHARED.
-
-Yeah, no. That's a hacky filesystem thing. It's not even a flag in
-anything core like 'struct page', it's just entirely internal to the
-filesystem itself.
-
-> Is there any other way we could archive something like this?
-
-I suspect you simply want to copy it at splice time, rather than push
-the page itself into the pipe as we do in copy_page_to_iter_pipe().
-
-Because the whole point of zero-copy really is that zero copy. And the
-whole point of splice() was to *not* complicate the rest of the system
-over-much, while allowing special cases.
-
-Linux is not the heap of bad ideas that is Hurd that does various
-versioning etc, and that made copy-on-write a first-class citizen
-because it uses the concept of "immutable mapped data" for reads and
-writes.
-
-Now, I do see a couple of possible alternatives to "just create a stable copy".
-
-For example, we very much have the notion of "confirm buffer data
-before copying". It's used for things like "I started the IO on the
-page, but the IO failed with an error, so even though I gave you a
-splice buffer, it turns out you can't use it".
-
-And I do wonder if we could introduce a notion of "optimistic splice",
-where the splice works exactly the way it does now (you get a page
-reference), but the "confirm" phase could check whether something has
-changed in that mapping (using the file versioning or whatever - I'm
-hand-waving) and simply fail the confirm.
-
-That would mean that the "splice to socket" part would fail in your
-chain, and you'd have to re-try it. But then the onus would be on
-*you* as a splicer, not on the rest of the system to fix up your
-special case.
-
-That idea sounds fairly far out there, and complicated and maybe not
-usable. So I'm just throwing it out as a "let's try to think of
-alternative solutions".
-
-Anybody?
-
-               Linus
+>
+> thanks,
+> jirka
