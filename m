@@ -2,327 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF8269046A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 11:06:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07539690488
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 11:22:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229786AbjBIKGB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 05:06:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37290 "EHLO
+        id S229740AbjBIKWm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 05:22:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbjBIKF6 (ORCPT
+        with ESMTP id S229721AbjBIKWi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 05:05:58 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F052CFF6
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 02:05:56 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id dr8so4686780ejc.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 02:05:56 -0800 (PST)
+        Thu, 9 Feb 2023 05:22:38 -0500
+Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C8113D69
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 02:22:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1675938155; x=1707474155;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=s/aANtn8M1MRwMxWmJrzWCK8teLJJSshpJqiog73p/U=;
+  b=mKFXhgwA0PCllvBhdpphW9jsQmJdTLaQFkps1cCHyCMIadBwbGswbsYk
+   RSCMELZhgd3FuCkGlwdU33qEYOPflyn+NxTKNtTNFYGxirrUnlYbSlO+R
+   pypPNby7huEGcMJvvQSy3MulHUevUFCso/YxfqT/0i79D7iDL9UP6DrG1
+   oWXRpFpO8JE3nW9Splz73ZjX4gQLpm53U/OYv2w5Lf2bdv2VrbdULqRnK
+   qC5wisz1zAGwebjYgR4xWNs3AGBhy7pd7IYTNdXXeukcJGrK9lMYRnt4g
+   NRhryd9smw94y52bzJqrsg1uSWw2vX1069xZnRl7NmFle5OtBYZJMJeNO
+   A==;
+X-IronPort-AV: E=Sophos;i="5.97,283,1669046400"; 
+   d="scan'208";a="222696693"
+Received: from mail-bn7nam10lp2100.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.100])
+  by ob1.hgst.iphmx.com with ESMTP; 09 Feb 2023 18:22:34 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZOlT3oFuTych30YebPk/8EUs5WIUiyjAj7qH/ehT15I5aAhkqwTR1quPiEFBC7ywjur6bcP1Tw/tJM6EqAnqr01TNuuEoFQCTecI3W+LI3JfXE8bORSLdH/e1ynAVnGBqCe3gZlwrgS4QwgFuWLVedflRUbO2rB5QlecarlKGG7/JHsg6K65mFXq5ECcoU2mY3tAQ0sBmURjVA55aZPfr/SYesn1lUy8h8p6lzO6DXb+95D1peWyYOWySaPkcgvrVdgEcO36wcHmQxZlXHV20WWOeTd1/x7dtWzR/5RO0yO1h8lDvPXpqC3UgMKqE7thrZqdmO9ph/WfnWb+0QRq4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s/aANtn8M1MRwMxWmJrzWCK8teLJJSshpJqiog73p/U=;
+ b=nsxficVMdPu976QOJwK3dygdmEW7Vc7ijal/kS1XuKlwzhrTl9C/rW5cta63mcHpmKjsJO0eX5yfSPR4EY5bbyFV/hzHSKG6+vTV+mRhQbX9uz32VDYPWWLwak5pc0YjCVWE1pjcw0pQWMwaLFyerKoPrhE+somuE1RYksAZ0qZyRRHytsejvVSkSiDSU/xZeUD6zrZDRJfwNGb4LcF5R+gjUbEgjunlIyAU5fC5SPXkm1CebGv8t3InUUsQAvJ5qIwLg3gNsS4uswcibYMTTqqCV1NXrRxINihR5l5K000VjHVDpLFJbFlMzwvMiMls87Mf7db0fR1gI/gHnOi1xA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CXUR6ViKuVKeKokhIgoINkwTS0ncG7g5XMGc7ceGRBw=;
-        b=tCLtVCgPdSwU1SOkOowMjfJBEOxuYdCkuEe6XnOygKQcvrxvTpWGK4xK25BcNwraxl
-         bjBbDkTXmqLBfKGaJxtnI0BMiAXLCeFm48hc+YZZnjKNbhuUgTFIgLKfO5SsO/unsFxx
-         kOvwgjahOykhijOMTwSU8hsxQOmgauFTC/d7M443SJ1TPVu5omkWmAcc07jq/psAVIqY
-         r0HOii276GIqdRj/HpDyA3EeBJibCUkC+3YRPTghZPm9FlL8sjUTguOGt9xBhrspQYWf
-         uTBAKVz578EWXx9uQdAtBkJ4bHPAW5UKmmouwGNkJnqfMI0bsbgp+Ndg3cs+puaQg8f0
-         mi6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CXUR6ViKuVKeKokhIgoINkwTS0ncG7g5XMGc7ceGRBw=;
-        b=miXmhU6jDsWAs+1j7hsS1+yAaGD9iQInAINgz53cay79rEIfOPwu+pUBO2hG1hUW3l
-         jvIGQY1rpT5sR4pgMXD3GQYc2uL+413Dzl6SqtV8kYkj+AfqmjDyxbKUayg1+eeEfMU9
-         wYzgwE8Bbj2E04hPuKSe9ZbVM7KEODQRFRoYb7l8bDNg0kFdq65FgwH0XfSizzF5w1rk
-         oOp/Qt12YVjP0YAVxUZri/IdYMq91nxw3YobAplSa3hKJftBUXSLaTnIZA2kwhgHs/KR
-         p/Iak1MhFM1Gnxu3ZJze5GJ7TJgeUR8CmSxkUXhjw1CT4B50oJ3vZGq9gtY0u1sJv4nx
-         bABg==
-X-Gm-Message-State: AO0yUKU1garjr1LAGh6twrMGmIVhuKebnN3yD6ZtOdOBe8ipARy3SUNa
-        00kTkOm+SNLXqPU9SUNTsX8bfqJ1lOfwTJCyOh/9wg==
-X-Google-Smtp-Source: AK7set+32AW5r6G6h2KUBmvW+gK7FIfbFLuT8cT4QgkUNgOdrjWpKMbzgGSHAf2t1HDY3Ht6hpKymlJQSQgL9CMmOdA=
-X-Received: by 2002:a17:906:6957:b0:886:73de:3efc with SMTP id
- c23-20020a170906695700b0088673de3efcmr2716345ejs.87.1675937155175; Thu, 09
- Feb 2023 02:05:55 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20230206134200uscas1p20382220d7fc10c899b4c79e01d94cf0b@uscas1p2.samsung.com>
- <20230206134148.GD6704@gsv> <20230208171321.GA408056@bgt-140510-bm01>
-In-Reply-To: <20230208171321.GA408056@bgt-140510-bm01>
-From:   Hans Holmberg <hans@owltronix.com>
-Date:   Thu, 9 Feb 2023 11:05:44 +0100
-Message-ID: <CANr-nt0wVphKW1LXhmw3CgtJ5qRKYWkTy=Xg9Ey-39OnwvxnHA@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC]: File system data placement for zoned block devices
-To:     Adam Manzanares <a.manzanares@samsung.com>
-Cc:     Hans Holmberg <Hans.Holmberg@wdc.com>,
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s/aANtn8M1MRwMxWmJrzWCK8teLJJSshpJqiog73p/U=;
+ b=m9ysjHoBz10VWRAaq19NdYgiQKo7UOP900rRC+sPQkOPnMTBULKrLy+l8UfJqOfaE4QArpZ805jtU2xHcFDQBwE5Vn+3OySMc5XtNEsR5P29XY+SyxQwfngRa0LfGGiB3eWXJlDUNFGfF++yW40kk7LaLSu6GKNm7026+qVvbqE=
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
+ by BL3PR04MB7996.namprd04.prod.outlook.com (2603:10b6:208:347::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.17; Thu, 9 Feb
+ 2023 10:22:31 +0000
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::8ed8:3450:1525:c60a]) by PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::8ed8:3450:1525:c60a%8]) with mapi id 15.20.6086.019; Thu, 9 Feb 2023
+ 10:22:31 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Hans Holmberg <hans@owltronix.com>,
+        Adam Manzanares <a.manzanares@samsung.com>
+CC:     Hans Holmberg <Hans.Holmberg@wdc.com>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
         "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <Matias.Bjorling@wdc.com>,
+        =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <Matias.Bjorling@wdc.com>,
         Damien Le Moal <Damien.LeMoal@wdc.com>,
         Dennis Maisenbacher <dennis.maisenbacher@wdc.com>,
         Naohiro Aota <Naohiro.Aota@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
         Aravind Ramesh <Aravind.Ramesh@wdc.com>,
-        =?UTF-8?Q?J=C3=B8rgen_Hansen?= <Jorgen.Hansen@wdc.com>,
+        =?utf-8?B?SsO4cmdlbiBIYW5zZW4=?= <Jorgen.Hansen@wdc.com>,
         "mcgrof@kernel.org" <mcgrof@kernel.org>,
         "javier@javigon.com" <javier@javigon.com>,
         "hch@lst.de" <hch@lst.de>,
         "guokuankuan@bytedance.com" <guokuankuan@bytedance.com>,
         "viacheslav.dubeyko@bytedance.com" <viacheslav.dubeyko@bytedance.com>,
         "j.granados@samsung.com" <j.granados@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Subject: Re: [LSF/MM/BPF TOPIC]: File system data placement for zoned block
+ devices
+Thread-Topic: [LSF/MM/BPF TOPIC]: File system data placement for zoned block
+ devices
+Thread-Index: AQHZOjDDUZpAXLX4TUqlcfdOqdocu67F0woAgACUuQCAAASvAA==
+Date:   Thu, 9 Feb 2023 10:22:31 +0000
+Message-ID: <61a40b61-2346-053d-1190-907075e1c9d2@wdc.com>
+References: <CGME20230206134200uscas1p20382220d7fc10c899b4c79e01d94cf0b@uscas1p2.samsung.com>
+ <20230206134148.GD6704@gsv> <20230208171321.GA408056@bgt-140510-bm01>
+ <CANr-nt0wVphKW1LXhmw3CgtJ5qRKYWkTy=Xg9Ey-39OnwvxnHA@mail.gmail.com>
+In-Reply-To: <CANr-nt0wVphKW1LXhmw3CgtJ5qRKYWkTy=Xg9Ey-39OnwvxnHA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.1
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR04MB7416:EE_|BL3PR04MB7996:EE_
+x-ms-office365-filtering-correlation-id: cae5921d-6c17-43cc-7b1c-08db0a878d8c
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: UYMSYB3Ao8GTq7AOuwtZPMpnOVC5a7uGDYdFUhzPpK/69hDhWtVD85zA33+ycVsCbK/UoIW4fQDjCaldhZfAG5ebefwQBaq+CShw+VllNnIRMSWKZDnQsozXWAgTKhJFe6f7AOyE437wOsqwssNA71tSCdURWse2nHetIVyrIVkM+0RGVUfROmapxayJ7KXVjpIj48IFA6RkQ6TDEC938HSaKLUVWHz03fnfz1JKjj+JUTjK6giHE3V3MvNNQ3bYfI815y7pgQLPxiTtg53wmvhQaI4/a9bp5FfjdyVA7g4BivJ0jMIP+ImpFZzAS/hH9BO9awvvYTHqV6kNZsb2pRTFhp55D0/d8tHYPht2QVXJ4vaa8bGGlgq3dmN0WIa0k7iGXrMGp3GFPgc0gjbmOxegmAMYpv2pQ1+hRcvVohSn5nyoeFPeVHurK0hkjRQMajWL9077HoffTyAnwwKKCllRjsvr/6tffFdMhvyF8MaL2aaH1+OlbFbg3LIhYOmhhoAtd/qBnYWfAC9pqcUpcfIuzz8PLlk6vpd6yDKH2OdWdOHjqaxmeHzX4gYy0pWHBcw7lrCVakNGDnUfLmLUXtuiSyytAErb63ShcdFNmJOcY0QJ2K2TTVL028n5DTNJef5UGpQwRkZ2EGeQff3kP9YvaedyJ4+tHfrZ5tGdynShYJCj7hcMd6KCanrCPuJ0DoJ+1nGBx7xEtmKns9efyWacVGaOEdv+4Un45cxz9Rc0yLJK+z/tXxcvXhM5NfW18TGLcwNfS9+KY4ZP28s3Hg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(366004)(346002)(39860400002)(376002)(396003)(136003)(451199018)(6512007)(53546011)(6506007)(83380400001)(38070700005)(186003)(2906002)(82960400001)(36756003)(7416002)(31686004)(6486002)(478600001)(8936002)(41300700001)(2616005)(71200400001)(5660300002)(66446008)(64756008)(8676002)(66946007)(4326008)(66476007)(91956017)(76116006)(122000001)(66556008)(86362001)(110136005)(54906003)(316002)(31696002)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Y0V5Rkh0NkxzMXRJck9QMXIvYjJJVVpTQTl6dlhvQ3hOb3A2V2ZuSUhXT0ZU?=
+ =?utf-8?B?SjZPelRrelZYL3ZmazBpVjlUOTc0VkNzTkNWSEhoWmdQVEtBSkdGelE5dExH?=
+ =?utf-8?B?VnNJUGExWUFPSFpWQ0RMcXJwRVN5VG1vT3JKL29zNGdwMXY2MmNIck40bEJ2?=
+ =?utf-8?B?Wkk4RXAxQWszMlZ2R3RSY3hadjVHTGhKSVF5VnVqSkFyZjAwcUJJREduSDVx?=
+ =?utf-8?B?NWJUWlQzVm95OFphdzUyaFdnUEVXVStyMzk1T2N1L2VmSmRIRm8zWG1GTEZ6?=
+ =?utf-8?B?VGxpTk5ZUjJRc0VZN21WaER1Rll2YVVqbnRjd2Q0NkJocS9QbUpVam1KN2k4?=
+ =?utf-8?B?dW50cXVqRjUxVEZVTEZ4cTFYQllxcVBkZGV5aWJFNnV0UDJNZExaM21EWm9P?=
+ =?utf-8?B?WlZ2MjkzVW9PL1JETjk1OEUwN1gxUUdxTjlnOERIUndNelZzTlNZUzZlRC90?=
+ =?utf-8?B?YXNGRm1GRjFkWDMyRFFsSTFYejBmNEJjWUswMVRJNDh3RTdQdlRSWmtUMnZZ?=
+ =?utf-8?B?VEZRMmRTRThFd3ZEZjdEeXM0dTI2ZCtnL3pYSm82RkRnK0NHaExEVzR1OGtD?=
+ =?utf-8?B?dlAvN0djV0JDY2k0VnFxdHRGUU9iVExIOGJjeWNVSjg4SEpmOWRuYnJEUzZj?=
+ =?utf-8?B?QUNFazZpbDI4cDc5VHduUG0ybElKVlZ6WGdNQWdWWjl6bEhwczdZYXdEQkhV?=
+ =?utf-8?B?U2dndk5rNmdidjNFRDB2Qi9iaWxyMit6UG5YTGxwWUVzQWw0RzZkQ05mcU1j?=
+ =?utf-8?B?YzJGZThaOGhocVpIUU9wQU95dm1HTU1JS2VwN1U5bDY0U0RjVnNTdFBVVW5W?=
+ =?utf-8?B?TWw3eWFWSXRWNHBJWHhUWUdXWVBNVExQZGNqZW15Zy9QSXVXalpZQzVpYzFt?=
+ =?utf-8?B?aEF5MHhKZzNjSUNQMThqZms2ZUdQVXM3RFp4MFcwNjJnQU9ORis3Z1hpTWla?=
+ =?utf-8?B?YmxPQmJ3Zk9aTm81MExScUZRTFVxcThEcWxVdHcyZkREMTNUQVdhdXFjNlp1?=
+ =?utf-8?B?WmdVQWFOdjVLeHlHSTNWVDF6bVEzVS9PaGNZVmNRdnlIMWsrMjNKZnpjM0pY?=
+ =?utf-8?B?SjJSVHRQbXBvZFZPRUkva3F4eU1CR2hLWXIxOHVJU3l1QWNFWmdDbkZucmtp?=
+ =?utf-8?B?NnFnVUFLR0ZGeEYrVGFMQmZWVUFEbGcycGtsTmptUHlsMEZRaHlvVWd0RmpB?=
+ =?utf-8?B?Ui9HVHBIbExneFdtV21aV3o4RGdTSFJtOURxOTcyR0hkMnBkaHYyVGxaQ3dO?=
+ =?utf-8?B?Q2VUTjdETHRIWFg5bkkxNUtrbUY5N1RyM3dBTUE2OEVVcHB5TUo3djYyZWRQ?=
+ =?utf-8?B?MVJvbFdxTVZiWG82elA3VEU3U04zNXZrR0ZFWmdQK2Z6bXFpbHVuT0Fmc0Vh?=
+ =?utf-8?B?Tjhzejg1SDN5WTNVdnpOcGFGV0hTM3BqSXh3VWloaExMcEdoMlpwb0RYaVpW?=
+ =?utf-8?B?UzV0aGJaZ0xhRDFUdkFZK2RQQStHMFJiTjNQYlZWU3ZLRkFIZUQwaG9zbkpI?=
+ =?utf-8?B?dUFJdTRwclU1Ti9jQ1JsRGdoSUEwWU1KNHlWNzZrRUJYUjFHaEx5TW5Yc0lX?=
+ =?utf-8?B?eTkvdHZXdXV5TnJ3MEZUa0xLVWtVenZheEloL3FtT0pEdjRXblFoaFFEbDRj?=
+ =?utf-8?B?Y1lFcUIxdzhiTGJvdjV0Ly8xMTd4Y3VVVlZHSFBCei8vWjNhblZETXpEa2dh?=
+ =?utf-8?B?VTZRaTdQWnI2WFBIZFRXTWhEL05pNUo3NFlId21PRCtOZXB5b1hTOE9zc0gy?=
+ =?utf-8?B?cmNuNXZmbGF6QURzNGU3andjNXRFVW1PSCt0SmpWaDZiY1ZKNUppR3BxL0Qy?=
+ =?utf-8?B?TXlmWlByZEVkY1BnbWFpYnFxNFRvSDViM3hBMEdqRGkrcjY2a3ljRkNsQ2t2?=
+ =?utf-8?B?Qm9NVklML0hmdVE1TUc4eVJuYXczdTJNbkRFUy9ML3V4M2QxMkkwaERRYldP?=
+ =?utf-8?B?V2hVeWNJMWdRUlljeGd3dG9TVUQzWE1RQkVuRU1MSldhcGYrNnNMSVpzK1Az?=
+ =?utf-8?B?RGF1b3E5NEpGSzIraFhPWE5BSVVrblZHczB6NUZ6OEwvK3hudkFmazhhNWp3?=
+ =?utf-8?B?TzhReTFSUW4rdzllSXQ4bUhJcXllMkx5cDRwQUIzT0U4d2c5VmtGOWptVVBX?=
+ =?utf-8?B?SmxLRFVrYml3VVQ5YjBQTDFYbkl3a2tNUFNHNjZvVDhlYWxBbDZDK0VlMlAz?=
+ =?utf-8?B?c2FRaDFiemtsWDRQWWxOTXBTQzJMRitwN0FyeFMwVEZiQ1Z4ZmhPVzc1dVRn?=
+ =?utf-8?Q?mEP8A/2n/+V1Ty9OiZZzLNMBxBvLHY+qYLlxsqK2ww=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <43271624F69DD5409B1285FB3CD3C09E@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?QmlrQ1B0MkpiMEFSeFFxWWNuT3B5ZnhUT01pQWhrelR5WU1GZFhhZUhNd1Rw?=
+ =?utf-8?B?clFGa3lReEtITXJlc0EzUlFCTm5pNWtZSFpNS0p6YTM1cEdpenYzZzZJQXpJ?=
+ =?utf-8?B?WEp5WWx4SHNYU0VSWHVnLzBVTE5nSWNKdU52aVp2TGRvSERmd3hOdnN5V1k2?=
+ =?utf-8?B?eGhSdXV0YmdUZGJna3h0NC85eXl4NEZZa2RyeXM5TkpIRmpEUkVaRE5EMktv?=
+ =?utf-8?B?N05FMWZ5TEF2bkNZUFFoajU0aFhUYVZoSU5YamFLTGRIWmhuV0RUZEhUQVZu?=
+ =?utf-8?B?ZlYxVitNcWY5RWxUTUdZRWFYNFU2Y21YamVvWjdIdHRwd2FrZjVVZmx4c2FP?=
+ =?utf-8?B?alBJQTA4eDJmaHZwcG5iWXpZN2Y4Q2Q1WEpsbFNMa2lNS0VGMHBjNC9yZmpa?=
+ =?utf-8?B?YWZJdW9qSW5tWkc5MlAvcG1ObW5qK29OTmZ5TDl0ZlJWaW1SRTV1cWVqeW1w?=
+ =?utf-8?B?d1k3eEdiR1ZQdWErM0ZKV3lrRlArUDdnNUNYUU9od2RSaGVubGNmSXIrM3NV?=
+ =?utf-8?B?WFZuM3FJKzA3MUhtVmJVU3lVMS9YWGVWZFJqMWVuK1Y5c2NqZ2VKUlQ4MlNj?=
+ =?utf-8?B?WVl3amhXRldEQk1mZTlSUS9OeXVFYnphVGZQUjNYdExVeEJUclRJZ2RnMXJF?=
+ =?utf-8?B?RnpuWjlCbTNVcXk3dDZhVDdNdjdVS2xxZ2JiL0twTU9yZUF1MEFHNWVkQmNs?=
+ =?utf-8?B?ejdaY2RSZElMVDdDWDF4cGdUSzdudlN6TFRla290VzliajZPWURrd3ZRQjcr?=
+ =?utf-8?B?VTRjaXJGaGJuZGhibkVDL3BmMkZzMTNXRS90NFR2VE9LMzJPNzJEV2ZLK2Iw?=
+ =?utf-8?B?VXBKNDlMOUhpazJEc2NKYlgxN1VpS3diVzVHVHVXdExyVURqc0crYnpLTzdu?=
+ =?utf-8?B?YlBsd0pkazhUYzUwUCtLZVQxbC9iVjY4TUhwWHpmMy9UNDFSVHRmR0REaGZW?=
+ =?utf-8?B?SlNuNkhGU05KOWN4WUFacTBrU1lTb3ZzS1AxZ1lvWlJMTU5WNTJ4aXNpaTB1?=
+ =?utf-8?B?azZEejhJWGhDTGJWY3FqZGdoQVVxeUEwSWJDYldwdmdRZ2o0c0UrK0RqdHhz?=
+ =?utf-8?B?WGdJRWVTa2V3YSs2L0JyL0ZuQTFCQ1FRNS81YnlwdFUyOVMxQVVwRnlTZkV1?=
+ =?utf-8?B?NmVmaFk5K3BFNkJ2M3A3S09LdDByeUZGdEMrWGllcHlML1JMZVk4VER6UlNj?=
+ =?utf-8?B?MElYVWEwVmEveitQZ1RJY25jamY3MDNjY3Z5OWdXN2VqdlVNV3pGczk4L1Bs?=
+ =?utf-8?B?N1JuUDJMaUhEbzN4aFdhaHdtMkxSbkhZMjA5aXQ5SHQvUGUzMitKMm51c2Ux?=
+ =?utf-8?Q?KhPte3AQlw2j/0TWJI+PQkEzUNdr/rppW9?=
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cae5921d-6c17-43cc-7b1c-08db0a878d8c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Feb 2023 10:22:31.4245
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3UY/yEZ+3KTJ+wy7zLfkNUkoDXHjItNPPgtd2wRGt3efa3O8dvSY0IAyHfJbk4+q0uKfh/a3NnJcRNlAv10msLD1m9ORqI18urYvCLykC/Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR04MB7996
+X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 8, 2023 at 6:13 PM Adam Manzanares <a.manzanares@samsung.com> w=
-rote:
->
-> On Mon, Feb 06, 2023 at 01:41:49PM +0000, Hans Holmberg wrote:
-> > Write amplification induced by garbage collection negatively impacts
-> > both the performance and the life time for storage devices.
-> >
-> > With zoned storage now standardized for SMR hard drives
-> > and flash(both NVME and UFS) we have an interface that allows
-> > us to reduce this overhead by adapting file systems to do
-> > better data placement.
->
-> I would be interested in this discussion as well. Data placement on stora=
-ge
-> media seems like a topic that is not going to go away any time soon. Inte=
-rfaces
-> that are not tied to particular HW implementations seem like a longer ter=
-m
-> approach to the issue.
->
-> >
-> > Background
-> > ----------
-> >
-> > Zoned block devices enables the host to reduce the cost of
-> > reclaim/garbage collection/cleaning by exposing the media erase
-> > units as zones.
-> >
-> > By filling up zones with data from files that will
-> > have roughly the same life span, garbage collection I/O
-> > can be minimized, reducing write amplification.
-> > Less disk I/O per user write.
-> >
-> > Reduced amounts of garbage collection I/O improves
-> > user max read and write throughput and tail latencies, see [1].
-> >
-> > Migrating out still-valid data to erase and reclaim unused
-> > capacity in e.g. NAND blocks has a significant performance
-> > cost. Unnecessarily moving data around also means that there
-> > will be more erase cycles per user write, reducing the life
-> > time of the media.
-> >
-> > Current state
-> > -------------
-> >
-> > To enable the performance benefits of zoned block devices
-> > a file system needs to:
-> >
-> > 1) Comply with the write restrictions associated to the
-> > zoned device model.
-> >
-> > 2) Make active choices when allocating file data into zones
-> > to minimize GC.
-> >
-> > Out of the upstream file systems, btrfs and f2fs supports
-> > the zoned block device model. F2fs supports active data placement
-> > by separating cold from hot data which helps in reducing gc,
-> > but there is room for improvement.
-> >
-> >
-> > There is still work to be done
-> > ------------------------------
-> >
-> > I've spent a fair amount of time benchmarking btrfs and f2fs
-> > on top of zoned block devices along with xfs, ext4 and other
-> > file systems using the conventional block interface
-> > and at least for modern applicationsm, doing log-structured
-> > flash-friendly writes, much can be improved.
-> >
-> > A good example of a flash-friendly workload is RocksDB [6]
-> > which both does append-only writes and has a good prediction model
-> > for the life time of its files (due to its lsm-tree based data structur=
-es)
-> >
-> > For RocksDB workloads, the cost of garbage collection can be reduced
-> > by 3x if near-optimal data placement is done (at 80% capacity usage).
-> > This is based on comparing ZenFS[2], a zoned storage file system plugin
-> > for RocksDB, with f2fs, xfs, ext4 and btrfs.
-> >
-> > I see no good reason why linux kernel file systems (at least f2fs & btr=
-fs)
-> > could not play as nice with these workload as ZenFS does, by just alloc=
-ating
-> > file data blocks in a better way.
-> >
->
-> For RocksDB one thing I have struggled with is the fact that RocksDB appe=
-ars
-> to me as a lightweight FS user. We expect much more from kernel FS than w=
-hat
-> RocksDB expects. There are multiple user space FS that are compatible wit=
-h
-> RocksDB. How far should the kernel go to accomodate this use case?
->
-> > In addition to ZenFS we also have flex-alloc [5].
-> > There are probably more data placement schemes for zoned storage out th=
-ere.
-> >
-> > I think we need to implement a scheme that is general-purpose enough
-> > for in-kernel file systems to cover a wide range of use cases and workl=
-oads.
->
-> This is the key point of the work IMO. I would hope to hear more use case=
-s and
-> make sure that the demand comes from potential users of the API.
->
-> >
-> > I brought this up at LPC last year[4], but we did not have much time
-> > for discussions.
-> >
-> > What is missing
-> > ---------------
-> >
-> > Data needs to be allocated to zones in a way that minimizes the need fo=
-r
-> > reclaim. Best-effort placement decision making could be implemented to =
-place
-> > files of similar life times into the same zones.
-> >
-> > To do this, file systems would have to utilize some sort of hint to
-> > separate data into different life-time-buckets and map those to
-> > different zones.
-> >
-> > There is a user ABI for hints available - the write-life-time hint inte=
-rface
-> > that was introduced for streams [3]. F2FS is the only user of this curr=
-ently.
-> >
-> > BTRFS and other file systems with zoned support could make use of it to=
-o,
-> > but it is limited to four, relative, life time values which I'm afraid =
-would be too limiting when multiple users share a disk.
-> >
->
-> I noticed F2FS uses only two of the four values ATM. I would like to hear=
- more
-> from F2FS users who use these hints as to what the impact of using the hi=
-nts is.
->
-> > Maybe the life time hints could be combined with process id to separate
-> > different workloads better, maybe we need something else. F2FS supports
-> > cold/hot data separation based on file extension, which is another solu=
-tion.
-> >
-> > This is the first thing I'd like to discuss.
-> >
-> > The second thing I'd like to discuss is testing and benchmarking, which
-> > is probably even more important and something that should be put into
-> > place first.
-> >
-> > Testing/benchmarking
-> > --------------------
-> >
-> > I think any improvements must be measurable, preferably without having =
-to
-> > run live production application workloads.
-> >
-> > Benchmarking and testing is generally hard to get right, and particular=
-ily hard
-> > when it comes to testing and benchmarking reclaim/garbage collection,
-> > so it would make sense to share the effort.
-> >
-> > We should be able to use fio to model a bunch of application workloads
-> > that would benefit from data placement (lsm-tree based key-value databa=
-se
-> > stores (e.g rocksdb, terarkdb), stream processing apps like Apache kafk=
-a)) ..
->
-> Should we just skip fio and run benchmarks on top of rocksDB and kafka? I=
- was
-> looking at mmtests recently and noticed that it goes and downloads mm rel=
-evant
-> applications and runs benchmarks on the chose benchmarks.
-
-It takes a significant amount of time and trouble to build, run and underst=
-and
-benchmarks for these applications. Modeling the workloads using fio
-minimizes the set-up work and would enable more developers to actually
-run these things. The workload definitions could also help developers
-understanding what sort of IO that these use cases generate.
-
-There is already one mixed-lifetime benchmark in fsperf [7], more
-could probably be added.
-I'm looking into adding a lsm-tree workload.
-
-Full, automated, application benchmarks(db_bech, sysbench, ..) would
-be great to have as well of course.
-
-[7] https://github.com/josefbacik/fsperf/blob/master/frag_tests/mixed-lifet=
-imes.fio
-
-Cheers,
-Hans
-
->
-> >
-> > Once we have a set of benchmarks that we collectively care about, I thi=
-nk we
-> > can work towards generic data placement methods with some level of
-> > confidence that it will actually work in practice.
-> >
-> > Creating a repository with a bunch of reclaim/gc stress tests and bench=
-marks
-> > would be beneficial not only for kernel file systems but also for user-=
-space
-> > and distributed file systems such as ceph.
->
-> This would be very valuable. Ideally with input from consumers of the dat=
-a
-> placement APIS.
->
-> >
-> > Thanks,
-> > Hans
-> >
-> > [1] https://urldefense.com/v3/__https://www.usenix.org/system/files/atc=
-21-bjorling.pdf__;!!EwVzqGoTKBqv-0DWAJBm!WC4RGRyZ9YioNTLW94o29OSHK5LD8GlXL_=
-2VKMGS7Z5e0cojtPDKfqU0iETvqHpyuKD6UpBapa6jkGmbktirD4LbAEY$
-> > [2] https://urldefense.com/v3/__https://protect2.fireeye.com/v1/url?k=
-=3D462cf2bb-27a7e781-462d79f4-74fe4860008a-ab419c0ae2c7fb34&q=3D1&e=3D66a35=
-d4b-398f-4758-82c5-79f023ada0b4&u=3Dhttps*3A*2F*2Fgithub.com*2Fwesterndigit=
-alcorporation*2Fzenfs__;JSUlJSU!!EwVzqGoTKBqv-0DWAJBm!WC4RGRyZ9YioNTLW94o29=
-OSHK5LD8GlXL_2VKMGS7Z5e0cojtPDKfqU0iETvqHpyuKD6UpBapa6jkGmbktirB3JeheY$
-> > [3] https://urldefense.com/v3/__https://lwn.net/Articles/726477/__;!!Ew=
-VzqGoTKBqv-0DWAJBm!WC4RGRyZ9YioNTLW94o29OSHK5LD8GlXL_2VKMGS7Z5e0cojtPDKfqU0=
-iETvqHpyuKD6UpBapa6jkGmbktirPUCJNUc$
-> > [4] https://urldefense.com/v3/__https://protect2.fireeye.com/v1/url?k=
-=3D7eb17e0e-1f3a6b34-7eb0f541-74fe4860008a-0e46d2a09227c132&q=3D1&e=3D66a35=
-d4b-398f-4758-82c5-79f023ada0b4&u=3Dhttps*3A*2F*2Flpc.events*2Fevent*2F16*2=
-Fcontributions*2F1231*2F__;JSUlJSUlJSU!!EwVzqGoTKBqv-0DWAJBm!WC4RGRyZ9YioNT=
-LW94o29OSHK5LD8GlXL_2VKMGS7Z5e0cojtPDKfqU0iETvqHpyuKD6UpBapa6jkGmbktirgbmZX=
-I0$
-> > [5] https://urldefense.com/v3/__https://protect2.fireeye.com/v1/url?k=
-=3D19cdffac-7846ea96-19cc74e3-74fe4860008a-1121f5b082abfbe3&q=3D1&e=3D66a35=
-d4b-398f-4758-82c5-79f023ada0b4&u=3Dhttps*3A*2F*2Fgithub.com*2FOpenMPDK*2FF=
-lexAlloc__;JSUlJSU!!EwVzqGoTKBqv-0DWAJBm!WC4RGRyZ9YioNTLW94o29OSHK5LD8GlXL_=
-2VKMGS7Z5e0cojtPDKfqU0iETvqHpyuKD6UpBapa6jkGmbktirL2CmpSE$
-> > [6] https://urldefense.com/v3/__https://protect2.fireeye.com/v1/url?k=
-=3D6ed08255-0f5b976f-6ed1091a-74fe4860008a-2a012b612f36b36a&q=3D1&e=3D66a35=
-d4b-398f-4758-82c5-79f023ada0b4&u=3Dhttps*3A*2F*2Fgithub.com*2Ffacebook*2Fr=
-ocksdb__;JSUlJSU!!EwVzqGoTKBqv-0DWAJBm!WC4RGRyZ9YioNTLW94o29OSHK5LD8GlXL_2V=
-KMGS7Z5e0cojtPDKfqU0iETvqHpyuKD6UpBapa6jkGmbktirJuN380k$
+T24gMDkuMDIuMjMgMTE6MDYsIEhhbnMgSG9sbWJlcmcgd3JvdGU6DQo+IEl0IHRha2VzIGEgc2ln
+bmlmaWNhbnQgYW1vdW50IG9mIHRpbWUgYW5kIHRyb3VibGUgdG8gYnVpbGQsIHJ1biBhbmQgdW5k
+ZXJzdGFuZA0KPiBiZW5jaG1hcmtzIGZvciB0aGVzZSBhcHBsaWNhdGlvbnMuIE1vZGVsaW5nIHRo
+ZSB3b3JrbG9hZHMgdXNpbmcgZmlvDQo+IG1pbmltaXplcyB0aGUgc2V0LXVwIHdvcmsgYW5kIHdv
+dWxkIGVuYWJsZSBtb3JlIGRldmVsb3BlcnMgdG8gYWN0dWFsbHkNCj4gcnVuIHRoZXNlIHRoaW5n
+cy4gVGhlIHdvcmtsb2FkIGRlZmluaXRpb25zIGNvdWxkIGFsc28gaGVscCBkZXZlbG9wZXJzDQo+
+IHVuZGVyc3RhbmRpbmcgd2hhdCBzb3J0IG9mIElPIHRoYXQgdGhlc2UgdXNlIGNhc2VzIGdlbmVy
+YXRlLg0KDQpUcnVlLCBidXQgSSB0aGluayBBZGFtIGhhcyBhIHBvaW50IGhlcmUuIElJUkMgbW10
+ZXN0cyBjb21lcyB3aXRoIHNvbWUgc2NyaXB0cw0KdG8gZG93bmxvYWQsIGJ1aWxkIGFuZCBydW4g
+dGhlIGRlc2lyZWQgYXBwbGljYXRpb25zIGFuZCB0aGVuIGRvIHRoZSBtYXRocy4NCg0KSW4gdGhp
+cyBkYXkgYW5kIGFnZSBwZW9wbGUgd291bGQgcHJvYmFibHkgd2FudCB0byB1c2UgYSBjb250YWlu
+ZXIgd2l0aCB0aGUNCmFwcGxpY2F0aW9uIGluc2lkZSBhbmQgc29tZSBhdXRvbWF0aW9uIGFyb3Vu
+ZCBpdCB0byBydW4gdGhlIGJlbmNobWFyayBhbmQgDQpwcmVzZW50IHRoZSByZXN1bHRzLg0KDQpE
+b24ndCBnZXQgbWUgd3JvbmcuIFNpbXBsZSBmaW8gc25pcHBldHMgYXJlIGRlZmluaXRpdmVseSB3
+aGF0IEkgd291bGQgcHJlZmVyDQphcyB3ZWxsLCBidXQgY3JlYXRpbmcgdGhlc2UgZG9lcyByZXF1
+aXJlIGEgbG90IG9mIGluc2lnaHQgaW50byB0aGUgaW5uZXINCndvcmtpbmdzIG9mIGEgZGVzaXJl
+ZCB1c2VyLXNwYWNlIHdvcmtsb2FkLiBPZiBjYXVzZSBvbmNlIHRoYXQgaXMgYWNoaWV2ZWQgd2UN
+CmNhbiBlYXNpbHkgYWRkIHRoaXMgd29ya2xvYWQgdG8gZnNwZXJmIGFuZCBoYXZlIHNvbWUgc29y
+dCBvZiBDSSB0ZXN0aW5nIGZvcg0KaXQgdG8gbWFrZSBzdXJlIHdlIGRvbid0IHJlZ3Jlc3MgaGVy
+ZS4NCg==
