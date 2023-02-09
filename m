@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 877A16904E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 11:32:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 978376904E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 11:32:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229585AbjBIKcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 05:32:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50924 "EHLO
+        id S230240AbjBIKcK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 05:32:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230084AbjBIKbh (ORCPT
+        with ESMTP id S230106AbjBIKbh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 9 Feb 2023 05:31:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E077A1A4B1
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 02:30:24 -0800 (PST)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32D1522DD5
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 02:30:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675938624;
+        s=mimecast20190719; t=1675938627;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Q5bJAUy0Yf/xIkHbL0gYjIax658ix+8tiANnbR9foj4=;
-        b=NoD9CprpF9eogXVh3n+/smx0tCBIZkIqGG0K6I11CYpGAbPLbWmyEGS5aPlAFkwj6qEn8I
-        2YW3zKIUIYtfSERhI4W6RNtqwP8URstXyhVzJtoYRp/5/mktUmb9I4rgDZ1xWnOwI8tJvp
-        ijn+9N8FzZgMQefM6FdxOwTPPFgR9ws=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=G1Az3EBV9SOKUryI5J/Szq/Ryazp7FGIfAGTSAZ/Hdw=;
+        b=T4HC3go4FbkysKVjCjop7WWm80Oyfi9M59nRatOuK1i7Hb6qEjwCXsyu+ZOxtWb9L8o45c
+        NPCjfCIIDP26FcOb510iXbCL74MKggyhWAfNFkXzEAshJl6E5ZyFNfE4+bauvqWJ3/45rT
+        vUCl2hVDYWaNR1D0NfdkR8Ie6bkovMw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-644-HKGEz01pP0Wfszk7FqXLoA-1; Thu, 09 Feb 2023 05:30:22 -0500
-X-MC-Unique: HKGEz01pP0Wfszk7FqXLoA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+ us-mta-321-jaEj5sufMhODZlB0qhi8BQ-1; Thu, 09 Feb 2023 05:30:23 -0500
+X-MC-Unique: jaEj5sufMhODZlB0qhi8BQ-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 312BA3C16E94;
-        Thu,  9 Feb 2023 10:30:12 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 02181884DC9;
+        Thu,  9 Feb 2023 10:30:15 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3ED8F1415127;
-        Thu,  9 Feb 2023 10:30:10 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EE831492B00;
+        Thu,  9 Feb 2023 10:30:12 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -51,17 +51,17 @@ Cc:     David Howells <dhowells@redhat.com>,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v13 05/12] iov_iter: Define flags to qualify page extraction.
-Date:   Thu,  9 Feb 2023 10:29:47 +0000
-Message-Id: <20230209102954.528942-6-dhowells@redhat.com>
+Subject: [PATCH v13 06/12] iov_iter: Add a function to extract a page list from an iterator
+Date:   Thu,  9 Feb 2023 10:29:48 +0000
+Message-Id: <20230209102954.528942-7-dhowells@redhat.com>
 In-Reply-To: <20230209102954.528942-1-dhowells@redhat.com>
 References: <20230209102954.528942-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,208 +69,408 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Define flags to qualify page extraction to pass into iov_iter_*_pages*()
-rather than passing in FOLL_* flags.
+Add a function, iov_iter_extract_pages(), to extract a list of pages from
+an iterator.  The pages may be returned with a pin added or nothing,
+depending on the type of iterator.
 
-For now only a flag to allow peer-to-peer DMA is supported.
+Add a second function, iov_iter_extract_will_pin(), to determine how the
+cleanup should be done.
+
+There are two cases:
+
+ (1) ITER_IOVEC or ITER_UBUF iterator.
+
+     Extracted pages will have pins (FOLL_PIN) obtained on them so that a
+     concurrent fork() will forcibly copy the page so that DMA is done
+     to/from the parent's buffer and is unavailable to/unaffected by the
+     child process.
+
+     iov_iter_extract_will_pin() will return true for this case.  The
+     caller should use something like unpin_user_page() to dispose of the
+     page.
+
+ (2) Any other sort of iterator.
+
+     No refs or pins are obtained on the page, the assumption is made that
+     the caller will manage page retention.
+
+     iov_iter_extract_will_pin() will return false.  The pages don't need
+     additional disposal.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Logan Gunthorpe <logang@deltatee.com>
+cc: John Hubbard <jhubbard@nvidia.com>
+cc: David Hildenbrand <david@redhat.com>
+cc: Matthew Wilcox <willy@infradead.org>
 cc: linux-fsdevel@vger.kernel.org
-cc: linux-block@vger.kernel.org
+cc: linux-mm@kvack.org
 ---
 
 Notes:
     ver #12)
-     - Use __bitwise for the extraction flags typedef.
+     - ITER_PIPE is gone, so drop related bits.
+     - Don't specify FOLL_PIN as that's implied by pin_user_pages_fast().
     
     ver #11)
-     - Use __bitwise for the extraction flags.
+     - Fix iov_iter_extract_kvec_pages() to include the offset into the page in
+       the returned starting offset.
+     - Use __bitwise for the extraction flags
+    
+    ver #10)
+     - Fix use of i->kvec in iov_iter_extract_bvec_pages() to be i->bvec.
     
     ver #9)
+     - Rename iov_iter_extract_mode() to iov_iter_extract_will_pin() and make
+       it return true/false not FOLL_PIN/0 as FOLL_PIN is going to be made
+       private to mm/.
      - Change extract_flags to extraction_flags.
     
+    ver #8)
+     - It seems that all DIO is supposed to be done under FOLL_PIN now, and not
+       FOLL_GET, so switch to only using pin_user_pages() for user-backed
+       iters.
+     - Wrap an argument in brackets in the iov_iter_extract_mode() macro.
+     - Drop the extract_flags argument to iov_iter_extract_mode() for now
+       [hch].
+    
     ver #7)
-     - Don't use FOLL_* as a parameter, but rather define constants
-       specifically to use with iov_iter_*_pages*().
-     - Drop the I/O direction constants for now.
+     - Switch to passing in iter-specific flags rather than FOLL_* flags.
+     - Drop the direction flags for now.
+     - Use ITER_ALLOW_P2PDMA to request FOLL_PCI_P2PDMA.
+     - Disallow use of ITER_ALLOW_P2PDMA with non-user-backed iter.
+     - Add support for extraction from KVEC-type iters.
+     - Use iov_iter_advance() rather than open-coding it.
+     - Make BVEC- and KVEC-type skip over initial empty vectors.
+    
+    ver #6)
+     - Add back the function to indicate the cleanup mode.
+     - Drop the cleanup_mode return arg to iov_iter_extract_pages().
+     - Pass FOLL_SOURCE/DEST_BUF in gup_flags.  Check this against the iter
+       data_source.
+    
+    ver #4)
+     - Use ITER_SOURCE/DEST instead of WRITE/READ.
+     - Allow additional FOLL_* flags, such as FOLL_PCI_P2PDMA to be passed in.
+    
+    ver #3)
+     - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
+       to get/pin_user_pages_fast()[1].
 
- block/bio.c         |  6 +++---
- block/blk-map.c     |  8 ++++----
- include/linux/uio.h | 10 ++++++++--
- lib/iov_iter.c      | 14 ++++++++------
- 4 files changed, 23 insertions(+), 15 deletions(-)
+ include/linux/uio.h |  27 ++++-
+ lib/iov_iter.c      | 264 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 290 insertions(+), 1 deletion(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index ab59a491a883..b97f3991c904 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1245,11 +1245,11 @@ static int bio_iov_add_zone_append_page(struct bio *bio, struct page *page,
-  */
- static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- {
-+	iov_iter_extraction_t extraction_flags = 0;
- 	unsigned short nr_pages = bio->bi_max_vecs - bio->bi_vcnt;
- 	unsigned short entries_left = bio->bi_max_vecs - bio->bi_vcnt;
- 	struct bio_vec *bv = bio->bi_io_vec + bio->bi_vcnt;
- 	struct page **pages = (struct page **)bv;
--	unsigned int gup_flags = 0;
- 	ssize_t size, left;
- 	unsigned len, i = 0;
- 	size_t offset, trim;
-@@ -1264,7 +1264,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 	pages += entries_left * (PAGE_PTRS_PER_BVEC - 1);
- 
- 	if (bio->bi_bdev && blk_queue_pci_p2pdma(bio->bi_bdev->bd_disk->queue))
--		gup_flags |= FOLL_PCI_P2PDMA;
-+		extraction_flags |= ITER_ALLOW_P2PDMA;
- 
- 	/*
- 	 * Each segment in the iov is required to be a block size multiple.
-@@ -1275,7 +1275,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 	 */
- 	size = iov_iter_get_pages(iter, pages,
- 				  UINT_MAX - bio->bi_iter.bi_size,
--				  nr_pages, &offset, gup_flags);
-+				  nr_pages, &offset, extraction_flags);
- 	if (unlikely(size <= 0))
- 		return size ? size : -EFAULT;
- 
-diff --git a/block/blk-map.c b/block/blk-map.c
-index 19940c978c73..080dd60485be 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -265,9 +265,9 @@ static struct bio *blk_rq_map_bio_alloc(struct request *rq,
- static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 		gfp_t gfp_mask)
- {
-+	iov_iter_extraction_t extraction_flags = 0;
- 	unsigned int max_sectors = queue_max_hw_sectors(rq->q);
- 	unsigned int nr_vecs = iov_iter_npages(iter, BIO_MAX_VECS);
--	unsigned int gup_flags = 0;
- 	struct bio *bio;
- 	int ret;
- 	int j;
-@@ -280,7 +280,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 		return -ENOMEM;
- 
- 	if (blk_queue_pci_p2pdma(rq->q))
--		gup_flags |= FOLL_PCI_P2PDMA;
-+		extraction_flags |= ITER_ALLOW_P2PDMA;
- 
- 	while (iov_iter_count(iter)) {
- 		struct page **pages, *stack_pages[UIO_FASTIOV];
-@@ -291,10 +291,10 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 		if (nr_vecs <= ARRAY_SIZE(stack_pages)) {
- 			pages = stack_pages;
- 			bytes = iov_iter_get_pages(iter, pages, LONG_MAX,
--						   nr_vecs, &offs, gup_flags);
-+						   nr_vecs, &offs, extraction_flags);
- 		} else {
- 			bytes = iov_iter_get_pages_alloc(iter, &pages,
--						LONG_MAX, &offs, gup_flags);
-+						LONG_MAX, &offs, extraction_flags);
- 		}
- 		if (unlikely(bytes <= 0)) {
- 			ret = bytes ? bytes : -EFAULT;
 diff --git a/include/linux/uio.h b/include/linux/uio.h
-index dcc0ca5ef491..af70e4c9ea27 100644
+index af70e4c9ea27..cf6658066736 100644
 --- a/include/linux/uio.h
 +++ b/include/linux/uio.h
-@@ -12,6 +12,8 @@
- 
- struct page;
- 
-+typedef unsigned int __bitwise iov_iter_extraction_t;
-+
- struct kvec {
- 	void *iov_base; /* and that should *never* hold a userland pointer */
- 	size_t iov_len;
-@@ -238,12 +240,12 @@ void iov_iter_xarray(struct iov_iter *i, unsigned int direction, struct xarray *
- 		     loff_t start, size_t count);
- ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
- 		size_t maxsize, unsigned maxpages, size_t *start,
--		unsigned gup_flags);
-+		iov_iter_extraction_t extraction_flags);
- ssize_t iov_iter_get_pages2(struct iov_iter *i, struct page **pages,
- 			size_t maxsize, unsigned maxpages, size_t *start);
- ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
- 		struct page ***pages, size_t maxsize, size_t *start,
--		unsigned gup_flags);
-+		iov_iter_extraction_t extraction_flags);
- ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i, struct page ***pages,
- 			size_t maxsize, size_t *start);
- int iov_iter_npages(const struct iov_iter *i, int maxpages);
-@@ -346,4 +348,8 @@ static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direction,
+@@ -347,9 +347,34 @@ static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direction,
+ 		.count = count
  	};
  }
+-
+ /* Flags for iov_iter_get/extract_pages*() */
+ /* Allow P2PDMA on the extracted pages */
+ #define ITER_ALLOW_P2PDMA	((__force iov_iter_extraction_t)0x01)
  
-+/* Flags for iov_iter_get/extract_pages*() */
-+/* Allow P2PDMA on the extracted pages */
-+#define ITER_ALLOW_P2PDMA	((__force iov_iter_extraction_t)0x01)
++ssize_t iov_iter_extract_pages(struct iov_iter *i, struct page ***pages,
++			       size_t maxsize, unsigned int maxpages,
++			       iov_iter_extraction_t extraction_flags,
++			       size_t *offset0);
++
++/**
++ * iov_iter_extract_will_pin - Indicate how pages from the iterator will be retained
++ * @iter: The iterator
++ *
++ * Examine the iterator and indicate by returning true or false as to how, if
++ * at all, pages extracted from the iterator will be retained by the extraction
++ * function.
++ *
++ * %true indicates that the pages will have a pin placed in them that the
++ * caller must unpin.  This is must be done for DMA/async DIO to force fork()
++ * to forcibly copy a page for the child (the parent must retain the original
++ * page).
++ *
++ * %false indicates that no measures are taken and that it's up to the caller
++ * to retain the pages.
++ */
++static inline bool iov_iter_extract_will_pin(const struct iov_iter *iter)
++{
++	return user_backed_iter(iter);
++}
 +
  #endif
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index adc5e8aa8ae8..34ee3764d0fa 100644
+index 34ee3764d0fa..8d34b6552179 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1020,9 +1020,9 @@ static struct page *first_bvec_segment(const struct iov_iter *i,
- static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		   struct page ***pages, size_t maxsize,
- 		   unsigned int maxpages, size_t *start,
--		   unsigned int gup_flags)
-+		   iov_iter_extraction_t extraction_flags)
- {
--	unsigned int n;
-+	unsigned int n, gup_flags = 0;
- 
- 	if (maxsize > i->count)
- 		maxsize = i->count;
-@@ -1030,6 +1030,8 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		return 0;
- 	if (maxsize > MAX_RW_COUNT)
- 		maxsize = MAX_RW_COUNT;
+@@ -1487,3 +1487,267 @@ void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
+ 		i->iov -= state->nr_segs - i->nr_segs;
+ 	i->nr_segs = state->nr_segs;
+ }
++
++/*
++ * Extract a list of contiguous pages from an ITER_XARRAY iterator.  This does not
++ * get references on the pages, nor does it get a pin on them.
++ */
++static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
++					     struct page ***pages, size_t maxsize,
++					     unsigned int maxpages,
++					     iov_iter_extraction_t extraction_flags,
++					     size_t *offset0)
++{
++	struct page *page, **p;
++	unsigned int nr = 0, offset;
++	loff_t pos = i->xarray_start + i->iov_offset;
++	pgoff_t index = pos >> PAGE_SHIFT;
++	XA_STATE(xas, i->xarray, index);
++
++	offset = pos & ~PAGE_MASK;
++	*offset0 = offset;
++
++	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
++	if (!maxpages)
++		return -ENOMEM;
++	p = *pages;
++
++	rcu_read_lock();
++	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
++		if (xas_retry(&xas, page))
++			continue;
++
++		/* Has the page moved or been split? */
++		if (unlikely(page != xas_reload(&xas))) {
++			xas_reset(&xas);
++			continue;
++		}
++
++		p[nr++] = find_subpage(page, xas.xa_index);
++		if (nr == maxpages)
++			break;
++	}
++	rcu_read_unlock();
++
++	maxsize = min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
++	iov_iter_advance(i, maxsize);
++	return maxsize;
++}
++
++/*
++ * Extract a list of contiguous pages from an ITER_BVEC iterator.  This does
++ * not get references on the pages, nor does it get a pin on them.
++ */
++static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
++					   struct page ***pages, size_t maxsize,
++					   unsigned int maxpages,
++					   iov_iter_extraction_t extraction_flags,
++					   size_t *offset0)
++{
++	struct page **p, *page;
++	size_t skip = i->iov_offset, offset;
++	int k;
++
++	for (;;) {
++		if (i->nr_segs == 0)
++			return 0;
++		maxsize = min(maxsize, i->bvec->bv_len - skip);
++		if (maxsize)
++			break;
++		i->iov_offset = 0;
++		i->nr_segs--;
++		i->bvec++;
++		skip = 0;
++	}
++
++	skip += i->bvec->bv_offset;
++	page = i->bvec->bv_page + skip / PAGE_SIZE;
++	offset = skip % PAGE_SIZE;
++	*offset0 = offset;
++
++	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
++	if (!maxpages)
++		return -ENOMEM;
++	p = *pages;
++	for (k = 0; k < maxpages; k++)
++		p[k] = page + k;
++
++	maxsize = min_t(size_t, maxsize, maxpages * PAGE_SIZE - offset);
++	iov_iter_advance(i, maxsize);
++	return maxsize;
++}
++
++/*
++ * Extract a list of virtually contiguous pages from an ITER_KVEC iterator.
++ * This does not get references on the pages, nor does it get a pin on them.
++ */
++static ssize_t iov_iter_extract_kvec_pages(struct iov_iter *i,
++					   struct page ***pages, size_t maxsize,
++					   unsigned int maxpages,
++					   iov_iter_extraction_t extraction_flags,
++					   size_t *offset0)
++{
++	struct page **p, *page;
++	const void *kaddr;
++	size_t skip = i->iov_offset, offset, len;
++	int k;
++
++	for (;;) {
++		if (i->nr_segs == 0)
++			return 0;
++		maxsize = min(maxsize, i->kvec->iov_len - skip);
++		if (maxsize)
++			break;
++		i->iov_offset = 0;
++		i->nr_segs--;
++		i->kvec++;
++		skip = 0;
++	}
++
++	kaddr = i->kvec->iov_base + skip;
++	offset = (unsigned long)kaddr & ~PAGE_MASK;
++	*offset0 = offset;
++
++	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
++	if (!maxpages)
++		return -ENOMEM;
++	p = *pages;
++
++	kaddr -= offset;
++	len = offset + maxsize;
++	for (k = 0; k < maxpages; k++) {
++		size_t seg = min_t(size_t, len, PAGE_SIZE);
++
++		if (is_vmalloc_or_module_addr(kaddr))
++			page = vmalloc_to_page(kaddr);
++		else
++			page = virt_to_page(kaddr);
++
++		p[k] = page;
++		len -= seg;
++		kaddr += PAGE_SIZE;
++	}
++
++	maxsize = min_t(size_t, maxsize, maxpages * PAGE_SIZE - offset);
++	iov_iter_advance(i, maxsize);
++	return maxsize;
++}
++
++/*
++ * Extract a list of contiguous pages from a user iterator and get a pin on
++ * each of them.  This should only be used if the iterator is user-backed
++ * (IOBUF/UBUF).
++ *
++ * It does not get refs on the pages, but the pages must be unpinned by the
++ * caller once the transfer is complete.
++ *
++ * This is safe to be used where background IO/DMA *is* going to be modifying
++ * the buffer; using a pin rather than a ref makes forces fork() to give the
++ * child a copy of the page.
++ */
++static ssize_t iov_iter_extract_user_pages(struct iov_iter *i,
++					   struct page ***pages,
++					   size_t maxsize,
++					   unsigned int maxpages,
++					   iov_iter_extraction_t extraction_flags,
++					   size_t *offset0)
++{
++	unsigned long addr;
++	unsigned int gup_flags = 0;
++	size_t offset;
++	int res;
++
++	if (i->data_source == ITER_DEST)
++		gup_flags |= FOLL_WRITE;
 +	if (extraction_flags & ITER_ALLOW_P2PDMA)
 +		gup_flags |= FOLL_PCI_P2PDMA;
- 
- 	if (likely(user_backed_iter(i))) {
- 		unsigned long addr;
-@@ -1081,14 +1083,14 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 
- ssize_t iov_iter_get_pages(struct iov_iter *i,
- 		   struct page **pages, size_t maxsize, unsigned maxpages,
--		   size_t *start, unsigned gup_flags)
-+		   size_t *start, iov_iter_extraction_t extraction_flags)
- {
- 	if (!maxpages)
- 		return 0;
- 	BUG_ON(!pages);
- 
- 	return __iov_iter_get_pages_alloc(i, &pages, maxsize, maxpages,
--					  start, gup_flags);
-+					  start, extraction_flags);
- }
- EXPORT_SYMBOL_GPL(iov_iter_get_pages);
- 
-@@ -1101,14 +1103,14 @@ EXPORT_SYMBOL(iov_iter_get_pages2);
- 
- ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
- 		   struct page ***pages, size_t maxsize,
--		   size_t *start, unsigned gup_flags)
-+		   size_t *start, iov_iter_extraction_t extraction_flags)
- {
- 	ssize_t len;
- 
- 	*pages = NULL;
- 
- 	len = __iov_iter_get_pages_alloc(i, pages, maxsize, ~0U, start,
--					 gup_flags);
-+					 extraction_flags);
- 	if (len <= 0) {
- 		kvfree(*pages);
- 		*pages = NULL;
++	if (i->nofault)
++		gup_flags |= FOLL_NOFAULT;
++
++	addr = first_iovec_segment(i, &maxsize);
++	*offset0 = offset = addr % PAGE_SIZE;
++	addr &= PAGE_MASK;
++	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
++	if (!maxpages)
++		return -ENOMEM;
++	res = pin_user_pages_fast(addr, maxpages, gup_flags, *pages);
++	if (unlikely(res <= 0))
++		return res;
++	maxsize = min_t(size_t, maxsize, res * PAGE_SIZE - offset);
++	iov_iter_advance(i, maxsize);
++	return maxsize;
++}
++
++/**
++ * iov_iter_extract_pages - Extract a list of contiguous pages from an iterator
++ * @i: The iterator to extract from
++ * @pages: Where to return the list of pages
++ * @maxsize: The maximum amount of iterator to extract
++ * @maxpages: The maximum size of the list of pages
++ * @extraction_flags: Flags to qualify request
++ * @offset0: Where to return the starting offset into (*@pages)[0]
++ *
++ * Extract a list of contiguous pages from the current point of the iterator,
++ * advancing the iterator.  The maximum number of pages and the maximum amount
++ * of page contents can be set.
++ *
++ * If *@pages is NULL, a page list will be allocated to the required size and
++ * *@pages will be set to its base.  If *@pages is not NULL, it will be assumed
++ * that the caller allocated a page list at least @maxpages in size and this
++ * will be filled in.
++ *
++ * @extraction_flags can have ITER_ALLOW_P2PDMA set to request peer-to-peer DMA
++ * be allowed on the pages extracted.
++ *
++ * The iov_iter_extract_will_pin() function can be used to query how cleanup
++ * should be performed.
++ *
++ * Extra refs or pins on the pages may be obtained as follows:
++ *
++ *  (*) If the iterator is user-backed (ITER_IOVEC/ITER_UBUF), pins will be
++ *      added to the pages, but refs will not be taken.
++ *      iov_iter_extract_will_pin() will return true.
++ *
++ *  (*) If the iterator is ITER_KVEC, ITER_BVEC or ITER_XARRAY, the pages are
++ *      merely listed; no extra refs or pins are obtained.
++ *      iov_iter_extract_will_pin() will return 0.
++ *
++ * Note also:
++ *
++ *  (*) Use with ITER_DISCARD is not supported as that has no content.
++ *
++ * On success, the function sets *@pages to the new pagelist, if allocated, and
++ * sets *offset0 to the offset into the first page.
++ *
++ * It may also return -ENOMEM and -EFAULT.
++ */
++ssize_t iov_iter_extract_pages(struct iov_iter *i,
++			       struct page ***pages,
++			       size_t maxsize,
++			       unsigned int maxpages,
++			       iov_iter_extraction_t extraction_flags,
++			       size_t *offset0)
++{
++	maxsize = min_t(size_t, min_t(size_t, maxsize, i->count), MAX_RW_COUNT);
++	if (!maxsize)
++		return 0;
++
++	if (likely(user_backed_iter(i)))
++		return iov_iter_extract_user_pages(i, pages, maxsize,
++						   maxpages, extraction_flags,
++						   offset0);
++	if (iov_iter_is_kvec(i))
++		return iov_iter_extract_kvec_pages(i, pages, maxsize,
++						   maxpages, extraction_flags,
++						   offset0);
++	if (iov_iter_is_bvec(i))
++		return iov_iter_extract_bvec_pages(i, pages, maxsize,
++						   maxpages, extraction_flags,
++						   offset0);
++	if (iov_iter_is_xarray(i))
++		return iov_iter_extract_xarray_pages(i, pages, maxsize,
++						     maxpages, extraction_flags,
++						     offset0);
++	return -EFAULT;
++}
++EXPORT_SYMBOL_GPL(iov_iter_extract_pages);
 
