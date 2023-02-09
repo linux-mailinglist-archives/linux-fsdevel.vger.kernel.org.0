@@ -2,77 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B3BE169116B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 20:36:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32F93691175
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 20:38:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230165AbjBITg0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 14:36:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58194 "EHLO
+        id S230175AbjBITi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 14:38:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229765AbjBITgZ (ORCPT
+        with ESMTP id S229525AbjBITi0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 14:36:25 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6347140C1
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 11:36:23 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id j25so2913285wrc.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 11:36:23 -0800 (PST)
+        Thu, 9 Feb 2023 14:38:26 -0500
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE52F457E6;
+        Thu,  9 Feb 2023 11:38:25 -0800 (PST)
+Received: by mail-io1-xd2b.google.com with SMTP id y2so1102202iot.4;
+        Thu, 09 Feb 2023 11:38:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WY1X/c7e5Z92+OMmg4xbOvYoJirbhLhMQkOVuZxTbAc=;
-        b=HpNataVxmxBBguwOhOWdkBLvuG7E72utIRmGrRWfumQf/7LSHKz2DmnbWLl7i7CwIa
-         kubb6cZfJqtTPz4iOILzRcOsFWYWstwg/DAwK0/5WnU8e6BtpUALpxd611815udXP0Bz
-         pHSLnZDLlYJY0wrv4dfF/rWX7DHdrmcoWXY5g=
+        bh=6Jdh4VULJ6F+h4MAiYTsb2LTjagqLadibqRKQMHpvOE=;
+        b=eZBK7bsG54sHx0p7PAQy2iX/zWTjNGA/Qd2/ZdxdVyvp0yXbv8yOGGG3EWPo99DRtz
+         D41JPGxHrKpnMA2ZENevlEV6JriYGPcTumXjSnsCJZwn5IrH5m3MDKobvNnUu2QaxaNv
+         +WiUlme18JXjpbjqrOg7uTaDWpVBzldrKQFEOrgFo/ISWjXyFrg8oofCUNE5uxKa4fQa
+         qqPF0R2NmRh4nBz+9U9FaEP7AHFZCLVSA96LHlfeeqzN265jRXHEQ9O8YMYBZcK9PUrQ
+         esy+bkwI35pyARvJmzRbZzKGOtkGzjGwSFU7dXqiDzoO47SEOS2+of7u8fQwhZszP01/
+         yFIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WY1X/c7e5Z92+OMmg4xbOvYoJirbhLhMQkOVuZxTbAc=;
-        b=rDcPD4T4mOUMOYkJZwnHljrEgWpzauRDR1wqAOC7C4PlMF5jMcm3wHi6YifPqsmjTL
-         MXdCud8AnS0mq/CdX++SEiKi2ppJsXd5Y2d9rIplHFqq2bKwxI8uP0Dng2oF7IsOfY/b
-         Xctpi3IOV2yy8b/kQLlKRraFZAOZ6DDNy1UAvVNsRIiUgxMpWXlz+ZrDd72bvM/D2H+d
-         oF+kaC0tNKza7CWkNidkOfle7GIp/vinRysgO5pnTThq3gDuGpJ9G8rQVAnXAfyRHdlX
-         bnQ17OTZoc7vp3HE7zSmil/oN9dkXM54hDkiCYKuCzd1YQB6IlGuculPzUTlUy0xvdun
-         VHAg==
-X-Gm-Message-State: AO0yUKXjCBRNBac2X8/IVTo5Cva3F7ym85fDmbh9TcTsB0DIat3c4upS
-        Sz2LRW1NiN1IYuSWpy9CrAQm1NSC6OoViih+wHk=
-X-Google-Smtp-Source: AK7set++aoCDB4Ghq3ziADReBt8nT3ubfxmrJEYp3Srfzezoo8KJI6IWX71cXny9r1xRG3Eu4Vgl1A==
-X-Received: by 2002:adf:f5c8:0:b0:2c3:ed14:8319 with SMTP id k8-20020adff5c8000000b002c3ed148319mr12846955wrp.14.1675971381565;
-        Thu, 09 Feb 2023 11:36:21 -0800 (PST)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id g12-20020a5d540c000000b002bff1de8d4bsm1926993wrv.49.2023.02.09.11.36.20
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Feb 2023 11:36:21 -0800 (PST)
-Received: by mail-ej1-f48.google.com with SMTP id dr8so9559936ejc.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 11:36:20 -0800 (PST)
-X-Received: by 2002:a17:906:4e46:b0:87a:7098:ca09 with SMTP id
- g6-20020a1709064e4600b0087a7098ca09mr2445413ejw.78.1675971380625; Thu, 09 Feb
- 2023 11:36:20 -0800 (PST)
+        bh=6Jdh4VULJ6F+h4MAiYTsb2LTjagqLadibqRKQMHpvOE=;
+        b=Svdjr43RbYt5Jx0V4oC/1rRJVds3RQ2vK8eAaClS5JELVPoFPvrODxkEpi34s4Qhua
+         UTAN+Hc3dxki0miSH6a3v0Ys7cp2tbTYAa/AQj50XGwQDqP/Bb+QQOb2wbiqEURbc2aD
+         uHl+5NMRLUWdQIMhn74QIaS2gbX6ZRCaHYNmXoNahRXKogoHlj1XW7zn+/pJH//Pfwm/
+         E6fgKopLJ33x3CroIspNXANkc5elwrhLNcCqs/uYF30C7tLgC5rtwrF03eX1hrOTouEo
+         BGyAqOg3j5ezp3llTE+TY1N4KxfHub2EicRuD1aZDu0/MAiT2ktaCcEB0Bkmw/9kiqyA
+         lGkA==
+X-Gm-Message-State: AO0yUKV6g7DJlh1MVTl2SKW9rO9kbwtGPDzGCwA12GdA3WafOkQbgPZ2
+        Iv3A8xPde789SDpUS8+59DyV/V7K2JCphaKp19E=
+X-Google-Smtp-Source: AK7set/SRwK2j1K6/X1ct4MebC7m2uZKEvZh2iPzd2xeOuLUL++LqTwMGYRVKWqAXTayJdIPTpmag/h5t3V8QGEoDGA=
+X-Received: by 2002:a02:b80a:0:b0:3b0:5216:258a with SMTP id
+ o10-20020a02b80a000000b003b05216258amr7282175jam.23.1675971505154; Thu, 09
+ Feb 2023 11:38:25 -0800 (PST)
 MIME-Version: 1.0
-References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
- <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com> <f6c6d42e-337a-bbab-0d36-cfcc915d26c6@samba.org>
-In-Reply-To: <f6c6d42e-337a-bbab-0d36-cfcc915d26c6@samba.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 9 Feb 2023 11:36:02 -0800
-X-Gmail-Original-Message-ID: <CAHk-=widtNT9y-9uGMnAgyR0kzyo0XjTkExSMoGpbZgeU=+vng@mail.gmail.com>
-Message-ID: <CAHk-=widtNT9y-9uGMnAgyR0kzyo0XjTkExSMoGpbZgeU=+vng@mail.gmail.com>
-Subject: Re: copy on write for splice() from file to pipe?
-To:     Stefan Metzmacher <metze@samba.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
+References: <20230201135737.800527-1-jolsa@kernel.org> <Y+UAsr8A+xT0bUY/@krava>
+In-Reply-To: <Y+UAsr8A+xT0bUY/@krava>
+From:   Namhyung Kim <namhyung@gmail.com>
+Date:   Thu, 9 Feb 2023 11:38:13 -0800
+Message-ID: <CAM9d7cgrwyzrnDkkU2sAExonKbjSrs=p7Qyr=cww2zg4DTDBFw@mail.gmail.com>
+Subject: Re: [RFC 0/5] mm/bpf/perf: Store build id in file object
+To:     Jiri Olsa <olsajiri@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, bpf@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,16 +82,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 9, 2023 at 11:17 AM Stefan Metzmacher <metze@samba.org> wrote:
+Hi Jiri,
+
+On Thu, Feb 9, 2023 at 6:25 AM Jiri Olsa <olsajiri@gmail.com> wrote:
 >
-> Any comment about the idea of having a preadv2() flag that
-> asks for a dma copy with something like async_memcpy() instead
-> of the default that ends up in copy_user_enhanced_fast_string()?
+> On Wed, Feb 01, 2023 at 02:57:32PM +0100, Jiri Olsa wrote:
+> > hi,
+> > we have a use cases for bpf programs to use binary file's build id.
+> >
+> > After some attempts to add helpers/kfuncs [1] [2] Andrii had an idea [3]
+> > to store build id directly in the file object. That would solve our use
+> > case and might be beneficial for other profiling/tracing use cases with
+> > bpf programs.
+> >
+> > This RFC patchset adds new config CONFIG_FILE_BUILD_ID option, which adds
+> > build id object pointer to the file object when enabled. The build id is
+> > read/populated when the file is mmap-ed.
+> >
+> > I also added bpf and perf changes that would benefit from this.
 
-I guarantee that you will only slow things down with some odd async_memcpy.
+Thanks for working on this!
 
-There are zero DMA engines that do memory copying better than memcpy -
-the only way you can do better if is the destination isn't memory in
-the first place but the final device, and then we just call it "dma".
+> >
+> > I'm not sure what's the policy on adding stuff to file object, so apologies
+> > if that's out of line. I'm open to any feedback or suggestions if there's
+> > better place or way to do this.
+>
+> hi,
+> Matthew suggested on irc to consider inode for storing build id
 
-                Linus
+Yeah, that's my idea too.
+
+>
+> I tried that and it seems to have better stats wrt allocated build
+> id objects, because inode is being shared among file objects
+>
+> I took /proc/slabinfo output after running bpf tests
+>
+> - build id stored in file:
+>
+>   # name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> : tunables <limit> <batchcount> <sharedfactor> : slabdata <active_slabs> <num_slabs> <sharedavail>
+>   build_id             668    775    160   25    1 : tunables    0    0    0 : slabdata     31     31      0
+>
+> - build id stored in inode:
+>
+>   # name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> : tunables <limit> <batchcount> <sharedfactor> : slabdata <active_slabs> <num_slabs> <sharedavail>
+>   build_id             222    225    160   25    1 : tunables    0    0    0 : slabdata      9      9      0
+
+Cool!
+
+>
+>
+> I'm stranger to inode/fs/mm code so I'll spend some time checking on
+> what I possibly broke in there before I send it, but I'd appreciate
+> any early feedback ;-)
+>
+> the code is in here:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+>   inode_build_id
+>
+> I'll send another version with inode if there's no objection
+
+I'll take a look.
+
+Thanks,
+Namhyung
+
+
+> >
+> > [1] https://lore.kernel.org/bpf/20221108222027.3409437-1-jolsa@kernel.org/
+> > [2] https://lore.kernel.org/bpf/20221128132915.141211-1-jolsa@kernel.org/
+> > [3] https://lore.kernel.org/bpf/CAEf4BzaZCUoxN_X2ALXwQeFTCwtL17R4P_B_-hUCcidfyO2xyQ@mail.gmail.com/
+> > ---
+> > Jiri Olsa (5):
+> >       mm: Store build id in file object
+> >       bpf: Use file object build id in stackmap
+> >       perf: Use file object build id in perf_event_mmap_event
+> >       selftests/bpf: Add file_build_id test
+> >       selftests/bpf: Add iter_task_vma_buildid test
+> >
+> >  fs/file_table.c                                               |  3 +++
+> >  include/linux/buildid.h                                       | 17 +++++++++++++++++
+> >  include/linux/fs.h                                            |  3 +++
+> >  kernel/bpf/stackmap.c                                         |  8 ++++++++
+> >  kernel/events/core.c                                          | 43 +++++++++++++++++++++++++++++++++++++++----
+> >  lib/buildid.c                                                 | 44 ++++++++++++++++++++++++++++++++++++++++++++
+> >  mm/Kconfig                                                    |  7 +++++++
+> >  mm/mmap.c                                                     | 15 +++++++++++++++
+> >  tools/testing/selftests/bpf/prog_tests/bpf_iter.c             | 88 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  tools/testing/selftests/bpf/prog_tests/file_build_id.c        | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
+> >  tools/testing/selftests/bpf/progs/file_build_id.c             | 34 ++++++++++++++++++++++++++++++++++
+> >  tools/testing/selftests/bpf/trace_helpers.c                   | 35 +++++++++++++++++++++++++++++++++++
+> >  tools/testing/selftests/bpf/trace_helpers.h                   |  1 +
+> >  14 files changed, 413 insertions(+), 4 deletions(-)
+> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/file_build_id.c
+> >  create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+> >  create mode 100644 tools/testing/selftests/bpf/progs/file_build_id.c
