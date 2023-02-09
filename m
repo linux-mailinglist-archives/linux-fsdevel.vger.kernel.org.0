@@ -2,190 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADFE9690B13
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 14:56:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87814690B43
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 15:04:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230089AbjBIN4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 08:56:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55660 "EHLO
+        id S230327AbjBIOET (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 09:04:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbjBIN4K (ORCPT
+        with ESMTP id S229752AbjBIOES (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 08:56:10 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E80B15BA75;
-        Thu,  9 Feb 2023 05:56:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=Cc:From:To:Date:Message-ID;
-        bh=dKtYu+JDvoYPo88QxjhqydMNl2n2n4GvLT2+LdSLEZE=; b=RSJ/HI3WV2J0cJ04J79ShIlxbS
-        CSkr+mcyNOLK0gj3CsBY+ygHhIGc23/ca63ckazjFkBcuXhRxoah8M8UBQdeAmQKKZ+28b/3/+QjJ
-        M89tanyKc2WD9Qj9VrF+13gBSfEf2LEFArQlvp9lqajdjBZH70XK8Nyi5rgREufnn4RcEMJ2V1b+9
-        rbF630HSORVyZlLfvftWN7+QTaSRNz3Nf0jt9Zgzo5+fPYwpPZZe6JAQB+sendYRYFWqOMoD4md2r
-        LesyeMZK81AfOvoo8BnwooncaFxkDqexx+nQ5eaLpzJ1b1sDBEN2mJ+imhWKQEX0rF/jjd8NrHWDG
-        pVLSuF2upXe+idrWJbIFHPboVpDYmynYVTgxQiApWGow5oWA/UxiMh5g0CMHzmDGgHDYGnzWn6Ktj
-        xHSykF8JENccQsFA87iOB3mdE4sxshmdL9ECTdDvIL0e36k6J3EwCdxiEIUF/ZWMfG7gEs+deKEAe
-        IYdtGfEWpFK/pCFg3kfYxGTl;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1pQ7P7-00Cops-4s; Thu, 09 Feb 2023 13:56:01 +0000
-Message-ID: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
-Date:   Thu, 9 Feb 2023 14:55:59 +0100
+        Thu, 9 Feb 2023 09:04:18 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CB5A47402;
+        Thu,  9 Feb 2023 06:04:17 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id r18so1485462wmq.5;
+        Thu, 09 Feb 2023 06:04:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/PUxryEd4dhrO7bv0OIAXlQqcpfOYRHX35DELWBAPHE=;
+        b=iZJRZxrJefggzAC+FvHDTR5gLHr2uHOtDx8X2MdTdeIgzrzDG6+ByN0Vf4uv9rbdJa
+         0MDoPsaegm6+PTbsCeRrIagMBvqPuzr2uZgBUl5tcxm8ne9n8LsmVBYHokjdCxILpZxg
+         lqpWDghfBS1ywAJqFT7yJs3O/js1VCARGvfb7N76nxzSNSLWejE0lU+9nvtZs9HwdpBO
+         d1lnFgGgMUdH+V+IxsKZnRkgPWhYRON4NyfgJEElTfQP3AOo0Gruo8GPcnQtKou34Kb6
+         cT46EXKlM1V7w/af/QS5WDqFwniA7H85MWFGufBNMoBZzK45yyPtv4FWFgwZQZXUTKK3
+         sRkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/PUxryEd4dhrO7bv0OIAXlQqcpfOYRHX35DELWBAPHE=;
+        b=KIOsmbXl+yWcrOYTSYAWC825vtPZM1GWyog64ddDYRmD2s6tVT2j+8oNS8jjdeNNUg
+         6M165mzeYAp4b9/l4rOi45Y4cng5VKsDBxrzs2Oi72oKGCs3kaHG3svUlDtLsS0UZEql
+         c7OUMErIIFGDksnQ8vxA5C1uDNxx0vkFfHCefioYPh8/CjsrcGEMrdK9H5TTmQ4n6T4r
+         EYWabdfbO7toX9CbWA18TkyctderQbgM2GmJeKTYSeke5PdZyRmdy/mcFspre+OzUDWV
+         A93Crylk62R4JSewmTMZIYaSmimILLoH7ZU66VDBwbLi/fyrm7rEP0HxIZBaTRFgnga8
+         KNYg==
+X-Gm-Message-State: AO0yUKULhVaANVjIAQptgGxq5RKCKLTZ+KEk3aozw2hiUO2bbIJBnyKC
+        HMR2SsRPjkWxR3MI1Cz5hSA=
+X-Google-Smtp-Source: AK7set+dQJhhuPXnb9xc8cpZgho9rV47XxrGh3m7mcorhUF5e31qI+vipv6EPg0wYlRKPwf3t1OkIg==
+X-Received: by 2002:a05:600c:3d0e:b0:3df:efdd:9dc7 with SMTP id bh14-20020a05600c3d0e00b003dfefdd9dc7mr6197494wmb.10.1675951455884;
+        Thu, 09 Feb 2023 06:04:15 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id u6-20020adfed46000000b002bf95500254sm1378133wro.64.2023.02.09.06.04.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Feb 2023 06:04:15 -0800 (PST)
+From:   Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date:   Thu, 9 Feb 2023 15:04:12 +0100
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: [PATCH RFC 5/5] selftests/bpf: Add iter_task_vma_buildid test
+Message-ID: <Y+T9XNkDWla1+3NV@krava>
+References: <20230201135737.800527-1-jolsa@kernel.org>
+ <20230201135737.800527-6-jolsa@kernel.org>
+ <CAEf4BzYGQGdydeVbZf5YTnDTvGduA_wbeQ=t5nSc6Wi=S17+=A@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-From:   Stefan Metzmacher <metze@samba.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
-Subject: copy on write for splice() from file to pipe?
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzYGQGdydeVbZf5YTnDTvGduA_wbeQ=t5nSc6Wi=S17+=A@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus and others,
+On Wed, Feb 08, 2023 at 04:01:42PM -0800, Andrii Nakryiko wrote:
 
-as written in a private mail before, I'm currently trying to
-make use of IORING_OP_SPLICE in order to get zero copy support
-in Samba.
+SNIP
 
-The most important use cases are 8 Mbytes reads and writes to
-files. where "memcpy" (at the lowest end copy_user_enhanced_fast_string())
-is the obvious performance killer.
+> > +static void test_task_vma_buildid(void)
+> > +{
+> > +       int err, iter_fd = -1, proc_maps_fd = -1;
+> > +       struct bpf_iter_task_vma_buildid *skel;
+> > +       char key[D_PATH_BUF_SIZE], *prev_key;
+> > +       char bpf_build_id[BUILDID_STR_SIZE];
+> > +       int len, files_fd, i, cnt = 0;
+> > +       struct build_id val;
+> > +       char *build_id;
+> > +       char c;
+> > +
+> > +       skel = bpf_iter_task_vma_buildid__open();
+> > +       if (!ASSERT_OK_PTR(skel, "bpf_iter_task_vma_buildid__open"))
+> > +               return;
+> > +
+> > +       err = bpf_iter_task_vma_buildid__load(skel);
+> > +       if (!ASSERT_OK(err, "bpf_iter_task_vma_buildid__load"))
+> > +               goto out;
+> 
+> minor: you can do __open_and_load() in one step
 
-I have a prototype that offers really great performance
-avoiding "memcpy" by using splice() (in order to get async IORING_OP_SPLICE).
+right, I copied that from another test, but removed all the
+setup in between, so we can actually call just __open_and_load
 
-So we have two cases:
+SNIP
 
-1. network -> socket -> splice -> pipe -> splice -> file -> storage
+> > +               memset(bpf_build_id, 0x0, sizeof(bpf_build_id));
+> > +               for (i = 0; i < val.sz; i++) {
+> > +                       sprintf(bpf_build_id + i*2, "%02x",
+> > +                               (unsigned char) val.data[i]);
+> > +               }
+> > +
+> > +               if (!ASSERT_OK(read_buildid(key, &build_id), "read_buildid"))
+> > +                       break;
+> > +
+> > +               printf("BUILDID %s %s %s\n", bpf_build_id, build_id, key);
+> 
+> debugging leftover or intentional?
+> 
+> > +               ASSERT_OK(strncmp(bpf_build_id, build_id, strlen(bpf_build_id)), "buildid_cmp");
+> > +
+> > +               free(build_id);
+> > +               prev_key = key;
+> > +               cnt++;
+> > +       }
+> > +
+> > +       printf("checked %d files\n", cnt);
+> 
+> ditto
 
-2. storage -> file -> splice -> pipe -> splice -> socket -> network
+both intentional, first one can go out I guess, but the
+number of checked files seemed interesting to me ;-)
 
-With 1. I guess everything can work reliable, once
-the pages are created/filled in the socket receive buffer
-they are used exclusively and they won't be shared on
-the way to the file. Which means we can be sure that
-data arrives unmodified in the file(system).
+SNIP
 
-But with 2. there's a problem, as the pages from the file,
-which are spliced into the pipe are still shared without
-copy on write with the file(system). It means writes to the file
-after the first splice modify the content of the spliced pages!
-So the content may change uncontrolled before it reaches the network!
-I created a little example that demonstrates the problem (see below),
-it gives the following output:
+> > diff --git a/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+> > new file mode 100644
+> > index 000000000000..25e2179ae5f4
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+> > @@ -0,0 +1,49 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +#include "bpf_iter.h"
+> > +#include <bpf/bpf_helpers.h>
+> > +#include <string.h>
+> > +
+> > +char _license[] SEC("license") = "GPL";
+> > +
+> > +#define VM_EXEC                0x00000004
+> > +#define D_PATH_BUF_SIZE        1024
+> > +
+> > +struct {
+> > +       __uint(type, BPF_MAP_TYPE_HASH);
+> > +       __uint(max_entries, 10000);
+> > +       __type(key, char[D_PATH_BUF_SIZE]);
+> > +       __type(value, struct build_id);
+> > +} files SEC(".maps");
+> > +
+> > +static char tmp_key[D_PATH_BUF_SIZE];
+> > +static struct build_id tmp_data;
+> > +
+> > +SEC("iter/task_vma") int proc_maps(struct bpf_iter__task_vma *ctx)
+> 
+> nit: let's keep SEC() on separate line from function itself
 
-> open(O_TMPFILE) => ffd[3]
-> pwrite(count=PIPE_BUF,ofs=PIPE_BUF) 0x1f sret[4096]
-> pipe() => ret[0]
-> splice(count=PIPE_BUF*2,ofs=0) sret[8192]
-> pwrite(count=PIPE_BUF,ofs=0) 0xf0 sret[4096]
-> pwrite(count=PIPE_BUF,ofs=PIPE_BUF) 0xf0 sret[4096]
-> read(from_pipe, count=PIPE_BUF) sret[4096]
-> memcmp() at ofs=0, expecting 0x00 => ret[240]
-> memcmp() at ofs=0, checking for 0xf0 => ret[0]
-> read(from_pipe, count=PIPE_BUF) sret[4096]
-> memcmp() at ofs=PIPE_BUF, expecting 0x1f => ret[209]
-> memcmp() at ofs=PIPE_BUF, checking for 0xf0 => ret[0]
+ok
 
-After reading from the pipe we get the values we have written to
-the file instead of the values we had at the time of splice.
+> 
+> > +{
+> > +       struct vm_area_struct *vma = ctx->vma;
+> > +       struct seq_file *seq = ctx->meta->seq;
+> > +       struct task_struct *task = ctx->task;
+> > +       unsigned long file_key;
+> > +       struct file *file;
+> > +
+> > +       if (task == (void *)0 || vma == (void *)0)
+> > +               return 0;
+> > +
+> > +       if (!(vma->vm_flags & VM_EXEC))
+> > +               return 0;
+> > +
+> > +       file = vma->vm_file;
+> > +       if (!file)
+> > +               return 0;
+> > +
+> > +       memset(tmp_key, 0x0, D_PATH_BUF_SIZE);
+> 
+> __builtin_memset() to not rely on compiler optimization?
+> 
+> > +       bpf_d_path(&file->f_path, (char *) &tmp_key, D_PATH_BUF_SIZE);
+> > +
+> > +       if (bpf_map_lookup_elem(&files, &tmp_key))
+> > +               return 0;
+> > +
+> > +       memcpy(&tmp_data, file->f_bid, sizeof(*file->f_bid));
+> 
+> same about __builtin_memcpy()
 
-For things like web servers, which mostly serve static content, this
-isn't a problem, but it is for Samba, when reads and writes may happen within
-microseconds, before the content is pushed to the network.
+ah ok, did not know that, will check.. curious what could
+go wrong by using not '__builtin_...' version?
 
-I'm wondering if there's a possible way out of this, maybe triggered by a new
-flag passed to splice.
-
-I looked through the code and noticed the existence of IOMAP_F_SHARED.
-Maybe the splice from the page cache to the pipe could set IOMAP_F_SHARED,
-while incrementing the refcount and the network driver could remove it again
-when the refcount reaches 1 again.
-
-Is there any other way we could archive something like this?
-
-In addition and/or as alternative I was thinking about a flag to
-preadv2() (and IORING_OP_READV) to indicate the use of something
-like async_memcpy(), instead of doing the copy via the cpu.
-That in combination with IORING_OP_SENDMSG_ZC would avoid "memcpy"
-on the cpu.
-
-Any hints, remarks and prototype patches are highly welcome.
-
-Thanks!
-metze
-
-#define _GNU_SOURCE         /* See feature_test_macros(7) */
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <limits.h>
-
-int main(void)
-{
-	int ffd;
-	int pfds[2];
-	char buf [PIPE_BUF] = {0, };
-	char buf2 [PIPE_BUF] = {0, };
-	ssize_t sret;
-	int ret;
-	off_t ofs;
-
-	memset(buf, 0x1f, PIPE_BUF);
-
-	ffd = open("/tmp/", O_RDWR | O_TMPFILE, S_IRUSR | S_IWUSR);
-	printf("open(O_TMPFILE) => ffd[%d]\n", ffd);
-
-	sret = pwrite(ffd, buf, PIPE_BUF, PIPE_BUF);
-	printf("pwrite(count=PIPE_BUF,ofs=PIPE_BUF) 0x1f sret[%zd]\n", sret);
-
-	ret = pipe(pfds);
-	printf("pipe() => ret[%d]\n", ret);
-
-	ofs = 0;
-	sret = splice(ffd, &ofs, pfds[1], NULL, PIPE_BUF*2, 0);
-	printf("splice(count=PIPE_BUF*2,ofs=0) sret[%zd]\n", sret);
-
-	memset(buf, 0xf0, PIPE_BUF);
-
-	sret = pwrite(ffd, buf, PIPE_BUF, 0);
-	printf("pwrite(count=PIPE_BUF,ofs=0) 0xf0 sret[%zd]\n", sret);
-	sret = pwrite(ffd, buf, PIPE_BUF, PIPE_BUF);
-	printf("pwrite(count=PIPE_BUF,ofs=PIPE_BUF) 0xf0 sret[%zd]\n", sret);
-
-	sret = read(pfds[0], buf, PIPE_BUF);
-	printf("read(from_pipe, count=PIPE_BUF) sret[%zd]\n", sret);
-
-	memset(buf2, 0x00, PIPE_BUF);
-	ret = memcmp(buf, buf2, PIPE_BUF);
-	printf("memcmp() at ofs=0, expecting 0x00 => ret[%d]\n", ret);
-	memset(buf2, 0xf0, PIPE_BUF);
-	ret = memcmp(buf, buf2, PIPE_BUF);
-	printf("memcmp() at ofs=0, checking for 0xf0 => ret[%d]\n", ret);
-
-	sret = read(pfds[0], buf, PIPE_BUF);
-	printf("read(from_pipe, count=PIPE_BUF) sret[%zd]\n", sret);
-
-	memset(buf2, 0x1f, PIPE_BUF);
-	ret = memcmp(buf, buf2, PIPE_BUF);
-	printf("memcmp() at ofs=PIPE_BUF, expecting 0x1f => ret[%d]\n", ret);
-	memset(buf2, 0xf0, PIPE_BUF);
-	ret = memcmp(buf, buf2, PIPE_BUF);
-	printf("memcmp() at ofs=PIPE_BUF, checking for 0xf0 => ret[%d]\n", ret);
-	return 0;
-}
+thanks,
+jirka
