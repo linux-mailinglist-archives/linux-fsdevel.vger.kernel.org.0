@@ -2,80 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A325690BB4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 15:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D613E690BB9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 15:29:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230258AbjBIO3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 09:29:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52560 "EHLO
+        id S230460AbjBIO3l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 09:29:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbjBIO3M (ORCPT
+        with ESMTP id S230431AbjBIO3Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 09:29:12 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75CB55C4BF
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 06:28:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675952910;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8hi8vlI22zQjSa/4dSjYwWdVgql9RWrivLUNeEtOJxM=;
-        b=cnoy4axX+46YBIjsO2Qgusn6Fck1PO6na+qzYB7psmNVFBuap7bMInYUSK0qzvt22ePJ1C
-        5gTqsfEu11+9GHfGl+WZVlvwVK3btr2It0t3SYYhXBUifnDrYq6T7s1z4/cVXsAhIxf8Ss
-        p2hvKVExDPHi3qyq3M6L7/OCCrhjTh4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-607-GO1tZjiEOY-IYsl24aKxrw-1; Thu, 09 Feb 2023 09:28:27 -0500
-X-MC-Unique: GO1tZjiEOY-IYsl24aKxrw-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DEEC9885620;
-        Thu,  9 Feb 2023 14:28:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3466E492C3F;
-        Thu,  9 Feb 2023 14:28:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20230208145335.307287-3-willy@infradead.org>
-References: <20230208145335.307287-3-willy@infradead.org> <20230208145335.307287-1-willy@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     dhowells@redhat.com, linux-xfs@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 2/3] afs: Split afs_pagecache_valid() out of afs_validate()
+        Thu, 9 Feb 2023 09:29:24 -0500
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF7E15C89D;
+        Thu,  9 Feb 2023 06:29:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=3gvgtgLgSW3u20gNVHqhv6UVsa84fGHu0R5hZms47Ng=; b=vt61NckReEUeqnTpd0R9KxOLEI
+        x96E4ZkczjYB62LIb2qijmoleFW85rS+f/TyFBP9IuDVmEsOJ6Wzs6I/LHjM1JAdP/VAwbAfmukSZ
+        lM7jsILULSIb/mSCibXUvb+gYzr6jI1dpOVCCh2HR/bcbsqN72/kQi9eGjmSvgpaWAysHCarFnh0A
+        8KLbX+MaegIjPKT/hHUIUEJQWsoz551S8hSN3UrHjJ10L+O3XE0QZQOD9DRQMZkOfqAQqAnYoatrG
+        c3Sq8TT/f6koGta7FSjJTCllE3Ve3B00WnaUhP+g9O2mv1caY7u4X8Y9vzxcrmYVBbs7x7MRu3Ju0
+        ZJS1lIcYUPQRA0koYly5gfaZfB4fWqQZEBPUepvNUYB38lUvML9KPeT4t8bmhMP1hrFIfLaj4faUx
+        TMS8vgaMYOQgu6oZ92Xl24R9q+D6PhYKv628UvzYhZmOmGCFZfRfmgtepoqp9lsXZY1NkmjxbWiso
+        3FPnDhPXaIkuClZRWKcpnE/m;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1pQ7vM-00Cp9C-H8; Thu, 09 Feb 2023 14:29:20 +0000
+Message-ID: <8476eee4-6227-213f-c6ab-86768d0b58c8@samba.org>
+Date:   Thu, 9 Feb 2023 15:29:18 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <684133.1675952905.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 09 Feb 2023 14:28:25 +0000
-Message-ID: <684134.1675952905@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: copy on write for splice() from file to pipe?
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API Mailing List <linux-api@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Samba Technical <samba-technical@lists.samba.org>
+References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
+ <Y+T/GE77AKzsPte9@casper.infradead.org>
+From:   Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <Y+T/GE77AKzsPte9@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox (Oracle) <willy@infradead.org> wrote:
+Am 09.02.23 um 15:11 schrieb Matthew Wilcox:
+> On Thu, Feb 09, 2023 at 02:55:59PM +0100, Stefan Metzmacher wrote:
+>> Hi Linus and others,
+>>
+>> as written in a private mail before, I'm currently trying to
+>> make use of IORING_OP_SPLICE in order to get zero copy support
+>> in Samba.
+> 
+> I have to ask why.  In a modern network, isn't all data encrypted?
 
->  extern int afs_getattr(struct mnt_idmap *idmap, const struct path *,
->  		       struct kstat *, u32, unsigned int);
->  extern int afs_setattr(struct mnt_idmap *idmap, struct dentry *, struct=
- iattr *);
+No people use plain connections for performance sensitive
+workloads and have client and server in isolated vlans.
 
-This doesn't apply to linus/master.  I'm guessing it's based on something
-else?
+> So you have to encrypt into a different buffer, and then you checksum
+> that buffer.  So it doesn't matter if writes can change the page cache
+> after you called splice(), you just need to have the data be consistent
+> so the checksum doesn't change.
 
-David
+SMB offers checksuming (signing) only as well as authenticated
+encryption.
+
+For signing only I experimented with splice() in combination with
+tee(), so that I can checksum the data after reading from tee,
+while I can still splice() into the socket.
+
+For encryption the async_memcpy flag to preadv2 could be usefull
+if we keep using userspace encryption using gnutls.
+If using the kernel crypto socket, we could also use splice to
+add the file data into the crypto functions and the same problem
+can happen, because some algorithms may encrypt and sign the data
+in separate steps and it doesn't expect the data to be changed.
+
+metze
 
