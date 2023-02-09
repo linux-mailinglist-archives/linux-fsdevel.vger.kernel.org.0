@@ -2,121 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC57868FD2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 03:34:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B417068FD52
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 03:49:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232034AbjBICdx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Feb 2023 21:33:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58446 "EHLO
+        id S230384AbjBICsp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Feb 2023 21:48:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232000AbjBICdu (ORCPT
+        with ESMTP id S232211AbjBICrt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Feb 2023 21:33:50 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E367D28843;
-        Wed,  8 Feb 2023 18:33:49 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 634686185A;
-        Thu,  9 Feb 2023 02:33:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDBC0C433EF;
-        Thu,  9 Feb 2023 02:33:45 +0000 (UTC)
-Date:   Wed, 8 Feb 2023 21:33:43 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     John Stultz <jstultz@google.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Kajetan Puchalski <kajetan.puchalski@arm.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Qais Yousef <qyousef@google.com>,
-        Daniele Di Proietto <ddiproietto@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded
- 16 with TASK_COMM_LEN
-Message-ID: <20230208213343.40ee15a5@gandalf.local.home>
-In-Reply-To: <20230208212858.477cd05e@gandalf.local.home>
-References: <20211120112738.45980-1-laoar.shao@gmail.com>
-        <20211120112738.45980-8-laoar.shao@gmail.com>
-        <Y+QaZtz55LIirsUO@google.com>
-        <CAADnVQ+nf8MmRWP+naWwZEKBFOYr7QkZugETgAVfjKcEVxmOtg@mail.gmail.com>
-        <CANDhNCo_=Q3pWc7h=ruGyHdRVGpsMKRY=C2AtZgLDwtGzRz8Kw@mail.gmail.com>
-        <20230208212858.477cd05e@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Wed, 8 Feb 2023 21:47:49 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C863EB5E;
+        Wed,  8 Feb 2023 18:44:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VBRf3kzezRGAcEqaQ6FqqxXIsPA/O+8ixt4Mt6EZ1iE=; b=Tr2Y/7RFlxGZWNQeZTUv4kN+Wb
+        /Fg0Wmke6hO89KsqNkjQgdkSCyzYuXQzbJ6N3A+Wl8Q4GSlr+S8uujRVcWZaoZiyxRC+bP2rGC6hW
+        VqsD2KZONdU6/BHyHQvgePlgXveJmGJkekvQueBRszL67cAr7dxW6vJKExw+NKQAxdIhuDh5UKXfI
+        mQQaQpz04gMPZerXq9H0bl+t18EDrgTskDBdThVYBCDSW1CeGr+tO4Zf+oJ3o9362h6MLs3SYsZRE
+        boyRUfBpDGh8BtFU+ZmGdxX3jsYwQ7UwplcmKo0F2cWMG/G5gTIpFvhbRZyC4SrjFPmtvpory64EX
+        hyhYTQCw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pPwv6-001kY4-Av; Thu, 09 Feb 2023 02:44:20 +0000
+Date:   Thu, 9 Feb 2023 02:44:20 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH 1/3] xfs: Remove xfs_filemap_map_pages() wrapper
+Message-ID: <Y+ReBH8DFxf+Iab4@casper.infradead.org>
+References: <20230208145335.307287-1-willy@infradead.org>
+ <20230208145335.307287-2-willy@infradead.org>
+ <Y+PQN8cLdOXST20D@magnolia>
+ <Y+PX5tPyOP2KQqoD@casper.infradead.org>
+ <20230208215311.GC360264@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230208215311.GC360264@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 8 Feb 2023 21:28:58 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, Feb 09, 2023 at 08:53:11AM +1100, Dave Chinner wrote:
+> > If XFS really needs it,
+> > it can trylock the semaphore and return 0 if it fails, falling back to
+> > the ->fault path.  But I don't think XFS actually needs it.
+> >
+> > The ->map_pages path trylocks the folio, checks the folio->mapping,
+> > checks uptodate, then checks beyond EOF (not relevant to hole punch).
+> > Then it takes the page table lock and puts the page(s) into the page
+> > tables, unlocks the folio and moves on to the next folio.
+> > 
+> > The hole-punch path, like the truncate path, takes the folio lock,
+> > unmaps the folio (which will take the page table lock) and removes
+> > it from the page cache.
+> > 
+> > So what's the race?
+> 
+> Hole punch is a multi-folio operation, so while we are operating on
+> invalidating one folio, another folio in the range we've already
+> invalidated could be instantiated and mapped, leaving mapped
+> up-to-date pages over a range we *require* the page cache to empty.
 
-> And this breaks much more than android. It will break trace-cmd, rasdaemon
-> and perf (if it's not using BTF). This change very much "Breaks userspace!"
-> And requires a kernel workaround, not a user space one.
-
-OK, so it doesn't break perf, trace-cmd and rasdaemon, because the enum is
-only needed in the print_fmt part. It can handle it in the field portion.
-
-That is:
-
-
-system: sched
-name: sched_switch
-ID: 285
-format:
-	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
-	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
-	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
-	field:int common_pid;	offset:4;	size:4;	signed:1;
-
-	field:char prev_comm[TASK_COMM_LEN];	offset:8;	size:16;	signed:0;
-                             ^^^^^^^^^^^^^^                          ^^
-                            is ignored                             is used
-
-
-	field:pid_t prev_pid;	offset:24;	size:4;	signed:1;
-	field:int prev_prio;	offset:28;	size:4;	signed:1;
-	field:long prev_state;	offset:32;	size:8;	signed:1;
-	field:char next_comm[TASK_COMM_LEN];	offset:40;	size:16;	signed:0;
-	field:pid_t next_pid;	offset:56;	size:4;	signed:1;
-	field:int next_prio;	offset:60;	size:4;	signed:1;
-
-print fmt: "prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d", REC->prev_comm, REC->prev_pid, REC->prev_prio, (REC->prev_state & ((((0x00000000 | 0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 | 0x00000040) + 1) << 1) - 1)) ? __print_flags(REC->prev_state & ((((0x00000000 | 0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 | 0x00000040) + 1) << 1) - 1), "|", { 0x00000001, "S" }, { 0x00000002, "D" }, { 0x00000004, "T" }, { 0x00000008, "t" }, { 0x00000010, "X" }, { 0x00000020, "Z" }, { 0x00000040, "P" }, { 0x00000080, "I" }) : "R", REC->prev_state & (((0x00000000 | 0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 | 0x00000040) + 1) << 1) ? "+" : "", REC->next_comm, REC->next_pid, REC->next_prio
-
-   ^^^^^^^
-
-Is what requires the conversions. So I take that back. It only breaks
-perfetto, and that's because it writes its own parser and doesn't use
-libtraceevent.
-
--- Steve
-
+Nope.  ->map_pages is defined to _not_ instantiate new pages.
+If there are uptodate pages in the page cache, they can be mapped, but
+missing pages will be skipped, and left to ->fault to bring in.
 
