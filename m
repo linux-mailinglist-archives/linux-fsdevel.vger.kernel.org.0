@@ -2,295 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4AC269102F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 19:16:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01F45691118
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 20:17:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbjBISQh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 13:16:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35632 "EHLO
+        id S230014AbjBITRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 14:17:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229867AbjBISQg (ORCPT
+        with ESMTP id S230005AbjBITRO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 13:16:36 -0500
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB35643F6
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 10:16:33 -0800 (PST)
-Received: by mail-qv1-xf33.google.com with SMTP id u16so1591355qvp.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 10:16:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D17ul6Jv4BBsV+2Jo6JXzyrGGRmbOMiujl+Liy7jNKU=;
-        b=Ym+CXKOtcv8hciunQy57PF9+Z0g9lkZnEGbxg0LeHnfu/JqGR+eXCyBLaJNHe2a1gB
-         RA77v7i9vAW3zCN/HYYrnibeS1rILcYRPWFAbU/mBmjZZm0l8+f1M417b/mqwPOPVQDY
-         uEBxLZpogxT1gue/5pPtX+xiHXuqlEuy0Coi0J2u3USmPmA2W9cOU8/XpJiJk8CS852B
-         ejQEBszFP3wzyp+8Lac5VDTaDfGAB/M4Zb6goMSfStqcOGEDTpf01j+sYhEPjGl/1mXf
-         CTXdW8E+gSiGAe4/HkAr13WDVdah+jTZsJw2drmrwOJQy4C5Ul9NJJMndD3aDclHNkBe
-         Hk3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D17ul6Jv4BBsV+2Jo6JXzyrGGRmbOMiujl+Liy7jNKU=;
-        b=Ew3efh+B7GQjmVQSJ7hMrbT8yDHf7NUedSpyVVTCr3qKwhcbHazZu5ayRc3adsU5Fd
-         XQopSoJnsiAXoOogGGsYU788/kVVFWqlVKrU5kwz7GB1WTWU0L0dytlXQj8VLWrax1Nh
-         Q2Db4ocZ49h9R9Yp/G+2oE4Ip5wuNbvLb4Bx79OSToawpen2GVX2BEjL9rMHaR4qSeVx
-         KCQT55DGw0iX0ZSsfBfTysWKp8xvCel7/GwaKfDORmHsWMUFowAXu2lyPCmjshvPgzyV
-         MuRdwYm2Xb3gsnKwX7t7OVWEteehopaUEAQlaRwqYYu8Knb7TwkJyWZjKIhTKTyn1Uju
-         XfwQ==
-X-Gm-Message-State: AO0yUKUkRprWKhxexFbVoe7kaqz4z19qtFzGF/wP+hgDrf6zoqVy9zoc
-        1Wktu+yPXf7H3rmlUHGxeAJE5IBB1CVANby+kd1F3A==
-X-Google-Smtp-Source: AK7set9/asfDGBIlS6FIxPCSSF0J5s4zfbRpUSo/lPaWYG0FFjA+m1JuZQPdJzdk/PLzyIx6cdEIqfKndQA7GHYwaXM=
-X-Received: by 2002:a0c:f302:0:b0:56e:8d82:742d with SMTP id
- j2-20020a0cf302000000b0056e8d82742dmr49876qvl.34.1675966592638; Thu, 09 Feb
- 2023 10:16:32 -0800 (PST)
+        Thu, 9 Feb 2023 14:17:14 -0500
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D3093F9;
+        Thu,  9 Feb 2023 11:17:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=uyuS50vZlHGk1xF8iynXmse5jo9/UIHiJy4O4eY3ZgY=; b=if8hFpG9EdXiPs0+56kdShigN0
+        m07Oxr9hsWdLL1IgEA7zbrDUNQNH93MPtMFlfyuUduoqhzUIdok9lVzpfLYOc1OJApHeLMMrzyd9T
+        pfHqcvasAnxr0JSvNozSSHeo4CfyZDdh8QoiPd+0iLrUtTjvl8qqlx0LmVGNydWQHr13HSjDjD/HC
+        Jvm+RoDceZrLi8mL2Xu5ZWacU5Onyz1ktUaqz5TfUIJ9s/9rsHKIeCHCn5ly7EhsIvDVFAoZo5DQl
+        BdDJKc6yyOPvuGw7ZCdXx36W4hnuzlESLA1zsdWzUilFX1PaE/FzAwMJv3k2DIb0mKL4HY2qdIKNJ
+        6rzb7DL2RGQlybkez6OcRxe8/NNnfopXrURMkNkjZKb8JlY0q/E5DV6L+GB2uEMFYcd4640Z9onzo
+        hYkOZxGGSEIfq6laocAMCjKzmnpEnCASwMjUwblNuSiKVwHV6LB5DDPbmf8T5mRQJMR60sR3yk4uc
+        2sJi2tZt8YacNuC/nhSTbN3U;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1pQCPp-00CrYI-JG; Thu, 09 Feb 2023 19:17:05 +0000
+Message-ID: <f6c6d42e-337a-bbab-0d36-cfcc915d26c6@samba.org>
+Date:   Thu, 9 Feb 2023 20:17:05 +0100
 MIME-Version: 1.0
-References: <20230207035139.272707-1-shiyn.lin@gmail.com>
-In-Reply-To: <20230207035139.272707-1-shiyn.lin@gmail.com>
-From:   Pasha Tatashin <pasha.tatashin@soleen.com>
-Date:   Thu, 9 Feb 2023 13:15:56 -0500
-Message-ID: <CA+CK2bBt0Gujv9BdhghVkbFRirAxCYXbpH-nquccPsKGnGwOBQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] Introduce Copy-On-Write to Page Table
-To:     Chih-En Lin <shiyn.lin@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Nadav Amit <namit@vmware.com>, Barry Song <baohua@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Yang Shi <shy828301@gmail.com>, Peter Xu <peterx@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Zach O'Keefe" <zokeefe@google.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Hugh Dickins <hughd@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Yu Zhao <yuzhao@google.com>, Juergen Gross <jgross@suse.com>,
-        Tong Tiangen <tongtiangen@huawei.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Li kunyu <kunyu@nfschina.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Gautam Menghani <gautammenghani201@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Brown <broonie@kernel.org>, Will Deacon <will@kernel.org>,
-        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Barret Rhoden <brho@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Dinglan Peng <peng301@purdue.edu>,
-        Pedro Fonseca <pfonseca@purdue.edu>,
-        Jim Huang <jserv@ccns.ncku.edu.tw>,
-        Huichun Feng <foxhoundsk.tw@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: copy on write for splice() from file to pipe?
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API Mailing List <linux-api@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Samba Technical <samba-technical@lists.samba.org>
+References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
+ <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
+From:   Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 6, 2023 at 10:52 PM Chih-En Lin <shiyn.lin@gmail.com> wrote:
->
-> v3 -> v4
-> - Add Kconfig, CONFIG_COW_PTE, since some of the architectures, e.g.,
->   s390 and powerpc32, don't support the PMD entry and PTE table
->   operations.
-> - Fix unmatch type of break_cow_pte_range() in
->   migrate_vma_collect_pmd().
-> - Don=E2=80=99t break COW PTE in folio_referenced_one().
-> - Fix the wrong VMA range checking in break_cow_pte_range().
-> - Only break COW when we modify the soft-dirty bit in
->   clear_refs_pte_range().
-> - Handle do_swap_page() with COW PTE in mm/memory.c and mm/khugepaged.c.
-> - Change the tlb flush from flush_tlb_mm_range() (x86 specific) to
->   tlb_flush_pmd_range().
-> - Handle VM_DONTCOPY with COW PTE fork.
-> - Fix the wrong address and invalid vma in recover_pte_range().
-> - Fix the infinite page fault loop in GUP routine.
->   In mm/gup.c:follow_pfn_pte(), instead of calling the break COW PTE
->   handler, we return -EMLINK to let the GUP handles the page fault
->   (call faultin_page() in __get_user_pages()).
-> - return not_found(pvmw) if the break COW PTE failed in
->   page_vma_mapped_walk().
-> - Since COW PTE has the same result as the normal COW selftest, it
->   probably passed the COW selftest.
->
->         # [RUN] vmsplice() + unmap in child ... with hugetlb (2048 kB)
->         not ok 33 No leak from parent into child
->         # [RUN] vmsplice() + unmap in child with mprotect() optimization =
-... with hugetlb (2048 kB)
->         not ok 44 No leak from parent into child
->         # [RUN] vmsplice() before fork(), unmap in parent after fork() ..=
-. with hugetlb (2048 kB)
->         not ok 55 No leak from child into parent
->         # [RUN] vmsplice() + unmap in parent after fork() ... with hugetl=
-b (2048 kB)
->         not ok 66 No leak from child into parent
->
->         Bail out! 4 out of 147 tests failed
->         # Totals: pass:143 fail:4 xfail:0 xpass:0 skip:0 error:0
->   See the more information about anon cow hugetlb tests:
->     https://patchwork.kernel.org/project/linux-mm/patch/20220927110120.10=
-6906-5-david@redhat.com/
->
->
-> v3: https://lore.kernel.org/linux-mm/20221220072743.3039060-1-shiyn.lin@g=
-mail.com/T/
->
-> RFC v2 -> v3
-> - Change the sysctl with PID to prctl(PR_SET_COW_PTE).
-> - Account all the COW PTE mapped pages in fork() instead of defer it to
->   page fault (break COW PTE).
-> - If there is an unshareable mapped page (maybe pinned or private
->   device), recover all the entries that are already handled by COW PTE
->   fork, then copy to the new one.
-> - Remove COW_PTE_OWNER_EXCLUSIVE flag and handle the only case of GUP,
->   follow_pfn_pte().
-> - Remove the PTE ownership since we don't need it.
-> - Use pte lock to protect the break COW PTE and free COW-ed PTE.
-> - Do TLB flushing in break COW PTE handler.
-> - Handle THP, KSM, madvise, mprotect, uffd and migrate device.
-> - Handle the replacement page of uprobe.
-> - Handle the clear_refs_write() of fs/proc.
-> - All of the benchmarks dropped since the accounting and pte lock.
->   The benchmarks of v3 is worse than RFC v2, most of the cases are
->   similar to the normal fork, but there still have an use case
->   (TriforceAFL) is better than the normal fork version.
->
-> RFC v2: https://lore.kernel.org/linux-mm/20220927162957.270460-1-shiyn.li=
-n@gmail.com/T/
->
-> RFC v1 -> RFC v2
-> - Change the clone flag method to sysctl with PID.
-> - Change the MMF_COW_PGTABLE flag to two flags, MMF_COW_PTE and
->   MMF_COW_PTE_READY, for the sysctl.
-> - Change the owner pointer to use the folio padding.
-> - Handle all the VMAs that cover the PTE table when doing the break COW P=
-TE.
-> - Remove the self-defined refcount to use the _refcount for the page
->   table page.
-> - Add the exclusive flag to let the page table only own by one task in
->   some situations.
-> - Invalidate address range MMU notifier and start the write_seqcount
->   when doing the break COW PTE.
-> - Handle the swap cache and swapoff.
->
-> RFC v1: https://lore.kernel.org/all/20220519183127.3909598-1-shiyn.lin@gm=
-ail.com/
->
-> ---
->
-> Currently, copy-on-write is only used for the mapped memory; the child
-> process still needs to copy the entire page table from the parent
-> process during forking. The parent process might take a lot of time and
-> memory to copy the page table when the parent has a big page table
-> allocated. For example, the memory usage of a process after forking with
-> 1 GB mapped memory is as follows:
+Hi Linus,
 
-For some reason, I was not able to reproduce performance improvements
-with a simple fork() performance measurement program. The results that
-I saw are the following:
+> Adding Jens, because he's one of the main splice people. You do seem
+> to be stepping on his work ;)
+> 
+> Jens, see
+> 
+>    https://lore.kernel.org/lkml/0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org
 
-Base:
-Fork latency per gigabyte: 0.004416 seconds
-Fork latency per gigabyte: 0.004382 seconds
-Fork latency per gigabyte: 0.004442 seconds
-COW kernel:
-Fork latency per gigabyte: 0.004524 seconds
-Fork latency per gigabyte: 0.004764 seconds
-Fork latency per gigabyte: 0.004547 seconds
+Ok, thanks! Maybe Jens should apear in the output of:
 
-AMD EPYC 7B12 64-Core Processor
-Base:
-Fork latency per gigabyte: 0.003923 seconds
-Fork latency per gigabyte: 0.003909 seconds
-Fork latency per gigabyte: 0.003955 seconds
-COW kernel:
-Fork latency per gigabyte: 0.004221 seconds
-Fork latency per gigabyte: 0.003882 seconds
-Fork latency per gigabyte: 0.003854 seconds
+scripts/get_maintainer.pl fs/splice.c
 
-Given, that page table for child is not copied, I was expecting the
-performance to be better with COW kernel, and also not to depend on
-the size of the parent.
+> On Thu, Feb 9, 2023 at 5:56 AM Stefan Metzmacher <metze@samba.org> wrote:
+>>
+>> So we have two cases:
+>>
+>> 1. network -> socket -> splice -> pipe -> splice -> file -> storage
+>>
+>> 2. storage -> file -> splice -> pipe -> splice -> socket -> network
+>>
+>> With 1. I guess everything can work reliable [..]
+>>
+>> But with 2. there's a problem, as the pages from the file,
+>> which are spliced into the pipe are still shared without
+>> copy on write with the file(system).
+> 
+> Well, honestly, that's really the whole point of splice. It was
+> designed to be a way to share the storage data without having to go
+> through a copy.
 
-Test program:
 
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <sys/mman.h>
-#include <sys/types.h>
+>> I'm wondering if there's a possible way out of this, maybe triggered by a new
+>> flag passed to splice.
+> 
+> Not really.
+> 
+> So basically, you cannot do "copy on write" on a page cache page,
+> because that breaks sharing.
+> 
+> You *want* the sharing to break, but that's because you're violating
+> what splice() was for, but think about all the cases where somebody is
+> just using mmap() and expects to see the file changes.
+> 
+> You also aren't thinking of the case where the page is already mapped
+> writably, and user processes may be changing the data at any time.
 
-#define USEC    1000000
-#define GIG     (1ul << 30)
-#define NGIG    32
-#define SIZE    (NGIG * GIG)
-#define NPROC   16
+I do because we're using that in our tdb library, but I hoped there would be
+a way out...
 
-void main() {
-        int page_size =3D getpagesize();
-        struct timeval start, end;
-        long duration, i;
-        char *p;
+>> I looked through the code and noticed the existence of IOMAP_F_SHARED.
+> 
+> Yeah, no. That's a hacky filesystem thing. It's not even a flag in
+> anything core like 'struct page', it's just entirely internal to the
+> filesystem itself.
 
-        p =3D mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
-                 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        if (p =3D=3D MAP_FAILED) {
-                perror("mmap");
-                exit(1);
-        }
-        madvise(p, SIZE, MADV_NOHUGEPAGE);
+Ok, I guess it's used for shared blocks in the filesystems,
+in order to support things like cow support in order to allow
+snapshots, correct?
 
-        /* Touch every page */
-        for (i =3D 0; i < SIZE; i +=3D page_size)
-                p[i] =3D 0;
+>> Is there any other way we could archive something like this?
+> 
+> I suspect you simply want to copy it at splice time, rather than push
+> the page itself into the pipe as we do in copy_page_to_iter_pipe().
+> 
+> Because the whole point of zero-copy really is that zero copy. And the
+> whole point of splice() was to *not* complicate the rest of the system
+> over-much, while allowing special cases.
+> 
+> Linux is not the heap of bad ideas that is Hurd that does various
+> versioning etc, and that made copy-on-write a first-class citizen
+> because it uses the concept of "immutable mapped data" for reads and
+> writes.
 
-        gettimeofday(&start, NULL);
-        for (i =3D 0; i < NPROC; i++) {
-                int pid =3D fork();
+Ok, thanks very much for the detailed feedback!
 
-                if (pid =3D=3D 0) {
-                        sleep(30);
-                        exit(0);
-                }
-        }
-        gettimeofday(&end, NULL);
-        /* Normolize per proc and per gig */
-        duration =3D ((end.tv_sec - start.tv_sec) * USEC
-                + (end.tv_usec - start.tv_usec)) / NPROC / NGIG;
-        printf("Fork latency per gigabyte: %ld.%06ld seconds\n",
-                duration / USEC, duration % USEC);
-}
+> Now, I do see a couple of possible alternatives to "just create a stable copy".
+> 
+> For example, we very much have the notion of "confirm buffer data
+> before copying". It's used for things like "I started the IO on the
+> page, but the IO failed with an error, so even though I gave you a
+> splice buffer, it turns out you can't use it".
+> 
+> And I do wonder if we could introduce a notion of "optimistic splice",
+> where the splice works exactly the way it does now (you get a page
+> reference), but the "confirm" phase could check whether something has
+> changed in that mapping (using the file versioning or whatever - I'm
+> hand-waving) and simply fail the confirm.
+> 
+> That would mean that the "splice to socket" part would fail in your
+> chain, and you'd have to re-try it. But then the onus would be on
+> *you* as a splicer, not on the rest of the system to fix up your
+> special case.
+> 
+> That idea sounds fairly far out there, and complicated and maybe not
+> usable. So I'm just throwing it out as a "let's try to think of
+> alternative solutions".
+
+That sounds complicated and still racy.
+
+Any comment about the idea of having a preadv2() flag that
+asks for a dma copy with something like async_memcpy() instead
+of the default that ends up in copy_user_enhanced_fast_string()?
+If that would be possible, a similar flag would also be possible
+for splice() in order to dma copy the pages into the pipe.
+
+metze
