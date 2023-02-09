@@ -2,289 +2,295 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CE17690F9B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 18:54:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4AC269102F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 19:16:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229834AbjBIRyr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 12:54:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42652 "EHLO
+        id S229897AbjBISQh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 13:16:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbjBIRyq (ORCPT
+        with ESMTP id S229867AbjBISQg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 12:54:46 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6D33403F;
-        Thu,  9 Feb 2023 09:54:44 -0800 (PST)
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 319HjKUO009775;
-        Thu, 9 Feb 2023 17:54:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=GHi8QWj9ahC4bQfIAbe6VaZe/sXAjqq1oU8gWykQFdw=;
- b=rQTF6SRezbhcQnCOx6ZU8VlRBgQfbQZ7Ay9qbomYhQlTFF5jAvG9TVWu3w/hmOSQjMw6
- nwNg2Wd7OreCLbt2T07TIwc3K7ulU0lIzYMx5m7CFGLpiUzrWkTCGW5oA/hr6yXrLh5J
- y06JHXZtmgsDE+bBsyId/qn1RjRRz+Mju3hI7QcwrzO40XaayHtc4oMJYfWG+sqvr42X
- wS1mLllkCZraRl6jzByeJc58JFrfPquS9QfHQB7KZG13lrb3YD4M+XpBEEMNy5qOrfPN
- prhPpedcNUtMW1Iyemdq/czXpSS7S+4CZWn4JbC1FqxAJLFRbhbcbCC6WzDmDCc+IRjW rw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nn5gjg69q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Feb 2023 17:54:40 +0000
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 319HmJug020079;
-        Thu, 9 Feb 2023 17:54:39 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nn5gjg699-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Feb 2023 17:54:39 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 319DWH6x002393;
-        Thu, 9 Feb 2023 17:54:38 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3nhf06pgm0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Feb 2023 17:54:37 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-        by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 319HsZre26346090
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 Feb 2023 17:54:35 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D69520040;
-        Thu,  9 Feb 2023 17:54:35 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87DB120043;
-        Thu,  9 Feb 2023 17:54:33 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.127.44])
-        by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-        Thu,  9 Feb 2023 17:54:33 +0000 (GMT)
-Date:   Thu, 9 Feb 2023 23:24:31 +0530
-From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rookxu <brookxu.cn@gmail.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>
-Subject: Re: [PATCH v3 7/8] ext4: Use rbtrees to manage PAs instead of inode
- i_prealloc_list
-Message-ID: <Y+UzQJRIJEiAr4Z4@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20230116080216.249195-1-ojaswin@linux.ibm.com>
- <20230116080216.249195-8-ojaswin@linux.ibm.com>
- <20230116122334.k2hlom22o2hlek3m@quack3>
- <Y8Z413XTPMr//bln@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <20230117110335.7dtlq4catefgjrm3@quack3>
- <Y8jizbGg6l2WxJPF@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <20230127144312.3m3hmcufcvxxp6f4@quack3>
- <Y9zHkMx7w4Io0TTv@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <Y+OGkVvzPN0RMv0O@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <20230209105418.ucowiqnnptbpwone@quack3>
+        Thu, 9 Feb 2023 13:16:36 -0500
+Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB35643F6
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 10:16:33 -0800 (PST)
+Received: by mail-qv1-xf33.google.com with SMTP id u16so1591355qvp.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 10:16:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D17ul6Jv4BBsV+2Jo6JXzyrGGRmbOMiujl+Liy7jNKU=;
+        b=Ym+CXKOtcv8hciunQy57PF9+Z0g9lkZnEGbxg0LeHnfu/JqGR+eXCyBLaJNHe2a1gB
+         RA77v7i9vAW3zCN/HYYrnibeS1rILcYRPWFAbU/mBmjZZm0l8+f1M417b/mqwPOPVQDY
+         uEBxLZpogxT1gue/5pPtX+xiHXuqlEuy0Coi0J2u3USmPmA2W9cOU8/XpJiJk8CS852B
+         ejQEBszFP3wzyp+8Lac5VDTaDfGAB/M4Zb6goMSfStqcOGEDTpf01j+sYhEPjGl/1mXf
+         CTXdW8E+gSiGAe4/HkAr13WDVdah+jTZsJw2drmrwOJQy4C5Ul9NJJMndD3aDclHNkBe
+         Hk3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D17ul6Jv4BBsV+2Jo6JXzyrGGRmbOMiujl+Liy7jNKU=;
+        b=Ew3efh+B7GQjmVQSJ7hMrbT8yDHf7NUedSpyVVTCr3qKwhcbHazZu5ayRc3adsU5Fd
+         XQopSoJnsiAXoOogGGsYU788/kVVFWqlVKrU5kwz7GB1WTWU0L0dytlXQj8VLWrax1Nh
+         Q2Db4ocZ49h9R9Yp/G+2oE4Ip5wuNbvLb4Bx79OSToawpen2GVX2BEjL9rMHaR4qSeVx
+         KCQT55DGw0iX0ZSsfBfTysWKp8xvCel7/GwaKfDORmHsWMUFowAXu2lyPCmjshvPgzyV
+         MuRdwYm2Xb3gsnKwX7t7OVWEteehopaUEAQlaRwqYYu8Knb7TwkJyWZjKIhTKTyn1Uju
+         XfwQ==
+X-Gm-Message-State: AO0yUKUkRprWKhxexFbVoe7kaqz4z19qtFzGF/wP+hgDrf6zoqVy9zoc
+        1Wktu+yPXf7H3rmlUHGxeAJE5IBB1CVANby+kd1F3A==
+X-Google-Smtp-Source: AK7set9/asfDGBIlS6FIxPCSSF0J5s4zfbRpUSo/lPaWYG0FFjA+m1JuZQPdJzdk/PLzyIx6cdEIqfKndQA7GHYwaXM=
+X-Received: by 2002:a0c:f302:0:b0:56e:8d82:742d with SMTP id
+ j2-20020a0cf302000000b0056e8d82742dmr49876qvl.34.1675966592638; Thu, 09 Feb
+ 2023 10:16:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230209105418.ucowiqnnptbpwone@quack3>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -h7DcXIBGq33Pa_-mvye41isKl0WEAwK
-X-Proofpoint-ORIG-GUID: XQe3Nl9qAy2uLvHgLt8sVYTPeWoBxQXl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
- definitions=2023-02-09_13,2023-02-09_03,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 spamscore=0 suspectscore=0 adultscore=0 mlxscore=0
- bulkscore=0 priorityscore=1501 mlxlogscore=999 clxscore=1015
- impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2212070000 definitions=main-2302090166
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230207035139.272707-1-shiyn.lin@gmail.com>
+In-Reply-To: <20230207035139.272707-1-shiyn.lin@gmail.com>
+From:   Pasha Tatashin <pasha.tatashin@soleen.com>
+Date:   Thu, 9 Feb 2023 13:15:56 -0500
+Message-ID: <CA+CK2bBt0Gujv9BdhghVkbFRirAxCYXbpH-nquccPsKGnGwOBQ@mail.gmail.com>
+Subject: Re: [PATCH v4 00/14] Introduce Copy-On-Write to Page Table
+To:     Chih-En Lin <shiyn.lin@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        David Hildenbrand <david@redhat.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Nadav Amit <namit@vmware.com>, Barry Song <baohua@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Yang Shi <shy828301@gmail.com>, Peter Xu <peterx@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Zach O'Keefe" <zokeefe@google.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Hugh Dickins <hughd@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Yu Zhao <yuzhao@google.com>, Juergen Gross <jgross@suse.com>,
+        Tong Tiangen <tongtiangen@huawei.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Li kunyu <kunyu@nfschina.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Gautam Menghani <gautammenghani201@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Brown <broonie@kernel.org>, Will Deacon <will@kernel.org>,
+        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Barret Rhoden <brho@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Dinglan Peng <peng301@purdue.edu>,
+        Pedro Fonseca <pfonseca@purdue.edu>,
+        Jim Huang <jserv@ccns.ncku.edu.tw>,
+        Huichun Feng <foxhoundsk.tw@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 09, 2023 at 11:54:18AM +0100, Jan Kara wrote:
-> Hello Ojaswin!
-> 
-> On Wed 08-02-23 16:55:05, Ojaswin Mujoo wrote:
-> > On Fri, Feb 03, 2023 at 02:06:56PM +0530, Ojaswin Mujoo wrote:
-> > > On Fri, Jan 27, 2023 at 03:43:12PM +0100, Jan Kara wrote:
-> > > > 
-> > > > Well, I think cond_resched() + goto retry would be OK here. We could also
-> > > > cycle the corresponding group lock which would wait for
-> > > > ext4_mb_discard_group_preallocations() to finish but that is going to burn
-> > > > the CPU even more than the cond_resched() + retry as we'll be just spinning
-> > > > on the spinlock. Sleeping is IMHO not warranted as the whole
-> > > > ext4_mb_discard_group_preallocations() is running under a spinlock anyway
-> > > > so it should better be a very short sleep.
-> > > > 
-> > > > Or actually I have one more possible solution: What the adjusting function
-> > > > is doing that it looks up PA before and after ac->ac_o_ex.fe_logical and
-> > > > trims start & end to not overlap these PAs. So we could just lookup these
-> > > > two PAs (ignoring the deleted state) and then just iterate from these with
-> > > > rb_prev() & rb_next() until we find not-deleted ones. What do you think? 
-> > > 
-> > > Hey Jan, 
-> > > 
-> > > Just thought I'd update you, I'm trying this solution out, and it looks
-> > > good but I'm hitting a few bugs in the implementation. Will update here
-> > > once I have it working correctly.
-> > 
-> > Alright, so after spending some time on these bugs I'm hitting I'm
-> > seeing some strange behavior. Basically, it seems like in scenarios
-> > where we are not able to allocate as many block as the normalized goal
-> > request, we can sometimes end up adding a PA that overlaps with existing
-> > PAs in the inode PA list/tree. This behavior exists even before this
-> > particular patchset. Due to presence of such overlapping PAs, the above
-> > logic was failing in some cases.
-> > 
-> > From my understanding of the code, this seems to be a BUG. We should not
-> > be adding overlapping PA ranges as that causes us to preallocate
-> > multiple blocks for the same logical offset in a file, however I would
-> > also like to know if my understanding is incorrect and if this is an
-> > intended behavior.
-> > 
-> > ----- Analysis of the issue ------
-> > 
-> > Here's my analysis of the behavior, which I did by adding some BUG_ONs
-> > and running generic/269 (4k bs). It happens pretty often, like once
-> > every 5-10 runs. Testing was done without applying this patch series on
-> > the Ted's dev branch.
-> > 
-> > 1. So taking an example of a real scenario I hit. After we find the best
-> > len possible, we enter the ext4_mb_new_inode_pa() function with the
-> > following values for start and end of the extents:
-> > 
-> > ## format: <start>/<end>(<len>)
-> > orig_ex:503/510(7) goal_ex:0/512(512) best_ex:0/394(394)
-> > 
-> > 2. Since (best_ex len < goal_ex len) we enter the PA window adjustment
-> > if condition here:
-> > 
-> > 	if (ac->ac_b_ex.fe_len < ac->ac_g_ex.fe_len)
-> > 		...
-> > 	}
-> > 
-> > 3. Here, we calc wins, winl and off and adjust logical start and end of
-> > the best found extent. The idea is to make sure that the best extent
-> > atleast covers the original request. In this example, the values are:
-> > 
-> > winl:503 wins:387 off:109
-> > 
-> > and win = min(winl, wins, off) = 109
-> > 
-> > 4. We then adjust the logical start of the best ex as:
-> > 
-> > 		ac->ac_b_ex.fe_logical = ac->ac_o_ex.fe_logical - EXT4_NUM_B2C(sbi, win);
-> > 
-> > which makes the new best extent as:
-> > 
-> > best_ex: 394/788(394)
-> > 
-> > As we can see, the best extent overflows outside the goal range, and
-> > hence we don't have any guarentee anymore that it will not overlap with
-> > another PA since we only check overlaps with the goal start and end.
-> > We then initialze the new PA with the logical start and end of the best
-> > extent and finaly add it to the inode PA list.
-> > 
-> > In my testing I was able to actually see overlapping PAs being added to
-> > the inode list.
-> > 
-> > ----------- END ---------------
-> > 
-> > Again, I would like to know if this is a BUG or intended. If its a BUG,
-> > is it okay for us to make sure the adjusted best extent length doesn't 
-> > extend the goal length? 
-> 
-> Good spotting. So I guess your understanding of mballoc is better than mine
-> by now :) but at least in my mental model I would also expect the resulting
-> preallocation to stay withing the goal extent. What is causing here the
-> issue is this code in ext4_mb_new_inode_pa():
-> 
->                 offs = ac->ac_o_ex.fe_logical %
->                         EXT4_C2B(sbi, ac->ac_b_ex.fe_len);
->                 if (offs && offs < win)
->                         win = offs;
-> 
-> so we apparently try to align the logical offset of the allocation to a
-> multiple of the allocated size but that just does not make much sense when
-Hi Jan!
+On Mon, Feb 6, 2023 at 10:52 PM Chih-En Lin <shiyn.lin@gmail.com> wrote:
+>
+> v3 -> v4
+> - Add Kconfig, CONFIG_COW_PTE, since some of the architectures, e.g.,
+>   s390 and powerpc32, don't support the PMD entry and PTE table
+>   operations.
+> - Fix unmatch type of break_cow_pte_range() in
+>   migrate_vma_collect_pmd().
+> - Don=E2=80=99t break COW PTE in folio_referenced_one().
+> - Fix the wrong VMA range checking in break_cow_pte_range().
+> - Only break COW when we modify the soft-dirty bit in
+>   clear_refs_pte_range().
+> - Handle do_swap_page() with COW PTE in mm/memory.c and mm/khugepaged.c.
+> - Change the tlb flush from flush_tlb_mm_range() (x86 specific) to
+>   tlb_flush_pmd_range().
+> - Handle VM_DONTCOPY with COW PTE fork.
+> - Fix the wrong address and invalid vma in recover_pte_range().
+> - Fix the infinite page fault loop in GUP routine.
+>   In mm/gup.c:follow_pfn_pte(), instead of calling the break COW PTE
+>   handler, we return -EMLINK to let the GUP handles the page fault
+>   (call faultin_page() in __get_user_pages()).
+> - return not_found(pvmw) if the break COW PTE failed in
+>   page_vma_mapped_walk().
+> - Since COW PTE has the same result as the normal COW selftest, it
+>   probably passed the COW selftest.
+>
+>         # [RUN] vmsplice() + unmap in child ... with hugetlb (2048 kB)
+>         not ok 33 No leak from parent into child
+>         # [RUN] vmsplice() + unmap in child with mprotect() optimization =
+... with hugetlb (2048 kB)
+>         not ok 44 No leak from parent into child
+>         # [RUN] vmsplice() before fork(), unmap in parent after fork() ..=
+. with hugetlb (2048 kB)
+>         not ok 55 No leak from child into parent
+>         # [RUN] vmsplice() + unmap in parent after fork() ... with hugetl=
+b (2048 kB)
+>         not ok 66 No leak from child into parent
+>
+>         Bail out! 4 out of 147 tests failed
+>         # Totals: pass:143 fail:4 xfail:0 xpass:0 skip:0 error:0
+>   See the more information about anon cow hugetlb tests:
+>     https://patchwork.kernel.org/project/linux-mm/patch/20220927110120.10=
+6906-5-david@redhat.com/
+>
+>
+> v3: https://lore.kernel.org/linux-mm/20221220072743.3039060-1-shiyn.lin@g=
+mail.com/T/
+>
+> RFC v2 -> v3
+> - Change the sysctl with PID to prctl(PR_SET_COW_PTE).
+> - Account all the COW PTE mapped pages in fork() instead of defer it to
+>   page fault (break COW PTE).
+> - If there is an unshareable mapped page (maybe pinned or private
+>   device), recover all the entries that are already handled by COW PTE
+>   fork, then copy to the new one.
+> - Remove COW_PTE_OWNER_EXCLUSIVE flag and handle the only case of GUP,
+>   follow_pfn_pte().
+> - Remove the PTE ownership since we don't need it.
+> - Use pte lock to protect the break COW PTE and free COW-ed PTE.
+> - Do TLB flushing in break COW PTE handler.
+> - Handle THP, KSM, madvise, mprotect, uffd and migrate device.
+> - Handle the replacement page of uprobe.
+> - Handle the clear_refs_write() of fs/proc.
+> - All of the benchmarks dropped since the accounting and pte lock.
+>   The benchmarks of v3 is worse than RFC v2, most of the cases are
+>   similar to the normal fork, but there still have an use case
+>   (TriforceAFL) is better than the normal fork version.
+>
+> RFC v2: https://lore.kernel.org/linux-mm/20220927162957.270460-1-shiyn.li=
+n@gmail.com/T/
+>
+> RFC v1 -> RFC v2
+> - Change the clone flag method to sysctl with PID.
+> - Change the MMF_COW_PGTABLE flag to two flags, MMF_COW_PTE and
+>   MMF_COW_PTE_READY, for the sysctl.
+> - Change the owner pointer to use the folio padding.
+> - Handle all the VMAs that cover the PTE table when doing the break COW P=
+TE.
+> - Remove the self-defined refcount to use the _refcount for the page
+>   table page.
+> - Add the exclusive flag to let the page table only own by one task in
+>   some situations.
+> - Invalidate address range MMU notifier and start the write_seqcount
+>   when doing the break COW PTE.
+> - Handle the swap cache and swapoff.
+>
+> RFC v1: https://lore.kernel.org/all/20220519183127.3909598-1-shiyn.lin@gm=
+ail.com/
+>
+> ---
+>
+> Currently, copy-on-write is only used for the mapped memory; the child
+> process still needs to copy the entire page table from the parent
+> process during forking. The parent process might take a lot of time and
+> memory to copy the page table when the parent has a big page table
+> allocated. For example, the memory usage of a process after forking with
+> 1 GB mapped memory is as follows:
 
-Yep, it is indeed the offset calculation that is cauing issues in this
-particular example. Any idea why this was originally added?
+For some reason, I was not able to reproduce performance improvements
+with a simple fork() performance measurement program. The results that
+I saw are the following:
 
-> we found some random leftover extent with shorter-than-goal size. So what
-> I'd do in the shorter-than-goal preallocation case is:
-> 
-> 1) If we can place the allocation at the end of goal window and still cover
-> the original allocation request, do that.
-> 
-> 2) Otherwise if we can place the allocation at the start of the goal
-> window and still cover the original allocation request, do that.
-> 
-> 3) Otherwise place the allocation at the start of the original allocation
-> request.
-> 
-> This would seem to reasonably reduce fragmentation of preallocated space
-> and still keep things simple.
-This looks like a good approach to me and it will take care of the issue
-caused due to offset calculation.
+Base:
+Fork latency per gigabyte: 0.004416 seconds
+Fork latency per gigabyte: 0.004382 seconds
+Fork latency per gigabyte: 0.004442 seconds
+COW kernel:
+Fork latency per gigabyte: 0.004524 seconds
+Fork latency per gigabyte: 0.004764 seconds
+Fork latency per gigabyte: 0.004547 seconds
 
-However, after commenting out the offset calculation bit in PA window
-adjustment logic, I noticed that there is one more way that such an
-overflow can happen, which would need to be addressed before we can
-implement the above approach. Basically, this happens when we end up
-with a goal len greater than the original len.
+AMD EPYC 7B12 64-Core Processor
+Base:
+Fork latency per gigabyte: 0.003923 seconds
+Fork latency per gigabyte: 0.003909 seconds
+Fork latency per gigabyte: 0.003955 seconds
+COW kernel:
+Fork latency per gigabyte: 0.004221 seconds
+Fork latency per gigabyte: 0.003882 seconds
+Fork latency per gigabyte: 0.003854 seconds
 
-See my comments at the end for more info.
+Given, that page table for child is not copied, I was expecting the
+performance to be better with COW kernel, and also not to depend on
+the size of the parent.
 
-> 
-> > Also, another thing I noticed is that after ext4_mb_normalize_request(),
-> > sometimes the original range can also exceed the normalized goal range,
-> > which is again was a bit surprising to me since my understanding was
-> > that normalized range would always encompass the orignal range.
-> 
-> Well, isn't that because (part of) the requested original range is already
-> preallocated? Or what causes the goal range to be shortened?
-> 
-Yes I think that pre existing PAs could be one of the cases.
+Test program:
 
-Other than that, I'm also seeing some cases of sparse writes which can cause
-ext4_mb_normalize_request() to result in having an original range that
-overflows out of the goal range. For example, I observed these values just
-after the if else if else conditions in the function, before we check if range
-overlaps pre existing PAs:
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/time.h>
+#include <sys/mman.h>
+#include <sys/types.h>
 
-orig_ex:2045/2055(len:10) normalized_range:0/2048, orig_isize:8417280
+#define USEC    1000000
+#define GIG     (1ul << 30)
+#define NGIG    32
+#define SIZE    (NGIG * GIG)
+#define NPROC   16
 
-Basically, since isize is large and we are doing a sparse write, we end
-up in the following if condition:
+void main() {
+        int page_size =3D getpagesize();
+        struct timeval start, end;
+        long duration, i;
+        char *p;
 
-	} else if (NRL_CHECK_SIZE(ac->ac_o_ex.fe_len,
-								(8<<20)>>bsbits, max, 8 * 1024)) {
-		start_off = ((loff_t)ac->ac_o_ex.fe_logical >> (23 - bsbits)) << 23;
-		size = 8 * 1024 * 1024;
- }
+        p =3D mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
+                 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        if (p =3D=3D MAP_FAILED) {
+                perror("mmap");
+                exit(1);
+        }
+        madvise(p, SIZE, MADV_NOHUGEPAGE);
 
-Resulting in normalized range less than original range.
+        /* Touch every page */
+        for (i =3D 0; i < SIZE; i +=3D page_size)
+                p[i] =3D 0;
 
-Now, in any case, once we get such an overflow, if we try to enter the PA
-adjustment window in ext4_mb_new_inode_pa() function, we will again end up with
-a best extent overflowing out of goal extent since we would try to cover the
-original extent. 
+        gettimeofday(&start, NULL);
+        for (i =3D 0; i < NPROC; i++) {
+                int pid =3D fork();
 
-So yeah, seems like there are 2 cases where we could result in overlapping PAs:
-
-1. Due to off calculation in PA adjustment window, as we discussed.  2. Due to
-original extent overflowing out of goal extent.
-
-I think the 3 step solution you proposed works well to counter 1 but not 2, so
-we probably need some more logic on top of your solution to take care of that.
-I'll think some more on how to fix this but I think this will be as a separate
-patch.
-
-Regards,
-Ojaswin 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+                if (pid =3D=3D 0) {
+                        sleep(30);
+                        exit(0);
+                }
+        }
+        gettimeofday(&end, NULL);
+        /* Normolize per proc and per gig */
+        duration =3D ((end.tv_sec - start.tv_sec) * USEC
+                + (end.tv_usec - start.tv_usec)) / NPROC / NGIG;
+        printf("Fork latency per gigabyte: %ld.%06ld seconds\n",
+                duration / USEC, duration % USEC);
+}
