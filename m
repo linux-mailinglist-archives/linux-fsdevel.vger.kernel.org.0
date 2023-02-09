@@ -2,167 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 01F45691118
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 20:17:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17711691151
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Feb 2023 20:27:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbjBITRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 14:17:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46956 "EHLO
+        id S230050AbjBIT1j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 14:27:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbjBITRO (ORCPT
+        with ESMTP id S229579AbjBIT1h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 14:17:14 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D3093F9;
-        Thu,  9 Feb 2023 11:17:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=uyuS50vZlHGk1xF8iynXmse5jo9/UIHiJy4O4eY3ZgY=; b=if8hFpG9EdXiPs0+56kdShigN0
-        m07Oxr9hsWdLL1IgEA7zbrDUNQNH93MPtMFlfyuUduoqhzUIdok9lVzpfLYOc1OJApHeLMMrzyd9T
-        pfHqcvasAnxr0JSvNozSSHeo4CfyZDdh8QoiPd+0iLrUtTjvl8qqlx0LmVGNydWQHr13HSjDjD/HC
-        Jvm+RoDceZrLi8mL2Xu5ZWacU5Onyz1ktUaqz5TfUIJ9s/9rsHKIeCHCn5ly7EhsIvDVFAoZo5DQl
-        BdDJKc6yyOPvuGw7ZCdXx36W4hnuzlESLA1zsdWzUilFX1PaE/FzAwMJv3k2DIb0mKL4HY2qdIKNJ
-        6rzb7DL2RGQlybkez6OcRxe8/NNnfopXrURMkNkjZKb8JlY0q/E5DV6L+GB2uEMFYcd4640Z9onzo
-        hYkOZxGGSEIfq6laocAMCjKzmnpEnCASwMjUwblNuSiKVwHV6LB5DDPbmf8T5mRQJMR60sR3yk4uc
-        2sJi2tZt8YacNuC/nhSTbN3U;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1pQCPp-00CrYI-JG; Thu, 09 Feb 2023 19:17:05 +0000
-Message-ID: <f6c6d42e-337a-bbab-0d36-cfcc915d26c6@samba.org>
-Date:   Thu, 9 Feb 2023 20:17:05 +0100
+        Thu, 9 Feb 2023 14:27:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE38124
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 11:26:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1675970805;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=x9cE6e+W76LeERGPHwI+bdvwZC6nPSTrvaIuldAklW4=;
+        b=TSnVYYYBqJsJJs7GqCO/jEG5PNrtTfYqUNtcVydn9pmNae0xN3Y4oU6Z7j6WRwF1TYWHqn
+        2ApylfXCOFCGWSebPPpsb51VpmxZj2XHN1Bb1m2K6cx3TRPoIe28JZ1RmLQbesU1aT3xuV
+        sJvmSmg3QZ0zBtS6cLlxu1eGa3qWf9M=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-590-y03Bq9F_PMeWrAe6IJa_xg-1; Thu, 09 Feb 2023 14:26:44 -0500
+X-MC-Unique: y03Bq9F_PMeWrAe6IJa_xg-1
+Received: by mail-qt1-f197.google.com with SMTP id f22-20020a05622a1a1600b003b8674f2302so1698623qtb.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 11:26:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x9cE6e+W76LeERGPHwI+bdvwZC6nPSTrvaIuldAklW4=;
+        b=Sa86bM1FiW2c4kE//oupdc622+robIVMUV3rWpY+60m8wxa/mkQIl2ca0E2ybKrORY
+         XqEMXUqsEzfRyfYuhhmXL/XmHNWHLwl+cnmmI5esr31FX7K3eXKH05vQd0nhyre1KxWT
+         8hlPgBJDNcHa6we4IDBgBKC+gd0WA1ljWMTed5OVkf+pjMfinWHmFd4M6hJvQXJExNm6
+         UFIxukKvsVHuqALTI8lwbUDLzjISZUZRg2VsLnqNbk7SznhKu20+SnokTT0uG3N64+z0
+         Vu+7IXFJeZ82TiEq89AaP299jwlVy0ZOauV7tRmz7/sbS7BdQuWJt3A+JR/SfMv/+nOu
+         zzsg==
+X-Gm-Message-State: AO0yUKX1aGeBdhDZq09UzTfs1uoq3c4Z/BH5FRYG0reZxTRzXtQqkHdW
+        cs1FBw0m1ukRSi50bFTjKwK94uiY1IEUBhJV8mvt4ZoGBSRB37tAKh4ee4HEz5WrSnVmSA4DE5h
+        zgqUxNjl+slp409eTpMIU5lD+5g==
+X-Received: by 2002:a0c:f54e:0:b0:56c:2082:743d with SMTP id p14-20020a0cf54e000000b0056c2082743dmr9228485qvm.5.1675970803839;
+        Thu, 09 Feb 2023 11:26:43 -0800 (PST)
+X-Google-Smtp-Source: AK7set/Cz68ujEJJEwIYk1OtfltUrAU4LXBdHLuQ9itehZm0vTs8jvdCbtuAw+h5up7Jog7JfvKeyQ==
+X-Received: by 2002:a0c:f54e:0:b0:56c:2082:743d with SMTP id p14-20020a0cf54e000000b0056c2082743dmr9228433qvm.5.1675970803495;
+        Thu, 09 Feb 2023 11:26:43 -0800 (PST)
+Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
+        by smtp.gmail.com with ESMTPSA id t66-20020a374645000000b007203bbbbb31sm1994600qka.47.2023.02.09.11.26.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Feb 2023 11:26:42 -0800 (PST)
+Date:   Thu, 9 Feb 2023 14:26:40 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v10 5/6] mm/pagemap: add documentation of PAGEMAP_SCAN
+ IOCTL
+Message-ID: <Y+VI8HfM1k3uPA5t@x1n>
+References: <20230202112915.867409-1-usama.anjum@collabora.com>
+ <20230202112915.867409-6-usama.anjum@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: copy on write for splice() from file to pipe?
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
-References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
- <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
-From:   Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230202112915.867409-6-usama.anjum@collabora.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
-
-> Adding Jens, because he's one of the main splice people. You do seem
-> to be stepping on his work ;)
+On Thu, Feb 02, 2023 at 04:29:14PM +0500, Muhammad Usama Anjum wrote:
+> Add some explanation and method to use write-protection and written-to
+> on memory range.
 > 
-> Jens, see
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  Documentation/admin-guide/mm/pagemap.rst | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 > 
->    https://lore.kernel.org/lkml/0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org
+> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
+> index 6e2e416af783..1cb2189e9a0d 100644
+> --- a/Documentation/admin-guide/mm/pagemap.rst
+> +++ b/Documentation/admin-guide/mm/pagemap.rst
+> @@ -230,3 +230,27 @@ Before Linux 3.11 pagemap bits 55-60 were used for "page-shift" (which is
+>  always 12 at most architectures). Since Linux 3.11 their meaning changes
+>  after first clear of soft-dirty bits. Since Linux 4.2 they are used for
+>  flags unconditionally.
+> +
+> +Pagemap Scan IOCTL
+> +==================
+> +
+> +The ``PAGEMAP_SCAN`` IOCTL on the pagemap file can be used to get and/or clear
+> +the info about page table entries. The following operations are supported in
+> +this IOCTL:
+> +- Get the information if the pages have been written-to (``PAGE_IS_WRITTEN``),
+> +  file mapped (``PAGE_IS_FILE``), present (``PAGE_IS_PRESENT``) or swapped
+> +  (``PAGE_IS_SWAPPED``).
+> +- Write-protect the pages (``PAGEMAP_WP_ENGAGE``) to start finding which
+> +  pages have been written-to.
+> +- Find pages which have been written-to and write protect the pages
+> +  (atomic ``PAGE_IS_WRITTEN + PAGEMAP_WP_ENGAGE``)
 
-Ok, thanks! Maybe Jens should apear in the output of:
+Could we extend this section a bit more?  Some points for reference:
 
-scripts/get_maintainer.pl fs/splice.c
+  - The new struct you introduced, definitions of each of the fields, and
+    generic use cases for each of the field/ops.
 
-> On Thu, Feb 9, 2023 at 5:56 AM Stefan Metzmacher <metze@samba.org> wrote:
->>
->> So we have two cases:
->>
->> 1. network -> socket -> splice -> pipe -> splice -> file -> storage
->>
->> 2. storage -> file -> splice -> pipe -> splice -> socket -> network
->>
->> With 1. I guess everything can work reliable [..]
->>
->> But with 2. there's a problem, as the pages from the file,
->> which are spliced into the pipe are still shared without
->> copy on write with the file(system).
-> 
-> Well, honestly, that's really the whole point of splice. It was
-> designed to be a way to share the storage data without having to go
-> through a copy.
+  - It'll be nice to list the OPs the new interface supports (GET,
+    WP_ENGAGE, GET+WP_ENGAGE).
 
+  - When should people use this rather than the old pagemap interface?
+    What's the major problems to solve / what's the major difference?
+    (Maybe nice to reference the Windows API too here)
 
->> I'm wondering if there's a possible way out of this, maybe triggered by a new
->> flag passed to splice.
-> 
-> Not really.
-> 
-> So basically, you cannot do "copy on write" on a page cache page,
-> because that breaks sharing.
-> 
-> You *want* the sharing to break, but that's because you're violating
-> what splice() was for, but think about all the cases where somebody is
-> just using mmap() and expects to see the file changes.
-> 
-> You also aren't thinking of the case where the page is already mapped
-> writably, and user processes may be changing the data at any time.
+> +
+> +To get information about which pages have been written-to and/or write protect
+> +the pages, following must be performed first in order:
+> + 1. The userfaultfd file descriptor is created with ``userfaultfd`` syscall.
+> + 2. The ``UFFD_FEATURE_WP_ASYNC`` feature is set by ``UFFDIO_API`` IOCTL.
+> + 3. The memory range is registered with ``UFFDIO_REGISTER_MODE_WP`` mode
+> +    through ``UFFDIO_REGISTER`` IOCTL.
+> +Then the any part of the registered memory or the whole memory region can be
+> +write protected using the ``UFFDIO_WRITEPROTECT`` IOCTL or ``PAGEMAP_SCAN``
+> +IOCTL.
 
-I do because we're using that in our tdb library, but I hoped there would be
-a way out...
+This part looks good.
 
->> I looked through the code and noticed the existence of IOMAP_F_SHARED.
-> 
-> Yeah, no. That's a hacky filesystem thing. It's not even a flag in
-> anything core like 'struct page', it's just entirely internal to the
-> filesystem itself.
+Thanks,
 
-Ok, I guess it's used for shared blocks in the filesystems,
-in order to support things like cow support in order to allow
-snapshots, correct?
+-- 
+Peter Xu
 
->> Is there any other way we could archive something like this?
-> 
-> I suspect you simply want to copy it at splice time, rather than push
-> the page itself into the pipe as we do in copy_page_to_iter_pipe().
-> 
-> Because the whole point of zero-copy really is that zero copy. And the
-> whole point of splice() was to *not* complicate the rest of the system
-> over-much, while allowing special cases.
-> 
-> Linux is not the heap of bad ideas that is Hurd that does various
-> versioning etc, and that made copy-on-write a first-class citizen
-> because it uses the concept of "immutable mapped data" for reads and
-> writes.
-
-Ok, thanks very much for the detailed feedback!
-
-> Now, I do see a couple of possible alternatives to "just create a stable copy".
-> 
-> For example, we very much have the notion of "confirm buffer data
-> before copying". It's used for things like "I started the IO on the
-> page, but the IO failed with an error, so even though I gave you a
-> splice buffer, it turns out you can't use it".
-> 
-> And I do wonder if we could introduce a notion of "optimistic splice",
-> where the splice works exactly the way it does now (you get a page
-> reference), but the "confirm" phase could check whether something has
-> changed in that mapping (using the file versioning or whatever - I'm
-> hand-waving) and simply fail the confirm.
-> 
-> That would mean that the "splice to socket" part would fail in your
-> chain, and you'd have to re-try it. But then the onus would be on
-> *you* as a splicer, not on the rest of the system to fix up your
-> special case.
-> 
-> That idea sounds fairly far out there, and complicated and maybe not
-> usable. So I'm just throwing it out as a "let's try to think of
-> alternative solutions".
-
-That sounds complicated and still racy.
-
-Any comment about the idea of having a preadv2() flag that
-asks for a dma copy with something like async_memcpy() instead
-of the default that ends up in copy_user_enhanced_fast_string()?
-If that would be possible, a similar flag would also be possible
-for splice() in order to dma copy the pages into the pipe.
-
-metze
