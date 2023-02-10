@@ -2,89 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55E50692992
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 22:52:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07C646929A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 22:55:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233942AbjBJVwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 16:52:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34972 "EHLO
+        id S233489AbjBJVyq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 16:54:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233941AbjBJVv5 (ORCPT
+        with ESMTP id S233600AbjBJVyc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 16:51:57 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56320E059
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 13:51:55 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id m2-20020a17090a414200b00231173c006fso10597311pjg.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 13:51:55 -0800 (PST)
+        Fri, 10 Feb 2023 16:54:32 -0500
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E887360A2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 13:54:32 -0800 (PST)
+Received: by mail-pf1-x432.google.com with SMTP id 144so4366494pfv.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 13:54:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676066071;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vom/MqYv+jQNYXBbUypmLqj6kXYFZ9S9wYtG411mBvo=;
-        b=t29WaowfXh9Y44It/7F23R9kLz9RmlgBuYd2/e6ooa9tSzzOrKHxJt6Z8BV5JoUkIS
-         rpCxMjo4XJUJsNpLHlB9UDpwMAqoiOroPHjOP64Z1vme4doejUmiaJwW0AwRBT+P6laD
-         IoTZCRBT4hNk1t/llsTlPqm7VA1H5oaPuIlIKxeA1Nw95VAUAo4zX6MuysQPmIyG4F+u
-         i3UqaVItYXiSntkFwx8DcbYUsyfs+kwYB77M5m5cDEwgbAI9OH69GYJjMkSxNEb7jWpp
-         J5rx1UVxOzi4sqZ6SxZDzkz7zz9aB2vk3fMlODIfCKVaNy7+6jrOZp7lwlCYWz/NUgYB
-         hoEQ==
+        bh=8utCxvYjDZ8Ky1caNcP1wX8sj0JjcEPoVN++BwSe+Rs=;
+        b=L5cDckAuUr0rOTx1u3hbvgfMJms7q96GWwMtPaZ13L2NIIekv+YVRSD2HjuqZ8SFlP
+         OLwA88Sm87iDd8Z2Pebw8yJXi6pTBD7+qr8/dR2zGnjAoJky5u9013QqTBmMhCR91Mf1
+         9ekskjap2zcMwq2+Q2hNW4mOVaXUPZ8fDcnjEVy8jidyyG38FkZzs+mei/ZFJEQkxrbp
+         bZkgXLIEhazqQYXy/mLnHVZ5q3WXEXOFTwLJ68D5KHBPSsLt1X1qHG2G8FuWThynViQA
+         rlpiufQPxTu0oIAhmEiuHE1leUZK4e1yzIjopunPitLJIaPQ5QGhAbieswzD9AGMEIw3
+         k+aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+        d=1e100.net; s=20210112; t=1676066071;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vom/MqYv+jQNYXBbUypmLqj6kXYFZ9S9wYtG411mBvo=;
-        b=F4gw/cruFl1Y/SlSsYbEOheH6aqosNqoT8rua1SaKbVeyeRN4a2bw6fF13tOa6Dl6Y
-         cB+Z//3WBxQzOp4gK5NjNrG2CR0j8Y3ZdgN+w+adswfp4jYtUgqKt7V0KnLdHpE9B5wJ
-         Aob50FQXxd4MRWKwzn8NA5+8KJ/ZINzWfGzfUHCyFakdFViljtTKbode8igBSNLpywO/
-         eHdqSQfTY0IgpIHasvHVJzvFP8dmYnQky+l0LBrQT2nUWMe36WfjASmXrmcHcrJkWaCO
-         9+RXS+/KsIf3XHlL+F6prALA/sDIbwyPBX18T5IVn4Gc2HfPJ6CvObMPydh6O+o32Ypp
-         szBA==
-X-Gm-Message-State: AO0yUKVEfb+jba7O7HRVFIGluO6gjz35yXz7JNHl4+wcdaqJ8dU30WxI
-        Bh1lIXhA86ekA0Pc1rXjG3rSi1jBMFJ5N3pB
-X-Google-Smtp-Source: AK7set9CoQAddeOh/s/FtjKzsrAlmbHEawv42o2oTdGE0NMoidcgIIuh/SVHi4+L81GmQ7GFfTwnWg==
-X-Received: by 2002:a17:903:182:b0:199:e1f:3f59 with SMTP id z2-20020a170903018200b001990e1f3f59mr16545721plg.4.1676065914763;
-        Fri, 10 Feb 2023 13:51:54 -0800 (PST)
+        bh=8utCxvYjDZ8Ky1caNcP1wX8sj0JjcEPoVN++BwSe+Rs=;
+        b=BxdVx0712vTin8Ymv0NyX0gsgd+gcjukSzL115+bwmlauVdggzVvMrFLaU1sGuNKOI
+         neJOUd1xy2X7CJk5/j2sQmiHqh30/r80ilclqlTmTDWjihFs57Ev7al3wyj1Sz4uraDV
+         t+Si89AXU/8v1bBfXVu2YKp7ZdhC9Arzm4wabgpeg4YLZFGDoKFcxklMq6V8yKaXCfmI
+         0RUtL6nfl5o+r+Q0yDg54KAiP4qBme9E19C7iMinUvbIjSL9e0Y5glQ3xiCI9el8512u
+         94wzIGHtK5Uk6w3iqa5iKCpKOw/jnw5ia3i8KHLSfVoJu5U5ZWmX161FTM3Y1IpMAQxo
+         O8Mg==
+X-Gm-Message-State: AO0yUKXM9soABk8UqkmvNQ/syrTD42W7+ygcZGOoSo2HtiRyWNjM+8T3
+        zj2pF1VWuiXCuPMFn8PjmZlxgrHSEx3A63pV
+X-Google-Smtp-Source: AK7set/YvEgdkrcaYPrEosuzDs3EadB5ufHzTv33GebDcHz1BHHTW3FpGAnZ8MXMp2qZ+zL2olvXnQ==
+X-Received: by 2002:a62:a10b:0:b0:587:bdcc:bf0d with SMTP id b11-20020a62a10b000000b00587bdccbf0dmr15095397pff.0.1676066071475;
+        Fri, 10 Feb 2023 13:54:31 -0800 (PST)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id g22-20020a1709029f9600b0019a7f493151sm290720plq.212.2023.02.10.13.51.53
+        by smtp.gmail.com with ESMTPSA id s22-20020a62e716000000b005a817973a81sm3687647pfh.43.2023.02.10.13.54.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Feb 2023 13:51:54 -0800 (PST)
-Message-ID: <2bb12591-9d24-6b26-178f-05e939bf3251@kernel.dk>
-Date:   Fri, 10 Feb 2023 14:51:52 -0700
+        Fri, 10 Feb 2023 13:54:31 -0800 (PST)
+Message-ID: <95efc2bd-2f23-9325-5a38-c01cc349eb4a@kernel.dk>
+Date:   Fri, 10 Feb 2023 14:54:29 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: copy on write for splice() from file to pipe?
+Subject: Re: [PATCH 0/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
 Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
+References: <20230210153212.733006-1-ming.lei@redhat.com>
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Stefan Metzmacher <metze@samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
-References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
- <CAHk-=wj66F6CdJUAAjqigXMBy7gHquFMzPNAwKCgkrb2mF6U7w@mail.gmail.com>
- <CALCETrU-9Wcb_zCsVWr24V=uCA0+c6x359UkJBOBgkbq+UHAMA@mail.gmail.com>
- <CAHk-=wjQZWMeQ9OgXDNepf+TLijqj0Lm0dXWwWzDcbz6o7yy_g@mail.gmail.com>
- <CALCETrWuRHWh5XFn8M8qx5z0FXAGHH=ysb+c6J+cqbYyTAHvhw@mail.gmail.com>
- <CAHk-=wjuXvF1cA=gJod=-6k4ypbEmOczFFDKriUpOVKy9dTJWQ@mail.gmail.com>
- <CALCETrUXYts5BRZKb25MVaWPk2mz34fKSqCR++SM382kSYLnJw@mail.gmail.com>
- <CAHk-=wgA=rB=7M_Fe3n9UkoW_7dqdUT2D=yb94=6GiGXEuAHDA@mail.gmail.com>
- <1dd85095-c18c-ed3e-38b7-02f4d13d9bd6@kernel.dk>
- <CAHk-=wiszt6btMPeT5UFcS=0=EVr=0injTR75KsvN8WetwQwkA@mail.gmail.com>
- <fe8252bd-17bd-850d-dcd0-d799443681e9@kernel.dk>
- <CAHk-=wiJ0QKKiORkVr8n345sPp=aHbrLTLu6CQ-S0XqWJ-kJ1A@mail.gmail.com>
- <7a2e5b7f-c213-09ff-ef35-d6c2967b31a7@kernel.dk>
- <CALCETrVx4cj7KrhaevtFN19rf=A6kauFTr7UPzQVage0MsBLrg@mail.gmail.com>
- <b44783e6-3da2-85dd-a482-5d9aeb018e9c@kernel.dk>
-In-Reply-To: <b44783e6-3da2-85dd-a482-5d9aeb018e9c@kernel.dk>
+In-Reply-To: <20230210153212.733006-1-ming.lei@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -96,62 +80,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/10/23 2:27 PM, Jens Axboe wrote:
-> On 2/10/23 2:14?PM, Andy Lutomirski wrote:
->> On Fri, Feb 10, 2023 at 12:50 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>> On 2/10/23 1:44?PM, Linus Torvalds wrote:
->>>> On Fri, Feb 10, 2023 at 12:39 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>
->>>>> Right, I'm referencing doing zerocopy data sends with io_uring, using
->>>>> IORING_OP_SEND_ZC. This isn't from a file, it's from a memory location,
->>>>> but the important bit here is the split notifications and how you
->>>>> could wire up a OP_SENDFILE similarly to what Andy described.
->>>>
->>>> Sure, I think it's much more reasonable with io_uring than with splice itself.
->>>>
->>>> So I was mainly just reacting to the "strict-splice" thing where Andy
->>>> was talking about tracking the page refcounts. I don't think anything
->>>> like that can be done at a splice() level, but higher levels that
->>>> actually know about the whole IO might be able to do something like
->>>> that.
->>>>
->>>> Maybe we're just talking past each other.
->>>
->>> Maybe slightly, as I was not really intending to comment on the strict
->>> splice thing. But yeah I agree on splice, it would not be trivial to do
->>> there. At least with io_uring we have the communication channel we need.
->>> And tracking page refcounts seems iffy and fraught with potential
->>> issues.
->>>
->>
->> Hmm.
->>
->> Are there any real-world use cases for zero-copy splice() that
->> actually depend on splicing from a file to a pipe and then later from
->> the pipe to a socket (or file or whatever)?  Or would everything
->> important be covered by a potential new io_uring operation that copies
->> from one fd directly to another fd?
+On 2/10/23 8:32 AM, Ming Lei wrote:
+> Hello,
 > 
-> I think it makes sense. As Linus has referenced, the sex appeal of
-> splice is the fact that it is dealing with pipes, and you can access
-> these internal buffers through other means. But that is probably largely
-> just something that is sexy design wise, nothing that _really_ matters
-> in practice. And the pipes do get in the way, for example I had to add
-> pipe resizing fcntl helpers to bump the size. If you're doing a plain
-> sendfile, the pipes just kind of get in the way too imho.
+> Add two OPs which buffer is retrieved via kernel splice for supporting
+> fuse/ublk zero copy.
 > 
-> Another upside (from the io_uring) perspective is that splice isn't very
-> efficient through io_uring, as it requires offload to io-wq. This could
-> obviously be solved by some refactoring in terms of non-blocking, but it
-> hasn't really been that relevant (and nobody has complained about it). A
-> new sendfile op would nicely get around that too as it could be designed
-> with async in nature, rather than the classic sync syscall model that
-> splice follows.
+> The 1st patch enhances direct pipe & splice for moving pages in kernel,
+> so that the two added OPs won't be misused, and avoid potential security
+> hole.
+> 
+> The 2nd patch allows splice_direct_to_actor() caller to ignore signal
+> if the actor won't block and can be done in bound time.
+> 
+> The 3rd patch add the two OPs.
+> 
+> The 4th patch implements ublk's ->splice_read() for supporting
+> zero copy.
+> 
+> ublksrv(userspace):
+> 
+> https://github.com/ming1/ubdsrv/commits/io_uring_splice_buf
+>     
+> So far, only loop/null target implements zero copy in above branch:
+>     
+> 	ublk add -t loop -f $file -z
+> 	ublk add -t none -z
+> 
+> Basic FS/IO function is verified, mount/kernel building & fio
+> works fine, and big chunk IO(BS: 64k/512k) performance gets improved
+> obviously.
 
-Speaking of splice/io_uring, Ming posted this today:
+Do you have any performance numbers? Also curious on liburing regression
+tests, would be nice to see as it helps with review.
 
-https://lore.kernel.org/io-uring/20230210153212.733006-1-ming.lei@redhat.com/
+Caveat - haven't looked into this in detail just yet.
 
 -- 
 Jens Axboe
