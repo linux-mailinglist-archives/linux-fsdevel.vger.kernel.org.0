@@ -2,237 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CF731692146
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 15:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FA1A692255
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 16:35:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231985AbjBJO7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 09:59:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53140 "EHLO
+        id S232760AbjBJPfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 10:35:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231517AbjBJO7e (ORCPT
+        with ESMTP id S232664AbjBJPfu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 09:59:34 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E41D303DF
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 06:58:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676041107;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=0GuaSLkqsctnE/R9PtYsrkRTyTfi3C3gicyzl5WAfdo=;
-        b=QroREGPB0jJNzpcuVJogRyyKLM86uvmBUkrDv1uvyQmW3IQCybPYLh1lidUegZnppnsFCJ
-        XYo0ox2ZrBg8IXBBVPhg41c7zOamuPhy5jutOuj/dUYdDTwahdek2ATEmDL9PVZzALVLPp
-        S0KsnaGxtsEkaasCA9bEpRXCvoPxSsA=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-455-nL4OnM4uPsS3Nq8OuBbb3g-1; Fri, 10 Feb 2023 09:58:26 -0500
-X-MC-Unique: nL4OnM4uPsS3Nq8OuBbb3g-1
-Received: by mail-ej1-f69.google.com with SMTP id d14-20020a170906c20e00b00889f989d8deso3752351ejz.15
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 06:58:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0GuaSLkqsctnE/R9PtYsrkRTyTfi3C3gicyzl5WAfdo=;
-        b=oEcnaZZM+d1x0tirVvLbZtHEHmjkDT2QaD2ZGb3lzTw6aeAmyjll07l5Cs3iKitp8O
-         8s8P2hSdjWljLGEzJjNdEnYnFOY2n2HEzB4x+QgyafA2GOR7UNBQ+Hxn0EVwOusJIb6X
-         A20ai2bAnfnmJVYg3qUTpG4b94qnVOamuPba5khOKS/6HUDwVhOUS4M5fkpVSIH8Z6V9
-         hvybLCpFR/Wyt8n3W5NHqxDilt1e2Lw0hgXpdWoZDPJFgkQivsN4VEU52CdI//pw1ZFq
-         sEj4uoQggU4ZrC8B5RDPYNfce5kc152BYzLHgiNHmPniz5tkiGn3aUY1dOZ0gTev3W2+
-         J7Sw==
-X-Gm-Message-State: AO0yUKWBQIvD3TOAiv48Mruk9u40CgnBNvMZHv6NSP6bhgDl8vpOMp3K
-        nEZz6U4BoFftPh5jswZTX1A/b3svORO7kPCbMKURkYnc/rIa2vMdD5Gv8r8EktAyxrEq+DIMcbN
-        lKVt4beU4qxsLf9/4ySyJleosbw==
-X-Received: by 2002:a17:906:830c:b0:878:5d46:9ed2 with SMTP id j12-20020a170906830c00b008785d469ed2mr15520860ejx.39.1676041105001;
-        Fri, 10 Feb 2023 06:58:25 -0800 (PST)
-X-Google-Smtp-Source: AK7set/KjOFaibc3QsEtqV/UTTJ1bP7jy1oQlsDgl+T1vfPoK6IQJs9Fi4kyrR2gjuPttCI2bZZVOw==
-X-Received: by 2002:a17:906:830c:b0:878:5d46:9ed2 with SMTP id j12-20020a170906830c00b008785d469ed2mr15520849ejx.39.1676041104825;
-        Fri, 10 Feb 2023 06:58:24 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8308:b104:2c00:2e8:ec99:5760:fb52])
-        by smtp.gmail.com with ESMTPSA id mj13-20020a170906af8d00b0089b6fd89429sm2509620ejb.10.2023.02.10.06.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Feb 2023 06:58:24 -0800 (PST)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] sysctl: fix proc_dobool() usability
-Date:   Fri, 10 Feb 2023 15:58:23 +0100
-Message-Id: <20230210145823.756906-1-omosnace@redhat.com>
-X-Mailer: git-send-email 2.39.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Fri, 10 Feb 2023 10:35:50 -0500
+Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 42A0526CC4;
+        Fri, 10 Feb 2023 07:35:49 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailnew.nyi.internal (Postfix) with ESMTP id DEAF7581F63;
+        Fri, 10 Feb 2023 10:10:36 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Fri, 10 Feb 2023 10:10:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1676041836; x=1676049036; bh=mnmCFBnaIP
+        +vBLu9FDqlvqV872F6Sk8/lQSQWnrc9vM=; b=D9Szpp77tFpcX+nFzNso9fAK0G
+        RKEY2e2MPcUw+e0HRg7S8ntVkkidfPRiVKiD9NnN/v5CGK69+T3Jead5T43+elxp
+        vdEvp0H3wpqmSvLp/EsSqJCUQp8vrbFlGhuwOBExHvxH/ijlvcebCIxq0GFKALZn
+        /KTXa55Xl1Nu1lYEE3YUdxKlBRHd9g6snyVPVw7lBXBFuN6X5R9KweBbGyws612U
+        HSSwAquhkWClD1qjztFmKSXMeUBJTYaykthTjsQv9cEQMLG0X1HQBvbnyPaoEUzh
+        c2j/S3bzXdpbQJtLfGhIn6moBc6uAsb7y1NxF05WugoRrHamBqi8vnM8+LIA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1676041836; x=1676049036; bh=mnmCFBnaIP+vBLu9FDqlvqV872F6
+        Sk8/lQSQWnrc9vM=; b=RHZtaJBO44uX2MARKJxLjffrlpmpVpqRWXHbD0f++4hp
+        qcrXlaKY1EA4C+ei9VBulYS+Pr1PaCMRoCiXza+fjmuBbIl7iAHJIIs/u5u04ZwR
+        un7ChSUzuQGzTl3Hzcn3+ASNHPbKVMq2pMRwmYsQFsty5c0tZWbMgH4X111G4rXx
+        xrYr3PGq6SNbkC1K18wAFFhEzQ4/Mu6MdjeZ0isXHr9XDxecB4/Wj99dyzjdUByn
+        eT3ZTxOyQt5xhBlFYcZRRNcG22TQLymxVnFTJ3lR0b/zX8cKrE9YnBJWzellYQHC
+        EsEl6lMz3XBzK0jy4OMsMTgRDCrxfrIC1I9MkjiqHw==
+X-ME-Sender: <xms:a17mY3P--ZnY9B0YNPVJei5M1XSljO-TrXiC-otvZu9e2Ux-mUMuYw>
+    <xme:a17mYx_FBr6stanlZSHdjEh_Yiizs7DAQDRo8eLwZjm4itklqm-Us_lyX4UcEEqKV
+    lc2GJafFQdTJPXBJdE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudehhedgjedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:a17mY2Qg8I9CgxEscmfW_KVeyAfpnzZW3vSqA_Kax6WR9loxG21lZw>
+    <xmx:a17mY7sOa99lDqlxfSrIsA34dub4d_dg1GrUC46fm4OCcg0OSUjgZQ>
+    <xmx:a17mY_cLeUpfTHmXPpf5NVLlLOlkwFqtmEf2CkzJAFgsXIq3rY2cJw>
+    <xmx:bF7mYzlxhpbpL2dPNp2_IA_FqJ-2rZBBDGc_SPVtMY4KfbLAmmmu4A>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 2C9A9B60086; Fri, 10 Feb 2023 10:10:35 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-156-g081acc5ed5-fm-20230206.001-g081acc5e
+Mime-Version: 1.0
+Message-Id: <7493f543-bf02-4bfe-90bd-a01d3c52cb52@app.fastmail.com>
+In-Reply-To: <2344ac16-781e-8bfa-ec75-e71df0f3ed28@redhat.com>
+References: <1446579994-9937-1-git-send-email-palmer@dabbelt.com>
+ <1447119071-19392-1-git-send-email-palmer@dabbelt.com>
+ <1447119071-19392-4-git-send-email-palmer@dabbelt.com>
+ <2344ac16-781e-8bfa-ec75-e71df0f3ed28@redhat.com>
+Date:   Fri, 10 Feb 2023 16:10:16 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Thomas Huth" <thuth@redhat.com>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Jakub Kicinski" <kuba@kernel.org>,
+        "Paolo Abeni" <pabeni@redhat.com>
+Cc:     "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        aishchuk@linux.vnet.ibm.com, aarcange@redhat.com,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Arnaldo Carvalho de Melo" <acme@kernel.org>,
+        "Baoquan He" <bhe@redhat.com>, 3chas3@gmail.com, chris@zankel.net,
+        dave@sr71.net, dyoung@redhat.com, drysdale@google.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>, geoff@infradead.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, "Ingo Molnar" <mingo@kernel.org>,
+        iulia.manda21@gmail.com, plagnioj@jcrosoft.com, jikos@kernel.org,
+        "Josh Triplett" <josh@joshtriplett.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, mathieu.desnoyers@efficios.com,
+        "Max Filippov" <jcmvbkbc@gmail.com>, paulmck@linux.vnet.ibm.com,
+        a.p.zijlstra@chello.nl, "Thomas Gleixner" <tglx@linutronix.de>,
+        vgoyal@redhat.com, x86@kernel.org,
+        "David Howells" <dhowells@redhat.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        Netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH 03/14] Move COMPAT_ATM_ADDPARTY to net/atm/svc.c
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently proc_dobool expects a (bool *) in table->data, but sizeof(int)
-in table->maxsize, because it uses do_proc_dointvec() directly.
+On Fri, Feb 10, 2023, at 15:55, Thomas Huth wrote:
+> On 10/11/2015 02.31, Palmer Dabbelt wrote:
+>> This used to be behind an #ifdef COMPAT_COMPAT, so most of userspace
+>> wouldn't have seen the definition before.  Unfortunately this header
+>> file became visible to userspace, so the definition has instead been
+>> moved to net/atm/svc.c (the only user).
+>> 
+>> Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
+>> Reviewed-by: Andrew Waterman <waterman@eecs.berkeley.edu>
+>> Reviewed-by: Albert Ou <aou@eecs.berkeley.edu>
 
-This is unsafe for at least two reasons:
-1. A sysctl table definition may use { .data = &variable, .maxsize =
-   sizeof(variable) }, not realizing that this makes the sysctl unusable
-   (see the Fixes: tag) and that they need to use the completely
-   counterintuitive sizeof(int) instead.
-2. proc_dobool() will currently try to parse an array of values if given
-   .maxsize >= 2*sizeof(int), but will try to write values of type bool
-   by offsets of sizeof(int), so it will not work correctly with neither
-   an (int *) nor a (bool *). There is no .maxsize validation to prevent
-   this.
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-Fix this by:
-1. Constraining proc_dobool() to allow only one value and .maxsize ==
-   sizeof(bool).
-2. Wrapping the original struct ctl_table in a temporary one with .data
-   pointing to a local int variable and .maxsize set to sizeof(int) and
-   passing this one to proc_dointvec(), converting the value to/from
-   bool as needed (using proc_dou8vec_minmax() as an example).
-3. Extending sysctl_check_table() to enforce proc_dobool() expectations.
-4. Fixing the proc_dobool() docstring (it was just copy-pasted from
-   proc_douintvec, apparently...).
-5. Converting all existing proc_dobool() users to set .maxsize to
-   sizeof(bool) instead of sizeof(int).
+It took me a bit to figure out why there is a separate command
+code but no special handler for the compat structure, aside from
+being in the wrong file it does look correct.
 
-Fixes: 83efeeeb3d04 ("tty: Allow TIOCSTI to be disabled")
-Fixes: a2071573d634 ("sysctl: introduce new proc handler proc_dobool")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- fs/lockd/svc.c        |  2 +-
- fs/proc/proc_sysctl.c |  6 ++++++
- kernel/sysctl.c       | 43 ++++++++++++++++++++++++-------------------
- mm/hugetlb_vmemmap.c  |  2 +-
- 4 files changed, 32 insertions(+), 21 deletions(-)
+>> +#ifdef CONFIG_COMPAT
+>> +/* It actually takes struct sockaddr_atmsvc, not struct atm_iobuf */
+>> +#define COMPAT_ATM_ADDPARTY _IOW('a', ATMIOC_SPECIAL+4, struct compat_atm_iobuf)
+>> +#endif
 
-diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
-index 59ef8a1f843f3..914ea1c3537d1 100644
---- a/fs/lockd/svc.c
-+++ b/fs/lockd/svc.c
-@@ -496,7 +496,7 @@ static struct ctl_table nlm_sysctls[] = {
- 	{
- 		.procname	= "nsm_use_hostnames",
- 		.data		= &nsm_use_hostnames,
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(bool),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dobool,
- 	},
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 48f2d60bd78a2..436025e0f77a6 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -1124,6 +1124,11 @@ static int sysctl_check_table_array(const char *path, struct ctl_table *table)
- 			err |= sysctl_err(path, table, "array not allowed");
- 	}
- 
-+	if (table->proc_handler == proc_dobool) {
-+		if (table->maxlen != sizeof(bool))
-+			err |= sysctl_err(path, table, "array not allowed");
-+	}
-+
- 	return err;
- }
- 
-@@ -1136,6 +1141,7 @@ static int sysctl_check_table(const char *path, struct ctl_table *table)
- 			err |= sysctl_err(path, entry, "Not a file");
- 
- 		if ((entry->proc_handler == proc_dostring) ||
-+		    (entry->proc_handler == proc_dobool) ||
- 		    (entry->proc_handler == proc_dointvec) ||
- 		    (entry->proc_handler == proc_douintvec) ||
- 		    (entry->proc_handler == proc_douintvec_minmax) ||
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 137d4abe3eda1..1c240d2c99bcb 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -425,21 +425,6 @@ static void proc_put_char(void **buf, size_t *size, char c)
- 	}
- }
- 
--static int do_proc_dobool_conv(bool *negp, unsigned long *lvalp,
--				int *valp,
--				int write, void *data)
--{
--	if (write) {
--		*(bool *)valp = *lvalp;
--	} else {
--		int val = *(bool *)valp;
--
--		*lvalp = (unsigned long)val;
--		*negp = false;
--	}
--	return 0;
--}
--
- static int do_proc_dointvec_conv(bool *negp, unsigned long *lvalp,
- 				 int *valp,
- 				 int write, void *data)
-@@ -710,16 +695,36 @@ int do_proc_douintvec(struct ctl_table *table, int write,
-  * @lenp: the size of the user buffer
-  * @ppos: file position
-  *
-- * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
-- * values from/to the user buffer, treated as an ASCII string.
-+ * Reads/writes one integer value from/to the user buffer,
-+ * treated as an ASCII string.
-+ *
-+ * table->data must point to a bool variable and table->maxlen must
-+ * be sizeof(bool).
-  *
-  * Returns 0 on success.
-  */
- int proc_dobool(struct ctl_table *table, int write, void *buffer,
- 		size_t *lenp, loff_t *ppos)
- {
--	return do_proc_dointvec(table, write, buffer, lenp, ppos,
--				do_proc_dobool_conv, NULL);
-+	struct ctl_table tmp;
-+	bool *data = table->data;
-+	int res, val;
-+
-+	/* Do not support arrays yet. */
-+	if (table->maxlen != sizeof(bool))
-+		return -EINVAL;
-+
-+	tmp = *table;
-+	tmp.maxlen = sizeof(val);
-+	tmp.data = &val;
-+
-+	val = READ_ONCE(*data);
-+	res = proc_dointvec(&tmp, write, buffer, lenp, ppos);
-+	if (res)
-+		return res;
-+	if (write)
-+		WRITE_ONCE(*data, val);
-+	return 0;
- }
- 
- /**
-diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-index 45e93a545dd7e..a559037cce00c 100644
---- a/mm/hugetlb_vmemmap.c
-+++ b/mm/hugetlb_vmemmap.c
-@@ -581,7 +581,7 @@ static struct ctl_table hugetlb_vmemmap_sysctls[] = {
- 	{
- 		.procname	= "hugetlb_optimize_vmemmap",
- 		.data		= &vmemmap_optimize_enabled,
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(vmemmap_optimize_enabled),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dobool,
- 	},
--- 
-2.39.1
+We could actually drop the #ifdef here as well, or moving into
+the existing #ifdef.
 
+>> +
+>>   static int svc_create(struct net *net, struct socket *sock, int protocol,
+>>   		      int kern);
+>
+> The CONFIG_* switch is still there in the atmdev.h uapi header ... could 
+> somebody please pick this patch up to fix it?
+
+It should get merged through the netdev tree, as Chas does not have
+a separate git tree for drivers/atm.
+
+I don't know what happened to the rest of the series, but if there are
+additional patches that got lost, merging them all through either the
+asm-generic or the mm tree would work as well.
+
+Any chance you or Palmer could rebase the series to 6.2-rc and
+see what remains?
+
+    Arnd
