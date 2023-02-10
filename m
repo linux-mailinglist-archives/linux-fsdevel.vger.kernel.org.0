@@ -2,44 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1849269277C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 20:56:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF5F2692846
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 21:27:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233442AbjBJT4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 14:56:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37860 "EHLO
+        id S233755AbjBJU12 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 15:27:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232484AbjBJT4D (ORCPT
+        with ESMTP id S233758AbjBJU10 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 14:56:03 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56CE835B1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 11:56:02 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0C1C6B824BF
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 19:56:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C64DEC433A0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 19:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676058959;
-        bh=/rbtwGkm6KjNDPlncngu4DRJNGQVNjUWrQ5+Z6JNEmg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dkQHuiF8P/dgaBGd5YJx4xzu3r7trh3/L6g9QQyiESG614aE8kO0FveBLQhhbngZc
-         cGqz0YYE/tUmjT5Z7If+FDBH2GXkOmkpN5WxsYX0iyP1MK29A+AHro0b+C6MjvppY+
-         Ht7bV5kq+1S33oRfw2XZ7R0ZzWHldTquToqimapb+Bl8ynj9Bltw8tb/b39/FKpKqZ
-         b/k5TZdVIY2s71ynKKWU0tm0QWgB/GexCz4DWX753hq69rDox9qbLhyQzrEj4ey6aH
-         3DlBRy1q/1yPEMO7TN3aElallOhM3pOp+KDzw3JMdKFKavBSJnHTGY5GuNnN82OsOi
-         wwO4sQ8qOtRzQ==
-Received: by mail-ed1-f45.google.com with SMTP id q19so5720349edd.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 11:55:59 -0800 (PST)
-X-Gm-Message-State: AO0yUKWwdpxKL0B/ADkEuuPucnvMseyzy4p3FlnAwZaxokuDyXG+ukao
-        3ke6h21ABqTozaCUiSBQqqsKmO2NAmng5mgEtYPQYg==
-X-Google-Smtp-Source: AK7set8T+tp2IZwVFvcjeL5tlcMarKtooKEDf9AGe53UI8xtD8A+U4cxUUUA2tv3tXXGolmJnsFOG8/Tj0Yb/wcb2uQ=
-X-Received: by 2002:a50:ba8d:0:b0:4ab:1c64:a9ed with SMTP id
- x13-20020a50ba8d000000b004ab1c64a9edmr1535489ede.2.1676058958001; Fri, 10 Feb
- 2023 11:55:58 -0800 (PST)
+        Fri, 10 Feb 2023 15:27:26 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 501AB7EC0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 12:27:21 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id qb15so16759377ejc.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 12:27:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZamuEXhcVKZ56iZ3/bDfyhF3ja60Eault4YAmV7SNAQ=;
+        b=TsQKwX+1pP22FCPs56/vCyqzRlBYKeuKP+V+HcYEmqly8S8QflkfYnflBEP5lT6H5b
+         F5OqDGoPLeri/hXpHRWaa+8lQPdUE2328dZc2DlNg611cY7QRaeODNzYeLtGw62oGpye
+         2d9QF4GSiwH6uplYVACzSv0yvdtDNJX7mh9+w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZamuEXhcVKZ56iZ3/bDfyhF3ja60Eault4YAmV7SNAQ=;
+        b=BC4RRW1zr2HeMxw4dP3wVXmh/VarmhnhTUt4iBHuNben+hi8H0szyAz0LsTx6ypqtL
+         9nEHNhnLs7JVe2kf85BJp+HtoCdNc0yGNHx1XARdxqMy+M4gUpz0kUM9zceYogWumJAO
+         EXbrST4f4/RO5lYVTQJ+wAFNmvHkaRlVlohGP0HDgeAv3OIA76em94JrjaOLF0LJetYU
+         ck1bgc9k6bUacfyM7jaJA3xGceR2nxWbkWtbKw2ghBTQhL1O86OZn+KRGuJSDR5ICliY
+         qA/kN0CLpGZnhTZzx2ZGuEXeNKt04MzStVdMtD624k3ytg0Qym+xc0VliYAN9T308Q7g
+         WUPw==
+X-Gm-Message-State: AO0yUKX2O/G0TeouWcd5YMLBhaGS+TR5OuBec8LTii4Joz4uy8lzuErD
+        LiukiO28fXhCtfMdRY1Chx2qiCH31ZnGhaHNWLw=
+X-Google-Smtp-Source: AK7set8tdzk8J6i6vWO/YsAS1AC6xvKpaufQ23oXB0r9+EgWLK7JBBH4hUtzIOPInQOR/yi1UvyJBA==
+X-Received: by 2002:a17:907:724e:b0:8af:2fa1:5ae5 with SMTP id ds14-20020a170907724e00b008af2fa15ae5mr10576340ejc.53.1676060839375;
+        Fri, 10 Feb 2023 12:27:19 -0800 (PST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id la2-20020a170906ad8200b008888f4120d4sm2811527ejb.129.2023.02.10.12.27.18
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Feb 2023 12:27:18 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id hx15so18773740ejc.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 12:27:18 -0800 (PST)
+X-Received: by 2002:a17:906:9381:b0:878:8061:e114 with SMTP id
+ l1-20020a170906938100b008788061e114mr1469478ejx.0.1676060838145; Fri, 10 Feb
+ 2023 12:27:18 -0800 (PST)
 MIME-Version: 1.0
 References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
  <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
@@ -49,16 +61,16 @@ References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
  <CAHk-=wj66F6CdJUAAjqigXMBy7gHquFMzPNAwKCgkrb2mF6U7w@mail.gmail.com>
  <CALCETrU-9Wcb_zCsVWr24V=uCA0+c6x359UkJBOBgkbq+UHAMA@mail.gmail.com>
  <CAHk-=wjQZWMeQ9OgXDNepf+TLijqj0Lm0dXWwWzDcbz6o7yy_g@mail.gmail.com>
- <CALCETrWuRHWh5XFn8M8qx5z0FXAGHH=ysb+c6J+cqbYyTAHvhw@mail.gmail.com> <CAHk-=wjuXvF1cA=gJod=-6k4ypbEmOczFFDKriUpOVKy9dTJWQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wjuXvF1cA=gJod=-6k4ypbEmOczFFDKriUpOVKy9dTJWQ@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 10 Feb 2023 11:55:45 -0800
-X-Gmail-Original-Message-ID: <CALCETrUXYts5BRZKb25MVaWPk2mz34fKSqCR++SM382kSYLnJw@mail.gmail.com>
-Message-ID: <CALCETrUXYts5BRZKb25MVaWPk2mz34fKSqCR++SM382kSYLnJw@mail.gmail.com>
+ <CALCETrWuRHWh5XFn8M8qx5z0FXAGHH=ysb+c6J+cqbYyTAHvhw@mail.gmail.com>
+ <CAHk-=wjuXvF1cA=gJod=-6k4ypbEmOczFFDKriUpOVKy9dTJWQ@mail.gmail.com> <CALCETrUXYts5BRZKb25MVaWPk2mz34fKSqCR++SM382kSYLnJw@mail.gmail.com>
+In-Reply-To: <CALCETrUXYts5BRZKb25MVaWPk2mz34fKSqCR++SM382kSYLnJw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 10 Feb 2023 12:27:01 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgA=rB=7M_Fe3n9UkoW_7dqdUT2D=yb94=6GiGXEuAHDA@mail.gmail.com>
+Message-ID: <CAHk-=wgA=rB=7M_Fe3n9UkoW_7dqdUT2D=yb94=6GiGXEuAHDA@mail.gmail.com>
 Subject: Re: copy on write for splice() from file to pipe?
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
         Matthew Wilcox <willy@infradead.org>,
         Stefan Metzmacher <metze@samba.org>,
         Jens Axboe <axboe@kernel.dk>,
@@ -69,88 +81,27 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Samba Technical <samba-technical@lists.samba.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 10, 2023 at 11:18 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Fri, Feb 10, 2023 at 11:56 AM Andy Lutomirski <luto@kernel.org> wrote:
 >
-> On Fri, Feb 10, 2023 at 11:02 AM Andy Lutomirski <luto@kernel.org> wrote:
-> >
-> > Second, either make splice more strict or add a new "strict splice"
-> > variant.  Strict splice only completes when it can promise that writes
-> > to the source that start after strict splice's completion won't change
-> > what gets written to the destination.
->
-> The thing ius, I think your "strict splice" is pointless and wrong.
->
-> It's pointless, because it simply means that it won't perform well.
->
-> And since the whole point of splice was performance, it's wrong.
->
-> I really think the whole "source needs to be stable" is barking up the
-> wrong tree.
->
-> You are pointing fingers at splice().
->
-> And I think that's wrong.
->
-> We should point the fingers at either the _user_ of splice - as Jeremy
-> Allison has done a couple of times - or we should point it at the sink
-> that cannot deal with unstable sources.
->
-> Because that whole "source is unstable" is what allows for that higher
-> performance. The moment you start requiring stability, you _will_ lose
-> it. You will have to lock the page, you'll have to umap it from any
-> shared mappings, etc etc.  And even if there are no writers, or no
-> current mappers, all that effort to make sure that is the case is
-> actually fairly expensive.
+> i think this is almost exactly what Jeremy and Stefan are asking for
+> re: notification when the system is done with a zero-copy send:
 
-...
+Yeah, right now it's all just "incremented page counts", I think.
 
-> Because I really think that your "strict splice" model would just mean
-> that now the kernel would have to add not just a memcpy, but also a
-> new allocation for that new stable buffer for the memcpy, and that
-> would all just be very very pointless.
->
-> Alternatively, it would require some kind of nasty hard locking
-> together with other limitations on what can be done by non-splice
-> users.
+Even the pipe code itself doesn't know about writes that have already
+been done, but that are pending elsewhere.
 
-I could be wrong, but I don't think any of this is necessary.  My
-strict splice isn't intended to be any more stable than current splice
--- it's intended to complete more slowly and more informatively.  Now
-maybe I'm wrong and the impleentation would be nasty, but I think that
-the only bookkeeping needed is to arrange strict-splice to not
-complete until the kernel is done with the source's page cache.  The
-use of the source is refcounted already, and a bit of extra work might
-be needed to track which strict-splice the reference came from, but
-unless I've missed something, it's not crazy.
+You'd have to ask the target file descriptor itself about "how much do
+you have pending" or something.
 
-Looking at the current splice implementaiton, a splice that isn't
-"strictly completed" is sort of represented by a struct pipe_buffer (I
-think).  The actual implementation of strict-splice might consist of
-separating pipe_buffer out from a pipe and adding an io_kiocb* and a
-refcount to it.  Or maybe even just adding an io_kiocb* and making the
-existing refcouting keep also track the io_kiocb*, but that might be
-complicated.  This all boils down to tracking an actual splice all the
-way through its lifecycle and not reporting it as done until it's all
-the way done.  Anything else is icing on the cake, no?
-
-There is absolutely no need to lock files or make page-cache pages
-immutable or anything like that.
-
-i think this is almost exactly what Jeremy and Stefan are asking for
-re: notification when the system is done with a zero-copy send:
-
-> What might be helpful in addition would be some kind of
-notification that all pages are no longer used by the network
-layer, IORING_OP_SENDMSG_ZC already supports such a notification,
-maybe we can build something similar.
+           Linus
