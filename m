@@ -2,60 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AD22691D1E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 11:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EA87691D4F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 11:54:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231938AbjBJKqM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 05:46:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59900 "EHLO
+        id S232228AbjBJKyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 05:54:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231720AbjBJKqK (ORCPT
+        with ESMTP id S231531AbjBJKyD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 05:46:10 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D9CE34C1F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 02:46:08 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id p26so14641887ejx.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 02:46:08 -0800 (PST)
+        Fri, 10 Feb 2023 05:54:03 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 622F11ABC0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 02:54:02 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id dr8so14682715ejc.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 02:54:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6uMcbVMgytFg/rZZMh+BerzgXH+nMa25qUluc8XB1rU=;
-        b=C7xSJEu9+rDzoh1MfU9LXHuvZgcD2HgbgNL80pXMhpAFJI6bMNR8/RscCbX64XjRbw
-         tCpz2KCnVjiMtmh8pvMvIHJoNJjOViWR8H3L2jxGPT3b8Kx09QMTtNlNTjzjbRCoIrsM
-         t6bR+Cd4K0t0yUXf8hqRv1ZpYBy2pEv8AMe5I=
+        bh=IY4Whe06KZr/dCRKC/k3Pnuiy/Cav2kBFD8hLrrOg8g=;
+        b=nY/IGLGNDxwn530xHObj2thmUqHZRExRlPumHRiXuRfiSoGNDPEVEF+L5oTEXv8PcP
+         ETbaF/URLWOEk55Yq0H8SNZ5bXxPS/Ze9/GJ9GFYZs9XeTEJ7dl9t9krGUkdAC3wi0WF
+         U3t/xZxHsaRWpDmZSXBrwiZnSO7RT+1smDyvY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6uMcbVMgytFg/rZZMh+BerzgXH+nMa25qUluc8XB1rU=;
-        b=O2q6RzJR9emIweKZw+ikTq01xX5xRmVxQxhAE/Z84/+6K8hwIsnmF3lj7zgEPjOZTJ
-         ihA173BgiLeRGtjaYahCCb8aJCDzCM6vZmnZf9FEe9rE8X2MC6Wz0v3zw3Wbn6Rc+EPE
-         v+uh//v5U/s+4/Lw3dwfL8jmXgGIHh4SIqnjxmhCpXdDBLS+HGZL1vPpDFp+M+am1hE6
-         GUex8k8Y+zRLYUBuPlW8dKOjhUwxaRRS9pMV0L3j3nP2zQpzZ3a3xedFWOm/Caniqtwy
-         bBl/InsmMadehkO+pJT24o2T3oL0fVTiVa/gSKXj5q3It3n/UwOgIRvF5ETC9sDwpbsD
-         PD5Q==
-X-Gm-Message-State: AO0yUKWChKx77b52eQf3Zhue+Ph0Kr4SJlLoFErHfggOb6seINZYsmN8
-        2D8xro8ntZaNM7f6ozrGkqWoC8cbXKo8igh50tlU5kqFjb6YjeHR
-X-Google-Smtp-Source: AK7set8F1pcPNpNn1QYJuq7e3gMLr8CMjJVXf1tOdSHHap6fkvfxo2/b6X/hF31/dxVuygrLi27mhhJ6/mxLfTt1llc=
+        bh=IY4Whe06KZr/dCRKC/k3Pnuiy/Cav2kBFD8hLrrOg8g=;
+        b=IKAGQATnUwDiUn0KLJqvmSVFZZPBD2y7Z12GzCpUHqqK/Yv7O6ATcijFOIUtPMlX0o
+         hVBDQKbKlIJHuFcGQCbrHiXbPGeCtay3cFcuSmIuVCiYLClXsIE5qq/7jBNADR3HJ6bJ
+         gBPH0CEkqRnTwZ0BMBAhP05Een2r8lzN5We6ZSgNJ16GzPqguhoUKj0CBOMaRBu73MWm
+         TcVsSXV9iaQSHs4FohnvJYW7A03jXu27elca4sbRXMvHoUsn372jLFPdLHPqMTR/3ZtR
+         4Kybq3hlNM3Pb4f8RBcP811u1zdJhre7Ydhj2Rn5zMoW4pQyKsAsvPfje1at99yH1+7A
+         0C5Q==
+X-Gm-Message-State: AO0yUKV+qPczJmL4p6VzH5uPwA8RvsX8lLG1aJ4ZtRUpzgVDURL4hwn7
+        OT0RgoBdR28+HfevpXGxLWzVuktYr0r2isBKeJ6OHg==
+X-Google-Smtp-Source: AK7set8xkzxBOD+wDzOrHdqZR4xd8pnPuGMx8oY9OQNbChtJSYSGC6AgESAHznUmU7N13mMocyUpTYWHP03Gt0TCi8c=
 X-Received: by 2002:a17:906:7242:b0:889:a006:7db5 with SMTP id
- n2-20020a170906724200b00889a0067db5mr3266276ejk.138.1676025967166; Fri, 10
- Feb 2023 02:46:07 -0800 (PST)
+ n2-20020a170906724200b00889a0067db5mr3270379ejk.138.1676026440994; Fri, 10
+ Feb 2023 02:54:00 -0800 (PST)
 MIME-Version: 1.0
-References: <7038cabf-e9bb-394a-e084-11bc23813fc7@ddn.com>
-In-Reply-To: <7038cabf-e9bb-394a-e084-11bc23813fc7@ddn.com>
+References: <20221122021536.1629178-1-drosen@google.com> <CAOQ4uxiyRxsZjkku_V2dBMvh1AGiKQx-iPjsD5tmGPv1PgJHvQ@mail.gmail.com>
+ <CA+PiJmRLTXfjJmgJm9VRBQeLVkWgaqSq0RMrRY1Vj7q6pV+omw@mail.gmail.com>
+ <2dc5e840-0ce8-dae9-99b9-e33d6ccbb016@fastmail.fm> <CAOQ4uxiBD5NXLMXFev7vsCLU5-_o8-_H-XcoMY1aqhOwnADo9w@mail.gmail.com>
+ <283b5344-3ef5-7799-e243-13c707388cd8@fastmail.fm> <CAOQ4uxjvUukDSBk977csO5cX=-1HiMHmyQxycbYQgrpLaanddw@mail.gmail.com>
+ <CAJfpegvHKkCn0UnNRVxFXjjnkOuq0N4xLN4WzpqVX+56DqdjUw@mail.gmail.com> <81e010cc-b52b-4b20-8d08-631ce8ca7fad@app.fastmail.com>
+In-Reply-To: <81e010cc-b52b-4b20-8d08-631ce8ca7fad@app.fastmail.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 10 Feb 2023 11:45:56 +0100
-Message-ID: <CAJfpegsOPsXqP0=fANO01pyaP99j2+BOF8UrixhXimrCsrabOQ@mail.gmail.com>
-Subject: Re: [LSF/MM/BFP ATTEND][LSF/MM/BFP TOPIC] fuse uring communication
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Date:   Fri, 10 Feb 2023 11:53:50 +0100
+Message-ID: <CAJfpegsocoi-KobnSpD9dHvZDeDwG+ZPKRV9Yo-4i8utZa5Jww@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/21] FUSE BPF: A Stacked Filesystem Extension for FUSE
+To:     Nikolaus Rath <nikolaus@rath.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Bernd Schubert <bernd.schubert@fastmail.fm>,
+        Daniel Rosenberg <drosen@google.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@android.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
@@ -66,94 +73,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 5 Feb 2023 at 02:00, Bernd Schubert <bschubert@ddn.com> wrote:
+On Fri, 10 Feb 2023 at 10:42, Nikolaus Rath <nikolaus@rath.org> wrote:
 >
-> Hello,
+> On Fri, 10 Feb 2023, at 09:38, Miklos Szeredi wrote:
+> > On Fri, 3 Feb 2023 at 12:43, Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> >> > Thanks a lot Amir, I'm going to send out an invitation tomorrow. Maybe
+> >> > Nikolaus as libfuse maintainer could also attend?
+> >> >
+> >>
+> >> Since this summit is about kernel filesystem development, I am not sure
+> >> on-prem attendance will be the best option for Nikolaus as we do have
+> >> a quota for
+> >> on-prem attendees, but we should have an option for connecting specific
+> >> attendees remotely for specific sessions, so that could be great.
+> >
+> > Not sure.  I think including non-kernel people might be beneficial to
+> > the whole fs development community.  Not saying LSF is the best place,
+> > but it's certainly a possibility.
+> >
+> > Nikolaus, I don't even know where you're located.  Do you think it
+> > would make sense for you to attend?
 >
-> I'm working for some time on fuse uring based communication that is numa
-> aware and core-affine.
-
-I might have mentioned this earlier, but one of the bigger issues with
-NUMA that I found was that having a single process with multiple
-threads serving queues of different NUMA nodes incurs a performance
-hit each time a server thread gets to run. This is due to having to
-update mm->cpu_bitmap, which indicates on which  CPUs the current
-process is running on.  This bitmap is shared by the address space,
-hence constantly updating it from different nodes means having to move
-it from one node to the other.
-
-My workaround was to use separate processes (address space is not
-shared) but use shared memory for common structures.  This complicates
-things quite a bit, so it would be nice to find some other way of
-fixing this issue.  For example it occurs to me that making this
-bitmap use different cachelines for CPUs that are on different nodes
-might actually help fix the issue.
-
-> In the current /dev/fuse based IO model requests are queued on lists
-> that are not core-affine or numa aware. For every request a round trip
-> between userspace and kernel is needed.
-> When we benchmarked our atomic-open patches (also still WIP) initially
-> confusing findings came up [1] and could be tracked down to multiple
-> threads reading from /dev/fuse. After switching to a single thread that
-> reads from /dev/fuse we got consistent and expected results.
-> Later we also figured out that adding a polling spin fuse_dev_do_read()
-> before going into a waitq sleep when no request is available greatly
-> improved meta data benchmark performance [2].
+> Hi folks,
 >
-> That made us to think about the current communication and to look into a
-> ring based queuing model. Around that time IORING_OP_URING_CMD was added
-> to uring and the new userspace block device driver (ublk) is using that
-> command, to send requests from kernel to userspace.
-> I started to look how ublk works and started to adapt a similar model to
-> fuse. State as today is that it is basically working, but I'm still
-> fixing issues found by xfstests. Benchmarks and patch cleanup for
-> submission follow next.
+> I'm located in London.
 >
-> https://github.com/bsbernd/linux/tree/fuse-uring
-> https://github.com/bsbernd/libfuse/tree/uring
-> (these branches will _not_ be used for upstream submission, these are
-> purely for base development)
+> I've never been at LHS, so it's hard for me to tell if I'd be useful there or not. If there's interest, then I would make an effort to attend.
 >
->
-> A fuse design documentation update will also be added in the 1st RFC
-> request, basic details follow as
->
-> - Initial mount setup goes over /dev/fuse
-> - fuse.ko queues FUSE_INIT in the existing /dev/fuse (background) queue
-> - User space sets up the ring and all queues with a new ioctl
-> - fuse.ko sets up the ring and allocates request queues/request memory
-> per queue/request
-> - Userspace mmaps these buffers and assigns them per queue/request
-> - Data are send through these mmaped buffers, there is no kmap involved
-> (difference to ublk)
+> Are we talking about the event in Vancouver on May 8th?
 
-How is the queue buffer filled?  Are requests packed or is the queue
-divided into equal parts for each request?
+Yes, that's the one.
 
-How replies are sent?  Do they use the same buffer?
+I'd certainly think it would be useful, since there will be people
+with interest in fuse filesystems and hashing out the development
+direction involves libfuse as well.
 
-> - Similar to ublk user space first submits SQEs with as
-> FUSE_URING_REQ_FETCH, then later as FUSE_URING_REQ_COMMIT_AND_FETCH -
-> commit results of the current request and fetch the next one.
-> - FUSE_URING_REQ_FETCH also takes the FUSE_INIT request, later these
-> lists are not checked anymore, as there is nothing supposed to be on them
+Here's the CFP and attendance request if you are interested:
 
-Which list?  If the FUSE_INIT is handled on /dev/fuse why handle it on
-the uring?
-
-> - The ring currently only only handles fuse pending and background
-> requests (with credits assigned)
-> - Forget requires libfuse still read /dev/fuse (handling will be added
-> to the ring later)
-> - In the WIP state request interrupts are not supported (yet)
-> - Userspace needs to send fuse notifications to /dev/fuse, needs to be
-> handled by the ring as well (or maybe a separate ring)
-> - My goal was to keep compatibility with existing fuse file systems,
-> except of the so far missing interrupt handling that should work so far.
-
-Interrupts and notifications are used by very few fs.  So if it's
-easier, then we could leave one thread to handle legacy /dev/fuse
-requests for anything that's not performance sensitive.
+  https://events.linuxfoundation.org/lsfmm/program/cfp/
 
 Thanks,
 Miklos
