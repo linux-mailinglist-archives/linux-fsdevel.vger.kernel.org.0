@@ -2,191 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2C9B69232E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 17:22:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8559969235F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 17:34:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232866AbjBJQV7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 11:21:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42914 "EHLO
+        id S232488AbjBJQeT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 11:34:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232178AbjBJQV5 (ORCPT
+        with ESMTP id S232572AbjBJQeS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 11:21:57 -0500
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE33113E8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 08:21:54 -0800 (PST)
-Received: by mail-qt1-x82a.google.com with SMTP id m12so6330873qth.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 08:21:54 -0800 (PST)
+        Fri, 10 Feb 2023 11:34:18 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94110A5E1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 08:34:16 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id u10so4222026wmj.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 08:34:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
+        d=linux-foundation.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q3mcvpqnGRzxZSmag23CWJUdjs1NpsRhnyJmXgB+2LI=;
-        b=cDO/ltH9oba2g7m81sHGlz0cBIBBu9U6Y0R4QWT3HoFKc3NTV8+aFwvlkqAIWcOhEr
-         UGt4UCdDpHWAJ0SUEqjNFUp/15BKrduZCAlc4syxNlr+MtSjMrmkOS5daqaAMhvQw5Xg
-         1fw7wdz/uB+dshxZ098absfclhWw7PkpV5uS9ISBzbAk0H1jixdK0jZVLy5/TReJiM0c
-         lj9te1QyiuH+6f+kC1tAPcXXaoKeT2U+BrTBjlUsgwkP7XtCUuPuQ6RXJDFtRiiB/hdQ
-         GpBuxkLYggD8zZXK4vXV5EiegQdXfkUPWRCTp6XMKUHP3AY2GwkERs3JIDZ+fD7akOWP
-         NLZg==
+        bh=fhLS95sVAPuPLSt4s3QNipINWEX9MBrZr6+OBYHbgx0=;
+        b=cL0mkbQIbHTogr8+gARmzk7nOJyD+7SQmmdWptCXTxvc58+uY1vnr+O3VA6IXM3pTE
+         xBSu3S98ypYKJ1ws4c6sOhAicybJKFwvsEqJZZr3hDlVubO2y7LscipiJbUntT3Fcny5
+         cCGhMNw2tXB30dK1JJMm5hbi0YDzOdQMqBrds=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Q3mcvpqnGRzxZSmag23CWJUdjs1NpsRhnyJmXgB+2LI=;
-        b=uCFu/rYqYeJXzCRnHm1vSizQrIdyejI/qNPhoR6VLDFlHxoUP/TcDe7l1Bh+I71eK1
-         3tJMObha8w1Rd/hhKrW1vTP9ZrbSo/6n0HzXSwUeuPcdxeRk0sz63QnBN3GgNppKpDwc
-         iQliTmKz7EQetFVZVDqTcTURKY9k4o/GLlpy5V14uHkWL+dtQ/sd2I/xqJL3RqM5ciMi
-         e7O1F4JJbngSn5xhkBmeIFmZQ1nN27CHHQEZpL9T5sl+1NjiNDtuR73Ce5wAUWDJUL12
-         otdkRn8AXdiyjH1kxikJW7Ev2OmCTDlGz2QP9fc+bdaqmkkOhKM296+E3KYyDsyzIJnq
-         6cUg==
-X-Gm-Message-State: AO0yUKVgeM0BiBCER7MtMjyGR6aHvCaAROGshKPQMwYTowOjQ+tf9kAt
-        bmB24irWNK50+70EzDM9ufJZTgGMZyO7uBNxFcQhag==
-X-Google-Smtp-Source: AK7set+L6NzhA8suon4TylHNK1DlDLEyOXcc0AMap3AYzq+uL59ZF8RYF/vEPW58PuLQG6/K4kNdvBPwVDipZHv+bVc=
-X-Received: by 2002:a05:622a:110f:b0:3b8:67d3:343c with SMTP id
- e15-20020a05622a110f00b003b867d3343cmr2507820qty.301.1676046113869; Fri, 10
- Feb 2023 08:21:53 -0800 (PST)
+        bh=fhLS95sVAPuPLSt4s3QNipINWEX9MBrZr6+OBYHbgx0=;
+        b=S1UxFaotPjPAmvdJraFf7y4VFpmdv1XqhXmDIyNFyNSUw/HxSZOK+G9TUz7sGof9Ew
+         6mUSQLDCm0Gj0xqyiWefOZuaZP3fkenjcrfrMejPqrbg/RMo2iAHj1JbidnuqfOrnZCr
+         6pHZhE+35soZ6e29kICsZMeUocHJeJAS3bsUNbr+CTYp11VhMH22HhCGaOa1su18IovS
+         d8sPwb7CGS8LdjNa7/9QQdSotaIVm9XzFGJSmGGokjAezFbgbYC5KQL+D3/8jcTthF/k
+         3z2hPjd/L7/+AqLrps1RdeyYPlGThJ7Gzt7Fb71p1q8zPeQmBjPLEdT6wagJLv/EkN9Z
+         ytvA==
+X-Gm-Message-State: AO0yUKWoC4b7j9kzVEjlybvJ3v5ry43IIAyHpme2rkOeTrsSyaQChkKI
+        g6OENcmun4JwK+GHZGaRmxHALI7nePlDVphXnLE=
+X-Google-Smtp-Source: AK7set/DUDsyTU6nZFc9opbTaC4ZWQ8FNiX1LBzewXgZaEFvM0nIYObtnWzZSjRNdPZDi/1eQHhJ2Q==
+X-Received: by 2002:a05:600c:4586:b0:3df:9858:c03a with SMTP id r6-20020a05600c458600b003df9858c03amr10381446wmo.15.1676046854637;
+        Fri, 10 Feb 2023 08:34:14 -0800 (PST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id b18-20020a05600c4e1200b003e00c453447sm8919484wmq.48.2023.02.10.08.34.13
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Feb 2023 08:34:13 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id lu11so17382051ejb.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 08:34:13 -0800 (PST)
+X-Received: by 2002:a17:906:4e46:b0:87a:7098:ca09 with SMTP id
+ g6-20020a1709064e4600b0087a7098ca09mr3021239ejw.78.1676046853351; Fri, 10 Feb
+ 2023 08:34:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20230207035139.272707-1-shiyn.lin@gmail.com> <CA+CK2bBt0Gujv9BdhghVkbFRirAxCYXbpH-nquccPsKGnGwOBQ@mail.gmail.com>
- <CANOhDtU3J8SUCzKtKvPPPrUHyo+LV5npNObHtYP_AK4W3LomDw@mail.gmail.com>
-In-Reply-To: <CANOhDtU3J8SUCzKtKvPPPrUHyo+LV5npNObHtYP_AK4W3LomDw@mail.gmail.com>
-From:   Pasha Tatashin <pasha.tatashin@soleen.com>
-Date:   Fri, 10 Feb 2023 11:21:16 -0500
-Message-ID: <CA+CK2bAWnzqKDTjBbxXOvURwr7nWmf8q-mzD1x-ztwbWVQBQKA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] Introduce Copy-On-Write to Page Table
-To:     Chih-En Lin <shiyn.lin@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Nadav Amit <namit@vmware.com>, Barry Song <baohua@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Yang Shi <shy828301@gmail.com>, Peter Xu <peterx@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Zach O'Keefe" <zokeefe@google.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Hugh Dickins <hughd@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Yu Zhao <yuzhao@google.com>, Juergen Gross <jgross@suse.com>,
-        Tong Tiangen <tongtiangen@huawei.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Li kunyu <kunyu@nfschina.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Gautam Menghani <gautammenghani201@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Brown <broonie@kernel.org>, Will Deacon <will@kernel.org>,
-        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Barret Rhoden <brho@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Dinglan Peng <peng301@purdue.edu>,
-        Pedro Fonseca <pfonseca@purdue.edu>,
-        Jim Huang <jserv@ccns.ncku.edu.tw>,
-        Huichun Feng <foxhoundsk.tw@gmail.com>
+References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
+ <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
+ <20230210021603.GA2825702@dread.disaster.area> <20230210040626.GB2825702@dread.disaster.area>
+ <Y+XLuYh+kC+4wTRi@casper.infradead.org> <20230210065747.GD2825702@dread.disaster.area>
+ <CALCETrWjJisipSJA7tPu+h6B2gs3m+g0yPhZ4z+Atod+WOMkZg@mail.gmail.com>
+In-Reply-To: <CALCETrWjJisipSJA7tPu+h6B2gs3m+g0yPhZ4z+Atod+WOMkZg@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 10 Feb 2023 08:33:56 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj66F6CdJUAAjqigXMBy7gHquFMzPNAwKCgkrb2mF6U7w@mail.gmail.com>
+Message-ID: <CAHk-=wj66F6CdJUAAjqigXMBy7gHquFMzPNAwKCgkrb2mF6U7w@mail.gmail.com>
+Subject: Re: copy on write for splice() from file to pipe?
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API Mailing List <linux-api@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Samba Technical <samba-technical@lists.samba.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > > Currently, copy-on-write is only used for the mapped memory; the child
-> > > process still needs to copy the entire page table from the parent
-> > > process during forking. The parent process might take a lot of time and
-> > > memory to copy the page table when the parent has a big page table
-> > > allocated. For example, the memory usage of a process after forking with
-> > > 1 GB mapped memory is as follows:
-> >
-> > For some reason, I was not able to reproduce performance improvements
-> > with a simple fork() performance measurement program. The results that
-> > I saw are the following:
-> >
-> > Base:
-> > Fork latency per gigabyte: 0.004416 seconds
-> > Fork latency per gigabyte: 0.004382 seconds
-> > Fork latency per gigabyte: 0.004442 seconds
-> > COW kernel:
-> > Fork latency per gigabyte: 0.004524 seconds
-> > Fork latency per gigabyte: 0.004764 seconds
-> > Fork latency per gigabyte: 0.004547 seconds
-> >
-> > AMD EPYC 7B12 64-Core Processor
-> > Base:
-> > Fork latency per gigabyte: 0.003923 seconds
-> > Fork latency per gigabyte: 0.003909 seconds
-> > Fork latency per gigabyte: 0.003955 seconds
-> > COW kernel:
-> > Fork latency per gigabyte: 0.004221 seconds
-> > Fork latency per gigabyte: 0.003882 seconds
-> > Fork latency per gigabyte: 0.003854 seconds
-> >
-> > Given, that page table for child is not copied, I was expecting the
-> > performance to be better with COW kernel, and also not to depend on
-> > the size of the parent.
+On Fri, Feb 10, 2023 at 7:15 AM Andy Lutomirski <luto@kernel.org> wrote:
 >
-> Yes, the child won't duplicate the page table, but fork will still
-> traverse all the page table entries to do the accounting.
-> And, since this patch expends the COW to the PTE table level, it's not
-> the mapped page (page table entry) grained anymore, so we have to
-> guarantee that all the mapped page is available to do COW mapping in
-> the such page table.
-> This kind of checking also costs some time.
-> As a result, since the accounting and the checking, the COW PTE fork
-> still depends on the size of the parent so the improvement might not
-> be significant.
+> Frankly, I really don't like having non-immutable data in a pipe.
 
-The current version of the series does not provide any performance
-improvements for fork(). I would recommend removing claims from the
-cover letter about better fork() performance, as this may be
-misleading for those looking for a way to speed up forking. In my
-case, I was looking to speed up Redis OSS, which relies on fork() to
-create consistent snapshots for driving replicates/backups. The O(N)
-per-page operation causes fork() to be slow, so I was hoping that this
-series, which does not duplicate the VA during fork(), would make the
-operation much quicker.
+That statement is completely nonsensical.
 
-> Actually, at the RFC v1 and v2, we proposed the version of skipping
-> those works, and we got a significant improvement. You can see the
-> number from RFC v2 cover letter [1]:
-> "In short, with 512 MB mapped memory, COW PTE decreases latency by 93%
-> for normal fork"
+A pipe is a kernel buffer. If you want the buffer to be immutable, you
+do "read()" and "write()" on it. End of story.
 
-I suspect the 93% improvement (when the mapcount was not updated) was
-only for VAs with 4K pages. With 2M mappings this series did not
-provide any benefit is this correct?
+In contrast, "splice()" is literally the "map" operation. It's
+"mmap()", without the "m", because it turns out that memory mapping
+has a few problems:
 
->
-> However, it might break the existing logic of the refcount/mapcount of
-> the page and destabilize the system.
+ (a) mmap fundamentally only works on a page granularity
 
-This makes sense.
+ (b) mmap has huge setup and teardown costs with page tables and TLB's
 
-> [1] https://lore.kernel.org/linux-mm/20220927162957.270460-1-shiyn.lin@gmail.com/T/#me2340d963c2758a2561c39cb3baf42c478dfe548
-> [2] https://lore.kernel.org/linux-mm/20220927162957.270460-1-shiyn.lin@gmail.com/T/#mbc33221f00c7cf3d71839b45fc23862a5dac3014
+and so splice() is just basically "strange mmap with that kernel
+buffer that is pipe"
+
+Really. That is what spice *is*. There's absolutely no question about it.
+
+It has some advantages over mmap, in that because it's a software
+mapping, we can "map" partial pages, which means that you can also map
+data that might not be in full pages (it might be an incoming network
+buffer, for example).
+
+It has a lot of disadvantages over mmap too, of course. Not using
+hardware means that it doesn't really show up as a linear mapping, and
+you don't get the nice hardware lookup accelerations - but it also
+means that you don't have the downsides (ie TLB costs etc).
+
+So I'm not saying that it is the same thing as "mmap", but I very much
+_am_ saying that there's a very real and direct similarity. There are
+three fundamental IO models in Unix: read, write, and mmap. And mmap()
+is very much a "you get a direct window into something that can change
+under you".  And splice() is exactly that same thing.
+
+It was literally designed to be "look, we want zero-copy networking,
+and we could do 'sendfile()' by mmap'ing the file, but mmap - and
+particularly munmap - is too expensive, so we map things into kernel
+buffers instead".
+
+So saying "I really don't like having non-immutable data in a pipe" is
+complete nonsense. It's syntactically correct English, but it makes no
+conceptual sense.
+
+You can say "I don't like 'splice()'". That's fine. I used to think
+splice was a really cool concept, but I kind of hate it these days.
+Not liking splice() makes a ton of sense.
+
+But given splice, saying "I don't like non-immutable data" really is
+complete nonsense.
+
+If you want a stable buffer, use read() and write(). It's that simple.
+If you want to send data from a file to the network, and want a stable
+buffer in between the two, then "read()" and "write()" is *exactly*
+what you should do.
+
+With read and write, there's no mmap()/munmap() overhead of the file,
+and you already have the buffer (iwe call it "user address space").
+The only downside is the extra copy.
+
+So if  you want to send stable, unchanging file contents to the
+network, there is absolutely *no* reason to ever involve a pipe at
+all, and you should entirely ignore splice().
+
+The *only* reason to ever use splice() is because you don't want to
+copy data, and just want a reference to it, and want to keep it all in
+kernel space, because the kernel<->user boundary ends up either
+requiring copies, or that page alignment, and is generally fairly
+expensive.
+
+But once you decide to go that way, you need to understand that you
+don't have "immutable data". You asked for a reference, you got a
+reference, and it *will* change.
+
+That's not something specific to "splice()". It's fundamental to the
+whole *concept* of zero-copy. If you don't want copies, and the source
+file changes, then you see those changes.
+
+So saying "I really don't like having non-immutable data in a pipe"
+really is nonsense. Don't use splice. Or do, and realize that it's a
+*mapping*.
+
+Because that is literally the whole - and ONLY - reason for splice in
+the first place.
+
+              Linus
