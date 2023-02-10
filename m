@@ -2,94 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AF07692875
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 21:39:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B9DA69288D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 21:43:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233331AbjBJUjs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 15:39:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40920 "EHLO
+        id S233353AbjBJUnT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 15:43:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233241AbjBJUjr (ORCPT
+        with ESMTP id S232935AbjBJUnP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 15:39:47 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D977582B3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 12:39:46 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id k13so7790375plg.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 12:39:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676061586;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hOgh7AvLAEWr6MHPlHv0hgSblyWQEvUMOhxbQH1+hyo=;
-        b=jc2vNS6CTgDl5wGMWicplBDwMvBI5B5pqGQ9DaNZQ307PdlpVexxHxXwRO7mUkX4NY
-         7fRQynw4kF8Oi2c4WShg0TbmesAXOhBwUP/ZDuN2qCO4aXUK0UZREXQBMwjpL7kmigkp
-         rXAkKJ0F4wN7ACfcxYmWv6a/ZDbG/+cg82oKRyXQ/Lm+c1IogSo6u4a4+21f8ZLF0Owj
-         BmISDB5fJOMG0q7j8CjfevhDocQFVyO1+tUeDOgi23M3EBTSDalxZmuN9Tnm/6svMWXF
-         VB1Kb91lB3AGgf5NAATPTOY28mbd9FstMUMd9wo/WtKwHesj1wp3QpdDs4RvCAzzLbdo
-         kDsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676061586;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hOgh7AvLAEWr6MHPlHv0hgSblyWQEvUMOhxbQH1+hyo=;
-        b=JOcFDPytGj5tgQXX8frsZgqiUbb8oMlvGSrRZa0d+2KRp7Lv4t6OXufi/grDU1nry5
-         hM1tT0O3dH/6K79nFEko4+YOdr5/vzFDqNbSLRuII1sI/hYzT4C0si+KKJ4InZGtfKnJ
-         aRkAtdwHguRNnvdxr7p1QBjC+H7+4Z8X7aUCbEZXOODQ+uj1q6mXGCEagQo1ja468U1O
-         PTqLGmKeAbNkIGHa+dnBE/UKcJOKD0Ps21r+nB9eRQh3YKBdg/VssotJL03pRNh35O67
-         kgL/a1+tKrTscHE2G6TBSc/v3pkJah5RC7NxlBr81rXHuenz9GYXY/w5aFzT+tNPJKXK
-         amGA==
-X-Gm-Message-State: AO0yUKWeOxA4SZosxISdaEBmDkmrlu7mEVj9/wUl76by3iIFAqQo8B4T
-        +NUHL0EUr047AE0yFUoDtGOPtQ==
-X-Google-Smtp-Source: AK7set+Y8TkAMh6d9nz8+dUcs2UW1ALm0QmrsJs0TveWKd9aTsokQRTlusL/k4JePfB0Sa0dyZsGSg==
-X-Received: by 2002:a17:902:f685:b0:199:190c:3c0c with SMTP id l5-20020a170902f68500b00199190c3c0cmr17850124plg.2.1676061585288;
-        Fri, 10 Feb 2023 12:39:45 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id l3-20020a170903120300b00196053474a8sm3774234plh.53.2023.02.10.12.39.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Feb 2023 12:39:44 -0800 (PST)
-Message-ID: <fe8252bd-17bd-850d-dcd0-d799443681e9@kernel.dk>
-Date:   Fri, 10 Feb 2023 13:39:43 -0700
+        Fri, 10 Feb 2023 15:43:15 -0500
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 900447070A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 12:43:13 -0800 (PST)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 31AKguqB016352
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Feb 2023 15:42:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1676061778; bh=pdTppfBFbu942mayOz5ovqBKLYyjLl+xg3ENsgaZyAc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=GUUyc8wRKs/V5GBvzJ5p2NX5/KKjt4ybnyWOZJrIadSFzQPd91yS5hql4QOpEHXy+
+         K8hQMkSpOsy2/8BucH35Ob+AQ8t3AHdl2ftpK2bNZQq92zbZESq5K4z7fltsyj2ZyI
+         aTPonDLDK5zoBwKT8UniDuE8kBTz96AJn2HZhuK8RYCyMzfRGTnFHYeZdCuQLyl3NR
+         SNjCxFS6jbINL5PmOS2uIU2bQOw804vCOg4RWkHiQncuCvbt8HRzxavNDoJ9Lgn8BW
+         W9667OBJt+wev8dUiyJ2/7bdEzu6SpXixivcp3klpWsuYvYXiITooyX+tmt2rYYpmp
+         JFJumg2/SUghA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id BCE0315C340F; Fri, 10 Feb 2023 15:42:56 -0500 (EST)
+Date:   Fri, 10 Feb 2023 15:42:56 -0500
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Sebastien Buisson <sbuisson.work@gmail.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: Backup/restore of fscrypt files and directories
+Message-ID: <Y+asUDeRFGpig+wG@mit.edu>
+References: <03a87391-1b19-de2d-5c18-581c1d0c47ca@gmail.com>
+ <Y+P3wumJK/znOKgl@gmail.com>
+ <0eaf08a8-ddec-5158-ab2b-ae7e3e1bab9b@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: copy on write for splice() from file to pipe?
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Stefan Metzmacher <metze@samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
-References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
- <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
- <20230210021603.GA2825702@dread.disaster.area>
- <20230210040626.GB2825702@dread.disaster.area>
- <Y+XLuYh+kC+4wTRi@casper.infradead.org>
- <20230210065747.GD2825702@dread.disaster.area>
- <CALCETrWjJisipSJA7tPu+h6B2gs3m+g0yPhZ4z+Atod+WOMkZg@mail.gmail.com>
- <CAHk-=wj66F6CdJUAAjqigXMBy7gHquFMzPNAwKCgkrb2mF6U7w@mail.gmail.com>
- <CALCETrU-9Wcb_zCsVWr24V=uCA0+c6x359UkJBOBgkbq+UHAMA@mail.gmail.com>
- <CAHk-=wjQZWMeQ9OgXDNepf+TLijqj0Lm0dXWwWzDcbz6o7yy_g@mail.gmail.com>
- <CALCETrWuRHWh5XFn8M8qx5z0FXAGHH=ysb+c6J+cqbYyTAHvhw@mail.gmail.com>
- <CAHk-=wjuXvF1cA=gJod=-6k4ypbEmOczFFDKriUpOVKy9dTJWQ@mail.gmail.com>
- <CALCETrUXYts5BRZKb25MVaWPk2mz34fKSqCR++SM382kSYLnJw@mail.gmail.com>
- <CAHk-=wgA=rB=7M_Fe3n9UkoW_7dqdUT2D=yb94=6GiGXEuAHDA@mail.gmail.com>
- <1dd85095-c18c-ed3e-38b7-02f4d13d9bd6@kernel.dk>
- <CAHk-=wiszt6btMPeT5UFcS=0=EVr=0injTR75KsvN8WetwQwkA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=wiszt6btMPeT5UFcS=0=EVr=0injTR75KsvN8WetwQwkA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0eaf08a8-ddec-5158-ab2b-ae7e3e1bab9b@gmail.com>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -97,30 +55,136 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/10/23 1:36 PM, Linus Torvalds wrote:
-> On Fri, Feb 10, 2023 at 12:32 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> No, we very much do have that for io_uring zerocopy sends, which was in
->> the bit below you snipped from the reply. It'll tell you when data has
->> been sent out, and when the data has been acked.
+On Fri, Feb 10, 2023 at 02:44:22PM +0100, Sebastien Buisson wrote:
+> As for symlinks, you are right I need to dig further. I think at least the
+> security.encdata xattr would need an additional field to hold the ciphertext
+> symlink target.
+
+So I'd caution you against the concept of using the security.encdata
+xattr.  In propose, it's being used in two different ways.  The first
+way is as a system call / ioctl like way, and that's something which
+is very much frowned upon, at least by many in the Kernel community.
+The red flag here is when you say that the xattr isn't actually stored
+on disk, but rather is created on the fly when the xattr is fetched.
+If you need to fetch information from the kernel that's not stored as
+part of the on-disk format, then use an ioctl or a system call.  Don't
+try to turn the xattr interface into a system call / ioctl extension
+like thing.
+
+The other way you're using the encdata is that you're presuming that
+this is how you'd store the information in the tar format.  And how we
+fetch information from the kernel, and how it is stored as an exchange
+format, should be decoupled as much as possible.
+
+In the case of a tar archive, the symlink target is normally stored in
+the data block of the tar archive.  In the case where the symlink is
+encrypted, why should that change?  We aren't storing the encrypted
+data in a different location, such as the encdata xattr; why should
+that be different in the case of the symlink target?
+
+Now, how you *fetch* the encrypted symlink target might be different,
+such as how we fetch the contents of an unencrypted data file (via the
+read system call) and how we fetch an unencrypted symlink target (via
+the readlink system call) are different.
+
+> > A description of the use cases of this feature would also be helpful.
+> > Historically, people have said they needed this feature when they really didn't.
 > 
-> Hmm. splice() itself definitely doesn't have that data - there's no
-> "io context" for it.
+> There is really a need for backup/restore at the file system level. For
+> instance, in case of storage failure, we would want to restore files to a
+> newly formatted device, in a finner granularity that cannot be achieved with
+> a backup/restore at the device level, or because that would allow changing
+> formatting options. Also, it particularly makes sense to have per-directory
+> backups, as the block devices are getting larger and larger.
 > 
-> There is only the pipe buffers, and they are released when the data
-> has been accepted - which is not the same as used (eg the networking
-> layer just takes another ref to the page and says "I'm done").
-> 
-> Maybe adding some io context to the pipe buffer would be possible, but
-> it's certainly not obvious how, without changing splice() semantics
-> completely.
+> The ability to backup and restore encrypted files is interesting in annother
+> use case: moving files between file systems and systems without the need to
+> decrypt then re-encrypt.
 
-Right, I'm referencing doing zerocopy data sends with io_uring, using
-IORING_OP_SEND_ZC. This isn't from a file, it's from a memory location,
-but the important bit here is the split notifications and how you
-could wire up a OP_SENDFILE similarly to what Andy described.
+The use case of being able to restore files without needing to decrypt
+and re-encrypt is quite different from the use case where you want to
+be able to backup the files without needing encryption keys present,
+but the encryption keys *are* needed at restore time is quite
+different --- and the latter is quite a bit easier.
 
--- 
-Jens Axboe
+For example, some of encryption modes which use the inode number as
+part of the IV, could be handled if keys are needed at restore time;
+but it would be quite a bit harder, if not impossible, if you want to
+be able restore the ecrypted files without doing a decrypt/re-encrypt
+pass.
 
+Can you give more details about why you are interested in implementing
+this?  Does your company have a more specific business justification
+for wanting to invest in this work?  If so, can you say more about it?
 
+The reason why I ask is because very often fscrypt gets used in
+integrated solutions, where the encryption/decryption engine is done
+in-line between the general purpose CPU and the storage device.  In
+some cases, the users' encryption keys might be stored in a something
+like ARM TrustZone or in some other specialized trusted key manager
+where even the kernel running in the general purpose hardware won't
+have access to *any* of the keys.  It's for that reason that we have
+some of these alternate modes where the inode number is used as part
+of the IV, as opposed to the more traditional scheme where the user's
+key is used to derive a file-specific subkey.
+
+One of the original use cases for fscrypt was for Android and ChromeOS
+devices.  And for those devices the state tends to be synchronized
+across multiple devices, including web browsers.  So the state ends up
+getting saved, unencrypted, in an application specific format, so you
+can recover very quickly with no data loss, even if the device gets
+lost or destroyed[1]. 
+
+[1] https://www.youtube.com/watch?v=lm-Vnx58UYo
+
+It was for this reason that ultimately, we decided that there really
+wasn't a need to back up the data in an encrypted form, since for the
+use case that our company was interested in addressing, well over 90%
+of the state was of necesity already being backed up in an unencrypted
+format.  So it was easier to just backup remaining bits of state, and
+if we need decrypt, then re-encrypt in a key which is derived from the
+user's login password before it is sent up to the cloud server.
+
+You may be trying to solve the problem in the most general way
+possible, but sometimes that's not the best solution, especially once
+time to market and cost/complexity of implementation is taken into
+account.  As Linus Torvalds stated earlier today, when talking about
+splice(2) vs sendfile(2):
+
+   "... this is also very much an example of how "generic" may be
+   something that is revered in computer science, but is often a
+   *horrible* thing in reality....
+
+   Special cases are often much simpler and easier, and sometimes the
+   special cases are all you actually want." [2]
+
+[2] https://lore.kernel.org/all/CAHk-=wip9xx367bfCV8xaF9Oaw4DZ6edF9Ojv10XoxJ-iUBwhA@mail.gmail.com/
+
+> In the case of hard links, I do not know how tar for instance handles this
+> for normal files. Do you have any ideas?
+
+   "Tar stores hardlinks in the tarball by storing the first file (of
+   a group of hardlinked files); the subsequent hard links to it are
+   indicated by a special record. When untarring, encountering this
+   record causes tar to create a hard link in the destination
+   filesystem." [3]
+
+[3] https://forums.whirlpool.net.au/archive/2787890
+
+Why are you assuming that tar is the best format to use for storing
+encrypted files?  It's going to require special extensions to the tar
+format, which means it won't necessarily be interoperable across
+different tar implementations.  (For example, the hard link support is
+specific to GNU tar.)
+
+Does your requirements (and this is why a more detailed explanation of
+your use case would be helpful) require supporting hard links?  If it
+doesn't and you don't mind storing N copies of the file in the tar
+archive file, and not restoring the hard links when the tar file is
+unpacked, then life is much simpler.  Which is why it's important to
+be very clear about use cases and requirements before trying to design
+a solution.
+
+Cheers,
+
+					- Ted
