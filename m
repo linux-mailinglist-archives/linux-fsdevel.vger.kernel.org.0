@@ -2,154 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C01B691686
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 03:10:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D19D691691
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 03:14:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229848AbjBJCKm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Feb 2023 21:10:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52494 "EHLO
+        id S230133AbjBJCO4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Feb 2023 21:14:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbjBJCKk (ORCPT
+        with ESMTP id S229554AbjBJCOz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Feb 2023 21:10:40 -0500
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2044.outbound.protection.outlook.com [40.107.92.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF5496E9AC;
-        Thu,  9 Feb 2023 18:10:38 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bJIn9ZU7PZ7etdIOd+zNOIQPDD7+2EAFJ22TOCxCgShYJZAm5mHFty39vybG0DGsaQeTG8ZqBnRb5prwafPdMy7xpBtQa/GZi7WzErJ8qMR64RY0ufNPMK0+15EJnb60vuPtxjpp2mPxug8J8DQIn4xdXyOz8JT3GjKwjVrlYv4mf9mFyBZVqFrH0RdHcayPqf3OEF3kbZzq2RwTeCgCTcqdre/RtYoZKmPe3+sfwhLnWz3wnfQa+T12MZb7sB/PgqhcWCQ78JPAf1hPiJAzWAmkr/90xLQ+QAFFJw9c4cn2i7QhMJHniRcj2Zx10VhGxtV282yQT4mQKglyOUE0rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gw30FNRnuT/3IOLTpvOzD4yIWwEhfvsC73MRHoWUZWA=;
- b=XHYh0xSDKVBV0ELBm4d0fa9HLwWvNol0VETwCpSoF6OYUnJex02IVh/7I0s0eceT03Bctl5f2PJjktajnHvC7tSDv4+OHvTLiNXHNdZ5/UUYC+VsuOurSfND5OGk9cv044VE3ibSp3bvGwGhLxPUba+xhKjPkYg7FKYf2E1PYk5CwIvUz2uHrEvL5/3EJn27kGxahWSEak6CZeMoFpcTD/RDToYvzElagElH2tv/kqjfF5RQgwRz5NurgMSdteET8UuYd4/B3sM0G8fY0OZQnPvgIxbApHsH8Zwlv9VhZNQulV8ezv8Dlzpue5vHEOGRcjdV6/2feBMnzcm7YMqsQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=suse.cz smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gw30FNRnuT/3IOLTpvOzD4yIWwEhfvsC73MRHoWUZWA=;
- b=dyiBHccmyZLrwVVgjsVESINlYqItFYwQTUYG8xxy6ecsh24oDgbpGZ6JzXsMJ1dHreHd8TC2B49Enzdhic9AMsuITl/io+/pZIjMh5C6l6zmyIXkxnlk1wviwh0ztbem7lRQ8zBA3l/5yCqQV+4JjgNs+GHtaT9S2BM6nHTHoMLLTTYM6AMh/3ro/G5Qut+NZbq3pktSR0f8rQJ7BcJ7z/eWPjFzHsgzVpK5UvaRQBcsxTXBBbuMHf3bRlnnfV+/aEuCFdySfc8+F+2ChvTUbxiHHcru2VvQn1CoGluy2xVk4mRQb81IqheGF8czB9pvO4uTAHGJZ4pD83OnJVHYqw==
-Received: from BN9PR03CA0460.namprd03.prod.outlook.com (2603:10b6:408:139::15)
- by MW4PR12MB7359.namprd12.prod.outlook.com (2603:10b6:303:219::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.17; Fri, 10 Feb
- 2023 02:10:36 +0000
-Received: from BN8NAM11FT039.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:139:cafe::40) by BN9PR03CA0460.outlook.office365.com
- (2603:10b6:408:139::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.18 via Frontend
- Transport; Fri, 10 Feb 2023 02:10:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT039.mail.protection.outlook.com (10.13.177.169) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6086.19 via Frontend Transport; Fri, 10 Feb 2023 02:10:35 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 9 Feb 2023
- 18:10:24 -0800
-Received: from [10.110.48.28] (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 9 Feb 2023
- 18:10:24 -0800
-Message-ID: <175bbfce-a947-1dcd-1e5f-91a9b8ccfc25@nvidia.com>
-Date:   Thu, 9 Feb 2023 18:10:23 -0800
+        Thu, 9 Feb 2023 21:14:55 -0500
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D02DE6F23D;
+        Thu,  9 Feb 2023 18:14:47 -0800 (PST)
+From:   =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=weissschuh.net;
+        s=mail; t=1675995286;
+        bh=PzdaMVxSEN1MS1ApJxFjAZ9RkslBEF+CPIjqjevsB98=;
+        h=From:Date:Subject:To:Cc:From;
+        b=g6QlAfPToQwM18srJO+qvWKrgP3Hoca0n6ZJZPqgHeu2DblLPaxYHyZfoIxRPpaTP
+         bAJaCtbx8Q8N/40J2xy99MxX0Vqb9i3BbYy8IqBqEC1HJiFl5E90ibyp/qAZTtliFZ
+         fQQ50TkHcURdEZTDIhRd8SAVGR3sMiWJTiMFT4xs=
+Date:   Fri, 10 Feb 2023 02:14:44 +0000
+Subject: [PATCH] zonefs: make kobj_type structure constant
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 3/5] mm: Do not try to write pinned folio during memory
- cleaning writeback
-Content-Language: en-US
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Jan Kara <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>
-CC:     <linux-block@vger.kernel.org>, <linux-mm@kvack.org>,
-        David Howells <dhowells@redhat.com>,
-        David Hildenbrand <david@redhat.com>
-References: <20230209121046.25360-1-jack@suse.cz>
- <20230209123206.3548-3-jack@suse.cz>
- <4961eb2d-c36b-d6a5-6a43-0c35d24606c0@nvidia.com>
-In-Reply-To: <4961eb2d-c36b-d6a5-6a43-0c35d24606c0@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.126.231.37]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT039:EE_|MW4PR12MB7359:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5328e3d9-d4db-4f26-e3c7-08db0b0bff6e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9MYKQEKsi5Eih/MvpWu5hgEV9yEpt1bNZV8dn9wPGBVRQ2AaMLZxdeyfLmTVvyQUgjCAooTRBOntYW2pKf2uqteVvt7NHApUQJqMpOO/URtfkN68E0HJtRzlwi5HUS2rk5aenEv8FSyq2A0zOy0btIbDo76rXGBlzV/TAwltbbc3LxWhaZ2ty5hZOCmYO/pGtmV0u5+bHLKMIeu+SLjLTEF/OoZVnzOGe86xy1V+aVCpegNyY9gxfRmzXb/jnEAYuC2RVUR/VaXvaqHvfaMBbib7/mtnFdeyq+AE2akFSibR2JkTMY0WFi0qZPMpFkk8xG7XCBve3CRByCGXGIVW5KFDnsowx1bXRicnqcIwXLAd8y/VooJpqrX4VHxkth3hZ47382ahODf9OInWqnDVXzIzFayD5nZPC8XVvttzHAsoVmhpGhB4fAANZasXbjWAlnCzY30h/vpeNq6d92xE5A6pB91Kje01xi0iknKhFS7rCCMp86W2XDGegiDCTUDPzfMRqmfH5rqZKVp9/YFtJQeJEJL10HhXbFSFikW+JciEmRKAMu4Lzs4rW07j+ze5jsqTn5CZVYF3Gmd2I5aouSdZAtyDgq4DdzgnrDVJz18ZAueOydykJueLc5otYCe8Kefa3ZJ4Xn7C0880SbFeZMcUBOtzWzHyzHBMYk6D6I/V50l5Bk8/N4hZe7kwWZSskuey2RhVhwCHfq0U6FVBE1nRs8VQP9eKqHO590TETsa+rCFMBFGXryIMU917g5GxF2s2CLwHqIwKNRyj2WfCXcDuaE+gfala8MrnlrH1yGg=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(346002)(396003)(376002)(136003)(451199018)(46966006)(40470700004)(36840700001)(478600001)(186003)(47076005)(426003)(26005)(336012)(40460700003)(16526019)(316002)(83380400001)(16576012)(54906003)(2616005)(66899018)(53546011)(31686004)(110136005)(70586007)(70206006)(4326008)(41300700001)(7636003)(5660300002)(36860700001)(8936002)(82740400003)(8676002)(31696002)(356005)(86362001)(40480700001)(82310400005)(36756003)(2906002)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2023 02:10:35.9029
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5328e3d9-d4db-4f26-e3c7-08db0b0bff6e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT039.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7359
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Message-Id: <20230210-kobj_type-zonefs-v1-1-9a9c5b40e037@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAJOo5WMC/x2N0QrCMAwAf2Xk2UCb+qK/IiLtzFx0pKOZoo79u
+ 8HHOzhuBeMmbHDsVmj8EpOqDnHXQT9mvTHK1RkoUAoUAz5quV+Wz8z4rcqDYY60P0QKKZUEnpV
+ sjKVl7UcP9TlNLufGg7z/n9N5237JuT6pdwAAAA==
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.12.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1675995284; l=1028;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=PzdaMVxSEN1MS1ApJxFjAZ9RkslBEF+CPIjqjevsB98=;
+ b=rR1az0+ORQFoQO0bkjkP7ciZtCZ2UX/pMF+cwVbpXltMGiUzaaEnnkSHCid7eCQFAxjW3BQYm
+ zeAr28pD04zAbYG1DTzSPqdsY2Ge70/0d55u6MoM27nYeppUPqEfrUR
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/9/23 17:54, John Hubbard wrote:
-> On 2/9/23 04:31, Jan Kara wrote:
->> When a folio is pinned, there is no point in trying to write it during
->> memory cleaning writeback. We cannot reclaim the folio until it is
->> unpinned anyway and we cannot even be sure the folio is really clean.
->> On top of that writeback of such folio may be problematic as the data
->> can change while the writeback is running thus causing checksum or
->> DIF/DIX failures. So just don't bother doing memory cleaning writeback
->> for pinned folios.
->>
->> Signed-off-by: Jan Kara <jack@suse.cz>
->> ---
->>   fs/9p/vfs_addr.c            |  2 +-
->>   fs/afs/file.c               |  2 +-
->>   fs/afs/write.c              |  6 +++---
->>   fs/btrfs/extent_io.c        | 14 +++++++-------
->>   fs/btrfs/free-space-cache.c |  2 +-
->>   fs/btrfs/inode.c            |  2 +-
->>   fs/btrfs/subpage.c          |  2 +-
-> 
+Since commit ee6d3dd4ed48 ("driver core: make kobj_type constant.")
+the driver core allows the usage of const struct kobj_type.
 
-Oh, and one more fix, below, is required in order to build with my local
-test config. Assuming that it is reasonable to deal with pinned pages
-here, which I think it is:
+Take advantage of this to constify the structure definition to prevent
+modification at runtime.
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-index 9c759df700ca..c3279fb0edc8 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-@@ -313,7 +313,7 @@ void __shmem_writeback(size_t size, struct address_space *mapping)
-  		if (!page)
-  			continue;
-  
--		if (!page_mapped(page) && clear_page_dirty_for_io(page)) {
-+		if (!page_mapped(page) && clear_page_dirty_for_io(&wbc, page)) {
-  			int ret;
-  
-  			SetPageReclaim(page);
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ fs/zonefs/sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
+diff --git a/fs/zonefs/sysfs.c b/fs/zonefs/sysfs.c
+index 9920689dc098..8ccb65c2b419 100644
+--- a/fs/zonefs/sysfs.c
++++ b/fs/zonefs/sysfs.c
+@@ -79,7 +79,7 @@ static const struct sysfs_ops zonefs_sysfs_attr_ops = {
+ 	.show	= zonefs_sysfs_attr_show,
+ };
+ 
+-static struct kobj_type zonefs_sb_ktype = {
++static const struct kobj_type zonefs_sb_ktype = {
+ 	.default_groups = zonefs_sysfs_groups,
+ 	.sysfs_ops	= &zonefs_sysfs_attr_ops,
+ 	.release	= zonefs_sysfs_sb_release,
+
+---
+base-commit: e544a07438522ab3688416e6e2e34bf0ee6d8755
+change-id: 20230210-kobj_type-zonefs-a124912033b3
+
+Best regards,
 -- 
-John Hubbard
-NVIDIA
+Thomas Weißschuh <linux@weissschuh.net>
+
