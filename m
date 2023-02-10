@@ -2,98 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E43F9692A23
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 23:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6534692A39
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 23:35:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233626AbjBJWbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 17:31:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56886 "EHLO
+        id S233313AbjBJWff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 17:35:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233269AbjBJWbW (ORCPT
+        with ESMTP id S233425AbjBJWfd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 17:31:22 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF4657FEE3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 14:31:21 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id n3so4702751pgr.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 14:31:21 -0800 (PST)
+        Fri, 10 Feb 2023 17:35:33 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF092122
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 14:35:32 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id jg8so19454167ejc.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 14:35:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676068281;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aakxc4GOV3A+tpqp5NT+fjFwCBvuUL/gF53A5SHyoUM=;
-        b=HBH4bzAOC+oGh0kd3NDtdX8oHQ3DvT4RC4HcqvIizHcpV3n2xpZ/i1ygDv66g0a0sz
-         fFmff/ydUHcr/+X2vhiNoX77AcEuuGESI7j171BtOjbkWmpMD2QfCuA7NdgR/VhtVKwT
-         959h2p2pCsk5upGFRWYhsUCl1xERt5f2ImVJMAbxm8vJkVPoFxvHGobgGpIC1ybTOr1B
-         i+fSVnx3B+YtsCrjnAxxvCy+a0eCqMxootp6C/nLWjjOkhIUlwlQEX+GZMBKjdJp4LW/
-         7mbD5YtOeKlIGfXKM9Lsh+r8K+Gycd3zKi2QOVLeyS/3775+KxgyKXzpAs/0kWCOQLdJ
-         Ce/w==
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sgPQEqmErKQB0wG6VWCF+VmnzkMKfRqkz/sIKfZqL68=;
+        b=gQz1/9xmHREGXPA2JXH0RsK7JsUhn7vHa15D/69fCSK/vZzwlw4bq85T8mRYkpJplP
+         EegJvrfeGBLxDkz18RvpvK6JB/6GDTuCoFw9pDlWGUVTnbp7FP4QCEiSxJ0txMWl8p8y
+         bbKRpYKHkKD8w9mPOUGxJllCwuJhuHiNZ3ZP0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676068281;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aakxc4GOV3A+tpqp5NT+fjFwCBvuUL/gF53A5SHyoUM=;
-        b=eCvZE0QIoQKRBkQRel4eYqHokVbnU7Y1ZwpY4R633fWqd2y0LQZBgObY+qxIBV+Gbu
-         BHYM48ebl3j9fCpsXQfELfblI9vxcpFvicb0ZY+fA0LMCfxq9OaxQyrovVR+xzGuJjx6
-         Ta88VtoRu6UWPq7lITUzPZU+WWI1uIzd7RAxOL6Ws1rsYFD5oy6B6YmFBsTOb9aOIywf
-         yxL7Rlw+OAZfg/mj7cwUz+DMjRvdBbuhYphOMzxhRFh43McaiHJVqXKR7CLQOZnTQCr1
-         KGWWDyvC60pkzcGZGBhmKx7elpymkX5O4oTIvSw6lCYbr5NmSik/gym6tDtMFntrqVko
-         JkkQ==
-X-Gm-Message-State: AO0yUKXM4xUPf2knzhdnYZX0X/NKzz3E4jnsqahquHcywT+uACiJfWv3
-        Ib8frN1t1njsqEJuJ0Rqpi/JWA==
-X-Google-Smtp-Source: AK7set9JzFtLT/BkCdAXDmaqIpgx7y6Q9b2lrPWOatxAvPOrDATXsIJKYQICCZAwhqj/4NCuYVdPag==
-X-Received: by 2002:a62:d115:0:b0:5a8:1637:1f03 with SMTP id z21-20020a62d115000000b005a816371f03mr11992803pfg.1.1676068281172;
-        Fri, 10 Feb 2023 14:31:21 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d15-20020aa7814f000000b00593ce7ebbaasm3710342pfn.184.2023.02.10.14.31.19
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sgPQEqmErKQB0wG6VWCF+VmnzkMKfRqkz/sIKfZqL68=;
+        b=QV+Dq+XXfYyMiheBZNWuTS4oMTFayQvem92w8nsqZtH59hekbZHMdmEHepBj3IlpmE
+         5sXX7oLfQ0q56WA52uB8JTZftTJg5hMx/S9MnLNuWtMs1guhX8AmvI3DqAbxoyjiipef
+         51r2Xzexa6SOqN+sPhhiUZzv/jjJ6hD+kMVhVMGLW7DjJMSGaKmdqurmW0ENRQk8MWry
+         IoVB882fPq7w1wnd3z8UOuS8y89qDTDWbbWZjSh8QkSDG96W/4N3lIBKf0/r3o+OmW+F
+         LQH1WYbR/kPRKT+uoa62UzXW9cQfi0CZ5Z/nD3rAzoXlLBT5RlN3VTjP1cDQLa2ClbmU
+         IIrg==
+X-Gm-Message-State: AO0yUKW/ykR9Cr5wkHoLOnCPFIZRvuBUGJ1VzB7zhygE4NBHuZGvzK/k
+        +P26GOiGX8/CbN4n0NDF6shKqKIsRI6KgcCHAEI=
+X-Google-Smtp-Source: AK7set9WUdF7RfYciS34fOvqBWEPT2AzmR2tWh3o7YSt+kpaQoeHW7IOnD98dvk/fQSaCSYpc/WkUw==
+X-Received: by 2002:a17:907:1b29:b0:881:a3ec:2b40 with SMTP id mp41-20020a1709071b2900b00881a3ec2b40mr22314374ejc.59.1676068530268;
+        Fri, 10 Feb 2023 14:35:30 -0800 (PST)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id n12-20020a1709065dac00b008ab3fdc8705sm3007490ejv.172.2023.02.10.14.35.29
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Feb 2023 14:31:20 -0800 (PST)
-Message-ID: <bee8b687-df78-baf8-495c-099d44f39275@kernel.dk>
-Date:   Fri, 10 Feb 2023 15:31:19 -0700
+        Fri, 10 Feb 2023 14:35:29 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id hx15so19399322ejc.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 14:35:29 -0800 (PST)
+X-Received: by 2002:a17:906:fad2:b0:88d:d304:3424 with SMTP id
+ lu18-20020a170906fad200b0088dd3043424mr1693934ejb.0.1676068528950; Fri, 10
+ Feb 2023 14:35:28 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v13 00/12] iov_iter: Improve page extraction (pin or just
- list)
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>,
+References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
+ <CAHk-=wjQZWMeQ9OgXDNepf+TLijqj0Lm0dXWwWzDcbz6o7yy_g@mail.gmail.com>
+ <CALCETrWuRHWh5XFn8M8qx5z0FXAGHH=ysb+c6J+cqbYyTAHvhw@mail.gmail.com>
+ <CAHk-=wjuXvF1cA=gJod=-6k4ypbEmOczFFDKriUpOVKy9dTJWQ@mail.gmail.com>
+ <CALCETrUXYts5BRZKb25MVaWPk2mz34fKSqCR++SM382kSYLnJw@mail.gmail.com>
+ <CAHk-=wgA=rB=7M_Fe3n9UkoW_7dqdUT2D=yb94=6GiGXEuAHDA@mail.gmail.com>
+ <1dd85095-c18c-ed3e-38b7-02f4d13d9bd6@kernel.dk> <CAHk-=wiszt6btMPeT5UFcS=0=EVr=0injTR75KsvN8WetwQwkA@mail.gmail.com>
+ <fe8252bd-17bd-850d-dcd0-d799443681e9@kernel.dk> <CAHk-=wiJ0QKKiORkVr8n345sPp=aHbrLTLu6CQ-S0XqWJ-kJ1A@mail.gmail.com>
+ <7a2e5b7f-c213-09ff-ef35-d6c2967b31a7@kernel.dk> <CALCETrVx4cj7KrhaevtFN19rf=A6kauFTr7UPzQVage0MsBLrg@mail.gmail.com>
+ <b44783e6-3da2-85dd-a482-5d9aeb018e9c@kernel.dk> <2bb12591-9d24-6b26-178f-05e939bf3251@kernel.dk>
+ <CAHk-=wjzqrD5wrfeaU390bXEEBY2JF-oKmFN4fREzgyXsbQRTQ@mail.gmail.com>
+ <CAHk-=wjUjtLjLbdTz=AzvGekyU1xiSL-wAAb7_j_XoT9t4o1vQ@mail.gmail.com> <824fa356-7d6e-6733-8848-ab84d850c27a@kernel.dk>
+In-Reply-To: <824fa356-7d6e-6733-8848-ab84d850c27a@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 10 Feb 2023 14:35:11 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg3gLL-f6XkQo4vw42Q+ySPrMdprNL1dxNrr3RGHzhnrw@mail.gmail.com>
+Message-ID: <CAHk-=wg3gLL-f6XkQo4vw42Q+ySPrMdprNL1dxNrr3RGHzhnrw@mail.gmail.com>
+Subject: Re: copy on write for splice() from file to pipe?
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Ming Lei <ming.lei@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API Mailing List <linux-api@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20230209102954.528942-1-dhowells@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230209102954.528942-1-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        Samba Technical <samba-technical@lists.samba.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/9/23 3:29?AM, David Howells wrote:
-> Hi Jens, Al, Christoph,
-> 
-> Here are patches to provide support for extracting pages from an iov_iter
-> and to use this in the extraction functions in the block layer bio code.
+On Fri, Feb 10, 2023 at 2:26 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >
+> > (I actually suspect that /dev/zero no longer works as a splice source,
+> > since we disabled the whole "fall back to regular IO" that Christoph
+> > did in 36e2c7421f02 "fs: don't allow splice read/write without
+> > explicit ops").
+>
+> Yet another one... Since it has a read_iter, should be fixable with just
+> adding the generic splice_read.
 
-[snip]
+I actually very consciously did *not* want to add cases of
+generic_splice_read() "just because we can".
 
-I updated the branch to v13, just as a heads-up. Still in
-for-6.3/iov-extract as before.
+I've been on a "let's minimize the reach of splice" thing for a while.
+I really loved Christoph's patches, even if I may not have been hugely
+vocal about it. His getting rid of set/get_fs() got rid of a *lot* of
+splice pain.
 
--- 
-Jens Axboe
+And rather than try to make everything work with splice that used to
+work just because it fell back on read/write, I was waiting for actual
+regression reports.
 
+Even when splice fails, a lot of user space then falls back on
+read/write, and unless there is some really fundamental reason not to,
+I think that's always the right thing to do.
+
+So we do have a number of "add splice_write/splice_read" commits, but
+they are hopefully all the result of people actually noticing
+breakage.
+
+You can do
+
+     git log --grep=36e2c7421f02
+
+to see at least some of them, and I really don't want to see them
+without a "Reported-by" and an actual issue.
+
+Exactly because I'm not all that enamoured with splice any more.
+
+                 Linus
