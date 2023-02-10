@@ -2,153 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA1A692255
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 16:35:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ACDC6921C0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 16:15:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232760AbjBJPfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 10:35:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35884 "EHLO
+        id S232427AbjBJPPM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 10:15:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232664AbjBJPfu (ORCPT
+        with ESMTP id S232504AbjBJPPL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 10:35:50 -0500
-Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 42A0526CC4;
-        Fri, 10 Feb 2023 07:35:49 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailnew.nyi.internal (Postfix) with ESMTP id DEAF7581F63;
-        Fri, 10 Feb 2023 10:10:36 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 10 Feb 2023 10:10:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1676041836; x=1676049036; bh=mnmCFBnaIP
-        +vBLu9FDqlvqV872F6Sk8/lQSQWnrc9vM=; b=D9Szpp77tFpcX+nFzNso9fAK0G
-        RKEY2e2MPcUw+e0HRg7S8ntVkkidfPRiVKiD9NnN/v5CGK69+T3Jead5T43+elxp
-        vdEvp0H3wpqmSvLp/EsSqJCUQp8vrbFlGhuwOBExHvxH/ijlvcebCIxq0GFKALZn
-        /KTXa55Xl1Nu1lYEE3YUdxKlBRHd9g6snyVPVw7lBXBFuN6X5R9KweBbGyws612U
-        HSSwAquhkWClD1qjztFmKSXMeUBJTYaykthTjsQv9cEQMLG0X1HQBvbnyPaoEUzh
-        c2j/S3bzXdpbQJtLfGhIn6moBc6uAsb7y1NxF05WugoRrHamBqi8vnM8+LIA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1676041836; x=1676049036; bh=mnmCFBnaIP+vBLu9FDqlvqV872F6
-        Sk8/lQSQWnrc9vM=; b=RHZtaJBO44uX2MARKJxLjffrlpmpVpqRWXHbD0f++4hp
-        qcrXlaKY1EA4C+ei9VBulYS+Pr1PaCMRoCiXza+fjmuBbIl7iAHJIIs/u5u04ZwR
-        un7ChSUzuQGzTl3Hzcn3+ASNHPbKVMq2pMRwmYsQFsty5c0tZWbMgH4X111G4rXx
-        xrYr3PGq6SNbkC1K18wAFFhEzQ4/Mu6MdjeZ0isXHr9XDxecB4/Wj99dyzjdUByn
-        eT3ZTxOyQt5xhBlFYcZRRNcG22TQLymxVnFTJ3lR0b/zX8cKrE9YnBJWzellYQHC
-        EsEl6lMz3XBzK0jy4OMsMTgRDCrxfrIC1I9MkjiqHw==
-X-ME-Sender: <xms:a17mY3P--ZnY9B0YNPVJei5M1XSljO-TrXiC-otvZu9e2Ux-mUMuYw>
-    <xme:a17mYx_FBr6stanlZSHdjEh_Yiizs7DAQDRo8eLwZjm4itklqm-Us_lyX4UcEEqKV
-    lc2GJafFQdTJPXBJdE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudehhedgjedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:a17mY2Qg8I9CgxEscmfW_KVeyAfpnzZW3vSqA_Kax6WR9loxG21lZw>
-    <xmx:a17mY7sOa99lDqlxfSrIsA34dub4d_dg1GrUC46fm4OCcg0OSUjgZQ>
-    <xmx:a17mY_cLeUpfTHmXPpf5NVLlLOlkwFqtmEf2CkzJAFgsXIq3rY2cJw>
-    <xmx:bF7mYzlxhpbpL2dPNp2_IA_FqJ-2rZBBDGc_SPVtMY4KfbLAmmmu4A>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 2C9A9B60086; Fri, 10 Feb 2023 10:10:35 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-156-g081acc5ed5-fm-20230206.001-g081acc5e
-Mime-Version: 1.0
-Message-Id: <7493f543-bf02-4bfe-90bd-a01d3c52cb52@app.fastmail.com>
-In-Reply-To: <2344ac16-781e-8bfa-ec75-e71df0f3ed28@redhat.com>
-References: <1446579994-9937-1-git-send-email-palmer@dabbelt.com>
- <1447119071-19392-1-git-send-email-palmer@dabbelt.com>
- <1447119071-19392-4-git-send-email-palmer@dabbelt.com>
- <2344ac16-781e-8bfa-ec75-e71df0f3ed28@redhat.com>
-Date:   Fri, 10 Feb 2023 16:10:16 +0100
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Thomas Huth" <thuth@redhat.com>,
-        "Palmer Dabbelt" <palmer@dabbelt.com>, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "Jakub Kicinski" <kuba@kernel.org>,
-        "Paolo Abeni" <pabeni@redhat.com>
-Cc:     "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        aishchuk@linux.vnet.ibm.com, aarcange@redhat.com,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Arnaldo Carvalho de Melo" <acme@kernel.org>,
-        "Baoquan He" <bhe@redhat.com>, 3chas3@gmail.com, chris@zankel.net,
-        dave@sr71.net, dyoung@redhat.com, drysdale@google.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>, geoff@infradead.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, "Ingo Molnar" <mingo@kernel.org>,
-        iulia.manda21@gmail.com, plagnioj@jcrosoft.com, jikos@kernel.org,
-        "Josh Triplett" <josh@joshtriplett.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, mathieu.desnoyers@efficios.com,
-        "Max Filippov" <jcmvbkbc@gmail.com>, paulmck@linux.vnet.ibm.com,
-        a.p.zijlstra@chello.nl, "Thomas Gleixner" <tglx@linutronix.de>,
-        vgoyal@redhat.com, x86@kernel.org,
-        "David Howells" <dhowells@redhat.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        Netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH 03/14] Move COMPAT_ATM_ADDPARTY to net/atm/svc.c
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 10 Feb 2023 10:15:11 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E98A47EFA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 07:15:10 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A3F2A61E03
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 15:15:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A37BC433AA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 15:15:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676042109;
+        bh=ASNHadyozyLIGhBVrhVI7EFdVirhfiV1fq9KsBAOwjw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VklJnD6zWz6k/285Nxbc426a8iy7awLNZLUt+bx8D+9w6gNcPVLOiEhxm/uutYb6T
+         YFn2xmFO+yjYuMk0nxEffW7Zk+b59KUWni6zGRjK9aB1l6a9Py1mSyUpb/neh5oPxN
+         623Y959fjqcir7jqWT1aRloHl4mtlCiPQ/Yw2j8DR9WFu3jhtSxl+EJ4rmHLRwbOJe
+         ivZRy64wvfG5MBAFyYN9Mi+u2tVlAkVONNKuGieU/lcoHdWKwr5U4PrrZcVRNTkHx3
+         bETO+lCNqOSpMkYwsUbVSzP583C1XO7lOT0m6FD4TrzWTf9rEVzls/Sm2xBtOWYy1m
+         clddAnHBbI8pQ==
+Received: by mail-ej1-f44.google.com with SMTP id gr7so16712215ejb.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 07:15:08 -0800 (PST)
+X-Gm-Message-State: AO0yUKU2BOoPeHwNX2z9Se5ypLa0HNVnPddBR1IkhkPBeanRw2Alaaje
+        MF/OGtx3rncOf5HpZkMh840RKnkK8EimcXlLnT7KQQ==
+X-Google-Smtp-Source: AK7set82uoXvXPMdWdCjmW9Ka6p9XO/hezpTDJigjecBYGrCBbgbcLwnXqm27c9nTy16gEHPF4kIoq/7kIfYYzOcQ9Y=
+X-Received: by 2002:a17:907:1de6:b0:8ae:cb48:3c80 with SMTP id
+ og38-20020a1709071de600b008aecb483c80mr1248578ejc.7.1676042107124; Fri, 10
+ Feb 2023 07:15:07 -0800 (PST)
+MIME-Version: 1.0
+References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
+ <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
+ <20230210021603.GA2825702@dread.disaster.area> <20230210040626.GB2825702@dread.disaster.area>
+ <Y+XLuYh+kC+4wTRi@casper.infradead.org> <20230210065747.GD2825702@dread.disaster.area>
+In-Reply-To: <20230210065747.GD2825702@dread.disaster.area>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 10 Feb 2023 07:14:55 -0800
+X-Gmail-Original-Message-ID: <CALCETrWjJisipSJA7tPu+h6B2gs3m+g0yPhZ4z+Atod+WOMkZg@mail.gmail.com>
+Message-ID: <CALCETrWjJisipSJA7tPu+h6B2gs3m+g0yPhZ4z+Atod+WOMkZg@mail.gmail.com>
+Subject: Re: copy on write for splice() from file to pipe?
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API Mailing List <linux-api@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Samba Technical <samba-technical@lists.samba.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 10, 2023, at 15:55, Thomas Huth wrote:
-> On 10/11/2015 02.31, Palmer Dabbelt wrote:
->> This used to be behind an #ifdef COMPAT_COMPAT, so most of userspace
->> wouldn't have seen the definition before.  Unfortunately this header
->> file became visible to userspace, so the definition has instead been
->> moved to net/atm/svc.c (the only user).
->> 
->> Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
->> Reviewed-by: Andrew Waterman <waterman@eecs.berkeley.edu>
->> Reviewed-by: Albert Ou <aou@eecs.berkeley.edu>
-
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-
-It took me a bit to figure out why there is a separate command
-code but no special handler for the compat structure, aside from
-being in the wrong file it does look correct.
-
->> +#ifdef CONFIG_COMPAT
->> +/* It actually takes struct sockaddr_atmsvc, not struct atm_iobuf */
->> +#define COMPAT_ATM_ADDPARTY _IOW('a', ATMIOC_SPECIAL+4, struct compat_atm_iobuf)
->> +#endif
-
-We could actually drop the #ifdef here as well, or moving into
-the existing #ifdef.
-
->> +
->>   static int svc_create(struct net *net, struct socket *sock, int protocol,
->>   		      int kern);
+On Thu, Feb 9, 2023 at 10:58 PM Dave Chinner <david@fromorbit.com> wrote:
 >
-> The CONFIG_* switch is still there in the atmdev.h uapi header ... could 
-> somebody please pick this patch up to fix it?
+> On Fri, Feb 10, 2023 at 04:44:41AM +0000, Matthew Wilcox wrote:
+> > On Fri, Feb 10, 2023 at 03:06:26PM +1100, Dave Chinner wrote:
+> > > So while I was pondering the complexity of this and watching a great
+> > > big shiny rocket create lots of heat, light and noise, it occurred
+> >
+> > That was kind of fun
+>
+> :)
+>
+> > > to me that we already have a mechanism for preventing page cache
+> > > data from being changed while the folios are under IO:
+> > > SB_I_STABLE_WRITES and folio_wait_stable().
+> >
+> > I thought about bringing that up, but it's not quite right.  That works
+> > great for writeback, but it only works for writeback.  We'd need to track
+> > another per-folio counter ... it'd be like the page pinning kerfuffle,
+> > only worse.
+>
+> Hmmm - I didn't think of that. It needs the counter because the
+> "stable request" is per folio reference state, not per folio state,
+> right? And the single flag works for writeback because we can only
+> have one writeback context in progress at a time?
+>
+> Yeah, not sure how to deal with that easily.
+>
+> > And for such a rare thing it seems like a poor use of 32
+> > bits of per-page state.
+>
+> Maybe, but zero copy file data -> network send is a pretty common
+> workload. Web servers, file servers, remote backup programs, etc.
+> Having files being written whilst others are reading them is not as
+> common, but that does happen in a wide variety of shared file server
+> environments.
+>
+> Regardless, I just had a couple of ideas - it they don't work so be
+> it.
+>
+> > Not to mention that you can effectively block
+> > all writes to a file for an indefinite time by splicing pages to a pipe
+> > that you then never read from.
+>
+> No, I wasn't suggesting that we make pages in transit stable - they
+> only need to be stable while the network stack requires them to be
+> stable....
 
-It should get merged through the netdev tree, as Chas does not have
-a separate git tree for drivers/atm.
+This is exactly where the existing splice API is problematic.  You
+can't splice from a file to a network socket right now.  First you
+splice to a pipe, and now that pipe contains some magical stuff.  And
+it stays there potentially forever.  Then you splice it again to a
+socket.
 
-I don't know what happened to the rest of the series, but if there are
-additional patches that got lost, merging them all through either the
-asm-generic or the mm tree would work as well.
+Would this be better if user code could splice straight to a socket?
+At least in principle, there could be a _limited_ amount of time
+during which anything needs to wait, and it's fundamentally entirely
+reasonable if a concurrent write to a file affects data being
+zero-copied to a socket _during the time after the zero-copy send is
+requested and before it reports completion_.
 
-Any chance you or Palmer could rebase the series to 6.2-rc and
-see what remains?
+Frankly, I really don't like having non-immutable data in a pipe.  A
+pipe is supposed to be a thing into which bytes are written and out
+from which the *same* bytes emerge, at least to the extent that anyone
+can observe it.  Do we really want:
 
-    Arnd
+$ some_program | tee file21 > file2
+
+to potentially write different data to file1 and file2?
+
+--Andy
