@@ -2,104 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABDBF6922A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 16:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2C9B69232E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 17:22:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232613AbjBJPw1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 10:52:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47408 "EHLO
+        id S232866AbjBJQV7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 11:21:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232572AbjBJPwZ (ORCPT
+        with ESMTP id S232178AbjBJQV5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 10:52:25 -0500
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 287A85FB44
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 07:52:24 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id c26so12221343ejz.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 07:52:24 -0800 (PST)
+        Fri, 10 Feb 2023 11:21:57 -0500
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE33113E8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 08:21:54 -0800 (PST)
+Received: by mail-qt1-x82a.google.com with SMTP id m12so6330873qth.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 08:21:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ROduZYJpSejdajCsBZSHrHuAACG1d4aq3VU3Cfv3Yt4=;
-        b=qAM8LzdtIzHzZx9Kf1mmuf82NNGWVm/JOZKSidHNH/flRfQFR6mcHEVPmS+xWBBlng
-         xasUroz0oZpe/l3/em7/BN9N6XRzOxO2hnrVQu6cxuSaA9K8aD3TrmDOekcOuYxYbZBP
-         3dYQPagXm7Qp8CpTytNoRFPG9+YbB5EwO42RA=
+        d=soleen.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q3mcvpqnGRzxZSmag23CWJUdjs1NpsRhnyJmXgB+2LI=;
+        b=cDO/ltH9oba2g7m81sHGlz0cBIBBu9U6Y0R4QWT3HoFKc3NTV8+aFwvlkqAIWcOhEr
+         UGt4UCdDpHWAJ0SUEqjNFUp/15BKrduZCAlc4syxNlr+MtSjMrmkOS5daqaAMhvQw5Xg
+         1fw7wdz/uB+dshxZ098absfclhWw7PkpV5uS9ISBzbAk0H1jixdK0jZVLy5/TReJiM0c
+         lj9te1QyiuH+6f+kC1tAPcXXaoKeT2U+BrTBjlUsgwkP7XtCUuPuQ6RXJDFtRiiB/hdQ
+         GpBuxkLYggD8zZXK4vXV5EiegQdXfkUPWRCTp6XMKUHP3AY2GwkERs3JIDZ+fD7akOWP
+         NLZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ROduZYJpSejdajCsBZSHrHuAACG1d4aq3VU3Cfv3Yt4=;
-        b=e2KNjkZLNgx0xEunoS5smFymNdH47GMW2uY0k4tG+o775Y4nfH0JPjt4Si+jxHakjO
-         cqKl7gdQQx9nG3eKOy9lUjc4E1z1p+//UOiA584AZJIDQ2vpLBXkk708uJjjuq4OPITQ
-         gwMcdcLOZgEnsGR1Il1DfxIalYp9SOhee3gT0LPsnVO9WfKXAVmocLKJHh2aYSSJk5CH
-         ZjFyxJ7OO1rFtq6NACRTyYg916fNKnZfGoKSGL0lv7ftKZkw7s8U9fRCG8Ds4litXi0T
-         4df89Ecy7KSuL/avXr7rzQRSw5aUJ8hCMWCsQ6zFBBHvPy5WFzgMi9omUzCwsW/O26hZ
-         0iGA==
-X-Gm-Message-State: AO0yUKXk5Ur1L8kssYpMSlPTSK5WVMmnGcVPo5MTHskrsDhS0QdnRX0m
-        dGkWwrXuTn6D7FTn7BTGdvf5P0ma4E6ukQgfHarkzg==
-X-Google-Smtp-Source: AK7set9DRrfJ8emvNMJ4bkS2cGPib1PAntVERZKX/H6AbXR1QQgyUoIWPbU2nZm7VGO/zeuCODpjgQVksVs8Lq6XoUc=
-X-Received: by 2002:a17:906:718d:b0:8ab:4931:ca26 with SMTP id
- h13-20020a170906718d00b008ab4931ca26mr1302015ejk.5.1676044342787; Fri, 10 Feb
- 2023 07:52:22 -0800 (PST)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q3mcvpqnGRzxZSmag23CWJUdjs1NpsRhnyJmXgB+2LI=;
+        b=uCFu/rYqYeJXzCRnHm1vSizQrIdyejI/qNPhoR6VLDFlHxoUP/TcDe7l1Bh+I71eK1
+         3tJMObha8w1Rd/hhKrW1vTP9ZrbSo/6n0HzXSwUeuPcdxeRk0sz63QnBN3GgNppKpDwc
+         iQliTmKz7EQetFVZVDqTcTURKY9k4o/GLlpy5V14uHkWL+dtQ/sd2I/xqJL3RqM5ciMi
+         e7O1F4JJbngSn5xhkBmeIFmZQ1nN27CHHQEZpL9T5sl+1NjiNDtuR73Ce5wAUWDJUL12
+         otdkRn8AXdiyjH1kxikJW7Ev2OmCTDlGz2QP9fc+bdaqmkkOhKM296+E3KYyDsyzIJnq
+         6cUg==
+X-Gm-Message-State: AO0yUKVgeM0BiBCER7MtMjyGR6aHvCaAROGshKPQMwYTowOjQ+tf9kAt
+        bmB24irWNK50+70EzDM9ufJZTgGMZyO7uBNxFcQhag==
+X-Google-Smtp-Source: AK7set+L6NzhA8suon4TylHNK1DlDLEyOXcc0AMap3AYzq+uL59ZF8RYF/vEPW58PuLQG6/K4kNdvBPwVDipZHv+bVc=
+X-Received: by 2002:a05:622a:110f:b0:3b8:67d3:343c with SMTP id
+ e15-20020a05622a110f00b003b867d3343cmr2507820qty.301.1676046113869; Fri, 10
+ Feb 2023 08:21:53 -0800 (PST)
 MIME-Version: 1.0
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 10 Feb 2023 16:52:12 +0100
-Message-ID: <CAJfpegu6xqH3U1icRcY1SeyVh0h-CirXJ-oaCXUsLCZGQgExUQ@mail.gmail.com>
-Subject: [LSF/MM/BPF TOPIC] fuse passthrough solutions and status
-To:     lsf-pc@lists.linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alessio Balsini <balsini@android.com>,
-        Daniel Rosenberg <drosen@google.com>, bpf <bpf@vger.kernel.org>
+References: <20230207035139.272707-1-shiyn.lin@gmail.com> <CA+CK2bBt0Gujv9BdhghVkbFRirAxCYXbpH-nquccPsKGnGwOBQ@mail.gmail.com>
+ <CANOhDtU3J8SUCzKtKvPPPrUHyo+LV5npNObHtYP_AK4W3LomDw@mail.gmail.com>
+In-Reply-To: <CANOhDtU3J8SUCzKtKvPPPrUHyo+LV5npNObHtYP_AK4W3LomDw@mail.gmail.com>
+From:   Pasha Tatashin <pasha.tatashin@soleen.com>
+Date:   Fri, 10 Feb 2023 11:21:16 -0500
+Message-ID: <CA+CK2bAWnzqKDTjBbxXOvURwr7nWmf8q-mzD1x-ztwbWVQBQKA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/14] Introduce Copy-On-Write to Page Table
+To:     Chih-En Lin <shiyn.lin@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        David Hildenbrand <david@redhat.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Nadav Amit <namit@vmware.com>, Barry Song <baohua@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Yang Shi <shy828301@gmail.com>, Peter Xu <peterx@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Zach O'Keefe" <zokeefe@google.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Hugh Dickins <hughd@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Yu Zhao <yuzhao@google.com>, Juergen Gross <jgross@suse.com>,
+        Tong Tiangen <tongtiangen@huawei.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Li kunyu <kunyu@nfschina.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Gautam Menghani <gautammenghani201@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Brown <broonie@kernel.org>, Will Deacon <will@kernel.org>,
+        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Barret Rhoden <brho@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Dinglan Peng <peng301@purdue.edu>,
+        Pedro Fonseca <pfonseca@purdue.edu>,
+        Jim Huang <jserv@ccns.ncku.edu.tw>,
+        Huichun Feng <foxhoundsk.tw@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Several fuse based filesystems pass file data from an underlying
-filesystem without modification.  The added value can come from
-changed directory structure, changed metadata or the ability to
-intercept I/O only in special cases.  This pattern is very common, so
-optimizing it could be very worthwhile.
+> > > Currently, copy-on-write is only used for the mapped memory; the child
+> > > process still needs to copy the entire page table from the parent
+> > > process during forking. The parent process might take a lot of time and
+> > > memory to copy the page table when the parent has a big page table
+> > > allocated. For example, the memory usage of a process after forking with
+> > > 1 GB mapped memory is as follows:
+> >
+> > For some reason, I was not able to reproduce performance improvements
+> > with a simple fork() performance measurement program. The results that
+> > I saw are the following:
+> >
+> > Base:
+> > Fork latency per gigabyte: 0.004416 seconds
+> > Fork latency per gigabyte: 0.004382 seconds
+> > Fork latency per gigabyte: 0.004442 seconds
+> > COW kernel:
+> > Fork latency per gigabyte: 0.004524 seconds
+> > Fork latency per gigabyte: 0.004764 seconds
+> > Fork latency per gigabyte: 0.004547 seconds
+> >
+> > AMD EPYC 7B12 64-Core Processor
+> > Base:
+> > Fork latency per gigabyte: 0.003923 seconds
+> > Fork latency per gigabyte: 0.003909 seconds
+> > Fork latency per gigabyte: 0.003955 seconds
+> > COW kernel:
+> > Fork latency per gigabyte: 0.004221 seconds
+> > Fork latency per gigabyte: 0.003882 seconds
+> > Fork latency per gigabyte: 0.003854 seconds
+> >
+> > Given, that page table for child is not copied, I was expecting the
+> > performance to be better with COW kernel, and also not to depend on
+> > the size of the parent.
+>
+> Yes, the child won't duplicate the page table, but fork will still
+> traverse all the page table entries to do the accounting.
+> And, since this patch expends the COW to the PTE table level, it's not
+> the mapped page (page table entry) grained anymore, so we have to
+> guarantee that all the mapped page is available to do COW mapping in
+> the such page table.
+> This kind of checking also costs some time.
+> As a result, since the accounting and the checking, the COW PTE fork
+> still depends on the size of the parent so the improvement might not
+> be significant.
 
-I'd like to discuss proposed solutions to enabling data passthrough.
-There are several prototypes:
+The current version of the series does not provide any performance
+improvements for fork(). I would recommend removing claims from the
+cover letter about better fork() performance, as this may be
+misleading for those looking for a way to speed up forking. In my
+case, I was looking to speed up Redis OSS, which relies on fork() to
+create consistent snapshots for driving replicates/backups. The O(N)
+per-page operation causes fork() to be slow, so I was hoping that this
+series, which does not duplicate the VA during fork(), would make the
+operation much quicker.
 
- - fuse2[1] (myself, very old)
- - fuse-passthrough[2] (Alessio Balsini, more recent)
- - fuse-bpf[3] (Daniel Rosenberg, new)
+> Actually, at the RFC v1 and v2, we proposed the version of skipping
+> those works, and we got a significant improvement. You can see the
+> number from RFC v2 cover letter [1]:
+> "In short, with 512 MB mapped memory, COW PTE decreases latency by 93%
+> for normal fork"
 
-The scope of fuse-bpf is much wider, but it does offer conditional
-passthrough behavior as well.
+I suspect the 93% improvement (when the mapcount was not updated) was
+only for VAs with 4K pages. With 2M mappings this series did not
+provide any benefit is this correct?
 
-One of the questions is how to reference underlying files.  Passing
-open file descriptors directly in the fuse messages could be
-dangerous[4].  Setting up the mapping from an open file descriptor to
-the kernel using an ioctl() instead should be safe.
+>
+> However, it might break the existing logic of the refcount/mapcount of
+> the page and destabilize the system.
 
-Other open issues:
+This makes sense.
 
- - what shall be the lifetime of the mapping?
-
- - does the mapped open file need to be visible to userspace?
-Remember, this is a kernel module, so there's no process involved
-where you could look at /proc/PID/fd.  Adding a kernel thread for each
-fuse instance that installs these mapped fds as actual file descriptor
-might be the solution.
-
-Thanks,
-Miklos
-
-
-[1] https://lore.kernel.org/all/CAJfpegtjEoE7H8tayLaQHG9fRSBiVuaspnmPr2oQiOZXVB1+7g@mail.gmail.com/
-
-[2] https://lore.kernel.org/all/20210125153057.3623715-1-balsini@android.com/
-
-[3] https://lore.kernel.org/all/20221122021536.1629178-1-drosen@google.com/
-
-[4] https://lore.kernel.org/all/CAG48ez17uXtjCTa7xpa=JWz3iBbNDQTKO2hvn6PAZtfW3kXgcA@mail.gmail.com/
+> [1] https://lore.kernel.org/linux-mm/20220927162957.270460-1-shiyn.lin@gmail.com/T/#me2340d963c2758a2561c39cb3baf42c478dfe548
+> [2] https://lore.kernel.org/linux-mm/20220927162957.270460-1-shiyn.lin@gmail.com/T/#mbc33221f00c7cf3d71839b45fc23862a5dac3014
