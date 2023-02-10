@@ -2,176 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8559969235F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 17:34:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DA1F692434
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 18:13:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232488AbjBJQeT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 11:34:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51910 "EHLO
+        id S232577AbjBJRNM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 12:13:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232572AbjBJQeS (ORCPT
+        with ESMTP id S232661AbjBJRNK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 11:34:18 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94110A5E1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 08:34:16 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id u10so4222026wmj.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 08:34:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fhLS95sVAPuPLSt4s3QNipINWEX9MBrZr6+OBYHbgx0=;
-        b=cL0mkbQIbHTogr8+gARmzk7nOJyD+7SQmmdWptCXTxvc58+uY1vnr+O3VA6IXM3pTE
-         xBSu3S98ypYKJ1ws4c6sOhAicybJKFwvsEqJZZr3hDlVubO2y7LscipiJbUntT3Fcny5
-         cCGhMNw2tXB30dK1JJMm5hbi0YDzOdQMqBrds=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fhLS95sVAPuPLSt4s3QNipINWEX9MBrZr6+OBYHbgx0=;
-        b=S1UxFaotPjPAmvdJraFf7y4VFpmdv1XqhXmDIyNFyNSUw/HxSZOK+G9TUz7sGof9Ew
-         6mUSQLDCm0Gj0xqyiWefOZuaZP3fkenjcrfrMejPqrbg/RMo2iAHj1JbidnuqfOrnZCr
-         6pHZhE+35soZ6e29kICsZMeUocHJeJAS3bsUNbr+CTYp11VhMH22HhCGaOa1su18IovS
-         d8sPwb7CGS8LdjNa7/9QQdSotaIVm9XzFGJSmGGokjAezFbgbYC5KQL+D3/8jcTthF/k
-         3z2hPjd/L7/+AqLrps1RdeyYPlGThJ7Gzt7Fb71p1q8zPeQmBjPLEdT6wagJLv/EkN9Z
-         ytvA==
-X-Gm-Message-State: AO0yUKWoC4b7j9kzVEjlybvJ3v5ry43IIAyHpme2rkOeTrsSyaQChkKI
-        g6OENcmun4JwK+GHZGaRmxHALI7nePlDVphXnLE=
-X-Google-Smtp-Source: AK7set/DUDsyTU6nZFc9opbTaC4ZWQ8FNiX1LBzewXgZaEFvM0nIYObtnWzZSjRNdPZDi/1eQHhJ2Q==
-X-Received: by 2002:a05:600c:4586:b0:3df:9858:c03a with SMTP id r6-20020a05600c458600b003df9858c03amr10381446wmo.15.1676046854637;
-        Fri, 10 Feb 2023 08:34:14 -0800 (PST)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id b18-20020a05600c4e1200b003e00c453447sm8919484wmq.48.2023.02.10.08.34.13
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Feb 2023 08:34:13 -0800 (PST)
-Received: by mail-ej1-f48.google.com with SMTP id lu11so17382051ejb.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 08:34:13 -0800 (PST)
-X-Received: by 2002:a17:906:4e46:b0:87a:7098:ca09 with SMTP id
- g6-20020a1709064e4600b0087a7098ca09mr3021239ejw.78.1676046853351; Fri, 10 Feb
- 2023 08:34:13 -0800 (PST)
+        Fri, 10 Feb 2023 12:13:10 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A47CF7A7E1;
+        Fri, 10 Feb 2023 09:12:31 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EDA9BB825AB;
+        Fri, 10 Feb 2023 17:12:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91CA4C433EF;
+        Fri, 10 Feb 2023 17:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676049148;
+        bh=dSrYgfvAVtR0ZuT/0xfZYM/PLUJUYwO3aMXAgAkHBtg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=uY+Ry98xhdMGnIUrnxErFsxBVYY6/6AMQw6IjWUtfmwlnh578+20eNilQs74fqd75
+         HVQim0R1enSJN5KYSGTIHe6G91ArtsMAqAzFppmS5/dy7na94H/IDdbC2Fl/8zqIqk
+         rE3R68d++mTw/rF1byjkSQyKnxkql0Db8KHnwivlr0n+tIV2cT9l6eUSBPzeYOCG2m
+         A36OlZr2LmKRBKChwLQ1o6rBXUaxztqc2qq8r9F/E+enEfZ7awPitJ+3w6WZsiBGQ0
+         pckhrOjje/NqqmqbHi2mblb3bV17npkGXwVW8gIn5lia4YTAOgcSIoVM2JOJ7Fjfbw
+         9HNBAbzTu1hPQ==
+Date:   Fri, 10 Feb 2023 09:12:28 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     djwong@kernel.org
+Cc:     dchinner@redhat.com, ddouwsma@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux@weissschuh.net,
+        syzbot+898115bc6d7140437215@syzkaller.appspotmail.com,
+        xu.panda@zte.com.cn, yang.yang29@zte.com.cn
+Subject: [ANNOUNCE] xfs-linux: for-next updated to dd07bb8b6baf
+Message-ID: <167604902064.3012541.14843121291940068102.stg-ugh@magnolia>
 MIME-Version: 1.0
-References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
- <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
- <20230210021603.GA2825702@dread.disaster.area> <20230210040626.GB2825702@dread.disaster.area>
- <Y+XLuYh+kC+4wTRi@casper.infradead.org> <20230210065747.GD2825702@dread.disaster.area>
- <CALCETrWjJisipSJA7tPu+h6B2gs3m+g0yPhZ4z+Atod+WOMkZg@mail.gmail.com>
-In-Reply-To: <CALCETrWjJisipSJA7tPu+h6B2gs3m+g0yPhZ4z+Atod+WOMkZg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 10 Feb 2023 08:33:56 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj66F6CdJUAAjqigXMBy7gHquFMzPNAwKCgkrb2mF6U7w@mail.gmail.com>
-Message-ID: <CAHk-=wj66F6CdJUAAjqigXMBy7gHquFMzPNAwKCgkrb2mF6U7w@mail.gmail.com>
-Subject: Re: copy on write for splice() from file to pipe?
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Stefan Metzmacher <metze@samba.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 10, 2023 at 7:15 AM Andy Lutomirski <luto@kernel.org> wrote:
->
-> Frankly, I really don't like having non-immutable data in a pipe.
+Hi folks,
 
-That statement is completely nonsensical.
+The for-next branch of the xfs-linux repository at:
 
-A pipe is a kernel buffer. If you want the buffer to be immutable, you
-do "read()" and "write()" on it. End of story.
+git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-In contrast, "splice()" is literally the "map" operation. It's
-"mmap()", without the "m", because it turns out that memory mapping
-has a few problems:
+has just been updated.
 
- (a) mmap fundamentally only works on a page granularity
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.  This push adds a couple of patches that have trickled
+in, and reverts the broken strscpy thing.  I'll think about Dave's
+lengthy allocator rework next week after fstestscloud finishes with it.
 
- (b) mmap has huge setup and teardown costs with page tables and TLB's
+The new head of the for-next branch is commit:
 
-and so splice() is just basically "strange mmap with that kernel
-buffer that is pipe"
+dd07bb8b6baf xfs: revert commit 8954c44ff477
 
-Really. That is what spice *is*. There's absolutely no question about it.
+13 new commits:
 
-It has some advantages over mmap, in that because it's a software
-mapping, we can "map" partial pages, which means that you can also map
-data that might not be in full pages (it might be an incoming network
-buffer, for example).
+Darrick J. Wong (9):
+[ddccb81b26ec] xfs: pass the xfs_bmbt_irec directly through the log intent code
+[f3ebac4c94c1] xfs: fix confusing variable names in xfs_bmap_item.c
+[72ba455599ad] xfs: pass xfs_extent_free_item directly through the log intent code
+[578c714b215d] xfs: fix confusing xfs_extent_item variable names
+[1534328bb427] xfs: pass rmap space mapping directly through the log intent code
+[ffaa196f6221] xfs: fix confusing variable names in xfs_rmap_item.c
+[0b11553ec54a] xfs: pass refcount intent directly through the log intent code
+[01a3af226b7d] xfs: fix confusing variable names in xfs_refcount_item.c
+[dd07bb8b6baf] xfs: revert commit 8954c44ff477
 
-It has a lot of disadvantages over mmap too, of course. Not using
-hardware means that it doesn't really show up as a linear mapping, and
-you don't get the nice hardware lookup accelerations - but it also
-means that you don't have the downsides (ie TLB costs etc).
+Dave Chinner (1):
+[c85007e2e394] xfs: don't use BMBT btree split workers for IO completion
 
-So I'm not saying that it is the same thing as "mmap", but I very much
-_am_ saying that there's a very real and direct similarity. There are
-three fundamental IO models in Unix: read, write, and mmap. And mmap()
-is very much a "you get a direct window into something that can change
-under you".  And splice() is exactly that same thing.
+Donald Douwsma (1):
+[167ce4cbfa37] xfs: allow setting full range of panic tags
 
-It was literally designed to be "look, we want zero-copy networking,
-and we could do 'sendfile()' by mmap'ing the file, but mmap - and
-particularly munmap - is too expensive, so we map things into kernel
-buffers instead".
+Thomas Weiﬂschuh (1):
+[2ee833352985] xfs: make kobj_type structures constant
 
-So saying "I really don't like having non-immutable data in a pipe" is
-complete nonsense. It's syntactically correct English, but it makes no
-conceptual sense.
+Xu Panda (1):
+[8954c44ff477] xfs: use strscpy() to instead of strncpy()
 
-You can say "I don't like 'splice()'". That's fine. I used to think
-splice was a really cool concept, but I kind of hate it these days.
-Not liking splice() makes a ton of sense.
+Code Diffstat:
 
-But given splice, saying "I don't like non-immutable data" really is
-complete nonsense.
-
-If you want a stable buffer, use read() and write(). It's that simple.
-If you want to send data from a file to the network, and want a stable
-buffer in between the two, then "read()" and "write()" is *exactly*
-what you should do.
-
-With read and write, there's no mmap()/munmap() overhead of the file,
-and you already have the buffer (iwe call it "user address space").
-The only downside is the extra copy.
-
-So if  you want to send stable, unchanging file contents to the
-network, there is absolutely *no* reason to ever involve a pipe at
-all, and you should entirely ignore splice().
-
-The *only* reason to ever use splice() is because you don't want to
-copy data, and just want a reference to it, and want to keep it all in
-kernel space, because the kernel<->user boundary ends up either
-requiring copies, or that page alignment, and is generally fairly
-expensive.
-
-But once you decide to go that way, you need to understand that you
-don't have "immutable data". You asked for a reference, you got a
-reference, and it *will* change.
-
-That's not something specific to "splice()". It's fundamental to the
-whole *concept* of zero-copy. If you don't want copies, and the source
-file changes, then you see those changes.
-
-So saying "I really don't like having non-immutable data in a pipe"
-really is nonsense. Don't use splice. Or do, and realize that it's a
-*mapping*.
-
-Because that is literally the whole - and ONLY - reason for splice in
-the first place.
-
-              Linus
+Documentation/admin-guide/xfs.rst |   2 +-
+fs/xfs/libxfs/xfs_alloc.c         |  32 ++++-----
+fs/xfs/libxfs/xfs_bmap.c          |  32 ++++-----
+fs/xfs/libxfs/xfs_bmap.h          |   5 +-
+fs/xfs/libxfs/xfs_btree.c         |  18 ++++-
+fs/xfs/libxfs/xfs_refcount.c      |  96 ++++++++++++--------------
+fs/xfs/libxfs/xfs_refcount.h      |   4 +-
+fs/xfs/libxfs/xfs_rmap.c          |  52 +++++++-------
+fs/xfs/libxfs/xfs_rmap.h          |   6 +-
+fs/xfs/xfs_bmap_item.c            | 137 ++++++++++++++++--------------------
+fs/xfs/xfs_error.c                |   2 +-
+fs/xfs/xfs_error.h                |  12 +++-
+fs/xfs/xfs_extfree_item.c         |  99 +++++++++++++-------------
+fs/xfs/xfs_globals.c              |   3 +-
+fs/xfs/xfs_refcount_item.c        | 110 ++++++++++++++---------------
+fs/xfs/xfs_rmap_item.c            | 142 ++++++++++++++++++--------------------
+fs/xfs/xfs_sysfs.c                |  12 ++--
+fs/xfs/xfs_sysfs.h                |  10 +--
+fs/xfs/xfs_trace.h                |  15 ++--
+19 files changed, 377 insertions(+), 412 deletions(-)
