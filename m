@@ -2,121 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F09676925FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 20:02:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECF88692626
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 20:18:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233223AbjBJTCj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 14:02:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49370 "EHLO
+        id S233260AbjBJTS2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 14:18:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233222AbjBJTCi (ORCPT
+        with ESMTP id S229495AbjBJTS1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 14:02:38 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F6EA7CCAB;
-        Fri, 10 Feb 2023 11:02:37 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id be8so7442013plb.7;
-        Fri, 10 Feb 2023 11:02:37 -0800 (PST)
+        Fri, 10 Feb 2023 14:18:27 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD5A57BFFE
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 11:18:25 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id k8-20020a05600c1c8800b003dc57ea0dfeso7002428wms.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 11:18:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j1cOhpJR3Kvbh9HZADpLcoUR0+gYgMIFfLat/AASZX0=;
-        b=UQ+9s6t4bnN7xq/qk4qKXpVS0fA5hjb9cQysWiQXGOw9sPbgxVC1j+th2xjSq94/ed
-         eRvdsolTfVMY3PoljYoCbTkdsmOI8pvt+k70XVKF4ZqMRLlu+DodzWwx+vdeWlEa7J81
-         eEszcT7Saa8bO3NougBlhx1qn4jvY2dYx/Wc8Q1OXr8dlpSIxSRjj5bHDYfgPiN8zqnt
-         0wVhAfhnQ73XAbCenDaLigho9YNDBCcGCjjlDcfpa1NWNuSCqNPo/SGwGqIbKQaBJWVS
-         1+0istMIS9kDB6T79b0rBV8Fz1/VvuIFFvUHJ0vpy+QNoR0FI79bMGaKj2PBYpZGl1yg
-         KcKw==
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rqdkVXcgxfdy1Dm/8iJj45I844hMpjNCthfme++2m+A=;
+        b=HXeP/zJ0VPZo44pu1T+InLR2v6BSFVt8KQxTIxDwhqwt5QJO3Gq4TOrcF1bpZ27GKI
+         Elg9+Al61hYH5yP/e3IOrLmM53/MBZegt7gZ4ga+ZMwPbD78nkcecLkPqgjH4g8cjArx
+         Fz2U4FUs2ho/9WBlfzAxyolkW7zXzrMdaNn+4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j1cOhpJR3Kvbh9HZADpLcoUR0+gYgMIFfLat/AASZX0=;
-        b=bQaDvIfUqoyf2Qeri0O8Rrp7h2Opuyn3BPU86Xt75sYB1rtcGWi6LAqnOAM/LAey7n
-         sbJGg+dO8SbxfJP+mMSZxgf5IF6PahlK+MmRF2Hbr2Qt9qLSLrPFMSuXe/DsZVTw/rxS
-         9b+427DlAjTmtYUWS7xtRqWqo17y7B0oqO4p0UKw59p0RnMnsC6saG1rN/qDBK+zRsw8
-         g58U161GJInNhVDMg+Dw8gpEhkx9sE/d7ZP2zumw+1hI+w9DNjFQlU0sBJ92bUiq8c2T
-         Uc4kANgdijJtri4TaY7d8ABrMQd1Z0gQ0W5gLFBei8igvXV+rttD0SUa+qF6w4FwE3Wb
-         7XiQ==
-X-Gm-Message-State: AO0yUKUnDc5rfWWkTIZHLG1y2+EMtwrH05gWPDeNBbCWM6A6/FYHqRNL
-        fxJLYy8TGaJorFaQPEfRX9U=
-X-Google-Smtp-Source: AK7set/dbUQDWhmep7CTi9/LcTRrHRCnUiwSqFkMOSYdaaHV8nzu9SC6LSieQdGiQ7i/nPcO7dHyMQ==
-X-Received: by 2002:a05:6a20:e488:b0:b5:389e:870e with SMTP id ni8-20020a056a20e48800b000b5389e870emr13945541pzb.4.1676055756388;
-        Fri, 10 Feb 2023 11:02:36 -0800 (PST)
-Received: from zhienlin-MacBook-Pro.local ([123.110.9.95])
-        by smtp.gmail.com with ESMTPSA id i5-20020a63a845000000b00477bfac06b7sm3352172pgp.34.2023.02.10.11.02.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Feb 2023 11:02:35 -0800 (PST)
-Date:   Sat, 11 Feb 2023 03:02:17 +0800
-From:   Chih-En Lin <shiyn.lin@gmail.com>
-To:     Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Nadav Amit <namit@vmware.com>, Barry Song <baohua@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Yang Shi <shy828301@gmail.com>, Peter Xu <peterx@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Zach O'Keefe <zokeefe@google.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Hugh Dickins <hughd@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Yu Zhao <yuzhao@google.com>, Juergen Gross <jgross@suse.com>,
-        Tong Tiangen <tongtiangen@huawei.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Li kunyu <kunyu@nfschina.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Gautam Menghani <gautammenghani201@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Brown <broonie@kernel.org>, Will Deacon <will@kernel.org>,
-        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Barret Rhoden <brho@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Dinglan Peng <peng301@purdue.edu>,
-        Pedro Fonseca <pfonseca@purdue.edu>,
-        Jim Huang <jserv@ccns.ncku.edu.tw>,
-        Huichun Feng <foxhoundsk.tw@gmail.com>
-Subject: Re: [PATCH v4 00/14] Introduce Copy-On-Write to Page Table
-Message-ID: <Y+aUuVLEXmRhHlC9@zhienlin-MacBook-Pro.local>
-References: <20230207035139.272707-1-shiyn.lin@gmail.com>
- <CA+CK2bBt0Gujv9BdhghVkbFRirAxCYXbpH-nquccPsKGnGwOBQ@mail.gmail.com>
- <CANOhDtU3J8SUCzKtKvPPPrUHyo+LV5npNObHtYP_AK4W3LomDw@mail.gmail.com>
- <CA+CK2bAWnzqKDTjBbxXOvURwr7nWmf8q-mzD1x-ztwbWVQBQKA@mail.gmail.com>
- <Y+Z8ymNYc+vJMBx8@strix-laptop>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rqdkVXcgxfdy1Dm/8iJj45I844hMpjNCthfme++2m+A=;
+        b=m6F6L0gTWGCI1FZTe+1ytRwes/MlayaHmWBU84wi9Ttcq+Q0SXZzKi/a8F6e2ZdoSE
+         Gu8WK9fA7JGVLdYNbI3idWPoyTW/r+fYKnthnpjv6s9rX6naEUQx7kFhgeLVP60ZQ18C
+         93UwgM2rbGk/W9UoIPz73nYCExvdclVyojzek+6gktbm/bi3WGklumGAB2ccVfHGzVfw
+         rMohwlJ51cp8cOQCRnTXLwtE3vNAjrilYDaG+xYmkNuCkC7Wgtxu8mmlBxcZF9bi5PkF
+         E/Lai82tvmsSSiOJxEKIBez5xcXNL854rbKa3KdDW4siJMVwTFn6lL3h1/1tx+BzIRlg
+         VBrQ==
+X-Gm-Message-State: AO0yUKWUEw6oU+3LwPI4AkDJ8ZkG40cnXizKEXoO6DOBhDXfG9oXKLX+
+        6Dw9v7b46KxXeW1QlCJv9whvBsSy2nKTFxywAoI=
+X-Google-Smtp-Source: AK7set8Lwr+6ZUC1iVDLt7SWTWSWz0sWlc7sbZ8CdHnuFKewsHNiTLZpKgW6zbt/e9Gk6KDh5amvwQ==
+X-Received: by 2002:a05:600c:330f:b0:3df:ef18:b0a1 with SMTP id q15-20020a05600c330f00b003dfef18b0a1mr17408384wmp.12.1676056704033;
+        Fri, 10 Feb 2023 11:18:24 -0800 (PST)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id i14-20020adff30e000000b00241fab5a296sm4318046wro.40.2023.02.10.11.18.23
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Feb 2023 11:18:23 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id q19so5603818edd.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 11:18:23 -0800 (PST)
+X-Received: by 2002:a50:f603:0:b0:49d:ec5e:1e98 with SMTP id
+ c3-20020a50f603000000b0049dec5e1e98mr3187606edn.5.1676056702919; Fri, 10 Feb
+ 2023 11:18:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y+Z8ymNYc+vJMBx8@strix-laptop>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
+ <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
+ <20230210021603.GA2825702@dread.disaster.area> <20230210040626.GB2825702@dread.disaster.area>
+ <Y+XLuYh+kC+4wTRi@casper.infradead.org> <20230210065747.GD2825702@dread.disaster.area>
+ <CALCETrWjJisipSJA7tPu+h6B2gs3m+g0yPhZ4z+Atod+WOMkZg@mail.gmail.com>
+ <CAHk-=wj66F6CdJUAAjqigXMBy7gHquFMzPNAwKCgkrb2mF6U7w@mail.gmail.com>
+ <CALCETrU-9Wcb_zCsVWr24V=uCA0+c6x359UkJBOBgkbq+UHAMA@mail.gmail.com>
+ <CAHk-=wjQZWMeQ9OgXDNepf+TLijqj0Lm0dXWwWzDcbz6o7yy_g@mail.gmail.com> <CALCETrWuRHWh5XFn8M8qx5z0FXAGHH=ysb+c6J+cqbYyTAHvhw@mail.gmail.com>
+In-Reply-To: <CALCETrWuRHWh5XFn8M8qx5z0FXAGHH=ysb+c6J+cqbYyTAHvhw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 10 Feb 2023 11:18:05 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjuXvF1cA=gJod=-6k4ypbEmOczFFDKriUpOVKy9dTJWQ@mail.gmail.com>
+Message-ID: <CAHk-=wjuXvF1cA=gJod=-6k4ypbEmOczFFDKriUpOVKy9dTJWQ@mail.gmail.com>
+Subject: Re: copy on write for splice() from file to pipe?
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API Mailing List <linux-api@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Samba Technical <samba-technical@lists.samba.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -124,66 +89,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 11, 2023 at 01:20:10AM +0800, Chih-En Lin wrote:
-> On Fri, Feb 10, 2023 at 11:21:16AM -0500, Pasha Tatashin wrote:
-> > > > > Currently, copy-on-write is only used for the mapped memory; the child
-> > > > > process still needs to copy the entire page table from the parent
-> > > > > process during forking. The parent process might take a lot of time and
-> > > > > memory to copy the page table when the parent has a big page table
-> > > > > allocated. For example, the memory usage of a process after forking with
-> > > > > 1 GB mapped memory is as follows:
-> > > >
-> > > > For some reason, I was not able to reproduce performance improvements
-> > > > with a simple fork() performance measurement program. The results that
-> > > > I saw are the following:
-> > > >
-> > > > Base:
-> > > > Fork latency per gigabyte: 0.004416 seconds
-> > > > Fork latency per gigabyte: 0.004382 seconds
-> > > > Fork latency per gigabyte: 0.004442 seconds
-> > > > COW kernel:
-> > > > Fork latency per gigabyte: 0.004524 seconds
-> > > > Fork latency per gigabyte: 0.004764 seconds
-> > > > Fork latency per gigabyte: 0.004547 seconds
-> > > >
-> > > > AMD EPYC 7B12 64-Core Processor
-> > > > Base:
-> > > > Fork latency per gigabyte: 0.003923 seconds
-> > > > Fork latency per gigabyte: 0.003909 seconds
-> > > > Fork latency per gigabyte: 0.003955 seconds
-> > > > COW kernel:
-> > > > Fork latency per gigabyte: 0.004221 seconds
-> > > > Fork latency per gigabyte: 0.003882 seconds
-> > > > Fork latency per gigabyte: 0.003854 seconds
-> > > >
-> > > > Given, that page table for child is not copied, I was expecting the
-> > > > performance to be better with COW kernel, and also not to depend on
-> > > > the size of the parent.
-> > >
-> > > Yes, the child won't duplicate the page table, but fork will still
-> > > traverse all the page table entries to do the accounting.
-> > > And, since this patch expends the COW to the PTE table level, it's not
-> > > the mapped page (page table entry) grained anymore, so we have to
-> > > guarantee that all the mapped page is available to do COW mapping in
-> > > the such page table.
-> > > This kind of checking also costs some time.
-> > > As a result, since the accounting and the checking, the COW PTE fork
-> > > still depends on the size of the parent so the improvement might not
-> > > be significant.
-> > 
-> > The current version of the series does not provide any performance
-> > improvements for fork(). I would recommend removing claims from the
-> > cover letter about better fork() performance, as this may be
-> > misleading for those looking for a way to speed up forking. In my
-> 
-> From v3 to v4, I changed the implementation of the COW fork() part to do
+On Fri, Feb 10, 2023 at 11:02 AM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> Second, either make splice more strict or add a new "strict splice"
+> variant.  Strict splice only completes when it can promise that writes
+> to the source that start after strict splice's completion won't change
+> what gets written to the destination.
 
-Sorry, it's "RFC v2 to v3".
+The thing ius, I think your "strict splice" is pointless and wrong.
 
-> the accounting and checking. At the time, I also removed most of the
-> descriptions about the better fork() performance. Maybe it's not enough
-> and still has some misleading. I will fix this in the next version.
-> Thanks.
+It's pointless, because it simply means that it won't perform well.
 
-Thanks,
-Chih-En Lin
+And since the whole point of splice was performance, it's wrong.
+
+I really think the whole "source needs to be stable" is barking up the
+wrong tree.
+
+You are pointing fingers at splice().
+
+And I think that's wrong.
+
+We should point the fingers at either the _user_ of splice - as Jeremy
+Allison has done a couple of times - or we should point it at the sink
+that cannot deal with unstable sources.
+
+Because that whole "source is unstable" is what allows for that higher
+performance. The moment you start requiring stability, you _will_ lose
+it. You will have to lock the page, you'll have to umap it from any
+shared mappings, etc etc.  And even if there are no writers, or no
+current mappers, all that effort to make sure that is the case is
+actually fairly expensive.
+
+So I would instead suggest a different approach entirely, with several
+different steps:
+
+ - make sure people are *aware* of this all.
+
+   Maybe this thread raised some awareness of it for some people, but
+more realistically - maybe we can really document this whole issue
+somewhere much more clearly
+
+ - it sounds like the particular user in question (samba) already very
+much has a reasonable model for "I have exclusive access to this" that
+just wasn't used
+
+ - and finally, I do think it might make sense for the networking
+people to look at how the networking side works with 'sendpage()'.
+
+Because I really think that your "strict splice" model would just mean
+that now the kernel would have to add not just a memcpy, but also a
+new allocation for that new stable buffer for the memcpy, and that
+would all just be very very pointless.
+
+Alternatively, it would require some kind of nasty hard locking
+together with other limitations on what can be done by non-splice
+users.
+
+                Linus
