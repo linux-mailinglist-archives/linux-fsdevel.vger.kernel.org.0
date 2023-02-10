@@ -2,136 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33A8D6918E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 07:58:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50292691B9E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 10:38:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231375AbjBJG6O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 01:58:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43452 "EHLO
+        id S231436AbjBJJiu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 04:38:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231347AbjBJG6N (ORCPT
+        with ESMTP id S230286AbjBJJit (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 01:58:13 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08ACE5AB30
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Feb 2023 22:57:51 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id a8-20020a17090a6d8800b002336b48f653so2796710pjk.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Feb 2023 22:57:51 -0800 (PST)
+        Fri, 10 Feb 2023 04:38:49 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 877815ACEE
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 01:38:46 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id hx15so14154744ejc.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Feb 2023 01:38:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1U8Y/0tbcD9B+rFGh6iJhmikTGHljyJ4FQw+gensxqM=;
-        b=4Z1SYdNbd8WuXmbNbPTp5CPsq+GgaHbcr8G8z8Vf2uXbpsOUdr/18311fSoj/DAvdM
-         vKD8kJ4v+dlInCvARG32DgUVW8yzfAhNkAyg4PrXHQ8xbnM6qm00vXAjizV3lv9K0Sf/
-         yhmZ9myipWzdAp3N3yBHfaKYQ0cJ0ZZ9R3JLCAc8crow8cakcI10UvY9qknPlyW1qW2Z
-         DMKFP+tHUhN2tmNEIcIcgczDV7s8cjMmG51ixCnGXX2nvFqjCTjT9YADasror/vi7CU8
-         10fPbGPPQUto5nhsZhX9kHLpIDYok04ij/5sDWe8+1g8aQUBeNpw+SaOrYegc5uSMILw
-         cGxw==
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+CSs87Bv4X9FdOPYmZI8I7ZXN+lGBiiiGHWUaDXWUyA=;
+        b=TC+YKkjyiydGRtrpmt7wSjvM/iGER/SrtSoz1eGq5Dh+7INoGE3CAvWyT6gFuHJw0+
+         a+sJLH1pyilAt0mtGhC3FfEB5gEjShtpNWb2dwOI6qQYjTGCc03QzygAayckUSGy9sNH
+         EFRK6CyM68LY8wjf+82mfK7pKtnF3BNXmwkjU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1U8Y/0tbcD9B+rFGh6iJhmikTGHljyJ4FQw+gensxqM=;
-        b=cRJqoKe2XGzjYtX0Lq7dOK6QHqzTgVknxO5NRmEsW6Zbx0fXHLIGgas2JXJ81iT8wT
-         W3zv8xh+S3CHV2MwXk7+fWmPnTddYaHNoT18SYTBLrZCV5JAQnZBz6PD/qOzpp42W88I
-         0LyNArYmXfqTQNKCSqeJ+R7eAwBMzEapcLR+hwDPFacsdwWqx01LmkGFEFVmlB1bYFO5
-         2MuNujGuLghHbEPZOLaE/OxN7+VJgJiIRYL9FcI8VYg0K4/o1WWJigwIYpPsfzsirrLW
-         arSGhiYploT5KmKNm2FlUUvkQD9wXgpVUKb73UkeBDyIZTIqogeEh5serxluwOOgjzZ1
-         Wkhg==
-X-Gm-Message-State: AO0yUKUiWQbQGqALk1hotABRpJRmXnXAlxekx5qCa+BzXW4Cy402eu5o
-        T9VJJwmxXpOzpYnycNM00bkb0A==
-X-Google-Smtp-Source: AK7set9t6gqJxoHDZIn5ha1EJDlZJueE1TdlQVqKbhBYcp7XjUdmkxQUWlM78CqsSipLc15u/SU+4w==
-X-Received: by 2002:a05:6a21:3613:b0:bc:30aa:8a6d with SMTP id yg19-20020a056a21361300b000bc30aa8a6dmr11239502pzb.2.1676012270527;
-        Thu, 09 Feb 2023 22:57:50 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-4-128.pa.nsw.optusnet.com.au. [49.181.4.128])
-        by smtp.gmail.com with ESMTPSA id i76-20020a636d4f000000b004fb171df68fsm2298927pgc.7.2023.02.09.22.57.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 22:57:50 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pQNLv-00DXUC-AP; Fri, 10 Feb 2023 17:57:47 +1100
-Date:   Fri, 10 Feb 2023 17:57:47 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Stefan Metzmacher <metze@samba.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
-Subject: Re: copy on write for splice() from file to pipe?
-Message-ID: <20230210065747.GD2825702@dread.disaster.area>
-References: <0cfd9f02-dea7-90e2-e932-c8129b6013c7@samba.org>
- <CAHk-=wj8rthcQ9gQbvkMzeFt0iymq+CuOzmidx3Pm29Lg+W0gg@mail.gmail.com>
- <20230210021603.GA2825702@dread.disaster.area>
- <20230210040626.GB2825702@dread.disaster.area>
- <Y+XLuYh+kC+4wTRi@casper.infradead.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+CSs87Bv4X9FdOPYmZI8I7ZXN+lGBiiiGHWUaDXWUyA=;
+        b=0Vsgekxv7odiQRKeviwCmMm95AGnaQ64ra6Zo7rrDhqeYBBbOPNCsclL0KmQFnDxul
+         iOYhaho7Pk8ObMXBPY+OaazOVkV3jSSfbVl1ZleyQ2cKHDz/ErTWM+7c/GC+8CIymW8n
+         8eb9rFCbgIFSOU8aDvd1w1nGEuXBugNDcoBr9JAbQf8dC1w4AFl94bEGfqmsykHjMZjU
+         ceR5jOOQUtgYhNM6DUzpNMSUeJ41WTqT1BbwPW1Y68M7qJuUP+yJFtb4XKptyP3zo0oH
+         u20cZDAZ0GpAKCsle2RA08ZVVSCKMOBSOIECmA62L4xZP2lP/gBbefypqZUt8VQO/AkE
+         tKqQ==
+X-Gm-Message-State: AO0yUKUVcI2Pilr41pnJD3JWIH7csl5GYdraDSTeNVeNRO08t/6c/lfx
+        FN4S5vUZbQfhRcWjPe0NnIDd8zfUGKUlHEH1ekJuyXrLsX9DMg==
+X-Google-Smtp-Source: AK7set8/uxRNe2y4k4ko7foqw0oR4bOtlspjtdSF2d3Obo3NZCeZRWVf990nwhUQ7Rv9MBGaypXSr2ym9HkQHAkPwKM=
+X-Received: by 2002:a17:906:7242:b0:889:a006:7db5 with SMTP id
+ n2-20020a170906724200b00889a0067db5mr3229286ejk.138.1676021925106; Fri, 10
+ Feb 2023 01:38:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y+XLuYh+kC+4wTRi@casper.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20221122021536.1629178-1-drosen@google.com> <CAOQ4uxiyRxsZjkku_V2dBMvh1AGiKQx-iPjsD5tmGPv1PgJHvQ@mail.gmail.com>
+ <CA+PiJmRLTXfjJmgJm9VRBQeLVkWgaqSq0RMrRY1Vj7q6pV+omw@mail.gmail.com>
+ <2dc5e840-0ce8-dae9-99b9-e33d6ccbb016@fastmail.fm> <CAOQ4uxiBD5NXLMXFev7vsCLU5-_o8-_H-XcoMY1aqhOwnADo9w@mail.gmail.com>
+ <283b5344-3ef5-7799-e243-13c707388cd8@fastmail.fm> <CAOQ4uxjvUukDSBk977csO5cX=-1HiMHmyQxycbYQgrpLaanddw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjvUukDSBk977csO5cX=-1HiMHmyQxycbYQgrpLaanddw@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 10 Feb 2023 10:38:34 +0100
+Message-ID: <CAJfpegvHKkCn0UnNRVxFXjjnkOuq0N4xLN4WzpqVX+56DqdjUw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/21] FUSE BPF: A Stacked Filesystem Extension for FUSE
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Bernd Schubert <bernd.schubert@fastmail.fm>,
+        Daniel Rosenberg <drosen@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@android.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Nikolaus Rath <Nikolaus@rath.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 10, 2023 at 04:44:41AM +0000, Matthew Wilcox wrote:
-> On Fri, Feb 10, 2023 at 03:06:26PM +1100, Dave Chinner wrote:
-> > So while I was pondering the complexity of this and watching a great
-> > big shiny rocket create lots of heat, light and noise, it occurred
-> 
-> That was kind of fun
+On Fri, 3 Feb 2023 at 12:43, Amir Goldstein <amir73il@gmail.com> wrote:
 
-:)
+> > Thanks a lot Amir, I'm going to send out an invitation tomorrow. Maybe
+> > Nikolaus as libfuse maintainer could also attend?
+> >
+>
+> Since this summit is about kernel filesystem development, I am not sure
+> on-prem attendance will be the best option for Nikolaus as we do have
+> a quota for
+> on-prem attendees, but we should have an option for connecting specific
+> attendees remotely for specific sessions, so that could be great.
 
-> > to me that we already have a mechanism for preventing page cache
-> > data from being changed while the folios are under IO:
-> > SB_I_STABLE_WRITES and folio_wait_stable().
-> 
-> I thought about bringing that up, but it's not quite right.  That works
-> great for writeback, but it only works for writeback.  We'd need to track
-> another per-folio counter ... it'd be like the page pinning kerfuffle,
-> only worse. 
+Not sure.  I think including non-kernel people might be beneficial to
+the whole fs development community.  Not saying LSF is the best place,
+but it's certainly a possibility.
 
-Hmmm - I didn't think of that. It needs the counter because the
-"stable request" is per folio reference state, not per folio state,
-right? And the single flag works for writeback because we can only
-have one writeback context in progress at a time?
+Nikolaus, I don't even know where you're located.  Do you think it
+would make sense for you to attend?
 
-Yeah, not sure how to deal with that easily.
-
-> And for such a rare thing it seems like a poor use of 32
-> bits of per-page state.
-
-Maybe, but zero copy file data -> network send is a pretty common
-workload. Web servers, file servers, remote backup programs, etc.
-Having files being written whilst others are reading them is not as
-common, but that does happen in a wide variety of shared file server
-environments.
-
-Regardless, I just had a couple of ideas - it they don't work so be
-it.
-
-> Not to mention that you can effectively block
-> all writes to a file for an indefinite time by splicing pages to a pipe
-> that you then never read from.
-
-No, I wasn't suggesting that we make pages in transit stable - they
-only need to be stable while the network stack requires them to be
-stable....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Miklos
