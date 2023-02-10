@@ -2,95 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C466691BB8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 10:42:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E283691D0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Feb 2023 11:42:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231420AbjBJJmc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Feb 2023 04:42:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39558 "EHLO
+        id S232116AbjBJKm1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Feb 2023 05:42:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231379AbjBJJma (ORCPT
+        with ESMTP id S231732AbjBJKmZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Feb 2023 04:42:30 -0500
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0578A2DE4A;
-        Fri, 10 Feb 2023 01:42:28 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id C6EEE3200077;
-        Fri, 10 Feb 2023 04:42:24 -0500 (EST)
-Received: from imap45 ([10.202.2.95])
-  by compute3.internal (MEProxy); Fri, 10 Feb 2023 04:42:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm2; t=1676022144; x=
-        1676108544; bh=csaH5JqKW2ltQ68oF2bGv2SKpBtE8d9nzCpkPamxqns=; b=N
-        j48S9SJK4v9ijnY4RyecfXH8GwfC69HIDCSDIEBsgE4vh8ZO0hvHqr7l4EF3F4BP
-        y4SBZ4R4IoaLw8c3Aoc4xJODXesbUpwlwHEqXdyHl/QdFCMMo5IV1JXDje5DjeCj
-        BQLTqy63tau/JVJG5qgJeILlG05ufXusAfAfGtjOiMloQ4y4OZITY90UsafwOWEL
-        zbsK1QSRTF4JpO9gYmsPaIeAp/LDSmxPvARh1BTJlKksHcljxzKUivu89Hp9vu3X
-        O3KXvckf41Ut1rK8tm6DsV3WV/2VFOUwNffWkHehmdIktv96PZPsCsjhF+YuGncO
-        8bobGh8G8eVFwFy1F1LAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1676022144; x=
-        1676108544; bh=csaH5JqKW2ltQ68oF2bGv2SKpBtE8d9nzCpkPamxqns=; b=H
-        EmizJ/DjNAJv6esw9RjOwrqu1EsAXFODal+zizsIJPQwWGoGRQn23j6ZVyXep0hn
-        ksrf4UxzNwMgjTZn7hJf6PaGyAw8la7ueb3v1qpn9t859NwYUSv3OB+d9/XVGHCG
-        4nuN18AR3Zg+7bsKCqqNfKuCyrFaTU4aAMGZIj8STackkdJrcXCm0rFt2BF8S1t1
-        XtWfH9FIrLqANZU4V5C3Asxw3K9FrxQqQ+hHNNnKahBhQkh5qmXlNy4shXN9CxaL
-        tKFrp3Cw34tz5mPCcZwXMBtOCjmdFEUiKwRZ5gqfTlQdw3XJsUZvY+XTrnYpGjDh
-        K84hCMQAO2VoUe9m/hmKg==
-X-ME-Sender: <xms:gBHmY0oblqeEz92CNx6nYYqH8YqIEBDa8otFHqLWHpaoJ6FS9kjknA>
-    <xme:gBHmY6o2nNN9ATKXLAQ3UmiTBjVZhuyRo0gQQjz-yywQBNS9TrDzNHSgj3LMRf-wg
-    jyORhvp6n4DS-sU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudehhedgtdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfp
-    ihhkohhlrghushcutfgrthhhfdcuoehnihhkohhlrghushesrhgrthhhrdhorhhgqeenuc
-    ggtffrrghtthgvrhhnpeejffdttedtieekheehhfduhfevvddugfelveehjefhteevlefh
-    feefheehhffgteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehnihhkohhlrghushesrhgrthhhrdhorhhg
-X-ME-Proxy: <xmx:gBHmY5NauDoe0skY_IrmoKeNBshxCrYQr8MYZciukA1Jkgpg1tBJkQ>
-    <xmx:gBHmY74ORuBlLSLvbU_SIm7IsP7DJ4S-iCF08wVWdzUJji4j7ksnkQ>
-    <xmx:gBHmYz6_fgaQTnxx6cvHJ_IOLt8maqBjZm1Q0fpNngBbPVRLw8qTqQ>
-    <xmx:gBHmYwydKxxH5ZXqcI4kl4tWFERRuycflqWmYdaKzFHD4o2OBVDCCw>
-Feedback-ID: i53a843ae:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 343C6272007A; Fri, 10 Feb 2023 04:42:24 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-156-g081acc5ed5-fm-20230206.001-g081acc5e
-Mime-Version: 1.0
-Message-Id: <81e010cc-b52b-4b20-8d08-631ce8ca7fad@app.fastmail.com>
-In-Reply-To: <CAJfpegvHKkCn0UnNRVxFXjjnkOuq0N4xLN4WzpqVX+56DqdjUw@mail.gmail.com>
-References: <20221122021536.1629178-1-drosen@google.com>
- <CAOQ4uxiyRxsZjkku_V2dBMvh1AGiKQx-iPjsD5tmGPv1PgJHvQ@mail.gmail.com>
- <CA+PiJmRLTXfjJmgJm9VRBQeLVkWgaqSq0RMrRY1Vj7q6pV+omw@mail.gmail.com>
- <2dc5e840-0ce8-dae9-99b9-e33d6ccbb016@fastmail.fm>
- <CAOQ4uxiBD5NXLMXFev7vsCLU5-_o8-_H-XcoMY1aqhOwnADo9w@mail.gmail.com>
- <283b5344-3ef5-7799-e243-13c707388cd8@fastmail.fm>
- <CAOQ4uxjvUukDSBk977csO5cX=-1HiMHmyQxycbYQgrpLaanddw@mail.gmail.com>
- <CAJfpegvHKkCn0UnNRVxFXjjnkOuq0N4xLN4WzpqVX+56DqdjUw@mail.gmail.com>
-Date:   Fri, 10 Feb 2023 09:41:30 +0000
-From:   "Nikolaus Rath" <nikolaus@rath.org>
-To:     "Miklos Szeredi" <miklos@szeredi.hu>,
-        "Amir Goldstein" <amir73il@gmail.com>
-Cc:     "Bernd Schubert" <bernd.schubert@fastmail.fm>,
-        "Daniel Rosenberg" <drosen@google.com>,
-        "Linux FS Devel" <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@android.com>,
-        "Vivek Goyal" <vgoyal@redhat.com>,
-        "Josef Bacik" <josef@toxicpanda.com>
-Subject: Re: [RFC PATCH v2 00/21] FUSE BPF: A Stacked Filesystem Extension for FUSE
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        Fri, 10 Feb 2023 05:42:25 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E4BF34C1F;
+        Fri, 10 Feb 2023 02:42:24 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2F6E63FE8E;
+        Fri, 10 Feb 2023 10:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1676025743; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eiLp0nIlB2IXBYhm+6Edakc0p6tqgjH4KpcYsBQFpLg=;
+        b=mQE/LUprHzh3stPmglOJ6jd3j2pgKsJODJhmu0VY3MhqZ8PLt8axg/z4NfRLR2Qp+E515L
+        Rd+hDKvOjSdhC7N717IOBDHARedFEYAIroyfTsk9XlTqyofvoionsSqVwhfF/x3vPfDCZy
+        b87rfhT13wBptvCOwpjm45QF8Uv7CXQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1676025743;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eiLp0nIlB2IXBYhm+6Edakc0p6tqgjH4KpcYsBQFpLg=;
+        b=cRvRDsg8afBmL2ySK1Lp/33L4BWOacH291O70bjzPGsKMqvaZ09Dn4vms3ULCpxYnmODBJ
+        bSTMTaYjH5Ir83Cw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 22A8F1325E;
+        Fri, 10 Feb 2023 10:42:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 50FwCI8f5mOxUQAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 10 Feb 2023 10:42:23 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 94D6AA06D8; Fri, 10 Feb 2023 11:42:22 +0100 (CET)
+Date:   Fri, 10 Feb 2023 11:42:22 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-mm@kvack.org,
+        David Howells <dhowells@redhat.com>,
+        David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 3/5] mm: Do not try to write pinned folio during memory
+ cleaning writeback
+Message-ID: <20230210104222.yt5ktthtwyc6f4iw@quack3>
+References: <20230209121046.25360-1-jack@suse.cz>
+ <20230209123206.3548-3-jack@suse.cz>
+ <4961eb2d-c36b-d6a5-6a43-0c35d24606c0@nvidia.com>
+ <175bbfce-a947-1dcd-1e5f-91a9b8ccfc25@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <175bbfce-a947-1dcd-1e5f-91a9b8ccfc25@nvidia.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -98,43 +79,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 10 Feb 2023, at 09:38, Miklos Szeredi wrote:
-> On Fri, 3 Feb 2023 at 12:43, Amir Goldstein <amir73il@gmail.com> wrote:
->
->> > Thanks a lot Amir, I'm going to send out an invitation tomorrow. Ma=
-ybe
->> > Nikolaus as libfuse maintainer could also attend?
->> >
->>
->> Since this summit is about kernel filesystem development, I am not su=
-re
->> on-prem attendance will be the best option for Nikolaus as we do have
->> a quota for
->> on-prem attendees, but we should have an option for connecting specif=
-ic
->> attendees remotely for specific sessions, so that could be great.
->
-> Not sure.  I think including non-kernel people might be beneficial to
-> the whole fs development community.  Not saying LSF is the best place,
-> but it's certainly a possibility.
->
-> Nikolaus, I don't even know where you're located.  Do you think it
-> would make sense for you to attend?
+On Thu 09-02-23 18:10:23, John Hubbard wrote:
+> On 2/9/23 17:54, John Hubbard wrote:
+> > On 2/9/23 04:31, Jan Kara wrote:
+> > > When a folio is pinned, there is no point in trying to write it during
+> > > memory cleaning writeback. We cannot reclaim the folio until it is
+> > > unpinned anyway and we cannot even be sure the folio is really clean.
+> > > On top of that writeback of such folio may be problematic as the data
+> > > can change while the writeback is running thus causing checksum or
+> > > DIF/DIX failures. So just don't bother doing memory cleaning writeback
+> > > for pinned folios.
+> > > 
+> > > Signed-off-by: Jan Kara <jack@suse.cz>
+> > > ---
+> > >   fs/9p/vfs_addr.c            |  2 +-
+> > >   fs/afs/file.c               |  2 +-
+> > >   fs/afs/write.c              |  6 +++---
+> > >   fs/btrfs/extent_io.c        | 14 +++++++-------
+> > >   fs/btrfs/free-space-cache.c |  2 +-
+> > >   fs/btrfs/inode.c            |  2 +-
+> > >   fs/btrfs/subpage.c          |  2 +-
+> > 
+> 
+> Oh, and one more fix, below, is required in order to build with my local
+> test config. Assuming that it is reasonable to deal with pinned pages
+> here, which I think it is:
+> 
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> index 9c759df700ca..c3279fb0edc8 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> @@ -313,7 +313,7 @@ void __shmem_writeback(size_t size, struct address_space *mapping)
+>  		if (!page)
+>  			continue;
+> -		if (!page_mapped(page) && clear_page_dirty_for_io(page)) {
+> +		if (!page_mapped(page) && clear_page_dirty_for_io(&wbc, page)) {
+>  			int ret;
+>  			SetPageReclaim(page);
+> 
 
-Hi folks,
+Thanks, fixed up. It didn't occur to me to grep drivers/ for these
+functions :).
 
-I'm located in London.=20
-
-I've never been at LHS, so it's hard for me to tell if I'd be useful the=
-re or not. If there's interest, then I would make an effort to attend.=20
-
-Are we talking about the event in Vancouver on May 8th?
-
-Best,
--Nikolaus
---
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
-
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=AB
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
