@@ -2,191 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD82069320C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Feb 2023 16:45:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB38C69320E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Feb 2023 16:45:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbjBKPpZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Feb 2023 10:45:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40702 "EHLO
+        id S229581AbjBKPpz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Feb 2023 10:45:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbjBKPpY (ORCPT
+        with ESMTP id S229517AbjBKPpy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Feb 2023 10:45:24 -0500
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FF56274AC
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 07:45:21 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id b5so9562888plz.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 07:45:21 -0800 (PST)
+        Sat, 11 Feb 2023 10:45:54 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61A9A1C7FE
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 07:45:53 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id w5so9534971plg.8
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 07:45:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1676130353;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4VEswFG9C7YW8tLmxKeZ3hDt57pvn+8QY3hw2oHokhY=;
-        b=t82cKAZFQyx4ZN66NzqffSnEW7pM2IX8oxlz/EEvv/Yu6dZIy/d+qyIdQWuFj8C7dE
-         ngXG0YUlPnrtOEHiMw2FW4mJu6cAm7vuMavU8Ju4+9WnJW4zIwZoULOl5Z2Fy7TB0Zfs
-         uKug/3Bs84iv+ffoiDghKh7hrrdxmKhIw2lgFdvRNDxI3QN0aRSanxZJ1ybkrGBizeLw
-         7t8dFXhdiNj24xf9jmMVH6yZJuV9b8oat+FoBGfDlJln6QSDKV0LFjKxUGPg66S3anfh
-         U4hnsYVrgC61Z7WM9g+L4HciEQDMwnQU1M7uuaL/w9FIn3IBTb4TjSk0VndiH13yzNcz
-         o75A==
+        bh=URAULDYPzqAW97Y0PuplWJohpXIirsB9YQQXPMjjzpY=;
+        b=sBJ+YwaV2n0RFHk8Y9Rpu/8yLeCmnq1N6FPLmD9pwFPgQO5gEkJNBB7nLGaoYx7727
+         +7efnkZPrlFDsWn/EQM3gLHEqv6381clJAdxW4Wp8ZbeT7LFfE9kRPZ4qSNJSPeoiXhq
+         m0w4kudyE6twZB5402aKKZqTfizXQiq9MFKZW/z7c0ZbeYgEFadO+OY3agjb9nywcL8c
+         2+TxpViSKam5jFYf1WEnN0OaqnQu0+5/SMiydAUzPykLysrIfIXpmYFJe7emNErhSko+
+         G2JDZgp8PmLHjq/H/8cdwbQ1fPEFq/NzkwlbtWBSmnIyG9cXgApnp1HP+pCeLyfgMAWc
+         KweQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
+        d=1e100.net; s=20210112; t=1676130353;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4VEswFG9C7YW8tLmxKeZ3hDt57pvn+8QY3hw2oHokhY=;
-        b=yH9qYt0O8A/AMRWBnU59XPhjksl1DdUlSqGHdPP4UUQg2fOgQ5aMKMocvGi1F7skY6
-         7rVVrjazgt6pH7Usb1Hh8W5/JDE7eCkxCJCsFwJ5+VTzYEhNBXxwNkRlorkfWPJwN3lb
-         OdDR74ESIdeyNs7490Hx1NE2EJid/vJP9R0rM9DzCn4dngah0nKoysUjMcWrRH83GTk7
-         QKLi15Adp/mp8ccbBOxpdTfMTq+nRlVXX2gDiK5OajKVlS9evoxA8lGGWRcaBiS6fClM
-         DfGM3dVNFRw6egBtlNl5ut3MpsYPnNJjbfycQaWZ6/4UuRGAjoao9qSWHA1jUJ2BUCYM
-         sQPA==
-X-Gm-Message-State: AO0yUKUPd8ShzALiCCPfJHt2rq/tWn4nQ2ZHQvtZLzsSRQaKvxe46WjK
-        YNDpZXj85y7seIFLfTDo/DGgPw==
-X-Google-Smtp-Source: AK7set+NCFjHIs7XPORhKLiTYuXBT8m+B1POG2YNxtMB4UxVI7wYhdDQA3jrc25p4no7/NBSxHA1xg==
-X-Received: by 2002:a17:903:2286:b0:19a:723a:8405 with SMTP id b6-20020a170903228600b0019a723a8405mr5967067plh.6.1676130320553;
-        Sat, 11 Feb 2023 07:45:20 -0800 (PST)
+        bh=URAULDYPzqAW97Y0PuplWJohpXIirsB9YQQXPMjjzpY=;
+        b=6Mer5SlvEaHbwkjG1oxEu8opI9LP42XGlkLFVBM2bkk/3w2ExQm7IgtawZDvQ/4hk8
+         FCYtzfC3MfzHr6eGdZqEMEG3yO5c2Xa9o7KqWAoEN4hX0CRgFQdYzl82VzpQajqUCSas
+         l52PUNKfberDNJmP6WiSwoBNYH4fpRNDd0JzvHfOrfajoJJHpkbaoLpdN6UydvAaZJv5
+         JDo02BFYJmFNMpXAykpTgF3RP+dtZ3Alq9I5jfFgar/TCqugAsglKmdS3DXeiGJC12El
+         T72n4hXzAjkwOJQbtuCZcR9HZlXVYgffkuO8yZ5Kesh/24fdA740fQZJAfiV4XKyVcKq
+         sErg==
+X-Gm-Message-State: AO0yUKV0zfhFKAZm6/4JVYmNJFv4edETtRk+EChK1EvE86GsTPzX/TnX
+        m2inoDJO7caPmFXKbJn6GncB6w==
+X-Google-Smtp-Source: AK7set9CgOhpXds7lnGYivQ5KdUVR59HIU/U7v0p5Md0ZFY1020GBouNNWHLxl4UJPAjmvUdFtSJIg==
+X-Received: by 2002:a17:903:428a:b0:19a:84b0:4845 with SMTP id ju10-20020a170903428a00b0019a84b04845mr2122958plb.5.1676130352985;
+        Sat, 11 Feb 2023 07:45:52 -0800 (PST)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ji11-20020a170903324b00b0019682e27995sm4479699plb.223.2023.02.11.07.45.19
+        by smtp.gmail.com with ESMTPSA id p14-20020a170902c58e00b00198e6257921sm481709plx.269.2023.02.11.07.45.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Feb 2023 07:45:19 -0800 (PST)
-Message-ID: <a487261c-cc0e-134b-cd8e-26460fe7cf59@kernel.dk>
-Date:   Sat, 11 Feb 2023 08:45:18 -0700
+        Sat, 11 Feb 2023 07:45:52 -0800 (PST)
+Message-ID: <480b4e28-c37a-2af4-e491-d048379ecb98@kernel.dk>
+Date:   Sat, 11 Feb 2023 08:45:51 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.2
-Subject: Re: [PATCH 3/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
+Subject: Re: [PATCH 0/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
 Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Bernd Schubert <bschubert@ddn.com>,
         Nitesh Shetty <nj.shetty@samsung.com>,
         Christoph Hellwig <hch@lst.de>,
         Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
 References: <20230210153212.733006-1-ming.lei@redhat.com>
- <20230210153212.733006-4-ming.lei@redhat.com>
+ <95efc2bd-2f23-9325-5a38-c01cc349eb4a@kernel.dk> <Y+ckE5Fly4gt7q2d@T590>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230210153212.733006-4-ming.lei@redhat.com>
+In-Reply-To: <Y+ckE5Fly4gt7q2d@T590>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/10/23 8:32?AM, Ming Lei wrote:
-> IORING_OP_READ_SPLICE_BUF: read to buffer which is built from
-> ->read_splice() of specified fd, so user needs to provide (splice_fd, offset, len)
-> for building buffer.
+On 2/10/23 10:13 PM, Ming Lei wrote:
+> On Fri, Feb 10, 2023 at 02:54:29PM -0700, Jens Axboe wrote:
+>> On 2/10/23 8:32 AM, Ming Lei wrote:
+>>> Hello,
+>>>
+>>> Add two OPs which buffer is retrieved via kernel splice for supporting
+>>> fuse/ublk zero copy.
+>>>
+>>> The 1st patch enhances direct pipe & splice for moving pages in kernel,
+>>> so that the two added OPs won't be misused, and avoid potential security
+>>> hole.
+>>>
+>>> The 2nd patch allows splice_direct_to_actor() caller to ignore signal
+>>> if the actor won't block and can be done in bound time.
+>>>
+>>> The 3rd patch add the two OPs.
+>>>
+>>> The 4th patch implements ublk's ->splice_read() for supporting
+>>> zero copy.
+>>>
+>>> ublksrv(userspace):
+>>>
+>>> https://github.com/ming1/ubdsrv/commits/io_uring_splice_buf
+>>>     
+>>> So far, only loop/null target implements zero copy in above branch:
+>>>     
+>>> 	ublk add -t loop -f $file -z
+>>> 	ublk add -t none -z
+>>>
+>>> Basic FS/IO function is verified, mount/kernel building & fio
+>>> works fine, and big chunk IO(BS: 64k/512k) performance gets improved
+>>> obviously.
+>>
+>> Do you have any performance numbers?
 > 
-> IORING_OP_WRITE_SPLICE_BUF: write from buffer which is built from
-> ->read_splice() of specified fd, so user needs to provide (splice_fd, offset, len)
-> for building buffer.
+> Simple test on ublk-loop over image in btrfs shows the improvement is
+> 100% ~ 200%.
+
+That is pretty tasty...
+
+>> Also curious on liburing regression
+>> tests, would be nice to see as it helps with review.
 > 
-> The typical use case is for supporting ublk/fuse io_uring zero copy,
-> and READ/WRITE OP retrieves ublk/fuse request buffer via direct pipe
-> from device->read_splice(), then READ/WRITE can be done to/from this
-> buffer directly.
+> It isn't easy since it requires ublk device so far, it looks like
+> read to/write from one device buffer.
 
-Main question here - would this be better not plumbed up through the rw
-path? Might be cleaner, even if it either requires a bit of helper
-refactoring or accepting a bit of duplication. But would still be better
-than polluting the rw fast path imho.
-
-Also seems like this should be separately testable. We can't add new
-opcodes that don't have a feature test at least, and should also have
-various corner case tests. A bit of commenting outside of this below.
-
-> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> index 5238ecd7af6a..91e8d8f96134 100644
-> --- a/io_uring/opdef.c
-> +++ b/io_uring/opdef.c
-> @@ -427,6 +427,31 @@ const struct io_issue_def io_issue_defs[] = {
->  		.prep			= io_eopnotsupp_prep,
->  #endif
->  	},
-> +	[IORING_OP_READ_SPLICE_BUF] = {
-> +		.needs_file		= 1,
-> +		.unbound_nonreg_file	= 1,
-> +		.pollin			= 1,
-> +		.plug			= 1,
-> +		.audit_skip		= 1,
-> +		.ioprio			= 1,
-> +		.iopoll			= 1,
-> +		.iopoll_queue		= 1,
-> +		.prep			= io_prep_rw,
-> +		.issue			= io_read,
-> +	},
-> +	[IORING_OP_WRITE_SPLICE_BUF] = {
-> +		.needs_file		= 1,
-> +		.hash_reg_file		= 1,
-> +		.unbound_nonreg_file	= 1,
-> +		.pollout		= 1,
-> +		.plug			= 1,
-> +		.audit_skip		= 1,
-> +		.ioprio			= 1,
-> +		.iopoll			= 1,
-> +		.iopoll_queue		= 1,
-> +		.prep			= io_prep_rw,
-> +		.issue			= io_write,
-> +	},
-
-Are these really safe with iopoll?
-
-> +static int io_prep_rw_splice_buf(struct io_kiocb *req,
-> +				 const struct io_uring_sqe *sqe)
-> +{
-> +	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
-> +	unsigned nr_pages = io_rw_splice_buf_nr_bvecs(rw->len);
-> +	loff_t splice_off = READ_ONCE(sqe->splice_off_in);
-> +	struct io_rw_splice_buf_data data;
-> +	struct io_mapped_ubuf *imu;
-> +	struct fd splice_fd;
-> +	int ret;
-> +
-> +	splice_fd = fdget(READ_ONCE(sqe->splice_fd_in));
-> +	if (!splice_fd.file)
-> +		return -EBADF;
-
-Seems like this should check for SPLICE_F_FD_IN_FIXED, and also use
-io_file_get_normal() for the non-fixed case in case someone passed in an
-io_uring fd.
-
-> +	data.imu = &imu;
-> +
-> +	rw->addr = 0;
-> +	req->flags |= REQ_F_NEED_CLEANUP;
-> +
-> +	ret = __io_prep_rw_splice_buf(req, &data, splice_fd.file, rw->len,
-> +			splice_off);
-> +	imu = *data.imu;
-> +	imu->acct_pages = 0;
-> +	imu->ubuf = 0;
-> +	imu->ubuf_end = data.total;
-> +	rw->len = data.total;
-> +	req->imu = imu;
-> +	if (!data.total) {
-> +		io_rw_cleanup_splice_buf(req);
-> +	} else  {
-> +		ret = 0;
-> +	}
-> +out_put_fd:
-> +	if (splice_fd.file)
-> +		fdput(splice_fd);
-> +
-> +	return ret;
-> +}
-
-If the operation is done, clear NEED_CLEANUP and do the cleanup here?
-That'll be faster.
+It can't be tested without ublk itself? Surely the two new added ops can
+have separate test cases?
 
 -- 
 Jens Axboe
+
 
