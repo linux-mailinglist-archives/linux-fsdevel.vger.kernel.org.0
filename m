@@ -2,75 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3A536935E1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 04:45:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 870096935E8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 04:55:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbjBLDpG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Feb 2023 22:45:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51422 "EHLO
+        id S229637AbjBLDzb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Feb 2023 22:55:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjBLDpE (ORCPT
+        with ESMTP id S229628AbjBLDza (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Feb 2023 22:45:04 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DA4B10A85;
-        Sat, 11 Feb 2023 19:45:03 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 43E0A60B42;
-        Sun, 12 Feb 2023 03:45:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5851C433EF;
-        Sun, 12 Feb 2023 03:44:57 +0000 (UTC)
-Date:   Sat, 11 Feb 2023 22:44:55 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     John Stultz <jstultz@google.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Kajetan Puchalski <kajetan.puchalski@arm.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Qais Yousef <qyousef@google.com>,
-        Daniele Di Proietto <ddiproietto@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded
- 16 with TASK_COMM_LEN
-Message-ID: <20230211224455.0a4b2914@gandalf.local.home>
-In-Reply-To: <CALOAHbAnFHAiMH4QDgS6xN16B31qfhG8tfQ+iioCr9pw3sP=bw@mail.gmail.com>
-References: <20211120112738.45980-1-laoar.shao@gmail.com>
-        <20211120112738.45980-8-laoar.shao@gmail.com>
-        <Y+QaZtz55LIirsUO@google.com>
-        <CAADnVQ+nf8MmRWP+naWwZEKBFOYr7QkZugETgAVfjKcEVxmOtg@mail.gmail.com>
-        <CANDhNCo_=Q3pWc7h=ruGyHdRVGpsMKRY=C2AtZgLDwtGzRz8Kw@mail.gmail.com>
-        <20230208212858.477cd05e@gandalf.local.home>
-        <20230208213343.40ee15a5@gandalf.local.home>
-        <20230211140011.4f15a633@gandalf.local.home>
-        <CALOAHbAnFHAiMH4QDgS6xN16B31qfhG8tfQ+iioCr9pw3sP=bw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Sat, 11 Feb 2023 22:55:30 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84CE211EB6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 19:55:26 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id k13so10530038plg.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 19:55:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EhWxFB4ODTurP+Bbh4zJn7gAxthxpyL6UKX+g4y+ZjQ=;
+        b=4oXWD6WwwvKtE7IE7ek3e8RvqRagQZ8C8ZrVALBgqtBxdRjm/aG7oxpBqUnFwwM4DJ
+         ek/S+kJ9IUeThE7HJuw7gpf7HnWARkN688eLl24wK0jaNeXhgDkFMWm0NfKMMJn1y6SE
+         h4EA/zeco7f8KQFXqBOXxVOPDf13kk+VjrfQQ7bZyHvYFEvs9qdQjwn1PPKGX+s5ShQ5
+         tKUPaXqT5Cu/VF3Afq8HKMWuhPcNDkMsOmtEgIMUaSFUcO5ihZ/plT4S3Rx6zU8mFNOH
+         g5Zee/a2NpptVNbnAIkNNH6nT3tQKF4AxjMi81qPNsjzLk52oa+VmL15tBMLA11JguiU
+         zNKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EhWxFB4ODTurP+Bbh4zJn7gAxthxpyL6UKX+g4y+ZjQ=;
+        b=6y8RSVdkmrgQdKpeYh+NiIczZGatxwOLMENlmmghJLYXjgC5VUQYFBVOHVGiCZ118R
+         mJfoDZ/2Za0Xv9pypL/93cycWP98mWQaddf0e6XsbwSnkjQUjS7pYDXIUA/50ltckNvE
+         Xs2TKSXwfQbJFCOwAwBV4kOXSXZ6fEr++fEy0s77lhgJNgklfnRe49hnHiGuHtTpMil/
+         NYAWK4jPpDOM5FBaxHRDHu4Dqrw3hLvzO3BYfwsBOhGMi1hpXt4oy62kJdgMrJjjJ2Um
+         WhOzBCv2ot0JqlU9JRhmNZl1nRddz2Lp19HzLY04v+XFxAGuxoLLknUJ/wrBIBjr37Yz
+         oQvw==
+X-Gm-Message-State: AO0yUKUALawNfwNpYKptLRRNWtULPs4I7jGZR3YiXBc50DDKo97p/ety
+        TmKqO+MfrNjV5VP0cpmtwpuxag==
+X-Google-Smtp-Source: AK7set9jwghXObjJgAAtgV3PvPOahGO37nT0OGYuWJMwgbbwncNytT3Wwxr2VE0SCOTnwxETr7ru1w==
+X-Received: by 2002:a17:903:182:b0:198:a5d9:f2fd with SMTP id z2-20020a170903018200b00198a5d9f2fdmr21711336plg.6.1676174125887;
+        Sat, 11 Feb 2023 19:55:25 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id a10-20020a170902ee8a00b001992e74d058sm975727pld.7.2023.02.11.19.55.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Feb 2023 19:55:25 -0800 (PST)
+Message-ID: <44355d28-776a-0134-b087-c11cf4e82f34@kernel.dk>
+Date:   Sat, 11 Feb 2023 20:55:23 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 3/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
+Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
+References: <20230210153212.733006-1-ming.lei@redhat.com>
+ <20230210153212.733006-4-ming.lei@redhat.com>
+ <a487261c-cc0e-134b-cd8e-26460fe7cf59@kernel.dk> <Y+e+i5BXQHcqdDGo@T590>
+ <22772531-bf55-f610-be93-3d53c9ce1c6d@kernel.dk> <Y+hbggDCm9wViPAv@T590>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Y+hbggDCm9wViPAv@T590>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,17 +84,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 12 Feb 2023 11:38:52 +0800
-Yafang Shao <laoar.shao@gmail.com> wrote:
-
-> > Actually, there are cases that this needs to be a number, as b3bc8547d3be6
-> > ("tracing: Have TRACE_DEFINE_ENUM affect trace event types as well") made
-> > it update fields as well as the printk fmt.
-> >  
+On 2/11/23 8:22?PM, Ming Lei wrote:
+>>>> Also seems like this should be separately testable. We can't add new
+>>>> opcodes that don't have a feature test at least, and should also have
+>>>> various corner case tests. A bit of commenting outside of this below.
+>>>
+>>> OK, I will write/add one very simple ublk userspace to liburing for
+>>> test purpose.
+>>
+>> Thanks!
 > 
-> It seems that TRACE_DEFINE_ENUM(TASK_COMM_LEN) in the trace events
-> header files would be a better fix.
+> Thinking of further, if we use ublk for liburing test purpose, root is
+> often needed, even though we support un-privileged mode, which needs
+> administrator to grant access, so is it still good to do so?
 
-NACK! I much prefer the proper fix that adds the length.
+That's fine, some tests already depend on root for certain things, like
+passthrough. When I run the tests, I do a pass as both a regular user
+and as root. The important bit is just that the tests skip when they are
+not root rather than fail.
 
--- Steve
+> It could be easier to add ->splice_read() on /dev/zero for test
+> purpose, just allocate zeroed pages in ->splice_read(), and add
+> them to pipe like ublk->splice_read(), and sink side can read
+> from or write to these pages, but zero's read_iter_zero() won't
+> be affected. And normal splice/tee won't connect to zero too
+> because we only allow it from kernel use.
+
+Arguably /dev/zero should still support splice_read() as a regression
+fix as I argued to Linus, so I'd just add that as a prep patch.
+
+>>>> Seems like this should check for SPLICE_F_FD_IN_FIXED, and also use
+>>>> io_file_get_normal() for the non-fixed case in case someone passed in an
+>>>> io_uring fd.
+>>>
+>>> SPLICE_F_FD_IN_FIXED needs one extra word for holding splice flags, if
+>>> we can use sqe->addr3, I think it is doable.
+>>
+>> I haven't checked the rest, but you can't just use ->splice_flags for
+>> this?
+> 
+> ->splice_flags shares memory with rwflags, so can't be used.
+> 
+> I think it is fine to use ->addr3, given io_getxattr()/io_setxattr()/
+> io_msg_ring() has used that.
+
+This is part of the confusion, as you treat it basically like a
+read/write internally, but the opcode names indicate differently. Why
+not just have a separate prep helper for these and then use a layout
+that makes more sense, surely rwflags aren't applicable for these
+anyway? I think that'd make it a lot cleaner.
+
+Yeah, addr3 could easily be used, but it's makes for a really confusing
+command structure when the command is kinda-read but also kinda-splice.
+And it arguable makes more sense to treat it as the latter, as it takes
+the two fds like splice.
+
+-- 
+Jens Axboe
+
