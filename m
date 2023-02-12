@@ -2,124 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4392369332A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Feb 2023 20:00:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF5F69357E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 02:43:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229589AbjBKTAT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Feb 2023 14:00:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45600 "EHLO
+        id S229513AbjBLBkW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Feb 2023 20:40:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjBKTAS (ORCPT
+        with ESMTP id S229449AbjBLBkV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Feb 2023 14:00:18 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC0A2199E0;
-        Sat, 11 Feb 2023 11:00:17 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sat, 11 Feb 2023 20:40:21 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA8D113E9
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 17:39:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676165973;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eAxzcbkCJ6zIQ31y1IjAFThY9NL30q5sWMTxM/NEZfE=;
+        b=AdmNDVAazZwR6ovhcCscuZ/lK0eQfKGQW0uBFqPGFCYAa7/ou4iaMpFPLLjFy5DwcKpxEF
+        sIthd7eRqJzVc+b/3ZRBUPkTtLeX3PlrOA6GBgpuHU2v0qqJfYrDPqNEDWfPM9F553PjfT
+        QbvxCzGfTxihr91JF2wFzeQbLbhPYg0=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-606-76X-Vc21OVugqo_uFi6N0Q-1; Sat, 11 Feb 2023 20:39:29 -0500
+X-MC-Unique: 76X-Vc21OVugqo_uFi6N0Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4455860B63;
-        Sat, 11 Feb 2023 19:00:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B82C0C433EF;
-        Sat, 11 Feb 2023 19:00:13 +0000 (UTC)
-Date:   Sat, 11 Feb 2023 14:00:11 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     John Stultz <jstultz@google.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Kajetan Puchalski <kajetan.puchalski@arm.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Qais Yousef <qyousef@google.com>,
-        Daniele Di Proietto <ddiproietto@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded
- 16 with TASK_COMM_LEN
-Message-ID: <20230211140011.4f15a633@gandalf.local.home>
-In-Reply-To: <20230208213343.40ee15a5@gandalf.local.home>
-References: <20211120112738.45980-1-laoar.shao@gmail.com>
-        <20211120112738.45980-8-laoar.shao@gmail.com>
-        <Y+QaZtz55LIirsUO@google.com>
-        <CAADnVQ+nf8MmRWP+naWwZEKBFOYr7QkZugETgAVfjKcEVxmOtg@mail.gmail.com>
-        <CANDhNCo_=Q3pWc7h=ruGyHdRVGpsMKRY=C2AtZgLDwtGzRz8Kw@mail.gmail.com>
-        <20230208212858.477cd05e@gandalf.local.home>
-        <20230208213343.40ee15a5@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A28491C0512F;
+        Sun, 12 Feb 2023 01:39:28 +0000 (UTC)
+Received: from T590 (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2029740C83B6;
+        Sun, 12 Feb 2023 01:39:20 +0000 (UTC)
+Date:   Sun, 12 Feb 2023 09:39:15 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
+        ming.lei@redhat.com
+Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
+ pages in kernel
+Message-ID: <Y+hDQ1vL6AMFri1E@T590>
+References: <20230210153212.733006-1-ming.lei@redhat.com>
+ <20230210153212.733006-2-ming.lei@redhat.com>
+ <Y+e3b+Myg/30hlYk@T590>
+ <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 8 Feb 2023 21:33:43 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Sat, Feb 11, 2023 at 10:57:08AM -0800, Linus Torvalds wrote:
+> On Sat, Feb 11, 2023 at 7:42 AM Ming Lei <ming.lei@redhat.com> wrote:
+> >
+> > +/*
+> > + * Used by source/sink end only, don't touch them in generic
+> > + * splice/pipe code. Set in source side, and check in sink
+> > + * side
+> > + */
+> > +#define PIPE_BUF_PRIV_FLAG_MAY_READ    0x1000 /* sink can read from page */
+> > +#define PIPE_BUF_PRIV_FLAG_MAY_WRITE   0x2000 /* sink can write to page */
+> > +
+> 
+> So this sounds much more sane and understandable, but I have two worries:
+> 
+>  (a) what's the point of MAY_READ? A non-readable page sounds insane
+> and wrong. All sinks expect to be able to read.
 
-> OK, so it doesn't break perf, trace-cmd and rasdaemon, because the enum is
-> only needed in the print_fmt part. It can handle it in the field portion.
-> 
-> That is:
-> 
-> 
-> system: sched
-> name: sched_switch
-> ID: 285
-> format:
-> 	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
-> 	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
-> 	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
-> 	field:int common_pid;	offset:4;	size:4;	signed:1;
-> 
-> 	field:char prev_comm[TASK_COMM_LEN];	offset:8;	size:16;	signed:0;
->                              ^^^^^^^^^^^^^^                          ^^
->                             is ignored                             is used
-> 
-> 
-> 	field:pid_t prev_pid;	offset:24;	size:4;	signed:1;
-> 	field:int prev_prio;	offset:28;	size:4;	signed:1;
-> 	field:long prev_state;	offset:32;	size:8;	signed:1;
-> 	field:char next_comm[TASK_COMM_LEN];	offset:40;	size:16;	signed:0;
-> 	field:pid_t next_pid;	offset:56;	size:4;	signed:1;
-> 	field:int next_prio;	offset:60;	size:4;	signed:1;
-> 
-> print fmt: "prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d", REC->prev_comm, REC->prev_pid, REC->prev_prio, (REC->prev_state & ((((0x00000000 | 0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 | 0x00000040) + 1) << 1) - 1)) ? __print_flags(REC->prev_state & ((((0x00000000 | 0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 | 0x00000040) + 1) << 1) - 1), "|", { 0x00000001, "S" }, { 0x00000002, "D" }, { 0x00000004, "T" }, { 0x00000008, "t" }, { 0x00000010, "X" }, { 0x00000020, "Z" }, { 0x00000040, "P" }, { 0x00000080, "I" }) : "R", REC->prev_state & (((0x00000000 | 0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 | 0x00000040) + 1) << 1) ? "+" : "", REC->next_comm, REC->next_pid, REC->next_prio
-> 
->    ^^^^^^^
-> 
-> Is what requires the conversions. So I take that back. It only breaks
-> perfetto, and that's because it writes its own parser and doesn't use
-> libtraceevent.
+For example, it is one page which needs sink end to fill data, so
+we needn't to zero it in source end every time, just for avoiding
+leak kernel data if (unexpected)sink end simply tried to read from
+the spliced page instead of writing data to page.
 
-Actually, there are cases that this needs to be a number, as b3bc8547d3be6
-("tracing: Have TRACE_DEFINE_ENUM affect trace event types as well") made
-it update fields as well as the printk fmt.
+> 
+>  (b) what about 'tee()' which duplicates a pipe buffer that has
+> MAY_WRITE? Particularly one that may already have been *partially*
+> given to something that thinks it can write to it?
 
-I think because libtraceevent noticed that it was a "char" array, it just
-defaults to "size". But this does have meaning for all other types, and I
-can see other parsers requiring that.
+The flags added is for kernel code(io_uring) over direct pipe,
+and the two pipe buf flags won't be copied cross tee, cause the kernel
+code just use spliced pages. (io_uring -> tee())
 
--- Steve
+Also because of the added SPLICE_F_PRIV_FOR_READ[WRITE], pipe buffer
+flags won't be copied over tee() too, because tee() can't pass the two
+flags to device's ->splice_read().
+
+We may need to document that the two pair flags should be used
+together.
+
+thanks,
+Ming
+
