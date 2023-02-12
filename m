@@ -2,110 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 488DE6935AB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 03:46:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C97D6935CF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 04:20:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjBLCqT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Feb 2023 21:46:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35490 "EHLO
+        id S229599AbjBLDU3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Feb 2023 22:20:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229647AbjBLCqS (ORCPT
+        with ESMTP id S229560AbjBLDU2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Feb 2023 21:46:18 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F15931449A
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 18:46:16 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id nn4-20020a17090b38c400b00233a6f118d0so6848501pjb.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 18:46:16 -0800 (PST)
+        Sat, 11 Feb 2023 22:20:28 -0500
+Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C3AF1631B;
+        Sat, 11 Feb 2023 19:20:25 -0800 (PST)
+Received: by mail-qv1-xf31.google.com with SMTP id d13so6352251qvj.8;
+        Sat, 11 Feb 2023 19:20:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=13n7orFtfB4ykJMQSCkI+SVHhcT583fh+bxIuvlC7mY=;
-        b=ESXg7vS2YfHpVFr9OQZAHv9M3hthBxU2Row9ea0aJR9IjQ6GL15VCoTe39SuK/apcz
-         lfGM7PXnvgu0PiiAykezRpIW1FRoeZgXJJ1f5yT+0kseS0KVDaqQDpA+I+Dymcgg1zY1
-         iJGmRqnL0dCDPWM41X5z2Oh7WP3Z/XxGAGv3Avnn9/JwRFp3kolnB1oZQv8VGQXmwX3d
-         rD5u2DHcmPTZ0/x3/2kVydfAybYsxNmLWQeSV3+yI7B70FNGMxThFxKX2Pd0AYuzKaP5
-         7cdqi426YYBSMwwbt6a0/WgGTHOQHmA3ZJ65WGdgZGheeKN3uSzavEMms8FWcLknPqQx
-         PyIw==
+        d=gmail.com; s=20210112; t=1676172024;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jV1+eUp6/la6bHJXVKZFSm553P2HVk0e+WKQfNoEdNc=;
+        b=j8FfzjjffbHe996BSSizWFQR8U1LbnObkHS0KW8Sxe+1TLrVLo8zfGGQInnU6xhzbH
+         gMukGPH+cudoOQUyCtBPxH09ZU2QkK/nJH8ttz5+m/XxBZSzTkAF4Ap4BYSEh5CyWXu5
+         Oapp+5NFd6/X03kKRS+eEcIGQbsuVSOR0T6TXsKtH1llkFVNF2hbgFGkDXAYC3CUbScz
+         uMe/G49BgtdoBhJd/CQtnIiXZwA9o8VLDw6QjV16jK+tWqv8k8XLX8azqyCTZjqVm4rG
+         N41ZuE+xIPxbYbnKDnOYkXcT+j/J6svp22SBMNzQA2X2XCNnyzisAN4pmaKROvaZqJ5G
+         VvlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=13n7orFtfB4ykJMQSCkI+SVHhcT583fh+bxIuvlC7mY=;
-        b=eEOnwGLwhU+BMwMq3hFx8mpo7Eog/byBbGJgA4o87H0KuTE/cWjGg7rJsRrAaahv4X
-         iAp2uArSyB2ZnxFv1dMnQMbj9tbadr06+X8C/oPBjOBe4nkEdbYz7Xq/6gwhHy4k7I+9
-         pluxQvaIII23c/FT1UKqwLlGw5MK7DpYDqMHLiLrbAWQsAN566ikgOw5AVsSHQUDIv/u
-         gt6HoZXNXE0x2o9tpF3dCR8PhwTfwgx0TnRfdlTNCffNSfYeMYsKCWJhupDNik57qYXN
-         Ms3xNjcdvhCUsm59xfma++jJ7/4Zi3ucVcV/n0IHUb5h+MeyU8fLRTaekXLDh74XcYQ3
-         WbaQ==
-X-Gm-Message-State: AO0yUKVmaJLOz7HA7ERn/cHXX0aoC8mQWc9cjARfr4Bsucb4dQGt4zwI
-        Uq7fcMEoZ6R41FjFmblr0sVCNOYqMH+SzEDl
-X-Google-Smtp-Source: AK7set8Q/Jh+L5ryxfXOAajWPMV5niu5B7Z5pm8YR78FRqb1qNpO8JtR/DWeRFI2ODz7Fg0mdVhiIg==
-X-Received: by 2002:a17:902:f685:b0:199:2ee:6248 with SMTP id l5-20020a170902f68500b0019902ee6248mr21267626plg.0.1676169976461;
-        Sat, 11 Feb 2023 18:46:16 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id g13-20020a63be4d000000b00478ca052819sm4935737pgo.47.2023.02.11.18.46.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Feb 2023 18:46:15 -0800 (PST)
-Message-ID: <467c0abe-251f-d74b-57c8-91e02bec1c05@kernel.dk>
-Date:   Sat, 11 Feb 2023 19:46:14 -0700
+        d=1e100.net; s=20210112; t=1676172024;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jV1+eUp6/la6bHJXVKZFSm553P2HVk0e+WKQfNoEdNc=;
+        b=Bt8yVgZsRvxq9R+CaQt7/tCVkxNE/PV6uV0ylvoahU+qXgG8oA2L/RZa1SsA3+Ywf3
+         vyQvDRGmH+q0pX+MgcnDkvpXGHEFg4IDFy2jg+oHSNkf+BAb7L4IOo06wiQkDhCp+KBP
+         vzozHY5d415FYt55JH0RDwetglfbezbRvK+7qRZh494uFxgi218gobKg5Jm2A4a1uZzU
+         deABIG02jjg+JqvHSC4NqjIRUrLAJLrdQf2otCLWeytCO093NdT3JaTy8MATfz+Hrn0u
+         ztOwrD/EUURAdkNT/i6XG6FeAwX4HVoGx6geWiEz2CVhff+CgKuSX50xdaUPgDTyIkqA
+         HP+A==
+X-Gm-Message-State: AO0yUKVeqGsAWsGBEGr5w69cAIIGUaQwQc9nwT/clFZlk/QC1Mc4r1ku
+        Vz65ALgO7gXCRTRs6q78K4SNR6NbUKltBk7iXH8=
+X-Google-Smtp-Source: AK7set9FOLosm1uHLls6cm+ufXyr97cSU/KvUyJyDOaMrnKJORlpTgb//i4VEJg64RftXvO3KX+HEdzTDo0amEJz+vU=
+X-Received: by 2002:a0c:e003:0:b0:56c:f4:989a with SMTP id j3-20020a0ce003000000b0056c00f4989amr2018254qvk.64.1676172024552;
+ Sat, 11 Feb 2023 19:20:24 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: copy on write for splice() from file to pipe?
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ming Lei <ming.lei@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
+References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-8-laoar.shao@gmail.com>
+ <Y+QaZtz55LIirsUO@google.com> <CAADnVQ+nf8MmRWP+naWwZEKBFOYr7QkZugETgAVfjKcEVxmOtg@mail.gmail.com>
+ <CANDhNCo_=Q3pWc7h=ruGyHdRVGpsMKRY=C2AtZgLDwtGzRz8Kw@mail.gmail.com>
+ <08e1c9d0-376f-d669-6fe8-559b2fbc2f2b@efficios.com> <CALOAHbBsmajStJ8TrnqEL_pv=UOt-vv0CH30EqThVq=JYXfi8A@mail.gmail.com>
+ <Y+UCxSktKM0CzMlA@e126311.manchester.arm.com> <CALOAHbCdNZ21oBE2ii_XBxecYLSxM7Ws2LRMirdEOpeULiNk4g@mail.gmail.com>
+ <20230211165120.byivmbfhwyegiyae@airbuntu>
+In-Reply-To: <20230211165120.byivmbfhwyegiyae@airbuntu>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sun, 12 Feb 2023 11:19:48 +0800
+Message-ID: <CALOAHbBgTOU5z54GNdzCdKPcJR1Sr0T2XNCzSYOApE1A=MLDkA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded 16
+ with TASK_COMM_LEN
+To:     Qais Yousef <qyousef@layalina.io>
+Cc:     Kajetan Puchalski <kajetan.puchalski@arm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        John Stultz <jstultz@google.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Stefan Metzmacher <metze@samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API Mailing List <linux-api@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Samba Technical <samba-technical@lists.samba.org>
-References: <CAHk-=wiszt6btMPeT5UFcS=0=EVr=0injTR75KsvN8WetwQwkA@mail.gmail.com>
- <fe8252bd-17bd-850d-dcd0-d799443681e9@kernel.dk>
- <CAHk-=wiJ0QKKiORkVr8n345sPp=aHbrLTLu6CQ-S0XqWJ-kJ1A@mail.gmail.com>
- <7a2e5b7f-c213-09ff-ef35-d6c2967b31a7@kernel.dk>
- <CALCETrVx4cj7KrhaevtFN19rf=A6kauFTr7UPzQVage0MsBLrg@mail.gmail.com>
- <b44783e6-3da2-85dd-a482-5d9aeb018e9c@kernel.dk>
- <2bb12591-9d24-6b26-178f-05e939bf3251@kernel.dk>
- <CAHk-=wjzqrD5wrfeaU390bXEEBY2JF-oKmFN4fREzgyXsbQRTQ@mail.gmail.com>
- <Y+cJDnnMuirSjO3E@T590> <55eaac9e-0d77-1fa2-df27-4d64e123177e@kernel.dk>
- <Y+euv+zR5ltTELqk@T590> <787c3b62-f5d8-694d-cd2f-24b40848e39f@kernel.dk>
- <CAHk-=whQ_V1ZE6jhQKHDk1MKvEkjpF2Pj-OcRQRXBTMsNpA1YA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=whQ_V1ZE6jhQKHDk1MKvEkjpF2Pj-OcRQRXBTMsNpA1YA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Qais Yousef <qyousef@google.com>,
+        Daniele Di Proietto <ddiproietto@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/11/23 11:57 AM, Linus Torvalds wrote:
-> On Sat, Feb 11, 2023 at 7:33 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> OK, but then the ignore_sig change should not be needed at all, just
->> changing that first bit to fatal_signal_pending() would do the trick?
-> 
-> Right. That was my point. The 'ignore_sig' flag just doesn't make
-> sense. It was a hack for a case that shouldn't exist.
+On Sun, Feb 12, 2023 at 12:51 AM Qais Yousef <qyousef@layalina.io> wrote:
+>
+> On 02/09/23 23:37, Yafang Shao wrote:
+> > On Thu, Feb 9, 2023 at 10:28 PM Kajetan Puchalski
+> > <kajetan.puchalski@arm.com> wrote:
+> > >
+> > > On Thu, Feb 09, 2023 at 02:20:36PM +0800, Yafang Shao wrote:
+> > >
+> > > [...]
+> > >
+> > > Hi Yafang,
+> > >
+> > > > Many thanks for the detailed analysis. Seems it can work.
+> > > >
+> > > > Hi John,
+> > > >
+> > > > Could you pls. try the attached fix ? I have verified it in my test env.
+> > >
+> > > I tested the patch on my environment where I found the issue with newer
+> > > kernels + older Perfetto. The patch does improve things so that's nice.
+> >
+> > Thanks for the test. I don't have Perfetto in hand, so I haven't
+> > verify Perfetto.
+>
+> FWIW, perfetto is not android specific and can run on normal linux distro setup
+> (which I do but haven't noticed this breakage).
+>
+> It's easy to download the latest release (including for android though I never
+> tried that) from github
+>
+>         https://github.com/google/perfetto/releases
+>
 
-Yep, just wanted to confirm that we'd _only_ do that first one and
-not go to sleep later on ignoring a signal as that could lead to
-issues. Your fatal signal pending suggestion is all we need.
+Thanks for the information. I will try to run it on my test env.
+I suspect the "systrace_parse_failure" error is caused by the field we
+introduced into struct ftrace_event_field in the proposed patch, but I
+haven't taken a deep look at the perfetto src code yet.
+
+> Kajetan might try to see if he can pick the latest version which IIUC contains
+> a workaround.
+>
+> If this simple patch can be tweaked to make it work again against older
+> versions that'd be nice though.
+>
+> HTH.
+>
+>
+> Cheers
+>
+> --
+> Qais Yousef
+
+
 
 -- 
-Jens Axboe
-
-
+Regards
+Yafang
