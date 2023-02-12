@@ -2,143 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 870096935E8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 04:55:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CEF8693698
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 10:02:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229637AbjBLDzb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Feb 2023 22:55:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53722 "EHLO
+        id S229489AbjBLJCT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Feb 2023 04:02:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbjBLDza (ORCPT
+        with ESMTP id S229472AbjBLJCS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Feb 2023 22:55:30 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84CE211EB6
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 19:55:26 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id k13so10530038plg.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 19:55:26 -0800 (PST)
+        Sun, 12 Feb 2023 04:02:18 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A881285B;
+        Sun, 12 Feb 2023 01:02:16 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id u10so6715855wmj.3;
+        Sun, 12 Feb 2023 01:02:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EhWxFB4ODTurP+Bbh4zJn7gAxthxpyL6UKX+g4y+ZjQ=;
-        b=4oXWD6WwwvKtE7IE7ek3e8RvqRagQZ8C8ZrVALBgqtBxdRjm/aG7oxpBqUnFwwM4DJ
-         ek/S+kJ9IUeThE7HJuw7gpf7HnWARkN688eLl24wK0jaNeXhgDkFMWm0NfKMMJn1y6SE
-         h4EA/zeco7f8KQFXqBOXxVOPDf13kk+VjrfQQ7bZyHvYFEvs9qdQjwn1PPKGX+s5ShQ5
-         tKUPaXqT5Cu/VF3Afq8HKMWuhPcNDkMsOmtEgIMUaSFUcO5ihZ/plT4S3Rx6zU8mFNOH
-         g5Zee/a2NpptVNbnAIkNNH6nT3tQKF4AxjMi81qPNsjzLk52oa+VmL15tBMLA11JguiU
-         zNKQ==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o054lJq7cNJLgChzGzCQ+WRE1bzNAT5cBcRzDdFJomI=;
+        b=BGNtl4F66FtklWTIE4ne2svwaooZ7g3z1KjWYUI6vGy7oJlAgTskn4ZdT80NCp4t/Z
+         t/Be3c6mDsYRSbFB7QhWskI6msrJf35wznQIPeL/bxOEvmmEBfA1bqznthEMtepzz3Sf
+         B01wfhs376EI0qTdI+yQ91d3fwKwYHIf4P4p7ZmLnZ8DM3VqU5D1vmgRPa5Tens3TYAM
+         mcCZcFow4LsUJM+MS+CiXx7yJ+d5sgar6ErWPEtzOyCIK7P7BTfnbbU4Yb8zEnAgABPf
+         F9DZxjJI+ENSU2x/8KUCCxawlx0uyHfQ4wj7v8T0jUMViSSuogZyvWGe9xM554NvggtV
+         FmTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EhWxFB4ODTurP+Bbh4zJn7gAxthxpyL6UKX+g4y+ZjQ=;
-        b=6y8RSVdkmrgQdKpeYh+NiIczZGatxwOLMENlmmghJLYXjgC5VUQYFBVOHVGiCZ118R
-         mJfoDZ/2Za0Xv9pypL/93cycWP98mWQaddf0e6XsbwSnkjQUjS7pYDXIUA/50ltckNvE
-         Xs2TKSXwfQbJFCOwAwBV4kOXSXZ6fEr++fEy0s77lhgJNgklfnRe49hnHiGuHtTpMil/
-         NYAWK4jPpDOM5FBaxHRDHu4Dqrw3hLvzO3BYfwsBOhGMi1hpXt4oy62kJdgMrJjjJ2Um
-         WhOzBCv2ot0JqlU9JRhmNZl1nRddz2Lp19HzLY04v+XFxAGuxoLLknUJ/wrBIBjr37Yz
-         oQvw==
-X-Gm-Message-State: AO0yUKUALawNfwNpYKptLRRNWtULPs4I7jGZR3YiXBc50DDKo97p/ety
-        TmKqO+MfrNjV5VP0cpmtwpuxag==
-X-Google-Smtp-Source: AK7set9jwghXObjJgAAtgV3PvPOahGO37nT0OGYuWJMwgbbwncNytT3Wwxr2VE0SCOTnwxETr7ru1w==
-X-Received: by 2002:a17:903:182:b0:198:a5d9:f2fd with SMTP id z2-20020a170903018200b00198a5d9f2fdmr21711336plg.6.1676174125887;
-        Sat, 11 Feb 2023 19:55:25 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id a10-20020a170902ee8a00b001992e74d058sm975727pld.7.2023.02.11.19.55.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Feb 2023 19:55:25 -0800 (PST)
-Message-ID: <44355d28-776a-0134-b087-c11cf4e82f34@kernel.dk>
-Date:   Sat, 11 Feb 2023 20:55:23 -0700
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o054lJq7cNJLgChzGzCQ+WRE1bzNAT5cBcRzDdFJomI=;
+        b=oopOD7oD4sUS/ZC3ixRmkqgxmFyljKS3LQofd3AY/zMvIrJNiUzZrBrYxRLxvY4FA6
+         c5hOOJG96iumC3A8bqHdsKcLRKxZvO6zmuL5RB2JNqQ39/H3hZGJM64fTz9FSzgSOWJf
+         xCPr9mIVRh8Qm5OpbUCRqCQX+e/1AurXGM3ESrGaeK/Y6E0zBtQaNOZvqE16L1B8dh95
+         R15g3uxc9yHryD7uQZVChQjSIGNeJqCkMPBBuU/RDY/85eMUHsFOWMxjE1jhXfhXmr20
+         OHt+ghQJxJi68JGU72fpAb0AzYl5ncFqRYaskTh2MZ9hiHzmR0ckG5//6YP2ARh271gD
+         ja1A==
+X-Gm-Message-State: AO0yUKVI4bDckPysEwss+KxjrZAwP02xhS/d+J6je9NFAcd+qLmOxUdN
+        KQ4FirT9nWUZt5LGuA3EhuI=
+X-Google-Smtp-Source: AK7set+0sdObphmL7tZ+fdK1yIO/BppQpXtS3/wTcInpWjWoOAd3ibt9p2OnYK//N2kEpJ77sQQ1qQ==
+X-Received: by 2002:a05:600c:1694:b0:3dc:5deb:40a0 with SMTP id k20-20020a05600c169400b003dc5deb40a0mr16808150wmn.8.1676192535306;
+        Sun, 12 Feb 2023 01:02:15 -0800 (PST)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id t7-20020a05600c450700b003dc42d48defsm12017183wmo.6.2023.02.12.01.02.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Feb 2023 01:02:14 -0800 (PST)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Leah Rumancik <leah.rumancik@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH 5.10 0/2] Backport two overlayfs fixed to 5.10.y
+Date:   Sun, 12 Feb 2023 11:02:02 +0200
+Message-Id: <20230212090204.339226-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 3/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
-Content-Language: en-US
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-References: <20230210153212.733006-1-ming.lei@redhat.com>
- <20230210153212.733006-4-ming.lei@redhat.com>
- <a487261c-cc0e-134b-cd8e-26460fe7cf59@kernel.dk> <Y+e+i5BXQHcqdDGo@T590>
- <22772531-bf55-f610-be93-3d53c9ce1c6d@kernel.dk> <Y+hbggDCm9wViPAv@T590>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Y+hbggDCm9wViPAv@T590>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/11/23 8:22?PM, Ming Lei wrote:
->>>> Also seems like this should be separately testable. We can't add new
->>>> opcodes that don't have a feature test at least, and should also have
->>>> various corner case tests. A bit of commenting outside of this below.
->>>
->>> OK, I will write/add one very simple ublk userspace to liburing for
->>> test purpose.
->>
->> Thanks!
-> 
-> Thinking of further, if we use ublk for liburing test purpose, root is
-> often needed, even though we support un-privileged mode, which needs
-> administrator to grant access, so is it still good to do so?
+Greg,
 
-That's fine, some tests already depend on root for certain things, like
-passthrough. When I run the tests, I do a pass as both a regular user
-and as root. The important bit is just that the tests skip when they are
-not root rather than fail.
+These two patches have been (correctly) auto selected to 5.15.y
+along with the two dependency patches tagged with:
+Stable-dep-of: b306e90ffabd ("ovl: remove privs in ovl_copyfile()")
+9636e70ee2d3 ("ovl: use ovl_copy_{real,upper}attr() wrappers")
+a54843833caf ("ovl: store lower path in ovl_inode")
 
-> It could be easier to add ->splice_read() on /dev/zero for test
-> purpose, just allocate zeroed pages in ->splice_read(), and add
-> them to pipe like ublk->splice_read(), and sink side can read
-> from or write to these pages, but zero's read_iter_zero() won't
-> be affected. And normal splice/tee won't connect to zero too
-> because we only allow it from kernel use.
+It wasn't wrong to apply those patches with the two dependencies
+to 5.15.y, but it is not as easy to do for 5.10.y, so here is a
+very simple backport of the two fixes to 5.10.y, i.e.:
+replaced ovl_copyattr(X) with ovl_copyattr(ovl_inode_real(X), X).
 
-Arguably /dev/zero should still support splice_read() as a regression
-fix as I argued to Linus, so I'd just add that as a prep patch.
+Note that the language "This fixes some failure in fstests..."
+in commit message means that those fixes are not enough for the
+tests to pass. Additional backports from v6.2 are needed for the
+tests to pass and I am collaborating those backports with Leah,
+so they will hit 5.15.y first before posting them for 5.10.y.
 
->>>> Seems like this should check for SPLICE_F_FD_IN_FIXED, and also use
->>>> io_file_get_normal() for the non-fixed case in case someone passed in an
->>>> io_uring fd.
->>>
->>> SPLICE_F_FD_IN_FIXED needs one extra word for holding splice flags, if
->>> we can use sqe->addr3, I think it is doable.
->>
->> I haven't checked the rest, but you can't just use ->splice_flags for
->> this?
-> 
-> ->splice_flags shares memory with rwflags, so can't be used.
-> 
-> I think it is fine to use ->addr3, given io_getxattr()/io_setxattr()/
-> io_msg_ring() has used that.
+Never the less, these overlayfs fixes are important security
+fixes, so they should be applied to LTS kernel even before
+all the cases in the fstests are fixed.
 
-This is part of the confusion, as you treat it basically like a
-read/write internally, but the opcode names indicate differently. Why
-not just have a separate prep helper for these and then use a layout
-that makes more sense, surely rwflags aren't applicable for these
-anyway? I think that'd make it a lot cleaner.
+Thanks,
+Amir.
 
-Yeah, addr3 could easily be used, but it's makes for a really confusing
-command structure when the command is kinda-read but also kinda-splice.
-And it arguable makes more sense to treat it as the latter, as it takes
-the two fds like splice.
+Amir Goldstein (2):
+  ovl: remove privs in ovl_copyfile()
+  ovl: remove privs in ovl_fallocate()
+
+ fs/overlayfs/file.c | 28 +++++++++++++++++++++++++---
+ 1 file changed, 25 insertions(+), 3 deletions(-)
 
 -- 
-Jens Axboe
+2.34.1
 
