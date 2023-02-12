@@ -2,69 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A16516935D4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 04:23:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3D116935DB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 04:39:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229532AbjBLDXu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Feb 2023 22:23:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47634 "EHLO
+        id S229584AbjBLDjb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Feb 2023 22:39:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjBLDXt (ORCPT
+        with ESMTP id S229473AbjBLDja (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Feb 2023 22:23:49 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D3D215CA8
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 19:23:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676172181;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fGv0BjCnxc/SPhJ+j5KwOIHLZiudk5g1HAhJ7XccPw8=;
-        b=dk6hNgC0i9JDg70HBZQJwFh4VRyLMkBb+U4wITAmT3p4jbP9yTZwGFjy5mCM4exrS5vc7z
-        4RDEAm9LxC2nzv5e5xmGYZaGbWJ+ohvBAzAXFVTjFKHGKQhrrkyP81d+kcHTbr4KngEf1h
-        xCHtq/2xXfcEaOELOXsvYkBED7rEuu0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-489-XOWJUzo3NVyeEu_2HQ6sYg-1; Sat, 11 Feb 2023 22:22:57 -0500
-X-MC-Unique: XOWJUzo3NVyeEu_2HQ6sYg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3B94929AA2D6;
-        Sun, 12 Feb 2023 03:22:56 +0000 (UTC)
-Received: from T590 (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 402F151FF;
-        Sun, 12 Feb 2023 03:22:48 +0000 (UTC)
-Date:   Sun, 12 Feb 2023 11:22:42 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
-        ming.lei@redhat.com
-Subject: Re: [PATCH 3/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
-Message-ID: <Y+hbggDCm9wViPAv@T590>
-References: <20230210153212.733006-1-ming.lei@redhat.com>
- <20230210153212.733006-4-ming.lei@redhat.com>
- <a487261c-cc0e-134b-cd8e-26460fe7cf59@kernel.dk>
- <Y+e+i5BXQHcqdDGo@T590>
- <22772531-bf55-f610-be93-3d53c9ce1c6d@kernel.dk>
+        Sat, 11 Feb 2023 22:39:30 -0500
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B35511658;
+        Sat, 11 Feb 2023 19:39:29 -0800 (PST)
+Received: by mail-qv1-xf2b.google.com with SMTP id o42so3935109qvo.13;
+        Sat, 11 Feb 2023 19:39:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1676173168;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=k38DlK0t/XHGBmKF/8ZrTC+4DU+EC3G+T7TmyTsfFvU=;
+        b=Eesg2pr21Hk2/SFlRpaZz6BWSDuCQ/lAmubyFyhQpXpmWUFBZwA3RMRmFl4R6kupMj
+         zIqimSmEfd8SJuRPncA7f70MIq1bYExvI5pTFbun6JKUsJZNcHRDzXvBezdU8A9IDOz9
+         S/KAxSCZfrwTD5epNKzAWf4XGqBE3lI9zOWH4r6myy1F/Kog4Mqu8l/+/0KMs42gMcw/
+         lunbSDYZj9MoJlmDA53Ub0uurhNXOzNtd70JVU5mY0X5OckxLpdhMHkEmh8xii43dAr3
+         ygFaw3kr1WSJiBYhv54OykPyCEASrCTnFAVWBt63tz1F0o3QWH6d4N8+M7w8JgbFaoUx
+         uYxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1676173168;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k38DlK0t/XHGBmKF/8ZrTC+4DU+EC3G+T7TmyTsfFvU=;
+        b=qbsu6bKhIeYAVtJYQqP5w8TRDZKs8gJ+P0IbQXR4/uzkSS2OWUh1YkUpuNGnNFdCOF
+         vqdGktXV05onwQRNlwIluhe/t4YgNAIiBk9RJL+U/IWODIQbWf/+T/WgRYiSIqIjRsCC
+         gWqOPzhEPMixvJbLQoSPo5MyQ4S+WsK/+hxiVD1o7OVWUg3Sv4LtLn31Qx5Vjto1BMZC
+         G8EKK1nGsmAUEbjx7ZLexoGagTcczbXHF2EvbkrLI9hTxBUuN9oiMJU9Z8eXvewbBno/
+         szB+fGh0gRhkihSGfAhkn9l+ooEUB6hNMhsElTeI6laiOnxuoIZsWxzLOmojSZknnIe3
+         rZuQ==
+X-Gm-Message-State: AO0yUKUwznrQUQpPhFrsJSWTqhy3H3xFZ87mqOZwyQgfrgwv05YP2DCg
+        frlm5TiISg5FSL9Y9Ipq/H9kHExfn3qfwc+oS5E=
+X-Google-Smtp-Source: AK7set++fC5LRuz2dH+ErgwVb2ke3N2snEdx0tgAkIr73gknu4wwZoOPtJOeV6iq468KODoVusgaflTPhY0FFMyRNq4=
+X-Received: by 2002:a0c:b306:0:b0:537:6777:b744 with SMTP id
+ s6-20020a0cb306000000b005376777b744mr1598861qve.58.1676173168615; Sat, 11 Feb
+ 2023 19:39:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22772531-bf55-f610-be93-3d53c9ce1c6d@kernel.dk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-8-laoar.shao@gmail.com>
+ <Y+QaZtz55LIirsUO@google.com> <CAADnVQ+nf8MmRWP+naWwZEKBFOYr7QkZugETgAVfjKcEVxmOtg@mail.gmail.com>
+ <CANDhNCo_=Q3pWc7h=ruGyHdRVGpsMKRY=C2AtZgLDwtGzRz8Kw@mail.gmail.com>
+ <20230208212858.477cd05e@gandalf.local.home> <20230208213343.40ee15a5@gandalf.local.home>
+ <20230211140011.4f15a633@gandalf.local.home>
+In-Reply-To: <20230211140011.4f15a633@gandalf.local.home>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sun, 12 Feb 2023 11:38:52 +0800
+Message-ID: <CALOAHbAnFHAiMH4QDgS6xN16B31qfhG8tfQ+iioCr9pw3sP=bw@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded 16
+ with TASK_COMM_LEN
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     John Stultz <jstultz@google.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Kajetan Puchalski <kajetan.puchalski@arm.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Qais Yousef <qyousef@google.com>,
+        Daniele Di Proietto <ddiproietto@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: multipart/mixed; boundary="0000000000004c630c05f4787a16"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,167 +97,135 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 11, 2023 at 09:52:58AM -0700, Jens Axboe wrote:
-> On 2/11/23 9:12?AM, Ming Lei wrote:
-> > On Sat, Feb 11, 2023 at 08:45:18AM -0700, Jens Axboe wrote:
-> >> On 2/10/23 8:32?AM, Ming Lei wrote:
-> >>> IORING_OP_READ_SPLICE_BUF: read to buffer which is built from
-> >>> ->read_splice() of specified fd, so user needs to provide (splice_fd, offset, len)
-> >>> for building buffer.
-> >>>
-> >>> IORING_OP_WRITE_SPLICE_BUF: write from buffer which is built from
-> >>> ->read_splice() of specified fd, so user needs to provide (splice_fd, offset, len)
-> >>> for building buffer.
-> >>>
-> >>> The typical use case is for supporting ublk/fuse io_uring zero copy,
-> >>> and READ/WRITE OP retrieves ublk/fuse request buffer via direct pipe
-> >>> from device->read_splice(), then READ/WRITE can be done to/from this
-> >>> buffer directly.
-> >>
-> >> Main question here - would this be better not plumbed up through the rw
-> >> path? Might be cleaner, even if it either requires a bit of helper
-> >> refactoring or accepting a bit of duplication. But would still be better
-> >> than polluting the rw fast path imho.
-> > 
-> > The buffer is actually IO buffer, which has to be plumbed up in IO path,
-> > and it can't be done like the registered buffer.
-> > 
-> > The only affect on fast path is :
-> > 
-> > 		if (io_rw_splice_buf(req))	//which just check opcode
-> >               return io_prep_rw_splice_buf(req, sqe);
-> > 
-> > and the cleanup code which is only done for the two new OPs.
-> > 
-> > Or maybe I misunderstand your point? Or any detailed suggestion?
-> > 
-> > Actually the code should be factored into generic helper, since net.c
-> > need to use them too. Probably it needs to move to rsrc.c?
-> 
-> Yep, just refactoring out those bits as a prep thing. rsrc could work,
-> or perhaps a new file for that.
+--0000000000004c630c05f4787a16
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-OK.
+On Sun, Feb 12, 2023 at 3:00 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Wed, 8 Feb 2023 21:33:43 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> > OK, so it doesn't break perf, trace-cmd and rasdaemon, because the enum=
+ is
+> > only needed in the print_fmt part. It can handle it in the field portio=
+n.
+> >
+> > That is:
+> >
+> >
+> > system: sched
+> > name: sched_switch
+> > ID: 285
+> > format:
+> >       field:unsigned short common_type;       offset:0;       size:2; s=
+igned:0;
+> >       field:unsigned char common_flags;       offset:2;       size:1; s=
+igned:0;
+> >       field:unsigned char common_preempt_count;       offset:3;       s=
+ize:1; signed:0;
+> >       field:int common_pid;   offset:4;       size:4; signed:1;
+> >
+> >       field:char prev_comm[TASK_COMM_LEN];    offset:8;       size:16; =
+       signed:0;
+> >                              ^^^^^^^^^^^^^^                          ^^
+> >                             is ignored                             is u=
+sed
+> >
+> >
+> >       field:pid_t prev_pid;   offset:24;      size:4; signed:1;
+> >       field:int prev_prio;    offset:28;      size:4; signed:1;
+> >       field:long prev_state;  offset:32;      size:8; signed:1;
+> >       field:char next_comm[TASK_COMM_LEN];    offset:40;      size:16; =
+       signed:0;
+> >       field:pid_t next_pid;   offset:56;      size:4; signed:1;
+> >       field:int next_prio;    offset:60;      size:4; signed:1;
+> >
+> > print fmt: "prev_comm=3D%s prev_pid=3D%d prev_prio=3D%d prev_state=3D%s=
+%s =3D=3D> next_comm=3D%s next_pid=3D%d next_prio=3D%d", REC->prev_comm, RE=
+C->prev_pid, REC->prev_prio, (REC->prev_state & ((((0x00000000 | 0x00000001=
+ | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 | 0x00000=
+040) + 1) << 1) - 1)) ? __print_flags(REC->prev_state & ((((0x00000000 | 0x=
+00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00000010 | 0x00000020 |=
+ 0x00000040) + 1) << 1) - 1), "|", { 0x00000001, "S" }, { 0x00000002, "D" }=
+, { 0x00000004, "T" }, { 0x00000008, "t" }, { 0x00000010, "X" }, { 0x000000=
+20, "Z" }, { 0x00000040, "P" }, { 0x00000080, "I" }) : "R", REC->prev_state=
+ & (((0x00000000 | 0x00000001 | 0x00000002 | 0x00000004 | 0x00000008 | 0x00=
+000010 | 0x00000020 | 0x00000040) + 1) << 1) ? "+" : "", REC->next_comm, RE=
+C->next_pid, REC->next_prio
+> >
+> >    ^^^^^^^
+> >
+> > Is what requires the conversions. So I take that back. It only breaks
+> > perfetto, and that's because it writes its own parser and doesn't use
+> > libtraceevent.
+>
+> Actually, there are cases that this needs to be a number, as b3bc8547d3be=
+6
+> ("tracing: Have TRACE_DEFINE_ENUM affect trace event types as well") made
+> it update fields as well as the printk fmt.
+>
 
-> 
-> >> Also seems like this should be separately testable. We can't add new
-> >> opcodes that don't have a feature test at least, and should also have
-> >> various corner case tests. A bit of commenting outside of this below.
-> > 
-> > OK, I will write/add one very simple ublk userspace to liburing for
-> > test purpose.
-> 
-> Thanks!
+It seems that TRACE_DEFINE_ENUM(TASK_COMM_LEN) in the trace events
+header files would be a better fix.
 
-Thinking of further, if we use ublk for liburing test purpose, root is
-often needed, even though we support un-privileged mode, which needs
-administrator to grant access, so is it still good to do so?
+> I think because libtraceevent noticed that it was a "char" array, it just
+> defaults to "size". But this does have meaning for all other types, and I
+> can see other parsers requiring that.
+>
+> -- Steve
 
-It could be easier to add ->splice_read() on /dev/zero for test
-purpose, just allocate zeroed pages in ->splice_read(), and add
-them to pipe like ublk->splice_read(), and sink side can read
-from or write to these pages, but zero's read_iter_zero() won't
-be affected. And normal splice/tee won't connect to zero too
-because we only allow it from kernel use.
 
-> 
-> >>> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> >>> index 5238ecd7af6a..91e8d8f96134 100644
-> >>> --- a/io_uring/opdef.c
-> >>> +++ b/io_uring/opdef.c
-> >>> @@ -427,6 +427,31 @@ const struct io_issue_def io_issue_defs[] = {
-> >>>  		.prep			= io_eopnotsupp_prep,
-> >>>  #endif
-> >>>  	},
-> >>> +	[IORING_OP_READ_SPLICE_BUF] = {
-> >>> +		.needs_file		= 1,
-> >>> +		.unbound_nonreg_file	= 1,
-> >>> +		.pollin			= 1,
-> >>> +		.plug			= 1,
-> >>> +		.audit_skip		= 1,
-> >>> +		.ioprio			= 1,
-> >>> +		.iopoll			= 1,
-> >>> +		.iopoll_queue		= 1,
-> >>> +		.prep			= io_prep_rw,
-> >>> +		.issue			= io_read,
-> >>> +	},
-> >>> +	[IORING_OP_WRITE_SPLICE_BUF] = {
-> >>> +		.needs_file		= 1,
-> >>> +		.hash_reg_file		= 1,
-> >>> +		.unbound_nonreg_file	= 1,
-> >>> +		.pollout		= 1,
-> >>> +		.plug			= 1,
-> >>> +		.audit_skip		= 1,
-> >>> +		.ioprio			= 1,
-> >>> +		.iopoll			= 1,
-> >>> +		.iopoll_queue		= 1,
-> >>> +		.prep			= io_prep_rw,
-> >>> +		.issue			= io_write,
-> >>> +	},
-> >>
-> >> Are these really safe with iopoll?
-> > 
-> > Yeah, after the buffer is built, the handling is basically
-> > same with IORING_OP_WRITE_FIXED, so I think it is safe.
-> 
-> Yeah, on a second look, as these are just using the normal read/write
-> path after that should be fine indeed.
-> 
-> >>
-> >>> +static int io_prep_rw_splice_buf(struct io_kiocb *req,
-> >>> +				 const struct io_uring_sqe *sqe)
-> >>> +{
-> >>> +	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
-> >>> +	unsigned nr_pages = io_rw_splice_buf_nr_bvecs(rw->len);
-> >>> +	loff_t splice_off = READ_ONCE(sqe->splice_off_in);
-> >>> +	struct io_rw_splice_buf_data data;
-> >>> +	struct io_mapped_ubuf *imu;
-> >>> +	struct fd splice_fd;
-> >>> +	int ret;
-> >>> +
-> >>> +	splice_fd = fdget(READ_ONCE(sqe->splice_fd_in));
-> >>> +	if (!splice_fd.file)
-> >>> +		return -EBADF;
-> >>
-> >> Seems like this should check for SPLICE_F_FD_IN_FIXED, and also use
-> >> io_file_get_normal() for the non-fixed case in case someone passed in an
-> >> io_uring fd.
-> > 
-> > SPLICE_F_FD_IN_FIXED needs one extra word for holding splice flags, if
-> > we can use sqe->addr3, I think it is doable.
-> 
-> I haven't checked the rest, but you can't just use ->splice_flags for
-> this?
+--=20
+Regards
+Yafang
 
-->splice_flags shares memory with rwflags, so can't be used.
+--0000000000004c630c05f4787a16
+Content-Type: application/octet-stream; name="TASK_COMM_LEN.diff"
+Content-Disposition: attachment; filename="TASK_COMM_LEN.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_le0u4tol0>
+X-Attachment-Id: f_le0u4tol0
 
-I think it is fine to use ->addr3, given io_getxattr()/io_setxattr()/
-io_msg_ring() has used that.
-
-> 
-> In any case, the get path needs to look like io_tee() here, and:
-> 
-> >>> +out_put_fd:
-> >>> +	if (splice_fd.file)
-> >>> +		fdput(splice_fd);
-> 
-> this put needs to be gated on whether it's a fixed file or not.
-
-Yeah.
-
-> 
-> >> If the operation is done, clear NEED_CLEANUP and do the cleanup here?
-> >> That'll be faster.
-> > 
-> > The buffer has to be cleaned up after req is completed, since bvec
-> > table is needed for bio, and page reference need to be dropped after
-> > IO is done too.
-> 
-> I mean when you clear that flag, call the cleanup bits you otherwise
-> would've called on later cleanup.
-
-Got it.
-
-Thanks,
-Ming
-
+ZGlmZiAtLWdpdCBhL2luY2x1ZGUvdHJhY2UvZXZlbnRzL2Jsb2NrLmggYi9pbmNsdWRlL3RyYWNl
+L2V2ZW50cy9ibG9jay5oDQppbmRleCA3ZjRkZmJkLi45N2NmNmMyIDEwMDY0NA0KLS0tIGEvaW5j
+bHVkZS90cmFjZS9ldmVudHMvYmxvY2suaA0KKysrIGIvaW5jbHVkZS90cmFjZS9ldmVudHMvYmxv
+Y2suaA0KQEAgLTEyLDYgKzEyLDggQEANCiANCiAjZGVmaW5lIFJXQlNfTEVOCTgNCiANCitUUkFD
+RV9ERUZJTkVfRU5VTShUQVNLX0NPTU1fTEVOKTsNCisNCiBERUNMQVJFX0VWRU5UX0NMQVNTKGJs
+b2NrX2J1ZmZlciwNCiANCiAJVFBfUFJPVE8oc3RydWN0IGJ1ZmZlcl9oZWFkICpiaCksDQpkaWZm
+IC0tZ2l0IGEvaW5jbHVkZS90cmFjZS9ldmVudHMvb29tLmggYi9pbmNsdWRlL3RyYWNlL2V2ZW50
+cy9vb20uaA0KaW5kZXggMjZhMTFlNC4uMTlkZTlhOCAxMDA2NDQNCi0tLSBhL2luY2x1ZGUvdHJh
+Y2UvZXZlbnRzL29vbS5oDQorKysgYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy9vb20uaA0KQEAgLTcs
+NiArNyw4IEBADQogI2luY2x1ZGUgPGxpbnV4L3RyYWNlcG9pbnQuaD4NCiAjaW5jbHVkZSA8dHJh
+Y2UvZXZlbnRzL21tZmxhZ3MuaD4NCiANCitUUkFDRV9ERUZJTkVfRU5VTShUQVNLX0NPTU1fTEVO
+KTsNCisNCiBUUkFDRV9FVkVOVChvb21fc2NvcmVfYWRqX3VwZGF0ZSwNCiANCiAJVFBfUFJPVE8o
+c3RydWN0IHRhc2tfc3RydWN0ICp0YXNrKSwNCmRpZmYgLS1naXQgYS9pbmNsdWRlL3RyYWNlL2V2
+ZW50cy9vc25vaXNlLmggYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy9vc25vaXNlLmgNCmluZGV4IDgy
+Zjc0MWUuLmFjM2MwYWIgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL3RyYWNlL2V2ZW50cy9vc25vaXNl
+LmgNCisrKyBiL2luY2x1ZGUvdHJhY2UvZXZlbnRzL29zbm9pc2UuaA0KQEAgLTYsNiArNiw4IEBA
+DQogI2RlZmluZSBfT1NOT0lTRV9UUkFDRV9IDQogDQogI2luY2x1ZGUgPGxpbnV4L3RyYWNlcG9p
+bnQuaD4NCitUUkFDRV9ERUZJTkVfRU5VTShUQVNLX0NPTU1fTEVOKTsNCisNCiBUUkFDRV9FVkVO
+VCh0aHJlYWRfbm9pc2UsDQogDQogCVRQX1BST1RPKHN0cnVjdCB0YXNrX3N0cnVjdCAqdCwgdTY0
+IHN0YXJ0LCB1NjQgZHVyYXRpb24pLA0KZGlmZiAtLWdpdCBhL2luY2x1ZGUvdHJhY2UvZXZlbnRz
+L3NjaGVkLmggYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy9zY2hlZC5oDQppbmRleCBmYmI5OWE2Li41
+N2VjMDllIDEwMDY0NA0KLS0tIGEvaW5jbHVkZS90cmFjZS9ldmVudHMvc2NoZWQuaA0KKysrIGIv
+aW5jbHVkZS90cmFjZS9ldmVudHMvc2NoZWQuaA0KQEAgLTIxNiw2ICsyMTYsNyBAQCBzdGF0aWMg
+aW5saW5lIGxvbmcgX190cmFjZV9zY2hlZF9zd2l0Y2hfc3RhdGUoYm9vbCBwcmVlbXB0LA0KIH0N
+CiAjZW5kaWYgLyogQ1JFQVRFX1RSQUNFX1BPSU5UUyAqLw0KIA0KK1RSQUNFX0RFRklORV9FTlVN
+KFRBU0tfQ09NTV9MRU4pOw0KIC8qDQogICogVHJhY2Vwb2ludCBmb3IgdGFzayBzd2l0Y2hlcywg
+cGVyZm9ybWVkIGJ5IHRoZSBzY2hlZHVsZXI6DQogICovDQpkaWZmIC0tZ2l0IGEvaW5jbHVkZS90
+cmFjZS9ldmVudHMvc2lnbmFsLmggYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy9zaWduYWwuaA0KaW5k
+ZXggMWRiN2U0Yi4uM2IxY2RiNiAxMDA2NDQNCi0tLSBhL2luY2x1ZGUvdHJhY2UvZXZlbnRzL3Np
+Z25hbC5oDQorKysgYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy9zaWduYWwuaA0KQEAgLTksNiArOSw4
+IEBADQogI2luY2x1ZGUgPGxpbnV4L3NjaGVkLmg+DQogI2luY2x1ZGUgPGxpbnV4L3RyYWNlcG9p
+bnQuaD4NCiANCitUUkFDRV9ERUZJTkVfRU5VTShUQVNLX0NPTU1fTEVOKTsNCisNCiAjZGVmaW5l
+IFRQX1NUT1JFX1NJR0lORk8oX19lbnRyeSwgaW5mbykJCQkJXA0KIAlkbyB7CQkJCQkJCVwNCiAJ
+CWlmIChpbmZvID09IFNFTkRfU0lHX05PSU5GTykgewkJCVwNCmRpZmYgLS1naXQgYS9pbmNsdWRl
+L3RyYWNlL2V2ZW50cy90YXNrLmggYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy90YXNrLmgNCmluZGV4
+IDY0ZDE2MDkuLjBhOWUwM2E3IDEwMDY0NA0KLS0tIGEvaW5jbHVkZS90cmFjZS9ldmVudHMvdGFz
+ay5oDQorKysgYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy90YXNrLmgNCkBAIC02LDYgKzYsNyBAQA0K
+ICNkZWZpbmUgX1RSQUNFX1RBU0tfSA0KICNpbmNsdWRlIDxsaW51eC90cmFjZXBvaW50Lmg+DQog
+DQorVFJBQ0VfREVGSU5FX0VOVU0oVEFTS19DT01NX0xFTik7DQogVFJBQ0VfRVZFTlQodGFza19u
+ZXd0YXNrLA0KIA0KIAlUUF9QUk9UTyhzdHJ1Y3QgdGFza19zdHJ1Y3QgKnRhc2ssIHVuc2lnbmVk
+IGxvbmcgY2xvbmVfZmxhZ3MpLA0K
+--0000000000004c630c05f4787a16--
