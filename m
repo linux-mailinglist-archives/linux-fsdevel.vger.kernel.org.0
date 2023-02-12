@@ -2,130 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E8746935A7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 03:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 488DE6935AB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Feb 2023 03:46:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229637AbjBLCnC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Feb 2023 21:43:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35202 "EHLO
+        id S229653AbjBLCqT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Feb 2023 21:46:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbjBLCnB (ORCPT
+        with ESMTP id S229647AbjBLCqS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Feb 2023 21:43:01 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CBDB11EBB
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 18:43:00 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id o8so8029266pls.11
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 18:43:00 -0800 (PST)
+        Sat, 11 Feb 2023 21:46:18 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F15931449A
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 18:46:16 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id nn4-20020a17090b38c400b00233a6f118d0so6848501pjb.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Feb 2023 18:46:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UfPAAizyWDulL2u7Q2gwUlbheSEUoxiWrAgxbmEozdw=;
-        b=S9v89PAwfzJ9i3HK+mpa22SkcgGOruKCno5xUY7LdRAQYD9/RAhfjs7Y4zPgi4OWfl
-         QJFn/wPJAAOGB6Hc1/hB3DX4m1djYwIuBdVdjMbY+kpaOeZIpZYPIhjLsq6he0Q+fwz9
-         uGXZZ9UyxfJvy2v8IHZFTISSoI9vq1VKMBUWGYJtuV6oj9YV2nw8yh601Uf9oxbCb8YW
-         sSygJjL5JcXzp6Byj9g1m6UovzXLCDEpfZu6VOyVGYcN1D0lywpFdVOQq7s2l7/YKEbg
-         wCJFTiteG+eTeBezKPKYx7/RSQ5pvKHiulRBcrtOUPdXfj44zq3MK9I+3twUrtmFiaEN
-         vMRg==
+        bh=13n7orFtfB4ykJMQSCkI+SVHhcT583fh+bxIuvlC7mY=;
+        b=ESXg7vS2YfHpVFr9OQZAHv9M3hthBxU2Row9ea0aJR9IjQ6GL15VCoTe39SuK/apcz
+         lfGM7PXnvgu0PiiAykezRpIW1FRoeZgXJJ1f5yT+0kseS0KVDaqQDpA+I+Dymcgg1zY1
+         iJGmRqnL0dCDPWM41X5z2Oh7WP3Z/XxGAGv3Avnn9/JwRFp3kolnB1oZQv8VGQXmwX3d
+         rD5u2DHcmPTZ0/x3/2kVydfAybYsxNmLWQeSV3+yI7B70FNGMxThFxKX2Pd0AYuzKaP5
+         7cdqi426YYBSMwwbt6a0/WgGTHOQHmA3ZJ65WGdgZGheeKN3uSzavEMms8FWcLknPqQx
+         PyIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UfPAAizyWDulL2u7Q2gwUlbheSEUoxiWrAgxbmEozdw=;
-        b=0S2m6yo1uaOD6pOSDJ+yl8IQbIhSIPvfcZQShw8UQCxsEHAY4NKWhZodf49NTgstcJ
-         tFn0USz70lCoeTOl1QivIFEqCLFiM4DABueHLhWcEL+PbJNWg6oeFhVxJvKLbdn8+00Q
-         L3eBdtbKduZfiuUdhjL9dZm43S7DQkTpamlHcAA32jJOyUZkgJvEJAymlxFb7N7D6LH2
-         1n3DXKWkvt6nOQgg0Mu3NW5H02tImHdYqKy6LXTZrULAoM3PNgNLL8Y+33zGaiBFQXCX
-         iupmmJ2Tz3vK3vr+nYQTnDGUwqrh78Gf1V63ZXIhswrpG71xhe70wsEkMCuMFto0e+8g
-         1rZg==
-X-Gm-Message-State: AO0yUKWlwHb1OeDjB471GpuKYcbsGmgJUm3Ty4QjU+lhKgmvuoI8qY7c
-        BfNhngtvvg1REyifsoeiszCV6A==
-X-Google-Smtp-Source: AK7set/4Vk6cZUn5nHnuAXm1aWHB6Xqz0MDzOiEtJ6oXCErcbU7r2r/jZJRmeCbNwfB9H2LKG8ayww==
-X-Received: by 2002:a17:902:d4c6:b0:19a:9864:288c with SMTP id o6-20020a170902d4c600b0019a9864288cmr555380plg.4.1676169779387;
-        Sat, 11 Feb 2023 18:42:59 -0800 (PST)
+        bh=13n7orFtfB4ykJMQSCkI+SVHhcT583fh+bxIuvlC7mY=;
+        b=eEOnwGLwhU+BMwMq3hFx8mpo7Eog/byBbGJgA4o87H0KuTE/cWjGg7rJsRrAaahv4X
+         iAp2uArSyB2ZnxFv1dMnQMbj9tbadr06+X8C/oPBjOBe4nkEdbYz7Xq/6gwhHy4k7I+9
+         pluxQvaIII23c/FT1UKqwLlGw5MK7DpYDqMHLiLrbAWQsAN566ikgOw5AVsSHQUDIv/u
+         gt6HoZXNXE0x2o9tpF3dCR8PhwTfwgx0TnRfdlTNCffNSfYeMYsKCWJhupDNik57qYXN
+         Ms3xNjcdvhCUsm59xfma++jJ7/4Zi3ucVcV/n0IHUb5h+MeyU8fLRTaekXLDh74XcYQ3
+         WbaQ==
+X-Gm-Message-State: AO0yUKVmaJLOz7HA7ERn/cHXX0aoC8mQWc9cjARfr4Bsucb4dQGt4zwI
+        Uq7fcMEoZ6R41FjFmblr0sVCNOYqMH+SzEDl
+X-Google-Smtp-Source: AK7set8Q/Jh+L5ryxfXOAajWPMV5niu5B7Z5pm8YR78FRqb1qNpO8JtR/DWeRFI2ODz7Fg0mdVhiIg==
+X-Received: by 2002:a17:902:f685:b0:199:2ee:6248 with SMTP id l5-20020a170902f68500b0019902ee6248mr21267626plg.0.1676169976461;
+        Sat, 11 Feb 2023 18:46:16 -0800 (PST)
 Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id l17-20020a170902eb1100b001947222676csm3608939plb.249.2023.02.11.18.42.58
+        by smtp.gmail.com with ESMTPSA id g13-20020a63be4d000000b00478ca052819sm4935737pgo.47.2023.02.11.18.46.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Feb 2023 18:42:58 -0800 (PST)
-Message-ID: <409656a0-7db5-d87c-3bb2-c05ff7af89af@kernel.dk>
-Date:   Sat, 11 Feb 2023 19:42:57 -0700
+        Sat, 11 Feb 2023 18:46:15 -0800 (PST)
+Message-ID: <467c0abe-251f-d74b-57c8-91e02bec1c05@kernel.dk>
+Date:   Sat, 11 Feb 2023 19:46:14 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.2
-Subject: Re: [PATCH 3/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-References: <20230210153212.733006-1-ming.lei@redhat.com>
- <20230210153212.733006-4-ming.lei@redhat.com>
- <7323fbef-4790-3975-9c43-7ba4b7809c33@kernel.dk> <Y+hFZaFte9YyfVwR@T590>
+Subject: Re: copy on write for splice() from file to pipe?
 Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ming Lei <ming.lei@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API Mailing List <linux-api@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Samba Technical <samba-technical@lists.samba.org>
+References: <CAHk-=wiszt6btMPeT5UFcS=0=EVr=0injTR75KsvN8WetwQwkA@mail.gmail.com>
+ <fe8252bd-17bd-850d-dcd0-d799443681e9@kernel.dk>
+ <CAHk-=wiJ0QKKiORkVr8n345sPp=aHbrLTLu6CQ-S0XqWJ-kJ1A@mail.gmail.com>
+ <7a2e5b7f-c213-09ff-ef35-d6c2967b31a7@kernel.dk>
+ <CALCETrVx4cj7KrhaevtFN19rf=A6kauFTr7UPzQVage0MsBLrg@mail.gmail.com>
+ <b44783e6-3da2-85dd-a482-5d9aeb018e9c@kernel.dk>
+ <2bb12591-9d24-6b26-178f-05e939bf3251@kernel.dk>
+ <CAHk-=wjzqrD5wrfeaU390bXEEBY2JF-oKmFN4fREzgyXsbQRTQ@mail.gmail.com>
+ <Y+cJDnnMuirSjO3E@T590> <55eaac9e-0d77-1fa2-df27-4d64e123177e@kernel.dk>
+ <Y+euv+zR5ltTELqk@T590> <787c3b62-f5d8-694d-cd2f-24b40848e39f@kernel.dk>
+ <CAHk-=whQ_V1ZE6jhQKHDk1MKvEkjpF2Pj-OcRQRXBTMsNpA1YA@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Y+hFZaFte9YyfVwR@T590>
+In-Reply-To: <CAHk-=whQ_V1ZE6jhQKHDk1MKvEkjpF2Pj-OcRQRXBTMsNpA1YA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/11/23 6:48 PM, Ming Lei wrote:
-> On Sat, Feb 11, 2023 at 10:13:37AM -0700, Jens Axboe wrote:
->> On 2/10/23 8:32?AM, Ming Lei wrote:
+On 2/11/23 11:57 AM, Linus Torvalds wrote:
+> On Sat, Feb 11, 2023 at 7:33 AM Jens Axboe <axboe@kernel.dk> wrote:
 >>
->> One more comment on this.
->>
->>> +static int __io_prep_rw_splice_buf(struct io_kiocb *req,
->>> +				   struct io_rw_splice_buf_data *data,
->>> +				   struct file *splice_f,
->>> +				   size_t len,
->>> +				   loff_t splice_off)
->>> +{
->>> +	unsigned flags = req->opcode == IORING_OP_READ_SPLICE_BUF ?
->>> +			SPLICE_F_KERN_FOR_READ : SPLICE_F_KERN_FOR_WRITE;
->>> +	struct splice_desc sd = {
->>> +		.total_len = len,
->>> +		.flags = flags | SPLICE_F_NONBLOCK | SPLICE_F_KERN_NEED_CONFIRM,
->>> +		.pos = splice_off,
->>> +		.u.data = data,
->>> +		.ignore_sig = true,
->>> +	};
->>> +
->>> +	return splice_direct_to_actor(splice_f, &sd,
->>> +			io_splice_buf_direct_actor);
->>
->> Is this safe? We end up using current->splice_pipe here, which should be
->> fine as long as things are left in a sane state after every operation.
->> Which they should be, just like a syscall would. Just wanted to make
->> sure you've considered that part.
+>> OK, but then the ignore_sig change should not be needed at all, just
+>> changing that first bit to fatal_signal_pending() would do the trick?
 > 
-> Yeah.
-> 
-> Direct pipe is always left as empty when splice_direct_to_actor()
-> returns. Pipe buffers(pages) are produced from ->splice_read()
-> called from splice_direct_to_actor(), and consumed by
-> io_splice_buf_direct_actor().
-> 
-> If any error is returned, direct pipe is empty too, and we just
-> need to drop reference of sliced pages by io_rw_cleanup_splice_buf().
+> Right. That was my point. The 'ignore_sig' flag just doesn't make
+> sense. It was a hack for a case that shouldn't exist.
 
-OK thanks for confirming, then that should be fine as we can
-obviously not have two syscalls (or sendfile(2) and task_work from
-io_uring) running at the same time.
+Yep, just wanted to confirm that we'd _only_ do that first one and
+not go to sleep later on ignoring a signal as that could lead to
+issues. Your fatal signal pending suggestion is all we need.
 
 -- 
 Jens Axboe
