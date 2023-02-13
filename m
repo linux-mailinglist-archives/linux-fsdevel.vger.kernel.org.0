@@ -2,71 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 25CDF693B95
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 02:07:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E334A693D95
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 05:54:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229687AbjBMBHL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Feb 2023 20:07:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38652 "EHLO
+        id S229786AbjBMEyd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Feb 2023 23:54:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbjBMBHK (ORCPT
+        with ESMTP id S229784AbjBMEyZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Feb 2023 20:07:10 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7DBE4C17
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Feb 2023 17:06:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676250386;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=I4w4+pIAJC6L4MJoTuvjbtqnVtxqrIwf9W0nUZC8tVI=;
-        b=RVNDW/dL0iiNuD9FnIVUq2dRxhsBLD+XAbrFc5/q80K+jFLIbmLfgDAxbSeDh3cU6JUiS9
-        9WejizFAcCzVtSYt37wWzzTTyb5elGa84NtIDnKMotkO88q6uSC+s4WeORnWQvNje5DNQ1
-        6gOj+aemQrR5zMdwkCL6p7SpGxm+HxE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-619-bn6-nGPpMea0uwUfi-099A-1; Sun, 12 Feb 2023 20:06:25 -0500
-X-MC-Unique: bn6-nGPpMea0uwUfi-099A-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 144F71869B6C;
-        Mon, 13 Feb 2023 01:06:25 +0000 (UTC)
-Received: from T590 (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F0F0BC16022;
-        Mon, 13 Feb 2023 01:06:09 +0000 (UTC)
-Date:   Mon, 13 Feb 2023 09:06:03 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
+        Sun, 12 Feb 2023 23:54:25 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E81C4113E0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Feb 2023 20:54:12 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id a8-20020a17090a6d8800b002336b48f653so9653591pjk.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Feb 2023 20:54:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oP4wZ0K6nVayFSsIwI2M/qbAeCayW2BZaB6BdNSazd0=;
+        b=kQCkDlkhAa4XVmRG1hxXFbpWGlXPMBYAGXgy0L0uPsR9g5pVZDofnEGhHEJYmp4t70
+         GThKDRHlZLQeCmf3sShq+tYAdJikORjaEoHzhV8XPsEC3fuBeKmrypEuXS7bnM4Hr1Mu
+         ejAuWJdj4rylP7L48un2eYEoyEM3T/HgHUJ+XVCnMOro/vM0ja9j4XcrCb2wVTAb2ykU
+         VVkETKJNdrlyLnPFCjstqmRxjQbAorY6hbHg6u7JiS4XZd2HNWZ+rc/s5B7cfxPqGP5E
+         y7sCTgg87DvCTzj8NBBDe3V2Zk1icq2em5kbBEcbVFNjlxLiW6d6zxFc1ZAJ17l5bZV5
+         /rrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oP4wZ0K6nVayFSsIwI2M/qbAeCayW2BZaB6BdNSazd0=;
+        b=q3K76FaOKUYcc8OYQsEt1zjKYHm9URKbTM6SrsFkVIcehtK1CZXnfiYf95b96HK1Lt
+         ewWsejKnLFFWm5598LyJ05ioRtEDOSxe3u1IUiFvbb9f2lkbiQhr9NlAb08XV76KcUgC
+         4kY18RViC8nStPveNTVRa07vw5kjV1WzYDcfzSrOwgWYVUjI9N9GO3AhakWr9LggKqaB
+         OnOiz/To7+/oOQgJ7Yqfq7FV0mpiK0nuBxwQHJFvpTfoISxFix+YvPckIMVq+BaZ5S8z
+         hAddTAQzXpk1oDYMjqKQS3XVjXDPaxcWpQ6pwZlnCI0tAKeuoF/Vb13ubeRFY0UfBN7i
+         n5Aw==
+X-Gm-Message-State: AO0yUKVJE3uWZG3uR2GAElBqikvkM71V8Ky5VBB8/PXGfRTnvbcX2tJb
+        Ie61U+utJ8rkLKY60Fxeoy18XQ==
+X-Google-Smtp-Source: AK7set/Y/udvpjSPyiRHvzVVe58rgU9SM3O2saFl6KwR15sjL2H2TEzdTJbI8CgO0QDxGQ+4+3WsRQ==
+X-Received: by 2002:a17:902:ce86:b0:19a:9580:750 with SMTP id f6-20020a170902ce8600b0019a95800750mr5863992plg.16.1676264052424;
+        Sun, 12 Feb 2023 20:54:12 -0800 (PST)
+Received: from debug.ba.rivosinc.com ([66.220.2.162])
+        by smtp.gmail.com with ESMTPSA id e5-20020a170902784500b00189e7cb8b89sm7078303pln.127.2023.02.12.20.54.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Feb 2023 20:54:12 -0800 (PST)
+From:   Deepak Gupta <debug@rivosinc.com>
+To:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
-        ming.lei@redhat.com, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 3/4] io_uring: add IORING_OP_READ[WRITE]_SPLICE_BUF
-Message-ID: <Y+mM+z519WhoOZpk@T590>
-References: <20230210153212.733006-1-ming.lei@redhat.com>
- <20230210153212.733006-4-ming.lei@redhat.com>
- <a487261c-cc0e-134b-cd8e-26460fe7cf59@kernel.dk>
- <Y+e+i5BXQHcqdDGo@T590>
- <22772531-bf55-f610-be93-3d53c9ce1c6d@kernel.dk>
- <Y+hbggDCm9wViPAv@T590>
- <44355d28-776a-0134-b087-c11cf4e82f34@kernel.dk>
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+Cc:     Deepak Gupta <debug@rivosinc.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH v1 RFC Zisslpcfi 07/20] elf: ELF header parsing in GNU property for cfi state
+Date:   Sun, 12 Feb 2023 20:53:36 -0800
+Message-Id: <20230213045351.3945824-8-debug@rivosinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230213045351.3945824-1-debug@rivosinc.com>
+References: <20230213045351.3945824-1-debug@rivosinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44355d28-776a-0134-b087-c11cf4e82f34@kernel.dk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,165 +77,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 11, 2023 at 08:55:23PM -0700, Jens Axboe wrote:
-> On 2/11/23 8:22?PM, Ming Lei wrote:
-> >>>> Also seems like this should be separately testable. We can't add new
-> >>>> opcodes that don't have a feature test at least, and should also have
-> >>>> various corner case tests. A bit of commenting outside of this below.
-> >>>
-> >>> OK, I will write/add one very simple ublk userspace to liburing for
-> >>> test purpose.
-> >>
-> >> Thanks!
-> > 
-> > Thinking of further, if we use ublk for liburing test purpose, root is
-> > often needed, even though we support un-privileged mode, which needs
-> > administrator to grant access, so is it still good to do so?
-> 
-> That's fine, some tests already depend on root for certain things, like
-> passthrough. When I run the tests, I do a pass as both a regular user
-> and as root. The important bit is just that the tests skip when they are
-> not root rather than fail.
+Binaries enabled with support for control-flow integrity will have new
+instructions that may fault on cpus which dont implement cfi mechanisms.
+This change adds
 
-OK, that is nice! I am going to write one minimized ublk userspace,
-which can be used in both liburing & blktests for test purpose.
+ - stub for setting up cfi state when loading a binary. Architecture
+   specific implementation can choose to implement this stub and setup
+   cfi state for program.
+ - define riscv ELF flag marker for forward cfi and backward cfi in
+   uapi/linux/elf.h
 
-> 
-> > It could be easier to add ->splice_read() on /dev/zero for test
-> > purpose, just allocate zeroed pages in ->splice_read(), and add
-> > them to pipe like ublk->splice_read(), and sink side can read
-> > from or write to these pages, but zero's read_iter_zero() won't
-> > be affected. And normal splice/tee won't connect to zero too
-> > because we only allow it from kernel use.
-> 
-> Arguably /dev/zero should still support splice_read() as a regression
-> fix as I argued to Linus, so I'd just add that as a prep patch.
+Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+---
+ fs/binfmt_elf.c          | 5 +++++
+ include/linux/elf.h      | 8 ++++++++
+ include/uapi/linux/elf.h | 6 ++++++
+ 3 files changed, 19 insertions(+)
 
-Understood.
-
-> 
-> >>>> Seems like this should check for SPLICE_F_FD_IN_FIXED, and also use
-> >>>> io_file_get_normal() for the non-fixed case in case someone passed in an
-> >>>> io_uring fd.
-> >>>
-> >>> SPLICE_F_FD_IN_FIXED needs one extra word for holding splice flags, if
-> >>> we can use sqe->addr3, I think it is doable.
-> >>
-> >> I haven't checked the rest, but you can't just use ->splice_flags for
-> >> this?
-> > 
-> > ->splice_flags shares memory with rwflags, so can't be used.
-> > 
-> > I think it is fine to use ->addr3, given io_getxattr()/io_setxattr()/
-> > io_msg_ring() has used that.
-> 
-> This is part of the confusion, as you treat it basically like a
-> read/write internally, but the opcode names indicate differently. Why
-> not just have a separate prep helper for these and then use a layout
-
-Looks separate prep is cleaner.
-
-> that makes more sense,surely rwflags aren't applicable for these
-> anyway? I think that'd make it a lot cleaner.
-> 
-> Yeah, addr3 could easily be used, but it's makes for a really confusing
-> command structure when the command is kinda-read but also kinda-splice.
-> And it arguable makes more sense to treat it as the latter, as it takes
-> the two fds like splice.
-
-Yeah, it can be thought as one direct splice between device and generic
-file, and I'd take more words to share the whole story here.
-
-1) traditional splice is: 
-
-file A(read file A to pipe buffer) -> pipe -> file B(write pipe buffer to file B)
-
-which implements zero copy for 'cp file_A file_B'.
-
-2) device splice (device -> pipe -> file)
-
-If only for doing 'cp device file', the current splice works just fine, however
-we do not have syscall for handling the following more generic scenario:
-
-	dev(produce buffer to pipe) -> pipe -> file(consume buffer from pipe)
-
-splice is supposed for transferring pages over pipe, so the above model
-is reasonable. And we do have kernel APIs for doing the above by direct
-pipe: splice_direct_to_actor & __splice_from_pipe.
-
-That is basically what this patch does, and consumer could be READ
-or WRITE. The current splice syscall only supports WRITE consumer(
-write pipe buffer to file) in pipe's read end.
-
-It can be used for fuse to support READ zero copy(fuse write zero copy
-was supported in 2010, but never support read zero copy because of missing
-such syscall), and for supporting ublk zero copy.
-
-Actually it can help to implement any "virt" drivers, most of which just
-talks with file or socket, or anything which can be handled in userspace
-efficiently.
-
-Follows the usage, suppose the syscall is named as dev_splice()
-
-	1) "poll" device A for incoming request
-	- "poll' just represents one kernel/user communication, once it
-	returns, there is request peeked
-
-    - device is one virt device and exposed to userspace and for
-	receiving request from userspace
-
-	2) handling driver specific logic
-	   - it could be request mapping, such as logical volume manager,
-		 the logic can be quite complicated to require Btree to map
-		 request from A to underlying files, such as dm-thin or bcache
-
-	   - it could be network based device, nbd, ceph RBD, drbd, ..., usb
-	   over IP, .., there could be meta lookup over socket, send
-	   command/recv reply, crypto enc/dec, ...
-
-	3) dev_splice(A, A_offset, len, B, B_offset, OP)
-	- A is the device
-	- B is one generic file(regular file, block device, socket, ...)
-	- OP is the consumer operation(could just be read/write or net
-	  recv/send)
-	- A(produce buffer) -> direct pipe -> B(consume the buffer from
-	pipe by OP)
-
-	4) after the above device_splice() is completed, request is
-	completed, and send notification to userspace
-
-Now we have io_uring command for handling 1) & 4) efficiently, the
-test over ublk has shown this point. If 3) can be supported, the
-complicated driver/device logic in 2) can be moved to userspace.
-Then the whole driver can be implemented in userspace efficiently,
-performance could even be better than kernel driver[1][2].
-
-The trouble is that when dev_splice() becomes much more generic, it is
-harder to define it as syscall. It could be easier with io_uring
-compared with splice() syscall, but still not easy enough:
-
-- if the sqe interface(for providing parameters) can be stable from
-  beginning, or can be extended in future easily
-
-- REQ_F_* has been used up
-
-- may cause some trouble inside io_uring implementation, such as, how
-to convert to other io_uring OP handling with the provide consumer op code.
-
-That is why I treat it as io_uring read/write from the beginning, the other
-two could be just treated as net recv/send, and only difference is that
-buffer is retrieved from direct pipe via splice(device, offset, len).
-
-So which type is better?  Treating it as dev_spice() or specific consumer
-OP? If we treat it as splice, is it better to define it as one single
-generic OP, or muliple OPs and each one is mapped to single consumer OP?
-
-I am open about the interface definition, any comment/suggestion is
-highly welcome!
-
-[1] https://lore.kernel.org/linux-block/Yza1u1KfKa7ycQm0@T590/
-[2] https://lore.kernel.org/lkml/20230126040822.GA2858@1wt.eu/T/
-
-Thanks,
-Ming
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 9a780fafc539..bb431052eb01 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1277,6 +1277,11 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 
+ 	set_binfmt(&elf_format);
+ 
++#if defined(CONFIG_USER_SHADOW_STACK) || defined(CONFIG_USER_INDIRECT_BR_LP)
++	retval = arch_elf_setup_cfi_state(&arch_state);
++	if (retval < 0)
++		goto out;
++#endif
+ #ifdef ARCH_HAS_SETUP_ADDITIONAL_PAGES
+ 	retval = ARCH_SETUP_ADDITIONAL_PAGES(bprm, elf_ex, !!interpreter);
+ 	if (retval < 0)
+diff --git a/include/linux/elf.h b/include/linux/elf.h
+index c9a46c4e183b..106d28f065aa 100644
+--- a/include/linux/elf.h
++++ b/include/linux/elf.h
+@@ -109,4 +109,12 @@ static inline int arch_elf_adjust_prot(int prot,
+ }
+ #endif
+ 
++#if defined(CONFIG_USER_SHADOW_STACK) || defined(CONFIG_USER_INDIRECT_BR_LP)
++extern int arch_elf_setup_cfi_state(const struct arch_elf_state *state);
++#else
++static inline int arch_elf_setup_cfi_state(const struct arch_elf_state *state)
++{
++	return 0;
++}
++#endif
+ #endif /* _LINUX_ELF_H */
+diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+index 4c6a8fa5e7ed..1cbd332061dc 100644
+--- a/include/uapi/linux/elf.h
++++ b/include/uapi/linux/elf.h
+@@ -468,4 +468,10 @@ typedef struct elf64_note {
+ /* Bits for GNU_PROPERTY_AARCH64_FEATURE_1_BTI */
+ #define GNU_PROPERTY_AARCH64_FEATURE_1_BTI	(1U << 0)
+ 
++/* .note.gnu.property types for RISCV: */
++/* Bits for GNU_PROPERTY_RISCV_FEATURE_1_FCFI/BCFI */
++#define GNU_PROPERTY_RISCV_FEATURE_1_AND  0xc0000000
++#define GNU_PROPERTY_RISCV_FEATURE_1_FCFI (1u << 0)
++#define GNU_PROPERTY_RISCV_FEATURE_1_BCFI (1u << 1)
++
+ #endif /* _UAPI_LINUX_ELF_H */
+-- 
+2.25.1
 
