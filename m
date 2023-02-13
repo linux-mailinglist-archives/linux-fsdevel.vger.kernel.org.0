@@ -2,65 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D7C694DEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 18:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47983694E48
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 18:43:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbjBMR0k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Feb 2023 12:26:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39130 "EHLO
+        id S230306AbjBMRnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Feb 2023 12:43:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbjBMR0d (ORCPT
+        with ESMTP id S229666AbjBMRni (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Feb 2023 12:26:33 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C6D1CF72
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 09:25:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676309141;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VNyANMGF9OwsTFd5OqRhUr3qVbMqC/5HgFkj+TRiOzg=;
-        b=X+ZR+IsLikqMptjmfSFCdCI/BzihRjp7Ka4fGbgPK51lQUBn8EQf1HC42SRRos/eeMvnIH
-        ayOaWO6tUcrMOtOb4gcIuhZZlr/NBjik4yEMCur6Bg3XxHyv6afHJV9zztp/r1qQhztO8J
-        NzBf/ptb6ZWpZS8H7hWItrqVmzu0vsc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-279-P-sviZC_M7-fQF0PQuCCgg-1; Mon, 13 Feb 2023 12:25:35 -0500
-X-MC-Unique: P-sviZC_M7-fQF0PQuCCgg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 42BF8800B24;
-        Mon, 13 Feb 2023 17:25:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F4C04010E85;
-        Mon, 13 Feb 2023 17:25:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <2344208.1676308516@warthog.procyon.org.uk>
-References: <2344208.1676308516@warthog.procyon.org.uk> <Y+pdHFFTk1TTEBsO@makrotopia.org>
-To:     Daniel Golle <daniel@makrotopia.org>
-Cc:     dhowells@redhat.com, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Hildenbrand <david@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: regression in next-20230213: "splice: Do splice read from a buffered file without using ITER_PIPE"
+        Mon, 13 Feb 2023 12:43:38 -0500
+Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 993711CF60;
+        Mon, 13 Feb 2023 09:43:36 -0800 (PST)
+Received: by mail-vk1-xa31.google.com with SMTP id bj54so2101944vkb.12;
+        Mon, 13 Feb 2023 09:43:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9482UVrO1xOex3fDG9vOfHJvbLYfZSOVxzqODqZLrhM=;
+        b=pB2tn5tHtfdCBMJjYMpCnJdlfezc6ccapdYO+jtaejPe3lAp31vt7hDCh/K1Qmk+an
+         iT+5ExitRyh2ov/ygn+EM2zyfFsJOrlA0tdr04jXPHVVGKG3L0T/SZoNY8SBtnGHXe+B
+         F/iAH2FmUy7ZlvOTvTc3+n9Bc2tNwmAiuypafTYDtfBnlg08SaTzS3elt8Xq0fPrGZ83
+         nGa8MLNwHr7g5pG5KKnkp6VHc/sDxyUNCeo52VFtfey7pB0o6d69Hhk4O3/FvOOzF3YT
+         hHUSIun+9lxMk+VcHUR/MXqlrzU31901zhjtB6kVCrFFk3TwbOKoqoteKAzeUDH09+IO
+         H20w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9482UVrO1xOex3fDG9vOfHJvbLYfZSOVxzqODqZLrhM=;
+        b=gwr4b6ZIRYrNX73VlVfcZIRjeYVZJwOYuIHunETzsp/SN8t42/ewfjejVj8L5FsOMk
+         UFqOA/oEKZJbi0qUR0VOu8m2eOXbBj8iCvXhbBg3UpKiGZ46RNxcTDZOjJI8R7mVHSfQ
+         FDRBhtBztLUAFHlhaP3S9yxaiGxsPD/yjPBL8zuolDB/swBQDeWH3VPsHNA86RTArcMw
+         9yOMgTfu+PB7lxKGZQZN+CVz0TI/s26BbmgYTGielifefwp/6ibyPqIfbmLDRGqc7LhJ
+         Y3fujni2ftKzA9u05dJIqi5HhM9GYnv1MOx+0sUPNiA8MIhKjfzP5EGzURdDFhS5AIRk
+         O35w==
+X-Gm-Message-State: AO0yUKVSj9NJPaqHfLxhkJfk4Ipy5VFnkyR1QqeLy3GBrwf/ubnmq5UQ
+        dT7VJfc8d9tKVtMkXbHzJCvGhldph4K6D4UtI/2zNoLd
+X-Google-Smtp-Source: AK7set9naPVyKCrqkGR7F/qNK9P9Tk3CooQcQ6h1dj4d/zgb+ama5O2Sbg2TvqL3Nq/Ktr1Ruv/ioL+LSUFZ1zV47KU=
+X-Received: by 2002:a1f:3883:0:b0:401:58fe:533 with SMTP id
+ f125-20020a1f3883000000b0040158fe0533mr968170vka.25.1676310215561; Mon, 13
+ Feb 2023 09:43:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2344524.1676309132.1@warthog.procyon.org.uk>
-Date:   Mon, 13 Feb 2023 17:25:32 +0000
-Message-ID: <2344525.1676309132@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+References: <20211120112738.45980-1-laoar.shao@gmail.com> <20211120112738.45980-8-laoar.shao@gmail.com>
+ <Y+QaZtz55LIirsUO@google.com> <CAADnVQ+nf8MmRWP+naWwZEKBFOYr7QkZugETgAVfjKcEVxmOtg@mail.gmail.com>
+ <CANDhNCo_=Q3pWc7h=ruGyHdRVGpsMKRY=C2AtZgLDwtGzRz8Kw@mail.gmail.com>
+ <20230208212858.477cd05e@gandalf.local.home> <20230208213343.40ee15a5@gandalf.local.home>
+ <20230211140011.4f15a633@gandalf.local.home> <CALOAHbAnFHAiMH4QDgS6xN16B31qfhG8tfQ+iioCr9pw3sP=bw@mail.gmail.com>
+ <20230211224455.0a4b2914@gandalf.local.home>
+In-Reply-To: <20230211224455.0a4b2914@gandalf.local.home>
+From:   Namhyung Kim <namhyung@gmail.com>
+Date:   Mon, 13 Feb 2023 09:43:23 -0800
+Message-ID: <CAM9d7chx+azdxfNVVtaC_8eM2a57aBFa3hjh0TvjFt-6Xc7r7w@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] tools/testing/selftests/bpf: replace open-coded 16
+ with TASK_COMM_LEN
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Yafang Shao <laoar.shao@gmail.com>,
+        John Stultz <jstultz@google.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Kajetan Puchalski <kajetan.puchalski@arm.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Qais Yousef <qyousef@google.com>,
+        Daniele Di Proietto <ddiproietto@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,15 +99,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+Hi Steve,
 
-> > [   30.379325]  filemap_get_pages+0x254/0x604
-> 
-> Would you also be able to find out what line that was on?
+On Sat, Feb 11, 2023 at 8:07 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Sun, 12 Feb 2023 11:38:52 +0800
+> Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> > > Actually, there are cases that this needs to be a number, as b3bc8547d3be6
+> > > ("tracing: Have TRACE_DEFINE_ENUM affect trace event types as well") made
+> > > it update fields as well as the printk fmt.
+> > >
+> >
+> > It seems that TRACE_DEFINE_ENUM(TASK_COMM_LEN) in the trace events
+> > header files would be a better fix.
+>
+> NACK! I much prefer the proper fix that adds the length.
 
-Actually, I think this is the line of interest:
+Can we just have both enum and macro at the same time?
+I guess the enum would fill the BTF and the macro would provide
+backward compatibility.
 
-	[   30.296108] lr : filemap_read_folio+0x40/0x214
-
-David
-
+Thanks,
+Namhyung
