@@ -2,505 +2,245 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 738CC694668
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 13:55:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11CBC6946A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 14:11:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbjBMMzi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Feb 2023 07:55:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42060 "EHLO
+        id S230223AbjBMNL0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Feb 2023 08:11:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229800AbjBMMzh (ORCPT
+        with ESMTP id S230015AbjBMNLV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Feb 2023 07:55:37 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D708018E;
-        Mon, 13 Feb 2023 04:55:31 -0800 (PST)
-Received: from [192.168.10.12] (unknown [39.45.179.179])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B67AC660206C;
-        Mon, 13 Feb 2023 12:55:23 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676292930;
-        bh=Xh/0dTNyLEOzCUIY4Do2zwkRqk+8BrgdVwpM3hddolc=;
-        h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-        b=R7Ji19SrAUUX4edPOh5y4RpUa5zZtHfvGJNGjCRevsL4kzL5T35VtXcXXxJs6NW6t
-         +I50Su34voWtp2VNTZdjQnUYvs6NU2R3KN5+YBSIJGnJIMtlMHakkj/e7r5zHSrsPK
-         Oa2hNiM9LZVcT8D4+T4pfQqAJDbvhDNrfZPvXPEw4GJ1qvA/gzYPtYJob/0vtwdmsI
-         qKACR/mssr2+XA6S4pq/emwRrrirgwMdTL+7EPMHu9i6bCXGzKeg6qDUzwhiXb+5ls
-         34/MPOwpAgTaxovXVt2TWfnapi5PbyEsqgHnG/179TzhSNCIz3IkLwD+/ySl10eUtb
-         YU6RV5Ib8UfGQ==
-Message-ID: <8b2959fb-2a74-0a1f-8833-0b18eab142dc@collabora.com>
-Date:   Mon, 13 Feb 2023 17:55:19 +0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: Re: [PATCH v10 3/6] fs/proc/task_mmu: Implement IOCTL to get and/or
- the clear info about PTEs
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        David Hildenbrand <david@redhat.com>,
+        Mon, 13 Feb 2023 08:11:21 -0500
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2082.outbound.protection.outlook.com [40.107.101.82])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706811ADDA;
+        Mon, 13 Feb 2023 05:11:15 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Wj5Va6nMnqK14OX2dnxQZG/lhuVTJSk0nURph/VyOJLAL0lbyUGWYHEpoODqbr9jA9AoV4qCzUeFtd4S5d9Pqpi1oPgaIAWnzKPupqY9lOQDxgxO5i7P88EEQbHiIc00vDtKqVhui/hInBo7oD33czr9oeL+FYuARrBtQlE4KFiChJTu6zfWG19QwWp3BWrEmmkd4ldHEqDKtclSW20t6AoCaY6TpetGo/pGF3ERkE4JGGeyTQrFGti7YG3LayWIXSUc/tGDPX5phDmUW1mQs/Vp7q+PtTwW9Hg9yz7YA+Ho4H16xCAuf9HfjWnbgXMc9pNFG2gRdrKP6F8oT7xjZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5ENVP1GGBPj1xqietufnO2P2Fn2qUANJ0PPZBR999UM=;
+ b=Lb0z4i8D8TvgbhpE6yFTRzFTkIt6f6yntLbDkTYFJfGLjkivaFzeXBFfLeYbklYVRo8/tAJ+EhEgKon6HG3kgh7WdDHEF1gTWEPn3oJzYzIHqAcj2pNspVMVfYmIQB/wCcVw8oPMDvcQKlJ+4eiZ6QMyvIOF7KgI7ZLOBW7Xa3dFYIHIpOnewIWesqB07ndbuKOonMhO/K6bxRMIOmCYI7vGh4X3aOBN8UYN77eEYrjTa2ZWZ0Xp00aOTJc7ZTt8y3GHnjXxnUJvl1vayJBKPWUTei4hqA/ZJE4ew0kXlAzoAoKLKICT8NxlotDAPqUrs+RGe0iDFzplRyVxor83bg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5ENVP1GGBPj1xqietufnO2P2Fn2qUANJ0PPZBR999UM=;
+ b=pgBZBMnzg1xuWq9+hkCzJ1g7x/OQ0/CvsAJisZad9nedqaW++CLtEYzz7H3tqYlwqx9lrVAaoXSgVaWsFUlTIQu7VJajap8WdGButgQrMQQV955wHOon32GxW+m2ZhEwpGJc4NzAmwoQjH8Dpn5vIsg6xeK72iRl69na8eTWqHk=
+Received: from MW4PR03CA0106.namprd03.prod.outlook.com (2603:10b6:303:b7::21)
+ by PH8PR12MB6748.namprd12.prod.outlook.com (2603:10b6:510:1c4::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.19; Mon, 13 Feb
+ 2023 13:11:13 +0000
+Received: from CO1NAM11FT040.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:b7:cafe::35) by MW4PR03CA0106.outlook.office365.com
+ (2603:10b6:303:b7::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.24 via Frontend
+ Transport; Mon, 13 Feb 2023 13:11:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1NAM11FT040.mail.protection.outlook.com (10.13.174.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6086.24 via Frontend Transport; Mon, 13 Feb 2023 13:11:12 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 13 Feb
+ 2023 07:11:11 -0600
+Date:   Mon, 13 Feb 2023 07:01:02 -0600
+From:   Michael Roth <michael.roth@amd.com>
+To:     Sean Christopherson <seanjc@google.com>
+CC:     Isaku Yamahata <isaku.yamahata@gmail.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <qemu-devel@nongnu.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
-        <emmir@google.com>, Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
         Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-References: <20230202112915.867409-1-usama.anjum@collabora.com>
- <20230202112915.867409-4-usama.anjum@collabora.com> <Y+QfDN4Y5Q10x8GQ@x1n>
-In-Reply-To: <Y+QfDN4Y5Q10x8GQ@x1n>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        <luto@kernel.org>, <jun.nakajima@intel.com>,
+        <dave.hansen@intel.com>, <ak@linux.intel.com>, <david@redhat.com>,
+        <aarcange@redhat.com>, <ddutile@redhat.com>, <dhildenb@redhat.com>,
+        Quentin Perret <qperret@google.com>, <tabba@google.com>,
+        <mhocko@suse.com>, <wei.w.wang@intel.com>
+Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
+Message-ID: <20230213130102.two7q3kkcf254uof@amd.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <Y8H5Z3e4hZkFxAVS@google.com>
+ <20230119111308.GC2976263@ls.amr.corp.intel.com>
+ <Y8lg1G2lRIrI/hld@google.com>
+ <20230119223704.GD2976263@ls.amr.corp.intel.com>
+ <Y880FiYF7YCtsw/i@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Y880FiYF7YCtsw/i@google.com>
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT040:EE_|PH8PR12MB6748:EE_
+X-MS-Office365-Filtering-Correlation-Id: 43a8f9a3-32a8-46b7-e39a-08db0dc3c810
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jbNd5Iv+nMb/kEsrf0a8am47WtZl2VEdW+ysLc0RZ7wgpegcD+SSGtuIQXPlQNvo9ZBd/oyhw/8GDy7NVP36VWmLk2SlhGtIP7ekYWgAYC6ztrMz0e/1CbALYRSHZ4ZzXtXayQqdSzNq8j/2jSRPF3C3+FGYGYc7WY4ufKEv0thC3Ov9WXO/wqvFRBTUVR5eXIA5jNnibeghjNCZK/jDyirnqeFVt3tiP03TZD/neroEJCrx0kwMy/h2c39XjF5zp5bTFRuKXFJkwM6FCr5z4sjdMNLYeRfcR+7UvLpoUz2ElJd05/vrYi7wtujUoeqopScUGMPFqXWnLJ0I27HjcPUXSFnGRDN5A+MrYchK1n9aoUh0jqFbejQOXIRPVZ8I/HMaheZfCcgZy8bu7rBKuZBrN3PJXGVeoSRxL/Q3H3H8MFl22pWCWwitHLU0Mt9Bv5ONkDAPOygw49ebzKA5vzJL/Mrtmz2courqHRxGHCFNguSmC+fgBG5E2Lk+b4GUDqvIW2XU+JKf9fP4CwzR9Ah6acFp9gtsGyvoFJ9ZBv5PTJrQcnBhhpl5TKLlwsBEj1A/7VH/thUzdNWlB7QrV4mHgtZqbAKA5MMBZ/GGTD5nLGq4Bpb+0Iu/YVjMY3cu+2QN7nBwPblqQukKzNjZmMBXsTrbF3VDpu5A2fMdn+bkRRuq7pUOsg3EWSVLw13ppaUdwwP7hyiiUFymRAJb77VNxzesS9WvS+HUrVZ3fb/zFVHw5PnLfWdlCHc+0KSJH3eM0Ab6y4pd6JZ+FCkbgg2Y7z2fgSMK5ZEs3HgOniocdlmBICt30Cv7PU9yGrhF
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(136003)(39860400002)(396003)(346002)(376002)(451199018)(40470700004)(36840700001)(46966006)(40480700001)(70206006)(2616005)(70586007)(966005)(6666004)(8676002)(86362001)(36756003)(6916009)(54906003)(426003)(47076005)(316002)(83380400001)(40460700003)(478600001)(4326008)(82310400005)(16526019)(66899018)(186003)(356005)(2906002)(26005)(82740400003)(81166007)(1076003)(336012)(41300700001)(7406005)(44832011)(8936002)(7416002)(5660300002)(36860700001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2023 13:11:12.7672
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43a8f9a3-32a8-46b7-e39a-08db0dc3c810
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT040.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6748
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/9/23 3:15 AM, Peter Xu wrote:
-> On Thu, Feb 02, 2023 at 04:29:12PM +0500, Muhammad Usama Anjum wrote:
->> This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
->> the info about page table entries. The following operations are supported
->> in this ioctl:
->> - Get the information if the pages have been written-to (PAGE_IS_WRITTEN),
->>   file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
->>   (PAGE_IS_SWAPPED).
->> - Write-protect the pages (PAGEMAP_WP_ENGAGE) to start finding which
->>   pages have been written-to.
->> - Find pages which have been written-to and write protect the pages
->>   (atomic PAGE_IS_WRITTEN + PAGEMAP_WP_ENGAGE)
->>
->> To get information about which pages have been written-to and/or write
->> protect the pages, following must be performed first in order:
->> - The userfaultfd file descriptor is created with userfaultfd syscall.
->> - The UFFD_FEATURE_WP_ASYNC feature is set by UFFDIO_API IOCTL.
->> - The memory range is registered with UFFDIO_REGISTER_MODE_WP mode
->>   through UFFDIO_REGISTER IOCTL.
->> Then the any part of the registered memory or the whole memory region
->> can be write protected using the UFFDIO_WRITEPROTECT IOCTL or
->> PAGEMAP_SCAN IOCTL.
->>
->> struct pagemap_scan_args is used as the argument of the IOCTL. In this
->> struct:
->> - The range is specified through start and len.
->> - The output buffer of struct page_region array and size is specified as
->>   vec and vec_len.
->> - The optional maximum requested pages are specified in the max_pages.
->> - The flags can be specified in the flags field. The PAGEMAP_WP_ENGAGE
->>   is the only added flag at this time.
->> - The masks are specified in required_mask, anyof_mask, excluded_ mask
->>   and return_mask.
->>
->> This IOCTL can be extended to get information about more PTE bits. This
->> IOCTL doesn't support hugetlbs at the moment. No information about
->> hugetlb can be obtained. This patch has evolved from a basic patch from
->> Gabriel Krisman Bertazi.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->> Changes in v10:
->> - move changes in tools/include/uapi/linux/fs.h to separate patch
->> - update commit message
->>
->> Change in v8:
->> - Correct is_pte_uffd_wp()
->> - Improve readability and error checks
->> - Remove some un-needed code
->>
->> Changes in v7:
->> - Rebase on top of latest next
->> - Fix some corner cases
->> - Base soft-dirty on the uffd wp async
->> - Update the terminologies
->> - Optimize the memory usage inside the ioctl
->>
->> Changes in v6:
->> - Rename variables and update comments
->> - Make IOCTL independent of soft_dirty config
->> - Change masks and bitmap type to _u64
->> - Improve code quality
->>
->> Changes in v5:
->> - Remove tlb flushing even for clear operation
->>
->> Changes in v4:
->> - Update the interface and implementation
->>
->> Changes in v3:
->> - Tighten the user-kernel interface by using explicit types and add more
->>   error checking
->>
->> Changes in v2:
->> - Convert the interface from syscall to ioctl
->> - Remove pidfd support as it doesn't make sense in ioctl
->> ---
->>  fs/proc/task_mmu.c      | 290 ++++++++++++++++++++++++++++++++++++++++
->>  include/uapi/linux/fs.h |  50 +++++++
->>  2 files changed, 340 insertions(+)
->>
->> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->> index e35a0398db63..c6bde19d63d9 100644
->> --- a/fs/proc/task_mmu.c
->> +++ b/fs/proc/task_mmu.c
->> @@ -19,6 +19,7 @@
->>  #include <linux/shmem_fs.h>
->>  #include <linux/uaccess.h>
->>  #include <linux/pkeys.h>
->> +#include <linux/minmax.h>
->>  
->>  #include <asm/elf.h>
->>  #include <asm/tlb.h>
->> @@ -1135,6 +1136,22 @@ static inline void clear_soft_dirty(struct vm_area_struct *vma,
->>  }
->>  #endif
->>  
->> +static inline bool is_pte_uffd_wp(pte_t pte)
->> +{
->> +	if ((pte_present(pte) && pte_uffd_wp(pte)) ||
->> +	    (pte_swp_uffd_wp_any(pte)))
->> +		return true;
->> +	return false;
+On Tue, Jan 24, 2023 at 01:27:50AM +0000, Sean Christopherson wrote:
+> On Thu, Jan 19, 2023, Isaku Yamahata wrote:
+> > On Thu, Jan 19, 2023 at 03:25:08PM +0000,
+> > Sean Christopherson <seanjc@google.com> wrote:
+> > 
+> > > On Thu, Jan 19, 2023, Isaku Yamahata wrote:
+> > > > On Sat, Jan 14, 2023 at 12:37:59AM +0000,
+> > > > Sean Christopherson <seanjc@google.com> wrote:
+> > > > 
+> > > > > On Fri, Dec 02, 2022, Chao Peng wrote:
+> > > > > > This patch series implements KVM guest private memory for confidential
+> > > > > > computing scenarios like Intel TDX[1]. If a TDX host accesses
+> > > > > > TDX-protected guest memory, machine check can happen which can further
+> > > > > > crash the running host system, this is terrible for multi-tenant
+> > > > > > configurations. The host accesses include those from KVM userspace like
+> > > > > > QEMU. This series addresses KVM userspace induced crash by introducing
+> > > > > > new mm and KVM interfaces so KVM userspace can still manage guest memory
+> > > > > > via a fd-based approach, but it can never access the guest memory
+> > > > > > content.
+> > > > > > 
+> > > > > > The patch series touches both core mm and KVM code. I appreciate
+> > > > > > Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
+> > > > > > reviews are always welcome.
+> > > > > >   - 01: mm change, target for mm tree
+> > > > > >   - 02-09: KVM change, target for KVM tree
+> > > > > 
+> > > > > A version with all of my feedback, plus reworked versions of Vishal's selftest,
+> > > > > is available here:
+> > > > > 
+> > > > >   git@github.com:sean-jc/linux.git x86/upm_base_support
+> > > > > 
+> > > > > It compiles and passes the selftest, but it's otherwise barely tested.  There are
+> > > > > a few todos (2 I think?) and many of the commits need changelogs, i.e. it's still
+> > > > > a WIP.
+> > > > > 
+> > > > > As for next steps, can you (handwaving all of the TDX folks) take a look at what
+> > > > > I pushed and see if there's anything horrifically broken, and that it still works
+> > > > > for TDX?
+> > > > > 
+> > > > > Fuad (and pKVM folks) same ask for you with respect to pKVM.  Absolutely no rush
+> > > > > (and I mean that).
+> > > > > 
+> > > > > On my side, the two things on my mind are (a) tests and (b) downstream dependencies
+> > > > > (SEV and TDX).  For tests, I want to build a lists of tests that are required for
+> > > > > merging so that the criteria for merging are clear, and so that if the list is large
+> > > > > (haven't thought much yet), the work of writing and running tests can be distributed.
+> > > > > 
+> > > > > Regarding downstream dependencies, before this lands, I want to pull in all the
+> > > > > TDX and SNP series and see how everything fits together.  Specifically, I want to
+> > > > > make sure that we don't end up with a uAPI that necessitates ugly code, and that we
+> > > > > don't miss an opportunity to make things simpler.  The patches in the SNP series to
+> > > > > add "legacy" SEV support for UPM in particular made me slightly rethink some minor
+> > > > > details.  Nothing remotely major, but something that needs attention since it'll
+> > > > > be uAPI.
+> > > > 
+> > > > Although I'm still debuging with TDX KVM, I needed the following.
+> > > > kvm_faultin_pfn() is called without mmu_lock held.  the race to change
+> > > > private/shared is handled by mmu_seq.  Maybe dedicated function only for
+> > > > kvm_faultin_pfn().
+> > > 
+> > > Gah, you're not on the other thread where this was discussed[*].  Simply deleting
+> > > the lockdep assertion is safe, for guest types that rely on the attributes to
+> > > define shared vs. private, KVM rechecks the attributes under the protection of
+> > > mmu_seq.
+> > > 
+> > > I'll get a fixed version pushed out today.
+> > > 
+> > > [*] https://lore.kernel.org/all/Y8gpl+LwSuSgBFks@google.com
+> > 
+> > Now I have tdx kvm working. I've uploaded at the followings.
+> > It's rebased to v6.2-rc3.
+> >         git@github.com:yamahata/linux.git tdx/upm
+> >         git@github.com:yamahata/qemu.git tdx/upm
 > 
-> Sorry I should have mentioned this earlier: you can directly return here.
-No problem at all. I'm replacing these two helper functions with following
-in next version so that !present pages don't show as dirty:
+> And I finally got a working, building version updated and pushed out (again to):
+> 
+>   git@github.com:sean-jc/linux.git x86/upm_base_support
+> 
+> Took longer than expected to get the memslot restrictions sussed out.  I'm done
+> working on the code for now, my plan is to come back to it+TDX+SNP in 2-3 weeks
+> to resolves any remaining todos (that no one else tackles) and to do the whole
+> "merge the world" excersise.
+> 
+> > kvm_mmu_do_page_fault() needs the following change.
+> > kvm_mem_is_private() queries mem_attr_array.  kvm_faultin_pfn() also uses
+> > kvm_mem_is_private(). So the shared-private check in kvm_faultin_pfn() doesn't
+> > make sense. This change would belong to TDX KVM patches, though.
+> 
+> Yeah, SNP needs similar treatment.  Sorting that out is high up on the todo list.
 
-static inline bool is_pte_written(pte_t pte)
-{
-	if ((pte_present(pte) && pte_uffd_wp(pte)) ||
-	    (pte_swp_uffd_wp_any(pte)))
-		return false;
-	return (pte_present(pte) || is_swap_pte(pte));
-}
+Hi Sean,
 
-static inline bool is_pmd_written(pmd_t pmd)
-{
-	if ((pmd_present(pmd) && pmd_uffd_wp(pmd)) ||
-	    (is_swap_pmd(pmd) && pmd_swp_uffd_wp(pmd)))
-		return false;
-	return (pmd_present(pmd) || is_swap_pmd(pmd));
-}
+We've rebased the SEV+SNP support onto your updated UPM base support
+tree and things seem to be working okay, but we needed some fixups on
+top of the base support get things working, along with 1 workaround
+for an issue that hasn't been root-caused yet:
 
-> 
->   return (pte_present(pte) && pte_uffd_wp(pte)) || pte_swp_uffd_wp_any(pte);
-> 
->> +}
->> +
->> +static inline bool is_pmd_uffd_wp(pmd_t pmd)
->> +{
->> +	if ((pmd_present(pmd) && pmd_uffd_wp(pmd)) ||
->> +	    (is_swap_pmd(pmd) && pmd_swp_uffd_wp(pmd)))
->> +		return true;
->> +	return false;
-> 
-> Same here.
-> 
->> +}
->> +
->>  #if defined(CONFIG_MEM_SOFT_DIRTY) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
->>  static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
->>  		unsigned long addr, pmd_t *pmdp)
->> @@ -1763,11 +1780,284 @@ static int pagemap_release(struct inode *inode, struct file *file)
->>  	return 0;
->>  }
->>  
->> +#define PAGEMAP_BITS_ALL		(PAGE_IS_WRITTEN | PAGE_IS_FILE |	\
->> +					 PAGE_IS_PRESENT | PAGE_IS_SWAPPED)
->> +#define PAGEMAP_NON_WRITTEN_BITS	(PAGE_IS_FILE |	PAGE_IS_PRESENT | PAGE_IS_SWAPPED)
->> +#define IS_WP_ENGAGE_OP(a)		(a->flags & PAGEMAP_WP_ENGAGE)
->> +#define IS_GET_OP(a)			(a->vec)
->> +#define HAS_NO_SPACE(p)			(p->max_pages && (p->found_pages == p->max_pages))
->> +
->> +#define PAGEMAP_SCAN_BITMAP(wt, file, present, swap)	\
->> +	(wt | file << 1 | present << 2 | swap << 3)
->> +#define IS_WT_REQUIRED(a)				\
->> +	((a->required_mask & PAGE_IS_WRITTEN) ||	\
->> +	 (a->anyof_mask & PAGE_IS_WRITTEN))
->> +
->> +struct pagemap_scan_private {
->> +	struct page_region *vec;
->> +	struct page_region prev;
->> +	unsigned long vec_len, vec_index;
->> +	unsigned int max_pages, found_pages, flags;
->> +	unsigned long required_mask, anyof_mask, excluded_mask, return_mask;
->> +};
->> +
->> +static int pagemap_scan_test_walk(unsigned long start, unsigned long end, struct mm_walk *walk)
->> +{
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +
->> +	if (IS_WT_REQUIRED(p) && !userfaultfd_wp(vma) && !userfaultfd_wp_async(vma))
-> 
-> Should this be:
-> 
->        (IS_WT_REQUIRED(p) && (!userfaultfd_wp(vma) || !userfaultfd_wp_async(vma)))
-> 
-> Instead?
-Correct. I'll fix this.
+  https://github.com/mdroth/linux/commits/upmv10b-host-snp-v8-wip
 
-> 
->> +		return -EPERM;
->> +	if (vma->vm_flags & VM_PFNMAP)
->> +		return 1;
->> +	return 0;
->> +}
->> +
->> +static inline int pagemap_scan_output(bool wt, bool file, bool pres, bool swap,
->> +				      struct pagemap_scan_private *p, unsigned long addr,
->> +				      unsigned int len)
->> +{
->> +	unsigned long bitmap, cur = PAGEMAP_SCAN_BITMAP(wt, file, pres, swap);
->> +	bool cpy = true;
->> +	struct page_region *prev = &p->prev;
-> 
-> Nit: switch the above two lines?
-I'll fix this.
+  *stash (upm_base_support): mm: restrictedmem: Kirill's pinning implementation
+  *workaround (use_base_support): mm: restrictedmem: loosen exclusivity check
+  *fixup (upm_base_support): KVM: use inclusive ranges for restrictedmem binding/unbinding
+  *fixup (upm_base_support): mm: restrictedmem: use inclusive ranges for issuing invalidations
+  *fixup (upm_base_support): KVM: fix restrictedmem GFN range calculations
+  *fixup (upm_base_support): KVM: selftests: CoCo compilation fixes
 
-> 
->> +
->> +	if (HAS_NO_SPACE(p))
->> +		return -ENOSPC;
->> +
->> +	if (p->max_pages && p->found_pages + len >= p->max_pages)
->> +		len = p->max_pages - p->found_pages;
-> 
-> If "p->found_pages + len >= p->max_pages", shouldn't this already return -ENOSPC?
-Length calculation is happening in the funtions calling this function. I'll
-move this out of here to make things logically better.
+We plan to post an updated RFC for v8 soon, but also wanted to share
+the staging tree in case you end up looking at the UPM integration aspects
+before then.
 
-> 
->> +	if (!len)
->> +		return -EINVAL;
->> +
->> +	if (p->required_mask)
->> +		cpy = ((p->required_mask & cur) == p->required_mask);
->> +	if (cpy && p->anyof_mask)
->> +		cpy = (p->anyof_mask & cur);
->> +	if (cpy && p->excluded_mask)
->> +		cpy = !(p->excluded_mask & cur);
->> +	bitmap = cur & p->return_mask;
->> +	if (cpy && bitmap) {
->> +		if ((prev->len) && (prev->bitmap == bitmap) &&
->> +		    (prev->start + prev->len * PAGE_SIZE == addr)) {
->> +			prev->len += len;
->> +			p->found_pages += len;
->> +		} else if (p->vec_index < p->vec_len) {
->> +			if (prev->len) {
->> +				memcpy(&p->vec[p->vec_index], prev, sizeof(struct page_region));
->> +				p->vec_index++;
->> +			}
-> 
-> IIUC you can have:
-> 
->   int pagemap_scan_deposit(p)
->   {
->         if (p->vec_index >= p->vec_len)
->                 return -ENOSPC;
-> 
->         if (p->prev->len) {
->                 memcpy(&p->vec[p->vec_index], prev, sizeof(struct page_region));
->                 p->vec_index++;
->         }
-> 
->         return 0;
->   }
-> 
-> Then call it here.  I think it can also be called below to replace
-> export_prev_to_out().
-No this isn't possible. We fill up prev until the next range doesn't merge
-with it. At that point, we put prev into the output buffer and new range is
-put into prev. Now that we have shifted to smaller page walks of <= 512
-entries. We want to visit all ranges before finally putting the prev to
-output. Sorry to have this some what complex method. The problem is that we
-want to merge the consective matching regions into one entry in the output.
-So to achieve this among multiple different page walks, the prev is being used.
-
-Lets suppose we want to visit memory from 0x7FFF00000000 to 7FFF00400000
-having length of 1024 pages and all of the memory has been written.
-walk_page_range() will be called 2 times. In the first call, prev will be
-set having length of 512. In second call, prev will be updated to 1024 as
-the previous range stored in prev could be extended. After this, the prev
-will be stored to the user output buffer consuming only 1 struct of page_range.
-
-If we store prev back to output memory in every walk_page_range() call, we
-wouldn't get 1 struct of page_range with length 1024. Instead we would get
-2 elements of page_range structs with half the length.
-
-> 
->> +			prev->start = addr;
->> +			prev->len = len;
->> +			prev->bitmap = bitmap;
->> +			p->found_pages += len;
->> +		} else {
->> +			return -ENOSPC;
->> +		}
->> +	}
->> +	return 0;
->> +}
->> +
->> +static inline int export_prev_to_out(struct pagemap_scan_private *p, struct page_region __user *vec,
->> +				     unsigned long *vec_index)
->> +{
->> +	struct page_region *prev = &p->prev;
->> +
->> +	if (prev->len) {
->> +		if (copy_to_user(&vec[*vec_index], prev, sizeof(struct page_region)))
->> +			return -EFAULT;
->> +		p->vec_index++;
->> +		(*vec_index)++;
->> +		prev->len = 0;
->> +	}
->> +	return 0;
->> +}
->> +
->> +static inline int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->> +					 unsigned long end, struct mm_walk *walk)
->> +{
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +	unsigned long addr = end;
-> 
-> This assignment is useless?
-No, this assignement gets used when only the WP_ENGAGE operation is used on
-normal size pages.
-
-> 
->> +	spinlock_t *ptl;
->> +	int ret = 0;
->> +	pte_t *pte;
->> +
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +	ptl = pmd_trans_huge_lock(pmd, vma);
->> +	if (ptl) {
->> +		bool pmd_wt;
->> +
->> +		pmd_wt = !is_pmd_uffd_wp(*pmd);
->> +		/*
->> +		 * Break huge page into small pages if operation needs to be performed is
->> +		 * on a portion of the huge page.
->> +		 */
->> +		if (pmd_wt && IS_WP_ENGAGE_OP(p) && (end - start < HPAGE_SIZE)) {
->> +			spin_unlock(ptl);
->> +			split_huge_pmd(vma, pmd, start);
->> +			goto process_smaller_pages;
->> +		}
->> +		if (IS_GET_OP(p))
->> +			ret = pagemap_scan_output(pmd_wt, vma->vm_file, pmd_present(*pmd),
->> +						  is_swap_pmd(*pmd), p, start,
->> +						  (end - start)/PAGE_SIZE);
->> +		spin_unlock(ptl);
->> +		if (!ret) {
->> +			if (pmd_wt && IS_WP_ENGAGE_OP(p))
->> +				uffd_wp_range(walk->mm, vma, start, HPAGE_SIZE, true);
->> +		}
->> +		return ret;
->> +	}
->> +process_smaller_pages:
->> +	if (pmd_trans_unstable(pmd))
->> +		return 0;
->> +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->> +
->> +	pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
->> +	if (IS_GET_OP(p)) {
->> +		for (addr = start; addr < end; pte++, addr += PAGE_SIZE) {
->> +			ret = pagemap_scan_output(!is_pte_uffd_wp(*pte), vma->vm_file,
->> +						  pte_present(*pte), is_swap_pte(*pte), p, addr, 1);
->> +			if (ret)
->> +				break;
->> +		}
->> +	}
->> +	pte_unmap_unlock(pte - 1, ptl);
->> +	if ((!ret || ret == -ENOSPC) && IS_WP_ENGAGE_OP(p) && (addr - start))
->> +		uffd_wp_range(walk->mm, vma, start, addr - start, true);
->> +
->> +	cond_resched();
->> +	return ret;
->> +}
->> +
->> +static int pagemap_scan_pte_hole(unsigned long addr, unsigned long end, int depth,
->> +				 struct mm_walk *walk)
->> +{
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +	int ret = 0;
->> +
->> +	if (vma)
->> +		ret = pagemap_scan_output(false, vma->vm_file, false, false, p, addr,
->> +					  (end - addr)/PAGE_SIZE);
->> +	return ret;
->> +}
->> +
->> +/* No hugetlb support is present. */
->> +static const struct mm_walk_ops pagemap_scan_ops = {
->> +	.test_walk = pagemap_scan_test_walk,
->> +	.pmd_entry = pagemap_scan_pmd_entry,
->> +	.pte_hole = pagemap_scan_pte_hole,
->> +};
->> +
->> +static long do_pagemap_cmd(struct mm_struct *mm, struct pagemap_scan_arg *arg)
->> +{
->> +	unsigned long empty_slots, vec_index = 0;
->> +	unsigned long __user start, end;
->> +	unsigned long __start, __end;
->> +	struct page_region __user *vec;
->> +	struct pagemap_scan_private p;
->> +	int ret = 0;
->> +
->> +	start = (unsigned long)untagged_addr(arg->start);
->> +	vec = (struct page_region *)(unsigned long)untagged_addr(arg->vec);
->> +
->> +	/* Validate memory ranges */
->> +	if ((!IS_ALIGNED(start, PAGE_SIZE)) || (!access_ok((void __user *)start, arg->len)))
->> +		return -EINVAL;
->> +	if (IS_GET_OP(arg) && ((arg->vec_len == 0) ||
->> +	    (!access_ok((void __user *)vec, arg->vec_len * sizeof(struct page_region)))))
->> +		return -EINVAL;
->> +
->> +	/* Detect illegal flags and masks */
->> +	if ((arg->flags & ~PAGEMAP_WP_ENGAGE) || (arg->required_mask & ~PAGEMAP_BITS_ALL) ||
->> +	    (arg->anyof_mask & ~PAGEMAP_BITS_ALL) || (arg->excluded_mask & ~PAGEMAP_BITS_ALL) ||
->> +	    (arg->return_mask & ~PAGEMAP_BITS_ALL))
->> +		return -EINVAL;
->> +	if (IS_GET_OP(arg) && ((!arg->required_mask && !arg->anyof_mask && !arg->excluded_mask) ||
->> +				!arg->return_mask))
->> +		return -EINVAL;
->> +	/* The non-WT flags cannot be obtained if PAGEMAP_WP_ENGAGE is also specified. */
->> +	if (IS_WP_ENGAGE_OP(arg) && ((arg->required_mask & PAGEMAP_NON_WRITTEN_BITS) ||
->> +	    (arg->anyof_mask & PAGEMAP_NON_WRITTEN_BITS)))
->> +		return -EINVAL;
-> 
-> I think you said you'll clean this up a bit.  I don't think so..
-You had showed a really clean way to put all these error checking
-conditions. But I wasn't able to put the current error checking conditions
-in that much nice way. I'd done at least something to make them look
-better. Sorry, I'll revisit and try to come up with easier to follow error
-checking conditions.
-
--- 
-BR,
-Muhammad Usama Anjum
+-Mike
