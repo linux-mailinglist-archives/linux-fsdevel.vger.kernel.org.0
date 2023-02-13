@@ -2,108 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28077694F65
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 19:31:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ECAE695146
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 21:04:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbjBMSb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Feb 2023 13:31:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54344 "EHLO
+        id S229780AbjBMUEt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Feb 2023 15:04:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230095AbjBMSb4 (ORCPT
+        with ESMTP id S229561AbjBMUEt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Feb 2023 13:31:56 -0500
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F40D1C7C0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 10:31:52 -0800 (PST)
-Received: by mail-il1-x134.google.com with SMTP id v13so3979284iln.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 10:31:52 -0800 (PST)
+        Mon, 13 Feb 2023 15:04:49 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7EB91D911
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 12:04:47 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id qb15so32628509ejc.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 12:04:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1676313111;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YhELXdf05zY7CUQbBTvzj+Gb4RqQa3WJ6RXbjMshAvY=;
-        b=NZV5uVS4lxJPp6p+1qBjsjYANGdxCjU7BFs2Bw5/LGTp+ssG20JBv/nuomJtaEkAar
-         kWcxozx9PDBw6h5DQipSxnERGEJfQHqgMPDd7uF3YZdckcLeIE/Rq8wnigt9JVrWqJxr
-         s9zdbhYDTE49SrvplNgADwzRqwTIFnNNmGRr4=
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3VQLY//5P39OuXGOEpzf1Glp5VE7sIcldzWZWkHVBtk=;
+        b=TsAcvf6Rib9TA7nd5ff4vkYnkiTo2vkqF7CbonXHIwalzDwl0C+xPzUQngvguvBhYW
+         lfrD3pWDukUSl79bN71gu/WciycmYWabbXLrlXuPTtajVxjnp+EjdrsnaaWimERVUikg
+         BZJmYQInM/dGBkTYdpAbao9PfJ1lR4MxklY+k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676313111;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YhELXdf05zY7CUQbBTvzj+Gb4RqQa3WJ6RXbjMshAvY=;
-        b=BPO0ovNwNiAShYd1blwAXOyNJEcFQDtAldnZ1kN3pust4T7A51L3fwwD5DMq/B5d2Y
-         a/53q5SP4sWCEX0idxGkM/8oVJluGwu5CAmZSZmNf6Wc1C8kIlrsauJHw3oACg2TbRYU
-         UJ3sk0HMkzIR/MmjQ+LicDXWgwIenXBhQtFhzUbV4S/OTd5pieTYjPn6ahfCgExo1SO7
-         m14twySCxQ800txrofHt44g9UBxb8CndVAIJLmVU3xewzjnGrSiad92usZADk62w8zPq
-         R2XitkvvF8ew/MTtMa056qSjKle5dB15C+h4ZqfQvkGg8TdJ3wLbTOXFEMT7O7QpolXk
-         MfdQ==
-X-Gm-Message-State: AO0yUKWScso0ainyK+qjlJrDiDKwNsaTmbstf+vVH6Sc3DuChrqxPKDf
-        keP4nYS/5trSDb3YCGi4fIxufA==
-X-Google-Smtp-Source: AK7set8mpQPw2+GHtj5ZOfErydEdxIXuNq2fH1Iph/NA7mZTRndHLsb8zko5n9EIpwjE1fYaXs0icQ==
-X-Received: by 2002:a92:d7c4:0:b0:313:fb1b:2f86 with SMTP id g4-20020a92d7c4000000b00313fb1b2f86mr14498260ilq.0.1676313111559;
-        Mon, 13 Feb 2023 10:31:51 -0800 (PST)
-Received: from shuah-tx13.internal ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id t25-20020a02ccb9000000b0036cc14af7adsm4148662jap.149.2023.02.13.10.31.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Feb 2023 10:31:50 -0800 (PST)
-From:   Shuah Khan <skhan@linuxfoundation.org>
-To:     shuah@kernel.org, brauner@kernel.org, sforshee@kernel.org
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/mount_setattr: fix redefine struct mount_attr build error
-Date:   Mon, 13 Feb 2023 11:31:49 -0700
-Message-Id: <20230213183149.231779-1-skhan@linuxfoundation.org>
-X-Mailer: git-send-email 2.34.1
+        bh=3VQLY//5P39OuXGOEpzf1Glp5VE7sIcldzWZWkHVBtk=;
+        b=0qrHimP3XloIBqCOEru5K6Jgcv4tnV0v17YlLrgWvCsT1Y50g+DWLhfft1ueiHiCZG
+         AUSJdf0NDCBJoySRt2Jj4aXhFxuVP4ZmXXxEB6KD6oI0CUPSZDtBoJ1Kcgq4eugPhkot
+         aZP1N4QfmtUXHxEtiiqBWXlqGrzDBSS9lkG1qU376L3bZKh9x5MEvN6Wrm5ojdmbJlGq
+         +E1G/GZm8lWD+wAlq610kl3cFwk56NJ3U4bZydCloOQDpzjC9igTlhDdML+Lb2v6GkgS
+         EyH6H+OtftES9xeoaO61Te7AmX4oAjZfNBXq54vG5+nROcG5m/lrbQdWVvayU1rKg8U3
+         iwvA==
+X-Gm-Message-State: AO0yUKW1llTGwhKV+5fDaAnh7Opw+sbg9yI/J2iPWwMU/2ykO69R0XYo
+        gE82Whb/WYXGxQrR+cZDrWd2KyJwUDyjkqqI8K8=
+X-Google-Smtp-Source: AK7set/drCjx2f/fCurIvD67XV8iOBsUZJj1y1TYcZ1Wk1/hvgYkBUaHpoIH8/5TKuzmjiQ+TVFlhA==
+X-Received: by 2002:a17:906:3888:b0:7c1:765:9cfc with SMTP id q8-20020a170906388800b007c107659cfcmr20189861ejd.34.1676318686055;
+        Mon, 13 Feb 2023 12:04:46 -0800 (PST)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id cp17-20020a17090793d100b00889c115cf6asm7256113ejc.145.2023.02.13.12.04.44
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Feb 2023 12:04:44 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id dr8so34614843ejc.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 12:04:44 -0800 (PST)
+X-Received: by 2002:a17:907:366:b0:88d:ba79:4310 with SMTP id
+ rs6-20020a170907036600b0088dba794310mr5996890ejb.0.1676318684223; Mon, 13 Feb
+ 2023 12:04:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20230210153212.733006-1-ming.lei@redhat.com> <20230210153212.733006-2-ming.lei@redhat.com>
+ <Y+e3b+Myg/30hlYk@T590> <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
+ <Y+hDQ1vL6AMFri1E@T590>
+In-Reply-To: <Y+hDQ1vL6AMFri1E@T590>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 13 Feb 2023 12:04:27 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
+Message-ID: <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
+ pages in kernel
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix the following build error due to redefining struct mount_attr by
-removing duplicate define from mount_setattr_test.c
+On Sat, Feb 11, 2023 at 5:39 PM Ming Lei <ming.lei@redhat.com> wrote:
+>
+> >
+> >  (a) what's the point of MAY_READ? A non-readable page sounds insane
+> > and wrong. All sinks expect to be able to read.
+>
+> For example, it is one page which needs sink end to fill data, so
+> we needn't to zero it in source end every time, just for avoiding
+> leak kernel data if (unexpected)sink end simply tried to read from
+> the spliced page instead of writing data to page.
 
-gcc -g -isystem .../tools/testing/selftests/../../../usr/include -Wall -O2 -pthread     mount_setattr_test.c  -o .../tools/testing/selftests/mount_setattr/mount_setattr_test
-mount_setattr_test.c:107:8: error: redefinition of ‘struct mount_attr’
-  107 | struct mount_attr {
-      |        ^~~~~~~~~~
-In file included from /usr/include/x86_64-linux-gnu/sys/mount.h:32,
-                 from mount_setattr_test.c:10:
-.../usr/include/linux/mount.h:129:8: note: originally defined here
-  129 | struct mount_attr {
-      |        ^~~~~~~~~~
-make: *** [../lib.mk:145: .../tools/testing/selftests/mount_setattr/mount_setattr_test] Error 1
+I still don't understand.
 
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
----
- tools/testing/selftests/mount_setattr/mount_setattr_test.c | 7 -------
- 1 file changed, 7 deletions(-)
+A sink *reads* the data. It doesn't write the data.
 
-diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-index 8c5fea68ae67..582669ca38e9 100644
---- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-+++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-@@ -103,13 +103,6 @@
- 	#else
- 		#define __NR_mount_setattr 442
- 	#endif
--
--struct mount_attr {
--	__u64 attr_set;
--	__u64 attr_clr;
--	__u64 propagation;
--	__u64 userns_fd;
--};
- #endif
- 
- #ifndef __NR_open_tree
--- 
-2.37.2
+There's no point trying to deal with "if unexpectedly doing crazy
+things". If a sink writes the data, the sinkm is so unbelievably buggy
+that it's not even funny.
 
+And having two flags that you then say "have to be used together" is pointless.
+
+It's not two different flags if you can't use them separately!
+
+So I think your explanations are anything *but* explaining what you
+want. They are just strange and not sensible.
+
+Please explain to me in small words and simple sentences what it is
+you want. And no, if the explanation is "the sink wants to write to
+the buffer", then that's not an explanation, it's just insanity.
+
+We *used* to have the concept of "gifting" the buffer explicitly to
+the sink, so that the sink could - instead of reading from it - decide
+to just use the whole buffer as-is long term. The idea was that tthe
+buffer woudl literally be moved from the source to the destination,
+ownership and all.
+
+But if that's what you want, then it's not about "sink writes". It's
+literally about the splice() wanting to move not just the data, but
+the whole ownership of the buffer.
+
+Anyway, I will NAK this as long as the explanations for what the
+semantics are and what you want to do don't make sense. Right now they
+don't.
+
+              Linus
