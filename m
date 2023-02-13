@@ -2,422 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7CEA69475E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 14:48:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1AC56947ED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 15:23:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230333AbjBMNsD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Feb 2023 08:48:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49370 "EHLO
+        id S230218AbjBMOXv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Feb 2023 09:23:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbjBMNsA (ORCPT
+        with ESMTP id S229863AbjBMOXo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Feb 2023 08:48:00 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F0871B335
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 05:46:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676295997;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+        Mon, 13 Feb 2023 09:23:44 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DEFF1B55B;
+        Mon, 13 Feb 2023 06:23:39 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C3E951F37F;
+        Mon, 13 Feb 2023 14:23:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1676298217; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=v3dWdulFMkC02AM2jYIVI6FYFE9HkcrX92HlV1c4tO4=;
-        b=AVEwNfAiL8GL5YnKq9/FoIAXn/ztttrqhSnGKFTvLEMiyrQTDaXe6EqCI7dzXRrFXwICcJ
-        Porxa4QXWs957FsH4PwaojjRj/jvTn3amJBhgQc7/b87EQer7SXqo3ocI5SSj88MIKgA21
-        YTmHix9KZnEubsqeo0CF3R02Q409TtQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-510-H46sO8NjN5-GuV9-iHBZng-1; Mon, 13 Feb 2023 08:46:34 -0500
-X-MC-Unique: H46sO8NjN5-GuV9-iHBZng-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        bh=xI8t880WoH5RIgX7MmHkHOMY1R2Mkd9PP0v7yUbxzrM=;
+        b=FejCCuo9F/1ynlgHsDBhIi9S5hH4MEbRMkX6V4fVllQfQz+Pvu43L3bCglZSBmTNDhNRJN
+        3aS3N4ba6rEBi/I6xjFdC2zQv6vgmregXBDMxAvs3F5TsBeXNNYCej7A4XuvZqcnE8ueLq
+        Zk4CH/H5bLzeEW32rCyj1TjJVuWh16E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1676298217;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xI8t880WoH5RIgX7MmHkHOMY1R2Mkd9PP0v7yUbxzrM=;
+        b=zQFUpB1curciG/HW2rtt77UABs/cJcnsU1I9qdyoFKrG5KNyvp9T4FGiOtq3iJMkfmY1iH
+        5B9gdsyOZJM5syAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D32F1885620;
-        Mon, 13 Feb 2023 13:46:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E0CB7C16022;
-        Mon, 13 Feb 2023 13:46:31 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 4/4] splice: Move filemap_read_splice() to mm/filemap.c
-Date:   Mon, 13 Feb 2023 13:46:19 +0000
-Message-Id: <20230213134619.2198965-5-dhowells@redhat.com>
-In-Reply-To: <20230213134619.2198965-1-dhowells@redhat.com>
-References: <20230213134619.2198965-1-dhowells@redhat.com>
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 124AD138E6;
+        Mon, 13 Feb 2023 14:23:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 9NaxA+lH6mPvfgAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Mon, 13 Feb 2023 14:23:37 +0000
+Message-ID: <5d83c330-2697-b0a2-f55a-434b12bd81f8@suse.cz>
+Date:   Mon, 13 Feb 2023 15:23:36 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v10 1/9] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+Content-Language: en-US
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     "Huang, Kai" <kai.huang@intel.com>,
+        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "Hocko, Michal" <mhocko@suse.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "tabba@google.com" <tabba@google.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "michael.roth@amd.com" <michael.roth@amd.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "ddutile@redhat.com" <ddutile@redhat.com>,
+        "rppt@kernel.org" <rppt@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>,
+        "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
+        "qperret@google.com" <qperret@google.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "vannapurve@google.com" <vannapurve@google.com>,
+        "hughd@google.com" <hughd@google.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "Wang, Wei W" <wei.w.wang@intel.com>,
+        "steven.price@arm.com" <steven.price@arm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linmiaohe@huawei.com" <linmiaohe@huawei.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-2-chao.p.peng@linux.intel.com>
+ <5c6e2e516f19b0a030eae9bf073d555c57ca1f21.camel@intel.com>
+ <20221219075313.GB1691829@chaop.bj.intel.com>
+ <deba096c85e41c3a15d122f2159986a74b16770f.camel@intel.com>
+ <20221220072228.GA1724933@chaop.bj.intel.com>
+ <126046ce506df070d57e6fe5ab9c92cdaf4cf9b7.camel@intel.com>
+ <20221221133905.GA1766136@chaop.bj.intel.com>
+ <b898e28d7fd7182e5d069646f84b650c748d9ca2.camel@intel.com>
+ <010a330c-a4d5-9c1a-3212-f9107d1c5f4e@suse.cz>
+ <20230123151803.lwbjug6fm45olmru@box>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20230123151803.lwbjug6fm45olmru@box>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move filemap_read_splice() to mm/filemap.c and make filemap_get_pages()
-static again.
+On 1/23/23 16:18, Kirill A. Shutemov wrote:
+> On Mon, Jan 23, 2023 at 03:03:45PM +0100, Vlastimil Babka wrote:
+>> On 12/22/22 01:37, Huang, Kai wrote:
+>> >>> I argue that this page pinning (or page migration prevention) is not
+>> >>> tied to where the page comes from, instead related to how the page will
+>> >>> be used. Whether the page is restrictedmem backed or GUP() backed, once
+>> >>> it's used by current version of TDX then the page pinning is needed. So
+>> >>> such page migration prevention is really TDX thing, even not KVM generic
+>> >>> thing (that's why I think we don't need change the existing logic of
+>> >>> kvm_release_pfn_clean()). 
+>> >>>
+>> > This essentially boils down to who "owns" page migration handling, and sadly,
+>> > page migration is kinda "owned" by the core-kernel, i.e. KVM cannot handle page
+>> > migration by itself -- it's just a passive receiver.
+>> > 
+>> > For normal pages, page migration is totally done by the core-kernel (i.e. it
+>> > unmaps page from VMA, allocates a new page, and uses migrate_pape() or a_ops-
+>> >> migrate_page() to actually migrate the page).
+>> > In the sense of TDX, conceptually it should be done in the same way. The more
+>> > important thing is: yes KVM can use get_page() to prevent page migration, but
+>> > when KVM wants to support it, KVM cannot just remove get_page(), as the core-
+>> > kernel will still just do migrate_page() which won't work for TDX (given
+>> > restricted_memfd doesn't have a_ops->migrate_page() implemented).
+>> > 
+>> > So I think the restricted_memfd filesystem should own page migration handling,
+>> > (i.e. by implementing a_ops->migrate_page() to either just reject page migration
+>> > or somehow support it).
+>> 
+>> While this thread seems to be settled on refcounts already, just wanted
+>> to point out that it wouldn't be ideal to prevent migrations by
+>> a_ops->migrate_page() rejecting them. It would mean cputime wasted (i.e.
+>> by memory compaction) by isolating the pages for migration and then
+>> releasing them after the callback rejects it (at least we wouldn't waste
+>> time creating and undoing migration entries in the userspace page tables
+>> as there's no mmap). Elevated refcount on the other hand is detected
+>> very early in compaction so no isolation is attempted, so from that
+>> aspect it's optimal.
+> 
+> Hm. Do we need a new hook in a_ops to check if the page is migratable
+> before going with longer path to migrate_page().
+> 
+> Or maybe add AS_UNMOVABLE?
 
-Requested-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Christoph Hellwig <hch@lst.de>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: John Hubbard <jhubbard@nvidia.com>
-cc: David Hildenbrand <david@redhat.com>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: linux-block@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
----
- fs/splice.c             | 128 -------------------------------------
- include/linux/pagemap.h |   2 -
- include/linux/splice.h  |   4 ++
- mm/filemap.c            | 138 ++++++++++++++++++++++++++++++++++++++--
- 4 files changed, 136 insertions(+), 136 deletions(-)
-
-diff --git a/fs/splice.c b/fs/splice.c
-index 8b2a9d963bc4..341cd8fb47a8 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -375,134 +375,6 @@ static ssize_t direct_splice_read(struct file *in, loff_t *ppos,
- 	return ret;
- }
- 
--/*
-- * Splice subpages from a folio into a pipe.
-- */
--static size_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
--				     struct folio *folio,
--				     loff_t fpos, size_t size)
--{
--	struct page *page;
--	size_t spliced = 0, offset = offset_in_folio(folio, fpos);
--
--	page = folio_page(folio, offset / PAGE_SIZE);
--	size = min(size, folio_size(folio) - offset);
--	offset %= PAGE_SIZE;
--
--	while (spliced < size &&
--	       !pipe_full(pipe->head, pipe->tail, pipe->max_usage)) {
--		struct pipe_buffer *buf = pipe_head_buf(pipe);
--		size_t part = min_t(size_t, PAGE_SIZE - offset, size - spliced);
--
--		*buf = (struct pipe_buffer) {
--			.ops	= &page_cache_pipe_buf_ops,
--			.page	= page,
--			.offset	= offset,
--			.len	= part,
--		};
--		folio_get(folio);
--		pipe->head++;
--		page++;
--		spliced += part;
--		offset = 0;
--	}
--
--	return spliced;
--}
--
--/*
-- * Splice folios from the pagecache of a buffered (ie. non-O_DIRECT) file into
-- * a pipe.
-- */
--static ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
--				   struct pipe_inode_info *pipe,
--				   size_t len, unsigned int flags)
--{
--	struct folio_batch fbatch;
--	struct kiocb iocb;
--	size_t total_spliced = 0, used, npages;
--	loff_t isize, end_offset;
--	bool writably_mapped;
--	int i, error = 0;
--
--	init_sync_kiocb(&iocb, in);
--	iocb.ki_pos = *ppos;
--	iocb.ki_flags &= IOCB_NOWAIT;
--
--	/* Work out how much data we can actually add into the pipe */
--	used = pipe_occupancy(pipe->head, pipe->tail);
--	npages = max_t(ssize_t, pipe->max_usage - used, 0);
--	len = min_t(size_t, len, npages * PAGE_SIZE);
--
--	folio_batch_init(&fbatch);
--
--	do {
--		cond_resched();
--
--		if (*ppos >= i_size_read(file_inode(in)))
--			break;
--
--		iocb.ki_pos = *ppos;
--		error = filemap_get_pages(&iocb, len, &fbatch, true);
--		if (error < 0)
--			break;
--
--		/*
--		 * i_size must be checked after we know the pages are Uptodate.
--		 *
--		 * Checking i_size after the check allows us to calculate
--		 * the correct value for "nr", which means the zero-filled
--		 * part of the page is not copied back to userspace (unless
--		 * another truncate extends the file - this is desired though).
--		 */
--		isize = i_size_read(file_inode(in));
--		if (unlikely(*ppos >= isize))
--			break;
--		end_offset = min_t(loff_t, isize, *ppos + len);
--
--		/*
--		 * Once we start copying data, we don't want to be touching any
--		 * cachelines that might be contended:
--		 */
--		writably_mapped = mapping_writably_mapped(in->f_mapping);
--
--		for (i = 0; i < folio_batch_count(&fbatch); i++) {
--			struct folio *folio = fbatch.folios[i];
--			size_t n;
--
--			if (folio_pos(folio) >= end_offset)
--				goto out;
--			folio_mark_accessed(folio);
--
--			/*
--			 * If users can be writing to this folio using arbitrary
--			 * virtual addresses, take care of potential aliasing
--			 * before reading the folio on the kernel side.
--			 */
--			if (writably_mapped)
--				flush_dcache_folio(folio);
--
--			n = splice_folio_into_pipe(pipe, folio, *ppos, len);
--			if (!n)
--				goto out;
--			len -= n;
--			total_spliced += n;
--			*ppos += n;
--			in->f_ra.prev_pos = *ppos;
--			if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
--				goto out;
--		}
--
--		folio_batch_release(&fbatch);
--	} while (len);
--
--out:
--	folio_batch_release(&fbatch);
--	file_accessed(in);
--
--	return total_spliced ? total_spliced : error;
--}
--
- /**
-  * generic_file_splice_read - splice data from file to a pipe
-  * @in:		file to splice from
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 3a7bdb35acff..29e1f9e76eb6 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -748,8 +748,6 @@ struct page *read_cache_page(struct address_space *, pgoff_t index,
- 		filler_t *filler, struct file *file);
- extern struct page * read_cache_page_gfp(struct address_space *mapping,
- 				pgoff_t index, gfp_t gfp_mask);
--int filemap_get_pages(struct kiocb *iocb, size_t count,
--		      struct folio_batch *fbatch, bool need_uptodate);
- 
- static inline struct page *read_mapping_page(struct address_space *mapping,
- 				pgoff_t index, struct file *file)
-diff --git a/include/linux/splice.h b/include/linux/splice.h
-index a55179fd60fc..691c44ef5c0b 100644
---- a/include/linux/splice.h
-+++ b/include/linux/splice.h
-@@ -67,6 +67,10 @@ typedef int (splice_actor)(struct pipe_inode_info *, struct pipe_buffer *,
- typedef int (splice_direct_actor)(struct pipe_inode_info *,
- 				  struct splice_desc *);
- 
-+ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
-+			    struct pipe_inode_info *pipe,
-+			    size_t len, unsigned int flags);
-+
- extern ssize_t splice_from_pipe(struct pipe_inode_info *, struct file *,
- 				loff_t *, size_t, unsigned int,
- 				splice_actor *);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 6970be64a3e0..963602671fee 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -42,6 +42,8 @@
- #include <linux/ramfs.h>
- #include <linux/page_idle.h>
- #include <linux/migrate.h>
-+#include <linux/pipe_fs_i.h>
-+#include <linux/splice.h>
- #include <asm/pgalloc.h>
- #include <asm/tlbflush.h>
- #include "internal.h"
-@@ -2576,12 +2578,8 @@ static int filemap_readahead(struct kiocb *iocb, struct file *file,
- 	return 0;
- }
- 
--/*
-- * Extract some folios from the pagecache of a file, reading those pages from
-- * the backing store if necessary and waiting for them.
-- */
--int filemap_get_pages(struct kiocb *iocb, size_t count,
--		      struct folio_batch *fbatch, bool need_uptodate)
-+static int filemap_get_pages(struct kiocb *iocb, size_t count,
-+		struct folio_batch *fbatch, bool need_uptodate)
- {
- 	struct file *filp = iocb->ki_filp;
- 	struct address_space *mapping = filp->f_mapping;
-@@ -2845,6 +2843,134 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- }
- EXPORT_SYMBOL(generic_file_read_iter);
- 
-+/*
-+ * Splice subpages from a folio into a pipe.
-+ */
-+static size_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
-+				     struct folio *folio,
-+				     loff_t fpos, size_t size)
-+{
-+	struct page *page;
-+	size_t spliced = 0, offset = offset_in_folio(folio, fpos);
-+
-+	page = folio_page(folio, offset / PAGE_SIZE);
-+	size = min(size, folio_size(folio) - offset);
-+	offset %= PAGE_SIZE;
-+
-+	while (spliced < size &&
-+	       !pipe_full(pipe->head, pipe->tail, pipe->max_usage)) {
-+		struct pipe_buffer *buf = pipe_head_buf(pipe);
-+		size_t part = min_t(size_t, PAGE_SIZE - offset, size - spliced);
-+
-+		*buf = (struct pipe_buffer) {
-+			.ops	= &page_cache_pipe_buf_ops,
-+			.page	= page,
-+			.offset	= offset,
-+			.len	= part,
-+		};
-+		folio_get(folio);
-+		pipe->head++;
-+		page++;
-+		spliced += part;
-+		offset = 0;
-+	}
-+
-+	return spliced;
-+}
-+
-+/*
-+ * Splice folios from the pagecache of a buffered (ie. non-O_DIRECT) file into
-+ * a pipe.
-+ */
-+ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
-+			    struct pipe_inode_info *pipe,
-+			    size_t len, unsigned int flags)
-+{
-+	struct folio_batch fbatch;
-+	struct kiocb iocb;
-+	size_t total_spliced = 0, used, npages;
-+	loff_t isize, end_offset;
-+	bool writably_mapped;
-+	int i, error = 0;
-+
-+	init_sync_kiocb(&iocb, in);
-+	iocb.ki_pos = *ppos;
-+	iocb.ki_flags &= IOCB_NOWAIT;
-+
-+	/* Work out how much data we can actually add into the pipe */
-+	used = pipe_occupancy(pipe->head, pipe->tail);
-+	npages = max_t(ssize_t, pipe->max_usage - used, 0);
-+	len = min_t(size_t, len, npages * PAGE_SIZE);
-+
-+	folio_batch_init(&fbatch);
-+
-+	do {
-+		cond_resched();
-+
-+		if (*ppos >= i_size_read(file_inode(in)))
-+			break;
-+
-+		iocb.ki_pos = *ppos;
-+		error = filemap_get_pages(&iocb, len, &fbatch, true);
-+		if (error < 0)
-+			break;
-+
-+		/*
-+		 * i_size must be checked after we know the pages are Uptodate.
-+		 *
-+		 * Checking i_size after the check allows us to calculate
-+		 * the correct value for "nr", which means the zero-filled
-+		 * part of the page is not copied back to userspace (unless
-+		 * another truncate extends the file - this is desired though).
-+		 */
-+		isize = i_size_read(file_inode(in));
-+		if (unlikely(*ppos >= isize))
-+			break;
-+		end_offset = min_t(loff_t, isize, *ppos + len);
-+
-+		/*
-+		 * Once we start copying data, we don't want to be touching any
-+		 * cachelines that might be contended:
-+		 */
-+		writably_mapped = mapping_writably_mapped(in->f_mapping);
-+
-+		for (i = 0; i < folio_batch_count(&fbatch); i++) {
-+			struct folio *folio = fbatch.folios[i];
-+			size_t n;
-+
-+			if (folio_pos(folio) >= end_offset)
-+				goto out;
-+			folio_mark_accessed(folio);
-+
-+			/*
-+			 * If users can be writing to this folio using arbitrary
-+			 * virtual addresses, take care of potential aliasing
-+			 * before reading the folio on the kernel side.
-+			 */
-+			if (writably_mapped)
-+				flush_dcache_folio(folio);
-+
-+			n = splice_folio_into_pipe(pipe, folio, *ppos, len);
-+			if (!n)
-+				goto out;
-+			len -= n;
-+			total_spliced += n;
-+			*ppos += n;
-+			in->f_ra.prev_pos = *ppos;
-+			if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
-+				goto out;
-+		}
-+
-+		folio_batch_release(&fbatch);
-+	} while (len);
-+
-+out:
-+	folio_batch_release(&fbatch);
-+	file_accessed(in);
-+
-+	return total_spliced ? total_spliced : error;
-+}
-+
- static inline loff_t folio_seek_hole_data(struct xa_state *xas,
- 		struct address_space *mapping, struct folio *folio,
- 		loff_t start, loff_t end, bool seek_data)
-
+AS_UNMOVABLE should indeed allow a test in e.g. compaction to descide that
+the page is not worth isolating in the first place.
