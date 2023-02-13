@@ -2,93 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 135D36953E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 23:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C626695403
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Feb 2023 23:44:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229984AbjBMWaq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Feb 2023 17:30:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40798 "EHLO
+        id S230175AbjBMWoM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Feb 2023 17:44:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229891AbjBMWap (ORCPT
+        with ESMTP id S230150AbjBMWoG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Feb 2023 17:30:45 -0500
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D8F81D919
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 14:30:44 -0800 (PST)
-Received: by mail-io1-xd2b.google.com with SMTP id y2so5088192iot.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 14:30:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1676327444;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wx7rLgjo31q4aRFngZaMZvvBuOkUVt0KZOQkB/G6VhE=;
-        b=UGnugubJQHiQKh1fUKagWN0eCSxWHJnX1T8ppG3v25k5W1wMi/U77Ogm6zUSYdIMwE
-         JVZNqI6rULxN82YJIiKRYDlwSvs6NkCloq5/pDRHZBeDIGy3zk5h8wSSFKE+tC/SccLk
-         0obqZDHv4o+sPYpR53NnvVTYPtVg27RrHas80=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676327444;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wx7rLgjo31q4aRFngZaMZvvBuOkUVt0KZOQkB/G6VhE=;
-        b=T6xxz7knHZAQWTuc/QF+nlBQnRpMu7pYJd5+Ey5hB5W3n6GEte5cJiCGljYXx6+Rat
-         ZLhThP5bhmPB7Veb0Trf1VBcAuCetdMir2BXUCBMJR/RQKlAu/8gDCvu1xmjXoW7FEf3
-         GF45KTvgX/ixN3RTA30OVO8aAaRaGf4DwwHWP9rNG91jswPrZ7i/OJb1Olw4Ve11qI3Q
-         kXVAbTes0XFHZFFmf/LAGFs4biMQpLNqph4NOcytdQjTUOwJpgSqZs7Y0Fj7TAch7DMh
-         aEjChxPa2w/PqTGtemsokEnwrhTYUzZywMAVlA89VFHDG96bPRYJ3JdDun0K7FoTnzpe
-         KV5Q==
-X-Gm-Message-State: AO0yUKWpGcEdQnH3UcEEG5YWLJW6sZ6MdToaF4XGbtaVEvyTH6I9aPPu
-        mvhdJeWhuZdbe2enYZbe2sEmdaFeL1Gs0fvA
-X-Google-Smtp-Source: AK7set/qkONysWSWunirShm5nK5En++rvYEyBksmNjPhTvo9bFHNmDs1uU4A4iFH2F8UniVDWrIz3g==
-X-Received: by 2002:a6b:3bd8:0:b0:72c:f57a:a37b with SMTP id i207-20020a6b3bd8000000b0072cf57aa37bmr85672ioa.2.1676327443835;
-        Mon, 13 Feb 2023 14:30:43 -0800 (PST)
-Received: from shuah-tx13.internal ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id n17-20020a056638121100b003a9515b47ebsm4341806jas.68.2023.02.13.14.30.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Feb 2023 14:30:43 -0800 (PST)
-From:   Shuah Khan <skhan@linuxfoundation.org>
-To:     shuah@kernel.org, brauner@kernel.org, sforshee@kernel.org
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/mount_setattr: fix to make run_tests failure
-Date:   Mon, 13 Feb 2023 15:30:41 -0700
-Message-Id: <20230213223041.242089-1-skhan@linuxfoundation.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 13 Feb 2023 17:44:06 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D80F1D921
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 14:43:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676328200;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/MvJyZLq27FWxSw/lw8AFrwhZrqpXu3dfjNVlytfVw4=;
+        b=Iv5/cDwokr8oP+tvloES/1iDpJfZp9tBBtDR4NdyjqWAdxFswusSOxFIicg87WKOPlcq3C
+        DFAMf3SWSbwzqVbmKbBKcExOuNmYqqMVI/gHGvZdwE9b2v4H2aDisH78+1yFPXxhnUpRYG
+        TDXqUhNXYi9Y7OK5GzUvwG5jj6uOj8w=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-77-NYCZe6bNMO-V6g3bY9PIng-1; Mon, 13 Feb 2023 17:43:16 -0500
+X-MC-Unique: NYCZe6bNMO-V6g3bY9PIng-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 964B02932487;
+        Mon, 13 Feb 2023 22:43:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7053B401014C;
+        Mon, 13 Feb 2023 22:43:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20230213180632.GA368628@roeck-us.net>
+References: <20230213180632.GA368628@roeck-us.net> <20230209102954.528942-1-dhowells@redhat.com> <20230209102954.528942-4-dhowells@redhat.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v13 03/12] splice: Do splice read from a buffered file without using ITER_PIPE
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2416072.1676328192.1@warthog.procyon.org.uk>
+Date:   Mon, 13 Feb 2023 22:43:12 +0000
+Message-ID: <2416073.1676328192@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-make run_tests doesn't run the test. Fix Makefile to set TEST_GEN_PROGS
-instead of TEST_GEN_FILES to fix the problem.
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-run_tests runs TEST_GEN_PROGS, TEST_CUSTOM_PROGS, and TEST_PROGS.
-TEST_GEN_FILES is for files generated by tests.
+> [    4.660118] PC is at 0x0
+> [    4.660248] LR is at filemap_read_folio+0x17/0x4e
 
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
----
- tools/testing/selftests/mount_setattr/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Do you know what the filesystem is that's being read from?
 
-diff --git a/tools/testing/selftests/mount_setattr/Makefile b/tools/testing/selftests/mount_setattr/Makefile
-index fde72df01b11..0c0d7b1234c1 100644
---- a/tools/testing/selftests/mount_setattr/Makefile
-+++ b/tools/testing/selftests/mount_setattr/Makefile
-@@ -2,6 +2,6 @@
- # Makefile for mount selftests.
- CFLAGS = -g $(KHDR_INCLUDES) -Wall -O2 -pthread
- 
--TEST_GEN_FILES += mount_setattr_test
-+TEST_GEN_PROGS := mount_setattr_test
- 
- include ../lib.mk
--- 
-2.37.2
+I think the problem is that there are a few filesystems/drivers that call
+generic_file_splice_read() but don't have a ->read_folio().  Now most of these
+can be made to call direct_splice_read() instead, leaving just coda, overlayfs
+and shmem.
+
+Coda and overlayfs can be made to pass the request down a layer.  I'm about to
+look into shmem.
+
+David
 
