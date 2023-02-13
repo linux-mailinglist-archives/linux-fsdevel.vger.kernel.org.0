@@ -2,338 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDAF5695506
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 00:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8D4969550F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 00:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231277AbjBMXup (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Feb 2023 18:50:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57222 "EHLO
+        id S231277AbjBMXxw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Feb 2023 18:53:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231269AbjBMXuo (ORCPT
+        with ESMTP id S229489AbjBMXxv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Feb 2023 18:50:44 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BACCC17176;
-        Mon, 13 Feb 2023 15:50:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 30736B81A2C;
-        Mon, 13 Feb 2023 23:50:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90339C433D2;
-        Mon, 13 Feb 2023 23:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676332215;
-        bh=nZoqCIzntooHyG/7O/cvPGIWw/MK4HLeMmg+I6toqr0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NblVv/QUcjtqg2tOds2OzXshr7zDMAYVBBYrAQxu4adZj8UawL4mMLfGSM3G5jY1G
-         b2mjr6+q9bB0DA2XMaoJqNFfpguLJRdSfQeaTBlGczj6tLSOGrdhPTtZDFht+G8r64
-         JGOup4IWFJ5BhjQvd6OoWZP2Z3wzI5cIJK89CD20rMV9ZpGE9V7BFrE+M+C0m3bn1n
-         iwdtwAkWsETBTZKRpv/pEu5qWvTYeCB+1bVNRf9g2np5R27ZrM1vIVSZWPk9U6TjDx
-         aOtxcef29tACnHbigA24xFmqh63cdfzcehNeWe1PA+JwAqY3SuSzxIjeut1UIyldxH
-         d3fGix6veS3+g==
-Date:   Mon, 13 Feb 2023 17:50:14 -0600
-From:   Seth Forshee <sforshee@kernel.org>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     shuah@kernel.org, brauner@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/mount_setattr: fix redefine struct mount_attr
- build error
-Message-ID: <Y+rMtlvx31w7eWCA@do-x1extreme>
-References: <20230213183149.231779-1-skhan@linuxfoundation.org>
+        Mon, 13 Feb 2023 18:53:51 -0500
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCCB01A5;
+        Mon, 13 Feb 2023 15:53:46 -0800 (PST)
+Received: by mail-pl1-x62d.google.com with SMTP id e17so6429579plg.12;
+        Mon, 13 Feb 2023 15:53:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oN12p0IDxvmorHBGQ7GzjlWOyGaJlkT0wNKpNtRNPE8=;
+        b=C91FV0IHIHySQTRkb86+GocwXDr8WlYgQiYnUNZd1Ke1PWzwc0Ui3swRKoM/EMugmd
+         mtDyIYfBfzKVpqk3ZurWfE4C06NJuP7sWx9xClULK72fPaRyTgD475XUP5w0R0lmJSxg
+         fqPMDhOQ1CLyvdP8vm+bEyoR42WnbkStnrKpQAmZxWuxcmJUuRvcyRi1Rk+aqkGEy+qK
+         F0pLZENP3TbitJijIx7cS7NuofTEJwgwDOkN5GYMW48d2+LHtiHhs30rOQ3tZSv01O8e
+         FB7gFZ7JbhxL0Pno8NSgZttpMsmCG6pRRBkbmMYW6rJKC8Z6IMP2dpIC+LDTcFZNOFFC
+         kxfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oN12p0IDxvmorHBGQ7GzjlWOyGaJlkT0wNKpNtRNPE8=;
+        b=xqNZuHMNxgT99rZWQQNnw8wpOg3qzosHQmhZyYVbFtaloz/QbEWRZQyZOt/2ErBMOz
+         8t3kfPaDYJUdJ37k7GsB3xZs8f+eDrNHSM8Gv/YCTpK3WTMNZgncvKZ6rDm7W0q/IejL
+         BOSbGmo0Fh5DE4zAy+4eX5xdxrH6AYACL6+xRsXSXaiimR4EP5zS0j6c/K6Iwg2ChBLg
+         qrri3JdwhGCVRqc12fFVIguPSnyle0fENkqkDSu9yG5tUunx9JE0RGiw1rdWHUizYJHA
+         LtdG0Itct4B8WC97y5w/d7X55xveuFUsCk3o173VB3Nw33n/RL+++mGn+XNuw55gFOm6
+         YcCQ==
+X-Gm-Message-State: AO0yUKVAPg73vouIYrCh0i7evYzmSJbBHtaXlCzgo8wRh07CMSl3SbM2
+        /P1rocIvc9ugnjVxXzMxRIU=
+X-Google-Smtp-Source: AK7set/amp4VFmNZkQNRNmMa3hykvI7jc+MqhCv8WD2YyR0i7BGfBFGLnLeucu0LFmUtyzTRowTMiQ==
+X-Received: by 2002:a05:6a20:12c7:b0:c3:161a:b954 with SMTP id v7-20020a056a2012c700b000c3161ab954mr391641pzg.44.1676332425999;
+        Mon, 13 Feb 2023 15:53:45 -0800 (PST)
+Received: from localhost ([192.55.54.55])
+        by smtp.gmail.com with ESMTPSA id z20-20020aa791d4000000b0058e08796e98sm8406145pfa.196.2023.02.13.15.53.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Feb 2023 15:53:45 -0800 (PST)
+Date:   Mon, 13 Feb 2023 15:53:43 -0800
+From:   Isaku Yamahata <isaku.yamahata@gmail.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Isaku Yamahata <isaku.yamahata@gmail.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 2/9] KVM: Introduce per-page memory attributes
+Message-ID: <20230213235343.GC4175971@ls.amr.corp.intel.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-3-chao.p.peng@linux.intel.com>
+ <20230209072529.GB4175971@ls.amr.corp.intel.com>
+ <Y+WRUriIoan/XChx@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230213183149.231779-1-skhan@linuxfoundation.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y+WRUriIoan/XChx@google.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 13, 2023 at 11:31:49AM -0700, Shuah Khan wrote:
-> Fix the following build error due to redefining struct mount_attr by
-> removing duplicate define from mount_setattr_test.c
-> 
-> gcc -g -isystem .../tools/testing/selftests/../../../usr/include -Wall -O2 -pthread     mount_setattr_test.c  -o .../tools/testing/selftests/mount_setattr/mount_setattr_test
-> mount_setattr_test.c:107:8: error: redefinition of ‘struct mount_attr’
->   107 | struct mount_attr {
->       |        ^~~~~~~~~~
-> In file included from /usr/include/x86_64-linux-gnu/sys/mount.h:32,
->                  from mount_setattr_test.c:10:
-> .../usr/include/linux/mount.h:129:8: note: originally defined here
->   129 | struct mount_attr {
->       |        ^~~~~~~~~~
-> make: *** [../lib.mk:145: .../tools/testing/selftests/mount_setattr/mount_setattr_test] Error 1
-> 
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> ---
->  tools/testing/selftests/mount_setattr/mount_setattr_test.c | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> index 8c5fea68ae67..582669ca38e9 100644
-> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> @@ -103,13 +103,6 @@
->  	#else
->  		#define __NR_mount_setattr 442
->  	#endif
-> -
-> -struct mount_attr {
-> -	__u64 attr_set;
-> -	__u64 attr_clr;
-> -	__u64 propagation;
-> -	__u64 userns_fd;
-> -};
->  #endif
+On Fri, Feb 10, 2023 at 12:35:30AM +0000,
+Sean Christopherson <seanjc@google.com> wrote:
 
-The difficulty with this is that whether or not you need this definition
-depends on your system headers. My laptop doesn't have definitions for
-either __NR_mount_setattr or struct mount_attr, so for me the build
-works without this patch but fails with it.
+> On Wed, Feb 08, 2023, Isaku Yamahata wrote:
+> > On Fri, Dec 02, 2022 at 02:13:40PM +0800,
+> > Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> > 
+> > > +static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
+> > > +					   struct kvm_memory_attributes *attrs)
+> > > +{
+> > > +	gfn_t start, end;
+> > > +	unsigned long i;
+> > > +	void *entry;
+> > > +	u64 supported_attrs = kvm_supported_mem_attributes(kvm);
+> > > +
+> > > +	/* flags is currently not used. */
+> > > +	if (attrs->flags)
+> > > +		return -EINVAL;
+> > > +	if (attrs->attributes & ~supported_attrs)
+> > > +		return -EINVAL;
+> > > +	if (attrs->size == 0 || attrs->address + attrs->size < attrs->address)
+> > > +		return -EINVAL;
+> > > +	if (!PAGE_ALIGNED(attrs->address) || !PAGE_ALIGNED(attrs->size))
+> > > +		return -EINVAL;
+> > > +
+> > > +	start = attrs->address >> PAGE_SHIFT;
+> > > +	end = (attrs->address + attrs->size - 1 + PAGE_SIZE) >> PAGE_SHIFT;
+> > > +
+> > > +	entry = attrs->attributes ? xa_mk_value(attrs->attributes) : NULL;
+> > > +
+> > > +	mutex_lock(&kvm->lock);
+> > > +	for (i = start; i < end; i++)
+> > > +		if (xa_err(xa_store(&kvm->mem_attr_array, i, entry,
+> > > +				    GFP_KERNEL_ACCOUNT)))
+> > > +			break;
+> > > +	mutex_unlock(&kvm->lock);
+> > > +
+> > > +	attrs->address = i << PAGE_SHIFT;
+> > > +	attrs->size = (end - i) << PAGE_SHIFT;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +#endif /* CONFIG_HAVE_KVM_MEMORY_ATTRIBUTES */
+> > > +
+> > 
+> > If memslot isn't private, it should return error if private attribute is set.
+> 
+> Why?  I'd rather keep the two things separate.  If we enforce this sort of thing
+> at KVM_SET_MEMORY_ATTRIBUTES, then we also have to enforce it at
+> KVM_SET_USER_MEMORY_REGION.
 
-I suppose we could fix this universally by using a different name for
-the struct in the test, e.g.:
-
-diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-index 8c5fea68ae67..0658129d526e 100644
---- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-+++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-@@ -103,13 +103,6 @@
- 	#else
- 		#define __NR_mount_setattr 442
- 	#endif
--
--struct mount_attr {
--	__u64 attr_set;
--	__u64 attr_clr;
--	__u64 propagation;
--	__u64 userns_fd;
--};
- #endif
- 
- #ifndef __NR_open_tree
-@@ -132,6 +125,13 @@ struct mount_attr {
- 	#endif
- #endif
- 
-+struct __mount_attr {
-+	__u64 attr_set;
-+	__u64 attr_clr;
-+	__u64 propagation;
-+	__u64 userns_fd;
-+};
-+
- #ifndef MOUNT_ATTR_IDMAP
- #define MOUNT_ATTR_IDMAP 0x00100000
- #endif
-@@ -141,7 +141,7 @@ struct mount_attr {
- #endif
- 
- static inline int sys_mount_setattr(int dfd, const char *path, unsigned int flags,
--				    struct mount_attr *attr, size_t size)
-+				    struct __mount_attr *attr, size_t size)
- {
- 	return syscall(__NR_mount_setattr, dfd, path, flags, attr, size);
- }
-@@ -347,7 +347,7 @@ static bool is_shared_mount(const char *path)
- 
- static void *mount_setattr_thread(void *data)
- {
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID,
- 		.attr_clr	= 0,
- 		.propagation	= MS_SHARED,
-@@ -445,7 +445,7 @@ FIXTURE_TEARDOWN(mount_setattr)
- 
- TEST_F(mount_setattr, invalid_attributes)
- {
--	struct mount_attr invalid_attr = {
-+	struct __mount_attr invalid_attr = {
- 		.attr_set = (1U << 31),
- 	};
- 
-@@ -479,11 +479,11 @@ TEST_F(mount_setattr, extensibility)
- {
- 	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
- 	char *s = "dummy";
--	struct mount_attr invalid_attr = {};
-+	struct __mount_attr invalid_attr = {};
- 	struct mount_attr_large {
--		struct mount_attr attr1;
--		struct mount_attr attr2;
--		struct mount_attr attr3;
-+		struct __mount_attr attr1;
-+		struct __mount_attr attr2;
-+		struct __mount_attr attr3;
- 	} large_attr = {};
- 
- 	if (!mount_setattr_supported())
-@@ -542,7 +542,7 @@ TEST_F(mount_setattr, extensibility)
- TEST_F(mount_setattr, basic)
- {
- 	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOEXEC | MOUNT_ATTR_RELATIME,
- 		.attr_clr	= MOUNT_ATTR__ATIME,
- 	};
-@@ -578,7 +578,7 @@ TEST_F(mount_setattr, basic_recursive)
- {
- 	int fd;
- 	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOEXEC | MOUNT_ATTR_RELATIME,
- 		.attr_clr	= MOUNT_ATTR__ATIME,
- 	};
-@@ -672,7 +672,7 @@ TEST_F(mount_setattr, mount_has_writers)
- {
- 	int fd, dfd;
- 	unsigned int old_flags = 0, new_flags = 0;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOEXEC | MOUNT_ATTR_RELATIME,
- 		.attr_clr	= MOUNT_ATTR__ATIME,
- 		.propagation	= MS_SHARED,
-@@ -729,7 +729,7 @@ TEST_F(mount_setattr, mount_has_writers)
- TEST_F(mount_setattr, mixed_mount_options)
- {
- 	unsigned int old_flags1 = 0, old_flags2 = 0, new_flags = 0, expected_flags = 0;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_clr = MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME,
- 		.attr_set = MOUNT_ATTR_RELATIME,
- 	};
-@@ -763,7 +763,7 @@ TEST_F(mount_setattr, mixed_mount_options)
- TEST_F(mount_setattr, time_changes)
- {
- 	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set	= MOUNT_ATTR_NODIRATIME | MOUNT_ATTR_NOATIME,
- 	};
- 
-@@ -967,7 +967,7 @@ TEST_F(mount_setattr, multi_threaded)
- TEST_F(mount_setattr, wrong_user_namespace)
- {
- 	int ret;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set = MOUNT_ATTR_RDONLY,
- 	};
- 
-@@ -983,7 +983,7 @@ TEST_F(mount_setattr, wrong_user_namespace)
- TEST_F(mount_setattr, wrong_mount_namespace)
- {
- 	int fd, ret;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set = MOUNT_ATTR_RDONLY,
- 	};
- 
-@@ -1074,7 +1074,7 @@ FIXTURE_TEARDOWN(mount_setattr_idmapped)
-  */
- TEST_F(mount_setattr_idmapped, invalid_fd_negative)
- {
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set	= MOUNT_ATTR_IDMAP,
- 		.userns_fd	= -EBADF,
- 	};
-@@ -1092,7 +1092,7 @@ TEST_F(mount_setattr_idmapped, invalid_fd_negative)
-  */
- TEST_F(mount_setattr_idmapped, invalid_fd_large)
- {
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set	= MOUNT_ATTR_IDMAP,
- 		.userns_fd	= INT64_MAX,
- 	};
-@@ -1111,7 +1111,7 @@ TEST_F(mount_setattr_idmapped, invalid_fd_large)
- TEST_F(mount_setattr_idmapped, invalid_fd_closed)
- {
- 	int fd;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set = MOUNT_ATTR_IDMAP,
- 	};
- 
-@@ -1134,7 +1134,7 @@ TEST_F(mount_setattr_idmapped, invalid_fd_closed)
- TEST_F(mount_setattr_idmapped, invalid_fd_initial_userns)
- {
- 	int open_tree_fd = -EBADF;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set = MOUNT_ATTR_IDMAP,
- 	};
- 
-@@ -1243,7 +1243,7 @@ static int get_userns_fd(unsigned long nsid, unsigned long hostid, unsigned long
- TEST_F(mount_setattr_idmapped, attached_mount_inside_current_mount_namespace)
- {
- 	int open_tree_fd = -EBADF;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set = MOUNT_ATTR_IDMAP,
- 	};
- 
-@@ -1273,7 +1273,7 @@ TEST_F(mount_setattr_idmapped, attached_mount_inside_current_mount_namespace)
- TEST_F(mount_setattr_idmapped, attached_mount_outside_current_mount_namespace)
- {
- 	int open_tree_fd = -EBADF;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set = MOUNT_ATTR_IDMAP,
- 	};
- 
-@@ -1303,7 +1303,7 @@ TEST_F(mount_setattr_idmapped, attached_mount_outside_current_mount_namespace)
- TEST_F(mount_setattr_idmapped, detached_mount_inside_current_mount_namespace)
- {
- 	int open_tree_fd = -EBADF;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set = MOUNT_ATTR_IDMAP,
- 	};
- 
-@@ -1333,7 +1333,7 @@ TEST_F(mount_setattr_idmapped, detached_mount_inside_current_mount_namespace)
- TEST_F(mount_setattr_idmapped, detached_mount_outside_current_mount_namespace)
- {
- 	int open_tree_fd = -EBADF;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set = MOUNT_ATTR_IDMAP,
- 	};
- 
-@@ -1365,7 +1365,7 @@ TEST_F(mount_setattr_idmapped, detached_mount_outside_current_mount_namespace)
- TEST_F(mount_setattr_idmapped, change_idmapping)
- {
- 	int open_tree_fd = -EBADF;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set = MOUNT_ATTR_IDMAP,
- 	};
- 
-@@ -1410,7 +1410,7 @@ static bool expected_uid_gid(int dfd, const char *path, int flags,
- TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
- {
- 	int open_tree_fd = -EBADF;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set = MOUNT_ATTR_IDMAP,
- 	};
- 
-@@ -1445,7 +1445,7 @@ TEST_F(mount_setattr, mount_attr_nosymfollow)
- {
- 	int fd;
- 	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
--	struct mount_attr attr = {
-+	struct __mount_attr attr = {
- 		.attr_set	= MOUNT_ATTR_NOSYMFOLLOW,
- 	};
+For device assignment via shared GPA, non-private memory slot needs to be
+allowed.
+-- 
+Isaku Yamahata <isaku.yamahata@gmail.com>
