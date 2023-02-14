@@ -2,322 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7606696EDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 22:08:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47C84696FEF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 22:40:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230145AbjBNVIL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 16:08:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58988 "EHLO
+        id S232833AbjBNVk2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 16:40:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjBNVIK (ORCPT
+        with ESMTP id S232761AbjBNVkZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 16:08:10 -0500
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C0EB22006
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 13:08:07 -0800 (PST)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230214210805euoutp020d6e4eae268b4ed1a6a0f4305b6433d1~DzP-JyK-e0075600756euoutp02e;
-        Tue, 14 Feb 2023 21:08:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230214210805euoutp020d6e4eae268b4ed1a6a0f4305b6433d1~DzP-JyK-e0075600756euoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1676408885;
-        bh=WZNUPR7cC4v6C2Z/xc3cX+nvjVjhRqTB4yIi8HI+SMM=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=SUodAQTDQ8reWDJtE+ve/Nk26Fp+rhZORCSdynZuZAVTAfCk9AE9Von9a6TPhElDy
-         M4s4+R4K+DG6ysiRaAxUlVTN1WHMvjy/Oh4BFhtfmfRGV/VUtOznVjU/2BmaCIJG54
-         0zGrf4Vu6/jXeZlfdncUi3cn2flWbykvkJ3PZYMQ=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230214210803eucas1p21749bcd4aea5a4b2d3fe31e1170b7a05~DzP9oDR8J1287012870eucas1p2O;
-        Tue, 14 Feb 2023 21:08:03 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 98.04.61197.338FBE36; Tue, 14
-        Feb 2023 21:08:03 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230214210803eucas1p1f155660ea78fed878f13a864fd49fd96~DzP9NTc-O0280202802eucas1p11;
-        Tue, 14 Feb 2023 21:08:03 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230214210803eusmtrp1e809c944aea3cfd447575c7699a992d9~DzP9MhNRq1590815908eusmtrp1h;
-        Tue, 14 Feb 2023 21:08:03 +0000 (GMT)
-X-AuditID: cbfec7f5-7dbff7000000ef0d-79-63ebf83328e1
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 1C.C4.00518.238FBE36; Tue, 14
-        Feb 2023 21:08:03 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230214210802eusmtip2f78e854adfa941ad997054add12d1853~DzP88cYLv2094220942eusmtip2j;
-        Tue, 14 Feb 2023 21:08:02 +0000 (GMT)
-Received: from localhost (106.210.248.29) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Tue, 14 Feb 2023 21:08:02 +0000
-Date:   Tue, 14 Feb 2023 22:08:00 +0100
-From:   Joel Granados <j.granados@samsung.com>
-To:     Hans Holmberg <Hans.Holmberg@wdc.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        Matias =?utf-8?B?QmrDuHJsaW5n?= <Matias.Bjorling@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "Dennis Maisenbacher" <dennis.maisenbacher@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Aravind Ramesh <Aravind.Ramesh@wdc.com>,
-        =?utf-8?Q?J=C3=B8rgen?= Hansen <Jorgen.Hansen@wdc.com>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "javier@javigon.com" <javier@javigon.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "a.manzanares@samsung.com" <a.manzanares@samsung.com>,
-        "guokuankuan@bytedance.com" <guokuankuan@bytedance.com>,
-        "viacheslav.dubeyko@bytedance.com" <viacheslav.dubeyko@bytedance.com>
-Subject: Re: [LSF/MM/BPF TOPIC]: File system data placement for zoned block
- devices
-Message-ID: <20230214210800.mfrok5hfb4hdkph2@localhost>
+        Tue, 14 Feb 2023 16:40:25 -0500
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2088.outbound.protection.outlook.com [40.107.95.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B79162B084;
+        Tue, 14 Feb 2023 13:40:22 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=W9o0W35UMAASQjz8V6b4xQqZzDVvc1K+SbNHhax0eay9c4dFnWcGf8zAmJhWaZnIcf5onGCMqdxSNvTlsj19w9Gv9pI9yQYgxHdQV+6ZXtl4j2d1newqgZELC3XQVLEF1ZdvaQzjguQbBsbjR7S+iHMzmhpYRO1awYZjo1Zd83Ye5wzJtuV7edaVcjddZKlscmDSDc0RKfS+u5A0MrWpMsGixDsUS9+ANLgzgOwkcvUkcE9AluerxR20xJ8XQFEaqwOOHFwQdAts40wbrLdL4LwFB4q53rmvxBKE3TkHLYL3DRZRfT9iQgYBOVMOadBgAPHwF+zsIa/ynTxRvE86zA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fRlrirk6FiGvA0H4GBXrfWoGA4SpAomqJEEVRU1ci0U=;
+ b=FGPh57lYMS13nR2D4zYnDBRvMp036CErpYLxu60FlYVuh3d1HRLdtfedQe5WoOhn1NIkbRk3nblcd6Me0+PcFzQJrR6AUVehCEg2LDkUmgwRtq84SK0sIcbHZsuGC6r8VvSXt8GrbjDzrPqlr2nMqz4sF8vdunwMVO6Z1YrEkLhSiUDS24Xhp2Fh1HwMdJpYimQGcHmIRSnB+SOf8WpguFsvD6tSyi10Z2MTZj88+yj4hH0HwLTn58ZcTmc83AvakEMKmXlAy4qPP1xTYLdyf7hAmaTI5tdgfjNhQGwKnrQcT/hFx2dtjScQjBbrtZ4Bkf24Ak1JSznb6e/TSZmD4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fRlrirk6FiGvA0H4GBXrfWoGA4SpAomqJEEVRU1ci0U=;
+ b=YGN2foYQxih6mvfriAK498/LPLm1gFBLIGNDoBL8QvKNQMDahMdQDx3CQebVM+fROIKiGi+pefchidie8tAya9ahK1wLkdFh8JvJELUJK2M4+h6YqyD7SqD7WbCzyQbe6Q0BcC+4js9a2OCS5zOCprXS+OjHxzYCMWqiF0uYyS+hJ0PQoDWaR7dJnYv2rLqDBJHtpCDNppJi3QOxGKmLHptOsNrDobi/nWIp4ctemVjliFnRXqGS/Kt0VGJFfRgdkqUDBSkzX/Tv1ZZZsdh5LYy6uIVtKg7HCy7ejxSYMAuz2B9gf3gx9BplxpZm9nr3DEhYdPdRWKMbssXGDZIRKg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
+ by BL1PR12MB5825.namprd12.prod.outlook.com (2603:10b6:208:394::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.24; Tue, 14 Feb
+ 2023 21:40:19 +0000
+Received: from BY5PR12MB4130.namprd12.prod.outlook.com
+ ([fe80::3b11:5acd:837b:c4c7]) by BY5PR12MB4130.namprd12.prod.outlook.com
+ ([fe80::3b11:5acd:837b:c4c7%9]) with mapi id 15.20.6086.024; Tue, 14 Feb 2023
+ 21:40:19 +0000
+Message-ID: <406c3480-ab59-5263-b7bf-d47df0f6267c@nvidia.com>
+Date:   Tue, 14 Feb 2023 13:40:17 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 1/5] mm: Do not reclaim private data from pinned page
+Content-Language: en-US
+To:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-mm@kvack.org, David Howells <dhowells@redhat.com>,
+        David Hildenbrand <david@redhat.com>
+References: <20230209121046.25360-1-jack@suse.cz>
+ <20230209123206.3548-1-jack@suse.cz> <Y+Ucq8A+WMT0ZUnd@casper.infradead.org>
+ <20230210112954.3yzlyi4hjgci36yn@quack3> <Y+oI+AYsADUZsB7m@infradead.org>
+ <20230214130629.hcnvwpgqzhc3ulgg@quack3>
+From:   John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20230214130629.hcnvwpgqzhc3ulgg@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0157.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c7::12) To BY5PR12MB4130.namprd12.prod.outlook.com
+ (2603:10b6:a03:20b::16)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="4hcy2rlkcc7q46sf"
-Content-Disposition: inline
-In-Reply-To: <20230206134148.GD6704@gsv>
-X-Originating-IP: [106.210.248.29]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZduzneV3jH6+TDfYtULSYefkHo0Vr+zcm
-        iwVHnzJbNN5vZLKY8OYou8XK1UeZLJ6sn8Vs0Xn6ApPF3657TBZ9Ex4zW/x5aGixZ+9JFosJ
-        bV+ZLW5MeMpoMfH4ZlaLjg1vGB0EPP6dWMPm0bzgDovHplWdbB67bzaweUzYvJHV4/MmOY/2
-        A91MAexRXDYpqTmZZalF+nYJXBk9uy+wFRy2rji3xaSB8bVhFyMnh4SAiUTHor1sXYxcHEIC
-        Kxglnq5pZYFwvjBK9M3+xwjhfGaUePLtORtMy5vvLUwQieWMEjNe9bLCVW0+2c4O4WxhlFi5
-        7zwjSAuLgKrE0e2vwNrZBHQkzr+5wwxiiwhoSsxeuBRsB7PACjaJ68t/sIMkhAVCJR4+/cAE
-        YvMKmEtcn3iPEcIWlDg58wkLiM0sUCGx8PRLoEEcQLa0xPJ/HCBhTgENiYkdXYwQpypJHL09
-        mwnCrpU4teUW2NkSAs84JbZ9mw+VcJGY8uAEC4QtLPHq+BZ2CFtG4vTkHqh4tsTOKbuYIewC
-        iVknp7KB7JUQsJboO5MDEXaUmPf8KQtEmE/ixltBiCv5JCZtm84MEeaV6GgTgqhWk9jRtJVx
-        AqPyLCR/zULy1yyEvyDCOhILdn9iwxDWlli28DUzhG0rsW7de5YFjOyrGMVTS4tz01OLjfNS
-        y/WKE3OLS/PS9ZLzczcxApPm6X/Hv+5gXPHqo94hRiYOxkOMKkDNjzasvsAoxZKXn5eqJMIr
-        /PRFshBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFebduTyUIC6YklqdmpqQWpRTBZJg5OqQamlUd2
-        rf0lGlUQErl2WeeB0ydLJ+y47KX0Pb9G69OB9sflG473zH8u9ct8HnP4lbcdrFcsOcV7jKdt
-        8tnuy2E9r/ao1nvvnbZcjy5/3Go3ma17+pqjvxcv7g2f/PL1rjZ91ukHxEoCa5TufTVJy561
-        duqzODbPdzNS/jNtYJKSmP259faHp6K8n9zU5oTf/+T1ujI9XOihRmHcHtOzzD+ib65Jiez4
-        vOFn3e+Xps0fbfIm/y47Z7B36ReX9S9nXnaVZk/w75gr85O1OffpO6PA07fieBa8Uo5LvvJL
-        VqNrj9fNZYosbVeF1avX/DVr3PrglaXeA/4w+f8fC7wvv/X9cqwoZN2O++pfchKYT1p571Vi
-        Kc5INNRiLipOBAD9aW4CFQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsVy+t/xe7rGP14nG+x/z2gx8/IPRovW9m9M
-        FguOPmW2aLzfyGQx4c1RdouVq48yWTxZP4vZovP0BSaLv133mCz6Jjxmtvjz0NBiz96TLBYT
-        2r4yW9yY8JTRYuLxzawWHRveMDoIePw7sYbNo3nBHRaPTas62Tx232xg85iweSOrx+dNch7t
-        B7qZAtij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S
-        9DLm9fQyFxy0rni7tpWxgfGlYRcjJ4eEgInEm+8tTF2MXBxCAksZJXb09zFCJGQkPl35yA5h
-        C0v8udbFBlH0kVHi7ZJDUM4WRonHmxexgFSxCKhKHN3+ig3EZhPQkTj/5g4ziC0ioCkxe+FS
-        RpAGZoEVbBLXl/8AGyssECrx8OkHJhCbV8Bc4vrEe2CrhQSqJc7famGGiAtKnJz5BGwBs0CZ
-        xJTt24HqOYBsaYnl/zhAwpwCGhITO7qgrlaSOHp7NhOEXSvx+e8zxgmMwrOQTJqFZNIshEkQ
-        YS2JG/9eYgprSyxb+JoZwraVWLfuPcsCRvZVjCKppcW56bnFRnrFibnFpXnpesn5uZsYgelj
-        27GfW3Ywrnz1Ue8QIxMH4yFGFaDORxtWX2CUYsnLz0tVEuEVfvoiWYg3JbGyKrUoP76oNCe1
-        +BCjKTAUJzJLiSbnAxNbXkm8oZmBqaGJmaWBqaWZsZI4r2dBR6KQQHpiSWp2ampBahFMHxMH
-        p1QDE4dy9ZObQYVrTeWKeL/Ntq2U+1kncvP9MTlfKR6NSR9UWmI17k76yNOxu/VS4qy0UzGd
-        q3JvRi02V7Y79Tt/o/9ZD43MuUk7dwuYfG4815iSJiW10UA78Yyga+1Fl8dSjSYPjlxJPKV9
-        Olq4g0n7VsaavbFz9h79ZLHMxW3KnpxoQfZr8xqfzuIKDP//t0OA47+10d9DJ42kGnqYt3bs
-        3NfBz5S65cb1qwtvTP627GG0S3zBYWuni+0XJC/7X9iarvszXO7rI22HI3mpV5kuBSb9/PXj
-        hIO94refWYxFLyyfC5oIT1gmv+6oi9LkkOqMKvEHdczFp07VN5YFCMpbHTggcOX3E/6qD1eS
-        Ta+0K7EUZyQaajEXFScCADN7hZm0AwAA
-X-CMS-MailID: 20230214210803eucas1p1f155660ea78fed878f13a864fd49fd96
-X-Msg-Generator: CA
-X-RootMTR: 20230206134200eucas1p16e5dc58fa12f678352735fc4b401dd75
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230206134200eucas1p16e5dc58fa12f678352735fc4b401dd75
-References: <CGME20230206134200eucas1p16e5dc58fa12f678352735fc4b401dd75@eucas1p1.samsung.com>
-        <20230206134148.GD6704@gsv>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4130:EE_|BL1PR12MB5825:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4f3fbb9-eb74-4480-ce3e-08db0ed4117a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DLI351cMkxDB0nk7K+6KLBcJv1WhW26hXGoMa37rtiJelgi8uqz+Vob+26pbB9qLpe0mUPGpbGWPbh/jAxmbCPBts8He7kI5viXPdCsHwYupSbcSc5oY8xTB8HUISqm3HSscmt4gfT8Nyb4ITfSP1D4IVT6M0DxX7PyJJD2mSvEzgGV+XkyA3z0Vh/lrQ1gFwm/TJ4nlBJeCjWwqc0waBTS7tJUxwp20wZKTACtcrfiXTWtc/PLzOFrf6aO6lULoA+uHZibMmqvi14v5mcd3T3ltvfzn6nHIOB5FLMdvduI4FvWCHPiycm6IxeW0z0UQag5pJkZXMBIQeDSfVttjjezw7lHxisZztKisutg95ChTjTVF8dMiPAtuBY4WVueZs13draXFhYCi2RxtVvCABIAlwryrSFVbC2FW03uXcebmd645E/m8iq8chkMG88GJpY9dpZoayk9h0YUXOr9vyotdJgxHvp/REkBPoEbn0qsP2jnhMbZjx0NioDCDJl8SPfP/jCAAfUHAceqQYE6b9jG+SHjMsv/24uC9dDsoUMdJ2n9ok6EIiPL8FL1e/vxzaOTi1mcwcEQ1uU2fP+Mr6r9UAm/MNW/Ineh70KTk5Q2+sl++bJ8Wf1OsvtBI2a5zctP4NKm8DZzvLgkHaQdHhQkTVYOGjl5uNiKL9kjJxz01+YgHNA9BddSPPnH7/wFrMTpJLQW/NnAv5cGCkHnLd0ofJLqasv9YkPNjnrJrIeU=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(346002)(376002)(396003)(366004)(136003)(39860400002)(451199018)(26005)(31686004)(6512007)(186003)(2616005)(316002)(6486002)(478600001)(8676002)(4326008)(66556008)(66476007)(66946007)(6506007)(54906003)(110136005)(53546011)(41300700001)(5660300002)(38100700002)(2906002)(8936002)(86362001)(36756003)(31696002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QjFsdGxhbXA3UWh1dXNycDZOak5XQVBreHpjY3NhSWtZdHJ3RTgraG5ta3Nq?=
+ =?utf-8?B?a20wV0FwcDZ2dm5Kc0trNCtBRVVROUVrUEREM3k4bTZ1T09TeDZpY1E3Yy9n?=
+ =?utf-8?B?bjBIOGRWcGlUL3BhckFTQ3lGK0tGaFAzd3NrSUhLNVJUZzV2cXgrb1BKQ21w?=
+ =?utf-8?B?dWZ2QzJRa21mS0laR1pvUjUxU2RpUWVwcFRKaEI4cDAwN283K29EM0htV3J6?=
+ =?utf-8?B?MkVIVitGRVRzVkhHckw4Q04raDJySEFjVkxQSldMdUE0RHVWenFCdkJCc2FO?=
+ =?utf-8?B?U2lIaGE2ZHRyTzRlTm1DS1loSUVKV1gwSlM4bVppUU9DMU4yR0gxRVAyZys1?=
+ =?utf-8?B?d1JvTVFKMFJJV2I4azFUclBvRTVJQUNob2FyeXhYRjRNRnF0a1JvRTRUdDc1?=
+ =?utf-8?B?ZlA5UDNMd0xuTlVET3c2UGowZHdBd0dIZmdFaXNRZUVvMmVSR2IzWDNZZmFu?=
+ =?utf-8?B?ZUY0bHlIN2srM2RSdGdMdS8vSnJQZU50UStHTzNlazNYakFrUzd0VUNJYW5t?=
+ =?utf-8?B?S1dONEVpcG9WRUtMcHdkNkpMOWtoMlBiQ1BQK3BGa1BaMWlVeGJTMk5paUE3?=
+ =?utf-8?B?RDlwYjFDTEEvUlAyVGpLM1gveGZpOThmUUhjYnhvbWJVZjJ6cm1jWFF5OGt4?=
+ =?utf-8?B?Z0t6Tzh5NFE4QldaL241djNta1haUFhDR2ZYYjZFRnpIN082Nlo5SmEvTXh2?=
+ =?utf-8?B?NXpmdHBkemFzVDdlT1BNbTVOQkIzdmt0UU1wMzdIKzhqNlQzZm4zcDkvY2pi?=
+ =?utf-8?B?dWNXRE5iZVphRDdYTUx5emlRSnQ3TGdpQmJ3Q0E5ZzByN0NGU1JTNjFxM2Q0?=
+ =?utf-8?B?RXdMZzZJU2tYOGFBc25tdFg1Y0lUZk15M1NvZHR3N2ZJTWN5bjZ3RGN3YlV2?=
+ =?utf-8?B?NkFHYkk0bk5CWFpQMy9OQU1jajNOV052Ry90NHZMR2prdFptT2ZHajlRZHlR?=
+ =?utf-8?B?NU1QTWZKcVB6cHNlOFRySkg4WHl3OXIxMi9zbU1SV3pQbmx4YzRDY0lIS0Zn?=
+ =?utf-8?B?cXVWL2pOb0RQdkgzUVUvRGFNY3Q3MzhVakZubHBtTE5SVkhPOFNnYklNRnFM?=
+ =?utf-8?B?UXk3V2hJWkl1ek9iUVFkbmJGS1hTeFdMZC9GSXNNZGRTT2FIU2RGdEtpaE8v?=
+ =?utf-8?B?Znk5eFMvY2owbitoak10M3MyQ0dDMGFlYnQvY2FWb2luTXZsSjdVRXJtZXZS?=
+ =?utf-8?B?aFNMV1VoQVQ3YkhST0JkeXN6NXlFTFNadHA0M1lUQk9lQ0JGckozakpiZ3lx?=
+ =?utf-8?B?SEpVazRnRUVRVHdvMjR6bU5nZ3hXb1pHY1N0L0JEVy9FSUdkNSttTndZOVBM?=
+ =?utf-8?B?aTZYUG85TDI3dTdRQnpKb1dSZStWQ1p0a1MrdmhXSzZUZm1GbWpkYkRpZndJ?=
+ =?utf-8?B?TnV6Y1VZcFo1bnZManJkN3grRWcreDErcks0OW04SVRjdzY4QVBJcjk2NWww?=
+ =?utf-8?B?UlFsOXJjYjhZcUd4eVN2WkFjTXNLaXdLSENlVCtSVGNiRXM3eHY1QVVTT2h0?=
+ =?utf-8?B?ZkxHdVZaZzlJWXRDc0I4VGxBaDR5d0JaK1pLWGRTRnlOOVlzcE9XUVlURmdT?=
+ =?utf-8?B?ZndlK01BamZDaGpMeXI3eHVXNzJBOFZ5NEFhNGlDSFZGMEUzajdXUlVzTlQ3?=
+ =?utf-8?B?cUkrT0tNUEF1VVBlT2VPalpUd0RVS3cyT05wNlpkQUhKNlBSZjlWajRPTlZS?=
+ =?utf-8?B?WWxjbXduRGlLK3I4Qk9yeU1wVU1BK1poTm1PeXBNUm81SnRIeHpFZkNVZXhz?=
+ =?utf-8?B?SWRXMDV3ZWYvb0pOQlpacm52dytZUEVVaFQxbUZ3VjBQU2lRU0ZkSXF0V3hy?=
+ =?utf-8?B?RndUZm5XOGc2bUlsZ0lSRUdITWtxaFQzVmFodTByZlVmR000ck5nMS9qS1Zj?=
+ =?utf-8?B?VzQxN3RpRit1Q2pNa0x2WUVQcGQzTkZPVFdOb24rWlUyRFByYkwvUG4vbFBC?=
+ =?utf-8?B?SFp2Nm5maTlBN214NzViR0pJZldlZ0tOdFg2Rk1KenRwdlZ2Sk13YXlIM3g3?=
+ =?utf-8?B?NUhkbGxHN3lGZVBpdDJMR2VaeFVQQUJOWnFHY2twRjI1dlBKcTdnY0E1Z3pW?=
+ =?utf-8?B?VWhpMmR1Wno3VjNDcGh5MUpYUVpZamc1Y05vMkdQb3VVMXlRS29mamNUMnEz?=
+ =?utf-8?B?b0E2dFF4YmxUb0JDTTh4NktTWFdoYzVsRVlNdlRJRUlhdEV4MHM4VjAvOEJp?=
+ =?utf-8?B?Z1E9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4f3fbb9-eb74-4480-ce3e-08db0ed4117a
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2023 21:40:19.3735
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6vKUAXa3uxtH4ZxzaZXlLOLoVkKAJ+M4JmAmhxQwHLt6rgmPDBnMF3Gm2JnB6++HT6N+GeisD+TGgE/hYL1RmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5825
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
+        SPF_NONE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---4hcy2rlkcc7q46sf
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2/14/23 05:06, Jan Kara wrote:
+> On Mon 13-02-23 01:55:04, Christoph Hellwig wrote:
+>> I think we need to distinguish between short- and long terms pins.
+>> For short term pins like direct I/O it doesn't make sense to take them
+>> off the lru, or to do any other special action.  Writeback will simplify
+>> have to wait for the short term pin.
+>>
+>> Long-term pins absolutely would make sense to be taken off the LRU list.
+> 
+> Yeah, I agree distinguishing these two would be nice as we could treat them
+> differently then. The trouble is a bit with always-crowded struct page. But
+> now it occurred to me that if we are going to take these long-term pinned
+> pages out from the LRU, we could overload the space for LRU pointers with
+> the counter (which is what I think John originally did). So yes, possibly
+> we could track separately long-term and short-term pins. John, what do you
+> think? Maybe time to revive your patches from 2018 in a bit different form?
+> ;)
+> 
 
-On Mon, Feb 06, 2023 at 01:41:49PM +0000, Hans Holmberg wrote:
-> Write amplification induced by garbage collection negatively impacts
-> both the performance and the life time for storage devices.
->=20
-> With zoned storage now standardized for SMR hard drives
-> and flash(both NVME and UFS) we have an interface that allows
-> us to reduce this overhead by adapting file systems to do
-> better data placement.
-I'm also very interested in discussions related to data placements. I am
-interested in this discussion.
+Oh wow, I really love this idea. We kept running into problems because
+long- and short-term pins were mixed up together (except during
+creation), and this, at long last, separates them. Very nice. I'd almost
+forgotten about the 2018 page.lru adventures, too. ha :)
 
->=20
-> Background
-> ----------
->=20
-> Zoned block devices enables the host to reduce the cost of
-> reclaim/garbage collection/cleaning by exposing the media erase
-> units as zones.
->=20
-> By filling up zones with data from files that will
-> have roughly the same life span, garbage collection I/O
-> can be minimized, reducing write amplification.
-> Less disk I/O per user write.
->=20
-> Reduced amounts of garbage collection I/O improves
-> user max read and write throughput and tail latencies, see [1].
->=20
-> Migrating out still-valid data to erase and reclaim unused
-> capacity in e.g. NAND blocks has a significant performance
-> cost. Unnecessarily moving data around also means that there
-> will be more erase cycles per user write, reducing the life
-> time of the media.
->=20
-> Current state
-> -------------
->=20
-> To enable the performance benefits of zoned block devices
-> a file system needs to:
->=20
-> 1) Comply with the write restrictions associated to the
-> zoned device model.=20
->=20
-> 2) Make active choices when allocating file data into zones
-> to minimize GC.
->=20
-> Out of the upstream file systems, btrfs and f2fs supports
-> the zoned block device model. F2fs supports active data placement
-> by separating cold from hot data which helps in reducing gc,
-> but there is room for improvement.
->=20
->=20
-> There is still work to be done
-> ------------------------------
->=20
-> I've spent a fair amount of time benchmarking btrfs and f2fs
-> on top of zoned block devices along with xfs, ext4 and other
-> file systems using the conventional block interface
-> and at least for modern applicationsm, doing log-structured
-> flash-friendly writes, much can be improved.=20
->=20
-> A good example of a flash-friendly workload is RocksDB [6]
-> which both does append-only writes and has a good prediction model
-> for the life time of its files (due to its lsm-tree based data structures)
->=20
-> For RocksDB workloads, the cost of garbage collection can be reduced
-> by 3x if near-optimal data placement is done (at 80% capacity usage).
-> This is based on comparing ZenFS[2], a zoned storage file system plugin
-> for RocksDB, with f2fs, xfs, ext4 and btrfs.
->=20
-> I see no good reason why linux kernel file systems (at least f2fs & btrfs)
-> could not play as nice with these workload as ZenFS does, by just allocat=
-ing
-> file data blocks in a better way.
->=20
-> In addition to ZenFS we also have flex-alloc [5].
-> There are probably more data placement schemes for zoned storage out ther=
-e.
->=20
-> I think wee need to implement a scheme that is general-purpose enough
-> for in-kernel file systems to cover a wide range of use cases and workloa=
-ds.
->=20
-> I brought this up at LPC last year[4], but we did not have much time
-> for discussions.
->=20
-> What is missing
-> ---------------
->=20
-> Data needs to be allocated to zones in a way that minimizes the need for
-> reclaim. Best-effort placement decision making could be implemented to pl=
-ace
-> files of similar life times into the same zones.
->=20
-> To do this, file systems would have to utilize some sort of hint to
-> separate data into different life-time-buckets and map those to
-> different zones.
->=20
-> There is a user ABI for hints available - the write-life-time hint interf=
-ace
-> that was introduced for streams [3]. F2FS is the only user of this curren=
-tly.
->=20
-> BTRFS and other file systems with zoned support could make use of it too,
-> but it is limited to four, relative, life time values which I'm afraid wo=
-uld be too limiting when multiple users share a disk.
->=20
-> Maybe the life time hints could be combined with process id to separate
-> different workloads better, maybe we need something else. F2FS supports
-> cold/hot data separation based on file extension, which is another soluti=
-on.
->=20
-> This is the first thing I'd like to discuss.
->=20
-> The second thing I'd like to discuss is testing and benchmarking, which
-> is probably even more important and something that should be put into
-> place first.
->=20
-> Testing/benchmarking
-> --------------------
->=20
-> I think any improvements must be measurable, preferably without having to
-> run live production application workloads.
->=20
-> Benchmarking and testing is generally hard to get right, and particularil=
-y hard
-> when it comes to testing and benchmarking reclaim/garbage collection,
-> so it would make sense to share the effort.
->=20
-> We should be able to use fio to model a bunch of application workloads
-> that would benefit from data placement (lsm-tree based key-value database
-> stores (e.g rocksdb, terarkdb), stream processing apps like Apache kafka)=
-) ..=20
->=20
-> Once we have a set of benchmarks that we collectively care about, I think=
- we
-> can work towards generic data placement methods with some level of
-> confidence that it will actually work in practice.
->=20
-> Creating a repository with a bunch of reclaim/gc stress tests and benchma=
-rks
-> would be beneficial not only for kernel file systems but also for user-sp=
-ace
-> and distributed file systems such as ceph.
->=20
-> Thanks,
-> Hans
->=20
-> [1] https://www.usenix.org/system/files/atc21-bjorling.pdf
-> [2] https://protect2.fireeye.com/v1/url?k=3Ddce9fbc5-8372c2a0-dce8708a-00=
-0babff32e3-302a3cb629dc78ae&q=3D1&e=3D3a8688d2-8cbb-40fb-9107-11a07c4e64ea&=
-u=3Dhttps%3A%2F%2Fgithub.com%2Fwesterndigitalcorporation%2Fzenfs
-> [3] https://lwn.net/Articles/726477/
-> [4] https://protect2.fireeye.com/v1/url?k=3D911c6738-ce875e5d-911dec77-00=
-0babff32e3-7bd289693aa18731&q=3D1&e=3D3a8688d2-8cbb-40fb-9107-11a07c4e64ea&=
-u=3Dhttps%3A%2F%2Flpc.events%2Fevent%2F16%2Fcontributions%2F1231%2F
-> [5] https://protect2.fireeye.com/v1/url?k=3De4102d1c-bb8b1479-e411a653-00=
-0babff32e3-d07ddeaede7547d7&q=3D1&e=3D3a8688d2-8cbb-40fb-9107-11a07c4e64ea&=
-u=3Dhttps%3A%2F%2Fgithub.com%2FOpenMPDK%2FFlexAlloc
-> [6] https://protect2.fireeye.com/v1/url?k=3D1f7befc6-40e0d6a3-1f7a6489-00=
-0babff32e3-a7f3b118578d6c39&q=3D1&e=3D3a8688d2-8cbb-40fb-9107-11a07c4e64ea&=
-u=3Dhttps%3A%2F%2Fgithub.com%2Ffacebook%2Frocksdb
+One objection might be that pinning is now going to be taking a lot of
+space in struct page / folio, but I think it's warranted, based on the
+long-standing, difficult problems that it would solve.
 
---4hcy2rlkcc7q46sf
-Content-Type: application/pgp-signature; name="signature.asc"
+We could even leave most of these patches, and David Howells' patches,
+intact, by using an approach similar to the mm_users and mm_count
+technique: maintain a long-term pin count in one of the folio->lru
+fields, and any non-zero count there creates a single count in
+folio->_pincount.
 
------BEGIN PGP SIGNATURE-----
+I could put together something to do that.
 
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmPr+DAACgkQupfNUreW
-QU/WCwv9GfvyzUxZUICqfDStntYoEi++p6xOMeoqKgmAB+V9E3FWJWFMucMjbnEa
-naDdbiFrPWzDB7cHNyXYmuAB41A2sEzHeyKprO2bQ2JBXIAI5wt35BGgOIaP7l7Y
-sIJAGbMS7enszPFszo7LDbit1fsO/TjvrItXfpFSG+3Ll9+BI6+Y97izeupWRu02
-d1AZnKsdi9bsBJQso/Qehi9WjClSERa4tLMasfj5ZYJokWrnspppM3DoRo60xO3O
-aygOi3P2yP0g+XtOfEClBRF+aoLNj1Zoac2HTvWekOC3+rWN3kXkuNC/PTnVzZ3n
-HWDXtuMbJI7vk1tqDdyKkiYVcMDinAwY2ANcQ4xb/j1VHA8TwnVdlhmtuPP96Ky4
-s0xb4X2aRhRbvQAhIjwtN56uBVKoQoUCp0PBHhixANb5v/QEI+XjeNJZ9cf/rhR+
-k/vLMfBXoODaWOjBNPGEVeZb2CgO0o4D0zHdxgPWjuwQU6pTsXyXhZ3NIEi11Ulx
-FTn6V1bk
-=OGA7
------END PGP SIGNATURE-----
 
---4hcy2rlkcc7q46sf--
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
