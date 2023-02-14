@@ -2,102 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8D4969550F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 00:53:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA348695598
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 01:53:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231277AbjBMXxw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Feb 2023 18:53:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59792 "EHLO
+        id S229863AbjBNAxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Feb 2023 19:53:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjBMXxv (ORCPT
+        with ESMTP id S229485AbjBNAxU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Feb 2023 18:53:51 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCCB01A5;
-        Mon, 13 Feb 2023 15:53:46 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id e17so6429579plg.12;
-        Mon, 13 Feb 2023 15:53:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oN12p0IDxvmorHBGQ7GzjlWOyGaJlkT0wNKpNtRNPE8=;
-        b=C91FV0IHIHySQTRkb86+GocwXDr8WlYgQiYnUNZd1Ke1PWzwc0Ui3swRKoM/EMugmd
-         mtDyIYfBfzKVpqk3ZurWfE4C06NJuP7sWx9xClULK72fPaRyTgD475XUP5w0R0lmJSxg
-         fqPMDhOQ1CLyvdP8vm+bEyoR42WnbkStnrKpQAmZxWuxcmJUuRvcyRi1Rk+aqkGEy+qK
-         F0pLZENP3TbitJijIx7cS7NuofTEJwgwDOkN5GYMW48d2+LHtiHhs30rOQ3tZSv01O8e
-         FB7gFZ7JbhxL0Pno8NSgZttpMsmCG6pRRBkbmMYW6rJKC8Z6IMP2dpIC+LDTcFZNOFFC
-         kxfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oN12p0IDxvmorHBGQ7GzjlWOyGaJlkT0wNKpNtRNPE8=;
-        b=xqNZuHMNxgT99rZWQQNnw8wpOg3qzosHQmhZyYVbFtaloz/QbEWRZQyZOt/2ErBMOz
-         8t3kfPaDYJUdJ37k7GsB3xZs8f+eDrNHSM8Gv/YCTpK3WTMNZgncvKZ6rDm7W0q/IejL
-         BOSbGmo0Fh5DE4zAy+4eX5xdxrH6AYACL6+xRsXSXaiimR4EP5zS0j6c/K6Iwg2ChBLg
-         qrri3JdwhGCVRqc12fFVIguPSnyle0fENkqkDSu9yG5tUunx9JE0RGiw1rdWHUizYJHA
-         LtdG0Itct4B8WC97y5w/d7X55xveuFUsCk3o173VB3Nw33n/RL+++mGn+XNuw55gFOm6
-         YcCQ==
-X-Gm-Message-State: AO0yUKVAPg73vouIYrCh0i7evYzmSJbBHtaXlCzgo8wRh07CMSl3SbM2
-        /P1rocIvc9ugnjVxXzMxRIU=
-X-Google-Smtp-Source: AK7set/amp4VFmNZkQNRNmMa3hykvI7jc+MqhCv8WD2YyR0i7BGfBFGLnLeucu0LFmUtyzTRowTMiQ==
-X-Received: by 2002:a05:6a20:12c7:b0:c3:161a:b954 with SMTP id v7-20020a056a2012c700b000c3161ab954mr391641pzg.44.1676332425999;
-        Mon, 13 Feb 2023 15:53:45 -0800 (PST)
-Received: from localhost ([192.55.54.55])
-        by smtp.gmail.com with ESMTPSA id z20-20020aa791d4000000b0058e08796e98sm8406145pfa.196.2023.02.13.15.53.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Feb 2023 15:53:45 -0800 (PST)
-Date:   Mon, 13 Feb 2023 15:53:43 -0800
-From:   Isaku Yamahata <isaku.yamahata@gmail.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Isaku Yamahata <isaku.yamahata@gmail.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v10 2/9] KVM: Introduce per-page memory attributes
-Message-ID: <20230213235343.GC4175971@ls.amr.corp.intel.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-3-chao.p.peng@linux.intel.com>
- <20230209072529.GB4175971@ls.amr.corp.intel.com>
- <Y+WRUriIoan/XChx@google.com>
+        Mon, 13 Feb 2023 19:53:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DBEAC163
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 16:52:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676335958;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=C7fWPKUxf/ySZogJmPF+FERbCegk6jr7LEHTCcC3FMQ=;
+        b=Tr4MhIC2pzRCoJmHvzefQktIhdCymnfce2+bbdWGB/yBUW+2GEF/KuW4QHUw5dOGMeMZhz
+        +kdNvWJ9QeVh5wk22y8rotDTxrncv9mcX2WNXEttZcgl415x3OBw7eglF3+TcMqZUo0QCN
+        DTRFZLIoRbsymeWbOc+PQh/uCeaP3GA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-138-4RYuPyS3PZCEszgvkpSmIA-1; Mon, 13 Feb 2023 19:52:37 -0500
+X-MC-Unique: 4RYuPyS3PZCEszgvkpSmIA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D065080006E;
+        Tue, 14 Feb 2023 00:52:36 +0000 (UTC)
+Received: from T590 (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3A49418EC7;
+        Tue, 14 Feb 2023 00:52:28 +0000 (UTC)
+Date:   Tue, 14 Feb 2023 08:52:23 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
+        ming.lei@redhat.com
+Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
+ pages in kernel
+Message-ID: <Y+rbR48vvhHDJlUF@T590>
+References: <20230210153212.733006-1-ming.lei@redhat.com>
+ <20230210153212.733006-2-ming.lei@redhat.com>
+ <Y+e3b+Myg/30hlYk@T590>
+ <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
+ <Y+hDQ1vL6AMFri1E@T590>
+ <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y+WRUriIoan/XChx@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+In-Reply-To: <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -105,58 +74,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 10, 2023 at 12:35:30AM +0000,
-Sean Christopherson <seanjc@google.com> wrote:
-
-> On Wed, Feb 08, 2023, Isaku Yamahata wrote:
-> > On Fri, Dec 02, 2022 at 02:13:40PM +0800,
-> > Chao Peng <chao.p.peng@linux.intel.com> wrote:
-> > 
-> > > +static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
-> > > +					   struct kvm_memory_attributes *attrs)
-> > > +{
-> > > +	gfn_t start, end;
-> > > +	unsigned long i;
-> > > +	void *entry;
-> > > +	u64 supported_attrs = kvm_supported_mem_attributes(kvm);
-> > > +
-> > > +	/* flags is currently not used. */
-> > > +	if (attrs->flags)
-> > > +		return -EINVAL;
-> > > +	if (attrs->attributes & ~supported_attrs)
-> > > +		return -EINVAL;
-> > > +	if (attrs->size == 0 || attrs->address + attrs->size < attrs->address)
-> > > +		return -EINVAL;
-> > > +	if (!PAGE_ALIGNED(attrs->address) || !PAGE_ALIGNED(attrs->size))
-> > > +		return -EINVAL;
-> > > +
-> > > +	start = attrs->address >> PAGE_SHIFT;
-> > > +	end = (attrs->address + attrs->size - 1 + PAGE_SIZE) >> PAGE_SHIFT;
-> > > +
-> > > +	entry = attrs->attributes ? xa_mk_value(attrs->attributes) : NULL;
-> > > +
-> > > +	mutex_lock(&kvm->lock);
-> > > +	for (i = start; i < end; i++)
-> > > +		if (xa_err(xa_store(&kvm->mem_attr_array, i, entry,
-> > > +				    GFP_KERNEL_ACCOUNT)))
-> > > +			break;
-> > > +	mutex_unlock(&kvm->lock);
-> > > +
-> > > +	attrs->address = i << PAGE_SHIFT;
-> > > +	attrs->size = (end - i) << PAGE_SHIFT;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +#endif /* CONFIG_HAVE_KVM_MEMORY_ATTRIBUTES */
-> > > +
-> > 
-> > If memslot isn't private, it should return error if private attribute is set.
+On Mon, Feb 13, 2023 at 12:04:27PM -0800, Linus Torvalds wrote:
+> On Sat, Feb 11, 2023 at 5:39 PM Ming Lei <ming.lei@redhat.com> wrote:
+> >
+> > >
+> > >  (a) what's the point of MAY_READ? A non-readable page sounds insane
+> > > and wrong. All sinks expect to be able to read.
+> >
+> > For example, it is one page which needs sink end to fill data, so
+> > we needn't to zero it in source end every time, just for avoiding
+> > leak kernel data if (unexpected)sink end simply tried to read from
+> > the spliced page instead of writing data to page.
 > 
-> Why?  I'd rather keep the two things separate.  If we enforce this sort of thing
-> at KVM_SET_MEMORY_ATTRIBUTES, then we also have to enforce it at
-> KVM_SET_USER_MEMORY_REGION.
+> I still don't understand.
+> 
+> A sink *reads* the data. It doesn't write the data.
+> 
+> There's no point trying to deal with "if unexpectedly doing crazy
+> things". If a sink writes the data, the sinkm is so unbelievably buggy
+> that it's not even funny.
+> 
+> And having two flags that you then say "have to be used together" is pointless.
 
-For device assignment via shared GPA, non-private memory slot needs to be
-allowed.
--- 
-Isaku Yamahata <isaku.yamahata@gmail.com>
+Actually I think it is fine to use the pipe buffer flags separately,
+if MAY_READ/MAY_WRITE is set in source end, the sink side need to respect
+it. All current in-tree source end actually implies both MAY_READ & MAY_WRITE.
+
+> It's not two different flags if you can't use them separately!
+> 
+> So I think your explanations are anything *but* explaining what you
+> want. They are just strange and not sensible.
+> 
+> Please explain to me in small words and simple sentences what it is
+> you want. And no, if the explanation is "the sink wants to write to
+> the buffer", then that's not an explanation, it's just insanity.
+> 
+> We *used* to have the concept of "gifting" the buffer explicitly to
+> the sink, so that the sink could - instead of reading from it - decide
+> to just use the whole buffer as-is long term. The idea was that tthe
+> buffer woudl literally be moved from the source to the destination,
+> ownership and all.
+> 
+> But if that's what you want, then it's not about "sink writes". It's
+> literally about the splice() wanting to move not just the data, but
+> the whole ownership of the buffer.
+
+Yeah, it is actually transferring the buffer ownership, and looks
+SPLICE_F_GIFT is exactly the case, but the driver side needs to set
+QUEUE_FLAG_STABLE_WRITES for avoiding writeback to touch these pages.
+
+Follows the idea:
+
+file(devices(such as, fuse, ublk), produce pipe buffer) -> direct pipe -> file(consume the pipe buffer)
+
+The 'consume' could be READ or WRITE.
+
+So once SPLICE_F_GIFT is set from source side, the two buffer flags
+aren't needed any more, right?
+
+Please see the detailed explanation & use case in following link:
+
+https://lore.kernel.org/linux-block/409656a0-7db5-d87c-3bb2-c05ff7af89af@kernel.dk/T/#m237e5973571b3d85df9fa519cf2c9762440009ba
+
+
+
+Thanks,
+Ming
+
