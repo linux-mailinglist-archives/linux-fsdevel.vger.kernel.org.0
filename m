@@ -2,272 +2,305 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E8A96958B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 06:51:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 984E1695B80
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 08:57:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231476AbjBNFve (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 00:51:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35634 "EHLO
+        id S231579AbjBNH5u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 02:57:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230370AbjBNFvX (ORCPT
+        with ESMTP id S231575AbjBNH5f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 00:51:23 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78B5C1C7EF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 21:51:21 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id n20-20020a17090aab9400b00229ca6a4636so19250434pjq.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Feb 2023 21:51:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KZLwifksZSXnUDr5sO0tJjBAlgxcCepDWDdg2HoH0Tc=;
-        b=eWD+x8mUOWS6qVzotZ3V+2qMmWYNRfLyD8v3WUNYQjnHcx5ichpbF5wX3qeDNGjYYr
-         ZJdDhEQ4s1GLHpjQAYqwZ5K4DiZa0ZLm0o3PImpFKw4W6FAfAJle41EQ817TYEAqTz8/
-         7kmQMMwYviCuiBce5aCS7gWbXtigR+MPDvG1DME+w+VxGxteI3WDp2MV5ZslDt2ajxue
-         MXzGUZmJfJ0rs1smmJLqOgEP5vXfti2TmoPrM2fOYXNbBs+elbCBmAxn1USi3UJWTRaQ
-         xCyhEjzALhiDjmeA4R4npp6Fe+uLrMX+951kZpNCttfHJQGFWi2RaZlmZR5DcQPapoA9
-         2rtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KZLwifksZSXnUDr5sO0tJjBAlgxcCepDWDdg2HoH0Tc=;
-        b=yCWOCIRYXGtmo8g8FgS61bMn5nrLCL9G8S1ObbLeXsC5dXUhye84QLmmcmTMt7de9P
-         8qULs8DWXz5noshySH/2/Cv9WZ9lSOatMB2zXIlpEVDJzxB/9olLa+OzyPRAgI6KJNLF
-         REILZXKVn6T93PS1MsmCQOjrLtT9sZRfpcF5O9MZM738Yu7fL2ERVZE/J4499T7P1BID
-         1J83j8BXRqVk83mktHqMiJpcpw8um//ROadPxpKJ+xBTCSb/O6tlYCNw6pfgVbLLlwaU
-         xdw6GZJOyawxkVcPfDqAZ95LYUFpnsCDInP7Zk0ICCDq2Bnk6T2o8OXrANyusLwUHx1P
-         qppA==
-X-Gm-Message-State: AO0yUKX+8TGP6XIDzXHgjzSDtJyZ2XhabZQTpcqVb/1rac64F1Spr3+3
-        UzSZR/TTD9f8x/2yznBK8AIglw==
-X-Google-Smtp-Source: AK7set86mEk5hlWyjNXTo7wKqcQxv+VXxCD+25L7rSon37f+5Qr9gTHbXjaACmngsmqJVj70K7J7EQ==
-X-Received: by 2002:a05:6a20:4421:b0:bc:74c3:9499 with SMTP id ce33-20020a056a20442100b000bc74c39499mr1503901pzb.24.1676353880892;
-        Mon, 13 Feb 2023 21:51:20 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-4-128.pa.nsw.optusnet.com.au. [49.181.4.128])
-        by smtp.gmail.com with ESMTPSA id s3-20020a637703000000b004e8f7f23c4bsm3407280pgc.76.2023.02.13.21.51.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Feb 2023 21:51:19 -0800 (PST)
-Received: from [192.168.253.23] (helo=devoid.disaster.area)
-        by dread.disaster.area with esmtp (Exim 4.92.3)
-        (envelope-from <dave@fromorbit.com>)
-        id 1pRoDk-00F5yL-JA; Tue, 14 Feb 2023 16:51:16 +1100
-Received: from dave by devoid.disaster.area with local (Exim 4.96)
-        (envelope-from <dave@devoid.disaster.area>)
-        id 1pRoDk-00HNdR-1q;
-        Tue, 14 Feb 2023 16:51:16 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     linux-xfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/3] xfs, iomap: ->discard_folio() is broken so remove it
-Date:   Tue, 14 Feb 2023 16:51:14 +1100
-Message-Id: <20230214055114.4141947-4-david@fromorbit.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230214055114.4141947-1-david@fromorbit.com>
-References: <20230214055114.4141947-1-david@fromorbit.com>
+        Tue, 14 Feb 2023 02:57:35 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D772C21A25;
+        Mon, 13 Feb 2023 23:57:33 -0800 (PST)
+Received: from [192.168.10.12] (unknown [39.45.179.179])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id EECDE660216F;
+        Tue, 14 Feb 2023 07:57:25 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1676361452;
+        bh=bLuH3JNMnvAE/sd8bnRNmS8hADblvHZLNhfCr4oCcs0=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=ok3IRdMKvUkFcuLuDpafb/xmh9qr1fWMpvlJCB9RJ37YXB1qHtxPPzQJBmrpYhXGb
+         aUEnFVi4PZCGRImQcghZRjXGN4C1VYoLrv+mopvvN5yUn1XRKNKgzMvTbmVngYGGZN
+         T6dv5VOmBAwkkde4WCYfqhU8xnu6VTRXL6kpa5AYGNFpsjDVHtoUob5yZBRWC7hqIJ
+         Wo4bV6ZwlQcKRCih0/JMbH42HY826QLorvWUQOsD7jI0LXmLV6oHe9VnzepM7WifWL
+         SAGOqaa2X3WXuQEoQtknmsZaAJZ3P35wR2zCczus7cm14240bL+hM+/JZvqKl/iuWn
+         TqvN+F4jTROjA==
+Message-ID: <39217d9a-ed7e-f1ff-59b9-4cbffa464999@collabora.com>
+Date:   Tue, 14 Feb 2023 12:57:21 +0500
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
+        <emmir@google.com>, Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v10 3/6] fs/proc/task_mmu: Implement IOCTL to get and/or
+ the clear info about PTEs
+To:     Peter Xu <peterx@redhat.com>
+References: <20230202112915.867409-1-usama.anjum@collabora.com>
+ <20230202112915.867409-4-usama.anjum@collabora.com> <Y+QfDN4Y5Q10x8GQ@x1n>
+ <8b2959fb-2a74-0a1f-8833-0b18eab142dc@collabora.com> <Y+qur8iIUQTLyE8f@x1n>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <Y+qur8iIUQTLyE8f@x1n>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+On 2/14/23 2:42 AM, Peter Xu wrote:
+> On Mon, Feb 13, 2023 at 05:55:19PM +0500, Muhammad Usama Anjum wrote:
+>> On 2/9/23 3:15 AM, Peter Xu wrote:
+>>> On Thu, Feb 02, 2023 at 04:29:12PM +0500, Muhammad Usama Anjum wrote:
+>>>> This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
+>>>> the info about page table entries. The following operations are supported
+>>>> in this ioctl:
+>>>> - Get the information if the pages have been written-to (PAGE_IS_WRITTEN),
+>>>>   file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
+>>>>   (PAGE_IS_SWAPPED).
+>>>> - Write-protect the pages (PAGEMAP_WP_ENGAGE) to start finding which
+>>>>   pages have been written-to.
+>>>> - Find pages which have been written-to and write protect the pages
+>>>>   (atomic PAGE_IS_WRITTEN + PAGEMAP_WP_ENGAGE)
+>>>>
+>>>> To get information about which pages have been written-to and/or write
+>>>> protect the pages, following must be performed first in order:
+>>>> - The userfaultfd file descriptor is created with userfaultfd syscall.
+>>>> - The UFFD_FEATURE_WP_ASYNC feature is set by UFFDIO_API IOCTL.
+>>>> - The memory range is registered with UFFDIO_REGISTER_MODE_WP mode
+>>>>   through UFFDIO_REGISTER IOCTL.
+>>>> Then the any part of the registered memory or the whole memory region
+>>>> can be write protected using the UFFDIO_WRITEPROTECT IOCTL or
+>>>> PAGEMAP_SCAN IOCTL.
+>>>>
+>>>> struct pagemap_scan_args is used as the argument of the IOCTL. In this
+>>>> struct:
+>>>> - The range is specified through start and len.
+>>>> - The output buffer of struct page_region array and size is specified as
+>>>>   vec and vec_len.
+>>>> - The optional maximum requested pages are specified in the max_pages.
+>>>> - The flags can be specified in the flags field. The PAGEMAP_WP_ENGAGE
+>>>>   is the only added flag at this time.
+>>>> - The masks are specified in required_mask, anyof_mask, excluded_ mask
+>>>>   and return_mask.
+>>>>
+>>>> This IOCTL can be extended to get information about more PTE bits. This
+>>>> IOCTL doesn't support hugetlbs at the moment. No information about
+>>>> hugetlb can be obtained. This patch has evolved from a basic patch from
+>>>> Gabriel Krisman Bertazi.
+>>>>
+>>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>>>> ---
+>>>> Changes in v10:
+>>>> - move changes in tools/include/uapi/linux/fs.h to separate patch
+>>>> - update commit message
+>>>>
+>>>> Change in v8:
+>>>> - Correct is_pte_uffd_wp()
+>>>> - Improve readability and error checks
+>>>> - Remove some un-needed code
+>>>>
+>>>> Changes in v7:
+>>>> - Rebase on top of latest next
+>>>> - Fix some corner cases
+>>>> - Base soft-dirty on the uffd wp async
+>>>> - Update the terminologies
+>>>> - Optimize the memory usage inside the ioctl
+>>>>
+>>>> Changes in v6:
+>>>> - Rename variables and update comments
+>>>> - Make IOCTL independent of soft_dirty config
+>>>> - Change masks and bitmap type to _u64
+>>>> - Improve code quality
+>>>>
+>>>> Changes in v5:
+>>>> - Remove tlb flushing even for clear operation
+>>>>
+>>>> Changes in v4:
+>>>> - Update the interface and implementation
+>>>>
+>>>> Changes in v3:
+>>>> - Tighten the user-kernel interface by using explicit types and add more
+>>>>   error checking
+>>>>
+>>>> Changes in v2:
+>>>> - Convert the interface from syscall to ioctl
+>>>> - Remove pidfd support as it doesn't make sense in ioctl
+>>>> ---
+>>>>  fs/proc/task_mmu.c      | 290 ++++++++++++++++++++++++++++++++++++++++
+>>>>  include/uapi/linux/fs.h |  50 +++++++
+>>>>  2 files changed, 340 insertions(+)
+>>>>
+>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>>> index e35a0398db63..c6bde19d63d9 100644
+>>>> --- a/fs/proc/task_mmu.c
+>>>> +++ b/fs/proc/task_mmu.c
+>>>> @@ -19,6 +19,7 @@
+>>>>  #include <linux/shmem_fs.h>
+>>>>  #include <linux/uaccess.h>
+>>>>  #include <linux/pkeys.h>
+>>>> +#include <linux/minmax.h>
+>>>>  
+>>>>  #include <asm/elf.h>
+>>>>  #include <asm/tlb.h>
+>>>> @@ -1135,6 +1136,22 @@ static inline void clear_soft_dirty(struct vm_area_struct *vma,
+>>>>  }
+>>>>  #endif
+>>>>  
+>>>> +static inline bool is_pte_uffd_wp(pte_t pte)
+>>>> +{
+>>>> +	if ((pte_present(pte) && pte_uffd_wp(pte)) ||
+>>>> +	    (pte_swp_uffd_wp_any(pte)))
+>>>> +		return true;
+>>>> +	return false;
+>>>
+>>> Sorry I should have mentioned this earlier: you can directly return here.
+>> No problem at all. I'm replacing these two helper functions with following
+>> in next version so that !present pages don't show as dirty:
+>>
+>> static inline bool is_pte_written(pte_t pte)
+>> {
+>> 	if ((pte_present(pte) && pte_uffd_wp(pte)) ||
+>> 	    (pte_swp_uffd_wp_any(pte)))
+>> 		return false;
+>> 	return (pte_present(pte) || is_swap_pte(pte));
+>> }
+> 
+> Could you explain why you don't want to return dirty for !present?  A page
+> can be written then swapped out.  Don't you want to know that happened
+> (from dirty tracking POV)?
+> 
+> The code looks weird to me too..  We only have three types of ptes: (1)
+> present, (2) swap, (3) none.
+> 
+> Then, "(pte_present() || is_swap_pte())" is the same as !pte_none().  Is
+> that what you're really looking for?
+Yes, this is what I've been trying to do. I'll use !pte_none() to make it
+simpler.
 
-Ever since commit e9c3a8e820ed ("iomap: don't invalidate folios
-after writeback errors") XFS and iomap have been retaining dirty
-folios in memory after a writeback error. XFS no longer invalidates
-the folio, and iomap no longer clears the folio uptodate state.
+> 
+>>
+>> static inline bool is_pmd_written(pmd_t pmd)
+>> {
+>> 	if ((pmd_present(pmd) && pmd_uffd_wp(pmd)) ||
+>> 	    (is_swap_pmd(pmd) && pmd_swp_uffd_wp(pmd)))
+>> 		return false;
+>> 	return (pmd_present(pmd) || is_swap_pmd(pmd));
+>> }
+> 
+> [...]
+> 
+>>>> +	bitmap = cur & p->return_mask;
+>>>> +	if (cpy && bitmap) {
+>>>> +		if ((prev->len) && (prev->bitmap == bitmap) &&
+>>>> +		    (prev->start + prev->len * PAGE_SIZE == addr)) {
+>>>> +			prev->len += len;
+>>>> +			p->found_pages += len;
+>>>> +		} else if (p->vec_index < p->vec_len) {
+>>>> +			if (prev->len) {
+>>>> +				memcpy(&p->vec[p->vec_index], prev, sizeof(struct page_region));
+>>>> +				p->vec_index++;
+>>>> +			}
+>>>
+>>> IIUC you can have:
+>>>
+>>>   int pagemap_scan_deposit(p)
+>>>   {
+>>>         if (p->vec_index >= p->vec_len)
+>>>                 return -ENOSPC;
+>>>
+>>>         if (p->prev->len) {
+>>>                 memcpy(&p->vec[p->vec_index], prev, sizeof(struct page_region));
+>>>                 p->vec_index++;
+>>>         }
+>>>
+>>>         return 0;
+>>>   }
+>>>
+>>> Then call it here.  I think it can also be called below to replace
+>>> export_prev_to_out().
+>> No this isn't possible. We fill up prev until the next range doesn't merge
+>> with it. At that point, we put prev into the output buffer and new range is
+>> put into prev. Now that we have shifted to smaller page walks of <= 512
+>> entries. We want to visit all ranges before finally putting the prev to
+>> output. Sorry to have this some what complex method. The problem is that we
+>> want to merge the consective matching regions into one entry in the output.
+>> So to achieve this among multiple different page walks, the prev is being used.
+>>
+>> Lets suppose we want to visit memory from 0x7FFF00000000 to 7FFF00400000
+>> having length of 1024 pages and all of the memory has been written.
+>> walk_page_range() will be called 2 times. In the first call, prev will be
+>> set having length of 512. In second call, prev will be updated to 1024 as
+>> the previous range stored in prev could be extended. After this, the prev
+>> will be stored to the user output buffer consuming only 1 struct of page_range.
+>>
+>> If we store prev back to output memory in every walk_page_range() call, we
+>> wouldn't get 1 struct of page_range with length 1024. Instead we would get
+>> 2 elements of page_range structs with half the length.
+> 
+> I didn't mean to merge PREV for each pgtable walk.  What I meant is I think
+> with such a pagemap_scan_deposit() you can rewrite it as:
+> 
+> if (cpy && bitmap) {
+>         if ((prev->len) && (prev->bitmap == bitmap) &&
+>             (prev->start + prev->len * PAGE_SIZE == addr)) {
+>                 prev->len += len;
+>                 p->found_pages += len;
+>         } else {
+>                 if (pagemap_scan_deposit(p))
+>                         return -ENOSPC;
+>                 prev->start = addr;
+>                 prev->len = len;
+>                 prev->bitmap = bitmap;
+>                 p->found_pages += len;
+>         }
+> }
+> 
+> Then you can reuse pagemap_scan_deposit() when before returning to
+> userspace, just to flush PREV to p->vec properly in a single helper.
+> It also makes the code slightly easier to read.
+Yeah, this would have worked as you have described. But in
+pagemap_scan_output(), we are flushing prev to p->vec. But later in
+export_prev_to_out() we need to flush prev to user_memory directly.
 
-However, iomap is still been calling ->discard_folio on error, and
-XFS is still punching the delayed allocation range backing the dirty
-folio.
 
-This is incorrect behaviour. The folio remains dirty and up to date,
-meaning that another writeback will be attempted in the near future.
-THis means that XFS is still going to have to allocate space for it
-during writeback, and that means it still needs to have a delayed
-allocation reservation and extent backing the dirty folio.
+> 
 
-Failure to retain the delalloc extent (because xfs_discard_folio()
-punched it out) means that the next writeback attempt does not find
-an extent over the range of the write in ->map_blocks(), and
-xfs_map_blocks() triggers a WARN_ON() because it should never land
-in a hole for a data fork writeback request. This looks like:
-
-[  647.356969] ------------[ cut here ]------------
-[  647.359277] WARNING: CPU: 14 PID: 21913 at fs/xfs/libxfs/xfs_bmap.c:4510 xfs_bmapi_convert_delalloc+0x221/0x4e0
-[  647.364551] Modules linked in:
-[  647.366294] CPU: 14 PID: 21913 Comm: test_delalloc_c Not tainted 6.2.0-rc7-dgc+ #1754
-[  647.370356] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.0-debian-1.16.0-5 04/01/2014
-[  647.374781] RIP: 0010:xfs_bmapi_convert_delalloc+0x221/0x4e0
-[  647.377807] Code: e9 7d fe ff ff 80 bf 54 01 00 00 00 0f 84 68 fe ff ff 48 8d 47 70 48 89 04 24 e9 63 fe ff ff 83 fd 02 41 be f5 ff ff ff 74 a5 <0f> 0b eb a0
-[  647.387242] RSP: 0018:ffffc9000aa677a8 EFLAGS: 00010293
-[  647.389837] RAX: 0000000000000000 RBX: ffff88825bc4da00 RCX: 0000000000000000
-[  647.393371] RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff88825bc4da40
-[  647.396546] RBP: 0000000000000000 R08: ffffc9000aa67810 R09: ffffc9000aa67850
-[  647.400186] R10: ffff88825bc4da00 R11: ffff888800a9aaac R12: ffff888101707000
-[  647.403484] R13: ffffc9000aa677e0 R14: 00000000fffffff5 R15: 0000000000000004
-[  647.406251] FS:  00007ff35ec24640(0000) GS:ffff88883ed00000(0000) knlGS:0000000000000000
-[  647.410089] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  647.413225] CR2: 00007f7292cbc5d0 CR3: 0000000807d0e004 CR4: 0000000000060ee0
-[  647.416917] Call Trace:
-[  647.418080]  <TASK>
-[  647.419291]  ? _raw_spin_unlock_irqrestore+0xe/0x30
-[  647.421400]  xfs_map_blocks+0x1b7/0x590
-[  647.422951]  iomap_do_writepage+0x1f1/0x7d0
-[  647.424607]  ? __mod_lruvec_page_state+0x93/0x140
-[  647.426419]  write_cache_pages+0x17b/0x4f0
-[  647.428079]  ? iomap_read_end_io+0x2c0/0x2c0
-[  647.429839]  iomap_writepages+0x1c/0x40
-[  647.431377]  xfs_vm_writepages+0x79/0xb0
-[  647.432826]  do_writepages+0xbd/0x1a0
-[  647.434207]  ? obj_cgroup_release+0x73/0xb0
-[  647.435769]  ? drain_obj_stock+0x130/0x290
-[  647.437273]  ? avc_has_perm+0x8a/0x1a0
-[  647.438746]  ? avc_has_perm_noaudit+0x8c/0x100
-[  647.440223]  __filemap_fdatawrite_range+0x8e/0xa0
-[  647.441960]  filemap_write_and_wait_range+0x3d/0xa0
-[  647.444258]  __iomap_dio_rw+0x181/0x790
-[  647.445960]  ? __schedule+0x385/0xa20
-[  647.447829]  iomap_dio_rw+0xe/0x30
-[  647.449284]  xfs_file_dio_write_aligned+0x97/0x150
-[  647.451332]  ? selinux_file_permission+0x107/0x150
-[  647.453299]  xfs_file_write_iter+0xd2/0x120
-[  647.455238]  vfs_write+0x20d/0x3d0
-[  647.456768]  ksys_write+0x69/0xf0
-[  647.458067]  do_syscall_64+0x34/0x80
-[  647.459488]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-[  647.461529] RIP: 0033:0x7ff3651406e9
-[  647.463119] Code: 48 8d 3d 2a a1 0c 00 0f 05 eb a5 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f8
-[  647.470563] RSP: 002b:00007ff35ec23df8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[  647.473465] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff3651406e9
-[  647.476278] RDX: 0000000000001400 RSI: 0000000020000000 RDI: 0000000000000005
-[  647.478895] RBP: 00007ff35ec23e20 R08: 0000000000000005 R09: 0000000000000000
-[  647.481568] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe533d8d4e
-[  647.483751] R13: 00007ffe533d8d4f R14: 0000000000000000 R15: 00007ff35ec24640
-[  647.486168]  </TASK>
-[  647.487142] ---[ end trace 0000000000000000 ]---
-
-Punching delalloc extents out from under dirty cached pages is wrong
-and broken. We can't remove the delalloc extent until the page is
-either removed from memory (i.e. invaliated) or writeback succeeds
-in converting the delalloc extent to a real extent and writeback can
-clean the page.
-
-Hence we remove xfs_discard_folio() because it is only punching
-delalloc blocks from under dirty pages now. With that removal,
-nothing else uses ->discard_folio(), so we remove that from the
-iomap infrastructure as well.
-
-Reported-by: pengfei.xu@intel.com
-Fixes: e9c3a8e820ed ("iomap: don't invalidate folios after writeback errors")
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
----
- fs/iomap/buffered-io.c | 16 +++-------------
- fs/xfs/xfs_aops.c      | 35 -----------------------------------
- include/linux/iomap.h  |  6 ------
- 3 files changed, 3 insertions(+), 54 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 356193e44cf0..502fa2d41097 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1635,19 +1635,9 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	 * completion to mark the error state of the pages under writeback
- 	 * appropriately.
- 	 */
--	if (unlikely(error)) {
--		/*
--		 * Let the filesystem know what portion of the current page
--		 * failed to map. If the page hasn't been added to ioend, it
--		 * won't be affected by I/O completion and we must unlock it
--		 * now.
--		 */
--		if (wpc->ops->discard_folio)
--			wpc->ops->discard_folio(folio, pos);
--		if (!count) {
--			folio_unlock(folio);
--			goto done;
--		}
-+	if (unlikely(error && !count)) {
-+		folio_unlock(folio);
-+		goto done;
- 	}
- 
- 	folio_start_writeback(folio);
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 41734202796f..3f0dae5ca9c2 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -448,44 +448,9 @@ xfs_prepare_ioend(
- 	return status;
- }
- 
--/*
-- * If the page has delalloc blocks on it, we need to punch them out before we
-- * invalidate the page.  If we don't, we leave a stale delalloc mapping on the
-- * inode that can trip up a later direct I/O read operation on the same region.
-- *
-- * We prevent this by truncating away the delalloc regions on the page.  Because
-- * they are delalloc, we can do this without needing a transaction. Indeed - if
-- * we get ENOSPC errors, we have to be able to do this truncation without a
-- * transaction as there is no space left for block reservation (typically why we
-- * see a ENOSPC in writeback).
-- */
--static void
--xfs_discard_folio(
--	struct folio		*folio,
--	loff_t			pos)
--{
--	struct xfs_inode	*ip = XFS_I(folio->mapping->host);
--	struct xfs_mount	*mp = ip->i_mount;
--	int			error;
--
--	if (xfs_is_shutdown(mp))
--		return;
--
--	xfs_alert_ratelimited(mp,
--		"page discard on page "PTR_FMT", inode 0x%llx, pos %llu.",
--			folio, ip->i_ino, pos);
--
--	error = xfs_bmap_punch_delalloc_range(ip, pos,
--			round_up(pos, folio_size(folio)));
--
--	if (error && !xfs_is_shutdown(mp))
--		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
--}
--
- static const struct iomap_writeback_ops xfs_writeback_ops = {
- 	.map_blocks		= xfs_map_blocks,
- 	.prepare_ioend		= xfs_prepare_ioend,
--	.discard_folio		= xfs_discard_folio,
- };
- 
- STATIC int
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 0983dfc9a203..681e26a86791 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -310,12 +310,6 @@ struct iomap_writeback_ops {
- 	 * conversions.
- 	 */
- 	int (*prepare_ioend)(struct iomap_ioend *ioend, int status);
--
--	/*
--	 * Optional, allows the file system to discard state on a page where
--	 * we failed to submit any I/O.
--	 */
--	void (*discard_folio)(struct folio *folio, loff_t pos);
- };
- 
- struct iomap_writepage_ctx {
 -- 
-2.39.0
-
+BR,
+Muhammad Usama Anjum
