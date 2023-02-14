@@ -2,110 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7C569718B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 00:06:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0164A6971E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 00:37:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232704AbjBNXGK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 18:06:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40734 "EHLO
+        id S229880AbjBNXhM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 18:37:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232545AbjBNXGJ (ORCPT
+        with ESMTP id S232035AbjBNXhJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 18:06:09 -0500
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1EC4311DE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 15:05:40 -0800 (PST)
-Received: by mail-il1-x135.google.com with SMTP id v13so5358477iln.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 15:05:40 -0800 (PST)
+        Tue, 14 Feb 2023 18:37:09 -0500
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCB9E2B628
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 15:37:07 -0800 (PST)
+Received: by mail-io1-xd35.google.com with SMTP id y7so6485106iob.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 15:37:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        d=linuxfoundation.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rm0NgkeBMMJp25GutovHDy5uGqqIv+F0wnILJzPaqVk=;
-        b=D86ZlEmgPn6zYt3h9LajOUBIj2lvYD/XRL387/aIgai9cGLaVo7W+YT6/UFZKMx6tZ
-         HzN/V11U6WHzjiu9lexALsC+tsagFh6XUFVXDvOO8C83W2GtEm2YwggXWicEO1kaGfzr
-         1zQNQhmbEWp0e57sHLzueTwkD417gRp5NHhEttVzDeJfgmt1qNNkzv+tlG9rbZst3zbj
-         1K95FQ6n5QVsqZgsPMKk03iFqrqEyr3X/gPH4e6GY8IeeWLlg1+DYwK3lIX958W373i6
-         dFJv7jP+9u9e6kBNwIg0kWamyyc0wfAeD9Z/LqAyu7fbjcC4zTcIx9J6UVIMzdGPp9YE
-         otCw==
+        bh=mZdjpB1hiR4KdFF9IW1WmBupIcjtLh3KZAHATvyECZc=;
+        b=hTAoWB2LQ9OA67yieHFQdvaCwbt9cNBIAg/X3DTK4gP9hE5H2rbBfPjwZe62bTp6mK
+         9i7tGy9YcyRUg0zuQpqI2dhnX2KAkntai21DmZNEqYhjB1hJ6RdKc7mI+PxW/QtleGoi
+         8ko5/pP2kAcKhYb19v3+WjeezjUxjYqKxRBLw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rm0NgkeBMMJp25GutovHDy5uGqqIv+F0wnILJzPaqVk=;
-        b=ZTFTJe7hHYJhqbNjcRegMsQSLCx/dp61FQ+MTM/keS64EyeyXrlEYizgKYwq+r9NZa
-         ocraxf7GyAWswqbJiBP+Aah7p+QhS1PlLshJKCb/RS/UTkqWVnMllO+jrE/A3/l0A2ZZ
-         H5q+4+g2NERC5WpRTU/fatHuG8Do5QOiiFkmaJoSlS7cDNb+KsVHaLal0SV1dS5naNUs
-         9XGqPqlolBDiKNfw0lbSe4F0rgIn4lpzJZpiLrY+EtWVNN1dI5S8fk+QTMDZAkUFvKnB
-         hrdrCJ9rPCqYHFAZmgRxt8yzq70V9etgI7xglTYiOuofvV7j4tf2DXOU2KDlhC8e5Upm
-         gtzA==
-X-Gm-Message-State: AO0yUKUj2chuS/utskvBbwjftMhGUWwyhOEpowt9aqqrO41dVXKpx80O
-        k3cDB/JXjKWIe3sVt9c+gwe/+A==
-X-Google-Smtp-Source: AK7set87wxmTDwtJRW0ye8r7q7aTzqoBfwNDT61LNDbHNlSoCq27WRJgV4Hmj4Wykio2W70BOuSA8w==
-X-Received: by 2002:a05:6e02:1e05:b0:315:579c:9b77 with SMTP id g5-20020a056e021e0500b00315579c9b77mr308762ila.1.1676415931247;
-        Tue, 14 Feb 2023 15:05:31 -0800 (PST)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id t5-20020a02cca5000000b003b1f0afe484sm5239206jap.141.2023.02.14.15.05.30
+        bh=mZdjpB1hiR4KdFF9IW1WmBupIcjtLh3KZAHATvyECZc=;
+        b=ydnZ55jNhXcEWpB8CvVR4/bCPlkLOnP8zNCVh0NeJWRFng3gLBqo9lHrmSHXb7b2z+
+         6f3sWtafPT5I4JCIB9FK+fIbBqoqCvItf6IHh00M3cVE0prWJvj0eBXWIkjLQSxpBBeg
+         mT4cp7N95YOEVed7Va8QqZ7V/2U9iMtOMNBWnfuo/XRsaEnmObN58GvHy0ouB+uw9MbY
+         ZGz8lNYhUVxUEBDkjyP0hbh/h9ks6aaW0CBLi1iL7/ZI2RpLNgH/44Nz3wXhjTVO+oot
+         zk0ryrjXhUMtQsocUOeQlwIhMitPjZgyJ0euEP9/a5XCaonJcBdXHz/THKeVrslR0ZiZ
+         +8tA==
+X-Gm-Message-State: AO0yUKX6Vrz5r8v4kNNKGiyXJJquVvb4SpkMLpvv+ThIjvOHjr6/ReYy
+        0WJQ0BoigxIroshpKXcAwroL9g==
+X-Google-Smtp-Source: AK7set/4/pIQOLdtIr2u+j9NEMRLql2ZuJXi2Ce/0glFkqfSzRfp2NVpFKuVnFsC3x9IfmqqHBjplA==
+X-Received: by 2002:a05:6602:1415:b0:70a:9fce:853c with SMTP id t21-20020a056602141500b0070a9fce853cmr424774iov.2.1676417827031;
+        Tue, 14 Feb 2023 15:37:07 -0800 (PST)
+Received: from [192.168.1.128] ([38.15.45.1])
+        by smtp.gmail.com with ESMTPSA id u14-20020a02aa8e000000b003a9595b7e3asm5322393jai.46.2023.02.14.15.37.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Feb 2023 15:05:30 -0800 (PST)
-Message-ID: <867e1e3e-681b-843b-1704-effed736e13d@kernel.dk>
-Date:   Tue, 14 Feb 2023 16:05:29 -0700
+        Tue, 14 Feb 2023 15:37:06 -0800 (PST)
+Message-ID: <dda181d1-8a5b-adb4-6665-016f50e51487@linuxfoundation.org>
+Date:   Tue, 14 Feb 2023 16:37:05 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH v14 00/17] iov_iter: Improve page extraction (pin or just
- list)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] selftests/mount_setattr: fix redefine struct mount_attr
+ build error
 Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>, smfrench@gmail.com
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20230214171330.2722188-1-dhowells@redhat.com>
- <2877092.1676415412@warthog.procyon.org.uk>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <2877092.1676415412@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+To:     Seth Forshee <sforshee@kernel.org>
+Cc:     shuah@kernel.org, brauner@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20230213183149.231779-1-skhan@linuxfoundation.org>
+ <Y+rMtlvx31w7eWCA@do-x1extreme>
+ <f536ecc2-1889-6df6-43d3-1a04dc8f1b14@linuxfoundation.org>
+ <Y+vzB1OTXr+zTCV7@do-x1extreme>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <Y+vzB1OTXr+zTCV7@do-x1extreme>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/14/23 3:56 PM, David Howells wrote:
-> Hi Jens,
-> 
-> If you decide not to take my patches in this merge window, would you have any
-> objection to my patches 1-3 and 10-11 in this series going through Steve
-> French's cifs tree so that he can take my cifs iteratorisation patches?
-> 
-> Patches 1-3 would add filemap_splice_read() and direct_splice_read(), but not
-> connect them up to anything and 10-11 would add iov_iter_extract_pages().  I
-> can then give Steve a patch to make cifs use them as part of my patches for
-> that.
-> 
-> This would only affect cifs.  See my iov-cifs branch:
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-cifs
-> 
-> for an example of how this would look.
+On 2/14/23 13:45, Seth Forshee wrote:
+> On Tue, Feb 14, 2023 at 10:10:00AM -0700, Shuah Khan wrote:
 
-Let's update the branch and see how it goes... If there's more fallout, then
-let's make a fallback plan for the first few.
+>>>
+>>
+>> The header search looks up system headers followed by installed headers in
+>> the repo (both in-tree and out-of-tree builds). kselftest builds do depend
+>> on headers_install. Did you building after running headers_install?
+> 
+> I wasn't aware they depend on headers_install. Why doesn't
+> Documentation/dev-tools/kselftest.rst mention this in the section that
+> describes how to run tests?
+> 
 
--- 
-Jens Axboe
+It ahs always been a dependency. If you were to compile from the
+main (root) Makefile as below - headers_install get done before
+test compile:
 
+make kselftest-all TARGETS=mount_setattr
+
+> It seems what I really need to fix the build is to include
+> linux/mount.h, which works for me with or without headers_install,
+> because I have the struct in /usr/include/linux/mount.h. And I suppose
+> the makefile should use KHDR_INCLUDES. So maybe the changes below should
+> also be included.
+> 
+
+Yes. Makefile change to use KHDR_INCLUDES is already done. Please
+take a look at linux-kselftest next - this was done as part of a
+tree-wide change.
+
+If including linux/mount.h is thr correct solution, please send me
+the patch on top of linux-kselftest next and I will pull it in.
+  
+> However I know Christian has said that there are challenges with
+> including the mount headers. He wrote this test, so I'd like to hear his
+> thoughts about adding the include. He's on vacation this week though.
+> 
+
+Sounds good.
+
+thanks,
+-- Shuah
 
