@@ -2,146 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5B0069641A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 14:00:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A548B69642A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 14:04:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232464AbjBNNAI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 08:00:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44380 "EHLO
+        id S232214AbjBNNEG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 08:04:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232512AbjBNNAG (ORCPT
+        with ESMTP id S232564AbjBNNED (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 08:00:06 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C269F273A;
-        Tue, 14 Feb 2023 05:00:02 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Tue, 14 Feb 2023 08:04:03 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA3762658F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 05:03:55 -0800 (PST)
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 65BD81F37F;
-        Tue, 14 Feb 2023 13:00:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1676379601; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gz+b6Xt8mJ3ak48xss4fFkdb+QBvNTstPHhtjW5QbEw=;
-        b=AZmiSRVQDfTJgkiUJSdU0mEi40Pv39uPOe93WKQbinXAnR11U4sFoMSpVveB2j5ui8LioA
-        TJKFRMhop3IfGy7gjALJ7MOKmk5A7MK5vJQwZGISDT2b41WFfo1BrTFI6nl6BzobuQH1iq
-        ps1fL1TLqalfcPs30O5TTVnGXX/SLZE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1676379601;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gz+b6Xt8mJ3ak48xss4fFkdb+QBvNTstPHhtjW5QbEw=;
-        b=YpBWRY9ZWWcMyQOKgAtNfVetBte+Wt4r+HM2bZe9L88SY5sib75nPRyO3s2u8o89tIZ94H
-        tnarVEyxu2ImUODg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 570B6138E3;
-        Tue, 14 Feb 2023 13:00:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id HVgcFdGF62NBKQAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 14 Feb 2023 13:00:01 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 14F89A06D8; Tue, 14 Feb 2023 14:00:00 +0100 (CET)
-Date:   Tue, 14 Feb 2023 14:00:00 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 1/5] mm: Do not reclaim private data from pinned page
-Message-ID: <20230214130000.s5kynjhjiyrpvzxx@quack3>
-References: <20230209121046.25360-1-jack@suse.cz>
- <20230209123206.3548-1-jack@suse.cz>
- <df6e150f-9d5c-6f68-f234-3e1ef419f464@redhat.com>
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BB5093F5E2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 13:03:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1676379833;
+        bh=ER4dQa+Ne4oEZinMWzIbnrWzPZzboegkxcHl8Z+0/Vc=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=pW80dIyfC8jOxvImmED+bB3+Mdg/o2HH1h2kaQ5kqBJq9TR6YOycnxSMDzfGYvtcC
+         bxHLPaLZOs0wns6ND0KPM/s26eGN92c/pU6yUpcGZNsLH79c+G1nIXCtFB4jmOqP3s
+         W16Q3b2C65vAyfEQ8CbnjEhqL3xvKkeELfoaYlYE+0LvnTM93oerQyKPulG+4+aUAF
+         g0w8aDZeb4hIzM7LI4v4ou2vZFPq3CGQUzCMZRELJTyGYqIKOwizHuW6AUXRUBWFKI
+         bdzKLST1Mp4HwOYVjfqmgjAjN5chBc6+OZxxAlXgXdvgly5L5YbIXBqmF/JOtK3t3G
+         1UEK8dJPWxbGA==
+Received: by mail-ej1-f70.google.com with SMTP id l18-20020a1709067d5200b008af415fdd80so9333001ejp.21
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 05:03:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ER4dQa+Ne4oEZinMWzIbnrWzPZzboegkxcHl8Z+0/Vc=;
+        b=2cC1cwKMxo5BDJa1m3JGi331/AUsB3P5GA7Ghy02rl7nopSo8uRwYmTnNbobut6B9v
+         q0WhoGBQP7w8H38FMIPzm9zD7VydWkThO2rKLoDObtdnnWvqfnopeARW3+DBvdCwJoqT
+         MNncsHS4AaLXpt+IPvtA+kwawrgj+6GlEcHildBKcqzumD1jBs0BWyQcTwIJNnzhRRfx
+         D9yeQ7CXlPuq9m140jOU1fw2cUYpOgda3XUQZJT0ZHIT8BVG9f/trk23mmCgwnKPrz0F
+         VRELuICL3yaO2HUXxgWm/XbXUVkuT/mtyy6pou/3eTw+VPRT2ubI5bPN86VjPCIWnDwx
+         D03Q==
+X-Gm-Message-State: AO0yUKUehuNvPioEgFJSdIJmQhS5k2q+/LpaMNaaQBLJB+mnuk70mddR
+        9Kdw7TxBNQiSvwBrCKFqb4KIzMDZmsjQ21067i8Sq0+kBRz8GmLCPlw88ZT1FXJ1jxeGfWOQNK1
+        qGTERBDwOlAUkh0W51EiOrAcHLi3AE2RONjFDdMe102g=
+X-Received: by 2002:a17:906:7c07:b0:8af:54d2:2088 with SMTP id t7-20020a1709067c0700b008af54d22088mr3170045ejo.37.1676379833254;
+        Tue, 14 Feb 2023 05:03:53 -0800 (PST)
+X-Google-Smtp-Source: AK7set9XZQwa7n90RxceqgMze3niR3fTNljuVE5NAHzPUMo/sqArbdvFoSGH3ByP6e/2m7qLKS75fw==
+X-Received: by 2002:a17:906:7c07:b0:8af:54d2:2088 with SMTP id t7-20020a1709067c0700b008af54d22088mr3170027ejo.37.1676379833115;
+        Tue, 14 Feb 2023 05:03:53 -0800 (PST)
+Received: from amikhalitsyn.. ([2a02:8109:bd40:1414:c85e:daf1:c7bb:28dc])
+        by smtp.gmail.com with ESMTPSA id b9-20020a170906194900b0088478517830sm8209790eje.83.2023.02.14.05.03.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Feb 2023 05:03:52 -0800 (PST)
+From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To:     corbet@lwn.net
+Cc:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [PATCH v3 0/2] docs: actualize file_system_type and super_operations descriptions
+Date:   Tue, 14 Feb 2023 14:02:38 +0100
+Message-Id: <20230214130240.166885-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df6e150f-9d5c-6f68-f234-3e1ef419f464@redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 13-02-23 10:01:35, David Hildenbrand wrote:
-> On 09.02.23 13:31, Jan Kara wrote:
-> > If the page is pinned, there's no point in trying to reclaim it.
-> > Furthermore if the page is from the page cache we don't want to reclaim
-> > fs-private data from the page because the pinning process may be writing
-> > to the page at any time and reclaiming fs private info on a dirty page
-> > can upset the filesystem (see link below).
-> > 
-> > Link: https://lore.kernel.org/linux-mm/20180103100430.GE4911@quack2.suse.cz
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> >   mm/vmscan.c | 10 ++++++++++
-> >   1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index bf3eedf0209c..ab3911a8b116 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -1901,6 +1901,16 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
-> >   			}
-> >   		}
-> > +		/*
-> > +		 * Folio is unmapped now so it cannot be newly pinned anymore.
-> > +		 * No point in trying to reclaim folio if it is pinned.
-> > +		 * Furthermore we don't want to reclaim underlying fs metadata
-> > +		 * if the folio is pinned and thus potentially modified by the
-> > +		 * pinning process is that may upset the filesystem.
-> > +		 */
-> > +		if (folio_maybe_dma_pinned(folio))
-> > +			goto activate_locked;
-> > +
-> >   		mapping = folio_mapping(folio);
-> >   		if (folio_test_dirty(folio)) {
-> >   			/*
-> 
-> At this point, we made sure that the folio is completely unmapped. However,
-> we specify "TTU_BATCH_FLUSH", so rmap code might defer a TLB flush and
-> consequently defer an IPI sync.
-> 
-> I remember that this check here is fine regarding GUP-fast: even if
-> concurrent GUP-fast pins the page after our check here, it should observe
-> the changed PTE and unpin it again.
->  
-> Checking after unmapping makes sense: we reduce the likelyhood of false
-> positives when a file-backed page is mapped many times (>= 1024). OTOH, we
-> might unmap pinned pages because we cannot really detect it early.
-> 
-> For anon pages, we have an early (racy) check, which turned out "ok" in
-> practice, because we don't frequently have that many anon pages that are
-> shared by that many processes. I assume we don't want something similar for
-> pagecache pages, because having a single page mapped by many processes can
-> happen easily and would prevent reclaim.
+Current descriptions are from 2.6.* times, let's update them.
 
-Yeah, I think pagecache pages shared by many processes are more likely.
-Furthermore I think pinned pagecache pages are rather rare so unmapping
-them before checking seems fine to me. Obviously we can reconsider if
-reality would prove me wrong ;).
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Miklos Szeredi <mszeredi@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
 
-> I once had a patch lying around that documented for the existing
-> folio_maybe_dma_pinned() for anon pages exactly that (racy+false positives
-> with many mappings).
-> 
-> Long story short, I assume this change is fine.
+Alexander Mikhalitsyn (2):
+  docs: filesystems: vfs: actualize struct file_system_type description
+  docs: filesystems: vfs: actualize struct super_operations description
 
-Thanks for the throughout verification :)
-
-								Honza
+ Documentation/filesystems/vfs.rst | 105 ++++++++++++++++++++++++------
+ 1 file changed, 86 insertions(+), 19 deletions(-)
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
