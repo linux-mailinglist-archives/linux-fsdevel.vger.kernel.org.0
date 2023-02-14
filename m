@@ -2,122 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A19669657E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 14:56:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BC396965A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 15:01:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232489AbjBNN4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 08:56:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38360 "EHLO
+        id S232597AbjBNOBP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 09:01:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232359AbjBNN4s (ORCPT
+        with ESMTP id S232529AbjBNOBN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 08:56:48 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFCA176AB;
-        Tue, 14 Feb 2023 05:56:16 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 168F31FE67;
-        Tue, 14 Feb 2023 13:56:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1676382965; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wEcL9ZqDcFReJTdiwk7aAbf7PWmErFH9naF5RkkLE+Y=;
-        b=1L1VOwSuTzy4sqE98fsLQ35bRFPl2Zkt0E1OhCPN0qVtEgYi5BC/ul/22EOcDbiA5pB4/A
-        oPW6+TvceVbc9yypZDxV2L3m1wpsOT+nj5PYCHAzwyq6F4kyxPdIcYM/HVlgTRmtXrDzoN
-        AmUXwmFa6ky1OyB6ys71AVwtfEsIyOk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1676382965;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wEcL9ZqDcFReJTdiwk7aAbf7PWmErFH9naF5RkkLE+Y=;
-        b=XqMBO5MLSMI5MJEF7FlkjGRdicMdFsJjbKPEeq7aYBVzx7OsKfrmUJWNfHbKWD4tC/1JWS
-        cYzBTb3CtC/GQxDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 088EF138E3;
-        Tue, 14 Feb 2023 13:56:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id h7ISAvWS62NHRAAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 14 Feb 2023 13:56:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9386FA06D8; Tue, 14 Feb 2023 14:56:04 +0100 (CET)
-Date:   Tue, 14 Feb 2023 14:56:04 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
+        Tue, 14 Feb 2023 09:01:13 -0500
+Received: from fudo.makrotopia.org (fudo.makrotopia.org [IPv6:2a07:2ec0:3002::71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D0425E0D;
+        Tue, 14 Feb 2023 06:00:38 -0800 (PST)
+Received: from local
+        by fudo.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+         (Exim 4.96)
+        (envelope-from <daniel@makrotopia.org>)
+        id 1pRvqg-0004pq-28;
+        Tue, 14 Feb 2023 14:59:58 +0100
+Date:   Tue, 14 Feb 2023 13:59:49 +0000
+From:   Daniel Golle <daniel@makrotopia.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Guenter Roeck <groeck7@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
         John Hubbard <jhubbard@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH 4/5] block: Add support for bouncing pinned pages
-Message-ID: <20230214135604.s5bygnthq7an5eoo@quack3>
-References: <20230209121046.25360-1-jack@suse.cz>
- <20230209123206.3548-4-jack@suse.cz>
- <Y+oKAB/epmJNyDbQ@infradead.org>
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Hugh Dickins <hughd@google.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>,
+        Arnd Bergmann <arnd@arndb.de>, coda@cs.cmu.edu,
+        codalist@coda.cs.cmu.edu, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] shmem, overlayfs, coda, tty, proc, kernfs,
+ random: Fix splice-read
+Message-ID: <Y+uT1SGEzjMrUbFI@makrotopia.org>
+References: <20230214083710.2547248-1-dhowells@redhat.com>
+ <20230214083710.2547248-6-dhowells@redhat.com>
+ <Y+tMMAEiKUEDzZMa@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y+oKAB/epmJNyDbQ@infradead.org>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y+tMMAEiKUEDzZMa@kroah.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 13-02-23 01:59:28, Christoph Hellwig wrote:
-> Eww.  The block bounc code really needs to go away, so a new user
-> makes me very unhappy.
+On Tue, Feb 14, 2023 at 09:54:08AM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Feb 14, 2023 at 08:37:10AM +0000, David Howells wrote:
+> > The new filemap_splice_read() has an implicit expectation via
+> > filemap_get_pages() that ->read_folio() exists if ->readahead() doesn't
+> > fully populate the pagecache of the file it is reading from[1], potentially
+> > leading to a jump to NULL if this doesn't exist.
+> > 
+> > A filesystem or driver shouldn't suffer from this if:
+> > 
+> >   - It doesn't set ->splice_read()
+> >   - It implements ->read_folio()
+> >   - It implements its own ->splice_read()
+> > 
+> > Note that some filesystems set generic_file_splice_read() and
+> > generic_file_read_iter() but don't set ->read_folio().  g_f_read_iter()
+> > will fall back to filemap_read_iter() which looks like it should suffer
+> > from the same issue.
+> > 
+> > Certain drivers, can just use direct_splice_read() rather than
+> > generic_file_splice_read() as that creates an output buffer and then just
+> > calls their ->read_iter() function:
+> > 
+> >   - random & urandom
+> >   - tty
+> >   - kernfs
+> >   - proc
+> >   - proc_namespace
+> > 
+> > Stacked filesystems just need to pass the operation down a layer:
+> > 
+> >   - coda
+> >   - overlayfs
+> > 
+> > And finally, there's shmem (used in tmpfs, ramfs, rootfs).  This needs its
+> > own splice-read implementation, based on filemap_splice_read(), but able to
+> > paste in zero_page when there's a page missing.
+> > 
+> > Fixes: d9722a475711 ("splice: Do splice read from a buffered file without using ITER_PIPE")
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: Daniel Golle <daniel@makrotopia.org>
+> > cc: Guenter Roeck <groeck7@gmail.com>
+> > cc: Christoph Hellwig <hch@lst.de>
+> > cc: Jens Axboe <axboe@kernel.dk>
+> > cc: Al Viro <viro@zeniv.linux.org.uk>
+> > cc: John Hubbard <jhubbard@nvidia.com>
+> > cc: David Hildenbrand <david@redhat.com>
+> > cc: Matthew Wilcox <willy@infradead.org>
+> > cc: Miklos Szeredi <miklos@szeredi.hu>
+> > cc: Hugh Dickins <hughd@google.com>
+> > cc: Jan Harkes <jaharkes@cs.cmu.edu>
+> > cc: Arnd Bergmann <arnd@arndb.de>
+> > cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > cc: coda@cs.cmu.edu
+> > cc: codalist@coda.cs.cmu.edu
+> > cc: linux-unionfs@vger.kernel.org
+> > cc: linux-block@vger.kernel.org
+> > cc: linux-fsdevel@vger.kernel.org
+> > cc: linux-mm@kvack.org
+> > Link: https://lore.kernel.org/r/Y+pdHFFTk1TTEBsO@makrotopia.org/ [1]
+> > ---
 > 
-> But independent of that I don't think this is enough anyway.  Just
-> copying the data out into a new page in the block layer doesn't solve
-> the problem that this page needs to be tracked as dirtied for fs
-> accounting.  e.g. every time we write this copy it needs space allocated
-> for COW file systems.
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Right, I forgot about this in my RFC. My original plan was to not clear the
-dirty bit in clear_page_dirty_for_io() even for WB_SYNC_ALL writeback when
-we do writeback the page and perhaps indicate this in the return value of
-clear_page_dirty_for_io() so that the COW filesystem can keep tracking this
-page as dirty.
+Confirming that the above indeed fixes the NULL pointer bug.
 
-> Which brings me back to if and when we do writeback for pinned page.
-> I don't think doing any I/O for short term pins like direct I/O
-> make sense.  These pins are defined to be unpinned after I/O
-> completes, so we might as well just wait for the unpin instead of doing
-> anything complicated.
-
-Agreed. For short term pins we could just wait which should be quite
-simple (although there's some DoS potential of this behavior if somebody
-runs multiple processes that keep pinning some page with short term pins).
-
-> Long term pins are more troublesome, but I really wonder what the
-> defined semantics for data integrity writeback like fsync on them
-> is to start with as the content is very much undefined.  Should
-> an fsync on a (partially) long term pinned file simplfy fail?  It's
-> not like we can win in that scenario.
-
-Well, we have also cases like sync(2) so one would have to be careful with
-error propagation and I'm afraid there are enough programs out-there that
-treat any error return from fsync(2) as catastrophic so I suspect this
-could lead to some surprises. The case I'm most worried about is if some
-application sets up RDMA to an mmaped file, runs the transfer and waits for
-it to complete, doesn't bother to unpin the pages (keeps them for future
-transfers) and calls fsync(2) to make data stable on local storage. That
-does seem like quite sensible use and so far it works just fine. And not
-writing pages with fsync(2) would break such uses.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Tested-by: Daniel Golle <daniel@makrotopia.org>
