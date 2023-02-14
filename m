@@ -2,66 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9479D696B34
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 18:16:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AF60696B5E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 18:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232371AbjBNRQi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 12:16:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42412 "EHLO
+        id S232731AbjBNRXe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 12:23:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232406AbjBNRPf (ORCPT
+        with ESMTP id S232517AbjBNRXc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 12:15:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0923C2ED69
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 09:14:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676394879;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7RYncx3d2QCFno76YxQ26A3gARIW2WsBk/g5n5z32ew=;
-        b=OIXCW4Dj6rkWJjA0YcFVFOBBGYLYZaaqZV98tlLSg96qVtqovST9p2t943pER/VYezgR2F
-        EnEYLhhnCMbPZXv2hUOQMuxTZB+bk21OaJfYFVEZERbtLKTDdBHWBdvoVgI1PnHPaJPp3d
-        CzAneYMRiDWvdMBrcPh1Ubf7Fw16SvY=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-528-53yWEtX-Pm2chQYNZopvZA-1; Tue, 14 Feb 2023 12:14:33 -0500
-X-MC-Unique: 53yWEtX-Pm2chQYNZopvZA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C77ED38123AE;
-        Tue, 14 Feb 2023 17:14:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D47AE18EC2;
-        Tue, 14 Feb 2023 17:14:30 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v14 17/17] block: convert bio_map_user_iov to use iov_iter_extract_pages
-Date:   Tue, 14 Feb 2023 17:13:30 +0000
-Message-Id: <20230214171330.2722188-18-dhowells@redhat.com>
-In-Reply-To: <20230214171330.2722188-1-dhowells@redhat.com>
-References: <20230214171330.2722188-1-dhowells@redhat.com>
+        Tue, 14 Feb 2023 12:23:32 -0500
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D422C648;
+        Tue, 14 Feb 2023 09:23:20 -0800 (PST)
+Received: by mail-pg1-x52f.google.com with SMTP id x31so10694527pgl.6;
+        Tue, 14 Feb 2023 09:23:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1676395400;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hUVBPsH3oAEXAQofX8yIP+/K7/mZIMg7RLPUFsCWbDA=;
+        b=OuAM2UqRAkLgip9Xw2DlRqYepaFNzc4qFNmiNv7cRaMP0yyakh9floBQOK5T1o36j4
+         brCm1ifKbS1O8/yLto56LAsH2Nty135AsDT2jME+fRQTxB+AHQsT/Bs6mSDG5mK6iCkT
+         q8Ebz/iwkfEpoCDePpDnJLLWEo14/SmThvfomwYGeUSw6pe1+wpMpPq4w/IUq0vsEgPV
+         RMYAaMifbEMCaY1mtkdBVeE/qwE1dpX/cpTJoVVJU/CVWL/Hax3hLNyGCgXLY55qEKRv
+         Vglf1d2v3x+nZ/z2P5UL2tBCr3/3GMBCCuHzItWHnd6KS4t8/0hVuoMlUN6gR2MD/bTy
+         eQwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1676395400;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hUVBPsH3oAEXAQofX8yIP+/K7/mZIMg7RLPUFsCWbDA=;
+        b=g0vlkqfXw0x3nqA5WMN4+righq4DsMWmshU4B9del2OjPo/6ZtajDFfML49EbdGJQ0
+         A0Cd++f3L5ltot4JV7tZsQjZiBOaFVfAVt019UFeLM1y17G/qAmIqySlNyGYcvsTws3h
+         lIbeXuqhSdKxx3DGmq9OKeXYBgh8/xLc3dTtAA5wTcN7DBLF0ryHEZUkgbVSaZlOOlV6
+         gLPu1Am3yBPCDQw0QDjw9j6l++671bfV6e1X9IHn9z7XqWh7eEYHwCTezPB+F9Z2Bl5h
+         fpJcNkuaxqAjie2cu5m0wW4xn0g1WnGKcb35X4tasAJJ8NY2XCWOc02Bb5mbYEKFyhAf
+         njSg==
+X-Gm-Message-State: AO0yUKWFNKItG94J4N+Lq9dX9gVXxqjeZJeVLcc7l0dfU2gQQ3r6mTsd
+        wCyFlA8M6mBjph57UZx3MQGZDHTjsVjCZCIc9K0=
+X-Google-Smtp-Source: AK7set99U5fDx0SzpjwyakcvBeVGYFyQEhDgFEtZ5IV98UZn563/hsCar30TCq32sx4Xxg5/i5E3Zr7bgyHYpeZ0EOQ=
+X-Received: by 2002:a62:1957:0:b0:5a8:b987:b71f with SMTP id
+ 84-20020a621957000000b005a8b987b71fmr649576pfz.20.1676395399593; Tue, 14 Feb
+ 2023 09:23:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+References: <20230207035139.272707-1-shiyn.lin@gmail.com> <CA+CK2bBt0Gujv9BdhghVkbFRirAxCYXbpH-nquccPsKGnGwOBQ@mail.gmail.com>
+ <CANOhDtU3J8SUCzKtKvPPPrUHyo+LV5npNObHtYP_AK4W3LomDw@mail.gmail.com>
+ <CA+CK2bAWnzqKDTjBbxXOvURwr7nWmf8q-mzD1x-ztwbWVQBQKA@mail.gmail.com>
+ <Y+Z8ymNYc+vJMBx8@strix-laptop> <62c44d12-933d-ee66-ef50-467cd8d30a58@redhat.com>
+In-Reply-To: <62c44d12-933d-ee66-ef50-467cd8d30a58@redhat.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Tue, 14 Feb 2023 09:23:08 -0800
+Message-ID: <CAHbLzkoYo3Fwz2H=GM3X+ao33NN2fc2qh6y_ir4A-RL0LvJaZA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/14] Introduce Copy-On-Write to Page Table
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Chih-En Lin <shiyn.lin@gmail.com>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Nadav Amit <namit@vmware.com>, Barry Song <baohua@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
+        "Zach O'Keefe" <zokeefe@google.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Hugh Dickins <hughd@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Yu Zhao <yuzhao@google.com>, Juergen Gross <jgross@suse.com>,
+        Tong Tiangen <tongtiangen@huawei.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Li kunyu <kunyu@nfschina.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Gautam Menghani <gautammenghani201@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Brown <broonie@kernel.org>, Will Deacon <will@kernel.org>,
+        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Barret Rhoden <brho@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Dinglan Peng <peng301@purdue.edu>,
+        Pedro Fonseca <pfonseca@purdue.edu>,
+        Jim Huang <jserv@ccns.ncku.edu.tw>,
+        Huichun Feng <foxhoundsk.tw@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,97 +119,159 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This will pin pages or leave them unaltered rather than getting a ref on
-them as appropriate to the iterator.
+On Tue, Feb 14, 2023 at 1:58 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> On 10.02.23 18:20, Chih-En Lin wrote:
+> > On Fri, Feb 10, 2023 at 11:21:16AM -0500, Pasha Tatashin wrote:
+> >>>>> Currently, copy-on-write is only used for the mapped memory; the child
+> >>>>> process still needs to copy the entire page table from the parent
+> >>>>> process during forking. The parent process might take a lot of time and
+> >>>>> memory to copy the page table when the parent has a big page table
+> >>>>> allocated. For example, the memory usage of a process after forking with
+> >>>>> 1 GB mapped memory is as follows:
+> >>>>
+> >>>> For some reason, I was not able to reproduce performance improvements
+> >>>> with a simple fork() performance measurement program. The results that
+> >>>> I saw are the following:
+> >>>>
+> >>>> Base:
+> >>>> Fork latency per gigabyte: 0.004416 seconds
+> >>>> Fork latency per gigabyte: 0.004382 seconds
+> >>>> Fork latency per gigabyte: 0.004442 seconds
+> >>>> COW kernel:
+> >>>> Fork latency per gigabyte: 0.004524 seconds
+> >>>> Fork latency per gigabyte: 0.004764 seconds
+> >>>> Fork latency per gigabyte: 0.004547 seconds
+> >>>>
+> >>>> AMD EPYC 7B12 64-Core Processor
+> >>>> Base:
+> >>>> Fork latency per gigabyte: 0.003923 seconds
+> >>>> Fork latency per gigabyte: 0.003909 seconds
+> >>>> Fork latency per gigabyte: 0.003955 seconds
+> >>>> COW kernel:
+> >>>> Fork latency per gigabyte: 0.004221 seconds
+> >>>> Fork latency per gigabyte: 0.003882 seconds
+> >>>> Fork latency per gigabyte: 0.003854 seconds
+> >>>>
+> >>>> Given, that page table for child is not copied, I was expecting the
+> >>>> performance to be better with COW kernel, and also not to depend on
+> >>>> the size of the parent.
+> >>>
+> >>> Yes, the child won't duplicate the page table, but fork will still
+> >>> traverse all the page table entries to do the accounting.
+> >>> And, since this patch expends the COW to the PTE table level, it's not
+> >>> the mapped page (page table entry) grained anymore, so we have to
+> >>> guarantee that all the mapped page is available to do COW mapping in
+> >>> the such page table.
+> >>> This kind of checking also costs some time.
+> >>> As a result, since the accounting and the checking, the COW PTE fork
+> >>> still depends on the size of the parent so the improvement might not
+> >>> be significant.
+> >>
+> >> The current version of the series does not provide any performance
+> >> improvements for fork(). I would recommend removing claims from the
+> >> cover letter about better fork() performance, as this may be
+> >> misleading for those looking for a way to speed up forking. In my
+> >
+> >  From v3 to v4, I changed the implementation of the COW fork() part to do
+> > the accounting and checking. At the time, I also removed most of the
+> > descriptions about the better fork() performance. Maybe it's not enough
+> > and still has some misleading. I will fix this in the next version.
+> > Thanks.
+> >
+> >> case, I was looking to speed up Redis OSS, which relies on fork() to
+> >> create consistent snapshots for driving replicates/backups. The O(N)
+> >> per-page operation causes fork() to be slow, so I was hoping that this
+> >> series, which does not duplicate the VA during fork(), would make the
+> >> operation much quicker.
+> >
+> > Indeed, at first, I tried to avoid the O(N) per-page operation by
+> > deferring the accounting and the swap stuff to the page fault. But,
+> > as I mentioned, it's not suitable for the mainline.
+> >
+> > Honestly, for improving the fork(), I have an idea to skip the per-page
+> > operation without breaking the logic. However, this will introduce the
+> > complicated mechanism and may has the overhead for other features. It
+> > might not be worth it. It's hard to strike a balance between the
+> > over-complicated mechanism with (probably) better performance and data
+> > consistency with the page status. So, I would focus on the safety and
+> > stable approach at first.
+>
+> Yes, it is most probably possible, but complexity, robustness and
+> maintainability have to be considered as well.
+>
+> Thanks for implementing this approach (only deduplication without other
+> optimizations) and evaluating it accordingly. It's certainly "cleaner",
+> such that we only have to mess with unsharing and not with other
+> accounting/pinning/mapcount thingies. But it also highlights how
+> intrusive even this basic deduplication approach already is -- and that
+> most benefits of the original approach requires even more complexity on top.
+>
+> I am not quite sure if the benefit is worth the price (I am not to
+> decide and I would like to hear other options).
+>
+> My quick thoughts after skimming over the core parts of this series
+>
+> (1) forgetting to break COW on a PTE in some pgtable walker feels quite
+>      likely (meaning that it might be fairly error-prone) and forgetting
+>      to break COW on a PTE table, accidentally modifying the shared
+>      table.
+> (2) break_cow_pte() can fail, which means that we can fail some
+>      operations (possibly silently halfway through) now. For example,
+>      looking at your change_pte_range() change, I suspect it's wrong.
+> (3) handle_cow_pte_fault() looks quite complicated and needs quite some
+>      double-checking: we temporarily clear the PMD, to reset it
+>      afterwards. I am not sure if that is correct. For example, what
+>      stops another page fault stumbling over that pmd_none() and
+>      allocating an empty page table? Maybe there are some locking details
+>      missing or they are very subtle such that we better document them. I
+>     recall that THP played quite some tricks to make such cases work ...
+>
+> >
+> >>> Actually, at the RFC v1 and v2, we proposed the version of skipping
+> >>> those works, and we got a significant improvement. You can see the
+> >>> number from RFC v2 cover letter [1]:
+> >>> "In short, with 512 MB mapped memory, COW PTE decreases latency by 93%
+> >>> for normal fork"
+> >>
+> >> I suspect the 93% improvement (when the mapcount was not updated) was
+> >> only for VAs with 4K pages. With 2M mappings this series did not
+> >> provide any benefit is this correct?
+> >
+> > Yes. In this case, the COW PTE performance is similar to the normal
+> > fork().
+>
+>
+> The thing with THP is, that during fork(), we always allocate a backup
+> PTE table, to be able to PTE-map the THP whenever we have to. Otherwise
+> we'd have to eventually fail some operations we don't want to fail --
+> similar to the case where break_cow_pte() could fail now due to -ENOMEM
+> although we really don't want to fail (e.g., change_pte_range() ).
+>
+> I always considered that wasteful, because in many scenarios, we'll
+> never ever split a THP and possibly waste memory.
 
-The pages need to be pinned for DIO rather than having refs taken on them
-to prevent VM copy-on-write from malfunctioning during a concurrent fork()
-(the result of the I/O could otherwise end up being visible to/affected by
-the child process).
+When you say "split THP", do you mean split the compound page to base
+pages? IIUC the backup PTE table page is used to guarantee the PMD
+split (just convert pmd mapped THP to PTE-mapped but not split the
+compound page) succeed. You may already notice there is no return
+value for PMD split.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Jan Kara <jack@suse.cz>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Logan Gunthorpe <logang@deltatee.com>
-cc: linux-block@vger.kernel.org
----
+The PMD split may be called quite often, for example, MADV_DONTNEED,
+mbind, mlock, and even in memory reclamation context  (THP swap).
 
-Notes:
-    ver #10)
-     - Drop bio_set_cleanup_mode(), open coding it instead.
-    
-    ver #8)
-     - Split the patch up a bit [hch].
-     - We should only be using pinned/non-pinned pages and not ref'd pages,
-       so adjust the comments appropriately.
-    
-    ver #7)
-     - Don't treat BIO_PAGE_REFFED/PINNED as being the same as FOLL_GET/PIN.
-    
-    ver #5)
-     - Transcribe the FOLL_* flags returned by iov_iter_extract_pages() to
-       BIO_* flags and got rid of bi_cleanup_mode.
-     - Replaced BIO_NO_PAGE_REF to BIO_PAGE_REFFED in the preceding patch.
+>
+> Optimizing that for THP (e.g., don't always allocate backup THP, have
+> some global allocation backup pool for splits + refill when
+> close-to-empty) might provide similar fork() improvements, both in speed
+> and memory consumption when it comes to anonymous memory.
 
- block/blk-map.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+It might work. But may be much more complicated than what you thought
+when handling multiple parallel PMD splits.
 
-diff --git a/block/blk-map.c b/block/blk-map.c
-index f1f70b50388d..0f1593e144da 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -281,22 +281,21 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 
- 	if (blk_queue_pci_p2pdma(rq->q))
- 		extraction_flags |= ITER_ALLOW_P2PDMA;
-+	if (iov_iter_extract_will_pin(iter))
-+		bio_set_flag(bio, BIO_PAGE_PINNED);
- 
--	bio_set_flag(bio, BIO_PAGE_REFFED);
- 	while (iov_iter_count(iter)) {
--		struct page **pages, *stack_pages[UIO_FASTIOV];
-+		struct page *stack_pages[UIO_FASTIOV];
-+		struct page **pages = stack_pages;
- 		ssize_t bytes;
- 		size_t offs;
- 		int npages;
- 
--		if (nr_vecs <= ARRAY_SIZE(stack_pages)) {
--			pages = stack_pages;
--			bytes = iov_iter_get_pages(iter, pages, LONG_MAX,
--						   nr_vecs, &offs, extraction_flags);
--		} else {
--			bytes = iov_iter_get_pages_alloc(iter, &pages,
--						LONG_MAX, &offs, extraction_flags);
--		}
-+		if (nr_vecs > ARRAY_SIZE(stack_pages))
-+			pages = NULL;
-+
-+		bytes = iov_iter_extract_pages(iter, &pages, LONG_MAX,
-+					       nr_vecs, extraction_flags, &offs);
- 		if (unlikely(bytes <= 0)) {
- 			ret = bytes ? bytes : -EFAULT;
- 			goto out_unmap;
-@@ -318,7 +317,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 				if (!bio_add_hw_page(rq->q, bio, page, n, offs,
- 						     max_sectors, &same_page)) {
- 					if (same_page)
--						put_page(page);
-+						bio_release_page(bio, page);
- 					break;
- 				}
- 
-@@ -330,7 +329,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 		 * release the pages we didn't map into the bio, if any
- 		 */
- 		while (j < npages)
--			put_page(pages[j++]);
-+			bio_release_page(bio, pages[j++]);
- 		if (pages != stack_pages)
- 			kvfree(pages);
- 		/* couldn't stuff something into bio? */
-
+>
+> --
+> Thanks,
+>
+> David / dhildenb
+>
