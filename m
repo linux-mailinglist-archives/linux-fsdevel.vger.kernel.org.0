@@ -2,172 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0F86696C48
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 19:04:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22CA1696C4C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 19:04:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231792AbjBNSEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 13:04:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34778 "EHLO
+        id S232478AbjBNSE4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 13:04:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229842AbjBNSEj (ORCPT
+        with ESMTP id S232098AbjBNSEm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 13:04:39 -0500
-Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCCA5BBB6;
-        Tue, 14 Feb 2023 10:04:29 -0800 (PST)
-Received: by mail-vk1-xa2b.google.com with SMTP id v81so8391660vkv.5;
-        Tue, 14 Feb 2023 10:04:29 -0800 (PST)
+        Tue, 14 Feb 2023 13:04:42 -0500
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B23482A6DB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 10:04:32 -0800 (PST)
+Received: by mail-qt1-x82c.google.com with SMTP id v17so18515936qto.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 10:04:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TMkf7c8z7/sNRkzcNDwG4/QBxpk3rcjnBNtaol4M2NI=;
-        b=akRLYn2Lt+j5KYsXonD7qbup/3PwO3moofYNPBFdWJkVw+5sAX6MrUuFQYDzf+PUtQ
-         eOigIsKg1yLWJVJPHlhn3GTB49jK92WJGohpggbYjVVrBMJASp5A4YCSpaKCtfL+wI/h
-         fmylS7WYz5GDurB8xcmbeBVZwgorB822MmzkHDaVynW9awqBsolKhtxUwARuwFXuqfzU
-         nKtvGRe/xC9+Q0hu/RGEVbWUXzCYjnj5uGruY8dUBZxa+RZPEncqOO9jZ92nyeGiDgs2
-         s7XOVJE8z+/PtoBXVcr/apdrA8lXC6ZwdZzoqqn1kgTp70EWoInTtO0C1pg1Tq52P7Ws
-         lA5A==
+        d=cs.cmu.edu; s=google-2021;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z+RfWT82grRH2yp1+kvd7+qFvAWPLOfM6Uu0gZ6cTAM=;
+        b=Ln45vBZO59pu7SCdRQDTnrH5JI49m22gg9Iw5nS8G1OytCBUQAa/PPJ6CJSRLIKP3+
+         Ete2z9K+Wm3eHwhoGtsAFCh9phgnyG6yYdbPTck3fzzialpi0qtypazpwULGSrPF+WM/
+         zsYEB/dDXQAXtsn8h+2p2i2kC+MIVbcsaa3HMsG9WOs5iWLLHN7D3NiVXSw/ejzP17TE
+         u64Zo1uSlebWrDFdcT3bHKs3eQY5Q3UffPxwjLrAWeCqBsEDdwrS9lP+d9v5iBe7yjsJ
+         jANs/yFtaz2RhvqlutN7zSqbZLgf+xWR6Yp7KKok7CJkJypVa2gQtZG1fEX4B7zl8MJ1
+         x2UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TMkf7c8z7/sNRkzcNDwG4/QBxpk3rcjnBNtaol4M2NI=;
-        b=nfQn2+JrEKqKQMmRLYcSP7745zOsaxgI6MJtaTPbqnzRdTUR9CV/db9YF7r9VR8EMt
-         CRktLaH8QEcdCs1Kc/+cfwQgUR8NihGy4KvpuguAAFy+nXEdQ4X+thfoiNcTnWeRCcGQ
-         GP1rXRljIQZMZ2MkF9iUbWGLCtFXX/CVk4lazujvoep+jd5ejfJX5uZ5Q2LXRKvRFomQ
-         Ri6qLMg9okiyrBOa7C10bqCrS0AWx0UpXmPh2rGVXJiaQQseokQU24iwzuCpesjkt6OL
-         mRennWnt7d/LsQvGfzveUTQooYeP8gsgBRT1fCRGCCBsNFhfuXYSqeomTSkVvHGlu6s2
-         qzRQ==
-X-Gm-Message-State: AO0yUKW0nDYgzGJQfWCvDycY21r5446XZbBLvdNUslo/Tgds5HMCMR75
-        I6SmQ50WX0YeXQDQt+yYYiTHVpfmNwN1w060VwUBfl8H
-X-Google-Smtp-Source: AK7set8E3Q1LiRcRuh+0KnT9RilvPri9nHdBF2Z0VeaMoKAPnrKE6kqUGgklozRykcihpkIg/7K/pocG/IuZZ3YSEgk=
-X-Received: by 2002:a1f:a681:0:b0:3d5:9b32:7ba4 with SMTP id
- p123-20020a1fa681000000b003d59b327ba4mr482672vke.15.1676397868643; Tue, 14
- Feb 2023 10:04:28 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+RfWT82grRH2yp1+kvd7+qFvAWPLOfM6Uu0gZ6cTAM=;
+        b=bYsW0dYms27dy4Rt1G/zNeRv03TvP5lhbqDpg1FJF/ThC+HT1nZz+xM1myBqnRNNeJ
+         qnJw7Y2fhW8cd9Mca7rI/Mxslpelq7FAGfZxEglwY7Z1HUlSdQ/WcD37AGywYPyMkFI5
+         /+4BJXleJaBsvA2BjebGs33I55eRkCoA/PFHBtn7sFyoRP/JDpaPoCcM+jsB5lzU+qFY
+         OsRSnhQ7q+jr4hcmTWTPQk8XUkVREhQHFFUoFuL5givXSbM+WQ965nko0iuNhW8J0f4e
+         1tkddJ3DfzPplSbP6FPdkm5KIsQKL7Jwm7tuVAt83D3dg3X7AwywIf2prOjmGSrPBXXO
+         wmFQ==
+X-Gm-Message-State: AO0yUKW4VVBQ2btg/Gk71gYskyLCMmnnKD+2g14SI51tm5zY12xztLG2
+        wNRWQfPeY2zo84IUxU1EL5mR0w==
+X-Google-Smtp-Source: AK7set+HUg0X5HtHNByMB4FKO6BoBVyKHOm7rQNL5MfU8paF1RWmVoOYq5KgxBs19P0Uaq1exxK3Dg==
+X-Received: by 2002:ac8:5dd2:0:b0:3b6:9817:18e4 with SMTP id e18-20020ac85dd2000000b003b6981718e4mr5283147qtx.49.1676397871740;
+        Tue, 14 Feb 2023 10:04:31 -0800 (PST)
+Received: from cs.cmu.edu (tunnel29655-pt.tunnel.tserv13.ash1.ipv6.he.net. [2001:470:7:582::2])
+        by smtp.gmail.com with ESMTPSA id e5-20020a05620a014500b006fcb77f3bd6sm12300242qkn.98.2023.02.14.10.04.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Feb 2023 10:04:31 -0800 (PST)
+Date:   Tue, 14 Feb 2023 13:04:28 -0500
+From:   Jan Harkes <jaharkes@cs.cmu.edu>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v14 06/17] coda: Implement splice-read
+Message-ID: <20230214180428.asqulrek773hae23@cs.cmu.edu>
+Mail-Followup-To: David Howells <dhowells@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>, linux-unionfs@vger.kernel.org
+References: <20230214171330.2722188-1-dhowells@redhat.com>
+ <20230214171330.2722188-7-dhowells@redhat.com>
 MIME-Version: 1.0
-References: <20221122021536.1629178-1-drosen@google.com> <CAOQ4uxiyRxsZjkku_V2dBMvh1AGiKQx-iPjsD5tmGPv1PgJHvQ@mail.gmail.com>
- <CA+PiJmRLTXfjJmgJm9VRBQeLVkWgaqSq0RMrRY1Vj7q6pV+omw@mail.gmail.com>
- <2dc5e840-0ce8-dae9-99b9-e33d6ccbb016@fastmail.fm> <CAOQ4uxiBD5NXLMXFev7vsCLU5-_o8-_H-XcoMY1aqhOwnADo9w@mail.gmail.com>
- <283b5344-3ef5-7799-e243-13c707388cd8@fastmail.fm> <CAOQ4uxjvUukDSBk977csO5cX=-1HiMHmyQxycbYQgrpLaanddw@mail.gmail.com>
- <CAJfpegvHKkCn0UnNRVxFXjjnkOuq0N4xLN4WzpqVX+56DqdjUw@mail.gmail.com>
- <81e010cc-b52b-4b20-8d08-631ce8ca7fad@app.fastmail.com> <CAJfpegsocoi-KobnSpD9dHvZDeDwG+ZPKRV9Yo-4i8utZa5Jww@mail.gmail.com>
- <56d5ac0e-4c54-46b7-85d3-5de127562630@app.fastmail.com>
-In-Reply-To: <56d5ac0e-4c54-46b7-85d3-5de127562630@app.fastmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 14 Feb 2023 20:04:17 +0200
-Message-ID: <CAOQ4uxhYafABMTYXQjVxaekkwbetwAEZFA42cCVQ-nzMQn4o5w@mail.gmail.com>
-Subject: Re: Attending LFS (was: [RFC PATCH v2 00/21] FUSE BPF: A Stacked
- Filesystem Extension for FUSE)
-To:     Nikolaus Rath <nikolaus@rath.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Bernd Schubert <bernd.schubert@fastmail.fm>,
-        Daniel Rosenberg <drosen@google.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, kernel-team <kernel-team@android.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230214171330.2722188-7-dhowells@redhat.com>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 14, 2023 at 6:53 PM Nikolaus Rath <nikolaus@rath.org> wrote:
->
-> Hi folks,
->
-> I've looked into this in more detail.
->
-> I wouldn't be able to get the travel funded by my employer, and I don't t=
-hink I'm a suitable recipient for the Linux Foundation's travel fund. There=
-fore, I think it would make more sense for me to attend potentially relevan=
-t sessions remotely.
->
-> If there's anything I need to do for that, please let me know. Otherwise =
-I'll assume that at some point I'll get a meeting invite from someone :-).
->
+On Tue, Feb 14, 2023 at 05:13:19PM +0000, David Howells wrote:
+> Implement splice-read for coda by passing the request down a layer rather
+> than going through generic_file_splice_read() which is going to be changed
+> to assume that ->read_folio() is present on buffered files.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Christoph Hellwig <hch@lst.de>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: John Hubbard <jhubbard@nvidia.com>
+> cc: David Hildenbrand <david@redhat.com>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: Jan Harkes <jaharkes@cs.cmu.edu>
+> cc: coda@cs.cmu.edu
+> cc: codalist@coda.cs.cmu.edu
+> cc: linux-unionfs@vger.kernel.org
+> cc: linux-block@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> ---
 
-Please use the Form in the CFP link to request to attend and specify
-that you can
-only  attend remotely.
+Acked-by: Jan Harkes <jaharkes@cs.cmu.edu>
 
-This will get you subscribed to information about relevant sessions
-and how to connect.
-
-> If there's a way to schedule these sessions in a Europe-friendly time tha=
-t would be much appreciated!
->
-
-Will do my best to take that into consideration :)
-
-Thanks,
-Amir.
-
->
-> --
-> GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
->
->              =C2=BBTime flies like an arrow, fruit flies like a Banana.=
-=C2=AB
->
-> On Fri, 10 Feb 2023, at 10:53, Miklos Szeredi wrote:
-> > On Fri, 10 Feb 2023 at 10:42, Nikolaus Rath <nikolaus@rath.org> wrote:
-> >>
-> >> On Fri, 10 Feb 2023, at 09:38, Miklos Szeredi wrote:
-> >> > On Fri, 3 Feb 2023 at 12:43, Amir Goldstein <amir73il@gmail.com> wro=
-te:
-> >> >
-> >> >> > Thanks a lot Amir, I'm going to send out an invitation tomorrow. =
-Maybe
-> >> >> > Nikolaus as libfuse maintainer could also attend?
-> >> >> >
-> >> >>
-> >> >> Since this summit is about kernel filesystem development, I am not =
-sure
-> >> >> on-prem attendance will be the best option for Nikolaus as we do ha=
-ve
-> >> >> a quota for
-> >> >> on-prem attendees, but we should have an option for connecting spec=
-ific
-> >> >> attendees remotely for specific sessions, so that could be great.
-> >> >
-> >> > Not sure.  I think including non-kernel people might be beneficial t=
-o
-> >> > the whole fs development community.  Not saying LSF is the best plac=
-e,
-> >> > but it's certainly a possibility.
-> >> >
-> >> > Nikolaus, I don't even know where you're located.  Do you think it
-> >> > would make sense for you to attend?
-> >>
-> >> Hi folks,
-> >>
-> >> I'm located in London.
-> >>
-> >> I've never been at LHS, so it's hard for me to tell if I'd be useful t=
-here or not. If there's interest, then I would make an effort to attend.
-> >>
-> >> Are we talking about the event in Vancouver on May 8th?
-> >
-> > Yes, that's the one.
-> >
-> > I'd certainly think it would be useful, since there will be people
-> > with interest in fuse filesystems and hashing out the development
-> > direction involves libfuse as well.
-> >
-> > Here's the CFP and attendance request if you are interested:
-> >
-> >   https://events.linuxfoundation.org/lsfmm/program/cfp/
-> >
-> > Thanks,
-> > Miklos
