@@ -2,74 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0023B696C70
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 19:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B23F696CD0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 19:25:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233245AbjBNSJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 13:09:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40096 "EHLO
+        id S233492AbjBNSZx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 13:25:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233320AbjBNSJo (ORCPT
+        with ESMTP id S233435AbjBNSZu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 13:09:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54BD5B4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 10:08:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676398132;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HjcdhS05rmuEMZxa+twXLjmdNPlmuoeDRI4X82wtvAM=;
-        b=K4ESRb592VTb8YDK8dg66eIs3B5+LrQ6hc3gj4YaN1qqO3s43Iz1/2nguqWVy7lUhDM+XF
-        YFmvM490VxqxkaNxdlfPpRHnpz8xCpLbyMIipEWHoPNNV755KzZvladfrI/NdrHgCF7f3j
-        W25EFgDsznDus2SdDp8VzqkrWiPXNNI=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-509-sJx5vOeCMOijv6JAcKnESA-1; Tue, 14 Feb 2023 13:08:43 -0500
-X-MC-Unique: sJx5vOeCMOijv6JAcKnESA-1
-Received: by mail-qt1-f200.google.com with SMTP id c14-20020ac87d8e000000b003ba2d72f98aso9774895qtd.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 10:08:43 -0800 (PST)
+        Tue, 14 Feb 2023 13:25:50 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643D82BF25;
+        Tue, 14 Feb 2023 10:25:28 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id 24so10820658pgt.7;
+        Tue, 14 Feb 2023 10:25:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=G7cKrloHxiaOUMo6OQnT1a5glIKiHrnYnSsZBzKf7Pk=;
+        b=fJKAy9qUocU5ALJnBnA+q7dLJJl7EmBcg7/ottoxidOWcpS6yHXt7C313JurhbREk0
+         R89r++AlhGcn8UC4v7L6tz9QaVpYVdGWJmwPMIjzcuUWntm2vXcB40ppLUPJztEqavtl
+         eaqJVqnglRgI12hweC/MaFce1FRfPyPoHPYHcRCBMGTvYAguEr8tHb6fGbxRXQyWuUvm
+         xzMLIzqKKOJdDH7xN1oxXFXakmBqw5bwDYey3KkOGz3mFOS++u/gWdlHQTZJzi02NBnz
+         y5AZtcSVh0A9xtt19fScnFy1So7JifhtwybQuH8cRWomvA1TuQbF2gmCPe1m+n+ODAL9
+         MxIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HjcdhS05rmuEMZxa+twXLjmdNPlmuoeDRI4X82wtvAM=;
-        b=U5k6cIk7MobvInvH3j50BV6ZP/Io8QBCEC3T5B+gM9wDe5iqab7oR4beNqHkDY2w9Z
-         8Wy+rNKOQdjqz/tNbyLA8BuNnAtZT3BDTxMsLJEBSITd8cKgJYvFgmtXfTXTacm05Fop
-         B5n6yFNMjuj7feCCTNXQG+Hd+4eqijF5yQznAjTVdLbkwRRjsTzjkVjMgsCILV6vzYUD
-         ydaM+MQ3yB9ZsUel8xeeqZYCYCHY2irzazdIKwKOUCgVq/mPZ0Xf+HNfm4dDhs5xdkmz
-         uERmjMv8Y16NF6DHX4X5H8Y0HIF+B3aMixQZdHY+T9p1LT0UGUQ1GXjGEyz0cpmbuYpG
-         paNQ==
-X-Gm-Message-State: AO0yUKXRTFU0Ce2YNAbpn2z6ppsaYLntPBcA8xY5y/P6wvc+7Xwo1rTq
-        xiO48BXZg/8OF6wog2OYiVJQF83mHQe4Io1Nc5A/e7jCMS7NU5NkrQgyQY8Lqo4we31dSReIKLt
-        BfyiIqABlXfctMRLnk0ZH45hAyQ==
-X-Received: by 2002:ac8:5dd2:0:b0:3b9:b1eb:ad38 with SMTP id e18-20020ac85dd2000000b003b9b1ebad38mr5889215qtx.50.1676398122642;
-        Tue, 14 Feb 2023 10:08:42 -0800 (PST)
-X-Google-Smtp-Source: AK7set+hu1302WvvlFrTLY6oqz7bo2akl5UzNLOR+/p83JKuA1hqt/vdRje9PboEcWz5bczHSoYPSQ==
-X-Received: by 2002:ac8:5dd2:0:b0:3b9:b1eb:ad38 with SMTP id e18-20020ac85dd2000000b003b9b1ebad38mr5889165qtx.50.1676398122214;
-        Tue, 14 Feb 2023 10:08:42 -0800 (PST)
-Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
-        by smtp.gmail.com with ESMTPSA id i9-20020ac80049000000b003b646123691sm11612681qtg.31.2023.02.14.10.08.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 10:08:41 -0800 (PST)
-Date:   Tue, 14 Feb 2023 13:10:05 -0500
-From:   Brian Foster <bfoster@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] xfs, iomap: ->discard_folio() is broken so remove it
-Message-ID: <Y+vOfaxIWX1c/yy9@bfoster>
-References: <20230214055114.4141947-1-david@fromorbit.com>
- <20230214055114.4141947-4-david@fromorbit.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G7cKrloHxiaOUMo6OQnT1a5glIKiHrnYnSsZBzKf7Pk=;
+        b=K1oDoOstb3rU2IitsW+keE1hbYEXiR1FSASAcnKM7JsFDcw4J4G0SfSz00Z6ap8W1Q
+         tct12xntPZYS2CErO9gApkLkLDA85lhT77HAecZa5Skb3u9JSsBf0RpdSGWPAJubk6AR
+         Caa96bIlqI1oOclpfrQ04FHyi/ms7Xz/axsMSP8Y7OvHk4mOiVKR+eknLaXvJUqciTJm
+         AEB5w0DicBO9CICP/vXgC6YsCmas77oCjxHE+TkSAr6VloBj6UyGZrvGGXXzMyYt+NOJ
+         QhtZS1iFWY7aqLl2yrcUZYvfLsoV7X32WJ/aDmdyHglxuploWyvLZSF2mV12pZnwo+bc
+         plnw==
+X-Gm-Message-State: AO0yUKWjlmStp5BU9ETTcWJCRoT9768YPEwItcEoXxPZoS4BM0An/64y
+        IKic16At2JyqZjBruCy8RVVDXVpgDCTY2JlF42g=
+X-Google-Smtp-Source: AK7set96VJT9hHJFtBSvMEfN3ZURduyPc/O+SeEx/NPsYEJw0sirrdvYE0HvZMlx1Z89b4tud0h8ZhXK6AIZFf5VTC0=
+X-Received: by 2002:a63:348a:0:b0:4fb:9359:493b with SMTP id
+ b132-20020a63348a000000b004fb9359493bmr539768pga.77.1676399127467; Tue, 14
+ Feb 2023 10:25:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230214055114.4141947-4-david@fromorbit.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+References: <20230207035139.272707-1-shiyn.lin@gmail.com> <CA+CK2bBt0Gujv9BdhghVkbFRirAxCYXbpH-nquccPsKGnGwOBQ@mail.gmail.com>
+ <CANOhDtU3J8SUCzKtKvPPPrUHyo+LV5npNObHtYP_AK4W3LomDw@mail.gmail.com>
+ <CA+CK2bAWnzqKDTjBbxXOvURwr7nWmf8q-mzD1x-ztwbWVQBQKA@mail.gmail.com>
+ <Y+Z8ymNYc+vJMBx8@strix-laptop> <62c44d12-933d-ee66-ef50-467cd8d30a58@redhat.com>
+ <CAHbLzkoYo3Fwz2H=GM3X+ao33NN2fc2qh6y_ir4A-RL0LvJaZA@mail.gmail.com> <b1cada27-33b0-f53a-4059-07c54d9f1bc4@redhat.com>
+In-Reply-To: <b1cada27-33b0-f53a-4059-07c54d9f1bc4@redhat.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Tue, 14 Feb 2023 10:25:15 -0800
+Message-ID: <CAHbLzkrkbibtwM4=Y4Ek-og2ERZNnKHTeVO==-JudyO=0R0JLw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/14] Introduce Copy-On-Write to Page Table
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Chih-En Lin <shiyn.lin@gmail.com>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Nadav Amit <namit@vmware.com>, Barry Song <baohua@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
+        "Zach O'Keefe" <zokeefe@google.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Hugh Dickins <hughd@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Yu Zhao <yuzhao@google.com>, Juergen Gross <jgross@suse.com>,
+        Tong Tiangen <tongtiangen@huawei.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Li kunyu <kunyu@nfschina.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Gautam Menghani <gautammenghani201@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Brown <broonie@kernel.org>, Will Deacon <will@kernel.org>,
+        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Barret Rhoden <brho@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Dinglan Peng <peng301@purdue.edu>,
+        Pedro Fonseca <pfonseca@purdue.edu>,
+        Jim Huang <jserv@ccns.ncku.edu.tw>,
+        Huichun Feng <foxhoundsk.tw@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,239 +120,191 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 14, 2023 at 04:51:14PM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> Ever since commit e9c3a8e820ed ("iomap: don't invalidate folios
-> after writeback errors") XFS and iomap have been retaining dirty
-> folios in memory after a writeback error. XFS no longer invalidates
-> the folio, and iomap no longer clears the folio uptodate state.
-> 
-> However, iomap is still been calling ->discard_folio on error, and
-> XFS is still punching the delayed allocation range backing the dirty
-> folio.
-> 
-> This is incorrect behaviour. The folio remains dirty and up to date,
-> meaning that another writeback will be attempted in the near future.
-> THis means that XFS is still going to have to allocate space for it
-> during writeback, and that means it still needs to have a delayed
-> allocation reservation and extent backing the dirty folio.
-> 
+On Tue, Feb 14, 2023 at 9:39 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> On 14.02.23 18:23, Yang Shi wrote:
+> > On Tue, Feb 14, 2023 at 1:58 AM David Hildenbrand <david@redhat.com> wrote:
+> >>
+> >> On 10.02.23 18:20, Chih-En Lin wrote:
+> >>> On Fri, Feb 10, 2023 at 11:21:16AM -0500, Pasha Tatashin wrote:
+> >>>>>>> Currently, copy-on-write is only used for the mapped memory; the child
+> >>>>>>> process still needs to copy the entire page table from the parent
+> >>>>>>> process during forking. The parent process might take a lot of time and
+> >>>>>>> memory to copy the page table when the parent has a big page table
+> >>>>>>> allocated. For example, the memory usage of a process after forking with
+> >>>>>>> 1 GB mapped memory is as follows:
+> >>>>>>
+> >>>>>> For some reason, I was not able to reproduce performance improvements
+> >>>>>> with a simple fork() performance measurement program. The results that
+> >>>>>> I saw are the following:
+> >>>>>>
+> >>>>>> Base:
+> >>>>>> Fork latency per gigabyte: 0.004416 seconds
+> >>>>>> Fork latency per gigabyte: 0.004382 seconds
+> >>>>>> Fork latency per gigabyte: 0.004442 seconds
+> >>>>>> COW kernel:
+> >>>>>> Fork latency per gigabyte: 0.004524 seconds
+> >>>>>> Fork latency per gigabyte: 0.004764 seconds
+> >>>>>> Fork latency per gigabyte: 0.004547 seconds
+> >>>>>>
+> >>>>>> AMD EPYC 7B12 64-Core Processor
+> >>>>>> Base:
+> >>>>>> Fork latency per gigabyte: 0.003923 seconds
+> >>>>>> Fork latency per gigabyte: 0.003909 seconds
+> >>>>>> Fork latency per gigabyte: 0.003955 seconds
+> >>>>>> COW kernel:
+> >>>>>> Fork latency per gigabyte: 0.004221 seconds
+> >>>>>> Fork latency per gigabyte: 0.003882 seconds
+> >>>>>> Fork latency per gigabyte: 0.003854 seconds
+> >>>>>>
+> >>>>>> Given, that page table for child is not copied, I was expecting the
+> >>>>>> performance to be better with COW kernel, and also not to depend on
+> >>>>>> the size of the parent.
+> >>>>>
+> >>>>> Yes, the child won't duplicate the page table, but fork will still
+> >>>>> traverse all the page table entries to do the accounting.
+> >>>>> And, since this patch expends the COW to the PTE table level, it's not
+> >>>>> the mapped page (page table entry) grained anymore, so we have to
+> >>>>> guarantee that all the mapped page is available to do COW mapping in
+> >>>>> the such page table.
+> >>>>> This kind of checking also costs some time.
+> >>>>> As a result, since the accounting and the checking, the COW PTE fork
+> >>>>> still depends on the size of the parent so the improvement might not
+> >>>>> be significant.
+> >>>>
+> >>>> The current version of the series does not provide any performance
+> >>>> improvements for fork(). I would recommend removing claims from the
+> >>>> cover letter about better fork() performance, as this may be
+> >>>> misleading for those looking for a way to speed up forking. In my
+> >>>
+> >>>   From v3 to v4, I changed the implementation of the COW fork() part to do
+> >>> the accounting and checking. At the time, I also removed most of the
+> >>> descriptions about the better fork() performance. Maybe it's not enough
+> >>> and still has some misleading. I will fix this in the next version.
+> >>> Thanks.
+> >>>
+> >>>> case, I was looking to speed up Redis OSS, which relies on fork() to
+> >>>> create consistent snapshots for driving replicates/backups. The O(N)
+> >>>> per-page operation causes fork() to be slow, so I was hoping that this
+> >>>> series, which does not duplicate the VA during fork(), would make the
+> >>>> operation much quicker.
+> >>>
+> >>> Indeed, at first, I tried to avoid the O(N) per-page operation by
+> >>> deferring the accounting and the swap stuff to the page fault. But,
+> >>> as I mentioned, it's not suitable for the mainline.
+> >>>
+> >>> Honestly, for improving the fork(), I have an idea to skip the per-page
+> >>> operation without breaking the logic. However, this will introduce the
+> >>> complicated mechanism and may has the overhead for other features. It
+> >>> might not be worth it. It's hard to strike a balance between the
+> >>> over-complicated mechanism with (probably) better performance and data
+> >>> consistency with the page status. So, I would focus on the safety and
+> >>> stable approach at first.
+> >>
+> >> Yes, it is most probably possible, but complexity, robustness and
+> >> maintainability have to be considered as well.
+> >>
+> >> Thanks for implementing this approach (only deduplication without other
+> >> optimizations) and evaluating it accordingly. It's certainly "cleaner",
+> >> such that we only have to mess with unsharing and not with other
+> >> accounting/pinning/mapcount thingies. But it also highlights how
+> >> intrusive even this basic deduplication approach already is -- and that
+> >> most benefits of the original approach requires even more complexity on top.
+> >>
+> >> I am not quite sure if the benefit is worth the price (I am not to
+> >> decide and I would like to hear other options).
+> >>
+> >> My quick thoughts after skimming over the core parts of this series
+> >>
+> >> (1) forgetting to break COW on a PTE in some pgtable walker feels quite
+> >>       likely (meaning that it might be fairly error-prone) and forgetting
+> >>       to break COW on a PTE table, accidentally modifying the shared
+> >>       table.
+> >> (2) break_cow_pte() can fail, which means that we can fail some
+> >>       operations (possibly silently halfway through) now. For example,
+> >>       looking at your change_pte_range() change, I suspect it's wrong.
+> >> (3) handle_cow_pte_fault() looks quite complicated and needs quite some
+> >>       double-checking: we temporarily clear the PMD, to reset it
+> >>       afterwards. I am not sure if that is correct. For example, what
+> >>       stops another page fault stumbling over that pmd_none() and
+> >>       allocating an empty page table? Maybe there are some locking details
+> >>       missing or they are very subtle such that we better document them. I
+> >>      recall that THP played quite some tricks to make such cases work ...
+> >>
+> >>>
+> >>>>> Actually, at the RFC v1 and v2, we proposed the version of skipping
+> >>>>> those works, and we got a significant improvement. You can see the
+> >>>>> number from RFC v2 cover letter [1]:
+> >>>>> "In short, with 512 MB mapped memory, COW PTE decreases latency by 93%
+> >>>>> for normal fork"
+> >>>>
+> >>>> I suspect the 93% improvement (when the mapcount was not updated) was
+> >>>> only for VAs with 4K pages. With 2M mappings this series did not
+> >>>> provide any benefit is this correct?
+> >>>
+> >>> Yes. In this case, the COW PTE performance is similar to the normal
+> >>> fork().
+> >>
+> >>
+> >> The thing with THP is, that during fork(), we always allocate a backup
+> >> PTE table, to be able to PTE-map the THP whenever we have to. Otherwise
+> >> we'd have to eventually fail some operations we don't want to fail --
+> >> similar to the case where break_cow_pte() could fail now due to -ENOMEM
+> >> although we really don't want to fail (e.g., change_pte_range() ).
+> >>
+> >> I always considered that wasteful, because in many scenarios, we'll
+> >> never ever split a THP and possibly waste memory.
+> >
+> > When you say "split THP", do you mean split the compound page to base
+> > pages? IIUC the backup PTE table page is used to guarantee the PMD
+> > split (just convert pmd mapped THP to PTE-mapped but not split the
+> > compound page) succeed. You may already notice there is no return
+> > value for PMD split.
+>
+> Yes, as I raised in my other reply.
+>
+> >
+> > The PMD split may be called quite often, for example, MADV_DONTNEED,
+> > mbind, mlock, and even in memory reclamation context  (THP swap).
+>
+> Yes, but with a single MADV_DONTNEED call you cannot PTE-map more than 2
+> THP (all other overlapped THP will get zapped). Same with most other
+> operations.
 
-Hmm.. I don't think that is correct. It looks like the previous patch
-removes the invalidation, but writeback clears the dirty bit before
-calling into the fs and we're not doing anything to redirty the folio,
-so there's no guarantee of subsequent writeback. As of that patch we
-presumably leave around a !dirty,uptodate folio without backing storage
-(due to the discard call as you've pointed out). I would hope/think the
-!dirty state would mean a redirty reallocates delalloc for the folio,
-but that's not immediately clear to me.
+My point is there may be multiple processes calling PMD split on
+different THPs at the same time.
 
-Regardless, I can see how this prevents this sort of error in the
-scenario where writeback fails due to corruption, but I don't see how it
-doesn't just break error handling of writeback failures not associated
-with corruption. I.e., a delalloc folio is allocated/dirtied, writeback
-fails due to some random/transient error, delalloc is left around on a
-!dirty page (i.e. stale), and reclaim eventually comes around and
-results in the usual block accounting corruption associated with stale
-delalloc blocks. This is easy enough to test/reproduce (just tried it
-via error injection to delalloc conversion) that I'm kind of surprised
-fstests doesn't uncover it. :/
+>
+> There are corner cases, though. I recall that s390x/kvm wants to break
+> all THP in a given VMA range. But that operation could safely fail if we
+> can't do that.
 
-> Failure to retain the delalloc extent (because xfs_discard_folio()
-> punched it out) means that the next writeback attempt does not find
-> an extent over the range of the write in ->map_blocks(), and
-> xfs_map_blocks() triggers a WARN_ON() because it should never land
-> in a hole for a data fork writeback request. This looks like:
-> 
+I'm supposed that is THP split (split the compound page), it may fail.
 
-I'm not sure this warning makes a lot of sense either given most of this
-should occur around the folio lock. Looking back at the code and the
-error report for this, the same error injection used above on a 5k write
-to a bsize=1k fs actually shows the punch remove fsb offsets 0-5 on a
-writeback failure, so it does appear to be punching too much out. The
-cause appears to be that the end offset is calculated in
-xfs_discard_folio() by rounding up the start offset to 4k (folio size).
-If pos == 0, this results in passing end_fsb == 0 to the punch code,
-which xfs_iext_lookup_extent_before() then changes to fsb == 5 because
-that's the last block of the delalloc extent that covers fsb 0.
+>
+> Certainly needs some investigation, that's most probably why it hasn't
+> been done yet.
+>
+> >
+> >>
+> >> Optimizing that for THP (e.g., don't always allocate backup THP, have
+> >> some global allocation backup pool for splits + refill when
+> >> close-to-empty) might provide similar fork() improvements, both in speed
+> >> and memory consumption when it comes to anonymous memory.
+> >
+> > It might work. But may be much more complicated than what you thought
+> > when handling multiple parallel PMD splits.
+>
+>
+> I consider the whole PTE-table linking to THPs complicated enough to
+> eventually replace it by something differently complicated that wastes
+> less memory ;)
 
-I've not reproduced the warning shown below, but I do see the side
-effect of losing data at fsb 5 if the first page conversion fails. This
-is silent because iomap now sees a hole and just skips the page. I
-suspect the warning results from a combination of this problem and
-racing writeback contexts as you've described in the commit log.
+Maybe...
 
-Brian
-
-> [  647.356969] ------------[ cut here ]------------
-> [  647.359277] WARNING: CPU: 14 PID: 21913 at fs/xfs/libxfs/xfs_bmap.c:4510 xfs_bmapi_convert_delalloc+0x221/0x4e0
-> [  647.364551] Modules linked in:
-> [  647.366294] CPU: 14 PID: 21913 Comm: test_delalloc_c Not tainted 6.2.0-rc7-dgc+ #1754
-> [  647.370356] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.0-debian-1.16.0-5 04/01/2014
-> [  647.374781] RIP: 0010:xfs_bmapi_convert_delalloc+0x221/0x4e0
-> [  647.377807] Code: e9 7d fe ff ff 80 bf 54 01 00 00 00 0f 84 68 fe ff ff 48 8d 47 70 48 89 04 24 e9 63 fe ff ff 83 fd 02 41 be f5 ff ff ff 74 a5 <0f> 0b eb a0
-> [  647.387242] RSP: 0018:ffffc9000aa677a8 EFLAGS: 00010293
-> [  647.389837] RAX: 0000000000000000 RBX: ffff88825bc4da00 RCX: 0000000000000000
-> [  647.393371] RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff88825bc4da40
-> [  647.396546] RBP: 0000000000000000 R08: ffffc9000aa67810 R09: ffffc9000aa67850
-> [  647.400186] R10: ffff88825bc4da00 R11: ffff888800a9aaac R12: ffff888101707000
-> [  647.403484] R13: ffffc9000aa677e0 R14: 00000000fffffff5 R15: 0000000000000004
-> [  647.406251] FS:  00007ff35ec24640(0000) GS:ffff88883ed00000(0000) knlGS:0000000000000000
-> [  647.410089] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  647.413225] CR2: 00007f7292cbc5d0 CR3: 0000000807d0e004 CR4: 0000000000060ee0
-> [  647.416917] Call Trace:
-> [  647.418080]  <TASK>
-> [  647.419291]  ? _raw_spin_unlock_irqrestore+0xe/0x30
-> [  647.421400]  xfs_map_blocks+0x1b7/0x590
-> [  647.422951]  iomap_do_writepage+0x1f1/0x7d0
-> [  647.424607]  ? __mod_lruvec_page_state+0x93/0x140
-> [  647.426419]  write_cache_pages+0x17b/0x4f0
-> [  647.428079]  ? iomap_read_end_io+0x2c0/0x2c0
-> [  647.429839]  iomap_writepages+0x1c/0x40
-> [  647.431377]  xfs_vm_writepages+0x79/0xb0
-> [  647.432826]  do_writepages+0xbd/0x1a0
-> [  647.434207]  ? obj_cgroup_release+0x73/0xb0
-> [  647.435769]  ? drain_obj_stock+0x130/0x290
-> [  647.437273]  ? avc_has_perm+0x8a/0x1a0
-> [  647.438746]  ? avc_has_perm_noaudit+0x8c/0x100
-> [  647.440223]  __filemap_fdatawrite_range+0x8e/0xa0
-> [  647.441960]  filemap_write_and_wait_range+0x3d/0xa0
-> [  647.444258]  __iomap_dio_rw+0x181/0x790
-> [  647.445960]  ? __schedule+0x385/0xa20
-> [  647.447829]  iomap_dio_rw+0xe/0x30
-> [  647.449284]  xfs_file_dio_write_aligned+0x97/0x150
-> [  647.451332]  ? selinux_file_permission+0x107/0x150
-> [  647.453299]  xfs_file_write_iter+0xd2/0x120
-> [  647.455238]  vfs_write+0x20d/0x3d0
-> [  647.456768]  ksys_write+0x69/0xf0
-> [  647.458067]  do_syscall_64+0x34/0x80
-> [  647.459488]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> [  647.461529] RIP: 0033:0x7ff3651406e9
-> [  647.463119] Code: 48 8d 3d 2a a1 0c 00 0f 05 eb a5 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f8
-> [  647.470563] RSP: 002b:00007ff35ec23df8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> [  647.473465] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff3651406e9
-> [  647.476278] RDX: 0000000000001400 RSI: 0000000020000000 RDI: 0000000000000005
-> [  647.478895] RBP: 00007ff35ec23e20 R08: 0000000000000005 R09: 0000000000000000
-> [  647.481568] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe533d8d4e
-> [  647.483751] R13: 00007ffe533d8d4f R14: 0000000000000000 R15: 00007ff35ec24640
-> [  647.486168]  </TASK>
-> [  647.487142] ---[ end trace 0000000000000000 ]---
-> 
-> Punching delalloc extents out from under dirty cached pages is wrong
-> and broken. We can't remove the delalloc extent until the page is
-> either removed from memory (i.e. invaliated) or writeback succeeds
-> in converting the delalloc extent to a real extent and writeback can
-> clean the page.
-> 
-> Hence we remove xfs_discard_folio() because it is only punching
-> delalloc blocks from under dirty pages now. With that removal,
-> nothing else uses ->discard_folio(), so we remove that from the
-> iomap infrastructure as well.
-> 
-> Reported-by: pengfei.xu@intel.com
-> Fixes: e9c3a8e820ed ("iomap: don't invalidate folios after writeback errors")
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> ---
->  fs/iomap/buffered-io.c | 16 +++-------------
->  fs/xfs/xfs_aops.c      | 35 -----------------------------------
->  include/linux/iomap.h  |  6 ------
->  3 files changed, 3 insertions(+), 54 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 356193e44cf0..502fa2d41097 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1635,19 +1635,9 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  	 * completion to mark the error state of the pages under writeback
->  	 * appropriately.
->  	 */
-> -	if (unlikely(error)) {
-> -		/*
-> -		 * Let the filesystem know what portion of the current page
-> -		 * failed to map. If the page hasn't been added to ioend, it
-> -		 * won't be affected by I/O completion and we must unlock it
-> -		 * now.
-> -		 */
-> -		if (wpc->ops->discard_folio)
-> -			wpc->ops->discard_folio(folio, pos);
-> -		if (!count) {
-> -			folio_unlock(folio);
-> -			goto done;
-> -		}
-> +	if (unlikely(error && !count)) {
-> +		folio_unlock(folio);
-> +		goto done;
->  	}
->  
->  	folio_start_writeback(folio);
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 41734202796f..3f0dae5ca9c2 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -448,44 +448,9 @@ xfs_prepare_ioend(
->  	return status;
->  }
->  
-> -/*
-> - * If the page has delalloc blocks on it, we need to punch them out before we
-> - * invalidate the page.  If we don't, we leave a stale delalloc mapping on the
-> - * inode that can trip up a later direct I/O read operation on the same region.
-> - *
-> - * We prevent this by truncating away the delalloc regions on the page.  Because
-> - * they are delalloc, we can do this without needing a transaction. Indeed - if
-> - * we get ENOSPC errors, we have to be able to do this truncation without a
-> - * transaction as there is no space left for block reservation (typically why we
-> - * see a ENOSPC in writeback).
-> - */
-> -static void
-> -xfs_discard_folio(
-> -	struct folio		*folio,
-> -	loff_t			pos)
-> -{
-> -	struct xfs_inode	*ip = XFS_I(folio->mapping->host);
-> -	struct xfs_mount	*mp = ip->i_mount;
-> -	int			error;
-> -
-> -	if (xfs_is_shutdown(mp))
-> -		return;
-> -
-> -	xfs_alert_ratelimited(mp,
-> -		"page discard on page "PTR_FMT", inode 0x%llx, pos %llu.",
-> -			folio, ip->i_ino, pos);
-> -
-> -	error = xfs_bmap_punch_delalloc_range(ip, pos,
-> -			round_up(pos, folio_size(folio)));
-> -
-> -	if (error && !xfs_is_shutdown(mp))
-> -		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
-> -}
-> -
->  static const struct iomap_writeback_ops xfs_writeback_ops = {
->  	.map_blocks		= xfs_map_blocks,
->  	.prepare_ioend		= xfs_prepare_ioend,
-> -	.discard_folio		= xfs_discard_folio,
->  };
->  
->  STATIC int
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 0983dfc9a203..681e26a86791 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -310,12 +310,6 @@ struct iomap_writeback_ops {
->  	 * conversions.
->  	 */
->  	int (*prepare_ioend)(struct iomap_ioend *ioend, int status);
-> -
-> -	/*
-> -	 * Optional, allows the file system to discard state on a page where
-> -	 * we failed to submit any I/O.
-> -	 */
-> -	void (*discard_folio)(struct folio *folio, loff_t pos);
->  };
->  
->  struct iomap_writepage_ctx {
-> -- 
-> 2.39.0
-> 
-
+>
+> --
+> Thanks,
+>
+> David / dhildenb
+>
