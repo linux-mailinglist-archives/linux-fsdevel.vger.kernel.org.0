@@ -2,202 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9DB696AC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 18:05:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3078696AD4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 18:10:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbjBNRFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 12:05:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59256 "EHLO
+        id S232927AbjBNRKH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 12:10:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231351AbjBNRFo (ORCPT
+        with ESMTP id S229808AbjBNRKG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 12:05:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FCBD2B280
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 09:04:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676394244;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NRv9ri62QZ3gJa1mEP8cILMMa4bJVoJu/pQsWSUh2bo=;
-        b=DRJCyQwCmwxA/WB+ek+hgT2HvQUGhx4vywVXkS5J/HRJ/qCr7IlZnSU5y24LfYIPD3ryU/
-        Pnw35PMlCA9nHhx/TKS+yuz1GN2z+z/Bh/JX5xranRYeZ0SBgsr4Ots3ykmR+Yehs7QuGO
-        kwt5Vs+bt4rrLPtSKQJ/ITjmpGfLIkQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-526-OkYAPHwFNY-tYWzcV6Dpwg-1; Tue, 14 Feb 2023 12:04:03 -0500
-X-MC-Unique: OkYAPHwFNY-tYWzcV6Dpwg-1
-Received: by mail-wr1-f69.google.com with SMTP id w9-20020a5d6089000000b002c5669766a8so421543wrt.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 09:04:02 -0800 (PST)
+        Tue, 14 Feb 2023 12:10:06 -0500
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B446EAB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 09:10:03 -0800 (PST)
+Received: by mail-io1-xd31.google.com with SMTP id l128so6110950iof.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 09:10:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1676394603;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x7Okgp0g5sZnhGVN5BSnDnYNcSRWmBw2rpZ3KAUXn5g=;
+        b=AjZXgc0lko9anBMaicDsIcZOqqI9sBHS8srbZa6cDKAX5Y7XGZvR6UHeciQZdhPX2W
+         R06xkNvQ2J2e+okTq5abS/hIqUG0WmjcLxJM3qXk0Sdrf9MHKVJhf/YcQlyqHoCUY31h
+         Ro7Pk525hprGLIaQDV0XNdG5HAtQifsGVlFpo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :from:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NRv9ri62QZ3gJa1mEP8cILMMa4bJVoJu/pQsWSUh2bo=;
-        b=1s58H3mq6q5T0HKK+XfTm8oPJJNLI24GXuafpLRwYU/4Crkev5m5r0U7cbpnvWURsp
-         I8tPMatih62LOgw2Lyd114GD5lkDfrY37YnRPWT2Alqml024rMqx1RZkMvKExtmeB1EA
-         Zi5DNFMv18SEQG2249OojEPOySdlqJl7URdjGY11sHR5Lu4Dtml+H8Z0q3EjhurPfwmk
-         rcONka9+CJuYQ4vx5aMX7fxCpBczmbC75bGqqyjbJse/IPcByRTXovWLpLITw1AtNAep
-         NdENqDgDnxHY8OFiwNpLPHZjke9L71BFjILUTe2ENnCgkUmqKd+TgSpzP+I0mGu/AWVK
-         Bm+g==
-X-Gm-Message-State: AO0yUKUnPJUYPXuhpQYP73Cnvi3+xD0lXcYLfNtvmTE85BM2u3QjmXQA
-        Voh6eHY1kXvGWDywgtmuGZkS1RGe38qhnyRHL+K47H8U//JcHjNlo15EbXCyx8i8bTaicf/BMzM
-        k6dh2uhNjM39hAfFr1mNtzFGSIA==
-X-Received: by 2002:a05:600c:13c5:b0:3dd:daac:d99d with SMTP id e5-20020a05600c13c500b003dddaacd99dmr2527003wmg.36.1676394241783;
-        Tue, 14 Feb 2023 09:04:01 -0800 (PST)
-X-Google-Smtp-Source: AK7set8tSPkMFovKHAi9fQL2Lota2iYTdYbeJPkqZQwJOal/QZ6PhHFXtJ8m01VC2QuC7xPfjtZ3Cg==
-X-Received: by 2002:a05:600c:13c5:b0:3dd:daac:d99d with SMTP id e5-20020a05600c13c500b003dddaacd99dmr2526969wmg.36.1676394241490;
-        Tue, 14 Feb 2023 09:04:01 -0800 (PST)
-Received: from ?IPV6:2003:cb:c709:1700:969:8e2b:e8bb:46be? (p200300cbc709170009698e2be8bb46be.dip0.t-ipconnect.de. [2003:cb:c709:1700:969:8e2b:e8bb:46be])
-        by smtp.gmail.com with ESMTPSA id t7-20020a05600c450700b003dc42d48defsm20057888wmo.6.2023.02.14.09.03.58
+        d=1e100.net; s=20210112; t=1676394603;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x7Okgp0g5sZnhGVN5BSnDnYNcSRWmBw2rpZ3KAUXn5g=;
+        b=mqpD5AM12AcB5gGb3yWIjgfjsoxZUb2mWRYgYSl3MgUfB2tOWZBV40qjkD7fNe89CR
+         KhHEoUYP6sv/lT0wfSUcp5W5+srCaS+QRD03H44aMO5rRqLQfkTcvpJB/DLs0jRNpmc8
+         VDYEFPZn4kF1QYhMMan6xmeUPt8MPbwyILGKBCR9M92+tYmv6B8b6+nl0LxPeZWwgQUp
+         oEtth81Q3TzYW2IP0/7PlcaQvUhjp2JCdPwN16CQauMrCdvDJU40+NJ4sQytCZE6S+0e
+         ULTJ5v6ZvqxMA239E6W4O6KOyVkLxOxhDVOfhf+O1k7zx33uWJG4RKEnnbnVDlPhVh0Q
+         x7jQ==
+X-Gm-Message-State: AO0yUKUp90MzaDzODIpr+PiH2UkLJjM1vpzMhi4O0+MeJQEop4TffJwX
+        rXv9U8qdhXsIgy+35YbfLtq9MA==
+X-Google-Smtp-Source: AK7set+xYio7oOhkTrsxXJaynXVcnsv0plfLgn6aQ+0eK8Tft/oqVrIzd3qqTEkzqTfs0t4N9Sgfxw==
+X-Received: by 2002:a05:6602:380f:b0:6cc:8b29:9a73 with SMTP id bb15-20020a056602380f00b006cc8b299a73mr2461287iob.1.1676394603149;
+        Tue, 14 Feb 2023 09:10:03 -0800 (PST)
+Received: from [192.168.1.128] ([38.15.45.1])
+        by smtp.gmail.com with ESMTPSA id s26-20020a6bdc1a000000b00740710c0a65sm427519ioc.47.2023.02.14.09.10.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Feb 2023 09:04:00 -0800 (PST)
-Message-ID: <1bee97ef-7632-b1bf-f042-29b97882bfb6@redhat.com>
-Date:   Tue, 14 Feb 2023 18:03:58 +0100
+        Tue, 14 Feb 2023 09:10:01 -0800 (PST)
+Message-ID: <f536ecc2-1889-6df6-43d3-1a04dc8f1b14@linuxfoundation.org>
+Date:   Tue, 14 Feb 2023 10:10:00 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v4 00/14] Introduce Copy-On-Write to Page Table
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] selftests/mount_setattr: fix redefine struct mount_attr
+ build error
+To:     Seth Forshee <sforshee@kernel.org>
+Cc:     shuah@kernel.org, brauner@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20230213183149.231779-1-skhan@linuxfoundation.org>
+ <Y+rMtlvx31w7eWCA@do-x1extreme>
 Content-Language: en-US
-From:   David Hildenbrand <david@redhat.com>
-To:     Chih-En Lin <shiyn.lin@gmail.com>
-Cc:     Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Nadav Amit <namit@vmware.com>, Barry Song <baohua@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Yang Shi <shy828301@gmail.com>, Peter Xu <peterx@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Zach O'Keefe <zokeefe@google.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Hugh Dickins <hughd@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Yu Zhao <yuzhao@google.com>, Juergen Gross <jgross@suse.com>,
-        Tong Tiangen <tongtiangen@huawei.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Li kunyu <kunyu@nfschina.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Gautam Menghani <gautammenghani201@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Brown <broonie@kernel.org>, Will Deacon <will@kernel.org>,
-        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Barret Rhoden <brho@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Dinglan Peng <peng301@purdue.edu>,
-        Pedro Fonseca <pfonseca@purdue.edu>,
-        Jim Huang <jserv@ccns.ncku.edu.tw>,
-        Huichun Feng <foxhoundsk.tw@gmail.com>
-References: <20230207035139.272707-1-shiyn.lin@gmail.com>
- <CA+CK2bBt0Gujv9BdhghVkbFRirAxCYXbpH-nquccPsKGnGwOBQ@mail.gmail.com>
- <CANOhDtU3J8SUCzKtKvPPPrUHyo+LV5npNObHtYP_AK4W3LomDw@mail.gmail.com>
- <CA+CK2bAWnzqKDTjBbxXOvURwr7nWmf8q-mzD1x-ztwbWVQBQKA@mail.gmail.com>
- <Y+Z8ymNYc+vJMBx8@strix-laptop>
- <62c44d12-933d-ee66-ef50-467cd8d30a58@redhat.com>
- <Y+uv3iTajGoOuNMO@strix-laptop>
- <a02714ee-3223-ba53-09eb-33f7b03ef038@redhat.com>
-Organization: Red Hat
-In-Reply-To: <a02714ee-3223-ba53-09eb-33f7b03ef038@redhat.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <Y+rMtlvx31w7eWCA@do-x1extreme>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14.02.23 17:58, David Hildenbrand wrote:
+On 2/13/23 16:50, Seth Forshee wrote:
+> On Mon, Feb 13, 2023 at 11:31:49AM -0700, Shuah Khan wrote:
+>> Fix the following build error due to redefining struct mount_attr by
+>> removing duplicate define from mount_setattr_test.c
+>>
+>> gcc -g -isystem .../tools/testing/selftests/../../../usr/include -Wall -O2 -pthread     mount_setattr_test.c  -o .../tools/testing/selftests/mount_setattr/mount_setattr_test
+>> mount_setattr_test.c:107:8: error: redefinition of ‘struct mount_attr’
+>>    107 | struct mount_attr {
+>>        |        ^~~~~~~~~~
+>> In file included from /usr/include/x86_64-linux-gnu/sys/mount.h:32,
+>>                   from mount_setattr_test.c:10:
+>> .../usr/include/linux/mount.h:129:8: note: originally defined here
+>>    129 | struct mount_attr {
+>>        |        ^~~~~~~~~~
+>> make: *** [../lib.mk:145: .../tools/testing/selftests/mount_setattr/mount_setattr_test] Error 1
+>>
+>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+>> ---
+>>   tools/testing/selftests/mount_setattr/mount_setattr_test.c | 7 -------
+>>   1 file changed, 7 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+>> index 8c5fea68ae67..582669ca38e9 100644
+>> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+>> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+>> @@ -103,13 +103,6 @@
+>>   	#else
+>>   		#define __NR_mount_setattr 442
+>>   	#endif
+>> -
+>> -struct mount_attr {
+>> -	__u64 attr_set;
+>> -	__u64 attr_clr;
+>> -	__u64 propagation;
+>> -	__u64 userns_fd;
+>> -};
+>>   #endif
 > 
->>>>
->>>> Honestly, for improving the fork(), I have an idea to skip the per-page
->>>> operation without breaking the logic. However, this will introduce the
->>>> complicated mechanism and may has the overhead for other features. It
->>>> might not be worth it. It's hard to strike a balance between the
->>>> over-complicated mechanism with (probably) better performance and data
->>>> consistency with the page status. So, I would focus on the safety and
->>>> stable approach at first.
->>>
->>> Yes, it is most probably possible, but complexity, robustness and
->>> maintainability have to be considered as well.
->>>
->>> Thanks for implementing this approach (only deduplication without other
->>> optimizations) and evaluating it accordingly. It's certainly "cleaner", such
->>> that we only have to mess with unsharing and not with other
->>> accounting/pinning/mapcount thingies. But it also highlights how intrusive
->>> even this basic deduplication approach already is -- and that most benefits
->>> of the original approach requires even more complexity on top.
->>>
->>> I am not quite sure if the benefit is worth the price (I am not to decide
->>> and I would like to hear other options).
->>
->> I'm looking at the discussion of page table sharing in 2002 [1].
->> It looks like in 2002 ~ 2006, there also have some patches try to
->> improve fork().
->>
->> After that, I also saw one thread which is about another shared page
->> table patch's benchmark. I can't find the original patch though [2].
->> But, I found the probably same patch in 2005 [3], it also mentioned
->> the previous benchmark discussion:
->>
->> "
->> For those familiar with the shared page table patch I did a couple of years
->> ago, this patch does not implement copy-on-write page tables for private
->> mappings.  Analysis showed the cost and complexity far outweighed any
->> potential benefit.
->> "
+> The difficulty with this is that whether or not you need this definition
+> depends on your system headers. My laptop doesn't have definitions for
+> either __NR_mount_setattr or struct mount_attr, so for me the build
+> works without this patch but fails with it.
 > 
-> Thanks for the pointer, interesting read. And my personal opinion is
-> that part of that statement still hold true :)
+
+The header search looks up system headers followed by installed headers in
+the repo (both in-tree and out-of-tree builds). kselftest builds do depend
+on headers_install. Did you building after running headers_install?
+
+> I suppose we could fix this universally by using a different name for
+> the struct in the test, e.g.:
 > 
->>
->> However, it might be different right now. For example, the implemetation
->> . We have split page table lock now, so we don't have to consider the
->> page_table_share_lock thing. Also, presently, we have different use
->> cases (shells [2] v.s. VM cloning and fuzzing) to consider.
 
+This is not a good way to for a couple of reasons. This masks any problems
+due to incompatibility between these defines.
 
-Oh, and because I stumbled over it, just as an interesting pointer on 
-QEMU devel:
-
-"[PATCH 00/10] Retire Fork-Based Fuzzing" [1]
-
-[1] https://lore.kernel.org/all/20230205042951.3570008-1-alxndr@bu.edu/T/#u
-
--- 
-Thanks,
-
-David / dhildenb
+thanks,
+-- Shuah
 
