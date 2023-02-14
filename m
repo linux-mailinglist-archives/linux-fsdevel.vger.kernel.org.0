@@ -2,53 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FBE0695C9D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 09:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39BD2695D07
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 09:34:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230153AbjBNIPD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 03:15:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50926 "EHLO
+        id S231905AbjBNIeR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 03:34:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231501AbjBNIOi (ORCPT
+        with ESMTP id S232053AbjBNIeM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 03:14:38 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB71221956;
-        Tue, 14 Feb 2023 00:14:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=RrTaxtcXRDbNW3k675vvTHtqOt
-        st6pBH7yFdtYRI3VE4khqxAx04fa450oG1KwupC4oObowv6Q8HwoBdWl13jEz17Mib1VICkI6+D2o
-        icDqZoA5e5eiWuT68Q3BxIWAb8iLYNxa6PoxuI4cL91VHDzgg8zzagO6+Bn1WvR+fY6U2LxP0/E7H
-        RZul2dzp0UZlxViinpZy9ukBU+yu6laWe6cZ8lPCSvwo7OeCNRXc7QZNW7CfsFjAdGZ/NKAWj7cxQ
-        BGWFxHiHZhzYZH8GK/Df24chGvQjNEP2GlcdlqzXc3IinpdYO1Wj/K0wMcnzYTiQfuES1ahOUgaZh
-        MSYABzrg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pRqSM-000V2y-C1; Tue, 14 Feb 2023 08:14:30 +0000
-Date:   Tue, 14 Feb 2023 00:14:30 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] xfs, iomap: ->discard_folio() is broken so remove it
-Message-ID: <Y+tC5nxFR93hRSVF@infradead.org>
-References: <20230214055114.4141947-1-david@fromorbit.com>
- <20230214055114.4141947-4-david@fromorbit.com>
+        Tue, 14 Feb 2023 03:34:12 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 253B0974D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 00:33:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676363605;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oxYgsuBJ4XAlbnZ8B/FCrtTzmhGNPO8GU8/13IaMfwo=;
+        b=h1zrDPS4LOvOz9bSrqO+GpjrHJlEJkKaKitd87FhQF4cb7OjmPQVJouzZaExuIm0rW4xc/
+        S8f0SXUR6v3WvykXHqvzjSiFSngUWnKz9dNBzTJaWobXr9E4iubx90fdOCMuBkaNgDFass
+        WYpaVku6nuW6gdP0r+ZbVTavZaXHem8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-159-lWlaoe7zPqmL0hnpNL7vKQ-1; Tue, 14 Feb 2023 03:33:23 -0500
+X-MC-Unique: lWlaoe7zPqmL0hnpNL7vKQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 470C1800B23;
+        Tue, 14 Feb 2023 08:33:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 463A7492B15;
+        Tue, 14 Feb 2023 08:33:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y+pdHFFTk1TTEBsO@makrotopia.org>
+References: <Y+pdHFFTk1TTEBsO@makrotopia.org>
+To:     Daniel Golle <daniel@makrotopia.org>
+Cc:     dhowells@redhat.com, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Hildenbrand <david@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: regression in next-20230213: "splice: Do splice read from a buffered file without using ITER_PIPE"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230214055114.4141947-4-david@fromorbit.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2547025.1676363600.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 14 Feb 2023 08:33:20 +0000
+Message-ID: <2547026.1676363600@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good:
+Hi Daniel,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+I've added a patch to my iov-extract-3 branch that I think should fix this=
+:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/=
+?h=3Diov-extract-3
+
+David
+
