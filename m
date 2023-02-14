@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AF39696B00
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 18:14:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11D86696B04
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 18:14:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232417AbjBNROm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 12:14:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41130 "EHLO
+        id S231686AbjBNROo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 12:14:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231687AbjBNROf (ORCPT
+        with ESMTP id S231812AbjBNROf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 14 Feb 2023 12:14:35 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB97B8A41
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 09:13:47 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 607FD9EED
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 09:13:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1676394827;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=H0CTUnwfVEWUZBHu5fA2fJ8y0quxYsONFQfvaH+Rj5U=;
-        b=IeE5caQjEzM4YFxp4tRjTPIMDypF9Cfmau4EWGt8t2rxEyR2xfqyCyoI5Kt3YVaJq6tvy+
-        WaGc7Mw02rBTGrjdFcxOl2j8QC+rZOrAMWHopWM/krBbVwe4vQRw0Jh8VE1eUzhuac/93c
-        qYZep4C7qEtHfT7MwslNjoX8jIaJw5A=
+        bh=Wrfy5DSUofzooKuydOZLN29ccYXYPtSMXDanySrmvRI=;
+        b=ZbAHHef0U70KGvje6048SUdz3M+C/x50bKlNLERnnNnwWHnWXdx/ylPhyTa2r6KSnGbf09
+        kOS4CzFq1QAq0ivEKzDDydiYKdfi6rGoqF7lExNWNiAaZfs7jAfTxSyOGvu82Jhh0ZPh9A
+        2MmsoAkZOCjPp/s6Vp114jCsRf4TioY=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-49-fW_ij3QZO56kIwrqyILfmQ-1; Tue, 14 Feb 2023 12:13:42 -0500
-X-MC-Unique: fW_ij3QZO56kIwrqyILfmQ-1
+ us-mta-593-llfpyhjxOKyRI8fnUf8UoA-1; Tue, 14 Feb 2023 12:13:44 -0500
+X-MC-Unique: llfpyhjxOKyRI8fnUf8UoA-1
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A9D5F1C08796;
-        Tue, 14 Feb 2023 17:13:40 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6EDA11C08795;
+        Tue, 14 Feb 2023 17:13:43 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B1699140EBF6;
-        Tue, 14 Feb 2023 17:13:38 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 53202140EBF6;
+        Tue, 14 Feb 2023 17:13:41 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -49,11 +49,13 @@ Cc:     David Howells <dhowells@redhat.com>,
         Logan Gunthorpe <logang@deltatee.com>,
         Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
+        linux-mm@kvack.org,
+        syzbot+a440341a59e3b7142895@syzkaller.appspotmail.com,
+        Christoph Hellwig <hch@lst.de>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v14 02/17] splice: Add a func to do a splice from a buffered file without ITER_PIPE
-Date:   Tue, 14 Feb 2023 17:13:15 +0000
-Message-Id: <20230214171330.2722188-3-dhowells@redhat.com>
+Subject: [PATCH v14 03/17] splice: Add a func to do a splice from an O_DIRECT file without ITER_PIPE
+Date:   Tue, 14 Feb 2023 17:13:16 +0000
+Message-Id: <20230214171330.2722188-4-dhowells@redhat.com>
 In-Reply-To: <20230214171330.2722188-1-dhowells@redhat.com>
 References: <20230214171330.2722188-1-dhowells@redhat.com>
 MIME-Version: 1.0
@@ -61,7 +63,7 @@ Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,17 +71,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a function to do splice read from a buffered file, pulling the
-folios out of the pagecache directly by calling filemap_get_pages() to do
-any required reading and then pasting the returned folios into the pipe.
+Implement a function, direct_file_splice(), that deals with this by using
+an ITER_BVEC iterator instead of an ITER_PIPE iterator as the former won't
+free its buffers when reverted.  The function bulk allocates all the
+buffers it thinks it is going to use in advance, does the read
+synchronously and only then trims the buffer down.  The pages we did use
+get pushed into the pipe.
 
-A helper function is provided to do the actual folio pasting and will
-handle multipage folios by splicing as many of the relevant subpages as
-will fit into the pipe.
+This fixes a problem with the upcoming iov_iter_extract_pages() function,
+whereby pages extracted from a non-user-backed iterator such as ITER_PIPE
+aren't pinned.  __iomap_dio_rw(), however, calls iov_iter_revert() to
+shorten the iterator to just the bufferage it is going to use - which has
+the side-effect of freeing the excess pipe buffers, even though they're
+attached to a bio and may get written to by DMA (thanks to Hillf Danton for
+spotting this[1]).
 
-The code is loosely based on filemap_read() and might belong in
-mm/filemap.c with that as it needs to use filemap_get_pages().
+This then causes memory corruption that is particularly noticable when the
+syzbot test[2] is run.  The test boils down to:
 
+	out = creat(argv[1], 0666);
+	ftruncate(out, 0x800);
+	lseek(out, 0x200, SEEK_SET);
+	in = open(argv[1], O_RDONLY | O_DIRECT | O_NOFOLLOW);
+	sendfile(out, in, NULL, 0x1dd00);
+
+run repeatedly in parallel.  What I think is happening is that ftruncate()
+occasionally shortens the DIO read that's about to be made by sendfile's
+splice core by reducing i_size.
+
+This should be more efficient for DIO read by virtue of doing a bulk page
+allocation, but slightly less efficient by ignoring any partial page in the
+pipe.
+
+Reported-by: syzbot+a440341a59e3b7142895@syzkaller.appspotmail.com
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Jens Axboe <axboe@kernel.dk>
 cc: Christoph Hellwig <hch@lst.de>
@@ -89,197 +113,190 @@ cc: John Hubbard <jhubbard@nvidia.com>
 cc: linux-mm@kvack.org
 cc: linux-block@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20230207094731.1390-1-hdanton@sina.com/ [1]
+Link: https://lore.kernel.org/r/000000000000b0b3c005f3a09383@google.com/ [2]
 ---
 
 Notes:
     ver #14)
-     - Rename to filemap_splice_read().
-     - Create a helper, pipe_head_buf(), to get the head buffer.
-     - Use init_sync_kiocb().
-     - Move to mm/filemap.c.
-     - Split the implementation of filemap_splice_read() from the patch to
-       make generic_file_splice_read() use it and direct_splice_read().
+     - Use alloc_pages_bulk_array() rather than alloc_pages_bulk_list().
+     - Use release_pages() rather than a loop calling __free_page().
+     - Rename to direct_splice_read().
+     - Don't call from generic_file_splice_read() yet.
+    
+    ver #13)
+     - Don't completely replace generic_file_splice_read(), but rather only use
+       this if we're doing a splicing from an O_DIRECT file fd.
 
- include/linux/fs.h |   3 ++
- mm/filemap.c       | 128 +++++++++++++++++++++++++++++++++++++++++++++
- mm/internal.h      |   6 +++
- 3 files changed, 137 insertions(+)
+ fs/splice.c               | 92 +++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h        |  3 ++
+ include/linux/pipe_fs_i.h | 20 +++++++++
+ lib/iov_iter.c            |  6 ---
+ 4 files changed, 115 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c1769a2c5d70..28743e38df91 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3163,6 +3163,9 @@ ssize_t vfs_iocb_iter_write(struct file *file, struct kiocb *iocb,
- 			    struct iov_iter *iter);
- 
- /* fs/splice.c */
-+ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
-+			    struct pipe_inode_info *pipe,
-+			    size_t len, unsigned int flags);
- extern ssize_t generic_file_splice_read(struct file *, loff_t *,
- 		struct pipe_inode_info *, size_t, unsigned int);
- extern ssize_t iter_file_splice_write(struct pipe_inode_info *,
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 876e77278d2a..8c7b135c8e23 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -42,6 +42,8 @@
- #include <linux/ramfs.h>
- #include <linux/page_idle.h>
- #include <linux/migrate.h>
-+#include <linux/pipe_fs_i.h>
-+#include <linux/splice.h>
- #include <asm/pgalloc.h>
- #include <asm/tlbflush.h>
- #include "internal.h"
-@@ -2842,6 +2844,132 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+diff --git a/fs/splice.c b/fs/splice.c
+index 5969b7a1d353..4c6332854b63 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -282,6 +282,98 @@ void splice_shrink_spd(struct splice_pipe_desc *spd)
+ 	kfree(spd->partial);
  }
- EXPORT_SYMBOL(generic_file_read_iter);
  
 +/*
-+ * Splice subpages from a folio into a pipe.
++ * Splice data from an O_DIRECT file into pages and then add them to the output
++ * pipe.
 + */
-+size_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
-+			      struct folio *folio, loff_t fpos, size_t size)
++ssize_t direct_splice_read(struct file *in, loff_t *ppos,
++			   struct pipe_inode_info *pipe,
++			   size_t len, unsigned int flags)
 +{
-+	struct page *page;
-+	size_t spliced = 0, offset = offset_in_folio(folio, fpos);
-+
-+	page = folio_page(folio, offset / PAGE_SIZE);
-+	size = min(size, folio_size(folio) - offset);
-+	offset %= PAGE_SIZE;
-+
-+	while (spliced < size &&
-+	       !pipe_full(pipe->head, pipe->tail, pipe->max_usage)) {
-+		struct pipe_buffer *buf = pipe_head_buf(pipe);
-+		size_t part = min_t(size_t, PAGE_SIZE - offset, size - spliced);
-+
-+		*buf = (struct pipe_buffer) {
-+			.ops	= &page_cache_pipe_buf_ops,
-+			.page	= page,
-+			.offset	= offset,
-+			.len	= part,
-+		};
-+		folio_get(folio);
-+		pipe->head++;
-+		page++;
-+		spliced += part;
-+		offset = 0;
-+	}
-+
-+	return spliced;
-+}
-+
-+/*
-+ * Splice folios from the pagecache of a buffered (ie. non-O_DIRECT) file into
-+ * a pipe.
-+ */
-+ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
-+			    struct pipe_inode_info *pipe,
-+			    size_t len, unsigned int flags)
-+{
-+	struct folio_batch fbatch;
-+	struct kiocb iocb;
-+	size_t total_spliced = 0, used, npages;
-+	loff_t isize, end_offset;
-+	bool writably_mapped;
-+	int i, error = 0;
-+
-+	init_sync_kiocb(&iocb, in);
-+	iocb.ki_pos = *ppos;
++	struct iov_iter to;
++	struct bio_vec *bv;
++	struct kiocb kiocb;
++	struct page **pages;
++	ssize_t ret;
++	size_t used, npages, chunk, remain, reclaim;
++	int i;
 +
 +	/* Work out how much data we can actually add into the pipe */
 +	used = pipe_occupancy(pipe->head, pipe->tail);
 +	npages = max_t(ssize_t, pipe->max_usage - used, 0);
 +	len = min_t(size_t, len, npages * PAGE_SIZE);
++	npages = DIV_ROUND_UP(len, PAGE_SIZE);
 +
-+	folio_batch_init(&fbatch);
++	bv = kzalloc(array_size(npages, sizeof(bv[0])) +
++		     array_size(npages, sizeof(struct page *)), GFP_KERNEL);
++	if (!bv)
++		return -ENOMEM;
 +
-+	do {
-+		cond_resched();
++	pages = (void *)(bv + npages);
++	npages = alloc_pages_bulk_array(GFP_USER, npages, pages);
++	if (!npages) {
++		kfree(bv);
++		return -ENOMEM;
++	}
 +
-+		if (*ppos >= i_size_read(file_inode(in)))
-+			break;
++	remain = len = min_t(size_t, len, npages * PAGE_SIZE);
 +
-+		iocb.ki_pos = *ppos;
-+		error = filemap_get_pages(&iocb, len, &fbatch, true);
-+		if (error < 0)
-+			break;
++	for (i = 0; i < npages; i++) {
++		chunk = min_t(size_t, PAGE_SIZE, remain);
++		bv[i].bv_page = pages[i];
++		bv[i].bv_offset = 0;
++		bv[i].bv_len = chunk;
++		remain -= chunk;
++	}
 +
++	/* Do the I/O */
++	iov_iter_bvec(&to, ITER_DEST, bv, npages, len);
++	init_sync_kiocb(&kiocb, in);
++	kiocb.ki_pos = *ppos;
++	ret = call_read_iter(in, &kiocb, &to);
++
++	reclaim = npages * PAGE_SIZE;
++	remain = 0;
++	if (ret > 0) {
++		reclaim -= ret;
++		remain = ret;
++		*ppos = kiocb.ki_pos;
++		file_accessed(in);
++	} else if (ret < 0) {
 +		/*
-+		 * i_size must be checked after we know the pages are Uptodate.
-+		 *
-+		 * Checking i_size after the check allows us to calculate
-+		 * the correct value for "nr", which means the zero-filled
-+		 * part of the page is not copied back to userspace (unless
-+		 * another truncate extends the file - this is desired though).
++		 * callers of ->splice_read() expect -EAGAIN on
++		 * "can't put anything in there", rather than -EFAULT.
 +		 */
-+		isize = i_size_read(file_inode(in));
-+		if (unlikely(*ppos >= isize))
-+			break;
-+		end_offset = min_t(loff_t, isize, *ppos + len);
++		if (ret == -EFAULT)
++			ret = -EAGAIN;
++	}
 +
-+		/*
-+		 * Once we start copying data, we don't want to be touching any
-+		 * cachelines that might be contended:
-+		 */
-+		writably_mapped = mapping_writably_mapped(in->f_mapping);
++	/* Free any pages that didn't get touched at all. */
++	reclaim /= PAGE_SIZE;
++	if (reclaim) {
++		npages -= reclaim;
++		release_pages(pages + npages, reclaim);
++	}
 +
-+		for (i = 0; i < folio_batch_count(&fbatch); i++) {
-+			struct folio *folio = fbatch.folios[i];
-+			size_t n;
++	/* Push the remaining pages into the pipe. */
++	for (i = 0; i < npages; i++) {
++		struct pipe_buffer *buf = pipe_head_buf(pipe);
 +
-+			if (folio_pos(folio) >= end_offset)
-+				goto out;
-+			folio_mark_accessed(folio);
++		chunk = min_t(size_t, remain, PAGE_SIZE);
++		*buf = (struct pipe_buffer) {
++			.ops	= &default_pipe_buf_ops,
++			.page	= bv[i].bv_page,
++			.offset	= 0,
++			.len	= chunk,
++		};
++		pipe->head++;
++		remain -= chunk;
++	}
 +
-+			/*
-+			 * If users can be writing to this folio using arbitrary
-+			 * virtual addresses, take care of potential aliasing
-+			 * before reading the folio on the kernel side.
-+			 */
-+			if (writably_mapped)
-+				flush_dcache_folio(folio);
-+
-+			n = splice_folio_into_pipe(pipe, folio, *ppos, len);
-+			if (!n)
-+				goto out;
-+			len -= n;
-+			total_spliced += n;
-+			*ppos += n;
-+			in->f_ra.prev_pos = *ppos;
-+			if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
-+				goto out;
-+		}
-+
-+		folio_batch_release(&fbatch);
-+	} while (len);
-+
-+out:
-+	folio_batch_release(&fbatch);
-+	file_accessed(in);
-+
-+	return total_spliced ? total_spliced : error;
++	kfree(bv);
++	return ret;
 +}
 +
- static inline loff_t folio_seek_hole_data(struct xa_state *xas,
- 		struct address_space *mapping, struct folio *folio,
- 		loff_t start, loff_t end, bool seek_data)
-diff --git a/mm/internal.h b/mm/internal.h
-index bcf75a8b032d..6d4ca98f3844 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -794,6 +794,12 @@ struct migration_target_control {
- 	gfp_t gfp_mask;
- };
+ /**
+  * generic_file_splice_read - splice data from file to a pipe
+  * @in:		file to splice from
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 28743e38df91..551c9403f9b3 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3166,6 +3166,9 @@ ssize_t vfs_iocb_iter_write(struct file *file, struct kiocb *iocb,
+ ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
+ 			    struct pipe_inode_info *pipe,
+ 			    size_t len, unsigned int flags);
++ssize_t direct_splice_read(struct file *in, loff_t *ppos,
++			   struct pipe_inode_info *pipe,
++			   size_t len, unsigned int flags);
+ extern ssize_t generic_file_splice_read(struct file *, loff_t *,
+ 		struct pipe_inode_info *, size_t, unsigned int);
+ extern ssize_t iter_file_splice_write(struct pipe_inode_info *,
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index 6cb65df3e3ba..d2c3f16cf6b1 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -156,6 +156,26 @@ static inline bool pipe_full(unsigned int head, unsigned int tail,
+ 	return pipe_occupancy(head, tail) >= limit;
+ }
  
-+/*
-+ * mm/filemap.c
++/**
++ * pipe_buf - Return the pipe buffer for the specified slot in the pipe ring
++ * @pipe: The pipe to access
++ * @slot: The slot of interest
 + */
-+size_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
-+			      struct folio *folio, loff_t fpos, size_t size);
++static inline struct pipe_buffer *pipe_buf(const struct pipe_inode_info *pipe,
++					   unsigned int slot)
++{
++	return &pipe->bufs[slot & (pipe->ring_size - 1)];
++}
 +
- /*
-  * mm/vmalloc.c
-  */
++/**
++ * pipe_head_buf - Return the pipe buffer at the head of the pipe ring
++ * @pipe: The pipe to access
++ */
++static inline struct pipe_buffer *pipe_head_buf(const struct pipe_inode_info *pipe)
++{
++	return pipe_buf(pipe, pipe->head);
++}
++
+ /**
+  * pipe_buf_get - get a reference to a pipe_buffer
+  * @pipe:	the pipe that the buffer belongs to
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index f9a3ff37ecd1..47c484551c59 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -186,12 +186,6 @@ static int copyin(void *to, const void __user *from, size_t n)
+ 	return res;
+ }
+ 
+-static inline struct pipe_buffer *pipe_buf(const struct pipe_inode_info *pipe,
+-					   unsigned int slot)
+-{
+-	return &pipe->bufs[slot & (pipe->ring_size - 1)];
+-}
+-
+ #ifdef PIPE_PARANOIA
+ static bool sanity(const struct iov_iter *i)
+ {
 
