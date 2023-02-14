@@ -2,70 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8DE3696BDF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 18:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC237696C15
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Feb 2023 18:54:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233118AbjBNRki (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 12:40:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42632 "EHLO
+        id S233217AbjBNRyx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 12:54:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232820AbjBNRk0 (ORCPT
+        with ESMTP id S233201AbjBNRyv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 12:40:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD081B9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 09:39:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676396375;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4QKLllZC1uEUOE2BdO7bzLxdbv09hiQiyoC40FRYKDo=;
-        b=bplvXCMM/PomsOAvdnCxSrzC/eQUPpYVD2Xcbu2DOTPRtziir75GC+KSEi95UKYeY+8+uj
-        39+C56KQBhk+bw420ZrDAtRPe3q8K3X6rPyY9/LtztTtoXC+Wd1N4cZpPpX0bvPqCjvMcg
-        pea+ROUb3Sq/GgmDXkWKt2STXb/UPIc=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-675-smmyHg3KP_up2QmeaE8FLQ-1; Tue, 14 Feb 2023 12:39:26 -0500
-X-MC-Unique: smmyHg3KP_up2QmeaE8FLQ-1
-Received: by mail-wm1-f71.google.com with SMTP id n4-20020a05600c3b8400b003dfe223de49so11301265wms.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 09:39:25 -0800 (PST)
+        Tue, 14 Feb 2023 12:54:51 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF91C2D174;
+        Tue, 14 Feb 2023 09:54:49 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id w14-20020a17090a5e0e00b00233d3b9650eso8746351pjf.4;
+        Tue, 14 Feb 2023 09:54:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=a09WllYZDnimLE8v2wTR3vxHfJ4ytKtsiaLki5l7X90=;
+        b=Qzg38EyqGAaADeTuF7AOzhFZ5UsLAmJ0g5L8w/2P0NokzD/mBFYc/xSZMycMBKS0Z5
+         wupb9ekS9ypcL8sFebok6R3xKRsZhP8u+iaa12pEciXf21c8ZXJiOctYQYk9LVGEYCVu
+         g3DGijIIyVE/ZMg8N79Qsna8x3qme/cmCgDsYVFxGbW9qE/xs2r0A9iTPcsosueeEqTu
+         Jjr4TM2Qc8KOxzHBWYhxdTXRrHBL3CQ+Nv28xLmFXnyOa56lPyjadVTJqgogsd17m5P4
+         o5bGV64r9s9UEghXDAd2No6h5gbin7zTwrT5EMqmeWba/l76WEkimFknICZVPr71c6ka
+         FzCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4QKLllZC1uEUOE2BdO7bzLxdbv09hiQiyoC40FRYKDo=;
-        b=cNSDNk1ND6dCEoQge1swTgOtQDXOfaoP/6VEt6MSczyhJU9FqmFedC7fgrbXaR4QOR
-         U3Zdcik5Kfz/xTGjRyQZ8CyJ8/tlVlwH3bkSaTYmQ+2sfRDM6bK4GWzruI2HA6ZhAZgN
-         8owbfiyy65fckskmELBsh7wvPFad5NnfkrNG76gj0+sqxuPg0Rz1ucmbK9OyxBl+qCUO
-         2o3xJHQ4baKK3LoKYqDhkhDU2jAlV3XPeSqIqZqvKKUPSQC/IOmU3t1wfj3j/p/VWDIE
-         uSqS1TdxzhveBPCzqbi7s3t/ZfxTKU7wSSn/K4LfZJkM6y06TvjVEIrQQzplG0dO+qnK
-         Iltg==
-X-Gm-Message-State: AO0yUKXY1KObw//0y1RFhl35LyfiGiNqQPculcIx3l0q+iHEvO0kCtq5
-        vuu40dHufbDuuHoIp8HmcmsZKUarlfgvw9ZakfX5acfpy4XjPSNieH38EwuhD9qZPBb9sPvGk++
-        +EDLixGXJa+riMqm5mDUCfV+w8Q==
-X-Received: by 2002:a5d:6806:0:b0:2c4:57d3:396 with SMTP id w6-20020a5d6806000000b002c457d30396mr2716948wru.40.1676396364812;
-        Tue, 14 Feb 2023 09:39:24 -0800 (PST)
-X-Google-Smtp-Source: AK7set/r0DQ7+ma2F6crvNFnBEefDNPcQ1q0jtIdkDICXCjvMBFXmslFeTySfwfESBVH/z6uWOQnhg==
-X-Received: by 2002:a5d:6806:0:b0:2c4:57d3:396 with SMTP id w6-20020a5d6806000000b002c457d30396mr2716932wru.40.1676396364345;
-        Tue, 14 Feb 2023 09:39:24 -0800 (PST)
-Received: from [192.168.3.108] (p5b0c60e7.dip0.t-ipconnect.de. [91.12.96.231])
-        by smtp.gmail.com with ESMTPSA id u14-20020adff88e000000b002c56046a3b5sm3582125wrp.53.2023.02.14.09.39.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Feb 2023 09:39:23 -0800 (PST)
-Message-ID: <b1cada27-33b0-f53a-4059-07c54d9f1bc4@redhat.com>
-Date:   Tue, 14 Feb 2023 18:39:21 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Content-Language: en-US
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     Chih-En Lin <shiyn.lin@gmail.com>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a09WllYZDnimLE8v2wTR3vxHfJ4ytKtsiaLki5l7X90=;
+        b=XX1NXOMKTDv01vCelgr8njCfwMkaT4GCkIEtorgZNfSOSnd6jRYgVgS1n0xwP2lWLv
+         6ZmT1MFxu2h0aqZqEaF9HeBKTMUthtU99TUN1xx/UayZlqxpBT/oD1yR/1qUq9IXJT6P
+         C2cHQOoFNU0Z3id28myRo3kwjNQgTjRvZdLNZiHZPifXYnu15uzfT0y6ig9pi/dy3nim
+         1rAmDeCojbRFCM1NxpXV2B2hO2ylwYGEyOrwYlowiqBlRonYz8WF6AvK8Lh7CgPL5Zyq
+         8UQcY6rZkZzHJMinVzrvFDdKrOUn0fap83HKU87EJgvci2ixAev1CRJLT7YHMVIC/GzD
+         OkuQ==
+X-Gm-Message-State: AO0yUKXlSoZB5O1ojFASw/bF7jnubY1SPX6r/4W0nM5GSP22W05HiPRR
+        telZFw3e/5pqCZesElxQ1fA=
+X-Google-Smtp-Source: AK7set/RGBzMrGawJ2NUjzEXa9UQINjHfKyuBo/buaEy0zUQBjImCtSLL6T8Fy1l0Il06cXLI1p46w==
+X-Received: by 2002:a17:902:e84a:b0:198:fded:3b69 with SMTP id t10-20020a170902e84a00b00198fded3b69mr4275449plg.53.1676397289002;
+        Tue, 14 Feb 2023 09:54:49 -0800 (PST)
+Received: from strix-laptop (2001-b011-20e0-1465-11be-7287-d61f-f938.dynamic-ip6.hinet.net. [2001:b011:20e0:1465:11be:7287:d61f:f938])
+        by smtp.gmail.com with ESMTPSA id p4-20020a1709028a8400b001993411d66bsm10427907plo.272.2023.02.14.09.54.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Feb 2023 09:54:48 -0800 (PST)
+Date:   Wed, 15 Feb 2023 01:54:38 +0800
+From:   Chih-En Lin <shiyn.lin@gmail.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Pasha Tatashin <pasha.tatashin@soleen.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Qi Zheng <zhengqi.arch@bytedance.com>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -81,7 +68,8 @@ Cc:     Chih-En Lin <shiyn.lin@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Xu <peterx@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Yang Shi <shy828301@gmail.com>, Peter Xu <peterx@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
         Zach O'Keefe <zokeefe@google.com>,
         Yun Zhou <yun.zhou@windriver.com>,
         Hugh Dickins <hughd@google.com>,
@@ -115,202 +103,174 @@ Cc:     Chih-En Lin <shiyn.lin@gmail.com>,
         Pedro Fonseca <pfonseca@purdue.edu>,
         Jim Huang <jserv@ccns.ncku.edu.tw>,
         Huichun Feng <foxhoundsk.tw@gmail.com>
+Subject: Re: [PATCH v4 00/14] Introduce Copy-On-Write to Page Table
+Message-ID: <Y+vK3tXWHCgTC8qk@strix-laptop>
 References: <20230207035139.272707-1-shiyn.lin@gmail.com>
  <CA+CK2bBt0Gujv9BdhghVkbFRirAxCYXbpH-nquccPsKGnGwOBQ@mail.gmail.com>
  <CANOhDtU3J8SUCzKtKvPPPrUHyo+LV5npNObHtYP_AK4W3LomDw@mail.gmail.com>
  <CA+CK2bAWnzqKDTjBbxXOvURwr7nWmf8q-mzD1x-ztwbWVQBQKA@mail.gmail.com>
  <Y+Z8ymNYc+vJMBx8@strix-laptop>
  <62c44d12-933d-ee66-ef50-467cd8d30a58@redhat.com>
- <CAHbLzkoYo3Fwz2H=GM3X+ao33NN2fc2qh6y_ir4A-RL0LvJaZA@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v4 00/14] Introduce Copy-On-Write to Page Table
-In-Reply-To: <CAHbLzkoYo3Fwz2H=GM3X+ao33NN2fc2qh6y_ir4A-RL0LvJaZA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+ <Y+uv3iTajGoOuNMO@strix-laptop>
+ <a02714ee-3223-ba53-09eb-33f7b03ef038@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a02714ee-3223-ba53-09eb-33f7b03ef038@redhat.com>
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URI_DOTEDU autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14.02.23 18:23, Yang Shi wrote:
-> On Tue, Feb 14, 2023 at 1:58 AM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 10.02.23 18:20, Chih-En Lin wrote:
->>> On Fri, Feb 10, 2023 at 11:21:16AM -0500, Pasha Tatashin wrote:
->>>>>>> Currently, copy-on-write is only used for the mapped memory; the child
->>>>>>> process still needs to copy the entire page table from the parent
->>>>>>> process during forking. The parent process might take a lot of time and
->>>>>>> memory to copy the page table when the parent has a big page table
->>>>>>> allocated. For example, the memory usage of a process after forking with
->>>>>>> 1 GB mapped memory is as follows:
->>>>>>
->>>>>> For some reason, I was not able to reproduce performance improvements
->>>>>> with a simple fork() performance measurement program. The results that
->>>>>> I saw are the following:
->>>>>>
->>>>>> Base:
->>>>>> Fork latency per gigabyte: 0.004416 seconds
->>>>>> Fork latency per gigabyte: 0.004382 seconds
->>>>>> Fork latency per gigabyte: 0.004442 seconds
->>>>>> COW kernel:
->>>>>> Fork latency per gigabyte: 0.004524 seconds
->>>>>> Fork latency per gigabyte: 0.004764 seconds
->>>>>> Fork latency per gigabyte: 0.004547 seconds
->>>>>>
->>>>>> AMD EPYC 7B12 64-Core Processor
->>>>>> Base:
->>>>>> Fork latency per gigabyte: 0.003923 seconds
->>>>>> Fork latency per gigabyte: 0.003909 seconds
->>>>>> Fork latency per gigabyte: 0.003955 seconds
->>>>>> COW kernel:
->>>>>> Fork latency per gigabyte: 0.004221 seconds
->>>>>> Fork latency per gigabyte: 0.003882 seconds
->>>>>> Fork latency per gigabyte: 0.003854 seconds
->>>>>>
->>>>>> Given, that page table for child is not copied, I was expecting the
->>>>>> performance to be better with COW kernel, and also not to depend on
->>>>>> the size of the parent.
->>>>>
->>>>> Yes, the child won't duplicate the page table, but fork will still
->>>>> traverse all the page table entries to do the accounting.
->>>>> And, since this patch expends the COW to the PTE table level, it's not
->>>>> the mapped page (page table entry) grained anymore, so we have to
->>>>> guarantee that all the mapped page is available to do COW mapping in
->>>>> the such page table.
->>>>> This kind of checking also costs some time.
->>>>> As a result, since the accounting and the checking, the COW PTE fork
->>>>> still depends on the size of the parent so the improvement might not
->>>>> be significant.
->>>>
->>>> The current version of the series does not provide any performance
->>>> improvements for fork(). I would recommend removing claims from the
->>>> cover letter about better fork() performance, as this may be
->>>> misleading for those looking for a way to speed up forking. In my
->>>
->>>   From v3 to v4, I changed the implementation of the COW fork() part to do
->>> the accounting and checking. At the time, I also removed most of the
->>> descriptions about the better fork() performance. Maybe it's not enough
->>> and still has some misleading. I will fix this in the next version.
->>> Thanks.
->>>
->>>> case, I was looking to speed up Redis OSS, which relies on fork() to
->>>> create consistent snapshots for driving replicates/backups. The O(N)
->>>> per-page operation causes fork() to be slow, so I was hoping that this
->>>> series, which does not duplicate the VA during fork(), would make the
->>>> operation much quicker.
->>>
->>> Indeed, at first, I tried to avoid the O(N) per-page operation by
->>> deferring the accounting and the swap stuff to the page fault. But,
->>> as I mentioned, it's not suitable for the mainline.
->>>
->>> Honestly, for improving the fork(), I have an idea to skip the per-page
->>> operation without breaking the logic. However, this will introduce the
->>> complicated mechanism and may has the overhead for other features. It
->>> might not be worth it. It's hard to strike a balance between the
->>> over-complicated mechanism with (probably) better performance and data
->>> consistency with the page status. So, I would focus on the safety and
->>> stable approach at first.
->>
->> Yes, it is most probably possible, but complexity, robustness and
->> maintainability have to be considered as well.
->>
->> Thanks for implementing this approach (only deduplication without other
->> optimizations) and evaluating it accordingly. It's certainly "cleaner",
->> such that we only have to mess with unsharing and not with other
->> accounting/pinning/mapcount thingies. But it also highlights how
->> intrusive even this basic deduplication approach already is -- and that
->> most benefits of the original approach requires even more complexity on top.
->>
->> I am not quite sure if the benefit is worth the price (I am not to
->> decide and I would like to hear other options).
->>
->> My quick thoughts after skimming over the core parts of this series
->>
->> (1) forgetting to break COW on a PTE in some pgtable walker feels quite
->>       likely (meaning that it might be fairly error-prone) and forgetting
->>       to break COW on a PTE table, accidentally modifying the shared
->>       table.
->> (2) break_cow_pte() can fail, which means that we can fail some
->>       operations (possibly silently halfway through) now. For example,
->>       looking at your change_pte_range() change, I suspect it's wrong.
->> (3) handle_cow_pte_fault() looks quite complicated and needs quite some
->>       double-checking: we temporarily clear the PMD, to reset it
->>       afterwards. I am not sure if that is correct. For example, what
->>       stops another page fault stumbling over that pmd_none() and
->>       allocating an empty page table? Maybe there are some locking details
->>       missing or they are very subtle such that we better document them. I
->>      recall that THP played quite some tricks to make such cases work ...
->>
->>>
->>>>> Actually, at the RFC v1 and v2, we proposed the version of skipping
->>>>> those works, and we got a significant improvement. You can see the
->>>>> number from RFC v2 cover letter [1]:
->>>>> "In short, with 512 MB mapped memory, COW PTE decreases latency by 93%
->>>>> for normal fork"
->>>>
->>>> I suspect the 93% improvement (when the mapcount was not updated) was
->>>> only for VAs with 4K pages. With 2M mappings this series did not
->>>> provide any benefit is this correct?
->>>
->>> Yes. In this case, the COW PTE performance is similar to the normal
->>> fork().
->>
->>
->> The thing with THP is, that during fork(), we always allocate a backup
->> PTE table, to be able to PTE-map the THP whenever we have to. Otherwise
->> we'd have to eventually fail some operations we don't want to fail --
->> similar to the case where break_cow_pte() could fail now due to -ENOMEM
->> although we really don't want to fail (e.g., change_pte_range() ).
->>
->> I always considered that wasteful, because in many scenarios, we'll
->> never ever split a THP and possibly waste memory.
+On Tue, Feb 14, 2023 at 05:58:45PM +0100, David Hildenbrand wrote:
 > 
-> When you say "split THP", do you mean split the compound page to base
-> pages? IIUC the backup PTE table page is used to guarantee the PMD
-> split (just convert pmd mapped THP to PTE-mapped but not split the
-> compound page) succeed. You may already notice there is no return
-> value for PMD split.
+> > > > 
+> > > > Honestly, for improving the fork(), I have an idea to skip the per-page
+> > > > operation without breaking the logic. However, this will introduce the
+> > > > complicated mechanism and may has the overhead for other features. It
+> > > > might not be worth it. It's hard to strike a balance between the
+> > > > over-complicated mechanism with (probably) better performance and data
+> > > > consistency with the page status. So, I would focus on the safety and
+> > > > stable approach at first.
+> > > 
+> > > Yes, it is most probably possible, but complexity, robustness and
+> > > maintainability have to be considered as well.
+> > > 
+> > > Thanks for implementing this approach (only deduplication without other
+> > > optimizations) and evaluating it accordingly. It's certainly "cleaner", such
+> > > that we only have to mess with unsharing and not with other
+> > > accounting/pinning/mapcount thingies. But it also highlights how intrusive
+> > > even this basic deduplication approach already is -- and that most benefits
+> > > of the original approach requires even more complexity on top.
+> > > 
+> > > I am not quite sure if the benefit is worth the price (I am not to decide
+> > > and I would like to hear other options).
+> > 
+> > I'm looking at the discussion of page table sharing in 2002 [1].
+> > It looks like in 2002 ~ 2006, there also have some patches try to
+> > improve fork().
+> > 
+> > After that, I also saw one thread which is about another shared page
+> > table patch's benchmark. I can't find the original patch though [2].
+> > But, I found the probably same patch in 2005 [3], it also mentioned
+> > the previous benchmark discussion:
+> > 
+> > "
+> > For those familiar with the shared page table patch I did a couple of years
+> > ago, this patch does not implement copy-on-write page tables for private
+> > mappings.  Analysis showed the cost and complexity far outweighed any
+> > potential benefit.
+> > "
+> 
+> Thanks for the pointer, interesting read. And my personal opinion is that
+> part of that statement still hold true :)
 
-Yes, as I raised in my other reply.
+;)
+
+> > 
+> > However, it might be different right now. For example, the implemetation
+> > . We have split page table lock now, so we don't have to consider the
+> > page_table_share_lock thing. Also, presently, we have different use
+> > cases (shells [2] v.s. VM cloning and fuzzing) to consider.
+> > 
+> > Nonetheless, I still think the discussion can provide some of the mind
+> > to us.
+> > 
+> > BTW, It seems like the 2002 patch [1] is different from the 2002 [2]
+> > and 2005 [3].
+> > 
+> > [1] https://lkml.iu.edu/hypermail/linux/kernel/0202.2/0102.html
+> > [2] https://lore.kernel.org/linux-mm/3E02FACD.5B300794@digeo.com/
+> > [3] https://lore.kernel.org/linux-mm/7C49DFF721CB4E671DB260F9@%5B10.1.1.4%5D/T/#u
+> > 
+> > > My quick thoughts after skimming over the core parts of this series
+> > > 
+> > > (1) forgetting to break COW on a PTE in some pgtable walker feels quite
+> > >      likely (meaning that it might be fairly error-prone) and forgetting
+> > >      to break COW on a PTE table, accidentally modifying the shared
+> > >      table.
+> > 
+> > Maybe I should also handle arch/ and others parts.
+> > I will keep looking at where I missed.
+> 
+> One could add sanity checks when modifying a PTE while the PTE table is
+> still marked shared ... but I guess there are some valid reasons where we
+> might want to modify shared PTE tables (rmap).
+
+Sounds good for adding sanity checks. I will look at this.
+One of the valid reasons that come to my head might be the
+referenced bit (rmap).
+
+> > 
+> > > (2) break_cow_pte() can fail, which means that we can fail some
+> > >      operations (possibly silently halfway through) now. For example,
+> > >      looking at your change_pte_range() change, I suspect it's wrong.
+> > 
+> > Maybe I should add WARN_ON() and skip the failed COW PTE.
+> 
+> One way or the other we'll have to handle it. WARN_ON() sounds wrong for
+> handling OOM situations (e.g., if only that cgroup is OOM).
+
+Or we should do the same thing like you mentioned:
+"
+For example, __split_huge_pmd() is currently not able to report a 
+failure. I assume that we could sleep in there. And if we're not able to 
+allocate any memory in there (with sleeping), maybe the process should 
+be zapped either way by the OOM killer.
+"
+
+But instead of zapping the process, we just skip the failed COW PTE.
+I don't think the user will expect their process to be killed by
+changing the protection.
+
+> > 
+> > > (3) handle_cow_pte_fault() looks quite complicated and needs quite some
+> > >      double-checking: we temporarily clear the PMD, to reset it
+> > >      afterwards. I am not sure if that is correct. For example, what
+> > >      stops another page fault stumbling over that pmd_none() and
+> > >      allocating an empty page table? Maybe there are some locking details
+> > >      missing or they are very subtle such that we better document them. I
+> > >     recall that THP played quite some tricks to make such cases work ...
+> > 
+> > I think that holding mmap_write_lock may be enough (I added
+> > mmap_assert_write_locked() in the fault function btw). But, I might
+> > be wrong. I will look at the THP stuff to see how they work. Thanks.
+> > 
+> 
+> Ehm, but page faults don't hold the mmap lock writable? And so are other
+> callers, like MADV_DONTNEED or MADV_FREE.
+> 
+> handle_pte_fault()->handle_pte_fault()->mmap_assert_write_locked() should
+> bail out.
+> 
+> Either I am missing something or you didn't test with lockdep enabled :)
+
+You're right. I thought I enabled the lockdep.
+And, why do I have the page fault will handle the mmap lock writable in my mind.
+The page fault holds the mmap lock readable instead of writable.
+;-)
+
+I should check/test all the locks again.
+Thanks.
 
 > 
-> The PMD split may be called quite often, for example, MADV_DONTNEED,
-> mbind, mlock, and even in memory reclamation context  (THP swap).
+> Note that there are upstream efforts to use only a VMA lock (and some people
+> even want to perform some page faults only protected by RCU).
 
-Yes, but with a single MADV_DONTNEED call you cannot PTE-map more than 2 
-THP (all other overlapped THP will get zapped). Same with most other 
-operations.
+I saw the discussion (https://lwn.net/Articles/906852/) before.
+If the page fault handler only uses a VMA lock, handle_cow_pte_fault() might not
+be affected since it only takes one VMA at a time. handle_cow_pte_fault() just
+allocate the PTE and copy the COW mapping entries to the new one.
+It's alredy handle the checking and accounting in copy_cow_pte_range().
 
-There are corner cases, though. I recall that s390x/kvm wants to break 
-all THP in a given VMA range. But that operation could safely fail if we 
-can't do that.
+But, if we decide to skip the per-page operation during fork().
+We should handle the VMA lock (or RCU) for the accounting and other
+stuff. It might be more complicated than before...
 
-Certainly needs some investigation, that's most probably why it hasn't 
-been done yet.
-
-> 
->>
->> Optimizing that for THP (e.g., don't always allocate backup THP, have
->> some global allocation backup pool for splits + refill when
->> close-to-empty) might provide similar fork() improvements, both in speed
->> and memory consumption when it comes to anonymous memory.
-> 
-> It might work. But may be much more complicated than what you thought
-> when handling multiple parallel PMD splits.
-
-
-I consider the whole PTE-table linking to THPs complicated enough to 
-eventually replace it by something differently complicated that wastes 
-less memory ;)
-
--- 
 Thanks,
-
-David / dhildenb
-
+Chih-En Lin
