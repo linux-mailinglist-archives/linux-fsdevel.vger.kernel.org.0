@@ -2,75 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0164A6971E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 00:37:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3406969728C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 01:12:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229880AbjBNXhM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Feb 2023 18:37:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57050 "EHLO
+        id S229933AbjBOAMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Feb 2023 19:12:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232035AbjBNXhJ (ORCPT
+        with ESMTP id S229526AbjBOAMT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Feb 2023 18:37:09 -0500
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCB9E2B628
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 15:37:07 -0800 (PST)
-Received: by mail-io1-xd35.google.com with SMTP id y7so6485106iob.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 15:37:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mZdjpB1hiR4KdFF9IW1WmBupIcjtLh3KZAHATvyECZc=;
-        b=hTAoWB2LQ9OA67yieHFQdvaCwbt9cNBIAg/X3DTK4gP9hE5H2rbBfPjwZe62bTp6mK
-         9i7tGy9YcyRUg0zuQpqI2dhnX2KAkntai21DmZNEqYhjB1hJ6RdKc7mI+PxW/QtleGoi
-         8ko5/pP2kAcKhYb19v3+WjeezjUxjYqKxRBLw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mZdjpB1hiR4KdFF9IW1WmBupIcjtLh3KZAHATvyECZc=;
-        b=ydnZ55jNhXcEWpB8CvVR4/bCPlkLOnP8zNCVh0NeJWRFng3gLBqo9lHrmSHXb7b2z+
-         6f3sWtafPT5I4JCIB9FK+fIbBqoqCvItf6IHh00M3cVE0prWJvj0eBXWIkjLQSxpBBeg
-         mT4cp7N95YOEVed7Va8QqZ7V/2U9iMtOMNBWnfuo/XRsaEnmObN58GvHy0ouB+uw9MbY
-         ZGz8lNYhUVxUEBDkjyP0hbh/h9ks6aaW0CBLi1iL7/ZI2RpLNgH/44Nz3wXhjTVO+oot
-         zk0ryrjXhUMtQsocUOeQlwIhMitPjZgyJ0euEP9/a5XCaonJcBdXHz/THKeVrslR0ZiZ
-         +8tA==
-X-Gm-Message-State: AO0yUKX6Vrz5r8v4kNNKGiyXJJquVvb4SpkMLpvv+ThIjvOHjr6/ReYy
-        0WJQ0BoigxIroshpKXcAwroL9g==
-X-Google-Smtp-Source: AK7set/4/pIQOLdtIr2u+j9NEMRLql2ZuJXi2Ce/0glFkqfSzRfp2NVpFKuVnFsC3x9IfmqqHBjplA==
-X-Received: by 2002:a05:6602:1415:b0:70a:9fce:853c with SMTP id t21-20020a056602141500b0070a9fce853cmr424774iov.2.1676417827031;
-        Tue, 14 Feb 2023 15:37:07 -0800 (PST)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id u14-20020a02aa8e000000b003a9595b7e3asm5322393jai.46.2023.02.14.15.37.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Feb 2023 15:37:06 -0800 (PST)
-Message-ID: <dda181d1-8a5b-adb4-6665-016f50e51487@linuxfoundation.org>
-Date:   Tue, 14 Feb 2023 16:37:05 -0700
+        Tue, 14 Feb 2023 19:12:19 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E9A30E91
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Feb 2023 16:11:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676419883;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=k37hKnr7FAR3AoepA4iTJhmjAlSP4APBHTl0oHVqVs4=;
+        b=jTEflOEFPAnGtgRE0NNRJjdXXuqLDftxGpoKwNBBkvW2O+BSNIERqq7EPANQW+IJ+kU9dD
+        MToBj32M+zMKo9DGgNH/If9tbz4N0ANP146q5FRvGIEc48GScReppe9leSPqDcvPzeyBjT
+        XhT9TVMenS+ZJ3gRM397kP4UBrlCvLM=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-127-9poEkWqlOpK_nbH3DRHwcg-1; Tue, 14 Feb 2023 19:11:20 -0500
+X-MC-Unique: 9poEkWqlOpK_nbH3DRHwcg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AF5BF1C0418E;
+        Wed, 15 Feb 2023 00:11:19 +0000 (UTC)
+Received: from T590 (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C1DBC15BAD;
+        Wed, 15 Feb 2023 00:11:10 +0000 (UTC)
+Date:   Wed, 15 Feb 2023 08:11:05 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>,
+        ming.lei@redhat.com
+Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
+ pages in kernel
+Message-ID: <Y+wjGZO6rVw5W35T@T590>
+References: <20230210153212.733006-1-ming.lei@redhat.com>
+ <20230210153212.733006-2-ming.lei@redhat.com>
+ <Y+e3b+Myg/30hlYk@T590>
+ <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
+ <Y+hDQ1vL6AMFri1E@T590>
+ <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
+ <CAJfpegtOetw46DvR1PeuX5L9-fe7Qk75mq5L4tGwpS_wuEz=1g@mail.gmail.com>
+ <Y+ucLFG/ap8uqwPG@T590>
+ <CAJfpeguGayE2fS2m9U7=Up4Eqa_89oTeR4xW-WbcfjJBRaYqHA@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH] selftests/mount_setattr: fix redefine struct mount_attr
- build error
-Content-Language: en-US
-To:     Seth Forshee <sforshee@kernel.org>
-Cc:     shuah@kernel.org, brauner@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20230213183149.231779-1-skhan@linuxfoundation.org>
- <Y+rMtlvx31w7eWCA@do-x1extreme>
- <f536ecc2-1889-6df6-43d3-1a04dc8f1b14@linuxfoundation.org>
- <Y+vzB1OTXr+zTCV7@do-x1extreme>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <Y+vzB1OTXr+zTCV7@do-x1extreme>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguGayE2fS2m9U7=Up4Eqa_89oTeR4xW-WbcfjJBRaYqHA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,47 +78,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/14/23 13:45, Seth Forshee wrote:
-> On Tue, Feb 14, 2023 at 10:10:00AM -0700, Shuah Khan wrote:
-
->>>
->>
->> The header search looks up system headers followed by installed headers in
->> the repo (both in-tree and out-of-tree builds). kselftest builds do depend
->> on headers_install. Did you building after running headers_install?
+On Tue, Feb 14, 2023 at 04:39:01PM +0100, Miklos Szeredi wrote:
+> On Tue, 14 Feb 2023 at 15:35, Ming Lei <ming.lei@redhat.com> wrote:
 > 
-> I wasn't aware they depend on headers_install. Why doesn't
-> Documentation/dev-tools/kselftest.rst mention this in the section that
-> describes how to run tests?
+> > I understand it isn't one issue from block device driver viewpoint at
+> > least, since the WRITE to buffer in sink end can be thought as DMA
+> > to buffer from device, and it is the upper layer(FS)'s responsibility
+> > for updating page flag. And block driver needn't to handle page
+> > status update.
 > 
+> The block device still needs to know when the DMA is finished, right?
 
-It ahs always been a dependency. If you were to compile from the
-main (root) Makefile as below - headers_install get done before
-test compile:
+Yeah, for normal in-kernel device driver, the completion is triggered by
+interrupt or io polling.
 
-make kselftest-all TARGETS=mount_setattr
+For ublk, io handling is done by userspace, here we use io_uring to
+handle the IO in aio style. When the aio is completed, the userspace
+gets notified of the completion.
 
-> It seems what I really need to fix the build is to include
-> linux/mount.h, which works for me with or without headers_install,
-> because I have the struct in /usr/include/linux/mount.h. And I suppose
-> the makefile should use KHDR_INCLUDES. So maybe the changes below should
-> also be included.
-> 
+Here the way is basically same with loop dio mode(losetup --direct-io=on),
+it is still zero copy, pages from loop block driver are passed to FS(backing file)
+directly for handling the original IO.
 
-Yes. Makefile change to use KHDR_INCLUDES is already done. Please
-take a look at linux-kselftest next - this was done as part of a
-tree-wide change.
 
-If including linux/mount.h is thr correct solution, please send me
-the patch on top of linux-kselftest next and I will pull it in.
-  
-> However I know Christian has said that there are challenges with
-> including the mount headers. He wrote this test, so I'd like to hear his
-> thoughts about adding the include. He's on vacation this week though.
-> 
-
-Sounds good.
-
-thanks,
--- Shuah
+Thanks, 
+Ming
 
