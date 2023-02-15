@@ -2,39 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DAFF697D85
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 14:36:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66EED697D8B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 14:36:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229809AbjBONgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Feb 2023 08:36:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53184 "EHLO
+        id S230187AbjBONgv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Feb 2023 08:36:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbjBONgQ (ORCPT
+        with ESMTP id S229514AbjBONgu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Feb 2023 08:36:16 -0500
+        Wed, 15 Feb 2023 08:36:50 -0500
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C19DE358D;
-        Wed, 15 Feb 2023 05:36:15 -0800 (PST)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 7DF952147;
-        Wed, 15 Feb 2023 13:32:03 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC2C358D;
+        Wed, 15 Feb 2023 05:36:48 -0800 (PST)
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id AE4042147;
+        Wed, 15 Feb 2023 13:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1676467923;
-        bh=OatpAkpsqEkQhNlA8+4RSwXL5RSbK1GB/mfif8PSuXw=;
+        d=paragon-software.com; s=mail; t=1676467956;
+        bh=b+LLWuFDWYTNULIicKcI1S4EHJN/4plvEY5VcSHrLWg=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=iAEGNCOIRzqY/nbzXCP4Ctrra7Efo9iOlJbi0C6An8CFHbytSmWV++wz84rTlqMmh
-         p6zCCJnU2Eaxt6xq+4+UPXt3YnnOlkUSBK9TS0HbznaWpvyZM15P4LOYZ+WahPq81y
-         VUWSCf+xlhJ9Nlh5mwDg+yXXj4owFmYLtU8dRK7Q=
+        b=Q/Yhfksb+qlZJt/4SxooKi0BdMWTt4rWIloAIs3pdR8jX3wuZjC6uyvFVJEygSGxA
+         qUfQAD8VSljf5GabnWJAwMIbqa+GC5tWrNBKOuc4ArDXojXIv2GIg4qgHfGkjqsvbM
+         RUE7iQtJBUzaiDMmsz+ntj3SX8NU96W+/1yPV/qA=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 0E8EC1E70;
+        Wed, 15 Feb 2023 13:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1676468207;
+        bh=b+LLWuFDWYTNULIicKcI1S4EHJN/4plvEY5VcSHrLWg=;
+        h=Date:Subject:From:To:CC:References:In-Reply-To;
+        b=ptH5fSA1Cz8XKI6v5HdTiOH2aOVUYljEDjk4I6gFH627yI0aZPymi8pOrP5gUwlMs
+         tW7L8ujIRq2JCs26nIJCdQ8r1U1/LsHBdzKlLxGh2FZ9x4mJ3qpflYanYe/wwE7Gdf
+         0EnfrqssmhRvJu5CANZTFB19MIUDtuWifUzDlQwk=
 Received: from [192.168.211.36] (192.168.211.36) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Wed, 15 Feb 2023 16:36:13 +0300
-Message-ID: <75a56ed1-eafc-0a18-9c2d-db4e423c3f26@paragon-software.com>
-Date:   Wed, 15 Feb 2023 17:36:12 +0400
+ 15.1.2375.7; Wed, 15 Feb 2023 16:36:46 +0300
+Message-ID: <eb87d3e8-a3fa-2359-24dc-012ee10543d8@paragon-software.com>
+Date:   Wed, 15 Feb 2023 17:36:46 +0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.2
-Subject: [PATCH 04/11] fs/ntfs3: Optimization in ntfs_set_state()
+Subject: [PATCH 05/11] fs/ntfs3: Undo endian changes
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -56,51 +66,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The current volume flags are updated only if VOLUME_FLAG_DIRTY has been 
-changed.
+sbi->mft.reserved_bitmap is in-memory (not on-disk!) bitmap.
+Assumed cpu endian is faster than fixed endian.
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/fsntfs.c | 9 +++++++--
-  1 file changed, 7 insertions(+), 2 deletions(-)
+  fs/ntfs3/fsntfs.c | 11 +++++------
+  1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
-index 342938704cfd..d888ba14237f 100644
+index d888ba14237f..9ed9dd0d8edf 100644
 --- a/fs/ntfs3/fsntfs.c
 +++ b/fs/ntfs3/fsntfs.c
-@@ -925,6 +925,7 @@ int ntfs_set_state(struct ntfs_sb_info *sbi, enum 
-NTFS_DIRTY_FLAGS dirty)
-      struct VOLUME_INFO *info;
-      struct mft_inode *mi;
-      struct ntfs_inode *ni;
-+    __le16 info_flags;
+@@ -646,13 +646,13 @@ int ntfs_look_free_mft(struct ntfs_sb_info *sbi, 
+CLST *rno, bool mft,
+                           NULL, 0, NULL, NULL))
+                      goto next;
 
-      /*
-       * Do not change state if fs was real_dirty.
-@@ -957,6 +958,8 @@ int ntfs_set_state(struct ntfs_sb_info *sbi, enum 
-NTFS_DIRTY_FLAGS dirty)
-          goto out;
-      }
+-                __clear_bit_le(ir - MFT_REC_RESERVED,
++                __clear_bit(ir - MFT_REC_RESERVED,
+                          &sbi->mft.reserved_bitmap);
+              }
+          }
 
-+    info_flags = info->flags;
-+
-      switch (dirty) {
-      case NTFS_DIRTY_ERROR:
-          ntfs_notice(sbi->sb, "Mark volume as dirty due to NTFS errors");
-@@ -970,8 +973,10 @@ int ntfs_set_state(struct ntfs_sb_info *sbi, enum 
-NTFS_DIRTY_FLAGS dirty)
-          break;
-      }
-      /* Cache current volume flags. */
--    sbi->volume.flags = info->flags;
--    mi->dirty = true;
-+    if (info_flags != info->flags) {
-+        sbi->volume.flags = info->flags;
-+        mi->dirty = true;
-+    }
-      err = 0;
+          /* Scan 5 bits for zero. Bit 0 == MFT_REC_RESERVED */
+-        zbit = find_next_zero_bit_le(&sbi->mft.reserved_bitmap,
++        zbit = find_next_zero_bit(&sbi->mft.reserved_bitmap,
+                        MFT_REC_FREE, MFT_REC_RESERVED);
+          if (zbit >= MFT_REC_FREE) {
+              sbi->mft.next_reserved = MFT_REC_FREE;
+@@ -720,7 +720,7 @@ int ntfs_look_free_mft(struct ntfs_sb_info *sbi, 
+CLST *rno, bool mft,
+      if (*rno >= MFT_REC_FREE)
+          wnd_set_used(wnd, *rno, 1);
+      else if (*rno >= MFT_REC_RESERVED && sbi->mft.reserved_bitmap_inited)
+-        __set_bit_le(*rno - MFT_REC_RESERVED, &sbi->mft.reserved_bitmap);
++        __set_bit(*rno - MFT_REC_RESERVED, &sbi->mft.reserved_bitmap);
 
   out:
+      if (!mft)
+@@ -748,7 +748,7 @@ void ntfs_mark_rec_free(struct ntfs_sb_info *sbi, 
+CLST rno, bool is_mft)
+          else
+              wnd_set_free(wnd, rno, 1);
+      } else if (rno >= MFT_REC_RESERVED && 
+sbi->mft.reserved_bitmap_inited) {
+-        __clear_bit_le(rno - MFT_REC_RESERVED, &sbi->mft.reserved_bitmap);
++        __clear_bit(rno - MFT_REC_RESERVED, &sbi->mft.reserved_bitmap);
+      }
+
+      if (rno < wnd_zone_bit(wnd))
+@@ -846,9 +846,8 @@ void ntfs_update_mftmirr(struct ntfs_sb_info *sbi, 
+int wait)
+  {
+      int err;
+      struct super_block *sb = sbi->sb;
+-    u32 blocksize;
++    u32 blocksize, bytes;
+      sector_t block1, block2;
+-    u32 bytes;
+
+      if (!sb)
+          return;
 -- 
 2.34.1
 
