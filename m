@@ -2,94 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EA2269810F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 17:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE1E3698247
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 18:36:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbjBOQkS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Feb 2023 11:40:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49578 "EHLO
+        id S230126AbjBORgz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Feb 2023 12:36:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbjBOQkR (ORCPT
+        with ESMTP id S230116AbjBORgy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Feb 2023 11:40:17 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 527B240C0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Feb 2023 08:40:16 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id t16so236461edd.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Feb 2023 08:40:16 -0800 (PST)
+        Wed, 15 Feb 2023 12:36:54 -0500
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0172A154;
+        Wed, 15 Feb 2023 09:36:52 -0800 (PST)
+Received: by mail-vs1-xe30.google.com with SMTP id j5so11651458vsc.8;
+        Wed, 15 Feb 2023 09:36:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uRPFQs3djXckE7Oktaa+X2AruZRRb1EX46zdXuL2aNA=;
-        b=O1Sb/PuAScpXjzzcEcRfdw765yckWsrlp60Zyj2Buh5pRD57qJFkPGXYlYGCSzbLKZ
-         0OZJxcmxT4DRgg7vRAKUywcu+0OCNVsBpF50NrQuVlyfYQKR1YKZkGKhonllv6EdWSWj
-         S4d4opyn+39fcS7g6apBLJVuIfqAPFopssH38=
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=D/KbAz5FeBvde1DWwl9iOIWYjZFr9YJ9qIF1/orABb4=;
+        b=cYriOyhdNuA2EoNNZXNy8xPtjOPisuyaTfco6+x0PjLBbTswJBsYT4Fwt2qOSWPO8P
+         dGFe0Wy45dR2Ls/fygoyz2AMcyfuBs69+rPHB/9WlL/Gk7hucnCcHOaEr+vBxM9b9JxT
+         R2icLxUhzRNM1iFWGmGvoB2yT6U9Fwk7fQDojLUQuZXvstlbNTWDFDyAy550jzB5uYuh
+         /jBGmeATOLlD80kMZZuX3Rm8LcIjjkMP+96z5OrEr4n6GU+lpccryZdLrDaxXK2HZCjN
+         86Jj4niv0FnG0A2l0lyqMtIC969ym85sc2EI8dcOYDwjKL5y8gTBNQ7+ucfAeNlS8Zeg
+         t0sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uRPFQs3djXckE7Oktaa+X2AruZRRb1EX46zdXuL2aNA=;
-        b=KpPa1wPMyE/UnLBna8MAaQnV+emCpWsNz/EI7+bSfR6+RSbLjyt1l+N+MAW7K9i+Go
-         fELCWTil7w8Umes31E+nLXV0+X8RiyGxWNX9zeasJcwjgh6XlTh/T4RWs36P3V5IXclS
-         ueeF3/s3HdZOwAn9LaY0FfJtxEaStRB6ig8gykQqB6lDY3J/Lh2AYU+jfKw3SnyP4T0s
-         HWGZM6Z++M4OEjtR5hVGraSGW3Uz5oNeJYmgskwtKLnvC9aKi66rubIqcJgeG822HBOb
-         4qQmggJZo8kRdhTkrkXmdfUJ73W5kjDXtE1Zgn84S0LRWPYmrQ2YMlpDROVC/T44WTZQ
-         E2Cg==
-X-Gm-Message-State: AO0yUKWHI6lpr5Ah9Vi/tldfYOShDqk2c9u6Yw5L2KEqgakXyvlQVgBz
-        iKrHvLaXWV0yEfw8YnR21+7bBzYyJRQ2xDROcRpPrg==
-X-Google-Smtp-Source: AK7set/iPBXeldwcN/CINqXYZtP94LHe3RbLgypUPLbVvQFOUAvYldPBfIvqSUN53v/EVz7QuOACKnzaFEzlWm2AvNQ=
-X-Received: by 2002:a17:906:8604:b0:878:790b:b7fd with SMTP id
- o4-20020a170906860400b00878790bb7fdmr1331614ejx.14.1676479214862; Wed, 15 Feb
- 2023 08:40:14 -0800 (PST)
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D/KbAz5FeBvde1DWwl9iOIWYjZFr9YJ9qIF1/orABb4=;
+        b=c/uhirYKPnyGuaLq9iCJpnI6BuvQmpqte2TbGQ9Nl65Nr2SubvIIs9RZJrRbEmmsIi
+         MEhrhb54OBIZj3rG4Yrg3Sq89f6lG0tpgKFdFcZcQZsddFdoLfSK2fMeRZzuNjYuV4sL
+         CdbqU4EppU5rDJEyfwOpyZPct9oEECUoTaLDRk6NkJmXu6cbhP3FwjxAsginc0hsyCJN
+         nCzkpIxagSxHBRkQWFoWYcxiGZSeeysejjtpzAhwY/36vSxU2RgxDuu+fMVvoHahlyb9
+         aoQCBtJzaF5WrMrE69Z1uyR5oSsfVq2Qo7n7BWWasqvC7Q2JoF7OX1zD7IDDyEu11JPk
+         lN5Q==
+X-Gm-Message-State: AO0yUKVoe7MlLBp4bf+Jh/GfFM0a/iZAdRVP3X3h1D/YliQcMRTAYt8A
+        +alsN6pDX2kXsm313gK9b6MURdCcqw4K3IQqNTUZw/Ee41Q=
+X-Google-Smtp-Source: AK7set9t//t+6BdnqgMCsubhUnUjEi3iNV6s16IQ0BY9MHTtCZkXx9TuWw2aBnkLQElmbsc+smedsNFcrl6WEVmSZQo=
+X-Received: by 2002:a67:ef41:0:b0:401:57f8:7c18 with SMTP id
+ k1-20020a67ef41000000b0040157f87c18mr534314vsr.51.1676482611590; Wed, 15 Feb
+ 2023 09:36:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20230214171330.2722188-1-dhowells@redhat.com> <20230214171330.2722188-6-dhowells@redhat.com>
- <CAJfpegshWgUYZLc5v-Vwf6g3ZGmfnHsT_t9JLwxFoV8wPrvBnA@mail.gmail.com>
- <3370085.1676475658@warthog.procyon.org.uk> <CAJfpegt5OurEve+TvzaXRVZSCv0in8_7whMYGsMDdDd2EjiBNQ@mail.gmail.com>
- <Y+z/85HqpEceq66f@casper.infradead.org>
-In-Reply-To: <Y+z/85HqpEceq66f@casper.infradead.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 15 Feb 2023 17:40:04 +0100
-Message-ID: <CAJfpegsuDWqVYa2n2tmQP0EfkcWtRjxFwU1EbG0On-XfQ8ZhFg@mail.gmail.com>
-Subject: Re: [PATCH v15 05/17] overlayfs: Implement splice-read
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-unionfs@vger.kernel.org
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Wed, 15 Feb 2023 23:06:40 +0530
+Message-ID: <CAOuPNLgTWNMSaZmE4UzOq8UhsLWnBzyt0xwsO=dS9NpQxh-h_g@mail.gmail.com>
+Subject: 
+To:     open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 15 Feb 2023 at 16:53, Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Wed, Feb 15, 2023 at 04:50:04PM +0100, Miklos Szeredi wrote:
-> > Looks good.  One more suggestion: add a vfs_splice() helper and use
-> > that from do_splice_to() as well.
->
-> I really hate call_read_iter() etc.  Please don't perpetuate that
-> pattern.
+Hi,
 
-I didn't suggest call_splice_read().  vfs_splice_read() would have the
-rw_verify_area() as well as the check for non-null ->splice_read().
+We are seeing below "ubi errors" during booting.
+Although this does not cause any functionality break, I am wondering
+if there is any way to fix it ?
+We are using Kernel 4.14 with UBI and squashfs (ubiblock) as volumes,
+and with systemd.
 
-Doing it that way from the start would have prevented two of the bugs
-that David introduced in the first version.
+Anybody have experienced the similar logs with ubi/squashfs and
+figured out a way to avoid it ?
+It seems like these open volumes are called twice, thus error -16
+indicates (device or resource busy).
+Or, are these logs expected because of squashfs or ubiblock ?
+Or, do we need to add anything related to udev-rules ?
+
+{
+....
+[  129.394789] ubi0 error: ubi_open_volume: cannot open device 0,
+volume 6, error -16
+[  129.486498] ubi0 error: ubi_open_volume: cannot open device 0,
+volume 7, error -16
+[  129.546582] ubi0 error: ubi_open_volume: cannot open device 0,
+volume 8, error -16
+[  129.645014] ubi0 error: ubi_open_volume: cannot open device 0,
+volume 9, error -16
+[  129.676456] ubi0 error: ubi_open_volume: cannot open device 0,
+volume 6, error -16
+[  129.706655] ubi0 error: ubi_open_volume: cannot open device 0,
+volume 10, error -16
+[  129.732740] ubi0 error: ubi_open_volume: cannot open device 0,
+volume 7, error -16
+[  129.811111] ubi0 error: ubi_open_volume: cannot open device 0,
+volume 8, error -16
+[  129.852308] ubi0 error: ubi_open_volume: cannot open device 0,
+volume 9, error -16
+[  129.923429] ubi0 error: ubi_open_volume: cannot open device 0,
+volume 10, error -16
+
+}
 
 Thanks,
-Miklos
+Pintu
