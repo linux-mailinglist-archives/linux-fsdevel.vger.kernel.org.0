@@ -2,107 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 43ABF698729
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 22:13:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C878969888F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Feb 2023 00:04:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbjBOVNe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Feb 2023 16:13:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46062 "EHLO
+        id S229975AbjBOXEF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Feb 2023 18:04:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjBOVNc (ORCPT
+        with ESMTP id S229988AbjBOXEC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Feb 2023 16:13:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C12E9EDD
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Feb 2023 13:12:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676495543;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6sdUXKXxrfW+mAzuTBhSKEe6d+lBQL+20Mwbq3MLzH8=;
-        b=h6So6iBTmvqkZLqSgaE2bERDe0SmIVaiUr7CQx9woMmzAjmXNFuqwudzevV5+QShmxAUEh
-        Yf0Sh/F6vBJesIExE1kCB3Rbh5RLDyDT0240UEksu71D9IEqM2ldgBT04+f1Atwr5HWUAz
-        hx7SlsM56xTrauAnUEysSpIwXFCj6+g=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-210-frjCRHJgN-q6g5dtZLhk0Q-1; Wed, 15 Feb 2023 16:12:21 -0500
-X-MC-Unique: frjCRHJgN-q6g5dtZLhk0Q-1
-Received: by mail-io1-f72.google.com with SMTP id z22-20020a5ec916000000b007407d6e01e5so1858708iol.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Feb 2023 13:12:21 -0800 (PST)
+        Wed, 15 Feb 2023 18:04:02 -0500
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95267457DB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Feb 2023 15:03:50 -0800 (PST)
+Received: by mail-pg1-x52e.google.com with SMTP id n2so142579pgb.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Feb 2023 15:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xVtTvqbwAg88jCPwlTtCkUIS1OKpRNgVadlt8olh1Ew=;
+        b=tQHptBT9539hpEgNxe7kkJVAXGkCIikNA+YWUw+gcNPb5YH9urjiPJ90V0f4FjHKNP
+         qCAHkUfi+Y7A+wEl8Kdcb8VSQCMVkHJnUXjVEe661H6NFbCq81FPD8PNTKromHQzHu5j
+         FiPR2Roxw+8T3jZRn/cBJBmINYcyJhZvdNT62mMxi0Nde8LR2EcbDU2Xk/Fsdvh9OtDG
+         eAgwTVZi/HcGgGkn2pFSpAqHfJgDW54ZydEQrFnyc+3nb9AjmSkIlcAoKIKlH+1W7Mi1
+         EcNaocuk6+XIhEuNKRv+ClfuCD/dqL3JZcLTpkWGhbcvAiVlSH8hvUZrhyJ+v8rXO74b
+         dSUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6sdUXKXxrfW+mAzuTBhSKEe6d+lBQL+20Mwbq3MLzH8=;
-        b=5Aqe1DO5/Yy+bnW7CDRANKvTz9a6TOZeYg7dHWnX3DfINn1rUVIATZ0Tvs7yjFlrEa
-         bT+2awbDJhfYW9tDxWRsqygE4LSAk0q6Jpnxl/bYLGTI9mFqeAGUOvF2SXq80tN0x4jz
-         XX31cq/b+ZcPwkR4wAY+KfDdPFTP62r7G5zXsjMm8TZOxwSddF36sLSH6bRFy40lu9Wr
-         W7kuieDDauHS6tCswW7cvMAuuXWyJ1Nn3dRw/1MgusH2oNg8Orhxpk4oBa9A3bV2Yifa
-         5EbVfB6catWqLcRKN1rsn30Xwl0SvTOG+sC812FaMtEBo4FlbpBaZiE2mRXrMHT+Yy3e
-         gw/g==
-X-Gm-Message-State: AO0yUKVjjjXLltZcHPdOzr/DTHx+aVVfD4IheDoyPxvYyG5Wxo5SmOgm
-        0tPnwlUR5JaAzlHHoIBVTesO8EA+6BMYAbH4uNRPWLQxweJ+pww1wgUOeSU6Fvxf6qfQgj735B5
-        4jID0lNSicsL8VwCSFJQ+00DBbA==
-X-Received: by 2002:a05:6e02:180a:b0:314:1579:be2c with SMTP id a10-20020a056e02180a00b003141579be2cmr3158031ilv.0.1676495540765;
-        Wed, 15 Feb 2023 13:12:20 -0800 (PST)
-X-Google-Smtp-Source: AK7set9YvaTULu4TJGwUvbRrKZO6FUCyDczd5c1ykfW4fd3xdBJS63A1AOfZuvkOfpTEmmxuCSkuUA==
-X-Received: by 2002:a05:6e02:180a:b0:314:1579:be2c with SMTP id a10-20020a056e02180a00b003141579be2cmr3157998ilv.0.1676495540462;
-        Wed, 15 Feb 2023 13:12:20 -0800 (PST)
-Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
-        by smtp.gmail.com with ESMTPSA id f3-20020a02b783000000b003b1d7fbf810sm1542836jam.148.2023.02.15.13.12.17
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xVtTvqbwAg88jCPwlTtCkUIS1OKpRNgVadlt8olh1Ew=;
+        b=iOIfMLFR27dZniYqCsyk9LqJ2zk4OmWNotmivBLJZ4YUGAMLpD4bHSDWeygbniKApo
+         fwHpguGpq/htosibF46kbOZ0CWqsMVnBWRkxJuX1SHP5hvJWv0n+Gn+t5ZRpQrU+qAMl
+         yIJlUd7Zyfh94t1+LRuQX1n7J2P4XLXTURjmTf1GnVh75tTAMdNW2nG2Kv7+6m98n9FR
+         uPVKuP9PdciJmH/biSwRI50KSeXL2LB3xChZB2xjAfbe6X2HVdw5D1LVmgp7y1GNQktI
+         FNOofFeTX5ggj3L6ZdsJlTVJZbdux50z1EXVlw7yEsrp8X2yoXwuZTjcJq0ZG57t2u1t
+         QREA==
+X-Gm-Message-State: AO0yUKVJwJuecjvxZIsm4OfCf/mAcSOpLJKGc2+LZX2sNC9IidIkOQPM
+        ilmn02mp9HuBhOHRYWYRZ4LWWw==
+X-Google-Smtp-Source: AK7set9d8E5pGgNEE3LtNcri62eLHazlgRov06Iy+BzhVVUs8sewOhIFm4hOEWkO2f2Kga811oNCsg==
+X-Received: by 2002:a62:5fc5:0:b0:593:2289:f01c with SMTP id t188-20020a625fc5000000b005932289f01cmr2834667pfb.25.1676502229667;
+        Wed, 15 Feb 2023 15:03:49 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-4-128.pa.nsw.optusnet.com.au. [49.181.4.128])
+        by smtp.gmail.com with ESMTPSA id 15-20020aa7924f000000b0059435689e36sm12582215pfp.170.2023.02.15.15.03.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Feb 2023 13:12:19 -0800 (PST)
-Date:   Wed, 15 Feb 2023 16:12:17 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v10 3/6] fs/proc/task_mmu: Implement IOCTL to get and/or
- the clear info about PTEs
-Message-ID: <Y+1KsQSYPYO/egvt@x1n>
-References: <20230202112915.867409-1-usama.anjum@collabora.com>
- <20230202112915.867409-4-usama.anjum@collabora.com>
- <Y+QfDN4Y5Q10x8GQ@x1n>
- <8b2959fb-2a74-0a1f-8833-0b18eab142dc@collabora.com>
- <Y+qur8iIUQTLyE8f@x1n>
- <39217d9a-ed7e-f1ff-59b9-4cbffa464999@collabora.com>
- <Y+v2HJ8+3i/KzDBu@x1n>
- <884f5aa6-5d12-eecc-ed71-7d653828ca20@collabora.com>
+        Wed, 15 Feb 2023 15:03:49 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pSQoU-00FmEl-Ht; Thu, 16 Feb 2023 10:03:46 +1100
+Date:   Thu, 16 Feb 2023 10:03:46 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/3] xfs, iomap: ->discard_folio() is broken so remove it
+Message-ID: <20230215230346.GP360264@dread.disaster.area>
+References: <20230214055114.4141947-1-david@fromorbit.com>
+ <20230214055114.4141947-4-david@fromorbit.com>
+ <Y+vOfaxIWX1c/yy9@bfoster>
+ <20230214222000.GL360264@dread.disaster.area>
+ <Y+z5d5QBeRg3dHVL@bfoster>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <884f5aa6-5d12-eecc-ed71-7d653828ca20@collabora.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+In-Reply-To: <Y+z5d5QBeRg3dHVL@bfoster>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -110,81 +76,111 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 15, 2023 at 03:03:09PM +0500, Muhammad Usama Anjum wrote:
-> On 2/15/23 1:59 AM, Peter Xu wrote:
-> [..]
-> >>>> static inline bool is_pte_written(pte_t pte)
-> >>>> {
-> >>>> 	if ((pte_present(pte) && pte_uffd_wp(pte)) ||
-> >>>> 	    (pte_swp_uffd_wp_any(pte)))
-> >>>> 		return false;
-> >>>> 	return (pte_present(pte) || is_swap_pte(pte));
-> >>>> }
-> >>>
-> >>> Could you explain why you don't want to return dirty for !present?  A page
-> >>> can be written then swapped out.  Don't you want to know that happened
-> >>> (from dirty tracking POV)?
-> >>>
-> >>> The code looks weird to me too..  We only have three types of ptes: (1)
-> >>> present, (2) swap, (3) none.
-> >>>
-> >>> Then, "(pte_present() || is_swap_pte())" is the same as !pte_none().  Is
-> >>> that what you're really looking for?
-> >> Yes, this is what I've been trying to do. I'll use !pte_none() to make it
-> >> simpler.
+On Wed, Feb 15, 2023 at 10:25:43AM -0500, Brian Foster wrote:
+> On Wed, Feb 15, 2023 at 09:20:00AM +1100, Dave Chinner wrote:
+> > On Tue, Feb 14, 2023 at 01:10:05PM -0500, Brian Foster wrote:
+> > > On Tue, Feb 14, 2023 at 04:51:14PM +1100, Dave Chinner wrote:
+> > > > From: Dave Chinner <dchinner@redhat.com>
+> > > > 
+> > > > Ever since commit e9c3a8e820ed ("iomap: don't invalidate folios
+> > > > after writeback errors") XFS and iomap have been retaining dirty
+> > > > folios in memory after a writeback error. XFS no longer invalidates
+> > > > the folio, and iomap no longer clears the folio uptodate state.
+> > > > 
+> > > > However, iomap is still been calling ->discard_folio on error, and
+> > > > XFS is still punching the delayed allocation range backing the dirty
+> > > > folio.
+> > > > 
+> > > > This is incorrect behaviour. The folio remains dirty and up to date,
+> > > > meaning that another writeback will be attempted in the near future.
+> > > > THis means that XFS is still going to have to allocate space for it
+> > > > during writeback, and that means it still needs to have a delayed
+> > > > allocation reservation and extent backing the dirty folio.
+> > > > 
+> > > 
+> > > Hmm.. I don't think that is correct. It looks like the previous patch
+> > > removes the invalidation, but writeback clears the dirty bit before
+> > > calling into the fs and we're not doing anything to redirty the folio,
+> > > so there's no guarantee of subsequent writeback.
 > > 
-> > Ah I think I see what you wanted to do now.. But I'm afraid it won't work
-> > for all cases.
+> > Ah, right, I got confused with iomap_do_writepage() which redirties
+> > folios it performs no action on. The case that is being tripped here
+> > is "count == 0" which means no action has actually been taken on the
+> > folio and it is not submitted for writeback. We don't mark the folio
+> > with an error on submission failure like we do for errors reported
+> > to IO completion, so the folio is just left in it's current state
+> > in the cache.
 > > 
-> > So IIUC the problem is anon pte can be empty, but since uffd-wp bit doesn't
-> > persist on anon (but none) ptes, then we got it lost and we cannot identify
-> > it from pages being written.  Your solution will solve problem for
-> > anonymous, but I think it'll break file memories.
+> > > Regardless, I can see how this prevents this sort of error in the
+> > > scenario where writeback fails due to corruption, but I don't see how it
+> > > doesn't just break error handling of writeback failures not associated
+> > > with corruption.
 > > 
-> > Example:
+> > What other cases in XFS do we have that cause mapping failure? We
+> > can't get ENOSPC here because of delalloc reservations. We can't get
+> > ENOMEM because all the memory allocations are blocking. That just
+> > leaves IO errors reading metadata, or structure corruption when
+> > parsing and modifying on-disk metadata.  I can't think (off the top
+> > of my head) of any other type of error we can get returned from
+> > allocation - what sort of non-corruption errors were you thinking
+> > of here?
 > > 
-> > Consider one shmem page that got mapped, write protected (using UFFDIO_WP
-> > ioctl), written again (removing uffd-wp bit automatically), then zapped.
-> > The pte will be pte_none() but it's actually written, afaiu.
+> > > fails due to some random/transient error, delalloc is left around on a
+> > > !dirty page (i.e. stale), and reclaim eventually comes around and
+> > > results in the usual block accounting corruption associated with stale
+> > > delalloc blocks.
 > > 
-> > Maybe it's time we should introduce UFFD_FEATURE_WP_ZEROPAGE, so we'll need
-> > to install pte markers for anonymous too (then it will work similarly like
-> > shmem/hugetlbfs, that we'll report writting to zero pages), then you'll
-> > need to have the new UFFD_FEATURE_WP_ASYNC depend on it.  With that I think
-> > you can keep using the old check and it should start to work.
+> > The first patches in the series fix those issues. If we get stray
+> > delalloc extents on a healthy inode, then it will still trigger all
+> > the warnings/asserts that we have now. But if the inode has been
+> > marked sick by a corruption based allocation failure, it will clean
+> > up in reclaim without leaking anything or throwing any new warnings.
 > > 
-> > Please let me know if my understanding is correct above.
-> Thank you for identifying it. Your understanding seems on point. I'll have
-> research things up about PTE Markers. I'm looking at your patches about it
-> [1]. Can you refer me to "mm alignment sessions" discussion in form of
-> presentation or if any transcript is available?
+> 
+> Those warnings/asserts that exist now indicate something is wrong and
+> that free space accounting is likely about to become corrupted, because
+> an otherwise clean inode is being reclaimed with stale delalloc blocks.
 
-No worry now, after a second thought I think zero page is better than pte
-markers, and I've got a patch that works for it here by injecting zero
-pages for anonymous:
+Well, yes.
 
-https://lore.kernel.org/all/20230215210257.224243-1-peterx@redhat.com/
+> I see there's an error injection knob (XFS_ERRTAG_REDUCE_MAX_IEXTENTS)
+> tied to the max extent count checking stuff in the delalloc conversion
+> path. You should be able to add some (10+) extents to a file and then
+> turn that thing all the way up to induce a (delalloc conversion)
+> writeback failure and see exactly what I'm talking about [1].
+> 
+> Brian
+> 
+> [1] The following occurs with this patch, but not on mainline because the
+> purpose of ->discard_folio() is to prevent it.
 
-I think we'd also better to enforce your new WP_ASYNC feature bit to depend
-on this one, so fail the UFFDIO_API if WP_ASYNC && !WP_ZEROPAGE.
+A non-corruption related writeback error has resulted in those debug
+checks triggering correctly. This demonstrates the debug checks are
+still working as intended. :)
 
-Could you please try by rebasing your work upon this one?  Hope it'll work
-for you already.  Note again that you'll need to go back to the old
-is_pte|pmd_written() to make things work always, I think.
+Hence this isn't an argument against removing ->discard_folio(), this is
+merely a demonstration that the current patch series needs more work.
 
-[...]
+Indeed, if the folio gets redirtied here instead of left clean as
+we've already talked about, a future writeback may, in fact, succeed
+and this specific problem goes away. We know how this retry
+mechanism works - it's exactly what we do with metadata write
+failures. Further, changing the behaviour of failure handling here
+is exactly what we have the configurable error handling
+infrastructure for. It's also why the "fail on unmount"
+functionality exists, too.
 
-> I truly understand how you feel about export_prev_to_out(). It is really
-> difficult to understand. Even I had to made a hard try to come up with the
-> current code to avoid consuming a lot of kernel's memory while giving user
-> the compact output. I can surely map both of these with a dirty looking
-> macro. But I'm unable to find a decent macro to replace these. I think I'll
-> put a comment some where to explain whats going-on.
+That is, if we get to the point that "fail on unmount" triggers for
+metadata we cannot write back due to persistent errors, we should
+also perform the same trigger for data we cannot write back due to
+persistent writeback allocation failures. In which case, any
+allocation error should mark the inode sick and the unconverted
+delalloc extents get cleaned up correctly by the final inode reclaim
+pass.
 
-So maybe I still missed something? I'll read the new version when it comes.
+Cheers,
 
-Thanks,
-
+Dave.
 -- 
-Peter Xu
-
+Dave Chinner
+david@fromorbit.com
