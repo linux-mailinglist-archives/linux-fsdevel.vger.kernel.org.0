@@ -2,72 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4A926979FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 11:36:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8284697B4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Feb 2023 13:00:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234099AbjBOKgv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Feb 2023 05:36:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56568 "EHLO
+        id S233937AbjBOMAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Feb 2023 07:00:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234078AbjBOKgu (ORCPT
+        with ESMTP id S233922AbjBOMAw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Feb 2023 05:36:50 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F7C37B76
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Feb 2023 02:36:44 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id k16so15519379ejv.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Feb 2023 02:36:44 -0800 (PST)
+        Wed, 15 Feb 2023 07:00:52 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F2DB3801E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Feb 2023 04:00:43 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id fi26so21678839edb.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Feb 2023 04:00:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jM0FwoIIzEHG4m8zeaDUaO7Uvam61BltMptR0QqQfi8=;
-        b=g10NP693SvvFXcmWRF8jugEf1fd0P1pWVWUmXSW+QT1vi5rZmh/Tp5whmTtenWD1ub
-         xxUGAKnzhAefLbyB7PoHddpwNA1phJRDGS7cNxVnesT8/czbcfvwChVMOQEifqixnehd
-         VYkM0S7GFtXgP2ob/07Hcxzpl7RUPcQtJwal4=
+        d=linaro.org; s=google;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4VUdCGE49XRzHSapC26DVNo0zyTxpm/781TlQ/JM0hk=;
+        b=WzXC4h4b9erT7h/NVTKsWubM7WnbXMEVDjLnATSbHHKXVr9Hue4pPMQhKxFKBzzZDe
+         OwLX0YPR/wTYDjNQXTnJm0iXeo2bZq1SF38cjtgaYgAwA7VZfzmCONX0xZ/6iU+GLxbJ
+         JVZ/WQL3g0v7hmdAdALL+HvjAAVAa2zpGBd9xAA7VQKHeUKKdRh5ZYkkxO7dj9TBpnyH
+         Fkg95R4If1CaruvQdj8dV3vs+38lsOypQuTGQGos5IfQx0s/rBlQK6xEgD4glYr4Mnjm
+         oELKMsBxoi29MDlefKELd4oXSzBgwTnAZL8DfAF53Q6lRW4zt9wh7wNqoFIcO/5tFEE7
+         nKcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jM0FwoIIzEHG4m8zeaDUaO7Uvam61BltMptR0QqQfi8=;
-        b=o9I5xu9l8uEm3zRFCCMSAGWG47yRVY9fdnLDf+SS1cCNUlVgz0QhUZq/yh+k4TksxR
-         UVn/JEirv54/LPYtpmtkdOTDYWN2V3T9yuXJ7mj8sEDgSOb2YKoTTJXee3fEeyUX67WG
-         Kv+OqCtoo3tGWvkGSetW0oEJ9QRAgTI4V2+IskOtidG8lByLCnRniPsvVO2ucF/8892H
-         zxizh+Hi2cdZcK7xOUrXw/QXPRbJezjo1u0rg93LhN0fFQMpz1tA1/UMx/iPpE8XmI4U
-         33V72yOKfIjws+HC6xfzrz0n+kekCiXkF8U21JOVsT506SwZvQ4xvlVbEiWK6es6ZHMO
-         pR5g==
-X-Gm-Message-State: AO0yUKU/yQB94vrMz5ERbpR2kpmSlESEm610pnhViuTGK9BA3c9oP+DR
-        AkvMBuYpfrPUWsbpNWtMxDemQcOVF660YAsMLZTZgw==
-X-Google-Smtp-Source: AK7set/bkHc0a756f/QlIvbRZtodwoFCU9VO07Oo08HkoJlbe19L4o3xLqNtmV85jzZ4Rw1THkuOEpBXU7a08gF46f8=
-X-Received: by 2002:a17:906:e219:b0:8af:2e89:83df with SMTP id
- gf25-20020a170906e21900b008af2e8983dfmr1079578ejb.6.1676457403411; Wed, 15
- Feb 2023 02:36:43 -0800 (PST)
+        bh=4VUdCGE49XRzHSapC26DVNo0zyTxpm/781TlQ/JM0hk=;
+        b=UmO87HNJqrog0nwLYnOi4OCq3CXsd2/LW4zOuqRuk/ZRvRj6WK/nwJ6edrUFQdYlGj
+         4adYw4RcogHdolj+EmEYPBc6gyqeDaYdloD8gWDUkwbhUaHJLJXZ1f9AvJjfmmdDBtqH
+         hVjirJNxC98kkxDy7BNqdWMaperpVBgvgl+nMoDpGkmurj1ixwjWnb2Q4Jt8rqL9D7wH
+         DmV5b3LJQRrveE9bkgNlhlTKE3UaAkjq+qLHsQ3LiKHpABLfC3szCFi7hZQoCIkGcDsT
+         RQJ6aIVy2yX9h720AaRpwECdDgfZ8XDDPDSjptJgQcXDDj6TWuX0gdBFwhdBKO7n9iG8
+         KjRQ==
+X-Gm-Message-State: AO0yUKVCcOO+SXHYCv5aGsmmshb3gFkCKbuFgFFN8iYazcVXjKDnbEhS
+        FrZdkZVGixNWiKoy4flrjilW2w==
+X-Google-Smtp-Source: AK7set8mzMZsxIghYW+QneLMlPjJkUSgm+fCQZ/b0Mr+7o4w9F+smHLglwSGm487RKihYyCIuty67g==
+X-Received: by 2002:aa7:d590:0:b0:4ac:bdf7:dffd with SMTP id r16-20020aa7d590000000b004acbdf7dffdmr1652543edq.12.1676462441534;
+        Wed, 15 Feb 2023 04:00:41 -0800 (PST)
+Received: from [192.168.1.101] (abxh117.neoplus.adsl.tpnet.pl. [83.9.1.117])
+        by smtp.gmail.com with ESMTPSA id h2-20020a056402094200b004acb42134c4sm7001477edz.70.2023.02.15.04.00.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Feb 2023 04:00:41 -0800 (PST)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 0/2] Revert boot-breaking changes in fs/
+Date:   Wed, 15 Feb 2023 13:00:37 +0100
+Message-Id: <20230215-topic-next-20230214-revert-v1-0-c58cd87b9086@linaro.org>
 MIME-Version: 1.0
-References: <20230210153212.733006-1-ming.lei@redhat.com> <20230210153212.733006-2-ming.lei@redhat.com>
- <Y+e3b+Myg/30hlYk@T590> <CAHk-=wgTzLjvhzx-XGkgEQmXH6t=8OTFdQyhDgafGdC2n5gOfg@mail.gmail.com>
- <Y+hDQ1vL6AMFri1E@T590> <CAHk-=wgJsi7t7YYpuo6ewXGnHz2nmj67iWR6KPGoz5TBu34mWQ@mail.gmail.com>
- <CAJfpegtOetw46DvR1PeuX5L9-fe7Qk75mq5L4tGwpS_wuEz=1g@mail.gmail.com>
- <Y+ucLFG/ap8uqwPG@T590> <CAJfpeguGayE2fS2m9U7=Up4Eqa_89oTeR4xW-WbcfjJBRaYqHA@mail.gmail.com>
- <Y+wjGZO6rVw5W35T@T590>
-In-Reply-To: <Y+wjGZO6rVw5W35T@T590>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 15 Feb 2023 11:36:32 +0100
-Message-ID: <CAJfpeguQ3xn2-6svkkVXJ88tiVfcDd-eKi1evzzfvu305fMoyw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] fs/splice: enhance direct pipe & splice for moving
- pages in kernel
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Bernd Schubert <bschubert@ddn.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ziyang Zhang <ZiyangZhang@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGXJ7GMC/y2MQQqAMAzAviI9W3BTEfzNrFULUmWbIsj+bg8eE
+ 0heSByFE4zVC5FvSXKogasroC3oyiizMfjGt413PebjFELlJ+PvOrSQY0YibmlZ3EBdDzaYQmK
+ cYlDabKHXvpfyAUrgY5dxAAAA
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-mm@kvack.org, Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1676462440; l=1045;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=Pk9Em+bfGAgf2e3KWWPVe2M5izGtozUbvqt4nZPzw3w=;
+ b=AgaZWdOrEtG7yPe/2cMEuuiDpK04G3/UjW2o/dHw6W9oZj9z/YCE7ikh9viiSSH86j7Q6d+X3IiY
+ nWs65LgUAJNmJKxkuOLxTpEfsmr3l+tO8KhzWcDEZ5bvH16X2poj
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -77,40 +86,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 15 Feb 2023 at 01:11, Ming Lei <ming.lei@redhat.com> wrote:
->
-> On Tue, Feb 14, 2023 at 04:39:01PM +0100, Miklos Szeredi wrote:
-> > On Tue, 14 Feb 2023 at 15:35, Ming Lei <ming.lei@redhat.com> wrote:
-> >
-> > > I understand it isn't one issue from block device driver viewpoint at
-> > > least, since the WRITE to buffer in sink end can be thought as DMA
-> > > to buffer from device, and it is the upper layer(FS)'s responsibility
-> > > for updating page flag. And block driver needn't to handle page
-> > > status update.
-> >
-> > The block device still needs to know when the DMA is finished, right?
->
-> Yeah, for normal in-kernel device driver, the completion is triggered by
-> interrupt or io polling.
->
-> For ublk, io handling is done by userspace, here we use io_uring to
-> handle the IO in aio style. When the aio is completed, the userspace
-> gets notified of the completion.
+next-20230213 introduced commit d9722a475711 ("splice: Do splice read from
+a buffered file without using ITER_PIPE") which broke booting on any
+Qualcomm ARM64 device I grabbed, dereferencing a null pointer in
+generic_filesplice_read+0xf8/x598. Revert it (and its dependency)
+(or accept better solutions should anybody come up with such) to make
+them bootable again.
 
-I think it might be better if the write completion was directly
-signaled to the original pipe buffer.  There are several advantages:
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (2):
+      Revert "iov_iter: Kill ITER_PIPE"
+      Revert "splice: Do splice read from a buffered file without using ITER_PIPE"
 
- - the kernel can guarantee (modulo bugs) that the buffer was
-initialized, this is important if the userspace server is unprivileged
+ fs/cifs/file.c      |   8 +-
+ fs/splice.c         | 159 +++----------------
+ include/linux/uio.h |  14 ++
+ lib/iov_iter.c      | 435 +++++++++++++++++++++++++++++++++++++++++++++++++++-
+ mm/filemap.c        |   3 +-
+ 5 files changed, 479 insertions(+), 140 deletions(-)
+---
+base-commit: 3ebb0ac55efaf1d0fb1b106f852c114e5021f7eb
+change-id: 20230215-topic-next-20230214-revert-cce3cff17c45
 
- - the server process does not need to be woken up on I/O completion
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
- - there could be a chain of splices involving various entities, yet
-the original pipe buffer should always get the completion
-
-I'm not sure what a good implementation would look like.  When a pipe
-buffer is split, things get complicated.  Maybe just disallow
-splitting on such buffers...
-
-Thanks,
-Miklos
