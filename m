@@ -2,266 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 22AFB699EB2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Feb 2023 22:08:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D7ED699F2C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Feb 2023 22:48:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbjBPVIs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Feb 2023 16:08:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42414 "EHLO
+        id S230046AbjBPVst (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Feb 2023 16:48:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230127AbjBPVIr (ORCPT
+        with ESMTP id S230036AbjBPVsq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Feb 2023 16:08:47 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECFE23CE2A;
-        Thu, 16 Feb 2023 13:08:41 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 16 Feb 2023 16:48:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC5301BACE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 13:47:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676584075;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=4OB3pN7HUKRF2HBGdaKO4enU3FqFrSp+zht7+u7JxNg=;
+        b=BF8+mD7pfEtb9L2ppVaH+NTi9qovkoYtKjJFGykYIOrhV8fEoCb5OGK4CVKaIHDp0CgxR5
+        HnJ+ODMZpAZ4Y+exsvnwpgvoJEziTguyVx0y3D42hMaNYuUF4HzJblfObbatf5V3qhiJBr
+        wp+hwJBIZMixli6S/7y5W93hx26u8nc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-125-pPzLFv9JOBy47XbqpzsHQw-1; Thu, 16 Feb 2023 16:47:51 -0500
+X-MC-Unique: pPzLFv9JOBy47XbqpzsHQw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 990BAB82953;
-        Thu, 16 Feb 2023 21:08:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D7A9C4339C;
-        Thu, 16 Feb 2023 21:08:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676581719;
-        bh=LvXIgDCIN74z8IeSY6yKYfnlHj9TM3k6hXkY0km0EW4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hikKxQz3AH25YM7Yj7swfRo89ggmlTxL5wZ+t8ngdcR0TxFBH98IekShIEOzsRgK+
-         LeIAaLccZSiORnG0COHoZ0KnXZkey5thc2g2d4BNKF5t0TgG54w6t9dYwRImOIWTYq
-         RhoYCaayRBl4qav9fjF9l/j7ZVVJq6po2IDik5VEA5HvA1AExfNQJ5XiEpMjHtZ0Wp
-         pUYtejiBRmqsOQ5E3BNn3hAe1pKv5h3ezas/qiXBGCA/39Rr0eOKtxVecnWh4HhqBF
-         BxX0Qie8mx6h2whXwBZ0Fk0QPmIg74J8pELbiDg36VTBJrDQcAk6yg+hyAy2Qt0Pvy
-         hUpXgQXjxAPDg==
-Date:   Thu, 16 Feb 2023 13:08:38 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Allison Henderson <allison.henderson@oracle.com>
-Cc:     Catherine Hoang <catherine.hoang@oracle.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        Chandan Babu <chandan.babu@oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>
-Subject: Re: [PATCH 08/14] xfs: document btree bulk loading
-Message-ID: <Y+6bVlkDRTLQfKtL@magnolia>
-References: <167243825144.682859.12802259329489258661.stgit@magnolia>
- <167243825274.682859.12299993371367493328.stgit@magnolia>
- <09df3ede9060fb7a06a717e525d845154a637787.camel@oracle.com>
- <Y+WO0AGaKfZ1JuTe@magnolia>
- <d251e4463c6771af965f13a3d9733925d4230f78.camel@oracle.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E60BC85A588;
+        Thu, 16 Feb 2023 21:47:49 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E0DD21121314;
+        Thu, 16 Feb 2023 21:47:47 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Steve French <smfrench@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Tom Talpey <tom@talpey.com>,
+        Stefan Metzmacher <metze@samba.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/17] smb3: Use iov_iters down to the network transport and fix DIO page pinning
+Date:   Thu, 16 Feb 2023 21:47:28 +0000
+Message-Id: <20230216214745.3985496-1-dhowells@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d251e4463c6771af965f13a3d9733925d4230f78.camel@oracle.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 16, 2023 at 03:46:02PM +0000, Allison Henderson wrote:
+Hi Steve,
 
-<snip to the relevant parts>
+Here's an updated version of my patchset to make the cifs/smb3 driver pass
+iov_iters down to the lowest layers where they can be passed directly to
+the network transport rather than passing lists of pages around.
 
-> > > > +Writing the New Tree
-> > > > +````````````````````
-> > > > +
-> > > > +This part is pretty simple -- the btree builder
-> > > > (``xfs_btree_bulkload``) claims
-> > > > +a block from the reserved list, writes the new btree block
-> > > > header,
-> > > > fills the
-> > > > +rest of the block with records, and adds the new leaf block to a
-> > > > list of
-> > > > +written blocks.
-> > > > +Sibling pointers are set every time a new block is added to the
-> > > > level.
-> > > > +When it finishes writing the record leaf blocks, it moves on to
-> > > > the
-> > > > node
-> > > > +blocks.
-> > > > +To fill a node block, it walks each block in the next level down
-> > > > in
-> > > > the tree
-> > > > +to compute the relevant keys and write them into the parent
-> > > > node.
-> > > > +When it reaches the root level, it is ready to commit the new
-> > > > btree!
-> > > I think most of this is as straight forward as it can be, but it's
-> > > a
-> > > lot visualizing too, which makes me wonder if it would benefit from
-> > > an
-> > > simple illustration if possible.
-> > > 
-> > > On a side note: In a prior team I discovered power points, while a
-> > > lot
-> > > work, were also really effective for quickly moving a crowd of
-> > > people
-> > > through connected graph navigation/manipulations.  Because each one
-> > > of
-> > > these steps was another slide that illustrated how the structure
-> > > evolved through the updates.  I realize that's not something that
-> > > fits
-> > > in the scheme of a document like this, but maybe something
-> > > supplemental
-> > > to add later.  While it was a time eater, i noticed a lot of
-> > > confused
-> > > expressions just seemed to shake loose, so sometimes it was worth
-> > > it.
-> > 
-> > That was ... surprisingly less bad than I feared it would be to cut
-> > and
-> > paste unicode linedraw characters and arrows.
-> > 
-> >           ┌─────────┐
-> >           │root     │
-> >           │PP       │
-> >           └─────────┘
-> >           ↙         ↘
-> >       ┌────┐       ┌────┐
-> >       │node│──────→│node│
-> >       │PP  │←──────│PP  │
-> >       └────┘       └────┘
-> >       ↙   ↘         ↙   ↘
-> >   ┌────┐ ┌────┐ ┌────┐ ┌────┐
-> >   │leaf│→│leaf│→│leaf│→│leaf│
-> >   │RRR │←│RRR │←│RRR │←│RRR │
-> >   └────┘ └────┘ └────┘ └────┘
-> > 
-> > (Does someone have a program that does this?)
-> I think Catherine mentioned she had used PlantUML for the larp diagram,
-> though for something this simple I think this is fine
+The series deals with the following issues:
 
-<nod>
+ (-) By pinning pages, it fixes the race between concurrent DIO read and
+     fork, whereby the pages containing the DIO read buffer may end up
+     belonging to the child process and not the parent - with the result
+     that the parent might not see the retrieved data.
 
-> > I really like your version!  Can I tweak it a bit?
-> > 
-> > - Until the reverse mapping btree runs out of records:
-> > 
-> >   - Retrieve the next record from the btree and put it in a bag.
-> > 
-> >   - Collect all records with the same starting block from the btree
-> > and
-> >     put them in the bag.
-> > 
-> >   - While the bag isn't empty:
-> > 
-> >     - Among the mappings in the bag, compute the lowest block number
-> >       where the reference count changes.
-> >       This position will be either the starting block number of the
-> > next
-> >       unprocessed reverse mapping or the next block after the
-> > shortest
-> >       mapping in the bag.
-> > 
-> >     - Remove all mappings from the bag that end at this position.
-> > 
-> >     - Collect all reverse mappings that start at this position from
-> > the
-> >       btree and put them in the bag.
-> > 
-> >     - If the size of the bag changed and is greater than one, create
-> > a
-> >       new refcount record associating the block number range that we
-> >       just walked to the size of the bag.
-> > 
-> > 
-> Sure, that looks fine to me
+ (-) cifs shouldn't take refs on pages extracted from non-user-backed
+     iterators (eg. KVEC).  With these changes, cifs will apply the
+     appropriate cleanup.  Note that there is the possibility the network
+     transport might, but that's beyond the scope of this patchset.
 
-Ok, will commit.
+ (-) Making it easier to transition to using folios in cifs rather than
+     pages by dealing with them through BVEC and XARRAY iterators.
 
-> > > Branch link?  Looks like maybe it's missing.  In fact this logic
-> > > looks
-> > > like it might have been cut off?
-> > 
-> > OH, heh.  I forgot that we already merged the AGFL repair code.
-> > 
-> > "See `fs/xfs/scrub/agheader_repair.c
-> > <
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre
-> > e/fs/xfs/scrub/agheader_repair.c>`_
-> > for more details."
-> > 
-> > > In any case, maybe give some thought to the highlight link
-> > > suggestions.
-> > 
-> > Er... how do those work?  In principle I like them, but none of your
-> > links actually highlighted anything here.  Could you send the link
-> > over
-> > IRC so that urldefense crapola won't destroy it, please?
-> > 
-> > --D
-> So I think the last we talked about these, we realized they're a chrome
-> only format.  That's a shame, I think they really help people to
-> quickly navigate the code in question.  Otherwise I'm pretty much just
-> poking through the branches looking for code that resembles the
-> description.
+The first five patches add two facilities to the VM/VFS core, excerpts from
+my iov-extract branch[1] that are required in order to do the cifs
+iteratorisation:
 
-Yep.  Back in 2020, Google was pushing a "link to text fragment"
-proposal wherein they'd add some secret sauce to URL anchors:
+ (*) Future replacements for file-splicing in the form of functions
+     filemap_splice_read() and direct_splice_read().  These allow file
+     splicing to be done without the use of an ITER_PIPE iterator, without
+     the need to take refs on the pages extracted from KVEC/BVEC/XARRAY
+     iterators.  This is necessary to use iov_iter_extract_pages().
 
-#:~:text=[prefix-,]textStart[,textEnd][,-suffix]
+     [!] Note that whilst these are added in core code, they are only used
+     by cifs at this point.
 
-Which would inspire web browsers to highlight all instances of "text" in
-a document and autoscroll to the first occurrence.  They've since
-integrated this into Chrome and persuaded Safari to pick it up, but
-there are serious problems with this hack.
+ (*) Add iov_iter_extract_pages(), a replacement for iov_iter_get_pages*()
+     that uses FOLL_PIN on user pages (IOVEC, UBUF) and doesn't pin kernel
+     pages (BVEC, KVEC, XARRAY).  This allows cifs to do the page pinning
+     correctly.
 
-https://wicg.github.io/scroll-to-text-fragment/
+     [!] Note that whilst this is added in core code, it is only used by
+     cifs at this point - though a corresponding change is made to the
+     flags argument of iov_iter_get_pages*() so that it doesn't take FOLL_*
+     flags, but rather takes iov_iter_extraction_t flags that are
+     translated internally to FOLL_* flags.
 
-The first and biggest problem is that none of the prefix characters here
-":~:text=" are invalid characters for a url anchor, nor are they ever
-invalid for an <a name> tag.  This is valid html:
+Then there's a couple of patches to make cifs use the new splice functions.
 
-<a name="dork:~:text=farts">cow</a>
+The series continues with a couple of patches that add stuff to netfslib
+that I want to use there as well as in cifs:
 
-And this is valid link to that html anchor:
+ (*) Add a netfslib function to extract and pin pages from an ITER_IOBUF or
+     ITER_UBUF iterator into an ITER_BVEC iterator.
 
-file:///tmp/a.html#dork:~:text=farts
+ (*) Add a netfslib function to extract pages from an iterator that's of
+     type ITER_UBUF/IOVEC/BVEC/KVEC/XARRAY and add them to a scatterlist.
+     The cleanup will need to be done as for iov_iter_extract_pages().
 
-Web browsers that are unaware of this extension (Firefox, lynx, w3m,
-etc.) will not know to ignore everything starting with ":~:" when
-navigating, so they will actually try to find an anchor matching that
-name.  That's why it didn't work for me but worked fine for Allison.
+     BVEC, KVEC and XARRAY iterators can be rendered into elements that
+     span multiple pages.
 
-This is even worse if the document also contains:
+Added to that are some cifs helpers that work with iterators:
 
-<a name="dork">frogs</a>
+ (*) Add a function to walk through an ITER_BVEC/KVEC/XARRAY iterator and
+     add elements to an RDMA SGE list.  Only the DMA addresses are stored,
+     and an element may span multiple pages (say if an xarray contains a
+     multipage folio).
 
-Because now the url "file:///tmp/a.html#dork:~:text=farts" jumps to
-"cow" on Chrome, and "frogs" on Firefox.
+ (*) Add a function to walk through an ITER_BVEC/KVEC/XARRAY iterator and
+     pass the contents into a shash function.
 
-Embrace and extend [with proprietary bullsh*t].  Thanks Google.
+ (*) Add functions to walk through an ITER_XARRAY iterator and perform
+     various sorts of cleanup on the folios held therein, to be used on I/O
+     completion.
 
-> I also poked around and found there was a firefox plugin that does the
-> same (link to text fragment addon).  Though it doesn't look like the
-> links generated are compatible between the browsers.
+ (*) Add a function to read from the transport TCP socket directly into an
+     iterator.
 
-No, they are not.
+Finally come the patches that actually do the work of iteratorising cifs:
 
-> Maybe something to consider if we have a lot of chrome or ff users.  I
-> think if they help facilitate more discussion they're better than
-> nothing at least during review.
+ (*) The main patch.  Replace page lists with iterators.  It extracts the
+     pages from ITER_UBUF and ITER_IOVEC iterators to an ITER_BVEC
+     iterator, pinning or getting refs on them, before passing them down as
+     the I/O may be done from a worker thread.
 
-I'll comb through these documents and add some suggestions of where to
-navigate, e.g.
+     The iterator is extracted into a scatterlist in order to talk to the
+     crypto interface or to do RDMA.
 
-"For more details, see the function xrep_reap."
+ (*) In the cifs RDMA code, extract the iterator into an RDMA SGE[] list,
+     removing the scatterlist intermediate - at least for smbd_send().
+     There appear to be other ways for cifs to talk to the RDMA layer that
+     don't go through that that I haven't managed to work out.
 
-Simple and readable by anyone, albeit without the convenient mechanical
-links.
+ (*) Remove a chunk of now-unused code.
 
-For more fun reading, apparently terminals support now escape sequences
-to inject url links too:
-https://github.com/Alhadis/OSC8-Adoption
+ (*) Allow DIO to/from KVEC-type iterators.
 
---D
+I've pushed the patches here also:
 
-> > 
-> > > Allison
-> > > 
-> 
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-cifs
+
+David
+
+Link: https://lore.kernel.org/r/20230214171330.2722188-1-dhowells@redhat.com/ [1]
+Link: https://lore.kernel.org/r/166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/20230131182855.4027499-1-dhowells@redhat.com/ # v1
+
+David Howells (17):
+  mm: Pass info, not iter, into filemap_get_pages()
+  splice: Add a func to do a splice from a buffered file without
+    ITER_PIPE
+  splice: Add a func to do a splice from an O_DIRECT file without
+    ITER_PIPE
+  iov_iter: Define flags to qualify page extraction.
+  iov_iter: Add a function to extract a page list from an iterator
+  splice: Export filemap/direct_splice_read()
+  cifs: Implement splice_read to pass down ITER_BVEC not ITER_PIPE
+  netfs: Add a function to extract a UBUF or IOVEC into a BVEC iterator
+  netfs: Add a function to extract an iterator into a scatterlist
+  cifs: Add a function to build an RDMA SGE list from an iterator
+  cifs: Add a function to Hash the contents of an iterator
+  cifs: Add some helper functions
+  cifs: Add a function to read into an iter from a socket
+  cifs: Change the I/O paths to use an iterator rather than a page list
+  cifs: Build the RDMA SGE list directly from an iterator
+  cifs: Remove unused code
+  cifs: DIO to/from KVEC-type iterators should now work
+
+ block/bio.c               |    6 +-
+ block/blk-map.c           |    8 +-
+ fs/cifs/Kconfig           |    1 +
+ fs/cifs/cifsencrypt.c     |  172 +++-
+ fs/cifs/cifsfs.c          |   12 +-
+ fs/cifs/cifsfs.h          |    6 +
+ fs/cifs/cifsglob.h        |   66 +-
+ fs/cifs/cifsproto.h       |   11 +-
+ fs/cifs/cifssmb.c         |   15 +-
+ fs/cifs/connect.c         |   14 +
+ fs/cifs/file.c            | 1772 ++++++++++++++++---------------------
+ fs/cifs/fscache.c         |   22 +-
+ fs/cifs/fscache.h         |   10 +-
+ fs/cifs/misc.c            |  128 +--
+ fs/cifs/smb2ops.c         |  362 ++++----
+ fs/cifs/smb2pdu.c         |   53 +-
+ fs/cifs/smbdirect.c       |  535 ++++++-----
+ fs/cifs/smbdirect.h       |    7 +-
+ fs/cifs/transport.c       |   54 +-
+ fs/netfs/Makefile         |    1 +
+ fs/netfs/iterator.c       |  371 ++++++++
+ fs/splice.c               |   93 ++
+ include/linux/fs.h        |    6 +
+ include/linux/netfs.h     |    8 +
+ include/linux/pipe_fs_i.h |   20 +
+ include/linux/uio.h       |   35 +-
+ lib/iov_iter.c            |  284 +++++-
+ mm/filemap.c              |  156 +++-
+ mm/internal.h             |    6 +
+ mm/vmalloc.c              |    1 +
+ 30 files changed, 2515 insertions(+), 1720 deletions(-)
+ create mode 100644 fs/netfs/iterator.c
+
