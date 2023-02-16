@@ -2,139 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6139869926A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Feb 2023 11:58:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5552269926E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Feb 2023 11:58:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230334AbjBPK6A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Feb 2023 05:58:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48782 "EHLO
+        id S230020AbjBPK6U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Feb 2023 05:58:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230238AbjBPK55 (ORCPT
+        with ESMTP id S229814AbjBPK6S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Feb 2023 05:57:57 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF4456ED7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 02:56:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676544979;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uTgMQWhXxbdOB1s+iJ3y+3uVjK3VfEIrdExBYMmTzrk=;
-        b=cgTA8yeBuLVrFQVUmlI+zpc+i1N1YJx/XupkVor1p/PDzbtkrCJaRFBHH5jm5w/+5d51X8
-        Bn2kkqyd8oZGSVLCtonsceAAevnNU5H26m5PiLePfMmuSxCWYBhVrrk1glN+9V+nsIJyVa
-        6qv75jzAEiTEOdI0A+bzz0LgINFEB2s=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-588-nMZFK_AqPyq9VdabL_wyNQ-1; Thu, 16 Feb 2023 05:56:18 -0500
-X-MC-Unique: nMZFK_AqPyq9VdabL_wyNQ-1
-Received: by mail-wr1-f71.google.com with SMTP id r15-20020a5d494f000000b002c54d9b8312so189767wrs.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 02:56:17 -0800 (PST)
+        Thu, 16 Feb 2023 05:58:18 -0500
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7A6125B3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 02:58:00 -0800 (PST)
+Received: by mail-il1-f207.google.com with SMTP id s5-20020a92cb05000000b003153437796fso1054488ilo.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 02:58:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uTgMQWhXxbdOB1s+iJ3y+3uVjK3VfEIrdExBYMmTzrk=;
-        b=H6N1fV4R2/lVJGDb/dg4IgSVmoUwBfO4Ngi3+68aOXGFjCXXGNLYX3it5EDqna8sF8
-         Ww2khDiaBld7EL1zcWaKvrZoAdG8vTQdKu7Yup2j7C0EwYQntxRvJIIvSxNN0DjslyP2
-         9D6o33suu+jHBIXlcY1gRI9an8FGVC3/5xP6tXLFafRe2fREnuaqLshPOprNtrardpv1
-         wKLyTWVWPTDS3nAUmlNPVVRFmb0C4COz5ehdicWeL77wjrAP7Pr6D+hvO37ZwJ6FbJCa
-         qvzC5AMzvrpijP4ikE6mKqLx1b6fmeg0XJA22psGFi3v9y8/z3ZHbd+gABWEW5VGjIee
-         e0Dg==
-X-Gm-Message-State: AO0yUKV01MPOOd4vOUHFg+CTT89LI3xTBBu2zZFWTsYsTHubWSxdqgpT
-        bGmJXQ14zhcSkg1Uj8x9hL6H8zg9GUCIA7Gbwe9azE8hvZEP0PxQKgfQpJSLTxm2cLsY3tD/Afc
-        0HF9n3HvesnWyZ5MxUnquBcB2HQ==
-X-Received: by 2002:adf:e701:0:b0:2c5:5331:5516 with SMTP id c1-20020adfe701000000b002c553315516mr4351125wrm.51.1676544976935;
-        Thu, 16 Feb 2023 02:56:16 -0800 (PST)
-X-Google-Smtp-Source: AK7set9ObTYOMWdJTcJUhFYm6zKW9Smmq8ZljjToRyJseQklHttx5j+GTfa92sWHSmEG8i4fOJ6xDQ==
-X-Received: by 2002:adf:e701:0:b0:2c5:5331:5516 with SMTP id c1-20020adfe701000000b002c553315516mr4351100wrm.51.1676544976599;
-        Thu, 16 Feb 2023 02:56:16 -0800 (PST)
-Received: from ?IPV6:2003:cb:c708:bc00:2acb:9e46:1412:686a? (p200300cbc708bc002acb9e461412686a.dip0.t-ipconnect.de. [2003:cb:c708:bc00:2acb:9e46:1412:686a])
-        by smtp.gmail.com with ESMTPSA id h16-20020adffa90000000b002c5621263e3sm1221457wrr.19.2023.02.16.02.56.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Feb 2023 02:56:16 -0800 (PST)
-Message-ID: <909d3cd5-eb64-6901-4e12-00ac5c69f4aa@redhat.com>
-Date:   Thu, 16 Feb 2023 11:56:15 +0100
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7RKon+041bE2xuGsQnoylSgzlyJUt+HUwDZ7efY9dW0=;
+        b=HvJvEsfVqXHbNoNOOT75/MN8DLNJ3z0IAVLsUpalTLMjVF2wCwek3BbBZH0zqWsZFI
+         jTysHvILSn5CXpMidILvxlvnJpqKMjwbE4nMycx/8UY3aNVsnIolxqF9DXrwgLykOb8/
+         QDU5KGFwKIEslIPAOs7nARCn1I6D40SaOX04VRM5myXDkA46VN1tQNcWuzGtfBEu2mW1
+         5V/CO/pHf61rhh+ng99cwUhJCf+UY2WXf+qWODmZZ3gcHoZYYrrBeyIPW6VowQ9QA36H
+         V5HCK64shxkUWZOHhVIs4XDSwWQjZ5SGQc2XFIm/bMiOEUvBA/2wimedNe3y45AsIjdn
+         pahg==
+X-Gm-Message-State: AO0yUKUraafgfnZXmARGg+YJtrJUtRX5NWCQuKiGjeucXpbtAiyjBFJ2
+        T3VKi712SwM0LBAG9kcWjtWEHwFjlW+VuR+hRBqmEHx+qYBKu7AhbA==
+X-Google-Smtp-Source: AK7set96u8/LK1D1mK32dqMQ97H6GTZVYbKj1nuy8d9DL1R4D4pKusnZuLtUMTagmqdzkl5n+Vb2U7s7jbQO2+ZuAnPG3v4bTZuZ
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 2/2] Revert "splice: Do splice read from a buffered file
- without using ITER_PIPE"
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-mm@kvack.org
-References: <20230215-topic-next-20230214-revert-v1-2-c58cd87b9086@linaro.org>
- <20230215-topic-next-20230214-revert-v1-0-c58cd87b9086@linaro.org>
- <3055589.1676466118@warthog.procyon.org.uk>
- <71078188-1443-d84e-658c-967991f3b590@linaro.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <71078188-1443-d84e-658c-967991f3b590@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:93a3:0:b0:3c2:b776:e8e5 with SMTP id
+ z32-20020a0293a3000000b003c2b776e8e5mr2014230jah.6.1676545069873; Thu, 16 Feb
+ 2023 02:57:49 -0800 (PST)
+Date:   Thu, 16 Feb 2023 02:57:49 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000057042905f4cf1130@google.com>
+Subject: [syzbot] WARNING in do_mknodat
+From:   syzbot <syzbot+3509066790782614b600@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_DIGITS,
+        FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 16.02.23 10:10, Konrad Dybcio wrote:
-> 
-> 
-> On 15.02.2023 14:01, David Howells wrote:
->> Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->>> next-20230213 introduced commit d9722a475711 ("splice: Do splice read from
->>> a buffered file without using ITER_PIPE") which broke booting on any
->>> Qualcomm ARM64 device I grabbed, dereferencing a null pointer in
->>> generic_filesplice_read+0xf8/x598. Revert it to make the devices
->>> bootable again.
->>>
->>> This reverts commit d9722a47571104f7fa1eeb5ec59044d3607c6070.
->>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>
->> Commit d9722a47571104f7fa1eeb5ec59044d3607c6070 was part of v13 of my
->> patches.  This got replaced yesterday by a newer version which may or may not
->> have made it into linux-next.
->>
->> This is probably a known bug fixed in the v14 by making shmem have its own
->> splice-read function.
->>
->> Can you try this?
->>
->> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-extract
-> next-20230216 boots fine again, thanks!
-> 
->>
->> (Also, can you include me in the cc list as I'm the author of the patch you
->> reverted?)
-> Ugh.. I thought b4 would have done that for me.. weird..
+Hello,
 
-Right, and usually it's nicer to comment on the problematic patches, 
-asking for a fix or a revert, instead of sending reverts.
+syzbot found the following issue on:
 
-My 2 cents.
+HEAD commit:    0a924817d2ed Merge tag '6.2-rc-smb3-client-fixes-part2' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12437928480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4e2d7bfa2d6d5a76
+dashboard link: https://syzkaller.appspot.com/bug?extid=3509066790782614b600
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
 
--- 
-Thanks,
+Unfortunately, I don't have any reproducer for this issue yet.
 
-David / dhildenb
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b0959a409a79/disk-0a924817.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/388daa76797b/vmlinux-0a924817.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b9d2d406c075/bzImage-0a924817.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3509066790782614b600@syzkaller.appspotmail.com
+
+WARNING: CPU: 1 PID: 8065 at kernel/locking/rwsem.c:1361 __up_write kernel/locking/rwsem.c:1360 [inline]
+WARNING: CPU: 1 PID: 8065 at kernel/locking/rwsem.c:1361 up_write+0x4f9/0x580 kernel/locking/rwsem.c:1615
+Modules linked in:
+CPU: 1 PID: 8065 Comm: syz-executor.1 Not tainted 6.1.0-syzkaller-14321-g0a924817d2ed #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+RIP: 0010:__up_write kernel/locking/rwsem.c:1360 [inline]
+RIP: 0010:up_write+0x4f9/0x580 kernel/locking/rwsem.c:1615
+Code: c7 00 ac ed 8a 48 c7 c6 a0 ae ed 8a 48 8b 54 24 28 48 8b 4c 24 18 4d 89 e0 4c 8b 4c 24 30 31 c0 53 e8 9b 59 e8 ff 48 83 c4 08 <0f> 0b e9 6b fd ff ff 48 c7 c1 98 8a 96 8e 80 e1 07 80 c1 03 38 c1
+RSP: 0000:ffffc90016557d20 EFLAGS: 00010292
+RAX: 4e2f149d5ad82600 RBX: ffffffff8aedace0 RCX: 0000000000040000
+RDX: ffffc9000b6bc000 RSI: 000000000001920b RDI: 000000000001920c
+RBP: ffffc90016557df0 R08: ffffffff816f2c9d R09: fffff52002caaf5d
+R10: fffff52002caaf5d R11: 1ffff92002caaf5c R12: 0000000000000000
+R13: ffff88807799b6d0 R14: 1ffff92002caafac R15: dffffc0000000000
+FS:  00007f84df1f6700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff06e74d68 CR3: 0000000021050000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ inode_unlock include/linux/fs.h:761 [inline]
+ done_path_create fs/namei.c:3857 [inline]
+ do_mknodat+0x4e1/0x740 fs/namei.c:3980
+ __do_sys_mknod fs/namei.c:3998 [inline]
+ __se_sys_mknod fs/namei.c:3996 [inline]
+ __x64_sys_mknod+0x8a/0xa0 fs/namei.c:3996
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f84de48c0a9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f84df1f6168 EFLAGS: 00000246
+ ORIG_RAX: 0000000000000085
+RAX: ffffffffffffffda RBX: 00007f84de5ac050 RCX: 00007f84de48c0a9
+RDX: 0000000000000702 RSI: 00000000ffffc000 RDI: 00000000200001c0
+RBP: 00007f84de4e7ae9 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffc94aa0aef R14: 00007f84df1f6300 R15: 0000000000022000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
