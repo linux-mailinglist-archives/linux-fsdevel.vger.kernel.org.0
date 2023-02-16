@@ -2,151 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FDDE69910A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Feb 2023 11:23:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6139869926A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Feb 2023 11:58:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229930AbjBPKXI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Feb 2023 05:23:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59694 "EHLO
+        id S230334AbjBPK6A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Feb 2023 05:58:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjBPKXH (ORCPT
+        with ESMTP id S230238AbjBPK55 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Feb 2023 05:23:07 -0500
-X-Greylist: delayed 736 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 16 Feb 2023 02:23:05 PST
-Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC501A64D;
-        Thu, 16 Feb 2023 02:23:05 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id EF2C4581F74;
-        Thu, 16 Feb 2023 05:01:54 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Thu, 16 Feb 2023 05:01:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1676541714; x=1676548914; bh=mU
-        wZ0jLBJxHz2jqLQpzE2WZti2villst4pazhry1LDk=; b=asp+w4tFm/0L+ogLMm
-        Aah1xvH4AC5j6a6LcApo6uCb3V6IY8r2ikkDaJR2FB7shHkGsgS8TyPVHysvz1wl
-        w7G3DJVe3kyuaXTizspLXlv3dJBwdw64oluQvhEnmtO4wfuyeISDBd6koC5smlpl
-        c93B3qTaOlQ4qQH+023WPx+j/T99sQC2oSsiiLdLbmjIl2Ea27cka8xxchVgLeve
-        2iThLMVvWxeyJ8/+TtsHp414ynVa9p8Ek5ApwrgL7rZwSTPWcV36dqF+GqYO8/Dy
-        1WBs+dM4cIQcKpj/xukVy46UYiPY04WL8AW6VZXgpBrsVwNylSig3yXUWWzBeko4
-        D/Rg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1676541714; x=1676548914; bh=mUwZ0jLBJxHz2jqLQpzE2WZti2vi
-        llst4pazhry1LDk=; b=tjURGj5OYhitZIFJH3pTuYCsW7QnYHGo+Bne0z8nqsMe
-        1vE03qoSKLsFpwrfX45Li0aYqbWQm4stNaS+vt48/4lKLIjocyVldJiCveFBfosz
-        z1zO21pN4R/OzCph8SEKEFFabqMyT2/AI11YU8k8hPU4nDeuJnfB8orvpWtkHJyT
-        9mZGqb+AKEOq7igi7qO71E1BN9IKsiUYj0+uGfblt1DBv9l3HV4NB/LxejoHDK8a
-        Re5iX+uoxlS4q0MeYcJEFDpzZxspfZMJAZuyRJEeItqZ6bNa39wmmelk/84cmodq
-        jRXd7aIoo1nGJiyBaZUIp7vf0F5yoSOrbVFLya1HVg==
-X-ME-Sender: <xms:Ef_tYzaWl82N0I06rUgcVq24rgB0UPCcY_uZCX5iMdPrN79_UTiyYQ>
-    <xme:Ef_tYyaVPVBOKK0gm-z_DyI7flgQuvDSu3EG7BaDzT2yhKmqV-mpAiN3ChBJhHpN3
-    36E8wlywbwfeB-_lBk>
-X-ME-Received: <xmr:Ef_tY1_9oOigwbr3GGpJODva1Y__qcK34XggsAHHIDjA9f4TX0aN_mQBvPjK5NI0x87C_g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudeijedguddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdttddttddtvdenucfhrhhomhepfdfmihhr
-    ihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnh
-    grmhgvqeenucggtffrrghtthgvrhhnpefhieeghfdtfeehtdeftdehgfehuddtvdeuheet
-    tddtheejueekjeegueeivdektdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvg
-X-ME-Proxy: <xmx:Ef_tY5qnpuptUFz_7q9O0jrLxFFrdoyPKTcdPLw4Oe4i1P9ucNbHbQ>
-    <xmx:Ef_tY-p8xe27YBBU1UELy8V2QuAQ-IGOmMnZ8rbJaTvFU0viy-Jabg>
-    <xmx:Ef_tY_QH7z8xTeiVhI_VGSg6zgQX4ss2bNezQMrty9LRd49QHytaLA>
-    <xmx:Ev_tY7OboPatSl1njimvH7MDK1iQT2H5wcb75YSbti-YfrG81Ou-SA>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 Feb 2023 05:01:52 -0500 (EST)
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id 93F7210CCE1; Thu, 16 Feb 2023 13:01:50 +0300 (+03)
-Date:   Thu, 16 Feb 2023 13:01:50 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Ackerley Tng <ackerleytng@google.com>
-Cc:     kvm@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, qemu-devel@nongnu.org,
-        chao.p.peng@linux.intel.com, aarcange@redhat.com,
-        ak@linux.intel.com, akpm@linux-foundation.org, arnd@arndb.de,
-        bfields@fieldses.org, bp@alien8.de, corbet@lwn.net,
-        dave.hansen@intel.com, david@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, hpa@zytor.com, hughd@google.com,
-        jlayton@kernel.org, jmattson@google.com, joro@8bytes.org,
-        jun.nakajima@intel.com, kirill.shutemov@linux.intel.com,
-        linmiaohe@huawei.com, luto@kernel.org, mail@maciej.szmigiero.name,
-        mhocko@suse.com, michael.roth@amd.com, mingo@redhat.com,
-        naoya.horiguchi@nec.com, pbonzini@redhat.com, qperret@google.com,
-        rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
-        steven.price@arm.com, tabba@google.com, tglx@linutronix.de,
-        vannapurve@google.com, vbabka@suse.cz, vkuznets@redhat.com,
-        wanpengli@tencent.com, wei.w.wang@intel.com, x86@kernel.org,
-        yu.c.zhang@linux.intel.com
-Subject: Re: [RFC PATCH 1/2] mm: restrictedmem: Allow userspace to specify
- mount_path for memfd_restricted
-Message-ID: <20230216100150.yv2ehwrdcfzbdhcq@box.shutemov.name>
-References: <cover.1676507663.git.ackerleytng@google.com>
- <176081a4817e492965a864a8bc8bacb7d2c05078.1676507663.git.ackerleytng@google.com>
+        Thu, 16 Feb 2023 05:57:57 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF4456ED7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 02:56:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676544979;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uTgMQWhXxbdOB1s+iJ3y+3uVjK3VfEIrdExBYMmTzrk=;
+        b=cgTA8yeBuLVrFQVUmlI+zpc+i1N1YJx/XupkVor1p/PDzbtkrCJaRFBHH5jm5w/+5d51X8
+        Bn2kkqyd8oZGSVLCtonsceAAevnNU5H26m5PiLePfMmuSxCWYBhVrrk1glN+9V+nsIJyVa
+        6qv75jzAEiTEOdI0A+bzz0LgINFEB2s=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-588-nMZFK_AqPyq9VdabL_wyNQ-1; Thu, 16 Feb 2023 05:56:18 -0500
+X-MC-Unique: nMZFK_AqPyq9VdabL_wyNQ-1
+Received: by mail-wr1-f71.google.com with SMTP id r15-20020a5d494f000000b002c54d9b8312so189767wrs.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 02:56:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uTgMQWhXxbdOB1s+iJ3y+3uVjK3VfEIrdExBYMmTzrk=;
+        b=H6N1fV4R2/lVJGDb/dg4IgSVmoUwBfO4Ngi3+68aOXGFjCXXGNLYX3it5EDqna8sF8
+         Ww2khDiaBld7EL1zcWaKvrZoAdG8vTQdKu7Yup2j7C0EwYQntxRvJIIvSxNN0DjslyP2
+         9D6o33suu+jHBIXlcY1gRI9an8FGVC3/5xP6tXLFafRe2fREnuaqLshPOprNtrardpv1
+         wKLyTWVWPTDS3nAUmlNPVVRFmb0C4COz5ehdicWeL77wjrAP7Pr6D+hvO37ZwJ6FbJCa
+         qvzC5AMzvrpijP4ikE6mKqLx1b6fmeg0XJA22psGFi3v9y8/z3ZHbd+gABWEW5VGjIee
+         e0Dg==
+X-Gm-Message-State: AO0yUKV01MPOOd4vOUHFg+CTT89LI3xTBBu2zZFWTsYsTHubWSxdqgpT
+        bGmJXQ14zhcSkg1Uj8x9hL6H8zg9GUCIA7Gbwe9azE8hvZEP0PxQKgfQpJSLTxm2cLsY3tD/Afc
+        0HF9n3HvesnWyZ5MxUnquBcB2HQ==
+X-Received: by 2002:adf:e701:0:b0:2c5:5331:5516 with SMTP id c1-20020adfe701000000b002c553315516mr4351125wrm.51.1676544976935;
+        Thu, 16 Feb 2023 02:56:16 -0800 (PST)
+X-Google-Smtp-Source: AK7set9ObTYOMWdJTcJUhFYm6zKW9Smmq8ZljjToRyJseQklHttx5j+GTfa92sWHSmEG8i4fOJ6xDQ==
+X-Received: by 2002:adf:e701:0:b0:2c5:5331:5516 with SMTP id c1-20020adfe701000000b002c553315516mr4351100wrm.51.1676544976599;
+        Thu, 16 Feb 2023 02:56:16 -0800 (PST)
+Received: from ?IPV6:2003:cb:c708:bc00:2acb:9e46:1412:686a? (p200300cbc708bc002acb9e461412686a.dip0.t-ipconnect.de. [2003:cb:c708:bc00:2acb:9e46:1412:686a])
+        by smtp.gmail.com with ESMTPSA id h16-20020adffa90000000b002c5621263e3sm1221457wrr.19.2023.02.16.02.56.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Feb 2023 02:56:16 -0800 (PST)
+Message-ID: <909d3cd5-eb64-6901-4e12-00ac5c69f4aa@redhat.com>
+Date:   Thu, 16 Feb 2023 11:56:15 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <176081a4817e492965a864a8bc8bacb7d2c05078.1676507663.git.ackerleytng@google.com>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 2/2] Revert "splice: Do splice read from a buffered file
+ without using ITER_PIPE"
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-mm@kvack.org
+References: <20230215-topic-next-20230214-revert-v1-2-c58cd87b9086@linaro.org>
+ <20230215-topic-next-20230214-revert-v1-0-c58cd87b9086@linaro.org>
+ <3055589.1676466118@warthog.procyon.org.uk>
+ <71078188-1443-d84e-658c-967991f3b590@linaro.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <71078188-1443-d84e-658c-967991f3b590@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 16, 2023 at 12:41:16AM +0000, Ackerley Tng wrote:
-> By default, the backing shmem file for a restrictedmem fd is created
-> on shmem's kernel space mount.
+On 16.02.23 10:10, Konrad Dybcio wrote:
 > 
-> With this patch, an optional tmpfs mount can be specified, which will
-> be used as the mountpoint for backing the shmem file associated with a
-> restrictedmem fd.
 > 
-> This change is modeled after how sys_open() can create an unnamed
-> temporary file in a given directory with O_TMPFILE.
+> On 15.02.2023 14:01, David Howells wrote:
+>> Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>>> next-20230213 introduced commit d9722a475711 ("splice: Do splice read from
+>>> a buffered file without using ITER_PIPE") which broke booting on any
+>>> Qualcomm ARM64 device I grabbed, dereferencing a null pointer in
+>>> generic_filesplice_read+0xf8/x598. Revert it to make the devices
+>>> bootable again.
+>>>
+>>> This reverts commit d9722a47571104f7fa1eeb5ec59044d3607c6070.
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>
+>> Commit d9722a47571104f7fa1eeb5ec59044d3607c6070 was part of v13 of my
+>> patches.  This got replaced yesterday by a newer version which may or may not
+>> have made it into linux-next.
+>>
+>> This is probably a known bug fixed in the v14 by making shmem have its own
+>> splice-read function.
+>>
+>> Can you try this?
+>>
+>> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-extract
+> next-20230216 boots fine again, thanks!
 > 
-> This will help restrictedmem fds inherit the properties of the
-> provided tmpfs mounts, for example, hugepage allocation hints, NUMA
-> binding hints, etc.
-> 
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> ---
->  include/linux/syscalls.h           |  2 +-
->  include/uapi/linux/restrictedmem.h |  8 ++++
->  mm/restrictedmem.c                 | 63 +++++++++++++++++++++++++++---
->  3 files changed, 66 insertions(+), 7 deletions(-)
->  create mode 100644 include/uapi/linux/restrictedmem.h
-> 
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index f9e9e0c820c5..4b8efe9a8680 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -1056,7 +1056,7 @@ asmlinkage long sys_memfd_secret(unsigned int flags);
->  asmlinkage long sys_set_mempolicy_home_node(unsigned long start, unsigned long len,
->  					    unsigned long home_node,
->  					    unsigned long flags);
-> -asmlinkage long sys_memfd_restricted(unsigned int flags);
-> +asmlinkage long sys_memfd_restricted(unsigned int flags, const char __user *mount_path);
->  
->  /*
->   * Architecture-specific system calls
+>>
+>> (Also, can you include me in the cc list as I'm the author of the patch you
+>> reverted?)
+> Ugh.. I thought b4 would have done that for me.. weird..
 
-I'm not sure what the right practice now: do we provide string that
-contains mount path or fd that represents the filesystem (returned from
-fsmount(2) or open_tree(2)).
+Right, and usually it's nicer to comment on the problematic patches, 
+asking for a fix or a revert, instead of sending reverts.
 
-fd seems more flexible: it allows to specify unbind mounts.
+My 2 cents.
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Thanks,
+
+David / dhildenb
+
