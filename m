@@ -2,41 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D7ED699F2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Feb 2023 22:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C420F699F32
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Feb 2023 22:49:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbjBPVst (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Feb 2023 16:48:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35572 "EHLO
+        id S230106AbjBPVtS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Feb 2023 16:49:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230036AbjBPVsq (ORCPT
+        with ESMTP id S229523AbjBPVtR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Feb 2023 16:48:46 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC5301BACE
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 13:47:56 -0800 (PST)
+        Thu, 16 Feb 2023 16:49:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8776138EAE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 13:48:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676584075;
+        s=mimecast20190719; t=1676584096;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=4OB3pN7HUKRF2HBGdaKO4enU3FqFrSp+zht7+u7JxNg=;
-        b=BF8+mD7pfEtb9L2ppVaH+NTi9qovkoYtKjJFGykYIOrhV8fEoCb5OGK4CVKaIHDp0CgxR5
-        HnJ+ODMZpAZ4Y+exsvnwpgvoJEziTguyVx0y3D42hMaNYuUF4HzJblfObbatf5V3qhiJBr
-        wp+hwJBIZMixli6S/7y5W93hx26u8nc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iluk0YvlYbmqrBsJ+zi3CUpWIoo6vLBgAkY0zGemXLc=;
+        b=OYVIC3QPnpIrBFnTVRH7k6xzc3udEczB/F9eohImuzBVepMHrjOqQFV0UNEcKrLSwXgPbn
+        70bSLXwlS+s/VMzPiEkhR9hnDMalepYxmJ44aAtWJnUbeyr8YPdEuDwuWs+bqUpzSE4tKX
+        KdEbHV7i5fUkWD3R11Z+SPShxOsnZwk=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-125-pPzLFv9JOBy47XbqpzsHQw-1; Thu, 16 Feb 2023 16:47:51 -0500
-X-MC-Unique: pPzLFv9JOBy47XbqpzsHQw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+ us-mta-668-Jom6SA2lN1mnPzx0-IYKGQ-1; Thu, 16 Feb 2023 16:48:11 -0500
+X-MC-Unique: Jom6SA2lN1mnPzx0-IYKGQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E60BC85A588;
-        Thu, 16 Feb 2023 21:47:49 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 774593C0F686;
+        Thu, 16 Feb 2023 21:48:10 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E0DD21121314;
-        Thu, 16 Feb 2023 21:47:47 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 81E7D401014C;
+        Thu, 16 Feb 2023 21:47:50 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Steve French <smfrench@gmail.com>
 Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
@@ -49,13 +50,18 @@ Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         Matthew Wilcox <willy@infradead.org>,
         Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 00/17] smb3: Use iov_iters down to the network transport and fix DIO page pinning
-Date:   Thu, 16 Feb 2023 21:47:28 +0000
-Message-Id: <20230216214745.3985496-1-dhowells@redhat.com>
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        David Hildenbrand <david@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 01/17] mm: Pass info, not iter, into filemap_get_pages()
+Date:   Thu, 16 Feb 2023 21:47:29 +0000
+Message-Id: <20230216214745.3985496-2-dhowells@redhat.com>
+In-Reply-To: <20230216214745.3985496-1-dhowells@redhat.com>
+References: <20230216214745.3985496-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -66,163 +72,115 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Steve,
+filemap_get_pages() and a number of functions that it calls take an
+iterator to provide two things: the number of bytes to be got from the file
+specified and whether partially uptodate pages are allowed.  Change these
+functions so that this information is passed in directly.  This allows it
+to be called without having an iterator to hand.
 
-Here's an updated version of my patchset to make the cifs/smb3 driver pass
-iov_iters down to the lowest layers where they can be passed directly to
-the network transport rather than passing lists of pages around.
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: David Hildenbrand <david@redhat.com>
+cc: John Hubbard <jhubbard@nvidia.com>
+cc: linux-mm@kvack.org
+cc: linux-block@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ mm/filemap.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-The series deals with the following issues:
-
- (-) By pinning pages, it fixes the race between concurrent DIO read and
-     fork, whereby the pages containing the DIO read buffer may end up
-     belonging to the child process and not the parent - with the result
-     that the parent might not see the retrieved data.
-
- (-) cifs shouldn't take refs on pages extracted from non-user-backed
-     iterators (eg. KVEC).  With these changes, cifs will apply the
-     appropriate cleanup.  Note that there is the possibility the network
-     transport might, but that's beyond the scope of this patchset.
-
- (-) Making it easier to transition to using folios in cifs rather than
-     pages by dealing with them through BVEC and XARRAY iterators.
-
-The first five patches add two facilities to the VM/VFS core, excerpts from
-my iov-extract branch[1] that are required in order to do the cifs
-iteratorisation:
-
- (*) Future replacements for file-splicing in the form of functions
-     filemap_splice_read() and direct_splice_read().  These allow file
-     splicing to be done without the use of an ITER_PIPE iterator, without
-     the need to take refs on the pages extracted from KVEC/BVEC/XARRAY
-     iterators.  This is necessary to use iov_iter_extract_pages().
-
-     [!] Note that whilst these are added in core code, they are only used
-     by cifs at this point.
-
- (*) Add iov_iter_extract_pages(), a replacement for iov_iter_get_pages*()
-     that uses FOLL_PIN on user pages (IOVEC, UBUF) and doesn't pin kernel
-     pages (BVEC, KVEC, XARRAY).  This allows cifs to do the page pinning
-     correctly.
-
-     [!] Note that whilst this is added in core code, it is only used by
-     cifs at this point - though a corresponding change is made to the
-     flags argument of iov_iter_get_pages*() so that it doesn't take FOLL_*
-     flags, but rather takes iov_iter_extraction_t flags that are
-     translated internally to FOLL_* flags.
-
-Then there's a couple of patches to make cifs use the new splice functions.
-
-The series continues with a couple of patches that add stuff to netfslib
-that I want to use there as well as in cifs:
-
- (*) Add a netfslib function to extract and pin pages from an ITER_IOBUF or
-     ITER_UBUF iterator into an ITER_BVEC iterator.
-
- (*) Add a netfslib function to extract pages from an iterator that's of
-     type ITER_UBUF/IOVEC/BVEC/KVEC/XARRAY and add them to a scatterlist.
-     The cleanup will need to be done as for iov_iter_extract_pages().
-
-     BVEC, KVEC and XARRAY iterators can be rendered into elements that
-     span multiple pages.
-
-Added to that are some cifs helpers that work with iterators:
-
- (*) Add a function to walk through an ITER_BVEC/KVEC/XARRAY iterator and
-     add elements to an RDMA SGE list.  Only the DMA addresses are stored,
-     and an element may span multiple pages (say if an xarray contains a
-     multipage folio).
-
- (*) Add a function to walk through an ITER_BVEC/KVEC/XARRAY iterator and
-     pass the contents into a shash function.
-
- (*) Add functions to walk through an ITER_XARRAY iterator and perform
-     various sorts of cleanup on the folios held therein, to be used on I/O
-     completion.
-
- (*) Add a function to read from the transport TCP socket directly into an
-     iterator.
-
-Finally come the patches that actually do the work of iteratorising cifs:
-
- (*) The main patch.  Replace page lists with iterators.  It extracts the
-     pages from ITER_UBUF and ITER_IOVEC iterators to an ITER_BVEC
-     iterator, pinning or getting refs on them, before passing them down as
-     the I/O may be done from a worker thread.
-
-     The iterator is extracted into a scatterlist in order to talk to the
-     crypto interface or to do RDMA.
-
- (*) In the cifs RDMA code, extract the iterator into an RDMA SGE[] list,
-     removing the scatterlist intermediate - at least for smbd_send().
-     There appear to be other ways for cifs to talk to the RDMA layer that
-     don't go through that that I haven't managed to work out.
-
- (*) Remove a chunk of now-unused code.
-
- (*) Allow DIO to/from KVEC-type iterators.
-
-I've pushed the patches here also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-cifs
-
-David
-
-Link: https://lore.kernel.org/r/20230214171330.2722188-1-dhowells@redhat.com/ [1]
-Link: https://lore.kernel.org/r/166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk/
-Link: https://lore.kernel.org/r/20230131182855.4027499-1-dhowells@redhat.com/ # v1
-
-David Howells (17):
-  mm: Pass info, not iter, into filemap_get_pages()
-  splice: Add a func to do a splice from a buffered file without
-    ITER_PIPE
-  splice: Add a func to do a splice from an O_DIRECT file without
-    ITER_PIPE
-  iov_iter: Define flags to qualify page extraction.
-  iov_iter: Add a function to extract a page list from an iterator
-  splice: Export filemap/direct_splice_read()
-  cifs: Implement splice_read to pass down ITER_BVEC not ITER_PIPE
-  netfs: Add a function to extract a UBUF or IOVEC into a BVEC iterator
-  netfs: Add a function to extract an iterator into a scatterlist
-  cifs: Add a function to build an RDMA SGE list from an iterator
-  cifs: Add a function to Hash the contents of an iterator
-  cifs: Add some helper functions
-  cifs: Add a function to read into an iter from a socket
-  cifs: Change the I/O paths to use an iterator rather than a page list
-  cifs: Build the RDMA SGE list directly from an iterator
-  cifs: Remove unused code
-  cifs: DIO to/from KVEC-type iterators should now work
-
- block/bio.c               |    6 +-
- block/blk-map.c           |    8 +-
- fs/cifs/Kconfig           |    1 +
- fs/cifs/cifsencrypt.c     |  172 +++-
- fs/cifs/cifsfs.c          |   12 +-
- fs/cifs/cifsfs.h          |    6 +
- fs/cifs/cifsglob.h        |   66 +-
- fs/cifs/cifsproto.h       |   11 +-
- fs/cifs/cifssmb.c         |   15 +-
- fs/cifs/connect.c         |   14 +
- fs/cifs/file.c            | 1772 ++++++++++++++++---------------------
- fs/cifs/fscache.c         |   22 +-
- fs/cifs/fscache.h         |   10 +-
- fs/cifs/misc.c            |  128 +--
- fs/cifs/smb2ops.c         |  362 ++++----
- fs/cifs/smb2pdu.c         |   53 +-
- fs/cifs/smbdirect.c       |  535 ++++++-----
- fs/cifs/smbdirect.h       |    7 +-
- fs/cifs/transport.c       |   54 +-
- fs/netfs/Makefile         |    1 +
- fs/netfs/iterator.c       |  371 ++++++++
- fs/splice.c               |   93 ++
- include/linux/fs.h        |    6 +
- include/linux/netfs.h     |    8 +
- include/linux/pipe_fs_i.h |   20 +
- include/linux/uio.h       |   35 +-
- lib/iov_iter.c            |  284 +++++-
- mm/filemap.c              |  156 +++-
- mm/internal.h             |    6 +
- mm/vmalloc.c              |    1 +
- 30 files changed, 2515 insertions(+), 1720 deletions(-)
- create mode 100644 fs/netfs/iterator.c
+diff --git a/mm/filemap.c b/mm/filemap.c
+index c4d4ace9cc70..876e77278d2a 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2440,21 +2440,19 @@ static int filemap_read_folio(struct file *file, filler_t filler,
+ }
+ 
+ static bool filemap_range_uptodate(struct address_space *mapping,
+-		loff_t pos, struct iov_iter *iter, struct folio *folio)
++		loff_t pos, size_t count, struct folio *folio,
++		bool need_uptodate)
+ {
+-	int count;
+-
+ 	if (folio_test_uptodate(folio))
+ 		return true;
+ 	/* pipes can't handle partially uptodate pages */
+-	if (iov_iter_is_pipe(iter))
++	if (need_uptodate)
+ 		return false;
+ 	if (!mapping->a_ops->is_partially_uptodate)
+ 		return false;
+ 	if (mapping->host->i_blkbits >= folio_shift(folio))
+ 		return false;
+ 
+-	count = iter->count;
+ 	if (folio_pos(folio) > pos) {
+ 		count -= folio_pos(folio) - pos;
+ 		pos = 0;
+@@ -2466,8 +2464,8 @@ static bool filemap_range_uptodate(struct address_space *mapping,
+ }
+ 
+ static int filemap_update_page(struct kiocb *iocb,
+-		struct address_space *mapping, struct iov_iter *iter,
+-		struct folio *folio)
++		struct address_space *mapping, size_t count,
++		struct folio *folio, bool need_uptodate)
+ {
+ 	int error;
+ 
+@@ -2501,7 +2499,8 @@ static int filemap_update_page(struct kiocb *iocb,
+ 		goto unlock;
+ 
+ 	error = 0;
+-	if (filemap_range_uptodate(mapping, iocb->ki_pos, iter, folio))
++	if (filemap_range_uptodate(mapping, iocb->ki_pos, count, folio,
++				   need_uptodate))
+ 		goto unlock;
+ 
+ 	error = -EAGAIN;
+@@ -2577,8 +2576,8 @@ static int filemap_readahead(struct kiocb *iocb, struct file *file,
+ 	return 0;
+ }
+ 
+-static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+-		struct folio_batch *fbatch)
++static int filemap_get_pages(struct kiocb *iocb, size_t count,
++		struct folio_batch *fbatch, bool need_uptodate)
+ {
+ 	struct file *filp = iocb->ki_filp;
+ 	struct address_space *mapping = filp->f_mapping;
+@@ -2588,7 +2587,7 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 	struct folio *folio;
+ 	int err = 0;
+ 
+-	last_index = DIV_ROUND_UP(iocb->ki_pos + iter->count, PAGE_SIZE);
++	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
+ retry:
+ 	if (fatal_signal_pending(current))
+ 		return -EINTR;
+@@ -2621,7 +2620,8 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 		if ((iocb->ki_flags & IOCB_WAITQ) &&
+ 		    folio_batch_count(fbatch) > 1)
+ 			iocb->ki_flags |= IOCB_NOWAIT;
+-		err = filemap_update_page(iocb, mapping, iter, folio);
++		err = filemap_update_page(iocb, mapping, count, folio,
++					  need_uptodate);
+ 		if (err)
+ 			goto err;
+ 	}
+@@ -2691,7 +2691,8 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 		if (unlikely(iocb->ki_pos >= i_size_read(inode)))
+ 			break;
+ 
+-		error = filemap_get_pages(iocb, iter, &fbatch);
++		error = filemap_get_pages(iocb, iter->count, &fbatch,
++					  iov_iter_is_pipe(iter));
+ 		if (error < 0)
+ 			break;
+ 
 
