@@ -2,124 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2BB469A40B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Feb 2023 03:54:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A80269A41C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Feb 2023 04:04:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbjBQCyO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Feb 2023 21:54:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60298 "EHLO
+        id S230198AbjBQDES (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Feb 2023 22:04:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230012AbjBQCyN (ORCPT
+        with ESMTP id S229489AbjBQDER (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Feb 2023 21:54:13 -0500
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B509854D04
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 18:54:12 -0800 (PST)
-Received: by mail-pl1-x62b.google.com with SMTP id j6so124163plh.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Feb 2023 18:54:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uBcdwEX6FT21aGltCWNGTHy4YpVdXGqa74J3HNN+qvU=;
-        b=gNH7rvfTjPO+9k6L/YbXU7YNiCz6oKQTlE25wcwFWgf6ITvNYXoA7TgNtqfRS1QOks
-         d2yExmrD/f0WlVPGGZTG3gnV4h4U9UZodpBjevDobFQxMdrhvLljwfr12vLjinYrN/mQ
-         zqUkLv99JLx9ajgQaZiQ2KAy41KmJHrRIMouN5HnH+NQxKeEN3Rq+Ju4tAvy3uRK0nu7
-         vGIH7wGBy08nwKExZww040DseWXKZPAdFeIPKlgNr71vyzaGxq6uzwj8PBHCGHcWZS6d
-         TAh/hqhkpfWgsn6zm80dl6b1I1BL4hYQwgTKA+HB4KAyrJuZWAC0MmBgmN5dcdEBkY9x
-         phQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uBcdwEX6FT21aGltCWNGTHy4YpVdXGqa74J3HNN+qvU=;
-        b=xCgDcAXam/LwrkpdNMfbHY4+WxC+85qQmLK1UB/iuPQf/0YBoYQZtfOij31xQ/F/lt
-         /qAzUBqB/jaGg+KEOgOB8mnXOOUdrzXjBzt12cfZ5iyKOIer0DRiwNmuYRSp22tSazko
-         GtVDUyAXDGu3bdFm08FVGSVBOhq3TtxsCRXcKGfiqNq+F6TwViLjVjf8O4YWzRhQp+G2
-         2G7S/G9edjq9IH+yxfce8dPY4Xejq/bJh1RetIUDGZVpJ5D35E2ekDe8ZQCfG193xdp/
-         dZaw5Z5AwG/tjUEiWnZ+ikaHTvfGE2QsL3Un1igqP+HfrND+Bp0KvfMvBLV3zB2vPzS4
-         BX2A==
-X-Gm-Message-State: AO0yUKVQEslZ9thmZW8OaFj8uRVXlQRJxIhsTFmo64ND/ZtN+EzklaE0
-        N/VcEWdmZdjurV0Ffxn4c2radg==
-X-Google-Smtp-Source: AK7set+xE/5g9g0P5EfNekFnPwk8H7gUJcIS42o9jqT2HEf34uVDC44sJ3IzM30pDFY9y8ukMJ3s1w==
-X-Received: by 2002:a17:902:ea0a:b0:19a:7060:948 with SMTP id s10-20020a170902ea0a00b0019a70600948mr152816plg.1.1676602452095;
-        Thu, 16 Feb 2023 18:54:12 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id r6-20020a170902be0600b00198b0fd363bsm1988322pls.45.2023.02.16.18.54.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Feb 2023 18:54:11 -0800 (PST)
-Message-ID: <754b3cc0-c420-3257-9569-833c42f93808@kernel.dk>
-Date:   Thu, 16 Feb 2023 19:54:10 -0700
+        Thu, 16 Feb 2023 22:04:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18AC953816;
+        Thu, 16 Feb 2023 19:04:17 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B83E0B82AF2;
+        Fri, 17 Feb 2023 03:04:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBE80C433EF;
+        Fri, 17 Feb 2023 03:04:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676603054;
+        bh=tnwZHUNV/A6Ohqf/7DM1M/eShouPHHc1DKhnpkFHCH0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=q3kP69MGqucrdNFfVA9sfK7SZKXlnLHxzCNecX4QorMGw56xDYPqlkLmfBrNM5ESi
+         fo9+TpSFCATip2io+s3YbuZfexRP3UkuB/keMdtDlQ6OYKV3UWlo+L+64+H9tJpKWM
+         86B53aphhQsaDhVD22TWo1HCVbVjNrt55jTiU4+7xpwH8uyG+KAMZbFkxDcRdEx3tH
+         YDSTQSBR3kiz87IVpJMIH0VjoFHdrL545VuTBV0mYB85SgPDGToZfluyPaPLHpyybB
+         4U4EH/pchFibuT0JFWL0oPukXI7ycYim1aE4dJAs9z3oeUIBw5qityrcPFvuOLPh6L
+         3Zh2R2tQHQaBg==
+Date:   Thu, 16 Feb 2023 19:04:12 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Steve French <smfrench@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Tom Talpey <tom@talpey.com>,
+        Stefan Metzmacher <metze@samba.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Steve French <sfrench@samba.org>, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 11/17] cifs: Add a function to Hash the contents of an
+ iterator
+Message-ID: <Y+7urFTFOCXOq5kp@sol.localdomain>
+References: <20230216214745.3985496-1-dhowells@redhat.com>
+ <20230216214745.3985496-12-dhowells@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL for-6.3] Make building the legacy dio code conditional
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230216214745.3985496-12-dhowells@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Thu, Feb 16, 2023 at 09:47:39PM +0000, David Howells wrote:
+> Add a function to push the contents of a BVEC-, KVEC- or XARRAY-type
+> iterator into a symmetric hash algorithm.
 
-We only have a few file systems that use the old dio code, make them
-select it rather than build it unconditionally.
+I think you mean a "synchronous hash algorithm".
 
-Please pull!
-
-
-The following changes since commit 2241ab53cbb5cdb08a6b2d4688feb13971058f65:
-
-  Linux 6.2-rc5 (2023-01-21 16:27:01 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/for-6.3/dio-2023-02-16
-
-for you to fetch changes up to 9636e650e16f6b01f0044f7662074958c23e4707:
-
-  fs: build the legacy direct I/O code conditionally (2023-01-26 10:30:56 -0700)
-
-----------------------------------------------------------------
-for-6.3/dio-2023-02-16
-
-----------------------------------------------------------------
-Christoph Hellwig (2):
-      fs: move sb_init_dio_done_wq out of direct-io.c
-      fs: build the legacy direct I/O code conditionally
-
- fs/Kconfig          |  4 ++++
- fs/Makefile         |  3 ++-
- fs/affs/Kconfig     |  1 +
- fs/direct-io.c      | 24 ------------------------
- fs/exfat/Kconfig    |  1 +
- fs/ext2/Kconfig     |  1 +
- fs/fat/Kconfig      |  1 +
- fs/hfs/Kconfig      |  1 +
- fs/hfsplus/Kconfig  |  1 +
- fs/internal.h       |  4 +---
- fs/jfs/Kconfig      |  1 +
- fs/nilfs2/Kconfig   |  1 +
- fs/ntfs3/Kconfig    |  1 +
- fs/ocfs2/Kconfig    |  1 +
- fs/reiserfs/Kconfig |  1 +
- fs/super.c          | 24 ++++++++++++++++++++++++
- fs/udf/Kconfig      |  1 +
- 17 files changed, 43 insertions(+), 28 deletions(-)
-
--- 
-Jens Axboe
-
+- Eric
