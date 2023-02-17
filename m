@@ -2,200 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D04A69B50F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Feb 2023 22:48:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A2B469B65A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 00:14:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229949AbjBQVsD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Feb 2023 16:48:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56540 "EHLO
+        id S230002AbjBQXO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Feb 2023 18:14:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229922AbjBQVsC (ORCPT
+        with ESMTP id S229952AbjBQXO4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Feb 2023 16:48:02 -0500
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77C314EB9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 13:48:00 -0800 (PST)
-Received: by mail-qt1-x836.google.com with SMTP id d10so2157151qtr.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 13:48:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=enluXHsm7DkEc3hL0ajHrApyhPOHqK5EyqrxYkxs80U=;
-        b=pBdWthIls+n16dmQx+0uCIxs88coY3ueOgBTPDqIo2ZjUKm5rXzl00XbA1LHggch4+
-         ayNT9pjqN2zGamMiXfsmYn8z9L10SLkOCrgRny0a8xPqIoiBYBQqrGproEXVqOE1d9RV
-         ho+OSX9aonEFUfurMbwRw0J/ZfFgVXSlvyF71o7ns9lcX+ik9UwUGtr5IKlIZsEEnUTm
-         QfjHZ67OaoNgPkhWnl6YBDrpY7norkpNkC5xGIpTQZbbL5sOG2VY58eUAau8CPXizi6O
-         1QjV34ZZkHhhTxRks41EDe3dJZ0oLoq8uJBgSZIcJERPN+NMKWKeCc6dYkXnKHtw8jus
-         bSCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=enluXHsm7DkEc3hL0ajHrApyhPOHqK5EyqrxYkxs80U=;
-        b=XkZkxWBGn3ay++8DiUx6X6+W4eVwPyqovzUYfnZHfZUrPWxdlSt2K9NuhndEVmyaZC
-         zxRc1K2YHZULU/RYxBZK5j+nkTzgCZjdcT0a/Q0SgFd51Vn2O1cAV1XS4G8GHFD0Hyfz
-         PWhKPFpUoGg8fGwfnMwBH1Wlq79jNoX8OE4zqs1PqrH52/QcSZdAdnglofXn8yAFc7f5
-         4WbrwtQGDIcbh5wQzHrOZMxODbGYM03+JL6hzvXD6cIU3nvkwPglPrCmLdw+cpNMY2zh
-         OruZh9bJVQyC54/oNKlZ1RS4f801NVHL/M5O0S4sF6H5y/B+wTr268sPzl90ezihAYnE
-         bGDw==
-X-Gm-Message-State: AO0yUKUa6wdwwkr3f0/He92cTTbJSH4ZjTb6KWqh/r5ageXWCRgXZe6f
-        /MMBjMZ/4hwBdYAmUVS8pU9zoQ==
-X-Google-Smtp-Source: AK7set9s13MPA7KIevE05yTqu6MkLcqJ1s2/ei6hCs9yDNe/IGqHKwYXxV+NibSXi7jOLMm0ZposlQ==
-X-Received: by 2002:a05:622a:389:b0:3ba:138f:7b46 with SMTP id j9-20020a05622a038900b003ba138f7b46mr3732914qtx.42.1676670479446;
-        Fri, 17 Feb 2023 13:47:59 -0800 (PST)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id r9-20020ac85c89000000b003b869f71eedsm4013713qta.66.2023.02.17.13.47.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Feb 2023 13:47:58 -0800 (PST)
-Date:   Fri, 17 Feb 2023 13:47:48 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.attlocal.net
-To:     Huang Ying <ying.huang@intel.com>
-cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
-        Yang Shi <shy828301@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Bharata B Rao <bharata@amd.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        Xin Hao <xhao@linux.alibaba.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Subject: Re: [PATCH -v5 0/9] migrate_pages(): batch TLB flushing
-In-Reply-To: <20230213123444.155149-1-ying.huang@intel.com>
-Message-ID: <87a6c8c-c5c1-67dc-1e32-eb30831d6e3d@google.com>
-References: <20230213123444.155149-1-ying.huang@intel.com>
+        Fri, 17 Feb 2023 18:14:56 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB00A149B6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 15:14:29 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 04873B82EB1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 23:13:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B85EC433A0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 23:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676675608;
+        bh=007Ju5hmo469I+GLbhKmQyFOblRRKqP7+IKJhGVg3Bc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FVQuLHu9su+8MtuqreGX0M6eUP2draqAXJj4M0+8pCp7wP3cq/lR7ACHIf24dTWkq
+         b+prnybkvEZUYcirmWUlld+/8oqr6Nlbu01GGr+WwVByKApBo1afHnsziIFQI2erWf
+         EGwGBTF+S6LSfMq241TKKmHuZRPX6qF35zA6vNp9ovpCBLGLSuQb95HK4Pn/rKOk+N
+         Q29erYenPL3+a3yt35AFu9AbVpoMWykSXPezSdlvTG0r5dcYRXTe3mPJC9QqOkNZ6+
+         ArzBr6bVo48aEYAhQoN4OGqbh5dK+dGwwlaEtAELclY4hqR6CWmZhFUEuGC2Xr7W+S
+         OAFm4QbGrDmsw==
+Received: by mail-ed1-f43.google.com with SMTP id h14so10230469edz.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 15:13:28 -0800 (PST)
+X-Gm-Message-State: AO0yUKWnY8/Vp1uxcxWs83OXhGLKNzDAm1y31vOF/oiy03NNBk1+Qwup
+        jr/VxEtnmXrDV7aypDmUGldxM42WDxYXLF7WNfOP5g==
+X-Google-Smtp-Source: AK7set8/bNsrYafbYm0zAE3nFVOlai7VLZ8imlSdGrFod1cdz9z2k4ibd74H3rjwb0A7aOD2eNsBGzV5MLYpkJRFYLE=
+X-Received: by 2002:a17:907:6c14:b0:8ae:cb48:3c80 with SMTP id
+ rl20-20020a1709076c1400b008aecb483c80mr5175474ejc.7.1676675606807; Fri, 17
+ Feb 2023 15:13:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <20230210061953.GC2825702@dread.disaster.area> <Y+oCBnz2nLtXrz7O@gondor.apana.org.au>
+ <CALCETrXKkZw3ojpmTftur1_-dEi6BOo9Q0cems_jgabntNFYig@mail.gmail.com> <Y+riPviz0em9L9BQ@gondor.apana.org.au>
+In-Reply-To: <Y+riPviz0em9L9BQ@gondor.apana.org.au>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 17 Feb 2023 15:13:14 -0800
+X-Gmail-Original-Message-ID: <CALCETrXr8vRPqEjhSg7=adQcM7OfWs_+fn2xP5OQeLXAaLzHHQ@mail.gmail.com>
+Message-ID: <CALCETrXr8vRPqEjhSg7=adQcM7OfWs_+fn2xP5OQeLXAaLzHHQ@mail.gmail.com>
+Subject: Re: copy on write for splice() from file to pipe?
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        torvalds@linux-foundation.org, metze@samba.org, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, samba-technical@lists.samba.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 13 Feb 2023, Huang Ying wrote:
+> On Feb 13, 2023, at 5:22 PM, Herbert Xu <herbert@gondor.apana.org.au> wro=
+te:
+>
+> =EF=BB=BFOn Mon, Feb 13, 2023 at 10:01:27AM -0800, Andy Lutomirski wrote:
+>>
+>> There's a difference between "kernel speaks TCP (or whatever)
+>> correctly" and "kernel does what the application needs it to do".
+>
+> Sure I get where you are coming from.  It's just that the other
+> participants in the discussion were thinking of stability for the
+> sake of TCP (or TLS or some other protocol the kernel implements)
+> and that simply is a non-issue.
 
-> From: "Huang, Ying" <ying.huang@intel.com>
-> 
-> Now, migrate_pages() migrate folios one by one, like the fake code as
-> follows,
-> 
->   for each folio
->     unmap
->     flush TLB
->     copy
->     restore map
-> 
-> If multiple folios are passed to migrate_pages(), there are
-> opportunities to batch the TLB flushing and copying.  That is, we can
-> change the code to something as follows,
-> 
->   for each folio
->     unmap
->   for each folio
->     flush TLB
->   for each folio
->     copy
->   for each folio
->     restore map
-> 
-> The total number of TLB flushing IPI can be reduced considerably.  And
-> we may use some hardware accelerator such as DSA to accelerate the
-> folio copying.
-> 
-> So in this patch, we refactor the migrate_pages() implementation and
-> implement the TLB flushing batching.  Base on this, hardware
-> accelerated folio copying can be implemented.
-> 
-> If too many folios are passed to migrate_pages(), in the naive batched
-> implementation, we may unmap too many folios at the same time.  The
-> possibility for a task to wait for the migrated folios to be mapped
-> again increases.  So the latency may be hurt.  To deal with this
-> issue, the max number of folios be unmapped in batch is restricted to
-> no more than HPAGE_PMD_NR in the unit of page.  That is, the influence
-> is at the same level of THP migration.
-> 
-> We use the following test to measure the performance impact of the
-> patchset,
-> 
-> On a 2-socket Intel server,
-> 
->  - Run pmbench memory accessing benchmark
-> 
->  - Run `migratepages` to migrate pages of pmbench between node 0 and
->    node 1 back and forth.
-> 
-> With the patch, the TLB flushing IPI reduces 99.1% during the test and
-> the number of pages migrated successfully per second increases 291.7%.
-> 
-> Xin Hao helped to test the patchset on an ARM64 server with 128 cores,
-> 2 NUMA nodes.  Test results show that the page migration performance
-> increases up to 78%.
-> 
-> This patchset is based on mm-unstable 2023-02-10.
+I can certainly imagine TLS or similar protocols breaking if data
+changes if the implementation is too clever and retransmission
+happens.  Suppose 2000 bytes are sent via splice using in-kernel TLS,
+and it goes out on the wire as two TCP segments.  The first segment is
+dropped but the second is received.  The kernel resends the first
+segment using different data.  This really ought to cause an integrity
+check at the far end to fail.
 
-And back in linux-next this week: I tried next-20230217 overnight.
+I don't know if any existing kTLS is clever enough to regenerate
+outgoing data when it needs to retransmit a segment, but it would be
+an interesting optimization for serving static content over TLS.
 
-There is a deadlock in this patchset (and in previous versions: sorry
-it's taken me so long to report), but I think one that's easily solved.
 
-I've not bisected to precisely which patch (load can take several hours
-to hit the deadlock), but it doesn't really matter, and I expect that
-you can guess.
 
-My root and home filesystems are ext4 (4kB blocks with 4kB PAGE_SIZE),
-and so is the filesystem I'm testing, ext4 on /dev/loop0 on tmpfs.
-So, plenty of ext4 page cache and buffer_heads.
-
-Again and again, the deadlock is seen with buffer_migrate_folio_norefs(),
-either in kcompactd0 or in khugepaged trying to compact, or in both:
-it ends up calling __lock_buffer(), and that schedules away, waiting
-forever to get BH_lock.  I have not identified who is holding BH_lock,
-but I imagine a jbd2 journalling thread, and presume that it wants one
-of the folio locks which migrate_pages_batch() is already holding; or
-maybe it's all more convoluted than that.  Other tasks then back up
-waiting on those folio locks held in the batch.
-
-Never a problem with buffer_migrate_folio(), always with the "more
-careful" buffer_migrate_folio_norefs().  And the patch below fixes
-it for me: I've had enough hours with it now, on enough occasions,
-to be confident of that.
-
-Cc'ing Jan Kara, who knows buffer_migrate_folio_norefs() and jbd2
-very well, and I hope can assure us that there is an understandable
-deadlock here, from holding several random folio locks, then trying
-to lock buffers.  Cc'ing fsdevel, because there's a risk that mm
-folk think something is safe, when it's not sufficient to cope with
-the diversity of filesystems.  I hope nothing more than the below is
-needed (and I've had no other problems with the patchset: good job),
-but cannot be sure.
-
-[PATCH next] migrate_pages: fix deadlock on buffer heads
-
-When __buffer_migrate_folio() is called from buffer_migrate_folio_norefs(),
-force MIGRATE_ASYNC mode so that buffer_migrate_lock_buffers() will only
-trylock_buffer(), failing with -EAGAIN as usual if that does not succeed.
-
-Signed-off-by: Hugh Dickins <hughd@google.com>
-
---- next-20230217/mm/migrate.c
-+++ fixed/mm/migrate.c
-@@ -748,7 +748,8 @@ static int __buffer_migrate_folio(struct
- 	if (folio_ref_count(src) != expected_count)
- 		return -EAGAIN;
- 
--	if (!buffer_migrate_lock_buffers(head, mode))
-+	if (!buffer_migrate_lock_buffers(head,
-+			check_refs ? MIGRATE_ASYNC : mode))
- 		return -EAGAIN;
- 
- 	if (check_refs) {
+>
+> Having a better way to communicate completion to the user would be
+> nice.  The only way to do it right now seems to be polling with
+> SIOCOUTQ.
+>
+>
