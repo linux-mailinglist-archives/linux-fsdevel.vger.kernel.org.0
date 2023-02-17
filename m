@@ -2,103 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 654D569A6A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Feb 2023 09:10:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 439AF69A6D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Feb 2023 09:23:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbjBQIKj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Feb 2023 03:10:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47246 "EHLO
+        id S229743AbjBQIXl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Feb 2023 03:23:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229755AbjBQIKU (ORCPT
+        with ESMTP id S229596AbjBQIX3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Feb 2023 03:10:20 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DF045ECBA;
-        Fri, 17 Feb 2023 00:10:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 17 Feb 2023 03:23:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EF1D5D3C0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 00:22:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676622155;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+rHRyKOcZeIEEhKELSIOc3sAUshwl8ClDrtCaFKbOR0=;
+        b=IqlWZG/8/iK2vNs58iSUe6o3wlzV87mTg//MlfBC9YREdbv3J+jF7mTY14SGyHM7klv10n
+        hH3nl25X/lVJmlqOYxdUaGFdjcm1Uqw2uzL6aSFziiMDTO8ic7ntp6Qs4cGn27sV+QZ52y
+        hHpcz+90c3JNrDt3rnoIa+T+fXCDn0A=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-532-mKHUGlstPr2G68_UGsxnAw-1; Fri, 17 Feb 2023 03:22:30 -0500
+X-MC-Unique: mKHUGlstPr2G68_UGsxnAw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 641A4CE2C73;
-        Fri, 17 Feb 2023 08:10:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90C52C433D2;
-        Fri, 17 Feb 2023 08:10:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676621414;
-        bh=NI1/kj+6SSROnQAFsZp/dzHzswdLFNUOD3A7hmPPR8o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fbZ3GveITZUXUsSii8I3KJR8XCRz4LQUFJM/yCfeueaklno1liMN0jZThWSB0/gEC
-         T/z4IUVg+0rkKfkiq5DOpNJ/C1JXV2vxG+glO7zWaOVYun8wf5Uy2FyyW8tw27DaxR
-         xmxiD9EluD7A+Gny0DnkDCQ6sJYzL59F7ZtUTevoZKzRMnDOUJZW5m/saVwmT1N/PM
-         vkG9PooM50Iz6KLgUuANxt6YUIjUmTfac+QUqv9/jK6yxrFiGuwB8RJzZ1UCw+aSWS
-         2Su9VB1XE5koO9GDr+7FW4yH4JelyB1Fey5HRvu2AN3OJpexHoT1cXqemQpC2hYOSP
-         F5UeJgynSPgAA==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] acl updates for v6.3
-Date:   Fri, 17 Feb 2023 09:10:04 +0100
-Message-Id: <20230217081004.1629199-1-brauner@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 112C885A5A3;
+        Fri, 17 Feb 2023 08:22:30 +0000 (UTC)
+Received: from T590 (ovpn-8-26.pek2.redhat.com [10.72.8.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 180E6492C3E;
+        Fri, 17 Feb 2023 08:22:19 +0000 (UTC)
+Date:   Fri, 17 Feb 2023 16:22:14 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>, ming.lei@redhat.com
+Subject: Re: [PATCH v14 08/17] splice: Do splice read from a file without
+ using ITER_PIPE
+Message-ID: <Y+85Ni9CH/7ajQga@T590>
+References: <20230214171330.2722188-1-dhowells@redhat.com>
+ <20230214171330.2722188-9-dhowells@redhat.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1638; i=brauner@kernel.org; h=from:subject; bh=NI1/kj+6SSROnQAFsZp/dzHzswdLFNUOD3A7hmPPR8o=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSS/N/0q9nhxwcMChoMRuf8fSjS3HxbYc8fpAZMdxwbLhzMC zz+o7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIrbUM/wNvHdA/WGvVx9R2Rk+/rq D1+25t8fTOEB92m/WJmybUbGL4X6wZdvgLu8aP6HUv2evLtldtLXgxu6WmJE7BZnX/on/CPAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230214171330.2722188-9-dhowells@redhat.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hey Linus,
+On Tue, Feb 14, 2023 at 05:13:21PM +0000, David Howells wrote:
+> Make generic_file_splice_read() use filemap_splice_read() and
+> direct_splice_read() rather than using an ITER_PIPE and call_read_iter().
+> 
+> With this, ITER_PIPE is no longer used.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Christoph Hellwig <hch@lst.de>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: David Hildenbrand <david@redhat.com>
+> cc: John Hubbard <jhubbard@nvidia.com>
+> cc: linux-mm@kvack.org
+> cc: linux-block@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+> 
+> Notes:
+>     ver #14)
+>     - Split out filemap_splice_read() into a separate patch.
+> 
+>  fs/splice.c | 30 +++++++-----------------------
+>  1 file changed, 7 insertions(+), 23 deletions(-)
+> 
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 4c6332854b63..a93478338cec 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -391,29 +391,13 @@ ssize_t generic_file_splice_read(struct file *in, loff_t *ppos,
+>  				 struct pipe_inode_info *pipe, size_t len,
+>  				 unsigned int flags)
+>  {
+> -	struct iov_iter to;
+> -	struct kiocb kiocb;
+> -	int ret;
+> -
+> -	iov_iter_pipe(&to, ITER_DEST, pipe, len);
+> -	init_sync_kiocb(&kiocb, in);
+> -	kiocb.ki_pos = *ppos;
+> -	ret = call_read_iter(in, &kiocb, &to);
+> -	if (ret > 0) {
+> -		*ppos = kiocb.ki_pos;
+> -		file_accessed(in);
+> -	} else if (ret < 0) {
+> -		/* free what was emitted */
+> -		pipe_discard_from(pipe, to.start_head);
+> -		/*
+> -		 * callers of ->splice_read() expect -EAGAIN on
+> -		 * "can't put anything in there", rather than -EFAULT.
+> -		 */
+> -		if (ret == -EFAULT)
+> -			ret = -EAGAIN;
+> -	}
+> -
+> -	return ret;
+> +	if (unlikely(*ppos >= file_inode(in)->i_sb->s_maxbytes))
+> +		return 0;
+> +	if (unlikely(!len))
+> +		return 0;
+> +	if (in->f_flags & O_DIRECT)
+> +		return direct_splice_read(in, ppos, pipe, len, flags);
 
-/* Summary */
-This contains a single update to the internal get acl method and
-replaces an open-coded cmpxchg() comparison with with try_cmpxchg().
-It's clearer and also beneficial on some architectures.
+Hello David,
 
-/* Testing */
-clang: Ubuntu clang version 15.0.2-1
-gcc: gcc (Ubuntu 12.2.0-3ubuntu1) 12.2.0
+I have one question, for dio, pages need to map to userspace
+memory, but direct_splice_read() just allocates pages and not
+see when the user mapping is setup, can you give one hint?
 
-All patches are based on v6.2-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed. All old and new tests in
-fstests, selftests, and LTP pass without regressions.
 
-/* Conflicts */
-At the time of creating this PR no merge conflicts were reported from
-linux-next and no merge conflicts showed up doing a test-merge with
-current mainline.
+Thanks, 
+Ming
 
-The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
-
-  Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/fs.acl.v6.3
-
-for you to fetch changes up to 4e1da8fe031303599e78f88e0dad9f44272e4f99:
-
-  posix_acl: Use try_cmpxchg in get_acl (2023-01-08 12:37:49 +0100)
-
-Please consider pulling these changes from the signed fs.acl.v6.3 tag.
-
-I'm on vacation until v6.2 is released this Sunday but Amir or Seth know
-how to reach me quite easily before that in case anything goes wrong.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-fs.acl.v6.3
-
-----------------------------------------------------------------
-Uros Bizjak (1):
-      posix_acl: Use try_cmpxchg in get_acl
-
- fs/posix_acl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
