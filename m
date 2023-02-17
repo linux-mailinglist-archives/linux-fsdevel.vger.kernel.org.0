@@ -2,232 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D87C69AE55
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Feb 2023 15:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0001469AF45
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Feb 2023 16:15:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229891AbjBQOtJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Feb 2023 09:49:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43542 "EHLO
+        id S230122AbjBQPPt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Feb 2023 10:15:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbjBQOtG (ORCPT
+        with ESMTP id S229630AbjBQPPs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Feb 2023 09:49:06 -0500
-Received: from mail1.bemta37.messagelabs.com (mail1.bemta37.messagelabs.com [85.158.142.113])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF8B6C029;
-        Fri, 17 Feb 2023 06:49:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1676645343; i=@fujitsu.com;
-        bh=A2wAW+QXyIH1Dyff7tecUiExycjpgnQWjt6WHBG3wNQ=;
-        h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=Ji0uCx/Zhz36NWi/Lm2xY2Wrzxh9bC6giHlydN1BJicaEVwD+b6ixwx18s0xHKZh5
-         g2tZu78f0j6AojtVlECNTkBLP8jjP1AgyyVPFxLTddQOp6qJSjfXiyV0Cd5bwZPMrz
-         +aHQpBcF2fN7iL3SkBDN6+zG68Y4vSiUKAVUrihkFK6nK6vaBQoDwMcHc/3oVOiShA
-         xTTA+p+69bfjR9RNY9S52bf3jgvkA0+ynFs7S96HtTXXCeOH1+HjABDydUejLbJI6n
-         fYzwWI+XpwFjnoEwbH+XE5c02KJU0S0uLopeKSEdGR9ZxofxTgY/X4nhkrFvAD8T/3
-         BWuHfeX6ChZmg==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRWlGSWpSXmKPExsViZ8OxWffe5Pf
-  JBpdm8VnMWb+GzWL61AuMFluO3WO0uPyEz+L0hEVMFrtf32Sz2LP3JIvFvTX/WS12/dnBbrHy
-  xx9Wi98/5rA5cHucWiThsXmFlsfiPS+ZPDat6mTz2PRpErvHiRm/WTxebJ7J6PHx6S0Wj8+b5
-  AI4o1gz85LyKxJYMyY+3cdcsF654t/Hz4wNjGdluxi5OIQENjBKPP7wix3CWcIk8f3bMyCHE8
-  jZxygx734RiM0moCNxYcFfVhBbRKBQYsWpoywgDcwCxxkltizfxAySEBbwkmh5tA2siEVAVeL
-  sgg1gcV4BF4mnq/4xgtgSAgoSUx6+B4tzCrhKLJ18kg1imYvEgbYTjBD1ghInZz5hAbGZBSQk
-  Dr54AVTPAdSrJDGzOx5iTKVE64dfLBC2msTVc5uYJzAKzkLSPQtJ9wJGplWMZsWpRWWpRbqme
-  klFmekZJbmJmTl6iVW6iXqppbp5+UUlGbqGeonlxXqpxcV6xZW5yTkpenmpJZsYgZGWUpzMsI
-  Oxs++v3iFGSQ4mJVFew4T3yUJ8SfkplRmJxRnxRaU5qcWHGGU4OJQkeE/3A+UEi1LTUyvSMnO
-  AUQ+TluDgURLhnZwPlOYtLkjMLc5Mh0idYtTlWNtwYC+zEEtefl6qlDjvjElARQIgRRmleXAj
-  YAnoEqOslDAvIwMDgxBPQWpRbmYJqvwrRnEORiVh3ucTgabwZOaVwG16BXQEE9ARC5jfghxRk
-  oiQkmpgit5+/KbrI8s/D299WSwXPSfiRz23aYBGsVWqzeHql6GXQ9ZOnLxgw85szvBMx4Uzq+
-  z+ivGdme0rt1Vk3v2UWataMlOb2QVz0vKKSyS+NJmvjZWYeuJHzjvmhYaeen95v7/yWt50uKb
-  PYi1LV9F+s2OW0Uu/LXD/viHpHNdzs60lljsfxbfdVew8X+V1PNipTFD84budefsfKQh7l5+u
-  Zzjwk/unZIG5hNAz1ypOo+U+AZ6SJ9bNuTL/0QOv4ydObnatnvfEqzZOVkArK9Iw8Ow1Jp+JS
-  +otf78M4JZ8/zstVfaSobapY/yxqbI55htnxhnyXZvfwMl6OTWocqFO2YMthVt/FfTa11VF5R
-  QrsRRnJBpqMRcVJwIAW0qBWbsDAAA=
-X-Env-Sender: ruansy.fnst@fujitsu.com
-X-Msg-Ref: server-7.tower-732.messagelabs.com!1676645341!163832!1
-X-Originating-IP: [62.60.8.179]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.102.2; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 14491 invoked from network); 17 Feb 2023 14:49:02 -0000
-Received: from unknown (HELO n03ukasimr04.n03.fujitsu.local) (62.60.8.179)
-  by server-7.tower-732.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 17 Feb 2023 14:49:02 -0000
-Received: from n03ukasimr04.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr04.n03.fujitsu.local (Postfix) with ESMTP id 880897C;
-        Fri, 17 Feb 2023 14:49:01 +0000 (GMT)
-Received: from R01UKEXCASM223.r01.fujitsu.local (R01UKEXCASM223 [10.182.185.121])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr04.n03.fujitsu.local (Postfix) with ESMTPS id 7B7BE7B;
-        Fri, 17 Feb 2023 14:49:01 +0000 (GMT)
-Received: from localhost.localdomain (10.167.225.141) by
- R01UKEXCASM223.r01.fujitsu.local (10.182.185.121) with Microsoft SMTP Server
- (TLS) id 15.0.1497.42; Fri, 17 Feb 2023 14:48:57 +0000
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     <linux-xfs@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>
-CC:     <djwong@kernel.org>, <david@fromorbit.com>,
-        <dan.j.williams@intel.com>, <hch@infradead.org>,
-        <jane.chu@oracle.com>, <akpm@linux-foundation.org>,
-        <willy@infradead.org>, <ruansy.fnst@fujitsu.com>
-Subject: [PATCH v10 3/3] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-Date:   Fri, 17 Feb 2023 14:48:32 +0000
-Message-ID: <1676645312-13-4-git-send-email-ruansy.fnst@fujitsu.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1676645312-13-1-git-send-email-ruansy.fnst@fujitsu.com>
-References: <1676645312-13-1-git-send-email-ruansy.fnst@fujitsu.com>
+        Fri, 17 Feb 2023 10:15:48 -0500
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D386F6666B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 07:15:45 -0800 (PST)
+Received: by mail-il1-f208.google.com with SMTP id p3-20020a92d683000000b003006328df7bso315400iln.17
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 07:15:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bOF1NJR2C6VQIkmOaGm3OZ/hC3PZmxuYb581posA0pY=;
+        b=abbl8rlwS1FjD9SR341s2+fpS4tUIVUBL9rAy3HHadlKY2jUB7N9fj5vKwXXy/S+cR
+         vy/ZUVtTGgPKpqTyv05l6/Nn8un8XVJUIyo/kEP15ROp0BxJlECT0fEepQILRdZi1TAi
+         5o9LpqM+gVOA5aOmedOgHWwJCE4kDlCSmVRDsAtHHeYzdDKYST7j9/e6A2GrMY8WpnId
+         UKaxLjpoYcwq73AYc5JtG1U463356GewiSjPP9uwAgsFKvk4Iof4T/f0SSdhKJIcQAI1
+         UHQrK3NeLlbvek6KBmsC824rXklowh1h5zJiNn1yhsbAPuHjBtcJbKDRLZxPsRFwkgvo
+         /IPw==
+X-Gm-Message-State: AO0yUKVO9KP1QzidR4wUZ3UcU7APRny4LVD6tcqwjsscevuu7I/udg2v
+        K8yz9+6JxGdycVCdJMaipKb0LV4LLVvHTXMPgy7mNWHpcFxe
+X-Google-Smtp-Source: AK7set8vsPE+Lbo+ybYE5fGk6chIL2Evqt2sM77c+hW8E0qS33wbuY+st4OMVHbpzwSWn8xFvemqmLAgLWD51yswvGsRCjkphFIo
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.225.141]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM223.r01.fujitsu.local (10.182.185.121)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6e02:1050:b0:314:8c8:de65 with SMTP id
+ p16-20020a056e02105000b0031408c8de65mr391899ilj.3.1676646945161; Fri, 17 Feb
+ 2023 07:15:45 -0800 (PST)
+Date:   Fri, 17 Feb 2023 07:15:45 -0800
+In-Reply-To: <000000000000471f2d05f1ce8bad@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009489a105f4e6c9e6@google.com>
+Subject: Re: [syzbot] [jfs?] KASAN: invalid-free in dbUnmount
+From:   syzbot <syzbot+6a93efb725385bc4b2e9@syzkaller.appspotmail.com>
+To:     jfs-discussion@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mudongliangabcd@gmail.com, paskripkin@gmail.com, r33s3n6@gmail.com,
+        shaggy@kernel.org, syzkaller-bugs@googlegroups.com,
+        wuhoipok@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch is inspired by Dan's "mm, dax, pmem: Introduce
-dev_pagemap_failure()"[1].  With the help of dax_holder and
-->notify_failure() mechanism, the pmem driver is able to ask filesystem
-(or mapped device) on it to unmap all files in use and notify processes
-who are using those files.
+syzbot has found a reproducer for the following issue on:
 
-Call trace:
-trigger unbind
- -> unbind_store()
-  -> ... (skip)
-   -> devres_release_all()   # was pmem driver ->remove() in v1
-    -> kill_dax()
-     -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
-      -> xfs_dax_notify_failure()
+HEAD commit:    ec35307e18ba Merge tag 'drm-fixes-2023-02-17' of git://ano..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=136bc2f0c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f4b0f5dd9aee9645
+dashboard link: https://syzkaller.appspot.com/bug?extid=6a93efb725385bc4b2e9
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16782d80c80000
 
-Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
-event.  So do not shutdown filesystem directly if something not
-supported, or if failure range includes metadata area.  Make sure all
-files and processes are handled correctly.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5680df3ffb85/disk-ec35307e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6bdf250f8996/vmlinux-ec35307e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5855b843bfdd/bzImage-ec35307e.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/7c16d31db3c2/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/7cb46f599e58/mount_5.gz
 
-[1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6a93efb725385bc4b2e9@syzkaller.appspotmail.com
 
-Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
----
- drivers/dax/super.c         |  3 ++-
- fs/xfs/xfs_notify_failure.c | 26 ++++++++++++++++++++++++++
- include/linux/mm.h          |  1 +
- 3 files changed, 29 insertions(+), 1 deletion(-)
+==================================================================
+BUG: KASAN: double-free in dbUnmount+0xf8/0x110 fs/jfs/jfs_dmap.c:264
+Free of addr ffff888070065000 by task syz-executor.2/5106
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index c4c4728a36e4..2e1a35e82fce 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
- 		return;
- 
- 	if (dax_dev->holder_data != NULL)
--		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
-+		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
-+				MF_MEM_PRE_REMOVE);
- 
- 	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
- 	synchronize_srcu(&dax_srcu);
-diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-index 7d46a7e4980f..5f915cfc9632 100644
---- a/fs/xfs/xfs_notify_failure.c
-+++ b/fs/xfs/xfs_notify_failure.c
-@@ -22,6 +22,7 @@
- 
- #include <linux/mm.h>
- #include <linux/dax.h>
-+#include <linux/fs.h>
- 
- struct xfs_failure_info {
- 	xfs_agblock_t		startblock;
-@@ -77,6 +78,9 @@ xfs_dax_failure_fn(
- 
- 	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
- 	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-+		/* The device is about to be removed.  Not a really failure. */
-+		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
-+			return 0;
- 		notify->want_shutdown = true;
- 		return 0;
- 	}
-@@ -168,7 +172,11 @@ xfs_dax_notify_ddev_failure(
- 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
- 		if (!error)
- 			error = -EFSCORRUPTED;
-+	} else if (mf_flags & MF_MEM_PRE_REMOVE) {
-+		error = thaw_super(mp->m_super);
-+		xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
- 	}
-+
- 	return error;
- }
- 
-@@ -182,6 +190,7 @@ xfs_dax_notify_failure(
- 	struct xfs_mount	*mp = dax_holder(dax_dev);
- 	u64			ddev_start;
- 	u64			ddev_end;
-+	int			error;
- 
- 	if (!(mp->m_super->s_flags & SB_BORN)) {
- 		xfs_warn(mp, "filesystem is not ready for notify_failure()!");
-@@ -196,6 +205,8 @@ xfs_dax_notify_failure(
- 
- 	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
- 	    mp->m_logdev_targp != mp->m_ddev_targp) {
-+		if (mf_flags & MF_MEM_PRE_REMOVE)
-+			return 0;
- 		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
- 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
- 		return -EFSCORRUPTED;
-@@ -209,6 +220,12 @@ xfs_dax_notify_failure(
- 	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
- 	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
- 
-+	/* Notify failure on the whole device */
-+	if (offset == 0 && len == U64_MAX) {
-+		offset = ddev_start;
-+		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
-+	}
-+
- 	/* Ignore the range out of filesystem area */
- 	if (offset + len - 1 < ddev_start)
- 		return -ENXIO;
-@@ -225,6 +242,15 @@ xfs_dax_notify_failure(
- 	if (offset + len - 1 > ddev_end)
- 		len = ddev_end - offset + 1;
- 
-+	if (mf_flags & MF_MEM_PRE_REMOVE) {
-+		xfs_info(mp, "device is about to be removed!");
-+		error = freeze_super(mp->m_super);
-+		if (error)
-+			return error;
-+		/* invalidate_inode_pages2() invalidates dax mapping */
-+		super_drop_pagecache(mp->m_super, invalidate_inode_pages2);
-+	}
-+
- 	return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), BTOBB(len),
- 			mf_flags);
- }
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 8f857163ac89..9711dbc9451f 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3424,6 +3424,7 @@ enum mf_flags {
- 	MF_UNPOISON = 1 << 4,
- 	MF_SW_SIMULATED = 1 << 5,
- 	MF_NO_RETRY = 1 << 6,
-+	MF_MEM_PRE_REMOVE = 1 << 7,
- };
- int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
- 		      unsigned long count, int mf_flags);
--- 
-2.39.1
+CPU: 0 PID: 5106 Comm: syz-executor.2 Not tainted 6.2.0-rc8-syzkaller-00098-gec35307e18ba #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:306 [inline]
+ print_report+0x163/0x4f0 mm/kasan/report.c:417
+ kasan_report_invalid_free+0x110/0x130 mm/kasan/report.c:482
+ ____kasan_slab_free+0xfb/0x120
+ kasan_slab_free include/linux/kasan.h:177 [inline]
+ slab_free_hook mm/slub.c:1781 [inline]
+ slab_free_freelist_hook mm/slub.c:1807 [inline]
+ slab_free mm/slub.c:3787 [inline]
+ __kmem_cache_free+0x264/0x3c0 mm/slub.c:3800
+ dbUnmount+0xf8/0x110 fs/jfs/jfs_dmap.c:264
+ jfs_umount+0x238/0x3a0 fs/jfs/jfs_umount.c:87
+ jfs_put_super+0x8a/0x190 fs/jfs/super.c:194
+ generic_shutdown_super+0x134/0x310 fs/super.c:492
+ kill_block_super+0x7e/0xe0 fs/super.c:1386
+ deactivate_locked_super+0xa4/0x110 fs/super.c:332
+ cleanup_mnt+0x490/0x520 fs/namespace.c:1291
+ task_work_run+0x24a/0x300 kernel/task_work.c:179
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ exit_to_user_mode_loop+0xd9/0x100 kernel/entry/common.c:171
+ exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:203
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
+ syscall_exit_to_user_mode+0x64/0x2e0 kernel/entry/common.c:296
+ do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f2586c8d567
+Code: ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcc1f3b418 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f2586c8d567
+RDX: 00007ffcc1f3b4ea RSI: 000000000000000a RDI: 00007ffcc1f3b4e0
+RBP: 00007ffcc1f3b4e0 R08: 00000000ffffffff R09: 00007ffcc1f3b2b0
+R10: 00005555571d08b3 R11: 0000000000000246 R12: 00007f2586ce6b24
+R13: 00007ffcc1f3c5a0 R14: 00005555571d0810 R15: 00007ffcc1f3c5e0
+ </TASK>
+
+Allocated by task 6074:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x4f/0x80 mm/kasan/common.c:52
+ ____kasan_kmalloc mm/kasan/common.c:374 [inline]
+ __kasan_kmalloc+0x9b/0xb0 mm/kasan/common.c:383
+ kmalloc include/linux/slab.h:580 [inline]
+ dbMount+0x58/0x9a0 fs/jfs/jfs_dmap.c:164
+ jfs_mount+0x1e5/0x830 fs/jfs/jfs_mount.c:121
+ jfs_fill_super+0x59c/0xc50 fs/jfs/super.c:556
+ mount_bdev+0x271/0x3a0 fs/super.c:1359
+ legacy_get_tree+0xef/0x190 fs/fs_context.c:610
+ vfs_get_tree+0x8c/0x270 fs/super.c:1489
+ do_new_mount+0x28f/0xae0 fs/namespace.c:3145
+ do_mount fs/namespace.c:3488 [inline]
+ __do_sys_mount fs/namespace.c:3697 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3674
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Freed by task 6095:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x4f/0x80 mm/kasan/common.c:52
+ kasan_save_free_info+0x2b/0x40 mm/kasan/generic.c:523
+ ____kasan_slab_free+0xd6/0x120 mm/kasan/common.c:236
+ kasan_slab_free include/linux/kasan.h:177 [inline]
+ slab_free_hook mm/slub.c:1781 [inline]
+ slab_free_freelist_hook mm/slub.c:1807 [inline]
+ slab_free mm/slub.c:3787 [inline]
+ __kmem_cache_free+0x264/0x3c0 mm/slub.c:3800
+ dbUnmount+0xf8/0x110 fs/jfs/jfs_dmap.c:264
+ jfs_mount_rw+0x4ac/0x6a0 fs/jfs/jfs_mount.c:247
+ jfs_remount+0x3d1/0x6b0 fs/jfs/super.c:454
+ reconfigure_super+0x3c9/0x7c0 fs/super.c:935
+ vfs_fsconfig_locked fs/fsopen.c:254 [inline]
+ __do_sys_fsconfig fs/fsopen.c:439 [inline]
+ __se_sys_fsconfig+0xa29/0xf70 fs/fsopen.c:314
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+The buggy address belongs to the object at ffff888070065000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 0 bytes inside of
+ 2048-byte region [ffff888070065000, ffff888070065800)
+
+The buggy address belongs to the physical page:
+page:ffffea0001c01800 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x70060
+head:ffffea0001c01800 order:3 compound_mapcount:0 subpages_mapcount:0 compound_pincount:0
+anon flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000010200 ffff888012442000 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000080080008 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5107, tgid 5107 (syz-executor.4), ts 445079557996, free_ts 18734675106
+ prep_new_page mm/page_alloc.c:2531 [inline]
+ get_page_from_freelist+0x3449/0x35c0 mm/page_alloc.c:4283
+ __alloc_pages+0x291/0x7e0 mm/page_alloc.c:5549
+ alloc_slab_page+0x6a/0x160 mm/slub.c:1851
+ allocate_slab mm/slub.c:1998 [inline]
+ new_slab+0x84/0x2f0 mm/slub.c:2051
+ ___slab_alloc+0xa85/0x10a0 mm/slub.c:3193
+ __slab_alloc mm/slub.c:3292 [inline]
+ __slab_alloc_node mm/slub.c:3345 [inline]
+ slab_alloc_node mm/slub.c:3442 [inline]
+ __kmem_cache_alloc_node+0x1b8/0x2a0 mm/slub.c:3491
+ kmalloc_trace+0x2a/0x60 mm/slab_common.c:1062
+ kmalloc include/linux/slab.h:580 [inline]
+ kzalloc include/linux/slab.h:720 [inline]
+ nsim_fib_create+0xa8/0xbb0 drivers/net/netdevsim/fib.c:1558
+ nsim_drv_probe+0x6ed/0xb30 drivers/net/netdevsim/dev.c:1581
+ really_probe+0x2ab/0xcd0 drivers/base/dd.c:639
+ __driver_probe_device+0x1c3/0x3f0 drivers/base/dd.c:778
+ driver_probe_device+0x50/0x420 drivers/base/dd.c:808
+ __device_attach_driver+0x2d3/0x520 drivers/base/dd.c:936
+ bus_for_each_drv+0x187/0x210 drivers/base/bus.c:427
+ __device_attach+0x35d/0x580 drivers/base/dd.c:1008
+ bus_probe_device+0xbe/0x1e0 drivers/base/bus.c:487
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1446 [inline]
+ free_pcp_prepare mm/page_alloc.c:1496 [inline]
+ free_unref_page_prepare+0xf3a/0x1040 mm/page_alloc.c:3369
+ free_unref_page+0x37/0x3f0 mm/page_alloc.c:3464
+ free_contig_range+0x9e/0x150 mm/page_alloc.c:9488
+ destroy_args+0x102/0x9a0 mm/debug_vm_pgtable.c:998
+ debug_vm_pgtable+0x40a/0x470 mm/debug_vm_pgtable.c:1318
+ do_one_initcall+0x2c3/0xa60 init/main.c:1306
+ do_initcall_level+0x157/0x210 init/main.c:1379
+ do_initcalls+0x3f/0x80 init/main.c:1395
+ kernel_init_freeable+0x477/0x630 init/main.c:1634
+ kernel_init+0x1d/0x2a0 init/main.c:1522
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+
+Memory state around the buggy address:
+ ffff888070064f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888070064f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888070065000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff888070065080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888070065100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
