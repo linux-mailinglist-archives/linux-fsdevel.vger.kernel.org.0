@@ -2,64 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3ADC69B392
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Feb 2023 21:13:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D379769B3CF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Feb 2023 21:24:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229558AbjBQUNs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Feb 2023 15:13:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45996 "EHLO
+        id S229759AbjBQUYU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Feb 2023 15:24:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjBQUNr (ORCPT
+        with ESMTP id S229602AbjBQUYQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Feb 2023 15:13:47 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C955A3B0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 12:13:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=ockG/VebYDhZIp62yI2wxrE61b7mutpBnLpXiWBMyrA=; b=D2o2tiIBtVEJz5qdLMd5z4DBKd
-        +xlroTuz4PlH0lkC8XolPD7Gbfp4d2Nz5YQ6gY05dASziqo8csu/tZ0GPAARzzDsPMy4pw/szzu8b
-        ooYXiT8bhT4ccvt3glDEX2Fn0KSWrYnlEheUnzdEMWk5AEBFaHA57pBIZT9zWRlBae4BRGEe6fqc7
-        H2psQKS30OanyQKuPhoXkx6FYdZutSoGNZ7AKcTqjzUYbc/geI5ft80+chAYyLYApif72F3CFjHXM
-        JfCeUO7l7s0tSz1FXIZeCYT0KpEN4MTOXIs90KPtW1b8vVaZSA02PuhELUYWxNhPd+jKtdXAVUAPh
-        EtUa6mTA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pT770-009bbH-Lh; Fri, 17 Feb 2023 20:13:42 +0000
-Date:   Fri, 17 Feb 2023 20:13:42 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     lsf-pc@lists.linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [LSF/MM/BPF TOPIC] Scalable Pagefaults
-Message-ID: <Y+/f9slIaK195fRX@casper.infradead.org>
+        Fri, 17 Feb 2023 15:24:16 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B2B60A50
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 12:23:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676665401;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=K5ZI+v0i1F3Jsex79dfpMaH/+vxYNgDnwx9OoQIYq98=;
+        b=MSnYPTG3n1WkmsQo9UJQ9yYI0NcOe+6FhlV7gskO7tk3XVKXugEHLD19sQrFyFN4ol3PVU
+        gp8UH6zNr/mOlEbUdJc7FJ7wGedaCldiXhybZ6oAn4axPSTC5CWnBYjY5cllHab8P2r4fo
+        3dd7PWv2Z5nXUUf432QfE/I4iVtEHaU=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-207-n1rRrwfrOIicTKJRtp8qxw-1; Fri, 17 Feb 2023 15:23:17 -0500
+X-MC-Unique: n1rRrwfrOIicTKJRtp8qxw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 062C11C0515F;
+        Fri, 17 Feb 2023 20:23:17 +0000 (UTC)
+Received: from thuth.com (unknown [10.39.192.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 352D7C15BA0;
+        Fri, 17 Feb 2023 20:23:15 +0000 (UTC)
+From:   Thomas Huth <thuth@redhat.com>
+To:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arch@vger.kernel.org, Chas Williams <3chas3@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Subject: [PATCH 0/4] Remove #ifdef CONFIG_* from uapi headers (2023 edition)
+Date:   Fri, 17 Feb 2023 21:22:57 +0100
+Message-Id: <20230217202301.436895-1-thuth@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We should continue the conversation from last year on the topic of page
-fault scalability.  I presume that by the time of the conference Suren's
-current patches for per-VMA locks [1] [2] will be at least in Andrew's
-tree, even if not quite upstream yet.  We will then be in a good place
-to discuss enhancements:
+uapi headers should not use the kernel-internal CONFIG switches.
+Palmer Dabbelt sent some patches to clean this up a couple of years
+ago, but unfortunately some of those patches never got merged.
+So here's a rebased version of those patches - since they are rather
+trivial, I hope it's OK for everybody if they could go through Arnd's
+"generic include/asm header files" branch?
 
- - File-backed VMAs
- - UFFD
- - Swap
- - Improve performance for low-thread-count apps
- - Full RCU handling of (some) page faults
+Palmer Dabbelt (4):
+  Move COMPAT_ATM_ADDPARTY to net/atm/svc.c
+  Move ep_take_care_of_epollwakeup() to fs/eventpoll.c
+  Move bp_type_idx to include/linux/hw_breakpoint.h
+  Move USE_WCACHING to drivers/block/pktcdvd.c
 
-Suren Baghdasaryan, Liam Howlett, Michel Lespinasse, Laurent Dufour,
-Peter Xu would all be good participants.
+ drivers/block/pktcdvd.c                  | 11 +++++++++++
+ fs/eventpoll.c                           | 13 +++++++++++++
+ include/linux/hw_breakpoint.h            | 10 ++++++++++
+ include/uapi/linux/atmdev.h              |  4 ----
+ include/uapi/linux/eventpoll.h           | 12 ------------
+ include/uapi/linux/hw_breakpoint.h       | 10 ----------
+ include/uapi/linux/pktcdvd.h             | 11 -----------
+ net/atm/svc.c                            |  5 +++++
+ tools/include/uapi/linux/hw_breakpoint.h | 10 ----------
+ 9 files changed, 39 insertions(+), 47 deletions(-)
 
-[1] https://lore.kernel.org/linux-mm/20230216051750.3125598-1-surenb@google.com/
-[2] https://lwn.net/Articles/906852/
+-- 
+2.31.1
 
