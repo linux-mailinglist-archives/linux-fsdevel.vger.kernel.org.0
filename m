@@ -2,81 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56D3869B71F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 01:45:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A416869B762
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 02:17:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230222AbjBRApK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Feb 2023 19:45:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36604 "EHLO
+        id S229628AbjBRBRD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Feb 2023 20:17:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230140AbjBRApA (ORCPT
+        with ESMTP id S229616AbjBRBRC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Feb 2023 19:45:00 -0500
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A858D6D7A7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 16:44:31 -0800 (PST)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-536587df775so21963237b3.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 16:44:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9mwmDPnm22mSNSwTn0VodViIvXaPz9XlM8QDWYhbyM8=;
-        b=eMm01hnumElMl3UotGf8lJtLmKUjjLEmp4ZHK0o1H0LRyNA5w7x33BZeE7ifCfM7pg
-         Cd3CBejXIUZT0dDASkiYet2Q11r1oqaxT2jWL7729gQTvNyIV+Z3A265SCXl8KKZFvM6
-         J2aSWma9rqTSDwyH7vONqfORZObAwWA+6hRLW5QjldLuMtFrDr6CiZLUw313wtVBTkEY
-         Uql860ZaIf2fzbiPBXmxv8De94uhU4jaykP5woFVxM5M2xVs65vFvbC27a8oelqLROik
-         ucodFnqa/c0QR5Ark7refIrmAYAsOKE19K26vuVEVEq0bwodrw1HGi4stiNrcoXlrrSh
-         sdyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9mwmDPnm22mSNSwTn0VodViIvXaPz9XlM8QDWYhbyM8=;
-        b=l3P+XdwJH5WmxPMZqVbX7OPYWMg9Dmex8PxcTWkQTV95xIibciP+nXiFbnDxhjbeAk
-         kZFGnN+g1d6naqcAkGg/LAmPOULF8Oti1xl5aCDG0VoZz3XoXgqtQGmr5DXq4OFejnxN
-         oLhC7qP9zIJHBXmVEmyJsHHBj22IO+6yMSz0gMwjIQMyTlJoV4wfRrXUuB8bMSEjYV/N
-         lVtqU/8egdsxQ5+55Fidi5856YKOm7nIBwOkbzc6ffnY7Q5DAtD97hW8HO9cEDwOLpfC
-         HuTPoKDBiL6erYBFmSUF6YMkTiw1uWaz2nNh/gwX3D5bzUUJRRELDQhLqXqjJN+n3Cy/
-         Q1eg==
-X-Gm-Message-State: AO0yUKUAvemICl5t6NjtQEdcdbBxwbEUy3iNfplYJsZ/fWJXQtjQCJn4
-        lXblXHoGtpb8DzoPhtCWqoD6BypnIbuy5zqpng==
-X-Google-Smtp-Source: AK7set8GCw+l6Q5gppx0SI7xgHF70UCy3j05OUIa+XJfbCoB3vIVoiRjffivwnfUze8k0uHuDZvSsWzxIhc/w0Mo2w==
-X-Received: from ackerleytng-cloudtop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:1f5f])
- (user=ackerleytng job=sendgmr) by 2002:a05:6902:10e:b0:95d:6b4f:a73a with
- SMTP id o14-20020a056902010e00b0095d6b4fa73amr5895ybh.8.1676681001601; Fri,
- 17 Feb 2023 16:43:21 -0800 (PST)
-Date:   Sat, 18 Feb 2023 00:43:02 +0000
-In-Reply-To: <cover.1676680548.git.ackerleytng@google.com>
-Mime-Version: 1.0
-References: <cover.1676680548.git.ackerleytng@google.com>
-X-Mailer: git-send-email 2.39.2.637.g21b0678d19-goog
-Message-ID: <67956539824ea9dd66a94d67b046b2f4bb0aa6f2.1676680548.git.ackerleytng@google.com>
-Subject: [RFC PATCH 2/2] selftests: restrictedmem: Add selftest for RMFD_HUGEPAGE
-From:   Ackerley Tng <ackerleytng@google.com>
-To:     kvm@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, qemu-devel@nongnu.org
-Cc:     aarcange@redhat.com, ak@linux.intel.com, akpm@linux-foundation.org,
-        arnd@arndb.de, bfields@fieldses.org, bp@alien8.de,
-        chao.p.peng@linux.intel.com, corbet@lwn.net, dave.hansen@intel.com,
-        david@redhat.com, ddutile@redhat.com, dhildenb@redhat.com,
-        hpa@zytor.com, hughd@google.com, jlayton@kernel.org,
-        jmattson@google.com, joro@8bytes.org, jun.nakajima@intel.com,
-        kirill.shutemov@linux.intel.com, linmiaohe@huawei.com,
-        luto@kernel.org, mail@maciej.szmigiero.name, mhocko@suse.com,
-        michael.roth@amd.com, mingo@redhat.com, naoya.horiguchi@nec.com,
-        pbonzini@redhat.com, qperret@google.com, rppt@kernel.org,
-        seanjc@google.com, shuah@kernel.org, steven.price@arm.com,
-        tabba@google.com, tglx@linutronix.de, vannapurve@google.com,
-        vbabka@suse.cz, vkuznets@redhat.com, wanpengli@tencent.com,
-        wei.w.wang@intel.com, x86@kernel.org, yu.c.zhang@linux.intel.com,
-        Ackerley Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+        Fri, 17 Feb 2023 20:17:02 -0500
+Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9370E36699;
+        Fri, 17 Feb 2023 17:17:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1676683019; i=@fujitsu.com;
+        bh=EarUJXJHeKc/uIrwmeqmpWyHrRMI7AcdO5uvPtkXwtM=;
+        h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+         In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        b=AJbD5xnirMYHgnmv0bUZg1KcyvYCo5v0rLrglNS6oAO51KHq1o2OX+7+ah/9TfemF
+         zA1GTjy216Vn0FHe8tpCx0iy8B3CrpDi0323ZNSu6WhkmRFnMSJqiiPvt+JCg+94fp
+         2ZcY9pCNQuTj7swZmRYyQqx4b8sps6uBdiGDcVsWsW4QpLT0aghj6I4z/TvP3A3UkN
+         xg/Zm5JW+q0XhBXu/jE0uxRuBHTHbOaeUtWWlHIAGtGRF2IEzoiedGZIqVK4Tysi6p
+         E+hcAaO1Eq608yqzoZTN2xL6IDx13WuuPOfM3DGWT3L8uSo8DyUdVlQD8qIwburBal
+         syL72CUr8mm2g==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRWlGSWpSXmKPExsViZ8ORpMuh/iH
+  Z4MEDVos569ewWUyfeoHRYsuxe4wWl5/wWZyesIjJYvfrm2wWe/aeZLG4t+Y/q8WuPzvYLVb+
+  +MNq8fvHHDYHbo9TiyQ8Nq/Q8li85yWTx6ZVnWwemz5NYvc4MeM3i8eLzTMZPT4+vcXi8XmTX
+  ABnFGtmXlJ+RQJrRuvmqcwF/VwV1598YWxgPMvRxcjFISSwkVHi4dWFjBDOUiaJC3c+MkM4Wx
+  klbn4+DJTh5OAVsJN4dGUhE4jNIqAqsff2J6i4oMTJmU9YQGxRgWSJY+db2UBsYQFHiV3H2li
+  7GDk4RAQ0JN5sMQKZySzQwiRxfNIHqG3LGSWufr4ENpRNQEfiwoK/rCA2p4CJxN6Hv8AGMQtY
+  SCx+c5AdwpaXaN46mxnElhBQkLgxaRULhF0p0frhF5StJnH13CbmCYxCs5DcNwvJqFlIRi1gZ
+  F7FaFqcWlSWWqRrrJdUlJmeUZKbmJmjl1ilm6iXWqpbnlpcomukl1herJdaXKxXXJmbnJOil5
+  dasokRGJspxWrCOxi/9P7VO8QoycGkJMr7edv7ZCG+pPyUyozE4oz4otKc1OJDjDIcHEoSvPc
+  UPyQLCRalpqdWpGXmANMETFqCg0dJhHe5DFCat7ggMbc4Mx0idYpRUUqcV0wNKCEAksgozYNr
+  g6WmS4yyUsK8jAwMDEI8BalFuZklqPKvGMU5GJWEeaOUgabwZOaVwE1/BbSYCWjxAua3IItLE
+  hFSUg1MobfmRjtl6ss5zLo9Nyc0cu633adu3+GYHGJUwTq5f/65e9IyihYMD9h9VGKM/gUr1J
+  U8aj34IXzyqyjDvwYOi2bf1j9zmaNP7scqxYeRLAWFIR4/0vN9luXEmTVO//7QL+TsjV2rrps
+  +uX/80uzzEr8kBU7cWa054XT1/NC6Wdf+8Ly1ts3dzS9456HtrI5TQl/eP1pypPiSFkvpM61S
+  0Yq359inztoSzfaozU5mX2fxoezd/w4sZNuvvN35D+/bmJueWs5JBV57zxRmBNktvsUU1xRdf
+  aPu//aiWBkTO2sriairP++Xv3jhq/Wx9dmXeWf/3c2cMbn3x7Yt2zMfXt6y41irmqRV4MPd7y
+  acFFRiKc5INNRiLipOBAC6nf7+yAMAAA==
+X-Env-Sender: ruansy.fnst@fujitsu.com
+X-Msg-Ref: server-6.tower-565.messagelabs.com!1676683015!365172!1
+X-Originating-IP: [62.60.8.98]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.102.2; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 21012 invoked from network); 18 Feb 2023 01:16:56 -0000
+Received: from unknown (HELO n03ukasimr03.n03.fujitsu.local) (62.60.8.98)
+  by server-6.tower-565.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 18 Feb 2023 01:16:56 -0000
+Received: from n03ukasimr03.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTP id B8BF01B1;
+        Sat, 18 Feb 2023 01:16:55 +0000 (GMT)
+Received: from R01UKEXCASM223.r01.fujitsu.local (R01UKEXCASM223 [10.182.185.121])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTPS id AA0611AC;
+        Sat, 18 Feb 2023 01:16:55 +0000 (GMT)
+Received: from [10.167.201.2] (10.167.201.2) by
+ R01UKEXCASM223.r01.fujitsu.local (10.182.185.121) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.42; Sat, 18 Feb 2023 01:16:50 +0000
+Message-ID: <d5e5c50f-6d16-5a52-e79d-3578acdc1d92@fujitsu.com>
+Date:   Sat, 18 Feb 2023 09:16:43 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v10 2/3] fs: introduce super_drop_pagecache()
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-xfs@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <djwong@kernel.org>, <david@fromorbit.com>,
+        <dan.j.williams@intel.com>, <hch@infradead.org>,
+        <jane.chu@oracle.com>, <akpm@linux-foundation.org>
+References: <1676645312-13-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <1676645312-13-3-git-send-email-ruansy.fnst@fujitsu.com>
+ <Y++n53dzkCsH1qeK@casper.infradead.org>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+In-Reply-To: <Y++n53dzkCsH1qeK@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.201.2]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM223.r01.fujitsu.local (10.182.185.121)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,50 +97,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Tests that when RMFD_HUGEPAGE is specified, restrictedmem will be
-backed by Transparent HugePages.
 
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
----
- .../restrictedmem_hugepage_test.c             | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
 
-diff --git a/tools/testing/selftests/restrictedmem/restrictedmem_hugepage_test.c b/tools/testing/selftests/restrictedmem/restrictedmem_hugepage_test.c
-index 0d9cf2ced754..75283d68696f 100644
---- a/tools/testing/selftests/restrictedmem/restrictedmem_hugepage_test.c
-+++ b/tools/testing/selftests/restrictedmem/restrictedmem_hugepage_test.c
-@@ -180,6 +180,31 @@ TEST_F(reset_shmem_enabled, restrictedmem_fstat_shmem_enabled_always)
- 	close(mfd);
- }
- 
-+TEST(restrictedmem_invalid_flags)
-+{
-+	int mfd = memfd_restricted(99, NULL);
-+
-+	ASSERT_EQ(-1, mfd);
-+	ASSERT_EQ(EINVAL, errno);
-+}
-+
-+TEST_F(reset_shmem_enabled, restrictedmem_rmfd_hugepage)
-+{
-+	int mfd = -1;
-+	struct stat stat;
-+
-+	ASSERT_EQ(0, set_shmem_thp_policy("never"));
-+
-+	mfd = memfd_restricted(RMFD_HUGEPAGE, NULL);
-+	ASSERT_NE(-1, mfd);
-+
-+	ASSERT_EQ(0, fstat(mfd, &stat));
-+
-+	ASSERT_EQ(stat.st_blksize, get_hpage_pmd_size());
-+
-+	close(mfd);
-+}
-+
- TEST(restrictedmem_tmpfile_no_mount_path)
- {
- 	int mfd = memfd_restricted(RMFD_TMPFILE, NULL);
--- 
-2.39.2.637.g21b0678d19-goog
+在 2023/2/18 0:14, Matthew Wilcox 写道:
+> On Fri, Feb 17, 2023 at 02:48:31PM +0000, Shiyang Ruan wrote:
+>> -		invalidate_mapping_pages(inode->i_mapping, 0, -1);
+>> -		iput(toput_inode);
+>> -		toput_inode = inode;
+>> -
+>> -		cond_resched();
+>> -		spin_lock(&sb->s_inode_list_lock);
+>> -	}
+>> -	spin_unlock(&sb->s_inode_list_lock);
+>> -	iput(toput_inode);
+>> +	super_drop_pagecache(sb, invalidate_inode_pages);
+> 
+> I thought I explained last time that you can do this with
+> invalidate_mapping_pages() / invalidate_inode_pages2_range() ?
+> Then you don't need to introduce invalidate_inode_pages().
+> 
+>> +void super_drop_pagecache(struct super_block *sb,
+>> +	int (*invalidator)(struct address_space *))
+> 
+> void super_drop_pagecache(struct super_block *sb,
+> 		int (*invalidate)(struct address_space *, pgoff_t, pgoff_t))
+> 
+>> +		invalidator(inode->i_mapping);
+> 
+> 		invalidate(inode->i_mapping, 0, -1)
+> 
+> ... then all the changes to mm/truncate.c and filemap.h go away.
 
+Yes, I tried as you suggested, but I found that they don't have same 
+type of return value.
+
+int invalidate_inode_pages2_range(struct address_space *mapping,
+				  pgoff_t start, pgoff_t end);
+
+unsigned long invalidate_mapping_pages(struct address_space *mapping,
+		pgoff_t start, pgoff_t end);
+
+
+--
+Thanks,
+Ruan.
