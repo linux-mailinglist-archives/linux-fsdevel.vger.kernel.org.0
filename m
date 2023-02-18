@@ -2,84 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7306C69B8A1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 09:05:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C06069B8BA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 09:29:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbjBRIFl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Feb 2023 03:05:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50502 "EHLO
+        id S229628AbjBRI3m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Feb 2023 03:29:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjBRIFk (ORCPT
+        with ESMTP id S229460AbjBRI3l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Feb 2023 03:05:40 -0500
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B939241F1;
-        Sat, 18 Feb 2023 00:05:39 -0800 (PST)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 0D381C009; Sat, 18 Feb 2023 09:06:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676707562; bh=OAFcUBrsFSt/oLsR9EX7XJPu+XPQ3u8XJHEt8p0SO6k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BHd8YQX7F8Yb5vCd7Wz0fW+8gJYl0yPKGqWXeRSBmxrHzvCWMYCynq+HmxjibxaSq
-         CV/eZIjxmlmOskC0qyM+4ppyoxHlvTnL+Mk4RxHAv/8WqGDJtRN58qhrnwGHJ8sqme
-         ULClBf0mySrEau33jjTAweqRdxHPUUJMx50BGA4NxOHWluWruPNI2QkkZBCrgzeyev
-         FLpBxB4RfvC9aLGZDuAsCjEEUA+PcOjfmb2JF5+KvrXc8SUZ09yjsp/y0A+rTmYueZ
-         brZhlzYfnlFhSlLX55I92b8z0HsEPQEHa+z+rWXUqa9stwD65y72MsVpSPN8GTlHT/
-         /V9XWUNA+YfKQ==
+        Sat, 18 Feb 2023 03:29:41 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74E653B218;
+        Sat, 18 Feb 2023 00:29:40 -0800 (PST)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31I7l15E013923;
+        Sat, 18 Feb 2023 08:29:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : cc :
+ subject : in-reply-to : in-reply-to : references : date : message-id :
+ mime-version : content-type; s=pp1;
+ bh=/B1KfengwjDqZ4DY5Ku7JHkRAZJEEkM50wW+rCq75yY=;
+ b=Cakpu6X/2DFnNf7hvDmOCSoX2Kk6LqT5fkJ1gBgrfR6dSu/EyEDeg0nrRQRmY5zXowjf
+ EUYChvgTxdpk13pk4KIH6k0bLRuhQXqKw3UFXjHf+7qNE+se6mvOmNeuzKL/aj1VPOj3
+ VmXP1HjZ09uAua4DFs8nHqH4mnsmcrdILsOeChK6gDkmI5+DnhGX1G42xh+1yFaTcHpi
+ 1d2YfBWbeL9nmfhrNY0/E+HJq0t2IRCLStTGCrxYevz4Nu40FdyW3+Z5h3WpaTw7kHO8
+ w4QYPg2tpauSeyfZxENO/1XfXfHWwaoat59kY/fi6+kXRqDRn5/2dXGLIcoKh+fW8h72 AA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nttkc8gy4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 18 Feb 2023 08:29:16 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31I8S2rV002930;
+        Sat, 18 Feb 2023 08:29:16 GMT
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nttkc8gxr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 18 Feb 2023 08:29:16 +0000
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 31I2t4nT031088;
+        Sat, 18 Feb 2023 08:29:14 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+        by ppma01fra.de.ibm.com (PPS) with ESMTPS id 3ntpa68611-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 18 Feb 2023 08:29:14 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 31I8TBxs50004352
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 18 Feb 2023 08:29:11 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C3BCA2004D;
+        Sat, 18 Feb 2023 08:29:11 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9C45620040;
+        Sat, 18 Feb 2023 08:29:11 +0000 (GMT)
+Received: from localhost (unknown [9.171.4.125])
+        by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Sat, 18 Feb 2023 08:29:11 +0000 (GMT)
+From:   Alexander Egorenkov <egorenar@linux.ibm.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     dhowells@redhat.com, axboe@kernel.dk, david@redhat.com,
+        hch@infradead.org, hch@lst.de, hdanton@sina.com, jack@suse.cz,
+        jgg@nvidia.com, jhubbard@nvidia.com, jlayton@kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        logang@deltatee.com, viro@zeniv.linux.org.uk, willy@infradead.org,
+        Marc Hartmayer <mhartmay@linux.ibm.com>
+Subject: Re: [PATCH v14 08/17] splice: Do splice read from a file without
+ using ITER_PIPE
+In-Reply-To: <732891.1676670463@warthog.procyon.org.uk>
+In-Reply-To: 
+References: <87a61ckowk.fsf@oc8242746057.ibm.com>
+ <732891.1676670463@warthog.procyon.org.uk>
+Date:   Sat, 18 Feb 2023 09:29:11 +0100
+Message-ID: <87a61b9y20.fsf@oc8242746057.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 6U8DH4_SJ9EcGSWRq94cisg3kdYaZ3TG
+X-Proofpoint-GUID: j-cDcyU2EI6447zlfftD4sjkH6r12ZRB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-18_03,2023-02-17_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 impostorscore=0 adultscore=0 malwarescore=0 spamscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302180070
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 53958C009;
-        Sat, 18 Feb 2023 09:05:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676707561; bh=OAFcUBrsFSt/oLsR9EX7XJPu+XPQ3u8XJHEt8p0SO6k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t4o7yZ0dQS0w/9C742EN6EZy3polnQtnWPv3DhkBLu2PWmWTPxvhXV6CYW+ZIKYQb
-         NMbERoFfPK3EXtTFk/TfePHaKmJCP6liTcAC9BFCDLd1GB9VPjJJiUPcxk4VsXO45p
-         QVvwvAi/PckB3N58LuzcOH7zR9qsb1TIh9qU9SYq8IEOH5TcJL5ZoaIEUTtF9nFDCc
-         sbwG+dvkVa2iMX/LGoB0ng1c6hrqpb/lHI0LnfJWd94IBRaKhFLTWdwm2jXvO8mFVa
-         rMfywRxcUD9mdfwm6PfGha0TxXZpANhmjO96P4GbCzumjfQb90K7bd+TQco2dF6wx5
-         3Ej7embvrv59Q==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id fb6f5d93;
-        Sat, 18 Feb 2023 08:05:32 +0000 (UTC)
-Date:   Sat, 18 Feb 2023 17:05:17 +0900
-From:   asmadeus@codewreck.org
-To:     Eric Van Hensbergen <ericvh@kernel.org>
-Cc:     v9fs-developer@lists.sourceforge.net, rminnich@gmail.com,
-        lucho@ionkov.net, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux_oss@crudebyte.com
-Subject: Re: [PATCH v4 07/11] 9p: Add additional debug flags and open modes
-Message-ID: <Y/CGvTCyhjFITkFs@codewreck.org>
-References: <20230124023834.106339-1-ericvh@kernel.org>
- <20230218003323.2322580-1-ericvh@kernel.org>
- <20230218003323.2322580-8-ericvh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230218003323.2322580-8-ericvh@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Van Hensbergen wrote on Sat, Feb 18, 2023 at 12:33:19AM +0000:
-> Add some additional debug flags to assist with debugging
-> cache changes.  Also add some additional open modes so we
-> can track cache state in fids more directly.
-> 
-> Signed-off-by: Eric Van Hensbergen <ericvh@kernel.org>
+Hi David,
 
-New debug flags can't hurt.
 
-For open modes: don't we send the mode verbatim to servers? won't they
-be confused?
-I guess I'll see in the next patch if you trim it down, but we might
-want to add a P9_MODE_MASK or something with values we're allowed to
-send and have client.c filter it out?
+David Howells <dhowells@redhat.com> writes:
 
--- 
-Dominique
+> Does the attached fix the problem for you?  The data being written into the
+> pipe needs to be limited to the size of the file.
+>
+> David
+>
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index c01bbcb9fa92..6362ac697a70 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2948,7 +2948,8 @@ ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
+>  			if (writably_mapped)
+>  				flush_dcache_folio(folio);
+>  
+> -			n = splice_folio_into_pipe(pipe, folio, *ppos, len);
+> +			n = min_t(loff_t, len, isize - *ppos);
+> +			n = splice_folio_into_pipe(pipe, folio, *ppos, n);
+>  			if (!n)
+>  				goto out;
+>  			len -= n;
+
+Yes, this change fixed the problem.
+
+Thanks
+Regards
+Alex
