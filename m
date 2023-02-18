@@ -2,79 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0919169B8D7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 09:57:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B0969B906
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 10:19:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229647AbjBRI5y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Feb 2023 03:57:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45786 "EHLO
+        id S229851AbjBRJTZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Feb 2023 04:19:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbjBRI5x (ORCPT
+        with ESMTP id S229630AbjBRJTW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Feb 2023 03:57:53 -0500
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFB1F6A5B;
-        Sat, 18 Feb 2023 00:57:52 -0800 (PST)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 526F0C009; Sat, 18 Feb 2023 09:58:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676710695; bh=ubkQvRzSSBkiGGklnpex2BU+jgWyII/4bCUelk7PNlY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E0lfYDsXGftZOMT3IXaaAj2YaCMEOhcT6/6mSmLZPpFsw2XR9KO5YsU5gshxN3dD6
-         9nRiufsd+S7v9xJKsOuj2wiQQz6H8OtLdSM6KzFSEzwali6Fwg3P9y1YlWLQ6ZTb6U
-         ngSBVNmVp5CKW3Gcc14Gbh1BB5TWQCHDC+DpjO57CrchsDZjtruG6T5HGamNyuR79J
-         1ERAi4xsMXkNtcKKUG+HLdDxx0QkuYNyBZK3HrcuJk/oTYQhbzr/xOVpeaGH9kAY6P
-         NUedCLScCw4AtTigM4gESPUrksCdQ16ZuRgolKNHb7+FpkBC2iqK7wd2BjY18mfqjx
-         lwTcEdvUo06TQ==
+        Sat, 18 Feb 2023 04:19:22 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC65FF745
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Feb 2023 01:18:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676711901;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R3BrmhBgQgWTKEiCYwN2vM7iyjzhHhTKrOpbAg9oclw=;
+        b=NMaqYUDvWpCClU8+OFzgitq0Fm85bZyi5Nge2JlF9NqhwxONkapZPxkr3OU7LptZAnWUZE
+        JsF2ZDfqKVvWMQoC6gjBsujJCR34ccAVjhbTtN5v9IMpXEgkpW/5SUgcp2CsEfe3DuvpRO
+        greQ6kl6xq7b5Nyz7Ka9cS+I/GUzXTU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-325-J1y4fjxvOBaocJW_UBOeNQ-1; Sat, 18 Feb 2023 04:18:17 -0500
+X-MC-Unique: J1y4fjxvOBaocJW_UBOeNQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 84A2980352D;
+        Sat, 18 Feb 2023 09:18:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F7A6492B00;
+        Sat, 18 Feb 2023 09:18:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <87a61b9y20.fsf@oc8242746057.ibm.com>
+References: <87a61b9y20.fsf@oc8242746057.ibm.com> <87a61ckowk.fsf@oc8242746057.ibm.com> <732891.1676670463@warthog.procyon.org.uk>
+To:     Alexander Egorenkov <egorenar@linux.ibm.com>
+Cc:     dhowells@redhat.com, axboe@kernel.dk, david@redhat.com,
+        hch@infradead.org, hch@lst.de, hdanton@sina.com, jack@suse.cz,
+        jgg@nvidia.com, jhubbard@nvidia.com, jlayton@kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        logang@deltatee.com, viro@zeniv.linux.org.uk, willy@infradead.org,
+        Marc Hartmayer <mhartmay@linux.ibm.com>
+Subject: Re: [PATCH v14 08/17] splice: Do splice read from a file without using ITER_PIPE
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1085543.1676711893.1@warthog.procyon.org.uk>
+Date:   Sat, 18 Feb 2023 09:18:13 +0000
+Message-ID: <1085544.1676711893@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 82DEAC009;
-        Sat, 18 Feb 2023 09:58:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676710694; bh=ubkQvRzSSBkiGGklnpex2BU+jgWyII/4bCUelk7PNlY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qCBPvYDUvj/yFub9mWEsBwW5RQthw4bAD68gxcyt4+AgoLY6bx9mBbjB+oYU7KdgZ
-         b+Gjh5deCVq0X6xqOsO5lGogGT4n56e408gDNUirqwwA0g3WMOBhdAOMsZ3kCCuCKc
-         OrYajWtesVodY4FSCjQzIwa0WWM/o0UhxNUbdCErCJh3pqEgamb6DU1e8sF7cS31f2
-         7Dlj53N+SnMCp/A9yIkKhUrStL0YwlXHynE+AfMBqLQMWyN/Y4D1Jcpkk9rwfUfIXt
-         BGIlqiEGixcf3jJvJkSU4KPLmxj4iELa4OHDBNNwO7TsJP8QZcsBVGrV0VPRnIslb2
-         72K92JpSD2jQQ==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 8c16b593;
-        Sat, 18 Feb 2023 08:57:46 +0000 (UTC)
-Date:   Sat, 18 Feb 2023 17:57:31 +0900
-From:   asmadeus@codewreck.org
-To:     Eric Van Hensbergen <ericvh@kernel.org>
-Cc:     v9fs-developer@lists.sourceforge.net, rminnich@gmail.com,
-        lucho@ionkov.net, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux_oss@crudebyte.com
-Subject: Re: [PATCH v4 02/11] fs/9p: Expand setup of writeback cache to all
- levels
-Message-ID: <Y/CS++GmLaVOzy7S@codewreck.org>
-References: <20230124023834.106339-1-ericvh@kernel.org>
- <20230218003323.2322580-1-ericvh@kernel.org>
- <20230218003323.2322580-3-ericvh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230218003323.2322580-3-ericvh@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Van Hensbergen wrote on Sat, Feb 18, 2023 at 12:33:14AM +0000:
-> If cache is enabled, make sure we are putting the right things
-> in place (mainly impacts mmap).  This also sets us up for more
-> cache levels.
+Alexander Egorenkov <egorenar@linux.ibm.com> wrote:
+
+> > +			n = min_t(loff_t, len, isize - *ppos);
+> > +			n = splice_folio_into_pipe(pipe, folio, *ppos, n);
+> >  			if (!n)
+> >  				goto out;
+> >  			len -= n;
 > 
-> Signed-off-by: Eric Van Hensbergen <ericvh@kernel.org>
+> Yes, this change fixed the problem.
 
-Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
+Thanks!
 
--- 
-Dominique
+David
+
