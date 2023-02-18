@@ -2,122 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB37369BBB2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 20:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39CE369BBB5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 20:59:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229568AbjBRT61 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Feb 2023 14:58:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39016 "EHLO
+        id S229636AbjBRT7r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Feb 2023 14:59:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbjBRT60 (ORCPT
+        with ESMTP id S229441AbjBRT7q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Feb 2023 14:58:26 -0500
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84F4F113D4;
-        Sat, 18 Feb 2023 11:58:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=C8XrL9CNyt1HtqjywXrajg6YUETn7qZRDBR+dZ8edfQ=; b=b/60iRsAukh4dG7k7Zp5PgccNg
-        zOrp2y6rl8UEEKsw5gVWHBlOWdwAMYiVXbhfg7ErOV6J/Bk54gZjM2wtazC+fjNZV2C8Qr/lII3rO
-        T3XR93FLw6ZqZE/216m2yb9dbIDvWMgGqIhqM/XK1HgduHPX+029kJ58y0rYjrGtbJg+JAnYjj4k8
-        2TMWU7IEa3iGzfsY1UgexiuEItdctYQqwoSEL8RDn4eIa71kh6qOv1CSMnfLWlatFp0lYmz8wRrvm
-        I3NBXYbU0uA8ZmFklItY22Vz9fvpfQ5ofcU9PexN23zgV65lYon4fFjoRlh2T4Ld2i/ScZfxAsNk5
-        nmlxjttttg9q2ZFDvGc/NA4cCztzK8+JdrXV0DThcy335V36V3BDcUaTfRgNYR53pIUETRbO2zviQ
-        +7BUwc1yCElc0GJxXoEqyrgaAKR9Z3fxd7R/epBEjAM0pidrn9cJcN03qEj8kTrgXfEsdu08rc8pJ
-        YdhbPjS/PAXllgh3O5TdFs0a5r8IoKVDXta8KStjc5toU3gll+Clun+CAp7I5hnI4vPTyTv1dPLsF
-        iuN+1qvFZq7L/QnsqAwu5ElnpZHv2cAy/AY2Hcqxdz1M9Z9BkxD45/yUV8s1DyU2+nKqivU/BfNZ0
-        sGmUC4v526CiaV3vjOoHVxR3ZKHXuCeAV7f7HghxM=;
-From:   Christian Schoenebeck <linux_oss@crudebyte.com>
-To:     Eric Van Hensbergen <ericvh@kernel.org>, asmadeus@codewreck.org
-Cc:     v9fs-developer@lists.sourceforge.net, rminnich@gmail.com,
-        lucho@ionkov.net, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 10/11] fs/9p: writeback mode fixes
-Date:   Sat, 18 Feb 2023 20:58:08 +0100
-Message-ID: <1983433.kCcYWV5373@silver>
-In-Reply-To: <Y/Ch8o/6HVS8Iyeh@codewreck.org>
-References: <20230124023834.106339-1-ericvh@kernel.org>
- <20230218003323.2322580-11-ericvh@kernel.org>
- <Y/Ch8o/6HVS8Iyeh@codewreck.org>
+        Sat, 18 Feb 2023 14:59:46 -0500
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D060F125A4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Feb 2023 11:59:45 -0800 (PST)
+Received: by mail-io1-f77.google.com with SMTP id m10-20020a0566022aca00b00745469852cfso507183iov.19
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Feb 2023 11:59:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pXywPTF4TFW1xlap95rMnZUmiADyD3ZS4ocYSqPDLgo=;
+        b=HxwHvnIb+/SSWBh3n+fPFW+KEwvLKJuPI1esDfj/oGB92YCDR4VYuRJ/M+GBviGZZB
+         dcoAFjaH94cO88iwlYB0xqywuLE0BumLPwAHtHgE0MNwXt0OHpY4suZI9gGEnbOEcEja
+         iN0xI4lCRDKusQY+PAZAhj72brq+HrcR4gI61x/keks+ZPg24+DkuwN/b5ZYXbaWJWbD
+         CyG5zFuzmalEZYlZ5THq1+TE+w1qE3q0GQYdOrF77kS3W5r2YnXGpqed6Bpsy/6Es4x8
+         HEFcQ6tYMZoEwfsFKH4EafNOAnacS2kSSjXuNXjdcycnj295I4gMczg0AcmXTsvwpLY8
+         atLA==
+X-Gm-Message-State: AO0yUKXOgPLY7+sAXY3gnyyDPYWRIa3Y+weW+bWTpMl/IIhCwQiJiuiq
+        IdohIKXPiLyHlygG5Do/yzzdBur/IVrTTWImarhn9ThKs15W
+X-Google-Smtp-Source: AK7set8q/Ao2UbhKr6G89mfVyUf9BSu4q128HL/jf53SxGxcEWKRVQlOF1/2bbtfXNsD9l6OQPs2yoYa2vtYmTDA1YYvPxtjdT45
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:1121:b0:3c5:139d:6097 with SMTP id
+ f1-20020a056638112100b003c5139d6097mr2505027jar.5.1676750385042; Sat, 18 Feb
+ 2023 11:59:45 -0800 (PST)
+Date:   Sat, 18 Feb 2023 11:59:45 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000013dee605f4fedf8b@google.com>
+Subject: [syzbot] [jfs?] KASAN: null-ptr-deref Read in txBegin
+From:   syzbot <syzbot+f1faa20eec55e0c8644c@syzkaller.appspotmail.com>
+To:     jfs-discussion@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Saturday, February 18, 2023 11:01:22 AM CET asmadeus@codewreck.org wrote:
-> Eric Van Hensbergen wrote on Sat, Feb 18, 2023 at 12:33:22AM +0000:
-> > This fixes several detected problems from preivous
-> > patches when running with writeback mode.  In
-> > particular this fixes issues with files which are opened
-> > as write only and getattr on files which dirty caches.
-> > 
-> > This patch makes sure that cache behavior for an open file is stored in
-> > the client copy of fid->mode.  This allows us to reflect cache behavior
-> > from mount flags, open mode, and information from the server to
-> > inform readahead and writeback behavior.
-> > 
-> > This includes adding support for a 9p semantic that qid.version==0
-> > is used to mark a file as non-cachable which is important for
-> > synthetic files.  This may have a side-effect of not supporting
-> > caching on certain legacy file servers that do not properly set
-> > qid.version.  There is also now a mount flag which can disable
-> > the qid.version behavior.
-> > 
-> > Signed-off-by: Eric Van Hensbergen <ericvh@kernel.org>
-> 
-> Didn't have time to review it all thoroughly, sending what I have
-> anyway...
-> 
-> > diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
-> > index 0e800b8f73cc..0c2c7a181d85 100644
-> > --- a/Documentation/filesystems/9p.rst
-> > +++ b/Documentation/filesystems/9p.rst
-> > @@ -79,18 +79,14 @@ Options
-> >  
-> >    cache=mode	specifies a caching policy.  By default, no caches are used.
-> >  
-> > -                        none
-> > -				default no cache policy, metadata and data
-> > -                                alike are synchronous.
-> > -			loose
-> > -				no attempts are made at consistency,
-> > -                                intended for exclusive, read-only mounts
-> > -                        fscache
-> > -				use FS-Cache for a persistent, read-only
-> > -				cache backend.
-> > -                        mmap
-> > -				minimal cache that is only used for read-write
-> > -                                mmap.  Northing else is cached, like cache=none
-> > +			=========	=============================================
-> > +			none		no cache of file or metadata
-> > +			readahead	readahead caching of files
-> > +			writeback	delayed writeback of files
-> > +			mmap		support mmap operations read/write with cache
-> > +			loose		meta-data and file cache with no coherency
-> > +			fscache		use FS-Cache for a persistent cache backend
-> > +			=========	=============================================
-> 
-> perhaps a word saying the caches are incremental, only one can be used,
-> and listing them in order?
-> e.g. it's not clear from this that writeback also enables readahead,
-> and as a user I'd try to use cache=readahead,cache=writeback and wonder
-> why that doesn't work (well, I guess it would in that order...)
+Hello,
 
-+1 on docs
+syzbot found the following issue on:
 
-The question was also whether to make these true separate options before being
-merged.
+HEAD commit:    82eac0c830b7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=108c3220c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=42ba4da8e1e6af9f
+dashboard link: https://syzkaller.appspot.com/bug?extid=f1faa20eec55e0c8644c
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12dea55f480000
 
-I give these patches a spin tomorrow.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/da7d342f68c6/disk-82eac0c8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bc04dc7d5c40/vmlinux-82eac0c8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9cbbc3b0e69a/bzImage-82eac0c8.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/40deef8f8496/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f1faa20eec55e0c8644c@syzkaller.appspotmail.com
+
+read_mapping_page failed!
+ERROR: (device loop0): txCommit: 
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:72 [inline]
+BUG: KASAN: null-ptr-deref in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+BUG: KASAN: null-ptr-deref in txBegin+0x131/0x6c0 fs/jfs/jfs_txnmgr.c:366
+Read of size 8 at addr 0000000000000040 by task syz-executor.0/5172
+
+CPU: 0 PID: 5172 Comm: syz-executor.0 Not tainted 6.2.0-rc8-syzkaller-00019-g82eac0c830b7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ print_report+0xe6/0x4f0 mm/kasan/report.c:420
+ kasan_report+0x13a/0x170 mm/kasan/report.c:517
+ kasan_check_range+0x283/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:72 [inline]
+ _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+ txBegin+0x131/0x6c0 fs/jfs/jfs_txnmgr.c:366
+ jfs_link+0x1ac/0x5e0 fs/jfs/namei.c:802
+ vfs_link+0x662/0x810 fs/namei.c:4529
+ do_linkat+0x5b4/0x9d0 fs/namei.c:4600
+ __do_sys_linkat fs/namei.c:4628 [inline]
+ __se_sys_linkat fs/namei.c:4625 [inline]
+ __x64_sys_linkat+0xdd/0xf0 fs/namei.c:4625
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7ff38288c0f9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff383575168 EFLAGS: 00000246 ORIG_RAX: 0000000000000109
+RAX: ffffffffffffffda RBX: 00007ff3829abf80 RCX: 00007ff38288c0f9
+RDX: 0000000000000004 RSI: 0000000020000040 RDI: 0000000000000004
+RBP: 00007ff3828e7ae9 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000020000080 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe4ad3d6bf R14: 00007ff383575300 R15: 0000000000022000
+ </TASK>
+==================================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
