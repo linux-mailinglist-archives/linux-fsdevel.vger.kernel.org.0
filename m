@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E88EE69B8C4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 09:38:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0BF869B8CB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 09:47:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbjBRIia (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Feb 2023 03:38:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37258 "EHLO
+        id S229555AbjBRIrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Feb 2023 03:47:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjBRIi3 (ORCPT
+        with ESMTP id S229463AbjBRIrS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Feb 2023 03:38:29 -0500
+        Sat, 18 Feb 2023 03:47:18 -0500
 Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B4612A6C3;
-        Sat, 18 Feb 2023 00:38:28 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A50B24988D;
+        Sat, 18 Feb 2023 00:47:17 -0800 (PST)
 Received: by nautica.notk.org (Postfix, from userid 108)
-        id 12C33C01F; Sat, 18 Feb 2023 09:38:51 +0100 (CET)
+        id 425D6C01C; Sat, 18 Feb 2023 09:47:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676709531; bh=6nGYl4ejl2yh1QxdThtP9LlS0BqHmw+97k9eUDdQAZw=;
+        t=1676710060; bh=zfYHy+wWsBlnsKVuoRnVIPGybUVspolwP7KgZ3LmG+c=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=v5C7J7gpZXN8ykRW8xUMfu42nIDzGdbo2sYRoYTUjNn8I4287KdBp+aMo8jaFn+a+
-         7IFiHtVATQnDHRL59eojmQLlX1uIKuqSWoQowGuO6n5xpFfjLC4R9q/t7gz46qFpi0
-         NVhoGiPHCoH7LI8iykaWtAxm41Pfse/ayRZfsJMuhk4WrZwZSljjz5eIYSIjct5xVm
-         FSepyZR2EQUH48Fv7iVyE9QLtHltOzeuhrDPw8j1XVA5kyVtvkslRLmG+q1jBn+CmT
-         NU6FnMuDpHWWqSQ0vfIpgbIDPR8qfAh2PT0AXDg6Oaa0t58xTtZpdMR3AvMOgBHpOU
-         didHFpfMD0C8A==
+        b=X7yvy2xm4r6SpRSR5HAPB9rS3RX5Vw+zfYarqN8k1rcWfXF0TNqY3rA6Skl0T501k
+         GMJYP9FRZn8E+rfLZ5jn+RYyi6vAJpZFOoYGbZeVySnUSMpPq55pKxXyrs2k8KjGAm
+         fzpSjvsS25N835AWoLMqWXC3blVPoPg9ckVia2cmMOQutMPD6Zqz8/f5MeWxcVYc/l
+         mb78RcpJI+ICML6CopdoCiJov8mglVTfsb8XREhsNHGSNznvuEMHOWbEYBEdXc/JWr
+         Ekz4PVkGEg7zhnWmshjoeSUlQzEroIzaglfXBcfmCt/QI/geItve1L/DL2Q9QZdU4v
+         m0BDZ0RzDSWnA==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 X-Spam-Level: 
@@ -33,79 +33,68 @@ X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 7251FC009;
-        Sat, 18 Feb 2023 09:38:47 +0100 (CET)
+        by nautica.notk.org (Postfix) with ESMTPS id A2DE0C009;
+        Sat, 18 Feb 2023 09:47:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676709529; bh=6nGYl4ejl2yh1QxdThtP9LlS0BqHmw+97k9eUDdQAZw=;
+        t=1676710059; bh=zfYHy+wWsBlnsKVuoRnVIPGybUVspolwP7KgZ3LmG+c=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dCXyXZ5HJplA4zxCLnbvG+69kgYc+r1fvx0ob7kNc+oeizj3bYMCk6yvb4xlBAj8l
-         BrLaETACkLt1iaFCCToVS99jS7dxr+abePVGxIxJSvaZnlAaCrWvoqkc+9mkxgEX8n
-         RPz1Nf0OcdFHmO0ItdHDT2xNOSF9CHWgM50ogjq2jIUwDABemUKTsHpsdO4XQWTMtJ
-         /QG3ld/BdNGIoETiygulWZ5eFWext6QyawMQHHOCZOYt91zmnvNkvSx3TEcvkf2w34
-         zVyDuq4LwU7jQUR44Ox3t0GJXvNPxy1BUwmHYzzNxVQqICeFxALVuCDoYO0vT052LS
-         3gpmU4+EEkylA==
+        b=mlQjgfGhvZFfYCtotPkc/EeA+rCka4LdbzDMcSM9SgMsW6pLMhYjuvJ+dit84Pmm3
+         Wo1CKyPEGcLABXPuMbhD7xckFkfJ95Q+8tQINB249VIMVwfubo91nTfp2M5tQhKUv3
+         4KL3HBOXEne00wQwWfnr1t4r9Y6/vAbGrGkO4DehTP6/E6BQsgaBiKxNVW29SkUISr
+         DUD72qsw59ZWrZtAwHg0QLm04c3rVRXVT16452qd1Cj5avRJHJcmFsSemBFEsh/5IA
+         oMcZsNgP0qbdGOyCNnTo1tI0PzzfcNO4Wj3dTXoLdPgdY1JfzUxjszNMgjRgfXxVrt
+         fXqHm7HwMHy3A==
 Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id eab71d22;
-        Sat, 18 Feb 2023 08:38:21 +0000 (UTC)
-Date:   Sat, 18 Feb 2023 17:38:06 +0900
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id dd33823b;
+        Sat, 18 Feb 2023 08:47:11 +0000 (UTC)
+Date:   Sat, 18 Feb 2023 17:46:56 +0900
 From:   asmadeus@codewreck.org
 To:     Eric Van Hensbergen <ericvh@kernel.org>
 Cc:     v9fs-developer@lists.sourceforge.net, rminnich@gmail.com,
         lucho@ionkov.net, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux_oss@crudebyte.com
-Subject: Re: [PATCH v4 10/11] fs/9p: writeback mode fixes
-Message-ID: <Y/CObgqBJT/xq3LU@codewreck.org>
+Subject: Re: [PATCH v4 08/11] fs/9p: Add new mount modes
+Message-ID: <Y/CQgOHjg0kmA1Vg@codewreck.org>
 References: <20230124023834.106339-1-ericvh@kernel.org>
  <20230218003323.2322580-1-ericvh@kernel.org>
- <20230218003323.2322580-11-ericvh@kernel.org>
+ <20230218003323.2322580-9-ericvh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230218003323.2322580-11-ericvh@kernel.org>
+In-Reply-To: <20230218003323.2322580-9-ericvh@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(not reviewed this yet, just a kerneldoc warning first before I forget)
+Eric Van Hensbergen wrote on Sat, Feb 18, 2023 at 12:33:20AM +0000:
+> Add some additional mount modes for cache management including
+> specifying directio as a mount option and an option for ignore
+> qid.version for determining whether or not a file is cacheable.
 
-Eric Van Hensbergen wrote on Sat, Feb 18, 2023 at 12:33:22AM +0000:
-> diff --git a/fs/9p/fid.c b/fs/9p/fid.c
-> index 805151114e96..8c1697619f3d 100644
-> --- a/fs/9p/fid.c
-> +++ b/fs/9p/fid.c
-> @@ -41,14 +40,24 @@ void v9fs_fid_add(struct dentry *dentry, struct p9_fid **pfid)
->  	*pfid = NULL;
->  }
->  
-> +static bool v9fs_is_writeable(int mode)
-> +{
-> +	if ((mode & P9_OWRITE) || (mode & P9_ORDWR))
-> +		return true;
-> +	else
-> +		return false;
-> +}
-> +
->  /**
->   * v9fs_fid_find_inode - search for an open fid off of the inode list
->   * @inode: return a fid pointing to a specific inode
-> + * @writeable: only consider fids which are writeable
+direct io is standard enough but ignore QV probably warrants a comment
+in the code and not just a word in the commit message.
 
-`make M=fs/9p W=1` complains about doc discreptancy here,
-writeable vs. want_writeable.
+I see you've added these in Documentation/filesystems/9p.rst in
+the "writeback mode fixes" -- I guess we can live with commits
+introducing options not being 100% coherent within the series (the
+implementation also comes in that fixes commit), but perhaps a '/*
+ignore qid.version */' comment in the enum?
 
-These are a pain, but let's make sure new ones don't creep in...
-(I just wish we could make W=1 the default for part of the subtree, but
-I didn't find an easy way to do so last time I checked -- perhaps you'll
-have more luck if you have time to look)
+> diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
+> index d90141d25d0d..48c7614c9333 100644
+> --- a/fs/9p/v9fs.h
+> +++ b/fs/9p/v9fs.h
+> @@ -37,7 +37,10 @@ enum p9_session_flags {
+>  	V9FS_ACCESS_USER	= 0x08,
+>  	V9FS_ACCESS_CLIENT	= 0x10,
+>  	V9FS_POSIX_ACL		= 0x20,
+> -	V9FS_NO_XATTR		= 0x40
+> +	V9FS_NO_XATTR		= 0x40,
+> +	V9FS_IGNORE_QV		= 0x80,
+> +	V9FS_DIRECT_IO		= 0x100,
+> +	V9FS_SYNC			= 0x200
 
->   * @uid: return a fid belonging to the specified user
-> + * @any: ignore uid as a selection criteria
->   *
->   */
-> -
-> -static struct p9_fid *v9fs_fid_find_inode(struct inode *inode, kuid_t uid)
-> +struct p9_fid *v9fs_fid_find_inode(struct inode *inode, bool want_writeable,
-> +	kuid_t uid, bool any)
+... And while we're here, indentation seems off on sync
 
 -- 
 Dominique
