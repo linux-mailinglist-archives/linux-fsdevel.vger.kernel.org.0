@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F0BF869B8CB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 09:47:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9AE069B8CE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 09:50:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229555AbjBRIrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Feb 2023 03:47:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40854 "EHLO
+        id S229668AbjBRIuP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Feb 2023 03:50:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbjBRIrS (ORCPT
+        with ESMTP id S229463AbjBRIuO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Feb 2023 03:47:18 -0500
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A50B24988D;
-        Sat, 18 Feb 2023 00:47:17 -0800 (PST)
+        Sat, 18 Feb 2023 03:50:14 -0500
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1008F4BE8E;
+        Sat, 18 Feb 2023 00:50:13 -0800 (PST)
 Received: by nautica.notk.org (Postfix, from userid 108)
-        id 425D6C01C; Sat, 18 Feb 2023 09:47:40 +0100 (CET)
+        id 997A6C01F; Sat, 18 Feb 2023 09:50:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676710060; bh=zfYHy+wWsBlnsKVuoRnVIPGybUVspolwP7KgZ3LmG+c=;
+        t=1676710235; bh=sXdImI4nkNQNTEPrwVQoa5Yw0dY8HCwd1vHRxqYPKJY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X7yvy2xm4r6SpRSR5HAPB9rS3RX5Vw+zfYarqN8k1rcWfXF0TNqY3rA6Skl0T501k
-         GMJYP9FRZn8E+rfLZ5jn+RYyi6vAJpZFOoYGbZeVySnUSMpPq55pKxXyrs2k8KjGAm
-         fzpSjvsS25N835AWoLMqWXC3blVPoPg9ckVia2cmMOQutMPD6Zqz8/f5MeWxcVYc/l
-         mb78RcpJI+ICML6CopdoCiJov8mglVTfsb8XREhsNHGSNznvuEMHOWbEYBEdXc/JWr
-         Ekz4PVkGEg7zhnWmshjoeSUlQzEroIzaglfXBcfmCt/QI/geItve1L/DL2Q9QZdU4v
-         m0BDZ0RzDSWnA==
+        b=QL+JBVm61ZHbZfpzS0z30/QJHPq2fa/YzotMPK8iFUJLStoBdU3CvTEX2jzEnYuyw
+         6z+Y096nExUAvDDhRe/fdtFaQJYXFvpllyfTWLbL2Yr97I3VlnxjKukaYrL6YwCr3l
+         yN7PWCPPBryhmUlfmN/dFxmI+JfDwDgj5yvTd096tuMOtF0hz092kED9hdixeyWaip
+         dgGQ+WsT4LMzOERnG3ibRkMKZDnhBNe02YYZGhNCLlrPm4wzqxOXXCf9gw3RRCTkap
+         H8IUTwS1+E4v+Wrjhc4+T/cN5lREMVLiBZC+XotGEfNUbbPPgkyEF2Zti42MqvzLzu
+         rozfzpcr/sK6w==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 X-Spam-Level: 
@@ -33,68 +33,53 @@ X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id A2DE0C009;
-        Sat, 18 Feb 2023 09:47:37 +0100 (CET)
+        by nautica.notk.org (Postfix) with ESMTPS id 14017C009;
+        Sat, 18 Feb 2023 09:50:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676710059; bh=zfYHy+wWsBlnsKVuoRnVIPGybUVspolwP7KgZ3LmG+c=;
+        t=1676710234; bh=sXdImI4nkNQNTEPrwVQoa5Yw0dY8HCwd1vHRxqYPKJY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mlQjgfGhvZFfYCtotPkc/EeA+rCka4LdbzDMcSM9SgMsW6pLMhYjuvJ+dit84Pmm3
-         Wo1CKyPEGcLABXPuMbhD7xckFkfJ95Q+8tQINB249VIMVwfubo91nTfp2M5tQhKUv3
-         4KL3HBOXEne00wQwWfnr1t4r9Y6/vAbGrGkO4DehTP6/E6BQsgaBiKxNVW29SkUISr
-         DUD72qsw59ZWrZtAwHg0QLm04c3rVRXVT16452qd1Cj5avRJHJcmFsSemBFEsh/5IA
-         oMcZsNgP0qbdGOyCNnTo1tI0PzzfcNO4Wj3dTXoLdPgdY1JfzUxjszNMgjRgfXxVrt
-         fXqHm7HwMHy3A==
+        b=bzl1CnpZNMJWsCQVMYsRbq3nj3xhcmrEDd46AQZjNYKstgvhUqU5mnLsB09u/5Kr1
+         Bs9JG8rQBU/IOlCHxv6LLcWyK0HfNk/1lEG1su3KzncFwiIBRHsAzHbkCUOMChK6wV
+         xW9CpXh09lGoDMnXmGr8TcXy9bFxgw0uENfHiwFxYGKBPOacHo10AXGnYEkAykR9xy
+         IeuibZbKtpopP7VE05IsStciz+JQqmbxalu6Vf3Ris23cezj7Jbrc34bYBiqmE2QPX
+         c+WzICD5d7zcnPOTWBb5opd8D4ctI5VNpv1Rm5CSa8sXXXuYl6vexboUGwa4UA33Xo
+         cRAycGsYP0ojQ==
 Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id dd33823b;
-        Sat, 18 Feb 2023 08:47:11 +0000 (UTC)
-Date:   Sat, 18 Feb 2023 17:46:56 +0900
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 271fab5c;
+        Sat, 18 Feb 2023 08:50:05 +0000 (UTC)
+Date:   Sat, 18 Feb 2023 17:49:50 +0900
 From:   asmadeus@codewreck.org
 To:     Eric Van Hensbergen <ericvh@kernel.org>
 Cc:     v9fs-developer@lists.sourceforge.net, rminnich@gmail.com,
         lucho@ionkov.net, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux_oss@crudebyte.com
-Subject: Re: [PATCH v4 08/11] fs/9p: Add new mount modes
-Message-ID: <Y/CQgOHjg0kmA1Vg@codewreck.org>
+Subject: Re: [PATCH v4 09/11] fs/9p: fix error reporting in v9fs_dir_release
+Message-ID: <Y/CRLskZ7QOROVWk@codewreck.org>
 References: <20230124023834.106339-1-ericvh@kernel.org>
  <20230218003323.2322580-1-ericvh@kernel.org>
- <20230218003323.2322580-9-ericvh@kernel.org>
+ <20230218003323.2322580-10-ericvh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230218003323.2322580-9-ericvh@kernel.org>
+In-Reply-To: <20230218003323.2322580-10-ericvh@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Van Hensbergen wrote on Sat, Feb 18, 2023 at 12:33:20AM +0000:
-> Add some additional mount modes for cache management including
-> specifying directio as a mount option and an option for ignore
-> qid.version for determining whether or not a file is cacheable.
+Eric Van Hensbergen wrote on Sat, Feb 18, 2023 at 12:33:21AM +0000:
+> Checking the p9_fid_put value allows us to pass back errors
+> involved if we end up clunking the fid as part of dir_release.
+> 
+> This can help with more graceful response to errors in writeback
+> among other things.
 
-direct io is standard enough but ignore QV probably warrants a comment
-in the code and not just a word in the commit message.
+That is good!
 
-I see you've added these in Documentation/filesystems/9p.rst in
-the "writeback mode fixes" -- I guess we can live with commits
-introducing options not being 100% coherent within the series (the
-implementation also comes in that fixes commit), but perhaps a '/*
-ignore qid.version */' comment in the enum?
+Note if there are other refs we won't see any error :/ But I think we
+should check p9_fid_put return value way more often, even if all we do
+with it is print a warning at some debug level for context.
 
-> diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
-> index d90141d25d0d..48c7614c9333 100644
-> --- a/fs/9p/v9fs.h
-> +++ b/fs/9p/v9fs.h
-> @@ -37,7 +37,10 @@ enum p9_session_flags {
->  	V9FS_ACCESS_USER	= 0x08,
->  	V9FS_ACCESS_CLIENT	= 0x10,
->  	V9FS_POSIX_ACL		= 0x20,
-> -	V9FS_NO_XATTR		= 0x40
-> +	V9FS_NO_XATTR		= 0x40,
-> +	V9FS_IGNORE_QV		= 0x80,
-> +	V9FS_DIRECT_IO		= 0x100,
-> +	V9FS_SYNC			= 0x200
+Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
 
-... And while we're here, indentation seems off on sync
-
--- 
+--
 Dominique
