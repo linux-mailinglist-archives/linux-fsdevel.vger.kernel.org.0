@@ -2,102 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A2B469B65A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 00:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D91B69B702
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 01:44:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbjBQXO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Feb 2023 18:14:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35148 "EHLO
+        id S229974AbjBRAnw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Feb 2023 19:43:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229952AbjBQXO4 (ORCPT
+        with ESMTP id S229872AbjBRAnu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Feb 2023 18:14:56 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB00A149B6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 15:14:29 -0800 (PST)
+        Fri, 17 Feb 2023 19:43:50 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6373218ABF;
+        Fri, 17 Feb 2023 16:43:13 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 04873B82EB1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 23:13:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B85EC433A0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 23:13:28 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A1ADF6207E;
+        Sat, 18 Feb 2023 00:33:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2611BC433EF;
+        Sat, 18 Feb 2023 00:33:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676675608;
-        bh=007Ju5hmo469I+GLbhKmQyFOblRRKqP7+IKJhGVg3Bc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FVQuLHu9su+8MtuqreGX0M6eUP2draqAXJj4M0+8pCp7wP3cq/lR7ACHIf24dTWkq
-         b+prnybkvEZUYcirmWUlld+/8oqr6Nlbu01GGr+WwVByKApBo1afHnsziIFQI2erWf
-         EGwGBTF+S6LSfMq241TKKmHuZRPX6qF35zA6vNp9ovpCBLGLSuQb95HK4Pn/rKOk+N
-         Q29erYenPL3+a3yt35AFu9AbVpoMWykSXPezSdlvTG0r5dcYRXTe3mPJC9QqOkNZ6+
-         ArzBr6bVo48aEYAhQoN4OGqbh5dK+dGwwlaEtAELclY4hqR6CWmZhFUEuGC2Xr7W+S
-         OAFm4QbGrDmsw==
-Received: by mail-ed1-f43.google.com with SMTP id h14so10230469edz.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 15:13:28 -0800 (PST)
-X-Gm-Message-State: AO0yUKWnY8/Vp1uxcxWs83OXhGLKNzDAm1y31vOF/oiy03NNBk1+Qwup
-        jr/VxEtnmXrDV7aypDmUGldxM42WDxYXLF7WNfOP5g==
-X-Google-Smtp-Source: AK7set8/bNsrYafbYm0zAE3nFVOlai7VLZ8imlSdGrFod1cdz9z2k4ibd74H3rjwb0A7aOD2eNsBGzV5MLYpkJRFYLE=
-X-Received: by 2002:a17:907:6c14:b0:8ae:cb48:3c80 with SMTP id
- rl20-20020a1709076c1400b008aecb483c80mr5175474ejc.7.1676675606807; Fri, 17
- Feb 2023 15:13:26 -0800 (PST)
+        s=k20201202; t=1676680424;
+        bh=lXhsoutPECxKV3nX3JhNGjme2nqA5IIggiW3j7Todqo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GStguZfzTZmY9/0+uqzLErEw1TejVU0fhuxl//reMls8miLIU91W/7TLvimRuiGHf
+         XePD67lej6yLD5XJh0y7TNJJ1DSudwUpuk79+AwNgYZwwciuwJ6WUApJ18mfTlIaYO
+         UiGgS9G+zDI0voHtEpJb8EaOu3t1lKkz8v8RQJssPykqXwao9fSskaKKxH+Lr+Rl7F
+         ctqFm79kJvDFnWfuB5KNEX1ZbGycAgjELErU7MSo8Ye0IQ/XoAgpbc6SklW66MF1Ig
+         UqUq6UcEKHFcB4qMiIqed9Y0FJ6S2Tsob64qOAm1L9GprL5YU+4Px2CizqSnt82M0d
+         3U9q1K7lXvdQQ==
+From:   Eric Van Hensbergen <ericvh@kernel.org>
+To:     v9fs-developer@lists.sourceforge.net, asmadeus@codewreck.org,
+        rminnich@gmail.com, lucho@ionkov.net
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux_oss@crudebyte.com, Eric Van Hensbergen <ericvh@kernel.org>
+Subject: [PATCH v4 00/11] Performance fixes for 9p filesystem
+Date:   Sat, 18 Feb 2023 00:33:12 +0000
+Message-Id: <20230218003323.2322580-1-ericvh@kernel.org>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20230124023834.106339-1-ericvh@kernel.org>
+References: <20230124023834.106339-1-ericvh@kernel.org>
 MIME-Version: 1.0
-References: <20230210061953.GC2825702@dread.disaster.area> <Y+oCBnz2nLtXrz7O@gondor.apana.org.au>
- <CALCETrXKkZw3ojpmTftur1_-dEi6BOo9Q0cems_jgabntNFYig@mail.gmail.com> <Y+riPviz0em9L9BQ@gondor.apana.org.au>
-In-Reply-To: <Y+riPviz0em9L9BQ@gondor.apana.org.au>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 17 Feb 2023 15:13:14 -0800
-X-Gmail-Original-Message-ID: <CALCETrXr8vRPqEjhSg7=adQcM7OfWs_+fn2xP5OQeLXAaLzHHQ@mail.gmail.com>
-Message-ID: <CALCETrXr8vRPqEjhSg7=adQcM7OfWs_+fn2xP5OQeLXAaLzHHQ@mail.gmail.com>
-Subject: Re: copy on write for splice() from file to pipe?
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        torvalds@linux-foundation.org, metze@samba.org, axboe@kernel.dk,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, samba-technical@lists.samba.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Feb 13, 2023, at 5:22 PM, Herbert Xu <herbert@gondor.apana.org.au> wro=
-te:
->
-> =EF=BB=BFOn Mon, Feb 13, 2023 at 10:01:27AM -0800, Andy Lutomirski wrote:
->>
->> There's a difference between "kernel speaks TCP (or whatever)
->> correctly" and "kernel does what the application needs it to do".
->
-> Sure I get where you are coming from.  It's just that the other
-> participants in the discussion were thinking of stability for the
-> sake of TCP (or TLS or some other protocol the kernel implements)
-> and that simply is a non-issue.
+This is the fourth version of a patch series which adds a number
+of features to improve read/write performance in the 9p filesystem.
+Mostly it focuses on fixing caching to help utilize the recently
+increased MSIZE limits and also fixes some problematic behavior
+within the writeback code.
 
-I can certainly imagine TLS or similar protocols breaking if data
-changes if the implementation is too clever and retransmission
-happens.  Suppose 2000 bytes are sent via splice using in-kernel TLS,
-and it goes out on the wire as two TCP segments.  The first segment is
-dropped but the second is received.  The kernel resends the first
-segment using different data.  This really ought to cause an integrity
-check at the far end to fail.
+All together, these show roughly 10x speed increases on simple
+file transfers over no caching for readahead mode.  Future patch
+sets will improve cache consistency and directory caching, which
+should benefit loose mode.
 
-I don't know if any existing kTLS is clever enough to regenerate
-outgoing data when it needs to retransmit a segment, but it would be
-an interesting optimization for serving static content over TLS.
+This iteration of the patch incorporates an important fix for
+writeback which uses a stronger mechanism to flush writeback on
+close of files and addresses observed bugs in previous versions of
+the patch for writeback, mmap, and loose cache modes.
 
+These patches are also available on github:
+https://github.com/v9fs/linux/tree/ericvh/for-next
+and on kernel.org:
+https://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs.git
 
+Tested against qemu, cpu, and diod with fsx, dbench, and postmark
+in every caching mode.
 
->
-> Having a better way to communicate completion to the user would be
-> nice.  The only way to do it right now seems to be polling with
-> SIOCOUTQ.
->
->
+I'm gonna definitely submit the first couple patches as they are
+fairly harmless - but would like to submit the whole series to the
+upcoming merge window.  Would appreciate reviews.
+
+Eric Van Hensbergen (11):
+  net/9p: Adjust maximum MSIZE to account for p9 header
+  fs/9p: Expand setup of writeback cache to all levels
+  fs/9p: Consolidate file operations and add readahead and writeback
+  fs/9p: Remove unnecessary superblock flags
+  fs/9p: allow disable of xattr support on mount
+  net/9p: fix bug in client create for .L
+  9p: Add additional debug flags and open modes
+  fs/9p: Add new mount modes
+  fs/9p: fix error reporting in v9fs_dir_release
+  fs/9p: writeback mode fixes
+  fs/9p: Fix revalidate
+
+ Documentation/filesystems/9p.rst |  26 ++--
+ fs/9p/fid.c                      |  49 +++-----
+ fs/9p/fid.h                      |  33 ++++-
+ fs/9p/v9fs.c                     |  49 +++++---
+ fs/9p/v9fs.h                     |  10 +-
+ fs/9p/v9fs_vfs.h                 |   4 -
+ fs/9p/vfs_addr.c                 |  24 ++--
+ fs/9p/vfs_dentry.c               |   3 +-
+ fs/9p/vfs_dir.c                  |  10 +-
+ fs/9p/vfs_file.c                 | 205 +++++++------------------------
+ fs/9p/vfs_inode.c                | 102 +++++++--------
+ fs/9p/vfs_inode_dotl.c           |  69 ++++++-----
+ fs/9p/vfs_super.c                |  28 +++--
+ include/net/9p/9p.h              |   5 +
+ net/9p/client.c                  |   8 +-
+ 15 files changed, 284 insertions(+), 341 deletions(-)
+
+--
+2.37.2
+
