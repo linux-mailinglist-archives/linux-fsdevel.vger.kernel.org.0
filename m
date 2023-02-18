@@ -2,93 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BCF3969BBE0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 21:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF1DB69BD7A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 23:16:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjBRUgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Feb 2023 15:36:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54738 "EHLO
+        id S229572AbjBRWQY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Feb 2023 17:16:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjBRUgK (ORCPT
+        with ESMTP id S229510AbjBRWQX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Feb 2023 15:36:10 -0500
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48CCE144B3;
-        Sat, 18 Feb 2023 12:36:09 -0800 (PST)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id BAC1EC009; Sat, 18 Feb 2023 21:36:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676752591; bh=/pFwTlz4AiDVvxjY6gJ7Ns3KKC9mALcI1mGQLAJfu0k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TCr+rnIlmqlEC+mbn65lqO+j/k6eE256kccNfwENTqhC5ZvRSBDrhRtsRVm7pm5I0
-         ZyIOFV8PtwmBzCEgkAC771iNgrotw8vFMlOiXgYbDSjiuIzic7jziilDYcAwnbgHUI
-         77W1L6GR5FGjxj3dK70BkV0ROn0xXAvYgLhXupQJdGak/fWhcPe+J+VJKlIpDOxFZm
-         1Vjgvp/0UP8HAxk5cbXLXWJhOSIA3K3fyWraM21DR2vz1ElgEY8bfI/0h7jrsll4C/
-         eT/G4FJSHV3o8ImK/gGhy7r4OuH2ZpnkyZhAPpQHrARfgCQH5CVuwvSHexCHZIOKHC
-         H1aGYaFD8Nrgg==
+        Sat, 18 Feb 2023 17:16:23 -0500
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EA6811E92
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Feb 2023 14:16:22 -0800 (PST)
+Received: by mail-il1-f197.google.com with SMTP id b15-20020a92db0f000000b003033a763270so747647iln.19
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Feb 2023 14:16:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aHsGASxn4uSpXV+2HTVe0iufvQ5emn00jv5p2JD41NQ=;
+        b=NcHgaCQfCgWVzRULJwyTVseRe2Z3l2Ha8JKp6lAbMJkhatvUM76gALa+umB6/1Rq0+
+         5glMdjhQKZyqSyTniviYV0dB4qJutKGeijlBq5vbs4uHGlFEGFLSSK37zMJREeS6N9iY
+         9lCIaRWDW6Z/NGb9L2K2Yt9BU4IPpVSlV/APsi6WKoRhIU1RCuBv6QHgorwrCHTM7q6v
+         wIBb+BpwMPcOUI5YFuNLFVhKBtzXzkae2ry4BtfOBeyzUvNTvAkghH76pNayMhp4BMZz
+         kBIgJ8woO3GF67FTTxnrtcv6KoUWlmr8ez/ULgjGCKCB4QuOpGJh8dkWS46u7Z/QoHuq
+         786A==
+X-Gm-Message-State: AO0yUKWGw0xCqBMVcV0YMwMAZ/ZQHMK8wKGxZOUVG204HXMN2jXzL9tj
+        vS+aa/8IWbjBZPRLuti+yojzoU+JfRuHDw0KhreRFOQAKW6g
+X-Google-Smtp-Source: AK7set81YNapfqNQN/UzWAcnjhBZNW5cOTuUpKTrlryiSRsou7OkgLiS8ErPWr/uxepSxYs5OQH2sbSHGA092OPmq/y0k9QkOI3p
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:c:b0:718:b11d:a972 with SMTP id
+ b12-20020a056602000c00b00718b11da972mr1403521ioa.36.1676758581499; Sat, 18
+ Feb 2023 14:16:21 -0800 (PST)
+Date:   Sat, 18 Feb 2023 14:16:21 -0800
+In-Reply-To: <0000000000008f00f7058ad13ec8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009fddba05f500c785@google.com>
+Subject: Re: [syzbot] [net?] [ntfs3?] KMSAN: uninit-value in bcmp
+From:   syzbot <syzbot+d8b02c920ae8f3e0be75@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com, davem@davemloft.net,
+        edward.lo@ambergroup.io, glider@google.com, idosch@mellanox.com,
+        ivan.khoronzhuk@linaro.org, jiri@mellanox.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, ntfs3@lists.linux.dev, petrm@mellanox.com,
+        phind.uet@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id A4471C009;
-        Sat, 18 Feb 2023 21:36:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676752591; bh=/pFwTlz4AiDVvxjY6gJ7Ns3KKC9mALcI1mGQLAJfu0k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TCr+rnIlmqlEC+mbn65lqO+j/k6eE256kccNfwENTqhC5ZvRSBDrhRtsRVm7pm5I0
-         ZyIOFV8PtwmBzCEgkAC771iNgrotw8vFMlOiXgYbDSjiuIzic7jziilDYcAwnbgHUI
-         77W1L6GR5FGjxj3dK70BkV0ROn0xXAvYgLhXupQJdGak/fWhcPe+J+VJKlIpDOxFZm
-         1Vjgvp/0UP8HAxk5cbXLXWJhOSIA3K3fyWraM21DR2vz1ElgEY8bfI/0h7jrsll4C/
-         eT/G4FJSHV3o8ImK/gGhy7r4OuH2ZpnkyZhAPpQHrARfgCQH5CVuwvSHexCHZIOKHC
-         H1aGYaFD8Nrgg==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 2df64c9a;
-        Sat, 18 Feb 2023 20:36:02 +0000 (UTC)
-Date:   Sun, 19 Feb 2023 05:35:47 +0900
-From:   asmadeus@codewreck.org
-To:     Eric Van Hensbergen <ericvh@gmail.com>
-Cc:     Eric Van Hensbergen <ericvh@kernel.org>,
-        v9fs-developer@lists.sourceforge.net, rminnich@gmail.com,
-        lucho@ionkov.net, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux_oss@crudebyte.com
-Subject: Re: [PATCH v4 03/11] fs/9p: Consolidate file operations and add
- readahead and writeback
-Message-ID: <Y/E2o2/NmfTyfiM5@codewreck.org>
-References: <20230124023834.106339-1-ericvh@kernel.org>
- <20230218003323.2322580-1-ericvh@kernel.org>
- <20230218003323.2322580-4-ericvh@kernel.org>
- <Y/CZVEQPFFo0zMjo@codewreck.org>
- <CAFkjPTm909jFaEnpmSMBu-6uZnPBVyU_KqMFzWCwbDopT4jCAA@mail.gmail.com>
- <CAFkjPTmZB273pMkQiX1mcBb4XgM5oo8dHZqV-MSPuTKFrFPkSQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAFkjPTmZB273pMkQiX1mcBb4XgM5oo8dHZqV-MSPuTKFrFPkSQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Van Hensbergen wrote on Sat, Feb 18, 2023 at 10:19:47AM -0600:
-> ...of course, relooking at the functions in mm/filemap.c it seems like
-> I can probably just use filemap_fdatawrite
-> instead of having my own flush function since it basically sets up wbc
-> the same way....
+syzbot suspects this issue was fixed by commit:
 
-hmm, I was basing myself off file_write_and_wait_range that also calls
-file_check_and_advance_wb_err before returning, but the wait actually
-comes from fdatawrite in there...
+commit 4f1dc7d9756e66f3f876839ea174df2e656b7f79
+Author: Edward Lo <edward.lo@ambergroup.io>
+Date:   Fri Sep 9 01:04:00 2022 +0000
 
-So, right:
- - WB_SYNC is probably ok, but if we go that way let's use
-filemap_fdatawrite -- less things to think about :)
- - if we want any sort of error reporting
-file_check_and_advance_wb_err() is probably useful, at which point
-keeping the old function is just as good. That doesn't do any wait, just
-checks f_wb_err ... in a really complicated way... I don't want to have
-to think about.
+    fs/ntfs3: Validate attribute name offset
 
---
-Dominique
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=149cdbcf480000
+start commit:   b7b275e60bcd Linux 6.1-rc7
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2325e409a9a893e1
+dashboard link: https://syzkaller.appspot.com/bug?extid=d8b02c920ae8f3e0be75
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164c4a4b880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152bfbc9880000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs/ntfs3: Validate attribute name offset
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
