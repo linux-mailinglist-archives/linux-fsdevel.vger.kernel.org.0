@@ -2,81 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A029C69B890
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 08:52:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A813269B898
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Feb 2023 09:02:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbjBRHw0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Feb 2023 02:52:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44028 "EHLO
+        id S229820AbjBRICM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Feb 2023 03:02:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229801AbjBRHwZ (ORCPT
+        with ESMTP id S229591AbjBRICK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Feb 2023 02:52:25 -0500
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25A344FC98
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Feb 2023 23:52:25 -0800 (PST)
+        Sat, 18 Feb 2023 03:02:10 -0500
+X-Greylist: delayed 586 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 18 Feb 2023 00:02:09 PST
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E637A4DE2C;
+        Sat, 18 Feb 2023 00:02:09 -0800 (PST)
 Received: by nautica.notk.org (Postfix, from userid 108)
-        id 7EF81C01D; Sat, 18 Feb 2023 08:52:45 +0100 (CET)
+        id 6ED44C01F; Sat, 18 Feb 2023 09:02:32 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676706765; bh=fROapFjKhE+vxFkAOe21o2IY0fvbpMlTcgsaDuyTXTA=;
+        t=1676707352; bh=xnzLbTiXqlMf+/EQqFeN+eC4zTGzFsvB7LNLEwOsaew=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KQoazwGaf00xHDeJJ2w63lcvhrJJY/GnP2k1wl5qGZ+CSqUjOQIjA2HXVugwImUrd
-         3J7maTAVQYZWvLDmmCdpco9BJvVWsx530+tPvl7zx7FHpD9lpQB3NpynmTvYOkoG9J
-         6t8DKQyPKmEEjFGLeDB++RsSOGXd8DU8es4KV5AulKC6MCEUVnjNEI/rkHzPzE/YuY
-         DLcXqJJPMcrKR5P3Sylvar1KH0VRU5sUDdHtC5mRRvEQ5+s4+7B/TQQ/cZpwcAggWg
-         2J38CLRYTJ09x8LfeG+TyRFPUeXhawjGExtfgySez6fAjxvAWcK2FjP3JcVp4omUnS
-         PFh8LqboctC8w==
+        b=TWObbccqUVwnrnZKbKh6ZOWPmxNbmmXFuJKxCQJiUCfwN4dIx+u4amdec2aV7ZcBU
+         Ng9jlkp7i3ijPeMF09zSK2caIBvZ97y3k7qafOTwLJX9d2xrUXxyxs/u5DsWbtXySG
+         EHatYpEc/Fjo+BGutf9PWyR930b69g0TEJrc7xTEUMggcZdvphhm3JRNbrbaNb5j+s
+         /faOD2oi7lMzHvqTFevkcWxd+pUp/nme98TniQA3a0FJMo+nw2mQZQ9/ZaOrko4Tsp
+         APT5By8dB71S/Uso2uta8uPWyInsdGgCteTP9EFla34+k9LXgWIG79d5+7CvKF3w6c
+         twOZbmaXWZBuw==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        autolearn=ham autolearn_force=no version=3.4.6
 Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 1D974C009;
-        Sat, 18 Feb 2023 08:52:41 +0100 (CET)
+        by nautica.notk.org (Postfix) with ESMTPS id ECF36C009;
+        Sat, 18 Feb 2023 09:02:28 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1676706764; bh=fROapFjKhE+vxFkAOe21o2IY0fvbpMlTcgsaDuyTXTA=;
+        t=1676707351; bh=xnzLbTiXqlMf+/EQqFeN+eC4zTGzFsvB7LNLEwOsaew=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kp2dJ0cTkLZeU2PanQyiK8g376dUUACCdnM5CEq2GVZStTBzbs12bxBBIyQYxH9pf
-         jKEp4pcbcg+hmm0nImA4D+Ns3LbOUwOsQ7Ix5UJ2/cnDwZe0G4qHnNgQ6/PC/8E3oo
-         OvW5QoaWRvmop0E9icHVWRasO6Lky4lSqwKWE7ttxunpqyhgCu62l8bQeNFs6T8Mvy
-         dQnVNraigTIVS1cyq2pOwG34j+1cEbvnDjOEqNlZRug1+MhsdpLHV7YK7L2vFvX6pK
-         59zbSGunPmAy55LVpD9JDZL//7vlGCaO+/qoAJwEat9eG9tvK/pm+xncR2ngBwOCTI
-         0LNndMn9B0pzQ==
+        b=A7LOd713p3DcFe5glsQv0d5pUSxWT7E4CabcHHS5oRu8saRN/ArmdYQHWLhtYXxuG
+         rvwtEuwJXHQdPNVeT5XEeVR+NktSxUeqXiKpnusdCH68d2PL52XiVQq0yPSfyhq0OK
+         pjc+Dctu2F+XfM2JN9EGd+n36OaU7qV1lFjIsKMRYil9SaX205YsEP2v4ZvNqG1Agx
+         YO7mC17LhFaTKEJC/NnB/fYCUHI17W+vMrD4xE2ohxEO269duy46f5FTAE+EkzWUQ0
+         OEroBfYuWUpZErsQvmwzUdLEQyYW5WLc2Khy7o14oBhwIZ6RJr1YdStialfiaC2U21
+         sbeoRMQmMnh5g==
 Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id b6aa872e;
-        Sat, 18 Feb 2023 07:52:15 +0000 (UTC)
-Date:   Sat, 18 Feb 2023 16:52:00 +0900
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id a6e04029;
+        Sat, 18 Feb 2023 08:02:02 +0000 (UTC)
+Date:   Sat, 18 Feb 2023 17:01:47 +0900
 From:   asmadeus@codewreck.org
 To:     Eric Van Hensbergen <ericvh@kernel.org>
 Cc:     v9fs-developer@lists.sourceforge.net, rminnich@gmail.com,
         lucho@ionkov.net, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux_oss@crudebyte.com
-Subject: Re: [PATCH v4 05/11] fs/9p: allow disable of xattr support on mount
-Message-ID: <Y/CDoEvgmLNbhZw7@codewreck.org>
+Subject: Re: [PATCH v4 06/11] net/9p: fix bug in client create for .L
+Message-ID: <Y/CF64nDuhoJtCmj@codewreck.org>
 References: <20230124023834.106339-1-ericvh@kernel.org>
  <20230218003323.2322580-1-ericvh@kernel.org>
- <20230218003323.2322580-6-ericvh@kernel.org>
+ <20230218003323.2322580-7-ericvh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230218003323.2322580-6-ericvh@kernel.org>
+In-Reply-To: <20230218003323.2322580-7-ericvh@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Van Hensbergen wrote on Sat, Feb 18, 2023 at 12:33:17AM +0000:
-> xattr creates a lot of additional messages for 9p in
-> the current implementation.  This allows users to
-> conditionalize xattr support on 9p mount if they
-> are on a connection with bad latency.  Using this
-> flag is also useful when debugging other aspects
-> of 9p as it reduces the noise in the trace files.
+Eric Van Hensbergen wrote on Sat, Feb 18, 2023 at 12:33:18AM +0000:
+> We are supposed to set fid->mode to reflect the flags
+> that were used to open the file.  We were actually setting
+> it to the creation mode which is the default perms of the
+> file not the flags the file was opened with.
 > 
 > Signed-off-by: Eric Van Hensbergen <ericvh@kernel.org>
 
+I was about to say fcreate has the same problem, but TCREATE's mode
+actually is the open mode (0 (called OREAD), 1 (OWRITE), 2 (ORDWR), and
+3 (OEXEC)) and dotl's create is called perm :|
+
+I guess that's where the mistake came from... Good catch!
+(and there's also p9_wstat's mode which also is the perms to make things
+more confusing...)
+
+
+Anyway,
 Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
 
---
+-- 
 Dominique
