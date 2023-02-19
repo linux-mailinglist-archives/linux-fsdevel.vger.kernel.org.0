@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 338C569C252
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Feb 2023 21:37:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D22B69C28A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Feb 2023 21:48:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231469AbjBSUha (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Feb 2023 15:37:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38628 "EHLO
+        id S231578AbjBSUsh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Feb 2023 15:48:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjBSUh3 (ORCPT
+        with ESMTP id S231562AbjBSUsg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Feb 2023 15:37:29 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A615317CF5;
-        Sun, 19 Feb 2023 12:37:28 -0800 (PST)
+        Sun, 19 Feb 2023 15:48:36 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26C26CDE3;
+        Sun, 19 Feb 2023 12:48:32 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 538B9B80502;
-        Sun, 19 Feb 2023 20:37:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C34D8C433EF;
-        Sun, 19 Feb 2023 20:37:25 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8779A60C5F;
+        Sun, 19 Feb 2023 20:48:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A891DC433D2;
+        Sun, 19 Feb 2023 20:48:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676839046;
-        bh=iTe0OcSqwl6lEg6Ylv8otlLHv1N+efZfZXNkztSLoIE=;
+        s=k20201202; t=1676839711;
+        bh=pPKAZ01/fvm24mHTwEi4mThE8LjTnMIHE3uOq5HgJ2A=;
         h=Date:From:To:Cc:Subject:From;
-        b=hmU/ReWdkFwW0Ws8IuBgL9dlSbZiG8GOMovVLCe1VgSrgTw2eVfp3YdZh5LygaKk/
-         e7cELOsXMXNURB5X0TzI9uKhx9m5AYwcvTnicERhaoh37Ahb/8B4nbxxMqOD6zuJsB
-         i2qIqQo4292V+2TtJNFoHwvEfq93Zf4T0nBfBRjVlSgNaAJ5m7a06myTDlhqB2GvaC
-         WnBvBaKkr0P1NatSWar24NbVNrymCicJKUowWm0hp4wJyDwYBE/0vDy7kRR6xinKry
-         NeVbEaQnp199+109ajvjgJgVZ+YKPhokDF6YsX4Vrxafyv7Zmb4CPV9vcRZzN8caiU
-         RKHIj0H2G1sYA==
-Date:   Sun, 19 Feb 2023 12:37:23 -0800
+        b=oSlao0JM5OYo6ACCVQAkZY5Q93HpYAmJpHW43ds1Q+OotpwLMAC3C9/0HAr7TFg3j
+         6iIScv4Z4TH0wEmaVQkCJdPjTX6g/FquCqjZVYcGvxDH07+RM8m6LDrUySsLDBPuqi
+         kx6b261+A/6sLtqlXctM6FSJAAIPJJv77aUq42aj0pCr5WDIc1kyWj5lhvOVYLkn0r
+         cUh/UmZQFRoSM6xwvOh9KAflYXuOznidceBSBU+f2ggZiirn5X6fhwfMXGWTtNFT8S
+         6TdKb8FV8xBjDKCf2hVWu6N3Wia/s6Wev2JmhPmVMgbPD47DmxWaULT29NvK4TcFeJ
+         G9byS+5xJ9d0A==
+Date:   Sun, 19 Feb 2023 12:48:29 -0800
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+Cc:     fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] fscrypt updates for 6.3
-Message-ID: <Y/KIgw8gAI/gtN8E@sol.localdomain>
+        linux-btrfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
+Subject: [GIT PULL] fsverity updates for 6.3
+Message-ID: <Y/KLHT3zaA0QFhVJ@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -53,37 +53,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 6d796c50f84ca79f1722bb131799e5a5710c4700:
+The following changes since commit 88603b6dc419445847923fcb7fe5080067a30f98:
 
-  Linux 6.2-rc6 (2023-01-29 13:59:43 -0800)
+  Linux 6.2-rc2 (2023-01-01 13:53:16 -0800)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
+  https://git.kernel.org/pub/scm/fs/fsverity/linux.git tags/fsverity-for-linus
 
-for you to fetch changes up to 097d7c1fcb8d4b52c62a36f94b8f18bc21a24934:
+for you to fetch changes up to 51e4e3153ebc32d3280d5d17418ae6f1a44f1ec1:
 
-  fscrypt: clean up fscrypt_add_test_dummy_key() (2023-02-07 22:30:30 -0800)
-
-----------------------------------------------------------------
-
-Simplify the implementation of the test_dummy_encryption mount option by
-adding the "test dummy key" on-demand.
+  fscrypt: support decrypting data from large folios (2023-01-28 15:10:12 -0800)
 
 ----------------------------------------------------------------
-Eric Biggers (5):
-      fscrypt: add the test dummy encryption key on-demand
-      ext4: stop calling fscrypt_add_test_dummy_key()
-      f2fs: stop calling fscrypt_add_test_dummy_key()
-      fs/super.c: stop calling fscrypt_destroy_keyring() from __put_super()
-      fscrypt: clean up fscrypt_add_test_dummy_key()
 
- fs/crypto/fscrypt_private.h |  4 ++++
- fs/crypto/keyring.c         | 26 +++++++-------------------
- fs/crypto/keysetup.c        | 23 +++++++++++++++++++++--
- fs/crypto/policy.c          |  3 +--
- fs/ext4/super.c             | 13 +------------
- fs/f2fs/super.c             |  6 ------
- fs/super.c                  |  1 -
- include/linux/fscrypt.h     |  9 ---------
- 8 files changed, 34 insertions(+), 51 deletions(-)
+Fix the longstanding implementation limitation that fsverity was only
+supported when the Merkle tree block size, filesystem block size, and
+PAGE_SIZE were all equal.  Specifically, add support for Merkle tree
+block sizes less than PAGE_SIZE, and make ext4 support fsverity on
+filesystems where the filesystem block size is less than PAGE_SIZE.
+
+Effectively, this means that fsverity can now be used on systems with
+non-4K pages, at least on ext4.  These changes have been tested using
+the verity group of xfstests, newly updated to cover the new code paths.
+
+Also update fs/verity/ to support verifying data from large folios.
+There's also a similar patch for fs/crypto/, to support decrypting data
+from large folios, which I'm including in this pull request to avoid a
+merge conflict between the fscrypt and fsverity branches.
+
+There will be a merge conflict in fs/buffer.c with some of the foliation
+work in the mm tree.  Please use the merge resolution from linux-next.
+
+----------------------------------------------------------------
+Eric Biggers (19):
+      fsverity: optimize fsverity_file_open() on non-verity files
+      fsverity: optimize fsverity_prepare_setattr() on non-verity files
+      fsverity: optimize fsverity_cleanup_inode() on non-verity files
+      fsverity: pass pos and size to ->write_merkle_tree_block
+      fsverity: remove debug messages and CONFIG_FS_VERITY_DEBUG
+      fsverity: use unsigned long for level_start
+      fsverity: simplify Merkle tree readahead size calculation
+      fsverity: store log2(digest_size) precomputed
+      fsverity: use EFBIG for file too large to enable verity
+      fsverity: replace fsverity_hash_page() with fsverity_hash_block()
+      fsverity: support verification with tree block size < PAGE_SIZE
+      fsverity: support enabling with tree block size < PAGE_SIZE
+      ext4: simplify ext4_readpage_limit()
+      f2fs: simplify f2fs_readpage_limit()
+      fs/buffer.c: support fsverity in block_read_full_folio()
+      ext4: allow verity with fs block size < PAGE_SIZE
+      fsverity.rst: update git repo URL for fsverity-utils
+      fsverity: support verifying data from large folios
+      fscrypt: support decrypting data from large folios
+
+ Documentation/filesystems/fscrypt.rst  |   4 +-
+ Documentation/filesystems/fsverity.rst |  96 +++++----
+ fs/btrfs/verity.c                      |  19 +-
+ fs/buffer.c                            |  72 +++++--
+ fs/crypto/bio.c                        |  10 +-
+ fs/crypto/crypto.c                     |  28 +--
+ fs/ext4/inode.c                        |   6 +-
+ fs/ext4/readpage.c                     |   3 +-
+ fs/ext4/super.c                        |   5 -
+ fs/ext4/verity.c                       |   6 +-
+ fs/f2fs/data.c                         |   3 +-
+ fs/f2fs/verity.c                       |   6 +-
+ fs/verity/Kconfig                      |   8 -
+ fs/verity/enable.c                     | 271 ++++++++++++--------------
+ fs/verity/fsverity_private.h           |  24 +--
+ fs/verity/hash_algs.c                  |  24 ++-
+ fs/verity/init.c                       |   1 -
+ fs/verity/open.c                       | 163 +++++++++-------
+ fs/verity/signature.c                  |   2 -
+ fs/verity/verify.c                     | 346 ++++++++++++++++++++++-----------
+ include/linux/fscrypt.h                |   9 +-
+ include/linux/fsverity.h               |  93 +++++++--
+ 22 files changed, 699 insertions(+), 500 deletions(-)
