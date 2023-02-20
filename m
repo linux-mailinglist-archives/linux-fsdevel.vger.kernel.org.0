@@ -2,74 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FD3869D4EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Feb 2023 21:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B55E69D54B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Feb 2023 21:51:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232776AbjBTUXs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Feb 2023 15:23:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43740 "EHLO
+        id S232065AbjBTUvs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Feb 2023 15:51:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232812AbjBTUXg (ORCPT
+        with ESMTP id S231708AbjBTUvr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Feb 2023 15:23:36 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDC3C212B7;
-        Mon, 20 Feb 2023 12:23:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E3D2560F45;
-        Mon, 20 Feb 2023 20:20:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B5248C4332A;
-        Mon, 20 Feb 2023 20:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676924405;
-        bh=yDMATgylroDX89FLnuj7maemArnbS7kpDPETWLDIMsM=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=maoR3C1i2vS8wKSF2j/l3ln+mzIcyOBhkJ/EFrIqe7fBxI4eunWsSLE9ODvp5bS67
-         A1tbr69jaugOuYmZERVUcwbfC3q1qFTuaTVMsIWZ6uvsfIhLYGTieKTuCRTgrCtK/K
-         MmDyFMblORFBnGRNx05non68DkEOpdtUFq/SWDJtUkaz+sfV5Ec4r2t7+bhVVvhUcn
-         mfpToaGKKcLZXYK40kvfkfG3Wp7YYZb+IeelwRVXm8jm5DD9IlGoSFYjnXFzPTGmnM
-         Hw58Qg+SplGea3S7GXTHLejHbmvu8oojmd2GCNJIl/SkehrEf3ybgrgw3vNp0PSshL
-         /H0GHXCziHVVg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9BFA1E68D23;
-        Mon, 20 Feb 2023 20:20:05 +0000 (UTC)
-Subject: Re: [GIT PULL] fs updates for v6.3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230217080755.1628990-1-brauner@kernel.org>
-References: <20230217080755.1628990-1-brauner@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230217080755.1628990-1-brauner@kernel.org>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/fs.v6.3
-X-PR-Tracked-Commit-Id: 47d586913f2abec4d240bae33417f537fda987ec
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ea5aac6fae94bff4756051b0503f86e31ef6808b
-Message-Id: <167692440563.19824.16071161083391467935.pr-tracker-bot@kernel.org>
-Date:   Mon, 20 Feb 2023 20:20:05 +0000
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 20 Feb 2023 15:51:47 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9C727ED5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Feb 2023 12:51:46 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id g1so9028762edz.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Feb 2023 12:51:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=w5FoV6iz+qsHEti0YmCKdm3et15hMt/LBUX5sGM07PY=;
+        b=ZLqCns8zkWPZ59uoG1MGmaVNWbez4ixf8sJg90IoueBTbTxz0Bnfiuoiou9/91WlyD
+         i7lqLNHl+s8TmNuMYOaCOqA9f2eeksCveWQM2FTm4DBO4M1f+Rog2dsGecxIpaXz0FfZ
+         elaiO9K4aT92O7YZaeEzVsw6+bgJaWsw3u7+M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w5FoV6iz+qsHEti0YmCKdm3et15hMt/LBUX5sGM07PY=;
+        b=ycKluZ8KFT54SlQb7gDPGtiO93i+0vvBQGxzrZrjrZur3jo7ljwAh50BiLHWK+zRc6
+         NWlDDK+RQlbur2NZdldwRBYhOAFOa1V9tR6O7XA0NBeA6Puoiqdtzd/7Tn12t0YTPnhM
+         Y4US4Qp0/t0O5P88LFV3m0R9wyoJ4tPoI1AKsz19uYCb/jkLYXQyeU+C3R/X/4J466/m
+         Z9QocFX5eGq51xG6sRTuLs7M42W4thaJQsOTbwls+8t4nkbrhe1SHE6wvYZC73orN6Ka
+         6mxllDi+yFIH4V7jdY0AdYEDDD63N97E34f/2LnAI1ul9+UwLJ6co+vmI/5rtF5uDR/+
+         V+Jg==
+X-Gm-Message-State: AO0yUKX0fRaLBoCr2h/ieKuXknd1IGnYQ2YpXSyzDssVZl/f2xBDsSi1
+        Ij8O2Puw+qPvFd5gyKoBd+68nySiuhfpBy5yIis=
+X-Google-Smtp-Source: AK7set/Pk1s27LXKQokphP3pTpiSG9RgyJyWhKQpy7+mTN9qhsF3qOINK5SBrZZPbd0gt4nT87SZkQ==
+X-Received: by 2002:a17:907:6d05:b0:8a9:e031:c49b with SMTP id sa5-20020a1709076d0500b008a9e031c49bmr11333580ejc.4.1676926304818;
+        Mon, 20 Feb 2023 12:51:44 -0800 (PST)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id fp1-20020a1709069e0100b008cda6560404sm2320273ejc.193.2023.02.20.12.51.44
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Feb 2023 12:51:44 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id da10so10503945edb.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Feb 2023 12:51:44 -0800 (PST)
+X-Received: by 2002:a17:906:b746:b0:88d:64e7:a2be with SMTP id
+ fx6-20020a170906b74600b0088d64e7a2bemr4936768ejb.15.1676926304040; Mon, 20
+ Feb 2023 12:51:44 -0800 (PST)
+MIME-Version: 1.0
+References: <20230217114342.vafa3sf7tm4cojh6@quack3>
+In-Reply-To: <20230217114342.vafa3sf7tm4cojh6@quack3>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 20 Feb 2023 12:51:26 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whwuQw=mP2G6qx9M-9GSNU5Ej-Y5E1RJ1Pq+PeCXYzLFQ@mail.gmail.com>
+Message-ID: <CAHk-=whwuQw=mP2G6qx9M-9GSNU5Ej-Y5E1RJ1Pq+PeCXYzLFQ@mail.gmail.com>
+Subject: Re: [GIT PULL] UDF and ext2 fixes
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Fri, 17 Feb 2023 09:07:55 +0100:
+On Fri, Feb 17, 2023 at 3:43 AM Jan Kara <jack@suse.cz> wrote:
+>
+>   * One fix to mpage_writepages() on which other udf fixes depend
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/fs.v6.3
+I've pulled this, and this doesn't look *wrong* per se, but it really
+didn't look like a bug in mpage_writepages() to me.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ea5aac6fae94bff4756051b0503f86e31ef6808b
+The bug seems to be clearly in the filesystem not returning a proper
+error code from its "->get_block()" function.
 
-Thank you!
+If the VFS layer asks for block creation, and the filesystem returns
+no error, but then a non-mapped result, that sounds like _clearly_ a
+filesystem bug to me.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Blaming mpage_writepages() seems entirely wrong.
+
+The extra sanity check in the vfs layer doesn't strike me as wrong, but ...
+
+Maybe it could have been a WARN_ON_ONCE() if "get_block(.., 1)"
+returns success with an unmapped result?
+
+            Linus
