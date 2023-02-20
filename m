@@ -2,599 +2,323 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13D8569C8C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Feb 2023 11:40:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A7F369CB4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Feb 2023 13:48:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbjBTKkT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Feb 2023 05:40:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60076 "EHLO
+        id S231723AbjBTMsY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Feb 2023 07:48:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230484AbjBTKkO (ORCPT
+        with ESMTP id S229679AbjBTMsW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Feb 2023 05:40:14 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B217FFF21;
-        Mon, 20 Feb 2023 02:39:37 -0800 (PST)
-Received: from [192.168.10.12] (unknown [39.45.217.110])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id BBB8D6602122;
-        Mon, 20 Feb 2023 10:39:02 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676889549;
-        bh=A5SWJcBOiszE435ZyZTYQc94hdz5af969yOVigYRG1s=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=KEchR26qWk2EtGE53k+cFdSfzdq1WJMY6G5DuDRy3xLGPgKQZoretp/d7RySPX9Rg
-         Jx1Kvy14voLagRCjBGXBSwAFM2ZV7mdY5NDfHSUDt7LEJdDzf5AZsE8GLpL+N46zq6
-         I6L4vE0pl2eChKEX5ocD+3/+5HqtAsa+MNge6WIOEhUkZufX8At+L0BVn85d9EoX07
-         JSFD7UMQY2n15Zqsmb07UrvfTMm3C/mM5zITrO2gtWxUYGZr2rmzrzkaWKoYdE/7Tm
-         rv9GfK80T93MxZRTCb6EAqYFQvMYr/u2T2NNACFvDpWwSmC3moabRsbvkom0oXSqx4
-         /+Ft/liwRgWiw==
-Message-ID: <05962e92-9d14-eaf9-2e0b-d683986c9d7f@collabora.com>
-Date:   Mon, 20 Feb 2023 15:38:58 +0500
+        Mon, 20 Feb 2023 07:48:22 -0500
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 899796195
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Feb 2023 04:48:08 -0800 (PST)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230220124805epoutp047c0dc228864b7be15428b1793305cb40~FiTJw05lg2212822128epoutp04T
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Feb 2023 12:48:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230220124805epoutp047c0dc228864b7be15428b1793305cb40~FiTJw05lg2212822128epoutp04T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1676897286;
+        bh=TA1po4dmHSG0OpaQURXypV1AF1U5/IyYzRr146C8W2U=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Ls4rzzoc9gdR5YV04k6RQhY4ZBkM0ULJmcPVLZVImXWeLEo6CbVQZ+8RMyO8x4Jd8
+         MfstZW4ckXZ+0XMAt37kz0e8SbkIhrbXBkZAaJd04zj02eh9e8uIaBE+GboSM+F2Hu
+         UPuMwnMLVCHs3YOGmNIXzz19Biwj72e844QyWUvs=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20230220124805epcas5p278212317737506b11d7ee38042f3743a~FiTJLjW0-3203132031epcas5p2v;
+        Mon, 20 Feb 2023 12:48:05 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4PL2Jg4XVgz4x9Pq; Mon, 20 Feb
+        2023 12:48:03 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        26.39.06765.30C63F36; Mon, 20 Feb 2023 21:48:03 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230220105423epcas5p4618b6fa4fadde27086180841be87638b~Fgv3yLYns2275622756epcas5p4R;
+        Mon, 20 Feb 2023 10:54:23 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230220105423epsmtrp165387f207e5da13ac0914dde680635aa~Fgv3w_xT62429224292epsmtrp1G;
+        Mon, 20 Feb 2023 10:54:23 +0000 (GMT)
+X-AuditID: b6c32a4b-20fff70000011a6d-78-63f36c03165f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        69.F9.17995.F5153F36; Mon, 20 Feb 2023 19:54:23 +0900 (KST)
+Received: from green5.sa.corp.samsungelectronics.net (unknown
+        [107.110.206.5]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230220105417epsmtip240792bb4071dc760fc5f37d77d2b4940~FgvyWnRW60747407474epsmtip2s;
+        Mon, 20 Feb 2023 10:54:17 +0000 (GMT)
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     bvanassche@acm.org, hare@suse.de, ming.lei@redhat.com,
+        damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+        joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v7 0/8] Implement copy offload support
+Date:   Mon, 20 Feb 2023 16:23:23 +0530
+Message-Id: <20230220105336.3810-1-nj.shetty@samsung.com>
+X-Mailer: git-send-email 2.35.1.500.gb896f729e2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
-        <emmir@google.com>, Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Nadav Amit <namit@vmware.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v10 3/6] fs/proc/task_mmu: Implement IOCTL to get and/or
- the clear info about PTEs
-Content-Language: en-US
-To:     Mike Rapoport <rppt@kernel.org>
-References: <20230202112915.867409-1-usama.anjum@collabora.com>
- <20230202112915.867409-4-usama.anjum@collabora.com>
- <Y+9SjpwS9LsRKQz0@kernel.org>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <Y+9SjpwS9LsRKQz0@kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0xbVRTH895rXwum861j2QXF1ZI5AYFWoNwKOM0IeQmbwx9oHJr6bJ/Q
+        Udqmrx1FZgTKL2uwDGHLihtDFuZAQVjZKNCxVJEBYXVjsDBEyACTjYwfw7gRAthHme6/z/3e
+        c873nnNz+JhwDQ/iq7VG2qClNGLcn3Ppl9C9EZhmWSl5fEoEWwZ+w2BhxRoGmyZsODyxuILB
+        1SEPBl3zNVw4dtWJwu7vK1F4oakXhV11Syjs3XiAw0r3KAJnR+wodN0Jh92ufg4c7vwOh7UN
+        szzo/taCwo6ZAgReWq3FYPPcAgdeu/Mc9Kz1cd/YRQ7fSiHtk0M46bRP8EjPn60ccnjIRLY1
+        foWTF899SXaN5eNkuWXeG1A8ySUXrozg5DeORoS8OJhHLre9QLbNPEBTnz2clZBJUyraIKK1
+        Sp1Krc1IFKe8q9iviJVJpBFSOYwTi7RUNp0oTjqQGpGs1nhHIBYdpTQmr5RKMYw46vUEg85k
+        pEWZOsaYKKb1Ko0+Rh/JUNmMSZsRqaWNr0klkldjvYGfZGX2VDWhele82VHq5OQjC+FWxI8P
+        iBgwfbwKY1lIdCFgbnC/FfH38kMEDCxN4L7DMgI6u25xrAh/M8N6TevTOxFQt8BmswcLCpZs
+        D7lsEE6Eg8ENPls1gPgDBc7BEDYGI6ZQUFt4DmEvdhAyUFxewmWZQ+wBjX9/vakLCDlYu3wW
+        95lFAdvkdp+8HfSfmuGwjBG7gaW9ZtMXEDV+wHrlJs/XThI4P+dCfbwD3O9zbOlB4J6tZItz
+        wIWqH3BfchEC7LftiO9iHygesGGsMUaEgpbOKJ8cDKoHmlGf8TZQvjqzVV8AOs484RDwYwv7
+        ZpYDweijgi0mQaWjaHNwQuJjUDZOVSC77U+1Y3+qHfv/xmcRrBEJpPVMdgbNxOqjtXTOf9+q
+        1GW3IZt7EJbSgdydWox0IygfcSOAj4kDBBuCZaVQoKJyP6cNOoXBpKEZNxLrHfFxLGinUudd
+        JK1RIY2RS2JkMlmMPFomFe8S7E3sVwqJDMpIZ9G0njY8yUP5fkH56Hh8dNDBWkfcWz0fToff
+        bpLnmo9gA69wHR+NOtfV3dLZ7pKT2GeUXjEyL5jhSY+d6alo7eY1m0LSFsfn84v+qjj263pe
+        WeUhUqm3h7551Fnvcb7nvmn2z27xmOvr0gMjpwtEDe0JK3iSzWoLlr9kKLZG5uzMnzgfkFQ4
+        VP/PeNzduLHmnILaly1565749W19vJDWn3JTC1UfjFQ77gffe/7y4RtXh9RGVbjEsnhyz/in
+        P8+XMlET+0aEfDPH9MXbZWlhUyeSewl1ysqR9vSM0+mS69XX17mPO0yPnlmZfD+5nf+75kaA
+        Iq0iBT1gNpX2S19MSDQ2iJjJg5VlBWJX2ztiDpNJScMwA0P9C1NXm8OQBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02RbUxSYRTH99zner3RyCu9PeCWG9UqLXqdPa3SXK3ueln6oZf1xZjcqUuI
+        QC2zkmLZohc1Wy5sWmQ0kV4kI0gloqzUkS3NpWXM0qyVYlGuVLSItfr2P7/zO2dnOzQUOEkR
+        nabI4FQKabqY4pHWB+LIeUmJvuQF333h+EbjI4iPFPghruzMp/C5gZ8QD7ubIa7rLwnB7U47
+        gWsNZwhcUVlP4JpLXwhcP9ZH4TOuNoB7XugJXNcRjWvrGkjccvcChcuMPaHYVaQlsK37MMDW
+        4TKIr3/ykvhJRwRu9j8OWTWVbWndwOo9boq16ztD2eY3VSTb4s5kLabjFHurPJetaddQ7Clt
+        /2/hqCeE9TpeUOzpahNgbzXlsD7LNNbS3UckhO3grZBx6WlZnGp+7E5e6r2zlYSybvm+6mN2
+        UgO80TpA04hZgnRPFDrAowWMDaBjpXkhOjDuNxcio/8hDOaJqGK0NzQoHSbQJYuDCAxTTDRq
+        GqMDfBLznkDuN29hoIBMP4FMXcY/myYyMejoqeBWkpmJTN9OgEDmM8uQ/85FKnjFfJTvCQ/i
+        cNRwvpsMYMjMQjdKBQEMmUikvV0CC0CY/j9L/8/S/2ddBNAEhJxSLU+RqxcqFym4vRK1VK7O
+        VKRIknfLLeDPk6OibKDWNCBxAYIGLoBoKJ7EH+P7kgV8mTR7P6fanaTKTOfULhBBk+Kp/Ge6
+        hiQBkyLN4HZxnJJT/e0S9DiRhjA8tXzcFPNyfZzGJyzeVhM66hW+/Znp25oELb0D/XvrRwbd
+        WeOTnY/eJ9zkxWvLRqy2Bk+rYeSso9lcrhqya0C7p2ib82OBY23c8FK3ZHNr+MnYVZ9TrorW
+        GRrzKo1Da665qkbNqZGF71KVEWsEuQd8eRNyFz8XOYe67kw2Wz/PqZYt6xVtmf56RmLCFJmx
+        rXh1zZzTPS/zOx8a4mcbiwYFVQ8K4ZerW8oL11WHya5n5bT/gF578aGB7U1a8GEwxpy9Y5Zw
+        itDR13glrn78nq/+2OkyWnw/w5qd9ryjzXZTtWR0ZUHXV9HcV5KedPnc+Mu+gzm284Zv5o3c
+        9n0lqzvEpDpVujAKqtTSX5YgUehTAwAA
+X-CMS-MailID: 20230220105423epcas5p4618b6fa4fadde27086180841be87638b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230220105423epcas5p4618b6fa4fadde27086180841be87638b
+References: <CGME20230220105423epcas5p4618b6fa4fadde27086180841be87638b@epcas5p4.samsung.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/17/23 3:10 PM, Mike Rapoport wrote:
-> On Thu, Feb 02, 2023 at 04:29:12PM +0500, Muhammad Usama Anjum wrote:
->> This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
->> the info about page table entries. The following operations are supported
->> in this ioctl:
->> - Get the information if the pages have been written-to (PAGE_IS_WRITTEN),
->>   file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
->>   (PAGE_IS_SWAPPED).
->> - Write-protect the pages (PAGEMAP_WP_ENGAGE) to start finding which
->>   pages have been written-to.
->> - Find pages which have been written-to and write protect the pages
->>   (atomic PAGE_IS_WRITTEN + PAGEMAP_WP_ENGAGE)
->>
->> To get information about which pages have been written-to and/or write
->> protect the pages, following must be performed first in order:
->> - The userfaultfd file descriptor is created with userfaultfd syscall.
->> - The UFFD_FEATURE_WP_ASYNC feature is set by UFFDIO_API IOCTL.
->> - The memory range is registered with UFFDIO_REGISTER_MODE_WP mode
->>   through UFFDIO_REGISTER IOCTL.
->> Then the any part of the registered memory or the whole memory region
->> can be write protected using the UFFDIO_WRITEPROTECT IOCTL or
->> PAGEMAP_SCAN IOCTL.
->>
->> struct pagemap_scan_args is used as the argument of the IOCTL. In this
->> struct:
->> - The range is specified through start and len.
->> - The output buffer of struct page_region array and size is specified as
->>   vec and vec_len.
->> - The optional maximum requested pages are specified in the max_pages.
->> - The flags can be specified in the flags field. The PAGEMAP_WP_ENGAGE
->>   is the only added flag at this time.
->> - The masks are specified in required_mask, anyof_mask, excluded_ mask
->>   and return_mask.
->>
->> This IOCTL can be extended to get information about more PTE bits. This
->> IOCTL doesn't support hugetlbs at the moment. No information about
->> hugetlb can be obtained. This patch has evolved from a basic patch from
->> Gabriel Krisman Bertazi.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->> Changes in v10:
->> - move changes in tools/include/uapi/linux/fs.h to separate patch
->> - update commit message
->>
->> Change in v8:
->> - Correct is_pte_uffd_wp()
->> - Improve readability and error checks
->> - Remove some un-needed code
->>
->> Changes in v7:
->> - Rebase on top of latest next
->> - Fix some corner cases
->> - Base soft-dirty on the uffd wp async
->> - Update the terminologies
->> - Optimize the memory usage inside the ioctl
->>
->> Changes in v6:
->> - Rename variables and update comments
->> - Make IOCTL independent of soft_dirty config
->> - Change masks and bitmap type to _u64
->> - Improve code quality
->>
->> Changes in v5:
->> - Remove tlb flushing even for clear operation
->>
->> Changes in v4:
->> - Update the interface and implementation
->>
->> Changes in v3:
->> - Tighten the user-kernel interface by using explicit types and add more
->>   error checking
->>
->> Changes in v2:
->> - Convert the interface from syscall to ioctl
->> - Remove pidfd support as it doesn't make sense in ioctl
->> ---
->>  fs/proc/task_mmu.c      | 290 ++++++++++++++++++++++++++++++++++++++++
->>  include/uapi/linux/fs.h |  50 +++++++
->>  2 files changed, 340 insertions(+)
->>
->> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->> index e35a0398db63..c6bde19d63d9 100644
->> --- a/fs/proc/task_mmu.c
->> +++ b/fs/proc/task_mmu.c
->> @@ -19,6 +19,7 @@
->>  #include <linux/shmem_fs.h>
->>  #include <linux/uaccess.h>
->>  #include <linux/pkeys.h>
->> +#include <linux/minmax.h>
->>  
->>  #include <asm/elf.h>
->>  #include <asm/tlb.h>
->> @@ -1135,6 +1136,22 @@ static inline void clear_soft_dirty(struct vm_area_struct *vma,
->>  }
->>  #endif
->>  
->> +static inline bool is_pte_uffd_wp(pte_t pte)
->> +{
->> +	if ((pte_present(pte) && pte_uffd_wp(pte)) ||
->> +	    (pte_swp_uffd_wp_any(pte)))
->> +		return true;
->> +	return false;
->> +}
->> +
->> +static inline bool is_pmd_uffd_wp(pmd_t pmd)
->> +{
->> +	if ((pmd_present(pmd) && pmd_uffd_wp(pmd)) ||
->> +	    (is_swap_pmd(pmd) && pmd_swp_uffd_wp(pmd)))
->> +		return true;
->> +	return false;
->> +}
->> +
->>  #if defined(CONFIG_MEM_SOFT_DIRTY) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
->>  static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
->>  		unsigned long addr, pmd_t *pmdp)
->> @@ -1763,11 +1780,284 @@ static int pagemap_release(struct inode *inode, struct file *file)
->>  	return 0;
->>  }
->>  
->> +#define PAGEMAP_BITS_ALL		(PAGE_IS_WRITTEN | PAGE_IS_FILE |	\
->> +					 PAGE_IS_PRESENT | PAGE_IS_SWAPPED)
->> +#define PAGEMAP_NON_WRITTEN_BITS	(PAGE_IS_FILE |	PAGE_IS_PRESENT | PAGE_IS_SWAPPED)
->> +#define IS_WP_ENGAGE_OP(a)		(a->flags & PAGEMAP_WP_ENGAGE)
->> +#define IS_GET_OP(a)			(a->vec)
->> +#define HAS_NO_SPACE(p)			(p->max_pages && (p->found_pages == p->max_pages))
->> +
->> +#define PAGEMAP_SCAN_BITMAP(wt, file, present, swap)	\
->> +	(wt | file << 1 | present << 2 | swap << 3)
->> +#define IS_WT_REQUIRED(a)				\
->> +	((a->required_mask & PAGE_IS_WRITTEN) ||	\
->> +	 (a->anyof_mask & PAGE_IS_WRITTEN))
-> 
-> All these macros are specific to pagemap_scan_ioctl() and should be
-> namespaced accordingly, e.g. PM_SCAN_BITS_ALL, PM_SCAN_BITMAP etc.
-> 
-> Also, IS_<opname>_OP() will be more readable as PM_SCAN_OP_IS_<opname> and
-> I'd suggest to open code IS_WP_ENGAGE_OP() and IS_GET_OP() and make
-> HAS_NO_SPACE() and IS_WT_REQUIRED() static inlines rather than macros.
-Will do in next version.
+The patch series covers the points discussed in November 2021 virtual
+call [LSF/MM/BFP TOPIC] Storage: Copy Offload [0].
+We have covered the initial agreed requirements in this patchset and
+further additional features suggested by community.
+Patchset borrows Mikulas's token based approach for 2 bdev
+implementation.
 
-> 
-> And I'd also make IS_GET_OP() more explicit by defining a PAGEMAP_WP_GET or
-> similar flag rather than using arg->vec.
-I had in the first revisions. But explicit GET_OP was removed in the
-previous iterations after some feedback. Peter has also suggested this.
-I'll add the GET_OP flag again.
+This is on top of our previous patchset v6[1].
 
-> 
->> +
->> +struct pagemap_scan_private {
->> +	struct page_region *vec;
->> +	struct page_region prev;
->> +	unsigned long vec_len, vec_index;
->> +	unsigned int max_pages, found_pages, flags;
->> +	unsigned long required_mask, anyof_mask, excluded_mask, return_mask;
->> +};
->> +
->> +static int pagemap_scan_test_walk(unsigned long start, unsigned long end, struct mm_walk *walk)
-> 
-> Please keep the lines under 80 characters limit.
-> 
->> +{
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +
->> +	if (IS_WT_REQUIRED(p) && !userfaultfd_wp(vma) && !userfaultfd_wp_async(vma))
->> +		return -EPERM;
->> +	if (vma->vm_flags & VM_PFNMAP)
->> +		return 1;
->> +	return 0;
->> +}
->> +
->> +static inline int pagemap_scan_output(bool wt, bool file, bool pres, bool swap,
->> +				      struct pagemap_scan_private *p, unsigned long addr,
->> +				      unsigned int len)
->> +{
->> +	unsigned long bitmap, cur = PAGEMAP_SCAN_BITMAP(wt, file, pres, swap);
->> +	bool cpy = true;
->> +	struct page_region *prev = &p->prev;
->> +
->> +	if (HAS_NO_SPACE(p))
->> +		return -ENOSPC;
->> +
->> +	if (p->max_pages && p->found_pages + len >= p->max_pages)
->> +		len = p->max_pages - p->found_pages;
->> +	if (!len)
->> +		return -EINVAL;
->> +
->> +	if (p->required_mask)
->> +		cpy = ((p->required_mask & cur) == p->required_mask);
->> +	if (cpy && p->anyof_mask)
->> +		cpy = (p->anyof_mask & cur);
->> +	if (cpy && p->excluded_mask)
->> +		cpy = !(p->excluded_mask & cur);
->> +	bitmap = cur & p->return_mask;
->> +	if (cpy && bitmap) {
->> +		if ((prev->len) && (prev->bitmap == bitmap) &&
->> +		    (prev->start + prev->len * PAGE_SIZE == addr)) {
->> +			prev->len += len;
->> +			p->found_pages += len;
->> +		} else if (p->vec_index < p->vec_len) {
->> +			if (prev->len) {
->> +				memcpy(&p->vec[p->vec_index], prev, sizeof(struct page_region));
->> +				p->vec_index++;
->> +			}
->> +			prev->start = addr;
->> +			prev->len = len;
->> +			prev->bitmap = bitmap;
->> +			p->found_pages += len;
->> +		} else {
->> +			return -ENOSPC;
->> +		}
->> +	}
->> +	return 0;
-> 
-> Please don't save on empty lines. Empty lines between logical pieces
-> improve readability.
-Sorry, I'll add them.
+Overall series supports:
+========================
+	1. Driver
+		- NVMe Copy command (single NS, TP 4065), including support
+		in nvme-target (for block and file backend).
 
-> 
->> +}
->> +
->> +static inline int export_prev_to_out(struct pagemap_scan_private *p, struct page_region __user *vec,
->> +				     unsigned long *vec_index)
->> +{
->> +	struct page_region *prev = &p->prev;
->> +
->> +	if (prev->len) {
->> +		if (copy_to_user(&vec[*vec_index], prev, sizeof(struct page_region)))
->> +			return -EFAULT;
->> +		p->vec_index++;
->> +		(*vec_index)++;
->> +		prev->len = 0;
->> +	}
->> +	return 0;
->> +}
->> +
->> +static inline int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->> +					 unsigned long end, struct mm_walk *walk)
->> +{
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +	unsigned long addr = end;
->> +	spinlock_t *ptl;
->> +	int ret = 0;
->> +	pte_t *pte;
->> +
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +	ptl = pmd_trans_huge_lock(pmd, vma);
->> +	if (ptl) {
->> +		bool pmd_wt;
->> +
->> +		pmd_wt = !is_pmd_uffd_wp(*pmd);
->> +		/*
->> +		 * Break huge page into small pages if operation needs to be performed is
->> +		 * on a portion of the huge page.
->> +		 */
->> +		if (pmd_wt && IS_WP_ENGAGE_OP(p) && (end - start < HPAGE_SIZE)) {
->> +			spin_unlock(ptl);
->> +			split_huge_pmd(vma, pmd, start);
->> +			goto process_smaller_pages;
->> +		}
->> +		if (IS_GET_OP(p))
->> +			ret = pagemap_scan_output(pmd_wt, vma->vm_file, pmd_present(*pmd),
->> +						  is_swap_pmd(*pmd), p, start,
->> +						  (end - start)/PAGE_SIZE);
->> +		spin_unlock(ptl);
->> +		if (!ret) {
->> +			if (pmd_wt && IS_WP_ENGAGE_OP(p))
->> +				uffd_wp_range(walk->mm, vma, start, HPAGE_SIZE, true);
->> +		}
->> +		return ret;
->> +	}
->> +process_smaller_pages:
->> +	if (pmd_trans_unstable(pmd))
->> +		return 0;
->> +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->> +
->> +	pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
->> +	if (IS_GET_OP(p)) {
->> +		for (addr = start; addr < end; pte++, addr += PAGE_SIZE) {
->> +			ret = pagemap_scan_output(!is_pte_uffd_wp(*pte), vma->vm_file,
->> +						  pte_present(*pte), is_swap_pte(*pte), p, addr, 1);
->> +			if (ret)
->> +				break;
->> +		}
->> +	}
->> +	pte_unmap_unlock(pte - 1, ptl);
->> +	if ((!ret || ret == -ENOSPC) && IS_WP_ENGAGE_OP(p) && (addr - start))
->> +		uffd_wp_range(walk->mm, vma, start, addr - start, true);
->> +
->> +	cond_resched();
->> +	return ret;
->> +}
->> +
->> +static int pagemap_scan_pte_hole(unsigned long addr, unsigned long end, int depth,
->> +				 struct mm_walk *walk)
->> +{
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +	int ret = 0;
->> +
->> +	if (vma)
->> +		ret = pagemap_scan_output(false, vma->vm_file, false, false, p, addr,
->> +					  (end - addr)/PAGE_SIZE);
->> +	return ret;
->> +}
->> +
->> +/* No hugetlb support is present. */
->> +static const struct mm_walk_ops pagemap_scan_ops = {
->> +	.test_walk = pagemap_scan_test_walk,
->> +	.pmd_entry = pagemap_scan_pmd_entry,
->> +	.pte_hole = pagemap_scan_pte_hole,
->> +};
->> +
->> +static long do_pagemap_cmd(struct mm_struct *mm, struct pagemap_scan_arg *arg)
->> +{
->> +	unsigned long empty_slots, vec_index = 0;
->> +	unsigned long __user start, end;
->> +	unsigned long __start, __end;
->> +	struct page_region __user *vec;
->> +	struct pagemap_scan_private p;
->> +	int ret = 0;
->> +
->> +	start = (unsigned long)untagged_addr(arg->start);
->> +	vec = (struct page_region *)(unsigned long)untagged_addr(arg->vec);
->> +
->> +	/* Validate memory ranges */
->> +	if ((!IS_ALIGNED(start, PAGE_SIZE)) || (!access_ok((void __user *)start, arg->len)))
->> +		return -EINVAL;
->> +	if (IS_GET_OP(arg) && ((arg->vec_len == 0) ||
->> +	    (!access_ok((void __user *)vec, arg->vec_len * sizeof(struct page_region)))))
->> +		return -EINVAL;
->> +
->> +	/* Detect illegal flags and masks */
->> +	if ((arg->flags & ~PAGEMAP_WP_ENGAGE) || (arg->required_mask & ~PAGEMAP_BITS_ALL) ||
->> +	    (arg->anyof_mask & ~PAGEMAP_BITS_ALL) || (arg->excluded_mask & ~PAGEMAP_BITS_ALL) ||
->> +	    (arg->return_mask & ~PAGEMAP_BITS_ALL))
->> +		return -EINVAL;
->> +	if (IS_GET_OP(arg) && ((!arg->required_mask && !arg->anyof_mask && !arg->excluded_mask) ||
->> +				!arg->return_mask))
->> +		return -EINVAL;
->> +	/* The non-WT flags cannot be obtained if PAGEMAP_WP_ENGAGE is also specified. */
->> +	if (IS_WP_ENGAGE_OP(arg) && ((arg->required_mask & PAGEMAP_NON_WRITTEN_BITS) ||
->> +	    (arg->anyof_mask & PAGEMAP_NON_WRITTEN_BITS)))
->> +		return -EINVAL;
-> 
-> I'd split argument validation into a separate function and split the OR'ed
-> conditions into separate if statements, e.g
-> 
-> bool pm_scan_args_valid(struct pagemap_scan_arg *arg)
-> {
-> 	if (IS_GET_OP(arg)) {
-> 		if (!arg->return_mask)
-> 			return false;
-> 		if (!arg->required_mask && !arg->anyof_mask && !arg->excluded_mask)
-> 			return false;
-> 	}
-> 
-> 	/* ... */
-> 
-> 	return true;
-> }
-This seems a very good way. Thank you so much!
+	2. Block layer
+		- Block-generic copy (REQ_COPY flag), with interface
+		accommodating two block-devs
+		- Emulation, for in-kernel user when offload is natively 
+                absent
+		- dm-linear support (for cases not requiring split)
 
-> 
->> +
->> +	end = start + arg->len;
->> +	p.max_pages = arg->max_pages;
->> +	p.found_pages = 0;
->> +	p.flags = arg->flags;
->> +	p.required_mask = arg->required_mask;
->> +	p.anyof_mask = arg->anyof_mask;
->> +	p.excluded_mask = arg->excluded_mask;
->> +	p.return_mask = arg->return_mask;
->> +	p.prev.len = 0;
->> +	p.vec_len = (PAGEMAP_WALK_SIZE >> PAGE_SHIFT);
->> +
->> +	if (IS_GET_OP(arg)) {
->> +		p.vec = kmalloc_array(p.vec_len, sizeof(struct page_region), GFP_KERNEL);
->> +		if (!p.vec)
->> +			return -ENOMEM;
->> +	} else {
->> +		p.vec = NULL;
->> +	}
->> +	__start = __end = start;
->> +	while (!ret && __end < end) {
->> +		p.vec_index = 0;
->> +		empty_slots = arg->vec_len - vec_index;
->> +		if (p.vec_len > empty_slots)
->> +			p.vec_len = empty_slots;
->> +
->> +		__end = (__start + PAGEMAP_WALK_SIZE) & PAGEMAP_WALK_MASK;
->> +		if (__end > end)
->> +			__end = end;
->> +
->> +		mmap_read_lock(mm);
->> +		ret = walk_page_range(mm, __start, __end, &pagemap_scan_ops, &p);
->> +		mmap_read_unlock(mm);
->> +		if (!(!ret || ret == -ENOSPC))
->> +			goto free_data;
->> +
->> +		__start = __end;
->> +		if (IS_GET_OP(arg) && p.vec_index) {
->> +			if (copy_to_user(&vec[vec_index], p.vec,
->> +					 p.vec_index * sizeof(struct page_region))) {
->> +				ret = -EFAULT;
->> +				goto free_data;
->> +			}
->> +			vec_index += p.vec_index;
->> +		}
->> +	}
->> +	ret = export_prev_to_out(&p, vec, &vec_index);
->> +	if (!ret)
->> +		ret = vec_index;
->> +free_data:
->> +	if (IS_GET_OP(arg))
->> +		kfree(p.vec);
->> +
->> +	return ret;
->> +}
->> +
->> +static long pagemap_scan_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->> +{
->> +	struct pagemap_scan_arg __user *uarg = (struct pagemap_scan_arg __user *)arg;
->> +	struct mm_struct *mm = file->private_data;
->> +	struct pagemap_scan_arg argument;
->> +
->> +	if (cmd == PAGEMAP_SCAN) {
->> +		if (copy_from_user(&argument, uarg, sizeof(struct pagemap_scan_arg)))
->> +			return -EFAULT;
->> +		return do_pagemap_cmd(mm, &argument);
->> +	}
->> +	return -EINVAL;
->> +}
->> +
->>  const struct file_operations proc_pagemap_operations = {
->>  	.llseek		= mem_lseek, /* borrow this */
->>  	.read		= pagemap_read,
->>  	.open		= pagemap_open,
->>  	.release	= pagemap_release,
->> +	.unlocked_ioctl = pagemap_scan_ioctl,
->> +	.compat_ioctl	= pagemap_scan_ioctl,
->>  };
->>  #endif /* CONFIG_PROC_PAGE_MONITOR */
->>  
->> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
->> index b7b56871029c..1ae9a8684b48 100644
->> --- a/include/uapi/linux/fs.h
->> +++ b/include/uapi/linux/fs.h
->> @@ -305,4 +305,54 @@ typedef int __bitwise __kernel_rwf_t;
->>  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
->>  			 RWF_APPEND)
->>  
->> +/* Pagemap ioctl */
->> +#define PAGEMAP_SCAN	_IOWR('f', 16, struct pagemap_scan_arg)
->> +
->> +/* Bits are set in the bitmap of the page_region and masks in pagemap_scan_args */
->> +#define PAGE_IS_WRITTEN		(1 << 0)
->> +#define PAGE_IS_FILE		(1 << 1)
->> +#define PAGE_IS_PRESENT		(1 << 2)
->> +#define PAGE_IS_SWAPPED		(1 << 3)
->> +
->> +/*
->> + * struct page_region - Page region with bitmap flags
->> + * @start:	Start of the region
->> + * @len:	Length of the region
->> + * bitmap:	Bits sets for the region
->> + */
->> +struct page_region {
->> +	__u64 start;
->> +	__u64 len;
->> +	__u64 bitmap;
->> +};
->> +
->> +/*
->> + * struct pagemap_scan_arg - Pagemap ioctl argument
->> + * @start:		Starting address of the region
->> + * @len:		Length of the region (All the pages in this length are included)
->> + * @vec:		Address of page_region struct array for output
->> + * @vec_len:		Length of the page_region struct array
->> + * @max_pages:		Optional max return pages
->> + * @flags:		Flags for the IOCTL
->> + * @required_mask:	Required mask - All of these bits have to be set in the PTE
->> + * @anyof_mask:		Any mask - Any of these bits are set in the PTE
->> + * @excluded_mask:	Exclude mask - None of these bits are set in the PTE
->> + * @return_mask:	Bits that are to be reported in page_region
->> + */
->> +struct pagemap_scan_arg {
->> +	__u64 start;
->> +	__u64 len;
->> +	__u64 vec;
->> +	__u64 vec_len;
->> +	__u32 max_pages;
->> +	__u32 flags;
->> +	__u64 required_mask;
->> +	__u64 anyof_mask;
->> +	__u64 excluded_mask;
->> +	__u64 return_mask;
->> +};
->> +
->> +/* Special flags */
->> +#define PAGEMAP_WP_ENGAGE	(1 << 0)
->> +
->>  #endif /* _UAPI_LINUX_FS_H */
->> -- 
->> 2.30.2
->>
-> 
+	3. User-interface
+		- copy_file_range
 
+Testing
+=======
+	Copy offload can be tested on:
+	a. QEMU: NVME simple copy (TP 4065). By setting nvme-ns
+		parameters mssrl,mcl, msrc. For more info [2].
+	b. Fabrics loopback.
+	c. blktests[3] (tests block/032,033, nvme/046,047,048,049)
+
+	Emuation can be tested on any device.
+
+	fio[4].
+
+Infra and plumbing:
+===================
+        We populate copy_file_range callback in def_blk_fops. 
+        For devices that support copy-offload, use blkdev_copy_offload to
+        achieve in-device copy.
+        However for cases, where device doesn't support offload,
+        fallback to generic_copy_file_range.
+        For in-kernel users (like fabrics), we use blkdev_issue_copy
+        which implements its own emulation, as fd is not available.
+        Modify checks in generic_copy_file_range to support block-device.
+
+Performance:
+============
+        The major benefit of this copy-offload/emulation framework is
+        observed in fabrics setup, for copy workloads across the network.
+        The host will send offload command over the network and actual copy
+        can be achieved using emulation on the target.
+        This results in better performance and network utilisation,
+        as compared to read and write travelling across the network.
+        With async-design of copy-offload/emulation we are able to see the
+        following improvements as compared to userspace read + write on a
+        NVMeOF TCP setup:
+
+        Setup1: Network Speed: 1000Mb/s
+        Host PC: Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
+        Target PC: AMD Ryzen 9 5900X 12-Core Processor
+        block size 8k:
+        710% improvement in IO BW (108 MiB/s to 876 MiB/s).
+        Network utilisation drops from  97% to 15%.
+        block-size 1M:
+        2532% improvement in IO BW (101 MiB/s to 2659 MiB/s).
+        Network utilisation drops from 89% to 0.62%.
+
+        Setup2: Network Speed: 100Gb/s
+        Server: Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz, 72 cores
+        (host and target have the same configuration)
+        block-size 8k:
+        17.5% improvement in IO BW (794 MiB/s to 933 MiB/s).
+        Network utilisation drops from  6.75% to 0.16%.
+
+Blktests[3]
+======================
+	tests/block/032,033: Runs copy offload and emulation on block device.
+        tests/nvme/046,047,048,049 Create a loop backed fabrics device and
+        run copy offload and emulation.
+
+Future Work
+===========
+        - nullblk: copy-offload emulation.
+	- loopback device copy offload support
+	- upstream fio to use copy offload
+
+	These are to be taken up after we reach consensus on the
+	plumbing of current elements that are part of this series.
+
+
+Additional links:
+=================
+	[0] https://lore.kernel.org/linux-nvme/CA+1E3rJ7BZ7LjQXXTdX+-0Edz=zT14mmPGMiVCzUgB33C60tbQ@mail.gmail.com/
+	[1] https://lore.kernel.org/lkml/20230112115908.23662-1-nj.shetty@samsung.com/T/ 
+	[2] https://qemu-project.gitlab.io/qemu/system/devices/nvme.html#simple-copy
+	[3] https://github.com/nitesh-shetty/blktests/tree/feat/copy_offload/v7
+	[4] https://github.com/vincentkfu/fio/tree/copyoffload-cfr-3.33-v7
+
+Changes since v6:
+=================
+        - copy_file_range instead of ioctl for direct block device
+        - Remove support for multi range (vectored) copy
+        - Remove ioctl interface for copy.
+        - Remove offload support in dm kcopyd.
+
+Changes since v5:
+=================
+	- Addition of blktests (Chaitanya Kulkarni)
+        - Minor fix for fabrics file backed path
+        - Remove buggy zonefs copy file range implementation.
+
+Changes since v4:
+=================
+	- make the offload and emulation design asynchronous (Hannes
+	  Reinecke)
+	- fabrics loopback support
+	- sysfs naming improvements (Damien Le Moal)
+	- use kfree() instead of kvfree() in cio_await_completion
+	  (Damien Le Moal)
+	- use ranges instead of rlist to represent range_entry (Damien
+	  Le Moal)
+	- change argument ordering in blk_copy_offload suggested (Damien
+	  Le Moal)
+	- removed multiple copy limit and merged into only one limit
+	  (Damien Le Moal)
+	- wrap overly long lines (Damien Le Moal)
+	- other naming improvements and cleanups (Damien Le Moal)
+	- correctly format the code example in description (Damien Le
+	  Moal)
+	- mark blk_copy_offload as static (kernel test robot)
+	
+Changes since v3:
+=================
+	- added copy_file_range support for zonefs
+	- added documentation about new sysfs entries
+	- incorporated review comments on v3
+	- minor fixes
+
+Changes since v2:
+=================
+	- fixed possible race condition reported by Damien Le Moal
+	- new sysfs controls as suggested by Damien Le Moal
+	- fixed possible memory leak reported by Dan Carpenter, lkp
+	- minor fixes
+
+Nitesh Shetty (8):
+  block: Introduce queue limits for copy-offload support
+  block: Add copy offload support infrastructure
+  block: add emulation for copy
+  fs, block: copy_file_range for def_blk_ops for direct block device.
+  nvme: add copy offload support
+  nvmet: add copy command support for bdev and file ns
+  dm: Add support for copy offload.
+  dm: Enable copy offload for dm-linear target
+
+ Documentation/ABI/stable/sysfs-block |  36 +++
+ block/blk-lib.c                      | 426 +++++++++++++++++++++++++++
+ block/blk-map.c                      |   4 +-
+ block/blk-settings.c                 |  24 ++
+ block/blk-sysfs.c                    |  64 ++++
+ block/blk.h                          |   2 +
+ block/fops.c                         |  18 ++
+ drivers/md/dm-linear.c               |   1 +
+ drivers/md/dm-table.c                |  42 +++
+ drivers/md/dm.c                      |   7 +
+ drivers/nvme/host/constants.c        |   1 +
+ drivers/nvme/host/core.c             | 106 ++++++-
+ drivers/nvme/host/fc.c               |   5 +
+ drivers/nvme/host/nvme.h             |   7 +
+ drivers/nvme/host/pci.c              |  27 +-
+ drivers/nvme/host/rdma.c             |   7 +
+ drivers/nvme/host/tcp.c              |  16 +
+ drivers/nvme/host/trace.c            |  19 ++
+ drivers/nvme/target/admin-cmd.c      |   9 +-
+ drivers/nvme/target/io-cmd-bdev.c    |  58 ++++
+ drivers/nvme/target/io-cmd-file.c    |  52 ++++
+ drivers/nvme/target/loop.c           |   6 +
+ drivers/nvme/target/nvmet.h          |   1 +
+ fs/read_write.c                      |  11 +-
+ include/linux/blk_types.h            |  25 ++
+ include/linux/blkdev.h               |  21 ++
+ include/linux/device-mapper.h        |   5 +
+ include/linux/nvme.h                 |  43 ++-
+ include/uapi/linux/fs.h              |   3 +
+ 29 files changed, 1032 insertions(+), 14 deletions(-)
+
+
+base-commit: 3ac88fa4605ec98e545fb3ad0154f575fda2de5f
 -- 
-BR,
-Muhammad Usama Anjum
+2.35.1.500.gb896f729e2
+
