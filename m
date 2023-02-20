@@ -2,79 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4922569CA7A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Feb 2023 13:07:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1852069CB6C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Feb 2023 13:53:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231864AbjBTMHq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Feb 2023 07:07:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56462 "EHLO
+        id S231824AbjBTMx1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Feb 2023 07:53:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231745AbjBTMHo (ORCPT
+        with ESMTP id S231265AbjBTMx0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Feb 2023 07:07:44 -0500
-X-Greylist: delayed 1305 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 20 Feb 2023 04:07:44 PST
-Received: from smtpq2.tb.mail.iss.as9143.net (smtpq2.tb.mail.iss.as9143.net [212.54.42.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4F216305
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Feb 2023 04:07:44 -0800 (PST)
-Received: from [212.54.42.107] (helo=smtp3.tb.mail.iss.as9143.net)
-        by smtpq2.tb.mail.iss.as9143.net with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <me@rubin55.org>)
-        id 1pU4cH-0003UO-Rd
-        for linux-fsdevel@vger.kernel.org; Mon, 20 Feb 2023 12:45:57 +0100
-Received: from edge.raaf.local ([83.87.71.29])
-        by smtp3.tb.mail.iss.as9143.net with ESMTP
-        id U4cHplyR1PuCLU4cHp4NLW; Mon, 20 Feb 2023 12:45:57 +0100
-X-Env-Mailfrom: me@rubin55.org
-X-Env-Rcptto: linux-fsdevel@vger.kernel.org
-X-SourceIP: 83.87.71.29
-X-CNFS-Analysis: v=2.4 cv=Ybd7pSdf c=1 sm=1 tr=0 ts=63f35d75 cx=a_exe
- a=55+TWXFlYidg0d0YyPQsNg==:117 a=55+TWXFlYidg0d0YyPQsNg==:17
- a=m04uMKEZRckA:10 a=xmC3PgOMfwqtXtabtDsA:9
-Received: from ORION.raaf.local (orion.raaf.local [172.17.1.14])
-        by edge.raaf.local (8.16.1/8.16.1) with ESMTP id 31KBjqMD045980;
-        Mon, 20 Feb 2023 12:45:52 +0100 (CET)
-        (envelope-from me@rubin55.org)
-From:   me@rubin55.org
-To:     stefan.tibus@gmx.de
-Cc:     adilger@dilger.ca, dave.kleikamp@oracle.com, harald@skogtun.org,
-        hch@infradead.org, jfs-discussion@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Jfs-discussion] Should we orphan JFS?
-Date:   Mon, 20 Feb 2023 12:45:52 +0100
-Message-Id: <20230220114552.27395-1-me@rubin55.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230119080532.crn7wzo4jz5x5ng3@tibus.st>
-References: <20230119080532.crn7wzo4jz5x5ng3@tibus.st>
+        Mon, 20 Feb 2023 07:53:26 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CDE283F5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Feb 2023 04:52:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676897558;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mi2k6ov9PIEEOKF8HtnT+0K1MGZyhTRbqIFEKucrAxQ=;
+        b=Pi27/CwsY/H/a2ClsPQY4Dak9WhqcJ00dblzmrrxhUeiPYufyi0mTLx/0yOw7D8qoi48e4
+        xswS1ULkSOpVhUMww3SOD3E1u7j/EMCIbUQSgAmjaG2sGI2B9eBcF5NeXo2BpiOPMM6zxE
+        Mf6Lk9Y+wCkZMmtqTI5z5F74Uuyqpfo=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-97-xfWndiqnOg6fzI0ytmeCRA-1; Mon, 20 Feb 2023 07:52:37 -0500
+X-MC-Unique: xfWndiqnOg6fzI0ytmeCRA-1
+Received: by mail-pg1-f197.google.com with SMTP id g13-20020a63f40d000000b005015be7b9faso861798pgi.15
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Feb 2023 04:52:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mi2k6ov9PIEEOKF8HtnT+0K1MGZyhTRbqIFEKucrAxQ=;
+        b=eLg6+CkxYOh3GLjOopOawxZhJGoh1Htx0c4tKHQEC80XQJxcEfDvmEWdDvuNzn3lQB
+         MoUtaAKqwYgo0jtv/hrw4B9QzGUQUsY5TcUWZ3Z1qTC7/PcN1YdTd0hze2iI1IiJz3q8
+         TkeCQNyR4TMxK9pHFC4PQKHUV/G4YbwUd5ELX9Ao2y0hHQDXHhl1hSQrpTf8wv/X6deS
+         r2Ms0excMuOqu/V9oYVNCDV2saPwAO17nCNPXX80x+bfpi35FIs0u5+S/fZV+io8JCLo
+         iLilB/3N26hHbU5EJH7GPD2eNGDB+Q8ZzXbVwznBn7TN5a4F6TDBDfZjnUedyWTqirbx
+         Osjg==
+X-Gm-Message-State: AO0yUKV9T7ZKLr6cSVnUsE/t/Ru1bzk0bNhtvpuNJPXgN2eXZcY/tIad
+        Y+OKEMuPscEXC33e4OmybV2pVdf5qP16Aj4K9XCbLMJNNa6Nim0aXK9rKD21GC9UZRc1nmMhnbg
+        TRxg2nud35J6JLCpV6abjrttNeRkMNCbjBMSxS/LCEQ==
+X-Received: by 2002:a17:903:449:b0:19a:f63a:47db with SMTP id iw9-20020a170903044900b0019af63a47dbmr191498plb.2.1676897556567;
+        Mon, 20 Feb 2023 04:52:36 -0800 (PST)
+X-Google-Smtp-Source: AK7set/HmWnP91UrLVg24xciP71WBRN1oXKx7zdnbGZIUV6VrXz5Bnk6LyVvuteQq63xg3d0WGyePBM+ET5m+YQOvdI=
+X-Received: by 2002:a17:903:449:b0:19a:f63a:47db with SMTP id
+ iw9-20020a170903044900b0019af63a47dbmr191497plb.2.1676897556296; Mon, 20 Feb
+ 2023 04:52:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfDGZ5ZKUvvAAa5LudPpQHQ95+oC0++yU9Fvyn4sk11teR8k5U7roAOqjFugDnQaXYezuvyl99hdeIaiId65AW5f7W+6KmRjqjGb7DttvqP1Zag1ujXHS
- F6ZOZpnBuzq2J7NcV6ag8O/55P3rISBNZq8YJahtYRxeVZKj6Z11dv7NAY3UKwMD/hkvMrAJeaw1W6YtQzYva/M7zfpaoLCLta2NsDNA1bjeeDu31PcRGMZ3
- Ys6zSdAWR8DQ16Bqnc8pDeFtTyuH3TO3aQxGGBn9ygJqHTtyvLCpA5lIfeElKUwk011zwLuLnwZIj0rKMkslOYC1wki8/Og7siwYAJt9rR6UBziJ52HgfCyN
- evY2iWBknZ4YhV66/52BmV+wa7T24t05kOOMY7gWJTkpDbmvpS7aIz6kXC/5q+AvycL8C/GmRBbjexmRDLICNxcbh69fXQ==
-X-Spam-Status: No, score=-0.0 required=5.0 tests=BAYES_20,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_SOFTFAIL
-        autolearn=no autolearn_force=no version=3.4.6
+References: <20230210145823.756906-1-omosnace@redhat.com>
+In-Reply-To: <20230210145823.756906-1-omosnace@redhat.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Mon, 20 Feb 2023 13:52:24 +0100
+Message-ID: <CAFqZXNt84oqHo5aQQbjuroA6fGzMyso9HuN4fz3u1mygze2Yrw@mail.gmail.com>
+Subject: Re: [PATCH] sysctl: fix proc_dobool() usability
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I would also like to chime in as a long time (20+ years?) user of JFS.
+On Fri, Feb 10, 2023 at 3:58 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> Currently proc_dobool expects a (bool *) in table->data, but sizeof(int)
+> in table->maxsize, because it uses do_proc_dointvec() directly.
+>
+> This is unsafe for at least two reasons:
+> 1. A sysctl table definition may use { .data = &variable, .maxsize =
+>    sizeof(variable) }, not realizing that this makes the sysctl unusable
+>    (see the Fixes: tag) and that they need to use the completely
+>    counterintuitive sizeof(int) instead.
+> 2. proc_dobool() will currently try to parse an array of values if given
+>    .maxsize >= 2*sizeof(int), but will try to write values of type bool
+>    by offsets of sizeof(int), so it will not work correctly with neither
+>    an (int *) nor a (bool *). There is no .maxsize validation to prevent
+>    this.
+>
+> Fix this by:
+> 1. Constraining proc_dobool() to allow only one value and .maxsize ==
+>    sizeof(bool).
+> 2. Wrapping the original struct ctl_table in a temporary one with .data
+>    pointing to a local int variable and .maxsize set to sizeof(int) and
+>    passing this one to proc_dointvec(), converting the value to/from
+>    bool as needed (using proc_dou8vec_minmax() as an example).
+> 3. Extending sysctl_check_table() to enforce proc_dobool() expectations.
+> 4. Fixing the proc_dobool() docstring (it was just copy-pasted from
+>    proc_douintvec, apparently...).
+> 5. Converting all existing proc_dobool() users to set .maxsize to
+>    sizeof(bool) instead of sizeof(int).
+>
+> Fixes: 83efeeeb3d04 ("tty: Allow TIOCSTI to be disabled")
+> Fixes: a2071573d634 ("sysctl: introduce new proc handler proc_dobool")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>  fs/lockd/svc.c        |  2 +-
+>  fs/proc/proc_sysctl.c |  6 ++++++
+>  kernel/sysctl.c       | 43 ++++++++++++++++++++++++-------------------
+>  mm/hugetlb_vmemmap.c  |  2 +-
+>  4 files changed, 32 insertions(+), 21 deletions(-)
 
-I use JFS for essentially all my Linux boxes, laptops, desktops due to
-its low resource usage and proven dependability. I also really enjoy
-its "naive" implementation of case-insensitivity, which I tend to use
-on /home mounted filesystems.
+Gentle ping... Without this patch the new "dev.tty.legacy_tiocsti"
+sysctl is unusable. This is blocking me from making selinux-testsuite
+work with CONFIG_LEGACY_TIOCSTI=n:
+https://lore.kernel.org/selinux/CAHC9VhQwrjwdW27+ktcT_9q-N7AmuUK8GYgoYbPXGVAcjwA4nQ@mail.gmail.com/T/
 
-I would really miss JFS for what it's worth and would like to sing its
-praises: low resource usage, tried-and-tested stability and for a long
-time the only case-insensitive option available (I know about ext4's
-new case-folding features of course, but have not had good experiences
-with it yet (experienced boot issues with grub, per directory setting)).
+-- 
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-Kind regards,
-
-
-Rubin!
