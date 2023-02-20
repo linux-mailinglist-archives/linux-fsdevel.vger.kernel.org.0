@@ -2,96 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCBCE69C55F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Feb 2023 07:33:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3823969C575
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Feb 2023 07:52:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230260AbjBTGc1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Feb 2023 01:32:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53214 "EHLO
+        id S230238AbjBTGwg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Feb 2023 01:52:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbjBTGc0 (ORCPT
+        with ESMTP id S230160AbjBTGwf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Feb 2023 01:32:26 -0500
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F34EB7C;
-        Sun, 19 Feb 2023 22:32:23 -0800 (PST)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id DE1851D3F;
-        Mon, 20 Feb 2023 06:28:08 +0000 (UTC)
+        Mon, 20 Feb 2023 01:52:35 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45EADAD2A
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Feb 2023 22:52:33 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id m7so387822lfj.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Feb 2023 22:52:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1676874488;
-        bh=YtXxZ6e5RLyaBmSaXafOMars1uaos3f4mgep2CPSeUg=;
-        h=Date:To:CC:From:Subject;
-        b=u7g0ARmwjwMj+BrUnDHQHYScdnAKxkHcDoIuM8/l0sq0TGUvtf55cvGSbGxGxkfUl
-         lLN9gyOdwkhB8es6fmxcw+FuoZX1M78QQ3kxLzbl9giqeaXM1ETMq1ZuPSH04UXHJT
-         IkXjgJ8BFbxJDL9dadnp/eADPac2HQMQ64+ZkyUk=
-Received: from [192.168.211.142] (192.168.211.142) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Mon, 20 Feb 2023 09:32:20 +0300
-Message-ID: <5de3e85e-3c8e-cc80-c825-481ac9f94f9a@paragon-software.com>
-Date:   Mon, 20 Feb 2023 10:32:20 +0400
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6CWW5uGUlAt6Sd8nKZj5npU45hxB5kJkdPJ1fT9sd6E=;
+        b=HhDvLYpHdjrALFMb5xlqKhWe9yGcFu5oU2QNjnJWD2wRBlenuRENihTwmVFGGr0cDw
+         6Gh/mT85lH/EFBC7p3aC4uGMGxL4TW8wFzRZNALajqXXMW8hJkRwRRH4gMKgxzRRNVD+
+         IA8nbh6f76/4MkiJLQlUWkf0cQuo5fm2bJ93So7L0zkCnhAHpBCAfW6PV+X72hUomvEM
+         qCrha5ZgXEo8ytn037Mvq1wXzMsGSzqwKfwa0Bmss0n7LGFbZB0r795eXn8i2ElUgdG3
+         7lFz8newb/Ol1wnh1B4xl/QQ1K/3zok2FqtToQLyitNkBnR7LF9M525EhcJYLeo5CD/Z
+         j54w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6CWW5uGUlAt6Sd8nKZj5npU45hxB5kJkdPJ1fT9sd6E=;
+        b=Xki0UW0AWWC53TA5+SkVVWrmuMtIN5b6iX8E2kco1FdT2nLsAZHGrzQNvhBK5ZDy5f
+         LS8VCzL31VkK3NpnmnOIjhLwLmJNJM+mLOLoYM47o2ip0zXU40ZOt6yF8iQkziUQm69r
+         bMir1t0bMzmvfZoGiatUpUxO6qSOkgkmrekD++f4qXdKl29m9AhrMDAdLZ65OZBDSmRW
+         HDo3MZMulsUhgeiDdLFxcTO6GSnc3CYelKVnSO40xfUFD6x0WGPY7bIMdp/KOJ9+bLP4
+         V9ZkFCuSUr4EOZ/gj/6yQnm3a3dNsI/AhabrZXsXRMP6vVNaVbYeZNVEQrbqPZOC2ioS
+         +Mqw==
+X-Gm-Message-State: AO0yUKWduGdmJaVF8EUL+J/E9Q4R3awg30v5d/isfqd8d0EJIj26NWui
+        0tr9/RJmN2faBU50sufMDJ67ttRwtwDHXdMOs3Axvg==
+X-Google-Smtp-Source: AK7set/FzkeRlCVFqlhSE4tboJRsOG7fcq2tajzcz2a+xN6YH+d4hlwiy9+UW4wTwa0/G7MThUOwOqFUTAPHI81esdk=
+X-Received: by 2002:a05:6512:3d90:b0:4dc:7e56:9839 with SMTP id
+ k16-20020a0565123d9000b004dc7e569839mr867321lfv.5.1676875951338; Sun, 19 Feb
+ 2023 22:52:31 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Content-Language: en-US
-To:     <ntfs3@lists.linux.dev>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, Dan Carpenter <error27@gmail.com>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH] fs/ntfs3: Fix root inode checking
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [192.168.211.142]
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <0000000000008f00f7058ad13ec8@google.com> <0000000000009fddba05f500c785@google.com>
+In-Reply-To: <0000000000009fddba05f500c785@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 20 Feb 2023 07:52:18 +0100
+Message-ID: <CACT4Y+asA1zb6A4SJTDgF+rpNyZoHmE27xjfQd5pqg2_wyhErA@mail.gmail.com>
+Subject: Re: [syzbot] [net?] [ntfs3?] KMSAN: uninit-value in bcmp
+To:     syzbot <syzbot+d8b02c920ae8f3e0be75@syzkaller.appspotmail.com>
+Cc:     almaz.alexandrovich@paragon-software.com, davem@davemloft.net,
+        edward.lo@ambergroup.io, glider@google.com, idosch@mellanox.com,
+        ivan.khoronzhuk@linaro.org, jiri@mellanox.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, ntfs3@lists.linux.dev, petrm@mellanox.com,
+        phind.uet@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Separate checking inode->i_op and inode itself.
+On Sat, 18 Feb 2023 at 23:16, syzbot
+<syzbot+d8b02c920ae8f3e0be75@syzkaller.appspotmail.com> wrote:
+>
+> syzbot suspects this issue was fixed by commit:
+>
+> commit 4f1dc7d9756e66f3f876839ea174df2e656b7f79
+> Author: Edward Lo <edward.lo@ambergroup.io>
+> Date:   Fri Sep 9 01:04:00 2022 +0000
+>
+>     fs/ntfs3: Validate attribute name offset
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=149cdbcf480000
+> start commit:   b7b275e60bcd Linux 6.1-rc7
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2325e409a9a893e1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d8b02c920ae8f3e0be75
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164c4a4b880000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152bfbc9880000
+>
+> If the result looks correct, please mark the issue as fixed by replying with:
+>
+> #syz fix: fs/ntfs3: Validate attribute name offset
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <error27@gmail.com>
-Link: https://lore.kernel.org/r/202302162319.bDJOuyfy-lkp@intel.com/
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
-  fs/ntfs3/super.c | 11 ++++++++++-
-  1 file changed, 10 insertions(+), 1 deletion(-)
+Looks reasonable to me"
 
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index e0f78b306f15..5158dd31fd97 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -1347,12 +1347,21 @@ static int ntfs_fill_super(struct super_block 
-*sb, struct fs_context *fc)
-      ref.low = cpu_to_le32(MFT_REC_ROOT);
-      ref.seq = cpu_to_le16(MFT_REC_ROOT);
-      inode = ntfs_iget5(sb, &ref, &NAME_ROOT);
--    if (IS_ERR(inode) || !inode->i_op) {
-+    if (IS_ERR(inode)) {
-          err = PTR_ERR(inode);
-          ntfs_err(sb, "Failed to load root (%d).", err);
-          goto out;
-      }
-
-+    /*
-+     * Final check. Looks like this case should never occurs.
-+     */
-+    if (!inode->i_op) {
-+        err = -EINVAL;
-+        ntfs_err(sb, "Failed to load root (%d).", err);
-+        goto put_inode_out;
-+    }
-+
-      sb->s_root = d_make_root(inode);
-      if (!sb->s_root) {
-          err = -ENOMEM;
--- 
-2.34.1
-
+#syz fix: fs/ntfs3: Validate attribute name offset
