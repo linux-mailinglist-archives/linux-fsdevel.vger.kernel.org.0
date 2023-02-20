@@ -2,142 +2,321 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 159EB69C624
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Feb 2023 08:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EBC969C6D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Feb 2023 09:36:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230342AbjBTHyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Feb 2023 02:54:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50146 "EHLO
+        id S231252AbjBTIgo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Feb 2023 03:36:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbjBTHyr (ORCPT
+        with ESMTP id S231215AbjBTIgm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Feb 2023 02:54:47 -0500
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92DD9BDFD
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Feb 2023 23:54:46 -0800 (PST)
-Received: by mail-il1-f208.google.com with SMTP id v3-20020a92c6c3000000b003159a0109ceso746857ilm.12
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Feb 2023 23:54:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=96yj1aHD38hIt7rAdjlqjX1GsnoopRCQUkxRVi9L4P0=;
-        b=dDV2N7nqo1iWgihp68l8nXCh0j6ebNqMhL4Zpo9VoUw5BEl4zfJXBx/n9/Zsu4I8Ki
-         zCPCJZI80BobrGcPyc73VYBMgAzIcoCBPDkX8iSeHi+rwSJWGzFToCG1KyHXaKOzrBXH
-         HMVprQX5J4r9Mo3eVfeGKRtETpZ++FdAWDmGGJPmkG3MWqLR5kvqeJ8zQOIjrVBfAHdB
-         +soMf6CkGSVgrlIfDKXZRycOa9k3qi/tqhacBpXyE2GUtA6QCsjDQPPE+tfX4MaOytVD
-         uhoz8Po6PyejdTWgNnxMjKssTgtyNeQYn0S1ERcoluR0up08aeXE+YR4+lFAP8Vhbzxs
-         Unzg==
-X-Gm-Message-State: AO0yUKXpvqmDzwrmM8mUkTWjHH/wkkqo/K/VSkoFE+te4IjGK42RUBZ9
-        xdxMCUnX2cKqBTTcBa7K7d3TEiXGLovFabEv8psDJL7ShCjR
-X-Google-Smtp-Source: AK7set+S+y1GWOWBgC3KownZ7sPSvSzsW/4WNlYyMDg0EhpWi0MaSNWu1NYiugx7lWDMZvJXAA/TgJFFFx1wlsJfD6KAkprE7VwH
+        Mon, 20 Feb 2023 03:36:42 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4AB013DDF;
+        Mon, 20 Feb 2023 00:36:22 -0800 (PST)
+Received: from [192.168.10.12] (unknown [39.45.217.110])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8BD7966018CA;
+        Mon, 20 Feb 2023 08:36:14 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1676882181;
+        bh=kMZkLJYnHc2ozlvIeqwgQbNYmUjgvuZvFvLC0JjfCIo=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=FeIL13Ed3B7K3m2XvQ5pImkpPsoNOFzsOakUec5c2jL58ehH2qjUnw2FhD4fazRg9
+         kvmAWUGLsDmmbgDK4BSvxMKf2++Ljw33BaxdsavOT1ClAUErVl8I61tAcWRnU5kTJP
+         dhMEwCPNbT1/QI6kscsfk9xBkzWoohTEDm+ESSKwEWU4Ltjrgtv+avAZjdsjm48q4Q
+         AEPNv82qmn8tzV+5Btag8a57XbWGyCnVo0H3nrvqOzSwMgeoo0PqA53OOCY9ckAyVU
+         gxD5cfPNapOgl0rPkPxsnIkI+iJAulpHSB4yqXH4JRbqBIvkSzchPe2ASirSTfq9gA
+         cwbD3TuL5Ah4w==
+Message-ID: <787ea67e-c48d-c88e-c233-a231b7a101e5@collabora.com>
+Date:   Mon, 20 Feb 2023 13:36:10 +0500
 MIME-Version: 1.0
-X-Received: by 2002:a02:8503:0:b0:3b1:7d3:88b2 with SMTP id
- g3-20020a028503000000b003b107d388b2mr634528jai.6.1676879685936; Sun, 19 Feb
- 2023 23:54:45 -0800 (PST)
-Date:   Sun, 19 Feb 2023 23:54:45 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000002eb8105f51cfa96@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in btrfs_ioctl_add_dev
-From:   syzbot <syzbot+afdee14f9fd3d20448e7@syzkaller.appspotmail.com>
-To:     chris@chrisdown.name, clm@fb.com, dsterba@suse.com,
-        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
+        <emmir@google.com>, Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Nadav Amit <namit@vmware.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v10 1/6] userfaultfd: Add UFFD WP Async support
+Content-Language: en-US
+To:     Mike Rapoport <rppt@kernel.org>
+References: <20230202112915.867409-1-usama.anjum@collabora.com>
+ <20230202112915.867409-2-usama.anjum@collabora.com>
+ <Y+9K5j+uWdTRKzkv@kernel.org>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <Y+9K5j+uWdTRKzkv@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi Mike,
 
-syzbot found the following issue on:
+Thanks for reviewing.
 
-HEAD commit:    c9c3395d5e3d Linux 6.2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1216e630c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f4a1b2323673cc82
-dashboard link: https://syzkaller.appspot.com/bug?extid=afdee14f9fd3d20448e7
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c9a378c80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e5c044c80000
+On 2/17/23 2:37 PM, Mike Rapoport wrote:
+> Hi Muhammad,
+> 
+> On Thu, Feb 02, 2023 at 04:29:10PM +0500, Muhammad Usama Anjum wrote:
+>> Add new WP Async mode (UFFD_FEATURE_WP_ASYNC) which resolves the page
+>> faults on its own. It can be used to track that which pages have been
+>> written-to from the time the pages were write-protected. It is very
+>> efficient way to track the changes as uffd is by nature pte/pmd based.
+>>
+>> UFFD synchronous WP sends the page faults to the userspace where the
+>> pages which have been written-to can be tracked. But it is not efficient.
+>> This is why this asynchronous version is being added. After setting the
+>> WP Async, the pages which have been written to can be found in the pagemap
+>> file or information can be obtained from the PAGEMAP_IOCTL.
+>>
+>> Suggested-by: Peter Xu <peterx@redhat.com>
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>> Changes in v10:
+>> - Build fix
+>> - Update comments and add error condition to return error from uffd
+>>   register if hugetlb pages are present when wp async flag is set
+>>
+>> Changes in v9:
+>> - Correct the fault resolution with code contributed by Peter
+>>
+>> Changes in v7:
+>> - Remove UFFDIO_WRITEPROTECT_MODE_ASYNC_WP and add UFFD_FEATURE_WP_ASYNC
+>> - Handle automatic page fault resolution in better way (thanks to Peter)
+>>
+>> update to wp async
+>>
+>> uffd wp async
+>> ---
+>>  fs/userfaultfd.c                 | 20 ++++++++++++++++++--
+>>  include/linux/userfaultfd_k.h    | 11 +++++++++++
+>>  include/uapi/linux/userfaultfd.h | 10 +++++++++-
+>>  mm/memory.c                      | 23 ++++++++++++++++++++---
+>>  4 files changed, 58 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+>> index 15a5bf765d43..422f2530c63e 100644
+>> --- a/fs/userfaultfd.c
+>> +++ b/fs/userfaultfd.c
+>> @@ -1422,10 +1422,15 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+>>  			goto out_unlock;
+>>  
+>>  		/*
+>> -		 * Note vmas containing huge pages
+>> +		 * Note vmas containing huge pages. Hugetlb isn't supported
+>> +		 * with UFFD_FEATURE_WP_ASYNC.
+>>  		 */
+>> -		if (is_vm_hugetlb_page(cur))
+>> +		if (is_vm_hugetlb_page(cur)) {
+>> +			if (ctx->features & UFFD_FEATURE_WP_ASYNC)
+>> +				goto out_unlock;
+>> +
+>>  			basic_ioctls = true;
+>> +		}
+>>  
+>>  		found = true;
+>>  	}
+>> @@ -1867,6 +1872,10 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+>>  	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
+>>  	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
+>>  
+>> +	/* The unprotection is not supported if in async WP mode */
+>> +	if (!mode_wp && (ctx->features & UFFD_FEATURE_WP_ASYNC))
+>> +		return -EINVAL;
+>> +
+>>  	if (mode_wp && mode_dontwake)
+>>  		return -EINVAL;
+>>  
+>> @@ -1950,6 +1959,13 @@ static int userfaultfd_continue(struct userfaultfd_ctx *ctx, unsigned long arg)
+>>  	return ret;
+>>  }
+>>  
+>> +int userfaultfd_wp_async(struct vm_area_struct *vma)
+>> +{
+>> +	struct userfaultfd_ctx *ctx = vma->vm_userfaultfd_ctx.ctx;
+>> +
+>> +	return (ctx && (ctx->features & UFFD_FEATURE_WP_ASYNC));
+>> +}
+>> +
+>>  static inline unsigned int uffd_ctx_features(__u64 user_features)
+>>  {
+>>  	/*
+>> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+>> index 9df0b9a762cc..38c92c2beb16 100644
+>> --- a/include/linux/userfaultfd_k.h
+>> +++ b/include/linux/userfaultfd_k.h
+>> @@ -179,6 +179,7 @@ extern int userfaultfd_unmap_prep(struct mm_struct *mm, unsigned long start,
+>>  				  unsigned long end, struct list_head *uf);
+>>  extern void userfaultfd_unmap_complete(struct mm_struct *mm,
+>>  				       struct list_head *uf);
+>> +extern int userfaultfd_wp_async(struct vm_area_struct *vma);
+>>  
+>>  #else /* CONFIG_USERFAULTFD */
+>>  
+>> @@ -189,6 +190,11 @@ static inline vm_fault_t handle_userfault(struct vm_fault *vmf,
+>>  	return VM_FAULT_SIGBUS;
+>>  }
+>>  
+>> +static inline void uffd_wp_range(struct mm_struct *dst_mm, struct vm_area_struct *vma,
+>> +				 unsigned long start, unsigned long len, bool enable_wp)
+>> +{
+>> +}
+>> +
+>>  static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
+>>  					struct vm_userfaultfd_ctx vm_ctx)
+>>  {
+>> @@ -274,6 +280,11 @@ static inline bool uffd_disable_fault_around(struct vm_area_struct *vma)
+>>  	return false;
+>>  }
+>>  
+>> +static inline int userfaultfd_wp_async(struct vm_area_struct *vma)
+>> +{
+>> +	return false;
+>> +}
+>> +
+>>  #endif /* CONFIG_USERFAULTFD */
+>>  
+>>  static inline bool pte_marker_entry_uffd_wp(swp_entry_t entry)
+>> diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
+>> index 005e5e306266..30a6f32cf564 100644
+>> --- a/include/uapi/linux/userfaultfd.h
+>> +++ b/include/uapi/linux/userfaultfd.h
+>> @@ -38,7 +38,8 @@
+>>  			   UFFD_FEATURE_MINOR_HUGETLBFS |	\
+>>  			   UFFD_FEATURE_MINOR_SHMEM |		\
+>>  			   UFFD_FEATURE_EXACT_ADDRESS |		\
+>> -			   UFFD_FEATURE_WP_HUGETLBFS_SHMEM)
+>> +			   UFFD_FEATURE_WP_HUGETLBFS_SHMEM |	\
+>> +			   UFFD_FEATURE_WP_ASYNC)
+>>  #define UFFD_API_IOCTLS				\
+>>  	((__u64)1 << _UFFDIO_REGISTER |		\
+>>  	 (__u64)1 << _UFFDIO_UNREGISTER |	\
+>> @@ -203,6 +204,12 @@ struct uffdio_api {
+>>  	 *
+>>  	 * UFFD_FEATURE_WP_HUGETLBFS_SHMEM indicates that userfaultfd
+>>  	 * write-protection mode is supported on both shmem and hugetlbfs.
+>> +	 *
+>> +	 * UFFD_FEATURE_WP_ASYNC indicates that userfaultfd write-protection
+>> +	 * asynchronous mode is supported in which the write fault is automatically
+>> +	 * resolved and write-protection is un-set. It only supports anon and shmem
+>> +	 * (hugetlb isn't supported). It only takes effect when a vma is registered
+>> +	 * with write-protection mode. Otherwise the flag is ignored.
+>>  	 */
+> 
+> Most of mm/ adheres the 80-character limits. Please make your changes to
+> follow it as well. 
+Will update in next version.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/26e9c877102c/disk-c9c3395d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9e3e3feba050/vmlinux-c9c3395d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/21beac50cf7f/bzImage-c9c3395d.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/9f00aa255474/mount_0.gz
+> 
+>>  #define UFFD_FEATURE_PAGEFAULT_FLAG_WP		(1<<0)
+>>  #define UFFD_FEATURE_EVENT_FORK			(1<<1)
+>> @@ -217,6 +224,7 @@ struct uffdio_api {
+>>  #define UFFD_FEATURE_MINOR_SHMEM		(1<<10)
+>>  #define UFFD_FEATURE_EXACT_ADDRESS		(1<<11)
+>>  #define UFFD_FEATURE_WP_HUGETLBFS_SHMEM		(1<<12)
+>> +#define UFFD_FEATURE_WP_ASYNC			(1<<13)
+>>  	__u64 features;
+>>  
+>>  	__u64 ioctls;
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 4000e9f017e0..75331fbf7cb4 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -3351,8 +3351,21 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+>>  
+>>  	if (likely(!unshare)) {
+>>  		if (userfaultfd_pte_wp(vma, *vmf->pte)) {
+>> -			pte_unmap_unlock(vmf->pte, vmf->ptl);
+>> -			return handle_userfault(vmf, VM_UFFD_WP);
+>> +			if (userfaultfd_wp_async(vma)) {
+>> +				/*
+>> +				 * Nothing needed (cache flush, TLB invalidations,
+>> +				 * etc.) because we're only removing the uffd-wp bit,
+>> +				 * which is completely invisible to the user.
+>> +				 */
+>> +				pte_t pte = pte_clear_uffd_wp(*vmf->pte);
+>> +
+>> +				set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
+>> +				/* Update this to be prepared for following up CoW handling */
+>> +				vmf->orig_pte = pte;
+>> +			} else {
+>> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
+>> +				return handle_userfault(vmf, VM_UFFD_WP);
+>> +			}
+> 
+> You can revert the condition here and reduce the nesting:
+> 
+> 			if (!userfaultfd_wp_async(vma)) {
+> 				pte_unmap_unlock(vmf->pte, vmf->ptl);
+> 				return handle_userfault(vmf, VM_UFFD_WP);
+> 			}
+> 
+> 			/* handle async WP */
+I'll update in next version.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+afdee14f9fd3d20448e7@syzkaller.appspotmail.com
+> 
+>>  		}
+>>  
+>>  		/*
+>> @@ -4812,8 +4825,11 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
+>>  
+>>  	if (vma_is_anonymous(vmf->vma)) {
+>>  		if (likely(!unshare) &&
+>> -		    userfaultfd_huge_pmd_wp(vmf->vma, vmf->orig_pmd))
+>> +		    userfaultfd_huge_pmd_wp(vmf->vma, vmf->orig_pmd)) {
+>> +			if (userfaultfd_wp_async(vmf->vma))
+>> +				goto split;
+>>  			return handle_userfault(vmf, VM_UFFD_WP);
+>> +		}
+>>  		return do_huge_pmd_wp_page(vmf);
+>>  	}
+>>  
+>> @@ -4825,6 +4841,7 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
+>>  		}
+>>  	}
+>>  
+>> +split:
+>>  	/* COW or write-notify handled on pte level: split pmd. */
+>>  	__split_huge_pmd(vmf->vma, vmf->pmd, vmf->address, false, NULL);
+>>  
+>> -- 
+>> 2.30.2
+>>
+> 
 
-assertion failed: fs_info->exclusive_operation == BTRFS_EXCLOP_BALANCE || fs_info->exclusive_operation == BTRFS_EXCLOP_DEV_ADD, in fs/btrfs/ioctl.c:457
-------------[ cut here ]------------
-kernel BUG at fs/btrfs/messages.c:259!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 6416 Comm: syz-executor132 Not tainted 6.2.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
-RIP: 0010:btrfs_assertfail+0x18/0x20 fs/btrfs/messages.c:259
-Code: df e8 0c 2d 3c f7 e9 50 fb ff ff e8 e2 7e 01 00 66 90 66 0f 1f 00 89 d1 48 89 f2 48 89 fe 48 c7 c7 20 16 2c 8b e8 38 62 ff ff <0f> 0b 66 0f 1f 44 00 00 66 0f 1f 00 53 48 89 fb e8 03 f4 e6 f6 48
-RSP: 0018:ffffc9000ca0fea0 EFLAGS: 00010246
-RAX: 0000000000000097 RBX: 00000000fffffff2 RCX: eb26e11d15dcfa00
-RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff816efb3c R09: fffff52001941f8d
-R10: 0000000000000000 R11: dffffc0000000001 R12: dffffc0000000000
-R13: 0000000000000003 R14: ffff888029d64680 R15: 1ffff110053acc1a
-FS:  00007f9e79ad6700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000077d02000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_exclop_balance fs/btrfs/ioctl.c:456 [inline]
- btrfs_ioctl_add_dev+0x347/0x480 fs/btrfs/ioctl.c:2660
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f9e80f4b589
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f9e79ad62f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f9e80fd57b0 RCX: 00007f9e80f4b589
-RDX: 0000000000000000 RSI: 000000005000940a RDI: 0000000000000004
-RBP: 00007f9e80fd57bc R08: 00007f9e79ad6700 R09: 0000000000000000
-R10: 00007f9e79ad6700 R11: 0000000000000246 R12: 00007f9e80fa2660
-R13: 01c8dfb098cf77b9 R14: 0030656c69662f2e R15: 00007f9e80fd57b8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:btrfs_assertfail+0x18/0x20 fs/btrfs/messages.c:259
-Code: df e8 0c 2d 3c f7 e9 50 fb ff ff e8 e2 7e 01 00 66 90 66 0f 1f 00 89 d1 48 89 f2 48 89 fe 48 c7 c7 20 16 2c 8b e8 38 62 ff ff <0f> 0b 66 0f 1f 44 00 00 66 0f 1f 00 53 48 89 fb e8 03 f4 e6 f6 48
-RSP: 0018:ffffc9000ca0fea0 EFLAGS: 00010246
-RAX: 0000000000000097 RBX: 00000000fffffff2 RCX: eb26e11d15dcfa00
-RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff816efb3c R09: fffff52001941f8d
-R10: 0000000000000000 R11: dffffc0000000001 R12: dffffc0000000000
-R13: 0000000000000003 R14: ffff888029d64680 R15: 1ffff110053acc1a
-FS:  00007f9e79ad6700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000077d02000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+BR,
+Muhammad Usama Anjum
