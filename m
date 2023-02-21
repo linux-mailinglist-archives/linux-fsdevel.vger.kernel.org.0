@@ -2,112 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1E8B69E8AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Feb 2023 20:58:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B52969E922
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Feb 2023 21:51:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229991AbjBUT6j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Feb 2023 14:58:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47852 "EHLO
+        id S229864AbjBUUvY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Feb 2023 15:51:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbjBUT6i (ORCPT
+        with ESMTP id S229724AbjBUUvX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Feb 2023 14:58:38 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BF192129E;
-        Tue, 21 Feb 2023 11:58:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3m7BCGAEZNjDasZrz2wufh7wDwBRXOZCBbm7SGl9TRc=; b=IHbWhPII7qYnTuhitFCv7e8Ptx
-        +DDIa91/rALCRuXZ3Y67WQ3Sf7pMxTt3xXHQ+0yy4i3B8bbi6qqT+JWr+3wQ2C7OMw5IZOMeyvMvE
-        hGMoCoqSMp+aoBcnhOLm3FdWMwC6OrUvR8P65lm/ufn8IvmmsJJN5hhc50tBCz888s5FvEOxZCdek
-        yE6Oma0hpMqRqM+rGYSIZ/cbZhyIiW7KmnMr5/mfRsBNUFmPxn/593lUZDWT0+Dj+NjtO0jm2SaUD
-        Ch1AGOvX1J2BRTlv26sDVzx8QV5VcCkfwO9yvzMKgfeuV66IT1iHF+0/Rx6/Vju4FziwY/8lcwkyF
-        lgzryj5g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pUYmR-00CsKI-Cd; Tue, 21 Feb 2023 19:58:27 +0000
-Date:   Tue, 21 Feb 2023 19:58:27 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-nvme@lists.infradead.org, bpf@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] State Of The Page
-Message-ID: <Y/UiY/08MuA/tBku@casper.infradead.org>
-References: <Y9KtCc+4n5uANB2f@casper.infradead.org>
- <8448beac-a119-330d-a2af-fc3531bdb930@linux.alibaba.com>
+        Tue, 21 Feb 2023 15:51:23 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31223302B3;
+        Tue, 21 Feb 2023 12:51:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1677012674;
+        bh=N4w7g7bbMneGm4ZhMjhv9CTYknNcabj3wGfoOlMb5Zc=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=kI+wXcMR6hXsTn+QR8f5sR1/1794Q6+xrneS7a5obWK88/qcS8iCO1S+SXD3kGmEn
+         6jOuy/SIcFdvUXVdQgt2lVkdwszP8Ou9ICNcAE9xhTYhgpnq2ajQz5hDvkNYMCoRUT
+         xPRfO+T5GS3icv0g1/j0HFG9Zw+KNbsgwkns8THE=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id ADA661285D81;
+        Tue, 21 Feb 2023 15:51:14 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id FGjkMet321rv; Tue, 21 Feb 2023 15:51:14 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1677012672;
+        bh=N4w7g7bbMneGm4ZhMjhv9CTYknNcabj3wGfoOlMb5Zc=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=ZI5rqcDpS+lxbOVqMrJXvhLWNx9advzwHK26ZLIrowuMjNn9YlbmAe31HnoDSe7H1
+         AJmanRWkZ9B1Y+WmfTm08FjN1z+FoTmBFxdj+Cu6BGbMOkEo9EqRtohuo4rh043DR5
+         BY3Fx6d44jyvbExWeZQ6rlhjCYVuGRDl6I4OaoOM=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 6110E1281F11;
+        Tue, 21 Feb 2023 15:51:12 -0500 (EST)
+Message-ID: <96463a32a97dc40bc30c47ddcdf19a5803de32d8.camel@HansenPartnership.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Linux Security Summit cross-over?
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     David Howells <dhowells@redhat.com>,
+        lsf-pc@lists.linux-foundation.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>
+Date:   Tue, 21 Feb 2023 15:51:11 -0500
+In-Reply-To: <2896937.1676998541@warthog.procyon.org.uk>
+References: <2896937.1676998541@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8448beac-a119-330d-a2af-fc3531bdb930@linux.alibaba.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 22, 2023 at 02:08:28AM +0800, Gao Xiang wrote:
-> On 2023/1/27 00:40, Matthew Wilcox wrote:
-> > I'd like to do another session on how the struct page dismemberment
-> > is going and what remains to be done.  Given how widely struct page is
-> > used, I think there will be interest from more than just MM, so I'd
-> > suggest a plenary session.
+On Tue, 2023-02-21 at 16:55 +0000, David Howells wrote:
 > 
-> I'm interested in this topic too, also I'd like to get some idea of the
-> future of the page dismemberment timeline so that I can have time to keep
-> the pace with it since some embedded use cases like Android are
-> memory-sensitive all the time.
+> Since the first day of the LSS is the same as the final day of LSF
+> and in the same venue, are there any filesystem + security subjects
+> that would merit a common session?
 
-As you all know, I'm absolutely amazing at project management & planning
-and can tell you to the day when a feature will be ready ;-)
 
-My goal for 2023 is to get to a point where we (a) have struct page
-reduced to:
+I've got one:  Cryptographic material handling.
 
-struct page {
-	unsigned long flags;
-	struct list_head lru;
-	struct address_space *mapping;
-	pgoff_t index;
-	unsigned long private;
-	atomic_t _mapcount;
-	atomic_t _refcount;
-	unsigned long memcg_data;
-#ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
-	int _last_cpupid;
-#endif
-};
+Subtitle could be: making keyrings more usable.
 
-and (b) can build an allnoconfig kernel with:
+The broad problem is that the use of encryption within the kernel is
+growing (from the old dm-crypt to the newer fscrypt and beyond) yet
+pretty much all of our cryptographic key material handling violates the
+principle of least privilege.  The latest one (which I happened to
+notice being interested in TPMs) is the systemd tpm2 cryptenroll.  The
+specific violation is that key unwrapping should occur as close as
+possible to use: when the kernel uses a key, it should be the kernel
+unwrapping it not unwrapping in user space and handing the unwrapped
+key down to the kernel because that gives a way.  We got here because
+in most of the old uses, the key is derived from a passphrase and the
+kernel can't prompt the user, so pieces of user space have to gather
+the precursor cryptographic material anyway.  However, we're moving
+towards using cryptographic devices (like the TPM, key fobs and the
+like) to store keys we really should be passing the wrapped key into
+the kernel and letting it do the unwrap to preserve least privilege. 
+dm-crypt has some support for using kernel based TPM keys (the trusted
+key subsystem), but this isn't propagated into systemd-cryptenroll and
+pretty much none of the other encryption systems make any attempt to
+use keyrings for unwrap handling, even if they use keyrings to store
+cryptographic material.
 
-struct page {
-	unsigned long flags;
-	unsigned long padding[5];
-	atomic_t _mapcount;
-	atomic_t _refcount;
-	unsigned long padding2;
-#ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
-	int _last_cpupid;
-#endif
-};
+Part of the reason seems to be that the keyrings subsystem itself is
+hard to use as a generic "unwrapper" since the consumer of the keys has
+to know exactly the key type to consume the protected payload.  We
+could possibly fix this by adding a payload accessor function so the
+keyring consumer could access a payload from any key type and thus
+benefit from in-kernel unwrapping, but there are likely a host of other
+issues that need to be solved.  So what I'd really like to discuss is:
 
-> Minor, it seems some apis still use ->lru field to chain bulk pages,
-> perhaps it needs some changes as well:
-> https://lore.kernel.org/r/20221222124412.rpnl2vojnx7izoow@techsingularity.net
-> https://lore.kernel.org/r/20230214190221.1156876-2-shy828301@gmail.com
+Given the security need for a generic in-kernel unwrapper, should we
+make keyrings do this and if so, how?
 
-Yang Shi covered the actual (non-)use of the list version of the bulk
-allocator already, but perhaps more importantly, each page allocated
-by the bulk allocator is actually a separately tracked allocation.
-So the obvious translation of the bulk allocator from pages to folios
-is that it allocates N order-0 folios.
+Regards,
 
-That may not be the best approach for all the users of the bulk allocator,
-so we may end up doing something different.  At any rate, use of page->lru
-isn't the problem here (yes, it's something that would need to change,
-but it's not a big conceptual problem).
+James
+
+
+
