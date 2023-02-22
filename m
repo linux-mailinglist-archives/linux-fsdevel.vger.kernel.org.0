@@ -2,117 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8154569ECD2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Feb 2023 03:33:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA6DC69ECF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Feb 2023 03:38:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbjBVCdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Feb 2023 21:33:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55420 "EHLO
+        id S230425AbjBVCiV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Feb 2023 21:38:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjBVCc7 (ORCPT
+        with ESMTP id S229539AbjBVCiU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Feb 2023 21:32:59 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 102128A6D;
-        Tue, 21 Feb 2023 18:32:59 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id e5so8269494plg.8;
-        Tue, 21 Feb 2023 18:32:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9cDSGjsZLxrrxEWh0LEAOx0oKYxUvAtDpQKo93C1IX8=;
-        b=hXtiawoKnL/qVSN+y9Grm7UP6aFZ8wR5vr7shuKHWJmOEp+ymU9ZL0Oprc4lGfPgo0
-         DAvR2n+wvi3bDvW1Yrhqaf1jh8VWuR4k8TqzMbaed5W4bDuDw9Y7QkcmQ/GNxh9cKRt8
-         LBrho171SdCVr3FaZ2hSsAk5c/FTP4BsQpG7LJxg+DaPOUwbD0cYitYL53tMcVrfv4px
-         Fd8S183ABH7mYNl3jYNrXJwj+JGgB8ehZyhldCoFAfrIyh4M6ozY+Tza7zQVd89LNGxi
-         S4vExBOdjpnlAy8fX50Url7Vus1AV+r+/2XE6nplaVCkEOUPftJ53wlV6IR7uOZM1ucX
-         WRBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9cDSGjsZLxrrxEWh0LEAOx0oKYxUvAtDpQKo93C1IX8=;
-        b=HyzdArXLVJsZRScG4fYwd16XpJkd3SMGhx4RMtfVG2kxg6VYkS81e1SvNse7P1+fQE
-         b/AKanq+/GxUTUZLVN6h3XKZjskrXidwWOAAqtM9heLNnhqHLGTuJkCr2jaMO63Wv3wH
-         3iQB3Ub+Ek5ZzCbFRQRuQLx1NaHSUrJgVkGynRBQn7rHQsrbvOAsZBsofo5W2HYVXG9p
-         ez/JVTxrIlt+MBRHDrzo1eV8SiCOaqWeIEeBi7+fO0O1Zm659ZYG6WfQIEIRminI7LQk
-         KnlC8CMjGbktt9qg/YFCwYJXaRqqKuIZW6TR57YDP/wDm5C9EWw3vcW2uWLG89DRERpq
-         96MQ==
-X-Gm-Message-State: AO0yUKXrPK7TVNbykeAmvPW1mURU1fe3g2UNGndLkcBb0gwdRAtCX/Mz
-        eTax0VevN7WYxIKSvzsXkTof/9QPbkA=
-X-Google-Smtp-Source: AK7set+CH4IPKvPhCyIUAZh8En9SGRNdOZNRv7oO+4wZHHyuwrtzZArEZpbhWgKKKvMxLZNr4mObYQ==
-X-Received: by 2002:a17:903:234b:b0:19a:7f4b:3ef6 with SMTP id c11-20020a170903234b00b0019a7f4b3ef6mr8627410plh.3.1677033178474;
-        Tue, 21 Feb 2023 18:32:58 -0800 (PST)
-Received: from [192.168.43.80] (subs32-116-206-28-13.three.co.id. [116.206.28.13])
-        by smtp.gmail.com with ESMTPSA id t9-20020a170902a5c900b00196896d6d04sm4245747plq.258.2023.02.21.18.32.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Feb 2023 18:32:58 -0800 (PST)
-Message-ID: <a1635643-a4a8-61e1-7798-af7455668878@gmail.com>
-Date:   Wed, 22 Feb 2023 09:32:54 +0700
+        Tue, 21 Feb 2023 21:38:20 -0500
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21D522594B;
+        Tue, 21 Feb 2023 18:38:17 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VcEEUep_1677033493;
+Received: from 30.97.49.34(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VcEEUep_1677033493)
+          by smtp.aliyun-inc.com;
+          Wed, 22 Feb 2023 10:38:14 +0800
+Message-ID: <874be627-cb9e-bca6-4845-18dcd65f0f3f@linux.alibaba.com>
+Date:   Wed, 22 Feb 2023 10:38:12 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] Update documentation of vfs_tmpfile
-Content-Language: en-US
-To:     "Hok Chun NG (Ben)" <me@benbenng.net>
-Cc:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>
-References: <20230221035528.10529-1-me@benbenng.net>
- <01000186721d17f8-ab0c64f0-a6ae-4e43-99a3-a44e6dba95b6-000000@email.amazonses.com>
- <Y/TFdmhvrLu1h8Kl@debian.me>
- <346A4D50-E68E-4D03-B06B-4949F5640197@benbenng.net>
- <0100018676b0882f-5895463a-0af2-4fae-9e0b-8d4676347b1f-000000@email.amazonses.com>
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <0100018676b0882f-5895463a-0af2-4fae-9e0b-8d4676347b1f-000000@email.amazonses.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.1
+Subject: Re: [LSF/MM/BPF TOPIC] State Of The Page
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-block@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-nvme@lists.infradead.org, bpf@vger.kernel.org
+References: <Y9KtCc+4n5uANB2f@casper.infradead.org>
+ <8448beac-a119-330d-a2af-fc3531bdb930@linux.alibaba.com>
+ <Y/UiY/08MuA/tBku@casper.infradead.org>
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <Y/UiY/08MuA/tBku@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-0.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_SORBS_WEB,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/22/23 08:15, Hok Chun NG (Ben) wrote:
-> Hi Bagas,
-> 
->> On Feb 21, 2023, at 8:21 AM, Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+
+
+On 2023/2/22 03:58, Matthew Wilcox wrote:
+> On Wed, Feb 22, 2023 at 02:08:28AM +0800, Gao Xiang wrote:
+>> On 2023/1/27 00:40, Matthew Wilcox wrote:
+>>> I'd like to do another session on how the struct page dismemberment
+>>> is going and what remains to be done.  Given how widely struct page is
+>>> used, I think there will be interest from more than just MM, so I'd
+>>> suggest a plenary session.
 >>
->> On Tue, Feb 21, 2023 at 03:55:54AM +0000, Hok Chun NG (Ben) wrote:
->>> On function vfs_tmpfile, documentation is updated according to function signature update.
->>>
->>> Description for 'dentry' and 'open_flag' removed.
->>> Description for 'parentpath' and 'file' added.
->>
->> What commit did vfs_tmpfile() change its signature?
+>> I'm interested in this topic too, also I'd like to get some idea of the
+>> future of the page dismemberment timeline so that I can have time to keep
+>> the pace with it since some embedded use cases like Android are
+>> memory-sensitive all the time.
 > 
-> Changes of the function signature is from 9751b338656f05a0ce918befd5118fcd970c71c6
-> vfs: move open right after ->tmpfile() by Miklos Szeredi mszeredi@redhat.com
+> As you all know, I'm absolutely amazing at project management & planning
+> and can tell you to the day when a feature will be ready ;-)
+
+yeah, but this core stuff actually impacts various subsystems, it would
+be better to get some in advance otherwise I'm not sure if I could have
+extra slots to handle these.
+
 > 
-
-Nice.
-
-The preferred git pretty format when referring to existing commit is
-"%h (\"%s\")". Make sure that you set core.abbrev to at least 12.
- 
->>
->> For the patch description, I'd like to write "Commit <commit> changes
->> function signature for vfs_tmpfile(). Catch the function documentation
->> up with the change."
+> My goal for 2023 is to get to a point where we (a) have struct page
+> reduced to:
 > 
-> I agree. Thank you for the suggestion.
+> struct page {
+> 	unsigned long flags;
+> 	struct list_head lru;
+> 	struct address_space *mapping;
+> 	pgoff_t index;
+> 	unsigned long private;
+> 	atomic_t _mapcount;
+> 	atomic_t _refcount;
+> 	unsigned long memcg_data;
+> #ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
+> 	int _last_cpupid;
+> #endif
+> };
 > 
+> and (b) can build an allnoconfig kernel with:
+> 
+> struct page {
+> 	unsigned long flags;
+> 	unsigned long padding[5];
+> 	atomic_t _mapcount;
+> 	atomic_t _refcount;
+> 	unsigned long padding2;
+> #ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
+> 	int _last_cpupid;
+> #endif
+> };
 
-OK, thanks!
+Okay, with the plan above, how to make it work with memdesc in the long
+term?
 
--- 
-An old man doll... just what I always wanted! - Clara
+Also in the future at least I'd like to know if it's possible / how to
+get folio itself from page and how to know if some folio is actually
+truncated or connected to some (or more) inodes.
+
+Anyway, all of the above are interesting to me, and that could avoid
+some extra useless folio adoption in the opposite direction.  Also I
+could have more rough thoughts how to get page cache sharing work.
+
+I could imagine many of them may be still in the preliminary form
+for now, but some detailed plans would be much helpful.
+
+> 
+>> Minor, it seems some apis still use ->lru field to chain bulk pages,
+>> perhaps it needs some changes as well:
+>> https://lore.kernel.org/r/20221222124412.rpnl2vojnx7izoow@techsingularity.net
+>> https://lore.kernel.org/r/20230214190221.1156876-2-shy828301@gmail.com
+> 
+> Yang Shi covered the actual (non-)use of the list version of the bulk
+> allocator already, but perhaps more importantly, each page allocated
+> by the bulk allocator is actually a separately tracked allocation.
+> So the obvious translation of the bulk allocator from pages to folios
+> is that it allocates N order-0 folios.
+> 
+> That may not be the best approach for all the users of the bulk allocator,
+> so we may end up doing something different.  At any rate, use of page->lru
+> isn't the problem here (yes, it's something that would need to change,
+> but it's not a big conceptual problem).
+
+Yes, I just would like to confirm how to use such apis in the long term.
+Currently it's no rush for me but I tend to avoid using them in a vague
+direction.
+
+Thanks,
+Gao Xiang
 
