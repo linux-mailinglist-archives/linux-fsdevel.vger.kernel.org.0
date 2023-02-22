@@ -2,218 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0025469EE2B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Feb 2023 06:09:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 888D969F0D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Feb 2023 10:02:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229957AbjBVFJj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Feb 2023 00:09:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56372 "EHLO
+        id S231513AbjBVJCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Feb 2023 04:02:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbjBVFJi (ORCPT
+        with ESMTP id S231511AbjBVJCk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Feb 2023 00:09:38 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCDF430B14;
-        Tue, 21 Feb 2023 21:09:36 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id cy6so20219104edb.5;
-        Tue, 21 Feb 2023 21:09:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QV2BQKnKvx83DtaQMTdOYH8bbYAylqUFBUTurFa+qSc=;
-        b=EaKhc2GiKSi4cpmcbvAM46W4ctY0NKxgkcuiGtSuY69PCdVrwrXvLnZ8njnCVY4BRl
-         2v7sO/W40xNV5hhZDEFdaADjryTnRwL4yPxLiGiS9bE2T2HExDmooDhs9fYvcAwBX/57
-         Bx7uh5pkubsNkOTzFUGhuR9WGyXgU+U6ru4t5/OUpKGukiQLOMljZBHr6W86yR2FQQtw
-         X9tKqY0QybL2p4lnuP3YwEvK52mEgraqJvbJUwwPzq4KYAu6o8pRPA5MgNaJgb4Egx71
-         wDUepxs2t/6qvIMR7PaxTunN1DqzSmhvAEpNuhD0JpNz2lM5uOCx77i9WXXvK/h2EkHV
-         3zMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QV2BQKnKvx83DtaQMTdOYH8bbYAylqUFBUTurFa+qSc=;
-        b=7HWOWJSgWJoxQq1YVMBwvlhrmadEk9rXSpDass9Uzo/4l+PG9PSkjDKe5zNKcxRBbh
-         tKCHO3SyCoD9xF6vlPibzwsB788lhAJtGRmfRLMEvEE4zKmwLVDHeLH64naMpyDv4Dps
-         gPq+j+iwPV55KFNC5wy2sz3JQG11X0t7b5g2GfSVTFSCYrBepk0I6+79aEDKfvOU1yRw
-         R5QUu/Yh9Yvw2Mcp2qCbU8RVs2z3uImN+XDFRtJYTbQj+uPwlpED/8KdGt2WkUBjhnv+
-         W/q60UMoQPMKsUF6TEmKEsh3B+7fdrJtWSCakwGPYSR2VTD4U/U7gh9hAPgFZ+Nbhm4R
-         0OVA==
-X-Gm-Message-State: AO0yUKUWO8t1IChY5//M4MKUv3hCeBpAoIcbm73bICqEMCEITW/qRYMx
-        PKzvV3QvTWhykHxbK3wET9ncyQpahhzn9aHvAHH5rn4wWA6XYA==
-X-Google-Smtp-Source: AK7set+SYitTue04U27BGvAjKJkKfTCQ19o9WWS316VsBdtJeOFCz/KSZFNCcDf1SMCKauyqJqsWN5VVMFNovRE4wjk=
-X-Received: by 2002:a17:906:db04:b0:88d:ba79:4317 with SMTP id
- xj4-20020a170906db0400b0088dba794317mr7971273ejb.7.1677042574702; Tue, 21 Feb
- 2023 21:09:34 -0800 (PST)
+        Wed, 22 Feb 2023 04:02:40 -0500
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A98AF37708
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Feb 2023 01:02:37 -0800 (PST)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230222090231epoutp041ceb163333a7f121c3a2362f3d5af652~GGgxxmGgE1638316383epoutp047
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Feb 2023 09:02:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230222090231epoutp041ceb163333a7f121c3a2362f3d5af652~GGgxxmGgE1638316383epoutp047
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1677056552;
+        bh=QFUI15qGG3Uc1pn5dekB8hZdtrWvi76P+HJ8sE3RT6E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=L/N6bWCuUfc6LNseTnAdIlhQFIJrTiuMHcj/TYtBhgs6qfi3q7WMJqgnK1XmRMdfb
+         l2QRe33qPgmi4p6Qgpi8+jg4QZGKHxfsqw5yfSz4BXiuMsZPmnGIN7PHZvWIrdETNK
+         ef0bWODOFgIp2LU6UyqjFhu9vE86i2JecYTzcHNE=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20230222090231epcas5p13f234960738c0cf4e3206c3cfad2b69a~GGgxG-5S80161201612epcas5p1F;
+        Wed, 22 Feb 2023 09:02:31 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4PM9CT4G7gz4x9Pr; Wed, 22 Feb
+        2023 09:02:29 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        59.81.06765.52AD5F36; Wed, 22 Feb 2023 18:02:29 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230222061311epcas5p1668d0066e043e146e6bd7db32c010667~GEM7Fiiac1792017920epcas5p1E;
+        Wed, 22 Feb 2023 06:13:11 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230222061311epsmtrp20840e9dccad1f7846d8bb9d162a25aa3~GEM7Efrmo3190331903epsmtrp2G;
+        Wed, 22 Feb 2023 06:13:11 +0000 (GMT)
+X-AuditID: b6c32a4b-20fff70000011a6d-24-63f5da258277
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        08.9C.05839.772B5F36; Wed, 22 Feb 2023 15:13:11 +0900 (KST)
+Received: from green5 (unknown [107.110.206.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230222061308epsmtip21ab9090b9fa12359e861e5637b8374cd~GEM3-5pBx1221112211epsmtip2d;
+        Wed, 22 Feb 2023 06:13:08 +0000 (GMT)
+Date:   Wed, 22 Feb 2023 11:42:36 +0530
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Minwoo Im <minwoo.im.dev@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, bvanassche@acm.org,
+        hare@suse.de, ming.lei@redhat.com,
+        damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+        joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v7 2/8] block: Add copy offload support infrastructure
+Message-ID: <20230222061236.GA13158@green5>
 MIME-Version: 1.0
-From:   Palash Oswal <oswalpalash@gmail.com>
-Date:   Tue, 21 Feb 2023 21:09:23 -0800
-Message-ID: <CAGyP=7fWFjioc7ok0SZ7kBNh6_MAk1keL4BKPvUNdmpGjnsZOA@mail.gmail.com>
-Subject: KASAN: use-after-free Read in inode_cgwb_move_to_attached
-To:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <Y/VapDeE98+A6/G2@minwoo-desktop>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TfVBUVRjGO/fuXhZ14YYfHHCSnUvGl7uwsrtdGqActK5RgWONYzXhtlw+
+        l91lP8RkKkAwBRWEMNnSwBASkA1WCIQF21IEYmDkQ2UkoUEjCBCQ0GVk2+VC43+/8z7PO897
+        3jOHg7p84+DOiVdoabVCKiewNaz6X328+FsH52UBmZUepKHjBkpm5D1DycqhXIw88+gpSi52
+        daOkaepbNnn3WiNCNl/IR8hLldcRsqlkBiGvWycxMt88AMgH/XqENA36kc2mdhbZe/U7jPy+
+        7IEDaS44gpCW42vJhtF0QFZPTLPIm4Obye5nbew3XKnevnBKf78Loxr1Qw5U9x81LKq3S0fV
+        VhzHKGPpl1TT3TSMOnlkymbIus+mplv6MerUlQpAGTtTqbnaLVTt6CQS6fxhYnAcLY2m1Txa
+        IVNGxytiQ4jwvVFhUWJJgJAvDCJfJXgKaRIdQux8J5L/ZrzctgGCd1Aq19lKkVKNhvAPDVYr
+        dVqaF6fUaEMIWhUtV4lUAo00SaNTxAoUtPY1YUDAdrHNeCAx7pZ1BlPVrT3UnWEEaeC0YzZw
+        5EBcBIfrppBssIbjgjcB+JWlFbMLLvgsgItFgYzwL4DVlaXIasfizXmMEUwADjwdYjOHUQCz
+        OxuA3cXCt8Khy/m2Dg4Hw/1gp5VjL2/AvWDpcBmw+1G8gA3T7pSz7cJ6/G2YNV69nMC1+S01
+        FpThF2F70SjLzo64AI4UTC/zRtwTXqtvW5nI4AiHag8yvBOOnW1Zqa+H421XHBh2h3NTJozh
+        FHjp6x+XbwDxTAD1t/WAEV6HWR25y8EoHgcv/pXBZuovwcIOZjgUd4InF0dXAriw4fwqe8Iq
+        Q/FKgBscWEhfYQoajg2zmA2NAHivvR3kAQ/9c5fTP5fH8DZY3DSL6W3LQ/HNsHyJw6APNFz1
+        LwbsCuBGqzRJsbRGrApU0Cn/v7hMmVQLln+Ib3gD+HP4kcAMEA4wA8hBiQ1cK3dO5sKNln52
+        mFYro9Q6Oa0xA7HtsU6j7htlStsXU2ijhKKgAJFEIhEFBUqEhCvXK6Rd5oLHSrV0Ik2raPVq
+        H8JxdE9DuGLvD3wq+cEvj7y10Jw5Xh4/MWv5NKTF+MVRtoenqWRs/zpJKi9xtshPkEcTtDUt
+        d6Cm1e/n+cWapcfKerdz595r5i9h6Uhq8gtOxvfzd4tCn+xI+O1OxCGkx5U34eKqTg1LhE9i
+        E8AvWm3YxS0f9+R8Lv9kYVfy4l6iKKJCm+DtcLjyh7r582eRM3T9rebdM5v2GTPfzel7mOM9
+        fmpHzFFEYBaP/R2zzVB2rPEe3MMlSn6yVP0OI7I6nGP8BwoPVBeirww07oreI15HfdQz49zh
+        45xscEopO+G3aX9r6MPbk/vc+hp1/5Rf7k/Q+FpDq1SzWRf4N8rmM+Uemu3CHQmPCZYmTir0
+        RdUa6X9EkgBuqgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsWy7bCSvG75pq/JBnPniVusP3WM2aJpwl9m
+        i9V3+9kspn34yWzx++x5Zou972azWtw8sJPJYs+iSUwWK1cfZbLYvfAjk8XR/2/ZLCYdusZo
+        8fTqLCaLvbe0LfbsPclicXnXHDaL+cueslscmtzMZPGrk9tix5NGRot1r9+zWJy4JW1x/u9x
+        Vgdxj8tXvD1m3T/L5rFz1l12j/P3NrJ4XD5b6rFpVSebx+Yl9R67bzawefQ2vwMqaL3P6vF+
+        31U2j74tqxg9Np+u9vi8Sc5j05O3TAH8UVw2Kak5mWWpRfp2CVwZ/2b+Yy74ylHR9O4ZcwPj
+        K7YuRk4OCQETid8nvgLZXBxCArsZJZ5sPsAEkZCUWPb3CDOELSyx8t9zdoiiR4wSL2e3MoIk
+        WARUJe6unQTUwMHBJqAtcfo/B0hYREBdYsmDZYwg9cwC01kl3k8/CrZNWMBLovXVOrAFvED1
+        vzb+YoYY+pBR4vOxM6wQCUGJkzOfsIDYzAJaEjf+vQRbwCwgLbH8H9gCTgE9iYeT34OViAoo
+        SxzYdpxpAqPgLCTds5B0z0LoXsDIvIpRMrWgODc9t9iwwDAvtVyvODG3uDQvXS85P3cTIzj2
+        tTR3MG5f9UHvECMTB+MhRgkOZiUR3v+8n5OFeFMSK6tSi/Lji0pzUosPMUpzsCiJ817oOhkv
+        JJCeWJKanZpakFoEk2Xi4JRqYFpw+l3OirXTymbemr7qykFuZlNOlZ/yQn6XTB0fubmaN1X+
+        nbHfKCZGhlNhkoMrwy3xVps7SS73U+/82fBc28pq9QzlLM97Qolrt65pm2bdp/M8+Un8270p
+        q7ck/WipSMjateiu/T3vJLt5FWecOFg4Tt2zX7eJVaio4hZncGJo+9WmF6UanW0WDny9i/ZG
+        z6hxcBBKDTRqkWvrOaT323rK1bUvwmeq/Pzc6t92S6z2+72DLZ3RRTmPVhjEW/jpveeu5N9b
+        ZPqwvMSOUXPvySnMNXLC0dPFHrIu3ejh/dwjz6TizaTo06fTHZ0fPF55dEehtMn6wHkZNQnh
+        z6XkI8tDl938Zq/5TTDvUc4JJZbijERDLeai4kQA/vWOE2wDAAA=
+X-CMS-MailID: 20230222061311epcas5p1668d0066e043e146e6bd7db32c010667
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----yVjN9gd9kB_eEBqPP9-k1BSyTM5mTd6q7sagKps1_qiE1IrQ=_83a81_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230220105441epcas5p49ffde763aae06db301804175e85f9472
+References: <20230220105336.3810-1-nj.shetty@samsung.com>
+        <CGME20230220105441epcas5p49ffde763aae06db301804175e85f9472@epcas5p4.samsung.com>
+        <20230220105336.3810-3-nj.shetty@samsung.com>
+        <Y/VapDeE98+A6/G2@minwoo-desktop>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
-I found the following issue using syzkaller on:
-HEAD commit : e60276b8c11ab4a8be23807bc67b04
-8cfb937dfa (v6.0.8)
-git tree: stable
+------yVjN9gd9kB_eEBqPP9-k1BSyTM5mTd6q7sagKps1_qiE1IrQ=_83a81_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-C Reproducer : https://gist.github.com/oswalpalash/bed0eba75def3cdd34a285428e9bcdc4
-Kernel .config :
-https://gist.github.com/oswalpalash/0962c70d774e5ec736a047bba917cecb
+On Wed, Feb 22, 2023 at 08:58:28AM +0900, Minwoo Im wrote:
+> > +/*
+> > + * @bdev_in:	source block device
+> > + * @pos_in:	source offset
+> > + * @bdev_out:	destination block device
+> > + * @pos_out:	destination offset
+> 
+> @len is missing here.
+> 
 
-Console log :
+acked
 
-==================================================================
-BUG: KASAN: use-after-free in __list_del_entry_valid+0xf2/0x110
-Read of size 8 at addr ffff8880273c4358 by task syz-executor.1/6475
+> > + * @end_io:	end_io function to be called on completion of copy operation,
+> > + *		for synchronous operation this should be NULL
+> > + * @private:	end_io function will be called with this private data, should be
+> > + *		NULL, if operation is synchronous in nature
+> > + * @gfp_mask:   memory allocation flags (for bio_alloc)
+> > + *
+> > + * Returns the length of bytes copied or a negative error value
+> > + *
+> > + * Description:
+> > + *	Copy source offset from source block device to destination block
+> > + *	device. length of a source range cannot be zero. Max total length of
+> > + *	copy is limited to MAX_COPY_TOTAL_LENGTH
+> > + */
+> > +int blkdev_issue_copy(struct block_device *bdev_in, loff_t pos_in,
+> > +		      struct block_device *bdev_out, loff_t pos_out, size_t len,
+> > +		      cio_iodone_t end_io, void *private, gfp_t gfp_mask)
+> 
 
-CPU: 0 PID: 6475 Comm: syz-executor.1 Not tainted 6.0.8-pasta #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.13.0-1ubuntu1.1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0xcd/0x134
- print_report.cold+0xe5/0x63a
- kasan_report+0x8a/0x1b0
- __list_del_entry_valid+0xf2/0x110
- inode_cgwb_move_to_attached+0x2ee/0x4e0
- writeback_single_inode+0x3fa/0x510
- write_inode_now+0x16a/0x1e0
- blkdev_flush_mapping+0x168/0x220
- blkdev_put_whole+0xd1/0xf0
- blkdev_put+0x29b/0x700
- deactivate_locked_super+0x8c/0xf0
- deactivate_super+0xad/0xd0
- cleanup_mnt+0x347/0x4b0
- task_work_run+0xe0/0x1a0
- exit_to_user_mode_prepare+0x25d/0x270
- syscall_exit_to_user_mode+0x19/0x50
- do_syscall_64+0x42/0xb0
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f22bd29143b
-Code: ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 90 f3 0f 1e fa 31 f6
-e9 05 00 00 00 0f 1f 44 00 00 f3 0f 1e fa b8 a6 00 00 00 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe505103b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f22bd29143b
-RDX: 00007f22bd228a90 RSI: 000000000000000a RDI: 00007ffe50510480
-RBP: 00007ffe50510480 R08: 00007f22bd2fba1f R09: 00007ffe50510240
-R10: 00000000fffffffb R11: 0000000000000246 R12: 00007f22bd2fb9f8
-R13: 00007ffe50511520 R14: 0000555556f4bd90 R15: 0000000000000032
- </TASK>
+------yVjN9gd9kB_eEBqPP9-k1BSyTM5mTd6q7sagKps1_qiE1IrQ=_83a81_
+Content-Type: text/plain; charset="utf-8"
 
-Allocated by task 7810:
- kasan_save_stack+0x1e/0x40
- __kasan_slab_alloc+0x85/0xb0
- kmem_cache_alloc_lru+0x25b/0xfb0
- fat_alloc_inode+0x23/0x1e0
- alloc_inode+0x61/0x1e0
- new_inode_pseudo+0x13/0x80
- new_inode+0x1b/0x40
- fat_build_inode+0x146/0x2d0
- vfat_create+0x249/0x390
- lookup_open+0x10bc/0x1640
- path_openat+0xa42/0x2840
- do_filp_open+0x1ca/0x2a0
- do_sys_openat2+0x61b/0x990
- do_sys_open+0xc3/0x140
- do_syscall_64+0x35/0xb0
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-Freed by task 16:
- kasan_save_stack+0x1e/0x40
- kasan_set_track+0x21/0x30
- kasan_set_free_info+0x20/0x30
- __kasan_slab_free+0xf5/0x180
- kmem_cache_free.part.0+0xfc/0x4a0
- i_callback+0x3f/0x70
- rcu_core+0x785/0x1720
- __do_softirq+0x1d0/0x908
-
-Last potentially related work creation:
- kasan_save_stack+0x1e/0x40
- __kasan_record_aux_stack+0x7e/0x90
- call_rcu+0x99/0x740
- destroy_inode+0x129/0x1b0
- iput.part.0+0x5cd/0x800
- iput+0x58/0x70
- dentry_unlink_inode+0x2e2/0x4a0
- __dentry_kill+0x374/0x5e0
- dput+0x656/0xbe0
- __fput+0x3cc/0xa90
- task_work_run+0xe0/0x1a0
- exit_to_user_mode_prepare+0x25d/0x270
- syscall_exit_to_user_mode+0x19/0x50
- do_syscall_64+0x42/0xb0
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-The buggy address belongs to the object at ffff8880273c4080
- which belongs to the cache fat_inode_cache of size 1488
-The buggy address is located 728 bytes inside of
- 1488-byte region [ffff8880273c4080, ffff8880273c4650)
-
-The buggy address belongs to the physical page:
-page:ffffea00009cf100 refcount:1 mapcount:0 mapping:0000000000000000
-index:0xffff8880273c4ffe pfn:0x273c4
-flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000200 ffffea00009cf0c8 ffff88801820e450 ffff888103e00e00
-raw: ffff8880273c4ffe ffff8880273c4080 0000000100000002 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Reclaimable, gfp_mask
-0x242050(__GFP_IO|__GFP_NOWARN|__GFP_COMP|__GFP_THISNODE|__GFP_RECLAIMABLE),
-pid 7810, tgid 7808 (syz-executor.1), ts 50543388569, free_ts
-21285403579
- prep_new_page+0x2c6/0x350
- get_page_from_freelist+0xae9/0x3a80
- __alloc_pages+0x321/0x710
- cache_grow_begin+0x75/0x360
- kmem_cache_alloc_lru+0xe72/0xfb0
- fat_alloc_inode+0x23/0x1e0
- alloc_inode+0x61/0x1e0
- new_inode_pseudo+0x13/0x80
- new_inode+0x1b/0x40
- fat_fill_super+0x1c37/0x3710
- mount_bdev+0x34d/0x410
- legacy_get_tree+0x105/0x220
- vfs_get_tree+0x89/0x2f0
- path_mount+0x121b/0x1cb0
- do_mount+0xf3/0x110
- __x64_sys_mount+0x18f/0x230
-page last free stack trace:
- free_pcp_prepare+0x5ab/0xd00
- free_unref_page+0x19/0x410
- slab_destroy+0x14/0x50
- slabs_destroy+0x6a/0x90
- ___cache_free+0x1e3/0x3b0
- qlist_free_all+0x51/0x1c0
- kasan_quarantine_reduce+0x13d/0x180
- __kasan_slab_alloc+0x97/0xb0
- kmem_cache_alloc+0x204/0xcc0
- getname_flags+0xd2/0x5b0
- vfs_fstatat+0x73/0xb0
- __do_sys_newlstat+0x8b/0x110
- do_syscall_64+0x35/0xb0
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-Memory state around the buggy address:
- ffff8880273c4200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880273c4280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8880273c4300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                    ^
- ffff8880273c4380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880273c4400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+------yVjN9gd9kB_eEBqPP9-k1BSyTM5mTd6q7sagKps1_qiE1IrQ=_83a81_--
