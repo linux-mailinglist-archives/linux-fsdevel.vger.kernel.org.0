@@ -2,126 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 406D669EFA2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Feb 2023 08:54:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19AA469F28A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Feb 2023 11:11:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231237AbjBVHx7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Feb 2023 02:53:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40522 "EHLO
+        id S232360AbjBVKLp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Feb 2023 05:11:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231234AbjBVHx6 (ORCPT
+        with ESMTP id S231135AbjBVKLj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Feb 2023 02:53:58 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C680E29425
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Feb 2023 23:53:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677052388;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ljX43G0wEY8L63/ppMMsMkg7cRFEwM1I5WynBYgGF5o=;
-        b=ZF0OSg9qYp3eGXbcDfltZ5+Yz5QHm2ahcT9lBgfVdeX5s1jzCITNZiUfmdWR9yT01+aIOE
-        Wgs2DLVvpfM+HxgGtpDcBEWbJTH+zPfWmGaJSh2FUoA0WCGGZiNUE21nXjzN053RzRqlpm
-        OLnwwFlHvSSd2L1/nOM9mwPnOz7wc0w=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-220-TS5PW8-_P-2z39tm3I421w-1; Wed, 22 Feb 2023 02:53:06 -0500
-X-MC-Unique: TS5PW8-_P-2z39tm3I421w-1
-Received: by mail-pl1-f198.google.com with SMTP id q5-20020a170902788500b0019b0c60afa8so4405089pll.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Feb 2023 23:53:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677052385;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ljX43G0wEY8L63/ppMMsMkg7cRFEwM1I5WynBYgGF5o=;
-        b=vU+iYM1sOjW3HeTS6aFlxnPebspK17HqVOlDovMTMzgSEWqw2eUcYU08iyMqgwg94u
-         eL1mtPWjt/VPKGLue0bWF/uVPVcP9mZuok4bfCX3aSCXClef1brzXtylZ1Vr7duNRrcw
-         2H8TywiAHajwykeUIEUsWggqFA4TYjUxk/DMXoCYFvKzEsrvpYt6afK8ktttFf4ojPxW
-         7WFx5Y+q4osrNa4MXTmJyn90rek+JwXeMmrF0Fp2ZaxzN6TZP+KToh6LOnx0HDlv2Up6
-         q3O7bhA/aO4xMM7q71W6EKDmZU1EmAaVujWpHPHwEBahFEN1iIpS6t+32MnPEyvV1Uze
-         Qltg==
-X-Gm-Message-State: AO0yUKWJ3rHPkeKf13eMBkZHukqtCWemBIgOrDrHA+apgzIRNJccM/uu
-        YYx2u4xwMDohwGqhR8zThicXFppKzNUWpHZqgU3QXs6UIv2I7WW16tMUT0pDxzoCO1kfkpkC3po
-        /hxhMHSmYnSc7O6R8KFbDfR8dK5225+oS2+8CTUCo+g==
-X-Received: by 2002:a62:e906:0:b0:5a8:c0e0:3b2 with SMTP id j6-20020a62e906000000b005a8c0e003b2mr1331077pfh.45.1677052385599;
-        Tue, 21 Feb 2023 23:53:05 -0800 (PST)
-X-Google-Smtp-Source: AK7set/h+aPFUm4SbrYbWk3iTTUpShGxZ6VUSjD4ik+PIQ2xgY3zYr2/zd6r5vbnkirTo15iRgIAj/K7nLMGyrknNUw=
-X-Received: by 2002:a62:e906:0:b0:5a8:c0e0:3b2 with SMTP id
- j6-20020a62e906000000b005a8c0e003b2mr1331073pfh.45.1677052385289; Tue, 21 Feb
- 2023 23:53:05 -0800 (PST)
+        Wed, 22 Feb 2023 05:11:39 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EB38311C1;
+        Wed, 22 Feb 2023 02:11:38 -0800 (PST)
+Received: from [192.168.10.12] (unknown [39.45.217.110])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id A5DDC660215E;
+        Wed, 22 Feb 2023 10:11:13 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1677060696;
+        bh=NXcADlIg87ZcIH/rmsyo4aL3MQ7pMgv/uza3wicJzPE=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=THO6C2nljd7jwF7SJMnlnE7I332qeIT0Y2k8E29LrPGIExRXzjvMgw2wW1j8gtrfj
+         7HIfAe/s+pErJgN8cPqOVUFTraUY0QBLiW7zuNwVh2QSz2yv7BI1HRD+MVET5GEVvO
+         Pba592XrXyPsLQHCWUkk9rL1Yxodfefnz9GqUDJdle0ki/yLi2TxYibwN5M3e1gdtZ
+         k0vOAPGfooR81D9X2QnPI1IMAAYSMNkDI9vH0iyVrxnIiuqQZj5sUtAjLUbMB2IgPK
+         szoZfOQEwiY4wu8Loq7NoTH+jIoW8Rq4kmmH+GrhvSjYbbDo7d2Gb3r7OX+BlQxBWv
+         NxJtjfUNiZ0Ow==
+Message-ID: <6d2b40c6-bed9-69a6-e198-537b50953acd@collabora.com>
+Date:   Wed, 22 Feb 2023 15:11:06 +0500
 MIME-Version: 1.0
-References: <20230210145823.756906-1-omosnace@redhat.com> <63f500ba.170a0220.c76fc.1642@mx.google.com>
- <Y/U5X5F0iFcpLwRK@bombadil.infradead.org>
-In-Reply-To: <Y/U5X5F0iFcpLwRK@bombadil.infradead.org>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Wed, 22 Feb 2023 08:52:53 +0100
-Message-ID: <CAFqZXNtK=y=V9_R0PWh1svkKzkotEtUiH-o2whWy=TdYiqfLCg@mail.gmail.com>
-Subject: Re: [PATCH] sysctl: fix proc_dobool() usability
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Peter Xu <peterx@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        Danylo Mocherniuk <mdanylo@google.com>
+Subject: Re: [PATCH v10 3/6] fs/proc/task_mmu: Implement IOCTL to get and/or
+ the clear info about PTEs
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+References: <20230202112915.867409-1-usama.anjum@collabora.com>
+ <20230202112915.867409-4-usama.anjum@collabora.com>
+ <CABb0KFEgsk+YidSXBYQ9mM8nVV6PuEOQf=bbNn7hsoG1hUeLZg@mail.gmail.com>
+ <36ddfd75-5c58-197b-16c9-9f819099ea6d@collabora.com>
+ <CABb0KFGWi0dtgXZ-AeUuHb55EgnwTu3JfJ9cW3ftCqezKi8dAQ@mail.gmail.com>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CABb0KFGWi0dtgXZ-AeUuHb55EgnwTu3JfJ9cW3ftCqezKi8dAQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 21, 2023 at 11:04 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> On Tue, Feb 21, 2023 at 09:34:49AM -0800, Kees Cook wrote:
-> > On Fri, Feb 10, 2023 at 03:58:23PM +0100, Ondrej Mosnacek wrote:
-> > > Currently proc_dobool expects a (bool *) in table->data, but sizeof(int)
-> > > in table->maxsize, because it uses do_proc_dointvec() directly.
-> > >
-> > > This is unsafe for at least two reasons:
-> > > 1. A sysctl table definition may use { .data = &variable, .maxsize =
-> > >    sizeof(variable) }, not realizing that this makes the sysctl unusable
-> > >    (see the Fixes: tag) and that they need to use the completely
-> > >    counterintuitive sizeof(int) instead.
-> > > 2. proc_dobool() will currently try to parse an array of values if given
-> > >    .maxsize >= 2*sizeof(int), but will try to write values of type bool
-> > >    by offsets of sizeof(int), so it will not work correctly with neither
-> > >    an (int *) nor a (bool *). There is no .maxsize validation to prevent
-> > >    this.
-> > >
-> > > Fix this by:
-> > > 1. Constraining proc_dobool() to allow only one value and .maxsize ==
-> > >    sizeof(bool).
-> > > 2. Wrapping the original struct ctl_table in a temporary one with .data
-> > >    pointing to a local int variable and .maxsize set to sizeof(int) and
-> > >    passing this one to proc_dointvec(), converting the value to/from
-> > >    bool as needed (using proc_dou8vec_minmax() as an example).
-> > > 3. Extending sysctl_check_table() to enforce proc_dobool() expectations.
-> > > 4. Fixing the proc_dobool() docstring (it was just copy-pasted from
-> > >    proc_douintvec, apparently...).
-> > > 5. Converting all existing proc_dobool() users to set .maxsize to
-> > >    sizeof(bool) instead of sizeof(int).
-> > >
-> > > Fixes: 83efeeeb3d04 ("tty: Allow TIOCSTI to be disabled")
-> > > Fixes: a2071573d634 ("sysctl: introduce new proc handler proc_dobool")
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> >
-> > Ah nice, thanks for tracking this down.
-> >
-> > Acked-by: Kees Cook <keescook@chromium.org>
->
-> Queued onto sysctl-next, will send to Linus as this is a fix too.
+On 2/21/23 5:42 PM, Michał Mirosław wrote:
+> On Tue, 21 Feb 2023 at 11:28, Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
+>>
+>> Hi Michał,
+>>
+>> Thank you so much for comment!
+>>
+>> On 2/17/23 8:18 PM, Michał Mirosław wrote:
+> [...]
+>>> For the page-selection mechanism, currently required_mask and
+>>> excluded_mask have conflicting
+>> They are opposite of each other:
+>> All the set bits in required_mask must be set for the page to be selected.
+>> All the set bits in excluded_mask must _not_ be set for the page to be
+>> selected.
+>>
+>>> responsibilities. I suggest to rework that to:
+>>> 1. negated_flags: page flags which are to be negated before applying
+>>> the page selection using following masks;
+>> Sorry I'm unable to understand the negation (which is XOR?). Lets look at
+>> the truth table:
+>> Page Flag       negated_flags
+>> 0               0                       0
+>> 0               1                       1
+>> 1               0                       1
+>> 1               1                       0
+>>
+>> If a page flag is 0 and negated_flag is 1, the result would be 1 which has
+>> changed the page flag. It isn't making sense to me. Why the page flag bit
+>> is being fliped?
+>>
+>> When Anrdei had proposed these masks, they seemed like a fancy way of
+>> filtering inside kernel and it was straight forward to understand. These
+>> masks would help his use cases for CRIU. So I'd included it. Please can you
+>> elaborate what is the purpose of negation?
+> 
+> The XOR is a way to invert the tested value of a flag (from positive
+> to negative and the other way) without having the API with invalid
+> values (with required_flags and excluded_flags you need to define a
+> rule about what happens if a flag is present in both of the masks -
+> either prioritise one mask over the other or reject the call).
+At minimum, one mask (required, any or excluded) must be specified. For a
+page to get selected, the page flags must fulfill the criterion of all the
+specified masks.
 
-Thanks, Luis!
+If a flag is present in both required_mask and excluded_mask, the
+required_mask would select a page. But exculded_mask would drop the page.
+So page page would be dropped. It is responsibility of the user to
+correctly specify the flags.
+
+matched = true;
+if (p->required_mask)
+	matched = ((p->required_mask & bitmap) == p->required_mask);
+if (matched && p->anyof_mask)
+	matched = (p->anyof_mask & bitmap);
+if (matched && p->excluded_mask)
+	matched = !(p->excluded_mask & bitmap);
+
+if (matched && bitmap) {
+	// page selected
+}
+
+Do you accept/like this behavior of masks after explaintation?
+
+> (Note: the XOR is applied only to the value of the flags for the
+> purpose of testing page-selection criteria.)
+> 
+> So:
+> 1. if a flag is not set in negated_flags, but set in required_flags,
+> then it means "this flag must be one" - equivalent to it being set in
+> required_flag (in your current version of the API).
+> 2. if a flag is set in negated_flags and also in required_flags, then
+> it means "this flag must be zero" - equivalent to it being set in
+> excluded_flags.
+Lets translate words into table:
+pageflags	required_flags	negated_flags	matched
+1		1		0		yes
+0		1		1		yes
+
+> 
+> The same thing goes for anyof_flags: if a flag is set in anyof_flags,
+> then for it to be considered matched:
+> 1. it must have a value of 1 if it is not set in negated_flags
+> 2. it must have a value of 0 if it is set in negated_flags
+
+pageflags	anyof_flags	negated_flags	matched
+1		1		0		yes
+0		1		1		yes
+
+> 
+> BTW, I think I assumed that both conditions (all flags in
+> required_flags and at least one in anyof_flags is present) need to be
+> true for the page to be selected - is this your intention? 
+All the masks are optional. If all or any of the 3 masks are specified, the
+page flags must pass these masks to get selected.
+
+> The example
+> code has a bug though, in that if anyof_flags is zero it will never
+> match. Let me fix the selection part:
+> 
+> // calc. a mask of flags that have expected ("active") values
+> tested_flags = page_flags ^ negated_flags;
+> // are all required flags in "active" state? [== all zero when negated]
+> if (~tested_flags & required_mask)
+>   skip page;
+> // is any extra flag "active"?
+> if (anyof_flags && !(tested_flags & anyof_flags))
+>   skip page;
+> 
+After taking a while to understand this and compare with already present
+flag system, `negated flags` is comparatively difficult to understand while
+already present flags seem easier.
+
+> 
+> Best Regards
+> Michał Mirosław
 
 -- 
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+BR,
+Muhammad Usama Anjum
