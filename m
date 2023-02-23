@@ -2,132 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B4156A1016
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Feb 2023 20:08:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 916BA6A138C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Feb 2023 00:12:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229717AbjBWTIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Feb 2023 14:08:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53168 "EHLO
+        id S229684AbjBWXL7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Feb 2023 18:11:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjBWTIQ (ORCPT
+        with ESMTP id S229696AbjBWXLz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Feb 2023 14:08:16 -0500
-Received: from CY4PR02CU008-vft-obe.outbound.protection.outlook.com (mail-westcentralusazon11012003.outbound.protection.outlook.com [40.93.200.3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8F982CFD1;
-        Thu, 23 Feb 2023 11:08:11 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eTDgPiuNtt30HBf066E67NlCYu4E/uCG4cd5ZmU+UWRyJZXU/YB5BmLtnGAxMj/26FGNYp5VJ/LwLhbXnMkF8LsZYlYsWR+vsOxIOzoCVyihxioGN6zuWvvMHMHw9haGNvjJA24Y67I9UIbnPE87GScvxgvDHIQ9T219wTAjoJvD4yo/qZrEch1uRnzKDsbuc3XniLAB9hUyc7++cQPSyZqcwjusCitKYgysPmqPqFd1cA5Kx8zarvrY96qYsectEgsMnodFU4OJ0bcxws7h8486MaIyOja/c8UuYdrwzvJN2thDmUT0zZrJIPPu07uDCDvWzl6LR0HOvxGXrUDQTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=En8jOnnzwMNikiRE6zJoRo+SMuZZjCngqxSHvs3RS2I=;
- b=WTuO7oVIUHWDS6oDCpCFPF/sS38m7RH72p3se7Dts+EnYrgER3K107dXSptvy51K8OAVYssDPZrNyVKyGN/3BZ/XFkWoUhYuvkm5qoUN36YJLSf5viwMch7uGQYXS1Bx4EYDfnK39Uq0SOgXyDHOFkPSM7tFAvtPk8iLASvCrNFTWieQDydl1bJkBitT1P6byYDXmfUmyqYPNUMn00BOYUZk2Od3V1l0RZoNzuHZWe3LcTgHFK0DaHgUG4McK3CQT57+uVKrmgpszsKk42VpCwjxzOyzKFpINwmtFFTz7shSZfmOKoNyKA/4yPQaJBSq74ozufy+7juJ4BsZcpOQ6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
- dkim=pass header.d=vmware.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=En8jOnnzwMNikiRE6zJoRo+SMuZZjCngqxSHvs3RS2I=;
- b=staJalvG3yfzzUE/7/NaZh2LzFVwjxtAJmXMUjxbaO6vr28mNhktlqCfZOI7496+tK1lcGjF0Vty9xKuIEx6/UEmtDd5N6Z3UuVEi5P3LmpCLN98R/8GDw2wFimpVpqE+Ah8w/R/UkNl/HauoqrjgCBThyNx/mGvGNT/u3/+PpM=
-Received: from BY3PR05MB8531.namprd05.prod.outlook.com (2603:10b6:a03:3ce::6)
- by IA1PR05MB9244.namprd05.prod.outlook.com (2603:10b6:208:3a3::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.19; Thu, 23 Feb
- 2023 19:08:08 +0000
-Received: from BY3PR05MB8531.namprd05.prod.outlook.com
- ([fe80::e9bd:ef2f:b71:8084]) by BY3PR05MB8531.namprd05.prod.outlook.com
- ([fe80::e9bd:ef2f:b71:8084%9]) with mapi id 15.20.6134.021; Thu, 23 Feb 2023
- 19:08:08 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        James Houghton <jthoughton@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] mm: userfaultfd: combine 'mode' and 'wp_copy'
- arguments
-Thread-Topic: [PATCH v2 3/5] mm: userfaultfd: combine 'mode' and 'wp_copy'
- arguments
-Thread-Index: AQHZRyHq5XmoYIOsjkuDkcqzrjwGLa7c4ToAgAADrACAAAEeAA==
-Date:   Thu, 23 Feb 2023 19:08:08 +0000
-Message-ID: <E559A848-37A9-41E1-88A5-2765EC166E5A@vmware.com>
-References: <20230223005754.2700663-1-axelrasmussen@google.com>
- <20230223005754.2700663-4-axelrasmussen@google.com>
- <F3D3DA6C-0AEC-4947-9E2F-7A9773296A5D@vmware.com>
- <CAJHvVcj_NKp8wOUL5D2GX61xp0Rvzy6Z8gvL_G=qogsJreiGTQ@mail.gmail.com>
-In-Reply-To: <CAJHvVcj_NKp8wOUL5D2GX61xp0Rvzy6Z8gvL_G=qogsJreiGTQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3731.400.51.1.1)
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vmware.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BY3PR05MB8531:EE_|IA1PR05MB9244:EE_
-x-ms-office365-filtering-correlation-id: b51d8383-bb8d-4c68-af30-08db15d14cf7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: DV2+pDOMdVq6pbXGRXrfHS2NtPW3VYO0tYtOqGw6t1djbHKIvsd9DgrLW/2S8RERHBeWrAEj2sWYUCSsfVyUQF1Nz06XGllTGpvXnrVzmlS11WI396GxY+4g4jUMVjp60Znb6P4kKOuYrfIl5AsWCamom7/aI5rhshW+ODdO9QpZg4epMH5kcp+9yZ0VHeBx3hYDqPjRHHOq33+0LBUI0m/wK4+V5JmPYGtujRSorALUDXSsLfDAUwnaRgFGBoNZ+jxO7f/luP2opcMw80cga+Eg6EUdREDD3x/6OCnpY2NvJUrQwYALDLzjXq+PSC3CN1oQByF5g+xe5rOFDN0hmpKhnVlt55QS26SqU2MWZj/gpUMkXEJ3It0SxTb7lWX0gxSaOalwvXsFxaSJBLZ1dbE7ccIvXiinizsI4kwVR4lu+lgr6JbyUH3Ls18esvxNGTWu2ueb4e/hI8OY1HSSa0KAFLhh74dX/Si8ZAhzCDCrIuoUcode+lJ2yDzVPKlBnue5ghUDVR5BY00W+ukz1BSs+J32PijHaDWhFuKMQalmCrCNAMH6hm0tQ7s2AeiZffELjE39dfwezPYCnkZ3txfNNEHSlH1cptWilVuKFLFTYteu6Biks2snv5pnstF4xHTomkek3BH1fUw1nM4SAsyuVbV3Cj8w24PH+YY3avQIjA6ljJmeVH1wE4/szzatHWK9LWPQutwq46dwTC1lDuCXFP9NF01IPUU/KV6UF6M=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR05MB8531.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(136003)(366004)(396003)(39860400002)(376002)(346002)(451199018)(38070700005)(33656002)(86362001)(36756003)(316002)(83380400001)(71200400001)(478600001)(6512007)(186003)(26005)(2616005)(6486002)(53546011)(6506007)(8936002)(7416002)(5660300002)(4744005)(54906003)(4326008)(66556008)(66476007)(76116006)(66946007)(66446008)(64756008)(8676002)(2906002)(6916009)(122000001)(41300700001)(38100700002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?siNcr1AqVGnf5adIra/vDiGmeaZDX+3tqcMiIEqX7Wg6cgTZc2MBUKfQkdZw?=
- =?us-ascii?Q?JHNGxR+0qSF3lqzSa6h3JY2MYEP27SqRvvJi90A62nTuHlKwOHLHlrKdhlix?=
- =?us-ascii?Q?V2zXXcX2ssYZoN9b7sQx4B/IREpax1J9g+DhF4q9VGPoCgMSpkeWW4QMK8OM?=
- =?us-ascii?Q?6JnZAjfSbBkJ2b/iUfjc/1ztQ9JD3o2ae2MuBi58hW9Vs3+yAGJEDhBpk79h?=
- =?us-ascii?Q?d4ru9Zdt5nQmWsLr/qvefZnW4f5kiGwRqryGfIalZt6WGLkTpsZ601f3PNa0?=
- =?us-ascii?Q?nOr6YkD+rZwvHLU3NUWEgwzHP+h8+LTlwmK0o9qJMnhe92K3PAIuO47efWek?=
- =?us-ascii?Q?VgTZthqixkiYD8F6s935rxZoCo8dPJwqpMH5DpZ9Tq676vUddcWTFJSPWeIv?=
- =?us-ascii?Q?5LXkgYnWrfodaWUK/nM2wl8LlCpcidMRT30KDJhTQbnkmAos93hj7DcMkuhK?=
- =?us-ascii?Q?A1wOl71q6r5Mz21rKk4le2nv86duYccrA93gS7MjItGlSYcrPwt6nTG9JKYt?=
- =?us-ascii?Q?00fVCT7VNww2eq4EorMWfJ9qBG2ZHD8rMbEpobBVAlQLT3ykaLxC7VAA9XFf?=
- =?us-ascii?Q?zQSuvz5H4YaOPl9kWlIHHtPsz+LhUXG9MXLhttu+cG0wLSLvSnvrSkLLcXAf?=
- =?us-ascii?Q?SZMJCA4Mhtxd8/h9h/5n1p1zRZV2HFAVAWHkj4pyJ5FdITN23TQx209mi1gQ?=
- =?us-ascii?Q?dKUTE1YIIZvMfswmHhLRPUZ5hZ6f2+UHZcL6GwdqlJPI12h0ul4t+oQ2BcP7?=
- =?us-ascii?Q?9Df0Ol4/PBcdTv9PSkt7d4uI3Vzw5jf8NdGJRpCWgzSd/RCZu15j1Y5Tvdn/?=
- =?us-ascii?Q?3AhWL4KqBR7+KAztixUF+htE1FjgbMm2OXRi00Nsm9ChbV50BzG4c/T5XKID?=
- =?us-ascii?Q?s1O8D4RZ0hPHSj68MgroMCQspDPWDDXHfcfj2nowuiLqoRexcNyuaBzXqFjB?=
- =?us-ascii?Q?hpIskwGhNA0H1uxwKQ/fz6yuBn49qsMLQOw+CKEAakMXOOqiLCUNt8RHE3l0?=
- =?us-ascii?Q?0iYnuaRdlC7+uYnYG9K2dq+BH4CvTq9gSYngJhCvetauonqvMB7kZ7ms+ygy?=
- =?us-ascii?Q?Gx7aLgwyqvbMlwm93A/jD7PZXwepADNdNA9btQ2yJnZYJL6cz/sR3zrtb81s?=
- =?us-ascii?Q?3Y+wJKIylSbZ44+t8ypNIWXmuAQwYj1R0ZOKniaK3rXMhri7uBlWsKZnRC2x?=
- =?us-ascii?Q?SoYJrNSsUfbNSv3BKqWThxzOYwAjMK5aNLO3/gB5AWupoE4yfpD0JudzHe8P?=
- =?us-ascii?Q?z7Z31dmO55zc5X3/oKWHugaKvBGShHpm3QrYM+6Eprk4jdjjnwX8c5F/vgXT?=
- =?us-ascii?Q?+r3eteg/Hzd85zytfjG+gN244+YSjo89Zmcvt9iha+NTlXQ6QSGM8hrFKqOL?=
- =?us-ascii?Q?QTZkT71JQiwg11s5T/WS4UVadBXRD/upQnCH4qDF01DHLthRUwGxMIMYO92Q?=
- =?us-ascii?Q?9YUvsiCdsNkqOeAR1O048SLYOdoe+16k4obcTDzjQNstRqdW1UV6QFqc/WPH?=
- =?us-ascii?Q?hlluuSdYqWwjJkTDGEBdG/9jwhbTRx7QTFq2r7mNf72XIEnFzuHAkQ/CrJgS?=
- =?us-ascii?Q?fkR0nReMkIxDJ3Jkt/B/acRRtKfSzeN2+4wahtg9?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <33BAE4DB7E1E424EB2CEB6FAC1B06AB6@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 23 Feb 2023 18:11:55 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FFB557D08
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Feb 2023 15:11:53 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id h16so48344864edz.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Feb 2023 15:11:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=eitmlabs-org.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ZhcqxXFunyKmJAnTkBe/sYveKPMZiCHLdgGndCIvmw=;
+        b=RPm9ajGg+bpqPeCQ1T7jJwujkrC4b1kK2z76ktAQ91JHtEA7+I+szu01tvj9rAzM/6
+         YY+DVjRz2xFvARlTc6YLhn/CVGCjezw0WG0Nj9o08eMCQtsn4Ni0kQQ5hrisWocExNpl
+         QQXcRsZzf84o4wLtmHyJAVsELWiYpMAwBqsm3cfAIM8uzGMuPECGV+gOy3kw5UpACdbf
+         0Z/jcSjufhR8XAucuecmqwEZSK+mn9OLMordC8aoOMK3pbuKCjbqjaDq+ajY2nEi44B5
+         0l0AwBlR1tI9XjcOVBg6vkqMnpys15syHbxbKQ0PE1ZWaL+cMY526C+3g3CBl5OaIf30
+         aPyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4ZhcqxXFunyKmJAnTkBe/sYveKPMZiCHLdgGndCIvmw=;
+        b=TyhJyr+mGCejxbQ6t8//kHIEmaGn4J4cXApU8u60FIZNogf9uqjMM0BIusqMzZfiMg
+         E9EsfMDDFMKPHjjQT59jBdcAH8QOAK6FRXf9PFIlnHMOnM4eR+4Ht7sCS1KZWfE49NMZ
+         Laqc50CyeKPCO/klPxq9ArIgLzX4tfrIQcRlKa9Ul0QineOiFr78iPQ8lBSlkWA261r7
+         hO5iWWsGImP4Se67mAuUCSRpqMT4gpkvsaPdGPIneYlngpcetkx+Kt9C1HikDd5dEcdd
+         aISfn2cxm61By40yBhY0dSnIe/qCWBpRcmHyHndJ8Dzm+iwcmRtQ/HbNyp+8zHn43NMI
+         Wf8g==
+X-Gm-Message-State: AO0yUKVSE9iE5aBoOxxA3SI7VetP0eUEICBImekvGGngAy/r1jKfx0iL
+        kVKP1l3A9r9msQX7bYaV62LPUz45+b1KCQG2q35bKw==
+X-Google-Smtp-Source: AK7set/bDMEFLOb9zD5mIiYLI3kJ4oUZ7FKxuHEIh9/zbBkhb+idLsQElu6vADg4xiN5SGB6/VWABvfcrsDnri21a74=
+X-Received: by 2002:a17:906:3388:b0:8af:b63:b4ba with SMTP id
+ v8-20020a170906338800b008af0b63b4bamr9918125eja.3.1677193911673; Thu, 23 Feb
+ 2023 15:11:51 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY3PR05MB8531.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b51d8383-bb8d-4c68-af30-08db15d14cf7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2023 19:08:08.6237
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cUHpt7J99kmn4uvysI+yPH1Q2rT/8E3NsAiWRrUdZQU5+OgUw7XWf4AGad9vInAvP/IICqu1YOpDvCfHkUzpsA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR05MB9244
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_NONE autolearn=no
+References: <4B9D76D5-C794-4A49-A76F-3D4C10385EE0@kohlschutter.com>
+ <CAJfpegs1Kta-HcikDGFt4=fa_LDttCeRmffKhUjWLr=DxzXg-A@mail.gmail.com>
+ <83A29F9C-1A91-4753-953A-0C98E8A9832C@kohlschutter.com> <CAJfpegv5W0CycWCc2-kcn4=UVqk1hP7KrvBpzXHwW-Nmkjx8zA@mail.gmail.com>
+ <FFA26FD1-60EF-457E-B914-E1978CCC7B57@kohlschutter.com> <CAJfpeguDAJpLMABsomBFQ=w6Li0=sBW0bFyALv4EJrAmR2BkpQ@mail.gmail.com>
+ <A31096BA-C128-4D0B-B27D-C34560844ED0@kohlschutter.com> <CAJfpegvBSCQwkCv=5LJDx1LRCN_ztTh9VMvrTbCyt0zf7W2trw@mail.gmail.com>
+ <CAHk-=wjg+xyBwMpQwLx_QWPY7Qf8gUOVek8rXdQccukDyVmE+w@mail.gmail.com>
+ <EE5E5841-3561-4530-8813-95C16A36D94A@kohlschutter.com> <CAHk-=wh5V8tQScw9Bgc8OiD0r5XmfVSCPp2OHPEf0p5T3obuZg@mail.gmail.com>
+ <CAJfpeguXB9mAk=jwWQmk3rivYnaWoLrju_hq-LwtYyNXG4JOeg@mail.gmail.com>
+ <CAHk-=wg+bpP5cvcaBhnmJKzTmAtgx12UhR4qzFXXb52atn9gDw@mail.gmail.com>
+ <56E6CAAE-FF25-4898-8F9D-048164582E7B@kohlschutter.com> <490c5026-27bd-1126-65dd-2ec975aae94c@eitmlabs.org>
+ <CAJfpegt7CMMapxD0W41n2SdwiBn8+B08vsov-iOpD=eQEiPN1w@mail.gmail.com> <CALKgVmeaPJj4e9sYP7g+v4hZ7XaHKAm6BUNz14gvaBd=sFCs9Q@mail.gmail.com>
+In-Reply-To: <CALKgVmeaPJj4e9sYP7g+v4hZ7XaHKAm6BUNz14gvaBd=sFCs9Q@mail.gmail.com>
+Reply-To: jonathan@eitm.org
+From:   Jonathan Katz <jkatz@eitmlabs.org>
+Date:   Thu, 23 Feb 2023 15:11:35 -0800
+Message-ID: <CALKgVmdqircMjn+iEuta5a7v5rROmYGXmQ0VJtzcCQnZYbJX6w@mail.gmail.com>
+Subject: Re: [PATCH] [REGRESSION] ovl: Handle ENOSYS when fileattr support is
+ missing in lower/upper fs
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     =?UTF-8?Q?Christian_Kohlsch=C3=BCtter?= 
+        <christian@kohlschutter.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -135,17 +82,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi all,
+
+Problem persists with me with 6.2.0
+# mainline --install-latest
+# reboot
+
+# uname -r
+6.2.0-060200-generic
 
 
-> On Feb 23, 2023, at 11:03 AM, Axel Rasmussen <axelrasmussen@google.com> w=
-rote:
->=20
-> Oh! I must have missed it, or just forgot. I'll take a look and see
-> about making some improvements. I'll also be sure to credit you in the
-> commit message.
+Representative log messages when mounting:
+Feb 23 22:50:43 instance-20220314-1510-fileserver-for-overlay kernel:
+[   44.641683] overlayfs: null uuid detected in lower fs '/', falling
+back to xino=off,index=off,nfs_export=off.
 
-It was not about credit. I just wanted to refer you to what I had in mind,
-and David did spend some time on reviewing my patch...
 
-;-)
 
+Representative log messages when accessing files:
+eb 23 23:06:31 instance-20220314-1510-fileserver-for-overlay kernel: [
+ 992.505357] overlayfs: failed to retrieve lower fileattr (8020
+MeOHH2O RecoverySample2-20221219-A-JJL-WebinarHilic10C-TOF-TT54-Neg-1722.d/Storage.mcf_idx,
+err=-38)
+Feb 23 23:06:32 instance-20220314-1510-fileserver-for-overlay kernel:
+[  993.523712] overlayfs: failed to retrieve lower fileattr (8020
+MeOHH2O RecoverySample2-20221219-A-JJL-WebinarHilic10C-TOF-TT54-Neg-1722.d/Storage.mcf_idx,
+err=-38)
+
+
+On Mon, Jan 30, 2023 at 11:27 AM Jonathan Katz <jkatz@eitmlabs.org> wrote:
+>
+> On Thu, Jan 26, 2023 at 5:26 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Wed, 18 Jan 2023 at 04:41, Jonathan Katz <jkatz@eitmlabs.org> wrote:
+> >
+> > > I believe that I am still having issues occur within Ubuntu 22.10 with
+> > > the 5.19 version of the kernel that might be associated with this
+> > > discussion.  I apologize up front for any faux pas I make in writing
+> > > this email.
+> >
+> > No need to apologize.   The fix in question went into v6.0 of the
+> > upstream kernel.  So apparently it's still missing from the distro you
+> > are using.
+>
+> Thank you for the reply! ---  I have upgraded the Kernel and it still
+> seems to be throwing errors.  Details follow:
+>
+> Distro: Ubuntu 22.10.
+> Upgraded kernel using mainline (mainline --install-latest)
+>
+> # uname -a
+> Linux instance-20220314-1510-fileserver-for-overlay
+> 6.1.8-060108-generic #202301240742 SMP PREEMPT_DYNAMIC Tue Jan 24
+> 08:13:53 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
+>
+> On mount I still get the following notice in syslog (representative):
+> Jan 30 19:11:46 instance-20220314-1510-fileserver-for-overlay kernel:
+> [   71.613334] overlayfs: null uuid detected in lower fs '/', falling
+> back to xino=off,index=off,nfs_export=off.
+>
+> And on access (via samba) I still see the following errors in the
+> syslog (representative):
+> Jan 30 19:19:34 instance-20220314-1510-fileserver-for-overlay kernel:
+> [  539.181858] overlayfs: failed to retrieve lower fileattr (8020
+> MeOHH2O RecoverySample2-20221219-A-JJL-WebinarHilic10C-TOF-TT54-Neg-1722.d/Storage.mcf_idx,
+> err=-38)
+>
+> And on the Windows client, the software still fails with the same symptomology.
+>
+>
+>
+>
+> >
+> > > An example error from our syslog:
+> > >
+> > > kernel: [2702258.538549] overlayfs: failed to retrieve lower fileattr
+> > > (8020 MeOHH2O
+> > > RecoverySample2-20221219-A-JJL-WebinarHilic10C-TOF-TT54-Neg-1722.d/analysis.tsf,
+> > > err=-38)
+> >
+> > Yep, looks like the same bug.
+> >
+> > Thanks,
+> > Miklos
