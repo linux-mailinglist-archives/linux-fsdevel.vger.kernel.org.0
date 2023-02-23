@@ -2,137 +2,252 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A7F06A00A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Feb 2023 02:32:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7217B6A02E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Feb 2023 07:44:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232500AbjBWBcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Feb 2023 20:32:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38916 "EHLO
+        id S233404AbjBWGoT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Feb 2023 01:44:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232927AbjBWBcC (ORCPT
+        with ESMTP id S232056AbjBWGoS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Feb 2023 20:32:02 -0500
-Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61ED93E621
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Feb 2023 17:31:56 -0800 (PST)
-Received: by mail-pg1-x54a.google.com with SMTP id v24-20020a631518000000b00502e6bfe335so1715604pgl.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Feb 2023 17:31:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Say+6a1ZyYr+UuCKdaAjxZI4dgG3bJdQNiusmWUgqvk=;
-        b=ZftMo2Jr/MYc+TnSUI/NqHqeLeV4TeeVWH0yMAlI85IeiLcuVkcU0Xi9yTYAL4Ti4N
-         Pcptnd77UOE+Ubfxn8QRWMdZmWSY4akFCQf6v1PFTzO870zP5UiH0CvKAUAI60rjhMim
-         A2kOh6/xUtroxJBIX+ZIQDEuJ2pVebSSpDtdCRhVuxII0dGn+QairZ/42WYH8onaX3sW
-         VTadd7UYWVbVvmpPJT8zKlqq4fO8PhGLg1iNudHVb3yTAkso/TczAQYjur3wkh3ATGMq
-         V9iE2XTX1+ukTikznIFKOxl8ReNuuDE+7TSPpoSVLKtc3hqyAmK9WjjTQq/mdtnRLNoK
-         xRbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Say+6a1ZyYr+UuCKdaAjxZI4dgG3bJdQNiusmWUgqvk=;
-        b=ACZK16I6rW2c2vh6pNDsmNtSx1VOpwpQ3gCqOLt6vUf2SQ6YI5Yd4Se5jQeAswHgA8
-         V9bV3Y9GMHd3ENya5eAjVWB2GTpfJLd5j6xk0N8O0AlpTZAEtQjhxqmBndm9XvEFeCgo
-         +K8MtKvyJV1n8Iwvu30VLgMg9T6/mIDK06UJUeYh0YwWLzcvSEJXt/v/DBP9cUR/iddj
-         GS4rExQxmIrFX7aZNAFXmCZ6/NVcbHGvgR6Eyp0kE5Ud6XTMDOAnSOSZcg62XMm6zDtJ
-         aIixPO5NaJt5RLGoXaxAFz90JSAgTXVfvF0fQ6Oev/ClgScqVmGIFBnbDtRoPZJGLL/1
-         X8iw==
-X-Gm-Message-State: AO0yUKWvIPDdzBvBpdTregpgGgjmV0ZvOFzuTxGJulJn9CVOKUa+dGw8
-        EwgLGb84EO/Yl2JqIYYO24ckHKxAgH1b8P39eg==
-X-Google-Smtp-Source: AK7set8In7pASIkwc5RmcKGC5gPhzEpeOqmjGbH5z8/aZP8m2bTicadsvcxB91Z6rAsHkHh1dfvaP8X5FauAcxQlUQ==
-X-Received: from ackerleytng-cloudtop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:1f5f])
- (user=ackerleytng job=sendgmr) by 2002:a17:90a:49ca:b0:231:1d90:7b1b with
- SMTP id l10-20020a17090a49ca00b002311d907b1bmr79634pjm.2.1677115915638; Wed,
- 22 Feb 2023 17:31:55 -0800 (PST)
-Date:   Thu, 23 Feb 2023 01:31:54 +0000
-In-Reply-To: <20230220030412.fgh3f5qzgihz4f4x@yy-desk-7060> (message from Yuan
- Yao on Mon, 20 Feb 2023 11:04:12 +0800)
-Mime-Version: 1.0
-Message-ID: <diqzk0099ng5.fsf@ackerleytng-cloudtop.c.googlers.com>
-Subject: Re: [RFC PATCH 0/2] Add flag as THP allocation hint for
- memfd_restricted() syscall
-From:   Ackerley Tng <ackerleytng@google.com>
-To:     Yuan Yao <yuan.yao@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, qemu-devel@nongnu.org, aarcange@redhat.com,
-        ak@linux.intel.com, akpm@linux-foundation.org, arnd@arndb.de,
-        bfields@fieldses.org, bp@alien8.de, chao.p.peng@linux.intel.com,
-        corbet@lwn.net, dave.hansen@intel.com, david@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com, hpa@zytor.com,
-        hughd@google.com, jlayton@kernel.org, jmattson@google.com,
-        joro@8bytes.org, jun.nakajima@intel.com,
-        kirill.shutemov@linux.intel.com, linmiaohe@huawei.com,
-        luto@kernel.org, mail@maciej.szmigiero.name, mhocko@suse.com,
-        michael.roth@amd.com, mingo@redhat.com, naoya.horiguchi@nec.com,
-        pbonzini@redhat.com, qperret@google.com, rppt@kernel.org,
-        seanjc@google.com, shuah@kernel.org, steven.price@arm.com,
-        tabba@google.com, tglx@linutronix.de, vannapurve@google.com,
-        vbabka@suse.cz, vkuznets@redhat.com, wanpengli@tencent.com,
-        wei.w.wang@intel.com, x86@kernel.org, yu.c.zhang@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Thu, 23 Feb 2023 01:44:18 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29BE31E1D2;
+        Wed, 22 Feb 2023 22:44:17 -0800 (PST)
+Received: from [192.168.10.12] (unknown [39.45.217.110])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id D582266021EE;
+        Thu, 23 Feb 2023 06:44:08 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1677134655;
+        bh=TJTFlKvzTABfSMhGqoOjprz5SYUhd5UMNxSYYXk92Xw=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=ZUU1DpGfC5Ss8taQDliaXh3EPYqmEhmfFkaFezALdrEGQ8WpqsP0aQ+YT3mNV7D0P
+         nBLYEmkWJRHjU/uAX+XITYlA2/cASn5B1+QPG/VWnUI+3cRPMn8c2uu5+n6V7tEM6j
+         CYojyLC9cpF8p/sVh/DfSdkfHP9V2GjVQwFlKkDdRV32XOEYak0IeNBYZzJi2asOxX
+         IsgRdbnklR6DKs52OXpPVTfi21RGyP3TH+Wk+R2whXnwIcs4OHYEDCkVBWTnD/+xS4
+         mNfmeut+xNjWy/1x8nrPd0mtxLbUP7VCWPuCU2ynBDBqqS51Duz+YnL4xxioPBjRN/
+         I3JjCWTPvLceQ==
+Message-ID: <473b32fd-24f9-88fd-602f-3ba11d725472@collabora.com>
+Date:   Thu, 23 Feb 2023 11:44:04 +0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Peter Xu <peterx@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        Danylo Mocherniuk <mdanylo@google.com>
+Subject: Re: [PATCH v10 3/6] fs/proc/task_mmu: Implement IOCTL to get and/or
+ the clear info about PTEs
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+References: <20230202112915.867409-1-usama.anjum@collabora.com>
+ <20230202112915.867409-4-usama.anjum@collabora.com>
+ <CABb0KFEgsk+YidSXBYQ9mM8nVV6PuEOQf=bbNn7hsoG1hUeLZg@mail.gmail.com>
+ <36ddfd75-5c58-197b-16c9-9f819099ea6d@collabora.com>
+ <CABb0KFGWi0dtgXZ-AeUuHb55EgnwTu3JfJ9cW3ftCqezKi8dAQ@mail.gmail.com>
+ <6d2b40c6-bed9-69a6-e198-537b50953acd@collabora.com>
+ <CABb0KFF+AEKijaXMjDpQLKyAdueJ93kf9QLfOouKHaPPwvfw_w@mail.gmail.com>
+ <a212c91e-b22a-c080-40ac-d2e909bb51c2@collabora.com>
+ <CABb0KFEBpJTNF7V0XfuvbtaHUiN0Zpx6FqD+BRyXf2gjxiVgTA@mail.gmail.com>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CABb0KFEBpJTNF7V0XfuvbtaHUiN0Zpx6FqD+BRyXf2gjxiVgTA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-WXVhbiBZYW8gPHl1YW4ueWFvQGxpbnV4LmludGVsLmNvbT4gd3JpdGVzOg0KDQo+IE9uIFNhdCwg
-RmViIDE4LCAyMDIzIGF0IDEyOjQzOjAwQU0gKzAwMDAsIEFja2VybGV5IFRuZyB3cm90ZToNCj4+
-IEhlbGxvLA0KDQo+PiBUaGlzIHBhdGNoc2V0IGJ1aWxkcyB1cG9uIHRoZSBtZW1mZF9yZXN0cmlj
-dGVkKCkgc3lzdGVtIGNhbGwgdGhhdCBoYXMNCj4+IGJlZW4gZGlzY3Vzc2VkIGluIHRoZSDigJhL
-Vk06IG1tOiBmZC1iYXNlZCBhcHByb2FjaCBmb3Igc3VwcG9ydGluZyBLVk3igJkNCj4+IHBhdGNo
-IHNlcmllcywgYXQNCj4+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAyMjEyMDIwNjEz
-NDcuMTA3MDI0Ni0xLWNoYW8ucC5wZW5nQGxpbnV4LmludGVsLmNvbS9ULyNtN2U5NDRkNzg5MmFm
-ZGQxZDYyYTAzYTI4N2JkNDg4YzU2ZTM3N2IwYw0KDQo+PiBUaGUgdHJlZSBjYW4gYmUgZm91bmQg
-YXQ6DQo+PiBodHRwczovL2dpdGh1Yi5jb20vZ29vZ2xlcHJvZGtlcm5lbC9saW51eC1jYy90cmVl
-L3Jlc3RyaWN0ZWRtZW0tcm1mZC1odWdlcGFnZQ0KDQo+PiBGb2xsb3dpbmcgdGhlIFJGQyB0byBw
-cm92aWRlIG1vdW50IGZvciBtZW1mZF9yZXN0cmljdGVkKCkgc3lzY2FsbCBhdA0KPj4gaHR0cHM6
-Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC9jb3Zlci4xNjc2NTA3NjYzLmdpdC5hY2tlcmxleXRuZ0Bn
-b29nbGUuY29tL1QvI3UsDQo+PiB0aGlzIHBhdGNoc2V0IGFkZHMgdGhlIFJNRkRfSFVHRVBBR0Ug
-ZmxhZyB0byB0aGUgbWVtZmRfcmVzdHJpY3RlZCgpDQo+PiBzeXNjYWxsLCB3aGljaCB3aWxsIGhp
-bnQgdGhlIGtlcm5lbCB0byB1c2UgVHJhbnNwYXJlbnQgSHVnZVBhZ2VzIHRvDQo+PiBiYWNrIHJl
-c3RyaWN0ZWRtZW0gcGFnZXMuDQoNCj4+IFRoaXMgc3VwcGxlbWVudHMgdGhlIGludGVyZmFjZSBw
-cm9wb3NlZCBlYXJsaWVyLCB3aGljaCByZXF1aXJlcyB0aGUNCj4+IGNyZWF0aW9uIG9mIGEgdG1w
-ZnMgbW91bnQgdG8gYmUgcGFzc2VkIHRvIG1lbWZkX3Jlc3RyaWN0ZWQoKSwgd2l0aCBhDQo+PiBt
-b3JlIGRpcmVjdCBwZXItZmlsZSBoaW50Lg0KDQo+PiBEZXBlbmRlbmNpZXM6DQoNCj4+ICsgU2Vh
-buKAmXMgaXRlcmF0aW9uIG9mIHRoZSDigJhLVk06IG1tOiBmZC1iYXNlZCBhcHByb2FjaCBmb3Ig
-c3VwcG9ydGluZw0KPj4gICAgS1ZN4oCZIHBhdGNoIHNlcmllcyBhdA0KPj4gICAgaHR0cHM6Ly9n
-aXRodWIuY29tL3NlYW4tamMvbGludXgvdHJlZS94ODYvdXBtX2Jhc2Vfc3VwcG9ydA0KPj4gKyBQ
-cm9wb3NlZCBmaXggZm9yIHJlc3RyaWN0ZWRtZW1fZ2V0YXR0cigpIGFzIG1lbnRpb25lZCBvbiB0
-aGUgbWFpbGluZw0KPj4gICAgbGlzdCBhdA0KPj4gICAgIA0KPj4gaHR0cHM6Ly9sb3JlLmtlcm5l
-bC5vcmcvbGttbC9kaXF6emdhMGZ2OTYuZnNmQGFja2VybGV5dG5nLWNsb3VkdG9wLXNnLmMuZ29v
-Z2xlcnMuY29tLw0KPj4gKyBIdWdo4oCZcyBwYXRjaDoNCj4+ICAgICANCj4+IGh0dHBzOi8vbG9y
-ZS5rZXJuZWwub3JnL2xrbWwvYzE0MGY1NmEtMWFhMy1mN2FlLWI3ZDEtOTNkYTdkNWEzNTcyQGdv
-b2dsZS5jb20vLA0KPj4gICAgd2hpY2ggcHJvdmlkZXMgZnVuY3Rpb25hbGl0eSBpbiBzaG1lbSB0
-aGF0IHJlYWRzIHRoZSBWTV9IVUdFUEFHRQ0KPj4gICAgZmxhZyBpbiBrZXkgZnVuY3Rpb25zIHNo
-bWVtX2lzX2h1Z2UoKSBhbmQgc2htZW1fZ2V0X2lub2RlKCkNCg0KPiBXaWxsIEh1Z2gncyBwYXRj
-aCBiZSBtZXJnZWQgaW50byA2LjMgPyBJIGRpZG4ndCBmaW5kIGl0IGluIDYuMi1yYzguDQo+IElN
-SE8gdGhpcyBwYXRjaCB3b24ndCB3b3JrIHdpdGhvdXQgSHVnaCdzIHBhdGNoLCBvciBhdCBsZWFz
-dCBuZWVkDQo+IGFub3RoZXIgd2F5LCBlLmcuIEhNRU1fU0IoaW5vZGUtPmlfc2IpLT5odWdlLg0K
-DQoNCkh1Z2gncyBwYXRjaCBpcyBzdGlsbCBwZW5kaW5nIGRpc2N1c3Npb24gYW5kIG1heSBub3Qg
-YmUgbWVyZ2VkIHNvDQpzb29uLiBUaGVzZSBwYXRjaGVzIHdpbGwgbm90IHdvcmsgd2l0aG91dCBI
-dWdoJ3MgcGF0Y2guDQoNCkkgd291bGQgbGlrZSB0byB1bmRlcnN0YW5kIHdoYXQgdGhlIGNvbW11
-bml0eSB0aGlua3Mgb2YgdGhlIHByb3Bvc2VkDQppbnRlcmZhY2UgKFJNRkRfSFVHRVBBR0UgZmxh
-ZywgcGFzc2VkIHRvIHRoZSBtZW1mZF9yZXN0cmljdGVkKCkNCnN5c2NhbGwpLiBJZiB0aGlzIGlu
-dGVyZmFjZSBpcyBmYXZvcmFibHkgcmVjZWl2ZWQsIHdlIGNhbiBkZWZpbml0ZWx5DQpmaW5kIGFu
-b3RoZXIgd2F5IGZvciBzaG1lbSB0byBzdXBwb3J0IHRoaXMgaW50ZXJmYWNlLg0KDQpJZiBJIHVu
-ZGVyc3RhbmQgY29ycmVjdGx5LCBTSE1FTV9TQihpbm9kZS0+aV9zYiktPmh1Z2UgY2hlY2tzIHRo
-ZSBzdGF0ZQ0Kb2YgaHVnZXBhZ2UtbmVzcyBmb3IgdGhlIHN1cGVyYmxvY2suIFNpbmNlIHRoZSBw
-cm9wb3NlZCBpbnRlcmZhY2Ugd2lsbA0Kb25seSBhZmZlY3QgYSBzaW5nbGUgZmlsZSwgd2Ugd2ls
-bCBuZWVkIHNvbWV0aGluZyBjbG9zZXIgdG8NCg0KICAgICBib29sIHNobWVtX2lzX2h1Z2Uoc3Ry
-dWN0IHZtX2FyZWFfc3RydWN0ICp2bWEsIHN0cnVjdCBpbm9kZSAqaW5vZGUsDQogICAgICAgICAg
-ICAgICAgICAgICAgICBwZ29mZl90IGluZGV4LCBib29sIHNobWVtX2h1Z2VfZm9yY2UpDQogICAg
-IHsNCiAgICAgICAgICAgICAuLi4NCg0KICAgICAgICAgICAgIGlmIChTSE1FTV9JKGlub2RlKS0+
-ZmxhZ3MgJiBWTV9IVUdFUEFHRSkNCiAgICAgICAgICAgICAgICAgICAgIHJldHVybiB0cnVlOw0K
-DQogICAgICAgICAgICAgLi4uDQogICAgIH0NCg0KZnJvbSBIdWdoJ3MgcGF0Y2guDQo=
+On 2/22/23 4:48 PM, Michał Mirosław wrote:
+> On Wed, 22 Feb 2023 at 12:06, Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
+>>
+>> On 2/22/23 3:44 PM, Michał Mirosław wrote:
+>>> On Wed, 22 Feb 2023 at 11:11, Muhammad Usama Anjum
+>>> <usama.anjum@collabora.com> wrote:
+>>>> On 2/21/23 5:42 PM, Michał Mirosław wrote:
+>>>>> On Tue, 21 Feb 2023 at 11:28, Muhammad Usama Anjum
+>>>>> <usama.anjum@collabora.com> wrote:
+>>>>>>
+>>>>>> Hi Michał,
+>>>>>>
+>>>>>> Thank you so much for comment!
+>>>>>>
+>>>>>> On 2/17/23 8:18 PM, Michał Mirosław wrote:
+>>>>> [...]
+>>>>>>> For the page-selection mechanism, currently required_mask and
+>>>>>>> excluded_mask have conflicting
+>>>>>> They are opposite of each other:
+>>>>>> All the set bits in required_mask must be set for the page to be selected.
+>>>>>> All the set bits in excluded_mask must _not_ be set for the page to be
+>>>>>> selected.
+>>>>>>
+>>>>>>> responsibilities. I suggest to rework that to:
+>>>>>>> 1. negated_flags: page flags which are to be negated before applying
+>>>>>>> the page selection using following masks;
+>>>>>> Sorry I'm unable to understand the negation (which is XOR?). Lets look at
+>>>>>> the truth table:
+>>>>>> Page Flag       negated_flags
+>>>>>> 0               0                       0
+>>>>>> 0               1                       1
+>>>>>> 1               0                       1
+>>>>>> 1               1                       0
+>>>>>>
+>>>>>> If a page flag is 0 and negated_flag is 1, the result would be 1 which has
+>>>>>> changed the page flag. It isn't making sense to me. Why the page flag bit
+>>>>>> is being fliped?
+>>>>>>
+>>>>>> When Anrdei had proposed these masks, they seemed like a fancy way of
+>>>>>> filtering inside kernel and it was straight forward to understand. These
+>>>>>> masks would help his use cases for CRIU. So I'd included it. Please can you
+>>>>>> elaborate what is the purpose of negation?
+>>>>>
+>>>>> The XOR is a way to invert the tested value of a flag (from positive
+>>>>> to negative and the other way) without having the API with invalid
+>>>>> values (with required_flags and excluded_flags you need to define a
+>>>>> rule about what happens if a flag is present in both of the masks -
+>>>>> either prioritise one mask over the other or reject the call).
+>>>> At minimum, one mask (required, any or excluded) must be specified. For a
+>>>> page to get selected, the page flags must fulfill the criterion of all the
+>>>> specified masks.
+>>>
+>>> [Please see the comment below.]
+>>>
+>>> [...]
+>>>> Lets translate words into table:
+>>> [Yes, those tables captured the intent correctly.]
+>>>
+>>>>> BTW, I think I assumed that both conditions (all flags in
+>>>>> required_flags and at least one in anyof_flags is present) need to be
+>>>>> true for the page to be selected - is this your intention?
+>>>> All the masks are optional. If all or any of the 3 masks are specified, the
+>>>> page flags must pass these masks to get selected.
+>>>
+>>> This explanation contradicts in part the introductory paragraph, but
+>>> this version seems more useful as you can pass all masks zero to have
+>>> all pages selected.
+>> Sorry, I wrote it wrongly. (All the masks are not optional.) Let me
+>> rephrase. All or at least any 1 of the 3 masks (required, any, exclude)
+>> must be specified. The return_mask must always be specified. Error is
+>> returned if all 3 masks (required, anyof, exclude) are zero or return_mask
+>> is zero.
+> 
+> Why do you need those restrictions? I'd guess it is valid to request a
+> list of all pages with zero return_mask - this will return a compact
+> list of used ranges of the virtual address space.
+At the time, we are supporting 4 flags (PAGE_IS_WRITTEN, PAGE_IS_FILE,
+PAGE_IS_PRESENT and PAGE_IS_SWAPPED). The idea is that user mention his
+flags of interest in the return_mask. If he wants only 1 flag, he'll
+specify it. Definitely if user wants only 1 flag, initially it doesn't make
+any sense to mention in the return mask. But we want uniformity. If user
+want, 2 or more flags in returned, return_mask becomes compulsory. So to
+keep things simple and generic for any number of flags of interest
+returned, the return_mask must be specified even if the flag of interest is
+only 1.
+
+> 
+>>>> After taking a while to understand this and compare with already present
+>>>> flag system, `negated flags` is comparatively difficult to understand while
+>>>> already present flags seem easier.
+>>>
+>>> Maybe replacing negated_flags in the API with matched_values =
+>>> ~negated_flags would make this better?
+>>>
+>>> We compare having to understand XOR vs having to understand ordering
+>>> of required_flags and excluded_flags.
+>> There is no ordering in current masks scheme. No mask is preferable. For a
+>> page to get selected, all the definitions of the masks must be fulfilled.
+>> You have come up with good example that what if required_mask =
+>> exclude_mask. In this case, no page will fulfill the criterion and hence no
+>> page would be selected. It is user's fault that he isn't understanding the
+>> definitions of these masks correctly.
+>>
+>> Now thinking about it, I can add a error check which would return error if
+>> a bit in required and excluded masks matches. Would you like it? Lets put
+>> this check in place.
+>> (Previously I'd left it for user's wisdom not to do this. If he'll specify
+>> same masks in them, he'll get no addresses out of the syscall.)
+> 
+> This error case is (one of) the problems I propose avoiding. You also
+> need much more text to describe the requred/excluded flags
+> interactions and edge cases than saying that a flag must have a value
+> equal to corresponding bit in ~negated_flags to be matched by
+> requried/anyof masks.
+I've found excluded_mask very intuitive as compared to negated_mask which
+is so difficult to understand that I don't know how to use it correctly.
+Lets take an example, I want pages which are PAGE_IS_WRITTEN and are not
+PAGE_IS_FILE. In addition, the pages must be PAGE_IS_PRESENT or
+PAGE_IS_SWAPPED. This can be specified as:
+
+required_mask = PAGE_IS_WRITTEN
+excluded_mask = PAGE_IS_FILE
+anyof_mask = PAGE_IS_PRESETNT | PAGE_IS_SWAP
+
+(a) assume page_flags = 0b1111
+skip page as 0b1111 & 0b0010 = true
+
+(b) assume page_flags = 0b1001
+select page as 0b1001 & 0b0010 = false
+
+It seemed intuitive. Right? How would you achieve same thing with negated_mask?
+
+required_mask = PAGE_IS_WRITTEN
+negated_mask = PAGE_IS_FILE
+anyof_mask = PAGE_IS_PRESETNT | PAGE_IS_SWAP
+
+(1) assume page_flags = 0b1111
+tested_flags = 0b1111 ^ 0b0010 = 0b1101
+
+(2) assume page_flags = 0b1001
+tested_flags = 0b1001 ^ 0b0010 = 0b1011
+
+In (1), we wanted to skip pages which have PAGE_IS_FILE set. But
+negated_mask has just masked it and page is still getting tested if it
+should be selected and it would get selected. It is wrong.
+
+In (2), the PAGE_IS_FILE bit of page_flags was 0 and got updated to 1 or
+PAGE_IS_FILE in tested_flags.
+
+> 
+>>> IOW my proposal is to replace branches in the masks interpretation (if
+>>> in one set then matches but if in another set then doesn't; if flags
+>>> match ... ) with plain calculation (flag is matching when equals
+>>> ~negated_flags; if flags match the masks ...).
+> 
+> Best Regards
+> Michał Mirosław
+
+-- 
+BR,
+Muhammad Usama Anjum
