@@ -2,110 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39EE56A1DB3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Feb 2023 15:45:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C00A96A2280
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Feb 2023 20:48:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbjBXOpo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Feb 2023 09:45:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35054 "EHLO
+        id S229600AbjBXTsy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Feb 2023 14:48:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230102AbjBXOpd (ORCPT
+        with ESMTP id S229529AbjBXTst (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Feb 2023 09:45:33 -0500
-X-Greylist: delayed 424 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 24 Feb 2023 06:45:17 PST
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DD48497E8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 06:45:17 -0800 (PST)
-Received: from newone.lan (unknown [10.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ixit.cz (Postfix) with ESMTPSA id 53FD4161ED2;
-        Fri, 24 Feb 2023 15:38:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-        t=1677249491;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=9fwVD4ucwH2c8weBti7L3KPNpxO0LVGqX+ym0nzws2k=;
-        b=oraeAmBGBywq8pjgh103DdoByF2y1jGZZ0q5+lzAfmMUA2PdlAEr8XutxxAPAc9SF5Iz5K
-        ZHfUv7cfu87cSYYVSQcBqSI3LyB9r9dZBXBsgucjHwYx1k1NMKE82eUiMKHx3TS8U4u3Mm
-        fwCHZW0NdNT38rdXJilrk8/jsWm22Bo=
-From:   David Heidelberg <david@ixit.cz>
-Cc:     dri-devel@lists.freedesktop.org, helen.koike@collabora.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wsa+renesas@sang-engineering.com, akpm@linux-foundation.org,
-        David Heidelberg <david@ixit.cz>
-Subject: [RESEND v2 PATCH] init/do_mounts.c: add virtiofs root fs support
-Date:   Fri, 24 Feb 2023 15:37:51 +0100
-Message-Id: <20230224143751.36863-1-david@ixit.cz>
-X-Mailer: git-send-email 2.39.1
+        Fri, 24 Feb 2023 14:48:49 -0500
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D882A6C19E
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 11:48:42 -0800 (PST)
+Received: by mail-il1-f206.google.com with SMTP id i5-20020a92c945000000b00316ef07ae8eso381690ilq.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 11:48:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Tj+YS6uDs/mw0VPIHBjLq++zoYCo86wH+DUsbWOpxBc=;
+        b=QFmoUn0PLlZF4q1HVdB9SkcHMJ19dfDV0VsFLNNL3IhI5dwVJiynSj4hldxcLMTCwK
+         GtnA80F5nvgYnhX4ia1ReUGIM+yb4TXNgEsoKjQ56n7YlUHOsSkhHh1CUfbRIpQtfw5o
+         6shMOAup0fdMJR70XkyWiWEQvdloFJEWsDeLE4nIiVFmoQE6f2cC59PiSy0ombkid0AA
+         //mDA7nXPlpPcDYcYasAJ8mQ8WHA/zd0/Cx4DYnilBaI2XG0Fn2jI7jASFnt/GXu2C+D
+         spAit/vOfq7JTi15lwW1wTTWPZSHL5H7/cOMvUhdOo5YFzouhrCki/QbN+/lCqPftO3e
+         SG7Q==
+X-Gm-Message-State: AO0yUKVg0gO8KHaFjTUxJw1E9thAGAA3zwWABq5VOAfX1hEH/drQMEiX
+        308Abd4+6komuXfvG1rc2YrhAtvUPmQWBIwajlHIWxTBCjPf
+X-Google-Smtp-Source: AK7set/lpdFhGHQw+cB9TUuzNn6N5waM1hr7VkUEtxTEE0QTJPim2M8myplppztA1iU387qG7HTmvXxzDqkXjrCs8qG48TKcd7Xc
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
-        RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a02:a1c7:0:b0:3e5:a7d9:27db with SMTP id
+ o7-20020a02a1c7000000b003e5a7d927dbmr3101248jah.6.1677268122191; Fri, 24 Feb
+ 2023 11:48:42 -0800 (PST)
+Date:   Fri, 24 Feb 2023 11:48:42 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009dcd7705f5776af6@google.com>
+Subject: [syzbot] [ext4?] UBSAN: shift-out-of-bounds in ext2_fill_super
+From:   syzbot <syzbot+4fec412f59eba8c01b77@syzkaller.appspotmail.com>
+To:     jack@suse.com, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Stefan Hajnoczi <stefanha@redhat.com>
+Hello,
 
-Make it possible to boot directly from a virtiofs file system with tag
-'myfs' using the following kernel parameters:
+syzbot found the following issue on:
 
-  rootfstype=virtiofs root=myfs rw
+HEAD commit:    a9b06ec42c0f Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1646c5e8c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8ad40c5d31656db1
+dashboard link: https://syzkaller.appspot.com/bug?extid=4fec412f59eba8c01b77
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172f9f58c80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13607dcf480000
 
-Booting directly from virtiofs makes it possible to use a directory on
-the host as the root file system.  This is convenient for testing and
-situations where manipulating disk image files is cumbersome.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3fd9d14dbef6/disk-a9b06ec4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d4fd6fe60f78/vmlinux-a9b06ec4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/908925a4e5fc/Image-a9b06ec4.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/322d1cd45d78/mount_1.gz
 
-Reviewed-by: Helen Koike <helen.koike@collabora.com>
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: David Heidelberg <david@ixit.cz>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4fec412f59eba8c01b77@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 512
+================================================================================
+UBSAN: shift-out-of-bounds in fs/ext2/super.c:948:25
+shift exponent 32 is too large for 32-bit type 'int'
+CPU: 1 PID: 5922 Comm: syz-executor396 Not tainted 6.2.0-syzkaller-18295-ga9b06ec42c0f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
+Call trace:
+ dump_backtrace+0x1c8/0x1f4 arch/arm64/kernel/stacktrace.c:158
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:165
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
+ dump_stack+0x1c/0x28 lib/dump_stack.c:113
+ ubsan_epilogue lib/ubsan.c:151 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x2f4/0x36c lib/ubsan.c:321
+ ext2_fill_super+0x2074/0x23fc fs/ext2/super.c:948
+ mount_bdev+0x26c/0x368 fs/super.c:1359
+ ext2_mount+0x44/0x58 fs/ext2/super.c:1484
+ legacy_get_tree+0xd4/0x16c fs/fs_context.c:610
+ vfs_get_tree+0x90/0x274 fs/super.c:1489
+ do_new_mount+0x25c/0x8c8 fs/namespace.c:3145
+ path_mount+0x590/0xe58 fs/namespace.c:3475
+ do_mount fs/namespace.c:3488 [inline]
+ __do_sys_mount fs/namespace.c:3697 [inline]
+ __se_sys_mount fs/namespace.c:3674 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3674
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
+ el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
+ el0_svc+0x58/0x168 arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+================================================================================
+EXT2-fs (loop0): error: fragsize 4096 != blocksize 1024(not supported yet)
+
+
 ---
-v2: added Reviewed-by and CCed everyone interested.
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-We have used this option in Mesa3D CI for testing crosvm for
-more than one years and it's proven to work reliably.
-
-We are working on effort to removing custom patches to be able to do 
-automated apply and test of patches from any tree.                              
-
-https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/.gitlab-ci/crosvm-runner.sh#L85
- init/do_mounts.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 811e94daf0a8..11c11abe23d7 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -578,6 +578,16 @@ void __init mount_root(void)
- 			printk(KERN_ERR "VFS: Unable to mount root fs via SMB.\n");
- 		return;
- 	}
-+#endif
-+#ifdef CONFIG_VIRTIO_FS
-+	if (root_fs_names && !strcmp(root_fs_names, "virtiofs")) {
-+		if (!do_mount_root(root_device_name, "virtiofs",
-+				   root_mountflags, root_mount_data))
-+			return;
-+
-+		panic("VFS: Unable to mount root fs \"%s\" from virtiofs",
-+		      root_device_name);
-+	}
- #endif
- 	if (ROOT_DEV == 0 && root_device_name && root_fs_names) {
- 		if (mount_nodev_root() == 0)
--- 
-2.39.1
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
