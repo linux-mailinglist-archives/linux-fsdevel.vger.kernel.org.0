@@ -2,137 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7CCA6A1A83
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Feb 2023 11:43:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E685E6A1D31
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Feb 2023 15:05:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbjBXKn5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Feb 2023 05:43:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42748 "EHLO
+        id S229500AbjBXOFB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Feb 2023 09:05:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbjBXKnM (ORCPT
+        with ESMTP id S229759AbjBXOFA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Feb 2023 05:43:12 -0500
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BCC212BE0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 02:42:47 -0800 (PST)
-Received: by mail-il1-f208.google.com with SMTP id f8-20020a056e0212a800b00317170581e6so430100ilr.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 02:42:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wu/tOnCc7ZTPiYWfykiutPtgVaJumHoVSI6tLhsDKBM=;
-        b=XMMnMQUC/u/FCUMkMzd9VdTnGdcWjlnQvRqplbzialef2xWmbjrcdFBszG3G2mVI0R
-         EPoeO0KyeRB9irgYP9/8Gbzzdt5ecU9NcvWX1OIZ8njVuyL/hw9sj4cMuphyRb0Sb63Y
-         cb/GJ05ZWLnAfjlppEk1DKWAey3tURKUGWfqoHsb9rGDdN2vQeViWTIBtAhU7z3/RVc3
-         wtIvUZeDXPKL1mDTKYyP7fVPHWt0WTXHsi1o/WKwmx2rozCqqKvJAl9oRcFx5ICIOBir
-         9BnaJDbHfrfQrZ1oKngGKT8r7u6Kxxt+VxL6zpRd9jDKSbbaitnXDS3HGEtj9pR0P1Vy
-         Jtmg==
-X-Gm-Message-State: AO0yUKWvpvcQ7kOVIPxuya9nxVZKwM4zW0fdZljMFDWgJjOXMkzr220y
-        N7e+PSkdGTkglP7WXESY1GvETUE3U9+xvUDUiRRmjALQ4UQG
-X-Google-Smtp-Source: AK7set/PMjmBTNfCWO+rEXugqmZ9mpJ1oFG9AgOcYhTmpgZnU/gej4pJOb6rhWhFSb6mIRdhn40OIVMsWvZBJqNVLSXhGR1e9Vrk
+        Fri, 24 Feb 2023 09:05:00 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C15E56510
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 06:04:56 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CB258618E8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 14:04:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34095C433D2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 14:04:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677247495;
+        bh=seP5xxJbE3CXlmNxeb3saP7qbwjJaMrdZp53k/MJh4o=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=QL6TC2GuXLvSJSOfptqkZAvucqG7C2L5fLId/dMsHa/57xnp52Nu5kX4L/qJ5l9kA
+         4od4Sha1WJEchxk7xsvP9VDGAKLwfz9IHMe3nbkbj4wMj0qAcF8g0xjTrk4Hmmd0s4
+         ReXF8QAtRLtRqFFwfbtgDGGaCJ2tyFHnkw6RMf6qxeZbMbetpdvNmocZy+6QmRYOKG
+         RR5oXvp07tXp3vJhNAWSUQytnYe/5Ql3sftJrLRhhxJDcPsm+N7mI7H4Kno5CSFbVb
+         94q6TP9/nRFmFchp9MXhOuMwYJ2EGjaZP8R/qoAzQaFK6/3difSbN9Az7Mlra8snK2
+         kHd+FxQd/Mytg==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-17227cba608so16996375fac.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 06:04:55 -0800 (PST)
+X-Gm-Message-State: AO0yUKWc0M1Wz+qaLh0+p4azHJcdrAmTw1LbhYFv24a6va/wHD/tD8Q6
+        yZ88EAh7IfwLdX15lQOqu4otQInDWSdrdOfvsZo=
+X-Google-Smtp-Source: AK7set9+NKZR2gl5W+mIIkJiSW/aAEsCv5diKhrAZitYm4DU85Y8I1QWDID0dAOMMOgjuSKQ0zy5tLRluwxHF4hdy5I=
+X-Received: by 2002:a05:6870:5a99:b0:172:59d4:26dd with SMTP id
+ dt25-20020a0568705a9900b0017259d426ddmr893371oab.11.1677247494290; Fri, 24
+ Feb 2023 06:04:54 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a92:5408:0:b0:317:b01:229 with SMTP id i8-20020a925408000000b003170b010229mr596832ilb.2.1677235366868;
- Fri, 24 Feb 2023 02:42:46 -0800 (PST)
-Date:   Fri, 24 Feb 2023 02:42:46 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003f3d9a05f56fcac5@google.com>
-Subject: [syzbot] [kernfs?] WARNING: suspicious RCU usage in mas_start
-From:   syzbot <syzbot+d79e205d463e603f47ff@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tj@kernel.org
+Received: by 2002:a8a:355:0:b0:4a5:1048:434b with HTTP; Fri, 24 Feb 2023
+ 06:04:53 -0800 (PST)
+In-Reply-To: <PUZPR04MB6316E45B7AB55F18F472503481A59@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <PUZPR04MB6316E45B7AB55F18F472503481A59@PUZPR04MB6316.apcprd04.prod.outlook.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Fri, 24 Feb 2023 23:04:53 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-PV1o5-npdx7GNnj2ffMNjus5tbuQYtUbfzJHdaDuQ+w@mail.gmail.com>
+Message-ID: <CAKYAXd-PV1o5-npdx7GNnj2ffMNjus5tbuQYtUbfzJHdaDuQ+w@mail.gmail.com>
+Subject: Re: [PATCH 2/3] exfat: don't print error log in normal case
+To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc:     "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+2023-02-21 16:34 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
+> When allocating a new cluster, exFAT first allocates from the
+> next cluster of the last cluster of the file. If the last cluster
+> of the file is the last cluster of the volume, allocate from the
+> first cluster. This is a normal case, but the following error log
+> will be printed. It makes users confused, so this commit removes
+> the error log.
+>
+> [1960905.181545] exFAT-fs (sdb1): hint_cluster is invalid (262130)
+>
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+> Reviewed-by: Andy Wu <Andy.Wu@sony.com>
+> ---
+>  fs/exfat/fatent.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+> index 65a8c9fb072c..b4ca533acaa9 100644
+> --- a/fs/exfat/fatent.c
+> +++ b/fs/exfat/fatent.c
+> @@ -342,14 +342,18 @@ int exfat_alloc_cluster(struct inode *inode, unsigned
+> int num_alloc,
+>  		}
+>  	}
+>
+> -	/* check cluster validation */
+> -	if (!is_valid_cluster(sbi, hint_clu)) {
+> -		exfat_err(sb, "hint_cluster is invalid (%u)",
+> -			hint_clu);
+> +	if (hint_clu == sbi->num_clusters) {
+>  		hint_clu = EXFAT_FIRST_CLUSTER;
+>  		p_chain->flags = ALLOC_FAT_CHAIN;
+>  	}
+>
+> +	/* check cluster validation */
+> +	if (!is_valid_cluster(sbi, hint_clu)) {
+> +		exfat_err(sb, "hint_cluster is invalid (%u)", hint_clu);
+> +		ret = -EIO;
+There is no problem with allocation when invalid hint clu.
+It is right to handle it as before instead returning -EIO.
+In other words, after change exfat_err() to exfat_warn(),
+It would be better to update print to avoid misunderstanding.
+i.e. it will rewind to the first cluster rather than simply hint clu
+invalid.
 
-syzbot found the following issue on:
-
-HEAD commit:    d2980d8d8265 Merge tag 'mm-nonmm-stable-2023-02-20-15-29' ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16c7f944c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=471a946f0dd5764c
-dashboard link: https://syzkaller.appspot.com/bug?extid=d79e205d463e603f47ff
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/65a5040f9f8c/disk-d2980d8d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e7593e5fe23f/vmlinux-d2980d8d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9714acfee895/bzImage-d2980d8d.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d79e205d463e603f47ff@syzkaller.appspotmail.com
-
-=============================
-WARNING: suspicious RCU usage
-6.2.0-syzkaller-09238-gd2980d8d8265 #0 Not tainted
------------------------------
-lib/maple_tree.c:856 suspicious rcu_dereference_check() usage!
-
-other info that might help us debug this:
-
-
-rcu_scheduler_active = 2, debug_locks = 1
-6 locks held by syz-executor.0/11715:
- #0: ffff888073bc0368 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x254/0x2f0 fs/file.c:1046
- #1: ffff888027ec2460 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x26d/0xbb0 fs/read_write.c:580
- #2: ffff888073909888 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1eb/0x4f0 fs/kernfs/file.c:325
- #3: ffff88801782d3a8 (kn->active#64){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x20f/0x4f0 fs/kernfs/file.c:326
- #4: ffffffff8d014968 (ksm_thread_mutex){+.+.}-{3:3}, at: run_store+0x122/0xb10 mm/ksm.c:2953
- #5: ffff88807b136d98 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_lock include/linux/mmap_lock.h:117 [inline]
- #5: ffff88807b136d98 (&mm->mmap_lock){++++}-{3:3}, at: unmerge_and_remove_all_rmap_items mm/ksm.c:990 [inline]
- #5: ffff88807b136d98 (&mm->mmap_lock){++++}-{3:3}, at: run_store+0x2db/0xb10 mm/ksm.c:2959
-
-stack backtrace:
-CPU: 1 PID: 11715 Comm: syz-executor.0 Not tainted 6.2.0-syzkaller-09238-gd2980d8d8265 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/16/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- lockdep_rcu_suspicious+0x220/0x340 kernel/locking/lockdep.c:6599
- mas_root lib/maple_tree.c:856 [inline]
- mas_start+0x2c1/0x440 lib/maple_tree.c:1357
- mas_state_walk lib/maple_tree.c:3838 [inline]
- mas_walk+0x33/0x180 lib/maple_tree.c:5052
- mas_find+0x1e9/0x240 lib/maple_tree.c:6030
- vma_next include/linux/mm.h:745 [inline]
- unmerge_and_remove_all_rmap_items mm/ksm.c:991 [inline]
- run_store+0x2f9/0xb10 mm/ksm.c:2959
- kernfs_fop_write_iter+0x3a6/0x4f0 fs/kernfs/file.c:334
- call_write_iter include/linux/fs.h:1851 [inline]
- new_sync_write fs/read_write.c:491 [inline]
- vfs_write+0x7b2/0xbb0 fs/read_write.c:584
- ksys_write+0x1a0/0x2c0 fs/read_write.c:637
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f498d08c0f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f498dec9168 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f498d1abf80 RCX: 00007f498d08c0f9
-RDX: 0000000000000002 RSI: 0000000020000000 RDI: 0000000000000003
-RBP: 00007f498d0e7ae9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffe961b822f R14: 00007f498dec9300 R15: 0000000000022000
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Thanks.
+> +		goto unlock;
+> +	}
+> +
+>  	p_chain->dir = EXFAT_EOF_CLUSTER;
+>
+>  	while ((new_clu = exfat_find_free_bitmap(sb, hint_clu)) !=
+> --
+> 2.25.1
+>
+>
