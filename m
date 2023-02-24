@@ -2,75 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C09736A2453
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Feb 2023 23:36:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 860046A24E4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Feb 2023 00:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229700AbjBXWgd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Feb 2023 17:36:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43796 "EHLO
+        id S229721AbjBXXKb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Feb 2023 18:10:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjBXWgc (ORCPT
+        with ESMTP id S229549AbjBXXKa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Feb 2023 17:36:32 -0500
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A87D1B2D3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 14:36:31 -0800 (PST)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-53865bdc1b1so12146077b3.16
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 14:36:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kcPGn+M6rIqx4tq8u4y5PnmVvUlM4XopORLae9pnp88=;
-        b=QOKHFuzxD9Oty0a5Re3OcanrsUmjZ7YVrnvH6W2tuNQqBHXx+lQ3dG9qCPTRT0a+KN
-         muI7pzifbe+Ya0/9S758YpqEubAIaILij0y/Yq6KSLuehY72U9iN2uC5eww/27YnHOwm
-         7tT20/kgLULJFJO8cQqXDbuebovMxSKrMRNPoA1xisQygA71xz3/LuNX0FqUVFYi5sPl
-         xTalxKiPHjmh+Le2ki3dJpFRoW8fewbUcfT4XSY/Iez8ee8FfAehpbz/raDXqdiTXAos
-         YLdFzMOIW6Ir9rLt6BX0gsge+6jtZ75hVk3ZZEQ5IRZtYCw1ZRwcYo+1GdGCQ/t8rBcR
-         VW4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kcPGn+M6rIqx4tq8u4y5PnmVvUlM4XopORLae9pnp88=;
-        b=j6+W32n8zmrmqhfsVWoqBzY9K+xZBcFhMOUjKOmiX6sn88ZGCDzBiv8XFjymm5AHjl
-         ihp5V+uP+fu4KkT8lDWOQiQTms7y9IjpCP+4ImbAW6pCalWdED+EP8YqQu+wUytQ0+oL
-         g4SAS4Xdt6+4/fYOJQLNwpU35qEGMcu0WLXNQrwpVc89GHwwJdcAWOixfVrzTnSGbp5a
-         uitE75ds54+u7kiukLd1+6ecEjWEcKKaty2h1wsnOZTx2rTRt24nkpFOvKngBhYfKQ5f
-         bl+TKbAQvgAtBUPmfZ+gj1/F6SKjEzSEGepQtwCmuFRBZ52cw3UTjFelcA700+HBqB6l
-         fPPw==
-X-Gm-Message-State: AO0yUKXnbUNcfAxSUiYPXtl5BXkRlWScF0JSIdZI1+z0+5lszaY6yfG0
-        pC8BI1gQH/NAhGT6fsEu8i5DsjJ42+w=
-X-Google-Smtp-Source: AK7set9L2FIpwGMGECLyskWfXlzU0H7sjRSGI9vrEuoVRE3jOXUP1tVhvhXXfg/VsQ8P5PxI02LV4EYJTec=
-X-Received: from drosen.mtv.corp.google.com ([2620:15c:211:200:b35d:3867:2eb8:33e4])
- (user=drosen job=sendgmr) by 2002:a5b:301:0:b0:a09:32fb:bd6c with SMTP id
- j1-20020a5b0301000000b00a0932fbbd6cmr4015876ybp.7.1677278190733; Fri, 24 Feb
- 2023 14:36:30 -0800 (PST)
-Date:   Fri, 24 Feb 2023 14:36:26 -0800
-In-Reply-To: <20220622194603.102655-1-krisman@collabora.com>
-Mime-Version: 1.0
-References: <20220622194603.102655-1-krisman@collabora.com>
-X-Mailer: git-send-email 2.39.2.722.g9855ee24e9-goog
-Message-ID: <20230224223626.565126-1-drosen@google.com>
-Subject: Re: [PATCH 0/7] Support negative dentries on case-insensitive directories
-From:   Daniel Rosenberg <drosen@google.com>
-To:     krisman@collabora.com
-Cc:     ebiggers@kernel.org, jaegeuk@kernel.org, kernel@collabora.com,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu,
-        viro@zeniv.linux.org.uk, Daniel Rosenberg <drosen@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Fri, 24 Feb 2023 18:10:30 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 291921630B;
+        Fri, 24 Feb 2023 15:10:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=PWlxtCRdEYf+JZg4eqY+Ghwyo/skTEHHEw79y59hqkA=; b=0/Tor7OOrFQUrrKwtxamtltx11
+        nKDIVjdsIQ0gcNotQUCZhG8ECjAKhIBhvT3EStnMoaGsUPNqn0mgb4ZNh4qc3MVSt4HlxYcMVbJHV
+        FcAL4x6XaOSHfXi5IZ4txQCLonRG2UoF/uOzi56GM1rKkuVPtqF6bCvWpDcLpEijZLuBmRmIkYKV8
+        f2ZaohLjFfmyuZqV2HlL5q0ikn01WleytaBoP378s41z0gdnmms6oecbmKLlSaZ2tW5Q3SM+/NiLA
+        FCRZyB/gPI/aj6PCnv6VCkCFC5QANTD0gbbPFijxoT9SCGDpTQDPAuRJ1OJLAOoya6ui+gjUOU3GL
+        ud7yYcYw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pVhCs-004G7y-Iv; Fri, 24 Feb 2023 23:10:26 +0000
+Date:   Fri, 24 Feb 2023 15:10:26 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-cxl@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mcgrof@kernel.org
+Subject: [ANN]: kdevops v6.2 released devices
+Message-ID: <Y/lD4kVcPqUppMwm@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,SUSPICIOUS_RECIPS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These look good to me. It will be nice to have negative dentries back for
-casefolded directories.
+I'd like to announce the release of kdevops v6.2 [0] [1]. I had already written
+about most of the new features on the v6.2-rc1 release in the December 2022
+notes [2], but since a new features cannot regress we've seen a few more new
+features sneak in since then. I'll re-iterate a few of the newest major
+features added since our last release (v5.0.2):
 
--Daniel Rosenberg
+  * ZNS
+  * CXL
+  * NFS
+  * Initial Kernel selftests suport: firmware, sysctl, kmod
+  * OCI cloud support
+  * libvirt use 9p now for local builds
+  * PCI-passthrough support including a new dynamic kconfig interface for it
+  * Building qemu for you
+  * 12 btrfs profiles to test
+  * Results for tests are now archived see workflows/fstests/results/
+    for an example namespace
+
+For more details of release notes you can refer to the v6.2-rc1 [3] and
+v6.2 [4] git tags.
+
+Thanks a lot to the developers who have contributed:
+
+  Adam Manzanares
+  Amir Goldstein
+  Chandan Babu R
+  Jeff Layton
+  Joel Granados
+  Josef Bacik
+  Luis Chamberlain
+  Pankaj Raghav
+
+*If* it makes sense, we may set up a stable brach for v6.2.y releases so
+which could fixate on the vagrant setup, so that folks using libvirt
+can get fixes. If we do that it would make sense to just merge fixes
+to the master branch first before the stable branch as well just as we
+do in upstream linux / stable branches.
+
+  Luis
+
+[0] https://github.com/linux-kdevops/kdevops
+[1] https://gitlab.com/linux-kdevops/kdevops
+[2] https://people.kernel.org/mcgrof/kdevops-v6-2-rc1-released
+[3] https://github.com/linux-kdevops/kdevops/releases/tag/v6.2-rc1
+[4] https://github.com/linux-kdevops/kdevops/releases/tag/v6.2
