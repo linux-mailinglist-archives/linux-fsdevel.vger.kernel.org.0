@@ -2,65 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A1BC6A2656
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Feb 2023 02:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99A3D6A2655
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Feb 2023 02:19:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbjBYBTQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Feb 2023 20:19:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49188 "EHLO
+        id S229732AbjBYBTR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Feb 2023 20:19:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbjBYBRS (ORCPT
+        with ESMTP id S229686AbjBYBRe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Feb 2023 20:17:18 -0500
+        Fri, 24 Feb 2023 20:17:34 -0500
 Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E5FD13533
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 17:17:13 -0800 (PST)
-Received: by mail-oi1-x22b.google.com with SMTP id y184so797916oiy.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 17:17:13 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B509219F2D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 17:17:15 -0800 (PST)
+Received: by mail-oi1-x22b.google.com with SMTP id y184so797965oiy.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 17:17:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SEG8PxvPPDHctUHzEMZC7jp24LlXiCWPf+XiGalvf6E=;
-        b=shGUeMll5ZaAhcGSzivdIXo6wU8GJff3MFx0a6RNPcLGDHFtcP7D8cptTg8GW4dUk+
-         mVYGoQTWNthIxRhWvmL1FQdmlzBmAqxfVPiWrtzWZOtpWDrToKz+CHdsrlvVBhBL9iYD
-         9zLAFwbD87lTC8BhH+gJLAUL6U5JV0la6mLgSxJJromPpknn8OuisZuvyXFTxANICF+e
-         mYLU9qBiLDmHdGBl4sbGUvfGg8Oyj6wWOFW0RbEuRlDkXV8vrsw9J8P5A2/TN0tyLYeL
-         nPuU5Aanbhw/0KCuVadKUVrVTjd3DiiWlDK8TjuvwYbkuHE+eZe0A1Br5UAeascGjDQe
-         KpQw==
+        bh=c2iCXdF1K4+cgfpqgtJ38AKebGSO4Ut1e8fY9wUGoQs=;
+        b=hFC1ioGG3m0KB6Q+eLqgec9uxibCudTQvABJBHgIjKS8iLwj9sZfYSNZlL4kuCBDxJ
+         4ff7HCgzzjd5PfahyQhzTfvSn2ydDQcEfYsO30bn7oIFYuc6HCsp2O+CquczXK1c8hBl
+         eDXoQuUe3ECEEvbemX7RQi/kTkNDzuZ+vG5qtbxoIltS7S0kx6YsAa/gLb4KUKllcVgr
+         ls2FWPgfcSj25UyauoYAgkIPvQ9AcyCEi40sw7irskZPozvlDBlLJXiDU2Rl2hbV4MBf
+         LWoaNr/cgXqQJjVoUconMrzCmBDN6S4ETjSfpLaH+4N3TzMmq4Ksp2aJD4dKykHqV1rw
+         4gcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SEG8PxvPPDHctUHzEMZC7jp24LlXiCWPf+XiGalvf6E=;
-        b=y0iwlLvZ/PqY2WgnPlyZCs+kJe/QH91LY3mpesOhrQxmP197UYdrvbg70mu8+qWomo
-         959n1pTOdetxr4xx9NYv+K/AECzeRz6xlUbcZVTybvqrdq5+C4dgAHON7rj1M53vI3ly
-         mDSkZJZ3DCKPVgX44JTbRCkaEedONjGhNPTkriQ0Rkds6R6cMmWiEYK9hZp8sBZRRnJe
-         +DVSmoPb4DrJJ0tACvKz28RU6EE2pGzGgw4QUZYA9/hqf+5eRV03uGbvPBRCNVxuIvDy
-         Jki7iQ8lIEdPJUNyGEpW8Cj6UsZJ41yVPeWC7kESSIh7/K5FCy99T5yPjQ8frx+xPexl
-         mlaQ==
-X-Gm-Message-State: AO0yUKUx26Trlc59W2vk/HWlcP0Qm7Ut8B+phYbNCEutd8A2wJUNx2ZK
-        9PQCcYgIUQ0+3db3qlW4cxhltAWY5Lu6IEoS
-X-Google-Smtp-Source: AK7set9OC61ibfcPLoFn2wJbOrjIsGmVy4korVplKbTHV8NefOS7XaWHgs25q7evQFoTtcscIVdb0Q==
-X-Received: by 2002:aca:f0d:0:b0:35a:d192:9a53 with SMTP id 13-20020aca0f0d000000b0035ad1929a53mr7336955oip.41.1677287832242;
-        Fri, 24 Feb 2023 17:17:12 -0800 (PST)
+        bh=c2iCXdF1K4+cgfpqgtJ38AKebGSO4Ut1e8fY9wUGoQs=;
+        b=zoYRAD/j5d+xjc/wR6ixLS+3NdmX31faQNLi96jly75QFmxjgV3HMykzSVHQOHr5K8
+         04VwBqzu7+DeyBdelWHxROAlRdXXM5rriPFC7QIZ597fVyKvV3on7hB+QrMLXICX4zcI
+         Ohs0x+MTIZcFGTuguFkq9ddc/P+OpZ+4j/uQQXhai+kgMnAc34/Nucbf728fmSKWbPCU
+         htsI0KBDf8DMC4HvHTPvg1hkJd2mv+i4Ey5ATkrgkgU/ex9n7H7RRoUBAuLrZ1aoWTKc
+         /WsvTvX1wzGeW5WOiot1lgc+mQtH0+VsRArKIftuMbA+LNNmAj2qscF1uEmW/vq5GN8F
+         OpFA==
+X-Gm-Message-State: AO0yUKVIsRQjSjc5Bb+xyOvNyteVifaByo8LmgGYK4M4s/UmpJfhUPnH
+        6kK6IvQjLNfVYutj1fopz7DzxAw3M1DLpoxU
+X-Google-Smtp-Source: AK7set/yMYcw6tUxnXjHgkSpqnTP696qqzHkMLFq655dkoqamuZF9tHXb/wsjIHAcEgENGDo/mH6xg==
+X-Received: by 2002:a05:6808:206:b0:364:858:7e88 with SMTP id l6-20020a056808020600b0036408587e88mr8019614oie.29.1677287834135;
+        Fri, 24 Feb 2023 17:17:14 -0800 (PST)
 Received: from system76-pc.. (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
-        by smtp.gmail.com with ESMTPSA id q3-20020acac003000000b0037d74967ef6sm363483oif.44.2023.02.24.17.17.10
+        by smtp.gmail.com with ESMTPSA id q3-20020acac003000000b0037d74967ef6sm363483oif.44.2023.02.24.17.17.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Feb 2023 17:17:11 -0800 (PST)
+        Fri, 24 Feb 2023 17:17:13 -0800 (PST)
 From:   Viacheslav Dubeyko <slava@dubeyko.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     viacheslav.dubeyko@bytedance.com, luka.perkov@sartura.hr,
         bruno.banelli@sartura.hr, Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [RFC PATCH 46/76] ssdfs: segment bitmap API implementation
-Date:   Fri, 24 Feb 2023 17:08:57 -0800
-Message-Id: <20230225010927.813929-47-slava@dubeyko.com>
+Subject: [RFC PATCH 47/76] ssdfs: introduce b-tree object
+Date:   Fri, 24 Feb 2023 17:08:58 -0800
+Message-Id: <20230225010927.813929-48-slava@dubeyko.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230225010927.813929-1-slava@dubeyko.com>
 References: <20230225010927.813929-1-slava@dubeyko.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -71,1572 +72,1094 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Segment bitmap implements API:
-(1) create - create empty segment bitmap object
-(2) destroy - destroy segment bitmap object
-(3) fragment_init - init fragment of segment bitmap
-(4) flush - flush dirty segment bitmap
-(5) check_state - check that segment has particular state
-(6) get_state - get current state of particular segment
-(7) change_state - change state of segment
-(8) find - find segment for requested state or state mask
-(9) find_and_set - find segment for requested state and change state
+SSDFS file system is using the logical segment, logical extent
+concepts, and the "Physical" Erase Blocks (PEB) migration scheme.
+Generally speaking, these techniques provide the opportunity
+to exclude completely the wandering tree issue and to decrease
+significantly the write amplification. SSDFS file system introduces
+the technique of storing the data on the basis of logical extent
+that describes this data’s position by means of segment ID and
+logical block ID. Finally, PEBs migration technique guarantee that
+data will be described by the same logical extent until the direct
+change of segment ID or logical block ID. As a result, it means that
+logical extent will be the same if data is sitting in the same logical
+segment. The responsibility of PEBs migration technique is to implement
+the continuous migration of data between PEBs inside of the logical
+segment for the case of data updates. Generally speaking, SSDFS file
+system’s internal techniques guarantee that COW policy will not update
+the content of b-tree. But content of b-tree will be updated only by
+regular operations of end-user with the file system.
+
+SSDFS file system uses b-tree architecture for metadata representation
+(for example, inodes tree, extents tree, dentries tree, xattr tree)
+because it provides the compact way of reserving the metadata space
+without the necessity to use the excessive overprovisioning of metadata
+reservation (for example, in the case of plain table or array).
+
+The b-tree provides the efficient technique of items lookup, especially,
+for the case of aged or sparse b-tree that is capable to contain
+the mixture of used and deleted (or freed) items. Such b-tree’s feature
+could be very useful for the case of extent invalidation, for example.
+Also SSDFS file system aggregates the b-tree’s root node in the superblock
+(for example, inodes tree case) or in the inode (for example, extents tree
+case). As a result, it means that an empty b-tree will contain only
+the root node without the necessity to reserve any b-tree’s node on the
+file system’s volume. Moreover, if a b-tree needs to contain only several
+items (two items, for example) then the root node’s space can be used to
+store these items inline without the necessity to create the full-featured
+b-tree’s node. As a result, SSDFS uses b-trees with the goal to achieve
+the compact representation of metadata, the flexible way to expend or
+to shrink the b-tree’s space capacity, and the efficient mechanism of
+items’ lookup.
+
+SSDFS file system uses a hybrid b-tree architecture with the goal
+to eliminate the index nodes’ side effect. The hybrid b-tree operates
+by three node types: (1) index node, (2) hybrid node, (3) leaf node.
+Generally speaking, the peculiarity of hybrid node is the mixture
+as index as data records into one node. Hybrid b-tree starts with root
+node that is capable to keep the two index records or two data records
+inline (if size of data record is equal or lesser than size of index
+record). If the b-tree needs to contain more than two items then it should
+be added the first hybrid node into the b-tree. The root level of
+b-tree is able to contain only two nodes because the root node is capable
+to store only two index records. Generally speaking, the initial goal of
+hybrid node is to store the data records in the presence of reserved
+index area.
 
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 CC: Viacheslav Dubeyko <viacheslav.dubeyko@bytedance.com>
 CC: Luka Perkov <luka.perkov@sartura.hr>
 CC: Bruno Banelli <bruno.banelli@sartura.hr>
 ---
- fs/ssdfs/segment_bitmap.c | 3014 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 3014 insertions(+)
+ fs/ssdfs/btree.c        | 1020 +++++++++++++++++++++++++++++++++++++++
+ fs/ssdfs/btree.h        |  218 +++++++++
+ fs/ssdfs/btree_search.c |  885 +++++++++++++++++++++++++++++++++
+ fs/ssdfs/btree_search.h |  359 ++++++++++++++
+ 4 files changed, 2482 insertions(+)
+ create mode 100644 fs/ssdfs/btree.c
+ create mode 100644 fs/ssdfs/btree.h
+ create mode 100644 fs/ssdfs/btree_search.c
+ create mode 100644 fs/ssdfs/btree_search.h
 
-diff --git a/fs/ssdfs/segment_bitmap.c b/fs/ssdfs/segment_bitmap.c
-index 633cd4cfca0a..50a7cc692fe3 100644
---- a/fs/ssdfs/segment_bitmap.c
-+++ b/fs/ssdfs/segment_bitmap.c
-@@ -1805,3 +1805,3017 @@ int ssdfs_segbmap_issue_fragments_update(struct ssdfs_segment_bmap *segbmap,
- 
- 	return err;
- }
+diff --git a/fs/ssdfs/btree.c b/fs/ssdfs/btree.c
+new file mode 100644
+index 000000000000..5780077a1eb9
+--- /dev/null
++++ b/fs/ssdfs/btree.c
+@@ -0,0 +1,1020 @@
++// SPDX-License-Identifier: BSD-3-Clause-Clear
++/*
++ * SSDFS -- SSD-oriented File System.
++ *
++ * fs/ssdfs/btree.c - generalized btree functionality implementation.
++ *
++ * Copyright (c) 2014-2019 HGST, a Western Digital Company.
++ *              http://www.hgst.com/
++ * Copyright (c) 2014-2023 Viacheslav Dubeyko <slava@dubeyko.com>
++ *              http://www.ssdfs.org/
++ *
++ * (C) Copyright 2014-2019, HGST, Inc., All rights reserved.
++ *
++ * Created by HGST, San Jose Research Center, Storage Architecture Group
++ *
++ * Authors: Viacheslav Dubeyko <slava@dubeyko.com>
++ *
++ * Acknowledgement: Cyril Guyot
++ *                  Zvonimir Bandic
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/pagevec.h>
++
++#include "peb_mapping_queue.h"
++#include "peb_mapping_table_cache.h"
++#include "ssdfs.h"
++#include "request_queue.h"
++#include "segment_bitmap.h"
++#include "offset_translation_table.h"
++#include "page_array.h"
++#include "page_vector.h"
++#include "peb_container.h"
++#include "segment.h"
++#include "btree_search.h"
++#include "btree_node.h"
++#include "btree_hierarchy.h"
++#include "peb_mapping_table.h"
++#include "btree.h"
++
++#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
++atomic64_t ssdfs_btree_page_leaks;
++atomic64_t ssdfs_btree_memory_leaks;
++atomic64_t ssdfs_btree_cache_leaks;
++#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
 +
 +/*
-+ * ssdfs_segbmap_flush_dirty_fragments() - flush dirty fragments
-+ * @segbmap: pointer on segment bitmap object
-+ * @fragments_count: count of fragments in segbmap
-+ * @fragment_size: size of fragment in bytes
-+ *
-+ * This method tries to flush all dirty fragments.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ENODATA    - segbmap hasn't dirty fragments.
-+ * %-ERANGE     - internal error.
++ * void ssdfs_btree_cache_leaks_increment(void *kaddr)
++ * void ssdfs_btree_cache_leaks_decrement(void *kaddr)
++ * void *ssdfs_btree_kmalloc(size_t size, gfp_t flags)
++ * void *ssdfs_btree_kzalloc(size_t size, gfp_t flags)
++ * void *ssdfs_btree_kcalloc(size_t n, size_t size, gfp_t flags)
++ * void ssdfs_btree_kfree(void *kaddr)
++ * struct page *ssdfs_btree_alloc_page(gfp_t gfp_mask)
++ * struct page *ssdfs_btree_add_pagevec_page(struct pagevec *pvec)
++ * void ssdfs_btree_free_page(struct page *page)
++ * void ssdfs_btree_pagevec_release(struct pagevec *pvec)
 + */
-+static
-+int ssdfs_segbmap_flush_dirty_fragments(struct ssdfs_segment_bmap *segbmap,
-+					u16 fragments_count,
-+					u16 fragment_size)
++#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
++	SSDFS_MEMORY_LEAKS_CHECKER_FNS(btree)
++#else
++	SSDFS_MEMORY_ALLOCATOR_FNS(btree)
++#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
++
++void ssdfs_btree_memory_leaks_init(void)
 +{
-+	unsigned long *fbmap;
-+	int size;
-+	unsigned long *found;
-+	u16 start_fragment;
-+	int err;
++#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
++	atomic64_set(&ssdfs_btree_page_leaks, 0);
++	atomic64_set(&ssdfs_btree_memory_leaks, 0);
++	atomic64_set(&ssdfs_btree_cache_leaks, 0);
++#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
++}
 +
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
-+
-+	SSDFS_DBG("segbmap %p, fragments_count %u, fragment_size %u\n",
-+		  segbmap, fragments_count, fragment_size);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	fbmap = segbmap->fbmap[SSDFS_SEGBMAP_MODIFICATION_FBMAP];
-+
-+	size = fragments_count;
-+	err = ssdfs_find_first_dirty_fragment(fbmap, size, &found);
-+	if (err == -ENODATA) {
-+		SSDFS_DBG("segbmap hasn't dirty fragments\n");
-+		return err;
-+	} else if (unlikely(err)) {
-+		SSDFS_ERR("fail to find dirty fragments: "
-+			  "err %d\n",
-+			  err);
-+		return err;
-+	} else if (!found) {
-+		SSDFS_ERR("invalid bitmap pointer\n");
-+		return -ERANGE;
++void ssdfs_btree_check_memory_leaks(void)
++{
++#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
++	if (atomic64_read(&ssdfs_btree_page_leaks) != 0) {
++		SSDFS_ERR("BTREE: "
++			  "memory leaks include %lld pages\n",
++			  atomic64_read(&ssdfs_btree_page_leaks));
 +	}
 +
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(((found - fbmap) * BITS_PER_LONG) >= U16_MAX);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	start_fragment = (u16)((found - fbmap) * BITS_PER_LONG);
-+
-+	err = ssdfs_segbmap_issue_fragments_update(segbmap, start_fragment,
-+						   fragment_size, *found);
-+	if (unlikely(err)) {
-+		SSDFS_ERR("fail to issue fragments update: "
-+			  "start_fragment %u, found %#lx, err %d\n",
-+			  start_fragment, *found, err);
-+		return err;
++	if (atomic64_read(&ssdfs_btree_memory_leaks) != 0) {
++		SSDFS_ERR("BTREE: "
++			  "memory allocator suffers from %lld leaks\n",
++			  atomic64_read(&ssdfs_btree_memory_leaks));
 +	}
 +
-+	err = ssdfs_clear_dirty_state(found);
-+	if (unlikely(err)) {
-+		SSDFS_ERR("fail to clear dirty state: "
-+			  "err %d\n",
-+			  err);
-+		return err;
++	if (atomic64_read(&ssdfs_btree_cache_leaks) != 0) {
++		SSDFS_ERR("BTREE: "
++			  "caches suffers from %lld leaks\n",
++			  atomic64_read(&ssdfs_btree_cache_leaks));
 +	}
-+
-+	size = fragments_count - (start_fragment + BITS_PER_LONG);
-+	while (size > 0) {
-+		err = ssdfs_find_first_dirty_fragment(++found, size,
-+						      &found);
-+		if (err == -ENODATA)
-+			return 0;
-+		else if (unlikely(err)) {
-+			SSDFS_ERR("fail to find dirty fragments: "
-+				  "err %d\n",
-+				  err);
-+			return err;
-+		} else if (!found) {
-+			SSDFS_ERR("invalid bitmap pointer\n");
-+			return -ERANGE;
-+		}
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+		BUG_ON(((found - fbmap) * BITS_PER_LONG) >= U16_MAX);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+		start_fragment = (u16)((found - fbmap) * BITS_PER_LONG);
-+
-+		err = ssdfs_segbmap_issue_fragments_update(segbmap,
-+							   start_fragment,
-+							   fragment_size,
-+							   *found);
-+		if (unlikely(err)) {
-+			SSDFS_ERR("fail to issue fragments update: "
-+				  "start_fragment %u, found %#lx, err %d\n",
-+				  start_fragment, *found, err);
-+			return err;
-+		}
-+
-+		err = ssdfs_clear_dirty_state(found);
-+		if (unlikely(err)) {
-+			SSDFS_ERR("fail to clear dirty state: "
-+				  "err %d\n",
-+				  err);
-+			return err;
-+		}
-+
-+		size = fragments_count - (start_fragment + BITS_PER_LONG);
-+	}
-+
-+	return 0;
++#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
 +}
 +
 +/*
-+ * ssdfs_segbmap_wait_flush_end() - wait flush ending
-+ * @segbmap: pointer on segment bitmap object
-+ * @fragments_count: count of fragments in segbmap
-+ *
-+ * This method is waiting the end of flush operation.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ERANGE     - internal error.
++ * ssdfs_btree_radix_tree_insert() - insert node into the radix tree
++ * @tree: btree pointer
++ * @node_id: node ID number
++ * @node: pointer on btree node
 + */
 +static
-+int ssdfs_segbmap_wait_flush_end(struct ssdfs_segment_bmap *segbmap,
-+				 u16 fragments_count)
++int ssdfs_btree_radix_tree_insert(struct ssdfs_btree *tree,
++				  unsigned long node_id,
++				  struct ssdfs_btree_node *node)
 +{
-+	struct ssdfs_segbmap_fragment_desc *fragment;
-+	struct ssdfs_segment_request *req1 = NULL, *req2 = NULL;
-+	bool has_backup;
-+	wait_queue_head_t *wq = NULL;
-+	int i;
-+	int err;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
-+
-+	SSDFS_DBG("segbmap %p, fragments_count %u\n",
-+		  segbmap, fragments_count);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	has_backup = segbmap->flags & SSDFS_SEGBMAP_HAS_COPY;
-+
-+	for (i = 0; i < fragments_count; i++) {
-+		fragment = &segbmap->desc_array[i];
-+
-+		switch (fragment->state) {
-+		case SSDFS_SEGBMAP_FRAG_DIRTY:
-+			SSDFS_ERR("found unprocessed dirty fragment: "
-+				  "index %d\n", i);
-+			return -ERANGE;
-+
-+		case SSDFS_SEGBMAP_FRAG_TOWRITE:
-+			req1 = &fragment->flush_req1;
-+			req2 = &fragment->flush_req2;
-+
-+check_req1_state:
-+			switch (atomic_read(&req1->result.state)) {
-+			case SSDFS_REQ_CREATED:
-+			case SSDFS_REQ_STARTED:
-+				wq = &req1->private.wait_queue;
-+
-+				err = wait_event_killable_timeout(*wq,
-+					    has_request_been_executed(req1),
-+					    SSDFS_DEFAULT_TIMEOUT);
-+				if (err < 0)
-+					WARN_ON(err < 0);
-+				else
-+					err = 0;
-+
-+				goto check_req1_state;
-+				break;
-+
-+			case SSDFS_REQ_FINISHED:
-+				/* do nothing */
-+				break;
-+
-+			case SSDFS_REQ_FAILED:
-+				err = req1->result.err;
-+
-+				if (!err) {
-+					err = -ERANGE;
-+					SSDFS_ERR("error code is absent\n");
-+				}
-+
-+				SSDFS_ERR("flush request is failed: "
-+					  "err %d\n", err);
-+				return err;
-+
-+			default:
-+				SSDFS_ERR("invalid result's state %#x\n",
-+				    atomic_read(&req1->result.state));
-+				return -ERANGE;
-+			}
-+
-+			if (!has_backup)
-+				goto finish_fragment_check;
-+
-+check_req2_state:
-+			switch (atomic_read(&req2->result.state)) {
-+			case SSDFS_REQ_CREATED:
-+			case SSDFS_REQ_STARTED:
-+				wq = &req2->private.wait_queue;
-+
-+				err = wait_event_killable_timeout(*wq,
-+					    has_request_been_executed(req2),
-+					    SSDFS_DEFAULT_TIMEOUT);
-+				if (err < 0)
-+					WARN_ON(err < 0);
-+				else
-+					err = 0;
-+
-+				goto check_req2_state;
-+				break;
-+
-+			case SSDFS_REQ_FINISHED:
-+				/* do nothing */
-+				break;
-+
-+			case SSDFS_REQ_FAILED:
-+				err = req2->result.err;
-+
-+				if (!err) {
-+					err = -ERANGE;
-+					SSDFS_ERR("error code is absent\n");
-+				}
-+
-+				SSDFS_ERR("flush request failed: "
-+					  "err %d\n", err);
-+				return err;
-+
-+			default:
-+				SSDFS_ERR("invalid result's state %#x\n",
-+				    atomic_read(&req2->result.state));
-+				return -ERANGE;
-+			}
-+
-+finish_fragment_check:
-+			break;
-+
-+		default:
-+			/* do nothing */
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * ssdfs_segbmap_issue_commit_logs() - request logs commit
-+ * @segbmap: pointer on segment bitmap object
-+ * @fragments_count: count of fragments in segbmap
-+ * @fragment_size: size of fragment in bytes
-+ *
-+ * This method tries to issue the commit logs operation.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ERANGE     - internal error.
-+ */
-+static
-+int ssdfs_segbmap_issue_commit_logs(struct ssdfs_segment_bmap *segbmap,
-+				    u16 fragments_count,
-+				    u16 fragment_size)
-+{
-+	struct ssdfs_segbmap_fragment_desc *fragment;
-+	struct ssdfs_segbmap_fragment_header *hdr;
-+	struct ssdfs_segment_request *req1 = NULL, *req2 = NULL;
-+	struct ssdfs_segment_info *si;
-+	struct page *page;
-+	void *kaddr;
-+	size_t extent_size = sizeof(struct ssdfs_volume_extent);
-+	u64 ino = SSDFS_SEG_BMAP_INO;
-+	bool has_backup;
-+	u64 offset;
-+	u16 seg_index;
-+	int copy_id;
-+	u16 i;
 +	int err = 0;
 +
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
++	BUG_ON(!tree || !node);
 +
-+	SSDFS_DBG("segbmap %p, fragments_count %u, fragment_size %u\n",
-+		  segbmap, fragments_count, fragment_size);
++	SSDFS_DBG("tree %p, node_id %llu, node %p\n",
++		  tree, (u64)node_id, node);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	has_backup = segbmap->flags & SSDFS_SEGBMAP_HAS_COPY;
-+
-+	for (i = 0; i < fragments_count; i++) {
-+		fragment = &segbmap->desc_array[i];
-+
-+		switch (fragment->state) {
-+		case SSDFS_SEGBMAP_FRAG_DIRTY:
-+			SSDFS_ERR("found unprocessed dirty fragment: "
-+				  "index %d\n", i);
-+			return -ERANGE;
-+
-+		case SSDFS_SEGBMAP_FRAG_TOWRITE:
-+			req1 = &fragment->flush_req1;
-+			req2 = &fragment->flush_req2;
-+
-+			ssdfs_request_init(req1);
-+			ssdfs_get_request(req1);
-+
-+			offset = (u64)i;
-+			offset *= fragment_size;
-+
-+			ssdfs_request_prepare_logical_extent(ino, offset,
-+							     0, 0, 0, req1);
-+
-+			page = find_lock_page(&segbmap->pages, i);
-+			if (!page) {
-+				err = -ERANGE;
-+				SSDFS_ERR("fail to find page: "
-+					  "fragment_index %u\n",
-+					  i);
-+				goto fail_issue_commit_logs;
-+			}
-+
-+			ssdfs_account_locked_page(page);
-+			kaddr = kmap_local_page(page);
-+
-+			hdr = SSDFS_SBMP_FRAG_HDR(kaddr);
-+
-+			err = ssdfs_segbmap_define_volume_extent(segbmap, req1,
-+								 hdr, 1,
-+								 &seg_index);
-+			if (unlikely(err)) {
-+				SSDFS_ERR("fail to define volume extent: "
-+					  "err %d\n",
-+					  err);
-+			}
-+
-+			kunmap_local(kaddr);
-+			ssdfs_unlock_page(page);
-+			ssdfs_put_page(page);
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("page %p, count %d\n",
-+				  page, page_ref_count(page));
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+			if (unlikely(err))
-+				goto fail_issue_commit_logs;
-+
-+			copy_id = SSDFS_MAIN_SEGBMAP_SEG;
-+			si = segbmap->segs[seg_index][copy_id];
-+
-+			err = ssdfs_segment_commit_log_async(si,
-+							SSDFS_REQ_ASYNC_NO_FREE,
-+							req1);
-+			if (unlikely(err)) {
-+				SSDFS_ERR("fail to issue the commit log: "
-+					  "seg_index %u, err %d\n",
-+					  seg_index, err);
-+				goto fail_issue_commit_logs;
-+			}
-+
-+			if (has_backup) {
-+				ssdfs_request_init(req2);
-+				ssdfs_get_request(req2);
-+
-+				ssdfs_request_prepare_logical_extent(ino,
-+								     offset,
-+								     0, 0, 0,
-+								     req2);
-+
-+				ssdfs_memcpy(&req2->place, 0, extent_size,
-+					     &req1->place, 0, extent_size,
-+					     extent_size);
-+
-+				copy_id = SSDFS_COPY_SEGBMAP_SEG;
-+				si = segbmap->segs[seg_index][copy_id];
-+
-+				err = ssdfs_segment_commit_log_async(si,
-+							SSDFS_REQ_ASYNC_NO_FREE,
-+							req2);
-+				if (unlikely(err)) {
-+					SSDFS_ERR("fail to issue log commit: "
-+						  "seg_index %u, err %d\n",
-+						  seg_index, err);
-+					goto fail_issue_commit_logs;
-+				}
-+			}
-+			break;
-+
-+		default:
-+			/* do nothing */
-+			break;
-+		}
++	err = radix_tree_preload(GFP_NOFS);
++	if (unlikely(err)) {
++		SSDFS_ERR("fail to preload radix tree: err %d\n",
++			  err);
++		return err;
 +	}
 +
-+	return 0;
++	spin_lock(&tree->nodes_lock);
++	err = radix_tree_insert(&tree->nodes, node_id, node);
++	spin_unlock(&tree->nodes_lock);
 +
-+fail_issue_commit_logs:
-+	ssdfs_put_request(req1);
++	radix_tree_preload_end();
 +
-+	if (has_backup)
-+		ssdfs_put_request(req2);
++	if (unlikely(err)) {
++		SSDFS_ERR("fail to add node into radix tree: "
++			  "node_id %llu, node %p, err %d\n",
++			  (u64)node_id, node, err);
++	}
 +
 +	return err;
 +}
 +
 +/*
-+ * ssdfs_segbmap_wait_finish_commit_logs() - wait commit logs ending
-+ * @segbmap: pointer on segment bitmap object
-+ * @fragments_count: count of fragments in segbmap
++ * ssdfs_btree_radix_tree_delete() - delete node from the radix tree
++ * @tree: btree pointer
++ * @node_id: node ID number
 + *
-+ * This method is waiting the end of commit logs operation.
++ * This method tries to delete the node from the radix tree.
++ *
++ * RETURN:
++ * pointer of the node object is deleted from the radix tree
++ */
++static
++struct ssdfs_btree_node *ssdfs_btree_radix_tree_delete(struct ssdfs_btree *tree,
++							unsigned long node_id)
++{
++	struct ssdfs_btree_node *ptr;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!tree);
++
++	SSDFS_DBG("tree %p, node_id %llu\n",
++		  tree, (u64)node_id);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	spin_lock(&tree->nodes_lock);
++	ptr = radix_tree_delete(&tree->nodes, node_id);
++	spin_unlock(&tree->nodes_lock);
++
++	return ptr;
++}
++
++/*
++ * ssdfs_btree_radix_tree_find() - find the node into the radix tree
++ * @tree: btree pointer
++ * @node_id: node ID number
++ * @node: pointer on btree node pointer [out]
++ *
++ * This method tries to find node in the radix tree.
 + *
 + * RETURN:
 + * [success]
 + * [failure] - error code:
 + *
-+ * %-ERANGE     - internal error.
++ * %-ENOENT     - tree doesn't contain the requested node.
 + */
-+static
-+int ssdfs_segbmap_wait_finish_commit_logs(struct ssdfs_segment_bmap *segbmap,
-+					  u16 fragments_count)
++int ssdfs_btree_radix_tree_find(struct ssdfs_btree *tree,
++				unsigned long node_id,
++				struct ssdfs_btree_node **node)
 +{
-+	struct ssdfs_segbmap_fragment_desc *fragment;
-+	struct ssdfs_segment_request *req1 = NULL, *req2 = NULL;
-+	bool has_backup;
-+	wait_queue_head_t *wq = NULL;
-+	int i;
-+	int err;
-+
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
++	BUG_ON(!tree || !node);
 +
-+	SSDFS_DBG("segbmap %p, fragments_count %u\n",
-+		  segbmap, fragments_count);
++	SSDFS_DBG("tree %p, node_id %llu\n",
++		  tree, (u64)node_id);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	has_backup = segbmap->flags & SSDFS_SEGBMAP_HAS_COPY;
++	spin_lock(&tree->nodes_lock);
++	*node = radix_tree_lookup(&tree->nodes, node_id);
++	spin_unlock(&tree->nodes_lock);
 +
-+	for (i = 0; i < fragments_count; i++) {
-+		fragment = &segbmap->desc_array[i];
-+
-+		switch (fragment->state) {
-+		case SSDFS_SEGBMAP_FRAG_DIRTY:
-+			SSDFS_ERR("found unprocessed dirty fragment: "
-+				  "index %d\n", i);
-+			return -ERANGE;
-+
-+		case SSDFS_SEGBMAP_FRAG_TOWRITE:
-+			req1 = &fragment->flush_req1;
-+			req2 = &fragment->flush_req2;
-+
-+check_req1_state:
-+			switch (atomic_read(&req1->result.state)) {
-+			case SSDFS_REQ_CREATED:
-+			case SSDFS_REQ_STARTED:
-+				wq = &req1->private.wait_queue;
-+
-+				err = wait_event_killable_timeout(*wq,
-+					    has_request_been_executed(req1),
-+					    SSDFS_DEFAULT_TIMEOUT);
-+				if (err < 0)
-+					WARN_ON(err < 0);
-+				else
-+					err = 0;
-+
-+				goto check_req1_state;
-+				break;
-+
-+			case SSDFS_REQ_FINISHED:
-+				/* do nothing */
-+				break;
-+
-+			case SSDFS_REQ_FAILED:
-+				err = req1->result.err;
-+
-+				if (!err) {
-+					err = -ERANGE;
-+					SSDFS_ERR("error code is absent\n");
-+				}
-+
-+				SSDFS_ERR("flush request is failed: "
-+					  "err %d\n", err);
-+				return err;
-+
-+			default:
-+				SSDFS_ERR("invalid result's state %#x\n",
-+				    atomic_read(&req1->result.state));
-+				return -ERANGE;
-+			}
-+
-+			if (!has_backup)
-+				goto finish_fragment_check;
-+
-+check_req2_state:
-+			switch (atomic_read(&req2->result.state)) {
-+			case SSDFS_REQ_CREATED:
-+			case SSDFS_REQ_STARTED:
-+				wq = &req2->private.wait_queue;
-+
-+				err = wait_event_killable_timeout(*wq,
-+					    has_request_been_executed(req2),
-+					    SSDFS_DEFAULT_TIMEOUT);
-+				if (err < 0)
-+					WARN_ON(err < 0);
-+				else
-+					err = 0;
-+
-+				goto check_req2_state;
-+				break;
-+
-+			case SSDFS_REQ_FINISHED:
-+				/* do nothing */
-+				break;
-+
-+			case SSDFS_REQ_FAILED:
-+				err = req2->result.err;
-+
-+				if (!err) {
-+					err = -ERANGE;
-+					SSDFS_ERR("error code is absent\n");
-+				}
-+
-+				SSDFS_ERR("flush request is failed: "
-+					  "err %d\n", err);
-+				return err;
-+
-+			default:
-+				SSDFS_ERR("invalid result's state %#x\n",
-+				    atomic_read(&req2->result.state));
-+				return -ERANGE;
-+			}
-+
-+finish_fragment_check:
-+			fragment->state = SSDFS_SEGBMAP_FRAG_INITIALIZED;
-+			break;
-+
-+		default:
-+			/* do nothing */
-+			break;
-+		}
++	if (!*node) {
++#ifdef CONFIG_SSDFS_DEBUG
++		SSDFS_DBG("unable to find the node: id %llu\n",
++			  (u64)node_id);
++#endif /* CONFIG_SSDFS_DEBUG */
++		return -ENOENT;
 +	}
 +
 +	return 0;
 +}
 +
-+/* TODO: copy all fragments' headers into checkpoint */
-+/* TODO: mark superblock as dirty */
-+/* TODO: new checkpoint should be stored into superblock segment */
 +static
-+int ssdfs_segbmap_create_checkpoint(struct ssdfs_segment_bmap *segbmap)
++int __ssdfs_btree_find_item(struct ssdfs_btree *tree,
++			    struct ssdfs_btree_search *search);
++
++/*
++ * ssdfs_btree_desc_init() - init the btree's descriptor
++ * @fsi: pointer on shared file system object
++ * @tree: pointer on inodes btree object
++ * @desc: pointer on btree's descriptor
++ * @min_item_size: minimal possible item size
++ * @max_item_size: maximal possible item size
++ */
++int ssdfs_btree_desc_init(struct ssdfs_fs_info *fsi,
++			  struct ssdfs_btree *tree,
++			  struct ssdfs_btree_descriptor *desc,
++			  u8 min_item_size,
++			  u16 max_item_size)
 +{
++	size_t index_size = sizeof(struct ssdfs_btree_index_key);
++	u32 pagesize;
++	u32 node_size;
++
 +#ifdef CONFIG_SSDFS_DEBUG
-+	/* TODO: implement */
-+	SSDFS_DBG("TODO: implement %s\n", __func__);
++	BUG_ON(!tree || !desc);
++
++	SSDFS_DBG("tree %p, desc %p\n",
++		  tree, desc);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	pagesize = fsi->pagesize;
++	node_size = 1 << desc->log_node_size;
++
++	if (node_size != (pagesize * desc->pages_per_node)) {
++		SSDFS_ERR("invalid pages_per_node: "
++			  "node_size %u, page_size %u, pages_per_node %u\n",
++			  node_size, pagesize, desc->pages_per_node);
++		return -EIO;
++	}
++
++	if (desc->node_ptr_size != index_size) {
++		SSDFS_ERR("invalid node_ptr_size %u\n",
++			  desc->node_ptr_size);
++		return -EIO;
++	}
++
++	if (le16_to_cpu(desc->index_size) != index_size) {
++		SSDFS_ERR("invalid index_size %u\n",
++			  le16_to_cpu(desc->index_size));
++		return -EIO;
++	}
++
++	tree->type = desc->type;
++	atomic_set(&tree->flags, le16_to_cpu(desc->flags));
++	tree->node_size = node_size;
++	tree->pages_per_node = desc->pages_per_node;
++	tree->node_ptr_size = desc->node_ptr_size;
++	tree->index_size = le16_to_cpu(desc->index_size);
++	tree->item_size = le16_to_cpu(desc->item_size);
++	tree->min_item_size = min_item_size;
++	tree->max_item_size = max_item_size;
++	tree->index_area_min_size = le16_to_cpu(desc->index_area_min_size);
++
++#ifdef CONFIG_SSDFS_DEBUG
++	SSDFS_DBG("type %#x, node_size %u, "
++		  "index_size %u, item_size %u\n",
++		  tree->type, tree->node_size,
++		  tree->index_size, tree->item_size);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
 +	return 0;
 +}
 +
 +/*
-+ * ssdfs_segbmap_flush() - flush segbmap current state
-+ * @segbmap: pointer on segment bitmap object
++ * ssdfs_btree_create() - create generalized btree object
++ * @fsi: pointer on shared file system object
++ * @desc_ops: pointer on btree descriptor operations
++ * @btree_ops: pointer on btree operations
++ * @tree: pointer on memory for btree creation
 + *
-+ * This method tries to flush current state of segbmap.
++ * This method tries to create inodes btree object.
 + *
 + * RETURN:
 + * [success]
 + * [failure] - error code:
 + *
-+ * %-EFAULT     - segbmap has corrupted state.
++ * %-EINVAL     - invalid input.
 + * %-ERANGE     - internal error.
 + */
-+int ssdfs_segbmap_flush(struct ssdfs_segment_bmap *segbmap)
++int ssdfs_btree_create(struct ssdfs_fs_info *fsi,
++		    u64 owner_ino,
++		    const struct ssdfs_btree_descriptor_operations *desc_ops,
++		    const struct ssdfs_btree_operations *btree_ops,
++		    struct ssdfs_btree *tree)
 +{
-+	u16 fragments_count;
-+	u16 fragment_size;
 +	int err = 0;
 +
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
++	BUG_ON(!fsi || !desc_ops || !tree);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
 +#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("segbmap %p\n",
-+		  segbmap);
++	SSDFS_ERR("fsi %p, owner_ino %llu, "
++		  "desc_ops %p, btree_ops %p, tree %p\n",
++		  fsi, owner_ino, desc_ops, btree_ops, tree);
 +#else
-+	SSDFS_DBG("segbmap %p\n",
-+		  segbmap);
++	SSDFS_DBG("fsi %p, owner_ino %llu, "
++		  "desc_ops %p, btree_ops %p, tree %p\n",
++		  fsi, owner_ino, desc_ops, btree_ops, tree);
 +#endif /* CONFIG_SSDFS_TRACK_API_CALL */
 +
-+	inode_lock_shared(segbmap->fsi->segbmap_inode);
-+	down_read(&segbmap->resize_lock);
++	atomic_set(&tree->state, SSDFS_BTREE_UNKNOWN_STATE);
 +
-+	if (segbmap->flags & SSDFS_SEGBMAP_ERROR) {
-+		err = -EFAULT;
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"segbmap has corrupted state\n");
-+		goto finish_segbmap_flush;
++	tree->owner_ino = owner_ino;
++
++	tree->fsi = fsi;
++	tree->desc_ops = desc_ops;
++	tree->btree_ops = btree_ops;
++
++	if (!desc_ops->init) {
++		SSDFS_ERR("empty btree descriptor init operation\n");
++		return -ERANGE;
 +	}
 +
-+	fragments_count = segbmap->fragments_count;
-+	fragment_size = segbmap->fragment_size;
-+
-+	ssdfs_sb_segbmap_header_correct_state(segbmap);
-+
-+	down_write(&segbmap->search_lock);
-+
-+	err = ssdfs_segbmap_flush_dirty_fragments(segbmap,
-+						  fragments_count,
-+						  fragment_size);
-+	if (err == -ENODATA) {
-+		err = 0;
-+		up_write(&segbmap->search_lock);
-+		SSDFS_DBG("segbmap hasn't dirty fragments\n");
-+		goto finish_segbmap_flush;
-+	} else if (unlikely(err)) {
-+		up_write(&segbmap->search_lock);
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"fail to flush segbmap: err %d\n",
-+				err);
-+		goto finish_segbmap_flush;
-+	}
-+
-+	err = ssdfs_segbmap_wait_flush_end(segbmap, fragments_count);
++	err = desc_ops->init(fsi, tree);
 +	if (unlikely(err)) {
-+		up_write(&segbmap->search_lock);
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"fail to flush segbmap: err %d\n",
-+				err);
-+		goto finish_segbmap_flush;
++		SSDFS_ERR("fail to init btree descriptor: err %d\n",
++			  err);
++		return err;
 +	}
 +
-+	err = ssdfs_segbmap_issue_commit_logs(segbmap,
-+					      fragments_count,
-+					      fragment_size);
-+	if (unlikely(err)) {
-+		up_write(&segbmap->search_lock);
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"fail to flush segbmap: err %d\n",
-+				err);
-+		goto finish_segbmap_flush;
++	atomic_set(&tree->height, U8_MAX);
++
++	init_rwsem(&tree->lock);
++	spin_lock_init(&tree->nodes_lock);
++	tree->upper_node_id = SSDFS_BTREE_ROOT_NODE_ID;
++	INIT_RADIX_TREE(&tree->nodes, GFP_ATOMIC);
++
++	if (!btree_ops && !btree_ops->create_root_node)
++		SSDFS_WARN("empty create_root_node method\n");
++	else {
++		struct ssdfs_btree_node *node;
++
++		node = ssdfs_btree_node_create(tree,
++						SSDFS_BTREE_ROOT_NODE_ID,
++						NULL,
++						SSDFS_BTREE_LEAF_NODE_HEIGHT,
++						SSDFS_BTREE_ROOT_NODE,
++						U64_MAX);
++		if (unlikely(IS_ERR_OR_NULL(node))) {
++			err = !node ? -ENOMEM : PTR_ERR(node);
++			SSDFS_ERR("fail to create root node: err %d\n",
++				  err);
++			return err;
++		}
++
++		err = btree_ops->create_root_node(fsi, node);
++		if (unlikely(err)) {
++			SSDFS_ERR("fail to init the root node\n");
++			goto finish_root_node_creation;
++		}
++
++		err = ssdfs_btree_radix_tree_insert(tree,
++						    SSDFS_BTREE_ROOT_NODE_ID,
++						    node);
++		if (unlikely(err)) {
++			SSDFS_ERR("fail to insert node into radix tree: "
++				  "err %d\n",
++				  err);
++			goto finish_root_node_creation;
++		}
++
++finish_root_node_creation:
++		if (unlikely(err)) {
++			ssdfs_btree_node_destroy(node);
++			return err;
++		}
 +	}
 +
-+	err = ssdfs_segbmap_wait_finish_commit_logs(segbmap,
-+						    fragments_count);
-+	if (unlikely(err)) {
-+		up_write(&segbmap->search_lock);
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"fail to flush segbmap: err %d\n",
-+				err);
-+		goto finish_segbmap_flush;
-+	}
-+
-+	downgrade_write(&segbmap->search_lock);
-+
-+	err = ssdfs_segbmap_create_checkpoint(segbmap);
-+	if (unlikely(err)) {
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"fail to create segbmap's checkpoint: "
-+				"err %d\n",
-+				err);
-+	}
-+
-+	up_read(&segbmap->search_lock);
-+
-+finish_segbmap_flush:
-+	up_read(&segbmap->resize_lock);
-+	inode_unlock_shared(segbmap->fsi->segbmap_inode);
++	atomic_set(&tree->state, SSDFS_BTREE_CREATED);
 +
 +#ifdef CONFIG_SSDFS_TRACK_API_CALL
 +	SSDFS_ERR("finished\n");
-+#else
-+	SSDFS_DBG("finished\n");
 +#endif /* CONFIG_SSDFS_TRACK_API_CALL */
 +
-+	return err;
-+}
-+
-+int ssdfs_segbmap_resize(struct ssdfs_segment_bmap *segbmap,
-+			 u64 new_items_count)
-+{
-+#ifdef CONFIG_SSDFS_DEBUG
-+	/* TODO: implement */
-+	SSDFS_DBG("TODO: implement %s\n", __func__);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	return -ENOSYS;
++	return 0;
 +}
 +
 +/*
-+ * ssdfs_segbmap_check_fragment_validity() - check fragment validity
-+ * @segbmap: pointer on segment bitmap object
-+ * @fragment_index: fragment index
-+ *
-+ * This method checks that fragment is ready for operations.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EFAULT     - fragment initialization has failed.
++ * ssdfs_btree_destroy() - destroy generalized btree object
++ * @tree: btree object
 + */
-+static
-+int ssdfs_segbmap_check_fragment_validity(struct ssdfs_segment_bmap *segbmap,
-+					  pgoff_t fragment_index)
++void ssdfs_btree_destroy(struct ssdfs_btree *tree)
 +{
-+	struct ssdfs_segbmap_fragment_desc *fragment;
++	int tree_state;
++	struct radix_tree_iter iter;
++	void **slot;
++	struct ssdfs_btree_node *node;
 +
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
-+
-+	SSDFS_DBG("segbmap %p, fragment_index %lu\n",
-+		  segbmap, fragment_index);
++	BUG_ON(!tree);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	fragment = &segbmap->desc_array[fragment_index];
++	tree_state = atomic_read(&tree->state);
 +
-+	switch (fragment->state) {
-+	case SSDFS_SEGBMAP_FRAG_CREATED:
-+		return -EAGAIN;
++#ifdef CONFIG_SSDFS_TRACK_API_CALL
++	SSDFS_ERR("tree %p, type %#x, state %#x\n",
++		  tree, tree->type, tree_state);
++#else
++	SSDFS_DBG("tree %p, type %#x, state %#x\n",
++		  tree, tree->type, tree_state);
++#endif /* CONFIG_SSDFS_TRACK_API_CALL */
 +
-+	case SSDFS_SEGBMAP_FRAG_INIT_FAILED:
-+		return -EFAULT;
++	switch (tree_state) {
++	case SSDFS_BTREE_CREATED:
++		/* expected state */
++		break;
 +
-+	case SSDFS_SEGBMAP_FRAG_INITIALIZED:
-+	case SSDFS_SEGBMAP_FRAG_DIRTY:
-+		/* do nothing */
++	case SSDFS_BTREE_DIRTY:
++		if (!is_ssdfs_btree_empty(tree)) {
++			/* complain */
++			SSDFS_WARN("tree is dirty\n");
++		} else {
++			/* regular destroy */
++			atomic_set(&tree->state, SSDFS_BTREE_UNKNOWN_STATE);
++		}
 +		break;
 +
 +	default:
++#ifdef CONFIG_SSDFS_DEBUG
 +		BUG();
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * ssdfs_segbmap_get_state() - get segment state
-+ * @segbmap: pointer on segment bitmap object
-+ * @seg: segment number
-+ * @end: pointer on completion for waiting init ending [out]
-+ *
-+ * This method tries to get state of @seg.
-+ *
-+ * RETURN:
-+ * [success] - segment state
-+ * [failure] - error code:
-+ *
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EFAULT     - segbmap has inconsistent state.
-+ * %-ERANGE     - internal error.
-+ */
-+int ssdfs_segbmap_get_state(struct ssdfs_segment_bmap *segbmap,
-+			    u64 seg, struct completion **end)
-+{
-+	u32 items_per_byte = SSDFS_ITEMS_PER_BYTE(SSDFS_SEG_STATE_BITS);
-+	u32 hdr_size = sizeof(struct ssdfs_segbmap_fragment_header);
-+	u64 items_count;
-+	u16 fragments_count;
-+	u16 fragment_size;
-+	pgoff_t fragment_index;
-+	struct page *page;
-+	u64 page_item;
-+	u32 byte_offset;
-+	void *kaddr;
-+	u8 *byte_ptr;
-+	u32 byte_item;
-+	int state = SSDFS_SEG_STATE_MAX;
-+	int err = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
-+
-+	SSDFS_DBG("segbmap %p, seg %llu\n",
-+		  segbmap, seg);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	*end = NULL;
-+
-+	inode_lock_shared(segbmap->fsi->segbmap_inode);
-+	down_read(&segbmap->resize_lock);
-+
-+	items_count = segbmap->items_count;
-+	fragments_count = segbmap->fragments_count;
-+	fragment_size = segbmap->fragment_size;
-+
-+	if (segbmap->flags & SSDFS_SEGBMAP_ERROR) {
-+		err = -EFAULT;
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"segbmap has corrupted state\n");
-+		goto finish_segment_check;
-+	}
-+
-+	if (seg >= items_count) {
-+		err = -ERANGE;
-+		SSDFS_ERR("seg %llu >= items_count %llu\n",
-+			  seg, items_count);
-+		goto finish_segment_check;
-+	}
-+
-+	fragment_index = ssdfs_segbmap_seg_2_fragment_index(seg);
-+	if (fragment_index >= fragments_count) {
-+		err = -EFAULT;
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"fragment_index %lu >= fragments_count %u\n",
-+				fragment_index, fragments_count);
-+		goto finish_segment_check;
-+	}
-+
-+	down_read(&segbmap->search_lock);
-+
-+	*end = &segbmap->desc_array[fragment_index].init_end;
-+
-+	err = ssdfs_segbmap_check_fragment_validity(segbmap, fragment_index);
-+	if (err == -EAGAIN) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("fragment %lu is not initialized yet\n",
-+			  fragment_index);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		goto finish_get_state;
-+	} else if (unlikely(err)) {
-+		SSDFS_ERR("fragment %lu init has failed\n",
-+			  fragment_index);
-+		goto finish_get_state;
-+	}
-+
-+	page = find_lock_page(&segbmap->pages, fragment_index);
-+	if (!page) {
-+		err = -ERANGE;
-+		SSDFS_ERR("fail to get fragment %lu page\n",
-+			  fragment_index);
-+		goto finish_get_state;
-+	}
-+
-+	ssdfs_account_locked_page(page);
-+
-+	page_item = ssdfs_segbmap_define_first_fragment_item(fragment_index,
-+							     fragment_size);
-+	if (seg < page_item) {
-+		err = -ERANGE;
-+		SSDFS_ERR("seg %llu < page_item %llu\n",
-+			  seg, page_item);
-+		goto free_page;
-+	}
-+
-+	page_item = seg - page_item;
-+
-+	if (page_item >= ssdfs_segbmap_items_per_fragment(fragment_size)) {
-+		err = -ERANGE;
-+		SSDFS_ERR("invalid page_item %llu\n",
-+			  page_item);
-+		goto free_page;
-+	}
-+
-+	byte_offset = ssdfs_segbmap_get_item_byte_offset(page_item);
-+
-+	if (byte_offset >= PAGE_SIZE) {
-+		err = -ERANGE;
-+		SSDFS_ERR("invalid byte_offset %u\n",
-+			  byte_offset);
-+		goto free_page;
-+	}
-+
-+	byte_item = page_item - ((byte_offset - hdr_size) * items_per_byte);
-+
-+	kaddr = kmap_local_page(page);
-+	byte_ptr = (u8 *)kaddr + byte_offset;
-+	state = ssdfs_segbmap_get_state_from_byte(byte_ptr, byte_item);
-+	kunmap_local(kaddr);
-+
-+free_page:
-+	ssdfs_unlock_page(page);
-+	ssdfs_put_page(page);
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	SSDFS_DBG("page %p, count %d\n",
-+		  page, page_ref_count(page));
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+finish_get_state:
-+	up_read(&segbmap->search_lock);
-+
-+finish_segment_check:
-+	up_read(&segbmap->resize_lock);
-+	inode_unlock_shared(segbmap->fsi->segbmap_inode);
-+
-+	if (unlikely(err))
-+		return err;
-+
-+	return state;
-+}
-+
-+/*
-+ * ssdfs_segbmap_check_state() - check segment state
-+ * @segbmap: pointer on segment bitmap object
-+ * @seg: segment number
-+ * @state: checking state
-+ * @end: pointer on completion for waiting init ending [out]
-+ *
-+ * This method checks that @seg has @state.
-+ *
-+ * RETURN:
-+ * [success] - segment has (1) or hasn't (0) requested @state
-+ * [failure] - error code:
-+ *
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EFAULT     - segbmap has inconsistent state.
-+ * %-ERANGE     - internal error.
-+ */
-+int ssdfs_segbmap_check_state(struct ssdfs_segment_bmap *segbmap,
-+				u64 seg, int state,
-+				struct completion **end)
-+{
-+	int res;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
-+	BUG_ON(state < SSDFS_SEG_CLEAN ||
-+		state >= SSDFS_SEG_STATE_MAX);
-+
-+	SSDFS_DBG("segbmap %p, seg %llu, state %#x\n",
-+		  segbmap, seg, state);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	res = ssdfs_segbmap_get_state(segbmap, seg, end);
-+	if (res == -EAGAIN) {
-+		SSDFS_DBG("fragment is not initialized yet\n");
-+		return res;
-+	} else if (unlikely(res < 0)) {
-+		SSDFS_WARN("fail to get segment %llu state: err %d\n",
-+			   seg, res);
-+		return res;
-+	} else if (res != state) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("res %#x != state %#x\n",
-+			  res, state);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		return 0;
-+	}
-+
-+	return 1;
-+}
-+
-+/*
-+ * ssdfs_segbmap_set_state_in_byte() - set state of item in byte
-+ * @byte_ptr: pointer on byte
-+ * @byte_item: index of item in byte
-+ * @old_state: pointer on old state value [in|out]
-+ * @new_state: new state value
-+ */
-+static inline
-+int ssdfs_segbmap_set_state_in_byte(u8 *byte_ptr, u32 byte_item,
-+				    int *old_state, int new_state)
-+{
-+	u8 value;
-+	int shift = byte_item * SSDFS_SEG_STATE_BITS;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	SSDFS_DBG("byte_ptr %p, byte_item %u, "
-+		  "old_state %p, new_state %#x\n",
-+		  byte_ptr, byte_item,
-+		  old_state, new_state);
-+
-+	BUG_ON(!byte_ptr || !old_state);
-+	BUG_ON(byte_item >= SSDFS_ITEMS_PER_BYTE(SSDFS_SEG_STATE_BITS));
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	*old_state = (int)((*byte_ptr >> shift) & SSDFS_SEG_STATE_MASK);
-+
-+	if (*old_state < SSDFS_SEG_CLEAN ||
-+	    *old_state >= SSDFS_SEG_STATE_MAX) {
-+		SSDFS_ERR("invalid old_state %#x\n",
-+			  *old_state);
-+		return -ERANGE;
-+	}
-+
-+	if (*old_state == new_state) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("old_state %#x == new_state %#x\n",
-+			  *old_state, new_state);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		return -EEXIST;
-+	}
-+
-+	value = new_state & SSDFS_SEG_STATE_MASK;
-+	value <<= shift;
-+
-+	*byte_ptr &= ~(SSDFS_SEG_STATE_MASK << shift);
-+	*byte_ptr |= value;
-+
-+	return 0;
-+}
-+
-+/*
-+ * ssdfs_segbmap_correct_fragment_header() - correct fragment's header
-+ * @segbmap: pointer on segment bitmap object
-+ * @fragment_index: fragment index
-+ * @old_state: old state value
-+ * @new_state: new state value
-+ * @kaddr: pointer on fragment's buffer
-+ */
-+static
-+void ssdfs_segbmap_correct_fragment_header(struct ssdfs_segment_bmap *segbmap,
-+					   pgoff_t fragment_index,
-+					   int old_state, int new_state,
-+					   void *kaddr)
-+{
-+	struct ssdfs_segbmap_fragment_desc *fragment;
-+	struct ssdfs_segbmap_fragment_header *hdr;
-+	unsigned long *fbmap;
-+	u16 fragment_bytes;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap || !kaddr);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
-+
-+	SSDFS_DBG("segbmap %p, fragment_index %lu, "
-+		  "old_state %#x, new_state %#x, kaddr %p\n",
-+		  segbmap, fragment_index,
-+		  old_state, new_state, kaddr);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (old_state == new_state) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("old_state %#x == new_state %#x\n",
-+			  old_state, new_state);
++#else
++		SSDFS_WARN("invalid tree state %#x\n",
++			   tree_state);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +		return;
 +	}
 +
-+	fragment = &segbmap->desc_array[fragment_index];
-+	hdr = SSDFS_SBMP_FRAG_HDR(kaddr);
-+	fragment_bytes = le16_to_cpu(hdr->fragment_bytes);
-+
-+	fragment->state = SSDFS_SEGBMAP_FRAG_DIRTY;
-+
-+	switch (old_state) {
-+	case SSDFS_SEG_CLEAN:
-+		switch (new_state) {
-+		case SSDFS_SEG_DATA_USING:
-+		case SSDFS_SEG_LEAF_NODE_USING:
-+		case SSDFS_SEG_HYBRID_NODE_USING:
-+		case SSDFS_SEG_INDEX_NODE_USING:
-+		case SSDFS_SEG_USED:
-+		case SSDFS_SEG_PRE_DIRTY:
-+		case SSDFS_SEG_DIRTY:
-+		case SSDFS_SEG_RESERVED:
-+		case SSDFS_SEG_BAD:
-+			/* expected state */
-+			break;
-+
-+		default:
-+			SSDFS_WARN("unexpected change: "
-+				   "old_state %#x, new_state %#x\n",
-+				   old_state, new_state);
-+			break;
-+		}
-+		break;
-+
-+	case SSDFS_SEG_DATA_USING:
-+	case SSDFS_SEG_LEAF_NODE_USING:
-+	case SSDFS_SEG_HYBRID_NODE_USING:
-+	case SSDFS_SEG_INDEX_NODE_USING:
-+		switch (new_state) {
-+		case SSDFS_SEG_CLEAN:
-+		case SSDFS_SEG_USED:
-+		case SSDFS_SEG_PRE_DIRTY:
-+		case SSDFS_SEG_DIRTY:
-+			/* expected state */
-+			break;
-+
-+		default:
-+			SSDFS_WARN("unexpected change: "
-+				   "old_state %#x, new_state %#x\n",
-+				   old_state, new_state);
-+			break;
-+		}
-+		break;
-+
-+	case SSDFS_SEG_USED:
-+		switch (new_state) {
-+		case SSDFS_SEG_CLEAN:
-+		case SSDFS_SEG_DATA_USING:
-+		case SSDFS_SEG_LEAF_NODE_USING:
-+		case SSDFS_SEG_HYBRID_NODE_USING:
-+		case SSDFS_SEG_INDEX_NODE_USING:
-+		case SSDFS_SEG_PRE_DIRTY:
-+		case SSDFS_SEG_DIRTY:
-+			/* expected state */
-+			break;
-+
-+		default:
-+			SSDFS_WARN("unexpected change: "
-+				   "old_state %#x, new_state %#x\n",
-+				   old_state, new_state);
-+			break;
-+		}
-+		break;
-+
-+	case SSDFS_SEG_PRE_DIRTY:
-+		switch (new_state) {
-+		case SSDFS_SEG_CLEAN:
-+		case SSDFS_SEG_DATA_USING:
-+		case SSDFS_SEG_LEAF_NODE_USING:
-+		case SSDFS_SEG_HYBRID_NODE_USING:
-+		case SSDFS_SEG_INDEX_NODE_USING:
-+		case SSDFS_SEG_USED:
-+		case SSDFS_SEG_DIRTY:
-+			/* expected state */
-+			break;
-+
-+		default:
-+			SSDFS_WARN("unexpected change: "
-+				   "old_state %#x, new_state %#x\n",
-+				   old_state, new_state);
-+			break;
-+		}
-+		break;
-+
-+	case SSDFS_SEG_RESERVED:
-+		switch (new_state) {
-+		case SSDFS_SEG_DIRTY:
-+			/* expected state */
-+			break;
-+
-+		default:
-+			SSDFS_WARN("unexpected change: "
-+				   "old_state %#x, new_state %#x\n",
-+				   old_state, new_state);
-+			break;
-+		}
-+		break;
-+
-+	case SSDFS_SEG_DIRTY:
-+		switch (new_state) {
-+		case SSDFS_SEG_CLEAN:
-+		case SSDFS_SEG_DATA_USING:
-+		case SSDFS_SEG_LEAF_NODE_USING:
-+		case SSDFS_SEG_HYBRID_NODE_USING:
-+		case SSDFS_SEG_INDEX_NODE_USING:
-+		case SSDFS_SEG_USED:
-+		case SSDFS_SEG_PRE_DIRTY:
-+			/* expected state */
-+			break;
-+
-+		default:
-+			SSDFS_WARN("unexpected change: "
-+				   "old_state %#x, new_state %#x\n",
-+				   old_state, new_state);
-+			break;
-+		}
-+		break;
-+
-+	case SSDFS_SEG_BAD:
-+		switch (new_state) {
-+		case SSDFS_SEG_CLEAN:
-+		case SSDFS_SEG_BAD:
-+			/* expected state */
-+			break;
-+
-+		default:
-+			SSDFS_WARN("unexpected change: "
-+				   "old_state %#x, new_state %#x\n",
-+				   old_state, new_state);
-+			break;
-+		}
-+		break;
-+
-+
-+	default:
-+		SSDFS_WARN("unexpected state: "
-+			   "old_state %#x\n",
-+			   old_state);
-+		break;
++	if (rwsem_is_locked(&tree->lock)) {
++		/* inform about possible trouble */
++		SSDFS_WARN("tree is locked under destruction\n");
 +	}
 +
-+#ifdef CONFIG_SSDFS_DEBUG
-+	SSDFS_DBG("BEFORE: total_segs %u, "
-+		  "clean_or_using_segs %u, "
-+		  "used_or_dirty_segs %u, "
-+		  "bad_segs %u\n",
-+		  fragment->total_segs,
-+		  fragment->clean_or_using_segs,
-+		  fragment->used_or_dirty_segs,
-+		  fragment->bad_segs);
-+#endif /* CONFIG_SSDFS_DEBUG */
++	spin_lock(&tree->nodes_lock);
++	radix_tree_for_each_slot(slot, &tree->nodes, &iter,
++				 SSDFS_BTREE_ROOT_NODE_ID) {
++		node =
++		    (struct ssdfs_btree_node *)radix_tree_delete(&tree->nodes,
++								 iter.index);
 +
-+	switch (old_state) {
-+	case SSDFS_SEG_CLEAN:
-+	case SSDFS_SEG_DATA_USING:
-+	case SSDFS_SEG_LEAF_NODE_USING:
-+	case SSDFS_SEG_HYBRID_NODE_USING:
-+	case SSDFS_SEG_INDEX_NODE_USING:
-+	case SSDFS_SEG_RESERVED:
-+		fbmap = segbmap->fbmap[SSDFS_SEGBMAP_CLEAN_USING_FBMAP];
-+		BUG_ON(fragment->clean_or_using_segs == 0);
-+		fragment->clean_or_using_segs--;
-+		if (fragment->clean_or_using_segs == 0)
-+			bitmap_clear(fbmap, fragment_index, 1);
-+		break;
++		spin_unlock(&tree->nodes_lock);
++		if (!node) {
++			SSDFS_WARN("empty node pointer: "
++				   "index %llu\n",
++				   (u64)iter.index);
++		} else {
++			if (tree->btree_ops && tree->btree_ops->destroy_node)
++				tree->btree_ops->destroy_node(node);
 +
-+	case SSDFS_SEG_USED:
-+	case SSDFS_SEG_PRE_DIRTY:
-+	case SSDFS_SEG_DIRTY:
-+		fbmap = segbmap->fbmap[SSDFS_SEGBMAP_USED_DIRTY_FBMAP];
-+		BUG_ON(fragment->used_or_dirty_segs == 0);
-+		fragment->used_or_dirty_segs--;
-+		if (fragment->used_or_dirty_segs == 0)
-+			bitmap_clear(fbmap, fragment_index, 1);
-+		break;
-+
-+	case SSDFS_SEG_BAD:
-+		fbmap = segbmap->fbmap[SSDFS_SEGBMAP_BAD_FBMAP];
-+		BUG_ON(fragment->bad_segs == 0);
-+		fragment->bad_segs--;
-+		if (fragment->bad_segs == 0)
-+			bitmap_clear(fbmap, fragment_index, 1);
-+		break;
-+
-+	default:
-+		BUG();
++			ssdfs_btree_node_destroy(node);
++		}
++		spin_lock(&tree->nodes_lock);
 +	}
++	spin_unlock(&tree->nodes_lock);
 +
-+#ifdef CONFIG_SSDFS_DEBUG
-+	SSDFS_DBG("OLD_STATE: total_segs %u, "
-+		  "clean_or_using_segs %u, "
-+		  "used_or_dirty_segs %u, "
-+		  "bad_segs %u\n",
-+		  fragment->total_segs,
-+		  fragment->clean_or_using_segs,
-+		  fragment->used_or_dirty_segs,
-+		  fragment->bad_segs);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	switch (new_state) {
-+	case SSDFS_SEG_CLEAN:
-+	case SSDFS_SEG_DATA_USING:
-+	case SSDFS_SEG_LEAF_NODE_USING:
-+	case SSDFS_SEG_HYBRID_NODE_USING:
-+	case SSDFS_SEG_INDEX_NODE_USING:
-+	case SSDFS_SEG_RESERVED:
-+		fbmap = segbmap->fbmap[SSDFS_SEGBMAP_CLEAN_USING_FBMAP];
-+		if (fragment->clean_or_using_segs == 0)
-+			bitmap_set(fbmap, fragment_index, 1);
-+		BUG_ON((fragment->clean_or_using_segs + 1) == U16_MAX);
-+		fragment->clean_or_using_segs++;
-+		break;
-+
-+	case SSDFS_SEG_USED:
-+	case SSDFS_SEG_PRE_DIRTY:
-+	case SSDFS_SEG_DIRTY:
-+		fbmap = segbmap->fbmap[SSDFS_SEGBMAP_USED_DIRTY_FBMAP];
-+		if (fragment->used_or_dirty_segs == 0)
-+			bitmap_set(fbmap, fragment_index, 1);
-+		BUG_ON((fragment->used_or_dirty_segs + 1) == U16_MAX);
-+		fragment->used_or_dirty_segs++;
-+		break;
-+
-+	case SSDFS_SEG_BAD:
-+		fbmap = segbmap->fbmap[SSDFS_SEGBMAP_BAD_FBMAP];
-+		if (fragment->bad_segs == 0)
-+			bitmap_set(fbmap, fragment_index, 1);
-+		BUG_ON((fragment->bad_segs + 1) == U16_MAX);
-+		fragment->bad_segs++;
-+		break;
-+
-+	default:
-+		BUG();
-+	}
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	SSDFS_DBG("NEW_STATE: total_segs %u, "
-+		  "clean_or_using_segs %u, "
-+		  "used_or_dirty_segs %u, "
-+		  "bad_segs %u\n",
-+		  fragment->total_segs,
-+		  fragment->clean_or_using_segs,
-+		  fragment->used_or_dirty_segs,
-+		  fragment->bad_segs);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	hdr->clean_or_using_segs = cpu_to_le16(fragment->clean_or_using_segs);
-+	hdr->used_or_dirty_segs = cpu_to_le16(fragment->used_or_dirty_segs);
-+	hdr->bad_segs = cpu_to_le16(fragment->bad_segs);
-+
-+	hdr->checksum = 0;
-+	hdr->checksum = ssdfs_crc32_le(kaddr, fragment_bytes);
-+
-+	fbmap = segbmap->fbmap[SSDFS_SEGBMAP_MODIFICATION_FBMAP];
-+	bitmap_set(fbmap, fragment_index, 1);
++#ifdef CONFIG_SSDFS_TRACK_API_CALL
++	SSDFS_ERR("finished\n");
++#endif /* CONFIG_SSDFS_TRACK_API_CALL */
 +}
 +
 +/*
-+ * __ssdfs_segbmap_change_state() - change segment state
-+ * @segbmap: pointer on segment bitmap object
-+ * @seg: segment number
-+ * @new_state: new state
-+ * @fragment_index: index of fragment
-+ * @fragment_size: size of fragment in bytes
++ * ssdfs_btree_desc_flush() - generalized btree's descriptor flush method
++ * @tree: btree object
++ * @desc: pointer on btree's descriptor [out]
++ */
++int ssdfs_btree_desc_flush(struct ssdfs_btree *tree,
++			   struct ssdfs_btree_descriptor *desc)
++{
++	u32 pagesize;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!tree || !tree->fsi || !desc);
++
++	SSDFS_DBG("owner_ino %llu, type %#x, state %#x\n",
++		  tree->owner_ino, tree->type,
++		  atomic_read(&tree->state));
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	pagesize = tree->fsi->pagesize;
++
++	if (tree->node_size != (pagesize * tree->pages_per_node)) {
++		SSDFS_ERR("invalid pages_per_node: "
++			  "node_size %u, page_size %u, pages_per_node %u\n",
++			  tree->node_size, pagesize, tree->pages_per_node);
++		return -ERANGE;
++	}
++
++	if (tree->node_ptr_size != sizeof(struct ssdfs_btree_index_key)) {
++		SSDFS_ERR("invalid node_ptr_size %u\n",
++			  tree->node_ptr_size);
++		return -ERANGE;
++	}
++
++	if (tree->index_size != sizeof(struct ssdfs_btree_index_key)) {
++		SSDFS_ERR("invalid index_size %u\n",
++			  tree->index_size);
++		return -ERANGE;
++	}
++
++	desc->flags = cpu_to_le16(atomic_read(&tree->flags));
++	desc->type = tree->type;
++	desc->log_node_size = ilog2(tree->node_size);
++	desc->pages_per_node = tree->pages_per_node;
++	desc->node_ptr_size = tree->node_ptr_size;
++	desc->index_size = cpu_to_le16(tree->index_size);
++	desc->index_area_min_size = cpu_to_le16(tree->index_area_min_size);
++
++	return 0;
++}
++
++/*
++ * ssdfs_btree_flush_nolock() - flush the current state of btree object
++ * @tree: btree object
 + *
-+ * This method tries to change state of @seg.
++ * This method tries to flush dirty nodes of the tree.
 + *
 + * RETURN:
 + * [success]
 + * [failure] - error code:
 + *
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EFAULT     - segbmap has inconsistent state.
++ * %-EINVAL     - invalid input.
 + * %-ERANGE     - internal error.
 + */
 +static
-+int __ssdfs_segbmap_change_state(struct ssdfs_segment_bmap *segbmap,
-+				 u64 seg, int new_state,
-+				 pgoff_t fragment_index,
-+				 u16 fragment_size)
++int ssdfs_btree_flush_nolock(struct ssdfs_btree *tree)
 +{
-+	u32 items_per_byte = SSDFS_ITEMS_PER_BYTE(SSDFS_SEG_STATE_BITS);
-+	struct page *page;
-+	u64 page_item;
-+	u32 byte_offset;
-+	u32 byte_item;
-+	void *kaddr;
-+	u8 *byte_ptr;
-+	int old_state;
++	struct radix_tree_iter iter;
++	void **slot;
++	struct ssdfs_btree_node *node;
++	int tree_height, cur_height;
++	struct ssdfs_segment_request *req;
++	wait_queue_head_t *wq = NULL;
++	const atomic_t *state;
 +	int err = 0;
 +
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
++	BUG_ON(!tree);
++	BUG_ON(!rwsem_is_locked(&tree->lock));
 +
-+	SSDFS_DBG("segbmap %p, seg %llu, new_state %#x, "
-+		  "fragment_index %lu, fragment_size %u\n",
-+		  segbmap, seg, new_state,
-+		  fragment_index, fragment_size);
++	SSDFS_DBG("tree %p, type %#x, state %#x\n",
++		  tree, tree->type, atomic_read(&tree->state));
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	err = ssdfs_segbmap_check_fragment_validity(segbmap, fragment_index);
-+	if (err == -EAGAIN) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("fragment %lu is not initialized yet\n",
-+			  fragment_index);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		goto finish_set_state;
-+	} else if (unlikely(err)) {
-+		SSDFS_ERR("fragment %lu init has failed\n",
-+			  fragment_index);
-+		goto finish_set_state;
-+	}
++	cur_height = SSDFS_BTREE_LEAF_NODE_HEIGHT;
++	tree_height = atomic_read(&tree->height);
 +
-+	page = find_lock_page(&segbmap->pages, fragment_index);
-+	if (!page) {
-+		err = -ERANGE;
-+		SSDFS_ERR("fail to get fragment %lu page\n",
-+			  fragment_index);
-+		goto finish_set_state;
-+	}
++	for (; cur_height < tree_height; cur_height++) {
++		rcu_read_lock();
 +
-+	ssdfs_account_locked_page(page);
++		spin_lock(&tree->nodes_lock);
++		radix_tree_for_each_tagged(slot, &tree->nodes, &iter,
++					   SSDFS_BTREE_ROOT_NODE_ID,
++					   SSDFS_BTREE_NODE_DIRTY_TAG) {
 +
-+	page_item = ssdfs_segbmap_define_first_fragment_item(fragment_index,
-+							     fragment_size);
-+	if (seg < page_item) {
-+		err = -ERANGE;
-+		SSDFS_ERR("seg %llu < page_item %llu\n",
-+			  seg, page_item);
-+		goto free_page;
-+	}
++			node = SSDFS_BTN(radix_tree_deref_slot(slot));
++			if (unlikely(!node)) {
++				SSDFS_WARN("empty node ptr: node_id %llu\n",
++					   (u64)iter.index);
++				radix_tree_tag_clear(&tree->nodes, iter.index,
++						SSDFS_BTREE_NODE_DIRTY_TAG);
++				continue;
++			}
++			spin_unlock(&tree->nodes_lock);
 +
-+	page_item = seg - page_item;
++			ssdfs_btree_node_get(node);
 +
-+	if (page_item >= ssdfs_segbmap_items_per_fragment(fragment_size)) {
-+		err = -ERANGE;
-+		SSDFS_ERR("invalid page_item %llu\n",
-+			  page_item);
-+		goto free_page;
-+	}
-+
-+	byte_offset = ssdfs_segbmap_get_item_byte_offset(page_item);
-+
-+	if (byte_offset >= PAGE_SIZE) {
-+		err = -ERANGE;
-+		SSDFS_ERR("invalid byte_offset %u\n",
-+			  byte_offset);
-+		goto free_page;
-+	}
-+
-+	div_u64_rem(page_item, items_per_byte, &byte_item);
-+
-+	kaddr = kmap_local_page(page);
-+	byte_ptr = (u8 *)kaddr + byte_offset;
-+	err = ssdfs_segbmap_set_state_in_byte(byte_ptr, byte_item,
-+					      &old_state, new_state);
-+	if (!err) {
-+		ssdfs_segbmap_correct_fragment_header(segbmap, fragment_index,
-+							old_state, new_state,
-+							kaddr);
-+	}
-+	kunmap_local(kaddr);
-+
-+	if (err == -EEXIST) {
-+		err = 0;
-+		SetPageUptodate(page);
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("old_state %#x == new_state %#x\n",
-+			  old_state, new_state);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+	} else if (unlikely(err)) {
-+		SSDFS_ERR("fail to set state: "
-+			  "seg %llu, new_state %#x, err %d\n",
-+			  seg, new_state, err);
-+		goto free_page;
-+	} else {
-+		SetPageUptodate(page);
-+		if (!PageDirty(page))
-+			ssdfs_set_page_dirty(page);
-+	}
-+
-+free_page:
-+	ssdfs_unlock_page(page);
-+	ssdfs_put_page(page);
++			rcu_read_unlock();
 +
 +#ifdef CONFIG_SSDFS_DEBUG
-+	SSDFS_DBG("page %p, count %d\n",
-+		  page, page_ref_count(page));
++			SSDFS_DBG("node_id %u\n", node->node_id);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+finish_set_state:
++			if (atomic_read(&node->height) != cur_height) {
++				ssdfs_btree_node_put(node);
++				rcu_read_lock();
++				spin_lock(&tree->nodes_lock);
++				continue;
++			}
++
++			if (!is_ssdfs_btree_node_pre_deleted(node)) {
++				err = ssdfs_btree_node_pre_flush(node);
++				if (unlikely(err)) {
++					ssdfs_btree_node_put(node);
++					SSDFS_ERR("fail to pre-flush node: "
++						  "node_id %llu, err %d\n",
++						  (u64)iter.index, err);
++					goto finish_flush_tree_nodes;
++				}
++
++				err = ssdfs_btree_node_flush(node);
++				if (unlikely(err)) {
++					ssdfs_btree_node_put(node);
++					SSDFS_ERR("fail to flush node: "
++						  "node_id %llu, err %d\n",
++						  (u64)iter.index, err);
++					goto finish_flush_tree_nodes;
++				}
++			}
++
++			rcu_read_lock();
++
++			spin_lock(&tree->nodes_lock);
++			radix_tree_tag_clear(&tree->nodes, iter.index,
++					     SSDFS_BTREE_NODE_DIRTY_TAG);
++			radix_tree_tag_set(&tree->nodes, iter.index,
++					   SSDFS_BTREE_NODE_TOWRITE_TAG);
++
++			ssdfs_btree_node_put(node);
++		}
++		spin_unlock(&tree->nodes_lock);
++
++		rcu_read_unlock();
++	}
++
++	cur_height = SSDFS_BTREE_LEAF_NODE_HEIGHT;
++
++	for (; cur_height < tree_height; cur_height++) {
++		rcu_read_lock();
++
++		spin_lock(&tree->nodes_lock);
++		radix_tree_for_each_tagged(slot, &tree->nodes, &iter,
++					   SSDFS_BTREE_ROOT_NODE_ID,
++					   SSDFS_BTREE_NODE_TOWRITE_TAG) {
++
++			node = SSDFS_BTN(radix_tree_deref_slot(slot));
++			if (unlikely(!node)) {
++				SSDFS_WARN("empty node ptr: node_id %llu\n",
++					   (u64)iter.index);
++				radix_tree_tag_clear(&tree->nodes, iter.index,
++						SSDFS_BTREE_NODE_TOWRITE_TAG);
++				continue;
++			}
++			spin_unlock(&tree->nodes_lock);
++
++			ssdfs_btree_node_get(node);
++
++			rcu_read_unlock();
++
++#ifdef CONFIG_SSDFS_DEBUG
++			SSDFS_DBG("node_id %u\n", node->node_id);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++			if (atomic_read(&node->height) != cur_height) {
++				ssdfs_btree_node_put(node);
++				rcu_read_lock();
++				spin_lock(&tree->nodes_lock);
++				continue;
++			}
++
++			if (is_ssdfs_btree_node_pre_deleted(node)) {
++				ssdfs_btree_node_put(node);
++				rcu_read_lock();
++				spin_lock(&tree->nodes_lock);
++				continue;
++			}
++
++check_flush_result_state:
++			state = &node->flush_req.result.state;
++
++			switch (atomic_read(state)) {
++			case SSDFS_REQ_CREATED:
++			case SSDFS_REQ_STARTED:
++				req = &node->flush_req;
++				wq = &req->private.wait_queue;
++
++				err = wait_event_killable_timeout(*wq,
++					    has_request_been_executed(req),
++					    SSDFS_DEFAULT_TIMEOUT);
++				if (err < 0)
++					WARN_ON(err < 0);
++				else
++					err = 0;
++
++				goto check_flush_result_state;
++				break;
++
++			case SSDFS_REQ_FINISHED:
++				/* do nothing */
++				break;
++
++			case SSDFS_REQ_FAILED:
++				ssdfs_btree_node_put(node);
++				err = node->flush_req.result.err;
++
++				if (!err) {
++					err = -ERANGE;
++					SSDFS_ERR("error code is absent\n");
++				}
++
++				SSDFS_ERR("flush request is failed: "
++					  "err %d\n", err);
++				goto finish_flush_tree_nodes;
++
++			default:
++				ssdfs_btree_node_put(node);
++				err = -ERANGE;
++				SSDFS_ERR("invalid result's state %#x\n",
++				    atomic_read(&node->flush_req.result.state));
++				goto finish_flush_tree_nodes;
++			}
++
++			rcu_read_lock();
++
++			spin_lock(&tree->nodes_lock);
++			ssdfs_btree_node_put(node);
++		}
++		spin_unlock(&tree->nodes_lock);
++
++		rcu_read_unlock();
++	}
++
++	cur_height = SSDFS_BTREE_LEAF_NODE_HEIGHT;
++
++	for (; cur_height < tree_height; cur_height++) {
++		rcu_read_lock();
++
++		spin_lock(&tree->nodes_lock);
++		radix_tree_for_each_slot(slot, &tree->nodes, &iter,
++					   SSDFS_BTREE_ROOT_NODE_ID) {
++
++			node = SSDFS_BTN(radix_tree_deref_slot(slot));
++			if (unlikely(!node)) {
++				SSDFS_WARN("empty node ptr: node_id %llu\n",
++					   (u64)iter.index);
++				radix_tree_tag_clear(&tree->nodes, iter.index,
++						SSDFS_BTREE_NODE_TOWRITE_TAG);
++				continue;
++			}
++			spin_unlock(&tree->nodes_lock);
++
++			ssdfs_btree_node_get(node);
++
++			rcu_read_unlock();
++
++#ifdef CONFIG_SSDFS_DEBUG
++			SSDFS_DBG("node_id %u\n", node->node_id);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++			if (atomic_read(&node->height) != cur_height) {
++				ssdfs_btree_node_put(node);
++				rcu_read_lock();
++				spin_lock(&tree->nodes_lock);
++				continue;
++			}
++
++			if (atomic_read(&node->type) == SSDFS_BTREE_ROOT_NODE) {
++				/*
++				 * Root node is inline.
++				 * Commit log operation is not necessary.
++				 */
++				ssdfs_btree_node_put(node);
++				rcu_read_lock();
++				spin_lock(&tree->nodes_lock);
++				continue;
++			}
++
++			if (is_ssdfs_btree_node_pre_deleted(node))
++				err = ssdfs_btree_deleted_node_commit_log(node);
++			else
++				err = ssdfs_btree_node_commit_log(node);
++
++			if (unlikely(err)) {
++				ssdfs_btree_node_put(node);
++				SSDFS_ERR("fail to request commit log: "
++					  "node_id %llu, err %d\n",
++					  (u64)iter.index, err);
++				goto finish_flush_tree_nodes;
++			}
++
++			rcu_read_lock();
++
++			spin_lock(&tree->nodes_lock);
++			ssdfs_btree_node_put(node);
++		}
++		spin_unlock(&tree->nodes_lock);
++
++		rcu_read_unlock();
++	}
++
++	cur_height = SSDFS_BTREE_LEAF_NODE_HEIGHT;
++
++	for (; cur_height < tree_height; cur_height++) {
++		rcu_read_lock();
++
++		spin_lock(&tree->nodes_lock);
++		radix_tree_for_each_slot(slot, &tree->nodes, &iter,
++					   SSDFS_BTREE_ROOT_NODE_ID) {
++
++			node = SSDFS_BTN(radix_tree_deref_slot(slot));
++			if (unlikely(!node)) {
++				SSDFS_WARN("empty node ptr: node_id %llu\n",
++					   (u64)iter.index);
++				radix_tree_tag_clear(&tree->nodes, iter.index,
++						SSDFS_BTREE_NODE_TOWRITE_TAG);
++				continue;
++			}
++			spin_unlock(&tree->nodes_lock);
++
++			ssdfs_btree_node_get(node);
++
++			rcu_read_unlock();
++
++#ifdef CONFIG_SSDFS_DEBUG
++			SSDFS_DBG("node_id %u\n", node->node_id);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++			if (atomic_read(&node->height) != cur_height) {
++				ssdfs_btree_node_put(node);
++				rcu_read_lock();
++				spin_lock(&tree->nodes_lock);
++				continue;
++			}
++
++			if (atomic_read(&node->type) == SSDFS_BTREE_ROOT_NODE) {
++				/*
++				 * Root node is inline.
++				 * Commit log operation is not necessary.
++				 */
++				goto clear_towrite_tag;
++			}
++
++			if (is_ssdfs_btree_node_pre_deleted(node))
++				goto clear_towrite_tag;
++
++check_commit_log_result_state:
++			state = &node->flush_req.result.state;
++
++			switch (atomic_read(state)) {
++			case SSDFS_REQ_CREATED:
++			case SSDFS_REQ_STARTED:
++				req = &node->flush_req;
++				wq = &req->private.wait_queue;
++
++				err = wait_event_killable_timeout(*wq,
++					    has_request_been_executed(req),
++					    SSDFS_DEFAULT_TIMEOUT);
++				if (err < 0)
++					WARN_ON(err < 0);
++				else
++					err = 0;
++
++				goto check_commit_log_result_state;
++				break;
++
++			case SSDFS_REQ_FINISHED:
++				/* do nothing */
++				break;
++
++			case SSDFS_REQ_FAILED:
++				ssdfs_btree_node_put(node);
++				err = node->flush_req.result.err;
++
++				if (!err) {
++					err = -ERANGE;
++					SSDFS_ERR("error code is absent\n");
++				}
++
++				SSDFS_ERR("flush request is failed: "
++					  "err %d\n", err);
++				goto finish_flush_tree_nodes;
++
++			default:
++				ssdfs_btree_node_put(node);
++				err = -ERANGE;
++				SSDFS_ERR("invalid result's state %#x\n",
++				    atomic_read(&node->flush_req.result.state));
++				goto finish_flush_tree_nodes;
++			}
++
++clear_towrite_tag:
++			rcu_read_lock();
++			spin_lock(&tree->nodes_lock);
++
++			radix_tree_tag_clear(&tree->nodes, iter.index,
++					     SSDFS_BTREE_NODE_TOWRITE_TAG);
++
++			ssdfs_btree_node_put(node);
++
++			spin_unlock(&tree->nodes_lock);
++			rcu_read_unlock();
++
++			if (is_ssdfs_btree_node_pre_deleted(node)) {
++				clear_ssdfs_btree_node_pre_deleted(node);
++
++				ssdfs_btree_radix_tree_delete(tree,
++							node->node_id);
++
++				if (tree->btree_ops &&
++				    tree->btree_ops->delete_node) {
++					err = tree->btree_ops->delete_node(node);
++					if (unlikely(err)) {
++						SSDFS_ERR("delete node failure: "
++							  "err %d\n", err);
++					}
++				}
++
++				if (tree->btree_ops &&
++				    tree->btree_ops->destroy_node)
++					tree->btree_ops->destroy_node(node);
++
++				ssdfs_btree_node_destroy(node);
++			}
++
++			rcu_read_lock();
++			spin_lock(&tree->nodes_lock);
++		}
++		spin_unlock(&tree->nodes_lock);
++
++		rcu_read_unlock();
++	}
++
++finish_flush_tree_nodes:
++	if (unlikely(err))
++		goto finish_btree_flush;
++
++	if (tree->desc_ops && tree->desc_ops->flush) {
++		err = tree->desc_ops->flush(tree);
++		if (unlikely(err)) {
++			SSDFS_ERR("fail to flush tree descriptor: "
++				  "err %d\n",
++				  err);
++			goto finish_btree_flush;
++		}
++	}
++
++	atomic_set(&tree->state, SSDFS_BTREE_CREATED);
++
++finish_btree_flush:
 +	return err;
 +}
 +
 +/*
-+ * ssdfs_segbmap_change_state() - change segment state
-+ * @segbmap: pointer on segment bitmap object
-+ * @seg: segment number
-+ * @new_state: new state
-+ * @end: pointer on completion for waiting init ending [out]
++ * ssdfs_btree_flush() - flush the current state of btree object
++ * @tree: btree object
 + *
-+ * This method tries to change state of @seg.
++ * This method tries to flush dirty nodes of the tree.
 + *
 + * RETURN:
 + * [success]
 + * [failure] - error code:
 + *
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EFAULT     - segbmap has inconsistent state.
++ * %-EINVAL     - invalid input.
 + * %-ERANGE     - internal error.
 + */
-+int ssdfs_segbmap_change_state(struct ssdfs_segment_bmap *segbmap,
-+				u64 seg, int new_state,
-+				struct completion **end)
++int ssdfs_btree_flush(struct ssdfs_btree *tree)
 +{
-+	u64 items_count;
-+	u16 fragments_count;
-+	u16 fragment_size;
-+	pgoff_t fragment_index;
++	int tree_state;
 +	int err = 0;
 +
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
++	BUG_ON(!tree);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
++	tree_state = atomic_read(&tree->state);
++
 +#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("segbmap %p, seg %llu, new_state %#x\n",
-+		  segbmap, seg, new_state);
++	SSDFS_ERR("tree %p, type %#x, state %#x\n",
++		  tree, tree->type, tree_state);
 +#else
-+	SSDFS_DBG("segbmap %p, seg %llu, new_state %#x\n",
-+		  segbmap, seg, new_state);
++	SSDFS_DBG("tree %p, type %#x, state %#x\n",
++		  tree, tree->type, tree_state);
 +#endif /* CONFIG_SSDFS_TRACK_API_CALL */
 +
-+	*end = NULL;
++	switch (tree_state) {
++	case SSDFS_BTREE_CREATED:
++		/* do nothing */
++#ifdef CONFIG_SSDFS_DEBUG
++		SSDFS_DBG("btree %#x is not dirty\n",
++			  tree->type);
++#endif /* CONFIG_SSDFS_DEBUG */
++		return 0;
 +
-+	inode_lock_shared(segbmap->fsi->segbmap_inode);
-+	down_read(&segbmap->resize_lock);
++	case SSDFS_BTREE_DIRTY:
++		/* expected state */
++		break;
 +
-+	items_count = segbmap->items_count;
-+	fragments_count = segbmap->fragments_count;
-+	fragment_size = segbmap->fragment_size;
-+
-+	if (segbmap->flags & SSDFS_SEGBMAP_ERROR) {
-+		err = -EFAULT;
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"segbmap has corrupted state\n");
-+		goto finish_segment_check;
++	default:
++#ifdef CONFIG_SSDFS_DEBUG
++		BUG();
++#else
++		SSDFS_WARN("invalid tree state %#x\n",
++			   tree_state);
++#endif /* CONFIG_SSDFS_DEBUG */
++		return -ERANGE;
 +	}
 +
-+	if (seg >= items_count) {
-+		err = -ERANGE;
-+		SSDFS_ERR("seg %llu >= items_count %llu\n",
-+			  seg, items_count);
-+		goto finish_segment_check;
++	down_write(&tree->lock);
++	err = ssdfs_btree_flush_nolock(tree);
++	up_write(&tree->lock);
++
++	if (unlikely(err)) {
++		SSDFS_ERR("fail to flush btree: err %d\n",
++			  err);
 +	}
-+
-+	fragment_index = ssdfs_segbmap_seg_2_fragment_index(seg);
-+	if (fragment_index >= fragments_count) {
-+		err = -EFAULT;
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"fragment_index %lu >= fragments_count %u\n",
-+				fragment_index, fragments_count);
-+		goto finish_segment_check;
-+	}
-+
-+	down_write(&segbmap->search_lock);
-+	*end = &segbmap->desc_array[fragment_index].init_end;
-+	err = __ssdfs_segbmap_change_state(segbmap, seg, new_state,
-+					   fragment_index, fragment_size);
-+	up_write(&segbmap->search_lock);
-+
-+finish_segment_check:
-+	up_read(&segbmap->resize_lock);
-+	inode_unlock_shared(segbmap->fsi->segbmap_inode);
 +
 +#ifdef CONFIG_SSDFS_TRACK_API_CALL
 +	SSDFS_ERR("finished\n");
@@ -1644,1474 +1167,1486 @@ index 633cd4cfca0a..50a7cc692fe3 100644
 +
 +	return err;
 +}
+diff --git a/fs/ssdfs/btree.h b/fs/ssdfs/btree.h
+new file mode 100644
+index 000000000000..40009755d016
+--- /dev/null
++++ b/fs/ssdfs/btree.h
+@@ -0,0 +1,218 @@
++// SPDX-License-Identifier: BSD-3-Clause-Clear
++/*
++ * SSDFS -- SSD-oriented File System.
++ *
++ * fs/ssdfs/btree.h - btree declarations.
++ *
++ * Copyright (c) 2014-2019 HGST, a Western Digital Company.
++ *              http://www.hgst.com/
++ * Copyright (c) 2014-2023 Viacheslav Dubeyko <slava@dubeyko.com>
++ *              http://www.ssdfs.org/
++ *
++ * (C) Copyright 2014-2019, HGST, Inc., All rights reserved.
++ *
++ * Created by HGST, San Jose Research Center, Storage Architecture Group
++ *
++ * Authors: Viacheslav Dubeyko <slava@dubeyko.com>
++ *
++ * Acknowledgement: Cyril Guyot
++ *                  Zvonimir Bandic
++ */
++
++#ifndef _SSDFS_BTREE_H
++#define _SSDFS_BTREE_H
++
++struct ssdfs_btree;
 +
 +/*
-+ * ssdfs_segbmap_choose_fbmap() - choose fragment bitmap
-+ * @segbmap: pointer on segment bitmap object
-+ * @state: requested state
-+ * @mask: requested mask
-+ *
-+ * RETURN:
-+ * [success] - pointer on fragment bitmap
-+ * [failure] - error code:
-+ *
-+ * %-EINVAL     - invalid input.
-+ * %-EOPNOTSUPP - operation is not supported.
++ * struct ssdfs_btree_descriptor_operations - btree descriptor operations
++ * @init: initialize btree object by descriptor
++ * @flush: save btree descriptor into superblock
 + */
-+static
-+unsigned long *ssdfs_segbmap_choose_fbmap(struct ssdfs_segment_bmap *segbmap,
-+					  int state, int mask)
++struct ssdfs_btree_descriptor_operations {
++	int (*init)(struct ssdfs_fs_info *fsi,
++		    struct ssdfs_btree *tree);
++	int (*flush)(struct ssdfs_btree *tree);
++};
++
++/*
++ * struct ssdfs_btree_operations - btree operations specialization
++ * @create_root_node: specialization of root node creation
++ * @create_node: specialization of node's construction operation
++ * @init_node: specialization of node's init operation
++ * @destroy_node: specialization of node's destroy operation
++ * @add_node: specialization of adding into the tree a new empty node
++ * @delete_node: specialization of deletion a node from the tree
++ * @pre_flush_root_node: specialized flush preparation of root node
++ * @flush_root_node: specialized method of root node flushing
++ * @pre_flush_node: specialized flush preparation of common node
++ * @flush_node: specialized method of common node flushing
++ */
++struct ssdfs_btree_operations {
++	int (*create_root_node)(struct ssdfs_fs_info *fsi,
++				struct ssdfs_btree_node *node);
++	int (*create_node)(struct ssdfs_btree_node *node);
++	int (*init_node)(struct ssdfs_btree_node *node);
++	void (*destroy_node)(struct ssdfs_btree_node *node);
++	int (*add_node)(struct ssdfs_btree_node *node);
++	int (*delete_node)(struct ssdfs_btree_node *node);
++	int (*pre_flush_root_node)(struct ssdfs_btree_node *node);
++	int (*flush_root_node)(struct ssdfs_btree_node *node);
++	int (*pre_flush_node)(struct ssdfs_btree_node *node);
++	int (*flush_node)(struct ssdfs_btree_node *node);
++};
++
++/*
++ * struct ssdfs_btree - generic btree
++ * @type: btree type
++ * @owner_ino: inode identification number of btree owner
++ * @node_size: size of the node in bytes
++ * @pages_per_node: physical pages per node
++ * @node_ptr_size: size in bytes of pointer on btree node
++ * @index_size: size in bytes of btree's index
++ * @item_size: default size of item in bytes
++ * @min_item_size: min size of item in bytes
++ * @max_item_size: max possible size of item in bytes
++ * @index_area_min_size: minimal size in bytes of index area in btree node
++ * @create_cno: btree's create checkpoint
++ * @state: btree state
++ * @flags: btree flags
++ * @height: current height of the tree
++ * @lock: btree's lock
++ * @nodes_lock: radix tree lock
++ * @upper_node_id: last allocated node id
++ * @nodes: nodes' radix tree
++ * @fsi: pointer on shared file system object
++ *
++ * Btree nodes are organized by radix tree.
++ * Another good point about radix tree is
++ * supporting of knowledge about dirty items.
++ */
++struct ssdfs_btree {
++	/* static data */
++	u8 type;
++	u64 owner_ino;
++	u32 node_size;
++	u8 pages_per_node;
++	u8 node_ptr_size;
++	u16 index_size;
++	u16 item_size;
++	u8 min_item_size;
++	u16 max_item_size;
++	u16 index_area_min_size;
++	u64 create_cno;
++
++	/* operation specializations */
++	const struct ssdfs_btree_descriptor_operations *desc_ops;
++	const struct ssdfs_btree_operations *btree_ops;
++
++	/* mutable data */
++	atomic_t state;
++	atomic_t flags;
++	atomic_t height;
++
++	struct rw_semaphore lock;
++
++	spinlock_t nodes_lock;
++	u32 upper_node_id;
++	struct radix_tree_root nodes;
++
++	struct ssdfs_fs_info *fsi;
++};
++
++/* Btree object states */
++enum {
++	SSDFS_BTREE_UNKNOWN_STATE,
++	SSDFS_BTREE_CREATED,
++	SSDFS_BTREE_DIRTY,
++	SSDFS_BTREE_STATE_MAX
++};
++
++/* Radix tree tags */
++#define SSDFS_BTREE_NODE_DIRTY_TAG	PAGECACHE_TAG_DIRTY
++#define SSDFS_BTREE_NODE_TOWRITE_TAG	PAGECACHE_TAG_TOWRITE
++
++/*
++ * Btree API
++ */
++int ssdfs_btree_create(struct ssdfs_fs_info *fsi,
++		    u64 owner_ino,
++		    const struct ssdfs_btree_descriptor_operations *desc_ops,
++		    const struct ssdfs_btree_operations *btree_ops,
++		    struct ssdfs_btree *tree);
++void ssdfs_btree_destroy(struct ssdfs_btree *tree);
++int ssdfs_btree_flush(struct ssdfs_btree *tree);
++
++int ssdfs_btree_find_item(struct ssdfs_btree *tree,
++			  struct ssdfs_btree_search *search);
++int ssdfs_btree_find_range(struct ssdfs_btree *tree,
++			   struct ssdfs_btree_search *search);
++bool is_ssdfs_btree_empty(struct ssdfs_btree *tree);
++int ssdfs_btree_allocate_item(struct ssdfs_btree *tree,
++			      struct ssdfs_btree_search *search);
++int ssdfs_btree_allocate_range(struct ssdfs_btree *tree,
++				struct ssdfs_btree_search *search);
++int ssdfs_btree_add_item(struct ssdfs_btree *tree,
++			 struct ssdfs_btree_search *search);
++int ssdfs_btree_add_range(struct ssdfs_btree *tree,
++			  struct ssdfs_btree_search *search);
++int ssdfs_btree_change_item(struct ssdfs_btree *tree,
++			    struct ssdfs_btree_search *search);
++int ssdfs_btree_delete_item(struct ssdfs_btree *tree,
++			    struct ssdfs_btree_search *search);
++int ssdfs_btree_delete_range(struct ssdfs_btree *tree,
++			     struct ssdfs_btree_search *search);
++int ssdfs_btree_delete_all(struct ssdfs_btree *tree);
++
++/*
++ * Internal Btree API
++ */
++bool need_migrate_generic2inline_btree(struct ssdfs_btree *tree,
++					int items_threshold);
++int ssdfs_btree_desc_init(struct ssdfs_fs_info *fsi,
++			  struct ssdfs_btree *tree,
++			  struct ssdfs_btree_descriptor *desc,
++			  u8 min_item_size,
++			  u16 max_item_size);
++int ssdfs_btree_desc_flush(struct ssdfs_btree *tree,
++			   struct ssdfs_btree_descriptor *desc);
++struct ssdfs_btree_node *
++ssdfs_btree_get_child_node_for_hash(struct ssdfs_btree *tree,
++				    struct ssdfs_btree_node *parent,
++				    u64 hash);
++int ssdfs_btree_update_parent_node_pointer(struct ssdfs_btree *tree,
++					   struct ssdfs_btree_node *parent);
++int ssdfs_btree_add_node(struct ssdfs_btree *tree,
++			 struct ssdfs_btree_search *search);
++int ssdfs_btree_insert_node(struct ssdfs_btree *tree,
++			    struct ssdfs_btree_search *search);
++int ssdfs_btree_delete_node(struct ssdfs_btree *tree,
++			    struct ssdfs_btree_search *search);
++int ssdfs_btree_get_head_range(struct ssdfs_btree *tree,
++				u32 expected_len,
++				struct ssdfs_btree_search *search);
++int ssdfs_btree_extract_range(struct ssdfs_btree *tree,
++				u16 start_index, u16 count,
++				struct ssdfs_btree_search *search);
++int ssdfs_btree_destroy_node_range(struct ssdfs_btree *tree,
++				   u64 start_hash);
++struct ssdfs_btree_node *
++__ssdfs_btree_read_node(struct ssdfs_btree *tree,
++			struct ssdfs_btree_node *parent,
++			struct ssdfs_btree_index_key *node_index,
++			u8 node_type, u32 node_id);
++int ssdfs_btree_radix_tree_find(struct ssdfs_btree *tree,
++				unsigned long node_id,
++				struct ssdfs_btree_node **node);
++int ssdfs_btree_synchronize_root_node(struct ssdfs_btree *tree,
++				struct ssdfs_btree_inline_root_node *root);
++int ssdfs_btree_get_next_hash(struct ssdfs_btree *tree,
++			      struct ssdfs_btree_search *search,
++			      u64 *next_hash);
++
++void ssdfs_debug_show_btree_node_indexes(struct ssdfs_btree *tree,
++					 struct ssdfs_btree_node *parent);
++void ssdfs_check_btree_consistency(struct ssdfs_btree *tree);
++void ssdfs_debug_btree_object(struct ssdfs_btree *tree);
++
++#endif /* _SSDFS_BTREE_H */
+diff --git a/fs/ssdfs/btree_search.c b/fs/ssdfs/btree_search.c
+new file mode 100644
+index 000000000000..27eb262690de
+--- /dev/null
++++ b/fs/ssdfs/btree_search.c
+@@ -0,0 +1,885 @@
++// SPDX-License-Identifier: BSD-3-Clause-Clear
++/*
++ * SSDFS -- SSD-oriented File System.
++ *
++ * fs/ssdfs/btree_search.c - btree search object functionality.
++ *
++ * Copyright (c) 2014-2019 HGST, a Western Digital Company.
++ *              http://www.hgst.com/
++ * Copyright (c) 2014-2023 Viacheslav Dubeyko <slava@dubeyko.com>
++ *              http://www.ssdfs.org/
++ *
++ * (C) Copyright 2014-2019, HGST, Inc., All rights reserved.
++ *
++ * Created by HGST, San Jose Research Center, Storage Architecture Group
++ *
++ * Authors: Viacheslav Dubeyko <slava@dubeyko.com>
++ *
++ * Acknowledgement: Cyril Guyot
++ *                  Zvonimir Bandic
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/pagevec.h>
++
++#include "peb_mapping_queue.h"
++#include "peb_mapping_table_cache.h"
++#include "ssdfs.h"
++#include "btree_search.h"
++#include "btree_node.h"
++
++#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
++atomic64_t ssdfs_btree_search_page_leaks;
++atomic64_t ssdfs_btree_search_memory_leaks;
++atomic64_t ssdfs_btree_search_cache_leaks;
++#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
++
++/*
++ * void ssdfs_btree_search_cache_leaks_increment(void *kaddr)
++ * void ssdfs_btree_search_cache_leaks_decrement(void *kaddr)
++ * void *ssdfs_btree_search_kmalloc(size_t size, gfp_t flags)
++ * void *ssdfs_btree_search_kzalloc(size_t size, gfp_t flags)
++ * void *ssdfs_btree_search_kcalloc(size_t n, size_t size, gfp_t flags)
++ * void ssdfs_btree_search_kfree(void *kaddr)
++ * struct page *ssdfs_btree_search_alloc_page(gfp_t gfp_mask)
++ * struct page *ssdfs_btree_search_add_pagevec_page(struct pagevec *pvec)
++ * void ssdfs_btree_search_free_page(struct page *page)
++ * void ssdfs_btree_search_pagevec_release(struct pagevec *pvec)
++ */
++#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
++	SSDFS_MEMORY_LEAKS_CHECKER_FNS(btree_search)
++#else
++	SSDFS_MEMORY_ALLOCATOR_FNS(btree_search)
++#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
++
++void ssdfs_btree_search_memory_leaks_init(void)
 +{
-+	unsigned long *fbmap;
++#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
++	atomic64_set(&ssdfs_btree_search_page_leaks, 0);
++	atomic64_set(&ssdfs_btree_search_memory_leaks, 0);
++	atomic64_set(&ssdfs_btree_search_cache_leaks, 0);
++#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
++}
++
++void ssdfs_btree_search_check_memory_leaks(void)
++{
++#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
++	if (atomic64_read(&ssdfs_btree_search_page_leaks) != 0) {
++		SSDFS_ERR("BTREE SEARCH: "
++			  "memory leaks include %lld pages\n",
++			  atomic64_read(&ssdfs_btree_search_page_leaks));
++	}
++
++	if (atomic64_read(&ssdfs_btree_search_memory_leaks) != 0) {
++		SSDFS_ERR("BTREE SEARCH: "
++			  "memory allocator suffers from %lld leaks\n",
++			  atomic64_read(&ssdfs_btree_search_memory_leaks));
++	}
++
++	if (atomic64_read(&ssdfs_btree_search_cache_leaks) != 0) {
++		SSDFS_ERR("BTREE SEARCH: "
++			  "caches suffers from %lld leaks\n",
++			  atomic64_read(&ssdfs_btree_search_cache_leaks));
++	}
++#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
++}
++
++/******************************************************************************
++ *                       BTREE SEARCH OBJECT CACHE                            *
++ ******************************************************************************/
++
++static struct kmem_cache *ssdfs_btree_search_obj_cachep;
++
++void ssdfs_zero_btree_search_obj_cache_ptr(void)
++{
++	ssdfs_btree_search_obj_cachep = NULL;
++}
++
++static void ssdfs_init_btree_search_object_once(void *obj)
++{
++	struct ssdfs_btree_search *search_obj = obj;
++
++	memset(search_obj, 0, sizeof(struct ssdfs_btree_search));
++}
++
++void ssdfs_shrink_btree_search_obj_cache(void)
++{
++	if (ssdfs_btree_search_obj_cachep)
++		kmem_cache_shrink(ssdfs_btree_search_obj_cachep);
++}
++
++void ssdfs_destroy_btree_search_obj_cache(void)
++{
++	if (ssdfs_btree_search_obj_cachep)
++		kmem_cache_destroy(ssdfs_btree_search_obj_cachep);
++}
++
++int ssdfs_init_btree_search_obj_cache(void)
++{
++	ssdfs_btree_search_obj_cachep =
++		kmem_cache_create_usercopy("ssdfs_btree_search_obj_cache",
++				sizeof(struct ssdfs_btree_search), 0,
++				SLAB_RECLAIM_ACCOUNT |
++				SLAB_MEM_SPREAD |
++				SLAB_ACCOUNT,
++				offsetof(struct ssdfs_btree_search, raw),
++				sizeof(union ssdfs_btree_search_raw_data) +
++				sizeof(struct ssdfs_name_string),
++				ssdfs_init_btree_search_object_once);
++	if (!ssdfs_btree_search_obj_cachep) {
++		SSDFS_ERR("unable to create btree search objects cache\n");
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
++/******************************************************************************
++ *                      BTREE SEARCH OBJECT FUNCTIONALITY                     *
++ ******************************************************************************/
++
++/*
++ * ssdfs_btree_search_alloc() - allocate memory for btree search object
++ */
++struct ssdfs_btree_search *ssdfs_btree_search_alloc(void)
++{
++	struct ssdfs_btree_search *ptr;
 +
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
-+
-+	if (state < SSDFS_SEG_CLEAN || state >= SSDFS_SEG_STATE_MAX) {
-+		SSDFS_ERR("unknown segment state %#x\n", state);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if ((mask & SSDFS_SEG_CLEAN_USING_MASK) != mask &&
-+	    (mask & SSDFS_SEG_USED_DIRTY_MASK) != mask &&
-+	    (mask & SSDFS_SEG_BAD_STATE_MASK) != mask) {
-+		SSDFS_ERR("unsupported set of flags %#x\n",
-+			  mask);
-+		return ERR_PTR(-EOPNOTSUPP);
-+	}
-+
-+	SSDFS_DBG("segbmap %p, state %#x, mask %#x\n",
-+		  segbmap, state, mask);
++	BUG_ON(!ssdfs_btree_search_obj_cachep);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	if (mask & SSDFS_SEG_CLEAN_USING_MASK) {
-+		fbmap = segbmap->fbmap[SSDFS_SEGBMAP_CLEAN_USING_FBMAP];
-+
-+		switch (state) {
-+		case SSDFS_SEG_CLEAN:
-+		case SSDFS_SEG_DATA_USING:
-+		case SSDFS_SEG_LEAF_NODE_USING:
-+		case SSDFS_SEG_HYBRID_NODE_USING:
-+		case SSDFS_SEG_INDEX_NODE_USING:
-+			return fbmap;
-+
-+		default:
-+			return ERR_PTR(-EOPNOTSUPP);
-+		}
-+	} else if (mask & SSDFS_SEG_USED_DIRTY_MASK) {
-+		fbmap = segbmap->fbmap[SSDFS_SEGBMAP_USED_DIRTY_FBMAP];
-+
-+		switch (state) {
-+		case SSDFS_SEG_USED:
-+		case SSDFS_SEG_PRE_DIRTY:
-+		case SSDFS_SEG_DIRTY:
-+			return fbmap;
-+
-+		default:
-+			return ERR_PTR(-EOPNOTSUPP);
-+		}
-+	} else if (mask & SSDFS_SEG_BAD_STATE_MASK) {
-+		fbmap = segbmap->fbmap[SSDFS_SEGBMAP_BAD_FBMAP];
-+
-+		switch (state) {
-+		case SSDFS_SEG_BAD:
-+			return fbmap;
-+
-+		default:
-+			return ERR_PTR(-EOPNOTSUPP);
-+		}
++	ptr = kmem_cache_alloc(ssdfs_btree_search_obj_cachep, GFP_KERNEL);
++	if (!ptr) {
++		SSDFS_ERR("fail to allocate memory for btree search object\n");
++		return ERR_PTR(-ENOMEM);
 +	}
 +
-+	return ERR_PTR(-EOPNOTSUPP);
++	ssdfs_btree_search_cache_leaks_increment(ptr);
++
++	return ptr;
 +}
 +
 +/*
-+ * ssdfs_segbmap_find_fragment() - find fragment
-+ * @segbmap: pointer on segment bitmap object
-+ * @fbmap: bitmap of fragments
-+ * @start_fragment: start fragment for search
-+ * @max_fragment: upper bound for fragment search
-+ * @found_fragment: found fragment index [out]
-+ *
-+ * This method tries to find fragment in bitmap of
-+ * fragments.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-EINVAL     - invalid input.
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EFAULT     - segbmap has inconsistent state.
-+ * %-ENODATA    - bitmap hasn't any valid fragment.
++ * ssdfs_btree_search_free() - free memory for btree search object
 + */
-+static
-+int ssdfs_segbmap_find_fragment(struct ssdfs_segment_bmap *segbmap,
-+				unsigned long *fbmap,
-+				u16 start_fragment, u16 max_fragment,
-+				int *found_fragment)
++void ssdfs_btree_search_free(struct ssdfs_btree_search *search)
 +{
-+	unsigned long *addr;
-+	u16 long_offset;
-+	u16 first_fragment;
-+	u16 checking_fragment;
-+	u16 size, requested_size, checked_size;
-+	unsigned long found;
-+	u16 i;
-+	int err = 0;
-+
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap || !fbmap || !found_fragment);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
-+
-+	SSDFS_DBG("fbmap %p, start_fragment %u, max_fragment %u\n",
-+		  fbmap, start_fragment, max_fragment);
++	BUG_ON(!ssdfs_btree_search_obj_cachep);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	*found_fragment = U16_MAX;
++	if (!search)
++		return;
 +
-+	if (start_fragment >= max_fragment) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("start_fragment %u >= max_fragment %u\n",
-+			  start_fragment, max_fragment);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		return -ENODATA;
++	if (search->node.parent) {
++		ssdfs_btree_node_put(search->node.parent);
++		search->node.parent = NULL;
 +	}
 +
-+	long_offset = (start_fragment + BITS_PER_LONG - 1) / BITS_PER_LONG;
-+	first_fragment = long_offset * BITS_PER_LONG;
++	if (search->node.child) {
++		ssdfs_btree_node_put(search->node.child);
++		search->node.child = NULL;
++	}
 +
-+	checking_fragment = min_t(u16, start_fragment, first_fragment);
-+	checked_size = max_fragment - checking_fragment;
++	search->node.state = SSDFS_BTREE_SEARCH_NODE_DESC_EMPTY;
 +
++	ssdfs_btree_search_free_result_buf(search);
++	ssdfs_btree_search_free_result_name(search);
++
++	ssdfs_btree_search_cache_leaks_decrement(search);
++	kmem_cache_free(ssdfs_btree_search_obj_cachep, search);
++}
++
++/*
++ * ssdfs_btree_search_init() - init btree search object
++ * @search: btree search object [out]
++ */
++void ssdfs_btree_search_init(struct ssdfs_btree_search *search)
++{
 +#ifdef CONFIG_SSDFS_DEBUG
-+	SSDFS_DBG("start_fragment %u, max_fragment %u, "
-+		  "long_offset %u, first_fragment %u, "
-+		  "checking_fragment %u, checked_size %u\n",
-+		  start_fragment, max_fragment,
-+		  long_offset, first_fragment,
-+		  checking_fragment, checked_size);
++	BUG_ON(!search);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	for (i = 0; i < checked_size; i++) {
-+		struct ssdfs_segbmap_fragment_desc *desc;
-+		u16 index = checking_fragment + i;
++	ssdfs_btree_search_free_result_buf(search);
++	ssdfs_btree_search_free_result_name(search);
 +
-+		desc = &segbmap->desc_array[index];
++	if (search->node.parent) {
++		ssdfs_btree_node_put(search->node.parent);
++		search->node.parent = NULL;
++	}
 +
-+		switch (desc->state) {
-+		case SSDFS_SEGBMAP_FRAG_INITIALIZED:
-+		case SSDFS_SEGBMAP_FRAG_DIRTY:
-+			/*
-+			 * We can use this fragment.
-+			 * Simply go ahead.
-+			 */
++	if (search->node.child) {
++		ssdfs_btree_node_put(search->node.child);
++		search->node.child = NULL;
++	}
++
++	memset(search, 0, sizeof(struct ssdfs_btree_search));
++	search->request.type = SSDFS_BTREE_SEARCH_UNKNOWN_TYPE;
++	search->node.state = SSDFS_BTREE_SEARCH_NODE_DESC_EMPTY;
++	search->result.state = SSDFS_BTREE_SEARCH_UNKNOWN_RESULT;
++	search->result.err = 0;
++	search->result.buf = NULL;
++	search->result.buf_state = SSDFS_BTREE_SEARCH_UNKNOWN_BUFFER_STATE;
++	search->result.name = NULL;
++	search->result.name_state = SSDFS_BTREE_SEARCH_UNKNOWN_BUFFER_STATE;
++}
++
++/*
++ * need_initialize_btree_search() - check necessity to init the search object
++ * @search: btree search object
++ */
++bool need_initialize_btree_search(struct ssdfs_btree_search *search)
++{
++	bool need_initialize = false;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!search);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	switch (search->result.state) {
++	case SSDFS_BTREE_SEARCH_UNKNOWN_RESULT:
++	case SSDFS_BTREE_SEARCH_FAILURE:
++	case SSDFS_BTREE_SEARCH_EMPTY_RESULT:
++	case SSDFS_BTREE_SEARCH_OBSOLETE_RESULT:
++		need_initialize = true;
++		break;
++
++	case SSDFS_BTREE_SEARCH_VALID_ITEM:
++		switch (search->request.type) {
++		case SSDFS_BTREE_SEARCH_FIND_ITEM:
++		case SSDFS_BTREE_SEARCH_FIND_RANGE:
++		case SSDFS_BTREE_SEARCH_CHANGE_ITEM:
++		case SSDFS_BTREE_SEARCH_MOVE_ITEM:
++		case SSDFS_BTREE_SEARCH_DELETE_ITEM:
++		case SSDFS_BTREE_SEARCH_DELETE_RANGE:
++		case SSDFS_BTREE_SEARCH_DELETE_ALL:
++		case SSDFS_BTREE_SEARCH_INVALIDATE_TAIL:
++			need_initialize = false;
 +			break;
 +
-+		case SSDFS_SEGBMAP_FRAG_CREATED:
-+			/* It needs to wait the fragment's init */
-+			err = -EAGAIN;
-+			checked_size = index - checking_fragment;
-+			goto check_presence_valid_fragments;
-+			break;
-+
-+		case SSDFS_SEGBMAP_FRAG_INIT_FAILED:
-+			err = -EFAULT;
-+			*found_fragment = index;
-+			SSDFS_ERR("fragment %u is corrupted\n",
-+				  index);
-+			checked_size = 0;
-+			goto check_presence_valid_fragments;
++		case SSDFS_BTREE_SEARCH_ALLOCATE_ITEM:
++		case SSDFS_BTREE_SEARCH_ALLOCATE_RANGE:
++		case SSDFS_BTREE_SEARCH_ADD_ITEM:
++		case SSDFS_BTREE_SEARCH_ADD_RANGE:
++			need_initialize = true;
 +			break;
 +
 +		default:
-+			err = -ERANGE;
-+			SSDFS_ERR("invalid fragment's state %#x\n",
-+				  desc->state);
-+			goto check_presence_valid_fragments;
++#ifdef CONFIG_SSDFS_DEBUG
++			SSDFS_ERR("search->request.type %#x\n",
++				  search->request.type);
++			BUG();
++#endif /* CONFIG_SSDFS_DEBUG */
 +			break;
-+		}
-+	}
++		};
++		break;
 +
-+check_presence_valid_fragments:
-+	if (err == -ERANGE || err == -EFAULT) {
-+		/* Simply return the error */
-+		return err;
-+	} else if (err == -EAGAIN) {
-+		if (checked_size == 0) {
-+			SSDFS_DBG("no valid fragments yet\n");
-+			return err;
-+		} else
-+			err = 0;
-+	}
++	case SSDFS_BTREE_SEARCH_POSSIBLE_PLACE_FOUND:
++		switch (search->request.type) {
++		case SSDFS_BTREE_SEARCH_ALLOCATE_ITEM:
++		case SSDFS_BTREE_SEARCH_ALLOCATE_RANGE:
++		case SSDFS_BTREE_SEARCH_ADD_ITEM:
++		case SSDFS_BTREE_SEARCH_ADD_RANGE:
++			need_initialize = false;
++			break;
 +
-+	if (start_fragment < first_fragment) {
-+		unsigned long value = *(fbmap + (long_offset - 1));
++		case SSDFS_BTREE_SEARCH_FIND_ITEM:
++		case SSDFS_BTREE_SEARCH_FIND_RANGE:
++		case SSDFS_BTREE_SEARCH_CHANGE_ITEM:
++		case SSDFS_BTREE_SEARCH_MOVE_ITEM:
++		case SSDFS_BTREE_SEARCH_DELETE_ITEM:
++		case SSDFS_BTREE_SEARCH_DELETE_RANGE:
++		case SSDFS_BTREE_SEARCH_DELETE_ALL:
++		case SSDFS_BTREE_SEARCH_INVALIDATE_TAIL:
++			need_initialize = true;
++			break;
 +
-+		size = start_fragment - ((long_offset - 1) * BITS_PER_LONG);
-+		size = min_t(u16, size, checked_size);
-+		bitmap_clear(&value, 0, size);
-+
-+		if (value != 0) {
-+			found = __ffs(value);
-+			*found_fragment = start_fragment + (u16)(found - size);
-+			return 0;
-+		} else {
++		default:
 +#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("unable to find fragment: "
-+				  "value %#lx\n",
-+				  value);
++			SSDFS_ERR("search->request.type %#x\n",
++				  search->request.type);
++			BUG();
 +#endif /* CONFIG_SSDFS_DEBUG */
-+			return -ENODATA;
-+		}
-+	} else {
-+		/* first_fragment <= start_fragment */
-+		addr = fbmap + long_offset;
-+		requested_size = max_fragment - first_fragment;
-+		size = min_t(u16, requested_size, checked_size);
++			break;
++		};
++		break;
 +
-+		if (size == 0) {
-+			SSDFS_DBG("no valid fragments yet\n");
-+			return -EAGAIN;
-+		}
++	case SSDFS_BTREE_SEARCH_OUT_OF_RANGE:
++		switch (search->request.type) {
++		case SSDFS_BTREE_SEARCH_ADD_ITEM:
++			need_initialize = false;
++			break;
 +
-+		found = find_first_bit(addr, size);
++		case SSDFS_BTREE_SEARCH_FIND_ITEM:
++		case SSDFS_BTREE_SEARCH_FIND_RANGE:
++		case SSDFS_BTREE_SEARCH_CHANGE_ITEM:
++		case SSDFS_BTREE_SEARCH_MOVE_ITEM:
++		case SSDFS_BTREE_SEARCH_DELETE_ITEM:
++		case SSDFS_BTREE_SEARCH_DELETE_RANGE:
++		case SSDFS_BTREE_SEARCH_DELETE_ALL:
++		case SSDFS_BTREE_SEARCH_INVALIDATE_TAIL:
++			need_initialize = true;
++			break;
 +
-+		found += first_fragment;
-+		BUG_ON(found >= U16_MAX);
-+		*found_fragment = found;
-+
-+		if (found >= size) {
-+			if (size < requested_size) {
++		default:
 +#ifdef CONFIG_SSDFS_DEBUG
-+				SSDFS_DBG("Wait init of fragment %lu\n",
-+					  found);
++			SSDFS_ERR("search->request.type %#x\n",
++				  search->request.type);
++			BUG();
 +#endif /* CONFIG_SSDFS_DEBUG */
-+				return -EAGAIN;
-+			} else {
-+#ifdef CONFIG_SSDFS_DEBUG
-+				SSDFS_DBG("unable to find fragment: "
-+					  "found %lu, size %u\n",
-+					  found, size);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+				return -ENODATA;
-+			}
-+		}
-+
-+		return 0;
-+	}
-+
-+	return -ERANGE;
-+}
-+
-+/*
-+ * ssdfs_segbmap_correct_search_start() - correct start item for search
-+ * @fragment_index: index of fragment
-+ * @old_start: old start value
-+ * @max: upper bound for search
-+ * @fragment_size: size of fragment in bytes
-+ */
-+static
-+u64 ssdfs_segbmap_correct_search_start(u16 fragment_index,
-+					u64 old_start, u64 max,
-+					u16 fragment_size)
-+{
-+	u64 first_item, corrected_value;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	if (old_start >= max) {
-+		SSDFS_ERR("old_start %llu >= max %llu\n",
-+			  old_start, max);
-+		return U64_MAX;
-+	}
-+
-+	SSDFS_DBG("fragment_index %u, old_start %llu, max %llu\n",
-+		  fragment_index, old_start, max);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	first_item = ssdfs_segbmap_define_first_fragment_item(fragment_index,
-+							      fragment_size);
-+
-+	if (first_item >= max) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("first_item %llu >= max %llu\n",
-+			  first_item, max);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		return U64_MAX;
-+	}
-+
-+	corrected_value = first_item > old_start ? first_item : old_start;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	SSDFS_DBG("corrected_value %llu\n", corrected_value);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	return corrected_value;
-+}
-+
-+/*
-+ * ssdfs_segbmap_define_items_count() - define items count for state/mask
-+ * @desc: fragment descriptor
-+ * @state: requested state
-+ * @mask: requested mask
-+ */
-+static inline
-+u16 ssdfs_segbmap_define_items_count(struct ssdfs_segbmap_fragment_desc *desc,
-+				     int state, int mask)
-+{
-+	int complex_mask;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!desc);
-+	BUG_ON(!mask);
-+
-+	SSDFS_DBG("desc %p, state %#x, mask %#x\n",
-+		  desc, state, mask);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	switch (state) {
-+	case SSDFS_SEG_CLEAN:
-+		complex_mask = SSDFS_SEG_CLEAN_STATE_FLAG | mask;
-+		break;
-+
-+	case SSDFS_SEG_DATA_USING:
-+		complex_mask = SSDFS_SEG_DATA_USING_STATE_FLAG | mask;
-+		break;
-+
-+	case SSDFS_SEG_LEAF_NODE_USING:
-+		complex_mask = SSDFS_SEG_LEAF_NODE_USING_STATE_FLAG | mask;
-+		break;
-+
-+	case SSDFS_SEG_HYBRID_NODE_USING:
-+		complex_mask = SSDFS_SEG_HYBRID_NODE_USING_STATE_FLAG | mask;
-+		break;
-+
-+	case SSDFS_SEG_INDEX_NODE_USING:
-+		complex_mask = SSDFS_SEG_INDEX_NODE_USING_STATE_FLAG | mask;
-+		break;
-+
-+	case SSDFS_SEG_USED:
-+		complex_mask = SSDFS_SEG_USED_STATE_FLAG | mask;
-+		break;
-+
-+	case SSDFS_SEG_PRE_DIRTY:
-+		complex_mask = SSDFS_SEG_PRE_DIRTY_STATE_FLAG | mask;
-+		break;
-+
-+	case SSDFS_SEG_DIRTY:
-+		complex_mask = SSDFS_SEG_DIRTY_STATE_FLAG | mask;
-+		break;
-+
-+	case SSDFS_SEG_BAD:
-+		complex_mask = SSDFS_SEG_BAD_STATE_FLAG | mask;
++			break;
++		};
 +		break;
 +
 +	default:
++#ifdef CONFIG_SSDFS_DEBUG
++		SSDFS_ERR("search->result.state %#x\n",
++			  search->result.state);
 +		BUG();
-+	}
-+
-+	if ((complex_mask & SSDFS_SEG_CLEAN_USING_MASK) != complex_mask &&
-+	    (complex_mask & SSDFS_SEG_USED_DIRTY_MASK) != complex_mask &&
-+	    (complex_mask & SSDFS_SEG_BAD_STATE_MASK) != complex_mask) {
-+		SSDFS_ERR("unsupported set of flags %#x\n",
-+			  complex_mask);
-+		return U16_MAX;
-+	}
-+
-+	if (complex_mask & SSDFS_SEG_CLEAN_USING_MASK)
-+		return desc->clean_or_using_segs;
-+	else if (complex_mask & SSDFS_SEG_USED_DIRTY_MASK)
-+		return desc->used_or_dirty_segs;
-+	else if (complex_mask & SSDFS_SEG_BAD_STATE_MASK)
-+		return desc->bad_segs;
-+
-+	return U16_MAX;
-+}
-+
-+/*
-+ * BYTE_CONTAINS_STATE() - check that byte contains requested state
-+ * @value: pointer on byte
-+ * @state: requested state
-+ */
-+static inline
-+bool BYTE_CONTAINS_STATE(u8 *value, int state)
-+{
-+	switch (state) {
-+	case SSDFS_SEG_CLEAN:
-+		return detect_clean_seg[*value];
-+
-+	case SSDFS_SEG_DATA_USING:
-+		return detect_data_using_seg[*value];
-+
-+	case SSDFS_SEG_LEAF_NODE_USING:
-+		return detect_lnode_using_seg[*value];
-+
-+	case SSDFS_SEG_HYBRID_NODE_USING:
-+		return detect_hnode_using_seg[*value];
-+
-+	case SSDFS_SEG_INDEX_NODE_USING:
-+		return detect_idxnode_using_seg[*value];
-+
-+	case SSDFS_SEG_USED:
-+		return detect_used_seg[*value];
-+
-+	case SSDFS_SEG_PRE_DIRTY:
-+		return detect_pre_dirty_seg[*value];
-+
-+	case SSDFS_SEG_DIRTY:
-+		return detect_dirty_seg[*value];
-+
-+	case SSDFS_SEG_BAD:
-+		return detect_bad_seg[*value];
++#endif /* CONFIG_SSDFS_DEBUG */
++		break;
 +	};
 +
-+	return false;
++	return need_initialize;
 +}
 +
 +/*
-+ * BYTE_CONTAINS_MASK() - check that byte contains any state under mask
-+ * @value: pointer on byte
-+ * @mask: requested mask
++ * is_btree_search_request_valid() - check validity of search request
++ * @search: btree search object
 + */
-+static inline
-+bool BYTE_CONTAINS_MASK(u8 *value, int mask)
++bool is_btree_search_request_valid(struct ssdfs_btree_search *search)
 +{
-+	if (mask & SSDFS_SEG_CLEAN_USING_MASK)
-+		return detect_clean_using_mask[*value];
-+	else if (mask & SSDFS_SEG_USED_DIRTY_MASK)
-+		return detect_used_dirty_mask[*value];
-+	else if (mask & SSDFS_SEG_BAD_STATE_MASK)
-+		return detect_bad_seg[*value];
-+
-+	return false;
-+}
-+
-+/*
-+ * FIRST_MASK_IN_BYTE() - determine first item's offset for requested mask
-+ * @value: pointer on analysed byte
-+ * @mask: requested mask
-+ * @start_offset: starting item's offset for analysis beginning
-+ * @state_bits: bits per state
-+ * @state_mask: mask of a bitmap's state
-+ *
-+ * This function tries to determine an item for @mask in
-+ * @value starting from @start_off.
-+ *
-+ * RETURN:
-+ * [success] - found item's offset.
-+ * [failure] - BITS_PER_BYTE.
-+ */
-+static inline
-+u8 FIRST_MASK_IN_BYTE(u8 *value, int mask,
-+		      u8 start_offset, u8 state_bits,
-+		      int state_mask)
-+{
-+	u8 i;
-+
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!value);
-+	BUG_ON(state_bits > BITS_PER_BYTE);
-+	BUG_ON((state_bits % 2) != 0);
-+	BUG_ON(start_offset > SSDFS_ITEMS_PER_BYTE(state_bits));
-+
-+	SSDFS_DBG("value %#x, mask %#x, "
-+		  "start_offset %u, state_bits %u\n",
-+		  *value, mask, start_offset, state_bits);
++	BUG_ON(!search);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	i = start_offset * state_bits;
-+	for (; i < BITS_PER_BYTE; i += state_bits) {
-+		if (IS_STATE_GOOD_FOR_MASK(mask, (*value >> i) & state_mask)) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("found bit %u, found item %u\n",
-+				  i, i / state_bits);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+			return i / state_bits;
-+		}
-+	}
-+
-+	return SSDFS_ITEMS_PER_BYTE(state_bits);
-+}
-+
-+/*
-+ * FIND_FIRST_ITEM_IN_FRAGMENT() - find first item in fragment
-+ * @hdr: pointer on segbmap fragment's header
-+ * @fragment: pointer on bitmap in fragment
-+ * @start_item: start segment number for search
-+ * @max_item: upper bound of segment number for search
-+ * @state: primary state for search
-+ * @mask: mask of additonal states that can be retrieved too
-+ * @found_seg: found segment number [out]
-+ * @found_for_mask: found segment number for mask [out]
-+ * @found_state_for_mask: found state for mask [out]
-+ *
-+ * This method tries to find first item with requested
-+ * state in fragment.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-EINVAL     - invalid input.
-+ * %-ERANGE     - internal error.
-+ * %-ENOENT     - found segment number for the mask.
-+ * %-ENODATA    - fragment doesn't include segment with requested state/mask.
-+ */
-+static
-+int FIND_FIRST_ITEM_IN_FRAGMENT(struct ssdfs_segbmap_fragment_header *hdr,
-+				u8 *fragment, u64 start_item, u64 max_item,
-+				int state, int mask,
-+				u64 *found_seg, u64 *found_for_mask,
-+				int *found_state_for_mask)
-+{
-+	u32 items_per_byte = SSDFS_ITEMS_PER_BYTE(SSDFS_SEG_STATE_BITS);
-+	u64 fragment_start_item;
-+	u64 aligned_start, aligned_end;
-+	u32 byte_index, search_bytes;
-+	u64 byte_range;
-+	u8 start_offset;
-+	int err = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!hdr || !fragment || !found_seg || !found_for_mask);
-+
-+	if (start_item >= max_item) {
-+		SSDFS_ERR("start_item %llu >= max_item %llu\n",
-+			  start_item, max_item);
-+		return -EINVAL;
-+	}
-+
-+	SSDFS_DBG("hdr %p, fragment %p, "
-+		  "start_item %llu, max_item %llu, "
-+		  "state %#x, mask %#x, "
-+		  "found_seg %p, found_for_mask %p\n",
-+		  hdr, fragment, start_item, max_item,
-+		  state, mask, found_seg, found_for_mask);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	*found_seg = U64_MAX;
-+	*found_for_mask = U64_MAX;
-+	*found_state_for_mask = SSDFS_SEG_STATE_MAX;
-+
-+	fragment_start_item = le64_to_cpu(hdr->start_item);
-+
-+	if (fragment_start_item == U64_MAX) {
-+		SSDFS_ERR("invalid fragment start item\n");
-+		return -ERANGE;
-+	}
-+
-+	search_bytes = le16_to_cpu(hdr->fragment_bytes) -
-+			sizeof(struct ssdfs_segbmap_fragment_header);
-+
-+	if (search_bytes == 0 || search_bytes > PAGE_SIZE) {
-+		SSDFS_ERR("invalid fragment_bytes %u\n",
-+			  search_bytes);
-+		return -ERANGE;
-+	}
-+
-+	aligned_start = ALIGNED_START_ITEM(start_item, SSDFS_SEG_STATE_BITS);
-+	aligned_end = ALIGNED_END_ITEM(max_item, SSDFS_SEG_STATE_BITS);
-+
-+	byte_range = (aligned_end - fragment_start_item) / items_per_byte;
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(byte_range >= U32_MAX);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	search_bytes = min_t(u32, search_bytes, (u32)byte_range);
-+
-+	if (fragment_start_item <= aligned_start) {
-+		u32 items_range = aligned_start - fragment_start_item;
-+		byte_index = items_range / items_per_byte;
-+		start_offset = (u8)(start_item - aligned_start);
-+	} else {
-+		byte_index = 0;
-+		start_offset = 0;
-+	}
-+
-+	for (; byte_index < search_bytes; byte_index++) {
-+		u8 *value = fragment + byte_index;
-+		u8 found_offset;
-+
-+		err = FIND_FIRST_ITEM_IN_BYTE(value, state,
-+					      SSDFS_SEG_STATE_BITS,
-+					      SSDFS_SEG_STATE_MASK,
-+					      start_offset,
-+					      BYTE_CONTAINS_STATE,
-+					      FIRST_STATE_IN_BYTE,
-+					      &found_offset);
-+
-+		if (err != -ENODATA || *found_for_mask != U64_MAX)
-+			goto ignore_search_for_mask;
-+
-+		err = FIND_FIRST_ITEM_IN_BYTE(value, mask,
-+					      SSDFS_SEG_STATE_BITS,
-+					      SSDFS_SEG_STATE_MASK,
-+					      start_offset,
-+					      BYTE_CONTAINS_MASK,
-+					      FIRST_MASK_IN_BYTE,
-+					      &found_offset);
-+
-+		if (!err && found_offset != U64_MAX) {
-+			err = -ENOENT;
-+
-+			*found_for_mask = fragment_start_item;
-+			*found_for_mask += byte_index * items_per_byte;
-+			*found_for_mask += found_offset;
-+
-+			if (*found_for_mask >= max_item) {
-+				*found_for_mask = U64_MAX;
-+				goto ignore_search_for_mask;
-+			}
-+
-+			*found_state_for_mask =
-+				ssdfs_segbmap_get_state_from_byte(value,
-+								  found_offset);
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("found_for_mask %llu, "
-+				  "found_state_for_mask %#x\n",
-+				  *found_for_mask,
-+				  *found_state_for_mask);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+			if (IS_STATE_GOOD_FOR_MASK(mask, *found_state_for_mask))
-+				break;
-+			else {
-+				err = -ENODATA;
-+				*found_for_mask = U64_MAX;
-+				*found_state_for_mask = SSDFS_SEG_STATE_MAX;
-+			}
-+		}
-+
-+ignore_search_for_mask:
-+		if (err == -ENODATA) {
-+			start_offset = 0;
-+			continue;
-+		} else if (err == -ENOENT) {
-+			/*
-+			 * Value for mask has been found.
-+			 * Simply end the search.
-+			 */
-+			break;
-+		} else if (unlikely(err)) {
-+			SSDFS_ERR("fail to find items in byte: "
-+				  "byte_index %u, state %#x, "
-+				  "err %d\n",
-+				  byte_index, state, err);
-+			goto end_search;
-+		}
-+
-+		*found_seg = fragment_start_item;
-+		*found_seg += byte_index * items_per_byte;
-+		*found_seg += found_offset;
-+
-+		if (*found_seg >= max_item)
-+			*found_seg = U64_MAX;
-+
++	switch (search->request.type) {
++	case SSDFS_BTREE_SEARCH_FIND_ITEM:
++	case SSDFS_BTREE_SEARCH_FIND_RANGE:
++	case SSDFS_BTREE_SEARCH_ALLOCATE_ITEM:
++	case SSDFS_BTREE_SEARCH_ALLOCATE_RANGE:
++	case SSDFS_BTREE_SEARCH_ADD_ITEM:
++	case SSDFS_BTREE_SEARCH_ADD_RANGE:
++	case SSDFS_BTREE_SEARCH_CHANGE_ITEM:
++	case SSDFS_BTREE_SEARCH_MOVE_ITEM:
++	case SSDFS_BTREE_SEARCH_DELETE_ITEM:
++	case SSDFS_BTREE_SEARCH_DELETE_RANGE:
++	case SSDFS_BTREE_SEARCH_DELETE_ALL:
++	case SSDFS_BTREE_SEARCH_INVALIDATE_TAIL:
++		/* valid type */
 +		break;
++
++	default:
++		SSDFS_WARN("invalid search request type %#x\n",
++			   search->request.type);
++		return false;
++	};
++
++	if (search->request.flags & ~SSDFS_BTREE_SEARCH_REQUEST_FLAGS_MASK) {
++		SSDFS_WARN("invalid flags set: %#x\n",
++			   search->request.flags);
++		return false;
 +	}
 +
-+	if (*found_seg == U64_MAX && *found_for_mask == U64_MAX)
-+		err = -ENODATA;
-+	else if (*found_seg == U64_MAX && *found_for_mask != U64_MAX)
-+		err = -ENOENT;
++	if (search->request.start.hash == U64_MAX) {
++		SSDFS_WARN("invalid start_hash\n");
++		return false;
++	} else if (search->request.start.hash > search->request.end.hash) {
++		SSDFS_WARN("invalid range: "
++			   "start_hash %llx, end_hash %llx\n",
++			   search->request.start.hash,
++			   search->request.end.hash);
++		return false;
++	}
 +
-+#ifdef CONFIG_SSDFS_DEBUG
-+	if (!err || err == -ENOENT) {
-+		SSDFS_DBG("found_seg %llu, found_for_mask %llu\n",
-+			  *found_seg, *found_for_mask);
-+	} else
-+		SSDFS_DBG("nothing was found: err %d\n", err);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+end_search:
-+	return err;
++	return true;
 +}
 +
 +/*
-+ * ssdfs_segbmap_find_in_fragment() - find segment with state in fragment
-+ * @segbmap: pointer on segment bitmap object
-+ * @fragment_index: index of fragment
-+ * @fragment_size: size of fragment in bytes
-+ * @start: start segment number for search
-+ * @max: upper bound of segment number for search
-+ * @state: primary state for search
-+ * @mask: mask of additonal states that can be retrieved too
-+ * @found_seg: found segment number [out]
-+ * @found_for_mask: found segment number for mask [out]
-+ * @found_state_for_mask: found state for mask [out]
-+ *
-+ * This method tries to find segment number for requested state
-+ * in fragment.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-EINVAL     - invalid input.
-+ * %-ERANGE     - internal error.
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EFAULT     - fragment has inconsistent state.
++ * is_btree_index_search_request_valid() - check index node search request
++ * @search: btree search object
++ * @prev_node_id: node ID from previous search
++ * @prev_node_height: node height from previous search
 + */
-+static
-+int ssdfs_segbmap_find_in_fragment(struct ssdfs_segment_bmap *segbmap,
-+				   u16 fragment_index,
-+				   u16 fragment_size,
-+				   u64 start, u64 max,
-+				   int state, int mask,
-+				   u64 *found_seg, u64 *found_for_mask,
-+				   int *found_state_for_mask)
++bool is_btree_index_search_request_valid(struct ssdfs_btree_search *search,
++					 u32 prev_node_id,
++					 u8 prev_node_height)
 +{
-+	struct ssdfs_segbmap_fragment_desc *fragment;
-+	size_t hdr_size = sizeof(struct ssdfs_segbmap_fragment_header);
-+	struct page *page;
-+	u64 first_item;
-+	u32 items_per_fragment;
-+	u16 items_count;
-+	void *kaddr;
-+	unsigned long *bmap;
-+	int err = 0;
-+
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap || !found_seg || !found_for_mask);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
-+
-+	if (start >= max) {
-+		SSDFS_ERR("start %llu >= max %llu\n",
-+			  start, max);
-+		return -EINVAL;
-+	}
-+
-+	SSDFS_DBG("segbmap %p, fragment_index %u, "
-+		  "fragment_size %u, start %llu, max %llu, "
-+		  "found_seg %p, found_for_mask %p\n",
-+		  segbmap, fragment_index, fragment_size,
-+		  start, max,
-+		  found_seg, found_for_mask);
++	BUG_ON(!search);
++	BUG_ON(prev_node_id == SSDFS_BTREE_NODE_INVALID_ID);
++	BUG_ON(prev_node_height == U8_MAX);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	*found_seg = U64_MAX;
-+	*found_for_mask = U64_MAX;
++	if (!is_btree_search_request_valid(search))
++		return false;
 +
-+	first_item = ssdfs_segbmap_define_first_fragment_item(fragment_index,
-+							      fragment_size);
-+	items_per_fragment = ssdfs_segbmap_items_per_fragment(fragment_size);
++	if (prev_node_id == search->node.id)
++		return false;
 +
-+	if (first_item >= max) {
-+		SSDFS_ERR("first_item %llu >= max %llu\n",
-+			  first_item, max);
-+		return -ERANGE;
-+	} else if ((first_item + items_per_fragment) <= start) {
-+		SSDFS_ERR("first_item %llu, items_per_fragment %u, "
-+			  "start %llu\n",
-+			  first_item, items_per_fragment, start);
-+		return -ERANGE;
-+	}
++	if (search->node.height != (prev_node_height - 1))
++		return false;
 +
-+	err = ssdfs_segbmap_check_fragment_validity(segbmap, fragment_index);
-+	if (err == -EAGAIN) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("fragment %u is not initilaized yet\n",
-+			  fragment_index);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		return err;
-+	} else if (err == -EFAULT) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("fragment %u initialization was failed\n",
-+			  fragment_index);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		return err;
-+	} else if (unlikely(err)) {
-+		SSDFS_ERR("fragment %u is corrupted: err %d\n",
-+			  fragment_index, err);
-+		return err;
-+	}
++	if (search->node.state != SSDFS_BTREE_SEARCH_FOUND_INDEX_NODE_DESC)
++		return false;
 +
-+	fragment = &segbmap->desc_array[fragment_index];
-+
-+	items_count = ssdfs_segbmap_define_items_count(fragment, state, mask);
-+	if (items_count == U16_MAX) {
-+		SSDFS_ERR("segbmap has inconsistent state\n");
-+		return -ERANGE;
-+	} else if (items_count == 0) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("fragment %u hasn't items for search\n",
-+			  fragment_index);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		return -ENODATA;
-+	}
-+
-+	items_count = fragment->total_segs;
-+
-+	if (items_count == 0 || items_count > items_per_fragment) {
-+		SSDFS_ERR("invalid total_segs %u\n", items_count);
-+		return -ERANGE;
-+	}
-+
-+	page = find_lock_page(&segbmap->pages, fragment_index);
-+	if (!page) {
-+		SSDFS_ERR("fragment %u hasn't memory page\n",
-+			  fragment_index);
-+		return -ERANGE;
-+	}
-+
-+	ssdfs_account_locked_page(page);
-+	kaddr = kmap_local_page(page);
-+	bmap = (unsigned long *)((u8 *)kaddr + hdr_size);
-+
-+	err = FIND_FIRST_ITEM_IN_FRAGMENT(SSDFS_SBMP_FRAG_HDR(kaddr),
-+					  (u8 *)bmap, start, max, state, mask,
-+					  found_seg, found_for_mask,
-+					  found_state_for_mask);
-+
-+	kunmap_local(kaddr);
-+	ssdfs_unlock_page(page);
-+	ssdfs_put_page(page);
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	SSDFS_DBG("page %p, count %d\n",
-+		  page, page_ref_count(page));
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	return err;
++	return true;
 +}
 +
 +/*
-+ * __ssdfs_segbmap_find() - find segment with state
-+ * @segbmap: pointer on segment bitmap object
-+ * @start: start segment number for search
-+ * @max: upper bound of segment number for search
-+ * @state: primary state for search
-+ * @mask: mask of additonal states that can be retrieved too
-+ * @fragment_size: fragment size in bytes
-+ * @seg: found segment number [out]
-+ * @end: pointer on completion for waiting init ending [out]
-+ *
-+ * This method tries to find segment number for requested state.
-+ *
-+ * RETURN:
-+ * [success] - found segment state
-+ * [failure] - error code:
-+ *
-+ * %-EINVAL     - invalid input.
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EOPNOTSUPP - operation is not supported.
-+ * %-ENOMEM     - fail to allocate memory.
-+ * %-EFAULT     - segbmap has inconsistent state.
-+ * %-ERANGE     - internal error.
-+ * %-ENODATA    - unable to find segment as for state as for mask.
++ * is_btree_leaf_node_found() - check that leaf btree node has been found
++ * @search: btree search object
 + */
-+static
-+int __ssdfs_segbmap_find(struct ssdfs_segment_bmap *segbmap,
-+			 u64 start, u64 max,
-+			 int state, int mask,
-+			 u16 fragment_size,
-+			 u64 *seg, struct completion **end)
++bool is_btree_leaf_node_found(struct ssdfs_btree_search *search)
 +{
-+	unsigned long *fbmap;
-+	int start_fragment, max_fragment, found_fragment;
-+	u64 found = U64_MAX, found_for_mask = U64_MAX;
-+	int found_state_for_mask = SSDFS_SEG_STATE_MAX;
-+	int err = -ENODATA;
-+
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap || !seg);
-+	BUG_ON(!rwsem_is_locked(&segbmap->search_lock));
-+
-+	SSDFS_DBG("segbmap %p, start %llu, max %llu, "
-+		  "state %#x, mask %#x, fragment_size %u, seg %p\n",
-+		  segbmap, start, max, state, mask,
-+		  fragment_size, seg);
++	BUG_ON(!search);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	*end = NULL;
++	if (search->node.state != SSDFS_BTREE_SEARCH_FOUND_LEAF_NODE_DESC)
++		return false;
 +
-+	if (start >= max) {
++	if (search->node.id == SSDFS_BTREE_NODE_INVALID_ID)
++		return false;
++
++	if (search->node.child == NULL)
++		return false;
++
++	return true;
++}
++
++/*
++ * is_btree_search_node_desc_consistent() - check node descriptor consistency
++ * @search: btree search object
++ */
++bool is_btree_search_node_desc_consistent(struct ssdfs_btree_search *search)
++{
 +#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("start %llu >= max %llu\n",
-+			  start, max);
++	BUG_ON(!search);
 +#endif /* CONFIG_SSDFS_DEBUG */
-+		return -ENODATA;
++
++	if (search->node.state != SSDFS_BTREE_SEARCH_FOUND_LEAF_NODE_DESC) {
++		SSDFS_ERR("unexpected search->node.state %#x\n",
++			  search->node.state);
++		return false;
 +	}
 +
-+	fbmap = ssdfs_segbmap_choose_fbmap(segbmap, state, mask);
-+	if (IS_ERR_OR_NULL(fbmap)) {
-+		err = (fbmap == NULL ? -ENOMEM : PTR_ERR(fbmap));
-+		SSDFS_ERR("unable to choose fragment bitmap: err %d\n",
-+			  err);
-+		return err;
++	if (!search->node.parent) {
++		SSDFS_ERR("search->node.parent is NULL\n");
++		return false;
 +	}
 +
-+	start_fragment = SEG_BMAP_FRAGMENTS(start + 1);
-+	if (start_fragment > 0)
-+		start_fragment -= 1;
++	if (!search->node.child) {
++		SSDFS_ERR("search->node.child is NULL\n");
++		return false;
++	}
 +
-+	max_fragment = SEG_BMAP_FRAGMENTS(max);
++	if (search->node.id != search->node.child->node_id) {
++		SSDFS_ERR("search->node.id %u != search->node.child->node_id %u\n",
++			  search->node.id, search->node.child->node_id);
++		return false;
++	}
 +
-+	do {
-+		u64 found_for_iter = U64_MAX;
-+		int found_state_for_iter = -1;
++	if (search->node.height != atomic_read(&search->node.child->height)) {
++		SSDFS_ERR("invalid height: "
++			  "search->node.height %u, "
++			  "search->node.child->height %d\n",
++			  search->node.height,
++			  atomic_read(&search->node.child->height));
++		return false;
++	}
 +
-+		err = ssdfs_segbmap_find_fragment(segbmap,
-+						  fbmap,
-+						  start_fragment,
-+						  max_fragment,
-+						  &found_fragment);
-+		if (err == -ENODATA) {
++	return true;
++}
++
++/*
++ * ssdfs_btree_search_define_child_node() - define child node for the search
++ * @search: search object
++ * @child: child node object
++ */
++void ssdfs_btree_search_define_child_node(struct ssdfs_btree_search *search,
++					  struct ssdfs_btree_node *child)
++{
 +#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("unable to find fragment: "
-+				  "state %#x, mask %#x, "
-+				  "start_fragment %d, max_fragment %d\n",
-+				  state, mask,
-+				  start_fragment, max_fragment);
++	BUG_ON(!search);
 +#endif /* CONFIG_SSDFS_DEBUG */
-+			goto finish_seg_search;
-+		} else if (err == -EFAULT) {
-+			ssdfs_fs_error(segbmap->fsi->sb,
-+					__FILE__, __func__, __LINE__,
-+					"segbmap inconsistent state: "
-+					"found_fragment %d\n",
-+					found_fragment);
-+			goto finish_seg_search;
-+		} else if (err == -EAGAIN) {
-+			if (found_fragment >= U16_MAX) {
-+				/* select the first fragment by default */
-+				found_fragment = 0;
-+			}
 +
-+			*end = &segbmap->desc_array[found_fragment].init_end;
++	if (search->node.child)
++		ssdfs_btree_node_put(search->node.child);
++
++	search->node.child = child;
++
++	if (search->node.child)
++		ssdfs_btree_node_get(search->node.child);
++}
++
++/*
++ * ssdfs_btree_search_forget_child_node() - forget child node for the search
++ * @search: search object
++ */
++void ssdfs_btree_search_forget_child_node(struct ssdfs_btree_search *search)
++{
 +#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("fragment %u is not initilaized yet\n",
-+				  found_fragment);
++	BUG_ON(!search);
 +#endif /* CONFIG_SSDFS_DEBUG */
-+			goto finish_seg_search;
-+		} else if (unlikely(err)) {
-+			SSDFS_ERR("fail to find fragment: "
-+				  "start_fragment %d, max_fragment %d, "
-+				  "err %d\n",
-+				  start_fragment, max_fragment, err);
-+			goto finish_seg_search;
-+		} else if (found_fragment >= U16_MAX) {
-+			err = -ERANGE;
-+			SSDFS_ERR("fail to find fragment: "
-+				  "start_fragment %d, max_fragment %d, "
-+				  "err %d\n",
-+				  start_fragment, max_fragment, err);
-+			goto finish_seg_search;
++
++	if (search->node.child) {
++		ssdfs_btree_node_put(search->node.child);
++		search->node.child = NULL;
++		search->node.state = SSDFS_BTREE_SEARCH_NODE_DESC_EMPTY;
++	}
++}
++
++/*
++ * ssdfs_btree_search_define_parent_node() - define parent node for the search
++ * @search: search object
++ * @parent: parent node object
++ */
++void ssdfs_btree_search_define_parent_node(struct ssdfs_btree_search *search,
++					   struct ssdfs_btree_node *parent)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!search);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (search->node.parent)
++		ssdfs_btree_node_put(search->node.parent);
++
++	search->node.parent = parent;
++
++	if (search->node.parent)
++		ssdfs_btree_node_get(search->node.parent);
++}
++
++/*
++ * ssdfs_btree_search_forget_parent_node() - forget parent node for the search
++ * @search: search object
++ */
++void ssdfs_btree_search_forget_parent_node(struct ssdfs_btree_search *search)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!search);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (search->node.parent) {
++		ssdfs_btree_node_put(search->node.parent);
++		search->node.parent = NULL;
++		search->node.state = SSDFS_BTREE_SEARCH_NODE_DESC_EMPTY;
++	}
++}
++
++/*
++ * ssdfs_btree_search_alloc_result_buf() - allocate result buffer
++ * @search: search object
++ * @buf_size: buffer size
++ */
++int ssdfs_btree_search_alloc_result_buf(struct ssdfs_btree_search *search,
++					size_t buf_size)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!search);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	search->result.buf = ssdfs_btree_search_kzalloc(buf_size, GFP_KERNEL);
++	if (!search->result.buf) {
++		SSDFS_ERR("fail to allocate buffer: size %zu\n",
++			  buf_size);
++		return -ENOMEM;
++	}
++
++	search->result.buf_size = buf_size;
++	search->result.buf_state = SSDFS_BTREE_SEARCH_EXTERNAL_BUFFER;
++	search->result.items_in_buffer = 0;
++	return 0;
++}
++
++/*
++ * ssdfs_btree_search_free_result_buf() - free result buffer
++ * @search: search object
++ */
++void ssdfs_btree_search_free_result_buf(struct ssdfs_btree_search *search)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!search);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (search->result.buf_state == SSDFS_BTREE_SEARCH_EXTERNAL_BUFFER) {
++		if (search->result.buf) {
++			ssdfs_btree_search_kfree(search->result.buf);
++			search->result.buf = NULL;
++			search->result.buf_state =
++				SSDFS_BTREE_SEARCH_UNKNOWN_BUFFER_STATE;
 +		}
++	}
++}
 +
-+		start = ssdfs_segbmap_correct_search_start(found_fragment,
-+							   start, max,
-+							   fragment_size);
-+		if (start == U64_MAX || start >= max) {
++/*
++ * ssdfs_btree_search_alloc_result_name() - allocate result name
++ * @search: search object
++ * @string_size: name string size
++ */
++int ssdfs_btree_search_alloc_result_name(struct ssdfs_btree_search *search,
++					 size_t string_size)
++{
 +#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("break search: start %llu, max %llu\n",
-+				  start, max);
++	BUG_ON(!search);
 +#endif /* CONFIG_SSDFS_DEBUG */
-+			break;
++
++	search->result.name = ssdfs_btree_search_kzalloc(string_size,
++							 GFP_KERNEL);
++	if (!search->result.name) {
++		SSDFS_ERR("fail to allocate buffer: size %zu\n",
++			  string_size);
++		return -ENOMEM;
++	}
++
++	search->result.name_string_size = string_size;
++	search->result.name_state = SSDFS_BTREE_SEARCH_EXTERNAL_BUFFER;
++	search->result.names_in_buffer = 0;
++	return 0;
++}
++
++/*
++ * ssdfs_btree_search_free_result_name() - free result name
++ * @search: search object
++ */
++void ssdfs_btree_search_free_result_name(struct ssdfs_btree_search *search)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!search);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (search->result.name_state == SSDFS_BTREE_SEARCH_EXTERNAL_BUFFER) {
++		if (search->result.name) {
++			ssdfs_btree_search_kfree(search->result.name);
++			search->result.name = NULL;
++			search->result.name =
++				SSDFS_BTREE_SEARCH_UNKNOWN_BUFFER_STATE;
 +		}
++	}
++}
 +
-+		*end = &segbmap->desc_array[found_fragment].init_end;
++void ssdfs_debug_btree_search_object(struct ssdfs_btree_search *search)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	struct ssdfs_btree_index_key *node_index;
++	struct ssdfs_shdict_ltbl2_item *ltbl2_item;
++	size_t item_size;
++	size_t count;
++	int i;
 +
-+		err = ssdfs_segbmap_find_in_fragment(segbmap, found_fragment,
-+						     fragment_size,
-+						     start, max,
-+						     state, mask,
-+						     &found, &found_for_iter,
-+						     &found_state_for_iter);
-+		if (err == -ENODATA) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("unable to find segment: "
-+				  "fragment %d, "
-+				  "state %#x, mask %#x, "
-+				  "start %llu, max %llu\n",
-+				  found_fragment,
-+				  state, mask,
-+				  start, max);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+			/* try next fragment */
-+		} else if (err == -ENOENT) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("mask %#x, found_for_mask %llu, "
-+				  "found_for_iter %llu, "
-+				  "found_state %#x\n",
-+				  mask, found_for_mask, found_for_iter,
-+				  found_state_for_iter);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+			err = 0;
-+			found_for_mask = found_for_iter;
-+			found_state_for_mask = found_state_for_iter;
-+			goto check_search_result;
-+		} else if (err == -EFAULT) {
-+			/* Just try another iteration */
-+#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("fragment %d is inconsistent\n",
-+				  found_fragment);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		} else if (err == -EAGAIN) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("fragment %u is not initilaized yet\n",
-+				  found_fragment);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+			goto finish_seg_search;
-+		} else if (unlikely(err < 0)) {
-+			SSDFS_ERR("fail to find segment: "
-+				  "found_fragment %d, start %llu, "
-+				  "max %llu, err %d\n",
-+				  found_fragment, start, max, err);
-+			goto finish_seg_search;
-+		} else if (found == U64_MAX) {
-+			err = -ERANGE;
-+			SSDFS_ERR("invalid segment number: "
-+				  "found_fragment %d, start %llu, "
-+				  "max %llu\n",
-+				  found_fragment, start, max);
-+			goto finish_seg_search;
-+		} else
-+			break;
++	BUG_ON(!search);
 +
-+		start_fragment = found_fragment + 1;
-+	} while (start_fragment <= max_fragment);
++	SSDFS_DBG("REQUEST: type %#x, flags %#x, count %u, "
++		  "START: name %p, name_len %zu, hash %llx, ino %llu, "
++		  "END: name %p, name_len %zu, hash %llx, ino %llu\n",
++		  search->request.type,
++		  search->request.flags,
++		  search->request.count,
++		  search->request.start.name,
++		  search->request.start.name_len,
++		  search->request.start.hash,
++		  search->request.start.ino,
++		  search->request.end.name,
++		  search->request.end.name_len,
++		  search->request.end.hash,
++		  search->request.end.ino);
 +
-+check_search_result:
-+	if (unlikely(err < 0)) {
-+		/* we have some error */
-+		goto finish_seg_search;
-+	} else if (found == U64_MAX) {
-+		if (found_for_mask == U64_MAX) {
-+			err = -ENODATA;
-+			SSDFS_DBG("fail to find segment\n");
-+		} else {
-+			*seg = found_for_mask;
-+			err = found_state_for_mask;
-+#ifdef CONFIG_SSDFS_DEBUG
-+			SSDFS_DBG("found for mask %llu, state %#x\n",
-+				  *seg, err);
-+#endif /* CONFIG_SSDFS_DEBUG */
++	SSDFS_DBG("NODE: state %#x, id %u, height %u, "
++		  "parent %p, child %p\n",
++		  search->node.state,
++		  search->node.id,
++		  search->node.height,
++		  search->node.parent,
++		  search->node.child);
++
++	node_index = &search->node.found_index;
++	SSDFS_DBG("NODE_INDEX: node_id %u, node_type %#x, "
++		  "height %u, flags %#x, hash %llx, "
++		  "seg_id %llu, logical_blk %u, len %u\n",
++		  le32_to_cpu(node_index->node_id),
++		  node_index->node_type,
++		  node_index->height,
++		  le16_to_cpu(node_index->flags),
++		  le64_to_cpu(node_index->index.hash),
++		  le64_to_cpu(node_index->index.extent.seg_id),
++		  le32_to_cpu(node_index->index.extent.logical_blk),
++		  le32_to_cpu(node_index->index.extent.len));
++
++	if (search->node.parent) {
++		SSDFS_DBG("PARENT NODE: node_id %u, state %#x, "
++			  "type %#x, height %d, refs_count %d\n",
++			  search->node.parent->node_id,
++			  atomic_read(&search->node.parent->state),
++			  atomic_read(&search->node.parent->type),
++			  atomic_read(&search->node.parent->height),
++			  atomic_read(&search->node.parent->refs_count));
++	}
++
++	if (search->node.child) {
++		SSDFS_DBG("CHILD NODE: node_id %u, state %#x, "
++			  "type %#x, height %d, refs_count %d\n",
++			  search->node.child->node_id,
++			  atomic_read(&search->node.child->state),
++			  atomic_read(&search->node.child->type),
++			  atomic_read(&search->node.child->height),
++			  atomic_read(&search->node.child->refs_count));
++	}
++
++	SSDFS_DBG("RESULT: state %#x, err %d, start_index %u, count %u, "
++		  "search_cno %llu\n",
++		  search->result.state,
++		  search->result.err,
++		  search->result.start_index,
++		  search->result.count,
++		  search->result.search_cno);
++
++	SSDFS_DBG("NAME: name_state %#x, name %p, "
++		  "name_string_size %zu, names_in_buffer %u\n",
++		  search->result.name_state,
++		  search->result.name,
++		  search->result.name_string_size,
++		  search->result.names_in_buffer);
++
++	SSDFS_DBG("LOOKUP: index %u, hash_lo %u, "
++		  "start_index %u, range_len %u\n",
++		  search->name.lookup.index,
++		  le32_to_cpu(search->name.lookup.desc.hash_lo),
++		  le16_to_cpu(search->name.lookup.desc.start_index),
++		  le16_to_cpu(search->name.lookup.desc.range_len));
++
++	ltbl2_item = &search->name.strings_range.desc;
++	SSDFS_DBG("STRINGS_RANGE: index %u, hash_lo %u, "
++		  "prefix_len %u, str_count %u, "
++		  "hash_index %u\n",
++		  search->name.strings_range.index,
++		  le32_to_cpu(ltbl2_item->hash_lo),
++		  ltbl2_item->prefix_len,
++		  ltbl2_item->str_count,
++		  le16_to_cpu(ltbl2_item->hash_index));
++
++	SSDFS_DBG("PREFIX: index %u, hash_hi %u, "
++		  "str_offset %u, str_len %u, type %#x\n",
++		  search->name.prefix.index,
++		  le32_to_cpu(search->name.prefix.desc.hash_hi),
++		  le16_to_cpu(search->name.prefix.desc.str_offset),
++		  search->name.prefix.desc.str_len,
++		  search->name.prefix.desc.type);
++
++	SSDFS_DBG("LEFT_NAME: index %u, hash_hi %u, "
++		  "str_offset %u, str_len %u, type %#x\n",
++		  search->name.left_name.index,
++		  le32_to_cpu(search->name.left_name.desc.hash_hi),
++		  le16_to_cpu(search->name.left_name.desc.str_offset),
++		  search->name.left_name.desc.str_len,
++		  search->name.left_name.desc.type);
++
++	SSDFS_DBG("RIGHT_NAME: index %u, hash_hi %u, "
++		  "str_offset %u, str_len %u, type %#x\n",
++		  search->name.right_name.index,
++		  le32_to_cpu(search->name.right_name.desc.hash_hi),
++		  le16_to_cpu(search->name.right_name.desc.str_offset),
++		  search->name.right_name.desc.str_len,
++		  search->name.right_name.desc.type);
++
++	if (search->result.name) {
++		count = search->result.names_in_buffer;
++
++		if (count > 0)
++			item_size = search->result.name_string_size / count;
++		else
++			item_size = 0;
++
++		for (i = 0; i < search->result.names_in_buffer; i++) {
++			struct ssdfs_name_string *name;
++			u8 *addr;
++
++			addr = (u8 *)search->result.name + (i * item_size);
++			name = (struct ssdfs_name_string *)addr;
++
++			SSDFS_DBG("NAME: index %d, hash %llx, str_len %zu\n",
++				  i, name->hash, name->len);
++
++			SSDFS_DBG("LOOKUP: index %u, hash_lo %u, "
++				  "start_index %u, range_len %u\n",
++				  name->lookup.index,
++				  le32_to_cpu(name->lookup.desc.hash_lo),
++				  le16_to_cpu(name->lookup.desc.start_index),
++				  le16_to_cpu(name->lookup.desc.range_len));
++
++			ltbl2_item = &name->strings_range.desc;
++			SSDFS_DBG("STRINGS_RANGE: index %u, hash_lo %u, "
++				  "prefix_len %u, str_count %u, "
++				  "hash_index %u\n",
++				  name->strings_range.index,
++				  le32_to_cpu(ltbl2_item->hash_lo),
++				  ltbl2_item->prefix_len,
++				  ltbl2_item->str_count,
++				  le16_to_cpu(ltbl2_item->hash_index));
++
++			SSDFS_DBG("PREFIX: index %u, hash_hi %u, "
++				  "str_offset %u, str_len %u, type %#x\n",
++				  name->prefix.index,
++				  le32_to_cpu(name->prefix.desc.hash_hi),
++				  le16_to_cpu(name->prefix.desc.str_offset),
++				  name->prefix.desc.str_len,
++				  name->prefix.desc.type);
++
++			SSDFS_DBG("LEFT_NAME: index %u, hash_hi %u, "
++				  "str_offset %u, str_len %u, type %#x\n",
++				  name->left_name.index,
++				  le32_to_cpu(name->left_name.desc.hash_hi),
++				  le16_to_cpu(name->left_name.desc.str_offset),
++				  name->left_name.desc.str_len,
++				  name->left_name.desc.type);
++
++			SSDFS_DBG("RIGHT_NAME: index %u, hash_hi %u, "
++				  "str_offset %u, str_len %u, type %#x\n",
++				  name->right_name.index,
++				  le32_to_cpu(name->right_name.desc.hash_hi),
++				  le16_to_cpu(name->right_name.desc.str_offset),
++				  name->right_name.desc.str_len,
++				  name->right_name.desc.type);
++
++			SSDFS_DBG("RAW STRING DUMP: index %d\n",
++				  i);
++			print_hex_dump_bytes("", DUMP_PREFIX_OFFSET,
++						name->str,
++						name->len);
++			SSDFS_DBG("\n");
 +		}
-+	} else {
-+		*seg = found;
-+		err = state;
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("found segment %llu\n", *seg);
-+#endif /* CONFIG_SSDFS_DEBUG */
 +	}
 +
-+finish_seg_search:
-+	return err;
++	SSDFS_DBG("RESULT BUFFER: buf_state %#x, buf %p, "
++		  "buf_size %zu, items_in_buffer %u\n",
++		  search->result.buf_state,
++		  search->result.buf,
++		  search->result.buf_size,
++		  search->result.items_in_buffer);
++
++	if (search->result.buf) {
++		count = search->result.items_in_buffer;
++
++		if (count > 0)
++			item_size = search->result.buf_size / count;
++		else
++			item_size = 0;
++
++		for (i = 0; i < search->result.items_in_buffer; i++) {
++			void *item;
++
++			item = (u8 *)search->result.buf + (i * item_size);
++
++			SSDFS_DBG("RAW BUF DUMP: index %d\n",
++				  i);
++			print_hex_dump_bytes("", DUMP_PREFIX_OFFSET,
++						item,
++						item_size);
++			SSDFS_DBG("\n");
++		}
++	}
++#endif /* CONFIG_SSDFS_DEBUG */
++}
+diff --git a/fs/ssdfs/btree_search.h b/fs/ssdfs/btree_search.h
+new file mode 100644
+index 000000000000..9fbdb796b4dd
+--- /dev/null
++++ b/fs/ssdfs/btree_search.h
+@@ -0,0 +1,359 @@
++// SPDX-License-Identifier: BSD-3-Clause-Clear
++/*
++ * SSDFS -- SSD-oriented File System.
++ *
++ * fs/ssdfs/btree_search.h - btree search object declarations.
++ *
++ * Copyright (c) 2014-2019 HGST, a Western Digital Company.
++ *              http://www.hgst.com/
++ * Copyright (c) 2014-2023 Viacheslav Dubeyko <slava@dubeyko.com>
++ *              http://www.ssdfs.org/
++ *
++ * (C) Copyright 2014-2019, HGST, Inc., All rights reserved.
++ *
++ * Created by HGST, San Jose Research Center, Storage Architecture Group
++ *
++ * Authors: Viacheslav Dubeyko <slava@dubeyko.com>
++ *
++ * Acknowledgement: Cyril Guyot
++ *                  Zvonimir Bandic
++ */
++
++#ifndef _SSDFS_BTREE_SEARCH_H
++#define _SSDFS_BTREE_SEARCH_H
++
++/* Search request types */
++enum {
++	SSDFS_BTREE_SEARCH_UNKNOWN_TYPE,
++	SSDFS_BTREE_SEARCH_FIND_ITEM,
++	SSDFS_BTREE_SEARCH_FIND_RANGE,
++	SSDFS_BTREE_SEARCH_ALLOCATE_ITEM,
++	SSDFS_BTREE_SEARCH_ALLOCATE_RANGE,
++	SSDFS_BTREE_SEARCH_ADD_ITEM,
++	SSDFS_BTREE_SEARCH_ADD_RANGE,
++	SSDFS_BTREE_SEARCH_CHANGE_ITEM,
++	SSDFS_BTREE_SEARCH_MOVE_ITEM,
++	SSDFS_BTREE_SEARCH_DELETE_ITEM,
++	SSDFS_BTREE_SEARCH_DELETE_RANGE,
++	SSDFS_BTREE_SEARCH_DELETE_ALL,
++	SSDFS_BTREE_SEARCH_INVALIDATE_TAIL,
++	SSDFS_BTREE_SEARCH_TYPE_MAX
++};
++
++/*
++ * struct ssdfs_peb_timestamps - PEB timestamps
++ * @peb_id: PEB ID
++ * @create_time: PEB's create timestamp
++ * @last_log_time: PEB's last log create timestamp
++ */
++struct ssdfs_peb_timestamps {
++	u64 peb_id;
++	u64 create_time;
++	u64 last_log_time;
++};
++
++/*
++ * struct ssdfs_btree_search_hash - btree search hash
++ * @name: name of the searching object
++ * @name_len: length of the name in bytes
++ * @uuid: UUID of the searching object
++ * @hash: hash value
++ * @ino: inode ID
++ * @fingerprint: fingerprint value
++ * @peb2time: PEB timestamps
++ */
++struct ssdfs_btree_search_hash {
++	const char *name;
++	size_t name_len;
++	u8 *uuid;
++	u64 hash;
++	u64 ino;
++	struct ssdfs_fingerprint *fingerprint;
++	struct ssdfs_peb_timestamps *peb2time;
++};
++
++/*
++ * struct ssdfs_btree_search_request - btree search request
++ * @type: request type
++ * @flags: request flags
++ * @start: starting hash value
++ * @end: ending hash value
++ * @count: range of hashes length in the request
++ */
++struct ssdfs_btree_search_request {
++	int type;
++#define SSDFS_BTREE_SEARCH_HAS_VALID_HASH_RANGE		(1 << 0)
++#define SSDFS_BTREE_SEARCH_HAS_VALID_COUNT		(1 << 1)
++#define SSDFS_BTREE_SEARCH_HAS_VALID_NAME		(1 << 2)
++#define SSDFS_BTREE_SEARCH_HAS_VALID_INO		(1 << 3)
++#define SSDFS_BTREE_SEARCH_NOT_INVALIDATE		(1 << 4)
++#define SSDFS_BTREE_SEARCH_HAS_VALID_UUID		(1 << 5)
++#define SSDFS_BTREE_SEARCH_HAS_VALID_FINGERPRINT	(1 << 6)
++#define SSDFS_BTREE_SEARCH_INCREMENT_REF_COUNT		(1 << 7)
++#define SSDFS_BTREE_SEARCH_DECREMENT_REF_COUNT		(1 << 8)
++#define SSDFS_BTREE_SEARCH_INLINE_BUF_HAS_NEW_ITEM	(1 << 9)
++#define SSDFS_BTREE_SEARCH_DONT_EXTRACT_RECORD		(1 << 10)
++#define SSDFS_BTREE_SEARCH_HAS_PEB2TIME_PAIR		(1 << 11)
++#define SSDFS_BTREE_SEARCH_REQUEST_FLAGS_MASK		0xFFF
++	u32 flags;
++
++	struct ssdfs_btree_search_hash start;
++	struct ssdfs_btree_search_hash end;
++	unsigned int count;
++};
++
++/* Node descriptor possible states */
++enum {
++	SSDFS_BTREE_SEARCH_NODE_DESC_EMPTY,
++	SSDFS_BTREE_SEARCH_ROOT_NODE_DESC,
++	SSDFS_BTREE_SEARCH_FOUND_INDEX_NODE_DESC,
++	SSDFS_BTREE_SEARCH_FOUND_LEAF_NODE_DESC,
++	SSDFS_BTREE_SEARCH_NODE_DESC_STATE_MAX
++};
++
++/*
++ * struct ssdfs_btree_search_node_desc - btree node descriptor
++ * @state: descriptor state
++ * @id: node ID number
++ * @height: node height
++ * @found_index: index of child node
++ * @parent: last parent node
++ * @child: last child node
++ */
++struct ssdfs_btree_search_node_desc {
++	int state;
++
++	u32 id;
++	u8 height;
++
++	struct ssdfs_btree_index_key found_index;
++	struct ssdfs_btree_node *parent;
++	struct ssdfs_btree_node *child;
++};
++
++/* Search result possible states */
++enum {
++	SSDFS_BTREE_SEARCH_UNKNOWN_RESULT,
++	SSDFS_BTREE_SEARCH_FAILURE,
++	SSDFS_BTREE_SEARCH_EMPTY_RESULT,
++	SSDFS_BTREE_SEARCH_VALID_ITEM,
++	SSDFS_BTREE_SEARCH_POSSIBLE_PLACE_FOUND,
++	SSDFS_BTREE_SEARCH_OUT_OF_RANGE,
++	SSDFS_BTREE_SEARCH_OBSOLETE_RESULT,
++	SSDFS_BTREE_SEARCH_PLEASE_ADD_NODE,
++	SSDFS_BTREE_SEARCH_PLEASE_DELETE_NODE,
++	SSDFS_BTREE_SEARCH_PLEASE_MOVE_BUF_CONTENT,
++	SSDFS_BTREE_SEARCH_RESULT_STATE_MAX
++};
++
++/* Search result buffer possible states */
++enum {
++	SSDFS_BTREE_SEARCH_UNKNOWN_BUFFER_STATE,
++	SSDFS_BTREE_SEARCH_INLINE_BUFFER,
++	SSDFS_BTREE_SEARCH_EXTERNAL_BUFFER,
++	SSDFS_BTREE_SEARCH_BUFFER_STATE_MAX
++};
++
++/*
++ * struct ssdfs_lookup_descriptor - lookup descriptor
++ * @index: index of item in the lookup1 table
++ * @desc: descriptor of lookup1 table's item
++ */
++struct ssdfs_lookup_descriptor {
++	u16 index;
++	struct ssdfs_shdict_ltbl1_item desc;
++};
++
++/*
++ * struct ssdfs_strings_range_descriptor - strings range descriptor
++ * @index: index of item in the lookup2 table
++ * @desc: descriptor of lookup2 table's item
++ */
++struct ssdfs_strings_range_descriptor {
++	u16 index;
++	struct ssdfs_shdict_ltbl2_item desc;
++};
++
++/*
++ * struct ssdfs_string_descriptor - string descriptor
++ * @index: index of item in the hash table
++ * @desc: descriptor of hash table's item
++ */
++struct ssdfs_string_descriptor {
++	u16 index;
++	struct ssdfs_shdict_htbl_item desc;
++};
++
++/*
++ * struct ssdfs_string_table_index - string table indexes
++ * @lookup1_index: index in lookup1 table
++ * @lookup2_index: index in lookup2 table
++ * @hash_index: index in hash table
++ *
++ * Search operation defines lookup, strings_range, prefix,
++ * left_name, and right_name. This information contains
++ * potential position to store the string. However,
++ * the final position to insert string and indexes can
++ * be defined during the insert operation. This field
++ * keeps the knowledge of finally used indexes to store
++ * the string and lookup1, lookup2, hash indexes.
++ */
++struct ssdfs_string_table_index {
++	u16 lookup1_index;
++	u16 lookup2_index;
++	u16 hash_index;
++};
++
++/*
++ * struct ssdfs_name_string - name string
++ * @hash: name hash
++ * @lookup: lookup item descriptor
++ * @strings_range: range of strings descriptor
++ * @prefix: prefix descriptor
++ * @left_name: left name descriptor
++ * @right_name: right name descriptor
++ * @placement: stored indexes descriptor
++ * @len: name length
++ * @str: name buffer
++ */
++struct ssdfs_name_string {
++	u64 hash;
++	struct ssdfs_lookup_descriptor lookup;
++	struct ssdfs_strings_range_descriptor strings_range;
++	struct ssdfs_string_descriptor prefix;
++	struct ssdfs_string_descriptor left_name;
++	struct ssdfs_string_descriptor right_name;
++
++	struct ssdfs_string_table_index placement;
++
++	size_t len;
++	unsigned char str[SSDFS_MAX_NAME_LEN];
++};
++
++/*
++ * struct ssdfs_btree_search_result - btree search result
++ * @state: result state
++ * @err: result error code
++ * @start_index: starting found item index
++ * @count: count of found items
++ * @search_cno: checkpoint of search activity
++ * @name_state: state of the name buffer
++ * @name: pointer on buffer with name(s)
++ * @name_string_size: size of the buffer in bytes
++ * @names_in_buffer: count of names in buffer
++ * @buf_state: state of the buffer
++ * @buf: pointer on buffer with item(s)
++ * @buf_size: size of the buffer in bytes
++ * @items_in_buffer: count of items in buffer
++ */
++struct ssdfs_btree_search_result {
++	int state;
++	int err;
++
++	u16 start_index;
++	u16 count;
++
++	u64 search_cno;
++
++	int name_state;
++	struct ssdfs_name_string *name;
++	size_t name_string_size;
++	u32 names_in_buffer;
++
++	int buf_state;
++	void *buf;
++	size_t buf_size;
++	u32 items_in_buffer;
++};
++
++/* Position check results */
++enum {
++	SSDFS_CORRECT_POSITION,
++	SSDFS_SEARCH_LEFT_DIRECTION,
++	SSDFS_SEARCH_RIGHT_DIRECTION,
++	SSDFS_CHECK_POSITION_FAILURE
++};
++
++/*
++ * struct ssdfs_btree_search - btree search
++ * @request: search request
++ * @node: btree node descriptor
++ * @result: search result
++ * @raw.fork: raw fork buffer
++ * @raw.inode: raw inode buffer
++ * @raw.dentry.header: raw directory entry header
++ * @raw.xattr.header: raw xattr entry header
++ * @raw.shared_extent: shared extent buffer
++ * @raw.snapshot: raw snapshot info buffer
++ * @raw.peb2time: raw PEB2time set
++ * @raw.invalidated_extent: invalidated extent buffer
++ * @name: name string
++ */
++struct ssdfs_btree_search {
++	struct ssdfs_btree_search_request request;
++	struct ssdfs_btree_search_node_desc node;
++	struct ssdfs_btree_search_result result;
++	union ssdfs_btree_search_raw_data {
++		struct ssdfs_raw_fork fork;
++		struct ssdfs_inode inode;
++		struct ssdfs_raw_dentry {
++			struct ssdfs_dir_entry header;
++		} dentry;
++		struct ssdfs_raw_xattr {
++			struct ssdfs_xattr_entry header;
++		} xattr;
++		struct ssdfs_shared_extent shared_extent;
++		struct ssdfs_snapshot snapshot;
++		struct ssdfs_peb2time_set peb2time;
++		struct ssdfs_raw_extent invalidated_extent;
++	} raw;
++	struct ssdfs_name_string name;
++};
++
++/* Btree height's classification */
++enum {
++	SSDFS_BTREE_PARENT2LEAF_HEIGHT		= 1,
++	SSDFS_BTREE_PARENT2HYBRID_HEIGHT	= 2,
++	SSDFS_BTREE_PARENT2INDEX_HEIGHT		= 3,
++};
++
++/*
++ * Inline functions
++ */
++
++static inline
++bool is_btree_search_contains_new_item(struct ssdfs_btree_search *search)
++{
++	return search->request.flags &
++			SSDFS_BTREE_SEARCH_INLINE_BUF_HAS_NEW_ITEM;
 +}
 +
 +/*
-+ * ssdfs_segbmap_find() - find segment with state
-+ * @segbmap: pointer on segment bitmap object
-+ * @start: start segment number for search
-+ * @max: upper bound of segment number for search
-+ * @state: primary state for search
-+ * @mask: mask of additonal states that can be retrieved too
-+ * @seg: found segment number [out]
-+ * @end: pointer on completion for waiting init ending [out]
-+ *
-+ * This method tries to find segment number for requested state.
-+ *
-+ * RETURN:
-+ * [success] - found segment state
-+ * [failure] - error code:
-+ *
-+ * %-EINVAL     - invalid input.
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EOPNOTSUPP - operation is not supported.
-+ * %-ENOMEM     - fail to allocate memory.
-+ * %-EFAULT     - segbmap has inconsistent state.
-+ * %-ERANGE     - internal error.
-+ * %-ENODATA    - unable to find segment as for state as for mask.
++ * Btree search object API
 + */
-+int ssdfs_segbmap_find(struct ssdfs_segment_bmap *segbmap,
-+			u64 start, u64 max,
-+			int state, int mask,
-+			u64 *seg, struct completion **end)
-+{
-+	u64 items_count;
-+	u16 fragment_size;
-+	int err = 0;
++struct ssdfs_btree_search *ssdfs_btree_search_alloc(void);
++void ssdfs_btree_search_free(struct ssdfs_btree_search *search);
++void ssdfs_btree_search_init(struct ssdfs_btree_search *search);
++bool need_initialize_btree_search(struct ssdfs_btree_search *search);
++bool is_btree_search_request_valid(struct ssdfs_btree_search *search);
++bool is_btree_index_search_request_valid(struct ssdfs_btree_search *search,
++					 u32 prev_node_id,
++					 u8 prev_node_height);
++bool is_btree_leaf_node_found(struct ssdfs_btree_search *search);
++bool is_btree_search_node_desc_consistent(struct ssdfs_btree_search *search);
++void ssdfs_btree_search_define_parent_node(struct ssdfs_btree_search *search,
++					   struct ssdfs_btree_node *parent);
++void ssdfs_btree_search_define_child_node(struct ssdfs_btree_search *search,
++					  struct ssdfs_btree_node *child);
++void ssdfs_btree_search_forget_parent_node(struct ssdfs_btree_search *search);
++void ssdfs_btree_search_forget_child_node(struct ssdfs_btree_search *search);
++int ssdfs_btree_search_alloc_result_buf(struct ssdfs_btree_search *search,
++					size_t buf_size);
++void ssdfs_btree_search_free_result_buf(struct ssdfs_btree_search *search);
++int ssdfs_btree_search_alloc_result_name(struct ssdfs_btree_search *search,
++					 size_t string_size);
++void ssdfs_btree_search_free_result_name(struct ssdfs_btree_search *search);
 +
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap || !seg);
++void ssdfs_debug_btree_search_object(struct ssdfs_btree_search *search);
 +
-+	if (start >= segbmap->items_count) {
-+		SSDFS_ERR("start %llu >= items_count %llu\n",
-+			  start, segbmap->items_count);
-+		return -EINVAL;
-+	}
-+
-+	if (start >= max) {
-+		SSDFS_ERR("start %llu >= max %llu\n",
-+			  start, max);
-+		return -EINVAL;
-+	}
-+
-+	if (state < SSDFS_SEG_CLEAN || state >= SSDFS_SEG_STATE_MAX) {
-+		SSDFS_ERR("unknown segment state %#x\n", state);
-+		return -EINVAL;
-+	}
-+
-+	if ((mask & SSDFS_SEG_CLEAN_USING_MASK) != mask &&
-+	    (mask & SSDFS_SEG_USED_DIRTY_MASK) != mask &&
-+	    (mask & SSDFS_SEG_BAD_STATE_MASK) != mask) {
-+		SSDFS_ERR("unsupported set of flags %#x\n",
-+			  mask);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	SSDFS_DBG("segbmap %p, start %llu, max %llu, "
-+		  "state %#x, mask %#x, seg %p\n",
-+		  segbmap, start, max, state, mask, seg);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	*end = NULL;
-+
-+	inode_lock_shared(segbmap->fsi->segbmap_inode);
-+	down_read(&segbmap->resize_lock);
-+
-+	items_count = segbmap->items_count;
-+	fragment_size = segbmap->fragment_size;
-+
-+	if (segbmap->flags & SSDFS_SEGBMAP_ERROR) {
-+		err = -EFAULT;
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"segbmap has corrupted state\n");
-+		goto finish_search_preparation;
-+	}
-+
-+	max = min_t(u64, max, items_count);
-+
-+	down_read(&segbmap->search_lock);
-+	err = __ssdfs_segbmap_find(segbmap, start, max, state, mask,
-+				   fragment_size, seg, end);
-+	up_read(&segbmap->search_lock);
-+
-+finish_search_preparation:
-+	up_read(&segbmap->resize_lock);
-+	inode_unlock_shared(segbmap->fsi->segbmap_inode);
-+
-+	return err;
-+}
-+
-+/*
-+ * ssdfs_segbmap_find_and_set() - find segment and change state
-+ * @segbmap: pointer on segment bitmap object
-+ * @start: start segment number for search
-+ * @max: upper bound of segment number for search
-+ * @state: primary state for search
-+ * @mask: mask of additonal states that can be retrieved too
-+ * @new_state: new state of segment
-+ * @seg: found segment number [out]
-+ * @end: pointer on completion for waiting init ending [out]
-+ *
-+ * This method tries to find segment number for requested state
-+ * and to set segment state as @new_state.
-+ *
-+ * RETURN:
-+ * [success] - found segment state before changing
-+ * [failure] - error code:
-+ *
-+ * %-EINVAL     - invalid input.
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EOPNOTSUPP - operation is not supported.
-+ * %-ENOMEM     - fail to allocate memory.
-+ * %-EFAULT     - segbmap has inconsistent state.
-+ * %-ERANGE     - internal error.
-+ * %-ENODATA    - unable to find segment as for state as for mask.
-+ */
-+int ssdfs_segbmap_find_and_set(struct ssdfs_segment_bmap *segbmap,
-+				u64 start, u64 max,
-+				int state, int mask,
-+				int new_state,
-+				u64 *seg, struct completion **end)
-+{
-+	u64 items_count;
-+	u16 fragments_count;
-+	u16 fragment_size;
-+	pgoff_t fragment_index;
-+	int err = 0, res = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap || !seg);
-+
-+	if (start >= segbmap->items_count) {
-+		SSDFS_ERR("start %llu >= items_count %llu\n",
-+			  start, segbmap->items_count);
-+		return -EINVAL;
-+	}
-+
-+	if (start >= max) {
-+		SSDFS_ERR("start %llu >= max %llu\n",
-+			  start, max);
-+		return -EINVAL;
-+	}
-+
-+	if (state < SSDFS_SEG_CLEAN || state >= SSDFS_SEG_STATE_MAX) {
-+		SSDFS_ERR("unknown segment state %#x\n", state);
-+		return -EINVAL;
-+	}
-+
-+	if ((mask & SSDFS_SEG_CLEAN_USING_MASK) != mask &&
-+	    (mask & SSDFS_SEG_USED_DIRTY_MASK) != mask &&
-+	    (mask & SSDFS_SEG_BAD_STATE_MASK) != mask) {
-+		SSDFS_ERR("unsupported set of flags %#x\n",
-+			  mask);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (new_state < SSDFS_SEG_CLEAN || new_state >= SSDFS_SEG_STATE_MAX) {
-+		SSDFS_ERR("unknown new segment state %#x\n", new_state);
-+		return -EINVAL;
-+	}
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("segbmap %p, start %llu, max %llu, "
-+		  "state %#x, mask %#x, new_state %#x, seg %p\n",
-+		  segbmap, start, max, state, mask, new_state, seg);
-+#else
-+	SSDFS_DBG("segbmap %p, start %llu, max %llu, "
-+		  "state %#x, mask %#x, new_state %#x, seg %p\n",
-+		  segbmap, start, max, state, mask, new_state, seg);
-+#endif /* CONFIG_SSDFS_TRACK_API_CALL */
-+
-+	*end = NULL;
-+
-+	inode_lock_shared(segbmap->fsi->segbmap_inode);
-+	down_read(&segbmap->resize_lock);
-+
-+	items_count = segbmap->items_count;
-+	fragments_count = segbmap->fragments_count;
-+	fragment_size = segbmap->fragment_size;
-+
-+	if (segbmap->flags & SSDFS_SEGBMAP_ERROR) {
-+		err = -EFAULT;
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"segbmap has corrupted state\n");
-+		goto finish_search_preparation;
-+	}
-+
-+	max = min_t(u64, max, items_count);
-+
-+	down_write(&segbmap->search_lock);
-+
-+try_to_find_seg_id:
-+	res = __ssdfs_segbmap_find(segbmap, start, max,
-+				   state, mask,
-+				   fragment_size, seg, end);
-+	if (res == -ENODATA) {
-+		err = res;
-+		SSDFS_DBG("unable to find any segment\n");
-+		goto finish_find_set;
-+	} else if (res == -EAGAIN) {
-+		err = res;
-+		SSDFS_DBG("fragment is not initilaized yet\n");
-+		goto finish_find_set;
-+	} else if (unlikely(res < 0)) {
-+		err = res;
-+		SSDFS_ERR("fail to find clean segment: err %d\n",
-+			  err);
-+		goto finish_find_set;
-+	}
-+
-+	if (res == new_state) {
-+		/* everything is done */
-+		goto finish_find_set;
-+	} else if (res == SSDFS_SEG_CLEAN) {
-+		/*
-+		 * we can change clean state on any other
-+		 */
-+	} else {
-+		start = *seg + 1;
-+		*seg = U64_MAX;
-+		goto try_to_find_seg_id;
-+	}
-+
-+	if (*seg >= items_count) {
-+		err = -ERANGE;
-+		SSDFS_ERR("seg %llu >= items_count %llu\n",
-+			  *seg, items_count);
-+		goto finish_find_set;
-+	}
-+
-+	fragment_index = ssdfs_segbmap_seg_2_fragment_index(*seg);
-+	if (fragment_index >= fragments_count) {
-+		err = -EFAULT;
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"fragment_index %lu >= fragments_count %u\n",
-+				fragment_index, fragments_count);
-+		goto finish_find_set;
-+	}
-+
-+	err = __ssdfs_segbmap_change_state(segbmap, *seg,
-+					   new_state,
-+					   fragment_index,
-+					   fragment_size);
-+	if (unlikely(err)) {
-+		SSDFS_ERR("fail to reserve segment: err %d\n",
-+			  err);
-+		goto finish_find_set;
-+	}
-+
-+finish_find_set:
-+	up_write(&segbmap->search_lock);
-+
-+finish_search_preparation:
-+	up_read(&segbmap->resize_lock);
-+	inode_unlock_shared(segbmap->fsi->segbmap_inode);
-+
-+#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("finished\n");
-+#endif /* CONFIG_SSDFS_TRACK_API_CALL */
-+
-+	if (unlikely(err))
-+		return err;
-+
-+	return res;
-+}
-+
-+/*
-+ * ssdfs_segbmap_reserve_clean_segment() - reserve clean segment
-+ * @segbmap: pointer on segment bitmap object
-+ * @start: start segment number for search
-+ * @max: upper bound of segment number for search
-+ * @seg: found segment number [out]
-+ * @end: pointer on completion for waiting init ending [out]
-+ *
-+ * This method tries to find clean segment and to reserve it.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-EINVAL     - invalid input.
-+ * %-EAGAIN     - fragment is under initialization yet.
-+ * %-EOPNOTSUPP - operation is not supported.
-+ * %-ENOMEM     - fail to allocate memory.
-+ * %-EFAULT     - segbmap has inconsistent state.
-+ * %-ERANGE     - internal error.
-+ * %-ENODATA    - unable to find segment.
-+ */
-+int ssdfs_segbmap_reserve_clean_segment(struct ssdfs_segment_bmap *segbmap,
-+					u64 start, u64 max,
-+					u64 *seg, struct completion **end)
-+{
-+	u64 items_count;
-+	u16 fragments_count;
-+	u16 fragment_size;
-+	pgoff_t fragment_index;
-+	int err = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!segbmap || !seg);
-+
-+	if (start >= segbmap->items_count) {
-+		SSDFS_ERR("start %llu >= items_count %llu\n",
-+			  start, segbmap->items_count);
-+		return -EINVAL;
-+	}
-+
-+	if (start >= max) {
-+		SSDFS_ERR("start %llu >= max %llu\n",
-+			  start, max);
-+		return -EINVAL;
-+	}
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("segbmap %p, start %llu, max %llu, "
-+		  "seg %p\n",
-+		  segbmap, start, max, seg);
-+#else
-+	SSDFS_DBG("segbmap %p, start %llu, max %llu, "
-+		  "seg %p\n",
-+		  segbmap, start, max, seg);
-+#endif /* CONFIG_SSDFS_TRACK_API_CALL */
-+
-+	*end = NULL;
-+
-+	inode_lock_shared(segbmap->fsi->segbmap_inode);
-+	down_read(&segbmap->resize_lock);
-+
-+	items_count = segbmap->items_count;
-+	fragments_count = segbmap->fragments_count;
-+	fragment_size = segbmap->fragment_size;
-+
-+	if (segbmap->flags & SSDFS_SEGBMAP_ERROR) {
-+		err = -EFAULT;
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"segbmap has corrupted state\n");
-+		goto finish_segment_check;
-+	}
-+
-+	down_write(&segbmap->search_lock);
-+
-+	err = __ssdfs_segbmap_find(segbmap, start, max,
-+				   SSDFS_SEG_CLEAN,
-+				   SSDFS_SEG_CLEAN_STATE_FLAG,
-+				   fragment_size, seg, end);
-+	if (err == -ENODATA) {
-+		SSDFS_DBG("unable to find clean segment\n");
-+		goto finish_reserve_segment;
-+	} else if (err == -EAGAIN) {
-+		SSDFS_DBG("fragment is not initilaized yet\n");
-+		goto finish_reserve_segment;
-+	} else if (unlikely(err < 0)) {
-+		SSDFS_ERR("fail to find clean segment: err %d\n",
-+			  err);
-+		goto finish_reserve_segment;
-+	}
-+
-+	if (*seg >= items_count) {
-+		err = -ERANGE;
-+		SSDFS_ERR("seg %llu >= items_count %llu\n",
-+			  *seg, items_count);
-+		goto finish_reserve_segment;
-+	}
-+
-+	fragment_index = ssdfs_segbmap_seg_2_fragment_index(*seg);
-+	if (fragment_index >= fragments_count) {
-+		err = -EFAULT;
-+		ssdfs_fs_error(segbmap->fsi->sb,
-+				__FILE__, __func__, __LINE__,
-+				"fragment_index %lu >= fragments_count %u\n",
-+				fragment_index, fragments_count);
-+		goto finish_reserve_segment;
-+	}
-+
-+	err = __ssdfs_segbmap_change_state(segbmap, *seg,
-+					   SSDFS_SEG_RESERVED,
-+					   fragment_index,
-+					   fragment_size);
-+	if (unlikely(err)) {
-+		SSDFS_ERR("fail to reserve segment: err %d\n",
-+			  err);
-+		goto finish_reserve_segment;
-+	}
-+
-+finish_reserve_segment:
-+	up_write(&segbmap->search_lock);
-+
-+finish_segment_check:
-+	up_read(&segbmap->resize_lock);
-+	inode_unlock_shared(segbmap->fsi->segbmap_inode);
-+
-+#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("finished: seg %llu, err %d\n", *seg, err);
-+#else
-+	SSDFS_DBG("finished: seg %llu, err %d\n", *seg, err);
-+#endif /* CONFIG_SSDFS_TRACK_API_CALL */
-+
-+	return err;
-+}
++#endif /* _SSDFS_BTREE_SEARCH_H */
 -- 
 2.34.1
 
