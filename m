@@ -2,84 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8888E6A2AF0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Feb 2023 18:05:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34B946A2B3F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Feb 2023 19:11:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229647AbjBYRFT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Feb 2023 12:05:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43440 "EHLO
+        id S229584AbjBYSLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Feb 2023 13:11:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjBYRFS (ORCPT
+        with ESMTP id S229492AbjBYSLj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Feb 2023 12:05:18 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1B7CC0D
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Feb 2023 09:05:17 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id da10so9450380edb.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Feb 2023 09:05:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kxoscNZqMv4xoYF3RLqiGyx1me2ebOAvYSK+OK3ZhoY=;
-        b=c6d6DuQDEwEyWOeU9gj9Xo815A7QOUCOMTCo9jq9Cq5yz6hYmwiLx0c4Fp5B4LKb75
-         o9RKpwNFd3uXOtyXLhbn6NtL3WgoxgV5zyvcMWc3kUhGHYY+jL0lSNw/pHxQbGQj0MuR
-         87uJf9mWtRan435KYLEgINT37dYgLVED/pPO8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kxoscNZqMv4xoYF3RLqiGyx1me2ebOAvYSK+OK3ZhoY=;
-        b=Ents9nAi/IrYxYDCfkikXpUmGlGsE7o6BneFbphxkGGdFWkXZXRSZ787fwZAdfbERe
-         PFvw21mKBzKuIMezBZCVIVIquvU9yzF1s3+Ntpb/9YvaHM2boPC4WMASwIhWOOjtdLEz
-         Sf9OG3dlKe67q318O9nTsgCqlqgw/o/SjjhKSYem17h+x6cNb//xFN9lAD+DTS+aa83U
-         VOwnYvOOL1Xj6ZxMOGKfQVMF1dFHv1kxY9TPBn8pAkMHabQTqCt+KMaYd5BpNvQaqi+O
-         ZXh2J0UPYS4OWo6Qz8MD3BlU7ABjpAwPmJ7qc7Bj3Vbln0catXguyKoutw03W7FhbXCY
-         pLIg==
-X-Gm-Message-State: AO0yUKUQCMsxNwsUUngrpBjjYxd7L9kk9k2UazDhyOUTgsvQXeCFjwg9
-        hV89ipeGQbFwidu7LCPwpalZgWNud2VL9fEBFvvFsw==
-X-Google-Smtp-Source: AK7set+t9wbCirAZ4IA0C7lX4D28qx0YbndHibr34SUyaxoQjAGBxJ0AfQ9uF+28a/td/5sDmVWUHw==
-X-Received: by 2002:aa7:c996:0:b0:4af:593d:9ce5 with SMTP id c22-20020aa7c996000000b004af593d9ce5mr18045754edt.16.1677344715350;
-        Sat, 25 Feb 2023 09:05:15 -0800 (PST)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id m19-20020a509993000000b004af5152751esm1035604edb.83.2023.02.25.09.05.14
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Feb 2023 09:05:14 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id ec43so9343381edb.8
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Feb 2023 09:05:14 -0800 (PST)
-X-Received: by 2002:a05:6402:500b:b0:4ad:739c:b38e with SMTP id
- p11-20020a056402500b00b004ad739cb38emr2500448eda.1.1677344714502; Sat, 25 Feb
- 2023 09:05:14 -0800 (PST)
-MIME-Version: 1.0
-References: <Y/gxyQA+yKJECwyp@ZenIV> <CAHk-=wiPHkYmiFY_O=7MK-vbWtLEiRP90ufugj1H1QFeiLPoVw@mail.gmail.com>
- <Y/mEQUfLqf8m2s/G@ZenIV> <Y/mVP5EsmoCt9NwK@ZenIV>
-In-Reply-To: <Y/mVP5EsmoCt9NwK@ZenIV>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 25 Feb 2023 09:04:57 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgQz8VDDxdaj3rk861Ucjzk72hJoCjZvfaeo8jCyVc_2w@mail.gmail.com>
-Message-ID: <CAHk-=wgQz8VDDxdaj3rk861Ucjzk72hJoCjZvfaeo8jCyVc_2w@mail.gmail.com>
+        Sat, 25 Feb 2023 13:11:39 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27A7A168A8;
+        Sat, 25 Feb 2023 10:11:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VkU3wglkazA3WDdsvY+r6GTOXkswm1z2trXm0IechuI=; b=DjStN73s/52C2aKUHJ/N7u+67C
+        xKVsxbGgc73JqCB9UjmsEXo28HLWtkaadn4Qvw3tfQ17fHwFv4xLIaSY4juqo0jfuluJOSt53Nnm0
+        J8miHKoX3rnhGz3CIFW4q/edegpeos3t2+FOnrUohR5FwZmcES4bSpPnvsdPfTmg8vIyGFPAxJ0WL
+        2xtQTXNuwr45ZB2usatus2AtDy+tzz51O8QNmg4FLoCibIJRsy7SLXCoy3hYICxmMM0rpCnf4hXNF
+        toOagD/u7ZgV18tcTWmTxhdx/qim6JhKTXHpKXqQl9N286vfbTxVVsV64HYFhRv988vdiaujpipbm
+        egPcgAcg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pVz1D-00CHC6-39;
+        Sat, 25 Feb 2023 18:11:36 +0000
+Date:   Sat, 25 Feb 2023 18:11:35 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org
 Subject: Re: [git pull] vfs.git misc bits
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Message-ID: <Y/pPV0q43R+drVtV@ZenIV>
+References: <Y/gxyQA+yKJECwyp@ZenIV>
+ <CAHk-=wiPHkYmiFY_O=7MK-vbWtLEiRP90ufugj1H1QFeiLPoVw@mail.gmail.com>
+ <Y/mEQUfLqf8m2s/G@ZenIV>
+ <Y/mVP5EsmoCt9NwK@ZenIV>
+ <CAHk-=wgQz8VDDxdaj3rk861Ucjzk72hJoCjZvfaeo8jCyVc_2w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgQz8VDDxdaj3rk861Ucjzk72hJoCjZvfaeo8jCyVc_2w@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 24, 2023 at 8:57 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Let's have it sit around for at least a few days, OK?  I mean, I'm pretty
-> certain that these are fixes, but they hadn't been in any public tree -
-> only posted to linux-arch.  At least #fixes gets picked by linux-next...
+On Sat, Feb 25, 2023 at 09:04:57AM -0800, Linus Torvalds wrote:
+> On Fri, Feb 24, 2023 at 8:57 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > Let's have it sit around for at least a few days, OK?  I mean, I'm pretty
+> > certain that these are fixes, but they hadn't been in any public tree -
+> > only posted to linux-arch.  At least #fixes gets picked by linux-next...
+> 
+> Ack, sounds good.
 
-Ack, sounds good.
+... and Intel build-bot had immediately caught a breakage in microblaze.
+Fixed and pushed out; I've checked all architectures affected by
+this series, and that was the only build breakage.  However, I still have
+no way to test it (or anything, for that matter) on microblaze - I've no
+userland images for it.  Status right now:
 
-               Linus
+alpha: bug confirmed, patch fixes it.
+hexagon, m68k, riscv: acked by maintainer (with explicit tested-by for m68k and riscv)
+microblaze, openrisc, nios2: builds, no way for me to test.
+sparc32, sparc64, itanic: builds, preparing to test (itanic - once I resurrect
+the sodding space heater I hadn't tried to boot for a couple of years; no
+idea whether it works).
+parisc: builds, but maintainers say that reproducer doesn't confirm the bug
+in mainline.  I've parisc32 box, will try to resurrect and see what's going
+on.  No way to test parisc64 here - no hardware and qemu/pa-risc doesn't handle
+64bit system emulation.
+
+Incidentally, while digging through the arch code around #PF, something's
+weird on csky.  Not this bug (it's handled correctly there), but...
+looks like vm_get_page_prot(0) returns something that would *not*
+pass pte_present().  Which should make life wonderful for e.g. PROT_READ|PROT_WRITE
+mmap() + memcpy to it + PROT_NONE mprotect() + PROT_READ|PROT_WRITE mprotect().
+
+Unless I'm seriously misunderstanding something, we have 3 mutually exclusive
+cases:
+	absent PTE - no further information in it.  No page at the corresponding
+address range, access will fault and work from scratch; pte_none() is true for those.
+	swap PTE - page had been swapped out, access will fault, the information in
+the entry encodes the location in swap.  is_swap_pte() is true for those.
+	normal page - page is there, access might or might not fault due to permissions,
+PTE contains the page frame number.  pte_present() is true for those.
+
+PROT_NONE should not yield something that looks like a swap entry.  And on csky we
+have
+#define PAGE_NONE       __pgprot(_PAGE_PROT_NONE)
+#define pte_none(pte)           (!(pte_val(pte) & ~_PAGE_GLOBAL))
+#define pte_present(pte)        (pte_val(pte) & _PAGE_PRESENT)
+
+and
+
+arch/csky/abiv1/inc/abi/pgtable-bits.h:26:#define _PAGE_PROT_NONE               _PAGE_READ
+arch/csky/abiv1/inc/abi/pgtable-bits.h:8:#define _PAGE_READ             (1<<1)
+arch/csky/abiv1/inc/abi/pgtable-bits.h:14:#define _PAGE_GLOBAL          (1<<6)
+arch/csky/abiv1/inc/abi/pgtable-bits.h:7:#define _PAGE_PRESENT          (1<<0)
+
+arch/csky/abiv2/inc/abi/pgtable-bits.h:26:#define _PAGE_PROT_NONE               _PAGE_WRITE
+arch/csky/abiv2/inc/abi/pgtable-bits.h:9:#define _PAGE_WRITE            (1<<9)
+arch/csky/abiv2/inc/abi/pgtable-bits.h:14:#define _PAGE_GLOBAL          (1<<0)
+arch/csky/abiv2/inc/abi/pgtable-bits.h:10:#define _PAGE_PRESENT         (1<<10)
+
+IOW, on both ABI variants we have PAGE_NONE looking like a malformed swap entry.
+And is_swap_pte() is simply !pte_none() && !pte_present()...
