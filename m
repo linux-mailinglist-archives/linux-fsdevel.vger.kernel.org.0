@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 535B26A2630
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Feb 2023 02:16:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 552E36A262F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Feb 2023 02:16:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229706AbjBYBQs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Feb 2023 20:16:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48682 "EHLO
+        id S229600AbjBYBQd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Feb 2023 20:16:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229685AbjBYBQ1 (ORCPT
+        with ESMTP id S229683AbjBYBQ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 24 Feb 2023 20:16:27 -0500
-Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEA7312864
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 17:16:07 -0800 (PST)
-Received: by mail-oi1-x235.google.com with SMTP id bl7so858685oib.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 17:16:07 -0800 (PST)
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 940C114EBA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 17:16:09 -0800 (PST)
+Received: by mail-oi1-x22e.google.com with SMTP id bk32so762466oib.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Feb 2023 17:16:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/eI+flnUK3bNkddtmqhNy5+pOxr2iizZbF1weqywGzc=;
-        b=U0/He9X0tTdwHSYp2/QXT6L2aH9QXHHviFoYDBwPpQtcLWCES+fns0nOrLqgSIFh7+
-         A70OD+SspO+L/l4UCya3PJDVV9qCAYemA7MXahQGi8AkHMyQtqhz4OSl/IU5oCG2fGFL
-         nAQGg8lkm3fldOYkGIt6K2WbZzrhx3LZ2wGwtCa6KMnp7yvjUPuy3ct1QVPlHbKIcFRZ
-         xer80X4BXr2JjY2XTAYrtIUNT3sPj+oOJNHRxdod68brqF3Hjgiy+bMXXPEJ7y/Yj3Yh
-         AAUBMOKaz5tJ09qB1dsnlkqmyzY4xNZmHN7Y3+TZgme+cnsVcoDAX9DCXlSdZgTfD0eR
-         4dzg==
+        bh=rEtIMF7jvR+q3tDMJmdQuHQ1cOBS0qnrBNVMhJsDmig=;
+        b=X3iyCXxucZJkxPcK6qbUWCCSdWXilxfoYYOhHnjDhpyQZnGcSHcM0oorbsEYtLvZYo
+         w98l6d1Glgxue/LPAPSuJjd82y1k/d4h/RG1UA+uGzW4S4s8PT/BDiWBYsIHo8HTqC9y
+         q3poXNM7DqQIkgCkj916iQmabEcfghUUlkuYfp0y0IWIuQTfT01KXaA4INy/tXBwpWMg
+         XMHPySWd5lHdJMeOaJnPls71nH5b8Rx0fkTYP4Be2pIg6m6kqeh7XgQDNm9yOP+43COY
+         8eQB7X8DYetYmfMT9ioVm3K/45h3HWkfI5md1rgBjLAI7dagEuGuzRTXgnf6iv0pa6kF
+         ReuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/eI+flnUK3bNkddtmqhNy5+pOxr2iizZbF1weqywGzc=;
-        b=yE1pHQ+l6IxukcQG+rX9MbATsPhClAlJV+MMXPHP/qDLhGp1GrLTZqYcAhPkxs3R8N
-         3sX3kanWbzFhS7KV817G9ybUxrNHDhQNqz8oKI2gtQp6gW0An0itN1VaSyG23oa0SOgy
-         8Sa4OEEv52acgiN+d0N1QQb2SKnGGzUNtuF+v7qbwHCjPb5u+wREaupZWEk+u66zsUZG
-         N5Nu11bOIiITGsv+G5I1zcOs/2jiLwZ0eQk9DxFVpyhorYtjvbhW0s08GrLPGyIBFYAO
-         b+lj6IU6vq1vObQ9eP1/jr4Tzz1Th9rR8typKca3CWnZBcqKwwg3w77/w2JQgeSrCNBx
-         AgVw==
-X-Gm-Message-State: AO0yUKXBHPxWAIQ8BZGkf0fLlk0JhGruhOSJ6BZwoetvi2JvPQENmsN+
-        XQDbq/I4/KNn9NYWxWG5Bsg0YHt0QRageINY
-X-Google-Smtp-Source: AK7set9BOCIPuereytrinA2daM3oM9LMDNbHc2Awp0UaQ0hHU+4p89YBSxy2HcQYpiXJ4CYZNvb/1g==
-X-Received: by 2002:a05:6808:3093:b0:383:9108:5b13 with SMTP id bl19-20020a056808309300b0038391085b13mr990760oib.1.1677287766158;
-        Fri, 24 Feb 2023 17:16:06 -0800 (PST)
+        bh=rEtIMF7jvR+q3tDMJmdQuHQ1cOBS0qnrBNVMhJsDmig=;
+        b=QpdWIos1ArgcLzHSnExejdxI6tC37XoxDJsjYVZIL2dV6sbwLi9wPzDAVLLBHhN9yt
+         Yh0cy9d1dawNBTamWyIPwDlQhUDyG5woQzzwTfGrqti/aNBARWOG7Mz3NCP67P55C2Bn
+         RDHPm3/cQeiKE1yHAxJ7aEGUKr/CQ+D+OCqy3XF9WtC3GCYVGTldWlESwBVUUR7w01kk
+         8JVNfUOuCI/DzVDGGWisDp2FGReGskZ+kzMIwho+aEAUuQw2b8HLi/qjhs4yAynaoNYi
+         wISF0CwSlDQGwQ9Fcv/fs/FKDEGxIl13BHKOg/5JSwn3mtjvNt0XfIJpxHCU1Xm+v9uW
+         YCFg==
+X-Gm-Message-State: AO0yUKX9OiJe/sfnt2TRQkG3koONK/7OW47h/+/Ft6dojXZuySHs6gyN
+        KKe/fAGDDgAIpJV8/WcWjIpnBKH0NpWrtOoH
+X-Google-Smtp-Source: AK7set8LpXTa9elhrOEEehfwu97q7TqRG7UNNY1Ci+sFfztQE+7Ne44MdzV3sNfxsq/nwPHgrdfbjg==
+X-Received: by 2002:a54:4103:0:b0:371:c6e:f45a with SMTP id l3-20020a544103000000b003710c6ef45amr7553995oic.34.1677287768332;
+        Fri, 24 Feb 2023 17:16:08 -0800 (PST)
 Received: from system76-pc.. (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
-        by smtp.gmail.com with ESMTPSA id q3-20020acac003000000b0037d74967ef6sm363483oif.44.2023.02.24.17.16.03
+        by smtp.gmail.com with ESMTPSA id q3-20020acac003000000b0037d74967ef6sm363483oif.44.2023.02.24.17.16.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Feb 2023 17:16:05 -0800 (PST)
+        Fri, 24 Feb 2023 17:16:07 -0800 (PST)
 From:   Viacheslav Dubeyko <slava@dubeyko.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     viacheslav.dubeyko@bytedance.com, luka.perkov@sartura.hr,
         bruno.banelli@sartura.hr, Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [RFC PATCH 15/76] ssdfs: introduce segment block bitmap
-Date:   Fri, 24 Feb 2023 17:08:26 -0800
-Message-Id: <20230225010927.813929-16-slava@dubeyko.com>
+Subject: [RFC PATCH 16/76] ssdfs: introduce segment request queue
+Date:   Fri, 24 Feb 2023 17:08:27 -0800
+Message-Id: <20230225010927.813929-17-slava@dubeyko.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230225010927.813929-1-slava@dubeyko.com>
 References: <20230225010927.813929-1-slava@dubeyko.com>
@@ -71,49 +71,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SSDFS splits a partition/volume on sequence of fixed-sized
-segments. Every segment can include one or several Logical
-Erase Blocks (LEB). LEB can be mapped into "Physical" Erase
-Block (PEB). PEB block bitmap object represents the aggregation
-of source PEB's block bitmap and destination PEB's block bitmap.
-Finally, segment block bitmap implements an array of PEB block
-bitmaps. Segment block bitmap has API:
-(1) create - create segment block bitmap
-(2) destroy - destroy segment block bitmap
-(3) partial_init - initialize by state of one PEB block bitmap
-(4) get_free_pages - get free pages in segment block bitmap
-(5) get_used_pages - get used pages in segment block bitmap
-(6) get_invalid_pages - get invalid pages in segment block bitmap
-(7) reserve_block - reserve a free block
-(8) reserved_extent - reserve some number of free blocks
-(9) pre_allocate - pre_allocate page/range in segment block bitmap
-(10) allocate - allocate page/range in segment block bitmap
-(11) update_range - change the state of range in segment block bitmap
+SSDFS implements a current segment concept. This concept implies
+that current segment object receives requests for adding new data
+or metadata. Also, PEB container object can receive requests for
+update of existing data or metadata. Segment request queue implements
+concept of such add new data or update requests.
+
+Segment request object defines:
+(1) logical extent (inode ID, logical offset from file's beginning
+    in bytes, valid bytes count in request);
+(2) volume extent (segment ID, logical block ID, length in logical
+    blocks);
+(3) request class (read, create, update, and so on);
+(4) request command (read page, create block, update block, and so on);
+(5) request type (synchronous, asynchronous, and so on).
+
+Current segment has create queue and every PEB container object
+has update queue. Caller needs to allocate segment request object,
+initialize it, and add into particular request queue. PEB's
+dedicated thread takes requests from the queue and executes
+requested action.
 
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 CC: Viacheslav Dubeyko <viacheslav.dubeyko@bytedance.com>
 CC: Luka Perkov <luka.perkov@sartura.hr>
 CC: Bruno Banelli <bruno.banelli@sartura.hr>
 ---
- fs/ssdfs/segment_block_bitmap.c | 1425 +++++++++++++++++++++++++++++++
- fs/ssdfs/segment_block_bitmap.h |  205 +++++
- 2 files changed, 1630 insertions(+)
- create mode 100644 fs/ssdfs/segment_block_bitmap.c
- create mode 100644 fs/ssdfs/segment_block_bitmap.h
+ fs/ssdfs/request_queue.c | 1240 ++++++++++++++++++++++++++++++++++++++
+ fs/ssdfs/request_queue.h |  417 +++++++++++++
+ 2 files changed, 1657 insertions(+)
+ create mode 100644 fs/ssdfs/request_queue.c
+ create mode 100644 fs/ssdfs/request_queue.h
 
-diff --git a/fs/ssdfs/segment_block_bitmap.c b/fs/ssdfs/segment_block_bitmap.c
+diff --git a/fs/ssdfs/request_queue.c b/fs/ssdfs/request_queue.c
 new file mode 100644
-index 000000000000..824c3d4fd31d
+index 000000000000..985adfe31bb3
 --- /dev/null
-+++ b/fs/ssdfs/segment_block_bitmap.c
-@@ -0,0 +1,1425 @@
++++ b/fs/ssdfs/request_queue.c
+@@ -0,0 +1,1240 @@
 +// SPDX-License-Identifier: BSD-3-Clause-Clear
 +/*
 + * SSDFS -- SSD-oriented File System.
 + *
-+ * fs/ssdfs/segment_block_bitmap.c - segment's block bitmap implementation.
++ * fs/ssdfs/request_queue.c - request queue implementation.
 + *
-+ * Copyright (c) 2014-2019 HGST, a Western Digital Company.
++ * Copyright (c) 2014-2019, HGST, a Western Digital Company.
 + *              http://www.hgst.com/
 + * Copyright (c) 2014-2023 Viacheslav Dubeyko <slava@dubeyko.com>
 + *              http://www.ssdfs.org/
@@ -128,1421 +130,1236 @@ index 000000000000..824c3d4fd31d
 + *                  Zvonimir Bandic
 + */
 +
-+#include <linux/pagemap.h>
 +#include <linux/slab.h>
 +#include <linux/pagevec.h>
 +
 +#include "peb_mapping_queue.h"
 +#include "peb_mapping_table_cache.h"
 +#include "ssdfs.h"
-+#include "page_vector.h"
-+#include "peb_block_bitmap.h"
-+#include "segment_block_bitmap.h"
++#include "request_queue.h"
++#include "segment_bitmap.h"
 +#include "offset_translation_table.h"
 +#include "page_array.h"
++#include "page_vector.h"
 +#include "peb_container.h"
-+#include "segment_bitmap.h"
-+#include "page_array.h"
 +#include "segment.h"
++#include "btree_search.h"
++#include "btree_node.h"
++#include "btree.h"
++#include "snapshots_tree.h"
 +
 +#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
-+atomic64_t ssdfs_seg_blk_page_leaks;
-+atomic64_t ssdfs_seg_blk_memory_leaks;
-+atomic64_t ssdfs_seg_blk_cache_leaks;
++atomic64_t ssdfs_req_queue_page_leaks;
++atomic64_t ssdfs_req_queue_memory_leaks;
++atomic64_t ssdfs_req_queue_cache_leaks;
 +#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
 +
 +/*
-+ * void ssdfs_seg_blk_cache_leaks_increment(void *kaddr)
-+ * void ssdfs_seg_blk_cache_leaks_decrement(void *kaddr)
-+ * void *ssdfs_seg_blk_kmalloc(size_t size, gfp_t flags)
-+ * void *ssdfs_seg_blk_kzalloc(size_t size, gfp_t flags)
-+ * void *ssdfs_seg_blk_kcalloc(size_t n, size_t size, gfp_t flags)
-+ * void ssdfs_seg_blk_kfree(void *kaddr)
-+ * struct page *ssdfs_seg_blk_alloc_page(gfp_t gfp_mask)
-+ * struct page *ssdfs_seg_blk_add_pagevec_page(struct pagevec *pvec)
-+ * void ssdfs_seg_blk_free_page(struct page *page)
-+ * void ssdfs_seg_blk_pagevec_release(struct pagevec *pvec)
++ * void ssdfs_req_queue_cache_leaks_increment(void *kaddr)
++ * void ssdfs_req_queue_cache_leaks_decrement(void *kaddr)
++ * void *ssdfs_req_queue_kmalloc(size_t size, gfp_t flags)
++ * void *ssdfs_req_queue_kzalloc(size_t size, gfp_t flags)
++ * void *ssdfs_req_queue_kcalloc(size_t n, size_t size, gfp_t flags)
++ * void ssdfs_req_queue_kfree(void *kaddr)
++ * struct page *ssdfs_req_queue_alloc_page(gfp_t gfp_mask)
++ * struct page *ssdfs_req_queue_add_pagevec_page(struct pagevec *pvec)
++ * void ssdfs_req_queue_free_page(struct page *page)
++ * void ssdfs_req_queue_pagevec_release(struct pagevec *pvec)
 + */
 +#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
-+	SSDFS_MEMORY_LEAKS_CHECKER_FNS(seg_blk)
++	SSDFS_MEMORY_LEAKS_CHECKER_FNS(req_queue)
 +#else
-+	SSDFS_MEMORY_ALLOCATOR_FNS(seg_blk)
++	SSDFS_MEMORY_ALLOCATOR_FNS(req_queue)
 +#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
 +
-+void ssdfs_seg_blk_memory_leaks_init(void)
++void ssdfs_req_queue_memory_leaks_init(void)
 +{
 +#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
-+	atomic64_set(&ssdfs_seg_blk_page_leaks, 0);
-+	atomic64_set(&ssdfs_seg_blk_memory_leaks, 0);
-+	atomic64_set(&ssdfs_seg_blk_cache_leaks, 0);
++	atomic64_set(&ssdfs_req_queue_page_leaks, 0);
++	atomic64_set(&ssdfs_req_queue_memory_leaks, 0);
++	atomic64_set(&ssdfs_req_queue_cache_leaks, 0);
 +#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
 +}
 +
-+void ssdfs_seg_blk_check_memory_leaks(void)
++void ssdfs_req_queue_check_memory_leaks(void)
 +{
 +#ifdef CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING
-+	if (atomic64_read(&ssdfs_seg_blk_page_leaks) != 0) {
-+		SSDFS_ERR("SEGMENT BLOCK BITMAP: "
++	if (atomic64_read(&ssdfs_req_queue_page_leaks) != 0) {
++		SSDFS_ERR("REQUESTS QUEUE: "
 +			  "memory leaks include %lld pages\n",
-+			  atomic64_read(&ssdfs_seg_blk_page_leaks));
++			  atomic64_read(&ssdfs_req_queue_page_leaks));
 +	}
 +
-+	if (atomic64_read(&ssdfs_seg_blk_memory_leaks) != 0) {
-+		SSDFS_ERR("SEGMENT BLOCK BITMAP: "
++	if (atomic64_read(&ssdfs_req_queue_memory_leaks) != 0) {
++		SSDFS_ERR("REQUESTS QUEUE: "
 +			  "memory allocator suffers from %lld leaks\n",
-+			  atomic64_read(&ssdfs_seg_blk_memory_leaks));
++			  atomic64_read(&ssdfs_req_queue_memory_leaks));
 +	}
 +
-+	if (atomic64_read(&ssdfs_seg_blk_cache_leaks) != 0) {
-+		SSDFS_ERR("SEGMENT BLOCK BITMAP: "
++	if (atomic64_read(&ssdfs_req_queue_cache_leaks) != 0) {
++		SSDFS_ERR("REQUESTS QUEUE: "
 +			  "caches suffers from %lld leaks\n",
-+			  atomic64_read(&ssdfs_seg_blk_cache_leaks));
++			  atomic64_read(&ssdfs_req_queue_cache_leaks));
 +	}
 +#endif /* CONFIG_SSDFS_MEMORY_LEAKS_ACCOUNTING */
 +}
 +
-+#define SSDFS_SEG_BLK_BMAP_STATE_FNS(value, name)			\
-+static inline								\
-+bool is_seg_block_bmap_##name(struct ssdfs_segment_blk_bmap *bmap)	\
-+{									\
-+	return atomic_read(&bmap->state) == SSDFS_SEG_BLK_BMAP_##value;	\
-+}									\
-+static inline								\
-+void set_seg_block_bmap_##name(struct ssdfs_segment_blk_bmap *bmap)	\
-+{									\
-+	atomic_set(&bmap->state, SSDFS_SEG_BLK_BMAP_##value);		\
-+}									\
++static struct kmem_cache *ssdfs_seg_req_obj_cachep;
 +
-+/*
-+ * is_seg_block_bmap_created()
-+ * set_seg_block_bmap_created()
-+ */
-+SSDFS_SEG_BLK_BMAP_STATE_FNS(CREATED, created)
-+
-+/*
-+ * ssdfs_segment_blk_bmap_create() - create segment block bitmap
-+ * @si: segment object
-+ * @init_flag: definition of block bitmap's creation state
-+ * @init_state: block state is used during initialization
-+ *
-+ * This method tries to create segment block bitmap.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ENOMEM     - unable to allocate memory.
-+ * %-ERANGE     - internal error.
-+ */
-+int ssdfs_segment_blk_bmap_create(struct ssdfs_segment_info *si,
-+				  int init_flag, int init_state)
++void ssdfs_zero_seg_req_obj_cache_ptr(void)
 +{
-+	struct ssdfs_fs_info *fsi;
-+	struct ssdfs_segment_blk_bmap *bmap;
-+	int i;
-+	int err;
++	ssdfs_seg_req_obj_cachep = NULL;
++}
 +
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!si || !si->fsi);
-+#endif /* CONFIG_SSDFS_DEBUG */
++static
++void ssdfs_init_seg_req_object_once(void *obj)
++{
++	struct ssdfs_segment_request *req_obj = obj;
 +
-+#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("si %p, seg_id %llu, "
-+		  "init_flag %#x, init_state %#x\n",
-+		  si, si->seg_id,
-+		  init_flag, init_state);
-+#else
-+	SSDFS_DBG("si %p, seg_id %llu, "
-+		  "init_flag %#x, init_state %#x\n",
-+		  si, si->seg_id,
-+		  init_flag, init_state);
-+#endif /* CONFIG_SSDFS_TRACK_API_CALL */
++	memset(req_obj, 0, sizeof(struct ssdfs_segment_request));
++}
 +
-+	fsi = si->fsi;
-+	bmap = &si->blk_bmap;
++void ssdfs_shrink_seg_req_obj_cache(void)
++{
++	if (ssdfs_seg_req_obj_cachep)
++		kmem_cache_shrink(ssdfs_seg_req_obj_cachep);
++}
 +
-+	bmap->parent_si = si;
-+	atomic_set(&bmap->state, SSDFS_SEG_BLK_BMAP_STATE_UNKNOWN);
++void ssdfs_destroy_seg_req_obj_cache(void)
++{
++	if (ssdfs_seg_req_obj_cachep)
++		kmem_cache_destroy(ssdfs_seg_req_obj_cachep);
++}
 +
-+	bmap->pages_per_peb = fsi->pages_per_peb;
-+	bmap->pages_per_seg = fsi->pages_per_seg;
-+
-+	init_rwsem(&bmap->modification_lock);
-+	atomic_set(&bmap->seg_valid_blks, 0);
-+	atomic_set(&bmap->seg_invalid_blks, 0);
-+	atomic_set(&bmap->seg_free_blks, 0);
-+
-+	bmap->pebs_count = si->pebs_count;
-+
-+	bmap->peb = ssdfs_seg_blk_kcalloc(bmap->pebs_count,
-+				  sizeof(struct ssdfs_peb_blk_bmap),
-+				  GFP_KERNEL);
-+	if (!bmap->peb) {
-+		SSDFS_ERR("fail to allocate PEBs' block bitmaps\n");
++int ssdfs_init_seg_req_obj_cache(void)
++{
++	ssdfs_seg_req_obj_cachep = kmem_cache_create("ssdfs_seg_req_obj_cache",
++					sizeof(struct ssdfs_segment_request), 0,
++					SLAB_RECLAIM_ACCOUNT |
++					SLAB_MEM_SPREAD |
++					SLAB_ACCOUNT,
++					ssdfs_init_seg_req_object_once);
++	if (!ssdfs_seg_req_obj_cachep) {
++		SSDFS_ERR("unable to create segment request objects cache\n");
 +		return -ENOMEM;
 +	}
 +
-+	for (i = 0; i < bmap->pebs_count; i++) {
-+		err = ssdfs_peb_blk_bmap_create(bmap, i, fsi->pages_per_peb,
-+						init_flag, init_state);
-+		if (unlikely(err)) {
-+			SSDFS_ERR("fail to create PEB's block bitmap: "
-+				  "peb_index %u, err %d\n",
-+				  i, err);
-+			goto fail_create_seg_blk_bmap;
-+		}
-+	}
-+
-+	set_seg_block_bmap_created(bmap);
-+
-+#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("finished\n");
-+#else
-+	SSDFS_DBG("finished\n");
-+#endif /* CONFIG_SSDFS_TRACK_API_CALL */
-+
 +	return 0;
-+
-+fail_create_seg_blk_bmap:
-+	ssdfs_segment_blk_bmap_destroy(bmap);
-+	return err;
 +}
 +
 +/*
-+ * ssdfs_segment_blk_bmap_destroy() - destroy segment block bitmap
-+ * @ptr: segment block bitmap pointer
++ * ssdfs_requests_queue_init() - initialize request queue
++ * @rq: initialized request queue
 + */
-+void ssdfs_segment_blk_bmap_destroy(struct ssdfs_segment_blk_bmap *ptr)
++void ssdfs_requests_queue_init(struct ssdfs_requests_queue *rq)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!rq);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	spin_lock_init(&rq->lock);
++	INIT_LIST_HEAD(&rq->list);
++}
++
++/*
++ * is_ssdfs_requests_queue_empty() - check that requests queue is empty
++ * @rq: requests queue
++ */
++bool is_ssdfs_requests_queue_empty(struct ssdfs_requests_queue *rq)
++{
++	bool is_empty;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!rq);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	spin_lock(&rq->lock);
++	is_empty = list_empty_careful(&rq->list);
++	spin_unlock(&rq->lock);
++
++	return is_empty;
++}
++
++/*
++ * ssdfs_requests_queue_add_head() - add request at the head of queue
++ * @rq: requests queue
++ * @req: request
++ */
++void ssdfs_requests_queue_add_head(struct ssdfs_requests_queue *rq,
++				   struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!rq || !req);
++
++	SSDFS_DBG("seg_id %llu, class %#x, cmd %#x\n",
++		  req->place.start.seg_id,
++		  req->private.class,
++		  req->private.cmd);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	spin_lock(&rq->lock);
++	list_add(&req->list, &rq->list);
++	spin_unlock(&rq->lock);
++}
++
++/*
++ * ssdfs_requests_queue_add_head_inc() - add request at the head of queue
++ * @fsi: pointer on shared file system object
++ * @rq: requests queue
++ * @req: request
++ */
++void ssdfs_requests_queue_add_head_inc(struct ssdfs_fs_info *fsi,
++					struct ssdfs_requests_queue *rq,
++					struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!fsi || !rq || !req);
++
++	SSDFS_DBG("seg_id %llu, class %#x, cmd %#x\n",
++		  req->place.start.seg_id,
++		  req->private.class,
++		  req->private.cmd);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	ssdfs_requests_queue_add_head(rq, req);
++	atomic64_inc(&fsi->flush_reqs);
++
++#ifdef CONFIG_SSDFS_DEBUG
++	SSDFS_DBG("flush_reqs %lld\n",
++		  atomic64_read(&fsi->flush_reqs));
++#endif /* CONFIG_SSDFS_DEBUG */
++}
++
++/*
++ * ssdfs_requests_queue_add_tail() - add request at the tail of queue
++ * @rq: requests queue
++ * @req: request
++ */
++void ssdfs_requests_queue_add_tail(struct ssdfs_requests_queue *rq,
++				   struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!rq || !req);
++
++	SSDFS_DBG("seg_id %llu, class %#x, cmd %#x\n",
++		  req->place.start.seg_id,
++		  req->private.class,
++		  req->private.cmd);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	spin_lock(&rq->lock);
++	list_add_tail(&req->list, &rq->list);
++	spin_unlock(&rq->lock);
++}
++
++/*
++ * ssdfs_requests_queue_add_tail_inc() - add request at the tail of queue
++ * @fsi: pointer on shared file system object
++ * @rq: requests queue
++ * @req: request
++ */
++void ssdfs_requests_queue_add_tail_inc(struct ssdfs_fs_info *fsi,
++					struct ssdfs_requests_queue *rq,
++					struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!fsi || !rq || !req);
++
++	SSDFS_DBG("seg_id %llu, class %#x, cmd %#x\n",
++		  req->place.start.seg_id,
++		  req->private.class,
++		  req->private.cmd);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	ssdfs_requests_queue_add_tail(rq, req);
++	atomic64_inc(&fsi->flush_reqs);
++
++#ifdef CONFIG_SSDFS_DEBUG
++	SSDFS_DBG("flush_reqs %lld\n",
++		  atomic64_read(&fsi->flush_reqs));
++#endif /* CONFIG_SSDFS_DEBUG */
++}
++
++/*
++ * is_request_command_valid() - check request's command validity
++ * @class: request's class
++ * @cmd: request's command
++ */
++static inline
++bool is_request_command_valid(int class, int cmd)
++{
++	bool is_valid = false;
++
++	switch (class) {
++	case SSDFS_PEB_READ_REQ:
++		is_valid = cmd > SSDFS_UNKNOWN_CMD &&
++				cmd < SSDFS_READ_CMD_MAX;
++		break;
++
++	case SSDFS_PEB_PRE_ALLOCATE_DATA_REQ:
++	case SSDFS_PEB_CREATE_DATA_REQ:
++	case SSDFS_PEB_PRE_ALLOCATE_LNODE_REQ:
++	case SSDFS_PEB_CREATE_LNODE_REQ:
++	case SSDFS_PEB_PRE_ALLOCATE_HNODE_REQ:
++	case SSDFS_PEB_CREATE_HNODE_REQ:
++	case SSDFS_PEB_PRE_ALLOCATE_IDXNODE_REQ:
++	case SSDFS_PEB_CREATE_IDXNODE_REQ:
++	case SSDFS_ZONE_USER_DATA_MIGRATE_REQ:
++		is_valid = cmd > SSDFS_READ_CMD_MAX &&
++				cmd < SSDFS_CREATE_CMD_MAX;
++		break;
++
++	case SSDFS_PEB_UPDATE_REQ:
++	case SSDFS_PEB_PRE_ALLOC_UPDATE_REQ:
++		is_valid = cmd > SSDFS_CREATE_CMD_MAX &&
++				cmd < SSDFS_UPDATE_CMD_MAX;
++		break;
++
++	case SSDFS_PEB_DIFF_ON_WRITE_REQ:
++		is_valid = cmd > SSDFS_UPDATE_CMD_MAX &&
++				cmd < SSDFS_DIFF_ON_WRITE_MAX;
++		break;
++
++	case SSDFS_PEB_COLLECT_GARBAGE_REQ:
++		is_valid = cmd > SSDFS_DIFF_ON_WRITE_MAX &&
++				cmd < SSDFS_COLLECT_GARBAGE_CMD_MAX;
++		break;
++
++	default:
++		is_valid = false;
++	}
++
++	return is_valid;
++}
++
++/*
++ * ssdfs_requests_queue_remove_first() - get request and remove from queue
++ * @rq: requests queue
++ * @req: first request [out]
++ *
++ * This function get first request in @rq, remove it from queue
++ * and return as @req.
++ *
++ * RETURN:
++ * [success] - @req contains pointer on request.
++ * [failure] - error code:
++ *
++ * %-ENODATA     - queue is empty.
++ * %-ENOENT      - first empty is NULL.
++ */
++int ssdfs_requests_queue_remove_first(struct ssdfs_requests_queue *rq,
++				      struct ssdfs_segment_request **req)
++{
++	bool is_empty;
++	int err = 0;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!rq || !req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	spin_lock(&rq->lock);
++	is_empty = list_empty_careful(&rq->list);
++	if (!is_empty) {
++		*req = list_first_entry_or_null(&rq->list,
++						struct ssdfs_segment_request,
++						list);
++		if (!*req) {
++			SSDFS_WARN("first entry is NULL\n");
++			err = -ENOENT;
++		} else
++			list_del(&(*req)->list);
++	}
++	spin_unlock(&rq->lock);
++
++	if (is_empty) {
++		SSDFS_WARN("requests queue is empty\n");
++		return -ENODATA;
++	} else if (err)
++		return err;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!is_request_command_valid((*req)->private.class,
++					 (*req)->private.cmd));
++	BUG_ON((*req)->private.type >= SSDFS_REQ_TYPE_MAX);
++
++	SSDFS_DBG("seg_id %llu, class %#x, cmd %#x\n",
++		  (*req)->place.start.seg_id,
++		  (*req)->private.class,
++		  (*req)->private.cmd);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	return 0;
++}
++
++/*
++ * ssdfs_requests_queue_remove_all() - remove all requests from queue
++ * @rq: requests queue
++ * @err: error code
++ *
++ * This function removes all requests from the queue.
++ */
++void ssdfs_requests_queue_remove_all(struct ssdfs_requests_queue *rq,
++				     int err)
++{
++	bool is_empty;
++	LIST_HEAD(tmp_list);
++	struct list_head *this, *next;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!rq);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	spin_lock(&rq->lock);
++	is_empty = list_empty_careful(&rq->list);
++	if (!is_empty)
++		list_replace_init(&rq->list, &tmp_list);
++	spin_unlock(&rq->lock);
++
++	if (is_empty)
++		return;
++
++	list_for_each_safe(this, next, &tmp_list) {
++		struct ssdfs_segment_request *req;
++		unsigned int i;
++
++		req = list_entry(this, struct ssdfs_segment_request, list);
++
++		if (!req) {
++			SSDFS_WARN("empty request ptr\n");
++			continue;
++		}
++
++		list_del(&req->list);
++
++		SSDFS_WARN("delete request: "
++			   "class %#x, cmd %#x, type %#x, refs_count %u, "
++			   "seg %llu, extent (start %u, len %u)\n",
++			   req->private.class, req->private.cmd,
++			   req->private.type,
++			   atomic_read(&req->private.refs_count),
++			   req->place.start.seg_id,
++			   req->place.start.blk_index,
++			   req->place.len);
++
++		atomic_set(&req->result.state, SSDFS_REQ_FAILED);
++
++		switch (req->private.type) {
++		case SSDFS_REQ_SYNC:
++			req->result.err = err;
++			complete(&req->result.wait);
++			wake_up_all(&req->private.wait_queue);
++			break;
++
++		case SSDFS_REQ_ASYNC:
++			complete(&req->result.wait);
++			wake_up_all(&req->private.wait_queue);
++
++			for (i = 0; i < pagevec_count(&req->result.pvec); i++) {
++				struct page *page = req->result.pvec.pages[i];
++
++				if (!page) {
++					SSDFS_WARN("empty page ptr: index %u\n", i);
++					continue;
++				}
++
++#ifdef CONFIG_SSDFS_DEBUG
++				WARN_ON(!PageLocked(page));
++#endif /* CONFIG_SSDFS_DEBUG */
++
++				ClearPageUptodate(page);
++				ssdfs_clear_page_private(page, 0);
++				ClearPageMappedToDisk(page);
++				ssdfs_clear_dirty_page(page);
++				ssdfs_unlock_page(page);
++				end_page_writeback(page);
++			}
++
++			ssdfs_put_request(req);
++			ssdfs_request_free(req);
++			break;
++
++		case SSDFS_REQ_ASYNC_NO_FREE:
++			complete(&req->result.wait);
++			wake_up_all(&req->private.wait_queue);
++
++			for (i = 0; i < pagevec_count(&req->result.pvec); i++) {
++				struct page *page = req->result.pvec.pages[i];
++
++				if (!page) {
++					SSDFS_WARN("empty page ptr: index %u\n", i);
++					continue;
++				}
++
++#ifdef CONFIG_SSDFS_DEBUG
++				WARN_ON(!PageLocked(page));
++#endif /* CONFIG_SSDFS_DEBUG */
++
++				ClearPageUptodate(page);
++				ssdfs_clear_page_private(page, 0);
++				ClearPageMappedToDisk(page);
++				ssdfs_clear_dirty_page(page);
++				ssdfs_unlock_page(page);
++				end_page_writeback(page);
++			}
++
++			ssdfs_put_request(req);
++			break;
++
++		default:
++			BUG();
++		};
++	}
++}
++
++/*
++ * ssdfs_request_alloc() - allocate memory for segment request object
++ */
++struct ssdfs_segment_request *ssdfs_request_alloc(void)
++{
++	struct ssdfs_segment_request *ptr;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!ssdfs_seg_req_obj_cachep);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	ptr = kmem_cache_alloc(ssdfs_seg_req_obj_cachep, GFP_KERNEL);
++	if (!ptr) {
++		SSDFS_ERR("fail to allocate memory for request\n");
++		return ERR_PTR(-ENOMEM);
++	}
++
++	ssdfs_req_queue_cache_leaks_increment(ptr);
++
++	return ptr;
++}
++
++/*
++ * ssdfs_request_free() - free memory for segment request object
++ */
++void ssdfs_request_free(struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!ssdfs_seg_req_obj_cachep);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (!req)
++		return;
++
++	ssdfs_req_queue_cache_leaks_decrement(req);
++	kmem_cache_free(ssdfs_seg_req_obj_cachep, req);
++}
++
++/*
++ * ssdfs_request_init() - common request initialization
++ * @req: request [out]
++ */
++void ssdfs_request_init(struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	memset(req, 0, sizeof(struct ssdfs_segment_request));
++
++	INIT_LIST_HEAD(&req->list);
++	atomic_set(&req->private.refs_count, 0);
++	init_waitqueue_head(&req->private.wait_queue);
++	pagevec_init(&req->result.pvec);
++	pagevec_init(&req->result.diffs);
++	atomic_set(&req->result.state, SSDFS_REQ_CREATED);
++	init_completion(&req->result.wait);
++	req->result.err = 0;
++}
++
++/*
++ * ssdfs_get_request() - increment reference counter
++ * @req: request
++ */
++void ssdfs_get_request(struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	WARN_ON(atomic_inc_return(&req->private.refs_count) <= 0);
++}
++
++/*
++ * ssdfs_put_request() - decrement reference counter
++ * @req: request
++ */
++void ssdfs_put_request(struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (atomic_dec_return(&req->private.refs_count) < 0) {
++#ifdef CONFIG_SSDFS_DEBUG
++		SSDFS_DBG("request's reference count %d\n",
++			  atomic_read(&req->private.refs_count));
++#endif /* CONFIG_SSDFS_DEBUG */
++	}
++}
++
++/*
++ * ssdfs_request_add_page() - add memory page into segment request
++ * @page: memory page
++ * @req: segment request [out]
++ */
++int ssdfs_request_add_page(struct page *page,
++			   struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!page || !req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (pagevec_space(&req->result.pvec) == 0) {
++		SSDFS_WARN("request's pagevec is full\n");
++		return -E2BIG;
++	}
++
++	pagevec_add(&req->result.pvec, page);
++	return 0;
++}
++
++/*
++ * ssdfs_request_add_diff_page() - add diff page into segment request
++ * @page: memory page
++ * @req: segment request [out]
++ */
++int ssdfs_request_add_diff_page(struct page *page,
++				struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!page || !req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (pagevec_space(&req->result.diffs) == 0) {
++		SSDFS_WARN("request's pagevec is full\n");
++		return -E2BIG;
++	}
++
++	pagevec_add(&req->result.diffs, page);
++	return 0;
++}
++
++/*
++ * ssdfs_request_allocate_and_add_page() - allocate and add page into request
++ * @req: segment request [out]
++ */
++struct page *
++ssdfs_request_allocate_and_add_page(struct ssdfs_segment_request *req)
++{
++	struct page *page;
++	int err;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++
++	SSDFS_DBG("pagevec count %d\n",
++		  pagevec_count(&req->result.pvec));
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (pagevec_space(&req->result.pvec) == 0) {
++		SSDFS_WARN("request's pagevec is full\n");
++		return ERR_PTR(-E2BIG);
++	}
++
++	page = ssdfs_req_queue_alloc_page(GFP_KERNEL | __GFP_ZERO);
++	if (IS_ERR_OR_NULL(page)) {
++		err = (page == NULL ? -ENOMEM : PTR_ERR(page));
++		SSDFS_ERR("unable to allocate memory page\n");
++		return ERR_PTR(err);
++	}
++
++	pagevec_add(&req->result.pvec, page);
++	return page;
++}
++
++/*
++ * ssdfs_request_allocate_and_add_diff_page() - allocate and add diff page
++ * @req: segment request [out]
++ */
++struct page *
++ssdfs_request_allocate_and_add_diff_page(struct ssdfs_segment_request *req)
++{
++	struct page *page;
++	int err;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++
++	SSDFS_DBG("pagevec count %d\n",
++		  pagevec_count(&req->result.diffs));
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (pagevec_space(&req->result.diffs) == 0) {
++		SSDFS_WARN("request's pagevec is full\n");
++		return ERR_PTR(-E2BIG);
++	}
++
++	page = ssdfs_req_queue_alloc_page(GFP_KERNEL | __GFP_ZERO);
++	if (IS_ERR_OR_NULL(page)) {
++		err = (page == NULL ? -ENOMEM : PTR_ERR(page));
++		SSDFS_ERR("unable to allocate memory page\n");
++		return ERR_PTR(err);
++	}
++
++	pagevec_add(&req->result.diffs, page);
++	return page;
++}
++
++/*
++ * ssdfs_request_allocate_and_add_old_state_page() - allocate+add old state page
++ * @req: segment request [out]
++ */
++struct page *
++ssdfs_request_allocate_and_add_old_state_page(struct ssdfs_segment_request *req)
++{
++	struct page *page;
++	int err;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++
++	SSDFS_DBG("pagevec count %d\n",
++		  pagevec_count(&req->result.old_state));
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (pagevec_space(&req->result.old_state) == 0) {
++		SSDFS_WARN("request's pagevec is full\n");
++		return ERR_PTR(-E2BIG);
++	}
++
++	page = ssdfs_req_queue_alloc_page(GFP_KERNEL | __GFP_ZERO);
++	if (IS_ERR_OR_NULL(page)) {
++		err = (page == NULL ? -ENOMEM : PTR_ERR(page));
++		SSDFS_ERR("unable to allocate memory page\n");
++		return ERR_PTR(err);
++	}
++
++	pagevec_add(&req->result.old_state, page);
++	return page;
++}
++
++/*
++ * ssdfs_request_allocate_locked_page() - allocate and add locked page
++ * @req: segment request [out]
++ * @page_index: index of the page
++ */
++struct page *
++ssdfs_request_allocate_locked_page(struct ssdfs_segment_request *req,
++				   int page_index)
++{
++	struct page *page;
++	int err;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++
++	SSDFS_DBG("pagevec count %d\n",
++		  pagevec_count(&req->result.pvec));
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (pagevec_space(&req->result.pvec) == 0) {
++		SSDFS_WARN("request's pagevec is full\n");
++		return ERR_PTR(-E2BIG);
++	}
++
++	if (page_index >= PAGEVEC_SIZE) {
++		SSDFS_ERR("invalid page index %d\n",
++			  page_index);
++		return ERR_PTR(-EINVAL);
++	}
++
++	page = req->result.pvec.pages[page_index];
++
++	if (page) {
++		SSDFS_ERR("page already exists: index %d\n",
++			  page_index);
++		return ERR_PTR(-EINVAL);
++	}
++
++	page = ssdfs_req_queue_alloc_page(GFP_KERNEL | __GFP_ZERO);
++	if (IS_ERR_OR_NULL(page)) {
++		err = (page == NULL ? -ENOMEM : PTR_ERR(page));
++		SSDFS_ERR("unable to allocate memory page\n");
++		return ERR_PTR(err);
++	}
++
++	req->result.pvec.pages[page_index] = page;
++
++	if ((page_index + 1) > req->result.pvec.nr)
++		req->result.pvec.nr = page_index + 1;
++
++	ssdfs_lock_page(page);
++
++	return page;
++}
++
++/*
++ * ssdfs_request_allocate_locked_diff_page() - allocate locked diff page
++ * @req: segment request [out]
++ * @page_index: index of the page
++ */
++struct page *
++ssdfs_request_allocate_locked_diff_page(struct ssdfs_segment_request *req,
++					int page_index)
++{
++	struct page *page;
++	int err;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++
++	SSDFS_DBG("pagevec count %d\n",
++		  pagevec_count(&req->result.diffs));
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (pagevec_space(&req->result.diffs) == 0) {
++		SSDFS_WARN("request's pagevec is full\n");
++		return ERR_PTR(-E2BIG);
++	}
++
++	if (page_index >= PAGEVEC_SIZE) {
++		SSDFS_ERR("invalid page index %d\n",
++			  page_index);
++		return ERR_PTR(-EINVAL);
++	}
++
++	page = req->result.diffs.pages[page_index];
++
++	if (page) {
++		SSDFS_ERR("page already exists: index %d\n",
++			  page_index);
++		return ERR_PTR(-EINVAL);
++	}
++
++	page = ssdfs_req_queue_alloc_page(GFP_KERNEL | __GFP_ZERO);
++	if (IS_ERR_OR_NULL(page)) {
++		err = (page == NULL ? -ENOMEM : PTR_ERR(page));
++		SSDFS_ERR("unable to allocate memory page\n");
++		return ERR_PTR(err);
++	}
++
++	req->result.diffs.pages[page_index] = page;
++
++	if ((page_index + 1) > req->result.diffs.nr)
++		req->result.diffs.nr = page_index + 1;
++
++	ssdfs_lock_page(page);
++
++	return page;
++}
++
++/*
++ * ssdfs_request_add_allocated_page_locked() - allocate, add and lock page
++ * @req: segment request [out]
++ */
++int ssdfs_request_add_allocated_page_locked(struct ssdfs_segment_request *req)
++{
++	struct page *page;
++	int err;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	page = ssdfs_request_allocate_and_add_page(req);
++	if (IS_ERR_OR_NULL(page)) {
++		err = (page == NULL ? -ENOMEM : PTR_ERR(page));
++		SSDFS_ERR("fail to allocate page: err %d\n",
++			  err);
++		return err;
++	}
++
++	ssdfs_lock_page(page);
++	return 0;
++}
++
++/*
++ * ssdfs_request_add_allocated_diff_locked() - allocate, add and lock page
++ * @req: segment request [out]
++ */
++int ssdfs_request_add_allocated_diff_locked(struct ssdfs_segment_request *req)
++{
++	struct page *page;
++	int err;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	page = ssdfs_request_allocate_and_add_diff_page(req);
++	if (IS_ERR_OR_NULL(page)) {
++		err = (page == NULL ? -ENOMEM : PTR_ERR(page));
++		SSDFS_ERR("fail to allocate page: err %d\n",
++			  err);
++		return err;
++	}
++
++	ssdfs_lock_page(page);
++	return 0;
++}
++
++/*
++ * ssdfs_request_add_old_state_page_locked() - allocate, add and lock page
++ * @req: segment request [out]
++ */
++int ssdfs_request_add_old_state_page_locked(struct ssdfs_segment_request *req)
++{
++	struct page *page;
++	int err;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	page = ssdfs_request_allocate_and_add_old_state_page(req);
++	if (IS_ERR_OR_NULL(page)) {
++		err = (page == NULL ? -ENOMEM : PTR_ERR(page));
++		SSDFS_ERR("fail to allocate page: err %d\n",
++			  err);
++		return err;
++	}
++
++	ssdfs_lock_page(page);
++	return 0;
++}
++
++/*
++ * ssdfs_request_unlock_and_remove_pages() - unlock and remove pages
++ * @req: segment request [out]
++ */
++void ssdfs_request_unlock_and_remove_pages(struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	ssdfs_request_unlock_and_remove_old_state(req);
++	ssdfs_request_unlock_and_remove_update(req);
++	ssdfs_request_unlock_and_remove_diffs(req);
++}
++
++/*
++ * ssdfs_request_unlock_and_remove_update() - unlock and remove update pages
++ * @req: segment request [out]
++ */
++void ssdfs_request_unlock_and_remove_update(struct ssdfs_segment_request *req)
++{
++	unsigned count;
++	int i;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	count = pagevec_count(&req->result.pvec);
++
++#ifdef CONFIG_SSDFS_DEBUG
++	SSDFS_DBG("result: pages count %u\n",
++		  count);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	for (i = 0; i < count; i++) {
++		struct page *page = req->result.pvec.pages[i];
++
++		if (!page) {
++#ifdef CONFIG_SSDFS_DEBUG
++			SSDFS_DBG("page %d is NULL\n", i);
++#endif /* CONFIG_SSDFS_DEBUG */
++			continue;
++		}
++
++		ssdfs_unlock_page(page);
++	}
++
++	ssdfs_req_queue_pagevec_release(&req->result.pvec);
++}
++
++/*
++ * ssdfs_request_unlock_and_remove_diffs() - unlock and remove diffs
++ * @req: segment request [out]
++ */
++void ssdfs_request_unlock_and_remove_diffs(struct ssdfs_segment_request *req)
++{
++	unsigned count;
++	int i;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	count = pagevec_count(&req->result.diffs);
++
++#ifdef CONFIG_SSDFS_DEBUG
++	SSDFS_DBG("diff: pages count %u\n",
++		  count);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	for (i = 0; i < count; i++) {
++		struct page *page = req->result.diffs.pages[i];
++
++		if (!page) {
++#ifdef CONFIG_SSDFS_DEBUG
++			SSDFS_DBG("page %d is NULL\n", i);
++#endif /* CONFIG_SSDFS_DEBUG */
++			continue;
++		}
++
++		ssdfs_unlock_page(page);
++	}
++
++	ssdfs_req_queue_pagevec_release(&req->result.diffs);
++}
++
++/*
++ * ssdfs_request_unlock_and_remove_old_state() - unlock and remove old state
++ * @req: segment request [out]
++ */
++void ssdfs_request_unlock_and_remove_old_state(struct ssdfs_segment_request *req)
++{
++	unsigned count;
++	int i;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	count = pagevec_count(&req->result.old_state);
++
++#ifdef CONFIG_SSDFS_DEBUG
++	SSDFS_DBG("old_state: pages count %u\n",
++		  count);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	for (i = 0; i < count; i++) {
++		struct page *page = req->result.old_state.pages[i];
++
++		if (!page) {
++#ifdef CONFIG_SSDFS_DEBUG
++			SSDFS_DBG("page %d is NULL\n", i);
++#endif /* CONFIG_SSDFS_DEBUG */
++			continue;
++		}
++
++		ssdfs_unlock_page(page);
++	}
++
++	ssdfs_req_queue_pagevec_release(&req->result.old_state);
++}
++
++/*
++ * ssdfs_request_switch_update_on_diff() - switch block update on diff page
++ * @fsi: shared file system info object
++ * @diff_page: page with prepared delta
++ * @req: segment request [out]
++ */
++int ssdfs_request_switch_update_on_diff(struct ssdfs_fs_info *fsi,
++					struct page *diff_page,
++					struct ssdfs_segment_request *req)
++{
++	struct page *page;
++	u32 mem_pages_per_block;
++	int page_index;
++	int i;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!fsi || !req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	mem_pages_per_block = fsi->pagesize / PAGE_SIZE;
++
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(mem_pages_per_block == 0);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	ssdfs_request_unlock_and_remove_old_state(req);
++
++	page_index = req->result.processed_blks * mem_pages_per_block;
++
++	for (i = 0; i < mem_pages_per_block; i++) {
++		page_index += i;
++
++		if (page_index >= pagevec_count(&req->result.pvec)) {
++			SSDFS_ERR("page_index %d >= pvec_size %u\n",
++				  page_index,
++				  pagevec_count(&req->result.pvec));
++			return -ERANGE;
++		}
++
++		page = req->result.pvec.pages[page_index];
++
++#ifdef CONFIG_SSDFS_DEBUG
++		BUG_ON(!page);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++		clear_page_new(page);
++		SetPageUptodate(page);
++		ssdfs_clear_dirty_page(page);
++
++		ssdfs_unlock_page(page);
++		end_page_writeback(page);
++
++		if (!(req->private.flags & SSDFS_REQ_DONT_FREE_PAGES))
++			ssdfs_req_queue_forget_page(page);
++
++		req->result.pvec.pages[page_index] = NULL;
++	}
++
++	page_index = req->result.processed_blks * mem_pages_per_block;
++	set_page_new(diff_page);
++	req->result.pvec.pages[page_index] = diff_page;
++	req->result.diffs.pages[0] = NULL;
++
++	if (pagevec_count(&req->result.diffs) > 1) {
++		SSDFS_WARN("diff pagevec contains several pages %u\n",
++			   pagevec_count(&req->result.diffs));
++		ssdfs_req_queue_pagevec_release(&req->result.diffs);
++	} else
++		pagevec_reinit(&req->result.diffs);
++
++	return 0;
++}
++
++/*
++ * ssdfs_request_unlock_and_remove_page() - unlock and remove page
++ * @req: segment request [in|out]
++ * @page_index: page index
++ */
++void ssdfs_request_unlock_and_remove_page(struct ssdfs_segment_request *req,
++					  int page_index)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	if (page_index >= pagevec_count(&req->result.pvec)) {
++		SSDFS_ERR("page_index %d >= pagevec_count %u\n",
++			  page_index,
++			  pagevec_count(&req->result.pvec));
++		return;
++	}
++
++	if (!req->result.pvec.pages[page_index]) {
++#ifdef CONFIG_SSDFS_DEBUG
++		SSDFS_DBG("page %d is NULL\n", page_index);
++#endif /* CONFIG_SSDFS_DEBUG */
++		return;
++	}
++
++	ssdfs_unlock_page(req->result.pvec.pages[page_index]);
++	ssdfs_req_queue_forget_page(req->result.pvec.pages[page_index]);
++	req->result.pvec.pages[page_index] = NULL;
++}
++
++/*
++ * ssdfs_free_flush_request_pages() - unlock and remove flush request's pages
++ * @req: segment request [out]
++ */
++void ssdfs_free_flush_request_pages(struct ssdfs_segment_request *req)
 +{
 +	int i;
 +
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!ptr);
++	BUG_ON(!req);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+	if (!ptr->parent_si) {
-+		/* object is not created yet */
-+		return;
++	for (i = 0; i < pagevec_count(&req->result.pvec); i++) {
++		struct page *page = req->result.pvec.pages[i];
++		bool need_free_page = false;
++
++		if (!page) {
++#ifdef CONFIG_SSDFS_DEBUG
++			SSDFS_DBG("page %d is NULL\n", i);
++#endif /* CONFIG_SSDFS_DEBUG */
++			continue;
++		}
++
++		if (need_add_block(page)) {
++			clear_page_new(page);
++
++			if (req->private.flags & SSDFS_REQ_PREPARE_DIFF)
++				need_free_page = true;
++		}
++
++		if (PageWriteback(page))
++			end_page_writeback(page);
++		else {
++			SSDFS_WARN("page %d is not under writeback: "
++				   "cmd %#x, type %#x\n",
++				   i, req->private.cmd,
++				   req->private.type);
++		}
++
++		if (PageLocked(page))
++			ssdfs_unlock_page(page);
++		else {
++			SSDFS_WARN("page %d is not locked: "
++				   "cmd %#x, type %#x\n",
++				   i, req->private.cmd,
++				   req->private.type);
++		}
++
++		req->result.pvec.pages[i] = NULL;
++
++		if (need_free_page)
++			ssdfs_req_queue_free_page(page);
++		else if (!(req->private.flags & SSDFS_REQ_DONT_FREE_PAGES))
++			ssdfs_req_queue_free_page(page);
 +	}
 +
-+#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("seg_id %llu, state %#x\n",
-+		  ptr->parent_si->seg_id,
-+		  atomic_read(&ptr->state));
-+#else
-+	SSDFS_DBG("seg_id %llu, state %#x\n",
-+		  ptr->parent_si->seg_id,
-+		  atomic_read(&ptr->state));
-+#endif /* CONFIG_SSDFS_TRACK_API_CALL */
-+
-+	atomic_set(&ptr->seg_valid_blks, 0);
-+	atomic_set(&ptr->seg_invalid_blks, 0);
-+	atomic_set(&ptr->seg_free_blks, 0);
-+
-+	for (i = 0; i < ptr->pebs_count; i++)
-+		ssdfs_peb_blk_bmap_destroy(&ptr->peb[i]);
-+
-+	ssdfs_seg_blk_kfree(ptr->peb);
-+	ptr->peb = NULL;
-+
-+	atomic_set(&ptr->state, SSDFS_SEG_BLK_BMAP_STATE_UNKNOWN);
-+
-+#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("finished\n");
-+#else
-+	SSDFS_DBG("finished\n");
-+#endif /* CONFIG_SSDFS_TRACK_API_CALL */
++	if (req->private.flags & SSDFS_REQ_DONT_FREE_PAGES) {
++		/*
++		 * Do nothing
++		 */
++	} else
++		pagevec_reinit(&req->result.pvec);
 +}
 +
 +/*
-+ * ssdfs_segment_blk_bmap_partial_init() - partial init of segment bitmap
-+ * @bmap: pointer on segment block bitmap
-+ * @peb_index: PEB's index
-+ * @source: pointer on pagevec with bitmap state
-+ * @hdr: header of block bitmap fragment
-+ * @cno: log's checkpoint
++ * ssdfs_peb_extent_length() - determine extent length in pagevec
++ * @si: segment object
++ * @pvec: page vector
 + */
-+int ssdfs_segment_blk_bmap_partial_init(struct ssdfs_segment_blk_bmap *bmap,
-+					u16 peb_index,
-+					struct ssdfs_page_vector *source,
-+					struct ssdfs_block_bitmap_fragment *hdr,
-+					u64 cno)
++u8 ssdfs_peb_extent_length(struct ssdfs_segment_info *si,
++			   struct pagevec *pvec)
 +{
-+	int err = 0;
++	u32 len;
 +
 +#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!bmap || !bmap->peb || !bmap->parent_si);
-+	BUG_ON(!source || !hdr);
-+	BUG_ON(ssdfs_page_vector_count(source) == 0);
++	BUG_ON(!si || !si->fsi || !pvec);
 +#endif /* CONFIG_SSDFS_DEBUG */
 +
-+#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("seg_id %llu, peb_index %u, cno %llu\n",
-+		  bmap->parent_si->seg_id, peb_index, cno);
-+#else
-+	SSDFS_DBG("seg_id %llu, peb_index %u, cno %llu\n",
-+		  bmap->parent_si->seg_id, peb_index, cno);
-+#endif /* CONFIG_SSDFS_TRACK_API_CALL */
-+
-+	if (atomic_read(&bmap->state) != SSDFS_SEG_BLK_BMAP_CREATED) {
-+		SSDFS_ERR("invalid segment block bitmap state %#x\n",
-+			  atomic_read(&bmap->state));
-+		return -ERANGE;
-+	}
-+
-+	if (peb_index >= bmap->pebs_count) {
-+		SSDFS_ERR("peb_index %u >= seg_blkbmap->pebs_count %u\n",
-+			  peb_index, bmap->pebs_count);
-+		return -ERANGE;
-+	}
-+
-+	err = ssdfs_peb_blk_bmap_init(&bmap->peb[peb_index],
-+					source, hdr, cno);
-+
-+#ifdef CONFIG_SSDFS_TRACK_API_CALL
-+	SSDFS_ERR("finished: err %d\n", err);
-+#else
-+	SSDFS_DBG("finished: err %d\n", err);
-+#endif /* CONFIG_SSDFS_TRACK_API_CALL */
-+
-+	return err;
-+}
-+
-+/*
-+ * ssdfs_segment_blk_bmap_init_failed() - process failure of segment bitmap init
-+ * @bmap: pointer on segment block bitmap
-+ * @peb_index: PEB's index
-+ */
-+void ssdfs_segment_blk_bmap_init_failed(struct ssdfs_segment_blk_bmap *bmap,
-+					u16 peb_index)
-+{
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!bmap || !bmap->peb);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (peb_index >= bmap->pebs_count) {
-+		SSDFS_WARN("peb_index %u >= seg_blkbmap->pebs_count %u\n",
-+			  peb_index, bmap->pebs_count);
-+		return;
-+	}
-+
-+	ssdfs_peb_blk_bmap_init_failed(&bmap->peb[peb_index]);
-+}
-+
-+/*
-+ * is_ssdfs_segment_blk_bmap_dirty() - check that PEB block bitmap is dirty
-+ * @bmap: pointer on segment block bitmap
-+ * @peb_index: PEB's index
-+ */
-+bool is_ssdfs_segment_blk_bmap_dirty(struct ssdfs_segment_blk_bmap *bmap,
-+					u16 peb_index)
-+{
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!bmap || !bmap->peb);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (peb_index >= bmap->pebs_count) {
-+		SSDFS_WARN("peb_index %u >= seg_blkbmap->pebs_count %u\n",
-+			  peb_index, bmap->pebs_count);
-+		return false;
-+	}
-+
-+	return is_ssdfs_peb_blk_bmap_dirty(&bmap->peb[peb_index]);
-+}
-+
-+/*
-+ * ssdfs_define_bmap_index() - define block bitmap for operation
-+ * @pebc: pointer on PEB container
-+ * @bmap_index: pointer on block bitmap index value [out]
-+ * @peb_index: pointer on PEB's index [out]
-+ *
-+ * This method tries to define bitmap index and PEB's index
-+ * for operation with block bitmap.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ERANGE     - internal error.
-+ */
-+static
-+int ssdfs_define_bmap_index(struct ssdfs_peb_container *pebc,
-+			    int *bmap_index, u16 *peb_index)
-+{
-+	struct ssdfs_segment_info *si;
-+	int migration_state, items_state;
-+	int err = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!pebc || !pebc->parent_si);
-+	BUG_ON(!bmap_index || !peb_index);
-+	BUG_ON(!rwsem_is_locked(&pebc->lock));
-+	BUG_ON(!mutex_is_locked(&pebc->migration_lock));
-+
-+	SSDFS_DBG("seg_id %llu, peb_index %u\n",
-+		  pebc->parent_si->seg_id,
-+		  pebc->peb_index);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	si = pebc->parent_si;
-+	*bmap_index = -1;
-+	*peb_index = U16_MAX;
-+
-+try_define_bmap_index:
-+	migration_state = atomic_read(&pebc->migration_state);
-+	items_state = atomic_read(&pebc->items_state);
-+	switch (migration_state) {
-+	case SSDFS_PEB_NOT_MIGRATING:
-+		*bmap_index = SSDFS_PEB_BLK_BMAP_SOURCE;
-+#ifdef CONFIG_SSDFS_DEBUG
-+		BUG_ON(!pebc->src_peb);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		*peb_index = pebc->src_peb->peb_index;
-+		break;
-+
-+	case SSDFS_PEB_UNDER_MIGRATION:
-+		switch (items_state) {
-+		case SSDFS_PEB1_DST_CONTAINER:
-+		case SSDFS_PEB2_DST_CONTAINER:
-+		case SSDFS_PEB1_SRC_EXT_PTR_DST_CONTAINER:
-+		case SSDFS_PEB2_SRC_EXT_PTR_DST_CONTAINER:
-+			*bmap_index = SSDFS_PEB_BLK_BMAP_SOURCE;
-+			break;
-+
-+		case SSDFS_PEB1_SRC_PEB2_DST_CONTAINER:
-+		case SSDFS_PEB2_SRC_PEB1_DST_CONTAINER:
-+			switch (atomic_read(&pebc->migration_phase)) {
-+			case SSDFS_SRC_PEB_NOT_EXHAUSTED:
-+				*bmap_index = SSDFS_PEB_BLK_BMAP_SOURCE;
-+				break;
-+
-+			default:
-+				*bmap_index = SSDFS_PEB_BLK_BMAP_DESTINATION;
-+				break;
-+			}
-+			break;
-+
-+		default:
-+			err = -ERANGE;
-+			SSDFS_WARN("invalid items_state %#x\n",
-+				   items_state);
-+			goto finish_define_bmap_index;
-+		};
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+		BUG_ON(!pebc->dst_peb);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		*peb_index = pebc->dst_peb->peb_index;
-+		break;
-+
-+	case SSDFS_PEB_MIGRATION_PREPARATION:
-+	case SSDFS_PEB_RELATION_PREPARATION:
-+	case SSDFS_PEB_FINISHING_MIGRATION:
-+#ifdef CONFIG_SSDFS_DEBUG
-+		/* unexpected situation */
-+		SSDFS_WARN("unexpected situation\n");
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		err = -EAGAIN;
-+		goto finish_define_bmap_index;
-+		break;
-+
-+	default:
-+		err = -ERANGE;
-+		SSDFS_WARN("invalid migration_state %#x\n",
-+			   migration_state);
-+		goto finish_define_bmap_index;
-+	}
-+
-+finish_define_bmap_index:
-+	if (err == -EAGAIN) {
-+		DEFINE_WAIT(wait);
-+
-+		err = 0;
-+
-+		mutex_unlock(&pebc->migration_lock);
-+		up_read(&pebc->lock);
-+		prepare_to_wait(&pebc->migration_wq, &wait,
-+				TASK_UNINTERRUPTIBLE);
-+		schedule();
-+		finish_wait(&pebc->migration_wq, &wait);
-+		down_read(&pebc->lock);
-+		mutex_lock(&pebc->migration_lock);
-+		goto try_define_bmap_index;
-+	} else if (unlikely(err)) {
-+		SSDFS_ERR("fail to define bmap_index: "
-+			  "seg %llu, peb_index %u, err %d\n",
-+			  pebc->parent_si->seg_id,
-+			  pebc->peb_index, err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+bool has_ssdfs_segment_blk_bmap_initialized(struct ssdfs_segment_blk_bmap *ptr,
-+					    struct ssdfs_peb_container *pebc)
-+{
-+	struct ssdfs_peb_blk_bmap *peb_blkbmap;
-+	u16 peb_index;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!ptr || !ptr->peb || !ptr->parent_si || !pebc);
-+
-+	SSDFS_DBG("seg_id %llu, peb_index %u\n",
-+		  ptr->parent_si->seg_id,
-+		  pebc->peb_index);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (atomic_read(&ptr->state) != SSDFS_SEG_BLK_BMAP_CREATED) {
-+		SSDFS_ERR("invalid segment block bitmap state %#x\n",
-+			  atomic_read(&ptr->state));
-+		return false;
-+	}
-+
-+	down_read(&pebc->lock);
-+	if (pebc->dst_peb)
-+		peb_index = pebc->dst_peb->peb_index;
-+	else
-+		peb_index = pebc->src_peb->peb_index;
-+	up_read(&pebc->lock);
-+
-+	if (peb_index >= ptr->pebs_count) {
-+		SSDFS_ERR("peb_index %u >= pebs_count %u\n",
-+			  peb_index, ptr->pebs_count);
-+		return false;
-+	}
-+
-+	peb_blkbmap = &ptr->peb[peb_index];
-+
-+	return has_ssdfs_peb_blk_bmap_initialized(peb_blkbmap);
-+}
-+
-+int ssdfs_segment_blk_bmap_wait_init_end(struct ssdfs_segment_blk_bmap *ptr,
-+					 struct ssdfs_peb_container *pebc)
-+{
-+	struct ssdfs_peb_blk_bmap *peb_blkbmap;
-+	u16 peb_index;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!ptr || !ptr->peb || !ptr->parent_si || !pebc);
-+
-+	SSDFS_DBG("seg_id %llu, peb_index %u\n",
-+		  ptr->parent_si->seg_id,
-+		  pebc->peb_index);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (atomic_read(&ptr->state) != SSDFS_SEG_BLK_BMAP_CREATED) {
-+		SSDFS_ERR("invalid segment block bitmap state %#x\n",
-+			  atomic_read(&ptr->state));
-+		return -ERANGE;
-+	}
-+
-+	down_read(&pebc->lock);
-+	if (pebc->dst_peb)
-+		peb_index = pebc->dst_peb->peb_index;
-+	else
-+		peb_index = pebc->src_peb->peb_index;
-+	up_read(&pebc->lock);
-+
-+	if (peb_index >= ptr->pebs_count) {
-+		SSDFS_ERR("peb_index %u >= pebs_count %u\n",
-+			  peb_index, ptr->pebs_count);
-+		return -ERANGE;
-+	}
-+
-+	peb_blkbmap = &ptr->peb[peb_index];
-+
-+	return ssdfs_peb_blk_bmap_wait_init_end(peb_blkbmap);
-+}
-+
-+/*
-+ * ssdfs_segment_blk_bmap_reserve_metapages() - reserve metapages
-+ * @ptr: segment block bitmap object
-+ * @pebc: pointer on PEB container
-+ * @count: amount of metadata pages for reservation
-+ *
-+ * This method tries to reserve @count metadata pages into
-+ * block bitmap.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ERANGE     - internal error.
-+ */
-+int ssdfs_segment_blk_bmap_reserve_metapages(struct ssdfs_segment_blk_bmap *ptr,
-+					     struct ssdfs_peb_container *pebc,
-+					     u32 count)
-+{
-+	struct ssdfs_peb_blk_bmap *peb_blkbmap;
-+	int bmap_index = SSDFS_PEB_BLK_BMAP_INDEX_MAX;
-+	u16 peb_index;
-+	int err = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!ptr || !ptr->peb || !ptr->parent_si || !pebc);
-+	BUG_ON(!rwsem_is_locked(&pebc->lock));
-+
-+	SSDFS_DBG("seg_id %llu, peb_index %u, count %u\n",
-+		  ptr->parent_si->seg_id,
-+		  pebc->peb_index, count);
-+	SSDFS_DBG("free_logical_blks %d, valid_logical_blks %d, "
-+		  "invalid_logical_blks %d, pages_per_seg %u\n",
-+		  atomic_read(&ptr->seg_free_blks),
-+		  atomic_read(&ptr->seg_valid_blks),
-+		  atomic_read(&ptr->seg_invalid_blks),
-+		  ptr->pages_per_seg);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (atomic_read(&ptr->state) != SSDFS_SEG_BLK_BMAP_CREATED) {
-+		SSDFS_ERR("invalid segment block bitmap state %#x\n",
-+			  atomic_read(&ptr->state));
-+		return -ERANGE;
-+	}
-+
-+	err = ssdfs_define_bmap_index(pebc, &bmap_index, &peb_index);
-+	if (unlikely(err)) {
-+		SSDFS_ERR("fail to define bmap_index: "
-+			  "seg %llu, peb_index %u, err %d\n",
-+			  ptr->parent_si->seg_id,
-+			  pebc->peb_index, err);
-+		return err;
-+	}
-+
-+	if (peb_index >= ptr->pebs_count) {
-+		SSDFS_ERR("peb_index %u >= pebs_count %u\n",
-+			  peb_index, ptr->pebs_count);
-+		return -ERANGE;
-+	}
-+
-+	peb_blkbmap = &ptr->peb[peb_index];
-+
-+	return ssdfs_peb_blk_bmap_reserve_metapages(peb_blkbmap,
-+						    bmap_index,
-+						    count);
-+}
-+
-+/*
-+ * ssdfs_segment_blk_bmap_free_metapages() - free metapages
-+ * @ptr: segment block bitmap object
-+ * @pebc: pointer on PEB container
-+ * @count: amount of metadata pages for freeing
-+ *
-+ * This method tries to free @count metadata pages into
-+ * block bitmap.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ERANGE     - internal error.
-+ */
-+int ssdfs_segment_blk_bmap_free_metapages(struct ssdfs_segment_blk_bmap *ptr,
-+					  struct ssdfs_peb_container *pebc,
-+					  u32 count)
-+{
-+	struct ssdfs_peb_blk_bmap *peb_blkbmap;
-+	int bmap_index = SSDFS_PEB_BLK_BMAP_INDEX_MAX;
-+	u16 peb_index;
-+	int err = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!ptr || !ptr->peb || !ptr->parent_si || !pebc);
-+	BUG_ON(!rwsem_is_locked(&pebc->lock));
-+
-+	SSDFS_DBG("seg_id %llu, peb_index %u, count %u\n",
-+		  ptr->parent_si->seg_id,
-+		  pebc->peb_index, count);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (atomic_read(&ptr->state) != SSDFS_SEG_BLK_BMAP_CREATED) {
-+		SSDFS_ERR("invalid segment block bitmap state %#x\n",
-+			  atomic_read(&ptr->state));
-+		return -ERANGE;
-+	}
-+
-+	err = ssdfs_define_bmap_index(pebc, &bmap_index, &peb_index);
-+	if (unlikely(err)) {
-+		SSDFS_ERR("fail to define bmap_index: "
-+			  "seg %llu, peb_index %u, err %d\n",
-+			  ptr->parent_si->seg_id,
-+			  pebc->peb_index, err);
-+		return err;
-+	}
-+
-+	if (peb_index >= ptr->pebs_count) {
-+		SSDFS_ERR("peb_index %u >= pebs_count %u\n",
-+			  peb_index, ptr->pebs_count);
-+		return -ERANGE;
-+	}
-+
-+	peb_blkbmap = &ptr->peb[peb_index];
-+
-+	return ssdfs_peb_blk_bmap_free_metapages(peb_blkbmap,
-+						 bmap_index,
-+						 count);
-+}
-+
-+/*
-+ * ssdfs_segment_blk_bmap_reserve_extent() - reserve free extent
-+ * @ptr: segment block bitmap object
-+ * @count: number of logical blocks
-+ *
-+ * This function tries to reserve some number of free blocks.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ERANGE     - internal error.
-+ * %-E2BIG      - segment hasn't enough free space.
-+ */
-+int ssdfs_segment_blk_bmap_reserve_extent(struct ssdfs_segment_blk_bmap *ptr,
-+					  u32 count)
-+{
-+	struct ssdfs_fs_info *fsi;
-+	struct ssdfs_segment_info *si;
-+	int free_blks;
-+	int err = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!ptr || !ptr->peb || !ptr->parent_si);
-+
-+	SSDFS_DBG("seg_id %llu\n",
-+		  ptr->parent_si->seg_id);
-+	SSDFS_DBG("BEFORE: free_logical_blks %d, valid_logical_blks %d, "
-+		  "invalid_logical_blks %d, pages_per_seg %u\n",
-+		  atomic_read(&ptr->seg_free_blks),
-+		  atomic_read(&ptr->seg_valid_blks),
-+		  atomic_read(&ptr->seg_invalid_blks),
-+		  ptr->pages_per_seg);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (atomic_read(&ptr->state) != SSDFS_SEG_BLK_BMAP_CREATED) {
-+		SSDFS_ERR("invalid segment block bitmap state %#x\n",
-+			  atomic_read(&ptr->state));
-+		return -ERANGE;
-+	}
-+
-+	down_read(&ptr->modification_lock);
-+
-+	free_blks = atomic_read(&ptr->seg_free_blks);
-+
-+	if (free_blks < count) {
-+		err = -E2BIG;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("segment %llu hasn't enough free pages: "
-+			  "free_pages %u, requested_pages %u\n",
-+			  ptr->parent_si->seg_id, free_blks, count);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+		atomic_set(&ptr->seg_free_blks, 0);
++	if (si->fsi->pagesize < PAGE_SIZE) {
++		BUG_ON(PAGE_SIZE % si->fsi->pagesize);
++		len = PAGE_SIZE / si->fsi->pagesize;
++		len *= pagevec_count(pvec);
++		BUG_ON(len == 0);
 +	} else {
-+		atomic_sub(count, &ptr->seg_free_blks);
++		len = pagevec_count(pvec) * PAGE_SIZE;
++		BUG_ON(len == 0);
++		BUG_ON(len % si->fsi->pagesize);
++		len = si->fsi->pagesize / len;
++		BUG_ON(len == 0);
 +	}
 +
-+	up_read(&ptr->modification_lock);
-+
-+	if (err)
-+		goto finish_reserve_extent;
-+
-+	si = ptr->parent_si;
-+	fsi = si->fsi;
-+
-+	if (si->seg_type == SSDFS_USER_DATA_SEG_TYPE) {
-+		u64 reserved = 0;
-+		u32 pending = 0;
-+
-+		spin_lock(&fsi->volume_state_lock);
-+		reserved = fsi->reserved_new_user_data_pages;
-+		if (fsi->reserved_new_user_data_pages >= count) {
-+			fsi->reserved_new_user_data_pages -= count;
-+		} else
-+			err = -ERANGE;
-+		spin_unlock(&fsi->volume_state_lock);
-+
-+		if (err) {
-+			SSDFS_ERR("count %u is bigger than reserved %llu\n",
-+				  count, reserved);
-+			goto finish_reserve_extent;
-+		}
-+
-+		spin_lock(&si->pending_lock);
-+		si->pending_new_user_data_pages += count;
-+		pending = si->pending_new_user_data_pages;
-+		spin_unlock(&si->pending_lock);
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+		SSDFS_DBG("seg_id %llu, pending %u\n",
-+			  si->seg_id, pending);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+	}
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	SSDFS_DBG("AFTER: free_logical_blks %d, valid_logical_blks %d, "
-+		  "invalid_logical_blks %d, pages_per_seg %u\n",
-+		  atomic_read(&ptr->seg_free_blks),
-+		  atomic_read(&ptr->seg_valid_blks),
-+		  atomic_read(&ptr->seg_invalid_blks),
-+		  ptr->pages_per_seg);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+finish_reserve_extent:
-+	return err;
++	BUG_ON(len >= U8_MAX);
++	return (u8)len;
 +}
-+
-+/*
-+ * ssdfs_segment_blk_bmap_reserve_block() - reserve free block
-+ * @ptr: segment block bitmap object
-+ * @count: number of logical blocks
-+ *
-+ * This function tries to reserve a free block.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ERANGE     - internal error.
-+ * %-E2BIG      - segment hasn't enough free space.
-+ */
-+int ssdfs_segment_blk_bmap_reserve_block(struct ssdfs_segment_blk_bmap *ptr)
-+{
-+	return ssdfs_segment_blk_bmap_reserve_extent(ptr, 1);
-+}
-+
-+/*
-+ * ssdfs_segment_blk_bmap_pre_allocate() - pre-allocate range of blocks
-+ * @ptr: segment block bitmap object
-+ * @pebc: pointer on PEB container
-+ * @len: pointer on variable with requested length of range
-+ * @range: pointer on blocks' range [in | out]
-+ *
-+ * This function tries to find contiguous range of free blocks and
-+ * to set the found range in pre-allocated state.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ERANGE     - internal error.
-+ */
-+int ssdfs_segment_blk_bmap_pre_allocate(struct ssdfs_segment_blk_bmap *ptr,
-+					struct ssdfs_peb_container *pebc,
-+					u32 *len,
-+					struct ssdfs_block_bmap_range *range)
-+{
-+	struct ssdfs_peb_blk_bmap *peb_blkbmap;
-+	int bmap_index = SSDFS_PEB_BLK_BMAP_INDEX_MAX;
-+	u16 peb_index;
-+	int err = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!ptr || !ptr->peb || !ptr->parent_si || !pebc);
-+	BUG_ON(!rwsem_is_locked(&pebc->lock));
-+
-+	SSDFS_DBG("seg_id %llu, peb_index %u\n",
-+		  ptr->parent_si->seg_id,
-+		  pebc->peb_index);
-+	SSDFS_DBG("free_logical_blks %d, valid_logical_blks %d, "
-+		  "invalid_logical_blks %d, pages_per_seg %u\n",
-+		  atomic_read(&ptr->seg_free_blks),
-+		  atomic_read(&ptr->seg_valid_blks),
-+		  atomic_read(&ptr->seg_invalid_blks),
-+		  ptr->pages_per_seg);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (atomic_read(&ptr->state) != SSDFS_SEG_BLK_BMAP_CREATED) {
-+		SSDFS_ERR("invalid segment block bitmap state %#x\n",
-+			  atomic_read(&ptr->state));
-+		return -ERANGE;
-+	}
-+
-+	err = ssdfs_define_bmap_index(pebc, &bmap_index, &peb_index);
-+	if (unlikely(err)) {
-+		SSDFS_ERR("fail to define bmap_index: "
-+			  "seg %llu, peb_index %u, err %d\n",
-+			  ptr->parent_si->seg_id,
-+			  pebc->peb_index, err);
-+		return err;
-+	}
-+
-+	if (peb_index >= ptr->pebs_count) {
-+		SSDFS_ERR("peb_index %u >= pebs_count %u\n",
-+			  peb_index, ptr->pebs_count);
-+		return -ERANGE;
-+	}
-+
-+	peb_blkbmap = &ptr->peb[peb_index];
-+
-+	return ssdfs_peb_blk_bmap_pre_allocate(peb_blkbmap, bmap_index,
-+						len, range);
-+}
-+
-+/*
-+ * ssdfs_segment_blk_bmap_allocate() - allocate range of blocks
-+ * @ptr: segment block bitmap object
-+ * @pebc: pointer on PEB container
-+ * @len: pointer on variable with requested length of range
-+ * @range: pointer on blocks' range [in | out]
-+ *
-+ * This function tries to find contiguous range of free blocks and
-+ * to set the found range in allocated state.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ERANGE     - internal error.
-+ */
-+int ssdfs_segment_blk_bmap_allocate(struct ssdfs_segment_blk_bmap *ptr,
-+				    struct ssdfs_peb_container *pebc,
-+				    u32 *len,
-+				    struct ssdfs_block_bmap_range *range)
-+{
-+	struct ssdfs_peb_blk_bmap *peb_blkbmap;
-+	int bmap_index = SSDFS_PEB_BLK_BMAP_INDEX_MAX;
-+	u16 peb_index;
-+	int err = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!ptr || !ptr->peb || !ptr->parent_si || !pebc);
-+	BUG_ON(!rwsem_is_locked(&pebc->lock));
-+
-+	SSDFS_DBG("seg_id %llu, peb_index %u\n",
-+		  ptr->parent_si->seg_id,
-+		  pebc->peb_index);
-+	SSDFS_DBG("free_logical_blks %d, valid_logical_blks %d, "
-+		  "invalid_logical_blks %d, pages_per_seg %u\n",
-+		  atomic_read(&ptr->seg_free_blks),
-+		  atomic_read(&ptr->seg_valid_blks),
-+		  atomic_read(&ptr->seg_invalid_blks),
-+		  ptr->pages_per_seg);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (atomic_read(&ptr->state) != SSDFS_SEG_BLK_BMAP_CREATED) {
-+		SSDFS_ERR("invalid segment block bitmap state %#x\n",
-+			  atomic_read(&ptr->state));
-+		return -ERANGE;
-+	}
-+
-+	err = ssdfs_define_bmap_index(pebc, &bmap_index, &peb_index);
-+	if (unlikely(err)) {
-+		SSDFS_ERR("fail to define bmap_index: "
-+			  "seg %llu, peb_index %u, err %d\n",
-+			  ptr->parent_si->seg_id,
-+			  pebc->peb_index, err);
-+		return err;
-+	}
-+
-+	if (peb_index >= ptr->pebs_count) {
-+		SSDFS_ERR("peb_index %u >= pebs_count %u\n",
-+			  peb_index, ptr->pebs_count);
-+		return -ERANGE;
-+	}
-+
-+	peb_blkbmap = &ptr->peb[peb_index];
-+
-+	return ssdfs_peb_blk_bmap_allocate(peb_blkbmap, bmap_index,
-+					   len, range);
-+}
-+
-+/*
-+ * ssdfs_segment_blk_bmap_update_range() - update range of blocks' state
-+ * @ptr: segment block bitmap object
-+ * @pebc: pointer on PEB container
-+ * @peb_migration_id: migration_id of PEB
-+ * @range_state: new state of range
-+ * @range: pointer on blocks' range [in | out]
-+ *
-+ * This function tries to change state of @range.
-+ *
-+ * RETURN:
-+ * [success]
-+ * [failure] - error code:
-+ *
-+ * %-ERANGE     - internal error.
-+ */
-+int ssdfs_segment_blk_bmap_update_range(struct ssdfs_segment_blk_bmap *bmap,
-+				    struct ssdfs_peb_container *pebc,
-+				    u8 peb_migration_id,
-+				    int range_state,
-+				    struct ssdfs_block_bmap_range *range)
-+{
-+	struct ssdfs_segment_info *si;
-+	struct ssdfs_peb_container *dst_pebc;
-+	struct ssdfs_peb_blk_bmap *dst_blkbmap;
-+	int bmap_index = SSDFS_PEB_BLK_BMAP_INDEX_MAX;
-+	u16 peb_index;
-+	int migration_state, migration_phase, items_state;
-+	bool need_migrate = false;
-+	bool need_move = false;
-+	int src_migration_id = -1, dst_migration_id = -1;
-+	int err = 0;
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(!bmap || !bmap->peb || !bmap->parent_si);
-+	BUG_ON(!pebc || !range);
-+	BUG_ON(!rwsem_is_locked(&pebc->lock));
-+	BUG_ON(!mutex_is_locked(&pebc->migration_lock));
-+
-+	SSDFS_DBG("seg_id %llu, peb_index %u, peb_migration_id %u, "
-+		  "range (start %u, len %u)\n",
-+		  bmap->parent_si->seg_id, pebc->peb_index,
-+		  peb_migration_id, range->start, range->len);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	si = pebc->parent_si;
-+
-+try_define_bmap_index:
-+	migration_state = atomic_read(&pebc->migration_state);
-+	migration_phase = atomic_read(&pebc->migration_phase);
-+	items_state = atomic_read(&pebc->items_state);
-+	switch (migration_state) {
-+	case SSDFS_PEB_NOT_MIGRATING:
-+		need_migrate = false;
-+		need_move = false;
-+		bmap_index = SSDFS_PEB_BLK_BMAP_SOURCE;
-+#ifdef CONFIG_SSDFS_DEBUG
-+		BUG_ON(!pebc->src_peb);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+		src_migration_id =
-+			ssdfs_get_peb_migration_id_checked(pebc->src_peb);
-+		if (unlikely(src_migration_id < 0)) {
-+			err = src_migration_id;
-+			SSDFS_ERR("invalid peb_migration_id: "
-+				  "err %d\n",
-+				  err);
-+			goto finish_define_bmap_index;
-+		}
-+
-+		if (peb_migration_id > src_migration_id) {
-+			err = -ERANGE;
-+			SSDFS_ERR("migration_id %u > src_migration_id %u\n",
-+				  peb_migration_id,
-+				  src_migration_id);
-+			goto finish_define_bmap_index;
-+		}
-+		peb_index = pebc->src_peb->peb_index;
-+		break;
-+
-+	case SSDFS_PEB_UNDER_MIGRATION:
-+		switch (items_state) {
-+		case SSDFS_PEB1_DST_CONTAINER:
-+		case SSDFS_PEB2_DST_CONTAINER:
-+			need_migrate = false;
-+			need_move = false;
-+			bmap_index = SSDFS_PEB_BLK_BMAP_SOURCE;
-+#ifdef CONFIG_SSDFS_DEBUG
-+			BUG_ON(!pebc->dst_peb);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+			dst_migration_id =
-+			    ssdfs_get_peb_migration_id_checked(pebc->dst_peb);
-+			if (unlikely(dst_migration_id < 0)) {
-+				err = dst_migration_id;
-+				SSDFS_ERR("invalid peb_migration_id: "
-+					  "err %d\n",
-+					  err);
-+				goto finish_define_bmap_index;
-+			}
-+
-+			if (peb_migration_id != dst_migration_id) {
-+				err = -ERANGE;
-+				SSDFS_ERR("migration_id %u != "
-+					  "dst_migration_id %u\n",
-+					  peb_migration_id,
-+					  dst_migration_id);
-+				goto finish_define_bmap_index;
-+			}
-+			peb_index = pebc->dst_peb->peb_index;
-+			break;
-+
-+		case SSDFS_PEB1_SRC_EXT_PTR_DST_CONTAINER:
-+		case SSDFS_PEB2_SRC_EXT_PTR_DST_CONTAINER:
-+#ifdef CONFIG_SSDFS_DEBUG
-+			BUG_ON(!pebc->src_peb || !pebc->dst_peb);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+			src_migration_id =
-+			    ssdfs_get_peb_migration_id_checked(pebc->src_peb);
-+			if (unlikely(src_migration_id < 0)) {
-+				err = src_migration_id;
-+				SSDFS_ERR("invalid peb_migration_id: "
-+					  "err %d\n",
-+					  err);
-+				goto finish_define_bmap_index;
-+			}
-+
-+			dst_migration_id =
-+			    ssdfs_get_peb_migration_id_checked(pebc->dst_peb);
-+			if (unlikely(dst_migration_id < 0)) {
-+				err = dst_migration_id;
-+				SSDFS_ERR("invalid peb_migration_id: "
-+					  "err %d\n",
-+					  err);
-+				goto finish_define_bmap_index;
-+			}
-+
-+			if (src_migration_id == dst_migration_id) {
-+				err = -ERANGE;
-+				SSDFS_ERR("src_migration_id %u == "
-+					  "dst_migration_id %u\n",
-+					  src_migration_id,
-+					  dst_migration_id);
-+				goto finish_define_bmap_index;
-+			}
-+
-+			if (peb_migration_id == src_migration_id) {
-+				int state;
-+
-+				need_migrate = true;
-+				need_move = false;
-+
-+				dst_pebc = pebc->dst_peb->pebc;
-+				state = atomic_read(&dst_pebc->items_state);
-+				switch (state) {
-+				case SSDFS_PEB1_DST_CONTAINER:
-+				case SSDFS_PEB2_DST_CONTAINER:
-+					bmap_index = SSDFS_PEB_BLK_BMAP_SOURCE;
-+					break;
-+
-+				case SSDFS_PEB1_SRC_PEB2_DST_CONTAINER:
-+				case SSDFS_PEB2_SRC_PEB1_DST_CONTAINER:
-+					bmap_index =
-+					    SSDFS_PEB_BLK_BMAP_DESTINATION;
-+					break;
-+
-+				default:
-+					BUG();
-+				}
-+
-+				peb_index = U16_MAX;
-+			} else if (peb_migration_id == dst_migration_id) {
-+				err = -ERANGE;
-+				SSDFS_WARN("invalid request: "
-+					   "peb_migration_id %u, "
-+					   "dst_migration_id %u\n",
-+					   peb_migration_id,
-+					   dst_migration_id);
-+				goto finish_define_bmap_index;
-+			} else {
-+				err = -ERANGE;
-+				SSDFS_ERR("fail to select PEB: "
-+					  "peb_migration_id %u, "
-+					  "src_migration_id %u, "
-+					  "dst_migration_id %u\n",
-+					  peb_migration_id,
-+					  src_migration_id,
-+					  dst_migration_id);
-+				goto finish_define_bmap_index;
-+			}
-+			break;
-+
-+		case SSDFS_PEB1_SRC_PEB2_DST_CONTAINER:
-+		case SSDFS_PEB2_SRC_PEB1_DST_CONTAINER:
-+#ifdef CONFIG_SSDFS_DEBUG
-+			BUG_ON(!pebc->src_peb || !pebc->dst_peb);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+			src_migration_id =
-+			    ssdfs_get_peb_migration_id_checked(pebc->src_peb);
-+			if (unlikely(src_migration_id < 0)) {
-+				err = src_migration_id;
-+				SSDFS_ERR("invalid peb_migration_id: "
-+					  "err %d\n",
-+					  err);
-+				goto finish_define_bmap_index;
-+			}
-+
-+			dst_migration_id =
-+			    ssdfs_get_peb_migration_id_checked(pebc->dst_peb);
-+			if (unlikely(dst_migration_id < 0)) {
-+				err = dst_migration_id;
-+				SSDFS_ERR("invalid peb_migration_id: "
-+					  "err %d\n",
-+					  err);
-+				goto finish_define_bmap_index;
-+			}
-+
-+			if (src_migration_id == dst_migration_id) {
-+				err = -ERANGE;
-+				SSDFS_ERR("src_migration_id %u == "
-+					  "dst_migration_id %u\n",
-+					  src_migration_id,
-+					  dst_migration_id);
-+				goto finish_define_bmap_index;
-+			}
-+
-+			if (peb_migration_id == src_migration_id) {
-+				switch (migration_phase) {
-+				case SSDFS_SRC_PEB_NOT_EXHAUSTED:
-+					need_migrate = false;
-+					need_move = false;
-+					bmap_index =
-+						SSDFS_PEB_BLK_BMAP_SOURCE;
-+					peb_index = pebc->src_peb->peb_index;
-+					break;
-+
-+				default:
-+					need_migrate = true;
-+					need_move = false;
-+					bmap_index =
-+						SSDFS_PEB_BLK_BMAP_INDEX_MAX;
-+					peb_index = pebc->src_peb->peb_index;
-+					break;
-+				}
-+			} else if (peb_migration_id == dst_migration_id) {
-+				need_migrate = false;
-+				need_move = false;
-+				bmap_index = SSDFS_PEB_BLK_BMAP_DESTINATION;
-+				peb_index = pebc->dst_peb->peb_index;
-+			} else if ((peb_migration_id + 1) == src_migration_id) {
-+				switch (migration_phase) {
-+				case SSDFS_SRC_PEB_NOT_EXHAUSTED:
-+					need_migrate = false;
-+					need_move = false;
-+					bmap_index =
-+						SSDFS_PEB_BLK_BMAP_SOURCE;
-+					peb_index = pebc->src_peb->peb_index;
-+					break;
-+
-+				default:
-+					need_migrate = false;
-+					need_move = true;
-+					bmap_index =
-+					    SSDFS_PEB_BLK_BMAP_DESTINATION;
-+					peb_index = pebc->dst_peb->peb_index;
-+					break;
-+				}
-+			} else {
-+				err = -ERANGE;
-+				SSDFS_ERR("fail to select PEB: "
-+					  "peb_migration_id %u, "
-+					  "src_migration_id %u, "
-+					  "dst_migration_id %u\n",
-+					  peb_migration_id,
-+					  src_migration_id,
-+					  dst_migration_id);
-+				goto finish_define_bmap_index;
-+			}
-+			break;
-+
-+		default:
-+			err = -ERANGE;
-+			SSDFS_WARN("invalid items_state %#x\n",
-+				   items_state);
-+			goto finish_define_bmap_index;
-+		};
-+		break;
-+
-+	case SSDFS_PEB_MIGRATION_PREPARATION:
-+	case SSDFS_PEB_RELATION_PREPARATION:
-+	case SSDFS_PEB_FINISHING_MIGRATION:
-+#ifdef CONFIG_SSDFS_DEBUG
-+		/* unexpected situation */
-+		SSDFS_WARN("unexpected situation\n");
-+#endif /* CONFIG_SSDFS_DEBUG */
-+		err = -EAGAIN;
-+		goto finish_define_bmap_index;
-+		break;
-+
-+	default:
-+		err = -ERANGE;
-+		SSDFS_WARN("invalid migration_state %#x\n",
-+			   migration_state);
-+		goto finish_define_bmap_index;
-+	}
-+
-+finish_define_bmap_index:
-+	if (err == -EAGAIN) {
-+		DEFINE_WAIT(wait);
-+
-+		err = 0;
-+		mutex_unlock(&pebc->migration_lock);
-+		up_read(&pebc->lock);
-+		prepare_to_wait(&pebc->migration_wq, &wait,
-+				TASK_UNINTERRUPTIBLE);
-+		schedule();
-+		finish_wait(&pebc->migration_wq, &wait);
-+		down_read(&pebc->lock);
-+		mutex_lock(&pebc->migration_lock);
-+		goto try_define_bmap_index;
-+	} else if (unlikely(err)) {
-+		SSDFS_ERR("fail to define bmap_index: "
-+			  "seg %llu, peb_index %u, err %d\n",
-+			  pebc->parent_si->seg_id,
-+			  pebc->peb_index, err);
-+		return err;
-+	}
-+
-+#ifdef CONFIG_SSDFS_DEBUG
-+	BUG_ON(need_migrate && need_move);
-+
-+	SSDFS_DBG("seg_id %llu, migration_state %#x, items_state %#x, "
-+		  "peb_migration_id %u, src_migration_id %d, "
-+		  "dst_migration_id %d, migration_phase %#x\n",
-+		  si->seg_id, migration_state, items_state,
-+		  peb_migration_id, src_migration_id,
-+		  dst_migration_id, migration_phase);
-+	SSDFS_DBG("seg_id %llu, need_migrate %#x, need_move %#x\n",
-+		  si->seg_id, need_migrate, need_move);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+	if (need_migrate) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		BUG_ON(peb_index >= U16_MAX);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+		if (peb_index >= bmap->pebs_count) {
-+			SSDFS_ERR("peb_index %u >= pebs_count %u\n",
-+				  peb_index, bmap->pebs_count);
-+			return -ERANGE;
-+		}
-+
-+		dst_blkbmap = &bmap->peb[peb_index];
-+
-+		err = ssdfs_peb_blk_bmap_migrate(dst_blkbmap,
-+						 range_state,
-+						 range);
-+		if (unlikely(err)) {
-+			SSDFS_ERR("fail to migrate: "
-+				  "range (start %u, len %u), "
-+				  "range_state %#x, "
-+				  "err %d\n",
-+				  range->start, range->len,
-+				  range_state, err);
-+			SSDFS_ERR("seg_id %llu, peb_index %u, "
-+				  "peb_migration_id %u, "
-+				  "range (start %u, len %u)\n",
-+				  bmap->parent_si->seg_id,
-+				  pebc->peb_index,
-+				  peb_migration_id,
-+				  range->start, range->len);
-+			SSDFS_ERR("seg_id %llu, migration_state %#x, "
-+				  "items_state %#x, "
-+				  "peb_migration_id %u, src_migration_id %d, "
-+				  "dst_migration_id %d, migration_phase %#x\n",
-+				  si->seg_id, migration_state, items_state,
-+				  peb_migration_id, src_migration_id,
-+				  dst_migration_id, migration_phase);
-+			SSDFS_ERR("seg_id %llu, need_migrate %#x, "
-+				  "need_move %#x\n",
-+				  si->seg_id, need_migrate, need_move);
-+			return err;
-+		}
-+	} else if (need_move) {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		BUG_ON(!pebc->dst_peb);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+		peb_index = pebc->dst_peb->peb_index;
-+
-+		if (peb_index >= bmap->pebs_count) {
-+			SSDFS_ERR("peb_index %u >= pebs_count %u\n",
-+				  peb_index, bmap->pebs_count);
-+			return -ERANGE;
-+		}
-+
-+		dst_blkbmap = &bmap->peb[peb_index];
-+
-+		if (range_state == SSDFS_BLK_PRE_ALLOCATED) {
-+			err = ssdfs_peb_blk_bmap_pre_allocate(dst_blkbmap,
-+							      bmap_index,
-+							      NULL,
-+							      range);
-+		} else {
-+			err = ssdfs_peb_blk_bmap_allocate(dst_blkbmap,
-+							  bmap_index,
-+							  NULL,
-+							  range);
-+		}
-+
-+		if (unlikely(err)) {
-+			SSDFS_ERR("fail to move: "
-+				  "range (start %u, len %u), "
-+				  "range_state %#x, "
-+				  "err %d\n",
-+				  range->start, range->len,
-+				  range_state, err);
-+			SSDFS_ERR("seg_id %llu, peb_index %u, "
-+				  "peb_migration_id %u, "
-+				  "range (start %u, len %u)\n",
-+				  bmap->parent_si->seg_id,
-+				  pebc->peb_index,
-+				  peb_migration_id,
-+				  range->start, range->len);
-+			SSDFS_ERR("seg_id %llu, migration_state %#x, "
-+				  "items_state %#x, "
-+				  "peb_migration_id %u, src_migration_id %d, "
-+				  "dst_migration_id %d, migration_phase %#x\n",
-+				  si->seg_id, migration_state, items_state,
-+				  peb_migration_id, src_migration_id,
-+				  dst_migration_id, migration_phase);
-+			SSDFS_ERR("seg_id %llu, need_migrate %#x, "
-+				  "need_move %#x\n",
-+				  si->seg_id, need_migrate, need_move);
-+			return err;
-+		}
-+	} else {
-+#ifdef CONFIG_SSDFS_DEBUG
-+		BUG_ON(peb_index >= U16_MAX);
-+#endif /* CONFIG_SSDFS_DEBUG */
-+
-+		if (peb_index >= bmap->pebs_count) {
-+			SSDFS_ERR("peb_index %u >= pebs_count %u\n",
-+				  peb_index, bmap->pebs_count);
-+			return -ERANGE;
-+		}
-+
-+		dst_blkbmap = &bmap->peb[peb_index];
-+
-+		err = ssdfs_peb_blk_bmap_update_range(dst_blkbmap,
-+						      bmap_index,
-+						      range_state,
-+						      range);
-+		if (unlikely(err)) {
-+			SSDFS_ERR("fail to update range: "
-+				  "range (start %u, len %u), "
-+				  "range_state %#x, "
-+				  "err %d\n",
-+				  range->start, range->len,
-+				  range_state, err);
-+			SSDFS_ERR("seg_id %llu, peb_index %u, "
-+				  "peb_migration_id %u, "
-+				  "range (start %u, len %u)\n",
-+				  bmap->parent_si->seg_id,
-+				  pebc->peb_index,
-+				  peb_migration_id,
-+				  range->start, range->len);
-+			SSDFS_ERR("seg_id %llu, migration_state %#x, "
-+				  "items_state %#x, "
-+				  "peb_migration_id %u, src_migration_id %d, "
-+				  "dst_migration_id %d, migration_phase %#x\n",
-+				  si->seg_id, migration_state, items_state,
-+				  peb_migration_id, src_migration_id,
-+				  dst_migration_id, migration_phase);
-+			SSDFS_ERR("seg_id %llu, need_migrate %#x, "
-+				  "need_move %#x\n",
-+				  si->seg_id, need_migrate, need_move);
-+			return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-diff --git a/fs/ssdfs/segment_block_bitmap.h b/fs/ssdfs/segment_block_bitmap.h
+diff --git a/fs/ssdfs/request_queue.h b/fs/ssdfs/request_queue.h
 new file mode 100644
-index 000000000000..899e34a4343a
+index 000000000000..7287182a3875
 --- /dev/null
-+++ b/fs/ssdfs/segment_block_bitmap.h
-@@ -0,0 +1,205 @@
++++ b/fs/ssdfs/request_queue.h
+@@ -0,0 +1,417 @@
 +// SPDX-License-Identifier: BSD-3-Clause-Clear
 +/*
 + * SSDFS -- SSD-oriented File System.
 + *
-+ * fs/ssdfs/segment_block_bitmap.h - segment's block bitmap declarations.
++ * fs/ssdfs/request_queue.h - request queue declarations.
 + *
 + * Copyright (c) 2014-2019 HGST, a Western Digital Company.
 + *              http://www.hgst.com/
@@ -1559,190 +1376,402 @@ index 000000000000..899e34a4343a
 + *                  Zvonimir Bandic
 + */
 +
-+#ifndef _SSDFS_SEGMENT_BLOCK_BITMAP_H
-+#define _SSDFS_SEGMENT_BLOCK_BITMAP_H
++#ifndef _SSDFS_REQUEST_QUEUE_H
++#define _SSDFS_REQUEST_QUEUE_H
 +
-+#include "peb_block_bitmap.h"
++#include <linux/pagevec.h>
 +
 +/*
-+ * struct ssdfs_segment_blk_bmap - segment block bitmap object
-+ * @state: segment block bitmap's state
-+ * @pages_per_peb: pages per physical erase block
-+ * @pages_per_seg: pages per segment
-+ * @modification_lock: lock for modification operations
-+ * @seg_valid_blks: segment's valid logical blocks count
-+ * @seg_invalid_blks: segment's invalid logical blocks count
-+ * @seg_free_blks: segment's free logical blocks count
-+ * @peb: array of PEB block bitmap objects
-+ * @pebs_count: PEBs count in segment
-+ * @parent_si: pointer on parent segment object
++ * struct ssdfs_requests_queue - requests queue descriptor
++ * @lock: requests queue's lock
++ * @list: requests queue's list
 + */
-+struct ssdfs_segment_blk_bmap {
-+	atomic_t state;
-+
-+	u32 pages_per_peb;
-+	u32 pages_per_seg;
-+
-+	struct rw_semaphore modification_lock;
-+	atomic_t seg_valid_blks;
-+	atomic_t seg_invalid_blks;
-+	atomic_t seg_free_blks;
-+
-+	struct ssdfs_peb_blk_bmap *peb;
-+	u16 pebs_count;
-+
-+	struct ssdfs_segment_info *parent_si;
++struct ssdfs_requests_queue {
++	spinlock_t lock;
++	struct list_head list;
 +};
 +
-+/* Segment block bitmap's possible states */
++/*
++ * Request classes
++ */
 +enum {
-+	SSDFS_SEG_BLK_BMAP_STATE_UNKNOWN,
-+	SSDFS_SEG_BLK_BMAP_CREATED,
-+	SSDFS_SEG_BLK_BMAP_STATE_MAX,
++	SSDFS_UNKNOWN_REQ_CLASS,		/* 0x00 */
++	SSDFS_PEB_READ_REQ,			/* 0x01 */
++	SSDFS_PEB_PRE_ALLOCATE_DATA_REQ,	/* 0x02 */
++	SSDFS_PEB_CREATE_DATA_REQ,		/* 0x03 */
++	SSDFS_PEB_PRE_ALLOCATE_LNODE_REQ,	/* 0x04 */
++	SSDFS_PEB_CREATE_LNODE_REQ,		/* 0x05 */
++	SSDFS_PEB_PRE_ALLOCATE_HNODE_REQ,	/* 0x06 */
++	SSDFS_PEB_CREATE_HNODE_REQ,		/* 0x07 */
++	SSDFS_PEB_PRE_ALLOCATE_IDXNODE_REQ,	/* 0x08 */
++	SSDFS_PEB_CREATE_IDXNODE_REQ,		/* 0x09 */
++	SSDFS_PEB_UPDATE_REQ,			/* 0x0A */
++	SSDFS_PEB_PRE_ALLOC_UPDATE_REQ,		/* 0x0B */
++	SSDFS_PEB_DIFF_ON_WRITE_REQ,		/* 0x0C */
++	SSDFS_PEB_COLLECT_GARBAGE_REQ,		/* 0x0D */
++	SSDFS_ZONE_USER_DATA_MIGRATE_REQ,	/* 0x0E */
++	SSDFS_PEB_REQ_CLASS_MAX,		/* 0x0F */
 +};
 +
 +/*
-+ * Segment block bitmap API
++ * Request commands
 + */
-+int ssdfs_segment_blk_bmap_create(struct ssdfs_segment_info *si,
-+				  int init_flag, int init_state);
-+void ssdfs_segment_blk_bmap_destroy(struct ssdfs_segment_blk_bmap *ptr);
-+int ssdfs_segment_blk_bmap_partial_init(struct ssdfs_segment_blk_bmap *bmap,
-+				    u16 peb_index,
-+				    struct ssdfs_page_vector *source,
-+				    struct ssdfs_block_bitmap_fragment *hdr,
-+				    u64 cno);
-+void ssdfs_segment_blk_bmap_init_failed(struct ssdfs_segment_blk_bmap *bmap,
-+					u16 peb_index);
++enum {
++	SSDFS_UNKNOWN_CMD,			/* 0x00 */
++	SSDFS_READ_PAGE,			/* 0x01 */
++	SSDFS_READ_PAGES_READAHEAD,		/* 0x02 */
++	SSDFS_READ_SRC_ALL_LOG_HEADERS,		/* 0x03 */
++	SSDFS_READ_DST_ALL_LOG_HEADERS,		/* 0x04 */
++	SSDFS_READ_BLK_BMAP_SRC_USING_PEB,	/* 0x05 */
++	SSDFS_READ_BLK_BMAP_DST_USING_PEB,	/* 0x06 */
++	SSDFS_READ_BLK_BMAP_SRC_USED_PEB,	/* 0x07 */
++	SSDFS_READ_BLK_BMAP_DST_USED_PEB,	/* 0x08 */
++	SSDFS_READ_BLK2OFF_TABLE_SRC_PEB,	/* 0x09 */
++	SSDFS_READ_BLK2OFF_TABLE_DST_PEB,	/* 0x0A */
++	SSDFS_READ_INIT_SEGBMAP,		/* 0x0B */
++	SSDFS_READ_INIT_MAPTBL,			/* 0x0C */
++	SSDFS_READ_SRC_LAST_LOG_FOOTER,		/* 0x0D */
++	SSDFS_READ_DST_LAST_LOG_FOOTER,		/* 0x0E */
++	SSDFS_READ_CMD_MAX,			/* 0x0F */
++	SSDFS_CREATE_BLOCK,			/* 0x10 */
++	SSDFS_CREATE_EXTENT,			/* 0x11 */
++	SSDFS_MIGRATE_ZONE_USER_BLOCK,		/* 0x12 */
++	SSDFS_MIGRATE_ZONE_USER_EXTENT,		/* 0x13 */
++	SSDFS_CREATE_CMD_MAX,			/* 0x14 */
++	SSDFS_UPDATE_BLOCK,			/* 0x15 */
++	SSDFS_UPDATE_PRE_ALLOC_BLOCK,		/* 0x16 */
++	SSDFS_UPDATE_EXTENT,			/* 0x17 */
++	SSDFS_UPDATE_PRE_ALLOC_EXTENT,		/* 0x18 */
++	SSDFS_COMMIT_LOG_NOW,			/* 0x19 */
++	SSDFS_START_MIGRATION_NOW,		/* 0x1A */
++	SSDFS_EXTENT_WAS_INVALIDATED,		/* 0x1B */
++	SSDFS_UPDATE_CMD_MAX,			/* 0x1C */
++	SSDFS_BTREE_NODE_DIFF,			/* 0x1D */
++	SSDFS_USER_DATA_DIFF,			/* 0x1E */
++	SSDFS_DIFF_ON_WRITE_MAX,		/* 0x1F */
++	SSDFS_COPY_PAGE,			/* 0x20 */
++	SSDFS_COPY_PRE_ALLOC_PAGE,		/* 0x21 */
++	SSDFS_MIGRATE_RANGE,			/* 0x22 */
++	SSDFS_MIGRATE_PRE_ALLOC_PAGE,		/* 0x23 */
++	SSDFS_MIGRATE_FRAGMENT,			/* 0x24 */
++	SSDFS_COLLECT_GARBAGE_CMD_MAX,		/* 0x25 */
++	SSDFS_KNOWN_CMD_MAX,			/* 0x26 */
++};
 +
-+bool is_ssdfs_segment_blk_bmap_dirty(struct ssdfs_segment_blk_bmap *bmap,
-+					u16 peb_index);
++/*
++ * Request types
++ */
++enum {
++	SSDFS_UNKNOWN_REQ_TYPE,
++	SSDFS_REQ_SYNC,
++	SSDFS_REQ_ASYNC,
++	SSDFS_REQ_ASYNC_NO_FREE,
++	SSDFS_REQ_TYPE_MAX,
++};
 +
-+bool has_ssdfs_segment_blk_bmap_initialized(struct ssdfs_segment_blk_bmap *ptr,
-+					    struct ssdfs_peb_container *pebc);
-+int ssdfs_segment_blk_bmap_wait_init_end(struct ssdfs_segment_blk_bmap *ptr,
-+					 struct ssdfs_peb_container *pebc);
++/*
++ * Request flags
++ */
++#define SSDFS_REQ_DONT_FREE_PAGES			(1 << 0)
++#define SSDFS_REQ_READ_ONLY_CACHE			(1 << 1)
++#define SSDFS_REQ_PREPARE_DIFF				(1 << 2)
++#define SSDFS_REQ_FLAGS_MASK				0x7
 +
-+int ssdfs_segment_blk_bmap_reserve_metapages(struct ssdfs_segment_blk_bmap *ptr,
-+					     struct ssdfs_peb_container *pebc,
-+					     u32 count);
-+int ssdfs_segment_blk_bmap_free_metapages(struct ssdfs_segment_blk_bmap *ptr,
-+					  struct ssdfs_peb_container *pebc,
-+					  u32 count);
-+int ssdfs_segment_blk_bmap_reserve_block(struct ssdfs_segment_blk_bmap *ptr);
-+int ssdfs_segment_blk_bmap_reserve_extent(struct ssdfs_segment_blk_bmap *ptr,
-+					  u32 count);
-+int ssdfs_segment_blk_bmap_pre_allocate(struct ssdfs_segment_blk_bmap *ptr,
-+					struct ssdfs_peb_container *pebc,
-+					u32 *len,
-+					struct ssdfs_block_bmap_range *range);
-+int ssdfs_segment_blk_bmap_allocate(struct ssdfs_segment_blk_bmap *ptr,
-+				    struct ssdfs_peb_container *pebc,
-+				    u32 *len,
-+				    struct ssdfs_block_bmap_range *range);
-+int ssdfs_segment_blk_bmap_update_range(struct ssdfs_segment_blk_bmap *ptr,
-+				    struct ssdfs_peb_container *pebc,
-+				    u8 peb_migration_id,
-+				    int range_state,
-+				    struct ssdfs_block_bmap_range *range);
++/*
++ * Result states
++ */
++enum {
++	SSDFS_UNKNOWN_REQ_RESULT,
++	SSDFS_REQ_CREATED,
++	SSDFS_REQ_STARTED,
++	SSDFS_REQ_FINISHED,
++	SSDFS_REQ_FAILED,
++	SSDFS_REQ_RESULT_MAX
++};
 +
++/*
++ * struct ssdfs_logical_extent - logical extent descriptor
++ * @ino: inode identification number
++ * @logical_offset: logical offset from file's begin in bytes
++ * @data_bytes: valid bytes count in request
++ * @cno: checkpoint
++ * @parent_snapshot: parent snapshot
++ */
++struct ssdfs_logical_extent {
++	u64 ino;
++	u64 logical_offset;
++	u32 data_bytes;
++	u64 cno;
++	u64 parent_snapshot;
++};
++
++/*
++ * struct ssdfs_request_internal_data - private request data
++ * @class: request class
++ * @cmd: request command
++ * @type: request type
++ * @refs_count: reference counter
++ * @flags: request flags
++ * @wait_queue: queue for result waiting
++ */
++struct ssdfs_request_internal_data {
++	int class;
++	int cmd;
++	int type;
++	atomic_t refs_count;
++	u32 flags;
++	wait_queue_head_t wait_queue;
++};
++
++/*
++ * struct ssdfs_request_result - requst result
++ * @pvec: array of memory pages
++ * @old_state: array of memory pages with initial state
++ * @diffs: array of diffs
++ * @processed_blks: count of processed physical pages
++ * @state: result's state
++ * @wait: wait-for-completion of operation
++ * @err: code of error
++ */
++struct ssdfs_request_result {
++	struct pagevec pvec;
++	struct pagevec old_state;
++	struct pagevec diffs;
++	int processed_blks;
++	atomic_t state;
++	struct completion wait;
++	int err;
++};
++
++/*
++ * struct ssdfs_segment_request - segment I/O request
++ * @list: requests queue list
++ * @extent: logical extent descriptor
++ * @place: logical blocks placement in segment
++ * @private: internal data of request
++ * @result: request result description
++ */
++struct ssdfs_segment_request {
++	struct list_head list;
++	struct ssdfs_logical_extent extent;
++	struct ssdfs_volume_extent place;
++	struct ssdfs_request_internal_data private;
++	struct ssdfs_request_result result;
++};
++
++/*
++ * struct ssdfs_peb_phys_offset - PEB's physical offset
++ * @peb_index: PEB's index
++ * @peb_migration_id: identification number of PEB in migration sequence
++ * @peb_page: PEB's page index
++ * @log_area: identification number of log area
++ * @byte_offset: offset in bytes from area's beginning
++ */
++struct ssdfs_peb_phys_offset {
++	u16 peb_index;
++	u8 peb_migration_id;
++	u16 peb_page;
++	u8 log_area;
++	u32 byte_offset;
++};
++
++struct ssdfs_segment_info;
++
++/*
++ * struct ssdfs_seg2req_pair - segment/request pair
++ * @si: pointer on segment object
++ * @req: pointer on request object
++ */
++struct ssdfs_seg2req_pair {
++	struct ssdfs_segment_info *si;
++	struct ssdfs_segment_request *req;
++};
++
++/*
++ * Request's inline functions
++ */
++
++/*
++ * ssdfs_request_prepare_logical_extent() - prepare logical extent
++ * @ino: inode id
++ * @logical_offset: logical offset in bytes from file's beginning
++ * @data_bytes: extent length in bytes
++ * @cno: checkpoint number
++ * @parent_snapshot: parent snapshot number
++ * @req: segment request [out]
++ */
 +static inline
-+int ssdfs_segment_blk_bmap_get_free_pages(struct ssdfs_segment_blk_bmap *ptr)
++void ssdfs_request_prepare_logical_extent(u64 ino,
++					  u64 logical_offset,
++					  u32 data_bytes,
++					  u64 cno,
++					  u64 parent_snapshot,
++					  struct ssdfs_segment_request *req)
 +{
-+#ifdef CONFIG_SSDFS_DEBUG
-+	int free_blks;
-+	int valid_blks;
-+	int invalid_blks;
-+	int calculated;
-+
-+	BUG_ON(!ptr);
-+
-+	free_blks = atomic_read(&ptr->seg_free_blks);
-+	valid_blks = atomic_read(&ptr->seg_valid_blks);
-+	invalid_blks = atomic_read(&ptr->seg_invalid_blks);
-+	calculated = free_blks + valid_blks + invalid_blks;
-+
-+	SSDFS_DBG("free_logical_blks %d, valid_logical_blks %d, "
-+		  "invalid_logical_blks %d, pages_per_seg %u\n",
-+		  free_blks, valid_blks, invalid_blks,
-+		  ptr->pages_per_seg);
-+
-+	if (calculated > ptr->pages_per_seg) {
-+		SSDFS_WARN("free_logical_blks %d, valid_logical_blks %d, "
-+			   "invalid_logical_blks %d, calculated %d, "
-+			   "pages_per_seg %u\n",
-+			   free_blks, valid_blks, invalid_blks,
-+			   calculated, ptr->pages_per_seg);
-+	}
-+#endif /* CONFIG_SSDFS_DEBUG */
-+	return atomic_read(&ptr->seg_free_blks);
++	req->extent.ino = ino;
++	req->extent.logical_offset = logical_offset;
++	req->extent.data_bytes = data_bytes;
++	req->extent.cno = cno;
++	req->extent.parent_snapshot = parent_snapshot;
 +}
 +
++/*
++ * ssdfs_request_prepare_internal_data() - prepare request's internal data
++ * @class: request class
++ * @cmd: request command
++ * @type: request type
++ * @req: segment request [out]
++ */
 +static inline
-+int ssdfs_segment_blk_bmap_get_used_pages(struct ssdfs_segment_blk_bmap *ptr)
++void ssdfs_request_prepare_internal_data(int class, int cmd, int type,
++					 struct ssdfs_segment_request *req)
 +{
 +#ifdef CONFIG_SSDFS_DEBUG
-+	int free_blks;
-+	int valid_blks;
-+	int invalid_blks;
-+	int calculated;
-+
-+	BUG_ON(!ptr);
-+
-+	free_blks = atomic_read(&ptr->seg_free_blks);
-+	valid_blks = atomic_read(&ptr->seg_valid_blks);
-+	invalid_blks = atomic_read(&ptr->seg_invalid_blks);
-+	calculated = free_blks + valid_blks + invalid_blks;
-+
-+	SSDFS_DBG("free_logical_blks %d, valid_logical_blks %d, "
-+		  "invalid_logical_blks %d, pages_per_seg %u\n",
-+		  free_blks, valid_blks, invalid_blks,
-+		  ptr->pages_per_seg);
-+
-+	if (calculated > ptr->pages_per_seg) {
-+		SSDFS_WARN("free_logical_blks %d, valid_logical_blks %d, "
-+			   "invalid_logical_blks %d, calculated %d, "
-+			   "pages_per_seg %u\n",
-+			   free_blks, valid_blks, invalid_blks,
-+			   calculated, ptr->pages_per_seg);
-+	}
++	BUG_ON(!req);
++	BUG_ON(class <= SSDFS_UNKNOWN_REQ_CLASS ||
++		class >= SSDFS_PEB_REQ_CLASS_MAX);
++	BUG_ON(cmd <= SSDFS_UNKNOWN_CMD || cmd >= SSDFS_KNOWN_CMD_MAX);
++	BUG_ON(type <= SSDFS_UNKNOWN_REQ_TYPE ||
++		type >= SSDFS_REQ_TYPE_MAX);
 +#endif /* CONFIG_SSDFS_DEBUG */
-+	return atomic_read(&ptr->seg_valid_blks);
++
++	req->private.class = class;
++	req->private.cmd = cmd;
++	req->private.type = type;
 +}
 +
++/*
++ * ssdfs_request_define_segment() - define segment number
++ * @seg_id: segment number
++ * @req: segment request [out]
++ */
 +static inline
-+int ssdfs_segment_blk_bmap_get_invalid_pages(struct ssdfs_segment_blk_bmap *ptr)
++void ssdfs_request_define_segment(u64 seg_id,
++				  struct ssdfs_segment_request *req)
 +{
 +#ifdef CONFIG_SSDFS_DEBUG
-+	int free_blks;
-+	int valid_blks;
-+	int invalid_blks;
-+	int calculated;
-+
-+	BUG_ON(!ptr);
-+
-+	free_blks = atomic_read(&ptr->seg_free_blks);
-+	valid_blks = atomic_read(&ptr->seg_valid_blks);
-+	invalid_blks = atomic_read(&ptr->seg_invalid_blks);
-+	calculated = free_blks + valid_blks + invalid_blks;
-+
-+	SSDFS_DBG("free_logical_blks %d, valid_logical_blks %d, "
-+		  "invalid_logical_blks %d, pages_per_seg %u\n",
-+		  free_blks, valid_blks, invalid_blks,
-+		  ptr->pages_per_seg);
-+
-+	if (calculated > ptr->pages_per_seg) {
-+		SSDFS_WARN("free_logical_blks %d, valid_logical_blks %d, "
-+			   "invalid_logical_blks %d, calculated %d, "
-+			   "pages_per_seg %u\n",
-+			   free_blks, valid_blks, invalid_blks,
-+			   calculated, ptr->pages_per_seg);
-+	}
++	BUG_ON(!req);
++	BUG_ON(seg_id == U64_MAX);
 +#endif /* CONFIG_SSDFS_DEBUG */
-+	return atomic_read(&ptr->seg_invalid_blks);
++
++	req->place.start.seg_id = seg_id;
 +}
 +
-+#endif /* _SSDFS_SEGMENT_BLOCK_BITMAP_H */
++/*
++ * ssdfs_request_define_volume_extent() - define logical volume extent
++ * @start: starting logical block number
++ * @len: count of logical blocks in the extent
++ * @req: segment request [out]
++ */
++static inline
++void ssdfs_request_define_volume_extent(u16 start, u16 len,
++					struct ssdfs_segment_request *req)
++{
++#ifdef CONFIG_SSDFS_DEBUG
++	BUG_ON(!req);
++	BUG_ON(start == U16_MAX);
++	BUG_ON(len == U32_MAX);
++#endif /* CONFIG_SSDFS_DEBUG */
++
++	req->place.start.blk_index = start;
++	req->place.len = len;
++}
++
++/*
++ * has_request_been_executed() - check that reqeust has been executed
++ * @req: segment request
++ */
++static inline
++bool has_request_been_executed(struct ssdfs_segment_request *req)
++{
++	bool has_been_executed = false;
++
++	switch (atomic_read(&req->result.state)) {
++	case SSDFS_REQ_CREATED:
++	case SSDFS_REQ_STARTED:
++		has_been_executed = false;
++		break;
++
++	case SSDFS_REQ_FINISHED:
++	case SSDFS_REQ_FAILED:
++		has_been_executed = true;
++		break;
++
++	default:
++		SSDFS_ERR("invalid result's state %#x\n",
++			  atomic_read(&req->result.state));
++		has_been_executed = true;
++	}
++
++	return has_been_executed;
++}
++
++/*
++ * Request queue's API
++ */
++void ssdfs_requests_queue_init(struct ssdfs_requests_queue *rq);
++bool is_ssdfs_requests_queue_empty(struct ssdfs_requests_queue *rq);
++void ssdfs_requests_queue_add_tail(struct ssdfs_requests_queue *rq,
++				   struct ssdfs_segment_request *req);
++void ssdfs_requests_queue_add_tail_inc(struct ssdfs_fs_info *fsi,
++					struct ssdfs_requests_queue *rq,
++					struct ssdfs_segment_request *req);
++void ssdfs_requests_queue_add_head(struct ssdfs_requests_queue *rq,
++				   struct ssdfs_segment_request *req);
++void ssdfs_requests_queue_add_head_inc(struct ssdfs_fs_info *fsi,
++					struct ssdfs_requests_queue *rq,
++					struct ssdfs_segment_request *req);
++int ssdfs_requests_queue_remove_first(struct ssdfs_requests_queue *rq,
++				      struct ssdfs_segment_request **req);
++void ssdfs_requests_queue_remove_all(struct ssdfs_requests_queue *rq,
++				     int err);
++
++/*
++ * Request's API
++ */
++void ssdfs_zero_seg_req_obj_cache_ptr(void);
++int ssdfs_init_seg_req_obj_cache(void);
++void ssdfs_shrink_seg_req_obj_cache(void);
++void ssdfs_destroy_seg_req_obj_cache(void);
++
++struct ssdfs_segment_request *ssdfs_request_alloc(void);
++void ssdfs_request_free(struct ssdfs_segment_request *req);
++void ssdfs_request_init(struct ssdfs_segment_request *req);
++void ssdfs_get_request(struct ssdfs_segment_request *req);
++void ssdfs_put_request(struct ssdfs_segment_request *req);
++int ssdfs_request_add_page(struct page *page,
++			   struct ssdfs_segment_request *req);
++int ssdfs_request_add_diff_page(struct page *page,
++				struct ssdfs_segment_request *req);
++struct page *
++ssdfs_request_allocate_and_add_page(struct ssdfs_segment_request *req);
++struct page *
++ssdfs_request_allocate_and_add_diff_page(struct ssdfs_segment_request *req);
++struct page *
++ssdfs_request_allocate_and_add_old_state_page(struct ssdfs_segment_request *req);
++struct page *
++ssdfs_request_allocate_locked_page(struct ssdfs_segment_request *req,
++				   int page_index);
++struct page *
++ssdfs_request_allocate_locked_diff_page(struct ssdfs_segment_request *req,
++					int page_index);
++int ssdfs_request_add_allocated_page_locked(struct ssdfs_segment_request *req);
++int ssdfs_request_add_allocated_diff_locked(struct ssdfs_segment_request *req);
++int ssdfs_request_add_old_state_page_locked(struct ssdfs_segment_request *req);
++void ssdfs_request_unlock_and_remove_page(struct ssdfs_segment_request *req,
++					  int page_index);
++void ssdfs_request_unlock_and_remove_pages(struct ssdfs_segment_request *req);
++void ssdfs_request_unlock_and_remove_update(struct ssdfs_segment_request *req);
++void ssdfs_request_unlock_and_remove_diffs(struct ssdfs_segment_request *req);
++void ssdfs_request_unlock_and_remove_old_state(struct ssdfs_segment_request *req);
++int ssdfs_request_switch_update_on_diff(struct ssdfs_fs_info *fsi,
++					struct page *diff_page,
++					struct ssdfs_segment_request *req);
++void ssdfs_free_flush_request_pages(struct ssdfs_segment_request *req);
++u8 ssdfs_peb_extent_length(struct ssdfs_segment_info *si,
++			   struct pagevec *pvec);
++
++#endif /* _SSDFS_REQUEST_QUEUE_H */
 -- 
 2.34.1
 
