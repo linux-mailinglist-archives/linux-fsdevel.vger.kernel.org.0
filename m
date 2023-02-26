@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD2936A2DB5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Feb 2023 04:45:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB4366A2E07
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Feb 2023 04:59:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230035AbjBZDpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Feb 2023 22:45:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55610 "EHLO
+        id S229875AbjBZD73 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Feb 2023 22:59:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229990AbjBZDog (ORCPT
+        with ESMTP id S229725AbjBZD71 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Feb 2023 22:44:36 -0500
+        Sat, 25 Feb 2023 22:59:27 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFBBD17CE3;
-        Sat, 25 Feb 2023 19:44:10 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F0EE8A47;
+        Sat, 25 Feb 2023 19:59:12 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0BB52B80B8F;
-        Sun, 26 Feb 2023 03:43:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D79C4339C;
-        Sun, 26 Feb 2023 03:43:17 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BD53CB80B8C;
+        Sun, 26 Feb 2023 03:44:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E57EFC4339B;
+        Sun, 26 Feb 2023 03:44:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677382997;
-        bh=Eig9/5/gmSof0DEms9mCjk4m3+ppAUCTgwGMVVF+Ffo=;
+        s=k20201202; t=1677383046;
+        bh=oIxAghDco1nlJELtPYxjKDbkxc75lnrjoUyKv7UPHI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iGlt1a7ohE7L/G9DHzzwd1/dl+zhz9s8tkGpeIFlkPa8jg6cSIluDwcdpBeCTmnFP
-         uKo1crBo2TL/GsKN3i6KlLNot9UnJxyIPQOXvbvkxTb1w5+nLnsh1ugGxae/OTZSgu
-         evoADzqSqUZSMT6T1XoW4fAQ/QBPICz4lm7DurQeHYX8S/sHFqtpZpOjqrNGGziBqq
-         dRi9IUQd5Y9xQMwmc0AvoRshd8SJGpjUaolfs7epKpOqzAFUrkM2Ilk5iSqA6HdEDh
-         fn7jRTa/6jvOA1BsFjxL6WM5YKMClAOErPjxRfaFQN7BUDCQyhbQlPiUKV0Gj9o2fd
-         HMg1J5thVEkPA==
+        b=c6cGkJaWjTcT5eeGE8Sp6fpB5zu9bl02b04FN9kqT5Svnnil2Ku+qa2gS5yDFSKX0
+         W8pAGYmwuxyP7gUhtMuLFP8D9/OosgtClCdgNIcwTaYkrsauPT77M78RubXsMVl6Yv
+         c8xvWcOjWW0g5Aqa7v3H/1J16oLOtuWOItuOFffBgh3UpKvgRqFeUV7TpQ8wsMrFIz
+         08q9VZJYwzC6upvQczr1mDw5+IbtE8sfNpKtHSmarreS4DZlImnf0V9IkuJGxbpaG6
+         CHf9wFh/9r4JhEH9Y++iymqY2bU1iE94eAnhgI8xAcDCq99Xuj42yfcJNEOYfRHJ2T
+         uOTMM2gOF6ZhA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Eric Biggers <ebiggers@google.com>,
         Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 12/21] fs/super.c: stop calling fscrypt_destroy_keyring() from __put_super()
-Date:   Sat, 25 Feb 2023 22:42:47 -0500
-Message-Id: <20230226034256.771769-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 5/6] fs/super.c: stop calling fscrypt_destroy_keyring() from __put_super()
+Date:   Sat, 25 Feb 2023 22:43:57 -0500
+Message-Id: <20230226034359.773806-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230226034256.771769-1-sashal@kernel.org>
-References: <20230226034256.771769-1-sashal@kernel.org>
+In-Reply-To: <20230226034359.773806-1-sashal@kernel.org>
+References: <20230226034359.773806-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -76,10 +76,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 deletion(-)
 
 diff --git a/fs/super.c b/fs/super.c
-index 4f8a626a35cd9..76d47620b930d 100644
+index 7fa3ee79ec898..4eeb0b47412ae 100644
 --- a/fs/super.c
 +++ b/fs/super.c
-@@ -291,7 +291,6 @@ static void __put_super(struct super_block *s)
+@@ -293,7 +293,6 @@ static void __put_super(struct super_block *s)
  		WARN_ON(s->s_inode_lru.node);
  		WARN_ON(!list_empty(&s->s_mounts));
  		security_sb_free(s);
