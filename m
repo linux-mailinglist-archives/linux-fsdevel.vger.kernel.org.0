@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D428D6A329E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Feb 2023 17:03:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C62806A32A2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Feb 2023 17:03:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229628AbjBZQDm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Feb 2023 11:03:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53578 "EHLO
+        id S229644AbjBZQDp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Feb 2023 11:03:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjBZQDf (ORCPT
+        with ESMTP id S229661AbjBZQDm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Feb 2023 11:03:35 -0500
+        Sun, 26 Feb 2023 11:03:42 -0500
 Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E3EDBDEB;
-        Sun, 26 Feb 2023 08:03:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D53EC1041B;
+        Sun, 26 Feb 2023 08:03:28 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.253.183.169])
-        by gnuweeb.org (Postfix) with ESMTPSA id D189C831AB;
-        Sun, 26 Feb 2023 16:03:18 +0000 (UTC)
+        by gnuweeb.org (Postfix) with ESMTPSA id 19DE8831AF;
+        Sun, 26 Feb 2023 16:03:23 +0000 (UTC)
 X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1677427403;
-        bh=VLdIA0Ryrjg4sqcZ4qs9212xaCVaprtzgyOR34VDtxc=;
+        s=default; t=1677427408;
+        bh=dk6mSe4MY5NIqRMjCLFlrLyUSKZZEVxaqAfyqXfwVa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mQ0KI6MLmFZy5fNV0dblCFChQ7CoCIrNnIkAJTvDHbO2K2nCKsvV0ZhdZNpW7+NnQ
-         IOI263lqaJo4TBbDplL4Th3KYfgol/qUGoVYiduQViA5IuOfg1wRxmSHnTibJFBOpm
-         LS7V5ikK1AUlWRPQFKcwJH3mU0r6I+fSGaMS/6VUlW2dUXZAoFzK5901bap+We8Bn4
-         xIVeyUo0nNBOqBQB3qcENdMYKOpB0exofmUbaiyIZ6V0Yrf5rZejsSziBcg7ityiJQ
-         qz44FB23tC+PMCMhPl5p/JJc9UicgOvVM4IMAZSvQ7nyMccVQXw9/IC3r2qjcmY9FV
-         AzyspPQipjinw==
+        b=k6QRoXLqOsMTebWNx0TMa8JLFQVdx/XStS+s7pCIKLmXL1YwM68tMgh+aty7mpfTj
+         CDYcYLrv1aihPsIr4VeASZQMuo8uhqBEvIRqB1L0IyXK4W1nYvvw/9XttO0PlH5It5
+         BA8KHyfpV6+rCMMDHJ0kcrl0vxyKWnJSpCJv9RVe/nHQTPcAtCG1yYN9Rw8RuTGxUb
+         EzxeckC0J4GDK81Y5bmNNanHEEdEV4e6hiIVZf0sNgZpvCfsDH+UeYHeeZstmnle33
+         7SPKZLvxBvCMGXDE9A28i5TCvefHYrJ/q2HtSMLQ4dy9pj3k5kizVzFYSEn3V7QTyY
+         SsmHAUF2408Jw==
 From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Tejun Heo <tj@kernel.org>
@@ -39,9 +39,9 @@ Cc:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Fsdevel Mailing List <linux-fsdevel@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [RFC PATCH v1 1/6] workqueue: Add set_workqueue_cpumask() helper function
-Date:   Sun, 26 Feb 2023 23:02:54 +0700
-Message-Id: <20230226160259.18354-2-ammarfaizi2@gnuweeb.org>
+Subject: [RFC PATCH v1 2/6] btrfs: Change `mount_opt` type in `struct btrfs_fs_info` to `u64`
+Date:   Sun, 26 Feb 2023 23:02:55 +0700
+Message-Id: <20230226160259.18354-3-ammarfaizi2@gnuweeb.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230226160259.18354-1-ammarfaizi2@gnuweeb.org>
 References: <20230226160259.18354-1-ammarfaizi2@gnuweeb.org>
@@ -56,59 +56,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allow users to specify a CPU set for the workqueue. The first use case
-of this helper function is to set the CPU affinity of Btrfs workqueues.
+On a 32-bit Linux system, `unsigned long` is 32-bit. In preparation to
+add more mount options, change the type to `u64` because the enum for
+this option has reached the max 32-bit capacity.
+
+It does not make any difference on a system where `unsigned long` is
+64-bit, only needed for the 32-bit system.
 
 Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 ---
- include/linux/workqueue.h |  3 +++
- kernel/workqueue.c        | 19 +++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ fs/btrfs/fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index ac551b8ee7d9f2f4..e3bd6f47e74ecd66 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -710,6 +710,9 @@ int workqueue_online_cpu(unsigned int cpu);
- int workqueue_offline_cpu(unsigned int cpu);
- #endif
+diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
+index 4c477eae689148dd..6de61367b6686197 100644
+--- a/fs/btrfs/fs.h
++++ b/fs/btrfs/fs.h
+@@ -422,7 +422,7 @@ struct btrfs_fs_info {
+ 	 * required instead of the faster short fsync log commits
+ 	 */
+ 	u64 last_trans_log_full_commit;
+-	unsigned long mount_opt;
++	u64 mount_opt;
  
-+int set_workqueue_cpumask(struct workqueue_struct *wq,
-+			  const cpumask_var_t mask);
-+
- void __init workqueue_init_early(void);
- void __init workqueue_init(void);
- 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index b8b541caed4854a4..adc1478fafb1811c 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -4398,6 +4398,25 @@ static int init_rescuer(struct workqueue_struct *wq)
- 	return 0;
- }
- 
-+int set_workqueue_cpumask(struct workqueue_struct *wq, const cpumask_var_t mask)
-+{
-+	struct workqueue_attrs *tmp_attrs;
-+	int ret;
-+
-+	tmp_attrs = alloc_workqueue_attrs();
-+	if (!tmp_attrs)
-+		return -ENOMEM;
-+
-+	apply_wqattrs_lock();
-+	copy_workqueue_attrs(tmp_attrs, wq->unbound_attrs);
-+	cpumask_copy(tmp_attrs->cpumask, mask);
-+	ret = apply_workqueue_attrs_locked(wq, tmp_attrs);
-+	apply_wqattrs_unlock();
-+	free_workqueue_attrs(tmp_attrs);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(set_workqueue_cpumask);
-+
- __printf(1, 4)
- struct workqueue_struct *alloc_workqueue(const char *fmt,
- 					 unsigned int flags,
+ 	unsigned long compress_type:4;
+ 	unsigned int compress_level;
 -- 
 Ammar Faizi
 
