@@ -2,58 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AECAD6A3308
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Feb 2023 18:01:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53E1E6A336C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Feb 2023 19:26:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbjBZRBs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Feb 2023 12:01:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39346 "EHLO
+        id S229661AbjBZS00 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Feb 2023 13:26:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbjBZRBr (ORCPT
+        with ESMTP id S229557AbjBZS0Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Feb 2023 12:01:47 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EBDEF941;
-        Sun, 26 Feb 2023 09:01:45 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id h17-20020a17090aea9100b0023739b10792so3978515pjz.1;
-        Sun, 26 Feb 2023 09:01:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0JXRJzGuJZN00HNNHJfRJv3AmmbP6kCQMVWRc0KyX8U=;
-        b=IVew+NoK6l47qKNxcUxWrRlLUX49q+1GN9+96MVBY8nOrJ2SbDHZWLVcf1wYqdb64b
-         MkGa3tmpaY6IELj7MGIc06t4FGMmU1tv+by/+W6G/g49ujYx0QgmwGin1fC3OHqKak8a
-         zQFoyy/ZovVXcUbOHrOyWtDms0dKlBrez+HGvJX5906yrlbogQXEA69hKsxKspOysj4Q
-         MzzhIlZuZrckHi9niouh3+2hYHkCBy1ovVEd6BmFLG8d4vMx3C2NbuT+NkzphH1e2z5r
-         drORQri+P2TV0KN9WpDK97OPTj9WHEjZiDnzLFMJW4C+41isLycNvDfHvBlfyVFFiIAW
-         ql5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0JXRJzGuJZN00HNNHJfRJv3AmmbP6kCQMVWRc0KyX8U=;
-        b=nTR6uqneYTYPA8q5qeUQlLK4/WW9vJRSd1QqKyfK9ttCjj6JzVOTmTTjX+CDsW2pvw
-         mRS5Tgu/uR3kV4EAIxffMZebe4l4TMk0H3L6AyaBuJU2RbMMdBuNbYoGuvrDErIR9A9R
-         KGCzxziKR14jQFhhac68h+z6PfD5oPx7b//d3QfKd4AmILao9+y0Edwc4Ph8nOzFwb8c
-         oe5UI9TIHvBVn3eye1jk3mxH7zv6HqMyESrzNu+x7TdtR4RGbc4iyTd6sywVLISvaeC5
-         vkx1Ki2LEQdQvx/GybePFuXMK/wG8TNcj/0vcwmR606xfpKi2PYnNp4y65It5YLTxdw3
-         xTkw==
-X-Gm-Message-State: AO0yUKVyvSfhz9AIJuR0TpLSln9diILylFQT9A9b2taZQKrSgdDrobQw
-        SDYSK/uAdJCjBFF7kekaq/k=
-X-Google-Smtp-Source: AK7set+UV26zRGMa1ukPz1jMf2XulekvRMg4op9oeY3PT/q4GbUPnYliVlA3cAiWqq4s8elT6dUYrw==
-X-Received: by 2002:a17:902:db08:b0:19c:da7f:a237 with SMTP id m8-20020a170902db0800b0019cda7fa237mr9714990plx.5.1677430904423;
-        Sun, 26 Feb 2023 09:01:44 -0800 (PST)
-Received: from localhost (2603-800c-1a02-1bae-a7fa-157f-969a-4cde.res6.spectrum.com. [2603:800c:1a02:1bae:a7fa:157f:969a:4cde])
-        by smtp.gmail.com with ESMTPSA id w11-20020a1709029a8b00b0019a7363e752sm2859138plp.276.2023.02.26.09.01.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Feb 2023 09:01:43 -0800 (PST)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Sun, 26 Feb 2023 07:01:41 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+        Sun, 26 Feb 2023 13:26:25 -0500
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97C0711EB0;
+        Sun, 26 Feb 2023 10:26:24 -0800 (PST)
+Received: from biznet-home.integral.gnuweeb.org (unknown [182.253.183.169])
+        by gnuweeb.org (Postfix) with ESMTPSA id 8C45E83191;
+        Sun, 26 Feb 2023 18:26:20 +0000 (UTC)
+X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1677435984;
+        bh=Iz5h8+IvB6AGuGph3EUQwH4CjEnn4umqDZWcNOgJEhU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XmoHYGC+4XhKP+Syq5r9hpOCyl3yg8Xx/8d669vPKBl7eFyJUSGrRhheM9/1baMmP
+         K1o48wOEL17Kzehoq3ICGyDQRKXrmh4/zvoE/EwsCWNEubD4NORt9yUgPDy0e1E4aS
+         fgk0v3Ms1+TEjwmt5+XfsJbFBuN7zHnlC5yhyMNCQyTCTuTLjjOI3YYVUVvdSAosRY
+         gwrNbez2CLyCg0YwV5ZgRhHV4swMlLHhDqYAawuouYWCc06HJq/PzuR/YvtZMrQy2U
+         BdLJSfiZQfthlsrUxT7iTfmXKNyhgYLXyfsBm326fAqefkfAgt6gfO8yIGXZDSk+9O
+         r7MEDUsqCzp1Q==
+Date:   Mon, 27 Feb 2023 01:26:16 +0700
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Tejun Heo <tj@kernel.org>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>,
         Lai Jiangshan <jiangshanlai@gmail.com>,
@@ -64,44 +42,63 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
 Subject: Re: [RFC PATCH v1 0/6] Introducing `wq_cpu_set` mount option for
  btrfs
-Message-ID: <Y/uQdXp8ioY1WQEp@slm.duckdns.org>
+Message-ID: <Y/ukSBodK65MEsuL@biznet-home.integral.gnuweeb.org>
 References: <20230226160259.18354-1-ammarfaizi2@gnuweeb.org>
+ <Y/uQdXp8ioY1WQEp@slm.duckdns.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230226160259.18354-1-ammarfaizi2@gnuweeb.org>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <Y/uQdXp8ioY1WQEp@slm.duckdns.org>
+X-Bpl:  hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 26, 2023 at 11:02:53PM +0700, Ammar Faizi wrote:
-> Hi,
-> 
-> This is an RFC patchset that introduces the `wq_cpu_set` mount option.
-> This option lets the user specify a CPU set that the Btrfs workqueues
-> will use.
-> 
-> Btrfs workqueues can slow sensitive user tasks down because they can use
-> any online CPU to perform heavy workloads on an SMP system. Add a mount
-> option to isolate the Btrfs workqueues to a set of CPUs. It is helpful
-> to avoid sensitive user tasks being preempted by Btrfs heavy workqueues.
-> 
-> This option is similar to the taskset bitmask except that the comma
-> separator is replaced with a dot. The reason for this is that the mount
-> option parser uses commas to separate mount options.
+Hello,
 
-Hmm... the allowed cpumasks for unbounded workqueues can already be set
-through /sys/devices/virtual/workqueue/cpumask and also each individual
-workqueue can be exposed in the matching subdirectory by setting WQ_SYSFS.
-Wouldn't the proposed btrfs option be a bit reduandant?
+On Sun, 26 Feb 2023 07:01:41 -1000, Tejun Heo wrote:
+> Hmm... the allowed cpumasks for unbounded workqueues can already be set
+> through /sys/devices/virtual/workqueue/cpumask and also each individual
+> workqueue can be exposed in the matching subdirectory by setting WQ_SYSFS.
+> Wouldn't the proposed btrfs option be a bit reduandant?
 
-Thanks.
+Thank you for the comment. I just realized the sysfs facility for this.
+So I will take a look into it deeper. For now, I have several reasons to
+use the `wq_cpu_set` option:
+
+1. Currently, there are 15 btrfs workqueues. It would not be convenient
+   to let the user manage each of them via the sysfs. Using `wq_cpu_set`
+   option at mounting time allows the user to set all of them in one
+   shot.
+
+   (for btrfs maintainers):
+   I am also not sure if the number of btrfs workqueues is stable so
+   that the user can rely on the WQ_SYSFS facility.
+
+2. I looked at /sys/devices/virtual/workqueue/ and saw its
+   subdirectories. The directory name is taken from the wq->name. But
+   how to distinguish multiple workqueues with the same name?
+
+Each btrfs mount will at least do this:
+
+	alloc_workqueue("btrfs-compressed-write", flags, max_active);
+
+When we do:
+
+	mount -t -o rw btrfs /dev/sda1 a;
+	mount -t -o rw btrfs /dev/sda2 b;
+	mount -t -o rw btrfs /dev/sda3 c;
+	mount -t -o rw btrfs /dev/sda4 d;
+
+Is there a way to identify which sysfs devices correspond to a specific
+mounted btrfs fs workqueues? Let's say I want each mount to have a
+different CPU mask.
 
 -- 
-tejun
+Ammar Faizi
+
