@@ -2,101 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 69CA06A2E57
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Feb 2023 06:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 315726A2F7D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Feb 2023 13:52:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbjBZFaq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Feb 2023 00:30:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52190 "EHLO
+        id S229565AbjBZMwb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Feb 2023 07:52:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbjBZFap (ORCPT
+        with ESMTP id S229549AbjBZMwa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Feb 2023 00:30:45 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39EEED303;
-        Sat, 25 Feb 2023 21:30:42 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E0C16B80B49;
-        Sun, 26 Feb 2023 05:30:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6D3C433D2;
-        Sun, 26 Feb 2023 05:30:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677389439;
-        bh=7hX/pPKKPtiF07aEdqR7BMzOcRIU6iwU4g8cV2SDxLU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ajKzDQKJujjZZXjMPLrddb2FN5dNYAWhqhJLPl1qOoMRR6mNi6N0BDIbxjruBl5Dn
-         HZon+lmy9ufnmzG49x4a8W008R1g55RCWFGjAFGZvCVdzefmVrLS1sLH3K06unJZqq
-         Q8bLO11aA7Z4lRd+n6fgVv1OPfoclB4HmrkfOo1swOyrr7pVDkps1FLDnAM9OsQtNr
-         AxTu+tZoYG+mJM/OI1dxqDcXmrMYGx9UoVZaeBu1yD2huECD7v6myuUVs1ZePUPhok
-         jEqcHM0Xt4q4RJ3WehpxX4MbLSf8cAjXRRLndEXZsu5FiX0jc5cpgEbkDncpfuS9AY
-         e5wxSanMhz3wA==
-Date:   Sat, 25 Feb 2023 21:30:37 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.1 12/21] fs/super.c: stop calling
- fscrypt_destroy_keyring() from __put_super()
-Message-ID: <Y/rufenGRpoJVXZr@sol.localdomain>
-References: <20230226034256.771769-1-sashal@kernel.org>
- <20230226034256.771769-12-sashal@kernel.org>
- <Y/rbGxq8oAEsW28j@sol.localdomain>
+        Sun, 26 Feb 2023 07:52:30 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE34BBAE;
+        Sun, 26 Feb 2023 04:52:29 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id kb15so3464214pjb.1;
+        Sun, 26 Feb 2023 04:52:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yS+TlC+EiV0VF2Rz3BRf4GEHgtRgdd+dzhIKTko3Adc=;
+        b=J3uh/yzOf0BMd6HVZ427c8iw0Q3fhTNqjTvvEpAFqErAaEE+9oRuC1giLmhLFg2hUC
+         rHoMSLwG5Reteaiu7wXv7O1mo5J0n/g5G8D7gt66MBgVTCcUMEXap09Y9DjPK9xeeIeW
+         kJpSobXfi0in5dTgl3Q/WzQg95sGmPCRN1c48aqLtxUIcSXx6ABFwQ3LgO2f2z77gjJv
+         n3OhMJSF7F0c9VSW+TWMnSWEjBFmwubOHDxn4utTTjEHP7/YEanU/sZysApBGoJ2yweE
+         OZTc4G+Rb02mPH8+0krx15HDQW9hG1GZYBrXfYOwP1tyfA3mul33LRpmrG/Lcxy8Lm+D
+         cjKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yS+TlC+EiV0VF2Rz3BRf4GEHgtRgdd+dzhIKTko3Adc=;
+        b=AZnPTUkwHUaGSHxzLkHXyBO1EpRQjx+oLjYfFoC/vEWdig3aGDMYPrrwM7ygxXjmR5
+         vNV6kbmtnA1TWyRlxq5wO1qCc3bfrc4Q4ozGLmaErP2uINtKVthb8lE1CKRE3S/PrmDt
+         MJKsJvbTVTjdJEGEILeVFXfGBcQtxqFbFHGNxwLQ0yxcM9YPV9ABtj/mB8iUNp00dixp
+         Dn0JbSdHyYY2jICPWKE8fBMl1S3uEFiU0aCfuyCXAUahOAlOYbkZiK0qZDOtvyB1k/Df
+         x5AxTxWwokABL1/zTKC5PdzrfNg/qsA0Dq8IXX9g9aeMNcCDMC9rJczX7J+/4bsaemAv
+         2fTg==
+X-Gm-Message-State: AO0yUKXgRx3L+V9fRHo2Q+E/DVbzu7ctnyT9GfPAIyyk14FD5UnPSe+A
+        jbhPPnnL4x/3et3aGKK2DvJbcWhayw3Lq3BoMoE=
+X-Google-Smtp-Source: AK7set9TIYU+I5MesW9FJSEiOVUVnuHHXfjTXQN0VZana3vFUqwCAUeTBbeWbH3QtVY1to3laVZtHw==
+X-Received: by 2002:a05:6a20:4417:b0:cd:4ad1:cffb with SMTP id ce23-20020a056a20441700b000cd4ad1cffbmr279401pzb.51.1677415948615;
+        Sun, 26 Feb 2023 04:52:28 -0800 (PST)
+Received: from localhost.localdomain ([199.101.192.110])
+        by smtp.gmail.com with ESMTPSA id c24-20020aa78c18000000b005ac419804d5sm2506090pfd.98.2023.02.26.04.52.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Feb 2023 04:52:28 -0800 (PST)
+From:   Dongliang Mu <mudongliangabcd@gmail.com>
+To:     Bart Van Assche <bvanassche@acm.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Muchun Song <songmuchun@bytedance.com>
+Cc:     Dongliang Mu <mudongliangabcd@gmail.com>,
+        syzbot+57e3e98f7e3b80f64d56@syzkaller.appspotmail.com,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: hfsplus: Fix UAF issue in hfsplus_put_super
+Date:   Sun, 26 Feb 2023 20:49:47 +0800
+Message-Id: <20230226124948.3175736-1-mudongliangabcd@gmail.com>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y/rbGxq8oAEsW28j@sol.localdomain>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 25, 2023 at 08:07:55PM -0800, Eric Biggers wrote:
-> On Sat, Feb 25, 2023 at 10:42:47PM -0500, Sasha Levin wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > [ Upstream commit ec64036e68634231f5891faa2b7a81cdc5dcd001 ]
-> > 
-> > Now that the key associated with the "test_dummy_operation" mount option
-> > is added on-demand when it's needed, rather than immediately when the
-> > filesystem is mounted, fscrypt_destroy_keyring() no longer needs to be
-> > called from __put_super() to avoid a memory leak on mount failure.
-> > 
-> > Remove this call, which was causing confusion because it appeared to be
-> > a sleep-in-atomic bug (though it wasn't, for a somewhat-subtle reason).
-> > 
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > Link: https://lore.kernel.org/r/20230208062107.199831-5-ebiggers@kernel.org
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> 
-> Why is this being backported?
-> 
-> - Eric
+The current hfsplus_put_super first calls hfs_btree_close on
+sbi->ext_tree, then invokes iput on sbi->hidden_dir, resulting in an
+use-after-free issue in hfsplus_release_folio.
 
-BTW, can you please permanently exclude all commits authored by me from AUTOSEL
-so that I don't have to repeatedly complain about every commit individually?
-Especially when these mails often come on weekends and holidays.
+As shown in hfsplus_fill_super, the error handling code also calls iput
+before hfs_btree_close.
 
-I know how to use Cc stable, and how to ask explicitly for a stable backport if
-I find out after the fact that one is needed.  (And other real people can always
-ask too... not counting AUTOSEL, even though you are sending the AUTOSEL emails,
-since clearly they go through no or very little human review.)
+To fix this error, we move all iput calls before hfsplus_btree_close.
 
-Of course, it's not just me that AUTOSEL isn't working for.  So, you'll still
-continue backporting random commits that I have to spend hours bisecting, e.g.
-https://lore.kernel.org/stable/20220921155332.234913-7-sashal@kernel.org.
+Note that this patch is tested on Syzbot.
 
-But at least I won't have to deal with this garbage for my own commits.
+Reported-by: syzbot+57e3e98f7e3b80f64d56@syzkaller.appspotmail.com
+Tested-by: Dongliang Mu <mudongliangabcd@gmail.com>
+Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
+---
+ fs/hfsplus/super.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Now, I'm not sure I'll get a response to this --- I received no response to my
-last AUTOSEL question at
-https://lore.kernel.org/stable/Y1DTFiP12ws04eOM@sol.localdomain.  So to
-hopefully entice you to actually do something, I'm also letting you know that I
-won't be reviewing any AUTOSEL mails for my commits anymore.
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 122ed89ebf9f..1986b4f18a90 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -295,11 +295,11 @@ static void hfsplus_put_super(struct super_block *sb)
+ 		hfsplus_sync_fs(sb, 1);
+ 	}
+ 
++	iput(sbi->alloc_file);
++	iput(sbi->hidden_dir);
+ 	hfs_btree_close(sbi->attr_tree);
+ 	hfs_btree_close(sbi->cat_tree);
+ 	hfs_btree_close(sbi->ext_tree);
+-	iput(sbi->alloc_file);
+-	iput(sbi->hidden_dir);
+ 	kfree(sbi->s_vhdr_buf);
+ 	kfree(sbi->s_backup_vhdr_buf);
+ 	unload_nls(sbi->nls);
+-- 
+2.34.1
 
-- Eric
