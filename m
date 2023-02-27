@@ -2,158 +2,406 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 949986A397F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 04:29:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26CBB6A3968
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 04:18:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229876AbjB0D3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Feb 2023 22:29:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37154 "EHLO
+        id S229673AbjB0DSX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Feb 2023 22:18:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229798AbjB0D3Y (ORCPT
+        with ESMTP id S229486AbjB0DSW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Feb 2023 22:29:24 -0500
-X-Greylist: delayed 3654 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 26 Feb 2023 19:29:20 PST
-Received: from mx07-001d1705.pphosted.com (mx07-001d1705.pphosted.com [185.132.183.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2FCB15C9F
-        for <linux-fsdevel@vger.kernel.org>; Sun, 26 Feb 2023 19:29:20 -0800 (PST)
-Received: from pps.filterd (m0209328.ppops.net [127.0.0.1])
-        by mx08-001d1705.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31R1hOqq019548;
-        Mon, 27 Feb 2023 02:20:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : mime-version :
- content-type : content-transfer-encoding; s=S1;
- bh=JQ3w2h5ZK36FWF29L4fINGZyDgXsxG5wfvW84PqHPXk=;
- b=YpZYzDqQ5i+unA2Qjlz5lecb0G6LQ3c6P/ROoR7R46EtJditV6en/TQ9HTN0LVyVKBQT
- ItqE1C0wes2KSZo09sZUq30WlrORqIuHwMsoVwWIQU28S4RfUkHIKZVc7axtwhk0Amlu
- frmXZFaO+g0qunFRmsCYmSsjZoXIN2YgkywhsWeqApVtftMGo3LlvGYpnUQt/TKPxz7W
- sJxd0Bpy0wXndyDjgkA7Nhgi0XBHAFIIRoaFus/lHEDK8rAb4+9lYbOpxhn3MY/RzVkP
- oKdqWDc5kOLkerInYHGZ12xtcu2TQqDcRTOYrRvokXZoqbFHCMCnBg6fC1fH7eravtjm sQ== 
-Received: from apc01-tyz-obe.outbound.protection.outlook.com (mail-tyzapc01lp2044.outbound.protection.outlook.com [104.47.110.44])
-        by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3nybgn92dt-1
+        Sun, 26 Feb 2023 22:18:22 -0500
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0063F107;
+        Sun, 26 Feb 2023 19:18:20 -0800 (PST)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31QKLw05007271;
+        Mon, 27 Feb 2023 03:18:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type :
+ content-transfer-encoding : in-reply-to : mime-version; s=corp-2022-7-12;
+ bh=ZYIIEf6Sapqn385Eb5JofyH2+CpKVsoV4+j3c1B4+X0=;
+ b=pFrjjlIdr40gBVzEooiAT2i4C7MPeS94J6ovavldxH6G4BFTcT17iaY7x1hkNPJvFeD3
+ nyrlKtxkHfWluWdWkj03GFhBBGEJuk17GcwuFYu4xCwa+tvkIOV3UM8yHzEAISehzvKo
+ pcgdNW6HveHl68wEKRlJYn5fX8hnP0hGYshE34YI6llKWUoV3zo/Ft9V3zCEmquM4D4u
+ Yfn43uN8X0B9DHgXL+t9kSwIc8cHBS3iJ2gPo6iIXKeXa8UaLUyKICasSQFkbFBZAL8H
+ CDoP/pdJRcy0gFFUDUuQIzdJhJc7T98iJmKTlaJFtmhnUPgQAuWNYjPqpIJ8bpRUwa5u zQ== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3nyb9aa5b2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 Feb 2023 02:20:20 +0000
+        Mon, 27 Feb 2023 03:18:04 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 31R0tebf032985;
+        Mon, 27 Feb 2023 03:18:03 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2105.outbound.protection.outlook.com [104.47.58.105])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ny8s4qjxh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Feb 2023 03:18:03 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bVvf02khRW//PhaDvtdiCU0Iqx3DMxl/TBOX+RBSi4WC6+3nPlivEBmVKXFk8pLH/WXnlS/Z6uI8s1tiHEXkQy6mOceXlZdZXJADIN84ymZIENULwMGjrnv489S0otFxvDFJNsJhdvxDtL6fb90TVjsDur/ghOWW71JV4wvLBvLoMEVu8+DOiCuRegWgZeTVEfPB1lNkVfV/AA991/L+NOvL3AUwwY1A9iGQfD65AQ+vHiWZqDIIc3p+h7FkHEz/VPsSKUJlJLlfN5SaSs9W1V326yAzBCscyUk9Z1JZzQJ0AuQeBI530kVyyS2ip/fUKy6+6rq+zOdvv+JCVEp/zw==
+ b=Pn+ARUvP5HJYBppG/TgEWJ2SP7DsJgz+qIuMCpNZoHbwlLcfZcW1gS1Uvg/GWFFDJ72rV48tDnjwkKqkamOPJN+9nj+cJwTw/DENJ7jltQCqmc8KPwnR9qyZCoGHgLgFa3omHKd+iL2yP5a6lu/4LG+xPXI7UdwnNmGBEWUZiLuUENQrdWsaZWnmdLH7/tglrTeRINB7dFVXn9KSOts8YCHnRHmQ74LaoQ/39xy6kSASGBkKQlAVgaZJqDPgSNmxV99jgeY6v0LFTEHxpuSZWyAJGhSMk6mibPNpf/Hn12iwMIe2dZ3pPY39+qlZDwY0wzmCGZ1n5BWchKiqFqhxaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JQ3w2h5ZK36FWF29L4fINGZyDgXsxG5wfvW84PqHPXk=;
- b=AozQ1VCfXDK81AJWHEuOpWfCb0NLOq5nerMPGgqXuQ+6bI+/OOI/KBGvp2O1TVijPM4lbzZ1ocQKht2HV7ag46YyWkAVFkidGNNielGQbeoOld7sX/0/j8gIEf36FCgUINGJ+XY7vItlEd0jjPGTFo9zJ6qirmblLynZIQT9B0dhSKi+BXQTdTq7r3KZ38S7iSLrXNgjZUbF9rsJ4a9c8Lk1N3P8jSzcY1jbwMEqyaukMaSwHLBENbxaRgUQApmtKUp70TguAd4QuC40PrdfJKj3DtbIxGtrlorBhqzFmXvSvYFQd8JOIdkn9WcwkZPK49QHEIRHwFFpHUfBhjXi+A==
+ bh=ZYIIEf6Sapqn385Eb5JofyH2+CpKVsoV4+j3c1B4+X0=;
+ b=VySOcQ8bA9hyhWNzIlBAOby6P77ifWJiULfc0NHNnC2Nsrere4gUpfvHXnGaxtSziWj9RNVROV/+92Fb0UEeGWpxiVgJpcmTazYJN5xLQD9lKyAsqgxC6hDUlfEHuPvDQAFrCn0je7lYCVZMkg/LdnbtvAtiBLx2PTfWdUjrWNnX5rofYTuucdIiIB8PGeBB5xa0PIimIfMoKS3Bn7QQPPNyq1FQEX2bxpiZ2N8hjN5xapE0QX0CmgCEf62hojsy/0fNLDY7I2jobjbrFZeMUppZaaXnWSEFRJvZaW8wZFjWQfxVy/0Yv5eAAOQXFDA0ngvrLMyqbNWp9NyrjxQ0cw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from TYAPR04MB2272.apcprd04.prod.outlook.com (2603:1096:404:1c::18)
- by KL1PR04MB6735.apcprd04.prod.outlook.com (2603:1096:820:d9::10) with
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZYIIEf6Sapqn385Eb5JofyH2+CpKVsoV4+j3c1B4+X0=;
+ b=cTP5S15xhM6swHL2fuZdyCwCVThq8f3xFlazwB+CrFxNrLRSPDva0oAUbY1QqWMo1yME5wi2r+eYEL8KVyF+Hd7gPfHVHHUG0SbyX4oqkoQuXEOiLJd3p3jLzg9nDRzXKjanYSeCLieix/+iNRpPk4r4i+i/BgqdS81OPJBEqqA=
+Received: from SN6PR10MB3022.namprd10.prod.outlook.com (2603:10b6:805:d8::25)
+ by MN6PR10MB7443.namprd10.prod.outlook.com (2603:10b6:208:46f::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.25; Mon, 27 Feb
- 2023 02:20:13 +0000
-Received: from TYAPR04MB2272.apcprd04.prod.outlook.com
- ([fe80::65ba:c802:ffac:d8c0]) by TYAPR04MB2272.apcprd04.prod.outlook.com
- ([fe80::65ba:c802:ffac:d8c0%4]) with mapi id 15.20.6134.025; Mon, 27 Feb 2023
- 02:20:13 +0000
-From:   "Andy.Wu@sony.com" <Andy.Wu@sony.com>
-To:     Namjae Jeon <linkinjeon@kernel.org>,
-        "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-CC:     "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
-Subject: RE: [PATCH 2/3] exfat: don't print error log in normal case
-Thread-Topic: [PATCH 2/3] exfat: don't print error log in normal case
-Thread-Index: AdlFxiFlnzIOBZgURkO2gsQA24A40QCktYOAAH3lA4A=
-Date:   Mon, 27 Feb 2023 02:20:13 +0000
-Message-ID: <TYAPR04MB2272FCA531495222A6BAFAF980AF9@TYAPR04MB2272.apcprd04.prod.outlook.com>
-References: <PUZPR04MB6316E45B7AB55F18F472503481A59@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <CAKYAXd-PV1o5-npdx7GNnj2ffMNjus5tbuQYtUbfzJHdaDuQ+w@mail.gmail.com>
-In-Reply-To: <CAKYAXd-PV1o5-npdx7GNnj2ffMNjus5tbuQYtUbfzJHdaDuQ+w@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYAPR04MB2272:EE_|KL1PR04MB6735:EE_
-x-ms-office365-filtering-correlation-id: 4d4f4414-f562-4a14-f291-08db186928a9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +Bx/lan+USoxkiReo5P22yIHlb5xoAkmirlzg8rxS/oMobm/N53tH4dOOXh1GlvkRZsWZWJQ0jtgupHvvASPgkjgFEIu6DCMIM9ls7NIY+/MJ54K8q5tCSs5v6abM8Pv7BM0VZjABinhPJv5Xh+Zk+EeiBwCvEzlKNBJOxaL7eBiSbAfEh5zxbNxFCNKaStROmecsgl6RtYnSR/BCCIxtA1JT5YevsBAKfKoBTTOv+aq8rf0S9QaoWsMYxyLAvCC5JNEUmFSevd4M0U/NWwiqpripRiDmLWcPEy/v+uac97LDNhKfMeJJcybX6u14NGdCg1tr03q161amMvhBdBkP6/Aez79wOH0nm3sSDVGoczahzXpde6so2RSHFMCGaeuY/1oG9EKSlvKy3ksWacty5zSoUBs/sPDTSrf6dcpSqmx0OMC4p2u7fEmofoI692mX3ndxMKXdeapa6Ui1UHJus5DLD1ovojUuIhY0gUtM4nzKgTQ7ZWDrUuZKIW4zPzcoDNWJHgb67/jofmZfcl1sMAtDNYO6vXnlTx91HjtONrlOSE4G2ITDQO6ldIcQ0r6kH/5It8TsHCla4DqCLlelf5ji9vSrxBx0ap7xR/nj7IHOOJUdDbCOkcEVLKmbmn1rxO/OjGR/D9feigaSJD+tZDsyplj3qmVAaqJBD1prAtmsGGagMLoRlI0y9uDJJhHh0Rc70Pj1WvKeNqpMnZ5PA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR04MB2272.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(346002)(136003)(396003)(376002)(39860400002)(366004)(451199018)(71200400001)(7696005)(8936002)(26005)(6506007)(64756008)(8676002)(41300700001)(66946007)(66446008)(4326008)(4744005)(52536014)(66476007)(66556008)(6636002)(54906003)(478600001)(107886003)(316002)(2906002)(110136005)(76116006)(5660300002)(82960400001)(122000001)(33656002)(86362001)(38070700005)(9686003)(38100700002)(186003)(83380400001)(55016003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?b3gwYURCS2Y3UjN6UHV4RFZvd2RoeUd4cCtkM1VidFB4cm5JQWdtMWtxVnlh?=
- =?utf-8?B?TXV1NjVhRVZWYXdBZ0NWSXFBZ0lKL3ZhNWdhUVE2OFcyZHZ6blNxN1BHcGxa?=
- =?utf-8?B?SGJnUkZycFpCSVBJWU9tWWM5Z1drNFZrcWtrTDZIMUlkVDlVdTg5NEd1YThJ?=
- =?utf-8?B?VjNqcUg5Z0RIOGprSTYwTW9GM3dHYkRZaDBwSnR6REZmdGlmeGdhNExWd3I1?=
- =?utf-8?B?NEx2T0hwYzcrMFBxYmdvMTN2bG5LOUZSMllzVkJ6SHliVGlYcGlDREVyK3F3?=
- =?utf-8?B?eWg0UENtN0FOZk01R1pub1V3RVYrWkxhWUVocXNHN3BaVGc1T3k3OFJrbkRi?=
- =?utf-8?B?b1JPRlBnS2V5M0lKUVJGL3RIOEZUZ01tb3RHbWZCYlM3R3VlUnBwNkh4L3VL?=
- =?utf-8?B?WEJlYVVtcitVQ0JQanJPb1g1Zng3aGpMUEZISStXSGQ5USswem4zOU5BMkpL?=
- =?utf-8?B?ZUZDL29lOVB5Q2p5bE0yV2Rud1RRSHZhV1A1K3ZLeTBLbUNpRGpZRzhHczFC?=
- =?utf-8?B?L3RodTZ3WjBKN1p0VVo0R1FPK0VtcGE3dmxJR2cyZVhrT2VZc0x1c3FFeklh?=
- =?utf-8?B?b3RoOXdybW9FajVCNnArQ3E2a0Y1V1NRMHJ5UDdDU3IzV2ZsbCsrOGlHZ2pq?=
- =?utf-8?B?SDNjZ3JnNFdHYStkcGhWZHFkZmdiekFFekZkWmxMalFhenp5ZGU5Wi9TTFI1?=
- =?utf-8?B?ZUxjVXhheC9lZG83RUpKc2JLVkQ2T0l6TUZwM3ZtYXB4ajk1a0FQVGppWndm?=
- =?utf-8?B?Nnd5Z0VEVUEwTWlQc2pEZ1pQbnVPUzI4dW9vem05ZVk3R2dWOWVRWXhOMVFF?=
- =?utf-8?B?c3l2K1BCV25ETW9PZEJqcEwwM1NMRy9uZHpOWU96VTZSMWFqV0ZudGNkV0tW?=
- =?utf-8?B?ajlBZVZCZ3Z0bVdwS09FbXlsNmtYeFlObTZjSUdSRU93Z0NuSGVaME1qVnJQ?=
- =?utf-8?B?NnpxV3FRQmQ4NmZnTXNkcEs5UHZLNEhQWnlOS0I0K090UFU3SXNia0ZKRThT?=
- =?utf-8?B?Mmd2eGFwRjhLbHpacm1rQmZlSjZwWTEzQ0NzVlh6RW1mbHp0eC9oZ3lSQVUz?=
- =?utf-8?B?WDN3WDlxeWRXczFoK2o0TU0xcWFRUlBZWFVIU1h3VUgycnV0YWZGRUs5OWUv?=
- =?utf-8?B?UHJhZGpCRXYrWjdtMWRqZi9DKzRDSnJQKytYYU54WUxMTHNuR3NrQUo0SElK?=
- =?utf-8?B?QTJpampVeDJMc0VmaGVJYXpzK25NMjNvY293ckF4dXg2b2NYVWhWZHZ2d3lx?=
- =?utf-8?B?NUxjbkxiSTN1bGxSTThYM1NpaEJMY09DaUgrZUMwOXQ4bXBNNWtjWVNlTVJk?=
- =?utf-8?B?a1JJUFZUblJZT3lpTEpPN0J2VkR4WlFObmU2akp0VkhLbHNuWlNvZm45d2lQ?=
- =?utf-8?B?dEU0OW92UEp5eWNObW42RkMyUUc1V0FOaWFiWHlhR01wUlRQbkorRmdSSkVw?=
- =?utf-8?B?ckVsUjNSZ1V5ZG9lT09McVJENGNDYUozZGVlWXlkNk43eEl5cmdqMzYyWkpO?=
- =?utf-8?B?QnlOOXdqOWlybmc4NGhWZUVieEQrbGhWcTh3UTVzU2JRZlFTbHBtME0xZDBy?=
- =?utf-8?B?dFJYNk5oZ2x0R0l6MzFMUGpHTXR6S3hDR3FkVThmY2JWS2t3Rm12TEQ5N0U4?=
- =?utf-8?B?VVZCRWM0dWRMeWV3TlVDRGJWdllPRzA3aTlGYkVpTDdTdXp5ZjQrNm5YSTdD?=
- =?utf-8?B?d0JtdDVUNE5pZzRCSzdEUXdzVU5NOFJwNldWZTg4Rm1RT2pQVUxCRjlIb3hj?=
- =?utf-8?B?OENMU0p4aFdhRWxHZDJaSGFJUUdWTDJBNXZ3WE1zbWJwYktIRWlwRzhQdE5M?=
- =?utf-8?B?VzVvUDZ1OFd6Nlg3WkFlUzEvK3pNUnBFRTA1dHM5bFFZVTgrLzg1UXZaNkx4?=
- =?utf-8?B?S2paT2ZPQzdTcFFzOE1BVWd2eGFJK2FWNXM4Y0s0eitPelF6NW1OK0FjM3d5?=
- =?utf-8?B?WGY2K2FMbDRIckl0aW5HQlZWT1BUMWFIdW92WUM2bW9sYzRENUVDeTRMRTE0?=
- =?utf-8?B?ZFJQRmhvQk5aV2NQNGp2TGRBQ2FPY1dZWkd6NUZHdXlsNTV0NEZSbDhIRWdP?=
- =?utf-8?B?K2hSeUdVZzZ3WUFOYnpQU2R5M25LTDNPV05TQkRrTjVBa241T2U0eWpOam9i?=
- =?utf-8?Q?dUTaaVPP3yEeYtDtRfYGKjggf?=
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.12; Mon, 27 Feb
+ 2023 03:17:59 +0000
+Received: from SN6PR10MB3022.namprd10.prod.outlook.com
+ ([fe80::93c9:c99e:5ab:4319]) by SN6PR10MB3022.namprd10.prod.outlook.com
+ ([fe80::93c9:c99e:5ab:4319%7]) with mapi id 15.20.6156.014; Mon, 27 Feb 2023
+ 03:17:59 +0000
+Date:   Sun, 26 Feb 2023 22:17:56 -0500
+From:   "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+To:     kernel test robot <oliver.sang@intel.com>
+Cc:     oe-lkp@lists.linux.dev, lkp@intel.com,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [linus:master] [mm/mmap]  0503ea8f5b: kernel_BUG_at_mm/filemap.c
+Message-ID: <20230227031756.v57rhicna3tjbavw@revolver>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+        kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+        lkp@intel.com, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <202302252122.38b2139-oliver.sang@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <202302252122.38b2139-oliver.sang@intel.com>
+User-Agent: NeoMutt/20220429
+X-ClientProxiedBy: YT4PR01CA0244.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10f::17) To SN6PR10MB3022.namprd10.prod.outlook.com
+ (2603:10b6:805:d8::25)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR10MB3022:EE_|MN6PR10MB7443:EE_
+X-MS-Office365-Filtering-Correlation-Id: 51b9e7fb-4f46-4988-f4df-08db18713a80
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: v5TZv9+uAeonj7i4rV72UH/mp2g7Eqviemxoa0KTFa+wmdEZgHyq4KrHfnZ/CwD8hl1Qdog1iF/wPTVY4YvQQGpYdNBFne2a42uVte1EKziOwrCoY/GAYmBTTx03yYpvvh9NL06bQvVxXUbem8oqzT1KxqiU37yAtO8kOxBRrZ86fO89lMOurTAkGldg2Gg9uf9MCDgaZU5CLZqbTYNi2qYK82qZxVFNM0G1McuCXBFPdbpVeKExiF/CeTKeqnCTkP43MoQyVFDgJgnh4C57QIC/1ta3RbfIysbH26oLUm5PgBimFHdOLDTOZNanJgESeWkpnrOYplI96G9RPDCPhrjqdTRkJ+BHr6LNEN453FfRnKOh0svLueqWU7plmIGCSpDBKi+1ltOOcwkpX+ZvDpdbWrLgrxBenOsCTw3yhLcBE6g6Db0lph/78VFioa69g1HqRHRtmz4vjWdFao0A8e0xme18YdQ7d1Jxs23wf0sOgVPXgjmTNxkij7j7IBPW7+Wz7Y+e3k1BiOM7Kp0Qqfmpx25k2bewEGdHkmvZ396WRuPlpJFR/xPx+vbbFDPVyTvkb4fuEReI3PyAPT/W0MuBDnt4JmFzG/hDTRgpC2TDKqg00tYI0kqq9BRZZs4w8GNL2YHcSoJ1k3qRJQ+OxgK86XcsT0LBsytnmirM8IU=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB3022.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(7916004)(136003)(366004)(396003)(376002)(39860400002)(346002)(451199018)(9686003)(6512007)(1076003)(6506007)(186003)(26005)(6666004)(83380400001)(86362001)(38100700002)(33716001)(66476007)(66556008)(66946007)(4326008)(6916009)(8676002)(2906002)(8936002)(5660300002)(6486002)(41300700001)(966005)(478600001)(316002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?eP+s/e2mx/CZ/n9stm3ghOCjya4zYkZS0nqxI0vfRk5XhYJ2JtD1Rz9SMrLs?=
+ =?us-ascii?Q?hOk3iPARg3pAYpZfgyvIQq9787+5Qn6VEiJPaLg7y0nfdJTz9qokIjxHtLPG?=
+ =?us-ascii?Q?caoCAZKqYrLp8lUHo9ij5j7AHd444Wc6ZisP/yxNhRJ0fYWdboaoZGaBdF03?=
+ =?us-ascii?Q?8mGP/x9Q+FQh8XXAnrvBBwWazVHCFBbTpxkB7gzf3l847VpJMMdg8T6xV2xu?=
+ =?us-ascii?Q?ECyxOHDgfGFSCcVnnJgrYYKQyKEqbcq9RBgiyw0QMEUs1JtdkzWqD3GHuvsp?=
+ =?us-ascii?Q?crOco7ZRZJuCI9Gf6zkxrJRmiy1SaHJy2URDHY7sIKWDqoQ9//Upy7oEMqqq?=
+ =?us-ascii?Q?q9/DMmmqP1NDfDNONz4IApK2xQtgNinqrcDnYOuQlzgxPEFpC68eY+e0jV/g?=
+ =?us-ascii?Q?QJkxWPuDSY/kBmiBK372YpsVC3JiFAgoCfp1Jch2YiPf8nHjglsjL15lHWCG?=
+ =?us-ascii?Q?XQvjaOreDXXoYFiHtJNJgCD18JbSfm99SBg40tkvsSVr9Q+cv1PrM2jd6Kq+?=
+ =?us-ascii?Q?0+DBmb8FKiGCNR9TYAzpoVOGd4O5Ts0nEUWc520iIOh6nMoLthx5RFxZZuN2?=
+ =?us-ascii?Q?x5cQkYsSBabDY+X1TSGAJIW9RU1LWn/821HpzgP9zB/LZVpLhqtdFYMV1na/?=
+ =?us-ascii?Q?xcu0ZSGM39zHcq3WBQjxfdgqWxjM5QincqVoSAo5kDAANz8kvn9tp43dl/1+?=
+ =?us-ascii?Q?SZ9CIvKATuZ8KKght2KzIcVLZOJWaXT2z49cOPuoJ5a5uDii7EFkIeUMbNjU?=
+ =?us-ascii?Q?+Wd7M47DtSJp/Xxql/+IWXQj9R8dTkTXlwJqKrWNeiNwaE8O1yK5B9U8a64L?=
+ =?us-ascii?Q?Fnf99NLg3wttuYYNf79QzBfXbrZEHR3DnvBpevjazMax7ZkWgwSQXMxGkMi+?=
+ =?us-ascii?Q?2XOaFgPIODs5mZJ8jjsKV6oyvbawQmEsc/1LNEcEcJXq3ylt5Jj02eauDWei?=
+ =?us-ascii?Q?onj80vSDiCJ6poFFzAgEPDL513nOUjfRNX243YzANRXc+WbOANWrLreQlJEF?=
+ =?us-ascii?Q?ZIR9Rwd1C0ol6fLnSHQsg1Pu38dG6EBXEWD/ZONIh6ImWEiiwoszWlv1h8mR?=
+ =?us-ascii?Q?jnuTuYk9S/8i5/n9OU6M6CFfHMhAwipF/GqtTuc7IB89n2u5A7TKFdg0qlXT?=
+ =?us-ascii?Q?PhtXXkmsszNiWyoTgcPVa4rm/iUpUK3UMEfxUZt+jBWhec6AmNdymwodFJD1?=
+ =?us-ascii?Q?yuCWbwPNF+bY+XMWzHHQ/Mm0Cc8RYVZl3JQ2HBpp899CSWQf8UZ1zENW55up?=
+ =?us-ascii?Q?ChGrfIkozAE89qXEVkNoVbGXWt9xC6qUEDtP7d0QfAAPOeiMp8kGjT2pE6sO?=
+ =?us-ascii?Q?rZ68/RGHVKM6ZnuKXB/bJGsEcK7NaruImKSdxpNyCqtA7LzeWgDceUkE0A1O?=
+ =?us-ascii?Q?88kdpBHZnTV5pWq5Cz/8Oo1op2q1LTaIoM6pYxCmPZv+BB1y2hp7MXf4zhp8?=
+ =?us-ascii?Q?MNob8vbh8iVoBJ5aqSKoNnsBbMIeCnsq2Z2tP/FfGKe741tyVg21scDWau2y?=
+ =?us-ascii?Q?VPORrGTTpY5oNL/Q63xOnROgALKfsItNv0Iaw/QmJoHegqyICN2EA9Uxujeq?=
+ =?us-ascii?Q?0sGVC2nGo+VDDx+X5UfTyhDN57Yt2++USFYCNs1ca4SM9WbFg8MT3C+xrK1O?=
+ =?us-ascii?Q?rA=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: uHVMvughJegCm2QcvqeHrGms9PTr2SxNY37S1Vf8DxFgVRQl9IVctn+K87T/wmreJjf/sM2VESdq+Lig9zSAw0dZT8kR/EtOOXxfHfsX5WEdR+smkiR/bA9sR59WR3aTL/78Jkr69rJiy+ngzHP9P1nFqfD1jpKfBXN2dVVBjZXCJaF5PKfNPLySttWiUZXEcfWcNOVpHssOo2pTQwxVM/HjgmTIM1WB9zc1QIeOJjtD4gyAwQdgXd7s/y/QocGsMa40JS9f9bAt86s3uBmby6bGeSNRWLgKw2Oy0Ia3SJAei9ppB25tieAO1ssNzGI9bfxnQeDbREu+vPo7xCPgtOt4pK3RGAO85ID58Z3UCI9Fd//0Rsbk7v3hm8sYvrTr6k8jLTUL1bWg3/lcgOXclVqSJPqKm2rbGhXQFhq7VQZVB7Ou2VVgrxx5dRVbRsjAnpccx1XAwFTpS+ve79TuorXxnRmgRwdrrjr7BHWgSMu1ZVLWMDtuBZJtkgfyvgfhkl9qZLwjQVtGB8HPGjaAirJxz38Ctrz027AmLSVHkXlahmpCL1F1kXe21+f1JV8hV2jM3KPXhlHrHMJrpSa7yYBwTNGRzm9Rt2ZEkPDV8FN6oKmnTLlD2xjQIs3tr2MG1or7nKauRDkbMML3Z+CuOjjIGboT4u6b11NhsDaFhOjHj3YCouiVyyHKJ8mfNRbxpSOIrTUBKCWV5WHhY8/wsOu/PpLPr62Or8uzVnc0gu4RjygTdj33nwBydkVPLxyn/sDaoQJDpYkCHryp/MStiO9NRfaCeRsfxQpSvRUCMNr3wkK1t20ezEHi6+cii4/ohgOIh33x10IIPMgPkqSjDA==
-X-OriginatorOrg: sony.com
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 2WQWlFcvivPLZpPD9QXPqS0QHZtKtzzv8p/ZU9jwWlmqJ9p14o8m+9pvyKmEnlzV6ImlQ4T58jDfKnAacXq/s4gi1nXcarC5/+Q7Qt+70Cx8o7NfN+VNUvGCYVz1Gp6PUNNpqBPtN+AJ12R5bF+Hoch28C8Y/grW4lCvyISWg9bT+a0RHIJRktDHf8yqS0YjYh86DKjKMsryqC+5/O1MIZZNYqQcNhvGu8QznowAuMiGiy11qpg0Az7TQ3CIB+cwc4JPr/NJDwBk2L+Hr7SHLJqQkPx9F7ORv5O5IwbxlojbzuwDRZjnkDBMie7OLHzldYNe7QAQEniHbhVzWjM9x0DGo79DX0F0b2bWno9GJtxnYtX/dr0nvXubuiVtyDIdPS3kK3XDYI09A0PeoAzcsm2jxckHsv96dqArk1ik4LvOirhzT8RfyJIT8LefAZ6gaiDh/Ds6H/uxQwstgogQSMo+vGk5C8jSlWNLR5/Xz0SP/vhYURMiiXxTg6ieO/XSEGLUNioCzuCXHq5LDl5Bg35UtF1sQhvMNrkAgcRw5vObtQtP3ewasX8eXQe8IdmJYTP/FzwcXkHfwrP4fnpFgyTiWwIHTVeQ2Dl2BH8iXgHhUz9xrfzQHAC7m4IG8s4tJvObP7E/J4HJoS39Tlntfh8jDZzSiTKm4etNwuZTNzcMVVLY5TIhCjZymWkOAPkr6EFMtNMlv4bXRwzrOkeJQE+trskYxsnIik3irS6hpQaCzd16H5yMP1TFzihwcM6nD7N3VlfqR+pQBZBdZBmHH5oJtuvYfO8aUCQnBwo9L5nHACBCC0t2En2d0yOO5mBNjSvJ83uBrTe5x8gboyI3UXG5zfRUDlSmZqyBJK8kfAeld2LVumAmUxWRmrVF4+sfrcdllEcxrFPjfIFfwy9oseO8UtaDfXJ3CryCfkz3p38=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51b9e7fb-4f46-4988-f4df-08db18713a80
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR10MB3022.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYAPR04MB2272.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d4f4414-f562-4a14-f291-08db186928a9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2023 02:20:13.5759
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2023 03:17:59.7145
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sz5+gUDf4pZopnPkJ2toeiqjCNSLFrQjdeqtgQOuOv1hj7OctZPawwgsCIZb3H41ATFMXw2eqd+u/mVmfsMq7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR04MB6735
-X-Proofpoint-ORIG-GUID: GlzHRiQGAXSKL-l3_NddY6OQexDjHX7t
-X-Proofpoint-GUID: GlzHRiQGAXSKL-l3_NddY6OQexDjHX7t
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-X-Sony-Outbound-GUID: GlzHRiQGAXSKL-l3_NddY6OQexDjHX7t
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hYMwRYzr1pl3+y/vPfIM770SrQO3FfFMI8LXID24hIdiymlljOjielKRbAcNniGBaPx5NpmsGxn0keOx76l98A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR10MB7443
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
  definitions=2023-02-26_22,2023-02-24_01,2023-02-09_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302270024
+X-Proofpoint-GUID: YKC9wv3iHuYyJaj_YQEVa5MifqmwZgHK
+X-Proofpoint-ORIG-GUID: YKC9wv3iHuYyJaj_YQEVa5MifqmwZgHK
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGkgTmFtamFlOg0KDQo+ID4gKwlpZiAoaGludF9jbHUgPT0gc2JpLT5udW1fY2x1c3RlcnMpIHsN
-Cj4gPiAgCQloaW50X2NsdSA9IEVYRkFUX0ZJUlNUX0NMVVNURVI7DQo+ID4gIAkJcF9jaGFpbi0+
-ZmxhZ3MgPSBBTExPQ19GQVRfQ0hBSU47DQo+ID4gIAl9DQpUaGlzIGlzIG5vcm1hbCBjYXNlLCBz
-byBsZXQgZXhmYXQgcmV3aW5kIHRvIHRoZSBmaXJzdCBjbHVzdGVyLg0KDQo+ID4gKwkvKiBjaGVj
-ayBjbHVzdGVyIHZhbGlkYXRpb24gKi8NCj4gPiArCWlmICghaXNfdmFsaWRfY2x1c3RlcihzYmks
-IGhpbnRfY2x1KSkgew0KPiA+ICsJCWV4ZmF0X2VycihzYiwgImhpbnRfY2x1c3RlciBpcyBpbnZh
-bGlkICgldSkiLCBoaW50X2NsdSk7DQo+ID4gKwkJcmV0ID0gLUVJTzsNCj4gVGhlcmUgaXMgbm8g
-cHJvYmxlbSB3aXRoIGFsbG9jYXRpb24gd2hlbiBpbnZhbGlkIGhpbnQgY2x1Lg0KPiBJdCBpcyBy
-aWdodCB0byBoYW5kbGUgaXQgYXMgYmVmb3JlIGluc3RlYWQgcmV0dXJuaW5nIC1FSU8uDQpXZSB0
-aGluayBhbGwgb3RoZXIgY2FzZSBhcmUgcmVhbCBlcnJvciBjYXNlLCBzbywgZXJyb3IgcHJpbnQg
-YW5kIHJldHVybiBFSU8uDQpNYXkgSSBjb25maXJtIGlzIHRoZXJlIGFueSBub3JtYWwgY2FzZSBp
-biBoZXJlPw0KDQpCZXN0IFJlZ2FyZHMNCkFuZHkgV3UNCg0K
+* kernel test robot <oliver.sang@intel.com> [230226 20:33]:
+>=20
+> Greeting,
+>=20
+> FYI, we noticed kernel_BUG_at_mm/filemap.c due to commit (built with gcc-=
+11):
+>=20
+> commit: 0503ea8f5ba73eb3ab13a81c1eefbaf51405385a ("mm/mmap: remove __vma_=
+adjust()")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>=20
+> [test failed on linux-next/master 0222aa9800b25ff171d6dcabcabcd5c42c6ffc3=
+f]
+
+If this is linux-next, shouldn't that mailing list be in the Cc list?
+
+>=20
+> in testcase: trinity
+> version: trinity-static-i386-x86_64-1c734c75-1_2020-01-06
+> with following parameters:
+>=20
+> 	runtime: 300s
+> 	group: group-04
+>=20
+> test-description: Trinity is a linux system call fuzz tester.
+> test-url: http://codemonkey.org.uk/projects/trinity/
+>=20
+>=20
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -=
+m 16G
+>=20
+> caused below changes (please refer to attached dmesg/kmsg for entire log/=
+backtrace):
+>=20
+>=20
+> please be noted, as below table, parent also has other type issues, and w=
+e
+> found they happen almost at same position of kernel_BUG_at_mm/filemap.c f=
+or
+> this commit if looking into dmesg (attached two parent dmesgs as well)
+
+I don't understand what you are saying with the above paragraph.
+
+I thought I understood that the bug happens in the previous commits and
+there is a dmesg from the previous two parents attached.. but when I
+look at the attached two dmesg, they are from the same commit and
+neither has anything to do with filemap.
+
+And why would we blame the later commit for the same bug?
+
+Did something go wrong with the bisection?
+
+>=20
+> we don't have knowledge if this commit fixes some problem in parent then
+> run further until further issues, but since this commit touches
+> mm/filemap.c, we just made out this report FYI
+
+I changed one line in a comment in mm/filemap.c in the commit.
+
+-------------
+diff --git a/mm/filemap.c b/mm/filemap.c
+index c915ded191f0..992554c18f1f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -97,7 +97,7 @@
+  *    ->i_pages lock           (__sync_single_inode)
+  *
+  *  ->i_mmap_rwsem
+- *    ->anon_vma.lock          (vma_adjust)
++ *    ->anon_vma.lock          (vma_merge)
+  *
+
+-----------
+
+Are you sure about this bisection?  I'm not saying it isn't my fault or
+looking to blame others, but I suspect we are indeed looking at the
+wrong commit here.
+
+>=20
+> BTW, we also noticed there is a fix commit
+> 07dc4b1862035 (" mm/mremap: fix dup_anon_vma() in vma_merge() case 4")
+> by further testing, BUG_at_mm/filemap.c is still existing there.
+>=20
+> +---------------------------------------------+------------+------------+
+> |                                             | 287051b185 | 0503ea8f5b |
+> +---------------------------------------------+------------+------------+
+> | BUG:kernel_NULL_pointer_dereference,address | 11         |            |
+> | Oops:#[##]                                  | 11         |            |
+> | RIP:dup_anon_vma                            | 11         |            |
+> | Kernel_panic-not_syncing:Fatal_exception    | 20         | 9          |
+> | canonical_address#:#[##]                    | 9          |            |
+> | RIP:anon_vma_clone                          | 9          |            |
+> | kernel_BUG_at_mm/filemap.c                  | 0          | 9          |
+> | invalid_opcode:#[##]                        | 0          | 9          |
+> | RIP:filemap_unaccount_folio                 | 0          | 9          |
+> +---------------------------------------------+------------+------------+
+>=20
+
+At what commit did problems start showing up regardless of what the
+problem was?  I did not see any other emails from this bot since
+2023-02-12, but clearly it is reporting problems with earlier commits
+considering the table above.
+
+>=20
+> If you fix the issue, kindly add following tag
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Link: https://lore.kernel.org/oe-lkp/202302252122.38b2139-oliver.sang@i=
+ntel.com
+>=20
+>=20
+> [   28.065728][ T4983] ------------[ cut here ]------------
+> [   28.066480][ T4983] kernel BUG at mm/filemap.c:153!
+> [   28.067153][ T4983] invalid opcode: 0000 [#1] SMP PTI
+> [   28.067868][ T4983] CPU: 0 PID: 4983 Comm: trinity-c3 Not tainted 6.2.=
+0-rc4-00443-g0503ea8f5ba7 #1
+> [   28.069001][ T4983] Hardware name: QEMU Standard PC (i440FX + PIIX, 19=
+96), BIOS 1.16.0-debian-1.16.0-5 04/01/2014
+> [ 28.072145][ T4983] RIP: 0010:filemap_unaccount_folio (filemap.c:?)=20
+> [ 28.072927][ T4983] Code: 89 fb 0f ba e0 10 72 05 8b 46 30 eb 0a 8b 46 5=
+8 85 c0 7f 07 8b 46 54 85 c0 78 11 48 c7 c6 a0 aa 24 82 48 89 ef e8 0b d2 0=
+2 00 <0f> 0b 48 89 ef e8 01 e7 ff ff be 13 00 00 00 48 89 ef 41 89 c4 41
+...
+
+> [ 28.087701][ T4983] __filemap_remove_folio (??:?)=20
+> [ 28.088418][ T4983] ? unmap_mapping_range_tree (memory.c:?)=20
+> [ 28.089168][ T4983] ? mapping_can_writeback+0x5/0xc=20
+> [ 28.089940][ T4983] filemap_remove_folio (??:?)=20
+> [ 28.090627][ T4983] truncate_inode_folio (??:?)=20
+> [ 28.091342][ T4983] shmem_undo_range (shmem.c:?)=20
+> [ 28.092036][ T4983] shmem_truncate_range (??:?)=20
+> [ 28.092753][ T4983] shmem_fallocate (shmem.c:?)=20
+> [ 28.093444][ T4983] vfs_fallocate (??:?)=20
+> [ 28.094128][ T4983] madvise_vma_behavior (madvise.c:?)=20
+> [ 28.094874][ T4983] do_madvise (??:?)=20
+> [ 28.095491][ T4983] __ia32_sys_madvise (??:?)=20
+> [ 28.096166][ T4983] do_int80_syscall_32 (??:?)=20
+> [ 28.096885][ T4983] entry_INT80_compat (??:?)=20
+
+What happened to your line numbers?  Didn't these show up before?  They
+did on 2023-02-06 [1]
+
+...
+>=20
+> To reproduce:
+>=20
+>         # build kernel
+> 	cd linux
+> 	cp config-6.2.0-rc4-00443-g0503ea8f5ba7 .config
+> 	make HOSTCC=3Dgcc-11 CC=3Dgcc-11 ARCH=3Dx86_64 olddefconfig prepare modu=
+les_prepare bzImage modules
+> 	make HOSTCC=3Dgcc-11 CC=3Dgcc-11 ARCH=3Dx86_64 INSTALL_MOD_PATH=3D<mod-i=
+nstall-dir> modules_install
+> 	cd <mod-install-dir>
+> 	find lib/ | cpio -o -H newc --quiet | gzip > modules.cgz
+>=20
+>=20
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp qemu -k <bzImage> -m modules.cgz job-script # job-script =
+is attached in this email
+>=20
+>         # if come across any failure that blocks the test,
+>         # please remove ~/.lkp and /lkp dir to run from a clean state.
+>=20
+
+This does not work for me.  Since my last use of lkp it seems something
+was changed and now -watchdog is not recognized by my qemu and so my
+attempts to reproduce this are failing.  Is there a way to avoid using
+the -watchdog flag?  Running the command by hand fails as it seems some
+files are removed on exit?
+
+I did try to remove the directories and run from a clean state, but it
+still fails for me. (see below)
+
+
+Thanks,
+Liam
+
+1. https://lore.kernel.org/linux-mm/202302062208.24d3e563-oliver.sang@intel=
+.com/
+
+Log of failed lkp 68d76160fd7bb767c4a63e7709706b462c475e1b
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+x86_64
+=3D=3D> Making package: lkp-src 0-1 (Sun Feb 26 09:31:45 PM EST 2023)
+=3D=3D> Checking runtime dependencies...
+=3D=3D> Checking buildtime dependencies...
+=3D=3D> WARNING: Using existing $srcdir/ tree
+=3D=3D> Removing existing $pkgdir/ directory...
+=3D=3D> Starting build()...
+make: Entering directory '/home/jedix/lkp-tests/bin/event'
+klcc  -D_FORTIFY_SOURCE=3D2  -c -o wakeup.o wakeup.c
+klcc  -Wl,-O1,--sort-common,--as-needed,-z,relro -static -o wakeup wakeup.o
+rm -f wakeup.o
+strip wakeup
+make: Leaving directory '/home/jedix/lkp-tests/bin/event'
+=3D=3D> Entering fakeroot environment...
+x86_64
+=3D=3D> Starting package()...
+=3D=3D> Creating package "lkp-src"...
+88466 blocks
+renamed '/home/jedix/.lkp/cache/lkp-x86_64.cgz.tmp' -> '/home/jedix/.lkp/ca=
+che/lkp-x86_64.cgz'
+=3D=3D> Leaving fakeroot environment.
+=3D=3D> Finished making: lkp-src 0-1 (Sun Feb 26 09:31:47 PM EST 2023)
+~/lkp-tests
+11 blocks
+result_root: /home/jedix/.lkp//result/trinity/group-04-300s/vm-snb/yocto-i3=
+86-minimal-20190520.cgz/x86_64-kexec/gcc-11/0503ea8f5ba73eb3ab13a81c1eefbaf=
+51405385a/0
+downloading initrds ...
+use local modules: /home/jedix/.lkp/cache/modules.cgz
+/usr/bin/wget -q --timeout=3D1800 --tries=3D1 --local-encoding=3DUTF-8 http=
+s://download.01.org/0day-ci/lkp-qemu/osimage/yocto/yocto-i386-minimal-20190=
+520.cgz -N -P /home/jedix/.lkp/cache/osimage/yocto
+17916 blocks
+/usr/bin/wget -q --timeout=3D1800 --tries=3D1 --local-encoding=3DUTF-8 http=
+s://download.01.org/0day-ci/lkp-qemu/osimage/pkg/debian-x86_64-20180403.cgz=
+/trinity-static-i386-x86_64-1c734c75-1_2020-01-06.cgz -N -P /home/jedix/.lk=
+p/cache/osimage/pkg/debian-x86_64-20180403.cgz
+43019 blocks
+exec command: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -fsdev local,=
+id=3Dtest_dev,path=3D/home/jedix/.lkp//result/trinity/group-04-300s/vm-snb/=
+yocto-i386-minimal-20190520.cgz/x86_64-kexec/gcc-11/0503ea8f5ba73eb3ab13a81=
+c1eefbaf51405385a/0,security_model=3Dnone -device virtio-9p-pci,fsdev=3Dtes=
+t_dev,mount_tag=3D9p/virtfs_mount -kernel bzImage -append root=3D/dev/ram0 =
+RESULT_ROOT=3D/result/trinity/group-04-300s/vm-snb/yocto-i386-minimal-20190=
+520.cgz/x86_64-kexec/gcc-11/0503ea8f5ba73eb3ab13a81c1eefbaf51405385a/19 BOO=
+T_IMAGE=3D/pkg/linux/x86_64-kexec/gcc-11/0503ea8f5ba73eb3ab13a81c1eefbaf514=
+05385a/vmlinuz-6.2.0-rc4-00443-g0503ea8f5ba7 branch=3Dlinus/master job=3D/l=
+kp/jobs/scheduled/vm-meta-102/trinity-group-04-300s-yocto-i386-minimal-2019=
+0520.cgz-0503ea8f5ba73eb3ab13a81c1eefbaf51405385a-20230224-7240-hzx70n-16.y=
+aml user=3Dlkp ARCH=3Dx86_64 kconfig=3Dx86_64-kexec commit=3D0503ea8f5ba73e=
+b3ab13a81c1eefbaf51405385a initcall_debug nmi_watchdog=3D0 vmalloc=3D256M i=
+nitramfs_async=3D0 page_owner=3Don max_uptime=3D1200 LKP_LOCAL_RUN=3D1 seli=
+nux=3D0 debug apic=3Ddebug sysrq_always_enabled rcupdate.rcu_cpu_stall_time=
+out=3D100 net.ifnames=3D0 printk.devkmsg=3Don panic=3D-1 softlockup_panic=
+=3D1 nmi_watchdog=3Dpanic oops=3Dpanic load_ramdisk=3D2 prompt_ramdisk=3D0 =
+drbd.minor_count=3D8 systemd.log_level=3Derr ignore_loglevel console=3Dtty0=
+ earlyprintk=3DttyS0,115200 console=3DttyS0,115200 vga=3Dnormal rw  ip=3Ddh=
+cp result_service=3D9p/virtfs_mount -initrd /home/jedix/.lkp/cache/final_in=
+itrd -smp 2 -m 3419M -no-reboot -watchdog i6300esb -rtc base=3Dlocaltime -d=
+evice e1000,netdev=3Dnet0 -netdev user,id=3Dnet0 -display none -monitor nul=
+l -serial stdio
+qemu-system-x86_64: -watchdog: invalid option
+
+
+
