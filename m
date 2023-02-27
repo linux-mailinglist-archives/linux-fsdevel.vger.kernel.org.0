@@ -2,154 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C70D46A4687
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 16:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91E136A46E8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 17:23:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229815AbjB0Pyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 10:54:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40368 "EHLO
+        id S229872AbjB0QXQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 11:23:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229893AbjB0Pyo (ORCPT
+        with ESMTP id S229656AbjB0QXP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 10:54:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 755D116ADA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 07:53:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677513232;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FSg5+r6je78Oo6DOHt1spvGdIu0PScSllKZjUp4heJA=;
-        b=KZ/7agVI/jwe0IRgbSdkf0oYeZgrYvfXh0bs8d7kVk0Da9q0c3dn0274MgXm5PNzsl8V3Q
-        ahJf+27OeU7bfTWKM96IKWRZAKZJYNJkGXiJeATeCTOBiFch9Icwq4bB5JKiBmTFnyZlCj
-        gA9kgS1y00Im/+IYkagAZP2iLYKtJl8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-416-inavr7DaPlSPxeWPDMSTeg-1; Mon, 27 Feb 2023 10:53:49 -0500
-X-MC-Unique: inavr7DaPlSPxeWPDMSTeg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 70F14185A7A4;
-        Mon, 27 Feb 2023 15:53:48 +0000 (UTC)
-Received: from localhost (unknown [10.39.193.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 348811121314;
-        Mon, 27 Feb 2023 15:53:47 +0000 (UTC)
-Date:   Mon, 27 Feb 2023 10:53:45 -0500
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     vgoyal@redhat.com
-Cc:     dri-devel@lists.freedesktop.org, helen.koike@collabora.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wsa+renesas@sang-engineering.com, akpm@linux-foundation.org,
-        David Heidelberg <david@ixit.cz>
-Subject: Re: [RESEND v2 PATCH] init/do_mounts.c: add virtiofs root fs support
-Message-ID: <Y/zSCarxyabSC1Zf@fedora>
-References: <20230224143751.36863-1-david@ixit.cz>
+        Mon, 27 Feb 2023 11:23:15 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25ABE4C03
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 08:23:12 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id i34so28086495eda.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 08:23:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wFR4tLzU09oPdFCdK8fx8YknXRfN/zDcEZwuvmhL1BA=;
+        b=VbaiOZLX1Bg4n5ZQb3SBvby6nX//Y2ZKzBgmRJmh6gTUuH3/QtNmyyX7kOw+C1jIEa
+         QkCkI57rKxsOgL37Os0SN+EntqnIxU4NK6FqaGF0TVRnoHhHjNRil3vLGtza0/kgAxhq
+         0FPL5HNtqzPYjPMULPqS1S8x50Uu3NBVjyuFQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wFR4tLzU09oPdFCdK8fx8YknXRfN/zDcEZwuvmhL1BA=;
+        b=OafCEG2/Z3P4CvXAfXUfAZ3SZx8G6kQQRzRQwg/AmGCJ0NfCovGy7QJ2vVP/ambzTy
+         OMoUGOfF6+74iVXLkovc3vAj5cgY0AZydNbYCFfTR1DT69z16F8kkqcUePTEm8+rXzL7
+         vKKfBlI9AYuMMywnm6wSd+cO+jUCTC6SzXMJQMwCbT9b197/ErkwNNafYIiMUuEaVpDp
+         +mjR9QWsf9jYvVVvh3RmzvOM1RyK//NPd2oxb4GaM2r2XSNSv7bNGkXYC8ykS/FQvnSC
+         CJAD0O9z0Z4NWqLaHyxK0NS2OXLCs7E8s/23mqUJZgyy5LiSaBsBaMcGdqbqD3IsutC5
+         hRMw==
+X-Gm-Message-State: AO0yUKXkvgXeFTyEqedI0vG2Wcx2GOnlqrX2C2shnxgbwJ1bp8o2Lzk7
+        KX0Fg28gavnepQgKCYmHbaTERw==
+X-Google-Smtp-Source: AK7set8MmGZpi2A29kYf3EdaoDWaJ7iO2C6l7g8xQqGEBfJ9UCgJk/1Bhmou+fSDZs/nHW/FNyzSUQ==
+X-Received: by 2002:a17:906:99d3:b0:8ef:fd8:9d04 with SMTP id s19-20020a17090699d300b008ef0fd89d04mr17295247ejn.27.1677514990668;
+        Mon, 27 Feb 2023 08:23:10 -0800 (PST)
+Received: from miu.piliscsaba.redhat.com (91-82-183-158.pool.digikabel.hu. [91.82.183.158])
+        by smtp.gmail.com with ESMTPSA id lc8-20020a170906f90800b008d57e796dcbsm3375610ejb.25.2023.02.27.08.23.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Feb 2023 08:23:10 -0800 (PST)
+Date:   Mon, 27 Feb 2023 17:23:04 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fuse update for 6.3
+Message-ID: <Y/zYyN7NeLKusmSj@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RSf3QCTu5WhPlQBP"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230224143751.36863-1-david@ixit.cz>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Linus,
 
---RSf3QCTu5WhPlQBP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please pull from:
 
-On Fri, Feb 24, 2023 at 03:37:51PM +0100, David Heidelberg wrote:
-> From: Stefan Hajnoczi <stefanha@redhat.com>
->=20
-> Make it possible to boot directly from a virtiofs file system with tag
-> 'myfs' using the following kernel parameters:
->=20
->   rootfstype=3Dvirtiofs root=3Dmyfs rw
->=20
-> Booting directly from virtiofs makes it possible to use a directory on
-> the host as the root file system.  This is convenient for testing and
-> situations where manipulating disk image files is cumbersome.
->=20
-> Reviewed-by: Helen Koike <helen.koike@collabora.com>
-> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
-> v2: added Reviewed-by and CCed everyone interested.
->=20
-> We have used this option in Mesa3D CI for testing crosvm for
-> more than one years and it's proven to work reliably.
->=20
-> We are working on effort to removing custom patches to be able to do=20
-> automated apply and test of patches from any tree.                       =
-      =20
->=20
-> https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/.gitlab-ci/crosvm-ru=
-nner.sh#L85
->  init/do_mounts.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-6.3
 
-Vivek, do you remember where we ended up with boot from virtiofs? I
-thought a different solution was merged some time ago.
+ - Fix regression in fileattr permission checking
 
-There is documentation from the virtiofs community here:
-https://virtio-fs.gitlab.io/howto-boot.html
+ - Fix possible hang during PID namespace destruction
 
-Stefan
+ - Add generic support for request extensions
 
->=20
-> diff --git a/init/do_mounts.c b/init/do_mounts.c
-> index 811e94daf0a8..11c11abe23d7 100644
-> --- a/init/do_mounts.c
-> +++ b/init/do_mounts.c
-> @@ -578,6 +578,16 @@ void __init mount_root(void)
->  			printk(KERN_ERR "VFS: Unable to mount root fs via SMB.\n");
->  		return;
->  	}
-> +#endif
-> +#ifdef CONFIG_VIRTIO_FS
-> +	if (root_fs_names && !strcmp(root_fs_names, "virtiofs")) {
-> +		if (!do_mount_root(root_device_name, "virtiofs",
-> +				   root_mountflags, root_mount_data))
-> +			return;
-> +
-> +		panic("VFS: Unable to mount root fs \"%s\" from virtiofs",
-> +		      root_device_name);
-> +	}
->  #endif
->  	if (ROOT_DEV =3D=3D 0 && root_device_name && root_fs_names) {
->  		if (mount_nodev_root() =3D=3D 0)
-> --=20
-> 2.39.1
->=20
+ - Add supplementary group list extension
 
---RSf3QCTu5WhPlQBP
-Content-Type: application/pgp-signature; name="signature.asc"
+ - Add limited support for supplying supplementary groups in create
+   requests
 
------BEGIN PGP SIGNATURE-----
+ - Documentation fixes
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmP80gkACgkQnKSrs4Gr
-c8gQDAf/S5FKAUxYW0RXBL8p7kqYdskcOGTgDOV7axCS6K87pK4tYT7M3RqheN3+
-edcQhwOIM1ycR+xuYS5AA60sUtNKlsF4RIZu8+ug1sJPoXZE2WDtQbMk4sCpctgt
-oWQTTVA35jvOv8SnfVL6AYcYTtymB6bpXaX/cYdUn5ERaOleKRvt4E8Rpjv9hCjS
-2pg+KhGCoTWLicimXqEmHZI4FwChxJgvmw8EmNmyNm9wzuh9xibsLbm0tB6wyIdt
-f7FWURT1T+yIr8TIChaWUg7pb+HldwDxpcFSsLeZGgaPB22os24ZTalYNrd8KQrm
-320U02Kiol90+QZLWEVXkJQ1z2HlmA==
-=igqY
------END PGP SIGNATURE-----
+Thanks,
+Miklos
 
---RSf3QCTu5WhPlQBP--
+---
+Alexander Mikhalitsyn (1):
+      fuse: add inode/permission checks to fileattr_get/fileattr_set
 
+Eric W. Biederman (1):
+      fuse: in fuse_flush only wait if someone wants the return code
+
+Miklos Szeredi (2):
+      fuse: add request extension
+      fuse: optional supplementary group in create requests
+
+Randy Dunlap (1):
+      fuse: fix all W=1 kernel-doc warnings
+
+---
+ fs/fuse/cuse.c            |   2 +-
+ fs/fuse/dev.c             |   4 +-
+ fs/fuse/dir.c             | 126 +++++++++++++++++++++++++++++++++++-----------
+ fs/fuse/file.c            |  91 +++++++++++++++++++++++----------
+ fs/fuse/fuse_i.h          |   9 +++-
+ fs/fuse/inode.c           |   4 +-
+ fs/fuse/ioctl.c           |   6 +++
+ include/uapi/linux/fuse.h |  45 ++++++++++++++++-
+ 8 files changed, 225 insertions(+), 62 deletions(-)
