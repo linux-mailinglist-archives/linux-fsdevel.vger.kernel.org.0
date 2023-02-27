@@ -2,112 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 593376A4D61
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 22:39:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3726E6A4DDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 23:17:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbjB0VjB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 16:39:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46640 "EHLO
+        id S229667AbjB0WRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 17:17:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbjB0VjA (ORCPT
+        with ESMTP id S229512AbjB0WRw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 16:39:00 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA7C011E99;
-        Mon, 27 Feb 2023 13:38:59 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 602EF60F24;
-        Mon, 27 Feb 2023 21:38:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAB2AC433EF;
-        Mon, 27 Feb 2023 21:38:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677533938;
-        bh=EBtrrhdOA19NAE5/F2Y67XUzzeFr0UMRVBaiZBpadlQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UrK8XdZPRsgi/trfsLijsvyMoNTiqeoDwBqSSl6iGjynEFSkCWC0RDLdgPUlDUXd+
-         N17/Y2vpMMK1klEEMpsSoCDlFXbk8vG0JF/Q0wgbURSzuFMNS3S6G2eyPVcZRVD2zH
-         1CfNDZIlpntqAb2E08bXqhCRRkJgGaLvSq1Lj3HbM7927opG/N5sXDD2sR4YQTDTHV
-         88W/qkYwH9IMedSU2NpNMjFM9bAzPhTRpxQLSJZCx5+s/f5n1lQZrGa1CpRpYnQOo3
-         HEFSebxafPkkog4GXiQY9aegQxFnYKrIar4Un21/AADVfMUIVn9HolKxxSoWwUSo8p
-         9frMz2ZjuZYkg==
-Date:   Mon, 27 Feb 2023 21:38:46 +0000
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <Y/0i5pGYjrVw59Kk@gmail.com>
-References: <20230226034256.771769-1-sashal@kernel.org>
- <20230226034256.771769-12-sashal@kernel.org>
- <Y/rbGxq8oAEsW28j@sol.localdomain>
- <Y/rufenGRpoJVXZr@sol.localdomain>
- <Y/ux9JLHQKDOzWHJ@sol.localdomain>
- <Y/y70zJj4kjOVfXa@sashalap>
- <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <Y/0U8tpNkgePu00M@sashalap>
+        Mon, 27 Feb 2023 17:17:52 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C952199
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 14:17:49 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id ky4so8408928plb.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 14:17:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mPM2MT4l22bSLqZbp1zzdMjwuCto4MQv4gVU0GLg09o=;
+        b=c3RRuHU2onk5Ll4yH0rWp94BqSk4DSJw35QyBkGUaFa0WGN4tgO2TcNVzhoYIx+7PH
+         DVLzen85rSVguCwv9NApLo93L2laz9K6tOeBUBJvz486/ZLlTL5qVvC6kpnmwOCm9Pjr
+         LVfvQcT4dxC4qxQBqbsYuUqwvU50L5wJerBgWIDGMGeV+E1BQas6rvjFc65e3rs3IA2q
+         9KlezrP7s25qLNC2O8rGQ2Rf2lu7RDsHCfqiwB1XmqR6ubPxGCE+79xQ8nWxaEf4u+wc
+         m298ViMCUknvpjJh5377alzfmmeSpITHNi140aNl0erKfh0vAWKeHCIOR2TY7vPLFA8N
+         4R3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mPM2MT4l22bSLqZbp1zzdMjwuCto4MQv4gVU0GLg09o=;
+        b=5E+rgEOGIgyzVEyn+MdXuzv4Iq6gG7P5r98N74HqDF0nt4eyX/L0ak1YOyNfIPWgek
+         OpC95sOxR60IWfTvv7B+/4sO9Bk5vlUVVWAJZYjjavIcMVUdG1CGE/UHeGW6EIcR3SQU
+         LSrtr9Idq/xDYDt6RnqhXbmeMBbXE3OhLOi6oCCb0WGIZMXd5ysXl75s7ShcRgnVyZQX
+         KFSpVQyRJQGaSaI//sEh185R9UcbDFqeitdtFvyfIraFDbBVfl4T6/pyQj+1yXlDPYu2
+         4A2jQgf6JYtjKXAdlX0S4gNoSseA77AMEX7r6GGYSgAo1pe/25FIji9u3u5xJeA6qCAD
+         dKww==
+X-Gm-Message-State: AO0yUKUf6Z0rxPiLHSoP1kTEJ7MxTv9lvo5Nuecpq1ZTSqnjUPUKu7Lj
+        BefP1HegT9sa9LGX71jNMwrxoBxai6HbHo2l
+X-Google-Smtp-Source: AK7set/UWLuA22t/X7nw5ppBZa0/KoERUzGb05/5qRp1Ftv4fGoo0pk3i5p98gZJeVqpUqkw9mF5YQ==
+X-Received: by 2002:a17:903:22cf:b0:19d:1686:989 with SMTP id y15-20020a17090322cf00b0019d16860989mr490126plg.59.1677536269102;
+        Mon, 27 Feb 2023 14:17:49 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-4-237.pa.vic.optusnet.com.au. [49.186.4.237])
+        by smtp.gmail.com with ESMTPSA id u13-20020a170902714d00b00198e7d97171sm5059718plm.128.2023.02.27.14.17.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Feb 2023 14:17:48 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pWloX-002tUp-Ps; Tue, 28 Feb 2023 09:17:45 +1100
+Date:   Tue, 28 Feb 2023 09:17:45 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Tejun Heo <tj@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        Linux Btrfs Mailing List <linux-btrfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Fsdevel Mailing List <linux-fsdevel@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+Subject: Re: [RFC PATCH v1 0/6] Introducing `wq_cpu_set` mount option for
+ btrfs
+Message-ID: <20230227221745.GI2825702@dread.disaster.area>
+References: <20230226160259.18354-1-ammarfaizi2@gnuweeb.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y/0U8tpNkgePu00M@sashalap>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230226160259.18354-1-ammarfaizi2@gnuweeb.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 03:39:14PM -0500, Sasha Levin wrote:
-> > > So to summarize, that buggy commit was backported even though:
-> > > 
-> > >   * There were no indications that it was a bug fix (and thus potentially
-> > >     suitable for stable) in the first place.
-> > >   * On the AUTOSEL thread, someone told you the commit is broken.
-> > >   * There was already a thread that reported a regression caused by the commit.
-> > >     Easily findable via lore search.
-> > >   * There was also already a pending patch that Fixes the commit.  Again easily
-> > >     findable via lore search.
-> > > 
-> > > So it seems a *lot* of things went wrong, no?  Why?  If so many things can go
-> > > wrong, it's not just a "mistake" but rather the process is the problem...
-> > 
-> > BTW, another cause of this is that the commit (66f99628eb24) was AUTOSEL'd after
-> > only being in mainline for 4 days, and *released* in all LTS kernels after only
-> > being in mainline for 12 days.  Surely that's a timeline befitting a critical
-> > security vulnerability, not some random neural-network-selected commit that
-> > wasn't even fixing anything?
-> 
-> I would love to have a mechanism that tells me with 100% confidence if a
-> given commit fixes a bug or not, could you provide me with one?
+On Sun, Feb 26, 2023 at 11:02:53PM +0700, Ammar Faizi wrote:
+> ## Test wq_cpu_set
+> sudo mount -t btrfs -o rw,compress-force=zstd:15,commit=1500,wq_cpu_set=0.4.1.5 /dev/sda2 hdd/a;
+> cp -rf /path/folder_with_many_large_files/ hdd/a/test;
+> sync; # See the CPU usage in htop.
+> sudo umount hdd/a;
 
-Just because you can't be 100% certain whether a commit is a fix doesn't mean
-you should be rushing to backport random commits that have no indications they
-are fixing anything.
+This seems like the wrong model for setting cpu locality for
+internal filesystem threads.
 
-> w.r.t timelines, this is something that was discussed on the mailing
-> list a few years ago where we decided that giving AUTOSEL commits 7 days
-> of soaking time is sufficient, if anything changed we can have this
-> discussion again.
+Users are used to controlling cpu sets and other locality behaviour
+of a task with wrapper tools like numactl. Wrap th emount command
+with a numactl command to limit the CPU set, then have the btrfs
+fill_super() callback set the cpu mask for the work queues it
+creates based on the cpu mask that has been set for the mount task.
 
-Nothing has changed, but that doesn't mean that your process is actually
-working.  7 days might be appropriate for something that looks like a security
-fix, but not for a random commit with no indications it is fixing anything.
+That is, I think the model should be "inherit cpu mask from parent
+task" rather than adding mount options. This model allows anything
+that numactl can control (e.g. memory locality) to also influence
+the filesystem default behaviour without having to add yet more
+mount options in the future....
 
-BTW, based on that example it's not even 7 days between AUTOSEL and patch
-applied, but actually 7 days from AUTOSEL to *release*.  So e.g. if someone
-takes just a 1 week vacation, in that time a commit they would have NAK'ed can
-be AUTOSEL'ed and pushed out across all LTS kernels...
-
-> Note, however, that it's not enough to keep pointing at a tiny set and
-> using it to suggest that the entire process is broken. How many AUTOSEL
-> commits introduced a regression? How many -stable tagged ones did? How
-> many bugs did AUTOSEL commits fix?
-
-So basically you don't accept feedback from individual people, as individual
-people don't have enough data?
-
-- Eric
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
