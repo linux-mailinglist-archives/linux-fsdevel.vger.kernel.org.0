@@ -2,36 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D7AF6A431B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 14:42:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBA2B6A432D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 14:46:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbjB0Nmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 08:42:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58430 "EHLO
+        id S229725AbjB0Np7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 08:45:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbjB0Nms (ORCPT
+        with ESMTP id S229558AbjB0Np6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 08:42:48 -0500
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3819510401;
-        Mon, 27 Feb 2023 05:42:47 -0800 (PST)
-Received: from biznet-home.integral.gnuweeb.org (unknown [182.2.39.140])
-        by gnuweeb.org (Postfix) with ESMTPSA id A06DC831EE;
-        Mon, 27 Feb 2023 13:42:43 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1677505366;
-        bh=sPMDNczqziOn29+Dhl16L3xNY5YIHG7rWMEp6/Gq5uY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BuXtL1GppH1wQW8Q9hth0QwTBc8n5vLNgDjnfqM322/I9Vvl1VVn/XHxMdG6dlef5
-         6QYC0/T1kAya1lzJsDd/0wcZExODJgc1DTW7E9islsADWEL+6jX1AqjeLddLEq00TT
-         kcthdylzgNMJyIywzUOPFJ1S7brs93pGp1K3rhaBwvGJRO0SAUC9iHrAB1GhlUOAPZ
-         y0oGkcrDtKl4K6sd7wZgHrsVwT5rMP3AQs1pbddQ5EC75Y1H/1Twj2JtwDE+yFnj8t
-         Z5OJ3r7v+uRVKmggYDlrDpM2GgM11yK9qW71gzmlNNfnb8bEBbtG9oACJLW1nLBkIo
-         bGH91GxKPXZtQ==
-Date:   Mon, 27 Feb 2023 20:42:35 +0700
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+        Mon, 27 Feb 2023 08:45:58 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB4221B550;
+        Mon, 27 Feb 2023 05:45:57 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id q31-20020a17090a17a200b0023750b69614so6172483pja.5;
+        Mon, 27 Feb 2023 05:45:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:subject:from:content-language
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CzmZnimNpH+EYXZ0bDiVoPJjPd0s6EF9C+qx53bSQDI=;
+        b=ZzJXXHoZM/CzyJMIT0Vd2FuqJwOWi3ZiAyVSIdc7G6v6HGERSoQrbFl3CmkMbEOnLe
+         FbpGGrrQEHUm9Rgq6jx/+TXe15M3qf3w3Vh4q6anEQ4uAvoQfYbEt+DvWNW1KY4OIJ3p
+         RBFv/zRS5jMOxUzJl2gA7gGnparcii/lfOL8ZMCau+/oUyGlMPHuyUHZGx44ZG86yclk
+         tooJpJQoGp6m/BY4hx0fFafeoQ1I7ieHk1WvE45EAUPsIBlwtKLeJ9HRf3x4fsD8kwYT
+         WQD3rUGs8DYYOgry/K/zvLtfBElIZKBk2AZOwe40hugW1vgw+5LzjXEF0OePfsWGm+MZ
+         flgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:subject:from:content-language
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CzmZnimNpH+EYXZ0bDiVoPJjPd0s6EF9C+qx53bSQDI=;
+        b=mfrFxwlLMrh/dMCseBhuOsco42557x0dcvYhznE4EYeH9V2B8bWNjyHQiZCytsoMgw
+         JvzBybnWxdycKALqfUbNDuguv+sM3mOzJ6NRrWHqtLoLt9MgpW66PhDfyulqbxYrQV+R
+         sq04DQcnzx0i5cBHu0H26I5g0ySZzhlUsxYIY2knvbPm6UTXmhTji7T+R8pg2KKd+IEK
+         cEybRbivYHQyrN6kWgE1g4ycmOrH3zZAD2JK61q5rtHNuSr6ssq+GKs3b0FPTE2xirz+
+         0twIrY/4Ez52fCLuIm4pGslE73cpzynj8KgB5z7R9Qgu7RMCo9tP7mTLIJ7Y9CBiSBQ0
+         +Omw==
+X-Gm-Message-State: AO0yUKURHEESWkDjPkY88pkVewEV9KUhkLUf/KtMZhIJQHYS4VFB3+nZ
+        77TVzcuAlfGlhAHlZhyz31M=
+X-Google-Smtp-Source: AK7set90PO9ecxcI2ys6lRPTe63kfXEIBrwfCYOYDLP+DSyx0qzIGI1tHu3XlHcF06v42vC1zlg7qQ==
+X-Received: by 2002:a05:6a20:9383:b0:cb:af96:9436 with SMTP id x3-20020a056a20938300b000cbaf969436mr21854292pzh.0.1677505557052;
+        Mon, 27 Feb 2023 05:45:57 -0800 (PST)
+Received: from [192.168.136.80] ([182.2.39.140])
+        by smtp.gmail.com with ESMTPSA id u24-20020a62ed18000000b005d663989ccfsm4241295pfh.200.2023.02.27.05.45.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Feb 2023 05:45:56 -0800 (PST)
+Message-ID: <b863f0ec-5e53-0045-cca1-c1a513e930e5@gmail.com>
+Date:   Mon, 27 Feb 2023 20:45:26 +0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Filipe Manana <fdmanana@kernel.org>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Tejun Heo <tj@kernel.org>,
         Lai Jiangshan <jiangshanlai@gmail.com>,
@@ -40,18 +65,19 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Fsdevel Mailing List <linux-fsdevel@vger.kernel.org>,
         GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+References: <20230226160259.18354-1-ammarfaizi2@gnuweeb.org>
+ <CAL3q7H63rvF3bXNgQAhcjdjbP2q5Wxo8MjcxcT7BeA9vjxAxwQ@mail.gmail.com>
+ <ff610f19-7303-f583-4e22-e526f314aaa9@gmx.com>
+Content-Language: en-US
+From:   Ammar Faizi <ammarfaizi2@gmail.com>
 Subject: Re: [RFC PATCH v1 0/6] Introducing `wq_cpu_set` mount option for
  btrfs
-Message-ID: <Y/yzS7aQ6PDyFsbm@biznet-home.integral.gnuweeb.org>
-References: <20230226160259.18354-1-ammarfaizi2@gnuweeb.org>
- <19732428-010d-582c-0aed-9dd09b11d403@gmx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19732428-010d-582c-0aed-9dd09b11d403@gmx.com>
-X-Bpl:  hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+In-Reply-To: <ff610f19-7303-f583-4e22-e526f314aaa9@gmx.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,26 +85,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 06:18:43PM +0800, Qu Wenruo wrote: 
-> I'm not sure if pinning the wq is really the best way to your problem.
+On 2/27/23 6:46 PM, Qu Wenruo wrote:
+> On 2023/2/27 19:02, Filipe Manana wrote:
+>> On Sun, Feb 26, 2023 at 4:31 PM Ammar Faizi <ammarfaizi2@gnuweeb.org> wrote:
+>>> Figure (the CPU usage when `wq_cpu_set` is used VS when it is not):
+>>> https://gist.githubusercontent.com/ammarfaizi2/a10f8073e58d1712c1ed49af83ae4ad1/raw/a4f7cbc4eb163db792a669d570ff542495e8c704/wq_cpu_set.png
+>>
+>> I haven't read the patchset.
+>>
+>> It's great that it reduces CPU usage. But does it also provide
+>> other performance benefits, like lower latency or higher throughput
+>> for some workloads? Or using less CPU also affects negatively in
+>> those other aspects?
+
+Based on my testing, it gives lower latency for a browser app playing
+a YouTube video.
+
+Without this proposed option, high-level compression on a btrfs
+storage is a real noise to user space apps. It periodically freezes
+the UI for 2 to 3 seconds and causes audio lag; it mostly happens when
+it starts writing the dirty write to the disk.
+
+It's reasonably easy to reproduce by making a large dirty write and
+invoking a "sync" command.
+
+Side note: Pin user apps to CPUs a,b,c,d and btrfs workquques to CPUs
+w,x,y,z.
+
+> So far it looks like to just set CPU masks for each workqueue.
 > 
-> Yes, I understand you want to limit the CPU usage of btrfs workqueues, but
-> have you tried "thread_pool=" mount option?
-> 
-> That mount option should limit the max amount of in-flight work items, thus
-> at least limit the CPU usage.
+> Thus if it's reducing CPU usage, it also takes longer time to finish
+> the workload (compression,csum calculation etc).
 
-I have tried to use the thread_poll=%u mount option previously. But I
-didn't observe the effect intensively. I'll try to play with this option
-more and see if it can yield the desired behavior.
+Yes, that's correct.
 
-> For the wq CPU pinning part, I'm not sure if it's really needed, although
-> it's known CPU pinning can affect some performance characteristics.
+I see this as a good mount option for btrfs because the btrfs-workload
+in question is CPU bound, specifically for the writing operation.
+While it may degrade the btrfs workload because we limit the number of
+usable CPUs, there is a condition where users don't prioritize writing
+to disk.
 
-What I like about CPU pinning is that we can dedicate CPUs for specific
-workloads so it won't cause scheduling noise to the app we've dedicated
-other CPUs for.
+Let's say:
+I want to run a smooth app with video. I also want to have high-level
+compression for my btrfs storage. But I don't want the compression and
+checksum work to bother my video; here, I give you CPU x,y,z for the
+btrfs work. And here I give you CPU a,b,c,d,e,f for the video work.
+
+I have a similar case on a torrent seeder server where high-level
+compression is expected. And I believe there are more cases where this
+option is advantageous.
+
+Thank you all for the comments,
 
 -- 
 Ammar Faizi
-
