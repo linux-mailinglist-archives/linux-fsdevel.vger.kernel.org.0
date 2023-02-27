@@ -2,124 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB6A96A4425
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 15:19:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4806A4435
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 15:21:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230289AbjB0OTF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 09:19:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33584 "EHLO
+        id S230301AbjB0OVV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 09:21:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbjB0OTE (ORCPT
+        with ESMTP id S230173AbjB0OVO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 09:19:04 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EB81A5FB;
-        Mon, 27 Feb 2023 06:19:03 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 27 Feb 2023 09:21:14 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20953C152
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 06:20:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1677507626;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DDxsPwEJOPowwYBBWwdBor9P24542C4HOJnuIelrcxA=;
+        b=gvzCuWeEBh2IEkCr4E1hFr7OhWwR7eVgTnuPURUkNf5CguEduR/jhK565b9xCcNOOs2egc
+        4+pV2KvUZ0o0VzAk6On8Fc27hs3vYYsxHMjFGM3/N09GlzQ6Tw/npTXZGJSLSlzDpZHFg/
+        B3fYY6mWNpr4pbAqD5gsmtMBTm3/ubE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-637-xicVSckyOnqOVKjyn87iwg-1; Mon, 27 Feb 2023 09:20:20 -0500
+X-MC-Unique: xicVSckyOnqOVKjyn87iwg-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CBECEB80D49;
-        Mon, 27 Feb 2023 14:19:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C5B1C433D2;
-        Mon, 27 Feb 2023 14:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677507540;
-        bh=MllVkqna+KRHh+7oa1TlLNjurp37Pn6DT90ieHwmVIU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y5hQ/4IuRP0f4VZ74sKn9NQ/k1+7NJsvJ7fDk//vnbbq/EeCAjbvvqNaxmJhdRLZ0
-         3escyQyLRTp0B8y+SRuaHWPWSn7US9yIbhiO4G4H0BJ+ioSGkBsq0KvmUGllchwSND
-         Ovwh3vVD3YZfo8icu7YFPjiZr/+muOCbsWhFkHOHtUNTJ7zfSB6ijuTz71Z3ALbkZI
-         tvYWQuxFsLZ0aIKCVOkqWn0WUEaIvM+lDkTxO7MU4UWnIaDlQ2OKn8TTkZGlpyq2zE
-         0o3vvVitww0a/dePj4d33FVtLiE9Iy25agvKL4dm9NFSP7JJrFO/nkz9pRahvNu1Ra
-         IPhiocKEObrQg==
-Date:   Mon, 27 Feb 2023 09:18:59 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.1 12/21] fs/super.c: stop calling
- fscrypt_destroy_keyring() from __put_super()
-Message-ID: <Y/y70zJj4kjOVfXa@sashalap>
-References: <20230226034256.771769-1-sashal@kernel.org>
- <20230226034256.771769-12-sashal@kernel.org>
- <Y/rbGxq8oAEsW28j@sol.localdomain>
- <Y/rufenGRpoJVXZr@sol.localdomain>
- <Y/ux9JLHQKDOzWHJ@sol.localdomain>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 368FE1871D9F;
+        Mon, 27 Feb 2023 14:20:19 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1EA34492B0E;
+        Mon, 27 Feb 2023 14:20:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y/y5rFX2koj2W6Wa@casper.infradead.org>
+References: <Y/y5rFX2koj2W6Wa@casper.infradead.org> <20230202204428.3267832-5-willy@infradead.org> <20230202204428.3267832-1-willy@infradead.org> <2730679.1677505767@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org,
+        Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+        fstests@vger.kernel.org
+Subject: Re: [PATCH 4/5] afs: Zero bytes after 'oldsize' if we're expanding the file
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Y/ux9JLHQKDOzWHJ@sol.localdomain>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2733934.1677507617.1@warthog.procyon.org.uk>
+Date:   Mon, 27 Feb 2023 14:20:17 +0000
+Message-ID: <2733935.1677507617@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 26, 2023 at 11:24:36AM -0800, Eric Biggers wrote:
->On Sat, Feb 25, 2023 at 09:30:37PM -0800, Eric Biggers wrote:
->> On Sat, Feb 25, 2023 at 08:07:55PM -0800, Eric Biggers wrote:
->> > On Sat, Feb 25, 2023 at 10:42:47PM -0500, Sasha Levin wrote:
->> > > From: Eric Biggers <ebiggers@google.com>
->> > >
->> > > [ Upstream commit ec64036e68634231f5891faa2b7a81cdc5dcd001 ]
->> > >
->> > > Now that the key associated with the "test_dummy_operation" mount option
->> > > is added on-demand when it's needed, rather than immediately when the
->> > > filesystem is mounted, fscrypt_destroy_keyring() no longer needs to be
->> > > called from __put_super() to avoid a memory leak on mount failure.
->> > >
->> > > Remove this call, which was causing confusion because it appeared to be
->> > > a sleep-in-atomic bug (though it wasn't, for a somewhat-subtle reason).
->> > >
->> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
->> > > Link: https://lore.kernel.org/r/20230208062107.199831-5-ebiggers@kernel.org
->> > > Signed-off-by: Sasha Levin <sashal@kernel.org>
->> >
->> > Why is this being backported?
->> >
->> > - Eric
->>
->> BTW, can you please permanently exclude all commits authored by me from AUTOSEL
->> so that I don't have to repeatedly complain about every commit individually?
->> Especially when these mails often come on weekends and holidays.
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Yup, no problem - I'll ignore any commits authored by you.
+> I'll send a patch series with all of this; it doesn't seem terribly
+> urgent.  Do you think there's a similar problem for AFS that Brian
+> noted with the generic patch?
 
->> I know how to use Cc stable, and how to ask explicitly for a stable backport if
->> I find out after the fact that one is needed.  (And other real people can always
->> ask too... not counting AUTOSEL, even though you are sending the AUTOSEL emails,
->> since clearly they go through no or very little human review.)
+Do you have a link I can look at?
 
-One of the challanges here is that it's difficult to solicit reviews or
-really any interaction from authors after a commit lands upstream. Look
-at the response rates to Greg's "FAILED" emails that ask authors to
-provide backports to commits they tagged for stable.
+David
 
->> Of course, it's not just me that AUTOSEL isn't working for.  So, you'll still
->> continue backporting random commits that I have to spend hours bisecting, e.g.
->> https://lore.kernel.org/stable/20220921155332.234913-7-sashal@kernel.org.
->>
->> But at least I won't have to deal with this garbage for my own commits.
->>
->> Now, I'm not sure I'll get a response to this --- I received no response to my
->> last AUTOSEL question at
->> https://lore.kernel.org/stable/Y1DTFiP12ws04eOM@sol.localdomain.  So to
->> hopefully entice you to actually do something, I'm also letting you know that I
->> won't be reviewing any AUTOSEL mails for my commits anymore.
->>
->
->The really annoying thing is that someone even replied to your AUTOSEL email for
->that broken patch and told you it is broken
->(https://lore.kernel.org/stable/d91aaff1-470f-cfdf-41cf-031eea9d6aca@mailbox.org),
->and ***you ignored it and applied the patch anyway***.
->
->Why are you even sending these emails if you are ignoring feedback anyway?
-
-I obviously didn't ignore it on purpose, right?
-
--- 
-Thanks,
-Sasha
