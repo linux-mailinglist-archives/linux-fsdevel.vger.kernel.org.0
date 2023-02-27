@@ -2,53 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F5E6A4795
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 18:11:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABF586A4887
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 18:48:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjB0RLF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 12:11:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47916 "EHLO
+        id S229994AbjB0Rr6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 12:47:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbjB0RLE (ORCPT
+        with ESMTP id S229954AbjB0Rr4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 12:11:04 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B954F2068D;
-        Mon, 27 Feb 2023 09:11:02 -0800 (PST)
+        Mon, 27 Feb 2023 12:47:56 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7652C1998;
+        Mon, 27 Feb 2023 09:47:51 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 45132B80D7B;
-        Mon, 27 Feb 2023 17:11:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF713C433D2;
-        Mon, 27 Feb 2023 17:10:59 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9C912B80D58;
+        Mon, 27 Feb 2023 17:47:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CE3C4339B;
+        Mon, 27 Feb 2023 17:47:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677517859;
-        bh=pfMj80tlu8pFMuld2MTuFdpdiluHe/9v58Gi1Vn1hQA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=uo4FOdYfp52QoxD5mywgsEkmatXSyjexOnH1wYuwgmwFgF5JChnAIBjqT636Doy6W
-         3i/bXIBwFkJWO1ikOHmA1zwgilJ1B2QQEqjM+BskvEFqhn4PuC4AG2Q7vTtxpRe5MU
-         2ZepoIXglSCxeaOp4ikdqODu8Zt1rzqVFlAHE9m8MIJtTPQOpUL0Kj0SOEo1OMNns1
-         AwEIpe22h+nqUCqVURGNHhCkSmQJNBwOIakheVA/Ei1w0gbOXgi2utoV/wLDWIgqgn
-         uqdq7SWetKT3+4vg1EBHnrnfh5LWZ89xTsRyh0TEjRnWhyVnTekqqNL7ebmNF1cK13
-         hTWFS6OKjjGGg==
-Date:   Mon, 27 Feb 2023 09:10:59 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     djwong@kernel.org
-Cc:     allison.henderson@oracle.com, dchinner@redhat.com,
-        ddouwsma@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux@weissschuh.net,
-        syzbot+090ae72d552e6bd93cfe@syzkaller.appspotmail.com,
-        syzbot+898115bc6d7140437215@syzkaller.appspotmail.com,
-        xu.panda@zte.com.cn, yang.yang29@zte.com.cn
-Subject: [ANNOUNCE] xfs-linux: for-next updated to 6e2985c938e8
-Message-ID: <167751705147.2483999.14248342639374859648.stg-ugh@magnolia>
+        s=k20201202; t=1677520068;
+        bh=DvG46GSct8ejJkcJckq54zAIl2grLPSZihgf4Ioz51I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uKiob6bBYwVqkRSXCOT6fNR2EGw7bcaPwTHURL5h83uxDRWEtOew5AknDNkwCzWBg
+         YKUYY1sTnTUK7+UwOs9W0jy0z5zZrBqef9kA+u2dsnRyeBjCIvqp0/24cYXDCfg+0x
+         CUZCzSKqtzS3I7MfjpP03UIDSxNKSNY8LFZ0GkUGFSPBwQFjyEpIFKzj5qVHaMcQz4
+         lDxcB0rn4uV/DKN+9/Z0J7Wr5fu5qAnM+eVq+aAg8801kQiasG+0nQLvR+ipppL+Kn
+         IHhER6O49M2yH0eCWxRiLrVT+cHttko6G2u0C+CUIqJjTw2ZtopYE9la/V8qAMytKV
+         A166262OFxSIQ==
+Date:   Mon, 27 Feb 2023 09:47:46 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: Re: AUTOSEL process
+Message-ID: <Y/zswi91axMN8OsA@sol.localdomain>
+References: <20230226034256.771769-1-sashal@kernel.org>
+ <20230226034256.771769-12-sashal@kernel.org>
+ <Y/rbGxq8oAEsW28j@sol.localdomain>
+ <Y/rufenGRpoJVXZr@sol.localdomain>
+ <Y/ux9JLHQKDOzWHJ@sol.localdomain>
+ <Y/y70zJj4kjOVfXa@sashalap>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+In-Reply-To: <Y/y70zJj4kjOVfXa@sashalap>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,145 +58,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On Mon, Feb 27, 2023 at 09:18:59AM -0500, Sasha Levin wrote:
+> On Sun, Feb 26, 2023 at 11:24:36AM -0800, Eric Biggers wrote:
+> > On Sat, Feb 25, 2023 at 09:30:37PM -0800, Eric Biggers wrote:
+> > > On Sat, Feb 25, 2023 at 08:07:55PM -0800, Eric Biggers wrote:
+> > > > On Sat, Feb 25, 2023 at 10:42:47PM -0500, Sasha Levin wrote:
+> > > > > From: Eric Biggers <ebiggers@google.com>
+> > > > >
+> > > > > [ Upstream commit ec64036e68634231f5891faa2b7a81cdc5dcd001 ]
+> > > > >
+> > > > > Now that the key associated with the "test_dummy_operation" mount option
+> > > > > is added on-demand when it's needed, rather than immediately when the
+> > > > > filesystem is mounted, fscrypt_destroy_keyring() no longer needs to be
+> > > > > called from __put_super() to avoid a memory leak on mount failure.
+> > > > >
+> > > > > Remove this call, which was causing confusion because it appeared to be
+> > > > > a sleep-in-atomic bug (though it wasn't, for a somewhat-subtle reason).
+> > > > >
+> > > > > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > > > > Link: https://lore.kernel.org/r/20230208062107.199831-5-ebiggers@kernel.org
+> > > > > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > > >
+> > > > Why is this being backported?
+> > > >
+> > > > - Eric
+> > > 
+> > > BTW, can you please permanently exclude all commits authored by me from AUTOSEL
+> > > so that I don't have to repeatedly complain about every commit individually?
+> > > Especially when these mails often come on weekends and holidays.
+> 
+> Yup, no problem - I'll ignore any commits authored by you.
+> 
+> > > I know how to use Cc stable, and how to ask explicitly for a stable backport if
+> > > I find out after the fact that one is needed.  (And other real people can always
+> > > ask too... not counting AUTOSEL, even though you are sending the AUTOSEL emails,
+> > > since clearly they go through no or very little human review.)
+> 
+> One of the challanges here is that it's difficult to solicit reviews or
+> really any interaction from authors after a commit lands upstream. Look
+> at the response rates to Greg's "FAILED" emails that ask authors to
+> provide backports to commits they tagged for stable.
 
-The for-next branch of the xfs-linux repository at:
+Well, it doesn't help that most of the stable emails aren't sent to the
+subsystem's mailing list, but instead just to the individual people mentioned in
+the commit.  So many people who would like to help never know about it.
 
-git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+> > > Of course, it's not just me that AUTOSEL isn't working for.  So, you'll still
+> > > continue backporting random commits that I have to spend hours bisecting, e.g.
+> > > https://lore.kernel.org/stable/20220921155332.234913-7-sashal@kernel.org.
+> > > 
+> > > But at least I won't have to deal with this garbage for my own commits.
+> > > 
+> > > Now, I'm not sure I'll get a response to this --- I received no response to my
+> > > last AUTOSEL question at
+> > > https://lore.kernel.org/stable/Y1DTFiP12ws04eOM@sol.localdomain.  So to
+> > > hopefully entice you to actually do something, I'm also letting you know that I
+> > > won't be reviewing any AUTOSEL mails for my commits anymore.
+> > > 
+> > 
+> > The really annoying thing is that someone even replied to your AUTOSEL email for
+> > that broken patch and told you it is broken
+> > (https://lore.kernel.org/stable/d91aaff1-470f-cfdf-41cf-031eea9d6aca@mailbox.org),
+> > and ***you ignored it and applied the patch anyway***.
+> > 
+> > Why are you even sending these emails if you are ignoring feedback anyway?
+> 
+> I obviously didn't ignore it on purpose, right?
+> 
 
-has just been updated.
+I don't know, is it obvious?  You've said in the past that sometimes you'd like
+to backport a commit even if the maintainer objects and/or it is known buggy.
+https://lore.kernel.org/stable/d91aaff1-470f-cfdf-41cf-031eea9d6aca@mailbox.org
+also didn't explicitly say "Don't backport this" but instead "This patch has
+issues", so maybe that made a difference?
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
+Anyway, the fact is that it happened.  And if it happened in the one bug that I
+happened to look at because it personally affected me and I spent hours
+bisecting, it probably is happening in lots of other cases too.  So it seems the
+process is not working...
 
-(Pushing during a merge window to slip in a bug fix, yeah!!!)
+Separately from responses to the AUTOSEL email, it also seems that you aren't
+checking for any reported regressions or pending fixes for a commit before
+backporting it.  Simply searching lore for the commit title
+https://lore.kernel.org/all/?q=%22drm%2Famdgpu%3A+use+dirty+framebuffer+helper%22
+would have turned up the bug report
+https://lore.kernel.org/dri-devel/20220918120926.10322-1-user@am64/ that
+bisected a regression to that commit, as well as a patch that Fixes that commit:
+https://lore.kernel.org/all/20220920130832.2214101-1-alexander.deucher@amd.com/
+Both of these existed before you even sent the AUTOSEL email!
 
-The new head of the for-next branch is commit:
+So to summarize, that buggy commit was backported even though:
 
-6e2985c938e8 xfs: restore old agirotor behavior
+  * There were no indications that it was a bug fix (and thus potentially
+    suitable for stable) in the first place.
+  * On the AUTOSEL thread, someone told you the commit is broken.
+  * There was already a thread that reported a regression caused by the commit.
+    Easily findable via lore search.
+  * There was also already a pending patch that Fixes the commit.  Again easily
+    findable via lore search.
 
-58 new commits:
+So it seems a *lot* of things went wrong, no?  Why?  If so many things can go
+wrong, it's not just a "mistake" but rather the process is the problem...
 
-Darrick J. Wong (12):
-[ddccb81b26ec] xfs: pass the xfs_bmbt_irec directly through the log intent code
-[f3ebac4c94c1] xfs: fix confusing variable names in xfs_bmap_item.c
-[72ba455599ad] xfs: pass xfs_extent_free_item directly through the log intent code
-[578c714b215d] xfs: fix confusing xfs_extent_item variable names
-[1534328bb427] xfs: pass rmap space mapping directly through the log intent code
-[ffaa196f6221] xfs: fix confusing variable names in xfs_rmap_item.c
-[0b11553ec54a] xfs: pass refcount intent directly through the log intent code
-[01a3af226b7d] xfs: fix confusing variable names in xfs_refcount_item.c
-[dd07bb8b6baf] xfs: revert commit 8954c44ff477
-[571dc9ae4eef] Merge tag 'xfs-alloc-perag-conversion' of git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs into xfs-6.3-merge-A
-[60b730a40c43] xfs: fix uninitialized variable access
-[6e2985c938e8] xfs: restore old agirotor behavior
-
-Dave Chinner (43):
-[c85007e2e394] xfs: don't use BMBT btree split workers for IO completion
-[1dd0510f6d4b] xfs: fix low space alloc deadlock
-[f08f984c63e9] xfs: prefer free inodes at ENOSPC over chunk allocation
-[d5753847b216] xfs: block reservation too large for minleft allocation
-[36b6ad2d9cb8] xfs: drop firstblock constraints from allocation setup
-[692b6cddeb65] xfs: t_firstblock is tracking AGs not blocks
-[55d5c3a386d7] xfs: don't assert fail on transaction cancel with deferred ops
-[c4d5660afbdc] xfs: active perag reference counting
-[368e2d09b41c] xfs: rework the perag trace points to be perag centric
-[498f0adbcdb6] xfs: convert xfs_imap() to take a perag
-[dedab3e4379d] xfs: use active perag references for inode allocation
-[bab8b795185b] xfs: inobt can use perags in many more places than it does
-[20a5eab49d35] xfs: convert xfs_ialloc_next_ag() to an atomic
-[7ac2ff8bb371] xfs: perags need atomic operational state
-[76257a15873c] xfs: introduce xfs_for_each_perag_wrap()
-[ecd788a92460] xfs: rework xfs_alloc_vextent()
-[2edf06a50f5b] xfs: factor xfs_alloc_vextent_this_ag() for  _iterate_ags()
-[4811c933ea1a] xfs: combine __xfs_alloc_vextent_this_ag and  xfs_alloc_ag_vextent
-[74c36a8689d3] xfs: use xfs_alloc_vextent_this_ag() where appropriate
-[85843327094f] xfs: factor xfs_bmap_btalloc()
-[319c9e874ac8] xfs: use xfs_alloc_vextent_first_ag() where appropriate
-[2a7f6d41d8b7] xfs: use xfs_alloc_vextent_start_bno() where appropriate
-[db4710fd1224] xfs: introduce xfs_alloc_vextent_near_bno()
-[5f36b2ce79f2] xfs: introduce xfs_alloc_vextent_exact_bno()
-[74b9aa63193b] xfs: introduce xfs_alloc_vextent_prepare()
-[e4d174260779] xfs: move allocation accounting to xfs_alloc_vextent_set_fsbno()
-[230e8fe8462f] xfs: fold xfs_alloc_ag_vextent() into callers
-[8b81356825ff] xfs: move the minimum agno checks into xfs_alloc_vextent_check_args
-[3432ef611199] xfs: convert xfs_alloc_vextent_iterate_ags() to use perag walker
-[35bf2b1abc9a] xfs: convert trim to use for_each_perag_range
-[89563e7dc099] xfs: factor out filestreams from xfs_bmap_btalloc_nullfb
-[6b637ad0c7be] xfs: get rid of notinit from xfs_bmap_longest_free_extent
-[05cf492a8d01] xfs: use xfs_bmap_longest_free_extent() in filestreams
-[8f7747ad8c52] xfs: move xfs_bmap_btalloc_filestreams() to xfs_filestreams.c
-[a52dc2ad3630] xfs: merge filestream AG lookup into xfs_filestream_select_ag()
-[ba34de8defe0] xfs: merge new filestream AG selection into xfs_filestream_select_ag()
-[3e43877a9dac] xfs: remove xfs_filestream_select_ag() longest extent check
-[f38b46bbfa76] xfs: factor out MRU hit case in xfs_filestream_select_ag
-[3054face139f] xfs: track an active perag reference in filestreams
-[eb70aa2d8ed9] xfs: use for_each_perag_wrap in xfs_filestream_pick_ag
-[571e259282a4] xfs: pass perag to filestreams tracing
-[f8f1ed1ab3ba] xfs: return a referenced perag from filestreams allocator
-[bd4f5d09cc93] xfs: refactor the filestreams allocator pick functions
-
-Donald Douwsma (1):
-[167ce4cbfa37] xfs: allow setting full range of panic tags
-
-Thomas Weiﬂschuh (1):
-[2ee833352985] xfs: make kobj_type structures constant
-
-Xu Panda (1):
-[8954c44ff477] xfs: use strscpy() to instead of strncpy()
-
-Code Diffstat:
-
-Documentation/admin-guide/xfs.rst  |   2 +-
-fs/xfs/libxfs/xfs_ag.c             |  93 ++++-
-fs/xfs/libxfs/xfs_ag.h             | 111 +++++-
-fs/xfs/libxfs/xfs_ag_resv.c        |   2 +-
-fs/xfs/libxfs/xfs_alloc.c          | 717 +++++++++++++++++++++++--------------
-fs/xfs/libxfs/xfs_alloc.h          |  61 ++--
-fs/xfs/libxfs/xfs_alloc_btree.c    |   2 +-
-fs/xfs/libxfs/xfs_bmap.c           | 704 +++++++++++++++++-------------------
-fs/xfs/libxfs/xfs_bmap.h           |  12 +-
-fs/xfs/libxfs/xfs_bmap_btree.c     |  64 ++--
-fs/xfs/libxfs/xfs_btree.c          |  18 +-
-fs/xfs/libxfs/xfs_ialloc.c         | 242 ++++++-------
-fs/xfs/libxfs/xfs_ialloc.h         |   5 +-
-fs/xfs/libxfs/xfs_ialloc_btree.c   |  47 ++-
-fs/xfs/libxfs/xfs_ialloc_btree.h   |  20 +-
-fs/xfs/libxfs/xfs_refcount.c       |  96 +++--
-fs/xfs/libxfs/xfs_refcount.h       |   4 +-
-fs/xfs/libxfs/xfs_refcount_btree.c |  10 +-
-fs/xfs/libxfs/xfs_rmap.c           |  52 ++-
-fs/xfs/libxfs/xfs_rmap.h           |   6 +-
-fs/xfs/libxfs/xfs_rmap_btree.c     |   2 +-
-fs/xfs/libxfs/xfs_sb.c             |   3 +-
-fs/xfs/scrub/agheader_repair.c     |  35 +-
-fs/xfs/scrub/bmap.c                |   2 +-
-fs/xfs/scrub/common.c              |  21 +-
-fs/xfs/scrub/fscounters.c          |  13 +-
-fs/xfs/scrub/repair.c              |   7 +-
-fs/xfs/xfs_bmap_item.c             | 137 +++----
-fs/xfs/xfs_bmap_util.c             |   2 +-
-fs/xfs/xfs_discard.c               |  50 ++-
-fs/xfs/xfs_error.c                 |   2 +-
-fs/xfs/xfs_error.h                 |  12 +-
-fs/xfs/xfs_extfree_item.c          |  99 ++---
-fs/xfs/xfs_filestream.c            | 455 +++++++++++------------
-fs/xfs/xfs_filestream.h            |   6 +-
-fs/xfs/xfs_fsmap.c                 |   5 +-
-fs/xfs/xfs_globals.c               |   3 +-
-fs/xfs/xfs_icache.c                |   8 +-
-fs/xfs/xfs_inode.c                 |   2 +-
-fs/xfs/xfs_iwalk.c                 |  10 +-
-fs/xfs/xfs_mount.h                 |   3 +-
-fs/xfs/xfs_refcount_item.c         | 110 +++---
-fs/xfs/xfs_reflink.c               |   4 +-
-fs/xfs/xfs_rmap_item.c             | 142 ++++----
-fs/xfs/xfs_super.c                 |  47 ++-
-fs/xfs/xfs_sysfs.c                 |  12 +-
-fs/xfs/xfs_sysfs.h                 |  10 +-
-fs/xfs/xfs_trace.h                 |  96 +++--
-fs/xfs/xfs_trans.c                 |   8 +-
-fs/xfs/xfs_trans.h                 |   2 +-
-50 files changed, 1917 insertions(+), 1659 deletions(-)
+- Eric
