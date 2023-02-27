@@ -2,73 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 362C86A496F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 19:18:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C4226A4A00
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 19:41:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229660AbjB0SSN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 13:18:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49716 "EHLO
+        id S229947AbjB0SlU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 13:41:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbjB0SSM (ORCPT
+        with ESMTP id S229854AbjB0SlU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 13:18:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01A6BE06E;
-        Mon, 27 Feb 2023 10:18:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7CF6060EEA;
-        Mon, 27 Feb 2023 18:18:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D8315C433D2;
-        Mon, 27 Feb 2023 18:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677521889;
-        bh=ooVWcWHIEeGj8G37FUu4v9GfLrGz5Dde9blpD2uLqVM=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=rIT0oU/lhJyINdiya16xLwdeabKDXx/qp/dXadcO/tUTCsXcSvnmNlVn3UBA7GMnX
-         CBq2p67OeNHO7ZBpgclBbcCHF4KI6rraA+vBEZ8udFdPwGYEpTjA300ke3pCOhxjF8
-         erQIbounOuwTY5jP4yhaNACzc79KU1qjWaAzrPWkk9EjdyAT+V/JoK3DbktShv1xNZ
-         iJLwi5+z8fB6RGllQhiL++nY5+K/Cus9W5Ma+1wkZQeCQ6Q4nHrYOpH7A2hIOrcJ7O
-         rOhXshThcB4JmG7Qt3idviH9AV0HF39Ltlak3vAV0OCtkQniTuY/oQ6+8T7byStWu0
-         sw0vuQQVFMF/A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C77D7E68D2D;
-        Mon, 27 Feb 2023 18:18:09 +0000 (UTC)
-Subject: Re: [GIT PULL] fuse update for 6.3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <Y/zYyN7NeLKusmSj@miu.piliscsaba.redhat.com>
-References: <Y/zYyN7NeLKusmSj@miu.piliscsaba.redhat.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Y/zYyN7NeLKusmSj@miu.piliscsaba.redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-6.3
-X-PR-Tracked-Commit-Id: 1cc4606d19e3710bfab3f6704b87ff9580493c69
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d40b2f4c94f221bd5aab205f945e6f88d3df0929
-Message-Id: <167752188980.27343.711244069441124562.pr-tracker-bot@kernel.org>
-Date:   Mon, 27 Feb 2023 18:18:09 +0000
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 27 Feb 2023 13:41:20 -0500
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D9E25B98
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 10:41:18 -0800 (PST)
+Received: by mail-qv1-xf2b.google.com with SMTP id op8so5099501qvb.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 10:41:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=efficientek-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A/ulrwzIZworYzpsVbD55851xLgzvV7G5hrKbS1T2G8=;
+        b=IbvZeAIiHHVHbpQ2DAC4KkKBVmBL4vsQW7CGtp6pPwV5YMCJjtP72xR7TaLNtapAg5
+         hVZl64CYzSAwncUX2umFsIoSh5M3TZzD32G3hlwlT+6h9DoPf0OMwg/0vk3wmGCQeIk0
+         E37ULciG/82PrXrswWg/4mj71Sa9svhDHmg5d+QBbVo7WsVM8besbHtDSE4WufhxQHmd
+         4POVCVeH5tXhpW4UO3arKSZbPCIljBWeqLwzRKPawyzR0wMnK8zxhjNZfVT0kXDDt2/6
+         26f/SqQ9yO4PKvLaG0w2C0u+VcOemXUwCYWDKgqD4QkUWxm1vrixiXuR9t0cxwqnin4W
+         x2IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A/ulrwzIZworYzpsVbD55851xLgzvV7G5hrKbS1T2G8=;
+        b=U+VaP/hns/lohPbO9HwtxhhyEWaFMDEoo3FSH/1vjgb3/QUmWlT8Uaw/S+bF3BziHj
+         5vZqwQydBHgPMhgdIbDU085cdAuWO8Ld1SrFBkBmix6t1zBOy2zz1/4/8WIPcs8DDY5r
+         Z6lXyNqyOeHJiO9L4i0btZUYrtqby5IVXExBeOkBWyZQ0a1lOijeH7jgB9ieg15/yo13
+         7048yNrgmSNy/0InFlt5NF8+GeRtd5R3dDdzqMzGZbQN2+lxQkIKHleDAQC0nE0sNYt7
+         rbUONh6toKIU6DwHTL4MxLvLL9LjWULMZKA0FsMTApOqr1oCdwqXJVS8X5PROtGWBMHW
+         lxYQ==
+X-Gm-Message-State: AO0yUKULXQ4gW9M+b9RT8h12/qduw01tHtUDIXS1IpX7+oYWupLH7C3g
+        drElJWQEwD1Vhmo5+4OhXE+aVg==
+X-Google-Smtp-Source: AK7set/LuVuasIVGB6lWomVJu25FMp222NzwbdwPoY2fFQ8GTwHs2oMIIQxlhbK7QXO0UDzEOpA6JQ==
+X-Received: by 2002:a05:6214:d49:b0:56e:c00c:bf5c with SMTP id 9-20020a0562140d4900b0056ec00cbf5cmr808386qvr.31.1677523277734;
+        Mon, 27 Feb 2023 10:41:17 -0800 (PST)
+Received: from localhost.localdomain ([37.218.244.251])
+        by smtp.gmail.com with ESMTPSA id d184-20020a37b4c1000000b0073b3316bbd0sm5392861qkf.29.2023.02.27.10.41.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Feb 2023 10:41:16 -0800 (PST)
+From:   Glenn Washburn <development@efficientek.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Glenn Washburn <development@efficientek.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: Correct missing "d_" prefix for dentry_operations member d_weak_revalidate
+Date:   Mon, 27 Feb 2023 12:40:42 -0600
+Message-Id: <20230227184042.2375235-1-development@efficientek.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Mon, 27 Feb 2023 17:23:04 +0100:
+The details for struct dentry_operations member d_weak_revalidate is
+missing a "d_" prefix.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-6.3
+Fixes: af96c1e304f7 (docs: filesystems: vfs: Convert vfs.txt to RST)
+Signed-off-by: Glenn Washburn <development@efficientek.com>
+---
+ Documentation/filesystems/vfs.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d40b2f4c94f221bd5aab205f945e6f88d3df0929
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index c53f30251a66..f3b344f0c0a4 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -1222,7 +1222,7 @@ defined:
+ 	return
+ 	-ECHILD and it will be called again in ref-walk mode.
+ 
+-``_weak_revalidate``
++``d_weak_revalidate``
+ 	called when the VFS needs to revalidate a "jumped" dentry.  This
+ 	is called when a path-walk ends at dentry that was not acquired
+ 	by doing a lookup in the parent directory.  This includes "/",
 
-Thank you!
-
+base-commit: 7fa08de735e41001a70c8ca869b2b159d74c2339
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.30.2
+
