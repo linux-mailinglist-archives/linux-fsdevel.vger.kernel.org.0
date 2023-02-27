@@ -2,108 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F7056A457C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 16:02:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CE6F6A4603
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 16:25:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjB0PCB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 10:02:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46076 "EHLO
+        id S230257AbjB0PZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 10:25:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbjB0PB7 (ORCPT
+        with ESMTP id S230223AbjB0PZP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 10:01:59 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8585A5262
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 07:01:57 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 317831FD65;
-        Mon, 27 Feb 2023 15:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1677510116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Mon, 27 Feb 2023 10:25:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB1471E2B3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 07:24:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1677511468;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=/ehaTZ+bGuePVfH1s2PTqaZD5xdifEOR/BACcpbQ4b0=;
-        b=fWUavvPfuaiosYQ2s1U/62EsLY4krQzXMtulfmqBa1bYsOJHdaoPN/zmEPBw+44zOCtcQL
-        2XIiHwXZuY40rYtjH/sPxyH7q1nZDiv5kHdRtTrotkuSmSrDHQa0RtEnHEG3nqyMsN7hg0
-        k2cMsMvb+nwt4WVkwgHg9EQt0vXXTlg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1677510116;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/ehaTZ+bGuePVfH1s2PTqaZD5xdifEOR/BACcpbQ4b0=;
-        b=lH7RIszqiyjBtW4aw5dHpkdVDC7z95IgZ8O1SRzbO1PaD5wblwOUcrfQjtlK33nrr9+Imt
-        Zke8KmONpp/oALBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=NWdwiI4PJ+IBncsrNHjeMLRPIquT5DILZIcxMXt8jUI=;
+        b=KszvOPEh38FRysolVCGdtSjesXrBVZ28nATJ6Q+rkT0b2WbSde8voz+jihp/8BNVXCirvI
+        W8eYtufgtaXPZtvYPgDWtuBkJADwOptAHZW3TFUK4i3jXLUzZPLq5WhN4pD9oC0R1BnHGO
+        DLRIBndek3WJWMN4tMZ2AlpMhJYfTA4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-183-XHmEih5kMpWQMmNTXrNLrw-1; Mon, 27 Feb 2023 10:24:22 -0500
+X-MC-Unique: XHmEih5kMpWQMmNTXrNLrw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 233A113A43;
-        Mon, 27 Feb 2023 15:01:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id xw+PCOTF/GMnGwAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 27 Feb 2023 15:01:56 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 8FEF9A06F2; Mon, 27 Feb 2023 16:01:55 +0100 (CET)
-Date:   Mon, 27 Feb 2023 16:01:55 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [GIT PULL] UDF and ext2 fixes
-Message-ID: <20230227150155.ubw5s3z2s2isiwev@quack3>
-References: <20230217114342.vafa3sf7tm4cojh6@quack3>
- <CAHk-=whwuQw=mP2G6qx9M-9GSNU5Ej-Y5E1RJ1Pq+PeCXYzLFQ@mail.gmail.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 18B33830F81;
+        Mon, 27 Feb 2023 15:24:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 13A182026D68;
+        Mon, 27 Feb 2023 15:24:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y/zCB43mmeZ/vSbz@casper.infradead.org>
+References: <Y/zCB43mmeZ/vSbz@casper.infradead.org> <2734058.1677507812@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Amit Shah <amit@kernel.org>, linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] splice: Prevent gifting of multipage folios
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whwuQw=mP2G6qx9M-9GSNU5Ej-Y5E1RJ1Pq+PeCXYzLFQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2737654.1677511460.1@warthog.procyon.org.uk>
+Date:   Mon, 27 Feb 2023 15:24:20 +0000
+Message-ID: <2737655.1677511460@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 20-02-23 12:51:26, Linus Torvalds wrote:
-> On Fri, Feb 17, 2023 at 3:43 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> >   * One fix to mpage_writepages() on which other udf fixes depend
-> 
-> I've pulled this, and this doesn't look *wrong* per se, but it really
-> didn't look like a bug in mpage_writepages() to me.
-> 
-> The bug seems to be clearly in the filesystem not returning a proper
-> error code from its "->get_block()" function.
-> 
-> If the VFS layer asks for block creation, and the filesystem returns
-> no error, but then a non-mapped result, that sounds like _clearly_ a
-> filesystem bug to me.
+Matthew Wilcox <willy@infradead.org> wrote:
 
-I agree having saner way to pass information from ->get_block "I cannot
-write this buffer in the page but please keep writing other buffers in this
-page" to the VFS is desirable. But this "return unmapped buffer" hack is
-what happened to work for __block_write_full_page() since ages and I belive
-it was occasionally used by filesystems so that's why I've made
-mpage_writepages() compatible with this behavior.
+> What should the Fixes: here be?  This was already possible with THPs
+> (both anon and tmpfs backed) long before I introduced folios.
 
-> Blaming mpage_writepages() seems entirely wrong.
-> 
-> The extra sanity check in the vfs layer doesn't strike me as wrong, but ...
-> 
-> Maybe it could have been a WARN_ON_ONCE() if "get_block(.., 1)"
-> returns success with an unmapped result?
+Good question.  How do I tell when THPs were introduced?  It looks like they
+might predate git, looking at free_compound_page()'s comment.
 
-A cleanup in this area would be certainly good but maybe the energy is
-better invested in the attempt to make filesystems use iomap instead of
-get_block based interfaces?
+David
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
