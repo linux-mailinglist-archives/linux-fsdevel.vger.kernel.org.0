@@ -2,157 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E44666A4C61
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 21:39:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BDF56A4C8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 21:56:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbjB0Uj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 15:39:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53838 "EHLO
+        id S229763AbjB0U4I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 15:56:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbjB0UjZ (ORCPT
+        with ESMTP id S229592AbjB0U4H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 15:39:25 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C93422DEC;
-        Mon, 27 Feb 2023 12:39:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 27 Feb 2023 15:56:07 -0500
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5498B25E12;
+        Mon, 27 Feb 2023 12:56:00 -0800 (PST)
+Received: from [10.0.0.182] (unknown [10.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id E3A6ACE115B;
-        Mon, 27 Feb 2023 20:39:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1D5CC433D2;
-        Mon, 27 Feb 2023 20:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677530356;
-        bh=vU0SzPPftW1Pk2q0BkvhVj0n+YleexbfpMDKgqWko8A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XfhECdkIewZ88wJ2x3gOyDZv4y2QxQmyyeNMETFZxZG8a1NO7U4gcS1n713GRALYO
-         Uv9Q1IuCvV6vrsH2fjq3x7ThsShZojLxqNl+LF2y+ijIbAsk/VP4+GvLLvtCYaKOq9
-         p7bVKX/fylCy9/I39WzVHmjOgbCPcSdgqC6mCkqgWr6xqLk+uR2Unt/MOubmX8qwnx
-         tr4VO3L2kqb/GMVF5FfrQjnENprdtUo2FG8BTAJmQhLIv0z4bGqZDsnMBa8qzRitkU
-         OPDvZKzUgkMzPu8zptnBU3xmh/FlcsCrWRCLl+L2ObnaYX7HOGtUnCnP1P0dEyy887
-         +MdF3zbDmPfmQ==
-Date:   Mon, 27 Feb 2023 15:39:14 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <Y/0U8tpNkgePu00M@sashalap>
-References: <20230226034256.771769-1-sashal@kernel.org>
- <20230226034256.771769-12-sashal@kernel.org>
- <Y/rbGxq8oAEsW28j@sol.localdomain>
- <Y/rufenGRpoJVXZr@sol.localdomain>
- <Y/ux9JLHQKDOzWHJ@sol.localdomain>
- <Y/y70zJj4kjOVfXa@sashalap>
- <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
+        by ixit.cz (Postfix) with ESMTPSA id B9847161B9A;
+        Mon, 27 Feb 2023 21:55:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+        t=1677531357;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=asQWI/0KqQ7Vskc9EMNo967uGziRnDRjnTbun9Xsibw=;
+        b=UU3tgWQJlBiGN4SmpF7FcfyXOhVg5CL0CPSW88hsr0v4bwPMpywNAcyE9F9bIloot+Kfyy
+        +zca8OffoaqtiDEe75NBHICli7NZAzc4uP7TRyCPlrcesgDQiNPFyjD8SGVHPiKezcGEHi
+        SK6nVNWE+3aAli4ddv45LvsvHMQmUbY=
+Message-ID: <cee2e3ea-14a6-c51f-7ce6-6a67dabff6f1@ixit.cz>
+Date:   Mon, 27 Feb 2023 21:55:57 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Y/zxKOBTLXFjSVyI@sol.localdomain>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:104.0) Gecko/20100101
+ Thunderbird/104.0
+Subject: Re: [RESEND v2 PATCH] init/do_mounts.c: add virtiofs root fs support
+To:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, helen.koike@collabora.com,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wsa+renesas@sang-engineering.com, akpm@linux-foundation.org
+References: <20230224143751.36863-1-david@ixit.cz> <Y/zSCarxyabSC1Zf@fedora>
+ <Y/zxO9PMaES8SenN@redhat.com>
+Content-Language: en-US
+From:   David Heidelberg <david@ixit.cz>
+In-Reply-To: <Y/zxO9PMaES8SenN@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        PDS_RDNS_DYNAMIC_FP,RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 10:06:32AM -0800, Eric Biggers wrote:
->On Mon, Feb 27, 2023 at 09:47:48AM -0800, Eric Biggers wrote:
->> > > > Of course, it's not just me that AUTOSEL isn't working for.  So, you'll still
->> > > > continue backporting random commits that I have to spend hours bisecting, e.g.
->> > > > https://lore.kernel.org/stable/20220921155332.234913-7-sashal@kernel.org.
->> > > >
->> > > > But at least I won't have to deal with this garbage for my own commits.
->> > > >
->> > > > Now, I'm not sure I'll get a response to this --- I received no response to my
->> > > > last AUTOSEL question at
->> > > > https://lore.kernel.org/stable/Y1DTFiP12ws04eOM@sol.localdomain.  So to
->> > > > hopefully entice you to actually do something, I'm also letting you know that I
->> > > > won't be reviewing any AUTOSEL mails for my commits anymore.
->> > > >
->> > >
->> > > The really annoying thing is that someone even replied to your AUTOSEL email for
->> > > that broken patch and told you it is broken
->> > > (https://lore.kernel.org/stable/d91aaff1-470f-cfdf-41cf-031eea9d6aca@mailbox.org),
->> > > and ***you ignored it and applied the patch anyway***.
->> > >
->> > > Why are you even sending these emails if you are ignoring feedback anyway?
->> >
->> > I obviously didn't ignore it on purpose, right?
->> >
->>
->> I don't know, is it obvious?  You've said in the past that sometimes you'd like
->> to backport a commit even if the maintainer objects and/or it is known buggy.
->> https://lore.kernel.org/stable/d91aaff1-470f-cfdf-41cf-031eea9d6aca@mailbox.org
->> also didn't explicitly say "Don't backport this" but instead "This patch has
->> issues", so maybe that made a difference?
+Thank you all!
 
- From what I gather I missed the reply - I would not blindly ignore a
-maintainer.
+We'll drop this patch in next MesaCI kernel uprev without this patch!
 
->> Anyway, the fact is that it happened.  And if it happened in the one bug that I
->> happened to look at because it personally affected me and I spent hours
->> bisecting, it probably is happening in lots of other cases too.  So it seems the
->> process is not working...
+David
 
-This one is tricky, becuase we also end up taking a lot of commits that
-do fix real bugs, and were never tagged for stable or even had a fixes
-tag.
-
-Maybe I should run the numbers again, but when we compared regression
-rates of stable tagged releases and AUTOSEL ones, it was fairly
-identical.
-
->> Separately from responses to the AUTOSEL email, it also seems that you aren't
->> checking for any reported regressions or pending fixes for a commit before
->> backporting it.  Simply searching lore for the commit title
->> https://lore.kernel.org/all/?q=%22drm%2Famdgpu%3A+use+dirty+framebuffer+helper%22
->> would have turned up the bug report
->> https://lore.kernel.org/dri-devel/20220918120926.10322-1-user@am64/ that
->> bisected a regression to that commit, as well as a patch that Fixes that commit:
->> https://lore.kernel.org/all/20220920130832.2214101-1-alexander.deucher@amd.com/
->> Both of these existed before you even sent the AUTOSEL email!
-
-I would love to have a way to automatically grep lore for reported
-issues that are pinpointed to a given commit. I'm hoping that Thorsten's
-regression tracker could be used that way soon enough.
-
->> So to summarize, that buggy commit was backported even though:
->>
->>   * There were no indications that it was a bug fix (and thus potentially
->>     suitable for stable) in the first place.
->>   * On the AUTOSEL thread, someone told you the commit is broken.
->>   * There was already a thread that reported a regression caused by the commit.
->>     Easily findable via lore search.
->>   * There was also already a pending patch that Fixes the commit.  Again easily
->>     findable via lore search.
->>
->> So it seems a *lot* of things went wrong, no?  Why?  If so many things can go
->> wrong, it's not just a "mistake" but rather the process is the problem...
+On 27/02/2023 19:06, Vivek Goyal wrote:
+> On Mon, Feb 27, 2023 at 10:53:45AM -0500, Stefan Hajnoczi wrote:
+>> On Fri, Feb 24, 2023 at 03:37:51PM +0100, David Heidelberg wrote:
+>>> From: Stefan Hajnoczi <stefanha@redhat.com>
+>>>
+>>> Make it possible to boot directly from a virtiofs file system with tag
+>>> 'myfs' using the following kernel parameters:
+>>>
+>>>    rootfstype=virtiofs root=myfs rw
+>>>
+>>> Booting directly from virtiofs makes it possible to use a directory on
+>>> the host as the root file system.  This is convenient for testing and
+>>> situations where manipulating disk image files is cumbersome.
+>>>
+>>> Reviewed-by: Helen Koike <helen.koike@collabora.com>
+>>> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+>>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>>> ---
+>>> v2: added Reviewed-by and CCed everyone interested.
+>>>
+>>> We have used this option in Mesa3D CI for testing crosvm for
+>>> more than one years and it's proven to work reliably.
+>>>
+>>> We are working on effort to removing custom patches to be able to do
+>>> automated apply and test of patches from any tree.
+>>>
+>>> https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/.gitlab-ci/crosvm-runner.sh#L85
+>>>   init/do_mounts.c | 10 ++++++++++
+>>>   1 file changed, 10 insertions(+)
+>> Vivek, do you remember where we ended up with boot from virtiofs? I
+>> thought a different solution was merged some time ago.
+> We merged a patch from Christoph Hellwig to support this.
 >
->BTW, another cause of this is that the commit (66f99628eb24) was AUTOSEL'd after
->only being in mainline for 4 days, and *released* in all LTS kernels after only
->being in mainline for 12 days.  Surely that's a timeline befitting a critical
->security vulnerability, not some random neural-network-selected commit that
->wasn't even fixing anything?
-
-I would love to have a mechanism that tells me with 100% confidence if a
-given commit fixes a bug or not, could you provide me with one?
-
-w.r.t timelines, this is something that was discussed on the mailing
-list a few years ago where we decided that giving AUTOSEL commits 7 days
-of soaking time is sufficient, if anything changed we can have this
-discussion again.
-
-Note, however, that it's not enough to keep pointing at a tiny set and
-using it to suggest that the entire process is broken. How many AUTOSEL
-commits introduced a regression? How many -stable tagged ones did? How
-many bugs did AUTOSEL commits fix?
-
+> commit f9259be6a9e7c22d92e5a5000913147ae17e8321
+> Author: Christoph Hellwig <hch@lst.de>
+> Date:   Wed Jul 14 16:23:20 2021 -0400
+>
+>      init: allow mounting arbitrary non-blockdevice filesystems as root
+>
+> Now one should be able to mount virtiofs using following syntax.
+>
+> "root=myfs rootfstype=virtiofs rw"
+>
+> IIUC, this patch should not be required anymore.
+>
+> Thanks
+> Vivek
+>
+>> There is documentation from the virtiofs community here:
+>> https://virtio-fs.gitlab.io/howto-boot.html
+>>
+>> Stefan
+>>
+>>> diff --git a/init/do_mounts.c b/init/do_mounts.c
+>>> index 811e94daf0a8..11c11abe23d7 100644
+>>> --- a/init/do_mounts.c
+>>> +++ b/init/do_mounts.c
+>>> @@ -578,6 +578,16 @@ void __init mount_root(void)
+>>>   			printk(KERN_ERR "VFS: Unable to mount root fs via SMB.\n");
+>>>   		return;
+>>>   	}
+>>> +#endif
+>>> +#ifdef CONFIG_VIRTIO_FS
+>>> +	if (root_fs_names && !strcmp(root_fs_names, "virtiofs")) {
+>>> +		if (!do_mount_root(root_device_name, "virtiofs",
+>>> +				   root_mountflags, root_mount_data))
+>>> +			return;
+>>> +
+>>> +		panic("VFS: Unable to mount root fs \"%s\" from virtiofs",
+>>> +		      root_device_name);
+>>> +	}
+>>>   #endif
+>>>   	if (ROOT_DEV == 0 && root_device_name && root_fs_names) {
+>>>   		if (mount_nodev_root() == 0)
+>>> -- 
+>>> 2.39.1
+>>>
+>
 -- 
-Thanks,
-Sasha
+David Heidelberg
+Consultant Software Engineer
+
