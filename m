@@ -2,65 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E707D6A4B82
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 20:47:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8DDE6A4BD1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Feb 2023 20:59:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230315AbjB0Trm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 14:47:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59378 "EHLO
+        id S229615AbjB0T7G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 14:59:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230305AbjB0Tri (ORCPT
+        with ESMTP id S229512AbjB0T7E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 14:47:38 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13D228215
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 11:47:27 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 81B16B80DB1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 19:47:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 180BAC433D2;
-        Mon, 27 Feb 2023 19:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677527245;
-        bh=lzfzDpupVAFg/QPvmyRLydbCbV+3pyAG9XpfpP6HYRY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nVoSzA3xh4Syfl7JMJ7t0ZuZoUvaA3/CboWmHYNrAYtvCQ5S6Gmk2uI2dvajY7nL/
-         yBkmw8KUD2hRmONgua8cgy1PiUzy2iHE0uBNtI0l1qoPwl6t73LbCHW0mD32Ub+6de
-         0f6z8wkZqKHnk+XxpinRQycKwWYdk6SnHexpEAe8SPPmk9L0odbx+CzWk5it7mtMbD
-         YCqrOCiNG2CHcHoODs500scqlLaJFCQX1xIWYZw9NhP1xvidDzYXNs7xUDtsXFX3OO
-         XpowpH0kea6rFWxZrgBkbwQdgzeLfT3kJl1KJ2hyfdp9y1BbIxLt+OOKU063vjqh55
-         hCjsimVLQGk+Q==
-Date:   Mon, 27 Feb 2023 11:47:24 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        lsf-pc@lists.linux-foundation.org,
+        Mon, 27 Feb 2023 14:59:04 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E2D16313
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 11:59:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=tHE3W2hDSjG4vPzPWLyKAiq/lpxIyult3kS14bkpF+s=; b=YmXVW3po14eT3bn0sG9QS/azYz
+        F9ekRhFTS5gF+MQsEaiJnHkNU7Lzi4q3tr7cbkL5l3OFMFbOmIBCGQOcyqSrzxDaWD6Wz0cxP0EH6
+        ykmFh1XKspyZjWUesD5cNJsVV5aewEr4Nd566u9iO0UZ4/+KWGaKWN8QsdakpCfevsKqkMat12lKM
+        hmc2guBrKrC+zJcqigcU/wA7XlMezg/wt8ZVApLGelNPZlbedzIBIahZYqxeKU20ZKzyPQXKj05IU
+        +1Ukr+VC5pLJuNUxGq93vBOsEYwdu+o6YnMaUrvYdL4NltaqgJdfKLwSBFLLMNldDqZ44fSGwu1qg
+        5QzFpIcw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pWjeC-00B4xY-EV; Mon, 27 Feb 2023 19:58:56 +0000
+Date:   Mon, 27 Feb 2023 11:58:56 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     lsf-pc@lists.linux-foundation.org,
         Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
         David Howells <dhowells@redhat.com>,
         "kbus >> Keith Busch" <kbusch@kernel.org>,
         Pankaj Raghav <p.raghav@samsung.com>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Subject: Re: LSF/MM/BPF 2023 IOMAP conversion status update
-Message-ID: <Y/0IzG4S2l52oC7R@magnolia>
+Message-ID: <Y/0LgMey64fv+n2v@bombadil.infradead.org>
 References: <20230129044645.3cb2ayyxwxvxzhah@garbanzo>
- <Y9X+5wu8AjjPYxTC@casper.infradead.org>
+ <Y/z/JrV8qRhUcqE7@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y9X+5wu8AjjPYxTC@casper.infradead.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y/z/JrV8qRhUcqE7@magnolia>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 29, 2023 at 05:06:47AM +0000, Matthew Wilcox wrote:
+On Mon, Feb 27, 2023 at 11:06:14AM -0800, Darrick J. Wong wrote:
 > On Sat, Jan 28, 2023 at 08:46:45PM -0800, Luis Chamberlain wrote:
+> > One of the recurring themes that comes up at LSF is "iomap has little
+> > to no documentation, it is hard to use". I've only recently taken a
+> > little nose dive into it, and so I also can frankly admit to say I don't
+> > grok it well either yet. However, the *general* motivation and value is clear:
+> > avoiding the old ugly monster of struct buffer_head, and abstracting
+> > the page cache for non network filesystems, and that is because for
+> > network filesystems my understanding is that we have another side effort
+> > for that. We could go a bit down memory lane on prior attempts to kill
+> > the struct buffer_head evil demon from Linux, or why its evil, but I'm not
+> > sure if recapping that is useful at this point in time, let me know, I could
+> > do that if it helps if folks want to talk about this at LSF.
+> 
+> I think there's so much to talk about WRT iomap that I also think we're
+> not going to have time for recapping why buffer heads are awful.
+
+Does this mean you'll finally be attending a conference (if invited)?!
+
+I have some private write ups on this as I reviewed *dozens* or threads
+on prior efforts to address this issue before, so I could try to
+condense some of this as a preamble write up before this session,
+should this session be a candidate discussion.
+
+> > For now I rather
+> > instead focus on sharing efforts to review where we are today on the effort
+> > towards conversion towards IOMAP for some of the major filesystems:
+> > 
+> > https://docs.google.com/presentation/d/e/2PACX-1vSN4TmhiTu1c6HNv6_gJZFqbFZpbF7GkABllSwJw5iLnSYKkkO-etQJ3AySYEbgJA/pub?start=true&loop=false&delayms=3000&slide=id.g189cfd05063_0_225
+> 
+> Ooh, slides, excellent!
+> 
+> Slide 3 -- there are a lot of separate struct iomap_ops in XFS because
+> we learned (somewhat late) that creating a separate ops structure (and
+> functions) for each IO path / use case is much more sanity-preserving
+> than multiplexing everything into one gigantic function.
+
+This is of huge value. Is is interesting that this was found through
+experience, ie empircally, rather than early on, and it made me wonder
+if things could be re-done -- what would we do?
+
+If that was useful for XFS -- could this also be usefulf for other
+filesytems? Could implying this somehow on the IOMAP API be useful?
+
+Based on your experience *should* filesystem authors *strive* towards
+splitting up the paths as well for IOMAP use?
+
+> Now we have four different write codepaths in the kernel:
+> 
+> extern const struct iomap_ops xfs_buffered_write_iomap_ops;
+> extern const struct iomap_ops xfs_page_mkwrite_iomap_ops;
+> 
+> These two use delayed allocation and use the pagecache for COW.
+> 
+> extern const struct iomap_ops xfs_direct_write_iomap_ops;
+> extern const struct iomap_ops xfs_dax_write_iomap_ops;
+> 
+> These two don't use delayed allocation.  IIRC the DAX ops also take care
+> of pre-zeroing allocations since we assume that memcpy to pmem is
+> relatively "cheap".
+> 
+> Only one is needed to cover the read cases and FIEMAP:
+> 
+> extern const struct iomap_ops xfs_read_iomap_ops;
+> 
+> And then there's the weird ones for SEEK_{DATA,HOLE}:
+> 
+> extern const struct iomap_ops xfs_seek_iomap_ops;
+> 
+> And FIEMAP for xattrs:
+> 
+> extern const struct iomap_ops xfs_xattr_iomap_ops;
+> 
+> (I'll get to xfs_writeback_ops downthread.)
+> 
 > > I'm hoping this *might* be useful to some, but I fear it may leave quite
 > > a bit of folks with more questions than answers as it did for me. And
 > > hence I figured that *this aspect of this topic* perhaps might be a good
@@ -68,69 +138,86 @@ On Sun, Jan 29, 2023 at 05:06:47AM +0000, Matthew Wilcox wrote:
 > > to document IOMAP API properly and helping with the whole conversion
 > > effort.
 > 
-> +1 from me.
+> Heh.  Yes.  Absolutely yes.
 > 
-> I've made a couple of abortive efforts to try and convert a "trivial"
-> filesystem like ext2/ufs/sysv/jfs to iomap, and I always get hung up on
-> what the semantics are for get_block_t and iomap_begin().
+> struct iomap_ops is a giant ball of frustration:
+> 
+> 	int (*iomap_begin)(struct inode *inode, loff_t pos, loff_t length,
+> 			unsigned flags, struct iomap *iomap,
+> 			struct iomap *srcmap);
+> 
+> If you're a filesystem trying to use iomap, it's not at all clear when
+> you're supposed to fill out @iomap and when you need to fill out
+> @srcmap.  Right now, the rule is that an ->iomap_begin implementation
+> should always fill out @iomap.  If the operation is a copy-on-write,
+> only then does the ->iomap_begin function need to fill out @srcmap.
+> 
+> I've been mulling over redesigning this so that the two parameters are
+> @read_iomap and @write_iomap.  Any time there's a place from which to
+> read data, the ->iomap_begin function would fill out @read_iomap.  This
+> would also be the vessel for SEEK_*, FIEMAP, and swapfile activation.
+> 
+> Any time there's a place in which to write data, the ->iomap_begin
+> function would fill out @write_iomap.  For a COW, the read and write
+> mappings would be different.  For a pure overwrite, they'd be the same.
+> 
+> This is going to take a bit of thought to get right.  It'll be easier
+> for XFS because we split the iomap_ops to handle different
+> responsibilities, but I haven't looked all that far into ext4 and btrfs
+> to see what they do.
 
-Yup.  I wrote about it a little bit here:
+IMHO so long as those use-cases don't break we should be fine in
+re-thinking IOMAP now. Otherwise a change later would incur much
+more care and could regress. A few of us are the brink of helping
+with the conversion effort, but these questions seems a bit more
+important to address than just trying to reduce the struct buffer_head
+count on each filesystem.
 
-https://lore.kernel.org/linux-fsdevel/Y%2Fz%2FJrV8qRhUcqE7@magnolia/T/#mda6c3175857d1e4cba88dca042fee030207df4f6
+> I also want to convert the inode/pos/length/flags arguments to a const
+> pointer to struct iomap_iter to reduce the register count.
 
-...and promised that I'd get back to writeback.
+Neat.
 
-For buffered IO, iomap does things in a much different order than (I
-think) most filesystems.  Traditionally, I think the order is i_rwsem ->
-mmap_invalidatelock(?) -> page lock -> get mapping.
+> > My gatherings from this quick review of API evolution and use is that,
+> > XFS is *certainly* a first class citizen user. No surprise there if a
+> > lot of the effort came out from XFS. And even though btrfs now avoids
+> > the evil struct buffer_head monster, its use of the IOMAP API seems
+> > *dramatically* different than XFS, and it probably puzzles many. Is it
+> > that btrfs managed to just get rid of struct buffer_head use but missed
+> > fully abstracting working with the page cache? How does one check? What
+> > semantics do we look for?
+> 
+> I'm under the impression that for buffered io, btrfs manages pagecache
+> folios directly, without the use of iomap at all.  Hence no mention of
+> buffer heads in the codebase.
+> 
+> A big problem I see in porting btrfs/ext*/f2fs/etc to use the iomap
+> pagecache code is that iomap doesn't support io permutations at all.
+> It assumes that it can assemble struct bio with pagecache pages and
+> issue that bio directly to the device.
+> 
+> IOWs, someone will need to port fscrypt, fsverity, compression, etc. to
+> iomap before those filesystems can jump off bufferheads.
 
-iomap relies on the callers to take i_rwsem, asks the filesystem for a
-mapping (with whatever locking that entails), and only then starts
-locking pagecache folios to operate on them.  IOWs, involving the
-filesystem earlier in the process enables it to make better decisions
-about space allocations, which in turn should make things faster and
-less fragmenty.
+Is it a worthy endeavor to have filesystems use IOMAP to manage working
+with the pagecache for you? Even if hard, is that a worthy lofty goal
+to aim for? Do we have general consensus on this?
 
-OTOH, it also means that we've learned the hard way that pagecache
-operations need a means to revalidate mappings to avoid write races.
-This applies both to the initial pagecache write and to scheduling
-writeback, but the mechanisms for each were developed separately and
-years apart.  See iomap::validity_cookie and
-xfs_writepage_ctx::{data,cow}_seq for what I'm talking about.
-We (xfs developers) ought to figure out if these two mechanisms should
-be merged before more filesystems start using iomap for buffered io.
-
-I'd like to have a discussion about how to clean up and clarify the
-iomap interfaces, and a separate one about how to port the remaining 35+
-filesystems.  I don't know how exactly to split this into LSF sessions,
-other than to suggest at least two.
-
-If hch or dchinner show up, I also want to drag them into this. :)
-
---D
-
+> > When looking to see if one can help on the conversion front with other
+> > filesystems it begs the question what is the correct real end goal. What
+> > should one strive for? And it also gets me wondering, if we wanted to abstract
+> > the page cache from scratch again, would we have done this a bit differently
+> > now? Are there lessons from the network filesystem side of things which
+> > can be shared? If so it gets me wondering if this instead should be
+> > about why that's a good idea and what should that look like.
+> 
+> All good questions to ask.
+> 
 > > Perhaps fs/buffers.c could be converted to folios only, and be done
 > > with it. But would we be loosing out on something? What would that be?
 > 
-> buffer_heads are inefficient for multi-page folios because some of the
-> algorthims are O(n^2) for n being the number of buffers in a folio.
-> It's fine for 8x 512b buffers in a 4k page, but for 512x 4kb buffers in
-> a 2MB folio, it's pretty sticky.  Things like "Read I/O has completed on
-> this buffer, can I mark the folio as Uptodate now?"  For iomap, that's a
-> scan of a 64 byte bitmap up to 512 times; for BHs, it's a loop over 512
-> allocations, looking at one bit in each BH before moving on to the next.
-> Similarly for writeback, iirc.
-> 
-> So +1 from me for a "How do we convert 35-ish block based filesystems
-> from BHs to iomap for their buffered & direct IO paths".  There's maybe a
-> separate discussion to be had for "What should the API be for filesystems
-> to access metadata on the block device" because I don't believe the
-> page-cache based APIs are easy for fs authors to use.
-> 
-> Maybe some related topics are
-> "What testing should we require for some of these ancient filesystems?"
-> "Whose job is it to convert these 35 filesystems anyway, can we just
-> delete some of them?"
-> "Is there a lower-performance but easier-to-implement API than iomap
-> for old filesystems that only exist for compatibiity reasons?"
-> 
+> Dirty secret here: I still don't understand what buffers.c does. ;)
+
+I'm on the same boat :D
+
+  Luis
