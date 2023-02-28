@@ -2,288 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD6F86A52E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 07:20:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A46696A53CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 08:43:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbjB1GUi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 01:20:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46286 "EHLO
+        id S230260AbjB1Hn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 02:43:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbjB1GUh (ORCPT
+        with ESMTP id S229471AbjB1HnY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 01:20:37 -0500
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2057.outbound.protection.outlook.com [40.107.7.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9A8C193E4;
-        Mon, 27 Feb 2023 22:20:34 -0800 (PST)
+        Tue, 28 Feb 2023 02:43:24 -0500
+Received: from mx07-001d1705.pphosted.com (mx07-001d1705.pphosted.com [185.132.183.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8A311205C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 23:43:23 -0800 (PST)
+Received: from pps.filterd (m0209329.ppops.net [127.0.0.1])
+        by mx08-001d1705.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31RNQfOt019754;
+        Tue, 28 Feb 2023 06:07:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=S1;
+ bh=7SASak8AQibfHLq3frEe3qrgYuIPfwZQv17OFq3iDYc=;
+ b=iseVjyhbmyWrQTx7OQfDpeAEtEGHPYjAzcTq1U/pZSb7yFUhwp/pX6RjE3eGYxRN1bmE
+ NOVkUuY1C4pMrlhB4Xd0IgIC3EJwM00L4FqycgJ7cO6zE/huw7+OSghdKkBxULt3dYQK
+ lCapwPtwQ9a7LoKLWuYdz1g1QRM0CuJL2E29SE/wjGBgENV+xNOI+vhGXgE6giSkpcJ5
+ Mm7b1tYgpKLBXQD36OXF88dz1U4VZL9zPGzm0M5oYa+AWajany4wCG+4WsO8z0GUay9T
+ F522tLMjCK666P+lTuQNJpTTJGl0xy58r44YMGant58bvEVGWKvA8aWuJJUuGQ+IOdmh cA== 
+Received: from apc01-sg2-obe.outbound.protection.outlook.com (mail-sgaapc01lp2106.outbound.protection.outlook.com [104.47.26.106])
+        by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3nyb2p2bh8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Feb 2023 06:07:30 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WeDhcwAjEmTR5zK2gJiJ126CECtUJZzohhvigyC/NjtL3A1FiVJwDcphbZ9mP/TMKBM02wJEPM09Dy7mL56mEEG2uS7BfNfqPI4+E0/tDaCkCqYP+ylogurwSosTJyjPlaXGbg0h4VpC8g6nr/FWd6sCJBOrHtE3dofTQB8lxdXfwYCYSpjGmDQSLtVyKUuYbecxaT8UAMx6BRcASZV7RB7aoAKJoi7advfcNfUhVKXUd4h8+SxEg5vNSj8VlbXj0qSL//IreYoeEtd55HUQDyC1l5oY7oYGtjMy5tkfm0Tag50+Nx4twT+ViENtx4zox0MoMlrqqAiL0WqntujPRg==
+ b=Gy9SgvKjTpd5ZQhGsmQ6d4MNXeUoF3C41PWckRqLtOwGwyAcLsAgXaqhw4H2Db/ihMsk9h4pyWNDHFrKUg2ELiD6VZ44yCYRMoqnxn6S9HUT9iI5aeq8V9kt0M1WlsS/K4wxzPSzhdddjtAyoDphQi+h3l70iCxFxxFjqEYj+P0rUADRNiAMbPYlfuEi+T6JAIcKhbzH788VS4q4BJZBE+irrZm66V27k04Upe34us5FN11qkedckA0Nv1HF18H+B9ck69oP2Uqvi7nhulAn+lLYYuFArnIlDW2yFWzgvYYliva6W/Rg2OURn2Sd37rUs1YCHUHre4nLVGYJl8VvDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6aofe97n55yS6ERvM1beGjk21hgdGzpcKTJtAhHrxrg=;
- b=eecwNkgVZb9JOAm5KLSw02ZOGaYfEYLTHeUoOXW0CUGXPkqDqMFZ31zIsEfECEillEqce+70k0JbNkkh9ArW63x8Z1wBEw6AHnCoF/uj2kM3djOjX1DKe5MgAJYuyyS/bAMJRibiUBnNmQWDmD0wvWckRtSxDcbVqdmiObbwP+eTCWRsT2NqEu6uMlJs/0fRLuSpaBdY9X4RQZG5puzC1AYzmzpJ5mDCAQclbpOjoowg0eiweja9VtyS5pWOxZ0PIAcUH7RfLWsCF6zWYVxkh5+32ibQ7zqHHVam4vzy3APdPRl8hY/He6T5ZHMayQjuHopg4EZMQkUl9DQzY8Op9w==
+ bh=7SASak8AQibfHLq3frEe3qrgYuIPfwZQv17OFq3iDYc=;
+ b=btpIgl9xC3nUwN1c96eBWcR/r3tKJ18pdLdbYVe+CuPwZ6Z+6qxRykU9M792x/O1dXm+Azvz9i2d8M0wqVD06jJmvq0zcyQrhYbzGBdZ1rwqF4dmdi5/mF/1vSc3AsJCooON17JXOOjLJqxdzjmC4Y0wiPc7G1qfTKsylKDMOBohDNHfpfFFqXSMOBx4wKuoCq/ph1lk21c70Uet2Dx7/75e7m4IkgnDiRh+455oXrYVxTH2Cx6JQoXfVVdfoOogyRD6DYXBsbbELBNMli9phnLmIROnGqKjWBjmqdYe0OwIWJmHzxSqhkWe6oAKhnlRl7TXmMCBlcz9ACCEStgA/g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6aofe97n55yS6ERvM1beGjk21hgdGzpcKTJtAhHrxrg=;
- b=tDp58XLcis89BpAC+/BBlo7UbSucoG4XQFf0zrusurSIYB6HbDTOuwKgTFtnYjiH0rS3UVFT/roQYbu7jAVt2/xLaX6qXyiO1gI9optpBuBFrGi4KAiUWKO26EL7gAAdIF1lZ3ym77OwWNjNKNKr9pXNI7o1tbFEjNbSrq/p9cZ3Q0a3sh3ErtbLUAz0Iz8DsJOihf7bhs6GnfkYabDa85ugXMvvDEvzdB0b+6mi84D4ilYIMFcJ7vRR6FDO1sXKzydzQ74kd6D5Q1p/wsQBitlSCfBL6pCiRXurzBzelWPRBGRbaHbTgjFjNkvTW5hX9CDDPYPJKThRcOl8D6ElRA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DB9PR10MB6642.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3d2::13) with
+ smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
+ dkim=pass header.d=sony.com; arc=none
+Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
+ by KL1PR0401MB4227.apcprd04.prod.outlook.com (2603:1096:820:25::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.25; Tue, 28 Feb
- 2023 06:20:31 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::784b:e95b:b855:dcc5]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::784b:e95b:b855:dcc5%9]) with mapi id 15.20.6134.030; Tue, 28 Feb 2023
- 06:20:31 +0000
-Message-ID: <08b4b0c8-3621-a970-d206-d24e6eb81355@siemens.com>
-Date:   Tue, 28 Feb 2023 07:20:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v2 2/2] binfmt_misc: enable sandboxed mounts
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Laurent Vivier <laurent@vivier.eu>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Jann Horn <jannh@google.com>,
-        Henning Schild <henning.schild@siemens.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Matthew Bobrowski <repnop@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        containers@lists.linux.dev,
-        Christian Brauner <christian.brauner@ubuntu.com>
-References: <20211216112659.310979-1-brauner@kernel.org>
- <20211216112659.310979-2-brauner@kernel.org>
- <20211226133140.GA8064@mail.hallyn.com>
- <0e817424-51db-fe0b-a00e-ac7933e8ac1d@siemens.com>
- <20220530081358.b3tvgvo63mq5o2oo@wittgenstein>
- <202205311219.725ED1C69@keescook>
- <20220602104107.6b3d3udhslvhg6ew@wittgenstein>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20220602104107.6b3d3udhslvhg6ew@wittgenstein>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0121.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9d::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.30; Tue, 28 Feb
+ 2023 06:07:26 +0000
+Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
+ ([fe80::779:3520:dde5:4941]) by PUZPR04MB6316.apcprd04.prod.outlook.com
+ ([fe80::779:3520:dde5:4941%7]) with mapi id 15.20.6134.026; Tue, 28 Feb 2023
+ 06:07:26 +0000
+From:   "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+To:     "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
+        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+Subject: [PATCH v2 2/3] exfat: don't print error log in normal case
+Thread-Topic: [PATCH v2 2/3] exfat: don't print error log in normal case
+Thread-Index: AdlLOpvFm4O2ert5RiWDsj4rGy5rJg==
+Date:   Tue, 28 Feb 2023 06:07:26 +0000
+Message-ID: <PUZPR04MB6316B9A83221D5AB769AB8CA81AC9@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|KL1PR0401MB4227:EE_
+x-ms-office365-filtering-correlation-id: 9444fb74-333c-4feb-e828-08db195210d6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 4aD6OmdsWgTINjP5mcpxSZmC337hL3wnQkZvRPWx2COZxfozKUfQoR8K6MHt0nW9xsfKRqpoxwK/J/geHVaN+IYy5YJduRyxmqrvPXk8MYm1T/IXvPCY4zEynPEnW0NZ29G2GpciwH06jetHMk1mquiSlafBfa22mCULoxLQu0p+QFXT5eVHJX8YXXWcLxAcOYhm5A8Ja3ylmc0Y/MfLWG5LykA5NLR6cuZ+IrHgRE5TWeOS+QmCNXXkmWeFm0FzqOlZlxFmrm/F0ZUI2EeBUvp4Nvhr7Gjvl9JczdWBIfcq4U544oMDaOsHA2Pl8MHGT6y+L2Ba1DkhPafAeskTbXmnyPIzYAh529H8ttCtxLn8nWQELYA3YEX5rhABZy0gmbuDcx8TPiIyKmu5i58ytGg/Z8IPG5mhQGZaQt23xMZUztsEaP2mUIl7A+1BOYU+fbjw6lhPVSy7q+A1glWmEt53JajiF9SaM8US+3amW94VNllmIWj02qCOyna99bgdfb9zhwS3J5Gmd91FsE9+BvDe2E1TTI1WCfJls21vsypUTC5Z0xI4r3YWFImqIB+mkGtYjhQ/tA/UR/sDrb7Lpi6rEGSxYPZt6YTL2Z6y9bQ4gLsj3/P9l/6mfMQDokG1OmR9hg/TYP8p3R2zA3z0HHWrBRq111Mid7q+T2CFc1yjchn/ygTUtK3fZB00A+mdIed84NkqfvHa1skLGkHw7Q==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(346002)(376002)(366004)(136003)(39860400002)(396003)(451199018)(110136005)(83380400001)(33656002)(54906003)(316002)(478600001)(82960400001)(38070700005)(122000001)(7696005)(26005)(41300700001)(9686003)(186003)(71200400001)(6506007)(107886003)(5660300002)(38100700002)(76116006)(52536014)(86362001)(8936002)(2906002)(66946007)(8676002)(66476007)(66446008)(66556008)(4326008)(55016003)(64756008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RWZWS3U1QkdRazZxNjg4T0J1eWo5Szl5UWdxRVhrVjZNSW1ZcE1sOEJlTTZq?=
+ =?utf-8?B?aFVveDQyalNmam5XZkNkbzgwWnkyNHE3ZmhPWjhvVERMZzE4eGx0b21ybUtx?=
+ =?utf-8?B?TS90MnlkVDEyN1M5WkJ6aEEwdGpQR0tkQlRUWkhBWExiRTFtMEt0ZHBRbG54?=
+ =?utf-8?B?ZUQxQUdBVW9FVHVlRG14Sk92ZGpoeVRBbWhPdVpKZW8xMytCSWs1Mll5WWI1?=
+ =?utf-8?B?RlJMZE5HbEtILzJqUjVVY0gxNnBQT013dDBWNWRkcUFUVmFlelZUVTQ2azVR?=
+ =?utf-8?B?akc0MHdJSDhyVnZnVS9FSUJBVG5BeTR1S0FFQWJ0RmtlVmFCSkU0ZmRaTnB6?=
+ =?utf-8?B?SkwraHVFZFgrakRsQnVkVHFwUGc5U04rcnAvZUxUdTlrNk5sa1E5RFdKaU9T?=
+ =?utf-8?B?TzRwbkRZYU13cDVueFBQbTVudWlQOXFOVnB1bGhEcEozcEdRaE5tM3BrMWdl?=
+ =?utf-8?B?M05PQUNEZUtMS1FLRHhDUklLQzVtb3c1VkZVek5EeHl3UTFiUXBORFBKdGxi?=
+ =?utf-8?B?L2pHcmF3UVZ0Z05hSm82UzJyYjQxUGliTEFETEVTVEk0T3VQbGZwc1ZjNU83?=
+ =?utf-8?B?b01EQzR2VHpLeTdKN0VPTmFLQUNpKyt1Q2JQNTJ1RnRzQ01GVVRPNEIyTGtX?=
+ =?utf-8?B?UlMrT3I3TzFaTjRsUlUrQ0VHaDVnODB5Y1RjSlRtQ1psZ2NVTFR2MFRmdzFB?=
+ =?utf-8?B?VkJJRnlaSTZqeVJIRHVWc1NVbHREU2RmZ01CMFlzQ2NRNks0bk1OcFN5aytD?=
+ =?utf-8?B?UDhNQkJubmJRZG9lcW9JTVJTaGxPTGhPYkx4MTJMOFBabHlETVZBcC9QUXg3?=
+ =?utf-8?B?RXlwOS9DUEltOGl2ZE1KMzdUVjdoUGk5akNFbE1YZHF4cWIvTGRLcEVmQVh1?=
+ =?utf-8?B?amh4M2l6UFU2ejVQeW5Ma0U0ak1WSFdUc1AwVGl1NHdHc1NFYXlTYURIcml3?=
+ =?utf-8?B?R3luNjlVOGVPdUlwbTN0K3VjSEp0aGhKRU5xdUYxOTgrOEZ5ZjBhQlM2bWRJ?=
+ =?utf-8?B?MHZobjV1UmRvYkJJYWhKd2lwckMvQ3VVRmJBSTQ4ZHdzeEF4NlRiTDhCbWl1?=
+ =?utf-8?B?TEtOM0k4ZGhiWXVzWk1CelJjKzkxVU9IMDdPMDJHcHhQclBUZmg3TmtHME9M?=
+ =?utf-8?B?TWNTN0dCYTBKbm1vcE1xYXhkOXNPNjcxK0FYeHdhM09jYmtoR3BqZVJqQWRt?=
+ =?utf-8?B?cXphWTdmUHBkUnBHU21YYXUxb3kxdW9wUllQbTBPYURCV2R3VjM0ZTNJbVFM?=
+ =?utf-8?B?Z2JoYjkrLzJuR09DK3JyeElCTkJWeWNveVNpZUgzS2laN3VOaURGdjhRZGxG?=
+ =?utf-8?B?OGhTSEJBMzh5TENnblU1M0FDYTN4N1VjdVBQZmNjNGtRY1Mzc2g4K20yNWVx?=
+ =?utf-8?B?VnJnU3VNOGRPWitIU2E3V0NUSEt5MHRKUWJrZlE0Y1BVbjh6WlE4ODRzOXZm?=
+ =?utf-8?B?djc0ZWFFd20xZ3lMd2UxekpjTW1QL2NnUjhpcHEybCt0Q1ZXMDRTb2hVRnZU?=
+ =?utf-8?B?YjRoMkZFM05TMCtYOXVHR0pCZ2NTUlgwc3ljd3BDNm5zTTN6N01ZSEFBNWRn?=
+ =?utf-8?B?YW1iUldLZVFkbVJNMEdUYWk2dDJHWUJjV0JpblMxZmNRc0NGRmtzdVB0MDJQ?=
+ =?utf-8?B?RmJndDJOMlNpZkpza25mMk91TnpVREJJdXVwV0wvd2hNQXdiMWExcXNqZUQ4?=
+ =?utf-8?B?cFkyaTFCejZySXQ2VGYvZHlIK1FLOEJrakVyV3N5S1JxWWF6bmR2NGdxdGVj?=
+ =?utf-8?B?Y0Vua0RRUDlEQlhWOGxVTWhrTTVPamJ2UkxJdmlpYWpJbW40Sm9LdFJOMWhj?=
+ =?utf-8?B?MktRMnp1S0RmMEdZNTJYSk1zODJmZUR4Y1NpWC9aTEdKOW5xb3cyRWhRMXNY?=
+ =?utf-8?B?YXJCQ3ppbnR1WDNReWh2bHZad0NzT28xRFV1ektybS9scDY2ZlJLelpTQ1Ar?=
+ =?utf-8?B?ckQyRzMveVhlb0pCMFRaeTArV0VhM2lPMDVPR2lIM0gyQmFzYU01aGF1TFNo?=
+ =?utf-8?B?QWdCOGhHdnFxVXdnQlNtaTlRREczalV2Q09ZeGNSb08xUTBIZmE5ZCtHY2Rs?=
+ =?utf-8?B?eGlYQVV5WkxWNzNLNzB2Y2NkejRmeGR1dFpsdmwzdTY5SFFCT3hpSmFUZVdu?=
+ =?utf-8?Q?zYqySBBX+WO6UdjYM+seO4bFI?=
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB9PR10MB6642:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb87789c-f033-468a-1299-08db1953e4b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Agy+ZBglX85XO2VIORqpUFSgVWBIkKiT86myXe4MDXVyn3JvKllz/nEOQdNUb/LQfRCtKa3bVTjCaBgEeBN+XsU7EFms6MoF3Kyh/bwFreKUjhgVBEgA/Ut/kzqHBXragEvGedRwQEZxbpMHMlL9FYngOwQ0t6TmPtmHQVf4PxvgKjCnKOdrhkdUz6cyBR3J02g0k1XsZJxJ98DVcEAfEi8Uqpu0jJPyJ4imtqnJGTQF8Krs8JZZN1B1tdWIknvOWL84jDuc2web/7jxDiyFkIu7knkZ1/Nsgy1yMxg3zx3hSKqSSobGt31QMLquQ2wq3pS5uMkdLk/pQ0M8lK52J+0/kwTAUm9Hv5tc0XLJt8ZiRjAiOl8x7rIHOH00KiSEY6MmJijvwycj3gJYCIAXUpRbTTozpyMPVOg4dMWJeAQ+sTjydiTcKiuuPuG63O0FdRNrCQ4vQSB8QK5/3t5U6NMtgOi2vEp86b/UfkLnzOYYRoFLc5qbfXVDuWpk+0Sn+vbYyGXjCTx/7FQX6JpGRmjEXwL5Y5F1z0ZRUbZYIkW/1/+EVkfhk+CSrC5dTcHV5jRbJC/QSTsuIGWqcJAmZykdKjJ92vjbuLX9iX4ireKXKdtlzA9BBH2FjsszhichBute3Vn1rr7wDCufaKFv+oGAVCQ2HlTh7vP4S/e72HxriSn1ySvilFAQRN4nJk6gzx8OSKoVipHH/H7frLugy02kgZTAp3BI1sSnKRhxiB42IHOY7Pbt18v+tztGMcVe
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(4636009)(376002)(366004)(39860400002)(346002)(396003)(136003)(451199018)(36756003)(31696002)(110136005)(478600001)(26005)(66556008)(66946007)(8676002)(86362001)(4326008)(41300700001)(66476007)(8936002)(316002)(2906002)(44832011)(7416002)(5660300002)(83380400001)(6506007)(186003)(54906003)(6666004)(966005)(38100700002)(6486002)(53546011)(6512007)(2616005)(82960400001)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?STB0M212ZjNPZHU1NlU0Tzg0SW9LTlFjR09hZ0dzcmdWQTV1RE84T1RMa01N?=
- =?utf-8?B?K1pRSTh1b0RQMENzWHlBSjNBZ0QreXZ3MjNIR0phcDZ6SS9Xc1hzS3A5dk44?=
- =?utf-8?B?TTlGMFdFMytBMHVnTUZJSnByc0pBMmxJS2RLWkh2TkFvTmMyQ25nbXcyRWVk?=
- =?utf-8?B?UTdiOHFCMG9wMGptNjJ2MU1xNGVCdHNXN0ZVM1FybFpZNGo5QU5qeTJtN2Nk?=
- =?utf-8?B?RVIzV0g4VFlmRWdsd2o3Q3pRTSt3WjY1UVB3N09DQ3Ava2Z0d2pWeXFxZnIw?=
- =?utf-8?B?Rkl3ZHE5NERKTmI5b1RLVHJ6OXgyenlEYjdvdkNZRW5EUzltNE9pb2IrWWlE?=
- =?utf-8?B?OHlpdVFCN0w3WUI5a3NhaGdvTmJtcGk5QW9jMWVCZ3NBclhIR3A2UFZCcUx2?=
- =?utf-8?B?ckVsK2FFM0NvdEFWbk1NWisyOUFJNEFuUUdtUG1ibnJEQWhMcGVpZ3pKVHV2?=
- =?utf-8?B?cmlqSjJmM3VkenRvblNjT0xpcFlKbmIzM3dIeFdmMWppT0ovZnF4eml0RkNM?=
- =?utf-8?B?TDZOcHlaS2kxZGtlS0lIeGlUZHFuV09OSk5IYldrQTl5S2hzaVhDZ1hVQXRN?=
- =?utf-8?B?MFRhSWRrcEhHY0sxSDZtMzAyUGlMSlk1Z2JUcFNRY0RPWWNjY3VuRTl0UkJq?=
- =?utf-8?B?ajhmaWxlOWRuL0FuaGNrQ3Y3YWE4bEVYRTBZbFJ0aVJNVkpLb3g1WXdnSUk5?=
- =?utf-8?B?STFidmpkem5BRXZIOStNNU9rZWFvSXVCckRhMGlTVmljK0xBOHZKTVY4ZDlM?=
- =?utf-8?B?eVE2KzhpWnNtaDQvbzlTTXdzSVlxQ21RVVRVREI1Tk9SbjEzdGZHL3h3SWp2?=
- =?utf-8?B?SHhwaGp1cWhrR2hnUmNUZDFVcVBGRDl1enpHK2hWbUZvQnlYYlNKSmlMWTNG?=
- =?utf-8?B?RzhjenNBMno5THNxSXpZQmJTVVVxNmNFeFdMMWk1Y0dRdThJemVHNGpMcXVQ?=
- =?utf-8?B?eTh3ZVlpUi9PUWFjd1pTN2V2bGh1N21pY3NkOEkrd01yMXA4NDU4Z0x4OXdT?=
- =?utf-8?B?TDdyclcvZDBFSkpLeU5CdGhyTW9TVlVPNCsyaGN5VHQvRjQ5WTNtc2NqYzJK?=
- =?utf-8?B?ZUUxWHJieTlPQ1JGaGVWeXVwd3BPNDZCOVAzalFqUng5NTBMajJqaTFwTzhB?=
- =?utf-8?B?dW11YVpMdzFsbW8zNlQrWkhEUFVQSFNNajE3QlM3Q1VrbXRZMHh1eEZvRTZh?=
- =?utf-8?B?RnNKMDVtVGtVcEp2eVVXSUhqS0Z0U3M0aG0xZEtDT3JMdDNQL3JBUDlTczRv?=
- =?utf-8?B?UFJvN2ZtTW4xZEhjOUZtUXFIejhmOHRReWJGQW1tWWF3ck1XZnQ5WWdjcnVK?=
- =?utf-8?B?QXJtU1hsWUFUTWtrR29sSldKN044SGRyYzZHelFWbmpWMDJpcnptU3BycUlT?=
- =?utf-8?B?WlJZM3NLcVFvaVFkdFl0MWFzd3pNN0FQeDErc2NvS29Xc3RXaGNnajdETjls?=
- =?utf-8?B?bUVMZVVEV05wTzUxbys4aUF4SElCeHlBR1lqdkRRdXdMYWVnb3lHSExJRFQv?=
- =?utf-8?B?bmQyeld2czY5K09NU3U5Mk5kYkdxV01kOWQ3SzlxOVZwZ213UnlyazBneFdh?=
- =?utf-8?B?SFZ0bnlWU2ErQ3VWeWVucVRSUmpzTG5ENmV3RE9PeWVLbmZZOGlWdk5FLzN6?=
- =?utf-8?B?RXViaHltWjBDejZPOVQ1LzU4WEpGYmlmVzAvRm9ybmR0S2ZLNnpFbVJ0NE1J?=
- =?utf-8?B?a0Q3dGRBOXlvaWRuVmJsQ2p0VnpLWmNuZHNTR0FMUGVaUUdZWU5ocVlvSjdV?=
- =?utf-8?B?YXNZNHM1OVNhWUgzR0xXV1dkSktaUGlFSjBDT1hBTXY5MnZERzlhTmZBZFZm?=
- =?utf-8?B?c1RzOUpNR1c1MFgwRTQ2eTE5cjk2TVpTZDJmdy85OGZrbFk3L2RKSlZVMnBQ?=
- =?utf-8?B?UGVmdEZNdmhxYUYvM2NiTEs2UFU0U0xzaisxM1Ztdk5RaE5IalpYMTFCU3RJ?=
- =?utf-8?B?akkzbHc0WEt6NTVGZWEwWWkzcHo0Sm9VWFl3Y1ZrYlBJYkFORjZ4RVJrN2M1?=
- =?utf-8?B?ZGpDUmVZM2wySUhUaHR4NHBYdm84eWZLRGs5UERTaUxGS3RrNVlkSGphT2xm?=
- =?utf-8?B?ZnNUTEZTS01HaTk4U3ZEUmRKRkU0Zk10UVlUNENUbmZlQ3k3TmtvY2s4NVdO?=
- =?utf-8?B?SjB0R3V0aGFwaHJ1dDVMQjBBbnJERTBKenhyUjRsVnVNZHBhMnRQMkdrc3BS?=
- =?utf-8?B?WUE9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb87789c-f033-468a-1299-08db1953e4b4
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: izCwWFJP7TD1cYdStnsKn1+UECVXak3nBg4WXNP0lR+N3McHQMCl0YVjrHtL59ux5K69rkeL9pX5CkgWZj76TrIF9CnG8f4TJP7QIg/Fuazfd3F8B1tIyuJ6H7PmeA/ItamntJ0tnz4tdOVn0cY/Q/lMRZGioIqzwsEYWnOJrpSyW8ZNN5Vb8sUrwwQWmgmY6l5aGkiLds6CjJ+1qhHtq2U1W6LaEMnqbhDZyk9xl1X1//pdK5GiZCL76QKO655f34+uXwXse/VvHIdGAJ145a667qWrs9c8Bdai0+QEAIIalVNmQHfmnTNF6ErGiXzEtsFphvHi5ZsBMWO49ylksN8LQqj2X/poKvgd7P2pwrufl2mO6AhjVHPYWpUga23Ru6Yfr0qTC0xknR37q5tMZhUADR+XQ3qzN2QJfmUP2t45duEh8uWWlG6C/zweopMnJfV9TFGfjbHM57riRKt1t1BnZqlX2pRnkF/jCqBYW8nEcmd7nRCIM/5VGFPW/0zex3Bomq8d4Ypm4N0s/OeuBb407xF5746+mdgstA/+c4sHwoXkrViZBGJ82t74KdZ+seHVVi0yWtP2mwa3m2gGxtEmkFiyAnHdj1j73BiwEjFm2EW9U2E6VebDu5vb3jBFzrtaHuyRzZgknSyFAJRoCWXBO+BhM93SMpZ6VJxBhR3c+7wtxdCM2YPQ7RlZZCERXi/8una3OZklfuQr17vxEUYmHF4dj7QVO9nc0zFGYkTbpc/P1iy6sNFjAI2t2t3oOWbkqxRurG7kKA8skWYnLRo9NazVoVEb8Lp3WYjn6ZsslhIOd2qhjeyoC1H4yqeM6NLvsGtAGVfw42LeVH6Uqg==
+X-OriginatorOrg: sony.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2023 06:20:31.4762
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9444fb74-333c-4feb-e828-08db195210d6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2023 06:07:26.3277
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3ceVd1I5Otbxa8MRB0fB/YFxCMhIRFXU8upD4f8SU89eldCNYxAlBDcgA3akttzUtam0paal3hgiD70KC5JE1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB6642
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE autolearn=no autolearn_force=no version=3.4.6
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aOWkw7R/sDxzDIb/BvrOumHeYyCzgwEj4ddRkzEp+Xl31RlrKeStt67EuQLOERN4rxG8yUx7yXRAT8jRt3a2Bw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0401MB4227
+X-Proofpoint-ORIG-GUID: 12jKhBPpoKCudEdDioMSgBFVQG6c446k
+X-Proofpoint-GUID: 12jKhBPpoKCudEdDioMSgBFVQG6c446k
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+X-Sony-Outbound-GUID: 12jKhBPpoKCudEdDioMSgBFVQG6c446k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-28_02,2023-02-27_01,2023-02-09_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 02.06.22 12:41, Christian Brauner wrote:
-> On Tue, May 31, 2022 at 12:24:37PM -0700, Kees Cook wrote:
->> On Mon, May 30, 2022 at 10:13:58AM +0200, Christian Brauner wrote:
->>> On Sun, May 29, 2022 at 09:35:40PM +0200, Jan Kiszka wrote:
->>>> On 26.12.21 14:31, Serge E. Hallyn wrote:
->>>>> On Thu, Dec 16, 2021 at 12:26:59PM +0100, Christian Brauner wrote:
->>>>>> From: Christian Brauner <christian.brauner@ubuntu.com>
->>>>>>
->>>>>> Enable unprivileged sandboxes to create their own binfmt_misc mounts.
->>>>>> This is based on Laurent's work in [1] but has been significantly
->>>>>> reworked to fix various issues we identified in earlier versions.
->>>>>>
->>>>>> While binfmt_misc can currently only be mounted in the initial user
->>>>>> namespace, binary types registered in this binfmt_misc instance are
->>>>>> available to all sandboxes (Either by having them installed in the
->>>>>> sandbox or by registering the binary type with the F flag causing the
->>>>>> interpreter to be opened right away). So binfmt_misc binary types are
->>>>>> already delegated to sandboxes implicitly.
->>>>>>
->>>>>> However, while a sandbox has access to all registered binary types in
->>>>>> binfmt_misc a sandbox cannot currently register its own binary types
->>>>>> in binfmt_misc. This has prevented various use-cases some of which were
->>>>>> already outlined in [1] but we have a range of issues associated with
->>>>>> this (cf. [3]-[5] below which are just a small sample).
->>>>>>
->>>>>> Extend binfmt_misc to be mountable in non-initial user namespaces.
->>>>>> Similar to other filesystem such as nfsd, mqueue, and sunrpc we use
->>>>>> keyed superblock management. The key determines whether we need to
->>>>>> create a new superblock or can reuse an already existing one. We use the
->>>>>> user namespace of the mount as key. This means a new binfmt_misc
->>>>>> superblock is created once per user namespace creation. Subsequent
->>>>>> mounts of binfmt_misc in the same user namespace will mount the same
->>>>>> binfmt_misc instance. We explicitly do not create a new binfmt_misc
->>>>>> superblock on every binfmt_misc mount as the semantics for
->>>>>> load_misc_binary() line up with the keying model. This also allows us to
->>>>>> retrieve the relevant binfmt_misc instance based on the caller's user
->>>>>> namespace which can be done in a simple (bounded to 32 levels) loop.
->>>>>>
->>>>>> Similar to the current binfmt_misc semantics allowing access to the
->>>>>> binary types in the initial binfmt_misc instance we do allow sandboxes
->>>>>> access to their parent's binfmt_misc mounts if they do not have created
->>>>>> a separate binfmt_misc instance.
->>>>>>
->>>>>> Overall, this will unblock the use-cases mentioned below and in general
->>>>>> will also allow to support and harden execution of another
->>>>>> architecture's binaries in tight sandboxes. For instance, using the
->>>>>> unshare binary it possible to start a chroot of another architecture and
->>>>>> configure the binfmt_misc interpreter without being root to run the
->>>>>> binaries in this chroot and without requiring the host to modify its
->>>>>> binary type handlers.
->>>>>>
->>>>>> Henning had already posted a few experiments in the cover letter at [1].
->>>>>> But here's an additional example where an unprivileged container
->>>>>> registers qemu-user-static binary handlers for various binary types in
->>>>>> its separate binfmt_misc mount and is then seamlessly able to start
->>>>>> containers with a different architecture without affecting the host:
->>>>>>
->>>>>> root    [lxc monitor] /var/snap/lxd/common/lxd/containers f1
->>>>>> 1000000  \_ /sbin/init
->>>>>> 1000000      \_ /lib/systemd/systemd-journald
->>>>>> 1000000      \_ /lib/systemd/systemd-udevd
->>>>>> 1000100      \_ /lib/systemd/systemd-networkd
->>>>>> 1000101      \_ /lib/systemd/systemd-resolved
->>>>>> 1000000      \_ /usr/sbin/cron -f
->>>>>> 1000103      \_ /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
->>>>>> 1000000      \_ /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
->>>>>> 1000104      \_ /usr/sbin/rsyslogd -n -iNONE
->>>>>> 1000000      \_ /lib/systemd/systemd-logind
->>>>>> 1000000      \_ /sbin/agetty -o -p -- \u --noclear --keep-baud console 115200,38400,9600 vt220
->>>>>> 1000107      \_ dnsmasq --conf-file=/dev/null -u lxc-dnsmasq --strict-order --bind-interfaces --pid-file=/run/lxc/dnsmasq.pid --liste
->>>>>> 1000000      \_ [lxc monitor] /var/lib/lxc f1-s390x
->>>>>> 1100000          \_ /usr/bin/qemu-s390x-static /sbin/init
->>>>>> 1100000              \_ /usr/bin/qemu-s390x-static /lib/systemd/systemd-journald
->>>>>> 1100000              \_ /usr/bin/qemu-s390x-static /usr/sbin/cron -f
->>>>>> 1100103              \_ /usr/bin/qemu-s390x-static /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-ac
->>>>>> 1100000              \_ /usr/bin/qemu-s390x-static /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
->>>>>> 1100104              \_ /usr/bin/qemu-s390x-static /usr/sbin/rsyslogd -n -iNONE
->>>>>> 1100000              \_ /usr/bin/qemu-s390x-static /lib/systemd/systemd-logind
->>>>>> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud console 115200,38400,9600 vt220
->>>>>> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/0 115200,38400,9600 vt220
->>>>>> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/1 115200,38400,9600 vt220
->>>>>> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/2 115200,38400,9600 vt220
->>>>>> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/3 115200,38400,9600 vt220
->>>>>> 1100000              \_ /usr/bin/qemu-s390x-static /lib/systemd/systemd-udevd
->>>>>>
->>>>>> [1]: https://lore.kernel.org/all/20191216091220.465626-1-laurent@vivier.eu
->>>>>> [2]: https://discuss.linuxcontainers.org/t/binfmt-misc-permission-denied
->>>>>> [3]: https://discuss.linuxcontainers.org/t/lxd-binfmt-support-for-qemu-static-interpreters
->>>>>> [4]: https://discuss.linuxcontainers.org/t/3-1-0-binfmt-support-service-in-unprivileged-guest-requires-write-access-on-hosts-proc-sys-fs-binfmt-misc
->>>>>> [5]: https://discuss.linuxcontainers.org/t/qemu-user-static-not-working-4-11
->>>>>>
->>>>>> Link: https://lore.kernel.org/r/20191216091220.465626-2-laurent@vivier.eu (origin)
->>>>>> Link: https://lore.kernel.org/r/20211028103114.2849140-2-brauner@kernel.org (v1)
->>>>>> Cc: Sargun Dhillon <sargun@sargun.me>
->>>>>> Cc: Serge Hallyn <serge@hallyn.com>
->>>>>
->>>>> (one typo below)
->>>>>
->>>>> Acked-by: Serge Hallyn <serge@hallyn.com>
->>>>>
->>>>
->>>> What happened to this afterwards? Any remaining issues?
->>>
->>> Not that we know. I plan to queue this up for 5.20.
->>
->> Hello!
->>
->> Thanks for the thread-ping -- I hadn't had a chance to read through this
->> before, but since it's touching binfmt, it popped up on my radar. :)
->>
->> I like it overall, though I'd rather see it split up more (there's
->> some refactoring built into the patches that would be nice to split out
->> just to make review easier), but since others have already reviewed it,
->> that's probably overkill.
->>
->> I'd really like to see some self-tests for this, though. Especially
-> 
-> Yeah, I had started writing them but decoupled the upstreaming. Imho,
-> you can start queueing this up. I'd like this to have very long exposure
-> in -next. I'll follow up with selftests in the next weeks. (I'm out for
-> a conference this week.)
-> 
->> around the cred logic changes and the namespace fallback logic. I'd like
->> to explicitly document and test what the expectations are around the
->> mounts, etc.
->>
->> Finally, I'd prefer this went via the execve tree.
-> 
-> I mentioned this yesterday to you but just so there's a paper trail:
-> The series and this iteration preceeds the maintainer entry. That's the
-> only reason this originally wasn't aimed at that tree when the series
-> was sent. You've been in Cc from the start though. :)
-> I'd like to step up and maintain the binfmt_misc fs going forward. There
-> are other tweaks it could use.
-> 
-
-Did anything happen after this? I'm not finding traced in lkml at least.
-
-Jan
-
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
-
+V2hlbiBhbGxvY2F0aW5nIGEgbmV3IGNsdXN0ZXIsIGV4RkFUIGZpcnN0IGFsbG9jYXRlcyBmcm9t
+IHRoZQ0KbmV4dCBjbHVzdGVyIG9mIHRoZSBsYXN0IGNsdXN0ZXIgb2YgdGhlIGZpbGUuIElmIHRo
+ZSBsYXN0IGNsdXN0ZXINCm9mIHRoZSBmaWxlIGlzIHRoZSBsYXN0IGNsdXN0ZXIgb2YgdGhlIHZv
+bHVtZSwgYWxsb2NhdGUgZnJvbSB0aGUNCmZpcnN0IGNsdXN0ZXIuIFRoaXMgaXMgYSBub3JtYWwg
+Y2FzZSwgYnV0IHRoZSBmb2xsb3dpbmcgZXJyb3IgbG9nDQp3aWxsIGJlIHByaW50ZWQuIEl0IG1h
+a2VzIHVzZXJzIGNvbmZ1c2VkLCBzbyB0aGlzIGNvbW1pdCByZW1vdmVzDQp0aGUgZXJyb3IgbG9n
+Lg0KDQpbMTk2MDkwNS4xODE1NDVdIGV4RkFULWZzIChzZGIxKTogaGludF9jbHVzdGVyIGlzIGlu
+dmFsaWQgKDI2MjEzMCkNCg0KU2lnbmVkLW9mZi1ieTogWXVlemhhbmcgTW8gPFl1ZXpoYW5nLk1v
+QHNvbnkuY29tPg0KUmV2aWV3ZWQtYnk6IEFuZHkgV3UgPEFuZHkuV3VAc29ueS5jb20+DQotLS0N
+CiBmcy9leGZhdC9mYXRlbnQuYyB8IDUgKysrLS0NCiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRp
+b25zKCspLCAyIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZnMvZXhmYXQvZmF0ZW50LmMg
+Yi9mcy9leGZhdC9mYXRlbnQuYw0KaW5kZXggNjVhOGM5ZmIwNzJjLi5jNzVjNWEyY2FkNDIgMTAw
+NjQ0DQotLS0gYS9mcy9leGZhdC9mYXRlbnQuYw0KKysrIGIvZnMvZXhmYXQvZmF0ZW50LmMNCkBA
+IC0zNDQsOCArMzQ0LDkgQEAgaW50IGV4ZmF0X2FsbG9jX2NsdXN0ZXIoc3RydWN0IGlub2RlICpp
+bm9kZSwgdW5zaWduZWQgaW50IG51bV9hbGxvYywNCiANCiAJLyogY2hlY2sgY2x1c3RlciB2YWxp
+ZGF0aW9uICovDQogCWlmICghaXNfdmFsaWRfY2x1c3RlcihzYmksIGhpbnRfY2x1KSkgew0KLQkJ
+ZXhmYXRfZXJyKHNiLCAiaGludF9jbHVzdGVyIGlzIGludmFsaWQgKCV1KSIsDQotCQkJaGludF9j
+bHUpOw0KKwkJaWYgKGhpbnRfY2x1ICE9IHNiaS0+bnVtX2NsdXN0ZXJzKQ0KKwkJCWV4ZmF0X2Vy
+cihzYiwgImhpbnRfY2x1c3RlciBpcyBpbnZhbGlkICgldSksIHJld2luZCB0byB0aGUgZmlyc3Qg
+Y2x1c3RlciIsDQorCQkJCQloaW50X2NsdSk7DQogCQloaW50X2NsdSA9IEVYRkFUX0ZJUlNUX0NM
+VVNURVI7DQogCQlwX2NoYWluLT5mbGFncyA9IEFMTE9DX0ZBVF9DSEFJTjsNCiAJfQ0KLS0gDQoy
+LjI1LjENCg0K
