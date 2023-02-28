@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DE786A55E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 10:34:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB236A55EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 10:34:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231373AbjB1JeR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 04:34:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50728 "EHLO
+        id S231414AbjB1Jef (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 04:34:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231375AbjB1JeJ (ORCPT
+        with ESMTP id S231415AbjB1JeY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 04:34:09 -0500
+        Tue, 28 Feb 2023 04:34:24 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 934772069E;
-        Tue, 28 Feb 2023 01:33:57 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A1561CF52;
+        Tue, 28 Feb 2023 01:34:10 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1DFDD61027;
-        Tue, 28 Feb 2023 09:33:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4462DC433D2;
-        Tue, 28 Feb 2023 09:33:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F0F0C61027;
+        Tue, 28 Feb 2023 09:34:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 555D7C433EF;
+        Tue, 28 Feb 2023 09:34:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677576836;
-        bh=v7m3NBy45N+El792surZKP+8N2u7TLJVtr7h9aVoZ3A=;
+        s=k20201202; t=1677576849;
+        bh=GuLnU0d3k2V6ZdWnoPW82USn52Mxiiw398+O8RnbxjY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CyNEGeiJh2hA0zwJNzVbvcRv6+QHDsr6iTjXBPAfvWILgkkPZYkyJWjabJgFTcgOz
-         +tEugTlLcvM2FjUSspt2SZrIkU9+pvmpiBl5uTt7FuqPEN7vfyub3oHWfvuaqO9aSs
-         Jmi26GTZAFipKJDW8bpPIsCZ4s20pU2eQaaPd6muUmEwKDazp16sZJLHI7p0M85fXk
-         lS1p/MSgROM6HKQrNDqGsyhrIABsgqU4QshrTJNIVI519Tor+O7fWvS/tQkZoVR4wQ
-         74c9LC0+Og9JHKP8WxKXm91ifBrX/0gdPSBVu9EEp1wdP2NDpBoUNtRyK17iMJLJ3c
-         EeioIfex1Td4g==
+        b=kUEbZG/k7LV/1mLXHeWWy8ByEFwfH8vr4ZFgj6lyjUX85YnoF9O+2SNLVfQ+BFZCK
+         /C8zbSyBs0+Fgcg9S3mJ2CLktdsdjmUgSUhzqdyNcv7ycvIZ0OCbJwonyDI4shyNV5
+         ftTQF6r5HRAVPTY6qSwaMbTC+jiQDAFlvQxjT/tlM2rrxAwhsV4dC4XBD980wAL+mb
+         tJpPPKnthTlBdWX5SGZewGddSsBTsAMcdvfZrdMbLb3WEcdYd1omjU9JoHFl2ZgqeI
+         OJuG5BHYKrQ+D9+Yy/tYafMvA1FOw/NB91C6UneYdz+M7WN7WxroH3DaZIK9AeKVf7
+         ICF2YvbB5G38w==
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -51,9 +51,9 @@ Cc:     bpf@vger.kernel.org, linux-mm@kvack.org,
         Stanislav Fomichev <sdf@google.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Namhyung Kim <namhyung@gmail.com>
-Subject: [PATCH RFC v2 bpf-next 8/9] selftests/bpf: Add inode_build_id test
-Date:   Tue, 28 Feb 2023 10:32:05 +0100
-Message-Id: <20230228093206.821563-9-jolsa@kernel.org>
+Subject: [PATCH RFC v2 bpf-next 9/9] selftests/bpf: Add iter_task_vma_buildid test
+Date:   Tue, 28 Feb 2023 10:32:06 +0100
+Message-Id: <20230228093206.821563-10-jolsa@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230228093206.821563-1-jolsa@kernel.org>
 References: <20230228093206.821563-1-jolsa@kernel.org>
@@ -68,185 +68,186 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The test attaches bpf program to sched_process_exec tracepoint
-and gets build of executed file from bprm->file->f_inode object.
-
-We use urandom_read as the test program and in addition we also
-attach uprobe to liburandom_read.so:urandlib_read_without_sema
-and retrieve and check build id of that shared library.
+Testing iterator access to build id in vma->vm_file->f_inode
+object by storing each binary with buildid into map and checking
+it against buildid retrieved in user space.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- .../selftests/bpf/prog_tests/inode_build_id.c | 68 +++++++++++++++++++
- .../selftests/bpf/progs/inode_build_id.c      | 62 +++++++++++++++++
- tools/testing/selftests/bpf/test_progs.h      | 10 +++
- 3 files changed, 140 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/inode_build_id.c
- create mode 100644 tools/testing/selftests/bpf/progs/inode_build_id.c
+ .../selftests/bpf/prog_tests/bpf_iter.c       | 78 +++++++++++++++++++
+ .../bpf/progs/bpf_iter_task_vma_buildid.c     | 60 ++++++++++++++
+ 2 files changed, 138 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/inode_build_id.c b/tools/testing/selftests/bpf/prog_tests/inode_build_id.c
-new file mode 100644
-index 000000000000..d0add90f187d
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/inode_build_id.c
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/tools/testing/selftests/bpf/prog_tests/bpf_iter.c b/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
+index 1f02168103dd..c7dd89e7cad0 100644
+--- a/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
++++ b/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
+@@ -33,6 +33,7 @@
+ #include "bpf_iter_bpf_link.skel.h"
+ #include "bpf_iter_ksym.skel.h"
+ #include "bpf_iter_sockmap.skel.h"
++#include "bpf_iter_task_vma_buildid.skel.h"
+ 
+ static int duration;
+ 
+@@ -1536,6 +1537,81 @@ static void test_task_vma_dead_task(void)
+ 	bpf_iter_task_vma__destroy(skel);
+ }
+ 
++#define D_PATH_BUF_SIZE	1024
 +
-+#include <unistd.h>
-+#include <test_progs.h>
-+#include "inode_build_id.skel.h"
-+#include "trace_helpers.h"
++struct build_id {
++	u32 sz;
++	char data[BPF_BUILD_ID_SIZE];
++};
 +
-+void test_inode_build_id(void)
++static void test_task_vma_buildid(void)
 +{
-+	int go[2], err, child_pid, child_status, c = 1, sz;
++	int err, iter_fd = -1, proc_maps_fd = -1, sz;
++	struct bpf_iter_task_vma_buildid *skel;
++	char key[D_PATH_BUF_SIZE], *prev_key;
 +	char build_id[BPF_BUILD_ID_SIZE];
-+	struct inode_build_id *skel;
++	int len, files_fd, cnt = 0;
++	struct build_id val;
++	char c;
 +
-+	skel = inode_build_id__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "inode_build_id__open_and_load"))
++	skel = bpf_iter_task_vma_buildid__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "bpf_iter_task_vma_buildid__open_and_load"))
 +		return;
 +
-+	if (!ASSERT_OK(pipe(go), "pipe"))
++	skel->links.proc_maps = bpf_program__attach_iter(
++		skel->progs.proc_maps, NULL);
++
++	if (!ASSERT_OK_PTR(skel->links.proc_maps, "bpf_program__attach_iter")) {
++		skel->links.proc_maps = NULL;
 +		goto out;
-+
-+	child_pid = fork();
-+	if (child_pid < 0)
-+		goto out;
-+
-+	/* child */
-+	if (child_pid == 0) {
-+		/* wait for parent's pid update */
-+		err = read(go[0], &c, 1);
-+		if (!ASSERT_EQ(err, 1, "child_read_pipe"))
-+			exit(err);
-+
-+		execle("./urandom_read", "urandom_read", NULL, NULL);
-+		exit(errno);
 +	}
 +
-+	/* parent, update child's pid and kick it */
-+	skel->bss->pid = child_pid;
-+
-+	err = inode_build_id__attach(skel);
-+	if (!ASSERT_OK(err, "inode_build_id__attach"))
++	iter_fd = bpf_iter_create(bpf_link__fd(skel->links.proc_maps));
++	if (!ASSERT_GE(iter_fd, 0, "create_iter"))
 +		goto out;
 +
-+	err = write(go[1], &c, 1);
-+	if (!ASSERT_EQ(err, 1, "child_write_pipe"))
-+		goto out;
++	/* trigger the iterator, there's no output, just map */
++	len = read(iter_fd, &c, 1);
++	ASSERT_EQ(len, 0, "len_check");
 +
-+	/* wait for child to exit */
-+	waitpid(child_pid, &child_status, 0);
-+	if (!ASSERT_EQ(WEXITSTATUS(child_status), 0, "child_exit_value"))
-+		goto out;
++	files_fd = bpf_map__fd(skel->maps.files);
 +
-+	sz = read_build_id("./urandom_read", build_id);
-+	if (!ASSERT_GT(sz, 0, "read_build_id"))
-+		goto out;
++	prev_key = NULL;
 +
-+	ASSERT_EQ(skel->bss->build_id_bin_size, sz, "build_id_bin_size");
-+	ASSERT_MEMEQ(skel->bss->build_id_bin, build_id, sz, "build_id_bin");
++	while (true) {
++		err = bpf_map_get_next_key(files_fd, prev_key, &key);
++		if (err) {
++			if (errno == ENOENT)
++				err = 0;
++			break;
++		}
++		if (bpf_map_lookup_elem(files_fd, key, &val))
++			break;
++		if (!ASSERT_LE(val.sz, BPF_BUILD_ID_SIZE, "buildid_size"))
++			break;
 +
-+	sz = read_build_id("./liburandom_read.so", build_id);
-+	if (!ASSERT_GT(sz, 0, "read_build_id"))
-+		goto out;
++		sz = read_build_id(key, build_id);
++		/* If there's an error, the build id is not present or malformed, kernel
++		 * should see the same result and bpf program pushed zero build id.
++		 */
++		if (sz < 0) {
++			memset(build_id, 0x0, BPF_BUILD_ID_SIZE);
++			sz = BPF_BUILD_ID_SIZE;
++		}
++		ASSERT_EQ(val.sz, sz, "build_id_size");
++		ASSERT_MEMEQ(val.data, build_id, sz, "build_id_data");
 +
-+	ASSERT_EQ(skel->bss->build_id_lib_size, sz, "build_id_lib_size");
-+	ASSERT_MEMEQ(skel->bss->build_id_lib, build_id, sz, "build_id_lib");
++		prev_key = key;
++		cnt++;
++	}
 +
++	printf("checked %d files\n", cnt);
 +out:
-+	inode_build_id__destroy(skel);
++	close(proc_maps_fd);
++	close(iter_fd);
++	bpf_iter_task_vma_buildid__destroy(skel);
 +}
-diff --git a/tools/testing/selftests/bpf/progs/inode_build_id.c b/tools/testing/selftests/bpf/progs/inode_build_id.c
++
+ void test_bpf_sockmap_map_iter_fd(void)
+ {
+ 	struct bpf_iter_sockmap *skel;
+@@ -1659,6 +1735,8 @@ void test_bpf_iter(void)
+ 		test_task_vma();
+ 	if (test__start_subtest("task_vma_dead_task"))
+ 		test_task_vma_dead_task();
++	if (test__start_subtest("task_vma_buildid"))
++		test_task_vma_buildid();
+ 	if (test__start_subtest("task_btf"))
+ 		test_task_btf();
+ 	if (test__start_subtest("tcp4"))
+diff --git a/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
 new file mode 100644
-index 000000000000..eceb215b56b8
+index 000000000000..dc528a4783ec
 --- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/inode_build_id.c
-@@ -0,0 +1,62 @@
++++ b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+@@ -0,0 +1,60 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+#include "vmlinux.h"
++#include "bpf_iter.h"
 +#include "err.h"
 +#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <linux/string.h>
++#include <string.h>
 +
 +char _license[] SEC("license") = "GPL";
 +
-+int pid;
++#define VM_EXEC		0x00000004
++#define D_PATH_BUF_SIZE	1024
 +
-+u32 build_id_bin_size;
-+u32 build_id_lib_size;
++struct {
++	__uint(type, BPF_MAP_TYPE_HASH);
++	__uint(max_entries, 10000);
++	__type(key, char[D_PATH_BUF_SIZE]);
++	__type(value, struct build_id);
++} files SEC(".maps");
 +
-+char build_id_bin[20];
-+char build_id_lib[20];
++static char path[D_PATH_BUF_SIZE];
++static struct build_id build_id;
 +
-+static int store_build_id(struct inode *inode, char *build_id, u32 *sz)
++SEC("iter/task_vma")
++int proc_maps(struct bpf_iter__task_vma *ctx)
 +{
-+	struct build_id *bid;
++	struct vm_area_struct *vma = ctx->vma;
++	struct seq_file *seq = ctx->meta->seq;
++	struct task_struct *task = ctx->task;
++	unsigned long file_key;
++	struct inode *inode;
++	struct file *file;
 +
-+	bid = inode->i_build_id;
-+	if (IS_ERR_OR_NULL(bid))
++	if (task == (void *)0 || vma == (void *)0)
 +		return 0;
-+	*sz = bid->sz;
-+	if (bid->sz > sizeof(bid->data))
++
++	if (!(vma->vm_flags & VM_EXEC))
 +		return 0;
-+	__builtin_memcpy(build_id, bid->data, sizeof(bid->data));
++
++	file = vma->vm_file;
++	if (!file)
++		return 0;
++
++	__builtin_memset(path, 0x0, D_PATH_BUF_SIZE);
++	bpf_d_path(&file->f_path, (char *) &path, D_PATH_BUF_SIZE);
++
++	if (bpf_map_lookup_elem(&files, &path))
++		return 0;
++
++	inode = file->f_inode;
++	if (IS_ERR_OR_NULL(inode->i_build_id)) {
++		/* On error return empty build id. */
++		__builtin_memset(&build_id.data, 0x0, sizeof(build_id.data));
++		build_id.sz = 20;
++	} else {
++		__builtin_memcpy(&build_id, inode->i_build_id, sizeof(*inode->i_build_id));
++	}
++
++	bpf_map_update_elem(&files, &path, &build_id, 0);
 +	return 0;
 +}
-+
-+SEC("tp_btf/sched_process_exec")
-+int BPF_PROG(prog, struct task_struct *p, pid_t old_pid, struct linux_binprm *bprm)
-+{
-+	int cur_pid = bpf_get_current_pid_tgid() >> 32;
-+
-+	if (pid != cur_pid)
-+		return 0;
-+	if (!bprm->file || !bprm->file->f_inode)
-+		return 0;
-+	return store_build_id(bprm->file->f_inode, build_id_bin, &build_id_bin_size);
-+}
-+
-+static long check_vma(struct task_struct *task, struct vm_area_struct *vma,
-+		      void *data)
-+{
-+	if (!vma || !vma->vm_file || !vma->vm_file->f_inode)
-+		return 0;
-+	return store_build_id(vma->vm_file->f_inode, build_id_lib, &build_id_lib_size);
-+}
-+
-+SEC("uprobe/liburandom_read.so:urandlib_read_without_sema")
-+int BPF_UPROBE(urandlib_read_without_sema)
-+{
-+	struct task_struct *task = bpf_get_current_task_btf();
-+	int cur_pid = bpf_get_current_pid_tgid() >> 32;
-+
-+	if (pid != cur_pid)
-+		return 0;
-+	return bpf_find_vma(task, ctx->ip, check_vma, NULL, 0);
-+}
-diff --git a/tools/testing/selftests/bpf/test_progs.h b/tools/testing/selftests/bpf/test_progs.h
-index 3825c2797a4b..8156d6d4cb3b 100644
---- a/tools/testing/selftests/bpf/test_progs.h
-+++ b/tools/testing/selftests/bpf/test_progs.h
-@@ -310,6 +310,16 @@ int test__join_cgroup(const char *path);
- 	___ok;								\
- })
- 
-+#define ASSERT_MEMEQ(actual, expected, sz, name) ({			\
-+	static int duration = 0;					\
-+	const char *___act = actual;					\
-+	const char *___exp = expected;					\
-+	bool ___ok = memcmp(___act, ___exp, sz) == 0;			\
-+	CHECK(!___ok, (name),						\
-+	      "unexpected %s does not match\n", (name));		\
-+	___ok;								\
-+})
-+
- #define ASSERT_STRNEQ(actual, expected, len, name) ({			\
- 	static int duration = 0;					\
- 	const char *___act = actual;					\
 -- 
 2.39.2
 
