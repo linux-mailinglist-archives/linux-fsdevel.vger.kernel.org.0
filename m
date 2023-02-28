@@ -2,254 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A73C6A5A76
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 14:59:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B90B6A5AB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 15:19:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbjB1N75 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 08:59:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60014 "EHLO
+        id S229649AbjB1OTu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 09:19:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbjB1N74 (ORCPT
+        with ESMTP id S229501AbjB1OTt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 08:59:56 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EB2A1D93B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 05:59:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677592749;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=yS2o7XZfIYuMoZTUmOUrhn8hRbT+X4gFkNVs7rGce/k=;
-        b=QddlUT8H5b3f5tVWsCglnxYIOZRG4hDH/+iCAYHHE2Xg5GGizym1fbukEH18VLmpz0G3OE
-        0zR+24SsWB4o3gZL2BeCkLIfHbS/nj6glfx9rgk9l4zZSUW6LkeCGODK3tTiC6ZywFFk2l
-        xA6msN9asac6hc+yM79LbGhuySkguxc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-21--gJQ9S0rOeqOPMpxsALabA-1; Tue, 28 Feb 2023 08:59:04 -0500
-X-MC-Unique: -gJQ9S0rOeqOPMpxsALabA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 32D87857D07;
-        Tue, 28 Feb 2023 13:59:04 +0000 (UTC)
-Received: from localhost (unknown [10.39.193.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 39167C15BAD;
-        Tue, 28 Feb 2023 13:59:02 +0000 (UTC)
-Date:   Tue, 28 Feb 2023 08:59:01 -0500
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     "Viacheslav A.Dubeyko" <viacheslav.dubeyko@bytedance.com>
-Cc:     Viacheslav Dubeyko <slava@dubeyko.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Luka Perkov <luka.perkov@sartura.hr>, bruno.banelli@sartura.hr
-Subject: Re: [External] [RFC PATCH 00/76] SSDFS: flash-friendly LFS file
- system for ZNS SSD
-Message-ID: <Y/4Ipfn7YkPoTjo2@fedora>
-References: <Y/y182cYxNo3zJmb@fedora>
- <0237BC64-C920-4A63-B676-B2E972A5AF49@bytedance.com>
+        Tue, 28 Feb 2023 09:19:49 -0500
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C1424103
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 06:19:47 -0800 (PST)
+Received: by mail-io1-f70.google.com with SMTP id c13-20020a0566022d0d00b0074cc4ed52d9so5992750iow.18
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 06:19:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J6I9nx2s7RTfWTlnagZt92XwoQkoLlEorV5GfVg0HLE=;
+        b=3yIUH6Ym1O9n43BDNesrS7Gn1cNIdemaPXPGbrSA3mWpQi8syxjXkzYWk171S1TP8g
+         BnvxTNRFjNP5udiCv3Tvr2Pgczo/8hoNXzwWwD+OisHJ8F8DGPxo4J0eXM/Jy9vuPkS2
+         YWqvgH0U3TFdjXNnemLr3KhmKkzaCpHuFWsTrwqZ1ALgOWOvpB9yIcwgMcQShbI9+S5X
+         om6amqvOBro5RRiR6IfXK5n2jVXwzzs9YLMx/LQtKF21rBgdYZHn6TVcFToZBmCra/nU
+         p0N4tyca3wjYqtS+jJXtCLi5TQ1FguggMJHhaAvc/nleEeXueAlLb6LauExw7qqbdLWX
+         tO0w==
+X-Gm-Message-State: AO0yUKXMb008oaiSG+8mjI6g88e8IfS626Es6b8IL0gBuObEeB1MtJxh
+        Dj4BhCA54IlT9XYQQ6mwAqLQU+gREn/G1mYpC4/Lag3rhRaV
+X-Google-Smtp-Source: AK7set80BgvGPfY0VZVc50EMjNfjx1r+lpseH5pu22IzNmUTBUhber0fCBuJJHCdpw2t1xFRIPl0wI8XeLnKny7oPSOmITR6cbg3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zpFIYzVA9dg9nld7"
-Content-Disposition: inline
-In-Reply-To: <0237BC64-C920-4A63-B676-B2E972A5AF49@bytedance.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:6244:0:b0:3ad:65e:e489 with SMTP id
+ d65-20020a026244000000b003ad065ee489mr1374385jac.1.1677593986353; Tue, 28 Feb
+ 2023 06:19:46 -0800 (PST)
+Date:   Tue, 28 Feb 2023 06:19:46 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a24e7405f5c34912@google.com>
+Subject: [syzbot] [ntfs3?] UBSAN: shift-out-of-bounds in ntfs_fill_super (2)
+From:   syzbot <syzbot+478c1bf0e6bf4a8f3a04@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
+        trix@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
 
---zpFIYzVA9dg9nld7
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot found the following issue on:
 
-On Mon, Feb 27, 2023 at 02:59:08PM -0800, Viacheslav A.Dubeyko wrote:
-> > On Feb 27, 2023, at 5:53 AM, Stefan Hajnoczi <stefanha@redhat.com> wrot=
-e:
-> > These comparisions include file systems that don't support zoned devices
-> > natively, maybe that's why IOPS comparisons cannot be made?
-> >=20
->=20
-> Performance comparison can be made for conventional SSD devices.
-> Of course, ZNS SSD has some peculiarities (limited number of open/active
-> zones, zone size, write pointer, strict append-only mode) and it requires
-> fair comparison. Because, these peculiarities/restrictions can as help as
-> make life more difficult. However, even if we can compare file systems for
-> the same type of storage device, then various configuration options
-> (logical block size, erase block size, segment size, and so on) or partic=
-ular
-> workload can significantly change a file system behavior. It=E2=80=99s al=
-ways not so
-> easy statement that this file system faster than another one.
+HEAD commit:    2ebd1fbb946d Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f0d518c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3519974f3f27816d
+dashboard link: https://syzkaller.appspot.com/bug?extid=478c1bf0e6bf4a8f3a04
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165b7474c80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c9de8cc80000
 
-I incorrectly assumed ssdfs was only for zoned devices.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/16985cc7a274/disk-2ebd1fbb.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fd3452567115/vmlinux-2ebd1fbb.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c75510922212/Image-2ebd1fbb.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/deffedf88bc5/mount_0.gz
 
->=20
-> >> (3) decrease the write amplification factor compared with:
-> >>    1.3x - 116x (ext4),
-> >>    14x - 42x (xfs),
-> >>    6x - 9x (btrfs),
-> >>    1.5x - 50x (f2fs),
-> >>    1.2x - 20x (nilfs2);
-> >> (4) prolong SSD lifetime compared with:
-> >=20
-> > Is this measuring how many times blocks are erased? I guess this
-> > measurement includes the background I/O from ssdfs migration and moving?
-> >=20
->=20
-> So, first of all, I need to explain the testing methodology. Testing incl=
-uded:
-> (1) create file (empty, 64 bytes, 16K, 100K), (2) update file, (3) delete=
- file.
-> Every particular test-case is executed as multiple mount/unmount operatio=
-ns
-> sequence. For example, total number of file creation operations were 1000=
- and
-> 10000, but one mount cycle included 10, 100, or 1000 file creation, file =
-update,
-> or file delete operations. Finally, file system must flush all dirty meta=
-data and
-> user data during unmount operation.
->=20
-> The blktrace tool registers LBAs and size for every I/O request. These da=
-ta are
-> the basis for estimation how many erase blocks have been involved into
-> operations. SSDFS volumes have been created by using 128KB, 512KB, and
-> 8MB erase block sizes. So, I used these erase block sizes for estimation.
-> Generally speaking, we can estimate the total number of erase blocks that
-> were involved into file system operations for particular use-case by mean=
-s of
-> calculation of number of bytes of all I/O requests and division on erase =
-block size.
-> If file system uses in-place updates, then it is possible to estimate how=
- many times
-> the same erase block (we know LBA numbers) has been completely re-written.
-> For example, if erase block (starting from LBA #32) received 1310720 byte=
-s of
-> write I/O requests, then erase block of 128KB in size has been re-written=
- 10x times.
-> So, it means that FTL needs to store all these data into 10 X 128KB erase=
- blocks
-> in the background or execute around 9 erase operation to keep the actual =
-state
-> of data into one 128KB erase block. So, this is the estimation of FTL GC =
-responsibility.
->=20
-> However, if we would like to estimate the total number of erase operation=
-, then
-> we need to take into account:
->=20
-> E total =3D E(FTL GC) + E(TRIM) + E(FS GC) + E(read disturbance) + E(rete=
-ntion)
->=20
-> The estimation of erase operation on the basis of retention issue is tric=
-ky and
-> it shows negligibly small number for such short testing. So, we can ignor=
-e it.
-> However, retention issue is important factor of decreasing SSD lifetime.
-> I executed the estimation of this factor and I made comparison for various
-> file systems. But this factor is deeply depends on time, workload, and
-> payload size. So, it=E2=80=99s really hard to share any stable and reason=
-able numbers
-> for this factor. Especially, it heavily depends on FTL implementation.
->=20
-> It is possible to make estimation of read disturbance but, again, it heav=
-ily
-> depends on NAND flash type, organization, and FTL algorithms. Also, this
-> estimation shows really small numbers that can be ignored for short testi=
-ng.
-> I=E2=80=99ve made this estimation and I can see that, currently, SSDFS ha=
-s read-intensive
-> nature because of offset translation table distribution policy. I am test=
-ing the fix
-> and I have hope to remove this issue.
->=20
-> SSDFS has efficient TRIM/erase policy. So, I can see TRIM/erase operations
-> even for such =E2=80=9Cshort" test-cases. As far as I can see, no other f=
-ile system issues
-> discard operations for the same test-cases. I included TRIM/erase operati=
-ons
-> into the calculation of total number of erase operations.
->=20
-> Estimation of GC operations on FS side (F2FS, NILFS2) is the most specula=
-tive one.
-> I=E2=80=99ve made estimation of number of erase operations that FS GC can=
- generate.
-> However, as far as I can see, even without taking into account the FS GC =
-erase
-> operations, SSDFS looks better compared with F2FS and NILFS2.
-> I need to add here that SSDFS uses migration scheme and doesn=E2=80=99t n=
-eed
-> in classical GC. But even for such =E2=80=9Cshort=E2=80=9D test-cases mig=
-ration scheme shows
-> really efficient TRIM/erase policy.=20
->=20
-> So, write amplification factor was estimated on the basis of write I/O re=
-quests
-> comparison. And SSD lifetime prolongation has been estimated and compared
-> by using the model that I explained above. I hope I explained it's clear =
-enough.
-> Feel free to ask additional questions if I missed something.
->=20
-> The measurement includes all operations (foreground and background) that
-> file system initiates because of using mount/unmount model. However, migr=
-ation
-> scheme requires additional explanation. Generally speaking, migration sch=
-eme
-> doesn=E2=80=99t generate additional I/O requests. Oppositely, migration s=
-cheme decreases
-> number of I/O requests. It could be tricky to follow. SSDFS uses compress=
-ion,
-> delta-encoding, compaction scheme, and migration stimulation. It means th=
-at
-> reqular file system=E2=80=99s update operations are the main vehicle of m=
-igration scheme.
-> Let imagine that application updates 4KB logical block. It means that SSD=
-FS
-> tries to compress (or delta-encode) this piece of data. Let compression g=
-ives us
-> 1KB compressed piece of data (4KB uncompressed size). It means that we can
-> place 1KB into 4KB memory page and we have 3KB free space. So, migration
-> logic checks that exhausted (completely full) old erase block that receiv=
-ed update
-> operation has another valid block(s). If we have such valid logical block=
-s, then
-> we can compress this logical blocks and store it into free space of 4K me=
-mory page.
-> So, we can finally store 4 compressed logical blocks (1KB in size each), =
-for example,
-> into 4KB memory page. It means that SSDFS issues one I/O request for 4 lo=
-gical
-> blocks instead of 4 ones. I simplify the explanation, but idea remains th=
-e same.
-> I hope I clarified the point. Feel free to ask additional questions if I =
-missed something.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+478c1bf0e6bf4a8f3a04@syzkaller.appspotmail.com
 
-Thanks for these explanations, that clarifies things!
+loop0: detected capacity change from 0 to 4096
+================================================================================
+UBSAN: shift-out-of-bounds in fs/ntfs3/super.c:777:25
+shift exponent 128 is too large for 32-bit type 'unsigned int'
+CPU: 0 PID: 5928 Comm: syz-executor258 Not tainted 6.2.0-syzkaller-18300-g2ebd1fbb946d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
+Call trace:
+ dump_backtrace+0x1c8/0x1f4 arch/arm64/kernel/stacktrace.c:158
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:165
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
+ dump_stack+0x1c/0x28 lib/dump_stack.c:113
+ ubsan_epilogue lib/ubsan.c:151 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x2f4/0x36c lib/ubsan.c:321
+ ntfs_init_from_boot fs/ntfs3/super.c:777 [inline]
+ ntfs_fill_super+0x2544/0x3b9c fs/ntfs3/super.c:970
+ get_tree_bdev+0x360/0x54c fs/super.c:1282
+ ntfs_fs_get_tree+0x28/0x38 fs/ntfs3/super.c:1408
+ vfs_get_tree+0x90/0x274 fs/super.c:1489
+ do_new_mount+0x25c/0x8c8 fs/namespace.c:3145
+ path_mount+0x590/0xe58 fs/namespace.c:3475
+ do_mount fs/namespace.c:3488 [inline]
+ __do_sys_mount fs/namespace.c:3697 [inline]
+ __se_sys_mount fs/namespace.c:3674 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3674
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
+ el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
+ el0_svc+0x58/0x168 arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+================================================================================
 
-Stefan
 
---zpFIYzVA9dg9nld7
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmP+CKUACgkQnKSrs4Gr
-c8j0jQf/SpvyGvKtjtTthp1HudkX22Ms4WhzPt5sA+TW9Mpu9Yn5xRpKRRvDMF4b
-+Gg+XkPJBmi4JGE7dT2wrhMTFuxML6f5rj/2nR0NhRa+/KePvLK1NKhqzWyZlcw0
-vUswVFq+YrOxTdQYcMIKVyKUPLrjrc38MViKYGHxDbtZfiVks+U2Zz9d4xFK0Arv
-BFuU/fsUu9LDmqRVl5IVvVsO4F9B1UWkxlwe8q8qscleuHvXKseaQ2U5Qw5GZO6R
-on1/X2qGGm9lJeSJSQvtDDMsmz3djZYZRwYBOhVozHcHkHTpLUw5nv2O+xa0Zgu9
-6nJUn8Jja7GSj5B4JujWSDC2p9VTwQ==
-=GR2e
------END PGP SIGNATURE-----
-
---zpFIYzVA9dg9nld7--
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
