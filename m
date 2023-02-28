@@ -2,77 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 843746A5FFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 20:52:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E96A36A600F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 20:59:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbjB1TwH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 14:52:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51132 "EHLO
+        id S230047AbjB1T7W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 14:59:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjB1TwG (ORCPT
+        with ESMTP id S230042AbjB1T7U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 14:52:06 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A50D833441
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 11:51:57 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id f13so44803412edz.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 11:51:57 -0800 (PST)
+        Tue, 28 Feb 2023 14:59:20 -0500
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DAED2A6CA
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 11:59:19 -0800 (PST)
+Received: by mail-qt1-x82c.google.com with SMTP id c3so7645298qtc.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 11:59:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1677613915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CI4tO9SBnVHbpP1UFj/aIsZLnQqSb0KukHtZDEVF+9Q=;
-        b=EGqXWGb6FO9oqjBg/RjdN/86icRC1mPJ3oftK9FFQmtW1fgTuj/zmUleWUKUiXp25b
-         c6AlQmcV0atsC/y67K5zu2wXxvzhbGCaOD7syFHQ9VXJzRYz6NH2pn9up0dOx+dWjEbu
-         VnxtlH/hlKeQ5BYQrPpt5FLATZFI06UDFf424=
+        bh=VuSVlKpPF8gU3w0v8rtlpMjWgWDk2kvzccZhwHpR+eM=;
+        b=YPZwN5+k6vm0UbGG6I9sOJ47jfD/Bl1ThzNCn3eEdbwoyq8mfB6d9njrHVa3GKfyFF
+         V2rsTW281KaDPWUlw6xajiDF5Jjd+WI1pBnXlLqCoJgPSMs5iFrQtGYeS7Q0yC0DjGKg
+         rQh26yA3WRyKqoOiYHZrfjuC3pSi4kkYRmeYMRJQqxp+YXgl1Us0mcJhXd8Ku93h5teB
+         VpscW1HQNs/hsstk5vsGOqD2O3JqZXYtGT6Kdusz+9Cc7NBOlRDn36A3/TznPvJkKIWw
+         7+VnskgZ2WiK+D2TxoAOn8qX1PcV1jv1JDB/5WWyRG8lcYrQ7fBe08VlrQyHvHT92G9n
+         rv/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677613915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CI4tO9SBnVHbpP1UFj/aIsZLnQqSb0KukHtZDEVF+9Q=;
-        b=E3T840scMm4UIaBM3D3dfcbqMKFWlhR9ro/UqmYbrXNJPdKuXq9AX6hfXVuimcTYDM
-         GYcMCWF9gVrBoUGwcE8yhcg5Mz9Cxt7DUpNFaszwil4duqDHSun99TxVGa0rPmth5V8Y
-         iEZLMW6Yr9ohkPZ53SlQePSdoPDZ1RtYnt7cHAbYtRkfC2dbVHcHnv6O4xuRM673slRu
-         eLl868b3MFJ9ryz1L6r+Rfs+IwujmQG95a0qKSsYmHy3ltXV0H+AZ1BPBCrHYlHsPXTf
-         MLH6uTfXCz4rEYLjvDyNGk5UvdX51voZqRxTLsI9AIXrYnyS2yxxN8xY43ydEpMm/PnP
-         aPJA==
-X-Gm-Message-State: AO0yUKXSkt5o+eMHftVU9L/bhOPK9OTDST6RNuZTM7neCQ4YSgGmWFjE
-        g3q8uVrDgqCNWifnP9qozx8iyWDoJUq6oPo9tFg=
-X-Google-Smtp-Source: AK7set/515ghHpksBJw4SxMZjLOLJnxH9+AoIBYGoQ614M5W4/q5nW5zS0Pf0xkpKx0gNT0U2F4iJA==
-X-Received: by 2002:a17:907:c207:b0:8f6:dc49:337f with SMTP id ti7-20020a170907c20700b008f6dc49337fmr5523166ejc.43.1677613915661;
-        Tue, 28 Feb 2023 11:51:55 -0800 (PST)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id w23-20020a17090649d700b008b17fe9ac6csm4864664ejv.178.2023.02.28.11.51.54
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Feb 2023 11:51:54 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id o15so42297105edr.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 11:51:54 -0800 (PST)
-X-Received: by 2002:a17:906:c08c:b0:8f1:4cc5:f14c with SMTP id
- f12-20020a170906c08c00b008f14cc5f14cmr1947231ejz.0.1677613914258; Tue, 28 Feb
- 2023 11:51:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20230125155557.37816-1-mjguzik@gmail.com> <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
- <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com> <CAGudoHEV_aNymUq6v9Trn_ZRU45TL12AVXqQeV2kA90FuawxiQ@mail.gmail.com>
- <CAHk-=wgCMTUV=5aE-V8WjxuCME8LTBh-8k5XTPKz6oRXJ_sgTg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgCMTUV=5aE-V8WjxuCME8LTBh-8k5XTPKz6oRXJ_sgTg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 28 Feb 2023 11:51:37 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjrQ_+PCrdNRWKsmf=SZP45_N7r51NbbB55DUdGb5f76A@mail.gmail.com>
-Message-ID: <CAHk-=wjrQ_+PCrdNRWKsmf=SZP45_N7r51NbbB55DUdGb5f76A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        bh=VuSVlKpPF8gU3w0v8rtlpMjWgWDk2kvzccZhwHpR+eM=;
+        b=TNLBC/sz19QVPoEi4uhNHTbXp1ino+EjF34ObtvjKiYqblayICLRUeDzq8zoZ8hMPK
+         tkF3dqPdtyuV2dvJl6Azje59wOD4WXaeab0OOFZ8N48DSbMfgwtS3O2A2OF8uhwq7EDa
+         +4xkoxhBeuv8pmQDbMJ3x3QFnOxv5ZxogqXmI975BZgwgVMbIq5xXFGYBOc8LXv6l8wv
+         SIG/qrrNzwsALRoeuEGAegz3hnwRLmukKEPYdAAI9F7sQFM9camTVvm/YCxbZD3E2ITP
+         uPEjw+jn0xqhb7UuJUsS0lMO52DFa2YpXbrGJiuPPlehVUtAHWogfAudMGQFcTZb+KGn
+         c3zg==
+X-Gm-Message-State: AO0yUKU0B2WdBnHztcF5No8UkxTycxPBsC6zi9hAA1BQ6SUM5CWIfTV0
+        /NmMW8mTbpKuyTNJCjBgXWE7IA==
+X-Google-Smtp-Source: AK7set/npV9n3dF9Lu0temv+NFVqOnKpsEEb6ImmgJmBogTFZipMN0MDl8NCZOsGqazJQab4LmJvrw==
+X-Received: by 2002:ac8:5b85:0:b0:3bf:b4c7:37d8 with SMTP id a5-20020ac85b85000000b003bfb4c737d8mr7262467qta.7.1677614358230;
+        Tue, 28 Feb 2023 11:59:18 -0800 (PST)
+Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
+        by smtp.gmail.com with ESMTPSA id f67-20020a37d246000000b006f9ddaaf01esm670683qkj.102.2023.02.28.11.59.16
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Feb 2023 11:59:17 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.2\))
+Subject: Re: [LSF/MM/BPF TOPIC] bpf iterator for file-system
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+In-Reply-To: <0a6f0513-b4b3-9349-cee5-b0ad38c81d2e@huaweicloud.com>
+Date:   Tue, 28 Feb 2023 11:59:14 -0800
+Cc:     lsf-pc@lists.linux-foundation.org, bpf <bpf@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Nhat Pham <nphamcs@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Message-Id: <C33452AE-4697-476F-ADDB-DDC91FDBB237@dubeyko.com>
+References: <0a6f0513-b4b3-9349-cee5-b0ad38c81d2e@huaweicloud.com>
+To:     Hou Tao <houtao@huaweicloud.com>
+X-Mailer: Apple Mail (2.3696.120.41.1.2)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,45 +76,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 28, 2023 at 11:39=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> This actually looks sane enough that I might even boot it. Call me crazy.
 
-Oh, and while I haven't actually booted it or tested it in any way, I
-did verify that it changes
 
--       movq    48(%rbx), %rax
--       movq    56(%rbx), %rcx
--       cmpl    %eax, %ecx
--       jne     .LBB58_13
--       shrq    $32, %rax
--       shrq    $32, %rcx
--       cmpl    %eax, %ecx
--       jne     .LBB58_13
+> On Feb 27, 2023, at 7:30 PM, Hou Tao <houtao@huaweicloud.com> wrote:
+>=20
+> =46rom time to time, new syscalls have been proposed to gain more =
+observability
+> for file-system:
+>=20
+> (1) getvalues() [0]. It uses a hierarchical namespace API to gather =
+and return
+> multiple values in single syscall.
+> (2) cachestat() [1].  It returns the cache status (e.g., number of =
+dirty pages)
+> of a given file in a scalable way.
+>=20
+> All these proposals requires adding a new syscall. Here I would like =
+to propose
+> another solution for file system observability: bpf iterator for file =
+system
+> object. The initial idea came when I was trying to implement a =
+filefrag-like
+> page cache tool with support for multi-order folio, so that we can =
+know the
+> number of multi-order folios and the orders of those folios in page =
+cache. After
+> developing a demo for it, I realized that we could use it to provide =
+more
+> observability for file system objects. e.g., dumping the per-cpu =
+iostat for a
+> super block [2],  iterating all inodes in a super-block to dump info =
+for
+> specific inodes (e.g., unlinked but pinned inode), or displaying the =
+flags of a
+> specific mount.
+>=20
 
-into
+Sounds like interesting suggestion to me. :) Potentially, it could have =
+more
+applications.
 
-+       movq    56(%rbx), %rax
-+       cmpq    48(%rbx), %rax
-+       jne     .LBB58_12
+> The BPF iterator was introduced in v5.8 [3] to support flexible =
+content dumping
+> for kernel objects. It works by creating bpf iterator file [4], which =
+is a
+> seq-like read-only file, and the content of the bpf iterator file is =
+determined
+> by a previously loaded bpf program, so userspace can read the bpf =
+iterator file
+> to get the information it needs. However there are some unresolved =
+issues:
+> (1) The privilege.
+> Loading the bpf program requires CAP_ADMIN or CAP_BPF. This means that =
+the
+> observability will be available to the privileged process. Maybe we =
+can load the
+> bpf program through a privileged process and make the bpf iterator =
+file being
+> readable for normal users.
+> (2) Prevent pinning the super-block
+> In the current naive implementation, the bpf iterator simply pins the
+> super-block of the passed fd and prevents the super-block from being =
+destroyed.
+> Perhaps fs-pin is a better choice, so the bpf iterator can be =
+deactivated after
+> the filesystem is umounted.
+>=20
+> I hope to send out an RFC soon before LSF/MM/BPF for further =
+discussion.
+>=20
 
-because it looks like clang was smart enough to unroll the silly
-fixed-size loop and do the two adjacent 32-bit loads of the old cap[]
-array as one 64-bit load, but then was _not_ smart enough to combine
-the two 32-bit compares into one 64-bit one.
+It will be good to see the patchset. :)
 
-And gcc didn't do the load optimization (which is questionable since
-it then just results in extra shifts and extra registers), so it just
-kept it as two 32-bit loads and compares. Again, with the patch, gcc
-obviously does the sane "one 64-bit load, one 64-bit compare" too.
+Thanks,
+Slava.
 
-There's a lot to be said for compiler optimizations fixing up silly
-source code, but I personally would just prefer to make the source
-code DTRT.
+> [0]:
+> =
+https://lore.kernel.org/linux-fsdevel/YnEeuw6fd1A8usjj@miu.piliscsaba.redh=
+at.com/
+> [1]: =
+https://lore.kernel.org/linux-mm/20230219073318.366189-1-nphamcs@gmail.com=
+/
+> [2]:
+> =
+https://lore.kernel.org/linux-fsdevel/CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8igA=
+0DT66GFH2ZanspA@mail.gmail.com/
+> [3]: https://lore.kernel.org/bpf/20200509175859.2474608-1-yhs@fb.com/
+> [4]: https://docs.kernel.org/bpf/bpf_iterators.html
+>=20
 
-Could the compiler have been even smarter and generated the same code?
-Yes it could. We shouldn't expect that, though. Particularly when the
-sane code is much more legible to humans too.
-
-                 Linus
