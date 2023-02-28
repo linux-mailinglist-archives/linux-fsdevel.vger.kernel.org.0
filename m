@@ -2,200 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E275F6A508C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 02:14:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D156A508F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 02:15:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjB1BOf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 20:14:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56098 "EHLO
+        id S229708AbjB1BPC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 20:15:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229722AbjB1BOe (ORCPT
+        with ESMTP id S229589AbjB1BPB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 20:14:34 -0500
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 480B110A9C;
-        Mon, 27 Feb 2023 17:14:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1677546873; x=1709082873;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=zoOLlOI4FDpyzfpulrTD38E/AaKOdhBBYSxTiVbEAuE=;
-  b=Vec9HgSQKgQvg6pvVSYenOCaVXThdoXbhn1I9Bfw6QwXrSrTd2SDakHm
-   5C+Cq+LFQiPG/1zGItXte21IpTyL0HXZjX07Q0skOdGjuc2DvOHkIi4Iz
-   CSnGrQE4rUufEjZmxXScubSMOrDIk9ghn5AgyN+vkj1dTHOfL5OArgGMH
-   1Gi9BksFmT8SaHvsSi8WePVgBLmSR26yiLNDN3z6NZ14GDLBs0+ieCA4C
-   /7OLkFvdxTC5NiAiDtb1aJ5t86nfbeA/wZxJ1J3YPiaFRTmt45xq/SjK6
-   i8eAKTV1onTgYH1OKi6O7kWyNVYbwHDS5nY53ot918lkg/H7la+8hZbR3
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10634"; a="420279357"
-X-IronPort-AV: E=Sophos;i="5.98,220,1673942400"; 
-   d="scan'208";a="420279357"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2023 17:14:32 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10634"; a="783628835"
-X-IronPort-AV: E=Sophos;i="5.98,220,1673942400"; 
-   d="scan'208";a="783628835"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2023 17:14:29 -0800
-From:   "Huang, Ying" <ying.huang@intel.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Zi Yan <ziy@nvidia.com>, Yang Shi <shy828301@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Bharata B Rao <bharata@amd.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        Xin Hao <xhao@linux.alibaba.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Subject: Re: [PATCH -v5 0/9] migrate_pages(): batch TLB flushing
-In-Reply-To: <20230227110614.dngdub2j3exr6dfp@quack3> (Jan Kara's message of
-        "Mon, 27 Feb 2023 12:06:14 +0100")
-References: <20230213123444.155149-1-ying.huang@intel.com>
-        <87a6c8c-c5c1-67dc-1e32-eb30831d6e3d@google.com>
-        <20230227110614.dngdub2j3exr6dfp@quack3>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
-Date:   Tue, 28 Feb 2023 09:13:26 +0800
-Message-ID: <87pm9ubnih.fsf@yhuang6-desk2.ccr.corp.intel.com>
+        Mon, 27 Feb 2023 20:15:01 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72D9216AED
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 17:14:58 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id h16so33460692edz.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 17:14:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1677546897;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A4foDmOd0TidPkdLCFMkrpX/LFzdbPkgPT38RIetMiw=;
+        b=WirmihFyrrVXSGptd2y2j1cn22O/wCwpjUfVO4nVTGBhhF/yulKPyU/gJZzLJrwBct
+         dXHy3G1t5CuCUB36+n1AuYqeQGvhtYQGgNHOfcb0JYS9Et31ltZPDmWl2vTaXnbSQHV6
+         F+1mO8KvPU75JUXQHIOj1uMYsAcBxdSUFHEm4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677546897;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A4foDmOd0TidPkdLCFMkrpX/LFzdbPkgPT38RIetMiw=;
+        b=no6pxdAV+Bg9zuTSkKcXHwZjJlRQIgcsLnEkWX1QFwQ8oJNp4xXkdMXAjcnS/EgyYf
+         TxyZ8evmcl1AM9wMDpF6SzFygH0Ss/5CtwbwL1jVyUA93BGYcm0T8KfyP0Z+3NqUKRGu
+         pAcQgp4xowWb5L+deH6f9eWFD5Z0nAgpvr1tslu0/akuE1NhLV2zg/loga4zlW/codo7
+         trCRV5CTi1mqOUd0dhGYKiO3xO9Dc63jSEUAICm67tXz28yNRag7gEwFcQbYXJEwXqhv
+         MXbn86UWmjm7Z2MyBcj+oY6kikqXhEIfElP1LCRVf8Fy2hSvjxHPP1SIIE1AQ8Us3sTr
+         QL/A==
+X-Gm-Message-State: AO0yUKXDIXHI3atqtGI7FRs/zz0Sax+o1LGMK2x8OvaBHn7YCrwfAl+6
+        sP2HsKIALNeHXQOvfYOXpDmRQyfgsVGiHPeeahg=
+X-Google-Smtp-Source: AK7set8XHDRtjEeDib5VWMi7zgOOCuod1oruF9fQq1GQaW0grrrIgueKmYoTL4vRZUTro1t2yzwfhQ==
+X-Received: by 2002:a17:907:3e24:b0:8aa:1f89:122e with SMTP id hp36-20020a1709073e2400b008aa1f89122emr946712ejc.39.1677546896620;
+        Mon, 27 Feb 2023 17:14:56 -0800 (PST)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id cw18-20020a170906c79200b008e22978b98bsm3917374ejb.61.2023.02.27.17.14.55
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Feb 2023 17:14:56 -0800 (PST)
+Received: by mail-ed1-f48.google.com with SMTP id eg37so33347054edb.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 17:14:55 -0800 (PST)
+X-Received: by 2002:a17:906:79a:b0:8b8:aef3:f2a9 with SMTP id
+ l26-20020a170906079a00b008b8aef3f2a9mr323832ejc.0.1677546895540; Mon, 27 Feb
+ 2023 17:14:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20230125155557.37816-1-mjguzik@gmail.com>
+In-Reply-To: <20230125155557.37816-1-mjguzik@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 27 Feb 2023 17:14:38 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
+Message-ID: <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
+To:     Mateusz Guzik <mjguzik@gmail.com>, Serge Hallyn <serge@hallyn.com>
+Cc:     viro@zeniv.linux.org.uk, paul@paul-moore.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Honza,
-
-Jan Kara <jack@suse.cz> writes:
-
-> On Fri 17-02-23 13:47:48, Hugh Dickins wrote:
->> On Mon, 13 Feb 2023, Huang Ying wrote:
->> 
->> > From: "Huang, Ying" <ying.huang@intel.com>
->> > 
->> > Now, migrate_pages() migrate folios one by one, like the fake code as
->> > follows,
->> > 
->> >   for each folio
->> >     unmap
->> >     flush TLB
->> >     copy
->> >     restore map
->> > 
->> > If multiple folios are passed to migrate_pages(), there are
->> > opportunities to batch the TLB flushing and copying.  That is, we can
->> > change the code to something as follows,
->> > 
->> >   for each folio
->> >     unmap
->> >   for each folio
->> >     flush TLB
->> >   for each folio
->> >     copy
->> >   for each folio
->> >     restore map
->> > 
->> > The total number of TLB flushing IPI can be reduced considerably.  And
->> > we may use some hardware accelerator such as DSA to accelerate the
->> > folio copying.
->> > 
->> > So in this patch, we refactor the migrate_pages() implementation and
->> > implement the TLB flushing batching.  Base on this, hardware
->> > accelerated folio copying can be implemented.
->> > 
->> > If too many folios are passed to migrate_pages(), in the naive batched
->> > implementation, we may unmap too many folios at the same time.  The
->> > possibility for a task to wait for the migrated folios to be mapped
->> > again increases.  So the latency may be hurt.  To deal with this
->> > issue, the max number of folios be unmapped in batch is restricted to
->> > no more than HPAGE_PMD_NR in the unit of page.  That is, the influence
->> > is at the same level of THP migration.
->> > 
->> > We use the following test to measure the performance impact of the
->> > patchset,
->> > 
->> > On a 2-socket Intel server,
->> > 
->> >  - Run pmbench memory accessing benchmark
->> > 
->> >  - Run `migratepages` to migrate pages of pmbench between node 0 and
->> >    node 1 back and forth.
->> > 
->> > With the patch, the TLB flushing IPI reduces 99.1% during the test and
->> > the number of pages migrated successfully per second increases 291.7%.
->> > 
->> > Xin Hao helped to test the patchset on an ARM64 server with 128 cores,
->> > 2 NUMA nodes.  Test results show that the page migration performance
->> > increases up to 78%.
->> > 
->> > This patchset is based on mm-unstable 2023-02-10.
->> 
->> And back in linux-next this week: I tried next-20230217 overnight.
->> 
->> There is a deadlock in this patchset (and in previous versions: sorry
->> it's taken me so long to report), but I think one that's easily solved.
->> 
->> I've not bisected to precisely which patch (load can take several hours
->> to hit the deadlock), but it doesn't really matter, and I expect that
->> you can guess.
->> 
->> My root and home filesystems are ext4 (4kB blocks with 4kB PAGE_SIZE),
->> and so is the filesystem I'm testing, ext4 on /dev/loop0 on tmpfs.
->> So, plenty of ext4 page cache and buffer_heads.
->> 
->> Again and again, the deadlock is seen with buffer_migrate_folio_norefs(),
->> either in kcompactd0 or in khugepaged trying to compact, or in both:
->> it ends up calling __lock_buffer(), and that schedules away, waiting
->> forever to get BH_lock.  I have not identified who is holding BH_lock,
->> but I imagine a jbd2 journalling thread, and presume that it wants one
->> of the folio locks which migrate_pages_batch() is already holding; or
->> maybe it's all more convoluted than that.  Other tasks then back up
->> waiting on those folio locks held in the batch.
->> 
->> Never a problem with buffer_migrate_folio(), always with the "more
->> careful" buffer_migrate_folio_norefs().  And the patch below fixes
->> it for me: I've had enough hours with it now, on enough occasions,
->> to be confident of that.
->> 
->> Cc'ing Jan Kara, who knows buffer_migrate_folio_norefs() and jbd2
->> very well, and I hope can assure us that there is an understandable
->> deadlock here, from holding several random folio locks, then trying
->> to lock buffers.  Cc'ing fsdevel, because there's a risk that mm
->> folk think something is safe, when it's not sufficient to cope with
->> the diversity of filesystems.  I hope nothing more than the below is
->> needed (and I've had no other problems with the patchset: good job),
->> but cannot be sure.
+On Wed, Jan 25, 2023 at 7:56=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> w=
+rote:
 >
-> I suspect it can indeed be caused by the presence of the loop device as
-> Huang Ying has suggested. What filesystems using buffer_heads do is a
-> pattern like:
->
-> bh = page_buffers(loop device page cache page);
-> lock_buffer(bh);
-> submit_bh(bh);
-> - now on loop dev this ends up doing:
->   lo_write_bvec()
->     vfs_iter_write()
->       ...
->       folio_lock(backing file folio);
->
-> So if migration code holds "backing file folio" lock and at the same time
-> waits for 'bh' lock (while trying to migrate loop device page cache page), it
-> is a deadlock.
->
-> Proposed solution of never waiting for locks in batched mode looks like a
-> sensible one to me...
+> +static inline bool cap_isidentical(const kernel_cap_t a, const kernel_ca=
+p_t b)
+> +{
+> +       unsigned __capi;
+> +       CAP_FOR_EACH_U32(__capi) {
+> +               if (a.cap[__capi] !=3D b.cap[__capi])
+> +                       return false;
+> +       }
+> +       return true;
+> +}
+> +
 
-Thank you very much for detail explanation!
+Side note, and this is not really related to this particular patch
+other than because it just brought up the issue once more..
 
-Best Regards,
-Huang, Ying
+Our "kernel_cap_t" thing is disgusting.
+
+It's been a structure containing
+
+        __u32 cap[_KERNEL_CAPABILITY_U32S];
+
+basically forever, and it's not likely to change in the future. I
+would object to any crazy capability expansion, considering how
+useless and painful they've been anyway, and I don't think anybody
+really is even remotely planning anything like that anyway.
+
+And what is _KERNEL_CAPABILITY_U32S anyway? It's the "third version"
+of that size:
+
+  #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
+
+which happens to be the same number as the second version of said
+#define, which happens to be "2".
+
+In other words, that fancy array is just 64 bits. And we'd probably be
+better off just treating it as such, and just doing
+
+        typedef u64 kernel_cap_t;
+
+since we have to do the special "convert from user space format"
+_anyway_, and this isn't something that is shared to user space as-is.
+
+Then that "cap_isidentical()" would literally be just "a =3D=3D b" instead
+of us playing games with for-loops that are just two wide, and a
+compiler that may or may not realize.
+
+It would literally remove some of the insanity in <linux/capability.h>
+- look for CAP_TO_MASK() and CAP_TO_INDEX and CAP_FS_MASK_B0 and
+CAP_FS_MASK_B1 and just plain ugliness that comes from this entirely
+historical oddity.
+
+Yes, yes, we started out having it be a single-word array, and yes,
+the code is written to think that it might some day be expanded past
+the two words it then in 2008 it expanded to two words and 64 bits.
+And now, fifteen years later, we use 40 of those 64 bits, and
+hopefully we'll never add another one.
+
+So we have historical reasons for why our kernel_cap_t is so odd. But
+it *is* odd.
+
+Hmm?
+
+             Linus
