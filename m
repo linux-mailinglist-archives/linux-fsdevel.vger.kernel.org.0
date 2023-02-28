@@ -2,72 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D2836A5F17
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 19:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C186A5F63
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 20:13:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbjB1S6c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 13:58:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58780 "EHLO
+        id S229698AbjB1TNP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 14:13:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbjB1S6b (ORCPT
+        with ESMTP id S229445AbjB1TNO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 13:58:31 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36DD91E9DB;
-        Tue, 28 Feb 2023 10:58:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ODWpsUYOiXhTNb085YfE8+7niJYCkg4/3V/Dygz4pW4=; b=f7U74J/t4GKsjYf9Pdpm7xB30A
-        zd+MKYYlyIA84bT/Cq/lzP7GTJmN5YGwraY/HTUvWRJ5S44vx9p7Ody/2+3pl2Vfgxw6ZvyRDQ71X
-        SQjPIptHglbVjnGdimS57MDHAyQFHmgwn8V7U3E6FdnU9DtSLUJwiUTAANO6lifYngrvmBK6rm/LM
-        Bcc87QEqrOkAEGR2PHaN+kR70FS5wmDqYCmDXx6lOBRnC7BXG2EWAcLUwjeNZixT24nIz/jaRu565
-        AQg6QszZIb6hpaV9L7w3+4uqrQ3fZNpBIXBQSoDlVj0S0xYi0Iv2PZ7SDncVrZ6wLto7DyLlKApUJ
-        UCl0D+og==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pX5BD-00E21Q-VG; Tue, 28 Feb 2023 18:58:27 +0000
-Date:   Tue, 28 Feb 2023 10:58:27 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-cxl@vger.kernel.org
-Cc:     Christian Brauner <brauner@kernel.org>, code@tyhicks.com,
-        sfrench@samba.org, jlayton@kernel.org, chandan.babu@oracle.com,
-        josef@toxicpanda.com, amir73il@gmail.com, palmer@dabbelt.com,
-        dave@stgolabs.net, a.manzanares@samsung.com, fan.ni@samsung.com
-Subject: Re: kdevops live demo zoom & Q&A
-Message-ID: <Y/5O0yItfBwNKdXm@bombadil.infradead.org>
-References: <Y/1KnN/ER8pnhbaa@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y/1KnN/ER8pnhbaa@bombadil.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Tue, 28 Feb 2023 14:13:14 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74E191D90C;
+        Tue, 28 Feb 2023 11:13:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F139661181;
+        Tue, 28 Feb 2023 19:13:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFD2EC433EF;
+        Tue, 28 Feb 2023 19:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1677611591;
+        bh=NomRgZhAnCadauaNPou4fifv4G+IJxYhxbkOJyVdeaY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gC9tn+qCRdX2PPavqpJdx8Gqi2XJrpEt/lxYjeSZMFH1MkwOPTnWeGZSSFyrivHHz
+         y+G2Ujnzj5zWphHDQNoj18ubFP9kBGdM1QlEVrI/nK1xvmeQH5ySs/ol0TpkotjjJb
+         /sP1lQwiBZp3nUCCxtQ1UZ3IMNi7g58hng+JOqyw=
+Date:   Tue, 28 Feb 2023 11:13:10 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, bpf@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Namhyung Kim <namhyung@gmail.com>
+Subject: Re: [PATCH RFC v2 bpf-next 1/9] mm: Store build id in inode object
+Message-Id: <20230228111310.05f339a0a1a00e919859ffad@linux-foundation.org>
+In-Reply-To: <20230228093206.821563-2-jolsa@kernel.org>
+References: <20230228093206.821563-1-jolsa@kernel.org>
+        <20230228093206.821563-2-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 04:28:12PM -0800, Luis Chamberlain wrote:
-> To start off with let me propose a few dates for this zoom demo (all
-> are Wednesdays as its my most flexible day):
+On Tue, 28 Feb 2023 10:31:58 +0100 Jiri Olsa <jolsa@kernel.org> wrote:
+
+> Storing build id in file's inode object for elf executable with build
+> id defined. The build id is stored when file is mmaped.
 > 
->   * March 8  1pm PST
->   * March 15 1pm PST
->   * March 29 1pm PST
+> This is enabled with new config option CONFIG_INODE_BUILD_ID.
+> 
+> The build id is valid only when the file with given inode is mmap-ed.
+> 
+> We store either the build id itself or the error we hit during
+> the retrieval.
+> 
+> ...
+>
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -699,6 +700,12 @@ struct inode {
+>  	struct fsverity_info	*i_verity_info;
+>  #endif
+>  
+> +#ifdef CONFIG_INODE_BUILD_ID
+> +	/* Initialized and valid for executable elf files when mmap-ed. */
+> +	struct build_id		*i_build_id;
+> +	spinlock_t		i_build_id_lock;
+> +#endif
+> +
 
-Based on feedback to at least to get some EU folks I'll change this to 9am PST.
-I know one person can't attend March 8th so the following dates are
-remaining:
+Remember we can have squillions of inodes in memory.  So that's one
+costly spinlock!
 
-* March 15 9am PST
-* March 29 9am PST
+AFAICT this lock could be removed if mmap_region() were to use an
+atomic exchange on inode->i_build_id?
 
-Let me know if this works for those who had expressed interest.
+If not, can we use an existing lock?  i_lock would be appropriate
+(don't forget to update its comment).
 
-  Luis
+Also, the code in mmap_region() runs build_id_free() inside the locked
+region, which seems unnecessary.
+
