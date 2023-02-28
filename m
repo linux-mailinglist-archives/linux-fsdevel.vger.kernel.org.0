@@ -2,97 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 630FD6A5038
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 01:44:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC4E36A504D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 01:52:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229590AbjB1Ao1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 19:44:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35988 "EHLO
+        id S229627AbjB1Awu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 19:52:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjB1Ao0 (ORCPT
+        with ESMTP id S229644AbjB1Awp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 19:44:26 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A65AF1E2A8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 16:44:25 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id ee7so33402796edb.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 16:44:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1677545064;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9VmmBrX2p1inGbF8ku+z06Eh1CWxuqZx/wcts3IMRaQ=;
-        b=JPbT/JW7R7IuAPmpByrn1qMuS6U+Vk/gyFK56mN4IR0SGz3O+fVGM/OeyV3tbiwvZF
-         hekWwKM00q9t7VTsqEVSGNwXfdAFyGac9py5IvNAl7dsE0kVpdNiX62HZF43R/LuYnpb
-         8Z2H/bsir3IkfbXxqDcN5Reh+7zPqnLG6hh+Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677545064;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9VmmBrX2p1inGbF8ku+z06Eh1CWxuqZx/wcts3IMRaQ=;
-        b=PuxoQBEVcxbbZwR3PqM36mf/EGCUoZ9nkAPHfahO6zvKyrUcUR774F2wRw8B/Qpr+b
-         3tsGW9thZKC12+wv0hV5+/7G7L18z6Qw9Kww9cVNSAipFedmPmfz0jfEifYP6QhXXc8+
-         3nSAk7fGYEr9IyTRbPO4+LpJ+clvfeGEXqLvxv+LzfimboE07LXnHngAtarh6y4lYIy4
-         d9TQbxMVpQ4iv3Du+y9gpI5f9RJiKW9U72mopI+DSkEmnBjkdGXXSaHuXXw5rvssUIeg
-         1nR0lNep8ywmFKuladwka3eUe0eCxYJNqwB3a/U1J62QJYbS/xHwmtfdGNR2JlxCEe6W
-         wvtw==
-X-Gm-Message-State: AO0yUKX6PsJHx5sd9gyqLW3+KuXbg9Pen36t21nDYEJJ5+m8AbRxXlyz
-        4hsU106bkGmZ9uLxPTBRXidFDqaexaS0HqBVEsc=
-X-Google-Smtp-Source: AK7set8G0t3BlXQeRx8BticVCVc4+WNECaTsqY5RMY8X6P2IXy0EVn1Bqd6wAggYFhhZhsGKcD7oPA==
-X-Received: by 2002:aa7:d4ce:0:b0:4ad:738a:a5db with SMTP id t14-20020aa7d4ce000000b004ad738aa5dbmr1639941edr.0.1677545063928;
-        Mon, 27 Feb 2023 16:44:23 -0800 (PST)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id sb11-20020a170906edcb00b008d2d2990c9fsm3864183ejb.93.2023.02.27.16.44.23
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Feb 2023 16:44:23 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id i34so33276192eda.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Feb 2023 16:44:23 -0800 (PST)
-X-Received: by 2002:a50:bb41:0:b0:4ac:b616:4ba9 with SMTP id
- y59-20020a50bb41000000b004acb6164ba9mr736894ede.5.1677545062838; Mon, 27 Feb
- 2023 16:44:22 -0800 (PST)
+        Mon, 27 Feb 2023 19:52:45 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2739298DB;
+        Mon, 27 Feb 2023 16:52:43 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 52E70B80DD6;
+        Tue, 28 Feb 2023 00:52:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC39C433EF;
+        Tue, 28 Feb 2023 00:52:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677545561;
+        bh=wX7w95mMFRf+sC/g2N5poZRs+gBImsllRdEeOYedA9A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kFx/vAvFODfYDII8Rr81BwnChAYdCNxC9tNo/Oz8VhEONHDOUm1EMX7MCdbp8A6LR
+         +oMdRD9iRi2cax4VuNTZAHEcg23Zjrrwan14eFgnL3TPGccGR8bRM14OXi9jeIrNxQ
+         s+zayBX3Z/VlntOznziR+Qqpt3c0IWFqEBOhLf44sbmRSw4ZUCWM4IIh9C60UDCWYH
+         6Dlb8UBRi8u9jKCJ2RCMIeahLTMuXGU2OZtWSgoCXZEKLa9PdMqSdQhhq7Tsvj7tdz
+         mshnY1R2JWhsL8aP2Urut2dmuVq0eN0NdnOKH6HOj7XkweUGoK/z9hW4rk8W7mE9di
+         h/8QRUJvQx5Ug==
+Date:   Mon, 27 Feb 2023 19:52:39 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: AUTOSEL process
+Message-ID: <Y/1QV9mQ31wbqFnp@sashalap>
+References: <Y/rbGxq8oAEsW28j@sol.localdomain>
+ <Y/rufenGRpoJVXZr@sol.localdomain>
+ <Y/ux9JLHQKDOzWHJ@sol.localdomain>
+ <Y/y70zJj4kjOVfXa@sashalap>
+ <Y/zswi91axMN8OsA@sol.localdomain>
+ <Y/zxKOBTLXFjSVyI@sol.localdomain>
+ <Y/0U8tpNkgePu00M@sashalap>
+ <Y/0i5pGYjrVw59Kk@gmail.com>
+ <Y/0wMiOwoeLcFefc@sashalap>
+ <Y/01z4EJNfioId1d@casper.infradead.org>
 MIME-Version: 1.0
-References: <20230125155557.37816-1-mjguzik@gmail.com> <20230125155557.37816-2-mjguzik@gmail.com>
-In-Reply-To: <20230125155557.37816-2-mjguzik@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 27 Feb 2023 16:44:06 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
-Message-ID: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, serge@hallyn.com, paul@paul-moore.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Y/01z4EJNfioId1d@casper.infradead.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 25, 2023 at 7:56=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
+On Mon, Feb 27, 2023 at 10:59:27PM +0000, Matthew Wilcox wrote:
+>On Mon, Feb 27, 2023 at 05:35:30PM -0500, Sasha Levin wrote:
+>> On Mon, Feb 27, 2023 at 09:38:46PM +0000, Eric Biggers wrote:
+>> > Just because you can't be 100% certain whether a commit is a fix doesn't mean
+>> > you should be rushing to backport random commits that have no indications they
+>> > are fixing anything.
+>>
+>> The difference in opinion here is that I don't think it's rushing: the
+>> stable kernel rules say a commit must be in a released kernel, while the
+>> AUTOSEL timelines make it so a commit must have been in two released
+>> kernels.
 >
-> Turns out for typical consumers the resulting creds would be identical
-> and this can be checked upfront, avoiding the hard work.
+>Patches in -rc1 have been in _no_ released kernels.  I'd feel a lot
+>better about AUTOSEL if it didn't pick up changes until, say, -rc4,
+>unless they were cc'd to stable.
 
-I've applied this v3 of the two patches.
+This happened before my time, but -rc are considered releases.
 
-Normally it would go through Al, but he's clearly been under the
-weather and is drowning in email. Besides, I'm comfortable with this
-particular set of patches anyway as I was involved in the previous
-round of access() overhead avoidance with the whole RCU grace period
-thing.
+The counter point to your argument/ask is that if you run the numbers on
+regressions between -rc releases, it's the later one that tend to
+introduce (way) more issues.
 
-So I think we're all better off having Al look at any iov_iter issues.
+I've actually written about it a few years back to ksummit discuss
+(here: https://lwn.net/Articles/753329/) because the numbers I saw
+indicate that later -rc releases are 3x likely to introduce a
+regression.
 
-Anybody holler if there are issues,
+Linus pushed back on it saying that it is "by design" because those
+commits are way more complex than ones that land during the early -rc
+cycles.
 
-             Linus
+So yes, I don't mind modifying the release workflow to decrease the
+regressions we introduce, but I think that there's a difference between
+what folks see as "helpful" and the outcome it would have.
+
+>> > Nothing has changed, but that doesn't mean that your process is actually
+>> > working.  7 days might be appropriate for something that looks like a security
+>> > fix, but not for a random commit with no indications it is fixing anything.
+>>
+>> How do we know if this is working or not though? How do you quantify the
+>> amount of useful commits?
+>
+>Sasha, 7 days is too short.  People have to be allowed to take holiday.
+
+That's true, and I don't have strong objections to making it longer. How
+often did it happen though? We don't end up getting too many replies
+past the 7 day window.
+
+I'll bump it to 14 days for a few months and see if it changes anything.
+
+>> I'd love to improve the process, but for that we need to figure out
+>> criteria for what we consider good or bad, collect data, and make
+>> decisions based on that data.
+>>
+>> What I'm getting from this thread is a few anecdotal examples and
+>> statements that the process isn't working at all.
+>>
+>> I took Jon's stablefixes script which he used for his previous articles
+>> around stable kernel regressions (here:
+>> https://lwn.net/Articles/812231/) and tried running it on the 5.15
+>> stable tree (just a random pick). I've proceeded with ignoring the
+>> non-user-visible regressions as Jon defined in his article (basically
+>> issues that were introduced and fixed in the same releases) and ended up
+>> with 604 commits that caused a user visible regression.
+>>
+>> Out of those 604 commits:
+>>
+>>  - 170 had an explicit stable tag.
+>>  - 434 did not have a stable tag.
+>
+>I think a lot of people don't realise they have to _both_ put a Fixes
+>tag _and_ add a Cc: stable.  How many of those 604 commits had a Fixes
+>tag?
+
+What do you mean? Just a cc: stable tag is enough to land it in stable,
+you don't have to do both. The numbers above reflect that.
+
+Running the numbers, there are 9422 commits with a Fixes tag in the 5.15
+tree, out of which 360 had a regression, so 360 / 9422 = 3.82%.
+
+-- 
+Thanks,
+Sasha
