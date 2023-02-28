@@ -2,71 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 216266A5B08
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 15:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE5086A5C7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 16:56:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229734AbjB1Org (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 09:47:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38888 "EHLO
+        id S230201AbjB1P4l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 10:56:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbjB1Orf (ORCPT
+        with ESMTP id S230203AbjB1P4i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 09:47:35 -0500
-Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9AE1CF4F;
-        Tue, 28 Feb 2023 06:47:34 -0800 (PST)
-Received: by mail-oo1-xc2a.google.com with SMTP id p8-20020a4a3c48000000b0052527a9d5f0so1593800oof.1;
-        Tue, 28 Feb 2023 06:47:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677595654;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MQqtgFt2ZrPoR/y5o9mWftXFVOmEsTr/lW9kmkGwIeU=;
-        b=hkwXo3LNwgRxN74Mc8UpBqQy4W9v8MFdb0B21cwtvjSroAqCKA3nGxYMkFFR/hxN8q
-         aTNjbWywo7ciKcrX/dnDhIDIQDPXwAML1PurY27j4DuewIwMigmXK49TVFyd8Ex/y3yE
-         +HV8wGXMGu4+MFmfYE+BOqwYdjWL1L0WpQ6ousW4/XWyjZADA7iGsERDoj0msCc5UTYg
-         60I1980f/Qnl/D9OAjS91fUJF7lhM+U4NjMw9APFLMG5Gs5/G3xsza1BtMilSEGBupYQ
-         ec7zxIdDR9BnETts277yPYHeIMGKkJOvGn5i4dITRj9MwYquyO21oXy9da1jQTWz/bqa
-         fe/w==
+        Tue, 28 Feb 2023 10:56:38 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B8D631E0D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 07:55:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1677599746;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=v6M2ykteJBFwPdE4Fc5PB7vibFCXhoU/gll1/xu6zk0=;
+        b=R8OwL6QnQYfbCN0NH5tuz778m9YcoHcv2TeDKfmzibZPV4/zMlznpAxuO4/EYM6vRXyAqX
+        fi1qEV49SpPGnJo6XHBduB2Wo3NmBTyY9IgTJijJNXSODH1I1+RTGL25LVNErXLMw9hCbx
+        DXWp6c3xG6yfhTVW1+G4St0Lnn5X3zQ=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-608-zJOvQeS2P-G3H9bBrwz5eg-1; Tue, 28 Feb 2023 10:55:44 -0500
+X-MC-Unique: zJOvQeS2P-G3H9bBrwz5eg-1
+Received: by mail-qt1-f198.google.com with SMTP id l17-20020ac84cd1000000b003bfbae42753so4810689qtv.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 07:55:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677595654;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MQqtgFt2ZrPoR/y5o9mWftXFVOmEsTr/lW9kmkGwIeU=;
-        b=mXuFm/2zZzjskzTvO3nC8zP705zd6mAr7kEK45Uc5VbCQtgpvHrOrI4Wm901og9rT4
-         AgZCfG5Ex5y9VZYSSoBCcen3UN0Txpc0eWpdUV3GnfLDuUAVIs0IQpsQ9Yg6hUhgy64o
-         +jW0tqkCjsQZdbo6bNFxrASbTCgAJtav4w0jnTdamdQT0u0MFD8Sh7HucgNgH7msRxdQ
-         leUjm0+Hc/qHvhxQbirLnJ5zj+HUYiKOs2SCW/gc7RzihiyS7S4lWvzMrKlZNZzfUdug
-         HdumwBp0Urmu9UrfZYAo0Ni6ZgBpw5AaefSo6oYw7EVbRvQ610o23/2rMrCDQ9us83OA
-         BFGw==
-X-Gm-Message-State: AO0yUKUY3MPNwAxjH7h5U8pcwQ8fd4voAZQBFo/1Qud8cKP1RsiZkJ3S
-        rwy2GLejJ+1xuuNHzkSW2YQD5P2b5NQUSoWQiNo=
-X-Google-Smtp-Source: AK7set8WvLmeK/3EEtJ41emSb/vN7XfCJ35JD48P5Pnt1sFUrR4W6SiHncUKVeXAqFboiMUX6ywXwL5DpvosfbdPRH4=
-X-Received: by 2002:a4a:a302:0:b0:525:2b47:93cb with SMTP id
- q2-20020a4aa302000000b005252b4793cbmr908579ool.1.1677595654090; Tue, 28 Feb
- 2023 06:47:34 -0800 (PST)
+        d=1e100.net; s=20210112; t=1677599744;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v6M2ykteJBFwPdE4Fc5PB7vibFCXhoU/gll1/xu6zk0=;
+        b=G+TaiG0VuXS9ZnDoXWA7QibYUudn4H8Wzprv6iJnG8RPQTCVFgrPe0il+mxE8MtlNl
+         kJ5zA+wts8tLTO8KYjg16n2Ad7HTFMxKsZDD8gQujAgabE7exgrJTDrYXdkGFueCJuS3
+         tNRJsWmgLwa6rkJBtamxQ4AQkTIdE4iOYZ/50Fo9l34A5lZ9Y72m473/UcIFYjE+2rNP
+         Jsku1h2FAknULt4V1wfRreCSpCIxJ6xmGv4rv0oNgwGp/Qd9g4L6VEENtJ+4lo7Q1+6I
+         XUSZZD8CVNwF20RHDp8ZuET8eSaVDyeB8Y75bN0/PgjKVdGSIjCIQ9qPxo+HZ14cvX4H
+         BDVQ==
+X-Gm-Message-State: AO0yUKWFGw6OhBszGQXUboMGxVbgz1gWMxnhO+4eSPEHHkL4lsvmxKmy
+        9slkOGJqFOTM6x/ziIGcM/6UtbN9waaGM9Zb8vjP5sl3v9G3fVTWAsqeB62DJPpXfm8zpXPbkKZ
+        adDWcguDS+hPtIXO13doZJVRgMA==
+X-Received: by 2002:ac8:580f:0:b0:3bf:daa8:cacc with SMTP id g15-20020ac8580f000000b003bfdaa8caccmr6872019qtg.3.1677599743734;
+        Tue, 28 Feb 2023 07:55:43 -0800 (PST)
+X-Google-Smtp-Source: AK7set/XPVjIGEfnKjmfSsCn1612xPeb/JaaDAmV6dwmY5PblZQ38Qj9ElM25ukoj3dLGb0rICpZcw==
+X-Received: by 2002:ac8:580f:0:b0:3bf:daa8:cacc with SMTP id g15-20020ac8580f000000b003bfdaa8caccmr6871879qtg.3.1677599742772;
+        Tue, 28 Feb 2023 07:55:42 -0800 (PST)
+Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
+        by smtp.gmail.com with ESMTPSA id x21-20020a376315000000b007419eb86df0sm7080654qkb.127.2023.02.28.07.55.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Feb 2023 07:55:42 -0800 (PST)
+Date:   Tue, 28 Feb 2023 10:55:40 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "kernel@collabora.com" <kernel@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrei Vagin <avagin@gmail.com>
+Subject: Re: [PATCH v10 3/6] fs/proc/task_mmu: Implement IOCTL to get and/or
+ the clear info about PTEs
+Message-ID: <Y/4j/Nu1vp9sVI7N@x1n>
+References: <20230202112915.867409-1-usama.anjum@collabora.com>
+ <20230202112915.867409-4-usama.anjum@collabora.com>
+ <cf36b6ea-6268-deff-d9ed-6782de2bd0a7@gmail.com>
+ <2fe790e5-89e0-d660-79cb-15160dffd907@collabora.com>
+ <751CCD6C-BFD1-42BD-A651-AE8E9568568C@vmware.com>
+ <c15446c5-eedd-690f-9dae-2bc12ee9eb78@collabora.com>
+ <F73885A1-14AE-4820-876B-A8E6DC6D19CC@vmware.com>
+ <Y/0eIUIh81jK9w2i@x1n>
+ <5D5DEEED-55EB-457B-9EB7-C6D5B326FE99@vmware.com>
 MIME-Version: 1.0
-Received: by 2002:ac9:4304:0:b0:4c1:4768:8c59 with HTTP; Tue, 28 Feb 2023
- 06:47:33 -0800 (PST)
-In-Reply-To: <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com>
-References: <20230125155557.37816-1-mjguzik@gmail.com> <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
- <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Tue, 28 Feb 2023 15:47:33 +0100
-Message-ID: <CAGudoHEV_aNymUq6v9Trn_ZRU45TL12AVXqQeV2kA90FuawxiQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5D5DEEED-55EB-457B-9EB7-C6D5B326FE99@vmware.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,99 +115,148 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/28/23, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 2/27/2023 5:14 PM, Linus Torvalds wrote:
->> On Wed, Jan 25, 2023 at 7:56=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com=
-> wrote:
->>> +static inline bool cap_isidentical(const kernel_cap_t a, const
->>> kernel_cap_t b)
->>> +{
->>> +       unsigned __capi;
->>> +       CAP_FOR_EACH_U32(__capi) {
->>> +               if (a.cap[__capi] !=3D b.cap[__capi])
->>> +                       return false;
->>> +       }
->>> +       return true;
->>> +}
->>> +
->> Side note, and this is not really related to this particular patch
->> other than because it just brought up the issue once more..
->>
->> Our "kernel_cap_t" thing is disgusting.
->>
->> It's been a structure containing
->>
->>         __u32 cap[_KERNEL_CAPABILITY_U32S];
->>
->> basically forever, and it's not likely to change in the future. I
->> would object to any crazy capability expansion, considering how
->> useless and painful they've been anyway, and I don't think anybody
->> really is even remotely planning anything like that anyway.
->>
->> And what is _KERNEL_CAPABILITY_U32S anyway? It's the "third version"
->> of that size:
->>
->>   #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
->>
->> which happens to be the same number as the second version of said
->> #define, which happens to be "2".
->>
->> In other words, that fancy array is just 64 bits. And we'd probably be
->> better off just treating it as such, and just doing
->>
->>         typedef u64 kernel_cap_t;
->>
->> since we have to do the special "convert from user space format"
->> _anyway_, and this isn't something that is shared to user space as-is.
->>
->> Then that "cap_isidentical()" would literally be just "a =3D=3D b" inste=
-ad
->> of us playing games with for-loops that are just two wide, and a
->> compiler that may or may not realize.
->>
->> It would literally remove some of the insanity in <linux/capability.h>
->> - look for CAP_TO_MASK() and CAP_TO_INDEX and CAP_FS_MASK_B0 and
->> CAP_FS_MASK_B1 and just plain ugliness that comes from this entirely
->> historical oddity.
->>
->> Yes, yes, we started out having it be a single-word array, and yes,
->> the code is written to think that it might some day be expanded past
->> the two words it then in 2008 it expanded to two words and 64 bits.
->> And now, fifteen years later, we use 40 of those 64 bits, and
->> hopefully we'll never add another one.
->
-> I agree that the addition of 24 more capabilities is unlikely. The
-> two reasons presented recently for adding capabilities are to implement
-> boutique policies (CAP_MYHARDWAREISSPECIAL) or to break up CAP_SYS_ADMIN.
-> Neither of these is sustainable with a finite number of capabilities, nor
-> do they fit the security model capabilities implement. It's possible that
-> a small number of additional capabilities will be approved, but even that
-> seems unlikely.
->
->
->> So we have historical reasons for why our kernel_cap_t is so odd. But
->> it *is* odd.
->>
->> Hmm?
->
-> I don't see any reason that kernel_cap_t shouldn't be a u64. If by some
-> amazing change in mindset we develop need for 65 capabilities, someone ca=
-n
-> dredge up the old code, shout "I told you so!" and put it back the way it
-> was. Or maybe by then we'll have u128, and can just switch to that.
->
+On Mon, Feb 27, 2023 at 11:09:12PM +0000, Nadav Amit wrote:
+> 
+> 
+> > On Feb 27, 2023, at 1:18 PM, Peter Xu <peterx@redhat.com> wrote:
+> > 
+> > !! External Email
+> > 
+> > On Thu, Feb 23, 2023 at 05:11:11PM +0000, Nadav Amit wrote:
+> >> From my experience with UFFD, proper ordering of events  is crucial, although it
+> >> is not always done well. Therefore, we should aim for improvement, not
+> >> regression. I believe that utilizing the pagemap-based mechanism for WP'ing
+> >> might be a step in the wrong direction. I think that it would have been better
+> >> to emit a 'UFFD_FEATURE_WP_ASYNC' WP-log (and ordered) with UFFD #PF and
+> >> events. The 'UFFD_FEATURE_WP_ASYNC'-log may not need to wake waiters on the
+> >> file descriptor unless the log is full.
+> > 
+> > Yes this is an interesting question to think about..
+> > 
+> > Keeping the data in the pgtable has one good thing that it doesn't need any
+> > complexity on maintaining the log, and no possibility of "log full".
+> 
+> I understand your concern, but I think that eventually it might be simpler
+> to maintain, since the logic of how to process the log is moved to userspace.
+> 
+> At the same time, handling inputs from pagemap and uffd handlers and sync’ing
+> them would not be too easy for userspace.
 
-Premature generalization is the root of all evil (or however the
-saying goes), as evidenced above.
+I do not expect a common uffd-wp async user to provide a fault handler at
+all.  In my imagination it's in most cases used standalone from other uffd
+modes; it means all the faults will still be handled by the kernel.  Here
+we only leverage the accuracy of userfaultfd comparing to soft-dirty, so
+not really real "user"-faults.
 
-The fact that this is an array of u32 escaped the confines of
-capability.h and as a result there would be unpleasant churn to sort
-it out, and more importantly this requires a lot more testing than you
-would normally expect.
+> 
+> But yes, allocation on the heap for userfaultfd_wait_queue-like entries would
+> be needed, and there are some issues of ordering the events (I think all #PF
+> and other events should be ordered regardless) and how not to traverse all
+> async-userfaultfd_wait_queue’s (except those that block if the log is full)
+> when a wakeup is needed.
 
-Personally I would only touch it as a result of losing a bet (and I'm
-not taking any with this in play), but that's just my $0.05 (adjusted
-for inflation).
+Will there be an ordering requirement for an async mode?  Considering it
+should be async to whatever else, I would think it's not a problem, but
+maybe I missed something.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+> 
+> > 
+> > If there's possible "log full" then the next question is whether we should
+> > let the worker wait the monitor if the monitor is not fast enough to
+> > collect those data.  It adds some slight dependency on the two threads, I
+> > think it can make the tracking harder or impossible in latency sensitive
+> > workloads.
+> 
+> Again, I understand your concern. But this model that I propose is not new.
+> It is used with PML (page-modification logging) and KVM, and IIRC there is
+> a similar interface between KVM and QEMU to provide this information. There
+> are endless other examples for similar producer-consumer mechanisms that
+> might lead to stall in extreme cases. 
+
+Yes, I'm not against thinking of using similar structures here.  It's just
+that it's definitely more complicated on the interface, at least we need
+yet one more interface to setup the rings and define its interfaces.
+
+Note that although Muhammud is defining another new interface here too for
+pagemap, I don't think it's strictly needed for uffd-wp async mode.  One
+can use uffd-wp async mode with PM_UFFD_WP which is with current pagemap
+interface already.
+
+So what Muhammud is proposing here are two things to me: (1) uffd-wp async,
+plus (2) a new pagemap interface (which will closely work with (1) only if
+we need atomicity on get-dirty and reprotect).
+
+Defining new interface for uffd-wp async mode will be something extra, so
+IMHO besides the heap allocation on the rings, we need to also justify
+whether that is needed.  That's why I think it's fine to go with what
+Muhammud proposed, because it's a minimum changeset at least for userfault
+to support an async mode, and anything else can be done on top if necessary.
+
+Going a bit back to the "lead to stall in extreme cases" above, just also
+want to mention that the VM use case is slightly different - dirty tracking
+is only heavily used during migration afaict, and it's a short period.  Not
+a lot of people will complain performance degrades during that period
+because that's just rare.  And, even without the ring the perf is really
+bad during migration anyway... Especially when huge pages are used to back
+the guest RAM.
+
+Here it's slightly different to me: it's about tracking dirty pages during
+any possible workload, and it can be monitored periodically and frequently.
+So IMHO stricter than a VM use case where migration is the only period to
+use it.
+
+> 
+> > 
+> > The other thing is we can also make the log "never gonna full" by making it
+> > a bitmap covering any registered ranges, but I don't either know whether
+> > it'll be worth it for the effort.
+> 
+> I do not see a benefit of half-log half-scan. It tries to take the
+> data-structure of one format and combine it with another.
+
+What I'm saying here is not half-log / half-scan, but use a single bitmap
+to store what page is dirty, just like KVM_GET_DIRTY_LOG.  I think it
+avoids any above "stall" issue.
+
+> 
+> Anyhow, I was just giving my 2 cents. Admittedly, I did not follow the
+> threads of previous versions and I did not see userspace components that
+> use the API to say something smart.
+
+Actually similar here. :) So I'm probably not the best one to describe what
+is the best to look as API.
+
+What I know is I think the new pagemap interface is welcomed by CRIU
+developers, so it may be something good with/without userfaultfd getting
+involved already.  I see this as "let's add one more bit for uffd-wp" in
+the new interface only.
+
+Quotting some link I got from Muhammud before with CRIU usage:
+
+https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com
+https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com
+
+> Personally, I do not find the current API proposal to be very consistent
+> and simple, and it seems to me that it lets pagemap do
+> userfaultfd-related tasks, which might be considered inappropriate and
+> non-intuitive.
+
+Yes, I agree.  I just don't know what's the best way to avoid this.
+
+The issue here IIUC is Muhammud needs one operation to do what Windows does
+with getWriteWatch() API.  It means we need to mix up GET and PROTECT in a
+single shot.  If we want to use pagemap as GET, then no choice to PROTECT
+also here to me.
+
+I think it'll be the same to soft-dirty if it's used, it means we'll extend
+soft-dirty modifications from clear_refs to pagemap too which I also don't
+think it's as clean.
+
+> 
+> If I derailed the discussion, I apologize.
+
+Not at all.  I just wished you joined earlier!
+
+-- 
+Peter Xu
+
