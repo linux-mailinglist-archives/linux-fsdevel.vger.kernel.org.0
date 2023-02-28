@@ -2,58 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC4E36A504D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 01:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 973856A507A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 02:02:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbjB1Awu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 19:52:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41024 "EHLO
+        id S229847AbjB1BCU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 20:02:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbjB1Awp (ORCPT
+        with ESMTP id S229732AbjB1BCK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 19:52:45 -0500
+        Mon, 27 Feb 2023 20:02:10 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2739298DB;
-        Mon, 27 Feb 2023 16:52:43 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C37F329E2B;
+        Mon, 27 Feb 2023 17:01:57 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 52E70B80DD6;
-        Tue, 28 Feb 2023 00:52:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC39C433EF;
-        Tue, 28 Feb 2023 00:52:40 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7977DB80DD5;
+        Tue, 28 Feb 2023 01:01:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 15E2BC433EF;
+        Tue, 28 Feb 2023 01:01:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677545561;
-        bh=wX7w95mMFRf+sC/g2N5poZRs+gBImsllRdEeOYedA9A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kFx/vAvFODfYDII8Rr81BwnChAYdCNxC9tNo/Oz8VhEONHDOUm1EMX7MCdbp8A6LR
-         +oMdRD9iRi2cax4VuNTZAHEcg23Zjrrwan14eFgnL3TPGccGR8bRM14OXi9jeIrNxQ
-         s+zayBX3Z/VlntOznziR+Qqpt3c0IWFqEBOhLf44sbmRSw4ZUCWM4IIh9C60UDCWYH
-         6Dlb8UBRi8u9jKCJ2RCMIeahLTMuXGU2OZtWSgoCXZEKLa9PdMqSdQhhq7Tsvj7tdz
-         mshnY1R2JWhsL8aP2Urut2dmuVq0eN0NdnOKH6HOj7XkweUGoK/z9hW4rk8W7mE9di
-         h/8QRUJvQx5Ug==
-Date:   Mon, 27 Feb 2023 19:52:39 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <Y/1QV9mQ31wbqFnp@sashalap>
-References: <Y/rbGxq8oAEsW28j@sol.localdomain>
- <Y/rufenGRpoJVXZr@sol.localdomain>
- <Y/ux9JLHQKDOzWHJ@sol.localdomain>
- <Y/y70zJj4kjOVfXa@sashalap>
- <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <Y/0U8tpNkgePu00M@sashalap>
- <Y/0i5pGYjrVw59Kk@gmail.com>
- <Y/0wMiOwoeLcFefc@sashalap>
- <Y/01z4EJNfioId1d@casper.infradead.org>
+        s=k20201202; t=1677546115;
+        bh=SOFnAzz1BpATHblwfDPCUsbi+PYozLGsV7wjyMHjkQk=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Yrv42d67C/zchBY/GRxlF2I0lPmwe05knllpu/5rTK8vNLkpKkCLGXRW/EjYeRcQY
+         aHuxa5lUaSLE2Afe8ejaxjxddX83InNC8yYf/n7QqXsiOwRK1tdC/PAWG2IXcNQOgY
+         ctsys9m1rsLd6yP7b7tBdN812nYX2LYEo8qPe+oBIPHLt89g0Cwqkm0p51fR8fPCcg
+         TdetilTXNnPAfk0reqGCm2sT8/+GsltnN7i+3VER2zpwbvwtW7x3LYVUOVdHbsdst+
+         nRsbnEVQZZ/TZDNRZDCtUZfjm+T1pc4gWZZkfyI00zmudv+MED+Nr1dAn0L670B0wj
+         RaBYdXnRZfKoA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E53C0E1CF31;
+        Tue, 28 Feb 2023 01:01:54 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Y/01z4EJNfioId1d@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH v2 00/11] fsverity: support for non-4K pages
+From:   patchwork-bot+f2fs@kernel.org
+Message-Id: <167754611492.27916.393758892204411776.git-patchwork-notify@kernel.org>
+Date:   Tue, 28 Feb 2023 01:01:54 +0000
+References: <20221223203638.41293-1-ebiggers@kernel.org>
+In-Reply-To: <20221223203638.41293-1-ebiggers@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, aalbersh@redhat.com,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -63,86 +58,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 10:59:27PM +0000, Matthew Wilcox wrote:
->On Mon, Feb 27, 2023 at 05:35:30PM -0500, Sasha Levin wrote:
->> On Mon, Feb 27, 2023 at 09:38:46PM +0000, Eric Biggers wrote:
->> > Just because you can't be 100% certain whether a commit is a fix doesn't mean
->> > you should be rushing to backport random commits that have no indications they
->> > are fixing anything.
->>
->> The difference in opinion here is that I don't think it's rushing: the
->> stable kernel rules say a commit must be in a released kernel, while the
->> AUTOSEL timelines make it so a commit must have been in two released
->> kernels.
->
->Patches in -rc1 have been in _no_ released kernels.  I'd feel a lot
->better about AUTOSEL if it didn't pick up changes until, say, -rc4,
->unless they were cc'd to stable.
+Hello:
 
-This happened before my time, but -rc are considered releases.
+This series was applied to jaegeuk/f2fs.git (dev)
+by Eric Biggers <ebiggers@google.com>:
 
-The counter point to your argument/ask is that if you run the numbers on
-regressions between -rc releases, it's the later one that tend to
-introduce (way) more issues.
+On Fri, 23 Dec 2022 12:36:27 -0800 you wrote:
+> [This patchset applies to mainline + some fsverity cleanups I sent out
+>  recently.  You can get everything from tag "fsverity-non4k-v2" of
+>  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git ]
+> 
+> Currently, filesystems (ext4, f2fs, and btrfs) only support fsverity
+> when the Merkle tree block size, filesystem block size, and page size
+> are all the same.  In practice that means 4K, since increasing the page
+> size, e.g. to 16K, forces the Merkle tree block size and filesystem
+> block size to be increased accordingly.  That can be impractical; for
+> one, users want the same file signatures to work on all systems.
+> 
+> [...]
 
-I've actually written about it a few years back to ksummit discuss
-(here: https://lwn.net/Articles/753329/) because the numbers I saw
-indicate that later -rc releases are 3x likely to introduce a
-regression.
+Here is the summary with links:
+  - [f2fs-dev,v2,01/11] fsverity: use unsigned long for level_start
+    https://git.kernel.org/jaegeuk/f2fs/c/284d5db5f99e
+  - [f2fs-dev,v2,02/11] fsverity: simplify Merkle tree readahead size calculation
+    https://git.kernel.org/jaegeuk/f2fs/c/9098f36b739d
+  - [f2fs-dev,v2,03/11] fsverity: store log2(digest_size) precomputed
+    https://git.kernel.org/jaegeuk/f2fs/c/579a12f78d88
+  - [f2fs-dev,v2,04/11] fsverity: use EFBIG for file too large to enable verity
+    https://git.kernel.org/jaegeuk/f2fs/c/55eed69cc8fd
+  - [f2fs-dev,v2,05/11] fsverity: replace fsverity_hash_page() with fsverity_hash_block()
+    https://git.kernel.org/jaegeuk/f2fs/c/f45555bf23cf
+  - [f2fs-dev,v2,06/11] fsverity: support verification with tree block size < PAGE_SIZE
+    https://git.kernel.org/jaegeuk/f2fs/c/5306892a50bf
+  - [f2fs-dev,v2,07/11] fsverity: support enabling with tree block size < PAGE_SIZE
+    https://git.kernel.org/jaegeuk/f2fs/c/56124d6c87fd
+  - [f2fs-dev,v2,08/11] ext4: simplify ext4_readpage_limit()
+    https://git.kernel.org/jaegeuk/f2fs/c/5e122148a3d5
+  - [f2fs-dev,v2,09/11] f2fs: simplify f2fs_readpage_limit()
+    https://git.kernel.org/jaegeuk/f2fs/c/feb0576a361a
+  - [f2fs-dev,v2,10/11] fs/buffer.c: support fsverity in block_read_full_folio()
+    https://git.kernel.org/jaegeuk/f2fs/c/4fa512ce7051
+  - [f2fs-dev,v2,11/11] ext4: allow verity with fs block size < PAGE_SIZE
+    https://git.kernel.org/jaegeuk/f2fs/c/db85d14dc5c5
 
-Linus pushed back on it saying that it is "by design" because those
-commits are way more complex than ones that land during the early -rc
-cycles.
-
-So yes, I don't mind modifying the release workflow to decrease the
-regressions we introduce, but I think that there's a difference between
-what folks see as "helpful" and the outcome it would have.
-
->> > Nothing has changed, but that doesn't mean that your process is actually
->> > working.  7 days might be appropriate for something that looks like a security
->> > fix, but not for a random commit with no indications it is fixing anything.
->>
->> How do we know if this is working or not though? How do you quantify the
->> amount of useful commits?
->
->Sasha, 7 days is too short.  People have to be allowed to take holiday.
-
-That's true, and I don't have strong objections to making it longer. How
-often did it happen though? We don't end up getting too many replies
-past the 7 day window.
-
-I'll bump it to 14 days for a few months and see if it changes anything.
-
->> I'd love to improve the process, but for that we need to figure out
->> criteria for what we consider good or bad, collect data, and make
->> decisions based on that data.
->>
->> What I'm getting from this thread is a few anecdotal examples and
->> statements that the process isn't working at all.
->>
->> I took Jon's stablefixes script which he used for his previous articles
->> around stable kernel regressions (here:
->> https://lwn.net/Articles/812231/) and tried running it on the 5.15
->> stable tree (just a random pick). I've proceeded with ignoring the
->> non-user-visible regressions as Jon defined in his article (basically
->> issues that were introduced and fixed in the same releases) and ended up
->> with 604 commits that caused a user visible regression.
->>
->> Out of those 604 commits:
->>
->>  - 170 had an explicit stable tag.
->>  - 434 did not have a stable tag.
->
->I think a lot of people don't realise they have to _both_ put a Fixes
->tag _and_ add a Cc: stable.  How many of those 604 commits had a Fixes
->tag?
-
-What do you mean? Just a cc: stable tag is enough to land it in stable,
-you don't have to do both. The numbers above reflect that.
-
-Running the numbers, there are 9422 commits with a Fixes tag in the 5.15
-tree, out of which 360 had a regression, so 360 / 9422 = 3.82%.
-
+You are awesome, thank you!
 -- 
-Thanks,
-Sasha
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
