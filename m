@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A6936A55D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 10:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D80C86A55DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 10:33:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbjB1JdC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 04:33:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48354 "EHLO
+        id S231350AbjB1JdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 04:33:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231331AbjB1Jc7 (ORCPT
+        with ESMTP id S231355AbjB1JdP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 04:32:59 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BF7219BF;
-        Tue, 28 Feb 2023 01:32:53 -0800 (PST)
+        Tue, 28 Feb 2023 04:33:15 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA6AA1FF6;
+        Tue, 28 Feb 2023 01:33:07 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DDD266103A;
-        Tue, 28 Feb 2023 09:32:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B153C4339B;
-        Tue, 28 Feb 2023 09:32:47 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 725F2B80E12;
+        Tue, 28 Feb 2023 09:33:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB3D7C433EF;
+        Tue, 28 Feb 2023 09:32:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677576772;
-        bh=gRbBq9vcg2Rx0X4DobOUrTbz29HAnK95YnrQdwF+tOs=;
+        s=k20201202; t=1677576785;
+        bh=QJB3wPU2HWgjAFGuMz7NkbXXZcNkRHN6drkDJ+SyIYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UUER4sVx5kKwhIxZJzXS365tQT33utMe1eesSOX10vXEV3c2fXxOy4y9NsJhXUSVj
-         KGCct3+pPhcRE6etwiID1UiyTVQBD13Q7e8AhkqWdblrc0rmr+ztVaXWSb6Pv+KEry
-         YuRjGz9aua3cIofqdhIrhgf/Z1iqxjOuygz3pleLvUxOJ5hfKziy/n/soR1wUwG7aS
-         nzcl/wOtvF13q+0mNO4y6Zse0dxmwf8NZw0Kp6Hw5MonV1qnkiGJWFjTEb++bv3uDS
-         SximpWRECz8+nkMrKJImloHn5eZrbunWLqwZ0EXwwrH7Zw7a6dbLxXJtMKTLweRI9B
-         Uvg44OWRgv/pg==
+        b=m6kPxmfUjqBPyP1zjk/AUvq0/knP93c2G+bJV20AAk00Bn5Qy1ceLoPdeWzhhd66V
+         C9PoDgaO8rIzmIHx+zhN6nkA+kRPYAwGKfC1VDZEgYNjMAhQbGB0eypPdGJFHD2N2y
+         vaePjn5SoDDn0dEkIf75C8Pfa7RvzbalnvALHj9mvgHJy8WdgTPhm9JEmabCzuuo/k
+         fDGJm19tk2+IfAuCsGapu6TbdLHo4eP/EqBsqwW6qqkL/Lc0+Fv/y1RTxYHDh8tlHE
+         GkDspDLRDbIm19taZ2SguntVqk7d/0F/NViAB3I+CONr1oBs9FaKr8W63nBjkqhJNr
+         LtdzQ20YTBC/w==
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -51,9 +51,9 @@ Cc:     bpf@vger.kernel.org, linux-mm@kvack.org,
         Stanislav Fomichev <sdf@google.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Namhyung Kim <namhyung@gmail.com>
-Subject: [PATCH RFC v2 bpf-next 3/9] perf: Use file object build id in perf_event_mmap_event
-Date:   Tue, 28 Feb 2023 10:32:00 +0100
-Message-Id: <20230228093206.821563-4-jolsa@kernel.org>
+Subject: [PATCH RFC v2 bpf-next 4/9] libbpf: Allow to resolve binary path in current directory
+Date:   Tue, 28 Feb 2023 10:32:01 +0100
+Message-Id: <20230228093206.821563-5-jolsa@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230228093206.821563-1-jolsa@kernel.org>
 References: <20230228093206.821563-1-jolsa@kernel.org>
@@ -68,101 +68,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use build id from file's inode object when available for perf's MMAP2
-event build id data.
+Try to resolve uprobe/usdt binary path also in current directory,
+it's used in the test code in following changes.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- kernel/events/core.c | 46 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 42 insertions(+), 4 deletions(-)
+ tools/lib/bpf/libbpf.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 7099c77bc53b..148f78a88492 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8527,6 +8527,9 @@ struct perf_mmap_event {
- 	u32			prot, flags;
- 	u8			build_id[BUILD_ID_SIZE_MAX];
- 	u32			build_id_size;
-+#ifdef CONFIG_INODE_BUILD_ID
-+	struct build_id		*i_build_id;
-+#endif
- 
- 	struct {
- 		struct perf_event_header	header;
-@@ -8539,6 +8542,41 @@ struct perf_mmap_event {
- 	} event_id;
- };
- 
-+#ifdef CONFIG_INODE_BUILD_ID
-+static void build_id_read(struct perf_mmap_event *mmap_event)
-+{
-+	struct vm_area_struct *vma = mmap_event->vma;
-+	struct inode *inode = NULL;
-+
-+	if (vma->vm_file)
-+		inode = file_inode(vma->vm_file);
-+	mmap_event->i_build_id = inode ? inode->i_build_id : NULL;
-+}
-+
-+static bool has_build_id(struct perf_mmap_event *mmap_event)
-+{
-+	return !IS_ERR_OR_NULL(mmap_event->i_build_id);
-+}
-+
-+#define build_id_data mmap_event->i_build_id->data
-+#define build_id_size mmap_event->i_build_id->sz
-+#else
-+static void build_id_read(struct perf_mmap_event *mmap_event)
-+{
-+	struct vm_area_struct *vma = mmap_event->vma;
-+
-+	build_id_parse(vma, mmap_event->build_id, &mmap_event->build_id_size);
-+}
-+
-+static bool has_build_id(struct perf_mmap_event *mmap_event)
-+{
-+	return mmap_event->build_id_size;
-+}
-+
-+#define build_id_data mmap_event->build_id
-+#define build_id_size mmap_event->build_id_size
-+#endif
-+
- static int perf_event_mmap_match(struct perf_event *event,
- 				 void *data)
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 05c4db355f28..f72115e8b7f9 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -10727,17 +10727,19 @@ static const char *arch_specific_lib_paths(void)
+ /* Get full path to program/shared library. */
+ static int resolve_full_path(const char *file, char *result, size_t result_sz)
  {
-@@ -8583,7 +8621,7 @@ static void perf_event_mmap_output(struct perf_event *event,
- 	mmap_event->event_id.pid = perf_event_pid(event, current);
- 	mmap_event->event_id.tid = perf_event_tid(event, current);
+-	const char *search_paths[3] = {};
++	const char *search_paths[4] = {};
+ 	int i, perm;
  
--	use_build_id = event->attr.build_id && mmap_event->build_id_size;
-+	use_build_id = event->attr.build_id && has_build_id(mmap_event);
+ 	if (str_has_sfx(file, ".so") || strstr(file, ".so.")) {
+ 		search_paths[0] = getenv("LD_LIBRARY_PATH");
+ 		search_paths[1] = "/usr/lib64:/usr/lib";
+ 		search_paths[2] = arch_specific_lib_paths();
++		search_paths[3] = ".";
+ 		perm = R_OK;
+ 	} else {
+ 		search_paths[0] = getenv("PATH");
+ 		search_paths[1] = "/usr/bin:/usr/sbin";
++		search_paths[2] = ".";
+ 		perm = R_OK | X_OK;
+ 	}
  
- 	if (event->attr.mmap2 && use_build_id)
- 		mmap_event->event_id.header.misc |= PERF_RECORD_MISC_MMAP_BUILD_ID;
-@@ -8592,10 +8630,10 @@ static void perf_event_mmap_output(struct perf_event *event,
- 
- 	if (event->attr.mmap2) {
- 		if (use_build_id) {
--			u8 size[4] = { (u8) mmap_event->build_id_size, 0, 0, 0 };
-+			u8 size[4] = { (u8) build_id_size, 0, 0, 0 };
- 
- 			__output_copy(&handle, size, 4);
--			__output_copy(&handle, mmap_event->build_id, BUILD_ID_SIZE_MAX);
-+			__output_copy(&handle, build_id_data, BUILD_ID_SIZE_MAX);
- 		} else {
- 			perf_output_put(&handle, mmap_event->maj);
- 			perf_output_put(&handle, mmap_event->min);
-@@ -8727,7 +8765,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
- 	mmap_event->event_id.header.size = sizeof(mmap_event->event_id) + size;
- 
- 	if (atomic_read(&nr_build_id_events))
--		build_id_parse(vma, mmap_event->build_id, &mmap_event->build_id_size);
-+		build_id_read(mmap_event);
- 
- 	perf_iterate_sb(perf_event_mmap_output,
- 		       mmap_event,
 -- 
 2.39.2
 
