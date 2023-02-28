@@ -2,58 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4633F6A50B0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 02:26:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 675CC6A50BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 02:30:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229807AbjB1B0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 20:26:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36590 "EHLO
+        id S229779AbjB1Bav (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 20:30:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229786AbjB1B0F (ORCPT
+        with ESMTP id S229605AbjB1Bat (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 20:26:05 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EAA623C46;
-        Mon, 27 Feb 2023 17:26:00 -0800 (PST)
+        Mon, 27 Feb 2023 20:30:49 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75C18525D;
+        Mon, 27 Feb 2023 17:30:43 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C3FC860EFC;
-        Tue, 28 Feb 2023 01:25:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23A22C433EF;
-        Tue, 28 Feb 2023 01:25:59 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 29A3DB80DD4;
+        Tue, 28 Feb 2023 01:30:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDDCCC433EF;
+        Tue, 28 Feb 2023 01:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677547559;
-        bh=0Pe7KSJN82PEApgbDu8WD+gbSjamTMir1pZN3Uhc2OI=;
+        s=k20201202; t=1677547840;
+        bh=6EQygXN8kukb7xm8ElTC1sWTx2fOUPnzwfRnnHir0SI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pVA3xdWLvU+MvDpwDpBZoIe+APPP1ID980TpPlmD8FNn/TD4okNnbu/tVtpDBW2Fp
-         BP/vFCkzNawaFOa4lOz2rhyy+v9BmxnZUA+XfORtSjulDxRMkDwoBTRq3HyfccqaRZ
-         M5tiwI+I3azc8QeibhZU+gBXMpjw7gMeKsZOsD+CfSlOtitA3kTPJVkn6XLUaOJvtM
-         Q0Fhs6W8m53D7dvV6D2v4/BufJJl1qesQKcsc+0EgcckKi5b7cFG7PMldMPSBK2D5H
-         YC1WS+XSb2SLTzu1HL4eyTRfJuGWqSvF38CCMpAuu1ucAkcWwu79uGYlhAo2+OoUEW
-         CLgcAqAEOC7Mw==
-Date:   Tue, 28 Feb 2023 01:25:57 +0000
+        b=X5G2bH9NLF+y6DAWm3C4skJJzRgvigSXnX2FpEPoftZkh4Js4TJhQz39F0yfuBc4+
+         wGYJfgnaQn8OApX8WXE/A6K8i+AGLRrm02Bb974d0Gie8HBYP6K5kVgAcESKSGoK4b
+         VMD2nG9gLw8XmVoBgmBGuNo2fgQUM4ahH7KLi/1vzO5/s9G7I++hxYqixvJqJwCe3k
+         R5WzZB6PDMETiydk3l4+LebgKGAg0irUwXQbDy5gnZ0eJNydQYu++C0S6uXcWm4/Zz
+         sO2RyTarFPwlvvZVqsQ32RCohoZPZZ5cmrjyynzZYyzdWRV40lvgGyTBJuAvesw34a
+         8vNGxrE3bAgvA==
+Date:   Tue, 28 Feb 2023 01:30:39 +0000
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <Y/1YJWs355TimFz1@gmail.com>
-References: <Y/rufenGRpoJVXZr@sol.localdomain>
- <Y/ux9JLHQKDOzWHJ@sol.localdomain>
- <Y/y70zJj4kjOVfXa@sashalap>
- <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <Y/0U8tpNkgePu00M@sashalap>
- <Y/0i5pGYjrVw59Kk@gmail.com>
- <Y/0wMiOwoeLcFefc@sashalap>
- <Y/01z4EJNfioId1d@casper.infradead.org>
- <Y/1QV9mQ31wbqFnp@sashalap>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     patchwork-bot+f2fs@kernel.org, linux-fscrypt@vger.kernel.org,
+        aalbersh@redhat.com, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v2 00/11] fsverity: support for non-4K pages
+Message-ID: <Y/1ZP9pc1Zw9xh/L@gmail.com>
+References: <20221223203638.41293-1-ebiggers@kernel.org>
+ <167754611492.27916.393758892204411776.git-patchwork-notify@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y/1QV9mQ31wbqFnp@sashalap>
+In-Reply-To: <167754611492.27916.393758892204411776.git-patchwork-notify@kernel.org>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -63,28 +56,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 07:52:39PM -0500, Sasha Levin wrote:
-> > > > Nothing has changed, but that doesn't mean that your process is actually
-> > > > working.  7 days might be appropriate for something that looks like a security
-> > > > fix, but not for a random commit with no indications it is fixing anything.
-> > > 
-> > > How do we know if this is working or not though? How do you quantify the
-> > > amount of useful commits?
+On Tue, Feb 28, 2023 at 01:01:54AM +0000, patchwork-bot+f2fs@kernel.org wrote:
+> Hello:
+> 
+> This series was applied to jaegeuk/f2fs.git (dev)
+> by Eric Biggers <ebiggers@google.com>:
+> 
+> On Fri, 23 Dec 2022 12:36:27 -0800 you wrote:
+> > [This patchset applies to mainline + some fsverity cleanups I sent out
+> >  recently.  You can get everything from tag "fsverity-non4k-v2" of
+> >  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git ]
 > > 
-> > Sasha, 7 days is too short.  People have to be allowed to take holiday.
+> > Currently, filesystems (ext4, f2fs, and btrfs) only support fsverity
+> > when the Merkle tree block size, filesystem block size, and page size
+> > are all the same.  In practice that means 4K, since increasing the page
+> > size, e.g. to 16K, forces the Merkle tree block size and filesystem
+> > block size to be increased accordingly.  That can be impractical; for
+> > one, users want the same file signatures to work on all systems.
+> > 
+> > [...]
 > 
-> That's true, and I don't have strong objections to making it longer. How
-> often did it happen though? We don't end up getting too many replies
-> past the 7 day window.
+> Here is the summary with links:
+>   - [f2fs-dev,v2,01/11] fsverity: use unsigned long for level_start
+>     https://git.kernel.org/jaegeuk/f2fs/c/284d5db5f99e
+>   - [f2fs-dev,v2,02/11] fsverity: simplify Merkle tree readahead size calculation
+>     https://git.kernel.org/jaegeuk/f2fs/c/9098f36b739d
+>   - [f2fs-dev,v2,03/11] fsverity: store log2(digest_size) precomputed
+>     https://git.kernel.org/jaegeuk/f2fs/c/579a12f78d88
+>   - [f2fs-dev,v2,04/11] fsverity: use EFBIG for file too large to enable verity
+>     https://git.kernel.org/jaegeuk/f2fs/c/55eed69cc8fd
+>   - [f2fs-dev,v2,05/11] fsverity: replace fsverity_hash_page() with fsverity_hash_block()
+>     https://git.kernel.org/jaegeuk/f2fs/c/f45555bf23cf
+>   - [f2fs-dev,v2,06/11] fsverity: support verification with tree block size < PAGE_SIZE
+>     https://git.kernel.org/jaegeuk/f2fs/c/5306892a50bf
+>   - [f2fs-dev,v2,07/11] fsverity: support enabling with tree block size < PAGE_SIZE
+>     https://git.kernel.org/jaegeuk/f2fs/c/56124d6c87fd
+>   - [f2fs-dev,v2,08/11] ext4: simplify ext4_readpage_limit()
+>     https://git.kernel.org/jaegeuk/f2fs/c/5e122148a3d5
+>   - [f2fs-dev,v2,09/11] f2fs: simplify f2fs_readpage_limit()
+>     https://git.kernel.org/jaegeuk/f2fs/c/feb0576a361a
+>   - [f2fs-dev,v2,10/11] fs/buffer.c: support fsverity in block_read_full_folio()
+>     https://git.kernel.org/jaegeuk/f2fs/c/4fa512ce7051
+>   - [f2fs-dev,v2,11/11] ext4: allow verity with fs block size < PAGE_SIZE
+>     https://git.kernel.org/jaegeuk/f2fs/c/db85d14dc5c5
 > 
-> I'll bump it to 14 days for a few months and see if it changes anything.
+> You are awesome, thank you!
+> -- 
+> Deet-doot-dot, I am a bot.
+> https://korg.docs.kernel.org/patchwork/pwbot.html
+> 
 
-It's not just for the review time, but also for the longer soak time in
-mainline.
-
-Of course, for that to work properly you have to actually take advantage of it,
-for example by re-checking for fixes when actually applying the patch, not just
-when sending the initial AUTOSEL email.  Which I hope you're doing already, but
-who knows.
+These commits reached the f2fs tree through mainline, not through being applied
+to the f2fs tree.  So this email shouldn't have been sent.  Jaegeuk, can you
+look into fixing the configuration of the f2fs patchwork bot to prevent this?
 
 - Eric
