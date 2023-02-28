@@ -2,138 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 238206A5CA1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 16:59:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 957516A5DE1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 18:03:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230212AbjB1P65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 10:58:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53866 "EHLO
+        id S229618AbjB1RD0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 12:03:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbjB1P6z (ORCPT
+        with ESMTP id S229510AbjB1RDZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 10:58:55 -0500
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1BE6526E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 07:58:54 -0800 (PST)
-Received: by mail-io1-f71.google.com with SMTP id a21-20020a5d9595000000b0074c9dc19e16so6435316ioo.15
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 07:58:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+ZoYcwriiDz1JVC+qEJ7hiihRvdZXKR0ltoGL+7jTA4=;
-        b=Bck/5/iYmK/1lL7co89+7UMB7Syu3R0SIce5wfZ+FWh3Jw+nheiE9SUYGb0Cr2P1Lp
-         xNV3pAGZb5iv+YhzYOLUxc6N0eA72EoAV5K/vzok3MjtZenuSS97SOFkkJxgduMBXe8t
-         HDT0gPWX+yi3nBUDRRHfNuKYFBLwvmP4NeO88d749ap7aAVGiRaxYIAF8Llf3y2HELX8
-         ZhPgoCCtRBcLdEyzA7ZnV/Yy2RW2EaaA/UKGDIihO298FKvI8oe7tjfes0A6v/bE3YKY
-         ojpPXCBrfP3AMShg9AQStwZD4dFSvdOJeW+4iP6ABxf3fW9nEcJ1Z8UX1ciyOxY3bFUF
-         4b1w==
-X-Gm-Message-State: AO0yUKWetnQihtA87+/uOwP/34Wkt1hx1HH+TM6YDTCHPJHd2fCuYVqD
-        f/G4yTj38zkFaQvjQShoQOLuPngolVLHpMYSCXb1EpFGjYDA
-X-Google-Smtp-Source: AK7set/RZiAoSBwevk045HZZ2LFr6tLP5PM6QEqsFwyCLlbRN3KJBRX3viqUNJvlZWigpCFEt/ByJtZCFWvPX0Aq72bq4m+C2FAX
+        Tue, 28 Feb 2023 12:03:25 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2969993C8;
+        Tue, 28 Feb 2023 09:03:23 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B3FF7610A1;
+        Tue, 28 Feb 2023 17:03:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F39C433EF;
+        Tue, 28 Feb 2023 17:03:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677603802;
+        bh=BGPHMddN/7Rv/G0+aO8UeGdWrCdsMalvyVw208xAlYA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f7iKjo1zLSWyNf9n61neTEP+5vqvclUtT+ZFbGvLQyTvnPobku6UI9DHpfADf7+kK
+         +f5Dsup1xKf/+gjhDnsOV3Sj00vA2Wy8NM0dC+UrKIQ3hSDp3VEzAwAL2BCR9akVPE
+         Se5xk4W9We2NJFj1LZPyhc+dl4zkMsbFEFXrSHgXTkxiz1ufpxdiQvKNYVZqV9Rt5/
+         qRZF/hY64EnwOj3aY2xPaINOPp5tKF1rKB6kjeO9xeVbMhenzNSkYyA57VBubwqHQz
+         f/K/HA4dJ3/DBLjekDy5uHuVCGfIf7vE88rwswnfOcagVK1ijRBu8sOWfaPDGwUII2
+         9wrnavEzQzvBQ==
+Date:   Tue, 28 Feb 2023 12:03:20 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: Re: AUTOSEL process
+Message-ID: <Y/4z2NyGgwG4zvYq@sashalap>
+References: <Y/ux9JLHQKDOzWHJ@sol.localdomain>
+ <Y/y70zJj4kjOVfXa@sashalap>
+ <Y/zswi91axMN8OsA@sol.localdomain>
+ <Y/zxKOBTLXFjSVyI@sol.localdomain>
+ <Y/0U8tpNkgePu00M@sashalap>
+ <Y/0i5pGYjrVw59Kk@gmail.com>
+ <Y/0wMiOwoeLcFefc@sashalap>
+ <Y/1LlA5WogOAPBNv@gmail.com>
+ <Y/1em4ygHgSjIYau@sashalap>
+ <Y/136zpJSWx96YEe@sol.localdomain>
 MIME-Version: 1.0
-X-Received: by 2002:a02:84c9:0:b0:3a9:75c9:da25 with SMTP id
- f67-20020a0284c9000000b003a975c9da25mr1483118jai.1.1677599933963; Tue, 28 Feb
- 2023 07:58:53 -0800 (PST)
-Date:   Tue, 28 Feb 2023 07:58:53 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000023a79f05f5c4ac51@google.com>
-Subject: [syzbot] [mm?] [fs?] WARNING in __folio_mark_dirty (2)
-From:   syzbot <syzbot+e14d6cd6ec241f507ba7@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Y/136zpJSWx96YEe@sol.localdomain>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, Feb 27, 2023 at 07:41:31PM -0800, Eric Biggers wrote:
+>On Mon, Feb 27, 2023 at 08:53:31PM -0500, Sasha Levin wrote:
+>> >
+>> > I'm shocked that these are the statistics you use to claim the current AUTOSEL
+>> > process is working.  I think they actually show quite the opposite!
+>> >
+>> > First, since many AUTOSEL commits aren't actually fixes but nearly all
+>> > stable-tagged commits *are* fixes, the rate of regressions per commit would need
+>> > to be lower for AUTOSEL commits than for stable-tagged commits in order for
+>> > AUTOSEL commits to have the same rate of regressions *per fix*.  Your numbers
+>> > suggest a similar regression rate *per commit*.  Thus, AUTOSEL probably
+>> > introduces more regressions *per fix* than stable-tagged commits.
+>>
+>> Interesting claim. How many of the AUTOSEL commits are "actual" fixes?
+>> How do you know if a commit is a fix for anything or not?
+>>
+>> Could you try and back claims with some evidence?
+>>
+>> Yes, in a perfect world where we know if a commit is a fix we could
+>> avoid introducing regressions into the stable trees. Heck, maybe we could
+>> even stop writing buggy code to begin with?
+>
+>Are you seriously trying to claim that a random commit your neural network
+>picked up is just as likely to be a fix as a commit that the author explicitly
+>tagged as a fix and/or for stable?
 
-syzbot found the following issue on:
+I'd like to think that this is the case after the initial selection and
+multiple rounds of reviews, yes.
 
-HEAD commit:    2fcd07b7ccd5 mm/mprotect: Fix successful vma_merge() of ne..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=117bdb18c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e0edbbd23e5eb14
-dashboard link: https://syzkaller.appspot.com/bug?extid=e14d6cd6ec241f507ba7
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1247507f480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166fefd8c80000
+>That's quite an extraordinary claim, and it's not true from my experience.  Lots
+>of AUTOSEL patches that get Cc'ed to me, if I'm familiar enough with the area to
+>understand fairly well whether the patch is a "fix", are not actually fixes.  Or
+>are very borderline "fixes" that don't meet stable criteria.  (Note, I generally
+>only bother responding to AUTOSEL if I think a patch is actually going to cause
+>a problem.  So a lack of response isn't necessarily agreement that a patch is
+>really suitable for stable...)
+>
+>Oh sorry, personal experience is not "evidence".  Please disregard my invalid
+>non-evidence-based opinion.
+>
+>> > (Of course, stable-tagged commits sometimes have missing prerequisite bugs too.
+>> > But it's expected to be at a lower rate, since the original developers and
+>> > maintainers are directly involved in adding the stable tags.  These are the
+>> > people who are more familiar than anyone else with prerequisites.)
+>>
+>> You'd be surprised. There is documentation around how one would annotate
+>> dependencies for stable tagged commits, something along the lines of:
+>>
+>> 	cc: stable@kernel.org # dep1 dep2
+>>
+>> Grep through the git log and see how often this is actually used.
+>
+>Well, probably more common is that prerequisites are in the same patchset, and
+>the prerequisites are tagged for stable too.  Whereas AUTOSEL often just picks
+>patch X of N.  Also, developers and maintainers who tag patches for stable are
+>probably more likely to help with the stable process in general and make sure
+>patches are backported correctly...
+>
+>Anyway, the point is, AUTOSEL needs to be fixed to stop inappropriately
+>cherry-picking patch X of N so often.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89d18c9cc43c/disk-2fcd07b7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a91767bc5caa/vmlinux-2fcd07b7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/90ba2476f5c1/bzImage-2fcd07b7.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/813b7d7d9dcd/mount_0.gz
+That's a fair point.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e14d6cd6ec241f507ba7@syzkaller.appspotmail.com
+>> > a multi-patch series, and if so are earlier patches needed as prerequisites".
+>> > There also needs to be more soak time in mainline, and more review time.
+>>
+>> Tricky bit with mainline/review time is that very few of our users
+>> actually run -rc trees.
+>>
+>> We end up hitting many of the regressions because the commits actually
+>> end up in stable trees. Should it work that way? No, but our testing
+>> story around -rc releases is quite lacking.
+>
+>Well, in the bug that affected me, it *was* found on mainline almost
+>immediately.  It just took a bit longer than the extremely aggressive 7-day
+>AUTOSEL period to be fixed.
+>
+>Oh sorry again, one example is not "evidence".  Please disregard my invalid
+>non-evidence-based opinion.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5081 at include/linux/backing-dev.h:253 inode_to_wb include/linux/backing-dev.h:253 [inline]
-WARNING: CPU: 0 PID: 5081 at include/linux/backing-dev.h:253 folio_account_dirtied mm/page-writeback.c:2656 [inline]
-WARNING: CPU: 0 PID: 5081 at include/linux/backing-dev.h:253 __folio_mark_dirty+0xbcb/0xfa0 mm/page-writeback.c:2707
-Modules linked in:
-CPU: 0 PID: 5081 Comm: syz-executor253 Not tainted 6.2.0-syzkaller-12018-g2fcd07b7ccd5 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/16/2023
-RIP: 0010:inode_to_wb include/linux/backing-dev.h:253 [inline]
-RIP: 0010:folio_account_dirtied mm/page-writeback.c:2656 [inline]
-RIP: 0010:__folio_mark_dirty+0xbcb/0xfa0 mm/page-writeback.c:2707
-Code: 78 70 48 89 44 24 10 e8 73 f4 63 08 31 ff 89 c6 89 44 24 10 e8 46 78 d1 ff 8b 44 24 10 85 c0 0f 85 42 f9 ff ff e8 e5 7b d1 ff <0f> 0b e9 36 f9 ff ff e8 d9 7b d1 ff e8 64 a0 b9 ff 31 ff 41 89 c4
-RSP: 0018:ffffc9000404fa28 EFLAGS: 00010093
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: ffff88802b47ba80 RSI: ffffffff81b3867b RDI: 0000000000000005
-RBP: ffffea0001f93c80 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000003 R12: 0000000000000001
-R13: ffffffff8e7847c0 R14: 0000000000000293 R15: ffff88802a46cc50
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd66b0fb000 CR3: 000000000c571000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- mark_buffer_dirty+0x3e8/0x570 fs/buffer.c:1148
- gfs2_unpin+0x109/0xcf0 fs/gfs2/lops.c:111
- buf_lo_after_commit+0x144/0x210 fs/gfs2/lops.c:747
- lops_after_commit fs/gfs2/lops.h:49 [inline]
- gfs2_log_flush+0x140f/0x2900 fs/gfs2/log.c:1116
- gfs2_kill_sb+0x6a/0x430 fs/gfs2/ops_fstype.c:1789
- deactivate_locked_super+0x98/0x160 fs/super.c:331
- deactivate_super+0xb1/0xd0 fs/super.c:362
- cleanup_mnt+0x2ae/0x3d0 fs/namespace.c:1177
- task_work_run+0x16f/0x270 kernel/task_work.c:179
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0xad3/0x2a40 kernel/exit.c:869
- do_group_exit+0xd4/0x2a0 kernel/exit.c:1019
- __do_sys_exit_group kernel/exit.c:1030 [inline]
- __se_sys_exit_group kernel/exit.c:1028 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1028
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7efcc6afa9c9
-Code: Unable to access opcode bytes at 0x7efcc6afa99f.
-RSP: 002b:00007ffcfb592d38 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00007efcc6ba7330 RCX: 00007efcc6afa9c9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
-RBP: 0000000000000001 R08: ffffffffffffffc0 R09: 00007efcc6ba1e40
-R10: 00007ffcfb592c50 R11: 0000000000000246 R12: 00007efcc6ba7330
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
- </TASK>
+I'm happy that we're in agreement that significant process changes can't
+happen because of opinions or anecdotal examples.
 
+In all seriousness, I will work on addressing the issues that happened
+around the commit(s) you've pointed out and improve our existing
+process.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Thanks,
+Sasha
