@@ -2,78 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D895F6A613C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 22:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 598236A621D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 23:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbjB1V36 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 16:29:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45572 "EHLO
+        id S229840AbjB1WHW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 17:07:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbjB1V35 (ORCPT
+        with ESMTP id S229445AbjB1WHU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 16:29:57 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF632CFF3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 13:29:54 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id da10so45909439edb.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 13:29:54 -0800 (PST)
+        Tue, 28 Feb 2023 17:07:20 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A91B32CC4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 14:07:19 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id k21-20020a17090aaa1500b002376652e160so11077412pjq.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 14:07:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1677619792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+8cphB32FCA+JDrayMTXIg9hnTVIdgiqn6d+31xf70g=;
-        b=RnvoGAxGwdikhKT4SupAxcADFamYOt+/v6RSL1oTb/zDbv1TM2he0JfutFX0uxibsD
-         aXfgAAPUlUpjgysAiDQd4529DHvHf+CRHuCzA3rdEZt3Lo9uF070u8Vc6hdwtGGCfB+P
-         QOl8M4FHCDbGl0EnClfCc8ZznvdwK40yN+tsU=
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YRCOA+ylhY8BYizlMsPJIRnUep7ueVrntpLfbub6Ho8=;
+        b=mEiI40fNyimk2yi3utKlVT4Y6/XfiZzMjf8IL7rx8OZsMKma/44lGsAnfhQMTGCIOg
+         XwvFvk+ZnJmZe9+sdLNWPkH1TdM+I4pNgrG1evG8lyp0RSNhFvrtiSo6iMPFR5Acpwfy
+         Gq9DjLyDHgC0vFM4FAJfYVG+okzSshZtjiOJSUFJJZMUJbnLm8ZnikUj0L5RaPwWgSMG
+         uvZmyfdN0NiOFEtzPa+f8Wx053NjMRjhE1YFf8eOyqQTPSMHobAOoSptMdDuJvuJm2Ek
+         fCsUiKusB2DxBsB5dssZ2d7zDkIjFa6Epeo3CDsDMsfBdVQ2wwKx4rzUqmq5HEg//qc5
+         wJRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677619792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+8cphB32FCA+JDrayMTXIg9hnTVIdgiqn6d+31xf70g=;
-        b=Ipa0LfWB3oGyO3H8UmfMRvU1AnTpWktASOGjrIieVEItqHK5yOgj31qQHxRuGnlNw/
-         unWh6ZQ8dHN1NhcaqyAZXAwTVP2sSskBGSndxF5d4hvVzYcv+cupaCmxCGGSBUrp4VxV
-         MpmA8lqk0xOR0t15Jo1HxNeClWLFPjaNbU7sgRQU/7qhmodFXOem4RRTAuJhmXUDFBbu
-         TiZvWFc0L9I60Xk34EdNScvXJJ+b+8WBryGBFbyBfdE0KHpUydzbcL7yCxYHCN4sEcgx
-         Rg+TLdoHPFGPF/wKP3Ajte2heE3G+TVBCTAK771HcmDspc0fUvOcISEDTOrRlTYlyaDt
-         m74g==
-X-Gm-Message-State: AO0yUKUN47cBTKIGtx2LrgHk3ArcoHTFLMIythNiDaVr9pVO5hTbfL2o
-        oOk6pAlG8Gz7cIHj6IKtLTJ0bpeUgivK28BvehQ=
-X-Google-Smtp-Source: AK7set9H64BnoLQghzqmXe4Vl83sUXeaNIjkHK5nUKNU/ZiLdq/Q6p51fxx1axx6OaVqDS1a/JXqrA==
-X-Received: by 2002:a17:907:76c6:b0:862:11f6:a082 with SMTP id kf6-20020a17090776c600b0086211f6a082mr4015121ejc.17.1677619792268;
-        Tue, 28 Feb 2023 13:29:52 -0800 (PST)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id us8-20020a170906bfc800b008cafeec917dsm4969732ejb.101.2023.02.28.13.29.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Feb 2023 13:29:51 -0800 (PST)
-Received: by mail-ed1-f44.google.com with SMTP id h16so45793364edz.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 13:29:51 -0800 (PST)
-X-Received: by 2002:a50:c34a:0:b0:4ae:f144:2c8e with SMTP id
- q10-20020a50c34a000000b004aef1442c8emr2699107edb.5.1677619791223; Tue, 28 Feb
- 2023 13:29:51 -0800 (PST)
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YRCOA+ylhY8BYizlMsPJIRnUep7ueVrntpLfbub6Ho8=;
+        b=kIsc83h4q4X19HJCtE0z4vhmGr0RlBBWOWKwN/qq1FTA/+ol7gnXRzC9ONOw7iIpcv
+         AeCiVKbWkz/BY4rHKQv0ZAtg4c/H99882wdzSFQCmLV9SV+klSmTbRZ/D0TLWoOoqQrl
+         nvem6u5IqwXSzw6jNvin4zyNlNhPNPcmGxZjZ8scsIxdmopHBc18181oem71AB9m4lqh
+         xq45Elxd9QLKul5IdEtDNprH1qnYV/HLe5NSMZE3SlLbGUko0yO+LnFDtRDsrgh6t3d5
+         +iqckVuvGB86sY7d8ti0rtXFipBKMtF9kjBV4d/GpQF2KC5mbr/J0h6aBKBc4BmwHUSX
+         udJw==
+X-Gm-Message-State: AO0yUKVdgYk4xvU0cGZkkc/67l9dkIOuhauZU2DBt1z5wTP5Lwk9Ofm5
+        E5Q2VVC9VkJ8al+14ozFw11UWA==
+X-Google-Smtp-Source: AK7set/jYgli/Hpbv8aT03CHshIOUH7bFyfP1JcTprKwyvrob0wmRB9dc55aO9ppjsNzZUynNOiyPQ==
+X-Received: by 2002:a17:903:1ce:b0:19d:1f42:b018 with SMTP id e14-20020a17090301ce00b0019d1f42b018mr8426976plh.27.1677622038760;
+        Tue, 28 Feb 2023 14:07:18 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-4-237.pa.vic.optusnet.com.au. [49.186.4.237])
+        by smtp.gmail.com with ESMTPSA id bc7-20020a170902930700b0019aaccb665bsm6957404plb.245.2023.02.28.14.07.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Feb 2023 14:07:18 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pX87u-003HvY-Hh; Wed, 01 Mar 2023 09:07:14 +1100
+Date:   Wed, 1 Mar 2023 09:07:14 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, bpf@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Namhyung Kim <namhyung@gmail.com>
+Subject: Re: [RFC v2 bpf-next 0/9] mm/bpf/perf: Store build id in inode object
+Message-ID: <20230228220714.GJ2825702@dread.disaster.area>
+References: <20230228093206.821563-1-jolsa@kernel.org>
 MIME-Version: 1.0
-References: <20230125155557.37816-1-mjguzik@gmail.com> <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
- <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com> <CAGudoHEV_aNymUq6v9Trn_ZRU45TL12AVXqQeV2kA90FuawxiQ@mail.gmail.com>
- <CAHk-=wgCMTUV=5aE-V8WjxuCME8LTBh-8k5XTPKz6oRXJ_sgTg@mail.gmail.com>
- <CAHk-=whwBb5Ws8x6aDV9u6CzMBQmsAtzF+UjWRnoe9xZxuW=qQ@mail.gmail.com> <CAGudoHH-u3KkwSsrSQPGKmhL9uke4HEL8U1Z+aU9etk9-PmdQQ@mail.gmail.com>
-In-Reply-To: <CAGudoHH-u3KkwSsrSQPGKmhL9uke4HEL8U1Z+aU9etk9-PmdQQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 28 Feb 2023 13:29:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgsVFvGrmbedVgpUjUJaRTMVxvGkr-dcR7s30S_MyDZfA@mail.gmail.com>
-Message-ID: <CAHk-=wgsVFvGrmbedVgpUjUJaRTMVxvGkr-dcR7s30S_MyDZfA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230228093206.821563-1-jolsa@kernel.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,15 +89,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 28, 2023 at 1:21=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> This is part of the crap which made me unwilling to do the clean up.
+On Tue, Feb 28, 2023 at 10:31:57AM +0100, Jiri Olsa wrote:
+> hi,
+> this is RFC patchset for adding build id under inode's object.
+> 
+> The main change to previous post [1] is to use inode object instead of file
+> object for build id data.
 
-Yeah, it's not pretty.
+Please explain what a "build id" is, the use case for it, why we
+need to store it in VFS objects, what threat model it is protecting
+the system against, etc.
 
-That said, the old code was worse. The only redeeming feature of the
-old code was that "nobody has touched it in ages", so it was at least
-stable.
+> 
+> However.. ;-) while using inode as build id storage place saves some memory
+> by keeping just one copy of the build id for all file instances, there seems
+> to be another problem.
 
-              Linus
+Yes, the problem being that we can cache hundreds of millions of
+inodes in memory, and only a very small subset of them are going to
+have open files associated with them. And an even smaller subset are
+going to be mmapped.
+
+So, in reality, this proposal won't save any memory at all - it
+costs memory for every inode that is not currently being used as
+a mmapped elf executable, right?
+
+> The problem is that we read the build id when the file is mmap-ed.
+
+Why? I'm completely clueless as to what this thing does or how it's
+used....
+
+> Which is fine for our use case,
+
+Which is?
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
