@@ -2,111 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B594E6A56F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 11:41:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D22A6A5774
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 12:05:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230123AbjB1KlV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 05:41:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56390 "EHLO
+        id S229953AbjB1LFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 06:05:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjB1KlU (ORCPT
+        with ESMTP id S229606AbjB1LFx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 05:41:20 -0500
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DECEB24106;
-        Tue, 28 Feb 2023 02:41:19 -0800 (PST)
-Received: by mail-ua1-x935.google.com with SMTP id l24so797700uac.12;
-        Tue, 28 Feb 2023 02:41:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677580879;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8DbVfOckXlAwnJnMHcsh1q8vZl9XSwnyP9AZsJxgsg4=;
-        b=dYmNo5q063Mxj4sRwSDBshps42BgANMZzJ8NIms3DO9OZ1erbLJBn1bI/++dPPOZ9j
-         SMQJ+pP6S74SUAZviENXfMIns2uD1CbtpvsuY71WE1Z1e/1HQ+VuhRa2/kVSb8hlCK20
-         SjGV3LqPnDl+bPFgpdzIRJgTG5HsdMfMV60qhikfRuMuTtChaFNOamja2scFf5vnk/E9
-         aalmU0sinLAviHRrTkJksfXmzEu+iI3jDD4N7NL5d0SJA7iHWM+ipoyrvDTk+CxcGIAT
-         CNC3shgktuDolX46+Z+j31Uk+SGKZjQ/VAQsKRnAAKjsj318ozW7A0fNNms1XgWW53ud
-         Pc4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677580879;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8DbVfOckXlAwnJnMHcsh1q8vZl9XSwnyP9AZsJxgsg4=;
-        b=Nwg6boTwnoKy5ppHpqCIpYIfKFgTrG3u7wfv5N298DVV4w98bF+C0H6N46auCj4Rd8
-         nV47UlKtBFC4stjCYTHzd0wovtbD3aH1ydjA59y8cJS26wdFQi3RcMPvK0t53lcHkHrU
-         8gKNkha7YaCoGQnNBBPcSIHiKPBH1R6Jqo2jMt/cLD7X0GejwIKvnBYthC9S8K+Q9Jto
-         fsOmniiukKBHYIkR2SOlB+dgnSAbqDHIU9AzT05dwI2WFM6doJjFoOIHEP1ZWLGam6Zy
-         V/rV/Nf4Ch05T197dlEgCdnAKO+ysbZ3iTvCSijbhk98BAZKMNrWqgfESjQ9ft1U2MNR
-         zGVA==
-X-Gm-Message-State: AO0yUKWEYOsccuVXlXx3ON+CuN/aB6OVRPuLeb0pqM5kmy72GB7tGJJc
-        eBo8JzaZzOPbeOcGwjnhRp9mRHfFUx79IAaIWAc=
-X-Google-Smtp-Source: AK7set+qBzkp5toODpAUw2ZZQlYyfMm2QZP7Sb0CMFTpsGk2V4xMYDfU3UbLNa2hh9TtB5fTmaYulOtIXe9TiOz9lbo=
-X-Received: by 2002:ac5:c85c:0:b0:40e:fee9:667a with SMTP id
- g28-20020ac5c85c000000b0040efee9667amr1014736vkm.3.1677580878928; Tue, 28 Feb
- 2023 02:41:18 -0800 (PST)
+        Tue, 28 Feb 2023 06:05:53 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B8E72A17F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 03:05:53 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A639C61033
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 11:05:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D07EC4339B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 11:05:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677582352;
+        bh=bPEVSRwdHZbo+GAxPEKB5AjrjzvHFI+v9sfoBFCRsH4=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=G8MaotF/NUMR0rHRTV/p8xwdg5lZ7nnKEor4HFbO3oEPdRziriB5lfH80SIeId/De
+         KjfYnOagypvHdO27K/Ph4H7Ei1upRZ4by8HJW2GdoGsiEIh/FWUb/lNjTeQXYIJSws
+         +dHGOHqMGqR7MYbjfbbn40Z0+UllcEKtRzLdNv1Gk/VcEa1UzVsa533ivcypEMLmpl
+         u8rhisCqQDkfI6pvdB0LGXoWuLjjY7a9atZOx7q/9TwxMaaSXTisQYDOThnR/N4ra9
+         sv5bsAjFrriEMoBdkrdQOzi1FyF7Njgl1SPVyTDD3KQJrko0SyGq2bSGl5z/k6Rf6D
+         KqZhwiW1NNwAQ==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-172334d5c8aso10468342fac.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 03:05:52 -0800 (PST)
+X-Gm-Message-State: AO0yUKUErnDbTA1bJJXjzm+K2BstrzYbm3vJn8tjbOPavaMWbVtLu2OD
+        ijiwSLsd8SF7mFob3J3TL5wnUYWJRAvednnnA/w=
+X-Google-Smtp-Source: AK7set/3xNNXCYbKpRkQikEyaZocXH6k6Z00G4qxGs9yXXwkAm8E7BybBHG0KOXFFoIHgzz34pZk/UfCi1IAtXHjNNA=
+X-Received: by 2002:a05:6871:6ab0:b0:172:2b6d:e85f with SMTP id
+ zf48-20020a0568716ab000b001722b6de85fmr594294oab.11.1677582351154; Tue, 28
+ Feb 2023 03:05:51 -0800 (PST)
 MIME-Version: 1.0
-References: <Y/rufenGRpoJVXZr@sol.localdomain> <Y/ux9JLHQKDOzWHJ@sol.localdomain>
- <Y/y70zJj4kjOVfXa@sashalap> <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain> <Y/0U8tpNkgePu00M@sashalap>
- <Y/0i5pGYjrVw59Kk@gmail.com> <Y/0wMiOwoeLcFefc@sashalap> <Y/1LlA5WogOAPBNv@gmail.com>
- <Y/1em4ygHgSjIYau@sashalap> <Y/136zpJSWx96YEe@sol.localdomain>
-In-Reply-To: <Y/136zpJSWx96YEe@sol.localdomain>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 28 Feb 2023 12:41:07 +0200
-Message-ID: <CAOQ4uxietbePiWgw8aOZiZ+YT=5vYVdPH=ChnBkU_KCaHGv+1w@mail.gmail.com>
-Subject: Re: AUTOSEL process
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
+Received: by 2002:ac9:67ca:0:b0:4c2:5d59:8c51 with HTTP; Tue, 28 Feb 2023
+ 03:05:50 -0800 (PST)
+In-Reply-To: <PUZPR04MB6316DF13B8E9FC79FD477A6C81AC9@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <PUZPR04MB6316DF13B8E9FC79FD477A6C81AC9@PUZPR04MB6316.apcprd04.prod.outlook.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Tue, 28 Feb 2023 20:05:50 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8T=hwywG115eF3i+RyNWrR9tLkcLpVmaSci76Fv_cCUA@mail.gmail.com>
+Message-ID: <CAKYAXd8T=hwywG115eF3i+RyNWrR9tLkcLpVmaSci76Fv_cCUA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] exfat: fix and refine exfat_alloc_cluster()
+To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc:     "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > I'm not sure how feedback in the form of "this sucks but I'm sure it
-> > could be much better" is useful.
+2023-02-28 15:07 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
+> Changes for v2:
+>   [2/3] do not return error if hint_cluster invalid
 >
-> I've already given you some specific suggestions.
->
-> I can't force you to listen to them, of course.
->
-
-Eric,
-
-As you probably know, this is not the first time that the subject of the
-AUTOSEL process has been discussed.
-Here is one example from fsdevel with a few other suggestions [1].
-
-But just so you know, as a maintainer, you have the option to request that
-patches to your subsystem will not be selected by AUTOSEL and run your
-own process to select, test and submit fixes to stable trees.
-
-xfs maintainers have done that many years ago.
-This choice has consequences though - for years, no xfs fixes were flowing
-into stable trees at all, because no one was doing the backport work.
-It is hard to imagine that LTS kernel users were more happy about this
-situation than they would be from occasional regressions, but who knows...
-
-It has taken a long time until we found the resources and finally started a
-process of reviewing, testing and submitting xfs fixes to stable trees and this
-process involves a lot of resources (3 maintainers + $$$), so opting out of
-AUTOSEL is not a clear win.
-
-I will pencil down yet another discussion on fs and stable process at
-LSFMM23 to update on the current status with xfs, but it is hard to
-believe that this time we will be able to make significant changes to
-the AUTOSEL process.
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/20201204160227.GA577125@mit.edu/#t
+> Yuezhang Mo (3):
+>   exfat: remove unneeded code from exfat_alloc_cluster()
+>   exfat: don't print error log in normal case
+>   exfat: fix the newly allocated clusters are not freed in error
+>     handling
+Applied, Thanks for your patches!
