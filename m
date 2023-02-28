@@ -2,125 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B90B6A5AB3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 15:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 216266A5B08
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 15:47:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbjB1OTu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 09:19:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46430 "EHLO
+        id S229734AbjB1Org (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 09:47:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbjB1OTt (ORCPT
+        with ESMTP id S229565AbjB1Orf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 09:19:49 -0500
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C1424103
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 06:19:47 -0800 (PST)
-Received: by mail-io1-f70.google.com with SMTP id c13-20020a0566022d0d00b0074cc4ed52d9so5992750iow.18
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 06:19:47 -0800 (PST)
+        Tue, 28 Feb 2023 09:47:35 -0500
+Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9AE1CF4F;
+        Tue, 28 Feb 2023 06:47:34 -0800 (PST)
+Received: by mail-oo1-xc2a.google.com with SMTP id p8-20020a4a3c48000000b0052527a9d5f0so1593800oof.1;
+        Tue, 28 Feb 2023 06:47:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677595654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MQqtgFt2ZrPoR/y5o9mWftXFVOmEsTr/lW9kmkGwIeU=;
+        b=hkwXo3LNwgRxN74Mc8UpBqQy4W9v8MFdb0B21cwtvjSroAqCKA3nGxYMkFFR/hxN8q
+         aTNjbWywo7ciKcrX/dnDhIDIQDPXwAML1PurY27j4DuewIwMigmXK49TVFyd8Ex/y3yE
+         +HV8wGXMGu4+MFmfYE+BOqwYdjWL1L0WpQ6ousW4/XWyjZADA7iGsERDoj0msCc5UTYg
+         60I1980f/Qnl/D9OAjS91fUJF7lhM+U4NjMw9APFLMG5Gs5/G3xsza1BtMilSEGBupYQ
+         ec7zxIdDR9BnETts277yPYHeIMGKkJOvGn5i4dITRj9MwYquyO21oXy9da1jQTWz/bqa
+         fe/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J6I9nx2s7RTfWTlnagZt92XwoQkoLlEorV5GfVg0HLE=;
-        b=3yIUH6Ym1O9n43BDNesrS7Gn1cNIdemaPXPGbrSA3mWpQi8syxjXkzYWk171S1TP8g
-         BnvxTNRFjNP5udiCv3Tvr2Pgczo/8hoNXzwWwD+OisHJ8F8DGPxo4J0eXM/Jy9vuPkS2
-         YWqvgH0U3TFdjXNnemLr3KhmKkzaCpHuFWsTrwqZ1ALgOWOvpB9yIcwgMcQShbI9+S5X
-         om6amqvOBro5RRiR6IfXK5n2jVXwzzs9YLMx/LQtKF21rBgdYZHn6TVcFToZBmCra/nU
-         p0N4tyca3wjYqtS+jJXtCLi5TQ1FguggMJHhaAvc/nleEeXueAlLb6LauExw7qqbdLWX
-         tO0w==
-X-Gm-Message-State: AO0yUKXMb008oaiSG+8mjI6g88e8IfS626Es6b8IL0gBuObEeB1MtJxh
-        Dj4BhCA54IlT9XYQQ6mwAqLQU+gREn/G1mYpC4/Lag3rhRaV
-X-Google-Smtp-Source: AK7set80BgvGPfY0VZVc50EMjNfjx1r+lpseH5pu22IzNmUTBUhber0fCBuJJHCdpw2t1xFRIPl0wI8XeLnKny7oPSOmITR6cbg3
+        d=1e100.net; s=20210112; t=1677595654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MQqtgFt2ZrPoR/y5o9mWftXFVOmEsTr/lW9kmkGwIeU=;
+        b=mXuFm/2zZzjskzTvO3nC8zP705zd6mAr7kEK45Uc5VbCQtgpvHrOrI4Wm901og9rT4
+         AgZCfG5Ex5y9VZYSSoBCcen3UN0Txpc0eWpdUV3GnfLDuUAVIs0IQpsQ9Yg6hUhgy64o
+         +jW0tqkCjsQZdbo6bNFxrASbTCgAJtav4w0jnTdamdQT0u0MFD8Sh7HucgNgH7msRxdQ
+         leUjm0+Hc/qHvhxQbirLnJ5zj+HUYiKOs2SCW/gc7RzihiyS7S4lWvzMrKlZNZzfUdug
+         HdumwBp0Urmu9UrfZYAo0Ni6ZgBpw5AaefSo6oYw7EVbRvQ610o23/2rMrCDQ9us83OA
+         BFGw==
+X-Gm-Message-State: AO0yUKUY3MPNwAxjH7h5U8pcwQ8fd4voAZQBFo/1Qud8cKP1RsiZkJ3S
+        rwy2GLejJ+1xuuNHzkSW2YQD5P2b5NQUSoWQiNo=
+X-Google-Smtp-Source: AK7set8WvLmeK/3EEtJ41emSb/vN7XfCJ35JD48P5Pnt1sFUrR4W6SiHncUKVeXAqFboiMUX6ywXwL5DpvosfbdPRH4=
+X-Received: by 2002:a4a:a302:0:b0:525:2b47:93cb with SMTP id
+ q2-20020a4aa302000000b005252b4793cbmr908579ool.1.1677595654090; Tue, 28 Feb
+ 2023 06:47:34 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a02:6244:0:b0:3ad:65e:e489 with SMTP id
- d65-20020a026244000000b003ad065ee489mr1374385jac.1.1677593986353; Tue, 28 Feb
- 2023 06:19:46 -0800 (PST)
-Date:   Tue, 28 Feb 2023 06:19:46 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a24e7405f5c34912@google.com>
-Subject: [syzbot] [ntfs3?] UBSAN: shift-out-of-bounds in ntfs_fill_super (2)
-From:   syzbot <syzbot+478c1bf0e6bf4a8f3a04@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-        trix@redhat.com
+Received: by 2002:ac9:4304:0:b0:4c1:4768:8c59 with HTTP; Tue, 28 Feb 2023
+ 06:47:33 -0800 (PST)
+In-Reply-To: <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com>
+References: <20230125155557.37816-1-mjguzik@gmail.com> <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
+ <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Tue, 28 Feb 2023 15:47:33 +0100
+Message-ID: <CAGudoHEV_aNymUq6v9Trn_ZRU45TL12AVXqQeV2kA90FuawxiQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 2/28/23, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 2/27/2023 5:14 PM, Linus Torvalds wrote:
+>> On Wed, Jan 25, 2023 at 7:56=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com=
+> wrote:
+>>> +static inline bool cap_isidentical(const kernel_cap_t a, const
+>>> kernel_cap_t b)
+>>> +{
+>>> +       unsigned __capi;
+>>> +       CAP_FOR_EACH_U32(__capi) {
+>>> +               if (a.cap[__capi] !=3D b.cap[__capi])
+>>> +                       return false;
+>>> +       }
+>>> +       return true;
+>>> +}
+>>> +
+>> Side note, and this is not really related to this particular patch
+>> other than because it just brought up the issue once more..
+>>
+>> Our "kernel_cap_t" thing is disgusting.
+>>
+>> It's been a structure containing
+>>
+>>         __u32 cap[_KERNEL_CAPABILITY_U32S];
+>>
+>> basically forever, and it's not likely to change in the future. I
+>> would object to any crazy capability expansion, considering how
+>> useless and painful they've been anyway, and I don't think anybody
+>> really is even remotely planning anything like that anyway.
+>>
+>> And what is _KERNEL_CAPABILITY_U32S anyway? It's the "third version"
+>> of that size:
+>>
+>>   #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
+>>
+>> which happens to be the same number as the second version of said
+>> #define, which happens to be "2".
+>>
+>> In other words, that fancy array is just 64 bits. And we'd probably be
+>> better off just treating it as such, and just doing
+>>
+>>         typedef u64 kernel_cap_t;
+>>
+>> since we have to do the special "convert from user space format"
+>> _anyway_, and this isn't something that is shared to user space as-is.
+>>
+>> Then that "cap_isidentical()" would literally be just "a =3D=3D b" inste=
+ad
+>> of us playing games with for-loops that are just two wide, and a
+>> compiler that may or may not realize.
+>>
+>> It would literally remove some of the insanity in <linux/capability.h>
+>> - look for CAP_TO_MASK() and CAP_TO_INDEX and CAP_FS_MASK_B0 and
+>> CAP_FS_MASK_B1 and just plain ugliness that comes from this entirely
+>> historical oddity.
+>>
+>> Yes, yes, we started out having it be a single-word array, and yes,
+>> the code is written to think that it might some day be expanded past
+>> the two words it then in 2008 it expanded to two words and 64 bits.
+>> And now, fifteen years later, we use 40 of those 64 bits, and
+>> hopefully we'll never add another one.
+>
+> I agree that the addition of 24 more capabilities is unlikely. The
+> two reasons presented recently for adding capabilities are to implement
+> boutique policies (CAP_MYHARDWAREISSPECIAL) or to break up CAP_SYS_ADMIN.
+> Neither of these is sustainable with a finite number of capabilities, nor
+> do they fit the security model capabilities implement. It's possible that
+> a small number of additional capabilities will be approved, but even that
+> seems unlikely.
+>
+>
+>> So we have historical reasons for why our kernel_cap_t is so odd. But
+>> it *is* odd.
+>>
+>> Hmm?
+>
+> I don't see any reason that kernel_cap_t shouldn't be a u64. If by some
+> amazing change in mindset we develop need for 65 capabilities, someone ca=
+n
+> dredge up the old code, shout "I told you so!" and put it back the way it
+> was. Or maybe by then we'll have u128, and can just switch to that.
+>
 
-syzbot found the following issue on:
+Premature generalization is the root of all evil (or however the
+saying goes), as evidenced above.
 
-HEAD commit:    2ebd1fbb946d Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=17f0d518c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3519974f3f27816d
-dashboard link: https://syzkaller.appspot.com/bug?extid=478c1bf0e6bf4a8f3a04
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165b7474c80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c9de8cc80000
+The fact that this is an array of u32 escaped the confines of
+capability.h and as a result there would be unpleasant churn to sort
+it out, and more importantly this requires a lot more testing than you
+would normally expect.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/16985cc7a274/disk-2ebd1fbb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fd3452567115/vmlinux-2ebd1fbb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c75510922212/Image-2ebd1fbb.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/deffedf88bc5/mount_0.gz
+Personally I would only touch it as a result of losing a bet (and I'm
+not taking any with this in play), but that's just my $0.05 (adjusted
+for inflation).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+478c1bf0e6bf4a8f3a04@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 4096
-================================================================================
-UBSAN: shift-out-of-bounds in fs/ntfs3/super.c:777:25
-shift exponent 128 is too large for 32-bit type 'unsigned int'
-CPU: 0 PID: 5928 Comm: syz-executor258 Not tainted 6.2.0-syzkaller-18300-g2ebd1fbb946d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
-Call trace:
- dump_backtrace+0x1c8/0x1f4 arch/arm64/kernel/stacktrace.c:158
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:165
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- dump_stack+0x1c/0x28 lib/dump_stack.c:113
- ubsan_epilogue lib/ubsan.c:151 [inline]
- __ubsan_handle_shift_out_of_bounds+0x2f4/0x36c lib/ubsan.c:321
- ntfs_init_from_boot fs/ntfs3/super.c:777 [inline]
- ntfs_fill_super+0x2544/0x3b9c fs/ntfs3/super.c:970
- get_tree_bdev+0x360/0x54c fs/super.c:1282
- ntfs_fs_get_tree+0x28/0x38 fs/ntfs3/super.c:1408
- vfs_get_tree+0x90/0x274 fs/super.c:1489
- do_new_mount+0x25c/0x8c8 fs/namespace.c:3145
- path_mount+0x590/0xe58 fs/namespace.c:3475
- do_mount fs/namespace.c:3488 [inline]
- __do_sys_mount fs/namespace.c:3697 [inline]
- __se_sys_mount fs/namespace.c:3674 [inline]
- __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3674
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
- el0_svc+0x58/0x168 arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-================================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+--=20
+Mateusz Guzik <mjguzik gmail.com>
