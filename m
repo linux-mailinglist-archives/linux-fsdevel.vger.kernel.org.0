@@ -2,57 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D1826A51DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 04:41:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBBFF6A5216
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 04:53:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230164AbjB1Dlj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Feb 2023 22:41:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40324 "EHLO
+        id S230114AbjB1DxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Feb 2023 22:53:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230023AbjB1Dli (ORCPT
+        with ESMTP id S229486AbjB1DxG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Feb 2023 22:41:38 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4328E2449A;
-        Mon, 27 Feb 2023 19:41:34 -0800 (PST)
+        Mon, 27 Feb 2023 22:53:06 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B168B44A;
+        Mon, 27 Feb 2023 19:53:05 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BA5E360F3C;
-        Tue, 28 Feb 2023 03:41:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01092C433EF;
-        Tue, 28 Feb 2023 03:41:32 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E847FB80CA7;
+        Tue, 28 Feb 2023 03:53:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302CFC433D2;
+        Tue, 28 Feb 2023 03:53:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677555693;
-        bh=qcl5s+6qbcUh8zwwiI9CIOUOSuOTjBUsfdsDbpRaWYI=;
+        s=k20201202; t=1677556382;
+        bh=u8P31QxD6VV0jVGuvboxfDzZUtsbvH8OqzD+6Goz13Q=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CtOhzqmfZavm5+CHMTdRk5MOZUZE73VL0dvBcb+B9KDPuFwaRilQc/8Xe4UTnDCnW
-         3MTSqxezZMkZxQaADnlDlEeqZsd8kADqEQAZKKRLAVX+mHdYJ/CHpanAGW03dIFbg9
-         p4MNBwlqlwHowhOtFYTQfy+GHgKUS03IGe81A2W5fBFqpDHIpsnUJLGqOug3EFQOGf
-         OMKtLnb97EYhozD6dmgFAw8u6AUcxYtyI+LKW7GPY6JwQLa36eGdH9XPKQNGna1Tyt
-         bmzfBOmbcFkxDS6CkkdZWSQVbqxKsBqkVrI8ZnFC61zDE/9SItIeUaO0jYp58Kar07
-         yjo1l27O6n6Bw==
-Date:   Mon, 27 Feb 2023 19:41:31 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <Y/136zpJSWx96YEe@sol.localdomain>
-References: <Y/rufenGRpoJVXZr@sol.localdomain>
- <Y/ux9JLHQKDOzWHJ@sol.localdomain>
- <Y/y70zJj4kjOVfXa@sashalap>
- <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <Y/0U8tpNkgePu00M@sashalap>
- <Y/0i5pGYjrVw59Kk@gmail.com>
- <Y/0wMiOwoeLcFefc@sashalap>
- <Y/1LlA5WogOAPBNv@gmail.com>
- <Y/1em4ygHgSjIYau@sashalap>
+        b=e2ZMcf24XxXbmCDzekB/T7YgJd/1GyrFRUrcuJfG9m4ayef66+7XXgKFql4BMYnLI
+         p3ky/n0i1OnZR19uWIXn1JvY16gg4xY0q+gyTYsqXUGGVBpkRbqy7K11DH7OLx5oQg
+         f7COZR8BF+TRB8PPa6/um00w3t3VQDwhMNyrVXQIwYLR235/Uw3h1WX6XJZ1dYtcV/
+         qHMFfpCP07a6FXcHhw/nYLLJkaStaw6d1+MUfdsMtT8+tPcRNOb2D9Qoa/StZ1rRjT
+         HIYWGv7xoXxJxIRin1Ui40Le9yyuYE2MfFWwbjN5W1hvaCdmsqgZbuZscnkHj1knk4
+         zPMU2QcVCsdSw==
+Date:   Mon, 27 Feb 2023 19:53:00 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     patchwork-bot+f2fs@kernel.org, linux-fscrypt@vger.kernel.org,
+        aalbersh@redhat.com, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v2 00/11] fsverity: support for non-4K pages
+Message-ID: <Y/16nEs4stc/0qmb@google.com>
+References: <20221223203638.41293-1-ebiggers@kernel.org>
+ <167754611492.27916.393758892204411776.git-patchwork-notify@kernel.org>
+ <Y/1ZP9pc1Zw9xh/L@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y/1em4ygHgSjIYau@sashalap>
+In-Reply-To: <Y/1ZP9pc1Zw9xh/L@gmail.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -62,85 +57,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 08:53:31PM -0500, Sasha Levin wrote:
+On 02/28, Eric Biggers wrote:
+> On Tue, Feb 28, 2023 at 01:01:54AM +0000, patchwork-bot+f2fs@kernel.org wrote:
+> > Hello:
 > > 
-> > I'm shocked that these are the statistics you use to claim the current AUTOSEL
-> > process is working.  I think they actually show quite the opposite!
+> > This series was applied to jaegeuk/f2fs.git (dev)
+> > by Eric Biggers <ebiggers@google.com>:
 > > 
-> > First, since many AUTOSEL commits aren't actually fixes but nearly all
-> > stable-tagged commits *are* fixes, the rate of regressions per commit would need
-> > to be lower for AUTOSEL commits than for stable-tagged commits in order for
-> > AUTOSEL commits to have the same rate of regressions *per fix*.  Your numbers
-> > suggest a similar regression rate *per commit*.  Thus, AUTOSEL probably
-> > introduces more regressions *per fix* than stable-tagged commits.
+> > On Fri, 23 Dec 2022 12:36:27 -0800 you wrote:
+> > > [This patchset applies to mainline + some fsverity cleanups I sent out
+> > >  recently.  You can get everything from tag "fsverity-non4k-v2" of
+> > >  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git ]
+> > > 
+> > > Currently, filesystems (ext4, f2fs, and btrfs) only support fsverity
+> > > when the Merkle tree block size, filesystem block size, and page size
+> > > are all the same.  In practice that means 4K, since increasing the page
+> > > size, e.g. to 16K, forces the Merkle tree block size and filesystem
+> > > block size to be increased accordingly.  That can be impractical; for
+> > > one, users want the same file signatures to work on all systems.
+> > > 
+> > > [...]
+> > 
+> > Here is the summary with links:
+> >   - [f2fs-dev,v2,01/11] fsverity: use unsigned long for level_start
+> >     https://git.kernel.org/jaegeuk/f2fs/c/284d5db5f99e
+> >   - [f2fs-dev,v2,02/11] fsverity: simplify Merkle tree readahead size calculation
+> >     https://git.kernel.org/jaegeuk/f2fs/c/9098f36b739d
+> >   - [f2fs-dev,v2,03/11] fsverity: store log2(digest_size) precomputed
+> >     https://git.kernel.org/jaegeuk/f2fs/c/579a12f78d88
+> >   - [f2fs-dev,v2,04/11] fsverity: use EFBIG for file too large to enable verity
+> >     https://git.kernel.org/jaegeuk/f2fs/c/55eed69cc8fd
+> >   - [f2fs-dev,v2,05/11] fsverity: replace fsverity_hash_page() with fsverity_hash_block()
+> >     https://git.kernel.org/jaegeuk/f2fs/c/f45555bf23cf
+> >   - [f2fs-dev,v2,06/11] fsverity: support verification with tree block size < PAGE_SIZE
+> >     https://git.kernel.org/jaegeuk/f2fs/c/5306892a50bf
+> >   - [f2fs-dev,v2,07/11] fsverity: support enabling with tree block size < PAGE_SIZE
+> >     https://git.kernel.org/jaegeuk/f2fs/c/56124d6c87fd
+> >   - [f2fs-dev,v2,08/11] ext4: simplify ext4_readpage_limit()
+> >     https://git.kernel.org/jaegeuk/f2fs/c/5e122148a3d5
+> >   - [f2fs-dev,v2,09/11] f2fs: simplify f2fs_readpage_limit()
+> >     https://git.kernel.org/jaegeuk/f2fs/c/feb0576a361a
+> >   - [f2fs-dev,v2,10/11] fs/buffer.c: support fsverity in block_read_full_folio()
+> >     https://git.kernel.org/jaegeuk/f2fs/c/4fa512ce7051
+> >   - [f2fs-dev,v2,11/11] ext4: allow verity with fs block size < PAGE_SIZE
+> >     https://git.kernel.org/jaegeuk/f2fs/c/db85d14dc5c5
+> > 
+> > You are awesome, thank you!
+> > -- 
+> > Deet-doot-dot, I am a bot.
+> > https://korg.docs.kernel.org/patchwork/pwbot.html
+> > 
 > 
-> Interesting claim. How many of the AUTOSEL commits are "actual" fixes?
-> How do you know if a commit is a fix for anything or not?
+> These commits reached the f2fs tree through mainline, not through being applied
+> to the f2fs tree.  So this email shouldn't have been sent.  Jaegeuk, can you
+> look into fixing the configuration of the f2fs patchwork bot to prevent this?
+
+Hmm, not sure how to fix that, since it seems patchwork bot reports this, once
+I pulled mainline into f2fs/dev branch.
+
 > 
-> Could you try and back claims with some evidence?
-> 
-> Yes, in a perfect world where we know if a commit is a fix we could
-> avoid introducing regressions into the stable trees. Heck, maybe we could
-> even stop writing buggy code to begin with?
-
-Are you seriously trying to claim that a random commit your neural network
-picked up is just as likely to be a fix as a commit that the author explicitly
-tagged as a fix and/or for stable?
-
-That's quite an extraordinary claim, and it's not true from my experience.  Lots
-of AUTOSEL patches that get Cc'ed to me, if I'm familiar enough with the area to
-understand fairly well whether the patch is a "fix", are not actually fixes.  Or
-are very borderline "fixes" that don't meet stable criteria.  (Note, I generally
-only bother responding to AUTOSEL if I think a patch is actually going to cause
-a problem.  So a lack of response isn't necessarily agreement that a patch is
-really suitable for stable...)
-
-Oh sorry, personal experience is not "evidence".  Please disregard my invalid
-non-evidence-based opinion.
-
-> > (Of course, stable-tagged commits sometimes have missing prerequisite bugs too.
-> > But it's expected to be at a lower rate, since the original developers and
-> > maintainers are directly involved in adding the stable tags.  These are the
-> > people who are more familiar than anyone else with prerequisites.)
-> 
-> You'd be surprised. There is documentation around how one would annotate
-> dependencies for stable tagged commits, something along the lines of:
-> 
-> 	cc: stable@kernel.org # dep1 dep2
-> 
-> Grep through the git log and see how often this is actually used.
-
-Well, probably more common is that prerequisites are in the same patchset, and
-the prerequisites are tagged for stable too.  Whereas AUTOSEL often just picks
-patch X of N.  Also, developers and maintainers who tag patches for stable are
-probably more likely to help with the stable process in general and make sure
-patches are backported correctly...
-
-Anyway, the point is, AUTOSEL needs to be fixed to stop inappropriately
-cherry-picking patch X of N so often.
-
-> > a multi-patch series, and if so are earlier patches needed as prerequisites".
-> > There also needs to be more soak time in mainline, and more review time.
-> 
-> Tricky bit with mainline/review time is that very few of our users
-> actually run -rc trees.
-> 
-> We end up hitting many of the regressions because the commits actually
-> end up in stable trees. Should it work that way? No, but our testing
-> story around -rc releases is quite lacking.
-
-Well, in the bug that affected me, it *was* found on mainline almost
-immediately.  It just took a bit longer than the extremely aggressive 7-day
-AUTOSEL period to be fixed.
-
-Oh sorry again, one example is not "evidence".  Please disregard my invalid
-non-evidence-based opinion.
-
-> I'm not sure how feedback in the form of "this sucks but I'm sure it
-> could be much better" is useful.
-
-I've already given you some specific suggestions.
-
-I can't force you to listen to them, of course.
-
-- Eric
+> - Eric
