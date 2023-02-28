@@ -2,94 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB1E36A540B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 09:02:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E576A54BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Feb 2023 09:50:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230424AbjB1ICP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 03:02:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46988 "EHLO
+        id S230450AbjB1IuQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 03:50:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230347AbjB1IBu (ORCPT
+        with ESMTP id S229786AbjB1IuO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 03:01:50 -0500
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A068D2BF32;
-        Tue, 28 Feb 2023 00:01:15 -0800 (PST)
-Received: from biznet-home.integral.gnuweeb.org (unknown [182.2.36.16])
-        by gnuweeb.org (Postfix) with ESMTPSA id F29B8831DA;
-        Tue, 28 Feb 2023 08:01:10 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1677571274;
-        bh=xUpQ0Xo2NE8oaRu79qOTI/d+TDpkm3C5IO6ZS1rJgEw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dskrUgXVrYPdXEFvsHlrNEygCz/KmoC03D5Tb7TNWTqmySshek9lolSNCkO8xRedE
-         857OfpJoLbd++j7EhouXB0iQK9CTBZWFjHWapttlPz1F1Wp6mlchToG+9sIeNvrsuu
-         JGj7oskiL3zEvKr4QGl/6GnuUckRZURfdGE9QmbDk1Xnjj6dIKcLdcYRjVVDVIfkWy
-         R4TXtGFd6Ge01i9y7HtiSNzkW+0RN5QV5PHdVtffucBTsB3pB3xtouIOW411lajrLw
-         QhRUn2vbIvR1WNFi7jtAkQ9D5t+5YdcBv+4ogD8ESiMCSL3MM3kf3dqVIagGrLqYXv
-         XcZTWMflGaTqQ==
-Date:   Tue, 28 Feb 2023 15:01:06 +0700
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        Linux Btrfs Mailing List <linux-btrfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Fsdevel Mailing List <linux-fsdevel@vger.kernel.org>,
-        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: Re: [RFC PATCH v1 0/6] Introducing `wq_cpu_set` mount option for
- btrfs
-Message-ID: <Y/20wsdwxx8OSw/+@biznet-home.integral.gnuweeb.org>
-References: <20230226160259.18354-1-ammarfaizi2@gnuweeb.org>
- <20230227221745.GI2825702@dread.disaster.area>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230227221745.GI2825702@dread.disaster.area>
-X-Bpl:  hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 28 Feb 2023 03:50:14 -0500
+Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E35C9900B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 00:50:06 -0800 (PST)
+Received: by mail-pf1-x449.google.com with SMTP id a25-20020a056a001d1900b005e82b3dc9f4so4773193pfx.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 00:50:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1677574206;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xdSAVrwCtkhEWC8GgYYqKMfIX8yBwrpfZDbmqtRyDyA=;
+        b=SOVV++5ZdqitZ36JKIv2fFMUIZWr2mRvM+1SYrMDqxcU64YKMcyXiXS7/JBzrMzVGR
+         a6lwTwArMZ5cvyX8urVSHUrUuVQOSfF42XGvNomA8Tvnp0LV06/wsJWl0LMz4W76Db5h
+         y3jUa5jifEAMLoWLF0Zr9sO3rNX27weBBlTgPK6tlMagy9lhu6URapPi6JL/AiWDq+/O
+         xpiOl8e/9NHV1lIOw2MgMwgF5M6/In9pOSbo61IAhJJdv/IGVjLeA7M8iH+2ekiFYHMp
+         H9Jqpmo7RoeMES/COvqdvDIkncurMcMLwWiPU0V57IM51nNJ+lMIpEBY3rU7HFrTSgtB
+         lU7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677574206;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xdSAVrwCtkhEWC8GgYYqKMfIX8yBwrpfZDbmqtRyDyA=;
+        b=xMDT0Hc96jeOyBBU7BXEILd0SPUnraWUKaLugf9Sf2EszlKJPsRBwIpCXOHYUcag71
+         iVe56vhVrDXy4YvyBW8iVWw0L8LP4HUJn3K8uJMtpPr2sjrL2Citt2cQb0CG2loCU3Cr
+         O21wg1v3ufAGlScOJrah8OWMIFyu4A4BCrEnmMZQfGB6R0Oop8uXQuKSnf+j1AWIa0R1
+         g/IuFfiFZ0oUixZCRVe8uNM5ftJEJVMuViN2eo16ppm4bGnGYt3e8bUHMchxZtZEfCTu
+         sNKGxVin7OFg6WVcNPXayNxGVEv//ZdpnGAJQzUA/z6101AJTmr2Bfc2Mdbb2ZmXOmyy
+         Sb+Q==
+X-Gm-Message-State: AO0yUKW62kTyWmHO1iTXiobe/5ixD2xJj2ChwbPcKFndKvig5WFvCoay
+        U+k1/1b7nBxEwDOpAmK5POQkVpbixjwbl/a0
+X-Google-Smtp-Source: AK7set9xyaSEGINDP0JdrxfWpmvgvG2OFkld3cb1qL57vscSNy7S0nejYo/cjvFVY+VnsY2ooCNyScP6qk2951NZ
+X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:2327])
+ (user=yosryahmed job=sendgmr) by 2002:a17:902:6bc5:b0:19c:fc1b:e600 with SMTP
+ id m5-20020a1709026bc500b0019cfc1be600mr684030plt.5.1677574206196; Tue, 28
+ Feb 2023 00:50:06 -0800 (PST)
+Date:   Tue, 28 Feb 2023 08:50:00 +0000
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.39.2.722.g9855ee24e9-goog
+Message-ID: <20230228085002.2592473-1-yosryahmed@google.com>
+Subject: [PATCH v1 0/2] Ignore non-LRU-based reclaim in memcg reclaim
+From:   Yosry Ahmed <yosryahmed@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        David Hildenbrand <david@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
+        Shakeel Butt <shakeelb@google.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 28, 2023 at 09:17:45AM +1100, Dave Chinner wrote:
-> This seems like the wrong model for setting cpu locality for
-> internal filesystem threads.
-> 
-> Users are used to controlling cpu sets and other locality behaviour
-> of a task with wrapper tools like numactl. Wrap th emount command
-> with a numactl command to limit the CPU set, then have the btrfs
-> fill_super() callback set the cpu mask for the work queues it
-> creates based on the cpu mask that has been set for the mount task.
-> 
-> That is, I think the model should be "inherit cpu mask from parent
-> task" rather than adding mount options. This model allows anything
-> that numactl can control (e.g. memory locality) to also influence
-> the filesystem default behaviour without having to add yet more
-> mount options in the future....
+Reclaimed pages through other means than LRU-based reclaim are tracked
+through reclaim_state in struct scan_control, which is stashed in
+current task_struct. These pages are added to the number of reclaimed
+pages through LRUs. For memcg reclaim, these pages generally cannot be
+linked to the memcg under reclaim and can cause an overestimated count
+of reclaimed pages. This short series tries to address that.
 
-Good idea on the tooling part.
+Patch 1 is just refactoring updating reclaim_state into a helper
+function, and renames reclaimed_slab to just reclaimed, with a comment
+describing its true purpose.
 
-I like the idea of using numactl to determine a proper CPU set. But
-users may also use /etc/fstab to mount their btrfs storage. In that
-case, using mount option is still handy.
+Patch 2 ignores pages reclaimed outside of LRU reclaim in memcg reclaim.
+The pages are uncharged anyway, so even if we end up under-reporting
+reclaimed pages we will still succeed in making progress during
+charging.
 
-Also, if we always inherit CPU mask from the parent task who calls the
-mount, it will be breaking the CPU affinity for old users who
-inadvertently call their mount cmd with random CPU mask.
+Do not let the diff stat trick you, patch 2 is a one-line change. All
+the rest is moving a couple of functions around and a huge comment :)
 
-We should keep the old behavior and allow user to opt in if they want
-to. Maybe something like:
+RFC -> v1:
+- Exported report_freed_pages in case XFS is built as a module (Matthew
+  Wilcox).
+- Renamed reclaimed_slab to reclaim in previously missed MGLRU code.
+- Refactored using reclaim_state to update sc->nr_reclaimed into a
+  helper and added an XL comment explaining why we ignore
+  reclaim_state->reclaimed in memcg reclaim (Johannes Weiner).
 
-   numactl -N 0 mount -t btrfs -o rw,wq_cpu_set=inherit /dev/bla bla
+Yosry Ahmed (2):
+  mm: vmscan: refactor updating reclaimed pages in reclaim_state
+  mm: vmscan: ignore non-LRU-based reclaim in memcg reclaim
+
+ fs/inode.c           |  3 +-
+ fs/xfs/xfs_buf.c     |  3 +-
+ include/linux/swap.h |  5 ++-
+ mm/slab.c            |  3 +-
+ mm/slob.c            |  6 ++--
+ mm/slub.c            |  5 ++-
+ mm/vmscan.c          | 79 +++++++++++++++++++++++++++++++++++---------
+ 7 files changed, 74 insertions(+), 30 deletions(-)
 
 -- 
-Ammar Faizi
+2.39.2.722.g9855ee24e9-goog
 
