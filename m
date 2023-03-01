@@ -2,139 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D27FE6A6A6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 11:06:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C95416A6A7E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 11:08:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229885AbjCAKGj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 05:06:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55122 "EHLO
+        id S229993AbjCAKIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 05:08:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229769AbjCAKGh (ORCPT
+        with ESMTP id S229824AbjCAKIU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 05:06:37 -0500
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3FE83B66A;
-        Wed,  1 Mar 2023 02:06:36 -0800 (PST)
-Received: from kwepemm600020.china.huawei.com (unknown [172.30.72.55])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4PRVF74H5fz16P0H;
-        Wed,  1 Mar 2023 18:03:55 +0800 (CST)
-Received: from localhost.localdomain (10.175.112.125) by
- kwepemm600020.china.huawei.com (7.193.23.147) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Wed, 1 Mar 2023 18:06:33 +0800
-From:   Peng Zhang <zhangpeng362@huawei.com>
-To:     <mcgrof@kernel.org>, <akpm@linux-foundation.org>,
-        <peterx@redhat.com>, <jthoughton@google.com>,
-        <Liam.Howlett@Oracle.com>, <viro@zeniv.linux.org.uk>,
-        <keescook@chromium.org>, <yzaikin@google.com>,
-        <wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        ZhangPeng <zhangpeng362@huawei.com>
-Subject: [PATCH] userfaultfd: move unprivileged_userfaultfd sysctl to its own file
-Date:   Wed, 1 Mar 2023 10:06:27 +0000
-Message-ID: <20230301100627.3505739-1-zhangpeng362@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 1 Mar 2023 05:08:20 -0500
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A7E1A648
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Mar 2023 02:08:19 -0800 (PST)
+Received: by mail-io1-f69.google.com with SMTP id c13-20020a0566022d0d00b0074cc4ed52d9so7929507iow.18
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Mar 2023 02:08:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TTSQYNOg9OZQxBXRQdwYpLcJKsFubqAo72NPGlg9CpM=;
+        b=O9wUYY/TzzcsviwB5BDW46x36XQs+O9J8MGd2CYPYGhyqK0eisZlKbEdqdJg1ey8lA
+         5q4A22/LwkJPbtBjOt/QPOAoZJFbCwrhZ6X14UqF3XI54HxhCgWCS5jrIxhs0ANZr0nO
+         kENWoEFNcDFCFdzj00Ws1eOZF/MH8iHn/BySJUWadq09EXrGgfqQaJn7L+UlXrkpR50j
+         3UcM03NUJ9y6lfbUIM2HUoPTOwRL03C5AiZtI34sNepzK4AKWZhOv0WbRkqaaBJn3PVZ
+         NEQ0c/0N0PzzHgqf7YyIwLKGIQ+gKRCo3xxkJQuASuuBr9vFbCTVW8PJata7NCwesvsm
+         UHgA==
+X-Gm-Message-State: AO0yUKVqiY8C8Y/QTwVrZv3dAGOAHDHuPfrhDCTIyQA2uJ4M6HhCC/hz
+        ObwTc73B3zGXbTpr4Dj4QfKsGmSaoO7VwZ3le/u4BIB0iGZL
+X-Google-Smtp-Source: AK7set+9+5X/rmiwzS5y9zd/polCDgC1mf5cojHMVCq+fi5kymlSfbpp3XXnKUbMuUR5F04OX2n/O6uA1Abba2gonsivBHeDDaEE
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.112.125]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600020.china.huawei.com (7.193.23.147)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6602:151:b0:745:c41a:8f0f with SMTP id
+ v17-20020a056602015100b00745c41a8f0fmr2577531iot.2.1677665299348; Wed, 01 Mar
+ 2023 02:08:19 -0800 (PST)
+Date:   Wed, 01 Mar 2023 02:08:19 -0800
+In-Reply-To: <00000000000052865105f5c8f2c8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003845ba05f5d3e416@google.com>
+Subject: Re: [syzbot] [ext4?] possible deadlock in jbd2_log_wait_commit
+From:   syzbot <syzbot+9d16c39efb5fade84574@syzkaller.appspotmail.com>
+To:     hdanton@sina.com, jack@suse.com, jack@suse.cz,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: ZhangPeng <zhangpeng362@huawei.com>
+syzbot has bisected this issue to:
 
-The sysctl_unprivileged_userfaultfd is part of userfaultfd, move it to
-its own file.
+commit 0813299c586b175d7edb25f56412c54b812d0379
+Author: Jan Kara <jack@suse.cz>
+Date:   Thu Jan 26 11:22:21 2023 +0000
 
-Signed-off-by: ZhangPeng <zhangpeng362@huawei.com>
----
- fs/userfaultfd.c              | 20 +++++++++++++++++++-
- include/linux/userfaultfd_k.h |  2 --
- kernel/sysctl.c               | 11 -----------
- 3 files changed, 19 insertions(+), 14 deletions(-)
+    ext4: Fix possible corruption when moving a directory
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 44d1ee429eb0..d01f803a6b11 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -32,7 +32,22 @@
- #include <linux/swapops.h>
- #include <linux/miscdevice.h>
- 
--int sysctl_unprivileged_userfaultfd __read_mostly;
-+static int sysctl_unprivileged_userfaultfd __read_mostly;
-+
-+#ifdef CONFIG_SYSCTL
-+static struct ctl_table vm_userfaultfd_table[] = {
-+	{
-+		.procname	= "unprivileged_userfaultfd",
-+		.data		= &sysctl_unprivileged_userfaultfd,
-+		.maxlen		= sizeof(sysctl_unprivileged_userfaultfd),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{ }
-+};
-+#endif
- 
- static struct kmem_cache *userfaultfd_ctx_cachep __read_mostly;
- 
-@@ -2178,6 +2193,9 @@ static int __init userfaultfd_init(void)
- 						0,
- 						SLAB_HWCACHE_ALIGN|SLAB_PANIC,
- 						init_once_userfaultfd_ctx);
-+#ifdef CONFIG_SYSCTL
-+	register_sysctl_init("vm", vm_userfaultfd_table);
-+#endif
- 	return 0;
- }
- __initcall(userfaultfd_init);
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index 3767f18114ef..fff49fec0258 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -36,8 +36,6 @@
- #define UFFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
- #define UFFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS)
- 
--extern int sysctl_unprivileged_userfaultfd;
--
- extern vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason);
- 
- /*
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 1c240d2c99bc..c14552a662ae 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2438,17 +2438,6 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= (void *)&mmap_rnd_compat_bits_min,
- 		.extra2		= (void *)&mmap_rnd_compat_bits_max,
- 	},
--#endif
--#ifdef CONFIG_USERFAULTFD
--	{
--		.procname	= "unprivileged_userfaultfd",
--		.data		= &sysctl_unprivileged_userfaultfd,
--		.maxlen		= sizeof(sysctl_unprivileged_userfaultfd),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
- #endif
- 	{ }
- };
--- 
-2.25.1
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14845d50c80000
+start commit:   e492250d5252 Merge tag 'pwm/for-6.3-rc1' of git://git.kern..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16845d50c80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12845d50c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f763d89e26d3d4c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d16c39efb5fade84574
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d96208c80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176d917f480000
 
+Reported-by: syzbot+9d16c39efb5fade84574@syzkaller.appspotmail.com
+Fixes: 0813299c586b ("ext4: Fix possible corruption when moving a directory")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
