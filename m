@@ -2,155 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16A656A7361
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 19:25:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36CD06A73F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 20:02:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbjCASZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 13:25:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60968 "EHLO
+        id S229718AbjCATCs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 14:02:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbjCASZG (ORCPT
+        with ESMTP id S229651AbjCATCq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 13:25:06 -0500
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05BE2234D3;
-        Wed,  1 Mar 2023 10:25:04 -0800 (PST)
-Received: by mail-lj1-x231.google.com with SMTP id j17so14946311ljq.11;
-        Wed, 01 Mar 2023 10:25:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fsmpw0D+wVLg2f4A5FKHFXC1PrzHNdWE6aaZ6Ob/5F4=;
-        b=N2o/TkrjobO7nq+2U7h5UDrD8Y9J9z7Q0sii+mudByIuIVHsElBLr//cdWp1p1HaTG
-         6fKoIwhqt/OOk41twF1duoi/mL9vIOIlOzZeaPYG169HKOQVtH0BDKgVkUkODWXt/1Cz
-         b2zQLU5TE1m8PBn3uuYEnNGJObNwcrJlyNqXQez+2kCeKR5kh5XjbPLXQZIly/vkgBnJ
-         n4SEciYTJ3gCqxCEq3UbWkYK5uQWrReneL8Y78/bRpAJ87Oq3Qj8+vVrtBSne0I4g5LC
-         aimdgDZ5DUZRsF4iIHym1ZenOSZ7oKVVzNrzAIevhQQo+buSh90k90i5PUYgKAEtY1Id
-         3eLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fsmpw0D+wVLg2f4A5FKHFXC1PrzHNdWE6aaZ6Ob/5F4=;
-        b=QuKxDR2MgtYLBiu5zRqMUcFSpkGXiftjqi1KqOJ3Ma8YNrtEMNjlwHPj6By8DTUwUY
-         cSNu5P1u74umfKKVUPmRsYaQvRjABcmgSD0/NLy9+xeVlx744v+Xd/pRdd5Q9XzKS4nr
-         nG9Nuj1XkOg2km2N4soY3F9DEjfAvwNzvSfEC/KP13Pcz7Y+mXNQaf4TbrTUPumLcgUk
-         IGuD33pfZvd2hjjFwF8evBIiuYL+N2lGpnuiGra1nTH5cLEuB+dLyC7/pSAfqLIMQqE7
-         /Nmygq6RyeGilWsn+L/4rDY3NqJZn9XppEL8Beg0Q88uN/abrqRTotfHuxXwqObwP+d+
-         L09w==
-X-Gm-Message-State: AO0yUKVdgNfxvYjK7Tjs5AqNPX6YSqWKXiU9y+eBSR1NjQlZC43Hdvxz
-        wQew9ARYXnw0txKzacBzEpCFkoTZgUThYteynaw=
-X-Google-Smtp-Source: AK7set/jnQmZcP1/IeHiFXMC1XzNjQw++DN85W3WS6+eHxNziEznxsqPkXt2Mk+r/ipuYy+XBPBxHx23WxvaLjY374I=
-X-Received: by 2002:a2e:a278:0:b0:295:9a96:a5fd with SMTP id
- k24-20020a2ea278000000b002959a96a5fdmr2358537ljm.5.1677695102024; Wed, 01 Mar
- 2023 10:25:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20230228223838.3794807-1-dhowells@redhat.com> <20230228223838.3794807-2-dhowells@redhat.com>
- <07171afd91dbd05b425d92e54f9832f9.pc@manguebit.com>
-In-Reply-To: <07171afd91dbd05b425d92e54f9832f9.pc@manguebit.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Wed, 1 Mar 2023 12:24:50 -0600
-Message-ID: <CAH2r5mtD7tF7UH0sXbvX2PASV5a63X0bmGhXK6KU3UJf+HB1zg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] cifs: Fix memory leak in direct I/O
-To:     Paulo Alcantara <pc@manguebit.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Tom Talpey <tom@talpey.com>,
-        Stefan Metzmacher <metze@samba.org>,
-        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
+        Wed, 1 Mar 2023 14:02:46 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E033497CE;
+        Wed,  1 Mar 2023 11:02:45 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 009E0CE1DED;
+        Wed,  1 Mar 2023 19:02:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16AAEC433D2;
+        Wed,  1 Mar 2023 19:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677697362;
+        bh=avy+R5ETeyQpbqcg7PcpMnPq76z3pQZJwJ1DmPY39xg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SQ+/Eb4Uy3c8s3cmt+E/31fydZrvRCInfPkQ5N8Q6Utop3W9Z411wHaGwneRCc0oH
+         nFGX2a4huLC4W6u0bPb4h83+Pu5sHzIUPe0zMGO7VUObNsZwemM3gQtGvdOLw662Vq
+         n/0I6L+pDEAotASMy1TkzFMDOTtKCd0fjAUQzM+T3DWV+g15MVeXp4za1e5EWO5q3G
+         jww3jXLGQB9tb9hfYbolY4+FIH+pfwWe2VZy0rKdsoQYaI2KWBBg3if8KPoFCR39vM
+         cisrlVGiQRuuYnRVzJaNYLDIUa32RN3cNPmItQ1rxtBerVay+0XzD1ohvZi6NrUxwO
+         3JG5CQAAbKdNg==
+Date:   Wed, 1 Mar 2023 19:02:30 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+3a3b5221ffafba7d5204@syzkaller.appspotmail.com>
+Cc:     jaegeuk@kernel.org, linux-fscrypt@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Murphy Zhou <jencce.kernel@gmail.com>,
-        Steve French <sfrench@samba.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Subject: Re: [syzbot] [fscrypt?] possible deadlock in fscrypt_initialize (2)
+Message-ID: <Y/+hRpwYSk4FT/oG@gmail.com>
+References: <0000000000002f1a6205f5d8096b@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000002f1a6205f5d8096b@google.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I also verified that this fixes the problem that Murphy pointed out - thx
+On Wed, Mar 01, 2023 at 07:04:59AM -0800, syzbot wrote:
+> -> #1 (fs_reclaim){+.+.}-{0:0}:
+>        __fs_reclaim_acquire mm/page_alloc.c:4716 [inline]
+>        fs_reclaim_acquire+0x11d/0x160 mm/page_alloc.c:4730
+>        might_alloc include/linux/sched/mm.h:271 [inline]
+>        slab_pre_alloc_hook mm/slab.h:728 [inline]
+>        slab_alloc_node mm/slub.c:3434 [inline]
+>        __kmem_cache_alloc_node+0x41/0x330 mm/slub.c:3491
+>        kmalloc_node_trace+0x21/0x60 mm/slab_common.c:1074
+>        kmalloc_node include/linux/slab.h:606 [inline]
+>        kzalloc_node include/linux/slab.h:731 [inline]
+>        mempool_create_node mm/mempool.c:272 [inline]
+>        mempool_create+0x52/0xc0 mm/mempool.c:261
+>        mempool_create_page_pool include/linux/mempool.h:112 [inline]
+>        fscrypt_initialize+0x8a/0xa0 fs/crypto/crypto.c:332
+>        fscrypt_setup_encryption_info+0xef/0xeb0 fs/crypto/keysetup.c:563
+>        fscrypt_get_encryption_info+0x375/0x450 fs/crypto/keysetup.c:668
+>        fscrypt_setup_filename+0x23c/0xec0 fs/crypto/fname.c:458
+>        ext4_fname_setup_filename+0x8c/0x110 fs/ext4/crypto.c:28
+>        ext4_find_entry+0x8c/0x140 fs/ext4/namei.c:1725
+>        ext4_rename+0x51d/0x26d0 fs/ext4/namei.c:3829
+>        ext4_rename2+0x1c7/0x270 fs/ext4/namei.c:4193
+>        vfs_rename+0xef6/0x17a0 fs/namei.c:4772
+>        do_renameat2+0xb62/0xc90 fs/namei.c:4923
+>        __do_sys_renameat2 fs/namei.c:4956 [inline]
+>        __se_sys_renameat2 fs/namei.c:4953 [inline]
+>        __ia32_sys_renameat2+0xe8/0x120 fs/namei.c:4953
+>        do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+>        __do_fast_syscall_32+0x65/0xf0 arch/x86/entry/common.c:178
+>        do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:203
+>        entry_SYSENTER_compat_after_hwframe+0x70/0x82
 
-On Wed, Mar 1, 2023 at 9:11=E2=80=AFAM Paulo Alcantara <pc@manguebit.com> w=
-rote:
->
-> David Howells <dhowells@redhat.com> writes:
->
-> > When __cifs_readv() and __cifs_writev() extract pages from a user-backe=
-d
-> > iterator into a BVEC-type iterator, they set ->bv_need_unpin to note
-> > whether they need to unpin the pages later.  However, in both cases the=
-y
-> > examine the BVEC-type iterator and not the source iterator - and so
-> > bv_need_unpin doesn't get set and the pages are leaked.
-> >
-> > I think this may be responsible for the generic/208 xfstest failing
-> > occasionally with:
-> >
-> >       WARNING: CPU: 0 PID: 3064 at mm/gup.c:218 try_grab_page+0x65/0x10=
-0
-> >       RIP: 0010:try_grab_page+0x65/0x100
-> >       follow_page_pte+0x1a7/0x570
-> >       __get_user_pages+0x1a2/0x650
-> >       __gup_longterm_locked+0xdc/0xb50
-> >       internal_get_user_pages_fast+0x17f/0x310
-> >       pin_user_pages_fast+0x46/0x60
-> >       iov_iter_extract_pages+0xc9/0x510
-> >       ? __kmalloc_large_node+0xb1/0x120
-> >       ? __kmalloc_node+0xbe/0x130
-> >       netfs_extract_user_iter+0xbf/0x200 [netfs]
-> >       __cifs_writev+0x150/0x330 [cifs]
-> >       vfs_write+0x2a8/0x3c0
-> >       ksys_pwrite64+0x65/0xa0
-> >
-> > with the page refcount going negative.  This is less unlikely than it s=
-eems
-> > because the page is being pinned, not simply got, and so the refcount
-> > increased by 1024 each time, and so only needs to be called around ~209=
-7152
-> > for the refcount to go negative.
-> >
-> > Further, the test program (aio-dio-invalidate-failure) uses a 32MiB sta=
-tic
-> > buffer and all the PTEs covering it refer to the same page because it's
-> > never written to.
-> >
-> > The warning in try_grab_page():
-> >
-> >       if (WARN_ON_ONCE(folio_ref_count(folio) <=3D 0))
-> >               return -ENOMEM;
-> >
-> > then trips and prevents us ever using the page again for DIO at least.
-> >
-> > Fixes: d08089f649a0 ("cifs: Change the I/O paths to use an iterator rat=
-her than a page list")
-> > Reported-by: Murphy Zhou <jencce.kernel@gmail.com>
-> > Link: https://lore.kernel.org/r/CAH2r5mvaTsJ---n=3D265a4zqRA7pP+o4MJ36W=
-CQUS6oPrOij8cw@mail.gmail.com
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > cc: Steve French <sfrench@samba.org>
-> > cc: Shyam Prasad N <nspmangalore@gmail.com>
-> > cc: Rohith Surabattula <rohiths.msft@gmail.com>
-> > cc: Paulo Alcantara <pc@cjr.nz>
-> > cc: Jeff Layton <jlayton@kernel.org>
-> > cc: linux-cifs@vger.kernel.org
-> > ---
-> >  fs/cifs/file.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> Reviewed-by: Paulo Alcantara (SUSE) <pc@manguebit.com>
+#syz dup: possible deadlock in start_this_handle (4)
 
-
-
---=20
-Thanks,
-
-Steve
+- Eric
