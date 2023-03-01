@@ -2,115 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04EC66A6541
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 03:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 146106A6547
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 03:06:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229579AbjCACFY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 21:05:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55612 "EHLO
+        id S229689AbjCACGk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 21:06:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbjCACFX (ORCPT
+        with ESMTP id S229516AbjCACGi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 21:05:23 -0500
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01DC932E7B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 18:05:19 -0800 (PST)
-Received: by mail-qt1-x82f.google.com with SMTP id z6so12916343qtv.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 18:05:19 -0800 (PST)
+        Tue, 28 Feb 2023 21:06:38 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19C4F36461;
+        Tue, 28 Feb 2023 18:06:36 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id p20so11247553plw.13;
+        Tue, 28 Feb 2023 18:06:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sladewatkins.net; s=googled;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20210112; t=1677636395;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TRjVj/Q9CuAHhxFzkvoIbUrL5/4PqItnxLip/wdIyLY=;
-        b=QKy1Pi9vufh5kuJhj7chiF0r1VdnM9l0V9AnDDv8maynJSleXR94/5jeKdGIHhZZFM
-         gdNZQtxggcXF0+wDO0TEJDY9922HjGRavvwZw/UtA8O+ox3rPsg8o0NnjZQVu6WLZ+6N
-         Y5e7iEhkrPPNu069+Z0G7sItZ7r5ROgIUuh0nG/zSHYW4vvBZXJM18pCgbdZwkajpu18
-         tudaothi8YpweyE/g/lpNa4z1CoheOtrrkh5g+hQVVZA1yDLhVuapLepe1LsqL0CAkQe
-         l4/QQ7SN87jYBMqWpygUZeLV3QmKfZXQ5OMZ0nrrmFPzMxuP0hwnsmT2wZQS2gBuC4Bp
-         m9ig==
+        bh=eDXpMPJh/Z2J5rlZzm59CNNEz409rvNJPJl6e9WZfsc=;
+        b=D1T7io8IYGIKl9EtEsH4K/ys8aAtGSaur2lCczYQmtxw6u7Wdj44pDKT2CzC1cCsGr
+         nC4Yu+2Sgpf+p/adsWCQkUVfFQigBGCebiOuf6biTcpsLjGszp3w53GgcgFkJFIM4flh
+         iOosdbuD7QNLY7earcPq0jXeCn5S/srp6lWFPVJg5XjebltcmSPLmw3xjUZRZsfLtxAH
+         zXkWia+8YepDoJZ2swL1beQwfQ6vHriRRqd5UmOdpeO7REZo1Nq+MXMI34VfLmviMIYA
+         vznCS0jzFGy9kQpcfbt7plJw+LLGeFj2kQ4dWA5VjKi7hF6J4TlVszFdsjiMf+CVyVix
+         3RXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20210112; t=1677636395;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TRjVj/Q9CuAHhxFzkvoIbUrL5/4PqItnxLip/wdIyLY=;
-        b=0nGOK+2+ToEY30DOQezz0+Q63tYC22B/elFYbBo4gt4djnkLpxgKqZIAZcGe9Jv0Ox
-         jB4k3+SAGXxsvdsm2nqaayWqtyGHXTE6SLry+KLJ+tG/gtyXm1c7uI3vLRw4VaWGJWob
-         QrkoiHWCczCNUPvFVfuxyZRvxKH7V6Dh4oJF9z1hZBtNFKztA4p91CSeCfOMv8iJRmBb
-         jOc8lbK73sFZN0RtOPpAstNsbCm9c9tlmd0KiGLVXAOQLUwj2XCMju3gmHfB/b7Qqh7R
-         LcwaSAxWZYKTQsEJHJusoR7+ble/UfD/DnBVptQFnbgX1IPjghcD6R63c/GCHyHKnm1K
-         vfpw==
-X-Gm-Message-State: AO0yUKWTeVmQY5H4dojj8XpzxV6z6ICMYdAQJWYv/0vXrlGOborWw4w0
-        Il21K2LA+b6bw7I903Ji2mJLYQ==
-X-Google-Smtp-Source: AK7set8kJFy9c93zY5Ha1M3Gbk6fwg1oP7ZowNJCK3vHB0c3OxBT2OVt/2LkxQb3R2xFpnpV7d2dhw==
-X-Received: by 2002:ac8:5f94:0:b0:3bf:d1c6:d375 with SMTP id j20-20020ac85f94000000b003bfd1c6d375mr8623747qta.36.1677636318964;
-        Tue, 28 Feb 2023 18:05:18 -0800 (PST)
-Received: from ghost.leviathan.sladewatkins.net (pool-108-44-32-49.albyny.fios.verizon.net. [108.44.32.49])
-        by smtp.gmail.com with ESMTPSA id a2-20020ac80002000000b003b9bca1e093sm7438872qtg.27.2023.02.28.18.05.17
+        bh=eDXpMPJh/Z2J5rlZzm59CNNEz409rvNJPJl6e9WZfsc=;
+        b=cafhmx1zt9CjH4w8Xu+FGJxHEaki5gAkJjXSxFNV3U2t0tgrOZKqDQA4tp4bad5fcd
+         WtvgdQQbbx9G1proGelB/pnZZ9QlueiSqrz74CjUWNyXFzH/VmB4huX9nkwFo8vwlFt1
+         gxZg60NJNQ6p7kkA+OQyyTN+vPm85unlgdj/tXq6ZNpZsby8VthdQI4eBsU8TIXgvzfc
+         +SK1KcyaLDZFfd915NAdN3qzs9/R/oa4m8+nQkjiNpCD9ajt9tz9nUsr0AWcwkGwtdPM
+         WK1RRTeNmvektFIii85fdNK02Y7+dUkLlvIz11jtE4EnHtg5QgY19jndkQ/8b6iJOr8v
+         gopQ==
+X-Gm-Message-State: AO0yUKVAvIGQxkXtBk/tmpskryMjKEyIIVciNlVfehArMq2X2G3TTc+e
+        5uSwnTcFHqZOL6AnSUN5/CU=
+X-Google-Smtp-Source: AK7set+7b3oV8KgUWH+qKZqKH02Oit6WbEUHfZYV2ViPss2MBCNZvZz20b49HrOheG6FUGqlFNRaQA==
+X-Received: by 2002:a17:90b:4a85:b0:234:9715:fe9a with SMTP id lp5-20020a17090b4a8500b002349715fe9amr5166286pjb.43.1677636395478;
+        Tue, 28 Feb 2023 18:06:35 -0800 (PST)
+Received: from [192.168.43.80] (subs02-180-214-232-27.three.co.id. [180.214.232.27])
+        by smtp.gmail.com with ESMTPSA id gn21-20020a17090ac79500b0022c0a05229fsm6772363pjb.41.2023.02.28.18.06.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Feb 2023 18:05:18 -0800 (PST)
-Message-ID: <8caf1c23-54e7-6357-29b0-4f7ddf8f16d2@sladewatkins.net>
-Date:   Tue, 28 Feb 2023 21:05:16 -0500
+        Tue, 28 Feb 2023 18:06:34 -0800 (PST)
+Message-ID: <ac60affc-ac5c-2ee7-c1a6-9be39e7b43c9@gmail.com>
+Date:   Wed, 1 Mar 2023 09:06:30 +0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: AUTOSEL process
+Subject: Re: [RFC PATCH v1 2/2] Documentation: btrfs: Document the influence
+ of wq_cpu_set to thread_pool option
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Btrfs Mailing List <linux-btrfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Fsdevel Mailing List <linux-fsdevel@vger.kernel.org>,
+        GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
+References: <20230226162639.20559-1-ammarfaizi2@gnuweeb.org>
+ <20230226162639.20559-3-ammarfaizi2@gnuweeb.org> <Y/wSXlp3vTEA6eo3@debian.me>
+ <Y/x/oD+byOu092fF@biznet-home.integral.gnuweeb.org>
 Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-References: <Y/y70zJj4kjOVfXa@sashalap> <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain> <Y/0U8tpNkgePu00M@sashalap>
- <Y/0i5pGYjrVw59Kk@gmail.com> <Y/0wMiOwoeLcFefc@sashalap>
- <Y/1LlA5WogOAPBNv@gmail.com> <Y/1em4ygHgSjIYau@sashalap>
- <Y/136zpJSWx96YEe@sol.localdomain>
- <CAOQ4uxietbePiWgw8aOZiZ+YT=5vYVdPH=ChnBkU_KCaHGv+1w@mail.gmail.com>
- <Y/3lV0P9h+FxmjyF@kroah.com>
-From:   Slade Watkins <srw@sladewatkins.net>
-In-Reply-To: <Y/3lV0P9h+FxmjyF@kroah.com>
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <Y/x/oD+byOu092fF@biznet-home.integral.gnuweeb.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-0.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_SORBS_WEB,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/28/23 06:28, Greg KH wrote:
->> But just so you know, as a maintainer, you have the option to request that
->> patches to your subsystem will not be selected by AUTOSEL and run your
->> own process to select, test and submit fixes to stable trees.
+On 2/27/23 17:02, Ammar Faizi wrote:
+> On Mon, Feb 27, 2023 at 09:15:58AM +0700, Bagas Sanjaya wrote:
+>> Why will the behavior be introduced in such future version (6.5)?
 > 
-> Yes, and simply put, that's the answer for any subsystem or maintainer
-> that does not want their patches picked using the AUTOSEL tool.
+> It's not like it has been staged for the next merge window. It's still
+> in an RFC state. The changes are not trivial and need further review.
 > 
-> The problem that the AUTOSEL tool is solving is real, we have whole
-> major subsystems where no patches are ever marked as "for stable" and so
-> real bugfixes are never backported properly.
-
-Yeah, I agree.
-
-And I'm throwing this out here [after having time to think about it due to an
-internet outage], but, would Cc'ing the patch's relevant subsystems on AUTOSEL
-emails help? This was sort of mentioned in this email[1] from Eric, and I
-think it _could_ help? I don't know, just something that crossed my mind earlier.
-
+> I don't know if it can hit the next merge window. As such, I picked a
+> long distance for this proposal. If it ends up going upstream sooner, we
+> can change this document.
 > 
-> In an ideal world, all maintainers would properly mark their patches for
-> stable backporting (as documented for the past 15+ years, with a cc:
-> stable tag, NOT a Fixes: tag), but we do not live in that world, and
-> hence, the need for the AUTOSEL work.
 
-(I wish we did... Oh well.)
+OK, thanks!
 
-[1] https://lore.kernel.org/stable/Y%2Fzswi91axMN8OsA@sol.localdomain/
+-- 
+An old man doll... just what I always wanted! - Clara
 
--- Slade
