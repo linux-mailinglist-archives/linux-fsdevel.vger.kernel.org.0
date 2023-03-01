@@ -2,59 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A1366A6413
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 01:13:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCC256A642C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 01:19:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbjCAANr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 19:13:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51354 "EHLO
+        id S229661AbjCAATg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 19:19:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229786AbjCAANm (ORCPT
+        with ESMTP id S229520AbjCAATf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 19:13:42 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1660037F02;
-        Tue, 28 Feb 2023 16:13:42 -0800 (PST)
+        Tue, 28 Feb 2023 19:19:35 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0458937B49;
+        Tue, 28 Feb 2023 16:19:31 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A8E8A61213;
-        Wed,  1 Mar 2023 00:13:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1CAE9C4339B;
-        Wed,  1 Mar 2023 00:13:41 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ACD9FB80EE4;
+        Wed,  1 Mar 2023 00:19:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36193C433EF;
+        Wed,  1 Mar 2023 00:19:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677629621;
-        bh=5cl1V6dcStcrN5DZsvs6IOJQhl7uablYH2MtKO1xfs0=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=F2OrRmr4VYgvpqyAqH8piry/Hm2360tdfIdaEWHz/+QtY9gMan1XCoQnn4Dry1smV
-         s+Y31Ntt2ovzTl9bFqXNedz+NQSnVbCVGc4+SznqbumE5vhE9oww29bVmxrcyBWqVo
-         MZGPbEEdJ+KhUtqWzQkjHupKdWre/tE5p8sLwHr8DIGex8WtjDI+sBBJvKcw93+TRH
-         mRXc00aS7Likx/W1Z/2Va9mmxxbldzFbNcsTHAWZxr4oPmJ5tucP0axKABxwOZ2piq
-         +X6+o4jCp8RGCQ4H2MsU3zUP0I7mM8E0WZjoTn96xAoCchljaMUVHJ81okIK6+sd2o
-         kPbkwa96RmZKg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 02E68C59A4C;
-        Wed,  1 Mar 2023 00:13:41 +0000 (UTC)
-Subject: Re: [GIT PULL] xfs: moar new code for 6.3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <167762780388.3622158.16184008545274432486.stg-ugh@magnolia>
-References: <167762780388.3622158.16184008545274432486.stg-ugh@magnolia>
-X-PR-Tracked-List-Id: <linux-xfs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <167762780388.3622158.16184008545274432486.stg-ugh@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.3-merge-4
-X-PR-Tracked-Commit-Id: 6e2985c938e8b765b3de299c561d87f98330c546
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c0927a7a5391f7d8e593e5e50ead7505a23cadf9
-Message-Id: <167762962100.26350.7173920358971274450.pr-tracker-bot@kernel.org>
-Date:   Wed, 01 Mar 2023 00:13:41 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     djwong@kernel.org, torvalds@linux-foundation.org,
-        allison.henderson@oracle.com, dchinner@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzbot+090ae72d552e6bd93cfe@syzkaller.appspotmail.com
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        s=k20201202; t=1677629968;
+        bh=Dp6YGll9fEq0i6/pi+lpCFF50nvydZGLY0lYQFlc3q8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KYYbEtIhVA3RWaS2xg2q0EfXodh4GOmNY4tvxi0H4nLyzYrhWFpOdD72CH8RSx/Fs
+         xo7oO1X6WU4IaJbbLF9mpPXsZu+uepDR7eZ9E/xOHQk6DduUX8NJD0LyPybDASGdD2
+         ZmHMwXFi3S0pfxzs27uWkvqVjDBKt5gIS93lfERCan2xoJndgBoXHTnXu0O3q6ZIqf
+         TLb8FfdJDyvbO+P7Qk4BDTTUMD9QMeQgjfcUeeptUmdVhOOmjdovvnLFJOVyrO+DRm
+         AvmmtMsDV1wJS+CJ+ESkqcokj8RzBbfrTr8zz0egPiFT7is9BVQjLWjH0qdqv2mB16
+         Tn7QJS4XudfSw==
+Date:   Tue, 28 Feb 2023 16:19:26 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+cf0b4280f19be4031cf2@syzkaller.appspotmail.com>
+Cc:     jack@suse.com, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu,
+        linux-fscrypt@vger.kernel.org
+Subject: Re: [syzbot] [ext4?] possible deadlock in start_this_handle (4)
+Message-ID: <Y/6aDmrx8Q9ob+Zi@sol.localdomain>
+References: <00000000000009d6c905f5cb6e07@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000009d6c905f5cb6e07@google.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,15 +55,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Tue, 28 Feb 2023 15:46:53 -0800:
+On Tue, Feb 28, 2023 at 04:02:36PM -0800, syzbot wrote:
+> -> #1 (fscrypt_init_mutex){+.+.}-{3:3}:
+>        __mutex_lock_common kernel/locking/mutex.c:603 [inline]
+>        __mutex_lock+0x12f/0x1350 kernel/locking/mutex.c:747
+>        fscrypt_initialize+0x40/0xa0 fs/crypto/crypto.c:326
+>        fscrypt_setup_encryption_info+0xef/0xeb0 fs/crypto/keysetup.c:563
+>        fscrypt_get_encryption_info+0x375/0x450 fs/crypto/keysetup.c:668
+>        fscrypt_setup_filename+0x23c/0xec0 fs/crypto/fname.c:458
+>        ext4_fname_setup_filename+0x8c/0x110 fs/ext4/crypto.c:28
+>        ext4_add_entry+0x3aa/0xe30 fs/ext4/namei.c:2380
+>        ext4_rename+0x1979/0x2620 fs/ext4/namei.c:3904
+>        ext4_rename2+0x1c7/0x270 fs/ext4/namei.c:4184
+>        vfs_rename+0xef6/0x17a0 fs/namei.c:4772
+>        do_renameat2+0xb62/0xc90 fs/namei.c:4923
+>        __do_sys_renameat2 fs/namei.c:4956 [inline]
+>        __se_sys_renameat2 fs/namei.c:4953 [inline]
+>        __ia32_sys_renameat2+0xe8/0x120 fs/namei.c:4953
+>        do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+>        __do_fast_syscall_32+0x65/0xf0 arch/x86/entry/common.c:178
+>        do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:203
+>        entry_SYSENTER_compat_after_hwframe+0x70/0x82
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.3-merge-4
+Interesting.  The above call stack is not supposed to be possible.  It says that
+the target directory's encryption key is being set up in the middle of
+ext4_rename().  But, fscrypt_prepare_rename() is supposed to return an error if
+either the source or target directory's key isn't set up already.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c0927a7a5391f7d8e593e5e50ead7505a23cadf9
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-Thank you!
+That's quite unfortunate :-(
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+- Eric
