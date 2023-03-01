@@ -2,108 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B11A6A6C82
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 13:43:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99C106A6C8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 13:45:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbjCAMnJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 07:43:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45080 "EHLO
+        id S229793AbjCAMpM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 07:45:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229659AbjCAMmx (ORCPT
+        with ESMTP id S229826AbjCAMpL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 07:42:53 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2730D103;
-        Wed,  1 Mar 2023 04:42:51 -0800 (PST)
+        Wed, 1 Mar 2023 07:45:11 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 288DE3B3C7;
+        Wed,  1 Mar 2023 04:45:08 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A994521A81;
-        Wed,  1 Mar 2023 12:42:49 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D5AC01FE14;
+        Wed,  1 Mar 2023 12:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1677674569; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1677674706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Lsv1DuXMnRsAXWN1/iMg2zCHw6wIP8mEYOtvYwGdNCU=;
-        b=hT6F6gfxlhGLyH4lFvA8/XrwgfMxpIpX7voqeaDOHacYJEQFoqCjdseLrVa9Gh1AIT2AyS
-        vv1wLQRR/w0VAdEX/8nt4V7Rvqy6lyJD/Yl3O3M0sUyyaPXsolE5kWTU6UTOrN9tNwUsd3
-        HJ0BkFcr+gDBISQkpOShRCC+nEmm2uU=
+        bh=8u/TFj2VjsuomX+EL4UF0htWY0lZS8tv6pZM1Zu/bL0=;
+        b=begXH1dQ7zKqSl1FXj1j8wl3l+1XvuMEeo1yZDAUm0fQirlxq1PEHHJUHcyV+P8fw43UKZ
+        XiNLG14WQErfJMauPwloKEBTrXx1gjnrWIMeGmORAYbuZBk3jppduz+R3pr/RYLp79c4Fk
+        dIWLm2ds1qqhJ+4mSJVzcSeGhoYu6F8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1677674569;
+        s=susede2_ed25519; t=1677674706;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Lsv1DuXMnRsAXWN1/iMg2zCHw6wIP8mEYOtvYwGdNCU=;
-        b=oUQI3h05w/jZ2zPFPeJWyGpmk6PwrqMi7r8hpPIT5cgG9ykEsmZ+ts6yEUTNVyFdM1ahd1
-        yV5ttFU9eeGODvAg==
+        bh=8u/TFj2VjsuomX+EL4UF0htWY0lZS8tv6pZM1Zu/bL0=;
+        b=QvU83tMMBI0GVx9uQQTeJUixJtzBYVKcMHTg5xcP2bpM+jc389D+lXsSBbvLuAfHBOHTr2
+        4OWAbna32NQsI3AQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9C22613A63;
-        Wed,  1 Mar 2023 12:42:49 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C3A2613A63;
+        Wed,  1 Mar 2023 12:45:06 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id GagLJklI/2PaeAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 01 Mar 2023 12:42:49 +0000
+        id WFO/L9JI/2PKegAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 01 Mar 2023 12:45:06 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 2877EA06E5; Wed,  1 Mar 2023 13:42:49 +0100 (CET)
-Date:   Wed, 1 Mar 2023 13:42:49 +0100
+        id 1D0D0A06E5; Wed,  1 Mar 2023 13:45:06 +0100 (CET)
+Date:   Wed, 1 Mar 2023 13:45:06 +0100
 From:   Jan Kara <jack@suse.cz>
-To:     syzbot <syzbot+9d16c39efb5fade84574@syzkaller.appspotmail.com>
-Cc:     hdanton@sina.com, jack@suse.com, jack@suse.cz,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] possible deadlock in jbd2_log_wait_commit
-Message-ID: <20230301124249.tj7oub3r35q5z3rx@quack3>
-References: <00000000000052865105f5c8f2c8@google.com>
- <0000000000003845ba05f5d3e416@google.com>
+To:     Palash Oswal <oswalpalash@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: KASAN: use-after-free Read in inode_cgwb_move_to_attached
+Message-ID: <20230301124506.4a7tuvlptyzkbpm3@quack3>
+References: <CAGyP=7fWFjioc7ok0SZ7kBNh6_MAk1keL4BKPvUNdmpGjnsZOA@mail.gmail.com>
+ <20230228124556.riiwwskbrh7lxogt@quack3>
+ <CAGyP=7f5mtWWhXF58-HaEmq=3Pba1EU83KKxwVXCe8tv9cARZQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0000000000003845ba05f5d3e416@google.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SORTED_RECIPS,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGyP=7f5mtWWhXF58-HaEmq=3Pba1EU83KKxwVXCe8tv9cARZQ@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 01-03-23 02:08:19, syzbot wrote:
-> syzbot has bisected this issue to:
+On Tue 28-02-23 22:33:32, Palash Oswal wrote:
+> On Tue, Feb 28, 2023 at 4:45 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Tue 21-02-23 21:09:23, Palash Oswal wrote:
+> > > Hello,
+> > > I found the following issue using syzkaller on:
+> > > HEAD commit : e60276b8c11ab4a8be23807bc67b04
+> > > 8cfb937dfa (v6.0.8)
+> > > git tree: stable
+> > >
+> > > C Reproducer : https://gist.github.com/oswalpalash/bed0eba75def3cdd34a285428e9bcdc4
+> > > Kernel .config :
+> > > https://gist.github.com/oswalpalash/0962c70d774e5ec736a047bba917cecb
+> > >
+> > > Console log :
+> > >
+> > > ==================================================================
+> > > BUG: KASAN: use-after-free in __list_del_entry_valid+0xf2/0x110
+> > > Read of size 8 at addr ffff8880273c4358 by task syz-executor.1/6475
+> >
+> > OK, so FAT inode was on writeback list (through inode->i_io_list) when
+> > being freed. This should be fixed by commit 4e3c51f4e805 ("fs: do not
+> > update freeing inode i_io_list"). Can you check please?
+> >
+> >                                                                 Honza
+> >
 > 
-> commit 0813299c586b175d7edb25f56412c54b812d0379
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Thu Jan 26 11:22:21 2023 +0000
-> 
->     ext4: Fix possible corruption when moving a directory
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14845d50c80000
-> start commit:   e492250d5252 Merge tag 'pwm/for-6.3-rc1' of git://git.kern..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=16845d50c80000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12845d50c80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f763d89e26d3d4c4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9d16c39efb5fade84574
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d96208c80000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176d917f480000
-> 
-> Reported-by: syzbot+9d16c39efb5fade84574@syzkaller.appspotmail.com
-> Fixes: 0813299c586b ("ext4: Fix possible corruption when moving a directory")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> I have verified that the commit fixes the bug. Tested against v6.0.11
+> on the stable tree.
 
-Drat, yeah, lockdep is actually right. We should not be grabbing i_rwsem
-while having transaction started in ext4_rename(). I'm somewhat surprised
-we didn't hit this lockdep warning earlier during the testing. So we need
-to move the locking earlier in ext4_rename(). I'll send a patch...
+Thanks for testing!
 
 								Honza
-
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
