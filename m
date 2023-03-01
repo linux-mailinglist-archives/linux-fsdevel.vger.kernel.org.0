@@ -2,82 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7895A6A71F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 18:20:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 611386A7331
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 19:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229715AbjCARU1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 12:20:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48958 "EHLO
+        id S230122AbjCASOG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 13:14:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbjCARU0 (ORCPT
+        with ESMTP id S230119AbjCASOF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 12:20:26 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E1612F78A;
-        Wed,  1 Mar 2023 09:20:25 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id o12so56766362edb.9;
-        Wed, 01 Mar 2023 09:20:25 -0800 (PST)
+        Wed, 1 Mar 2023 13:14:05 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F7B442BD5
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Mar 2023 10:13:59 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id o15so54988079edr.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Mar 2023 10:13:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PlUwDtADYHSrJPyoxSgDxKr9/apm1LHvBX2UdWMjnq8=;
-        b=kmY8+0jd0UO04TZ9LYpBCyQY03De4TqTrGm8NPfSf0vaW64b45be7w3o4md6WrYQzD
-         Nk6yyZvFj30UxurRBN3V+nafrvvrx3pvJOA6uGD4dKM4/Gosc9LXPYIpxLk+e8oI172a
-         epfY8bLQElCLQBG/G/D3aNXPmrvDqlpag/b383C6TarUk/MiYMkzu79s8/llnCqhyT5O
-         D0DyTUGP2J+daMOT78INprXwotujvJQOezk6R/D/0mdukTm1U+kZJaccajHohx1R8aHN
-         VoTMHHUgoDJ4yGdV/Y8WXYHEXZdPj2ytqmVAF6EIkcKvd8pySzX9ILVOqDzYmD/P2JvV
-         G4Pw==
+        d=linux-foundation.org; s=google; t=1677694437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6/asb3PYi302CsLXOXWpBQTKIfyQX2PG5Qj/oLUdH5k=;
+        b=VcEiiaTfxPmiqwXoecvpahehdctu63BLGW4saFO/UrTcs1beWBHcWiztIw4qeMLbtN
+         UDhVjdTYZ+U8fsUpZKjsT4dWBeA5xIObDM5vZ0oqdg6xFxGAE/ONB29DGc4bgwj08Yi/
+         pe4O9bVEPFq8625OTiGntkymQ9EyiAsiFSpUs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PlUwDtADYHSrJPyoxSgDxKr9/apm1LHvBX2UdWMjnq8=;
-        b=YisyumKbbQ2QZXLGgjVKmcIonM5PvCm59ht8aeiw3qhiGvEM2Zb9FbWAzGIGA83eNK
-         81pn7xCLe+lEpQGppYmwf8Qh47UUiUOY+9TXk5pLf7vCiSr3lOG7cMZn+Attp0ktRIJp
-         TCrJYViUXdgNXnFKPsOicdgyrc0QSD/qvkei0MaObAqi+pp0oQnMEDls0dieaYouYEfQ
-         oSZPv5dNjN1ophFV5PzRhJVwEC58C/9VND0BtVYatJ6tcnmiZavJ6g/87BrgUW/3OaE/
-         /XUhWG9oHW4NuJOb2jv1+4gN+IgqPbDnDEZOOpqr7u0aQAcgNaTRPYvVxG1i6f3rxzpC
-         LMOw==
-X-Gm-Message-State: AO0yUKV4qbdGCq9lZPAcYZrISPxuE0joQKyTo6iECaq2wzRC1JJO9g/6
-        +H0F0HDiF4dSdI2ttMfvVD8=
-X-Google-Smtp-Source: AK7set9ce/Lg09giRLFyJlygFLDRlK0AJJHwRCRI7xF7/8PjhdMqFjMHxUup6B/jZkvyjMraBN7X5w==
-X-Received: by 2002:a17:907:2ce6:b0:8ec:439f:18fb with SMTP id hz6-20020a1709072ce600b008ec439f18fbmr7719468ejc.29.1677691223898;
-        Wed, 01 Mar 2023 09:20:23 -0800 (PST)
-Received: from [127.0.1.1] (i130160.upc-i.chello.nl. [62.195.130.160])
-        by smtp.googlemail.com with ESMTPSA id oy26-20020a170907105a00b008b133f9b33dsm5894826ejb.169.2023.03.01.09.20.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Mar 2023 09:20:23 -0800 (PST)
-From:   Jakob Koschel <jkl820.git@gmail.com>
-Date:   Wed, 01 Mar 2023 18:20:18 +0100
-Subject: [PATCH] locks: avoid usage of list iterator after loop in
- generic_delete_lease()
+        d=1e100.net; s=20210112; t=1677694437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6/asb3PYi302CsLXOXWpBQTKIfyQX2PG5Qj/oLUdH5k=;
+        b=Rgm4LpzJb9GhfcBba6l62jx6K4u3ej8uOtfXWsYaMPKVC8IThpW46PFo1EpXf6U6Hm
+         iQEKvCezJY0iwMCwnTQChRvGzASLYLvkfpHNjvRJO7EeATgJlK72HzSPulyorDWiVCm9
+         ezu0Rk0AC6w8eNPIPE4gRjfxE6GEmD8ET/S9MjMlu3w/hGu46wdvBk6GPb0x6rYHTR1Y
+         69FkS6RtrYhdf/alyrJcCNofhfx5zSYzS0MaDpjuNqdmny+p/uHoDWYe6Mxw4lzPKVrr
+         yIwQL4hHqz+aMfeX7A+npnP6kGdVZzT4HzkBiJr35LzjjENJlN70SaDNBU7y74x6T78M
+         2Owg==
+X-Gm-Message-State: AO0yUKXu9UmmlXyZjkVbKAFkQEvwqwITyA0RUwgiRLZ+z2bKq3HQlvqW
+        t032VbKhVFT1V6t9+wiwii1wJ4ELBoOJfGV8c7NiZg==
+X-Google-Smtp-Source: AK7set8qze8W8r2FkuMrEXCQeR+B4towBGfA7FC+d0zKMpVvu5VDrLjIZ29YodGG9bTx4i0DhYHMVA==
+X-Received: by 2002:aa7:c9d9:0:b0:4ab:1625:908d with SMTP id i25-20020aa7c9d9000000b004ab1625908dmr8249956edt.16.1677694437606;
+        Wed, 01 Mar 2023 10:13:57 -0800 (PST)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id u7-20020a50d507000000b004af759bc79asm5964358edi.7.2023.03.01.10.13.56
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Mar 2023 10:13:57 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id ck15so57715882edb.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Mar 2023 10:13:56 -0800 (PST)
+X-Received: by 2002:a17:906:2ec8:b0:877:747e:f076 with SMTP id
+ s8-20020a1709062ec800b00877747ef076mr3586877eji.0.1677694436076; Wed, 01 Mar
+ 2023 10:13:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230301-locks-avoid-iter-after-loop-v1-1-4d0529b03dc7@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAFGJ/2MC/x2NwQrCMBBEf6Xs2YU0RUF/RTxsNhu7WJOSlSKU/
- ruJl4HHDG92MKkqBrdhhyqbmpbcYDwNwDPlp6DGxuCdn9zkRlwKvwxpKxpRP1KRUs+llBUdX5h
- dCtFfz9AMgUwwVMo8d8ebrE17sVZJ+v3f3h/H8QOj02jQhgAAAA==
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pietro Borrello <borrello@diag.uniroma1.it>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        "Bos, H.J." <h.j.bos@vu.nl>, Jakob Koschel <jkl820.git@gmail.com>
-X-Mailer: b4 0.12.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1677691223; l=1254;
- i=jkl820.git@gmail.com; s=20230112; h=from:subject:message-id;
- bh=s8p60stXlwjtVT6XiuBNRX2nbAh1LO4y0YMOQFFePMk=;
- b=fYRttOSj5AURDfVgB1PTV4Wf4V5JihCeOaPgiew3txrpcAzyUBZeXITuLbn0t9YBgzoJbXSeCnL5
- wI62wyprA6nL2zskNxukFdOcdqBo22Kl68xaAvBOAGr2rP+bYAbA
-X-Developer-Key: i=jkl820.git@gmail.com; a=ed25519;
- pk=rcRpP90oZXet9udPj+2yOibfz31aYv8tpf0+ZYOQhyA=
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+References: <20230125155557.37816-1-mjguzik@gmail.com> <CAHk-=wjz8O4XX=Mg6cv5Rq9w9877Xd4DCz5jk0onVKLnzzaPTA@mail.gmail.com>
+ <97465c08-7b6e-7fd7-488d-0f677ac22f81@schaufler-ca.com> <CAGudoHEV_aNymUq6v9Trn_ZRU45TL12AVXqQeV2kA90FuawxiQ@mail.gmail.com>
+ <CAHk-=wgCMTUV=5aE-V8WjxuCME8LTBh-8k5XTPKz6oRXJ_sgTg@mail.gmail.com>
+ <CAHk-=whwBb5Ws8x6aDV9u6CzMBQmsAtzF+UjWRnoe9xZxuW=qQ@mail.gmail.com>
+ <CAGudoHH-u3KkwSsrSQPGKmhL9uke4HEL8U1Z+aU9etk9-PmdQQ@mail.gmail.com> <CAHk-=wgsVFvGrmbedVgpUjUJaRTMVxvGkr-dcR7s30S_MyDZfA@mail.gmail.com>
+In-Reply-To: <CAHk-=wgsVFvGrmbedVgpUjUJaRTMVxvGkr-dcR7s30S_MyDZfA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 1 Mar 2023 10:13:39 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whmk3EnmFU6XbLjMZW_ZBU8UJGDEyua7m5Aa3pmgtVQRg@mail.gmail.com>
+Message-ID: <CAHk-=whmk3EnmFU6XbLjMZW_ZBU8UJGDEyua7m5Aa3pmgtVQRg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] capability: add cap_isidentical
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,39 +82,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-'victim' and 'fl' are ensured to be equal at this point. For consistency
-both should use the same variable.
+On Tue, Feb 28, 2023 at 1:29=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> That said, the old code was worse. The only redeeming feature of the
+> old code was that "nobody has touched it in ages", so it was at least
+> stable.
 
-Additionally, Linus proposed to avoid any use of the list iterator
-variable after the loop, in the attempt to move the list iterator
-variable declaration into the marcro to avoid any potential misuse after
-the loop [1].
+Bah. I've walked through that patch something like ten times now, and
+decided that there's no way it breaks anything. Famous last words.
 
-Link: https://lore.kernel.org/all/CAHk-=wgRr_D8CB-D9Kg-c=EHreAsk5SqXPwr9Y7k9sA6cWXJ6w@mail.gmail.com/ [1]
-Signed-off-by: Jakob Koschel <jkl820.git@gmail.com>
----
- fs/locks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It also means that I don't want to look at that ugly old code when I
+have the fix for it all, so I just moved it over from my experimental
+tree to the main tree, since it's still the merge window.
 
-diff --git a/fs/locks.c b/fs/locks.c
-index 66b4eef09db5..3f46d21a95f4 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -1841,7 +1841,7 @@ static int generic_delete_lease(struct file *filp, void *owner)
- 	}
- 	trace_generic_delete_lease(inode, victim);
- 	if (victim)
--		error = fl->fl_lmops->lm_change(victim, F_UNLCK, &dispose);
-+		error = victim->fl_lmops->lm_change(victim, F_UNLCK, &dispose);
- 	spin_unlock(&ctx->flc_lock);
- 	percpu_up_read(&file_rwsem);
- 	locks_dispose_list(&dispose);
+Quod licet Iovi, non licet bovi, or something.
 
----
-base-commit: c0927a7a5391f7d8e593e5e50ead7505a23cadf9
-change-id: 20230301-locks-avoid-iter-after-loop-0c6cc0fbd295
-
-Best regards,
--- 
-Jakob Koschel <jkl820.git@gmail.com>
-
+                 Linus
