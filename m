@@ -2,80 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C95416A6A7E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 11:08:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 539416A6AD1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 11:31:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbjCAKIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 05:08:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56918 "EHLO
+        id S229786AbjCAKb2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 05:31:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbjCAKIU (ORCPT
+        with ESMTP id S229659AbjCAKbZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 05:08:20 -0500
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A7E1A648
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Mar 2023 02:08:19 -0800 (PST)
-Received: by mail-io1-f69.google.com with SMTP id c13-20020a0566022d0d00b0074cc4ed52d9so7929507iow.18
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Mar 2023 02:08:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTSQYNOg9OZQxBXRQdwYpLcJKsFubqAo72NPGlg9CpM=;
-        b=O9wUYY/TzzcsviwB5BDW46x36XQs+O9J8MGd2CYPYGhyqK0eisZlKbEdqdJg1ey8lA
-         5q4A22/LwkJPbtBjOt/QPOAoZJFbCwrhZ6X14UqF3XI54HxhCgWCS5jrIxhs0ANZr0nO
-         kENWoEFNcDFCFdzj00Ws1eOZF/MH8iHn/BySJUWadq09EXrGgfqQaJn7L+UlXrkpR50j
-         3UcM03NUJ9y6lfbUIM2HUoPTOwRL03C5AiZtI34sNepzK4AKWZhOv0WbRkqaaBJn3PVZ
-         NEQ0c/0N0PzzHgqf7YyIwLKGIQ+gKRCo3xxkJQuASuuBr9vFbCTVW8PJata7NCwesvsm
-         UHgA==
-X-Gm-Message-State: AO0yUKVqiY8C8Y/QTwVrZv3dAGOAHDHuPfrhDCTIyQA2uJ4M6HhCC/hz
-        ObwTc73B3zGXbTpr4Dj4QfKsGmSaoO7VwZ3le/u4BIB0iGZL
-X-Google-Smtp-Source: AK7set+9+5X/rmiwzS5y9zd/polCDgC1mf5cojHMVCq+fi5kymlSfbpp3XXnKUbMuUR5F04OX2n/O6uA1Abba2gonsivBHeDDaEE
+        Wed, 1 Mar 2023 05:31:25 -0500
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F712A992;
+        Wed,  1 Mar 2023 02:31:23 -0800 (PST)
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1pXJk0-0000Cp-Sh; Wed, 01 Mar 2023 11:31:20 +0100
+Message-ID: <bbfb9ea8-5cf2-66fe-e711-9d8baf4863e6@leemhuis.info>
+Date:   Wed, 1 Mar 2023 11:31:20 +0100
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:151:b0:745:c41a:8f0f with SMTP id
- v17-20020a056602015100b00745c41a8f0fmr2577531iot.2.1677665299348; Wed, 01 Mar
- 2023 02:08:19 -0800 (PST)
-Date:   Wed, 01 Mar 2023 02:08:19 -0800
-In-Reply-To: <00000000000052865105f5c8f2c8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003845ba05f5d3e416@google.com>
-Subject: Re: [syzbot] [ext4?] possible deadlock in jbd2_log_wait_commit
-From:   syzbot <syzbot+9d16c39efb5fade84574@syzkaller.appspotmail.com>
-To:     hdanton@sina.com, jack@suse.com, jack@suse.cz,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Content-Language: en-US, de-DE
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+References: <Y/y70zJj4kjOVfXa@sashalap> <Y/zswi91axMN8OsA@sol.localdomain>
+ <Y/zxKOBTLXFjSVyI@sol.localdomain> <Y/0U8tpNkgePu00M@sashalap>
+ <Y/0i5pGYjrVw59Kk@gmail.com> <Y/0wMiOwoeLcFefc@sashalap>
+ <Y/1LlA5WogOAPBNv@gmail.com> <Y/1em4ygHgSjIYau@sashalap>
+ <Y/136zpJSWx96YEe@sol.localdomain>
+ <CAOQ4uxietbePiWgw8aOZiZ+YT=5vYVdPH=ChnBkU_KCaHGv+1w@mail.gmail.com>
+ <Y/3lV0P9h+FxmjyF@kroah.com>
+From:   Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: AUTOSEL process
+In-Reply-To: <Y/3lV0P9h+FxmjyF@kroah.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1677666683;5674a027;
+X-HE-SMSGID: 1pXJk0-0000Cp-Sh
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On 28.02.23 12:28, Greg KH wrote:
+> On Tue, Feb 28, 2023 at 12:41:07PM +0200, Amir Goldstein wrote:
+>>>> I'm not sure how feedback in the form of "this sucks but I'm sure it
+>>>> could be much better" is useful.
+>>> I've already given you some specific suggestions.
+>>> I can't force you to listen to them, of course.
+>>
+>> As you probably know, this is not the first time that the subject of the
+>> AUTOSEL process has been discussed.
+>> Here is one example from fsdevel with a few other suggestions [1].
+>>
+>> But just so you know, as a maintainer, you have the option to request that
+>> patches to your subsystem will not be selected by AUTOSEL and run your
+>> own process to select, test and submit fixes to stable trees.
+> [...]
+> In an ideal world, all maintainers would properly mark their patches for
+> stable backporting (as documented for the past 15+ years, with a cc:
+> stable tag, NOT a Fixes: tag), but we do not live in that world, and
+> hence, the need for the AUTOSEL work.
 
-commit 0813299c586b175d7edb25f56412c54b812d0379
-Author: Jan Kara <jack@suse.cz>
-Date:   Thu Jan 26 11:22:21 2023 +0000
+Well, we could do something to get a bit closer to the ideal world:
+teach checkpatch.pl to help developers do the right thing in the first
+place. That's what I'm trying to do right now to make them add Link:
+tags more often (https://git.kernel.org/torvalds/c/d7f1d71e5ef6 ), as my
+regression tracking efforts heavily rely on them. Shouldn't be too hard
+to add a simple check along the lines of "this change has a Fixes: tag;
+either CC stable or do <foo> to suppress this warning" (<foo> could be a
+"nostable" tag or something else that we'd need to agree on first).
 
-    ext4: Fix possible corruption when moving a directory
+In an ideal we'd maybe even have a "checkpatch bot" that looks at all
+patches posted and sends feedback to the list if it finds something to
+improve. Sure, some (a lot?) of what AUTOSEL does relies on data that is
+only available after a change was merged, but maybe some is available
+earlier already.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14845d50c80000
-start commit:   e492250d5252 Merge tag 'pwm/for-6.3-rc1' of git://git.kern..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16845d50c80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12845d50c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f763d89e26d3d4c4
-dashboard link: https://syzkaller.appspot.com/bug?extid=9d16c39efb5fade84574
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d96208c80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176d917f480000
-
-Reported-by: syzbot+9d16c39efb5fade84574@syzkaller.appspotmail.com
-Fixes: 0813299c586b ("ext4: Fix possible corruption when moving a directory")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Ciao, Thorsten
