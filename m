@@ -2,181 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5088F6A685D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 08:45:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE1706A68AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 09:17:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229748AbjCAHpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 02:45:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52098 "EHLO
+        id S229866AbjCAIRN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 03:17:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbjCAHpG (ORCPT
+        with ESMTP id S229862AbjCAIRL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 02:45:06 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCF4B23116
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 23:44:43 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id q31-20020a17090a17a200b0023750b69614so12122583pja.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 23:44:43 -0800 (PST)
+        Wed, 1 Mar 2023 03:17:11 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E201439CD2;
+        Wed,  1 Mar 2023 00:16:50 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id da10so50561854edb.3;
+        Wed, 01 Mar 2023 00:16:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1677656683;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jyS0C1HTG0tduNh0L7kbfvu/lzkj/LLnrbNqiht2ZzQ=;
-        b=K9cAlseifIqk8MiACuzD0FGxhZR1aO2o9ZI8Os17fFA2mqSVr3dKiYJTt/IYZ7fl+u
-         ph0RgCHRQsX5j+/PFetqA0UZzNvofS3/Dv1itfS9vNFho8Msr4EOmv5uvqKjH1sJFitg
-         Ipq/ff3fRNu/rOEERARAji3c2kKrBUgRcEYBz7Buj0+tkckiZI7xOrVGkcLVAknLO40H
-         vCCp4Z3R2BUOda+siG2WGrSE18a9VgvjpH5HfaXJ9eZppUpXcgb1JNeNbkPuxmKYXXhT
-         1EFNgd6CjRvv3aO7iChwxCFKN+F5lgSTXXEWRJ1vGeQLQJ9bSx29v/3TXgIrlKhQA3az
-         sQrw==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TSqaYlQUZddNvmjmRwWT7Q43mvIxxx7/x0n679k+Rr4=;
+        b=Ncv5Q6I+853ziEJ9cFR2KIze1sEPOYFcl2bIAQzHg0HwDZOr++UC6svB8xjQwjP6KD
+         ZDzuuASX1qYHLpto1FnMJO1X9UB/QXfEVb42wZWfmjfKGt1shD/+d+tYkZmJGm9LLThi
+         9yeZwNTySbYwQOvXxFygGSc6LTPepJ0VNgjeEGr4G4j2U1UY4uuSwmVhH++ahsxuEeD9
+         B0FjuskEUT2RE7VVrSlA+4J4+886/9AbOur2Th4zo3fPx0ZEMNqjYRtbhXV6jVYuwGq0
+         Fn7sMh8/3PN0oiwrI8wTtaq5VRdoTjPRiZTmGn7L8bu8OS6lueukVupNM9QpQ89W3yYx
+         Cptg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677656683;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jyS0C1HTG0tduNh0L7kbfvu/lzkj/LLnrbNqiht2ZzQ=;
-        b=K1w4DWiwJrzrrn2qD1dugolOFN6lP6gpM19aaZW72VvCCWfCSqRoerCm3ZdWN+Hxta
-         nxT7Bo4Bv4M0a7phCAtcb3tQuAChtKs0D/oPlMH2RrKRd6balsDNJrQefMz0yjZmQnUP
-         ILev9qW8JbVRffWzIB95HFj0kG8PPHcEoCI2DDzXz/AzrM4kQz0VcqBu/x8xgnsMzP1y
-         Dw6sVUV2/fS6EuQ5/Kq/9kgwXL+sylwT1lXbRmlreZgUN9ykpQjrpTlCma82wdwIPlWj
-         8NWTixRU9l/PedCC/1US4JQbRBPHZemLUO5nWkB9vX8KmjOuMjzZPA8O+EyColXJ0h7D
-         V6OA==
-X-Gm-Message-State: AO0yUKWPPc9QGLnmr36GfepZsIrImyYSMME7hQrSPhFxqqUQKuXmYtLO
-        DDEr/qsUfP6z5TavyDaPaMXGIw==
-X-Google-Smtp-Source: AK7set/RvUa8pCt4yFC8gzSIzxh9lcNDOWsMuNnBPKvNbcp5EZJSGPNF8q5pVqT9V7lAOUXoxsmxcQ==
-X-Received: by 2002:a17:903:2447:b0:19c:c9da:a62e with SMTP id l7-20020a170903244700b0019cc9daa62emr6447929pls.54.1677656683026;
-        Tue, 28 Feb 2023 23:44:43 -0800 (PST)
-Received: from [10.3.144.50] ([61.213.176.8])
-        by smtp.gmail.com with ESMTPSA id p12-20020a170902eacc00b0019a6cce2060sm7663725pld.57.2023.02.28.23.44.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Feb 2023 23:44:42 -0800 (PST)
-Message-ID: <1c8b966e-8208-e9c9-c75b-9ebf2a138059@bytedance.com>
-Date:   Wed, 1 Mar 2023 15:44:37 +0800
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TSqaYlQUZddNvmjmRwWT7Q43mvIxxx7/x0n679k+Rr4=;
+        b=vzwveZTFE4EQILtLvP5UdAyjJuF8vfASr8b6MkOaDL7PA4GHhIUsWVdN2d1xvc+EH8
+         Zmhxp1TWVs9/RMSaT3SBvbtalz6Ja9fa64iphyEIev18WLxE1+v9lpiiWxws8lzr8mDK
+         tZZjuG7OUPqCF3c2SPeUR1XezlvwocOuh0+o9Y0AQr9vtQNC7pjj2vVEIcy7eEzSygg+
+         t1N/wlAlZ/goNHzikww+QMOfliUnifXijdg2aOOEEnElFdyVKWWXerfZeuZhSfJ73WWU
+         6izuWtL2/J9hk1VopifXGbLC6HlLVkOOJVPViTFVnP6Lw8cptgS6uBRUmz6Jj/1LR1OY
+         fCUw==
+X-Gm-Message-State: AO0yUKXgQPwNYIq3H3rVsKtYTn2hOVC/epRyxLQmzc7yZoZMmoMEbKkY
+        1CcxKKLv5kJdU+5bseJSy1U=
+X-Google-Smtp-Source: AK7set95o6sHbzdX6KfRuUyx6EBQOue22QgQbKFPOQh/jgQcGhdkQTxLsOIsP3/Ms8wfhJY9TGhQew==
+X-Received: by 2002:a17:907:2057:b0:8b1:319c:c29e with SMTP id pg23-20020a170907205700b008b1319cc29emr6438580ejb.74.1677658608959;
+        Wed, 01 Mar 2023 00:16:48 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id v13-20020a1709064e8d00b008e3bf17fb2asm5578521eju.19.2023.03.01.00.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Mar 2023 00:16:48 -0800 (PST)
+From:   Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date:   Wed, 1 Mar 2023 09:16:46 +0100
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, bpf@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Namhyung Kim <namhyung@gmail.com>
+Subject: Re: [PATCH RFC v2 bpf-next 1/9] mm: Store build id in inode object
+Message-ID: <Y/8J7pkJ8g1uEQcq@krava>
+References: <20230228093206.821563-1-jolsa@kernel.org>
+ <20230228093206.821563-2-jolsa@kernel.org>
+ <20230228111310.05f339a0a1a00e919859ffad@linux-foundation.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.7.2
-Subject: Re: Re: [PATCH] erofs: support for mounting a single block device
- with multiple devices
-To:     Gao Xiang <hsiangkao@linux.alibaba.com>, xiang@kernel.org,
-        chao@kernel.org, gerry@linux.alibaba.com,
-        linux-erofs@lists.ozlabs.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jefflexu@linux.alibaba.com, huyue2@coolpad.com,
-        Xin Yin <yinxin.x@bytedance.com>
-References: <20230301070417.13084-1-zhujia.zj@bytedance.com>
- <c3c10f27-7941-6ccc-fa60-b5a289bf03ba@linux.alibaba.com>
-From:   Jia Zhu <zhujia.zj@bytedance.com>
-In-Reply-To: <c3c10f27-7941-6ccc-fa60-b5a289bf03ba@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230228111310.05f339a0a1a00e919859ffad@linux-foundation.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Feb 28, 2023 at 11:13:10AM -0800, Andrew Morton wrote:
+> On Tue, 28 Feb 2023 10:31:58 +0100 Jiri Olsa <jolsa@kernel.org> wrote:
+> 
+> > Storing build id in file's inode object for elf executable with build
+> > id defined. The build id is stored when file is mmaped.
+> > 
+> > This is enabled with new config option CONFIG_INODE_BUILD_ID.
+> > 
+> > The build id is valid only when the file with given inode is mmap-ed.
+> > 
+> > We store either the build id itself or the error we hit during
+> > the retrieval.
+> > 
+> > ...
+> >
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -699,6 +700,12 @@ struct inode {
+> >  	struct fsverity_info	*i_verity_info;
+> >  #endif
+> >  
+> > +#ifdef CONFIG_INODE_BUILD_ID
+> > +	/* Initialized and valid for executable elf files when mmap-ed. */
+> > +	struct build_id		*i_build_id;
+> > +	spinlock_t		i_build_id_lock;
+> > +#endif
+> > +
+> 
+> Remember we can have squillions of inodes in memory.  So that's one
+> costly spinlock!
+> 
+> AFAICT this lock could be removed if mmap_region() were to use an
+> atomic exchange on inode->i_build_id?
 
-
-在 2023/3/1 15:08, Gao Xiang 写道:
-> Hi Jia,
-> 
-> On 2023/3/1 15:04, Jia Zhu wrote:
->> In order to support mounting multi-layer container image as a block
->> device, add single block device with multiple devices feature for EROFS.
-> 
-> In order to support mounting multi-blob container image as a single
-> flattened block device, add flattened block device feature for EROFS.
-> 
-Thanks, I would revise it.
->>
->> In this mode, all meta/data contents will be mapped into one block 
->> address.
->> User could directly mount the block device by EROFS.
->>
->> Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
->> Reviewed-by: Xin Yin <yinxin.x@bytedance.com>
->> ---
->>   fs/erofs/data.c  | 8 ++++++--
->>   fs/erofs/super.c | 5 +++++
->>   2 files changed, 11 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
->> index e16545849ea7..870b1f7fe1d4 100644
->> --- a/fs/erofs/data.c
->> +++ b/fs/erofs/data.c
->> @@ -195,9 +195,9 @@ int erofs_map_dev(struct super_block *sb, struct 
->> erofs_map_dev *map)
->>   {
->>       struct erofs_dev_context *devs = EROFS_SB(sb)->devs;
->>       struct erofs_device_info *dif;
->> +    bool flatdev = !!sb->s_bdev;
-> 
-> I'd like to land it in sbi and set it in advance?
-> 
-I'll revise that in next version.
-> Also, did you test this patch?
-
-I've tested the patch using the following steps mentioned by
-https://github.com/dragonflyoss/image-service/pull/1111
-
-1. Compose a (nbd)block device from an EROFS image.
-2. mount -t erofs /dev/nbdx /mnt/
-3. compare the md5sum between source dir and /mnt dir.
+right, that should work I'll check 
 
 > 
-> Thanks,
-> Gao Xiang
+> If not, can we use an existing lock?  i_lock would be appropriate
+> (don't forget to update its comment).
+
+ok
+
 > 
+> Also, the code in mmap_region() runs build_id_free() inside the locked
+> region, which seems unnecessary.
 > 
->>       int id;
->> -    /* primary device by default */
->>       map->m_bdev = sb->s_bdev;
->>       map->m_daxdev = EROFS_SB(sb)->dax_dev;
->>       map->m_dax_part_off = EROFS_SB(sb)->dax_part_off;
->> @@ -210,12 +210,16 @@ int erofs_map_dev(struct super_block *sb, struct 
->> erofs_map_dev *map)
->>               up_read(&devs->rwsem);
->>               return -ENODEV;
->>           }
->> +        if (flatdev) {
->> +            map->m_pa += blknr_to_addr(dif->mapped_blkaddr);
->> +            map->m_deviceid = 0;
->> +        }
->>           map->m_bdev = dif->bdev;
->>           map->m_daxdev = dif->dax_dev;
->>           map->m_dax_part_off = dif->dax_part_off;
->>           map->m_fscache = dif->fscache;
->>           up_read(&devs->rwsem);
->> -    } else if (devs->extra_devices) {
->> +    } else if (devs->extra_devices && !flatdev) {
->>           down_read(&devs->rwsem);
->>           idr_for_each_entry(&devs->tree, dif, id) {
->>               erofs_off_t startoff, length;
->> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
->> index 19b1ae79cec4..4f9725b0950c 100644
->> --- a/fs/erofs/super.c
->> +++ b/fs/erofs/super.c
->> @@ -226,6 +226,7 @@ static int erofs_init_device(struct erofs_buf 
->> *buf, struct super_block *sb,
->>       struct erofs_fscache *fscache;
->>       struct erofs_deviceslot *dis;
->>       struct block_device *bdev;
->> +    bool flatdev = !!sb->s_bdev;
->>       void *ptr;
->>       ptr = erofs_read_metabuf(buf, sb, erofs_blknr(*pos), EROFS_KMAP);
->> @@ -248,6 +249,10 @@ static int erofs_init_device(struct erofs_buf 
->> *buf, struct super_block *sb,
->>           if (IS_ERR(fscache))
->>               return PTR_ERR(fscache);
->>           dif->fscache = fscache;
->> +    } else if (flatdev) {
->> +        dif->bdev = sb->s_bdev;
->> +        dif->dax_dev = EROFS_SB(sb)->dax_dev;
->> +        dif->dax_part_off = sbi->dax_part_off;
->>       } else {
->>           bdev = blkdev_get_by_path(dif->path, FMODE_READ | FMODE_EXCL,
->>                         sb->s_type);
+
+ok, if the atomic exchange is doable, it'll take care of this
+
+thanks,
+jirka
