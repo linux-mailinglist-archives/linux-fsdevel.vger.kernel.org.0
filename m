@@ -2,192 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B6896A63E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 00:47:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 342F06A63F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 01:01:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229777AbjB1Xq7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Feb 2023 18:46:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60274 "EHLO
+        id S229806AbjCAABv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Feb 2023 19:01:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbjB1Xq6 (ORCPT
+        with ESMTP id S229732AbjCAABu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Feb 2023 18:46:58 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E07E37739;
-        Tue, 28 Feb 2023 15:46:57 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E1174B80ED6;
-        Tue, 28 Feb 2023 23:46:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87626C433D2;
-        Tue, 28 Feb 2023 23:46:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677628014;
-        bh=hxTo2gEbH0ASBG49Qu72JbFUOmGIgyr21x50j6Ryzhk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=NmlwZdi6fDzF6wqE99dkVbGFAq540GTlvXoEz/KBUpdKM1Tky5lNCSmvvJZsZZRpF
-         bCExuQh0iqPSG2zDpxaZlAQgRufxRQx2rIu4v612yaFOd04vZCBeEGgagDbZ6pyZZu
-         BhiXclrR57RDRIFcnfXLwOfbEX+EIHOkrp4qksaDl+Axf55u2Z5nw0+F+Xq9s8HHQz
-         ttIZFY24MbtEeR5HxIVU3f/wTBrRGvc9uawqlup4/R9AQjW7QSL4bm/GP+tnGlx1yg
-         8c+G10OK5hhx4SDGsyelFCr80licoOYxekPHQ4DsPBHVPPFa1YlAlJVgvlLG7kcO4I
-         /r/ZKHOgZK5rg==
-Date:   Tue, 28 Feb 2023 15:46:53 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     djwong@kernel.org, torvalds@linux-foundation.org
-Cc:     allison.henderson@oracle.com, dchinner@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzbot+090ae72d552e6bd93cfe@syzkaller.appspotmail.com
-Subject: [GIT PULL] xfs: moar new code for 6.3
-Message-ID: <167762780388.3622158.16184008545274432486.stg-ugh@magnolia>
+        Tue, 28 Feb 2023 19:01:50 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219DE3646D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 16:01:47 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id h17-20020a17090aea9100b0023739b10792so11286153pjz.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Feb 2023 16:01:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dase/rKwb8olXZw4+LDNprv2RVCPainY9pi10HK+tM4=;
+        b=EoN6tMUySbv/wFvH2G/QeYhTnLIx3gjJeTQtsMNGzRTnISlnTeG8+r+tvwK6CmYT41
+         OeouGTxgJLPsn272MRkAGA4Olp0GdYTo6rrImv8mCMuQ/Wp44Ka7nK2wTZ0z0lgh/Qx+
+         dZJ9uNPfEhxRodhq6vnIxcWla5T03eiWYMPAFlMAt+7sFP9HaC7pVlTp+A52Wy/bSG5M
+         yDzO5Ph6nQh2T+pjRfVh0cVTEjft9Nbp2dpYrAeGm06yuGmsQ+JaGppvhOUkNS0W+raw
+         5tW+xZ9ho/DJ3URoql/D5S1tetpNq4lNmlxjBpF3L5XvUGZojRlGcBfn2gAnhMDOVRnC
+         lxyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dase/rKwb8olXZw4+LDNprv2RVCPainY9pi10HK+tM4=;
+        b=QO2u1Td5vAInC5BWlRafqhZ2d301ks/QZ+eNcTIt5tE/dCw3M+Ab65Z/NuDBdul0Z1
+         0JWY/eM0wf26geK60eKWBrvul5g/Byg34EpyJOZQ1Wo+PQiDFr+/nr0RwSUqKFxYdcGh
+         /4+n8cyingj0wu2EQ6nZJICqXTsufgtKLLon4p/b7LpXbj0j9wtL1Kx8HTPygfKtf9Hi
+         LJTjxR3xu2JXA39zmLWida1RdNk8PEmPBW4xlfYiBHofVi76Yn5FIMrb95ZE6DspQ86T
+         lDtKPGFma5EMbpxzLBvEhkovVIHbJrQ1XD4Jz9tIk2ayvQAmJH39hmHvq2wzdWGG6DXF
+         8IzA==
+X-Gm-Message-State: AO0yUKWLfmVRerLFIE9rr4YnyQEm8FoAuAPNmK8EjwarHIgx1ogIrZ6S
+        VtwylrAdT/hnaUn2+V82SmSpuw==
+X-Google-Smtp-Source: AK7set/KzrMuIbnrMYbSMOuNfdjL2hXTWzj1HCDFNgudNuM3MC2YID6lT6+Gg5o1CKvOP0NhVRyMqQ==
+X-Received: by 2002:a17:902:e543:b0:19d:62b:f040 with SMTP id n3-20020a170902e54300b0019d062bf040mr5423860plf.37.1677628906585;
+        Tue, 28 Feb 2023 16:01:46 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-4-237.pa.vic.optusnet.com.au. [49.186.4.237])
+        by smtp.gmail.com with ESMTPSA id u8-20020a656708000000b005004919b31dsm6278906pgf.72.2023.02.28.16.01.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Feb 2023 16:01:45 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pX9ug-003JtX-7K; Wed, 01 Mar 2023 11:01:42 +1100
+Date:   Wed, 1 Mar 2023 11:01:42 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     syzbot <syzbot+dd426ae4af71f1e74729@syzkaller.appspotmail.com>
+Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Subject: Re: [syzbot] [ext4?] possible deadlock in evict (3)
+Message-ID: <20230301000142.GK2825702@dread.disaster.area>
+References: <00000000000065970505f5c5e3fb@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <00000000000065970505f5c5e3fb@google.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+[obvious one for the ext4 people]
 
-Please pull this branch with changes for xfs for 6.3-rc1.  This second
-pull request contains a fix for a deadlock in the allocator.  It
-continues the slow march towards being able to offline AGs, and it
-refactors the interface to the xfs allocator to be less indirection
-happy.
+On Tue, Feb 28, 2023 at 09:25:55AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    ae3419fbac84 vc_screen: don't clobber return value in vcs_..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1136fe18c80000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ff98a3b3c1aed3ab
+> dashboard link: https://syzkaller.appspot.com/bug?extid=dd426ae4af71f1e74729
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+dd426ae4af71f1e74729@syzkaller.appspotmail.com
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.2.0-syzkaller-12913-gae3419fbac84 #0 Not tainted
+> ------------------------------------------------------
+> kswapd0/100 is trying to acquire lock:
+> ffff888047aea650 (sb_internal){.+.+}-{0:0}, at: evict+0x2ed/0x6b0 fs/inode.c:665
+> 
+> but task is already holding lock:
+> ffffffff8c8e29e0 (fs_reclaim){+.+.}-{0:0}, at: set_task_reclaim_state mm/vmscan.c:200 [inline]
+> ffffffff8c8e29e0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x170/0x1ac0 mm/vmscan.c:7338
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #3 (fs_reclaim){+.+.}-{0:0}:
+>        __fs_reclaim_acquire mm/page_alloc.c:4716 [inline]
+>        fs_reclaim_acquire+0x11d/0x160 mm/page_alloc.c:4730
+>        might_alloc include/linux/sched/mm.h:271 [inline]
+>        prepare_alloc_pages+0x159/0x570 mm/page_alloc.c:5362
+>        __alloc_pages+0x149/0x5c0 mm/page_alloc.c:5580
+>        alloc_pages+0x1aa/0x270 mm/mempolicy.c:2283
+>        __get_free_pages+0xc/0x40 mm/page_alloc.c:5641
+>        kasan_populate_vmalloc_pte mm/kasan/shadow.c:309 [inline]
+>        kasan_populate_vmalloc_pte+0x27/0x150 mm/kasan/shadow.c:300
+>        apply_to_pte_range mm/memory.c:2578 [inline]
+>        apply_to_pmd_range mm/memory.c:2622 [inline]
+>        apply_to_pud_range mm/memory.c:2658 [inline]
+>        apply_to_p4d_range mm/memory.c:2694 [inline]
+>        __apply_to_page_range+0x68c/0x1030 mm/memory.c:2728
+>        alloc_vmap_area+0x536/0x1f20 mm/vmalloc.c:1638
+>        __get_vm_area_node+0x145/0x3f0 mm/vmalloc.c:2495
+>        __vmalloc_node_range+0x250/0x1300 mm/vmalloc.c:3141
+>        kvmalloc_node+0x156/0x1a0 mm/util.c:628
+>        kvmalloc include/linux/slab.h:737 [inline]
+>        ext4_xattr_move_to_block fs/ext4/xattr.c:2570 [inline]
 
-As usual, I did a test-merge with the main upstream branch as of a few
-minutes ago, and didn't see any conflicts.  Please let me know if you
-encounter any problems.
+	buffer = kvmalloc(value_size, GFP_NOFS);
 
---D
+Yeah, this doesn't work like the code says it should. The gfp mask
+is not passed down to the page table population code and it hard
+codes GFP_KERNEL allocations so you have to do:
 
-The following changes since commit dd07bb8b6baf2389caff221f043d9188ce6bab8c:
+	memalloc_nofs_save();
+	buffer = kvmalloc(value_size, GFP_KERNEL);
+	memalloc_nofs_restore();
 
-xfs: revert commit 8954c44ff477 (2023-02-10 09:06:06 -0800)
+to apply GFP_NOFS to allocations in the pte population code to avoid
+memory reclaim recursion in kvmalloc.
 
-are available in the Git repository at:
-
-git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.3-merge-4
-
-for you to fetch changes up to 6e2985c938e8b765b3de299c561d87f98330c546:
-
-xfs: restore old agirotor behavior (2023-02-27 08:53:45 -0800)
-
-----------------------------------------------------------------
-New code for 6.3-rc1, part 2:
-
-* Fix a deadlock in the free space allocator due to the AG-walking
-algorithm forgetting to follow AG-order locking rules.
-* Make the inode allocator prefer existing free inodes instead of
-failing to allocate new inode chunks when free space is low.
-* Set minleft correctly when setting allocator parameters for bmap
-changes.
-* Fix uninitialized variable access in the getfsmap code.
-* Make a distinction between active and passive per-AG structure
-references.  For now, active references are taken to perform some
-work in an AG on behalf of a high level operation; passive references
-are used by lower level code to finish operations started by other
-threads.  Eventually this will become part of online shrink.
-* Split out all the different allocator strategies into separate
-functions to move us away from design antipattern of filling out a
-huge structure for various differentish things and issuing a single
-function multiplexing call.
-* Various cleanups in the filestreams allocator code, which we might
-very well want to deprecate instead of continuing.
-* Fix a bug with the agi rotor code that was introduced earlier in this
-series.
-
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-
-----------------------------------------------------------------
-Darrick J. Wong (3):
-Merge tag 'xfs-alloc-perag-conversion' of git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs into xfs-6.3-merge-A
-xfs: fix uninitialized variable access
-xfs: restore old agirotor behavior
-
-Dave Chinner (42):
-xfs: fix low space alloc deadlock
-xfs: prefer free inodes at ENOSPC over chunk allocation
-xfs: block reservation too large for minleft allocation
-xfs: drop firstblock constraints from allocation setup
-xfs: t_firstblock is tracking AGs not blocks
-xfs: don't assert fail on transaction cancel with deferred ops
-xfs: active perag reference counting
-xfs: rework the perag trace points to be perag centric
-xfs: convert xfs_imap() to take a perag
-xfs: use active perag references for inode allocation
-xfs: inobt can use perags in many more places than it does
-xfs: convert xfs_ialloc_next_ag() to an atomic
-xfs: perags need atomic operational state
-xfs: introduce xfs_for_each_perag_wrap()
-xfs: rework xfs_alloc_vextent()
-xfs: factor xfs_alloc_vextent_this_ag() for  _iterate_ags()
-xfs: combine __xfs_alloc_vextent_this_ag and  xfs_alloc_ag_vextent
-xfs: use xfs_alloc_vextent_this_ag() where appropriate
-xfs: factor xfs_bmap_btalloc()
-xfs: use xfs_alloc_vextent_first_ag() where appropriate
-xfs: use xfs_alloc_vextent_start_bno() where appropriate
-xfs: introduce xfs_alloc_vextent_near_bno()
-xfs: introduce xfs_alloc_vextent_exact_bno()
-xfs: introduce xfs_alloc_vextent_prepare()
-xfs: move allocation accounting to xfs_alloc_vextent_set_fsbno()
-xfs: fold xfs_alloc_ag_vextent() into callers
-xfs: move the minimum agno checks into xfs_alloc_vextent_check_args
-xfs: convert xfs_alloc_vextent_iterate_ags() to use perag walker
-xfs: convert trim to use for_each_perag_range
-xfs: factor out filestreams from xfs_bmap_btalloc_nullfb
-xfs: get rid of notinit from xfs_bmap_longest_free_extent
-xfs: use xfs_bmap_longest_free_extent() in filestreams
-xfs: move xfs_bmap_btalloc_filestreams() to xfs_filestreams.c
-xfs: merge filestream AG lookup into xfs_filestream_select_ag()
-xfs: merge new filestream AG selection into xfs_filestream_select_ag()
-xfs: remove xfs_filestream_select_ag() longest extent check
-xfs: factor out MRU hit case in xfs_filestream_select_ag
-xfs: track an active perag reference in filestreams
-xfs: use for_each_perag_wrap in xfs_filestream_pick_ag
-xfs: pass perag to filestreams tracing
-xfs: return a referenced perag from filestreams allocator
-xfs: refactor the filestreams allocator pick functions
-
-fs/xfs/libxfs/xfs_ag.c             |  93 ++++-
-fs/xfs/libxfs/xfs_ag.h             | 111 +++++-
-fs/xfs/libxfs/xfs_ag_resv.c        |   2 +-
-fs/xfs/libxfs/xfs_alloc.c          | 685 +++++++++++++++++++++++--------------
-fs/xfs/libxfs/xfs_alloc.h          |  61 ++--
-fs/xfs/libxfs/xfs_alloc_btree.c    |   2 +-
-fs/xfs/libxfs/xfs_bmap.c           | 672 +++++++++++++++++-------------------
-fs/xfs/libxfs/xfs_bmap.h           |   7 +
-fs/xfs/libxfs/xfs_bmap_btree.c     |  64 ++--
-fs/xfs/libxfs/xfs_btree.c          |   2 +-
-fs/xfs/libxfs/xfs_ialloc.c         | 242 ++++++-------
-fs/xfs/libxfs/xfs_ialloc.h         |   5 +-
-fs/xfs/libxfs/xfs_ialloc_btree.c   |  47 ++-
-fs/xfs/libxfs/xfs_ialloc_btree.h   |  20 +-
-fs/xfs/libxfs/xfs_refcount_btree.c |  10 +-
-fs/xfs/libxfs/xfs_rmap_btree.c     |   2 +-
-fs/xfs/libxfs/xfs_sb.c             |   3 +-
-fs/xfs/scrub/agheader_repair.c     |  35 +-
-fs/xfs/scrub/bmap.c                |   2 +-
-fs/xfs/scrub/common.c              |  21 +-
-fs/xfs/scrub/fscounters.c          |  13 +-
-fs/xfs/scrub/repair.c              |   7 +-
-fs/xfs/xfs_bmap_util.c             |   2 +-
-fs/xfs/xfs_discard.c               |  50 ++-
-fs/xfs/xfs_filestream.c            | 455 ++++++++++++------------
-fs/xfs/xfs_filestream.h            |   6 +-
-fs/xfs/xfs_fsmap.c                 |   5 +-
-fs/xfs/xfs_icache.c                |   8 +-
-fs/xfs/xfs_inode.c                 |   2 +-
-fs/xfs/xfs_iwalk.c                 |  10 +-
-fs/xfs/xfs_mount.h                 |   3 +-
-fs/xfs/xfs_reflink.c               |   4 +-
-fs/xfs/xfs_super.c                 |  47 ++-
-fs/xfs/xfs_trace.h                 |  81 ++---
-fs/xfs/xfs_trans.c                 |   8 +-
-fs/xfs/xfs_trans.h                 |   2 +-
-36 files changed, 1541 insertions(+), 1248 deletions(-)
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
