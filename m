@@ -2,115 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AFBD6A71D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 18:08:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7895A6A71F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 18:20:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229815AbjCARI2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 12:08:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38368 "EHLO
+        id S229715AbjCARU1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 12:20:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229769AbjCARI1 (ORCPT
+        with ESMTP id S229674AbjCARU0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 12:08:27 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D382069A
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Mar 2023 09:08:25 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F5B261419
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Mar 2023 17:08:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86060C433D2;
-        Wed,  1 Mar 2023 17:08:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677690504;
-        bh=20lsOtTm3VJqpNG3SKHu4vMMMyKHulIUG/bHI55Os4s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V5r/1J8Xe9cZzoqSPWjbfbKOqkRDCHtzjModu0bIIgoW6l4y0Qm4/I4dG5vSxZy14
-         FocsRvLqt48DOnLr4eD8fXogzp1NcAE0PfyIUA3qbpBXV30yp+jjj28syRfTesW6wk
-         r0fSkgzlE3oOYlFixNO5eNSmR4y0UPsw+C+9EsK03UkfSXrcKHMTZAYuNFZ406LfaY
-         295CGP3m8iMHMaw4F4kNjNNusobdfJgfqhXapsbjgAJ3NCtJlhG+AxxMR3miD8nmcG
-         AwSxElXJQLKTly59PBXTHbdujUPmjivceaZ3AwS8v07CdwT0AIAnEA0YySYCamxW9k
-         MBNUbcJeToC0g==
-Date:   Wed, 1 Mar 2023 09:08:23 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Ritesh Harjani <ritesh.list@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        lsf-pc@lists.linux-foundation.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        "kbus >> Keith Busch" <kbusch@kernel.org>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: LSF/MM/BPF 2023 IOMAP conversion status update
-Message-ID: <Y/+GhyKDhLCULAm2@magnolia>
-References: <20230129044645.3cb2ayyxwxvxzhah@garbanzo>
- <87wn40mmpf.fsf@doe.com>
+        Wed, 1 Mar 2023 12:20:26 -0500
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E1612F78A;
+        Wed,  1 Mar 2023 09:20:25 -0800 (PST)
+Received: by mail-ed1-x542.google.com with SMTP id o12so56766362edb.9;
+        Wed, 01 Mar 2023 09:20:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PlUwDtADYHSrJPyoxSgDxKr9/apm1LHvBX2UdWMjnq8=;
+        b=kmY8+0jd0UO04TZ9LYpBCyQY03De4TqTrGm8NPfSf0vaW64b45be7w3o4md6WrYQzD
+         Nk6yyZvFj30UxurRBN3V+nafrvvrx3pvJOA6uGD4dKM4/Gosc9LXPYIpxLk+e8oI172a
+         epfY8bLQElCLQBG/G/D3aNXPmrvDqlpag/b383C6TarUk/MiYMkzu79s8/llnCqhyT5O
+         D0DyTUGP2J+daMOT78INprXwotujvJQOezk6R/D/0mdukTm1U+kZJaccajHohx1R8aHN
+         VoTMHHUgoDJ4yGdV/Y8WXYHEXZdPj2ytqmVAF6EIkcKvd8pySzX9ILVOqDzYmD/P2JvV
+         G4Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PlUwDtADYHSrJPyoxSgDxKr9/apm1LHvBX2UdWMjnq8=;
+        b=YisyumKbbQ2QZXLGgjVKmcIonM5PvCm59ht8aeiw3qhiGvEM2Zb9FbWAzGIGA83eNK
+         81pn7xCLe+lEpQGppYmwf8Qh47UUiUOY+9TXk5pLf7vCiSr3lOG7cMZn+Attp0ktRIJp
+         TCrJYViUXdgNXnFKPsOicdgyrc0QSD/qvkei0MaObAqi+pp0oQnMEDls0dieaYouYEfQ
+         oSZPv5dNjN1ophFV5PzRhJVwEC58C/9VND0BtVYatJ6tcnmiZavJ6g/87BrgUW/3OaE/
+         /XUhWG9oHW4NuJOb2jv1+4gN+IgqPbDnDEZOOpqr7u0aQAcgNaTRPYvVxG1i6f3rxzpC
+         LMOw==
+X-Gm-Message-State: AO0yUKV4qbdGCq9lZPAcYZrISPxuE0joQKyTo6iECaq2wzRC1JJO9g/6
+        +H0F0HDiF4dSdI2ttMfvVD8=
+X-Google-Smtp-Source: AK7set9ce/Lg09giRLFyJlygFLDRlK0AJJHwRCRI7xF7/8PjhdMqFjMHxUup6B/jZkvyjMraBN7X5w==
+X-Received: by 2002:a17:907:2ce6:b0:8ec:439f:18fb with SMTP id hz6-20020a1709072ce600b008ec439f18fbmr7719468ejc.29.1677691223898;
+        Wed, 01 Mar 2023 09:20:23 -0800 (PST)
+Received: from [127.0.1.1] (i130160.upc-i.chello.nl. [62.195.130.160])
+        by smtp.googlemail.com with ESMTPSA id oy26-20020a170907105a00b008b133f9b33dsm5894826ejb.169.2023.03.01.09.20.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Mar 2023 09:20:23 -0800 (PST)
+From:   Jakob Koschel <jkl820.git@gmail.com>
+Date:   Wed, 01 Mar 2023 18:20:18 +0100
+Subject: [PATCH] locks: avoid usage of list iterator after loop in
+ generic_delete_lease()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wn40mmpf.fsf@doe.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230301-locks-avoid-iter-after-loop-v1-1-4d0529b03dc7@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAFGJ/2MC/x2NwQrCMBBEf6Xs2YU0RUF/RTxsNhu7WJOSlSKU/
+ ruJl4HHDG92MKkqBrdhhyqbmpbcYDwNwDPlp6DGxuCdn9zkRlwKvwxpKxpRP1KRUs+llBUdX5h
+ dCtFfz9AMgUwwVMo8d8ebrE17sVZJ+v3f3h/H8QOj02jQhgAAAA==
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pietro Borrello <borrello@diag.uniroma1.it>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        "Bos, H.J." <h.j.bos@vu.nl>, Jakob Koschel <jkl820.git@gmail.com>
+X-Mailer: b4 0.12.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1677691223; l=1254;
+ i=jkl820.git@gmail.com; s=20230112; h=from:subject:message-id;
+ bh=s8p60stXlwjtVT6XiuBNRX2nbAh1LO4y0YMOQFFePMk=;
+ b=fYRttOSj5AURDfVgB1PTV4Wf4V5JihCeOaPgiew3txrpcAzyUBZeXITuLbn0t9YBgzoJbXSeCnL5
+ wI62wyprA6nL2zskNxukFdOcdqBo22Kl68xaAvBOAGr2rP+bYAbA
+X-Developer-Key: i=jkl820.git@gmail.com; a=ed25519;
+ pk=rcRpP90oZXet9udPj+2yOibfz31aYv8tpf0+ZYOQhyA=
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 01, 2023 at 10:29:56PM +0530, Ritesh Harjani wrote:
-> Luis Chamberlain <mcgrof@kernel.org> writes:
-> 
-> > One of the recurring themes that comes up at LSF is "iomap has little
-> > to no documentation, it is hard to use". I've only recently taken a
-> > little nose dive into it, and so I also can frankly admit to say I don't
-> > grok it well either yet. However, the *general* motivation and value is clear:
-> > avoiding the old ugly monster of struct buffer_head, and abstracting
-> > the page cache for non network filesystems, and that is because for
-> > network filesystems my understanding is that we have another side effort
-> > for that. We could go a bit down memory lane on prior attempts to kill
-> > the struct buffer_head evil demon from Linux, or why its evil, but I'm not
-> > sure if recapping that is useful at this point in time, let me know, I could
-> > do that if it helps if folks want to talk about this at LSF. For now I rather
-> 
-> It would certainly help to hear on what are our plans of
-> IOMAP_F_BUFFER_HEAD flag and it's related code. I know it is there
-> for gfs2, but it would be good to know on what are our plans before we
-> start converting all other filesystems to move to iomap?
-> Do we advise on not to use this path for other filesystems? Do we plan
-> to deprecate it in order to kill buffer heads in future?
-> e.g.
-> root> git grep "buffer_head" fs/iomap/
-> fs/iomap/buffered-io.c:#include <linux/buffer_head.h>
-> 
-> Wanted more insights on this and our plans w.r.t other filesystem
-> wanting to use it. So a short walk down the memory lane and our plans
-> for future w.r.t IOMAP_F_BUFFER_HEAD would certainly help.
+'victim' and 'fl' are ensured to be equal at this point. For consistency
+both should use the same variable.
 
-For filesystems considering an iomap port, my advice is:
+Additionally, Linus proposed to avoid any use of the list iterator
+variable after the loop, in the attempt to move the list iterator
+variable declaration into the marcro to avoid any potential misuse after
+the loop [1].
 
-If your filesystem is simple (e.g. direct overwrites, no cow, no verity,
-no fscrypt, etc) then you ought to consider jumping to iomap directly
-and moving off bufferheads forever.  If I were working on a port of
-something simple(ish) like ext2 or fat or something, that's how I'd go.
+Link: https://lore.kernel.org/all/CAHk-=wgRr_D8CB-D9Kg-c=EHreAsk5SqXPwr9Y7k9sA6cWXJ6w@mail.gmail.com/ [1]
+Signed-off-by: Jakob Koschel <jkl820.git@gmail.com>
+---
+ fs/locks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Obviously, any filesystem that does not use bufferheads and ports to
-iomap should go straight there.  Do not *start* using bufferheads.
+diff --git a/fs/locks.c b/fs/locks.c
+index 66b4eef09db5..3f46d21a95f4 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -1841,7 +1841,7 @@ static int generic_delete_lease(struct file *filp, void *owner)
+ 	}
+ 	trace_generic_delete_lease(inode, victim);
+ 	if (victim)
+-		error = fl->fl_lmops->lm_change(victim, F_UNLCK, &dispose);
++		error = victim->fl_lmops->lm_change(victim, F_UNLCK, &dispose);
+ 	spin_unlock(&ctx->flc_lock);
+ 	percpu_up_read(&file_rwsem);
+ 	locks_dispose_list(&dispose);
 
-For filesystems where things are more complicated (ext4/jbd2) it might
-make more sense to port to iomap with bufferheads in one release to make
-sure you've gotten the locking, iomap-ops, and writeback working
-correctly.  Once that's done, then move off bufferheads.
+---
+base-commit: c0927a7a5391f7d8e593e5e50ead7505a23cadf9
+change-id: 20230301-locks-avoid-iter-after-loop-0c6cc0fbd295
 
-gfs2 might want to move off of bufferheads some day, but I think they're
-still letting the dust settle on the new iomap plumbing.
+Best regards,
+-- 
+Jakob Koschel <jkl820.git@gmail.com>
 
-IOWs, I don't see IOMAP_F_BUFFER_HEAD going away until there's no longer
-any interest in it.
-
---D
-
-> Thanks
-> -ritesh
