@@ -2,83 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF7196A6903
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 09:43:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D27FE6A6A6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 11:06:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229747AbjCAInj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 03:43:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38154 "EHLO
+        id S229885AbjCAKGj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 05:06:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbjCAInh (ORCPT
+        with ESMTP id S229769AbjCAKGh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 03:43:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A04ACEB7B;
-        Wed,  1 Mar 2023 00:43:36 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5B597B80F62;
-        Wed,  1 Mar 2023 08:43:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96608C433D2;
-        Wed,  1 Mar 2023 08:43:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1677660214;
-        bh=P6TBSi7zwnxjHUc4Xu9qIrJQ1O+gRdm3CdFxFAvnTMQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vmf+xNm+/EyDIzdH4PQ7EthTPPt8vHSAD2YLnDI0yce/+r4DcqL49wuoycs65t4gS
-         5CjIfhuBJL5DYNJTR4Rv3vWQmyRQZDxuEcpl5Dk0p7DyzfTK10f9U1Ek3D3D8gFNCu
-         ncrJpxccLNJLSA8r+FaEXYqZEdSY5JCsUCRr/UlQ=
-Date:   Wed, 1 Mar 2023 09:43:31 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Willy Tarreau <w@1wt.eu>, Slade Watkins <srw@sladewatkins.net>,
-        Sasha Levin <sashal@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <Y/8QMzvyZeb7j8XX@kroah.com>
-References: <Y/1em4ygHgSjIYau@sashalap>
- <Y/136zpJSWx96YEe@sol.localdomain>
- <CAOQ4uxietbePiWgw8aOZiZ+YT=5vYVdPH=ChnBkU_KCaHGv+1w@mail.gmail.com>
- <Y/3lV0P9h+FxmjyF@kroah.com>
- <8caf1c23-54e7-6357-29b0-4f7ddf8f16d2@sladewatkins.net>
- <Y/7fFHv3dU6osd6x@sol.localdomain>
- <Y/7sLcCtsk9oqZH0@kroah.com>
- <Y/79Tfn5kFIItUDD@sol.localdomain>
- <Y/8BU4cyySwQZSII@1wt.eu>
- <Y/8NWuHX0Sff+DhY@sol.localdomain>
+        Wed, 1 Mar 2023 05:06:37 -0500
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3FE83B66A;
+        Wed,  1 Mar 2023 02:06:36 -0800 (PST)
+Received: from kwepemm600020.china.huawei.com (unknown [172.30.72.55])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4PRVF74H5fz16P0H;
+        Wed,  1 Mar 2023 18:03:55 +0800 (CST)
+Received: from localhost.localdomain (10.175.112.125) by
+ kwepemm600020.china.huawei.com (7.193.23.147) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Wed, 1 Mar 2023 18:06:33 +0800
+From:   Peng Zhang <zhangpeng362@huawei.com>
+To:     <mcgrof@kernel.org>, <akpm@linux-foundation.org>,
+        <peterx@redhat.com>, <jthoughton@google.com>,
+        <Liam.Howlett@Oracle.com>, <viro@zeniv.linux.org.uk>,
+        <keescook@chromium.org>, <yzaikin@google.com>,
+        <wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        ZhangPeng <zhangpeng362@huawei.com>
+Subject: [PATCH] userfaultfd: move unprivileged_userfaultfd sysctl to its own file
+Date:   Wed, 1 Mar 2023 10:06:27 +0000
+Message-ID: <20230301100627.3505739-1-zhangpeng362@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y/8NWuHX0Sff+DhY@sol.localdomain>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.112.125]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600020.china.huawei.com (7.193.23.147)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 01, 2023 at 12:31:22AM -0800, Eric Biggers wrote:
-> On Wed, Mar 01, 2023 at 08:40:03AM +0100, Willy Tarreau wrote:
-> > But it's going into a dead end. You are the one saying that changes
-> > are easy, suggesting to use get_maintainers.pl, so easy that you can't
-> > try to adapt them in existing stuff. Even without modifying existing
-> > scripts, if you are really interested by such features, why not at least
-> > try to run your idea over a whole series, figure how long it takes, how
-> > accurate it seems to be, adjust the output to remove unwanted noise and
-> > propose for review a few lines that seem to do the job for you ?
-> > 
-> 
-> As I said, Sasha *already does this for AUTOSEL*.  So it seems this problem has
-> already been solved, but Sasha and Greg are not coordinating with each other.
+From: ZhangPeng <zhangpeng362@huawei.com>
 
-We do not share the same scripts for these tasks as we have different
-roles here.  That's all, nothing malicious.
+The sysctl_unprivileged_userfaultfd is part of userfaultfd, move it to
+its own file.
 
-thanks,
+Signed-off-by: ZhangPeng <zhangpeng362@huawei.com>
+---
+ fs/userfaultfd.c              | 20 +++++++++++++++++++-
+ include/linux/userfaultfd_k.h |  2 --
+ kernel/sysctl.c               | 11 -----------
+ 3 files changed, 19 insertions(+), 14 deletions(-)
 
-greg k-h
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 44d1ee429eb0..d01f803a6b11 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -32,7 +32,22 @@
+ #include <linux/swapops.h>
+ #include <linux/miscdevice.h>
+ 
+-int sysctl_unprivileged_userfaultfd __read_mostly;
++static int sysctl_unprivileged_userfaultfd __read_mostly;
++
++#ifdef CONFIG_SYSCTL
++static struct ctl_table vm_userfaultfd_table[] = {
++	{
++		.procname	= "unprivileged_userfaultfd",
++		.data		= &sysctl_unprivileged_userfaultfd,
++		.maxlen		= sizeof(sysctl_unprivileged_userfaultfd),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
++	{ }
++};
++#endif
+ 
+ static struct kmem_cache *userfaultfd_ctx_cachep __read_mostly;
+ 
+@@ -2178,6 +2193,9 @@ static int __init userfaultfd_init(void)
+ 						0,
+ 						SLAB_HWCACHE_ALIGN|SLAB_PANIC,
+ 						init_once_userfaultfd_ctx);
++#ifdef CONFIG_SYSCTL
++	register_sysctl_init("vm", vm_userfaultfd_table);
++#endif
+ 	return 0;
+ }
+ __initcall(userfaultfd_init);
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index 3767f18114ef..fff49fec0258 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -36,8 +36,6 @@
+ #define UFFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+ #define UFFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS)
+ 
+-extern int sysctl_unprivileged_userfaultfd;
+-
+ extern vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason);
+ 
+ /*
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 1c240d2c99bc..c14552a662ae 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2438,17 +2438,6 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= (void *)&mmap_rnd_compat_bits_min,
+ 		.extra2		= (void *)&mmap_rnd_compat_bits_max,
+ 	},
+-#endif
+-#ifdef CONFIG_USERFAULTFD
+-	{
+-		.procname	= "unprivileged_userfaultfd",
+-		.data		= &sysctl_unprivileged_userfaultfd,
+-		.maxlen		= sizeof(sysctl_unprivileged_userfaultfd),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
+-	},
+ #endif
+ 	{ }
+ };
+-- 
+2.25.1
+
