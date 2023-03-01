@@ -2,49 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 539416A6AD1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 11:31:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36A836A6B9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 12:21:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229786AbjCAKb2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 05:31:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49000 "EHLO
+        id S229976AbjCALVQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 06:21:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229659AbjCAKbZ (ORCPT
+        with ESMTP id S229674AbjCALVO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 05:31:25 -0500
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F712A992;
-        Wed,  1 Mar 2023 02:31:23 -0800 (PST)
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1pXJk0-0000Cp-Sh; Wed, 01 Mar 2023 11:31:20 +0100
-Message-ID: <bbfb9ea8-5cf2-66fe-e711-9d8baf4863e6@leemhuis.info>
-Date:   Wed, 1 Mar 2023 11:31:20 +0100
+        Wed, 1 Mar 2023 06:21:14 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B7363B206;
+        Wed,  1 Mar 2023 03:21:13 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id g3so3959428wri.6;
+        Wed, 01 Mar 2023 03:21:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k8uupGhWT0cJC0ZGi7m3ZW+QzCETbdp0XGrBXIt1ZcA=;
+        b=UeKStxeQM6igNrDtDNhX8o/3pbMFhVpjB0OwFwCmJArgJ+183mXSa5HIx6l9QG53uO
+         J+fwkfDV0o14bJ8o9tYjG21bCp8gDDD5R2U9nDbukZQcFiSZL/DrG0SkFtfgTT0+fFTz
+         egN4k8D4QxBNFhi4WIatG02YjoFJKr1VZ2Hzft01uwJfXIMThEt0w9ZSjRRGQa3+38X5
+         nlSe6yy3ipwfnRsFEeXeHlJ1s8NgaeMA+vp9NaAcFyoHBqK7JdtmeFDVi/fyb5OXAdYR
+         iXtQ9oPGdAdW8BHLzYVmbak8ozGU3IWzal4JFOcWlBT+9iOWBJiBM18I2T1zl+mVuSpa
+         NssA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k8uupGhWT0cJC0ZGi7m3ZW+QzCETbdp0XGrBXIt1ZcA=;
+        b=G6zUVynCKkqUMpDw625YR/GD3y5BVx6mBvKqw5AAJVARdxKu8VUhxbUnTKSdZkIlOm
+         u1b442MMZyO2inRwiqksg65CR29NrGWwetHLg8we12PpnKORdlVOQCIzKz36o1GFQgkX
+         9Xts44TlVmqOVjWTvnPUJqPKXeKJvisoimkDv6CYI0sWVyylOC8GtWpwjU4ULVtuzLO9
+         mQE/50il4J0UOU9ursC+7SSQJD1U/8hAwOhmphlWYlSn3EsaOMjQShw86wtT+iAvLgmp
+         laZwOdTT/+kAp0VCB/NdoeTWCGFLZRbMZWRaRzfTtytPsvkNIsbiW1bzc23jEDTguEJt
+         JJpQ==
+X-Gm-Message-State: AO0yUKXEyVZa5PTzvkw0DB4eN0PtUSysizKXgwV2MJAxHiDzmfGo7Zsr
+        FiWfAaH/q9ZZnkixOjHxupyYcB88oavEWA==
+X-Google-Smtp-Source: AK7set+AD1MK8ZoaDoS6r5V32Q28cTiJuQJyQzbNRXTftxp3gvoky39QOWsJllrQttt0aUZrLwgDpw==
+X-Received: by 2002:a5d:6686:0:b0:2c7:1d60:f34e with SMTP id l6-20020a5d6686000000b002c71d60f34emr4935591wru.6.1677669671530;
+        Wed, 01 Mar 2023 03:21:11 -0800 (PST)
+Received: from suse.localnet ([212.216.157.254])
+        by smtp.gmail.com with ESMTPSA id i15-20020adffdcf000000b002c58ca558b6sm12473328wrs.88.2023.03.01.03.21.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Mar 2023 03:21:10 -0800 (PST)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [git pull] vfs.git sysv pile
+Date:   Wed, 01 Mar 2023 12:20:56 +0100
+Message-ID: <13214812.uLZWGnKmhe@suse>
+In-Reply-To: <Y/gugbqq858QXJBY@ZenIV>
+References: <Y/gugbqq858QXJBY@ZenIV>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Content-Language: en-US, de-DE
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-References: <Y/y70zJj4kjOVfXa@sashalap> <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain> <Y/0U8tpNkgePu00M@sashalap>
- <Y/0i5pGYjrVw59Kk@gmail.com> <Y/0wMiOwoeLcFefc@sashalap>
- <Y/1LlA5WogOAPBNv@gmail.com> <Y/1em4ygHgSjIYau@sashalap>
- <Y/136zpJSWx96YEe@sol.localdomain>
- <CAOQ4uxietbePiWgw8aOZiZ+YT=5vYVdPH=ChnBkU_KCaHGv+1w@mail.gmail.com>
- <Y/3lV0P9h+FxmjyF@kroah.com>
-From:   Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: AUTOSEL process
-In-Reply-To: <Y/3lV0P9h+FxmjyF@kroah.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1677666683;5674a027;
-X-HE-SMSGID: 1pXJk0-0000Cp-Sh
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -53,39 +72,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28.02.23 12:28, Greg KH wrote:
-> On Tue, Feb 28, 2023 at 12:41:07PM +0200, Amir Goldstein wrote:
->>>> I'm not sure how feedback in the form of "this sucks but I'm sure it
->>>> could be much better" is useful.
->>> I've already given you some specific suggestions.
->>> I can't force you to listen to them, of course.
->>
->> As you probably know, this is not the first time that the subject of the
->> AUTOSEL process has been discussed.
->> Here is one example from fsdevel with a few other suggestions [1].
->>
->> But just so you know, as a maintainer, you have the option to request that
->> patches to your subsystem will not be selected by AUTOSEL and run your
->> own process to select, test and submit fixes to stable trees.
-> [...]
-> In an ideal world, all maintainers would properly mark their patches for
-> stable backporting (as documented for the past 15+ years, with a cc:
-> stable tag, NOT a Fixes: tag), but we do not live in that world, and
-> hence, the need for the AUTOSEL work.
+On venerd=EC 24 febbraio 2023 04:26:57 CET Al Viro wrote:
+> 	Fabio's "switch to kmap_local_page()" patchset (originally after the
+> ext2 counterpart, with a lot of cleaning up done to it; as the matter of
+> fact, ext2 side is in need of similar cleanups - calling conventions there
+> are bloody awful).
 
-Well, we could do something to get a bit closer to the ideal world:
-teach checkpatch.pl to help developers do the right thing in the first
-place. That's what I'm trying to do right now to make them add Link:
-tags more often (https://git.kernel.org/torvalds/c/d7f1d71e5ef6 ), as my
-regression tracking efforts heavily rely on them. Shouldn't be too hard
-to add a simple check along the lines of "this change has a Fixes: tag;
-either CC stable or do <foo> to suppress this warning" (<foo> could be a
-"nostable" tag or something else that we'd need to agree on first).
+If nobody else is already working on these cleanups in ext2 following your=
+=20
+suggestion, I'd be happy to work on this by the end of this week. I only ne=
+ed=20
+a confirmation because I'd hate to duplicate someone else work.
 
-In an ideal we'd maybe even have a "checkpatch bot" that looks at all
-patches posted and sends feedback to the list if it finds something to
-improve. Sure, some (a lot?) of what AUTOSEL does relies on data that is
-only available after a change was merged, but maybe some is available
-earlier already.
+> Plus the equivalents of minix stuff...
 
-Ciao, Thorsten
+I don't know this other filesystem but I could take a look and see whether =
+it=20
+resembles somehow sysv and ext2 (if so, this work would be pretty simple to=
+o,=20
+thanks to your kind suggestions when I worked on sysv and ufs).
+
+I'm adding Jan to the Cc list to hear whether he is aware of anybody else=20
+working on this changes for ext2. I'm waiting for a reply from you (@Al) or=
+=20
+Jan to avoid duplication (as said above).
+
+Thanks,
+
+=46abio=20
+
+> The following changes since commit b7bfaa761d760e72a969d116517eaa12e404c2=
+62:
+>=20
+>   Linux 6.2-rc3 (2023-01-08 11:49:43 -0600)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.sysv
+>=20
+> for you to fetch changes up to abb7c742397324f8676c5b622effdce911cd52e3:
+>=20
+>   sysv: fix handling of delete_entry and set_link failures (2023-01-19
+> 23:24:42 -0500)
+>=20
+> ----------------------------------------------------------------
+> Al Viro (1):
+>       sysv: fix handling of delete_entry and set_link failures
+>=20
+> Christoph Hellwig (1):
+>       sysv: don't flush page immediately for DIRSYNC directories
+>=20
+> Fabio M. De Francesco (4):
+>       fs/sysv: Use the offset_in_page() helper
+>       fs/sysv: Change the signature of dir_get_page()
+>       fs/sysv: Use dir_put_page() in sysv_rename()
+>       fs/sysv: Replace kmap() with kmap_local_page()
+>=20
+>  fs/sysv/dir.c   | 154
+> ++++++++++++++++++++++++++++++++------------------------ fs/sysv/namei.c =
+|=20
+> 42 ++++++++--------
+>  fs/sysv/sysv.h  |   3 +-
+>  3 files changed, 111 insertions(+), 88 deletions(-)
+
+
+
+
