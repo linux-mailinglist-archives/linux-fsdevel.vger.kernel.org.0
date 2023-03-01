@@ -2,165 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DABC26A70DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 17:28:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 537FC6A7191
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Mar 2023 17:54:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbjCAQ2R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 11:28:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47592 "EHLO
+        id S229824AbjCAQyG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 11:54:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229679AbjCAQ2Q (ORCPT
+        with ESMTP id S229463AbjCAQyE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 11:28:16 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2EA5619C;
-        Wed,  1 Mar 2023 08:28:14 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id qa18-20020a17090b4fd200b0023750b675f5so17869812pjb.3;
-        Wed, 01 Mar 2023 08:28:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=P7haAdLVLlDeldbPNE93BNwsAAMcDWz2aparhFZ6snc=;
-        b=ScpO2xYGcncaAu7MJmZ0jOxZc2MFhctvdoHr8MPqN1YeVqLXaIKJf5687TOMRiLeJF
-         ov2n7XuS384LRK55cbIy9sINjo1DFTtCGGIx1jRAczK8s1rL8cNJlKPhRnL+JYlUjsEr
-         wI2ajEmTljOZVPblwy7hyMNhD8L4uYLwT1lx4C2AyIfTfVGzvluQ4/XXH1O6JP4L1drU
-         nj6B/jiNGF4gmgEoKuYDcq2xGzxbhhsC3BQeSH9999F074yinxk/8R7JtY2h/QA/5l2W
-         bCUpFfKHg43g3H7X6dTk0WPmbKmKOxRwjAqtiTkqX066qqDSDiar0f59NDI8buGqoZT7
-         VL5Q==
+        Wed, 1 Mar 2023 11:54:04 -0500
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA86A24135
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Mar 2023 08:54:02 -0800 (PST)
+Received: by mail-io1-f72.google.com with SMTP id k13-20020a5d9d4d000000b0074caed3a2d2so9215253iok.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Mar 2023 08:54:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=P7haAdLVLlDeldbPNE93BNwsAAMcDWz2aparhFZ6snc=;
-        b=UIU2B0ZAR44MDUIZtrqJefYa2zVysncAsrZ0I7GFT5tPOFlHAeaWJ7Ph2c5UT535f6
-         pLBSwQLeHLwfqcnWj/Kt22sPoj8Gx7carQRRgjSmiT7u6bM55ioRnNXyuSqHIE+tsQXw
-         2pihMvd8M2xNHA8DLa2LRHNtPHuPFT3syajoohfgghipIqSy0EkPx7oCH0/EON0qWm1o
-         WrU929RycJCQX6VClCRdHm6LZcppAz4/Dq3Mc8+gzf/pB9Dlz+ZhZFqI72ZM/rpKjzyf
-         1UURrzvwK/K8KljIr79tdTyIKFTVkmbllcm/qTV2Vke8vfBeVKnDicgVQr0VyCuOMpqD
-         auvQ==
-X-Gm-Message-State: AO0yUKVg6mJ0S95zvwmz7qn/U8h/P2TkzdKbGBIid09JGktFNmcF86Eq
-        XmAXhnUeVWaiRt2rkrD0gvQ=
-X-Google-Smtp-Source: AK7set+ervFmTCiG6ysVAUSUHqEReNOEh1qF1r4N++pKBJkkynck6Z0EyTk83a923L/HE/nYajTVtg==
-X-Received: by 2002:a17:903:247:b0:19c:f1ab:4220 with SMTP id j7-20020a170903024700b0019cf1ab4220mr7245531plh.46.1677688094437;
-        Wed, 01 Mar 2023 08:28:14 -0800 (PST)
-Received: from rh-tp ([2406:7400:63:469f:eb50:3ffb:dc1b:2d55])
-        by smtp.gmail.com with ESMTPSA id b11-20020a170902ed0b00b0019602b2c00csm8633420pld.175.2023.03.01.08.28.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Mar 2023 08:28:13 -0800 (PST)
-Date:   Wed, 01 Mar 2023 21:57:58 +0530
-Message-Id: <87v8jka12p.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     Dave Chinner <david@fromorbit.com>,
-        syzbot <syzbot+dd426ae4af71f1e74729@syzkaller.appspotmail.com>
-Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] possible deadlock in evict (3)
-In-Reply-To: <20230301000142.GK2825702@dread.disaster.area>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        bh=Qdufye7nsdiEuktgAaX45QySU43qp/3ZmCmUxJlBXDk=;
+        b=5BoQ35qdgRc0UiLrswU/jbDV5Ym/vkcSBDQ8Ig66uh+xBGr4PQcURhWmc6g/tRswyt
+         EAgUdUgh1DUl0bCeDOdfLr3MtBQn5J6Hy7xGSnAJKFUp0ZU3PPXKSBRCpxBnnWxUoPlp
+         7O2XLPJxtL/R4uPn5L1CeP6tH4CQKTBXRX5flFYLc7Jy3cClm6pI3qvDk/0Td7OqrhaG
+         btUpnfoBAvyn+4NGYmer6Xu3o/VL69xxQioQ2LgJd9IzkfESQ3cnA1ZwiDMDbaNyHChi
+         BwONm01qlHokr/7L1kq/ZLRdObFU/8NTH118uW29D9jqEDiy94nHOvMuw15pObAKOwfk
+         bIhw==
+X-Gm-Message-State: AO0yUKWf1zQqgzjcmAOTpAOdffSc5U/wpf0IV5ztGVnwsSb+cNolYCwI
+        JZsNfCHf2njanpJp7McE42eOB3W3Q5L0+3Sy0jrbAA9lUown
+X-Google-Smtp-Source: AK7set9BOYgzdHscO/xfbG7JE2QGM3BM7VMgI/1xMbp+T2NVCyBY3R7p4mM7d7W/LFUQYW02ELjqh+aNlHMkfRymj0UBG4rI3m3Z
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:3882:b0:3c4:cf94:54a7 with SMTP id
+ b2-20020a056638388200b003c4cf9454a7mr4394149jav.0.1677689642274; Wed, 01 Mar
+ 2023 08:54:02 -0800 (PST)
+Date:   Wed, 01 Mar 2023 08:54:02 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002bd5ae05f5d98f4f@google.com>
+Subject: [syzbot] [udf?] WARNING in __brelse (2)
+From:   syzbot <syzbot+64d1c4bd2e3fa680321d@syzkaller.appspotmail.com>
+To:     jack@suse.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dave Chinner <david@fromorbit.com> writes:
+Hello,
 
-> [obvious one for the ext4 people]
->
-> On Tue, Feb 28, 2023 at 09:25:55AM -0800, syzbot wrote:
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    ae3419fbac84 vc_screen: don't clobber return value in vcs_..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1136fe18c80000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=ff98a3b3c1aed3ab
->> dashboard link: https://syzkaller.appspot.com/bug?extid=dd426ae4af71f1e74729
->> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
->>
->> Unfortunately, I don't have any reproducer for this issue yet.
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+dd426ae4af71f1e74729@syzkaller.appspotmail.com
->>
->> ======================================================
->> WARNING: possible circular locking dependency detected
->> 6.2.0-syzkaller-12913-gae3419fbac84 #0 Not tainted
->> ------------------------------------------------------
->> kswapd0/100 is trying to acquire lock:
->> ffff888047aea650 (sb_internal){.+.+}-{0:0}, at: evict+0x2ed/0x6b0 fs/inode.c:665
->>
->> but task is already holding lock:
->> ffffffff8c8e29e0 (fs_reclaim){+.+.}-{0:0}, at: set_task_reclaim_state mm/vmscan.c:200 [inline]
->> ffffffff8c8e29e0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x170/0x1ac0 mm/vmscan.c:7338
->>
->> which lock already depends on the new lock.
->>
->>
->> the existing dependency chain (in reverse order) is:
->>
->> -> #3 (fs_reclaim){+.+.}-{0:0}:
->>        __fs_reclaim_acquire mm/page_alloc.c:4716 [inline]
->>        fs_reclaim_acquire+0x11d/0x160 mm/page_alloc.c:4730
->>        might_alloc include/linux/sched/mm.h:271 [inline]
->>        prepare_alloc_pages+0x159/0x570 mm/page_alloc.c:5362
->>        __alloc_pages+0x149/0x5c0 mm/page_alloc.c:5580
->>        alloc_pages+0x1aa/0x270 mm/mempolicy.c:2283
->>        __get_free_pages+0xc/0x40 mm/page_alloc.c:5641
->>        kasan_populate_vmalloc_pte mm/kasan/shadow.c:309 [inline]
->>        kasan_populate_vmalloc_pte+0x27/0x150 mm/kasan/shadow.c:300
->>        apply_to_pte_range mm/memory.c:2578 [inline]
->>        apply_to_pmd_range mm/memory.c:2622 [inline]
->>        apply_to_pud_range mm/memory.c:2658 [inline]
->>        apply_to_p4d_range mm/memory.c:2694 [inline]
->>        __apply_to_page_range+0x68c/0x1030 mm/memory.c:2728
->>        alloc_vmap_area+0x536/0x1f20 mm/vmalloc.c:1638
->>        __get_vm_area_node+0x145/0x3f0 mm/vmalloc.c:2495
->>        __vmalloc_node_range+0x250/0x1300 mm/vmalloc.c:3141
->>        kvmalloc_node+0x156/0x1a0 mm/util.c:628
->>        kvmalloc include/linux/slab.h:737 [inline]
->>        ext4_xattr_move_to_block fs/ext4/xattr.c:2570 [inline]
->
-> 	buffer = kvmalloc(value_size, GFP_NOFS);
->
-> Yeah, this doesn't work like the code says it should. The gfp mask
-> is not passed down to the page table population code and it hard
-> codes GFP_KERNEL allocations so you have to do:
->
-> 	memalloc_nofs_save();
-> 	buffer = kvmalloc(value_size, GFP_KERNEL);
-> 	memalloc_nofs_restore();
->
-> to apply GFP_NOFS to allocations in the pte population code to avoid
-> memory reclaim recursion in kvmalloc.
+syzbot found the following issue on:
 
-What about this patch mentioned below? Is it the kasan allocations
-(kasan_populate_vmalloc()), which hasn't been taken care of in this
-patch. Does this means we need kvmalloc fixed instead for kasan allocations?
+HEAD commit:    2ebd1fbb946d Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=144829a8c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3519974f3f27816d
+dashboard link: https://syzkaller.appspot.com/bug?extid=64d1c4bd2e3fa680321d
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
 
-Though I agree we can have the fix like you mentioned above
-(as many of the API users are already doing above). Just wanted to have the
-full context of what is going on here.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-451769ebb7e792c3404db53b3c2a422990de654e
-Author:     Michal Hocko <mhocko@suse.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/16985cc7a274/disk-2ebd1fbb.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fd3452567115/vmlinux-2ebd1fbb.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c75510922212/Image-2ebd1fbb.gz.xz
 
-mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+64d1c4bd2e3fa680321d@syzkaller.appspotmail.com
 
-Patch series "extend vmalloc support for constrained allocations", v2.
-
-Based on a recent discussion with Dave and Neil [1] I have tried to
-implement NOFS, NOIO, NOFAIL support for the vmalloc to make life of
-kvmalloc users easier.
-
-[1] http://lkml.kernel.org/r/163184741778.29351.16920832234899124642.stgit@noble.brown
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+------------[ cut here ]------------
+VFS: brelse: Trying to free free buffer
+WARNING: CPU: 1 PID: 13690 at fs/buffer.c:1145 __brelse+0x84/0xd8 fs/buffer.c:1145
+Modules linked in:
+CPU: 1 PID: 13690 Comm: syz-executor.1 Not tainted 6.2.0-syzkaller-18300-g2ebd1fbb946d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __brelse+0x84/0xd8 fs/buffer.c:1145
+lr : __brelse+0x84/0xd8 fs/buffer.c:1145
+sp : ffff8000222f7600
+x29: ffff8000222f7600 x28: ffff8000222f7760 x27: ffff000130521080
+x26: ffff8000222f77b0 x25: 1ffff0000445ef00 x24: ffff0000dd9088d0
+x23: ffff70000445eed8 x22: 1ffff0000445eee4 x21: ffff00013fc33d98
+x20: 0000000000000000 x19: ffff00013fc33df8 x18: 1fffe0003689f976
+x17: ffff800015b8d000 x16: ffff80001235d16c x15: 0000000000000000
+x14: 1ffff00002b720af x13: dfff800000000000 x12: 0000000000040000
+x11: 0000000000016792 x10: ffff80001ffaa000 x9 : 93de21cc8eb3a600
+x8 : 93de21cc8eb3a600 x7 : ffff800008288c58 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff80000aae9f90
+x2 : ffff0001b44fcf08 x1 : 0000000100000000 x0 : 0000000000000027
+Call trace:
+ __brelse+0x84/0xd8 fs/buffer.c:1145
+ brelse include/linux/buffer_head.h:326 [inline]
+ udf_rename+0xd1c/0x10b0 fs/udf/namei.c:1214
+ vfs_rename+0x9e0/0xe80 fs/namei.c:4779
+ do_renameat2+0x95c/0x100c fs/namei.c:4930
+ __do_sys_renameat2 fs/namei.c:4963 [inline]
+ __se_sys_renameat2 fs/namei.c:4960 [inline]
+ __arm64_sys_renameat2+0xe0/0xfc fs/namei.c:4960
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
+ el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
+ el0_svc+0x58/0x168 arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+irq event stamp: 7128
+hardirqs last  enabled at (7127): [<ffff800008288cf8>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1370 [inline]
+hardirqs last  enabled at (7127): [<ffff800008288cf8>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5055
+hardirqs last disabled at (7128): [<ffff800012358d60>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
+softirqs last  enabled at (7094): [<ffff800008020ea8>] softirq_handle_end kernel/softirq.c:414 [inline]
+softirqs last  enabled at (7094): [<ffff800008020ea8>] __do_softirq+0xd4c/0xfa4 kernel/softirq.c:600
+softirqs last disabled at (7079): [<ffff80000802b4a4>] ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:80
+---[ end trace 0000000000000000 ]---
 
 
-Thanks
--ritesh
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
