@@ -2,70 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD7746A88A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 19:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C95256A88B8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 19:49:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229595AbjCBSno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 13:43:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39046 "EHLO
+        id S229505AbjCBSt5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 13:49:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbjCBSnn (ORCPT
+        with ESMTP id S229449AbjCBSt4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 13:43:43 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF73193E2;
-        Thu,  2 Mar 2023 10:43:43 -0800 (PST)
+        Thu, 2 Mar 2023 13:49:56 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F7811149;
+        Thu,  2 Mar 2023 10:49:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=UhgtDiIvQRC30uro2NxhIrm3LooGaC9VAn5v4TlqZd4=; b=RTWIzkq6JIvSi0fRSUYy/OJtJs
-        pn2lQ89X/u1rS/QAF2QvFZ3SgcvQt/x09TiRTByvKYO+pxE/Zn9y3hMXsOi4kKssMWAqRHv7QJfgX
-        k6LozQQBAtCcG2ENQZQMf8NUgXi3+x2uMadiuewIdvmGexiqLXW126fn9Dh0jfCVQkz54vYM3YC0J
-        XlSnwzmjkmvLhbLmx3zmonAWBkgGICcRltB0JgY/Ux7YDrQIud+NX9YT56yhhdjirvKn6eiym3rjU
-        zpLzrCrowanWN4V5arUZAz1rXhIX2HSSiwZC6pKjxnwr3wwFOM94muCU5RMqsHXjWsqCCjpD8Jtwm
-        m8ppjQgg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pXntz-00DNEo-2o;
-        Thu, 02 Mar 2023 18:43:39 +0000
-Date:   Thu, 2 Mar 2023 18:43:39 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
- possible
-Message-ID: <ZADuWxU963sInrj/@ZenIV>
-References: <20230125155557.37816-1-mjguzik@gmail.com>
- <20230125155557.37816-2-mjguzik@gmail.com>
- <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
- <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
- <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
- <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
- <ZADoeOiJs6BRLUSd@ZenIV>
- <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
+        bh=agqc831C8v4FMtdYpZfvj2AmsMmIWRE9gM+fVerrSqc=; b=JeanFOxt8sJYlvsUJtWVjlquNR
+        UUH3VAdW2tXhESxQ55dI0UK/B+tyQ03zcJJuCX8HSa6odH6LQXpITsUgoJn5Vlg9kwN1eLhJmMfhr
+        Wdsu7Dc5N4Bd1gHJr2CDMIX9jSN5GINinQRYsMMI2b4Pa6Xyo5QgUlq142pTTVNW4ukylTsWYrSag
+        mH1+ad8gvvHJHD15jIoH4vYpTuSUQQSeuGsXd8bMvnDNfr41n8y13nW/jMmdGTn5+ivEiWdgvdU3r
+        DpNxQEREXqMrIbO0JyyTaCFG1alUrEOuJXeWS4sfGq7dLckcu5YdLJdPREm6lpo0pm6UjbZkwoTmm
+        Hf8omiCw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pXnzs-002aR2-Gi; Thu, 02 Mar 2023 18:49:44 +0000
+Date:   Thu, 2 Mar 2023 18:49:44 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Imran Khan <imran.f.khan@oracle.com>
+Cc:     tj@kernel.org, gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        joe.jin@oracle.com
+Subject: Re: [PATCH 3/3] kernfs: change kernfs_rename_lock into a read-write
+ lock.
+Message-ID: <ZADvyJcIazbpCnPu@casper.infradead.org>
+References: <20230302043203.1695051-1-imran.f.khan@oracle.com>
+ <20230302043203.1695051-4-imran.f.khan@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230302043203.1695051-4-imran.f.khan@oracle.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 02, 2023 at 07:22:17PM +0100, Mateusz Guzik wrote:
-
-> Ops, I meant "names_cache", here:
-> 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
-> 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
+On Thu, Mar 02, 2023 at 03:32:03PM +1100, Imran Khan wrote:
+> kernfs_rename_lock protects a node's ->parent and thus kernfs topology.
+> Thus it can be used in cases that rely on a stable kernfs topology.
+> Change it to a read-write lock for better scalability.
 > 
-> it is fs/dcache.c and I brainfarted into the above.
+> Suggested by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Imran Khan <imran.f.khan@oracle.com>
 
-So you mean __getname() stuff?
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
