@@ -2,167 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E03E6A8C51
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 23:56:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C9E6A8C4C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 23:56:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229692AbjCBW4i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 17:56:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42472 "EHLO
+        id S230097AbjCBW4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 17:56:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230242AbjCBW4g (ORCPT
+        with ESMTP id S229626AbjCBW4c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 17:56:36 -0500
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD58A559DE;
-        Thu,  2 Mar 2023 14:56:33 -0800 (PST)
-Received: from [192.168.192.83] (unknown [50.47.134.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 419E23F301;
-        Thu,  2 Mar 2023 22:56:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1677797788;
-        bh=7bAi7GvlLZqPDpdIMXt0Yd4XZ6qIgEVOlEjLpx+UniI=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=JF0zItZu8a/QA+CEzhwTb0M4jJwxjdquCHP+lb8lwhiseRuxzR9VRYQcjbxN0cEe+
-         qpMubuEgJq7A9WgWbB6zgOLQmiINIic57ynnFeUgSvCLcaSpVRWhVs1LYZgR8+c0u4
-         4KWrQCKMwTF88x75z/mwqtccDRh/bRWkB3VAy0yh8oGLxxsaubAcybs6qs2lguX0L4
-         LuSMDcJ4GhQL+lnM9+88jmrIQ1ajtPOwfpYpMnmg5Q9o4jngcYL/gqSDtViaaWR+NW
-         QYgrY1PTAGS0HHLxZYM+E9YEC4J36i31Sm+Q8e9V8CQ3fRQyyeQEzVY+BrGofC8oTj
-         tVOvO6YAWFmvA==
-Message-ID: <e97bf2c2-6879-de79-1e07-276bc2192d6e@canonical.com>
-Date:   Thu, 2 Mar 2023 14:56:21 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 02/11] proc_sysctl: move helper which creates required
- subdirectories
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>, ebiederm@xmission.com,
-        keescook@chromium.org, yzaikin@google.com, paul@paul-moore.com,
+        Thu, 2 Mar 2023 17:56:32 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA2C559D3
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 14:56:29 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id h8so848120plf.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Mar 2023 14:56:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1677797788;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=qXTwXNN5BPBJ/NZ3OYbXwmxOPd3hLZf5+C8HCX49djg=;
+        b=cPNPEoDiS/HfsiIItPLGT3E2KS7Pa2nDCzgKjzoBCNTmF5ovdMVml+ppsm005Cz2gc
+         pMD41ueS/rsqWBDjk0Ang+swrwWISO9NpTVI+XcAlfsXxlunEfDcOqSyRkjHfJ2N7W3M
+         nXhJv2G01aF56hxwfL9a8N8s/N1YUs1FWh6Ok=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677797788;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qXTwXNN5BPBJ/NZ3OYbXwmxOPd3hLZf5+C8HCX49djg=;
+        b=SVxpL45RZw4FDx5F+cWzExn3N7eITeN1t+QZ3t052jx6wotQ0+v4Whk5Si4yHGU9yn
+         PxE74MH9ngbX5VEIsjcUkhOl20XNRltb/YIrDlbZT8ZrLtMuUREC7I7pkspsTxTUk+oY
+         gLMYC4S6aB8z8Q69fuNzJTRt4WEDxAmas2WK624N+pKQdOeYcTKJKwOI6xlKCj5vgCyP
+         +4G8rBBVsJsDBSCAAi9627hLLmmNFKB51nFCAYrbNrCVzX3eTY2qD51ax/7YcM+Ph2QF
+         3Wa1tYWApSh2tpq8DZp8ArYpS7wR/xSi7ocbwLSwqULkd6KmohYlAS/w8TS8VheHPbFO
+         LQfw==
+X-Gm-Message-State: AO0yUKVkX/WCjG/MIdEJQkogef1EJLJ3ovKsWvpVZ52QIA2Jyx2jSNa2
+        XvPG9AjTzkYQBruVlUltLrv+pA==
+X-Google-Smtp-Source: AK7set+MdZhHyeith+B94HrQd6WpkfpBD5XCV21gXOzsSKhUw+dB78RFefTe7N6XbvDbdrdQDA//KA==
+X-Received: by 2002:a17:902:ec88:b0:19a:e762:a1af with SMTP id x8-20020a170902ec8800b0019ae762a1afmr3404427plg.33.1677797788585;
+        Thu, 02 Mar 2023 14:56:28 -0800 (PST)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id b9-20020a170903228900b00198d7b52eefsm168326plh.257.2023.03.02.14.56.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Mar 2023 14:56:28 -0800 (PST)
+Message-ID: <6401299c.170a0220.3a2e.0b8a@mx.google.com>
+X-Google-Original-Message-ID: <202303021456.@keescook>
+Date:   Thu, 2 Mar 2023 14:56:27 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     ebiederm@xmission.com, yzaikin@google.com,
+        john.johansen@canonical.com, paul@paul-moore.com,
         jmorris@namei.org, serge@hallyn.com, luto@amacapital.net,
         wad@chromium.org, dverkamp@chromium.org, paulmck@kernel.org,
         baihaowen@meizu.com, frederic@kernel.org, jeffxu@google.com,
-        ebiggers@kernel.org, tytso@mit.edu, guoren@kernel.org
-Cc:     j.granados@samsung.com, zhangpeng362@huawei.com,
+        ebiggers@kernel.org, tytso@mit.edu, guoren@kernel.org,
+        j.granados@samsung.com, zhangpeng362@huawei.com,
         tangmeng@uniontech.com, willy@infradead.org, nixiaoming@huawei.com,
         sujiaxun@uniontech.com, patches@lists.linux.dev,
         linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
         linux-security-module@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/11] seccomp: simplify sysctls with
+ register_sysctl_init()
 References: <20230302202826.776286-1-mcgrof@kernel.org>
- <20230302202826.776286-3-mcgrof@kernel.org>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20230302202826.776286-3-mcgrof@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+ <20230302202826.776286-8-mcgrof@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230302202826.776286-8-mcgrof@kernel.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/2/23 12:28, Luis Chamberlain wrote:
-> Move the code which creates the subdirectories for a ctl table
-> into a helper routine so to make it easier to review. Document
-> the goal.
-> 
-> This creates no functional changes.
+On Thu, Mar 02, 2023 at 12:28:22PM -0800, Luis Chamberlain wrote:
+> register_sysctl_paths() is only needed if you have childs (directories)
+> with entries. Just use register_sysctl_init() as it also does the
+> kmemleak check for you.
 > 
 > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Reviewed-by: John Johansen <john.johansen@canonical.com>
+Acked-by: Kees Cook <keescook@chromium.org>
 
-> ---
->   fs/proc/proc_sysctl.c | 56 ++++++++++++++++++++++++-------------------
->   1 file changed, 32 insertions(+), 24 deletions(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 1df0beb50dbe..6b9b2694d430 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -1283,6 +1283,35 @@ static int insert_links(struct ctl_table_header *head)
->   	return err;
->   }
->   
-> +/* Find the directory for the ctl_table. If one is not found create it. */
-> +static struct ctl_dir *sysctl_mkdir_p(struct ctl_dir *dir, const char *path)
-> +{
-> +	const char *name, *nextname;
-> +
-> +	for (name = path; name; name = nextname) {
-> +		int namelen;
-> +		nextname = strchr(name, '/');
-> +		if (nextname) {
-> +			namelen = nextname - name;
-> +			nextname++;
-> +		} else {
-> +			namelen = strlen(name);
-> +		}
-> +		if (namelen == 0)
-> +			continue;
-> +
-> +		/*
-> +		 * namelen ensures if name is "foo/bar/yay" only foo is
-> +		 * registered first. We traverse as if using mkdir -p and
-> +		 * return a ctl_dir for the last directory entry.
-> +		 */
-> +		dir = get_subdir(dir, name, namelen);
-> +		if (IS_ERR(dir))
-> +			break;
-> +	}
-> +	return dir;
-> +}
-> +
->   /**
->    * __register_sysctl_table - register a leaf sysctl table
->    * @set: Sysctl tree to register on
-> @@ -1334,7 +1363,6 @@ struct ctl_table_header *__register_sysctl_table(
->   {
->   	struct ctl_table_root *root = set->dir.header.root;
->   	struct ctl_table_header *header;
-> -	const char *name, *nextname;
->   	struct ctl_dir *dir;
->   	struct ctl_table *entry;
->   	struct ctl_node *node;
-> @@ -1359,29 +1387,9 @@ struct ctl_table_header *__register_sysctl_table(
->   	dir->header.nreg++;
->   	spin_unlock(&sysctl_lock);
->   
-> -	/* Find the directory for the ctl_table */
-> -	for (name = path; name; name = nextname) {
-> -		int namelen;
-> -		nextname = strchr(name, '/');
-> -		if (nextname) {
-> -			namelen = nextname - name;
-> -			nextname++;
-> -		} else {
-> -			namelen = strlen(name);
-> -		}
-> -		if (namelen == 0)
-> -			continue;
-> -
-> -		/*
-> -		 * namelen ensures if name is "foo/bar/yay" only foo is
-> -		 * registered first. We traverse as if using mkdir -p and
-> -		 * return a ctl_dir for the last directory entry.
-> -		 */
-> -		dir = get_subdir(dir, name, namelen);
-> -		if (IS_ERR(dir))
-> -			goto fail;
-> -	}
-> -
-> +	dir = sysctl_mkdir_p(dir, path);
-> +	if (IS_ERR(dir))
-> +		goto fail;
->   	spin_lock(&sysctl_lock);
->   	if (insert_header(dir, header))
->   		goto fail_put_dir_locked;
-
+-- 
+Kees Cook
