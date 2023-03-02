@@ -2,104 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9466C6A7A25
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 04:50:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01DC36A7A3F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 05:04:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229661AbjCBDud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 22:50:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57366 "EHLO
+        id S229699AbjCBEEI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 23:04:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjCBDuc (ORCPT
+        with ESMTP id S229470AbjCBEEH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 22:50:32 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 941B41EFCA;
-        Wed,  1 Mar 2023 19:50:31 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 70E85B81035;
-        Thu,  2 Mar 2023 03:50:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD36C433D2;
-        Thu,  2 Mar 2023 03:50:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677729028;
-        bh=gX6kt3+5lfprjA67P4c0hJG42XWIpdAERPk/U9u9xJI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dJWANL6fOjDnDK2WTU1fWA4MqapEuhfddjcndYuVRPrY2OTCWm7zNBsgWO/Cx4c8u
-         ajDGVmhK/KMkqoKaEBw3lvSWkV/KqQ27bdtl1j+iL8dYYl6o1v6Ffqgj4BcW5EVMWZ
-         JrMffy7qG8DW39NW7QWj0z2i8zA1ll/Tj7wN7AuRCJIXMuZpShNjtJJKiVjM049Cul
-         H7SdrbMBY1RO+/PYBER7yKzgy7bgle0KPF4asvDHEkiGpVGptxkCBevZqfBAcZyGM2
-         4mIcOEHpfo0jsRxqvgBuZdsUIDV0yxSwtEm9EQ4r9CEzuc/vBQngDZtzuJPvX6bDna
-         2WEehCQl7JCBA==
-Date:   Wed, 1 Mar 2023 19:50:27 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
-Message-ID: <ZAAdA5UG+qrJLRmY@magnolia>
-References: <Y/7L74P6jSWwOvWt@mit.edu>
+        Wed, 1 Mar 2023 23:04:07 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4757F36092;
+        Wed,  1 Mar 2023 20:04:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=Dhd6767pQ9B4fmJY8pvrA4c98sBJmkeXewyhhMbkQ4s=; b=DArjITYvSyRA8hwykvEP9WXJRS
+        FSstE4CI5Ao7wGT9SJo36E6PhD6WNQa49UM1tm092RTfZu2MHxwIMgDPo27mGW738B4WIWUIUjMge
+        coMcxOzsZWBKfu7QrsLzkcuvoVM63BWJacq/jlGmEofbGS9RbxbB6/h4DG102NaW+7JlxE7zi84VL
+        bAK0QmzKkH0mpxWMLdyN4FTQ+dV2YVs+NKbpzPqPBjMm3IcC04Ykiw6k9NhYTwR+6Hkia+tBU7g5L
+        jIVux/M9owfywhctB/45gHDCIc4rM23sLyHKd9EGRhR9moE45oN82DBoyyKRoRMRygPLH4l8rRBjy
+        0iZtDAYA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pXaAb-002A0I-Vi; Thu, 02 Mar 2023 04:03:54 +0000
+Date:   Thu, 2 Mar 2023 04:03:53 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc:     Gao Xiang <hsiangkao@linux.alibaba.com>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-block@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-nvme@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] State Of The Page
+Message-ID: <ZAAgKTWpwCE1fruV@casper.infradead.org>
+References: <Y9KtCc+4n5uANB2f@casper.infradead.org>
+ <8448beac-a119-330d-a2af-fc3531bdb930@linux.alibaba.com>
+ <Y/UiY/08MuA/tBku@casper.infradead.org>
+ <CA+CK2bBYX-N8T_ZdzsHC7oJnHsmqHufdTUJj5OrdFk17uQ=fzw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Y/7L74P6jSWwOvWt@mit.edu>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CA+CK2bBYX-N8T_ZdzsHC7oJnHsmqHufdTUJj5OrdFk17uQ=fzw@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 28, 2023 at 10:52:15PM -0500, Theodore Ts'o wrote:
-> Emulated block devices offered by cloud VM’s can provide functionality
-> to guest kernels and applications that traditionally have not been
-> available to users of consumer-grade HDD and SSD’s.  For example,
-> today it’s possible to create a block device in Google’s Persistent
-> Disk with a 16k physical sector size, which promises that aligned 16k
-> writes will be atomically.  With NVMe, it is possible for a storage
-> device to promise this without requiring read-modify-write updates for
-> sub-16k writes.  All that is necessary are some changes in the block
-> layer so that the kernel does not inadvertently tear a write request
-> when splitting a bio because it is too large (perhaps because it got
-> merged with some other request, and then it gets split at an
-> inconvenient boundary).
-
-Now that we've flung ourselves into the wild world of Software Defined
-Secure Storage as a Service*, I was thinking --
-
-T10 PI gives the kernel a means to associate its own checksums (and a
-goofy u16 tag) with LBAs on disk.  There haven't been that many actual
-SCSI devices that implement it, but I wonder how hard it would be for
-clod storage backends to export things like that?  The storage nodes
-often have a bit more CPU power, too.
-
-Though admittedly the advent of customer-managed FDE in the cloud and
-might make that less useful?
-
-Just my random 2c late at night,
-
---D
-
-* SDSSAAS: what you get from banging head on keyboard in frustration
-
-> There are also more interesting, advanced optimizations that might be
-> possible.  For example, Jens had observed the passing hints that
-> journaling writes (either from file systems or databases) could be
-> potentially useful.  Unfortunately most common storage devices have
-> not supported write hints, and support for write hints were ripped out
-> last year.  That can be easily reversed, but there are some other
-> interesting related subjects that are very much suited for LSF/MM.
+On Wed, Mar 01, 2023 at 10:50:24PM -0500, Pasha Tatashin wrote:
+> On Tue, Feb 21, 2023 at 2:58 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > My goal for 2023 is to get to a point where we (a) have struct page
+> > reduced to:
+> >
+> > struct page {
+> >         unsigned long flags;
+> >         struct list_head lru;
+> >         struct address_space *mapping;
+> >         pgoff_t index;
+> >         unsigned long private;
+> >         atomic_t _mapcount;
+> >         atomic_t _refcount;
+> >         unsigned long memcg_data;
+> > #ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
+> >         int _last_cpupid;
+> > #endif
+> > };
 > 
-> For example, most cloud storage devices are doing read-ahead to try to
-> anticipate read requests from the VM.  This can interfere with the
-> read-ahead being done by the guest kernel.  So being able to tell
-> cloud storage device whether a particular read request is stemming
-> from a read-ahead or not.  At the moment, as Matthew Wilcox has
-> pointed out, we currently use the read-ahead code path for synchronous
-> buffered reads.  So plumbing this information so it can passed through
-> multiple levels of the mm, fs, and block layers will probably be
-> needed.
+> This looks clean, but it is still 64-bytes. I wonder if we could
+> potentially reduce it down to 56 bytes by removing memcg_data.
+
+We need struct page to be 16-byte aligned to make slab work.  We also need
+it to divide PAGE_SIZE evenly to make CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
+work.  I don't think it's worth nibbling around the edges like this
+anyway; convert everything from page to folio and then we can do the
+big bang conversion where struct page shrinks from 64 bytes to 8.
