@@ -2,170 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 263336A7CEF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 09:39:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F34E6A7CF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 09:41:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbjCBIji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 03:39:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48074 "EHLO
+        id S229705AbjCBIla (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 03:41:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbjCBIjh (ORCPT
+        with ESMTP id S229600AbjCBIl3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 03:39:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AFA7199FA;
-        Thu,  2 Mar 2023 00:39:36 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BEC20B811F6;
-        Thu,  2 Mar 2023 08:39:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6894CC4339B;
-        Thu,  2 Mar 2023 08:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677746373;
-        bh=Mn2WCZLODtYeRS6OA0ifOlfZ7zABBTX9L3F2oIQ2qDY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jjKoC8YKoh1LNX8WPfjJ3cc47vdNi6UeW1F0NF5HFtjBBF2oSaH+7jFpIUgkGoTU5
-         wvxmPfAjXz6TFoZkfO0GCdJV+boLjQHYmt6e5O/6UTxfT9z0wBtqKOyAcJE7LmSjWk
-         jCb71UTBXBzFzKILio/gbCua9R2xCs+6cUK5a2iKZ7qH64/FrxU8e9Gj0HKnvf3R4x
-         a3IIwukPl3/hHdseCn4H7X/YVWbJYLqRoMbVDBCMGkAeleG8zhmqwVkRG8n0laS3h0
-         gQKKoatv9AgjYuPJjjqa1Ean/XDZQ1Kqbm8XpHvk3pHfuXtM5o4Qub1W8tb4sO1ddG
-         JT+7F28hMQVZg==
-Date:   Thu, 2 Mar 2023 09:39:28 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Glenn Washburn <development@efficientek.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Seth Forshee <sforshee@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v2] hostfs: handle idmapped mounts
-Message-ID: <20230302083928.zek46ybxvuwgwdf5@wittgenstein>
-References: <20230301015002.2402544-1-development@efficientek.com>
+        Thu, 2 Mar 2023 03:41:29 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AB5924CAD;
+        Thu,  2 Mar 2023 00:41:28 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id eg37so64354569edb.12;
+        Thu, 02 Mar 2023 00:41:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K1YXVoCyOwxQNnderTrmDeMC40tQAhZcHa0ukb6R9Ws=;
+        b=Rszkk4uwKQuXpOD256yevOsKDiLr4NPBQeo7kAGO8nrR5c7v+uWhDLhg1c7DXe9CCg
+         6sFJnQQ4ys8Xt1HBqHwDBQrCCPYrMZ6BlscFKL4kizHDhu5qs0Eh1RxAjc23brCl9Qui
+         hLLRgbOMAGA591ODRdSldDjRHtZ2mZSN8n5Vl9ar1h5eHetOevpSNJNTs26ycj6OaG0L
+         4L1Pd9hLwD1fUZaSEIK2u125UT6now9zJlMBhpMWKs1c/5nVFU6lq/vXdOsheBdpLFsr
+         B8E2UMZSfprRlDOChYnYKKNzt5pl2CyVD9OZJZjYlsvamVh3NNY2DITQQ/F7gUn2Qwtb
+         +sFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K1YXVoCyOwxQNnderTrmDeMC40tQAhZcHa0ukb6R9Ws=;
+        b=XDITuMq8D89kWJpMsNCIgRa1eWq9V+RBSRJc85TH9jh6vSuKTr9gJhKJ8CC6DSOkqF
+         aYcXbZ58sM1QNzAcVLV6tWbJp+t9gxUEKEWAeMawDjr7jjEuCnW/sSfKVbzsKGQUZW5o
+         fMIgMWsJYWeKg+8grFoJyaebDsIccJxwDx93p+OQFp0/d0tvjg2HkSfCRjWKdRjKH1m7
+         Dqcmt/cD+NMC9iYuaB2ucDZHwCaeq1RmuNwz4bPgPE7fGtjv8inHAHlZMwKeMgONWxI+
+         mSc5tcoJhxhpDtigScMWxqR4pggoQcDJhKJpa0gW/qdB+Fz00rWi/l5PZO9s6aifxH0r
+         WP9w==
+X-Gm-Message-State: AO0yUKU4PsNvrcoLsbsfhdDat01zJFhtEtHMkmLfpD/Ie6uiYuGsXYTr
+        rH3hO85snQwZz1dCw5RKpDUNE99iVFOgQg==
+X-Google-Smtp-Source: AK7set+Wnc63PgyHHQ3ShMaX4eflGRmShodrFGCyynYYDAJoy+XWo1MzU/OGJ7YL2Ydiea70Fhp+9w==
+X-Received: by 2002:a05:6402:1250:b0:4bb:f229:9431 with SMTP id l16-20020a056402125000b004bbf2299431mr1280219edw.19.1677746486483;
+        Thu, 02 Mar 2023 00:41:26 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a98-20020a509eeb000000b004ad601533a3sm6665583edf.55.2023.03.02.00.41.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Mar 2023 00:41:26 -0800 (PST)
+From:   Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date:   Thu, 2 Mar 2023 09:41:23 +0100
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, bpf@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Namhyung Kim <namhyung@gmail.com>
+Subject: Re: [RFC v2 bpf-next 0/9] mm/bpf/perf: Store build id in inode object
+Message-ID: <ZABhM913DI+DYSjL@krava>
+References: <20230228093206.821563-1-jolsa@kernel.org>
+ <20230228220714.GJ2825702@dread.disaster.area>
+ <Y/9yIJ9kOHcZqIzo@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230301015002.2402544-1-development@efficientek.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y/9yIJ9kOHcZqIzo@kernel.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 28, 2023 at 07:50:02PM -0600, Glenn Washburn wrote:
-> Let hostfs handle idmapped mounts. This allows to have the same hostfs
-> mount appear in multiple locations with different id mappings.
+On Wed, Mar 01, 2023 at 12:41:20PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Mar 01, 2023 at 09:07:14AM +1100, Dave Chinner escreveu:
+> > On Tue, Feb 28, 2023 at 10:31:57AM +0100, Jiri Olsa wrote:
+> > > this is RFC patchset for adding build id under inode's object.
 > 
-> root@(none):/media# id
-> uid=0(root) gid=0(root) groups=0(root)
-> root@(none):/media# mkdir mnt idmapped
-> root@(none):/media# mount -thostfs -o/home/user hostfs mnt
+> > > The main change to previous post [1] is to use inode object instead of file
+> > > object for build id data.
+> > 
+> > Please explain what a "build id" is, the use case for it, why we
+> > need to store it in VFS objects, what threat model it is protecting
+> > the system against, etc.
 > 
-> root@(none):/media# touch mnt/aaa
-> root@(none):/media# mount-idmapped --map-mount u:`id -u user`:0:1 --map-mount g:`id -g user`:0:1 /media/mnt /media/idmapped
-> root@(none):/media# ls -l mnt/aaa idmapped/aaa
-> -rw-r--r-- 1 root root 0 Jan 28 01:23 idmapped/aaa
-> -rw-r--r-- 1 user user 0 Jan 28 01:23 mnt/aaa
+> [root@quaco ~]# file /bin/bash
+> /bin/bash: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=160df51238a38ca27d03290f3ad5f7df75560ae0, for GNU/Linux 3.2.0, stripped
+> [root@quaco ~]# file /lib64/libc.so.6
+> /lib64/libc.so.6: ELF 64-bit LSB shared object, x86-64, version 1 (GNU/Linux), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=8257ee907646e9b057197533d1e4ac8ede7a9c5c, for GNU/Linux 3.2.0, not stripped
+> [root@quaco ~]#
 > 
-> root@(none):/media# touch idmapped/bbb
-> root@(none):/media# ls -l mnt/bbb idmapped/bbb
-> -rw-r--r-- 1 root root 0 Jan 28 01:26 idmapped/bbb
-> -rw-r--r-- 1 user user 0 Jan 28 01:26 mnt/bbb
+> Those BuildID[sha1]= bits, that is present in all binaries I think in
+> all distros for quite a while.
 > 
-> Signed-off-by: Glenn Washburn <development@efficientek.com>
-> ---
-> Changes from v1:
->  * Rebase on to tip. The above commands work and have the results expected.
->    The __vfsuid_val(make_vfsuid(...)) seems ugly to get the uid_t, but it
->    seemed like the best one I've come across. Is there a better way?
+> This page, from when this was initially designed, has a discussion about
+> it, why it is needed, etc:
+> 
+>   https://fedoraproject.org/wiki/RolandMcGrath/BuildID
+> 
+> 'perf record' will receive MMAP records, initially without build-ids,
+> now we have one that has, but collecting it when the mmap is executed
+> (and thus a PERF_RECORD_MMAP* record is emitted) may not work, thus this
+> work from Jiri.
 
-Sure, I can help you with that. ;)
+thanks for the pointers
+
+build id is unique id for binary that's been used to identify
+correct binary version for related stuff.. like binary's debuginfo
+in perf or match binary with stack trace entries in bpf stackmap
+
+jirka
 
 > 
-> Glenn
-> ---
->  fs/hostfs/hostfs_kern.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-> index c18bb50c31b6..9459da99a0db 100644
-> --- a/fs/hostfs/hostfs_kern.c
-> +++ b/fs/hostfs/hostfs_kern.c
-> @@ -786,7 +786,7 @@ static int hostfs_permission(struct mnt_idmap *idmap,
->  		err = access_file(name, r, w, x);
->  	__putname(name);
->  	if (!err)
-> -		err = generic_permission(&nop_mnt_idmap, ino, desired);
-> +		err = generic_permission(idmap, ino, desired);
->  	return err;
->  }
+> - Arnaldo
 >  
-> @@ -794,13 +794,14 @@ static int hostfs_setattr(struct mnt_idmap *idmap,
->  			  struct dentry *dentry, struct iattr *attr)
->  {
->  	struct inode *inode = d_inode(dentry);
-> +	struct user_namespace *fs_userns = i_user_ns(inode);
-
-Fyi, since hostfs can't be mounted in a user namespace
-fs_userns == &init_user_ns
-so it doesn't really matter what you use.
-
->  	struct hostfs_iattr attrs;
->  	char *name;
->  	int err;
+> > > 
+> > > However.. ;-) while using inode as build id storage place saves some memory
+> > > by keeping just one copy of the build id for all file instances, there seems
+> > > to be another problem.
 >  
->  	int fd = HOSTFS_I(inode)->fd;
+> > Yes, the problem being that we can cache hundreds of millions of
+> > inodes in memory, and only a very small subset of them are going to
+> > have open files associated with them. And an even smaller subset are
+> > going to be mmapped.
 >  
-> -	err = setattr_prepare(&nop_mnt_idmap, dentry, attr);
-> +	err = setattr_prepare(idmap, dentry, attr);
->  	if (err)
->  		return err;
->  
-> @@ -814,11 +815,11 @@ static int hostfs_setattr(struct mnt_idmap *idmap,
->  	}
->  	if (attr->ia_valid & ATTR_UID) {
->  		attrs.ia_valid |= HOSTFS_ATTR_UID;
-> -		attrs.ia_uid = from_kuid(&init_user_ns, attr->ia_uid);
-> +		attrs.ia_uid = __vfsuid_val(make_vfsuid(idmap, fs_userns, attr->ia_uid));
->  	}
->  	if (attr->ia_valid & ATTR_GID) {
->  		attrs.ia_valid |= HOSTFS_ATTR_GID;
-> -		attrs.ia_gid = from_kgid(&init_user_ns, attr->ia_gid);
-> +		attrs.ia_gid = __vfsgid_val(make_vfsgid(idmap, fs_userns, attr->ia_gid));
-
-Heh, if you look include/linux/fs.h:
-
-        /*
-         * The two anonymous unions wrap structures with the same member.
-         *
-         * Filesystems raising FS_ALLOW_IDMAP need to use ia_vfs{g,u}id which
-         * are a dedicated type requiring the filesystem to use the dedicated
-         * helpers. Other filesystem can continue to use ia_{g,u}id until they
-         * have been ported.
-         *
-         * They always contain the same value. In other words FS_ALLOW_IDMAP
-         * pass down the same value on idmapped mounts as they would on regular
-         * mounts.
-         */
-        union {
-                kuid_t          ia_uid;
-                vfsuid_t        ia_vfsuid;
-        };
-        union {
-                kgid_t          ia_gid;
-                vfsgid_t        ia_vfsgid;
-        };
-
-this just is:
-
-attrs.ia_uid = from_vfsuid(idmap, fs_userns, attr->ia_vfsuid));
-attrs.ia_gid = from_vfsgid(idmap, fs_userns, attr->ia_vfsgid));
-
-(I plan to fully replace ia_{g,u}id at some point.)
-
-Christian
+> > So, in reality, this proposal won't save any memory at all - it
+> > costs memory for every inode that is not currently being used as
+> > a mmapped elf executable, right?
+> > 
+> > > The problem is that we read the build id when the file is mmap-ed.
+> > 
+> > Why? I'm completely clueless as to what this thing does or how it's
+> > used....
+> > 
+> > > Which is fine for our use case,
+> > 
+> > Which is?
+> > 
+> > -Dave.
+> > -- 
+> > Dave Chinner
+> > david@fromorbit.com
