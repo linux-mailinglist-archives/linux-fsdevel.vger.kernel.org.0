@@ -2,109 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3875F6A88C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 19:59:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB44B6A88D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 20:02:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229616AbjCBS7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 13:59:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49284 "EHLO
+        id S229642AbjCBTCS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 14:02:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbjCBS7e (ORCPT
+        with ESMTP id S229537AbjCBTCR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 13:59:34 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F24B13D72;
-        Thu,  2 Mar 2023 10:59:33 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id u5so273807plq.7;
-        Thu, 02 Mar 2023 10:59:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gB2HUq7BqZ9YE5Jdj4A7pEijY65clFvt/4yvZ8jHPnA=;
-        b=ctoOOVTs2qJZKuApqbKVDht7z3QHErqz0+Mwy9oj99d80efA79IBLI5jt11rKV4PBq
-         Un1DJ8OWpedoFC+v79LCkrPmSgQrDfKhgO9gFf7chHqG6P8yxCRIqVq/EMhcn6pcjnIp
-         +On+ZkiLwNgiXPCrlQgHYs5JyaeLyV390VnE25xfRp7JGk/ij8Kt10URI1yia1PqhVoo
-         5nvEjKnqrEuR3f3nMv68a/CQYZTlK+Jb/t3Qidspe0pHPzM6mwph+gN1mHC8dksOk6hZ
-         PFwvjEiCZUPlVy9CWIWAKhWWJa04YCVDplaylAYdBhM05HAmLH3KM1UIpovzbo1VWQoQ
-         u0PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gB2HUq7BqZ9YE5Jdj4A7pEijY65clFvt/4yvZ8jHPnA=;
-        b=f3BKW2hPgBB18Yh4EmLXf7UvnY+vKEcFTbH/758Iic8fY8AQKbuAG71W8FZrAkImCM
-         kufyGpWYZzG8AIi2N1Z+uxLQ1hjhIOT4vKHA60ZyXxNT7E1OrhHuijGitCpBMMUgR8h2
-         7KTBC6JGOBZmJJnoDLASukIw/nAQnNLZiSk3X7az9bzwSDvSCDq8SRzDbAiFUiysuGE/
-         loFpNZzq5dhoGRb8u58Me8VsNIUF0OSTVzFXpCoXzMiGNVQ1xyAoqIZmPO8aeBDBwMaH
-         ocyCOJpbkxiOQymYIaIr6OWSpPjaCMrkVyhLCRcIFosvXkPiMJAepZMVmtkhewgMrYAB
-         8seQ==
-X-Gm-Message-State: AO0yUKVJdocZZfeaS8sJLanlUnXGtSINdwZ+KlxWD3TydrpamBzJASC1
-        88X4D+HelqXsW4Hdkd5hyVirjN00bqrLsw==
-X-Google-Smtp-Source: AK7set/ksNl7Jzc+pfuBBpVrz4NHC/5lbtvgGlz8T80xiBtwr3j5Dw4kVMBI6ThbNKQOKdrg/faMvQ==
-X-Received: by 2002:a05:6a20:3d83:b0:cc:8266:9951 with SMTP id s3-20020a056a203d8300b000cc82669951mr14028766pzi.56.1677783572375;
-        Thu, 02 Mar 2023 10:59:32 -0800 (PST)
-Received: from rh-tp ([2406:7400:63:469f:eb50:3ffb:dc1b:2d55])
-        by smtp.gmail.com with ESMTPSA id x52-20020a056a000bf400b005a7bd10bb2asm46481pfu.79.2023.03.02.10.59.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Mar 2023 10:59:31 -0800 (PST)
-Date:   Fri, 03 Mar 2023 00:29:07 +0530
-Message-Id: <87pm9rm138.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFCv3 1/3] iomap: Allocate iop in ->write_begin() early
-In-Reply-To: <Y/5Jttk0j4m6dep8@casper.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Thu, 2 Mar 2023 14:02:17 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4EC3193F3;
+        Thu,  2 Mar 2023 11:02:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=lpBNVR74iubjvON2wguO4B8ttWa6FZ0mrtSI3Z/IcA8=; b=rL03dt7h2WxlaKHIIhcEPhjJxg
+        bn28ifI4tDnDJLbkFxlRtgBxfHTWBCn3JNL/d67e3Qek5xAdY9QlEWOeA2rtKVd8FI/HWCLZtWTA3
+        bBEGr74fT+YeSYz6BKm1vQQc7m1zT7oZ+Kr6ixxkfHdmgsp2m5+pEkOvmTBTUWAe7EnQQC92qcCWw
+        0/b6MbJRr2vvy0BChdIuu5UlRVaKuRNo3giHvqq8i1e3Qi2J/3v5fUzuris51tvCvNdQuRFNrcQkp
+        R8v4jASZ7AcFUyk97Ebmvr/yK3LI1XZyQEPz67Mw38spqI95ibMVF2ht8IY4n+Ui+ynvR4fDbv8cA
+        Gw530wDA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pXoBv-00DNPR-05;
+        Thu, 02 Mar 2023 19:02:11 +0000
+Date:   Thu, 2 Mar 2023 19:02:10 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
+ possible
+Message-ID: <ZADysodnEPRqhKqc@ZenIV>
+References: <20230125155557.37816-1-mjguzik@gmail.com>
+ <20230125155557.37816-2-mjguzik@gmail.com>
+ <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
+ <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
+ <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
+ <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
+ <ZADoeOiJs6BRLUSd@ZenIV>
+ <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
+ <ZADuWxU963sInrj/@ZenIV>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZADuWxU963sInrj/@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> writes:
+On Thu, Mar 02, 2023 at 06:43:39PM +0000, Al Viro wrote:
+> On Thu, Mar 02, 2023 at 07:22:17PM +0100, Mateusz Guzik wrote:
+> 
+> > Ops, I meant "names_cache", here:
+> > 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
+> > 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
+> > 
+> > it is fs/dcache.c and I brainfarted into the above.
+> 
+> So you mean __getname() stuff?
 
-> On Wed, Mar 01, 2023 at 12:03:48AM +0530, Ritesh Harjani wrote:
->> Matthew Wilcox <willy@infradead.org> writes:
->>
->> > On Mon, Feb 27, 2023 at 01:13:30AM +0530, Ritesh Harjani (IBM) wrote:
->> >> +++ b/fs/iomap/buffered-io.c
->> >> @@ -535,11 +535,16 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
->> >>  	size_t from = offset_in_folio(folio, pos), to = from + len;
->> >>  	size_t poff, plen;
->> >>
->> >> +	if (pos <= folio_pos(folio) &&
->> >> +	    pos + len >= folio_pos(folio) + folio_size(folio))
->> >> +		return 0;
->> >> +
->> >> +	iop = iomap_page_create(iter->inode, folio, iter->flags);
->> >> +
->> >>  	if (folio_test_uptodate(folio))
->> >>  		return 0;
->> >>  	folio_clear_error(folio);
->> >>
->> >> -	iop = iomap_page_create(iter->inode, folio, iter->flags);
->> >>  	if ((iter->flags & IOMAP_NOWAIT) && !iop && nr_blocks > 1)
->> >>  		return -EAGAIN;
->> >
->> > Don't you want to move the -EAGAIN check up too?  Otherwise an
->> > io_uring write will dirty the entire folio rather than a block.
->>
->> I am not entirely convinced whether we should move this check up
->> (to put it just after the iop allocation). The reason is if the folio is
->> uptodate then it is ok to return 0 rather than -EAGAIN, because we are
->> anyway not going to read the folio from disk (given it is completely
->> uptodate).
->>
->> Thoughts? Or am I missing anything here.
->
-> But then we won't have an iop, so a write will dirty the entire folio
-> instead of just the blocks you want to dirty.
+The thing is, getname_flags()/getname_kernel() is not the only user of that
+thing; grep and you'll see (and keep in mind that cifs alloc_dentry_path()
+is a __getname() wrapper, with its own callers).  We might have bugs papered
+over^W^Whardened away^W^Wpapered over in some of those users.
 
-Ok, I got what you are saying. Make sense. I will give it a try.
+I agree that getname_flags()/getname_kernel()/sys_getcwd() have no need of
+pre-zeroing; fw_get_filesystem_firmware(), ceph_mdsc_build_path(),
+[hostfs]dentry_name() and ima_d_path() seem to be safe.  So's
+vboxsf_path_from_dentry() (I think).  But with this bunch I'd need
+a review before I'd be willing to say "this security theatre buys us
+nothing here":
 
-Thanks
--ritesh
+fs/cifs/cifsproto.h:67: return __getname();
+fs/exfat/dir.c:195:     nb->lfn = __getname();
+fs/fat/dir.c:287:               *unicode = __getname();
+fs/fat/namei_vfat.c:598:        uname = __getname();
+fs/ntfs3/dir.c:394:     name = __getname();
+fs/ntfs3/inode.c:1289:  new_de = __getname();
+fs/ntfs3/inode.c:1694:  de = __getname();
+fs/ntfs3/inode.c:1732:  de = __getname();
+fs/ntfs3/namei.c:71:    struct cpu_str *uni = __getname();
+fs/ntfs3/namei.c:286:   de = __getname();
+fs/ntfs3/namei.c:355:   struct cpu_str *uni = __getname();
+fs/ntfs3/namei.c:494:   uni = __getname();
+fs/ntfs3/namei.c:555:   uni1 = __getname();
+fs/ntfs3/xattr.c:532:   buf = __getname();
+
+fs/cifs/cifs_dfs_ref.c:168:     page = alloc_dentry_path();
+fs/cifs/cifsacl.c:1697: page = alloc_dentry_path();
+fs/cifs/cifsacl.c:1760: page = alloc_dentry_path();
+fs/cifs/cifsproto.h:65:static inline void *alloc_dentry_path(void)
+fs/cifs/dir.c:187:      void *page = alloc_dentry_path();
+fs/cifs/dir.c:604:      page = alloc_dentry_path();
+fs/cifs/dir.c:664:      page = alloc_dentry_path();
+fs/cifs/file.c:594:     page = alloc_dentry_path();
+fs/cifs/file.c:796:     page = alloc_dentry_path();
+fs/cifs/file.c:2223:    void *page = alloc_dentry_path();
+fs/cifs/file.c:2255:    void *page = alloc_dentry_path();
+fs/cifs/inode.c:1663:   page = alloc_dentry_path();
+fs/cifs/inode.c:1938:   page = alloc_dentry_path();
+fs/cifs/inode.c:2001:   void *page = alloc_dentry_path();
+fs/cifs/inode.c:2170:   page1 = alloc_dentry_path();
+fs/cifs/inode.c:2171:   page2 = alloc_dentry_path();
+fs/cifs/inode.c:2446:   page = alloc_dentry_path();
+fs/cifs/inode.c:2738:   void *page = alloc_dentry_path();
+fs/cifs/inode.c:2893:   void *page = alloc_dentry_path();
+fs/cifs/ioctl.c:34:     void *page = alloc_dentry_path();
+fs/cifs/link.c:491:     page1 = alloc_dentry_path();
+fs/cifs/link.c:492:     page2 = alloc_dentry_path();
+fs/cifs/misc.c:803:     page = alloc_dentry_path();
+fs/cifs/readdir.c:1071: void *page = alloc_dentry_path();
+fs/cifs/smb2ops.c:2059: void *page = alloc_dentry_path();
+fs/cifs/xattr.c:112:    page = alloc_dentry_path();
+fs/cifs/xattr.c:277:    page = alloc_dentry_path();
+fs/cifs/xattr.c:382:    page = alloc_dentry_path();
