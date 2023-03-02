@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 05AC56A8CDB
+	by mail.lfdr.de (Postfix) with ESMTP id A5E5D6A8CDD
 	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 00:18:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229815AbjCBXSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 18:18:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60194 "EHLO
+        id S229810AbjCBXSW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 18:18:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjCBXSO (ORCPT
+        with ESMTP id S229831AbjCBXSP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 18:18:14 -0500
+        Thu, 2 Mar 2023 18:18:15 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E73A59415
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 15:16:59 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA3158B46
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 15:17:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677799010;
+        s=mimecast20190719; t=1677799013;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=1eE9Pafa530L5JjpUU74EsDdw6S9K1gsLvm9PBz92W8=;
-        b=SPhkFSgxWifBjmP1F1Jt8+5V5ymjtD88Y1PhXux1hRWFp8xLu7bkdjvx43uMo5e5FuDwzb
-        0lyMhv1VTSa4sDvHe09iOo32qGI8x1+wWdgtAlYcZwxiEpXiS28h0QyfFJ7qGE+LNduVMs
-        qriuZS57zHc5oBa88MieKb0HDN+Xna0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=nNYSQ/Y9B3aZRJt+LYUgV6EcG7vLla4aEHu0riyXHik=;
+        b=ccQsJISbti997Ttdl2XBgh7bmwyhSQlSx3C9X5OHPsJbOIUfNYa1Yukvqv4NKoFngAu8op
+        Bz2eL/FA15HwjbpruglQIHmYkTcjfHCvx/zLY35rXjJCDeuLyJxk4BH27S7w8UJfS3P+h0
+        3mbAYQoQlJbNC9w14z0LbgUZ5QaLBZI=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-622-zwFLchJEPOeBqPxHgNImPw-1; Thu, 02 Mar 2023 18:16:47 -0500
-X-MC-Unique: zwFLchJEPOeBqPxHgNImPw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+ us-mta-640-Ema7s1klNeSsDP6d3fPMHw-1; Thu, 02 Mar 2023 18:16:50 -0500
+X-MC-Unique: Ema7s1klNeSsDP6d3fPMHw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 630DB800B23;
-        Thu,  2 Mar 2023 23:16:46 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2767F1C05AC1;
+        Thu,  2 Mar 2023 23:16:49 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 54038440D9;
-        Thu,  2 Mar 2023 23:16:44 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 15443492C3E;
+        Thu,  2 Mar 2023 23:16:46 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Steve French <smfrench@gmail.com>
@@ -54,14 +54,14 @@ Cc:     David Howells <dhowells@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Steve French <sfrench@samba.org>,
         Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Subject: [PATCH 1/3] mm: Add a function to get a single tagged folio from a file
-Date:   Thu,  2 Mar 2023 23:16:36 +0000
-Message-Id: <20230302231638.521280-2-dhowells@redhat.com>
+Subject: [PATCH 2/3] afs: Partially revert and use filemap_get_folio_tag()
+Date:   Thu,  2 Mar 2023 23:16:37 +0000
+Message-Id: <20230302231638.521280-3-dhowells@redhat.com>
 In-Reply-To: <20230302231638.521280-1-dhowells@redhat.com>
 References: <20230302231638.521280-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -72,115 +72,187 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a function to get a single tagged folio from a file rather than a batch
-for use in afs and cifs where, in the common case, the batch is likely to
-be rendered irrelevant by the {afs,cifs}_extend_writeback() function.
+Partially revert the changes made by:
 
-For filemap_get_folios_tag() to be of use, the batch has to be passed down,
-and if it contains scattered, non-contiguous folios, these are likely to
-end up being pinned by the batch for significant periods of time whilst I/O
-is undertaken on earlier pages.
+    acc8d8588cb7e3e64b0d2fa611dad06574cd67b1.
+    afs: convert afs_writepages_region() to use filemap_get_folios_tag()
 
-Further, for write_cache_pages() to be useful, it would need to wait for
-PG_fscache which is used to indicate that I/O is in progress from a folio to
-the cache - but it can't do this unconditionally as some filesystems, such
-as btrfs, use PG_private_2 for other purposes.
+The issue is that filemap_get_folios_tag() gets a batch of pages at a time,
+and then afs_writepages_region() goes through them one at a time, extends
+each into an operation with as many pages as will fit using the loop in
+afs_extend_writeback() and submits it - but, in the common case, this means
+that the other pages in the batch already got annexed and processed in
+afs_extend_writeback() and we end up doing duplicate processing.
 
+Switching to write_cache_pages() isn't an immediate substitute as that
+doesn't take account of PG_fscache (and this bit is used in other ways by
+other filesystems).
+
+So go back to finding the next folio from the VM one at a time and then
+extending the op onwards.
+
+Fixes: acc8d8588cb7 ("afs: convert afs_writepages_region() to use filemap_get_folios_tag()")
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
 cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Steve French <sfrench@samba.org>
 cc: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 cc: Andrew Morton <akpm@linux-foundation.org>
 cc: linux-afs@lists.infradead.org
-cc: linux-cifs@vger.kernel.org
 cc: linux-mm@kvack.org
 Link: https://lore.kernel.org/r/2214157.1677250083@warthog.procyon.org.uk/
 ---
- include/linux/pagemap.h |  2 ++
- mm/filemap.c            | 58 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+)
+ fs/afs/write.c | 118 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 57 insertions(+), 61 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 0acb8e1fb7af..577535633006 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -741,6 +741,8 @@ unsigned filemap_get_folios_contig(struct address_space *mapping,
- 		pgoff_t *start, pgoff_t end, struct folio_batch *fbatch);
- unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
- 		pgoff_t end, xa_mark_t tag, struct folio_batch *fbatch);
-+struct folio *filemap_get_folio_tag(struct address_space *mapping, pgoff_t *start,
-+				    pgoff_t end, xa_mark_t tag);
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 571f3b9a417e..2ed76697be96 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -704,87 +704,83 @@ static int afs_writepages_region(struct address_space *mapping,
+ 				 bool max_one_loop)
+ {
+ 	struct folio *folio;
+-	struct folio_batch fbatch;
+ 	ssize_t ret;
+-	unsigned int i;
+-	int n, skips = 0;
++	int skips = 0;
  
- struct page *grab_cache_page_write_begin(struct address_space *mapping,
- 			pgoff_t index);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 2723104cc06a..1b1e9c661018 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2339,6 +2339,64 @@ unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
- }
- EXPORT_SYMBOL(filemap_get_folios_tag);
+ 	_enter("%llx,%llx,", start, end);
+-	folio_batch_init(&fbatch);
  
-+/**
-+ * filemap_get_folio_tag - Get the first folio matching @tag
-+ * @mapping:    The address_space to search
-+ * @start:      The starting page index
-+ * @end:        The final page index (inclusive)
-+ * @tag:        The tag index
-+ *
-+ * Search for and return the first folios in the mapping starting at index
-+ * @start and up to index @end (inclusive).  The folio is returned with an
-+ * elevated reference count.
-+ *
-+ * If a folio is returned, it may start before @start; if it does, it will
-+ * contain @start.  The folio may also extend beyond @end; if it does, it will
-+ * contain @end.  If folios are added to or removed from the page cache while
-+ * this is running, they may or may not be found by this call.
-+ *
-+ * Return: The folio that was found or NULL.  @start is also updated to index
-+ * the next folio for the traversal or will be left pointing after @end.
-+ */
-+struct folio *filemap_get_folio_tag(struct address_space *mapping, pgoff_t *start,
-+				    pgoff_t end, xa_mark_t tag)
-+{
-+	XA_STATE(xas, &mapping->i_pages, *start);
-+	struct folio *folio;
-+
-+	rcu_read_lock();
-+	while ((folio = find_get_entry(&xas, end, tag)) != NULL) {
-+		/*
-+		 * Shadow entries should never be tagged, but this iteration
-+		 * is lockless so there is a window for page reclaim to evict
-+		 * a page we saw tagged. Skip over it.
+ 	do {
+ 		pgoff_t index = start / PAGE_SIZE;
+ 
+-		n = filemap_get_folios_tag(mapping, &index, end / PAGE_SIZE,
+-					PAGECACHE_TAG_DIRTY, &fbatch);
+-
+-		if (!n)
++		folio = filemap_get_folio_tag(mapping, &index, end / PAGE_SIZE,
++					      PAGECACHE_TAG_DIRTY);
++		if (!folio)
+ 			break;
+-		for (i = 0; i < n; i++) {
+-			folio = fbatch.folios[i];
+-			start = folio_pos(folio); /* May regress with THPs */
+ 
+-			_debug("wback %lx", folio_index(folio));
++		start = folio_pos(folio); /* May regress with THPs */
+ 
+-			/* At this point we hold neither the i_pages lock nor the
+-			 * page lock: the page may be truncated or invalidated
+-			 * (changing page->mapping to NULL), or even swizzled
+-			 * back from swapper_space to tmpfs file mapping
+-			 */
+-			if (wbc->sync_mode != WB_SYNC_NONE) {
+-				ret = folio_lock_killable(folio);
+-				if (ret < 0) {
+-					folio_batch_release(&fbatch);
+-					return ret;
+-				}
+-			} else {
+-				if (!folio_trylock(folio))
+-					continue;
+-			}
++		_debug("wback %lx", folio_index(folio));
+ 
+-			if (folio->mapping != mapping ||
+-			    !folio_test_dirty(folio)) {
+-				start += folio_size(folio);
+-				folio_unlock(folio);
+-				continue;
++		/* At this point we hold neither the i_pages lock nor the
++		 * page lock: the page may be truncated or invalidated
++		 * (changing page->mapping to NULL), or even swizzled
++		 * back from swapper_space to tmpfs file mapping
 +		 */
-+		if (xa_is_value(folio))
++		if (wbc->sync_mode != WB_SYNC_NONE) {
++			ret = folio_lock_killable(folio);
++			if (ret < 0) {
++				folio_put(folio);
++				return ret;
++			}
++		} else {
++			if (!folio_trylock(folio)) {
++				folio_put(folio);
++				return 0;
+ 			}
++		}
+ 
+-			if (folio_test_writeback(folio) ||
+-			    folio_test_fscache(folio)) {
+-				folio_unlock(folio);
+-				if (wbc->sync_mode != WB_SYNC_NONE) {
+-					folio_wait_writeback(folio);
++		if (folio_mapping(folio) != mapping ||
++		    !folio_test_dirty(folio)) {
++			start += folio_size(folio);
++			folio_unlock(folio);
++			folio_put(folio);
 +			continue;
++		}
 +
-+		if (folio_test_hugetlb(folio))
-+			*start = folio->index + 1;
-+		else
-+			*start = folio_next_index(folio);
-+		goto out;
-+	}
++		if (folio_test_writeback(folio) ||
++		    folio_test_fscache(folio)) {
++			folio_unlock(folio);
++			if (wbc->sync_mode != WB_SYNC_NONE) {
++				folio_wait_writeback(folio);
+ #ifdef CONFIG_AFS_FSCACHE
+-					folio_wait_fscache(folio);
++				folio_wait_fscache(folio);
+ #endif
+-				} else {
+-					start += folio_size(folio);
+-				}
+-				if (wbc->sync_mode == WB_SYNC_NONE) {
+-					if (skips >= 5 || need_resched()) {
+-						*_next = start;
+-						_leave(" = 0 [%llx]", *_next);
+-						return 0;
+-					}
+-					skips++;
+-				}
+-				continue;
++			} else {
++				start += folio_size(folio);
+ 			}
+-
+-			if (!folio_clear_dirty_for_io(folio))
+-				BUG();
+-			ret = afs_write_back_from_locked_folio(mapping, wbc,
+-					folio, start, end);
+-			if (ret < 0) {
+-				_leave(" = %zd", ret);
+-				folio_batch_release(&fbatch);
+-				return ret;
++			folio_put(folio);
++			if (wbc->sync_mode == WB_SYNC_NONE) {
++				if (skips >= 5 || need_resched())
++					break;
++				skips++;
+ 			}
++			continue;
++		}
+ 
+-			start += ret;
++		if (!folio_clear_dirty_for_io(folio))
++			BUG();
++		ret = afs_write_back_from_locked_folio(mapping, wbc, folio, start, end);
++		folio_put(folio);
++		if (ret < 0) {
++			_leave(" = %zd", ret);
++			return ret;
+ 		}
+ 
+-		folio_batch_release(&fbatch);
++		start += ret;
 +
-+	/*
-+	 * We come here when there is no page beyond @end. We take care to not
-+	 * overflow the index @start as it confuses some of the callers. This
-+	 * breaks the iteration when there is a page at index -1 but that is
-+	 * already broke anyway.
-+	 */
-+	if (end == (pgoff_t)-1)
-+		*start = (pgoff_t)-1;
-+	else
-+		*start = end + 1;
-+out:
-+	rcu_read_unlock();
-+	return folio;
-+}
-+EXPORT_SYMBOL(filemap_get_folio_tag);
++		if (max_one_loop)
++			break;
 +
- /*
-  * CD/DVDs are error prone. When a medium error occurs, the driver may fail
-  * a _large_ part of the i/o request. Imagine the worst scenario:
+ 		cond_resched();
+ 	} while (wbc->nr_to_write > 0);
+ 
 
