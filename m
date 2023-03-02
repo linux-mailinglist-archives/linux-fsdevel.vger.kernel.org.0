@@ -2,109 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45C916A8C39
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 23:52:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 803AA6A8C49
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 23:56:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230217AbjCBWwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 17:52:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37408 "EHLO
+        id S230232AbjCBW4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 17:56:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230214AbjCBWvw (ORCPT
+        with ESMTP id S230230AbjCBW4I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 17:51:52 -0500
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 247A35329A;
-        Thu,  2 Mar 2023 14:51:51 -0800 (PST)
-Received: from [192.168.192.83] (unknown [50.47.134.245])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 6E3503F123;
-        Thu,  2 Mar 2023 22:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1677797507;
-        bh=bioryjk+aw7umCRjJRv4QvVIBgleMXFeIjs93Jwz0DU=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=Cj7XrX8b3UMGQ4YO23XrAP0FCwraXl+y1is+aXBHq4Yaq0NJ8Y8zOoX9mLwzMi+cA
-         W3HPuGOFaftga2KXhKyZ5/4wS3BJLQBJ5S66CQM0hrX5LMpBQztUXGj1ZJW8M57Tj9
-         E70gT7F19dTUoCRQak+Bmmjm6DiRshfhlHBeKvil8gT2zCWDPf/XMYo1iREmsccTjN
-         W73jiILx6RoqVEa9UN6TtrU3KE8vHdtwQu/Blp/WvArnFFzabJzHpde6FZkpMk6+tz
-         aA8hHzFDIvRxA5sc+RxL5w2jCZ/b5qSxjxwm4eMptgFrVN4BVZW/vH7z72DRLHmUiF
-         E9HGDOJeYK7xg==
-Message-ID: <0767e9c6-b255-7c66-a75b-e3fc59f129f9@canonical.com>
-Date:   Thu, 2 Mar 2023 14:51:40 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 04/11] apparmor: simplify sysctls with
- register_sysctl_init()
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>, ebiederm@xmission.com,
-        keescook@chromium.org, yzaikin@google.com, paul@paul-moore.com,
+        Thu, 2 Mar 2023 17:56:08 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3940C34C11
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 14:56:07 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id i10so854369plr.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Mar 2023 14:56:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1677797767;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fDa++rPUZHG1cADT97wEka7i9XpBCSMw+BsUJit3tM8=;
+        b=apW6CO+GriA5ax10w+Ltl21EZyiCuiEkrosyVJE39MbM7iiqBxUYPqTnJSZJrvIQ5m
+         AyBgf/dBZT8ggeDyaszfb5BRhMl3PsNMujEvWYmubxg2OsoEQS9fDcbnxUg4wG8mHx8b
+         JSd7FVNrEyw/RGhiZ1WY6WaWHYqk9swiQFrcM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677797767;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fDa++rPUZHG1cADT97wEka7i9XpBCSMw+BsUJit3tM8=;
+        b=KHfSyfJkRuL9/pTAjhCuMFyv6KNLcUseZz1LStIbLWoLolXmnP2HX032dh35wFYMTg
+         H4WMaOur+UNkVU4cADNJatHl+j8aOQdNO/PnTJU8zSd3VOa5bbdX1xwN2oBlGRJX1lrs
+         nLoqVgTYjt8KlA8plmbutSh9UE6qhbZKjEu54CKKto8wEgV1rzqLVeDfDLmYui+/NzkE
+         YOX+nCvjn7r3Zr7fXdGo8hZMlTOLxCFkf3+YzYj4HC6ppBo/OfrqYfP/Z7oq4YqX141A
+         hAkWqnR5ZNxjUBNx0mqLoSV4z6WiLJG7hXcJorcSoqCsmG2w9zY83YQKsM+bOoWImDVg
+         lQwA==
+X-Gm-Message-State: AO0yUKXMgrH3HJzaUnAd/2mY/3BOhtTgWGjqElwiMVv0I2k18oD/dwau
+        wz6DfGh8w1MdCiHC/c/AEgnt0A==
+X-Google-Smtp-Source: AK7set+MEnLjHdrL/UF2pQiGl3CRsjFYnt0FAye8NGhtXVtdNjGBD457Drx+Q5YR8VVMf1FPUpgIMQ==
+X-Received: by 2002:a17:90b:4a8c:b0:237:b702:49c0 with SMTP id lp12-20020a17090b4a8c00b00237b70249c0mr12768587pjb.45.1677797766720;
+        Thu, 02 Mar 2023 14:56:06 -0800 (PST)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id x13-20020a17090a294d00b00234a2f6d9c0sm224637pjf.57.2023.03.02.14.56.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Mar 2023 14:56:06 -0800 (PST)
+Message-ID: <64012986.170a0220.67312.124e@mx.google.com>
+X-Google-Original-Message-ID: <202303021455.@keescook>
+Date:   Thu, 2 Mar 2023 14:56:05 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     ebiederm@xmission.com, yzaikin@google.com,
+        john.johansen@canonical.com, paul@paul-moore.com,
         jmorris@namei.org, serge@hallyn.com, luto@amacapital.net,
         wad@chromium.org, dverkamp@chromium.org, paulmck@kernel.org,
         baihaowen@meizu.com, frederic@kernel.org, jeffxu@google.com,
-        ebiggers@kernel.org, tytso@mit.edu, guoren@kernel.org
-Cc:     j.granados@samsung.com, zhangpeng362@huawei.com,
+        ebiggers@kernel.org, tytso@mit.edu, guoren@kernel.org,
+        j.granados@samsung.com, zhangpeng362@huawei.com,
         tangmeng@uniontech.com, willy@infradead.org, nixiaoming@huawei.com,
         sujiaxun@uniontech.com, patches@lists.linux.dev,
         linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
         linux-security-module@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/11] loadpin: simplify sysctls use with
+ register_sysctl()
 References: <20230302202826.776286-1-mcgrof@kernel.org>
- <20230302202826.776286-5-mcgrof@kernel.org>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20230302202826.776286-5-mcgrof@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+ <20230302202826.776286-6-mcgrof@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230302202826.776286-6-mcgrof@kernel.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/2/23 12:28, Luis Chamberlain wrote:
-> Using register_sysctl_paths() is really only needed if you have
-> subdirectories with entries. We can use the simple register_sysctl()
-> instead.
+On Thu, Mar 02, 2023 at 12:28:20PM -0800, Luis Chamberlain wrote:
+> register_sysctl_paths() is not required, we can just use
+> register_sysctl() with the required path specified.
 > 
 > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Acked-by: John Johansen <john.johansen@canonical.com>
 
-> ---
->   security/apparmor/lsm.c | 8 +-------
->   1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index d6cc4812ca53..47c7ec7e5a80 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1764,11 +1764,6 @@ static int apparmor_dointvec(struct ctl_table *table, int write,
->   	return proc_dointvec(table, write, buffer, lenp, ppos);
->   }
->   
-> -static struct ctl_path apparmor_sysctl_path[] = {
-> -	{ .procname = "kernel", },
-> -	{ }
-> -};
-> -
->   static struct ctl_table apparmor_sysctl_table[] = {
->   	{
->   		.procname       = "unprivileged_userns_apparmor_policy",
-> @@ -1790,8 +1785,7 @@ static struct ctl_table apparmor_sysctl_table[] = {
->   
->   static int __init apparmor_init_sysctl(void)
->   {
-> -	return register_sysctl_paths(apparmor_sysctl_path,
-> -				     apparmor_sysctl_table) ? 0 : -ENOMEM;
-> +	return register_sysctl("kernel", apparmor_sysctl_table) ? 0 : -ENOMEM;
->   }
->   #else
->   static inline int apparmor_init_sysctl(void)
+Acked-by: Kees Cook <keescook@chromium.org>
 
+-- 
+Kees Cook
