@@ -2,97 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 51AB26A8BA4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 23:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2E036A8BE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 23:35:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbjCBWVT convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 2 Mar 2023 17:21:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36794 "EHLO
+        id S230159AbjCBWft (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 17:35:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbjCBWVR (ORCPT
+        with ESMTP id S230158AbjCBWfq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 17:21:17 -0500
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 879782C64E
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 14:21:16 -0800 (PST)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-133-p9yk02mGNJ-EvnKq43nrsA-1; Thu, 02 Mar 2023 22:21:13 +0000
-X-MC-Unique: p9yk02mGNJ-EvnKq43nrsA-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.47; Thu, 2 Mar
- 2023 22:21:11 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.047; Thu, 2 Mar 2023 22:21:11 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'aloktiagi' <aloktiagi@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "keescook@chromium.org" <keescook@chromium.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        Tycho Andersen <tycho@tycho.pizza>
-Subject: RE: [RFC 2/3] file: allow callers to free the old file descriptor
- after dup2
-Thread-Topic: [RFC 2/3] file: allow callers to free the old file descriptor
- after dup2
-Thread-Index: AQHZTTP1xmE+kqQuQ0egihVRbIR0J67oDplw
-Date:   Thu, 2 Mar 2023 22:21:11 +0000
-Message-ID: <bef11c18fa234948bcab0316418f04aa@AcuMS.aculab.com>
-References: <20230302182207.456311-1-aloktiagi@gmail.com>
- <20230302182207.456311-2-aloktiagi@gmail.com>
-In-Reply-To: <20230302182207.456311-2-aloktiagi@gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 2 Mar 2023 17:35:46 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD6574ECD1;
+        Thu,  2 Mar 2023 14:35:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=EDchka0i9+vLwDywAtBdjR7j0SGFx/hXskmfI/nuX5k=; b=n7ezqhYYOPMJ6nGrco1MqUGSih
+        MRNjo6PsWfwVCE385x1QYi7TlEZDWsuHvV6RNkYivYJDjvAft9l/8Bdp3x9LNtPTUJcNEUukcq51T
+        6lqD7uKmQr00p7l5mwp7VXaECwKSSDgBOxhuYQxY8ra/38MeVhgkztKDMjs54a0BmDcExsmaGvwxe
+        29dG8La8hWlVyrnJBjVNy8Gils45lEIU0pQaScmiJTS+eR7m/OhkIqRqojMfFhwkbpr3AgX7L5nEs
+        cFSKInL+Y/khNOhwOWrObRvQjTCvJMaS3MXm/tGPuVUpF9OoHch1TWVyJP1hr/Ts5ZRH6E6dp3ly8
+        ti82K28w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pXrWX-00DPuE-0M;
+        Thu, 02 Mar 2023 22:35:41 +0000
+Date:   Thu, 2 Mar 2023 22:35:41 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [git pull] vfs.git sysv pile
+Message-ID: <ZAEkveTgVqKau+ab@ZenIV>
+References: <Y/gugbqq858QXJBY@ZenIV>
+ <Y/9duET0Mt5hPu2L@ZenIV>
+ <20230302095931.jwyrlgtxcke7iwuu@quack3>
+ <9074146.CDJkKcVGEf@suse>
+ <ZAD6n+mH/P8LDcOw@ZenIV>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,PDS_BAD_THREAD_QP_64,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZAD6n+mH/P8LDcOw@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: aloktiagi
-> Sent: 02 March 2023 18:22
+On Thu, Mar 02, 2023 at 07:35:59PM +0000, Al Viro wrote:
+> On Thu, Mar 02, 2023 at 12:31:46PM +0100, Fabio M. De Francesco wrote:
 > 
-> Allow callers of do_dup2 to free the old file descriptor in case they need to
-> make additional operations on it.
+> > But... when yesterday Al showed his demo patchset I probably interpreted his 
+> > reply the wrong way and thought that since he spent time for the demo he 
+> > wanted to put this to completion on his own.
+> > 
+> > Now I see that you are interpreting his message as an invite to use them to 
+> > shorten the time... 
+> > 
+> > Furthermore I'm not sure about how I should credit him. Should I merely add a 
+> > "Suggested-by:" tag or more consistent "Co-authored-by: Al Viro <...>"? Since 
+> > he did so much I'd rather the second but I need his permission.
+> 
+> What, for sysv part?  It's already in mainline; for minixfs and ufs, if you want
+> to do those - whatever you want, I'd probably go for "modelled after sysv
+> series in 6.2" - "Suggested-by" in those would suffice...
+> 
+> > @Al,
+> > 
+> > Can I really proceed with *your* work? What should the better suited tag be to 
+> > credit you for the patches?
+> > 
+> > If you can reply today or at least by Friday, I'll pick your demo patchset, 
+> > put it to completion, make the patches and test them with (x)fstests on a 
+> > QEMU/KVM x86_32 bit VM, with 6GB RAM, running an HIGHMEM64GB enabled kernel.
+> 
+> Frankly, ext2 patchset had been more along the lines of "here's what untangling
+> the calling conventions in ext2 would probably look like" than anything else.
+> If you are willing to test (and review) that sucker and it turns out to be OK,
+> I'll be happy to slap your tested-by on those during rebase and feed them to
+> Jan...
 
-That doesn't read right at all.
+PS: now we can actually turn
+        kunmap_local((void *)((unsigned long)page_addr & PAGE_MASK));
+into
+	kunmap_local(page_addr);
 
-Whether or not this is a good idea (or can be done differently)
-the interface is horrid.
+provided that commit doing that includes something along the lines of
 
->  	if (tofree)
-> -		filp_close(tofree, files);
-> +		*fdfile = tofree;
+Do-Not-Backport-Without: 88d7b12068b9 "highmem: round down the address passed to kunmap_flush_on_unmap()"
 
-Why not:
-
-	if (fdfile) [
-		*fdfile = tofree;
-	} else {
-		if (tofree)
-			filp_close(tofree, files);
-	}
-
-Then existing code just passes NULL and the caller can't 'forget'
-to intitalise fdfile.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+in commit message.
