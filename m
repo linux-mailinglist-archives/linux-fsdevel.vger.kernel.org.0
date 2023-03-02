@@ -2,135 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B03CF6A8A92
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 21:42:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 976866A8AD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 21:47:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229702AbjCBUm0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 15:42:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41784 "EHLO
+        id S230311AbjCBUrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 15:47:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbjCBUmZ (ORCPT
+        with ESMTP id S230134AbjCBUqv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 15:42:25 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728B33B87A
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 12:42:24 -0800 (PST)
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com [209.85.210.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 43D1E3F234
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 20:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1677789742;
-        bh=VPNnC6C1cy3MGBtKJ7RY2J7qDK3sxM2tBtUziWuIYdg=;
-        h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-         Content-Type:MIME-Version;
-        b=fR5ykiFqiJqksFR5sFlfm4Bmdx95y8ThEG9bxzb9ocgZm7JiSZs1wFab84mZmZ+Vn
-         2ZFQAEWto8cb3rm9SAa/T9kds2vyfK3DbEcQt/ATL0WBqac3KLT+MqWjbS4DoWfIqk
-         YsBSa96Hd91XXSMa7t/2PYedkgcb4XKztIJ4MS6vQY0lMhb9/KWYocm5wyzrR+l4MB
-         SULOQn5t+TdskdpntxRp1iDHlNY5LSvKSTa334mmpIdePvmFZnyIwCTDN9/nLuha3G
-         MRbxlkqfE2xglf2JCMr+YB2EqL00z41Cb9drxf+eRtJR5qngvmBuXdIN6X5k3AsGbf
-         KPzUzkHKqPwsg==
-Received: by mail-ot1-f72.google.com with SMTP id l10-20020a056830334a00b00694420738edso234540ott.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Mar 2023 12:42:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677789740;
-        h=mime-version:user-agent:content-transfer-encoding:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VPNnC6C1cy3MGBtKJ7RY2J7qDK3sxM2tBtUziWuIYdg=;
-        b=jJs19ItMWuGhyI+jYT9/unfm8sq3Jxvypq6oyqq7Ui9ocT4ys5atf23yHVfumb3B6r
-         MskucxlrAQaIqY6TFHmzPaaVg0lVkDcqfr5EytUOleUuJYy3cKnv8pMDTcUmkWYMTHP0
-         FZlWbqosMhH/1kF56sTZWWlv4hcfUH3gLzqKdtLU2IGEhATikfY2S0tQURrRmI67XgGD
-         j1SmXRrWF6gruzXtNezsMe6b4HJeA0Haw/vbC+YpUC560LC1HFy6qd/guXoCxCz3SQvf
-         +xPdr0ggH+/5UbCVcFeOQrjzkpy2KAeA3bfFI8KNM/t9v2JW+LodITzhyua7KPGHoRcD
-         3x1g==
-X-Gm-Message-State: AO0yUKVKMy7nLM5msaGsS1IPJrbhWzIM6AVrV0m/bnTIeAtBT8hkcg3l
-        M4MAqcSJCNrfGnaKIhN1ZdDqAr9VxY/gDACXaS5M744fSRRzGtSNacdd9/Nl1wkmy2hkfIs+IMc
-        TmMeSiVW4twpW7B01hfcbNzJhCgF0uhVv6PYUDGfQsZlZSoLwxmA=
-X-Received: by 2002:a9d:803:0:b0:690:d198:4d1e with SMTP id 3-20020a9d0803000000b00690d1984d1emr1669400oty.8.1677789740516;
-        Thu, 02 Mar 2023 12:42:20 -0800 (PST)
-X-Google-Smtp-Source: AK7set+mzZi4KGEKQQVH4HIHgt8mr09sF5ZEI/y0N5gvVHOM4lDo9PhDEhWGcQyAF/1JU7UCO5GrTA==
-X-Received: by 2002:a9d:803:0:b0:690:d198:4d1e with SMTP id 3-20020a9d0803000000b00690d1984d1emr1669391oty.8.1677789740223;
-        Thu, 02 Mar 2023 12:42:20 -0800 (PST)
-Received: from ?IPv6:2804:1b3:a7c3:d46d:73b6:f440:93a4:30? ([2804:1b3:a7c3:d46d:73b6:f440:93a4:30])
-        by smtp.gmail.com with ESMTPSA id d11-20020a9d72cb000000b0068bcef4f543sm327296otk.21.2023.03.02.12.42.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Mar 2023 12:42:19 -0800 (PST)
-Message-ID: <c010472791aa57c8ea838b5e85780f5be98898d5.camel@canonical.com>
-Subject: Re: [PATCH 04/11] apparmor: simplify sysctls with
- register_sysctl_init()
-From:   Georgia Garcia <georgia.garcia@canonical.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>, ebiederm@xmission.com,
-        keescook@chromium.org, yzaikin@google.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, luto@amacapital.net,
-        wad@chromium.org, dverkamp@chromium.org, paulmck@kernel.org,
-        baihaowen@meizu.com, frederic@kernel.org, jeffxu@google.com,
-        ebiggers@kernel.org, tytso@mit.edu, guoren@kernel.org
+        Thu, 2 Mar 2023 15:46:51 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF13A457E0;
+        Thu,  2 Mar 2023 12:46:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=3oCwpVDu4xcBlhkNHBH3geMu/7Wx6m5tuk0CiJ937us=; b=oPfHzWkN8o7ub3rjHyZDbsPtuV
+        7OLcJfzIoHmz3hIhOOr5kBrnrOOjnqx+vnDYKGEwImYtId4tJmI3hI7TmpRvol1qy0/js0LDSCCef
+        uYyVFwuRIv+72rBzXJJL0naQqm1tyQKKt/2w75lq7w6OQGgJpvTeV7VQJ6LrUilaqMDLDtvyolKf8
+        0avj6KHqtDh0Bz8fQ0U6V+osbmh5p1GVtHHfZTjtL/mGvYZwDVOByysy24tuupVVhYrVm+iTXMJtH
+        iifnMDagP5WH4KcQAHvfQb48U1z36CnTuk+x2Iz2ihBwpYE8DEkqJb+70NXox4icRbETMcGAnJpzt
+        8LnDrLzQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pXpoc-003HXK-7q; Thu, 02 Mar 2023 20:46:14 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com, minyard@acm.org,
+        kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+        decui@microsoft.com, song@kernel.org, robinmholt@gmail.com,
+        steve.wahl@hpe.com, mike.travis@hpe.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org, jgross@suse.com,
+        sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
+        xen-devel@lists.xenproject.org
 Cc:     j.granados@samsung.com, zhangpeng362@huawei.com,
         tangmeng@uniontech.com, willy@infradead.org, nixiaoming@huawei.com,
         sujiaxun@uniontech.com, patches@lists.linux.dev,
         linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 02 Mar 2023 17:42:07 -0300
-In-Reply-To: <20230302202826.776286-5-mcgrof@kernel.org>
-References: <20230302202826.776286-1-mcgrof@kernel.org>
-         <20230302202826.776286-5-mcgrof@kernel.org>
-Organization: Canonical
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu1 
+        linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-hyperv@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH 0/7] sysctl: slowly deprecate register_sysctl_table()
+Date:   Thu,  2 Mar 2023 12:46:05 -0800
+Message-Id: <20230302204612.782387-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2023-03-02 at 12:28 -0800, Luis Chamberlain wrote:
-> Using register_sysctl_paths() is really only needed if you have
-> subdirectories with entries. We can use the simple register_sysctl()
-> instead.
->=20
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  security/apparmor/lsm.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
->=20
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index d6cc4812ca53..47c7ec7e5a80 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1764,11 +1764,6 @@ static int apparmor_dointvec(struct ctl_table *tab=
-le, int write,
->  	return proc_dointvec(table, write, buffer, lenp, ppos);
->  }
-> =20
-> -static struct ctl_path apparmor_sysctl_path[] =3D {
-> -	{ .procname =3D "kernel", },
-> -	{ }
-> -};
-> -
->  static struct ctl_table apparmor_sysctl_table[] =3D {
->  	{
->  		.procname       =3D "unprivileged_userns_apparmor_policy",
-> @@ -1790,8 +1785,7 @@ static struct ctl_table apparmor_sysctl_table[] =3D=
- {
-> =20
->  static int __init apparmor_init_sysctl(void)
->  {
-> -	return register_sysctl_paths(apparmor_sysctl_path,
-> -				     apparmor_sysctl_table) ? 0 : -ENOMEM;
-> +	return register_sysctl("kernel", apparmor_sysctl_table) ? 0 : -ENOMEM;
->  }
->  #else
->  static inline int apparmor_init_sysctl(void)
+As the large array of sysctls in kernel/sysctl.c is reduced we get to
+the point of wanting to optimize how we register sysctls by only dealing
+with flat simple structures, with no subdirectories. In particular the
+last empty element should not be needed. We'll get there, and save some
+memory, but as we move forward that path will be come the more relevant
+path to use in the sysctl registration. It is much simpler as it avoids
+recursion.
 
-Reviewed-by: Georgia Garcia <georgia.garcia@canonical.com>
+Turns out we can also convert existing users of register_sysctl_table()
+which just need their subdirectories created for them. This effort
+addresses most users of register_sysctl_table() in drivers/ except
+parport -- that needs a bit more review.
+
+This is part of the process to deprecate older sysctl users which uses
+APIs which can incur recursion, but don't need it [0]. This is the
+second effort.
+
+Yes -- we'll get to the point *each* of these conversions means saving
+one empty syctl, but that change needs a bit more careful review before
+merging. But since these conversion are also deleting tables for
+subdirectories, the delta in size of the kernel should not incrase
+really.
+
+The most complex change is the sgi-xp change which does deal with
+a case where we have a subdirectory with an entry, I just split
+that in two registrations. No point in keeping recursion just for
+a few minor if we can simplify code around. More eyeballs / review /
+testing on that change is appreciated.
+
+Sending these out early so they can get tested properly early on
+linux-next. I'm happy to take these via sysctl-next [0] but since
+I don' think register_sysctl_table() will be nuked on v6.4 I think
+it's fine for each of these to go into each respective tree. I can
+pick up last stragglers on sysctl-next. If you want me to take this
+via sysctl-next too, just let me know and I'm happy to do that. Either
+way works.
+
+[0] https://lkml.kernel.org/r/20230302202826.776286-1-mcgrof@kernel.org
+
+Luis Chamberlain (7):
+  scsi: simplify sysctl registration with register_sysctl()
+  ipmi: simplify sysctl registration
+  hv: simplify sysctl registration
+  md: simplify sysctl registration
+  sgi-xp: simplify sysctl registration
+  tty: simplify sysctl registration
+  xen: simplify sysctl registration for balloon
+
+ drivers/char/ipmi/ipmi_poweroff.c | 16 +---------------
+ drivers/hv/vmbus_drv.c            | 11 +----------
+ drivers/md/md.c                   | 22 +---------------------
+ drivers/misc/sgi-xp/xpc_main.c    | 24 ++++++++++--------------
+ drivers/scsi/scsi_sysctl.c        | 16 +---------------
+ drivers/tty/tty_io.c              | 20 +-------------------
+ drivers/xen/balloon.c             | 20 +-------------------
+ 7 files changed, 16 insertions(+), 113 deletions(-)
+
+-- 
+2.39.1
 
