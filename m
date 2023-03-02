@@ -2,103 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E87F96A886A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 19:18:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 018016A8876
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 19:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbjCBSSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 13:18:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46530 "EHLO
+        id S229886AbjCBSWT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 13:22:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjCBSSj (ORCPT
+        with ESMTP id S229634AbjCBSWS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 13:18:39 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 778A232E71;
-        Thu,  2 Mar 2023 10:18:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-        bh=6ZbSRd9H+lkeIXySMnl2e4FQvXpmm6EbThjgjlUfRiI=; b=ahduqHW0pupAY1Wjd/TmIMCrZp
-        NIhUdp2M3dv57MpPgxwBPUMLuTdt7QqIcGb3ZicKWown2FMdADu/1RYisPLsnaiP86H+mSKzGGBvY
-        m6xd49eB2mkf+ztYFC8Y/ULhU47ow6KCpuRIScCNr57l9Sx++FvupSqJvc35fY3K1+eQfKnHtyQtS
-        W3ObH95ygIbbuXTUbJ+F2F1Lu/NK1qhaAbUfRLsQS9P/UGVfRBJ0G93tZCqe77eiqpyxn71bvMxd0
-        Y5cRrW5njNX3GQU+auMmFtEDkAl4XsD+8BxnWOCcA7yw8VByMW5NEv/PGgKamXZtRONF+nohoexpC
-        Bq7SY5aw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pXnVg-00DN3N-38;
-        Thu, 02 Mar 2023 18:18:33 +0000
-Date:   Thu, 2 Mar 2023 18:18:32 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
- possible
-Message-ID: <ZADoeOiJs6BRLUSd@ZenIV>
-References: <20230125155557.37816-1-mjguzik@gmail.com>
- <20230125155557.37816-2-mjguzik@gmail.com>
- <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
- <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
- <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
- <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
+        Thu, 2 Mar 2023 13:22:18 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1541027F;
+        Thu,  2 Mar 2023 10:22:17 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id 6-20020a17090a190600b00237c5b6ecd7so3666499pjg.4;
+        Thu, 02 Mar 2023 10:22:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677781337;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HX2Vj0FqJHvCREMyAVXC+Ew/k8upKYV2kIV0kMLwhNg=;
+        b=PIOmkhQ3Zmdcw5LDd3JSBkvBEhGf/h08i54ZYcAP9bt78ucYbTMFOMMuyPaZRTviSA
+         ZvjjabcdDF958KxtPotYhI/RqV2r0JQ+KOZnvIE39rLW43WAFh+33vZVGM/5KY2/Xedw
+         45KrQacLCOIQoraNKb8rKFQiJBArTqVyHMk4aBiBG2MToi3Sl+1C+Wbt617uUnKqZfbG
+         vRYP43QanARqxQ+YS924J1cqXWOs4nZ/f8GE+haOBpqk1cWS8tqcV/QEj4OQIarobQjh
+         a+sN0HCYvzLiKKici3loOX98aMEyCDiuabwW3Y2k+uziF0xAHzhJUQ+hKLSy+qOowBPK
+         Bvjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677781337;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HX2Vj0FqJHvCREMyAVXC+Ew/k8upKYV2kIV0kMLwhNg=;
+        b=wybl8bPtdv56mnytyGjjVIgOuFdxHpOFBIhe05SsTSKD9XthXsrojv2WFjiA9VZ/u4
+         M9yLWE9699PLgfuMM60McjFUMWOrQOGPmOZ0ml8elAjVZ7JTmZ7jOT+OTnb1nVUrcpA7
+         eN2KwqjNFS9zcjHTF3J2PgYYmEenGJTjp5dSOrjBcJyo5y+wAPetps1CNET+e3r/Incc
+         QfN8i+h6enqJlBjK/L7MKMs3JUTTJnJ8dTxDGG+yjz34jI8NtggYboEobZnl9P74lzJ3
+         /8bzyALCddHGWtORQYbcPQizexzqToAYY05n9N4MV3Gkyld5zXzxxy9Ib0HRyTmAIV1N
+         csfQ==
+X-Gm-Message-State: AO0yUKXEfyu44xhSFkVA3PnVIIMOPDYmL6PrD22Zx0fLGcCmDlcl/Hs+
+        A6PKAgOeye3f7eOoUwVrXJk=
+X-Google-Smtp-Source: AK7set/lehteaf2LyWVK/VBv6pfhm/1Eg4IJkxaxcbUnXo5NreywqIY0ZgqWAukxmQqkSCPcbkjdqg==
+X-Received: by 2002:a17:90a:fd15:b0:233:a836:15f4 with SMTP id cv21-20020a17090afd1500b00233a83615f4mr11509061pjb.1.1677781337010;
+        Thu, 02 Mar 2023 10:22:17 -0800 (PST)
+Received: from ip-172-31-38-16.us-west-2.compute.internal (ec2-52-37-71-140.us-west-2.compute.amazonaws.com. [52.37.71.140])
+        by smtp.gmail.com with ESMTPSA id j6-20020a17090adc8600b00234b785af1dsm89908pjv.26.2023.03.02.10.22.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Mar 2023 10:22:16 -0800 (PST)
+From:   aloktiagi <aloktiagi@gmail.com>
+To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     keescook@chromium.org, hch@infradead.org,
+        aloktiagi <aloktiagi@gmail.com>,
+        Tycho Andersen <tycho@tycho.pizza>
+Subject: [RFC 1/3] file: Introduce iterate_fd_locked
+Date:   Thu,  2 Mar 2023 18:22:05 +0000
+Message-Id: <20230302182207.456311-1-aloktiagi@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 02, 2023 at 07:14:24PM +0100, Mateusz Guzik wrote:
-> On 3/2/23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> > On Thu, Mar 2, 2023 at 12:30 AM Christian Brauner <brauner@kernel.org>
-> > wrote:
-> >>
-> >> Fwiw, as long as you, Al, and others are fine with it and I'm aware of
-> >> it I'm happy to pick up more stuff like this. I've done it before and
-> >> have worked in this area so I'm happy to help with some of the load.
-> >
-> > Yeah, that would work. We've actually had discussions of vfs
-> > maintenance in general.
-> >
-> > In this case it really wasn't an issue, with this being just two
-> > fairly straightforward patches for code that I was familiar with.
-> >
-> 
-> Well on that note I intend to write a patch which would add a flag to
-> the dentry cache.
-> 
-> There is this thing named CONFIG_INIT_ON_ALLOC_DEFAULT_ON which is
-> enabled at least on debian, ubuntu and arch. It results in mandatory
-> memset on the obj before it gets returned from kmalloc, for hardening
-> purposes.
-> 
-> Now the problem is that dentry cache allocates bufs 4096 bytes in
-> size, so this is an equivalent of a clear_page call and it happens
-> *every time* there is a path lookup.
+Callers holding the files->file_lock lock can call iterate_fd_locked instead of
+iterate_fd
 
-Huh?  Quite a few path lookups don't end up allocating any dentries;
-what exactly are you talking about?
+Signed-off-by: aloktiagi <aloktiagi@gmail.com>
+Reviewed-by: Tycho Andersen <tycho@tycho.pizza>
+---
+ fs/file.c               | 21 +++++++++++++++------
+ include/linux/fdtable.h |  3 +++
+ 2 files changed, 18 insertions(+), 6 deletions(-)
 
-> Given how dentry cache is used, I'm confident there is 0 hardening
-> benefit for it.
-> 
-> So the plan would be to add a flag on cache creation to exempt it from
-> the mandatory memset treatment and use it with dentry.
-> 
-> I don't have numbers handy but as you can imagine it gave me a nice bump :)
-> 
-> Whatever you think about the idea aside, the q is: can something like
-> the above go in without Al approving it?
+diff --git a/fs/file.c b/fs/file.c
+index c942c89ca4cd..4b2346b8a5ee 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1295,15 +1295,12 @@ int f_dupfd(unsigned int from, struct file *file, unsigned flags)
+ 	return err;
+ }
+ 
+-int iterate_fd(struct files_struct *files, unsigned n,
+-		int (*f)(const void *, struct file *, unsigned),
+-		const void *p)
++int iterate_fd_locked(struct files_struct *files, unsigned n,
++                int (*f)(const void *, struct file *, unsigned),
++                const void *p)
+ {
+ 	struct fdtable *fdt;
+ 	int res = 0;
+-	if (!files)
+-		return 0;
+-	spin_lock(&files->file_lock);
+ 	for (fdt = files_fdtable(files); n < fdt->max_fds; n++) {
+ 		struct file *file;
+ 		file = rcu_dereference_check_fdtable(files, fdt->fd[n]);
+@@ -1313,6 +1310,18 @@ int iterate_fd(struct files_struct *files, unsigned n,
+ 		if (res)
+ 			break;
+ 	}
++	return res;
++}
++
++int iterate_fd(struct files_struct *files, unsigned n,
++		int (*f)(const void *, struct file *, unsigned),
++		const void *p)
++{
++	int res = 0;
++	if (!files)
++		return 0;
++	spin_lock(&files->file_lock);
++	res = iterate_fd_locked(files, n, f, p);
+ 	spin_unlock(&files->file_lock);
+ 	return res;
+ }
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index e066816f3519..14882520d1fe 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -122,6 +122,9 @@ void do_close_on_exec(struct files_struct *);
+ int iterate_fd(struct files_struct *, unsigned,
+ 		int (*)(const void *, struct file *, unsigned),
+ 		const void *);
++int iterate_fd_locked(struct files_struct *, unsigned,
++			int (*)(const void *, struct file *, unsigned),
++			const void *);
+ 
+ extern int close_fd(unsigned int fd);
+ extern int __close_range(unsigned int fd, unsigned int max_fd, unsigned int flags);
+-- 
+2.34.1
 
-That one I would really like to take a look at.
