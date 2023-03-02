@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C4F66A8AA7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 21:46:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 270C66A8AA1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 21:46:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbjCBUqx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 15:46:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43704 "EHLO
+        id S230140AbjCBUqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 15:46:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229854AbjCBUqu (ORCPT
+        with ESMTP id S229455AbjCBUqu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 2 Mar 2023 15:46:50 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605B94393C;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EC8A43937;
         Thu,  2 Mar 2023 12:46:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=b/ElRNVyLTcjLcjUYbTcuyx0KXFL0MQ9s53W3J7Nkdk=; b=JCk7vmd3WPk/eusfOMOFOK2REk
-        1XVuRYTKBgLvoHrvgM9QB8cHTbTgvan1wf+AtXio6deB/kkhZpQfQneT6nmVXKxIezrONKrOTELf3
-        rmCdFYzMHmg0TONwR5JS3VZ4zjWOMvXxjMFqyI6psWBRhwrNFSzKCozLL3Y7WMmT9MwO2epJUmMn1
-        nx1ETSbvwg/quZ3YXXD2gyOYG/pSUp1kP3DtHGRkmCdbO6zoWCzkVSo+qXR4XGbcXKmbNwBRWEY4U
-        V/tsgcudL0zXWPh1vuYy3EMUxTm83D/qlj7qqRLAlpw6hkLDL5UQ5XuwLQuQCuAhQx5o/qgOt8lew
-        PxDMLkug==;
+        bh=dtfyNVshuDQIj+dlbLKUh3FrBpHjPuB+OiDl4kHMg0w=; b=y+/KNE5d+TW3hH8L9Iql5pMuDY
+        mtQ2q1980lq3pkwG/xQP1LmilCyPNzezGqF7q0DG5V7xsGEwDTYwL1JvJCDFTe/zRXH57HGHD5QW/
+        O8UeGtO2rrvC7q1JiYXTkhaSl2XwOkiMf9u7Bw475hl1I50DYfKypH7bafzPo/5auQO5nAWWpyMzo
+        gGUrJvFV6cuTyc3hE4lyn5hDmXOrOPtNk1IXXmXNQPVhLjpjwJ7GPmbWttNzvSv3PP/4O3nghH0oh
+        Q9RypKa5XuLJaNXMpBIQPO6xY6fjA5jHIzzVMBlTxnFZ6w8BOSv37SOKMsJSXJC05q7iNhPjFZil9
+        SHo+B+Mg==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pXpoc-003HXW-Pv; Thu, 02 Mar 2023 20:46:14 +0000
+        id 1pXpoc-003HXY-T5; Thu, 02 Mar 2023 20:46:14 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
         jejb@linux.ibm.com, martin.petersen@oracle.com, minyard@acm.org,
@@ -44,9 +44,9 @@ Cc:     j.granados@samsung.com, zhangpeng362@huawei.com,
         linux-hyperv@vger.kernel.org,
         openipmi-developer@lists.sourceforge.net,
         linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 6/7] tty: simplify sysctl registration
-Date:   Thu,  2 Mar 2023 12:46:11 -0800
-Message-Id: <20230302204612.782387-7-mcgrof@kernel.org>
+Subject: [PATCH 7/7] xen: simplify sysctl registration for balloon
+Date:   Thu,  2 Mar 2023 12:46:12 -0800
+Message-Id: <20230302204612.782387-8-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230302204612.782387-1-mcgrof@kernel.org>
 References: <20230302204612.782387-1-mcgrof@kernel.org>
@@ -64,51 +64,52 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 register_sysctl_table() is a deprecated compatibility wrapper.
-register_sysctl_init() can do the directory creation for you so just use
-that
+register_sysctl_init() can do the directory creation for you so just
+use that.
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- drivers/tty/tty_io.c | 20 +-------------------
+ drivers/xen/balloon.c | 20 +-------------------
  1 file changed, 1 insertion(+), 19 deletions(-)
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 36fb945fdad4..766750e355ac 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -3614,31 +3614,13 @@ static struct ctl_table tty_table[] = {
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index 617a7f4f07a8..586a1673459e 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -97,24 +97,6 @@ static struct ctl_table balloon_table[] = {
  	{ }
  };
  
--static struct ctl_table tty_dir_table[] = {
+-static struct ctl_table balloon_root[] = {
 -	{
--		.procname	= "tty",
+-		.procname	= "balloon",
 -		.mode		= 0555,
--		.child		= tty_table,
+-		.child		= balloon_table,
 -	},
 -	{ }
 -};
 -
--static struct ctl_table tty_root_table[] = {
+-static struct ctl_table xen_root[] = {
 -	{
--		.procname	= "dev",
+-		.procname	= "xen",
 -		.mode		= 0555,
--		.child		= tty_dir_table,
+-		.child		= balloon_root,
 -	},
 -	{ }
 -};
 -
- /*
-  * Ok, now we can initialize the rest of the tty devices and can count
-  * on memory allocations, interrupts etc..
-  */
- int __init tty_init(void)
- {
--	register_sysctl_table(tty_root_table);
-+	register_sysctl_init("dev/tty", tty_table);
- 	cdev_init(&tty_cdev, &tty_fops);
- 	if (cdev_add(&tty_cdev, MKDEV(TTYAUX_MAJOR, 0), 1) ||
- 	    register_chrdev_region(MKDEV(TTYAUX_MAJOR, 0), 1, "/dev/tty") < 0)
+ #else
+ #define xen_hotplug_unpopulated 0
+ #endif
+@@ -747,7 +729,7 @@ static int __init balloon_init(void)
+ #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
+ 	set_online_page_callback(&xen_online_page);
+ 	register_memory_notifier(&xen_memory_nb);
+-	register_sysctl_table(xen_root);
++	register_sysctl_init("xen/balloon", balloon_table);
+ #endif
+ 
+ 	balloon_add_regions();
 -- 
 2.39.1
 
