@@ -2,236 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D00596A8011
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 11:41:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3417F6A810A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 12:31:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229498AbjCBKk6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 05:40:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56348 "EHLO
+        id S229756AbjCBLbz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 06:31:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbjCBKk6 (ORCPT
+        with ESMTP id S229632AbjCBLbv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 05:40:58 -0500
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1D82302A6
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 02:40:54 -0800 (PST)
-Received: by mail-il1-f199.google.com with SMTP id 2-20020a056e020ca200b003033a763270so9546297ilg.19
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Mar 2023 02:40:54 -0800 (PST)
+        Thu, 2 Mar 2023 06:31:51 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E2CB231FC;
+        Thu,  2 Mar 2023 03:31:50 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id j2so16174454wrh.9;
+        Thu, 02 Mar 2023 03:31:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bx+PVsncwZDKHuskc1x0Kqy1fJLkTEStG1WLlrUYmaQ=;
+        b=eHcaBjAB8Xy9X/NH4Kj2RIOTbBSKGdswSuCCK1eBdEQdYPmUmSksaMR9PsbxYj+X+o
+         6kYhpANIs9moaSPxW1NWx2nLpO9KVuVig6i/p16+UolXvUmsgE/mh/lHJFDMOzLjADZk
+         sXSxwzkAkFOXb7BQF3Ik6eHtikKR3GS0Yzx+Gg8IXquGkUi3zmNF0Q/40BxfbxClaTRc
+         QitCny6zQCG44rbd9Gf1GHnnvUxM4k6eoAIgYrD5+fKsLoxb64fIAeRbjq6pi5dwzGrL
+         QjjqVr9N9co/6rv5e3DwKXfDEUeaVxtvbGP0ym13z5WUj9VmI5JY05F60vpC2KLlTecP
+         HfhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4y6ekAr2f9pTk4oEDC+4C4bSnqM1bN8NsGnnz+S/8/4=;
-        b=cT4LXQaAlOP5AOU4AIivfYhmLrosI/2qE/moisUFopGoyczZXn2sN6rxNTlV/eTGxg
-         pFz/7qEYFBLvfAg5pg2Cj/wcwq4szkigaxfp/ssbDqwFWvjLelDt2FgIp75vATLbeZn6
-         3qo+s64ySd8IpCHiHeXfAkApIbbjxRi8u0h7rbY/Oit2ABeUwftMi3l/3eH3Hg73rTO9
-         WOwKUJ97GChoFOuYWikwloas9L0SGkUXfc/uR9FeUC884+4iyM+DwXwOzTOcckr7rFOy
-         dvoD9cw6gUp5eoNnvKLI/L4CZbtnv/iBxFxcuaUBevb+qzJOa4IopQRsAHC1WrfjCxQC
-         Jgzw==
-X-Gm-Message-State: AO0yUKVZJ7V6hXVN8yjBPmhYvjYrD9162q8MbqFQgocR19RQE7/YPdyE
-        SbFh34qRTPkjPYWDRXLbr+I5+5reYpVDRBCRYB5TFiSs7z1pAJM=
-X-Google-Smtp-Source: AK7set8t9pWxViAJvea2e6U/bK+ZozpitVQeGrJSzd45kYEAXXJ77ADYs5ycFq/NG3cmjGrN1DvSFPjzCEso082f7S38J5A5nNJV
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bx+PVsncwZDKHuskc1x0Kqy1fJLkTEStG1WLlrUYmaQ=;
+        b=TPF3vu7EzAbaLObuWdmZubnQWNNSkZYPNUvVTd/JRr6V0d3hrFrGQ7INDQMugb22J3
+         SVgIb7N2VH5mHe94ClkRCwMZTIcKZcyGC9A96oeUXtHMB8N27E/kakiA4wclbpDZxL8F
+         gazIdmHu2AT3F6QrMMPzsOdKwNxru58zu+2if9ajIcFFFaLOkHAoGotHJK4P3PGoMP1J
+         rNq6NcHJO73qtVpgqx5XK3jngAoVUcn4PS1R4kHMCHmi4YF9z6dNjgoZZJjcTiNuOcNi
+         jMr7hKz9C8Cf6fItWuGG7vYZrw6xSL7TRU3myw1Sw4FlcQ9I16Gg9Mr2o8/d3A0Un6fH
+         MuTw==
+X-Gm-Message-State: AO0yUKWrWfHtKAfFn7QEhGOAXxl9eduShnMMKyGUEhUQabXT0ZDRB6Ht
+        VQYZuArrtlOZrxiRy0WGT+w=
+X-Google-Smtp-Source: AK7set9JLbLhbSNQk4Sf9xcHO+93ZUsRLRuD//8wsjVdOqKIcDPzeoFxevwlbxbmiEOM2b5yUCLPdA==
+X-Received: by 2002:a5d:5692:0:b0:2c7:1524:eb07 with SMTP id f18-20020a5d5692000000b002c71524eb07mr7235380wrv.67.1677756708612;
+        Thu, 02 Mar 2023 03:31:48 -0800 (PST)
+Received: from suse.localnet (host-82-61-39-134.retail.telecomitalia.it. [82.61.39.134])
+        by smtp.gmail.com with ESMTPSA id v12-20020adfedcc000000b002c5a1bd527dsm15030597wro.96.2023.03.02.03.31.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Mar 2023 03:31:47 -0800 (PST)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [git pull] vfs.git sysv pile
+Date:   Thu, 02 Mar 2023 12:31:46 +0100
+Message-ID: <9074146.CDJkKcVGEf@suse>
+In-Reply-To: <20230302095931.jwyrlgtxcke7iwuu@quack3>
+References: <Y/gugbqq858QXJBY@ZenIV> <Y/9duET0Mt5hPu2L@ZenIV>
+ <20230302095931.jwyrlgtxcke7iwuu@quack3>
 MIME-Version: 1.0
-X-Received: by 2002:a02:a02:0:b0:3e9:4d91:5c9c with SMTP id
- 2-20020a020a02000000b003e94d915c9cmr693973jaw.1.1677753654330; Thu, 02 Mar
- 2023 02:40:54 -0800 (PST)
-Date:   Thu, 02 Mar 2023 02:40:54 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000964cb905f5e876ff@google.com>
-Subject: [syzbot] [reiserfs?] possible deadlock in delete_one_xattr (2)
-From:   syzbot <syzbot+7a278bf8bfa794494110@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On gioved=EC 2 marzo 2023 10:59:31 CET Jan Kara wrote:
+> On Wed 01-03-23 14:14:16, Al Viro wrote:
+> > On Wed, Mar 01, 2023 at 02:00:18PM +0100, Jan Kara wrote:
+> > > On Wed 01-03-23 12:20:56, Fabio M. De Francesco wrote:
+> > > > On venerd=EC 24 febbraio 2023 04:26:57 CET Al Viro wrote:
+> > > > > 	Fabio's "switch to kmap_local_page()" patchset (originally after=
+ the
+> > > > >=20
+> > > > > ext2 counterpart, with a lot of cleaning up done to it; as the=20
+matter
+> > > > > of
+> > > > > fact, ext2 side is in need of similar cleanups - calling conventi=
+ons
+> > > > > there
+> > > > > are bloody awful).
+> > > >=20
+> > > > If nobody else is already working on these cleanups in ext2 followi=
+ng
+> > > > your
+> > > > suggestion, I'd be happy to work on this by the end of this week. I=
+=20
+only
+> > > > need
+> > > > a confirmation because I'd hate to duplicate someone else work.
+> > > >=20
+> > > > > Plus the equivalents of minix stuff...
+> > > >=20
+> > > > I don't know this other filesystem but I could take a look and see
+> > > > whether it
+> > > > resembles somehow sysv and ext2 (if so, this work would be pretty=20
+simple
+> > > > too,
+> > > > thanks to your kind suggestions when I worked on sysv and ufs).
+> > > >=20
+> > > > I'm adding Jan to the Cc list to hear whether he is aware of anybody
+> > > > else
+> > > > working on this changes for ext2. I'm waiting for a reply from you=
+=20
+(@Al)
+> > > > or
+> > > > Jan to avoid duplication (as said above).
+> > >=20
+> > > I'm not sure what exactly Al doesn't like about how ext2 handles page=
+s=20
+and
+> > > mapping but if you have some cleanups in mind, sure go ahead. I don't=
+=20
+have
+> > > any plans on working on that code in the near term.
+> >=20
+> > I think I've pushed a demo patchset to vfs.git at some point back in
+> > January... Yep - see #work.ext2 in there; completely untested, though.
+>=20
+> OK, I think your changes to ext2_rename() in PATCH 1 leak a reference and
+> mapping of old_page but otherwise I like the patches. So Fabio, if you can
+> pick them up and push this to completion, it would be nice. Thanks!
+>=20
 
-syzbot found the following issue on:
+@Jan,
 
-HEAD commit:    2fcd07b7ccd5 mm/mprotect: Fix successful vma_merge() of ne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16148c50c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=56eb47529ec6fdbe
-dashboard link: https://syzkaller.appspot.com/bug?extid=7a278bf8bfa794494110
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+I was sure you would have liked them :-)
+I'm happy to pick them up and push them to completion.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+But... when yesterday Al showed his demo patchset I probably interpreted hi=
+s=20
+reply the wrong way and thought that since he spent time for the demo he=20
+wanted to put this to completion on his own.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fe4d914ffdbb/disk-2fcd07b7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/590339659f6c/vmlinux-2fcd07b7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f0ecc3d4d7e9/bzImage-2fcd07b7.xz
+Now I see that you are interpreting his message as an invite to use them to=
+=20
+shorten the time...=20
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7a278bf8bfa794494110@syzkaller.appspotmail.com
+=46urthermore I'm not sure about how I should credit him. Should I merely a=
+dd a=20
+"Suggested-by:" tag or more consistent "Co-authored-by: Al Viro <...>"? Sin=
+ce=20
+he did so much I'd rather the second but I need his permission.
 
-REISERFS (device loop2): Created .reiserfs_priv - reserved for xattr storage.
-======================================================
-WARNING: possible circular locking dependency detected
-6.2.0-syzkaller-12018-g2fcd07b7ccd5 #0 Not tainted
-------------------------------------------------------
-syz-executor.2/12978 is trying to acquire lock:
-ffff888070d27ac0 (&type->i_mutex_dir_key#8/2){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:793 [inline]
-ffff888070d27ac0 (&type->i_mutex_dir_key#8/2){+.+.}-{3:3}, at: xattr_rmdir fs/reiserfs/xattr.c:106 [inline]
-ffff888070d27ac0 (&type->i_mutex_dir_key#8/2){+.+.}-{3:3}, at: delete_one_xattr+0x141/0x2d0 fs/reiserfs/xattr.c:338
+@Al,
 
-but task is already holding lock:
-ffff888031d2a3e0 (&type->i_mutex_dir_key#8/3){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:793 [inline]
-ffff888031d2a3e0 (&type->i_mutex_dir_key#8/3){+.+.}-{3:3}, at: reiserfs_for_each_xattr+0x6fd/0x9a0 fs/reiserfs/xattr.c:309
+Can I really proceed with *your* work? What should the better suited tag be=
+ to=20
+credit you for the patches?
 
-which lock already depends on the new lock.
+If you can reply today or at least by Friday, I'll pick your demo patchset,=
+=20
+put it to completion, make the patches and test them with (x)fstests on a=20
+QEMU/KVM x86_32 bit VM, with 6GB RAM, running an HIGHMEM64GB enabled kernel.
 
+Thanks,
 
-the existing dependency chain (in reverse order) is:
-
--> #2 (&type->i_mutex_dir_key#8/3){+.+.}-{3:3}:
-       down_write_nested+0x96/0x200 kernel/locking/rwsem.c:1689
-       inode_lock_nested include/linux/fs.h:793 [inline]
-       open_xa_root fs/reiserfs/xattr.c:127 [inline]
-       open_xa_dir+0x127/0x840 fs/reiserfs/xattr.c:152
-       xattr_lookup+0x21/0x3d0 fs/reiserfs/xattr.c:395
-       reiserfs_xattr_get+0x118/0xa80 fs/reiserfs/xattr.c:677
-       security_get+0x83/0xb0 fs/reiserfs/xattr_security.c:19
-       __vfs_getxattr+0x138/0x1a0 fs/xattr.c:426
-       cap_inode_need_killpriv+0x40/0x60 security/commoncap.c:301
-       security_inode_need_killpriv+0x44/0xa0 security/security.c:1492
-       dentry_needs_remove_privs fs/inode.c:1968 [inline]
-       __file_remove_privs+0x3a0/0x640 fs/inode.c:1999
-       __generic_file_write_iter+0xc7/0x500 mm/filemap.c:3999
-       generic_file_write_iter+0xe3/0x350 mm/filemap.c:4086
-       call_write_iter include/linux/fs.h:1851 [inline]
-       new_sync_write fs/read_write.c:491 [inline]
-       vfs_write+0x9ed/0xe10 fs/read_write.c:584
-       ksys_write+0x12b/0x250 fs/read_write.c:637
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #1 (&sb->s_type->i_mutex_key#21){+.+.}-{3:3}:
-       down_write+0x92/0x200 kernel/locking/rwsem.c:1573
-       inode_lock include/linux/fs.h:758 [inline]
-       lock_two_nondirectories+0xf0/0x110 fs/inode.c:1122
-       vfs_rename+0x9ac/0x17a0 fs/namei.c:4742
-       do_renameat2+0xb62/0xc90 fs/namei.c:4923
-       __do_sys_renameat2 fs/namei.c:4956 [inline]
-       __se_sys_renameat2 fs/namei.c:4953 [inline]
-       __x64_sys_renameat2+0xe8/0x120 fs/namei.c:4953
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #0 (&type->i_mutex_dir_key#8/2){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3098 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3217 [inline]
-       validate_chain kernel/locking/lockdep.c:3832 [inline]
-       __lock_acquire+0x2ec7/0x5d40 kernel/locking/lockdep.c:5056
-       lock_acquire kernel/locking/lockdep.c:5669 [inline]
-       lock_acquire+0x1e3/0x670 kernel/locking/lockdep.c:5634
-       down_write_nested+0x96/0x200 kernel/locking/rwsem.c:1689
-       inode_lock_nested include/linux/fs.h:793 [inline]
-       xattr_rmdir fs/reiserfs/xattr.c:106 [inline]
-       delete_one_xattr+0x141/0x2d0 fs/reiserfs/xattr.c:338
-       reiserfs_for_each_xattr+0x70e/0x9a0 fs/reiserfs/xattr.c:311
-       reiserfs_delete_xattrs+0x20/0xa0 fs/reiserfs/xattr.c:364
-       reiserfs_evict_inode+0x2e7/0x540 fs/reiserfs/inode.c:53
-       evict+0x2ed/0x6b0 fs/inode.c:665
-       iput_final fs/inode.c:1748 [inline]
-       iput.part.0+0x59b/0x8a0 fs/inode.c:1774
-       iput+0x5c/0x80 fs/inode.c:1764
-       dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
-       __dentry_kill+0x3c0/0x640 fs/dcache.c:607
-       dentry_kill fs/dcache.c:745 [inline]
-       dput+0x6ac/0xe10 fs/dcache.c:913
-       path_put+0x31/0x70 fs/namei.c:559
-       path_setxattr+0xd6/0x1c0 fs/xattr.c:655
-       __do_sys_lsetxattr fs/xattr.c:674 [inline]
-       __se_sys_lsetxattr fs/xattr.c:670 [inline]
-       __x64_sys_lsetxattr+0xc1/0x160 fs/xattr.c:670
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-other info that might help us debug this:
-
-Chain exists of:
-  &type->i_mutex_dir_key#8/2 --> &sb->s_type->i_mutex_key#21 --> &type->i_mutex_dir_key#8/3
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&type->i_mutex_dir_key#8/3);
-                               lock(&sb->s_type->i_mutex_key#21);
-                               lock(&type->i_mutex_dir_key#8/3);
-  lock(&type->i_mutex_dir_key#8/2);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.2/12978:
- #0: ffff888031d2a3e0 (&type->i_mutex_dir_key#8/3){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:793 [inline]
- #0: ffff888031d2a3e0 (&type->i_mutex_dir_key#8/3){+.+.}-{3:3}, at: reiserfs_for_each_xattr+0x6fd/0x9a0 fs/reiserfs/xattr.c:309
-
-stack backtrace:
-CPU: 0 PID: 12978 Comm: syz-executor.2 Not tainted 6.2.0-syzkaller-12018-g2fcd07b7ccd5 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/16/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
- check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2178
- check_prev_add kernel/locking/lockdep.c:3098 [inline]
- check_prevs_add kernel/locking/lockdep.c:3217 [inline]
- validate_chain kernel/locking/lockdep.c:3832 [inline]
- __lock_acquire+0x2ec7/0x5d40 kernel/locking/lockdep.c:5056
- lock_acquire kernel/locking/lockdep.c:5669 [inline]
- lock_acquire+0x1e3/0x670 kernel/locking/lockdep.c:5634
- down_write_nested+0x96/0x200 kernel/locking/rwsem.c:1689
- inode_lock_nested include/linux/fs.h:793 [inline]
- xattr_rmdir fs/reiserfs/xattr.c:106 [inline]
- delete_one_xattr+0x141/0x2d0 fs/reiserfs/xattr.c:338
- reiserfs_for_each_xattr+0x70e/0x9a0 fs/reiserfs/xattr.c:311
- reiserfs_delete_xattrs+0x20/0xa0 fs/reiserfs/xattr.c:364
- reiserfs_evict_inode+0x2e7/0x540 fs/reiserfs/inode.c:53
- evict+0x2ed/0x6b0 fs/inode.c:665
- iput_final fs/inode.c:1748 [inline]
- iput.part.0+0x59b/0x8a0 fs/inode.c:1774
- iput+0x5c/0x80 fs/inode.c:1764
- dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
- __dentry_kill+0x3c0/0x640 fs/dcache.c:607
- dentry_kill fs/dcache.c:745 [inline]
- dput+0x6ac/0xe10 fs/dcache.c:913
- path_put+0x31/0x70 fs/namei.c:559
- path_setxattr+0xd6/0x1c0 fs/xattr.c:655
- __do_sys_lsetxattr fs/xattr.c:674 [inline]
- __se_sys_lsetxattr fs/xattr.c:670 [inline]
- __x64_sys_lsetxattr+0xc1/0x160 fs/xattr.c:670
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7efd9908c0f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007efd99e3b168 EFLAGS: 00000246 ORIG_RAX: 00000000000000bd
-RAX: ffffffffffffffda RBX: 00007efd991abf80 RCX: 00007efd9908c0f9
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000020000040
-RBP: 00007efd990e7ae9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffdc761bbef R14: 00007efd99e3b300 R15: 0000000000022000
- </TASK>
+=46abio
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
