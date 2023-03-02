@@ -2,164 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 211DA6A89C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 20:52:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C396A89CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 20:54:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229562AbjCBTwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 14:52:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50730 "EHLO
+        id S229957AbjCBTyG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 14:54:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjCBTwe (ORCPT
+        with ESMTP id S229437AbjCBTyF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 14:52:34 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DEE530B11;
-        Thu,  2 Mar 2023 11:52:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9rkbBGcTOZSGthlsZfNwLzZTlKqZ5d5oAGtqyHXmTgs=; b=Zd76kEN1ty0OKus/3hTd2y0IG4
-        cWuYqOo5k5Uwk97TL7KplHDnSGUYabwS2nyyxCanBxKxVmc8eX0C3r/pDKX2Jq+bdRlyWcKtr4prX
-        0kNUzgN90mQG7Ou/E0bL/IFf22sMja1GC9aVRu+DQb59dPEmEKzml367ySKYCQTr/MUnpWQpUkzwd
-        CevrVFvbmobvkRRKNRiCgLPJIe6hujbpCnG4HdpAeade89I55Hhi5A0ABmIwxUC7xSfbWcIRXhAJZ
-        yz5MNezj7TygzSObOMRTTSL18fnkb2qt750eSRka7rC2hyDXzOdNbUFcj2QVDmEQLllbbSoAWKAmC
-        13NeRsVA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pXoyQ-003CGY-1t; Thu, 02 Mar 2023 19:52:18 +0000
-Date:   Thu, 2 Mar 2023 11:52:18 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Meng Tang <tangmeng@uniontech.com>
-Cc:     Peng Zhang <zhangpeng362@huawei.com>,
-        Joel Granados <j.granados@samsung.com>, keescook@chromium.org,
-        yzaikin@google.com, ebiederm@xmission.com, willy@infradead.org,
-        kbuild-all@lists.01.org, nixiaoming@huawei.com,
-        sujiaxun@uniontech.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] fs/proc: optimize register ctl_tables
-Message-ID: <ZAD+cpbrqlc5vmry@bombadil.infradead.org>
-References: <20220304112341.19528-1-tangmeng@uniontech.com>
- <202203081905.IbWENTfU-lkp@intel.com>
- <Y7xWUQQIJYLMk5fO@bombadil.infradead.org>
- <Y8iKjJYMFRSthxzn@bombadil.infradead.org>
- <Y//4B2Bw4O2umKgW@bombadil.infradead.org>
- <541B117370C84093+1a6c9c3b-20a0-cbb5-56e4-5ab0f5e42f03@uniontech.com>
+        Thu, 2 Mar 2023 14:54:05 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B142A3597
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 11:54:04 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id u5so424812plq.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Mar 2023 11:54:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1677786844;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JPgYLv6lYLGlNO2NPrtA30mIkNmqpF6DOGQTD6NOI2A=;
+        b=WKq6nYU84T2GjPSgPjLMj9ONaPARuYK2Ad1yuOY9DGsrWGFj4WkxocR+EUW8FzXS3b
+         gRhB85J69pU6QwBznfn2qrPRqHCBWvVviIwWCquS8XE50Qj43ZRvtcwrIPd85CbMEmST
+         /F27/4fHRumBexB2mG/pPQnN/EtVFvZMzZlFA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677786844;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JPgYLv6lYLGlNO2NPrtA30mIkNmqpF6DOGQTD6NOI2A=;
+        b=tIkBsKyix5znJnfAmhJ8dAjUbvLcQucQ2TUa1/11qijxKfxNcKgwnc8eJrfpxQvIQq
+         0TMaaVZfZ6nd86Kgp35rolDP/h7wR5USVsyUApe5jsVash4Gh4btXRbK0LPft85kGLZe
+         v7hQz8VA8sIF9xs8HVTASnxH7wLHVmy3JXqrjrGg2Hsky4S/RV1zENsNvFOezsoH3o0n
+         kamwIA1VfvXHB35m0fTJ1hJekB+xUQsz6QUCXAjf8owVlmwr2L8qLT0D3z8BYWvzN7Ay
+         HsQv8obVmHyZE/Id3LdliN1wkN2jUq1d+5gQgQ1ec+zxtIf/mUIMjt5LHWJ7DNV5pG5g
+         olxA==
+X-Gm-Message-State: AO0yUKWr2DoJ5GHaPkzukXeaE6S0J3Lg9r3FjO5ZgJeDwr4ceyVD5TSC
+        fK7qGehHm6ZLKuYUCfdaLFkPqQ==
+X-Google-Smtp-Source: AK7set8cMneRnOzUf9HmSOrEyAAAr/zXjrTqsx0CeaOdpGYWa/1YP+GHIynAJwhigY5dwhd8TZ5YQA==
+X-Received: by 2002:a17:902:c946:b0:19c:d401:ecb with SMTP id i6-20020a170902c94600b0019cd4010ecbmr12199825pla.63.1677786844233;
+        Thu, 02 Mar 2023 11:54:04 -0800 (PST)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id h10-20020a170902f54a00b0019c13c4b175sm72200plf.189.2023.03.02.11.54.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Mar 2023 11:54:03 -0800 (PST)
+Message-ID: <6400fedb.170a0220.ece29.04b8@mx.google.com>
+X-Google-Original-Message-ID: <202303021147.@keescook>
+Date:   Thu, 2 Mar 2023 11:54:03 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mateusz Guzik <mjguzik@gmail.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
+ possible
+References: <20230125155557.37816-2-mjguzik@gmail.com>
+ <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
+ <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
+ <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
+ <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
+ <ZADoeOiJs6BRLUSd@ZenIV>
+ <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
+ <CAHk-=wjp5fMupRwnROtC5Yn+MVLA7v=J+_QJSi1rr3qAjdsfXw@mail.gmail.com>
+ <CAHk-=wi11ZbOBdMR5hQDz0x0NNZ9gM-4SxXxK-7R3_yh7e10rQ@mail.gmail.com>
+ <ZAD21ZEiB2V9Ttto@ZenIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <541B117370C84093+1a6c9c3b-20a0-cbb5-56e4-5ab0f5e42f03@uniontech.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZAD21ZEiB2V9Ttto@ZenIV>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 02, 2023 at 10:45:32AM +0800, Meng Tang wrote:
+On Thu, Mar 02, 2023 at 07:19:49PM +0000, Al Viro wrote:
+> On Thu, Mar 02, 2023 at 11:10:03AM -0800, Linus Torvalds wrote:
+> > On Thu, Mar 2, 2023 at 11:03 AM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > >
+> > > It might be best if we actually exposed it as a SLAB_SKIP_ZERO thing,
+> > > just to make it possible to say - exactly in situations like this -
+> > > that this particular slab cache has no advantage from pre-zeroing.
+> > 
+> > Actually, maybe it's just as well to keep it per-allocation, and just
+> > special-case getname_flags() itself.
+> > 
+> > We could replace the __getname() there with just a
+> > 
+> >         kmem_cache_alloc(names_cachep, GFP_KERNEL | __GFP_SKIP_ZERO);
+> > 
+> > we're going to overwrite the beginning of the buffer with the path we
+> > copy from user space, and then we'd have to make people comfortable
+> > with the fact that even with zero initialization hardening on, the
+> > space after the filename wouldn't be initialized...
 > 
-> On 2023/3/2 09:12, Luis Chamberlain wrot
-> > 
-> > I've taken the time to rebase this but I'm not a big fan of how fragile
-> > it is, you can easily forget to do the proper accounting or bailing out.
-> > 
-> > Upon looking at all this it reminded me tons of times Eric has
-> > said a few calls are just compatibility wrappers, and otherwise they are
-> > deprecated. Ie, they exist just to old users but we should have new
-> > users move on to the new helpers. When / if we can move the older ones
-> 
-> When a user registers sysctl, the entry is register_sysctl. In order to be
-> compatible with the previous method, I added the following statement:
-> 
-> +#define register_sysctl(path, table) register_sysctl_with_num(path, table,
-> ARRAY_SIZE(table))
-> 
-> On this basis, we can provide both register_sysctl and
-> register_sysctl_with_num.
+> ACK; same in getname_kernel() and sys_getcwd(), at the very least.
 
-Yes, I get that, but *how* the code uses the number argument is what
-gives me concern. There's just too many changes.
+FWIW, much earlier analysis suggested opting out these kmem caches:
 
-> > away that'd be great. Knowing that simplifies the use-cases we have to
-> > address for this case too.
-> 
-> We need to modify the helper description information, but this does not
-> affect the compatible use of the current old method and the new method now.
+	buffer_head
+	names_cache
+	mm_struct
+	anon_vma
+	skbuff_head_cache
+	skbuff_fclone_cache
 
-Yes I get that. But it can easily regress for new users if you did miss
-out on doing proper accounting in a few places.
+Alexander's analysis more recently[2] of skbuff went a bit further,
+I think, and allowed opt-out for non-kmem cache page allocations too.
 
-> > So I phased out completely register_sysctl_paths() and then started to
-> > work on register_sysctl_table(). I didn't complete phasing out
-> > register_sysctl_table() but with a bit of patience and looking at the
-> > few last examples I did I think we can quickly phase it out with coccinelle.
-> > Here's where I'm at:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=sysctl-testing
-> > 
-> > On top of that I've rebased your patches but I'm not confident in them
-> > so I just put this out here in case others want to work on it:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=sysctl-testing-opt
-> > 
-> > What I think we should do first instead is do a non-functional change
-> > which transforms all loops to list_for_each_table_entry() and then
-> > we can consider using the bail out *within* the list_for_each_table_entry()
-> > macro itself.
-> > 
-> > That would solve the first part -- the fragile odd checks to bail out
-> > early.  But not the odd accounting we have to do at times. So it begs
-> > the question if we can instead deprecate register_sysctl_table() and
-> > then have a counter for us at all times. Also maybe an even simpler
-> > alternative may just be to see to have the nr_entries be inferred with
-> > ARRAY_SIZE() if count_subheaders() == 1? I haven't looked into that yet.
-> > 
-> 
-> Do you want to know here is whether it is possible to accurately calculate
-> nr_entries if entry->child is established?
+-Kees
 
-Not really, if you see, when count_subheaders() == 1 it means there are
-no subdirectories and just only file entries exist and so
-__register_sysctl_table() is used. That code path does not recurse.
+[1] https://lore.kernel.org/all/20190514143537.10435-5-glider@google.com/
 
-The code path with a child already is supposed to do the right thing.
-
-The *new* code path we're dealing with is in the world where count_subheaders() == 1
-but we don't even use count_subheaders() in the new code path. register_sysctl()
-calls the simple path of __register_sysctl_table() too as it is implied
-count_subheaders() == 1.
-
-My point then was that for *that* case, of __register_sysctl_table(),
-it already does its own accounting for number of entries with an initial
-list_for_each_table_entry(). Since the list_for_each_table_entry()
-always only moves forwards if its not dealing with an empty entry,
-it effectively does proper accounting for the old cases.
-
-In the new use cases we want to strive to get to a point of not having
-to add an extra entry, and as you have pointed out ARRAY_SIZE() must be
-used prior to having the pointer passed.
-
-My point was rather that by deprecating the world with
-count_subheaders() != 1 makes *all* code paths what we want, where we
-could then just replace the first part of __register_sysctl_table()
-which gets num_entries with the passed number of entries. Deprecating
-the old users will take time. But it means we should keep in mind that
-is the goal. Most / all code should go through these paths eventually
-and we should tidy things up for it.
-
-I was hoping we could leverage the existing use of nr_entries
-computation early __register_sysctl_table() and just go with that by
-modifying the list_for_each_table_entry().
-
-The odd accounting needed today where you set 'num = register_by_num'
-tons of times, perhaps just split the routine up ? Would that help
-so to not have to do that?
-
-We want to make as changes first which are non-functional, and keeping
-in midn long term we *will* always use the num_entries passed as you
-have done.
-
-  Luis
+-- 
+Kees Cook
