@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FCC26A8A3F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 21:29:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42EDE6A8A65
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 21:29:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229923AbjCBU3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 15:29:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58058 "EHLO
+        id S230001AbjCBU3s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 15:29:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229918AbjCBU3M (ORCPT
+        with ESMTP id S230076AbjCBU30 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 15:29:12 -0500
+        Thu, 2 Mar 2023 15:29:26 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5162A1A96D;
-        Thu,  2 Mar 2023 12:29:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B25C81E5D1;
+        Thu,  2 Mar 2023 12:29:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=/B53CtexeyD9Bd10s0zaJAUsHZrSjOaoezyvPxx8LTk=; b=kRovkSM5K1GhgJjJe0utOQ9MZY
-        hpy6mdK+hdW7jylca3OqRuGOqomE9o3CJgh4EGuz6lp4VM+DigRs+oMJLZbx1vPfYAJGYvE/AZwdR
-        zZMqIaZw9YNZrnir2UYXxGBYxi/AOSq6sF5ZDXLpiyr8lp6UjqhN/VKoOTg8OCGk9qa6qaxPQ/cFv
-        /zAiY16rKO6TLzH1g2wL004PtEqFK9PR7b5zQiS749hfGIwUIGGJkzbEseFVd7V08//at3INtBAsB
-        ehall8mmM0GZyxzilQRwnIGiLlRqdOFLBF5J1OIcHnXiivobw3jlcxCB7V9Z2lFMd/l7y5EuA2dCg
-        f+aooOFA==;
+        bh=Twn8MQ1Gcyzszq3QMuH8qlsxJH8SeLsz2Z/0dFs1T4k=; b=OcKK2q+bPChjV8lLm8hD8AxY/r
+        0ZovvoOZyeZWiN66xALTlkMSscbzMU03wN2Numi+F46tX1ap0g9sJmBv8Vf2/tFtlHSaGnf8vY1Iq
+        OWJZu6BWsKEm0gwUWsNQtpbPMSinmD3Sd4Wf+VCgJqs72vkHGe5kr0edfkTfwCjcFQxx4yTjYSN5L
+        4T2Zq+MUsJ1tcSPlT3LJEBjnctee8Tn0g+giVPsQH2/KO3gYJSaf12NznKHR3fgF0pJh4TNcCwyts
+        0ggEuqJC5rprNeKbjssHjNnzh4wdI8cykjd8bxvzx6Yx+oxPQ/yvC+38szw8Mk7St5joqEuNvKKXI
+        3NnI8Vdw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pXpXR-003FxB-Uq; Thu, 02 Mar 2023 20:28:29 +0000
+        id 1pXpXS-003FxD-1R; Thu, 02 Mar 2023 20:28:30 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
         john.johansen@canonical.com, paul@paul-moore.com,
@@ -40,9 +40,9 @@ Cc:     j.granados@samsung.com, zhangpeng362@huawei.com,
         linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
         linux-security-module@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 02/11] proc_sysctl: move helper which creates required subdirectories
-Date:   Thu,  2 Mar 2023 12:28:17 -0800
-Message-Id: <20230302202826.776286-3-mcgrof@kernel.org>
+Subject: [PATCH 03/11] sysctl: clarify register_sysctl_init() base directory order
+Date:   Thu,  2 Mar 2023 12:28:18 -0800
+Message-Id: <20230302202826.776286-4-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230302202826.776286-1-mcgrof@kernel.org>
 References: <20230302202826.776286-1-mcgrof@kernel.org>
@@ -59,98 +59,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move the code which creates the subdirectories for a ctl table
-into a helper routine so to make it easier to review. Document
-the goal.
+Relatively new docs which I added which hinted the base directories needed
+to be created before is wrong, remove that incorrect comment. This has been
+hinted before by Eric twice already [0] [1], I had just not verified that
+until now. Now that I've verified that updates the docs to relax the context
+described.
 
-This creates no functional changes.
-
+[0] https://lkml.kernel.org/r/875ys0azt8.fsf@email.froward.int.ebiederm.org
+[1] https://lkml.kernel.org/r/87ftbiud6s.fsf@x220.int.ebiederm.org
+Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/proc/proc_sysctl.c | 56 ++++++++++++++++++++++++-------------------
- 1 file changed, 32 insertions(+), 24 deletions(-)
+ fs/proc/proc_sysctl.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 1df0beb50dbe..6b9b2694d430 100644
+index 6b9b2694d430..15d5e02f1ec0 100644
 --- a/fs/proc/proc_sysctl.c
 +++ b/fs/proc/proc_sysctl.c
-@@ -1283,6 +1283,35 @@ static int insert_links(struct ctl_table_header *head)
- 	return err;
- }
- 
-+/* Find the directory for the ctl_table. If one is not found create it. */
-+static struct ctl_dir *sysctl_mkdir_p(struct ctl_dir *dir, const char *path)
-+{
-+	const char *name, *nextname;
-+
-+	for (name = path; name; name = nextname) {
-+		int namelen;
-+		nextname = strchr(name, '/');
-+		if (nextname) {
-+			namelen = nextname - name;
-+			nextname++;
-+		} else {
-+			namelen = strlen(name);
-+		}
-+		if (namelen == 0)
-+			continue;
-+
-+		/*
-+		 * namelen ensures if name is "foo/bar/yay" only foo is
-+		 * registered first. We traverse as if using mkdir -p and
-+		 * return a ctl_dir for the last directory entry.
-+		 */
-+		dir = get_subdir(dir, name, namelen);
-+		if (IS_ERR(dir))
-+			break;
-+	}
-+	return dir;
-+}
-+
- /**
-  * __register_sysctl_table - register a leaf sysctl table
-  * @set: Sysctl tree to register on
-@@ -1334,7 +1363,6 @@ struct ctl_table_header *__register_sysctl_table(
- {
- 	struct ctl_table_root *root = set->dir.header.root;
- 	struct ctl_table_header *header;
--	const char *name, *nextname;
- 	struct ctl_dir *dir;
- 	struct ctl_table *entry;
- 	struct ctl_node *node;
-@@ -1359,29 +1387,9 @@ struct ctl_table_header *__register_sysctl_table(
- 	dir->header.nreg++;
- 	spin_unlock(&sysctl_lock);
- 
--	/* Find the directory for the ctl_table */
--	for (name = path; name; name = nextname) {
--		int namelen;
--		nextname = strchr(name, '/');
--		if (nextname) {
--			namelen = nextname - name;
--			nextname++;
--		} else {
--			namelen = strlen(name);
--		}
--		if (namelen == 0)
--			continue;
--
--		/*
--		 * namelen ensures if name is "foo/bar/yay" only foo is
--		 * registered first. We traverse as if using mkdir -p and
--		 * return a ctl_dir for the last directory entry.
--		 */
--		dir = get_subdir(dir, name, namelen);
--		if (IS_ERR(dir))
--			goto fail;
--	}
--
-+	dir = sysctl_mkdir_p(dir, path);
-+	if (IS_ERR(dir))
-+		goto fail;
- 	spin_lock(&sysctl_lock);
- 	if (insert_header(dir, header))
- 		goto fail_put_dir_locked;
+@@ -1440,10 +1440,7 @@ EXPORT_SYMBOL(register_sysctl);
+  * register_sysctl() failing on init are extremely low, and so for both reasons
+  * this function does not return any error as it is used by initialization code.
+  *
+- * Context: Can only be called after your respective sysctl base path has been
+- * registered. So for instance, most base directories are registered early on
+- * init before init levels are processed through proc_sys_init() and
+- * sysctl_init_bases().
++ * Context: if your base directory does not exist it will be created for you.
+  */
+ void __init __register_sysctl_init(const char *path, struct ctl_table *table,
+ 				 const char *table_name)
 -- 
 2.39.1
 
