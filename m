@@ -2,122 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63B996A7A63
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 05:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CF3B6A7A7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 05:32:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbjCBESa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Mar 2023 23:18:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42474 "EHLO
+        id S229692AbjCBEcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Mar 2023 23:32:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229896AbjCBESC (ORCPT
+        with ESMTP id S229518AbjCBEcQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Mar 2023 23:18:02 -0500
-Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A710057096
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Mar 2023 20:16:47 -0800 (PST)
-Received: by mail-qt1-x830.google.com with SMTP id z6so16944428qtv.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Mar 2023 20:16:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OiLX93qNxOIggMQE39gtCyYpTO910rpc2HqmiyP4Wqs=;
-        b=A1EaYf8tKwM+OSZSx4sx0qUaPdLBesg9gHN2HlrQvObNa2lqTRK6IIiYpalGERQjcF
-         pn+3xJBA/2791KiNqkOv//qXihovDpzswgjkqop1IXsV/L8NKh0Reo/ds5+FfnISkwnR
-         I4WYiYH26wHIo2lOKIbarUgozHVzZhjq93i0zsrTBDllz8HnRhjt1fP7c+82n2uMukdc
-         FrBA3ORoe7jdcFdPw9qrbyGt3C0CW2OrZV5E0sHojytvWDuV8PlYeOB/d3LJNDdjuJSG
-         uvSrX/ZjBU8NVnQtHqnVeKjdMBgeElsggH2A6HgKfI3fDqki+55VcLxx2U4VMZJDfP6k
-         wNBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OiLX93qNxOIggMQE39gtCyYpTO910rpc2HqmiyP4Wqs=;
-        b=p2kzoLV41ryydGHTJWOejPRiCKbLse6DReOXElkbGiF04gXnu9yelrCvlboeqtsvex
-         Nb6BXzEznW7ayvHBKmeNKFlCmELSjgKBjpAvnihfP1GfjG/T1Kbcg7e4mZpGcxz2+/0g
-         Y5cbtK/967sfUt98FFgtnH27NsFmeDho6ZPzZYjb7CNtzC8JTV3++Y0MKHl3b61Mf/Ix
-         7QAeIAqpQJGNuQPpXegD0nwWsgPth50ulps0KyR4z0tPrZWlh6SeIF7Vq1v46XMP42V3
-         gC91WStxG82SOGfme8HA1K3hOjHpi6C5lY54j/vJ2i32akVAznZvPXFqWLyET2Ygy/MG
-         4Z6g==
-X-Gm-Message-State: AO0yUKWgXcO40gIpWTvPP6tyc9TejBxYWkr8qla5wUT10oJEcoz9gQxT
-        gZsls6FNKGhvnVEv8B6KEwaivmcVAWiPV5Q8GJyjoA==
-X-Google-Smtp-Source: AK7set/1Qo/2N3JCxnEKF/vVdWvMT8KXKuR0NcpsojQRCVOxjmuWm2l5Wboe2MANA6zXLOiyu1AmcY+R5Hl0TYWvINA=
-X-Received: by 2002:ac8:444a:0:b0:3bf:b844:ffc7 with SMTP id
- m10-20020ac8444a000000b003bfb844ffc7mr2387535qtn.12.1677730602197; Wed, 01
- Mar 2023 20:16:42 -0800 (PST)
+        Wed, 1 Mar 2023 23:32:16 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3871E497C0;
+        Wed,  1 Mar 2023 20:32:14 -0800 (PST)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 321MxKgE017202;
+        Thu, 2 Mar 2023 04:32:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2022-7-12; bh=SzY3TSGeoxLLZE49ifvuQ2pf50uYOD/2poZwGo/0E5c=;
+ b=KkCb+iKjzv9Xc5Fe/bLcZE2B2XSItLWEiyhahDQ/Wza5Egp4Gp+1LZicvQx8v/qQ2Tb+
+ OolIYGMLToUC6PFjnprhdpptTtuCb82ByJHsIALEAtoqJfkcD17c19yOPP3SdcMVBDGK
+ FatHEFaBeJX1lsiSCftkE/cZdIA6DTma29S1hW5OBgy+sYS3Qef2OcG70RoeYas0st6u
+ HOkdABhVy0oPpqgxycdvkV3CYSn+nW13Z8J5ORs3I2BpkulWsUA1It/zX8gHeEVa07yW
+ qEQ2n8tO1NhIXA8eV/0X/75YFKLUcrGzg19iBpEFfw2+Kp3GrI/FIyVchLdMPGqwXkzz IQ== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3nybaktnax-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Mar 2023 04:32:09 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 3223eOfq031525;
+        Thu, 2 Mar 2023 04:32:09 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ny8sga7dg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Mar 2023 04:32:09 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3224W8eS012677;
+        Thu, 2 Mar 2023 04:32:08 GMT
+Received: from localhost.localdomain (dhcp-10-191-129-161.vpn.oracle.com [10.191.129.161])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3ny8sga7bn-1;
+        Thu, 02 Mar 2023 04:32:08 +0000
+From:   Imran Khan <imran.f.khan@oracle.com>
+To:     tj@kernel.org, gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        joe.jin@oracle.com
+Subject: [PATCH 0/3] kernfs: Introduce separate rwsem to protect inode
+Date:   Thu,  2 Mar 2023 15:32:00 +1100
+Message-Id: <20230302043203.1695051-1-imran.f.khan@oracle.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <Y9KtCc+4n5uANB2f@casper.infradead.org> <8448beac-a119-330d-a2af-fc3531bdb930@linux.alibaba.com>
- <Y/UiY/08MuA/tBku@casper.infradead.org> <CA+CK2bBYX-N8T_ZdzsHC7oJnHsmqHufdTUJj5OrdFk17uQ=fzw@mail.gmail.com>
- <ZAAgKTWpwCE1fruV@casper.infradead.org>
-In-Reply-To: <ZAAgKTWpwCE1fruV@casper.infradead.org>
-From:   Pasha Tatashin <pasha.tatashin@soleen.com>
-Date:   Wed, 1 Mar 2023 23:16:06 -0500
-Message-ID: <CA+CK2bCxBqjh4b_-ZU8czDR-naaHJVKWo38uhB2_a9x18NWYbQ@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] State Of The Page
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Gao Xiang <hsiangkao@linux.alibaba.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-nvme@lists.infradead.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-02_01,2023-03-01_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=991 mlxscore=0
+ adultscore=0 bulkscore=0 malwarescore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2303020035
+X-Proofpoint-GUID: rqgWtyKN2cg7YmGm9ddbBNJlis2Kj5K_
+X-Proofpoint-ORIG-GUID: rqgWtyKN2cg7YmGm9ddbBNJlis2Kj5K_
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 1, 2023 at 11:03=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Wed, Mar 01, 2023 at 10:50:24PM -0500, Pasha Tatashin wrote:
-> > On Tue, Feb 21, 2023 at 2:58=E2=80=AFPM Matthew Wilcox <willy@infradead=
-.org> wrote:
-> > > My goal for 2023 is to get to a point where we (a) have struct page
-> > > reduced to:
-> > >
-> > > struct page {
-> > >         unsigned long flags;
-> > >         struct list_head lru;
-> > >         struct address_space *mapping;
-> > >         pgoff_t index;
-> > >         unsigned long private;
-> > >         atomic_t _mapcount;
-> > >         atomic_t _refcount;
-> > >         unsigned long memcg_data;
-> > > #ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
-> > >         int _last_cpupid;
-> > > #endif
-> > > };
-> >
-> > This looks clean, but it is still 64-bytes. I wonder if we could
-> > potentially reduce it down to 56 bytes by removing memcg_data.
->
-> We need struct page to be 16-byte aligned to make slab work.  We also nee=
-d
-> it to divide PAGE_SIZE evenly to make CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMA=
-P
+This change set is consolidating the changes discussed and/or mentioned
+in [1] and [2]. I have not received any feedback about any of the
+patches included in this change set, so I am rebasing them on current
+linux-next tip and bringing them all in one place.
 
-Hm, can you please elaborate on both of these cases, how do both of
-these cases work today with _last_cpuid configs or some other configs
-that increase "struct page" above 64-bytes?
+As mentioned in [1], since changing per-fs kernfs_rwsem into a hashed
+rwsem is not working for all scenarios, PATCH-1 here tries to address
+the same issue with the help of another newly introduced per-fs rwsem.
+PATCH-2 and PATCH-3 are basically resend of PATCH-1 and PATCH-2
+respectively in [2].
 
-> work.  I don't think it's worth nibbling around the edges like this
-> anyway; convert everything from page to folio and then we can do the
-> big bang conversion where struct page shrinks from 64 bytes to 8.
+It would be really helpful if I could get some feedback about this
+changeset so that we can reduce the kernfs_rwsem contention and make
+sysfs access more scalable for large-scale systems.
 
-I agree with general idea that converting to folio and shrinking
-"struct page" to 8 bytes can be a big memory consumption win, but even
-then we do not want to encourage the memdesc users to use larger than
-needed types. If "flags" and "memcgs" are going to be part of almost
-every single memdesc type it would be nice to reduce them from
-16-bytes to 8-bytes.
+The patches in this change set are as follows:
 
-Pasha
+PATCH-1: kernfs: Introduce separate rwsem to protect inode attributes.
+
+PATCH-2: kernfs: Use a per-fs rwsem to protect per-fs list of
+kernfs_super_info.
+
+PATCH-3: kernfs: change kernfs_rename_lock into a read-write lock.
+
+Imran Khan (3):
+  kernfs: Introduce separate rwsem to protect inode attributes.
+  Use a per-fs rwsem to protect per-fs list of kernfs_super_info.
+  kernfs: change kernfs_rename_lock into a read-write lock.
+
+ fs/kernfs/dir.c             | 26 +++++++++++++++++---------
+ fs/kernfs/file.c            |  2 ++
+ fs/kernfs/inode.c           | 16 ++++++++--------
+ fs/kernfs/kernfs-internal.h |  2 ++
+ fs/kernfs/mount.c           |  8 ++++----
+ 5 files changed, 33 insertions(+), 21 deletions(-)
+
+
+base-commit: 7f7a8831520f12a3cf894b0627641fad33971221
+
+[1]:https://lore.kernel.org/all/74969b22-e0b6-30bd-a1f0-132f4b8485cf@oracle.com/
+[2]:https://lore.kernel.org/all/20220810111017.2267160-1-imran.f.khan@oracle.com/
+-- 
+2.34.1
+
