@@ -2,61 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C95256A88B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 19:49:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C3CA6A88BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 19:52:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbjCBSt5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 13:49:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
+        id S229608AbjCBSwA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 13:52:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjCBSt4 (ORCPT
+        with ESMTP id S229579AbjCBSv7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 13:49:56 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F7811149;
-        Thu,  2 Mar 2023 10:49:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=agqc831C8v4FMtdYpZfvj2AmsMmIWRE9gM+fVerrSqc=; b=JeanFOxt8sJYlvsUJtWVjlquNR
-        UUH3VAdW2tXhESxQ55dI0UK/B+tyQ03zcJJuCX8HSa6odH6LQXpITsUgoJn5Vlg9kwN1eLhJmMfhr
-        Wdsu7Dc5N4Bd1gHJr2CDMIX9jSN5GINinQRYsMMI2b4Pa6Xyo5QgUlq142pTTVNW4ukylTsWYrSag
-        mH1+ad8gvvHJHD15jIoH4vYpTuSUQQSeuGsXd8bMvnDNfr41n8y13nW/jMmdGTn5+ivEiWdgvdU3r
-        DpNxQEREXqMrIbO0JyyTaCFG1alUrEOuJXeWS4sfGq7dLckcu5YdLJdPREm6lpo0pm6UjbZkwoTmm
-        Hf8omiCw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pXnzs-002aR2-Gi; Thu, 02 Mar 2023 18:49:44 +0000
-Date:   Thu, 2 Mar 2023 18:49:44 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Imran Khan <imran.f.khan@oracle.com>
-Cc:     tj@kernel.org, gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        joe.jin@oracle.com
-Subject: Re: [PATCH 3/3] kernfs: change kernfs_rename_lock into a read-write
- lock.
-Message-ID: <ZADvyJcIazbpCnPu@casper.infradead.org>
-References: <20230302043203.1695051-1-imran.f.khan@oracle.com>
- <20230302043203.1695051-4-imran.f.khan@oracle.com>
+        Thu, 2 Mar 2023 13:51:59 -0500
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E17624C85;
+        Thu,  2 Mar 2023 10:51:56 -0800 (PST)
+Received: by mail-oi1-x22c.google.com with SMTP id bh20so14334994oib.9;
+        Thu, 02 Mar 2023 10:51:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677783116;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g4miANRftKXvw3pXYRIpYFtXe5ceS+myUMxfIqC9f6g=;
+        b=eNTLwlcwVO9qt7WefOE/XSaVIJNFp3TkE3k79MaNYDmvuzhbrXB1q7do4Bwg4uyf//
+         HpuBJwSTrpJUE1IWFrIM/cAQQnspE7NJH8t/uARIWuCNC1z+kyd2/C5gDB0cNVprK77k
+         PkBZfGkNZFXL04GJ1qnNvAPo+NaINpS+y0yodzxbUVGKpY/pLEE/6pR1OnmDtsQNBCMk
+         P6jzmTJxsjtugzXKq7zeUTWCg49fmIkciZLhrdRlZ+j4+25o2YFaGMS9FOl1yWi1dd0X
+         1ByeOBMmrdHUK1A03dQ+ZFEpQU1nvIGo34NZDAgGRU/9ej7S4R2sRyRXuf1Bc7lh5ezZ
+         63Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677783116;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g4miANRftKXvw3pXYRIpYFtXe5ceS+myUMxfIqC9f6g=;
+        b=rzUZFdN5SKbH/67HOw2xj+Ha2DU/R25mJcQN8nq4sSeMtrkP0TFNjNRJMRPnLAfPk5
+         YhRTe05VMBNvNSQb6wDYyqqIo3YIvdiuqtZxbvUwM2eE60Z2fNmL7eErf2TIJLQAjEhJ
+         l4QhlOmSzY0Lao30v2WDEIubu2o695KLcwZa+g8qZ6vh7FX2itpNZsX5UpdvDp39CGIR
+         ipSBK8PYoU8kTcs7/YdMmLf5oIKXu/FnE+pVDEIUlEM+S8A/z+nsTq9cK3eqVPQppiHR
+         8Kt5Vozc2vDNXJgh27Kr6wzm+cat0y5VzRfRwr7IFi+hZAndLdxbuagsck1qwGN2IEhX
+         saHQ==
+X-Gm-Message-State: AO0yUKXau+Ggucz4wKQn5HLs1YKvbfvtmF71aYy6tZSvt3ceAxj3KFgD
+        Qm2IshrMxNfV8kOfNJrGo54dfyydvuMweRVg6T0=
+X-Google-Smtp-Source: AK7set8etazuQfWIK1AczOuew0I3NCmGN8J9YEHY9RTCA/pE6sM0ooCMbqPCnY41ITM7XwmeL6pSLFygSIv5F50p5Sk=
+X-Received: by 2002:a05:6808:d3:b0:378:74af:45ef with SMTP id
+ t19-20020a05680800d300b0037874af45efmr3358790oic.11.1677783116012; Thu, 02
+ Mar 2023 10:51:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230302043203.1695051-4-imran.f.khan@oracle.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:ac9:4304:0:b0:4c1:4768:8c59 with HTTP; Thu, 2 Mar 2023
+ 10:51:55 -0800 (PST)
+In-Reply-To: <ZADuWxU963sInrj/@ZenIV>
+References: <20230125155557.37816-1-mjguzik@gmail.com> <20230125155557.37816-2-mjguzik@gmail.com>
+ <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
+ <20230302083025.khqdizrnjkzs2lt6@wittgenstein> <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
+ <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
+ <ZADoeOiJs6BRLUSd@ZenIV> <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
+ <ZADuWxU963sInrj/@ZenIV>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Thu, 2 Mar 2023 19:51:55 +0100
+Message-ID: <CAGudoHFUkchB93rvOSFgBxkLJWT59hyGs==uTcvtO3pKyekxvQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 02, 2023 at 03:32:03PM +1100, Imran Khan wrote:
-> kernfs_rename_lock protects a node's ->parent and thus kernfs topology.
-> Thus it can be used in cases that rely on a stable kernfs topology.
-> Change it to a read-write lock for better scalability.
-> 
-> Suggested by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Imran Khan <imran.f.khan@oracle.com>
+On 3/2/23, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Thu, Mar 02, 2023 at 07:22:17PM +0100, Mateusz Guzik wrote:
+>
+>> Ops, I meant "names_cache", here:
+>> 	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
+>> 			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
+>>
+>> it is fs/dcache.c and I brainfarted into the above.
+>
+> So you mean __getname() stuff?
+>
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+yes. do some lookups in a loop on a kernel built with
+CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y (there may be a runtime switch for
+it?) and  you will see memset using most time in perf top
+
+-- 
+Mateusz Guzik <mjguzik gmail.com>
