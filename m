@@ -2,90 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C406E6A8C57
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 23:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 237E56A8C63
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Mar 2023 23:58:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjCBW5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 17:57:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42980 "EHLO
+        id S230027AbjCBW6m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 17:58:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229813AbjCBW5C (ORCPT
+        with ESMTP id S229795AbjCBW6l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 17:57:02 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3100558484
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 14:56:53 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id l1so709615pjt.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Mar 2023 14:56:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1677797812;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=bh8uEZAD/yvWP1Lrn9R+0QNZba+XTTUTVdSRMgAQcmQ=;
-        b=K//SvYScc9/RPlNzAc+bbNZPJfdelma3q9O4bB1wnxAJ4F3+DrxFkHfD9CzyFhzWbQ
-         zxzjRce8GzbRVhw5ROu1iovSYFPgJkpXdsVV9KLRuZ+DLM3i6IU1sNlajSgCAnvliBm1
-         V57qqveobMxUQT7AgmZQGrEwmKkrWRVbgNjpI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677797812;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bh8uEZAD/yvWP1Lrn9R+0QNZba+XTTUTVdSRMgAQcmQ=;
-        b=7aML80rhIotAaahvu3E3d/5g7b77nYFDcjhP2cdx3UPtNqNHN3a+zC9NaTggOfDMCg
-         5kksF7O2ompSU77G55oBRn96Q61CKHzOW14kqTthxJqoLNKyg6dseaLyDhdnX8a2GWOc
-         vdwd46sNf8G6kjpY3ZjcUhG1c79bA3H1VyRIETu6zGTQYKJliMwBv5HE8LxY9VxzpWQq
-         ED32XRzNikqz5rRhiSvUmKVLbEN2Qj7DfP2o+LoxOoqEwL1rhe9kHf96C01bnARS99kU
-         wFzkMU/TGKdbR4B1E5bbHSidyufQuhk/OsqxsNdGhyBjsuUBmhLPCafZ2WDxO7s+zBZC
-         trhg==
-X-Gm-Message-State: AO0yUKX4zgAu7fpYU6gXlGAcrNWXCjmRCIPwYhN5GwN9mRBOmwa2jR99
-        S4vk/qMizj8yLWsh8ajGThqWDA==
-X-Google-Smtp-Source: AK7set8NQA8CZRtcwSlTz7C5GCelOHtAp1Ylxj2HvVTT0A4/xUpLXx5v+dscM8DAlm1E4D6F1Zi9ew==
-X-Received: by 2002:a17:902:d2c9:b0:19e:3b41:1828 with SMTP id n9-20020a170902d2c900b0019e3b411828mr4267544plc.22.1677797812569;
-        Thu, 02 Mar 2023 14:56:52 -0800 (PST)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id kx7-20020a170902f94700b001990028c0c9sm192659plb.68.2023.03.02.14.56.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Mar 2023 14:56:52 -0800 (PST)
-Message-ID: <640129b4.170a0220.e5ce3.0f65@mx.google.com>
-X-Google-Original-Message-ID: <202303021456.@keescook>
-Date:   Thu, 2 Mar 2023 14:56:51 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     ebiederm@xmission.com, yzaikin@google.com,
-        john.johansen@canonical.com, paul@paul-moore.com,
+        Thu, 2 Mar 2023 17:58:41 -0500
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A4138037;
+        Thu,  2 Mar 2023 14:58:38 -0800 (PST)
+Received: from [192.168.192.83] (unknown [50.47.134.245])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 2A9E13F301;
+        Thu,  2 Mar 2023 22:58:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1677797915;
+        bh=nkU4U7NSmjI2zWgPD+AtYN7NNzpxjnc7tmq01qgN89k=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=QkcSCzV3s2aj6boz+mHxWsvucqomXVM/UQMrhA8Io4U8bKBeQ81oMS6ckekAuDzcQ
+         nkee4Drs6MUphvNdT3zxLyELL0QBD3OjNecncPrTQ+WRLaN25mbdEPFtaIB/hxBYjZ
+         6LQWJNNw1PSTwYQ9GiuttKxMpIh3lrywy15enDkd4vPX4jww9qJK/F3V6v+YoVGM8p
+         KwJTSxjKOR0eVcxtl4LhCOnUwTRrQuiV6DbFt5hbn1WrxG7+UhtfmpUHN3F3VQ90D6
+         3Txt4UavSwO0JpLNRp9W8onES1k7FXy6P1GVHKx0l9OcE5dMacEx5bs89r2WVKcrd2
+         wQtRYLKHRCkVg==
+Message-ID: <257aa5c0-144b-b157-0270-0a7f470c195b@canonical.com>
+Date:   Thu, 2 Mar 2023 14:58:28 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 05/11] loadpin: simplify sysctls use with
+ register_sysctl()
+Content-Language: en-US
+To:     Luis Chamberlain <mcgrof@kernel.org>, ebiederm@xmission.com,
+        keescook@chromium.org, yzaikin@google.com, paul@paul-moore.com,
         jmorris@namei.org, serge@hallyn.com, luto@amacapital.net,
         wad@chromium.org, dverkamp@chromium.org, paulmck@kernel.org,
         baihaowen@meizu.com, frederic@kernel.org, jeffxu@google.com,
-        ebiggers@kernel.org, tytso@mit.edu, guoren@kernel.org,
-        j.granados@samsung.com, zhangpeng362@huawei.com,
+        ebiggers@kernel.org, tytso@mit.edu, guoren@kernel.org
+Cc:     j.granados@samsung.com, zhangpeng362@huawei.com,
         tangmeng@uniontech.com, willy@infradead.org, nixiaoming@huawei.com,
         sujiaxun@uniontech.com, patches@lists.linux.dev,
         linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
         linux-security-module@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/11] yama: simplfy sysctls with register_sysctl()
 References: <20230302202826.776286-1-mcgrof@kernel.org>
- <20230302202826.776286-7-mcgrof@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230302202826.776286-7-mcgrof@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+ <20230302202826.776286-6-mcgrof@kernel.org>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20230302202826.776286-6-mcgrof@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 02, 2023 at 12:28:21PM -0800, Luis Chamberlain wrote:
-> register_sysctl_paths() is only need if you have directories with
-> entries, simplify this by using register_sysctl().
+On 3/2/23 12:28, Luis Chamberlain wrote:
+> register_sysctl_paths() is not required, we can just use
+> register_sysctl() with the required path specified.
 > 
 > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
 
-Acked-by: Kees Cook <keescook@chromium.org>
+> ---
+>   security/loadpin/loadpin.c | 8 +-------
+>   1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+> index d73a281adf86..c971464b4ad5 100644
+> --- a/security/loadpin/loadpin.c
+> +++ b/security/loadpin/loadpin.c
+> @@ -52,12 +52,6 @@ static bool deny_reading_verity_digests;
+>   #endif
+>   
+>   #ifdef CONFIG_SYSCTL
+> -static struct ctl_path loadpin_sysctl_path[] = {
+> -	{ .procname = "kernel", },
+> -	{ .procname = "loadpin", },
+> -	{ }
+> -};
+> -
+>   static struct ctl_table loadpin_sysctl_table[] = {
+>   	{
+>   		.procname       = "enforce",
+> @@ -262,7 +256,7 @@ static int __init loadpin_init(void)
+>   		enforce ? "" : "not ");
+>   	parse_exclude();
+>   #ifdef CONFIG_SYSCTL
+> -	if (!register_sysctl_paths(loadpin_sysctl_path, loadpin_sysctl_table))
+> +	if (!register_sysctl("kernel/loadpin", loadpin_sysctl_table))
+>   		pr_notice("sysctl registration failed!\n");
+>   #endif
+>   	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
 
--- 
-Kees Cook
