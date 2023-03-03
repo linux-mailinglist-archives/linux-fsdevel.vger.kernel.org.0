@@ -2,26 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEF4C6A9E63
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 19:21:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC4356A9E67
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 19:21:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231622AbjCCSVh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Mar 2023 13:21:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40550 "EHLO
+        id S231649AbjCCSVw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Mar 2023 13:21:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231597AbjCCSVf (ORCPT
+        with ESMTP id S231657AbjCCSVt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Mar 2023 13:21:35 -0500
-X-Greylist: delayed 64 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 03 Mar 2023 10:21:34 PST
+        Fri, 3 Mar 2023 13:21:49 -0500
 Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90A9D53B;
-        Fri,  3 Mar 2023 10:21:33 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PSwzp5m6nz9xtRp;
-        Sat,  4 Mar 2023 02:12:22 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAAD65F6C5;
+        Fri,  3 Mar 2023 10:21:43 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PSx0137Nnz9xtSF;
+        Sat,  4 Mar 2023 02:12:33 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S14;
-        Fri, 03 Mar 2023 19:21:09 +0100 (CET)
+        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S15;
+        Fri, 03 Mar 2023 19:21:20 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
         jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
@@ -34,33 +33,33 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
         stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 12/28] fs: Fix description of vfs_tmpfile()
-Date:   Fri,  3 Mar 2023 19:18:26 +0100
-Message-Id: <20230303181842.1087717-13-roberto.sassu@huaweicloud.com>
+Subject: [PATCH 13/28] security: Align inode_setattr hook definition with EVM
+Date:   Fri,  3 Mar 2023 19:18:27 +0100
+Message-Id: <20230303181842.1087717-14-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
 References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S14
-X-Coremail-Antispam: 1UD129KBjvdXoWrZw4rWF43tr1kXFy8ur4rKrg_yoWfGFc_CF
-        WvqF18Wan8Xr17Za1FkrWaqry3u3Z8Ar1akws3t342grZ8Jr95JFWkArWrX34kZ3WxXr13
-        Cr92v3WaqF17WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbg8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
-        0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-        Y2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-        v26F4UJVW0owA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-        wI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-        xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-        z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
-        AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-        x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
-        W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Ar0_tr1lIxAIcVC0I7IYx2IY6xkF
-        7I0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-        0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7I
-        U0189tUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBF1jj4YvdwAAss
+X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S15
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF1DZr47Wr4kXrWfJw48tFb_yoW5CF4fpF
+        45JasxKr4rXFyxWr1vkF4Uua1S9FWfWrWUJrWvgw1SyF92qr1IgFyxGr1jkF15Gry8GrnF
+        qFsFvrs8Wrn0yrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
+        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
+        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+        AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E
+        14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I
+        80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
+        c4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4
+        kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E
+        5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZV
+        WrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26F1j6w1UMIIF0xvE2Ix0cI8IcVCY
+        1x0267AKxVWxJr0_GcWlIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
+        v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdYxBIdaVFxhVjvjDU0xZFpf9x
+        07j7GYLUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj4otWAAAsO
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
@@ -72,31 +71,78 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Update the description of vfs_tmpfile() to match the current parameters of
-that function.
+Add the idmap parameter to the definition, so that evm_inode_setattr() can
+be registered as this hook implementation.
 
-Fixes: 9751b338656f ("vfs: move open right after ->tmpfile()")
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- fs/namei.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/lsm_hook_defs.h | 3 ++-
+ security/security.c           | 2 +-
+ security/selinux/hooks.c      | 3 ++-
+ security/smack/smack_lsm.c    | 4 +++-
+ 4 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 57727a1ae38..b4c52c4890b 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3574,9 +3574,9 @@ static int do_open(struct nameidata *nd,
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 2e10945622a..4372a6b2632 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -133,7 +133,8 @@ LSM_HOOK(int, 0, inode_readlink, struct dentry *dentry)
+ LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
+ 	 bool rcu)
+ LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
+-LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *attr)
++LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
++	 struct iattr *attr)
+ LSM_HOOK(int, 0, inode_getattr, const struct path *path)
+ LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry, const char *name, const void *value,
+diff --git a/security/security.c b/security/security.c
+index df6714aa19d..f7fe252e9d3 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2168,7 +2168,7 @@ int security_inode_setattr(struct mnt_idmap *idmap,
+ 
+ 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+ 		return 0;
+-	ret = call_int_hook(inode_setattr, 0, dentry, attr);
++	ret = call_int_hook(inode_setattr, 0, idmap, dentry, attr);
+ 	if (ret)
+ 		return ret;
+ 	return evm_inode_setattr(idmap, dentry, attr);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3e4308dd336..b31ad6109b0 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3104,7 +3104,8 @@ static int selinux_inode_permission(struct inode *inode, int mask)
+ 	return rc;
+ }
+ 
+-static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
++static int selinux_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
++				 struct iattr *iattr)
+ {
+ 	const struct cred *cred = current_cred();
+ 	struct inode *inode = d_backing_inode(dentry);
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 598b398c62e..09cfd3c31dc 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1173,12 +1173,14 @@ static int smack_inode_permission(struct inode *inode, int mask)
+ 
  /**
-  * vfs_tmpfile - create tmpfile
-  * @idmap:	idmap of the mount the inode was found from
-- * @dentry:	pointer to dentry of the base directory
-+ * @parentpath:	pointer to the path of the base directory
-+ * @file:	file descriptor of the new tmpfile
-  * @mode:	mode of the new tmpfile
-- * @open_flag:	flags
+  * smack_inode_setattr - Smack check for setting attributes
++ * @idmap: idmap of the mount
+  * @dentry: the object
+  * @iattr: for the force flag
   *
-  * Create a temporary file.
-  *
+  * Returns 0 if access is permitted, an error code otherwise
+  */
+-static int smack_inode_setattr(struct dentry *dentry, struct iattr *iattr)
++static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
++			       struct iattr *iattr)
+ {
+ 	struct smk_audit_info ad;
+ 	int rc;
 -- 
 2.25.1
 
