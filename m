@@ -2,58 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44AB06AA0C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 21:58:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 426EE6AA0DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 22:10:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231766AbjCCU6q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Mar 2023 15:58:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42408 "EHLO
+        id S231795AbjCCVKB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Mar 2023 16:10:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231767AbjCCU6o (ORCPT
+        with ESMTP id S231835AbjCCVJv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Mar 2023 15:58:44 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A431218B09
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Mar 2023 12:58:33 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id o12so15262301edb.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Mar 2023 12:58:33 -0800 (PST)
+        Fri, 3 Mar 2023 16:09:51 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2311B62D9B;
+        Fri,  3 Mar 2023 13:09:45 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id y184so2789122oiy.8;
+        Fri, 03 Mar 2023 13:09:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1677877112;
+        d=gmail.com; s=20210112; t=1677877784;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :references:in-reply-to:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1o4OY5lQPKh+GkI89Rz6TXZXk/LYf31mRBJK3Sl9ezg=;
-        b=PyBlh3TaC6AY2IaRzPfVxfaIj90lqsk2+bToAYFa2qzDIPO7VYLiLtVSDbJJBoEiy7
-         TlkyueFoXWtTjF6K3CKXJCl90oaQr4OlkbH7D/mKfXsh81d9CQfm+sxys9D0R1l0jcU/
-         CP01sDAjSuoPFCQyplTZizSeXN3DMAW1GJ6Iw=
+        bh=gj3D0bfvOLWOuIuZ/qODED5yK5G7S3fF6CiSL+ecQPo=;
+        b=jusnkVmqUVn8BpkeS3wcTVdmD3nxUKwSxwRd5AINGAUtUNhzB2gTteVtP56gKT2Rla
+         G7zMprADCjK7S2827s53fX/tp3/yI+IfMJ4W/BSYs9xqCBjg7T1l+Umzxfw7aCu/nr8D
+         CiA09CoHTqH18B2Yu9voZ6ESLA+z3pX2Aa4w++TRhvIIihBJeUblCiywjw8UxN43UiSF
+         moHB56uXIfZeZ72aYiBt3r86yhTumXCnJ5a1pHccV60iVOUfiKdqj1YiCOLxWZzag01O
+         TdXNfdCiDwz5tvZHsF421frel03ADCK6bUScrAysNxUyZkMuQrE63iaWUkGHrk0mIICo
+         YOiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677877112;
+        d=1e100.net; s=20210112; t=1677877784;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :references:in-reply-to:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1o4OY5lQPKh+GkI89Rz6TXZXk/LYf31mRBJK3Sl9ezg=;
-        b=FYSaKPZBrTi7TswAoPBiHWB2bfKhgO3dYcmjAYd8WifydGUguVSMtMbwn5gsuvUZ0u
-         5i6VcCQG1tTmX7x14PtNNeoJhkWodyO9H+X4ZKgCk0xNxHaWhDF7ew7ce4eynv8N3Zht
-         uviIuJUN99MfvWfVh81NoV0bbx701Hn1oh3wH4bSjlTaH6GafxQQy6pI1Q5rvmJMNPfv
-         jBvzydfCSdUFZKjxLQno17jVMTNv8foOOB1UwAyqZo3Zwq1SqhHgkzun1CMp7CwMugSN
-         nSQdcyyuKbzmwSx9fEpHbmpwD01AqO8IOPEN/JOPUE8Jtx/4ZI/bWtjRgiNZGx/A4qRe
-         6MHw==
-X-Gm-Message-State: AO0yUKVwcR1gDVBsNVQ0ibVPD1r5YYlTDrVpISq+9mCo5V7Eqd1QE1NL
-        LcqfbLIDEVhkZ1qLv0X34AcCkcc6cK4cRctZuWVW+A==
-X-Google-Smtp-Source: AK7set/hjDq9Qry0h5k28gQSQYiP8yNgFMx2f39e8oqK4sOnX77vS+w+y1HmZVrMP6dZzYO5RZz6lA==
-X-Received: by 2002:a17:906:3687:b0:881:4d98:fe2e with SMTP id a7-20020a170906368700b008814d98fe2emr2420505ejc.29.1677877111802;
-        Fri, 03 Mar 2023 12:58:31 -0800 (PST)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id i2-20020a17090685c200b008dcaf24bf77sm1325379ejy.36.2023.03.03.12.58.30
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Mar 2023 12:58:30 -0800 (PST)
-Received: by mail-ed1-f49.google.com with SMTP id g3so15435100eda.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Mar 2023 12:58:30 -0800 (PST)
-X-Received: by 2002:a17:906:3d51:b0:8f1:4c6a:e72 with SMTP id
- q17-20020a1709063d5100b008f14c6a0e72mr1497478ejf.0.1677877109830; Fri, 03 Mar
- 2023 12:58:29 -0800 (PST)
+        bh=gj3D0bfvOLWOuIuZ/qODED5yK5G7S3fF6CiSL+ecQPo=;
+        b=VFEwmqFBKn+ySPjccxGiY0dZhhxTu5SFZoZRYLqKiCKyLYW82ZnfbJjTIKaMPREK+D
+         k3So4WtdK2Efvh1/wBzZBSqKS4Cb5Msucs7f1svNnCXpZa5B0/P8KdJCdsUlkLgVbwZu
+         PhVAjD9ArOaPv8ukrthGn2P4kZXqm+njgAOzkx5uhpFCe2dUhP9zp7JIdoNZuieGOyOp
+         /q/iZ8OQczMwjB1CXEP4zlL385IcGZFIiaLtZCiA9lP4Ve4IUszDnuxsLwonNCx0E/GN
+         yoUlo9vNFmOn/e1kEQzYHG3EQLRNRu9qMoyQZ/I/hV2T3Xh80Qmb/Em7Wpwtd1Y9h5wN
+         mcvg==
+X-Gm-Message-State: AO0yUKVFS/m0gNVK6Ntyj1WWatIhPWYBzl9Aik+mESvARGL+kEmFHoCz
+        hFra8QtF5+3fuEiFNjZO8NcfQfYtvF1UJkebSIY=
+X-Google-Smtp-Source: AK7set+lv0o0V2rKWQs7DvncmnsJ+v43LjjTV15LKpUl42YJfJazb3W7NZuB6NmCG0wlS2lnai3p3IKi79M0Ludekfs=
+X-Received: by 2002:a54:4612:0:b0:37f:953b:f235 with SMTP id
+ p18-20020a544612000000b0037f953bf235mr1057917oip.11.1677877784547; Fri, 03
+ Mar 2023 13:09:44 -0800 (PST)
 MIME-Version: 1.0
+Received: by 2002:a05:6802:31f:b0:4c2:d201:fe1f with HTTP; Fri, 3 Mar 2023
+ 13:09:43 -0800 (PST)
+In-Reply-To: <CAHk-=wgz51x2gaiD4=6T3UGZtKOSm3k56iq=h4tqy3wQsN-VTA@mail.gmail.com>
 References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
  <20230302083025.khqdizrnjkzs2lt6@wittgenstein> <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
  <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
@@ -65,14 +62,13 @@ References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
  <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
  <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
  <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
- <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com> <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
-In-Reply-To: <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 3 Mar 2023 12:58:13 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgz51x2gaiD4=6T3UGZtKOSm3k56iq=h4tqy3wQsN-VTA@mail.gmail.com>
-Message-ID: <CAHk-=wgz51x2gaiD4=6T3UGZtKOSm3k56iq=h4tqy3wQsN-VTA@mail.gmail.com>
+ <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
+ <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com> <CAHk-=wgz51x2gaiD4=6T3UGZtKOSm3k56iq=h4tqy3wQsN-VTA@mail.gmail.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Fri, 3 Mar 2023 22:09:43 +0100
+Message-ID: <CAGudoHGEOGJtcXFL2LVphNMpe38h3u4XT=PJZbc84Gka_h+tCg@mail.gmail.com>
 Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Mateusz Guzik <mjguzik@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Alexander Potapenko <glider@google.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Kees Cook <keescook@chromium.org>,
@@ -82,9 +78,9 @@ Cc:     Alexander Potapenko <glider@google.com>,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -92,53 +88,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 3, 2023 at 12:39=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
+On 3/3/23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Fri, Mar 3, 2023 at 12:39=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com>=
+ wrote:
+>>
+>> I think there is a systemic problem which comes with the kzalloc API
 >
-> I think there is a systemic problem which comes with the kzalloc API
+> Well, it's not necessarily the API that is bad, but the implementation.
+>
+> We could easily make kzalloc() with a constant size just expand to
+> kmalloc+memset, and get the behavior you want.
+>
+> We already do magical things for "find the right slab bucket" part of
+> kmalloc too for constant sizes. It's changed over the years, but that
+> policy goes back a long long time. See
+>
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?=
+id=3D95203fe78007f9ab3aebb96606473ae18c00a5a8
+>
+> from the BK history tree.
+>
+> Exactly because some things are worth optimizing for when the size is
+> known at compile time.
+>
+> Maybe just extending kzalloc() similarly? Trivial and entirely untested
+> patch:
+>
+>    --- a/include/linux/slab.h
+>    +++ b/include/linux/slab.h
+>    @@ -717,6 +717,12 @@ static inline void *kmem_cache_zalloc(struct
+> kmem_cache *k, gfp_t flags)
+>      */
+>     static inline __alloc_size(1) void *kzalloc(size_t size, gfp_t flags)
+>     {
+>    +    if (__builtin_constant_p(size)) {
+>    +            void *ret =3D kmalloc(size, flags);
+>    +            if (ret)
+>    +                    memset(ret, 0, size);
+>    +            return ret;
+>    +    }
+>         return kmalloc(size, flags | __GFP_ZERO);
+>     }
+>
+> This may well be part of what has changed over the years. People have
+> done a *lot* of pseudo-automated "kmalloc+memset -> kzalloc" code
+> simplification. And in the process we've lost a lot of good
+> optimizations.
 
-Well, it's not necessarily the API that is bad, but the implementation.
+I was about to write that kzalloc can use automagic treatment. I made
+a change of similar sort years back in FreeBSD
+https://cgit.freebsd.org/src/commit/?id=3D34c538c3560591a3856e85988b0b5eefd=
+de53b0c
 
-We could easily make kzalloc() with a constant size just expand to
-kmalloc+memset, and get the behavior you want.
+The crux of the comment though was not about kzalloc (another
+brainfart, apologies), but kmem_cache_zalloc -- that one is kind of
+screwed as is.
 
-We already do magical things for "find the right slab bucket" part of
-kmalloc too for constant sizes. It's changed over the years, but that
-policy goes back a long long time. See
+Perhaps it would be unscrewed if calls could be converted to something
+in the lines of kmem_cache_zalloc_ptr(cachep, flags, returnobj);
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/=
-?id=3D95203fe78007f9ab3aebb96606473ae18c00a5a8
+so this from __alloc_file:
+        struct file *f;
+	int error;
 
-from the BK history tree.
+	f =3D kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
+        if (unlikely(!f))
+		return ERR_PTR(-ENOMEM);
 
-Exactly because some things are worth optimizing for when the size is
-known at compile time.
+could be:
+	if (unlikely(!kmem_cache_zalloc_ptr(filp_cachep, GFP_KERNEL, f))
+		return ERR_PTR(-ENOMEM);
 
-Maybe just extending kzalloc() similarly? Trivial and entirely untested pat=
-ch:
+... where the macro rolls with similar treatment to the one you pasted
+for kzalloc. and assigns to f.
 
-   --- a/include/linux/slab.h
-   +++ b/include/linux/slab.h
-   @@ -717,6 +717,12 @@ static inline void *kmem_cache_zalloc(struct
-kmem_cache *k, gfp_t flags)
-     */
-    static inline __alloc_size(1) void *kzalloc(size_t size, gfp_t flags)
-    {
-   +    if (__builtin_constant_p(size)) {
-   +            void *ret =3D kmalloc(size, flags);
-   +            if (ret)
-   +                    memset(ret, 0, size);
-   +            return ret;
-   +    }
-        return kmalloc(size, flags | __GFP_ZERO);
-    }
+if this sounds acceptable coccinelle could be used to do a sweep
 
-This may well be part of what has changed over the years. People have
-done a *lot* of pseudo-automated "kmalloc+memset -> kzalloc" code
-simplification. And in the process we've lost a lot of good
-optimizations.
+I don't have a good name for it.
 
-I used to do profiling religiously, but these days I only do it for
-particular areas (usually just the walking part of pathname lookup)
-
-             Linus
+--=20
+Mateusz Guzik <mjguzik gmail.com>
