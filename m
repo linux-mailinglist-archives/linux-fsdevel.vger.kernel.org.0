@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB37C6A9FF7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 20:19:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EAA46AA019
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 20:27:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231540AbjCCTT2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Mar 2023 14:19:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52668 "EHLO
+        id S231437AbjCCT1P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Mar 2023 14:27:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231190AbjCCTT1 (ORCPT
+        with ESMTP id S231555AbjCCT06 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Mar 2023 14:19:27 -0500
+        Fri, 3 Mar 2023 14:26:58 -0500
 Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9077AD51B;
-        Fri,  3 Mar 2023 11:19:26 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E0251B553;
+        Fri,  3 Mar 2023 11:26:56 -0800 (PST)
 Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 4FF0F32007F0;
-        Fri,  3 Mar 2023 14:19:25 -0500 (EST)
+        by mailout.west.internal (Postfix) with ESMTP id F21B33200437;
+        Fri,  3 Mar 2023 14:26:54 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Fri, 03 Mar 2023 14:19:26 -0500
+  by compute1.internal (MEProxy); Fri, 03 Mar 2023 14:26:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
         cc:cc:content-transfer-encoding:content-type:content-type:date
         :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1677871164; x=1677957564; bh=kuuJpFZokkDlh5b4z6JvJ1JyByWlwqXcZja
-        +DHm8hpw=; b=fpvukAdplsmW6tJuXyM+pJou2LfqV6qn97jo4szAzlfiRiedFHs
-        iqHmpEbltr4t6YJ3zXoQtH382LQnmggJfW6Env+5jWapfvzZesTrQYjuuDY3/TD3
-        Vgo9d5ty8t08HYh+3SOshwBrqujdgAbr7ziPmAvA/NeG/w7ITT0SXJuoH+6zTtiy
-        GnZN1ozlw+HDUcExLHXG77GffJj6/CYu5EwDCzz31Tr6Vir52wACh7/67tvnI1hC
-        IKbip/kCV5L6DL+ze6D7NsyEAiaA9jFZDJ26IrDcEb8VXJ6ASCbFBinqoWIdr5UH
-        qAUr/Zf/QfZcfjdhUKSyeCy6HT9ge5Xe6Fg==
+        1677871614; x=1677958014; bh=cn8ZyhiM02WQ5IwSpSCmExINbOiY1FTRvSe
+        WV7cmSm0=; b=N1RSAryTYZAwtcYjGBO6mhkVHeOTEdBk1FiWfo+yxtKeRXF4BWM
+        Gup6AFOhZYSEIEQ0d3k350CjQNw6t1JE7sSyP292rNiqKk1km4cuQWgUgSIWYeeP
+        fxxR8aNHrOk+9JM+Qd9J7SkPdzahDXjgIvSyAyYLGN2HdM3e44lUF2FLjroz1VG3
+        ywUTkf7LzyS3gcrulzAkIszU83cpCRwZ9wnIe47w8ghHAAhIdTE5lgFeb7kH2v7y
+        iK1fSsMXA7Abhp9WAXtCqYEWSVobCBt0yKNYzHbsDeUzz9WM1Q4muyyw5cAWDBwf
+        GNm75WDHwJ9HdRnULxf9Zs5MuYgIDUVrv0Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:content-type:date:date:feedback-id:feedback-id
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
         :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1677871164; x=1677957564; bh=kuuJpFZokkDlh5b4z6JvJ1JyByWlwqXcZja
-        +DHm8hpw=; b=byKh/D2nacvYUMcRoCvOlPjBPoXNKGiNa9YSqqb/toZYz40zBke
-        qScPGdT8IAJ7ZCzpqY50LFS9QO0pNaVX03tAHmwWX4tNIIX16nbdzuqcRFksWNzH
-        NamRzjMkyvRjx+2kJ58JywqYBP++rfzEhbbhPwVxVauuP9CieM/Dm2Tm6wHPcOSh
-        rcoPS3xxpmdsfXnHMtVNfdFfuWoCo3CdCT+Kkiu+zv5aYo/TMg9e3h5TPqMLktcA
-        M2Kg4zOwg2dAGz5c39LowE6oEuh/oU2U6uzCuqrY7Y4ZPPlP0FMkGRKvGcGY+wif
-        shib6UyGLgblcVueI+lV/gaDJtvF4o6XYAw==
-X-ME-Sender: <xms:PEgCZIdw80iTA432wsx4cbt3oa9adUYbZQe53C3Pvq-mkmqp0uL0_Q>
-    <xme:PEgCZKNPKt17AbdqMTPn0qVCiUHXWtTvnkBmQBJugXtW4QOZrCXg-9ekIu_QqybPa
-    ywhRUQjB6pDhS_s>
-X-ME-Received: <xmr:PEgCZJiyNOpwENRnW1gLSjHsnWI9bt0aJ679RBc1_uObz6LjYxvzgZBPRdBRRxGztg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudelledguddujecutefuodetggdotefrod
+        1677871614; x=1677958014; bh=cn8ZyhiM02WQ5IwSpSCmExINbOiY1FTRvSe
+        WV7cmSm0=; b=kmDNuG7CWiWstb8TFK+mqFGxbQzUJwdWbBE5EUQNE+j/3nLPQDN
+        zkK7YlQESR5EMyn8bGovZT9uluSULGIIpJNLpsmlxK5e7jcNsa4qavsfFTxJUnhY
+        VwnboR/cfEH/qHWxnyMywlQX5fjsuiQGs/sQq/Vaa6QU5xHwNyY5/Cb67ju0vwr/
+        94kY2tI9nGDPcG5NuLEwqc1xvE3cyRkSorrYvGrFukgrXPHS013guFmZ0Zk5G/BO
+        lxFoHsCxRMEbt2LzEVqsSXgnJm4N/Cc4oe3wQfJ8h83cNlJgjCak/FNO+wmwBpgu
+        dmDFGy5S/pCUeApQ/bznYgazhzTGupR8AAA==
+X-ME-Sender: <xms:_kkCZD8LsWhMk1VoC3ce8QG2624zNGxgi-jz-M7j5rbTkSUHdQFzow>
+    <xme:_kkCZPt_huuq4-vlUmCvgMNzY89VYrTQTCz4r9PV5tzuNTPwRjAJCR3ruC3PHDhqQ
+    RwM7-h9G9Fqbzd->
+X-ME-Received: <xmr:_kkCZBBYBLzSmq7hVsHbhTW0OcGX6z8QQqqC_nSUGbtMCsbs3rhig0ZLKUxBIB3tJQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudelledguddulecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
     enucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepuegv
@@ -57,15 +57,15 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudelledguddujecutefuodetgg
     vdefgfeuffeifeejgfejffehtddtfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
     grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
     rdhfmh
-X-ME-Proxy: <xmx:PEgCZN8G6MlEjegenNjhD6rwiXjkfrqX0jioj6nLPCb1aLn6PC5iDA>
-    <xmx:PEgCZEsLz2HY92dgkRLS0yNbJKLILpu3pJDFXpaycuGMAmWxroZZBw>
-    <xmx:PEgCZEHNV51TE8L997iTgIpFFHHQZbrIUl0F2wn2b40oG2tkwhgm5g>
-    <xmx:PEgCZFkGC0Ka_RZNviuOaNRnSsbWSxoxDOZsVH6XVpSPF45Tu-whOQ>
+X-ME-Proxy: <xmx:_kkCZPdKm0iKnXzKoTEO74wQj1zBiJhb5oIYpJ1ztphhH5-zsoAKoQ>
+    <xmx:_kkCZIOZcPnDcbhWy-U54IKul76IDA_tP2CU0JjDiAR3_cXx08eC3g>
+    <xmx:_kkCZBmrh_58DWCT5-N4uL2M_-ig74T4b9o_XQZRma-nLoj9X1PUPw>
+    <xmx:_kkCZJGSjHabyAMAs4yAhGa-0J4iIjczMfee864DGEUiasoDazEKAg>
 Feedback-ID: id8a24192:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 3 Mar 2023 14:19:23 -0500 (EST)
-Message-ID: <e49787bc-fd4f-1fdc-e66b-270ea8367a11@fastmail.fm>
-Date:   Fri, 3 Mar 2023 20:19:21 +0100
+ 3 Mar 2023 14:26:52 -0500 (EST)
+Message-ID: <381a19bb-d17e-b48b-8259-6287dbe170df@fastmail.fm>
+Date:   Fri, 3 Mar 2023 20:26:52 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
@@ -135,168 +135,12 @@ On 2/20/23 20:37, Alexander Mikhalitsyn wrote:
 > +	struct fuse_iqueue *fiq = &fc->iq;
 > +	struct fuse_dev *fud;
 > +	unsigned int i;
-
-Assuming you have a malicious daemon that tries to cause bad behavior, 
-only allow one ioctl at at time? I.e. add a value that reinit is in 
-progress? And unset at the end of the function?
-
 > +
 > +	if (fc->conn_gen + 1 < fc->conn_gen)
 > +		return -EOVERFLOW;
 > +
-
-Add a comment, like
-
-/* Unsets fc->connected and fiq->connected and ensures that no new 
-requests can be queued */
-
-?
-
 > +	fuse_abort_conn(fc);
 > +	fuse_wait_aborted(fc);
-> +
-> +	spin_lock(&fc->lock);
-> +	if (fc->connected) {
-> +		spin_unlock(&fc->lock);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (fc->conn_gen + 1 < fc->conn_gen) {
-> +		spin_unlock(&fc->lock);
-> +		return -EOVERFLOW;
-> +	}
-> +
-> +	fc->conn_gen++;
-> +
-> +	spin_lock(&fiq->lock);
-> +	if (request_pending(fiq) || fiq->forget_list_tail != &fiq->forget_list_head) {
-> +		spin_unlock(&fiq->lock);
-> +		spin_unlock(&fc->lock);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (&fuse_dev_fiq_ops != fiq->ops) {
-> +		spin_unlock(&fiq->lock);
-> +		spin_unlock(&fc->lock);
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	fiq->connected = 1;
-> +	spin_unlock(&fiq->lock);
-> +
-> +	spin_lock(&fc->bg_lock);
-> +	if (!list_empty(&fc->bg_queue)) {
-> +		spin_unlock(&fc->bg_lock);
-> +		spin_unlock(&fc->lock);
-> +		return -EINVAL;
-> +	}
-> +
-> +	fc->blocked = 0;
-> +	fc->max_background = FUSE_DEFAULT_MAX_BACKGROUND;
-> +	spin_unlock(&fc->bg_lock);
-> +
-> +	list_for_each_entry(fud, &fc->devices, entry) {
-> +		struct fuse_pqueue *fpq = &fud->pq;
-> +
-> +		spin_lock(&fpq->lock);
-> +		if (!list_empty(&fpq->io)) {
-> +			spin_unlock(&fpq->lock);
-> +			spin_unlock(&fc->lock);
-> +			return -EINVAL;
-> +		}
-> +
-> +		for (i = 0; i < FUSE_PQ_HASH_SIZE; i++) {
-> +			if (!list_empty(&fpq->processing[i])) {
-> +				spin_unlock(&fpq->lock);
-> +				spin_unlock(&fc->lock);
-> +				return -EINVAL;
-> +			}
-> +		}
-> +
-> +		fpq->connected = 1;
-> +		spin_unlock(&fpq->lock);
-> +	}
-> +
-> +	fuse_set_initialized(fc);
 
-I'm not sure about this, why not the common way via FUSE_INIT reply?
+Shouldn't this also try to flush all data first?
 
-> +
-> +	/* Background queuing checks fc->connected under bg_lock */
-> +	spin_lock(&fc->bg_lock);
-> +	fc->connected = 1;
-> +	spin_unlock(&fc->bg_lock);
-> +
-> +	fc->aborted = false;
-> +	fc->abort_err = 0;
-> +
-> +	/* nullify all the flags */
-> +	memset(&fc->flags, 0, sizeof(struct fuse_conn_flags));
-> +
-> +	spin_unlock(&fc->lock);
-> +
-> +	down_read(&fc->killsb);
-> +	if (!list_empty(&fc->mounts)) {
-> +		struct fuse_mount *fm;
-> +
-> +		fm = list_first_entry(&fc->mounts, struct fuse_mount, fc_entry);
-> +		if (!fm->sb) {
-> +			up_read(&fc->killsb);
-> +			return -EINVAL;
-> +		}
-> +
-> +		fuse_send_init(fm);
-> +	}
-> +	up_read(&fc->killsb);
-> +
-> +	return 0;
-> +}
-> +
->   void fuse_wait_aborted(struct fuse_conn *fc)
->   {
->   	/* matches implicit memory barrier in fuse_drop_waiting() */
-> @@ -2282,6 +2388,32 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
->   			}
->   		}
->   		break;
-> +	case FUSE_DEV_IOC_REINIT:
-> +		struct fuse_conn *fc;
-> +
-> +		if (!checkpoint_restore_ns_capable(file->f_cred->user_ns))
-> +			return -EPERM;
-> +
-> +		res = -EINVAL;
-> +		fud = fuse_get_dev(file);
-> +
-> +		/*
-> +		 * Only fuse mounts with an already initialized fuse
-> +		 * connection are supported
-> +		 */
-> +		if (file->f_op == &fuse_dev_operations && fud) {
-> +			mutex_lock(&fuse_mutex);
-> +			fc = fud->fc;
-> +			if (fc)
-> +				fc = fuse_conn_get(fc);
-> +			mutex_unlock(&fuse_mutex);
-> +
-> +			if (fc) {
-> +				res = fuse_reinit_conn(fc);
-> +				fuse_conn_put(fc);
-> +			}
-> +		}
-> +		break;
->   	default:
->   		res = -ENOTTY;
->   		break;
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 1b9d0dfae72d..3dac67b25eae 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -989,6 +989,7 @@ struct fuse_notify_retrieve_in {
->   /* Device ioctls: */
->   #define FUSE_DEV_IOC_MAGIC		229
->   #define FUSE_DEV_IOC_CLONE		_IOR(FUSE_DEV_IOC_MAGIC, 0, uint32_t)
-> +#define FUSE_DEV_IOC_REINIT		_IO(FUSE_DEV_IOC_MAGIC, 0)
->   
->   struct fuse_lseek_in {
->   	uint64_t	fh;
