@@ -2,273 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD036A9ECB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 19:29:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3297A6A9EA4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 19:27:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231766AbjCCS3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Mar 2023 13:29:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53246 "EHLO
+        id S231637AbjCCS1J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Mar 2023 13:27:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231715AbjCCS3M (ORCPT
+        with ESMTP id S231618AbjCCS1I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Mar 2023 13:29:12 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C802E819;
-        Fri,  3 Mar 2023 10:28:54 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PSx8J1Wh2z9xtRp;
-        Sat,  4 Mar 2023 02:19:44 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwCHCAQOPAJkKY9rAQ--.12963S7;
-        Fri, 03 Mar 2023 19:28:31 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
-        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 28/28] integrity: Switch from rbtree to LSM-managed blob for integrity_iint_cache
-Date:   Fri,  3 Mar 2023 19:26:02 +0100
-Message-Id: <20230303182602.1088032-6-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+        Fri, 3 Mar 2023 13:27:08 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA4DF10A85;
+        Fri,  3 Mar 2023 10:26:59 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bnKrpWCFou7tY8zP9B3wUGQKW57IY84F2dZMFcVDB7VZJIIXBbQGQPENcHgrjC23HTcED2wg2SBDCwnm5uDU3058lU0nvntLZdN1V6sBK4N/9uLzmJ5ZKm+71i4imZk0hYVpBMLsiKjFVclGYGF8Edf2Ab+YnvJ7OgHoHGUKgLhHZI/LTY3WcN3KHZ5NlP4i+YJhrCvchtVVCoHBK1GPNJZuvtU7rh6jmROUEFCrJfanFPZLIlI98C/EhcEvsp9ngsB/5qpWKQ0Dk76wgbmAiSpbG2vcVtvy/M62OApteJkymaLHdo5cn0JJpJclUELdAS3udZypHN6xRDSQET3PbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yyKSAPV55TpmSAeivDtmd0YblwRyYKrz9w1OBOFGdOQ=;
+ b=VQQpwupvV8HAxn8bi+sruCjglFEyKTyHqMdEwiL/nqEvyjaDPOvLslzTuTclK08/aEZhrEHMBm3Q2Xt0yvV3DhGnnAkMvPQ9rXtWh9uOHoAZurbQ29joyu8bxcD6ccy/65we4b6nVlBN1FQLebUk52LKZdMfi8XuTKGXG1V3cXwNjoK7vMvXwQbPv/Xv1GyVf3mlsxOpMWdQDlFPzLm70r01VDc3E7yLjEPrJJKxpcCB7JSTEqBE66I9RTUCHVQVaqU5wxMmTFnRDMECcvlnhkb0m3tc0nrX/SkJ3yl159BshRxzZJUVb2/AljE1WB9v975yIz/zAvBpu9ymCQB/Lw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
+ header.d=ddn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yyKSAPV55TpmSAeivDtmd0YblwRyYKrz9w1OBOFGdOQ=;
+ b=zFmhSKAt2DK6MYQ9qUrVmC1yvpR39hJN4+BgtbgYCLtglnJhwADzBO6/0VVV97eHgJroGyUFvXo9gL38XWQNrVKujQ06yhSfMaz2ucptcG5KaqLCMG+L4WsI0zaim5KQ9DICZg0157USE/e3Ippwc7vUQmHWb6987cJqZwrRILM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ddn.com;
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com (2603:10b6:4:aa::29)
+ by DM6PR19MB4214.namprd19.prod.outlook.com (2603:10b6:5:2b9::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.24; Fri, 3 Mar
+ 2023 18:26:56 +0000
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::e6d4:29f7:2077:bd69]) by DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::e6d4:29f7:2077:bd69%4]) with mapi id 15.20.6086.024; Fri, 3 Mar 2023
+ 18:26:56 +0000
+Message-ID: <2111304e-6a22-e767-f79b-c72cde42294b@ddn.com>
+Date:   Fri, 3 Mar 2023 19:26:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [RFC PATCH 5/9] fuse: move fuse connection flags to the separate
+ structure
+To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        mszeredi@redhat.com
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        =?UTF-8?Q?St=c3=a9phane_Graber?= <stgraber@ubuntu.com>,
+        Seth Forshee <sforshee@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        criu@openvz.org
+References: <20230220193754.470330-1-aleksandr.mikhalitsyn@canonical.com>
+ <20230220193754.470330-6-aleksandr.mikhalitsyn@canonical.com>
+Content-Language: en-US
+From:   Bernd Schubert <bschubert@ddn.com>
+In-Reply-To: <20230220193754.470330-6-aleksandr.mikhalitsyn@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO3P265CA0019.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:387::18) To DM5PR1901MB2037.namprd19.prod.outlook.com
+ (2603:10b6:4:aa::29)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwCHCAQOPAJkKY9rAQ--.12963S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxKryfGFy8XFyDtr1UAFWDurg_yoWxGF1xpF
-        42gay8Jws8ZFWj9F4vyFZ8ur4fKFyqgFZ7W34Ykw1kAFyvvr1jqFs8AryUZFy5GrW5Kw1I
-        qrn8Kr4UuF1qyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-        AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E
-        14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-        xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-        z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
-        AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-        x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
-        W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF
-        7I0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-        0_Cr0_Gr1UMIIF0xvEx4A2jsIEc7CjxVAFwI0_GcCE3sUvcSsGvfC2KfnxnUUI43ZEXa7I
-        U0189tUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj4otXQADsI
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM5PR1901MB2037:EE_|DM6PR19MB4214:EE_
+X-MS-Office365-Filtering-Correlation-Id: baa4b04b-88a4-4a95-9915-08db1c14de22
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LW4LFb+8Wk0xfrSR7sy1SjlXGOHbePg/wezE1XQhr3cwlHEwwj/r8dhSlII7tJgKKYn/kQhqcUHMSaXyFkgzvcRfoa7N9lSbpR55AJFcVQ8Q2Z2BTxoZ1Ds4QnfbOSKzd4edKiKl2akUCbYH41jmkZXG58uMMoJYUBeWzX7Co0dhQN5wa3TdtM8E9RhcSGY4xBjBGn5acpg0GBOo/nfDLXghO8yHZA2Vgje+/sUWB6K1+aKht3+JlalkE2rGBncsZkT7cQnCQUTxPZ/2uWAuJ1mwIWgJQ3ptTOXmvf8QE823uG5IY1CU32jlXEMBC6paEQuUNyIQjBACVTFdotfbhzI/1/GhRzekc+2QiT0QHeONO/+17jA/kEL/BBBkcW9WeiNSkt0DHxW9HenlkEv2Jc7/ZdFdYUJ59gXy991pS8VltUJ+1SFChPrXSYF3EvodGxtNq/2wADFztA9yGWymK1lbKMADNo8Nd8bySVlyEyGL/U2GtdS6d7y50FK6DlNg366B42pXEYutMW1j6aKYAzpbSjx/+LBX/wESnCyqS4SsBN82OQzyDWKO+Ln8tnQn/z0y1REqilYW/YMBh0PNR2l3lzlWgcnnXiu3xL/JSisG09bmDN8IhHQOkIsnasaGuHpQGMl2x/C9YX3mxb11jgc4bPgkgqZxb59cDe9ET+IWXoqZYy5Trqt6ilLaaRMlZDGRpnIOYdj64MmAjbYTW+n/ooaYIGO364bkN5YUvRc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1901MB2037.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39850400004)(136003)(396003)(346002)(376002)(366004)(451199018)(31686004)(26005)(6486002)(54906003)(316002)(6512007)(38100700002)(31696002)(4326008)(36756003)(86362001)(4744005)(6506007)(2616005)(83380400001)(66946007)(8676002)(478600001)(5660300002)(2906002)(186003)(66556008)(6666004)(66476007)(53546011)(8936002)(41300700001)(7416002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NnB2SkdxVTF6RndQMnp1TTJNSmxEajB3N3NmZWVUeFFydXZaaG9vMjFyWlNL?=
+ =?utf-8?B?YkMzRzQwQ3RSMk9xMG9FUmtiTmFCdGp6cStzWWlpODA1b0llSjR1L0RiRFcx?=
+ =?utf-8?B?UExQUThKTjVTQnhQdzJCNllRQWhvWFoyQmRyOGtiMTh3bGtRQVgzcWZvb0FQ?=
+ =?utf-8?B?bkVrZVhUQlZLUzJYZXRxQk9VNnlEUk5qWTlPeVlrT295VWh3MTVxd2kvVnBt?=
+ =?utf-8?B?NVBQUVFyb3VhRjhSMXNBQWp3dkJRWkdrNlpRMzd6ZFkvTHI0RkRBaEVLUElx?=
+ =?utf-8?B?ek5BK1NHWUtlZ1JLMDhtVUR3eGt5NExTbzFyUzJWWjV3cDgwVDJ0SlJmQU91?=
+ =?utf-8?B?eHF1NndGMWFSSnFEbXRTdkptVmtVRnNzZ0dKMVNjRytIKzNWakpkaEtLVDFF?=
+ =?utf-8?B?VU9ZN0hYdWNZWlhFdjU5VFRmSnhKcEpaTC80dlJMMGZvdzFBdlVLRjNMVlZE?=
+ =?utf-8?B?bHBrUGNGTUpwa0Jmcm1KZVM3SkR5RytyaDR5MFgydmVLanpjS1Y5MzljZGdM?=
+ =?utf-8?B?cFMyV1liWUhUYTQ1ZC9YQ3ZsVUt2UWlUMFJBbGMrMUYzZzNJM21uUU56Y3Jw?=
+ =?utf-8?B?cjlBS2hXcUhDTlNZSlh1OXRaUE04d2ZEYXA3aE40cUtpQlJINSs5YlpDTmJ0?=
+ =?utf-8?B?b0NqZFVxdyt2aU52VDNMZ0VScmtrM0pNVVdEZ3h3dkk1OWdjZTBrWkdBKzRu?=
+ =?utf-8?B?V2lRcHpqcGhWaFVRSHFJZTN6K0NUVnhidzhzbjAyM2FZWkJaYk9CcXpLdWx4?=
+ =?utf-8?B?L1ZpaFdraWZWalJWMjVpZGVseWtQN2NaOHpSU00wTnVHQzd3eUZvOXNGaHdi?=
+ =?utf-8?B?SFZNdkh1OGFVUkh6Y1pQWWJZL2p2OXlxWjZmdHFTbEk4WStkb0R1TnNnK0tt?=
+ =?utf-8?B?M2x6T25aeWw3TzJSM1ZoRGg5b2hrWENScHlsWG9oOEtnUGZ3NnBLRFlmL0ZH?=
+ =?utf-8?B?WmwrcURnaVhmQk9DRFloMVZSYUEyOTQ5ZW95cFJvRy9mWEVQelcxcVpBZE9K?=
+ =?utf-8?B?ajhJK1NuVzc2Tm1YbXRVNGQzckk1TXcyaEZUTVZQTnhWUkRuOHk2NWs4UVU5?=
+ =?utf-8?B?TEZPbjVjcGdrUnd3VGdWTjBJZ3ZaRTFGTmlCc1g3UTdhU1ZTZlNZQWJlRlBC?=
+ =?utf-8?B?anl4L2s4K2tHaDBWajdNZ2dnNFZlaXQ5UDdDY0syTUNadE1SQ1o3L3oyQlB5?=
+ =?utf-8?B?WU9GVExVNS8raW9RbTJaTXVYSmIzNlJvQ1RKQVJER0pIRkNaa1RienJXT1VY?=
+ =?utf-8?B?bWplc2ViVlpHeWNZaDRCd0pLZE1RU3FpRzVGYmFMVkw2bnpEQzMrN2tJT2lS?=
+ =?utf-8?B?N3liZEZ6NFRoYkJkTWUxK1JuTnZiOUkvTGZCMENURzRwSXZENGlXeU5hMDFC?=
+ =?utf-8?B?ZFVyUDloMFU3NmdiVUtMc0RJUWZiNkl3NlBUd0IzcExtRU53cmJNU0l0VU9T?=
+ =?utf-8?B?UXNzZTFXK3p6ZkpJNUNQZ0F5Um4xYjl3bUFRZkkyVkRYYzkyYXpFYngySW04?=
+ =?utf-8?B?VE82TkpkWHQzeTY2NDhTYlJlQm5tR0U3bWNvbUJtTEdKMnEvUWhVUXNoVkl2?=
+ =?utf-8?B?UFlFMVVEaThZSzF4S3d6ajdtSlFYTm4rZnphUFpROEpEUUZ2NXM0Yk9TclV1?=
+ =?utf-8?B?U3UyK1JhTENlYTRPMnRxZldtQkZQZ2tZU3UzUGFHVzlYNys5aU1FZVZOY2Nk?=
+ =?utf-8?B?MVd3c2pIQ3loSGxJc2ZTQ1p0ekJzY3E4dER1d05Na2x1WU5kR3RIaGt1aldX?=
+ =?utf-8?B?ODBOdTNLZit6Rkx1L1Rnc2taeS90U0hGOG83bVR6LzBXQm85amp1SXRqY0Nv?=
+ =?utf-8?B?d1A3TXBWcmVVVjE3MW8yK1d2ZWxuWkIzVy8ySHdMSGlLMjVQRWovd2xWdWdC?=
+ =?utf-8?B?UHM0S05xNWxRUXM0NHU1MCs4cUs2Q21FYmJOdE1lQXRqVnllZUp3ekNtYVZL?=
+ =?utf-8?B?MFVxb3JQREdJQmFqKzJHdzlBRVMxN1lka2lCMEtzSmJQaWRodXhocDJ1NUFG?=
+ =?utf-8?B?WWljSVF3bkhKZDRYa3hsaXJlMzdqWi92ckMxUitKL3BqdEFkYXZQYWpXYnE3?=
+ =?utf-8?B?SEZmNGhVNUxBdnJ0enhleUdSdEtSbGVuRzJ1d2p1dW1XTTRML1JyYUpBM3l5?=
+ =?utf-8?Q?R7chjMhFstNJtjG65WQJwnCbF?=
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: baa4b04b-88a4-4a95-9915-08db1c14de22
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR1901MB2037.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2023 18:26:56.0571
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tSMKp/gMdbBM8XrhGGKue7AKJUpBkvte13wnvKJZD6SGyJ44eb+jNJR5tvsrsnwrgFGGgDg5y4m1UGIOC0ukNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR19MB4214
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Before the security field of kernel objects could be shared among LSMs with
-the LSM stacking feature, IMA and EVM had to rely on an alternative storage
-of inode metadata. The association between inode metadata and inode is
-maintained through an rbtree.
 
-With the reservation mechanism offered by the LSM infrastructure, the
-rbtree is no longer necessary, as each LSM could reserve a space in the
-security blob for each inode. Thus, request from the 'integrity' LSM a
-space in the security blob for the pointer of inode metadata
-(integrity_iint_cache structure).
+On 2/20/23 20:37, Alexander Mikhalitsyn wrote:
+> Let's move all the fuse connection flags that can be safely zeroed
+> after connection reinitialization to the separate structure fuse_conn_flags.
+> 
+> All of these flags values are calculated dynamically basing on
+> the userspace daemon capabilities (like no_open, no_flush) or on the
+> response for FUSE_INIT request.
+> 
 
-Prefer this to allocating the integrity_iint_cache structure directly, as
-IMA would require it only for a subset of inodes. Always allocating it
-would cause a waste of memory.
+ From my point of view this makes the code a bit better readable, in 
+general.
 
-Introduce two primitives for getting and setting the pointer of
-integrity_iint_cache in the security blob, respectively
-integrity_inode_get_iint() and integrity_inode_set_iint(). This would make
-the code more understandable, as they directly replace rbtree operations.
+[...]
 
-Locking is not needed, as access to inode metadata is not shared, it is per
-inode.
+>   };
+>   
+> +/**
+> + * A Fuse connection.
+> + *
+> + * This structure is created, when the root filesystem is mounted, and
+> + * is destroyed, when the client device is closed and the last
+> + * fuse_mount is destroyed.
+> + */
+> +struct fuse_conn_flags {
+> +	/** Do readahead asynchronously?  Only set in INIT */
+> +	unsigned async_read:1;
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/iint.c      | 64 ++++------------------------------
- security/integrity/integrity.h | 20 ++++++++++-
- 2 files changed, 25 insertions(+), 59 deletions(-)
 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index b12215d8b13..1610380de2f 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -14,58 +14,25 @@
- #include <linux/slab.h>
- #include <linux/init.h>
- #include <linux/spinlock.h>
--#include <linux/rbtree.h>
- #include <linux/file.h>
- #include <linux/uaccess.h>
- #include <linux/security.h>
- #include <linux/lsm_hooks.h>
- #include "integrity.h"
- 
--static struct rb_root integrity_iint_tree = RB_ROOT;
--static DEFINE_RWLOCK(integrity_iint_lock);
- static struct kmem_cache *iint_cache __read_mostly;
- 
- struct dentry *integrity_dir;
- 
--/*
-- * __integrity_iint_find - return the iint associated with an inode
-- */
--static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
--{
--	struct integrity_iint_cache *iint;
--	struct rb_node *n = integrity_iint_tree.rb_node;
--
--	while (n) {
--		iint = rb_entry(n, struct integrity_iint_cache, rb_node);
--
--		if (inode < iint->inode)
--			n = n->rb_left;
--		else if (inode > iint->inode)
--			n = n->rb_right;
--		else
--			break;
--	}
--	if (!n)
--		return NULL;
--
--	return iint;
--}
--
- /*
-  * integrity_iint_find - return the iint associated with an inode
-  */
- struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
- {
--	struct integrity_iint_cache *iint;
--
- 	if (!IS_IMA(inode))
- 		return NULL;
- 
--	read_lock(&integrity_iint_lock);
--	iint = __integrity_iint_find(inode);
--	read_unlock(&integrity_iint_lock);
--
--	return iint;
-+	return integrity_inode_get_iint(inode);
- }
- 
- static void iint_free(struct integrity_iint_cache *iint)
-@@ -94,9 +61,7 @@ static void iint_free(struct integrity_iint_cache *iint)
-  */
- struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
- {
--	struct rb_node **p;
--	struct rb_node *node, *parent = NULL;
--	struct integrity_iint_cache *iint, *test_iint;
-+	struct integrity_iint_cache *iint;
- 
- 	/*
- 	 * The integrity's "iint_cache" is initialized at security_init(),
-@@ -114,26 +79,10 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
- 	if (!iint)
- 		return NULL;
- 
--	write_lock(&integrity_iint_lock);
--
--	p = &integrity_iint_tree.rb_node;
--	while (*p) {
--		parent = *p;
--		test_iint = rb_entry(parent, struct integrity_iint_cache,
--				     rb_node);
--		if (inode < test_iint->inode)
--			p = &(*p)->rb_left;
--		else
--			p = &(*p)->rb_right;
--	}
--
- 	iint->inode = inode;
--	node = &iint->rb_node;
- 	inode->i_flags |= S_IMA;
--	rb_link_node(node, parent, p);
--	rb_insert_color(node, &integrity_iint_tree);
-+	integrity_inode_set_iint(inode, iint);
- 
--	write_unlock(&integrity_iint_lock);
- 	return iint;
- }
- 
-@@ -150,10 +99,8 @@ static void integrity_inode_free(struct inode *inode)
- 	if (!IS_IMA(inode))
- 		return;
- 
--	write_lock(&integrity_iint_lock);
--	iint = __integrity_iint_find(inode);
--	rb_erase(&iint->rb_node, &integrity_iint_tree);
--	write_unlock(&integrity_iint_lock);
-+	iint = integrity_iint_find(inode);
-+	integrity_inode_set_iint(inode, NULL);
- 
- 	iint_free(iint);
- }
-@@ -193,6 +140,7 @@ static int __init integrity_lsm_init(void)
- }
- 
- struct lsm_blob_sizes integrity_blob_sizes __lsm_ro_after_init = {
-+	.lbs_inode = sizeof(struct integrity_iint_cache *),
- 	.lbs_xattr = 1,
- };
- 
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index a3cbc65f9c6..720c2f183e4 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -18,6 +18,7 @@
- #include <crypto/hash.h>
- #include <linux/key.h>
- #include <linux/audit.h>
-+#include <linux/lsm_hooks.h>
- 
- /* iint action cache flags */
- #define IMA_MEASURE		0x00000001
-@@ -157,7 +158,6 @@ struct ima_file_id {
- 
- /* integrity data associated with an inode */
- struct integrity_iint_cache {
--	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
- 	struct mutex mutex;	/* protects: version, flags, digest */
- 	struct inode *inode;	/* back pointer to inode in question */
- 	u64 version;		/* track inode changes */
-@@ -191,6 +191,24 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- extern struct dentry *integrity_dir;
- extern struct lsm_blob_sizes integrity_blob_sizes;
- 
-+static inline struct integrity_iint_cache *
-+integrity_inode_get_iint(const struct inode *inode)
-+{
-+	struct integrity_iint_cache **iint_sec;
-+
-+	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
-+	return *iint_sec;
-+}
-+
-+static inline void integrity_inode_set_iint(const struct inode *inode,
-+					    struct integrity_iint_cache *iint)
-+{
-+	struct integrity_iint_cache **iint_sec;
-+
-+	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
-+	*iint_sec = iint;
-+}
-+
- struct modsig;
- 
- #ifdef CONFIG_IMA
--- 
-2.25.1
+The comment does not match the struct?
 
