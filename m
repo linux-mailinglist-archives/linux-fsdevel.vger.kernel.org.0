@@ -2,25 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 32F606A9F35
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 19:39:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF4C6A9E63
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 19:21:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231970AbjCCSjK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Mar 2023 13:39:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38522 "EHLO
+        id S231622AbjCCSVh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Mar 2023 13:21:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231487AbjCCSiq (ORCPT
+        with ESMTP id S231597AbjCCSVf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Mar 2023 13:38:46 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D328BCA38;
-        Fri,  3 Mar 2023 10:38:00 -0800 (PST)
+        Fri, 3 Mar 2023 13:21:35 -0500
+X-Greylist: delayed 64 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 03 Mar 2023 10:21:34 PST
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90A9D53B;
+        Fri,  3 Mar 2023 10:21:33 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4PSx075ZWlz9xrtW;
-        Sat,  4 Mar 2023 02:12:39 +0800 (CST)
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PSwzp5m6nz9xtRp;
+        Sat,  4 Mar 2023 02:12:22 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S13;
-        Fri, 03 Mar 2023 19:20:59 +0100 (CET)
+        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S14;
+        Fri, 03 Mar 2023 19:21:09 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
         jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
@@ -33,18 +34,18 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
         stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 11/28] evm: Complete description of evm_inode_setattr()
-Date:   Fri,  3 Mar 2023 19:18:25 +0100
-Message-Id: <20230303181842.1087717-12-roberto.sassu@huaweicloud.com>
+Subject: [PATCH 12/28] fs: Fix description of vfs_tmpfile()
+Date:   Fri,  3 Mar 2023 19:18:26 +0100
+Message-Id: <20230303181842.1087717-13-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
 References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S13
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw1kJr4ruFW3XFyUWrW7Jwb_yoWkZrcE9F
-        Wvvr48Wr4kXFs3Z34jkF4avrWvgr1rJrn3K347K3srZ345G3Z3XFs7XryfX348XrWUJrWq
-        9asIyryag347WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S14
+X-Coremail-Antispam: 1UD129KBjvdXoWrZw4rWF43tr1kXFy8ur4rKrg_yoWfGFc_CF
+        WvqF18Wan8Xr17Za1FkrWaqry3u3Z8Ar1akws3t342grZ8Jr95JFWkArWrX34kZ3WxXr13
+        Cr92v3WaqF17WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
         9fnUUIcSsGvfJTRUUUbg8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
         Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
         0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
@@ -59,7 +60,7 @@ X-Coremail-Antispam: 1UD129KBjvdXoW7Gw1kJr4ruFW3XFyUWrW7Jwb_yoWkZrcE9F
         7I0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
         0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7I
         U0189tUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj4otVwAAsB
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBF1jj4YvdwAAss
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
@@ -71,30 +72,31 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Add the description for missing parameters of evm_inode_setattr() to
-avoid the warning arising with W=n compile option.
+Update the description of vfs_tmpfile() to match the current parameters of
+that function.
 
-Fixes: 817b54aa45db ("evm: add evm_inode_setattr to prevent updating an invalid security.evm")
-Fixes: c1632a0f1120 ("fs: port ->setattr() to pass mnt_idmap")
+Fixes: 9751b338656f ("vfs: move open right after ->tmpfile()")
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/evm/evm_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 1155a58ae87..8b5c472f78b 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -798,7 +798,9 @@ static int evm_attr_change(struct mnt_idmap *idmap,
- 
+diff --git a/fs/namei.c b/fs/namei.c
+index 57727a1ae38..b4c52c4890b 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3574,9 +3574,9 @@ static int do_open(struct nameidata *nd,
  /**
-  * evm_inode_setattr - prevent updating an invalid EVM extended attribute
-+ * @idmap: idmap of the mount
-  * @dentry: pointer to the affected dentry
-+ * @attr: iattr structure containing the new file attributes
+  * vfs_tmpfile - create tmpfile
+  * @idmap:	idmap of the mount the inode was found from
+- * @dentry:	pointer to dentry of the base directory
++ * @parentpath:	pointer to the path of the base directory
++ * @file:	file descriptor of the new tmpfile
+  * @mode:	mode of the new tmpfile
+- * @open_flag:	flags
   *
-  * Permit update of file attributes when files have a valid EVM signature,
-  * except in the case of them having an immutable portable signature.
+  * Create a temporary file.
+  *
 -- 
 2.25.1
 
