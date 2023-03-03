@@ -2,193 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EA936A96F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 13:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BB3A6A982A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 14:12:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230477AbjCCMGT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Mar 2023 07:06:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55148 "EHLO
+        id S229926AbjCCNL7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Mar 2023 08:11:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbjCCMGS (ORCPT
+        with ESMTP id S229563AbjCCNL6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Mar 2023 07:06:18 -0500
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E1AA1ACD1;
-        Fri,  3 Mar 2023 04:06:17 -0800 (PST)
+        Fri, 3 Mar 2023 08:11:58 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B99A93F7;
+        Fri,  3 Mar 2023 05:11:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1677845177; x=1709381177;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1ZhnkZvUx6/qDxwOmfHWY1TW6Ezr2JMQifRPtpqWpl8=;
-  b=Pv9c1kKM3LFOwOG9CR3aJ1aGUqPbHCN/MXr6d4YG1e56DKOE9CSQaaL+
-   louuYHBJ+IcRm6tv4Jsz8fnET/W3C6FmoCllNVP2pEn08kpyKTRdHYujt
-   +TUug1K3IwzW3By+jmRlel1ai/W9k0uStlmpQxRZNsC8mWx/QNuc+x7vh
-   S8cNuf1GLPtnSwwWseK2FCgxTB2fERL8RnvX+4M4UAq2/vM0xCVPUekU1
-   xbRRfYP6sWzlOtakJZ+mG8qLV6V1EoiYyEo9rzaWmtLYJSW+SQxjNgBSl
-   FZxvmuMQwVIMxGoIbj+RP/Jt15sPucyU2/Opjosr8j8/m1xTUOvW9XujV
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10637"; a="397618378"
-X-IronPort-AV: E=Sophos;i="5.98,230,1673942400"; 
-   d="scan'208";a="397618378"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2023 04:06:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10637"; a="849438018"
-X-IronPort-AV: E=Sophos;i="5.98,230,1673942400"; 
-   d="scan'208";a="849438018"
-Received: from lkp-server01.sh.intel.com (HELO 776573491cc5) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 03 Mar 2023 04:06:14 -0800
-Received: from kbuild by 776573491cc5 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pY4Av-0001Qe-0k;
-        Fri, 03 Mar 2023 12:06:13 +0000
-Date:   Fri, 3 Mar 2023 20:05:22 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Gao Xiang <xiang@kernel.org>
-Subject: Re: [PATCH 1/2] filemap: Add folio_copy_tail()
-Message-ID: <202303031911.we6DjYXd-lkp@intel.com>
-References: <20230303064315.701090-2-willy@infradead.org>
+        d=hansenpartnership.com; s=20151216; t=1677849112;
+        bh=hr2srA7lr1NS/bcOuwoy15lE9j7MbrTWwn/RCZPWv0o=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=f1Pdx1vzcijeNa0004rr3e9cC1SjXfOWCFM+NrWJGrr/TWHQ+3B49wbGzwv6Udf40
+         CxF6io8nWu/84nFNe/89vnDHQreJehCaxJd/gvEzK2WXET7NW/0JH4ZjuSs9eIrzyf
+         aYqH9XtLmM1PUmqrdGYZfaFLzEDHpHFUHYcdGvtc=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id EFFB212860A2;
+        Fri,  3 Mar 2023 08:11:52 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id h_qcRum7Wm9d; Fri,  3 Mar 2023 08:11:52 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1677849111;
+        bh=hr2srA7lr1NS/bcOuwoy15lE9j7MbrTWwn/RCZPWv0o=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=Gr1jV7AuEfHPRgmsMNt1lw07RRz25rhs0sLbhYiOU/KoJypM3unmCLMeCNKkqWgXJ
+         elpVW6j/eU4OARWHw58u709qNvR+D8RPFahxs06foKJ/0HWQENbFBrv7gB20K9vze9
+         WUj6f27ybv5mwJs+1Z2/LCXn1vHuKWU9VatnZlu8=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id D8DB31285ED5;
+        Fri,  3 Mar 2023 08:11:50 -0500 (EST)
+Message-ID: <f68905c5785b355b621847974d620fb59f021a41.camel@HansenPartnership.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Keith Busch <kbusch@kernel.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-block@vger.kernel.org
+Date:   Fri, 03 Mar 2023 08:11:47 -0500
+In-Reply-To: <ZAFuSSZ5vZN7/UAa@casper.infradead.org>
+References: <Y/7L74P6jSWwOvWt@mit.edu>
+         <ZAFUYqAcPmRPLjET@kbusch-mbp.dhcp.thefacebook.com>
+         <ZAFuSSZ5vZN7/UAa@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230303064315.701090-2-willy@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
+On Fri, 2023-03-03 at 03:49 +0000, Matthew Wilcox wrote:
+> On Thu, Mar 02, 2023 at 06:58:58PM -0700, Keith Busch wrote:
+> > That said, I was hoping you were going to suggest supporting 16k
+> > logical block sizes. Not a problem on some arch's, but still
+> > problematic when PAGE_SIZE is 4k. :)
+> 
+> I was hoping Luis was going to propose a session on LBA size >
+> PAGE_SIZE. Funnily, while the pressure is coming from the storage
+> vendors, I don't think there's any work to be done in the storage
+> layers.  It's purely a FS+MM problem.
 
-I love your patch! Perhaps something to improve:
+Heh, I can do the fools rush in bit, especially if what we're
+interested in the minimum it would take to support this ...
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on linus/master next-20230303]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The FS problem could be solved simply by saying FS block size must
+equal device block size, then it becomes purely a MM issue.  The MM
+issue could be solved by adding a page order attribute to struct
+address_space and insisting that pagecache/filemap functions in
+mm/filemap.c all have to operate on objects that are an integer
+multiple of the address space order.  The base allocator is
+filemap_alloc_folio, which already has an apparently always zero order
+parameter (hmmm...) and it always seems to be called from sites that
+have the address_space, so it could simply be modified to always
+operate at the address_space order.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/filemap-Add-folio_copy_tail/20230303-144359
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20230303064315.701090-2-willy%40infradead.org
-patch subject: [PATCH 1/2] filemap: Add folio_copy_tail()
-config: arm-randconfig-r006-20230302 (https://download.01.org/0day-ci/archive/20230303/202303031911.we6DjYXd-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm cross compiling tool for clang build
-        # apt-get install binutils-arm-linux-gnueabi
-        # https://github.com/intel-lab-lkp/linux/commit/a4ee841f30215e4f7c5dda2ab82007f590a6a62b
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Matthew-Wilcox-Oracle/filemap-Add-folio_copy_tail/20230303-144359
-        git checkout a4ee841f30215e4f7c5dda2ab82007f590a6a62b
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
+The above would be a bit suboptimal in that blocks are always mapped to
+physically contiguous pages, but it should be enough to get the concept
+working.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303031911.we6DjYXd-lkp@intel.com/
+James
 
-All warnings (new ones prefixed by >>):
-
->> mm/filemap.c:4160:17: warning: comparison of distinct pointer types ('typeof (poff + len) *' (aka 'unsigned int *') and 'typeof (((1UL) << 12)) *' (aka 'unsigned long *')) [-Wcompare-distinct-pointer-types]
-                   size_t plen = min(poff + len, PAGE_SIZE) - poff;
-                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:67:19: note: expanded from macro 'min'
-   #define min(x, y)       __careful_cmp(x, y, <)
-                           ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:36:24: note: expanded from macro '__careful_cmp'
-           __builtin_choose_expr(__safe_cmp(x, y), \
-                                 ^~~~~~~~~~~~~~~~
-   include/linux/minmax.h:26:4: note: expanded from macro '__safe_cmp'
-                   (__typecheck(x, y) && __no_side_effects(x, y))
-                    ^~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:20:28: note: expanded from macro '__typecheck'
-           (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                      ~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~
->> mm/filemap.c:4172:11: warning: comparison of distinct pointer types ('typeof (len) *' (aka 'unsigned int *') and 'typeof (((1UL) << 12)) *' (aka 'unsigned long *')) [-Wcompare-distinct-pointer-types]
-                           plen = min(len, PAGE_SIZE);
-                                  ^~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:67:19: note: expanded from macro 'min'
-   #define min(x, y)       __careful_cmp(x, y, <)
-                           ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:36:24: note: expanded from macro '__careful_cmp'
-           __builtin_choose_expr(__safe_cmp(x, y), \
-                                 ^~~~~~~~~~~~~~~~
-   include/linux/minmax.h:26:4: note: expanded from macro '__safe_cmp'
-                   (__typecheck(x, y) && __no_side_effects(x, y))
-                    ^~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:20:28: note: expanded from macro '__typecheck'
-           (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                      ~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~
-   2 warnings generated.
-
-
-vim +4160 mm/filemap.c
-
-  4125	
-  4126	/**
-  4127	 * folio_copy_tail - Copy an in-memory file tail into a page cache folio.
-  4128	 * @folio: The folio to copy into.
-  4129	 * @pos: The file position of the first byte of data in the tail.
-  4130	 * @src: The address of the tail data.
-  4131	 * @max: The size of the buffer used for the tail data.
-  4132	 *
-  4133	 * Supports file tails starting at @pos that are a maximum of @max
-  4134	 * bytes in size.  Zeroes the remainder of the folio.
-  4135	 */
-  4136	void folio_copy_tail(struct folio *folio, loff_t pos, void *src, size_t max)
-  4137	{
-  4138		loff_t isize = i_size_read(folio->mapping->host);
-  4139		size_t offset, len = isize - pos;
-  4140		char *dst;
-  4141	
-  4142		if (folio_pos(folio) > isize) {
-  4143			len = 0;
-  4144		} else if (folio_pos(folio) > pos) {
-  4145			len -= folio_pos(folio) - pos;
-  4146			src += folio_pos(folio) - pos;
-  4147			max -= folio_pos(folio) - pos;
-  4148			pos = folio_pos(folio);
-  4149		}
-  4150		/*
-  4151		 * i_size is larger than the number of bytes stored in the tail?
-  4152		 * Assume the remainder is zero-padded.
-  4153		 */
-  4154		if (WARN_ON_ONCE(len > max))
-  4155			len = max;
-  4156		offset = offset_in_folio(folio, pos);
-  4157		dst = kmap_local_folio(folio, offset);
-  4158		if (folio_test_highmem(folio) && folio_test_large(folio)) {
-  4159			size_t poff = offset_in_page(offset);
-> 4160			size_t plen = min(poff + len, PAGE_SIZE) - poff;
-  4161	
-  4162			for (;;) {
-  4163				memcpy(dst, src, plen);
-  4164				memset(dst + plen, 0, PAGE_SIZE - poff - plen);
-  4165				offset += PAGE_SIZE - poff;
-  4166				if (offset == folio_size(folio))
-  4167					break;
-  4168				kunmap_local(dst);
-  4169				dst = kmap_local_folio(folio, offset);
-  4170				len -= plen;
-  4171				poff = 0;
-> 4172				plen = min(len, PAGE_SIZE);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
