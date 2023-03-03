@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D4BF6A9E8B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 19:23:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 432AE6A9E91
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 19:23:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231718AbjCCSXD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Mar 2023 13:23:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42378 "EHLO
+        id S231723AbjCCSXR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Mar 2023 13:23:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231719AbjCCSW6 (ORCPT
+        with ESMTP id S231452AbjCCSXN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Mar 2023 13:22:58 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BCC460A9C;
-        Fri,  3 Mar 2023 10:22:36 -0800 (PST)
+        Fri, 3 Mar 2023 13:23:13 -0500
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7979B60A92;
+        Fri,  3 Mar 2023 10:22:49 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PSx122bn7z9xtRh;
-        Sat,  4 Mar 2023 02:13:26 +0800 (CST)
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4PSx1p6jFvz9v7JB;
+        Sat,  4 Mar 2023 02:14:06 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S20;
-        Fri, 03 Mar 2023 19:22:13 +0100 (CET)
+        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S21;
+        Fri, 03 Mar 2023 19:22:24 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
         jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
@@ -33,33 +33,33 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
         stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 18/28] security: Introduce path_post_mknod hook
-Date:   Fri,  3 Mar 2023 19:18:32 +0100
-Message-Id: <20230303181842.1087717-19-roberto.sassu@huaweicloud.com>
+Subject: [PATCH 19/28] security: Introduce inode_post_create_tmpfile hook
+Date:   Fri,  3 Mar 2023 19:18:33 +0100
+Message-Id: <20230303181842.1087717-20-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
 References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S20
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr47XFyUAF4UAryDGFWxWFg_yoWrGrWkpa
-        18tFn3Gr4rGFyagr1kAF47Ca4SvrWY93y7JrZIgwnIyFnxtrnIqF4S9ryYkr93GrWj9ryI
-        y3W3tr43Gw4Utr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S21
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF1fWrW8KF47uryUury8Krg_yoWrJw4xpF
+        WxK3W3Grs5XFy7WryvyF4Uuw1S9aySgrW7JrZagwn0yFn7tr1ftF4S9r12kFy3JrW8Wr12
+        q3ZxKrZxGr17tr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUPSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
         6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
         Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
         rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
         AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E
-        14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I
-        80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
-        c4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4
-        kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E
-        5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZV
-        WrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26F1j6w1UMIIF0xvE2Ix0cI8IcVCY
-        1x0267AKxVWxJr0_GcWlIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
-        v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdYxBIdaVFxhVjvjDU0xZFpf9x
-        07j7GYLUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj4otWQAAsP
+        14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
+        xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
+        z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
+        AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
+        x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
+        W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Ar0_tr1lIxAIcVC0I7IYx2IY6xkF
+        7I0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
+        0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7I
+        U0189tUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj4otWQABsO
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
@@ -72,100 +72,96 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
 In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-the path_post_mknod hook.
+the inode_post_create_tmpfile hook.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- fs/namei.c                    |  2 ++
- include/linux/lsm_hook_defs.h |  3 +++
- include/linux/security.h      |  9 +++++++++
- security/security.c           | 19 +++++++++++++++++++
- 4 files changed, 33 insertions(+)
+ fs/namei.c                    |  1 +
+ include/linux/lsm_hook_defs.h |  2 ++
+ include/linux/security.h      |  8 ++++++++
+ security/security.c           | 18 ++++++++++++++++++
+ 4 files changed, 29 insertions(+)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 41f7fdf4657..3f2747521d3 100644
+index 3f2747521d3..8c4fdfd81d4 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3980,6 +3980,8 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
- 					  dentry, mode, 0);
- 			break;
+@@ -3624,6 +3624,7 @@ static int vfs_tmpfile(struct mnt_idmap *idmap,
+ 		inode->i_state |= I_LINKABLE;
+ 		spin_unlock(&inode->i_lock);
  	}
-+	if (!error)
-+		security_path_post_mknod(idmap, &path, dentry, mode, dev);
- out2:
- 	done_path_create(&path, dentry);
- 	if (retry_estale(error, lookup_flags)) {
++	security_inode_post_create_tmpfile(idmap, dir, file_dentry(file), mode);
+ 	ima_post_create_tmpfile(idmap, dir, file_dentry(file), mode);
+ 	return 0;
+ }
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 4580912051a..32c801a3ea2 100644
+index 32c801a3ea2..5dc2a7c3d9a 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -93,6 +93,9 @@ LSM_HOOK(int, 0, path_mkdir, const struct path *dir, struct dentry *dentry,
- LSM_HOOK(int, 0, path_rmdir, const struct path *dir, struct dentry *dentry)
- LSM_HOOK(int, 0, path_mknod, const struct path *dir, struct dentry *dentry,
- 	 umode_t mode, unsigned int dev)
-+LSM_HOOK(void, LSM_RET_VOID, path_post_mknod, struct mnt_idmap *idmap,
-+	 const struct path *dir, struct dentry *dentry, umode_t mode,
-+	 unsigned int dev)
- LSM_HOOK(int, 0, path_truncate, const struct path *path)
- LSM_HOOK(int, 0, path_symlink, const struct path *dir, struct dentry *dentry,
- 	 const char *old_name)
+@@ -120,6 +120,8 @@ LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+ 	 const struct qstr *name, const struct inode *context_inode)
+ LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
+ 	 umode_t mode)
++LSM_HOOK(void, LSM_RET_VOID, inode_post_create_tmpfile, struct mnt_idmap *idmap,
++	 struct inode *dir, struct dentry *dentry, umode_t mode)
+ LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
+ 	 struct dentry *new_dentry)
+ LSM_HOOK(int, 0, inode_unlink, struct inode *dir, struct dentry *dentry)
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 88e88280f7d..fb6e9d434c6 100644
+index fb6e9d434c6..b3e201404dc 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -1835,6 +1835,9 @@ int security_path_mkdir(const struct path *dir, struct dentry *dentry, umode_t m
- int security_path_rmdir(const struct path *dir, struct dentry *dentry);
- int security_path_mknod(const struct path *dir, struct dentry *dentry, umode_t mode,
- 			unsigned int dev);
-+void security_path_post_mknod(struct mnt_idmap *idmap, const struct path *dir,
-+			      struct dentry *dentry, umode_t mode,
-+			      unsigned int dev);
- int security_path_truncate(const struct path *path);
- int security_path_symlink(const struct path *dir, struct dentry *dentry,
- 			  const char *old_name);
-@@ -1869,6 +1872,12 @@ static inline int security_path_mknod(const struct path *dir, struct dentry *den
+@@ -337,6 +337,9 @@ int security_inode_init_security_anon(struct inode *inode,
+ 				      const struct qstr *name,
+ 				      const struct inode *context_inode);
+ int security_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode);
++void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
++					struct inode *dir,
++					struct dentry *dentry, umode_t mode);
+ int security_inode_link(struct dentry *old_dentry, struct inode *dir,
+ 			 struct dentry *new_dentry);
+ int security_inode_unlink(struct inode *dir, struct dentry *dentry);
+@@ -787,6 +790,11 @@ static inline int security_inode_create(struct inode *dir,
  	return 0;
  }
  
-+static inline void security_path_post_mknod(struct mnt_idmap *idmap,
-+					    const struct path *dir,
-+					    struct dentry *dentry, umode_t mode,
-+					    unsigned int dev)
++static inline void
++security_inode_post_create_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
++				   struct dentry *dentry, umode_t mode)
 +{ }
 +
- static inline int security_path_truncate(const struct path *path)
- {
- 	return 0;
+ static inline int security_inode_link(struct dentry *old_dentry,
+ 				       struct inode *dir,
+ 				       struct dentry *new_dentry)
 diff --git a/security/security.c b/security/security.c
-index 6cbbb4289f7..f5f367e2064 100644
+index f5f367e2064..8883082b686 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -1753,6 +1753,25 @@ int security_path_mknod(const struct path *dir, struct dentry *dentry,
+@@ -1971,6 +1971,24 @@ int security_inode_create(struct inode *dir, struct dentry *dentry,
  }
- EXPORT_SYMBOL(security_path_mknod);
+ EXPORT_SYMBOL_GPL(security_inode_create);
  
 +/**
-+ * security_path_post_mknod() - Update inode security field after file creation
++ * security_inode_post_create_tmpfile() - Update inode sec after tmpfile created
 + * @idmap: idmap of the mount
-+ * @dir: parent directory
-+ * @dentry: new file
-+ * @mode: new file mode
-+ * @dev: device number
++ * @dir: the inode of the base directory
++ * @dentry: the dentry of the new tmpfile
++ * @mode: the mode of the new tmpfile
 + *
-+ * Update inode security field after a file has been created.
++ * Update inode security field after a tmpfile has been created.
 + */
-+void security_path_post_mknod(struct mnt_idmap *idmap, const struct path *dir,
-+			      struct dentry *dentry, umode_t mode,
-+			      unsigned int dev)
++void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
++					struct inode *dir,
++					struct dentry *dentry, umode_t mode)
 +{
-+	if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
++	if (unlikely(IS_PRIVATE(dir)))
 +		return;
-+	call_void_hook(path_post_mknod, idmap, dir, dentry, mode, dev);
++	call_void_hook(inode_post_create_tmpfile, idmap, dir, dentry, mode);
 +}
 +
  /**
-  * security_path_mkdir() - Check if creating a new directory is allowed
-  * @dir: parent directory
+  * security_inode_link() - Check if creating a hard link is allowed
+  * @old_dentry: existing file
 -- 
 2.25.1
 
