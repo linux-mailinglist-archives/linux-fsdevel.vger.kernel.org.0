@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F9D46A9F60
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 19:43:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DC326A9EAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 19:28:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231901AbjCCSnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Mar 2023 13:43:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47982 "EHLO
+        id S231704AbjCCS2L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Mar 2023 13:28:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231825AbjCCSnl (ORCPT
+        with ESMTP id S231684AbjCCS2J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Mar 2023 13:43:41 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F32C412BE3;
-        Fri,  3 Mar 2023 10:43:15 -0800 (PST)
+        Fri, 3 Mar 2023 13:28:09 -0500
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C48A1124;
+        Fri,  3 Mar 2023 10:28:02 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4PSx2N2nb4z9xrcx;
-        Sat,  4 Mar 2023 02:14:36 +0800 (CST)
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PSx7H2YjJz9v7Yb;
+        Sat,  4 Mar 2023 02:18:51 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S24;
-        Fri, 03 Mar 2023 19:22:55 +0100 (CET)
+        by APP1 (Coremail) with SMTP id LxC2BwCHCAQOPAJkKY9rAQ--.12963S2;
+        Fri, 03 Mar 2023 19:27:38 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
         jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
@@ -33,36 +33,35 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
         stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 22/28] security: Introduce key_post_create_or_update hook
-Date:   Fri,  3 Mar 2023 19:18:36 +0100
-Message-Id: <20230303181842.1087717-23-roberto.sassu@huaweicloud.com>
+Subject: [PATCH 23/28] security: Introduce LSM_ORDER_LAST
+Date:   Fri,  3 Mar 2023 19:25:57 +0100
+Message-Id: <20230303182602.1088032-1-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
 References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S24
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF1fCFy3GryfWFyrtFyDGFg_yoWrWrWUpa
-        yYk3W5t3y8KFyaqrZxAF17Way5t3y0gry7K39xu34rtFnYqw4xXr42kFn8CrW5Xry5Ary0
-        v3y7ZrW3Gr1qyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-        AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-        wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
-        WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
-        bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7
-        AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-        F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
-        ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7Cj
-        xVAFwI0_GcCE3s1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F
-        4j6r4UJwCI42IY6I8E87Iv6xkF7I0E14v26rxl6s0DYxBIdaVFxhVjvjDU0xZFpf9x07j7
-        GYLUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj4otWgAAsM
+X-CM-TRANSID: LxC2BwCHCAQOPAJkKY9rAQ--.12963S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFyUXr4xKr1DCry3Cr15Arb_yoW8ZFy8pa
+        yDtFWfGr40yFyrWw1DAanxK3W8J395Ca4UGFWDWw1UXa9aqry0yr43Cr1S9ryDXF9rAFyI
+        9FW2vw4Skw1DZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x
+        0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+        n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+        0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
+        ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcV
+        CY1x0267AKxVWxJr0_GcWlIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv
+        67AKxVWxJVW8Jr1lIxAIcVC2z280aVCY1x0267AKxVW0oVCq3bIYCTnIWIevJa73UjIFyT
+        uYvjxUxo7KDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBF1jj4YvgAAAsb
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -71,118 +70,61 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-the key_post_create_or_update hook.
+Introduce LSM_ORDER_LAST, to satisfy the requirement of LSMs willing to be
+the last, e.g. the 'integrity' LSM, without changing the kernel command
+line or configuration.
+
+As for LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled and put
+at the end of the LSM list in no particular order.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- include/linux/lsm_hook_defs.h |  3 +++
- include/linux/security.h      | 11 +++++++++++
- security/keys/key.c           |  7 ++++++-
- security/security.c           | 19 +++++++++++++++++++
- 4 files changed, 39 insertions(+), 1 deletion(-)
+ include/linux/lsm_hooks.h |  1 +
+ security/security.c       | 12 +++++++++---
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 6c324fe5099..cf171e65420 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -397,6 +397,9 @@ LSM_HOOK(void, LSM_RET_VOID, key_free, struct key *key)
- LSM_HOOK(int, 0, key_permission, key_ref_t key_ref, const struct cred *cred,
- 	 enum key_need_perm need_perm)
- LSM_HOOK(int, 0, key_getsecurity, struct key *key, char **_buffer)
-+LSM_HOOK(void, LSM_RET_VOID, key_post_create_or_update, struct key *keyring,
-+	 struct key *key, const void *payload, size_t payload_len,
-+	 unsigned long flags, bool create)
- #endif /* CONFIG_KEYS */
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 21a8ce23108..05c4b831d99 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -93,6 +93,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ enum lsm_order {
+ 	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
+ 	LSM_ORDER_MUTABLE = 0,
++	LSM_ORDER_LAST = 1,
+ };
  
- #ifdef CONFIG_AUDIT
-diff --git a/include/linux/security.h b/include/linux/security.h
-index f8df5b69667..be23a303bba 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1952,6 +1952,9 @@ void security_key_free(struct key *key);
- int security_key_permission(key_ref_t key_ref, const struct cred *cred,
- 			    enum key_need_perm need_perm);
- int security_key_getsecurity(struct key *key, char **_buffer);
-+void security_key_post_create_or_update(struct key *keyring, struct key *key,
-+					const void *payload, size_t payload_len,
-+					unsigned long flags, bool create);
- 
- #else
- 
-@@ -1979,6 +1982,14 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
- 	return 0;
- }
- 
-+static inline void security_key_post_create_or_update(struct key *keyring,
-+						      struct key *key,
-+						      const void *payload,
-+						      size_t payload_len,
-+						      unsigned long flags,
-+						      bool create)
-+{ }
-+
- #endif
- #endif /* CONFIG_KEYS */
- 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 5c0c7df833f..0f9c6faf349 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -934,6 +934,8 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
- 		goto error_link_end;
- 	}
- 
-+	security_key_post_create_or_update(keyring, key, payload, plen, flags,
-+					   true);
- 	ima_post_key_create_or_update(keyring, key, payload, plen,
- 				      flags, true);
- 
-@@ -967,10 +969,13 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
- 
- 	key_ref = __key_update(key_ref, &prep);
- 
--	if (!IS_ERR(key_ref))
-+	if (!IS_ERR(key_ref)) {
-+		security_key_post_create_or_update(keyring, key, payload, plen,
-+						   flags, false);
- 		ima_post_key_create_or_update(keyring, key,
- 					      payload, plen,
- 					      flags, false);
-+	}
- 
- 	goto error_free_prep;
- }
+ struct lsm_info {
 diff --git a/security/security.c b/security/security.c
-index b3a9c317f75..322090a50cd 100644
+index 322090a50cd..24f52ba3218 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -5195,6 +5195,25 @@ int security_key_getsecurity(struct key *key, char **_buffer)
- 	*_buffer = NULL;
- 	return call_int_hook(key_getsecurity, 0, key, _buffer);
- }
-+
-+/**
-+ * security_key_post_create_or_update() - Tell caller of key creation or update
-+ * @keyring: keyring to which the key is linked to
-+ * @key: created or updated key
-+ * @payload: data used to instantiate or update the key
-+ * @payload_len: length of payload
-+ * @flags: key flags
-+ * @create: flag indicating whether the key was created or updated
-+ *
-+ * Notify the caller of a key creation or update.
-+ */
-+void security_key_post_create_or_update(struct key *keyring, struct key *key,
-+					const void *payload, size_t payload_len,
-+					unsigned long flags, bool create)
-+{
-+	call_void_hook(key_post_create_or_update, keyring, key, payload,
-+		       payload_len, flags, create);
-+}
- #endif	/* CONFIG_KEYS */
+@@ -284,9 +284,9 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 		bool found = false;
  
- #ifdef CONFIG_AUDIT
+ 		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+-			if (lsm->order == LSM_ORDER_MUTABLE &&
+-			    strcmp(lsm->name, name) == 0) {
+-				append_ordered_lsm(lsm, origin);
++			if (strcmp(lsm->name, name) == 0) {
++				if (lsm->order == LSM_ORDER_MUTABLE)
++					append_ordered_lsm(lsm, origin);
+ 				found = true;
+ 			}
+ 		}
+@@ -306,6 +306,12 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 		}
+ 	}
+ 
++	/* LSM_ORDER_LAST is always last. */
++	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		if (lsm->order == LSM_ORDER_LAST)
++			append_ordered_lsm(lsm, "   last");
++	}
++
+ 	/* Disable all LSMs not in the ordered list. */
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+ 		if (exists_ordered_lsm(lsm))
 -- 
 2.25.1
 
