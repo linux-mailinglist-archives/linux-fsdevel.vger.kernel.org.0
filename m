@@ -2,253 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63B916A8E4A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 01:48:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23D8F6A8E71
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Mar 2023 02:00:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbjCCAsp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Mar 2023 19:48:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36050 "EHLO
+        id S229783AbjCCBAE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Mar 2023 20:00:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbjCCAsn (ORCPT
+        with ESMTP id S229510AbjCCBAD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Mar 2023 19:48:43 -0500
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980A114484
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Mar 2023 16:48:40 -0800 (PST)
-Received: by mail-io1-f72.google.com with SMTP id y187-20020a6bc8c4000000b0074d28aa136dso469977iof.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Mar 2023 16:48:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VVWORoaCBQDh6CbYt/bpV8YwYd9I/tB65Ocv2JmS2H8=;
-        b=UOOZ3kIursZ4Z7V3LaNYymKYZOh1NTmYn9lD4RhXemIMmZskHZaxZY7zebiDJY/XwH
-         3IqKU9dgAwmTFl99Q1l4tDIxWZbsCHDEpu47WTgy9K7Kpu6fLvkEqAuhgynbhrDE+v2/
-         hMJVlXv0SBnWka8iDtpHLU4k1vdYjrOu6vS0ZTnW7hizhD+J2T6LPaXxU6ixf+ii+c2i
-         TFTpOsItGhdW1CRV9seq3W2VcCqkfFgB5Fl979XRb8qa8F0J6I5EgFLQrUTz2InpWq3U
-         mlaOVw/Vl/FUPWSGKeABCFqLLR3uO+ol0SjmEzKFdUEVI23OWyMmh9xTDmcx73bfp3OE
-         +AAQ==
-X-Gm-Message-State: AO0yUKXq7zYkXAjRCgY7qY9POWYvuA1EUDxYv0VLVbQkGdmI72F9CDYI
-        WEZuvj3mdutGehg2UaylkskZXQWroRvfvFEWmNXSWfnJXOur
-X-Google-Smtp-Source: AK7set90KFuFssDEa3fo+inSWbOdVzUlHWgNP0f5J8AgpMevsna6k/e09FBASrtD20D9UuDYRPjNH325eRtlkOiqJf6FrIblpBpF
+        Thu, 2 Mar 2023 20:00:03 -0500
+Received: from BN3PR00CU001-vft-obe.outbound.protection.outlook.com (mail-eastus2azon11020026.outbound.protection.outlook.com [52.101.56.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 856F7241DA;
+        Thu,  2 Mar 2023 17:00:01 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AuvQ9CDuHTMoZoDb9rs1DRZD52BGA2lguPZ0TBoSd6InI4TRNTWQYv306bTWu8JaofJ9ALgDDCpx5MQV+F9V0R/aDN0T4sdhUxGJpwTq+Qy/6+fQ1pII3YOALF7R9JNwRQSl6cTCIG1mOzBevY4Dq5wXVy7WMN52ZFT5JKtsflH+AZXAS4u0Y0c+skSVPDuK5noB87ZonlrRe8Gx596LC/5bWOCJoeBEAsH70F2Yew+umsSwnIHQ4N1s1R0kaEHVBuKEz9HqjXa0bahlIZqw23dFMNMUvLM5cTNCj3uAtVf8yQqX8PkJKKT/OLKq1tJrYHRSgAqwVspHcaNOkKxqeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hcwaIoYuY8LkEKc/K8Y1d7YqRltWlySlqVn09ozurWo=;
+ b=KTN6sLYr7jCChpiimVQRmeG2pwlp5F1YONzPfwqk82Bo5gP1hIN0ts/5vmbyLbbquIrmOlG+OAAmFY/CWH+jNmOzSYJE4fLLH6KpJIZb7HeqhrYmICTHqU9e1VIz/m1/mbD13u3Y1QknMA6ft0MJyeiU4vpb8xGjb0bC1CsMsUrRYDIgaDJdzpIuNA8f7IOcoQXb3vhAARofFUUYjUSmcEld+fYhxjQYxcRSBqHog/G4m3E/USZntIZ5gGJ1FM/LdpM3piFFMUfihHzYlZD1u+Ae8oaXt4OQ9JKCuB8Fez1VYUlxDabRUGJDItRZQUJhPDb77bi4tGv2VN2halZT1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hcwaIoYuY8LkEKc/K8Y1d7YqRltWlySlqVn09ozurWo=;
+ b=LVLreJfQLFqKH8U4sGCDkzsfz9neFxkUuGRsl8DqLSj5AdVo39uRPljKiJo6tsjJFw2vbLB13JkI6SygMLOlOIOde47WEuuV3jRXazucmOfm3tvv7yeo/KrapIm8f9ro7ykPzvUr0gdOGV13GBqg3DqzAa+Hu/imBrVtt+xRz7w=
+Received: from BYAPR21MB1688.namprd21.prod.outlook.com (2603:10b6:a02:bf::26)
+ by DS0PR21MB3862.namprd21.prod.outlook.com (2603:10b6:8:117::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.7; Fri, 3 Mar
+ 2023 00:59:58 +0000
+Received: from BYAPR21MB1688.namprd21.prod.outlook.com
+ ([fe80::629a:b75a:482e:2d4a]) by BYAPR21MB1688.namprd21.prod.outlook.com
+ ([fe80::629a:b75a:482e:2d4a%5]) with mapi id 15.20.6178.007; Fri, 3 Mar 2023
+ 00:59:58 +0000
+From:   "Michael Kelley (LINUX)" <mikelley@microsoft.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "yzaikin@google.com" <yzaikin@google.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "minyard@acm.org" <minyard@acm.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "wei.liu@kernel.org" <wei.liu@kernel.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        "song@kernel.org" <song@kernel.org>,
+        "robinmholt@gmail.com" <robinmholt@gmail.com>,
+        "steve.wahl@hpe.com" <steve.wahl@hpe.com>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jirislaby@kernel.org" <jirislaby@kernel.org>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "sstabellini@kernel.org" <sstabellini@kernel.org>,
+        "oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+CC:     "j.granados@samsung.com" <j.granados@samsung.com>,
+        "zhangpeng362@huawei.com" <zhangpeng362@huawei.com>,
+        "tangmeng@uniontech.com" <tangmeng@uniontech.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "nixiaoming@huawei.com" <nixiaoming@huawei.com>,
+        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
+        "patches@lists.linux.dev" <patches@lists.linux.dev>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "openipmi-developer@lists.sourceforge.net" 
+        <openipmi-developer@lists.sourceforge.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 3/7] hv: simplify sysctl registration
+Thread-Topic: [PATCH 3/7] hv: simplify sysctl registration
+Thread-Index: AQHZTUghmT7Wxm+Iike4T3P5qQULMa7oPC4w
+Date:   Fri, 3 Mar 2023 00:59:57 +0000
+Message-ID: <BYAPR21MB16886A06B7D3DBC4A10EF984D7B39@BYAPR21MB1688.namprd21.prod.outlook.com>
+References: <20230302204612.782387-1-mcgrof@kernel.org>
+ <20230302204612.782387-4-mcgrof@kernel.org>
+In-Reply-To: <20230302204612.782387-4-mcgrof@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=fe1c164e-92ed-4e67-a49a-a1d27905e5b8;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2023-03-03T00:59:14Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BYAPR21MB1688:EE_|DS0PR21MB3862:EE_
+x-ms-office365-filtering-correlation-id: 498f5fa7-384d-434b-9bdb-08db1b829bfa
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 7luQdAIeYd5DgNZR0tGfR/9z4g/rMl+7zsncSixc5P0tSF2YznjxdKfNk2/XxD6P036DDuO+gCtuwUmxbimpR8Hpem3XHlv1oO+q1bTUM++rxQ2Ii0LEyz+wROLz/N31ouX7S+QTBuysw34y//aFm1YSLoWrjxlvUANhsy7vCei2qokx36c8iT9FDc0QOhdfkY6eZnUmehOfKTyLJFT/3kKh9dHiGM4pjos2Ycs+7PoXzYd4vBgmZjNbhCoixf8eO4mvM0aoPPiG8lkSITXpn7g3PeihGrs18A1AaYrr6JZ5DbZguaOTuJyt64npXPPPGaJyQJHLeAkEQoo8u0ixrNJ/3y2AR5pilPKj4vpAPUzlTXny3EYcWxg7dXnCTfuGsTA96I/uT92bCZv9TKH7PHLQSg/R5Rl+O/uTMULQ4u3rrVFgYD/EwNLTLMjNSy4vJZKcdSP2opAl0Gg8jgRMTXGs4vQ0KJiJ4PlMepgeg6UyUIgyBj8sEaNFBYuF3Y8zgyv2koCiTKmyeaVAt53oHJKOacAn/ovwnom5kyHaGxVEOEc3iv07s0V6i/fTN7s7TFZS7NzQV1L1tvprKry8SRyziTKBs0eb53aus1kwmqo4eIwwAV19RdCPtQDZTQy3BNuM58c+t/8DFDlvUQtQMkrToH27wp3tA9Dr7fgwgR9WZsyCqyuI0XCZ08XcToSrwxNaZJMRaUByugMqUm0yULNghWDvejHn2mTPf5aCueS/QolYN9ganhHiO9jg9rz2mmUVK5eu4VItO+bNagQV4Q==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR21MB1688.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(346002)(136003)(366004)(396003)(39860400002)(376002)(451199018)(7696005)(86362001)(6506007)(66446008)(316002)(64756008)(55016003)(4326008)(66556008)(66476007)(8676002)(921005)(54906003)(110136005)(83380400001)(2906002)(122000001)(33656002)(26005)(82960400001)(9686003)(186003)(7416002)(7406005)(82950400001)(76116006)(52536014)(66946007)(8936002)(38070700005)(5660300002)(38100700002)(71200400001)(478600001)(10290500003)(41300700001)(8990500004);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Ajsq1TcVBn/ZLc3bc9sjhQmJ5VdDc49BQXeKLlNu5Xi4zQAjIAs7HTggdJef?=
+ =?us-ascii?Q?d5lH3GhjyhYxRc39AEP4URGZq7GKgXxA0Vn4MfAje8V8ivdT+ZfFDUrCsW8e?=
+ =?us-ascii?Q?7sSfq9xxnM5qq2U5oWNasrF8qnie2hbZ9LpmEyHusy2WOFiDLWD50Sv+Hva6?=
+ =?us-ascii?Q?7bzMLasCQrRBrKzM0gqZP+5YiMjeIRb32uFOM2irqfBfj4cL/0imWLRD5Hq/?=
+ =?us-ascii?Q?PE3A2tX/La/Kd+gdJHdQjFs6lHOjqVNANhP+Nf4GmBF3EphSt6mXbN0ou2OR?=
+ =?us-ascii?Q?GN0bKnVDlbdI/H3V7D0Qrq7qhKlacE02BwZvPuDqZf3EPjJ3qGOIOL3PaTea?=
+ =?us-ascii?Q?9CAI6za1+0JsolWIG9jauZtMVgB7taUYltoQ07FE5QD5Yoe7jLJlXV7/FrBf?=
+ =?us-ascii?Q?B0qNP1LMdyYJ2Bm/HMHl1GniNGQyZeEja54IzlVTEbdZJtPKq4PW+LSod1n/?=
+ =?us-ascii?Q?knyIGVPGr1AMLjwjl+iJ5VLtrMtyIUpvgIl99P0e9BnaV24LZhLdhxKxJObN?=
+ =?us-ascii?Q?B2JFSUp2CDvw4j1aG9i2QSbrcWbDH/whvqtCspG4ader+UMxN78zbApssmDz?=
+ =?us-ascii?Q?ZG7ebyOnon0A93z8ClnmaECKcl+VQ4LKYbQcYeP1Xx75vxArx5WZNvHwvK1B?=
+ =?us-ascii?Q?2ucIk51ZHwGtB2AXNCQFUZJ2Hvk6hkOg4WQSni29h9mQinYPDkjl9JRoTQxH?=
+ =?us-ascii?Q?bsnD10sd5jpQwKEhmZCVTBx9YxnP+jRSZw0qWanrhKjaskv+maKFjYWWqKM8?=
+ =?us-ascii?Q?PkBWNrhxbuLQ6i2tAQUpUrYpfXvOA7vCQywuqiyDlLSzR1cxLNkQ6p69eIu6?=
+ =?us-ascii?Q?L+sS1uH2rSjrmBTohd7P1VuG8yRUFAL6OIKGTjOxn2c69hkUajhOPHEYTSAi?=
+ =?us-ascii?Q?I6AhrBAnCIAgCFUvvsqP1uJ+NYWUTCVh7Gw2cgIVvtHS608v4+Nq3DIzyJ9f?=
+ =?us-ascii?Q?87oU27P4cZPjozZG+mNGMcVq9M87ha+n2HuHGDe0RT4e2z/alPMT11LjpFnd?=
+ =?us-ascii?Q?rCL+i+0TFLZuvhZZodEYpL4SZq+13/lm4fwaJh5p+QUzd4MBdAJaeBgFXmnA?=
+ =?us-ascii?Q?46/n8wKY4PeVwhJldIxHJaDUWERBY4Z/3bZzPu3GCgKfPc+rzxsDNxt2JqaX?=
+ =?us-ascii?Q?xsSks+hYmF41SwWMsf9ztHnOFCaED+W9nbQmlLKOoF1ULbXQ3Ee1Ea/kiKTx?=
+ =?us-ascii?Q?8woDr1xYwd2gTqZAPOzgJTAKNV62vXparryLddhI89Zg4SJG6zczb53yJLCK?=
+ =?us-ascii?Q?lXCuuDSpxZTiNk32qLOshIDxnSq3K6NRONByvmZK/Fqqo2OP59MsPIWkm03n?=
+ =?us-ascii?Q?etWje6b76FuXRvDJi3d0lEZddit+VzjvMQhN9+aVDzlTTcXG6P4FyoI/Erqa?=
+ =?us-ascii?Q?fmywD0gRJZ3hCzj0VnIEcr2W7q0SxvBdus0yHywgex4Bwxt8Ck+uNvlEmPCf?=
+ =?us-ascii?Q?h3l2DVTr8A7wwKI3o8mk8HKewLClpYeqn+UoCvfe9psUV3Jm8nfGAjWPMDMm?=
+ =?us-ascii?Q?aUJmbyXPOiXE6GKni1hIF2P3q1GIaDJ2dI0vtmw+UatAnjSvGXOivH4M8MfZ?=
+ =?us-ascii?Q?9MUBFg4n3Vtg7x+s7/ShI2o3Aq7UpkhH4aG6XPDeJQFbNvUphiZ1RzE/mv5l?=
+ =?us-ascii?Q?xg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:dcb:b0:317:6d19:332d with SMTP id
- l11-20020a056e020dcb00b003176d19332dmr196276ilj.3.1677804519997; Thu, 02 Mar
- 2023 16:48:39 -0800 (PST)
-Date:   Thu, 02 Mar 2023 16:48:39 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006ac86605f5f44eb9@google.com>
-Subject: [syzbot] [nilfs?] possible deadlock in nilfs_evict_inode
-From:   syzbot <syzbot+5b7d542076d9bddc3c6a@syzkaller.appspotmail.com>
-To:     konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR21MB1688.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 498f5fa7-384d-434b-9bdb-08db1b829bfa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2023 00:59:57.9023
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: DcXel5WdWBH6prBf0eyu02o+jyHBBZnK9EZRtDBaMLWw1+SzlPHPmquDTa7XuodbaT1BylXcJcvDRudky5c3L+jqQLrpSx9i6f8CZkASXtM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR21MB3862
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+From: Luis Chamberlain <mcgrof@infradead.org> On Behalf Of Luis Chamberlain=
+ Sent: Thursday, March 2, 2023 12:46 PM
+>
+> register_sysctl_table() is a deprecated compatibility wrapper.
+> register_sysctl() can do the directory creation for you so just use
+> that.
+>=20
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>  drivers/hv/vmbus_drv.c | 11 +----------
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index d24dd65b33d4..229353f1e9c2 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -1460,15 +1460,6 @@ static struct ctl_table hv_ctl_table[] =3D {
+>  	{}
+>  };
+>=20
+> -static struct ctl_table hv_root_table[] =3D {
+> -	{
+> -		.procname	=3D "kernel",
+> -		.mode		=3D 0555,
+> -		.child		=3D hv_ctl_table
+> -	},
+> -	{}
+> -};
+> -
+>  /*
+>   * vmbus_bus_init -Main vmbus driver initialization routine.
+>   *
+> @@ -1547,7 +1538,7 @@ static int vmbus_bus_init(void)
+>  		 * message recording won't be available in isolated
+>  		 * guests should the following registration fail.
+>  		 */
+> -		hv_ctl_table_hdr =3D register_sysctl_table(hv_root_table);
+> +		hv_ctl_table_hdr =3D register_sysctl("kernel", hv_ctl_table);
+>  		if (!hv_ctl_table_hdr)
+>  			pr_err("Hyper-V: sysctl table register error");
+>=20
+> --
+> 2.39.1
 
-syzbot found the following issue on:
-
-HEAD commit:    2fcd07b7ccd5 mm/mprotect: Fix successful vma_merge() of ne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=149da9f7480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=56eb47529ec6fdbe
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b7d542076d9bddc3c6a
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5b7d542076d9bddc3c6a@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.2.0-syzkaller-12018-g2fcd07b7ccd5 #0 Not tainted
-------------------------------------------------------
-kswapd0/101 is trying to acquire lock:
-ffff88802a8dc650 (sb_internal#2){.+.+}-{0:0}, at: nilfs_evict_inode+0x13b/0x440 fs/nilfs2/inode.c:928
-
-but task is already holding lock:
-ffffffff8c8e29e0 (fs_reclaim){+.+.}-{0:0}, at: set_task_reclaim_state mm/vmscan.c:200 [inline]
-ffffffff8c8e29e0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x170/0x1ac0 mm/vmscan.c:7338
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (fs_reclaim){+.+.}-{0:0}:
-       __fs_reclaim_acquire mm/page_alloc.c:4716 [inline]
-       fs_reclaim_acquire+0x11d/0x160 mm/page_alloc.c:4730
-       might_alloc include/linux/sched/mm.h:271 [inline]
-       slab_pre_alloc_hook mm/slab.h:728 [inline]
-       slab_alloc_node mm/slab.c:3241 [inline]
-       __kmem_cache_alloc_node+0x3b/0x3f0 mm/slab.c:3541
-       kmalloc_trace+0x26/0x60 mm/slab_common.c:1061
-       kmalloc include/linux/slab.h:580 [inline]
-       kzalloc include/linux/slab.h:720 [inline]
-       nilfs_sysfs_create_device_group+0x81/0x850 fs/nilfs2/sysfs.c:982
-       init_nilfs+0xdc0/0x12f0 fs/nilfs2/the_nilfs.c:700
-       nilfs_fill_super fs/nilfs2/super.c:1056 [inline]
-       nilfs_mount+0x921/0x1150 fs/nilfs2/super.c:1324
-       legacy_get_tree+0x109/0x220 fs/fs_context.c:610
-       vfs_get_tree+0x8d/0x350 fs/super.c:1501
-       do_new_mount fs/namespace.c:3042 [inline]
-       path_mount+0x1342/0x1e40 fs/namespace.c:3372
-       do_mount fs/namespace.c:3385 [inline]
-       __do_sys_mount fs/namespace.c:3594 [inline]
-       __se_sys_mount fs/namespace.c:3571 [inline]
-       __x64_sys_mount+0x283/0x300 fs/namespace.c:3571
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #2 (&nilfs->ns_sem){++++}-{3:3}:
-       down_write+0x92/0x200 kernel/locking/rwsem.c:1573
-       nilfs_set_error fs/nilfs2/super.c:92 [inline]
-       __nilfs_error+0x21f/0x4d0 fs/nilfs2/super.c:137
-       nilfs_check_page fs/nilfs2/dir.c:156 [inline]
-       nilfs_get_page.isra.0+0x9b9/0xc90 fs/nilfs2/dir.c:197
-       nilfs_empty_dir+0xc9/0x420 fs/nilfs2/dir.c:630
-       nilfs_rmdir+0x11d/0x240 fs/nilfs2/namei.c:325
-       vfs_rmdir.part.0+0x1b0/0x5a0 fs/namei.c:4121
-       vfs_rmdir fs/namei.c:4106 [inline]
-       do_rmdir+0x3a8/0x420 fs/namei.c:4180
-       __do_sys_rmdir fs/namei.c:4199 [inline]
-       __se_sys_rmdir fs/namei.c:4197 [inline]
-       __x64_sys_rmdir+0xca/0x110 fs/namei.c:4197
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #1 (&nilfs->ns_segctor_sem){++++}-{3:3}:
-       down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
-       nilfs_transaction_begin+0x31a/0xa20 fs/nilfs2/segment.c:223
-       nilfs_rmdir+0xb9/0x240 fs/nilfs2/namei.c:320
-       vfs_rmdir.part.0+0x1b0/0x5a0 fs/namei.c:4121
-       vfs_rmdir fs/namei.c:4106 [inline]
-       do_rmdir+0x3a8/0x420 fs/namei.c:4180
-       __do_sys_rmdir fs/namei.c:4199 [inline]
-       __se_sys_rmdir fs/namei.c:4197 [inline]
-       __x64_sys_rmdir+0xca/0x110 fs/namei.c:4197
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #0 (sb_internal#2){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3098 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3217 [inline]
-       validate_chain kernel/locking/lockdep.c:3832 [inline]
-       __lock_acquire+0x2ec7/0x5d40 kernel/locking/lockdep.c:5056
-       lock_acquire kernel/locking/lockdep.c:5669 [inline]
-       lock_acquire+0x1e3/0x670 kernel/locking/lockdep.c:5634
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1477 [inline]
-       sb_start_intwrite include/linux/fs.h:1599 [inline]
-       nilfs_transaction_begin+0x21e/0xa20 fs/nilfs2/segment.c:220
-       nilfs_evict_inode+0x13b/0x440 fs/nilfs2/inode.c:928
-       evict+0x2ed/0x6b0 fs/inode.c:665
-       iput_final fs/inode.c:1748 [inline]
-       iput.part.0+0x59b/0x8a0 fs/inode.c:1774
-       iput+0x5c/0x80 fs/inode.c:1764
-       dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
-       __dentry_kill+0x3c0/0x640 fs/dcache.c:607
-       shrink_dentry_list+0x12c/0x4f0 fs/dcache.c:1201
-       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1282
-       super_cache_scan+0x33a/0x590 fs/super.c:104
-       do_shrink_slab+0x464/0xd20 mm/vmscan.c:853
-       shrink_slab_memcg mm/vmscan.c:922 [inline]
-       shrink_slab+0x388/0x660 mm/vmscan.c:1001
-       shrink_one+0x502/0x810 mm/vmscan.c:5343
-       shrink_many mm/vmscan.c:5394 [inline]
-       lru_gen_shrink_node mm/vmscan.c:5511 [inline]
-       shrink_node+0x2064/0x35f0 mm/vmscan.c:6459
-       kswapd_shrink_node mm/vmscan.c:7262 [inline]
-       balance_pgdat+0xa02/0x1ac0 mm/vmscan.c:7452
-       kswapd+0x70b/0x1000 mm/vmscan.c:7712
-       kthread+0x2e8/0x3a0 kernel/kthread.c:376
-       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
-
-other info that might help us debug this:
-
-Chain exists of:
-  sb_internal#2 --> &nilfs->ns_sem --> fs_reclaim
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&nilfs->ns_sem);
-                               lock(fs_reclaim);
-  lock(sb_internal#2);
-
- *** DEADLOCK ***
-
-3 locks held by kswapd0/101:
- #0: ffffffff8c8e29e0 (fs_reclaim){+.+.}-{0:0}, at: set_task_reclaim_state mm/vmscan.c:200 [inline]
- #0: ffffffff8c8e29e0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x170/0x1ac0 mm/vmscan.c:7338
- #1: ffffffff8c8995d0 (shrinker_rwsem){++++}-{3:3}, at: shrink_slab_memcg mm/vmscan.c:895 [inline]
- #1: ffffffff8c8995d0 (shrinker_rwsem){++++}-{3:3}, at: shrink_slab+0x2a0/0x660 mm/vmscan.c:1001
- #2: ffff88802a8dc0e0 (&type->s_umount_key#65){++++}-{3:3}, at: trylock_super fs/super.c:414 [inline]
- #2: ffff88802a8dc0e0 (&type->s_umount_key#65){++++}-{3:3}, at: super_cache_scan+0x70/0x590 fs/super.c:79
-
-stack backtrace:
-CPU: 0 PID: 101 Comm: kswapd0 Not tainted 6.2.0-syzkaller-12018-g2fcd07b7ccd5 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
- check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2178
- check_prev_add kernel/locking/lockdep.c:3098 [inline]
- check_prevs_add kernel/locking/lockdep.c:3217 [inline]
- validate_chain kernel/locking/lockdep.c:3832 [inline]
- __lock_acquire+0x2ec7/0x5d40 kernel/locking/lockdep.c:5056
- lock_acquire kernel/locking/lockdep.c:5669 [inline]
- lock_acquire+0x1e3/0x670 kernel/locking/lockdep.c:5634
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write include/linux/fs.h:1477 [inline]
- sb_start_intwrite include/linux/fs.h:1599 [inline]
- nilfs_transaction_begin+0x21e/0xa20 fs/nilfs2/segment.c:220
- nilfs_evict_inode+0x13b/0x440 fs/nilfs2/inode.c:928
- evict+0x2ed/0x6b0 fs/inode.c:665
- iput_final fs/inode.c:1748 [inline]
- iput.part.0+0x59b/0x8a0 fs/inode.c:1774
- iput+0x5c/0x80 fs/inode.c:1764
- dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
- __dentry_kill+0x3c0/0x640 fs/dcache.c:607
- shrink_dentry_list+0x12c/0x4f0 fs/dcache.c:1201
- prune_dcache_sb+0xeb/0x150 fs/dcache.c:1282
- super_cache_scan+0x33a/0x590 fs/super.c:104
- do_shrink_slab+0x464/0xd20 mm/vmscan.c:853
- shrink_slab_memcg mm/vmscan.c:922 [inline]
- shrink_slab+0x388/0x660 mm/vmscan.c:1001
- shrink_one+0x502/0x810 mm/vmscan.c:5343
- shrink_many mm/vmscan.c:5394 [inline]
- lru_gen_shrink_node mm/vmscan.c:5511 [inline]
- shrink_node+0x2064/0x35f0 mm/vmscan.c:6459
- kswapd_shrink_node mm/vmscan.c:7262 [inline]
- balance_pgdat+0xa02/0x1ac0 mm/vmscan.c:7452
- kswapd+0x70b/0x1000 mm/vmscan.c:7712
- kthread+0x2e8/0x3a0 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
