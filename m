@@ -2,56 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 18E336AAC08
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Mar 2023 20:04:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9EBE6AAC19
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Mar 2023 20:20:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229484AbjCDTE3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Mar 2023 14:04:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35574 "EHLO
+        id S229625AbjCDTUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Mar 2023 14:20:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjCDTE2 (ORCPT
+        with ESMTP id S229550AbjCDTUP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Mar 2023 14:04:28 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70CF91714C;
-        Sat,  4 Mar 2023 11:04:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=gk7SjEpw3fRez1WAUe0E4mRcDbNV5fQmNUi1Uz2ZLys=; b=xdenxezCvtxLJClr279s1BNnLa
-        caKlctrkgiAqM8+dwFbBO4LJgVrzN+uMtwNZEthCmLFh9iScomz7ueJIMNwjJpKCD97422QoVQ8a/
-        KMhGmsKe/pdBdYS00M7nH1GBRsAOAQ/MAR+kToApg9A5WShYE72nt+bgN8tteZKYXmgHcyA0Us3lk
-        Wc6XrsH8oe4rRPEW4ZdOCHo1/xnGes8OAWrZ726juNhPcTbIoVfUzBBp/LHAXVsDE0cuH/fXiB30O
-        9SE7DkGGgxY1aVG/B5+N22V2c765XW07NfJJlPVrId7wab0qzYRwjBSF10ZDyhMRGplHgm50AiFuo
-        7a9l+nIw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pYXB7-009R33-28; Sat, 04 Mar 2023 19:04:21 +0000
-Date:   Sat, 4 Mar 2023 11:04:21 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Keith Busch <kbusch@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        Daniel Gomez <da.gomez@samsung.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
-Message-ID: <ZAOWNck7YLae02bQ@bombadil.infradead.org>
-References: <Y/7L74P6jSWwOvWt@mit.edu>
- <ZAFUYqAcPmRPLjET@kbusch-mbp.dhcp.thefacebook.com>
- <ZAFuSSZ5vZN7/UAa@casper.infradead.org>
- <f68905c5785b355b621847974d620fb59f021a41.camel@HansenPartnership.com>
- <ZAL0ifa66TfMinCh@casper.infradead.org>
+        Sat, 4 Mar 2023 14:20:15 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3AD8199EF
+        for <linux-fsdevel@vger.kernel.org>; Sat,  4 Mar 2023 11:20:14 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id g3so23228399eda.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Mar 2023 11:20:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1677957613;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j3SyI5wgA+xTVIyMgqXNDzGyf+k3DO/lHNaL5moHRgg=;
+        b=gIZNwHIq7of5vBXFWYayy/5Jn4WG7jeGgLHTbK2wcsymhq/38Aessnoje0kTTXsKfG
+         9lcp/uJxGqqsHwBl6IlSqQEeQQHaNsyKIMpryyA5ArC48Q79bgWbpXqj13jELuhhOHN/
+         2rVcsvLwZ+IvMfoAMx/76Zj8wwAdwKJXLMs0k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677957613;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j3SyI5wgA+xTVIyMgqXNDzGyf+k3DO/lHNaL5moHRgg=;
+        b=dGmAhPzU8mK1uzeNqXV5pDplNG3nykRwdN/viwirLFYDLgi77vB1M0YteLIURmc+Hh
+         Un8FjYAgnLC/0W+wvjhLFOWrbs8t1e3HCItoISS2/miaUb/NAmXsm72AjB0ccgvgA8Zc
+         htzxpritvKmCplbkYxJX0cW0fcQK8KXWUvhpevHV1fUGpYMEjsbl5gD/T+fOSLfHE4Kj
+         XXvorzayX2hO7unb1Zf/BuHiCy4vjmkjKooNuH9/OZZ8SWMiJ8q9rtuWFcmMRjQWDp41
+         Z8kkZX24r4S//tjcYRfpjlzGRaJV7rGXB/MOSYK46Mi2XOkHTBUICP44S25Ha2kP4qW9
+         ZkIA==
+X-Gm-Message-State: AO0yUKXLhDoHKUAnuYYqTvxkgXayyECEDcFCpPFffxYUdLA5zC0PJcT6
+        nEo0REbBP7nKLNs+llWr8nkF1pzjy6Jo4aMPa7VsSw==
+X-Google-Smtp-Source: AK7set/GJNALOTyuqJoWqIR0o6SVokN2uka5AsQLAkQlHRFy0tErsGwTV50s2QZgBPDEFYd2uPzgTQ==
+X-Received: by 2002:a17:906:1c13:b0:86c:a3ed:1442 with SMTP id k19-20020a1709061c1300b0086ca3ed1442mr5757374ejg.4.1677957613252;
+        Sat, 04 Mar 2023 11:20:13 -0800 (PST)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id l8-20020a170906938800b008bc8ad41646sm2319755ejx.157.2023.03.04.11.20.11
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 Mar 2023 11:20:11 -0800 (PST)
+Received: by mail-ed1-f50.google.com with SMTP id j11so3615503edq.4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Mar 2023 11:20:11 -0800 (PST)
+X-Received: by 2002:a17:906:3d51:b0:8f1:4c6a:e72 with SMTP id
+ q17-20020a1709063d5100b008f14c6a0e72mr2610583ejf.0.1677957611299; Sat, 04 Mar
+ 2023 11:20:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZAL0ifa66TfMinCh@casper.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+References: <ZAEC3LN6oUe6BKSN@ZenIV> <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
+ <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
+ <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
+ <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
+ <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
+ <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
+ <CAHk-=wgfNrMFQCFWFtn+UXjAdJAGAAFFJZ1JpEomTneza32A6g@mail.gmail.com>
+ <ZAK6Duaf4mlgpZPP@yury-laptop> <CAHk-=wh1r3KfATA-JSdt3qt2y3sC=5U9+wZsbabW+dvPsqRCvA@mail.gmail.com>
+ <ZALcbQoKA7K8k2gJ@yury-laptop>
+In-Reply-To: <ZALcbQoKA7K8k2gJ@yury-laptop>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 4 Mar 2023 11:19:54 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjit4tstX3q4DkiYLTD6zet_7j=CfjbvTMqtnOwmY7jzA@mail.gmail.com>
+Message-ID: <CAHk-=wjit4tstX3q4DkiYLTD6zet_7j=CfjbvTMqtnOwmY7jzA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     Yury Norov <yury.norov@gmail.com>
+Cc:     Mateusz Guzik <mjguzik@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,33 +90,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 04, 2023 at 07:34:33AM +0000, Matthew Wilcox wrote:
-> The hard part is plugging your ears to the screams of the MM people
-> who are convinced that fragmentation will make it impossible to mount
-> your filesystem.
+On Fri, Mar 3, 2023 at 9:51=E2=80=AFPM Yury Norov <yury.norov@gmail.com> wr=
+ote:
+>
+> And the following code will be broken:
+>
+> cpumask_t m1, m2;
+>
+> cpumask_setall(m1); // m1 is ffff ffff ffff ffff because it uses
+>                     // compile-time optimized nr_cpumask_bits
+>
+> for_each_cpu(cpu, m1) // 32 iterations because it relied on nr_cpu_ids
+>         cpumask_set_cpu(cpu, m2); // m2 is ffff ffff XXXX XXXX
 
-One doesn't just need to plug your ears, one can also be prepared for that,
-should that actually end up being true, because frankly we don't have
-the evidence yet. And it's something I have slowly started to think about --
-because -- why not be ready?
+So  honestly, it looks like you picked an example of something very
+unusual to then make everything else slower.
 
-In fact let's say the inverse is true, having the tooling to proove them
-wrong is also a desirable outcome and that begs the question of proper
-tooling to measure this, etc. Something probably more for an MM track.
-What would satifsy proof and what tooling / metrics used?
+Rather than commit aa47a7c215e7, we should just have fixed 'setall()'
+and 'for_each_cpu()' to use nr_cpu_ids, and then the rest would
+continue to use nr_cpumask_bits.
 
-It is *not* something that only is implicated by storage IO controllers
-and so what we're looking at a generic device issue / concern for memory
-fragmentation.
+That particular code sequence is arguably broken to begin with.
+setall() should really only be used as a mask, most definitely not as
+some kind of "all possible cpus".
 
-*If* the generalization of huge page uses for something like bpf-prog-pack ends
-up materializing and we end up using it for even *all* module .text,
-*then* I *think* it something similar be a way to address that concern
-for devices with huge pages for CMA. This is one area where I think
-device hints for large IO might come in handy, we can limit such
-dedicated pools to only devices with hints and limit the amount of huge
-pages used for this purpose.
+The latter is "cpu_possible_mask", which is very different indeed (and
+often what you want is "cpu_online_mask")
 
-But ask me 2 kernel releases from now again.
+But I'd certainly be ok with using nr_cpu_ids for setall, partly
+exactly because it's so rare. It would probably be better to remove it
+entirely, but whatever.
 
-  Luis
+              Linus
