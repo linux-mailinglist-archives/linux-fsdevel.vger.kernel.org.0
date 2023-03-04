@@ -2,87 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC9A56AAC04
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Mar 2023 20:03:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18E336AAC08
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Mar 2023 20:04:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbjCDTC7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Mar 2023 14:02:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33964 "EHLO
+        id S229484AbjCDTE3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Mar 2023 14:04:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbjCDTC6 (ORCPT
+        with ESMTP id S229447AbjCDTE2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Mar 2023 14:02:58 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BD143AA5
-        for <linux-fsdevel@vger.kernel.org>; Sat,  4 Mar 2023 11:02:57 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id i34so23016901eda.7
-        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Mar 2023 11:02:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1677956575;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nulv/YbaIdsPYIu/TyuXgIK5szxQR3P85oOKBpQEjds=;
-        b=Y4jFqiPVN6ZvXlcEWlXhhwV3rOFOosDPDSXZxtf5GfztoSu+Zs4s2m5U0vX4mEXNn0
-         GO1jy7LINSCiXz4k304O34u8j6ENpioXQbi9SuFJMaqjcSnJJXl1Q1afefooOlth2Dn1
-         ENiInfIbHdNoyUEhYiS3kJGcKAdR7ZjLTksRc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677956575;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nulv/YbaIdsPYIu/TyuXgIK5szxQR3P85oOKBpQEjds=;
-        b=rwx6oGh7/K42e0V2X4+zVhw2QJiO0AU74oVPDtlGhpT7cwxBIw9oFR4rM3NrsXpIIe
-         s/VKPGdoSmI8jLeMk1vGa3rquQI/fsC4hx51wCdfGtHLFPREi4W4cMvrGzBNcSJ2VMDM
-         RdpPE4OTWFeHMzq9n1yICMqnU1RemP9ggmj0tY8gUnNw+U5x3BcVj8gWZ5B5yF0QFDel
-         8AqxJpqjO+TAmY8jvX/b3H5PuO+1HMKvvmfpadyKAZn7f6ZfODEjFACebLZzoude3tV8
-         Pv3V5B5Z1v0wiOEESTOZfcnASOfNPAKxalI8OA8SD6szndck91g5caIdNsvCiU/5anVe
-         9I6Q==
-X-Gm-Message-State: AO0yUKU2f89J0g9HevRJ3R49PcK+DEmOwci7OUgthX+fH6kwUoFQg8cw
-        7yY9ELGF2Y7pHNfJE1IO2NphaO/IPmO312oMHCb9fw==
-X-Google-Smtp-Source: AK7set9u+Cp7cS4/fzJj+LDORLSa+J4Z/SQQv5dI3z30khFKo0awkMQnbhXomxOXK4wQt80oxRwBnA==
-X-Received: by 2002:a50:ed12:0:b0:4bb:8e88:daeb with SMTP id j18-20020a50ed12000000b004bb8e88daebmr5647327eds.31.1677956574939;
-        Sat, 04 Mar 2023 11:02:54 -0800 (PST)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a38-20020a509ea9000000b004c041723816sm2729513edf.89.2023.03.04.11.02.53
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 Mar 2023 11:02:54 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id cw28so23061658edb.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Mar 2023 11:02:53 -0800 (PST)
-X-Received: by 2002:a17:906:d041:b0:877:747d:4a82 with SMTP id
- bo1-20020a170906d04100b00877747d4a82mr2787706ejb.0.1677956573508; Sat, 04 Mar
- 2023 11:02:53 -0800 (PST)
+        Sat, 4 Mar 2023 14:04:28 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70CF91714C;
+        Sat,  4 Mar 2023 11:04:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gk7SjEpw3fRez1WAUe0E4mRcDbNV5fQmNUi1Uz2ZLys=; b=xdenxezCvtxLJClr279s1BNnLa
+        caKlctrkgiAqM8+dwFbBO4LJgVrzN+uMtwNZEthCmLFh9iScomz7ueJIMNwjJpKCD97422QoVQ8a/
+        KMhGmsKe/pdBdYS00M7nH1GBRsAOAQ/MAR+kToApg9A5WShYE72nt+bgN8tteZKYXmgHcyA0Us3lk
+        Wc6XrsH8oe4rRPEW4ZdOCHo1/xnGes8OAWrZ726juNhPcTbIoVfUzBBp/LHAXVsDE0cuH/fXiB30O
+        9SE7DkGGgxY1aVG/B5+N22V2c765XW07NfJJlPVrId7wab0qzYRwjBSF10ZDyhMRGplHgm50AiFuo
+        7a9l+nIw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pYXB7-009R33-28; Sat, 04 Mar 2023 19:04:21 +0000
+Date:   Sat, 4 Mar 2023 11:04:21 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Keith Busch <kbusch@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        Daniel Gomez <da.gomez@samsung.com>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-block@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
+Message-ID: <ZAOWNck7YLae02bQ@bombadil.infradead.org>
+References: <Y/7L74P6jSWwOvWt@mit.edu>
+ <ZAFUYqAcPmRPLjET@kbusch-mbp.dhcp.thefacebook.com>
+ <ZAFuSSZ5vZN7/UAa@casper.infradead.org>
+ <f68905c5785b355b621847974d620fb59f021a41.camel@HansenPartnership.com>
+ <ZAL0ifa66TfMinCh@casper.infradead.org>
 MIME-Version: 1.0
-References: <ZAEC3LN6oUe6BKSN@ZenIV> <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
- <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
- <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
- <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
- <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
- <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
- <CAHk-=wgfNrMFQCFWFtn+UXjAdJAGAAFFJZ1JpEomTneza32A6g@mail.gmail.com>
- <ZAK6Duaf4mlgpZPP@yury-laptop> <CAHk-=wh1r3KfATA-JSdt3qt2y3sC=5U9+wZsbabW+dvPsqRCvA@mail.gmail.com>
- <ZALcbQoKA7K8k2gJ@yury-laptop>
-In-Reply-To: <ZALcbQoKA7K8k2gJ@yury-laptop>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 4 Mar 2023 11:02:36 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whJSXQfPGjpj8SAgEn5bOHOGvHPvFQM6GutcUU7kS8qXw@mail.gmail.com>
-Message-ID: <CAHk-=whJSXQfPGjpj8SAgEn5bOHOGvHPvFQM6GutcUU7kS8qXw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Yury Norov <yury.norov@gmail.com>
-Cc:     Mateusz Guzik <mjguzik@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
-        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZAL0ifa66TfMinCh@casper.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -90,44 +59,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 3, 2023 at 9:51=E2=80=AFPM Yury Norov <yury.norov@gmail.com> wr=
-ote:
->
-> At that time you was OK with CONFIG_FORCE_NR_CPUS, only suggested to
-> hide it behind CONFIG_EXPERT:
+On Sat, Mar 04, 2023 at 07:34:33AM +0000, Matthew Wilcox wrote:
+> The hard part is plugging your ears to the screams of the MM people
+> who are convinced that fragmentation will make it impossible to mount
+> your filesystem.
 
-I think there was a mis-communication.
+One doesn't just need to plug your ears, one can also be prepared for that,
+should that actually end up being true, because frankly we don't have
+the evidence yet. And it's something I have slowly started to think about --
+because -- why not be ready?
 
-I as violently *not* ok with that question at all. I think our Kconfig
-phase is really annoying and nasty, and we should not ask people
-questions that they don't know what they mean.
+In fact let's say the inverse is true, having the tooling to proove them
+wrong is also a desirable outcome and that begs the question of proper
+tooling to measure this, etc. Something probably more for an MM track.
+What would satifsy proof and what tooling / metrics used?
 
-So putting it behind EXPERT was a "at that point, the question is
-gone", and I'm ok with the config variable existing.
+It is *not* something that only is implicated by storage IO controllers
+and so what we're looking at a generic device issue / concern for memory
+fragmentation.
 
-But..
+*If* the generalization of huge page uses for something like bpf-prog-pack ends
+up materializing and we end up using it for even *all* module .text,
+*then* I *think* it something similar be a way to address that concern
+for devices with huge pages for CMA. This is one area where I think
+device hints for large IO might come in handy, we can limit such
+dedicated pools to only devices with hints and limit the amount of huge
+pages used for this purpose.
 
-I am *not* ok with you then thinking that "oh, the config variable
-exists, so our default code generation can be complete crap".
+But ask me 2 kernel releases from now again.
 
-The kernel should do well by default. No amount of "but you could go
-into magic config variables and then force options that might be ok
-for embedded systems to make it generate ok code".
-
-I think it's completely crazy that the distros enable MAXSMP. But
-that's their choice. A *sane* distro should not do that, and then we
-limit the normal kernel to something sane like a couple of hundreds of
-CPUs rather than thousands of them (and the associated huge overhead).
-
-At that point, things like cpumap_clear() should be a couple of stores
-- not a call-out to a variable-sized memset().
-
-Notice? Simple and understandable Kconfig questions like "do you
-*really* need to support thousands of CPU's"
-
-Not that FORCE_NR_CPUS that is _completely_ useless to any
-distribution and thus completely unacceptable as a regular question.
-
-See the difference?
-
-          Linus
+  Luis
