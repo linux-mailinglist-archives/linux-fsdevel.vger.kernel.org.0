@@ -2,149 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 854A96AAB28
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Mar 2023 17:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA346AAB2C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Mar 2023 17:41:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbjCDQjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Mar 2023 11:39:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36750 "EHLO
+        id S229597AbjCDQlg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Mar 2023 11:41:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbjCDQjQ (ORCPT
+        with ESMTP id S229506AbjCDQlf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Mar 2023 11:39:16 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7841B477;
-        Sat,  4 Mar 2023 08:39:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=h97qSCKBwWKB/vgNGl/R2rNrAByzPswrGoQZipssPGg=; b=IgVFiNLcTJCMLaVE1nNe+gXi6O
-        M94ahKtwVh8NWYTFWg/3iRrlZ58rayMTrKLYF2d/HMi3XTNDkjJMS24eAsYoCJEGMqGskv54cDoij
-        A6vZiS8T4E2IhmTMAulcqCw6jhCGJJhHiJQJCIYP9srvi7E4QxvQlrOi4lQzIqeLcCiZOS0eWHYIi
-        seTPHhJQTfkD6U2ZROwBkVcF7/FXNR7zVPvHda0BFSyY0Uc4wyv23jOnV7Tv/UouWQ4x2eBIT44+N
-        jJho6nkn3JBfLlz+TKgF0vURa+FOiiL1RmgCYtaR09+ukfexTu0/96RpX/RZtMNUbxg9oOCGL+Xf+
-        ylykMb6g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pYUuU-003wF5-VT; Sat, 04 Mar 2023 16:39:03 +0000
-Date:   Sat, 4 Mar 2023 16:39:02 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Keith Busch <kbusch@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
-Message-ID: <ZAN0JkklyCRIXVo6@casper.infradead.org>
-References: <Y/7L74P6jSWwOvWt@mit.edu>
- <ZAFUYqAcPmRPLjET@kbusch-mbp.dhcp.thefacebook.com>
- <ZAFuSSZ5vZN7/UAa@casper.infradead.org>
- <f68905c5785b355b621847974d620fb59f021a41.camel@HansenPartnership.com>
- <ZAL0ifa66TfMinCh@casper.infradead.org>
- <2600732b9ed0ddabfda5831aff22fd7e4270e3be.camel@HansenPartnership.com>
+        Sat, 4 Mar 2023 11:41:35 -0500
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF731D919;
+        Sat,  4 Mar 2023 08:41:34 -0800 (PST)
+Received: by mail-qv1-f50.google.com with SMTP id ff4so3857683qvb.2;
+        Sat, 04 Mar 2023 08:41:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677948093;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P2DqimBr3ac9VX2BbSxkSUKr8QLSMmm6AVDp0wt/2XA=;
+        b=jyWpdoTlEbbrM0W9zWWpq0BBKOD4/YTcd2wMti8Edbvz+3/zyXFZI/yWyXedWhOaT/
+         SnvEDibWQYFJJH4xPVmwe8H+Zfi91F5+q164V8qw6eQlICeL8gtGeUwiHFAnwspotvCZ
+         /vl+h6DZaW/3fT1yle732X/wb38+uN8AdippV8xvW1xR9nr+fzkvN8/XWNWbhAgnF7i5
+         FjkNi1cC/AC/+3Sk28igCDO1lIvX1/u5XG2Bz+2EF95Ue42F+GM/fhXD1/q4GE9xTPQ6
+         7oMyd3CBaD6WJZ9k6xCJx4Q/hkgdQiY4k+ABDXuen+F0rW8WlgbdvLSicsHt+lEXPvvX
+         JT4A==
+X-Gm-Message-State: AO0yUKWpuDyIcYuVa67HqMUX2vbkfyoNGAPcJ8NHrg4wYI6Qs8MCv4EI
+        gHtm56wkhGT+jk04AYb/+D64KGYMmVZR1T8n
+X-Google-Smtp-Source: AK7set/ArPa0FbhqGXIzhCbMGE8HbPmCJBdKZh9394fVz3rCCGuxwqtqhWk/4lFxGCT8A/jj85THwg==
+X-Received: by 2002:a05:6214:c84:b0:56e:9dd8:4812 with SMTP id r4-20020a0562140c8400b0056e9dd84812mr9409693qvr.3.1677948092975;
+        Sat, 04 Mar 2023 08:41:32 -0800 (PST)
+Received: from maniforge ([24.1.27.177])
+        by smtp.gmail.com with ESMTPSA id i3-20020a378603000000b007068b49b8absm3929435qkd.62.2023.03.04.08.41.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Mar 2023 08:41:32 -0800 (PST)
+Date:   Sat, 4 Mar 2023 10:41:30 -0600
+From:   David Vernet <void@manifault.com>
+To:     Yury Norov <yury.norov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mateusz Guzik <mjguzik@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
+ possible
+Message-ID: <20230304164130.GA370071@maniforge>
+References: <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
+ <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
+ <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
+ <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
+ <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
+ <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
+ <CAHk-=wgfNrMFQCFWFtn+UXjAdJAGAAFFJZ1JpEomTneza32A6g@mail.gmail.com>
+ <ZAK6Duaf4mlgpZPP@yury-laptop>
+ <CAHk-=wh1r3KfATA-JSdt3qt2y3sC=5U9+wZsbabW+dvPsqRCvA@mail.gmail.com>
+ <ZALcbQoKA7K8k2gJ@yury-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2600732b9ed0ddabfda5831aff22fd7e4270e3be.camel@HansenPartnership.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZALcbQoKA7K8k2gJ@yury-laptop>
+User-Agent: Mutt/2.2.9 (2022-11-12)
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 04, 2023 at 08:41:04AM -0500, James Bottomley wrote:
-> On Sat, 2023-03-04 at 07:34 +0000, Matthew Wilcox wrote:
-> > On Fri, Mar 03, 2023 at 08:11:47AM -0500, James Bottomley wrote:
-> > > On Fri, 2023-03-03 at 03:49 +0000, Matthew Wilcox wrote:
-> > > > On Thu, Mar 02, 2023 at 06:58:58PM -0700, Keith Busch wrote:
-> > > > > That said, I was hoping you were going to suggest supporting
-> > > > > 16k logical block sizes. Not a problem on some arch's, but
-> > > > > still problematic when PAGE_SIZE is 4k. :)
-> > > > 
-> > > > I was hoping Luis was going to propose a session on LBA size >
-> > > > PAGE_SIZE. Funnily, while the pressure is coming from the storage
-> > > > vendors, I don't think there's any work to be done in the storage
-> > > > layers.  It's purely a FS+MM problem.
-> > > 
-> > > Heh, I can do the fools rush in bit, especially if what we're
-> > > interested in the minimum it would take to support this ...
-> > > 
-> > > The FS problem could be solved simply by saying FS block size must
-> > > equal device block size, then it becomes purely a MM issue.
+On Fri, Mar 03, 2023 at 09:51:41PM -0800, Yury Norov wrote:
+> On Fri, Mar 03, 2023 at 07:42:36PM -0800, Linus Torvalds wrote:
+> > ing: quoted-printable
+> > Status: O
+> > Content-Length: 1593
+> > Lines: 41
 > > 
-> > Spoken like somebody who's never converted a filesystem to
-> > supporting large folios.  There are a number of issues:
+> > On Fri, Mar 3, 2023 at 7:25â€¯PM Yury Norov <yury.norov@gmail.com> wrote:
+> > >
+> > > Did you enable CONFIG_FORCE_NR_CPUS? If you pick it, the kernel will
+> > > bind nr_cpu_ids to NR_CPUS at compile time, and the memset() call
+> > > should disappear.
 > > 
-> > 1. The obvious; use of PAGE_SIZE and/or PAGE_SHIFT
+> > I do not believe CONFIG_FORCE_NR_CPUS makes any sense, and I think I
+> > told you so at the time.
 > 
-> Well, yes, a filesystem has to be aware it's using a block size larger
-> than page size.
+> At that time you was OK with CONFIG_FORCE_NR_CPUS, only suggested to
+> hide it behind CONFIG_EXPERT:
 > 
-> > 2. Use of kmap-family to access, eg directories.  You can't kmap
-> >    an entire folio, only one page at a time.  And if a dentry is
-> > split across a page boundary ...
+> https://lore.kernel.org/all/Yzx4fSmmr8bh6gdl@yury-laptop/T/#m92d405527636154c3b2000e0105379170d988315
+>  
+> > This all used to just work *without* some kind of config thing, First
+> > removing the automatic "do the right thing", and then adding a config
+> > option to "force" doing the right thing seems more than a bit silly to
+> > me.
+> > 
+> > I think CONFIG_FORCE_NR_CPUS should go away, and - once more - become
+> > just the "is the cpumask small enough to be just allocated directly"
+> > thing.
 > 
-> Is kmap relevant?  It's only used for reading user pages in the kernel
-> and I can't see why a filesystem would use it unless it wants to pack
-> inodes into pages that also contain user data, which is an optimization
-> not a fundamental issue (although I grant that as the blocksize grows
-> it becomes more useful) so it doesn't have to be part of the minimum
-> viable prototype.
+> This all was just broken. For example, as I mentioned in commit message,
+> cpumask_full() was broken. I know because I wrote a test. There were no
+> a single user for the function, and nobody complained. Now we have one
+> in BPF code. So if we simply revert the aa47a7c215e, it will hurt real
+> users.
 
-Filesystems often choose to store their metadata in HIGHMEM.  This wasn't
-an entirely crazy idea back in, say, 2005, when you might be running
-an ext2 filesystem on a machine with 32GB of RAM, and only 800MB of
-address space for it.
+FWIW, we can remove bpf_cpumask_full() and any other affected
+bpf_cpumask kfuncs if we need to. kfuncs have no strict stability
+guarantees (they're kernel symbols meant for use by kernel programs, see
+[0]), so we can remove them without worrying about user space breakages
+or stability issues. They were also added relatively recently, and as
+far as I know, Tejun and I are thus far the only people using them.
 
-Now it's silly.  Buy a real computer.  I'm getting more and more
-comfortable with the idea that "Linux doesn't support block sizes >
-PAGE_SIZE on 32-bit machines" is an acceptable answer.
+[0]: https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/Documentation/bpf/kfuncs.rst#n350
 
-> > 3. buffer_heads do not currently support large folios.  Working on
-> > it.
+Of course, I'd prefer that we didn't remove any of them, but if we have
+to then BPF won't get in the way. As you pointed out below, there are
+scenarios beyond cpumask_full() where (many) non-BPF callers could trip
+on this as well, so IMO what we have today makes sense (assuming there's
+not some other clever way to correctly optimize for NR_CPUS without the
+extra config option, as you also said below).
+
+Thanks,
+David
+
+> The pre-CONFIG_FORCE_NR_CPUS cpumask machinery would work only if you
+> set NR_CPUS to the number that matches to the actual number of CPUs as
+> detected at boot time.
 > 
-> Yes, I always forget filesystems still use the buffer cache.  But
-> fundamentally the buffer_head structure can cope with buffers that span
-> pages so most of the logic changes would be around grow_dev_page().  It
-> seems somewhat messy but not too hard.
-
-I forgot one particularly nasty case; we have filesystems (including the
-mpage code used by a number of filesystems) which put an array of block
-numbers on the stack.  Not a big deal when that's 8 entries (4kB/512 * 8
-bytes = 64 bytes), but it starts to get noticable at 64kB PAGE_SIZE (1kB
-is a little large for a stack allocation) and downright unreasonable
-if you try to do something to a 2MB allocation (32kB).
-
-> > Probably a few other things I forget.  But look through the recent
-> > patches to AFS, CIFS, NFS, XFS, iomap that do folio conversions.
-> > A lot of it is pretty mechanical, but some of it takes hard thought.
-> > And if you have ideas about how to handle ext2 directories, I'm all
-> > ears.
+> In your example, if you have NR_CPUS == 64, and for some reason disable
+> hyper threading, nr_cpumask_bits will be set to 64 at compile time, but
+> nr_cpu_ids will be set to 32 at boot time, assuming
+> CONFIG_CPUMASK_OFFSTACK is disabled.
 > 
-> OK, so I can see you were waiting for someone to touch a nerve, but if
-> I can go back to the stated goal, I never really thought *every*
-> filesystem would be suitable for block size > page size, so simply
-> getting a few of the modern ones working would be good enough for the
-> minimum viable prototype.
-
-XFS already works with arbitrary-order folios.  The only needed piece is
-specifying to the VFS that there's a minimum order for this particular
-inode, and having the VFS honour that everywhere.
-
-What "touches a nerve" is people who clearly haven't been paying attention
-to the problem making sweeping assertions about what the easy and hard
-parts are.
-
-> I fully understand that eventually we'll need to get a single large
-> buffer to span discontiguous pages ... I noted that in the bit you cut,
-> but I don't see why the prototype shouldn't start with contiguous
-> pages.
-
-I disagree that this is a desirable goal.  To solve the scalability
-issues we have in the VFS, we need to manage memory in larger chunks
-than PAGE_SIZE.  That makes the concerns expressed in previous years moot.
+> And the following code will be broken:
+> 
+> cpumask_t m1, m2;
+> 
+> cpumask_setall(m1); // m1 is ffff ffff ffff ffff because it uses
+>                     // compile-time optimized nr_cpumask_bits
+> 
+> for_each_cpu(cpu, m1) // 32 iterations because it relied on nr_cpu_ids
+>         cpumask_set_cpu(cpu, m2); // m2 is ffff ffff XXXX XXXX
+> 
+> BUG_ON(!cpumask_equal(m1, m2)); // Bug because it will test all 64 bits
+>
+> Today with CONFIG_FORCE_NR_CPUS disabled, kernel consistently relies
+> on boot-time defined nr_cpu_ids in functions like cpumask_equal()
+> with the cost of disabled runtime optimizations.
+> 
+> If CONFIG_FORCE_NR_CPUS is enabled, it wires nr_cpu_ids to NR_CPUS
+> at compile time, which allows compile-time optimization.
+> 
+> If CONFIG_FORCE_NR_CPUS is enabled, but actual number of CPUs doesn't
+> match to NR_CPUS, the kernel throws a warning at boot time - better
+> than nothing.
+> 
+> I'm not happy bothering people with a new config parameter in such a
+> simple case. I just don't know how to fix it better. Is there a safe
+> way to teach compiler to optimize against NR_CPUS other than telling
+> it explicitly?
+> 
+> > Of course, the problem for others remain that distros will do that
+> > CONFIG_CPUMASK_OFFSTACK thing, and then things will suck regardless.
+> > 
+> > I was *so* happy with our clever "you can have large cpumasks, and
+> > we'll just allocate them off the stack" long long ago, because it
+> > meant that we could have one single source tree where this was all
+> > cleanly abstracted away, and we even had nice types and type safety
+> > for it all.
+> > 
+> > That meant that we could support all the fancy SGI machines with
+> > several thousand cores, and it all "JustWorked(tm)", and didn't make
+> > the normal case any worse.
+> > 
+> > I didn't expect distros to then go "ooh, we want that too", and enable
+> > it all by default, and make all our clever "you only see this
+> > indirection if you need it" go away, and now the normal case is the
+> > *bad* case, unless you just build your own kernel and pick sane
+> > defaults.
+> >
+> > Oh well.
+> 
+> From distro people's perspective, 'one size fits all' is the best
+> approach. It's hard to blame them.
+> 
+> Thanks,
+> Yury
