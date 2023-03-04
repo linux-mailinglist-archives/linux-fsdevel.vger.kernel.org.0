@@ -2,137 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0999E6AAB17
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Mar 2023 17:22:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 854A96AAB28
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Mar 2023 17:39:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229447AbjCDQWY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Mar 2023 11:22:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55304 "EHLO
+        id S229534AbjCDQjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Mar 2023 11:39:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjCDQWX (ORCPT
+        with ESMTP id S229506AbjCDQjQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Mar 2023 11:22:23 -0500
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE60B15565
-        for <linux-fsdevel@vger.kernel.org>; Sat,  4 Mar 2023 08:22:20 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R971e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Vd3nnbI_1677946935;
-Received: from 30.120.156.107(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Vd3nnbI_1677946935)
-          by smtp.aliyun-inc.com;
-          Sun, 05 Mar 2023 00:22:17 +0800
-Message-ID: <579ad5a0-2e7b-85b8-10b0-7c8879f9c872@linux.alibaba.com>
-Date:   Sun, 5 Mar 2023 00:22:15 +0800
+        Sat, 4 Mar 2023 11:39:16 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7841B477;
+        Sat,  4 Mar 2023 08:39:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=h97qSCKBwWKB/vgNGl/R2rNrAByzPswrGoQZipssPGg=; b=IgVFiNLcTJCMLaVE1nNe+gXi6O
+        M94ahKtwVh8NWYTFWg/3iRrlZ58rayMTrKLYF2d/HMi3XTNDkjJMS24eAsYoCJEGMqGskv54cDoij
+        A6vZiS8T4E2IhmTMAulcqCw6jhCGJJhHiJQJCIYP9srvi7E4QxvQlrOi4lQzIqeLcCiZOS0eWHYIi
+        seTPHhJQTfkD6U2ZROwBkVcF7/FXNR7zVPvHda0BFSyY0Uc4wyv23jOnV7Tv/UouWQ4x2eBIT44+N
+        jJho6nkn3JBfLlz+TKgF0vURa+FOiiL1RmgCYtaR09+ukfexTu0/96RpX/RZtMNUbxg9oOCGL+Xf+
+        ylykMb6g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pYUuU-003wF5-VT; Sat, 04 Mar 2023 16:39:03 +0000
+Date:   Sat, 4 Mar 2023 16:39:02 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Keith Busch <kbusch@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-block@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
+Message-ID: <ZAN0JkklyCRIXVo6@casper.infradead.org>
+References: <Y/7L74P6jSWwOvWt@mit.edu>
+ <ZAFUYqAcPmRPLjET@kbusch-mbp.dhcp.thefacebook.com>
+ <ZAFuSSZ5vZN7/UAa@casper.infradead.org>
+ <f68905c5785b355b621847974d620fb59f021a41.camel@HansenPartnership.com>
+ <ZAL0ifa66TfMinCh@casper.infradead.org>
+ <2600732b9ed0ddabfda5831aff22fd7e4270e3be.camel@HansenPartnership.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.6.1
-Subject: Re: [LSF/MM/BFP TOPIC] Composefs vs erofs+overlay
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Colin Walters <walters@verbum.org>,
-        Alexander Larsson <alexl@redhat.com>,
-        lsf-pc@lists.linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Jingbo Xu <jefflexu@linux.alibaba.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-References: <e84d009fd32b7a02ceb038db5cf1737db91069d5.camel@redhat.com>
- <CAL7ro1E7KY5yUJOLu6TY0RtAC5304sM3Lvk=zSCrqDrxTPW2og@mail.gmail.com>
- <ffe56605-6ef7-01b5-e613-7600165820d8@linux.alibaba.com>
- <13e7205f-113b-ad47-417f-53b63743c64c@linux.alibaba.com>
- <4782a0db-5780-4309-badf-67f69507cc81@app.fastmail.com>
- <0a571702-a907-c2b1-bb38-96aa7b268a1b@linux.alibaba.com>
-In-Reply-To: <0a571702-a907-c2b1-bb38-96aa7b268a1b@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <2600732b9ed0ddabfda5831aff22fd7e4270e3be.camel@HansenPartnership.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Mar 04, 2023 at 08:41:04AM -0500, James Bottomley wrote:
+> On Sat, 2023-03-04 at 07:34 +0000, Matthew Wilcox wrote:
+> > On Fri, Mar 03, 2023 at 08:11:47AM -0500, James Bottomley wrote:
+> > > On Fri, 2023-03-03 at 03:49 +0000, Matthew Wilcox wrote:
+> > > > On Thu, Mar 02, 2023 at 06:58:58PM -0700, Keith Busch wrote:
+> > > > > That said, I was hoping you were going to suggest supporting
+> > > > > 16k logical block sizes. Not a problem on some arch's, but
+> > > > > still problematic when PAGE_SIZE is 4k. :)
+> > > > 
+> > > > I was hoping Luis was going to propose a session on LBA size >
+> > > > PAGE_SIZE. Funnily, while the pressure is coming from the storage
+> > > > vendors, I don't think there's any work to be done in the storage
+> > > > layers.  It's purely a FS+MM problem.
+> > > 
+> > > Heh, I can do the fools rush in bit, especially if what we're
+> > > interested in the minimum it would take to support this ...
+> > > 
+> > > The FS problem could be solved simply by saying FS block size must
+> > > equal device block size, then it becomes purely a MM issue.
+> > 
+> > Spoken like somebody who's never converted a filesystem to
+> > supporting large folios.  There are a number of issues:
+> > 
+> > 1. The obvious; use of PAGE_SIZE and/or PAGE_SHIFT
+> 
+> Well, yes, a filesystem has to be aware it's using a block size larger
+> than page size.
+> 
+> > 2. Use of kmap-family to access, eg directories.  You can't kmap
+> >    an entire folio, only one page at a time.  And if a dentry is
+> > split across a page boundary ...
+> 
+> Is kmap relevant?  It's only used for reading user pages in the kernel
+> and I can't see why a filesystem would use it unless it wants to pack
+> inodes into pages that also contain user data, which is an optimization
+> not a fundamental issue (although I grant that as the blocksize grows
+> it becomes more useful) so it doesn't have to be part of the minimum
+> viable prototype.
 
+Filesystems often choose to store their metadata in HIGHMEM.  This wasn't
+an entirely crazy idea back in, say, 2005, when you might be running
+an ext2 filesystem on a machine with 32GB of RAM, and only 800MB of
+address space for it.
 
-On 2023/3/4 23:29, Gao Xiang wrote:
-> Hi Colin,
-> 
-> On 2023/3/4 22:59, Colin Walters wrote:
->>
->>
->> On Fri, Mar 3, 2023, at 12:37 PM, Gao Xiang wrote:
->>>
->>> Actually since you're container guys, I would like to mention
->>> a way to directly reuse OCI tar data and not sure if you
->>> have some interest as well, that is just to generate EROFS
->>> metadata which could point to the tar blobs so that data itself
->>> is still the original tar, but we could add fsverity + IMMUTABLE
->>> to these blobs rather than the individual untared files.
->>
->>> Â Â  - OCI layer diff IDs in the OCI spec [1] are guaranteed;
->>
->> The https://github.com/vbatts/tar-split approach addresses this problem domain adequately I think.
-> 
-> Thanks for the interest and comment.
-> 
-> I'm not aware of this project, and I'm not sure if tar-split
-> helps mount tar stuffs, maybe I'm missing something?
-> 
-> As for EROFS, as long as we support subpage block size, it's
-> entirely possible to refer the original tar data without tar
-> stream modification.
-> 
->>
->> Correct me if I'm wrong, but having erofs point to underlying tar wouldn't by default get us page cache sharing or even the "opportunistic" disk sharing that composefs brings, unless userspace did something like attempting to dedup files in the tar stream via hashing and using reflinks on the underlying fs.Â  And then doing reflinks would require alignment inside the stream, right?Â  The https://fedoraproject.org/wiki/Changes/RPMCoW change is very similar in that it's proposing a modification of the RPM format to 4k align files in the 
-> 
-> hmmm.. I think userspace don't need to dedupe files in the
-> tar stream.
-> 
-> stream for this reason.Â  But that's exactly it, then it's a new tweaked format and not identical to what came before, so the "compatibility" rationale is actually weakened a lot.
->>
->>
-> 
-> As you said, "opportunistic" finer disk sharing inside all tar
-> streams can be resolved by reflink or other stuffs by the underlay
-> filesystems (like XFS, or virtual devices like device mapper).
-> 
-> Not bacause EROFS cannot do on-disk dedupe, just because in this
-> way EROFS can only use the original tar blobs, and EROFS is not
-> the guy to resolve the on-disk sharing stuff.Â  However, here since
-> the original tar blob is used, so that the tar stream data is
-> unchanged (with the same diffID) when the container is running.
-> 
-> As a kernel filesystem, if two files are equal, we could treat them
-> in the same inode address space, even they are actually with slightly
-> different inode metadata (uid, gid, mode, nlink, etc).Â  That is
-> entirely possible as an in-kernel filesystem even currently linux
-> kernel doesn't implement finer page cache sharing, so EROFS can
-> support page-cache sharing of files in all tar streams if needed.
+Now it's silly.  Buy a real computer.  I'm getting more and more
+comfortable with the idea that "Linux doesn't support block sizes >
+PAGE_SIZE on 32-bit machines" is an acceptable answer.
 
-By the way, in case of misunderstanding, the current workable ways
-of Linux page cache sharing don't _strictly_ need the real inode is
-the same inode (like what stackable fs like overlayfs does), just
-need sharing data among different inodes consecutive in one address
-space, which means:
-
-   1) we could reuse blob (the tar stream) address space to share
-      page cache, actually that is what Jingbo's did for fscache
-      page cache sharing:
-      https://lore.kernel.org/r/20230203030143.73105-1-jefflexu@linux.alibaba.com
-
-   2) create a virtual inode (or reuse one address space of real
-      inodes) to share data between real inodes.
-
-Either way can do page cache sharing of inodes with same data
-across different filesystems and are practial without extra
-linux-mm improvement.
-
-thanks,
-Gao Xiang
-
+> > 3. buffer_heads do not currently support large folios.  Working on
+> > it.
 > 
-> Thanks,
-> Gao Xiang
+> Yes, I always forget filesystems still use the buffer cache.  But
+> fundamentally the buffer_head structure can cope with buffers that span
+> pages so most of the logic changes would be around grow_dev_page().  It
+> seems somewhat messy but not too hard.
+
+I forgot one particularly nasty case; we have filesystems (including the
+mpage code used by a number of filesystems) which put an array of block
+numbers on the stack.  Not a big deal when that's 8 entries (4kB/512 * 8
+bytes = 64 bytes), but it starts to get noticable at 64kB PAGE_SIZE (1kB
+is a little large for a stack allocation) and downright unreasonable
+if you try to do something to a 2MB allocation (32kB).
+
+> > Probably a few other things I forget.  But look through the recent
+> > patches to AFS, CIFS, NFS, XFS, iomap that do folio conversions.
+> > A lot of it is pretty mechanical, but some of it takes hard thought.
+> > And if you have ideas about how to handle ext2 directories, I'm all
+> > ears.
+> 
+> OK, so I can see you were waiting for someone to touch a nerve, but if
+> I can go back to the stated goal, I never really thought *every*
+> filesystem would be suitable for block size > page size, so simply
+> getting a few of the modern ones working would be good enough for the
+> minimum viable prototype.
+
+XFS already works with arbitrary-order folios.  The only needed piece is
+specifying to the VFS that there's a minimum order for this particular
+inode, and having the VFS honour that everywhere.
+
+What "touches a nerve" is people who clearly haven't been paying attention
+to the problem making sweeping assertions about what the easy and hard
+parts are.
+
+> I fully understand that eventually we'll need to get a single large
+> buffer to span discontiguous pages ... I noted that in the bit you cut,
+> but I don't see why the prototype shouldn't start with contiguous
+> pages.
+
+I disagree that this is a desirable goal.  To solve the scalability
+issues we have in the VFS, we need to manage memory in larger chunks
+than PAGE_SIZE.  That makes the concerns expressed in previous years moot.
