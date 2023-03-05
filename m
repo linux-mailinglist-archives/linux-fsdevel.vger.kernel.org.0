@@ -2,111 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8C4E6AB191
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Mar 2023 18:23:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D7A76AB1B2
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Mar 2023 19:17:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbjCERXi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Mar 2023 12:23:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58246 "EHLO
+        id S229705AbjCESRt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Mar 2023 13:17:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjCERXh (ORCPT
+        with ESMTP id S229485AbjCESRr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Mar 2023 12:23:37 -0500
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60FD3EC6F
-        for <linux-fsdevel@vger.kernel.org>; Sun,  5 Mar 2023 09:23:35 -0800 (PST)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-250-LOSwqRzdPumsQ90Himc9cg-1; Sun, 05 Mar 2023 17:23:31 +0000
-X-MC-Unique: LOSwqRzdPumsQ90Himc9cg-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.47; Sun, 5 Mar
- 2023 17:23:29 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.047; Sun, 5 Mar 2023 17:23:29 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
-        Mateusz Guzik <mjguzik@gmail.com>, Borislav Petkov <bp@suse.de>
-CC:     Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
- possible
-Thread-Topic: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
- possible
-Thread-Index: AQHZTtzWe5NzBLiIgUWjC9/KNPby/q7sbr9A
-Date:   Sun, 5 Mar 2023 17:23:29 +0000
-Message-ID: <f764a4ff956c4de8b059602c539e2c4a@AcuMS.aculab.com>
-References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
- <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
- <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
- <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
- <ZADoeOiJs6BRLUSd@ZenIV>
- <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
- <CAHk-=wjp5fMupRwnROtC5Yn+MVLA7v=J+_QJSi1rr3qAjdsfXw@mail.gmail.com>
- <CAHk-=wi11ZbOBdMR5hQDz0x0NNZ9gM-4SxXxK-7R3_yh7e10rQ@mail.gmail.com>
- <ZAD21ZEiB2V9Ttto@ZenIV> <6400fedb.170a0220.ece29.04b8@mx.google.com>
- <ZAEC3LN6oUe6BKSN@ZenIV>
- <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
- <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
+        Sun, 5 Mar 2023 13:17:47 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5372FA273
+        for <linux-fsdevel@vger.kernel.org>; Sun,  5 Mar 2023 10:17:46 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id ay14so26161214edb.11
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Mar 2023 10:17:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1678040264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d0UA/7lZ63JFeoLOmQNO6i8Dnq6C2Xq3iYWWB1kja+U=;
+        b=HZnF5dA8oOl+6Jlnkwgm3b1GR0uPuOeNeWpITcsq/Y922X60lZICne2mJfDliiEyZQ
+         2z8fXZ7/KrhDTby4Oexr6bKDrXR7L3PfZFuUG6MOZQjuNiPggxitWxU7FySg3p0xbZZo
+         B/VX77vk0etI7dKqL93YlzMMyYsfVn8I6ROh8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678040264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d0UA/7lZ63JFeoLOmQNO6i8Dnq6C2Xq3iYWWB1kja+U=;
+        b=mab8kGbL4MVmrLv0QbwjQh9V6ivEiRIgDfynBez/DgI+y8vFYIbrwyEf8jPoA0EWd5
+         GiL0lFJxdW+OAtx8A6NwZ5UCfoCUmM2SdkBEUQE7kiaO5O17uxBsHYQFgsU1h8ZmyFna
+         mdAZsTCqJpsUFH5OyKKaCLDUbBz8eAcBE/Y/u6EwsRgZ0e1uz0JMPSIiVyktCVBWb6PE
+         e0m08+2fLpM6L81UQqs7c0Q0WCvO0spYQvNtb3vVhvrlXtIzqXAs9XbI1nGJHAr6o9PI
+         wNiVWHUesKuoXJeR24RfVCPduEQc4lrXbglNDcvZDgm2jAkavVvgylscpbydt7QTLs7V
+         g19Q==
+X-Gm-Message-State: AO0yUKWaSr7mrMEaTAhfXFn8sEM+q7bzYW7cFsg/tzLdpddNM/tTasds
+        hSiO3C88d+ZDdjEL324wFvIKTPKeNFArfOyNOh5qMQ==
+X-Google-Smtp-Source: AK7set+5/TTQiprPtgIJJMixl9KtAsIHmWGB5wRQoCSmlZpuw9VrPV+G4Rdkj24iVRVJXip/NGZ8eg==
+X-Received: by 2002:a17:906:cccf:b0:8b2:c2fc:178e with SMTP id ot15-20020a170906cccf00b008b2c2fc178emr7253968ejb.74.1678040264331;
+        Sun, 05 Mar 2023 10:17:44 -0800 (PST)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id j17-20020a50d011000000b004e48f8df7e2sm526481edf.72.2023.03.05.10.17.43
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Mar 2023 10:17:43 -0800 (PST)
+Received: by mail-ed1-f50.google.com with SMTP id s11so29822446edy.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Mar 2023 10:17:43 -0800 (PST)
+X-Received: by 2002:a17:906:4997:b0:877:7480:c75d with SMTP id
+ p23-20020a170906499700b008777480c75dmr3913520eju.0.1678040262904; Sun, 05 Mar
+ 2023 10:17:42 -0800 (PST)
+MIME-Version: 1.0
+References: <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
  <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
  <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
  <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
  <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
- <CAHk-=wgz51x2gaiD4=6T3UGZtKOSm3k56iq=h4tqy3wQsN-VTA@mail.gmail.com>
- <CAGudoHH8t9_5iLd8FsTW4PBZ+_vGad3YAd8K=n=SrRtnWHm49Q@mail.gmail.com>
- <CAGudoHFPr4+vfqufWiscRXqSRAuZM=S8H7QsZbiLrG+s1OWm1w@mail.gmail.com>
- <CAHk-=wh17G6zo6Rfut++SHzDgXdvtrupfSX+bNL08v=LpHU0Lg@mail.gmail.com>
-In-Reply-To: <CAHk-=wh17G6zo6Rfut++SHzDgXdvtrupfSX+bNL08v=LpHU0Lg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+ <CAHk-=wgfNrMFQCFWFtn+UXjAdJAGAAFFJZ1JpEomTneza32A6g@mail.gmail.com>
+ <ZAK6Duaf4mlgpZPP@yury-laptop> <CAHk-=wh1r3KfATA-JSdt3qt2y3sC=5U9+wZsbabW+dvPsqRCvA@mail.gmail.com>
+ <ZALcbQoKA7K8k2gJ@yury-laptop> <CAHk-=wjit4tstX3q4DkiYLTD6zet_7j=CfjbvTMqtnOwmY7jzA@mail.gmail.com>
+ <ZAOvUuxJP7tAKc1e@yury-laptop> <CAHk-=wh2U3a7AdvekB3uyAmH+NNk-CxN-NxGzQ=GZwjaEcM-tg@mail.gmail.com>
+ <CAHk-=whEwe1H1_YXki1aYwGnVwazY+z0=6deU-Zd855ogvLgww@mail.gmail.com>
+ <CAHk-=wiHp3AkvFThpnGSA7k=KpPbXd0vurga+-8FqUNRbML_fA@mail.gmail.com> <CA+icZUUH-J3eh=PSEcaHRDtcKB9svA2Qct6RiOq_MFP_+KeBLQ@mail.gmail.com>
+In-Reply-To: <CA+icZUUH-J3eh=PSEcaHRDtcKB9svA2Qct6RiOq_MFP_+KeBLQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 5 Mar 2023 10:17:25 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgzNnvVwjoW0Ojn1V_BcEoYX=wydcMs-FTNV+7kJmfq=A@mail.gmail.com>
+Message-ID: <CAHk-=wgzNnvVwjoW0Ojn1V_BcEoYX=wydcMs-FTNV+7kJmfq=A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
+To:     sedat.dilek@gmail.com
+Cc:     Yury Norov <yury.norov@gmail.com>,
+        Mateusz Guzik <mjguzik@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Christian Brauner <brauner@kernel.org>, serge@hallyn.com,
+        paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDQgTWFyY2ggMjAyMyAyMDo0OA0KPiANCj4g
-T24gU2F0LCBNYXIgNCwgMjAyMyBhdCAxMjozMeKAr1BNIE1hdGV1c3ogR3V6aWsgPG1qZ3V6aWtA
-Z21haWwuY29tPiB3cm90ZToNCj4gPg0KPiA+IEdvb2QgbmV3czogZ2NjIHByb3ZpZGVzIGEgbG90
-IG9mIGNvbnRyb2wgYXMgdG8gaG93IGl0IGlubGluZXMgc3RyaW5nDQo+ID4gb3BzLCBtb3N0IG5v
-dGFibHk6DQo+ID4gICAgICAgIC1tc3RyaW5nb3Atc3RyYXRlZ3k9YWxnDQo+IA0KPiBOb3RlIHRo
-YXQgYW55IHN0YXRpYyBkZWNpc2lvbiBpcyBhbHdheXMgZ29pbmcgdG8gYmUgY3JhcCBzb21ld2hl
-cmUuDQo+IFlvdSBjYW4gbWFrZSBpdCBkbyB0aGUgIm9wdGltYWwiIHRoaW5nIGZvciBhbnkgcGFy
-dGljdWxhciBtYWNoaW5lLCBidXQNCj4gSSBjb25zaWRlciB0aGF0IHRvIGJlIGp1c3QgZ2FyYmFn
-ZS4NCj4gDQo+IFdoYXQgSSB3b3VsZCBhY3R1YWxseSBsaWtlIHRvIHNlZSBpcyB0aGUgY29tcGls
-ZXIgYWx3YXlzIGdlbmVyYXRlIGFuDQo+IG91dC1vZi1saW5lIGNhbGwgZm9yIHRoZSAiYmlnIGVu
-b3VnaCB0byBub3QganVzdCBkbyBpbmxpbmUgdHJpdmlhbGx5Ig0KPiBjYXNlLCBidXQgZG8gc28g
-d2l0aCB0aGUgInJlcCBzdG9zYi9tb3ZzYiIgY2FsbGluZyBjb252ZW50aW9uLg0KDQpJIHRoaW5r
-IHlvdSBhbHNvIHdhbnQgaXQgdG8gZGlmZmVyZW50aWF0ZSBiZXR3ZWVuIHJlcXVlc3RzIHRoYXQN
-CmFyZSBrbm93biB0byBiZSBhIHdob2xlIG51bWJlciBvZiB3b3JkcyBhbmQgb25lcyB0aGF0IG1p
-Z2h0DQpiZSBieXRlIHNpemVkLg0KDQpGb3IgdGhlIGttYWxsb2MrbWVtemVybyBjYXNlIHlvdSBr
-bm93IHlvdSBjYW4gemVybyBhIHdob2xlDQpudW1iZXIgb2Ygd29yZHMgLSBzbyBhbGwgdGhlIGNo
-ZWNrcyBtZW1zZXQgaGFzIHRvIGRvIGZvcg0KYnl0ZSBsZW5ndGgvYWxpZ25tZW50IGNhbiBiZSBy
-ZW1vdmVkLg0KDQpUaGUgc2FtZSBpcyB0cnVlIGZvciBtZW1jcHkoKSBjYWxscyB1c2VkIGZvciBz
-dHJ1Y3R1cmUgY29waWVzLg0KVGhlIGNvbXBpbGVyIGtub3dzIHRoYXQgYWxpZ25lZCBmdWxsLXdv
-cmQgY29waWVzIGNhbiBiZSBkb25lLg0KU28gaXQgc2hvdWxkbid0IGJlIGNhbGxpbmcgYSBmdW5j
-dGlvbiB0aGF0IGhhcyB0byByZWRvIHRoZSB0ZXN0cy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVy
-ZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5
-bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Sun, Mar 5, 2023 at 1:26=E2=80=AFAM Sedat Dilek <sedat.dilek@gmail.com> =
+wrote:
+>
+> can you share your "normal config", please?
 
+Well, I just have CONFIG_NR_CPUS set to 64.
+
+That happens to be the number of actual cores (well, threads) I have
+on my desktop, but it's what I use for my laptop too (that has 8
+cores).
+
+Basically, I consider CONFIG_NR_CPUS=3D64 is likely the "sweet spot" for
+code generation and still covering 99+% of all machines out there.
+
+Now, MAXSMP is great for (a) coverage testing and for (b) being able
+to handle pretty much *anything* out there, but it really was
+originally meant for the SGI kind of hardware: not exactly
+off-the-shelf.
+
+So I use MAXSMP for compile testing (by virtue of "allmodconfig"), and
+it's great for that. But unless you have more than several hundred
+cpus in your machine, you should never use it.
+
+There are a few main issues with MAXSMP:
+
+ - the simple ("common") embedded cpu masks end up being big (ie any
+data structure that has a "cpumask_t" in it will be huge, just because
+the static size of 'struct cpumask' is 8192 bits, ie 1kB)
+
+ - the fancy case of using a "cpumask_var_t" will use a pointer and a
+dynamic allocation (which is then sized to be appropriate to the
+*actual* number of CPU's, so that you don't have to allocate 8192 bits
+for everything).
+
+ - the code generation ends up inevitably being about variable-sized
+loops, because nobody wants to traverse those kinds of data structures
+
+In contrast, if you use CONFIG_NR_CPUS=3D64, both the embeddeed and
+"fancy" version will be just a single 64-bit word. No extra pointer
+overhead, no indirection through said pointers, and no need for loops
+(ok, there will still be loops for walking the bits in the word, but a
+lot of them will actually be about using instructions like "bsf" etc).
+
+So you end up with better code, smaller data structures, and less
+pointer chasing.
+
+So those two situations are generally the two "sane" configurations: a
+good reasonable NR_CPUS that works for just about everybody, and then
+another extreme config for the 1% (or - more likely - 0.01%)
+
+Now, it's not like 64 is somehow magical. Picking something like
+NR_CPUS of 192 is perfectly fine too - it will use three words for the
+bitmap, it will still avoid the pointer indirection, it will have a
+few small fixed-size loops. It's certainly not *wrong*. It will cover
+bigger HEDT machines, but I feel like the HEDT people probably are
+special enough that they could probably just use the MAXSMP case, or -
+if they care - just build their own kernels.
+
+So you *can* certainly pick other values. We used to have special UP
+vs SMP kernel builds, and that clearly no longer makes sense. Nobody
+cares about UP on x86-64.
+
+But I do feel like MAXSMP is simply not a great config for 99.9% of
+all people, and if you are willing to have two configs, then that "64
+or MAXSMP" seems to be the sane split.
+
+And with that split, there will be *very* few people who actually use MAXSM=
+P.
+
+               Linus
