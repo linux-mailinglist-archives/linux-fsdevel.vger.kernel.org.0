@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D7A76AB1B2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Mar 2023 19:17:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BEA76AB1C1
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Mar 2023 19:50:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229705AbjCESRt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Mar 2023 13:17:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56024 "EHLO
+        id S229614AbjCESnp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Mar 2023 13:43:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjCESRr (ORCPT
+        with ESMTP id S229543AbjCESnm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Mar 2023 13:17:47 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5372FA273
-        for <linux-fsdevel@vger.kernel.org>; Sun,  5 Mar 2023 10:17:46 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id ay14so26161214edb.11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Mar 2023 10:17:46 -0800 (PST)
+        Sun, 5 Mar 2023 13:43:42 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36369CDEF
+        for <linux-fsdevel@vger.kernel.org>; Sun,  5 Mar 2023 10:43:41 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id u9so30090540edd.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Mar 2023 10:43:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1678040264;
+        d=linux-foundation.org; s=google; t=1678041819;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d0UA/7lZ63JFeoLOmQNO6i8Dnq6C2Xq3iYWWB1kja+U=;
-        b=HZnF5dA8oOl+6Jlnkwgm3b1GR0uPuOeNeWpITcsq/Y922X60lZICne2mJfDliiEyZQ
-         2z8fXZ7/KrhDTby4Oexr6bKDrXR7L3PfZFuUG6MOZQjuNiPggxitWxU7FySg3p0xbZZo
-         B/VX77vk0etI7dKqL93YlzMMyYsfVn8I6ROh8=
+        bh=zK/rrMwqyPmyu+qAqo29lnLv2pRkbjMCkopb9tAe0Bw=;
+        b=duTuPzp2D/zLqgVNKR1UwpGZY7y61kGIfqzx2RtAzX6/JFrNTd150CamMdKfgR6U3A
+         8nTLP+cGc0IOo2I1yYKUK3ncELNOisWgRewP45Ygop3/gKUliIKKvRDXIrTmtcslie8V
+         iOm7DbbXU+oEM1ac7Alvr4BGlUip0a5vNeGxs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678040264;
+        d=1e100.net; s=20210112; t=1678041819;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d0UA/7lZ63JFeoLOmQNO6i8Dnq6C2Xq3iYWWB1kja+U=;
-        b=mab8kGbL4MVmrLv0QbwjQh9V6ivEiRIgDfynBez/DgI+y8vFYIbrwyEf8jPoA0EWd5
-         GiL0lFJxdW+OAtx8A6NwZ5UCfoCUmM2SdkBEUQE7kiaO5O17uxBsHYQFgsU1h8ZmyFna
-         mdAZsTCqJpsUFH5OyKKaCLDUbBz8eAcBE/Y/u6EwsRgZ0e1uz0JMPSIiVyktCVBWb6PE
-         e0m08+2fLpM6L81UQqs7c0Q0WCvO0spYQvNtb3vVhvrlXtIzqXAs9XbI1nGJHAr6o9PI
-         wNiVWHUesKuoXJeR24RfVCPduEQc4lrXbglNDcvZDgm2jAkavVvgylscpbydt7QTLs7V
-         g19Q==
-X-Gm-Message-State: AO0yUKWaSr7mrMEaTAhfXFn8sEM+q7bzYW7cFsg/tzLdpddNM/tTasds
-        hSiO3C88d+ZDdjEL324wFvIKTPKeNFArfOyNOh5qMQ==
-X-Google-Smtp-Source: AK7set+5/TTQiprPtgIJJMixl9KtAsIHmWGB5wRQoCSmlZpuw9VrPV+G4Rdkj24iVRVJXip/NGZ8eg==
-X-Received: by 2002:a17:906:cccf:b0:8b2:c2fc:178e with SMTP id ot15-20020a170906cccf00b008b2c2fc178emr7253968ejb.74.1678040264331;
-        Sun, 05 Mar 2023 10:17:44 -0800 (PST)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id j17-20020a50d011000000b004e48f8df7e2sm526481edf.72.2023.03.05.10.17.43
+        bh=zK/rrMwqyPmyu+qAqo29lnLv2pRkbjMCkopb9tAe0Bw=;
+        b=onvRQKj7EIZZJK8eTE5+bvbKlqxETi7v4BGwqc3GQhIT/3U729uzFhCgU3Eb2xPHql
+         L3tRQfCArG4fSy3iqphzkZLNlpwpxvSTM7R9s/NxAZ0XJDUSUDw5myvpC+iniOpwTLWp
+         4/Pmo9mYF6uuHwwpebXUYsmiTdl/z4ZQbQtUszdcdj2ODdlS7gORJaay/VclhFKRknH3
+         /iOc3UHLsA2Yfj8OK1g6sx98wajtoBQX09MSWK6+vkBgjSLPhTPC84uBL3vRAYs0YVsy
+         aT532Wdffcx8NWMojtcOk1+2zIRVJl8B4V4Yt3aBfmFMgTDXfVXX6b/lf9SlnhmItlGs
+         YMyA==
+X-Gm-Message-State: AO0yUKVIs5ShcDTCoPF9eBsWnQtQeqkNlD16XO64yhIR0MVHserLHMfB
+        bkaepOAHVhy8T2XtCGNJ6CBU7JIyirwNtaETFiyxhQ==
+X-Google-Smtp-Source: AK7set/Ndqy14Y/dXu1FDNjR4vhuuxg4KaAVhCkksf0+ftoouJI1P/g0IJBSr7jeuwBmS+3aRk5IKw==
+X-Received: by 2002:a17:906:4911:b0:8b8:c04f:c5f9 with SMTP id b17-20020a170906491100b008b8c04fc5f9mr9089473ejq.73.1678041819354;
+        Sun, 05 Mar 2023 10:43:39 -0800 (PST)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id kv22-20020a17090778d600b008dceec0fd4csm3501529ejc.73.2023.03.05.10.43.37
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Mar 2023 10:17:43 -0800 (PST)
-Received: by mail-ed1-f50.google.com with SMTP id s11so29822446edy.8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Mar 2023 10:17:43 -0800 (PST)
-X-Received: by 2002:a17:906:4997:b0:877:7480:c75d with SMTP id
- p23-20020a170906499700b008777480c75dmr3913520eju.0.1678040262904; Sun, 05 Mar
- 2023 10:17:42 -0800 (PST)
+        Sun, 05 Mar 2023 10:43:37 -0800 (PST)
+Received: by mail-ed1-f41.google.com with SMTP id ay14so26312433edb.11
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Mar 2023 10:43:37 -0800 (PST)
+X-Received: by 2002:a50:9f47:0:b0:4bc:13f5:68a5 with SMTP id
+ b65-20020a509f47000000b004bc13f568a5mr4529109edf.5.1678041816888; Sun, 05 Mar
+ 2023 10:43:36 -0800 (PST)
 MIME-Version: 1.0
 References: <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
  <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
@@ -64,12 +64,13 @@ References: <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
  <ZALcbQoKA7K8k2gJ@yury-laptop> <CAHk-=wjit4tstX3q4DkiYLTD6zet_7j=CfjbvTMqtnOwmY7jzA@mail.gmail.com>
  <ZAOvUuxJP7tAKc1e@yury-laptop> <CAHk-=wh2U3a7AdvekB3uyAmH+NNk-CxN-NxGzQ=GZwjaEcM-tg@mail.gmail.com>
  <CAHk-=whEwe1H1_YXki1aYwGnVwazY+z0=6deU-Zd855ogvLgww@mail.gmail.com>
- <CAHk-=wiHp3AkvFThpnGSA7k=KpPbXd0vurga+-8FqUNRbML_fA@mail.gmail.com> <CA+icZUUH-J3eh=PSEcaHRDtcKB9svA2Qct6RiOq_MFP_+KeBLQ@mail.gmail.com>
-In-Reply-To: <CA+icZUUH-J3eh=PSEcaHRDtcKB9svA2Qct6RiOq_MFP_+KeBLQ@mail.gmail.com>
+ <CAHk-=wiHp3AkvFThpnGSA7k=KpPbXd0vurga+-8FqUNRbML_fA@mail.gmail.com>
+ <CA+icZUUH-J3eh=PSEcaHRDtcKB9svA2Qct6RiOq_MFP_+KeBLQ@mail.gmail.com> <CAHk-=wgzNnvVwjoW0Ojn1V_BcEoYX=wydcMs-FTNV+7kJmfq=A@mail.gmail.com>
+In-Reply-To: <CAHk-=wgzNnvVwjoW0Ojn1V_BcEoYX=wydcMs-FTNV+7kJmfq=A@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 5 Mar 2023 10:17:25 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgzNnvVwjoW0Ojn1V_BcEoYX=wydcMs-FTNV+7kJmfq=A@mail.gmail.com>
-Message-ID: <CAHk-=wgzNnvVwjoW0Ojn1V_BcEoYX=wydcMs-FTNV+7kJmfq=A@mail.gmail.com>
+Date:   Sun, 5 Mar 2023 10:43:19 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg1evFSMjkpNgL-6p2Qx44nR9r0GK+1mPodous89czBfQ@mail.gmail.com>
+Message-ID: <CAHk-=wg1evFSMjkpNgL-6p2Qx44nR9r0GK+1mPodous89czBfQ@mail.gmail.com>
 Subject: Re: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if possible
 To:     sedat.dilek@gmail.com
 Cc:     Yury Norov <yury.norov@gmail.com>,
@@ -93,73 +94,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 5, 2023 at 1:26=E2=80=AFAM Sedat Dilek <sedat.dilek@gmail.com> =
-wrote:
+On Sun, Mar 5, 2023 at 10:17=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> can you share your "normal config", please?
+> There are a few main issues with MAXSMP:
 
-Well, I just have CONFIG_NR_CPUS set to 64.
+It's probably worth noting that most architectures don't even support
+MAXSMP at all.
 
-That happens to be the number of actual cores (well, threads) I have
-on my desktop, but it's what I use for my laptop too (that has 8
-cores).
+Only x86-64 does.
 
-Basically, I consider CONFIG_NR_CPUS=3D64 is likely the "sweet spot" for
-code generation and still covering 99+% of all machines out there.
+For example, ia64 and sparc64, which both did techncially support a
+lot of cores, just made "cpumask_t" huge, and had no support for the
+whole "use a pointer to an indirect allocation".
 
-Now, MAXSMP is great for (a) coverage testing and for (b) being able
-to handle pretty much *anything* out there, but it really was
-originally meant for the SGI kind of hardware: not exactly
-off-the-shelf.
+That ends up meaning that you allocate those huge structures on the
+stack or just make other structures enormous when they contain a CPU
+mask, but it mostly works. It's a horrid, horrid model, though. But at
+least ia64 had 64kB stacks anyway, and in the book of "bad engineering
+decisions of Itanium", this is all just a footnote.
 
-So I use MAXSMP for compile testing (by virtue of "allmodconfig"), and
-it's great for that. But unless you have more than several hundred
-cpus in your machine, you should never use it.
+arm64 also has that "range 2 4096" for number of CPUs but defaults to
+a much saner 256 cpus.
 
-There are a few main issues with MAXSMP:
+I suspect (and sincerely hope) that nobody actually tries to use an
+arm64 build with that 4k cpu build. If/when arm64 actually does get up
+to that 'thousands of cores" situation, they'll hopefully enable the
+MAXSMP kind of indirection and off-stack cpu mask arrays.
 
- - the simple ("common") embedded cpu masks end up being big (ie any
-data structure that has a "cpumask_t" in it will be huge, just because
-the static size of 'struct cpumask' is 8192 bits, ie 1kB)
+So MAXSMP and the whole CPUMASK_OFFSTACK option is an architecture
+choice, and you don't have to do it the way x86-64 does it. But the
+x86 choice is likely the best tested and thought out by far.
 
- - the fancy case of using a "cpumask_var_t" will use a pointer and a
-dynamic allocation (which is then sized to be appropriate to the
-*actual* number of CPU's, so that you don't have to allocate 8192 bits
-for everything).
+For example, POWERPC technically supports CPUMASK_OFFSTACK too, but
+really only in theory. On powerpc, you have
 
- - the code generation ends up inevitably being about variable-sized
-loops, because nobody wants to traverse those kinds of data structures
+    config NR_CPUS
+          range 2 8192 if SMP
+          default "32" if PPC64
 
-In contrast, if you use CONFIG_NR_CPUS=3D64, both the embeddeed and
-"fancy" version will be just a single 64-bit word. No extra pointer
-overhead, no indirection through said pointers, and no need for loops
-(ok, there will still be loops for walking the bits in the word, but a
-lot of them will actually be about using instructions like "bsf" etc).
+so while configuration the range is technically up to 8k CPUs, I doubt
+people use that value very much. And we have
 
-So you end up with better code, smaller data structures, and less
-pointer chasing.
+        select CPUMASK_OFFSTACK if NR_CPUS >=3D 8192
 
-So those two situations are generally the two "sane" configurations: a
-good reasonable NR_CPUS that works for just about everybody, and then
-another extreme config for the 1% (or - more likely - 0.01%)
+so it only uses that OFFSTACK one if you pick exactly 8192 CPUs (which
+presumably nobody does in real life outside of build testing - it's
+not the default, and I think most of the POWER range tops up in the
+192 core range, eg E980 with 16 sockets of 12 cores each).
 
-Now, it's not like 64 is somehow magical. Picking something like
-NR_CPUS of 192 is perfectly fine too - it will use three words for the
-bitmap, it will still avoid the pointer indirection, it will have a
-few small fixed-size loops. It's certainly not *wrong*. It will cover
-bigger HEDT machines, but I feel like the HEDT people probably are
-special enough that they could probably just use the MAXSMP case, or -
-if they care - just build their own kernels.
+So I suspect that x86-64 is the *only* one to actually use this
+widely, and I think distros have been *much* too eager to do so.
 
-So you *can* certainly pick other values. We used to have special UP
-vs SMP kernel builds, and that clearly no longer makes sense. Nobody
-cares about UP on x86-64.
+The fact that most distros default to
 
-But I do feel like MAXSMP is simply not a great config for 99.9% of
-all people, and if you are willing to have two configs, then that "64
-or MAXSMP" seems to be the sane split.
+    CONFIG_MAXSMP=3Dy
+    CONFIG_NR_CPUS=3D8192
 
-And with that split, there will be *very* few people who actually use MAXSM=
-P.
+seems pretty crazy, when I have a hard time finding anything with more
+than 192 cores.  I'm sure they exist. But do they _really_ run
+unmodified vendor kernels?
 
                Linus
