@@ -2,154 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA1F96AAF7C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Mar 2023 13:26:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8C4E6AB191
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Mar 2023 18:23:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229625AbjCEM0x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Mar 2023 07:26:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40014 "EHLO
+        id S229591AbjCERXi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Mar 2023 12:23:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbjCEM0w (ORCPT
+        with ESMTP id S229437AbjCERXh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Mar 2023 07:26:52 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C39B86A5A;
-        Sun,  5 Mar 2023 04:26:51 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id m20-20020a17090ab79400b00239d8e182efso10498841pjr.5;
-        Sun, 05 Mar 2023 04:26:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xl6vFQ8hkQZXo44bP1B53YtidADnYRkkCpZDgBto+Ns=;
-        b=fWAE6kDK6cLjnWoKKFqTQKS46k6YBJbs/Y35QxFtDPDxjvaZE/U8iCdV5aDw5WKMHP
-         khWReskA4FTtEqV5ZtLjpSVHC12Q7OIjjG/SNuXsjpAfUmbuHq25G5u7jALq5mAakPz7
-         2d5scY2CHOUIPFx+rSPNJZL1L61eRDrF7Ph4XVWEXbP9Co9Pr5JvsBiie8oDIshfKnyR
-         Or6uM6LjQMIx213rv2yKM0MAywWiBbz99lC9YB8y+LeoeZOiIVUCWBLdTJGdh4glSr92
-         oolb6QjebyxT+6vPROd/1QaR3Ohbg/BcW1IbIAThMQjRAgAN2pYYYhhMevU14kPOzRid
-         RrZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xl6vFQ8hkQZXo44bP1B53YtidADnYRkkCpZDgBto+Ns=;
-        b=dSWc5ax4gGF6GtlGkcS+nvbNo12B5dlRaPI13u5yWc7mdaIz+ygsui5xwrv1H13Y1z
-         y7oz/u3FP75D2gxLS4Az+w+8qwJ6te2vNRnPxm7kEyQxq/uIkdRqBz7JqPB/4EDLwRFi
-         xFXBV5T+MkzcO+T1fNmVWln0vnquWGLsObnyGs8EXj7if4/gy063swiUHfMUjnpXpJhq
-         7ygHkkjcZodboheoFQ7HLcy5U/kqlg/XKRBbyxdACr6RzSEUo6kA58GLzKRxPGgtXFas
-         ngRPLGPJ5ZbndCPfKNNwtS7uhwOjO5tK+HLEs/IJqMCAnCUymlXT8v3Qf0aUWX+bcigI
-         lO0w==
-X-Gm-Message-State: AO0yUKW+6p7claxUD3jwVkRrJW6uyBjNP9uoSYqXOyhRjMlYXnMYtBEU
-        IM1y357/p8pxYmJn92nSZfY5KdeyTyUTiQ==
-X-Google-Smtp-Source: AK7set/JhFWvhV+4RtlLAix3MAknUUeAZO0KumPI+d44GUXEMbsUIWDLTkZiwVqZ6cB0kYSmx4DWUw==
-X-Received: by 2002:a17:90b:1bc2:b0:237:a174:ce54 with SMTP id oa2-20020a17090b1bc200b00237a174ce54mr8409118pjb.21.1678019210952;
-        Sun, 05 Mar 2023 04:26:50 -0800 (PST)
-Received: from rh-tp ([2406:7400:63:469f:eb50:3ffb:dc1b:2d55])
-        by smtp.gmail.com with ESMTPSA id lt15-20020a17090b354f00b0023377b98c7csm4319571pjb.38.2023.03.05.04.26.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Mar 2023 04:26:50 -0800 (PST)
-Date:   Sun, 05 Mar 2023 17:56:32 +0530
-Message-Id: <87zg8r1j0n.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 20/31] ext4: Convert __ext4_block_zero_page_range() to use a folio
-In-Reply-To: <20230126202415.1682629-21-willy@infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Sun, 5 Mar 2023 12:23:37 -0500
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60FD3EC6F
+        for <linux-fsdevel@vger.kernel.org>; Sun,  5 Mar 2023 09:23:35 -0800 (PST)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-250-LOSwqRzdPumsQ90Himc9cg-1; Sun, 05 Mar 2023 17:23:31 +0000
+X-MC-Unique: LOSwqRzdPumsQ90Himc9cg-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.47; Sun, 5 Mar
+ 2023 17:23:29 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.047; Sun, 5 Mar 2023 17:23:29 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
+        Mateusz Guzik <mjguzik@gmail.com>, Borislav Petkov <bp@suse.de>
+CC:     Alexander Potapenko <glider@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Christian Brauner <brauner@kernel.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
+ possible
+Thread-Topic: [PATCH v3 2/2] vfs: avoid duplicating creds in faccessat if
+ possible
+Thread-Index: AQHZTtzWe5NzBLiIgUWjC9/KNPby/q7sbr9A
+Date:   Sun, 5 Mar 2023 17:23:29 +0000
+Message-ID: <f764a4ff956c4de8b059602c539e2c4a@AcuMS.aculab.com>
+References: <CAHk-=wgbm1rjkSs0w+dVJJzzK2M1No=j419c+i7T4V4ky2skOw@mail.gmail.com>
+ <20230302083025.khqdizrnjkzs2lt6@wittgenstein>
+ <CAHk-=wivxuLSE4ESRYv_=e8wXrD0GEjFQmUYnHKyR1iTDTeDwg@mail.gmail.com>
+ <CAGudoHF9WKoKhKRHOH_yMsPnX+8Lh0fXe+y-K26mVR0gajEhaQ@mail.gmail.com>
+ <ZADoeOiJs6BRLUSd@ZenIV>
+ <CAGudoHFhnJ1z-81FKYpzfDmvcWFeHNkKGdr00CkuH5WJa2FAMQ@mail.gmail.com>
+ <CAHk-=wjp5fMupRwnROtC5Yn+MVLA7v=J+_QJSi1rr3qAjdsfXw@mail.gmail.com>
+ <CAHk-=wi11ZbOBdMR5hQDz0x0NNZ9gM-4SxXxK-7R3_yh7e10rQ@mail.gmail.com>
+ <ZAD21ZEiB2V9Ttto@ZenIV> <6400fedb.170a0220.ece29.04b8@mx.google.com>
+ <ZAEC3LN6oUe6BKSN@ZenIV>
+ <CAG_fn=UQEuvJ9WXou_sW3moHcVQZJ9NvJ5McNcsYE8xw_WEYGw@mail.gmail.com>
+ <CAGudoHFqNdXDJM2uCQ9m7LzP0pAx=iVj1WBnKc4k9Ky1Xf5XmQ@mail.gmail.com>
+ <CAHk-=wh-eTh=4g28Ec5W4pHNTaCSZWJdxVj4BH2sNE2hAA+cww@mail.gmail.com>
+ <CAGudoHG+anGcO1XePmLjb+Hatr4VQMiZ2FufXs8hT3JrHyGMAw@mail.gmail.com>
+ <CAHk-=wjy_q9t4APgug9q-EBMRKAybXt9DQbyM9Egsh=F+0k2Mg@mail.gmail.com>
+ <CAGudoHGYaWTCnL4GOR+4Lbcfg5qrdOtNjestGZOkgtUaTwdGrQ@mail.gmail.com>
+ <CAHk-=wgz51x2gaiD4=6T3UGZtKOSm3k56iq=h4tqy3wQsN-VTA@mail.gmail.com>
+ <CAGudoHH8t9_5iLd8FsTW4PBZ+_vGad3YAd8K=n=SrRtnWHm49Q@mail.gmail.com>
+ <CAGudoHFPr4+vfqufWiscRXqSRAuZM=S8H7QsZbiLrG+s1OWm1w@mail.gmail.com>
+ <CAHk-=wh17G6zo6Rfut++SHzDgXdvtrupfSX+bNL08v=LpHU0Lg@mail.gmail.com>
+In-Reply-To: <CAHk-=wh17G6zo6Rfut++SHzDgXdvtrupfSX+bNL08v=LpHU0Lg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Matthew Wilcox (Oracle)" <willy@infradead.org> writes:
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDQgTWFyY2ggMjAyMyAyMDo0OA0KPiANCj4g
+T24gU2F0LCBNYXIgNCwgMjAyMyBhdCAxMjozMeKAr1BNIE1hdGV1c3ogR3V6aWsgPG1qZ3V6aWtA
+Z21haWwuY29tPiB3cm90ZToNCj4gPg0KPiA+IEdvb2QgbmV3czogZ2NjIHByb3ZpZGVzIGEgbG90
+IG9mIGNvbnRyb2wgYXMgdG8gaG93IGl0IGlubGluZXMgc3RyaW5nDQo+ID4gb3BzLCBtb3N0IG5v
+dGFibHk6DQo+ID4gICAgICAgIC1tc3RyaW5nb3Atc3RyYXRlZ3k9YWxnDQo+IA0KPiBOb3RlIHRo
+YXQgYW55IHN0YXRpYyBkZWNpc2lvbiBpcyBhbHdheXMgZ29pbmcgdG8gYmUgY3JhcCBzb21ld2hl
+cmUuDQo+IFlvdSBjYW4gbWFrZSBpdCBkbyB0aGUgIm9wdGltYWwiIHRoaW5nIGZvciBhbnkgcGFy
+dGljdWxhciBtYWNoaW5lLCBidXQNCj4gSSBjb25zaWRlciB0aGF0IHRvIGJlIGp1c3QgZ2FyYmFn
+ZS4NCj4gDQo+IFdoYXQgSSB3b3VsZCBhY3R1YWxseSBsaWtlIHRvIHNlZSBpcyB0aGUgY29tcGls
+ZXIgYWx3YXlzIGdlbmVyYXRlIGFuDQo+IG91dC1vZi1saW5lIGNhbGwgZm9yIHRoZSAiYmlnIGVu
+b3VnaCB0byBub3QganVzdCBkbyBpbmxpbmUgdHJpdmlhbGx5Ig0KPiBjYXNlLCBidXQgZG8gc28g
+d2l0aCB0aGUgInJlcCBzdG9zYi9tb3ZzYiIgY2FsbGluZyBjb252ZW50aW9uLg0KDQpJIHRoaW5r
+IHlvdSBhbHNvIHdhbnQgaXQgdG8gZGlmZmVyZW50aWF0ZSBiZXR3ZWVuIHJlcXVlc3RzIHRoYXQN
+CmFyZSBrbm93biB0byBiZSBhIHdob2xlIG51bWJlciBvZiB3b3JkcyBhbmQgb25lcyB0aGF0IG1p
+Z2h0DQpiZSBieXRlIHNpemVkLg0KDQpGb3IgdGhlIGttYWxsb2MrbWVtemVybyBjYXNlIHlvdSBr
+bm93IHlvdSBjYW4gemVybyBhIHdob2xlDQpudW1iZXIgb2Ygd29yZHMgLSBzbyBhbGwgdGhlIGNo
+ZWNrcyBtZW1zZXQgaGFzIHRvIGRvIGZvcg0KYnl0ZSBsZW5ndGgvYWxpZ25tZW50IGNhbiBiZSBy
+ZW1vdmVkLg0KDQpUaGUgc2FtZSBpcyB0cnVlIGZvciBtZW1jcHkoKSBjYWxscyB1c2VkIGZvciBz
+dHJ1Y3R1cmUgY29waWVzLg0KVGhlIGNvbXBpbGVyIGtub3dzIHRoYXQgYWxpZ25lZCBmdWxsLXdv
+cmQgY29waWVzIGNhbiBiZSBkb25lLg0KU28gaXQgc2hvdWxkbid0IGJlIGNhbGxpbmcgYSBmdW5j
+dGlvbiB0aGF0IGhhcyB0byByZWRvIHRoZSB0ZXN0cy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVy
+ZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5
+bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-> Use folio APIs throughout.  Saves many calls to compound_head().
-
-minor comment below.
-
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/ext4/inode.c | 28 ++++++++++++++++------------
->  1 file changed, 16 insertions(+), 12 deletions(-)
->
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index b79e591b7c8e..727aa2e51a9d 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3812,23 +3812,26 @@ static int __ext4_block_zero_page_range(handle_t *handle,
->  	ext4_lblk_t iblock;
->  	struct inode *inode = mapping->host;
->  	struct buffer_head *bh;
-> -	struct page *page;
-> +	struct folio *folio;
->  	int err = 0;
->
-> -	page = find_or_create_page(mapping, from >> PAGE_SHIFT,
-> -				   mapping_gfp_constraint(mapping, ~__GFP_FS));
-> -	if (!page)
-> +	folio = __filemap_get_folio(mapping, from >> PAGE_SHIFT,
-> +				    FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
-> +				    mapping_gfp_constraint(mapping, ~__GFP_FS));
-> +	if (!folio)
->  		return -ENOMEM;
->
->  	blocksize = inode->i_sb->s_blocksize;
->
->  	iblock = index << (PAGE_SHIFT - inode->i_sb->s_blocksize_bits);
->
-> -	if (!page_has_buffers(page))
-> -		create_empty_buffers(page, blocksize, 0);
-> +	bh = folio_buffers(folio);
-> +	if (!bh) {
-> +		create_empty_buffers(&folio->page, blocksize, 0);
-> +		bh = folio_buffers(folio);
-> +	}
->
->  	/* Find the buffer that contains "offset" */
-> -	bh = page_buffers(page);
->  	pos = blocksize;
->  	while (offset >= pos) {
->  		bh = bh->b_this_page;
-> @@ -3850,7 +3853,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
->  	}
->
->  	/* Ok, it's mapped. Make sure it's up-to-date */
-> -	if (PageUptodate(page))
-> +	if (folio_test_uptodate(folio))
->  		set_buffer_uptodate(bh);
->
->  	if (!buffer_uptodate(bh)) {
-> @@ -3860,7 +3863,8 @@ static int __ext4_block_zero_page_range(handle_t *handle,
->  		if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
->  			/* We expect the key to be set. */
->  			BUG_ON(!fscrypt_has_encryption_key(inode));
-> -			err = fscrypt_decrypt_pagecache_blocks(page, blocksize,
-> +			err = fscrypt_decrypt_pagecache_blocks(&folio->page,
-> +							       blocksize,
->  							       bh_offset(bh));
-
-I think after this patch which added support for decrypting large folio,
-fscrypt_descrypt_pagecache_blocks() takes folio as it's 1st argument.
-Hence this patch will need a small change to pass folio instead of page.
-
-Other than that the change looks good to me.
-
-Please feel free to add -
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-
-    51e4e3153ebc32d3280d5d17418ae6f1a44f1ec1
-    Author:     Eric Biggers <ebiggers@google.com>
-    CommitDate: Sat Jan 28 15:10:12 2023 -0800
-
-    fscrypt: support decrypting data from large folios
-
-
--ritesh
