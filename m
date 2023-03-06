@@ -2,129 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E42CE6ACB0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 18:45:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22FE96ACB33
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 18:48:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230137AbjCFRp5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 12:45:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60132 "EHLO
+        id S229799AbjCFRsz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 12:48:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230145AbjCFRpt (ORCPT
+        with ESMTP id S229835AbjCFRsv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 12:45:49 -0500
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE6A76BDCD
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Mar 2023 09:45:14 -0800 (PST)
-Received: by mail-io1-f72.google.com with SMTP id y187-20020a6bc8c4000000b0074d28aa136dso5685057iof.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Mar 2023 09:45:14 -0800 (PST)
+        Mon, 6 Mar 2023 12:48:51 -0500
+Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5198A3433F;
+        Mon,  6 Mar 2023 09:48:11 -0800 (PST)
+Received: by mail-qt1-x82f.google.com with SMTP id c19so11421221qtn.13;
+        Mon, 06 Mar 2023 09:48:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678124858;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p1eWPKJ51eNrRfxr8qpuMzBvGQcCgHtk6iQFk59WM4Q=;
+        b=kU6ZdNt4/JNsj5FLXVbb6eSpPM6wvFVtR+1XIOxFAz9rylhl4Clv+MaMsvMnhAEG+1
+         73a/PEjugV8ItdHRKPv4qEGEs0QV6KYWNM8h1I5ueexEhjEKla96FEl1i2xmijBwdgNO
+         0FQ2WqUN/tbJbN94M2whMpPqaEPd5WBca8RT7pWVGg/oO7/Hp9NhlSuU1IF+F9Kxd+Jt
+         Pb8oiBGq6yCoSZtTlSc9f/4Q2KB4YQxizsqU7olT+eJ3jOLQ0LsSGZGmNqq44foHK5ed
+         MVLPcsRwJU+uDTkjTizZPxZU0YDpFm68U3uDYxk3F/S+H+jSpJnnk+wFWGK8/6sGVZC9
+         JqUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678124678;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DvGwBPTQ7j4fKwRJaqe9v0f7Zi4TnEYXY8bTeBecqR4=;
-        b=aOqwwgqHkz/YZfxaXnRklFlTTJ/kf6p5TAstEBowQR19oQQUBzoTH0zji1QbPwJZtz
-         zYIBbj5YRNU8FQdEiTaa02CHgvTyEM9ZmAq3ubSKAdoprrg0/mQb94N/VNNsSx5YhTR0
-         io1fQSn9A7mkVTG8vmnsClUVckMPJVa3c8Eax1wahr1fsxWMUnhP3DxtB5F3IPn7rvcI
-         6gX0/Gtelk06mRZAG/1Od9kcnarG6LM1EB8hxfT7vZZvo7IoBB40QtBsrBTYdcheEOW5
-         vfa5DPXmB4c6SdcqRDJDrhJ35Fm8zAKuBXyXejJ0i7qpEQ0nJD1M6b/YmYO3wTsWykGK
-         CPuA==
-X-Gm-Message-State: AO0yUKW37KdfZOsngSfkSalTtSgdMaIggO8EvJCcPoQViQkQf87ZbIpe
-        JF+fJISGKUK+2wZFLSQryL2HDjGPRF+u8vNVr7IGlFg0v+XHPFY=
-X-Google-Smtp-Source: AK7set/whmgHHHaEz+dxLemDH8Mpf08oeUidi88EJ9qB9lD9fwWkfeSEUBp++VkaZXUH9HZ/AUSU8/JXgqqMcKH2YuOR5QMsZ8vn
+        d=1e100.net; s=20210112; t=1678124858;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p1eWPKJ51eNrRfxr8qpuMzBvGQcCgHtk6iQFk59WM4Q=;
+        b=5GYI4G10cgc7DMeaficWGON+0m3xkEDXgZBjjK4bGOrP7OIjRav01phlcQdGb6IW75
+         8lFn4AhIkfLcFF3Re6KNLUBAngTTefFXPLWW5IdUEmLYrHiYyq0T+eHNlOfMpSQ2PXzt
+         qyYU2wc5Qih783AY96VgYgy6UhI53fyc1WLT0Y42c1Du9/Q8zLcVHwt5d7LKjR4QFe3p
+         b59QDc4fXyRCz7Xlw8z654LGa20T5HBhdzrkPh4NbdvCr8JK8pL1SKR+L8oFm05AhCpo
+         G1Xy9eYSTuLhGtWXXmtaTUiCi5odv3QAIsSa4Dr4n46onAo7np/fyv3UibbFAt95IYM7
+         mv1Q==
+X-Gm-Message-State: AO0yUKWJ4rTs/B1/Pd6nY3OlgHFwqU3B+/70gXwR8FaAr13UUsPVTR35
+        pZxFY9HA7y3Tc5BV3Ja6VZ8=
+X-Google-Smtp-Source: AK7set8j8NYHOzIg2YdsTAT6Tz9KFRAPslskDrFAAN58RYGKSTcYRAAey1lBpiMdZD2wEXVAi1UweA==
+X-Received: by 2002:a05:622a:8:b0:3bf:cfa6:55a1 with SMTP id x8-20020a05622a000800b003bfcfa655a1mr20480979qtw.12.1678124858595;
+        Mon, 06 Mar 2023 09:47:38 -0800 (PST)
+Received: from mjollnir ([137.118.186.11])
+        by smtp.gmail.com with ESMTPSA id s184-20020a372cc1000000b0074235fc7a69sm7807445qkh.68.2023.03.06.09.47.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 09:47:37 -0800 (PST)
+Date:   Mon, 6 Mar 2023 12:47:32 -0500
+From:   Storm Dragon <stormdragon2976@gmail.com>
+To:     Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc:     stable@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: Request to backport "sysctl: fix proc_dobool() usability" to
+ stable kernels
+Message-ID: <ZAYnNEimr6WwoWEl@mjollnir>
+References: <20230210145823.756906-1-omosnace@redhat.com>
+ <9563010d-a5cf-49e2-8c51-f2e66f064997@t-8ch.de>
+ <ZAQDxbTlaIoKb9yB@mjollnir>
+ <09ee7747-3038-4d6c-b063-f0349fa52b6e@t-8ch.de>
 MIME-Version: 1.0
-X-Received: by 2002:a02:95cd:0:b0:3c5:15d2:9a1c with SMTP id
- b71-20020a0295cd000000b003c515d29a1cmr5734944jai.2.1678124678137; Mon, 06 Mar
- 2023 09:44:38 -0800 (PST)
-Date:   Mon, 06 Mar 2023 09:44:38 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005451a705f63ed952@google.com>
-Subject: [syzbot] [hfs?] kernel BUG in hfsplus_bnode_unhash
-From:   syzbot <syzbot+65f654e7ff6234bf771f@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/j6BFlRkvo3AYZi8"
+Content-Disposition: inline
+In-Reply-To: <09ee7747-3038-4d6c-b063-f0349fa52b6e@t-8ch.de>
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
 
-syzbot found the following issue on:
+--/j6BFlRkvo3AYZi8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-HEAD commit:    0988a0ea7919 Merge tag 'for-v6.3-part2' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ee96e4c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ff98a3b3c1aed3ab
-dashboard link: https://syzkaller.appspot.com/bug?extid=65f654e7ff6234bf771f
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+On Sun, Mar 05, 2023 at 03:06:12AM +0000, Thomas Wei=C3=9Fschuh wrote:
+>Maybe it would also make sense to open a ticket to ArchLinux to enable
+>CONFIG_LEGACY_TIOCSTI again, as per the kernel default.
+>
+>In accordance with the options help text:
+>
+>"Say 'Y here only if you have confirmed that yout system's userspace
+>depends on this functionality to continue operating normally"
+>
+>Could you create such a ticket if think it's necessary?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The ticket has been created. The link is:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+65f654e7ff6234bf771f@syzkaller.appspotmail.com
+https://bugs.archlinux.org/task/77745
 
-------------[ cut here ]------------
-kernel BUG at fs/hfsplus/bnode.c:461!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 100 Comm: kswapd0 Not tainted 6.2.0-syzkaller-13467-g0988a0ea7919 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-RIP: 0010:hfsplus_bnode_unhash+0xf7/0x1e0 fs/hfsplus/bnode.c:461
-Code: 2b e8 fd e7 34 ff 48 8d 6b 20 48 89 e8 48 c1 e8 03 42 80 3c 28 00 0f 85 b3 00 00 00 48 8b 5b 20 48 85 db 75 d2 e8 d9 e7 34 ff <0f> 0b e8 d2 e7 34 ff e8 cd e7 34 ff 49 8d 7c 24 20 48 b8 00 00 00
-RSP: 0018:ffffc90001587348 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff8880160f0100 RSI: ffffffff824f32d7 RDI: ffff88802a310120
-RBP: ffff88802a310000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff888029372a00
-R13: 0000000000000000 R14: ffffea00009f81c0 R15: 0000000000001000
-FS:  0000000000000000(0000) GS:ffff88802ca00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7fd8638528 CR3: 0000000071e75000 CR4: 0000000000150ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- hfsplus_release_folio+0x285/0x5f0 fs/hfsplus/inode.c:102
- filemap_release_folio+0x13f/0x1b0 mm/filemap.c:4121
- shrink_folio_list+0x1fe3/0x3c80 mm/vmscan.c:2010
- evict_folios+0x794/0x1940 mm/vmscan.c:5121
- try_to_shrink_lruvec+0x82c/0xb90 mm/vmscan.c:5297
- shrink_one+0x46b/0x810 mm/vmscan.c:5341
- shrink_many mm/vmscan.c:5394 [inline]
- lru_gen_shrink_node mm/vmscan.c:5511 [inline]
- shrink_node+0x2064/0x35f0 mm/vmscan.c:6459
- kswapd_shrink_node mm/vmscan.c:7262 [inline]
- balance_pgdat+0xa02/0x1ac0 mm/vmscan.c:7452
- kswapd+0x70b/0x1000 mm/vmscan.c:7712
- kthread+0x2e8/0x3a0 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hfsplus_bnode_unhash+0xf7/0x1e0 fs/hfsplus/bnode.c:461
-Code: 2b e8 fd e7 34 ff 48 8d 6b 20 48 89 e8 48 c1 e8 03 42 80 3c 28 00 0f 85 b3 00 00 00 48 8b 5b 20 48 85 db 75 d2 e8 d9 e7 34 ff <0f> 0b e8 d2 e7 34 ff e8 cd e7 34 ff 49 8d 7c 24 20 48 b8 00 00 00
-RSP: 0018:ffffc90001587348 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff8880160f0100 RSI: ffffffff824f32d7 RDI: ffff88802a310120
-RBP: ffff88802a310000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff888029372a00
-R13: 0000000000000000 R14: ffffea00009f81c0 R15: 0000000000001000
-FS:  0000000000000000(0000) GS:ffff88802ca00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7fd8638528 CR3: 0000000071e75000 CR4: 0000000000150ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Thanks,
+Storm
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--/j6BFlRkvo3AYZi8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEjjImGMhZhYoKESBfW+ojcUPdwZMFAmQGJzEACgkQW+ojcUPd
+wZMN6w/+L7tA7xu1mricIdiBEVjlUlfhOfOaYN9Mzy0JJyPtF5sYhyBx9eozJzqp
+LIdDqKx5Vn4rgpE9sGaCEWayLP+4YpHgpitkuZCiUHR5vfeOn1r7iqwKPx1qetPZ
+S4LYFqSnZLgM1V29X1WG4JiJ6ek7fLwGEroohnvzUZSoDbGvGAPqeCd1fl0OZq3o
+EabBruycpoA9v10aw7ImL0hqtwKQQkDSvaazwAstQDRTyU4iB8SagU0Qntbzf09S
+d4WGSMnP2zXR57L1UlyD4uW143WICS0yB7V3aKUu+NZtdZfuh+fKyz4eWQ93aVYm
+n/PizuO49lAiJmw1pr0QdiKCyTzpH0Uqt+XW42PRMXANQ788oXtDhZWyhEwvgqru
+cQdbf4rmSU8Krt2C1MqrZwlMXCMBn8kaM0Kt6SxbuOR8NttibVi4idkGLHtJmSdN
+mJ8FA8MAE0HlIL6mSQhflCOJtfFiVdAeWrQ2/8FIew+A2TDMn4c943Ab9ycmWoUy
+iFOe5VKjeM3pQXMZ1c16wI9UtSeyBt7UdTYL/5I+uZtSFosFAM0psokenxkkh/pO
+W0GumhF9xXF1OQEzVJF1YRbH89ia7VgCo0uSnOJ8j3T6ib51gBHCQsWt5hgUQr9d
+XlJ4YarcAU7aFqflr1koKlMib5Yv8bvxEgQBpAvPY7DDnRvyoQk=
+=w2CO
+-----END PGP SIGNATURE-----
+
+--/j6BFlRkvo3AYZi8--
