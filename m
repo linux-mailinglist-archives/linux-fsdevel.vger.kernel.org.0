@@ -2,122 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F8C6ACDDA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 20:18:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 554A16ACDEF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 20:25:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230221AbjCFTSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 14:18:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42014 "EHLO
+        id S229582AbjCFTZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 14:25:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229864AbjCFTSZ (ORCPT
+        with ESMTP id S229486AbjCFTZ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 14:18:25 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 822A4421C
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Mar 2023 11:18:23 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id cw28so43125805edb.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Mar 2023 11:18:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1678130302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WbDbkrtYIaj4h/JEt+PGK5ggFWdbYGJfSSTneNQay2I=;
-        b=j/07IYjSLrbP9Eed2enqYxlX9HMGoSoiQUuwQx9dFVyPpB3YRAMSeLD9HaWSLpNvYu
-         rdpyWP6BteBn7g2st0KtOpwue3ypCyVyHqL7KkagjXQ/Xleg57j0JY3rvKcf8dI7ME4z
-         /dfVGyjtzWyQ7xEi+8locFLvagSsTZ6wt9YqU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678130302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WbDbkrtYIaj4h/JEt+PGK5ggFWdbYGJfSSTneNQay2I=;
-        b=zyZWORnSJNO0U7M5ic7ulXtXmnfAOr+USaqI64jOH+hkBVWob0b+WNqmuFUmEKuM5U
-         49VyiPDpDtqLrX+QK8bg6cIQnQdNE2cdwLFgCLoGQih3KEyF0Ly/97MGqLrdXJSvLVsL
-         BFOSLIrz71syh+YdPsqMBVUS6q5Iz10iTU3Gqz7JKGqbRG4HduBnZ2p71NCXgIkzCKkM
-         vnrepBRNK/JNkewSf1EWeOeCrY/PS9Kcslm0Q7ymzHffAauF6bOcuBzQ4zqQk8/5VvDR
-         +39QErj3xk0cUM4q6JO9a4ZUs6I1O7niapLnCXtTneqXN6MKsEzDBsQb+yUyUzKJz1x5
-         FH9w==
-X-Gm-Message-State: AO0yUKU1f0/8qe1WB3ljXD0tvgGH5b5venFfMCOdpZ4mHqqA3Vm00aeC
-        QnWDZzQqx5LTT3TFWRyPBv2UPU9talUG674W9eGSXw==
-X-Google-Smtp-Source: AK7set9r6F6+ciMT23z4zIyc6eSsWKiXVPrmgrbAFXs3L+sQF77q3SaEIRL9LWHOYyUh2e/b+JTXgVDt4xSUBnGetuA=
-X-Received: by 2002:a17:906:edac:b0:8f3:9ee9:f1e2 with SMTP id
- sa12-20020a170906edac00b008f39ee9f1e2mr5847569ejb.5.1678130301984; Mon, 06
- Mar 2023 11:18:21 -0800 (PST)
+        Mon, 6 Mar 2023 14:25:26 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F22F5F508;
+        Mon,  6 Mar 2023 11:25:25 -0800 (PST)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 326J182T013880;
+        Mon, 6 Mar 2023 19:25:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=6+23jHM4l58hoG7GSUu7wO0221imSXoSx+ETuZMRz4c=;
+ b=TIOp11uObWUHecHhZ/YVuD3frIrKUrUaGQRHneur7arLaIKDDrI2JrMCyOEl7bAjgo71
+ ttheay5MkWER9LJEEPPLW9ltvSqe6YIreKH33gGFJPYDIlWE7bO6O+iyhJrBGy4ZLTJx
+ H6EEERLADE1bszosJy6RtwegN/91Xim3g/7kkWPm/ZhZ1jr6Dp99N5rh5FqQ7CiJSeW9
+ UVC2krbcVxXDpvzhc3CWxa4UY5Sj6BqORtmWEyDU0jL7X3uOiudvaP8KOpSZxSq7tsvt
+ kABwdqtvpCFeaHsTwXgg2rjgfIbHQnEmvPT22ehIWIwosQiUQqFTHTRZl6d0Z1s7UoAr dA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4uaeu1xr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 19:24:59 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 326J6rrK030908;
+        Mon, 6 Mar 2023 19:24:59 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4uaeu1wt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 19:24:59 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 326IoZsk017255;
+        Mon, 6 Mar 2023 19:24:57 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([9.208.129.120])
+        by ppma04dal.us.ibm.com (PPS) with ESMTPS id 3p41akajea-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 19:24:57 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+        by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 326JOt5228246674
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Mar 2023 19:24:56 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D09C25805E;
+        Mon,  6 Mar 2023 19:24:55 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CEA575805D;
+        Mon,  6 Mar 2023 19:24:51 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon,  6 Mar 2023 19:24:51 +0000 (GMT)
+Message-ID: <e5303185-c698-0243-8208-6cb553fde37b@linux.ibm.com>
+Date:   Mon, 6 Mar 2023 14:24:51 -0500
 MIME-Version: 1.0
-References: <20230220193754.470330-1-aleksandr.mikhalitsyn@canonical.com>
- <CAJfpegvQyD-+EL2DdVWmyKF8odYWj4kAONyRf6VH_h4JCTu=vg@mail.gmail.com> <CAEivzxdX28JhA+DY92nTGn56kmMgdeT9WX__j7NU3QHpg+wcdQ@mail.gmail.com>
-In-Reply-To: <CAEivzxdX28JhA+DY92nTGn56kmMgdeT9WX__j7NU3QHpg+wcdQ@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 6 Mar 2023 20:18:11 +0100
-Message-ID: <CAJfpeguYO9J=np5vxH+HjCSAxn=8fcQRhh_-BVadTt86zWfkpQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/9] fuse: API for Checkpoint/Restore
-To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc:     mszeredi@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>,
-        =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
-        Seth Forshee <sforshee@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        criu@openvz.org, flyingpeng@tencent.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 16/28] security: Introduce file_post_open hook
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+ <20230303181842.1087717-17-roberto.sassu@huaweicloud.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20230303181842.1087717-17-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: epqk5AExyAg6NYq9PP8NxSaDFSR5J6H4
+X-Proofpoint-ORIG-GUID: be0YuCLZdPBMY9GxhbA9tw1SdswEaE-e
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-06_12,2023-03-06_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ phishscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 mlxscore=0 impostorscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303060168
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 6 Mar 2023 at 17:44, Aleksandr Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com> wrote:
->
-> On Mon, Mar 6, 2023 at 5:15=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu>=
- wrote:
 
-> > Apparently all of the added mechanisms (REINIT, BM_REVAL, conn_gen)
-> > are crash recovery related, and not useful for C/R.  Why is this being
-> > advertised as a precursor for CRIU support?
->
-> It's because I'm doing this with CRIU in mind too, I think it's a good
-> way to make a universal interface
-> which can address not only the recovery case but also the C/R, cause
-> in some sense it's a close problem.
 
-That's what I'm wondering about...
+On 3/3/23 13:18, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> In preparation to move IMA and EVM to the LSM infrastructure, introduce the
+> file_post_open hook. Also, export security_file_post_open() for NFS.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Crash recovery is about restoring (or at least regenerating) state in
-the userspace server.
+>   
+> +/**
+> + * security_file_post_open() - Recheck access to a file after it has been opened
+> + * @file: the file
+> + * @mask: access mask
+> + *
+> + * Recheck access with mask after the file has been opened. The hook is useful
+> + * for LSMs that require the file content to be available in order to make
+> + * decisions.
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_file_post_open(struct file *file, int mask)
+> +{
 
-In CRIU restoring the state of the userspace server is a solved
-problem, the issue is restoring state in the kernel part of fuse.  In
-a sense it's the exact opposite problem that crash recovery is doing.
+Files with private inodes don't seem to checked for in any existing functions, either, so no check. Good..
 
-> But of course, Checkpoint/Restore is a way more trickier. But before
-> doing all the work with CRIU PoC,
-> I wanted to consult with you and folks if there are any serious
-> objections to this interface/feature or, conversely,
-> if there is someone else who is interested in it.
->
-> Now about interfaces REINIT, BM_REVAL.
->
-> I think it will be useful for CRIU case, but probably I need to extend
-> it a little bit, as I mentioned earlier in the cover letter:
-> > >* "fake" daemon has to reply to FUSE_INIT request from the kernel and =
-initialize fuse connection somehow.
-> > > This setup can be not consistent with the original daemon (protocol v=
-ersion, daemon capabilities/settings
-> > > like no_open, no_flush, readahead, and so on).
->
-> So, after the "fake" demon has done its job during CRIU restore, we
-> need to replace it with the actual demon from
-> the dumpee tree and performing REINIT looks like a sanner way.
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-I don't get it.  How does REINIT help with switching to the real daemon?
-
-Thanks,
-Miklos
+> +	return call_int_hook(file_post_open, 0, file, mask);
+> +}
+> +EXPORT_SYMBOL_GPL(security_file_post_open);
+> +
+>   /**
+>    * security_file_truncate() - Check if truncating a file is allowed
+>    * @file: file
