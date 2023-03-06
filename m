@@ -2,110 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCFCD6AC8C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 17:54:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F1436AC8E9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 18:00:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229753AbjCFQyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 11:54:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
+        id S230112AbjCFRAi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 12:00:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229636AbjCFQyo (ORCPT
+        with ESMTP id S229772AbjCFRAg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 11:54:44 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EC594391D;
-        Mon,  6 Mar 2023 08:54:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=mJSF1Ywx6z0mGMzdYzVD02f9wlhXiIbZLi0DEBUkFeU=; b=4W+naTxVvLaKelVIlzOADVjTbz
-        zbCaq2xAMhoc7OJy1f/RCDyXZT4VA4nFUh6Ad2O9b6XMv5hTB0DjrLhd1nhvy2vGf2JAbiCGAefDa
-        1ERMrudAE+Nc4OleRwkXKoYBxjgignNHljhMKq7xs8taw1O7hhPFBCBrfRNuL7ggu7hcmWqVUnypN
-        YHZCRxKHA2Cza5puDW/i46JF61Yl8qFc/6rsFrLut8hhD4XmTKXHRvR6Y3WYX8b25O+MVt9V6wMBu
-        Lf9p6vplwjrvaI4z1gec6K+JUzilD9SJVASZdkLIYX566D/ZMoycan7ww4Yad0wBdNQBU4fiwtFg5
-        vv97/kng==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pZE58-00E0hR-CA; Mon, 06 Mar 2023 16:53:02 +0000
-Date:   Mon, 6 Mar 2023 08:53:02 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-btrfs@vger.kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 01/21] fs: readahead_begin() to call before locking folio
-Message-ID: <ZAYaboLpVfTC71+3@infradead.org>
-References: <cover.1677793433.git.rgoldwyn@suse.com>
- <4b8c7d11d7440523dba12205a88b7d43f61a07b1.1677793433.git.rgoldwyn@suse.com>
+        Mon, 6 Mar 2023 12:00:36 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C31E329E19;
+        Mon,  6 Mar 2023 09:00:14 -0800 (PST)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 326Grm70031139;
+        Mon, 6 Mar 2023 16:58:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=1WlxBw4xTvuZLMmzSdTNLosvZcE6Ev/bFvq4Znx6N/A=;
+ b=Ci9LecJ+CncafqY1cSuWFIWcg3eBpkaeALnQEtCUaLsqz9DY7jneoGf3wITrg3tao9go
+ cXb+uE+Zfjfb38TqCLAl6/kIpc2xJNj0bV9STmYgAFFDcTSjOj4Jp5hz9ZuLfmFv9j1O
+ h+k4kPG/ly46evvxa/iC7hxZFK2PGrwPjBMIsRnjj3ZfxB9XjIEOljtDunuvDbcaAVIg
+ ixgxQXAKJ0Up+Ui9Zgd/b7lpDzSuCuB53Z9Ypv6cbKhNoXV/8sV5A/JTh2KTq6GBahbF
+ VcGP0ErhBNbe/pmXpqUKD0fK3rfx7J9tBh5UuiSemziKFr/Bgd4WhApLrZAHPO2/KUBb gg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4yhr2fqj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 16:58:31 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 326Groog031328;
+        Mon, 6 Mar 2023 16:58:30 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4yhr2fq5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 16:58:30 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 326FwjwX017270;
+        Mon, 6 Mar 2023 16:58:30 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([9.208.130.101])
+        by ppma04dal.us.ibm.com (PPS) with ESMTPS id 3p41ak9t00-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Mar 2023 16:58:29 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+        by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 326GwSs67340588
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Mar 2023 16:58:28 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8331F5805C;
+        Mon,  6 Mar 2023 16:58:28 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6AF8D5805A;
+        Mon,  6 Mar 2023 16:58:26 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon,  6 Mar 2023 16:58:26 +0000 (GMT)
+Message-ID: <fa9dd649-f05c-28e0-319c-4f39d133ce99@linux.ibm.com>
+Date:   Mon, 6 Mar 2023 11:58:25 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b8c7d11d7440523dba12205a88b7d43f61a07b1.1677793433.git.rgoldwyn@suse.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 06/28] ima: Align ima_inode_removexattr() definition with
+ LSM infrastructure
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+ <20230303181842.1087717-7-roberto.sassu@huaweicloud.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20230303181842.1087717-7-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Uk2RN-YvQchHdbgogWV3Dtv5yWwucACu
+X-Proofpoint-ORIG-GUID: T6ZUq5OEUIdD21z9_M2lOdRjOYV-WsIf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-06_10,2023-03-06_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 spamscore=0 mlxlogscore=944 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 phishscore=0 suspectscore=0
+ clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303060146
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 02, 2023 at 04:24:46PM -0600, Goldwyn Rodrigues wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+
+
+On 3/3/23 13:18, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> The btrfs filesystem needs to lock the extents before locking folios
-> to be read from disk. So, introduce a function in
-> address_space_operaitons, called btrfs_readahead_begin() which is called
-> before the folio are allocateed and locked.
-
-Please Cc the mm and fsdevel and willy on these kinds of changes.
-
-But I'd also like to take this opportunity to ask what the rationale
-behind the extent locking for reads in btrfs is to start with.
-
-All other file systems rely on filemap_invalidate_lock_shared for
-locking page reads vs invalidates and it seems to work great.  btrfs
-creates a lot of overhead with the extent locking, and introduces
-a lot of additional trouble like the readahead code here, or the problem
-with O_DIRECT writes that read from the same region that Boris recently
-fixed.
-
-Maybe we can think really hard and find a way to normalize the locking
-and simply both btrfs and common infrastructure?
-
-> ---
->  include/linux/fs.h | 1 +
->  mm/readahead.c     | 3 +++
->  2 files changed, 4 insertions(+)
+> Change ima_inode_removexattr() definition, so that it can be registered as
+> implementation of the inode_removexattr hook.
 > 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c1769a2c5d70..6b650db57ca3 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -363,6 +363,7 @@ struct address_space_operations {
->  	/* Mark a folio dirty.  Return true if this dirtied it */
->  	bool (*dirty_folio)(struct address_space *, struct folio *);
->  
-> +	void (*readahead_begin)(struct readahead_control *);
->  	void (*readahead)(struct readahead_control *);
->  
->  	int (*write_begin)(struct file *, struct address_space *mapping,
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index b10f0cf81d80..6924d5fed350 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -520,6 +520,9 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  			new_order--;
->  	}
->  
-> +	if (mapping->a_ops->readahead_begin)
-> +		mapping->a_ops->readahead_begin(ractl);
-> +
->  	filemap_invalidate_lock_shared(mapping);
->  	while (index <= limit) {
->  		unsigned int order = new_order;
-> -- 
-> 2.39.2
-> 
----end quoted text---
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
