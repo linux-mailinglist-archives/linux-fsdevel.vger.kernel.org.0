@@ -2,102 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E753E6AC536
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 16:33:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80C516AC594
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 16:36:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbjCFPdy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 10:33:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59804 "EHLO
+        id S231467AbjCFPgp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 10:36:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbjCFPdm (ORCPT
+        with ESMTP id S231340AbjCFPg1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 10:33:42 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76BEB1FCC;
-        Mon,  6 Mar 2023 07:33:09 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 9348B1FDEA;
-        Mon,  6 Mar 2023 15:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1678116776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dNqd9N9G5bFzsdc1tokz9KckA5IVFCkvFeG9MyfmC44=;
-        b=tEoBs0C1ckQoMkF15c8P1vjI4mchhJKWseAIuDN8inn4b4GMLA2nbHQIrY5cQ2IxQ1UeM8
-        0ea7wJ7HA73u+Ufbry8CUk9bOcahfC89rMInC57QsfEqv6W0fA9xgo6Y+1/G3At7DSpyhV
-        3hjL66cjT8JFLQR+7kvWF4eRcSlleCM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1678116776;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dNqd9N9G5bFzsdc1tokz9KckA5IVFCkvFeG9MyfmC44=;
-        b=raxLY5VO3G2i6vLRRdef+XURriG1s4yuBien1bep2ZojzrXF6YnxsXr/oL3vs+T9n4hKQa
-        CHopOPBrVU6hENAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 13A7D13513;
-        Mon,  6 Mar 2023 15:32:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id dmNLM6cHBmT+LgAAMHmgww
-        (envelope-from <krisman@suse.de>); Mon, 06 Mar 2023 15:32:55 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     Nick Alcock <nick.alcock@oracle.com>
-Cc:     mcgrof@kernel.org, linux-modules@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 11/17] unicode: remove MODULE_LICENSE in non-modules
-References: <20230302211759.30135-1-nick.alcock@oracle.com>
-        <20230302211759.30135-12-nick.alcock@oracle.com>
-Date:   Mon, 06 Mar 2023 10:32:53 -0500
-In-Reply-To: <20230302211759.30135-12-nick.alcock@oracle.com> (Nick Alcock's
-        message of "Thu, 2 Mar 2023 21:17:53 +0000")
-Message-ID: <874jqxrj2y.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+        Mon, 6 Mar 2023 10:36:27 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FC237B4B;
+        Mon,  6 Mar 2023 07:35:32 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4PVj8P3kJJz9xrsC;
+        Mon,  6 Mar 2023 23:25:57 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwA3wAvvBwZkGfJ3AQ--.19155S2;
+        Mon, 06 Mar 2023 16:34:20 +0100 (CET)
+Message-ID: <7bde74e6e5ccf24b2a2bd9dc2bbfcae5c424eac7.camel@huaweicloud.com>
+Subject: Re: [PATCH 21/28] security: Introduce inode_post_remove_acl hook
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>, viro@zeniv.linux.org.uk,
+        chuck.lever@oracle.com, jlayton@kernel.org, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Mon, 06 Mar 2023 16:34:04 +0100
+In-Reply-To: <6393eb31-5eb3-cb1c-feb7-2ab347703042@linux.ibm.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+         <20230303181842.1087717-22-roberto.sassu@huaweicloud.com>
+         <6393eb31-5eb3-cb1c-feb7-2ab347703042@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwA3wAvvBwZkGfJ3AQ--.19155S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZrW5CrW7Ww47Gr43GrykXwb_yoWDurc_CF
+        4vy3s7GFs8XF1kJr4q9r1FqFsa9rZ5XrnxtryrGrs8AayxJFn5WF4IyryfZrW8Xrn7A3y5
+        AFyxAay2vFy7ujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+        AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj4o+5gAEsq
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Nick Alcock <nick.alcock@oracle.com> writes:
+On Mon, 2023-03-06 at 10:22 -0500, Stefan Berger wrote:
+> 
+> On 3/3/23 13:18, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> > the inode_post_remove_acl hook.
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >   
+> > +/**
+> > + * security_inode_post_remove_acl() - Update inode sec after remove_acl op
+> > + * @idmap: idmap of the mount
+> > + * @dentry: file
+> > + * @acl_name: acl name
+> > + *
+> > + * Update inode security field after successful remove_acl operation on @dentry
+> > + * in @idmap. The posix acls are identified by @acl_name.
+> > + */
+> > +void security_inode_post_remove_acl(struct mnt_idmap *idmap,
+> > +				    struct dentry *dentry, const char *acl_name)
+> > +{
+> > +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> > +		return;
+> 
+> Was that a mistake before that EVM and IMA functions did not filtered out private inodes?
 
-> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
-> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
-> are used to identify modules. As a consequence, uses of the macro
-> in non-modules will cause modprobe to misidentify their containing
-> object file as a module when it is not (false positives), and modprobe
-> might succeed rather than failing with a suitable error message.
->
-> So remove it in the files in this commit, none of which can be built as
-> modules.
->
-> Signed-off-by: Nick Alcock <nick.alcock@oracle.com>
-> Suggested-by: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: linux-modules@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>
-> Cc: Gabriel Krisman Bertazi <krisman@collabora.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> ---
+Looks like that. At least for hooks that are not called from
+security.c.
 
-Acked-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Thanks
 
-Thanks,
+Roberto
 
--- 
-Gabriel Krisman Bertazi
