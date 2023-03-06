@@ -2,56 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A4AF6AB9BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 10:26:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6C056ABAAF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 11:05:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229918AbjCFJ0p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 04:26:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36402 "EHLO
+        id S229914AbjCFKF0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 05:05:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229871AbjCFJ0n (ORCPT
+        with ESMTP id S229980AbjCFKFZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 04:26:43 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10557231E0;
-        Mon,  6 Mar 2023 01:26:41 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 6 Mar 2023 05:05:25 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FBF712F1A;
+        Mon,  6 Mar 2023 02:05:22 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9D4E3B80D27;
-        Mon,  6 Mar 2023 09:26:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2167C433EF;
-        Mon,  6 Mar 2023 09:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678094799;
-        bh=57FrCCZ2Wq+YAZlBEbTVLCXLXyHrbe4LXgxzAP6Rt70=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aGpHk5/EASsEtl4vKnAkGUaXhtbPzA/d2cXgftsQx8PVrRgVXQNsAAnUOBX1GgX6I
-         G/6gfIFXfw4GETwfv8Vqa+2mueXnJba6vq4doCPeNTZ+42jYFYMi/XGYUBkeA8X/oD
-         ElKS799bOnXufZBGOEBscaDcXEpJHRp87DtATu56G0m7hUhBUbQpW3gm1nxMrdfglF
-         0ZbBUcHJGIkJmz/Hsybihbq8zOv2if13KJ/EEandIpN1dFYg7WzDuihAtyiEKIBsW3
-         NHz3uKORaef+IPel5P8LpgPELeV5dFcgKzByHGHs4b9oIVc5RyT13xsoOqXUWsxf3W
-         aynSxAyBPrijQ==
-Date:   Mon, 6 Mar 2023 10:26:33 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <sforshee@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v3 00/10] acl: drop posix acl handlers from xattr handlers
-Message-ID: <20230306092633.tobpejvw7mwcx22v@wittgenstein>
-References: <20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org>
- <20230201133020.GA31902@lst.de>
- <20230201134254.fai2vc7gtzj6iikx@wittgenstein>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 303971FDDD;
+        Mon,  6 Mar 2023 10:05:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1678097121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QRb9m2gaQoCLctLOiYS3tE6uGi3yOZ0FLkQqw+fFybA=;
+        b=TCnLqFQlPrObIJ2juVIYjrKmRoTrx3k99z6KhVWYekZPPw4ynNrbxuEsuJyGzff3GXyFrc
+        CT1C3eappXnvVCbJf0hQ0fzjmVpnF9YlkcQBlsqQDlNpTvb3caMPsk4txIfgvmN4gv/vN/
+        0r9LGeBBDqu5g9VOWeI5mjwMNpGveMw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1678097121;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QRb9m2gaQoCLctLOiYS3tE6uGi3yOZ0FLkQqw+fFybA=;
+        b=7QsEJHCXVvi7r+XMVVSbIhVXqO5yz9jL2VMCXu13ylzuQLIZRnMx4a1gUJcfr6lVtP1Xi1
+        dvhhF7CN5Z15hZBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 17ACE13A66;
+        Mon,  6 Mar 2023 10:05:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id BJXfBOG6BWSXbwAAMHmgww
+        (envelope-from <hare@suse.de>); Mon, 06 Mar 2023 10:05:21 +0000
+Message-ID: <d1976bc4-0350-256e-2f88-028278a3b9fa@suse.de>
+Date:   Mon, 6 Mar 2023 11:05:20 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230201134254.fai2vc7gtzj6iikx@wittgenstein>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Keith Busch <kbusch@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        Daniel Gomez <da.gomez@samsung.com>,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier.gonz@samsung.com>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-block@vger.kernel.org
+References: <Y/7L74P6jSWwOvWt@mit.edu>
+ <ZAFUYqAcPmRPLjET@kbusch-mbp.dhcp.thefacebook.com>
+ <ZAFuSSZ5vZN7/UAa@casper.infradead.org>
+ <ZAJqjM6qLrraFrrn@bombadil.infradead.org>
+ <c9f6544d-1731-4a73-a926-0e85ae9da9df@suse.de>
+ <ZAN2HYXDI+hIsf6W@casper.infradead.org>
+ <edac909b-98e5-cb6d-bb80-2f6a20a15029@suse.de>
+ <ZAOF3p+vqA6pd7px@casper.infradead.org>
+ <0b70deae-9fc7-ca33-5737-85d7532b3d33@suse.de>
+ <ZAWi5KwrsYL+0Uru@casper.infradead.org>
+Content-Language: en-US
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <ZAWi5KwrsYL+0Uru@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,21 +87,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 01, 2023 at 02:42:54PM +0100, Christian Brauner wrote:
-> On Wed, Feb 01, 2023 at 02:30:20PM +0100, Christoph Hellwig wrote:
-> > This version looks good to me, but I'd really prefer if a reiserfs
-> > insider could look over the reiserfs patches.
+On 3/6/23 09:23, Matthew Wilcox wrote:
+> On Sun, Mar 05, 2023 at 12:22:15PM +0100, Hannes Reinecke wrote:
+>> On 3/4/23 18:54, Matthew Wilcox wrote:
+>>> I think we're talking about different things (probably different storage
+>>> vendors want different things, or even different people at the same
+>>> storage vendor want different things).
+>>>
+>>> Luis and I are talking about larger LBA sizes.  That is, the minimum
+>>> read/write size from the block device is 16kB or 64kB or whatever.
+>>> In this scenario, the minimum amount of space occupied by a file goes
+>>> up from 512 bytes or 4kB to 64kB.  That's doable, even if somewhat
+>>> suboptimal.
+>>>
+>> And so do I. One can view zones as really large LBAs.
+>>
+>> Indeed it might be suboptimal from the OS point of view.
+>> But from the device point of view it won't.
+>> And, in fact, with devices becoming faster and faster the question is
+>> whether sticking with relatively small sectors won't become a limiting
+>> factor eventually.
+>>
+>>> Your concern seems to be more around shingled devices (or their equivalent
+>>> in SSD terms) where there are large zones which are append-only, but
+>>> you can still random-read 512 byte LBAs.  I think there are different
+>>> solutions to these problems, and people are working on both of these
+>>> problems.
+>>>
+>> My point being that zones are just there because the I/O stack can only deal
+>> with sectors up to 4k. If the I/O stack would be capable of dealing
+>> with larger LBAs one could identify a zone with an LBA, and the entire issue
+>> of append-only and sequential writes would be moot.
+>> Even the entire concept of zones becomes irrelevant as the OS would
+>> trivially only write entire zones.
 > 
-> I consider this material for v6.4 even with an -rc8 for v6.3. So there's
-> time but we shouldn't block it on reiserfs. Especially, since it's
-> marked deprecated.
-
-So I've applied this now. If there's still someone interested in
-checking the reiserfs bits more than what we did with xfstests they
-should please do so. But I don't want to hold up this series waiting for
-that to happen.
-
+> All current filesystems that I'm aware of require their fs block size
+> to be >= LBA size.  That is, you can't take a 512-byte blocksize ext2
+> filesystem and put it on a 4kB LBA storage device.
 > 
-> Fwiw, I've tested reiserfs with xfstests on a kernel with and without
-> this series applied and there's no regressions. But it's overall pretty
-> buggy at least according to xfstests. Which is expected, I guess.
+> That means that files can only grow/shrink in 256MB increments.  I
+> don't think that amount of wasted space is going to be acceptable.
+> So if we're serious about going down this path, we need to tell
+> filesystem people to start working out how to support fs block
+> size < LBA size.
+> 
+> That's a big ask, so let's be sure storage vendors actually want
+> this.  Both supporting zoned devices & suporting 16k/64k block
+> sizes are easier asks.
+
+Why, I know. And this really is a future goal.
+(Possibly a very _distant_ future goal.)
+
+Indeed we should concentrate on getting 16k/64k blocks initially.
+Or maybe 128k blocks to help our RAIDed friends.
+
+Cheers,
+
+Hannes
+
