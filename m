@@ -2,52 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58DE36ACB1D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 18:46:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33DE96ACB11
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 18:46:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230412AbjCFRqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 12:46:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33170 "EHLO
+        id S229833AbjCFRp6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 12:45:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230462AbjCFRqc (ORCPT
+        with ESMTP id S229968AbjCFRpv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 12:46:32 -0500
-Received: from mail-il1-x146.google.com (mail-il1-x146.google.com [IPv6:2607:f8b0:4864:20::146])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9B1C6BC23
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Mar 2023 09:45:56 -0800 (PST)
-Received: by mail-il1-x146.google.com with SMTP id r13-20020a92c5ad000000b00316ecbf63c9so5645631ilt.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Mar 2023 09:45:56 -0800 (PST)
+        Mon, 6 Mar 2023 12:45:51 -0500
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F6646BC32
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Mar 2023 09:45:19 -0800 (PST)
+Received: by mail-il1-f198.google.com with SMTP id l5-20020a92d8c5000000b00316f26477d6so5647790ilo.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Mar 2023 09:45:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678124678;
+        d=1e100.net; s=20210112; t=1678124677;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GxC+zrdwXsUzP44JUUIxQpsBssHdZyrJhaBghz1c1gU=;
-        b=vwrX/QInk3mNHQP7AUk+xuerNOVUjxiI7ZoF1iiQMLMw7Jm4l8B/mR/iYC1FClfiTp
-         l89z8tL5ApZ/Q3ftZJcVKJQEGFGpB1fh2JLmQrGEjE1ggW6ezteYEAQgPqp3jTWu4eqS
-         geMBvn/1HHgC3c8uQOI3D8q9AumtC+JwUi0cUQ4LPTpU/qjopVANRPDLdR2+lCDKSLfi
-         5hmtRJtroaBh3FEiESlnCZHeFiqd5Y/k4spDL6uubrhwu/O2Jy2sfdWCN61JlMjN/MPl
-         1yWg2vvUcbfvPOFw/aQA3bgNnghiQBhX6jteY/el1rNXpoG1MJEU1VfRuO6oL9qwIzVi
-         svYw==
-X-Gm-Message-State: AO0yUKU4mTZ3syY4ZK0p86vnpQqpdkM6gWKahNvjkWHAVsjTE5TfvWjO
-        OHO8yO1DtRLjoTOEfmUMiRhULjPMaDOpm/hw9kBC59TFcM6l
-X-Google-Smtp-Source: AK7set8D7ryF6B/fTcEs0INTehKt1eBhyExL24efZlk2flFqqijq2W7GcIB19I/LaZV8Aqr2GE5pch7I9igSwSclUbhQ67mupoNx
+        bh=GcOCBhima2UyyDq7VB/1E9koaBdwududHylkHfonubs=;
+        b=ZOJ/Oo75aFwe/x8IuZ+ywt/AiqxdtydaOH2yT9tdhcGKx7w8nCPAkPpnii+Z/472EL
+         LJHE0SkGaM4OpvR64DW+/blLvvDXDhQmK6mRcr1o67sJQwn9K5wqWDJnluJzBKzUTTi9
+         UId45mymhWvoj95KRKIkoyuPqXqjSy7xwvCz5gRDQQoVi6bBemqsQ72TlZqquGbkZHwO
+         ZaDyk/HKSmypE2Q54vqXwlMJS4C1FEKXVbCdHdrNiypU2HavgPjmiDax4OKJiSNRQLW4
+         yyNR3m1idUjiD13HyF9BR2FVkI49Q7p/G3CGfCS4Fn8+7JH4MmKyUy6F8pFcreXo5rBL
+         +SfA==
+X-Gm-Message-State: AO0yUKUyDH93wl9cSmiP/XJFMeXAKv+mE+CvbcEhKzhWewGriCEorhq2
+        WV8wCyzLNaEhCaQPyaCBmg9NTTKTc1Xlc6RTTr/FyTpKz8WS
+X-Google-Smtp-Source: AK7set88Bw0d2XTFKUme34XJrkWaccDVs1augIVNYRXEzj+MP9c2PxF+jZE8nNJpCZSojpb7/bgKCrAGpjgg40YIwZT8CPf9Sczt
 MIME-Version: 1.0
-X-Received: by 2002:a6b:c894:0:b0:74d:4df6:2530 with SMTP id
- y142-20020a6bc894000000b0074d4df62530mr7982376iof.2.1678124677897; Mon, 06
+X-Received: by 2002:a02:23cc:0:b0:3be:81d3:5af3 with SMTP id
+ u195-20020a0223cc000000b003be81d35af3mr5918807jau.3.1678124677684; Mon, 06
  Mar 2023 09:44:37 -0800 (PST)
 Date:   Mon, 06 Mar 2023 09:44:37 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000050a49105f63ed997@google.com>
-Subject: [syzbot] [cluster?] general protection fault in gfs2_dump_glock (2)
-From:   syzbot <syzbot+427fed3295e9a7e887f2@syzkaller.appspotmail.com>
-To:     agruenba@redhat.com, cluster-devel@redhat.com,
+Message-ID: <0000000000004d661705f63ed958@google.com>
+Subject: [syzbot] [hfs?] kernel BUG in __block_write_full_page
+From:   syzbot <syzbot+3aa7a6b7eb0d5536abaf@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, bpf@vger.kernel.org,
+        cgroups@vger.kernel.org, hannes@cmpxchg.org, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rpeterso@redhat.com, syzkaller-bugs@googlegroups.com
+        linux-mm@kvack.org, martin.petersen@oracle.com, mcgrof@kernel.org,
+        mhocko@kernel.org, njavali@marvell.com, roman.gushchin@linux.dev,
+        shakeelb@google.com, songmuchun@bytedance.com,
+        syzkaller-bugs@googlegroups.com, yzaikin@google.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -58,77 +63,98 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    f915322fe014 Merge tag 'v6.3-p2' of git://git.kernel.org/p..
+HEAD commit:    b01fe98d34f3 Merge tag 'i2c-for-6.3-rc1-part2' of git://gi..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16f297b0c80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16d58468c80000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=dc0f7cfe5b32efe2
-dashboard link: https://syzkaller.appspot.com/bug?extid=427fed3295e9a7e887f2
+dashboard link: https://syzkaller.appspot.com/bug?extid=3aa7a6b7eb0d5536abaf
 compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a8b9bcc80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11955f54c80000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a80092c80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c4f138c80000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ad716bf3cfc2/disk-f915322f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3dda0fefb7a2/vmlinux-f915322f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/009b2977ab37/bzImage-f915322f.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6c7bfd847dac/mount_2.gz
+disk image: https://storage.googleapis.com/syzbot-assets/a1d37240ef5e/disk-b01fe98d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3727e84b1762/vmlinux-b01fe98d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0d45494f57a4/bzImage-b01fe98d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/ff4c7574ee40/mount_0.gz
+
+The issue was bisected to:
+
+commit 4dc48a107a146cade61097958ff2366c13da1f60
+Author: Nilesh Javali <njavali@marvell.com>
+Date:   Tue Jun 7 04:46:27 2022 +0000
+
+    scsi: qla2xxx: Update version to 10.02.07.500-k
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13eb900ac80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=101b900ac80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17eb900ac80000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+427fed3295e9a7e887f2@syzkaller.appspotmail.com
+Reported-by: syzbot+3aa7a6b7eb0d5536abaf@syzkaller.appspotmail.com
+Fixes: 4dc48a107a14 ("scsi: qla2xxx: Update version to 10.02.07.500-k")
 
-gfs2: fsid=syz:syz.0:  H: s:SH f:H e:0 p:6113 [syz-executor409] __gfs2_lookup+0xa4/0x270 fs/gfs2/inode.c:888
-==================================================================
-BUG: KASAN: vmalloc-out-of-bounds in gfs2_dump_glock+0x14b3/0x1ad0
-Read of size 8 at addr ffffc90005957720 by task syz-executor409/6095
-
-CPU: 0 PID: 6095 Comm: syz-executor409 Not tainted 6.2.0-syzkaller-13563-gf915322fe014 #0
+------------[ cut here ]------------
+kernel BUG at fs/buffer.c:1829!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 9252 Comm: syz-executor382 Not tainted 6.2.0-syzkaller-13534-gb01fe98d34f3 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
+RIP: 0010:__block_write_full_page+0xfb2/0x16a0 fs/buffer.c:1829
+Code: 02 e9 16 f2 ff ff e8 6d 60 89 ff 48 8b 3c 24 e8 b4 32 00 00 48 89 c7 48 c7 c6 20 96 17 8b e8 05 6a c8 ff 0f 0b e8 4e 60 89 ff <0f> 0b f3 0f 1e fa 48 8b 2c 24 48 89 ee 48 81 e6 ff 0f 00 00 31 ff
+RSP: 0018:ffffc9000bde6ff0 EFLAGS: 00010293
+RAX: ffffffff82035c92 RBX: 00fff0000000a02f RCX: ffff888026c03a80
+RDX: 0000000000000000 RSI: 0000000000008000 RDI: 0000000000000000
+RBP: 0000000000008000 R08: ffffffff820354d8 R09: fffff9400007d819
+R10: 0000000000000000 R11: dffffc0000000001 R12: 0000000000000000
+R13: 1ffff11002d73d01 R14: dffffc0000000000 R15: ffffea00003ec0c0
+FS:  00007fe61c1db700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000002af1e000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:319 [inline]
- print_report+0x163/0x540 mm/kasan/report.c:430
- kasan_report+0x176/0x1b0 mm/kasan/report.c:536
- gfs2_dump_glock+0x14b3/0x1ad0
- gfs2_consist_inode_i+0xf5/0x110 fs/gfs2/util.c:465
- gfs2_dirent_scan+0x512/0x640 fs/gfs2/dir.c:602
- gfs2_dirent_search+0x30e/0x8c0 fs/gfs2/dir.c:850
- gfs2_dir_search+0xb2/0x2f0 fs/gfs2/dir.c:1650
- gfs2_lookupi+0x460/0x5d0 fs/gfs2/inode.c:332
- __gfs2_lookup+0xa4/0x270 fs/gfs2/inode.c:888
- gfs2_atomic_open+0x9e/0x230 fs/gfs2/inode.c:1292
- atomic_open fs/namei.c:3279 [inline]
- lookup_open fs/namei.c:3387 [inline]
- open_last_lookups fs/namei.c:3484 [inline]
- path_openat+0x103c/0x3170 fs/namei.c:3712
- do_filp_open+0x234/0x490 fs/namei.c:3742
- do_sys_openat2+0x13f/0x500 fs/open.c:1348
- do_sys_open fs/open.c:1364 [inline]
- __do_sys_open fs/open.c:1372 [inline]
- __se_sys_open fs/open.c:1368 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1368
+ writeout mm/migrate.c:907 [inline]
+ fallback_migrate_folio mm/migrate.c:931 [inline]
+ move_to_new_folio+0x7a1/0x14d0 mm/migrate.c:981
+ migrate_folio_move mm/migrate.c:1295 [inline]
+ migrate_pages_batch mm/migrate.c:1827 [inline]
+ migrate_pages+0x4c0b/0x6670 mm/migrate.c:1979
+ compact_zone+0x2bc9/0x45a0 mm/compaction.c:2420
+ compact_node+0x216/0x420 mm/compaction.c:2717
+ compact_nodes mm/compaction.c:2730 [inline]
+ sysctl_compaction_handler+0xab/0x150 mm/compaction.c:2774
+ proc_sys_call_handler+0x545/0x8a0 fs/proc/proc_sysctl.c:604
+ do_iter_write+0x6ea/0xc50 fs/read_write.c:861
+ vfs_writev fs/read_write.c:934 [inline]
+ do_writev+0x27f/0x470 fs/read_write.c:977
  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7ff0f3f00b39
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 91 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff0f3ea4208 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007ff0f3f90788 RCX: 00007ff0f3f00b39
-RDX: 0000000000000008 RSI: 0000000000000002 RDI: 0000000020000280
-RBP: 00007ff0f3f90780 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff0f3f9078c
-R13: 00007fffdfd2a3af R14: 00007ff0f3ea4300 R15: 0000000000022000
+RIP: 0033:0x7fe61c22f659
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe61c1db2f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00007fe61c2b47a0 RCX: 00007fe61c22f659
+RDX: 0000000000000001 RSI: 0000000020000240 RDI: 0000000000000004
+RBP: 00007fe61c281700 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe61c2810e0
+R13: 0073756c70736668 R14: 6d656d5f74636170 R15: 00007fe61c2b47a8
  </TASK>
-
-Memory state around the buggy address:
- ffffc90005957600: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
- ffffc90005957680: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
->ffffc90005957700: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-                               ^
- ffffc90005957780: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
- ffffc90005957800: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-==================================================================
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__block_write_full_page+0xfb2/0x16a0 fs/buffer.c:1829
+Code: 02 e9 16 f2 ff ff e8 6d 60 89 ff 48 8b 3c 24 e8 b4 32 00 00 48 89 c7 48 c7 c6 20 96 17 8b e8 05 6a c8 ff 0f 0b e8 4e 60 89 ff <0f> 0b f3 0f 1e fa 48 8b 2c 24 48 89 ee 48 81 e6 ff 0f 00 00 31 ff
+RSP: 0018:ffffc9000bde6ff0 EFLAGS: 00010293
+RAX: ffffffff82035c92 RBX: 00fff0000000a02f RCX: ffff888026c03a80
+RDX: 0000000000000000 RSI: 0000000000008000 RDI: 0000000000000000
+RBP: 0000000000008000 R08: ffffffff820354d8 R09: fffff9400007d819
+R10: 0000000000000000 R11: dffffc0000000001 R12: 0000000000000000
+R13: 1ffff11002d73d01 R14: dffffc0000000000 R15: ffffea00003ec0c0
+FS:  00007fe61c1db700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffd2061aeb8 CR3: 000000002af1e000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
@@ -138,5 +164,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this issue, for details see:
 https://goo.gl/tpsmEJ#testing-patches
