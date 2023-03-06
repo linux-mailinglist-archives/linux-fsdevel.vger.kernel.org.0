@@ -2,135 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 114896AC4B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 16:23:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9DB46AC4CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 16:27:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230236AbjCFPW7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 10:22:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42804 "EHLO
+        id S230202AbjCFP1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 10:27:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230242AbjCFPW5 (ORCPT
+        with ESMTP id S229869AbjCFP1L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 10:22:57 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A01594492;
-        Mon,  6 Mar 2023 07:22:56 -0800 (PST)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 326DMRln006766;
-        Mon, 6 Mar 2023 15:22:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=VrGSBKAj7tyepIvg8dZKxFqM5WTgkddDSp6AIl+WRU0=;
- b=TaMam++YaBPeuOp9JiTGb79CsjIkc36Dd42YZIpFWJTmPnKi2IC0Zj9IrbgAB0ZfHqiC
- vcgx4diEAAX1IfZwzEXP+tSP51/JFk0hqwzeUKsuWbQz24y74uRgx7PYKIL/mBjOdSAg
- 4dNty0YatmrFPW4Lh/BTRkTGwNpNdFNkRT/KHaAXtWvWwplh/CzXI2jwZA5DmSILdX3R
- zWzGmuaw6LGKkQuPBxaQfr8DtzsYJkqxrQZiRnhahtXWXRanjZyWBWGDZcC2Ejs1tSlY
- j7l90R0xoxqrIN+TT9BzYhWFl+ySs+3hGP0Hj4k0TXKkWZHP+dzMRc6ECCp0QsTINOkm aw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4vp22daj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Mar 2023 15:22:14 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 326F4Ao2014642;
-        Mon, 6 Mar 2023 15:22:13 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p4vp22d9u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Mar 2023 15:22:13 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 326DXWZg023896;
-        Mon, 6 Mar 2023 15:22:12 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([9.208.130.102])
-        by ppma03dal.us.ibm.com (PPS) with ESMTPS id 3p41879a2t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Mar 2023 15:22:12 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 326FMAAP7275098
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 6 Mar 2023 15:22:11 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB4455805A;
-        Mon,  6 Mar 2023 15:22:10 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9ECBB58052;
-        Mon,  6 Mar 2023 15:22:09 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Mar 2023 15:22:09 +0000 (GMT)
-Message-ID: <6393eb31-5eb3-cb1c-feb7-2ab347703042@linux.ibm.com>
-Date:   Mon, 6 Mar 2023 10:22:09 -0500
+        Mon, 6 Mar 2023 10:27:11 -0500
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F090340CB;
+        Mon,  6 Mar 2023 07:27:10 -0800 (PST)
+Received: by mail-wr1-f52.google.com with SMTP id j2so9210391wrh.9;
+        Mon, 06 Mar 2023 07:27:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678116429;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WjzbTdN7CLD76LwUYgSQFGlrkv+uCLMJlqFIMmRORpA=;
+        b=2EUxB7rhuYb6ii74TXs9YxpCJfySTXuBhpC00xi2g2Tl/LKcr0u9Gh6OjOA8oldIWm
+         Lw703w6B1qzrGyPBhPf8iBBgv1HVPnMh9jfcg3j0t3OUzrKpwzLv1dqjaisbRwHAYGSW
+         wYNLJ4gQQcUb4/vmh7WEEIcloNRTZsKn+wBCQOnSApgMEs2UHBk0eWUKqtz8OXuZGKuA
+         BzvEFRHctI0x1VBvTC81BQkLNFM+tdLdQiJ6zp2kSI/3aGe8368MDS740BPhLgQ12qXj
+         0FpHtsTrpwiDjoTE3C6nL7fusulh7SN/6ulOjc7FvCvckC1B9086DLwqq7hFqptf6eOQ
+         WrcA==
+X-Gm-Message-State: AO0yUKWGBHuyX1P1LV1bgoz7eY99SoIykUcj0mjyVRYY4DrF42RVupL4
+        0loLf8b2rTaDprlKZq3BqsQ=
+X-Google-Smtp-Source: AK7set8sLVDUwT8GQGScn0gVSp+FOGcmG6WKTOjmYMNL/6orgxuEwPFL/9jsyQwuVKKF6cXajJRglg==
+X-Received: by 2002:adf:eb4b:0:b0:2c6:e744:cf71 with SMTP id u11-20020adfeb4b000000b002c6e744cf71mr6185222wrn.52.1678116429360;
+        Mon, 06 Mar 2023 07:27:09 -0800 (PST)
+Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
+        by smtp.gmail.com with ESMTPSA id r1-20020a056000014100b002c5534db60bsm10414947wrx.71.2023.03.06.07.27.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 07:27:08 -0800 (PST)
+Date:   Mon, 6 Mar 2023 15:27:03 +0000
+From:   Wei Liu <wei.liu@kernel.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com, minyard@acm.org,
+        kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+        decui@microsoft.com, song@kernel.org, robinmholt@gmail.com,
+        steve.wahl@hpe.com, mike.travis@hpe.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org, jgross@suse.com,
+        sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
+        xen-devel@lists.xenproject.org, j.granados@samsung.com,
+        zhangpeng362@huawei.com, tangmeng@uniontech.com,
+        willy@infradead.org, nixiaoming@huawei.com, sujiaxun@uniontech.com,
+        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-raid@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] hv: simplify sysctl registration
+Message-ID: <ZAYGR4DFQrjZVpC5@liuwe-devbox-debian-v2>
+References: <20230302204612.782387-1-mcgrof@kernel.org>
+ <20230302204612.782387-4-mcgrof@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 21/28] security: Introduce inode_post_remove_acl hook
-Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
-        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
- <20230303181842.1087717-22-roberto.sassu@huaweicloud.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20230303181842.1087717-22-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: AKIv0y4E55QGlCTE3kidZ-FcDxY6BVsp
-X-Proofpoint-GUID: 7VO4QW9BF7pCYWJoql3FFQOMb7x68ZuX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-06_08,2023-03-06_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 clxscore=1011 suspectscore=0
- mlxlogscore=999 mlxscore=0 priorityscore=1501 adultscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2303060133
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230302204612.782387-4-mcgrof@kernel.org>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 3/3/23 13:18, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On Thu, Mar 02, 2023 at 12:46:08PM -0800, Luis Chamberlain wrote:
+> register_sysctl_table() is a deprecated compatibility wrapper.
+> register_sysctl() can do the directory creation for you so just use
+> that.
 > 
-> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> the inode_post_remove_acl hook.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
->   
-> +/**
-> + * security_inode_post_remove_acl() - Update inode sec after remove_acl op
-> + * @idmap: idmap of the mount
-> + * @dentry: file
-> + * @acl_name: acl name
-> + *
-> + * Update inode security field after successful remove_acl operation on @dentry
-> + * in @idmap. The posix acls are identified by @acl_name.
-> + */
-> +void security_inode_post_remove_acl(struct mnt_idmap *idmap,
-> +				    struct dentry *dentry, const char *acl_name)
-> +{
-> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> +		return;
-
-Was that a mistake before that EVM and IMA functions did not filtered out private inodes?
-
-    Stefan
-
+Reviewed-by: Wei Liu <wei.liu@kernel.org>
