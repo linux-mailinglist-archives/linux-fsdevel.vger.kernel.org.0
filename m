@@ -2,177 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A52016AB690
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 07:52:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5527C6AB7FD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 09:10:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbjCFGwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 01:52:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34122 "EHLO
+        id S229854AbjCFIKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 03:10:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbjCFGwE (ORCPT
+        with ESMTP id S229490AbjCFIKy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 01:52:04 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4128683F9;
-        Sun,  5 Mar 2023 22:52:03 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id ce8-20020a17090aff0800b0023a61cff2c6so6906519pjb.0;
-        Sun, 05 Mar 2023 22:52:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IT1FiVQMyBFwjF1wOpOa6ILmz5MNm2RKjHdSLDxlVi0=;
-        b=o/ek07NRjadh5WM060XSa5573dj9v+Rf2qVPmZttIdPa3TxKr0Ki9zxyvB8WhkDGX9
-         o+2Xz6s4UXE4a3BJ4XEozK+wPRCgydRzYtPMWbTvq1SV4vErnL6CYqEimgL9TZjobAKU
-         gmNNg+ra9tlu2YbX5cjOJFWq8nfiVGCZ87wX6y6y3LHGzM9Y1+Gqdp/7jNcRFLrr1ksy
-         ARRuFvVw8SQ+BKkHz1u2yBGPO5RSmbR3Nhv50WYxrp95RZvEM9gWwMofYqooBzqkpnc8
-         8pr+c8jEVkGlU5b2O43SvSoAf9kUwKRl0qjuoTUPDyTAcQlVo3IHjmVgHWqAvu5FPdZx
-         DvqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IT1FiVQMyBFwjF1wOpOa6ILmz5MNm2RKjHdSLDxlVi0=;
-        b=mzdlbsDUXUHQzkEX7rZxOEMvKVoc8LuMmXWyjfGMUHmylOUjhE/Hazbm61BXSXEqZ9
-         SFMfOl3gvpU4lE0cnfkO9hoi1reE+6p5HXHRUM/e3/WhtV2T6c/sVPSIYSzs8yy8MJvT
-         m2aTItU7kAjsTlANoxohOJmdKKORiDluKGklGOekRM04TkTfUjUZuOXNgmiGOCpGam2/
-         kaFFc4aRdnLRdMxcdQ7H7psP2KJVwQpzNuNQynS0JOiVJGhK2gofaF2WNHNRgMxPzLx6
-         2KGW7yMsQdA1uhtHEzaGjftyGhfCVFJhk+idCB8faevS5ZMAJQA4lZKj0pIldK4Nngor
-         aKBg==
-X-Gm-Message-State: AO0yUKXjApLLbLqTuIMHwH9NsoedBQNKb4mHFhnza3eX+3JEWC20wFre
-        eb19d9abgpgGlk8VdkMYfzbo38POwN8=
-X-Google-Smtp-Source: AK7set8QiaMSVNVIna4KA3HvnUmGd1xiu/sVigD2uWobd4WwF13/d/BlTao1YrUOuOeV1IuoT5U9cw==
-X-Received: by 2002:a17:902:e844:b0:19c:d97f:5d28 with SMTP id t4-20020a170902e84400b0019cd97f5d28mr13343148plg.32.1678085522316;
-        Sun, 05 Mar 2023 22:52:02 -0800 (PST)
-Received: from rh-tp ([129.41.58.21])
-        by smtp.gmail.com with ESMTPSA id j14-20020a170903024e00b0019462aa090bsm5815593plh.284.2023.03.05.22.51.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Mar 2023 22:52:01 -0800 (PST)
-Date:   Mon, 06 Mar 2023 12:21:48 +0530
-Message-Id: <87wn3u1iez.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 25/31] ext4: Convert ext4_block_write_begin() to take a folio
-In-Reply-To: <20230126202415.1682629-26-willy@infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Mon, 6 Mar 2023 03:10:54 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8CA5A25F;
+        Mon,  6 Mar 2023 00:10:52 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 5DEEA22370;
+        Mon,  6 Mar 2023 08:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1678090251; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eqsn968J0cCVrLZWYWjZfL9JRrTtcZJUf2GKxlH4pcQ=;
+        b=PdpeJ3+WlkwHUCyDxfOU4oUlyi45jTM8bCwD1xRH7VogqLYwkFHHuTujXj7Nn5ducCF3U4
+        MsX7DKbaXKWZmNwGt21FRnTv0JidlNvKGRIBDBgF70SokY3yIqdPIerI03XxfSaVse6b6N
+        cxhKcHEIGqChRAkLHqUaRvN+hEuBXaI=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7789E13A66;
+        Mon,  6 Mar 2023 08:10:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id P9ajGwqgBWQDPQAAMHmgww
+        (envelope-from <jgross@suse.com>); Mon, 06 Mar 2023 08:10:50 +0000
+Message-ID: <453a66f5-5443-01a5-7161-8c888eea1957@suse.com>
+Date:   Mon, 6 Mar 2023 09:10:49 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 7/7] xen: simplify sysctl registration for balloon
+Content-Language: en-US
+To:     Luis Chamberlain <mcgrof@kernel.org>, ebiederm@xmission.com,
+        keescook@chromium.org, yzaikin@google.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, minyard@acm.org, kys@microsoft.com,
+        haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+        song@kernel.org, robinmholt@gmail.com, steve.wahl@hpe.com,
+        mike.travis@hpe.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, sstabellini@kernel.org,
+        oleksandr_tyshchenko@epam.com, xen-devel@lists.xenproject.org
+Cc:     j.granados@samsung.com, zhangpeng362@huawei.com,
+        tangmeng@uniontech.com, willy@infradead.org, nixiaoming@huawei.com,
+        sujiaxun@uniontech.com, patches@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
+        linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-hyperv@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <20230302204612.782387-1-mcgrof@kernel.org>
+ <20230302204612.782387-8-mcgrof@kernel.org>
+From:   Juergen Gross <jgross@suse.com>
+In-Reply-To: <20230302204612.782387-8-mcgrof@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------cK08nbi0V3641a7DHkBg1e2W"
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Matthew Wilcox (Oracle)" <willy@infradead.org> writes:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------cK08nbi0V3641a7DHkBg1e2W
+Content-Type: multipart/mixed; boundary="------------DF6mDcbQeAPh0wqxZibFzCd0";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Luis Chamberlain <mcgrof@kernel.org>, ebiederm@xmission.com,
+ keescook@chromium.org, yzaikin@google.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, minyard@acm.org, kys@microsoft.com,
+ haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+ song@kernel.org, robinmholt@gmail.com, steve.wahl@hpe.com,
+ mike.travis@hpe.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
+ xen-devel@lists.xenproject.org
+Cc: j.granados@samsung.com, zhangpeng362@huawei.com, tangmeng@uniontech.com,
+ willy@infradead.org, nixiaoming@huawei.com, sujiaxun@uniontech.com,
+ patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-raid@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-hyperv@vger.kernel.org,
+ openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Message-ID: <453a66f5-5443-01a5-7161-8c888eea1957@suse.com>
+Subject: Re: [PATCH 7/7] xen: simplify sysctl registration for balloon
+References: <20230302204612.782387-1-mcgrof@kernel.org>
+ <20230302204612.782387-8-mcgrof@kernel.org>
+In-Reply-To: <20230302204612.782387-8-mcgrof@kernel.org>
 
-> All the callers now have a folio, so pass that in and operate on folios.
-> Removes four calls to compound_head().
+--------------DF6mDcbQeAPh0wqxZibFzCd0
+Content-Type: multipart/mixed; boundary="------------MsaV4p6uFuvvpR0Tnh9bv8Z8"
 
-Why do you say four? Isn't it 3 calls of PageUptodate(page) which
-removes calls to compound_head()? Which one did I miss?
+--------------MsaV4p6uFuvvpR0Tnh9bv8Z8
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/ext4/inode.c | 41 +++++++++++++++++++++--------------------
->  1 file changed, 21 insertions(+), 20 deletions(-)
->
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index dbfc0670de75..507c7f88d737 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1055,12 +1055,12 @@ int do_journal_get_write_access(handle_t *handle, struct inode *inode,
->  }
->
->  #ifdef CONFIG_FS_ENCRYPTION
-> -static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
-> +static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
->  				  get_block_t *get_block)
->  {
->  	unsigned from = pos & (PAGE_SIZE - 1);
->  	unsigned to = from + len;
-> -	struct inode *inode = page->mapping->host;
-> +	struct inode *inode = folio->mapping->host;
->  	unsigned block_start, block_end;
->  	sector_t block;
->  	int err = 0;
-> @@ -1070,22 +1070,24 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
->  	int nr_wait = 0;
->  	int i;
->
-> -	BUG_ON(!PageLocked(page));
-> +	BUG_ON(!folio_test_locked(folio));
->  	BUG_ON(from > PAGE_SIZE);
->  	BUG_ON(to > PAGE_SIZE);
->  	BUG_ON(from > to);
->
-> -	if (!page_has_buffers(page))
-> -		create_empty_buffers(page, blocksize, 0);
-> -	head = page_buffers(page);
-> +	head = folio_buffers(folio);
-> +	if (!head) {
-> +		create_empty_buffers(&folio->page, blocksize, 0);
-> +		head = folio_buffers(folio);
-> +	}
->  	bbits = ilog2(blocksize);
-> -	block = (sector_t)page->index << (PAGE_SHIFT - bbits);
-> +	block = (sector_t)folio->index << (PAGE_SHIFT - bbits);
->
->  	for (bh = head, block_start = 0; bh != head || !block_start;
->  	    block++, block_start = block_end, bh = bh->b_this_page) {
->  		block_end = block_start + blocksize;
->  		if (block_end <= from || block_start >= to) {
-> -			if (PageUptodate(page)) {
-> +			if (folio_test_uptodate(folio)) {
->  				set_buffer_uptodate(bh);
->  			}
->  			continue;
-> @@ -1098,19 +1100,20 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
->  			if (err)
->  				break;
->  			if (buffer_new(bh)) {
-> -				if (PageUptodate(page)) {
-> +				if (folio_test_uptodate(folio)) {
->  					clear_buffer_new(bh);
->  					set_buffer_uptodate(bh);
->  					mark_buffer_dirty(bh);
->  					continue;
->  				}
->  				if (block_end > to || block_start < from)
-> -					zero_user_segments(page, to, block_end,
-> -							   block_start, from);
-> +					folio_zero_segments(folio, to,
-> +							    block_end,
-> +							    block_start, from);
->  				continue;
->  			}
->  		}
-> -		if (PageUptodate(page)) {
-> +		if (folio_test_uptodate(folio)) {
->  			set_buffer_uptodate(bh);
->  			continue;
->  		}
-> @@ -1130,13 +1133,13 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
->  			err = -EIO;
->  	}
->  	if (unlikely(err)) {
-> -		page_zero_new_buffers(page, from, to);
-> +		page_zero_new_buffers(&folio->page, from, to);
->  	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
->  		for (i = 0; i < nr_wait; i++) {
->  			int err2;
->
-> -			err2 = fscrypt_decrypt_pagecache_blocks(page, blocksize,
-> -								bh_offset(wait[i]));
-> +			err2 = fscrypt_decrypt_pagecache_blocks(&folio->page,
-> +						blocksize, bh_offset(wait[i]));
+T24gMDIuMDMuMjMgMjE6NDYsIEx1aXMgQ2hhbWJlcmxhaW4gd3JvdGU6DQo+IHJlZ2lzdGVy
+X3N5c2N0bF90YWJsZSgpIGlzIGEgZGVwcmVjYXRlZCBjb21wYXRpYmlsaXR5IHdyYXBwZXIu
+DQo+IHJlZ2lzdGVyX3N5c2N0bF9pbml0KCkgY2FuIGRvIHRoZSBkaXJlY3RvcnkgY3JlYXRp
+b24gZm9yIHlvdSBzbyBqdXN0DQo+IHVzZSB0aGF0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTog
+THVpcyBDaGFtYmVybGFpbiA8bWNncm9mQGtlcm5lbC5vcmc+DQoNClJldmlld2VkLWJ5OiBK
+dWVyZ2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+DQoNCg0KSnVlcmdlbg0KDQo=
+--------------MsaV4p6uFuvvpR0Tnh9bv8Z8
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-folio_decrypt_pagecache_blocks() takes folio as it's argument now.
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-Other than that it looks good to me. Please feel free to add -
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+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
+jR/i1DG86lem3iBDXzXsZDn8R38=3D
+=3D2wuH
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------MsaV4p6uFuvvpR0Tnh9bv8Z8--
+
+--------------DF6mDcbQeAPh0wqxZibFzCd0--
+
+--------------cK08nbi0V3641a7DHkBg1e2W
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmQFoAoFAwAAAAAACgkQsN6d1ii/Ey/O
+cQf/UgUlm7Jf2BZLvJhuDsq9O+IW6Npn1h2rQdo60ZYboq1o5TQYMejnC1JeUpLLrC4U2R6d5miv
+5qdjYRtM6HEuoeibfi+fZQsn1QOhlIo42hVx1l2pCW4EMasDGDYyYiHBz9knt8nEXXBKNVejiIWK
+vHTAI9eelFBkaCs4VWAYByv/g5A2LZ3k4FIi1Ns6qYztfXY2wGEh2D2usSG9qqTh3uGXbf4+wrLZ
+n+iGnhXZhK9sScOuypGb94iOCUNHFBo/F0gtDqyIIXvqR50NvxOcZWx5HVH8PJOoMcsfLRQ/K2us
+rQKj/rLlj+U4DbCEmuCSdLIV9MJ+iqfEiRlC8ppxEg==
+=b1HF
+-----END PGP SIGNATURE-----
+
+--------------cK08nbi0V3641a7DHkBg1e2W--
