@@ -2,89 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90EC76ABD0C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 11:36:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AA076ABA62
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 10:52:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbjCFKgK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 05:36:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45366 "EHLO
+        id S229797AbjCFJwg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 04:52:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231213AbjCFKfy (ORCPT
+        with ESMTP id S229865AbjCFJwe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 05:35:54 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D29041ACE5;
-        Mon,  6 Mar 2023 02:35:53 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4PVZWc2YYlz9xGYc;
-        Mon,  6 Mar 2023 18:27:08 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwCHCAT9wQVk+QB3AQ--.18482S2;
-        Mon, 06 Mar 2023 11:35:46 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH] fs: Fix description of vfs_tmpfile()
-Date:   Mon,  6 Mar 2023 11:35:31 +0100
-Message-Id: <20230306103531.1298202-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwCHCAT9wQVk+QB3AQ--.18482S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZw4rWF43tr1kXFy8ur4rKrg_yoWfZrb_uF
-        Wvqr18uas8Xr17Aw4Fkryavry3u3Z8Ar13Gr4ft34IgFZ8Jr95AFWkArWfX34kZ3WxXr13
-        Cr92va4agF13WjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUboxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-        67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-        AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-        j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-        kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-        bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-        AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
-        42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJw
-        CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
-        WIevJa73UjIFyTuYvjxUrNtxDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj4o6dQABs4
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 6 Mar 2023 04:52:34 -0500
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7328023641;
+        Mon,  6 Mar 2023 01:52:31 -0800 (PST)
+Received: by mail-pl1-x62f.google.com with SMTP id h8so9618438plf.10;
+        Mon, 06 Mar 2023 01:52:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wG8c7belK9OM/OT139DOvd0umxDg1Jwx48LfTTUoDq8=;
+        b=Bqk84XzlHXdUfL5jaevO/928dBaaKnaQ/6iMPIvzXXK4wXwLhD8T6jH72W2O9clYGr
+         w4468W4AUtB14ezm/PNepGojuEiqbA3wwrhczCUmfTyMcUCq/qHaHETuhPdN3sceUATq
+         kjFclmdVx8nb3gOomQeOZS2/43S6EDre1NqDWzHyRwePjObcFmiQ6/PyvjUa0vFW1sCB
+         +sP9OvcIZ4mDCMQafARVvfE6MvvGiB6YhK8uV8Jw6eaPXHgUboGFoQPrtpYshvuo2KE+
+         P54u+DEuJzRaKNJDcsrTj999zPH45FGYMPJVVy33hABYOjS5ASLFiJ1tli7793TEwIy0
+         DHMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wG8c7belK9OM/OT139DOvd0umxDg1Jwx48LfTTUoDq8=;
+        b=cL2AC2iAw6O4HxzbTgvug/CufLH2Nn3dx913oGl+zQ36eR1q7xrR8MmyBfNRQjj0Il
+         H9z89tCUcRJiKFTz+CwB0FJADJ2CbXK3M1U0eIUzgILhLwYC5Nswryotyf8eBJhy3ZKT
+         YuapAFm7uYZlUBhSz+vwblvZ8MBbShkoFGFcEb7iZfcbpxaAnDt4HJ62w4kHXDL8x91R
+         79+b6TQNr5uJWftXdsoVvXElWH8qRnnhFi/jcL/SEpOUYFQxoSPCdON63KhHN7tC2C7n
+         iUsxPFjeYllKvw857j7fILF7IIJnRWyCdRy2GybylCk3ZHZ8okfYYQ8LZD1r/c/CTWMR
+         TaHA==
+X-Gm-Message-State: AO0yUKWFvMzeLPQQHuKZ0hQTEfCtWQAVBhfd74bvHLunP/7AhEgIdmuB
+        35rkirXib3Fntfr8CSfzpJjE1m7kW28=
+X-Google-Smtp-Source: AK7set/bBdX5zqdpORgqfqafnX6iscVVZGVVNV/7vxmq/Vj9Zf+JCNzxV2mm3lWUKcFbiEvJ7NsuKA==
+X-Received: by 2002:a17:903:32d0:b0:19a:a810:542 with SMTP id i16-20020a17090332d000b0019aa8100542mr13107676plr.61.1678096350554;
+        Mon, 06 Mar 2023 01:52:30 -0800 (PST)
+Received: from rh-tp ([129.41.58.18])
+        by smtp.gmail.com with ESMTPSA id u4-20020a170902e80400b0019d397b0f18sm6238132plg.214.2023.03.06.01.52.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 01:52:30 -0800 (PST)
+Date:   Mon, 06 Mar 2023 20:51:45 +0530
+Message-Id: <87r0u129di.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 25/31] ext4: Convert ext4_block_write_begin() to take a folio
+In-Reply-To: <ZAWj4FHczOQwwEbK@casper.infradead.org>
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,DATE_IN_FUTURE_03_06,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+Matthew Wilcox <willy@infradead.org> writes:
 
-Update the description of vfs_tmpfile() to match the current parameters of
-that function.
+> On Mon, Mar 06, 2023 at 12:21:48PM +0530, Ritesh Harjani wrote:
+>> "Matthew Wilcox (Oracle)" <willy@infradead.org> writes:
+>>
+>> > All the callers now have a folio, so pass that in and operate on folios.
+>> > Removes four calls to compound_head().
+>>
+>> Why do you say four? Isn't it 3 calls of PageUptodate(page) which
+>> removes calls to compound_head()? Which one did I miss?
+>>
+>> > -	BUG_ON(!PageLocked(page));
+>> > +	BUG_ON(!folio_test_locked(folio));
+>
+> That one ;-)
 
-Fixes: 9751b338656f ("vfs: move open right after ->tmpfile()")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Acked-by: Christian Brauner <brauner@kernel.org>
----
- fs/namei.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+__PAGEFLAG(Locked, locked, PF_NO_TAIL)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index edfedfbccae..f04f7be5893 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3574,9 +3574,9 @@ static int do_open(struct nameidata *nd,
- /**
-  * vfs_tmpfile - create tmpfile
-  * @idmap:	idmap of the mount the inode was found from
-- * @dentry:	pointer to dentry of the base directory
-+ * @parentpath:	pointer to the path of the base directory
-+ * @file:	file descriptor of the new tmpfile
-  * @mode:	mode of the new tmpfile
-- * @open_flag:	flags
-  *
-  * Create a temporary file.
-  *
--- 
-2.25.1
+#define __PAGEFLAG(uname, lname, policy)				\
+	TESTPAGEFLAG(uname, lname, policy)				\
+	__SETPAGEFLAG(uname, lname, policy)				\
+	__CLEARPAGEFLAG(uname, lname, policy)
 
+#define TESTPAGEFLAG(uname, lname, policy)				\
+static __always_inline bool folio_test_##lname(struct folio *folio)	\
+{ return test_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); }	\
+static __always_inline int Page##uname(struct page *page)		\
+{ return test_bit(PG_##lname, &policy(page, 0)->flags); }
+
+How? PageLocked(page) doesn't do any compount_head() calls no?
+
+-ritesh
+
+>
+>> >  	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+>> >  		for (i = 0; i < nr_wait; i++) {
+>> >  			int err2;
+>> >
+>> > -			err2 = fscrypt_decrypt_pagecache_blocks(page, blocksize,
+>> > -								bh_offset(wait[i]));
+>> > +			err2 = fscrypt_decrypt_pagecache_blocks(&folio->page,
+>> > +						blocksize, bh_offset(wait[i]));
+>>
+>> folio_decrypt_pagecache_blocks() takes folio as it's argument now.
+>>
+>> Other than that it looks good to me. Please feel free to add -
+>> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>
+> Thanks.  I'll refresh this patchset next week.
+
+Sure. Thanks!
