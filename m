@@ -2,74 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E2B6AB1E9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Mar 2023 20:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43DDF6AB526
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Mar 2023 04:50:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbjCETh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Mar 2023 14:37:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35172 "EHLO
+        id S229802AbjCFDuz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Mar 2023 22:50:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbjCEThZ (ORCPT
+        with ESMTP id S229457AbjCFDuy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Mar 2023 14:37:25 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2E3313D54;
-        Sun,  5 Mar 2023 11:37:24 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 66CC0B80B10;
-        Sun,  5 Mar 2023 19:37:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 29875C433EF;
-        Sun,  5 Mar 2023 19:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678045042;
-        bh=zEJI7yk42TZcaVP8xqLw5rhLMIuJEUHNURqp3RX0DFU=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=GDJ30jhPA2OKTvtwOx6uhfAAzNkBAVILdfS1C9HPyRCIuH3f0Oo/XpCjb1jhg3yTk
-         3L1LbxhlpozGP/9xJLBxDb0hecXJB6a5sq2+ca2IBQfhz02njVf5zENrzANIiFb7Ne
-         z0iAWBKl7VUy3iKOyBjSmUe+nYXVSy/1/5EZnq/hBXxWiT0bPSmcEFMoSRbMwaKyaA
-         ud8Jlw9FZQhrFt2gT8ZGvBnAW7Cw0Yz4pbSEm7JTGNB8oBh2s+InkOe8wOfcAN1VMx
-         Jzepu00KoM1gJgtrNrr26fIFVCveeAsyRyYZmY9EMUC9LylG4u4hv3vw+bq6HTmad7
-         LbAPcyfVIHhpw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1127EC41679;
-        Sun,  5 Mar 2023 19:37:22 +0000 (UTC)
-Subject: Re: [git pull] add Christian Brauner as co-maintainer
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <ZAToVz5v5WlhzskY@ZenIV>
-References: <ZAToVz5v5WlhzskY@ZenIV>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZAToVz5v5WlhzskY@ZenIV>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-misc
-X-PR-Tracked-Commit-Id: 3304f18bfcf588df0fe3b703b6a6c1129d80bdc7
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1a90673e17b6bcc6b6e8c072015956a6204e0f2d
-Message-Id: <167804504206.1860.12952686498509871025.pr-tracker-bot@kernel.org>
-Date:   Sun, 05 Mar 2023 19:37:22 +0000
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Sun, 5 Mar 2023 22:50:54 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246EDC646;
+        Sun,  5 Mar 2023 19:50:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1678074650;
+        bh=uOpjYi/uwBaBMW8bz4zVun2hNpZrW4Dt7bBTAD9vHpA=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=T8lPnbWzdOIza/IhsTAWCawsX4jPwiAZ25CHyR43GLMM+uOn29OwSNeEqsQuwVh0D
+         ETAQy8e7nidLM/i/reZxUWFxis3vec10HQAxcWY28nIvBFIoSLpgklbsFXl0jRK4BR
+         Kt8cjZdreuOEPCRgUZUck9FfeieOYgy7Zit5gke4=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9F2E01280671;
+        Sun,  5 Mar 2023 22:50:50 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8kPEqNcgNz3h; Sun,  5 Mar 2023 22:50:50 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1678074650;
+        bh=uOpjYi/uwBaBMW8bz4zVun2hNpZrW4Dt7bBTAD9vHpA=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=T8lPnbWzdOIza/IhsTAWCawsX4jPwiAZ25CHyR43GLMM+uOn29OwSNeEqsQuwVh0D
+         ETAQy8e7nidLM/i/reZxUWFxis3vec10HQAxcWY28nIvBFIoSLpgklbsFXl0jRK4BR
+         Kt8cjZdreuOEPCRgUZUck9FfeieOYgy7Zit5gke4=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9FCF11280651;
+        Sun,  5 Mar 2023 22:50:49 -0500 (EST)
+Message-ID: <9bdeda94a7cd2ee9218d992e1da95a322ce0ec68.camel@HansenPartnership.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Keith Busch <kbusch@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-block@vger.kernel.org
+Date:   Sun, 05 Mar 2023 22:50:48 -0500
+In-Reply-To: <ZAN0JkklyCRIXVo6@casper.infradead.org>
+References: <Y/7L74P6jSWwOvWt@mit.edu>
+         <ZAFUYqAcPmRPLjET@kbusch-mbp.dhcp.thefacebook.com>
+         <ZAFuSSZ5vZN7/UAa@casper.infradead.org>
+         <f68905c5785b355b621847974d620fb59f021a41.camel@HansenPartnership.com>
+         <ZAL0ifa66TfMinCh@casper.infradead.org>
+         <2600732b9ed0ddabfda5831aff22fd7e4270e3be.camel@HansenPartnership.com>
+         <ZAN0JkklyCRIXVo6@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Sun, 5 Mar 2023 19:07:03 +0000:
+On Sat, 2023-03-04 at 16:39 +0000, Matthew Wilcox wrote:
+> > I fully understand that eventually we'll need to get a single large
+> > buffer to span discontiguous pages ... I noted that in the bit you
+> > cut, but I don't see why the prototype shouldn't start with
+> > contiguous pages.
+> 
+> I disagree that this is a desirable goal.  To solve the scalability
+> issues we have in the VFS, we need to manage memory in larger chunks
+> than PAGE_SIZE.  That makes the concerns expressed in previous years
+> moot.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-misc
+Well, what is or isn't desirable in this regard can be left to a later
+exploration.  Most of the cloud storage problems seem to be solved with
+a 16k block size, for which I think we'll find current compaction is
+good enough.  I actually think we might not have a current cloud use
+case beyond 64k sectors.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1a90673e17b6bcc6b6e8c072015956a6204e0f2d
+James
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
