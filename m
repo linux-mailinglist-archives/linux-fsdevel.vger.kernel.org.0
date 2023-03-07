@@ -2,215 +2,228 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EAAD76AF6F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 21:51:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F216AF75C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 22:17:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbjCGUu7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 15:50:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44780 "EHLO
+        id S231128AbjCGVRq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 16:17:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229887AbjCGUu5 (ORCPT
+        with ESMTP id S229497AbjCGVRo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 15:50:57 -0500
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE99AA739
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 12:50:56 -0800 (PST)
-Received: by mail-il1-f200.google.com with SMTP id t16-20020a92c0d0000000b00319bb6f4282so7561402ilf.20
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 12:50:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678222255;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d2TaVkmzoFnbidPsxAEaZiPwl2GKYJdrifj1ZuLmWyE=;
-        b=x6RYVG869b2u9BXpmoUCjPPAaBDnT4zAi+88piCIoKcHbVs7p8wUnhqI+qIhwuMFce
-         W28R+dJbiBsT4nVdHDOZwpHFrlUPmrA8Dvp8GMAmpjx8ChEc61cSpdcxrdgcLlmTfV89
-         rURicxBe/XVaFOO5mkOoKW7H9fD5v/DfQUDpkui+Q+1AWfs2Wg/V0QbTzUY4X90h6Fsb
-         QvOpdmcBTOmrOaaDk8BRDG5xKAFL/SFTwhUR8SwbU+o+2vCSpVFKwVCHQyq1+QSiAc9I
-         1R7/u1+iCOiqMgfw9RDYJEP3gm5n4kp/fgW7yVsHZp27mhiEzD3NfcjeX2A3B9MNxZhP
-         wutQ==
-X-Gm-Message-State: AO0yUKU7moQDnwxAuBe7RSUHYUgiWukf6Y3NpJHPmzapjCWFB//JSXcE
-        WsOLl9g1YoZNyikRAh58qCLzLhtlmA90JtTUhlRG2v2OV/49
-X-Google-Smtp-Source: AK7set9Q3fQ7QaebeZqWPyLaB4izydi5rzt3N6zz4x1KYKQBL2nLH7IYDELTuCVnn9h+Bb+GOTRlBr6Fa6b2pcs9kZQi6Wq5+kxF
+        Tue, 7 Mar 2023 16:17:44 -0500
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75D9C98850;
+        Tue,  7 Mar 2023 13:17:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678223863; x=1709759863;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=pOR+a0qtrYYUZio/wrLuNbeEvIN9xaLlLRSgEW1v7oE=;
+  b=W1XHguvb8MNtD2Utaz5tUU9x5l0OF9xbXjoHYXDccBVm2+BX59IBo3Rq
+   cZEa3MUlD8PBz5Q7EQYMFr/AmdeLMfMOrYXGos3cxZNtTXRkXbpAR7lNs
+   13GsdoBkocn0hxSuttWtJAB34AVi04xmTPGPAFDVYxcTsTnBhmmnR7PoP
+   NHkkUIth9pho+E8O+pVMcLlTnqdQAkvEZY1IbE9K3f7K2W219NNfOnEXp
+   vaPObN1jjUJ6a3dgs/cMan9ObFW2kUI7AXwmJbtDC+C6ENO+NQkaoFtkt
+   xOS312+f7Euyr6VGNv9OZnhAGmWuruslkYl60DrktgSClQzWLrV11Y/lf
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="337496400"
+X-IronPort-AV: E=Sophos;i="5.98,241,1673942400"; 
+   d="scan'208";a="337496400"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2023 13:17:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="850837662"
+X-IronPort-AV: E=Sophos;i="5.98,241,1673942400"; 
+   d="scan'208";a="850837662"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orsmga005.jf.intel.com with ESMTP; 07 Mar 2023 13:17:42 -0800
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Tue, 7 Mar 2023 13:17:42 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21 via Frontend Transport; Tue, 7 Mar 2023 13:17:42 -0800
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.49) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.21; Tue, 7 Mar 2023 13:17:42 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=W1Ey59cIM6xmPb2fOLgqM6SRpTeRsOxFc4bm9GN3I5a7LmhY+I/Hl7qjeRYedlwnkImPeXG1rDYOyICONaOVRupyiq6EL0OIpuz7d7CJh/dHNqpEW3ZNrIaCcNy8zvz5urtaoA8xHLR/e0mQgou03m82sOW6KlSpd5a38Q087RbkW0Bul4G+/r8eWOMvGNAmCKtrcqBhSNSz8UkPFVoKbQ24TsKaqnhvCVdsnWM6pQg0maNY6wWj1Hlck9hn+NC8nTW9ON29t4ejoGhrowv7Z8+IMFUEwrKjaciKvO9MudreJJa4yCd2ZXrYGF+UCNg+f6HjSi84hHQu0tuf4tBUhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UZpzKj+X87gkz3kPIOct8kwmP+GqeDrhf0c++yq+L2I=;
+ b=V8YK7lmPpT8sfKXjq6kK6W3DpsC/JZuRVwuwYghkz9UMjc19rWSDSKIysGjUNTZJev5noqrEgs5n7XURe+Do9+YGvqkuP5QxogIW29/AQhyIaw3jFLPC0rwNuK66STO7FYpj1V8sNSghBbTm5C+eFQELyo9lEQpbOaWGjYAhU4DZ6vteRtVbJZGrqgBVNX9d+4fkYYd9Ck85V6pJ9W8GucncmnURbvHyLD7fabl3Z22QS+qzw/jXoaK9Ayc40s2fyJxzfpNRANfiT4w0mhG+8BKSva8g2Avvi5lNwMuP43ucKyILEalJLGFab9sfzN4GcrncGqCxAIH6c57Wsjdvng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by DS7PR11MB6224.namprd11.prod.outlook.com (2603:10b6:8:97::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6156.27; Tue, 7 Mar 2023 21:17:40 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::a54:899:975c:5b65]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::a54:899:975c:5b65%7]) with mapi id 15.20.6156.017; Tue, 7 Mar 2023
+ 21:17:39 +0000
+From:   "Keller, Jacob E" <jacob.e.keller@intel.com>
+To:     Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     Soheil Hassas Yeganeh <soheil@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        "Eric Biggers" <ebiggers@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <brauner@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex
+ contention
+Thread-Topic: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex
+ contention
+Thread-Index: AQHZUSVCtRdQbQ7OR0qukN0bzLm1BK7v0elw
+Date:   Tue, 7 Mar 2023 21:17:39 +0000
+Message-ID: <CO1PR11MB5089C96D23A1D6F0F121716DD6B79@CO1PR11MB5089.namprd11.prod.outlook.com>
+References: <e8228f0048977456466bc33b42600e929fedd319.1678213651.git.pabeni@redhat.com>
+In-Reply-To: <e8228f0048977456466bc33b42600e929fedd319.1678213651.git.pabeni@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO1PR11MB5089:EE_|DS7PR11MB6224:EE_
+x-ms-office365-filtering-correlation-id: e4789b94-2902-4219-51a8-08db1f5161cd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: u3wgtFs8y+GBIDmXMuPtV3Q34B8Cqj/dcbUEb64XmJyACxfNbmmGL5lVKCfp65m+Z0Kix0CBIvm9JTjeWub1U6oX9qcizA01SOU3TQIdbhueYUxpcCXeEHyxzMEU661FROBupKoPHXocTNO2tPh4SsuL/xkzbO887viHP/JeerQMIZ7HmqljVT0rQlOdmYafDLWf5QPPZh5y4WExgJMiy71EVdGmXBonRIftmXSJAVgG6On0uGUTEGfVBNExWH6wW+lRngT/8OSqNZ3HH7ehDuLI+ugqYk/xBvoLoVovmcaYfGWjX4ydO+g+Pbv/8I2j0l2jmaDdehGdSl3D1LQhdgxVKAgb8s2mia7yhvYplS34O0AjotXFxX89P+4NsID7MoAPlYCsqAtlyjetOyZGmADA48Su6ReQggWngML27nwtY/ljkWr/HZR125Rt/Mob/r2v91b5KH0DJP1nqLhlI/ynbr2cnmtirIoXAJpr/Hi1KuK/mWdsjxkuzF3EiQ8TEFzylmQncW/twkKhZYQ28CTb5V2cGFsPjggA8lbq7UkQqWiesh2YCOZP40ZXaccPwdbP2Z1HgIJC7DtouRXJ45EqfXpLL4in0ba7VghkbFIlhd4pY26NR0cHMHtg7aFkUsb/A5s2wcOr4mm25/PiS5Czhj5W2oIw9R9UDKiTLCXxi/7OZp1imD4MF91w6Z7uDOrywByCI7TDMmmwLLOg6Q==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(396003)(136003)(366004)(39860400002)(346002)(376002)(451199018)(53546011)(6506007)(83380400001)(55016003)(33656002)(82960400001)(122000001)(38070700005)(38100700002)(9686003)(86362001)(186003)(26005)(41300700001)(66476007)(66946007)(64756008)(8676002)(2906002)(66446008)(66556008)(8936002)(52536014)(76116006)(5660300002)(7416002)(4326008)(7696005)(478600001)(71200400001)(110136005)(54906003)(316002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?j7qwKjeBN/VGPAi1VhcXixhbfn+p7u3rmexAmCw2YeZbMXBNGRszwv/GvTIR?=
+ =?us-ascii?Q?R01uYs/2O9OXPsiGlyDanrYY25gw19/ec8p0UV9M+pWBimcgX6Iie3v1QsxL?=
+ =?us-ascii?Q?kxvgw3tP1dljMCC1ZUEMJeWkF/7NE+QTyP0tvg5FfxiOOwcMZB2OJNIx88bN?=
+ =?us-ascii?Q?xoMWXrXBHWQUTLdA5xYufCuog7Gnw0pZtBacakzh7IP3UpdooTuErOvePBq/?=
+ =?us-ascii?Q?W/VIJS2I+hNp/0a1WKRSCOoXrMx7a/wIuRaYiElfzKfhyYADpgUcEQwXjY7l?=
+ =?us-ascii?Q?dzHxHUmxlnNycJq3T/joq6COz1YCp1u//cHwk89mhAnZm2E8TQ4CyV+ZDR1h?=
+ =?us-ascii?Q?qp6dJ53MymibWSfZRvWgMXJnzuTSUvV4Z3pb2+qaaOKSmmLXpxfaA36KeD6R?=
+ =?us-ascii?Q?41w/x2NqbmImmluT72TF9P2nsdhrBIveWiQs3t9NOioEKuDuXBU9zIzBaT2v?=
+ =?us-ascii?Q?d7jMbX7Yy/a/bdi1sX7cp6EhjzVQCeECJSAZQDVN+JczrkyMPamFcyFVVfhm?=
+ =?us-ascii?Q?3uxB5gnnO9y4lg3UoNf7j5G/5gerRU3hixqGyIDoC4tfKZncxTU+eBZI+TN2?=
+ =?us-ascii?Q?VSv8UeXIxo4fO06u1N+2eq1MUYbFBScNIm9K8nBEjzQS1DX7p8EX5q2//cA2?=
+ =?us-ascii?Q?EU4f0iE1Urv45gWtGQ5a/xukYzri7Z3oCxyoh0zegxN5ZyaLOFBRu1lFjYSJ?=
+ =?us-ascii?Q?VJDKFe4y4CoEbrPJRtI3eMwP4tMRG6lGpUcsdKMjgqEI2rgaQgNFrBf5s1J4?=
+ =?us-ascii?Q?L5OZLSQCKzgng4ri7GGHOHnQvjCJgZl3GCe8khBW+D8e+zLaoeBGHqprvyqK?=
+ =?us-ascii?Q?DVRA0CQDmS6TnClCXQJ6V4bBEX4Pt3quMW+TCFM1tC4oh+DiHf+mTaAD1Zvg?=
+ =?us-ascii?Q?pwaULRjom+k3UPc3rT8zSXmgy8vsybPSteZTJk+FN9DdtsWqIgXT3ACpzgcf?=
+ =?us-ascii?Q?RjXTu6a43gu0SyUgSFBweh/ufGe9uaqa5WntqF0quCE/NoZpcfveSxl7leh6?=
+ =?us-ascii?Q?JUsT/rjbW2rMdIjCgFISZsCF6d1YwPFzO74uwdnRfiigWK0qGhyLAYy20aub?=
+ =?us-ascii?Q?R+EMd5jR8U2reloCEIV3MWgg3+6sslyyHXE8bmZQKl/Mi4VGbJSc8iyZcPcM?=
+ =?us-ascii?Q?kDErw9a1gg96CcrOiGqx3tD9GCm/SyLJVQzAGnYeWc8YJKtuNHwZTfD/MtQb?=
+ =?us-ascii?Q?Q7ol++pkMB+hBYCpMqZuOBRe20vBdAvyGHM4Dx4E3wU96vXG7aeNIpSJWCjf?=
+ =?us-ascii?Q?4qMm+zqQti+4VA8/rHYhUvlvxXVEHmSdV9wwAg3dn7rI8LlDzfiQNNbeFseL?=
+ =?us-ascii?Q?9iL42DD0tLVDhZyisBs/nftCpLLkJLletFsgeb6BqvD4VuliVRzsHamYGDw8?=
+ =?us-ascii?Q?IT4XqDJx8SlsRvdTHKRa4k7pDdoyNDZqXaDb5sW6Lk6iuluCEoEKhql4yM4g?=
+ =?us-ascii?Q?0IHLrt5GiFyXefd4OY0zhXWHfYjyV3dImHRIKeY3ihO8UilHLjFo2ES/5SzT?=
+ =?us-ascii?Q?glMVIZPnINbeyjVexiSWZFsDU0wPHkjCJy8aqY2ZHWzNCSuozt6Y4gclboad?=
+ =?us-ascii?Q?gzayvN/6GScxiwdy9tdK6Va+WrBMl1xj04L8aOrC?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a02:7310:0:b0:3e0:6875:f5e2 with SMTP id
- y16-20020a027310000000b003e06875f5e2mr7593499jab.6.1678222255359; Tue, 07 Mar
- 2023 12:50:55 -0800 (PST)
-Date:   Tue, 07 Mar 2023 12:50:55 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000062913f05f655919e@google.com>
-Subject: [syzbot] [9p?] KASAN: wild-memory-access Write in v9fs_get_acl
-From:   syzbot <syzbot+cb1d16facb3cc90de5fb@syzkaller.appspotmail.com>
-To:     asmadeus@codewreck.org, ericvh@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux_oss@crudebyte.com, lucho@ionkov.net,
-        syzkaller-bugs@googlegroups.com,
-        v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4789b94-2902-4219-51a8-08db1f5161cd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2023 21:17:39.6558
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YnfYxOWKMS2ncV0FFrBxTtYoyRbck8kGn8WM9zaxFBx43PhzDQPQ7TiNbaQYos7ZNzDxWCHveBYYbfuUwwQfWbI2TQLzw/qUmMj3ds+EPP0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6224
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    596b6b709632 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=12ce3de4c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3519974f3f27816d
-dashboard link: https://syzkaller.appspot.com/bug?extid=cb1d16facb3cc90de5fb
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b2e204c80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e74fb0c80000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/06e2210b88a3/disk-596b6b70.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/79e6930ab577/vmlinux-596b6b70.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/56b95e6bcb5c/Image-596b6b70.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/e12043e9faac/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cb1d16facb3cc90de5fb@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 256
-MINIX-fs: mounting unchecked file system, running fsck is recommended
-==================================================================
-BUG: KASAN: wild-memory-access in instrument_atomic_read_write include/linux/instrumented.h:102 [inline]
-BUG: KASAN: wild-memory-access in atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:176 [inline]
-BUG: KASAN: wild-memory-access in __refcount_sub_and_test include/linux/refcount.h:272 [inline]
-BUG: KASAN: wild-memory-access in __refcount_dec_and_test include/linux/refcount.h:315 [inline]
-BUG: KASAN: wild-memory-access in refcount_dec_and_test include/linux/refcount.h:333 [inline]
-BUG: KASAN: wild-memory-access in posix_acl_release include/linux/posix_acl.h:57 [inline]
-BUG: KASAN: wild-memory-access in v9fs_get_acl+0x1a4/0x390 fs/9p/acl.c:102
-Write of size 4 at addr 9fffeb37f97f1c00 by task syz-executor798/5923
-
-CPU: 0 PID: 5923 Comm: syz-executor798 Not tainted 6.2.0-syzkaller-18302-g596b6b709632 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
-Call trace:
- dump_backtrace+0x1c8/0x1f4 arch/arm64/kernel/stacktrace.c:158
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:165
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- print_report+0xe4/0x4c0 mm/kasan/report.c:420
- kasan_report+0xd4/0x130 mm/kasan/report.c:517
- kasan_check_range+0x264/0x2a4 mm/kasan/generic.c:189
- __kasan_check_write+0x2c/0x3c mm/kasan/shadow.c:37
- instrument_atomic_read_write include/linux/instrumented.h:102 [inline]
- atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:176 [inline]
- __refcount_sub_and_test include/linux/refcount.h:272 [inline]
- __refcount_dec_and_test include/linux/refcount.h:315 [inline]
- refcount_dec_and_test include/linux/refcount.h:333 [inline]
- posix_acl_release include/linux/posix_acl.h:57 [inline]
- v9fs_get_acl+0x1a4/0x390 fs/9p/acl.c:102
- v9fs_mount+0x77c/0xa5c fs/9p/vfs_super.c:183
- legacy_get_tree+0xd4/0x16c fs/fs_context.c:610
- vfs_get_tree+0x90/0x274 fs/super.c:1489
- do_new_mount+0x25c/0x8c8 fs/namespace.c:3145
- path_mount+0x590/0xe58 fs/namespace.c:3475
- do_mount fs/namespace.c:3488 [inline]
- __do_sys_mount fs/namespace.c:3697 [inline]
- __se_sys_mount fs/namespace.c:3674 [inline]
- __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3674
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
- el0_svc+0x58/0x168 arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-==================================================================
-Unable to handle kernel paging request at virtual address 9fffeb37f97f1c00
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004
-  CM = 0, WnR = 0
-[9fffeb37f97f1c00] address between user and kernel address ranges
-Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 5923 Comm: syz-executor798 Tainted: G    B              6.2.0-syzkaller-18302-g596b6b709632 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/21/2023
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __lse_atomic_fetch_add_release arch/arm64/include/asm/atomic_lse.h:62 [inline]
-pc : __lse_atomic_fetch_sub_release arch/arm64/include/asm/atomic_lse.h:76 [inline]
-pc : arch_atomic_fetch_sub_release arch/arm64/include/asm/atomic.h:51 [inline]
-pc : atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:177 [inline]
-pc : __refcount_sub_and_test include/linux/refcount.h:272 [inline]
-pc : __refcount_dec_and_test include/linux/refcount.h:315 [inline]
-pc : refcount_dec_and_test include/linux/refcount.h:333 [inline]
-pc : posix_acl_release include/linux/posix_acl.h:57 [inline]
-pc : v9fs_get_acl+0x1b0/0x390 fs/9p/acl.c:102
-lr : arch_atomic_fetch_sub_release arch/arm64/include/asm/atomic.h:51 [inline]
-lr : atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:177 [inline]
-lr : __refcount_sub_and_test include/linux/refcount.h:272 [inline]
-lr : __refcount_dec_and_test include/linux/refcount.h:315 [inline]
-lr : refcount_dec_and_test include/linux/refcount.h:333 [inline]
-lr : posix_acl_release include/linux/posix_acl.h:57 [inline]
-lr : v9fs_get_acl+0x1ac/0x390 fs/9p/acl.c:102
-sp : ffff80001e607970
-x29: ffff80001e607970 x28: dfff800000000000 x27: 1ffff00003cc0f3c
-x26: 1ffff00003cc0f38 x25: ffff0000ddbe4648 x24: ffff0000ddbe45e0
-x23: ffff0000de2a0000 x22: dfff800000000000 x21: 9fffeb37f97f1c00
-x20: 00000000fffffffb x19: fffffffffffffffb x18: 1fffe0003689b776
-x17: ffff800015b8d000 x16: ffff80001235d16c x15: 0000000000000000
-x14: 0000000040000000 x13: 0000000000000002 x12: 0000000000000001
-x11: ff80800009d500bc x10: 0000000000000000 x9 : ffff800009d500bc
-x8 : 00000000ffffffff x7 : 1fffe0003689b777 x6 : ffff800008288c58
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000081b9ce8
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- arch_atomic_fetch_sub_release arch/arm64/include/asm/atomic.h:51 [inline]
- atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:177 [inline]
- __refcount_sub_and_test include/linux/refcount.h:272 [inline]
- __refcount_dec_and_test include/linux/refcount.h:315 [inline]
- refcount_dec_and_test include/linux/refcount.h:333 [inline]
- posix_acl_release include/linux/posix_acl.h:57 [inline]
- v9fs_get_acl+0x1b0/0x390 fs/9p/acl.c:102
- v9fs_mount+0x77c/0xa5c fs/9p/vfs_super.c:183
- legacy_get_tree+0xd4/0x16c fs/fs_context.c:610
- vfs_get_tree+0x90/0x274 fs/super.c:1489
- do_new_mount+0x25c/0x8c8 fs/namespace.c:3145
- path_mount+0x590/0xe58 fs/namespace.c:3475
- do_mount fs/namespace.c:3488 [inline]
- __do_sys_mount fs/namespace.c:3697 [inline]
- __se_sys_mount fs/namespace.c:3674 [inline]
- __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3674
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
- el0_svc+0x58/0x168 arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-Code: 97b08d5c d503201f 979ee91f 12800008 (b86802b6) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	97b08d5c 	bl	0xfffffffffec23570
-   4:	d503201f 	nop
-   8:	979ee91f 	bl	0xfffffffffe7ba484
-   c:	12800008 	mov	w8, #0xffffffff            	// #-1
-* 10:	b86802b6 	ldaddl	w8, w22, [x21] <-- trapping instruction
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> -----Original Message-----
+> From: Paolo Abeni <pabeni@redhat.com>
+> Sent: Tuesday, March 7, 2023 10:47 AM
+> To: netdev@vger.kernel.org
+> Cc: Soheil Hassas Yeganeh <soheil@google.com>; Al Viro
+> <viro@zeniv.linux.org.uk>; Carlos Maiolino <cmaiolino@redhat.com>; Eric
+> Biggers <ebiggers@kernel.org>; Keller, Jacob E <jacob.e.keller@intel.com>=
+;
+> Andrew Morton <akpm@linux-foundation.org>; Jens Axboe <axboe@kernel.dk>;
+> Christian Brauner <brauner@kernel.org>; linux-fsdevel@vger.kernel.org
+> Subject: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex content=
+ion
+>=20
+> We are observing huge contention on the epmutex during an http
+> connection/rate test:
+>=20
+>  83.17% 0.25%  nginx            [kernel.kallsyms]         [k]
+> entry_SYSCALL_64_after_hwframe
+> [...]
+>            |--66.96%--__fput
+>                       |--60.04%--eventpoll_release_file
+>                                  |--58.41%--__mutex_lock.isra.6
+>                                            |--56.56%--osq_lock
+>=20
+> The application is multi-threaded, creates a new epoll entry for
+> each incoming connection, and does not delete it before the
+> connection shutdown - that is, before the connection's fd close().
+>=20
+> Many different threads compete frequently for the epmutex lock,
+> affecting the overall performance.
+>=20
+> To reduce the contention this patch introduces explicit reference countin=
+g
+> for the eventpoll struct. Each registered event acquires a reference,
+> and references are released at ep_remove() time.
+>=20
+> Additionally, this introduces a new 'dying' flag to prevent races between
+> the EP file close() and the monitored file close().
+> ep_eventpoll_release() marks, under f_lock spinlock, each epitem as befor=
+e
+> removing it, while EP file close() does not touch dying epitems.
+>=20
+> The eventpoll struct is released by whoever - among EP file close() and
+> and the monitored file close() drops its last reference.
+>=20
+> With all the above in place, we can drop the epmutex usage at disposal ti=
+me.
+>=20
+> Overall this produces a significant performance improvement in the
+> mentioned connection/rate scenario: the mutex operations disappear from
+> the topmost offenders in the perf report, and the measured connections/ra=
+te
+> grows by ~60%.
+>=20
+> To make the change more readable this additionally renames ep_free() to
+> ep_clear_and_put(), and moves the actual memory cleanup in a separate
+> ep_free() helper.
+>=20
+> Tested-by: Xiumei Mu <xmu@redhiat.com>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+> Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+> ---
+> This is a repost of v4, with no changes. Kindly asking if FS maintainers
+> could have a look.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+This (still) looks good to me.
+
+Thanks,
+Jake
