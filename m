@@ -2,61 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 351A76AF32F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 20:01:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 361B06AF5AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 20:28:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233353AbjCGTBt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 14:01:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39242 "EHLO
+        id S234212AbjCGT23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 14:28:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233230AbjCGTB1 (ORCPT
+        with ESMTP id S234152AbjCGT2J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 14:01:27 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A0A7F961
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 10:47:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678214820;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=vmnJ72tmPeTd8ht2ecvm9giyfkZZJvjLvoS6VqT5sHE=;
-        b=BJiq0sBjg4VEGUKxdZR9Samb+thCbZ/i39uLJLZHig0gpG02llf9C9KzDaI9mW1cC1gUPQ
-        iMrE6w8kB4wFjqeaHbq/zpB075h2/PB5q9A8+kHJfdlOh776Ij8AwWYJ3T7lPdSV+BAa2O
-        2wkkQyh5F3D5We2LJjMoIpKpbz3ZCWg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-480-io4MG5o5OiusbiWiGO4uqg-1; Tue, 07 Mar 2023 13:46:57 -0500
-X-MC-Unique: io4MG5o5OiusbiWiGO4uqg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7DF0D811E9C;
-        Tue,  7 Mar 2023 18:46:56 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.39.195.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6BA962026D4B;
-        Tue,  7 Mar 2023 18:46:54 +0000 (UTC)
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     Soheil Hassas Yeganeh <soheil@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex contention
-Date:   Tue,  7 Mar 2023 19:46:37 +0100
-Message-Id: <e8228f0048977456466bc33b42600e929fedd319.1678213651.git.pabeni@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        Tue, 7 Mar 2023 14:28:09 -0500
+Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C42B2B5FE7
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 11:14:09 -0800 (PST)
+Received: by mail-pj1-x104a.google.com with SMTP id q24-20020a17090a2e1800b00237c37964d4so8517377pjd.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 11:14:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1678216446;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Wt+tMy1RH9zC84sq0to0cY0x7+Xv2yMTzgsmC8ZQ7cM=;
+        b=D+BRUMlsQmhPM7Km19r0cwtSovSQv0WAERIfkRDuEbsEadkI29Rz8sSQqIRpfAPEa/
+         uCEsFKnPst88VAZKSkPZjffh5S3WZTxUmNU4Xw/KSiy4soV/n0dJgIrEl9OXSPbIfQQK
+         KLOBXvGg6LH2ugOhFB2E2wpPrpDgxCLKWf0LPJlLMfhxqqsHvu6JPcw14TUVTqqyGFlZ
+         BGsXgEkUEMCjAYmlzNQrRRX203Kz1uOE6SMPxmDIVc7khBpDDg6yCWpgZR7rxAtYpjv/
+         SqkEiQXtopyaQBB3xjjHp9QzaFJ66vn2U3nSuUXKNCqd3tZoY5qhFiJPfWWt4zAY4ldo
+         w8FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678216446;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wt+tMy1RH9zC84sq0to0cY0x7+Xv2yMTzgsmC8ZQ7cM=;
+        b=Vuh1qXoXfcQcXlw1quu5KAFKreH5BPzV/ZtD3XwVwJnnEpNoN7gplba7wUYte6Y0yh
+         SEGgwqtdipOsgLAtERICa39PsL6oRQdsIzzzjLY2vgZJHHTtaSu7pe+hQ9iOnwX6GQNm
+         eGnK6X/qLMzNDwUHh2eCxKLW8K12BI14M9iWFUwJoJMl7zzA02wwB99jJRBnwTxmPBPF
+         T/0SFDEfImru6aUGgvBuFx0RMdiM7sSxMc76HulZboVc3VoM/qUd8y9dgwDnHb5NVQHD
+         0NBX6iSwQd5xNzRP3hNr91OV846WD8C/Xvxl0az+6zXSXxHAn6pvDYJgXAjqw3/Nfdoz
+         MPsQ==
+X-Gm-Message-State: AO0yUKXsBBoZmaqIXxwqiljBsx+Lvn6VBz+4HU/4Uc1BPJ0dXLeY8Ft4
+        EOlZDma3gomhD56SzOHQ+KTflPcDyZ6ORAqlvQ==
+X-Google-Smtp-Source: AK7set9XmMrWXZ6mpUlbpcFneSpuxawFmXBvqn5A78lIM65RH9bBDorwkD1ukffGVS/euOjwrQaunWK8N4egR11Vkw==
+X-Received: from ackerleytng-cloudtop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:1f5f])
+ (user=ackerleytng job=sendgmr) by 2002:a17:90a:8e83:b0:237:1fe0:b151 with
+ SMTP id f3-20020a17090a8e8300b002371fe0b151mr5483530pjo.8.1678216446569; Tue,
+ 07 Mar 2023 11:14:06 -0800 (PST)
+Date:   Tue, 07 Mar 2023 19:14:05 +0000
+In-Reply-To: <20221202061347.1070246-10-chao.p.peng@linux.intel.com> (message
+ from Chao Peng on Fri,  2 Dec 2022 14:13:47 +0800)
+Mime-Version: 1.0
+Message-ID: <diqzcz5kz85e.fsf@ackerleytng-cloudtop.c.googlers.com>
+Subject: Re: [PATCH v10 9/9] KVM: Enable and expose KVM_MEM_PRIVATE
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        pbonzini@redhat.com, corbet@lwn.net, seanjc@google.com,
+        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
+        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, arnd@arndb.de, naoya.horiguchi@nec.com,
+        linmiaohe@huawei.com, x86@kernel.org, hpa@zytor.com,
+        hughd@google.com, jlayton@kernel.org, bfields@fieldses.org,
+        akpm@linux-foundation.org, shuah@kernel.org, rppt@kernel.org,
+        steven.price@arm.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        vannapurve@google.com, yu.c.zhang@linux.intel.com,
+        chao.p.peng@linux.intel.com, kirill.shutemov@linux.intel.com,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com, qperret@google.com,
+        tabba@google.com, michael.roth@amd.com, mhocko@suse.com,
+        wei.w.wang@intel.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,418 +84,403 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We are observing huge contention on the epmutex during an http
-connection/rate test:
+Chao Peng <chao.p.peng@linux.intel.com> writes:
 
- 83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYSCALL_64_after_hwframe
-[...]
-           |--66.96%--__fput
-                      |--60.04%--eventpoll_release_file
-                                 |--58.41%--__mutex_lock.isra.6
-                                           |--56.56%--osq_lock
+> Register/unregister private memslot to fd-based memory backing store
+> restrictedmem and implement the callbacks for restrictedmem_notifier:
+>    - invalidate_start()/invalidate_end() to zap the existing memory
+>      mappings in the KVM page table.
+>    - error() to request KVM_REQ_MEMORY_MCE and later exit to userspace
+>      with KVM_EXIT_SHUTDOWN.
 
-The application is multi-threaded, creates a new epoll entry for
-each incoming connection, and does not delete it before the
-connection shutdown - that is, before the connection's fd close().
+> Expose KVM_MEM_PRIVATE for memslot and KVM_MEMORY_ATTRIBUTE_PRIVATE for
+> KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES to userspace but either are
+> controlled by kvm_arch_has_private_mem() which should be rewritten by
+> architecture code.
 
-Many different threads compete frequently for the epmutex lock,
-affecting the overall performance.
+Could we perhaps rename KVM_MEM_PRIVATE to KVM_MEM_PROTECTED, to be in
+line with KVM_X86_PROTECTED_VM?
 
-To reduce the contention this patch introduces explicit reference counting
-for the eventpoll struct. Each registered event acquires a reference,
-and references are released at ep_remove() time.
+I feel that a memslot that has the KVM_MEM_PRIVATE flag need not always
+be private; It can sometimes be providing memory that is shared and
+also accessible from the host.
 
-Additionally, this introduces a new 'dying' flag to prevent races between
-the EP file close() and the monitored file close().
-ep_eventpoll_release() marks, under f_lock spinlock, each epitem as before
-removing it, while EP file close() does not touch dying epitems.
+KVM_MEMORY_ATTRIBUTE_PRIVATE is fine as-is because this flag is set when
+the guest memory is meant to be backed by private memory.
 
-The eventpoll struct is released by whoever - among EP file close() and
-and the monitored file close() drops its last reference.
+KVM_MEMORY_EXIT_FLAG_PRIVATE is also okay because the flag is used to
+indicate when the memory error is caused by a private access (as opposed
+to a shared access).
 
-With all the above in place, we can drop the epmutex usage at disposal time.
+kvm_slot_can_be_private() could perhaps be renamed kvm_is_protected_slot()?
 
-Overall this produces a significant performance improvement in the
-mentioned connection/rate scenario: the mutex operations disappear from
-the topmost offenders in the perf report, and the measured connections/rate
-grows by ~60%.
 
-To make the change more readable this additionally renames ep_free() to
-ep_clear_and_put(), and moves the actual memory cleanup in a separate
-ep_free() helper.
+> Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> Reviewed-by: Fuad Tabba <tabba@google.com>
+> ---
+>   arch/x86/include/asm/kvm_host.h |   1 +
+>   arch/x86/kvm/x86.c              |  13 +++
+>   include/linux/kvm_host.h        |   3 +
+>   virt/kvm/kvm_main.c             | 179 +++++++++++++++++++++++++++++++-
+>   4 files changed, 191 insertions(+), 5 deletions(-)
 
-Tested-by: Xiumei Mu <xmu@redhiat.com>
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
----
-This is a repost of v4, with no changes. Kindly asking if FS maintainers
-could have a look.
+> diff --git a/arch/x86/include/asm/kvm_host.h  
+> b/arch/x86/include/asm/kvm_host.h
+> index 7772ab37ac89..27ef31133352 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -114,6 +114,7 @@
+>   	KVM_ARCH_REQ_FLAGS(31, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
+>   #define KVM_REQ_HV_TLB_FLUSH \
+>   	KVM_ARCH_REQ_FLAGS(32, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
+> +#define KVM_REQ_MEMORY_MCE		KVM_ARCH_REQ(33)
 
-    v4 at:
-    https://lore.kernel.org/linux-fsdevel/9d8ad7995e51ad3aecdfe6f7f9e72231b8c9d3b5.1671569682.git.pabeni@redhat.com/
+>   #define CR0_RESERVED_BITS                                               \
+>   	(~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_TS \
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 5aefcff614d2..c67e22f3e2ee 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -6587,6 +6587,13 @@ int kvm_arch_pm_notifier(struct kvm *kvm, unsigned  
+> long state)
+>   }
+>   #endif /* CONFIG_HAVE_KVM_PM_NOTIFIER */
 
-    v3 at:
-    https://lore.kernel.org/linux-fsdevel/1aedd7e87097bc4352ba658ac948c585a655785a.1669657846.git.pabeni@redhat.com/
+> +#ifdef CONFIG_HAVE_KVM_RESTRICTED_MEM
+> +void kvm_arch_memory_mce(struct kvm *kvm)
+> +{
+> +	kvm_make_all_cpus_request(kvm, KVM_REQ_MEMORY_MCE);
+> +}
+> +#endif
+> +
+>   static int kvm_vm_ioctl_get_clock(struct kvm *kvm, void __user *argp)
+>   {
+>   	struct kvm_clock_data data = { 0 };
+> @@ -10357,6 +10364,12 @@ static int vcpu_enter_guest(struct kvm_vcpu  
+> *vcpu)
 
-    v2 at:
-    https://lore.kernel.org/linux-fsdevel/f35e58ed5af8131f0f402c3dc6c3033fa96d1843.1669312208.git.pabeni@redhat.com/
+>   		if (kvm_check_request(KVM_REQ_UPDATE_CPU_DIRTY_LOGGING, vcpu))
+>   			static_call(kvm_x86_update_cpu_dirty_logging)(vcpu);
+> +
+> +		if (kvm_check_request(KVM_REQ_MEMORY_MCE, vcpu)) {
+> +			vcpu->run->exit_reason = KVM_EXIT_SHUTDOWN;
+> +			r = 0;
+> +			goto out;
+> +		}
+>   	}
 
-    v1 at:
-    https://lore.kernel.org/linux-fsdevel/f35e58ed5af8131f0f402c3dc6c3033fa96d1843.1669312208.git.pabeni@redhat.com/
+>   	if (kvm_check_request(KVM_REQ_EVENT, vcpu) || req_int_win ||
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 153842bb33df..f032d878e034 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -590,6 +590,7 @@ struct kvm_memory_slot {
+>   	struct file *restricted_file;
+>   	loff_t restricted_offset;
+>   	struct restrictedmem_notifier notifier;
+> +	struct kvm *kvm;
+>   };
 
-    Previous related effort at:
-    https://lore.kernel.org/linux-fsdevel/20190727113542.162213-1-cj.chengjian@huawei.com/
-    https://lkml.org/lkml/2017/10/28/81
----
- fs/eventpoll.c | 185 +++++++++++++++++++++++++++++++------------------
- 1 file changed, 116 insertions(+), 69 deletions(-)
+>   static inline bool kvm_slot_can_be_private(const struct kvm_memory_slot  
+> *slot)
+> @@ -2363,6 +2364,8 @@ static inline int kvm_restricted_mem_get_pfn(struct  
+> kvm_memory_slot *slot,
+>   	*pfn = page_to_pfn(page);
+>   	return ret;
+>   }
+> +
+> +void kvm_arch_memory_mce(struct kvm *kvm);
+>   #endif /* CONFIG_HAVE_KVM_RESTRICTED_MEM */
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 64659b110973..a43ccb02133c 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -57,13 +57,7 @@
-  * we need a lock that will allow us to sleep. This lock is a
-  * mutex (ep->mtx). It is acquired during the event transfer loop,
-  * during epoll_ctl(EPOLL_CTL_DEL) and during eventpoll_release_file().
-- * Then we also need a global mutex to serialize eventpoll_release_file()
-- * and ep_free().
-- * This mutex is acquired by ep_free() during the epoll file
-- * cleanup path and it is also acquired by eventpoll_release_file()
-- * if a file has been pushed inside an epoll set and it is then
-- * close()d without a previous call to epoll_ctl(EPOLL_CTL_DEL).
-- * It is also acquired when inserting an epoll fd onto another epoll
-+ * The epmutex is acquired when inserting an epoll fd onto another epoll
-  * fd. We do this so that we walk the epoll tree and ensure that this
-  * insertion does not create a cycle of epoll file descriptors, which
-  * could lead to deadlock. We need a global mutex to prevent two
-@@ -153,6 +147,13 @@ struct epitem {
- 	/* The file descriptor information this item refers to */
- 	struct epoll_filefd ffd;
- 
-+	/*
-+	 * Protected by file->f_lock, true for to-be-released epitem already
-+	 * removed from the "struct file" items list; together with
-+	 * eventpoll->refcount orchestrates "struct eventpoll" disposal
-+	 */
-+	bool dying;
-+
- 	/* List containing poll wait queues */
- 	struct eppoll_entry *pwqlist;
- 
-@@ -217,6 +218,12 @@ struct eventpoll {
- 	u64 gen;
- 	struct hlist_head refs;
- 
-+	/*
-+	 * usage count, used together with epitem->dying to
-+	 * orchestrate the disposal of this struct
-+	 */
-+	refcount_t refcount;
-+
- #ifdef CONFIG_NET_RX_BUSY_POLL
- 	/* used to track busy poll napi_id */
- 	unsigned int napi_id;
-@@ -240,9 +247,7 @@ struct ep_pqueue {
- /* Maximum number of epoll watched descriptors, per user */
- static long max_user_watches __read_mostly;
- 
--/*
-- * This mutex is used to serialize ep_free() and eventpoll_release_file().
-- */
-+/* Used for cycles detection */
- static DEFINE_MUTEX(epmutex);
- 
- static u64 loop_check_gen = 0;
-@@ -557,8 +562,7 @@ static void ep_remove_wait_queue(struct eppoll_entry *pwq)
- 
- /*
-  * This function unregisters poll callbacks from the associated file
-- * descriptor.  Must be called with "mtx" held (or "epmutex" if called from
-- * ep_free).
-+ * descriptor.  Must be called with "mtx" held.
-  */
- static void ep_unregister_pollwait(struct eventpoll *ep, struct epitem *epi)
- {
-@@ -681,11 +685,38 @@ static void epi_rcu_free(struct rcu_head *head)
- 	kmem_cache_free(epi_cache, epi);
- }
- 
-+static void ep_get(struct eventpoll *ep)
-+{
-+	refcount_inc(&ep->refcount);
-+}
-+
-+/*
-+ * Returns true if the event poll can be disposed
-+ */
-+static bool ep_refcount_dec_and_test(struct eventpoll *ep)
-+{
-+	if (!refcount_dec_and_test(&ep->refcount))
-+		return false;
-+
-+	WARN_ON_ONCE(!RB_EMPTY_ROOT(&ep->rbr.rb_root));
-+	return true;
-+}
-+
-+static void ep_free(struct eventpoll *ep)
-+{
-+	mutex_destroy(&ep->mtx);
-+	free_uid(ep->user);
-+	wakeup_source_unregister(ep->ws);
-+	kfree(ep);
-+}
-+
- /*
-  * Removes a "struct epitem" from the eventpoll RB tree and deallocates
-  * all the associated resources. Must be called with "mtx" held.
-+ * If the dying flag is set, do the removal only if force is true.
-+ * Returns true if the eventpoll can be disposed.
-  */
--static int ep_remove(struct eventpoll *ep, struct epitem *epi)
-+static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool force)
- {
- 	struct file *file = epi->ffd.file;
- 	struct epitems_head *to_free;
-@@ -700,6 +731,11 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
- 
- 	/* Remove the current item from the list of epoll hooks */
- 	spin_lock(&file->f_lock);
-+	if (epi->dying && !force) {
-+		spin_unlock(&file->f_lock);
-+		return false;
-+	}
-+
- 	to_free = NULL;
- 	head = file->f_ep;
- 	if (head->first == &epi->fllink && !epi->fllink.next) {
-@@ -733,28 +769,28 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
- 	call_rcu(&epi->rcu, epi_rcu_free);
- 
- 	percpu_counter_dec(&ep->user->epoll_watches);
-+	return ep_refcount_dec_and_test(ep);
-+}
- 
--	return 0;
-+/*
-+ * ep_remove variant for callers owing an additional reference to the ep
-+ */
-+static void ep_remove_safe(struct eventpoll *ep, struct epitem *epi)
-+{
-+	WARN_ON_ONCE(__ep_remove(ep, epi, false));
- }
- 
--static void ep_free(struct eventpoll *ep)
-+static void ep_clear_and_put(struct eventpoll *ep)
- {
- 	struct rb_node *rbp;
- 	struct epitem *epi;
-+	bool dispose;
- 
- 	/* We need to release all tasks waiting for these file */
- 	if (waitqueue_active(&ep->poll_wait))
- 		ep_poll_safewake(ep, NULL, 0);
- 
--	/*
--	 * We need to lock this because we could be hit by
--	 * eventpoll_release_file() while we're freeing the "struct eventpoll".
--	 * We do not need to hold "ep->mtx" here because the epoll file
--	 * is on the way to be removed and no one has references to it
--	 * anymore. The only hit might come from eventpoll_release_file() but
--	 * holding "epmutex" is sufficient here.
--	 */
--	mutex_lock(&epmutex);
-+	mutex_lock(&ep->mtx);
- 
- 	/*
- 	 * Walks through the whole tree by unregistering poll callbacks.
-@@ -768,25 +804,21 @@ static void ep_free(struct eventpoll *ep)
- 
- 	/*
- 	 * Walks through the whole tree by freeing each "struct epitem". At this
--	 * point we are sure no poll callbacks will be lingering around, and also by
--	 * holding "epmutex" we can be sure that no file cleanup code will hit
--	 * us during this operation. So we can avoid the lock on "ep->lock".
--	 * We do not need to lock ep->mtx, either, we only do it to prevent
--	 * a lockdep warning.
-+	 * point we are sure no poll callbacks will be lingering around.
-+	 * Since we still own a reference to the eventpoll struct, the loop can't
-+	 * dispose it.
- 	 */
--	mutex_lock(&ep->mtx);
- 	while ((rbp = rb_first_cached(&ep->rbr)) != NULL) {
- 		epi = rb_entry(rbp, struct epitem, rbn);
--		ep_remove(ep, epi);
-+		ep_remove_safe(ep, epi);
- 		cond_resched();
- 	}
-+
-+	dispose = ep_refcount_dec_and_test(ep);
- 	mutex_unlock(&ep->mtx);
- 
--	mutex_unlock(&epmutex);
--	mutex_destroy(&ep->mtx);
--	free_uid(ep->user);
--	wakeup_source_unregister(ep->ws);
--	kfree(ep);
-+	if (dispose)
-+		ep_free(ep);
- }
- 
- static int ep_eventpoll_release(struct inode *inode, struct file *file)
-@@ -794,7 +826,7 @@ static int ep_eventpoll_release(struct inode *inode, struct file *file)
- 	struct eventpoll *ep = file->private_data;
- 
- 	if (ep)
--		ep_free(ep);
-+		ep_clear_and_put(ep);
- 
- 	return 0;
- }
-@@ -906,33 +938,35 @@ void eventpoll_release_file(struct file *file)
- {
- 	struct eventpoll *ep;
- 	struct epitem *epi;
--	struct hlist_node *next;
-+	bool dispose;
- 
- 	/*
--	 * We don't want to get "file->f_lock" because it is not
--	 * necessary. It is not necessary because we're in the "struct file"
--	 * cleanup path, and this means that no one is using this file anymore.
--	 * So, for example, epoll_ctl() cannot hit here since if we reach this
--	 * point, the file counter already went to zero and fget() would fail.
--	 * The only hit might come from ep_free() but by holding the mutex
--	 * will correctly serialize the operation. We do need to acquire
--	 * "ep->mtx" after "epmutex" because ep_remove() requires it when called
--	 * from anywhere but ep_free().
--	 *
--	 * Besides, ep_remove() acquires the lock, so we can't hold it here.
-+	 * Use the 'dying' flag to prevent a concurrent ep_cleat_and_put() from
-+	 * touching the epitems list before eventpoll_release_file() can access
-+	 * the ep->mtx.
- 	 */
--	mutex_lock(&epmutex);
--	if (unlikely(!file->f_ep)) {
--		mutex_unlock(&epmutex);
--		return;
--	}
--	hlist_for_each_entry_safe(epi, next, file->f_ep, fllink) {
-+again:
-+	spin_lock(&file->f_lock);
-+	if (file->f_ep && file->f_ep->first) {
-+		/* detach from ep tree */
-+		epi = hlist_entry(file->f_ep->first, struct epitem, fllink);
-+		epi->dying = true;
-+		spin_unlock(&file->f_lock);
-+
-+		/*
-+		 * ep access is safe as we still own a reference to the ep
-+		 * struct
-+		 */
- 		ep = epi->ep;
--		mutex_lock_nested(&ep->mtx, 0);
--		ep_remove(ep, epi);
-+		mutex_lock(&ep->mtx);
-+		dispose = __ep_remove(ep, epi, true);
- 		mutex_unlock(&ep->mtx);
-+
-+		if (dispose)
-+			ep_free(ep);
-+		goto again;
- 	}
--	mutex_unlock(&epmutex);
-+	spin_unlock(&file->f_lock);
- }
- 
- static int ep_alloc(struct eventpoll **pep)
-@@ -955,6 +989,7 @@ static int ep_alloc(struct eventpoll **pep)
- 	ep->rbr = RB_ROOT_CACHED;
- 	ep->ovflist = EP_UNACTIVE_PTR;
- 	ep->user = user;
-+	refcount_set(&ep->refcount, 1);
- 
- 	*pep = ep;
- 
-@@ -1223,10 +1258,10 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
- 		 */
- 		list_del_init(&wait->entry);
- 		/*
--		 * ->whead != NULL protects us from the race with ep_free()
--		 * or ep_remove(), ep_remove_wait_queue() takes whead->lock
--		 * held by the caller. Once we nullify it, nothing protects
--		 * ep/epi or even wait.
-+		 * ->whead != NULL protects us from the race with
-+		 * ep_clear_and_put() or ep_remove(), ep_remove_wait_queue()
-+		 * takes whead->lock held by the caller. Once we nullify it,
-+		 * nothing protects ep/epi or even wait.
- 		 */
- 		smp_store_release(&ep_pwq_from_wait(wait)->whead, NULL);
- 	}
-@@ -1496,16 +1531,22 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
- 	if (tep)
- 		mutex_unlock(&tep->mtx);
- 
-+	/*
-+	 * ep_remove_safe() calls in the later error paths can't lead to
-+	 * ep_free() as the ep file itself still holds an ep reference.
-+	 */
-+	ep_get(ep);
-+
- 	/* now check if we've created too many backpaths */
- 	if (unlikely(full_check && reverse_path_check())) {
--		ep_remove(ep, epi);
-+		ep_remove_safe(ep, epi);
- 		return -EINVAL;
- 	}
- 
- 	if (epi->event.events & EPOLLWAKEUP) {
- 		error = ep_create_wakeup_source(epi);
- 		if (error) {
--			ep_remove(ep, epi);
-+			ep_remove_safe(ep, epi);
- 			return error;
- 		}
- 	}
-@@ -1529,7 +1570,7 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
- 	 * high memory pressure.
- 	 */
- 	if (unlikely(!epq.epi)) {
--		ep_remove(ep, epi);
-+		ep_remove_safe(ep, epi);
- 		return -ENOMEM;
- 	}
- 
-@@ -2025,7 +2066,7 @@ static int do_epoll_create(int flags)
- out_free_fd:
- 	put_unused_fd(fd);
- out_free_ep:
--	ep_free(ep);
-+	ep_clear_and_put(ep);
- 	return error;
- }
- 
-@@ -2167,10 +2208,16 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
- 			error = -EEXIST;
- 		break;
- 	case EPOLL_CTL_DEL:
--		if (epi)
--			error = ep_remove(ep, epi);
--		else
-+		if (epi) {
-+			/*
-+			 * The eventpoll itself is still alive: the refcount
-+			 * can't go to zero here.
-+			 */
-+			ep_remove_safe(ep, epi);
-+			error = 0;
-+		} else {
- 			error = -ENOENT;
-+		}
- 		break;
- 	case EPOLL_CTL_MOD:
- 		if (epi) {
--- 
-2.39.2
+>   #endif
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index e107afea32f0..ac835fc77273 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -936,6 +936,121 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
 
+>   #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
+
+> +#ifdef CONFIG_HAVE_KVM_RESTRICTED_MEM
+> +static bool restrictedmem_range_is_valid(struct kvm_memory_slot *slot,
+> +					 pgoff_t start, pgoff_t end,
+> +					 gfn_t *gfn_start, gfn_t *gfn_end)
+> +{
+> +	unsigned long base_pgoff = slot->restricted_offset >> PAGE_SHIFT;
+> +
+> +	if (start > base_pgoff)
+> +		*gfn_start = slot->base_gfn + start - base_pgoff;
+> +	else
+> +		*gfn_start = slot->base_gfn;
+> +
+> +	if (end < base_pgoff + slot->npages)
+> +		*gfn_end = slot->base_gfn + end - base_pgoff;
+> +	else
+> +		*gfn_end = slot->base_gfn + slot->npages;
+> +
+> +	if (*gfn_start >= *gfn_end)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +static void kvm_restrictedmem_invalidate_begin(struct  
+> restrictedmem_notifier *notifier,
+> +					       pgoff_t start, pgoff_t end)
+> +{
+> +	struct kvm_memory_slot *slot = container_of(notifier,
+> +						    struct kvm_memory_slot,
+> +						    notifier);
+> +	struct kvm *kvm = slot->kvm;
+> +	gfn_t gfn_start, gfn_end;
+> +	struct kvm_gfn_range gfn_range;
+> +	int idx;
+> +
+> +	if (!restrictedmem_range_is_valid(slot, start, end,
+> +					  &gfn_start, &gfn_end))
+> +		return;
+> +
+> +	gfn_range.start = gfn_start;
+> +	gfn_range.end = gfn_end;
+> +	gfn_range.slot = slot;
+> +	gfn_range.pte = __pte(0);
+> +	gfn_range.may_block = true;
+> +
+> +	idx = srcu_read_lock(&kvm->srcu);
+> +	KVM_MMU_LOCK(kvm);
+> +
+> +	kvm_mmu_invalidate_begin(kvm);
+> +	kvm_mmu_invalidate_range_add(kvm, gfn_start, gfn_end);
+> +	if (kvm_unmap_gfn_range(kvm, &gfn_range))
+> +		kvm_flush_remote_tlbs(kvm);
+> +
+> +	KVM_MMU_UNLOCK(kvm);
+> +	srcu_read_unlock(&kvm->srcu, idx);
+> +}
+> +
+> +static void kvm_restrictedmem_invalidate_end(struct  
+> restrictedmem_notifier *notifier,
+> +					     pgoff_t start, pgoff_t end)
+> +{
+> +	struct kvm_memory_slot *slot = container_of(notifier,
+> +						    struct kvm_memory_slot,
+> +						    notifier);
+> +	struct kvm *kvm = slot->kvm;
+> +	gfn_t gfn_start, gfn_end;
+> +
+> +	if (!restrictedmem_range_is_valid(slot, start, end,
+> +					  &gfn_start, &gfn_end))
+> +		return;
+> +
+> +	KVM_MMU_LOCK(kvm);
+> +	kvm_mmu_invalidate_end(kvm);
+> +	KVM_MMU_UNLOCK(kvm);
+> +}
+> +
+> +static void kvm_restrictedmem_error(struct restrictedmem_notifier  
+> *notifier,
+> +				    pgoff_t start, pgoff_t end)
+> +{
+> +	struct kvm_memory_slot *slot = container_of(notifier,
+> +						    struct kvm_memory_slot,
+> +						    notifier);
+> +	kvm_arch_memory_mce(slot->kvm);
+> +}
+> +
+> +static struct restrictedmem_notifier_ops kvm_restrictedmem_notifier_ops  
+> = {
+> +	.invalidate_start = kvm_restrictedmem_invalidate_begin,
+> +	.invalidate_end = kvm_restrictedmem_invalidate_end,
+> +	.error = kvm_restrictedmem_error,
+> +};
+> +
+> +static inline void kvm_restrictedmem_register(struct kvm_memory_slot  
+> *slot)
+> +{
+> +	slot->notifier.ops = &kvm_restrictedmem_notifier_ops;
+> +	restrictedmem_register_notifier(slot->restricted_file, &slot->notifier);
+> +}
+> +
+> +static inline void kvm_restrictedmem_unregister(struct kvm_memory_slot  
+> *slot)
+> +{
+> +	restrictedmem_unregister_notifier(slot->restricted_file,
+> +					  &slot->notifier);
+> +}
+> +
+> +#else /* !CONFIG_HAVE_KVM_RESTRICTED_MEM */
+> +
+> +static inline void kvm_restrictedmem_register(struct kvm_memory_slot  
+> *slot)
+> +{
+> +	WARN_ON_ONCE(1);
+> +}
+> +
+> +static inline void kvm_restrictedmem_unregister(struct kvm_memory_slot  
+> *slot)
+> +{
+> +	WARN_ON_ONCE(1);
+> +}
+> +
+> +#endif /* CONFIG_HAVE_KVM_RESTRICTED_MEM */
+> +
+>   #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
+>   static int kvm_pm_notifier_call(struct notifier_block *bl,
+>   				unsigned long state,
+> @@ -980,6 +1095,11 @@ static void kvm_destroy_dirty_bitmap(struct  
+> kvm_memory_slot *memslot)
+>   /* This does not remove the slot from struct kvm_memslots data  
+> structures */
+>   static void kvm_free_memslot(struct kvm *kvm, struct kvm_memory_slot  
+> *slot)
+>   {
+> +	if (slot->flags & KVM_MEM_PRIVATE) {
+> +		kvm_restrictedmem_unregister(slot);
+> +		fput(slot->restricted_file);
+> +	}
+> +
+>   	kvm_destroy_dirty_bitmap(slot);
+
+>   	kvm_arch_free_memslot(kvm, slot);
+> @@ -1551,10 +1671,14 @@ static void kvm_replace_memslot(struct kvm *kvm,
+>   	}
+>   }
+
+> -static int check_memory_region_flags(const struct kvm_user_mem_region  
+> *mem)
+> +static int check_memory_region_flags(struct kvm *kvm,
+> +				     const struct kvm_user_mem_region *mem)
+>   {
+>   	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
+
+> +	if (kvm_arch_has_private_mem(kvm))
+> +		valid_flags |= KVM_MEM_PRIVATE;
+> +
+>   #ifdef __KVM_HAVE_READONLY_MEM
+>   	valid_flags |= KVM_MEM_READONLY;
+>   #endif
+> @@ -1630,6 +1754,9 @@ static int kvm_prepare_memory_region(struct kvm  
+> *kvm,
+>   {
+>   	int r;
+
+> +	if (change == KVM_MR_CREATE && new->flags & KVM_MEM_PRIVATE)
+> +		kvm_restrictedmem_register(new);
+> +
+>   	/*
+>   	 * If dirty logging is disabled, nullify the bitmap; the old bitmap
+>   	 * will be freed on "commit".  If logging is enabled in both old and
+> @@ -1658,6 +1785,9 @@ static int kvm_prepare_memory_region(struct kvm  
+> *kvm,
+>   	if (r && new && new->dirty_bitmap && (!old || !old->dirty_bitmap))
+>   		kvm_destroy_dirty_bitmap(new);
+
+> +	if (r && change == KVM_MR_CREATE && new->flags & KVM_MEM_PRIVATE)
+> +		kvm_restrictedmem_unregister(new);
+> +
+>   	return r;
+>   }
+
+> @@ -1963,7 +2093,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>   	int as_id, id;
+>   	int r;
+
+> -	r = check_memory_region_flags(mem);
+> +	r = check_memory_region_flags(kvm, mem);
+>   	if (r)
+>   		return r;
+
+> @@ -1982,6 +2112,10 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>   	     !access_ok((void __user *)(unsigned long)mem->userspace_addr,
+>   			mem->memory_size))
+>   		return -EINVAL;
+> +	if (mem->flags & KVM_MEM_PRIVATE &&
+> +		(mem->restricted_offset & (PAGE_SIZE - 1) ||
+> +		 mem->restricted_offset > U64_MAX - mem->memory_size))
+> +		return -EINVAL;
+>   	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_MEM_SLOTS_NUM)
+>   		return -EINVAL;
+>   	if (mem->guest_phys_addr + mem->memory_size < mem->guest_phys_addr)
+> @@ -2020,6 +2154,9 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>   		if ((kvm->nr_memslot_pages + npages) < kvm->nr_memslot_pages)
+>   			return -EINVAL;
+>   	} else { /* Modify an existing slot. */
+> +		/* Private memslots are immutable, they can only be deleted. */
+> +		if (mem->flags & KVM_MEM_PRIVATE)
+> +			return -EINVAL;
+>   		if ((mem->userspace_addr != old->userspace_addr) ||
+>   		    (npages != old->npages) ||
+>   		    ((mem->flags ^ old->flags) & KVM_MEM_READONLY))
+> @@ -2048,10 +2185,28 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>   	new->npages = npages;
+>   	new->flags = mem->flags;
+>   	new->userspace_addr = mem->userspace_addr;
+> +	if (mem->flags & KVM_MEM_PRIVATE) {
+> +		new->restricted_file = fget(mem->restricted_fd);
+> +		if (!new->restricted_file ||
+> +		    !file_is_restrictedmem(new->restricted_file)) {
+> +			r = -EINVAL;
+> +			goto out;
+> +		}
+> +		new->restricted_offset = mem->restricted_offset;
+> +	}
+> +
+> +	new->kvm = kvm;
+
+>   	r = kvm_set_memslot(kvm, old, new, change);
+>   	if (r)
+> -		kfree(new);
+> +		goto out;
+> +
+> +	return 0;
+> +
+> +out:
+> +	if (new->restricted_file)
+> +		fput(new->restricted_file);
+> +	kfree(new);
+>   	return r;
+>   }
+>   EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
+> @@ -2351,6 +2506,8 @@ static int kvm_vm_ioctl_clear_dirty_log(struct kvm  
+> *kvm,
+>   #ifdef CONFIG_HAVE_KVM_MEMORY_ATTRIBUTES
+>   static u64 kvm_supported_mem_attributes(struct kvm *kvm)
+>   {
+> +	if (kvm_arch_has_private_mem(kvm))
+> +		return KVM_MEMORY_ATTRIBUTE_PRIVATE;
+>   	return 0;
+>   }
+
+> @@ -4822,16 +4979,28 @@ static long kvm_vm_ioctl(struct file *filp,
+>   	}
+>   	case KVM_SET_USER_MEMORY_REGION: {
+>   		struct kvm_user_mem_region mem;
+> -		unsigned long size = sizeof(struct kvm_userspace_memory_region);
+> +		unsigned int flags_offset = offsetof(typeof(mem), flags);
+> +		unsigned long size;
+> +		u32 flags;
+
+>   		kvm_sanity_check_user_mem_region_alias();
+
+> +		memset(&mem, 0, sizeof(mem));
+> +
+>   		r = -EFAULT;
+> +		if (get_user(flags, (u32 __user *)(argp + flags_offset)))
+> +			goto out;
+> +
+> +		if (flags & KVM_MEM_PRIVATE)
+> +			size = sizeof(struct kvm_userspace_memory_region_ext);
+> +		else
+> +			size = sizeof(struct kvm_userspace_memory_region);
+> +
+>   		if (copy_from_user(&mem, argp, size))
+>   			goto out;
+
+>   		r = -EINVAL;
+> -		if (mem.flags & KVM_MEM_PRIVATE)
+> +		if ((flags ^ mem.flags) & KVM_MEM_PRIVATE)
+>   			goto out;
+
+>   		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
