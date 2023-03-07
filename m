@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E946AD3C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 02:20:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD60F6AD3D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 02:24:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229817AbjCGBUx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 20:20:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47550 "EHLO
+        id S229841AbjCGBYa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 20:24:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229680AbjCGBUw (ORCPT
+        with ESMTP id S229834AbjCGBY2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 20:20:52 -0500
+        Mon, 6 Mar 2023 20:24:28 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F343234302
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Mar 2023 17:20:01 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75CA66E89
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Mar 2023 17:23:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678152000;
+        s=mimecast20190719; t=1678152220;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=8qrw2gr+qx7DWb3UAvdR/mcFIQhqsDgcX3EEuLph/d4=;
-        b=YGeRZmkt7KTnmfz0mjbJg7dpkGGflmQPQEwP2U3RoDgEjIjwDq0sLFrNl/L7jawKbGyXou
-        V/6djRUqTh2s2HMDxNwPuIjMLaHKe3raP6r1IJM8xkLeV0l0KetebFhABURHHI+jCl+WuW
-        jnYMOIKpJfBAGU5cG3HgDeHdp2u2vX4=
+        bh=VqFd56y4+LzHfJxq40JHsrzkzmxYaLDJMh6dCS+VZKQ=;
+        b=C0kAeLZ4m80kQ4W4REDmVUtUNvdH71ufoL66+MFJQcGyuqIkGfNppwFbe4jSHyzbvaQnyj
+        t6xAqIUceq+fI32Pio566tw018E1mehq4s2XcmtiGgimP8DkQojH2Wr+koeHkdsho8PX2Y
+        Imuov6DiiRJ8Uqa3mDmjklKLEbbdtCY=
 Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
  [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-104-78syH1EcMf2GRWkyubOHZg-1; Mon, 06 Mar 2023 20:19:59 -0500
-X-MC-Unique: 78syH1EcMf2GRWkyubOHZg-1
-Received: by mail-qk1-f199.google.com with SMTP id dm13-20020a05620a1d4d00b00742a22c4239so6553126qkb.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Mar 2023 17:19:59 -0800 (PST)
+ us-mta-368-tyl07KeNOn2ML-TyqfK8-Q-1; Mon, 06 Mar 2023 20:23:39 -0500
+X-MC-Unique: tyl07KeNOn2ML-TyqfK8-Q-1
+Received: by mail-qk1-f199.google.com with SMTP id e14-20020a05620a208e00b0074270b9960dso6509247qka.22
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Mar 2023 17:23:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678151999;
+        d=1e100.net; s=20210112; t=1678152218;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8qrw2gr+qx7DWb3UAvdR/mcFIQhqsDgcX3EEuLph/d4=;
-        b=P9vwt868CV7b8/HaSDXnyk1fUcD958SlEFdM3Z9Xcr2UJIcnTPvYKtsbBuKdz+1X9t
-         sS/zzdUnKXuspLcksBGwzhrTm0guKk9ci8TQWfR7blD4wxDhWocVZ24KF2r57dRlIzcH
-         NlQWf2mTY+IWQ/Q59W5loP2GOS/NQKXbv2Z7f7ofYocXh6Qu+mNvGmO/QCY1+GYLIzoC
-         SD7lcvd9FPfMSRgL5depSIoYnelZ69kM+NORg2cQgv6kK130BE8opSNjknpyOw9BJM6G
-         YDsYhonDjO9TT8YxPdVB01/5R4eEBUYpTbLfNqqjltwsAtfGd89D4WS8pe+5s9/pZ8oQ
-         JdyA==
-X-Gm-Message-State: AO0yUKU/Gszx6QGtliK51nxH9UvPvofTajMskeC0YyHY4YKAjk3qUGZT
-        +oHv1U2o8P0kRiCpbPEuqk3N8IPUQrVa9Eaj5rBebsWfavk91XZ7U/Ug2Hw1dxpvv2lHOZl/wla
-        ACMTGhBJKPhPgI81t+MhmFHHUvw==
-X-Received: by 2002:ac8:7d12:0:b0:3bf:d71e:5b08 with SMTP id g18-20020ac87d12000000b003bfd71e5b08mr25643228qtb.3.1678151999076;
-        Mon, 06 Mar 2023 17:19:59 -0800 (PST)
-X-Google-Smtp-Source: AK7set+YPHN/ncr0Du5Ek2aNycnO04K6K6elfomWX85YMAJoHPLqYfwEiEIk3YRAWh/HHoBKpUm+sw==
-X-Received: by 2002:ac8:7d12:0:b0:3bf:d71e:5b08 with SMTP id g18-20020ac87d12000000b003bfd71e5b08mr25643186qtb.3.1678151998762;
-        Mon, 06 Mar 2023 17:19:58 -0800 (PST)
+        bh=VqFd56y4+LzHfJxq40JHsrzkzmxYaLDJMh6dCS+VZKQ=;
+        b=4H7LzAYMg8qwrsmdQ1zeBrXqs24dlzWqA1K3JcziZ1E33BnzA/z1uvE75F6ttmAPE7
+         RqUlwiSyhUeUmA0Vfs9nM67dUY1sRyvY+Cr07qroTfCN6Z8Ms7XGSEAhmJJpPzwQ30fH
+         BxGUfIHJ9+DcPPb7pbiScoFJAUe0QfCTYKxzJcCFXveQvQgfRCVKeEFs5ZXR+FT0QQ/j
+         czV7u+1SUV7XR5VVIb1rBPp0BcpLUAMDfPJqrvLwu0kAwIjeOsljismNEPMfarsQNJEq
+         zfY04HaPXq9L08e5h1TgmfQI3yIOnPaM5WGjYlQbkiYtyZ2u0yOLjg/LfdgKqR9JfCA8
+         Mjpg==
+X-Gm-Message-State: AO0yUKXVbgeJ8xymtqnkTNJaTzvtOIQrGOsfvdzCHibC3YwxoVt5DtQ+
+        7xDmYymnrorlqYAJmOi2PwL1bbKCkCTbbWlWKQdiD+NSON8q1F5mwwj/JF2kGY41GV+M1X4HZAR
+        9r+q8N+7MBNLb+xWAMZeDkvu2y3q3hv8UCA==
+X-Received: by 2002:ac8:4e49:0:b0:3b6:309e:dfe1 with SMTP id e9-20020ac84e49000000b003b6309edfe1mr22807073qtw.3.1678152218570;
+        Mon, 06 Mar 2023 17:23:38 -0800 (PST)
+X-Google-Smtp-Source: AK7set9NpW+IRYzeTwvzpjcmeG0lCpLiSMH4ix2ZZfLC9vuxmSNZLU9/wHTDN/VWK1ddDO5/7LNY8w==
+X-Received: by 2002:ac8:4e49:0:b0:3b6:309e:dfe1 with SMTP id e9-20020ac84e49000000b003b6309edfe1mr22807045qtw.3.1678152218368;
+        Mon, 06 Mar 2023 17:23:38 -0800 (PST)
 Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
-        by smtp.gmail.com with ESMTPSA id j11-20020a05622a038b00b003bd0f0b26b0sm8855311qtx.77.2023.03.06.17.19.57
+        by smtp.gmail.com with ESMTPSA id e15-20020ac85dcf000000b003bfad864e81sm8708948qtx.69.2023.03.06.17.23.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Mar 2023 17:19:58 -0800 (PST)
-Date:   Mon, 6 Mar 2023 20:19:56 -0500
+        Mon, 06 Mar 2023 17:23:37 -0800 (PST)
+Date:   Mon, 6 Mar 2023 20:23:36 -0500
 From:   Peter Xu <peterx@redhat.com>
 To:     Axel Rasmussen <axelrasmussen@google.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -70,18 +70,18 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         James Houghton <jthoughton@google.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] mm: userfaultfd: don't separate addr + len
- arguments
-Message-ID: <ZAaRPCntR94hGBL2@x1n>
+Subject: Re: [PATCH v3 5/5] mm: userfaultfd: add UFFDIO_CONTINUE_MODE_WP to
+ install WP PTEs
+Message-ID: <ZAaSGGzylNFCR+ql@x1n>
 References: <20230306225024.264858-1-axelrasmussen@google.com>
- <20230306225024.264858-5-axelrasmussen@google.com>
+ <20230306225024.264858-6-axelrasmussen@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230306225024.264858-5-axelrasmussen@google.com>
+In-Reply-To: <20230306225024.264858-6-axelrasmussen@google.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -89,76 +89,22 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 06, 2023 at 02:50:23PM -0800, Axel Rasmussen wrote:
-> We have a lot of functions which take an address + length pair,
-> currently passed as separate arguments. However, in our userspace API we
-> already have struct uffdio_range, which is exactly this pair, and this
-> is what we get from userspace when ioctls are called.
+On Mon, Mar 06, 2023 at 02:50:24PM -0800, Axel Rasmussen wrote:
+> UFFDIO_COPY already has UFFDIO_COPY_MODE_WP, so when installing a new
+> PTE to resolve a missing fault, one can install a write-protected one.
+> This is useful when using UFFDIO_REGISTER_MODE_{MISSING,WP} in
+> combination.
 > 
-> Instead of splitting the struct up into two separate arguments, just
-> plumb the struct through to the functions which use it (once we get to
-> the mfill_atomic_pte level, we're dealing with single (huge)pages, so we
-> don't need both parts).
+> So, add an analogous UFFDIO_CONTINUE_MODE_WP, which does the same thing
+> but for *minor* faults.
 > 
-> Relatedly, for waking, just re-use this existing structure instead of
-> defining a new "struct uffdio_wake_range".
+> Update the selftest to do some very basic exercising of the new flag.
 > 
 > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> ---
->  fs/userfaultfd.c              | 107 +++++++++++++---------------------
->  include/linux/userfaultfd_k.h |  17 +++---
->  mm/userfaultfd.c              |  92 ++++++++++++++---------------
->  3 files changed, 96 insertions(+), 120 deletions(-)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index b8e328123b71..984b63b0fc75 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -95,11 +95,6 @@ struct userfaultfd_wait_queue {
->  	bool waken;
->  };
->  
-> -struct userfaultfd_wake_range {
-> -	unsigned long start;
-> -	unsigned long len;
-> -};
 
-Would there still be a difference on e.g. 32 bits systems?
+Some mentioning on the use case would be nice. :) No objection having it.
 
-[...]
-
->  static __always_inline int validate_range(struct mm_struct *mm,
-> -					  __u64 start, __u64 len)
-> +					  const struct uffdio_range *range)
->  {
->  	__u64 task_size = mm->task_size;
->  
-> -	if (start & ~PAGE_MASK)
-> +	if (range->start & ~PAGE_MASK)
->  		return -EINVAL;
-> -	if (len & ~PAGE_MASK)
-> +	if (range->len & ~PAGE_MASK)
->  		return -EINVAL;
-> -	if (!len)
-> +	if (!range->len)
->  		return -EINVAL;
-> -	if (start < mmap_min_addr)
-> +	if (range->start < mmap_min_addr)
->  		return -EINVAL;
-> -	if (start >= task_size)
-> +	if (range->start >= task_size)
->  		return -EINVAL;
-> -	if (len > task_size - start)
-> +	if (range->len > task_size - range->start)
->  		return -EINVAL;
->  	return 0;
->  }
-
-Personally I don't like a lot on such a change. :( It avoids one parameter
-being passed over but it can add a lot indirections.
-
-Do you strongly suggest this?  Shall we move on without this so to not
-block the last patch (which I assume is the one you're looking for)?
+Acked-by: Peter Xu <peterx@redhat.com>
 
 Thanks,
 
