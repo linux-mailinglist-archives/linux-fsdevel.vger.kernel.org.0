@@ -2,186 +2,249 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FD6A6AF8AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 23:28:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12B066AFA4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 00:28:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231566AbjCGW2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 17:28:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55410 "EHLO
+        id S229886AbjCGX2C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 18:28:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231339AbjCGW21 (ORCPT
+        with ESMTP id S229525AbjCGX17 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 17:28:27 -0500
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAEFDAF778;
-        Tue,  7 Mar 2023 14:27:43 -0800 (PST)
-Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
-        by mx0a-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 327L5gJ4028321;
-        Tue, 7 Mar 2023 22:24:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pps0720; bh=LaaPqV7Flc0GLDHQpIpi/BIcyjij0wSdtMhbcCHYsgA=;
- b=KucE5UTqJQpxT11mxXz+EBR8v0tavcjUv9Ui2FHab40WoQiuV3yFIDgqKk3q5kcdvuwo
- drWjaXC7Yx+uiwl1OenpwWu47udmJqwKjE9dILefQUZGqLmGaEP1NLYCkNLYgQXE55IH
- pJ+yRhi5GSJ5jKQ8RWB3Nr3EtesnmJ05hdKeHlS8cBLT36zWyHn3FQ9/R6GqQyfwyefx
- YeGHnWIch0H3I5hz2qQ78crYlcNTY741RdGLewUR/aekyotj3MBUgHiSeyPnIKvgWPEK
- jg+AIfQknv6WWMr+5LSHk3ZVcc7cEeQsQPCw1ideabEOY7fb99n90BFJHjYRpVRpYa7A Vw== 
-Received: from p1lg14878.it.hpe.com (p1lg14878.it.hpe.com [16.230.97.204])
-        by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 3p6bu8114b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Mar 2023 22:24:17 +0000
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by p1lg14878.it.hpe.com (Postfix) with ESMTPS id CBB17130A9;
-        Tue,  7 Mar 2023 22:24:16 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.36])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 9C74F80AD9E;
-        Tue,  7 Mar 2023 22:24:12 +0000 (UTC)
-Date:   Tue, 7 Mar 2023 16:24:10 -0600
-From:   Steve Wahl <steve.wahl@hpe.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, minyard@acm.org,
-        kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-        decui@microsoft.com, song@kernel.org, robinmholt@gmail.com,
-        steve.wahl@hpe.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, jgross@suse.com, sstabellini@kernel.org,
-        oleksandr_tyshchenko@epam.com, xen-devel@lists.xenproject.org,
-        j.granados@samsung.com, zhangpeng362@huawei.com,
-        tangmeng@uniontech.com, willy@infradead.org, nixiaoming@huawei.com,
-        sujiaxun@uniontech.com, patches@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-hyperv@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] sgi-xp: simplify sysctl registration
-Message-ID: <ZAe5batlkUwlKoxx@swahl-home.5wahls.com>
-References: <20230302204612.782387-1-mcgrof@kernel.org>
- <20230302204612.782387-6-mcgrof@kernel.org>
+        Tue, 7 Mar 2023 18:27:59 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F2B1EC68
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 15:27:56 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id g18so14903086ljl.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 15:27:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1678231675;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dgM5UWACpA1ziJGubEWxyksAdshP8CY52eV8GhV8Gkg=;
+        b=TGT2yqt1nWpJRPljNttb9FcVv36E/Jt8A84ByzTR4qfutxQ7fHbpdB+EgF/6Hu8QEA
+         lGav8SrhhYCem9wRNTeicDzl5ewmc3qyFq1vE8KfXRp3zg47pIamj2eOLTILU7cqykpP
+         eIRethLM6K4/tMKQANyi6ZEnJZjZRMB/OCTP+DWXQsvO2zKmMTsPyQD8swSXLVTS2D5g
+         zpu9uzYUHyfgWtbbJ7XEYTACwoPmJeHTPKHV/ad884DyulUXcTRi/oc/IJ8NR/H3zqZs
+         tKa1AESMTbEZ0h1SvjwaE/87vK4azcWvVNgcCANUEXMYEwcMUPSMOuu0EJJvRrTgBIy/
+         aRPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678231675;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dgM5UWACpA1ziJGubEWxyksAdshP8CY52eV8GhV8Gkg=;
+        b=x+us73X+UrChLAoKG7wS0XF2nJcUPL76QYFLPrEN/NX7iaS8w2tJrCEoCGnmtICivo
+         O9DQcoIuHnYAd6vYyL5mtmvgBNyYFKGHHnhgfQnx3bGQdyFmVT59Pzh2dyG2hV4UvFZm
+         0DJ0CJJMK4k2wKApK7O5lQefZqCBWh1y7BTbjLD+nTOI6OiyrYOiiXyhipMOEt+evHnV
+         RkaIWE5XsodLhYx73aOngZ2I/UiFFAN/UHf2SBUimcAA3p66pqZBzdsVW0l5vCk4EDF0
+         n3Y+ua8oJMTxllSfOKoMkis7wHl41czNwvG+bKolkZXRS3Q3c+tgAQHNhJTZbtarv96N
+         5A6Q==
+X-Gm-Message-State: AO0yUKXpkQcOnLO4p4puhmVrBbBTdhm9ASPDNG8rnhIcu2BmvSg52LZD
+        0E2F+1bd1E6NSAHSnDzFvf9Zl7FLVWNOIp0oQMGXLQ==
+X-Google-Smtp-Source: AK7set9qzhTKfHxML+MgHqsSuJRnPMnUneATXidb0+SUYjXa+h00K/U7lnIkoXpbPJNdsASUF+bM31GH9FkDBDE6CkE=
+X-Received: by 2002:a05:651c:11c6:b0:295:d460:5a2d with SMTP id
+ z6-20020a05651c11c600b00295d4605a2dmr4907216ljo.2.1678231674431; Tue, 07 Mar
+ 2023 15:27:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230302204612.782387-6-mcgrof@kernel.org>
-X-Proofpoint-GUID: -gScpSVwE5aPWwo4gsaN-rEbeWVyAJK_
-X-Proofpoint-ORIG-GUID: -gScpSVwE5aPWwo4gsaN-rEbeWVyAJK_
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-07_16,2023-03-07_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- mlxscore=0 malwarescore=0 impostorscore=0 adultscore=0 priorityscore=1501
- suspectscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303070197
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230306225024.264858-1-axelrasmussen@google.com>
+ <20230306225024.264858-4-axelrasmussen@google.com> <ZAaMs44nspRQJmrk@x1n>
+In-Reply-To: <ZAaMs44nspRQJmrk@x1n>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Tue, 7 Mar 2023 15:27:17 -0800
+Message-ID: <CAJHvVciQWctUoZtrPga-fhgBf2dtc+6ypwE3FYe8ApQWpQyL0Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] mm: userfaultfd: combine 'mode' and 'wp_copy' arguments
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Nadav Amit <namit@vmware.com>, Shuah Khan <shuah@kernel.org>,
+        James Houghton <jthoughton@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 02, 2023 at 12:46:10PM -0800, Luis Chamberlain wrote:
-> Although this driver is a good use case for having a directory
-> that is not other directories and then subdirectories with more
-> entries, the usage of register_sysctl_table() can recurse and
-> increases complexity so to avoid that just split out the
-> registration to each directory with its own entries.
-> 
-> register_sysctl_table() is a deprecated compatibility wrapper.
-> register_sysctl() can do the directory creation for you so just use
-> that.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+On Mon, Mar 6, 2023 at 5:00=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Mon, Mar 06, 2023 at 02:50:22PM -0800, Axel Rasmussen wrote:
+> > Many userfaultfd ioctl functions take both a 'mode' and a 'wp_copy'
+> > argument. In future commits we plan to plumb the flags through to more
+> > places, so we'd be proliferating the very long argument list even
+> > further.
+> >
+> > Let's take the time to simplify the argument list. Combine the two
+> > arguments into one - and generalize, so when we add more flags in the
+> > future, it doesn't imply more function arguments.
+> >
+> > Since the modes (copy, zeropage, continue) are mutually exclusive, stor=
+e
+> > them as an integer value (0, 1, 2) in the low bits. Place combine-able
+> > flag bits in the high bits.
+> >
+> > This is quite similar to an earlier patch proposed by Nadav Amit
+> > ("userfaultfd: introduce uffd_flags" - for some reason Lore no longer
+> > has a copy of the patch). The main difference is that patch only handle=
+d
+>
+> Lore has. :)
+>
+> https://lore.kernel.org/all/20220619233449.181323-2-namit@vmware.com
+>
+> And btw sorry to review late.
+>
+> > flags, whereas this patch *also* combines the "mode" argument into the
+> > same type to shorten the argument list.
+> >
+> > Acked-by: James Houghton <jthoughton@google.com>
+> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+>
+> Mostly good to me, a few nitpicks below.
+>
+> [...]
+>
+> > +/* A combined operation mode + behavior flags. */
+> > +typedef unsigned int __bitwise uffd_flags_t;
+> > +
+> > +/* Mutually exclusive modes of operation. */
+> > +enum mfill_atomic_mode {
+> > +     MFILL_ATOMIC_COPY =3D (__force uffd_flags_t) 0,
+> > +     MFILL_ATOMIC_ZEROPAGE =3D (__force uffd_flags_t) 1,
+> > +     MFILL_ATOMIC_CONTINUE =3D (__force uffd_flags_t) 2,
+> > +     NR_MFILL_ATOMIC_MODES,
+> >  };
+>
+> I never used enum like this.  I had a feeling that this will enforce
+> setting the enum entries but would the enforce applied to later
+> assignments?  I'm not sure.
+>
+> I had a quick test and actually I found sparse already complains about
+> calculating the last enum entry:
+>
+> ---8<---
+> $ cat a.c
+> typedef unsigned int __attribute__((bitwise)) flags_t;
+>
+> enum {
+>     FLAG1 =3D (__attribute__((force)) flags_t) 0,
+>     FLAG_NUM,
+> };
+>
+> void main(void)
+> {
+>     uffd_flags_t flags =3D FLAG1;
+> }
+> $ sparse a.c
+> a.c:5:5: error: can't increment the last enum member
+> ---8<---
+>
+> Maybe just use the simple "#define"s?
 
-Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
+Agreed, if sparse isn't happy with this then using the force macros is
+pointless.
 
-> ---
->  drivers/misc/sgi-xp/xpc_main.c | 24 ++++++++++--------------
->  1 file changed, 10 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/misc/sgi-xp/xpc_main.c b/drivers/misc/sgi-xp/xpc_main.c
-> index b2c3c22fc13c..6da509d692bb 100644
-> --- a/drivers/misc/sgi-xp/xpc_main.c
-> +++ b/drivers/misc/sgi-xp/xpc_main.c
-> @@ -93,7 +93,7 @@ int xpc_disengage_timelimit = XPC_DISENGAGE_DEFAULT_TIMELIMIT;
->  static int xpc_disengage_min_timelimit;	/* = 0 */
->  static int xpc_disengage_max_timelimit = 120;
->  
-> -static struct ctl_table xpc_sys_xpc_hb_dir[] = {
-> +static struct ctl_table xpc_sys_xpc_hb[] = {
->  	{
->  	 .procname = "hb_interval",
->  	 .data = &xpc_hb_interval,
-> @@ -112,11 +112,7 @@ static struct ctl_table xpc_sys_xpc_hb_dir[] = {
->  	 .extra2 = &xpc_hb_check_max_interval},
->  	{}
->  };
-> -static struct ctl_table xpc_sys_xpc_dir[] = {
-> -	{
-> -	 .procname = "hb",
-> -	 .mode = 0555,
-> -	 .child = xpc_sys_xpc_hb_dir},
-> +static struct ctl_table xpc_sys_xpc[] = {
->  	{
->  	 .procname = "disengage_timelimit",
->  	 .data = &xpc_disengage_timelimit,
-> @@ -127,14 +123,9 @@ static struct ctl_table xpc_sys_xpc_dir[] = {
->  	 .extra2 = &xpc_disengage_max_timelimit},
->  	{}
->  };
-> -static struct ctl_table xpc_sys_dir[] = {
-> -	{
-> -	 .procname = "xpc",
-> -	 .mode = 0555,
-> -	 .child = xpc_sys_xpc_dir},
-> -	{}
-> -};
-> +
->  static struct ctl_table_header *xpc_sysctl;
-> +static struct ctl_table_header *xpc_sysctl_hb;
->  
->  /* non-zero if any remote partition disengage was timed out */
->  int xpc_disengage_timedout;
-> @@ -1041,6 +1032,8 @@ xpc_do_exit(enum xp_retval reason)
->  
->  	if (xpc_sysctl)
->  		unregister_sysctl_table(xpc_sysctl);
-> +	if (xpc_sysctl_hb)
-> +		unregister_sysctl_table(xpc_sysctl_hb);
->  
->  	xpc_teardown_partitions();
->  
-> @@ -1243,7 +1236,8 @@ xpc_init(void)
->  		goto out_1;
->  	}
->  
-> -	xpc_sysctl = register_sysctl_table(xpc_sys_dir);
-> +	xpc_sysctl = register_sysctl("xpc", xpc_sys_xpc);
-> +	xpc_sysctl_hb = register_sysctl("xpc/hb", xpc_sys_xpc_hb);
->  
->  	/*
->  	 * Fill the partition reserved page with the information needed by
-> @@ -1308,6 +1302,8 @@ xpc_init(void)
->  	(void)unregister_die_notifier(&xpc_die_notifier);
->  	(void)unregister_reboot_notifier(&xpc_reboot_notifier);
->  out_2:
-> +	if (xpc_sysctl_hb)
-> +		unregister_sysctl_table(xpc_sysctl_hb);
->  	if (xpc_sysctl)
->  		unregister_sysctl_table(xpc_sysctl);
->  
-> -- 
-> 2.39.1
-> 
+The enum is valuable because it lets us get the # of modes; assuming
+we agree that's useful below ...
 
--- 
-Steve Wahl, Hewlett Packard Enterprise
+>
+> >
+> > +#define MFILL_ATOMIC_MODE_BITS (const_ilog2(NR_MFILL_ATOMIC_MODES - 1)=
+ + 1)
+>
+> Here IIUC it should be "const_ilog2(NR_MFILL_ATOMIC_MODES) + 1", but
+> maybe..  we don't bother and define every bit explicitly?
+
+If my reading of const_ilog2's definition is correct, then:
+
+const_ilog2(4) =3D 2
+const_ilog2(3) =3D 1
+const_ilog2(2) =3D 1
+
+For either 3 or 4 modes, we need 2 bits to represent them (0, 1, 2,
+3), i.e. we want MFILL_ATOMIC_MODE_BITS =3D 2. I think this is correct
+as is, because const_ilog2(4 - 1) + 1 =3D 2, and const_ilog2(3 - 1) + 1
+=3D 2.
+
+In other words, I think const_ilog2 is defined as floor(log2()),
+whereas what we want is ceil(log2()).
+
+The benefit of doing this vs. just doing defines with fixed values is,
+if we ever added a new mode, we wouldn't have to do bit twiddling and
+update the mask, flag bits, etc. - it would happen "automatically". I
+prefer it this way, but I agree it is a matter of opinion / taste. :)
+If you or others feel strongly this is overcomplicated, I can take the
+other approach.
+
+>
+> > +#define MFILL_ATOMIC_BIT(nr) ((__force uffd_flags_t) BIT(MFILL_ATOMIC_=
+MODE_BITS + (nr)))
+> > +#define MFILL_ATOMIC_MODE_MASK (MFILL_ATOMIC_BIT(0) - 1)
+> > +
+> > +/* Flags controlling behavior. */
+> > +#define MFILL_ATOMIC_WP MFILL_ATOMIC_BIT(0)
+>
+> [...]
+>
+> > @@ -312,9 +312,9 @@ static __always_inline ssize_t mfill_atomic_hugetlb=
+(
+> >                                             unsigned long dst_start,
+> >                                             unsigned long src_start,
+> >                                             unsigned long len,
+> > -                                           enum mcopy_atomic_mode mode=
+,
+> > -                                           bool wp_copy)
+> > +                                           uffd_flags_t flags)
+> >  {
+> > +     int mode =3D flags & MFILL_ATOMIC_MODE_MASK;
+> >       struct mm_struct *dst_mm =3D dst_vma->vm_mm;
+> >       int vm_shared =3D dst_vma->vm_flags & VM_SHARED;
+> >       ssize_t err;
+> > @@ -333,7 +333,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb=
+(
+> >        * by THP.  Since we can not reliably insert a zero page, this
+> >        * feature is not supported.
+> >        */
+> > -     if (mode =3D=3D MCOPY_ATOMIC_ZEROPAGE) {
+> > +     if (mode =3D=3D MFILL_ATOMIC_ZEROPAGE) {
+>
+> The mode comes from "& MFILL_ATOMIC_MODE_MASK" but it doesn't quickly tel=
+l
+> whether there's a shift for the mask.
+>
+> Would it look better we just have a helper to fetch the mode?  The functi=
+on
+> tells that whatever it returns must be the mode:
+>
+>        if (uffd_flags_get_mode(flags) =3D=3D MFILL_ATOMIC_ZEROPAGE)
+>
+> We also avoid quite a few "mode" variables.  All the rest bits will be fi=
+ne
+> to use "flags & FLAG1" if it's a boolean (so only this "mode" is slightly
+> tricky).
+
+Agreed, this is simpler. I'll make this change.
+
+>
+> What do you think?
+>
+> Thanks,
+>
+> --
+> Peter Xu
+>
