@@ -2,114 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEC1D6AF765
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 22:18:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B1CD6AF76A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 22:22:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231404AbjCGVSo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 16:18:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54176 "EHLO
+        id S229757AbjCGVWI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 16:22:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231342AbjCGVSl (ORCPT
+        with ESMTP id S229611AbjCGVWG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 16:18:41 -0500
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A91D97B63;
-        Tue,  7 Mar 2023 13:18:37 -0800 (PST)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 590DE1C0DED; Tue,  7 Mar 2023 22:18:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-        t=1678223916;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xOCA+B803sAAHckyXwGmHDW0Ff8AOSfZKq2GNyZF7uY=;
-        b=Nh97T0AiTyoXJCOX8R4Dvc1Ad92ZPSicZeYeV7WxIByGHIz2AYSDo7XGFTlADTcOgMOJ9+
-        bo/Ui7IYGEQV0xLetL/a8vF/HaGFfgRd9txg1DoLJXpo0ZOoVbX/2OVHREfWqWeQ0MLCiN
-        GBs2VKQyc87dezuzSXAnXO6wQmTryKA=
-Date:   Tue, 7 Mar 2023 22:18:35 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <ZATC3djtr9/uPX+P@duo.ucw.cz>
-References: <20230226034256.771769-1-sashal@kernel.org>
- <20230226034256.771769-12-sashal@kernel.org>
- <Y/rbGxq8oAEsW28j@sol.localdomain>
- <Y/rufenGRpoJVXZr@sol.localdomain>
- <Y/ux9JLHQKDOzWHJ@sol.localdomain>
- <Y/y70zJj4kjOVfXa@sashalap>
- <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
+        Tue, 7 Mar 2023 16:22:06 -0500
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90D729DE1A
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 13:22:05 -0800 (PST)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-536c02c9dfbso268689387b3.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 13:22:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1678224125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ix+rz8/Cgkdlv6+uECDU6NopcnuqQRV5cx3kDDiFh8Q=;
+        b=jPGlnvYPXnj6sY3e3wnH2CKmwP+bxvCmgMXJFEoCPLjFskYphPavq8nFeGzPemVqUd
+         V7c1v4KGLSesT7wUtl/6is5w3dpAKe0/t8sxf/p85w4PpWKcUcWVvsJQyPiL0AB/dI2I
+         8Y7ZwE95vik8WG9ElQnIi9oLfwiVF3njs3GVct5Xiz8tNZfJ+Hc/biWKpUtlui9e8aXT
+         e5xvJbuWPjvlOJrE+inq3YpogISAW8cuNaooAgXFRDcCxLnaBsYdkd6JJ9caBaZshBtX
+         1RZRQ7CKAXUUM4V1nAhsKosvoFdsDpC+LZFaCW/T4nMFy7PtsWoHgbnz2gC7xW012WPJ
+         WEpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678224125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ix+rz8/Cgkdlv6+uECDU6NopcnuqQRV5cx3kDDiFh8Q=;
+        b=rrDZ/X8z1H+5VhDHOhiJJzl16w9wDUokbeYhAlXd7yGvsfBNlgxCEBqsPZjR/4Y42U
+         +r6M/sEkhZYgzUxjb+IL3gsf8vyItxmuZ5p6tcMYRGZMLpAoOWLuDtOUAYfoUU+ADceg
+         mcJxXK3s29BfaGNwqWpnGIrPz8Il0nQ8EtmuTXJak1XnokmvwRjKNM3Zu65fgBQr4YnK
+         jri/31fs59FQ63kb4I79oowuBkTaylL9CZ8z8YGSVkwYYX6Iu2yVeUJWAfILyqosPMbb
+         Tjp4c4DhatUybgWjv3bYMQ+FHqPSmT9pA45fEowsyWTp6haUZHl5OmctPVz/vdQ4v4Ii
+         yzig==
+X-Gm-Message-State: AO0yUKXhG3y2jlfGmiRG+XTJ+kYllIr6187OQ3hkneLPkegg0HqJ2sbh
+        9lfo+fW6G8KuH9yawuWtYR1I1eMWUquS22t7PJ8RXQ==
+X-Google-Smtp-Source: AK7set9ogEoXjKLSGYP4LNAsO6Wu44RKFwsr+WT5Vgcv0blZpxfFNL9xJ6zzOMkLcF8VIYNM2T7c/1h++I6kybekwvU=
+X-Received: by 2002:a81:ac4c:0:b0:533:9ffb:cb11 with SMTP id
+ z12-20020a81ac4c000000b005339ffbcb11mr10285814ywj.7.1678224123295; Tue, 07
+ Mar 2023 13:22:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rghMMqG7Ff+4WZ/W"
-Content-Disposition: inline
-In-Reply-To: <Y/zxKOBTLXFjSVyI@sol.localdomain>
-X-Spam-Status: No, score=-1.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,SPF_HELO_NONE,
-        SPF_NEUTRAL,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+References: <e8228f0048977456466bc33b42600e929fedd319.1678213651.git.pabeni@redhat.com>
+ <CO1PR11MB5089C96D23A1D6F0F121716DD6B79@CO1PR11MB5089.namprd11.prod.outlook.com>
+In-Reply-To: <CO1PR11MB5089C96D23A1D6F0F121716DD6B79@CO1PR11MB5089.namprd11.prod.outlook.com>
+From:   Soheil Hassas Yeganeh <soheil@google.com>
+Date:   Tue, 7 Mar 2023 16:21:27 -0500
+Message-ID: <CACSApvY_pj-tReFEpoH5e6xvUuk2ih9Nc+cc6AZzd5yvFCiTQg@mail.gmail.com>
+Subject: Re: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex contention
+To:     "Keller, Jacob E" <jacob.e.keller@intel.com>
+Cc:     Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <brauner@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Mar 7, 2023 at 4:17=E2=80=AFPM Keller, Jacob E <jacob.e.keller@inte=
+l.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Paolo Abeni <pabeni@redhat.com>
+> > Sent: Tuesday, March 7, 2023 10:47 AM
+> > To: netdev@vger.kernel.org
+> > Cc: Soheil Hassas Yeganeh <soheil@google.com>; Al Viro
+> > <viro@zeniv.linux.org.uk>; Carlos Maiolino <cmaiolino@redhat.com>; Eric
+> > Biggers <ebiggers@kernel.org>; Keller, Jacob E <jacob.e.keller@intel.co=
+m>;
+> > Andrew Morton <akpm@linux-foundation.org>; Jens Axboe <axboe@kernel.dk>=
+;
+> > Christian Brauner <brauner@kernel.org>; linux-fsdevel@vger.kernel.org
+> > Subject: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex conte=
+ntion
+> >
+> > We are observing huge contention on the epmutex during an http
+> > connection/rate test:
+> >
+> >  83.17% 0.25%  nginx            [kernel.kallsyms]         [k]
+> > entry_SYSCALL_64_after_hwframe
+> > [...]
+> >            |--66.96%--__fput
+> >                       |--60.04%--eventpoll_release_file
+> >                                  |--58.41%--__mutex_lock.isra.6
+> >                                            |--56.56%--osq_lock
+> >
+> > The application is multi-threaded, creates a new epoll entry for
+> > each incoming connection, and does not delete it before the
+> > connection shutdown - that is, before the connection's fd close().
+> >
+> > Many different threads compete frequently for the epmutex lock,
+> > affecting the overall performance.
+> >
+> > To reduce the contention this patch introduces explicit reference count=
+ing
+> > for the eventpoll struct. Each registered event acquires a reference,
+> > and references are released at ep_remove() time.
+> >
+> > Additionally, this introduces a new 'dying' flag to prevent races betwe=
+en
+> > the EP file close() and the monitored file close().
+> > ep_eventpoll_release() marks, under f_lock spinlock, each epitem as bef=
+ore
+> > removing it, while EP file close() does not touch dying epitems.
+> >
+> > The eventpoll struct is released by whoever - among EP file close() and
+> > and the monitored file close() drops its last reference.
+> >
+> > With all the above in place, we can drop the epmutex usage at disposal =
+time.
+> >
+> > Overall this produces a significant performance improvement in the
+> > mentioned connection/rate scenario: the mutex operations disappear from
+> > the topmost offenders in the perf report, and the measured connections/=
+rate
+> > grows by ~60%.
+> >
+> > To make the change more readable this additionally renames ep_free() to
+> > ep_clear_and_put(), and moves the actual memory cleanup in a separate
+> > ep_free() helper.
+> >
+> > Tested-by: Xiumei Mu <xmu@redhiat.com>
+> > Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+> > Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+> > Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+> > ---
+> > This is a repost of v4, with no changes. Kindly asking if FS maintainer=
+s
+> > could have a look.
+>
+> This (still) looks good to me.
+>
+> Thanks,
+> Jake
 
---rghMMqG7Ff+4WZ/W
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> > So to summarize, that buggy commit was backported even though:
-> >=20
-> >   * There were no indications that it was a bug fix (and thus potential=
-ly
-> >     suitable for stable) in the first place.
-> >   * On the AUTOSEL thread, someone told you the commit is broken.
-> >   * There was already a thread that reported a regression caused by the=
- commit.
-> >     Easily findable via lore search.
-> >   * There was also already a pending patch that Fixes the commit.  Agai=
-n easily
-> >     findable via lore search.
-> >=20
-> > So it seems a *lot* of things went wrong, no?  Why?  If so many things =
-can go
-> > wrong, it's not just a "mistake" but rather the process is the problem.=
-=2E.
->=20
-> BTW, another cause of this is that the commit (66f99628eb24) was AUTOSEL'=
-d after
-> only being in mainline for 4 days, and *released* in all LTS kernels afte=
-r only
-> being in mainline for 12 days.  Surely that's a timeline befitting a crit=
-ical
-> security vulnerability, not some random neural-network-selected commit th=
-at
-> wasn't even fixing anything?
-
-I see this problem, too, "-stable" is more experimental than Linus's
-releases.
-
-I believe that -stable would be more useful without AUTOSEL process.
-
-Best regards,
-									Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
-
---rghMMqG7Ff+4WZ/W
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZAeqKwAKCRAw5/Bqldv6
-8nfRAJwPw04Enp8eMKpkA3BuciBXfqt9kgCfTBR5ceYD64Tyfu6k4KqHZpIU4dk=
-=ErRX
------END PGP SIGNATURE-----
-
---rghMMqG7Ff+4WZ/W--
+Thank you! Still looks great to me as well.
