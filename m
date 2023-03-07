@@ -2,159 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B1CD6AF76A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 22:22:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 316456AF7A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 22:31:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbjCGVWI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 16:22:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56956 "EHLO
+        id S231467AbjCGVbH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 16:31:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbjCGVWG (ORCPT
+        with ESMTP id S229940AbjCGVbG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 16:22:06 -0500
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90D729DE1A
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 13:22:05 -0800 (PST)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-536c02c9dfbso268689387b3.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 13:22:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1678224125;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ix+rz8/Cgkdlv6+uECDU6NopcnuqQRV5cx3kDDiFh8Q=;
-        b=jPGlnvYPXnj6sY3e3wnH2CKmwP+bxvCmgMXJFEoCPLjFskYphPavq8nFeGzPemVqUd
-         V7c1v4KGLSesT7wUtl/6is5w3dpAKe0/t8sxf/p85w4PpWKcUcWVvsJQyPiL0AB/dI2I
-         8Y7ZwE95vik8WG9ElQnIi9oLfwiVF3njs3GVct5Xiz8tNZfJ+Hc/biWKpUtlui9e8aXT
-         e5xvJbuWPjvlOJrE+inq3YpogISAW8cuNaooAgXFRDcCxLnaBsYdkd6JJ9caBaZshBtX
-         1RZRQ7CKAXUUM4V1nAhsKosvoFdsDpC+LZFaCW/T4nMFy7PtsWoHgbnz2gC7xW012WPJ
-         WEpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678224125;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ix+rz8/Cgkdlv6+uECDU6NopcnuqQRV5cx3kDDiFh8Q=;
-        b=rrDZ/X8z1H+5VhDHOhiJJzl16w9wDUokbeYhAlXd7yGvsfBNlgxCEBqsPZjR/4Y42U
-         +r6M/sEkhZYgzUxjb+IL3gsf8vyItxmuZ5p6tcMYRGZMLpAoOWLuDtOUAYfoUU+ADceg
-         mcJxXK3s29BfaGNwqWpnGIrPz8Il0nQ8EtmuTXJak1XnokmvwRjKNM3Zu65fgBQr4YnK
-         jri/31fs59FQ63kb4I79oowuBkTaylL9CZ8z8YGSVkwYYX6Iu2yVeUJWAfILyqosPMbb
-         Tjp4c4DhatUybgWjv3bYMQ+FHqPSmT9pA45fEowsyWTp6haUZHl5OmctPVz/vdQ4v4Ii
-         yzig==
-X-Gm-Message-State: AO0yUKXhG3y2jlfGmiRG+XTJ+kYllIr6187OQ3hkneLPkegg0HqJ2sbh
-        9lfo+fW6G8KuH9yawuWtYR1I1eMWUquS22t7PJ8RXQ==
-X-Google-Smtp-Source: AK7set9ogEoXjKLSGYP4LNAsO6Wu44RKFwsr+WT5Vgcv0blZpxfFNL9xJ6zzOMkLcF8VIYNM2T7c/1h++I6kybekwvU=
-X-Received: by 2002:a81:ac4c:0:b0:533:9ffb:cb11 with SMTP id
- z12-20020a81ac4c000000b005339ffbcb11mr10285814ywj.7.1678224123295; Tue, 07
- Mar 2023 13:22:03 -0800 (PST)
-MIME-Version: 1.0
-References: <e8228f0048977456466bc33b42600e929fedd319.1678213651.git.pabeni@redhat.com>
- <CO1PR11MB5089C96D23A1D6F0F121716DD6B79@CO1PR11MB5089.namprd11.prod.outlook.com>
-In-Reply-To: <CO1PR11MB5089C96D23A1D6F0F121716DD6B79@CO1PR11MB5089.namprd11.prod.outlook.com>
-From:   Soheil Hassas Yeganeh <soheil@google.com>
-Date:   Tue, 7 Mar 2023 16:21:27 -0500
-Message-ID: <CACSApvY_pj-tReFEpoH5e6xvUuk2ih9Nc+cc6AZzd5yvFCiTQg@mail.gmail.com>
-Subject: Re: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex contention
-To:     "Keller, Jacob E" <jacob.e.keller@intel.com>
-Cc:     Paolo Abeni <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Tue, 7 Mar 2023 16:31:06 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7ECD5849A;
+        Tue,  7 Mar 2023 13:30:59 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 536956154D;
+        Tue,  7 Mar 2023 21:30:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B47BC433EF;
+        Tue,  7 Mar 2023 21:30:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1678224658;
+        bh=36o8AruU3hfc6QJy9oCEJc8TPiLr1A1Cs5VTFOz0r/Q=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Z+0VYs5E+j+bwhNXvsF9KnrZW3kmEeK3/rYutKZKZumj7/nKcfFNYAIyIe90j0jxh
+         cN4JRWfZE9vH4OVaghpmbPPHKe7NAqsgFTgjoHF7EdJ8t7BfbaU+824eTt2/mdIbFk
+         ZfEP+s7JSoTDg3NH9kwSGPQVwxQb8oiVIvvyuUYo=
+Date:   Tue, 7 Mar 2023 13:30:57 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     netdev@vger.kernel.org, Soheil Hassas Yeganeh <soheil@google.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Carlos Maiolino <cmaiolino@redhat.com>,
         Eric Biggers <ebiggers@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Jacob Keller <jacob.e.keller@intel.com>,
         Jens Axboe <axboe@kernel.dk>,
         Christian Brauner <brauner@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex
+ contention
+Message-Id: <20230307133057.1904d8ffab2980f8e23ee3cc@linux-foundation.org>
+In-Reply-To: <e8228f0048977456466bc33b42600e929fedd319.1678213651.git.pabeni@redhat.com>
+References: <e8228f0048977456466bc33b42600e929fedd319.1678213651.git.pabeni@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 7, 2023 at 4:17=E2=80=AFPM Keller, Jacob E <jacob.e.keller@inte=
-l.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Paolo Abeni <pabeni@redhat.com>
-> > Sent: Tuesday, March 7, 2023 10:47 AM
-> > To: netdev@vger.kernel.org
-> > Cc: Soheil Hassas Yeganeh <soheil@google.com>; Al Viro
-> > <viro@zeniv.linux.org.uk>; Carlos Maiolino <cmaiolino@redhat.com>; Eric
-> > Biggers <ebiggers@kernel.org>; Keller, Jacob E <jacob.e.keller@intel.co=
-m>;
-> > Andrew Morton <akpm@linux-foundation.org>; Jens Axboe <axboe@kernel.dk>=
-;
-> > Christian Brauner <brauner@kernel.org>; linux-fsdevel@vger.kernel.org
-> > Subject: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex conte=
-ntion
-> >
-> > We are observing huge contention on the epmutex during an http
-> > connection/rate test:
-> >
-> >  83.17% 0.25%  nginx            [kernel.kallsyms]         [k]
-> > entry_SYSCALL_64_after_hwframe
-> > [...]
-> >            |--66.96%--__fput
-> >                       |--60.04%--eventpoll_release_file
-> >                                  |--58.41%--__mutex_lock.isra.6
-> >                                            |--56.56%--osq_lock
-> >
-> > The application is multi-threaded, creates a new epoll entry for
-> > each incoming connection, and does not delete it before the
-> > connection shutdown - that is, before the connection's fd close().
-> >
-> > Many different threads compete frequently for the epmutex lock,
-> > affecting the overall performance.
-> >
-> > To reduce the contention this patch introduces explicit reference count=
-ing
-> > for the eventpoll struct. Each registered event acquires a reference,
-> > and references are released at ep_remove() time.
-> >
-> > Additionally, this introduces a new 'dying' flag to prevent races betwe=
-en
-> > the EP file close() and the monitored file close().
-> > ep_eventpoll_release() marks, under f_lock spinlock, each epitem as bef=
-ore
-> > removing it, while EP file close() does not touch dying epitems.
-> >
-> > The eventpoll struct is released by whoever - among EP file close() and
-> > and the monitored file close() drops its last reference.
-> >
-> > With all the above in place, we can drop the epmutex usage at disposal =
-time.
-> >
-> > Overall this produces a significant performance improvement in the
-> > mentioned connection/rate scenario: the mutex operations disappear from
-> > the topmost offenders in the perf report, and the measured connections/=
-rate
-> > grows by ~60%.
-> >
-> > To make the change more readable this additionally renames ep_free() to
-> > ep_clear_and_put(), and moves the actual memory cleanup in a separate
-> > ep_free() helper.
-> >
-> > Tested-by: Xiumei Mu <xmu@redhiat.com>
-> > Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-> > Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-> > Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-> > ---
-> > This is a repost of v4, with no changes. Kindly asking if FS maintainer=
-s
-> > could have a look.
->
-> This (still) looks good to me.
->
-> Thanks,
-> Jake
+On Tue,  7 Mar 2023 19:46:37 +0100 Paolo Abeni <pabeni@redhat.com> wrote:
 
-Thank you! Still looks great to me as well.
+> We are observing huge contention on the epmutex during an http
+> connection/rate test:
+> 
+>  83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYSCALL_64_after_hwframe
+> [...]
+>            |--66.96%--__fput
+>                       |--60.04%--eventpoll_release_file
+>                                  |--58.41%--__mutex_lock.isra.6
+>                                            |--56.56%--osq_lock
+> 
+> The application is multi-threaded, creates a new epoll entry for
+> each incoming connection, and does not delete it before the
+> connection shutdown - that is, before the connection's fd close().
+> 
+> Many different threads compete frequently for the epmutex lock,
+> affecting the overall performance.
+> 
+> To reduce the contention this patch introduces explicit reference counting
+> for the eventpoll struct. Each registered event acquires a reference,
+> and references are released at ep_remove() time.
+> 
+> Additionally, this introduces a new 'dying' flag to prevent races between
+> the EP file close() and the monitored file close().
+> ep_eventpoll_release() marks, under f_lock spinlock, each epitem as before
+
+"as dying"?
+
+> removing it, while EP file close() does not touch dying epitems.
+
+The need for this dying flag is somewhat unclear to me.  I mean, if we
+have refcounting done correctly, why the need for this flag?  Some
+additional description of the dynamics would be helpful.
+
+Methinks this flag is here to cope with the delayed freeing via
+hlist_del_rcu(), but that's a guess?
+
+> The eventpoll struct is released by whoever - among EP file close() and
+> and the monitored file close() drops its last reference.
+> 
+> With all the above in place, we can drop the epmutex usage at disposal time.
+> 
+> Overall this produces a significant performance improvement in the
+> mentioned connection/rate scenario: the mutex operations disappear from
+> the topmost offenders in the perf report, and the measured connections/rate
+> grows by ~60%.
+> 
+> To make the change more readable this additionally renames ep_free() to
+> ep_clear_and_put(), and moves the actual memory cleanup in a separate
+> ep_free() helper.
+> 
+> ...
+>
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+>
+> ...
+>
+> +	free_uid(ep->user);
+> +	wakeup_source_unregister(ep->ws);
+> +	kfree(ep);
+> +}
+> +
+>  /*
+>   * Removes a "struct epitem" from the eventpoll RB tree and deallocates
+>   * all the associated resources. Must be called with "mtx" held.
+> + * If the dying flag is set, do the removal only if force is true.
+
+This comment describes "what" the code does, which is obvious from the
+code anwyay.  It's better if comments describe "why" the code does what
+it does.
+
+> + * Returns true if the eventpoll can be disposed.
+>   */
+> -static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+> +static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool force)
+>  {
+>  	struct file *file = epi->ffd.file;
+>  	struct epitems_head *to_free;
+>
+> ...
+>
+>  	/*
+> -	 * We don't want to get "file->f_lock" because it is not
+> -	 * necessary. It is not necessary because we're in the "struct file"
+> -	 * cleanup path, and this means that no one is using this file anymore.
+> -	 * So, for example, epoll_ctl() cannot hit here since if we reach this
+> -	 * point, the file counter already went to zero and fget() would fail.
+> -	 * The only hit might come from ep_free() but by holding the mutex
+> -	 * will correctly serialize the operation. We do need to acquire
+> -	 * "ep->mtx" after "epmutex" because ep_remove() requires it when called
+> -	 * from anywhere but ep_free().
+> -	 *
+> -	 * Besides, ep_remove() acquires the lock, so we can't hold it here.
+> +	 * Use the 'dying' flag to prevent a concurrent ep_cleat_and_put() from
+
+s/cleat/clear/
+
+> +	 * touching the epitems list before eventpoll_release_file() can access
+> +	 * the ep->mtx.
+>  	 */
+> -	mutex_lock(&epmutex);
+> -	if (unlikely(!file->f_ep)) {
+> -		mutex_unlock(&epmutex);
+> -		return;
+> -	}
+> -	hlist_for_each_entry_safe(epi, next, file->f_ep, fllink) {
+> +again:
+> +	spin_lock(&file->f_lock);
+> +	if (file->f_ep && file->f_ep->first) {
+> +		/* detach from ep tree */
+
+Comment appears to be misplaced - the following code doesn't detach
+anything?
+
+> +		epi = hlist_entry(file->f_ep->first, struct epitem, fllink);
+> +		epi->dying = true;
+> +		spin_unlock(&file->f_lock);
+> +
+> +		/*
+> +		 * ep access is safe as we still own a reference to the ep
+> +		 * struct
+> +		 */
+>  		ep = epi->ep;
+> -		mutex_lock_nested(&ep->mtx, 0);
+> -		ep_remove(ep, epi);
+> +		mutex_lock(&ep->mtx);
+> +		dispose = __ep_remove(ep, epi, true);
+>  		mutex_unlock(&ep->mtx);
+> +
+> +		if (dispose)
+> +			ep_free(ep);
+> +		goto again;
+>  	}
+> ...
+>
