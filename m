@@ -2,68 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC7B6AD986
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 09:49:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66F256AD993
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 09:51:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229917AbjCGIta (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 03:49:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58594 "EHLO
+        id S229830AbjCGIvy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 03:51:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229864AbjCGIt3 (ORCPT
+        with ESMTP id S229587AbjCGIvx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 03:49:29 -0500
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99262AD29;
-        Tue,  7 Mar 2023 00:49:27 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046060;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VdKkiN1_1678178959;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0VdKkiN1_1678178959)
-          by smtp.aliyun-inc.com;
-          Tue, 07 Mar 2023 16:49:25 +0800
-From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] splice: Remove redundant assignment to ret
-Date:   Tue,  7 Mar 2023 16:49:18 +0800
-Message-Id: <20230307084918.28632-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+        Tue, 7 Mar 2023 03:51:53 -0500
+Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD32C30B15
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 00:51:51 -0800 (PST)
+Received: by mail.corrib.pl (Postfix, from userid 1001)
+        id D2131A2FE4; Tue,  7 Mar 2023 08:51:29 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
+        t=1678179113; bh=X6IEpSISwJiYlJ3uA866lskXve3r+4o2hf4z7VM6m5o=;
+        h=Date:From:To:Subject:From;
+        b=P9AEtCqBp+SKAvT56c9u2pQgR457G9RxdAZ4kNMIFINiQEgWi75haFPKmvlvIkpU3
+         zJOwLTcWxym5mYrDdv+EhSERKuYQUH1QA8zRisP4RUKANrbi1Hkaqr4kq//cjrrOCc
+         P8bZoiNzk+Hkk2BTyBaBuK9Ryrze0/VecRHnn+2B9sdc1Qpjo5upY2A+Ty6SKfogDo
+         TQLXz5WDee+rV4m81hO8HXCOP+VgUwM6RxmpVxJ/Bn3+QXyPa9oGXzoCSOWAsZk1bf
+         OE0bB5KWJ4wK7DsyheQbRn5Em00jT7KI4h2u2mYB2C0DeC1tWYDwIM8xG46guia8Sh
+         o1+gtl4pg1kPw==
+Received: by mail.corrib.pl for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 08:51:12 GMT
+Message-ID: <20230307074501-0.1.5w.hw1h.0.5okg4sp9fh@corrib.pl>
+Date:   Tue,  7 Mar 2023 08:51:12 GMT
+From:   =?UTF-8?Q? "Szczepan_Kie=C5=82basa" ?= 
+        <szczepan.kielbasa@corrib.pl>
+To:     <linux-fsdevel@vger.kernel.org>
+Subject: Faktoring
+X-Mailer: mail.corrib.pl
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The variable ret belongs to redundant assignment and can be deleted.
+Dzie=C5=84 dobry,
 
-fs/splice.c:940:2: warning: Value stored to 'ret' is never read.
+rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
+ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
+wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=4406
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- fs/splice.c | 1 -
- 1 file changed, 1 deletion(-)
+Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
+stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
+z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
+ kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
+adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
+Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 2e76dbb81a8f..2c3dec2b6dfa 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -937,7 +937,6 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
- 	/*
- 	 * Do the splice.
- 	 */
--	ret = 0;
- 	bytes = 0;
- 	len = sd->total_len;
- 	flags = sd->flags;
--- 
-2.20.1.7.g153144c
 
+Pozdrawiam
+Szczepan Kie=C5=82basa
