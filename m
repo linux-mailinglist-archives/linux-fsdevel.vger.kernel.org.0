@@ -2,188 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E5B5B6ADB36
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 10:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD9236ADB42
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 11:00:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231139AbjCGJ5o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 04:57:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58500 "EHLO
+        id S229753AbjCGKAp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 05:00:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230459AbjCGJ5j (ORCPT
+        with ESMTP id S230457AbjCGKAo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 04:57:39 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799AD5615D
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 01:56:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678183001;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KoUQUqk0Tk16AH05lotUQDG6XAkp82NihC6ABFospAs=;
-        b=P7z5D1ttJMzoRvjE7FY9zhhdeEaEglK2jzG6TgetF3OFhjIzyy3QZ1P9wvHmxmJwdQduVz
-        Z9J8pKiXvaAq9WWeFmIUBTFf62sPTzQzwYT7PnBL86kWBeX/ZJeBcyTMf/Glpsv6HuuJBu
-        mHfJOTPJBv4H8QHVTdANRncN01+XpnI=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-500-Y8JQrbiFO8OlC-pbhNA4CA-1; Tue, 07 Mar 2023 04:56:40 -0500
-X-MC-Unique: Y8JQrbiFO8OlC-pbhNA4CA-1
-Received: by mail-il1-f198.google.com with SMTP id m7-20020a924b07000000b003170cef3f12so6911240ilg.22
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 01:56:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678183000;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KoUQUqk0Tk16AH05lotUQDG6XAkp82NihC6ABFospAs=;
-        b=6rODebelnnRzJK6+ftvucy4n1FJy0nphQahng7Qx+u4QI92xGyq8BxZi7iAvw7CvF4
-         wiGcPLQmjKpmThDCfO7oFk7PYsUIxvJqu168atZw/umlWFcVFulX7wqw12/9XViwOFFq
-         3v1k3ZXWOe5cSbG0dPlUWZmAM0f8h/HcV+S0kRw6ibotkAYJq8A8CkVbE1pZur4OCJeb
-         uBlATkRsI/Zq26L2Qwm4g20FFmedojBH3/t6FiTFJaKXJJqsTgA/Q9BlIjF7kBkkJmkK
-         lpQXVr+tH7CeWwKWTlcSXOMMfaojMONf+A87/B9lUA0N4xxqemPYndBVrQLN4Liul2JT
-         VsfQ==
-X-Gm-Message-State: AO0yUKXEl5fihi6N6eahNpRMHDi+HP5TO74kq+2Lka7W4Sf+v8ATg3Ff
-        iAZZkLie3wO9c8sLE85/7qmuF4K5Q3saHeLy8OockaYeXpX8rZn2G/UKoJ0L37kWtK3KvgTGnwi
-        +d80ZHYihDIP2tEiyYDZDr8sTl5eGZ43PVD+z7deiAA==
-X-Received: by 2002:a92:c208:0:b0:30e:e796:23c1 with SMTP id j8-20020a92c208000000b0030ee79623c1mr6783081ilo.1.1678182999900;
-        Tue, 07 Mar 2023 01:56:39 -0800 (PST)
-X-Google-Smtp-Source: AK7set/TFBcHkCO8rATH10CymGqD9tL/eIbVgZ5bm29/yl+QaBnKwTQz7r89i4pZw1n2gUWJwfLPnHGqbconPHBBfZk=
-X-Received: by 2002:a92:c208:0:b0:30e:e796:23c1 with SMTP id
- j8-20020a92c208000000b0030ee79623c1mr6783073ilo.1.1678182999657; Tue, 07 Mar
- 2023 01:56:39 -0800 (PST)
+        Tue, 7 Mar 2023 05:00:44 -0500
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF7F63B23C
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 02:00:40 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R571e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0VdKwXAj_1678183237;
+Received: from 30.221.196.111(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VdKwXAj_1678183237)
+          by smtp.aliyun-inc.com;
+          Tue, 07 Mar 2023 18:00:38 +0800
+Message-ID: <7c0c6a31-0f49-a15c-f018-af6964cf448f@linux.alibaba.com>
+Date:   Tue, 7 Mar 2023 18:00:37 +0800
 MIME-Version: 1.0
-References: <e84d009fd32b7a02ceb038db5cf1737db91069d5.camel@redhat.com>
- <CAL7ro1E7KY5yUJOLu6TY0RtAC5304sM3Lvk=zSCrqDrxTPW2og@mail.gmail.com>
- <CAL7ro1FZMRiep582LaiaqqxzYq_XeM2UMxvsHoT-guf_-bqSfg@mail.gmail.com>
- <e81d3776-8239-b8fa-1c64-bdb6f5cbe4df@linux.alibaba.com> <CAL7ro1GwDF1201StXw8xL9xL6y4jW1t+cbLPOmsRUp574+ewQQ@mail.gmail.com>
- <fb9f65b5-a867-1a26-1c74-8c83e5c47f31@linux.alibaba.com> <CAL7ro1Ezvs0V9vUBF_eiDRwvPE8gTemAK12unGLUgRfrC_wLeg@mail.gmail.com>
- <c6328bd6-3587-3e12-2ae0-652bbdc17a6a@linux.alibaba.com> <CAL7ro1FPKPWQvHteQq_t=u_LuR4B1Q5c=FBE-tRTN8CfoZCAHw@mail.gmail.com>
- <07b3a7e2-5514-1262-2510-7747337640cc@linux.alibaba.com> <2a9d79b0-1610-2f66-9a72-a8a938030247@linux.alibaba.com>
-In-Reply-To: <2a9d79b0-1610-2f66-9a72-a8a938030247@linux.alibaba.com>
-From:   Alexander Larsson <alexl@redhat.com>
-Date:   Tue, 7 Mar 2023 10:56:28 +0100
-Message-ID: <CAL7ro1GMAKrYG3gWJHx2UwVTQo=UjKWSH6iBbpoBO_a-ybbieQ@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.1
 Subject: Re: [LSF/MM/BFP TOPIC] Composefs vs erofs+overlay
-To:     Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc:     Jingbo Xu <jefflexu@linux.alibaba.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        Amir Goldstein <amir73il@gmail.com>,
+Content-Language: en-US
+From:   Jingbo Xu <jefflexu@linux.alibaba.com>
+To:     Alexander Larsson <alexl@redhat.com>,
+        lsf-pc@lists.linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
         Christian Brauner <brauner@kernel.org>,
+        Gao Xiang <hsiangkao@linux.alibaba.com>,
         Giuseppe Scrivano <gscrivan@redhat.com>,
         Dave Chinner <david@fromorbit.com>,
         Vivek Goyal <vgoyal@redhat.com>,
         Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <e84d009fd32b7a02ceb038db5cf1737db91069d5.camel@redhat.com>
+ <CAL7ro1E7KY5yUJOLu6TY0RtAC5304sM3Lvk=zSCrqDrxTPW2og@mail.gmail.com>
+ <CAL7ro1FZMRiep582LaiaqqxzYq_XeM2UMxvsHoT-guf_-bqSfg@mail.gmail.com>
+ <e81d3776-8239-b8fa-1c64-bdb6f5cbe4df@linux.alibaba.com>
+In-Reply-To: <e81d3776-8239-b8fa-1c64-bdb6f5cbe4df@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 7, 2023 at 10:38=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.=
-com> wrote:
->
-> On 2023/3/7 17:26, Gao Xiang wrote:
-> >
-> >
-> > On 2023/3/7 17:07, Alexander Larsson wrote:
-> >> On Tue, Mar 7, 2023 at 9:34=E2=80=AFAM Gao Xiang <hsiangkao@linux.alib=
-aba.com> wrote:
-> >>>
-> >>>
-> >>>
-> >>> On 2023/3/7 16:21, Alexander Larsson wrote:
-> >>>> On Mon, Mar 6, 2023 at 5:17=E2=80=AFPM Gao Xiang <hsiangkao@linux.al=
-ibaba.com> wrote:
-> >>>>
-> >>>>>>> I tested the performance of "ls -lR" on the whole tree of
-> >>>>>>> cs9-developer-rootfs.  It seems that the performance of erofs (ge=
-nerated
-> >>>>>>> from mkfs.erofs) is slightly better than that of composefs.  Whil=
-e the
-> >>>>>>> performance of erofs generated from mkfs.composefs is slightly wo=
-rse
-> >>>>>>> that that of composefs.
-> >>>>>>
-> >>>>>> I suspect that the reason for the lower performance of mkfs.compos=
-efs
-> >>>>>> is the added overlay.fs-verity xattr to all the files. It makes th=
-e
-> >>>>>> image larger, and that means more i/o.
-> >>>>>
-> >>>>> Actually you could move overlay.fs-verity to EROFS shared xattr are=
-a (or
-> >>>>> even overlay.redirect but it depends) if needed, which could save s=
-ome
-> >>>>> I/Os for your workloads.
-> >>>>>
-> >>>>> shared xattrs can be used in this way as well if you care such mino=
-r
-> >>>>> difference, actually I think inlined xattrs for your workload are j=
-ust
-> >>>>> meaningful for selinux labels and capabilities.
-> >>>>
-> >>>> Really? Could you expand on this, because I would think it will be
-> >>>> sort of the opposite. In my usecase, the erofs fs will be read by
-> >>>> overlayfs, which will probably access overlay.* pretty often.  At th=
-e
-> >>>> very least it will load overlay.metacopy and overlay.redirect for
-> >>>> every lookup.
-> >>>
-> >>> Really.  In that way, it will behave much similiar to composefs on-di=
-sk
-> >>> arrangement now (in composefs vdata area).
-> >>>
-> >>> Because in that way, although an extra I/O is needed for verification=
-,
-> >>> and it can only happen when actually opening the file (so "ls -lR" is
-> >>> not impacted.) But on-disk inodes are more compact.
-> >>>
-> >>> All EROFS xattrs will be cached in memory so that accessing
-> >>> overlay.* pretty often is not greatly impacted due to no real I/Os
-> >>> (IOWs, only some CPU time is consumed).
-> >>
-> >> So, I tried moving the overlay.digest xattr to the shared area, but
-> >> actually this made the performance worse for the ls case. I have not
-> >
-> > That is much strange.  We'd like to open it up if needed.  BTW, did you
-> > test EROFS with acl enabled all the time?
-> >
-> >> looked into the cause in detail, but my guess is that ls looks for the
-> >> acl xattr, and such a negative lookup will cause erofs to look at all
-> >> the shared xattrs for the inode, which means they all end up being
-> >> loaded anyway. Of course, this will only affect ls (or other cases
-> >> that read the acl), so its perhaps a bit uncommon.
-> >
-> > Yeah, in addition to that, I guess real acls could be landed in inlined
-> > xattrs as well if exists...
-> >
-> >>
-> >> Did you ever consider putting a bloom filter in the h_reserved area of
-> >> erofs_xattr_ibody_header? Then it could return early without i/o
-> >> operations for keys that are not set for the inode. Not sure what the
-> >> computational cost of that would be though.
-> >
-> > Good idea!  Let me think about it, but enabling "noacl" mount
-> > option isn't prefered if acl is no needed in your use cases.
->
->            ^ is preferred.
 
-That is probably the right approach for the composefs usecase. But
-even when you want acls, typically only just a few files have acls
-set, so it might be interesting to handle the negative acl lookup case
-more efficiently.
 
---=20
-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D
- Alexander Larsson                                Red Hat, Inc
-       alexl@redhat.com         alexander.larsson@gmail.com
+On 3/6/23 11:49 PM, Jingbo Xu wrote:
+> 
+> 
+> On 3/6/23 7:33 PM, Alexander Larsson wrote:
+>> On Fri, Mar 3, 2023 at 2:57 PM Alexander Larsson <alexl@redhat.com> wrote:
+>>>
+>>> On Mon, Feb 27, 2023 at 10:22 AM Alexander Larsson <alexl@redhat.com> wrote:
+>>>>
+>>>> Hello,
+>>>>
+>>>> Recently Giuseppe Scrivano and I have worked on[1] and proposed[2] the
+>>>> Composefs filesystem. It is an opportunistically sharing, validating
+>>>> image-based filesystem, targeting usecases like validated ostree
+>>>> rootfs:es, validated container images that share common files, as well
+>>>> as other image based usecases.
+>>>>
+>>>> During the discussions in the composefs proposal (as seen on LWN[3])
+>>>> is has been proposed that (with some changes to overlayfs), similar
+>>>> behaviour can be achieved by combining the overlayfs
+>>>> "overlay.redirect" xattr with an read-only filesystem such as erofs.
+>>>>
+>>>> There are pros and cons to both these approaches, and the discussion
+>>>> about their respective value has sometimes been heated. We would like
+>>>> to have an in-person discussion at the summit, ideally also involving
+>>>> more of the filesystem development community, so that we can reach
+>>>> some consensus on what is the best apporach.
+>>>
+>>> In order to better understand the behaviour and requirements of the
+>>> overlayfs+erofs approach I spent some time implementing direct support
+>>> for erofs in libcomposefs. So, with current HEAD of
+>>> github.com/containers/composefs you can now do:
+>>>
+>>> $ mkcompose --digest-store=objects --format=erofs source-dir image.erofs
+>>>
+>>> This will produce an object store with the backing files, and a erofs
+>>> file with the required overlayfs xattrs, including a made up one
+>>> called "overlay.fs-verity" containing the expected fs-verity digest
+>>> for the lower dir. It also adds the required whiteouts to cover the
+>>> 00-ff dirs from the lower dir.
+>>>
+>>> These erofs files are ordered similarly to the composefs files, and we
+>>> give similar guarantees about their reproducibility, etc. So, they
+>>> should be apples-to-apples comparable with the composefs images.
+>>>
+>>> Given this, I ran another set of performance tests on the original cs9
+>>> rootfs dataset, again measuring the time of `ls -lR`. I also tried to
+>>> measure the memory use like this:
+>>>
+>>> # echo 3 > /proc/sys/vm/drop_caches
+>>> # systemd-run --scope sh -c 'ls -lR mountpoint' > /dev/null; cat $(cat
+>>> /proc/self/cgroup | sed -e "s|0::|/sys/fs/cgroup|")/memory.peak'
+>>>
+>>> These are the alternatives I tried:
+>>>
+>>> xfs: the source of the image, regular dir on xfs
+>>> erofs: the image.erofs above, on loopback
+>>> erofs dio: the image.erofs above, on loopback with --direct-io=on
+>>> ovl: erofs above combined with overlayfs
+>>> ovl dio: erofs dio above combined with overlayfs
+>>> cfs: composefs mount of image.cfs
+>>>
+>>> All tests use the same objects dir, stored on xfs. The erofs and
+>>> overlay implementations are from a stock 6.1.13 kernel, and composefs
+>>> module is from github HEAD.
+>>>
+>>> I tried loopback both with and without the direct-io option, because
+>>> without direct-io enabled the kernel will double-cache the loopbacked
+>>> data, as per[1].
+>>>
+>>> The produced images are:
+>>>  8.9M image.cfs
+>>> 11.3M image.erofs
+>>>
+>>> And gives these results:
+>>>            | Cold cache | Warm cache | Mem use
+>>>            |   (msec)   |   (msec)   |  (mb)
+>>> -----------+------------+------------+---------
+>>> xfs        |   1449     |    442     |    54
+>>> erofs      |    700     |    391     |    45
+>>> erofs dio  |    939     |    400     |    45
+>>> ovl        |   1827     |    530     |   130
+>>> ovl dio    |   2156     |    531     |   130
+>>> cfs        |    689     |    389     |    51
+>>
+>> It has been noted that the readahead done by kernel_read() may cause
+>> read-ahead of unrelated data into memory which skews the results in
+>> favour of workloads that consume all the filesystem metadata (such as
+>> the ls -lR usecase of the above test). In the table above this favours
+>> composefs (which uses kernel_read in some codepaths) as well as
+>> non-dio erofs (non-dio loopback device uses readahead too).
+>>
+>> I updated composefs to not use kernel_read here:
+>>   https://github.com/containers/composefs/pull/105
+>>
+>> And a new kernel patch-set based on this is available at:
+>>   https://github.com/alexlarsson/linux/tree/composefs
+>>
+>> The resulting table is now (dropping the non-dio erofs):
+>>
+>>            | Cold cache | Warm cache | Mem use
+>>            |   (msec)   |   (msec)   |  (mb)
+>> -----------+------------+------------+---------
+>> xfs        |   1449     |    442     |   54
+>> erofs dio  |    939     |    400     |   45
+>> ovl dio    |   2156     |    531     |  130
+>> cfs        |    833     |    398     |   51
+>>
+>>            | Cold cache | Warm cache | Mem use
+>>            |   (msec)   |   (msec)   |  (mb)
+>> -----------+------------+------------+---------
+>> ext4       |   1135     |    394     |   54
+>> erofs dio  |    922     |    401     |   45
+>> ovl dio    |   1810     |    532     |  149
+>> ovl lazy   |   1063     |    523     |  87
+>> cfs        |    768     |    459     |  51
+>>
+>> So, while cfs is somewhat worse now for this particular usecase, my
+>> overall analysis still stands.
+>>
+> 
+> Hi,
+> 
+> I tested your patch removing kernel_read(), and here is the statistics
+> tested in my environment.
+> 
+> 
+> Setup
+> ======
+> CPU: x86_64 Intel(R) Xeon(R) Platinum 8269CY CPU @ 2.50GHz
+> Disk: cloud disk, 11800 IOPS upper limit
+> OS: Linux v6.2
+> FS of backing objects: xfs
+> 
+> 
+> Image size
+> ===========
+> 8.6M large.composefs (with --compute-digest)
+> 8.9M large.erofs (mkfs.erofs)
+> 11M  large.cps.in.erofs (mkfs.composefs --compute-digest --format=erofs)
+> 
+> 
+> Perf of "ls -lR"
+> ================
+> 					      | uncached| cached
+> 					      |  (ms)	|  (ms)
+> ----------------------------------------------|---------|--------
+> composefs				      	   | 519	| 178
+> erofs (mkfs.erofs, DIRECT loop) 	     	   | 497 	| 192
+> erofs (mkfs.composefs --format=erofs, DIRECT loop) | 536 	| 199
+> 
+> I tested the performance of "ls -lR" on the whole tree of
+> cs9-developer-rootfs.  It seems that the performance of erofs (generated
+> from mkfs.erofs) is slightly better than that of composefs.  While the
+> performance of erofs generated from mkfs.composefs is slightly worse
+> that that of composefs.
+> 
+> The uncached performance is somewhat slightly different with that given
+> by Alexander Larsson.  I think it may be due to different test
+> environment, as my test machine is a server with robust performance,
+> with cloud disk as storage.
+> 
+> It's just a simple test without further analysis, as it's a bit late for
+> me :)
+> 
 
+Forgot to mention that all erofs (no matter generated from mkfs.erofs or
+mkfs.composefs) are mounted with "-o noacl", as composefs has not
+implemented its acl yet.
+
+
+-- 
+Thanks,
+Jingbo
