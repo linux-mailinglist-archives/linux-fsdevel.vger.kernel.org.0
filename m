@@ -2,55 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AFA96AD3FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 02:32:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E46BE6AD3FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 02:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229929AbjCGBcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 20:32:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59238 "EHLO
+        id S229925AbjCGBcT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 20:32:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229806AbjCGBcM (ORCPT
+        with ESMTP id S229772AbjCGBcP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 20:32:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09031637CB;
-        Mon,  6 Mar 2023 17:31:30 -0800 (PST)
+        Mon, 6 Mar 2023 20:32:15 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 583E353292;
+        Mon,  6 Mar 2023 17:31:44 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 89630611B3;
-        Tue,  7 Mar 2023 01:31:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2BE7C433EF;
-        Tue,  7 Mar 2023 01:31:28 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D677AB8126A;
+        Tue,  7 Mar 2023 01:31:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA3DC433D2;
+        Tue,  7 Mar 2023 01:31:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678152689;
-        bh=+DJ2l186OwWVqyaoqJJDL4Cqj5GAmOsrAt20qhbHXUs=;
+        s=k20201202; t=1678152694;
+        bh=6802hAB636FjTNNBftg8d5gR9AIiuBDv0EZGrDUmjHg=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=El6xT5EYYxz3rkvIJA8n3I5gIkKVTTzYcExqZFRiXvMmE/7+XBgGuVy+5AUIvbEhr
-         W5PChz2VnomHdYOYfvSVG8QiHal9Hd/3b2J28Z60W3uhfvUd3aeQwDdQL8E7E7aSPe
-         ORzdZAm8472hf0VdHSzyeh0hAOZGW8Ad2d2HrioRaw37LcmlpyDERdcATuyaXEk1JU
-         RkrqSJt9dDIlvwfbQzxcg8zzZlWQ9Li49amr6tsppbNwY9a4uoQOh58rW/RhlKQRPP
-         IzCHCeAM/XVHun4OIPO1pWJLwF2OQUu01F+cLW+0pVxeqPQqCB0H+FSFhQLUEvpXRb
-         xp2tN+wXju0KQ==
-Subject: [PATCH 07/14] xfs: document pageable kernel memory
+        b=e45I1zk7s9/qk2a6zc9tQZejFwL3OsUaMC4Cq1l6Hli1N4KsddWs4sSHYwjN0z2r/
+         i3DO8mxkfUxK2L3KV0jO6dCTWz3PhPqqxV0O/n6cLCSy6nJ9uA7RD5RWsgO7mdDotl
+         HTPLELQnDsGUrLmE8O1UTAGf0gIoFcFFJ5Ih5yAuzBZY5NKEJgIcGQtCXFPnOuCOnE
+         mYMv+M6xopyWzURimKO3DqKQd7ECycsONKDahRR6hLc/AfYpLqmZi/bI3K3Kce2Ozo
+         BMbY3iM1J+2DNQRZL+3bRyoWgWy6qDEClx+0tmvKAAtqlR7MXXA1NhSXnCw/LT9cGn
+         2gNOE30Nozygg==
+Subject: [PATCH 08/14] xfs: document btree bulk loading
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         chandan.babu@oracle.com, allison.henderson@oracle.com,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         catherine.hoang@oracle.com, david@fromorbit.com
-Date:   Mon, 06 Mar 2023 17:31:28 -0800
-Message-ID: <167815268848.3750278.17454613426313755372.stgit@magnolia>
+Date:   Mon, 06 Mar 2023 17:31:34 -0800
+Message-ID: <167815269412.3750278.16082662517962448050.stgit@magnolia>
 In-Reply-To: <167815264897.3750278.15092544376893521026.stgit@magnolia>
 References: <167815264897.3750278.15092544376893521026.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,URI_DOTEDU autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -59,529 +58,688 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add a discussion of pageable kernel memory, since online fsck needs
-quite a bit more memory than most other parts of the filesystem to stage
-records and other information.
+Add a discussion of the btree bulk loading code, which makes it easy to
+take an in-memory recordset and write it out to disk in an efficient
+manner.  This also enables atomic switchover from the old to the new
+structure with minimal potential for leaking the old blocks.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- .../filesystems/xfs-online-fsck-design.rst         |  500 ++++++++++++++++++++
- 1 file changed, 500 insertions(+)
+ .../filesystems/xfs-online-fsck-design.rst         |  665 ++++++++++++++++++++
+ 1 file changed, 665 insertions(+)
 
 
 diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
-index e095264b591e..21f0638ab69d 100644
+index 21f0638ab69d..2baea7673498 100644
 --- a/Documentation/filesystems/xfs-online-fsck-design.rst
 +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-@@ -413,6 +413,8 @@ Algorithms") of Srinivasan.
- However, any data structure builder that maintains a resource lock for the
- duration of the repair is *always* an offline algorithm.
+@@ -2332,3 +2332,668 @@ this functionality as follows:
  
-+.. _secondary_metadata:
+ After removing xfile logged buffers from the transaction in this manner, the
+ transaction can be committed or cancelled.
 +
- Secondary Metadata
- ``````````````````
- 
-@@ -1832,3 +1834,501 @@ Scrub teardown disables all static keys obtained by ``xchk_fsgates_enable``.
- 
- For more information, please see the kernel documentation of
- Documentation/staging/static-keys.rst.
++Bulk Loading of Ondisk B+Trees
++------------------------------
 +
-+.. _xfile:
++As mentioned previously, early iterations of online repair built new btree
++structures by creating a new btree and adding observations individually.
++Loading a btree one record at a time had a slight advantage of not requiring
++the incore records to be sorted prior to commit, but was very slow and leaked
++blocks if the system went down during a repair.
++Loading records one at a time also meant that repair could not control the
++loading factor of the blocks in the new btree.
 +
-+Pageable Kernel Memory
-+----------------------
++Fortunately, the venerable ``xfs_repair`` tool had a more efficient means for
++rebuilding a btree index from a collection of records -- bulk btree loading.
++This was implemented rather inefficiently code-wise, since ``xfs_repair``
++had separate copy-pasted implementations for each btree type.
 +
-+Some online checking functions work by scanning the filesystem to build a
-+shadow copy of an ondisk metadata structure in memory and comparing the two
-+copies.
-+For online repair to rebuild a metadata structure, it must compute the record
-+set that will be stored in the new structure before it can persist that new
-+structure to disk.
-+Ideally, repairs complete with a single atomic commit that introduces
-+a new data structure.
-+To meet these goals, the kernel needs to collect a large amount of information
-+in a place that doesn't require the correct operation of the filesystem.
++To prepare for online fsck, each of the four bulk loaders were studied, notes
++were taken, and the four were refactored into a single generic btree bulk
++loading mechanism.
++Those notes in turn have been refreshed and are presented below.
 +
-+Kernel memory isn't suitable because:
++Geometry Computation
++````````````````````
 +
-+* Allocating a contiguous region of memory to create a C array is very
-+  difficult, especially on 32-bit systems.
++The zeroth step of bulk loading is to assemble the entire record set that will
++be stored in the new btree, and sort the records.
++Next, call ``xfs_btree_bload_compute_geometry`` to compute the shape of the
++btree from the record set, the type of btree, and any load factor preferences.
++This information is required for resource reservation.
 +
-+* Linked lists of records introduce double pointer overhead which is very high
-+  and eliminate the possibility of indexed lookups.
++First, the geometry computation computes the minimum and maximum records that
++will fit in a leaf block from the size of a btree block and the size of the
++block header.
++Roughly speaking, the maximum number of records is::
 +
-+* Kernel memory is pinned, which can drive the system into OOM conditions.
++        maxrecs = (block_size - header_size) / record_size
 +
-+* The system might not have sufficient memory to stage all the information.
++The XFS design specifies that btree blocks should be merged when possible,
++which means the minimum number of records is half of maxrecs::
 +
-+At any given time, online fsck does not need to keep the entire record set in
-+memory, which means that individual records can be paged out if necessary.
-+Continued development of online fsck demonstrated that the ability to perform
-+indexed data storage would also be very useful.
-+Fortunately, the Linux kernel already has a facility for byte-addressable and
-+pageable storage: tmpfs.
-+In-kernel graphics drivers (most notably i915) take advantage of tmpfs files
-+to store intermediate data that doesn't need to be in memory at all times, so
-+that usage precedent is already established.
-+Hence, the ``xfile`` was born!
++        minrecs = maxrecs / 2
 +
-++--------------------------------------------------------------------------+
-+| **Historical Sidebar**:                                                  |
-++--------------------------------------------------------------------------+
-+| The first edition of online repair inserted records into a new btree as  |
-+| it found them, which failed because filesystem could shut down with a    |
-+| built data structure, which would be live after recovery finished.       |
-+|                                                                          |
-+| The second edition solved the half-rebuilt structure problem by storing  |
-+| everything in memory, but frequently ran the system out of memory.       |
-+|                                                                          |
-+| The third edition solved the OOM problem by using linked lists, but the  |
-+| memory overhead of the list pointers was extreme.                        |
-++--------------------------------------------------------------------------+
++The next variable to determine is the desired loading factor.
++This must be at least minrecs and no more than maxrecs.
++Choosing minrecs is undesirable because it wastes half the block.
++Choosing maxrecs is also undesirable because adding a single record to each
++newly rebuilt leaf block will cause a tree split, which causes a noticeable
++drop in performance immediately afterwards.
++The default loading factor was chosen to be 75% of maxrecs, which provides a
++reasonably compact structure without any immediate split penalties::
 +
-+xfile Access Models
-+```````````````````
++        default_load_factor = (maxrecs + minrecs) / 2
 +
-+A survey of the intended uses of xfiles suggested these use cases:
++If space is tight, the loading factor will be set to maxrecs to try to avoid
++running out of space::
 +
-+1. Arrays of fixed-sized records (space management btrees, directory and
-+   extended attribute entries)
++        leaf_load_factor = enough space ? default_load_factor : maxrecs
 +
-+2. Sparse arrays of fixed-sized records (quotas and link counts)
++Load factor is computed for btree node blocks using the combined size of the
++btree key and pointer as the record size::
 +
-+3. Large binary objects (BLOBs) of variable sizes (directory and extended
-+   attribute names and values)
++        maxrecs = (block_size - header_size) / (key_size + ptr_size)
++        minrecs = maxrecs / 2
++        node_load_factor = enough space ? default_load_factor : maxrecs
 +
-+4. Staging btrees in memory (reverse mapping btrees)
++Once that's done, the number of leaf blocks required to store the record set
++can be computed as::
 +
-+5. Arbitrary contents (realtime space management)
++        leaf_blocks = ceil(record_count / leaf_load_factor)
 +
-+To support the first four use cases, high level data structures wrap the xfile
-+to share functionality between online fsck functions.
-+The rest of this section discusses the interfaces that the xfile presents to
-+four of those five higher level data structures.
-+The fifth use case is discussed in the :ref:`realtime summary <rtsummary>` case
-+study.
++The number of node blocks needed to point to the next level down in the tree
++is computed as::
 +
-+The most general storage interface supported by the xfile enables the reading
-+and writing of arbitrary quantities of data at arbitrary offsets in the xfile.
-+This capability is provided by ``xfile_pread`` and ``xfile_pwrite`` functions,
-+which behave similarly to their userspace counterparts.
-+XFS is very record-based, which suggests that the ability to load and store
-+complete records is important.
-+To support these cases, a pair of ``xfile_obj_load`` and ``xfile_obj_store``
-+functions are provided to read and persist objects into an xfile.
-+They are internally the same as pread and pwrite, except that they treat any
-+error as an out of memory error.
-+For online repair, squashing error conditions in this manner is an acceptable
-+behavior because the only reaction is to abort the operation back to userspace.
-+All five xfile usecases can be serviced by these four functions.
++        n_blocks = (n == 0 ? leaf_blocks : node_blocks[n])
++        node_blocks[n + 1] = ceil(n_blocks / node_load_factor)
 +
-+However, no discussion of file access idioms is complete without answering the
-+question, "But what about mmap?"
-+It is convenient to access storage directly with pointers, just like userspace
-+code does with regular memory.
-+Online fsck must not drive the system into OOM conditions, which means that
-+xfiles must be responsive to memory reclamation.
-+tmpfs can only push a pagecache folio to the swap cache if the folio is neither
-+pinned nor locked, which means the xfile must not pin too many folios.
++The entire computation is performed recursively until the current level only
++needs one block.
++The resulting geometry is as follows:
 +
-+Short term direct access to xfile contents is done by locking the pagecache
-+folio and mapping it into kernel address space.
-+Programmatic access (e.g. pread and pwrite) uses this mechanism.
-+Folio locks are not supposed to be held for long periods of time, so long
-+term direct access to xfile contents is done by bumping the folio refcount,
-+mapping it into kernel address space, and dropping the folio lock.
-+These long term users *must* be responsive to memory reclaim by hooking into
-+the shrinker infrastructure to know when to release folios.
++- For AG-rooted btrees, this level is the root level, so the height of the new
++  tree is ``level + 1`` and the space needed is the summation of the number of
++  blocks on each level.
 +
-+The ``xfile_get_page`` and ``xfile_put_page`` functions are provided to
-+retrieve the (locked) folio that backs part of an xfile and to release it.
-+The only code to use these folio lease functions are the xfarray
-+:ref:`sorting<xfarray_sort>` algorithms and the :ref:`in-memory
-+btrees<xfbtree>`.
++- For inode-rooted btrees where the records in the top level do not fit in the
++  inode fork area, the height is ``level + 2``, the space needed is the
++  summation of the number of blocks on each level, and the inode fork points to
++  the root block.
 +
-+xfile Access Coordination
-+`````````````````````````
++- For inode-rooted btrees where the records in the top level can be stored in
++  the inode fork area, then the root block can be stored in the inode, the
++  height is ``level + 1``, and the space needed is one less than the summation
++  of the number of blocks on each level.
++  This only becomes relevant when non-bmap btrees gain the ability to root in
++  an inode, which is a future patchset and only included here for completeness.
 +
-+For security reasons, xfiles must be owned privately by the kernel.
-+They are marked ``S_PRIVATE`` to prevent interference from the security system,
-+must never be mapped into process file descriptor tables, and their pages must
-+never be mapped into userspace processes.
++.. _newbt:
 +
-+To avoid locking recursion issues with the VFS, all accesses to the shmfs file
-+are performed by manipulating the page cache directly.
-+xfile writers call the ``->write_begin`` and ``->write_end`` functions of the
-+xfile's address space to grab writable pages, copy the caller's buffer into the
-+page, and release the pages.
-+xfile readers call ``shmem_read_mapping_page_gfp`` to grab pages directly
-+before copying the contents into the caller's buffer.
-+In other words, xfiles ignore the VFS read and write code paths to avoid
-+having to create a dummy ``struct kiocb`` and to avoid taking inode and
-+freeze locks.
-+tmpfs cannot be frozen, and xfiles must not be exposed to userspace.
++Reserving New B+Tree Blocks
++```````````````````````````
 +
-+If an xfile is shared between threads to stage repairs, the caller must provide
-+its own locks to coordinate access.
-+For example, if a scrub function stores scan results in an xfile and needs
-+other threads to provide updates to the scanned data, the scrub function must
-+provide a lock for all threads to share.
++Once repair knows the number of blocks needed for the new btree, it allocates
++those blocks using the free space information.
++Each reserved extent is tracked separately by the btree builder state data.
++To improve crash resilience, the reservation code also logs an Extent Freeing
++Intent (EFI) item in the same transaction as each space allocation and attaches
++its in-memory ``struct xfs_extent_free_item`` object to the space reservation.
++If the system goes down, log recovery will use the unfinished EFIs to free the
++unused space, the free space, leaving the filesystem unchanged.
 +
-+.. _xfarray:
++Each time the btree builder claims a block for the btree from a reserved
++extent, it updates the in-memory reservation to reflect the claimed space.
++Block reservation tries to allocate as much contiguous space as possible to
++reduce the number of EFIs in play.
 +
-+Arrays of Fixed-Sized Records
-+`````````````````````````````
++While repair is writing these new btree blocks, the EFIs created for the space
++reservations pin the tail of the ondisk log.
++It's possible that other parts of the system will remain busy and push the head
++of the log towards the pinned tail.
++To avoid livelocking the filesystem, the EFIs must not pin the tail of the log
++for too long.
++To alleviate this problem, the dynamic relogging capability of the deferred ops
++mechanism is reused here to commit a transaction at the log head containing an
++EFD for the old EFI and new EFI at the head.
++This enables the log to release the old EFI to keep the log moving forwards.
 +
-+In XFS, each type of indexed space metadata (free space, inodes, reference
-+counts, file fork space, and reverse mappings) consists of a set of fixed-size
-+records indexed with a classic B+ tree.
-+Directories have a set of fixed-size dirent records that point to the names,
-+and extended attributes have a set of fixed-size attribute keys that point to
-+names and values.
-+Quota counters and file link counters index records with numbers.
-+During a repair, scrub needs to stage new records during the gathering step and
-+retrieve them during the btree building step.
++EFIs have a role to play during the commit and reaping phases; please see the
++next section and the section about :ref:`reaping<reaping>` for more details.
 +
-+Although this requirement can be satisfied by calling the read and write
-+methods of the xfile directly, it is simpler for callers for there to be a
-+higher level abstraction to take care of computing array offsets, to provide
-+iterator functions, and to deal with sparse records and sorting.
-+The ``xfarray`` abstraction presents a linear array for fixed-size records atop
-+the byte-accessible xfile.
++Proposed patchsets are the
++`bitmap rework
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-bitmap-rework>`_
++and the
++`preparation for bulk loading btrees
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-prep-for-bulk-loading>`_.
 +
-+.. _xfarray_access_patterns:
 +
-+Array Access Patterns
-+^^^^^^^^^^^^^^^^^^^^^
++Writing the New Tree
++````````````````````
 +
-+Array access patterns in online fsck tend to fall into three categories.
-+Iteration of records is assumed to be necessary for all cases and will be
-+covered in the next section.
++This part is pretty simple -- the btree builder (``xfs_btree_bulkload``) claims
++a block from the reserved list, writes the new btree block header, fills the
++rest of the block with records, and adds the new leaf block to a list of
++written blocks::
 +
-+The first type of caller handles records that are indexed by position.
-+Gaps may exist between records, and a record may be updated multiple times
-+during the collection step.
-+In other words, these callers want a sparse linearly addressed table file.
-+The typical use case are quota records or file link count records.
-+Access to array elements is performed programmatically via ``xfarray_load`` and
-+``xfarray_store`` functions, which wrap the similarly-named xfile functions to
-+provide loading and storing of array elements at arbitrary array indices.
-+Gaps are defined to be null records, and null records are defined to be a
-+sequence of all zero bytes.
-+Null records are detected by calling ``xfarray_element_is_null``.
-+They are created either by calling ``xfarray_unset`` to null out an existing
-+record or by never storing anything to an array index.
++  ┌────┐
++  │leaf│
++  │RRR │
++  └────┘
 +
-+The second type of caller handles records that are not indexed by position
-+and do not require multiple updates to a record.
-+The typical use case here is rebuilding space btrees and key/value btrees.
-+These callers can add records to the array without caring about array indices
-+via the ``xfarray_append`` function, which stores a record at the end of the
-+array.
-+For callers that require records to be presentable in a specific order (e.g.
-+rebuilding btree data), the ``xfarray_sort`` function can arrange the sorted
-+records; this function will be covered later.
++Sibling pointers are set every time a new block is added to the level::
 +
-+The third type of caller is a bag, which is useful for counting records.
-+The typical use case here is constructing space extent reference counts from
++  ┌────┐ ┌────┐ ┌────┐ ┌────┐
++  │leaf│→│leaf│→│leaf│→│leaf│
++  │RRR │←│RRR │←│RRR │←│RRR │
++  └────┘ └────┘ └────┘ └────┘
++
++When it finishes writing the record leaf blocks, it moves on to the node
++blocks
++To fill a node block, it walks each block in the next level down in the tree
++to compute the relevant keys and write them into the parent node::
++
++      ┌────┐       ┌────┐
++      │node│──────→│node│
++      │PP  │←──────│PP  │
++      └────┘       └────┘
++      ↙   ↘         ↙   ↘
++  ┌────┐ ┌────┐ ┌────┐ ┌────┐
++  │leaf│→│leaf│→│leaf│→│leaf│
++  │RRR │←│RRR │←│RRR │←│RRR │
++  └────┘ └────┘ └────┘ └────┘
++
++When it reaches the root level, it is ready to commit the new btree!::
++
++          ┌─────────┐
++          │  root   │
++          │   PP    │
++          └─────────┘
++          ↙         ↘
++      ┌────┐       ┌────┐
++      │node│──────→│node│
++      │PP  │←──────│PP  │
++      └────┘       └────┘
++      ↙   ↘         ↙   ↘
++  ┌────┐ ┌────┐ ┌────┐ ┌────┐
++  │leaf│→│leaf│→│leaf│→│leaf│
++  │RRR │←│RRR │←│RRR │←│RRR │
++  └────┘ └────┘ └────┘ └────┘
++
++The first step to commit the new btree is to persist the btree blocks to disk
++synchronously.
++This is a little complicated because a new btree block could have been freed
++in the recent past, so the builder must use ``xfs_buf_delwri_queue_here`` to
++remove the (stale) buffer from the AIL list before it can write the new blocks
++to disk.
++Blocks are queued for IO using a delwri list and written in one large batch
++with ``xfs_buf_delwri_submit``.
++
++Once the new blocks have been persisted to disk, control returns to the
++individual repair function that called the bulk loader.
++The repair function must log the location of the new root in a transaction,
++clean up the space reservations that were made for the new btree, and reap the
++old metadata blocks:
++
++1. Commit the location of the new btree root.
++
++2. For each incore reservation:
++
++   a. Log Extent Freeing Done (EFD) items for all the space that was consumed
++      by the btree builder.  The new EFDs must point to the EFIs attached to
++      the reservation to prevent log recovery from freeing the new blocks.
++
++   b. For unclaimed portions of incore reservations, create a regular deferred
++      extent free work item to be free the unused space later in the
++      transaction chain.
++
++   c. The EFDs and EFIs logged in steps 2a and 2b must not overrun the
++      reservation of the committing transaction.
++      If the btree loading code suspects this might be about to happen, it must
++      call ``xrep_defer_finish`` to clear out the deferred work and obtain a
++      fresh transaction.
++
++3. Clear out the deferred work a second time to finish the commit and clean
++   the repair transaction.
++
++The transaction rolling in steps 2c and 3 represent a weakness in the repair
++algorithm, because a log flush and a crash before the end of the reap step can
++result in space leaking.
++Online repair functions minimize the chances of this occuring by using very
++large transactions, which each can accomodate many thousands of block freeing
++instructions.
++Repair moves on to reaping the old blocks, which will be presented in a
++subsequent :ref:`section<reaping>` after a few case studies of bulk loading.
++
++Case Study: Rebuilding the Inode Index
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++
++The high level process to rebuild the inode index btree is:
++
++1. Walk the reverse mapping records to generate ``struct xfs_inobt_rec``
++   records from the inode chunk information and a bitmap of the old inode btree
++   blocks.
++
++2. Append the records to an xfarray in inode order.
++
++3. Use the ``xfs_btree_bload_compute_geometry`` function to compute the number
++   of blocks needed for the inode btree.
++   If the free space inode btree is enabled, call it again to estimate the
++   geometry of the finobt.
++
++4. Allocate the number of blocks computed in the previous step.
++
++5. Use ``xfs_btree_bload`` to write the xfarray records to btree blocks and
++   generate the internal node blocks.
++   If the free space inode btree is enabled, call it again to load the finobt.
++
++6. Commit the location of the new btree root block(s) to the AGI.
++
++7. Reap the old btree blocks using the bitmap created in step 1.
++
++Details are as follows.
++
++The inode btree maps inumbers to the ondisk location of the associated
++inode records, which means that the inode btrees can be rebuilt from the
 +reverse mapping information.
-+Records can be put in the bag in any order, they can be removed from the bag
-+at any time, and uniqueness of records is left to callers.
-+The ``xfarray_store_anywhere`` function is used to insert a record in any
-+null record slot in the bag; and the ``xfarray_unset`` function removes a
-+record from the bag.
++Reverse mapping records with an owner of ``XFS_RMAP_OWN_INOBT`` marks the
++location of the old inode btree blocks.
++Each reverse mapping record with an owner of ``XFS_RMAP_OWN_INODES`` marks the
++location of at least one inode cluster buffer.
++A cluster is the smallest number of ondisk inodes that can be allocated or
++freed in a single transaction; it is never smaller than 1 fs block or 4 inodes.
++
++For the space represented by each inode cluster, ensure that there are no
++records in the free space btrees nor any records in the reference count btree.
++If there are, the space metadata inconsistencies are reason enough to abort the
++operation.
++Otherwise, read each cluster buffer to check that its contents appear to be
++ondisk inodes and to decide if the file is allocated
++(``xfs_dinode.i_mode != 0``) or free (``xfs_dinode.i_mode == 0``).
++Accumulate the results of successive inode cluster buffer reads until there is
++enough information to fill a single inode chunk record, which is 64 consecutive
++numbers in the inumber keyspace.
++If the chunk is sparse, the chunk record may include holes.
++
++Once the repair function accumulates one chunk's worth of data, it calls
++``xfarray_append`` to add the inode btree record to the xfarray.
++This xfarray is walked twice during the btree creation step -- once to populate
++the inode btree with all inode chunk records, and a second time to populate the
++free inode btree with records for chunks that have free non-sparse inodes.
++The number of records for the inode btree is the number of xfarray records,
++but the record count for the free inode btree has to be computed as inode chunk
++records are stored in the xfarray.
 +
 +The proposed patchset is the
-+`big in-memory array
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=big-array>`_.
-+
-+Iterating Array Elements
-+^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+Most users of the xfarray require the ability to iterate the records stored in
-+the array.
-+Callers can probe every possible array index with the following:
-+
-+.. code-block:: c
-+
-+	xfarray_idx_t i;
-+	foreach_xfarray_idx(array, i) {
-+	    xfarray_load(array, i, &rec);
-+
-+	    /* do something with rec */
-+	}
-+
-+All users of this idiom must be prepared to handle null records or must already
-+know that there aren't any.
-+
-+For xfarray users that want to iterate a sparse array, the ``xfarray_iter``
-+function ignores indices in the xfarray that have never been written to by
-+calling ``xfile_seek_data`` (which internally uses ``SEEK_DATA``) to skip areas
-+of the array that are not populated with memory pages.
-+Once it finds a page, it will skip the zeroed areas of the page.
-+
-+.. code-block:: c
-+
-+	xfarray_idx_t i = XFARRAY_CURSOR_INIT;
-+	while ((ret = xfarray_iter(array, &i, &rec)) == 1) {
-+	    /* do something with rec */
-+	}
-+
-+.. _xfarray_sort:
-+
-+Sorting Array Elements
-+^^^^^^^^^^^^^^^^^^^^^^
-+
-+During the fourth demonstration of online repair, a community reviewer remarked
-+that for performance reasons, online repair ought to load batches of records
-+into btree record blocks instead of inserting records into a new btree one at a
-+time.
-+The btree insertion code in XFS is responsible for maintaining correct ordering
-+of the records, so naturally the xfarray must also support sorting the record
-+set prior to bulk loading.
-+
-+Case Study: Sorting xfarrays
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The sorting algorithm used in the xfarray is actually a combination of adaptive
-+quicksort and a heapsort subalgorithm in the spirit of
-+`Sedgewick <https://algs4.cs.princeton.edu/23quicksort/>`_ and
-+`pdqsort <https://github.com/orlp/pdqsort>`_, with customizations for the Linux
-+kernel.
-+To sort records in a reasonably short amount of time, ``xfarray`` takes
-+advantage of the binary subpartitioning offered by quicksort, but it also uses
-+heapsort to hedge aginst performance collapse if the chosen quicksort pivots
-+are poor.
-+Both algorithms are (in general) O(n * lg(n)), but there is a wide performance
-+gulf between the two implementations.
-+
-+The Linux kernel already contains a reasonably fast implementation of heapsort.
-+It only operates on regular C arrays, which limits the scope of its usefulness.
-+There are two key places where the xfarray uses it:
-+
-+* Sorting any record subset backed by a single xfile page.
-+
-+* Loading a small number of xfarray records from potentially disparate parts
-+  of the xfarray into a memory buffer, and sorting the buffer.
-+
-+In other words, ``xfarray`` uses heapsort to constrain the nested recursion of
-+quicksort, thereby mitigating quicksort's worst runtime behavior.
-+
-+Choosing a quicksort pivot is a tricky business.
-+A good pivot splits the set to sort in half, leading to the divide and conquer
-+behavior that is crucial to  O(n * lg(n)) performance.
-+A poor pivot barely splits the subset at all, leading to O(n\ :sup:`2`)
-+runtime.
-+The xfarray sort routine tries to avoid picking a bad pivot by sampling nine
-+records into a memory buffer and using the kernel heapsort to identify the
-+median of the nine.
-+
-+Most modern quicksort implementations employ Tukey's "ninther" to select a
-+pivot from a classic C array.
-+Typical ninther implementations pick three unique triads of records, sort each
-+of the triads, and then sort the middle value of each triad to determine the
-+ninther value.
-+As stated previously, however, xfile accesses are not entirely cheap.
-+It turned out to be much more performant to read the nine elements into a
-+memory buffer, run the kernel's in-memory heapsort on the buffer, and choose
-+the 4th element of that buffer as the pivot.
-+Tukey's ninthers are described in J. W. Tukey, `The ninther, a technique for
-+low-effort robust (resistant) location in large samples`, in *Contributions to
-+Survey Sampling and Applied Statistics*, edited by H. David, (Academic Press,
-+1978), pp. 251–257.
-+
-+The partitioning of quicksort is fairly textbook -- rearrange the record
-+subset around the pivot, then set up the current and next stack frames to
-+sort with the larger and the smaller halves of the pivot, respectively.
-+This keeps the stack space requirements to log2(record count).
-+
-+As a final performance optimization, the hi and lo scanning phase of quicksort
-+keeps examined xfile pages mapped in the kernel for as long as possible to
-+reduce map/unmap cycles.
-+Surprisingly, this reduces overall sort runtime by nearly half again after
-+accounting for the application of heapsort directly onto xfile pages.
-+
-+Blob Storage
-+````````````
-+
-+Extended attributes and directories add an additional requirement for staging
-+records: arbitrary byte sequences of finite length.
-+Each directory entry record needs to store entry name,
-+and each extended attribute needs to store both the attribute name and value.
-+The names, keys, and values can consume a large amount of memory, so the
-+``xfblob`` abstraction was created to simplify management of these blobs
-+atop an xfile.
-+
-+Blob arrays provide ``xfblob_load`` and ``xfblob_store`` functions to retrieve
-+and persist objects.
-+The store function returns a magic cookie for every object that it persists.
-+Later, callers provide this cookie to the ``xblob_load`` to recall the object.
-+The ``xfblob_free`` function frees a specific blob, and the ``xfblob_truncate``
-+function frees them all because compaction is not needed.
-+
-+The details of repairing directories and extended attributes will be discussed
-+in a subsequent section about atomic extent swapping.
-+However, it should be noted that these repair functions only use blob storage
-+to cache a small number of entries before adding them to a temporary ondisk
-+file, which is why compaction is not required.
-+
-+The proposed patchset is at the start of the
-+`extended attribute repair
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-xattrs>`_ series.
-+
-+.. _xfbtree:
-+
-+In-Memory B+Trees
-+`````````````````
-+
-+The chapter about :ref:`secondary metadata<secondary_metadata>` mentioned that
-+checking and repairing of secondary metadata commonly requires coordination
-+between a live metadata scan of the filesystem and writer threads that are
-+updating that metadata.
-+Keeping the scan data up to date requires requires the ability to propagate
-+metadata updates from the filesystem into the data being collected by the scan.
-+This *can* be done by appending concurrent updates into a separate log file and
-+applying them before writing the new metadata to disk, but this leads to
-+unbounded memory consumption if the rest of the system is very busy.
-+Another option is to skip the side-log and commit live updates from the
-+filesystem directly into the scan data, which trades more overhead for a lower
-+maximum memory requirement.
-+In both cases, the data structure holding the scan results must support indexed
-+access to perform well.
-+
-+Given that indexed lookups of scan data is required for both strategies, online
-+fsck employs the second strategy of committing live updates directly into
-+scan data.
-+Because xfarrays are not indexed and do not enforce record ordering, they
-+are not suitable for this task.
-+Conveniently, however, XFS has a library to create and maintain ordered reverse
-+mapping records: the existing rmap btree code!
-+If only there was a means to create one in memory.
-+
-+Recall that the :ref:`xfile <xfile>` abstraction represents memory pages as a
-+regular file, which means that the kernel can create byte or block addressable
-+virtual address spaces at will.
-+The XFS buffer cache specializes in abstracting IO to block-oriented  address
-+spaces, which means that adaptation of the buffer cache to interface with
-+xfiles enables reuse of the entire btree library.
-+Btrees built atop an xfile are collectively known as ``xfbtrees``.
-+The next few sections describe how they actually work.
-+
-+The proposed patchset is the
-+`in-memory btree
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=in-memory-btrees>`_
++`AG btree repair
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-ag-btrees>`_
 +series.
 +
-+Using xfiles as a Buffer Cache Target
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++Case Study: Rebuilding the Space Reference Counts
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +
-+Two modifications are necessary to support xfiles as a buffer cache target.
-+The first is to make it possible for the ``struct xfs_buftarg`` structure to
-+host the ``struct xfs_buf`` rhashtable, because normally those are held by a
-+per-AG structure.
-+The second change is to modify the buffer ``ioapply`` function to "read" cached
-+pages from the xfile and "write" cached pages back to the xfile.
-+Multiple access to individual buffers is controlled by the ``xfs_buf`` lock,
-+since the xfile does not provide any locking on its own.
-+With this adaptation in place, users of the xfile-backed buffer cache use
-+exactly the same APIs as users of the disk-backed buffer cache.
-+The separation between xfile and buffer cache implies higher memory usage since
-+they do not share pages, but this property could some day enable transactional
-+updates to an in-memory btree.
-+Today, however, it simply eliminates the need for new code.
++Reverse mapping records are used to rebuild the reference count information.
++Reference counts are required for correct operation of copy on write for shared
++file data.
++Imagine the reverse mapping entries as rectangles representing extents of
++physical blocks, and that the rectangles can be laid down to allow them to
++overlap each other.
++From the diagram below, it is apparent that a reference count record must start
++or end wherever the height of the stack changes.
++In other words, the record emission stimulus is level-triggered::
 +
-+Space Management with an xfbtree
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++                        █    ███
++              ██      █████ ████   ███        ██████
++        ██   ████     ███████████ ████     █████████
++        ████████████████████████████████ ███████████
++        ^ ^  ^^ ^^    ^ ^^ ^^^  ^^^^  ^ ^^ ^  ^     ^
++        2 1  23 21    3 43 234  2123  1 01 2  3     0
 +
-+Space management for an xfile is very simple -- each btree block is one memory
-+page in size.
-+These blocks use the same header format as an on-disk btree, but the in-memory
-+block verifiers ignore the checksums, assuming that xfile memory is no more
-+corruption-prone than regular DRAM.
-+Reusing existing code here is more important than absolute memory efficiency.
++The ondisk reference count btree does not store the refcount == 0 cases because
++the free space btree already records which blocks are free.
++Extents being used to stage copy-on-write operations should be the only records
++with refcount == 1.
++Single-owner file blocks aren't recorded in either the free space or the
++reference count btrees.
 +
-+The very first block of an xfile backing an xfbtree contains a header block.
-+The header describes the owner, height, and the block number of the root
-+xfbtree block.
++The high level process to rebuild the reference count btree is:
 +
-+To allocate a btree block, use ``xfile_seek_data`` to find a gap in the file.
-+If there are no gaps, create one by extending the length of the xfile.
-+Preallocate space for the block with ``xfile_prealloc``, and hand back the
-+location.
-+To free an xfbtree block, use ``xfile_discard`` (which internally uses
-+``FALLOC_FL_PUNCH_HOLE``) to remove the memory page from the xfile.
++1. Walk the reverse mapping records to generate ``struct xfs_refcount_irec``
++   records for any space having more than one reverse mapping and add them to
++   the xfarray.
++   Any records owned by ``XFS_RMAP_OWN_COW`` are also added to the xfarray
++   because these are extents allocated to stage a copy on write operation and
++   are tracked in the refcount btree.
 +
-+Populating an xfbtree
-+^^^^^^^^^^^^^^^^^^^^^
++   Use any records owned by ``XFS_RMAP_OWN_REFC`` to create a bitmap of old
++   refcount btree blocks.
 +
-+An online fsck function that wants to create an xfbtree should proceed as
-+follows:
++2. Sort the records in physical extent order, putting the CoW staging extents
++   at the end of the xfarray.
++   This matches the sorting order of records in the refcount btree.
 +
-+1. Call ``xfile_create`` to create an xfile.
++3. Use the ``xfs_btree_bload_compute_geometry`` function to compute the number
++   of blocks needed for the new tree.
 +
-+2. Call ``xfs_alloc_memory_buftarg`` to create a buffer cache target structure
-+   pointing to the xfile.
++4. Allocate the number of blocks computed in the previous step.
 +
-+3. Pass the buffer cache target, buffer ops, and other information to
-+   ``xfbtree_create`` to write an initial tree header and root block to the
-+   xfile.
-+   Each btree type should define a wrapper that passes necessary arguments to
-+   the creation function.
-+   For example, rmap btrees define ``xfs_rmapbt_mem_create`` to take care of
-+   all the necessary details for callers.
-+   A ``struct xfbtree`` object will be returned.
++5. Use ``xfs_btree_bload`` to write the xfarray records to btree blocks and
++   generate the internal node blocks.
 +
-+4. Pass the xfbtree object to the btree cursor creation function for the
-+   btree type.
-+   Following the example above, ``xfs_rmapbt_mem_cursor`` takes care of this
-+   for callers.
++6. Commit the location of new btree root block to the AGF.
 +
-+5. Pass the btree cursor to the regular btree functions to make queries against
-+   and to update the in-memory btree.
-+   For example, a btree cursor for an rmap xfbtree can be passed to the
-+   ``xfs_rmap_*`` functions just like any other btree cursor.
-+   See the :ref:`next section<xfbtree_commit>` for information on dealing with
-+   xfbtree updates that are logged to a transaction.
++7. Reap the old btree blocks using the bitmap created in step 1.
 +
-+6. When finished, delete the btree cursor, destroy the xfbtree object, free the
-+   buffer target, and the destroy the xfile to release all resources.
++Details are as follows; the same algorithm is used by ``xfs_repair`` to
++generate refcount information from reverse mapping records.
 +
-+.. _xfbtree_commit:
++- Until the reverse mapping btree runs out of records:
 +
-+Committing Logged xfbtree Buffers
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++  - Retrieve the next record from the btree and put it in a bag.
 +
-+Although it is a clever hack to reuse the rmap btree code to handle the staging
-+structure, the ephemeral nature of the in-memory btree block storage presents
-+some challenges of its own.
-+The XFS transaction manager must not commit buffer log items for buffers backed
-+by an xfile because the log format does not understand updates for devices
-+other than the data device.
-+An ephemeral xfbtree probably will not exist by the time the AIL checkpoints
-+log transactions back into the filesystem, and certainly won't exist during
-+log recovery.
-+For these reasons, any code updating an xfbtree in transaction context must
-+remove the buffer log items from the transaction and write the updates into the
-+backing xfile before committing or cancelling the transaction.
++  - Collect all records with the same starting block from the btree and put
++    them in the bag.
 +
-+The ``xfbtree_trans_commit`` and ``xfbtree_trans_cancel`` functions implement
-+this functionality as follows:
++  - While the bag isn't empty:
 +
-+1. Find each buffer log item whose buffer targets the xfile.
++    - Among the mappings in the bag, compute the lowest block number where the
++      reference count changes.
++      This position will be either the starting block number of the next
++      unprocessed reverse mapping or the next block after the shortest mapping
++      in the bag.
 +
-+2. Record the dirty/ordered status of the log item.
++    - Remove all mappings from the bag that end at this position.
 +
-+3. Detach the log item from the buffer.
++    - Collect all reverse mappings that start at this position from the btree
++      and put them in the bag.
 +
-+4. Queue the buffer to a special delwri list.
++    - If the size of the bag changed and is greater than one, create a new
++      refcount record associating the block number range that we just walked to
++      the size of the bag.
 +
-+5. Clear the transaction dirty flag if the only dirty log items were the ones
-+   that were detached in step 3.
++The bag-like structure in this case is a type 2 xfarray as discussed in the
++:ref:`xfarray access patterns<xfarray_access_patterns>` section.
++Reverse mappings are added to the bag using ``xfarray_store_anywhere`` and
++removed via ``xfarray_unset``.
++Bag members are examined through ``xfarray_iter`` loops.
 +
-+6. Submit the delwri list to commit the changes to the xfile, if the updates
-+   are being committed.
++The proposed patchset is the
++`AG btree repair
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-ag-btrees>`_
++series.
 +
-+After removing xfile logged buffers from the transaction in this manner, the
-+transaction can be committed or cancelled.
++Case Study: Rebuilding File Fork Mapping Indices
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++
++The high level process to rebuild a data/attr fork mapping btree is:
++
++1. Walk the reverse mapping records to generate ``struct xfs_bmbt_rec``
++   records from the reverse mapping records for that inode and fork.
++   Append these records to an xfarray.
++   Compute the bitmap of the old bmap btree blocks from the ``BMBT_BLOCK``
++   records.
++
++2. Use the ``xfs_btree_bload_compute_geometry`` function to compute the number
++   of blocks needed for the new tree.
++
++3. Sort the records in file offset order.
++
++4. If the extent records would fit in the inode fork immediate area, commit the
++   records to that immediate area and skip to step 8.
++
++5. Allocate the number of blocks computed in the previous step.
++
++6. Use ``xfs_btree_bload`` to write the xfarray records to btree blocks and
++   generate the internal node blocks.
++
++7. Commit the new btree root block to the inode fork immediate area.
++
++8. Reap the old btree blocks using the bitmap created in step 1.
++
++There are some complications here:
++First, it's possible to move the fork offset to adjust the sizes of the
++immediate areas if the data and attr forks are not both in BMBT format.
++Second, if there are sufficiently few fork mappings, it may be possible to use
++EXTENTS format instead of BMBT, which may require a conversion.
++Third, the incore extent map must be reloaded carefully to avoid disturbing
++any delayed allocation extents.
++
++The proposed patchset is the
++`file mapping repair
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-file-mappings>`_
++series.
++
++.. _reaping:
++
++Reaping Old Metadata Blocks
++---------------------------
++
++Whenever online fsck builds a new data structure to replace one that is
++suspect, there is a question of how to find and dispose of the blocks that
++belonged to the old structure.
++The laziest method of course is not to deal with them at all, but this slowly
++leads to service degradations as space leaks out of the filesystem.
++Hopefully, someone will schedule a rebuild of the free space information to
++plug all those leaks.
++Offline repair rebuilds all space metadata after recording the usage of
++the files and directories that it decides not to clear, hence it can build new
++structures in the discovered free space and avoid the question of reaping.
++
++As part of a repair, online fsck relies heavily on the reverse mapping records
++to find space that is owned by the corresponding rmap owner yet truly free.
++Cross referencing rmap records with other rmap records is necessary because
++there may be other data structures that also think they own some of those
++blocks (e.g. crosslinked trees).
++Permitting the block allocator to hand them out again will not push the system
++towards consistency.
++
++For space metadata, the process of finding extents to dispose of generally
++follows this format:
++
++1. Create a bitmap of space used by data structures that must be preserved.
++   The space reservations used to create the new metadata can be used here if
++   the same rmap owner code is used to denote all of the objects being rebuilt.
++
++2. Survey the reverse mapping data to create a bitmap of space owned by the
++   same ``XFS_RMAP_OWN_*`` number for the metadata that is being preserved.
++
++3. Use the bitmap disunion operator to subtract (1) from (2).
++   The remaining set bits represent candidate extents that could be freed.
++   The process moves on to step 4 below.
++
++Repairs for file-based metadata such as extended attributes, directories,
++symbolic links, quota files and realtime bitmaps are performed by building a
++new structure attached to a temporary file and swapping the forks.
++Afterward, the mappings in the old file fork are the candidate blocks for
++disposal.
++
++The process for disposing of old extents is as follows:
++
++4. For each candidate extent, count the number of reverse mapping records for
++   the first block in that extent that do not have the same rmap owner for the
++   data structure being repaired.
++
++   - If zero, the block has a single owner and can be freed.
++
++   - If not, the block is part of a crosslinked structure and must not be
++     freed.
++
++5. Starting with the next block in the extent, figure out how many more blocks
++   have the same zero/nonzero other owner status as that first block.
++
++6. If the region is crosslinked, delete the reverse mapping entry for the
++   structure being repaired and move on to the next region.
++
++7. If the region is to be freed, mark any corresponding buffers in the buffer
++   cache as stale to prevent log writeback.
++
++8. Free the region and move on.
++
++However, there is one complication to this procedure.
++Transactions are of finite size, so the reaping process must be careful to roll
++the transactions to avoid overruns.
++Overruns come from two sources:
++
++a. EFIs logged on behalf of space that is no longer occupied
++
++b. Log items for buffer invalidations
++
++This is also a window in which a crash during the reaping process can leak
++blocks.
++As stated earlier, online repair functions use very large transactions to
++minimize the chances of this occurring.
++
++The proposed patchset is the
++`preparation for bulk loading btrees
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-prep-for-bulk-loading>`_
++series.
++
++Case Study: Reaping After a Regular Btree Repair
++````````````````````````````````````````````````
++
++Old reference count and inode btrees are the easiest to reap because they have
++rmap records with special owner codes: ``XFS_RMAP_OWN_REFC`` for the refcount
++btree, and ``XFS_RMAP_OWN_INOBT`` for the inode and free inode btrees.
++Creating a list of extents to reap the old btree blocks is quite simple,
++conceptually:
++
++1. Lock the relevant AGI/AGF header buffers to prevent allocation and frees.
++
++2. For each reverse mapping record with an rmap owner corresponding to the
++   metadata structure being rebuilt, set the corresponding range in a bitmap.
++
++3. Walk the current data structures that have the same rmap owner.
++   For each block visited, clear that range in the above bitmap.
++
++4. Each set bit in the bitmap represents a block that could be a block from the
++   old data structures and hence is a candidate for reaping.
++   In other words, ``(rmap_records_owned_by & ~blocks_reachable_by_walk)``
++   are the blocks that might be freeable.
++
++If it is possible to maintain the AGF lock throughout the repair (which is the
++common case), then step 2 can be performed at the same time as the reverse
++mapping record walk that creates the records for the new btree.
++
++Case Study: Rebuilding the Free Space Indices
++`````````````````````````````````````````````
++
++The high level process to rebuild the free space indices is:
++
++1. Walk the reverse mapping records to generate ``struct xfs_alloc_rec_incore``
++   records from the gaps in the reverse mapping btree.
++
++2. Append the records to an xfarray.
++
++3. Use the ``xfs_btree_bload_compute_geometry`` function to compute the number
++   of blocks needed for each new tree.
++
++4. Allocate the number of blocks computed in the previous step from the free
++   space information collected.
++
++5. Use ``xfs_btree_bload`` to write the xfarray records to btree blocks and
++   generate the internal node blocks for the free space by length index.
++   Call it again for the free space by block number index.
++
++6. Commit the locations of the new btree root blocks to the AGF.
++
++7. Reap the old btree blocks by looking for space that is not recorded by the
++   reverse mapping btree, the new free space btrees, or the AGFL.
++
++Repairing the free space btrees has three key complications over a regular
++btree repair:
++
++First, free space is not explicitly tracked in the reverse mapping records.
++Hence, the new free space records must be inferred from gaps in the physical
++space component of the keyspace of the reverse mapping btree.
++
++Second, free space repairs cannot use the common btree reservation code because
++new blocks are reserved out of the free space btrees.
++This is impossible when repairing the free space btrees themselves.
++However, repair holds the AGF buffer lock for the duration of the free space
++index reconstruction, so it can use the collected free space information to
++supply the blocks for the new free space btrees.
++It is not necessary to back each reserved extent with an EFI because the new
++free space btrees are constructed in what the ondisk filesystem thinks is
++unowned space.
++However, if reserving blocks for the new btrees from the collected free space
++information changes the number of free space records, repair must re-estimate
++the new free space btree geometry with the new record count until the
++reservation is sufficient.
++As part of committing the new btrees, repair must ensure that reverse mappings
++are created for the reserved blocks and that unused reserved blocks are
++inserted into the free space btrees.
++Deferrred rmap and freeing operations are used to ensure that this transition
++is atomic, similar to the other btree repair functions.
++
++Third, finding the blocks to reap after the repair is not overly
++straightforward.
++Blocks for the free space btrees and the reverse mapping btrees are supplied by
++the AGFL.
++Blocks put onto the AGFL have reverse mapping records with the owner
++``XFS_RMAP_OWN_AG``.
++This ownership is retained when blocks move from the AGFL into the free space
++btrees or the reverse mapping btrees.
++When repair walks reverse mapping records to synthesize free space records, it
++creates a bitmap (``ag_owner_bitmap``) of all the space claimed by
++``XFS_RMAP_OWN_AG`` records.
++The repair context maintains a second bitmap corresponding to the rmap btree
++blocks and the AGFL blocks (``rmap_agfl_bitmap``).
++When the walk is complete, the bitmap disunion operation ``(ag_owner_bitmap &
++~rmap_agfl_bitmap)`` computes the extents that are used by the old free space
++btrees.
++These blocks can then be reaped using the methods outlined above.
++
++The proposed patchset is the
++`AG btree repair
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-ag-btrees>`_
++series.
++
++.. _rmap_reap:
++
++Case Study: Reaping After Repairing Reverse Mapping Btrees
++``````````````````````````````````````````````````````````
++
++Old reverse mapping btrees are less difficult to reap after a repair.
++As mentioned in the previous section, blocks on the AGFL, the two free space
++btree blocks, and the reverse mapping btree blocks all have reverse mapping
++records with ``XFS_RMAP_OWN_AG`` as the owner.
++The full process of gathering reverse mapping records and building a new btree
++are described in the case study of
++:ref:`live rebuilds of rmap data <rmap_repair>`, but a crucial point from that
++discussion is that the new rmap btree will not contain any records for the old
++rmap btree, nor will the old btree blocks be tracked in the free space btrees.
++The list of candidate reaping blocks is computed by setting the bits
++corresponding to the gaps in the new rmap btree records, and then clearing the
++bits corresponding to extents in the free space btrees and the current AGFL
++blocks.
++The result ``(new_rmapbt_gaps & ~(agfl | bnobt_records))`` are reaped using the
++methods outlined above.
++
++The rest of the process of rebuildng the reverse mapping btree is discussed
++in a separate :ref:`case study<rmap_repair>`.
++
++The proposed patchset is the
++`AG btree repair
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-ag-btrees>`_
++series.
++
++Case Study: Rebuilding the AGFL
++```````````````````````````````
++
++The allocation group free block list (AGFL) is repaired as follows:
++
++1. Create a bitmap for all the space that the reverse mapping data claims is
++   owned by ``XFS_RMAP_OWN_AG``.
++
++2. Subtract the space used by the two free space btrees and the rmap btree.
++
++3. Subtract any space that the reverse mapping data claims is owned by any
++   other owner, to avoid re-adding crosslinked blocks to the AGFL.
++
++4. Once the AGFL is full, reap any blocks leftover.
++
++5. The next operation to fix the freelist will right-size the list.
++
++See `fs/xfs/scrub/agheader_repair.c <https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/xfs/scrub/agheader_repair.c>`_ for more details.
 
