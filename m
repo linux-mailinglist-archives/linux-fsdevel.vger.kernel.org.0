@@ -2,111 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5301D6AD9BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 09:59:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B9866AD9E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 10:08:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230155AbjCGI65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 03:58:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41372 "EHLO
+        id S230134AbjCGJIw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 04:08:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjCGI6z (ORCPT
+        with ESMTP id S229742AbjCGJIu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 03:58:55 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 478E7515F7;
-        Tue,  7 Mar 2023 00:58:53 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4PW8KD3lV2z9yB6h;
-        Tue,  7 Mar 2023 16:50:08 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwC3gVio_AZktq14AQ--.19560S2;
-        Tue, 07 Mar 2023 09:58:29 +0100 (CET)
-Message-ID: <f604ce5c7a535755a56736395a82220f65bcbc3f.camel@huaweicloud.com>
-Subject: Re: [PATCH 11/28] evm: Complete description of evm_inode_setattr()
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Tue, 07 Mar 2023 09:58:14 +0100
-In-Reply-To: <ecb168e5-e85f-73ee-7bc4-c13d0ea8811e@linux.ibm.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-         <20230303181842.1087717-12-roberto.sassu@huaweicloud.com>
-         <ecb168e5-e85f-73ee-7bc4-c13d0ea8811e@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Tue, 7 Mar 2023 04:08:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC2C4274AE
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 01:08:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678180085;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dpiUx3zGKux9wdXXDvIFxrkb+UsNID/89koJxMZ33YU=;
+        b=hwz0oHH/M3lRitHSE+jCA9/lLbslj8WzMTliR34elBwlEjwQU6xuGtEy9h8cH/5rsgdhQR
+        nPQahFxnGD51Hm/QdICnfFnuKZnteJoXKFGchJv5sZVoBguM3WHvu8m8KUOTmjSxJjwQBQ
+        T6ozkZ/eGJKyhl32aEBvd23pbvcRNQY=
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
+ [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-583-D_OxrcXwPganelqE9FpG7g-1; Tue, 07 Mar 2023 04:08:03 -0500
+X-MC-Unique: D_OxrcXwPganelqE9FpG7g-1
+Received: by mail-io1-f72.google.com with SMTP id a21-20020a5d9595000000b0074c9dc19e16so6667165ioo.15
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 01:08:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678180083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dpiUx3zGKux9wdXXDvIFxrkb+UsNID/89koJxMZ33YU=;
+        b=KSfkBFzKj+IlvtgCApevAiClD+xWEMwdRS1r/PGxL6x8z26qsVO+fqGmFwQrzRkyVe
+         CXNoec7oysksyXFXtuRxP7Tgqo13SCil2vJ+1m46ANeC2+af0qlHxEVlA4FJIP5+wb+Y
+         DdeCIx5H5a541d1RsgjOSApEp4GKVbJbTAnFqTd5HkRPLhDazK29/j9gGFneJD6m0p7/
+         6l1O7+/eQDT2AX+x6c0XfuT1MaSxRyieoP0t2Mzr/nN6lv7yeQQmCvSTk57FSY+ojiIv
+         FZkg+2TCH8AUQww0j5RlAbzvJvMj1+pHSUqD/kNG1FEMhw5NO7ggBxiHih/cuj7TWxSh
+         onKg==
+X-Gm-Message-State: AO0yUKXdvPzwV5r9Q0g+tKsR/PchlDZXR8ccr6gz5mszkELCwQkAofl4
+        V+o7uPpw0UPU+bjJLtQz6plBbeeByFvCp8llfXprT0SkSco8AIubjaUDzd9d7ywToKR/yNgWQJq
+        jZa0nbsdfZy4zEYVjC5TDblmYZ8ciwTvf8ILGmD62tg==
+X-Received: by 2002:a05:6e02:f50:b0:316:ed77:e325 with SMTP id y16-20020a056e020f5000b00316ed77e325mr6881860ilj.1.1678180083147;
+        Tue, 07 Mar 2023 01:08:03 -0800 (PST)
+X-Google-Smtp-Source: AK7set/E3BFP5y07YEl67msa2F8qHRKBpLfKJEafqYFWKzSAb8r9U+dF1EKeyYQgDrXCmB0c3E8nDnA+gf05sCMJ9TY=
+X-Received: by 2002:a05:6e02:f50:b0:316:ed77:e325 with SMTP id
+ y16-20020a056e020f5000b00316ed77e325mr6881858ilj.1.1678180082868; Tue, 07 Mar
+ 2023 01:08:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwC3gVio_AZktq14AQ--.19560S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WrWkJF48Xr4UCFyUAr45GFg_yoW8XF13pa
-        yfKa48Gr4rtry29F98ta1xZa4Sg3y0gryj9398Aw4qyFn8GrnavryIkryrur98Kr18Cr1F
-        ya4av3W3Za15A3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBF1jj4pFJgACsW
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <e84d009fd32b7a02ceb038db5cf1737db91069d5.camel@redhat.com>
+ <CAL7ro1E7KY5yUJOLu6TY0RtAC5304sM3Lvk=zSCrqDrxTPW2og@mail.gmail.com>
+ <CAL7ro1FZMRiep582LaiaqqxzYq_XeM2UMxvsHoT-guf_-bqSfg@mail.gmail.com>
+ <e81d3776-8239-b8fa-1c64-bdb6f5cbe4df@linux.alibaba.com> <CAL7ro1GwDF1201StXw8xL9xL6y4jW1t+cbLPOmsRUp574+ewQQ@mail.gmail.com>
+ <fb9f65b5-a867-1a26-1c74-8c83e5c47f31@linux.alibaba.com> <CAL7ro1Ezvs0V9vUBF_eiDRwvPE8gTemAK12unGLUgRfrC_wLeg@mail.gmail.com>
+ <c6328bd6-3587-3e12-2ae0-652bbdc17a6a@linux.alibaba.com>
+In-Reply-To: <c6328bd6-3587-3e12-2ae0-652bbdc17a6a@linux.alibaba.com>
+From:   Alexander Larsson <alexl@redhat.com>
+Date:   Tue, 7 Mar 2023 10:07:51 +0100
+Message-ID: <CAL7ro1FPKPWQvHteQq_t=u_LuR4B1Q5c=FBE-tRTN8CfoZCAHw@mail.gmail.com>
+Subject: Re: [LSF/MM/BFP TOPIC] Composefs vs erofs+overlay
+To:     Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc:     Jingbo Xu <jefflexu@linux.alibaba.com>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-03-06 at 12:04 -0500, Stefan Berger wrote:
-> 
-> On 3/3/23 13:18, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Add the description for missing parameters of evm_inode_setattr() to
-> > avoid the warning arising with W=n compile option.
-> > 
-> > Fixes: 817b54aa45db ("evm: add evm_inode_setattr to prevent updating an invalid security.evm")
-> > Fixes: c1632a0f1120 ("fs: port ->setattr() to pass mnt_idmap")
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Among the previous patches I think there were 2 fixes like this one you could possibly also split off.
+On Tue, Mar 7, 2023 at 9:34=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.c=
+om> wrote:
+>
+>
+>
+> On 2023/3/7 16:21, Alexander Larsson wrote:
+> > On Mon, Mar 6, 2023 at 5:17=E2=80=AFPM Gao Xiang <hsiangkao@linux.aliba=
+ba.com> wrote:
+> >
+> >>>> I tested the performance of "ls -lR" on the whole tree of
+> >>>> cs9-developer-rootfs.  It seems that the performance of erofs (gener=
+ated
+> >>>> from mkfs.erofs) is slightly better than that of composefs.  While t=
+he
+> >>>> performance of erofs generated from mkfs.composefs is slightly worse
+> >>>> that that of composefs.
+> >>>
+> >>> I suspect that the reason for the lower performance of mkfs.composefs
+> >>> is the added overlay.fs-verity xattr to all the files. It makes the
+> >>> image larger, and that means more i/o.
+> >>
+> >> Actually you could move overlay.fs-verity to EROFS shared xattr area (=
+or
+> >> even overlay.redirect but it depends) if needed, which could save some
+> >> I/Os for your workloads.
+> >>
+> >> shared xattrs can be used in this way as well if you care such minor
+> >> difference, actually I think inlined xattrs for your workload are just
+> >> meaningful for selinux labels and capabilities.
+> >
+> > Really? Could you expand on this, because I would think it will be
+> > sort of the opposite. In my usecase, the erofs fs will be read by
+> > overlayfs, which will probably access overlay.* pretty often.  At the
+> > very least it will load overlay.metacopy and overlay.redirect for
+> > every lookup.
+>
+> Really.  In that way, it will behave much similiar to composefs on-disk
+> arrangement now (in composefs vdata area).
+>
+> Because in that way, although an extra I/O is needed for verification,
+> and it can only happen when actually opening the file (so "ls -lR" is
+> not impacted.) But on-disk inodes are more compact.
+>
+> All EROFS xattrs will be cached in memory so that accessing
+> overlay.* pretty often is not greatly impacted due to no real I/Os
+> (IOWs, only some CPU time is consumed).
 
-Didn't find it.
+So, I tried moving the overlay.digest xattr to the shared area, but
+actually this made the performance worse for the ls case. I have not
+looked into the cause in detail, but my guess is that ls looks for the
+acl xattr, and such a negative lookup will cause erofs to look at all
+the shared xattrs for the inode, which means they all end up being
+loaded anyway. Of course, this will only affect ls (or other cases
+that read the acl), so its perhaps a bit uncommon.
 
-Thanks
+Did you ever consider putting a bloom filter in the h_reserved area of
+erofs_xattr_ibody_header? Then it could return early without i/o
+operations for keys that are not set for the inode. Not sure what the
+computational cost of that would be though.
 
-Roberto
-
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > ---
-> >   security/integrity/evm/evm_main.c | 2 ++
-> >   1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> > index 1155a58ae87..8b5c472f78b 100644
-> > --- a/security/integrity/evm/evm_main.c
-> > +++ b/security/integrity/evm/evm_main.c
-> > @@ -798,7 +798,9 @@ static int evm_attr_change(struct mnt_idmap *idmap,
-> >   
-> >   /**
-> >    * evm_inode_setattr - prevent updating an invalid EVM extended attribute
-> > + * @idmap: idmap of the mount
-> >    * @dentry: pointer to the affected dentry
-> > + * @attr: iattr structure containing the new file attributes
-> >    *
-> >    * Permit update of file attributes when files have a valid EVM signature,
-> >    * except in the case of them having an immutable portable signature.
+--=20
+=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D
+ Alexander Larsson                                Red Hat, Inc
+       alexl@redhat.com         alexander.larsson@gmail.com
 
