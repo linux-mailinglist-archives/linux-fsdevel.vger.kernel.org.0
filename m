@@ -2,117 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1166AF87A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 23:22:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FD6A6AF8AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 23:28:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230260AbjCGWWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 17:22:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47542 "EHLO
+        id S231566AbjCGW2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 17:28:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbjCGWV7 (ORCPT
+        with ESMTP id S231339AbjCGW21 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 17:21:59 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 585AEE055;
-        Tue,  7 Mar 2023 14:21:58 -0800 (PST)
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1M4b1y-1pY1nG3MBS-001eXY; Tue, 07
- Mar 2023 23:21:41 +0100
-Message-ID: <96f5c29c-1b25-66af-1ba1-731ae39d912d@gmx.com>
-Date:   Wed, 8 Mar 2023 06:21:34 +0800
+        Tue, 7 Mar 2023 17:28:27 -0500
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAEFDAF778;
+        Tue,  7 Mar 2023 14:27:43 -0800 (PST)
+Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
+        by mx0a-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 327L5gJ4028321;
+        Tue, 7 Mar 2023 22:24:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pps0720; bh=LaaPqV7Flc0GLDHQpIpi/BIcyjij0wSdtMhbcCHYsgA=;
+ b=KucE5UTqJQpxT11mxXz+EBR8v0tavcjUv9Ui2FHab40WoQiuV3yFIDgqKk3q5kcdvuwo
+ drWjaXC7Yx+uiwl1OenpwWu47udmJqwKjE9dILefQUZGqLmGaEP1NLYCkNLYgQXE55IH
+ pJ+yRhi5GSJ5jKQ8RWB3Nr3EtesnmJ05hdKeHlS8cBLT36zWyHn3FQ9/R6GqQyfwyefx
+ YeGHnWIch0H3I5hz2qQ78crYlcNTY741RdGLewUR/aekyotj3MBUgHiSeyPnIKvgWPEK
+ jg+AIfQknv6WWMr+5LSHk3ZVcc7cEeQsQPCw1ideabEOY7fb99n90BFJHjYRpVRpYa7A Vw== 
+Received: from p1lg14878.it.hpe.com (p1lg14878.it.hpe.com [16.230.97.204])
+        by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 3p6bu8114b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Mar 2023 22:24:17 +0000
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by p1lg14878.it.hpe.com (Postfix) with ESMTPS id CBB17130A9;
+        Tue,  7 Mar 2023 22:24:16 +0000 (UTC)
+Received: from swahl-home.5wahls.com (unknown [16.231.227.36])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 9C74F80AD9E;
+        Tue,  7 Mar 2023 22:24:12 +0000 (UTC)
+Date:   Tue, 7 Mar 2023 16:24:10 -0600
+From:   Steve Wahl <steve.wahl@hpe.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com, minyard@acm.org,
+        kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+        decui@microsoft.com, song@kernel.org, robinmholt@gmail.com,
+        steve.wahl@hpe.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, jgross@suse.com, sstabellini@kernel.org,
+        oleksandr_tyshchenko@epam.com, xen-devel@lists.xenproject.org,
+        j.granados@samsung.com, zhangpeng362@huawei.com,
+        tangmeng@uniontech.com, willy@infradead.org, nixiaoming@huawei.com,
+        sujiaxun@uniontech.com, patches@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, apparmor@lists.ubuntu.com,
+        linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-hyperv@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] sgi-xp: simplify sysctl registration
+Message-ID: <ZAe5batlkUwlKoxx@swahl-home.5wahls.com>
+References: <20230302204612.782387-1-mcgrof@kernel.org>
+ <20230302204612.782387-6-mcgrof@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 03/34] btrfs: add a btrfs_inode pointer to struct
- btrfs_bio
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20230121065031.1139353-1-hch@lst.de>
- <20230121065031.1139353-4-hch@lst.de>
- <88b2fae1-8d95-2172-7bc4-c5dfc4ff7410@gmx.com>
- <20230307144106.GA19477@lst.de>
-Content-Language: en-US
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-In-Reply-To: <20230307144106.GA19477@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:e1Ke+vXVlsKJ++zVehuc+AJhjvv9pTgMQFuUeyblgEIczKAlf7N
- G93Dg6SwYbI2+qYogqGGxyjCI1S+HhT7jcX03u0N/hzQqt1ZQam1ZUc/YeUGq9j0dWZHbU5
- GUqkN44Nr8TApAxzcQ9+5W0JvfWalsEtDCH9FFAS8pGqO92YIdSvutXJEpIqoao8x9eW21S
- ISHcn1W37xu28T5FKsRnQ==
-UI-OutboundReport: notjunk:1;M01:P0:th6cQcUJOvo=;neg31cJGh5KjgaeGl2d78+kuA3/
- Ia5rUrpAS9eGbbhHZu//gEJTV+O3ZRrbqo0sJav6gkUME5jlog8GU+yf5TO5ksWmX76BA5p7a
- jLKAnBkzUaYa7f+LRs4sM4J36zv8zcxkMsLtSocPmzwoCdm/RM+cPNW0v/xvmB8wMHDb66CmI
- smpGUMGqIIi4k4Faj6KjZyaaIttaYBbwBrVK5cHVy6UGufe9HaaH+pp8/UtIKfsaEUTgwSpdT
- dmmmrbEgQ4Gttl8Du/RFOm7DJU9wXbMAu+nuhoJrk5P8asN8TG2xqoVDCmuDxaO/REJz7by05
- aqLbfxINKhEsxe0M861//ny0nuM++5KveobIR0pWBb72R0ofvSARsB+6HRoqC+fX6cwUIUDmw
- J9Y22BORbVDTukX5szqDtKn7Myi/AYhncpUEPje52J/uHSr1VOUNcQr8oXTOn7u1VoSo59n7D
- 4CrBMKT4Ja9TOyTauuN1u2IuT7VV/hbUchvI9JXFqFEZZsj7x5dm6vLIJ4+n/+LU4BTs6NqiS
- U2x4Kdek3b9x6Qbe5HpY8rQ6Cl05pfGp9SyNT62qKWj6S2HIBeAn5jsiwla06Y0I/3AInxg34
- MEvgd/360acXo1NGeABBYkKWhNJ1UNoz9qpNzTVNEuK3rH7CqohKfIUOLMG6G8lc/fFMEC+lm
- 57w7EmG9NRF/0lC8gAATQXLi7z6aAU/uZQ3rwFQJQGf8wPXiNIUW5XJpm9SOxMHs2XeKI/uYg
- SH9R/8JKemObQdLqmJWtgBaLRWVX7bohfGzUSXsOAM9/mk9ciornL+J+9+Xnhj3w+zWpDxcYU
- Uko/43zq5Sb2pec288kaRlhZowYxJ8XiJNkQ8hjickHRvxoZ0LmVbQzNp+iENH8zliveAi0OS
- 9KLJFgJeLzYI7Kl5s3IOqQNyM+DMQuJXrTB56+CxMK9vdJrBDvcVeJFlZTrdXYnOfsUWsN9Tr
- xh8f9BhyPgoimYHFcAHup0miRIc=
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,FREEMAIL_FROM,
-        NICE_REPLY_A,RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230302204612.782387-6-mcgrof@kernel.org>
+X-Proofpoint-GUID: -gScpSVwE5aPWwo4gsaN-rEbeWVyAJK_
+X-Proofpoint-ORIG-GUID: -gScpSVwE5aPWwo4gsaN-rEbeWVyAJK_
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-07_16,2023-03-07_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ mlxscore=0 malwarescore=0 impostorscore=0 adultscore=0 priorityscore=1501
+ suspectscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303070197
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2023/3/7 22:41, Christoph Hellwig wrote:
-> On Tue, Mar 07, 2023 at 09:44:32AM +0800, Qu Wenruo wrote:
->> With my recent restart on scrub rework, this patch makes me wonder, what if
->> scrub wants to use btrfs_bio, but don't want to pass a valid btrfs_inode
->> pointer?
+On Thu, Mar 02, 2023 at 12:46:10PM -0800, Luis Chamberlain wrote:
+> Although this driver is a good use case for having a directory
+> that is not other directories and then subdirectories with more
+> entries, the usage of register_sysctl_table() can recurse and
+> increases complexity so to avoid that just split out the
+> registration to each directory with its own entries.
 > 
-> The full inode is only really needed for the data repair code.  But a lot
-> of code uses the fs_info, which would have to be added as a separate
-> counter.  The other usage is the sync_writers counter, which is a bit
-> odd and should probably be keyed off the REQ_SYNC flag instead.
+> register_sysctl_table() is a deprecated compatibility wrapper.
+> register_sysctl() can do the directory creation for you so just use
+> that.
 > 
->> E.g. scrub code just wants to read certain mirror of a logical bytenr.
->> This can simplify the handling of RAID56, as for data stripes the repair
->> path is the same, just try the next mirror(s).
->>
->> Furthermore most of the new btrfs_bio code is handling data reads by
->> triggering read-repair automatically.
->> This can be unnecessary for scrub.
-> 
-> This sounds like you don't want to use the btrfs_bio at all as you
-> don't rely on any of the functionality from it.
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Well, to me the proper mirror_num based read is the core of btrfs_bio, 
-not the read-repair thing.
+Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
 
-Thus I'm not that convinced fully automatic read-repair integrated into 
-btrfs_bio is a good idea.
+> ---
+>  drivers/misc/sgi-xp/xpc_main.c | 24 ++++++++++--------------
+>  1 file changed, 10 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/misc/sgi-xp/xpc_main.c b/drivers/misc/sgi-xp/xpc_main.c
+> index b2c3c22fc13c..6da509d692bb 100644
+> --- a/drivers/misc/sgi-xp/xpc_main.c
+> +++ b/drivers/misc/sgi-xp/xpc_main.c
+> @@ -93,7 +93,7 @@ int xpc_disengage_timelimit = XPC_DISENGAGE_DEFAULT_TIMELIMIT;
+>  static int xpc_disengage_min_timelimit;	/* = 0 */
+>  static int xpc_disengage_max_timelimit = 120;
+>  
+> -static struct ctl_table xpc_sys_xpc_hb_dir[] = {
+> +static struct ctl_table xpc_sys_xpc_hb[] = {
+>  	{
+>  	 .procname = "hb_interval",
+>  	 .data = &xpc_hb_interval,
+> @@ -112,11 +112,7 @@ static struct ctl_table xpc_sys_xpc_hb_dir[] = {
+>  	 .extra2 = &xpc_hb_check_max_interval},
+>  	{}
+>  };
+> -static struct ctl_table xpc_sys_xpc_dir[] = {
+> -	{
+> -	 .procname = "hb",
+> -	 .mode = 0555,
+> -	 .child = xpc_sys_xpc_hb_dir},
+> +static struct ctl_table xpc_sys_xpc[] = {
+>  	{
+>  	 .procname = "disengage_timelimit",
+>  	 .data = &xpc_disengage_timelimit,
+> @@ -127,14 +123,9 @@ static struct ctl_table xpc_sys_xpc_dir[] = {
+>  	 .extra2 = &xpc_disengage_max_timelimit},
+>  	{}
+>  };
+> -static struct ctl_table xpc_sys_dir[] = {
+> -	{
+> -	 .procname = "xpc",
+> -	 .mode = 0555,
+> -	 .child = xpc_sys_xpc_dir},
+> -	{}
+> -};
+> +
+>  static struct ctl_table_header *xpc_sysctl;
+> +static struct ctl_table_header *xpc_sysctl_hb;
+>  
+>  /* non-zero if any remote partition disengage was timed out */
+>  int xpc_disengage_timedout;
+> @@ -1041,6 +1032,8 @@ xpc_do_exit(enum xp_retval reason)
+>  
+>  	if (xpc_sysctl)
+>  		unregister_sysctl_table(xpc_sysctl);
+> +	if (xpc_sysctl_hb)
+> +		unregister_sysctl_table(xpc_sysctl_hb);
+>  
+>  	xpc_teardown_partitions();
+>  
+> @@ -1243,7 +1236,8 @@ xpc_init(void)
+>  		goto out_1;
+>  	}
+>  
+> -	xpc_sysctl = register_sysctl_table(xpc_sys_dir);
+> +	xpc_sysctl = register_sysctl("xpc", xpc_sys_xpc);
+> +	xpc_sysctl_hb = register_sysctl("xpc/hb", xpc_sys_xpc_hb);
+>  
+>  	/*
+>  	 * Fill the partition reserved page with the information needed by
+> @@ -1308,6 +1302,8 @@ xpc_init(void)
+>  	(void)unregister_die_notifier(&xpc_die_notifier);
+>  	(void)unregister_reboot_notifier(&xpc_reboot_notifier);
+>  out_2:
+> +	if (xpc_sysctl_hb)
+> +		unregister_sysctl_table(xpc_sysctl_hb);
+>  	if (xpc_sysctl)
+>  		unregister_sysctl_table(xpc_sysctl);
+>  
+> -- 
+> 2.39.1
+> 
 
-Thanks,
-Qu
-> 
->>
->> And since we're here, can we also have btrfs equivalent of on-stack bio?
->> As scrub can benefit a lot from that, as for sector-by-sector read, we want
->> to avoid repeating allocating/freeing a btrfs_bio just for reading one
->> sector.
->> (The existing behavior is using on-stack bio with bio_init/bio_uninit
->> inside scrub_recheck_block())
-> 
-> You can do that right now by declaring a btrfs_bio on-stack and then
-> calling bio_init on the embedded bio followed by a btrfs_bio_init on
-> the btrfs_bio.  But I don't think doing this will actually be a win
-> for the scrub code in terms of speed or code size.
+-- 
+Steve Wahl, Hewlett Packard Enterprise
