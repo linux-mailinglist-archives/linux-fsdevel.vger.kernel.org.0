@@ -2,213 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DDA646AD3A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 02:01:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E3F06AD3A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 02:01:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbjCGBB3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Mar 2023 20:01:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60338 "EHLO
+        id S229636AbjCGBBM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Mar 2023 20:01:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbjCGBB2 (ORCPT
+        with ESMTP id S229611AbjCGBBL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Mar 2023 20:01:28 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7BAC303DE
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Mar 2023 17:00:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678150839;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VHFntejT56JbD/rUEQWs9tWFnUbRv9RbZFyVXVHrMio=;
-        b=dj2/2ErKB18ReCVgFiujYVsWFdllbOvi5wMkY2PhU5AaXJ3ufzhDlAw42w858fC2AsdA/C
-        rGrcaA4As8C2qT1dlTTJUVTOX+vcbotG7xS1WUEGsNjRlwBQU4BQplZN4IuAezWKek1Vbg
-        SlNQAphxPEw0WJZBiklwgpzyAVTw6bM=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-346-0XGBsVA6Moqd-t0PSzFeSg-1; Mon, 06 Mar 2023 20:00:38 -0500
-X-MC-Unique: 0XGBsVA6Moqd-t0PSzFeSg-1
-Received: by mail-qt1-f200.google.com with SMTP id h21-20020ac87d55000000b003bffb1c9745so6235206qtb.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Mar 2023 17:00:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678150838;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VHFntejT56JbD/rUEQWs9tWFnUbRv9RbZFyVXVHrMio=;
-        b=2z9YPnKrVZRw+oW8cw3gWTZtQwWFEL+CGqJ9TJakEn7N3gYjVC7JRie2egYeTrxM+x
-         nVujlGeJ77oUZfiURH8Sg6aJEQ7NLn0sZRDakFUUA3sfqpnRq+7fa8hsoMXQZQWOK+3q
-         STDiZw4KxqUy58I2CcOp41nV44FQ9i3myt6u+EZvLgJSbDX+BBUdFbx4P8FoLMTfvhOE
-         XAgsXwWxqhAvidVa0QTORvXCFROp4iyBHeoFsIAuLT5685iGrWAismPDZ5VUOGbWm1EK
-         atAZFIT2kmhKxJRyZn7nWE1fRdMfa1mktrTCuJ4+gOYzt89gd88VdTrUUJLLrm66ilqL
-         rg/w==
-X-Gm-Message-State: AO0yUKWXMmh2qQPNVis8m9Zr2zaEDt1G34CWDMB2c3iqC+e3uwZU6BAK
-        fQ1W37VOvSG6DZEUVmZ7N8eSAciA/X8mOzsxCAYy5oxISI1MlydbF0Q9P1KyvWSbRLLYHnETmhD
-        BJzJ0z7R5gujBA+13J2z71wt/6w==
-X-Received: by 2002:ac8:4e49:0:b0:3bf:a564:573b with SMTP id e9-20020ac84e49000000b003bfa564573bmr22624855qtw.0.1678150837983;
-        Mon, 06 Mar 2023 17:00:37 -0800 (PST)
-X-Google-Smtp-Source: AK7set9mNewiLEJ/Qcl0fkXX58JVHG+qYCqPmSyNkMCeEvogUl0mdbdtpfbHSmtHHB3rrhxwI1DA3g==
-X-Received: by 2002:ac8:4e49:0:b0:3bf:a564:573b with SMTP id e9-20020ac84e49000000b003bfa564573bmr22624808qtw.0.1678150837670;
-        Mon, 06 Mar 2023 17:00:37 -0800 (PST)
-Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
-        by smtp.gmail.com with ESMTPSA id v25-20020ac873d9000000b003c033b23a9asm1407231qtp.12.2023.03.06.17.00.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Mar 2023 17:00:37 -0800 (PST)
-Date:   Mon, 6 Mar 2023 20:00:35 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Nadav Amit <namit@vmware.com>, Shuah Khan <shuah@kernel.org>,
-        James Houghton <jthoughton@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] mm: userfaultfd: combine 'mode' and 'wp_copy'
- arguments
-Message-ID: <ZAaMs44nspRQJmrk@x1n>
-References: <20230306225024.264858-1-axelrasmussen@google.com>
- <20230306225024.264858-4-axelrasmussen@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230306225024.264858-4-axelrasmussen@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Mon, 6 Mar 2023 20:01:11 -0500
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E66B52FCDC
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Mar 2023 17:01:08 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 943A95C0163;
+        Mon,  6 Mar 2023 20:01:06 -0500 (EST)
+Received: from imap46 ([10.202.2.96])
+  by compute3.internal (MEProxy); Mon, 06 Mar 2023 20:01:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verbum.org; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1678150866; x=1678237266; bh=6t
+        tRYZyzv2O8slmNiZeyxP2X530IBAGLvqBhwFjnptY=; b=jVQTCHOUWvsGhUTWVm
+        RL3pJtRFZdVLSn3/OhZ1n+j0rLLtzPxkI+xJtrIcnuOjm4pFSXZSw7Xo2Juoebr4
+        5P2igdyBWC3sU3nCXnjuAm+iINaIhRFdiTGsjQ3W3wlGnzCKl4+rO7cqaqXfjD61
+        Zh9QP83OtZgvERUhYDqlswcOMEenSmhA5OvRkYM650wb17ec8HGqFaXAlpoG3IOT
+        NqZm42m11gFhOvE4gxX8Z8soUtiaORIELqvclWNoSFJQT6xjUe3lWWs9qWnIU6Js
+        qg812RWORdJuiLgCLyMJikXxI+oO/gL93MoaBvmZkD3w48tEQAnzMHNILom+M39X
+        J+KQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1678150866; x=1678237266; bh=6ttRYZyzv2O8s
+        lmNiZeyxP2X530IBAGLvqBhwFjnptY=; b=hhUpmQWA++S8ArIULWtXEw+wnNy+a
+        u5yXo2jEUPcai/Iaghhn6VvVlJwmgTayp2hdF3o3AyP1HKZ5gA+vjKui1j4yaFoJ
+        Xftu5BHE/WH+bmtCWFAeHtHRbxgJlsuGrbUbdyJUPYGA6JVtG1GnNY1T68lGN7Xy
+        0wCQRYNYLHG++rNDS+tCM61H1FwNTysZYWU/8d/LrrmSlek17QA6iLqwJw3PDsKT
+        KDoajnrUqicPz1VfRT7viq6Tbn43r0HfERiPpTDVAkvuS1WiVNUpRLClY4wTGinU
+        eDIwQgIvk75Ie0u0a1z16y/ahbNuYpkEIf+SUeYI6iVSaYOQSFiHmsphg==
+X-ME-Sender: <xms:0YwGZKexIhLJAhAjB9TkEduXl4Ys5zFudDmnFdnCsJFQ0zrDUVYmfQ>
+    <xme:0YwGZEPKS8QMrtBDIdaagRvOe-7FcLrB17d9up1WdaDGZ2FRzAhb0S3h4MawfqMbU
+    2ZI3VQy_Fk2nZsG>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvddtledgvdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfveho
+    lhhinhcuhggrlhhtvghrshdfuceofigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpeefffdthfeuuefhudetieelheevtdeikeffiefgkefguefffeek
+    jedtfeefhfduhfenucffohhmrghinhepghhithhhuhgsrdgtohhmpdgsohhumhdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpeifrghl
+    thgvrhhssehvvghrsghumhdrohhrgh
+X-ME-Proxy: <xmx:0YwGZLioITPHsoH1OVrR96hbJTYt_-LYqoZFPBhWxk04CqRtBfF2_g>
+    <xmx:0YwGZH-SbWGnTZK1QAIrRUO3HLJ0OCWu2_kM532SWb54hetyaGNAyQ>
+    <xmx:0YwGZGs-nVi9y0qr_r1WQ2xmkMvRRlCfe17_AfsOIbCKvjm686vNbA>
+    <xmx:0owGZEAv7Ok1bmN7fFd2At9KfPaLwxypgWGa0s3RysoWSKL4oqbJVg>
+Feedback-ID: ibe7c40e9:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id AA97E2A20080; Mon,  6 Mar 2023 20:01:05 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-206-g57c8fdedf8-fm-20230227.001-g57c8fded
+Mime-Version: 1.0
+Message-Id: <6bea16fa-737f-4aad-a2cd-0a12029e614d@app.fastmail.com>
+In-Reply-To: <0a571702-a907-c2b1-bb38-96aa7b268a1b@linux.alibaba.com>
+References: <e84d009fd32b7a02ceb038db5cf1737db91069d5.camel@redhat.com>
+ <CAL7ro1E7KY5yUJOLu6TY0RtAC5304sM3Lvk=zSCrqDrxTPW2og@mail.gmail.com>
+ <ffe56605-6ef7-01b5-e613-7600165820d8@linux.alibaba.com>
+ <13e7205f-113b-ad47-417f-53b63743c64c@linux.alibaba.com>
+ <4782a0db-5780-4309-badf-67f69507cc81@app.fastmail.com>
+ <0a571702-a907-c2b1-bb38-96aa7b268a1b@linux.alibaba.com>
+Date:   Mon, 06 Mar 2023 20:00:45 -0500
+From:   "Colin Walters" <walters@verbum.org>
+To:     "Gao Xiang" <hsiangkao@linux.alibaba.com>,
+        "Alexander Larsson" <alexl@redhat.com>,
+        lsf-pc@lists.linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        "Amir Goldstein" <amir73il@gmail.com>,
+        "Christian Brauner" <brauner@kernel.org>,
+        "Jingbo Xu" <jefflexu@linux.alibaba.com>,
+        "Giuseppe Scrivano" <gscrivan@redhat.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        "Vivek Goyal" <vgoyal@redhat.com>,
+        "Miklos Szeredi" <miklos@szeredi.hu>
+Subject: Re: [LSF/MM/BFP TOPIC] Composefs vs erofs+overlay
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 06, 2023 at 02:50:22PM -0800, Axel Rasmussen wrote:
-> Many userfaultfd ioctl functions take both a 'mode' and a 'wp_copy'
-> argument. In future commits we plan to plumb the flags through to more
-> places, so we'd be proliferating the very long argument list even
-> further.
-> 
-> Let's take the time to simplify the argument list. Combine the two
-> arguments into one - and generalize, so when we add more flags in the
-> future, it doesn't imply more function arguments.
-> 
-> Since the modes (copy, zeropage, continue) are mutually exclusive, store
-> them as an integer value (0, 1, 2) in the low bits. Place combine-able
-> flag bits in the high bits.
-> 
-> This is quite similar to an earlier patch proposed by Nadav Amit
-> ("userfaultfd: introduce uffd_flags" - for some reason Lore no longer
-> has a copy of the patch). The main difference is that patch only handled
 
-Lore has. :)
 
-https://lore.kernel.org/all/20220619233449.181323-2-namit@vmware.com
+On Sat, Mar 4, 2023, at 10:29 AM, Gao Xiang wrote:
+> Hi Colin,
+>
+> On 2023/3/4 22:59, Colin Walters wrote:
+>> 
+>> 
+>> On Fri, Mar 3, 2023, at 12:37 PM, Gao Xiang wrote:
+>>>
+>>> Actually since you're container guys, I would like to mention
+>>> a way to directly reuse OCI tar data and not sure if you
+>>> have some interest as well, that is just to generate EROFS
+>>> metadata which could point to the tar blobs so that data itself
+>>> is still the original tar, but we could add fsverity + IMMUTABLE
+>>> to these blobs rather than the individual untared files.
+>> 
+>>>    - OCI layer diff IDs in the OCI spec [1] are guaranteed;
+>> 
+>> The https://github.com/vbatts/tar-split approach addresses this problem domain adequately I think.
+>
+> Thanks for the interest and comment.
+>
+> I'm not aware of this project, and I'm not sure if tar-split
+> helps mount tar stuffs, maybe I'm missing something?
 
-And btw sorry to review late.
+Not directly; it's widely used in the container ecosystem (podman/docker etc.) to split off the original bit-for-bit tar stream metadata content from the actually large data (particularly regular files) so that one can write the files to a regular underlying fs (xfs/ext4/etc.) and use overlayfs on top.   Then it helps reverse the process and reconstruct the original tar stream for pushes, for exactly the reason you mention.
 
-> flags, whereas this patch *also* combines the "mode" argument into the
-> same type to shorten the argument list.
-> 
-> Acked-by: James Houghton <jthoughton@google.com>
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+Slightly OT but a whole reason we're having this conversation now is definitely rooted in the original Docker inventor having the idea of *deriving* or layering on top of previous images, which is not part of dpkg/rpm or squashfs or raw disk images etc.  Inherent in this is the idea that we're not talking about *a* filesystem - we're talking about filesystem*s* plural and how they're wired together and stacked.
 
-Mostly good to me, a few nitpicks below.
+It's really only very simplistic use cases for which a single read-only filesystem suffices.  They exist - e.g. people booting things like Tails OS https://tails.boum.org/ on one of those USB sticks with a physical write protection switch, etc. 
 
-[...]
+But that approach makes every OS update very expensive - most use cases really want fast and efficient incremental in-place OS updates and a clear distinct split between OS filesystem and app filesystems.   But without also forcing separate size management onto both.
 
-> +/* A combined operation mode + behavior flags. */
-> +typedef unsigned int __bitwise uffd_flags_t;
-> +
-> +/* Mutually exclusive modes of operation. */
-> +enum mfill_atomic_mode {
-> +	MFILL_ATOMIC_COPY = (__force uffd_flags_t) 0,
-> +	MFILL_ATOMIC_ZEROPAGE = (__force uffd_flags_t) 1,
-> +	MFILL_ATOMIC_CONTINUE = (__force uffd_flags_t) 2,
-> +	NR_MFILL_ATOMIC_MODES,
->  };
+> Not bacause EROFS cannot do on-disk dedupe, just because in this
+> way EROFS can only use the original tar blobs, and EROFS is not
+> the guy to resolve the on-disk sharing stuff.  
 
-I never used enum like this.  I had a feeling that this will enforce
-setting the enum entries but would the enforce applied to later
-assignments?  I'm not sure.
+Right, agree; this ties into my larger point above that no one technology/filesystem is the sole solution in the general case.
 
-I had a quick test and actually I found sparse already complains about
-calculating the last enum entry:
+> As a kernel filesystem, if two files are equal, we could treat them
+> in the same inode address space, even they are actually with slightly
+> different inode metadata (uid, gid, mode, nlink, etc).  That is
+> entirely possible as an in-kernel filesystem even currently linux
+> kernel doesn't implement finer page cache sharing, so EROFS can
+> support page-cache sharing of files in all tar streams if needed.
 
----8<---
-$ cat a.c
-typedef unsigned int __attribute__((bitwise)) flags_t;
+Hmmm.  I should clarify here I have zero kernel patches, I'm a userspace developer (on container and OS updates, for which I'd like a unified stack).  But it seems to me that while you're right that it would be technically possible for a single filesystem to do this, in practice it would require some sort of virtual sub-filesystem internally.  And at that point, it does seem more elegant to me to make that stacking explicit, more like how composefs is doing it.  
 
-enum {
-    FLAG1 = (__attribute__((force)) flags_t) 0,
-    FLAG_NUM,
-};
+That said I think there's a lot of legitimate debate here, and I hope we can continue doing so productively!
 
-void main(void)
-{
-    uffd_flags_t flags = FLAG1;
-}
-$ sparse a.c
-a.c:5:5: error: can't increment the last enum member
----8<---
-
-Maybe just use the simple "#define"s?
-
->  
-> +#define MFILL_ATOMIC_MODE_BITS (const_ilog2(NR_MFILL_ATOMIC_MODES - 1) + 1)
-
-Here IIUC it should be "const_ilog2(NR_MFILL_ATOMIC_MODES) + 1", but
-maybe..  we don't bother and define every bit explicitly?
-
-> +#define MFILL_ATOMIC_BIT(nr) ((__force uffd_flags_t) BIT(MFILL_ATOMIC_MODE_BITS + (nr)))
-> +#define MFILL_ATOMIC_MODE_MASK (MFILL_ATOMIC_BIT(0) - 1)
-> +
-> +/* Flags controlling behavior. */
-> +#define MFILL_ATOMIC_WP MFILL_ATOMIC_BIT(0)
-
-[...]
-
-> @@ -312,9 +312,9 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
->  					      unsigned long dst_start,
->  					      unsigned long src_start,
->  					      unsigned long len,
-> -					      enum mcopy_atomic_mode mode,
-> -					      bool wp_copy)
-> +					      uffd_flags_t flags)
->  {
-> +	int mode = flags & MFILL_ATOMIC_MODE_MASK;
->  	struct mm_struct *dst_mm = dst_vma->vm_mm;
->  	int vm_shared = dst_vma->vm_flags & VM_SHARED;
->  	ssize_t err;
-> @@ -333,7 +333,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
->  	 * by THP.  Since we can not reliably insert a zero page, this
->  	 * feature is not supported.
->  	 */
-> -	if (mode == MCOPY_ATOMIC_ZEROPAGE) {
-> +	if (mode == MFILL_ATOMIC_ZEROPAGE) {
-
-The mode comes from "& MFILL_ATOMIC_MODE_MASK" but it doesn't quickly tell
-whether there's a shift for the mask.
-
-Would it look better we just have a helper to fetch the mode?  The function
-tells that whatever it returns must be the mode:
-
-       if (uffd_flags_get_mode(flags) == MFILL_ATOMIC_ZEROPAGE)
-
-We also avoid quite a few "mode" variables.  All the rest bits will be fine
-to use "flags & FLAG1" if it's a boolean (so only this "mode" is slightly
-tricky).
-
-What do you think?
-
-Thanks,
-
--- 
-Peter Xu
 
