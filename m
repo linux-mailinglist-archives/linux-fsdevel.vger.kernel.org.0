@@ -2,154 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 128386AD9A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 09:55:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5301D6AD9BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Mar 2023 09:59:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbjCGIzw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 03:55:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37838 "EHLO
+        id S230155AbjCGI65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 03:58:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbjCGIzu (ORCPT
+        with ESMTP id S229593AbjCGI6z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 03:55:50 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707F1231D6;
-        Tue,  7 Mar 2023 00:55:49 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id 6-20020a17090a190600b00237c5b6ecd7so15835233pjg.4;
-        Tue, 07 Mar 2023 00:55:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678179349;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ImZIUnjHmWZ61AUl7EQPcyNMNKjjE5EWwslBdnmGov0=;
-        b=SgtCPQOkavqX+SBvioxmaURb4Km1AY2R8AW5U4vSda+AC/SpuW1VlTHGyP70Ytx+dK
-         Ayqg7je+tRBqJgKKk3xbtLurdcXlYw7hY3sBDSNIsbqQaTaWlTIUJTIYgsMbE1qBnKWg
-         /hROrhlTfzg3xPNGrquDfsSGiwb0TXzQaLrdv6qEZpVcvM7b1WzNHXSgRk3aFnEGnlOS
-         pWwK1QeBx+FxcTN4I5U3/9k5Yj3rpU8Ih3evW7wRHjji5kdcAhxLf3NbbaUegC1gepj2
-         7a5RjDaKtVujCChtlIFUvuthDcTm7IdCxR8tO87EfAs7qwzDXDhuaRoejK8v9buentv2
-         88iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678179349;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ImZIUnjHmWZ61AUl7EQPcyNMNKjjE5EWwslBdnmGov0=;
-        b=UpVX4L6+uhd9WRQN43C/hOST1TWs4Fkzje/S4ypQuat/k953JuyEkGzL2eQix5q2lE
-         FA7QnP6Lq38G3Ryl4yJbLraasRtVTmO+A1PM2JIIGh0hROSbrDUioW9t1RdAtj9cSbqw
-         TPmOizo7ETcu7xp11VXCk4Bf/qVZW1A/wswy5JlH5VgMgrD4/u0v4pPpEGJTBDY5ssl4
-         42bk+z3lGKNZRcZf90rAZF58A0GyTJ9ah3GS+PkOPMQucRKDTWABfJUogGMUIWd880Ip
-         ZudZpUAFNJQiJlXtdTJ7HdKgMsB3DXGYvnyFtH12HH1FGwJ4YEds9I+hPvI1FVQIjPUF
-         Pzhg==
-X-Gm-Message-State: AO0yUKVXbJEGoLc+Ch5OQFlJnbz/hGBCl7tPVF3PyEdqFIaxEH1ZKjD7
-        uEDK4+4zSwQGDTmmzrzYxmg=
-X-Google-Smtp-Source: AK7set+n/zlRJOeNQP8M0xg3+cjUmJoxvSXtbUWiJcG+ExUBSsH7mIN1Yeehxsqw3k185LjLKRmDAg==
-X-Received: by 2002:a17:902:ab07:b0:19c:e7ee:52ad with SMTP id ik7-20020a170902ab0700b0019ce7ee52admr12501058plb.28.1678179348695;
-        Tue, 07 Mar 2023 00:55:48 -0800 (PST)
-Received: from carrot.. (i219-164-39-244.s42.a014.ap.plala.or.jp. [219.164.39.244])
-        by smtp.gmail.com with ESMTPSA id z9-20020a63e109000000b004fbd91d9716sm7377100pgh.15.2023.03.07.00.55.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 00:55:47 -0800 (PST)
-From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-nilfs@vger.kernel.org,
-        syzbot <syzbot+132fdd2f1e1805fdc591@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, glider@google.com
-Subject: [PATCH] nilfs2: fix kernel-infoleak in nilfs_ioctl_wrap_copy()
-Date:   Tue,  7 Mar 2023 17:55:48 +0900
-Message-Id: <20230307085548.6290-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <000000000000a5bd2d05f63f04ae@google.com>
-References: <000000000000a5bd2d05f63f04ae@google.com>
+        Tue, 7 Mar 2023 03:58:55 -0500
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 478E7515F7;
+        Tue,  7 Mar 2023 00:58:53 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4PW8KD3lV2z9yB6h;
+        Tue,  7 Mar 2023 16:50:08 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwC3gVio_AZktq14AQ--.19560S2;
+        Tue, 07 Mar 2023 09:58:29 +0100 (CET)
+Message-ID: <f604ce5c7a535755a56736395a82220f65bcbc3f.camel@huaweicloud.com>
+Subject: Re: [PATCH 11/28] evm: Complete description of evm_inode_setattr()
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>, viro@zeniv.linux.org.uk,
+        chuck.lever@oracle.com, jlayton@kernel.org, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Tue, 07 Mar 2023 09:58:14 +0100
+In-Reply-To: <ecb168e5-e85f-73ee-7bc4-c13d0ea8811e@linux.ibm.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+         <20230303181842.1087717-12-roberto.sassu@huaweicloud.com>
+         <ecb168e5-e85f-73ee-7bc4-c13d0ea8811e@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwC3gVio_AZktq14AQ--.19560S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WrWkJF48Xr4UCFyUAr45GFg_yoW8XF13pa
+        yfKa48Gr4rtry29F98ta1xZa4Sg3y0gryj9398Aw4qyFn8GrnavryIkryrur98Kr18Cr1F
+        ya4av3W3Za15A3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBF1jj4pFJgACsW
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The ioctl helper function nilfs_ioctl_wrap_copy, which exchanges a
-metadata array to/from user space, may copy uninitialized buffer regions
-to user space memory for read-only ioctl commands NILFS_IOCTL_GET_SUINFO
-and NILFS_IOCTL_GET_CPINFO.
+On Mon, 2023-03-06 at 12:04 -0500, Stefan Berger wrote:
+> 
+> On 3/3/23 13:18, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > Add the description for missing parameters of evm_inode_setattr() to
+> > avoid the warning arising with W=n compile option.
+> > 
+> > Fixes: 817b54aa45db ("evm: add evm_inode_setattr to prevent updating an invalid security.evm")
+> > Fixes: c1632a0f1120 ("fs: port ->setattr() to pass mnt_idmap")
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Among the previous patches I think there were 2 fixes like this one you could possibly also split off.
 
-This can occur when the element size of the user space metadata given
-by the v_size member of the argument nilfs_argv structure is larger than
-the size of the metadata element (nilfs_suinfo structure or nilfs_cpinfo
-structure) on the file system side.
+Didn't find it.
 
-KMSAN-enabled kernels detect this issue as follows:
+Thanks
 
- BUG: KMSAN: kernel-infoleak in instrument_copy_to_user
- include/linux/instrumented.h:121 [inline]
- BUG: KMSAN: kernel-infoleak in _copy_to_user+0xc0/0x100 lib/usercopy.c:33
-  instrument_copy_to_user include/linux/instrumented.h:121 [inline]
-  _copy_to_user+0xc0/0x100 lib/usercopy.c:33
-  copy_to_user include/linux/uaccess.h:169 [inline]
-  nilfs_ioctl_wrap_copy+0x6fa/0xc10 fs/nilfs2/ioctl.c:99
-  nilfs_ioctl_get_info fs/nilfs2/ioctl.c:1173 [inline]
-  nilfs_ioctl+0x2402/0x4450 fs/nilfs2/ioctl.c:1290
-  nilfs_compat_ioctl+0x1b8/0x200 fs/nilfs2/ioctl.c:1343
-  __do_compat_sys_ioctl fs/ioctl.c:968 [inline]
-  __se_compat_sys_ioctl+0x7dd/0x1000 fs/ioctl.c:910
-  __ia32_compat_sys_ioctl+0x93/0xd0 fs/ioctl.c:910
-  do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
-  __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
-  do_fast_syscall_32+0x37/0x80 arch/x86/entry/common.c:203
-  do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:246
-  entry_SYSENTER_compat_after_hwframe+0x70/0x82
+Roberto
 
- Uninit was created at:
-  __alloc_pages+0x9f6/0xe90 mm/page_alloc.c:5572
-  alloc_pages+0xab0/0xd80 mm/mempolicy.c:2287
-  __get_free_pages+0x34/0xc0 mm/page_alloc.c:5599
-  nilfs_ioctl_wrap_copy+0x223/0xc10 fs/nilfs2/ioctl.c:74
-  nilfs_ioctl_get_info fs/nilfs2/ioctl.c:1173 [inline]
-  nilfs_ioctl+0x2402/0x4450 fs/nilfs2/ioctl.c:1290
-  nilfs_compat_ioctl+0x1b8/0x200 fs/nilfs2/ioctl.c:1343
-  __do_compat_sys_ioctl fs/ioctl.c:968 [inline]
-  __se_compat_sys_ioctl+0x7dd/0x1000 fs/ioctl.c:910
-  __ia32_compat_sys_ioctl+0x93/0xd0 fs/ioctl.c:910
-  do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
-  __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
-  do_fast_syscall_32+0x37/0x80 arch/x86/entry/common.c:203
-  do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:246
-  entry_SYSENTER_compat_after_hwframe+0x70/0x82
-
- Bytes 16-127 of 3968 are uninitialized
- ...
-
-This eliminates the leak issue by initializing the page allocated as
-buffer using get_zeroed_page().
-
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Reported-by: syzbot+132fdd2f1e1805fdc591@syzkaller.appspotmail.com
-Link: https://lkml.kernel.org/r/000000000000a5bd2d05f63f04ae@google.com
-Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: stable@vger.kernel.org
----
- fs/nilfs2/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/nilfs2/ioctl.c b/fs/nilfs2/ioctl.c
-index 5ccc638ae92f..1dfbc0c34513 100644
---- a/fs/nilfs2/ioctl.c
-+++ b/fs/nilfs2/ioctl.c
-@@ -71,7 +71,7 @@ static int nilfs_ioctl_wrap_copy(struct the_nilfs *nilfs,
- 	if (argv->v_index > ~(__u64)0 - argv->v_nmembs)
- 		return -EINVAL;
- 
--	buf = (void *)__get_free_pages(GFP_NOFS, 0);
-+	buf = (void *)get_zeroed_page(GFP_NOFS);
- 	if (unlikely(!buf))
- 		return -ENOMEM;
- 	maxmembs = PAGE_SIZE / argv->v_size;
--- 
-2.34.1
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> > ---
+> >   security/integrity/evm/evm_main.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> > index 1155a58ae87..8b5c472f78b 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -798,7 +798,9 @@ static int evm_attr_change(struct mnt_idmap *idmap,
+> >   
+> >   /**
+> >    * evm_inode_setattr - prevent updating an invalid EVM extended attribute
+> > + * @idmap: idmap of the mount
+> >    * @dentry: pointer to the affected dentry
+> > + * @attr: iattr structure containing the new file attributes
+> >    *
+> >    * Permit update of file attributes when files have a valid EVM signature,
+> >    * except in the case of them having an immutable portable signature.
 
