@@ -2,78 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12B066AFA4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 00:28:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D5BD6AFAE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 01:13:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbjCGX2C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 18:28:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35924 "EHLO
+        id S229750AbjCHANb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 19:13:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbjCGX17 (ORCPT
+        with ESMTP id S229628AbjCHAN3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 18:27:59 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F2B1EC68
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 15:27:56 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id g18so14903086ljl.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 15:27:56 -0800 (PST)
+        Tue, 7 Mar 2023 19:13:29 -0500
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07AAB51FA7
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 16:13:27 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id k6-20020a25e806000000b00a623fca0d0aso15900724ybd.16
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 16:13:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1678231675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dgM5UWACpA1ziJGubEWxyksAdshP8CY52eV8GhV8Gkg=;
-        b=TGT2yqt1nWpJRPljNttb9FcVv36E/Jt8A84ByzTR4qfutxQ7fHbpdB+EgF/6Hu8QEA
-         lGav8SrhhYCem9wRNTeicDzl5ewmc3qyFq1vE8KfXRp3zg47pIamj2eOLTILU7cqykpP
-         eIRethLM6K4/tMKQANyi6ZEnJZjZRMB/OCTP+DWXQsvO2zKmMTsPyQD8swSXLVTS2D5g
-         zpu9uzYUHyfgWtbbJ7XEYTACwoPmJeHTPKHV/ad884DyulUXcTRi/oc/IJ8NR/H3zqZs
-         tKa1AESMTbEZ0h1SvjwaE/87vK4azcWvVNgcCANUEXMYEwcMUPSMOuu0EJJvRrTgBIy/
-         aRPg==
+        d=google.com; s=20210112; t=1678234406;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mmMlzzjnms9LP64W1EI4s9J2Aar/VS+/OpXG4YzMt1g=;
+        b=DQipY5o6kwt2urMmc3ga0lGBCwLobU1Ifep42NoUNsZIX8Td2En8TfxAl5sbGzyNBB
+         LIWsf3t77LSuCc0pGvjcZjIWULi+KlePCMmeN/QbMHXhC1Ixa4kOh+7152WsxGf2VC2d
+         Ms1xKb6gHNm+/4O8RDcSjT+AzBbqUzpwW93RRiqm6+BJSL4+2HqKul5reyJxS2qUjQVn
+         TjBmoEh1iNCS+lDVRczhTC0nw7EmFFlXj/fUYAlIAjyVh4kOpH9EZLnti4uHp00WyheW
+         Vcv6eAX7BJrGIniLd7INUu4OdKbDatMzJF7cbOv0xYoxbaZDVLO31xC6G1jgMlMxSBxo
+         JYtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678231675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dgM5UWACpA1ziJGubEWxyksAdshP8CY52eV8GhV8Gkg=;
-        b=x+us73X+UrChLAoKG7wS0XF2nJcUPL76QYFLPrEN/NX7iaS8w2tJrCEoCGnmtICivo
-         O9DQcoIuHnYAd6vYyL5mtmvgBNyYFKGHHnhgfQnx3bGQdyFmVT59Pzh2dyG2hV4UvFZm
-         0DJ0CJJMK4k2wKApK7O5lQefZqCBWh1y7BTbjLD+nTOI6OiyrYOiiXyhipMOEt+evHnV
-         RkaIWE5XsodLhYx73aOngZ2I/UiFFAN/UHf2SBUimcAA3p66pqZBzdsVW0l5vCk4EDF0
-         n3Y+ua8oJMTxllSfOKoMkis7wHl41czNwvG+bKolkZXRS3Q3c+tgAQHNhJTZbtarv96N
-         5A6Q==
-X-Gm-Message-State: AO0yUKXpkQcOnLO4p4puhmVrBbBTdhm9ASPDNG8rnhIcu2BmvSg52LZD
-        0E2F+1bd1E6NSAHSnDzFvf9Zl7FLVWNOIp0oQMGXLQ==
-X-Google-Smtp-Source: AK7set9qzhTKfHxML+MgHqsSuJRnPMnUneATXidb0+SUYjXa+h00K/U7lnIkoXpbPJNdsASUF+bM31GH9FkDBDE6CkE=
-X-Received: by 2002:a05:651c:11c6:b0:295:d460:5a2d with SMTP id
- z6-20020a05651c11c600b00295d4605a2dmr4907216ljo.2.1678231674431; Tue, 07 Mar
- 2023 15:27:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20230306225024.264858-1-axelrasmussen@google.com>
- <20230306225024.264858-4-axelrasmussen@google.com> <ZAaMs44nspRQJmrk@x1n>
-In-Reply-To: <ZAaMs44nspRQJmrk@x1n>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Tue, 7 Mar 2023 15:27:17 -0800
-Message-ID: <CAJHvVciQWctUoZtrPga-fhgBf2dtc+6ypwE3FYe8ApQWpQyL0Q@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] mm: userfaultfd: combine 'mode' and 'wp_copy' arguments
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Nadav Amit <namit@vmware.com>, Shuah Khan <shuah@kernel.org>,
-        James Houghton <jthoughton@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        d=1e100.net; s=20210112; t=1678234406;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mmMlzzjnms9LP64W1EI4s9J2Aar/VS+/OpXG4YzMt1g=;
+        b=tMi8CTpeuEDo1dnEBfjnEF3AaIdgI9TVWQIrTs71bD5mO2n08lLxBOfvEf7+hHaFsW
+         jawrGGqsusp6P/XiG02NJ2CRr7jqrrBIyJVsxoAWyFu7XByb/0juRND596073S3++Ogw
+         lrYS55Dx6uajojLC69gCKXt4ZPflrrsRA3rN/EmXN6gJxUuGQyxD+vkpOFZukEC1Ak9l
+         PWcGI7rva3FOJ5SIq95gavhpL9IfARyzzwgTwQOaKss0DtbXTHhVnjnFuQr5SPXWlyhj
+         SDtBbyX46rfXjP4eRk+aVhcm1SO5+wFTeW6oF+AB7f/c0aoCveFzppcj7V0ROqsaXI5M
+         WYIg==
+X-Gm-Message-State: AO0yUKWd/WochtVoERgAUTWX1mLrhBnp8P9GI17yFbDugzStFaoaFRs1
+        OzKRteY4PJ8Rp/3pvTT26JnlOvEvlplFLfwJkg==
+X-Google-Smtp-Source: AK7set9fM9oqHN6RTfjUl1adN2jlRFEqmkZWFcTMizE5EgbRXDHz1eOesgkblPkKuD6/cVScAGsGMu92G3PJwAt7ew==
+X-Received: from ackerleytng-cloudtop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:1f5f])
+ (user=ackerleytng job=sendgmr) by 2002:a05:6902:145:b0:ac2:a7a7:23c3 with
+ SMTP id p5-20020a056902014500b00ac2a7a723c3mr5937614ybh.12.1678234406173;
+ Tue, 07 Mar 2023 16:13:26 -0800 (PST)
+Date:   Wed, 08 Mar 2023 00:13:24 +0000
+In-Reply-To: <20230128140030.GB700688@chaop.bj.intel.com> (message from Chao
+ Peng on Sat, 28 Jan 2023 22:00:30 +0800)
+Mime-Version: 1.0
+Message-ID: <diqz5ybc3xsr.fsf@ackerleytng-cloudtop.c.googlers.com>
+Subject: Re: [PATCH v10 9/9] KVM: Enable and expose KVM_MEM_PRIVATE
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     seanjc@google.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, pbonzini@redhat.com, corbet@lwn.net,
+        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
+        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, arnd@arndb.de, naoya.horiguchi@nec.com,
+        linmiaohe@huawei.com, x86@kernel.org, hpa@zytor.com,
+        hughd@google.com, jlayton@kernel.org, bfields@fieldses.org,
+        akpm@linux-foundation.org, shuah@kernel.org, rppt@kernel.org,
+        steven.price@arm.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        vannapurve@google.com, yu.c.zhang@linux.intel.com,
+        kirill.shutemov@linux.intel.com, luto@kernel.org,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, qperret@google.com, tabba@google.com,
+        michael.roth@amd.com, mhocko@suse.com, wei.w.wang@intel.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,170 +83,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 6, 2023 at 5:00=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> On Mon, Mar 06, 2023 at 02:50:22PM -0800, Axel Rasmussen wrote:
-> > Many userfaultfd ioctl functions take both a 'mode' and a 'wp_copy'
-> > argument. In future commits we plan to plumb the flags through to more
-> > places, so we'd be proliferating the very long argument list even
-> > further.
-> >
-> > Let's take the time to simplify the argument list. Combine the two
-> > arguments into one - and generalize, so when we add more flags in the
-> > future, it doesn't imply more function arguments.
-> >
-> > Since the modes (copy, zeropage, continue) are mutually exclusive, stor=
-e
-> > them as an integer value (0, 1, 2) in the low bits. Place combine-able
-> > flag bits in the high bits.
-> >
-> > This is quite similar to an earlier patch proposed by Nadav Amit
-> > ("userfaultfd: introduce uffd_flags" - for some reason Lore no longer
-> > has a copy of the patch). The main difference is that patch only handle=
-d
->
-> Lore has. :)
->
-> https://lore.kernel.org/all/20220619233449.181323-2-namit@vmware.com
->
-> And btw sorry to review late.
->
-> > flags, whereas this patch *also* combines the "mode" argument into the
-> > same type to shorten the argument list.
-> >
-> > Acked-by: James Houghton <jthoughton@google.com>
-> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
->
-> Mostly good to me, a few nitpicks below.
->
-> [...]
->
-> > +/* A combined operation mode + behavior flags. */
-> > +typedef unsigned int __bitwise uffd_flags_t;
-> > +
-> > +/* Mutually exclusive modes of operation. */
-> > +enum mfill_atomic_mode {
-> > +     MFILL_ATOMIC_COPY =3D (__force uffd_flags_t) 0,
-> > +     MFILL_ATOMIC_ZEROPAGE =3D (__force uffd_flags_t) 1,
-> > +     MFILL_ATOMIC_CONTINUE =3D (__force uffd_flags_t) 2,
-> > +     NR_MFILL_ATOMIC_MODES,
-> >  };
->
-> I never used enum like this.  I had a feeling that this will enforce
-> setting the enum entries but would the enforce applied to later
-> assignments?  I'm not sure.
->
-> I had a quick test and actually I found sparse already complains about
-> calculating the last enum entry:
->
-> ---8<---
-> $ cat a.c
-> typedef unsigned int __attribute__((bitwise)) flags_t;
->
-> enum {
->     FLAG1 =3D (__attribute__((force)) flags_t) 0,
->     FLAG_NUM,
-> };
->
-> void main(void)
-> {
->     uffd_flags_t flags =3D FLAG1;
-> }
-> $ sparse a.c
-> a.c:5:5: error: can't increment the last enum member
-> ---8<---
->
-> Maybe just use the simple "#define"s?
+Chao Peng <chao.p.peng@linux.intel.com> writes:
 
-Agreed, if sparse isn't happy with this then using the force macros is
-pointless.
+> On Sat, Jan 14, 2023 at 12:01:01AM +0000, Sean Christopherson wrote:
+>> On Fri, Dec 02, 2022, Chao Peng wrote:
+> ...
+>> Strongly prefer to use similar logic to existing code that detects wraps:
 
-The enum is valuable because it lets us get the # of modes; assuming
-we agree that's useful below ...
+>> 		mem->restricted_offset + mem->memory_size < mem->restricted_offset
 
->
-> >
-> > +#define MFILL_ATOMIC_MODE_BITS (const_ilog2(NR_MFILL_ATOMIC_MODES - 1)=
- + 1)
->
-> Here IIUC it should be "const_ilog2(NR_MFILL_ATOMIC_MODES) + 1", but
-> maybe..  we don't bother and define every bit explicitly?
+>> This is also where I'd like to add the "gfn is aligned to offset" check,  
+>> though
+>> my brain is too fried to figure that out right now.
 
-If my reading of const_ilog2's definition is correct, then:
+> Used count_trailing_zeros() for this TODO, unsure we have other better
+> approach.
 
-const_ilog2(4) =3D 2
-const_ilog2(3) =3D 1
-const_ilog2(2) =3D 1
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index afc8c26fa652..fd34c5f7cd2f 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -56,6 +56,7 @@
+>   #include <asm/processor.h>
+>   #include <asm/ioctl.h>
+>   #include <linux/uaccess.h>
+> +#include <linux/count_zeros.h>
 
-For either 3 or 4 modes, we need 2 bits to represent them (0, 1, 2,
-3), i.e. we want MFILL_ATOMIC_MODE_BITS =3D 2. I think this is correct
-as is, because const_ilog2(4 - 1) + 1 =3D 2, and const_ilog2(3 - 1) + 1
-=3D 2.
+>   #include "coalesced_mmio.h"
+>   #include "async_pf.h"
+> @@ -2087,6 +2088,19 @@ static bool kvm_check_memslot_overlap(struct  
+> kvm_memslots *slots, int id,
+>   	return false;
+>   }
 
-In other words, I think const_ilog2 is defined as floor(log2()),
-whereas what we want is ceil(log2()).
+> +/*
+> + * Return true when ALIGNMENT(offset) >= ALIGNMENT(gpa).
+> + */
+> +static bool kvm_check_rmem_offset_alignment(u64 offset, u64 gpa)
+> +{
+> +	if (!offset)
+> +		return true;
+> +	if (!gpa)
+> +		return false;
+> +
+> +	return !!(count_trailing_zeros(offset) >= count_trailing_zeros(gpa));
 
-The benefit of doing this vs. just doing defines with fixed values is,
-if we ever added a new mode, we wouldn't have to do bit twiddling and
-update the mask, flag bits, etc. - it would happen "automatically". I
-prefer it this way, but I agree it is a matter of opinion / taste. :)
-If you or others feel strongly this is overcomplicated, I can take the
-other approach.
+Perhaps we could do something like
 
->
-> > +#define MFILL_ATOMIC_BIT(nr) ((__force uffd_flags_t) BIT(MFILL_ATOMIC_=
-MODE_BITS + (nr)))
-> > +#define MFILL_ATOMIC_MODE_MASK (MFILL_ATOMIC_BIT(0) - 1)
-> > +
-> > +/* Flags controlling behavior. */
-> > +#define MFILL_ATOMIC_WP MFILL_ATOMIC_BIT(0)
->
-> [...]
->
-> > @@ -312,9 +312,9 @@ static __always_inline ssize_t mfill_atomic_hugetlb=
-(
-> >                                             unsigned long dst_start,
-> >                                             unsigned long src_start,
-> >                                             unsigned long len,
-> > -                                           enum mcopy_atomic_mode mode=
-,
-> > -                                           bool wp_copy)
-> > +                                           uffd_flags_t flags)
-> >  {
-> > +     int mode =3D flags & MFILL_ATOMIC_MODE_MASK;
-> >       struct mm_struct *dst_mm =3D dst_vma->vm_mm;
-> >       int vm_shared =3D dst_vma->vm_flags & VM_SHARED;
-> >       ssize_t err;
-> > @@ -333,7 +333,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb=
-(
-> >        * by THP.  Since we can not reliably insert a zero page, this
-> >        * feature is not supported.
-> >        */
-> > -     if (mode =3D=3D MCOPY_ATOMIC_ZEROPAGE) {
-> > +     if (mode =3D=3D MFILL_ATOMIC_ZEROPAGE) {
->
-> The mode comes from "& MFILL_ATOMIC_MODE_MASK" but it doesn't quickly tel=
-l
-> whether there's a shift for the mask.
->
-> Would it look better we just have a helper to fetch the mode?  The functi=
-on
-> tells that whatever it returns must be the mode:
->
->        if (uffd_flags_get_mode(flags) =3D=3D MFILL_ATOMIC_ZEROPAGE)
->
-> We also avoid quite a few "mode" variables.  All the rest bits will be fi=
-ne
-> to use "flags & FLAG1" if it's a boolean (so only this "mode" is slightly
-> tricky).
+#define lowest_set_bit(val) (val & -val)
 
-Agreed, this is simpler. I'll make this change.
+and use
 
->
-> What do you think?
->
-> Thanks,
->
-> --
-> Peter Xu
->
+return lowest_set_bit(offset) >= lowest_set_bit(gpa);
+
+Please help me to understand: why must ALIGNMENT(offset) >=
+ALIGNMENT(gpa)? Why is it not sufficient to have both gpa and offset be
+aligned to PAGE_SIZE?
+
+> +}
+> +
+>   /*
+>    * Allocate some memory and give it an address in the guest physical  
+> address
+>    * space.
+> @@ -2128,7 +2142,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>   	if (mem->flags & KVM_MEM_PRIVATE &&
+>   	    (mem->restrictedmem_offset & (PAGE_SIZE - 1) ||
+>   	     mem->restrictedmem_offset + mem->memory_size <  
+> mem->restrictedmem_offset ||
+> -	     0 /* TODO: require gfn be aligned with restricted offset */))
+> +	     !kvm_check_rmem_offset_alignment(mem->restrictedmem_offset,
+> +					      mem->guest_phys_addr)))
+>   		return -EINVAL;
+>   	if (as_id >= kvm_arch_nr_memslot_as_ids(kvm) || id >= KVM_MEM_SLOTS_NUM)
+>   		return -EINVAL;
