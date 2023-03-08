@@ -2,77 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B39876B04EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 11:48:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CF846B07F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 14:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230494AbjCHKsV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 05:48:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43930 "EHLO
+        id S230078AbjCHNHW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 08:07:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231187AbjCHKsJ (ORCPT
+        with ESMTP id S231674AbjCHNHF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 05:48:09 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66FCA2ED67
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 02:48:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 8 Mar 2023 08:07:05 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E67E0D08D9
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 05:04:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678280581;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=E+JpZdzShNnz09SI24AkbLkWXPdhG4xH8w/Z8yC3hnY=;
+        b=TglU4s19Rk1k9mHftQdTC6wyJYWtIugIdxxfvDWy5azwLGS+DwxqC4YKCUIoBGVeGOd7lq
+        STDo9L099ANSEA7enXCjNoXyPVPJZCb9Ae2EGc+rWNPAgjf4vBWrxk/foj7FaHjxNE/geW
+        Znn5bn1MHmh7r7Sy92I90aZyawHdGCY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-511-ttX-xMO6NXiDvSMEyLvwqw-1; Wed, 08 Mar 2023 08:02:55 -0500
+X-MC-Unique: ttX-xMO6NXiDvSMEyLvwqw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id B0F4ECE1F0D
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 10:48:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD887C433D2;
-        Wed,  8 Mar 2023 10:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678272482;
-        bh=qxNoCraFJ5yovgheOm7XmgzRBTLRL5Siv4nfldmQb5E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZlViI7xOq3av/dNTXeudELbSS1YXEkAluPvPxduxSYHaE95j8CuZpFTbp4oXmYYnK
-         4CrkBTuPtNMD4JsPv1t0qC+3Lfo+cfyh51dDOPo+l/m26MtPSPgCKPcZZFvvf9szOa
-         3jX6PJu40PnE8jxcaVcRxjuczalpx8tjXFDBMeaavO2Q/X4EIfo3fihs0b8KmKB+de
-         Y3ockSM9DJLwMBtmAkivDHR+nNpLsY/m691olbKm1V6kDNu7Dv0N8/pnwBqOZdBCqN
-         oLu7VWOwYNF4/GGwnOJbXD0HOFMQmrdNtQq37k0LtK1DudQOTcctFX0FZSScDmWSSl
-         nNQqqrH30bPzQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
-        David Disseldorp <ddiss@suse.de>
-Cc:     Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2] watch_queue: fix IOC_WATCH_QUEUE_SET_SIZE alloc error paths
-Date:   Wed,  8 Mar 2023 11:47:55 +0100
-Message-Id: <167827232250.714110.2196458192251440824.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230307152106.6899-1-ddiss@suse.de>
-References: <20230307152106.6899-1-ddiss@suse.de>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 74DB018A63F2;
+        Wed,  8 Mar 2023 13:02:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D36CF4024CA1;
+        Wed,  8 Mar 2023 13:02:53 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <4eb320f0fee86b259fd499cd2d97127922a57e66.camel@kernel.org>
+References: <4eb320f0fee86b259fd499cd2d97127922a57e66.camel@kernel.org> <20220210094454.826716-1-rbergant@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] vfs: parse sloppy mount option in correct order
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=605; i=brauner@kernel.org; h=from:subject:message-id; bh=Qn0J5j2g+fixlcfGVUxT5TxOPwBM+m4RXniRJx2hTPw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRwpG98mra40EuAR2GbueayZKFXhT5RpTEvtq199KRv6Z+q I4cCO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACai+5CRYaXvk/vH2uv0/yhs/hBRdZ y59u3XQjFj3TfXEt9mXSi4JMfwz0A+eMm8kPDKQz61s44EhjNMO7v1grDH+QWnNwQ/dl2/hQkA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1971388.1678280573.1@warthog.procyon.org.uk>
+Date:   Wed, 08 Mar 2023 13:02:53 +0000
+Message-ID: <1971389.1678280573@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner (Microsoft) <brauner@kernel.org>
+Jeff Layton <jlayton@kernel.org> wrote:
 
+> This looks like it will do the right thing. We definitely _don't_ want
+> order-dependent option parsing.
 
-On Tue, 07 Mar 2023 16:21:06 +0100, David Disseldorp wrote:
-> The watch_queue_set_size() allocation error paths return the ret value
-> set via the prior pipe_resize_ring() call, which will always be zero.
-> 
-> As a result, IOC_WATCH_QUEUE_SET_SIZE callers such as "keyctl watch"
-> fail to detect kernel wqueue->notes allocation failures and proceed to
-> KEYCTL_WATCH_KEY, with any notifications subsequently lost.
-> 
-> [...]
+If we don't want order-dependent option parsing, then we really need to
+accumulate all the options in the kernel and only then fully parse/interpret
+them - and go through them at least twice where we know we may have options
+that retroactively affect other options:-/
 
-Unless someone got to it before me, I've now picked this up:
+I guess we can't kill off "sloppy" for the moment.
 
-[1/1] watch_queue: fix IOC_WATCH_QUEUE_SET_SIZE alloc error paths
-      commit: 03e1d60e177eedbd302b77af4ea5e21b5a7ade31
+David
 
-Thanks!
-Christian
