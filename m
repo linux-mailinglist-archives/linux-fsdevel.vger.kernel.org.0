@@ -2,179 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD536B084D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 14:18:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E0E6B088B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 14:24:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231551AbjCHNSA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 08:18:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41872 "EHLO
+        id S230516AbjCHNYF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 08:24:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230151AbjCHNRg (ORCPT
+        with ESMTP id S231352AbjCHNXk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 08:17:36 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC40394760;
-        Wed,  8 Mar 2023 05:14:22 -0800 (PST)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 328BCCaG017227;
-        Wed, 8 Mar 2023 13:13:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=DDya8KHWHSr+5LXFEtSadqnhaQ4lHkZDT8S2YAyfe/Y=;
- b=auCENqIntmm0A1BsxKuDmcYtdTvppvJDgVPE+SHx+7OGNeS/taxLpu2Q01pa/7JTWEAt
- +R1Knw7d3q1rZ1lKtssB2sKzeowWtHQg6TeBvBhhdzJQYwVLQTq2NHbUXUMF+QPxT2Ds
- iLZJJ3+y1Kb5nqi3Nly1JgYHBwV6ppXx8KDIKcGYOvvioLrgDEYd4+xDVVRM22gPVuwU
- lt4u5fwiiFcXDypA/uhVMZHz0xWbFcEsccSTSVjp+/hpE68SZd8gL8/9MEVpe0oFt6Ys
- eIyjinhPGBjpns9d8T0uoqh0UK3c4xIkbowqdmb+K1R4V6BLlDhruUHIr+IQ12zf7vOE bw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p6s9a2pyd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Mar 2023 13:13:34 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 328BjWTg011563;
-        Wed, 8 Mar 2023 13:13:34 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p6s9a2pxy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Mar 2023 13:13:34 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 328CFKVJ011865;
-        Wed, 8 Mar 2023 13:13:32 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([9.208.129.113])
-        by ppma04dal.us.ibm.com (PPS) with ESMTPS id 3p6gbv3tfc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Mar 2023 13:13:32 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-        by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 328DDUcW20447792
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 8 Mar 2023 13:13:30 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C59F058059;
-        Wed,  8 Mar 2023 13:13:30 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 263B558043;
-        Wed,  8 Mar 2023 13:13:28 +0000 (GMT)
-Received: from sig-9-77-134-135.ibm.com (unknown [9.77.134.135])
-        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  8 Mar 2023 13:13:28 +0000 (GMT)
-Message-ID: <a0320926ebfe732dabc4e53c3a35ede450c75474.camel@linux.ibm.com>
-Subject: Re: [PATCH 23/28] security: Introduce LSM_ORDER_LAST
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
-        jlayton@kernel.org, dmitry.kasatkin@gmail.com, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
-        jarkko@kernel.org, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 08 Mar 2023 08:13:27 -0500
-In-Reply-To: <20230303182602.1088032-1-roberto.sassu@huaweicloud.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-         <20230303182602.1088032-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: avdfNnHmEZqY1uVYuUhCo4zAiJ8gOvMX
-X-Proofpoint-GUID: Mze5PduXBAbVrIyKXgxIaLuxWOWA6wDg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-08_08,2023-03-08_03,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 phishscore=0 clxscore=1011 impostorscore=0 mlxlogscore=999
- priorityscore=1501 suspectscore=0 mlxscore=0 spamscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303080111
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Wed, 8 Mar 2023 08:23:40 -0500
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA550BD4FA
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 05:20:18 -0800 (PST)
+Received: by mail-yb1-xb35.google.com with SMTP id k199so14561885ybf.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Mar 2023 05:20:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678281618;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zv+/okQpvLPeEesFbW+f0IeMoL7WJaBwrI7ka3EB5Nc=;
+        b=beriZHac6z4sRNuFTm2+2QYEXbIFUb4q/rbgaJ3tZqMIW4zP4bOZ5DQrvFc4lm6pUF
+         xQL4eEq+T0XForJBaAh5ORO71ZKrrr0K9FQXebh7usMSgRvhlpewgFxoMkShgWWZlV1o
+         Hi+9mZOJV723oQjtI573i5+wsoql5BsqVrEiEOlN+8AFMjdy1sQFHO8SJClwKWSGP9+6
+         LT+pD32gmJnsqHcJPvKhvJjtn5NchOsjsjh7AJ8VIxX5hKC6DkENcrPFj2+NTTxeyVLf
+         p6asUoXcogkiSXDXuEikKoFsvxN2EpQfk17U5M2AUnuIV1m6xK1KVY0v7zrG9N/fLCjH
+         wl0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678281618;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zv+/okQpvLPeEesFbW+f0IeMoL7WJaBwrI7ka3EB5Nc=;
+        b=HXYhbOK1gXLSQsIbvihRV92hB5N89SSps10Q0QM67NTDC7l994t+MXNlWeiag1GKnL
+         EFN3P2guSB+JA6uvxOYUMFAJmKkLjyqtJj+m/ulVYREAnTRRuayQvxeTY3gwXQKWhKGU
+         ItRSh9eTquyYKORdHZGULgBtu2k6dKMP/NzVYKvUwurS/3DZlkNng3iwzyNUwIUxTIcx
+         7AkOw2h7n1cyOY7SOvMEfuVbptBQJn0KbcrFVEEHesphAlxBfEHrgt1rH+nXigyvDWh9
+         VcWg7AFsPY9hqEUtE0tvI46vJSseIkYCV2bQckzAh1GEC1w/WvgA+vxT4ed0eaBc+v7m
+         eCew==
+X-Gm-Message-State: AO0yUKVUHW8z9fjg7pPEm2bhTl0M4JFK1dl9n5aa8JDoiD2H/FoiHKxC
+        Hqw1q+Lf+cuux2cHNs3AKJXj+hOm5qfZqfWplbY=
+X-Google-Smtp-Source: AK7set/heTYVNBn5i71EAPpc5T95TpPXKzleBhckLxSAiHeqmVL71F/wzaAmLIqfIDBp1FB94DiUKOFFD2iG19+F+f0=
+X-Received: by 2002:a25:8b03:0:b0:ad2:3839:f49 with SMTP id
+ i3-20020a258b03000000b00ad238390f49mr11103591ybl.5.1678281617980; Wed, 08 Mar
+ 2023 05:20:17 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a05:7000:915d:b0:47d:3f52:35f1 with HTTP; Wed, 8 Mar 2023
+ 05:20:17 -0800 (PST)
+Reply-To: au12bello@yahoo.com
+From:   audu bello <essj7302@gmail.com>
+Date:   Wed, 8 Mar 2023 14:20:17 +0100
+Message-ID: <CAC2u7wastjEJeB9L2gBGqQ_pQh+4A-qKX0kSYYZpzTw=RFFtFg@mail.gmail.com>
+Subject: I haven't heard back
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=6.0 required=5.0 tests=BAYES_80,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:b35 listed in]
+        [list.dnswl.org]
+        *  2.0 BAYES_80 BODY: Bayes spam probability is 80 to 95%
+        *      [score: 0.8890]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [essj7302[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [essj7302[at]gmail.com]
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Roberto,
-
-On Fri, 2023-03-03 at 19:25 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Introduce LSM_ORDER_LAST, to satisfy the requirement of LSMs willing to be
-> the last, e.g. the 'integrity' LSM, without changing the kernel command
-> line or configuration.
-
-Please reframe this as a bug fix for 79f7865d844c ("LSM: Introduce
-"lsm=" for boottime LSM selection") and upstream it first, with
-'integrity' as the last LSM.   The original bug fix commit 92063f3ca73a
-("integrity: double check iint_cache was initialized") could then be
-removed.
-
-> 
-> As for LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled and put
-> at the end of the LSM list in no particular order.
-
-^Similar to LSM_ORDER_FIRST ...
-
-And remove "in no particular order".
-
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  include/linux/lsm_hooks.h |  1 +
->  security/security.c       | 12 +++++++++---
->  2 files changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 21a8ce23108..05c4b831d99 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -93,6 +93,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
->  enum lsm_order {
->  	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
->  	LSM_ORDER_MUTABLE = 0,
-> +	LSM_ORDER_LAST = 1,
->  };
->  
->  struct lsm_info {
-> diff --git a/security/security.c b/security/security.c
-> index 322090a50cd..24f52ba3218 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -284,9 +284,9 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->  		bool found = false;
->  
->  		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> -			if (lsm->order == LSM_ORDER_MUTABLE &&
-> -			    strcmp(lsm->name, name) == 0) {
-> -				append_ordered_lsm(lsm, origin);
-> +			if (strcmp(lsm->name, name) == 0) {
-> +				if (lsm->order == LSM_ORDER_MUTABLE)
-> +					append_ordered_lsm(lsm, origin);
->  				found = true;
->  			}
->  		}
-> @@ -306,6 +306,12 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->  		}
->  	}
->  
-> +	/* LSM_ORDER_LAST is always last. */
-> +	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> +		if (lsm->order == LSM_ORDER_LAST)
-> +			append_ordered_lsm(lsm, "   last");
-> +	}
-> +
->  	/* Disable all LSMs not in the ordered list. */
->  	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
->  		if (exists_ordered_lsm(lsm))
-
 -- 
-thanks,
-
-Mimi
-
+I've reached out a couple times, but I haven't heard back. I'd
+appreciate a response to my email about pending transaction
