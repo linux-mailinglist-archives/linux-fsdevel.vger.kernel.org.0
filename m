@@ -2,148 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DA8B6AFB24
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 01:31:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02DAE6AFB26
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 01:32:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229901AbjCHAbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 19:31:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54360 "EHLO
+        id S229918AbjCHAcD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 19:32:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229900AbjCHAbr (ORCPT
+        with ESMTP id S229819AbjCHAcC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 19:31:47 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC68CB04BC;
-        Tue,  7 Mar 2023 16:31:41 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id ec29so28612874edb.6;
-        Tue, 07 Mar 2023 16:31:41 -0800 (PST)
+        Tue, 7 Mar 2023 19:32:02 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10CCBB0491
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 16:32:01 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id q31-20020a17090a17a200b0023750b69614so420890pja.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 16:32:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678235500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P8DWyxZLwz0osrzYUjjj+Q0PWcCb5xGom73+y4XCUag=;
-        b=CMl2Qemmziw/e5oRKfvTMmICqZiTcuts6A0+1gO6EtGLAZSyeG6hC1F2jpmgqnuHCi
-         9R44T4/cTr5QflfIkBYXsV36jE3BdPM+vDyT2DgE5Qku5adiF+9H3TFAGBnWCup3nwFy
-         ZkauYEsWDQ4MHj+vY2fBRcHHYxoKQoDpiXpPjWSNcU840D++A2lmTEOFuf4WMloYRaHg
-         Ak/Ge3lPxtKqkuiDdeAg8oLtNF4gr1SUImSCLPedwUfEZg4D0Jn4aR9xNzkqOiqQ8er6
-         GSj3zqjtYKQuLi8w37fcToRPRNLYiXGnbiBH2MSRvCUwvaqwtUOQteCifiPUVsr2ouKR
-         /a4Q==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678235520;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AEsMgalcatpSKQO/pDZVaHweQJaXK1mWCaEr5mhyepU=;
+        b=rsB/B7Cfuk4rjsdAczPw02m2FmRN7MTInKl6zemXOO/ZVFzkZxDPS5d5xhOyIDQ/Hd
+         ZK2q2GnZTtIV6Nk7c0t/DDi8KxzCRxez1BYexvIg83Ej3aP3uajkmYgLOGUpIbr7EkCM
+         GNKbLv2KS5YHDn+6upoHFKB8kkpH5KlEjZRoRHpgjZuvo6mR6kA6BtVadtffi7J2tIWo
+         Drx7NBxkEpA4O5i7Pg2en9NpzoYA7EiDQ91bUB42eFTZeP5aW5UQQNZ68EoL2Ob/aCGy
+         Y6WSyavGa1xw7S13urK+pb47RIMgZze8a/w56PdQ+itvU1g4xhO/SxHCmDLdCtGq0jbl
+         1kXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678235500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P8DWyxZLwz0osrzYUjjj+Q0PWcCb5xGom73+y4XCUag=;
-        b=GyQGrJBMZnho5+6jmG5YBU4A9jXfjC1ZgbXKyv9sxgrJmlYl0LklZfH2ANsL6gF4T1
-         hIIwUNgs24/IEj71Yz30Q9reu5+KdZzRzDJXZ3bmkK3ypspEPgzoAwDi3TCF5B/s7qtB
-         fVXFq5E+gb1Wn86AAjrAHNjoyy1OIQg3lFs1Q4xvv24nOBSBOR4+3C7kCZNgFDWVDp8z
-         Ff/4XsJB16UfYpRSsiqcA3INx3oNJcCbjOeFhsfMRDRIFpNmRRFzNHyAQU7lNOWp868R
-         Ijd1oycFfKEoA3wZgl+M1vmFtbMOLi1qQeNmmjxhYdcAa9oQYhT1K3FEjlTSe662HDNh
-         g79w==
-X-Gm-Message-State: AO0yUKWTqYBajJFUGP/zRj4SmxSfNwggY2arHZDp1GlWjWB9shqECekL
-        OoohvWs2l8QI9rAtn4ohkaTj7kHwYmae4OU846Y=
-X-Google-Smtp-Source: AK7set/isvjfpk9L7++ojTmD2MedPIioIjEyje2YVbRt5Mxdd1x/zVxoo60oOmS54QWAPrLb5Sb1UfW0CrYyYe7Md8A=
-X-Received: by 2002:a17:906:24da:b0:8a5:c8bd:4ac4 with SMTP id
- f26-20020a17090624da00b008a5c8bd4ac4mr7515351ejb.15.1678235500017; Tue, 07
- Mar 2023 16:31:40 -0800 (PST)
+        d=1e100.net; s=20210112; t=1678235520;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AEsMgalcatpSKQO/pDZVaHweQJaXK1mWCaEr5mhyepU=;
+        b=f0qgXNdz7UvP/kmUfoNZOd/jaWtZ1iyB6i9Kdvl+e6v+q8GGT9X2ApyXooY6yQZ6rV
+         UxedWPOGGaKOYbALcv2MH4X73p5nu+mly0QjpklITcWttfrJ8WBXpCJ/HdoSBOAgJPhq
+         AqgBgH2zDbHgC7rH533jQw0rIwNMG8rE4rydXxJmQNxmkCzNUqm7wLAbEEvYPX1FpVyi
+         bzjjJgxXXeH3hqK6eGXjuUpoAdkVIw2+kFg4EHSL47d6olU3J/vUw2qxnlMzgz5XdVE4
+         NlLMe8adfg7gEqrLuSu9ghaH5OuccceiKyGYxkvNEjpPngP66GAxeZ0ExZ13BdKs9atg
+         EuQg==
+X-Gm-Message-State: AO0yUKV0buyy0G8aoYn1CvKklUnPVo/RIIU6+FmCWJEBRYe28pScbeX0
+        hqBRcOGsluM+gzJiKUcaHo9rJw==
+X-Google-Smtp-Source: AK7set8N6zVADkbhO5WhiG2LAuOBDL7zqJZxE8JWVESIY4R+IXttseHYc/os4nAEUMpP6zFtvSz2Aw==
+X-Received: by 2002:a17:902:e5d0:b0:196:3f5a:b4f9 with SMTP id u16-20020a170902e5d000b001963f5ab4f9mr18941514plf.1.1678235520461;
+        Tue, 07 Mar 2023 16:32:00 -0800 (PST)
+Received: from [172.20.4.229] ([50.233.106.125])
+        by smtp.gmail.com with ESMTPSA id a16-20020a170902b59000b00195f242d0a0sm8872788pls.194.2023.03.07.16.31.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Mar 2023 16:32:00 -0800 (PST)
+Message-ID: <2cd7c118-5a6a-0a21-5e08-58ece4fe56c2@kernel.dk>
+Date:   Tue, 7 Mar 2023 17:31:59 -0700
 MIME-Version: 1.0
-References: <0a6f0513-b4b3-9349-cee5-b0ad38c81d2e@huaweicloud.com>
-In-Reply-To: <0a6f0513-b4b3-9349-cee5-b0ad38c81d2e@huaweicloud.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 7 Mar 2023 16:31:28 -0800
-Message-ID: <CAEf4Bza98fCnVRhxfxBOgqLuvB3c7Zh7A9yO8gtgVaNxGmZ4Pg@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] bpf iterator for file-system
-To:     Hou Tao <houtao@huaweicloud.com>
-Cc:     lsf-pc@lists.linux-foundation.org, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Nhat Pham <nphamcs@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCHSET for-next 0/2] Make pipe honor IOCB_NOWAIT
+Content-Language: en-US
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        brauner@kernel.org
+References: <20230307154533.11164-1-axboe@kernel.dk>
+ <20230308001929.GS2825702@dread.disaster.area>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230308001929.GS2825702@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 7:42=E2=80=AFPM Hou Tao <houtao@huaweicloud.com> wr=
-ote:
->
-> From time to time, new syscalls have been proposed to gain more observabi=
-lity
-> for file-system:
->
-> (1) getvalues() [0]. It uses a hierarchical namespace API to gather and r=
-eturn
-> multiple values in single syscall.
-> (2) cachestat() [1].  It returns the cache status (e.g., number of dirty =
-pages)
-> of a given file in a scalable way.
->
-> All these proposals requires adding a new syscall. Here I would like to p=
-ropose
-> another solution for file system observability: bpf iterator for file sys=
-tem
-> object. The initial idea came when I was trying to implement a filefrag-l=
-ike
-> page cache tool with support for multi-order folio, so that we can know t=
-he
-> number of multi-order folios and the orders of those folios in page cache=
-. After
-> developing a demo for it, I realized that we could use it to provide more
-> observability for file system objects. e.g., dumping the per-cpu iostat f=
-or a
-> super block [2],  iterating all inodes in a super-block to dump info for
-> specific inodes (e.g., unlinked but pinned inode), or displaying the flag=
-s of a
-> specific mount.
->
-> The BPF iterator was introduced in v5.8 [3] to support flexible content d=
-umping
-> for kernel objects. It works by creating bpf iterator file [4], which is =
-a
-> seq-like read-only file, and the content of the bpf iterator file is dete=
-rmined
-> by a previously loaded bpf program, so userspace can read the bpf iterato=
-r file
-> to get the information it needs. However there are some unresolved issues=
-:
-> (1) The privilege.
-> Loading the bpf program requires CAP_ADMIN or CAP_BPF. This means that th=
-e
-> observability will be available to the privileged process. Maybe we can l=
-oad the
-> bpf program through a privileged process and make the bpf iterator file b=
-eing
-> readable for normal users.
+On 3/7/23 5:19 PM, Dave Chinner wrote:
+> On Tue, Mar 07, 2023 at 08:45:31AM -0700, Jens Axboe wrote:
+>> Hi,
+>>
+>> File types that implement read_iter/write_iter should check for
+>> IOCB_NOWAIT
+> 
+> Since when? If so, what's the point of setting FMODE_NOWAIT when the
+> struct file is opened to indicate the file has comprehensive
+> IOCB_NOWAIT support in the underlying IO path?
 
-That's possible today. Once you load BPF iter program and pin it in
-BPF FS, you can chown/chmod pinned file to give access to it to
-unprivileged processes.
+Guess I missed that FMODE_NOWAIT is supposed to be added for that,
+my naive assumption was that the iter based one should check. Which
+is a bad sad, but at least there's a flag for it.
 
-> (2) Prevent pinning the super-block
-> In the current naive implementation, the bpf iterator simply pins the
-> super-block of the passed fd and prevents the super-block from being dest=
-royed.
-> Perhaps fs-pin is a better choice, so the bpf iterator can be deactivated=
- after
-> the filesystem is umounted.
->
-> I hope to send out an RFC soon before LSF/MM/BPF for further discussion.
->
-> [0]:
-> https://lore.kernel.org/linux-fsdevel/YnEeuw6fd1A8usjj@miu.piliscsaba.red=
-hat.com/
-> [1]: https://lore.kernel.org/linux-mm/20230219073318.366189-1-nphamcs@gma=
-il.com/
-> [2]:
-> https://lore.kernel.org/linux-fsdevel/CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8ig=
-A0DT66GFH2ZanspA@mail.gmail.com/
-> [3]: https://lore.kernel.org/bpf/20200509175859.2474608-1-yhs@fb.com/
-> [4]: https://docs.kernel.org/bpf/bpf_iterators.html
->
+But the good news is that I can drop the io_uring patch, just need
+to revise the pipe patch. I'll send a v2.
+
+-- 
+Jens Axboe
+
+
