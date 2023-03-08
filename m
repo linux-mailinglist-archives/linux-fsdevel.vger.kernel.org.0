@@ -2,269 +2,298 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9EAB6B0224
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 09:56:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F7476B036B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 10:53:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbjCHI4k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 03:56:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42242 "EHLO
+        id S230011AbjCHJxO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 04:53:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbjCHI4c (ORCPT
+        with ESMTP id S230031AbjCHJxJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 03:56:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E649B9AA
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 00:55:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678265737;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nSUxl7P5hQy+/YtrpvxvlD1qQxLj804ODoUh/9ZocfE=;
-        b=As6u5DbsKQhX8JMup9mC9ezncoP2sG4MwFObopNjvZWk5KoUuqr3NCnyX/Mkh2hqm6Ckiv
-        kTqyf+5AkAZA+wRcYuorQBt3Mrj9Tv+GTmqSixEpQQMc5ZMnkqBGGpfInjudJFeeufRisG
-        lkzmYtkfjsBPFTJLFmhsr/+Tl2yTbA8=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-444-ISakx3NJNiKWTom7mzJzyw-1; Wed, 08 Mar 2023 03:55:36 -0500
-X-MC-Unique: ISakx3NJNiKWTom7mzJzyw-1
-Received: by mail-qv1-f71.google.com with SMTP id s18-20020a0cf792000000b00572c04240f1so8920819qvn.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Mar 2023 00:55:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678265736;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nSUxl7P5hQy+/YtrpvxvlD1qQxLj804ODoUh/9ZocfE=;
-        b=YgXOQNzNvVy7diaNhOaPcWK4JEQPBopSMv2blgyRhb/IRAREf7nDzRPL3VrfuLYTeX
-         J2fL7uiQLGl3jdoS/AiQSFwOY/+52NA61YtxskyPZVu6vstv47abl5/Epk2/3v5jdY8i
-         NGijTXwBqZDkJi47W+uu5HQhC/0zPruFupF4NzTV4OxTLEFs+T4XsJKZw2uRz+D4jbmi
-         cIozFMbIHjcXtfexpBxgXtaYO6o3aSJ+/63uXWggs9pgfgSigm/yY55ahvFsvVgHVcqZ
-         viYpeUrfh57uP145oCiGT6ygA2ECYaWXkbCWN8MmVDxlQLT8vZkWZTb/YoZjcW979xt0
-         m7XQ==
-X-Gm-Message-State: AO0yUKV6jEroh6LkTFkxphMBNHWRloWVnBBH+ekJ9bBdkKa3RU+WTy7C
-        XuvKNKWvkB4iInYuxiBUwE8cBW7UPEtHmnkP5MQxW2xe2XgCxmBd3j+yVx6Fceog0++HZInogs1
-        HGujzx/5cskUxupR89BycZGnShA==
-X-Received: by 2002:a05:622a:11c2:b0:3bd:1c0f:74f3 with SMTP id n2-20020a05622a11c200b003bd1c0f74f3mr34312766qtk.2.1678265736305;
-        Wed, 08 Mar 2023 00:55:36 -0800 (PST)
-X-Google-Smtp-Source: AK7set/LqHuuLs+iFiwPadK3SrLCod1w1FhHVbxTYMTJFEjslFMf2nSsbvaQDDBDwAJn7wd7IT5/rQ==
-X-Received: by 2002:a05:622a:11c2:b0:3bd:1c0f:74f3 with SMTP id n2-20020a05622a11c200b003bd1c0f74f3mr34312738qtk.2.1678265735941;
-        Wed, 08 Mar 2023 00:55:35 -0800 (PST)
-Received: from gerbillo.redhat.com (146-241-121-28.dyn.eolo.it. [146.241.121.28])
-        by smtp.gmail.com with ESMTPSA id d1-20020ac85ac1000000b003b9e1d3a502sm11377180qtd.54.2023.03.08.00.55.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 00:55:35 -0800 (PST)
-Message-ID: <f049d74b59323ed2ad16a0b52de86f157ae353ce.camel@redhat.com>
-Subject: Re: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex
- contention
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     netdev@vger.kernel.org, Soheil Hassas Yeganeh <soheil@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Date:   Wed, 08 Mar 2023 09:55:31 +0100
-In-Reply-To: <20230307133057.1904d8ffab2980f8e23ee3cc@linux-foundation.org>
-References: <e8228f0048977456466bc33b42600e929fedd319.1678213651.git.pabeni@redhat.com>
-         <20230307133057.1904d8ffab2980f8e23ee3cc@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+        Wed, 8 Mar 2023 04:53:09 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 190D1AD03C;
+        Wed,  8 Mar 2023 01:52:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678269167; x=1709805167;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dxQJct6f43Jx0UnkB4zNZyJRb1ubXcUEMzADERU/HTo=;
+  b=i4qA8kB9wpNWkbradAv19TUkDihJzH+V4+5n2BZoEYHiAZ0etZT8kbTg
+   +GppTfBdDtTkVz7ZpKB5L2TfwfIzlXgzv81vNQYwGwL7+DKqvGlI4m51M
+   J6Rgo+V16I0+HbHOuIFeAhR6SGgeYnawsTEZcrsiAjj1mkytHWGBpCnJc
+   3SU+6KKIiea7qYsFzq6MUOrGomBemRVqi5TRdcpP/dRsxOaebIH9a3exD
+   9btRN3kMP4HmcwmiySNRbvYJR7YT0XCUQgGaxeucOY4jfluwFofC53Q8N
+   6kLoe3ZYo1SLZD6H2MRf5FGE85zjr4vRtv/WkUH0hg7mI9aVMpVm8Jqz0
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="333584672"
+X-IronPort-AV: E=Sophos;i="5.98,243,1673942400"; 
+   d="scan'208";a="333584672"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2023 01:52:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="679277486"
+X-IronPort-AV: E=Sophos;i="5.98,243,1673942400"; 
+   d="scan'208";a="679277486"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 08 Mar 2023 01:52:42 -0800
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pZqTR-00021x-1W;
+        Wed, 08 Mar 2023 09:52:41 +0000
+Date:   Wed, 8 Mar 2023 17:51:56 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Nadav Amit <namit@vmware.com>, Peter Xu <peterx@redhat.com>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        James Houghton <jthoughton@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Axel Rasmussen <axelrasmussen@google.com>
+Subject: Re: [PATCH v3 4/5] mm: userfaultfd: don't separate addr + len
+ arguments
+Message-ID: <202303081703.nwxAgIVH-lkp@intel.com>
+References: <20230306225024.264858-5-axelrasmussen@google.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230306225024.264858-5-axelrasmussen@google.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-03-07 at 13:30 -0800, Andrew Morton wrote:
-> On Tue,  7 Mar 2023 19:46:37 +0100 Paolo Abeni <pabeni@redhat.com> wrote:
->=20
-> > We are observing huge contention on the epmutex during an http
-> > connection/rate test:
-> >=20
-> >  83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYS=
-CALL_64_after_hwframe
-> > [...]
-> >            |--66.96%--__fput
-> >                       |--60.04%--eventpoll_release_file
-> >                                  |--58.41%--__mutex_lock.isra.6
-> >                                            |--56.56%--osq_lock
-> >=20
-> > The application is multi-threaded, creates a new epoll entry for
-> > each incoming connection, and does not delete it before the
-> > connection shutdown - that is, before the connection's fd close().
-> >=20
-> > Many different threads compete frequently for the epmutex lock,
-> > affecting the overall performance.
-> >=20
-> > To reduce the contention this patch introduces explicit reference count=
-ing
-> > for the eventpoll struct. Each registered event acquires a reference,
-> > and references are released at ep_remove() time.
-> >=20
-> > Additionally, this introduces a new 'dying' flag to prevent races betwe=
-en
-> > the EP file close() and the monitored file close().
-> > ep_eventpoll_release() marks, under f_lock spinlock, each epitem as bef=
-ore
->=20
-> "as dying"?
->=20
-> > removing it, while EP file close() does not touch dying epitems.
->=20
-> The need for this dying flag is somewhat unclear to me.  I mean, if we
-> have refcounting done correctly, why the need for this flag?  Some
-> additional description of the dynamics would be helpful.
->=20
-> Methinks this flag is here to cope with the delayed freeing via
-> hlist_del_rcu(), but that's a guess?
+Hi Axel,
 
-First thing first, thanks for the feedback!
+Thank you for the patch! Yet something to improve:
 
-Both ep_clear_and_put() and eventpoll_release_file() can release the
-eventpoll struct. The second must acquire the file->f_lock spinlock to
-reach/access such struct pointer. Callers of __ep_remove need to
-acquire first the ep->mtx, so eventpoll_release_file() must release the
-spinlock after fetching the pointer and before acquiring the mutex.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.3-rc1]
+[cannot apply to akpm-mm/mm-everything next-20230308]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Meanwhile, without the 'dying' flag, ep_clear_and_put() could kick-in,
-eventually on a different CPU, drop all the ep references and free the
-struct.=C2=A0
-An alternative to the 'dying' flag would be removing the following loop
-from ep_clear_and_put():
+url:    https://github.com/intel-lab-lkp/linux/commits/Axel-Rasmussen/mm-userfaultfd-rename-functions-for-clarity-consistency/20230307-065203
+patch link:    https://lore.kernel.org/r/20230306225024.264858-5-axelrasmussen%40google.com
+patch subject: [PATCH v3 4/5] mm: userfaultfd: don't separate addr + len arguments
+config: x86_64-randconfig-a011-20230306 (https://download.01.org/0day-ci/archive/20230308/202303081703.nwxAgIVH-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/cee642b93be3ae01c7cc737c0176cbc16074a25a
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Axel-Rasmussen/mm-userfaultfd-rename-functions-for-clarity-consistency/20230307-065203
+        git checkout cee642b93be3ae01c7cc737c0176cbc16074a25a
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
 
-	while ((rbp =3D rb_first_cached(&ep->rbr)) !=3D NULL) {
-                epi =3D rb_entry(rbp, struct epitem, rbn);
-                ep_remove_safe(ep, epi);
-                cond_resched();
-        }
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303081703.nwxAgIVH-lkp@intel.com/
 
-So that ep_clear_and_put() would not release all the ep references
-anymore. That option has the downside of keeping the ep struct alive
-for an unlimited time after ep_clear_and_put(). A previous revision of
-this patch implemented a similar behavior, but Eric Biggers noted it
-could hurt some users:
+All errors (new ones prefixed by >>):
 
-https://lore.kernel.org/linux-fsdevel/Y3%2F4FW4mqY3fWRfU@sol.localdomain/
-
-Please let me know if the above is clear enough.
-
-> > The eventpoll struct is released by whoever - among EP file close() and
-> > and the monitored file close() drops its last reference.
-> >=20
-> > With all the above in place, we can drop the epmutex usage at disposal =
-time.
-> >=20
-> > Overall this produces a significant performance improvement in the
-> > mentioned connection/rate scenario: the mutex operations disappear from
-> > the topmost offenders in the perf report, and the measured connections/=
-rate
-> > grows by ~60%.
-> >=20
-> > To make the change more readable this additionally renames ep_free() to
-> > ep_clear_and_put(), and moves the actual memory cleanup in a separate
-> > ep_free() helper.
-> >=20
-> > ...
-> >=20
-> > --- a/fs/eventpoll.c
-> > +++ b/fs/eventpoll.c
-> >=20
-> > ...
-> >=20
-> > +	free_uid(ep->user);
-> > +	wakeup_source_unregister(ep->ws);
-> > +	kfree(ep);
-> > +}
-> > +
-> >  /*
-> >   * Removes a "struct epitem" from the eventpoll RB tree and deallocate=
-s
-> >   * all the associated resources. Must be called with "mtx" held.
-> > + * If the dying flag is set, do the removal only if force is true.
->=20
-> This comment describes "what" the code does, which is obvious from the
-> code anwyay.  It's better if comments describe "why" the code does what
-> it does.
-
-What about appending the following?
-
-"""
-This prevents ep_clear_and_put() from dropping all the ep references
-while running concurrently with eventpoll_release_file().
-"""
-
-(I'll keep the 'what' part to hopefully make the 'why' more clear)
-
-> > + * Returns true if the eventpoll can be disposed.
-> >   */
-> > -static int ep_remove(struct eventpoll *ep, struct epitem *epi)
-> > +static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool=
- force)
-> >  {
-> >  	struct file *file =3D epi->ffd.file;
-> >  	struct epitems_head *to_free;
-> >=20
-> > ...
-> >=20
-> >  	/*
-> > -	 * We don't want to get "file->f_lock" because it is not
-> > -	 * necessary. It is not necessary because we're in the "struct file"
-> > -	 * cleanup path, and this means that no one is using this file anymor=
-e.
-> > -	 * So, for example, epoll_ctl() cannot hit here since if we reach thi=
-s
-> > -	 * point, the file counter already went to zero and fget() would fail=
-.
-> > -	 * The only hit might come from ep_free() but by holding the mutex
-> > -	 * will correctly serialize the operation. We do need to acquire
-> > -	 * "ep->mtx" after "epmutex" because ep_remove() requires it when cal=
-led
-> > -	 * from anywhere but ep_free().
-> > -	 *
-> > -	 * Besides, ep_remove() acquires the lock, so we can't hold it here.
-> > +	 * Use the 'dying' flag to prevent a concurrent ep_cleat_and_put() fr=
-om
->=20
-> s/cleat/clear/
->=20
-> > +	 * touching the epitems list before eventpoll_release_file() can acce=
-ss
-> > +	 * the ep->mtx.
-> >  	 */
-> > -	mutex_lock(&epmutex);
-> > -	if (unlikely(!file->f_ep)) {
-> > -		mutex_unlock(&epmutex);
-> > -		return;
-> > -	}
-> > -	hlist_for_each_entry_safe(epi, next, file->f_ep, fllink) {
-> > +again:
-> > +	spin_lock(&file->f_lock);
-> > +	if (file->f_ep && file->f_ep->first) {
-> > +		/* detach from ep tree */
->=20
-> Comment appears to be misplaced - the following code doesn't detach
-> anything?
-
-Indeed. This is a left-over from a previous revision. Can be dropped.
+>> mm/userfaultfd.c:577:52: error: passing 'const struct uffdio_range *' to parameter of incompatible type 'struct uffdio_range'
+                   return  mfill_atomic_hugetlb(dst_vma, src_start, dst, flags);
+                                                                    ^~~
+   mm/userfaultfd.c:463:29: note: passing argument to parameter 'dst' here
+                                       struct uffdio_range dst,
+                                                           ^
+   1 error generated.
 
 
-I have a process question: I understand this is queued for the mm-
-nonmm-unstable branch. Should I send a v5 with the above comments
-changes or an incremental patch or something completely different?
+vim +577 mm/userfaultfd.c
 
-Thanks!
+   508	
+   509	static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
+   510						    unsigned long src_start,
+   511						    const struct uffdio_range *dst,
+   512						    atomic_t *mmap_changing,
+   513						    uffd_flags_t flags)
+   514	{
+   515		struct vm_area_struct *dst_vma;
+   516		ssize_t err;
+   517		pmd_t *dst_pmd;
+   518		unsigned long src_addr, dst_addr;
+   519		long copied;
+   520		struct page *page;
+   521	
+   522		/*
+   523		 * Sanitize the command parameters:
+   524		 */
+   525		BUG_ON(dst->start & ~PAGE_MASK);
+   526		BUG_ON(dst->len & ~PAGE_MASK);
+   527	
+   528		/* Does the address range wrap, or is the span zero-sized? */
+   529		BUG_ON(src_start + dst->len <= src_start);
+   530		BUG_ON(dst->start + dst->len <= dst->start);
+   531	
+   532		src_addr = src_start;
+   533		dst_addr = dst->start;
+   534		copied = 0;
+   535		page = NULL;
+   536	retry:
+   537		mmap_read_lock(dst_mm);
+   538	
+   539		/*
+   540		 * If memory mappings are changing because of non-cooperative
+   541		 * operation (e.g. mremap) running in parallel, bail out and
+   542		 * request the user to retry later
+   543		 */
+   544		err = -EAGAIN;
+   545		if (mmap_changing && atomic_read(mmap_changing))
+   546			goto out_unlock;
+   547	
+   548		/*
+   549		 * Make sure the vma is not shared, that the dst range is
+   550		 * both valid and fully within a single existing vma.
+   551		 */
+   552		err = -ENOENT;
+   553		dst_vma = find_dst_vma(dst_mm, dst);
+   554		if (!dst_vma)
+   555			goto out_unlock;
+   556	
+   557		err = -EINVAL;
+   558		/*
+   559		 * shmem_zero_setup is invoked in mmap for MAP_ANONYMOUS|MAP_SHARED but
+   560		 * it will overwrite vm_ops, so vma_is_anonymous must return false.
+   561		 */
+   562		if (WARN_ON_ONCE(vma_is_anonymous(dst_vma) &&
+   563		    dst_vma->vm_flags & VM_SHARED))
+   564			goto out_unlock;
+   565	
+   566		/*
+   567		 * validate 'mode' now that we know the dst_vma: don't allow
+   568		 * a wrprotect copy if the userfaultfd didn't register as WP.
+   569		 */
+   570		if ((flags & MFILL_ATOMIC_WP) && !(dst_vma->vm_flags & VM_UFFD_WP))
+   571			goto out_unlock;
+   572	
+   573		/*
+   574		 * If this is a HUGETLB vma, pass off to appropriate routine
+   575		 */
+   576		if (is_vm_hugetlb_page(dst_vma))
+ > 577			return  mfill_atomic_hugetlb(dst_vma, src_start, dst, flags);
+   578	
+   579		if (!vma_is_anonymous(dst_vma) && !vma_is_shmem(dst_vma))
+   580			goto out_unlock;
+   581		if (!vma_is_shmem(dst_vma) &&
+   582		    (flags & MFILL_ATOMIC_MODE_MASK) == MFILL_ATOMIC_CONTINUE)
+   583			goto out_unlock;
+   584	
+   585		/*
+   586		 * Ensure the dst_vma has a anon_vma or this page
+   587		 * would get a NULL anon_vma when moved in the
+   588		 * dst_vma.
+   589		 */
+   590		err = -ENOMEM;
+   591		if (!(dst_vma->vm_flags & VM_SHARED) &&
+   592		    unlikely(anon_vma_prepare(dst_vma)))
+   593			goto out_unlock;
+   594	
+   595		while (src_addr < src_start + dst->len) {
+   596			pmd_t dst_pmdval;
+   597	
+   598			BUG_ON(dst_addr >= dst->start + dst->len);
+   599	
+   600			dst_pmd = mm_alloc_pmd(dst_mm, dst_addr);
+   601			if (unlikely(!dst_pmd)) {
+   602				err = -ENOMEM;
+   603				break;
+   604			}
+   605	
+   606			dst_pmdval = pmdp_get_lockless(dst_pmd);
+   607			/*
+   608			 * If the dst_pmd is mapped as THP don't
+   609			 * override it and just be strict.
+   610			 */
+   611			if (unlikely(pmd_trans_huge(dst_pmdval))) {
+   612				err = -EEXIST;
+   613				break;
+   614			}
+   615			if (unlikely(pmd_none(dst_pmdval)) &&
+   616			    unlikely(__pte_alloc(dst_mm, dst_pmd))) {
+   617				err = -ENOMEM;
+   618				break;
+   619			}
+   620			/* If an huge pmd materialized from under us fail */
+   621			if (unlikely(pmd_trans_huge(*dst_pmd))) {
+   622				err = -EFAULT;
+   623				break;
+   624			}
+   625	
+   626			BUG_ON(pmd_none(*dst_pmd));
+   627			BUG_ON(pmd_trans_huge(*dst_pmd));
+   628	
+   629			err = mfill_atomic_pte(dst_pmd, dst_vma, dst_addr,
+   630					       src_addr, &page, flags);
+   631			cond_resched();
+   632	
+   633			if (unlikely(err == -ENOENT)) {
+   634				void *page_kaddr;
+   635	
+   636				mmap_read_unlock(dst_mm);
+   637				BUG_ON(!page);
+   638	
+   639				page_kaddr = kmap_local_page(page);
+   640				err = copy_from_user(page_kaddr,
+   641						     (const void __user *) src_addr,
+   642						     PAGE_SIZE);
+   643				kunmap_local(page_kaddr);
+   644				if (unlikely(err)) {
+   645					err = -EFAULT;
+   646					goto out;
+   647				}
+   648				flush_dcache_page(page);
+   649				goto retry;
+   650			} else
+   651				BUG_ON(page);
+   652	
+   653			if (!err) {
+   654				dst_addr += PAGE_SIZE;
+   655				src_addr += PAGE_SIZE;
+   656				copied += PAGE_SIZE;
+   657	
+   658				if (fatal_signal_pending(current))
+   659					err = -EINTR;
+   660			}
+   661			if (err)
+   662				break;
+   663		}
+   664	
+   665	out_unlock:
+   666		mmap_read_unlock(dst_mm);
+   667	out:
+   668		if (page)
+   669			put_page(page);
+   670		BUG_ON(copied < 0);
+   671		BUG_ON(err > 0);
+   672		BUG_ON(!copied && !err);
+   673		return copied ? copied : err;
+   674	}
+   675	
 
-Paolo
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
