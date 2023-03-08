@@ -2,79 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A46206AFDEC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 05:34:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2006AFEB4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 07:04:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbjCHEeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 23:34:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45026 "EHLO
+        id S229843AbjCHGEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 01:04:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbjCHEdy (ORCPT
+        with ESMTP id S229449AbjCHGEu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 23:33:54 -0500
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1DE9C98B
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 20:33:51 -0800 (PST)
-Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 3284XTvr021510
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 7 Mar 2023 23:33:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1678250011; bh=5pMWU6jII+CDzJ3zfBYzkUuOg2Vxa1wRZCqfVcF9NJw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=fQhdRuF0Ca9IEXfQKd+n1CWjT4/CljpFoikCFVl7AO2kkLJZ1QrGEPJcagh7ta2rY
-         BGXxUedt75uaQKW7xU1cgPnuBe//MVsbHRA6aCnxEuj6oWspQ7Z91SvYoXoqIpbliP
-         hMhV7kimgU4zNhgCardZfP3GqqqajPTIRl8j0b2pfjDWL38Ye2Kl8FAzgS4Xc5ImWD
-         OUMXf52s2nH5CtbxDuU+VwC5StYHrIWm9lLlRnsPvWemVDXhTNlIagqLz5YSZthj4X
-         Ru2u5eR7BMIj+DqlkfW+7Fpm47kjVB9Eo3HseBZnt6KVmCZYKTwjCBbGDoOmC8fzNP
-         FbaBkJ14wWcVg==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id CF9E715C3444; Tue,  7 Mar 2023 23:33:29 -0500 (EST)
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     linux-ext4@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-fscrypt@vger.kernel.org,
-        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] ext4: fix cgroup writeback accounting with fs-layer encryption
-Date:   Tue,  7 Mar 2023 23:33:22 -0500
-Message-Id: <167824999281.2129363.12204207098890359786.b4-ty@mit.edu>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20230203005503.141557-1-ebiggers@kernel.org>
-References: <20230203005503.141557-1-ebiggers@kernel.org>
+        Wed, 8 Mar 2023 01:04:50 -0500
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A87772B288;
+        Tue,  7 Mar 2023 22:04:48 -0800 (PST)
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1N8XPt-1qeFMG1dtB-014Wun; Wed, 08
+ Mar 2023 07:04:34 +0100
+Message-ID: <5aff53ea-0666-d4d6-3bf1-07b3674a405a@gmx.com>
+Date:   Wed, 8 Mar 2023 14:04:26 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230121065031.1139353-1-hch@lst.de>
+ <20230121065031.1139353-4-hch@lst.de>
+ <88b2fae1-8d95-2172-7bc4-c5dfc4ff7410@gmx.com>
+ <20230307144106.GA19477@lst.de>
+ <96f5c29c-1b25-66af-1ba1-731ae39d912d@gmx.com>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: Re: [PATCH 03/34] btrfs: add a btrfs_inode pointer to struct
+ btrfs_bio
+In-Reply-To: <96f5c29c-1b25-66af-1ba1-731ae39d912d@gmx.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Provags-ID: V03:K1:jHoIq4V9I6P8AHOnPYOiJ5R27Ssn8X5wQSX4vavWLDjJ/ZBGT8t
+ Ikr/j7+hJO54u1oi/kHO0nqUJyz+nWB1mYUb4nX7+4kMiw5l6j1bLb+/GHdHIqevW7mL/IR
+ 02cfCNLzXNDYZD7zkrAVnRiWSTUJPxmPzOtI1DbUn3IyVev0sGEaechnL0/BQ8gaB1YVPfI
+ D94IOns6PsUL7B4n79C0A==
+UI-OutboundReport: notjunk:1;M01:P0:datC4IgmbY4=;G7YIPxDWvdtHvKTPCwYKEQ+X2PA
+ yQLOg1tsqrpjzUjbUR8X3R1ccmEOTVYWL3aE9lRoQBLdqr9GzapMHTNwkcfro6ipe0pujsTwd
+ DDth1Hh3LJcErAQ1fnYMjyU4VEQanOQEZ0qtIeTrPjF5+APkPywrLVJUIu1v8jRTgEOjyaRCL
+ FCERCJM0E85InsX6GkzLnez69hg46ydLr0n5FbgxJBLZ9TsJAhbCNsbrO+zIwXc4tYjV+opud
+ tFO+AC2u3N2tyPpH9BjlxX+409WO9jmuE46tooGQewMEogoJDgqelnsbVIlQiLcoSYggdzyAN
+ gMFiIXkLilH9vglkop5eRFkcfq/B2ybcinFaB7FCUkvBnGgPIsCdNGU8PMC5J4Qsr77ab2pnb
+ pEX5OD2j6dKcv6nHU6X5NKU0GE5wU2XdW4dGxZp5rsjx8MHvkat49Tfie+RgSTohXqMiqaGG1
+ gq8iVscbJ+rv/ZzEXEJbpMuqmTSZVI6Iy+lS8PA9PW7JWUp/yPvx4X2bPcic998PIJgLUzoRu
+ yCqYPirbTof2DKTlSYD6qn2uHg4S8aZnq5OB4yG7OcsjC9ydInGoQPICfvytnMFbcANmsxHwM
+ vQaZP0gv+PZieaKHEIt07N9eTFPwBOhUXuId5gindFxxnx36HjJatktLtTkCd/ypArvDzqFnN
+ DdelMbbfzZxG/3D1LI4J1gFgju00RZbqePkclwQLsuqPbxtVPTzcsrj4j7YkhDEfVLPLO8cFL
+ bpoiBZ+X+HWuBB+yhZmdr5/4tk85ZbU2Cx5PkmlSbl2zp1hUtVJbFGR7DCmeUmbVgXNN+jCfX
+ npnlvq4yctssYh1U1LJOaI2XpmxFNRmrBAf17BjCqqftwQdHjRK15e3FxZQmB2jPpiinq7IWr
+ //fG43sNnhaHxZUlDANb3UC0spSUo4QkM6UcOoFXbRIlm0BHxfZJBatnff8dESMYYShND470s
+ OyrcemC32DeaKOUhKliVhrsPwTU=
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,FREEMAIL_FROM,
+        NICE_REPLY_A,RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2 Feb 2023 16:55:03 -0800, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> When writing a page from an encrypted file that is using
-> filesystem-layer encryption (not inline encryption), ext4 encrypts the
-> pagecache page into a bounce page, then writes the bounce page.
-> 
-> It also passes the bounce page to wbc_account_cgroup_owner().  That's
-> incorrect, because the bounce page is a newly allocated temporary page
-> that doesn't have the memory cgroup of the original pagecache page.
-> This makes wbc_account_cgroup_owner() not account the I/O to the owner
-> of the pagecache page as it should.
-> 
-> [...]
 
-Applied, thanks!
 
-[1/1] ext4: fix cgroup writeback accounting with fs-layer encryption
-      commit: ffec85d53d0f39ee4680a2cf0795255e000e1feb
+On 2023/3/8 06:21, Qu Wenruo wrote:
+> 
+> 
+> On 2023/3/7 22:41, Christoph Hellwig wrote:
+>> On Tue, Mar 07, 2023 at 09:44:32AM +0800, Qu Wenruo wrote:
+>>> With my recent restart on scrub rework, this patch makes me wonder, 
+>>> what if
+>>> scrub wants to use btrfs_bio, but don't want to pass a valid btrfs_inode
+>>> pointer?
+>>
+>> The full inode is only really needed for the data repair code.  But a lot
+>> of code uses the fs_info, which would have to be added as a separate
+>> counter.  The other usage is the sync_writers counter, which is a bit
+>> odd and should probably be keyed off the REQ_SYNC flag instead.
+>>
+>>> E.g. scrub code just wants to read certain mirror of a logical bytenr.
+>>> This can simplify the handling of RAID56, as for data stripes the repair
+>>> path is the same, just try the next mirror(s).
+>>>
+>>> Furthermore most of the new btrfs_bio code is handling data reads by
+>>> triggering read-repair automatically.
+>>> This can be unnecessary for scrub.
+>>
+>> This sounds like you don't want to use the btrfs_bio at all as you
+>> don't rely on any of the functionality from it.
+> 
+> Well, to me the proper mirror_num based read is the core of btrfs_bio, 
+> not the read-repair thing.
+> 
+> Thus I'm not that convinced fully automatic read-repair integrated into 
+> btrfs_bio is a good idea.
 
-Best regards,
--- 
-Theodore Ts'o <tytso@mit.edu>
+BTW, I also checked if I can craft a scrub specific version of 
+btrfs_submit_bio().
+
+The result doesn't look good at all.
+
+Without a btrfs_bio structure, it's already pretty hard to properly put 
+bioc, decrease the bio counter.
+
+Or I need to create a scrub_bio, and re-implement all the needed endio 
+function handling.
+
+So please really consider the simplest case, one just wants to 
+read/write some data using logical + mirror_num, without any btrfs inode 
+nor csum verification.
+
+Thanks,
+Qu
+
+> 
+> Thanks,
+> Qu
+>>
+>>>
+>>> And since we're here, can we also have btrfs equivalent of on-stack bio?
+>>> As scrub can benefit a lot from that, as for sector-by-sector read, 
+>>> we want
+>>> to avoid repeating allocating/freeing a btrfs_bio just for reading one
+>>> sector.
+>>> (The existing behavior is using on-stack bio with bio_init/bio_uninit
+>>> inside scrub_recheck_block())
+>>
+>> You can do that right now by declaring a btrfs_bio on-stack and then
+>> calling bio_init on the embedded bio followed by a btrfs_bio_init on
+>> the btrfs_bio.  But I don't think doing this will actually be a win
+>> for the scrub code in terms of speed or code size.
