@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 52ED36B0F57
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 17:55:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32E876B0F69
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 17:55:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230100AbjCHQzB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 11:55:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50944 "EHLO
+        id S230135AbjCHQzc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 11:55:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbjCHQyo (ORCPT
+        with ESMTP id S230148AbjCHQys (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 11:54:44 -0500
+        Wed, 8 Mar 2023 11:54:48 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB050BA854
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 08:53:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3A1CC1C28
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 08:53:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678294425;
+        s=mimecast20190719; t=1678294426;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=HEPrb4kIqMqW7eebyDDmobfSBttcdx5+yTOr0krGf5g=;
-        b=Uy1lm7i1mSmUu4VDAISnaUnzHpJInMIMSkDTeTWEYBNgQvyElXZZHSOrgw0lqBcc5dpUjS
-        pu0T1/+1GAMkrG/MrZP/7WErVMV0AGifbbr1RA7QNZtZu7auXNYLpfL1K2LubLKsdCS64/
-        vMLwQcE8aL32mIZ8Wu+JL4iBgq5nsqg=
+        bh=7b6tezcmsCRtrHxO2uDV+B0gtFM5s5ObrJQQe5H2QZI=;
+        b=PzGLBJEhGlhLzImLex7/ZXfjx8BX9xOg06Y641NhfX/D89+Pjm7QE6Ty0oN0LFsQBmAGri
+        qQuR7uXtyk58hFT1ZBdYj+atf8QWrZXxVqg8GaGS2UCK4lc2naYycb+xeik1vGp3mUcTuy
+        fgeMVHwwp8/laPi9ssN9ytifCYHsJk8=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-297-lMpGSRQOMG6okmNVI3BTqA-1; Wed, 08 Mar 2023 11:53:41 -0500
-X-MC-Unique: lMpGSRQOMG6okmNVI3BTqA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+ us-mta-457-phLgeZkLN8-e2tx3s-Pb0w-1; Wed, 08 Mar 2023 11:53:39 -0500
+X-MC-Unique: phLgeZkLN8-e2tx3s-Pb0w-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 83C6418A650A;
-        Wed,  8 Mar 2023 16:53:32 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2E66E88B7DE;
+        Wed,  8 Mar 2023 16:53:35 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 81ADA492C3E;
-        Wed,  8 Mar 2023 16:53:30 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 20FAF492B09;
+        Wed,  8 Mar 2023 16:53:33 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -53,17 +53,17 @@ Cc:     David Howells <dhowells@redhat.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Christoph Hellwig <hch@lst.de>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v17 12/14] block: Add BIO_PAGE_PINNED and associated infrastructure
-Date:   Wed,  8 Mar 2023 16:52:49 +0000
-Message-Id: <20230308165251.2078898-13-dhowells@redhat.com>
+Subject: [PATCH v17 13/14] block: Convert bio_iov_iter_get_pages to use iov_iter_extract_pages
+Date:   Wed,  8 Mar 2023 16:52:50 +0000
+Message-Id: <20230308165251.2078898-14-dhowells@redhat.com>
 In-Reply-To: <20230308165251.2078898-1-dhowells@redhat.com>
 References: <20230308165251.2078898-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,8 +71,13 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add BIO_PAGE_PINNED to indicate that the pages in a bio are pinned
-(FOLL_PIN) and that the pin will need removing.
+This will pin pages or leave them unaltered rather than getting a ref on
+them as appropriate to the iterator.
+
+The pages need to be pinned for DIO rather than having refs taken on them to
+prevent VM copy-on-write from malfunctioning during a concurrent fork() (the
+result of the I/O could otherwise end up being affected by/visible to the
+child process).
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
@@ -89,98 +94,89 @@ Notes:
     ver #10)
      - Drop bio_set_cleanup_mode(), open coding it instead.
     
-    ver #9)
-     - Only consider pinning in bio_set_cleanup_mode().  Ref'ing pages in
-       struct bio is going away.
-     - page_put_unpin() is removed; call unpin_user_page() and put_page()
-       directly.
-     - Use bio_release_page() in __bio_release_pages().
-     - BIO_PAGE_PINNED and BIO_PAGE_REFFED can't both be set, so use if-else
-       when testing both of them.
-    
     ver #8)
-     - Move the infrastructure to clean up pinned pages to this patch [hch].
-     - Put BIO_PAGE_PINNED before BIO_PAGE_REFFED as the latter should
-       probably be removed at some point.  FOLL_PIN can then be renumbered
-       first.
+     - Split the patch up a bit [hch].
+     - We should only be using pinned/non-pinned pages and not ref'd pages,
+       so adjust the comments appropriately.
+    
+    ver #7)
+     - Don't treat BIO_PAGE_REFFED/PINNED as being the same as FOLL_GET/PIN.
+    
+    ver #5)
+     - Transcribe the FOLL_* flags returned by iov_iter_extract_pages() to
+       BIO_* flags and got rid of bi_cleanup_mode.
+     - Replaced BIO_NO_PAGE_REF to BIO_PAGE_REFFED in the preceding patch.
 
- block/bio.c               |  6 +++---
- block/blk.h               | 12 ++++++++++++
- include/linux/bio.h       |  3 ++-
- include/linux/blk_types.h |  1 +
- 4 files changed, 18 insertions(+), 4 deletions(-)
+ block/bio.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index 4ff96a0e4091..51ae957cc4b6 100644
+index 51ae957cc4b6..fc98c1c723ca 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -1168,7 +1168,7 @@ void __bio_release_pages(struct bio *bio, bool mark_dirty)
- 	bio_for_each_segment_all(bvec, bio, iter_all) {
- 		if (mark_dirty && !PageCompound(bvec->bv_page))
- 			set_page_dirty_lock(bvec->bv_page);
--		put_page(bvec->bv_page);
-+		bio_release_page(bio, bvec->bv_page);
+@@ -1204,7 +1204,7 @@ static int bio_iov_add_page(struct bio *bio, struct page *page,
  	}
+ 
+ 	if (same_page)
+-		put_page(page);
++		bio_release_page(bio, page);
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(__bio_release_pages);
-@@ -1488,8 +1488,8 @@ void bio_set_pages_dirty(struct bio *bio)
-  * the BIO and re-dirty the pages in process context.
+ 
+@@ -1218,7 +1218,7 @@ static int bio_iov_add_zone_append_page(struct bio *bio, struct page *page,
+ 			queue_max_zone_append_sectors(q), &same_page) != len)
+ 		return -EINVAL;
+ 	if (same_page)
+-		put_page(page);
++		bio_release_page(bio, page);
+ 	return 0;
+ }
+ 
+@@ -1229,10 +1229,10 @@ static int bio_iov_add_zone_append_page(struct bio *bio, struct page *page,
+  * @bio: bio to add pages to
+  * @iter: iov iterator describing the region to be mapped
   *
-  * It is expected that bio_check_pages_dirty() will wholly own the BIO from
-- * here on.  It will run one put_page() against each page and will run one
-- * bio_put() against the BIO.
-+ * here on.  It will unpin each page and will run one bio_put() against the
-+ * BIO.
+- * Pins pages from *iter and appends them to @bio's bvec array. The
+- * pages will have to be released using put_page() when done.
+- * For multi-segment *iter, this function only adds pages from the
+- * next non-empty segment of the iov iterator.
++ * Extracts pages from *iter and appends them to @bio's bvec array.  The pages
++ * will have to be cleaned up in the way indicated by the BIO_PAGE_PINNED flag.
++ * For a multi-segment *iter, this function only adds pages from the next
++ * non-empty segment of the iov iterator.
   */
- 
- static void bio_dirty_fn(struct work_struct *work);
-diff --git a/block/blk.h b/block/blk.h
-index cc4e8873dfde..d65d96994a94 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -432,6 +432,18 @@ int bio_add_hw_page(struct request_queue *q, struct bio *bio,
- 		struct page *page, unsigned int len, unsigned int offset,
- 		unsigned int max_sectors, bool *same_page);
- 
-+/*
-+ * Clean up a page appropriately, where the page may be pinned, may have a
-+ * ref taken on it or neither.
-+ */
-+static inline void bio_release_page(struct bio *bio, struct page *page)
-+{
-+	if (bio_flagged(bio, BIO_PAGE_PINNED))
-+		unpin_user_page(page);
-+	else if (bio_flagged(bio, BIO_PAGE_REFFED))
-+		put_page(page);
-+}
-+
- struct request_queue *blk_alloc_queue(int node_id);
- 
- int disk_scan_partitions(struct gendisk *disk, fmode_t mode);
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index b537d03377f0..d8c30c791a9a 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -488,7 +488,8 @@ void zero_fill_bio(struct bio *bio);
- 
- static inline void bio_release_pages(struct bio *bio, bool mark_dirty)
+ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
  {
--	if (bio_flagged(bio, BIO_PAGE_REFFED))
-+	if (bio_flagged(bio, BIO_PAGE_REFFED) ||
-+	    bio_flagged(bio, BIO_PAGE_PINNED))
- 		__bio_release_pages(bio, mark_dirty);
- }
+@@ -1264,9 +1264,9 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 	 * result to ensure the bio's total size is correct. The remainder of
+ 	 * the iov data will be picked up in the next bio iteration.
+ 	 */
+-	size = iov_iter_get_pages(iter, pages,
+-				  UINT_MAX - bio->bi_iter.bi_size,
+-				  nr_pages, &offset, extraction_flags);
++	size = iov_iter_extract_pages(iter, &pages,
++				      UINT_MAX - bio->bi_iter.bi_size,
++				      nr_pages, extraction_flags, &offset);
+ 	if (unlikely(size <= 0))
+ 		return size ? size : -EFAULT;
  
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 7daa261f4f98..a0e339ff3d09 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -318,6 +318,7 @@ struct bio {
-  * bio flags
-  */
- enum {
-+	BIO_PAGE_PINNED,	/* Unpin pages in bio_release_pages() */
- 	BIO_PAGE_REFFED,	/* put pages in bio_release_pages() */
- 	BIO_CLONED,		/* doesn't own data */
- 	BIO_BOUNCED,		/* bio is a bounce bio */
+@@ -1299,7 +1299,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 	iov_iter_revert(iter, left);
+ out:
+ 	while (i < nr_pages)
+-		put_page(pages[i++]);
++		bio_release_page(bio, pages[i++]);
+ 
+ 	return ret;
+ }
+@@ -1334,7 +1334,8 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 		return 0;
+ 	}
+ 
+-	bio_set_flag(bio, BIO_PAGE_REFFED);
++	if (iov_iter_extract_will_pin(iter))
++		bio_set_flag(bio, BIO_PAGE_PINNED);
+ 	do {
+ 		ret = __bio_iov_iter_get_pages(bio, iter);
+ 	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
 
