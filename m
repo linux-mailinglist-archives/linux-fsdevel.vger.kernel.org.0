@@ -2,83 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F0BB6B1301
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 21:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3993B6B1330
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 21:36:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229657AbjCHUZC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 15:25:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46104 "EHLO
+        id S230295AbjCHUgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 15:36:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229717AbjCHUYu (ORCPT
+        with ESMTP id S229453AbjCHUgN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 15:24:50 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4391F9AFCA
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 12:24:47 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id i34so70618515eda.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Mar 2023 12:24:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1678307086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lJfFbUmgGUScXMrHUtC6nJ4LuBCrcr+wpYFFKWYzLa4=;
-        b=pCaJbe3DmW0dyXfacjDPlJY5/4U/ixkj3XablpiH1L6RdZms5pExSKySI+k3rFZ0W+
-         XlgY9bNlROzdIEj4gUOPml8wQHiAZv4RBcvlEls+/I48YmqhZzU4lVSQp1y/Xt/hVSvC
-         JCPoUk0K9747ZtqzB1JeG9f0KR1fBQH9Ik/SyRhoZD4RON4rAiIRSZLdVIwSgl9IGowk
-         Pa7zqoOz/+RndMfT9O3ofxye9Yi8yNIfSBKY/FE5arKW9G9FhxZk0gBqQvC3XaUmPM3D
-         VaFgmyCxkZNyYrJ1Gcfug6wHmKW64Win8yJ0deJXYmWzelnxKBid7hCZHMJP8F/xl8LD
-         utqw==
+        Wed, 8 Mar 2023 15:36:13 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA86FCCE91
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 12:34:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678307688;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Hdk7ckeqLYIwLCDmEyqXJOvt1gf7vv0upLXeTwcvE5I=;
+        b=TIq+IIZEEZaP0U6kpqopioNf8OlfTVBYPn91rYRRhAp2qGbvpJracGez0SVPs+CHGPAKE2
+        X9KQNgNArJBHz/O8fHe9XzpFBiCjKPgmaU3Pgrl52W5RjhtTFDge0M2MldeUQDtjaL6kGA
+        F9xtfuqTIJIjQGlIZdPNuSXMIARabSg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-398-1Bq-g6cbMomsb7F_jlE-gA-1; Wed, 08 Mar 2023 15:34:47 -0500
+X-MC-Unique: 1Bq-g6cbMomsb7F_jlE-gA-1
+Received: by mail-wm1-f72.google.com with SMTP id y16-20020a1c4b10000000b003dd1b5d2a36so1109596wma.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Mar 2023 12:34:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678307086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lJfFbUmgGUScXMrHUtC6nJ4LuBCrcr+wpYFFKWYzLa4=;
-        b=Xi80qXVmRHfIss77qnYEQQM/qV0EmNUSaQsklyo/B7ZtCDnQikNjMF2J5ZpQOh31Xm
-         UYVTiFgELiDzToQItlD58JCKNymJAGHaX/OypzXcRF9tnD31nnPHQVYkLIQFPaKVCsGs
-         hLJnFrJFvw/JuBOHlgF7hLI4L8zyW46jSM5ZIv85wFd/sAMkbT4GcBWW/Jzvu+llO7Bt
-         g/xtaf6glinFKoF54cos19vcMksIJuAfGlEI20pmFJ7d2fMZf+wrqq0obeuiCqq+v0bB
-         dTb/th33taSYR/FXkCmDYx4Lg7XO1/r+BagYrtSfvhed/b5mfTlyYnhqnzcCJZimOA9P
-         Yf2g==
-X-Gm-Message-State: AO0yUKUdDMMrm0I69CXfJHC960tu0+v7luq6s+x8ITuS5f12tvdJk+w2
-        2EYxUZiWq2a6VCc+HoOmyoquNjI/Hau9lSKJIunW7g==
-X-Google-Smtp-Source: AK7set+DV9RxenSdhDCOFgakZZcsnB5QX/El2Wvkj9fjCVlQsjhbhU0QFrcMSUEA/hLFDWBIFA8W0HOSXVt6Xx+KiFY=
-X-Received: by 2002:a17:906:b11a:b0:8f8:edfc:b68b with SMTP id
- u26-20020a170906b11a00b008f8edfcb68bmr9931531ejy.6.1678307085464; Wed, 08 Mar
- 2023 12:24:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20230228085002.2592473-1-yosryahmed@google.com>
- <20230308160056.GA414058@cmpxchg.org> <CAJD7tka=6b-U3m0FdMoP=9nC8sYuJ9thghb9muqN5hQ5ZMrDag@mail.gmail.com>
- <20230308201629.GB476158@cmpxchg.org>
-In-Reply-To: <20230308201629.GB476158@cmpxchg.org>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Wed, 8 Mar 2023 12:24:08 -0800
-Message-ID: <CAJD7tkbDN2LUG_EZHV8VZd3M4-wtY9TCO5uS2c5qvqEWpoMvoA@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Ignore non-LRU-based reclaim in memcg reclaim
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        David Hildenbrand <david@redhat.com>,
-        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
+        d=1e100.net; s=20210112; t=1678307686;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hdk7ckeqLYIwLCDmEyqXJOvt1gf7vv0upLXeTwcvE5I=;
+        b=uY6f1Kqzuj8nGS2RxfawpAnDu6fxsDQ6f0rBFanTq7FR79RqIUyaja0qxAZStPlNA5
+         BcDnsedH4QNVpfooI17oswxrcGrzWnkX7e4mom1e67mEFQck7tLWpwxbfS6kuLxGrq6h
+         dxrFiirMUkkl76T6NNkWaKIoNvEAYHqYGe5mFk5IgDAYTZ3nySed2G6GRRj25KJ+3k2d
+         Cg4YGbUvn3VgU8Ybhvtdh5qmEpRpy1SJlpfSxOxGjYJdJRzezibRgpI3V3uhjhpIqGRQ
+         5FJ4GKjifCREFUzxxRu7CEkqX0DjsthD4IK1o9JWzywvZDy1S+DjAoC8l/V2k6L2KII9
+         BJtw==
+X-Gm-Message-State: AO0yUKXxt1sggoVtHuycIgiKhJHmdk1f62q79QEPbE49NScR8xUjX/Vv
+        l7EYFXRKGBdcnbBxQC5HpZF8XVJuibnqCcCiRNevpm10wwDc13YxigtInPAZOZp9VEgxcPN8nLd
+        tvEASfRq0WhK30Ilhf11qEiEpsQ==
+X-Received: by 2002:adf:e60b:0:b0:2c7:1c72:699f with SMTP id p11-20020adfe60b000000b002c71c72699fmr12351047wrm.4.1678307685838;
+        Wed, 08 Mar 2023 12:34:45 -0800 (PST)
+X-Google-Smtp-Source: AK7set9FmzZXAuBId0QOA4oZOfelEMo1fHMeBunZRomyT3/1ttx9W0b8OZAA9h7jV06Ay582RhCeug==
+X-Received: by 2002:adf:e60b:0:b0:2c7:1c72:699f with SMTP id p11-20020adfe60b000000b002c71c72699fmr12351041wrm.4.1678307685424;
+        Wed, 08 Mar 2023 12:34:45 -0800 (PST)
+Received: from gerbillo.redhat.com (146-241-121-28.dyn.eolo.it. [146.241.121.28])
+        by smtp.gmail.com with ESMTPSA id p10-20020a5d68ca000000b002c59e001631sm16443877wrw.77.2023.03.08.12.34.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Mar 2023 12:34:44 -0800 (PST)
+Message-ID: <f0c49fb4b682b81d64184d1181bc960728907474.camel@redhat.com>
+Subject: Re: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex
+ contention
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     netdev@vger.kernel.org, Soheil Hassas Yeganeh <soheil@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Date:   Wed, 08 Mar 2023 21:34:43 +0100
+In-Reply-To: <20230308104054.84612fbe99e8a57ae57b5ff0@linux-foundation.org>
+References: <e8228f0048977456466bc33b42600e929fedd319.1678213651.git.pabeni@redhat.com>
+         <20230307133057.1904d8ffab2980f8e23ee3cc@linux-foundation.org>
+         <f049d74b59323ed2ad16a0b52de86f157ae353ce.camel@redhat.com>
+         <20230308104054.84612fbe99e8a57ae57b5ff0@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,126 +89,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 8, 2023 at 12:16=E2=80=AFPM Johannes Weiner <hannes@cmpxchg.org=
-> wrote:
->
-> On Wed, Mar 08, 2023 at 10:01:24AM -0800, Yosry Ahmed wrote:
-> > On Wed, Mar 8, 2023 at 8:00=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.=
-org> wrote:
-> > >
-> > > Hello Yosry,
-> > >
-> > > On Tue, Feb 28, 2023 at 08:50:00AM +0000, Yosry Ahmed wrote:
-> > > > Reclaimed pages through other means than LRU-based reclaim are trac=
-ked
-> > > > through reclaim_state in struct scan_control, which is stashed in
-> > > > current task_struct. These pages are added to the number of reclaim=
-ed
-> > > > pages through LRUs. For memcg reclaim, these pages generally cannot=
- be
-> > > > linked to the memcg under reclaim and can cause an overestimated co=
-unt
-> > > > of reclaimed pages. This short series tries to address that.
-> > >
-> > > Could you please add more details on how this manifests as a problem
-> > > with real workloads?
-> >
-> > We haven't observed problems in production workloads, but we have
-> > observed problems in testing using memory.reclaim when sometimes a
-> > write to memory.reclaim would succeed when we didn't fully reclaim the
-> > requested amount. This leads to tests flaking sometimes, and we have
-> > to look into the failures to find out if there is a real problem or
-> > not.
->
-> Ah, that would be great to have in the cover letter. Thanks!
+On Wed, 2023-03-08 at 10:40 -0800, Andrew Morton wrote:
+> On Wed, 08 Mar 2023 09:55:31 +0100 Paolo Abeni <pabeni@redhat.com> wrote:
+>=20
+> > I have a process question: I understand this is queued for the mm-
+> > nonmm-unstable branch. Should I send a v5 with the above comments
+> > changes or an incremental patch or something completely different?
+>=20
+> Either is OK.  If it's a v5 I'll usually queue a delta so people who
+> have a;ready reviewed can see what changed.  That delta is later
+> squashed and I'll use v5's changelog for the whole.
 
-Will do in the next version.
+Since even the changelog needs some fixup, I'll send a v5.
 
->
-> Have you also tested this patch against prod without memory.reclaim?
-> Just to make sure there are no problems with cgroup OOMs or
-> similar. There shouldn't be, but, you know...
+Thanks,
 
-Honestly, no. I was debugging a test flake and I spotted that this was
-the cause, came up with patches to address it, and sent it to the
-mailing list for feedback. We did not want to merge it internally if
-it's not going to land upstream -- with the rationale that making the
-test more tolerant might be better than maintaining the patch
-internally, although that is not ideal of course (as it can hide
-actual failures from different sources).
+Paolo
 
->
-> > > > Patch 1 is just refactoring updating reclaim_state into a helper
-> > > > function, and renames reclaimed_slab to just reclaimed, with a comm=
-ent
-> > > > describing its true purpose.
-> > >
-> > > Looking through the code again, I don't think these helpers add value=
-.
-> > >
-> > > report_freed_pages() is fairly vague. Report to who? It abstracts onl=
-y
-> > > two lines of code, and those two lines are more descriptive of what's
-> > > happening than the helper is. Just leave them open-coded.
-> >
-> > I agree the name is not great, I am usually bad at naming things and
-> > hope people would point that out (like you're doing now). The reason I
-> > added it is to contain the logic within mm/vmscan.c such that future
-> > changes do not have to add noisy diffs to a lot of unrelated files. If
-> > you have a better name that makes more sense to you please let me
-> > know, otherwise I'm fine dropping the helper as well, no strong
-> > opinions here.
->
-> I tried to come up with something better, but wasn't happy with any of
-> the options, either. So I defaulted to just leaving it alone :-)
->
-> It's part of the shrinker API and the name hasn't changed since the
-> initial git import of the kernel tree. It should be fine, churn-wise.
-
-Last attempt, just update_reclaim_state() (corresponding to
-flush_reclaim_state() below). It doesn't tell a story, but neither
-does incrementing a counter in current->reclaim_state. If that doesn't
-make you happy I'll give up now and leave it as-is :)
-
->
-> > > add_non_vmanscan_reclaimed() may or may not add anything. But let's
-> > > take a step back. It only has two callsites because lrugen duplicates
-> > > the entire reclaim implementation, including the call to shrink_slab(=
-)
-> > > and the transfer of reclaim_state to sc->nr_reclaimed.
-> > >
-> > > IMO the resulting code would overall be simpler, less duplicative and
-> > > easier to follow if you added a common shrink_slab_reclaim() that
-> > > takes sc, handles the transfer, and documents the memcg exception.
-> >
-> > IIUC you mean something like:
-> >
-> > void shrink_slab_reclaim(struct scan_control *sc, pg_data_t *pgdat,
-> > struct mem_cgroup *memcg)
-> > {
-> >     shrink_slab(sc->gfp_mask, pgdat->node_id, memcg, sc->priority);
-> >
-> >     /* very long comment */
-> >     if (current->reclaim_state && !cgroup_reclaim(sc)) {
-> >         sc->nr_reclaimed +=3D current->reclaim_state->reclaimed;
-> >         current->reclaim_state->reclaimed =3D 0;
-> >     }
-> > }
->
-> Sorry, I screwed up, that doesn't actually work.
->
-> reclaim_state is used by buffer heads freed in shrink_folio_list() ->
-> filemap_release_folio(). So flushing the count cannot be shrink_slab()
-> specific. Bummer. Your patch had it right by making a helper for just
-> flushing the reclaim state. But add_non_vmscan_reclaimed() is then
-> also not a great name because these frees are directly from vmscan.
->
-> Maybe simply flush_reclaim_state()?
-
-Sounds good and simple enough, I will use that for the next version.
-
->
-> As far as the name reclaimed_slab, I agree it's not optimal, although
-> 90% accurate ;-) I wouldn't mind a rename to just 'reclaimed'.
-
-Got it.
