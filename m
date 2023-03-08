@@ -2,58 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D0896AFC37
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 02:23:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA1D26AFC3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 02:26:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbjCHBXI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 20:23:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37052 "EHLO
+        id S230030AbjCHB0v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 20:26:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbjCHBXH (ORCPT
+        with ESMTP id S229733AbjCHB0s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 20:23:07 -0500
+        Tue, 7 Mar 2023 20:26:48 -0500
 Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D99C1F5E1;
-        Tue,  7 Mar 2023 17:23:05 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id g3so59918309eda.1;
-        Tue, 07 Mar 2023 17:23:05 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75AD2898DB;
+        Tue,  7 Mar 2023 17:26:46 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id j11so40291961edq.4;
+        Tue, 07 Mar 2023 17:26:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678238584;
+        d=gmail.com; s=20210112; t=1678238805;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KskDoY551EmOHdJiRobDKDE+GFk+1yzE3Gg+RoSEyLY=;
-        b=JkQ0bhqC4Am3GcwuI0OROo84uG8MtJapLie7+68UMHC5Os+sArhf+fMXrkFCEwU6ih
-         z3CNo5ZBcJnEAEyOG50vquTJXubVuAGEqRAiR31KBRlocW8rqfEsPA4BnETM4Yh7xcAm
-         YcKY/PFP7waSJx5BEx6c3DL89+jR12G/ty2oqNEFShnLxgaNCdxXu0tZH5LLqyra+MCT
-         HJwIeOkqve/OxsgaKJwKzTCSC9eb6CRCnxh4jAJ/6l9LNpdjbC+gwWf0sVXvg2pW9aUk
-         ozl55DldiDnJFtOtvrzhwLtnTEeybIg8Xv/RGwgIJyjv8wyNtfFqeb7kjyerqQ2I9QSO
-         lycA==
+        bh=Li/ZgFXVP1Se56QdUsy/uv0TfvyuXofWTKsHZLAR0u8=;
+        b=iZJUH/J3LDHn1vSlVYlB7F4OHGs5nuClm3+6k8o+tyMEXcAAf+O8L5y5J+2Pv9Gs4K
+         Bs1GUbaLIH0J6VMGlPCk3vrLv/mDc65kQxDprstIs/Lf/97jeXemaXO9qNYzkWriaknm
+         7FCQcI0IvaKd4lHCmBfIkTpmicWyPD0zViylk0JeHezdLu+GguQt/JP4vSwuUs6zoj1w
+         4UwpxTYwgDFIOG9/dpCSqJzEdGkMp1izGNuL7NksYzGThWC50sFa1voZkIyMUyy4H2qM
+         RDOPp+nNKY7/sNZHTFVb6AewEA9FaumABuAEtxckMPOFGgh2G1x5LpuQiEC1evnesim8
+         JNdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678238584;
+        d=1e100.net; s=20210112; t=1678238805;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KskDoY551EmOHdJiRobDKDE+GFk+1yzE3Gg+RoSEyLY=;
-        b=XurVw3H66Gb/y6VXWowUv8/exrs/A9+c/hbmyGwBbO0KCAZkfPRg2HiC6IYERBAcAE
-         AV127IHMCPu5+jNH2LPdTvMBz6bKat3xaqZ6xaZ952eNu6bcyQNv1gACrcTQeX+vhtu9
-         HRlMD6Esjsb4Koxn/UbzVuTyQ6GA3iXHcMWX59IqNd0KEgvfx9arLi/XzwB3coO2LEsU
-         4WTGRTr2AK+2HNcLN6fttBMJO1xjJFDC8k/dZ1lbZNnq76umcr7xcYdJFGro1VKNGJMN
-         vPDUD9bOx/Jsl6PVhAxFo9xCqG37VEjJ7fxKerq7u2KuLiBzA87bCOiPIqSrEisXAGgB
-         iMRQ==
-X-Gm-Message-State: AO0yUKXzOpEEeKCzOmFhGeKfM7fWis0zOemY47PH89shuzzA92UE3anW
-        0PE1qomW9EP0KLXIKcGEVz74jgqKIDmMGxvPErY=
-X-Google-Smtp-Source: AK7set8UF2ElgsF28TDecwVtSd8IHMfsKKXYJQppk+w1+yzC8tJQLsFc92Ik1julFeaWkn6KOgvNREeU2jUpuJ0aQbY=
-X-Received: by 2002:a17:907:33c1:b0:8b0:fbd5:2145 with SMTP id
- zk1-20020a17090733c100b008b0fbd52145mr8286182ejb.15.1678238583714; Tue, 07
- Mar 2023 17:23:03 -0800 (PST)
+        bh=Li/ZgFXVP1Se56QdUsy/uv0TfvyuXofWTKsHZLAR0u8=;
+        b=N21ukIxRm77qaMWuo7X3bVyb46j15K7eTWVNO8oG9ntsfZE2pymVTHWKhAQgrTEHVQ
+         XY9oLOBEA+E79ZihdKsaad4ZnIAd8a9Th0+TqiREdlF09L/gDwxuuiF0UdH3OGo+h792
+         UGDsj0whC4aZuPypYjxDJiIR721amvHF+ujl88JEdgS/J+LYQG1dI+Sc97pm3ELY3LwY
+         unQSXR82WkfzeVkYtqHPEst0TDaynQCqAQ+5S96gW592sB97CjMTmkPkbHofbVgpkIt5
+         6yAMScXh2CfUX5zd2gWhrtWO9Q3+metnCxqfYLo2X2u2ul0e6ECmfLSwildE1UvJpy5t
+         rbjg==
+X-Gm-Message-State: AO0yUKUyT9K8JPt892P3UL1hKjUVPqBYo5Tgh+bu6r/+4Wm15esy42Xr
+        vM/MXesIcqnDbtPdVxcVGMDeSF8sl4OKunPJWOLYOuZbDnc=
+X-Google-Smtp-Source: AK7set/Yboq1ECwCfm6ab/yrsQXlJu0ggY8MGTJNHj7mLxZr/bf0BTOQb2Z15ZV6UhYJ9ldsL72UsBPkNBwjVCNYx2c=
+X-Received: by 2002:a50:8711:0:b0:4bb:d098:2138 with SMTP id
+ i17-20020a508711000000b004bbd0982138mr8943838edb.5.1678238804760; Tue, 07 Mar
+ 2023 17:26:44 -0800 (PST)
 MIME-Version: 1.0
-References: <20230228093206.821563-1-jolsa@kernel.org> <20230228093206.821563-6-jolsa@kernel.org>
-In-Reply-To: <20230228093206.821563-6-jolsa@kernel.org>
+References: <20230228093206.821563-1-jolsa@kernel.org> <20230228093206.821563-8-jolsa@kernel.org>
+In-Reply-To: <20230228093206.821563-8-jolsa@kernel.org>
 From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 7 Mar 2023 17:22:51 -0800
-Message-ID: <CAEf4BzZsOvvPJRt69vj+YCAJ1DAXgLSD0E3rfoMOLo3c6mSKiQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 bpf-next 5/9] selftests/bpf: Add read_buildid function
+Date:   Tue, 7 Mar 2023 17:26:32 -0800
+Message-ID: <CAEf4Bzb-ZuR6RwgGEw1Dyy+HtvyzdnCYXWXU86v=694rWcZpAA@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 bpf-next 7/9] selftests/bpf: Replace
+ extract_build_id with read_build_id
 To:     Jiri Olsa <jolsa@kernel.org>
 Cc:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -87,167 +88,193 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Tue, Feb 28, 2023 at 1:33=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
 >
-> Adding read_build_id function that parses out build id from
-> specified binary.
->
-> It will replace extract_build_id and also be used in following
-> changes.
+> Replacing extract_build_id with read_build_id that parses out
+> build id directly from elf without using readelf tool.
 >
 > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
->  tools/testing/selftests/bpf/trace_helpers.c | 98 +++++++++++++++++++++
->  tools/testing/selftests/bpf/trace_helpers.h |  5 ++
->  2 files changed, 103 insertions(+)
+
+small nit below, but looks good. Thanks for clean up!
+
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+>  .../bpf/prog_tests/stacktrace_build_id.c      | 19 ++++++--------
+>  .../bpf/prog_tests/stacktrace_build_id_nmi.c  | 17 +++++--------
+>  tools/testing/selftests/bpf/test_progs.c      | 25 -------------------
+>  tools/testing/selftests/bpf/test_progs.h      |  1 -
+>  4 files changed, 13 insertions(+), 49 deletions(-)
 >
-> diff --git a/tools/testing/selftests/bpf/trace_helpers.c b/tools/testing/=
-selftests/bpf/trace_helpers.c
-> index 09a16a77bae4..c10e16626cd3 100644
-> --- a/tools/testing/selftests/bpf/trace_helpers.c
-> +++ b/tools/testing/selftests/bpf/trace_helpers.c
-> @@ -11,6 +11,9 @@
->  #include <linux/perf_event.h>
->  #include <sys/mman.h>
->  #include "trace_helpers.h"
-> +#include <linux/limits.h>
-> +#include <libelf.h>
-> +#include <gelf.h>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c=
+ b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
+> index 9ad09a6c538a..9e4b76ee356f 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
+> @@ -7,13 +7,12 @@ void test_stacktrace_build_id(void)
 >
->  #define DEBUGFS "/sys/kernel/debug/tracing/"
+>         int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd;
+>         struct test_stacktrace_build_id *skel;
+> -       int err, stack_trace_len;
+> +       int err, stack_trace_len, build_id_size;
+>         __u32 key, prev_key, val, duration =3D 0;
+> -       char buf[256];
+> -       int i, j;
+> +       char buf[BPF_BUILD_ID_SIZE];
+>         struct bpf_stack_build_id id_offs[PERF_MAX_STACK_DEPTH];
+>         int build_id_matches =3D 0;
+> -       int retry =3D 1;
+> +       int i, retry =3D 1;
 >
-> @@ -230,3 +233,98 @@ ssize_t get_rel_offset(uintptr_t addr)
->         fclose(f);
->         return -EINVAL;
+>  retry:
+>         skel =3D test_stacktrace_build_id__open_and_load();
+> @@ -52,9 +51,10 @@ void test_stacktrace_build_id(void)
+>                   "err %d errno %d\n", err, errno))
+>                 goto cleanup;
+>
+> -       err =3D extract_build_id(buf, 256);
+> +       build_id_size =3D read_build_id("./urandom_read", buf);
+
+nit: "urandom_read" vs "./urandom_read" matters only when executing
+binary, not when opening a file. So all these "./" just creates
+unnecessary confusion, IMO
+
+> +       err =3D build_id_size < 0 ? build_id_size : 0;
+>
+> -       if (CHECK(err, "get build_id with readelf",
+> +       if (CHECK(err, "read_build_id",
+>                   "err %d errno %d\n", err, errno))
+>                 goto cleanup;
+>
+> @@ -64,8 +64,6 @@ void test_stacktrace_build_id(void)
+>                 goto cleanup;
+>
+>         do {
+> -               char build_id[64];
+> -
+>                 err =3D bpf_map_lookup_elem(stackmap_fd, &key, id_offs);
+>                 if (CHECK(err, "lookup_elem from stackmap",
+>                           "err %d, errno %d\n", err, errno))
+> @@ -73,10 +71,7 @@ void test_stacktrace_build_id(void)
+>                 for (i =3D 0; i < PERF_MAX_STACK_DEPTH; ++i)
+>                         if (id_offs[i].status =3D=3D BPF_STACK_BUILD_ID_V=
+ALID &&
+>                             id_offs[i].offset !=3D 0) {
+> -                               for (j =3D 0; j < 20; ++j)
+> -                                       sprintf(build_id + 2 * j, "%02x",
+> -                                               id_offs[i].build_id[j] & =
+0xff);
+> -                               if (strstr(buf, build_id) !=3D NULL)
+> +                               if (memcmp(buf, id_offs[i].build_id, buil=
+d_id_size) =3D=3D 0)
+>                                         build_id_matches =3D 1;
+>                         }
+>                 prev_key =3D key;
+> diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_n=
+mi.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
+> index f4ea1a215ce4..8d84149ebcc7 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
+> @@ -28,11 +28,10 @@ void test_stacktrace_build_id_nmi(void)
+>                 .config =3D PERF_COUNT_HW_CPU_CYCLES,
+>         };
+>         __u32 key, prev_key, val, duration =3D 0;
+> -       char buf[256];
+> -       int i, j;
+> +       char buf[BPF_BUILD_ID_SIZE];
+>         struct bpf_stack_build_id id_offs[PERF_MAX_STACK_DEPTH];
+> -       int build_id_matches =3D 0;
+> -       int retry =3D 1;
+> +       int build_id_matches =3D 0, build_id_size;
+> +       int i, retry =3D 1;
+>
+>         attr.sample_freq =3D read_perf_max_sample_freq();
+>
+> @@ -94,7 +93,8 @@ void test_stacktrace_build_id_nmi(void)
+>                   "err %d errno %d\n", err, errno))
+>                 goto cleanup;
+>
+> -       err =3D extract_build_id(buf, 256);
+> +       build_id_size =3D read_build_id("./urandom_read", buf);
+> +       err =3D build_id_size < 0 ? build_id_size : 0;
+>
+>         if (CHECK(err, "get build_id with readelf",
+>                   "err %d errno %d\n", err, errno))
+> @@ -106,8 +106,6 @@ void test_stacktrace_build_id_nmi(void)
+>                 goto cleanup;
+>
+>         do {
+> -               char build_id[64];
+> -
+>                 err =3D bpf_map__lookup_elem(skel->maps.stackmap, &key, s=
+izeof(key),
+>                                            id_offs, sizeof(id_offs), 0);
+>                 if (CHECK(err, "lookup_elem from stackmap",
+> @@ -116,10 +114,7 @@ void test_stacktrace_build_id_nmi(void)
+>                 for (i =3D 0; i < PERF_MAX_STACK_DEPTH; ++i)
+>                         if (id_offs[i].status =3D=3D BPF_STACK_BUILD_ID_V=
+ALID &&
+>                             id_offs[i].offset !=3D 0) {
+> -                               for (j =3D 0; j < 20; ++j)
+> -                                       sprintf(build_id + 2 * j, "%02x",
+> -                                               id_offs[i].build_id[j] & =
+0xff);
+> -                               if (strstr(buf, build_id) !=3D NULL)
+> +                               if (memcmp(buf, id_offs[i].build_id, buil=
+d_id_size) =3D=3D 0)
+>                                         build_id_matches =3D 1;
+>                         }
+>                 prev_key =3D key;
+> diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/sel=
+ftests/bpf/test_progs.c
+> index 6d5e3022c75f..9813d53c4878 100644
+> --- a/tools/testing/selftests/bpf/test_progs.c
+> +++ b/tools/testing/selftests/bpf/test_progs.c
+> @@ -591,31 +591,6 @@ int compare_stack_ips(int smap_fd, int amap_fd, int =
+stack_trace_len)
+>         return err;
 >  }
-> +
-> +static int
-> +parse_build_id_buf(const void *note_start, Elf32_Word note_size,
-> +                  char *build_id)
-> +{
-> +       Elf32_Word note_offs =3D 0, new_offs;
-> +
-> +       while (note_offs + sizeof(Elf32_Nhdr) < note_size) {
-> +               Elf32_Nhdr *nhdr =3D (Elf32_Nhdr *)(note_start + note_off=
-s);
-> +
-> +               if (nhdr->n_type =3D=3D 3 &&
-> +                   nhdr->n_namesz =3D=3D sizeof("GNU") &&
-> +                   !strcmp((char *)(nhdr + 1), "GNU") &&
-> +                   nhdr->n_descsz > 0 &&
-> +                   nhdr->n_descsz <=3D BPF_BUILD_ID_SIZE) {
-> +                       memcpy(build_id, note_start + note_offs +
-> +                              ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhd=
-r),
-> +                              nhdr->n_descsz);
-> +                       memset(build_id + nhdr->n_descsz, 0,
-> +                              BPF_BUILD_ID_SIZE - nhdr->n_descsz);
-
-I won't count :) but if something fits within 100 characters, please
-keep it on single line
-
-> +                       return (int) nhdr->n_descsz;
-> +               }
-> +
-> +               new_offs =3D note_offs + sizeof(Elf32_Nhdr) +
-> +                          ALIGN(nhdr->n_namesz, 4) + ALIGN(nhdr->n_descs=
-z, 4);
-> +
-> +               if (new_offs >=3D note_size)
-> +                       break;
-> +               note_offs =3D new_offs;
-> +       }
-> +
-> +       return -EINVAL;
-> +}
-> +
-> +/* Reads binary from *path* file and returns it in the *build_id*
-> + * which is expected to be at least BPF_BUILD_ID_SIZE bytes.
-> + * Returns size of build id on success. On error the error value
-> + * is returned.
-> + */
-> +int read_build_id(const char *path, char *build_id)
-> +{
-> +       int fd, err =3D -EINVAL;
-> +       Elf *elf =3D NULL;
-> +       GElf_Ehdr ehdr;
-> +       size_t max, i;
-> +
-> +       fd =3D open(path, O_RDONLY | O_CLOEXEC);
-> +       if (fd < 0)
-> +               return -errno;
-> +
-> +       (void)elf_version(EV_CURRENT);
-> +
-> +       elf =3D elf_begin(fd, ELF_C_READ, NULL);
-> +       if (!elf)
-> +               goto out;
-> +
-> +       if (elf_kind(elf) !=3D ELF_K_ELF)
-> +               goto out;
-> +
-> +       if (gelf_getehdr(elf, &ehdr) =3D=3D NULL)
-> +               goto out;
-> +
-> +       if (ehdr.e_ident[EI_CLASS] !=3D ELFCLASS64)
-> +               goto out;
-> +
-> +       for (i =3D 0; i < ehdr.e_phnum; i++) {
-> +               GElf_Phdr mem, *phdr;
-> +               char *data;
-> +
-> +               phdr =3D gelf_getphdr(elf, i, &mem);
-> +               if (!phdr)
-> +                       goto out;
-> +
-> +               if (phdr->p_type !=3D PT_NOTE)
-> +                       continue;
-> +
-> +               data =3D elf_rawfile(elf, &max);
-> +               if (!data)
-> +                       goto out;
-> +
-> +               if (phdr->p_offset >=3D max ||
-> +                  (phdr->p_offset + phdr->p_memsz >=3D max))
-> +                       goto out;
-> +
-> +               err =3D parse_build_id_buf(data + phdr->p_offset, phdr->p=
-_memsz, build_id);
-> +               if (err > 0)
-> +                       goto out;
-> +       }
-> +
-> +out:
-> +       if (elf)
-> +               elf_end(elf);
-> +       close(fd);
-> +       return err;
-> +}
-> diff --git a/tools/testing/selftests/bpf/trace_helpers.h b/tools/testing/=
-selftests/bpf/trace_helpers.h
-> index 53efde0e2998..50b2cc498ba7 100644
-> --- a/tools/testing/selftests/bpf/trace_helpers.h
-> +++ b/tools/testing/selftests/bpf/trace_helpers.h
-> @@ -4,6 +4,9 @@
 >
->  #include <bpf/libbpf.h>
->
-> +#define ALIGN(x, a)            __ALIGN_MASK(x, (typeof(x))(a)-1)
-> +#define __ALIGN_MASK(x, mask)  (((x)+(mask))&~(mask))
-
-nit: I know these are macros, but why would you first use __ALIGN_MASK
-and then #define it? swap them?
-
-
-> +
->  struct ksym {
->         long addr;
->         char *name;
-> @@ -23,4 +26,6 @@ void read_trace_pipe(void);
->  ssize_t get_uprobe_offset(const void *addr);
->  ssize_t get_rel_offset(uintptr_t addr);
->
-> +int read_build_id(const char *path, char *build_id);
-> +
->  #endif
+> -int extract_build_id(char *build_id, size_t size)
+> -{
+> -       FILE *fp;
+> -       char *line =3D NULL;
+> -       size_t len =3D 0;
+> -
+> -       fp =3D popen("readelf -n ./urandom_read | grep 'Build ID'", "r");
+> -       if (fp =3D=3D NULL)
+> -               return -1;
+> -
+> -       if (getline(&line, &len, fp) =3D=3D -1)
+> -               goto err;
+> -       pclose(fp);
+> -
+> -       if (len > size)
+> -               len =3D size;
+> -       memcpy(build_id, line, len);
+> -       build_id[len] =3D '\0';
+> -       free(line);
+> -       return 0;
+> -err:
+> -       pclose(fp);
+> -       return -1;
+> -}
+> -
+>  static int finit_module(int fd, const char *param_values, int flags)
+>  {
+>         return syscall(__NR_finit_module, fd, param_values, flags);
+> diff --git a/tools/testing/selftests/bpf/test_progs.h b/tools/testing/sel=
+ftests/bpf/test_progs.h
+> index 9fbdc57c5b57..3825c2797a4b 100644
+> --- a/tools/testing/selftests/bpf/test_progs.h
+> +++ b/tools/testing/selftests/bpf/test_progs.h
+> @@ -404,7 +404,6 @@ static inline void *u64_to_ptr(__u64 ptr)
+>  int bpf_find_map(const char *test, struct bpf_object *obj, const char *n=
+ame);
+>  int compare_map_keys(int map1_fd, int map2_fd);
+>  int compare_stack_ips(int smap_fd, int amap_fd, int stack_trace_len);
+> -int extract_build_id(char *build_id, size_t size);
+>  int kern_sync_rcu(void);
+>  int trigger_module_test_read(int read_sz);
+>  int trigger_module_test_write(int write_sz);
 > --
 > 2.39.2
 >
