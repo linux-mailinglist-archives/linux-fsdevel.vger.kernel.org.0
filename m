@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D63DA6B09D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 14:51:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EB396B0A4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 15:01:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231503AbjCHNvY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 08:51:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51488 "EHLO
+        id S232030AbjCHOBh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 09:01:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231416AbjCHNvT (ORCPT
+        with ESMTP id S231887AbjCHOBN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 08:51:19 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E711B8F718;
-        Wed,  8 Mar 2023 05:51:13 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id o11-20020a05600c4fcb00b003eb33ea29a8so1197839wmq.1;
-        Wed, 08 Mar 2023 05:51:13 -0800 (PST)
+        Wed, 8 Mar 2023 09:01:13 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB34F31E0A;
+        Wed,  8 Mar 2023 06:00:06 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id az36so9878584wmb.1;
+        Wed, 08 Mar 2023 06:00:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678283472;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2a7IZeMYO9n6PXhDENMf/0WN13+dEVs/avcgaXRcG/k=;
-        b=A4NTo7Z6YDgzCwMQESROwQaWS7+cg9Iy1ytO1f0y336fkSDEYoFEwSWHuMio2AeImv
-         bRKfQOPZS7v7R8U6HmQRtcOA2GmhZ7dXgMzYNjo0fDH0ScPWI0V6twP+EVgUmWmt9j+5
-         qJj4k5QZ/geasNr19348OmPQkRXOJpbvvsrRy0RL54mL+tySiJ+QoZRhhU9YG79PINK1
-         kERy8iZxpB6awyslCA7+Usb+u05LnxScq5SqVkyt6rluOcUlzOxOawVHn2MbjEq+Eqkh
-         QRUARSyxOX7fJCt4YFU0PBFlW9OGyW36+oQQ0TGau6MT7BLuiC5P4+0x+GaandeSVmXQ
-         OI9g==
+        d=gmail.com; s=20210112; t=1678284005;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ijCIwYAPHXH0JJ+XDQYDNj+O+tMouNaBIO9o2nVcDs8=;
+        b=THbWYOEzoZY1Wq+Hj1c1Z23EGHOERcBr1xS1UYnd58sZJTcj65wRsmdBIpATJ5ZEvi
+         2UAVbYzzXm/CbuXOWd3xUzPdspNUTbXiSmWUcIwdZf2tJHwERpph/iO374/hLyv3thOL
+         SvK0uufuL6YupsR1/whQEb7+NQ4S1vJHyWn8V2qwBJ20rF0EKy9Y95Grl+3dP2JnFPaW
+         7T1p14NXqyYLqGuXhvElEuCQL3j5gA9Lj0e29CuyX1XJSUA634hNOPRicebRONgNJPKX
+         XyBpPzpprlp6ybWCSiTz/Mvf2CyQwxL4FwnnBzp/yTsbvD5CHU4WFnECZPlcfwOfiowB
+         hJYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678283472;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2a7IZeMYO9n6PXhDENMf/0WN13+dEVs/avcgaXRcG/k=;
-        b=P1davj40wEI+te7gOZQj/GzXqw2FigY2K1rSXsTFhMMKbjlL6jr9jv3vdeMvDY8R0x
-         97Y/3RGw7b16Kvm74qxZ1jn3UG9PFMAZS0ppbe/BWpbNY5tyZRrM+74KXD9zDh+5QDVl
-         S1wJUJw1qb/k6bpTCoICZ6E7G5rBGu8/lUqDlT6nfhMJ9LDQn5/zMRgV9pWgHMg6LY1c
-         ZJpFo77elh9gk56AKOZBLmPuzrzP7/XWvwYhop0cH0fjuMd4AJowF45DcDIY1vyjBUrF
-         LtEAzZSneFt85X+U43htP0BDyajGimoIewbaqDV75j2S3jPiRxlvdDM7ubvbNH50vkX5
-         QHdw==
-X-Gm-Message-State: AO0yUKWydeaOpa6SsoP8qkE2/L7ZoSEvuBfz9Lu1YdPhYDe56GHut2f/
-        z65hcYS8tdMtPsOhudKtwcQ=
-X-Google-Smtp-Source: AK7set/iI0f+bFuGX2KOYnRyVO55NVMzanwW/UZXPecNwIj6030n4Qu5dMtQwcP4F+mKYfu9HOXczw==
-X-Received: by 2002:a05:600c:3d14:b0:3df:9858:c033 with SMTP id bh20-20020a05600c3d1400b003df9858c033mr16288216wmb.8.1678283472235;
-        Wed, 08 Mar 2023 05:51:12 -0800 (PST)
+        d=1e100.net; s=20210112; t=1678284005;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ijCIwYAPHXH0JJ+XDQYDNj+O+tMouNaBIO9o2nVcDs8=;
+        b=4gfywHiKLs4eJcfVm5amaWwkuFfNhbUeVgNz5drpHUhlGOMU5oJ1ZyVNha2v8iJIe/
+         QWMnX0wwWlpH/3Z+mg+bkau75+drtdlvooL0nSr9vHik9hxiHl09ugYTuyrNUfp2p2O1
+         MdGmakCAUcn9RtVg70YoY33YwL7Ztq6rOJS/J9YaxApHG9swchicY2MJmSWczGp0349q
+         /XuzrVlwGVuswkL7kIxcdXQYIWNjRrrrR+S2EwPe276cXvdqr8Wk9ToXVwqkiKvdumM/
+         yZQ+iW5awRfQQ+2ro4dWxPC01rn8Dp3vpQ43U9uKNmHTs/2Cd5kVm0uKA8NZDlzM+dB+
+         jS4g==
+X-Gm-Message-State: AO0yUKUEOi34wugND4buA09P0kga8b/R1JWTsQJn6iMf59hr2WqDJVRL
+        xdaFV4WAjf7iqotp8swSyv4=
+X-Google-Smtp-Source: AK7set/vn8OmbYpYQOF2rZW6B03lZoH7qD0Ni12/ue2KmXWMbAqnSzbBF1zwnu0kRzByWKofxqOH9A==
+X-Received: by 2002:a05:600c:4fc5:b0:3e2:1f63:4beb with SMTP id o5-20020a05600c4fc500b003e21f634bebmr16964014wmq.19.1678284005129;
+        Wed, 08 Mar 2023 06:00:05 -0800 (PST)
 Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id o14-20020a05600c510e00b003dc522dd25esm4731434wms.30.2023.03.08.05.51.10
+        by smtp.gmail.com with ESMTPSA id q8-20020a05600c46c800b003e7f1086660sm21557344wmo.15.2023.03.08.06.00.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 05:51:11 -0800 (PST)
+        Wed, 08 Mar 2023 06:00:04 -0800 (PST)
 From:   Jiri Olsa <olsajiri@gmail.com>
 X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date:   Wed, 8 Mar 2023 14:51:09 +0100
+Date:   Wed, 8 Mar 2023 15:00:02 +0100
 To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
 Cc:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -72,17 +71,16 @@ Cc:     Alexei Starovoitov <ast@kernel.org>,
         Stanislav Fomichev <sdf@google.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Namhyung Kim <namhyung@gmail.com>
-Subject: Re: [PATCH RFC v2 bpf-next 7/9] selftests/bpf: Replace
- extract_build_id with read_build_id
-Message-ID: <ZAiSzVTaOuWw5qRU@krava>
+Subject: Re: [PATCH RFC v2 bpf-next 9/9] selftests/bpf: Add
+ iter_task_vma_buildid test
+Message-ID: <ZAiU4nk5zKey4p5O@krava>
 References: <20230228093206.821563-1-jolsa@kernel.org>
- <20230228093206.821563-8-jolsa@kernel.org>
- <CAEf4Bzb-ZuR6RwgGEw1Dyy+HtvyzdnCYXWXU86v=694rWcZpAA@mail.gmail.com>
+ <20230228093206.821563-10-jolsa@kernel.org>
+ <CAEf4BzbLz5q8NgREMEiOPumSBEhKMh0rDC=1ii8Muvm4Whg59w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bzb-ZuR6RwgGEw1Dyy+HtvyzdnCYXWXU86v=694rWcZpAA@mail.gmail.com>
+In-Reply-To: <CAEf4BzbLz5q8NgREMEiOPumSBEhKMh0rDC=1ii8Muvm4Whg59w@mail.gmail.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -93,189 +91,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 07, 2023 at 05:26:32PM -0800, Andrii Nakryiko wrote:
-> On Tue, Feb 28, 2023 at 1:33 AM Jiri Olsa <jolsa@kernel.org> wrote:
-> >
-> > Replacing extract_build_id with read_build_id that parses out
-> > build id directly from elf without using readelf tool.
-> >
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> 
-> small nit below, but looks good. Thanks for clean up!
-> 
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> 
-> >  .../bpf/prog_tests/stacktrace_build_id.c      | 19 ++++++--------
-> >  .../bpf/prog_tests/stacktrace_build_id_nmi.c  | 17 +++++--------
-> >  tools/testing/selftests/bpf/test_progs.c      | 25 -------------------
-> >  tools/testing/selftests/bpf/test_progs.h      |  1 -
-> >  4 files changed, 13 insertions(+), 49 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
-> > index 9ad09a6c538a..9e4b76ee356f 100644
-> > --- a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
-> > +++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
-> > @@ -7,13 +7,12 @@ void test_stacktrace_build_id(void)
-> >
-> >         int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd;
-> >         struct test_stacktrace_build_id *skel;
-> > -       int err, stack_trace_len;
-> > +       int err, stack_trace_len, build_id_size;
-> >         __u32 key, prev_key, val, duration = 0;
-> > -       char buf[256];
-> > -       int i, j;
-> > +       char buf[BPF_BUILD_ID_SIZE];
-> >         struct bpf_stack_build_id id_offs[PERF_MAX_STACK_DEPTH];
-> >         int build_id_matches = 0;
-> > -       int retry = 1;
-> > +       int i, retry = 1;
-> >
-> >  retry:
-> >         skel = test_stacktrace_build_id__open_and_load();
-> > @@ -52,9 +51,10 @@ void test_stacktrace_build_id(void)
-> >                   "err %d errno %d\n", err, errno))
-> >                 goto cleanup;
-> >
-> > -       err = extract_build_id(buf, 256);
-> > +       build_id_size = read_build_id("./urandom_read", buf);
-> 
-> nit: "urandom_read" vs "./urandom_read" matters only when executing
-> binary, not when opening a file. So all these "./" just creates
-> unnecessary confusion, IMO
+On Tue, Mar 07, 2023 at 05:32:17PM -0800, Andrii Nakryiko wrote:
 
-right, I'll remove it also in the other test
+SNIP
 
-thanks,
+> > diff --git a/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+> > new file mode 100644
+> > index 000000000000..dc528a4783ec
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+> > @@ -0,0 +1,60 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +#include "bpf_iter.h"
+> > +#include "err.h"
+> > +#include <bpf/bpf_helpers.h>
+> > +#include <string.h>
+> > +
+> > +char _license[] SEC("license") = "GPL";
+> > +
+> > +#define VM_EXEC                0x00000004
+> > +#define D_PATH_BUF_SIZE        1024
+> > +
+> > +struct {
+> > +       __uint(type, BPF_MAP_TYPE_HASH);
+> > +       __uint(max_entries, 10000);
+> > +       __type(key, char[D_PATH_BUF_SIZE]);
+> > +       __type(value, struct build_id);
+> > +} files SEC(".maps");
+> > +
+> > +static char path[D_PATH_BUF_SIZE];
+> > +static struct build_id build_id;
+> > +
+> > +SEC("iter/task_vma")
+> > +int proc_maps(struct bpf_iter__task_vma *ctx)
+> > +{
+> > +       struct vm_area_struct *vma = ctx->vma;
+> > +       struct seq_file *seq = ctx->meta->seq;
+> > +       struct task_struct *task = ctx->task;
+> > +       unsigned long file_key;
+> > +       struct inode *inode;
+> > +       struct file *file;
+> > +
+> > +       if (task == (void *)0 || vma == (void *)0)
+> > +               return 0;
+> > +
+> > +       if (!(vma->vm_flags & VM_EXEC))
+> > +               return 0;
+> > +
+> > +       file = vma->vm_file;
+> > +       if (!file)
+> > +               return 0;
+> > +
+> > +       __builtin_memset(path, 0x0, D_PATH_BUF_SIZE);
+> > +       bpf_d_path(&file->f_path, (char *) &path, D_PATH_BUF_SIZE);
+> > +
+> > +       if (bpf_map_lookup_elem(&files, &path))
+> > +               return 0;
+> > +
+> > +       inode = file->f_inode;
+> > +       if (IS_ERR_OR_NULL(inode->i_build_id)) {
+> > +               /* On error return empty build id. */
+> > +               __builtin_memset(&build_id.data, 0x0, sizeof(build_id.data));
+> > +               build_id.sz = 20;
+> 
+> let's replace `#define BUILD_ID_SIZE_MAX 20` in
+> include/linux/buildid.h with `enum { BUILD_ID_SIZE_MAX = 20 };`. This
+> will "expose" this constant into BTF and thus vmlinux.h, so we won't
+> have to hard-code anything. BPF users would be grateful as well.
+> 
+> No downsides of doing this.
+
+ok works nicely.. thanks
+
 jirka
-
-> 
-> > +       err = build_id_size < 0 ? build_id_size : 0;
-> >
-> > -       if (CHECK(err, "get build_id with readelf",
-> > +       if (CHECK(err, "read_build_id",
-> >                   "err %d errno %d\n", err, errno))
-> >                 goto cleanup;
-> >
-> > @@ -64,8 +64,6 @@ void test_stacktrace_build_id(void)
-> >                 goto cleanup;
-> >
-> >         do {
-> > -               char build_id[64];
-> > -
-> >                 err = bpf_map_lookup_elem(stackmap_fd, &key, id_offs);
-> >                 if (CHECK(err, "lookup_elem from stackmap",
-> >                           "err %d, errno %d\n", err, errno))
-> > @@ -73,10 +71,7 @@ void test_stacktrace_build_id(void)
-> >                 for (i = 0; i < PERF_MAX_STACK_DEPTH; ++i)
-> >                         if (id_offs[i].status == BPF_STACK_BUILD_ID_VALID &&
-> >                             id_offs[i].offset != 0) {
-> > -                               for (j = 0; j < 20; ++j)
-> > -                                       sprintf(build_id + 2 * j, "%02x",
-> > -                                               id_offs[i].build_id[j] & 0xff);
-> > -                               if (strstr(buf, build_id) != NULL)
-> > +                               if (memcmp(buf, id_offs[i].build_id, build_id_size) == 0)
-> >                                         build_id_matches = 1;
-> >                         }
-> >                 prev_key = key;
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
-> > index f4ea1a215ce4..8d84149ebcc7 100644
-> > --- a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
-> > +++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
-> > @@ -28,11 +28,10 @@ void test_stacktrace_build_id_nmi(void)
-> >                 .config = PERF_COUNT_HW_CPU_CYCLES,
-> >         };
-> >         __u32 key, prev_key, val, duration = 0;
-> > -       char buf[256];
-> > -       int i, j;
-> > +       char buf[BPF_BUILD_ID_SIZE];
-> >         struct bpf_stack_build_id id_offs[PERF_MAX_STACK_DEPTH];
-> > -       int build_id_matches = 0;
-> > -       int retry = 1;
-> > +       int build_id_matches = 0, build_id_size;
-> > +       int i, retry = 1;
-> >
-> >         attr.sample_freq = read_perf_max_sample_freq();
-> >
-> > @@ -94,7 +93,8 @@ void test_stacktrace_build_id_nmi(void)
-> >                   "err %d errno %d\n", err, errno))
-> >                 goto cleanup;
-> >
-> > -       err = extract_build_id(buf, 256);
-> > +       build_id_size = read_build_id("./urandom_read", buf);
-> > +       err = build_id_size < 0 ? build_id_size : 0;
-> >
-> >         if (CHECK(err, "get build_id with readelf",
-> >                   "err %d errno %d\n", err, errno))
-> > @@ -106,8 +106,6 @@ void test_stacktrace_build_id_nmi(void)
-> >                 goto cleanup;
-> >
-> >         do {
-> > -               char build_id[64];
-> > -
-> >                 err = bpf_map__lookup_elem(skel->maps.stackmap, &key, sizeof(key),
-> >                                            id_offs, sizeof(id_offs), 0);
-> >                 if (CHECK(err, "lookup_elem from stackmap",
-> > @@ -116,10 +114,7 @@ void test_stacktrace_build_id_nmi(void)
-> >                 for (i = 0; i < PERF_MAX_STACK_DEPTH; ++i)
-> >                         if (id_offs[i].status == BPF_STACK_BUILD_ID_VALID &&
-> >                             id_offs[i].offset != 0) {
-> > -                               for (j = 0; j < 20; ++j)
-> > -                                       sprintf(build_id + 2 * j, "%02x",
-> > -                                               id_offs[i].build_id[j] & 0xff);
-> > -                               if (strstr(buf, build_id) != NULL)
-> > +                               if (memcmp(buf, id_offs[i].build_id, build_id_size) == 0)
-> >                                         build_id_matches = 1;
-> >                         }
-> >                 prev_key = key;
-> > diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
-> > index 6d5e3022c75f..9813d53c4878 100644
-> > --- a/tools/testing/selftests/bpf/test_progs.c
-> > +++ b/tools/testing/selftests/bpf/test_progs.c
-> > @@ -591,31 +591,6 @@ int compare_stack_ips(int smap_fd, int amap_fd, int stack_trace_len)
-> >         return err;
-> >  }
-> >
-> > -int extract_build_id(char *build_id, size_t size)
-> > -{
-> > -       FILE *fp;
-> > -       char *line = NULL;
-> > -       size_t len = 0;
-> > -
-> > -       fp = popen("readelf -n ./urandom_read | grep 'Build ID'", "r");
-> > -       if (fp == NULL)
-> > -               return -1;
-> > -
-> > -       if (getline(&line, &len, fp) == -1)
-> > -               goto err;
-> > -       pclose(fp);
-> > -
-> > -       if (len > size)
-> > -               len = size;
-> > -       memcpy(build_id, line, len);
-> > -       build_id[len] = '\0';
-> > -       free(line);
-> > -       return 0;
-> > -err:
-> > -       pclose(fp);
-> > -       return -1;
-> > -}
-> > -
-> >  static int finit_module(int fd, const char *param_values, int flags)
-> >  {
-> >         return syscall(__NR_finit_module, fd, param_values, flags);
-> > diff --git a/tools/testing/selftests/bpf/test_progs.h b/tools/testing/selftests/bpf/test_progs.h
-> > index 9fbdc57c5b57..3825c2797a4b 100644
-> > --- a/tools/testing/selftests/bpf/test_progs.h
-> > +++ b/tools/testing/selftests/bpf/test_progs.h
-> > @@ -404,7 +404,6 @@ static inline void *u64_to_ptr(__u64 ptr)
-> >  int bpf_find_map(const char *test, struct bpf_object *obj, const char *name);
-> >  int compare_map_keys(int map1_fd, int map2_fd);
-> >  int compare_stack_ips(int smap_fd, int amap_fd, int stack_trace_len);
-> > -int extract_build_id(char *build_id, size_t size);
-> >  int kern_sync_rcu(void);
-> >  int trigger_module_test_read(int read_sz);
-> >  int trigger_module_test_write(int write_sz);
-> > --
-> > 2.39.2
-> >
