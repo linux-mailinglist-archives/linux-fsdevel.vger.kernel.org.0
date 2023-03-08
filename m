@@ -2,79 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F5606AFD8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 04:43:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A46206AFDEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 05:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbjCHDnt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Mar 2023 22:43:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47368 "EHLO
+        id S229920AbjCHEeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Mar 2023 23:34:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbjCHDnr (ORCPT
+        with ESMTP id S229718AbjCHEdy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Mar 2023 22:43:47 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C163A648E
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 19:42:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678246952;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3CIFBPqlVsgi4mbIetMfKlJgaIVFbV+dfBNFlisMIHI=;
-        b=K1vOK/aaSG1dIZoUjhsIGBIXk32zyzewPkE4qWGKG1lFbbqb7b3Pa27aTRlD8hqH7bB1pt
-        LMPvdeqPzWxWCbIqUUBg33OTSyVVrkYkaDAZ8NFLpBSttauO8GOsze1s9ED5hgXBeXBNS4
-        lLF2bDroY2hEmvyq4PxUG3WNYlajhKc=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-533-5yysV-1_NE6Zmy2nmbzs4g-1; Tue, 07 Mar 2023 22:42:31 -0500
-X-MC-Unique: 5yysV-1_NE6Zmy2nmbzs4g-1
-Received: by mail-pf1-f199.google.com with SMTP id fb7-20020a056a002d8700b0061c7b700c6dso4020227pfb.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 19:42:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678246950;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3CIFBPqlVsgi4mbIetMfKlJgaIVFbV+dfBNFlisMIHI=;
-        b=2O2HfG/PQiWtGV2CRVxippmIh1kcQDbLzMT1YCm5SBL7P71l4pJKcwXAqT0zrQHa7L
-         IKwB37F0jy8RNlMn+psO79+0XCpAb4s2XX4YGW/JG7uxw+fPO6wBB677AYIuSzMrjIV+
-         OBTWUvMepkQgqOztQbIarpkwR6FCruhbDhKch2/NMi5YJd/zSukF4925e+FWJoR3+AvJ
-         FGHDu1NpX3+XZ1uPBb6JdxiyA8lHQegjQpHWTn6MGE5iF6a1BjPuAJPgtK2PiZgJy1Aq
-         hR3agoYrc70MDtujykAtdTKjGS9Vt2N7dpChF4vnhYd7+x1sDkaLWMgUQ+HxeGNTOlmN
-         f27w==
-X-Gm-Message-State: AO0yUKXdOYBrN4c34ItL7KC4mqmTLR95n7Er5XDAqea51nI8sEGPqkjJ
-        RtfbLll4L3YSzZNKIKkA/LTXVuVMIOzLrfmivb2/lTkuAP9z8aZyI/LSamvkG4WreW7KLTqPreI
-        wx52HJaCaKWyGgXib3EH2vp7h5w==
-X-Received: by 2002:a17:90a:e7c6:b0:234:8950:6d1f with SMTP id kb6-20020a17090ae7c600b0023489506d1fmr17707812pjb.11.1678246950033;
-        Tue, 07 Mar 2023 19:42:30 -0800 (PST)
-X-Google-Smtp-Source: AK7set8UPZv2ZLhfkS7n1EfbO2gitcf4in2vPM0ixlWMSTOQuUAZcsMtdcRJGanwFD1L7yFrBUKJ2w==
-X-Received: by 2002:a17:90a:e7c6:b0:234:8950:6d1f with SMTP id kb6-20020a17090ae7c600b0023489506d1fmr17707795pjb.11.1678246949681;
-        Tue, 07 Mar 2023 19:42:29 -0800 (PST)
-Received: from [10.72.12.78] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id n3-20020a17090ade8300b00233864f21a7sm9868514pjv.51.2023.03.07.19.42.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Mar 2023 19:42:29 -0800 (PST)
-Message-ID: <c2f9e0d3-0242-1304-26ea-04f25c3cdee4@redhat.com>
-Date:   Wed, 8 Mar 2023 11:42:22 +0800
+        Tue, 7 Mar 2023 23:33:54 -0500
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1DE9C98B
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 20:33:51 -0800 (PST)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 3284XTvr021510
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 7 Mar 2023 23:33:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1678250011; bh=5pMWU6jII+CDzJ3zfBYzkUuOg2Vxa1wRZCqfVcF9NJw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=fQhdRuF0Ca9IEXfQKd+n1CWjT4/CljpFoikCFVl7AO2kkLJZ1QrGEPJcagh7ta2rY
+         BGXxUedt75uaQKW7xU1cgPnuBe//MVsbHRA6aCnxEuj6oWspQ7Z91SvYoXoqIpbliP
+         hMhV7kimgU4zNhgCardZfP3GqqqajPTIRl8j0b2pfjDWL38Ye2Kl8FAzgS4Xc5ImWD
+         OUMXf52s2nH5CtbxDuU+VwC5StYHrIWm9lLlRnsPvWemVDXhTNlIagqLz5YSZthj4X
+         Ru2u5eR7BMIj+DqlkfW+7Fpm47kjVB9Eo3HseBZnt6KVmCZYKTwjCBbGDoOmC8fzNP
+         FbaBkJ14wWcVg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id CF9E715C3444; Tue,  7 Mar 2023 23:33:29 -0500 (EST)
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     linux-ext4@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-fscrypt@vger.kernel.org,
+        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ext4: fix cgroup writeback accounting with fs-layer encryption
+Date:   Tue,  7 Mar 2023 23:33:22 -0500
+Message-Id: <167824999281.2129363.12204207098890359786.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20230203005503.141557-1-ebiggers@kernel.org>
+References: <20230203005503.141557-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH] fs/ceph/mds_client: ignore responses for waiting requests
-Content-Language: en-US
-To:     Max Kellermann <max.kellermann@ionos.com>, idryomov@gmail.com,
-        jlayton@kernel.org, ceph-devel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20230302130650.2209938-1-max.kellermann@ionos.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20230302130650.2209938-1-max.kellermann@ionos.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,119 +55,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Max,
+On Thu, 2 Feb 2023 16:55:03 -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> When writing a page from an encrypted file that is using
+> filesystem-layer encryption (not inline encryption), ext4 encrypts the
+> pagecache page into a bounce page, then writes the bounce page.
+> 
+> It also passes the bounce page to wbc_account_cgroup_owner().  That's
+> incorrect, because the bounce page is a newly allocated temporary page
+> that doesn't have the memory cgroup of the original pagecache page.
+> This makes wbc_account_cgroup_owner() not account the I/O to the owner
+> of the pagecache page as it should.
+> 
+> [...]
 
-Sorry for late.
+Applied, thanks!
 
-On 02/03/2023 21:06, Max Kellermann wrote:
-> If a request is put on the waiting list, its submission is postponed
-> until the session becomes ready (e.g. via `mdsc->waiting_for_map` or
-> `session->s_waiting`).  If a `CEPH_MSG_CLIENT_REPLY` happens to be
-> received before `CEPH_MSG_MDS_MAP`, the request gets freed, and then
-> this assertion fails:
+[1/1] ext4: fix cgroup writeback accounting with fs-layer encryption
+      commit: ffec85d53d0f39ee4680a2cf0795255e000e1feb
 
-How could this happen ?
-
-Since the req hasn't been submitted yet, how could it receive a reply 
-normally ?
-
->   WARN_ON_ONCE(!list_empty(&req->r_wait));
->
-> This occurred on a server after the Ceph MDS connection failed, and a
-> corrupt reply packet was received for a waiting request:
->
->   libceph: mds1 (1)10.0.0.10:6801 socket error on write
->   libceph: mds1 (1)10.0.0.10:6801 session reset
->   ceph: mds1 closed our session
->   ceph: mds1 reconnect start
->   ceph: mds1 reconnect success
->   ceph: problem parsing mds trace -5
->   ceph: mds parse_reply err -5
->   ceph: mdsc_handle_reply got corrupt reply mds1(tid:5530222)
-
-It should be a corrupted reply and it lead us to get a incorrect req, 
-which hasn't been submitted yet.
-
-BTW, do you have the dump of the corrupted msg by 'ceph_msg_dump(msg)' ?
-
-We can check what have corrupted exactly.
-
-Thanks
-
-- Xiubo
-
->   [...]
->   ------------[ cut here ]------------
->   WARNING: CPU: 9 PID: 229180 at fs/ceph/mds_client.c:966 ceph_mdsc_release_request+0x17a/0x180
->   Modules linked in:
->   CPU: 9 PID: 229180 Comm: kworker/9:3 Not tainted 6.1.8-cm4all1 #45
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
->   Workqueue: ceph-msgr ceph_con_workfn
->   RIP: 0010:ceph_mdsc_release_request+0x17a/0x180
->   Code: 39 d8 75 26 5b 48 89 ee 48 8b 3d f9 2d 04 02 5d e9 fb 01 c9 ff e8 56 85 ab ff eb 9c 48 8b 7f 58 e8 db 4d ff ff e9 a4 fe ff ff <0f> 0b eb d6 66 90 0f 1f 44 00 00 41 54 48 8d 86 b8 03 00 00 55 4c
->   RSP: 0018:ffffa6f2c0e2bd20 EFLAGS: 00010287
->   RAX: ffff8f58b93687f8 RBX: ffff8f592f6374a8 RCX: 0000000000000aed
->   RDX: 0000000000000ac0 RSI: 0000000000000000 RDI: 0000000000000000
->   RBP: ffff8f592f637148 R08: 0000000000000001 R09: ffffffffa901de00
->   R10: 0000000000000001 R11: ffffd630ad09dfc8 R12: ffff8f58b9368000
->   R13: ffff8f5806b33800 R14: ffff8f58894f6780 R15: 000000000054626e
->   FS:  0000000000000000(0000) GS:ffff8f630f040000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: 00007ffc2926df68 CR3: 0000000218dce002 CR4: 00000000001706e0
->   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->   Call Trace:
->    <TASK>
->    mds_dispatch+0xec5/0x1460
->    ? inet_recvmsg+0x4d/0xf0
->    ceph_con_process_message+0x6b/0x80
->    ceph_con_v1_try_read+0xb92/0x1400
->    ceph_con_workfn+0x383/0x4e0
->    process_one_work+0x1da/0x370
->    ? process_one_work+0x370/0x370
->    worker_thread+0x4d/0x3c0
->    ? process_one_work+0x370/0x370
->    kthread+0xbb/0xe0
->    ? kthread_complete_and_exit+0x20/0x20
->    ret_from_fork+0x22/0x30
->    </TASK>
->   ---[ end trace 0000000000000000 ]---
->   ceph: mds1 caps renewed
->
-> If we know that a request has not yet been submitted, we should ignore
-> all responses for it, just like we ignore responses for unknown TIDs.
->
-> To: ceph-devel@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-> ---
->   fs/ceph/mds_client.c | 7 +++++++
->   1 file changed, 7 insertions(+)
->
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 27a245d959c0..fa74fdb2cbfb 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -3275,6 +3275,13 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
->   	}
->   	dout("handle_reply %p\n", req);
->   
-> +	/* waiting, not yet submitted? */
-> +	if (!list_empty(&req->r_wait)) {
-> +		pr_err("mdsc_handle_reply on waiting request tid %llu\n", tid);
-> +		mutex_unlock(&mdsc->mutex);
-> +		goto out;
-> +	}
-> +
->   	/* correct session? */
->   	if (req->r_session != session) {
->   		pr_err("mdsc_handle_reply got %llu on session mds%d"
-
+Best regards,
 -- 
-Best Regards,
-
-Xiubo Li (李秀波)
-
-Email: xiubli@redhat.com/xiubli@ibm.com
-Slack: @Xiubo Li
-
+Theodore Ts'o <tytso@mit.edu>
