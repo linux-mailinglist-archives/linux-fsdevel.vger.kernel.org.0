@@ -2,88 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EB396B0A4C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 15:01:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EDF26B0A6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 15:04:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232030AbjCHOBh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 09:01:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37714 "EHLO
+        id S232102AbjCHOEB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 09:04:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231887AbjCHOBN (ORCPT
+        with ESMTP id S231977AbjCHODT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 09:01:13 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB34F31E0A;
-        Wed,  8 Mar 2023 06:00:06 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id az36so9878584wmb.1;
-        Wed, 08 Mar 2023 06:00:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678284005;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ijCIwYAPHXH0JJ+XDQYDNj+O+tMouNaBIO9o2nVcDs8=;
-        b=THbWYOEzoZY1Wq+Hj1c1Z23EGHOERcBr1xS1UYnd58sZJTcj65wRsmdBIpATJ5ZEvi
-         2UAVbYzzXm/CbuXOWd3xUzPdspNUTbXiSmWUcIwdZf2tJHwERpph/iO374/hLyv3thOL
-         SvK0uufuL6YupsR1/whQEb7+NQ4S1vJHyWn8V2qwBJ20rF0EKy9Y95Grl+3dP2JnFPaW
-         7T1p14NXqyYLqGuXhvElEuCQL3j5gA9Lj0e29CuyX1XJSUA634hNOPRicebRONgNJPKX
-         XyBpPzpprlp6ybWCSiTz/Mvf2CyQwxL4FwnnBzp/yTsbvD5CHU4WFnECZPlcfwOfiowB
-         hJYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678284005;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ijCIwYAPHXH0JJ+XDQYDNj+O+tMouNaBIO9o2nVcDs8=;
-        b=4gfywHiKLs4eJcfVm5amaWwkuFfNhbUeVgNz5drpHUhlGOMU5oJ1ZyVNha2v8iJIe/
-         QWMnX0wwWlpH/3Z+mg+bkau75+drtdlvooL0nSr9vHik9hxiHl09ugYTuyrNUfp2p2O1
-         MdGmakCAUcn9RtVg70YoY33YwL7Ztq6rOJS/J9YaxApHG9swchicY2MJmSWczGp0349q
-         /XuzrVlwGVuswkL7kIxcdXQYIWNjRrrrR+S2EwPe276cXvdqr8Wk9ToXVwqkiKvdumM/
-         yZQ+iW5awRfQQ+2ro4dWxPC01rn8Dp3vpQ43U9uKNmHTs/2Cd5kVm0uKA8NZDlzM+dB+
-         jS4g==
-X-Gm-Message-State: AO0yUKUEOi34wugND4buA09P0kga8b/R1JWTsQJn6iMf59hr2WqDJVRL
-        xdaFV4WAjf7iqotp8swSyv4=
-X-Google-Smtp-Source: AK7set/vn8OmbYpYQOF2rZW6B03lZoH7qD0Ni12/ue2KmXWMbAqnSzbBF1zwnu0kRzByWKofxqOH9A==
-X-Received: by 2002:a05:600c:4fc5:b0:3e2:1f63:4beb with SMTP id o5-20020a05600c4fc500b003e21f634bebmr16964014wmq.19.1678284005129;
-        Wed, 08 Mar 2023 06:00:05 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id q8-20020a05600c46c800b003e7f1086660sm21557344wmo.15.2023.03.08.06.00.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 06:00:04 -0800 (PST)
-From:   Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date:   Wed, 8 Mar 2023 15:00:02 +0100
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Hao Luo <haoluo@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, bpf@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Namhyung Kim <namhyung@gmail.com>
-Subject: Re: [PATCH RFC v2 bpf-next 9/9] selftests/bpf: Add
- iter_task_vma_buildid test
-Message-ID: <ZAiU4nk5zKey4p5O@krava>
-References: <20230228093206.821563-1-jolsa@kernel.org>
- <20230228093206.821563-10-jolsa@kernel.org>
- <CAEf4BzbLz5q8NgREMEiOPumSBEhKMh0rDC=1ii8Muvm4Whg59w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzbLz5q8NgREMEiOPumSBEhKMh0rDC=1ii8Muvm4Whg59w@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        Wed, 8 Mar 2023 09:03:19 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6145B5BDB9;
+        Wed,  8 Mar 2023 06:01:17 -0800 (PST)
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 328Ct2LF002620;
+        Wed, 8 Mar 2023 14:00:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=W7pu0BjMNvv0R8uv+TNLj8Ly3OYFDM7vNmLiZfeEzOc=;
+ b=j3CIlcyJJy71GIrbe3n1fGWyhfyTmULltfmNcUhnJGBsJT7wM8TtGt8Ue1RWSRmwSUMG
+ qqozUGOFReBhg3uinoPzgQRZ3cIdVTiXvK97ur+tLSBEJXaBuBVzblqGpr1oIkU8m8z1
+ ZieweGAYGNsY2iK7ypAfAP4/BxS8jxPm9QhUZPfM+/T284kA32NigkX2MqEFxFxvGgo/
+ GuJ2xS6e9nnkYuTE9Hph5aU1MnVWqswIQoT1gLfeV5fk2hIaCJhGJByKKe102fSCh5kd
+ /dmIFfkl0OqRyxTxoOxPvH1SliyYek8KyGpeYl98Jib0URaobWfApu3toSFiB/Ur58cx Mw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p6rh34y0w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Mar 2023 14:00:39 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 328DvXcF018605;
+        Wed, 8 Mar 2023 14:00:38 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p6rh34xxf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Mar 2023 14:00:38 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 328B7Xp7009306;
+        Wed, 8 Mar 2023 14:00:35 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
+        by ppma02wdc.us.ibm.com (PPS) with ESMTPS id 3p6g1gkbyx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Mar 2023 14:00:35 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 328E0Yjp7995904
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Mar 2023 14:00:34 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D8B758055;
+        Wed,  8 Mar 2023 14:00:34 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 46CD75805F;
+        Wed,  8 Mar 2023 14:00:32 +0000 (GMT)
+Received: from sig-9-77-134-135.ibm.com (unknown [9.77.134.135])
+        by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Wed,  8 Mar 2023 14:00:32 +0000 (GMT)
+Message-ID: <1d02222998cf465fa7080ffb910bcf5815b7f857.camel@linux.ibm.com>
+Subject: Re: [PATCH 23/28] security: Introduce LSM_ORDER_LAST
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, dmitry.kasatkin@gmail.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, dhowells@redhat.com,
+        jarkko@kernel.org, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 08 Mar 2023 09:00:31 -0500
+In-Reply-To: <ee5d9eb3addb9d408408fd748d52686bd9b85e24.camel@huaweicloud.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+         <20230303182602.1088032-1-roberto.sassu@huaweicloud.com>
+         <a0320926ebfe732dabc4e53c3a35ede450c75474.camel@linux.ibm.com>
+         <ee5d9eb3addb9d408408fd748d52686bd9b85e24.camel@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8_rl_RBJXHXHcxsBcgBlMoDaw6c84CM7
+X-Proofpoint-ORIG-GUID: pLzRE0E0ZuhY9RwOOy5fFbGbISeJZHiF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-08_08,2023-03-08_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 mlxlogscore=999 phishscore=0 priorityscore=1501 bulkscore=0
+ spamscore=0 impostorscore=0 suspectscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303080115
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -91,77 +102,98 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 07, 2023 at 05:32:17PM -0800, Andrii Nakryiko wrote:
-
-SNIP
-
-> > diff --git a/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
-> > new file mode 100644
-> > index 000000000000..dc528a4783ec
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
-> > @@ -0,0 +1,60 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +#include "bpf_iter.h"
-> > +#include "err.h"
-> > +#include <bpf/bpf_helpers.h>
-> > +#include <string.h>
-> > +
-> > +char _license[] SEC("license") = "GPL";
-> > +
-> > +#define VM_EXEC                0x00000004
-> > +#define D_PATH_BUF_SIZE        1024
-> > +
-> > +struct {
-> > +       __uint(type, BPF_MAP_TYPE_HASH);
-> > +       __uint(max_entries, 10000);
-> > +       __type(key, char[D_PATH_BUF_SIZE]);
-> > +       __type(value, struct build_id);
-> > +} files SEC(".maps");
-> > +
-> > +static char path[D_PATH_BUF_SIZE];
-> > +static struct build_id build_id;
-> > +
-> > +SEC("iter/task_vma")
-> > +int proc_maps(struct bpf_iter__task_vma *ctx)
-> > +{
-> > +       struct vm_area_struct *vma = ctx->vma;
-> > +       struct seq_file *seq = ctx->meta->seq;
-> > +       struct task_struct *task = ctx->task;
-> > +       unsigned long file_key;
-> > +       struct inode *inode;
-> > +       struct file *file;
-> > +
-> > +       if (task == (void *)0 || vma == (void *)0)
-> > +               return 0;
-> > +
-> > +       if (!(vma->vm_flags & VM_EXEC))
-> > +               return 0;
-> > +
-> > +       file = vma->vm_file;
-> > +       if (!file)
-> > +               return 0;
-> > +
-> > +       __builtin_memset(path, 0x0, D_PATH_BUF_SIZE);
-> > +       bpf_d_path(&file->f_path, (char *) &path, D_PATH_BUF_SIZE);
-> > +
-> > +       if (bpf_map_lookup_elem(&files, &path))
-> > +               return 0;
-> > +
-> > +       inode = file->f_inode;
-> > +       if (IS_ERR_OR_NULL(inode->i_build_id)) {
-> > +               /* On error return empty build id. */
-> > +               __builtin_memset(&build_id.data, 0x0, sizeof(build_id.data));
-> > +               build_id.sz = 20;
+On Wed, 2023-03-08 at 14:26 +0100, Roberto Sassu wrote:
+> On Wed, 2023-03-08 at 08:13 -0500, Mimi Zohar wrote:
+> > Hi Roberto,
+> > 
+> > On Fri, 2023-03-03 at 19:25 +0100, Roberto Sassu wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > 
+> > > Introduce LSM_ORDER_LAST, to satisfy the requirement of LSMs willing to be
+> > > the last, e.g. the 'integrity' LSM, without changing the kernel command
+> > > line or configuration.
+> > 
+> > Please reframe this as a bug fix for 79f7865d844c ("LSM: Introduce
+> > "lsm=" for boottime LSM selection") and upstream it first, with
+> > 'integrity' as the last LSM.   The original bug fix commit 92063f3ca73a
+> > ("integrity: double check iint_cache was initialized") could then be
+> > removed.
 > 
-> let's replace `#define BUILD_ID_SIZE_MAX 20` in
-> include/linux/buildid.h with `enum { BUILD_ID_SIZE_MAX = 20 };`. This
-> will "expose" this constant into BTF and thus vmlinux.h, so we won't
-> have to hard-code anything. BPF users would be grateful as well.
+> Ok, I should complete the patch by checking the cache initialization in
+> iint.c.
 > 
-> No downsides of doing this.
+> > > As for LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled and put
+> > > at the end of the LSM list in no particular order.
+> > 
+> > ^Similar to LSM_ORDER_FIRST ...
+> > 
+> > And remove "in no particular order".
+> 
+> The reason for this is that I originally thought that the relative
+> order of LSMs specified in the kernel configuration or the command line
+> was respected (if more than one LSM specifies LSM_ORDER_LAST). In fact
+> not. To do this, we would have to parse the LSM string again, as it is
+> done for LSM_ORDER_MUTABLE LSMs.
 
-ok works nicely.. thanks
+IMA and EVM are only configurable if 'integrity' is enabled.  Similar
+to how LSM_ORDER_FIRST is reserved for capabilities, LSM_ORDER_LAST
+should be reserved for integrity (LSMs), if it is configured, for the
+reason as described in the "[PATCH 24/28] ima: Move to LSM
+infrastructure" patch description.
 
-jirka
+> 
+> Thanks
+> 
+> Roberto
+> 
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  include/linux/lsm_hooks.h |  1 +
+> > >  security/security.c       | 12 +++++++++---
+> > >  2 files changed, 10 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > > index 21a8ce23108..05c4b831d99 100644
+> > > --- a/include/linux/lsm_hooks.h
+> > > +++ b/include/linux/lsm_hooks.h
+> > > @@ -93,6 +93,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+> > >  enum lsm_order {
+> > >  	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
+> > >  	LSM_ORDER_MUTABLE = 0,
+> > > +	LSM_ORDER_LAST = 1,
+> > >  };
+> > >  
+> > >  struct lsm_info {
+> > > diff --git a/security/security.c b/security/security.c
+> > > index 322090a50cd..24f52ba3218 100644
+> > > --- a/security/security.c
+> > > +++ b/security/security.c
+> > > @@ -284,9 +284,9 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+> > >  		bool found = false;
+> > >  
+> > >  		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+> > > -			if (lsm->order == LSM_ORDER_MUTABLE &&
+> > > -			    strcmp(lsm->name, name) == 0) {
+> > > -				append_ordered_lsm(lsm, origin);
+> > > +			if (strcmp(lsm->name, name) == 0) {
+> > > +				if (lsm->order == LSM_ORDER_MUTABLE)
+> > > +					append_ordered_lsm(lsm, origin);
+> > >  				found = true;
+> > >  			}
+> > >  		}
+> > > @@ -306,6 +306,12 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+> > >  		}
+> > >  	}
+> > >  
+> > > +	/* LSM_ORDER_LAST is always last. */
+> > > +	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+> > > +		if (lsm->order == LSM_ORDER_LAST)
+> > > +			append_ordered_lsm(lsm, "   last");
+> > > +	}
+> > > +
+> > >  	/* Disable all LSMs not in the ordered list. */
+> > >  	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+> > >  		if (exists_ordered_lsm(lsm))
+> 
+
+
