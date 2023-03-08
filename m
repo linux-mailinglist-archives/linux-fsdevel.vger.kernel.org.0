@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C9DC6B0F52
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 17:54:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DBAD6B0F51
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 17:54:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229928AbjCHQyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 11:54:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49384 "EHLO
+        id S229809AbjCHQyf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 11:54:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbjCHQyL (ORCPT
+        with ESMTP id S229652AbjCHQyM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 11:54:11 -0500
+        Wed, 8 Mar 2023 11:54:12 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F14FB31E22
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 08:53:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B18F761AA3
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 08:53:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1678294400;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PhbxTzWahXdd/JlmGrRowyeASqSlq5EbDSo0Q9TZAGc=;
-        b=hM0nRbrF1MoXBP7RU9/atMQ+2yAGE/JncDHrVqEMsvniy4HISLKJqLedPdFkehZJDswxF6
-        z87kAhTPw4nEe5oY7VUupjLNUG+lOZ8rXiOwfsnSFAQLQcfjDq0IqMuy4tRJnXlMxIJirg
-        x7n03L5S2ldAK0xcz54MSEVzuwymcYI=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=WFhWed43Sc7081L0WA9mMaa7Q22YwjW6QNRxMcW8x9U=;
+        b=EJweUAC+rWeUpi5IhZcmhfA7CJQex9N75cqfY5FYkFISMR72UVRfOgN6rK95H2auNPViqp
+        Lhz8FZZJ9F/upEWghulTxx3A14uK6IxjZ4j9vHFp9jIbFA/qTMAHA+fjWZKeYhKGMI3e7K
+        +tdxBWV3uq5fARhnR3md957xX3Vtqs0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-18-Nut58j8COw2eSbYYTRM5UQ-1; Wed, 08 Mar 2023 11:53:14 -0500
-X-MC-Unique: Nut58j8COw2eSbYYTRM5UQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+ us-mta-286-n7_IuBJlMQ-LcFthELANRQ-1; Wed, 08 Mar 2023 11:53:17 -0500
+X-MC-Unique: n7_IuBJlMQ-LcFthELANRQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1025F1C12983;
-        Wed,  8 Mar 2023 16:53:13 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3D8BE8027FD;
+        Wed,  8 Mar 2023 16:53:16 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7E0E9492B04;
-        Wed,  8 Mar 2023 16:53:10 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C81E414171B6;
+        Wed,  8 Mar 2023 16:53:13 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -51,18 +51,19 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Jan Harkes <jaharkes@cs.cmu.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>, coda@cs.cmu.edu,
-        codalist@coda.cs.cmu.edu, linux-unionfs@vger.kernel.org
-Subject: [PATCH v17 05/14] coda: Implement splice-read
-Date:   Wed,  8 Mar 2023 16:52:42 +0000
-Message-Id: <20230308165251.2078898-6-dhowells@redhat.com>
+        John Hubbard <jhubbard@nvidia.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v17 06/14] tty, proc, kernfs, random: Use direct_splice_read()
+Date:   Wed,  8 Mar 2023 16:52:43 +0000
+Message-Id: <20230308165251.2078898-7-dhowells@redhat.com>
 In-Reply-To: <20230308165251.2078898-1-dhowells@redhat.com>
 References: <20230308165251.2078898-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -73,83 +74,154 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement splice-read for coda by passing the request down a layer rather
-than going through generic_file_splice_read() which is going to be changed
-to assume that ->read_folio() is present on buffered files.
+Use direct_splice_read() for tty, procfs, kernfs and random files rather
+than going through generic_file_splice_read() as they just copy the file
+into the output buffer and don't splice pages.  This avoids the need for
+them to have a ->read_folio() to satisfy filemap_splice_read().
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jan Harkes <jaharkes@cs.cmu.edu>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 cc: Christoph Hellwig <hch@lst.de>
 cc: Jens Axboe <axboe@kernel.dk>
 cc: Al Viro <viro@zeniv.linux.org.uk>
 cc: John Hubbard <jhubbard@nvidia.com>
 cc: David Hildenbrand <david@redhat.com>
 cc: Matthew Wilcox <willy@infradead.org>
-cc: coda@cs.cmu.edu
-cc: codalist@coda.cs.cmu.edu
-cc: linux-unionfs@vger.kernel.org
+cc: Miklos Szeredi <miklos@szeredi.hu>
+cc: Arnd Bergmann <arnd@arndb.de>
 cc: linux-block@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 cc: linux-mm@kvack.org
 ---
+ drivers/char/random.c | 4 ++--
+ drivers/tty/tty_io.c  | 4 ++--
+ fs/kernfs/file.c      | 2 +-
+ fs/proc/inode.c       | 4 ++--
+ fs/proc/proc_sysctl.c | 2 +-
+ fs/proc_namespace.c   | 6 +++---
+ 6 files changed, 11 insertions(+), 11 deletions(-)
 
-Notes:
-    ver #17)
-     - Use vfs_splice_read() helper rather than open-coding checks.
-
- fs/coda/file.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/fs/coda/file.c b/fs/coda/file.c
-index 3f3c81e6b1ab..12b26bd13564 100644
---- a/fs/coda/file.c
-+++ b/fs/coda/file.c
-@@ -23,6 +23,7 @@
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- #include <linux/uio.h>
-+#include <linux/splice.h>
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index ce3ccd172cc8..792713616ba8 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1546,7 +1546,7 @@ const struct file_operations random_fops = {
+ 	.compat_ioctl = compat_ptr_ioctl,
+ 	.fasync = random_fasync,
+ 	.llseek = noop_llseek,
+-	.splice_read = generic_file_splice_read,
++	.splice_read = direct_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ };
  
- #include <linux/coda.h>
- #include "coda_psdev.h"
-@@ -94,6 +95,32 @@ coda_file_write_iter(struct kiocb *iocb, struct iov_iter *to)
- 	return ret;
- }
+@@ -1557,7 +1557,7 @@ const struct file_operations urandom_fops = {
+ 	.compat_ioctl = compat_ptr_ioctl,
+ 	.fasync = random_fasync,
+ 	.llseek = noop_llseek,
+-	.splice_read = generic_file_splice_read,
++	.splice_read = direct_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ };
  
-+static ssize_t
-+coda_file_splice_read(struct file *coda_file, loff_t *ppos,
-+		      struct pipe_inode_info *pipe,
-+		      size_t len, unsigned int flags)
-+{
-+	struct inode *coda_inode = file_inode(coda_file);
-+	struct coda_file_info *cfi = coda_ftoc(coda_file);
-+	struct file *in = cfi->cfi_container;
-+	loff_t ki_pos = *ppos;
-+	ssize_t ret;
-+
-+	ret = venus_access_intent(coda_inode->i_sb, coda_i2f(coda_inode),
-+				  &cfi->cfi_access_intent,
-+				  len, ki_pos, CODA_ACCESS_TYPE_READ);
-+	if (ret)
-+		goto finish_read;
-+
-+	ret = vfs_splice_read(in, ppos, pipe, len, flags);
-+
-+finish_read:
-+	venus_access_intent(coda_inode->i_sb, coda_i2f(coda_inode),
-+			    &cfi->cfi_access_intent,
-+			    len, ki_pos, CODA_ACCESS_TYPE_READ_FINISH);
-+	return ret;
-+}
-+
- static void
- coda_vm_open(struct vm_area_struct *vma)
- {
-@@ -302,5 +329,5 @@ const struct file_operations coda_file_operations = {
- 	.open		= coda_open,
- 	.release	= coda_release,
- 	.fsync		= coda_fsync,
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 36fb945fdad4..9d117e579dfb 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -466,7 +466,7 @@ static const struct file_operations tty_fops = {
+ 	.llseek		= no_llseek,
+ 	.read_iter	= tty_read,
+ 	.write_iter	= tty_write,
 -	.splice_read	= generic_file_splice_read,
-+	.splice_read	= coda_file_splice_read,
++	.splice_read	= direct_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ 	.poll		= tty_poll,
+ 	.unlocked_ioctl	= tty_ioctl,
+@@ -481,7 +481,7 @@ static const struct file_operations console_fops = {
+ 	.llseek		= no_llseek,
+ 	.read_iter	= tty_read,
+ 	.write_iter	= redirected_tty_write,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= direct_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ 	.poll		= tty_poll,
+ 	.unlocked_ioctl	= tty_ioctl,
+diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+index e4a50e4ff0d2..9d23b8141db7 100644
+--- a/fs/kernfs/file.c
++++ b/fs/kernfs/file.c
+@@ -1011,7 +1011,7 @@ const struct file_operations kernfs_file_fops = {
+ 	.release	= kernfs_fop_release,
+ 	.poll		= kernfs_fop_poll,
+ 	.fsync		= noop_fsync,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= direct_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ };
+ 
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index f495fdb39151..711f12706469 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -591,7 +591,7 @@ static const struct file_operations proc_iter_file_ops = {
+ 	.llseek		= proc_reg_llseek,
+ 	.read_iter	= proc_reg_read_iter,
+ 	.write		= proc_reg_write,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= direct_splice_read,
+ 	.poll		= proc_reg_poll,
+ 	.unlocked_ioctl	= proc_reg_unlocked_ioctl,
+ 	.mmap		= proc_reg_mmap,
+@@ -617,7 +617,7 @@ static const struct file_operations proc_reg_file_ops_compat = {
+ static const struct file_operations proc_iter_file_ops_compat = {
+ 	.llseek		= proc_reg_llseek,
+ 	.read_iter	= proc_reg_read_iter,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= direct_splice_read,
+ 	.write		= proc_reg_write,
+ 	.poll		= proc_reg_poll,
+ 	.unlocked_ioctl	= proc_reg_unlocked_ioctl,
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 5851eb5bc726..e49f99657d1c 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -869,7 +869,7 @@ static const struct file_operations proc_sys_file_operations = {
+ 	.poll		= proc_sys_poll,
+ 	.read_iter	= proc_sys_read,
+ 	.write_iter	= proc_sys_write,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= direct_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ 	.llseek		= default_llseek,
+ };
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 846f9455ae22..492abbbeff5e 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -324,7 +324,7 @@ static int mountstats_open(struct inode *inode, struct file *file)
+ const struct file_operations proc_mounts_operations = {
+ 	.open		= mounts_open,
+ 	.read_iter	= seq_read_iter,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= direct_splice_read,
+ 	.llseek		= seq_lseek,
+ 	.release	= mounts_release,
+ 	.poll		= mounts_poll,
+@@ -333,7 +333,7 @@ const struct file_operations proc_mounts_operations = {
+ const struct file_operations proc_mountinfo_operations = {
+ 	.open		= mountinfo_open,
+ 	.read_iter	= seq_read_iter,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= direct_splice_read,
+ 	.llseek		= seq_lseek,
+ 	.release	= mounts_release,
+ 	.poll		= mounts_poll,
+@@ -342,7 +342,7 @@ const struct file_operations proc_mountinfo_operations = {
+ const struct file_operations proc_mountstats_operations = {
+ 	.open		= mountstats_open,
+ 	.read_iter	= seq_read_iter,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= direct_splice_read,
+ 	.llseek		= seq_lseek,
+ 	.release	= mounts_release,
  };
 
