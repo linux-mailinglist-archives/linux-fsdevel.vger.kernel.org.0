@@ -2,96 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99FC86B0E28
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 17:07:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 987F66B0E95
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 17:24:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232452AbjCHQHW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 11:07:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58404 "EHLO
+        id S229952AbjCHQYP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 11:24:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232030AbjCHQG7 (ORCPT
+        with ESMTP id S229835AbjCHQYN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 11:06:59 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38398F769
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 08:04:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678291487;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2NWMkFGTVgULUDjAwqmBVEBtedj5eFLtnY35SqecmsU=;
-        b=KcaP2lLKfOTGjMraSSXdwu1lKXH3bW3A9IsQTYpnOP95XWuSVN/n4L7I6PMysCXYsOoR3F
-        B2HnO3Qmjmk1Pc2o7ywQ6L3nnaKVSF24NPRZqSQLhzW3SPtLJUCab9AGJdF6qr0E7VjveO
-        pQcks62wwmRl7puGnSSxiV3EFkuacwo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-512-sBNcmhvQO3ucJLvWDaxBBQ-1; Wed, 08 Mar 2023 11:04:43 -0500
-X-MC-Unique: sBNcmhvQO3ucJLvWDaxBBQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 384B687B2A6;
-        Wed,  8 Mar 2023 16:04:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C38C42026D4B;
-        Wed,  8 Mar 2023 16:04:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20230308155609.GA21508@lst.de>
-References: <20230308155609.GA21508@lst.de> <CAJfpeguGksS3sCigmRi9hJdUec8qtM9f+_9jC1rJhsXT+dV01w@mail.gmail.com> <20230308143754.1976726-1-dhowells@redhat.com> <20230308143754.1976726-4-dhowells@redhat.com> <2011735.1678290876@warthog.procyon.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v16 03/13] overlayfs: Implement splice-read
+        Wed, 8 Mar 2023 11:24:13 -0500
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30ACEC1C0C;
+        Wed,  8 Mar 2023 08:24:02 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PWy7j4CqPz9xHM1;
+        Thu,  9 Mar 2023 00:14:41 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwBHHGN5tghkH4B+AQ--.22743S2;
+        Wed, 08 Mar 2023 17:23:35 +0100 (CET)
+Message-ID: <0a15c85e9de2235c313b10839aabf750f276552f.camel@huaweicloud.com>
+Subject: Re: [PATCH 00/28] security: Move IMA and EVM to the LSM
+ infrastructure
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
+        chuck.lever@oracle.com, jlayton@kernel.org,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 08 Mar 2023 17:23:18 +0100
+In-Reply-To: <59eb6d6d2ffd5522b2116000ab48b1711d57f5e5.camel@linux.ibm.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+         <59eb6d6d2ffd5522b2116000ab48b1711d57f5e5.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2012342.1678291479.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 08 Mar 2023 16:04:39 +0000
-Message-ID: <2012343.1678291479@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: GxC2BwBHHGN5tghkH4B+AQ--.22743S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxArW7Aw17XFWDGryDJw4fXwb_yoW5ZF15pF
+        Z8K3W5Kr4ktF109rs2v3y8uFWfCa1fJ3yUJr95K34UZa45GF1FqFWvkF15uFyDG3s0kFyF
+        qF4jq3s5Z3WDZrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+        AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+        6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU13rcDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAKBF1jj4pXogABsA
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> wrote:
+On Wed, 2023-03-08 at 10:14 -0500, Mimi Zohar wrote:
+> Hi Roberto,
+> 
+> On Fri, 2023-03-03 at 19:18 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > This patch set depends on:
+> > - https://lore.kernel.org/linux-integrity/20221201104125.919483-1-roberto.sassu@huaweicloud.com/ (there will be a v8 shortly)
+> > - https://lore.kernel.org/linux-security-module/20230217032625.678457-1-paul@paul-moore.com/
+> > 
+> > IMA and EVM are not effectively LSMs, especially due the fact that in the
+> > past they could not provide a security blob while there is another LSM
+> > active.
+> > 
+> > That changed in the recent years, the LSM stacking feature now makes it
+> > possible to stack together multiple LSMs, and allows them to provide a
+> > security blob for most kernel objects. While the LSM stacking feature has
+> > some limitations being worked out, it is already suitable to make IMA and
+> > EVM as LSMs.
+> > 
+> > In short, while this patch set is big, it does not make any functional
+> > change to IMA and EVM. IMA and EVM functions are called by the LSM
+> > infrastructure in the same places as before (except ima_post_path_mknod()),
+> > rather being hardcoded calls, and the inode metadata pointer is directly
+> > stored in the inode security blob rather than in a separate rbtree.
+> > 
+> > More specifically, patches 1-13 make IMA and EVM functions suitable to
+> > be registered to the LSM infrastructure, by aligning function parameters.
+> > 
+> > Patches 14-22 add new LSM hooks in the same places where IMA and EVM
+> > functions are called, if there is no LSM hook already.
+> > 
+> > Patch 23 adds the 'last' ordering strategy for LSMs, so that IMA and EVM
+> > functions are called in the same order as of today. Also, like with the
+> > 'first' strategy, LSMs using it are always enabled, so IMA and EVM
+> > functions will be always called (if IMA and EVM are compiled built-in).
+> > 
+> > Patches 24-27 do the bulk of the work, remove hardcoded calls to IMA and
+> > EVM functions, register those functions in the LSM infrastructure, and let
+> > the latter call them. In addition, they also reserve one slot for EVM to 
+> > supply an xattr to the inode_init_security hook.
+> > 
+> > Finally, patch 28 removes the rbtree used to bind metadata to the inodes,
+> > and instead reserve a space in the inode security blob to store the pointer
+> > to metadata. This also brings performance improvements due to retrieving
+> > metadata in constant time, as opposed to logarithmic.
+> 
+> Prior to IMA being upstreamed, it went through a number of iterations,
+> first on the security hooks, then as a separate parallel set of
+> integrity hooks, and, finally, co-located with the security hooks,
+> where they exist.  With this patch set we've come full circle.
+> 
+> With the LSM stacking support, multiple LSMs can now use the
+> 'i_security' field removing the need for the rbtree indirection for
+> accessing integrity state info.
+> 
+> Roberto, thank you for making this change.  Mostly it looks good.  
+> Reviewing the patch set will be easier once the prereq's and this patch
+> set can be properly applied.
 
-> On Wed, Mar 08, 2023 at 03:54:36PM +0000, David Howells wrote:
-> > Using do_splice_to() as a helper is probably a good idea, though both =
-Willy
-> > and Christoph seem to dislike it.
-> =
+Welcome. Yes, once Paul reviews the other patch set, we can
+progressively apply the patches.
 
-> That's not true.  What I'm fundamentlly against is pointless wrappers
-> like the call_* that add no value.  do_splice_to adds useful checks,
-> so if properly named and documented, I'm absolutely in favour.
+Thanks
 
-Fair enough.  Rename to vfs_splice_read() okay with you?
-
-David
+Roberto
 
