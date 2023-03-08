@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E1C6B0B89
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 15:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 429FA6B0B80
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 15:39:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231668AbjCHOjl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 09:39:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48424 "EHLO
+        id S230332AbjCHOji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 09:39:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232208AbjCHOjP (ORCPT
+        with ESMTP id S232132AbjCHOjO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 09:39:15 -0500
+        Wed, 8 Mar 2023 09:39:14 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D105B5E7
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 06:38:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 287C63756B
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 06:38:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678286299;
+        s=mimecast20190719; t=1678286301;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=gNjp2803YzC3zT/XJu0Jjeq/3mtCoxBl7OitHcYTUso=;
-        b=Pan2V7XVvHLsux1ZHiLUM8FjlTPVIblEDBNg1d0DUWarlg71/6VKmImVzO4wV6BLsVuDJE
-        yRn5gwK51bHfcTU4TRT38yihdgItJs4vqzFDKttd8gSvMC5F3HPNclz2ByEz2kIwP/NP4d
-        r36cxpxjcZWlI83FHXbVHn3774x+u5Q=
+        bh=t6OAyEYn0daMnp8L9pWL3EjurZ3FwJIkgFcgCsYP8ro=;
+        b=D5BzN3SvnWLIMiWlIziLC31sMPI0vptz4Q3jvEiQ+kg2tdXNkpMcj9XKDRE5KCK6YSuY6K
+        Xavb7koOY8ruLfyn95cxnPN336VDaWhEX0AnoL34ur0c7Njq6FGvjBMh2lNeF9WCe5k9Yw
+        EBf2oX++5ARJBjNX0ouiTVBJMURuylk=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-617-gep4CwD9MCiui4WOcwo1DA-1; Wed, 08 Mar 2023 09:38:15 -0500
-X-MC-Unique: gep4CwD9MCiui4WOcwo1DA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+ us-mta-373-z2E0ldL8PlCMxbtTf0W6YQ-1; Wed, 08 Mar 2023 09:38:18 -0500
+X-MC-Unique: z2E0ldL8PlCMxbtTf0W6YQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 31D8C882821;
-        Wed,  8 Mar 2023 14:38:14 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 135FD802DD4;
+        Wed,  8 Mar 2023 14:38:17 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB8352166B2A;
-        Wed,  8 Mar 2023 14:38:11 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CF5211121314;
+        Wed,  8 Mar 2023 14:38:14 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -51,19 +51,17 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Steve French <smfrench@gmail.com>,
         Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v16 05/13] tty, proc, kernfs, random: Use direct_splice_read()
-Date:   Wed,  8 Mar 2023 14:37:46 +0000
-Message-Id: <20230308143754.1976726-6-dhowells@redhat.com>
+        John Hubbard <jhubbard@nvidia.com>, linux-cifs@vger.kernel.org
+Subject: [PATCH v16 06/13] splice: Do splice read from a file without using ITER_PIPE
+Date:   Wed,  8 Mar 2023 14:37:47 +0000
+Message-Id: <20230308143754.1976726-7-dhowells@redhat.com>
 In-Reply-To: <20230308143754.1976726-1-dhowells@redhat.com>
 References: <20230308143754.1976726-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -74,154 +72,163 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use direct_splice_read() for tty, procfs, kernfs and random files rather
-than going through generic_file_splice_read() as they just copy the file
-into the output buffer and don't splice pages.  This avoids the need for
-them to have a ->read_folio() to satisfy filemap_splice_read().
+Make generic_file_splice_read() use filemap_splice_read() and
+direct_splice_read() rather than using an ITER_PIPE and call_read_iter().
+
+Make cifs use generic_file_splice_read() rather than doing it for itself.
+
+Unexport filemap_splice_read().
+
+With this, ITER_PIPE is no longer used.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Christoph Hellwig <hch@lst.de>
 cc: Jens Axboe <axboe@kernel.dk>
+cc: Steve French <smfrench@gmail.com>
+cc: Christoph Hellwig <hch@lst.de>
 cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: John Hubbard <jhubbard@nvidia.com>
 cc: David Hildenbrand <david@redhat.com>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Miklos Szeredi <miklos@szeredi.hu>
-cc: Arnd Bergmann <arnd@arndb.de>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: linux-block@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
+cc: John Hubbard <jhubbard@nvidia.com>
 cc: linux-mm@kvack.org
+cc: linux-block@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
 ---
- drivers/char/random.c | 4 ++--
- drivers/tty/tty_io.c  | 4 ++--
- fs/kernfs/file.c      | 2 +-
- fs/proc/inode.c       | 4 ++--
- fs/proc/proc_sysctl.c | 2 +-
- fs/proc_namespace.c   | 6 +++---
- 6 files changed, 11 insertions(+), 11 deletions(-)
+ fs/cifs/cifsfs.c |  8 ++++----
+ fs/cifs/cifsfs.h |  3 ---
+ fs/cifs/file.c   | 16 ----------------
+ fs/splice.c      | 30 +++++++-----------------------
+ mm/filemap.c     |  1 -
+ 5 files changed, 11 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index ce3ccd172cc8..792713616ba8 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1546,7 +1546,7 @@ const struct file_operations random_fops = {
- 	.compat_ioctl = compat_ptr_ioctl,
- 	.fasync = random_fasync,
- 	.llseek = noop_llseek,
--	.splice_read = generic_file_splice_read,
-+	.splice_read = direct_splice_read,
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index cbcf210d56e4..ba963a26cb19 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1359,7 +1359,7 @@ const struct file_operations cifs_file_ops = {
+ 	.fsync = cifs_fsync,
+ 	.flush = cifs_flush,
+ 	.mmap  = cifs_file_mmap,
+-	.splice_read = cifs_splice_read,
++	.splice_read = generic_file_splice_read,
  	.splice_write = iter_file_splice_write,
- };
- 
-@@ -1557,7 +1557,7 @@ const struct file_operations urandom_fops = {
- 	.compat_ioctl = compat_ptr_ioctl,
- 	.fasync = random_fasync,
- 	.llseek = noop_llseek,
--	.splice_read = generic_file_splice_read,
-+	.splice_read = direct_splice_read,
+ 	.llseek = cifs_llseek,
+ 	.unlocked_ioctl	= cifs_ioctl,
+@@ -1379,7 +1379,7 @@ const struct file_operations cifs_file_strict_ops = {
+ 	.fsync = cifs_strict_fsync,
+ 	.flush = cifs_flush,
+ 	.mmap = cifs_file_strict_mmap,
+-	.splice_read = cifs_splice_read,
++	.splice_read = generic_file_splice_read,
  	.splice_write = iter_file_splice_write,
+ 	.llseek = cifs_llseek,
+ 	.unlocked_ioctl	= cifs_ioctl,
+@@ -1417,7 +1417,7 @@ const struct file_operations cifs_file_nobrl_ops = {
+ 	.fsync = cifs_fsync,
+ 	.flush = cifs_flush,
+ 	.mmap  = cifs_file_mmap,
+-	.splice_read = cifs_splice_read,
++	.splice_read = generic_file_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.llseek = cifs_llseek,
+ 	.unlocked_ioctl	= cifs_ioctl,
+@@ -1435,7 +1435,7 @@ const struct file_operations cifs_file_strict_nobrl_ops = {
+ 	.fsync = cifs_strict_fsync,
+ 	.flush = cifs_flush,
+ 	.mmap = cifs_file_strict_mmap,
+-	.splice_read = cifs_splice_read,
++	.splice_read = generic_file_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.llseek = cifs_llseek,
+ 	.unlocked_ioctl	= cifs_ioctl,
+diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h
+index 71fe0a0a7992..8b239854e590 100644
+--- a/fs/cifs/cifsfs.h
++++ b/fs/cifs/cifsfs.h
+@@ -100,9 +100,6 @@ extern ssize_t cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to);
+ extern ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from);
+ extern ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from);
+ extern ssize_t cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from);
+-extern ssize_t cifs_splice_read(struct file *in, loff_t *ppos,
+-				struct pipe_inode_info *pipe, size_t len,
+-				unsigned int flags);
+ extern int cifs_flock(struct file *pfile, int cmd, struct file_lock *plock);
+ extern int cifs_lock(struct file *, int, struct file_lock *);
+ extern int cifs_fsync(struct file *, loff_t, loff_t, int);
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 4d4a2d82636d..321f9b7c84c9 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -5066,19 +5066,3 @@ const struct address_space_operations cifs_addr_ops_smallbuf = {
+ 	.launder_folio = cifs_launder_folio,
+ 	.migrate_folio = filemap_migrate_folio,
  };
+-
+-/*
+- * Splice data from a file into a pipe.
+- */
+-ssize_t cifs_splice_read(struct file *in, loff_t *ppos,
+-			 struct pipe_inode_info *pipe, size_t len,
+-			 unsigned int flags)
+-{
+-	if (unlikely(*ppos >= file_inode(in)->i_sb->s_maxbytes))
+-		return 0;
+-	if (unlikely(!len))
+-		return 0;
+-	if (in->f_flags & O_DIRECT)
+-		return direct_splice_read(in, ppos, pipe, len, flags);
+-	return filemap_splice_read(in, ppos, pipe, len, flags);
+-}
+diff --git a/fs/splice.c b/fs/splice.c
+index abd21a455a2b..9c6adcd0a2e9 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -387,29 +387,13 @@ ssize_t generic_file_splice_read(struct file *in, loff_t *ppos,
+ 				 struct pipe_inode_info *pipe, size_t len,
+ 				 unsigned int flags)
+ {
+-	struct iov_iter to;
+-	struct kiocb kiocb;
+-	int ret;
+-
+-	iov_iter_pipe(&to, ITER_DEST, pipe, len);
+-	init_sync_kiocb(&kiocb, in);
+-	kiocb.ki_pos = *ppos;
+-	ret = call_read_iter(in, &kiocb, &to);
+-	if (ret > 0) {
+-		*ppos = kiocb.ki_pos;
+-		file_accessed(in);
+-	} else if (ret < 0) {
+-		/* free what was emitted */
+-		pipe_discard_from(pipe, to.start_head);
+-		/*
+-		 * callers of ->splice_read() expect -EAGAIN on
+-		 * "can't put anything in there", rather than -EFAULT.
+-		 */
+-		if (ret == -EFAULT)
+-			ret = -EAGAIN;
+-	}
+-
+-	return ret;
++	if (unlikely(*ppos >= file_inode(in)->i_sb->s_maxbytes))
++		return 0;
++	if (unlikely(!len))
++		return 0;
++	if (in->f_flags & O_DIRECT)
++		return direct_splice_read(in, ppos, pipe, len, flags);
++	return filemap_splice_read(in, ppos, pipe, len, flags);
+ }
+ EXPORT_SYMBOL(generic_file_splice_read);
  
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 36fb945fdad4..9d117e579dfb 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -466,7 +466,7 @@ static const struct file_operations tty_fops = {
- 	.llseek		= no_llseek,
- 	.read_iter	= tty_read,
- 	.write_iter	= tty_write,
--	.splice_read	= generic_file_splice_read,
-+	.splice_read	= direct_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.poll		= tty_poll,
- 	.unlocked_ioctl	= tty_ioctl,
-@@ -481,7 +481,7 @@ static const struct file_operations console_fops = {
- 	.llseek		= no_llseek,
- 	.read_iter	= tty_read,
- 	.write_iter	= redirected_tty_write,
--	.splice_read	= generic_file_splice_read,
-+	.splice_read	= direct_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.poll		= tty_poll,
- 	.unlocked_ioctl	= tty_ioctl,
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index e4a50e4ff0d2..9d23b8141db7 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -1011,7 +1011,7 @@ const struct file_operations kernfs_file_fops = {
- 	.release	= kernfs_fop_release,
- 	.poll		= kernfs_fop_poll,
- 	.fsync		= noop_fsync,
--	.splice_read	= generic_file_splice_read,
-+	.splice_read	= direct_splice_read,
- 	.splice_write	= iter_file_splice_write,
- };
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 2723104cc06a..3a93515ae2ed 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2967,7 +2967,6 @@ ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
  
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index f495fdb39151..711f12706469 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -591,7 +591,7 @@ static const struct file_operations proc_iter_file_ops = {
- 	.llseek		= proc_reg_llseek,
- 	.read_iter	= proc_reg_read_iter,
- 	.write		= proc_reg_write,
--	.splice_read	= generic_file_splice_read,
-+	.splice_read	= direct_splice_read,
- 	.poll		= proc_reg_poll,
- 	.unlocked_ioctl	= proc_reg_unlocked_ioctl,
- 	.mmap		= proc_reg_mmap,
-@@ -617,7 +617,7 @@ static const struct file_operations proc_reg_file_ops_compat = {
- static const struct file_operations proc_iter_file_ops_compat = {
- 	.llseek		= proc_reg_llseek,
- 	.read_iter	= proc_reg_read_iter,
--	.splice_read	= generic_file_splice_read,
-+	.splice_read	= direct_splice_read,
- 	.write		= proc_reg_write,
- 	.poll		= proc_reg_poll,
- 	.unlocked_ioctl	= proc_reg_unlocked_ioctl,
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 5851eb5bc726..e49f99657d1c 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -869,7 +869,7 @@ static const struct file_operations proc_sys_file_operations = {
- 	.poll		= proc_sys_poll,
- 	.read_iter	= proc_sys_read,
- 	.write_iter	= proc_sys_write,
--	.splice_read	= generic_file_splice_read,
-+	.splice_read	= direct_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.llseek		= default_llseek,
- };
-diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index 846f9455ae22..492abbbeff5e 100644
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -324,7 +324,7 @@ static int mountstats_open(struct inode *inode, struct file *file)
- const struct file_operations proc_mounts_operations = {
- 	.open		= mounts_open,
- 	.read_iter	= seq_read_iter,
--	.splice_read	= generic_file_splice_read,
-+	.splice_read	= direct_splice_read,
- 	.llseek		= seq_lseek,
- 	.release	= mounts_release,
- 	.poll		= mounts_poll,
-@@ -333,7 +333,7 @@ const struct file_operations proc_mounts_operations = {
- const struct file_operations proc_mountinfo_operations = {
- 	.open		= mountinfo_open,
- 	.read_iter	= seq_read_iter,
--	.splice_read	= generic_file_splice_read,
-+	.splice_read	= direct_splice_read,
- 	.llseek		= seq_lseek,
- 	.release	= mounts_release,
- 	.poll		= mounts_poll,
-@@ -342,7 +342,7 @@ const struct file_operations proc_mountinfo_operations = {
- const struct file_operations proc_mountstats_operations = {
- 	.open		= mountstats_open,
- 	.read_iter	= seq_read_iter,
--	.splice_read	= generic_file_splice_read,
-+	.splice_read	= direct_splice_read,
- 	.llseek		= seq_lseek,
- 	.release	= mounts_release,
- };
+ 	return total_spliced ? total_spliced : error;
+ }
+-EXPORT_SYMBOL(filemap_splice_read);
+ 
+ static inline loff_t folio_seek_hole_data(struct xa_state *xas,
+ 		struct address_space *mapping, struct folio *folio,
 
