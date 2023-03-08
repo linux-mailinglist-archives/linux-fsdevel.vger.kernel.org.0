@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F26B6B14F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 23:20:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F9D06B14F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 23:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230250AbjCHWT5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 17:19:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36224 "EHLO
+        id S230300AbjCHWT7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 17:19:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230312AbjCHWTu (ORCPT
+        with ESMTP id S230337AbjCHWTx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 17:19:50 -0500
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5FF69545B
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 14:19:45 -0800 (PST)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-536be78056eso109137b3.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Mar 2023 14:19:45 -0800 (PST)
+        Wed, 8 Mar 2023 17:19:53 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC5F497B44
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 14:19:47 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id 66-20020a250245000000b00a53c1100d72so222010ybc.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Mar 2023 14:19:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1678313984;
+        d=google.com; s=20210112; t=1678313987;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3qfduLMYpbX/eaIxmSwqctkndy7m9wVy8PCWJ7GfFGI=;
-        b=k5wkO/KbrcGkUo25W5QN4LLfIuQXvS4nk4V7ivGZu4a+ARwzHF8LYZN+MXIvZZfzvD
-         8PpS7Y3UtSlgTY2kOJHGU7UZPPk2UR+HnRZ3GucaS2hJ1DTwe6fAggGkwIijDIbuZwjR
-         UoXgdH6BBQXDLVoMNI6Qi0NoatB27T1PEu6JuBYHJNzuDe0cC2DW+c0VsLc3XQkM3WKV
-         G/AydUC2vCvEiAl9rGj5NAm3aPG8UO/Oc1kY94iN3o+2dI1lufYZBKbPsAQX0YMUS62I
-         PHZgAgCwW1+rze6bkP1nCv1GL4GiifUQogx/i21ma41dJbc6Tr8UbQne3+GHUcF+F3/X
-         jd6Q==
+        bh=LvHQfBSgJpk2leJg2lbv23wkIb9ch0JlJ29o+UkLqLA=;
+        b=Yz9Wf7aQWqLQu1CN+0EwInCRKNr1DZvHqklRMi8tSv9Sr1rghhBdpEihEd63RbUoa0
+         2NRJujBJLTC3SpjGMRlifUR1fwSqU6aR7EVWjIhNnC7xz6dv0ZVz/cEGUem3moSNsQBs
+         XfRbhbkuDe372oOYOP/U6vAvu4Wup3jUKLucRHtNKiunVDgWUp7QfzcB8SW7WoL7L0um
+         Lp9LZwsGK/jZR42Tx3qTYyWARChru2UYNB2Hhq1LY8YGVuN2DUuPvNBD5GhwEN8+BBJr
+         cl6f7pex42DgsZtrrBikRfz7crFb0JCd4BK26FQYBBq+XArctEwmIDjuZ9GLW2KyzIRr
+         A0vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678313984;
+        d=1e100.net; s=20210112; t=1678313987;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3qfduLMYpbX/eaIxmSwqctkndy7m9wVy8PCWJ7GfFGI=;
-        b=SKi0jejyuQn5Pzc9hqpQ+susGjHMJ5acCTLAIcEWLxr56/JlOoMBgoAwK9Tuf+JBuL
-         Wc156cRlcEZ3JquVtQsfpNO24/bng6rkrkT7mjrz/pbQmJa1owsoCnHK5Jz5ZL3it5/N
-         M4+n0yAtF6tSGXJ7AgZ6lB8qt3G0Ece7MlLWIPulbZDNefwgJOFynkhS64L0GlmrH7mj
-         P7U7srOTTZDClP2xhleF2ETsB1o7M5K22Slp2QhasbN0MYcD8Tt2+WMxx88B3akk1XMe
-         p1uEz5mvCVZYsyYsi/H8IoUC0PpbDVygnmbwh3dkJc+WTsrhgwj+SFtTRleA3snMvBwh
-         acjA==
-X-Gm-Message-State: AO0yUKUpcPlEHxArJtbCJHxjnTdpEwKGHwlnH8/EgZpF8kW7T8PySdfx
-        1dbPuklEoPkZJk/swWII//DT7fih1ckIJdP2uRTA
-X-Google-Smtp-Source: AK7set8ENvk9aqnhQf9+1ATRq7bfy/EuaPhVEUgvUxOZRsyPIYfoGwwgoRtTIEhiUpIMpBy1g+alYPUzkKhDDmmxgvaF
+        bh=LvHQfBSgJpk2leJg2lbv23wkIb9ch0JlJ29o+UkLqLA=;
+        b=I0jmMpXiMOSF6j3FWMZtlsB9+bhl+ZjBUd1oA0r5nar3znLeN0b2xTy62iRH5Qs0O+
+         BI35Oo02VJElm2IlGveA5RcSSCfa/Q+QKXdYyxqS3tMnglhYFNYZSslIclhxf3qyfHLS
+         V3sk9/jZT/rIkhRYB+0r7QctRxnPnyxeaIzDohCBQo8XDNGqvaNv72D+7YClVcv65nqg
+         5PcdhCwRFcLjTNhWc8vbR0A83HJ6kKY0niFHFhWfoe2e+9H/DC/eMYpmdJwwymKS2WU3
+         7mb2zkssees5pBdnMXo++I3Jh7qx6ipLLT1Bt02uV4+Jv9h95KQTqzOSfViK8eA7FHtJ
+         050A==
+X-Gm-Message-State: AO0yUKVOqGv5FzIQ0dUX+omS0d0fEVNNMaSalvclWSnkEV7ZuNSOzcjm
+        4Xa7mmTCTlHwqJskYhI4OAMYxklVhCmx6vRS+oCb
+X-Google-Smtp-Source: AK7set9UW1FIPyZ8r+wZxfqJFfSITGVvxyKDazvFuPddI3cchLABBfsGdj4cnjKMOvoWWBNNOwQLCA920hU23FYdRvgk
 X-Received: from axel.svl.corp.google.com ([2620:15c:2d4:203:96cb:1c04:7322:78a4])
- (user=axelrasmussen job=sendgmr) by 2002:a81:a1ca:0:b0:527:9d23:f6d7 with
- SMTP id y193-20020a81a1ca000000b005279d23f6d7mr9ywg.48.1678313984535; Wed, 08
- Mar 2023 14:19:44 -0800 (PST)
-Date:   Wed,  8 Mar 2023 14:19:30 -0800
+ (user=axelrasmussen job=sendgmr) by 2002:a05:6902:145:b0:ac2:a7a7:23c3 with
+ SMTP id p5-20020a056902014500b00ac2a7a723c3mr7748521ybh.12.1678313986816;
+ Wed, 08 Mar 2023 14:19:46 -0800 (PST)
+Date:   Wed,  8 Mar 2023 14:19:31 -0800
 In-Reply-To: <20230308221932.1548827-1-axelrasmussen@google.com>
 Mime-Version: 1.0
 References: <20230308221932.1548827-1-axelrasmussen@google.com>
 X-Mailer: git-send-email 2.40.0.rc1.284.g88254d51c5-goog
-Message-ID: <20230308221932.1548827-3-axelrasmussen@google.com>
-Subject: [PATCH v4 2/4] mm: userfaultfd: don't pass around both mm and vma
+Message-ID: <20230308221932.1548827-4-axelrasmussen@google.com>
+Subject: [PATCH v4 3/4] mm: userfaultfd: combine 'mode' and 'wp_copy' arguments
 From:   Axel Rasmussen <axelrasmussen@google.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -79,366 +79,498 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quite a few userfaultfd functions took both mm and vma pointers as
-arguments. Since the mm is trivially accessible via vma->vm_mm, there's
-no reason to pass both; it just needlessly extends the already long
-argument list.
+Many userfaultfd ioctl functions take both a 'mode' and a 'wp_copy'
+argument. In future commits we plan to plumb the flags through to more
+places, so we'd be proliferating the very long argument list even
+further.
 
-Get rid of the mm pointer, where possible, to shorten the argument list.
+Let's take the time to simplify the argument list. Combine the two
+arguments into one - and generalize, so when we add more flags in the
+future, it doesn't imply more function arguments.
 
-Acked-by: Peter Xu <peterx@redhat.com>
+Since the modes (copy, zeropage, continue) are mutually exclusive, store
+them as an integer value (0, 1, 2) in the low bits. Place combine-able
+flag bits in the high bits.
+
+This is quite similar to an earlier patch proposed by Nadav Amit
+("userfaultfd: introduce uffd_flags" [1]). The main difference is that
+patch only handled flags, whereas this patch *also* combines the "mode"
+argument into the same type to shorten the argument list.
+
+[1]: https://lore.kernel.org/all/20220619233449.181323-2-namit@vmware.com/
+
+Acked-by: James Houghton <jthoughton@google.com>
 Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 ---
- fs/userfaultfd.c              |  2 +-
- include/linux/hugetlb.h       |  5 ++-
- include/linux/shmem_fs.h      |  4 +--
- include/linux/userfaultfd_k.h |  4 +--
- mm/hugetlb.c                  |  4 +--
+ fs/userfaultfd.c              |  5 ++-
+ include/linux/hugetlb.h       | 10 ++---
+ include/linux/shmem_fs.h      |  5 ++-
+ include/linux/userfaultfd_k.h | 45 +++++++++++++--------
+ mm/hugetlb.c                  | 12 +++---
  mm/shmem.c                    |  7 ++--
- mm/userfaultfd.c              | 61 +++++++++++++++++------------------
- 7 files changed, 41 insertions(+), 46 deletions(-)
+ mm/userfaultfd.c              | 76 ++++++++++++++++-------------------
+ 7 files changed, 83 insertions(+), 77 deletions(-)
 
 diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 365bf00dd8dd..84d5d402214a 100644
+index 84d5d402214a..56e54e50414e 100644
 --- a/fs/userfaultfd.c
 +++ b/fs/userfaultfd.c
-@@ -1629,7 +1629,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+@@ -1714,6 +1714,7 @@ static int userfaultfd_copy(struct userfaultfd_ctx *ctx,
+ 	struct uffdio_copy uffdio_copy;
+ 	struct uffdio_copy __user *user_uffdio_copy;
+ 	struct userfaultfd_wake_range range;
++	uffd_flags_t flags = 0;
  
- 		/* Reset ptes for the whole vma range if wr-protected */
- 		if (userfaultfd_wp(vma))
--			uffd_wp_range(mm, vma, start, vma_end - start, false);
-+			uffd_wp_range(vma, start, vma_end - start, false);
+ 	user_uffdio_copy = (struct uffdio_copy __user *) arg;
  
- 		new_flags = vma->vm_flags & ~__VM_UFFD_FLAGS;
- 		prev = vma_merge(&vmi, mm, prev, start, vma_end, new_flags,
+@@ -1740,10 +1741,12 @@ static int userfaultfd_copy(struct userfaultfd_ctx *ctx,
+ 		goto out;
+ 	if (uffdio_copy.mode & ~(UFFDIO_COPY_MODE_DONTWAKE|UFFDIO_COPY_MODE_WP))
+ 		goto out;
++	if (uffdio_copy.mode & UFFDIO_COPY_MODE_WP)
++		flags |= MFILL_ATOMIC_WP;
+ 	if (mmget_not_zero(ctx->mm)) {
+ 		ret = mfill_atomic_copy(ctx->mm, uffdio_copy.dst, uffdio_copy.src,
+ 					uffdio_copy.len, &ctx->mmap_changing,
+-					uffdio_copy.mode);
++					flags);
+ 		mmput(ctx->mm);
+ 	} else {
+ 		return -ESRCH;
 diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 8f0467bf1cbd..8b9325f77ac3 100644
+index 8b9325f77ac3..6270a4786584 100644
 --- a/include/linux/hugetlb.h
 +++ b/include/linux/hugetlb.h
-@@ -158,7 +158,7 @@ unsigned long hugetlb_total_pages(void);
- vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 			unsigned long address, unsigned int flags);
- #ifdef CONFIG_USERFAULTFD
--int hugetlb_mfill_atomic_pte(struct mm_struct *dst_mm, pte_t *dst_pte,
-+int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
+@@ -162,9 +162,8 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
  			     struct vm_area_struct *dst_vma,
  			     unsigned long dst_addr,
  			     unsigned long src_addr,
-@@ -393,8 +393,7 @@ static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
- }
- 
- #ifdef CONFIG_USERFAULTFD
--static inline int hugetlb_mfill_atomic_pte(struct mm_struct *dst_mm,
--					   pte_t *dst_pte,
-+static inline int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
+-			     enum mcopy_atomic_mode mode,
+-			     struct page **pagep,
+-			     bool wp_copy);
++			     uffd_flags_t flags,
++			     struct page **pagep);
+ #endif /* CONFIG_USERFAULTFD */
+ bool hugetlb_reserve_pages(struct inode *inode, long from, long to,
+ 						struct vm_area_struct *vma,
+@@ -397,9 +396,8 @@ static inline int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
  					   struct vm_area_struct *dst_vma,
  					   unsigned long dst_addr,
  					   unsigned long src_addr,
+-					   enum mcopy_atomic_mode mode,
+-					   struct page **pagep,
+-					   bool wp_copy)
++					   uffd_flags_t flags,
++					   struct page **pagep)
+ {
+ 	BUG();
+ 	return 0;
 diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 103d1000a5a2..b82916c25e61 100644
+index b82916c25e61..b7048bd88a8d 100644
 --- a/include/linux/shmem_fs.h
 +++ b/include/linux/shmem_fs.h
-@@ -151,14 +151,14 @@ extern void shmem_uncharge(struct inode *inode, long pages);
+@@ -9,6 +9,7 @@
+ #include <linux/percpu_counter.h>
+ #include <linux/xattr.h>
+ #include <linux/fs_parser.h>
++#include <linux/userfaultfd_k.h>
  
- #ifdef CONFIG_USERFAULTFD
- #ifdef CONFIG_SHMEM
--extern int shmem_mfill_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
-+extern int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+ /* inode in-kernel data */
+ 
+@@ -155,11 +156,11 @@ extern int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
  				  struct vm_area_struct *dst_vma,
  				  unsigned long dst_addr,
  				  unsigned long src_addr,
- 				  bool zeropage, bool wp_copy,
+-				  bool zeropage, bool wp_copy,
++				  uffd_flags_t flags,
  				  struct page **pagep);
  #else /* !CONFIG_SHMEM */
--#define shmem_mfill_atomic_pte(dst_mm, dst_pmd, dst_vma, dst_addr, \
-+#define shmem_mfill_atomic_pte(dst_pmd, dst_vma, dst_addr, \
- 			       src_addr, zeropage, wp_copy, pagep) ({ BUG(); 0; })
+ #define shmem_mfill_atomic_pte(dst_pmd, dst_vma, dst_addr, \
+-			       src_addr, zeropage, wp_copy, pagep) ({ BUG(); 0; })
++			       src_addr, flags, pagep) ({ BUG(); 0; })
  #endif /* CONFIG_SHMEM */
  #endif /* CONFIG_USERFAULTFD */
+ 
 diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index 468080125612..ba79e296fcc7 100644
+index ba79e296fcc7..4d7425684171 100644
 --- a/include/linux/userfaultfd_k.h
 +++ b/include/linux/userfaultfd_k.h
-@@ -56,7 +56,7 @@ enum mcopy_atomic_mode {
- 	MCOPY_ATOMIC_CONTINUE,
+@@ -40,30 +40,43 @@ extern int sysctl_unprivileged_userfaultfd;
+ 
+ extern vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason);
+ 
+-/*
+- * The mode of operation for __mcopy_atomic and its helpers.
+- *
+- * This is almost an implementation detail (mcopy_atomic below doesn't take this
+- * as a parameter), but it's exposed here because memory-kind-specific
+- * implementations (e.g. hugetlbfs) need to know the mode of operation.
+- */
+-enum mcopy_atomic_mode {
+-	/* A normal copy_from_user into the destination range. */
+-	MCOPY_ATOMIC_NORMAL,
+-	/* Don't copy; map the destination range to the zero page. */
+-	MCOPY_ATOMIC_ZEROPAGE,
+-	/* Just install pte(s) with the existing page(s) in the page cache. */
+-	MCOPY_ATOMIC_CONTINUE,
++/* A combined operation mode + behavior flags. */
++typedef unsigned int __bitwise uffd_flags_t;
++
++/* Mutually exclusive modes of operation. */
++enum mfill_atomic_mode {
++	MFILL_ATOMIC_COPY,
++	MFILL_ATOMIC_ZEROPAGE,
++	MFILL_ATOMIC_CONTINUE,
++	NR_MFILL_ATOMIC_MODES,
  };
  
--extern int mfill_atomic_install_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
-+extern int mfill_atomic_install_pte(pmd_t *dst_pmd,
++#define MFILL_ATOMIC_MODE_BITS (const_ilog2(NR_MFILL_ATOMIC_MODES - 1) + 1)
++#define MFILL_ATOMIC_BIT(nr) BIT(MFILL_ATOMIC_MODE_BITS + (nr))
++#define MFILL_ATOMIC_FLAG(nr) ((__force uffd_flags_t) MFILL_ATOMIC_BIT(nr))
++#define MFILL_ATOMIC_MODE_MASK ((__force uffd_flags_t) (MFILL_ATOMIC_BIT(0) - 1))
++
++static inline bool uffd_flags_has_mode(uffd_flags_t flags, enum mfill_atomic_mode expected)
++{
++	return (flags & MFILL_ATOMIC_MODE_MASK) == ((__force uffd_flags_t) expected);
++}
++
++static inline uffd_flags_t uffd_flags_set_mode(uffd_flags_t flags, enum mfill_atomic_mode mode)
++{
++	return flags | ((__force uffd_flags_t) mode);
++}
++
++/* Flags controlling behavior. */
++#define MFILL_ATOMIC_WP MFILL_ATOMIC_FLAG(0)
++
+ extern int mfill_atomic_install_pte(pmd_t *dst_pmd,
  				    struct vm_area_struct *dst_vma,
  				    unsigned long dst_addr, struct page *page,
- 				    bool newly_allocated, bool wp_copy);
-@@ -73,7 +73,7 @@ extern ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigned long dst
- extern int mwriteprotect_range(struct mm_struct *dst_mm,
- 			       unsigned long start, unsigned long len,
- 			       bool enable_wp, atomic_t *mmap_changing);
--extern long uffd_wp_range(struct mm_struct *dst_mm, struct vm_area_struct *vma,
-+extern long uffd_wp_range(struct vm_area_struct *vma,
- 			  unsigned long start, unsigned long len, bool enable_wp);
+-				    bool newly_allocated, bool wp_copy);
++				    bool newly_allocated, uffd_flags_t flags);
  
- /* mm helpers */
+ extern ssize_t mfill_atomic_copy(struct mm_struct *dst_mm, unsigned long dst_start,
+ 				 unsigned long src_start, unsigned long len,
+-				 atomic_t *mmap_changing, __u64 mode);
++				 atomic_t *mmap_changing, uffd_flags_t flags);
+ extern ssize_t mfill_atomic_zeropage(struct mm_struct *dst_mm,
+ 				     unsigned long dst_start,
+ 				     unsigned long len,
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 4c9276549394..fe043034ab46 100644
+index fe043034ab46..493406a2d61e 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -6157,8 +6157,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
-  * Used by userfaultfd UFFDIO_* ioctls. Based on userfaultfd's mfill_atomic_pte
-  * with modifications for hugetlb pages.
-  */
--int hugetlb_mfill_atomic_pte(struct mm_struct *dst_mm,
--			     pte_t *dst_pte,
-+int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
+@@ -6161,12 +6161,12 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
  			     struct vm_area_struct *dst_vma,
  			     unsigned long dst_addr,
  			     unsigned long src_addr,
-@@ -6166,6 +6165,7 @@ int hugetlb_mfill_atomic_pte(struct mm_struct *dst_mm,
- 			     struct page **pagep,
- 			     bool wp_copy)
+-			     enum mcopy_atomic_mode mode,
+-			     struct page **pagep,
+-			     bool wp_copy)
++			     uffd_flags_t flags,
++			     struct page **pagep)
  {
-+	struct mm_struct *dst_mm = dst_vma->vm_mm;
- 	bool is_continue = (mode == MCOPY_ATOMIC_CONTINUE);
+ 	struct mm_struct *dst_mm = dst_vma->vm_mm;
+-	bool is_continue = (mode == MCOPY_ATOMIC_CONTINUE);
++	bool is_continue = uffd_flags_has_mode(flags, MFILL_ATOMIC_CONTINUE);
++	bool wp_enabled = (flags & MFILL_ATOMIC_WP);
  	struct hstate *h = hstate_vma(dst_vma);
  	struct address_space *mapping = dst_vma->vm_file->f_mapping;
+ 	pgoff_t idx = vma_hugecache_offset(h, dst_vma, dst_addr);
+@@ -6301,7 +6301,7 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
+ 	 * For either: (1) CONTINUE on a non-shared VMA, or (2) UFFDIO_COPY
+ 	 * with wp flag set, don't set pte write bit.
+ 	 */
+-	if (wp_copy || (is_continue && !vm_shared))
++	if (wp_enabled || (is_continue && !vm_shared))
+ 		writable = 0;
+ 	else
+ 		writable = dst_vma->vm_flags & VM_WRITE;
+@@ -6316,7 +6316,7 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
+ 	_dst_pte = huge_pte_mkdirty(_dst_pte);
+ 	_dst_pte = pte_mkyoung(_dst_pte);
+ 
+-	if (wp_copy)
++	if (wp_enabled)
+ 		_dst_pte = huge_pte_mkuffd_wp(_dst_pte);
+ 
+ 	set_huge_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 448f393d8ab2..1d751b6cf1ac 100644
+index 1d751b6cf1ac..7d688afb5e31 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -2415,8 +2415,7 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
- }
+@@ -76,7 +76,6 @@ static struct vfsmount *shm_mnt;
+ #include <linux/syscalls.h>
+ #include <linux/fcntl.h>
+ #include <uapi/linux/memfd.h>
+-#include <linux/userfaultfd_k.h>
+ #include <linux/rmap.h>
+ #include <linux/uuid.h>
  
- #ifdef CONFIG_USERFAULTFD
--int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
--			   pmd_t *dst_pmd,
-+int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+@@ -2419,7 +2418,7 @@ int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
  			   struct vm_area_struct *dst_vma,
  			   unsigned long dst_addr,
  			   unsigned long src_addr,
-@@ -2506,11 +2505,11 @@ int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+-			   bool zeropage, bool wp_copy,
++			   uffd_flags_t flags,
+ 			   struct page **pagep)
+ {
+ 	struct inode *inode = file_inode(dst_vma->vm_file);
+@@ -2451,7 +2450,7 @@ int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+ 		if (!folio)
+ 			goto out_unacct_blocks;
+ 
+-		if (!zeropage) {	/* COPY */
++		if (uffd_flags_has_mode(flags, MFILL_ATOMIC_COPY)) {
+ 			page_kaddr = kmap_local_folio(folio, 0);
+ 			/*
+ 			 * The read mmap_lock is held here.  Despite the
+@@ -2510,7 +2509,7 @@ int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
  		goto out_release;
  
- 	ret = shmem_add_to_page_cache(folio, mapping, pgoff, NULL,
--				      gfp & GFP_RECLAIM_MASK, dst_mm);
-+				      gfp & GFP_RECLAIM_MASK, dst_vma->vm_mm);
- 	if (ret)
- 		goto out_release;
- 
--	ret = mfill_atomic_install_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
-+	ret = mfill_atomic_install_pte(dst_pmd, dst_vma, dst_addr,
- 				       &folio->page, true, wp_copy);
+ 	ret = mfill_atomic_install_pte(dst_pmd, dst_vma, dst_addr,
+-				       &folio->page, true, wp_copy);
++				       &folio->page, true, flags);
  	if (ret)
  		goto out_delete_from_cache;
+ 
 diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 84db5b2fad3a..4fc373476739 100644
+index 4fc373476739..dd807924446f 100644
 --- a/mm/userfaultfd.c
 +++ b/mm/userfaultfd.c
-@@ -55,12 +55,13 @@ struct vm_area_struct *find_dst_vma(struct mm_struct *dst_mm,
-  * This function handles both MCOPY_ATOMIC_NORMAL and _CONTINUE for both shmem
-  * and anon, and for both shared and private VMAs.
-  */
--int mfill_atomic_install_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
-+int mfill_atomic_install_pte(pmd_t *dst_pmd,
+@@ -58,7 +58,7 @@ struct vm_area_struct *find_dst_vma(struct mm_struct *dst_mm,
+ int mfill_atomic_install_pte(pmd_t *dst_pmd,
  			     struct vm_area_struct *dst_vma,
  			     unsigned long dst_addr, struct page *page,
- 			     bool newly_allocated, bool wp_copy)
+-			     bool newly_allocated, bool wp_copy)
++			     bool newly_allocated, uffd_flags_t flags)
  {
  	int ret;
-+	struct mm_struct *dst_mm = dst_vma->vm_mm;
- 	pte_t _dst_pte, *dst_pte;
- 	bool writable = dst_vma->vm_flags & VM_WRITE;
- 	bool vm_shared = dst_vma->vm_flags & VM_SHARED;
-@@ -127,8 +128,7 @@ int mfill_atomic_install_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
- 	return ret;
- }
+ 	struct mm_struct *dst_mm = dst_vma->vm_mm;
+@@ -77,7 +77,7 @@ int mfill_atomic_install_pte(pmd_t *dst_pmd,
+ 		writable = false;
+ 	if (writable)
+ 		_dst_pte = pte_mkwrite(_dst_pte);
+-	if (wp_copy)
++	if (flags & MFILL_ATOMIC_WP)
+ 		_dst_pte = pte_mkuffd_wp(_dst_pte);
  
--static int mfill_atomic_pte_copy(struct mm_struct *dst_mm,
--				 pmd_t *dst_pmd,
-+static int mfill_atomic_pte_copy(pmd_t *dst_pmd,
+ 	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
+@@ -132,8 +132,8 @@ static int mfill_atomic_pte_copy(pmd_t *dst_pmd,
  				 struct vm_area_struct *dst_vma,
  				 unsigned long dst_addr,
  				 unsigned long src_addr,
-@@ -190,10 +190,10 @@ static int mfill_atomic_pte_copy(struct mm_struct *dst_mm,
- 	__SetPageUptodate(page);
- 
- 	ret = -ENOMEM;
--	if (mem_cgroup_charge(page_folio(page), dst_mm, GFP_KERNEL))
-+	if (mem_cgroup_charge(page_folio(page), dst_vma->vm_mm, GFP_KERNEL))
+-				 struct page **pagep,
+-				 bool wp_copy)
++				 uffd_flags_t flags,
++				 struct page **pagep)
+ {
+ 	void *page_kaddr;
+ 	int ret;
+@@ -194,7 +194,7 @@ static int mfill_atomic_pte_copy(pmd_t *dst_pmd,
  		goto out_release;
  
--	ret = mfill_atomic_install_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
-+	ret = mfill_atomic_install_pte(dst_pmd, dst_vma, dst_addr,
- 				       page, true, wp_copy);
+ 	ret = mfill_atomic_install_pte(dst_pmd, dst_vma, dst_addr,
+-				       page, true, wp_copy);
++				       page, true, flags);
  	if (ret)
  		goto out_release;
-@@ -204,8 +204,7 @@ static int mfill_atomic_pte_copy(struct mm_struct *dst_mm,
- 	goto out;
- }
- 
--static int mfill_atomic_pte_zeropage(struct mm_struct *dst_mm,
--				     pmd_t *dst_pmd,
-+static int mfill_atomic_pte_zeropage(pmd_t *dst_pmd,
- 				     struct vm_area_struct *dst_vma,
- 				     unsigned long dst_addr)
- {
-@@ -217,7 +216,7 @@ static int mfill_atomic_pte_zeropage(struct mm_struct *dst_mm,
- 
- 	_dst_pte = pte_mkspecial(pfn_pte(my_zero_pfn(dst_addr),
- 					 dst_vma->vm_page_prot));
--	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
-+	dst_pte = pte_offset_map_lock(dst_vma->vm_mm, dst_pmd, dst_addr, &ptl);
- 	if (dst_vma->vm_file) {
- 		/* the shmem MAP_PRIVATE case requires checking the i_size */
- 		inode = dst_vma->vm_file->f_inode;
-@@ -230,7 +229,7 @@ static int mfill_atomic_pte_zeropage(struct mm_struct *dst_mm,
- 	ret = -EEXIST;
- 	if (!pte_none(*dst_pte))
- 		goto out_unlock;
--	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
-+	set_pte_at(dst_vma->vm_mm, dst_addr, dst_pte, _dst_pte);
- 	/* No need to invalidate - it was non-present before */
- 	update_mmu_cache(dst_vma, dst_addr, dst_pte);
- 	ret = 0;
-@@ -240,8 +239,7 @@ static int mfill_atomic_pte_zeropage(struct mm_struct *dst_mm,
- }
- 
- /* Handles UFFDIO_CONTINUE for all shmem VMAs (shared or private). */
--static int mfill_atomic_pte_continue(struct mm_struct *dst_mm,
--				     pmd_t *dst_pmd,
-+static int mfill_atomic_pte_continue(pmd_t *dst_pmd,
+ out:
+@@ -242,7 +242,7 @@ static int mfill_atomic_pte_zeropage(pmd_t *dst_pmd,
+ static int mfill_atomic_pte_continue(pmd_t *dst_pmd,
  				     struct vm_area_struct *dst_vma,
  				     unsigned long dst_addr,
- 				     bool wp_copy)
-@@ -269,7 +267,7 @@ static int mfill_atomic_pte_continue(struct mm_struct *dst_mm,
- 		goto out_release;
+-				     bool wp_copy)
++				     uffd_flags_t flags)
+ {
+ 	struct inode *inode = file_inode(dst_vma->vm_file);
+ 	pgoff_t pgoff = linear_page_index(dst_vma, dst_addr);
+@@ -268,7 +268,7 @@ static int mfill_atomic_pte_continue(pmd_t *dst_pmd,
  	}
  
--	ret = mfill_atomic_install_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
-+	ret = mfill_atomic_install_pte(dst_pmd, dst_vma, dst_addr,
- 				       page, false, wp_copy);
+ 	ret = mfill_atomic_install_pte(dst_pmd, dst_vma, dst_addr,
+-				       page, false, wp_copy);
++				       page, false, flags);
  	if (ret)
  		goto out_release;
-@@ -310,7 +308,7 @@ static pmd_t *mm_alloc_pmd(struct mm_struct *mm, unsigned long address)
-  * mfill_atomic processing for HUGETLB vmas.  Note that this routine is
-  * called with mmap_lock held, it will release mmap_lock before returning.
-  */
--static __always_inline ssize_t mfill_atomic_hugetlb(struct mm_struct *dst_mm,
-+static __always_inline ssize_t mfill_atomic_hugetlb(
- 					      struct vm_area_struct *dst_vma,
+ 
+@@ -313,8 +313,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
  					      unsigned long dst_start,
  					      unsigned long src_start,
-@@ -318,6 +316,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(struct mm_struct *dst_mm,
- 					      enum mcopy_atomic_mode mode,
- 					      bool wp_copy)
+ 					      unsigned long len,
+-					      enum mcopy_atomic_mode mode,
+-					      bool wp_copy)
++					      uffd_flags_t flags)
  {
-+	struct mm_struct *dst_mm = dst_vma->vm_mm;
+ 	struct mm_struct *dst_mm = dst_vma->vm_mm;
  	int vm_shared = dst_vma->vm_flags & VM_SHARED;
- 	ssize_t err;
- 	pte_t *dst_pte;
-@@ -411,7 +410,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(struct mm_struct *dst_mm,
+@@ -334,7 +333,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+ 	 * by THP.  Since we can not reliably insert a zero page, this
+ 	 * feature is not supported.
+ 	 */
+-	if (mode == MCOPY_ATOMIC_ZEROPAGE) {
++	if (uffd_flags_has_mode(flags, MFILL_ATOMIC_ZEROPAGE)) {
+ 		mmap_read_unlock(dst_mm);
+ 		return -EINVAL;
+ 	}
+@@ -402,7 +401,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
  			goto out_unlock;
  		}
  
--		err = hugetlb_mfill_atomic_pte(dst_mm, dst_pte, dst_vma,
-+		err = hugetlb_mfill_atomic_pte(dst_pte, dst_vma,
- 					       dst_addr, src_addr, mode, &page,
- 					       wp_copy);
+-		if (mode != MCOPY_ATOMIC_CONTINUE &&
++		if (!uffd_flags_has_mode(flags, MFILL_ATOMIC_CONTINUE) &&
+ 		    !huge_pte_none_mostly(huge_ptep_get(dst_pte))) {
+ 			err = -EEXIST;
+ 			hugetlb_vma_unlock_read(dst_vma);
+@@ -410,9 +409,8 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+ 			goto out_unlock;
+ 		}
  
-@@ -463,17 +462,15 @@ static __always_inline ssize_t mfill_atomic_hugetlb(struct mm_struct *dst_mm,
- }
- #else /* !CONFIG_HUGETLB_PAGE */
- /* fail at build time if gcc attempts to use this */
--extern ssize_t mfill_atomic_hugetlb(struct mm_struct *dst_mm,
--				      struct vm_area_struct *dst_vma,
--				      unsigned long dst_start,
--				      unsigned long src_start,
--				      unsigned long len,
--				      enum mcopy_atomic_mode mode,
--				      bool wp_copy);
-+extern ssize_t mfill_atomic_hugetlb(struct vm_area_struct *dst_vma,
-+				    unsigned long dst_start,
-+				    unsigned long src_start,
-+				    unsigned long len,
-+				    enum mcopy_atomic_mode mode,
-+				    bool wp_copy);
+-		err = hugetlb_mfill_atomic_pte(dst_pte, dst_vma,
+-					       dst_addr, src_addr, mode, &page,
+-					       wp_copy);
++		err = hugetlb_mfill_atomic_pte(dst_pte, dst_vma, dst_addr,
++					       src_addr, flags, &page);
+ 
+ 		hugetlb_vma_unlock_read(dst_vma);
+ 		mutex_unlock(&hugetlb_fault_mutex_table[hash]);
+@@ -466,23 +464,21 @@ extern ssize_t mfill_atomic_hugetlb(struct vm_area_struct *dst_vma,
+ 				    unsigned long dst_start,
+ 				    unsigned long src_start,
+ 				    unsigned long len,
+-				    enum mcopy_atomic_mode mode,
+-				    bool wp_copy);
++				    uffd_flags_t flags);
  #endif /* CONFIG_HUGETLB_PAGE */
  
--static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
--						pmd_t *dst_pmd,
-+static __always_inline ssize_t mfill_atomic_pte(pmd_t *dst_pmd,
+ static __always_inline ssize_t mfill_atomic_pte(pmd_t *dst_pmd,
  						struct vm_area_struct *dst_vma,
  						unsigned long dst_addr,
  						unsigned long src_addr,
-@@ -484,7 +481,7 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
+-						struct page **page,
+-						enum mcopy_atomic_mode mode,
+-						bool wp_copy)
++						uffd_flags_t flags,
++						struct page **pagep)
+ {
  	ssize_t err;
  
- 	if (mode == MCOPY_ATOMIC_CONTINUE) {
--		return mfill_atomic_pte_continue(dst_mm, dst_pmd, dst_vma,
-+		return mfill_atomic_pte_continue(dst_pmd, dst_vma,
- 						 dst_addr, wp_copy);
+-	if (mode == MCOPY_ATOMIC_CONTINUE) {
++	if (uffd_flags_has_mode(flags, MFILL_ATOMIC_CONTINUE)) {
+ 		return mfill_atomic_pte_continue(dst_pmd, dst_vma,
+-						 dst_addr, wp_copy);
++						 dst_addr, flags);
  	}
  
-@@ -500,14 +497,14 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
+ 	/*
+@@ -496,18 +492,17 @@ static __always_inline ssize_t mfill_atomic_pte(pmd_t *dst_pmd,
+ 	 * and not in the radix tree.
  	 */
  	if (!(dst_vma->vm_flags & VM_SHARED)) {
- 		if (mode == MCOPY_ATOMIC_NORMAL)
--			err = mfill_atomic_pte_copy(dst_mm, dst_pmd, dst_vma,
-+			err = mfill_atomic_pte_copy(dst_pmd, dst_vma,
- 						    dst_addr, src_addr, page,
- 						    wp_copy);
+-		if (mode == MCOPY_ATOMIC_NORMAL)
++		if (uffd_flags_has_mode(flags, MFILL_ATOMIC_COPY))
+ 			err = mfill_atomic_pte_copy(dst_pmd, dst_vma,
+-						    dst_addr, src_addr, page,
+-						    wp_copy);
++						    dst_addr, src_addr,
++						    flags, pagep);
  		else
--			err = mfill_atomic_pte_zeropage(dst_mm, dst_pmd,
-+			err = mfill_atomic_pte_zeropage(dst_pmd,
+ 			err = mfill_atomic_pte_zeropage(dst_pmd,
  						 dst_vma, dst_addr);
  	} else {
--		err = shmem_mfill_atomic_pte(dst_mm, dst_pmd, dst_vma,
-+		err = shmem_mfill_atomic_pte(dst_pmd, dst_vma,
+ 		err = shmem_mfill_atomic_pte(dst_pmd, dst_vma,
  					     dst_addr, src_addr,
- 					     mode != MCOPY_ATOMIC_NORMAL,
- 					     wp_copy, page);
-@@ -588,7 +585,7 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
- 	 * If this is a HUGETLB vma, pass off to appropriate routine
- 	 */
- 	if (is_vm_hugetlb_page(dst_vma))
--		return  mfill_atomic_hugetlb(dst_mm, dst_vma, dst_start,
-+		return  mfill_atomic_hugetlb(dst_vma, dst_start,
- 					     src_start, len, mcopy_mode,
- 					     wp_copy);
- 
-@@ -641,7 +638,7 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
- 		BUG_ON(pmd_none(*dst_pmd));
- 		BUG_ON(pmd_trans_huge(*dst_pmd));
- 
--		err = mfill_atomic_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
-+		err = mfill_atomic_pte(dst_pmd, dst_vma, dst_addr,
- 				       src_addr, &page, mcopy_mode, wp_copy);
- 		cond_resched();
- 
-@@ -710,7 +707,7 @@ ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigned long start,
- 			    mmap_changing, 0);
- }
- 
--long uffd_wp_range(struct mm_struct *dst_mm, struct vm_area_struct *dst_vma,
-+long uffd_wp_range(struct vm_area_struct *dst_vma,
- 		   unsigned long start, unsigned long len, bool enable_wp)
- {
- 	unsigned int mm_cp_flags;
-@@ -730,7 +727,7 @@ long uffd_wp_range(struct mm_struct *dst_mm, struct vm_area_struct *dst_vma,
- 	 */
- 	if (!enable_wp && vma_wants_manual_pte_write_upgrade(dst_vma))
- 		mm_cp_flags |= MM_CP_TRY_CHANGE_WRITABLE;
--	tlb_gather_mmu(&tlb, dst_mm);
-+	tlb_gather_mmu(&tlb, dst_vma->vm_mm);
- 	ret = change_protection(&tlb, dst_vma, start, start + len, mm_cp_flags);
- 	tlb_finish_mmu(&tlb);
- 
-@@ -782,7 +779,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
- 			goto out_unlock;
+-					     mode != MCOPY_ATOMIC_NORMAL,
+-					     wp_copy, page);
++					     flags, pagep);
  	}
  
--	err = uffd_wp_range(dst_mm, dst_vma, start, len, enable_wp);
-+	err = uffd_wp_range(dst_vma, start, len, enable_wp);
+ 	return err;
+@@ -517,9 +512,8 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
+ 					    unsigned long dst_start,
+ 					    unsigned long src_start,
+ 					    unsigned long len,
+-					    enum mcopy_atomic_mode mcopy_mode,
+ 					    atomic_t *mmap_changing,
+-					    __u64 mode)
++					    uffd_flags_t flags)
+ {
+ 	struct vm_area_struct *dst_vma;
+ 	ssize_t err;
+@@ -527,7 +521,6 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
+ 	unsigned long src_addr, dst_addr;
+ 	long copied;
+ 	struct page *page;
+-	bool wp_copy;
  
- 	/* Return 0 on success, <0 on failures */
- 	if (err > 0)
+ 	/*
+ 	 * Sanitize the command parameters:
+@@ -577,8 +570,7 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
+ 	 * validate 'mode' now that we know the dst_vma: don't allow
+ 	 * a wrprotect copy if the userfaultfd didn't register as WP.
+ 	 */
+-	wp_copy = mode & UFFDIO_COPY_MODE_WP;
+-	if (wp_copy && !(dst_vma->vm_flags & VM_UFFD_WP))
++	if ((flags & MFILL_ATOMIC_WP) && !(dst_vma->vm_flags & VM_UFFD_WP))
+ 		goto out_unlock;
+ 
+ 	/*
+@@ -586,12 +578,12 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
+ 	 */
+ 	if (is_vm_hugetlb_page(dst_vma))
+ 		return  mfill_atomic_hugetlb(dst_vma, dst_start,
+-					     src_start, len, mcopy_mode,
+-					     wp_copy);
++					     src_start, len, flags);
+ 
+ 	if (!vma_is_anonymous(dst_vma) && !vma_is_shmem(dst_vma))
+ 		goto out_unlock;
+-	if (!vma_is_shmem(dst_vma) && mcopy_mode == MCOPY_ATOMIC_CONTINUE)
++	if (!vma_is_shmem(dst_vma) &&
++	    uffd_flags_has_mode(flags, MFILL_ATOMIC_CONTINUE))
+ 		goto out_unlock;
+ 
+ 	/*
+@@ -639,7 +631,7 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
+ 		BUG_ON(pmd_trans_huge(*dst_pmd));
+ 
+ 		err = mfill_atomic_pte(dst_pmd, dst_vma, dst_addr,
+-				       src_addr, &page, mcopy_mode, wp_copy);
++				       src_addr, flags, &page);
+ 		cond_resched();
+ 
+ 		if (unlikely(err == -ENOENT)) {
+@@ -687,24 +679,24 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
+ 
+ ssize_t mfill_atomic_copy(struct mm_struct *dst_mm, unsigned long dst_start,
+ 			  unsigned long src_start, unsigned long len,
+-			  atomic_t *mmap_changing, __u64 mode)
++			  atomic_t *mmap_changing, uffd_flags_t flags)
+ {
+-	return mfill_atomic(dst_mm, dst_start, src_start, len,
+-			    MCOPY_ATOMIC_NORMAL, mmap_changing, mode);
++	return mfill_atomic(dst_mm, dst_start, src_start, len, mmap_changing,
++			    uffd_flags_set_mode(flags, MFILL_ATOMIC_COPY));
+ }
+ 
+ ssize_t mfill_atomic_zeropage(struct mm_struct *dst_mm, unsigned long start,
+ 			      unsigned long len, atomic_t *mmap_changing)
+ {
+-	return mfill_atomic(dst_mm, start, 0, len, MCOPY_ATOMIC_ZEROPAGE,
+-			    mmap_changing, 0);
++	return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
++			    uffd_flags_set_mode(0, MFILL_ATOMIC_ZEROPAGE));
+ }
+ 
+ ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigned long start,
+ 			      unsigned long len, atomic_t *mmap_changing)
+ {
+-	return mfill_atomic(dst_mm, start, 0, len, MCOPY_ATOMIC_CONTINUE,
+-			    mmap_changing, 0);
++	return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
++			    uffd_flags_set_mode(0, MFILL_ATOMIC_CONTINUE));
+ }
+ 
+ long uffd_wp_range(struct vm_area_struct *dst_vma,
 -- 
 2.40.0.rc1.284.g88254d51c5-goog
 
