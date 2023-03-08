@@ -2,81 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 307DF6B0E10
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 17:03:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99FC86B0E28
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 17:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232304AbjCHQDL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 11:03:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47526 "EHLO
+        id S232452AbjCHQHW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 11:07:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232463AbjCHQCv (ORCPT
+        with ESMTP id S232030AbjCHQG7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 11:02:51 -0500
-Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53FF3CE14A
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 08:01:03 -0800 (PST)
-Received: by mail-qt1-x830.google.com with SMTP id r16so16918089qtx.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Mar 2023 08:01:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112; t=1678291257;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h3hZwpKMg+vlHtotr98nmh9kQ0sI9K4sYDzfoR8/Nkw=;
-        b=VKR9kxxOdfwLKRX+OUxi0CqO3qdzQviWy2G5KfY1OlbX5P2Zjs7o+pnTrBmcgdPn/3
-         3mcJ510vjumwGzDhiWCOfmNnwbgE1xGHD/3UPa5tx6sWp0j1xRGvNagDAeIJvEyJqMmY
-         E2nu6YPt8YzGd84SVtsL7clnfqTYJf9TROwXIfd1yPVrGs7P4BS3ZZRyCNAU28hjP7I0
-         iglsK76350p0U/4VE1Mvd237L0HvzuoKM+uyEaqw58KBNXFQ+xVXxJHJV4vSiuA0zCYF
-         ooBfwRMknXntUcS7NSqpef0p62PactO8oozTc50D7gqWgBk6/NceCWvU3Q7eLccrbNBa
-         VWuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678291257;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h3hZwpKMg+vlHtotr98nmh9kQ0sI9K4sYDzfoR8/Nkw=;
-        b=E2xLln4HBiJbET9nVE5YufFH3x6isFLBymQXx0u4AbgQFSriKR3UHaIsvFwBtXi3PZ
-         DJh6nSPHAzEi5v9mLolJkw6A70Wkdcu+TNiEWkmgU9QBOTX+C2KSNM1Tr0XbQDrx3RLS
-         LjdIBkuIzFdJb8CJGLz3WZzB8xIarwfH2/g+560WEoeCzgx2sVMOzwGUO1IfYYPLjPWN
-         x3hCZtU7ewYZs+rgXm8G50ygnK8/DcHohCQIW4YWsEcsObY866yhCj/z6SUF1B6ybXG0
-         PTtkwyAzUd/sde3U6YEUkJFl6zn1LMvC8AvUdCThYBiuhjm98KV3KVyHNoYMGfmfdcHJ
-         XCuQ==
-X-Gm-Message-State: AO0yUKVfzk5Aq/+vmmmSSL+X4UvEh8be8+ymS9oapgHeM+VRjhUf1RPU
-        +LaA9Zz8uSc+D2O15suwKm9Xbg==
-X-Google-Smtp-Source: AK7set8VHTOzJ1mGxBCJIKeE5Y/M6Q5A34bQK9WHzEHfDvqAd4z/Xd8BRHp+AwjZqV34Y2Q19xl+tQ==
-X-Received: by 2002:a05:622a:303:b0:3bf:a08d:b265 with SMTP id q3-20020a05622a030300b003bfa08db265mr37829235qtw.24.1678291257174;
-        Wed, 08 Mar 2023 08:00:57 -0800 (PST)
-Received: from localhost (2603-7000-0c01-2716-8f57-5681-ccd3-4a2e.res6.spectrum.com. [2603:7000:c01:2716:8f57:5681:ccd3:4a2e])
-        by smtp.gmail.com with ESMTPSA id a191-20020ae9e8c8000000b00742743dba2asm11578051qkg.39.2023.03.08.08.00.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 08:00:56 -0800 (PST)
-Date:   Wed, 8 Mar 2023 11:00:56 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Yosry Ahmed <yosryahmed@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
+        Wed, 8 Mar 2023 11:06:59 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38398F769
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 08:04:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678291487;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2NWMkFGTVgULUDjAwqmBVEBtedj5eFLtnY35SqecmsU=;
+        b=KcaP2lLKfOTGjMraSSXdwu1lKXH3bW3A9IsQTYpnOP95XWuSVN/n4L7I6PMysCXYsOoR3F
+        B2HnO3Qmjmk1Pc2o7ywQ6L3nnaKVSF24NPRZqSQLhzW3SPtLJUCab9AGJdF6qr0E7VjveO
+        pQcks62wwmRl7puGnSSxiV3EFkuacwo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-512-sBNcmhvQO3ucJLvWDaxBBQ-1; Wed, 08 Mar 2023 11:04:43 -0500
+X-MC-Unique: sBNcmhvQO3ucJLvWDaxBBQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 384B687B2A6;
+        Wed,  8 Mar 2023 16:04:42 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C38C42026D4B;
+        Wed,  8 Mar 2023 16:04:39 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20230308155609.GA21508@lst.de>
+References: <20230308155609.GA21508@lst.de> <CAJfpeguGksS3sCigmRi9hJdUec8qtM9f+_9jC1rJhsXT+dV01w@mail.gmail.com> <20230308143754.1976726-1-dhowells@redhat.com> <20230308143754.1976726-4-dhowells@redhat.com> <2011735.1678290876@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
         David Hildenbrand <david@redhat.com>,
-        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 0/2] Ignore non-LRU-based reclaim in memcg reclaim
-Message-ID: <20230308160056.GA414058@cmpxchg.org>
-References: <20230228085002.2592473-1-yosryahmed@google.com>
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v16 03/13] overlayfs: Implement splice-read
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230228085002.2592473-1-yosryahmed@google.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2012342.1678291479.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 08 Mar 2023 16:04:39 +0000
+Message-ID: <2012343.1678291479@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,34 +79,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Yosry,
+Christoph Hellwig <hch@lst.de> wrote:
 
-On Tue, Feb 28, 2023 at 08:50:00AM +0000, Yosry Ahmed wrote:
-> Reclaimed pages through other means than LRU-based reclaim are tracked
-> through reclaim_state in struct scan_control, which is stashed in
-> current task_struct. These pages are added to the number of reclaimed
-> pages through LRUs. For memcg reclaim, these pages generally cannot be
-> linked to the memcg under reclaim and can cause an overestimated count
-> of reclaimed pages. This short series tries to address that.
+> On Wed, Mar 08, 2023 at 03:54:36PM +0000, David Howells wrote:
+> > Using do_splice_to() as a helper is probably a good idea, though both =
+Willy
+> > and Christoph seem to dislike it.
+> =
 
-Could you please add more details on how this manifests as a problem
-with real workloads?
+> That's not true.  What I'm fundamentlly against is pointless wrappers
+> like the call_* that add no value.  do_splice_to adds useful checks,
+> so if properly named and documented, I'm absolutely in favour.
 
-> Patch 1 is just refactoring updating reclaim_state into a helper
-> function, and renames reclaimed_slab to just reclaimed, with a comment
-> describing its true purpose.
+Fair enough.  Rename to vfs_splice_read() okay with you?
 
-Looking through the code again, I don't think these helpers add value.
+David
 
-report_freed_pages() is fairly vague. Report to who? It abstracts only
-two lines of code, and those two lines are more descriptive of what's
-happening than the helper is. Just leave them open-coded.
-
-add_non_vmanscan_reclaimed() may or may not add anything. But let's
-take a step back. It only has two callsites because lrugen duplicates
-the entire reclaim implementation, including the call to shrink_slab()
-and the transfer of reclaim_state to sc->nr_reclaimed.
-
-IMO the resulting code would overall be simpler, less duplicative and
-easier to follow if you added a common shrink_slab_reclaim() that
-takes sc, handles the transfer, and documents the memcg exception.
