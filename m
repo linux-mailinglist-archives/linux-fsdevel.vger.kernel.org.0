@@ -2,138 +2,343 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 987F66B0E95
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 17:24:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64FA46B0F70
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 17:56:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229952AbjCHQYP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 11:24:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36182 "EHLO
+        id S230056AbjCHQ4O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 11:56:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbjCHQYN (ORCPT
+        with ESMTP id S229963AbjCHQy6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 11:24:13 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30ACEC1C0C;
-        Wed,  8 Mar 2023 08:24:02 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PWy7j4CqPz9xHM1;
-        Thu,  9 Mar 2023 00:14:41 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwBHHGN5tghkH4B+AQ--.22743S2;
-        Wed, 08 Mar 2023 17:23:35 +0100 (CET)
-Message-ID: <0a15c85e9de2235c313b10839aabf750f276552f.camel@huaweicloud.com>
-Subject: Re: [PATCH 00/28] security: Move IMA and EVM to the LSM
- infrastructure
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 08 Mar 2023 17:23:18 +0100
-In-Reply-To: <59eb6d6d2ffd5522b2116000ab48b1711d57f5e5.camel@linux.ibm.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-         <59eb6d6d2ffd5522b2116000ab48b1711d57f5e5.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Wed, 8 Mar 2023 11:54:58 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D65567302E
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 08:54:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678294445;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=wIv6ZNbH3Ki2xdrllrhfS/sHz0g6FqNgkKM7E37nfig=;
+        b=dLyI1KxyLvOLyIL2A3ZXT8KCND0hBbDNf1fa9Ys9ci2MG7YHrUFPVaf4frbXK/WKY2fZ/x
+        oDkUqV32K4rrixpDuhAVSjV/PxdLaP8NiMSd19BrFRkwPQdg7obfoMLQRbjGyzHEMHEUNz
+        VQk5xgHt9osZSVWlxHJDMhvpDro0/7Q=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-463-FGF7m3Z8PdaOO6M-cPXt0A-1; Wed, 08 Mar 2023 11:53:58 -0500
+X-MC-Unique: FGF7m3Z8PdaOO6M-cPXt0A-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6D3001C12981;
+        Wed,  8 Mar 2023 16:52:58 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 18677492C3E;
+        Wed,  8 Mar 2023 16:52:56 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v17 00/14] splice, block: Use page pinning and kill ITER_PIPE
+Date:   Wed,  8 Mar 2023 16:52:37 +0000
+Message-Id: <20230308165251.2078898-1-dhowells@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwBHHGN5tghkH4B+AQ--.22743S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxArW7Aw17XFWDGryDJw4fXwb_yoW5ZF15pF
-        Z8K3W5Kr4ktF109rs2v3y8uFWfCa1fJ3yUJr95K34UZa45GF1FqFWvkF15uFyDG3s0kFyF
-        qF4jq3s5Z3WDZrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-        AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU13rcDUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAKBF1jj4pXogABsA
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-03-08 at 10:14 -0500, Mimi Zohar wrote:
-> Hi Roberto,
-> 
-> On Fri, 2023-03-03 at 19:18 +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > This patch set depends on:
-> > - https://lore.kernel.org/linux-integrity/20221201104125.919483-1-roberto.sassu@huaweicloud.com/ (there will be a v8 shortly)
-> > - https://lore.kernel.org/linux-security-module/20230217032625.678457-1-paul@paul-moore.com/
-> > 
-> > IMA and EVM are not effectively LSMs, especially due the fact that in the
-> > past they could not provide a security blob while there is another LSM
-> > active.
-> > 
-> > That changed in the recent years, the LSM stacking feature now makes it
-> > possible to stack together multiple LSMs, and allows them to provide a
-> > security blob for most kernel objects. While the LSM stacking feature has
-> > some limitations being worked out, it is already suitable to make IMA and
-> > EVM as LSMs.
-> > 
-> > In short, while this patch set is big, it does not make any functional
-> > change to IMA and EVM. IMA and EVM functions are called by the LSM
-> > infrastructure in the same places as before (except ima_post_path_mknod()),
-> > rather being hardcoded calls, and the inode metadata pointer is directly
-> > stored in the inode security blob rather than in a separate rbtree.
-> > 
-> > More specifically, patches 1-13 make IMA and EVM functions suitable to
-> > be registered to the LSM infrastructure, by aligning function parameters.
-> > 
-> > Patches 14-22 add new LSM hooks in the same places where IMA and EVM
-> > functions are called, if there is no LSM hook already.
-> > 
-> > Patch 23 adds the 'last' ordering strategy for LSMs, so that IMA and EVM
-> > functions are called in the same order as of today. Also, like with the
-> > 'first' strategy, LSMs using it are always enabled, so IMA and EVM
-> > functions will be always called (if IMA and EVM are compiled built-in).
-> > 
-> > Patches 24-27 do the bulk of the work, remove hardcoded calls to IMA and
-> > EVM functions, register those functions in the LSM infrastructure, and let
-> > the latter call them. In addition, they also reserve one slot for EVM to 
-> > supply an xattr to the inode_init_security hook.
-> > 
-> > Finally, patch 28 removes the rbtree used to bind metadata to the inodes,
-> > and instead reserve a space in the inode security blob to store the pointer
-> > to metadata. This also brings performance improvements due to retrieving
-> > metadata in constant time, as opposed to logarithmic.
-> 
-> Prior to IMA being upstreamed, it went through a number of iterations,
-> first on the security hooks, then as a separate parallel set of
-> integrity hooks, and, finally, co-located with the security hooks,
-> where they exist.  With this patch set we've come full circle.
-> 
-> With the LSM stacking support, multiple LSMs can now use the
-> 'i_security' field removing the need for the rbtree indirection for
-> accessing integrity state info.
-> 
-> Roberto, thank you for making this change.  Mostly it looks good.  
-> Reviewing the patch set will be easier once the prereq's and this patch
-> set can be properly applied.
+Hi Jens, Al, Christoph,
 
-Welcome. Yes, once Paul reviews the other patch set, we can
-progressively apply the patches.
+The first half of this patchset kills off ITER_PIPE to avoid a race between
+truncate, iov_iter_revert() on the pipe and an as-yet incomplete DMA to a
+bio with unpinned/unref'ed pages from an O_DIRECT splice read.  This causes
+memory corruption[2].  Instead, we use filemap_splice_read(), which invokes
+the buffered file reading code and splices from the pagecache into the
+pipe; direct_splice_read(), which bulk-allocates a buffer, reads into it
+and then pushes the filled pages into the pipe; or handle it in
+filesystem-specific code.
 
-Thanks
+ (1) Simplify the calculations for the number of pages to be reclaimed in
+     direct_splice_read().
 
-Roberto
+ (2) Turn do_splice_to() into a helper so that it can be used by overlayfs
+     and coda to perform the checks on the lower fs.
+
+ (3) Provide shmem with its own splice_read to handle non-existent pages
+     in the pagecache.  We don't want a ->read_folio() as we don't want to
+     populate holes, but filemap_get_pages() requires it.
+
+ (4) Provide overlayfs with its own splice_read to call down to a lower
+     layer as overlayfs doesn't provide ->read_folio().
+
+ (5) Provide coda with its own splice_read to call down to a lower layer as
+     coda doesn't provide ->read_folio().
+
+ (6) Direct ->splice_read to direct_splice_read() in tty, procfs, kernfs
+     and random files as they just copy to the output buffer and don't
+     splice pages.
+
+ (7) Change generic_file_splice_read() to just switch between
+     filemap_splice_read() and direct_splice_read() rather than using
+     ITER_PIPE.
+
+ (8) Remove ITER_PIPE and its paraphernalia as generic_file_splice_read()
+     was the only user.
+
+The second half of the patchset rolls page-pinning out to the bio struct
+and the block layer, using iov_iter_extract_pages() to get pages and noting
+with BIO_PAGE_PINNED if the data pages attached to a bio are pinned.  If
+the data pages come from a non-user-backed iterator, then the pages are
+left unpinned and unref'd, relying on whoever set up the I/O to do the
+retaining
+
+ (9) Don't hold a ref on ZERO_PAGE in iomap_dio_zero().
+
+(10) Fix bio_flagged() so that it doesn't prevent a gcc optimisation.
+
+(11) Make the bio struct carry a pair of flags to indicate the cleanup
+     mode.  BIO_NO_PAGE_REF is replaced with BIO_PAGE_REFFED (indicating
+     FOLL_GET was used) and BIO_PAGE_PINNED (indicating FOLL_PIN was used)
+     is added.
+
+     BIO_PAGE_REFFED will go away, but at the moment fs/direct-io.c sets it
+     and this series does not fully address that file.
+
+(12) Add a function, bio_release_page(), to release a page appropriately to
+     the cleanup mode indicated by the BIO_PAGE_* flags.
+
+(13) Make bio_iov_iter_get_pages() use iov_iter_extract_pages() to retain
+     the pages appropriately and clean them up later.
+
+(14) Make bio_map_user_iov() also use iov_iter_extract_pages().
+
+I've pushed the patches here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-extract
+
+David
+
+Changes:
+========
+ver #17)
+ - Rename do_splice_to() to vfs_splice_read() and export it so that it can
+   be a helper and make overlayfs and coda use it, allowing duplicate
+   checks to be removed.
+
+ver #16)
+ - The filemap_get_pages() changes are now upstream.
+ - filemap_splice_read() and direct_splice_read() are now upstream.
+ - iov_iter_extract_pages() is now upstream.
+
+ver #15)
+ - Fixed up some errors in overlayfs_splice_read().
+
+ver #14)
+ - Some changes to generic_file_buffered_splice_read():
+   - Rename to filemap_splice_read() and move to mm/filemap.c.
+   - Create a helper, pipe_head_buf().
+   - Use init_sync_kiocb().
+ - Some changes to generic_file_direct_splice_read():
+   - Use alloc_pages_bulk_array() rather than alloc_pages_bulk_list().
+   - Use release_pages() instead of __free_page() in a loop.
+   - Rename to direct_splice_read().
+ - Rearrange the patches to implement filemap_splice_read() and
+   direct_splice_read() separately to changing generic_file_splice_read().
+ - Don't call generic_file_splice_read() when there isn't a ->read_folio().
+ - Insert patches to fix read_folio-less cases:
+   - Make tty, procfs, kernfs and (u)random use direct_splice_read().
+   - Make overlayfs and coda call down to a lower layer.
+   - Give shmem its own splice-read that doesn't insert missing pages.
+ - Fixed a min() with mixed type args on some arches.
+
+ver #13)
+ - Only use allocation in advance and ITER_BVEC for DIO read-splice.
+ - Make buffered read-splice get pages directly from the pagecache.
+ - Alter filemap_get_pages() & co. so that it doesn't need an iterator.
+
+ver #12)
+ - Added the missing __bitwise on the iov_iter_extraction_t typedef.
+ - Rebased on -rc7.
+ - Don't specify FOLL_PIN to pin_user_pages_fast().
+ - Inserted patch at front to fix race between DIO read and truncation that
+   caused memory corruption when iov_iter_revert() got called on an
+   ITER_PIPE iterator[2].
+ - Inserted a patch after that to remove the now-unused ITER_PIPE and its
+   helper functions.
+ - Removed the ITER_PIPE bits from iov_iter_extract_pages().
+
+ver #11)
+ - Fix iov_iter_extract_kvec_pages() to include the offset into the page in
+   the returned starting offset.
+ - Use __bitwise for the extraction flags
+
+ver #10)
+ - Fix use of i->kvec in iov_iter_extract_bvec_pages() to be i->bvec.
+ - Drop bio_set_cleanup_mode(), open coding it instead.
+
+ver #9)
+ - It's now not permitted to use FOLL_PIN outside of mm/, so:
+ - Change iov_iter_extract_mode() into iov_iter_extract_will_pin() and
+   return true/false instead of FOLL_PIN/0.
+ - Drop of folio_put_unpin() and page_put_unpin() and instead call
+   unpin_user_page() (and put_page()) directly as necessary.
+ - Make __bio_release_pages() call bio_release_page() instead of
+   unpin_user_page() as there's no BIO_* -> FOLL_* translation to do.
+ - Drop the FOLL_* renumbering patch.
+ - Change extract_flags to extraction_flags.
+
+ver #8)
+ - Import Christoph Hellwig's changes.
+   - Split the conversion-to-extraction patch.
+   - Drop the extract_flags arg from iov_iter_extract_mode().
+   - Don't default bios to BIO_PAGE_REFFED, but set explicitly.
+ - Switch FOLL_PIN and FOLL_GET when renumbering so PIN is at bit 0.
+ - Switch BIO_PAGE_PINNED and BIO_PAGE_REFFED so PINNED is at bit 0.
+ - We should always be using FOLL_PIN (not FOLL_GET) for DIO, so adjust the
+   patches for that.
+
+ver #7)
+ - For now, drop the parts to pass the I/O direction to iov_iter_*pages*()
+   as it turned out to be a lot more complicated, with places not setting
+   IOCB_WRITE when they should, for example.
+ - Drop all the patches that changed things other then the block layer's
+   bio handling.  The netfslib and cifs changes can go into a separate
+   patchset.
+ - Add support for extracting pages from KVEC-type iterators.
+ - When extracting from BVEC/KVEC, skip over empty vecs at the front.
+
+ver #6)
+ - Fix write() syscall and co. not setting IOCB_WRITE.
+ - Added iocb_is_read() and iocb_is_write() to check IOCB_WRITE.
+ - Use op_is_write() in bio_copy_user_iov().
+ - Drop the iterator direction checks from smbd_recv().
+ - Define FOLL_SOURCE_BUF and FOLL_DEST_BUF and pass them in as part of
+   gup_flags to iov_iter_get/extract_pages*().
+ - Replace iov_iter_get_pages*2() with iov_iter_get_pages*() and remove.
+ - Add back the function to indicate the cleanup mode.
+ - Drop the cleanup_mode return arg to iov_iter_extract_pages().
+ - Provide a helper to clean up a page.
+ - Renumbered FOLL_GET and FOLL_PIN and made BIO_PAGE_REFFED/PINNED have
+   the same numerical values, enforced with an assertion.
+ - Converted AF_ALG, SCSI vhost, generic DIO, FUSE, splice to pipe, 9P and
+   NFS.
+ - Added in the patches to make CIFS do top-to-bottom iterators and use
+   various of the added extraction functions.
+ - Added a pair of work-in-progess patches to make sk_buff fragments store
+   FOLL_GET and FOLL_PIN.
+
+ver #5)
+ - Replace BIO_NO_PAGE_REF with BIO_PAGE_REFFED and split into own patch.
+ - Transcribe FOLL_GET/PIN into BIO_PAGE_REFFED/PINNED flags.
+ - Add patch to allow bio_flagged() to be combined by gcc.
+
+ver #4)
+ - Drop the patch to move the FOLL_* flags to linux/mm_types.h as they're
+   no longer referenced by linux/uio.h.
+ - Add ITER_SOURCE/DEST cleanup patches.
+ - Make iov_iter/netfslib iter extraction patches use ITER_SOURCE/DEST.
+ - Allow additional gup_flags to be passed into iov_iter_extract_pages().
+ - Add struct bio patch.
+
+ver #3)
+ - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
+   to get/pin_user_pages_fast()[1].
+
+ver #2)
+ - Rolled the extraction cleanup mode query function into the extraction
+   function, returning the indication through the argument list.
+ - Fixed patch 4 (extract to scatterlist) to actually use the new
+   extraction API.
+
+Link: https://lore.kernel.org/r/Y3zFzdWnWlEJ8X8/@infradead.org/ [1]
+Link: https://lore.kernel.org/r/000000000000b0b3c005f3a09383@google.com/ [2]
+Link: https://lore.kernel.org/r/166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166722777223.2555743.162508599131141451.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166732024173.3186319.18204305072070871546.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166920902005.1461876.2786264600108839814.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/166997419665.9475.15014699817597102032.stgit@warthog.procyon.org.uk/ # v3
+Link: https://lore.kernel.org/r/167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk/ # v4
+Link: https://lore.kernel.org/r/167344725490.2425628.13771289553670112965.stgit@warthog.procyon.org.uk/ # v5
+Link: https://lore.kernel.org/r/167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk/ # v6
+Link: https://lore.kernel.org/r/20230120175556.3556978-1-dhowells@redhat.com/ # v7
+Link: https://lore.kernel.org/r/20230123173007.325544-1-dhowells@redhat.com/ # v8
+Link: https://lore.kernel.org/r/20230124170108.1070389-1-dhowells@redhat.com/ # v9
+Link: https://lore.kernel.org/r/20230125210657.2335748-1-dhowells@redhat.com/ # v10
+Link: https://lore.kernel.org/r/20230126141626.2809643-1-dhowells@redhat.com/ # v11
+Link: https://lore.kernel.org/r/20230207171305.3716974-1-dhowells@redhat.com/ # v12
+Link: https://lore.kernel.org/r/20230209102954.528942-1-dhowells@redhat.com/ # v13
+Link: https://lore.kernel.org/r/20230214171330.2722188-1-dhowells@redhat.com/ # v14
+Link: https://lore.kernel.org/r/20230308143754.1976726-1-dhowells@redhat.com/ # v16
+
+Additional patches that got folded in:
+
+Link: https://lore.kernel.org/r/20230213134619.2198965-1-dhowells@redhat.com/ # v1
+Link: https://lore.kernel.org/r/20230213153301.2338806-1-dhowells@redhat.com/ # v2
+Link: https://lore.kernel.org/r/20230214083710.2547248-1-dhowells@redhat.com/ # v3
+
+Christoph Hellwig (1):
+  block: Replace BIO_NO_PAGE_REF with BIO_PAGE_REFFED with inverted
+    logic
+
+David Howells (13):
+  splice: Clean up direct_splice_read() a bit
+  splice: Make do_splice_to() generic and export it
+  shmem: Implement splice-read
+  overlayfs: Implement splice-read
+  coda: Implement splice-read
+  tty, proc, kernfs, random: Use direct_splice_read()
+  splice: Do splice read from a file without using ITER_PIPE
+  iov_iter: Kill ITER_PIPE
+  iomap: Don't get an reference on ZERO_PAGE for direct I/O block
+    zeroing
+  block: Fix bio_flagged() so that gcc can better optimise it
+  block: Add BIO_PAGE_PINNED and associated infrastructure
+  block: Convert bio_iov_iter_get_pages to use iov_iter_extract_pages
+  block: convert bio_map_user_iov to use iov_iter_extract_pages
+
+ block/bio.c               |  29 +--
+ block/blk-map.c           |  22 +-
+ block/blk.h               |  12 ++
+ drivers/char/random.c     |   4 +-
+ drivers/tty/tty_io.c      |   4 +-
+ fs/cifs/cifsfs.c          |   8 +-
+ fs/cifs/cifsfs.h          |   3 -
+ fs/cifs/file.c            |  16 --
+ fs/coda/file.c            |  29 ++-
+ fs/direct-io.c            |   2 +
+ fs/iomap/direct-io.c      |   1 -
+ fs/kernfs/file.c          |   2 +-
+ fs/overlayfs/file.c       |  23 +-
+ fs/proc/inode.c           |   4 +-
+ fs/proc/proc_sysctl.c     |   2 +-
+ fs/proc_namespace.c       |   6 +-
+ fs/splice.c               |  76 +++----
+ include/linux/bio.h       |   5 +-
+ include/linux/blk_types.h |   3 +-
+ include/linux/splice.h    |   3 +
+ include/linux/uio.h       |  14 --
+ lib/iov_iter.c            | 429 +-------------------------------------
+ mm/filemap.c              |   4 +-
+ mm/shmem.c                | 124 ++++++++++-
+ 24 files changed, 274 insertions(+), 551 deletions(-)
 
