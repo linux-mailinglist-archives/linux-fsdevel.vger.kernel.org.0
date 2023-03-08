@@ -2,83 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 548A46B156B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 23:44:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5A456B16BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 00:43:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbjCHWoi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 17:44:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42616 "EHLO
+        id S229636AbjCHXnS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 18:43:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229800AbjCHWog (ORCPT
+        with ESMTP id S229513AbjCHXnR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 17:44:36 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323CE62FEB
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 14:43:47 -0800 (PST)
+        Wed, 8 Mar 2023 18:43:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C19EA6230D
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 15:42:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678315426;
+        s=mimecast20190719; t=1678318963;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=jUpec8k3TuIoHkhdWuDgw2GYbAPkkhYheZa+lxQbkK0=;
-        b=dPs8c3b3RtJDbhKCuoxJlxNN+hgWHpW4Wp38outWfYuKxQ2I32E9emD6kZFsHTQPHRi4Q1
-        RNxI+oWNyo2RHc0yBmEyk5KNUfL9DoBcJe8Ny7YqFqico25bzjVs57hHxng80hXJ4PrN3u
-        dBOnNuxo426Epz9iwO4EYdiEc5GAz+w=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-86-wvo7d4O9PMipzP-A_E6gnA-1; Wed, 08 Mar 2023 17:43:42 -0500
-X-MC-Unique: wvo7d4O9PMipzP-A_E6gnA-1
-Received: by mail-qt1-f200.google.com with SMTP id r4-20020ac867c4000000b003bfefb6dd58so60419qtp.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Mar 2023 14:43:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678315422;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jUpec8k3TuIoHkhdWuDgw2GYbAPkkhYheZa+lxQbkK0=;
-        b=SYWHoyXP+nBRFfT+4bq8kEQjvuBzZoa2Wn24XP4gkftjW6iALsp7kWEP6bNOY1K/GW
-         E6KmLVvJ7gh183sjPWqBRSLWnvN8oVczRGBDpi8aL00BBSZxPsSY8xjIjlcfF0N2z0+l
-         tizOOsSEpQdd7izKJk5iGaSfwgNJU+WUDeetekiW+SaW+F0Ix8kGPcLgG4LTHQfiBeP9
-         I3wFzOOKLVGuGWCLZe0oKdyt5CvdJoY3T++xqeikr2AurujB7RlTt/U1cET0oCMBrvD9
-         baIHTc3SvyXDrVkWv2ShX+Kw/uFgZxZ99oPB98z3a5goaFIxcCy4eKc9dxemhPFCFc1l
-         DE5w==
-X-Gm-Message-State: AO0yUKWgBZx6SukkHNM7qEZc0SpvM7k5voZwJMNNjGrUK7rB5g4Wfrqr
-        KhxEVYU7zezGIsE5sUQDlBkqGwxr+cDL/FG4JHJDUKLseNvJWEJeCkyHNGnnFR+n9pOYybRlq4m
-        2EwYXY5qZ/ou3k1QR3PUXCCSnTQ==
-X-Received: by 2002:a05:622a:4c7:b0:3bf:be4b:8094 with SMTP id q7-20020a05622a04c700b003bfbe4b8094mr39961486qtx.0.1678315422282;
-        Wed, 08 Mar 2023 14:43:42 -0800 (PST)
-X-Google-Smtp-Source: AK7set/svpcFN7oyLd26+MN7LVXbPhQYslhKV53Vi4XzGLt4t3d/JLaXvYRZ51X7BFbuHcnLETSjqQ==
-X-Received: by 2002:a05:622a:4c7:b0:3bf:be4b:8094 with SMTP id q7-20020a05622a04c700b003bfbe4b8094mr39961450qtx.0.1678315422037;
-        Wed, 08 Mar 2023 14:43:42 -0800 (PST)
-Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
-        by smtp.gmail.com with ESMTPSA id r25-20020ac87959000000b003bfc1f49ad1sm12255401qtt.87.2023.03.08.14.43.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 14:43:41 -0800 (PST)
-Date:   Wed, 8 Mar 2023 17:43:39 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Nadav Amit <namit@vmware.com>, Shuah Khan <shuah@kernel.org>,
-        James Houghton <jthoughton@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] mm: userfaultfd: combine 'mode' and 'wp_copy'
- arguments
-Message-ID: <ZAkPmy0EqcW6Mfvn@x1n>
-References: <20230308221932.1548827-1-axelrasmussen@google.com>
- <20230308221932.1548827-4-axelrasmussen@google.com>
+        bh=Z4+90+ZxONY2XZZy5o49XHYJX/j1G6CBk1SjoO4mL6Q=;
+        b=gWWJhCdB7q8/Cfv8zYX1M+k/muejMDW0CWdX/qx6Gt7NUtCdjsbBDdfXmgBKsVCZKPZ1cF
+        HQ8LW9eUHc7VxVmaRqFSuArCvb+Vm0lAnDATS0YQ3hq1QxC72QAJEtWhAjnvlS+2PeQW4F
+        rQc40yHEu/ZMepp0uz3Xnzituj4ApeQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-395-WEXlRhpyMhWZy7SX8kvLaw-1; Wed, 08 Mar 2023 18:42:37 -0500
+X-MC-Unique: WEXlRhpyMhWZy7SX8kvLaw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 78A1E101A521;
+        Wed,  8 Mar 2023 23:42:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E59B440C945A;
+        Wed,  8 Mar 2023 23:42:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjYR3h5Q-_i3Q2Et=P8WsrjwNA20fYpEQf9nafHwBNALA@mail.gmail.com>
+References: <CAHk-=wjYR3h5Q-_i3Q2Et=P8WsrjwNA20fYpEQf9nafHwBNALA@mail.gmail.com> <20230308165251.2078898-1-dhowells@redhat.com> <20230308165251.2078898-4-dhowells@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Daniel Golle <daniel@makrotopia.org>,
+        Guenter Roeck <groeck7@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v17 03/14] shmem: Implement splice-read
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230308221932.1548827-4-axelrasmussen@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2139516.1678318952.1@warthog.procyon.org.uk>
+Date:   Wed, 08 Mar 2023 23:42:32 +0000
+Message-ID: <2139517.1678318952@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -89,40 +77,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All nitpicks below.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-On Wed, Mar 08, 2023 at 02:19:31PM -0800, Axel Rasmussen wrote:
-> +static inline bool uffd_flags_has_mode(uffd_flags_t flags, enum mfill_atomic_mode expected)
-> +{
-> +	return (flags & MFILL_ATOMIC_MODE_MASK) == ((__force uffd_flags_t) expected);
-> +}
+> I get the feeling that the zeropage case just isn't so important that we'd
+> need to duplicate filemap_splice_read() just for that, and I think that the
+> code should either
+> 
+>  (a) just make a silly "read_folio()" for shmfs that just clears the page.
+> 
+>      Ugly but maybe simple and not horrid?
 
-I would still call it uffd_flags_get_mode() or uffd_flags_mode(), "has"
-sounds a bit like there can be >1 modes set but it's not.
+The problem with that is that once a page is in the pagecache attached to a
+shmem file, we can't get rid of it without deleting or truncating the file...
+At least, I think that the case.  For all other regular filesystems, a page
+full of zeros can be flushed/discarded by the LRU.
 
-> +
-> +static inline uffd_flags_t uffd_flags_set_mode(uffd_flags_t flags, enum mfill_atomic_mode mode)
-> +{
-> +	return flags | ((__force uffd_flags_t) mode);
-> +}
+shmem also has its own function for allocating folios in its pagecache, the
+caller of ->read_folio() would probably have to use that.
 
-IIUC this __force mostly won't work in any way because it protects
-e.g. illegal math ops upon it (to only allow bitops, iiuc) but here it's an
-OR so it's always legal..
+>  (b) teach filemap_splice_read() that a NULL 'read_folio' function
+> means "use the zero page"
+> 
+>      That might not be splice() itself, but maybe in
+> filemap_get_pages() or something.
 
-So I'd just drop it and also clear the mode mask to be very clear it sets
-the mode right, rather than any chance of messing up when set twice:
+It would require some special handling in filemap_get_pages() - and/or
+probably better filemap_splice_read() since, for shmem, it's only relevant to
+splice.  An additional flag could be added to filemap_get_pages() to tell it
+to stop at a hole in the pagecache rather than invoking readahead.
+filemap_splice_read() would then need to examine the pagecache to work out how
+big the hole is and insert the appropriate number of zeropages before calling
+back into filemap_get_pages() again.  Possibly it could use SEEK_DATA.
 
-    flags &= ~MFILL_ATOMIC_MODE_MASK;
-    return flags | mode;
+> or
+> 
+>  (c) go even further, and teach read_folio() in general about file
+> holes, and allow *any* filesystem to read zeroes that way in general
+> without creating a folio for it.
 
-But feel free to ignore this if there's no other reason to repost, I don't
-think it matters a huge deal.
+Nice idea, but we'd need a way to store a "negative" marker (as opposed to
+"unknown") in the pagecache for the filemap code to be able to use it.  This
+sort of thing might become easier if xarray gets switched to a maple tree
+implementation as that would better allow for caching of a known file hole of
+arbitrary size with a single entry.
 
-Acked-by: Peter Xu <peterx@redhat.com>
+But for the moment, the filemap code would have to jump through a filesystem's
+->readahead or ->read_folio vectors to work out if there's a hole there or not
+- but in both cases it must already have allocated the pages it wants to
+query.
 
-Thanks,
-
--- 
-Peter Xu
+David
 
