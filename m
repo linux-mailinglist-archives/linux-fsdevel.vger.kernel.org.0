@@ -2,141 +2,269 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 302376B0084
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 09:07:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9EAB6B0224
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 09:56:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbjCHIHo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 03:07:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46184 "EHLO
+        id S229635AbjCHI4k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 03:56:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbjCHIHj (ORCPT
+        with ESMTP id S229629AbjCHI4c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 03:07:39 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7E89DE29;
-        Wed,  8 Mar 2023 00:07:13 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4PWl6y2Ntbz9xqcC;
-        Wed,  8 Mar 2023 15:58:18 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwAX41kGQghkLu58AQ--.21290S2;
-        Wed, 08 Mar 2023 09:06:42 +0100 (CET)
-Message-ID: <8c7034e74c55e9c4eb6424aa472f5c66b389b34f.camel@huaweicloud.com>
-Subject: Re: [PATCH 23/28] security: Introduce LSM_ORDER_LAST
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 08 Mar 2023 09:06:28 +0100
-In-Reply-To: <4b158d7e-a96d-58ae-cc34-0ad6abc1cea9@linux.ibm.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-         <20230303182602.1088032-1-roberto.sassu@huaweicloud.com>
-         <4b158d7e-a96d-58ae-cc34-0ad6abc1cea9@linux.ibm.com>
+        Wed, 8 Mar 2023 03:56:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E649B9AA
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 00:55:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678265737;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nSUxl7P5hQy+/YtrpvxvlD1qQxLj804ODoUh/9ZocfE=;
+        b=As6u5DbsKQhX8JMup9mC9ezncoP2sG4MwFObopNjvZWk5KoUuqr3NCnyX/Mkh2hqm6Ckiv
+        kTqyf+5AkAZA+wRcYuorQBt3Mrj9Tv+GTmqSixEpQQMc5ZMnkqBGGpfInjudJFeeufRisG
+        lkzmYtkfjsBPFTJLFmhsr/+Tl2yTbA8=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-444-ISakx3NJNiKWTom7mzJzyw-1; Wed, 08 Mar 2023 03:55:36 -0500
+X-MC-Unique: ISakx3NJNiKWTom7mzJzyw-1
+Received: by mail-qv1-f71.google.com with SMTP id s18-20020a0cf792000000b00572c04240f1so8920819qvn.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Mar 2023 00:55:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678265736;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nSUxl7P5hQy+/YtrpvxvlD1qQxLj804ODoUh/9ZocfE=;
+        b=YgXOQNzNvVy7diaNhOaPcWK4JEQPBopSMv2blgyRhb/IRAREf7nDzRPL3VrfuLYTeX
+         J2fL7uiQLGl3jdoS/AiQSFwOY/+52NA61YtxskyPZVu6vstv47abl5/Epk2/3v5jdY8i
+         NGijTXwBqZDkJi47W+uu5HQhC/0zPruFupF4NzTV4OxTLEFs+T4XsJKZw2uRz+D4jbmi
+         cIozFMbIHjcXtfexpBxgXtaYO6o3aSJ+/63uXWggs9pgfgSigm/yY55ahvFsvVgHVcqZ
+         viYpeUrfh57uP145oCiGT6ygA2ECYaWXkbCWN8MmVDxlQLT8vZkWZTb/YoZjcW979xt0
+         m7XQ==
+X-Gm-Message-State: AO0yUKV6jEroh6LkTFkxphMBNHWRloWVnBBH+ekJ9bBdkKa3RU+WTy7C
+        XuvKNKWvkB4iInYuxiBUwE8cBW7UPEtHmnkP5MQxW2xe2XgCxmBd3j+yVx6Fceog0++HZInogs1
+        HGujzx/5cskUxupR89BycZGnShA==
+X-Received: by 2002:a05:622a:11c2:b0:3bd:1c0f:74f3 with SMTP id n2-20020a05622a11c200b003bd1c0f74f3mr34312766qtk.2.1678265736305;
+        Wed, 08 Mar 2023 00:55:36 -0800 (PST)
+X-Google-Smtp-Source: AK7set/LqHuuLs+iFiwPadK3SrLCod1w1FhHVbxTYMTJFEjslFMf2nSsbvaQDDBDwAJn7wd7IT5/rQ==
+X-Received: by 2002:a05:622a:11c2:b0:3bd:1c0f:74f3 with SMTP id n2-20020a05622a11c200b003bd1c0f74f3mr34312738qtk.2.1678265735941;
+        Wed, 08 Mar 2023 00:55:35 -0800 (PST)
+Received: from gerbillo.redhat.com (146-241-121-28.dyn.eolo.it. [146.241.121.28])
+        by smtp.gmail.com with ESMTPSA id d1-20020ac85ac1000000b003b9e1d3a502sm11377180qtd.54.2023.03.08.00.55.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Mar 2023 00:55:35 -0800 (PST)
+Message-ID: <f049d74b59323ed2ad16a0b52de86f157ae353ce.camel@redhat.com>
+Subject: Re: [PATCH v4 RESEND] epoll: use refcount to reduce ep_mutex
+ contention
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     netdev@vger.kernel.org, Soheil Hassas Yeganeh <soheil@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Date:   Wed, 08 Mar 2023 09:55:31 +0100
+In-Reply-To: <20230307133057.1904d8ffab2980f8e23ee3cc@linux-foundation.org>
+References: <e8228f0048977456466bc33b42600e929fedd319.1678213651.git.pabeni@redhat.com>
+         <20230307133057.1904d8ffab2980f8e23ee3cc@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwAX41kGQghkLu58AQ--.21290S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFy8AF15Ar45KrW7ur47twb_yoW8KF1Upa
-        yktFWfGr4FyFy8W3WDX3ZxK3W8t39YkFWUC39rWr1UXa92qrySkr43Cr1S9FyDXF9rCFyI
-        vrWav34akwn0yaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAKBF1jj4pQsgAAsW
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-03-07 at 13:04 -0500, Stefan Berger wrote:
-> 
-> On 3/3/23 13:25, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Introduce LSM_ORDER_LAST, to satisfy the requirement of LSMs willing to be
-> > the last, e.g. the 'integrity' LSM, without changing the kernel command
-> > line or configuration.
-> > 
-> > As for LSM_ORDER_FIRST, LSMs with LSM_ORDER_LAST are always enabled and put
-> > at the end of the LSM list in no particular order.
-> > 
-> 
-> I think you should describe the reason for the change for LSM_ORDER_MUTABLE as well.
+On Tue, 2023-03-07 at 13:30 -0800, Andrew Morton wrote:
+> On Tue,  7 Mar 2023 19:46:37 +0100 Paolo Abeni <pabeni@redhat.com> wrote:
+>=20
+> > We are observing huge contention on the epmutex during an http
+> > connection/rate test:
+> >=20
+> >  83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYS=
+CALL_64_after_hwframe
+> > [...]
+> >            |--66.96%--__fput
+> >                       |--60.04%--eventpoll_release_file
+> >                                  |--58.41%--__mutex_lock.isra.6
+> >                                            |--56.56%--osq_lock
+> >=20
+> > The application is multi-threaded, creates a new epoll entry for
+> > each incoming connection, and does not delete it before the
+> > connection shutdown - that is, before the connection's fd close().
+> >=20
+> > Many different threads compete frequently for the epmutex lock,
+> > affecting the overall performance.
+> >=20
+> > To reduce the contention this patch introduces explicit reference count=
+ing
+> > for the eventpoll struct. Each registered event acquires a reference,
+> > and references are released at ep_remove() time.
+> >=20
+> > Additionally, this introduces a new 'dying' flag to prevent races betwe=
+en
+> > the EP file close() and the monitored file close().
+> > ep_eventpoll_release() marks, under f_lock spinlock, each epitem as bef=
+ore
+>=20
+> "as dying"?
+>=20
+> > removing it, while EP file close() does not touch dying epitems.
+>=20
+> The need for this dying flag is somewhat unclear to me.  I mean, if we
+> have refcounting done correctly, why the need for this flag?  Some
+> additional description of the dynamics would be helpful.
+>=20
+> Methinks this flag is here to cope with the delayed freeing via
+> hlist_del_rcu(), but that's a guess?
 
-Right.
+First thing first, thanks for the feedback!
 
-Thanks
+Both ep_clear_and_put() and eventpoll_release_file() can release the
+eventpoll struct. The second must acquire the file->f_lock spinlock to
+reach/access such struct pointer. Callers of __ep_remove need to
+acquire first the ep->mtx, so eventpoll_release_file() must release the
+spinlock after fetching the pointer and before acquiring the mutex.
 
-Roberto
+Meanwhile, without the 'dying' flag, ep_clear_and_put() could kick-in,
+eventually on a different CPU, drop all the ep references and free the
+struct.=C2=A0
+An alternative to the 'dying' flag would be removing the following loop
+from ep_clear_and_put():
 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >   include/linux/lsm_hooks.h |  1 +
-> >   security/security.c       | 12 +++++++++---
-> >   2 files changed, 10 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index 21a8ce23108..05c4b831d99 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -93,6 +93,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
-> >   enum lsm_order {
-> >   	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
-> >   	LSM_ORDER_MUTABLE = 0,
-> > +	LSM_ORDER_LAST = 1,
-> >   };
-> >   
-> >   struct lsm_info {
-> > diff --git a/security/security.c b/security/security.c
-> > index 322090a50cd..24f52ba3218 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -284,9 +284,9 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
-> >   		bool found = false;
-> >   
-> >   		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> > -			if (lsm->order == LSM_ORDER_MUTABLE &&
-> > -			    strcmp(lsm->name, name) == 0) {
-> > -				append_ordered_lsm(lsm, origin);
-> > +			if (strcmp(lsm->name, name) == 0) {
-> > +				if (lsm->order == LSM_ORDER_MUTABLE)
-> > +					append_ordered_lsm(lsm, origin);
-> >   				found = true;
-> >   			}
-> >   		}
-> > @@ -306,6 +306,12 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
-> >   		}
-> >   	}
-> >   
-> > +	/* LSM_ORDER_LAST is always last. */
-> > +	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> > +		if (lsm->order == LSM_ORDER_LAST)
-> > +			append_ordered_lsm(lsm, "   last");
-> > +	}
+	while ((rbp =3D rb_first_cached(&ep->rbr)) !=3D NULL) {
+                epi =3D rb_entry(rbp, struct epitem, rbn);
+                ep_remove_safe(ep, epi);
+                cond_resched();
+        }
+
+So that ep_clear_and_put() would not release all the ep references
+anymore. That option has the downside of keeping the ep struct alive
+for an unlimited time after ep_clear_and_put(). A previous revision of
+this patch implemented a similar behavior, but Eric Biggers noted it
+could hurt some users:
+
+https://lore.kernel.org/linux-fsdevel/Y3%2F4FW4mqY3fWRfU@sol.localdomain/
+
+Please let me know if the above is clear enough.
+
+> > The eventpoll struct is released by whoever - among EP file close() and
+> > and the monitored file close() drops its last reference.
+> >=20
+> > With all the above in place, we can drop the epmutex usage at disposal =
+time.
+> >=20
+> > Overall this produces a significant performance improvement in the
+> > mentioned connection/rate scenario: the mutex operations disappear from
+> > the topmost offenders in the perf report, and the measured connections/=
+rate
+> > grows by ~60%.
+> >=20
+> > To make the change more readable this additionally renames ep_free() to
+> > ep_clear_and_put(), and moves the actual memory cleanup in a separate
+> > ep_free() helper.
+> >=20
+> > ...
+> >=20
+> > --- a/fs/eventpoll.c
+> > +++ b/fs/eventpoll.c
+> >=20
+> > ...
+> >=20
+> > +	free_uid(ep->user);
+> > +	wakeup_source_unregister(ep->ws);
+> > +	kfree(ep);
+> > +}
 > > +
-> >   	/* Disable all LSMs not in the ordered list. */
-> >   	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> >   		if (exists_ordered_lsm(lsm))
+> >  /*
+> >   * Removes a "struct epitem" from the eventpoll RB tree and deallocate=
+s
+> >   * all the associated resources. Must be called with "mtx" held.
+> > + * If the dying flag is set, do the removal only if force is true.
+>=20
+> This comment describes "what" the code does, which is obvious from the
+> code anwyay.  It's better if comments describe "why" the code does what
+> it does.
+
+What about appending the following?
+
+"""
+This prevents ep_clear_and_put() from dropping all the ep references
+while running concurrently with eventpoll_release_file().
+"""
+
+(I'll keep the 'what' part to hopefully make the 'why' more clear)
+
+> > + * Returns true if the eventpoll can be disposed.
+> >   */
+> > -static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+> > +static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool=
+ force)
+> >  {
+> >  	struct file *file =3D epi->ffd.file;
+> >  	struct epitems_head *to_free;
+> >=20
+> > ...
+> >=20
+> >  	/*
+> > -	 * We don't want to get "file->f_lock" because it is not
+> > -	 * necessary. It is not necessary because we're in the "struct file"
+> > -	 * cleanup path, and this means that no one is using this file anymor=
+e.
+> > -	 * So, for example, epoll_ctl() cannot hit here since if we reach thi=
+s
+> > -	 * point, the file counter already went to zero and fget() would fail=
+.
+> > -	 * The only hit might come from ep_free() but by holding the mutex
+> > -	 * will correctly serialize the operation. We do need to acquire
+> > -	 * "ep->mtx" after "epmutex" because ep_remove() requires it when cal=
+led
+> > -	 * from anywhere but ep_free().
+> > -	 *
+> > -	 * Besides, ep_remove() acquires the lock, so we can't hold it here.
+> > +	 * Use the 'dying' flag to prevent a concurrent ep_cleat_and_put() fr=
+om
+>=20
+> s/cleat/clear/
+>=20
+> > +	 * touching the epitems list before eventpoll_release_file() can acce=
+ss
+> > +	 * the ep->mtx.
+> >  	 */
+> > -	mutex_lock(&epmutex);
+> > -	if (unlikely(!file->f_ep)) {
+> > -		mutex_unlock(&epmutex);
+> > -		return;
+> > -	}
+> > -	hlist_for_each_entry_safe(epi, next, file->f_ep, fllink) {
+> > +again:
+> > +	spin_lock(&file->f_lock);
+> > +	if (file->f_ep && file->f_ep->first) {
+> > +		/* detach from ep tree */
+>=20
+> Comment appears to be misplaced - the following code doesn't detach
+> anything?
+
+Indeed. This is a left-over from a previous revision. Can be dropped.
+
+
+I have a process question: I understand this is queued for the mm-
+nonmm-unstable branch. Should I send a v5 with the above comments
+changes or an incremental patch or something completely different?
+
+Thanks!
+
+Paolo
 
