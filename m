@@ -2,123 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D3D06AFF1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 07:47:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7AE56AFF27
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Mar 2023 07:55:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229845AbjCHGq7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Mar 2023 01:46:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34278 "EHLO
+        id S229761AbjCHGz2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Mar 2023 01:55:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229806AbjCHGqy (ORCPT
+        with ESMTP id S229676AbjCHGzX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Mar 2023 01:46:54 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA4E4A0B2D
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 22:46:52 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id q31-20020a17090a17a200b0023750b69614so1036738pja.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 22:46:52 -0800 (PST)
+        Wed, 8 Mar 2023 01:55:23 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AB6E9BE36
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Mar 2023 22:55:22 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id cw28so61748071edb.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Mar 2023 22:55:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112; t=1678258012;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kmG46A14t7t7HVqup7DVsAme3iM/60xWBqiw7dTDTPU=;
-        b=Ev67Nwmsj4lVyjgef4etBdUJEpcOOJ8D6B32kQDIDeTk2eLKG6OvWi6tKtUmsI9Yjx
-         S7agcPVk4yON+V3qFyQumfsRwSJB5gpxxnVYSpHiA+ZjEwkmTIyaAOGu9TeBEhTCDsG6
-         UVIAJeG+/qd7LUGUCe7lCxmFtKFiJuohMJ1+sqQ5gyUqzoAuTbylG/NeCa1WkRcdjTp4
-         UUq7BU8/4hv7qqYC0RnJdgam3ZbCGVsJaYWFfx2bs9vrLDzb8ZxiTGD1otny7xRLeblK
-         oczdR4CdFqyXwDHnzxAk/IGCgurGOv1VjhGjMTHD9mAXZAKigljh1gZe2tquUhVnFONT
-         +psQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678258012;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20210112; t=1678258520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kmG46A14t7t7HVqup7DVsAme3iM/60xWBqiw7dTDTPU=;
-        b=HYB9IUlKvSuDI2FMgNWro0JISWO9olDofQBcva2mPoCHGpQpHibt8Lmh9lc2GD9g1S
-         SSCTmknqdcZgFZQUTaIPKlLvYlmRVvs459W08He60i3zArliwqZBaWBeoi6GXMS/N70H
-         PiIB4SgKCvAc2orKm5i0fPR1Te9psrk3HwWgsNMkdWnXqh2GeeFbfZ2XVW4JqepLt6U3
-         SkDBi3++EOgD6RUycdQdGi3nhpRJ8t+abFGB2YY14nhX/7wWKJKqI4EX5++6hGUlpaIs
-         K3Fz/QRuEANGDdMwxZtwwrSzB6ZFZ+C7OOLtsESHUEPOYOv5+e1NaLt6eECGJJJvt8V9
-         Pd9A==
-X-Gm-Message-State: AO0yUKXAdz9RRD8cag/rskOp38X53QTq0/3MZyDNnlyjGxS/Htmi0uOP
-        2zbt8qixvwOhEJL6OJwCVg0iDA==
-X-Google-Smtp-Source: AK7set+jfx6/JoFPDz1KR4qP1hDTo3hq+3N6Qi6/fEevr/4FR1O1umr8spU4VNLsHVuScbBHjZiMmQ==
-X-Received: by 2002:a05:6a20:6f57:b0:cc:b662:9e7c with SMTP id gu23-20020a056a206f5700b000ccb6629e7cmr13992368pzb.46.1678258012166;
-        Tue, 07 Mar 2023 22:46:52 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-4-237.pa.vic.optusnet.com.au. [49.186.4.237])
-        by smtp.gmail.com with ESMTPSA id w18-20020a63af12000000b004fbdfdffa40sm8606537pge.87.2023.03.07.22.46.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 22:46:51 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pZnZY-006C1p-P7; Wed, 08 Mar 2023 17:46:48 +1100
-Date:   Wed, 8 Mar 2023 17:46:48 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCHSET for-next 0/3] Add FMODE_NOWAIT support to pipes
-Message-ID: <20230308064648.GT2825702@dread.disaster.area>
-References: <20230308031033.155717-1-axboe@kernel.dk>
- <30edf51c-792e-05b9-9045-2feab70ec427@kernel.dk>
+        bh=t70odTwmK6O77z83bIqLAvXxKp0qE+ApIEsl/k0TwRg=;
+        b=SvJRYpGbYBjKv59H4HCKsI7FHXUk8wNeT5ln9OF9p4Yo/DzY3x+JBriHlUCsLHkbLx
+         uHAd7HHnZs0HddC1hWysXar5oL4ukgo/NxGJ1wHVSC6czBH1euLkijk1EOW7+Sww2Z8D
+         cUoOFf5GHkzBlSvQ04vt5G4UBXvzz0wyCHSZTsrPaUV8ptoJoHjnZwVBZuVm8Q9gnRVj
+         wrRPSR0xKEskGh/0nSPNtRDNdYx0vvgjbeyLF8NumIBinb2rdsXWQKYiG8dIcOQLYSf7
+         t1D/nGvITRdRK8fmju2RQ7t6cDKNmxR2RdOKMy/7/Qy3fhn2/EdDNb3dgGy7vU2RY/OE
+         0qEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678258520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t70odTwmK6O77z83bIqLAvXxKp0qE+ApIEsl/k0TwRg=;
+        b=iS8K+Bjfk4hGNW6EfggXPVCZEMBSLk448/U13KYvB7VSS9VYbXMY6uD3roVJUsSlIC
+         +8nZmVUNkmwoWlL+l05P6nEUTBfMueNKxcKMhKzILNlCX7FCwoWFRfiZ5vbW36SuM1ti
+         hIPwMKQ5n+MOn6k/uOVKnq8jcP6zl9hHQ7EXYEson7TtGUNDMIB+gpcqsuEnR2L2ro6I
+         b+IYxIVkUt1G2xgAzJ+MV5bhRUZwpVsUx3ZN9p8HNE7ncBXunutyIB5SkPKY3IbkJXwh
+         2J4AHbh7uohTvHvFu+13oDYnDweCLfUXPj06an78jEvylWEUFce6ukL9BhKe07tt5crE
+         lEAg==
+X-Gm-Message-State: AO0yUKXFueABJyH7bB1TujICyxHB3dp1gC5tZe1d7sektHBtInG0zXL7
+        9skzASSVMU8hog/w65BPMQRWez6S/rwIRCMumYfJnA==
+X-Google-Smtp-Source: AK7set84EqwKbbWtBzLqoI2WBaXzcxS36AWRY3R571B29UifEtRwl/Oaa3UiGOLEMSR+VMGnJ9LPtwdL8OLwQH7/Z6w=
+X-Received: by 2002:a50:8750:0:b0:4c2:ed2:1196 with SMTP id
+ 16-20020a508750000000b004c20ed21196mr9453336edv.5.1678258520463; Tue, 07 Mar
+ 2023 22:55:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30edf51c-792e-05b9-9045-2feab70ec427@kernel.dk>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230228085002.2592473-1-yosryahmed@google.com>
+In-Reply-To: <20230228085002.2592473-1-yosryahmed@google.com>
+From:   Yosry Ahmed <yosryahmed@google.com>
+Date:   Tue, 7 Mar 2023 22:54:44 -0800
+Message-ID: <CAJD7tkbjidNgKi1RLOyVks-RR34mXh+QkKf_BZY_ZcMrjfP0TQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Ignore non-LRU-based reclaim in memcg reclaim
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        David Hildenbrand <david@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
+        Shakeel Butt <shakeelb@google.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 07, 2023 at 08:33:24PM -0700, Jens Axboe wrote:
-> On 3/7/23 8:10?PM, Jens Axboe wrote:
-> > Curious on how big of a difference this makes, I wrote a small benchmark
-> > that simply opens 128 pipes and then does 256 rounds of reading and
-> > writing to them. This was run 10 times, discarding the first run as it's
-> > always a bit slower. Before the patch:
-> > 
-> > Avg:	262.52 msec
-> > Stdev:	  2.12 msec
-> > Min:	261.07 msec
-> > Max	267.91 msec
-> > 
-> > and after the patch:
-> > 
-> > Avg:	24.14 msec
-> > Stdev:	 9.61 msec
-> > Min:	17.84 msec
-> > Max:	43.75 msec
-> > 
-> > or about a 10x improvement in performance (and efficiency).
-> 
-> The above test was for a pipe being empty when the read is issued, if
-> the test is changed to have data when, then it looks even better:
-> 
-> Before:
-> 
-> Avg:	249.24 msec
-> Stdev:	  0.20 msec
-> Min:	248.96 msec
-> Max:	249.53 msec
-> 
-> After:
-> 
-> Avg:	 10.86 msec
-> Stdev:	  0.91 msec
-> Min:	 10.02 msec
-> Max:	 12.67 msec
-> 
-> or about a 23x improvement.
+On Tue, Feb 28, 2023 at 12:50=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
+> wrote:
+>
+> Reclaimed pages through other means than LRU-based reclaim are tracked
+> through reclaim_state in struct scan_control, which is stashed in
+> current task_struct. These pages are added to the number of reclaimed
+> pages through LRUs. For memcg reclaim, these pages generally cannot be
+> linked to the memcg under reclaim and can cause an overestimated count
+> of reclaimed pages. This short series tries to address that.
+>
+> Patch 1 is just refactoring updating reclaim_state into a helper
+> function, and renames reclaimed_slab to just reclaimed, with a comment
+> describing its true purpose.
+>
+> Patch 2 ignores pages reclaimed outside of LRU reclaim in memcg reclaim.
+> The pages are uncharged anyway, so even if we end up under-reporting
+> reclaimed pages we will still succeed in making progress during
+> charging.
+>
+> Do not let the diff stat trick you, patch 2 is a one-line change. All
+> the rest is moving a couple of functions around and a huge comment :)
+>
+> RFC -> v1:
+> - Exported report_freed_pages in case XFS is built as a module (Matthew
+>   Wilcox).
+> - Renamed reclaimed_slab to reclaim in previously missed MGLRU code.
+> - Refactored using reclaim_state to update sc->nr_reclaimed into a
+>   helper and added an XL comment explaining why we ignore
+>   reclaim_state->reclaimed in memcg reclaim (Johannes Weiner).
+>
+> Yosry Ahmed (2):
+>   mm: vmscan: refactor updating reclaimed pages in reclaim_state
+>   mm: vmscan: ignore non-LRU-based reclaim in memcg reclaim
+>
+>  fs/inode.c           |  3 +-
+>  fs/xfs/xfs_buf.c     |  3 +-
+>  include/linux/swap.h |  5 ++-
+>  mm/slab.c            |  3 +-
+>  mm/slob.c            |  6 ++--
+>  mm/slub.c            |  5 ++-
+>  mm/vmscan.c          | 79 +++++++++++++++++++++++++++++++++++---------
+>  7 files changed, 74 insertions(+), 30 deletions(-)
+>
+> --
+> 2.39.2.722.g9855ee24e9-goog
+>
 
-Nice!
-
-Code looks OK, maybe consider s/nonblock/nowait/, but I'm not a pipe
-expert so I'll leave nitty gritty details to Al, et al.
-
-Acked-by: Dave Chinner <dchinner@redhat.com>
--- 
-Dave Chinner
-david@fromorbit.com
+Friendly ping on this series, any comments or thoughts -- especially
+on the memcg side?
