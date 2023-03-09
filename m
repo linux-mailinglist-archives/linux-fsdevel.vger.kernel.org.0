@@ -2,99 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 710666B2822
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 16:03:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20A7E6B286A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 16:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231660AbjCIPD0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 10:03:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57992 "EHLO
+        id S229549AbjCIPJp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 10:09:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232160AbjCIPDH (ORCPT
+        with ESMTP id S231469AbjCIPJU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 10:03:07 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7EFF0C56
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Mar 2023 06:59:40 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id u9so8192942edd.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Mar 2023 06:59:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1678373979;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+VSDa7dBH/bVf4+A7dL/Xx6tG+g312K6/L+r45ZA+CU=;
-        b=De0gNLn6ZBXhJR3GiPLzdHVtUHk9b0I+eQyNxZGTw8O0e8giDVjxj1uqT0EfDgqJIG
-         48/LmTbYk1rbeobIw+Bkvgp1z5/QMmUcoa55yGfMpZAdIJ9ECQDcNjRJHy0Etaz9qTbV
-         n4nWOz+0tWPMXB5F7AdPyXHI2n/71TPUZnQN4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678373979;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+VSDa7dBH/bVf4+A7dL/Xx6tG+g312K6/L+r45ZA+CU=;
-        b=t8eKPJ/9aROTe59EMLR56/VmrOpMPXhK0tSabnmGdVz+LI50/EqIbnJ/l3Mom2az/l
-         Q1rPLcP/vpJ8zLUREWf+ZNf1WaXzsnYTang1Y+lrtErPQ8dn29UBDwxHQzMp7HlKY1Nk
-         +ni3SzOEJ2MtMw727L5dTFSbzFVFRYTcxvU+zW+i4xqzgzbhU2CmVbvtbh+1bETgYSGg
-         zQNiuaw+23RHA9VRWhAe83IJ91ts87VWQi7BSp88XBATBPW4/Cp9Cszf8T1D4Z1oqA77
-         gRFVfosPd6W3yL6f2VFYzdey0hn2b+APu+fmCsUPYlA+xVc7tikZ0pqtg0Pml8ABF1wA
-         ZUzw==
-X-Gm-Message-State: AO0yUKXy1cFS2H6IoymePPhaGNtlPMlrw11iK6q3TyO6JiRPMsC2Eg1B
-        1GWugje5tlDMlPLeN1DD3bOKpqigxihuAaDqLzI23xKP4FO00Xws
-X-Google-Smtp-Source: AK7set+19crCv3xn8eV6LTvRSmhextzlOUuWjoia6pFldjZHmUNJ1nqnArcoZB1onZ3MrlNAowxHKoc6ietIxmjkjrU=
-X-Received: by 2002:a50:8e5d:0:b0:4c8:1fda:52fd with SMTP id
- 29-20020a508e5d000000b004c81fda52fdmr12485472edx.8.1678373979006; Thu, 09 Mar
- 2023 06:59:39 -0800 (PST)
+        Thu, 9 Mar 2023 10:09:20 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF6D8FA085;
+        Thu,  9 Mar 2023 07:06:52 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 1E931220A0;
+        Thu,  9 Mar 2023 15:06:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1678374411; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R6g4kRDdU6Pzsf3osnmqtkBjat/AV+71HfLT7+Petq0=;
+        b=Ymap7u+kMyX4vLkfKiaEhZhokT4sx2z9jpEPbZSO9rQzt0kIJj+cqmoblpnjoV1k0SyEUj
+        cd7DAI8WoFdsOp/67o6qtC6SgujL+cLHeWozarmPZE1WPw568sbDtYTP9mwHYAJLwL6Qyq
+        IdcW9IUA7ZJ3B7p6KlToms8GZTboVQ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1678374411;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R6g4kRDdU6Pzsf3osnmqtkBjat/AV+71HfLT7+Petq0=;
+        b=C+pFLS1Gyn+Z1rC/kHyViduGByHJeoMNBtoejeg/Mh44UksWeUecipeduzk9dSd7usn4v5
+        wp2k7mc+nu0mCUBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0F7A513A10;
+        Thu,  9 Mar 2023 15:06:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 8fSxAwv2CWSmTgAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 09 Mar 2023 15:06:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id D1ADDA06FF; Thu,  9 Mar 2023 16:06:49 +0100 (CET)
+Date:   Thu, 9 Mar 2023 16:06:49 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Ritesh Harjani <ritesh.list@gmail.com>
+Subject: Re: [RFC 11/11] ext4: Add allocation criteria 1.5 (CR1_5)
+Message-ID: <20230309150649.5pnhqsf2khvffl6l@quack3>
+References: <cover.1674822311.git.ojaswin@linux.ibm.com>
+ <08173ee255f70cdc8de9ac3aa2e851f9d74acb12.1674822312.git.ojaswin@linux.ibm.com>
 MIME-Version: 1.0
-References: <CAL7ro1GQcs28kT+_2M5JQZoUN6KHYmA85ouiwjj6JU+1=C-q4g@mail.gmail.com>
-In-Reply-To: <CAL7ro1GQcs28kT+_2M5JQZoUN6KHYmA85ouiwjj6JU+1=C-q4g@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 9 Mar 2023 15:59:28 +0100
-Message-ID: <CAJfpeguTqXKuBcR3ZBbpWTPTbhnLja0QkBz3ASa4mgaw+A4-rQ@mail.gmail.com>
-Subject: Re: WIP: verity support for overlayfs
-To:     Alexander Larsson <alexl@redhat.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <08173ee255f70cdc8de9ac3aa2e851f9d74acb12.1674822312.git.ojaswin@linux.ibm.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 8 Mar 2023 at 16:29, Alexander Larsson <alexl@redhat.com> wrote:
->
-> As was recently discussed in the various threads about composefs we
-> want the ability to specify a fs-verity digest for metacopy files,
-> such that the lower file used for the data is guaranteed to have the
-> specified digest.
->
-> I wrote an initial version of this here:
->
->   https://github.com/alexlarsson/linux/tree/overlay-verity
->
-> I would like some feedback on this approach. Does it make sense?
->
-> For context, here is the main commit text:
->
-> This adds support for a new overlay xattr "overlay.verity", which
-> contains a fs-verity digest. This is used for metacopy files, and
-> whenever the lowerdata file is accessed overlayfs can verify that
-> the data file fs-verity digest matches the expected one.
->
-> By default this is ignored, but if the mount option "verity_policy" is
-> set to "validate" or "require", then all accesses validate any
-> specified digest. If you use "require" it additionally fails to access
-> metacopy file if the verity xattr is missing.
->
-> The digest is validated during ovl_open() as well as when the lower file
-> is copied up. Additionally the overlay.verity xattr is copied to the
-> upper file during a metacopy operation, in order to later do the validation
-> of the digest when the copy-up happens.
+On Fri 27-01-23 18:07:38, Ojaswin Mujoo wrote:
+> CR1_5 aims to optimize allocations which can't be satisfied in CR1. The
+> fact that we couldn't find a group in CR1 suggests that it would be
+> difficult to find a continuous extent to compleltely satisfy our
+> allocations. So before falling to the slower CR2, in CR1.5 we
+> proactively trim the the preallocations so we can find a group with
+> (free / fragments) big enough.  This speeds up our allocation at the
+> cost of slightly reduced preallocation.
+> 
+> The patch also adds a new sysfs tunable:
+> 
+> * /sys/fs/ext4/<partition>/mb_cr1_5_max_trim_order
+> 
+> This controls how much CR1.5 can trim a request before falling to CR2.
+> For example, for a request of order 7 and max trim order 2, CR1.5 can
+> trim this upto order 5.
+> 
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
-Hmm, so what exactly happens if the file is copied up and then
-modified?  The verification will fail, no?
+The idea looks good. Couple of questions below...
 
-Thanks,
-Miklos
+> +/*
+> + * We couldn't find a group in CR1 so try to find the highest free fragment
+> + * order we have and proactively trim the goal request length to that order to
+> + * find a suitable group faster.
+> + *
+> + * This optimizes allocation speed at the cost of slightly reduced
+> + * preallocations. However, we make sure that we don't trim the request too
+> + * much and fall to CR2 in that case.
+> + */
+> +static void ext4_mb_choose_next_group_cr1_5(struct ext4_allocation_context *ac,
+> +		enum criteria *new_cr, ext4_group_t *group, ext4_group_t ngroups)
+> +{
+> +	struct ext4_sb_info *sbi = EXT4_SB(ac->ac_sb);
+> +	struct ext4_group_info *grp = NULL;
+> +	int i, order, min_order;
+> +
+> +	if (unlikely(ac->ac_flags & EXT4_MB_CR1_5_OPTIMIZED)) {
+> +		if (sbi->s_mb_stats)
+> +			atomic_inc(&sbi->s_bal_cr1_5_bad_suggestions);
+> +	}
+> +
+> +	/*
+> +	 * mb_avg_fragment_size_order() returns order in a way that makes
+> +	 * retrieving back the length using (1 << order) inaccurate. Hence, use
+> +	 * fls() instead since we need to know the actual length while modifying
+> +	 * goal length.
+> +	 */
+> +	order = fls(ac->ac_g_ex.fe_len);
+> +	min_order = order - sbi->s_mb_cr1_5_max_trim_order;
+
+Given we still require the allocation contains at least originally
+requested blocks, is it ever the case that goal size would be 8 times
+larger than original alloc size? Otherwise the
+sbi->s_mb_cr1_5_max_trim_order logic seems a bit pointless...
+
+> +	if (min_order < 0)
+> +		min_order = 0;
+
+Perhaps add:
+
+	if (1 << min_order < ac->ac_o_ex.fe_len)
+		min_order = fls(ac->ac_o_ex.fe_len) + 1;
+
+and then you can drop the condition from the loop below...
+
+> +
+> +	for (i = order; i >= min_order; i--) {
+> +		if (ac->ac_o_ex.fe_len <= (1 << i)) {
+> +			/*
+> +			 * Scale down goal len to make sure we find something
+> +			 * in the free fragments list. Basically, reduce
+> +			 * preallocations.
+> +			 */
+> +			ac->ac_g_ex.fe_len = 1 << i;
+
+When scaling down the size with sbi->s_stripe > 1, it would be better to
+choose multiple of sbi->s_stripe and not power of two. But our stripe
+support is fairly weak anyway (e.g. initial goal size does not reflect it
+at all AFAICT) so probably we don't care here either.
+
+> +		} else {
+> +			break;
+> +		}
+> +
+> +		grp = ext4_mb_find_good_group_avg_frag_lists(ac,
+> +							     mb_avg_fragment_size_order(ac->ac_sb,
+> +							     ac->ac_g_ex.fe_len));
+> +		if (grp)
+> +			break;
+> +	}
+> +
+> +	if (grp) {
+> +		*group = grp->bb_group;
+> +		ac->ac_flags |= EXT4_MB_CR1_5_OPTIMIZED;
+> +	} else {
+> +		/* Reset goal length to original goal length before falling into CR2 */
+> +		ac->ac_g_ex.fe_len = ac->ac_orig_goal_len;
+>  		*new_cr = CR2;
+>  	}
+>  }
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
