@@ -2,110 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 506A36B2645
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 15:07:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D60846B2658
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 15:10:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231644AbjCIOH2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 09:07:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40944 "EHLO
+        id S229956AbjCIOKi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 09:10:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231645AbjCIOGx (ORCPT
+        with ESMTP id S231783AbjCIOKA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 09:06:53 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C77CB18A86;
-        Thu,  9 Mar 2023 06:05:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Thu, 9 Mar 2023 09:10:00 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069A7A6148;
+        Thu,  9 Mar 2023 06:08:46 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 75E7B219E3;
+        Thu,  9 Mar 2023 14:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1678370925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=02cwensYYfPLwV4kjxWXiviNQrLpEu8A11nprCgOsxA=;
+        b=V8VSKNaWl75655qTvaV3eSxW6t2Zfs/mi0+1M/z/YmkQA0Y4+WSsOVb9ovRvaoffK5XI7s
+        ICiDkzieFzksEGZlBsxn/+XeFaOcyBids4pA4tvEJ+ptkOdi3U4Y6/Uwkj64Ds1Ft9iAR2
+        jyboAjbFhhBxgon1QkIMUJRoOKQs/+U=
+Received: from suse.cz (unknown [10.100.208.146])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 700F5B81EED;
-        Thu,  9 Mar 2023 14:05:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD33C433D2;
-        Thu,  9 Mar 2023 14:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678370738;
-        bh=xJ7YPrTfTthbYoyo8UtH2onMzmwtgbsrsuyUa9lXPAE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dmztQVg5CIS8T690ZZtBtC6IlnrcP7PqLeuT8DjrijPjpNg2SxZAeYmM5PzoNc/H7
-         er5fix33obktnrmBYc0X7CA59basYJ3ltJEGA2F9wjpLFMSHBpI6UMGjKnwvbHUTGd
-         FTkFktQ8RRAfqly2xui9EyDGPOQO6oUnUl3MJL+sDEvOmA42HcAk8Ph7PxFqXQXnwF
-         9381JT3MVOZOc8GalYXITxcLggI5BOSU6t/DLTQOnaUWTzuJhNJBFSutu+mtQ3rd9/
-         EkCczClEm5xdnnfmLqC1Sfp8FcJtsSgB5i+d+JwRU6vtDg7lkb2Bkd+YItg3+d6c4r
-         VwqmtL+h0w4fg==
-Date:   Thu, 9 Mar 2023 07:05:34 -0700
-From:   Keith Busch <kbusch@kernel.org>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>, Hannes Reinecke <hare@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        Daniel Gomez <da.gomez@samsung.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
-Message-ID: <ZAnnrhUG1B+r1nd0@kbusch-mbp.dhcp.thefacebook.com>
-References: <edac909b-98e5-cb6d-bb80-2f6a20a15029@suse.de>
- <ZAOF3p+vqA6pd7px@casper.infradead.org>
- <0b70deae-9fc7-ca33-5737-85d7532b3d33@suse.de>
- <ZAWi5KwrsYL+0Uru@casper.infradead.org>
- <20230306161214.GB959362@mit.edu>
- <ZAjLhkfRqwQ+vkHI@casper.infradead.org>
- <CGME20230308181355eucas1p1c94ffee59e210fb762540c888e8eae8a@eucas1p1.samsung.com>
- <1367983d4fa09dcb63e29db2e8be3030ae6f6e8c.camel@HansenPartnership.com>
- <20230309080434.tnr33rhzh3a5yc5q@ArmHalley.local>
- <260064c68b61f4a7bc49f09499e1c107e2a28f31.camel@HansenPartnership.com>
+        by relay2.suse.de (Postfix) with ESMTPS id 94D042C141;
+        Thu,  9 Mar 2023 14:08:44 +0000 (UTC)
+Date:   Thu, 9 Mar 2023 15:08:43 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: global states: was: Re: [PATCH printk v1 05/18] printk: Add non-BKL
+ console basic infrastructure
+Message-ID: <ZAnoa8A8geQt6ucf@alley>
+References: <20230302195618.156940-1-john.ogness@linutronix.de>
+ <20230302195618.156940-6-john.ogness@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <260064c68b61f4a7bc49f09499e1c107e2a28f31.camel@HansenPartnership.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230302195618.156940-6-john.ogness@linutronix.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 09, 2023 at 08:11:35AM -0500, James Bottomley wrote:
-> On Thu, 2023-03-09 at 09:04 +0100, Javier González wrote:
-> > FTL designs are complex. We have ways to maintain sector sizes under
-> > 64 bits, but this is a common industry problem.
-> > 
-> > The media itself does not normally oeprate at 4K. Page siges can be
-> > 16K, 32K, etc.
+On Thu 2023-03-02 21:02:05, John Ogness wrote:
+> From: Thomas Gleixner <tglx@linutronix.de>
 > 
-> Right, and we've always said if we knew what this size was we could
-> make better block write decisions.  However, today if you look what
-> most NVMe devices are reporting, it's a bit sub-optimal:
+> The current console/printk subsystem is protected by a Big Kernel Lock,
+> (aka console_lock) which has ill defined semantics and is more or less
+> stateless. This puts severe limitations on the console subsystem and
+> makes forced takeover and output in emergency and panic situations a
+> fragile endavour which is based on try and pray.
+> 
+> The goal of non-BKL consoles is to break out of the console lock jail
+> and to provide a new infrastructure that avoids the pitfalls and
+> allows console drivers to be gradually converted over.
+> 
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -3472,6 +3492,14 @@ void register_console(struct console *newcon)
+>  	newcon->dropped = 0;
+>  	console_init_seq(newcon, bootcon_registered);
+>  
+> +	if (!(newcon->flags & CON_NO_BKL))
+> +		have_bkl_console = true;
 
-Your sample size may be off if your impression is that "most" NVMe drives
-report themselves this way. :)
- 
-> jejb@lingrow:/sys/block/nvme1n1/queue> cat logical_block_size 
-> 512
-> jejb@lingrow:/sys/block/nvme1n1/queue> cat physical_block_size 
-> 512
-> jejb@lingrow:/sys/block/nvme1n1/queue> cat optimal_io_size 
-> 0
-> 
-> If we do get Linux to support large block sizes, are we actually going
-> to get better information out of the devices?
-> 
-> >  Increasing the block size would allow for better host/device
-> > cooperation. As Ted mentions, this has been a requirement for HDD and
-> > SSD vendor for years. It seems to us that the time is right now and
-> > that we have mechanisms in Linux to do the plumbing. Folios is
-> > ovbiously a big part of this.
-> 
-> Well a decade ago we did a lot of work to support 4k sector devices.
-> Ultimately the industry went with 512 logical/4k physical devices
-> because of problems with non-Linux proprietary OSs but you could still
-> use 4k today if you wanted (I've actually still got a working 4k SCSI
-> drive), so why is no NVMe device doing that?
+We never clear this value even when the console gets unregistered.
 
-In my experience, all but the cheapest consumer grade nvme devices report 4k
-logical. They all support an option to emulate 512b if you really wanted it to,
-but the more optimal 4k is the most common default for server grade nvme.
+> +	else
+> +		cons_nobkl_init(newcon);
+> +
+> +	if (newcon->flags & CON_BOOT)
+> +		have_boot_console = true;
+> +
+>  	/*
+>  	 * Put this console in the list - keep the
+>  	 * preferred driver at the head of the list.
+> @@ -3515,6 +3543,9 @@ void register_console(struct console *newcon)
+>  			if (con->flags & CON_BOOT)
+>  				unregister_console_locked(con);
+>  		}
+> +
+> +		/* All boot consoles have been unregistered. */
+> +		have_boot_console = false;
+
+The boot consoles can be removed also by printk_late_init().
+
+I would prefer to make this more error-proof and update both
+have_bkl_console and have_boot_console in unregister_console().
+
+A solution would be to use a reference counter instead of the boolean.
+I am not sure if it is worth it. But it seems that refcount_read()
+is just simple atomic read, aka READ_ONCE().
+
+
+>  	}
+>  unlock:
+>  	console_list_unlock();
+
+Best Regards,
+Petr
