@@ -2,78 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55EB86B237B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 12:57:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 862556B23BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 13:11:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231229AbjCIL5U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 06:57:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56546 "EHLO
+        id S230124AbjCIML1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 07:11:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230113AbjCIL5T (ORCPT
+        with ESMTP id S229977AbjCIMLZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 06:57:19 -0500
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 081F0DBB42
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Mar 2023 03:57:18 -0800 (PST)
-Received: by mail-il1-f197.google.com with SMTP id m7-20020a924b07000000b003170cef3f12so774687ilg.22
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Mar 2023 03:57:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678363037;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yX6TF+vn9/IHLiO2rdpruGDt6O5lqRy5gxKQUxEGJDo=;
-        b=QkWWPFthKNyJ/IxNjCKstyg8QuapBnhWECFXIS956DdM9+Y3WkKwyC6jGzAyFn5Jdd
-         owx4GSKjJVvWmBY8vvb2WvDydH1KmWtBK9jCszfu/hihV8xQuAUVbILtX0hIJBWuOU7+
-         I9FJAKnxRPxmR1xO270AtHx5/DPjX3mcIOnkCaph1gVZ9t/1EzxQGU6bRI4ofEp2FkhX
-         fcsCIpDH4Y9OLA31orDcH90HO7z7rNuyL5oTq5kELV6VVrk/KKX10AYjudM7tmDXcDbL
-         1m3QVeNlNPcM+fx8uJEJVRlO2hKv7PV1+0LTXiz6F58SdCONGAYHpX/ft0ItNafdRKfw
-         QWXg==
-X-Gm-Message-State: AO0yUKXnnw0RyjYtZurzQDernGmzZbGw1XLPuYUFJf0jyk1dSYZLooV4
-        1hnJYg0VIlONFjfndkkZIjkJWy7qh5BVR6v7DTLzcUBzsgdh
-X-Google-Smtp-Source: AK7set+l8Q/wcIAHiiaNGzoKIqYWGV1eypA0ZwqCwtYTqttblmrfVY7wkNJf3lfXJvgGGVFWxEPLrQ5Yl2IIoz5/eOqsmab5UWT0
+        Thu, 9 Mar 2023 07:11:25 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42A5CE8ABB;
+        Thu,  9 Mar 2023 04:11:24 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D7B0D2007B;
+        Thu,  9 Mar 2023 12:11:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1678363882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=06HODakZlwz/k2YThwRN3Zc6vrX2aFdxNnGOiwjUJRE=;
+        b=QQtA5MgLeHwNGm99vPRu+4EOM56fCNCmL9eF3JMk3Yh8tUSpRcLaRHBYIVVZidWODr8ejP
+        hoDNp8jjSh7YmFS55txMt9Zi/4CQ7abn0pNlwFznkTN/KZMsV55a8loD/IGm4AxGohDn0I
+        s77XA+16FjIZzO9D6vWNt/uBJh7UWpc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1678363882;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=06HODakZlwz/k2YThwRN3Zc6vrX2aFdxNnGOiwjUJRE=;
+        b=mwwaEI5jbt/hevrojcq/rfw8EcfjduFGDK7FH22yUyjrlnMb/qxMqNNaTUGREc88ma+2li
+        jEYI9TgT54+EtaCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C61F113A10;
+        Thu,  9 Mar 2023 12:11:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id InlSMOrMCWSOaAAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 09 Mar 2023 12:11:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 4F886A06FF; Thu,  9 Mar 2023 13:11:22 +0100 (CET)
+Date:   Thu, 9 Mar 2023 13:11:22 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Ritesh Harjani <ritesh.list@gmail.com>
+Subject: Re: [RFC 04/11] ext4: Convert mballoc cr (criteria) to enum
+Message-ID: <20230309121122.vzfswandgqqm4yk5@quack3>
+References: <cover.1674822311.git.ojaswin@linux.ibm.com>
+ <9670431b31aa62e83509fa2802aad364910ee52e.1674822311.git.ojaswin@linux.ibm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:cd0:b0:3e5:4c9d:6e14 with SMTP id
- e16-20020a0566380cd000b003e54c9d6e14mr10876861jak.4.1678363037341; Thu, 09
- Mar 2023 03:57:17 -0800 (PST)
-Date:   Thu, 09 Mar 2023 03:57:17 -0800
-In-Reply-To: <0000000000004c06c405eb318db4@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a5202905f6765872@google.com>
-Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_run_delayed_refs
-From:   syzbot <syzbot+ebdb2403435c4136db2b@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9670431b31aa62e83509fa2802aad364910ee52e.1674822311.git.ojaswin@linux.ibm.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+On Fri 27-01-23 18:07:31, Ojaswin Mujoo wrote:
+> Convert criteria to be an enum so it easier to maintain. This change
+> also makes it easier to insert new criterias in the future.
+> 
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
-commit 8bb808c6ad91ec3d332f072ce8f8aa4b16e307e0
-Author: David Sterba <dsterba@suse.com>
-Date:   Thu Nov 3 13:39:01 2022 +0000
+Just two small comments below:
 
-    btrfs: don't print stack trace when transaction is aborted due to ENOMEM
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index b8b00457da8d..6037b8e0af86 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -126,6 +126,14 @@ enum SHIFT_DIRECTION {
+>  	SHIFT_RIGHT,
+>  };
+>  
+> +/*
+> + * Number of criterias defined. For each criteria, mballoc has slightly
+> + * different way of finding the required blocks nad usually, higher the
+						   ^^^ and
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1541ad14c80000
-start commit:   98555239e4c3 Merge tag 'arc-6.1-fixes' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a66c6c673fb555e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=ebdb2403435c4136db2b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a4d8ea880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13172832880000
+> + * criteria the slower the allocation. We start at lower criterias and keep
+> + * falling back to higher ones if we are not able to find any blocks.
+> + */
+> +#define EXT4_MB_NUM_CRS 4
+> +
 
-If the result looks correct, please mark the issue as fixed by replying with:
+So defining this in a different header than the enum itself is fragile. I
+understand you need it in ext4_sb_info declaration so probably I'd move the
+enum declaration to ext4.h. Alternatively I suppose we could move a lot of
+mballoc stuff out of ext4_sb_info into a separate struct because there's a
+lot of it. But that would be much larger undertaking.
 
-#syz fix: btrfs: don't print stack trace when transaction is aborted due to ENOMEM
+Also when going for symbolic allocator scan names maybe we could actually
+make names sensible instead of CR[0-4]? Perhaps like CR_ORDER2_ALIGNED,
+CR_BEST_LENGHT_FAST, CR_BEST_LENGTH_ALL, CR_ANY_FREE. And probably we could
+deal with ordered comparisons like in:
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+                if (cr < 2 &&
+                    (!sbi->s_log_groups_per_flex ||
+                     ((group & ((1 << sbi->s_log_groups_per_flex) - 1)) != 0)) &
+                    !(ext4_has_group_desc_csum(sb) &&
+                      (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT))))
+                        return 0;
+
+to declare CR_FAST_SCAN = 2, or something like that. What do you think?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
