@@ -2,226 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6124B6B28E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 16:33:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4B506B2908
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 16:46:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231296AbjCIPdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 10:33:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60012 "EHLO
+        id S231421AbjCIPqb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 10:46:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230513AbjCIPc7 (ORCPT
+        with ESMTP id S230018AbjCIPq3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 10:32:59 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF5B44A4;
-        Thu,  9 Mar 2023 07:32:55 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id C713820157;
-        Thu,  9 Mar 2023 15:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1678375973; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Thu, 9 Mar 2023 10:46:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D63EBDCF7E
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Mar 2023 07:45:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678376744;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=quA1wtVIFMTnXp+eZD0K7wbRNFsGXtBDlP7KMrESYkA=;
-        b=CfvWCEqTzpt7CElb+91qOk57anSKDNu9Ooj51pNUc1qvS3X2ojSoChPAr3jKNESlO76ctX
-        6SkehSo5gpGLRGZUwrPcWCo2FywrtlNZos75QhTHDuBDSjYZrgpzVhHTHu3q772feu1vZP
-        Lw0vFF2EPZh0dYwsyssFp/wxAOSH1yU=
-Received: from suse.cz (pmladek.tcp.ovpn2.prg.suse.de [10.100.208.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 9B1092C141;
-        Thu,  9 Mar 2023 15:32:52 +0000 (UTC)
-Date:   Thu, 9 Mar 2023 16:32:48 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: naming: Re: [PATCH printk v1 05/18] printk: Add non-BKL console
- basic infrastructure
-Message-ID: <ZAn8IC+hj+y01vgs@alley>
-References: <20230302195618.156940-1-john.ogness@linutronix.de>
- <20230302195618.156940-6-john.ogness@linutronix.de>
+        bh=37/w03iyTP4+W8iPKFzYFgUbiQ52iRaqgtdVrDhT9xs=;
+        b=PSwkJ2jfh/Q1wzU1FQELNbWABHXie3ElG6EUf/+Yq6PmHZZV4MfcKCONQ6HisW7P8+gOzM
+        JZR6vkNX+apuXHF0kH35aLQGUsfeo6s3GQIJzTe0F1MTq9L80+WQ6uIymrkEcjsPjnuZMB
+        pmyuOkN4Ye6aOxlfy+P5r5oBywKnPwU=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-299-q5BU8o_rMSm47LOmU3POiQ-1; Thu, 09 Mar 2023 10:45:43 -0500
+X-MC-Unique: q5BU8o_rMSm47LOmU3POiQ-1
+Received: by mail-io1-f70.google.com with SMTP id a21-20020a5d9595000000b0074c9dc19e16so1018148ioo.15
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Mar 2023 07:45:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678376743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=37/w03iyTP4+W8iPKFzYFgUbiQ52iRaqgtdVrDhT9xs=;
+        b=qFKL2eTLBpfNcRwg4qIA5eObaZeRwPauDh9EC8mswtuF+LpZuIvJtz+1T37hXl5M+E
+         y0SZ0232Xf0XXIeTDuGZruv3sihRApMhnXA886RZNUPJZpK9tv4sK4PinLe5Q7jN0Rqj
+         xn2omAOcMHkG3uz7fqHcEBEQlryTQWwqG3TIKeH2BHjc+Gg68MmVAw5tsyh5leiUsAfb
+         gncSsRkI1k5KzcOlTzAGOe9f2wfXxA4/i5Vni89ehVUG52DdM8LP7Qui+L/nCenaFjvq
+         L7y39yrDW3AVcihn4athYOub5cRxeD/y+jwoRTEUECiAaWPnnB6Vv3/ceTOQjyHe8C3t
+         1ktg==
+X-Gm-Message-State: AO0yUKUjJH7Dy1yq+Iz4lCqdgDnGDZIe0QXoBxhkQsVfAoKfPr2nrFcB
+        6ftDFHd2u6eVmyWCWMYXnvJHOHlFtum2aybb1KfCwR73qkSSN23To8XU+uA0jk9dLbf5CIkOLmm
+        iul6RqUArTIWaA1UzSX4DwreEKo4G/P7LDm5vnYzB3g==
+X-Received: by 2002:a02:aa1c:0:b0:3b4:42bd:bec with SMTP id r28-20020a02aa1c000000b003b442bd0becmr11003175jam.4.1678376743051;
+        Thu, 09 Mar 2023 07:45:43 -0800 (PST)
+X-Google-Smtp-Source: AK7set8QBRuryYFdirBo6eHZdfY2571MUkP1FwqMyqR1gOwhXmwSuzQmRXV2DIONkq+83p0UnSvSoKwmFcBwJVN7bHM=
+X-Received: by 2002:a02:aa1c:0:b0:3b4:42bd:bec with SMTP id
+ r28-20020a02aa1c000000b003b442bd0becmr11003168jam.4.1678376742785; Thu, 09
+ Mar 2023 07:45:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230302195618.156940-6-john.ogness@linutronix.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <CAL7ro1GQcs28kT+_2M5JQZoUN6KHYmA85ouiwjj6JU+1=C-q4g@mail.gmail.com>
+ <CAJfpeguTqXKuBcR3ZBbpWTPTbhnLja0QkBz3ASa4mgaw+A4-rQ@mail.gmail.com>
+In-Reply-To: <CAJfpeguTqXKuBcR3ZBbpWTPTbhnLja0QkBz3ASa4mgaw+A4-rQ@mail.gmail.com>
+From:   Alexander Larsson <alexl@redhat.com>
+Date:   Thu, 9 Mar 2023 16:45:31 +0100
+Message-ID: <CAL7ro1FZKNa1vMJ0CLsGr0Wcg=TSm_2Ehso=adQEVnn3G5i=xQ@mail.gmail.com>
+Subject: Re: WIP: verity support for overlayfs
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 2023-03-02 21:02:05, John Ogness wrote:
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> The current console/printk subsystem is protected by a Big Kernel Lock,
-> (aka console_lock) which has ill defined semantics and is more or less
-> stateless. This puts severe limitations on the console subsystem and
-> makes forced takeover and output in emergency and panic situations a
-> fragile endavour which is based on try and pray.
-> 
-> The goal of non-BKL consoles is to break out of the console lock jail
-> and to provide a new infrastructure that avoids the pitfalls and
-> allows console drivers to be gradually converted over.
-> 
-> The proposed infrastructure aims for the following properties:
-> 
->   - Per console locking instead of global locking
->   - Per console state which allows to make informed decisions
->   - Stateful handover and takeover
-> 
+On Thu, Mar 9, 2023 at 3:59=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
+rote:
+>
+> On Wed, 8 Mar 2023 at 16:29, Alexander Larsson <alexl@redhat.com> wrote:
+> >
+> > As was recently discussed in the various threads about composefs we
+> > want the ability to specify a fs-verity digest for metacopy files,
+> > such that the lower file used for the data is guaranteed to have the
+> > specified digest.
+> >
+> > I wrote an initial version of this here:
+> >
+> >   https://github.com/alexlarsson/linux/tree/overlay-verity
+> >
+> > I would like some feedback on this approach. Does it make sense?
+> >
+> > For context, here is the main commit text:
+> >
+> > This adds support for a new overlay xattr "overlay.verity", which
+> > contains a fs-verity digest. This is used for metacopy files, and
+> > whenever the lowerdata file is accessed overlayfs can verify that
+> > the data file fs-verity digest matches the expected one.
+> >
+> > By default this is ignored, but if the mount option "verity_policy" is
+> > set to "validate" or "require", then all accesses validate any
+> > specified digest. If you use "require" it additionally fails to access
+> > metacopy file if the verity xattr is missing.
+> >
+> > The digest is validated during ovl_open() as well as when the lower fil=
+e
+> > is copied up. Additionally the overlay.verity xattr is copied to the
+> > upper file during a metacopy operation, in order to later do the valida=
+tion
+> > of the digest when the copy-up happens.
+>
+> Hmm, so what exactly happens if the file is copied up and then
+> modified?  The verification will fail, no?
 
-So, this patch adds:
+When we do a meta-copy-up we need to look at the data file and
+synthesize an overlay.verity xattr in the upper dir based on the
+existing fs-verity diges. At least if the file has fs-verity enabled.
+And indeed, in the verify_policy=3Drequired case, if there is no
+fs-verity in the lower file we should fall back to a full copy-up
+instead of a metacopy-up, or we will end up with a metacopy we can't
+validate.
 
-	CON_NO_BKL		= BIT(8),
-
-	struct cons_state {
-
-	atomic_long_t		__private atomic_state[2];
-
-	include/linux/console.h
-	kernel/printk/printk_nobkl.c
-
-	enum state_selector {
-		CON_STATE_CUR,
-
-	cons_state_set()
-	cons_state_try_cmpxchg()
-
-	cons_nobkl_init()
-	cons_nobkl_cleanup()
-
-
-later patches add:
-
-	console_can_proceed(struct cons_write_context *wctxt);
-	console_enter_unsafe(struct cons_write_context *wctxt);
-
-	cons_atomic_enter()
-	cons_atomic_flush();
-
-	static bool cons_emit_record(struct cons_write_context *wctxt)
-
-
-All the above names seem to be used only by the NOBLK consoles.
-And they use "cons", "NO_BKL", "nobkl", "cons_atomic", "atomic", "console".
-
-I wonder if there is a system or if the names just evolved during several
-reworks.
-
-Please, let me know if I am over the edge, like too picky and that it
-is not worth it. But you know me. I think that it should help to be
-more consistent. And it actually might be a good idea to separate
-API specific to the NOBKL consoles.
-
-Here is my opinion:
-
-1. I am not even sure if "nobkl", aka "no_big_kernel_lock" is the
-   major property of these consoles.
-
-   It might get confused by the real famous big kernel lock.
-   Also I tend to confuse this with "noblk", aka "non-blocking".
-
-   I always liked the "atomic consoles" description.
+However, if you actually modify a file I don't really see the problem,
+you will get a non-verified upper layer file with the changes. It will
+not fail validation because it is at that point not validated. Really
+we can only expect to validate the lower layers.
 
 
-2. More importantly, an easy to distinguish shortcat would be nice
-   as a common prefix. The following comes to my mind:
+--
+=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D
+ Alexander Larsson                                Red Hat, Inc
+       alexl@redhat.com         alexander.larsson@gmail.com
 
-   + nbcon - aka nobkl/noblk consoles API
-   + acon  - atomic console API
-
-
-It would look like:
-
-a) variant with nbcom:
-
-
-	CON_NB		= BIT(8),
-
-	struct nbcon_state {
-	atomic_long_t		__private atomic_nbcon_state[2];
-
-	include/linux/console.h
-	kernel/printk/nbcon.c
-
-	enum nbcon_state_selector {
-		NBCON_STATE_CUR,
-
-	nbcon_state_set()
-	nbcon_state_try_cmpxchg()
-
-	nbcon_init()
-	nbcon_cleanup()
-
-	nbcon_can_proceed(struct cons_write_context *wctxt);
-	nbcon_enter_unsafe(struct cons_write_context *wctxt);
-
-	nbcon_enter()
-	nbcon_flush_all();
-
-	nbcon_emit_next_record()
-
-
-a) varianta with atomic:
-
-
-	CON_ATOMIC		= BIT(8),
-
-	struct acon_state {
-	atomic_long_t		__private acon_state[2];
-
-	include/linux/console.h
-	kernel/printk/acon.c  or atomic_console.c
-
-	enum acon_state_selector {
-		ACON_STATE_CUR,
-
-	acon_state_set()
-	acon_state_try_cmpxchg()
-
-	acon_init()
-	acon_cleanup()
-
-	acon_can_proceed(struct cons_write_context *wctxt);
-	acon_enter_unsafe(struct cons_write_context *wctxt);
-
-	acon_enter()
-	acon_flush_all();
-
-	acon_emit_next_record()
-
-
-I would prefer the variant with "nbcon" because
-
-	$> git grep nbcon | wc -l
-	0
-
-vs.
-
-	$> git grep acon | wc -l
-	11544
-
-
-Again, feel free to tell me that I ask for too much. I am not
-sure how complicated would be to do this mass change and if it
-is worth it. I can review this patchset even with the current names.
-
-My main concern is about the long term maintainability. It is
-always easier to see patches than a monolitic source code.
-I would like to reduce the risk of people hating us for what "a mess"
-we made ;-)
-
-Well, the current names might be fine when the legacy code gets
-removed one day. The question is how realistic it is. Also we
-probably should make them slightly more consistent anyway.
-
-Best Regards,
-Petr
