@@ -2,150 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BE476B24FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 14:11:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EB4C6B25B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 14:45:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230195AbjCINLp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 08:11:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57706 "EHLO
+        id S229970AbjCINp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 08:45:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbjCINLn (ORCPT
+        with ESMTP id S229729AbjCINp2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 08:11:43 -0500
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F0DD5A7F;
-        Thu,  9 Mar 2023 05:11:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1678367499;
-        bh=ximSBdqm11LjZkXc+6xN4CESZDhw1BYjj+9qJ8MzVUs=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=IaAgulVrKnAlPv2g9YUwPeVG3kjLr4zTCuiYcy4FOtAtni2DimLGPdtR5RKQ9dKJK
-         jYPtl3sQ54MRWe5LuLgedYJOWoh8PnMxRyEoRuEdiDNZs8xiVmfq2xM9oQWduYvOuk
-         2HNPfKw28Nm1Hj/0zE+k90F3BQrzSdg3BZIx7kB0=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 116DE1281446;
-        Thu,  9 Mar 2023 08:11:39 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id pc7NiKohuf7s; Thu,  9 Mar 2023 08:11:38 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1678367498;
-        bh=ximSBdqm11LjZkXc+6xN4CESZDhw1BYjj+9qJ8MzVUs=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=jiXbls0PZ6UqDt36GCwKW7X7dFmjNQ5w5Y5aFASfef4wv740Q7UiikJquC3oRPPlm
-         LrOWzL7n3TLXBe75VMf8TYwT6F6RrzxfKFsPSNN0tg3gksXItN2iGbgw+vKtBjOVIi
-         TA/XaSmNmd0qIi6NBPgovbKdkKMpB8ASv+nZPbZc=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B73771280885;
-        Thu,  9 Mar 2023 08:11:37 -0500 (EST)
-Message-ID: <260064c68b61f4a7bc49f09499e1c107e2a28f31.camel@HansenPartnership.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Javier =?ISO-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>, Hannes Reinecke <hare@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Keith Busch <kbusch@kernel.org>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        Daniel Gomez <da.gomez@samsung.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org
-Date:   Thu, 09 Mar 2023 08:11:35 -0500
-In-Reply-To: <20230309080434.tnr33rhzh3a5yc5q@ArmHalley.local>
-References: <c9f6544d-1731-4a73-a926-0e85ae9da9df@suse.de>
-         <ZAN2HYXDI+hIsf6W@casper.infradead.org>
-         <edac909b-98e5-cb6d-bb80-2f6a20a15029@suse.de>
-         <ZAOF3p+vqA6pd7px@casper.infradead.org>
-         <0b70deae-9fc7-ca33-5737-85d7532b3d33@suse.de>
-         <ZAWi5KwrsYL+0Uru@casper.infradead.org> <20230306161214.GB959362@mit.edu>
-         <ZAjLhkfRqwQ+vkHI@casper.infradead.org>
-         <CGME20230308181355eucas1p1c94ffee59e210fb762540c888e8eae8a@eucas1p1.samsung.com>
-         <1367983d4fa09dcb63e29db2e8be3030ae6f6e8c.camel@HansenPartnership.com>
-         <20230309080434.tnr33rhzh3a5yc5q@ArmHalley.local>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+        Thu, 9 Mar 2023 08:45:28 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 912A55D744;
+        Thu,  9 Mar 2023 05:45:25 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id fm20-20020a05600c0c1400b003ead37e6588so3624616wmb.5;
+        Thu, 09 Mar 2023 05:45:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678369524;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E6Yp4ykCm3cUFPIraj3jw8904oAl0ICbY5EFtxJP3RY=;
+        b=kAgzbWBIm+8cm3CHxp+53SeTaQI1ayQTmGl++4bNxTad8rAMdhOr5AvIh1lNETh6HZ
+         Uc9FrU3Fz6FpbYzVxo3JxTmZ2zx+k1nVRLvH71q/3hTX+6fV3l6MyQa5AAXYF7Z46JT2
+         lHXdypnKmx5MuZLY98B+rGbcJgFo+oEHaWscv9A1E+LRQcvUkBHLD1QIZIPS7gLiSNY8
+         asVRONWnX5toQG1I8WmEq6SsyJJqugq+m0LHCsN1vR97bVZBZGRl8j0bHZHSpEm0vf6q
+         MXMWwYP9Pp7DfXEVdCtUZkwEpORqy3DPGn7+u8+sPbE3KExC1OhEswE7Td/WgZWCTuld
+         bYQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678369524;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E6Yp4ykCm3cUFPIraj3jw8904oAl0ICbY5EFtxJP3RY=;
+        b=TXfnBKYpplZkIYYWwBnkRZAdQUcrV/VhHqk9+sCVE8J1O/KXOMZpQDH5ClIlDjQ/19
+         PeCVknSEJ14HoTM9e9LduTAsteaCZm27IJS7cetdUkqZLDa06lR+BEI1HQho0PhWqVZo
+         TVAAxruRfmUTktr1vLxWEXRTv1NAjoLepdRCDCZq5k5LQahxUWwOPtc7Ht007KAH1yap
+         zr1J5rZ499L1ghl6kfe3c7Xxag25Tu7o4o0rJQs/pTorPjb3+7je//kFA6Tmtei+qCmd
+         5wbZ+ephbY38wyBWKwTv/7P0wQFsPOroOBGNyD2ONHyyCI5lqetGdPkIvySOhkJsZ13g
+         BZVQ==
+X-Gm-Message-State: AO0yUKUm+mb0f/N1iCsqgNMOepijRIzxtlJrOAQ0goY0e6e4hv2B19NE
+        1/GluAcjtGdhrd4LSmBnNrU=
+X-Google-Smtp-Source: AK7set9o30O7lBn3u0olN/rw8q0yBl1RBDA+SlXQJiJaNfm57RCNKUNdegRH6uqAagMOIT4QE4LmDA==
+X-Received: by 2002:a05:600c:3b22:b0:3e2:1d1e:78d6 with SMTP id m34-20020a05600c3b2200b003e21d1e78d6mr19656319wms.7.1678369523969;
+        Thu, 09 Mar 2023 05:45:23 -0800 (PST)
+Received: from suse.localnet (host-95-235-93-126.retail.telecomitalia.it. [95.235.93.126])
+        by smtp.gmail.com with ESMTPSA id z17-20020a05600c221100b003e01493b136sm2769076wml.43.2023.03.09.05.45.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Mar 2023 05:45:23 -0800 (PST)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [git pull] vfs.git sysv pile
+Date:   Thu, 09 Mar 2023 14:45:22 +0100
+Message-ID: <1812408.QZUTf85G27@suse>
+In-Reply-To: <2907412.VdNmn5OnKV@suse>
+References: <Y/gugbqq858QXJBY@ZenIV> <ZAD6n+mH/P8LDcOw@ZenIV> <2907412.VdNmn5OnKV@suse>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2023-03-09 at 09:04 +0100, Javier González wrote:
-> On 08.03.2023 13:13, James Bottomley wrote:
-> > On Wed, 2023-03-08 at 17:53 +0000, Matthew Wilcox wrote:
-> > > On Mon, Mar 06, 2023 at 11:12:14AM -0500, Theodore Ts'o wrote:
-> > > > What HDD vendors want is to be able to have 32k or even 64k
-> > > > *physical* sector sizes.  This allows for much more efficient
-> > > > erasure codes, so it will increase their byte capacity now that
-> > > > it's no longer easier to get capacity boosts by squeezing the
-> > > > tracks closer and closer, and their have been various
-> > > > engineering tradeoffs with SMR, HAMR, and MAMR.  HDD vendors
-> > > > have been asking for this at LSF/MM, and in othervenues for
-> > > > ***years***.
-> > > 
-> > > I've been reminded by a friend who works on the drive side that a
-> > > motivation for the SSD vendors is (essentially) the size of
-> > > sector_t. Once the drive needs to support more than 2/4 billion
-> > > sectors, they need to move to a 64-bit sector size, so the amount
-> > > of memory consumed by the FTL doubles, the CPU data cache becomes
-> > > half as effective, etc. That significantly increases the BOM for
-> > > the drive, and so they have to charge more.  With a 512-byte LBA,
-> > > that's 2TB; with a 4096-byte LBA, it's at 16TB and with a 64k
-> > > LBA, they can keep using 32-bit LBA numbers all the way up to
-> > > 256TB.
-> > 
-> > I thought the FTL operated on physical sectors and the logical to
-> > physical was done as a RMW through the FTL?  In which case sector_t
-> > shouldn't matter to the SSD vendors for FTL management because they
-> > can keep the logical sector size while increasing the physical one.
-> > Obviously if physical size goes above the FS block size, the drives
-> > will behave suboptimally with RMWs, which is why 4k physical is the
-> > max currently.
-> > 
-> 
-> FTL designs are complex. We have ways to maintain sector sizes under
-> 64 bits, but this is a common industry problem.
-> 
-> The media itself does not normally oeprate at 4K. Page siges can be
-> 16K, 32K, etc.
+On mercoled=EC 8 marzo 2023 18:40:44 CET Fabio M. De Francesco wrote:
+> On gioved=EC 2 marzo 2023 20:35:59 CET Al Viro wrote:
+>=20
+> [...]
+>=20
+> > Frankly, ext2 patchset had been more along the lines of "here's what
+> > untangling the calling conventions in ext2 would probably look like" th=
+an
+> > anything else. If you are willing to test (and review) that sucker and =
+it
+> > turns out to be OK, I'll be happy to slap your tested-by on those during
+> > rebase and feed them to Jan...
+>=20
+> I git-clone(d) and built your "vfs" tree, branch #work.ext2, without and=
+=20
+with
+> the following commits:
+>=20
+> f5b399373756 ("ext2: use offset_in_page() instead of open-coding it as
+> subtraction")
+>=20
+> c7248e221fb5 ("ext2_get_page(): saner type")
+>=20
+> 470e54a09898 ("ext2_put_page(): accept any pointer within the page")
+>=20
+> 15abcc147cf7 ("ext2_{set_link,delete_entry}(): don't bother with page_add=
+r")
+>=20
+> 16a5ee2027b7 ("ext2_find_entry()/ext2_dotdot(): callers don't need page_a=
+ddr
+> anymore")
+>=20
+> Then I read the code and FWIW the five patches look good to me. I think t=
+hey
+> can work properly.
+>=20
+> Therefore, if you want to, please feel free to add my "Reviewed-by" tag (=
+OK,=20
+I
+> know that you don't need my reviews, since you are the one who taught me =
+how
+> to write patches like yours for sysv and ufs :-)).
+>=20
+> As a personal preference, in ext2_get_page() I'd move the two lines of co=
+de
+> from the "fail" label to the same 'if' block where you have the "goto=20
+fail;",
+> mainly because that label is only reachable from there. However, it does =
+not
+> matter at all because I'm only expressing my personal preference.
+>=20
+> I ran `./check -g quick` without your patches in a QEMU/KVM x86_32 VM, 6GB
+> RAM, running a Kernel with HIGHMEM64GB enabled. I ran it three or four ti=
+mes
+> because it kept on hanging at random tests' numbers.
+>=20
+> I'm noticing the same pattern due to the oom killer kicking in several ti=
+mes
+> to kill processes until xfstests its is dead.
+>=20
+> [ 1171.795551] Out of memory: Killed process 1669 (xdg-desktop-por) total-
+vm:
+> 105068kB, anon-rss:9792kB, file-rss:10972kB, shmem-rss:0kB, UID:1000=20
+pgtables:
+> 136kB oom_score_adj:200
+> [ 1172.339920] systemd invoked oom-killer: gfp_mask=3D0xcc0(GFP_KERNEL),
+> order=3D0, oom_score_adj=3D100
+> [ 1172.339927] CPU: 3 PID: 1413 Comm: systemd Tainted: G S      W   E
+> 6.3.0-rc1-x86-32-debug+ #1
+> [ 1172.339929] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
+> rel-1.16.0-0-gd239552-rebuilt.opensuse.org 04/01/2014
+> [ 1172.339931] Call Trace:
+> [ 1172.339934]  dump_stack_lvl+0x92/0xd4
+> [ 1172.339939]  dump_stack+0xd/0x10
+> [ 1172.339941]  dump_header+0x42/0x454
+> [ 1172.339945]  ? ___ratelimit+0x6f/0x140
+> [ 1172.339948]  oom_kill_process+0xe9/0x244
+> [ 1172.339950]  out_of_memory+0xf6/0x424
+>=20
+> I have not enough experience to understand why we get to that out-of-memo=
+ry
+> condition, so that several processes get killed. I can send the whole=20
+decoded
+> stack trace and other information to whoever can look at this issue to=20
+figure
+> out how to fix this big issue. I can try to bisect this issue too, but I=
+=20
+need
+> time because of other commitments and a slow system for building the=20
+necessary
+> kernels.
+>=20
+> I want to stress that it does not depend on the above-mentioned patches.=
+=20
+Yes,
+> I'm running Al's "vfs" tree, #work.ext2 branch, but with one only patch=20
+beyond
+> the merge with Linus' tree:
+>=20
+> 522dad1 ext2_rename(): set_link and delete_entry may fail
+>=20
+> I have no means to test this tree. However, I think that I'd have the same
+> issue with Linus' tree too, unless this issue is due to the only commit n=
+ot
+> yet there (I strongly doubt about this possibility).
+>=20
+> Thanks,
+>=20
+> Fabio
 
-Right, and we've always said if we knew what this size was we could
-make better block write decisions.  However, today if you look what
-most NVMe devices are reporting, it's a bit sub-optimal:
+I want to confirm that running xfstests on the most recent SUSE Kernel does=
+n't=20
+trigger the OOM Killer. It only fails 16 of 597 tests. I suppose that those=
+ 16=20
+failures are expected to happen.
 
-jejb@lingrow:/sys/block/nvme1n1/queue> cat logical_block_size 
-512
-jejb@lingrow:/sys/block/nvme1n1/queue> cat physical_block_size 
-512
-jejb@lingrow:/sys/block/nvme1n1/queue> cat optimal_io_size 
-0
+The kernel provided by openSUSE Tumbleweed is...
 
-If we do get Linux to support large block sizes, are we actually going
-to get better information out of the devices?
+uname -a
+Linux tweed32 6.2.1-1-pae #1 SMP PREEMPT_DYNAMIC Mon Feb 27 11:39:51 UTC 20=
+23=20
+(69e0e95) i686 athlon i386 GNU/Linux
 
->  Increasing the block size would allow for better host/device
-> cooperation. As Ted mentions, this has been a requirement for HDD and
-> SSD vendor for years. It seems to us that the time is right now and
-> that we have mechanisms in Linux to do the plumbing. Folios is
-> ovbiously a big part of this.
+I'll try a bisection as soon as possible.
 
-Well a decade ago we did a lot of work to support 4k sector devices.
-Ultimately the industry went with 512 logical/4k physical devices
-because of problems with non-Linux proprietary OSs but you could still
-use 4k today if you wanted (I've actually still got a working 4k SCSI
-drive), so why is no NVMe device doing that?
+=46abio
 
-This is not to say I think larger block sizes is in any way a bad idea
-... I just think that given the history, it will be driven by
-application needs rather than what the manufacturers tell us.
-
-James
 
