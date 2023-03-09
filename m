@@ -2,144 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 542CA6B1AA0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 06:14:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F7D6B1ACA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 06:32:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229654AbjCIFOv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 00:14:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46246 "EHLO
+        id S229972AbjCIFcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 00:32:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbjCIFOt (ORCPT
+        with ESMTP id S229845AbjCIFb5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 00:14:49 -0500
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2048.outbound.protection.outlook.com [40.107.114.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD4B46A04C;
-        Wed,  8 Mar 2023 21:14:44 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T6UGPcLJqwnJ6kxIEmE8pCA/Q/iMn26qylwuLkF3n3RwA3r/Ryh8ATaT3a0ioRLrJc1mOs+luHBNS28780bDbCJqgVjlte0hEL/lT66HETA9NMBQ/WuQLFrwtbgjPdknXQ3xTnafvW8hrGWkjkssKjV5n0dnqMZiQJa2hExEDi9tjK0yw2MjLZWzVPnlH3duQocYKo4F1HbTFcywMsXl7jn34Ao/VcDcFTHSVgBd6MMZTdgEJYMiFIy4yfUvfgZNbBnjkQoak5BsOLKM3r2Xqa2QuDPHflbpBfONhLeu/hAJ2dQHlM0gPxOKCzxMlGbkPdNl3El9K+ajy+Ns5EGvuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6su3jZ+1X+FGzDvMp6PHsmhfeaUyVEd2aTCq6iQLzOU=;
- b=iIQbnJqLAaR9dOHqYx/N6/oFp2W2VDShLeHuSg/reVzb+7m9n+NeXNAdb8ZFozszoTZA3HqQxL703FPhVM0w/ZRyKgcN19lfTc+8JIRWN0b8jFq5FF/Po+YvlIDJX1C/OzbMTLWNwFYfEQguz35xugQAXLz7nU068rYWH30gzcrDqntZYRscLc5iQQLdH5YiqG+zBc049xnZUlxflMQlwQi0bLepx1tOVPeoSP3QhURJjNozRmpxyqT/CmcpBtqAmEDBecYdohyWo0ryOS0ClyRCsyu7BdgFKuqgEiea6XdEJ6GpRkr4oyuNXncckFUb73UqYw22Z1d78bZ++7r5tA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nec.com; dmarc=pass action=none header.from=nec.com; dkim=pass
- header.d=nec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nec.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6su3jZ+1X+FGzDvMp6PHsmhfeaUyVEd2aTCq6iQLzOU=;
- b=aHcIS8xmTn31Q1KkMYzvlfOTvrMbILdpt5zB5YOx5HpV88r+RBjiyAlkDOaojFYbAGJuTFaqfAmQlzXyrNB4auqKoGtsR6LU77RjAYfDUkoeYmWPSZT2dyQ4ll9SVeLDebMQa9PC/rbj/6gEEk1Ss2zC/4DSagoa53ck2zU+TpY=
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com (2603:1096:400:13c::10)
- by OS3PR01MB6276.jpnprd01.prod.outlook.com (2603:1096:604:f5::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.17; Thu, 9 Mar
- 2023 05:14:42 +0000
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::3924:5b48:7ad7:ab0]) by TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::3924:5b48:7ad7:ab0%8]) with mapi id 15.20.6178.018; Thu, 9 Mar 2023
- 05:14:42 +0000
-From:   =?utf-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPo+OAgOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-CC:     Luis Chamberlain <mcgrof@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH] mm: memory-failure: Move memory failure sysctls to its
- own file
-Thread-Topic: [PATCH] mm: memory-failure: Move memory failure sysctls to its
- own file
-Thread-Index: AQHZUkEPh11ZOS2V6EaLBiN5ERHmHK7x55aA
-Date:   Thu, 9 Mar 2023 05:14:41 +0000
-Message-ID: <20230309051439.GA4018963@hori.linux.bs1.fc.nec.co.jp>
-References: <20230309045924.52395-1-wangkefeng.wang@huawei.com>
-In-Reply-To: <20230309045924.52395-1-wangkefeng.wang@huawei.com>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nec.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB8591:EE_|OS3PR01MB6276:EE_
-x-ms-office365-filtering-correlation-id: e56de1ce-151b-403d-76b2-08db205d307f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: s5ahc2dTDPiFe1vTwKqQm+xKeQrFK0cMqUYDvyV0gbMHAinlzT5RgkPx/WDIcMaVKPhZo72hn4JzAl9wbFjdeQ9mYtbk/2j6uyiNuxLltTlc0sJxvv9B9T82Z3o9I6cBGOy+l2ofr8337cEyrIsnLDCvVcj/BhRDfuQcFyiBvFFD4uZ24jp1BgLzYSBXzdfsTNIvJjUqKhWxx52Z8CKAqsb0dTmGnzjPYFX0H9j08tFDcZrW5VSvAu4r3EdcP/6ajIzucr/VAo0sxC+Ik75InsrM99vR0qB7+Ir1PRhb61BLD4j0pWL/aKT1Fzu9TIh9LiaDfTyNzAZ+BVUiMNzVg6O6H8N3bC98cEXMk2abOuWlM0VGbGTznE9c6q23ujjobO5L+xg4SdLo+FelFvf4/ceq5bhaUyl9NNSw6xaqwV/qoMGZO5t6UOwRDIqyZ3de+7OLUR3HbIX+C+vft3HvTx8hOMoaGSQdtQ/jDmmdJQ+mpx799YyxHPZS1/YOm3/BQHcTw4efIxmbXPVvKV3RgdF4Qbanvr3XF+RLFgfMTfdimoKTme8PoXWRXBGBeKr+33hQqXrQ4dWM2zdUEYxIAQWW7vg3HjvPJEh0bzX9gjEpEOyvVgFbviciE4VWz8CqmYrI+XQ2lXwbYuEd867Hxj8eTkMSkA2hLLG9ex/HCv/zOVOeW/XTKO0BO6GPsM+2bLcwsy1/ad9ZrPX+EOdQkg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB8591.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(136003)(376002)(39860400002)(396003)(366004)(346002)(451199018)(83380400001)(478600001)(85182001)(122000001)(186003)(71200400001)(54906003)(33656002)(38100700002)(82960400001)(66556008)(9686003)(76116006)(66446008)(66946007)(66476007)(8676002)(4326008)(64756008)(6916009)(26005)(6512007)(38070700005)(2906002)(55236004)(6506007)(1076003)(5660300002)(4744005)(316002)(6486002)(41300700001)(8936002)(86362001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?T2Fnd09xUVpYVE5tZzI0Qjd6WUx5bVlzNDUveUZMSjVmTXlIT1lacnZ5V0dx?=
- =?utf-8?B?TjhFQ0JialFwSHV4bFhJQWRGU0ZFOHUwM2x3TlRCeUJTdHpLQnZYSUpxMXZm?=
- =?utf-8?B?REN5aTF3eG9VdE1rdlIrZ1FSSmVCZXhydmZuenNwYWErV0drNEtLMUNTSnor?=
- =?utf-8?B?MUtJUGRtTlpmTmljRTBPemxjbEdjNTlpM01QVmxqU1BZVEdHUlhucktNVnY1?=
- =?utf-8?B?azQ0ZnFHV0hZYy9WUzBVaTVIajViUGhJeDVGWTlBYUkwcWJXSUhMZHY5VHE0?=
- =?utf-8?B?dzRtY0d4ZFdUK20wN29MUkVBbmZlZ3BGeTgxWndhVG9ueTVQMEpVdnVmN3Rq?=
- =?utf-8?B?SEs3NGVPTzRoVC9RSzA2RlFGMm9vdHcvVmtHN3lWZ0FGS1ZPUzMxUTRNckRN?=
- =?utf-8?B?NmtKc2FHK3NZeVRkZTNZd1FWR1hNMHJLNGRtLzV6ZUVwTkpzNk04SDF4amRI?=
- =?utf-8?B?QXlLYjByUDBXVjV5ekRXN1BpQ29OVDN6QjVNUkxZd1l0cDNsdzExOTE4RGZa?=
- =?utf-8?B?MUJMV1d4dmFORG8rMkFmNmxnRG9remhndjk0YXYwVm5BTGEzTDVjcXhYcnA2?=
- =?utf-8?B?amh0czlvaEtPYjloMGVJMEVDc3I3clUybFdtQy9PQ0ovbWJCZmRRR29FKy9I?=
- =?utf-8?B?ekk3bnBxLzVmb2xTUUFUU2c2dzZKMnpuYzVpZ1BVcEhCajBEeWxXcmhabC82?=
- =?utf-8?B?enQ0Ym9aczdieXppM09wWk5FUFFyTVZ1YTJkUTBaRXFoNDVGTlc2Wmhzb0da?=
- =?utf-8?B?Q3Y1djRmR0dVMml5eTRCNlVuZG9kOUI2bkYxcDk0NGdTcHNvRk9HQ091cko3?=
- =?utf-8?B?ejBod2lteWJRaFl1VHNHaDZUaFEvcWRGWGIyZUpwaW80YTB6VjVpS1ZadFFI?=
- =?utf-8?B?QTlBaTBTTnlNWVE0dWo2aVp0SjBBUit1U1pHQ0FYRURGYUFzWjZqQkZycFVI?=
- =?utf-8?B?V0RzaTlpZmd1ZWFJcVo3ZnZCREdWRlNRQkladktPYk54bFZhR250MmxKZ1Vw?=
- =?utf-8?B?T0tJQ2NUTGs5YmlMYjZuWUNlRGdBWEJHYVNETDRaWUhNVy81OEhRUFprQlFE?=
- =?utf-8?B?WnRFRGZveWwvZWNla2lmK2lXN0VDa1BjTm9TcU1EdFhOdm53TUxqS0V4a21i?=
- =?utf-8?B?ejNic3BJQ1dvL3ZONUp6MCtHbG9FSzduNWw4MXN3Uk54RFZMUCtudzdFUFp1?=
- =?utf-8?B?cUR2bW96Y2xsZ04vQkZJMHBzNEVUQlczZXhPaUNvc0t0MDJDVGpZVURuZUtt?=
- =?utf-8?B?SXd6T0VEYkdSQ2Myenk4UloyQzBmb3JweDl2UFhab0Y2cHRlZHdtNTJCQ0VE?=
- =?utf-8?B?QURsV2haYVhKWmx4T0wwd2Z3dlAzNkkzczFkd0NzMENQYkZRbHBLTzR5QU54?=
- =?utf-8?B?SXpzQjljSThCNWQ2K2FwNlIrTnpKQ0tFV1l1S21kS3N3alRPZFJVUXMwQlNy?=
- =?utf-8?B?VXhja0ZVMlZ3N3g4ZEZ3MGg2TDdsSVVNNy9Ya1I3NGFvYnlFV0NRQy9sK2di?=
- =?utf-8?B?Zk4rbnRNY1ovM1NKR1Y3NTU0VmVaSFpzSlpUakJOODVINGV2cm5vcEFITHhF?=
- =?utf-8?B?d0h1MnhGemE2bWFKdUNUaCs2SkROMmY5K3dXdUlXWDhsYlZDeDR2MmJGRFJG?=
- =?utf-8?B?a1BLUXpxaytaS2RBTGovT3grREtNcFFOSnhJYnhyTWRYdncyd09ONUs5ZUpz?=
- =?utf-8?B?Nms1a0Y4VHRhOExLcGJuTEpYVDg1TEh0T0R1NXFRTkduNE5WNGNNeEkwb055?=
- =?utf-8?B?RjJWYjFPK0lNMGxPQVBGWFdKb0xBT0NvOGJhQlpodFFiSm5ibW8xcEZ5Tm0y?=
- =?utf-8?B?TEREYU1ZdE5xOHpHNmdOU3F5MmNBZGRndGY3dnRpRXBEblJWS0lRZUd0Tnhm?=
- =?utf-8?B?anhLK1JQbEJuVlAxVC9oTVk2TEloTnpvSzBJRzZ4VlUzbjlrWXRtMWErcTht?=
- =?utf-8?B?TEhiL2E4Z0dRSHRhRHNnUW9MMElwaUNMVFhCbGpibUZRNHIwZFJrUkR3THJh?=
- =?utf-8?B?MHVQNnFicjY5cHNoUkM4U0tMaFBiN1V5N0o5ODNoWkVpZHcrQUwzWkwwQ2Va?=
- =?utf-8?B?enprK092aUhXdlFlb2lHOUZieEN1SmcxWitObjA3SGticEZSaDlrbTZDMUJs?=
- =?utf-8?B?cS9KMjF3amhJb2hpOTZmRS8zcWpCSlh3cE9PaHV2UmNmSFpqcXpiOHR6R3pK?=
- =?utf-8?B?VFE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CE5FCD9533A6B34EAC03F5CCA8D4D1B0@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 9 Mar 2023 00:31:57 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02376DABA2
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Mar 2023 21:31:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678339864;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NF+hRgTvNfgmlgjECsBfqeiS0Fv+B2tyOOlTKhNVTBk=;
+        b=Tz44ZjvkYVwSI4/BubeZRrn2qgCWsxz23p/ohhEH35eUT28ON8i/G5ddaP+x7aQUf2yn3x
+        nK+BiYU8rjtFodNPN6oBtOR4yVXD2vL83ZjTgaugTwudyZH6yCzVyyq39FQM0TLPKxuqrl
+        R+OPqtSxuToj+gwonwGYUHXVjsi+JeE=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-464-GONiSKHIMBacTfKjytcrgA-1; Thu, 09 Mar 2023 00:31:02 -0500
+X-MC-Unique: GONiSKHIMBacTfKjytcrgA-1
+Received: by mail-pj1-f72.google.com with SMTP id m9-20020a17090a7f8900b0023769205928so2127217pjl.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Mar 2023 21:31:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678339861;
+        h=in-reply-to:from:references:cc:to:content-language:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NF+hRgTvNfgmlgjECsBfqeiS0Fv+B2tyOOlTKhNVTBk=;
+        b=h/Fve0oEnLFHZvkjYY/PF5kCgQPZWKV7hwp7Wr50/lJeKNGudu7igo/tXubRn0u3t8
+         9ZLKph2a4LzeaJx9DRyKx4kA+0WLWcAhj7UQv1V3hpc670cM0E4N6UPU0eCI1AxTvYX8
+         /WxZ7ICAw/7Z1h+87emOZNaGyL+6DyHqirDvBedATITadOS1jAT8vT1rJAS7nm49pJrO
+         gjclXYXoEouxbXwQaRxJW0HEU9r4GKlcdxzKxkmF2BA64xQ9kysw+gs6zJgDq4FMREtw
+         btpbWHqYANPfPq4uvTNNofq2R7SeO3uynN/v5Aie2uk4XOEU3wKv8GL4ZTS5QkN2Lr8S
+         Kh6g==
+X-Gm-Message-State: AO0yUKXFaUeae9UtyIIwA8Sl8Z3pNtnvA1tnFr6D0VbKUa8SgLuKr+mz
+        ao0lSdogZBZAQY+Bd+qNqVCV+owMKNL+8aIGfD9y4Uc7EwHd0WhOXPVRH4K46zKFftaPFObR+GG
+        sqPRUo+YUb8no4JaR4DJZgLzDag==
+X-Received: by 2002:a17:902:8303:b0:19e:6516:127a with SMTP id bd3-20020a170902830300b0019e6516127amr16656913plb.39.1678339861055;
+        Wed, 08 Mar 2023 21:31:01 -0800 (PST)
+X-Google-Smtp-Source: AK7set8/A14OcinraypJh2YtkGvwipZHtLDr/jVtglsBDKiEWbxU1KHRkvnxTMyVtYesgeU7EFQ5cQ==
+X-Received: by 2002:a17:902:8303:b0:19e:6516:127a with SMTP id bd3-20020a170902830300b0019e6516127amr16656886plb.39.1678339860614;
+        Wed, 08 Mar 2023 21:31:00 -0800 (PST)
+Received: from [10.72.13.99] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id h10-20020a170902f54a00b0019c13c4b175sm10616783plf.189.2023.03.08.21.30.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Mar 2023 21:31:00 -0800 (PST)
+Content-Type: multipart/mixed; boundary="------------dq4f42jxE1QnjnQr5D0c0j29"
+Message-ID: <cf545923-e782-76a7-dd94-f8586530502b@redhat.com>
+Date:   Thu, 9 Mar 2023 13:30:53 +0800
 MIME-Version: 1.0
-X-OriginatorOrg: nec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB8591.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e56de1ce-151b-403d-76b2-08db205d307f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2023 05:14:42.0451
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e67df547-9d0d-4f4d-9161-51c6ed1f7d11
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: uuretg0lj40lbnaE5E+Pc7Ql/xwGAuOvQmqUgKYxxkyKzwTVaDs0zeZ9vPh5H294JDmKuyMRc3XnYsZxMo1fEA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB6276
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH] fs/ceph/mds_client: ignore responses for waiting requests
+Content-Language: en-US
+To:     Max Kellermann <max.kellermann@ionos.com>
+Cc:     idryomov@gmail.com, jlayton@kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20230302130650.2209938-1-max.kellermann@ionos.com>
+ <c2f9e0d3-0242-1304-26ea-04f25c3cdee4@redhat.com>
+ <CAKPOu+_1ee8QDkuB4TxQBaUwnHi4bRKuszWzCb-BCY44cp1aJQ@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAKPOu+_1ee8QDkuB4TxQBaUwnHi4bRKuszWzCb-BCY44cp1aJQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gVGh1LCBNYXIgMDksIDIwMjMgYXQgMTI6NTk6MjRQTSArMDgwMCwgS2VmZW5nIFdhbmcgd3Jv
-dGU6DQo+IFRoZSBzeXNjdGxfbWVtb3J5X2ZhaWx1cmVfZWFybHlfa2lsbCBhbmQgbWVtb3J5X2Zh
-aWx1cmVfcmVjb3ZlcnkNCj4gYXJlIG9ubHkgdXNlZCBpbiBtZW1vcnktZmFpbHVyZS5jLCBtb3Zl
-IHRoZW0gdG8gaXRzIG93biBmaWxlLg0KDQpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4NCg0KQ291
-bGQgeW91IGV4cGxhaW4gdGhlIGJlbmVmaXQgdG8gbW92ZSB0aGVtPw0KV2Ugc2VlbSB0byBoYXZl
-IG1hbnkgb3RoZXIgcGFyYW1ldGVycyBpbiBrZXJuZWwvc3lzY3RsLmMgd2hpY2ggYXJlIHVzZWQN
-Cm9ubHkgaW4gc2luZ2xlIHBsYWNlcywgc28gd2h5IGRvIHdlIGhhbmRsZSB0aGVzZSB0d28gZGlm
-ZmVyZW50bHk/DQoNClRoYW5rcywNCk5hb3lhIEhvcmlndWNoaQ==
+This is a multi-part message in MIME format.
+--------------dq4f42jxE1QnjnQr5D0c0j29
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+
+On 08/03/2023 23:17, Max Kellermann wrote:
+> On Wed, Mar 8, 2023 at 4:42 AM Xiubo Li <xiubli@redhat.com> wrote:
+>> How could this happen ?
+>>
+>> Since the req hasn't been submitted yet, how could it receive a reply
+>> normally ?
+> I have no idea. We have frequent problems with MDS closing the
+> connection (once or twice a week), and sometimes, this leads to the
+> WARNING problem which leaves the server hanging. This seems to be some
+> timing problem, but that MDS connection problem is a different
+> problem.
+> My patch just attempts to address the WARNING; not knowing much about
+> Ceph internals, my idea was that even if the server sends bad reply
+> packets, the client shouldn't panic.
+>
+>> It should be a corrupted reply and it lead us to get a incorrect req,
+>> which hasn't been submitted yet.
+>>
+>> BTW, do you have the dump of the corrupted msg by 'ceph_msg_dump(msg)' ?
+> Unfortunately not - we have already scrubbed the server that had this
+> problem and rebooted it with a fresh image including my patch. It
+> seems I don't have a full copy of the kernel log anymore.
+>
+> Coincidentally, the patch has prevented another kernel hang just a few
+> minutes ago:
+>
+>   Mar 08 15:48:53 sweb1 kernel: ceph: mds0 caps stale
+>   Mar 08 15:49:13 sweb1 kernel: ceph: mds0 caps stale
+>   Mar 08 15:49:35 sweb1 kernel: ceph: mds0 caps went stale, renewing
+>   Mar 08 15:49:35 sweb1 kernel: ceph: mds0 caps stale
+>   Mar 08 15:49:35 sweb1 kernel: libceph: mds0 (1)10.41.2.11:6801 socket
+> error on write
+>   Mar 08 15:49:35 sweb1 kernel: libceph: mds0 (1)10.41.2.11:6801 session reset
+>   Mar 08 15:49:35 sweb1 kernel: ceph: mds0 closed our session
+>   Mar 08 15:49:35 sweb1 kernel: ceph: mds0 reconnect start
+>   Mar 08 15:49:36 sweb1 kernel: ceph: mds0 reconnect success
+>   Mar 08 15:49:36 sweb1 kernel: ceph:  dropping dirty+flushing Fx state
+> for 0000000064778286 2199046848012
+>   Mar 08 15:49:40 sweb1 kernel: ceph: mdsc_handle_reply on waiting
+> request tid 1106187
+>   Mar 08 15:49:53 sweb1 kernel: ceph: mds0 caps renewed
+>
+> Since my patch is already in place, the kernel hasn't checked the
+> unexpected packet and thus hasn't dumped it....
+>
+> If you need more information and have a patch with more logging, I
+> could easily boot those servers with your patch and post that data
+> next time it happens.
+
+Hi Max,
+
+I figured out one possible case:
+
+For example when mds closes our session the kclient will call 
+'cleanup_session_requests()', which will drop the unsafe requests and 
+then set 'req->r_attempts' to 0, that means for the requests if they 
+were sent out without receiving unsafe reply they will be retried and 
+then they will be possibly added to the wait list in '__do_request()'. 
+If these requests will get a reply later just after being retried we 
+could see this warning.
+
+I attached one testing patch based yours, just added more debug logs, 
+which won't be introduce perf issue since all the logs should be printed 
+in corner cases.
+
+Could you help test it ?
+
+Thanks,
+
+- Xiubo
+
+> Max
+>
+--------------dq4f42jxE1QnjnQr5D0c0j29
+Content-Type: text/x-patch; charset=UTF-8; name="test.patch"
+Content-Disposition: attachment; filename="test.patch"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL2ZzL2NlcGgvbWRzX2NsaWVudC5jIGIvZnMvY2VwaC9tZHNfY2xpZW50
+LmMKaW5kZXggYjhkNmNjYTE2MDA1Li41MmY1ZTQwYTM0MWQgMTAwNjQ0Ci0tLSBhL2ZzL2Nl
+cGgvbWRzX2NsaWVudC5jCisrKyBiL2ZzL2NlcGgvbWRzX2NsaWVudC5jCkBAIC0xNzU0LDcg
+KzE3NTQsNyBAQCBzdGF0aWMgdm9pZCBjbGVhbnVwX3Nlc3Npb25fcmVxdWVzdHMoc3RydWN0
+IGNlcGhfbWRzX2NsaWVudCAqbWRzYywKIAlzdHJ1Y3QgY2VwaF9tZHNfcmVxdWVzdCAqcmVx
+OwogCXN0cnVjdCByYl9ub2RlICpwOwogCi0JZG91dCgiY2xlYW51cF9zZXNzaW9uX3JlcXVl
+c3RzIG1kcyVkXG4iLCBzZXNzaW9uLT5zX21kcyk7CisJcHJfaW5mbygiY2xlYW51cF9zZXNz
+aW9uX3JlcXVlc3RzIG1kcyVkXG4iLCBzZXNzaW9uLT5zX21kcyk7CiAJbXV0ZXhfbG9jaygm
+bWRzYy0+bXV0ZXgpOwogCXdoaWxlICghbGlzdF9lbXB0eSgmc2Vzc2lvbi0+c191bnNhZmUp
+KSB7CiAJCXJlcSA9IGxpc3RfZmlyc3RfZW50cnkoJnNlc3Npb24tPnNfdW5zYWZlLApAQCAt
+MTc3Myw4ICsxNzczLDEyIEBAIHN0YXRpYyB2b2lkIGNsZWFudXBfc2Vzc2lvbl9yZXF1ZXN0
+cyhzdHJ1Y3QgY2VwaF9tZHNfY2xpZW50ICptZHNjLAogCQlyZXEgPSByYl9lbnRyeShwLCBz
+dHJ1Y3QgY2VwaF9tZHNfcmVxdWVzdCwgcl9ub2RlKTsKIAkJcCA9IHJiX25leHQocCk7CiAJ
+CWlmIChyZXEtPnJfc2Vzc2lvbiAmJgotCQkgICAgcmVxLT5yX3Nlc3Npb24tPnNfbWRzID09
+IHNlc3Npb24tPnNfbWRzKQorCQkgICAgcmVxLT5yX3Nlc3Npb24tPnNfbWRzID09IHNlc3Np
+b24tPnNfbWRzKSB7CisJCQlpZiAocmVxLT5yX2F0dGVtcHRzKQorCQkJCXByX2luZm8oIm1k
+cyVkIHJlcSB0aWQgJWxsdSByZWF0dGVtcHRlZFxuIiwKKwkJCQkJc2Vzc2lvbi0+c19tZHMs
+IHJlcS0+cl90aWQpOwogCQkJcmVxLT5yX2F0dGVtcHRzID0gMDsKKwkJfQogCX0KIAltdXRl
+eF91bmxvY2soJm1kc2MtPm11dGV4KTsKIH0KQEAgLTMyMzUsNyArMzIzOSw4IEBAIHN0YXRp
+YyB2b2lkIF9fZG9fcmVxdWVzdChzdHJ1Y3QgY2VwaF9tZHNfY2xpZW50ICptZHNjLAogCQkJ
+Z290byBmaW5pc2g7CiAJCX0KIAkJaWYgKG1kc2MtPm1kc21hcC0+bV9lcG9jaCA9PSAwKSB7
+Ci0JCQlkb3V0KCJkb19yZXF1ZXN0IG5vIG1kc21hcCwgd2FpdGluZyBmb3IgbWFwXG4iKTsK
+KwkJCXByX2luZm8oImRvX3JlcXVlc3Qgbm8gbWRzbWFwLCB3YWl0aW5nIGZvciBtYXAgcmVx
+IHRpZCAlbGx1XG4iLAorCQkJCXJlcS0+cl90aWQpOwogCQkJbGlzdF9hZGQoJnJlcS0+cl93
+YWl0LCAmbWRzYy0+d2FpdGluZ19mb3JfbWFwKTsKIAkJCXJldHVybjsKIAkJfQpAQCAtMzI1
+Niw3ICszMjYxLDggQEAgc3RhdGljIHZvaWQgX19kb19yZXF1ZXN0KHN0cnVjdCBjZXBoX21k
+c19jbGllbnQgKm1kc2MsCiAJCQllcnIgPSAtRUpVS0VCT1g7CiAJCQlnb3RvIGZpbmlzaDsK
+IAkJfQotCQlkb3V0KCJkb19yZXF1ZXN0IG5vIG1kcyBvciBub3QgYWN0aXZlLCB3YWl0aW5n
+IGZvciBtYXBcbiIpOworCQlwcl9pbmZvKCJkb19yZXF1ZXN0IG5vIG1kcyBvciBub3QgYWN0
+aXZlLCB3YWl0aW5nIGZvciBtYXAgcmVxIHRpZCAlbGx1XG4iLAorCQkJcmVxLT5yX3RpZCk7
+CiAJCWxpc3RfYWRkKCZyZXEtPnJfd2FpdCwgJm1kc2MtPndhaXRpbmdfZm9yX21hcCk7CiAJ
+CXJldHVybjsKIAl9CkBAIC0zMzAyLDggKzMzMDgsMTAgQEAgc3RhdGljIHZvaWQgX19kb19y
+ZXF1ZXN0KHN0cnVjdCBjZXBoX21kc19jbGllbnQgKm1kc2MsCiAJCSAqIGl0IHRvIHRoZSBt
+ZHNjIHF1ZXVlLgogCQkgKi8KIAkJaWYgKHNlc3Npb24tPnNfc3RhdGUgPT0gQ0VQSF9NRFNf
+U0VTU0lPTl9SRUpFQ1RFRCkgewotCQkJaWYgKGNlcGhfdGVzdF9tb3VudF9vcHQobWRzYy0+
+ZnNjLCBDTEVBTlJFQ09WRVIpKQorCQkJaWYgKGNlcGhfdGVzdF9tb3VudF9vcHQobWRzYy0+
+ZnNjLCBDTEVBTlJFQ09WRVIpKSB7CisJCQkJcHJfaW5mbygiIENMRUFOUkVDT1ZFUiByZXEg
+dGlkICVsbHVcbiIsIHJlcS0+cl90aWQpOwogCQkJCWxpc3RfYWRkKCZyZXEtPnJfd2FpdCwg
+Jm1kc2MtPndhaXRpbmdfZm9yX21hcCk7CisJCQl9CiAJCQllbHNlCiAJCQkJZXJyID0gLUVB
+Q0NFUzsKIAkJCWdvdG8gb3V0X3Nlc3Npb247CkBAIC0zMzE4LDYgKzMzMjYsNyBAQCBzdGF0
+aWMgdm9pZCBfX2RvX3JlcXVlc3Qoc3RydWN0IGNlcGhfbWRzX2NsaWVudCAqbWRzYywKIAkJ
+CWlmIChyYW5kb20pCiAJCQkJcmVxLT5yX3Jlc2VuZF9tZHMgPSBtZHM7CiAJCX0KKwkJcHJf
+aW5mbygiIHNlc3Npb24gaXMgbm90IG9wZW5lZCwgcmVxIHRpZCAlbGx1XG4iLCByZXEtPnJf
+dGlkKTsKIAkJbGlzdF9hZGQoJnJlcS0+cl93YWl0LCAmc2Vzc2lvbi0+c193YWl0aW5nKTsK
+IAkJZ290byBvdXRfc2Vzc2lvbjsKIAl9CkBAIC0zNjIxLDYgKzM2MzAsMTQgQEAgc3RhdGlj
+IHZvaWQgaGFuZGxlX3JlcGx5KHN0cnVjdCBjZXBoX21kc19zZXNzaW9uICpzZXNzaW9uLCBz
+dHJ1Y3QgY2VwaF9tc2cgKm1zZykKIAl9CiAJZG91dCgiaGFuZGxlX3JlcGx5ICVwXG4iLCBy
+ZXEpOwogCisJLyogd2FpdGluZywgbm90IHlldCBzdWJtaXR0ZWQ/ICovCisJaWYgKCFsaXN0
+X2VtcHR5KCZyZXEtPnJfd2FpdCkpIHsKKwkJcHJfZXJyKCJtZHNjX2hhbmRsZV9yZXBseSBv
+biB3YWl0aW5nIHJlcXVlc3QgdGlkICVsbHVcbiIsIHRpZCk7CisJCW11dGV4X3VubG9jaygm
+bWRzYy0+bXV0ZXgpOworCQljZXBoX21zZ19kdW1wKG1zZyk7CisJCWdvdG8gb3V0OworCX0K
+KwogCS8qIGNvcnJlY3Qgc2Vzc2lvbj8gKi8KIAlpZiAocmVxLT5yX3Nlc3Npb24gIT0gc2Vz
+c2lvbikgewogCQlwcl9lcnIoIm1kc2NfaGFuZGxlX3JlcGx5IGdvdCAlbGx1IG9uIHNlc3Np
+b24gbWRzJWQiCkBAIC00MDE5LDYgKzQwMzYsNyBAQCBzdGF0aWMgdm9pZCBoYW5kbGVfc2Vz
+c2lvbihzdHJ1Y3QgY2VwaF9tZHNfc2Vzc2lvbiAqc2Vzc2lvbiwKIAljYXNlIENFUEhfU0VT
+U0lPTl9DTE9TRToKIAkJaWYgKHNlc3Npb24tPnNfc3RhdGUgPT0gQ0VQSF9NRFNfU0VTU0lP
+Tl9SRUNPTk5FQ1RJTkcpCiAJCQlwcl9pbmZvKCJtZHMlZCByZWNvbm5lY3QgZGVuaWVkXG4i
+LCBzZXNzaW9uLT5zX21kcyk7CisJCXByX2luZm8oIm1kcyVkIGNsb3NlZCBvdXIgc2Vzc2lv
+blxuIiwgc2Vzc2lvbi0+c19tZHMpOwogCQlzZXNzaW9uLT5zX3N0YXRlID0gQ0VQSF9NRFNf
+U0VTU0lPTl9DTE9TRUQ7CiAJCWNsZWFudXBfc2Vzc2lvbl9yZXF1ZXN0cyhtZHNjLCBzZXNz
+aW9uKTsKIAkJcmVtb3ZlX3Nlc3Npb25fY2FwcyhzZXNzaW9uKTsKQEAgLTQ3MjcsNiArNDc0
+NSw3IEBAIHN0YXRpYyB2b2lkIGNoZWNrX25ld19tYXAoc3RydWN0IGNlcGhfbWRzX2NsaWVu
+dCAqbWRzYywKIAkJCV9fd2FrZV9yZXF1ZXN0cyhtZHNjLCAmcy0+c193YWl0aW5nKTsKIAkJ
+CW11dGV4X3VubG9jaygmbWRzYy0+bXV0ZXgpOwogCisJCQlwcl9pbmZvKCJjaGVja19uZXdf
+bWFwIGV4Y2VlZCBtYXggcmFuayBtZHMlZFxuIiwgaSk7CiAJCQltdXRleF9sb2NrKCZzLT5z
+X211dGV4KTsKIAkJCWNsZWFudXBfc2Vzc2lvbl9yZXF1ZXN0cyhtZHNjLCBzKTsKIAkJCXJl
+bW92ZV9zZXNzaW9uX2NhcHMocyk7CkBAIC01NDgzLDYgKzU1MDIsNyBAQCB2b2lkIGNlcGhf
+bWRzY19mb3JjZV91bW91bnQoc3RydWN0IGNlcGhfbWRzX2NsaWVudCAqbWRzYykKIAkJbXV0
+ZXhfbG9jaygmc2Vzc2lvbi0+c19tdXRleCk7CiAJCV9fY2xvc2Vfc2Vzc2lvbihtZHNjLCBz
+ZXNzaW9uKTsKIAkJaWYgKHNlc3Npb24tPnNfc3RhdGUgPT0gQ0VQSF9NRFNfU0VTU0lPTl9D
+TE9TSU5HKSB7CisJCQlwcl9pbmZvKCJjZXBoX21kc2NfZm9yY2VfdW1vdW50IG1kcyVkXG4i
+LCBtZHMpOwogCQkJY2xlYW51cF9zZXNzaW9uX3JlcXVlc3RzKG1kc2MsIHNlc3Npb24pOwog
+CQkJcmVtb3ZlX3Nlc3Npb25fY2FwcyhzZXNzaW9uKTsKIAkJfQo=
+
+--------------dq4f42jxE1QnjnQr5D0c0j29--
+
