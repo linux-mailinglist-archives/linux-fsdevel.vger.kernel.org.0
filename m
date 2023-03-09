@@ -2,319 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D01196B2047
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 10:39:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B76CF6B2065
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 10:43:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231252AbjCIJjn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 04:39:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56424 "EHLO
+        id S231319AbjCIJnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 04:43:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbjCIJjm (ORCPT
+        with ESMTP id S231360AbjCIJnk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 04:39:42 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F762DE1CD
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Mar 2023 01:39:40 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id u9so4554611edd.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Mar 2023 01:39:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1678354779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WGNuRvZ8lS7XESHNCrOlWjPsv1FnRrcTXW2fRVQu+M8=;
-        b=MK2v7qt9neRMXXISpAiAvnjRTzv8Mx0W015Pd0IwUbcVGmAGFtQ83Oxeu06anLRDFP
-         duMgUJmvzIKuuPMLOLy0RmL6j3O3JguC/ztcuZhHSArgzzWcUEetTcuBoTyLXDxyw7Nj
-         9fDWoURoX5ylkK0CY9QFIxIuhEw1izEg+zCTZvnhU4g9gPJgINKQakpSw5gpYk6+o3WE
-         ttWgPWn+G2Qdakb23BBYMti0QTYW43AVm2zAUMA0deh+DJWbY3KBgKMjcU16R3nGlIPK
-         9I+cD5rOwLmRm7x1+MN+VLPqf2IUUKkl6GuSxrrp0tC45yvBXvcPkUk3t/XJo2jqFV9b
-         U7Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678354779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WGNuRvZ8lS7XESHNCrOlWjPsv1FnRrcTXW2fRVQu+M8=;
-        b=HFhepPIYItsllafATLYTCh8fq6aq3m8xzgkpKz3EUIKgACXKmI2fYo30gud7mLqHXi
-         NEQtuy/vs9ThxvZGbtyuzWE1auFQiokFuT5oqUnlzB+27YN/HBjbfNWnQFn+ITH4/a5p
-         piL8m7jiQYntPoAv4Lmzupe+1Sb/8irM4pmY4lHebhZMjVPuvdxUKl93EZLr0/gz1WoY
-         GoMxDcn2737hBXgub5fZ80HB4s/fC+bGuInBfaIzEkgiLVerSxhypEydJOUBQpcujSqK
-         GQDxXkH+9Skt2vKOB00ROxqJLuXXlEBIuJVCMRQa6Cw7xc89li1J/RsWuG5+B5KFCAZM
-         Cr/Q==
-X-Gm-Message-State: AO0yUKXXzEWhCtnB3OU6JAATc3ck9LUMmjmbEEtTqJAYUYsKE/IGKNqw
-        JOpkL8pDrAC9IACCZFkTjBpUwME6cJNVrBR2RIT3KQ==
-X-Google-Smtp-Source: AK7set8tO9nTFdrettltT4IWxh61gXrBDwA9xWU3+9eSg2d2Nv5R0J3ff1LnsWVtXQOFaVzGy3B8ezQvaqTi7wu9WJQ=
-X-Received: by 2002:a17:906:1ec6:b0:8b0:7e1d:f6fa with SMTP id
- m6-20020a1709061ec600b008b07e1df6famr10187131ejj.15.1678354778760; Thu, 09
- Mar 2023 01:39:38 -0800 (PST)
+        Thu, 9 Mar 2023 04:43:40 -0500
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2104.outbound.protection.outlook.com [40.107.117.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 256D1D462D;
+        Thu,  9 Mar 2023 01:43:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cyn7YCxxuNbOxWA+YYTRV8tYUDLT5HgTfGm7rfviLCvo8YHu1ElfhF+2gYgHGz1kuZVIJvuh1GeCWXKt83foYawjf5GunbgeVW8DS4U5z07fukFMNVjATuN060kg3XoBULOWiyF42qcKtSjwvoP3cZYVfc+N+0tKmr3PIIt3fjvsXThXysOVKwNFpQWWtIzmOF3u6UzC/7jy+j1pY+PSsQ8z45Y9z1uh3ys+pi7Tun5B6q6lWJ96yds8wicqBxHYgB9R9vrTjQE2Q6RmkJ3o6BR+RXTRgjwD0Ha8reeHYPISJ6F2QgmkBruKt1Oq0GHju80rLbnpwBzr9ldhyNZWTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zUYza8g2PyCIiC2OrOmKbG3IQTXkQ4xS0l+bQ/UtoeM=;
+ b=CxzQ5LIKO/AVNQrWynR4wv8ePw+K/B+Bpj96+a6/YcM8HjJJiDw4InnL/Hk8LL4UIlCCTJH4iK/E3sEM7KSeM+uY5a7nePGNGSsELXIhpsruBj8dMpQoGy4ceuV3TiRxkYxm62AuAANMVXoKiBJ5JIIHc120BzYyyJU0Kcg4bRcFM5LFVbtaa5w9znf+bReHAGj3FV2ZY+vJPI6GIz8OI1h8+ftsXKBnaJw2LRQ9p6Vjisz7ilSm2IsV5iiA6pf3/dNxa/IguTpotqiy9X3n9qDXPqxxxYS/vwGn3L/blsELPk+TnkcnPlJ9HE5oU+gO3qb1OtdrL/krc5DeZM3AVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zUYza8g2PyCIiC2OrOmKbG3IQTXkQ4xS0l+bQ/UtoeM=;
+ b=KpMPMDOZ9tHyaFfdBYeDIe6tyJnYr2ez2I5X8ZzUQmzCs0GJ30RAdaPPPZQr7kQnhvHC48GnVFlYtWZGGCXyNeA1u83HWFZgWGOjjn3E7svPHYeXKDvkET0/Ps9ZsRHNI4seeWkyFLnqf5tCUX3rHHtWW4pgDmkgba0gDXqOoLXdds8qWmtpeXAGM9cB1Njov7XRffcUoO73g1yGI1GWO4U7u3zEmWtyC7XntYr7w1c5VNWng2yljY35F5gsmqTnpMTkjkQqWM9eDHgkk2tQpRnVe8kD6z6uhKAkkNVIxktpR8xp8kbMBiv4iUvCnsJrn2BuOuNCXJJOlbDwzrABwQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB5275.apcprd06.prod.outlook.com (2603:1096:400:1f5::6)
+ by SI2PR06MB5412.apcprd06.prod.outlook.com (2603:1096:4:1ef::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.18; Thu, 9 Mar
+ 2023 09:43:31 +0000
+Received: from TYZPR06MB5275.apcprd06.prod.outlook.com
+ ([fe80::a2c6:4a08:7779:5190]) by TYZPR06MB5275.apcprd06.prod.outlook.com
+ ([fe80::a2c6:4a08:7779:5190%2]) with mapi id 15.20.6156.028; Thu, 9 Mar 2023
+ 09:43:31 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     xiang@kernel.org, chao@kernel.org, huyue2@coolpad.com,
+        jefflexu@linux.alibaba.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, rpeterso@redhat.com, agruenba@redhat.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org
+Cc:     linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH 1/4] fs: add i_blocksize_mask()
+Date:   Thu,  9 Mar 2023 17:43:14 +0800
+Message-Id: <20230309094317.69773-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.35.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0035.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::22)
+ To TYZPR06MB5275.apcprd06.prod.outlook.com (2603:1096:400:1f5::6)
 MIME-Version: 1.0
-References: <20230309093109.3039327-1-yosryahmed@google.com> <20230309093109.3039327-3-yosryahmed@google.com>
-In-Reply-To: <20230309093109.3039327-3-yosryahmed@google.com>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Thu, 9 Mar 2023 01:39:02 -0800
-Message-ID: <CAJD7tkYJ=xKvRxGKm3bsXy9_yO+fz1wYZcBO-XiAJjRacJsdQg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] mm: vmscan: refactor updating reclaimed pages in reclaim_state
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        David Hildenbrand <david@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@kernel.org>, Yu Zhao <yuzhao@google.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB5275:EE_|SI2PR06MB5412:EE_
+X-MS-Office365-Filtering-Correlation-Id: ccdfc196-f1b2-4666-7081-08db2082bdd2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: qae3vB1q5azCwwMFBxFyNfulkS2fKl26dHrPR5EE2x89+PmGv+wkF4/+4aKLws+K7tg8UH2kUAZO771w1fj59D5/YRnvOqbqaNGxw/L9+6R4e9MlwrJ89LG+aO7hP5uPVucjhn9HQVzG7Vd6h1sTMpvYGa7IKcA0GqEqL9yOinjY54lR3g1tQX69gg1Pi00ck9+rrauET6gapdYqqNfoz4PIOKsXCKnpga8DbQZxpv/GOpKGazvOlVAvT5b1YOn8CoWMOLLFS0Vs1alJOdhrJ2tA7KMQ+MQn83aOHkYTfiGl9sb4D1H9XmVZasohnH9srt/IW0HrF2npeyFvyzcLEgPYNUft/Sja1P96GOVSsYR71QkbFBtJZRIGVzwSW3hJO9ZkYN5pfkRcKCQng2voJNcQm2Ti5Qh7HpTwP75UmRR81QjoosxLTVIE1MdfG+LvZUzPAqrcTQEzrTUkTu59KALngE4jJeF0asBpip6l4zlLvWphQvjvLEEOLgdbZUvs5ZJ1H7knJrSAxkroXDaHLnISfO1IphYeyWe0mDtbKi94bL3lPhpMptOweVXd5g9ZwVUW9GVZ8nbsqgXn03rA1zc2RDtPcyAgXSnEwjx88rsperdZf3ZiJYccY5e/8F3wxEYywh4ThQbzpCtYkRFaXGTVRZOtfJOTQaa0wIKoxcPcQdDPHm8Th1a7AP4zywn447BAzuVTD4CXEJHXiUq0q9byEhNehwijGoPn2g76q+0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB5275.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(366004)(136003)(376002)(39860400002)(396003)(346002)(451199018)(107886003)(6666004)(83380400001)(36756003)(478600001)(921005)(38350700002)(316002)(38100700002)(6486002)(2616005)(6512007)(52116002)(6506007)(186003)(26005)(1076003)(5660300002)(4744005)(7416002)(66476007)(66556008)(2906002)(8936002)(41300700001)(8676002)(4326008)(86362001)(66946007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Jegshxbn02X1nQ9NnM0gp3J6Xyonqyz267OOMRqinh4BkSeL3sTf6HJBFoQR?=
+ =?us-ascii?Q?g28Nq5NlTjXow0dveGB5xSz9VCunB/WBFaN0pphNfUfW9+QOgNN4nldxdg7D?=
+ =?us-ascii?Q?QMREfd2XUCC3IFhFKaFrSiUOZbAb3i3rNDAchTCFwbV24SswW1UK5wE5nopn?=
+ =?us-ascii?Q?BNAiGz2hr9KwxThzquTdnrouRTl0TCfLgdkEFTZ0wBnnCoO8hlKhqK1rAOev?=
+ =?us-ascii?Q?7ltEAKcwC+TigMLZHJeXcvNlDQ1RpPPidCu4J5ELguMtYxHqTHRoMZQkcSdi?=
+ =?us-ascii?Q?wmFSu+LDSg49LB1Fn5AqmF0v4sq1wMf1tJu5yvFT5V2Sn412oMxFKB1vMrhT?=
+ =?us-ascii?Q?Awut0jFKDo5fcbGmaS1D4eER2/O2TruCOHVU7gkssx6qWxpwH7WcTeElKeja?=
+ =?us-ascii?Q?6o8zNDtfymrZUIGMHmhxjE+/KO3/UtZfvX+67XdHrmo2zUfZ3ks1OwEQvXdU?=
+ =?us-ascii?Q?Q1C59ITLACRUv8pM8aEJUmFqWfKxE/A85CfCxspRupXXPmZNfPG2PqILBsqz?=
+ =?us-ascii?Q?lO/6Enjak8gUggluwzbWHXdtUkyPakMRPzoxfqU6SfX1DQtVJgsB8+BV2s56?=
+ =?us-ascii?Q?heYKICWrCvEBWUj/AdoFQvcVxsPwayzr27iQoQektPtXPWwVu1JrZC0iLoar?=
+ =?us-ascii?Q?tDSVqhV7VhmMqUjANrmoE4+QViNwnKPYWxMUp9nexImyj6+OtaeWxcRgnFHI?=
+ =?us-ascii?Q?Wu9/c62rBcyGOzWgZ6jj+yNUz/ToP+ZLa9ouML2AnaCvozxTymQL2aj7EVtl?=
+ =?us-ascii?Q?qTTO+ekKCpkxKj4u5Mve3JByPVKxjn9nF3RBTqSPdQsShpXZCqeNjaKo0XWf?=
+ =?us-ascii?Q?RJtrg9qdIjxR9k/y+gZdZ9rgTwvDSwO3y2sZ9ZA6ZoZNhtUeBStEI5mFoh2U?=
+ =?us-ascii?Q?9CPSAQy+2esQi4JqogFK9RrlsqxDclAhletMVoa0TaNIFMtFv6mtCcddU+D8?=
+ =?us-ascii?Q?de6fYhaF2b5FQ4AM929O/mwS1nH7HUx+WFZ6Zf0e5pmC8stsOkesmCF1xKLO?=
+ =?us-ascii?Q?Mo73eIzcPGfGQKgyo7LJUG+S0ZiNH6xE5lRamHlvXpctNxsrC1HT6F4cIKH4?=
+ =?us-ascii?Q?Vhbq8uSM1k5v94WkE8a1nTJzZesmPJiY12EKS0w+ga05a2P8oG2o9H0fUymr?=
+ =?us-ascii?Q?43eWt3AqRkEDbXwJmQbmhelBqBa0YjNP1j5xcsbac9YbaVX1O+v2axGF3GSB?=
+ =?us-ascii?Q?uHtHLrYg89VoZuelcMJKSaUWSx6ezrAZvoTN6Vve9NYW0K0vzjIBIESweNA+?=
+ =?us-ascii?Q?UFUr8PHW9r9H1YV0zfTWx+KgyrUQ/afUCr+WbnCg7l5ZRavI/0QrMm9vrvr/?=
+ =?us-ascii?Q?b2ERtetmSdI9a/nitJ4/7Mv3qq7pEvYRSZlXmTjDm9eZwlfuQVDGkva875ou?=
+ =?us-ascii?Q?yireaBY9gj0KH3Ah3u+wcbVUeUxPuJwt0L3+e3dwfAfa0E9ixPRs0HL3gT3g?=
+ =?us-ascii?Q?hYBSrMzQAB5yWzUZI1dPOfa3oDN/PSFKfJNyREEHaq1JekyPDjfPuGXdZpJy?=
+ =?us-ascii?Q?nIMF6/rkqLHLoj0A42LqL+5uzHoJU1uq13V/cLGA/EotBOlITFqskY8MdmMD?=
+ =?us-ascii?Q?WbiCAxhSRdoEr5ZKFV6ofdSTmnx3+7Tzol4eWcbM?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ccdfc196-f1b2-4666-7081-08db2082bdd2
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB5275.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2023 09:43:30.8079
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yFyq14KB3cuZWCF5cyf54mK1ICs+rCE80rakkE22SpYH+jFpm73e0dq8Ro89rResc+AGFx8Lcowq7SYuTmndCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5412
+X-Spam-Status: No, score=-0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,RCVD_IN_VALIDITY_RPBL,SPF_HELO_PASS,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 9, 2023 at 1:31=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
-wrote:
->
-> During reclaim, we keep track of pages reclaimed from other means than
-> LRU-based reclaim through scan_control->reclaim_state->reclaimed_slab,
-> which we stash a pointer to in current task_struct.
->
-> However, we keep track of more than just reclaimed slab pages through
-> this. We also use it for clean file pages dropped through pruned inodes,
-> and xfs buffer pages freed. Rename reclaimed_slab to reclaimed, and add
-> a helper function that wraps updating it through current, so that future
-> changes to this logic are contained within mm/vmscan.c.
->
-> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-> ---
->  fs/inode.c           |  3 +--
->  fs/xfs/xfs_buf.c     |  3 +--
->  include/linux/swap.h |  5 ++++-
->  mm/slab.c            |  3 +--
->  mm/slob.c            |  6 ++----
->  mm/slub.c            |  5 ++---
->  mm/vmscan.c          | 36 ++++++++++++++++++++++++++++++------
->  7 files changed, 41 insertions(+), 20 deletions(-)
->
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 4558dc2f1355..e60fcc41faf1 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -864,8 +864,7 @@ static enum lru_status inode_lru_isolate(struct list_=
-head *item,
->                                 __count_vm_events(KSWAPD_INODESTEAL, reap=
-);
->                         else
->                                 __count_vm_events(PGINODESTEAL, reap);
-> -                       if (current->reclaim_state)
-> -                               current->reclaim_state->reclaimed_slab +=
-=3D reap;
-> +                       mm_account_reclaimed_pages(reap);
->                 }
->                 iput(inode);
->                 spin_lock(lru_lock);
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index 54c774af6e1c..060079f1e966 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -286,8 +286,7 @@ xfs_buf_free_pages(
->                 if (bp->b_pages[i])
->                         __free_page(bp->b_pages[i]);
->         }
-> -       if (current->reclaim_state)
-> -               current->reclaim_state->reclaimed_slab +=3D bp->b_page_co=
-unt;
-> +       report_freed_pages(bp->b_page_count);
+Introduce i_blocksize_mask() to simplify code, which replace
+(i_blocksize(node) - 1). Like done in commit
+93407472a21b("fs: add i_blocksize()").
 
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ include/linux/fs.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Ugh I missed updating this one to mm_account_reclaimed_page().
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c85916e9f7db..db335bd9c256 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -711,6 +711,11 @@ static inline unsigned int i_blocksize(const struct inode *node)
+ 	return (1 << node->i_blkbits);
+ }
+ 
++static inline unsigned int i_blocksize_mask(const struct inode *node)
++{
++	return i_blocksize(node) - 1;
++}
++
+ static inline int inode_unhashed(struct inode *inode)
+ {
+ 	return hlist_unhashed(&inode->i_hash);
+-- 
+2.25.1
 
-This fixup needs to be squashed here. I will include it in v3 if a
-respin is needed, otherwise I hope Andrew can squash it in.
-
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index 060079f1e966..15d1e5a7c2d3 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -286,7 +286,7 @@ xfs_buf_free_pages(
-                if (bp->b_pages[i])
-                        __free_page(bp->b_pages[i]);
-        }
--       report_freed_pages(bp->b_page_count);
-+       mm_account_reclaimed_pages(bp->b_page_count);
-
-        if (bp->b_pages !=3D bp->b_page_array)
-                kmem_free(bp->b_pages);
-
->
->
->         if (bp->b_pages !=3D bp->b_page_array)
->                 kmem_free(bp->b_pages);
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index 209a425739a9..589ea2731931 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -153,13 +153,16 @@ union swap_header {
->   * memory reclaim
->   */
->  struct reclaim_state {
-> -       unsigned long reclaimed_slab;
-> +       /* pages reclaimed outside of LRU-based reclaim */
-> +       unsigned long reclaimed;
->  #ifdef CONFIG_LRU_GEN
->         /* per-thread mm walk data */
->         struct lru_gen_mm_walk *mm_walk;
->  #endif
->  };
->
-> +void mm_account_reclaimed_pages(unsigned long pages);
-> +
->  #ifdef __KERNEL__
->
->  struct address_space;
-> diff --git a/mm/slab.c b/mm/slab.c
-> index dabc2a671fc6..64bf1de817b2 100644
-> --- a/mm/slab.c
-> +++ b/mm/slab.c
-> @@ -1392,8 +1392,7 @@ static void kmem_freepages(struct kmem_cache *cache=
-p, struct slab *slab)
->         smp_wmb();
->         __folio_clear_slab(folio);
->
-> -       if (current->reclaim_state)
-> -               current->reclaim_state->reclaimed_slab +=3D 1 << order;
-> +       mm_account_reclaimed_pages(1 << order);
->         unaccount_slab(slab, order, cachep);
->         __free_pages(&folio->page, order);
->  }
-> diff --git a/mm/slob.c b/mm/slob.c
-> index fe567fcfa3a3..79cc8680c973 100644
-> --- a/mm/slob.c
-> +++ b/mm/slob.c
-> @@ -61,7 +61,7 @@
->  #include <linux/slab.h>
->
->  #include <linux/mm.h>
-> -#include <linux/swap.h> /* struct reclaim_state */
-> +#include <linux/swap.h> /* mm_account_reclaimed_pages() */
->  #include <linux/cache.h>
->  #include <linux/init.h>
->  #include <linux/export.h>
-> @@ -211,9 +211,7 @@ static void slob_free_pages(void *b, int order)
->  {
->         struct page *sp =3D virt_to_page(b);
->
-> -       if (current->reclaim_state)
-> -               current->reclaim_state->reclaimed_slab +=3D 1 << order;
-> -
-> +       mm_account_reclaimed_pages(1 << order);
->         mod_node_page_state(page_pgdat(sp), NR_SLAB_UNRECLAIMABLE_B,
->                             -(PAGE_SIZE << order));
->         __free_pages(sp, order);
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 39327e98fce3..7aa30eef8235 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -11,7 +11,7 @@
->   */
->
->  #include <linux/mm.h>
-> -#include <linux/swap.h> /* struct reclaim_state */
-> +#include <linux/swap.h> /* mm_account_reclaimed_pages() */
->  #include <linux/module.h>
->  #include <linux/bit_spinlock.h>
->  #include <linux/interrupt.h>
-> @@ -2063,8 +2063,7 @@ static void __free_slab(struct kmem_cache *s, struc=
-t slab *slab)
->         /* Make the mapping reset visible before clearing the flag */
->         smp_wmb();
->         __folio_clear_slab(folio);
-> -       if (current->reclaim_state)
-> -               current->reclaim_state->reclaimed_slab +=3D pages;
-> +       mm_account_reclaimed_pages(pages);
->         unaccount_slab(slab, order, s);
->         __free_pages(&folio->page, order);
->  }
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index fef7d1c0f82b..a3e38851b34a 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -511,6 +511,34 @@ static void set_task_reclaim_state(struct task_struc=
-t *task,
->         task->reclaim_state =3D rs;
->  }
->
-> +/*
-> + * mm_account_reclaimed_pages(): account reclaimed pages outside of LRU-=
-based
-> + * reclaim
-> + * @pages: number of pages reclaimed
-> + *
-> + * If the current process is undergoing a reclaim operation, increment t=
-he
-> + * number of reclaimed pages by @pages.
-> + */
-> +void mm_account_reclaimed_pages(unsigned long pages)
-> +{
-> +       if (current->reclaim_state)
-> +               current->reclaim_state->reclaimed +=3D pages;
-> +}
-> +EXPORT_SYMBOL(mm_account_reclaimed_pages);
-> +
-> +/*
-> + * flush_reclaim_state(): add pages reclaimed outside of LRU-based recla=
-im to
-> + * scan_control->nr_reclaimed.
-> + */
-> +static void flush_reclaim_state(struct scan_control *sc,
-> +                               struct reclaim_state *rs)
-> +{
-> +       if (rs) {
-> +               sc->nr_reclaimed +=3D rs->reclaimed;
-> +               rs->reclaimed =3D 0;
-> +       }
-> +}
-> +
->  static long xchg_nr_deferred(struct shrinker *shrinker,
->                              struct shrink_control *sc)
->  {
-> @@ -5346,8 +5374,7 @@ static int shrink_one(struct lruvec *lruvec, struct=
- scan_control *sc)
->                 vmpressure(sc->gfp_mask, memcg, false, sc->nr_scanned - s=
-canned,
->                            sc->nr_reclaimed - reclaimed);
->
-> -       sc->nr_reclaimed +=3D current->reclaim_state->reclaimed_slab;
-> -       current->reclaim_state->reclaimed_slab =3D 0;
-> +       flush_reclaim_state(sc, current->reclaim_state);
->
->         return success ? MEMCG_LRU_YOUNG : 0;
->  }
-> @@ -6472,10 +6499,7 @@ static void shrink_node(pg_data_t *pgdat, struct s=
-can_control *sc)
->
->         shrink_node_memcgs(pgdat, sc);
->
-> -       if (reclaim_state) {
-> -               sc->nr_reclaimed +=3D reclaim_state->reclaimed_slab;
-> -               reclaim_state->reclaimed_slab =3D 0;
-> -       }
-> +       flush_reclaim_state(sc, reclaim_state);
->
->         /* Record the subtree's reclaim efficiency */
->         if (!sc->proactive)
-> --
-> 2.40.0.rc0.216.gc4246ad0f0-goog
->
