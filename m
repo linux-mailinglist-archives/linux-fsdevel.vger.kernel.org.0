@@ -2,202 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EB4C6B25B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 14:45:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7A036B260C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 15:00:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbjCINp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 08:45:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57796 "EHLO
+        id S231513AbjCIOA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 09:00:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229729AbjCINp2 (ORCPT
+        with ESMTP id S231657AbjCIN76 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 08:45:28 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 912A55D744;
-        Thu,  9 Mar 2023 05:45:25 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id fm20-20020a05600c0c1400b003ead37e6588so3624616wmb.5;
-        Thu, 09 Mar 2023 05:45:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678369524;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E6Yp4ykCm3cUFPIraj3jw8904oAl0ICbY5EFtxJP3RY=;
-        b=kAgzbWBIm+8cm3CHxp+53SeTaQI1ayQTmGl++4bNxTad8rAMdhOr5AvIh1lNETh6HZ
-         Uc9FrU3Fz6FpbYzVxo3JxTmZ2zx+k1nVRLvH71q/3hTX+6fV3l6MyQa5AAXYF7Z46JT2
-         lHXdypnKmx5MuZLY98B+rGbcJgFo+oEHaWscv9A1E+LRQcvUkBHLD1QIZIPS7gLiSNY8
-         asVRONWnX5toQG1I8WmEq6SsyJJqugq+m0LHCsN1vR97bVZBZGRl8j0bHZHSpEm0vf6q
-         MXMWwYP9Pp7DfXEVdCtUZkwEpORqy3DPGn7+u8+sPbE3KExC1OhEswE7Td/WgZWCTuld
-         bYQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678369524;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E6Yp4ykCm3cUFPIraj3jw8904oAl0ICbY5EFtxJP3RY=;
-        b=TXfnBKYpplZkIYYWwBnkRZAdQUcrV/VhHqk9+sCVE8J1O/KXOMZpQDH5ClIlDjQ/19
-         PeCVknSEJ14HoTM9e9LduTAsteaCZm27IJS7cetdUkqZLDa06lR+BEI1HQho0PhWqVZo
-         TVAAxruRfmUTktr1vLxWEXRTv1NAjoLepdRCDCZq5k5LQahxUWwOPtc7Ht007KAH1yap
-         zr1J5rZ499L1ghl6kfe3c7Xxag25Tu7o4o0rJQs/pTorPjb3+7je//kFA6Tmtei+qCmd
-         5wbZ+ephbY38wyBWKwTv/7P0wQFsPOroOBGNyD2ONHyyCI5lqetGdPkIvySOhkJsZ13g
-         BZVQ==
-X-Gm-Message-State: AO0yUKUm+mb0f/N1iCsqgNMOepijRIzxtlJrOAQ0goY0e6e4hv2B19NE
-        1/GluAcjtGdhrd4LSmBnNrU=
-X-Google-Smtp-Source: AK7set9o30O7lBn3u0olN/rw8q0yBl1RBDA+SlXQJiJaNfm57RCNKUNdegRH6uqAagMOIT4QE4LmDA==
-X-Received: by 2002:a05:600c:3b22:b0:3e2:1d1e:78d6 with SMTP id m34-20020a05600c3b2200b003e21d1e78d6mr19656319wms.7.1678369523969;
-        Thu, 09 Mar 2023 05:45:23 -0800 (PST)
-Received: from suse.localnet (host-95-235-93-126.retail.telecomitalia.it. [95.235.93.126])
-        by smtp.gmail.com with ESMTPSA id z17-20020a05600c221100b003e01493b136sm2769076wml.43.2023.03.09.05.45.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Mar 2023 05:45:23 -0800 (PST)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [git pull] vfs.git sysv pile
-Date:   Thu, 09 Mar 2023 14:45:22 +0100
-Message-ID: <1812408.QZUTf85G27@suse>
-In-Reply-To: <2907412.VdNmn5OnKV@suse>
-References: <Y/gugbqq858QXJBY@ZenIV> <ZAD6n+mH/P8LDcOw@ZenIV> <2907412.VdNmn5OnKV@suse>
+        Thu, 9 Mar 2023 08:59:58 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AB78DD369;
+        Thu,  9 Mar 2023 05:57:38 -0800 (PST)
+Received: from localhost.localdomain (unknown [39.45.145.7])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 315DB660302F;
+        Thu,  9 Mar 2023 13:57:30 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1678370256;
+        bh=UaUIMl6MjswHfwBbA5lFzdwWz//seTzFcyEUoT9+TRI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YsCI1ry3x1PRroOtS4+zcq353ETgtVQJ6lRBij0S6jyvS+SiEKQk+oRF8OPNvbChN
+         PQg8zVJLaAcD01quMKibipn7OcPbRk3NX/CzRVhJD8I3EufhOmJ9WDPYhS0A+ddVQK
+         VVxlDDaPJQPisl646RMtMDwS3MRcXDqV9YGue8I1RTCzIj3KHkGHhcsB1DKoXaubra
+         PSM3Kyh9cD65rx9nBWftM6hIIHmc+/IDA8soeUsEdrsxVqWj5tuNPYSOP+uWA+RDBM
+         SJ7l3UT7Fe4u8gZFwhPm5tX7tmokU5GzFRf00UrWW729EWJQ0MYnV7drctiohBuxfe
+         FAOQK2OJxmoPQ==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: [PATCH v11 0/7] Implement IOCTL to get and optionally clear info about PTEs
+Date:   Thu,  9 Mar 2023 18:57:11 +0500
+Message-Id: <20230309135718.1490461-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On mercoled=EC 8 marzo 2023 18:40:44 CET Fabio M. De Francesco wrote:
-> On gioved=EC 2 marzo 2023 20:35:59 CET Al Viro wrote:
->=20
-> [...]
->=20
-> > Frankly, ext2 patchset had been more along the lines of "here's what
-> > untangling the calling conventions in ext2 would probably look like" th=
-an
-> > anything else. If you are willing to test (and review) that sucker and =
-it
-> > turns out to be OK, I'll be happy to slap your tested-by on those during
-> > rebase and feed them to Jan...
->=20
-> I git-clone(d) and built your "vfs" tree, branch #work.ext2, without and=
-=20
-with
-> the following commits:
->=20
-> f5b399373756 ("ext2: use offset_in_page() instead of open-coding it as
-> subtraction")
->=20
-> c7248e221fb5 ("ext2_get_page(): saner type")
->=20
-> 470e54a09898 ("ext2_put_page(): accept any pointer within the page")
->=20
-> 15abcc147cf7 ("ext2_{set_link,delete_entry}(): don't bother with page_add=
-r")
->=20
-> 16a5ee2027b7 ("ext2_find_entry()/ext2_dotdot(): callers don't need page_a=
-ddr
-> anymore")
->=20
-> Then I read the code and FWIW the five patches look good to me. I think t=
-hey
-> can work properly.
->=20
-> Therefore, if you want to, please feel free to add my "Reviewed-by" tag (=
-OK,=20
-I
-> know that you don't need my reviews, since you are the one who taught me =
-how
-> to write patches like yours for sysv and ufs :-)).
->=20
-> As a personal preference, in ext2_get_page() I'd move the two lines of co=
-de
-> from the "fail" label to the same 'if' block where you have the "goto=20
-fail;",
-> mainly because that label is only reachable from there. However, it does =
-not
-> matter at all because I'm only expressing my personal preference.
->=20
-> I ran `./check -g quick` without your patches in a QEMU/KVM x86_32 VM, 6GB
-> RAM, running a Kernel with HIGHMEM64GB enabled. I ran it three or four ti=
-mes
-> because it kept on hanging at random tests' numbers.
->=20
-> I'm noticing the same pattern due to the oom killer kicking in several ti=
-mes
-> to kill processes until xfstests its is dead.
->=20
-> [ 1171.795551] Out of memory: Killed process 1669 (xdg-desktop-por) total-
-vm:
-> 105068kB, anon-rss:9792kB, file-rss:10972kB, shmem-rss:0kB, UID:1000=20
-pgtables:
-> 136kB oom_score_adj:200
-> [ 1172.339920] systemd invoked oom-killer: gfp_mask=3D0xcc0(GFP_KERNEL),
-> order=3D0, oom_score_adj=3D100
-> [ 1172.339927] CPU: 3 PID: 1413 Comm: systemd Tainted: G S      W   E
-> 6.3.0-rc1-x86-32-debug+ #1
-> [ 1172.339929] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
-> rel-1.16.0-0-gd239552-rebuilt.opensuse.org 04/01/2014
-> [ 1172.339931] Call Trace:
-> [ 1172.339934]  dump_stack_lvl+0x92/0xd4
-> [ 1172.339939]  dump_stack+0xd/0x10
-> [ 1172.339941]  dump_header+0x42/0x454
-> [ 1172.339945]  ? ___ratelimit+0x6f/0x140
-> [ 1172.339948]  oom_kill_process+0xe9/0x244
-> [ 1172.339950]  out_of_memory+0xf6/0x424
->=20
-> I have not enough experience to understand why we get to that out-of-memo=
-ry
-> condition, so that several processes get killed. I can send the whole=20
-decoded
-> stack trace and other information to whoever can look at this issue to=20
-figure
-> out how to fix this big issue. I can try to bisect this issue too, but I=
-=20
-need
-> time because of other commitments and a slow system for building the=20
-necessary
-> kernels.
->=20
-> I want to stress that it does not depend on the above-mentioned patches.=
-=20
-Yes,
-> I'm running Al's "vfs" tree, #work.ext2 branch, but with one only patch=20
-beyond
-> the merge with Linus' tree:
->=20
-> 522dad1 ext2_rename(): set_link and delete_entry may fail
->=20
-> I have no means to test this tree. However, I think that I'd have the same
-> issue with Linus' tree too, unless this issue is due to the only commit n=
-ot
-> yet there (I strongly doubt about this possibility).
->=20
-> Thanks,
->=20
-> Fabio
+These patches are based on next-20230307 and UFFD_FEATURE_WP_UNPOPULATED
+patches from Peter.
 
-I want to confirm that running xfstests on the most recent SUSE Kernel does=
-n't=20
-trigger the OOM Killer. It only fails 16 of 597 tests. I suppose that those=
- 16=20
-failures are expected to happen.
+*Changes in v11*
+- Rebase on top of next-20230307
+- Base patches on UFFD_FEATURE_WP_UNPOPULATED (https://lore.kernel.org/all/20230306213925.617814-1-peterx@redhat.com)
+- Do a lot of cosmetic changes and review updates
+- Remove ENGAGE_WP + ! GET operation as it can be performed with UFFDIO_WRITEPROTECT
 
-The kernel provided by openSUSE Tumbleweed is...
+*Changes in v10*
+- Add specific condition to return error if hugetlb is used with wp
+  async
+- Move changes in tools/include/uapi/linux/fs.h to separate patch
+- Add documentation
 
-uname -a
-Linux tweed32 6.2.1-1-pae #1 SMP PREEMPT_DYNAMIC Mon Feb 27 11:39:51 UTC 20=
-23=20
-(69e0e95) i686 athlon i386 GNU/Linux
+*Changes in v9:*
+- Correct fault resolution for userfaultfd wp async
+- Fix build warnings and errors which were happening on some configs
+- Simplify pagemap ioctl's code
 
-I'll try a bisection as soon as possible.
+*Changes in v8:*
+- Update uffd async wp implementation
+- Improve PAGEMAP_IOCTL implementation
 
-=46abio
+*Changes in v7:*
+- Add uffd wp async
+- Update the IOCTL to use uffd under the hood instead of soft-dirty
+  flags
 
+Hello,
+
+Note:
+Soft-dirty pages and pages which have been written-to are synonyms. As
+kernel already has soft-dirty feature inside which we have given up to
+use, we are using written-to terminology while using UFFD async WP under
+the hood.
+
+This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
+the info about page table entries. The following operations are
+supported in this ioctl:
+- Get the information if the pages have been written-to (PAGE_IS_WRITTEN),
+  file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
+  (PAGE_IS_SWAPPED).
+- Write-protect the pages (PAGEMAP_WP_ENGAGE) to start finding which
+  pages have been written-to.
+- Find pages which have been written-to and write protect the pages
+  (atomic PAGE_IS_WRITTEN + PAGEMAP_WP_ENGAGE)
+
+It is possible to find and clear soft-dirty pages entirely in userspace.
+But it isn't efficient:
+- The mprotect and SIGSEGV handler for bookkeeping
+- The userfaultfd wp (synchronous) with the handler for bookkeeping
+
+Some benchmarks can be seen here[1]. This series adds features that weren't
+present earlier:
+- There is no atomic get soft-dirty/Written-to status and clear present in
+  the kernel.
+- The pages which have been written-to can not be found in accurate way.
+  (Kernel's soft-dirty PTE bit + sof_dirty VMA bit shows more soft-dirty
+  pages than there actually are.)
+
+Historically, soft-dirty PTE bit tracking has been used in the CRIU
+project. The procfs interface is enough for finding the soft-dirty bit
+status and clearing the soft-dirty bit of all the pages of a process.
+We have the use case where we need to track the soft-dirty PTE bit for
+only specific pages on-demand. We need this tracking and clear mechanism
+of a region of memory while the process is running to emulate the
+getWriteWatch() syscall of Windows.
+
+*(Moved to using UFFD instead of soft-dirtyi feature to find pages which
+have been written-to from v7 patch series)*:
+Stop using the soft-dirty flags for finding which pages have been
+written to. It is too delicate and wrong as it shows more soft-dirty
+pages than the actual soft-dirty pages. There is no interest in
+correcting it [2][3] as this is how the feature was written years ago.
+It shouldn't be updated to changed behaviour. Peter Xu has suggested
+using the async version of the UFFD WP [4] as it is based inherently
+on the PTEs.
+
+So in this patch series, I've added a new mode to the UFFD which is
+asynchronous version of the write protect. When this variant of the
+UFFD WP is used, the page faults are resolved automatically by the
+kernel. The pages which have been written-to can be found by reading
+pagemap file (!PM_UFFD_WP). This feature can be used successfully to
+find which pages have been written to from the time the pages were
+write protected. This works just like the soft-dirty flag without
+showing any extra pages which aren't soft-dirty in reality.
+
+The information related to pages if the page is file mapped, present and
+swapped is required for the CRIU project [5][6]. The addition of the
+required mask, any mask, excluded mask and return masks are also required
+for the CRIU project [5].
+
+The IOCTL returns the addresses of the pages which match the specific
+masks. The page addresses are returned in struct page_region in a compact
+form. The max_pages is needed to support a use case where user only wants
+to get a specific number of pages. So there is no need to find all the
+pages of interest in the range when max_pages is specified. The IOCTL
+returns when the maximum number of the pages are found. The max_pages is
+optional. If max_pages is specified, it must be equal or greater than the
+vec_size. This restriction is needed to handle worse case when one
+page_region only contains info of one page and it cannot be compacted.
+This is needed to emulate the Windows getWriteWatch() syscall.
+
+The patch series include the detailed selftest which can be used as an
+example for the uffd async wp test and PAGEMAP_IOCTL. It shows the
+interface usages as well.
+
+[1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
+[2] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
+[3] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
+[4] https://lore.kernel.org/all/Y6Hc2d+7eTKs7AiH@x1n
+[5] https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com/
+[6] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com/
+
+Regards,
+Muhammad Usama Anjum
+
+Muhammad Usama Anjum (7):
+  userfaultfd: Add UFFD WP Async support
+  userfaultfd: Define dummy uffd_wp_range()
+  userfaultfd: update documentation to describe UFFD_FEATURE_WP_ASYNC
+  fs/proc/task_mmu: Implement IOCTL to get and optionally clear info
+    about PTEs
+  tools headers UAPI: Update linux/fs.h with the kernel sources
+  mm/pagemap: add documentation of PAGEMAP_SCAN IOCTL
+  selftests: mm: add pagemap ioctl tests
+
+ Documentation/admin-guide/mm/pagemap.rst     |  56 ++
+ Documentation/admin-guide/mm/userfaultfd.rst |  21 +
+ fs/proc/task_mmu.c                           | 366 ++++++++
+ fs/userfaultfd.c                             |  25 +-
+ include/linux/userfaultfd_k.h                |  14 +
+ include/uapi/linux/fs.h                      |  53 ++
+ include/uapi/linux/userfaultfd.h             |  11 +-
+ mm/memory.c                                  |  27 +-
+ tools/include/uapi/linux/fs.h                |  53 ++
+ tools/testing/selftests/mm/.gitignore        |   1 +
+ tools/testing/selftests/mm/Makefile          |   4 +-
+ tools/testing/selftests/mm/config            |   1 +
+ tools/testing/selftests/mm/pagemap_ioctl.c   | 920 +++++++++++++++++++
+ tools/testing/selftests/mm/run_vmtests.sh    |   4 +
+ 14 files changed, 1549 insertions(+), 7 deletions(-)
+ create mode 100644 tools/testing/selftests/mm/pagemap_ioctl.c
+ mode change 100644 => 100755 tools/testing/selftests/mm/run_vmtests.sh
+
+-- 
+2.39.2
 
