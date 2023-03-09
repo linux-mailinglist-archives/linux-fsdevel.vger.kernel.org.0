@@ -2,87 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F2336B2369
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 12:50:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55EB86B237B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 12:57:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231510AbjCILud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 06:50:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47306 "EHLO
+        id S231229AbjCIL5U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 06:57:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231414AbjCILuU (ORCPT
+        with ESMTP id S230113AbjCIL5T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 06:50:20 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED4A4E7ED2;
-        Thu,  9 Mar 2023 03:50:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7E3C661B24;
-        Thu,  9 Mar 2023 11:50:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DFE8C433EF;
-        Thu,  9 Mar 2023 11:50:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678362617;
-        bh=/WZMnXXvFvWgEiClRENR/krm9fheBqDzubyeL7/cJxM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Ph5Tc5gzvSdj9y50QqzJYCO8UsBDQThgchpxldN2b+P9F3G2J9B9Vm1AJOtmUBCa6
-         JoKOAWikTEQmYm6XdO/yJhYFRZ6h69C7rtnCOUEV80fayicqC9fWIVwR115LrioyOb
-         T521IXUbKTipGdp4VPZccj+ACtQcB0V4jITKqBPeLP49yckNtZFu8dKV84MfyR0Cz4
-         I5ChNWh0VHa8EIaRV0LJK5dsSZdFdkpt8Bg+bUCC/i6ABa3uP3eSxUre7S25A24gYm
-         Bv/ueyHlYrNbuWTRA6kcL38nr4m0m7qb6EmouUTXZO4jS0rRj9wymmr0xDS7lvLasC
-         5UXCXrZ7dTHMg==
-Message-ID: <fd7e0f354da923ebb0cbe2c41188708e4d6c992a.camel@kernel.org>
-Subject: Re: [PATCH] fs/locks: Remove redundant assignment to cmd
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc:     viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abaci Robot <abaci@linux.alibaba.com>
-Date:   Thu, 09 Mar 2023 06:50:15 -0500
-In-Reply-To: <167835349787.767856.6018396733410513369.b4-ty@kernel.org>
-References: <20230308071316.16410-1-jiapeng.chong@linux.alibaba.com>
-         <167835349787.767856.6018396733410513369.b4-ty@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+        Thu, 9 Mar 2023 06:57:19 -0500
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 081F0DBB42
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Mar 2023 03:57:18 -0800 (PST)
+Received: by mail-il1-f197.google.com with SMTP id m7-20020a924b07000000b003170cef3f12so774687ilg.22
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Mar 2023 03:57:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678363037;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yX6TF+vn9/IHLiO2rdpruGDt6O5lqRy5gxKQUxEGJDo=;
+        b=QkWWPFthKNyJ/IxNjCKstyg8QuapBnhWECFXIS956DdM9+Y3WkKwyC6jGzAyFn5Jdd
+         owx4GSKjJVvWmBY8vvb2WvDydH1KmWtBK9jCszfu/hihV8xQuAUVbILtX0hIJBWuOU7+
+         I9FJAKnxRPxmR1xO270AtHx5/DPjX3mcIOnkCaph1gVZ9t/1EzxQGU6bRI4ofEp2FkhX
+         fcsCIpDH4Y9OLA31orDcH90HO7z7rNuyL5oTq5kELV6VVrk/KKX10AYjudM7tmDXcDbL
+         1m3QVeNlNPcM+fx8uJEJVRlO2hKv7PV1+0LTXiz6F58SdCONGAYHpX/ft0ItNafdRKfw
+         QWXg==
+X-Gm-Message-State: AO0yUKXnnw0RyjYtZurzQDernGmzZbGw1XLPuYUFJf0jyk1dSYZLooV4
+        1hnJYg0VIlONFjfndkkZIjkJWy7qh5BVR6v7DTLzcUBzsgdh
+X-Google-Smtp-Source: AK7set+l8Q/wcIAHiiaNGzoKIqYWGV1eypA0ZwqCwtYTqttblmrfVY7wkNJf3lfXJvgGGVFWxEPLrQ5Yl2IIoz5/eOqsmab5UWT0
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:cd0:b0:3e5:4c9d:6e14 with SMTP id
+ e16-20020a0566380cd000b003e54c9d6e14mr10876861jak.4.1678363037341; Thu, 09
+ Mar 2023 03:57:17 -0800 (PST)
+Date:   Thu, 09 Mar 2023 03:57:17 -0800
+In-Reply-To: <0000000000004c06c405eb318db4@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a5202905f6765872@google.com>
+Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_run_delayed_refs
+From:   syzbot <syzbot+ebdb2403435c4136db2b@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2023-03-09 at 10:25 +0100, Christian Brauner wrote:
-> From: Christian Brauner (Microsoft) <brauner@kernel.org>
->=20
->=20
-> On Wed, 08 Mar 2023 15:13:16 +0800, Jiapeng Chong wrote:
-> > Variable 'cmd' set but not used.
-> >=20
-> > fs/locks.c:2428:3: warning: Value stored to 'cmd' is never read.
-> >=20
-> >=20
->=20
-> Seems unused for quite a while. I've picked this up since there's a few o=
-ther
-> trivial fixes I have pending. But I'm happy to drop this if you prefer th=
-is
-> goes via the lock tree, Jeff.
->=20
-> [1/1] fs/locks: Remove redundant assignment to cmd
->       commit: dc592190a5543c559010e09e8130a1af3f9068d3
+syzbot suspects this issue was fixed by commit:
 
-Thanks Christian,
+commit 8bb808c6ad91ec3d332f072ce8f8aa4b16e307e0
+Author: David Sterba <dsterba@suse.com>
+Date:   Thu Nov 3 13:39:01 2022 +0000
 
-I had already picked it into the locks-next branch (though I didn't get
-a chance to reply and mention that), but I'll drop it and plan to let
-you carry it.
+    btrfs: don't print stack trace when transaction is aborted due to ENOMEM
 
-Thanks,
---=20
-Jeff Layton <jlayton@kernel.org>
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1541ad14c80000
+start commit:   98555239e4c3 Merge tag 'arc-6.1-fixes' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a66c6c673fb555e8
+dashboard link: https://syzkaller.appspot.com/bug?extid=ebdb2403435c4136db2b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a4d8ea880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13172832880000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: btrfs: don't print stack trace when transaction is aborted due to ENOMEM
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
