@@ -2,131 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 648186B24F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 14:08:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE476B24FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 14:11:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231221AbjCINIe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 08:08:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53682 "EHLO
+        id S230195AbjCINLp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 08:11:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230118AbjCINId (ORCPT
+        with ESMTP id S229776AbjCINLn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 08:08:33 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB0B7D82;
-        Thu,  9 Mar 2023 05:08:07 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PXTlB12Nyz9xGWf;
-        Thu,  9 Mar 2023 20:58:46 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwC3QAwS2glkNqSEAQ--.25311S2;
-        Thu, 09 Mar 2023 14:07:43 +0100 (CET)
-Message-ID: <92c36707c8f9398f7f626c3da01bb98586880836.camel@huaweicloud.com>
-Subject: Re: [PATCH 15/28] security: Introduce inode_post_removexattr hook
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Thu, 09 Mar 2023 14:07:26 +0100
-In-Reply-To: <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-         <20230303181842.1087717-16-roberto.sassu@huaweicloud.com>
-         <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
+        Thu, 9 Mar 2023 08:11:43 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F0DD5A7F;
+        Thu,  9 Mar 2023 05:11:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1678367499;
+        bh=ximSBdqm11LjZkXc+6xN4CESZDhw1BYjj+9qJ8MzVUs=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=IaAgulVrKnAlPv2g9YUwPeVG3kjLr4zTCuiYcy4FOtAtni2DimLGPdtR5RKQ9dKJK
+         jYPtl3sQ54MRWe5LuLgedYJOWoh8PnMxRyEoRuEdiDNZs8xiVmfq2xM9oQWduYvOuk
+         2HNPfKw28Nm1Hj/0zE+k90F3BQrzSdg3BZIx7kB0=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 116DE1281446;
+        Thu,  9 Mar 2023 08:11:39 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id pc7NiKohuf7s; Thu,  9 Mar 2023 08:11:38 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1678367498;
+        bh=ximSBdqm11LjZkXc+6xN4CESZDhw1BYjj+9qJ8MzVUs=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=jiXbls0PZ6UqDt36GCwKW7X7dFmjNQ5w5Y5aFASfef4wv740Q7UiikJquC3oRPPlm
+         LrOWzL7n3TLXBe75VMf8TYwT6F6RrzxfKFsPSNN0tg3gksXItN2iGbgw+vKtBjOVIi
+         TA/XaSmNmd0qIi6NBPgovbKdkKMpB8ASv+nZPbZc=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B73771280885;
+        Thu,  9 Mar 2023 08:11:37 -0500 (EST)
+Message-ID: <260064c68b61f4a7bc49f09499e1c107e2a28f31.camel@HansenPartnership.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Javier =?ISO-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>, Hannes Reinecke <hare@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Keith Busch <kbusch@kernel.org>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        Daniel Gomez <da.gomez@samsung.com>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-block@vger.kernel.org
+Date:   Thu, 09 Mar 2023 08:11:35 -0500
+In-Reply-To: <20230309080434.tnr33rhzh3a5yc5q@ArmHalley.local>
+References: <c9f6544d-1731-4a73-a926-0e85ae9da9df@suse.de>
+         <ZAN2HYXDI+hIsf6W@casper.infradead.org>
+         <edac909b-98e5-cb6d-bb80-2f6a20a15029@suse.de>
+         <ZAOF3p+vqA6pd7px@casper.infradead.org>
+         <0b70deae-9fc7-ca33-5737-85d7532b3d33@suse.de>
+         <ZAWi5KwrsYL+0Uru@casper.infradead.org> <20230306161214.GB959362@mit.edu>
+         <ZAjLhkfRqwQ+vkHI@casper.infradead.org>
+         <CGME20230308181355eucas1p1c94ffee59e210fb762540c888e8eae8a@eucas1p1.samsung.com>
+         <1367983d4fa09dcb63e29db2e8be3030ae6f6e8c.camel@HansenPartnership.com>
+         <20230309080434.tnr33rhzh3a5yc5q@ArmHalley.local>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: LxC2BwC3QAwS2glkNqSEAQ--.25311S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1DuFW3ur4ftrWxGr1xXwb_yoW8trykpF
-        s8t3ZxCF4rXr17GF97tF4UCwsagw48Gr4UJ3y2gw1jvFn7twn2qFWUKr15uFyrXr4j9Fyq
-        qFnIgr95Cr15AaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-        AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU13rcDUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBF1jj4ZjhQAAsc
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-03-08 at 10:43 -0500, Mimi Zohar wrote:
-> Hi Roberto,
-> 
-> On Fri, 2023-03-03 at 19:18 +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
+On Thu, 2023-03-09 at 09:04 +0100, Javier González wrote:
+> On 08.03.2023 13:13, James Bottomley wrote:
+> > On Wed, 2023-03-08 at 17:53 +0000, Matthew Wilcox wrote:
+> > > On Mon, Mar 06, 2023 at 11:12:14AM -0500, Theodore Ts'o wrote:
+> > > > What HDD vendors want is to be able to have 32k or even 64k
+> > > > *physical* sector sizes.  This allows for much more efficient
+> > > > erasure codes, so it will increase their byte capacity now that
+> > > > it's no longer easier to get capacity boosts by squeezing the
+> > > > tracks closer and closer, and their have been various
+> > > > engineering tradeoffs with SMR, HAMR, and MAMR.  HDD vendors
+> > > > have been asking for this at LSF/MM, and in othervenues for
+> > > > ***years***.
+> > > 
+> > > I've been reminded by a friend who works on the drive side that a
+> > > motivation for the SSD vendors is (essentially) the size of
+> > > sector_t. Once the drive needs to support more than 2/4 billion
+> > > sectors, they need to move to a 64-bit sector size, so the amount
+> > > of memory consumed by the FTL doubles, the CPU data cache becomes
+> > > half as effective, etc. That significantly increases the BOM for
+> > > the drive, and so they have to charge more.  With a 512-byte LBA,
+> > > that's 2TB; with a 4096-byte LBA, it's at 16TB and with a 64k
+> > > LBA, they can keep using 32-bit LBA numbers all the way up to
+> > > 256TB.
 > > 
-> > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> > the inode_post_removexattr hook.
+> > I thought the FTL operated on physical sectors and the logical to
+> > physical was done as a RMW through the FTL?  In which case sector_t
+> > shouldn't matter to the SSD vendors for FTL management because they
+> > can keep the logical sector size while increasing the physical one.
+> > Obviously if physical size goes above the FS block size, the drives
+> > will behave suboptimally with RMWs, which is why 4k physical is the
+> > max currently.
 > > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  fs/xattr.c                    |  1 +
-> >  include/linux/lsm_hook_defs.h |  2 ++
-> >  include/linux/security.h      |  5 +++++
-> >  security/security.c           | 14 ++++++++++++++
-> >  4 files changed, 22 insertions(+)
-> > 
-> > diff --git a/fs/xattr.c b/fs/xattr.c
-> > index 14a7eb3c8fa..10c959d9fc6 100644
-> > --- a/fs/xattr.c
-> > +++ b/fs/xattr.c
-> > @@ -534,6 +534,7 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
-> >  
-> >  	if (!error) {
-> >  		fsnotify_xattr(dentry);
-> > +		security_inode_post_removexattr(dentry, name);
-> >  		evm_inode_post_removexattr(dentry, name);
-> >  	}
 > 
-> Nothing wrong with this, but other places in this function test "if
-> (error) goto ...".   Perhaps it is time to clean this up.
-
-Theoretically, all 'goto out' can be replaced with 'return error'.
-
-I would be more in favor of minimizing the changes as much as possible
-to reach the main goal. But it is ok also to change the last part.
-
-Thanks
-
-Roberto
-
-> >  
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > index eedefbcdde3..2ae5224d967 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -147,6 +147,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
-> >  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
-> >  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
-> >  	 struct dentry *dentry, const char *name)
-> > +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
-> > +	 const char *name)
+> FTL designs are complex. We have ways to maintain sector sizes under
+> 64 bits, but this is a common industry problem.
 > 
-> @Christian should the security_inode_removexattr() and
-> security_inode_post_removexattr() arguments be the same?
-> 
-> >  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
-> >  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
-> >  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
+> The media itself does not normally oeprate at 4K. Page siges can be
+> 16K, 32K, etc.
+
+Right, and we've always said if we knew what this size was we could
+make better block write decisions.  However, today if you look what
+most NVMe devices are reporting, it's a bit sub-optimal:
+
+jejb@lingrow:/sys/block/nvme1n1/queue> cat logical_block_size 
+512
+jejb@lingrow:/sys/block/nvme1n1/queue> cat physical_block_size 
+512
+jejb@lingrow:/sys/block/nvme1n1/queue> cat optimal_io_size 
+0
+
+If we do get Linux to support large block sizes, are we actually going
+to get better information out of the devices?
+
+>  Increasing the block size would allow for better host/device
+> cooperation. As Ted mentions, this has been a requirement for HDD and
+> SSD vendor for years. It seems to us that the time is right now and
+> that we have mechanisms in Linux to do the plumbing. Folios is
+> ovbiously a big part of this.
+
+Well a decade ago we did a lot of work to support 4k sector devices.
+Ultimately the industry went with 512 logical/4k physical devices
+because of problems with non-Linux proprietary OSs but you could still
+use 4k today if you wanted (I've actually still got a working 4k SCSI
+drive), so why is no NVMe device doing that?
+
+This is not to say I think larger block sizes is in any way a bad idea
+... I just think that given the history, it will be driven by
+application needs rather than what the manufacturers tell us.
+
+James
 
