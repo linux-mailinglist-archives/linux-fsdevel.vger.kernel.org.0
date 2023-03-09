@@ -2,187 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A8176B247C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 13:48:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 648186B24F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 14:08:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229523AbjCIMsT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 07:48:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45646 "EHLO
+        id S231221AbjCINIe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 08:08:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjCIMsS (ORCPT
+        with ESMTP id S230118AbjCINId (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 07:48:18 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48B07E7765
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Mar 2023 04:47:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678366049;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0ehW2nevq00V5yC0+7FXoqhGhXSAe2U1rSyspc8Zvdg=;
-        b=NZxY7sYQRZMxfvjJ1k0kDZz2c4Llu59idYMVV5GWOl8ZHQLTyNVp0+zehfBctZDDNd2oXs
-        vCrckBbSCYbINjncA87bqU3pn45+rAtP4qfwTUUxxsqEkjyVB4ApV5tuFV8PQbQVZbU0Cd
-        bMDvfNJQvy7xX6TvVAk4rdAIHcysIGg=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-338-_gngiJu5MgG_y6HgDUuy7Q-1; Thu, 09 Mar 2023 07:47:28 -0500
-X-MC-Unique: _gngiJu5MgG_y6HgDUuy7Q-1
-Received: by mail-qt1-f199.google.com with SMTP id x21-20020ac86b55000000b003c01d1a0708so989914qts.19
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Mar 2023 04:47:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678366047;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0ehW2nevq00V5yC0+7FXoqhGhXSAe2U1rSyspc8Zvdg=;
-        b=xTRicDwxoR5FrRWyzr8Toqi08ukNZWxKJR7vytbLLYEpRKoAHV7nsYwPrjH4ZKUTAN
-         bP+iLhiVCAbnRvFBbkTYImRDpCAlLq2Ce+t+oPBqYtUbVvmUSO9Wy+GUMgG0hIks2blq
-         vzi4elyLXamkHfSkUjsSz+aKHSIrh3L+1VFmlZ0T8EW47lb+LiCEMtl0R4WtyLtaKn6P
-         QCIFUpm2zJvBpqt49H1JOfmQbUdEDlbH2xEQv7hyMcUzuUJwhAKlY5sn9MhegI1R7JbL
-         9/BWzbhX/BnYvtZOGFC64YtqZ4lP08kuW0KLo3fxCgAPX9eqB/8UdiERMup4p+ju1LsJ
-         aiAg==
-X-Gm-Message-State: AO0yUKWvimh/Ns8JQNrCTVeQn+ED1wnx9JzggPH6Jl/3MA0mB+/u8r6t
-        phgtKZiDVzNi3y0qbDS/Z8lR0YYXKV5++BDfCSLUQGDGpt+bUDX8SQUlOeVrDC4kewo1F7OM0Pi
-        0b7sjXrwZ2vaq8tkUKXdI+vuEaw==
-X-Received: by 2002:a05:622a:118a:b0:3bf:cc1b:9512 with SMTP id m10-20020a05622a118a00b003bfcc1b9512mr4614236qtk.1.1678366047592;
-        Thu, 09 Mar 2023 04:47:27 -0800 (PST)
-X-Google-Smtp-Source: AK7set+07iNYp4QytjfgvdXz6Ibrp+MLL2JCpqrWePXQSZuPccULPXLzvOuBUsaA/SXIruJvl7nHcg==
-X-Received: by 2002:a05:622a:118a:b0:3bf:cc1b:9512 with SMTP id m10-20020a05622a118a00b003bfcc1b9512mr4614198qtk.1.1678366047241;
-        Thu, 09 Mar 2023 04:47:27 -0800 (PST)
-Received: from gerbillo.redhat.com (146-241-121-28.dyn.eolo.it. [146.241.121.28])
-        by smtp.gmail.com with ESMTPSA id 4-20020a370304000000b0073bb00eb0besm13431307qkd.22.2023.03.09.04.47.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Mar 2023 04:47:26 -0800 (PST)
-Message-ID: <5de48abb24e033a5eb457007d0a5b6b391831fd4.camel@redhat.com>
-Subject: Re: [PATCH v5] epoll: use refcount to reduce ep_mutex contention
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     netdev@vger.kernel.org, Soheil Hassas Yeganeh <soheil@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org
-Date:   Thu, 09 Mar 2023 13:47:23 +0100
-In-Reply-To: <20230309111803.2z242amw4f5nwfwu@wittgenstein>
-References: <323de732635cc3513c1837c6cbb98f012174f994.1678312201.git.pabeni@redhat.com>
-         <20230309111803.2z242amw4f5nwfwu@wittgenstein>
+        Thu, 9 Mar 2023 08:08:33 -0500
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB0B7D82;
+        Thu,  9 Mar 2023 05:08:07 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PXTlB12Nyz9xGWf;
+        Thu,  9 Mar 2023 20:58:46 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwC3QAwS2glkNqSEAQ--.25311S2;
+        Thu, 09 Mar 2023 14:07:43 +0100 (CET)
+Message-ID: <92c36707c8f9398f7f626c3da01bb98586880836.camel@huaweicloud.com>
+Subject: Re: [PATCH 15/28] security: Introduce inode_post_removexattr hook
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
+        chuck.lever@oracle.com, jlayton@kernel.org,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Thu, 09 Mar 2023 14:07:26 +0100
+In-Reply-To: <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+         <20230303181842.1087717-16-roberto.sassu@huaweicloud.com>
+         <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: LxC2BwC3QAwS2glkNqSEAQ--.25311S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1DuFW3ur4ftrWxGr1xXwb_yoW8trykpF
+        s8t3ZxCF4rXr17GF97tF4UCwsagw48Gr4UJ3y2gw1jvFn7twn2qFWUKr15uFyrXr4j9Fyq
+        qFnIgr95Cr15AaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+        6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+        AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv
+        6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU13rcDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBF1jj4ZjhQAAsc
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2023-03-09 at 12:18 +0100, Christian Brauner wrote:
-> On Wed, Mar 08, 2023 at 10:51:31PM +0100, Paolo Abeni wrote:
-> > We are observing huge contention on the epmutex during an http
-> > connection/rate test:
-> >=20
-> >  83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYS=
-CALL_64_after_hwframe
-> > [...]
-> >            |--66.96%--__fput
-> >                       |--60.04%--eventpoll_release_file
-> >                                  |--58.41%--__mutex_lock.isra.6
-> >                                            |--56.56%--osq_lock
-> >=20
-> > The application is multi-threaded, creates a new epoll entry for
-> > each incoming connection, and does not delete it before the
-> > connection shutdown - that is, before the connection's fd close().
-> >=20
-> > Many different threads compete frequently for the epmutex lock,
-> > affecting the overall performance.
-> >=20
-> > To reduce the contention this patch introduces explicit reference count=
-ing
-> > for the eventpoll struct. Each registered event acquires a reference,
-> > and references are released at ep_remove() time.
-> >=20
-> > The eventpoll struct is released by whoever - among EP file close() and
-> > and the monitored file close() drops its last reference.
-> >=20
-> > Additionally, this introduces a new 'dying' flag to prevent races betwe=
-en
-> > the EP file close() and the monitored file close().
-> > ep_eventpoll_release() marks, under f_lock spinlock, each epitem as dyi=
-ng
-> > before removing it, while EP file close() does not touch dying epitems.
-> >=20
-> > The above is needed as both close operations could run concurrently and
-> > drop the EP reference acquired via the epitem entry. Without the above
-> > flag, the monitored file close() could reach the EP struct via the epit=
-em
-> > list while the epitem is still listed and then try to put it after its
-> > disposal.
-> >=20
-> > An alternative could be avoiding touching the references acquired via
-> > the epitems at EP file close() time, but that could leave the EP struct
-> > alive for potentially unlimited time after EP file close(), with nasty
-> > side effects.
-> >=20
-> > With all the above in place, we can drop the epmutex usage at disposal =
-time.
-> >=20
-> > Overall this produces a significant performance improvement in the
-> > mentioned connection/rate scenario: the mutex operations disappear from
-> > the topmost offenders in the perf report, and the measured connections/=
-rate
-> > grows by ~60%.
-> >=20
-> > To make the change more readable this additionally renames ep_free() to
-> > ep_clear_and_put(), and moves the actual memory cleanup in a separate
-> > ep_free() helper.
-> >=20
-> > Tested-by: Xiumei Mu <xmu@redhiat.com>
->=20
-> Is that a typo "redhiat" in the mail?
+On Wed, 2023-03-08 at 10:43 -0500, Mimi Zohar wrote:
+> Hi Roberto,
+> 
+> On Fri, 2023-03-03 at 19:18 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> > the inode_post_removexattr hook.
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  fs/xattr.c                    |  1 +
+> >  include/linux/lsm_hook_defs.h |  2 ++
+> >  include/linux/security.h      |  5 +++++
+> >  security/security.c           | 14 ++++++++++++++
+> >  4 files changed, 22 insertions(+)
+> > 
+> > diff --git a/fs/xattr.c b/fs/xattr.c
+> > index 14a7eb3c8fa..10c959d9fc6 100644
+> > --- a/fs/xattr.c
+> > +++ b/fs/xattr.c
+> > @@ -534,6 +534,7 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
+> >  
+> >  	if (!error) {
+> >  		fsnotify_xattr(dentry);
+> > +		security_inode_post_removexattr(dentry, name);
+> >  		evm_inode_post_removexattr(dentry, name);
+> >  	}
+> 
+> Nothing wrong with this, but other places in this function test "if
+> (error) goto ...".   Perhaps it is time to clean this up.
 
-Indeed yes! Thanks for noticing. Should I share a new revision to
-address that?
+Theoretically, all 'goto out' can be replaced with 'return error'.
 
-[...]
+I would be more in favor of minimizing the changes as much as possible
+to reach the main goal. But it is ok also to change the last part.
 
-> > @@ -700,6 +733,11 @@ static int ep_remove(struct eventpoll *ep, struct =
-epitem *epi)
-> > =20
-> >  	/* Remove the current item from the list of epoll hooks */
-> >  	spin_lock(&file->f_lock);
-> > +	if (epi->dying && !force) {
-> > +		spin_unlock(&file->f_lock);
-> > +		return false;
-> > +	}
->=20
-> It's a bit unfortunate that we have to acquire the spinlock just to immed=
-iately
-> having to drop it. Slighly ugly but workable could be but that depends on=
- how
-> likely we find it that we end up with !force and a dying fd...
+Thanks
 
-The concurrent close() of both the EP file and the monitored file
-should be a quite rare event, I *think* over-optimizing it should not
-be worthy. Additionally, even with the spinlock, the proposed patch
-should be considerably faster then the previous code even in that
-specific scenario, as before we the epmutex conflicting with a much
-larger scope.=20
+Roberto
 
-The only doubt I have about the suggested code, should we add a
-READ_ONCE() even on the later 'dying' check? My understanding is that
-the compiler should be allowed to emit a single read instruction,
-before the spinlock itself.
-
-Cheers,
-
-Paolo
+> >  
+> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> > index eedefbcdde3..2ae5224d967 100644
+> > --- a/include/linux/lsm_hook_defs.h
+> > +++ b/include/linux/lsm_hook_defs.h
+> > @@ -147,6 +147,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
+> >  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
+> >  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
+> >  	 struct dentry *dentry, const char *name)
+> > +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
+> > +	 const char *name)
+> 
+> @Christian should the security_inode_removexattr() and
+> security_inode_post_removexattr() arguments be the same?
+> 
+> >  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
+> >  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
+> >  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
 
