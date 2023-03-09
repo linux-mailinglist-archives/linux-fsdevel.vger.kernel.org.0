@@ -2,74 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E27396B1FF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 10:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBDF56B2003
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 10:29:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230259AbjCIJ0J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 04:26:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60230 "EHLO
+        id S230432AbjCIJ3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 04:29:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230192AbjCIJ0H (ORCPT
+        with ESMTP id S231235AbjCIJ3P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 04:26:07 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D438CE250F;
-        Thu,  9 Mar 2023 01:26:03 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 653BDB81EAC;
-        Thu,  9 Mar 2023 09:26:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CF4AC4339B;
-        Thu,  9 Mar 2023 09:25:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678353961;
-        bh=jpVo/qb7UamQHfPQh9Ec34d8qof4tu675UL+rAU13MQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q0gjc++yZqNvNq5iWUsJQ1uYW1YFqo1HVHDWrCldx60+/6+CRkdv+3Mi4U9yPmLfj
-         kRO9XYGTsljZSLeimRALXBkFzp6s9LNtKZCKiNo7c3YATB1Puw/bOzTeFfm4GrfT9/
-         SUvsO8aqfwqHJqSG4fqrLbiz3KM26vV+GWQsvOc5UT9qVc281LZvrvZCdznnrqsLpc
-         ZVtSpaCk1ONCnABx0iSl63ZtAFpYOkrnfegdtOZHey81Ub9eXMxG36OV1qANh+Snyz
-         7Wx9Y38M8Oeg1nBWhdMoY9UHXCmNdmK0i7uX7tQK/C4DIT12U/H9yXbnT1pf/O419T
-         EoF47sdBi2ayQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     jlayton@kernel.org, Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc:     Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH] fs/locks: Remove redundant assignment to cmd
-Date:   Thu,  9 Mar 2023 10:25:47 +0100
-Message-Id: <167835349787.767856.6018396733410513369.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230308071316.16410-1-jiapeng.chong@linux.alibaba.com>
-References: <20230308071316.16410-1-jiapeng.chong@linux.alibaba.com>
+        Thu, 9 Mar 2023 04:29:15 -0500
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1423A2313F;
+        Thu,  9 Mar 2023 01:29:11 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 2C6DB68BEB; Thu,  9 Mar 2023 10:29:07 +0100 (CET)
+Date:   Thu, 9 Mar 2023 10:29:07 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Miklos Szeredi <miklos@szeredi.hu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v16 03/13] overlayfs: Implement splice-read
+Message-ID: <20230309092906.GA23816@lst.de>
+References: <20230308155609.GA21508@lst.de> <CAJfpeguGksS3sCigmRi9hJdUec8qtM9f+_9jC1rJhsXT+dV01w@mail.gmail.com> <20230308143754.1976726-1-dhowells@redhat.com> <20230308143754.1976726-4-dhowells@redhat.com> <2011735.1678290876@warthog.procyon.org.uk> <2012343.1678291479@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=473; i=brauner@kernel.org; h=from:subject:message-id; bh=iTC8S6rIDjoS1mT+A981RU0H8andjK2LQ6RdfBW8NmI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRwLhO+uUV6268DEfsTkytDNS/rLHz71PfiFqbcze+2z8r7 rc8b21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRv8EM/7RN182wPtassHPeZfm+jt rq5rwUszvTZ1rxbN2cv5dRYxIjw70/B/nyV9m8CFjL4nX1eoZ/RW9tl8TPKynezxV0hNOP8AAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2012343.1678291479@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner (Microsoft) <brauner@kernel.org>
-
-
-On Wed, 08 Mar 2023 15:13:16 +0800, Jiapeng Chong wrote:
-> Variable 'cmd' set but not used.
+On Wed, Mar 08, 2023 at 04:04:39PM +0000, David Howells wrote:
+> Christoph Hellwig <hch@lst.de> wrote:
 > 
-> fs/locks.c:2428:3: warning: Value stored to 'cmd' is never read.
+> > On Wed, Mar 08, 2023 at 03:54:36PM +0000, David Howells wrote:
+> > > Using do_splice_to() as a helper is probably a good idea, though both Willy
+> > > and Christoph seem to dislike it.
+> > 
+> > That's not true.  What I'm fundamentlly against is pointless wrappers
+> > like the call_* that add no value.  do_splice_to adds useful checks,
+> > so if properly named and documented, I'm absolutely in favour.
 > 
-> 
+> Fair enough.  Rename to vfs_splice_read() okay with you?
 
-Seems unused for quite a while. I've picked this up since there's a few other
-trivial fixes I have pending. But I'm happy to drop this if you prefer this
-goes via the lock tree, Jeff.
-
-[1/1] fs/locks: Remove redundant assignment to cmd
-      commit: dc592190a5543c559010e09e8130a1af3f9068d3
+Yes.
