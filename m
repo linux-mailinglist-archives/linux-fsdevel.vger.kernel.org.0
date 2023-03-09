@@ -2,121 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2DAE6B2148
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 11:22:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79AB06B217B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Mar 2023 11:32:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbjCIKW3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 05:22:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59810 "EHLO
+        id S230509AbjCIKcy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 05:32:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229928AbjCIKWO (ORCPT
+        with ESMTP id S230379AbjCIKcw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 05:22:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8986CE051
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Mar 2023 02:21:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678357299;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5Ir/h645vG7/3e7LKCiTYw/Yo812wpfTRDoEn9ipx+Q=;
-        b=H0rAgnqZX6cXGx8PPESrS7+2Os1Zy3dVkaS6jpxxpIZbV8KIG6vyrR/dxiLamQJSFKmfJ5
-        i4GoPlhkd2cdcRaOSkQOlJBfC3+f/mBRyGiqET0NzYGu5rpTjimL6cLvFp3XIXeZcNIS2d
-        CEQA9BEi0Xk4TWgWe6XS+5SqdYRBK68=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-142-FLjRXR2JPZi0Xc-9SN72rQ-1; Thu, 09 Mar 2023 05:21:38 -0500
-X-MC-Unique: FLjRXR2JPZi0Xc-9SN72rQ-1
-Received: by mail-pf1-f199.google.com with SMTP id i7-20020a626d07000000b005d29737db06so988814pfc.15
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Mar 2023 02:21:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678357295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Ir/h645vG7/3e7LKCiTYw/Yo812wpfTRDoEn9ipx+Q=;
-        b=RzYv9PrGDl3GL5As/dlWWgfDFjMLltDvFDyRGMm7fNyZmVJyIZoc/RknXbGwqOEq6m
-         fzfVyovwcX5FV9NerGB0z/rmuyyZ+TZIiv2z4A2t6H8159emDDGySYSeuJpZFoRpHG8x
-         V1fipd0tKbGnEt1JWdRI7RLBeMB+vw4Te0ziTGjSM41xOYzve7w3kMACZQlFPiFeh1d5
-         ri3wIKImFdZMagNJF+BAQpL+DGTZ7vjqJenJ7R6MlC7opsvlKuEyy0fjZZEP1fVYcErP
-         FEWN5XOTRL0nw3EsC9dbDW4yqhCTQe8Jv5H0sKcyofHcAVlVufwakIBJb4mu8dbcrU3M
-         meqA==
-X-Gm-Message-State: AO0yUKXa1FFoqzwAo0jbm0fNN5i+sX72fnZ/h+olHeYuA+u+s5SRN36e
-        3ev46VmL6pCPc9K1/Rs1SjCL58ZDZhFX0bq/QIN9MQSqj5cLdwFsG1hboDWdaJRnsl047dKCoII
-        AOJyz9OaexKrZrRAjk4sW4xKK0+JW/pTzoHR1zLex4g==
-X-Received: by 2002:a17:902:f7c1:b0:19c:a3be:a4f3 with SMTP id h1-20020a170902f7c100b0019ca3bea4f3mr8229329plw.4.1678357295487;
-        Thu, 09 Mar 2023 02:21:35 -0800 (PST)
-X-Google-Smtp-Source: AK7set9VDTf99mRyC2eJOBxIkMspHxJ2pV++2lzfcL1yIkpa4x+m9xdxgNtT/wUdeXHjX/qKTQaaMK9Wp7kJK/Zrno4=
-X-Received: by 2002:a17:902:f7c1:b0:19c:a3be:a4f3 with SMTP id
- h1-20020a170902f7c100b0019ca3bea4f3mr8229321plw.4.1678357295164; Thu, 09 Mar
- 2023 02:21:35 -0800 (PST)
+        Thu, 9 Mar 2023 05:32:52 -0500
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7A00E501B;
+        Thu,  9 Mar 2023 02:32:48 -0800 (PST)
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MNbp3-1puLvb3lmN-00P7CR; Thu, 09
+ Mar 2023 11:32:45 +0100
+Message-ID: <62d03fce-0670-8d6a-2ee8-7c8725269fad@gmx.com>
+Date:   Thu, 9 Mar 2023 18:32:41 +0800
 MIME-Version: 1.0
-References: <20230309094317.69773-1-frank.li@vivo.com>
-In-Reply-To: <20230309094317.69773-1-frank.li@vivo.com>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Thu, 9 Mar 2023 11:21:23 +0100
-Message-ID: <CAHc6FU7vGD9NGn0phJsLEmcU8O7AaBS+hm=AEwYOc0nFGHS-hQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] fs: add i_blocksize_mask()
-To:     Yangtao Li <frank.li@vivo.com>
-Cc:     xiang@kernel.org, chao@kernel.org, huyue2@coolpad.com,
-        jefflexu@linux.alibaba.com, tytso@mit.edu,
-        adilger.kernel@dilger.ca, rpeterso@redhat.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 03/34] btrfs: add a btrfs_inode pointer to struct
+ btrfs_bio
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230121065031.1139353-1-hch@lst.de>
+ <20230121065031.1139353-4-hch@lst.de>
+ <88b2fae1-8d95-2172-7bc4-c5dfc4ff7410@gmx.com>
+ <20230307144106.GA19477@lst.de>
+ <96f5c29c-1b25-66af-1ba1-731ae39d912d@gmx.com>
+ <5aff53ea-0666-d4d6-3bf1-07b3674a405a@gmx.com>
+ <20230308142817.GA14929@lst.de>
+ <9c59ce30-f217-568e-a3a0-f5a8fd1ac107@gmx.com>
+ <20230309093119.GB23816@lst.de>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+In-Reply-To: <20230309093119.GB23816@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:RRD8NmwZQtpfff9Bh0e4ejy7bLeXP6jjWlhay4ctYig9aFO9SnV
+ 4CIPfzNPfIiHV/aDti8B19mRe9mvBPDIoYzmOLafjHaXkH0Y56u548p4w6E8DrnotGv+UIB
+ yln9gNoRMNW2VNmdHBD2AU0uFuFt1tyCHYpfdnnw0OabmXnNRKtdDQFZ+cWd8olmw1T9O7i
+ K+8ODS0SjFKcdz6haFIGg==
+UI-OutboundReport: notjunk:1;M01:P0:nkm4I6UXIkU=;W5PwGMz7h+pyuNBX3fp7H5VKXJV
+ xKPMTc/+64gPjl801T4z9UfNhsIP87qjqRlLP6DqSJumRPRHuHKRVbC2eVpapZC75G2G5Eno3
+ RtJhBE1EEZVJQn2kJ1Me2SHHozb2Aiqu3uocb32uk7Ia4WhFw43nKRWKDuUD/Xv/+xZ5CW2Ad
+ 47jiCwWG1kTCCTwVCtr5P/9ggWWLd/BUm2ZzPFL+lNBlQ6U6fNLk83kBglQqH7OuT1KHbUTzu
+ KpGpymfTxHO3WmYI4I35fE3MlmThEu44Xos2ki3acBeGF5IbCmOfA79ateyP6UEhQ8enQkDSk
+ NQ3sFCQ3jowBS1WlpSG9eZW7bqwk9IN4x84SMAXWis4gCSyxKi5lRqnoiVfLuvdCiD88KUic1
+ IeA4pVkuURnVokQUQP57ADW7LAamLfcE1BeiM3poXOUTmplQFDche6MJjB2E8FiALYJtKqmdt
+ isAaL5r9bLExodDfayFOZqy4nboBJG4Vln6fRGSqiTOHdWUVYk8eKf3iCyc/Zx/DFLom2YmWL
+ WcH8tsSRYu2m1s4dlqWbEAoo6XXpu7O2pvbAV/aRHRA7kr5JmeUMjFqTDHL5OA58n0PSPh/oL
+ prl8aoSPlQvAZV8LpqLZFSCaS8bXT5aFbL/lrHC034O5yLcCHPTqIziVC/7q8ZvIiRWAwqb5d
+ aF+7cPhUTi5ujM1lLJ8lYcC5oF6Eha8xM6WYjoaNdJxhAR9OV24/rzxqbbKITnBq6mvuhpCIR
+ YwzfTnr0tn5VGsRfzonsNQFDVn20nIt+EECVmquOQ1HBhgU2ooadzwVxsZefi1HVzNrYWUnMm
+ o/7Mc2k91XBk6QCYhAgQWUSJNbyjCe++LdSByx6F26ea1umAOLEqefWlUbElnyAZZ1PW0NsdM
+ teO87EjYILsNdovkSI2aGlA4bFdb+CuaIMvisNR8MPb+SufsDgvIVF7sQgH7HKE0Qx8svrCy5
+ MxY5dl5NSbVsYrmLwfmKm/rYCSk=
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,FREEMAIL_FROM,
+        NICE_REPLY_A,RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 9, 2023 at 10:43=E2=80=AFAM Yangtao Li <frank.li@vivo.com> wrot=
-e:
-> Introduce i_blocksize_mask() to simplify code, which replace
-> (i_blocksize(node) - 1). Like done in commit
-> 93407472a21b("fs: add i_blocksize()").
 
-I would call this i_blockmask().
 
-Note that it could be used in ocfs2_is_io_unaligned() as well.
+On 2023/3/9 17:31, Christoph Hellwig wrote:
+> On Thu, Mar 09, 2023 at 08:08:34AM +0800, Qu Wenruo wrote:
+>> My current one is a new btrfs_submit_scrub_read() helper, getting rid of
+>> features I don't need and slightly modify the endio functions to avoid any
+>> checks if no bbio->inode. AKA, most of your idea.
+>>
+>> So that would be mostly fine.
+> 
+> This looks mostly ok to me.  I suspect in the longer run all metadata
+> I/O might be able to use this helper as well.
 
->
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  include/linux/fs.h | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c85916e9f7db..db335bd9c256 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -711,6 +711,11 @@ static inline unsigned int i_blocksize(const struct =
-inode *node)
->         return (1 << node->i_blkbits);
->  }
->
-> +static inline unsigned int i_blocksize_mask(const struct inode *node)
-> +{
-> +       return i_blocksize(node) - 1;
-> +}
-> +
->  static inline int inode_unhashed(struct inode *inode)
->  {
->         return hlist_unhashed(&inode->i_hash);
-> --
-> 2.25.1
->
+IMHO metadata would also go into the btrfs_check_read_bio().
+
+As for now, all the info for metadata verification is already integrated 
+into bbio, thus in the long run, the no-check path would be the exception.
+> 
+>> But for RAID56, the bioc has to live long enough for raid56 work to finish,
+>> thus has to go btrfs_raid56_end_io() and rely on the extra bbio->end_io().
+> 
+> The bioc lifetimes for RAID56 are a bit odd and one of the things I'd
+> love to eventually look into, but іt's not very high on the priority list
+> right now.
+
+If you have some good ideas, I'm very happy to try.
+
+My current idea is to dump a bioc for btrfs_raid_bio, so 
+btrfs_submit_bio() path can just free the bioc after usage, no need to wait.
+
+But not sure if this change would really cleanup the code, thus it would 
+still be very low on priority.
 
 Thanks,
-Andreas
-
+Qu
