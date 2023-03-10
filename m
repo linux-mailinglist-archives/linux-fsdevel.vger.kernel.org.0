@@ -2,129 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 845E36B37ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 08:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B7F26B37F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 09:02:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbjCJH7i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 02:59:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42200 "EHLO
+        id S230132AbjCJICh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 03:02:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229761AbjCJH7f (ORCPT
+        with ESMTP id S229817AbjCJICf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 02:59:35 -0500
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96806E1923
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Mar 2023 23:59:33 -0800 (PST)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230310075930euoutp01cc89b599aa434ea0f1a125b1eec5ab29~K-_UN2UAW1047410474euoutp01a
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Mar 2023 07:59:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230310075930euoutp01cc89b599aa434ea0f1a125b1eec5ab29~K-_UN2UAW1047410474euoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1678435170;
-        bh=PimTtV2xHIocHqP2C+En+WnmhKxhh5/j7Aded0ia+kU=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=SHMtnsauZtuZy7eARn+dgLJ19MXzT0UwfR5HtREwtRIhNNuKt7WKSY7NlEiWli1Oa
-         l6bPN4YbTnfcMaG0woEsMYKspTn1T/ek8afIzbRDJRLAQkYY2sQW17zr3u/M8IdLFG
-         CFCpKgNDUto0dGuoIoFSFkDRO5DapC6hosB2PgWg=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230310075930eucas1p16d3608cbea90732ba9c3387ace884cbf~K-_T_7dH41088410884eucas1p1A;
-        Fri, 10 Mar 2023 07:59:30 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 70.F0.09503.263EA046; Fri, 10
-        Mar 2023 07:59:30 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230310075929eucas1p1063b67e2f0f2d37e4ab75b16b8cf19d5~K-_TpDcqu1087110871eucas1p15;
-        Fri, 10 Mar 2023 07:59:29 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230310075929eusmtrp181b7c3da465b447c055e25d0be4afea0~K-_Tob8dA3126731267eusmtrp1j;
-        Fri, 10 Mar 2023 07:59:29 +0000 (GMT)
-X-AuditID: cbfec7f2-e8fff7000000251f-b8-640ae362ed3c
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E5.A0.09583.163EA046; Fri, 10
-        Mar 2023 07:59:29 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230310075929eusmtip1b52b89013e48dc68c336ce29feecca38~K-_TdcQgG1058610586eusmtip1x;
-        Fri, 10 Mar 2023 07:59:29 +0000 (GMT)
-Received: from localhost (106.110.32.122) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 10 Mar 2023 07:59:28 +0000
-Date:   Fri, 10 Mar 2023 08:59:28 +0100
-From:   Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>, Hannes Reinecke <hare@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Keith Busch <kbusch@kernel.org>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        Daniel Gomez <da.gomez@samsung.com>,
-        <lsf-pc@lists.linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-block@vger.kernel.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Cloud storage optimizations
-Message-ID: <20230310075928.zcuiep3f2vpxbfdo@ArmHalley.local>
+        Fri, 10 Mar 2023 03:02:35 -0500
+X-Greylist: delayed 12643 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 10 Mar 2023 00:02:33 PST
+Received: from out-20.mta0.migadu.com (out-20.mta0.migadu.com [91.218.175.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 792FEEA02D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Mar 2023 00:02:33 -0800 (PST)
+Date:   Fri, 10 Mar 2023 17:02:22 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1678435350;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xp9xWG2NFzHRjHc+BoxHoDF//7nBHv8YZ/vDhrkzT3k=;
+        b=gnuNkIfwv5KCUPFp3S4GvQnGUzgD/Q0gbKJl7O/oEP7X9OOGsjwy09oogkcynWjzL9kIkt
+        eCnsByz9QC1zPQ/K+cuDRKxq2r1yUZLqCgR6nAn0RBmDQ4FgFAzDKXLENqZ6PKA28Ib6J5
+        9dcgtjrsHhjBzKoNqambYF7gtRvrZ+Q=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Naoya Horiguchi <naoya.horiguchi@linux.dev>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Hugh Dickins <hughd@google.com>, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, naoya.horiguchi@nec.com
+Subject: Re: [PATCH 7/7] mm: return an ERR_PTR from __filemap_get_folio
+Message-ID: <20230310080222.GA1659148@u2004>
+References: <20230121065755.1140136-1-hch@lst.de>
+ <20230121065755.1140136-8-hch@lst.de>
+ <20230310043137.GA1624890@u2004>
+ <20230310070023.GA13563@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <260064c68b61f4a7bc49f09499e1c107e2a28f31.camel@HansenPartnership.com>
-X-Originating-IP: [106.110.32.122]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djP87pJj7lSDNp2sljsWTSJyWJjP4fF
-        pEPXGC323tK22LP3JIvFvTX/WS32vd7LbHFjwlNGi9aen+wWv3/MYXPg8pg26RSbx+YVWh6b
-        VnWyeWz6NIndY/KN5YweTWeOMntsPl3t8XmTXABHFJdNSmpOZllqkb5dAlfGhQkfmQqeKVZM
-        7P3I0sD4XqqLkZNDQsBE4ta0DrYuRi4OIYEVjBK9K4+zQjhfGCWurDkJ5XxmlNjf9pUZpmXl
-        kkfMEInljBJf3zUxwlU1H3sONWwLo8S/F91MIC0sAqoSTy6uYwOx2QTsJS4tuwU2SkTAWuLL
-        qgVg3cwC/5gk9nxsYgVJCAMlNs3awwhi8wrYSnx8tpYZwhaUODnzCQuIzSxgJdH5AaSeA8iW
-        llj+jwMiLC/RvHU2M0iYUyBYYl1LLsTVShKPX7xlhLBrJU5tucUEslZCYDanxOmfK5kgEi4S
-        L28cY4OwhSVeHd/CDmHLSJye3MMCYWdLXDzTDQ2KEonF74+B7ZIAOrnvTA5E2FHia+8TJogw
-        n8SNt4IQl/FJTNo2HaqaV6KjTWgCo8osJG/NQvLWLIS3ZiF5awEjyypG8dTS4tz01GLDvNRy
-        veLE3OLSvHS95PzcTYzAtHX63/FPOxjnvvqod4iRiYPxEKMEB7OSCO93KY4UId6UxMqq1KL8
-        +KLSnNTiQ4zSHCxK4rzatieThQTSE0tSs1NTC1KLYLJMHJxSDUyL6vL3fN1wmOtmtvuahOm+
-        J1Jipj968pwx/U2AY+mzKwIP9r0+37Tpm+2GtT8jK/0bmnYVV/bO9ws+JBzLZpibdvlj0YvA
-        DcL9v9a4WZquChTIyc++r1A3dY2y0+0lHHMu7f85YXGSleW+ioib55PPMbcKbvz7dnbGFoUn
-        sqIb7NtilHcefx6wa06C1pFiPetPun7cCdrWdvfcbyys1D7uutXonPIrxpYHtfpWK1cseX33
-        QKTP9Hkf1bbKzmP0Ubr57sqFZ1PO8/5TWLGE99ZiZp3yuO1X5d9nnnMVvt9auazsXGwBpym3
-        fgqj2XaTK3EOU/36cyed8z94g/ei3ilW/VWhgt3vTnjd1tAQaTurxFKckWioxVxUnAgA7418
-        2soDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEIsWRmVeSWpSXmKPExsVy+t/xu7qJj7lSDM5s17LYs2gSk8XGfg6L
-        SYeuMVrsvaVtsWfvSRaLe2v+s1rse72X2eLGhKeMFq09P9ktfv+Yw+bA5TFt0ik2j80rtDw2
-        repk89j0aRK7x+Qbyxk9ms4cZfbYfLra4/MmuQCOKD2bovzSklSFjPziElulaEMLIz1DSws9
-        IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MCxM+MhU8U6yY2PuRpYHxvVQXIyeHhICJxMol
-        j5i7GLk4hASWMkrcPnaaGSIhI/Hpykd2CFtY4s+1LjaIoo+MEtM6OlghnC2MEuuPnADrYBFQ
-        lXhycR0biM0mYC9xadktsLiIgLXEl1ULGEEamAX+MUks33mJFSQhDJTYNGsPI4jNK2Ar8fHZ
-        Wqg7lrNIXDn0lgUiIShxcuYTMJtZwEJi5vzzQA0cQLa0xPJ/HBBheYnmrbOZQcKcAsES61py
-        Ia5Wknj84i0jhF0r8fnvM8YJjCKzkAydhWToLIShs5AMXcDIsopRJLW0ODc9t9hIrzgxt7g0
-        L10vOT93EyMwsrcd+7llB+PKVx/1DjEycTAeYpTgYFYS4f0uxZEixJuSWFmVWpQfX1Sak1p8
-        iNEUGEQTmaVEk/OBqSWvJN7QzMDU0MTM0sDU0sxYSZzXs6AjUUggPbEkNTs1tSC1CKaPiYNT
-        qoGpk+UNa+2sTgcf1+enO0/f022fUMrIq5IzS7u+596EP2wC3J4F2ydOD+5dlfEsZP6vBz5M
-        N5jMP1S92yW+3Oid+JRZxhonm3fwS8s6ZzY7CnUGsfw6aVtweBfv1t3p7zT6zTUY0368dJ1v
-        tVPoaPbfHlHzsxqnbqUnfDpw4GZy11vz/S1qS/fZZSmenyK01TQ6avPbT1OZ/PLWNbKHhkSr
-        hjtyZ4t+r7TXnOSe4fLaVWX6jCzm2xPeVRd1Wtg/sK5+Z/bzxMIfF2RnLpvWo/w96uellZx6
-        JQu4+aOacg+d4jrZ0TpDLU8+9dOLFuOzVxev3LRLft+7qGpl3ZP6s2MPemzt+vlO5LAq1ySf
-        f15KLMUZiYZazEXFiQALT+uKdQMAAA==
-X-CMS-MailID: 20230310075929eucas1p1063b67e2f0f2d37e4ab75b16b8cf19d5
-X-Msg-Generator: CA
-X-RootMTR: 20230308181355eucas1p1c94ffee59e210fb762540c888e8eae8a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230308181355eucas1p1c94ffee59e210fb762540c888e8eae8a
-References: <edac909b-98e5-cb6d-bb80-2f6a20a15029@suse.de>
-        <ZAOF3p+vqA6pd7px@casper.infradead.org>
-        <0b70deae-9fc7-ca33-5737-85d7532b3d33@suse.de>
-        <ZAWi5KwrsYL+0Uru@casper.infradead.org> <20230306161214.GB959362@mit.edu>
-        <ZAjLhkfRqwQ+vkHI@casper.infradead.org>
-        <CGME20230308181355eucas1p1c94ffee59e210fb762540c888e8eae8a@eucas1p1.samsung.com>
-        <1367983d4fa09dcb63e29db2e8be3030ae6f6e8c.camel@HansenPartnership.com>
-        <20230309080434.tnr33rhzh3a5yc5q@ArmHalley.local>
-        <260064c68b61f4a7bc49f09499e1c107e2a28f31.camel@HansenPartnership.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+In-Reply-To: <20230310070023.GA13563@lst.de>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
         URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -132,90 +56,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 09.03.2023 08:11, James Bottomley wrote:
->On Thu, 2023-03-09 at 09:04 +0100, Javier González wrote:
->> On 08.03.2023 13:13, James Bottomley wrote:
->> > On Wed, 2023-03-08 at 17:53 +0000, Matthew Wilcox wrote:
->> > > On Mon, Mar 06, 2023 at 11:12:14AM -0500, Theodore Ts'o wrote:
->> > > > What HDD vendors want is to be able to have 32k or even 64k
->> > > > *physical* sector sizes.  This allows for much more efficient
->> > > > erasure codes, so it will increase their byte capacity now that
->> > > > it's no longer easier to get capacity boosts by squeezing the
->> > > > tracks closer and closer, and their have been various
->> > > > engineering tradeoffs with SMR, HAMR, and MAMR.  HDD vendors
->> > > > have been asking for this at LSF/MM, and in othervenues for
->> > > > ***years***.
->> > >
->> > > I've been reminded by a friend who works on the drive side that a
->> > > motivation for the SSD vendors is (essentially) the size of
->> > > sector_t. Once the drive needs to support more than 2/4 billion
->> > > sectors, they need to move to a 64-bit sector size, so the amount
->> > > of memory consumed by the FTL doubles, the CPU data cache becomes
->> > > half as effective, etc. That significantly increases the BOM for
->> > > the drive, and so they have to charge more.  With a 512-byte LBA,
->> > > that's 2TB; with a 4096-byte LBA, it's at 16TB and with a 64k
->> > > LBA, they can keep using 32-bit LBA numbers all the way up to
->> > > 256TB.
->> >
->> > I thought the FTL operated on physical sectors and the logical to
->> > physical was done as a RMW through the FTL?  In which case sector_t
->> > shouldn't matter to the SSD vendors for FTL management because they
->> > can keep the logical sector size while increasing the physical one.
->> > Obviously if physical size goes above the FS block size, the drives
->> > will behave suboptimally with RMWs, which is why 4k physical is the
->> > max currently.
->> >
->>
->> FTL designs are complex. We have ways to maintain sector sizes under
->> 64 bits, but this is a common industry problem.
->>
->> The media itself does not normally oeprate at 4K. Page siges can be
->> 16K, 32K, etc.
->
->Right, and we've always said if we knew what this size was we could
->make better block write decisions.  However, today if you look what
->most NVMe devices are reporting, it's a bit sub-optimal:
->
->jejb@lingrow:/sys/block/nvme1n1/queue> cat logical_block_size
->512
->jejb@lingrow:/sys/block/nvme1n1/queue> cat physical_block_size
->512
->jejb@lingrow:/sys/block/nvme1n1/queue> cat optimal_io_size
->0
->
->If we do get Linux to support large block sizes, are we actually going
->to get better information out of the devices?
+On Fri, Mar 10, 2023 at 08:00:23AM +0100, Christoph Hellwig wrote:
+> On Fri, Mar 10, 2023 at 01:31:37PM +0900, Naoya Horiguchi wrote:
+> > On Sat, Jan 21, 2023 at 07:57:55AM +0100, Christoph Hellwig wrote:
+> > > Instead of returning NULL for all errors, distinguish between:
+> > > 
+> > >  - no entry found and not asked to allocated (-ENOENT)
+> > >  - failed to allocate memory (-ENOMEM)
+> > >  - would block (-EAGAIN)
+> > > 
+> > > so that callers don't have to guess the error based on the passed
+> > > in flags.
+> > > 
+> > > Also pass through the error through the direct callers:
+> > > filemap_get_folio, filemap_lock_folio filemap_grab_folio
+> > > and filemap_get_incore_folio.
+> > > 
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > 
+> > Hello,
+> > 
+> > I found a NULL pointer dereference issue related to this patch,
+> > so let me share it.
+> > 
+> > Here is the bug message (I used akpm/mm-unstable on Mar 9):
+> > 
+> > [ 2871.648659] BUG: kernel NULL pointer dereference, address: 0000000000000000
+> > [ 2871.651286] #PF: supervisor read access in kernel mode
+> > [ 2871.653231] #PF: error_code(0x0000) - not-present page
+> > [ 2871.655170] PGD 80000001517dd067 P4D 80000001517dd067 PUD 1491d1067 PMD 0
+> > [ 2871.657739] Oops: 0000 [#1] PREEMPT SMP PTI
+> > [ 2871.659329] CPU: 4 PID: 1599 Comm: page-types Tainted: G            E    N 6.3.0-rc1-v6.3-rc1-230309-1629-189-ga71a7+ #36
+> > [ 2871.663362] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.1-2.fc37 04/01/2014
+> > [ 2871.666507] RIP: 0010:mincore_page+0x19/0x90
+> > [ 2871.668086] Code: cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 41 54 55 53 e8 92 2b 03 00 48 3d 00 f0 ff ff 77 54 48 89 c3 <48> 8b 00 48 c1 e8 02 89 c5 83 e5 01 75 21 8b 43 34 85 c0 74 47 f0
+> > [ 2871.678313] RSP: 0018:ffffbe57c203fd00 EFLAGS: 00010207
+> > [ 2871.681422] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> > [ 2871.685609] RDX: 0000000000000000 RSI: ffff9f59ca1506d8 RDI: ffff9f59ce7c2880
+> > [ 2871.689599] RBP: 0000000000000000 R08: 00007f9f14200000 R09: ffff9f59c9078508
+> > [ 2871.693295] R10: 00007f9ed4400000 R11: 0000000000000000 R12: 0000000000000200
+> > [ 2871.695969] R13: 0000000000000001 R14: ffff9f59c9ef4450 R15: ffff9f59c4ac9000
+> > [ 2871.699927] FS:  00007f9ed47ee740(0000) GS:ffff9f5abbc00000(0000) knlGS:0000000000000000
+> > [ 2871.703969] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [ 2871.706689] CR2: 0000000000000000 CR3: 0000000149ffe006 CR4: 0000000000170ee0
+> > [ 2871.709923] DR0: ffffffff91531760 DR1: ffffffff91531761 DR2: ffffffff91531762
+> > [ 2871.713424] DR3: ffffffff91531763 DR6: 00000000ffff0ff0 DR7: 0000000000000600
+> > [ 2871.716758] Call Trace:
+> > [ 2871.717998]  <TASK>
+> > [ 2871.719008]  __mincore_unmapped_range+0x6e/0xd0
+> > [ 2871.721220]  mincore_unmapped_range+0x16/0x30
+> > [ 2871.723288]  walk_pgd_range+0x485/0x9e0
+> > [ 2871.725128]  __walk_page_range+0x195/0x1b0
+> > [ 2871.727224]  walk_page_range+0x151/0x180
+> > [ 2871.728883]  __do_sys_mincore+0xec/0x2b0
+> > [ 2871.730707]  do_syscall_64+0x3a/0x90
+> > [ 2871.732179]  entry_SYSCALL_64_after_hwframe+0x72/0xdc
+> > [ 2871.734148] RIP: 0033:0x7f9ed443f4ab
+> > [ 2871.735548] Code: 73 01 c3 48 8b 0d 75 99 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 1b 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 45 99 1b 00 f7 d8 64 89 01 48
+> > [ 2871.742194] RSP: 002b:00007ffe924d72b8 EFLAGS: 00000206 ORIG_RAX: 000000000000001b
+> > [ 2871.744787] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9ed443f4ab
+> > [ 2871.747186] RDX: 00007ffe92557300 RSI: 0000000000200000 RDI: 00007f9ed4200000
+> > [ 2871.749404] RBP: 00007ffe92567330 R08: 0000000000000005 R09: 0000000000000000
+> > [ 2871.751683] R10: 00007f9ed4405d68 R11: 0000000000000206 R12: 00007ffe925674b8
+> > [ 2871.753925] R13: 0000000000404af1 R14: 000000000040ad78 R15: 00007f9ed4833000
+> > [ 2871.756493]  </TASK>
+> > 
+> > The precedure to reproduce this is (1) punch hole some page in a shmem
+> > file, then (2) call mincore() over the punch-holed address range. 
+> > 
+> > I confirmed that filemap_get_incore_folio() (actually filemap_get_entry()
+> > inside it) returns NULL in that case, so we unexpectedly enter the following
+> > if-block for the "not found" case.
+> 
+> Yes.  Please try this fix:
+> 
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index c7160070b9daa9..b76a65ac28b319 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -390,6 +390,8 @@ struct folio *filemap_get_incore_folio(struct address_space *mapping,
+>  	struct swap_info_struct *si;
+>  	struct folio *folio = filemap_get_entry(mapping, index);
+>  
+> +	if (!folio)
+> +		return ERR_PTR(-ENOENT);
+>  	if (!xa_is_value(folio))
+>  		return folio;
+>  	if (!shmem_mapping(mapping))
 
-We already have this through the NVMe Optimal Performance parameters
-(see Dan's response for this). Note that these values are already
-implemented in the kernel. If I recall properly, Bart was the one doing
-this work.
+Confirmed the fix, thank you very much!
 
-More over, from the vendor side, it is a challenge to expose larger LBAs
-without wide support in OSs. I am confident that if we are pushing for
-this work and we see it fits existing FSs, we will see vendors exposing
-new LBA formats in the beginning (same as we have 512b and 4K in the
-same drive), and eventually focusing only on larger LBA sizes.
-
->
->>  Increasing the block size would allow for better host/device
->> cooperation. As Ted mentions, this has been a requirement for HDD and
->> SSD vendor for years. It seems to us that the time is right now and
->> that we have mechanisms in Linux to do the plumbing. Folios is
->> ovbiously a big part of this.
->
->Well a decade ago we did a lot of work to support 4k sector devices.
->Ultimately the industry went with 512 logical/4k physical devices
->because of problems with non-Linux proprietary OSs but you could still
->use 4k today if you wanted (I've actually still got a working 4k SCSI
->drive), so why is no NVMe device doing that?
-
-Most NVMe devices report 4K today. Actually 512b is mostly an
-optimization targeted at read-heavy workloads.
-
->
->This is not to say I think larger block sizes is in any way a bad idea
->... I just think that given the history, it will be driven by
->application needs rather than what the manufacturers tell us.
-
-I see more and more that this deserves a session at LSF/MM
+- Naoya Horiguchi
