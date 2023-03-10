@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B49256B54EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 23:58:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 306C76B54F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 23:58:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231539AbjCJW6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 17:58:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44858 "EHLO
+        id S231580AbjCJW6y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 17:58:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230293AbjCJW6u (ORCPT
+        with ESMTP id S230427AbjCJW6u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 10 Mar 2023 17:58:50 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C3911ABBE;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E1E711AC81;
         Fri, 10 Mar 2023 14:58:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=G6+Cn89Ag9qW4eqhjNdBjQ8YmvxCStNR3LV0by4fV3k=; b=zZ1WSST/cH7QUvz9Ds/P3tCfmS
-        aXovpVr04NxN011cTjexoffPvMNsDAXeLnFb2ESZvEGwTDiRDMnKB+i1OGzvwTvRfgbPbgAmTQTiw
-        a4aNFYjBGKYWs8dhy7emo/sUV+6x4/gPDECYnG1LoSX7bD+tzc4cMnxYOljDC8yG534hFNSonbZla
-        mbJriUQ9wxbcTg1zq4NYNaJorwtPTzysGbGmvEZ8tNJj4P2EyLyz4PSGkvq6HiQfIUwt1x1Rks9Wn
-        RTYa2BK4EsqM7uLDUMTJn4Msv0ghJNfq8pOwKPSohOS9vNKyaMrBjqShQtALB64KNaJ7oUqIep6W5
-        upTCPD7w==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=CI7wUFe4HoAyZSn/G8BSxZXCldpIdIVkdFkiT2hi/YU=; b=oK2etHUPnlp7nBlLvwy1fUlUbE
+        RfZnxL7Hi7ugHjVsrcBw1aSuS47Oascs0KpARm4hgfQxeUZVE+HcH8VVjNGNeY/TjH5zt6yu0tHaw
+        8QvI2iwH+Q3C2JLyxFjDdpJTLpM2OJqOimtPjgmGZ+Yaz+KFickUNLcK4ba4k/o8jfja1TZap1RyJ
+        qVP1HJpnN4aoMCdC9IBD+AlJP6uVPzpz37E4T8W62Bm1nwmH8GHbatJMXeCPY8wNgE2XVs0MnBZPP
+        fc8rrbo0lH3hnZk5rfrM1JqJj0g1EI2283iB7qxRkQEyBYOXpmPiDjnzTOqtNEzXlb2i9/976dKpY
+        JHGUih8Q==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1palhD-00GYlR-2Z; Fri, 10 Mar 2023 22:58:43 +0000
+        id 1palhD-00GYlT-3q; Fri, 10 Mar 2023 22:58:43 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     chuck.lever@oracle.com, jlayton@kernel.org,
         trond.myklebust@hammerspace.com, anna@kernel.org,
@@ -35,10 +35,12 @@ Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
         j.granados@samsung.com, patches@lists.linux.dev,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: nfs/lockd: simplify sysctl registration
-Date:   Fri, 10 Mar 2023 14:58:39 -0800
-Message-Id: <20230310225842.3946871-1-mcgrof@kernel.org>
+Subject: [PATCH 1/3] lockd: simplify two-level sysctl registration for nlm_sysctls
+Date:   Fri, 10 Mar 2023 14:58:40 -0800
+Message-Id: <20230310225842.3946871-2-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20230310225842.3946871-1-mcgrof@kernel.org>
+References: <20230310225842.3946871-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
@@ -52,27 +54,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is just following the work of the same sysctl registration [0] I
-just emailed you patches for sunprc but for nfs and lockd.
+There is no need to declare two tables to just create directories,
+this can be easily be done with a prefix path with register_sysctl().
 
-Feel free to pick up or let me know if you want me to take them through
-my tree. I haven't even finished compile testing all these yet, but they
-are pretty trivial.
+Simplify this registration.
 
-I'm just dropping netdev on this series as its purely nfs/lockd stuff.
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ fs/lockd/svc.c | 20 +-------------------
+ 1 file changed, 1 insertion(+), 19 deletions(-)
 
-[0] https://lkml.kernel.org/r/20230310225236.3939443-1-mcgrof@kernel.org
-
-Luis Chamberlain (3):
-  lockd: simplify two-level sysctl registration for nlm_sysctls
-  nfs: simplify two-level sysctl registration for nfs4_cb_sysctls
-  nfs: simplify two-level sysctl registration for nfs_cb_sysctls
-
- fs/lockd/svc.c      | 20 +-------------------
- fs/nfs/nfs4sysctl.c | 21 ++-------------------
- fs/nfs/sysctl.c     | 20 +-------------------
- 3 files changed, 4 insertions(+), 57 deletions(-)
-
+diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
+index 914ea1c3537d..5bca33758bc8 100644
+--- a/fs/lockd/svc.c
++++ b/fs/lockd/svc.c
+@@ -510,24 +510,6 @@ static struct ctl_table nlm_sysctls[] = {
+ 	{ }
+ };
+ 
+-static struct ctl_table nlm_sysctl_dir[] = {
+-	{
+-		.procname	= "nfs",
+-		.mode		= 0555,
+-		.child		= nlm_sysctls,
+-	},
+-	{ }
+-};
+-
+-static struct ctl_table nlm_sysctl_root[] = {
+-	{
+-		.procname	= "fs",
+-		.mode		= 0555,
+-		.child		= nlm_sysctl_dir,
+-	},
+-	{ }
+-};
+-
+ #endif	/* CONFIG_SYSCTL */
+ 
+ /*
+@@ -644,7 +626,7 @@ static int __init init_nlm(void)
+ 
+ #ifdef CONFIG_SYSCTL
+ 	err = -ENOMEM;
+-	nlm_sysctl_table = register_sysctl_table(nlm_sysctl_root);
++	nlm_sysctl_table = register_sysctl("fs/nfs", nlm_sysctls);
+ 	if (nlm_sysctl_table == NULL)
+ 		goto err_sysctl;
+ #endif
 -- 
 2.39.1
 
