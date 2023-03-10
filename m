@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E9236B5592
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:24:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EC416B559B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:29:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231733AbjCJXYe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 18:24:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53182 "EHLO
+        id S231733AbjCJX3Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 18:29:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231952AbjCJXYS (ORCPT
+        with ESMTP id S231404AbjCJX3L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 18:24:18 -0500
+        Fri, 10 Mar 2023 18:29:11 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 047685CECC;
-        Fri, 10 Mar 2023 15:24:17 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5779E12C822;
+        Fri, 10 Mar 2023 15:29:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
         Content-ID:Content-Description:In-Reply-To:References;
-        bh=n3ibBOSHwLtyYWSPz4byfz4X1HpWIu7EDA2VdrWLfGg=; b=oY5BhI0UKiQJz+oVu3mMg8gY7t
-        zqnqSgmo9/fkhKmgDQNJSot1ASq8dmZpKF3mHqTbtmtmRukQ/tB7GS1fAluaTbQfhd4TOlTqMapR5
-        PPp1v2kxfb5Tqdx3/FAIg9O3eYr8KFWck+wdleTjGP4Dfsym9ZsKEUpRKs19Cz2nigJ8ilbF+zrIC
-        /ZzQ3KQ2Ih8LAvctLYJv4LfZUEpXXms0Lmu3Wix/wtbK5SmHjF8VFe4zBfvTuQcL1dZWHikG+huRl
-        yp5D0i3FpTXu5kH5iMkVSi4ZOoRVeNxM4PhFF7utzvjjCUfJkKJVAfmVtesXWAtp2oqeOqc99R+U9
-        Sc/kDHhw==;
+        bh=vxh+5loJXr3QOkEBXraKRrSEsoLxyjcuI0B+WEdhvrc=; b=ICn+4H1Gid6ISIQtmA0dRRbsb8
+        TA5WsB7AvOCX+EZG9pAFvNij/xCRcRVffQ8DW1eKISqZhVdSweKez4Ce4x6bNBbtzrxAb3g/QEuQY
+        Tgr2QdR77Rqua6uRpaqyFTZqzSdIsVTrMeEb8BmWcxEHuLzpriCVgZUTuzips3XFyZibgMPeH/JJG
+        7AHXtJJ84yqwS7cGnh2ZAZre7hmo0fkKTYShqUS1WzB3bJkjmaooFmGGSreXLsWcb5IK6592fhuCN
+        NLUCBWdbzyfO99+sFR9jKYhNMMC+dlHEnIFt5rF3WEDeMKkGshOoxh1DZjxsHRCEEpSrV6uM7y73S
+        ls83Dbxw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pam5w-00Gbr0-MM; Fri, 10 Mar 2023 23:24:16 +0000
+        id 1pamAN-00GcM6-0Y; Fri, 10 Mar 2023 23:28:51 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     linux-ia64@vger.kernel.org
+To:     mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu
 Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
         j.granados@samsung.com, patches@lists.linux.dev,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH] ia64: simplify one-level sysctl registration for kdump_ctl_table
-Date:   Fri, 10 Mar 2023 15:24:16 -0800
-Message-Id: <20230310232416.3958751-1-mcgrof@kernel.org>
+        linuxppc-dev@lists.ozlabs.org, Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH 0/2] ppc: simplify sysctl registration
+Date:   Fri, 10 Mar 2023 15:28:48 -0800
+Message-Id: <20230310232850.3960676-1-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,49 +50,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is no need to declare an extra tables to just create directory,
-this can be easily be done with a prefix path with register_sysctl().
+We can simplify the way we do sysctl registration both by
+reducing the number of lines and also avoiding calllers which
+could do recursion. The docs are being updated to help reflect
+this better [0].
 
-Simplify this registration.
+[0] https://lore.kernel.org/all/20230310223947.3917711-1-mcgrof@kernel.org/T/#u     
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
+Luis Chamberlain (2):
+  ppc: simplify one-level sysctl registration for
+    powersave_nap_ctl_table
+  ppc: simplify one-level sysctl registration for
+    nmi_wd_lpm_factor_ctl_table
 
-If ia64 is not removed from the kernel feel free to take this or I can
-take it through sysctl-next.
+ arch/powerpc/kernel/idle.c                | 10 +---------
+ arch/powerpc/platforms/pseries/mobility.c | 10 +---------
+ 2 files changed, 2 insertions(+), 18 deletions(-)
 
- arch/ia64/kernel/crash.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
-
-diff --git a/arch/ia64/kernel/crash.c b/arch/ia64/kernel/crash.c
-index 76730f34685c..88b3ce3e66cd 100644
---- a/arch/ia64/kernel/crash.c
-+++ b/arch/ia64/kernel/crash.c
-@@ -234,15 +234,6 @@ static struct ctl_table kdump_ctl_table[] = {
- 	},
- 	{ }
- };
--
--static struct ctl_table sys_table[] = {
--	{
--	  .procname = "kernel",
--	  .mode = 0555,
--	  .child = kdump_ctl_table,
--	},
--	{ }
--};
- #endif
- 
- static int
-@@ -257,7 +248,7 @@ machine_crash_setup(void)
- 	if((ret = register_die_notifier(&kdump_init_notifier_nb)) != 0)
- 		return ret;
- #ifdef CONFIG_SYSCTL
--	register_sysctl_table(sys_table);
-+	register_sysctl("kernel", kdump_ctl_table);
- #endif
- 	return 0;
- }
 -- 
 2.39.1
 
