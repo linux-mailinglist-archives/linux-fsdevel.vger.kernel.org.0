@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A63F6B5568
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:17:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADC136B5587
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:22:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230444AbjCJXRd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 18:17:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42082 "EHLO
+        id S231803AbjCJXWJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 18:22:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230085AbjCJXRK (ORCPT
+        with ESMTP id S231618AbjCJXWA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 18:17:10 -0500
+        Fri, 10 Mar 2023 18:22:00 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25AB1DBF9;
-        Fri, 10 Mar 2023 15:17:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 239A5115656;
+        Fri, 10 Mar 2023 15:21:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
         Content-ID:Content-Description:In-Reply-To:References;
-        bh=pgG6wYlLqJqvOJPF09LlwBdJHikie1Bdz5Z0msFQ56w=; b=TkhZQ2cn7q9bRC5SaYpuPU/sGh
-        xEaOEmXy+0FpiXlLGjGcIbaxqiMxVQidMvumKg3n2TynZ3ZrSduuLIced1VHPCaYbbzqihJRv3foY
-        oeLwO/0oLXTpdPsahHbMorMbWfGRHqN5bpN72J/qRsrCO4wYsgp/aGVdAiu5lcoDIOxQ5G3AHoWEy
-        mXE852Anb7wm0aaiBirm7KOVdJYo1cY/BpWVrOkp4v4F25COfBsQb9xUH3kX2l0ScmCnSYcHqOkDH
-        KE+rIsMUlk9qZYM/y++Cyc4lv7ipARhlgSfusrravVsNnwmEInWIrsph01SN/Cy/ppaOcB6HgIKoZ
-        rZFNY/JQ==;
+        bh=Vl75lOivwxRd2Gq7JNUD53sjLJaqgVHzQJHDdO+38Jc=; b=fSLTvqIpq4dw1JrHrXBJ7039LX
+        4ywebvj4dFbVA3TjRRJuPgWV9StjK8zXQ+a33IdDsS2fX/Q4QMGirL1WDRqizNZaVxL5GOW/eEKcH
+        knTkNc3fPmnsodNzCJSQadU7ceRhoWNXvAXAs42kFHGQFUWyqoveZ9fBzX/NNfX8HVOjxC8jM3sha
+        Fh4x1QLHlaygVz3C8Z86xLsrXpJTorZ9XEO5EPD694G1HxD2WxvbNUGi6mI9cGTPiwWzuF97RmKfc
+        dOJl8U0pKM/8OMtSaGldSYx7rtCmXJF6/pjxFkUfmKc4VNxBgosIrj9LkAOyJaDzbbf5sArUfdQ7w
+        taZI1tcQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1palyr-00GatI-5f; Fri, 10 Mar 2023 23:16:57 +0000
+        id 1pam3b-00GbRI-Jz; Fri, 10 Mar 2023 23:21:51 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     pvorel@suse.cz, akpm@linux-foundation.org,
-        gregkh@linuxfoundation.org, keescook@chromium.org, Jason@zx2c4.com
-Cc:     ebiederm@xmission.com, yzaikin@google.com, j.granados@samsung.com,
+To:     herbert@gondor.apana.org.au, davem@davemloft.net
+Cc:     ebiederm@xmission.com, linux-crypto@vger.kernel.org,
+        keescook@chromium.org, yzaikin@google.com, j.granados@samsung.com,
         patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH] utsname: simplify one-level sysctl registration for uts_kern_table
-Date:   Fri, 10 Mar 2023 15:16:56 -0800
-Message-Id: <20230310231656.3955051-1-mcgrof@kernel.org>
+Subject: [PATCH] crypto: simplify one-level sysctl registration for crypto_sysctl_table
+Date:   Fri, 10 Mar 2023 15:21:50 -0800
+Message-Id: <20230310232150.3957148-1-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,48 +58,42 @@ Simplify this registration.
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
 
-This is part of the effort to phase out calls that can recurse from
-sysctl registration [0]. If you have a tree to take this in feel free
-to take it, or I can take it too through sysclt-next. Let me know!
+If not clear, see this new doc:
 
-This file has no explicit maintainer, so I assume there is no tree.
+https://lore.kernel.org/all/20230310223947.3917711-1-mcgrof@kernel.org/T/#u     
 
-If I so no one taking it I can take in as part of sysctl-next later.
+But the skinny is we can deprecate long term APIs from sysctl that
+uses recursion.
 
-[0] https://lore.kernel.org/all/20230310223947.3917711-1-mcgrof@kernel.org/T/#u
-
- kernel/utsname_sysctl.c | 11 +----------
+ crypto/fips.c | 11 +----------
  1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/kernel/utsname_sysctl.c b/kernel/utsname_sysctl.c
-index f50398cb790d..019e3a1566cf 100644
---- a/kernel/utsname_sysctl.c
-+++ b/kernel/utsname_sysctl.c
-@@ -123,15 +123,6 @@ static struct ctl_table uts_kern_table[] = {
+diff --git a/crypto/fips.c b/crypto/fips.c
+index b05d3c7b3ca5..92fd506abb21 100644
+--- a/crypto/fips.c
++++ b/crypto/fips.c
+@@ -66,20 +66,11 @@ static struct ctl_table crypto_sysctl_table[] = {
  	{}
  };
  
--static struct ctl_table uts_root_table[] = {
+-static struct ctl_table crypto_dir_table[] = {
 -	{
--		.procname	= "kernel",
--		.mode		= 0555,
--		.child		= uts_kern_table,
+-		.procname       = "crypto",
+-		.mode           = 0555,
+-		.child          = crypto_sysctl_table
 -	},
 -	{}
 -};
 -
- #ifdef CONFIG_PROC_SYSCTL
- /*
-  * Notify userspace about a change in a certain entry of uts_kern_table,
-@@ -147,7 +138,7 @@ void uts_proc_notify(enum uts_proc proc)
+ static struct ctl_table_header *crypto_sysctls;
  
- static int __init utsname_sysctl_init(void)
+ static void crypto_proc_fips_init(void)
  {
--	register_sysctl_table(uts_root_table);
-+	register_sysctl("kernel", uts_kern_table);
- 	return 0;
+-	crypto_sysctls = register_sysctl_table(crypto_dir_table);
++	crypto_sysctls = register_sysctl("crypto", crypto_sysctl_table);
  }
  
+ static void crypto_proc_fips_exit(void)
 -- 
 2.39.1
 
