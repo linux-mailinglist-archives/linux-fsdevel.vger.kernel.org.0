@@ -2,145 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6955D6B35B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 05:40:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC316B362A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 06:49:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbjCJEk3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 23:40:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48064 "EHLO
+        id S229932AbjCJFtN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 00:49:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229655AbjCJEkY (ORCPT
+        with ESMTP id S229471AbjCJFtL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 23:40:24 -0500
-X-Greylist: delayed 511 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 09 Mar 2023 20:40:21 PST
-Received: from out-33.mta0.migadu.com (out-33.mta0.migadu.com [IPv6:2001:41d0:1004:224b::21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B268102841
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Mar 2023 20:40:19 -0800 (PST)
-Date:   Fri, 10 Mar 2023 13:31:37 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1678422707;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=G2zysOwE/XmHnnQEWgReghgqR+PBhnvLsAHfZMM+Qa4=;
-        b=tXFG+Jg9Cc+ASjSJb5f85Sn4QAmHr6OdtNasQoTS54YtoTxYQ1Z22ditujRLuWd2l4u5lZ
-        hhEIISbpKiqFnvfInaEB3IpkHkOukm7qn3P/hUDGs6JVWgnuT6Qmhh+Ns7l2owcwEv1bx9
-        NJYxympOP5WD50/Duuq+OnQ5JhmDAsw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Naoya Horiguchi <naoya.horiguchi@linux.dev>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        cluster-devel@redhat.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, naoya.horiguchi@nec.com
-Subject: Re: [PATCH 7/7] mm: return an ERR_PTR from __filemap_get_folio
-Message-ID: <20230310043137.GA1624890@u2004>
-References: <20230121065755.1140136-1-hch@lst.de>
- <20230121065755.1140136-8-hch@lst.de>
+        Fri, 10 Mar 2023 00:49:11 -0500
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2117.outbound.protection.outlook.com [40.107.117.117])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22220F98CB;
+        Thu,  9 Mar 2023 21:49:08 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RwkRTiksMlNNeCiakrmb83uKXGeusGyimWPUXjJ3mO+HGrSuOJTs/ZY0dHCxieMNEUJ/7byyMduQneVy8ErbqnfjF78/AWF8LzRgy5DWyVOV9jx7nZT1ZxwktNJZ1sa0eQtVO7SUyvLuhTtxAVGcV+APm1ZMci/Mo6ir43Z4qh16e3q0pwP43zt36qnKIzdftSl9WhOuVaqBuwgZhHc5MXQHUNGEhLKWmPVtOuFycTmId18Y5kG9l/vpLil76rhrX14AXy8475uoHiuI0OK2bGTerrc4HkogaHy5TwKyBBzfCe94rVL/vcEeo2sZKNPjf3m8+YF6tlin1CWq8a1MEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3TAffNeOIPDXwmJpJmg+oAqVVOrB+2BtWDSDZs2nixE=;
+ b=hi1wUju2c9ZwhegyrxrDv+F3AlPk2VxMa2fDoHB1ZMgRkezMKQ7a1LDcNtMTw90Klqvm5s714/R4EOi3VdjVnnoffQcnA8S4X44/3QXXn4PllcckrJYqNuKhyRDyVZLeP+Ea4RgmTvNdbcLKu+Ji/lMekPngutZisZMrva/apLWXo23jzvWQ5INVU1x9VTpU6pMSpB4SqR26+P48SBNf+enqlXWT+d6eAW1yfUDywlZ29x6MRrE6GgvP55cGTgQAlSVL+xorJpLhFiYrWIXoaRFWgHZVto+acxfOr51f8MVk0hPNd6q+yzXkgrrPQlSsUACt4bgQqNaXjnt48V/4XA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3TAffNeOIPDXwmJpJmg+oAqVVOrB+2BtWDSDZs2nixE=;
+ b=PnMuaBEzswFltY0fcHXCO7pPnp2DZKrwcx9UR8s3y/hHG+l3R3mR87q7uY/aq/beKl+R8Ukf9KNVZUecw3zbIzerPjQNAdnnIUOmgyFqf92h4k2J/dm2Ov+dNPYt5KMHYiShkTjQCodOHTR4eKQIQqUfjAG0mw9spF8vz5Nm1naJOFmE0h4oUP+7kNNCHCceFlfmabY9bwW42v+TSa44BL+J10FEa1av0VDl+u9R8TWv+MNBfDd3/sahso0m1U/yhQ15bK9fnwJsUxx9pgoeIH3PkUVHP6TuT5ptWUg047+YC5dGWQ5A67HUYCoOSIXTN1YwGV6SqZwBEYsnmU20Yw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by TYZPR06MB6023.apcprd06.prod.outlook.com (2603:1096:400:341::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.18; Fri, 10 Mar
+ 2023 05:49:05 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::daf6:5ebb:a93f:1869]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::daf6:5ebb:a93f:1869%9]) with mapi id 15.20.6178.019; Fri, 10 Mar 2023
+ 05:49:05 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     xiang@kernel.org, chao@kernel.org, huyue2@coolpad.com,
+        jefflexu@linux.alibaba.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, rpeterso@redhat.com, agruenba@redhat.com,
+        mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org
+Cc:     linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+        Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH v4 1/5] fs: add i_blockmask()
+Date:   Fri, 10 Mar 2023 13:48:25 +0800
+Message-Id: <20230310054829.4241-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.35.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR04CA0006.apcprd04.prod.outlook.com
+ (2603:1096:4:197::13) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230121065755.1140136-8-hch@lst.de>
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TYZPR06MB6023:EE_
+X-MS-Office365-Filtering-Correlation-Id: f656adcf-6898-4ad5-6580-08db212b28c0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: q5loVG/P0L8dPSpzK4iqHvOo3G3acBqRX7+o4Q0X6w8SrT+S8DT8na1IHtp+t0Nd0a+KxLiV/YGfQBZBFl8JeQ4YeCp13xBXGrq8xjrREtuRmG6rp9IcAcRjWVWeNrH27dHIsEsz4Qbcvi2thbipeWR2MlZKEhkGXhl4YUcwZQCrD4OCg78xMofqdo9dQhIRc2HFF27RX/xkaKZGE0RBIU4sH9au2kaUEHGnioNyJS2VFnH//IGT82dUP1IkqBEWuar/Tzudp8lWOz+0xQaem2kEdOI2Gu7TQ3EGcYoK+TjxZnfQ45sJ4FU5V0LLhBsDslIOLUrb2KCFiuh3WEn174RJR90kXavhQ11Q4qztfm0d69QVt3ZvGL8KcEGEts1La2sr5kx9xzaHrHU0w+xrD0TwcRVCwe3IXp7oUSmBWAVJtU/rVM2kWkYrWDEc+j27xm5/YfVse8HC/2oTTPag+dlg+CqigwQTHaGZ/FgpCRSUUlhkh2lVBDlZDH54lSiiE/BPFd4VWyU8vgcNlC5+psPv+yVDf5rO4RtMFZMEazHxiKPZJmVRO5dtFsX4erUOkmTvpZtWwMa6SLc46Yi61wu1vIDrzVDxQfrNYBeGxPKUtKJaY3q2TYO7mWcK+/EU6vWHS+YAjowY5R/3CAxJ29tpTidrDY1hE/2qGcMA/i9fhsTXAb5CQws5POwxWlcKNKvcmb8r6t9/eyRlitjWxA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(346002)(376002)(39850400004)(136003)(396003)(366004)(451199018)(52116002)(6486002)(1076003)(26005)(6506007)(6666004)(6512007)(107886003)(186003)(4744005)(41300700001)(66946007)(66476007)(66556008)(4326008)(8676002)(7416002)(8936002)(5660300002)(86362001)(2906002)(36756003)(316002)(478600001)(921005)(83380400001)(38100700002)(38350700002)(2616005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?aprk+g84nqLMpNNI5rUbx6iM5UMphBCJ9RK2qPxGW7h8m8JzB33rKsiQRtDV?=
+ =?us-ascii?Q?pqTgd2pTe/i0h1kLN61ORIlFcpiP2n4isWBMiYUUneQEvNgRxGy1UtDo01ct?=
+ =?us-ascii?Q?Dy7orjvXIF1ER90NC0gvD3lD3XUL6L/xN+CMSuo99tN/nPb5hSLUEJRpvjUm?=
+ =?us-ascii?Q?iCyg/KQiGQ4eGfC5saOz53S9umPvgZKV+Z2p2fvcOvOt8ZCblkIGPiomX2QZ?=
+ =?us-ascii?Q?edoRVO6/J+Pas2jZ9AlVIaGJd7hhpWPOz3WuYOyIQHVWlLXUs1zMVVrkMdEm?=
+ =?us-ascii?Q?KBSdeJn7sDvsTt35C4Fw9OtZlpgk+Kt9j2S/o2S3JveIIh2GdQpyjygtu8dv?=
+ =?us-ascii?Q?bJw3TM6Vl2goTKl/yxqnEyPeIwGXfTI5nFzIgFXMVk1cyCq9L54cYhNTcS3L?=
+ =?us-ascii?Q?LuSly58RXb0K+GhG2FUyjXqgzx8y9MNP+uTMHF6LOBJlnzqnHFIXWJLmQlfi?=
+ =?us-ascii?Q?FIg03nXNrVvgr8v+NukhifRPLYg4CWnJ786W8TzVqnEs6iiLfO1TAw354g19?=
+ =?us-ascii?Q?aSyYRMh1a+aGVEoZwFKlSnEsMtVZ7MYgwDkhgMpaAFzAldNyvxVkcdzWP57N?=
+ =?us-ascii?Q?+hkjrev+7rtzAvF1IuPceA0zNFqGxkCB4gof2eWz5E4Yb6b4bD6sHJguvsQY?=
+ =?us-ascii?Q?YzMWA6R1xIGOtXAtmDCOUr2+6J/XTRkdsjNL8dFjqfWo/NhSYUhxL1loNri2?=
+ =?us-ascii?Q?3vEuXMGkJvhgEMhbZ7kVdpWaA0NBZ0toLmZ7zbM4e6HEs2m+L087UK8dFfEH?=
+ =?us-ascii?Q?w1vl+cyhLtRhL8VkRHwlUgJIXh2TcR8hCJK1idwUHduJm4YjCtPkWTmCqQmv?=
+ =?us-ascii?Q?PLqO5+h8Cic2DilnEhehXkbgJDNrtHSQ4WWw8V08JbcxqRusfW9U3SgM0lkD?=
+ =?us-ascii?Q?MJfYF/6qFZ+/rkrzprrfDUQ+oK1/HXNT8jOWTflh3Soz2LRmFZNq3NZmx8RH?=
+ =?us-ascii?Q?/zAn9ikbrNJ2F/Jn9Xs260X+8UyVLTcsATP6y9MrhbP6xY/m4SNERB8R1fGV?=
+ =?us-ascii?Q?t3J59j/nGGuyRwRgCKUaY0i3QAkVPXCfP7rrvAuNPiUN8NgbOyb4v2G45Ow0?=
+ =?us-ascii?Q?8ZBtMUOQpugU7fg7FEFEQE6AYap2TlKeF0GGC7eUIuNwnuhNerWUdOrXCOEc?=
+ =?us-ascii?Q?J1DHTkzkDceh/gcHn2bEYGxeppiX3jToHz8T6BfCh/+iqmiQwaiQGLyhMy0P?=
+ =?us-ascii?Q?RRo45RPFtFyJ8Rwjks5xRrAWRHj6nJpAeDpt+i462y80yje9Cd5WRn1dZi9v?=
+ =?us-ascii?Q?UnFBys9tA5/rWziHAe2+3Ppc421RraD1Borf7GHDUSb5PDYuaVNhN1VGcF11?=
+ =?us-ascii?Q?AijhZ+Y0rNgUD7FZnZcOVXHwd6Af/086bTtdDaUh8D6fIwoBQePvhW7XntN3?=
+ =?us-ascii?Q?BaQeD8lFToPFFI+A2Vj6WSJ8b8Eilh5aIYUPHMsKHfdpMl/zARi/k2FezH8O?=
+ =?us-ascii?Q?JgdhcRAFPb0heyF/EOeX2TLusKQHWcWK17l/0E0/pkiX8xi8akjCf7vUXM8x?=
+ =?us-ascii?Q?z4oJNpsB4osfWJS/7uBgRB8z9ZvxD3bpjQ2Pce49vpeyJoIF4nUIf4rNXW02?=
+ =?us-ascii?Q?50b2EBkBmkDPuA20By6EezsCBfMTa2Cgee4Np7PS?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f656adcf-6898-4ad5-6580-08db212b28c0
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2023 05:49:05.6408
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8GGE7Fo335S2snThWbu0+AtI41kdP2hhJuIk+9ccCwlb+qS60p9Ofe5+dBMtZRWhKpBx6n8xGTGX62ets8gdCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6023
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jan 21, 2023 at 07:57:55AM +0100, Christoph Hellwig wrote:
-> Instead of returning NULL for all errors, distinguish between:
-> 
->  - no entry found and not asked to allocated (-ENOENT)
->  - failed to allocate memory (-ENOMEM)
->  - would block (-EAGAIN)
-> 
-> so that callers don't have to guess the error based on the passed
-> in flags.
-> 
-> Also pass through the error through the direct callers:
-> filemap_get_folio, filemap_lock_folio filemap_grab_folio
-> and filemap_get_incore_folio.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Introduce i_blockmask() to simplify code, which replace
+(i_blocksize(node) - 1). Like done in commit
+93407472a21b("fs: add i_blocksize()").
 
-Hello,
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+v4:
+-drop ext4 patch
+-erofs patch based on mainline
+-a bit change in ocfs2 patch
+ include/linux/fs.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-I found a NULL pointer dereference issue related to this patch,
-so let me share it.
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c85916e9f7db..17387d465b8b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -711,6 +711,11 @@ static inline unsigned int i_blocksize(const struct inode *node)
+ 	return (1 << node->i_blkbits);
+ }
+ 
++static inline unsigned int i_blockmask(const struct inode *node)
++{
++	return i_blocksize(node) - 1;
++}
++
+ static inline int inode_unhashed(struct inode *inode)
+ {
+ 	return hlist_unhashed(&inode->i_hash);
+-- 
+2.25.1
 
-Here is the bug message (I used akpm/mm-unstable on Mar 9):
-
-[ 2871.648659] BUG: kernel NULL pointer dereference, address: 0000000000000000
-[ 2871.651286] #PF: supervisor read access in kernel mode
-[ 2871.653231] #PF: error_code(0x0000) - not-present page
-[ 2871.655170] PGD 80000001517dd067 P4D 80000001517dd067 PUD 1491d1067 PMD 0
-[ 2871.657739] Oops: 0000 [#1] PREEMPT SMP PTI
-[ 2871.659329] CPU: 4 PID: 1599 Comm: page-types Tainted: G            E    N 6.3.0-rc1-v6.3-rc1-230309-1629-189-ga71a7+ #36
-[ 2871.663362] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.1-2.fc37 04/01/2014
-[ 2871.666507] RIP: 0010:mincore_page+0x19/0x90
-[ 2871.668086] Code: cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 41 54 55 53 e8 92 2b 03 00 48 3d 00 f0 ff ff 77 54 48 89 c3 <48> 8b 00 48 c1 e8 02 89 c5 83 e5 01 75 21 8b 43 34 85 c0 74 47 f0
-[ 2871.678313] RSP: 0018:ffffbe57c203fd00 EFLAGS: 00010207
-[ 2871.681422] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-[ 2871.685609] RDX: 0000000000000000 RSI: ffff9f59ca1506d8 RDI: ffff9f59ce7c2880
-[ 2871.689599] RBP: 0000000000000000 R08: 00007f9f14200000 R09: ffff9f59c9078508
-[ 2871.693295] R10: 00007f9ed4400000 R11: 0000000000000000 R12: 0000000000000200
-[ 2871.695969] R13: 0000000000000001 R14: ffff9f59c9ef4450 R15: ffff9f59c4ac9000
-[ 2871.699927] FS:  00007f9ed47ee740(0000) GS:ffff9f5abbc00000(0000) knlGS:0000000000000000
-[ 2871.703969] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 2871.706689] CR2: 0000000000000000 CR3: 0000000149ffe006 CR4: 0000000000170ee0
-[ 2871.709923] DR0: ffffffff91531760 DR1: ffffffff91531761 DR2: ffffffff91531762
-[ 2871.713424] DR3: ffffffff91531763 DR6: 00000000ffff0ff0 DR7: 0000000000000600
-[ 2871.716758] Call Trace:
-[ 2871.717998]  <TASK>
-[ 2871.719008]  __mincore_unmapped_range+0x6e/0xd0
-[ 2871.721220]  mincore_unmapped_range+0x16/0x30
-[ 2871.723288]  walk_pgd_range+0x485/0x9e0
-[ 2871.725128]  __walk_page_range+0x195/0x1b0
-[ 2871.727224]  walk_page_range+0x151/0x180
-[ 2871.728883]  __do_sys_mincore+0xec/0x2b0
-[ 2871.730707]  do_syscall_64+0x3a/0x90
-[ 2871.732179]  entry_SYSCALL_64_after_hwframe+0x72/0xdc
-[ 2871.734148] RIP: 0033:0x7f9ed443f4ab
-[ 2871.735548] Code: 73 01 c3 48 8b 0d 75 99 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 1b 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 45 99 1b 00 f7 d8 64 89 01 48
-[ 2871.742194] RSP: 002b:00007ffe924d72b8 EFLAGS: 00000206 ORIG_RAX: 000000000000001b
-[ 2871.744787] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9ed443f4ab
-[ 2871.747186] RDX: 00007ffe92557300 RSI: 0000000000200000 RDI: 00007f9ed4200000
-[ 2871.749404] RBP: 00007ffe92567330 R08: 0000000000000005 R09: 0000000000000000
-[ 2871.751683] R10: 00007f9ed4405d68 R11: 0000000000000206 R12: 00007ffe925674b8
-[ 2871.753925] R13: 0000000000404af1 R14: 000000000040ad78 R15: 00007f9ed4833000
-[ 2871.756493]  </TASK>
-
-The precedure to reproduce this is (1) punch hole some page in a shmem
-file, then (2) call mincore() over the punch-holed address range. 
-
-I confirmed that filemap_get_incore_folio() (actually filemap_get_entry()
-inside it) returns NULL in that case, so we unexpectedly enter the following
-if-block for the "not found" case.
-
-> diff --git a/mm/mincore.c b/mm/mincore.c
-> index cd69b9db008126..5437e584b208bf 100644
-> --- a/mm/mincore.c
-> +++ b/mm/mincore.c
-> @@ -61,7 +61,7 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t index)
->  	 * tmpfs's .fault). So swapped out tmpfs mappings are tested here.
->  	 */
->  	folio = filemap_get_incore_folio(mapping, index);
-> -	if (folio) {
-> +	if (!IS_ERR(folio)) {
->  		present = folio_test_uptodate(folio);
->  		folio_put(folio);
->  	}
-
-I guess that this patch intends to make filemap_get_incore_folio() return
-non-NULL error code, so replacing the check with "if (!IS_ERR_OR_NULL(folio))"
-cannot be a solution. But I have no idea about the fix, so could you help me?
-
-Thanks,
-Naoya Horiguchi
