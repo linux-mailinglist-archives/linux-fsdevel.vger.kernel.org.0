@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F28886B4C77
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 17:14:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 524BC6B4C5E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 17:13:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbjCJQOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 11:14:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40256 "EHLO
+        id S231446AbjCJQNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 11:13:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232132AbjCJQMj (ORCPT
+        with ESMTP id S231589AbjCJQMY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 11:12:39 -0500
+        Fri, 10 Mar 2023 11:12:24 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9402711AC99
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Mar 2023 08:09:29 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95C0118805
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Mar 2023 08:09:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678464493;
+        s=mimecast20190719; t=1678464498;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uORM3Xhzjyx5pSXtVFHzrrBAkab8IB4YL2yYQbG2PCU=;
-        b=FTBxhIguSgn+TKySI5zaQO/3JHPnwOdWJqeKwKdumpp9qQPeX9P05EOIsha/s7hcHDbXJV
-        ABCXtg4McBr9Y0lJYGcxP7q2i82aOe7ErgosXi9vu+481icG1mhAofZ+WM1dNUBiLaX3kR
-        vJ+xBXyDGC6jHZcSYlMyR3vbjh5dLNg=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=VF7DOSFSoxperMCR1c0beoAVNr9jhMKzR2GYQ6m9DTA=;
+        b=U9UsDKvfKK8N2ZGaAnBBx6XfqO21mihzI/QhWrERLr3ekDVQioNxdX6rHc6XEYT0B6xMZv
+        ZsFlbTYKLufGWX0A8RasQf7H0/V5HlGBzPgBaLt9q57t6RkHupQZSKQULZ+iagM3OhQQQC
+        1BIWXz2nJoqR63M20xj9UTkP8/DUvN4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-627-vhIr2a09NJ-Bi14QG2KogA-1; Fri, 10 Mar 2023 11:08:11 -0500
-X-MC-Unique: vhIr2a09NJ-Bi14QG2KogA-1
+ us-mta-587-0nmZr2faN_Ob6cqxJso-SQ-1; Fri, 10 Mar 2023 11:08:14 -0500
+X-MC-Unique: 0nmZr2faN_Ob6cqxJso-SQ-1
 Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 00B1938041DD;
-        Fri, 10 Mar 2023 16:08:11 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 612A3185A794;
+        Fri, 10 Mar 2023 16:08:13 +0000 (UTC)
 Received: from thuth.com (unknown [10.45.224.202])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DE54C492C3E;
-        Fri, 10 Mar 2023 16:08:08 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C0A2492C3E;
+        Fri, 10 Mar 2023 16:08:11 +0000 (UTC)
 From:   Thomas Huth <thuth@redhat.com>
 To:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 Cc:     linux-arch@vger.kernel.org, Chas Williams <3chas3@gmail.com>,
@@ -45,9 +45,9 @@ Cc:     linux-arch@vger.kernel.org, Chas Williams <3chas3@gmail.com>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v2 4/5] pktcdvd: Remove CONFIG_CDROM_PKTCDVD_WCACHE from uapi header
-Date:   Fri, 10 Mar 2023 17:07:56 +0100
-Message-Id: <20230310160757.199253-5-thuth@redhat.com>
+Subject: [PATCH v2 5/5] scripts: Update the CONFIG_* ignore list in headers_install.sh
+Date:   Fri, 10 Mar 2023 17:07:57 +0100
+Message-Id: <20230310160757.199253-6-thuth@redhat.com>
 In-Reply-To: <20230310160757.199253-1-thuth@redhat.com>
 References: <20230310160757.199253-1-thuth@redhat.com>
 MIME-Version: 1.0
@@ -63,81 +63,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-CONFIG_* switches should not be exposed in uapi headers, thus let's get
-rid of the USE_WCACHING macro here (which was also named way to generic)
-and integrate the logic directly in the only function that needs it.
+The file in include/uapi/linux/ have been cleaned in the previous patches,
+so we can now remove these entries from the CONFIG_* ignore-list.
 
-Suggested-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Thomas Huth <thuth@redhat.com>
 ---
- drivers/block/pktcdvd.c      | 13 +++++++++----
- include/uapi/linux/pktcdvd.h | 11 -----------
- 2 files changed, 9 insertions(+), 15 deletions(-)
+ scripts/headers_install.sh | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 2f1a92509271..5ae2a80db2c3 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -1869,12 +1869,12 @@ static noinline_for_stack int pkt_probe_settings(struct pktcdvd_device *pd)
- /*
-  * enable/disable write caching on drive
-  */
--static noinline_for_stack int pkt_write_caching(struct pktcdvd_device *pd,
--						int set)
-+static noinline_for_stack int pkt_write_caching(struct pktcdvd_device *pd)
- {
- 	struct packet_command cgc;
- 	struct scsi_sense_hdr sshdr;
- 	unsigned char buf[64];
-+	bool set = IS_ENABLED(CONFIG_CDROM_PKTCDVD_WCACHE);
- 	int ret;
+diff --git a/scripts/headers_install.sh b/scripts/headers_install.sh
+index 4041881746ad..36b56b746fce 100755
+--- a/scripts/headers_install.sh
++++ b/scripts/headers_install.sh
+@@ -83,10 +83,6 @@ arch/nios2/include/uapi/asm/swab.h:CONFIG_NIOS2_CI_SWAB_SUPPORT
+ arch/x86/include/uapi/asm/auxvec.h:CONFIG_IA32_EMULATION
+ arch/x86/include/uapi/asm/auxvec.h:CONFIG_X86_64
+ arch/x86/include/uapi/asm/mman.h:CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+-include/uapi/linux/atmdev.h:CONFIG_COMPAT
+-include/uapi/linux/eventpoll.h:CONFIG_PM_SLEEP
+-include/uapi/linux/hw_breakpoint.h:CONFIG_HAVE_MIXED_BREAKPOINTS_REGS
+-include/uapi/linux/pktcdvd.h:CONFIG_CDROM_PKTCDVD_WCACHE
+ "
  
- 	init_cdrom_command(&cgc, buf, sizeof(buf), CGC_DATA_READ);
-@@ -1890,7 +1890,12 @@ static noinline_for_stack int pkt_write_caching(struct pktcdvd_device *pd,
- 	if (ret)
- 		return ret;
- 
--	buf[pd->mode_offset + 10] |= (!!set << 2);
-+	/*
-+	 * use drive write caching -- we need deferred error handling to be
-+	 * able to successfully recover with this option (drive will return good
-+	 * status as soon as the cdb is validated).
-+	 */
-+	buf[pd->mode_offset + 10] |= (set << 2);
- 
- 	cgc.buflen = cgc.cmd[8] = 2 + ((buf[0] << 8) | (buf[1] & 0xff));
- 	ret = pkt_mode_select(pd, &cgc);
-@@ -2085,7 +2090,7 @@ static int pkt_open_write(struct pktcdvd_device *pd)
- 		return -EIO;
- 	}
- 
--	pkt_write_caching(pd, USE_WCACHING);
-+	pkt_write_caching(pd);
- 
- 	ret = pkt_get_max_speed(pd, &write_speed);
- 	if (ret)
-diff --git a/include/uapi/linux/pktcdvd.h b/include/uapi/linux/pktcdvd.h
-index 9cbb55d21c94..6a5552dfd6af 100644
---- a/include/uapi/linux/pktcdvd.h
-+++ b/include/uapi/linux/pktcdvd.h
-@@ -29,17 +29,6 @@
-  */
- #define PACKET_WAIT_TIME	(HZ * 5 / 1000)
- 
--/*
-- * use drive write caching -- we need deferred error handling to be
-- * able to successfully recover with this option (drive will return good
-- * status as soon as the cdb is validated).
-- */
--#if defined(CONFIG_CDROM_PKTCDVD_WCACHE)
--#define USE_WCACHING		1
--#else
--#define USE_WCACHING		0
--#endif
--
- /*
-  * No user-servicable parts beyond this point ->
-  */
+ for c in $configs
 -- 
 2.31.1
 
