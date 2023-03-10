@@ -2,84 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87C7F6B34E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 04:40:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCA236B34E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 04:42:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbjCJDkp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Mar 2023 22:40:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48256 "EHLO
+        id S229977AbjCJDmm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Mar 2023 22:42:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230111AbjCJDko (ORCPT
+        with ESMTP id S229732AbjCJDml (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Mar 2023 22:40:44 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 256D3A9DC2;
-        Thu,  9 Mar 2023 19:40:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=JZiF53bxmc/MLuNb1YEKJk9gkzndAVyIO5xNpj+Nmhs=; b=FuuWjo1upLo/wHs2NXXbRXxAOJ
-        leA9cTuNBYkLUNif5UdWqotdSAjJHiV2zbCw94ADvsd4R9lo1tuVdJjgnerWCMKwr4U5u6hlrZpLZ
-        ZiRV0mPTzJSBiezPPyPLwtefWvQRa8L+YKpu72SS2E9j22zb93zXRD+LhN7Ke7mMOY6BpIY4gw1mF
-        B8kzc8nJDW7NN+BHplzekS3tybKFZ7F+eTW1Hgvz5L6VyMjgdRVm6i/zWzkpqTmSbUOkwTA/nqw4D
-        S1X/M7JXuAgyTOy1A5bD2Dmx4cyqgdRgCcuxzyfzOV3wf5mHd1PP/ghyINJ69koiH51llJYOZULpM
-        zIQlKS7w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1paTc8-00FCfv-0T;
-        Fri, 10 Mar 2023 03:40:16 +0000
-Date:   Fri, 10 Mar 2023 03:40:16 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        chuck.lever@oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH] fs/locks: Remove redundant assignment to cmd
-Message-ID: <20230310034016.GH3390869@ZenIV>
-References: <20230308071316.16410-1-jiapeng.chong@linux.alibaba.com>
- <167835349787.767856.6018396733410513369.b4-ty@kernel.org>
- <fd7e0f354da923ebb0cbe2c41188708e4d6c992a.camel@kernel.org>
+        Thu, 9 Mar 2023 22:42:41 -0500
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A02C80A9;
+        Thu,  9 Mar 2023 19:42:39 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=20;SR=0;TI=SMTPD_---0VdVlEJ2_1678419754;
+Received: from 30.97.48.46(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VdVlEJ2_1678419754)
+          by smtp.aliyun-inc.com;
+          Fri, 10 Mar 2023 11:42:36 +0800
+Message-ID: <2fa31829-03f0-7bfb-a89b-e3917c479733@linux.alibaba.com>
+Date:   Fri, 10 Mar 2023 11:42:34 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd7e0f354da923ebb0cbe2c41188708e4d6c992a.camel@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.1
+Subject: Re: [PATCH v3 2/6] erofs: convert to use i_blockmask()
+To:     Al Viro <viro@zeniv.linux.org.uk>, Yangtao Li <frank.li@vivo.com>
+Cc:     xiang@kernel.org, chao@kernel.org, huyue2@coolpad.com,
+        jefflexu@linux.alibaba.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, rpeterso@redhat.com, agruenba@redhat.com,
+        mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        brauner@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel@vger.kernel.org
+References: <20230309152127.41427-1-frank.li@vivo.com>
+ <20230309152127.41427-2-frank.li@vivo.com> <20230310031547.GD3390869@ZenIV>
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20230310031547.GD3390869@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 09, 2023 at 06:50:15AM -0500, Jeff Layton wrote:
-> On Thu, 2023-03-09 at 10:25 +0100, Christian Brauner wrote:
-> > From: Christian Brauner (Microsoft) <brauner@kernel.org>
-> > 
-> > 
-> > On Wed, 08 Mar 2023 15:13:16 +0800, Jiapeng Chong wrote:
-> > > Variable 'cmd' set but not used.
-> > > 
-> > > fs/locks.c:2428:3: warning: Value stored to 'cmd' is never read.
-> > > 
-> > > 
-> > 
-> > Seems unused for quite a while. I've picked this up since there's a few other
-> > trivial fixes I have pending. But I'm happy to drop this if you prefer this
-> > goes via the lock tree, Jeff.
-> > 
-> > [1/1] fs/locks: Remove redundant assignment to cmd
-> >       commit: dc592190a5543c559010e09e8130a1af3f9068d3
-> 
-> Thanks Christian,
-> 
-> I had already picked it into the locks-next branch (though I didn't get
-> a chance to reply and mention that), but I'll drop it and plan to let
-> you carry it.
+Hi Al,
 
-IMO that's better off in locks tree; unless Christian is planning some
-work in the area this cycle (I definitely do not), it's better to have
-it in the branch in your git - we can always pull a branch from it if
-needed and it's less likely to cause conflicts that way.
+On 2023/3/10 11:15, Al Viro wrote:
+> On Thu, Mar 09, 2023 at 11:21:23PM +0800, Yangtao Li wrote:
+>> Use i_blockmask() to simplify code.
+> 
+> Umm...  What's the branchpoint for that series?  Not the mainline -
+> there we have i_blocksize() open-coded...
+
+Actually Yue Hu sent out a clean-up patch and I applied to -next for
+almost a week and will be upstreamed for 6.3-rc2:
+
+https://lore.kernel.org/r/a238dca1-256f-ae2f-4a33-e54861fe4ffb@kernel.org/T/#t
+
+And then Yangtao would like to wrap this as a new VFS helper, I'm not
+sure why it's necessary since it doesn't save a lot but anyway, I'm open
+to it if VFS could have such new helper.
+
+Thanks,
+Gao Xiang
+
+> 
+>> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+>> ---
+>> v3:
+>> -none
+>> v2:
+>> -convert to i_blockmask()
+>>   fs/erofs/data.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+>> index 7e8baf56faa5..e9d1869cd4b3 100644
+>> --- a/fs/erofs/data.c
+>> +++ b/fs/erofs/data.c
+>> @@ -380,7 +380,7 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>   		if (bdev)
+>>   			blksize_mask = bdev_logical_block_size(bdev) - 1;
+>>   		else
+>> -			blksize_mask = i_blocksize(inode) - 1;
+>> +			blksize_mask = i_blockmask(inode);
+>>   
+>>   		if ((iocb->ki_pos | iov_iter_count(to) |
+>>   		     iov_iter_alignment(to)) & blksize_mask)
+>> -- 
+>> 2.25.1
+>>
