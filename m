@@ -2,55 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0742E6B395A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 10:00:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68CED6B397C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 10:02:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbjCJJAN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 04:00:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58286 "EHLO
+        id S231477AbjCJJCG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 04:02:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230206AbjCJI7S (ORCPT
+        with ESMTP id S229984AbjCJJBC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 03:59:18 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3453F102B77;
-        Fri, 10 Mar 2023 00:53:01 -0800 (PST)
+        Fri, 10 Mar 2023 04:01:02 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A9AA110537;
+        Fri, 10 Mar 2023 00:55:34 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C5B9161133;
-        Fri, 10 Mar 2023 08:53:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44835C433D2;
-        Fri, 10 Mar 2023 08:52:58 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9AF4B6115C;
+        Fri, 10 Mar 2023 08:55:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E9BC433EF;
+        Fri, 10 Mar 2023 08:55:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678438380;
-        bh=UOkvQ0uqHHfL785oiVqIn6OhjgZ1kHQ35LvccbGpGp8=;
+        s=k20201202; t=1678438533;
+        bh=AyDHsHcaeFxIsFdxmIlVycwGMhNgoSvd8Vb6XkDH0V4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lhfvytSvwJti2QPRmi2gD461byc7l2E2sCS1EbTDlWGw2vgs9ls6Oiomxxssezwir
-         2Vm0Gngbm/tDoPG1oaCkD0Ejqh/0Eh51gJKjGa+r9S2e8gav8bwcPXZhrgmu3VI0kP
-         b64j2JeGaorc1KjuiCe9ma74/B38OFVZKuvmSqJUd+iO3eMboqnQj+kndlCmU2RdjT
-         dBA6bkASMioz+pMZRyJqer+wKcKFFBmVrVyDzcv1XOkTVCGEPHQnEIy09xZ93iUwXh
-         xwOBwWYIT1S/o8bZhVC70j75bHUD4oZ3JpQxoxkWZq40Ob04J+7LlR9MlWtxsEm/Vc
-         u5gpxanSRYeVQ==
-Date:   Fri, 10 Mar 2023 09:52:54 +0100
+        b=cRnutpYeVCGD23q/4kXuS+FKKdtfzGjOzAGhW5IVBbbN7HZbnNbYIrIWldg3nylO1
+         CuWhLptegTC+YSj0Dc/oXdH1wd6R56oR2zQK0fP8B2fC3phqZMpyInJbOzar22+tkZ
+         PUFMNJAliIkcXqexcuB5j3azhGNIDIROpsekVk7wB/ZlnVONvZMHMTiOXyGX+QY1fO
+         x6OjWfbGHA9CdzRY4PHehEVTM199maEYyfgpER2CmR7i4Mxv3LNwT1cU8i+FQL1c1k
+         bU3jfFuyA34pDIYGsFrqmhd/EJWUMUVPzaRjcFwtVvETADyGrOB/5DV7ncUOS2DYDG
+         iXboZTW33KMuA==
+Date:   Fri, 10 Mar 2023 09:55:27 +0100
 From:   Christian Brauner <brauner@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        chuck.lever@oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH] fs/locks: Remove redundant assignment to cmd
-Message-ID: <20230310085254.counxoqhuv5bmkr5@wittgenstein>
-References: <20230308071316.16410-1-jiapeng.chong@linux.alibaba.com>
- <167835349787.767856.6018396733410513369.b4-ty@kernel.org>
- <fd7e0f354da923ebb0cbe2c41188708e4d6c992a.camel@kernel.org>
- <20230310034016.GH3390869@ZenIV>
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     netdev@vger.kernel.org, Soheil Hassas Yeganeh <soheil@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5] epoll: use refcount to reduce ep_mutex contention
+Message-ID: <20230310085527.mxezm3qzytet2duu@wittgenstein>
+References: <323de732635cc3513c1837c6cbb98f012174f994.1678312201.git.pabeni@redhat.com>
+ <20230309111803.2z242amw4f5nwfwu@wittgenstein>
+ <5de48abb24e033a5eb457007d0a5b6b391831fd4.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230310034016.GH3390869@ZenIV>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+In-Reply-To: <5de48abb24e033a5eb457007d0a5b6b391831fd4.camel@redhat.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,54 +60,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 03:40:16AM +0000, Al Viro wrote:
-> On Thu, Mar 09, 2023 at 06:50:15AM -0500, Jeff Layton wrote:
-> > On Thu, 2023-03-09 at 10:25 +0100, Christian Brauner wrote:
-> > > From: Christian Brauner (Microsoft) <brauner@kernel.org>
+On Thu, Mar 09, 2023 at 01:47:23PM +0100, Paolo Abeni wrote:
+> On Thu, 2023-03-09 at 12:18 +0100, Christian Brauner wrote:
+> > On Wed, Mar 08, 2023 at 10:51:31PM +0100, Paolo Abeni wrote:
+> > > We are observing huge contention on the epmutex during an http
+> > > connection/rate test:
 > > > 
+> > >  83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYSCALL_64_after_hwframe
+> > > [...]
+> > >            |--66.96%--__fput
+> > >                       |--60.04%--eventpoll_release_file
+> > >                                  |--58.41%--__mutex_lock.isra.6
+> > >                                            |--56.56%--osq_lock
 > > > 
-> > > On Wed, 08 Mar 2023 15:13:16 +0800, Jiapeng Chong wrote:
-> > > > Variable 'cmd' set but not used.
-> > > > 
-> > > > fs/locks.c:2428:3: warning: Value stored to 'cmd' is never read.
-> > > > 
-> > > > 
+> > > The application is multi-threaded, creates a new epoll entry for
+> > > each incoming connection, and does not delete it before the
+> > > connection shutdown - that is, before the connection's fd close().
 > > > 
-> > > Seems unused for quite a while. I've picked this up since there's a few other
-> > > trivial fixes I have pending. But I'm happy to drop this if you prefer this
-> > > goes via the lock tree, Jeff.
+> > > Many different threads compete frequently for the epmutex lock,
+> > > affecting the overall performance.
 > > > 
-> > > [1/1] fs/locks: Remove redundant assignment to cmd
-> > >       commit: dc592190a5543c559010e09e8130a1af3f9068d3
+> > > To reduce the contention this patch introduces explicit reference counting
+> > > for the eventpoll struct. Each registered event acquires a reference,
+> > > and references are released at ep_remove() time.
+> > > 
+> > > The eventpoll struct is released by whoever - among EP file close() and
+> > > and the monitored file close() drops its last reference.
+> > > 
+> > > Additionally, this introduces a new 'dying' flag to prevent races between
+> > > the EP file close() and the monitored file close().
+> > > ep_eventpoll_release() marks, under f_lock spinlock, each epitem as dying
+> > > before removing it, while EP file close() does not touch dying epitems.
+> > > 
+> > > The above is needed as both close operations could run concurrently and
+> > > drop the EP reference acquired via the epitem entry. Without the above
+> > > flag, the monitored file close() could reach the EP struct via the epitem
+> > > list while the epitem is still listed and then try to put it after its
+> > > disposal.
+> > > 
+> > > An alternative could be avoiding touching the references acquired via
+> > > the epitems at EP file close() time, but that could leave the EP struct
+> > > alive for potentially unlimited time after EP file close(), with nasty
+> > > side effects.
+> > > 
+> > > With all the above in place, we can drop the epmutex usage at disposal time.
+> > > 
+> > > Overall this produces a significant performance improvement in the
+> > > mentioned connection/rate scenario: the mutex operations disappear from
+> > > the topmost offenders in the perf report, and the measured connections/rate
+> > > grows by ~60%.
+> > > 
+> > > To make the change more readable this additionally renames ep_free() to
+> > > ep_clear_and_put(), and moves the actual memory cleanup in a separate
+> > > ep_free() helper.
+> > > 
+> > > Tested-by: Xiumei Mu <xmu@redhiat.com>
 > > 
-> > Thanks Christian,
-> > 
-> > I had already picked it into the locks-next branch (though I didn't get
-> > a chance to reply and mention that), but I'll drop it and plan to let
-> > you carry it.
+> > Is that a typo "redhiat" in the mail?
 > 
-> IMO that's better off in locks tree; unless Christian is planning some
-> work in the area this cycle (I definitely do not), it's better to have
-> it in the branch in your git - we can always pull a branch from it if
-> needed and it's less likely to cause conflicts that way.
+> Indeed yes! Thanks for noticing. Should I share a new revision to
+> address that?
 
-I have picked up another fix for fs/locks.c for idmapped mounts so I
-plan on sending that with some other smaller fixes soon. (And that
-idmapped thing needs to be backported as well.)
-
-So if there's non-trivial changes then I fully agree that the locking
-tree is absolutely the right place. Especially since Jeff will also be
-able to describe the changes properly and as you said we can always just
-pull a branch to minimize conflicts.
-
-However, when we have simple stuff like this let's just collect it in
-our for *.misc trees and send it to Linus if we think enough stuff has
-piled up (2+?). There's no point in holding fixes like this back for a
-long time.
-
-The likelihood of getting merge conflicts for smallish things that we
-send weekly is rather low judging from my personal experience. Stephen
-will tell us that quickly anyway. And even if we do get them Linus has
-said repeatedly that he doesn't mind fixing them so we shouldn't be
-fuzzed about it. Worst(/best?) case, everyone gets to watch my head
-being torn off...
+No, I think we can just fix that up...
