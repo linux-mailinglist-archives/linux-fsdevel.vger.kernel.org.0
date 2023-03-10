@@ -2,45 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DFF476B54EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 23:58:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E756B5543
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:02:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231389AbjCJW6v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 17:58:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44844 "EHLO
+        id S231715AbjCJXCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 18:02:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230246AbjCJW6t (ORCPT
+        with ESMTP id S230293AbjCJXCV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 17:58:49 -0500
+        Fri, 10 Mar 2023 18:02:21 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4487F11ABAC;
-        Fri, 10 Mar 2023 14:58:48 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D11147838;
+        Fri, 10 Mar 2023 15:02:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=PETkYU+yLAOC06k0Jk3717NirimTBUEacXQYVPLCx+k=; b=VuJ8QGzTljjnxQAGTBwmlAEbe4
-        bxAsS6bspO0fL4OaZie/KXBnbWapTbnJXc6LV/+7yTRzHhmUKQovBJZsp+VYqSV/PayedCRTgfzwf
-        WjDC1d0tO1XIm1nlU0ENvlWetX6rGWXRfQHvAOT4Rn0ssnfQvK7V8nO5klGVRAXpwYtvSECLLkhai
-        ipA2YmL0x0DIUrgga0kgVI8DwfyjYJxHX2k8ZMF3VU/7H28uw9+80U98Rpt5r8snEIoVto6oo2xKc
-        AniA2x7rixepUZv2B6NdYhcZtkZ7ZRYKVI9eJs0JI776K30jtZz7gaLnp63QBJ2VAruHaQDKA+fyC
-        GRvYYNhA==;
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=eet2vNHP9SJyRytQAXeN8dV9MlcbH4NW2iBs2IrmZDA=; b=D0P+yBFRbDD6Jw9Y3fJhnTPsrq
+        l88RCpE421CMXqcRp/zu8zhyDXD+kJD0SPKKMr5xdj+r+PBL4rWOKzpmL4ADiku7It8+dicSWA+bw
+        5nSv3/FhwMiiZ8Qs3BCO6P8jWlSmByf6ebJTBPwM8+cdpQH34xs5/HsfavYDfFD5FCTCdYMvpHvb9
+        ouAorx54GfC33pUF+eihyGd+4yFtUGNGOEJQMv6wZ44zglX7yyWeEPuJsBiZHS2ax8cVE0U6BJ5pf
+        LZXiMI6IuRVZdUi5aHTL0FzKAnkhTIRa0NDDo0ybW8KUsYg13a1d12EQ91jREbJATq+Z2UUTZ7Tv9
+        9M0tob/w==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1palhD-00GYlX-6T; Fri, 10 Mar 2023 22:58:43 +0000
+        id 1palkh-00GZGm-Vp; Fri, 10 Mar 2023 23:02:20 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     chuck.lever@oracle.com, jlayton@kernel.org,
-        trond.myklebust@hammerspace.com, anna@kernel.org,
-        linux-nfs@vger.kernel.org
-Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
-        j.granados@samsung.com, patches@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     djwong@kernel.org
+Cc:     linux-xfs@vger.kernel.org, keescook@chromium.org,
+        yzaikin@google.com, j.granados@samsung.com,
+        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 3/3] nfs: simplify two-level sysctl registration for nfs_cb_sysctls
-Date:   Fri, 10 Mar 2023 14:58:42 -0800
-Message-Id: <20230310225842.3946871-4-mcgrof@kernel.org>
+Subject: [PATCH] xfs: simplify two-level sysctl registration for xfs_table
+Date:   Fri, 10 Mar 2023 15:02:19 -0800
+Message-Id: <20230310230219.3948819-1-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230310225842.3946871-1-mcgrof@kernel.org>
-References: <20230310225842.3946871-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
@@ -61,40 +58,47 @@ Simplify this registration.
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/nfs/sysctl.c | 20 +-------------------
+
+This is not clear to some so I've updated the docs for the sysctl
+registration here:
+
+https://lore.kernel.org/all/20230310223947.3917711-1-mcgrof@kernel.org/T/#u     
+
+ fs/xfs/xfs_sysctl.c | 20 +-------------------
  1 file changed, 1 insertion(+), 19 deletions(-)
 
-diff --git a/fs/nfs/sysctl.c b/fs/nfs/sysctl.c
-index 7aea195ddb35..f39e2089bc4c 100644
---- a/fs/nfs/sysctl.c
-+++ b/fs/nfs/sysctl.c
-@@ -32,27 +32,9 @@ static struct ctl_table nfs_cb_sysctls[] = {
- 	{ }
+diff --git a/fs/xfs/xfs_sysctl.c b/fs/xfs/xfs_sysctl.c
+index 546a6cd96729..fade33735393 100644
+--- a/fs/xfs/xfs_sysctl.c
++++ b/fs/xfs/xfs_sysctl.c
+@@ -210,28 +210,10 @@ static struct ctl_table xfs_table[] = {
+ 	{}
  };
  
--static struct ctl_table nfs_cb_sysctl_dir[] = {
+-static struct ctl_table xfs_dir_table[] = {
 -	{
--		.procname = "nfs",
--		.mode = 0555,
--		.child = nfs_cb_sysctls,
+-		.procname	= "xfs",
+-		.mode		= 0555,
+-		.child		= xfs_table
 -	},
--	{ }
+-	{}
 -};
 -
--static struct ctl_table nfs_cb_sysctl_root[] = {
+-static struct ctl_table xfs_root_table[] = {
 -	{
--		.procname = "fs",
--		.mode = 0555,
--		.child = nfs_cb_sysctl_dir,
+-		.procname	= "fs",
+-		.mode		= 0555,
+-		.child		= xfs_dir_table
 -	},
--	{ }
+-	{}
 -};
 -
- int nfs_register_sysctl(void)
+ int
+ xfs_sysctl_register(void)
  {
--	nfs_callback_sysctl_table = register_sysctl_table(nfs_cb_sysctl_root);
-+	nfs_callback_sysctl_table = register_sysctl("fs/nfs", nfs_cb_sysctls);
- 	if (nfs_callback_sysctl_table == NULL)
+-	xfs_table_header = register_sysctl_table(xfs_root_table);
++	xfs_table_header = register_sysctl("fs/xfs", xfs_table);
+ 	if (!xfs_table_header)
  		return -ENOMEM;
  	return 0;
 -- 
