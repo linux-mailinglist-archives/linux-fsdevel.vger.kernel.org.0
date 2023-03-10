@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 65F476B5557
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 043776B555C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:13:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230447AbjCJXNA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 18:13:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35370 "EHLO
+        id S231493AbjCJXNH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 18:13:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230085AbjCJXM6 (ORCPT
+        with ESMTP id S231261AbjCJXND (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 18:12:58 -0500
+        Fri, 10 Mar 2023 18:13:03 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C24F94490;
-        Fri, 10 Mar 2023 15:12:55 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A506F9028;
+        Fri, 10 Mar 2023 15:12:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=vwgcdlyuo+GJ5jvlI6ItnonZwvRm0XCG4SGb6jgIIUk=; b=dMTygatsLoA/2mFiksWRScl55F
-        vdQLDay0b6L3bB/x+/odyMiMicp6eud00Iajv04D2ddWCyvWiafl9OIo5tou8FIOsvyLu16ZBB50x
-        swGL2v8tqMw0P8jJEYy3/QzIRKcd88WHrFDx0Hv1gO8EwjgzhCItc5tQj3tyBcAWXcibMN7A1fcgA
-        SMwQlmrB5SHEVnl6ReEcNznTdZurq/VPVJdZc9Pr6iaGLKObUHughlIWS1F9ChW5GGv5RfBNQ8vom
-        VXqAaYigO9jd4r/iE6KHoTCdsFfRQOb4LmAAkwcxo/oeY0KwFQxHUMFl+uFQq94ITAjN2zgaZNmLM
-        IvKM80xQ==;
+        bh=KO2HxTUOZzbjQ3y76wpSpZnZj3+bp1GiNAt8DWUNdxU=; b=k6dL7lF5h50jRNr0sP1WQeyO2+
+        eYsLqyIE9wANrimmvLh1SLKSaKAQLXJUk1alQIuj4XBGvJRj9uRieruhcs+U6SV+HR+VvPc1UPSuY
+        OCc8YZiS6Kb6vpacPRdCb765jGYyQ6mzFufMLIU/iSRNrAp5CXlIIMcmb0RuF4weYhUKE0HejaRS4
+        jhrpz+NLg0h7aljcxQP1MoA91eAVuC2Z15E+ZXUHvRkn9mDApq0e9at52A/DmXtjojSQ7Fenv5WEO
+        k+NlhBWmlWjDlx6pKRtetpvCU+1DPxNSA7GfdJg2p1cN+xRBYPPZpZa9blNrjwlGC0KgFPyFFinA6
+        UUi2v2Bw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1paluB-00GaJL-AJ; Fri, 10 Mar 2023 23:12:07 +0000
+        id 1paluB-00GaJN-BZ; Fri, 10 Mar 2023 23:12:07 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     dhowells@redhat.com, linux-cachefs@redhat.com, jack@suse.com,
         jaharkes@cs.cmu.edu, coda@cs.cmu.edu, codalist@coda.cs.cmu.edu,
@@ -35,9 +35,9 @@ Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
         j.granados@samsung.com, patches@lists.linux.dev,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 4/5] coda: simplify one-level sysctl registration for coda_table
-Date:   Fri, 10 Mar 2023 15:12:05 -0800
-Message-Id: <20230310231206.3952808-5-mcgrof@kernel.org>
+Subject: [PATCH 5/5] ntfs: simplfy one-level sysctl registration for ntfs_sysctls
+Date:   Fri, 10 Mar 2023 15:12:06 -0800
+Message-Id: <20230310231206.3952808-6-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230310231206.3952808-1-mcgrof@kernel.org>
 References: <20230310231206.3952808-1-mcgrof@kernel.org>
@@ -61,34 +61,39 @@ Simplify this registration.
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/coda/sysctl.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ fs/ntfs/sysctl.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/fs/coda/sysctl.c b/fs/coda/sysctl.c
-index fda3b702b1c5..a247c14aaab7 100644
---- a/fs/coda/sysctl.c
-+++ b/fs/coda/sysctl.c
-@@ -39,19 +39,10 @@ static struct ctl_table coda_table[] = {
+diff --git a/fs/ntfs/sysctl.c b/fs/ntfs/sysctl.c
+index a030d00af90c..174fe536a1c0 100644
+--- a/fs/ntfs/sysctl.c
++++ b/fs/ntfs/sysctl.c
+@@ -31,16 +31,6 @@ static struct ctl_table ntfs_sysctls[] = {
  	{}
  };
  
--static struct ctl_table fs_table[] = {
+-/* Define the parent directory /proc/sys/fs. */
+-static struct ctl_table sysctls_root[] = {
 -	{
--		.procname	= "coda",
+-		.procname	= "fs",
 -		.mode		= 0555,
--		.child		= coda_table
+-		.child		= ntfs_sysctls
 -	},
 -	{}
 -};
 -
- void coda_sysctl_init(void)
- {
- 	if ( !fs_table_header )
--		fs_table_header = register_sysctl_table(fs_table);
-+		fs_table_header = register_sysctl("coda", coda_table);
- }
+ /* Storage for the sysctls header. */
+ static struct ctl_table_header *sysctls_root_table;
  
- void coda_sysctl_clean(void)
+@@ -54,7 +44,7 @@ int ntfs_sysctl(int add)
+ {
+ 	if (add) {
+ 		BUG_ON(sysctls_root_table);
+-		sysctls_root_table = register_sysctl_table(sysctls_root);
++		sysctls_root_table = register_sysctl("fs", ntfs_sysctls);
+ 		if (!sysctls_root_table)
+ 			return -ENOMEM;
+ 	} else {
 -- 
 2.39.1
 
