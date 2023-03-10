@@ -2,105 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 42E756B5543
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:02:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6ACA6B554F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:07:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231715AbjCJXCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 18:02:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49654 "EHLO
+        id S231826AbjCJXHK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 18:07:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230293AbjCJXCV (ORCPT
+        with ESMTP id S231540AbjCJXHJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 18:02:21 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D11147838;
-        Fri, 10 Mar 2023 15:02:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=eet2vNHP9SJyRytQAXeN8dV9MlcbH4NW2iBs2IrmZDA=; b=D0P+yBFRbDD6Jw9Y3fJhnTPsrq
-        l88RCpE421CMXqcRp/zu8zhyDXD+kJD0SPKKMr5xdj+r+PBL4rWOKzpmL4ADiku7It8+dicSWA+bw
-        5nSv3/FhwMiiZ8Qs3BCO6P8jWlSmByf6ebJTBPwM8+cdpQH34xs5/HsfavYDfFD5FCTCdYMvpHvb9
-        ouAorx54GfC33pUF+eihyGd+4yFtUGNGOEJQMv6wZ44zglX7yyWeEPuJsBiZHS2ax8cVE0U6BJ5pf
-        LZXiMI6IuRVZdUi5aHTL0FzKAnkhTIRa0NDDo0ybW8KUsYg13a1d12EQ91jREbJATq+Z2UUTZ7Tv9
-        9M0tob/w==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1palkh-00GZGm-Vp; Fri, 10 Mar 2023 23:02:20 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     djwong@kernel.org
-Cc:     linux-xfs@vger.kernel.org, keescook@chromium.org,
-        yzaikin@google.com, j.granados@samsung.com,
-        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH] xfs: simplify two-level sysctl registration for xfs_table
-Date:   Fri, 10 Mar 2023 15:02:19 -0800
-Message-Id: <20230310230219.3948819-1-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.37.1
+        Fri, 10 Mar 2023 18:07:09 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4C0B14ACC7;
+        Fri, 10 Mar 2023 15:07:08 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5F617B822E7;
+        Fri, 10 Mar 2023 23:07:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 036ECC433EF;
+        Fri, 10 Mar 2023 23:07:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678489626;
+        bh=zuN/kFW3k+Kq1wk3QFfp0txq4cDJq8FuADNAuknyD+w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E6+sPMil9mlBPLY/qvvhbqSohKQrUtexjne1dG+56aUrxJZSEMuJlHlP5Xihhkv+D
+         IVWjys5gs/uN1w4HYqr6UrJFN+7IIj8Tjl8jT2VH5p2noRx5AJZKCY2hMGxZmlJto9
+         dRCLcKa1dL2E+fwLL9UAvzhJwTD4c9Hzmb+3m72ESsBW5tYQ+ZUy2OAGUvsy6VBD37
+         /DgmJ1SklD7Wis1Ee97NFLSUHcUDcUJgUIHmQJ0HK0M63JYyxqeN2mDwOprmiuQrC+
+         GpZVQG3lL2Ao1E8gw1CNUhUSGB+IO2/56NnWqoIv6MFTwymQZh2ZoUFCLU97V+f/yg
+         9ODUrhbPkS3uQ==
+Date:   Fri, 10 Mar 2023 15:07:04 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: Re: AUTOSEL process
+Message-ID: <ZAu4GE0q4jzRI+F6@sol.localdomain>
+References: <Y/ux9JLHQKDOzWHJ@sol.localdomain>
+ <Y/y70zJj4kjOVfXa@sashalap>
+ <Y/zswi91axMN8OsA@sol.localdomain>
+ <Y/zxKOBTLXFjSVyI@sol.localdomain>
+ <Y/0U8tpNkgePu00M@sashalap>
+ <Y/0i5pGYjrVw59Kk@gmail.com>
+ <Y/0wMiOwoeLcFefc@sashalap>
+ <Y/1LlA5WogOAPBNv@gmail.com>
+ <Y/1em4ygHgSjIYau@sashalap>
+ <Y/136zpJSWx96YEe@sol.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y/136zpJSWx96YEe@sol.localdomain>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is no need to declare two tables to just create directories,
-this can be easily be done with a prefix path with register_sysctl().
+On Mon, Feb 27, 2023 at 07:41:31PM -0800, Eric Biggers wrote:
+> 
+> Well, probably more common is that prerequisites are in the same patchset, and
+> the prerequisites are tagged for stable too.  Whereas AUTOSEL often just picks
+> patch X of N.  Also, developers and maintainers who tag patches for stable are
+> probably more likely to help with the stable process in general and make sure
+> patches are backported correctly...
+> 
+> Anyway, the point is, AUTOSEL needs to be fixed to stop inappropriately
+> cherry-picking patch X of N so often.
+> 
 
-Simplify this registration.
+... and AUTOSEL strikes again, with the 6.1 and 6.2 kernels currently crashing
+whenever a block device is removed, due to patches 1 and 3 of a 3-patch series
+being AUTOSEL'ed (on the same day I started this discussion, no less):
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
+https://lore.kernel.org/linux-block/CAOCAAm4reGhz400DSVrh0BetYD3Ljr2CZen7_3D4gXYYdB4SKQ@mail.gmail.com/T/#u
 
-This is not clear to some so I've updated the docs for the sysctl
-registration here:
+Oh sorry, ignore this, it's just an anecdotal example.
 
-https://lore.kernel.org/all/20230310223947.3917711-1-mcgrof@kernel.org/T/#u     
-
- fs/xfs/xfs_sysctl.c | 20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
-
-diff --git a/fs/xfs/xfs_sysctl.c b/fs/xfs/xfs_sysctl.c
-index 546a6cd96729..fade33735393 100644
---- a/fs/xfs/xfs_sysctl.c
-+++ b/fs/xfs/xfs_sysctl.c
-@@ -210,28 +210,10 @@ static struct ctl_table xfs_table[] = {
- 	{}
- };
- 
--static struct ctl_table xfs_dir_table[] = {
--	{
--		.procname	= "xfs",
--		.mode		= 0555,
--		.child		= xfs_table
--	},
--	{}
--};
--
--static struct ctl_table xfs_root_table[] = {
--	{
--		.procname	= "fs",
--		.mode		= 0555,
--		.child		= xfs_dir_table
--	},
--	{}
--};
--
- int
- xfs_sysctl_register(void)
- {
--	xfs_table_header = register_sysctl_table(xfs_root_table);
-+	xfs_table_header = register_sysctl("fs/xfs", xfs_table);
- 	if (!xfs_table_header)
- 		return -ENOMEM;
- 	return 0;
--- 
-2.39.1
-
+- Eric
