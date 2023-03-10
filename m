@@ -2,51 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D13906B4486
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 15:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EFC96B4C52
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 17:13:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232301AbjCJOZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 09:25:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42582 "EHLO
+        id S231219AbjCJQNT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 11:13:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232311AbjCJOYo (ORCPT
+        with ESMTP id S231355AbjCJQMP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 09:24:44 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65AFADDB2E;
-        Fri, 10 Mar 2023 06:23:37 -0800 (PST)
-Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4PY7X85ntKzHvKK;
-        Fri, 10 Mar 2023 22:21:28 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Fri, 10 Mar 2023 22:23:35 +0800
-Message-ID: <a9375f3c-bd8b-8d32-2fd2-32047005f9b5@huawei.com>
-Date:   Fri, 10 Mar 2023 22:23:34 +0800
+        Fri, 10 Mar 2023 11:12:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E822101101
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Mar 2023 08:09:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678464485;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=rFrEXheoagyGuGhHvjwBBfDFiECGzjLiqrbLv4R0rvY=;
+        b=XPEbl9vCWwFdDQUDjvRAptlGPRVWgicVEisQXZy7NAnESBmr/RUp5nqbAL3Q4YmSC5ib1v
+        ZydC/OtnrypGie+XT3fziTUIPOHVjQIX7WdQ704wUezpJT+s2sEpSkdMYDT+JqNzLhDDZo
+        TvkhA+K14k8LwVjBbRMiQZrEwK7uuVw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-262-1qJTywyZPHettNgAt-TBhg-1; Fri, 10 Mar 2023 11:08:03 -0500
+X-MC-Unique: 1qJTywyZPHettNgAt-TBhg-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 08D53100F909;
+        Fri, 10 Mar 2023 16:08:02 +0000 (UTC)
+Received: from thuth.com (unknown [10.45.224.202])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 89FD3492B00;
+        Fri, 10 Mar 2023 16:07:59 +0000 (UTC)
+From:   Thomas Huth <thuth@redhat.com>
+To:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arch@vger.kernel.org, Chas Williams <3chas3@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v2 0/5] Remove #ifdef CONFIG_* from uapi headers (2023 edition)
+Date:   Fri, 10 Mar 2023 17:07:52 +0100
+Message-Id: <20230310160757.199253-1-thuth@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH] mm: hugetlb: move hugeltb sysctls to its own file
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <muchun.song@linux.dev>
-CC:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-References: <20230309122011.61969-1-wangkefeng.wang@huawei.com>
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <20230309122011.61969-1-wangkefeng.wang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.243]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,51 +60,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+uapi headers should not use the kernel-internal CONFIG switches.
+Palmer Dabbelt sent some patches to clean this up a couple of years
+ago, but unfortunately some of those patches never got merged.
+So here's a rebased version of those patches - since they are rather
+trivial, I hope it's OK for everybody if they could go through Arnd's
+"generic include/asm header files" branch.
 
+v2:
+- Added Reviewed-bys from v1
+- Changed the CONFIG_CDROM_PKTCDVD_WCACHE patch according to Christoph's
+  suggestion
+- Added final patch to clean the list in scripts/headers_install.sh
 
-On 2023/3/9 20:20, Kefeng Wang wrote:
-> This moves all hugetlb sysctls to its own file, also kill an
-> useless hugetlb_treat_movable_handler() defination.
-> 
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> ---
->   include/linux/hugetlb.h |  8 -------
->   kernel/sysctl.c         | 32 --------------------------
->   mm/hugetlb.c            | 51 ++++++++++++++++++++++++++++++++++++++---
->   3 files changed, 48 insertions(+), 43 deletions(-)
-> 
+Palmer Dabbelt (3):
+  Move COMPAT_ATM_ADDPARTY to net/atm/svc.c
+  Move ep_take_care_of_epollwakeup() to fs/eventpoll.c
+  Move bp_type_idx to include/linux/hw_breakpoint.h
 
-> +#ifdef CONFIG_SYSCTL
-> +static void hugetlb_sysctl_init(void);
+Thomas Huth (2):
+  pktcdvd: Remove CONFIG_CDROM_PKTCDVD_WCACHE from uapi header
+  scripts: Update the CONFIG_* ignore list in headers_install.sh
 
-Hi Luis，this should add __init as it is called by hugetlb_init,
-could you help to change it, or I could send a new patch.
+ drivers/block/pktcdvd.c                  | 13 +++++++++----
+ fs/eventpoll.c                           | 13 +++++++++++++
+ include/linux/hw_breakpoint.h            | 10 ++++++++++
+ include/uapi/linux/atmdev.h              |  4 ----
+ include/uapi/linux/eventpoll.h           | 12 ------------
+ include/uapi/linux/hw_breakpoint.h       | 10 ----------
+ include/uapi/linux/pktcdvd.h             | 11 -----------
+ net/atm/svc.c                            |  5 +++++
+ scripts/headers_install.sh               |  4 ----
+ tools/include/uapi/linux/hw_breakpoint.h | 10 ----------
+ 10 files changed, 37 insertions(+), 55 deletions(-)
 
+-- 
+2.31.1
 
-> +#else
-> +static inline void hugetlb_sysctl_init(void) { }
-> +#endif
-> +
->   static int __init hugetlb_init(void)
->   {
->   	int i;
-> @@ -4257,6 +4263,7 @@ static int __init hugetlb_init(void)
->   
->   	hugetlb_sysfs_init();
->   	hugetlb_cgroup_file_init();
-> +	hugetlb_sysctl_init();
->   
-...
-> +
-> +static void hugetlb_sysctl_init(void)
-
-ditto, sorry for the mistake.
-
-Thanks.
-
-> +{
-> +	register_sysctl_init("vm", hugetlb_table);
-> +}
->   #endif /* CONFIG_SYSCTL */
->   
->   void hugetlb_report_meminfo(struct seq_file *m)
