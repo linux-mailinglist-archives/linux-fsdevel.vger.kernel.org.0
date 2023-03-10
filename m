@@ -2,60 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 524BC6B4C5E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 17:13:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CE736B512C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 20:54:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231446AbjCJQNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 11:13:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42020 "EHLO
+        id S230453AbjCJTx6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 14:53:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231589AbjCJQMY (ORCPT
+        with ESMTP id S230188AbjCJTx5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 11:12:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95C0118805
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Mar 2023 08:09:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678464498;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VF7DOSFSoxperMCR1c0beoAVNr9jhMKzR2GYQ6m9DTA=;
-        b=U9UsDKvfKK8N2ZGaAnBBx6XfqO21mihzI/QhWrERLr3ekDVQioNxdX6rHc6XEYT0B6xMZv
-        ZsFlbTYKLufGWX0A8RasQf7H0/V5HlGBzPgBaLt9q57t6RkHupQZSKQULZ+iagM3OhQQQC
-        1BIWXz2nJoqR63M20xj9UTkP8/DUvN4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-587-0nmZr2faN_Ob6cqxJso-SQ-1; Fri, 10 Mar 2023 11:08:14 -0500
-X-MC-Unique: 0nmZr2faN_Ob6cqxJso-SQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 612A3185A794;
-        Fri, 10 Mar 2023 16:08:13 +0000 (UTC)
-Received: from thuth.com (unknown [10.45.224.202])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C0A2492C3E;
-        Fri, 10 Mar 2023 16:08:11 +0000 (UTC)
-From:   Thomas Huth <thuth@redhat.com>
-To:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arch@vger.kernel.org, Chas Williams <3chas3@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v2 5/5] scripts: Update the CONFIG_* ignore list in headers_install.sh
-Date:   Fri, 10 Mar 2023 17:07:57 +0100
-Message-Id: <20230310160757.199253-6-thuth@redhat.com>
-In-Reply-To: <20230310160757.199253-1-thuth@redhat.com>
-References: <20230310160757.199253-1-thuth@redhat.com>
+        Fri, 10 Mar 2023 14:53:57 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88C3F10FB9E;
+        Fri, 10 Mar 2023 11:53:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=Ss+hdlsE3tPgccu1HnUCYdR+3LmCLybQ7871SrfrPpU=; b=0ntTevDI5MKI7rCGq03+F0Xh2f
+        rwpX68L12144Jx2FT77vR0dUqtR3ZG4e7aYqEjJLB45iYWxjQO++W/ChDmofmzTe9ghqkVH6Fxx8T
+        RcLeMaphm4W71tV+eq7czrT1SiWJ32fqc5QTXVBXgc1yFf2X0hgsjTe0vyI4mID+owLue9ZGvrGAu
+        0MFLLuWtqMDeqZwORN6wnu2mtQQW+XwKB2j9bgQ/raiRq8p64RvLocZ2mw/p3np71VhecrQvslNGp
+        g0fuIUoNsXlUN/ParteV9vUJWhFHSDrZfv0i+gPZzMo9HuVPSe8bQuQA/owJMwNLuEGjt89ujEwgx
+        1LBFYAVQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1paioC-00FwaX-QL; Fri, 10 Mar 2023 19:53:44 +0000
+Date:   Fri, 10 Mar 2023 11:53:44 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <muchun.song@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Subject: Re: [PATCH] mm: hugetlb: move hugeltb sysctls to its own file
+Message-ID: <ZAuKyAnfkOnK7NWK@bombadil.infradead.org>
+References: <20230309122011.61969-1-wangkefeng.wang@huawei.com>
+ <a9375f3c-bd8b-8d32-2fd2-32047005f9b5@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+In-Reply-To: <a9375f3c-bd8b-8d32-2fd2-32047005f9b5@huawei.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,29 +56,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The file in include/uapi/linux/ have been cleaned in the previous patches,
-so we can now remove these entries from the CONFIG_* ignore-list.
+On Fri, Mar 10, 2023 at 10:23:34PM +0800, Kefeng Wang wrote:
+> 
+> 
+> On 2023/3/9 20:20, Kefeng Wang wrote:
+> > This moves all hugetlb sysctls to its own file, also kill an
+> > useless hugetlb_treat_movable_handler() defination.
+> > 
+> > Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> > ---
+> >   include/linux/hugetlb.h |  8 -------
+> >   kernel/sysctl.c         | 32 --------------------------
+> >   mm/hugetlb.c            | 51 ++++++++++++++++++++++++++++++++++++++---
+> >   3 files changed, 48 insertions(+), 43 deletions(-)
+> > 
+> 
+> > +#ifdef CONFIG_SYSCTL
+> > +static void hugetlb_sysctl_init(void);
+> 
+> Hi Luis，this should add __init as it is called by hugetlb_init,
+> could you help to change it, or I could send a new patch.
+> 
+> 
+> > +#else
+> > +static inline void hugetlb_sysctl_init(void) { }
+> > +#endif
+> > +
+> >   static int __init hugetlb_init(void)
+> >   {
+> >   	int i;
+> > @@ -4257,6 +4263,7 @@ static int __init hugetlb_init(void)
+> >   	hugetlb_sysfs_init();
+> >   	hugetlb_cgroup_file_init();
+> > +	hugetlb_sysctl_init();
+> ...
+> > +
+> > +static void hugetlb_sysctl_init(void)
+> 
+> ditto, sorry for the mistake.
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- scripts/headers_install.sh | 4 ----
- 1 file changed, 4 deletions(-)
+Just send a fix.
 
-diff --git a/scripts/headers_install.sh b/scripts/headers_install.sh
-index 4041881746ad..36b56b746fce 100755
---- a/scripts/headers_install.sh
-+++ b/scripts/headers_install.sh
-@@ -83,10 +83,6 @@ arch/nios2/include/uapi/asm/swab.h:CONFIG_NIOS2_CI_SWAB_SUPPORT
- arch/x86/include/uapi/asm/auxvec.h:CONFIG_IA32_EMULATION
- arch/x86/include/uapi/asm/auxvec.h:CONFIG_X86_64
- arch/x86/include/uapi/asm/mman.h:CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
--include/uapi/linux/atmdev.h:CONFIG_COMPAT
--include/uapi/linux/eventpoll.h:CONFIG_PM_SLEEP
--include/uapi/linux/hw_breakpoint.h:CONFIG_HAVE_MIXED_BREAKPOINTS_REGS
--include/uapi/linux/pktcdvd.h:CONFIG_CDROM_PKTCDVD_WCACHE
- "
- 
- for c in $configs
--- 
-2.31.1
-
+  Luis
