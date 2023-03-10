@@ -2,99 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CE736B512C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 20:54:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59B426B516C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Mar 2023 21:07:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbjCJTx6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 14:53:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58268 "EHLO
+        id S231292AbjCJUHQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 15:07:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230188AbjCJTx5 (ORCPT
+        with ESMTP id S230427AbjCJUHM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 14:53:57 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88C3F10FB9E;
-        Fri, 10 Mar 2023 11:53:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-        bh=Ss+hdlsE3tPgccu1HnUCYdR+3LmCLybQ7871SrfrPpU=; b=0ntTevDI5MKI7rCGq03+F0Xh2f
-        rwpX68L12144Jx2FT77vR0dUqtR3ZG4e7aYqEjJLB45iYWxjQO++W/ChDmofmzTe9ghqkVH6Fxx8T
-        RcLeMaphm4W71tV+eq7czrT1SiWJ32fqc5QTXVBXgc1yFf2X0hgsjTe0vyI4mID+owLue9ZGvrGAu
-        0MFLLuWtqMDeqZwORN6wnu2mtQQW+XwKB2j9bgQ/raiRq8p64RvLocZ2mw/p3np71VhecrQvslNGp
-        g0fuIUoNsXlUN/ParteV9vUJWhFHSDrZfv0i+gPZzMo9HuVPSe8bQuQA/owJMwNLuEGjt89ujEwgx
-        1LBFYAVQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1paioC-00FwaX-QL; Fri, 10 Mar 2023 19:53:44 +0000
-Date:   Fri, 10 Mar 2023 11:53:44 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH] mm: hugetlb: move hugeltb sysctls to its own file
-Message-ID: <ZAuKyAnfkOnK7NWK@bombadil.infradead.org>
-References: <20230309122011.61969-1-wangkefeng.wang@huawei.com>
- <a9375f3c-bd8b-8d32-2fd2-32047005f9b5@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a9375f3c-bd8b-8d32-2fd2-32047005f9b5@huawei.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+        Fri, 10 Mar 2023 15:07:12 -0500
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 425D9126F06;
+        Fri, 10 Mar 2023 12:07:09 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.west.internal (Postfix) with ESMTP id 407C932003C0;
+        Fri, 10 Mar 2023 15:07:06 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Fri, 10 Mar 2023 15:07:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1678478825; x=1678565225; bh=0a
+        Ymj5tx8ig6QH6sJhzcEPY7Nw5ZBynuJPqxTvDXknM=; b=X5SC3oGJ1EZkFs8ADD
+        QVEjij51GN0LONEbpD6hZlYAnCAyOxHB/gFebYyrdKkWFPpYeZ8Ekojii9DGHmhk
+        NuBEKgBccRnqnpkf1bwkTbG11Wx6ZsIYpEcAjpvDZwqR+r8If9LLEn3/3tKl5jiR
+        KIXh71Rvp5EdS8mY+Vv6InffJAiSovUyHbykouSLymLzscVVo4JAdCHSEMTfRFbj
+        kufQxdZbwlk6CjcOy1VRp48RBpwGu2jRTDwJ3oRtPok05nduJx58UG6oBsp0Hi/q
+        sYvXorvn29xBldNcEVVc5Ce/4US4FzQCRi9b++9OBz4s/c5OwEmgHrWPnCi80hSp
+        Ve3g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1678478825; x=1678565225; bh=0aYmj5tx8ig6Q
+        H6sJhzcEPY7Nw5ZBynuJPqxTvDXknM=; b=emaikchmYYs5S9yN9qw7620/5cxeP
+        a3pzILMyUL+Iz3TjbcPSeUXhgluPzTHXu8eshOEMhlwZ+3pantwcpDBDUcd094Ms
+        yIHZwVPKdwGZuAWeMmyA72Ef8Oh+qipTK7xSr3tbXRyyNBYAJXzMuiuGpEqWC8p6
+        wYyXGsZOITWS8h5trFBjkrAHuvxaqgefwN/KYDFuubn6liRXjPXhUpZatSA71ukZ
+        LaGMcwPgrJsjT55ocE/nyMeVyKwSNgR1UuGCNS2ova0zrXDx3FwOUN9LMspMbt4W
+        9sor26Ysa7FuEcRPKgHz64QhVDVvJYj/gmOnGGf6uftFm3EEsaaEGZ+mA==
+X-ME-Sender: <xms:6Y0LZL4hM-WTjE7oYScaxRaC4bmFlHc401-aeXrUMWqRgx2kKUepdw>
+    <xme:6Y0LZA4uNK5KMORPICWxUj4OoL7PjxR6CmxGyKuukUMu0uZ2a1LwmkdjW2z7179bY
+    PHFEXcxs0wf0zlhi2U>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvddukedguddvlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:6Y0LZCeI4J1F1ejZsac9taQx3HQQ2wtWYwOz_LvnafEMtTHfkqPJ9w>
+    <xmx:6Y0LZMJuxI1NjEo29mH0yiYmAjDPykYQR8yQqSilWZSRTP7yTZDQ8w>
+    <xmx:6Y0LZPI4QWu68qVcwMHW6SDIGnvwPH3fgeJCqxq3TQaguypMs_GxNQ>
+    <xmx:6Y0LZMpXXbTU9riN2MVYqmKlpXj3JzLs5aTumgZAio8D2aERXyZr0Q>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 9843DB60086; Fri, 10 Mar 2023 15:07:05 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-206-g57c8fdedf8-fm-20230227.001-g57c8fded
+Mime-Version: 1.0
+Message-Id: <1a2c5d85-049c-4512-be39-1319fa790924@app.fastmail.com>
+In-Reply-To: <20230310160757.199253-1-thuth@redhat.com>
+References: <20230310160757.199253-1-thuth@redhat.com>
+Date:   Fri, 10 Mar 2023 21:06:44 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Thomas Huth" <thuth@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     Linux-Arch <linux-arch@vger.kernel.org>,
+        "Chas Williams" <3chas3@gmail.com>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-atm-general@lists.sourceforge.net,
+        Netdev <netdev@vger.kernel.org>,
+        "Christoph Hellwig" <hch@infradead.org>
+Subject: Re: [PATCH v2 0/5] Remove #ifdef CONFIG_* from uapi headers (2023 edition)
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 10:23:34PM +0800, Kefeng Wang wrote:
-> 
-> 
-> On 2023/3/9 20:20, Kefeng Wang wrote:
-> > This moves all hugetlb sysctls to its own file, also kill an
-> > useless hugetlb_treat_movable_handler() defination.
-> > 
-> > Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> > ---
-> >   include/linux/hugetlb.h |  8 -------
-> >   kernel/sysctl.c         | 32 --------------------------
-> >   mm/hugetlb.c            | 51 ++++++++++++++++++++++++++++++++++++++---
-> >   3 files changed, 48 insertions(+), 43 deletions(-)
-> > 
-> 
-> > +#ifdef CONFIG_SYSCTL
-> > +static void hugetlb_sysctl_init(void);
-> 
-> Hi Luis，this should add __init as it is called by hugetlb_init,
-> could you help to change it, or I could send a new patch.
-> 
-> 
-> > +#else
-> > +static inline void hugetlb_sysctl_init(void) { }
-> > +#endif
-> > +
-> >   static int __init hugetlb_init(void)
-> >   {
-> >   	int i;
-> > @@ -4257,6 +4263,7 @@ static int __init hugetlb_init(void)
-> >   	hugetlb_sysfs_init();
-> >   	hugetlb_cgroup_file_init();
-> > +	hugetlb_sysctl_init();
-> ...
-> > +
-> > +static void hugetlb_sysctl_init(void)
-> 
-> ditto, sorry for the mistake.
+On Fri, Mar 10, 2023, at 17:07, Thomas Huth wrote:
+> uapi headers should not use the kernel-internal CONFIG switches.
+> Palmer Dabbelt sent some patches to clean this up a couple of years
+> ago, but unfortunately some of those patches never got merged.
+> So here's a rebased version of those patches - since they are rather
+> trivial, I hope it's OK for everybody if they could go through Arnd's
+> "generic include/asm header files" branch.
+>
+> v2:
+> - Added Reviewed-bys from v1
+> - Changed the CONFIG_CDROM_PKTCDVD_WCACHE patch according to Christoph's
+>   suggestion
+> - Added final patch to clean the list in scripts/headers_install.sh
 
-Just send a fix.
+Thanks for the rebase, applied to the asm-generic tree now, as I'm
+fairly optimistic they are all good.
 
-  Luis
+    Arnd
