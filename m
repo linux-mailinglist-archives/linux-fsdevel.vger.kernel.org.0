@@ -2,84 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6ACA6B554F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:07:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3DC36B5559
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 00:13:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231826AbjCJXHK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Mar 2023 18:07:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57408 "EHLO
+        id S231395AbjCJXNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Mar 2023 18:13:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231540AbjCJXHJ (ORCPT
+        with ESMTP id S231269AbjCJXND (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Mar 2023 18:07:09 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4C0B14ACC7;
-        Fri, 10 Mar 2023 15:07:08 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5F617B822E7;
-        Fri, 10 Mar 2023 23:07:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 036ECC433EF;
-        Fri, 10 Mar 2023 23:07:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678489626;
-        bh=zuN/kFW3k+Kq1wk3QFfp0txq4cDJq8FuADNAuknyD+w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E6+sPMil9mlBPLY/qvvhbqSohKQrUtexjne1dG+56aUrxJZSEMuJlHlP5Xihhkv+D
-         IVWjys5gs/uN1w4HYqr6UrJFN+7IIj8Tjl8jT2VH5p2noRx5AJZKCY2hMGxZmlJto9
-         dRCLcKa1dL2E+fwLL9UAvzhJwTD4c9Hzmb+3m72ESsBW5tYQ+ZUy2OAGUvsy6VBD37
-         /DgmJ1SklD7Wis1Ee97NFLSUHcUDcUJgUIHmQJ0HK0M63JYyxqeN2mDwOprmiuQrC+
-         GpZVQG3lL2Ao1E8gw1CNUhUSGB+IO2/56NnWqoIv6MFTwymQZh2ZoUFCLU97V+f/yg
-         9ODUrhbPkS3uQ==
-Date:   Fri, 10 Mar 2023 15:07:04 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <ZAu4GE0q4jzRI+F6@sol.localdomain>
-References: <Y/ux9JLHQKDOzWHJ@sol.localdomain>
- <Y/y70zJj4kjOVfXa@sashalap>
- <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <Y/0U8tpNkgePu00M@sashalap>
- <Y/0i5pGYjrVw59Kk@gmail.com>
- <Y/0wMiOwoeLcFefc@sashalap>
- <Y/1LlA5WogOAPBNv@gmail.com>
- <Y/1em4ygHgSjIYau@sashalap>
- <Y/136zpJSWx96YEe@sol.localdomain>
+        Fri, 10 Mar 2023 18:13:03 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEE49EF5;
+        Fri, 10 Mar 2023 15:12:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=R85E7uQimX2SAhrrjoHNWpuZL+HB0XZL3iNXIzJ+Yfs=; b=OeX4YM2GdD8E9RJo04tNLmwNCS
+        x0hqiWJ9Z9ahNS7XwVJSZAXDZmPJo9nNWL7aKXjzydSAFrO0m6dO6xG10dB7jQyx1g+t5152jH5iu
+        RFr0CdSqQ1zqYuqLq9UzUk6qXWbt0SggkiG/waVG0ox+0oYz4KKQt9TDjTX9C+sU11JxpkXuF5At9
+        hqsCniEWdxR4bSmO2f0ffGRd8rtvqjmmhjNVxfRHtdMb6/eiMnLbt7FhrJ58cNFVQurJ9CVvZt6xY
+        8FNgLoLk4rFGNlH3BRUowvYNtRZEF3bvPNqNpJCLZt611qS7AsyT0l+T0DRfcoTDg+2wbym9JFlgy
+        voypE+7A==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1paluB-00GaJB-50; Fri, 10 Mar 2023 23:12:07 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     dhowells@redhat.com, linux-cachefs@redhat.com, jack@suse.com,
+        jaharkes@cs.cmu.edu, coda@cs.cmu.edu, codalist@coda.cs.cmu.edu,
+        anton@tuxera.com, linux-ntfs-dev@lists.sourceforge.net
+Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        j.granados@samsung.com, patches@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH 0/5] misc filesystems: simplify sysctl registration
+Date:   Fri, 10 Mar 2023 15:12:01 -0800
+Message-Id: <20230310231206.3952808-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y/136zpJSWx96YEe@sol.localdomain>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 07:41:31PM -0800, Eric Biggers wrote:
-> 
-> Well, probably more common is that prerequisites are in the same patchset, and
-> the prerequisites are tagged for stable too.  Whereas AUTOSEL often just picks
-> patch X of N.  Also, developers and maintainers who tag patches for stable are
-> probably more likely to help with the stable process in general and make sure
-> patches are backported correctly...
-> 
-> Anyway, the point is, AUTOSEL needs to be fixed to stop inappropriately
-> cherry-picking patch X of N so often.
-> 
+This simplifies syctl registration for a few misc filesystems according
+to our latest preference / guidance [0]. register_sysctl_table() incurs
+possible recursion and we can avoid that by dealing with flat
+directories with files in them, and having the subdirectories explicitly
+named with register_sysctl().
 
-... and AUTOSEL strikes again, with the 6.1 and 6.2 kernels currently crashing
-whenever a block device is removed, due to patches 1 and 3 of a 3-patch series
-being AUTOSEL'ed (on the same day I started this discussion, no less):
+As we phase these callers out we can deprecate / remove register_sysctl_table()
+eventually.
 
-https://lore.kernel.org/linux-block/CAOCAAm4reGhz400DSVrh0BetYD3Ljr2CZen7_3D4gXYYdB4SKQ@mail.gmail.com/T/#u
+If you're a maintainer feel free to pick up the patch or I'm also happy
+to take it through sysctl-next if you like. These don't create
+conflicts so there is no requirement they go throug sysclt-next at all.
 
-Oh sorry, ignore this, it's just an anecdotal example.
+I can pick up stragglers later.
 
-- Eric
+[0] https://lore.kernel.org/all/20230310223947.3917711-1-mcgrof@kernel.org/T/#u     
+
+Luis Chamberlain (5):
+  fs/cachefiles: simplify one-level sysctl registration for
+    cachefiles_sysctls
+  devpts: simplify two-level sysctl registration for pty_kern_table
+  quota: simplify two-level sysctl registration for fs_dqstats_table
+  coda: simplify one-level sysctl registration for coda_table
+  ntfs: simplfy one-level sysctl registration for ntfs_sysctls
+
+ fs/cachefiles/error_inject.c | 11 +----------
+ fs/coda/sysctl.c             | 11 +----------
+ fs/devpts/inode.c            | 20 +-------------------
+ fs/ntfs/sysctl.c             | 12 +-----------
+ fs/quota/dquot.c             | 20 +-------------------
+ 5 files changed, 5 insertions(+), 69 deletions(-)
+
+-- 
+2.39.1
+
