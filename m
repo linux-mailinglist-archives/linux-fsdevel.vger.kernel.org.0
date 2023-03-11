@@ -2,75 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FD5E6B58EC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 07:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 716F66B594A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 08:27:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbjCKG0I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Mar 2023 01:26:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58036 "EHLO
+        id S230183AbjCKH1T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Mar 2023 02:27:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229589AbjCKG0H (ORCPT
+        with ESMTP id S229801AbjCKH1R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Mar 2023 01:26:07 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65F5213B961;
-        Fri, 10 Mar 2023 22:26:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=I+OnlACID7Vj4QKsE6DLJjjwrblDiFCX+bTgJFHMKmo=; b=oDh4toKy8WZlQSR8TD6vqfC58I
-        A3SvzbtBJw3fxhf6TBiLWNmC7n+uuHF1SS5dGqG3TaP3UuKcOzIJJH3MCDHUVqxISAH5oYvpVMRQW
-        mwiEinLlgcsWAA8u9ZH9jYjsmntv6Kzf3SJLUaphlYCVhexykzuJQJu7TDqO+3MJxw5Mq4HxtY+7V
-        VUeDdAHT5/nJ/U9uE1cXQopZDFmgyZuD+T6UKXHvkPshUeMm5k64nLtJzBLb/kp3NVlrPoCXHV1mr
-        NDCMnmQPcVOXGoIUOIMSWlcKJedTJHsDq2rLVuwYH1VzN+49Unt6hn6q9zO1u2bl6Yf7rmTssdIUB
-        WcWyLuYQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pasg3-00A1DJ-4d; Sat, 11 Mar 2023 06:25:59 +0000
-Date:   Sat, 11 Mar 2023 06:25:59 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <ZAwe95meyCiv6qc4@casper.infradead.org>
-References: <20230226034256.771769-1-sashal@kernel.org>
- <20230226034256.771769-12-sashal@kernel.org>
- <Y/rbGxq8oAEsW28j@sol.localdomain>
- <Y/rufenGRpoJVXZr@sol.localdomain>
- <Y/ux9JLHQKDOzWHJ@sol.localdomain>
- <Y/y70zJj4kjOVfXa@sashalap>
- <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <ZATC3djtr9/uPX+P@duo.ucw.cz>
- <ZAewdAql4PBUYOG5@gmail.com>
+        Sat, 11 Mar 2023 02:27:17 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D6951340E8;
+        Fri, 10 Mar 2023 23:27:16 -0800 (PST)
+Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4PYZDP3g9JznWTZ;
+        Sat, 11 Mar 2023 15:24:21 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Sat, 11 Mar 2023 15:27:13 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <muchun.song@linux.dev>
+CC:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v2] mm: hugetlb: move hugeltb sysctls to its own file
+Date:   Sat, 11 Mar 2023 15:47:34 +0800
+Message-ID: <20230311074734.123269-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZAewdAql4PBUYOG5@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500001.china.huawei.com (7.185.36.107)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 07, 2023 at 09:45:24PM +0000, Eric Biggers wrote:
-> On Tue, Mar 07, 2023 at 10:18:35PM +0100, Pavel Machek wrote:
-> > I believe that -stable would be more useful without AUTOSEL process.
-> 
-> There has to be a way to ensure that security fixes that weren't properly tagged
-> make it to stable anyway.  So, AUTOSEL is necessary, at least in some form.  I
-> think that debating *whether it should exist* is a distraction from what's
-> actually important, which is that the current AUTOSEL process has some specific
-> problems, and these specific problems need to be fixed...
+This moves all hugetlb sysctls to its own file, also kill an
+useless hugetlb_treat_movable_handler() since commit d6cb41cc44c6
+("mm, hugetlb: remove hugepages_treat_as_movable sysctl").
 
-I agree with you, that we need autosel and we also need autosel to
-be better.  I actually see Pavel's mail as a datapoint (or "anecdote",
-if you will) in support of that; the autosel process currently works
-so badly that a long-time contributor thinks it's worse than nothing.
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+---
+v2:
+- add __init to hugetlb_sysfs_init
+- update commit and add RBs
 
-Sasha, what do you need to help you make this better?
+ include/linux/hugetlb.h |  8 -------
+ kernel/sysctl.c         | 32 --------------------------
+ mm/hugetlb.c            | 51 ++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 48 insertions(+), 43 deletions(-)
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 7c977d234aba..4056b05d81ed 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -124,14 +124,6 @@ void hugepage_put_subpool(struct hugepage_subpool *spool);
+ 
+ void hugetlb_dup_vma_private(struct vm_area_struct *vma);
+ void clear_vma_resv_huge_pages(struct vm_area_struct *vma);
+-int hugetlb_sysctl_handler(struct ctl_table *, int, void *, size_t *, loff_t *);
+-int hugetlb_overcommit_handler(struct ctl_table *, int, void *, size_t *,
+-		loff_t *);
+-int hugetlb_treat_movable_handler(struct ctl_table *, int, void *, size_t *,
+-		loff_t *);
+-int hugetlb_mempolicy_sysctl_handler(struct ctl_table *, int, void *, size_t *,
+-		loff_t *);
+-
+ int move_hugetlb_page_tables(struct vm_area_struct *vma,
+ 			     struct vm_area_struct *new_vma,
+ 			     unsigned long old_addr, unsigned long new_addr,
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index c14552a662ae..ce0297acf97c 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2140,38 +2140,6 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_ONE,
+ 	},
+-#endif
+-#ifdef CONFIG_HUGETLB_PAGE
+-	{
+-		.procname	= "nr_hugepages",
+-		.data		= NULL,
+-		.maxlen		= sizeof(unsigned long),
+-		.mode		= 0644,
+-		.proc_handler	= hugetlb_sysctl_handler,
+-	},
+-#ifdef CONFIG_NUMA
+-	{
+-		.procname       = "nr_hugepages_mempolicy",
+-		.data           = NULL,
+-		.maxlen         = sizeof(unsigned long),
+-		.mode           = 0644,
+-		.proc_handler   = &hugetlb_mempolicy_sysctl_handler,
+-	},
+-#endif
+-	 {
+-		.procname	= "hugetlb_shm_group",
+-		.data		= &sysctl_hugetlb_shm_group,
+-		.maxlen		= sizeof(gid_t),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-	 },
+-	{
+-		.procname	= "nr_overcommit_hugepages",
+-		.data		= NULL,
+-		.maxlen		= sizeof(unsigned long),
+-		.mode		= 0644,
+-		.proc_handler	= hugetlb_overcommit_handler,
+-	},
+ #endif
+ 	{
+ 		.procname	= "lowmem_reserve_ratio",
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 712e32b38295..6f3c5f587c66 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -4202,6 +4202,12 @@ static void __init hugetlb_sysfs_init(void)
+ 	hugetlb_register_all_nodes();
+ }
+ 
++#ifdef CONFIG_SYSCTL
++static void __init hugetlb_sysctl_init(void);
++#else
++static void __init hugetlb_sysctl_init(void) { }
++#endif
++
+ static int __init hugetlb_init(void)
+ {
+ 	int i;
+@@ -4257,6 +4263,7 @@ static int __init hugetlb_init(void)
+ 
+ 	hugetlb_sysfs_init();
+ 	hugetlb_cgroup_file_init();
++	hugetlb_sysctl_init();
+ 
+ #ifdef CONFIG_SMP
+ 	num_fault_mutexes = roundup_pow_of_two(8 * num_possible_cpus());
+@@ -4588,7 +4595,7 @@ static int hugetlb_sysctl_handler_common(bool obey_mempolicy,
+ 	return ret;
+ }
+ 
+-int hugetlb_sysctl_handler(struct ctl_table *table, int write,
++static int hugetlb_sysctl_handler(struct ctl_table *table, int write,
+ 			  void *buffer, size_t *length, loff_t *ppos)
+ {
+ 
+@@ -4597,7 +4604,7 @@ int hugetlb_sysctl_handler(struct ctl_table *table, int write,
+ }
+ 
+ #ifdef CONFIG_NUMA
+-int hugetlb_mempolicy_sysctl_handler(struct ctl_table *table, int write,
++static int hugetlb_mempolicy_sysctl_handler(struct ctl_table *table, int write,
+ 			  void *buffer, size_t *length, loff_t *ppos)
+ {
+ 	return hugetlb_sysctl_handler_common(true, table, write,
+@@ -4605,7 +4612,7 @@ int hugetlb_mempolicy_sysctl_handler(struct ctl_table *table, int write,
+ }
+ #endif /* CONFIG_NUMA */
+ 
+-int hugetlb_overcommit_handler(struct ctl_table *table, int write,
++static int hugetlb_overcommit_handler(struct ctl_table *table, int write,
+ 		void *buffer, size_t *length, loff_t *ppos)
+ {
+ 	struct hstate *h = &default_hstate;
+@@ -4634,6 +4641,44 @@ int hugetlb_overcommit_handler(struct ctl_table *table, int write,
+ 	return ret;
+ }
+ 
++static struct ctl_table hugetlb_table[] = {
++	{
++		.procname	= "nr_hugepages",
++		.data		= NULL,
++		.maxlen		= sizeof(unsigned long),
++		.mode		= 0644,
++		.proc_handler	= hugetlb_sysctl_handler,
++	},
++#ifdef CONFIG_NUMA
++	{
++		.procname       = "nr_hugepages_mempolicy",
++		.data           = NULL,
++		.maxlen         = sizeof(unsigned long),
++		.mode           = 0644,
++		.proc_handler   = &hugetlb_mempolicy_sysctl_handler,
++	},
++#endif
++	{
++		.procname	= "hugetlb_shm_group",
++		.data		= &sysctl_hugetlb_shm_group,
++		.maxlen		= sizeof(gid_t),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++	{
++		.procname	= "nr_overcommit_hugepages",
++		.data		= NULL,
++		.maxlen		= sizeof(unsigned long),
++		.mode		= 0644,
++		.proc_handler	= hugetlb_overcommit_handler,
++	},
++	{ }
++};
++
++static void __init hugetlb_sysctl_init(void)
++{
++	register_sysctl_init("vm", hugetlb_table);
++}
+ #endif /* CONFIG_SYSCTL */
+ 
+ void hugetlb_report_meminfo(struct seq_file *m)
+-- 
+2.35.3
+
