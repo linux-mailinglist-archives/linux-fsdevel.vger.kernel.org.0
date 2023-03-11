@@ -2,78 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 527806B595D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 08:57:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E39E86B596E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 09:12:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229530AbjCKH5X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Mar 2023 02:57:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39698 "EHLO
+        id S229894AbjCKIMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Mar 2023 03:12:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbjCKH5V (ORCPT
+        with ESMTP id S229522AbjCKIMT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Mar 2023 02:57:21 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBFC5BBA9;
-        Fri, 10 Mar 2023 23:57:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6C3DDB80880;
-        Sat, 11 Mar 2023 07:57:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95641C433EF;
-        Sat, 11 Mar 2023 07:57:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1678521437;
-        bh=Gg16DCykJnE2Bhw2ejexmfCb52yIzdYHCxDa3JlpAbE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gzGhctNUhn4NXUQyyAwllTMN+IEjkkXebZzYti5laFRdavjcYflS/A7tZnaiI8yU1
-         I885XBkAlyECh1czT2rDSTVhF8HLOXbrFeBeeHVPUAXHkJzEwFiZtJYWLKSpJSR1Ac
-         JOptKAO5qt/aguAxHHQ21+PinmZFwIvJ5kjKvkd8=
-Date:   Sat, 11 Mar 2023 08:57:14 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     pvorel@suse.cz, akpm@linux-foundation.org, keescook@chromium.org,
-        Jason@zx2c4.com, ebiederm@xmission.com, yzaikin@google.com,
-        j.granados@samsung.com, patches@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] utsname: simplify one-level sysctl registration for
- uts_kern_table
-Message-ID: <ZAw0WoMnaBdMEDwa@kroah.com>
-References: <20230310231656.3955051-1-mcgrof@kernel.org>
+        Sat, 11 Mar 2023 03:12:19 -0500
+Received: from 1wt.eu (wtarreau.pck.nerim.net [62.212.114.60])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B454913F686;
+        Sat, 11 Mar 2023 00:12:17 -0800 (PST)
+Received: (from willy@localhost)
+        by mail.home.local (8.17.1/8.17.1/Submit) id 32B8BYKR026215;
+        Sat, 11 Mar 2023 09:11:34 +0100
+Date:   Sat, 11 Mar 2023 09:11:34 +0100
+From:   Willy Tarreau <w@1wt.eu>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: AUTOSEL process
+Message-ID: <ZAw3tt9xISOdb5sS@1wt.eu>
+References: <20230226034256.771769-12-sashal@kernel.org>
+ <Y/rbGxq8oAEsW28j@sol.localdomain>
+ <Y/rufenGRpoJVXZr@sol.localdomain>
+ <Y/ux9JLHQKDOzWHJ@sol.localdomain>
+ <Y/y70zJj4kjOVfXa@sashalap>
+ <Y/zswi91axMN8OsA@sol.localdomain>
+ <Y/zxKOBTLXFjSVyI@sol.localdomain>
+ <ZATC3djtr9/uPX+P@duo.ucw.cz>
+ <ZAewdAql4PBUYOG5@gmail.com>
+ <ZAwe95meyCiv6qc4@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230310231656.3955051-1-mcgrof@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <ZAwe95meyCiv6qc4@casper.infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 03:16:56PM -0800, Luis Chamberlain wrote:
-> There is no need to declare an extra tables to just create directory,
-> this can be easily be done with a prefix path with register_sysctl().
+On Sat, Mar 11, 2023 at 06:25:59AM +0000, Matthew Wilcox wrote:
+> On Tue, Mar 07, 2023 at 09:45:24PM +0000, Eric Biggers wrote:
+> > On Tue, Mar 07, 2023 at 10:18:35PM +0100, Pavel Machek wrote:
+> > > I believe that -stable would be more useful without AUTOSEL process.
+> > 
+> > There has to be a way to ensure that security fixes that weren't properly tagged
+> > make it to stable anyway.  So, AUTOSEL is necessary, at least in some form.  I
+> > think that debating *whether it should exist* is a distraction from what's
+> > actually important, which is that the current AUTOSEL process has some specific
+> > problems, and these specific problems need to be fixed...
 > 
-> Simplify this registration.
+> I agree with you, that we need autosel and we also need autosel to
+> be better.  I actually see Pavel's mail as a datapoint (or "anecdote",
+> if you will) in support of that; the autosel process currently works
+> so badly that a long-time contributor thinks it's worse than nothing.
 > 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Sasha, what do you need to help you make this better?
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+One would probably need to define "better" and "so badly". As a user
+of -stable kernels, I consider that they've got much better over the
+last years. A lot of processes have improved everywhere even before
+the release, but I do think that autosel is part of what generally
+gives a chance to some useful and desired fixed (e.g. in drivers) to
+be backported and save some users unneeded headaches.
 
-> ---
-> 
-> This is part of the effort to phase out calls that can recurse from
-> sysctl registration [0]. If you have a tree to take this in feel free
-> to take it, or I can take it too through sysclt-next. Let me know!
-> 
-> This file has no explicit maintainer, so I assume there is no tree.
-> 
-> If I so no one taking it I can take in as part of sysctl-next later.
+In fact I think that the reason for the negative perception is that
+patches that it picks are visible, and it's easy to think "WTF" when
+seeing one of them. Previously, these patches were not proposed, so
+nobody knew they were missing. It happened to plenty of us to spend
+some time trying to spot why a stable kernel would occasionally fail
+on a machine, and discovering in the process that mainline did work
+because it contained a fix that was never backported. This is
+frustrating but there's noone to blame for failing to pick that patch
+(and the patch's author should not be blamed either since for small
+compatibility stuff it's probably common to see first-timers who are
+not yet at ease with the process).
 
-I recommend taking it in your tree like this, thanks.
+Here the patches are CCed to their authors before being merged. They
+get a chance to be reviewed and rejected. Granted, maybe sometimes they
+could be subject to a longer delay or be sent to certain lists. Maybe.
+But I do think that the complaints in fact reflect a process that's not
+as broken as some think, precisely because it allows people to complain
+when something is going wrong. The previous process didn't permit that.
+For this alone it's a progress.
 
-greg k-h
+Willy
