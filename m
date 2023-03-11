@@ -2,57 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C8846B5C55
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 14:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 024806B5C97
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 15:06:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbjCKNlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Mar 2023 08:41:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35138 "EHLO
+        id S229767AbjCKOGN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Mar 2023 09:06:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjCKNls (ORCPT
+        with ESMTP id S229473AbjCKOGM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Mar 2023 08:41:48 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8708120846;
-        Sat, 11 Mar 2023 05:41:46 -0800 (PST)
+        Sat, 11 Mar 2023 09:06:12 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B594E9F3B;
+        Sat, 11 Mar 2023 06:06:10 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6D2F6B8255A;
-        Sat, 11 Mar 2023 13:41:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 125B7C433EF;
-        Sat, 11 Mar 2023 13:41:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7EE3260C3D;
+        Sat, 11 Mar 2023 14:06:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B566EC433D2;
+        Sat, 11 Mar 2023 14:06:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678542104;
-        bh=TUj6B2JUwlbSCcSD1ruoTBbqXG49LuQK4EwxuZZ0zq0=;
+        s=k20201202; t=1678543569;
+        bh=K8EAh0QfxzkdULHNSkhCoqGD46lp5v3W4c/Rtfq8ViQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hkbIgcPL81/oRuov0WC7BfBxYy5TC4QaNo3Uz+QpuYt7UUGUUDIzuEkD4Vq8vShAD
-         d0QiZPUfaox+OJwmsTW1N3lKPLZYf+bv4zCQ+zYLQC4h2GNb/sSDD7ng0zH2qjo8wt
-         eMUmnntqFrAJwk/M1+wJh+zXVl/VwT/gYYsVms/VNgBninB83XZRblWg0oLqwmfmwt
-         72QdGC1JxC19AWXGk2XcbeI1Osck+aDFwIfzCygp7HfXqH/VRMhcFEIN6/8ozmhH5n
-         SSQaDpTxKtJr3vFd/JDApUjnPYxzP9TqQPIJ43f26WtafxRFdkHA+qM4X/2SgNIajM
-         JsuPdXTDxN0Tg==
-Date:   Sat, 11 Mar 2023 08:41:42 -0500
+        b=exnwTTc6fBCxAaB3HtIEtgkhL7325m54NsIZCp8+sq9Z8NIOFUxOfVEzatH+WHnPm
+         KRsmDqAdMXt5FSPI/C5EII1SgRh+jV1y7uIKb1KgqO2WuUlTKrMYcePsqsyReVIhgN
+         7pX8RuuxTnjyGC5HyvJrSL9RbPLlYt6u03S/DeAMn1tRo99N3GOOFf+/KDSA3PSf6y
+         b2Dg49sNM+eNbaIYuvJGRnr407wn8M1xj8iR22NFs9R66K1zVNYuM7zE3ARl19zeeP
+         zNZ2QuLNOwdNK6YIzxsORzicdQN3whnX+Xifm+K7/1zarBhsPJ1BASppKO0NExRtiD
+         6d9kZOJ+wX35w==
+Date:   Sat, 11 Mar 2023 09:06:08 -0500
 From:   Sasha Levin <sashal@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
         viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
 Subject: Re: AUTOSEL process
-Message-ID: <ZAyFFtORBosdarMr@sashalap>
-References: <Y/y70zJj4kjOVfXa@sashalap>
+Message-ID: <ZAyK0KM6JmVOvQWy@sashalap>
+References: <20230226034256.771769-12-sashal@kernel.org>
+ <Y/rbGxq8oAEsW28j@sol.localdomain>
+ <Y/rufenGRpoJVXZr@sol.localdomain>
+ <Y/ux9JLHQKDOzWHJ@sol.localdomain>
+ <Y/y70zJj4kjOVfXa@sashalap>
  <Y/zswi91axMN8OsA@sol.localdomain>
  <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <Y/0U8tpNkgePu00M@sashalap>
- <Y/0i5pGYjrVw59Kk@gmail.com>
- <Y/0wMiOwoeLcFefc@sashalap>
- <Y/1LlA5WogOAPBNv@gmail.com>
- <Y/1em4ygHgSjIYau@sashalap>
- <Y/136zpJSWx96YEe@sol.localdomain>
- <ZAu4GE0q4jzRI+F6@sol.localdomain>
+ <ZATC3djtr9/uPX+P@duo.ucw.cz>
+ <ZAewdAql4PBUYOG5@gmail.com>
+ <ZAwe95meyCiv6qc4@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <ZAu4GE0q4jzRI+F6@sol.localdomain>
+In-Reply-To: <ZAwe95meyCiv6qc4@casper.infradead.org>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -62,29 +63,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 03:07:04PM -0800, Eric Biggers wrote:
->On Mon, Feb 27, 2023 at 07:41:31PM -0800, Eric Biggers wrote:
+On Sat, Mar 11, 2023 at 06:25:59AM +0000, Matthew Wilcox wrote:
+>On Tue, Mar 07, 2023 at 09:45:24PM +0000, Eric Biggers wrote:
+>> On Tue, Mar 07, 2023 at 10:18:35PM +0100, Pavel Machek wrote:
+>> > I believe that -stable would be more useful without AUTOSEL process.
 >>
->> Well, probably more common is that prerequisites are in the same patchset, and
->> the prerequisites are tagged for stable too.  Whereas AUTOSEL often just picks
->> patch X of N.  Also, developers and maintainers who tag patches for stable are
->> probably more likely to help with the stable process in general and make sure
->> patches are backported correctly...
->>
->> Anyway, the point is, AUTOSEL needs to be fixed to stop inappropriately
->> cherry-picking patch X of N so often.
->>
+>> There has to be a way to ensure that security fixes that weren't properly tagged
+>> make it to stable anyway.  So, AUTOSEL is necessary, at least in some form.  I
+>> think that debating *whether it should exist* is a distraction from what's
+>> actually important, which is that the current AUTOSEL process has some specific
+>> problems, and these specific problems need to be fixed...
 >
->... and AUTOSEL strikes again, with the 6.1 and 6.2 kernels currently crashing
->whenever a block device is removed, due to patches 1 and 3 of a 3-patch series
->being AUTOSEL'ed (on the same day I started this discussion, no less):
+>I agree with you, that we need autosel and we also need autosel to
+>be better.  I actually see Pavel's mail as a datapoint (or "anecdote",
+>if you will) in support of that; the autosel process currently works
+>so badly that a long-time contributor thinks it's worse than nothing.
 >
->https://lore.kernel.org/linux-block/CAOCAAm4reGhz400DSVrh0BetYD3Ljr2CZen7_3D4gXYYdB4SKQ@mail.gmail.com/T/#u
->
->Oh sorry, ignore this, it's just an anecdotal example.
+>Sasha, what do you need to help you make this better?
 
-Yes, clearly a problem with AUTOSEL and not with how sad the testing
-story is for stable releases.
+What could I do to avoid this?
+
+I suppose that if I had a way to know if a certain a commit is part of a
+series, I could either take all of it or none of it, but I don't think I
+have a way of doing that by looking at a commit in Linus' tree
+(suggestions welcome, I'm happy to implement them).
+
+Other than that, the commit at hand:
+
+1. Describes a real problem that needs to be fixed, so while it was
+reverted for a quick fix, we'll need to go back and bring it in along
+with it's dependency.
+
+2. Soaked for over two weeks between the AUTOSEL mails and the release,
+gone through multiple rounds of reviews.
+
+3. Went through all the tests provided by all the individuals, bots,
+companies, etc who test the tree through multiple rounds of testing (we
+had to do a -rc2 for that releases).
+
+4. Went through whatever tests distros run on the kernel before they
+package and release it.
 
 -- 
 Thanks,
