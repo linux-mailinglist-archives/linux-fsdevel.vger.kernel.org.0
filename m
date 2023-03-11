@@ -2,61 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE746B5F8C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 19:07:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3216C6B5FC0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 19:27:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230259AbjCKSHi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Mar 2023 13:07:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39534 "EHLO
+        id S229668AbjCKS1E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Mar 2023 13:27:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230357AbjCKSHf (ORCPT
+        with ESMTP id S229623AbjCKS1D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Mar 2023 13:07:35 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F056F591FA;
-        Sat, 11 Mar 2023 10:07:11 -0800 (PST)
+        Sat, 11 Mar 2023 13:27:03 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FCDC65073;
+        Sat, 11 Mar 2023 10:27:02 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8605B60DDB;
-        Sat, 11 Mar 2023 18:07:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD043C433EF;
-        Sat, 11 Mar 2023 18:07:10 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EC9F0B80066;
+        Sat, 11 Mar 2023 18:27:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34DD9C433EF;
+        Sat, 11 Mar 2023 18:26:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678558030;
-        bh=y9LAEZUH0SBqtIwhQ/pvz04mJb1cBc4uT0VPORKHNew=;
+        s=k20201202; t=1678559219;
+        bh=3iAyDZpKshk7IQK0fRZAxsKNdS+J95Uq6fH2Y9EK6m8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xf/N3Wpli0HJECACmXpGBz7O1TtuPd5TwQk33WRZVfrCaIu3U8ffGRihrPrhpAqlH
-         Hm0UbfeOd948SlaCWxX/oPLDvnW2stT+1bf5HXXYLlh2wF/qKHNUfLYIBgwOtwK3Hh
-         yRuU42EJi2wCLgJZlSVLUqF5Y+/80zew4LxNMpfVz/IQSIzBQqApUG5QYojFASeCfU
-         4x7EusH1u384BrZkU2J95pHU1PyojidbSNPDGAopFNENzOESPLCvc2s3y594354IAP
-         ikj2vBVBp1W6OTmeg/I+/ygxNpFGYCbnVpe2Z0NXaiT0UQZ9K54s2SK5K2v9KL4xIl
-         kn3fTPODQ04OA==
-Date:   Sat, 11 Mar 2023 13:07:09 -0500
+        b=Ya+6c/AuJSmcJpRuWc9J8bv+IXsrNpldfMmGz5925Z+SPMX87AAVuyQ5Mz2tZjb9N
+         xtLpRHLzD/xfcnpxJWK5SkskLlnZcX5KZS8tT5tPLQPfArxuz2FjpKM0zhwZ8amMuN
+         FqwHXQq+DgKXXi0a47pqIeswfNCQI08aG0hNgLggN7rifSI65I+4pTzeMOLVvwGRNk
+         SpO9VD0MKmS1Y11k9N9MHPpZcwS52KbRrHvGynlv3geUwp2KIP61uMRlw2p5Y0YLam
+         PgY5meLbvRxYs7V2Z6JndLLTueJ9x7+fnhIqGq+Y1ruk5wK8Ul9bB1v7mAlWb1HTfi
+         k+IA/T9fhx9pA==
+Date:   Sat, 11 Mar 2023 13:26:57 -0500
 From:   Sasha Levin <sashal@kernel.org>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
         stable@vger.kernel.org, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org
 Subject: Re: AUTOSEL process
-Message-ID: <ZAzDTVluocRvZ8W8@sashalap>
-References: <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <Y/0U8tpNkgePu00M@sashalap>
- <Y/0i5pGYjrVw59Kk@gmail.com>
- <Y/0wMiOwoeLcFefc@sashalap>
- <Y/1LlA5WogOAPBNv@gmail.com>
- <Y/1em4ygHgSjIYau@sashalap>
- <Y/136zpJSWx96YEe@sol.localdomain>
- <ZAu4GE0q4jzRI+F6@sol.localdomain>
- <ZAyFFtORBosdarMr@sashalap>
- <734c9a0920f293c88168f38c1245e779d03f4364.camel@HansenPartnership.com>
+Message-ID: <ZAzH8Ve05SRLYPnR@sashalap>
+References: <Y/ux9JLHQKDOzWHJ@sol.localdomain>
+ <Y/y70zJj4kjOVfXa@sashalap>
+ <Y/zswi91axMN8OsA@sol.localdomain>
+ <Y/zxKOBTLXFjSVyI@sol.localdomain>
+ <ZATC3djtr9/uPX+P@duo.ucw.cz>
+ <ZAewdAql4PBUYOG5@gmail.com>
+ <ZAwe95meyCiv6qc4@casper.infradead.org>
+ <ZAyK0KM6JmVOvQWy@sashalap>
+ <20230311161644.GH860405@mit.edu>
+ <ZAy+3f1/xfl6dWpI@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <734c9a0920f293c88168f38c1245e779d03f4364.camel@HansenPartnership.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+In-Reply-To: <ZAy+3f1/xfl6dWpI@sol.localdomain>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,68 +65,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 11, 2023 at 10:54:36AM -0500, James Bottomley wrote:
->On Sat, 2023-03-11 at 08:41 -0500, Sasha Levin wrote:
->> On Fri, Mar 10, 2023 at 03:07:04PM -0800, Eric Biggers wrote:
->> > On Mon, Feb 27, 2023 at 07:41:31PM -0800, Eric Biggers wrote:
->> > >
->> > > Well, probably more common is that prerequisites are in the same
->> > > patchset, and the prerequisites are tagged for stable too. 
->> > > Whereas AUTOSEL often just picks patch X of N.  Also, developers
->> > > and maintainers who tag patches for stable are probably more
->> > > likely to help with the stable process in general and make sure
->> > > patches are backported correctly...
->> > >
->> > > Anyway, the point is, AUTOSEL needs to be fixed to stop
->> > > inappropriately cherry-picking patch X of N so often.
->> > >
+On Sat, Mar 11, 2023 at 09:48:13AM -0800, Eric Biggers wrote:
+>On Sat, Mar 11, 2023 at 11:16:44AM -0500, Theodore Ts'o wrote:
+>> On Sat, Mar 11, 2023 at 09:06:08AM -0500, Sasha Levin wrote:
 >> >
->> > ... and AUTOSEL strikes again, with the 6.1 and 6.2 kernels
->> > currently crashing whenever a block device is removed, due to
->> > patches 1 and 3 of a 3-patch series being AUTOSEL'ed (on the same
->> > day I started this discussion, no less):
->> >
->> > https://lore.kernel.org/linux-block/CAOCAAm4reGhz400DSVrh0BetYD3Ljr2CZen7_3D4gXYYdB4SKQ@mail.gmail.com/T/#u
->> >
->> > Oh sorry, ignore this, it's just an anecdotal example.
+>> > I suppose that if I had a way to know if a certain a commit is part of a
+>> > series, I could either take all of it or none of it, but I don't think I
+>> > have a way of doing that by looking at a commit in Linus' tree
+>> > (suggestions welcome, I'm happy to implement them).
 >>
->> Yes, clearly a problem with AUTOSEL and not with how sad the testing
->> story is for stable releases.
+>> Well, this is why I think it is a good idea to have a link to the
+>> patch series in lore.  I know Linus doesn't like it, claiming it
+>> doesn't add any value, but I have to disagree.  It adds two bits of
+>> value.
+>>
 >
->Hey, that's a completely circular argument:  if we had perfect testing
->then, of course, it would pick up every bad patch before anything got
->released; but we don't, and everyone knows it.  Therefore, we have to
->be discriminating about what patches we put in.  And we have to
->acknowledge that zero bugs in patches isn't feasible in spite of all
->the checking we do do.  I also think we have to acknowledge that users
->play a role in the testing process because some bugs simply aren't
->picked up until they try out a release.  So discouraging users from
->running mainline -rc's means we do get bugs in the released kernel that
->we might not have had if they did.  Likewise if everyone only runs
->stable kernels, the bugs in the released kernel don't get found until
->stable.  So this blame game really isn't helping.
+>So, earlier I was going to go into more detail about some of my ideas, before
+>Sasha and Greg started stonewalling with "patches welcome" (i.e. "I'm refusing
+>to do my job") and various silly arguments about why nothing should be changed.
+>But I suppose the worst thing that can happen is that that just continues, so
+>here it goes:
+
+"job"? do you think I'm paid to do this work? Why would I stonewall
+improvements to the process?
+
+I'm getting a bunch of suggestions and complaints that I'm not implementing
+those suggestions fast enough on my spare time.
+
+>One of the first things I would do if I was maintaining the stable kernels is to
+>set up a way to automatically run searches on the mailing lists, and then take
+>advantage of that in the stable process in various ways.  Not having that is the
+>root cause of a lot of the issues with the current process, IMO.
+
+"if I was maintaining the stable kernels" - why is this rellevant? give
+us the tool you've proposed below and we'll be happy to use it. Heck,
+don't give it to us, use it to review the patches we're sending out for
+review and let us know if we've missed anything.
+
+>Now that lore exists, this might be trivial: it could be done just by hammering
+>lore.kernel.org with queries https://lore.kernel.org/linux-fsdevel/?q=query from
+>a Python script.
 >
->I think the one thing everyone on this thread might agree on is that
->this bug wouldn't have happened if AUTOSEL could detect and backport
->series instead of individual patches.  Sasha says that can't be done
->based on in information in Linus' tree[1] which is true but not a
->correct statement of the problem.  The correct question is given all
->the information available, including lore, could we assist AUTOSEL in
->better detecting series and possibly making better decisions generally?
+>Of course, there's a chance that won't scale to multiple queries for each one of
+>thousands of stable commits, or at least won't be friendly to the kernel.org
+>admins.  In that case, what can be done is to download down all emails from all
+>lists, using lore's git mirrors or Atom feeds, and index them locally.  (Note:
+>if the complete history is inconveniently large, then just indexing the last
+>year or so would work nearly as well.)
+>
+>Then once that is in place, that could be used in various ways.  For example,
+>given a git commit, it's possible to search by email subject to get to the
+>original patch, *even if the git commit does not have a Link tag*.  And it can
+>be automatically checked whether it's part of a patch series, and if so, whether
+>all the patches in the series are being backported or just some.
+>
+>This could also be used to check for mentions of a commit on the mailing list
+>that potentially indicate a regression report, which is one of the issues we
+>discussed earlier.  I'm not sure what the optimal search criteria would be, but
+>one option would be something like "messages that contain the commit title or
+>commit ID and are dated to after the commit being committed".  There might need
+>to be some exclusions added to that.
+>
+>This could also be used to automatically find the AUTOSEL email, if one exists,
+>and check whether it's been replied to or not.
+>
+>The purpose of all these mailing list searches would be to generate a list of
+>potential issues with backporting each commit, which would then undergo brief
+>human review.  Once issues are reviewed, that state would be persisted, so that
+>if the script gets run again, it would only show *new* information based on new
+>mailing list emails that have not already been reviewed.  That's needed because
+>these issues need to be checked for when the patch is initially proposed for
+>stable as well as slightly later, before the actual release happens.
+>
+>If the stable maintainers have no time for doing *any* human review themselves
+>(again, I do not know what their requirements are on how much time they can
+>spend per patch), then instead an email with the list of potential issues could
+>be generated and sent to stable@vger.kernel.org for review by others.
+>
+>Anyway, that's my idea.  I know the response will be either "that won't work" or
+>"patches welcome", or a mix of both, but that's it.
 
-My argument was that this type of issue is no AUTOSEL specific, and we
-saw it happening multiple times with stable tagged patches as well.
+I've been playing with this in the past - I had a bot that looks at the
+mailing lists for patches that are tagged for stable, and attempts to
+apply/build then on the multiple trees to verify that it works and send
+a reply back if something goes wrong, asking for a backport.
 
-It's something that needs to get solved, and I suspect that both Greg
-and myself will end up using it when it's there.
+It gets a bit tricky as there's no way to go back from a commit to the
+initial submission, you start hitting issues like:
 
->I think that's the challenge for anyone who actually wants to help
->rather than complain.  At least the series detection bit sounds like it
->could be a reasonable summer of code project.
+- Patches get re-sent multiple times (think stuff like tip trees,
+reviews from other maintainers, etc).
+- Different versions of patches - for example, v1 was a single patch
+and in v2 it became multiple patches.
 
-Right - I was trying to reply directly to Willy's question: this is
-something very useful, somewhat hard, and I don't think I could do in
-the near future - so help is welcome here.
+I'm not arguing against your idea, I'm just saying that it's not
+trivial. An incomplete work here simply won't scale to the thousands of
+patches that flow in the trees, and won't be as useful. I don't think
+that this is trivial as you suggest.
+
+If you disagree, and really think it's trivial, take 5 minutes to write
+something up? please?
 
 -- 
 Thanks,
