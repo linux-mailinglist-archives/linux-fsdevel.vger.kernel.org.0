@@ -2,78 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 36DCC6B6077
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 21:20:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADAD16B60A7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 21:52:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229824AbjCKUUH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Mar 2023 15:20:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38418 "EHLO
+        id S230018AbjCKUwI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Mar 2023 15:52:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjCKUUG (ORCPT
+        with ESMTP id S229754AbjCKUwE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Mar 2023 15:20:06 -0500
-Received: from 1wt.eu (wtarreau.pck.nerim.net [62.212.114.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 912062A155;
-        Sat, 11 Mar 2023 12:20:05 -0800 (PST)
-Received: (from willy@localhost)
-        by mail.home.local (8.17.1/8.17.1/Submit) id 32BKJs0Z030455;
-        Sat, 11 Mar 2023 21:19:54 +0100
-Date:   Sat, 11 Mar 2023 21:19:54 +0100
-From:   Willy Tarreau <w@1wt.eu>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <ZAzianzvIOUrH5pr@1wt.eu>
-References: <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <ZATC3djtr9/uPX+P@duo.ucw.cz>
- <ZAewdAql4PBUYOG5@gmail.com>
- <ZAwe95meyCiv6qc4@casper.infradead.org>
- <ZAyK0KM6JmVOvQWy@sashalap>
- <20230311161644.GH860405@mit.edu>
- <ZAy+3f1/xfl6dWpI@sol.localdomain>
- <ZAzJltJaydwjCN6E@1wt.eu>
- <ZAzVbzthi8IfptFZ@sol.localdomain>
- <ZAzafagDchRQRxWi@sol.localdomain>
+        Sat, 11 Mar 2023 15:52:04 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32DA6B320;
+        Sat, 11 Mar 2023 12:52:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=epir3kUlhwZi0ch2uSTIsF69TiKLgNjq3KCcq98c0O4=; b=R+dZ//ubz4V6Nr9bKl/jSds2bB
+        oTZq7+72nRwC7sTYVui6f0o0c5bkl+Y0cB3FaoSyRedMPnqsVsoZvNek6F16DgCV2u8903aiYZN1F
+        Gnhyz+MtlGhrLcwd5gKnQGBfIF7ydk7YAp8qikDA5PoZiVfJFyQk54QFjxe1t7hH2Sxm21rDpZwno
+        FJ0y4DTbqc0d/yiiEYbBgnPXfFyB9V+BmdBxLdHABNL3I8zAgybA+W/8Oxww5OkhySEk6S+tl38RD
+        Ts0594cQz74PsxfDNCqpNqEQ6lZPSmAO51xc3T/MHBdnwB6p6jyVD1e+FxyAFaVr6pWZx6QhWHzvH
+        7bbK1xgQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pb6Bz-001EK8-O9; Sat, 11 Mar 2023 20:51:51 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     chuck.lever@oracle.com, jlayton@kernel.org,
+        trond.myklebust@hammerspace.com, anna@kernel.org,
+        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+        kuba@kernel.org, linux-nfs@vger.kernel.org
+Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        j.granados@samsung.com, patches@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH v2 0/5] sunrpc: simplfy sysctl registrations
+Date:   Sat, 11 Mar 2023 12:51:43 -0800
+Message-Id: <20230311205148.293375-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZAzafagDchRQRxWi@sol.localdomain>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 11, 2023 at 11:46:05AM -0800, Eric Biggers wrote:
-> (And please note, the key word here is *confidence*.  We all agree that it's
-> never possible to be absolutely 100% sure whether a commit is appropriate for
-> stable or not.  That's a red herring.
+This is my v2 series to simplify sysctl registration for sunrpc. The
+first series was posted just yesterday [0]. On this v2 I address the
+only compilation issues found by 0day through my entire tree of
+sysctl conversions.
 
-In fact even developers themselves sometimes don't know, and even when they
-know, sometimes they know after committing it. Many times we've found that
-a bug was accidently resolved by a small change. Just for this it's important
-to support a post-merge analysis.
+Changes sincce v1:
 
-> And I would assume, or at least hope, that the neural network thing being used
-> for AUTOSEL outputs a confidence rating and not just a yes/no answer.  If it
-> actually just outputs yes/no, well how is anyone supposed to know that and fix
-> that, given that it does not seem to be an open source project?)
+   o Fix compilation when CONFIG_SUNRPC_DEBUG is enabled, I forgot to move the
+    proc routines above, and so the 4th patch now does that too.
 
-Honestly I don't know. I ran a few experiments with natural language
-processors such as GPT-3 on commit messages which contained human-readable
-instructions, and asking "what am I expected to do with these patches", and
-seeing the bot respond "you should backport them to this version, change
-this and that in that version, and preliminary take that patch". It
-summarized extremely well the instructions delivered by the developer,
-which is awesome, but was not able to provide any form of confidence
-level. I don't know what Sasha uses but wouldn't be surprised it shares
-some such mechanisms and that it might not always be easy to get such a
-confidence level. But I could be wrong.
+Feel free to take these patches or let me know and I'm happy to also
+take these in through sysctl-next. Typically I use sysctl-next for
+core sysctl changes or for kernel/sysctl.c cleanup to avoid conflicts.
+All these syctls however are well contained to sunrpc so they can also
+go in separately. Let me know how you'd like to go about these patches.
 
-Willy
+[0] https://lkml.kernel.org/r/20230310225236.3939443-1-mcgrof@kernel.org
+
+Luis Chamberlain (5):
+  sunrpc: simplify two-level sysctl registration for tsvcrdma_parm_table
+  sunrpc: simplify one-level sysctl registration for xr_tunables_table
+  sunrpc: simplify one-level sysctl registration for xs_tunables_table
+  sunrpc: move sunrpc_table and proc routines above
+  sunrpc: simplify one-level sysctl registration for debug_table
+
+ net/sunrpc/sysctl.c             | 44 ++++++++++++---------------------
+ net/sunrpc/xprtrdma/svc_rdma.c  | 21 ++--------------
+ net/sunrpc/xprtrdma/transport.c | 11 +--------
+ net/sunrpc/xprtsock.c           | 13 ++--------
+ 4 files changed, 21 insertions(+), 68 deletions(-)
+
+-- 
+2.39.1
+
