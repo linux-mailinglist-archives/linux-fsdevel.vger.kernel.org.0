@@ -2,62 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F506B5DBA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 17:17:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB7F56B5E62
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Mar 2023 18:11:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229819AbjCKQRO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Mar 2023 11:17:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55914 "EHLO
+        id S229796AbjCKRLL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Mar 2023 12:11:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229954AbjCKQRM (ORCPT
+        with ESMTP id S229469AbjCKRLK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Mar 2023 11:17:12 -0500
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B996510DE57
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Mar 2023 08:17:07 -0800 (PST)
-Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 32BGGi06006833
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 11 Mar 2023 11:16:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1678551406; bh=pk7UJBZS0pGO5djHQvl6UDLseuYPhzAM+aRfDFea3mY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=ojGDog63lbcLBbNtVq7le5fyHKms9oOWTDO4oSVK8AKNS6zOLnVgMsVwDPn9ARvHJ
-         0pezOmtlmVrjSaqLEMvjCAh4k4l5ZwMtLBlF/XhK5idJVIs3h881Ktw1OM66OVOipA
-         Ba9t2BEYTNDxEDBHhc0yH4LseE/Ej3evoXgUz1+nyQNxv5LqkfXs5Mv74ok1NSgsn9
-         HQWreuksic4PHmm+8n/2kl9cHR6zT38D8Q6w1zkB/9OA1ZEVczJw706IXrKUOTfkPj
-         WhHAbzv8fzoa1xAYxJOFrEzYEmAzI1WSXwH0KP91vz8+4j0LTQD9kAGw+5fPBn9Dry
-         6vo0GSLFaSl1g==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 5EC5315C45B9; Sat, 11 Mar 2023 11:16:44 -0500 (EST)
-Date:   Sat, 11 Mar 2023 11:16:44 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <20230311161644.GH860405@mit.edu>
-References: <Y/rbGxq8oAEsW28j@sol.localdomain>
- <Y/rufenGRpoJVXZr@sol.localdomain>
- <Y/ux9JLHQKDOzWHJ@sol.localdomain>
- <Y/y70zJj4kjOVfXa@sashalap>
- <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <ZATC3djtr9/uPX+P@duo.ucw.cz>
- <ZAewdAql4PBUYOG5@gmail.com>
- <ZAwe95meyCiv6qc4@casper.infradead.org>
- <ZAyK0KM6JmVOvQWy@sashalap>
+        Sat, 11 Mar 2023 12:11:10 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F0ED7615F;
+        Sat, 11 Mar 2023 09:11:05 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id d41-20020a05600c4c2900b003e9e066550fso5322701wmp.4;
+        Sat, 11 Mar 2023 09:11:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678554664;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fKflYvA8UcraGyQwNuSBGmcqYYys5oOu9Tv+Rn3Pb4o=;
+        b=f/p5keK0gDn+cn95qsnKc0uFP6yb5Tk64quQhjr14E486Qy1YPmwmMTNQphBA3+QTP
+         pq8W94gj33ApebuATbwCcG68CQ6UsIy7PwKktFVrcsFx/VJpFNIGa0J0RIDfFHVMUKKT
+         hjwBSUhR5Ii+fW0n+sQ5SWdi27pQ1/C0jfBWhsrGNu9DFRfqaHIMMPAuIEfH1E5FYvwT
+         0rN/XP7KXMfDl+zddqVQNZkG154PzxCssVUbPXVrREP0g7iWbjV+miirvzOOTTC1R4bJ
+         mUNBHC3gVW/WsT/qOzM8iY32akDeA6IFnIqDUSnxP03VJ1M3wA6qYEcqcDEU05wHynIS
+         ch/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678554664;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fKflYvA8UcraGyQwNuSBGmcqYYys5oOu9Tv+Rn3Pb4o=;
+        b=3K8ArE0jalojEQkqriHGqD5gQvK3zvse1t+xfWQdVh81fPUROA2kd4+LEytDIvqye3
+         puaUyt2YdWtjklJpns0N1Vqw8EMJlAIBYHZfu4SSyVS2FoUGXV+O2yiab5hmcUre/j21
+         7DA3/1YdRQorht/yTm/SzLBC7glBSeZZ19EtQEzrLtqtKM/i7St/arI+z8y39P2xq0Zd
+         L5m4k4qShddo40B31KmDQnBUvIzrLlacCD/ZGYPhS1NHGk+14Gix5P77OqesfHxCu5cE
+         ugWH+xcO5tWBf1qSA0uYnD6a+6zxWrluPJdYtCfrst4u39GYE5uTbmNRQ4wqsbfN2LHZ
+         Pruw==
+X-Gm-Message-State: AO0yUKUJ0mmJ7lvXitLSY2H60nfpDOFlH5SZE9g7vwQ4krh96eJbpr1f
+        qmxTOcC64qe86y6NNoexlwM=
+X-Google-Smtp-Source: AK7set9tx1wziatWCHhFmDDnM59Wz2TGCwApXBxtfLl3LbxbORM1FoSASnFQfNU78qdcxolkmGHk6w==
+X-Received: by 2002:a05:600c:4453:b0:3de:a525:1d05 with SMTP id v19-20020a05600c445300b003dea5251d05mr4729209wmn.8.1678554663709;
+        Sat, 11 Mar 2023 09:11:03 -0800 (PST)
+Received: from suse.localnet (host-79-35-102-94.retail.telecomitalia.it. [79.35.102.94])
+        by smtp.gmail.com with ESMTPSA id v7-20020a05600c444700b003e204fdb160sm3630719wmn.3.2023.03.11.09.11.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Mar 2023 09:11:03 -0800 (PST)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [git pull] common helper for kmap_local_page() users in local filesystems
+Date:   Sat, 11 Mar 2023 18:11:01 +0100
+Message-ID: <8232398.NyiUUSuA9g@suse>
+In-Reply-To: <20230310204431.GW3390869@ZenIV>
+References: <20230310204431.GW3390869@ZenIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZAyK0KM6JmVOvQWy@sashalap>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -65,61 +72,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 11, 2023 at 09:06:08AM -0500, Sasha Levin wrote:
-> 
-> I suppose that if I had a way to know if a certain a commit is part of a
-> series, I could either take all of it or none of it, but I don't think I
-> have a way of doing that by looking at a commit in Linus' tree
-> (suggestions welcome, I'm happy to implement them).
+On venerd=EC 10 marzo 2023 21:44:31 CET Al Viro wrote:
+> 	kmap_local_page() conversions in local filesystems keep running into
+> kunmap_local_page()+put_page() combinations; we can keep inventing names
+> for identical inline helpers, but it's getting rather inconvenient.  I've
+> added a trivial helper to linux/highmem.h instead.
 
-Well, this is why I think it is a good idea to have a link to the
-patch series in lore.  I know Linus doesn't like it, claiming it
-doesn't add any value, but I have to disagree.  It adds two bits of
-value.
+Yeah, "put_and_unmap_page()". Nice helper :-)
 
-First, if there is any discussion on the review of the patch before it
-goes in, the lore link gives you access to that --- and if people have
-a back-lick in the cover letter of version N to the cover letter of
-version N-1, it allows someone doing code archeology to find all of
-the discussions around the patch series in the lore archives.
+Today I decided to prepare a series to convert all the functions of all the=
+=20
+filesystems where I had found the above-mentioned pattern but I stopped=20
+immediately after converting dir_put_page() in fs/sysv.
 
-Secondly, the lore link will allow you to figure out whether or not
-the patch is part of a series; b4 can figure this out by looking at
-the in-reply-to headers, and lore will chain the patch series
-together, so if the commit contains a lore link to the patch, the
-AUTOSEL script could use that to find out whether the patch is part of
-the series.
+Why? Just because I realized that I do not understand the reasons behind th=
+e=20
+choice of the name of the helper... =20
 
-And this is really easy to do.  All you need is the following in
-.git/hooks/applypatch-msg:
+Why did you name it "put_and_unmap_page()" instead of "unmap_and_put_page()=
+",=20
+for we always unmap first _and_ put the page immediately the unmapping?
 
-#!/bin/sh
-# For .git/hooks/applypatch-msg
-#
-. git-sh-setup
-perl -pi -e 's|^Message-Id:\s*<?([^>]+)>?$|Link: https://lore.kernel.org/r/$1|g;' "$1"
-test -x "$GIT_DIR/hooks/commit-msg" &&
-	exec "$GIT_DIR/hooks/commit-msg" ${1+"$@"}
-:
+It seems it want to imply that instead we put first and unmap later (which=
+=20
+would be wrong). That name sounds misleading to me and not sound (logically=
+=20
+speaking).
 
-Cheers,
+Am I missing some obscure convention behind your choice of that name for th=
+e=20
+helper?
 
-						- Ted
+If not, can you please change it from "put_and_unmap_page()" to=20
+"unmap_and_put_page()"?=20
 
-P.S.  There was a recent patch series where I noticed that I would be
-screwed if AUTOSEL would only take patch 2/2 and not patch 1/2.  I
-dealt with that though by adding an explicit "Cc: stable@kernel.org".
-So that's the other way to avoid breakage; if people were universally
-careful about adding "Cc: stable@kernel.org" tags, then we wouldn't
-need AUTOSEL at all.
+Thanks,
 
-And this is another place where I break with commonly received wisdom
-about "Thou Shalt Never, Never Rewind The Git Branch".  Personally, if
-I find that I missed a Cc: stable tag, rewinding the branch to add
-edit the trailers is *far* better a tradeoff than adhering to some
-religious rule about never rewinding git branches.  Of course, I can
-get away with that since I don't have people basing their branches on
-my branch.  But I've seen people who will self-righteously proclaim
-non-rewinding git branches as the One True Way to do git, and I
-profoundly disagree with that point of view.
+=46abio
+
+>=20
+> 	I would've held that back until the merge window, if not for the
+> mess it causes in tree topology - I've several branches merging from that
+> one, and it's only going to get worse if e.g. ext2 stuff gets picked by
+> Jan.
+>=20
+> 	The helper is trivial and it's early in the cycle.  It would=20
+simplify
+> the things if you could pull it - then I'd simply rebase the affected=20
+branches
+> to -rc2...
+>=20
+> The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4c=
+c6:
+>=20
+>   Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-
+highmem
+>=20
+> for you to fetch changes up to 849ad04cf562ac63b0371a825eed473d84de9c6d:
+>=20
+>   new helper: put_and_unmap_page() (2023-03-07 01:50:53 -0500)
+>=20
+> ----------------------------------------------------------------
+> put_and_unmap_page() helper
+>=20
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+>=20
+> ----------------------------------------------------------------
+> Al Viro (1):
+>       new helper: put_and_unmap_page()
+>=20
+>  include/linux/highmem.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+
+
+
 
