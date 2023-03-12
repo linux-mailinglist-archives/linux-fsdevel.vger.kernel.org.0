@@ -2,48 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7FF86B65F1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Mar 2023 13:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F70F6B66BE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Mar 2023 14:34:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbjCLMTC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Mar 2023 08:19:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58748 "EHLO
+        id S230256AbjCLNeO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Mar 2023 09:34:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbjCLMTB (ORCPT
+        with ESMTP id S230128AbjCLNeM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Mar 2023 08:19:01 -0400
+        Sun, 12 Mar 2023 09:34:12 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99FB4B813;
-        Sun, 12 Mar 2023 05:18:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 086DB39CF2;
+        Sun, 12 Mar 2023 06:34:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 306ECB80C6D;
-        Sun, 12 Mar 2023 12:18:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 749B8C433D2;
-        Sun, 12 Mar 2023 12:18:55 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C82C2B80B18;
+        Sun, 12 Mar 2023 13:34:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B733AC433AC;
+        Sun, 12 Mar 2023 13:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678623536;
-        bh=YIm6BrJxkKkNeNguAXKLPjoFpf5zhhV6aNe4aQAKWb4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QluP+5+E01SPrA4KYmuaGZMkY6Uf+XQCqMMcjVgTF2PqxTrQJ9VuJ4o+pLt0yL5tR
-         YwlVQ71/VadM6vth50GoPAq2fTVZ5s/0eWfp+XSOwka3fmNfMy1zsoZq3RE1M0NYAW
-         ReDxCRi/MEl6SWBmpuR5TXMJuFDDxPI4KtGKpTPWv4T1PR+etBhnBpkSE7jrHbiy8H
-         JsZEwWZCB9Lza/P3WDA7VbY44n9XxhVsW90r8eKxHW1Hy6Wct0N4LgezuBAgx/7kTM
-         FuXNU3txrhXRgD4ldSCjusyd/vGDv1XW1kJOi3r5z4ofzH+t3eXRzRoi7pvvNhI+Bu
-         li0B7r2IZ8goQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date:   Sun, 12 Mar 2023 13:18:21 +0100
-Message-Id: <20230312121821.919841-1-brauner@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        s=k20201202; t=1678628047;
+        bh=lLvXX1RY/TsF8vol5nsiuBWxIpMDLvN0QDYIXXQeoWg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UOQf+FW3/2d+IEmAsy7eNQW3JNm0eAJefKGE73FaHUHHDq0ElsfNYtCQcvAPboeYt
+         9MT0+G7PZ7DycgLy7r5w5Ki/Mxen3fjLb7vzpOHpnDhBTAGKp6ne84OJBGRPmGJhCH
+         bhbHwfHiBhZfERo/BePa2A1/zNKr6LXQe5co5MvatEmccC6RSFWwVTxZvp8u/5/sWC
+         x3JnwSQVyvw9K036uUlwi5aHa9dA3yRAqHbqry1iNwXTixgCTlO4wpnXXADqN+CQGq
+         C1Km24e9n+Xe8TZgYSlFt1YiBEbH25GET36pVBZ4FWX5MynV672PZgyGe+ol2e/oqc
+         tyPhXjsWMki3Q==
+Date:   Sun, 12 Mar 2023 13:34:03 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>, Willy Tarreau <w@1wt.eu>,
+        Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Subject: Re: AUTOSEL process
+Message-ID: <ZA3Uy4HuBPLvKWsJ@sirena.org.uk>
+References: <ZAyK0KM6JmVOvQWy@sashalap>
+ <20230311161644.GH860405@mit.edu>
+ <ZAy+3f1/xfl6dWpI@sol.localdomain>
+ <ZAzJltJaydwjCN6E@1wt.eu>
+ <ZAzVbzthi8IfptFZ@sol.localdomain>
+ <ZAzghyeiac3Zh8Hh@1wt.eu>
+ <ZAzqSeus4iqCOf1O@sol.localdomain>
+ <ZA1V4MbG6U3wP6q6@1wt.eu>
+ <ZA1hdkrOKLG697RG@sol.localdomain>
+ <CAOQ4uxiJPvKh5VzoP=9xamFfU78r3J25pwW6GQyAUN7YPJk=dQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2496; i=brauner@kernel.org; h=from:subject; bh=YIm6BrJxkKkNeNguAXKLPjoFpf5zhhV6aNe4aQAKWb4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTwHmbyOsemcPjMAfHEb8Vvyl21+JoNaiTk1+nlGXUYHzjN e7W4o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCK3HBkZum/s/aK7U32G0f/Fs8sPL9 uicEFQtvbUVa0pwkXXG2RX1jAyfJf3luR9//38y4SjMxPuBdnFK2xwMw/a/9H1wayfDWZTWQE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="g2af+PWy0yQWzBAQ"
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxiJPvKh5VzoP=9xamFfU78r3J25pwW6GQyAUN7YPJk=dQ@mail.gmail.com>
+X-Cookie: Many a family tree needs trimming.
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -53,73 +69,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hey Linus,
 
-/* Summary */
-This contains a few simple vfs fixes for v6.3. There should be nothing
-exciting in here:
+--g2af+PWy0yQWzBAQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-* When allocating pages for a watch queue failed, we didn't return an
-  error causing userspace to proceed even though all subsequent
-  notifcations would be lost. Make sure to return an error.
-* Fix a misformed tree entry for the idmapping maintainers entry.
-* When setting file leases from an idmapped mount via generic_setlease()
-  we need to take the idmapping into account otherwise taking a lease
-  would fail from an idmapped mount.
-* Remove two redundant assignments, one in splice code and the other in
-  locks code, that static checkers complained about.
+On Sun, Mar 12, 2023 at 09:42:59AM +0200, Amir Goldstein wrote:
 
-The watch queue and file lease fix should be backported.
+> Alas, despite sending a pull request via github and advertising my work
+> and its benefits on several occasions, I got no feedback from Konstantin
+> nor from any other developers, so I did not pursue upstreaming.
 
-/* Testing */
-clang: Ubuntu clang version 15.0.2-1
-gcc: gcc (Ubuntu 12.2.0-3ubuntu1) 12.2.0
+> If you find any part of this work relevant, I can try to rebase and
+> post my b4 patches.
 
-All patches are based on v6.3-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed. All old and new tests in
-fstests, selftests, and LTP pass without regressions.
+...
 
-/* Conflicts */
-At the time of creating this PR no merge conflicts were reported from
-linux-next and no merge conflicts showed up doing a test-merge with
-current mainline.
+> [1] https://github.com/mricon/b4/pull/1
 
-The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
+b4 development is mainly done via email on the tools@linux.kernel.org
+list, and https://git.kernel.org/pub/scm/utils/b4/b4.git rather than that
+github repository (note that yours is the first and only pull
+request there) is the main repo.  I suspect that github repo is
+just an automatically maintained mirror and nobody's seen your
+pull request, you'd be much more likely to get a response sending
+your patches to the list CC Konstantin.
 
-  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+--g2af+PWy0yQWzBAQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-are available in the Git repository at:
+-----BEGIN PGP SIGNATURE-----
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/vfs.misc.v6.3-rc2
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQN1McACgkQJNaLcl1U
+h9AcIQgAg8ofOrCx+tGCy6/btvuphxg1CWaxqhEa/n3LX9DaWK5Edr2ukKshhkoh
+VdvMuf1chP6TjW0wQBEdwh8IRB7ZMx2uSp/dYdI968ohf5MoZur9FuYWJaPbxAnC
+Q8/Q2La9oZ5EAgrD2yJWoABLy+/r53Q8XOab30K02PLiDD9L4ZUPAUpDdj1898r0
+igsHe1wxtgkO68kw2hjx8We2hu/p44RvAEqIexOUXlt8ZBKaLptFq1WfDK+7Dse5
+QPkJN8T5YublavSzESExkQAo7hClVKU+DbJ1cZIwygsa2TsgWeGuzuALqXwjX8uI
+sEN77L4ymPK/C5+lyWv73xb5VReREQ==
+=VSTB
+-----END PGP SIGNATURE-----
 
-for you to fetch changes up to 42d0c4bdf753063b6eec55415003184d3ca24f6e:
-
-  filelocks: use mount idmapping for setlease permission check (2023-03-09 22:36:12 +0100)
-
-Please consider pulling these changes from the signed vfs.misc.v6.3-rc2 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs.misc.v6.3-rc2
-
-----------------------------------------------------------------
-David Disseldorp (1):
-      watch_queue: fix IOC_WATCH_QUEUE_SET_SIZE alloc error paths
-
-Jiapeng Chong (2):
-      splice: Remove redundant assignment to ret
-      fs/locks: Remove redundant assignment to cmd
-
-Lukas Bulwahn (1):
-      MAINTAINERS: repair a malformed T: entry in IDMAPPED MOUNTS
-
-Seth Forshee (1):
-      filelocks: use mount idmapping for setlease permission check
-
- MAINTAINERS          | 4 ++--
- fs/locks.c           | 4 ++--
- fs/splice.c          | 1 -
- kernel/watch_queue.c | 1 +
- 4 files changed, 5 insertions(+), 5 deletions(-)
+--g2af+PWy0yQWzBAQ--
