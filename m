@@ -2,139 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13B656B7416
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 11:32:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B3A96B7419
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 11:32:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbjCMKcQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Mar 2023 06:32:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39488 "EHLO
+        id S229960AbjCMKcs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Mar 2023 06:32:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229682AbjCMKcP (ORCPT
+        with ESMTP id S229570AbjCMKcr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Mar 2023 06:32:15 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B22EC178;
-        Mon, 13 Mar 2023 03:32:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 13 Mar 2023 06:32:47 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E902F1CF66;
+        Mon, 13 Mar 2023 03:32:45 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 07B8BB80F99;
-        Mon, 13 Mar 2023 10:32:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B084C433EF;
-        Mon, 13 Mar 2023 10:32:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1678703531;
-        bh=chNdwuAemYgMq4XKL76d7BGQaxzzJr1o0V7KFh3PATM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sJXAUXuypSk/Ys5+qKwq5QjXXqo1LDIpNyK39xsKuc9lM+OuX3rMYzQVK05PHwDW0
-         DAckh5m59xLCl2L2HOrZP+RE/xLznlYJusK9MdhUGJj6+G81676F1J+zlphk8/Io9D
-         oXvKAvx1SxyOM1CpKhZBqJbXXa5uDYdZ06iA1P8Y=
-Date:   Mon, 13 Mar 2023 11:32:08 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kirtikumar Anandrao Ramchandani <kirtiar15502@gmail.com>
-Cc:     security@kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linuxfoundation.org>
-Subject: Re: Patch for a overwriting/corruption of the file system
-Message-ID: <ZA77qAuaTVCEwqHc@kroah.com>
-References: <CADZg-m0Z+dOGfG=ddJxqPvgFwG0+OLAyP157SNzj6R6J2p7L-g@mail.gmail.com>
- <ZA734rBwf4ib2u9n@kroah.com>
- <CADZg-m04XELrO-v-uYZ4PyYHXVPX35dgWbCHBpZvwepS4XV9Ew@mail.gmail.com>
- <CADZg-m2k_L8-byX0WKYw5Cj1JPPhxk3HCBexpqPtZvcLRNY8Ug@mail.gmail.com>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 8DEB722A3B;
+        Mon, 13 Mar 2023 10:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1678703564; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VHdNtQjCqb3Vt8pNGTQr7HY3gsesOM01FBMwNyxFwks=;
+        b=TDFAXWoNCSFC+7ZyGnFGVUf1HEAm0TqX7utOhqoMZuBLF8xETy6TYVXmM9OAkVQLZRkJvv
+        2eYx9wD8XXHFZGR2Wmb9Yxq+hvCe/rOItxSiwffPFRFgFBJrdxSbs9qQ2fMrQ42EUPKdBF
+        JUU+aEaDYZGsbh7yZV5PqMzmdegikBc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1678703564;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VHdNtQjCqb3Vt8pNGTQr7HY3gsesOM01FBMwNyxFwks=;
+        b=xvBXW1Sl3GB6cxLigExGWfi9IS4Ne2TE0awxiYTCT8ts8wRxqpCVMwC2debR/zfU56zVEY
+        joEUdy0756SHz1BA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7D1FB139F9;
+        Mon, 13 Mar 2023 10:32:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id U2j0Hcz7DmQsQgAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 13 Mar 2023 10:32:44 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 018BCA06FD; Mon, 13 Mar 2023 11:32:43 +0100 (CET)
+Date:   Mon, 13 Mar 2023 11:32:43 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, jack@suse.com,
+        jaharkes@cs.cmu.edu, coda@cs.cmu.edu, codalist@coda.cs.cmu.edu,
+        anton@tuxera.com, linux-ntfs-dev@lists.sourceforge.net,
+        ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        j.granados@samsung.com, patches@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] quota: simplify two-level sysctl registration for
+ fs_dqstats_table
+Message-ID: <20230313103243.ubn3mw3nkkcdyi5c@quack3>
+References: <20230310231206.3952808-1-mcgrof@kernel.org>
+ <20230310231206.3952808-4-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADZg-m2k_L8-byX0WKYw5Cj1JPPhxk3HCBexpqPtZvcLRNY8Ug@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230310231206.3952808-4-mcgrof@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 13, 2023 at 03:54:55PM +0530, Kirtikumar Anandrao Ramchandani wrote:
-> Seems like again it got rejected. I am sending it in the body if it works:
+On Fri 10-03-23 15:12:04, Luis Chamberlain wrote:
+> There is no need to declare two tables to just create directories,
+> this can be easily be done with a prefix path with register_sysctl().
 > 
-> >From 839cae91705e044b49397590f2d85a5dd289f0c5 Mon Sep 17 00:00:00 2001
-> From: KirtiRamchandani <kirtar15502@gmail.com>
-> Date: Mon, 13 Mar 2023 15:05:08 +0530
-> Subject: [PATCH] Fix bug in affs_rename() function. The `affs_rename()`
->  function in the AFFS filesystem has a bug that can cause the `retval`
->  variable to be overwritten before it is used. Specifically, the function
->  assigns `retval` a value in two separate code blocks, but then only checks
->  its value in one of those blocks. This commit fixes the bug by ensuring
-> that
->  `retval` is properly checked in both code blocks.
+> Simplify this registration.
 > 
-> Signed-off-by: KirtiRamchandani <kirtar15502@gmail.com>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+
+Thanks. I've taken the patch into my tree.
+
+								Honza
+
 > ---
->  namei.c | 4++++--
->  1 file changed, 4 insertions(+), 2 deletion(-)
+>  fs/quota/dquot.c | 20 +-------------------
+>  1 file changed, 1 insertion(+), 19 deletions(-)
 > 
-> diff --git a/fs/affs/namei.c b/fs/affs/namei.c
-> index d1084e5..a54c700 100644
-> --- a/fs/affs/namei.c
-> +++ b/fs/affs/namei.c
-> @@ -488,7 +488,8 @@ affs_xrename(struct inode *old_dir, struct dentry
-> *old_dentry,
->         affs_lock_dir(new_dir);
->         retval = affs_insert_hash(new_dir, bh_old);
->         affs_unlock_dir(new_dir);
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index a6357f728034..90cb70c82012 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -2948,24 +2948,6 @@ static struct ctl_table fs_dqstats_table[] = {
+>  	{ },
+>  };
+>  
+> -static struct ctl_table fs_table[] = {
+> -	{
+> -		.procname	= "quota",
+> -		.mode		= 0555,
+> -		.child		= fs_dqstats_table,
+> -	},
+> -	{ },
+> -};
 > -
-> +       if (retval)
-> +               goto done;
-
-The patch is corrupted and can not be applied.
-
-Here's the response from my patch bot.  Please read over the
-documentation and try to submit it properly like any other normal
-change.
-
-------------
-
-
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- Your patch is malformed (tabs converted to spaces, linewrapped, etc.)
-  and can not be applied.  Please read the file,
-  Documentation/process/email-clients.rst in order to fix this.
-
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what is needed in
-  order to properly describe the change.
-
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what a proper
-  Subject: line should look like.
-
-- It looks like you did not use your "real" name for the patch on either
-  the Signed-off-by: line, or the From: line (both of which have to
-  match).  Please read the kernel file,
-  Documentation/process/submitting-patches.rst for how to do this
-  correctly.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+> -static struct ctl_table sys_table[] = {
+> -	{
+> -		.procname	= "fs",
+> -		.mode		= 0555,
+> -		.child		= fs_table,
+> -	},
+> -	{ },
+> -};
+> -
+>  static int __init dquot_init(void)
+>  {
+>  	int i, ret;
+> @@ -2973,7 +2955,7 @@ static int __init dquot_init(void)
+>  
+>  	printk(KERN_NOTICE "VFS: Disk quotas %s\n", __DQUOT_VERSION__);
+>  
+> -	register_sysctl_table(sys_table);
+> +	register_sysctl("fs/quota", fs_dqstats_table);
+>  
+>  	dquot_cachep = kmem_cache_create("dquot",
+>  			sizeof(struct dquot), sizeof(unsigned long) * 4,
+> -- 
+> 2.39.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
