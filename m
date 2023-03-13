@@ -2,77 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4004C6B84E7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 23:42:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8AAE6B85E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 00:09:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbjCMWma (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Mar 2023 18:42:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36494 "EHLO
+        id S229938AbjCMXJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Mar 2023 19:09:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230038AbjCMWm2 (ORCPT
+        with ESMTP id S229889AbjCMXJP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Mar 2023 18:42:28 -0400
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309AD8F51E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Mar 2023 15:42:20 -0700 (PDT)
-Received: by mail-il1-f197.google.com with SMTP id c9-20020a929409000000b0032307610dfaso2399729ili.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Mar 2023 15:42:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678747339;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eByn0hcpMeptzqeE5fW4i3qazh2DBAhZRn02bjUF1dw=;
-        b=rS61a64SeJwYbFGgX1gYow+eUIYiTVfUiEJx5FPFYZrWoHAKuw6ix6GM/S/8mS1v/U
-         pbLsl7cOkMpNTuwrOZeP1Mrd79rhhYliQbMyTlzRuZhJmEx3jdTQ7znTTitnajNQH0TZ
-         QjknkneaDXUNhvkWZUhzHxcDQLyGD6XHZ6GtjiX60XPrDwadw31lVZ87qKnhDx8+JFZT
-         JuJRZFhdaGwtd82Q6IS2saVG8kwLal/xa0gFAfwrP6IeL/VtusvXgoU0cZZqVfmywgdj
-         DMnI1UkxQPFdRo2m9F4y3XF0ERlZJSjfOiT1ptVi6UJ58f7au6juES7y1AoW5yEJTDEH
-         x/GA==
-X-Gm-Message-State: AO0yUKVkwx1LhgQ5lH59UYa76WHH5rs3ym3gRFEarCphZoqoFupN1UJf
-        PaSNmBvHXuZNDKJHDIhcYoHMgGmW9iYPncuOIUJdKfFjdc3qiM8=
-X-Google-Smtp-Source: AK7set+fnk55krITt4nQ7dp/jxaceUY4R+J29wFnbO5f0kTTIE+CiL6hu7x9nP551hGsq4nMawWE93qeRydgkCVUG8z6POugriqz
+        Mon, 13 Mar 2023 19:09:15 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E03638C83B;
+        Mon, 13 Mar 2023 16:08:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678748933; x=1710284933;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KshWSejkFbkeVBwakT7QiRHIr/W7baLNEGoxZeDhpeo=;
+  b=c6+sPB9rnTyoE8r5QWk8wv7EiOqEu1Dct4dzAczEz1NfnzM3thHe4oQn
+   6gGIodcueU1evOQIJ5iq2OVgrAgo8dhXLEyW4ulCtArO8u+Bo8ht5G5K8
+   tgbY9FLsesTQyG3pme/+GwR3Z3M70evR8NLQk2PblSpK3/ujLPUIgOtgX
+   QJ/uMBsK2jEkTh8IR+jAPect5WwLuOICUrbVl9lyDpPrPoknaxWRsaqvy
+   K8E0ORL/ljiKt2uK7efEIapNOFaqeBj/K98f11WfoOFxcaFbc91Euz7Ed
+   kSJ9VSxB1Q+qJTcYfg67QB2A7PmoBh2TSXSl2aH5ZmdjEVpZFQWN1kzlX
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10648"; a="399871312"
+X-IronPort-AV: E=Sophos;i="5.98,258,1673942400"; 
+   d="scan'208";a="399871312"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2023 16:08:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10648"; a="628806685"
+X-IronPort-AV: E=Sophos;i="5.98,258,1673942400"; 
+   d="scan'208";a="628806685"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 13 Mar 2023 16:08:51 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pbrHe-0006EC-0e;
+        Mon, 13 Mar 2023 23:08:50 +0000
+Date:   Tue, 14 Mar 2023 07:07:53 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>
+Subject: Re: [PATCH] nfs: use vfs setgid helper
+Message-ID: <202303140652.dN7XrtM4-lkp@intel.com>
+References: <20230313-fs-nfs-setgid-v1-1-5b1fa599f186@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:54f:b0:319:34bf:dbef with SMTP id
- i15-20020a056e02054f00b0031934bfdbefmr648931ils.0.1678747339558; Mon, 13 Mar
- 2023 15:42:19 -0700 (PDT)
-Date:   Mon, 13 Mar 2023 15:42:19 -0700
-In-Reply-To: <000000000000e3af1a05eec2e287@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d7988d05f6cfd256@google.com>
-Subject: Re: [syzbot] [reiserfs?] KASAN: use-after-free Read in leaf_paste_in_buffer
-From:   syzbot <syzbot+55b82aea13452e3d128f@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, peterz@infradead.org,
-        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230313-fs-nfs-setgid-v1-1-5b1fa599f186@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+Hi Christian,
 
-commit 26388a7c353f7b1d3fd8a6df6452fa9773193155
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Thu Jan 12 19:44:03 2023 +0000
+I love your patch! Yet something to improve:
 
-    cpuidle,arch: Mark all regular cpuidle_state:: Enter methods __cpuidle
+[auto build test ERROR on eeac8ede17557680855031c6f305ece2378af326]
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16fc20aac80000
-start commit:   420b2d431d18 Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6bb1911ff9919df0
-dashboard link: https://syzkaller.appspot.com/bug?extid=55b82aea13452e3d128f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17249347480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14281c1b480000
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Brauner/nfs-use-vfs-setgid-helper/20230313-212725
+base:   eeac8ede17557680855031c6f305ece2378af326
+patch link:    https://lore.kernel.org/r/20230313-fs-nfs-setgid-v1-1-5b1fa599f186%40kernel.org
+patch subject: [PATCH] nfs: use vfs setgid helper
+config: parisc64-defconfig (https://download.01.org/0day-ci/archive/20230314/202303140652.dN7XrtM4-lkp@intel.com/config)
+compiler: hppa64-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/503d040be490a519b2e483672702dcca530443ce
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Christian-Brauner/nfs-use-vfs-setgid-helper/20230313-212725
+        git checkout 503d040be490a519b2e483672702dcca530443ce
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=parisc64 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=parisc64 SHELL=/bin/bash
 
-If the result looks correct, please mark the issue as fixed by replying with:
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303140652.dN7XrtM4-lkp@intel.com/
 
-#syz fix: cpuidle,arch: Mark all regular cpuidle_state:: Enter methods __cpuidle
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>> ERROR: modpost: "setattr_should_drop_sgid" [fs/nfs/nfs.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
