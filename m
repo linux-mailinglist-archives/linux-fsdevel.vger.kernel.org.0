@@ -2,77 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9678E6B7975
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 14:50:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B01086B7BB0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 16:16:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbjCMNuz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Mar 2023 09:50:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54950 "EHLO
+        id S230024AbjCMPQ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Mar 2023 11:16:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231193AbjCMNuy (ORCPT
+        with ESMTP id S229670AbjCMPQ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Mar 2023 09:50:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679123D925;
-        Mon, 13 Mar 2023 06:50:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F2438612C4;
-        Mon, 13 Mar 2023 13:50:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B980C433EF;
-        Mon, 13 Mar 2023 13:50:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678715450;
-        bh=jjJBYyK32CZD3TPJIaHH1R48sBMGIt3Gh69XgbPzF+4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pXNm8dO4zSw95Y1eqX7WiMNNJpt90pENduYu3bsaPePbuEU2tJgoCzs1WpuyVQc8X
-         D/UjtyTCp58NlEA1YCl7g0FUvJ7jHOQOumZA+EbKayp7DtPajlOl7xmd27klpNEIA5
-         J80/K/DPwMXRXPw05gLS6g61yZnypdMFHZHzFFJwLGSea4GRL/bPJ5YFT6Y5A/3WvS
-         wSqS52BWIrjK37OpvOk4+mL1OmgOt5zb3bEwLXWU4iz7HnDGjAsBM214NAaUl+x8ha
-         3OGcUGTL+1c2Ig8lCTta68par9R+eyTs6xr75HewNc/HmDIKgXMJiAgHELzoMjbeSW
-         PKiO+Fdu4wb1w==
-Date:   Mon, 13 Mar 2023 14:50:45 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc:     corbet@lwn.net, Eric Biggers <ebiggers@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] docs: filesystems: vfs: actualize struct
- super_operations description
-Message-ID: <20230313135045.diycgwbwzxvnnjub@wittgenstein>
-References: <20230313130718.253708-1-aleksandr.mikhalitsyn@canonical.com>
- <20230313130718.253708-3-aleksandr.mikhalitsyn@canonical.com>
+        Mon, 13 Mar 2023 11:16:26 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C41E2CFF1;
+        Mon, 13 Mar 2023 08:16:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=eQO4dib77fwpq45HsemPbGF1tK
+        B+NFfyH2P44jYfEUE2nMfCjsiuccczw3afR9tVukGid8aWh+Dhr0Ge4SUC7rA3i3QGZUze1NCFOuC
+        7hajc8KEK+DKGhs5uaaxOEdT+81HoJHQ7wS/CaaLQRvxZVuJyNM/TmIi+MMMW9Sp0lmJJMPD4D7Qv
+        eH8OGlLUx3OFWfk+ss5Cr5HccxxTQ4eXFEdOmPRMw5LDoJSfEss0qEYzF0mWlD+S0m81gtRguFJaK
+        5DBrYDs2GoivzyJpWBK68NPJw5e1NWZ48ogQyGOfLyvmp0IxwBF0o5oMXS3ZWghCUeU8fl1DIVNk/
+        7YM738OQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pbjuP-006OLK-TF; Mon, 13 Mar 2023 15:16:21 +0000
+Date:   Mon, 13 Mar 2023 08:16:21 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Thomas Huth <thuth@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-arch@vger.kernel.org, Chas Williams <3chas3@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 4/5] pktcdvd: Remove CONFIG_CDROM_PKTCDVD_WCACHE from
+ uapi header
+Message-ID: <ZA8+RdetyyaNd539@infradead.org>
+References: <20230310160757.199253-1-thuth@redhat.com>
+ <20230310160757.199253-5-thuth@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230313130718.253708-3-aleksandr.mikhalitsyn@canonical.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230310160757.199253-5-thuth@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 13, 2023 at 02:07:18PM +0100, Alexander Mikhalitsyn wrote:
-> Added/updated descriptions for super_operations:
-> - free_inode method
-> - evict_inode method
-> - freeze_super/thaw_super method
-> - show_{devname,path,stats} procfs-related methods
-> - get_dquots method
-> 
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Cc: Miklos Szeredi <mszeredi@redhat.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-doc@vger.kernel.org
-> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> ---
+Looks good:
 
-Looks good,
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
