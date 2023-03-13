@@ -2,137 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B3A96B7419
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 11:32:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7E6C6B7493
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 11:48:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229960AbjCMKcs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Mar 2023 06:32:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39906 "EHLO
+        id S230230AbjCMKsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Mar 2023 06:48:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbjCMKcr (ORCPT
+        with ESMTP id S230231AbjCMKsb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Mar 2023 06:32:47 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E902F1CF66;
-        Mon, 13 Mar 2023 03:32:45 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Mon, 13 Mar 2023 06:48:31 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E8B3C175;
+        Mon, 13 Mar 2023 03:48:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 8DEB722A3B;
-        Mon, 13 Mar 2023 10:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1678703564; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VHdNtQjCqb3Vt8pNGTQr7HY3gsesOM01FBMwNyxFwks=;
-        b=TDFAXWoNCSFC+7ZyGnFGVUf1HEAm0TqX7utOhqoMZuBLF8xETy6TYVXmM9OAkVQLZRkJvv
-        2eYx9wD8XXHFZGR2Wmb9Yxq+hvCe/rOItxSiwffPFRFgFBJrdxSbs9qQ2fMrQ42EUPKdBF
-        JUU+aEaDYZGsbh7yZV5PqMzmdegikBc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1678703564;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VHdNtQjCqb3Vt8pNGTQr7HY3gsesOM01FBMwNyxFwks=;
-        b=xvBXW1Sl3GB6cxLigExGWfi9IS4Ne2TE0awxiYTCT8ts8wRxqpCVMwC2debR/zfU56zVEY
-        joEUdy0756SHz1BA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7D1FB139F9;
-        Mon, 13 Mar 2023 10:32:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id U2j0Hcz7DmQsQgAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 13 Mar 2023 10:32:44 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 018BCA06FD; Mon, 13 Mar 2023 11:32:43 +0100 (CET)
-Date:   Mon, 13 Mar 2023 11:32:43 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, jack@suse.com,
-        jaharkes@cs.cmu.edu, coda@cs.cmu.edu, codalist@coda.cs.cmu.edu,
-        anton@tuxera.com, linux-ntfs-dev@lists.sourceforge.net,
-        ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        by ams.source.kernel.org (Postfix) with ESMTPS id A8E51B8100B;
+        Mon, 13 Mar 2023 10:48:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6570C433D2;
+        Mon, 13 Mar 2023 10:48:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678704486;
+        bh=Bp5TXoOJ/Wv93fmFssCfDV9bpII5nb3PWXt4PA5WmWg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=HjDXgua77k09CEmzK0n53WvrXHZumhoHS4CpKeTCOGA4U+PeH/L2csFcjeXIpN+qm
+         +AXXBqVGre6TRH3WrSl4bSPL8zRzWeGq/cwm94VH1/wPm3+BtwUb7fKHQxALeE0Xu6
+         kH6v+50Rscr2skkXey3OgYv0oms+UifnOArvb41D7sHkURgsyMZTRUG+9qhsQ44zfy
+         FHgIEro4OXB+r5LVHhxmxn30bNmCBUvVVy9N8fDbk2aIAa/M0WiTqueU84eIRdtJYQ
+         7ez5ZP8KL1Kx0r6vCS4sMRWA4nTvZQ+tFarfQoYpVTcxKP/gPTTRX+zPFwDp6y/05C
+         g4XXz6Grsy2wA==
+Message-ID: <b719944dbe8b8790524a10c1032dfb09a2182cb8.camel@kernel.org>
+Subject: Re: [PATCH v3 0/5] sunrpc: simplfy sysctl registrations
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>, chuck.lever@oracle.com,
+        trond.myklebust@hammerspace.com, anna@kernel.org,
+        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+        kuba@kernel.org, linux-nfs@vger.kernel.org
+Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
         j.granados@samsung.com, patches@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] quota: simplify two-level sysctl registration for
- fs_dqstats_table
-Message-ID: <20230313103243.ubn3mw3nkkcdyi5c@quack3>
-References: <20230310231206.3952808-1-mcgrof@kernel.org>
- <20230310231206.3952808-4-mcgrof@kernel.org>
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 13 Mar 2023 06:48:03 -0400
+In-Reply-To: <20230311233944.354858-1-mcgrof@kernel.org>
+References: <20230311233944.354858-1-mcgrof@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230310231206.3952808-4-mcgrof@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 10-03-23 15:12:04, Luis Chamberlain wrote:
-> There is no need to declare two tables to just create directories,
-> this can be easily be done with a prefix path with register_sysctl().
-> 
-> Simplify this registration.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+On Sat, 2023-03-11 at 15:39 -0800, Luis Chamberlain wrote:
+> This is my v3 series to simplify sysctl registration for sunrpc. The
+> first series was posted just yesterday [0] but 0-day found an issue with
+> CONFIG_SUNRPC_DEBUG. After this fix I poasted a fix for v2 [1] but alas
+> 0-day then found an issue when CONFIG_SUNRPC_DEBUG is disabled. This
+> fixes both cases... hopefully that's it.
+>                                                                          =
+                                                                           =
+                                         =20
+> Changes on v3:
+>=20
+>    o Fix compilation when CONFIG_SUNRPC_DEBUG is disabled.. forgot to
+>      keep all the sysctl stuff under the #ifdef.
+>=20
+> Changes on v2:
+>=20
+>    o Fix compilation when CONFIG_SUNRPC_DEBUG is enabled, I forgot to mov=
+e the
+>      proc routines above, and so the 4th patch now does that too.
+>                                                                          =
+                                                                           =
+                                         =20
+> Feel free to take these patches or let me know and I'm happy to also
+> take these in through sysctl-next. Typically I use sysctl-next for
+> core sysctl changes or for kernel/sysctl.c cleanup to avoid conflicts.
+> All these syctls however are well contained to sunrpc so they can also
+> go in separately. Let me know how you'd like to go about these patches.
+>                                                                          =
+                                                                           =
+                                         =20
+> [0] https://lkml.kernel.org/r/20230310225236.3939443-1-mcgrof@kernel.org
+>=20
+> Luis Chamberlain (5):
+>   sunrpc: simplify two-level sysctl registration for tsvcrdma_parm_table
+>   sunrpc: simplify one-level sysctl registration for xr_tunables_table
+>   sunrpc: simplify one-level sysctl registration for xs_tunables_table
+>   sunrpc: move sunrpc_table and proc routines above
+>   sunrpc: simplify one-level sysctl registration for debug_table
+>=20
+>  net/sunrpc/sysctl.c             | 42 ++++++++++++---------------------
+>  net/sunrpc/xprtrdma/svc_rdma.c  | 21 ++---------------
+>  net/sunrpc/xprtrdma/transport.c | 11 +--------
+>  net/sunrpc/xprtsock.c           | 13 ++--------
+>  4 files changed, 20 insertions(+), 67 deletions(-)
+>=20
 
-Thanks. I've taken the patch into my tree.
+Nice little cleanup.
 
-								Honza
-
-> ---
->  fs/quota/dquot.c | 20 +-------------------
->  1 file changed, 1 insertion(+), 19 deletions(-)
-> 
-> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-> index a6357f728034..90cb70c82012 100644
-> --- a/fs/quota/dquot.c
-> +++ b/fs/quota/dquot.c
-> @@ -2948,24 +2948,6 @@ static struct ctl_table fs_dqstats_table[] = {
->  	{ },
->  };
->  
-> -static struct ctl_table fs_table[] = {
-> -	{
-> -		.procname	= "quota",
-> -		.mode		= 0555,
-> -		.child		= fs_dqstats_table,
-> -	},
-> -	{ },
-> -};
-> -
-> -static struct ctl_table sys_table[] = {
-> -	{
-> -		.procname	= "fs",
-> -		.mode		= 0555,
-> -		.child		= fs_table,
-> -	},
-> -	{ },
-> -};
-> -
->  static int __init dquot_init(void)
->  {
->  	int i, ret;
-> @@ -2973,7 +2955,7 @@ static int __init dquot_init(void)
->  
->  	printk(KERN_NOTICE "VFS: Disk quotas %s\n", __DQUOT_VERSION__);
->  
-> -	register_sysctl_table(sys_table);
-> +	register_sysctl("fs/quota", fs_dqstats_table);
->  
->  	dquot_cachep = kmem_cache_create("dquot",
->  			sizeof(struct dquot), sizeof(unsigned long) * 4,
-> -- 
-> 2.39.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
