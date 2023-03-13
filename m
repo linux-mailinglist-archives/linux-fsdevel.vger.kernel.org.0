@@ -2,30 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A70E76B7DA2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 17:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11BB16B7DC3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 17:37:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbjCMQdb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Mar 2023 12:33:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33382 "EHLO
+        id S231209AbjCMQh3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Mar 2023 12:37:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230450AbjCMQdV (ORCPT
+        with ESMTP id S229957AbjCMQh0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Mar 2023 12:33:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C67F87B4A8;
-        Mon, 13 Mar 2023 09:32:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 13 Mar 2023 12:37:26 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB01C3802A;
+        Mon, 13 Mar 2023 09:37:04 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 309D961361;
-        Mon, 13 Mar 2023 16:31:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F364C433EF;
-        Mon, 13 Mar 2023 16:31:48 +0000 (UTC)
-Date:   Mon, 13 Mar 2023 12:31:47 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D2B3F20676;
+        Mon, 13 Mar 2023 16:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1678725404; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DX7mBzmKKfcM2HuODm/+5FefEjTjA8Vp+Q98rewow2A=;
+        b=j6iQskk8H7diMVNHczY1aV7fkHvRKIwG3bc4Kl9ZbUa+tRDnYLj3RnaHy5sYnzAxw0m3jv
+        M9mVV3eFteDgDImzzbZ+q/TAcIKDKLStcl+drfaTughWYkObovtRaMW30Q1HYD0ff8PxO4
+        nQrGIT6UCrRa90UneiNISQqL/jWFkWw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1678725404;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DX7mBzmKKfcM2HuODm/+5FefEjTjA8Vp+Q98rewow2A=;
+        b=ioRERLVvqvnqO1qwwQLGqTJRVb3O7tnPx8P0djrxd8iO49bdlnmG5SmCwmrQRiABU/fZ8b
+        7scvi92G6gdXmvBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 662B013517;
+        Mon, 13 Mar 2023 16:36:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id yp4tGBxRD2ShFAAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Mon, 13 Mar 2023 16:36:44 +0000
+Message-ID: <93d33f35-fc5e-3ab2-1ac0-891f018b4b06@suse.cz>
+Date:   Mon, 13 Mar 2023 17:36:44 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 0/7] remove SLOB and allow kfree() with kmem_cache_alloc()
+Content-Language: en-US
 To:     Mike Rapoport <mike.rapoport@gmail.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
+Cc:     Christoph Lameter <cl@linux.com>,
         David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Pekka Enberg <penberg@kernel.org>,
@@ -47,83 +79,101 @@ Cc:     Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
         Mike Rapoport <rppt@kernel.org>,
         Neeraj Upadhyay <quic_neeraju@quicinc.com>,
         Paolo Abeni <pabeni@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH 0/7] remove SLOB and allow kfree() with
- kmem_cache_alloc()
-Message-ID: <20230313123147.6d28c47e@gandalf.local.home>
-In-Reply-To: <ZA2gofYkXRcJ8cLA@kernel.org>
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
 References: <20230310103210.22372-1-vbabka@suse.cz>
-        <ZA2gofYkXRcJ8cLA@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+ <ZA2gofYkXRcJ8cLA@kernel.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <ZA2gofYkXRcJ8cLA@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 12 Mar 2023 11:51:29 +0200
-Mike Rapoport <mike.rapoport@gmail.com> wrote:
-
+On 3/12/23 10:51, Mike Rapoport wrote:
+> Hi Vlastimil,
+> 
+> On Fri, Mar 10, 2023 at 11:32:02AM +0100, Vlastimil Babka wrote:
+>> Also in git:
+>> https://git.kernel.org/vbabka/h/slab-remove-slob-v1r1
+>> 
+>> The SLOB allocator was deprecated in 6.2 so I think we can start
+>> exposing the complete removal in for-next and aim at 6.4 if there are no
+>> complaints.
+>> 
+>> Besides code cleanup, the main immediate benefit will be allowing
+>> kfree() family of function to work on kmem_cache_alloc() objects (Patch
+>> 7), which was incompatible with SLOB.
+>> 
+>> This includes kfree_rcu() so I've updated the comment there to remove
+>> the mention of potential future addition of kmem_cache_free_rcu() as
+>> there should be no need for that now.
+>> 
+>> Otherwise it's straightforward. Patch 2 is a cleanup in net area, that I
+>> can either handle in slab tree or submit in net after SLOB is removed.
+>> Another cleanup in tomoyo is already in the tomoyo tree as that didn't
+>> need to wait until SLOB removal.
+>> 
+>> Vlastimil Babka (7):
+>>   mm/slob: remove CONFIG_SLOB
+>>   net: skbuff: remove SLOB-specific ifdefs
+>>   mm, page_flags: remove PG_slob_free
+>>   mm, pagemap: remove SLOB and SLQB from comments and documentation
+>>   mm/slab: remove CONFIG_SLOB code from slab common code
+>>   mm/slob: remove slob.c
+>>   mm/slab: document kfree() as allowed for kmem_cache_alloc() objects
+>> 
+>>  Documentation/admin-guide/mm/pagemap.rst     |   6 +-
+>>  Documentation/core-api/memory-allocation.rst |  15 +-
+>>  fs/proc/page.c                               |   5 +-
+>>  include/linux/page-flags.h                   |   4 -
+>>  include/linux/rcupdate.h                     |   6 +-
+>>  include/linux/slab.h                         |  39 -
+>>  init/Kconfig                                 |   2 +-
+>>  kernel/configs/tiny.config                   |   1 -
+>>  mm/Kconfig                                   |  22 -
+>>  mm/Makefile                                  |   1 -
+>>  mm/slab.h                                    |  61 --
+>>  mm/slab_common.c                             |   7 +-
+>>  mm/slob.c                                    | 757 -------------------
+>>  net/core/skbuff.c                            |  16 -
+>>  tools/mm/page-types.c                        |   6 +-
+>>  15 files changed, 23 insertions(+), 925 deletions(-)
+>>  delete mode 100644 mm/slob.c
+> 
 > git grep -in slob still gives a couple of matches. I've dropped the
 > irrelevant ones it it left me with these:
 > 
 > CREDITS:14:D: SLOB slab allocator
+
+I think it wouldn't be fair to remove that one as it's a historical record
+of some sort?
+
 > kernel/trace/ring_buffer.c:358: * Also stolen from mm/slob.c. Thanks to Mathieu Desnoyers for pointing
 > mm/Kconfig:251:    SLOB allocator and is not recommended for systems with more than
+
+Yeah that's a help text for SLUB_TINY which can still help those who migrate
+from SLOB.
+
 > mm/Makefile:25:KCOV_INSTRUMENT_slob.o := n
->  
+
+That one I will remove, thanks!
+
 > Except the comment in kernel/trace/ring_buffer.c all are trivial.
 > 
 > As for the comment in ring_buffer.c, it looks completely irrelevant at this
 > point.
 > 
 > @Steve?
+> 
+>> -- 
+>> 2.39.2
+>> 
+> 
 
-You want me to remember something I wrote almost 15 years ago? I think I
-understand that comment as much as you do. Yeah, that was when I was still
-learning to write comments for my older self to understand, and I failed
-miserably!
-
-But git history comes to the rescue. The commit that added that comment was:
-
-ed56829cb3195 ("ring_buffer: reset buffer page when freeing")
-
-This was at a time when it was suggested to me to use the struct page
-directly in the ring buffer and where we could do fun "tricks" for
-"performance". (I was never really for this, but I wasn't going to argue).
-
-And the code in question then had:
-
-/*
- * Also stolen from mm/slob.c. Thanks to Mathieu Desnoyers for pointing
- * this issue out.
- */
-static inline void free_buffer_page(struct buffer_page *bpage)
-{
-        reset_page_mapcount(&bpage->page);
-        bpage->page.mapping = NULL;
-        __free_page(&bpage->page);
-}
-
-
-But looking at commit: e4c2ce82ca27 ("ring_buffer: allocate buffer page
-pointer")
-
-It was finally decided that method was not safe, and we should not be using
-struct page but just allocate an actual page (much safer!).
-
-I never got rid of the comment, which was more about that
-"reset_page_mapcount()", and should have been deleted back then.
-
-Just remove that comment. And you could even add:
-
-Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Fixes: e4c2ce82ca27 ("ring_buffer: allocate buffer page pointer")
-
--- Steve
