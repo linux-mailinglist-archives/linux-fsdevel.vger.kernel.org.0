@@ -2,130 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E49E6B78B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 14:21:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D946A6B78D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Mar 2023 14:25:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229978AbjCMNVP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Mar 2023 09:21:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59634 "EHLO
+        id S229997AbjCMNZz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Mar 2023 09:25:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbjCMNVO (ORCPT
+        with ESMTP id S230360AbjCMNZw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Mar 2023 09:21:14 -0400
-Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312F532E67
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Mar 2023 06:21:12 -0700 (PDT)
-Received: by mail-qt1-x82c.google.com with SMTP id l18so13053961qtp.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Mar 2023 06:21:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cs.cmu.edu; s=google-2021; t=1678713671;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QHO4CXHOhldd2DiUrl/ejsH2q5KI1USw1eGFcu9b0ig=;
-        b=M9gNpCcWhIhO+Pofqekr3Qvzn7isiotq8cegImZnyEf2n2rRcx6ujt+RThmAJWVx1m
-         KsutCj1fcM/SBSO5HQwRTsAJyYDhmt0/IqBfvjdXFVtdVYYexrx/vani0sPd9Y6C8bSR
-         z+OwIsC47lXc71oHHs45SAWYkHgGLU4yWN7bd2W5/4SbhWoB131V3DhK9R0oyYHIgdiT
-         GLKhzZWhNR16MXD6iO4dIBhEdtFKYpqqp+gVV6ujs2ZNXBLTPPDItje3mLuQRcVHTvLo
-         M7m9O3u292cjuyIbj939FmhD/m8xKkxFDeqc5BzmVb5bUrKk6SCJgvobQsO4suoLSnjN
-         k3Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678713671;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QHO4CXHOhldd2DiUrl/ejsH2q5KI1USw1eGFcu9b0ig=;
-        b=M3+WESzfshInX1X9k0qZw2pZOJEfGiRO7qr6w/lE7XPpdW3xn4FNkbjrCECqFF1ibe
-         Tv0WiVKundEcYDAj2To0peLk21afRaVDo74mB7nepv54Mxa1ZR+qQGwR5HtXKedyxb0P
-         mqE/OjulknzCIhKyNaw4YVvSslbMutxzlVNjqpw7L46f8Rw4B1Jni0pQoGpFaZzpsuOt
-         6EVo+lnSzmZNYvmj3EJ46Ix8E/ao46/0lVdpt4+h2F+6uo/JggUnFOcCWx2WPffVMdqL
-         0QA9v70n3VhFU8nPgjn0TqRvrdqhQbf0sctJthmDs12L74+I+SGsdRHf/IR7ilUXXM3D
-         ew1g==
-X-Gm-Message-State: AO0yUKUq5/0I55V8xYzbz091ApKRl1alIyJIV2eXhSbsr2DzAvgYwUiw
-        PEDEOboUeebL4W0UOVOmygqH2Q==
-X-Google-Smtp-Source: AK7set+qWcXGYSBmUrPiyqZz3kW+BzfzdfMTNJfcQQkggbUK3AbU2ZrHzChSpTh7a62BChLAPG+PxA==
-X-Received: by 2002:a05:622a:1045:b0:3bd:1a07:2063 with SMTP id f5-20020a05622a104500b003bd1a072063mr58524181qte.45.1678713671251;
-        Mon, 13 Mar 2023 06:21:11 -0700 (PDT)
-Received: from cs.cmu.edu (tunnel29655-pt.tunnel.tserv13.ash1.ipv6.he.net. [2001:470:7:582::2])
-        by smtp.gmail.com with ESMTPSA id y1-20020ac87081000000b003b860983973sm5426091qto.60.2023.03.13.06.21.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Mar 2023 06:21:10 -0700 (PDT)
-Date:   Mon, 13 Mar 2023 09:21:08 -0400
-From:   Jan Harkes <jaharkes@cs.cmu.edu>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, jack@suse.com,
-        anton@tuxera.com, linux-ntfs-dev@lists.sourceforge.net,
-        ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
-        j.granados@samsung.com, patches@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] coda: simplify one-level sysctl registration for
- coda_table
-Message-ID: <20230313132108.5xbzbxz62jjzecat@cs.cmu.edu>
-Mail-Followup-To: Luis Chamberlain <mcgrof@kernel.org>, dhowells@redhat.com,
-        linux-cachefs@redhat.com, jack@suse.com, anton@tuxera.com,
-        linux-ntfs-dev@lists.sourceforge.net, ebiederm@xmission.com,
-        keescook@chromium.org, yzaikin@google.com, j.granados@samsung.com,
-        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230310231206.3952808-1-mcgrof@kernel.org>
- <20230310231206.3952808-5-mcgrof@kernel.org>
+        Mon, 13 Mar 2023 09:25:52 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 164DD26CEA;
+        Mon, 13 Mar 2023 06:25:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B1D11B80DFC;
+        Mon, 13 Mar 2023 13:25:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7000BC4339C;
+        Mon, 13 Mar 2023 13:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678713948;
+        bh=k2LYFFGMZwKGlMXyjsfyVXpfREqFKoaTC649uhWuyFA=;
+        h=From:Date:Subject:To:Cc:From;
+        b=YnZXf/Nfq6e0MA5aFIVdAplX5MmTxwm+XdPAi0on/KYWlCKKgHM9C7okvNOYLTQ2D
+         CUd7mcAL9rMI0Pu6nCppUAWDDXq/2r0F6XA9TT+VUtZ/JvUM4G6CDRqRlfH4e6HHdQ
+         lALYXg+VY3D6XVMdKrZR0De8Davmab/ZrJ85K9Ul/yZFlym3sR0EpN6qKZknOKKiwO
+         Y9HZGReptoagmTWZ2illQaNnKgbWS4fT+SVZH0ODL2byfOJEulfgZrBDW3JghYc5sU
+         xcRYx0kcG/9BkXBVTjX28zYD08/kdnk2RdD43s9KSIjl/EdwcfFYwHeaxzp7GbXS2w
+         qHIq0bFt3Eryw==
+From:   Christian Brauner <brauner@kernel.org>
+Date:   Mon, 13 Mar 2023 14:25:34 +0100
+Subject: [PATCH] nfs: use vfs setgid helper
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230310231206.3952808-5-mcgrof@kernel.org>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230313-fs-nfs-setgid-v1-1-5b1fa599f186@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAE0kD2QC/x2NSwqEQAwFryJZT6A/KuhVhlmkNWoWtkMiIoh3n
+ 3YWb1E8irrAWIUN+uoC5UNMtlzAvyoYFsozo4yFIbgQXfQRJ8NcZrzPMmLbdLV35F0KDRQnkTE
+ mpTwsj7WS7azP8VWe5PyH3p/7/gFOIfpaeAAAAA==
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>
+X-Mailer: b4 0.13-dev-2eb1a
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1599; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=k2LYFFGMZwKGlMXyjsfyVXpfREqFKoaTC649uhWuyFA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTwq0T1zOab1VwXZ3/s/TGunzn5++0Wnub8uZ3Zv4KPJebu
+ e8HajlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIl82cfIcPeQhMpD0YVLfm9Syi3Z4y
+ Fs2r7LWuKF8YH65v8GpS/vijAy7GZQXFo+KSk7idtSTOR0/bvUGu/HfKqvDjQlHzxUtTWcDwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good to me, nice little cleanup.
+We've aligned setgid behavior over multiple kernel releases. The details
+can be found in the following two merge messages:
+cf619f891971 ("Merge tag 'fs.ovl.setgid.v6.2')
+426b4ca2d6a5 ("Merge tag 'fs.setgid.v6.0')
+Consistent setgid stripping behavior is now encapsulated in the
+setattr_should_drop_sgid() helper which is used by all filesystems that
+strip setgid bits outside of vfs proper. Switch nfs to rely on this
+helper as well. Without this patch the setgid stripping tests in
+xfstests will fail.
 
-Jan
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
+ fs/nfs/inode.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-On Fri, Mar 10, 2023 at 07:04:07PM -0500, Luis Chamberlain wrote:
-> There is no need to declare an extra tables to just create directory,
-> this can be easily be done with a prefix path with register_sysctl().
-> 
-> Simplify this registration.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index 222a28320e1c..5001086500b3 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -42,6 +42,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/iversion.h>
+ 
++#include "../internal.h"
+ #include "nfs4_fs.h"
+ #include "callback.h"
+ #include "delegation.h"
+@@ -717,9 +718,7 @@ void nfs_setattr_update_inode(struct inode *inode, struct iattr *attr,
+ 		if ((attr->ia_valid & ATTR_KILL_SUID) != 0 &&
+ 		    inode->i_mode & S_ISUID)
+ 			inode->i_mode &= ~S_ISUID;
+-		if ((attr->ia_valid & ATTR_KILL_SGID) != 0 &&
+-		    (inode->i_mode & (S_ISGID | S_IXGRP)) ==
+-		     (S_ISGID | S_IXGRP))
++		if (setattr_should_drop_sgid(&nop_mnt_idmap, inode))
+ 			inode->i_mode &= ~S_ISGID;
+ 		if ((attr->ia_valid & ATTR_MODE) != 0) {
+ 			int mode = attr->ia_mode & S_IALLUGO;
 
-Acked-by: Jan Harkes <jaharkes@cs.cmu.edu
+---
+base-commit: eeac8ede17557680855031c6f305ece2378af326
+change-id: 20230313-fs-nfs-setgid-659410a10b25
 
-> ---
->  fs/coda/sysctl.c | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
-> 
-> diff --git a/fs/coda/sysctl.c b/fs/coda/sysctl.c
-> index fda3b702b1c5..a247c14aaab7 100644
-> --- a/fs/coda/sysctl.c
-> +++ b/fs/coda/sysctl.c
-> @@ -39,19 +39,10 @@ static struct ctl_table coda_table[] = {
->  	{}
->  };
->  
-> -static struct ctl_table fs_table[] = {
-> -	{
-> -		.procname	= "coda",
-> -		.mode		= 0555,
-> -		.child		= coda_table
-> -	},
-> -	{}
-> -};
-> -
->  void coda_sysctl_init(void)
->  {
->  	if ( !fs_table_header )
-> -		fs_table_header = register_sysctl_table(fs_table);
-> +		fs_table_header = register_sysctl("coda", coda_table);
->  }
->  
->  void coda_sysctl_clean(void)
-> -- 
-> 2.39.1
-> 
-> 
