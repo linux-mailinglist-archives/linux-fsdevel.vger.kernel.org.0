@@ -2,220 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 987AD6B8831
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 03:14:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDE8A6B8848
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 03:19:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbjCNCO0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Mar 2023 22:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33996 "EHLO
+        id S229811AbjCNCTg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Mar 2023 22:19:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjCNCOZ (ORCPT
+        with ESMTP id S229755AbjCNCTf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Mar 2023 22:14:25 -0400
+        Mon, 13 Mar 2023 22:19:35 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA37B30EB;
-        Mon, 13 Mar 2023 19:14:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDC131B541;
+        Mon, 13 Mar 2023 19:19:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 56428614A6;
-        Tue, 14 Mar 2023 02:14:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2823C433EF;
-        Tue, 14 Mar 2023 02:14:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678760062;
-        bh=TLxubRg2wj4/bxK478LTNwiY+jupRRwciwxIPviGdyg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ttrKgsv1vSJ6shxVSeuf0XxhkrnLLyw4ba1gH07Vx1HZkpmCUHxX9dYY3pITjfSkD
-         h445S7hCmRdzlPMfqBxthxWUWJJ7KaRBie3fHH+/d5AqGdRbbEUgpaMcorPyx8u60W
-         nLoKfqA1xN75fRlQOPQLcVL3OsrEnXrqP5OvvtmoA1rmHUcNEeIUHnzNbnxekoK77b
-         gs1FdkK17yTVl5c0L1N97vRXzS/u0oQ8R00Ju9lE8cI11ir9ptoWleMvcftv8q/w4+
-         2lvgQkLkAoEtLGWNgPy1NwFA1IStY9ftG6+UV5GPcpYrMvNvMzUxXkVgbcQF9t5dhL
-         XaXIe6J0tClmA==
-Date:   Mon, 13 Mar 2023 19:14:22 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Ritesh Harjani <ritesh.list@gmail.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        xfs <linux-xfs@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Subject: Re: [LSF TOPIC] online repair of filesystems: what next?
-Message-ID: <20230314021422.GE11394@frogsfrogsfrogs>
-References: <20230309160000.GC1637786@frogsfrogsfrogs>
- <87v8j9ixvy.fsf@doe.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87v8j9ixvy.fsf@doe.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 88C8B61572;
+        Tue, 14 Mar 2023 02:19:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DFDAC4339C;
+        Tue, 14 Mar 2023 02:19:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1678760373;
+        bh=jQhD/M7Ani+bWf3eE9KwDDKZgpO+n2YjiyMZ49M+DVU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=TEy2LQY75YaxuMZ9i9d0txb/bAPwVksXWhiZdQy+Gp0ocrEuwRrFo+5Wh7rqlFeNe
+         1LlrirqETNh2b1bMxwBWU+ClRS3UtSm156sFelxG38ph5FucwHNDR7Wyqo4Eq0iphr
+         BLQ4sFlz8R2QZTg6FkeByENg0z1522RLRjMbOHgw=
+Date:   Mon, 13 Mar 2023 19:19:31 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     kernel test robot <yujie.liu@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>, <oe-lkp@lists.linux.dev>,
+        <lkp@intel.com>, Linux Memory Management List <linux-mm@kvack.org>,
+        "Andreas Gruenbacher" <agruenba@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        <linux-afs@lists.infradead.org>, <linux-ext4@vger.kernel.org>,
+        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-nfs@vger.kernel.org>, <linux-nilfs@vger.kernel.org>,
+        <cgroups@vger.kernel.org>
+Subject: Re: [linux-next:master] [mm] 480c454ff6:
+ BUG:kernel_NULL_pointer_dereference
+Message-Id: <20230313191931.f84776cb09dc8c4b50673a76@linux-foundation.org>
+In-Reply-To: <202303140916.5e8e96b2-yujie.liu@intel.com>
+References: <202303140916.5e8e96b2-yujie.liu@intel.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 09, 2023 at 11:56:57PM +0530, Ritesh Harjani wrote:
-> "Darrick J. Wong" <djwong@kernel.org> writes:
+On Tue, 14 Mar 2023 10:10:42 +0800 kernel test robot <yujie.liu@intel.com> wrote:
+
+> Greeting,
 > 
-> > On Thu, Mar 09, 2023 at 08:54:39AM +1100, Dave Chinner wrote:
-> >> On Wed, Mar 08, 2023 at 06:12:06PM +0100, Jan Kara wrote:
-> >> > Hi!
-> >> >
-> >> > I'm interested in this topic. Some comments below.
-> >> >
-> >> > On Tue 28-02-23 12:49:03, Darrick J. Wong wrote:
-> >> > > Five years ago[0], we started a conversation about cross-filesystem
-> >> > > userspace tooling for online fsck.  I think enough time has passed for
-> >> > > us to have another one, since a few things have happened since then:
-> >> > >
-> >> > > 1. ext4 has gained the ability to send corruption reports to a userspace
-> >> > >    monitoring program via fsnotify.  Thanks, Collabora!
-> >> > >
-> >> > > 2. XFS now tracks successful scrubs and corruptions seen during runtime
-> >> > >    and during scrubs.  Userspace can query this information.
-> >> > >
-> >> > > 3. Directory parent pointers, which enable online repair of the
-> >> > >    directory tree, is nearing completion.
-> >> > >
-> >> > > 4. Dave and I are working on merging online repair of space metadata for
-> >> > >    XFS.  Online repair of directory trees is feature complete, but we
-> >> > >    still have one or two unresolved questions in the parent pointer
-> >> > >    code.
-> >> > >
-> >> > > 5. I've gotten a bit better[1] at writing systemd service descriptions
-> >> > >    for scheduling and performing background online fsck.
-> >> > >
-> >> > > Now that fsnotify_sb_error exists as a result of (1), I think we
-> >> > > should figure out how to plumb calls into the readahead and writeback
-> >> > > code so that IO failures can be reported to the fsnotify monitor.  I
-> >> > > suspect there may be a few difficulties here since fsnotify (iirc)
-> >> > > allocates memory and takes locks.
-> >> >
-> >> > Well, if you want to generate fsnotify events from an interrupt handler,
-> >> > you're going to have a hard time, I don't have a good answer for that.
-> >>
-> >> I don't think we ever do that, or need to do that. IO completions
-> >> that can throw corruption errors are already running in workqueue
-> >> contexts in XFS.
-> >>
-> >> Worst case, we throw all bios that have IO errors flagged to the
-> >> same IO completion workqueues, and the problem of memory allocation,
-> >> locks, etc in interrupt context goes away entire.
-> >
-> > Indeed.  For XFS I think the only time we might need to fsnotify about
-> > errors from interrupt context is writeback completions for a pure
-> > overwrite?  We could punt those to a workqueue as Dave says.  Or figure
-> > out a way for whoever's initiating writeback to send it for us?
-> >
-> > I think this is a general issue for the pagecache, not XFS.  I'll
-> > brainstorm with willy the next time I encounter him.
-> >
-> >> > But
-> >> > offloading of error event generation to a workqueue should be doable (and
-> >> > event delivery is async anyway so from userspace POV there's no
-> >> > difference).
-> >>
-> >> Unless I'm misunderstanding you (possible!), that requires a memory
-> >> allocation to offload the error information to the work queue to
-> >> allow the fsnotify error message to be generated in an async manner.
-> >> That doesn't seem to solve anything.
-> >>
-> >> > Otherwise locking shouldn't be a problem AFAICT. WRT memory
-> >> > allocation, we currently preallocate the error events to avoid the loss of
-> >> > event due to ENOMEM. With current usecases (filesystem catastrophical error
-> >> > reporting) we have settled on a mempool with 32 preallocated events (note
-> >> > that preallocated event gets used only if normal kmalloc fails) for
-> >> > simplicity. If the error reporting mechanism is going to be used
-> >> > significantly more, we may need to reconsider this but it should be doable.
-> >> > And frankly if you have a storm of fs errors *and* the system is going
-> >> > ENOMEM at the same time, I have my doubts loosing some error report is
-> >> > going to do any more harm ;).
-> >>
-> >> Once the filesystem is shut down, it will need to turn off
-> >> individual sickness notifications because everything is sick at this
-> >> point.
-> >
-> > I was thinking that the existing fsnotify error set should adopt a 'YOUR
-> > FS IS DEAD' notification.  Then when the fs goes down due to errors or
-> > the shutdown ioctl, we can broadcast that as the final last gasp of the
-> > filesystem.
-> >
-> >> > > As a result of (2), XFS now retains quite a bit of incore state about
-> >> > > its own health.  The structure that fsnotify gives to userspace is very
-> >> > > generic (superblock, inode, errno, errno count).  How might XFS export
-> >> > > a greater amount of information via this interface?  We can provide
-> >> > > details at finer granularity -- for example, a specific data structure
-> >> > > under an allocation group or an inode, or specific quota records.
-> >> >
-> >> > Fsnotify (fanotify in fact) interface is fairly flexible in what can be
-> >> > passed through it. So if you need to pass some (reasonably short) binary
-> >> > blob to userspace which knows how to decode it, fanotify can handle that
-> >> > (with some wrapping). Obviously there's a tradeoff to make how much of the
-> >> > event is generic (as that is then easier to process by tools common for all
-> >> > filesystems) and how much is fs specific (which allows to pass more
-> >> > detailed information). But I guess we need to have concrete examples of
-> >> > events to discuss this.
-> >>
-> >> Fine grained health information will always be filesystem specific -
-> >> IMO it's not worth trying to make it generic when there is only one
-> >> filesystem that tracking and exporting fine-grained health
-> >> information. Once (if) we get multiple filesystems tracking fine
-> >> grained health information, then we'll have the information we need
-> >> to implement a useful generic set of notifications, but until then I
-> >> don't think we should try.
-> >
-> > Same here.  XFS might want to send the generic notifications and follow
-> > them up with more specific information?
-> >
-> >> We should just export the notifications the filesystem utilities
-> >> need to do their work for the moment.  When management applications
-> >> (e.g Stratis) get to the point where they can report/manage
-> >> filesystem health and need that information from multiple
-> >> filesystems types, then we can work out a useful common subset of
-> >> fine grained events across those filesystems that the applications
-> >> can listen for.
-> >
-> > If someone wants to write xfs_scrubd that listens for events and issues
-> > XFS_IOC_SCRUB_METADATA calls I'd be all ears. :)
-> >
+> Previous report:
+> https://lore.kernel.org/oe-lkp/202303100947.9b421b1c-yujie.liu@intel.com
 > 
-> Does it make sense to have more generic FS specific application daemon
-> which can listen on such events from fanotify and take admin actions
-> based on that.
-> For e.g. If any FS corruption is encountered causing FS shutdown and/or
-> ro mount.
-
-If we ever wire up generic notifications for the pagecache and iomap
-then I guess we /could/ at least build a generic service to do things
-like blast the user's session notifier/sysadmin's monitoring service
-when things go wrong.
-
-> 1. then taking a xfs metadump which can later be used for analysis
-> of what went wrong (ofcourse this will need more thinking on how and
-> where to store it).
-> 2. Initiating xfs_scrub with XFS_IOC_SCRUB_METATA call.
-
-These things are all /very/ filesystem specific.  For things like
-metadump and auto-scrubbing I think we'd need something in xfsprogs, not
-a generic tool.
-
-> 3. What else?
+> FYI, we noticed BUG:kernel_NULL_pointer_dereference,address due to commit (built with gcc-11):
 > 
-> Ofcourse in production workloads the metadump can be collected by
-> obfuscating file/directory names ;)
+> commit: 480c454ff64b734a35677ee4b239e32143a4235c ("mm: return an ERR_PTR from __filemap_get_folio")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> [test failed on linux-next/master 24469a0e5052ba01a35a15f104717a82b7a4798b]
+> 
+> in testcase: trinity
+> version: trinity-x86_64-e63e4843-1_20220913
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	group: group-04
+> 
+> test-description: Trinity is a linux system call fuzz tester.
+> test-url: http://codemonkey.org.uk/projects/trinity/
+> 
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> [   29.300153][ T6430] BUG: kernel NULL pointer dereference, address: 0000000000000000
 
-That said... it would be pretty useful if there was *some* ability to
-automate capture of metadata dumps for ext4 and xfs.  Once the fs goes
-offline it's probably safe to capture the dump since (presumably) the fs
-will not be writing to the block device any more.
+Thanks, I expect this is fixed by
 
-The hard part is having a place to dump that much information.  Do we
-still trust the running system enough to handle it, or would we be
-better off deferring that to a kdump payload?
+commit 151dff099e8e6d9c8efcc75ad0ad3b8eead58704
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Fri Mar 10 08:00:23 2023 +0100
 
---D
+    mm-return-an-err_ptr-from-__filemap_get_folio-fix
+    
+    fix null-pointer deref
+    
+    Link: https://lkml.kernel.org/r/20230310070023.GA13563@lst.de
+    Signed-off-by: Christoph Hellwig <hch@lst.de>
+    Reported-by: Naoya Horiguchi <naoya.horiguchi@linux.dev>
+      Link: https://lkml.kernel.org/r/20230310043137.GA1624890@u2004
+    Cc: Andreas Gruenbacher <agruenba@redhat.com>
+    Cc: Hugh Dickins <hughd@google.com>
+    Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+    Cc: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 
-> -ritesh
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index c7160070b9da..b76a65ac28b3 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -390,6 +390,8 @@ struct folio *filemap_get_incore_folio(struct address_space *mapping,
+ 	struct swap_info_struct *si;
+ 	struct folio *folio = filemap_get_entry(mapping, index);
+ 
++	if (!folio)
++		return ERR_PTR(-ENOENT);
+ 	if (!xa_is_value(folio))
+ 		return folio;
+ 	if (!shmem_mapping(mapping))
+
+
+
