@@ -2,112 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7AC6B9772
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 15:13:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AFFC6B984A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 15:51:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230429AbjCNONZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 10:13:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60790 "EHLO
+        id S230493AbjCNOvO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 10:51:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229790AbjCNONW (ORCPT
+        with ESMTP id S230498AbjCNOvM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 10:13:22 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C26A42EC;
-        Tue, 14 Mar 2023 07:12:55 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4761F21F48;
-        Tue, 14 Mar 2023 14:12:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1678803148; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q0HjvnKbml+YdcLLE7DMO0MaJnPS3khjsSC2B2uEuwo=;
-        b=QXdStDC3u29eG6VvG5yUEI1E+896xhnAECIuv+0PhGzoJ3EYSxQ/z6ymoeF6nPvcUjX55k
-        9rqLh/hsV5w3Fql1CVkywHbc5UVjuHA0dDKaPJAtU+gyrKtbBQsg8/omdBY1Mef2bJ1cEB
-        t3VtiyemZp1lDHZ4T5S4Lnz8QA81h9M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1678803148;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q0HjvnKbml+YdcLLE7DMO0MaJnPS3khjsSC2B2uEuwo=;
-        b=BHqiCNJyvFqs1LJLRJENn60nI3LRSVNTA6AmP6Xo3wGJxpkXbVD8rnK/0CvWLdLaF85B7j
-        qW1wAzcx1JKiwVDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3B3E413A26;
-        Tue, 14 Mar 2023 14:12:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id /zFqDsyAEGTUFAAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 14 Mar 2023 14:12:28 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id C1602A06FD; Tue, 14 Mar 2023 15:12:27 +0100 (CET)
-Date:   Tue, 14 Mar 2023 15:12:27 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Willy Tarreau <w@1wt.eu>, David Laight <David.Laight@aculab.com>,
-        'Sasha Levin' <sashal@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: AUTOSEL process
-Message-ID: <20230314141227.7x6k2wsveliooclw@quack3>
-References: <Y/y70zJj4kjOVfXa@sashalap>
- <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <ZATC3djtr9/uPX+P@duo.ucw.cz>
- <ZAewdAql4PBUYOG5@gmail.com>
- <ZAwe95meyCiv6qc4@casper.infradead.org>
- <ZAyK0KM6JmVOvQWy@sashalap>
- <9ff6fe2c13434512b034823112843d4f@AcuMS.aculab.com>
- <ZA1X46ClAJGc/2V7@1wt.eu>
- <20230312050947.GK860405@mit.edu>
+        Tue, 14 Mar 2023 10:51:12 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B19F2A2F1E;
+        Tue, 14 Mar 2023 07:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=H1QGXFGueBuHBkdVnY1gVNgWxdg/uqRKaISs/k4X5k8=; b=S7EeSUpGaZlBdHu4WUHAIdr25V
+        ixFY7YsdAbe5O4aABq5JSzhjm6AQQEt3eXVPOFTCWjSNtDCgQFZErMmKupnpF9Y/4skbRxraN6HkX
+        TqmDE1TcO5R6zBSPSKRc5doATbZgmLE4SGmmnROLttR98UmmdtbKjQjHzeTUwv1E1p/bjEoFFy+iH
+        nyqmOOJUi5ry9SunSrF7pQBYspmk5uLVQJF6SmWk5LWJAeaLgy3Zr7wr5xxwd+hQMMwpvWD+yVxuy
+        /CaVhXopsc+90LrYwApR0yOX/0l4LaCriYpzBh1LHFmzupT2UryDjtJai0v3ndjSU6zPsYceoZ+bh
+        bp/MSRHg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pc5zT-00CzPv-OB; Tue, 14 Mar 2023 14:51:03 +0000
+Date:   Tue, 14 Mar 2023 14:51:03 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-afs@lists.infradead.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
+        ocfs2-devel@oss.oracle.com, devel@lists.orangefs.org,
+        reiserfs-devel@vger.kernel.org,
+        Evgeniy Dushistov <dushistov@mail.ru>
+Subject: RFC: Filesystem metadata in HIGHMEM
+Message-ID: <ZBCJ11qT8AWGA9y8@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230312050947.GK860405@mit.edu>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 12-03-23 00:09:47, Theodore Ts'o wrote:
-> On Sun, Mar 12, 2023 at 05:41:07AM +0100, Willy Tarreau wrote:
-> > 
-> > I suspect that having an option to keep the message ID in the footer (a
-> > bit like the "cherry-picked from" tag but instead "blongs to series")
-> > could possibly help. And when no such info is present we could have
-> > one ID generated per "git am" execution since usually if you apply an
-> > mbox, it constitutes a series (but not always of course, though it's
-> > not difficult to arrange series like this).
-> 
-> As I pointed out earlier, some of us are adding the message ID in the
-> footer alrady, using a Link tag.  This is even documented already in
-> the Kernel Maintainer's Handbook, so I'm pretty sure it's not just me.  :-)
+TLDR: I think we should rip out support for fs metadata in highmem
 
-Yeah, given Linus' rants about links pointing to patch posting, what I'm
-currently doing is that I add Message-ID: tag to the patch instead of a
-Link: tag. It preserves the information as well and it is obvious to human
-reader what are links to reports / discussions and what is just a link to
-patch posting.
+We want to support filesystems on devices with LBA size > PAGE_SIZE.
+That's subtly different and slightly harder than fsblk size > PAGE_SIZE.
+We can use large folios to read the blocks into, but reading/writing
+the data in those folios is harder if it's in highmem.  The kmap family
+of functions can only map a single page at a time (and changing that
+is hard).  We could vmap, but that's slow and can't be used from atomic
+context.  Working a single page at a time can be tricky (eg consider an
+ext2 directory entry that spans a page boundary).
 
-								Honza
+Many filesystems do not support having their metadata in highmem.
+ext4 doesn't.  xfs doesn't.  f2fs doesn't.  afs, ceph, ext2, hfs,
+minix, nfs, nilfs2, ntfs, ntfs3, ocfs2, orangefs, qnx6, reiserfs, sysv
+and ufs do.
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Originally, ext2 directories in the page cache were done by Al Viro
+in 2001.  At that time, the important use-case was machines with tens of
+gigabytes of highmem and ~800MB of lowmem.  Since then, the x86 systems
+have gone to 64-bit and the only real uses for highmem are cheap systems
+with ~8GB of memory total and 2-4GB of lowmem.  These systems really
+don't need to keep directories in highmem; using highmem for file &
+anon memory is enough to keep the system in balance.
+
+So let's just rip out the ability to keep directories (and other fs
+metadata) in highmem.  Many filesystems already don't support this,
+and it makes supporting LBA size > PAGE_SIZE hard.
+
+I'll turn this into an LSFMM topic if we don't reach resolution on the
+mailing list, but I'm optimistic that everybody will just agree with
+me ;-)
