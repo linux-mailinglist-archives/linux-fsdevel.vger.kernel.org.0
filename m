@@ -2,100 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D4FE6B8C75
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 09:05:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63E626B8D10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 09:21:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230491AbjCNIFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 04:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38476 "EHLO
+        id S230300AbjCNIUy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 04:20:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230421AbjCNIF0 (ORCPT
+        with ESMTP id S231234AbjCNIUC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 04:05:26 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91CEE80936;
-        Tue, 14 Mar 2023 01:05:15 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 269001FE20;
-        Tue, 14 Mar 2023 08:05:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1678781114; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=TqIJDRVcUYmUlbVn0Al2s2TH5Ea7U61xcXfPnxRC8bk=;
-        b=JuuPkRge9DaAsKPAnSsr3J3o2B1c45g4WDsJTAypBCaOTG/+k2YtwugJotj+5umoepDq5L
-        TuUVPHm4eFg+d2esuhVpCZd6V3STHgLDJx9hJDyNjPYs0q2y13F3+6WIXihGzreIdcwUbu
-        lO+u7taEJcnju7keWQH7NrYiQQWglyE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1678781114;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=TqIJDRVcUYmUlbVn0Al2s2TH5Ea7U61xcXfPnxRC8bk=;
-        b=lFATKKuMWsr+cewxUEmgvU2RGt38Txqkod0y1aDc5gwWv25hEcpjSi72g6lfcJ97SCxl5W
-        v+xphcCSgLf76gAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E80C113A26;
-        Tue, 14 Mar 2023 08:05:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id PMfcN7kqEGSmNQAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Tue, 14 Mar 2023 08:05:13 +0000
-Message-ID: <4b9fc9c6-b48c-198f-5f80-811a44737e5f@suse.cz>
-Date:   Tue, 14 Mar 2023 09:05:13 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-From:   Vlastimil Babka <vbabka@suse.cz>
-Subject: [LSF/MM/BPF TOPIC] SLOB+SLAB allocators removal and future SLUB
- improvements
-To:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org,
-        bpf@vger.kernel.org, linux-xfs@vger.kernel.org
-Content-Language: en-US
-Cc:     David Rientjes <rientjes@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
+        Tue, 14 Mar 2023 04:20:02 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DAB76EBD;
+        Tue, 14 Mar 2023 01:19:32 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id v21so5618551ple.9;
+        Tue, 14 Mar 2023 01:19:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678781972;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8uO2pb0aT1NnyTIVfLkUifV1o9o6G5xDatiTfXnW8OM=;
+        b=QCEaXsu/OjbQKOKTYOcfuHjvGyeHK9nYJiXxfEUWECrdKCyWwPq0L0FNqeK2N9n0Ae
+         EYhweA0WDiVCNFTXO/Wu2yt+0iX/rIGOjay3O9J0T5PfyRcM9Od/wAOnZeMKsTEccNB1
+         kBPODFp6Fy5xfTTUhVz+KrAXlcmQwZdHP+yI41uKkVWzMoTXmLqYZGqI2hHTgzIP5M4q
+         /RAASByDELA1VcinP8SU4Nnn47z78AHy+V6TX7KQ4FM3dvquhkssjsbw6ytwlZpCQ4zG
+         C1OUBzTPW44akruzEoyygVQ3dj7HZ9nnKMlsFkidV34OJTbRtTmlN9/8JVCA/Jd6/d8K
+         AasQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678781972;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8uO2pb0aT1NnyTIVfLkUifV1o9o6G5xDatiTfXnW8OM=;
+        b=ZKXqVLN7cSWL7EY19nw0eWkYpnFC32F9FGF4NLn1RszeCN7NBEN1TpyKPFiuho17fB
+         2MKmc9cz7HEpSYp31iLNZp88IsWBxW5UA4PrmumkoBJxitH6wjX5WfukVCvZEfQwDGTG
+         mcvJSRnUwI3jlrycXEMguks9XEJfuZQpcmtErspSuyMKpKqBUaZeefWPog83cEyERn9C
+         naWiie9tx98GC4C/hY4L9sXaSbeejVv+5hFsFhT5KIeaJ0r6caz6celbc18Sxbc+p6+2
+         n9joBF5BRhNVeDLTRplLM8vShrgZZ+L65N0+13II2ZnpsEM85MiCzfCD+Jq855dcSMX8
+         3SPA==
+X-Gm-Message-State: AO0yUKWK45zEmyNuNszJCSAnmzAAUFD9hHBmnM4RoiglJYkgLXdXsT2E
+        mgFwnHJByhFljaQryVN+R4Y=
+X-Google-Smtp-Source: AK7set/EQKyfrynoi8fEAytH0KIk6OtEN1YHKRHZ+aytWMZMlLInWc+g/9ht3BCMiq8qdv6zEI7rTA==
+X-Received: by 2002:a17:902:c407:b0:19e:7490:c93e with SMTP id k7-20020a170902c40700b0019e7490c93emr49670592plk.63.1678781971870;
+        Tue, 14 Mar 2023 01:19:31 -0700 (PDT)
+Received: from localhost ([2400:8902::f03c:93ff:fe27:642a])
+        by smtp.gmail.com with ESMTPSA id w5-20020a170902d3c500b0019fcece6847sm1113921plb.227.2023.03.14.01.19.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Mar 2023 01:19:30 -0700 (PDT)
+Date:   Tue, 14 Mar 2023 08:19:18 +0000
+From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        Pekka Enberg <penberg@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        rcu@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        netdev@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 4/7] mm, pagemap: remove SLOB and SLQB from comments and
+ documentation
+Message-ID: <ZBAuBj0hgLK7Iqgy@localhost>
+References: <20230310103210.22372-1-vbabka@suse.cz>
+ <20230310103210.22372-5-vbabka@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230310103210.22372-5-vbabka@suse.cz>
+X-Spam-Status: No, score=3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
+        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As you're probably aware, my plan is to get rid of SLOB and SLAB, leaving
-only SLUB going forward. The removal of SLOB seems to be going well, there
-were no objections to the deprecation and I've posted v1 of the removal
-itself [1] so it could be in -next soon.
+On Fri, Mar 10, 2023 at 11:32:06AM +0100, Vlastimil Babka wrote:
+> SLOB has been removed and SLQB never merged, so remove their mentions
+> from comments and documentation of pagemap.
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  Documentation/admin-guide/mm/pagemap.rst | 6 +++---
+>  fs/proc/page.c                           | 5 ++---
+>  2 files changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
+> index b5f970dc91e7..bb4aa897a773 100644
+> --- a/Documentation/admin-guide/mm/pagemap.rst
+> +++ b/Documentation/admin-guide/mm/pagemap.rst
+> @@ -91,9 +91,9 @@ Short descriptions to the page flags
+>     The page is being locked for exclusive access, e.g. by undergoing read/write
+>     IO.
+>  7 - SLAB
+> -   The page is managed by the SLAB/SLOB/SLUB/SLQB kernel memory allocator.
+> -   When compound page is used, SLUB/SLQB will only set this flag on the head
+> -   page; SLOB will not flag it at all.
+> +   The page is managed by the SLAB/SLUB kernel memory allocator.
+> +   When compound page is used, either will only set this flag on the head
+> +   page..
+>  10 - BUDDY
+>      A free memory block managed by the buddy system allocator.
+>      The buddy system organizes free memory in blocks of various orders.
+> diff --git a/fs/proc/page.c b/fs/proc/page.c
+> index 6249c347809a..1356aeffd8dc 100644
+> --- a/fs/proc/page.c
+> +++ b/fs/proc/page.c
+> @@ -125,7 +125,7 @@ u64 stable_page_flags(struct page *page)
+>  	/*
+>  	 * pseudo flags for the well known (anonymous) memory mapped pages
+>  	 *
+> -	 * Note that page->_mapcount is overloaded in SLOB/SLUB/SLQB, so the
+> +	 * Note that page->_mapcount is overloaded in SLAB/SLUB, so the
 
-The immediate benefit of that is that we can allow kfree() (and kfree_rcu())
-to free objects from kmem_cache_alloc() - something that IIRC at least xfs
-people wanted in the past, and SLOB was incompatible with that.
+SLUB does not overload _mapcount.
 
-For SLAB removal I haven't yet heard any objections (but also didn't
-deprecate it yet) but if there are any users due to particular workloads
-doing better with SLAB than SLUB, we can discuss why those would regress and
-what can be done about that in SLUB.
+>  	 * simple test in page_mapped() is not enough.
+>  	 */
+>  	if (!PageSlab(page) && page_mapped(page))
+> @@ -166,8 +166,7 @@ u64 stable_page_flags(struct page *page)
+>  
+>  	/*
+>  	 * Caveats on high order pages: page->_refcount will only be set
+> -	 * -1 on the head page; SLUB/SLQB do the same for PG_slab;
+> -	 * SLOB won't set PG_slab at all on compound pages.
+> +	 * -1 on the head page; SLAB/SLUB do the same for PG_slab;
 
-Once we have just one slab allocator in the kernel, we can take a closer
-look at what the users are missing from it that forces them to create own
-allocators (e.g. BPF), and could be considered to be added as a generic
-implementation to SLUB.
+I think this comment could be just saying that PG_buddy is only set on
+head page, not saying
 
-Thanks,
-Vlastimil
+_refcount is set to -1 on head page (is it even correct?)
 
-[1] https://lore.kernel.org/all/20230310103210.22372-1-vbabka@suse.cz/
+>  	 */
+>  	if (PageBuddy(page))
+>  		u |= 1 << KPF_BUDDY;
+> -- 
+> 2.39.2
+> 
