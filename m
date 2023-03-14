@@ -2,83 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AFFC6B984A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 15:51:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D421E6B988A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 16:08:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230493AbjCNOvO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 10:51:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48784 "EHLO
+        id S231524AbjCNPIc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 11:08:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230498AbjCNOvM (ORCPT
+        with ESMTP id S231503AbjCNPI2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 10:51:12 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B19F2A2F1E;
-        Tue, 14 Mar 2023 07:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=H1QGXFGueBuHBkdVnY1gVNgWxdg/uqRKaISs/k4X5k8=; b=S7EeSUpGaZlBdHu4WUHAIdr25V
-        ixFY7YsdAbe5O4aABq5JSzhjm6AQQEt3eXVPOFTCWjSNtDCgQFZErMmKupnpF9Y/4skbRxraN6HkX
-        TqmDE1TcO5R6zBSPSKRc5doATbZgmLE4SGmmnROLttR98UmmdtbKjQjHzeTUwv1E1p/bjEoFFy+iH
-        nyqmOOJUi5ry9SunSrF7pQBYspmk5uLVQJF6SmWk5LWJAeaLgy3Zr7wr5xxwd+hQMMwpvWD+yVxuy
-        /CaVhXopsc+90LrYwApR0yOX/0l4LaCriYpzBh1LHFmzupT2UryDjtJai0v3ndjSU6zPsYceoZ+bh
-        bp/MSRHg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pc5zT-00CzPv-OB; Tue, 14 Mar 2023 14:51:03 +0000
-Date:   Tue, 14 Mar 2023 14:51:03 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-afs@lists.infradead.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
-        ocfs2-devel@oss.oracle.com, devel@lists.orangefs.org,
-        reiserfs-devel@vger.kernel.org,
-        Evgeniy Dushistov <dushistov@mail.ru>
-Subject: RFC: Filesystem metadata in HIGHMEM
-Message-ID: <ZBCJ11qT8AWGA9y8@casper.infradead.org>
+        Tue, 14 Mar 2023 11:08:28 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36211A0F1E;
+        Tue, 14 Mar 2023 08:08:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678806506; x=1710342506;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hamc92EMwwSNQxL+T9p74zThaNZs0lLKS/A1U9M8u4w=;
+  b=nEScB8/guV+/LMdl91oBBuKMbGYWeOanCsN9hMg/wDLDDuIhh1uR/YJY
+   Yd3S0ENBd311NiGnbNDnrYvQAlPbSOgsVRIaweuBWNnAIRgQW04zX/Xvr
+   v9CShbvqFsaGsKZtkG5xp+oJ03B06D2sE+4/iij62OuHZcY8nff68i9Br
+   EvY73p9P890++eA7ZhsSRNQauTapU/mm7keG7gnbaeoJD9rhsULZkzvSi
+   s2givouoXkuDDMZppt8aeaGjvJZmFfpxzptjcdJFG+bPufIaDmkRhi70Y
+   3DnlGdTFypJ8eJzlyzbbmkuQCl463L05IiqjDblcONWqqvgTWLfHUG4WS
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="321300284"
+X-IronPort-AV: E=Sophos;i="5.98,260,1673942400"; 
+   d="scan'208";a="321300284"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2023 08:08:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="656377938"
+X-IronPort-AV: E=Sophos;i="5.98,260,1673942400"; 
+   d="scan'208";a="656377938"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 14 Mar 2023 08:08:24 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 0468D209; Tue, 14 Mar 2023 17:09:08 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] fs/namespace: fnic: Switch to use %ptTd
+Date:   Tue, 14 Mar 2023 17:09:06 +0200
+Message-Id: <20230314150906.52318-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-TLDR: I think we should rip out support for fs metadata in highmem
+Use %ptTd instead of open-coded variant to print contents
+of time64_t type in human readable form.
 
-We want to support filesystems on devices with LBA size > PAGE_SIZE.
-That's subtly different and slightly harder than fsblk size > PAGE_SIZE.
-We can use large folios to read the blocks into, but reading/writing
-the data in those folios is harder if it's in highmem.  The kmap family
-of functions can only map a single page at a time (and changing that
-is hard).  We could vmap, but that's slow and can't be used from atomic
-context.  Working a single page at a time can be tricky (eg consider an
-ext2 directory entry that spans a page boundary).
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ fs/namespace.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Many filesystems do not support having their metadata in highmem.
-ext4 doesn't.  xfs doesn't.  f2fs doesn't.  afs, ceph, ext2, hfs,
-minix, nfs, nilfs2, ntfs, ntfs3, ocfs2, orangefs, qnx6, reiserfs, sysv
-and ufs do.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index d26ea0d9041f..0e7c69a2009b 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2617,15 +2617,12 @@ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *
+ 	   (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
+ 		char *buf = (char *)__get_free_page(GFP_KERNEL);
+ 		char *mntpath = buf ? d_path(mountpoint, buf, PAGE_SIZE) : ERR_PTR(-ENOMEM);
+-		struct tm tm;
+ 
+-		time64_to_tm(sb->s_time_max, 0, &tm);
+-
+-		pr_warn("%s filesystem being %s at %s supports timestamps until %04ld (0x%llx)\n",
++		pr_warn("%s filesystem being %s at %s supports timestamps until %ptTd (0x%llx)\n",
+ 			sb->s_type->name,
+ 			is_mounted(mnt) ? "remounted" : "mounted",
+-			mntpath,
+-			tm.tm_year+1900, (unsigned long long)sb->s_time_max);
++			mntpath, &sb->s_time_max,
++			(unsigned long long)sb->s_time_max);
+ 
+ 		free_page((unsigned long)buf);
+ 		sb->s_iflags |= SB_I_TS_EXPIRY_WARNED;
+-- 
+2.39.2
 
-Originally, ext2 directories in the page cache were done by Al Viro
-in 2001.  At that time, the important use-case was machines with tens of
-gigabytes of highmem and ~800MB of lowmem.  Since then, the x86 systems
-have gone to 64-bit and the only real uses for highmem are cheap systems
-with ~8GB of memory total and 2-4GB of lowmem.  These systems really
-don't need to keep directories in highmem; using highmem for file &
-anon memory is enough to keep the system in balance.
-
-So let's just rip out the ability to keep directories (and other fs
-metadata) in highmem.  Many filesystems already don't support this,
-and it makes supporting LBA size > PAGE_SIZE hard.
-
-I'll turn this into an LSFMM topic if we don't reach resolution on the
-mailing list, but I'm optimistic that everybody will just agree with
-me ;-)
