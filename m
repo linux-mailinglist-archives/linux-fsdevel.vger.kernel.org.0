@@ -2,99 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E45D6B9A16
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 16:43:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B95886B9BEB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 17:43:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230223AbjCNPni (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 11:43:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33622 "EHLO
+        id S229969AbjCNQnd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 12:43:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230261AbjCNPnd (ORCPT
+        with ESMTP id S229755AbjCNQnb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 11:43:33 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC01429E1C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 08:42:53 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id bf15so6574616iob.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 08:42:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678808531; x=1681400531;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZHz2nZLJ4+lOFDzcTjzzzwSr1D9I38tSW7UFA8xP/Wc=;
-        b=iViwvskyUrD//4VJS4EeDiJQJ9+jLVfuS3UhjpR6NN4jYjmy5SnVln807bJL41/L9H
-         ig7FPnvJfEC5Ax0q72Ynsq3b+XGieUKQ0sHtUF/YR8BMQu6wzRMFcPWxX3BJ3jXXt3zo
-         YplZGA+P/iff7aZfIPQHHFv8P8juSPLAvqcXkW2NAOVOj27gQ8GbJoHIrb89mjxX/pSx
-         xfS3gpLDhOMQHYhmeH/L1/rdVt5NeIka91iZomNgoxEahN4YvBWJPxfWhivVmo9hIeGV
-         N/hSJMh9iBRfPT7BedXGhdhbWc5oXGi1Sz/+k/LNPHjYeDEmuYuvH2HozT5B4CN8h83x
-         CO5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678808531; x=1681400531;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZHz2nZLJ4+lOFDzcTjzzzwSr1D9I38tSW7UFA8xP/Wc=;
-        b=S4BFlyYGY8df6XozgmasVblXHU2yd2XU56GT5L6hJ9A8WjbZ53t0kO3GB6HuarMGTi
-         R0+sLlWEXjdRYDbh9U4XmrXXw86lqVfSkLfdG3pq+ofW/FCZe069M0KeFmVz1unx3f2E
-         f3hrfbQDjq61Xf1SGVQpUyeQEgQEYd8BOHT0pUgVJDOGlXHkTJ/WjvMWkZNCAys2nZ+2
-         kJ+ruskiT45xraC82EiqbLqaG+5S1iNP3Wxd8tIBhNNtbZkg8zRGoOIRsqv10a0MSuY8
-         sK2u0s9bkgSdsYPobo7op8syp0tPiJjCFhsJkyv2DSeTb0Nk1A21dI/a6J6I+oZ8uR4v
-         /8sg==
-X-Gm-Message-State: AO0yUKVCRMpC9qrMHjgTYpe+/+RYaInGV/s9tQ41i9vYhTe4lJcPtK31
-        7NfvLlNPfirPKNRQ7Qr41ihMVA==
-X-Google-Smtp-Source: AK7set8g0uVZ/TbXbVx1cBaqfSdKLbgSZ8iRV9KZ/U2mVbIm19U5+LVCfYmZY9YcN8rUxjj93Z9RoQ==
-X-Received: by 2002:a6b:6e08:0:b0:74e:8718:a174 with SMTP id d8-20020a6b6e08000000b0074e8718a174mr13396ioh.1.1678808531079;
-        Tue, 14 Mar 2023 08:42:11 -0700 (PDT)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id u9-20020a02cb89000000b003b0692eb199sm867929jap.20.2023.03.14.08.42.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Mar 2023 08:42:10 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     brauner@kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dave Chinner <dchinner@redhat.com>
-Subject: [PATCH 3/3] pipe: set FMODE_NOWAIT on pipes
-Date:   Tue, 14 Mar 2023 09:42:03 -0600
-Message-Id: <20230314154203.181070-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230314154203.181070-1-axboe@kernel.dk>
-References: <20230314154203.181070-1-axboe@kernel.dk>
+        Tue, 14 Mar 2023 12:43:31 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 594457302E;
+        Tue, 14 Mar 2023 09:43:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=gjXIkZzK9eKcsdx4ghLE0EciyRLq1m3GlTeawRmpUUA=; b=pK5R28ZJkzuHPxskO0nobwwjY9
+        K7ZaCEN/3XvyZSHeJweJDhKMCKdkrRA41vYQOdiUU/YRzCrFmnEBpFW916YBy7vgtxrlBFFZItIRY
+        oVxwEU1op+XlMbbixbUCsWNJjbO/ij0PTFabPTsrNfS2Jp4xk/yFKvl3nF8JD9rRBLxUE6Rmk5kTZ
+        oQJVdKhFkufEauztmeqNyoINoGgY2Jtj0GOR5iM30KtyBv+OqoHEUMhOdzvlIrLqBDwF2ROhl7J2F
+        YDWrZAZZ7CQYK5kneKa8UOEBavS4G+nW5lKSlHgDROeit/52rqKuWkh1Zwmbiie9tst61OEm3eu24
+        sdKz02Ug==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pc7ji-00D3j5-AF; Tue, 14 Mar 2023 16:42:54 +0000
+Date:   Tue, 14 Mar 2023 16:42:54 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Daniel Golle <daniel@makrotopia.org>,
+        Guenter Roeck <groeck7@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v17 03/14] shmem: Implement splice-read
+Message-ID: <ZBCkDvveAIJENA0G@casper.infradead.org>
+References: <20230308165251.2078898-1-dhowells@redhat.com>
+ <20230308165251.2078898-4-dhowells@redhat.com>
+ <CAHk-=wjYR3h5Q-_i3Q2Et=P8WsrjwNA20fYpEQf9nafHwBNALA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <CAHk-=wjYR3h5Q-_i3Q2Et=P8WsrjwNA20fYpEQf9nafHwBNALA@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The read/write path is now prepared to deal with IOCB_NOWAIT, hence
-enable support for that via setting FMODE_NOWAIT on new pipes.
+On Wed, Mar 08, 2023 at 02:39:00PM -0800, Linus Torvalds wrote:
+> On Wed, Mar 8, 2023 at 8:53 AM David Howells <dhowells@redhat.com> wrote:
+> >
+> > The new filemap_splice_read() has an implicit expectation via
+> > filemap_get_pages() that ->read_folio() exists if ->readahead() doesn't
+> > fully populate the pagecache of the file it is reading from[1], potentially
+> > leading to a jump to NULL if this doesn't exist.  shmem, however, (and by
+> > extension, tmpfs, ramfs and rootfs), doesn't have ->read_folio(),
+> 
+> This patch is the only one in your series that I went "Ugh, that's
+> really ugly" for.
+> 
+> Do we really want to basically duplicate all of filemap_splice_read()?
+> 
+> I get the feeling that the zeropage case just isn't so important that
+> we'd need to duplicate filemap_splice_read() just for that, and I
+> think that the code should either
+> 
+>  (a) just make a silly "read_folio()" for shmfs that just clears the page.
+> 
+>      Ugly but maybe simple and not horrid?
 
-Acked-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/pipe.c | 3 +++
- 1 file changed, 3 insertions(+)
+The problem is that we might have swapped out the shmem folio.  So we
+don't want to clear the page, but ask swap to fill the page.  The way
+that currently works (see shmem_get_folio_gfp()) is to fetch the swap
+entry from the page cache, allocate a new folio inside the shmem code,
+then replace the swap entry with the new folio.
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index dc00b20e56c8..b7e380952fca 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -999,6 +999,9 @@ static int __do_pipe_flags(int *fd, struct file **files, int flags)
- 	audit_fd_pair(fdr, fdw);
- 	fd[0] = fdr;
- 	fd[1] = fdw;
-+	/* pipe groks IOCB_NOWAIT */
-+	files[0]->f_mode |= FMODE_NOWAIT;
-+	files[1]->f_mode |= FMODE_NOWAIT;
- 	return 0;
- 
-  err_fdr:
--- 
-2.39.2
+What I'd like to see is the generic code say "Ah, this is a shmem
+inode, so it's special and the xa_value entry is swap information,
+not workingset information, so I'll allocate the folio and restore
+the folio->private swap information to let the shmem_read_folio
+function do its job correctly".
 
+Either that or we completely overhaul the shmem code to store the
+location of its swapped data somewhere that's not the page cache.
+
+>  (b) teach filemap_splice_read() that a NULL 'read_folio' function
+> means "use the zero page"
+
+Same problem as (a).
+
+>  (c) go even further, and teach read_folio() in general about file
+> holes, and allow *any* filesystem to read zeroes that way in general
+> without creating a folio for it.
+
+I've had thoughts along those lines in the past.  It's pretty major
+surgery, I think.  At the moment, we allocate the pages and add them
+to the page cache in a locked state before asking the filesystem to
+populate them.  So the fs doesn't even have the file layout (eg the
+get_block or iomap info) that would tell it where the holes are until
+the page has already been allocated and inserted.  We could of course
+free the page and replace it with a special 'THIS_IS_A_HOLE' entry.
+It's just never seemed important enuogh to me to do this surgery.
+
+> in a perfect world, if done well I think shmem_file_read_iter() should
+> go away, and it could use generic_file_read_iter too.
+> 
+> I dunno. Maybe shm really is *so* special that this is the right way
+> to do things, but I did react quite negatively to this patch. So not a
+> complete NAK, but definitely a "do we _really_ have to do this?"
+
+I'd really like to see shmem have a read_folio implementation.  I
+don't know how much work it's going to be.
