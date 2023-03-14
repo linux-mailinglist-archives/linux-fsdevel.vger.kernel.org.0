@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 504156BA1E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 23:09:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B69E6BA1E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 23:09:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231226AbjCNWJi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 18:09:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37784 "EHLO
+        id S229519AbjCNWJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 18:09:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231221AbjCNWJP (ORCPT
+        with ESMTP id S229734AbjCNWJZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 18:09:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 290891A49C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 15:08:22 -0700 (PDT)
+        Tue, 14 Mar 2023 18:09:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CF7E570B6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 15:08:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678831701;
+        s=mimecast20190719; t=1678831710;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=74aMisHJvcrsbS5g8R7662ZNEA+1A6hMiypJVvVd5yo=;
-        b=K7OYh+oSryh6k37MoPc/qKL9YCTxlqfJWXMcpgexq2hBBqdzGYNLPQtj4zHVcZ9S1PFB2c
-        nu3mHZ2K9YvH7D4YKDLf8Zt+Uj9lQCW6nKitsHhUY3UP3pIGvEb5nY2VsjnSoDhnjJQD/z
-        +VDxREydJai6zymDX7wF/hZeC4jB0WA=
+        bh=Mo6NWBR6hkfydtMnZeO+F5U5GhN+vbQRFCzRyccP/1I=;
+        b=eEBMOerezWZxsM70FMjSbcwZb7ZdCFz0Eg2OeiIIDvWuwUnlQoRudJiYUDvR1pt8DAq7Gw
+        sh1t/LkMDua91wffiKv/j+icCSHDfKwCLd73n3BkSAckPeZ1r/CssxZYvOVNUD9wGXxPH3
+        fNIpxzg0BeAMkYXnbPdQw8alR+liPCw=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-482-OmsvrtS9MnWFP7mBkgbzgQ-1; Tue, 14 Mar 2023 18:08:20 -0400
-X-MC-Unique: OmsvrtS9MnWFP7mBkgbzgQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+ us-mta-355-ou2O4Fm_MEqdgyGyXimoSw-1; Tue, 14 Mar 2023 18:08:25 -0400
+X-MC-Unique: ou2O4Fm_MEqdgyGyXimoSw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 15FA9811E6E;
-        Tue, 14 Mar 2023 22:08:19 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 538CA85D060;
+        Tue, 14 Mar 2023 22:08:22 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B11D347507A;
-        Tue, 14 Mar 2023 22:08:16 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AD5082166B26;
+        Tue, 14 Mar 2023 22:08:19 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -52,21 +52,21 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Jan Harkes <jaharkes@cs.cmu.edu>,
         Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-unionfs@vger.kernel.org
-Subject: [PATCH v18 04/15] overlayfs: Implement splice-read
-Date:   Tue, 14 Mar 2023 22:07:46 +0000
-Message-Id: <20230314220757.3827941-5-dhowells@redhat.com>
+        John Hubbard <jhubbard@nvidia.com>, coda@cs.cmu.edu,
+        codalist@coda.cs.cmu.edu, linux-unionfs@vger.kernel.org
+Subject: [PATCH v18 05/15] coda: Implement splice-read
+Date:   Tue, 14 Mar 2023 22:07:47 +0000
+Message-Id: <20230314220757.3827941-6-dhowells@redhat.com>
 In-Reply-To: <20230314220757.3827941-1-dhowells@redhat.com>
 References: <20230314220757.3827941-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,18 +74,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement splice-read for overlayfs by passing the request down a layer
-rather than going through generic_file_splice_read() which is going to be
-changed to assume that ->read_folio() is present on buffered files.
+Implement splice-read for coda by passing the request down a layer rather
+than going through generic_file_splice_read() which is going to be changed
+to assume that ->read_folio() is present on buffered files.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Jan Harkes <jaharkes@cs.cmu.edu>
 cc: Christoph Hellwig <hch@lst.de>
 cc: Jens Axboe <axboe@kernel.dk>
 cc: Al Viro <viro@zeniv.linux.org.uk>
 cc: John Hubbard <jhubbard@nvidia.com>
 cc: David Hildenbrand <david@redhat.com>
 cc: Matthew Wilcox <willy@infradead.org>
-cc: Miklos Szeredi <miklos@szeredi.hu>
+cc: coda@cs.cmu.edu
+cc: codalist@coda.cs.cmu.edu
 cc: linux-unionfs@vger.kernel.org
 cc: linux-block@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
@@ -95,54 +97,60 @@ cc: linux-mm@kvack.org
 Notes:
     ver #17)
      - Use vfs_splice_read() helper rather than open-coding checks.
-    
-    ver #15)
-     - Remove redundant FMODE_CAN_ODIRECT check on real file.
-     - Do rw_verify_area() on the real file, not the overlay file.
-     - Fix a file leak.
 
- fs/overlayfs/file.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ fs/coda/file.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 7c04f033aadd..86197882ff35 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -419,6 +419,27 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+diff --git a/fs/coda/file.c b/fs/coda/file.c
+index 3f3c81e6b1ab..12b26bd13564 100644
+--- a/fs/coda/file.c
++++ b/fs/coda/file.c
+@@ -23,6 +23,7 @@
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+ #include <linux/uio.h>
++#include <linux/splice.h>
+ 
+ #include <linux/coda.h>
+ #include "coda_psdev.h"
+@@ -94,6 +95,32 @@ coda_file_write_iter(struct kiocb *iocb, struct iov_iter *to)
  	return ret;
  }
  
-+static ssize_t ovl_splice_read(struct file *in, loff_t *ppos,
-+			       struct pipe_inode_info *pipe, size_t len,
-+			       unsigned int flags)
++static ssize_t
++coda_file_splice_read(struct file *coda_file, loff_t *ppos,
++		      struct pipe_inode_info *pipe,
++		      size_t len, unsigned int flags)
 +{
-+	const struct cred *old_cred;
-+	struct fd real;
++	struct inode *coda_inode = file_inode(coda_file);
++	struct coda_file_info *cfi = coda_ftoc(coda_file);
++	struct file *in = cfi->cfi_container;
++	loff_t ki_pos = *ppos;
 +	ssize_t ret;
 +
-+	ret = ovl_real_fdget(in, &real);
++	ret = venus_access_intent(coda_inode->i_sb, coda_i2f(coda_inode),
++				  &cfi->cfi_access_intent,
++				  len, ki_pos, CODA_ACCESS_TYPE_READ);
 +	if (ret)
-+		return ret;
++		goto finish_read;
 +
-+	old_cred = ovl_override_creds(file_inode(in)->i_sb);
-+	ret = vfs_splice_read(real.file, ppos, pipe, len, flags);
-+	revert_creds(old_cred);
-+	ovl_file_accessed(in);
++	ret = vfs_splice_read(in, ppos, pipe, len, flags);
 +
-+	fdput(real);
++finish_read:
++	venus_access_intent(coda_inode->i_sb, coda_i2f(coda_inode),
++			    &cfi->cfi_access_intent,
++			    len, ki_pos, CODA_ACCESS_TYPE_READ_FINISH);
 +	return ret;
 +}
 +
- /*
-  * Calling iter_file_splice_write() directly from overlay's f_op may deadlock
-  * due to lock order inversion between pipe->mutex in iter_file_splice_write()
-@@ -695,7 +716,7 @@ const struct file_operations ovl_file_operations = {
- 	.fallocate	= ovl_fallocate,
- 	.fadvise	= ovl_fadvise,
- 	.flush		= ovl_flush,
--	.splice_read    = generic_file_splice_read,
-+	.splice_read    = ovl_splice_read,
- 	.splice_write   = ovl_splice_write,
- 
- 	.copy_file_range	= ovl_copy_file_range,
+ static void
+ coda_vm_open(struct vm_area_struct *vma)
+ {
+@@ -302,5 +329,5 @@ const struct file_operations coda_file_operations = {
+ 	.open		= coda_open,
+ 	.release	= coda_release,
+ 	.fsync		= coda_fsync,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= coda_file_splice_read,
+ };
 
