@@ -2,85 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B52B6B9DF8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 19:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB5FC6B9E51
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 19:27:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229636AbjCNSNB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 14:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33248 "EHLO
+        id S230240AbjCNS16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 14:27:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbjCNSM7 (ORCPT
+        with ESMTP id S230272AbjCNS1n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 14:12:59 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5FE922C9F;
-        Tue, 14 Mar 2023 11:12:57 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 14 Mar 2023 14:27:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B3C8B060
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 11:26:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678818415;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fTfsBvYbBxdRy/TFGETnYr2wutSLBUazSKwuZl5QCkE=;
+        b=TyuVcmKF4FnUs1VZMHWP+2Z9AmSsQSgfQGECSpk6VdIEYk1L9TGa690AMxFUOcgDEu+WIS
+        KOjQGv955J3MiBX7jx19axxx8ihTD+XU5hiFZgka13NO1glDkSpUrbIodP+bY/ZzVGo2jD
+        yZ1g/NzCt1wedJzVoKZJrj6PTkP8K3Y=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-644-OSAmWMqFMO6H_2rey2MskA-1; Tue, 14 Mar 2023 14:26:49 -0400
+X-MC-Unique: OSAmWMqFMO6H_2rey2MskA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 7A9DE44A;
-        Tue, 14 Mar 2023 18:12:57 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7A9DE44A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1678817577; bh=C2Jo0+NKx7aG1yAi3TKpW+xiGewvFQwGLZLYK6y+3ic=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=riyT7GfS9Dsrq/Uh0slJl2Rqvebfq3qS44UocAf8YxBP+iiTOksD/Os+Gv1N3B9jE
-         IePi8fROY6Vfjb3ktM9uczLqF6DHvi/uG6q8CukhfHlnp+6LRs4nZU3btKNpj44mWk
-         6I5LbzTo+9FfFG+ifWud6tpl3QeztRKNdVlTiVi/9fIXxTc2fplI+6zTKQ1sCSN+d2
-         kJph4PmWFNWqye3mhStiSBfn9HZR0YWwCAgR1EJVJDYD0GSqFE7AvrfS1h0/Kephsz
-         1RJEtT1m3JQJ3y9QOxU+LbBKk4KfuVFKWM6ZAHRZ4R2v8BRQxakaXVCqK/Ws1lOuXe
-         Kum2/nfa8Vb6Q==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1BD4E280A328;
+        Tue, 14 Mar 2023 18:26:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A90B1121318;
+        Tue, 14 Mar 2023 18:26:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wiO-Z7QdKnA+yeLCROiVVE6dBK=TaE7wz4hMc0gE2SPRw@mail.gmail.com>
+References: <CAHk-=wiO-Z7QdKnA+yeLCROiVVE6dBK=TaE7wz4hMc0gE2SPRw@mail.gmail.com> <20230308165251.2078898-1-dhowells@redhat.com> <20230308165251.2078898-4-dhowells@redhat.com> <CAHk-=wjYR3h5Q-_i3Q2Et=P8WsrjwNA20fYpEQf9nafHwBNALA@mail.gmail.com> <ZBCkDvveAIJENA0G@casper.infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] docs: actualize file_system_type and
- super_operations descriptions
-In-Reply-To: <20230313130718.253708-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20230313130718.253708-1-aleksandr.mikhalitsyn@canonical.com>
-Date:   Tue, 14 Mar 2023 12:12:56 -0600
-Message-ID: <87v8j3ryl3.fsf@meer.lwn.net>
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Daniel Golle <daniel@makrotopia.org>,
+        Guenter Roeck <groeck7@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v17 03/14] shmem: Implement splice-read
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3761464.1678818404.1@warthog.procyon.org.uk>
+Date:   Tue, 14 Mar 2023 18:26:44 +0000
+Message-ID: <3761465.1678818404@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com> writes:
+Hi Linus,
 
-> Current descriptions are from 2.6.* times, let's update them.
->
-> I've noticed that during my work on fuse recovery API.
->
-> v2:
-> - fixed commit messages according to Jonathan's advice
->
-> v3:
-> - removed direct kernel version specification as Eric proposed
->
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Cc: Miklos Szeredi <mszeredi@redhat.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-doc@vger.kernel.org
->
-> Alexander Mikhalitsyn (2):
->   docs: filesystems: vfs: actualize struct file_system_type description
->   docs: filesystems: vfs: actualize struct super_operations description
->
->  Documentation/filesystems/vfs.rst | 105 ++++++++++++++++++++++++------
->  1 file changed, 86 insertions(+), 19 deletions(-)
+Are you okay if we go with my current patch for the moment?
 
-Series applied, thanks.
+David
 
-jon
