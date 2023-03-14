@@ -2,84 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB5FC6B9E51
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 19:27:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B875E6B9E48
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 19:27:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230240AbjCNS16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 14:27:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59514 "EHLO
+        id S229642AbjCNS1J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 14:27:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230272AbjCNS1n (ORCPT
+        with ESMTP id S229885AbjCNS1H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 14:27:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B3C8B060
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 11:26:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678818415;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fTfsBvYbBxdRy/TFGETnYr2wutSLBUazSKwuZl5QCkE=;
-        b=TyuVcmKF4FnUs1VZMHWP+2Z9AmSsQSgfQGECSpk6VdIEYk1L9TGa690AMxFUOcgDEu+WIS
-        KOjQGv955J3MiBX7jx19axxx8ihTD+XU5hiFZgka13NO1glDkSpUrbIodP+bY/ZzVGo2jD
-        yZ1g/NzCt1wedJzVoKZJrj6PTkP8K3Y=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-644-OSAmWMqFMO6H_2rey2MskA-1; Tue, 14 Mar 2023 14:26:49 -0400
-X-MC-Unique: OSAmWMqFMO6H_2rey2MskA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 14 Mar 2023 14:27:07 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D960974B2;
+        Tue, 14 Mar 2023 11:27:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1BD4E280A328;
-        Tue, 14 Mar 2023 18:26:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A90B1121318;
-        Tue, 14 Mar 2023 18:26:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wiO-Z7QdKnA+yeLCROiVVE6dBK=TaE7wz4hMc0gE2SPRw@mail.gmail.com>
-References: <CAHk-=wiO-Z7QdKnA+yeLCROiVVE6dBK=TaE7wz4hMc0gE2SPRw@mail.gmail.com> <20230308165251.2078898-1-dhowells@redhat.com> <20230308165251.2078898-4-dhowells@redhat.com> <CAHk-=wjYR3h5Q-_i3Q2Et=P8WsrjwNA20fYpEQf9nafHwBNALA@mail.gmail.com> <ZBCkDvveAIJENA0G@casper.infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Daniel Golle <daniel@makrotopia.org>,
-        Guenter Roeck <groeck7@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH v17 03/14] shmem: Implement splice-read
+        by ams.source.kernel.org (Postfix) with ESMTPS id ED528B81AE1;
+        Tue, 14 Mar 2023 18:27:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641C2C433EF;
+        Tue, 14 Mar 2023 18:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1678818422;
+        bh=sZJC19YJ19ITSfQATsdT6wquwPEVzTC8Tb6zCiuxHhw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rgleUlJoXnikh8YK3DWXMKfJcOFvQ3cgCGxrVLOVtU4Et7fhmBB4k2W53IWTS1Bnw
+         GUY9h2uZWYNjkGT4szhLspw98l7Fv0scOmX/9vksctARYT0cFoU84LSAJacHLwQ+tw
+         dYZ3RZSPjOM0d+cUbucL9byTcWgAtyUrufkVtgDk=
+Date:   Tue, 14 Mar 2023 19:26:59 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Sasha Levin <sashal@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: AUTOSEL process
+Message-ID: <ZBC8c31rf1E2EsF5@kroah.com>
+References: <ZATC3djtr9/uPX+P@duo.ucw.cz>
+ <ZAewdAql4PBUYOG5@gmail.com>
+ <ZAwe95meyCiv6qc4@casper.infradead.org>
+ <ZAyK0KM6JmVOvQWy@sashalap>
+ <20230311161644.GH860405@mit.edu>
+ <ZAy+3f1/xfl6dWpI@sol.localdomain>
+ <ZAzH8Ve05SRLYPnR@sashalap>
+ <ZAzOgw8Ui4kh1Z3D@sol.localdomain>
+ <ZA9gXRMvQj2TO0W3@kroah.com>
+ <ZA9xWaHuh3hiYr8X@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3761464.1678818404.1@warthog.procyon.org.uk>
-Date:   Tue, 14 Mar 2023 18:26:44 +0000
-Message-ID: <3761465.1678818404@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZA9xWaHuh3hiYr8X@sol.localdomain>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Mon, Mar 13, 2023 at 11:54:17AM -0700, Eric Biggers wrote:
+> 
+> The fact is, many people *do* follow the rules exactly by *not* tagging commits
+> for stable when they don't meet the documented eligibility criteria.  But then
+> the stable maintainers backport the commits anyway, as the real eligibility
+> criteria are *much* more relaxed than what is documented.
 
-Are you okay if we go with my current patch for the moment?
+Again, if you do NOT want your patches backported, because you always
+mark them properly for stable releases, just let us know and we will add
+you to the list of other subsystems and maintainers that have asked us
+for this in the past.
 
-David
+We can't detect the absence of a tag as "I know exactly what I am doing"
+because of the huge number of developers who do NOT tag patches, and so,
+we have to dig through the tree to find fixes on our own.
 
+thanks,
+
+greg k-h
