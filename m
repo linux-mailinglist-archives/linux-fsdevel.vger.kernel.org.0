@@ -2,96 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D421E6B988A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 16:08:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49B0A6B9A0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 16:43:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231524AbjCNPIc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 11:08:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48378 "EHLO
+        id S229872AbjCNPnY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 11:43:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231503AbjCNPI2 (ORCPT
+        with ESMTP id S229571AbjCNPnX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 11:08:28 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36211A0F1E;
-        Tue, 14 Mar 2023 08:08:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678806506; x=1710342506;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=hamc92EMwwSNQxL+T9p74zThaNZs0lLKS/A1U9M8u4w=;
-  b=nEScB8/guV+/LMdl91oBBuKMbGYWeOanCsN9hMg/wDLDDuIhh1uR/YJY
-   Yd3S0ENBd311NiGnbNDnrYvQAlPbSOgsVRIaweuBWNnAIRgQW04zX/Xvr
-   v9CShbvqFsaGsKZtkG5xp+oJ03B06D2sE+4/iij62OuHZcY8nff68i9Br
-   EvY73p9P890++eA7ZhsSRNQauTapU/mm7keG7gnbaeoJD9rhsULZkzvSi
-   s2givouoXkuDDMZppt8aeaGjvJZmFfpxzptjcdJFG+bPufIaDmkRhi70Y
-   3DnlGdTFypJ8eJzlyzbbmkuQCl463L05IiqjDblcONWqqvgTWLfHUG4WS
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="321300284"
-X-IronPort-AV: E=Sophos;i="5.98,260,1673942400"; 
-   d="scan'208";a="321300284"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2023 08:08:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="656377938"
-X-IronPort-AV: E=Sophos;i="5.98,260,1673942400"; 
-   d="scan'208";a="656377938"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 14 Mar 2023 08:08:24 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 0468D209; Tue, 14 Mar 2023 17:09:08 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] fs/namespace: fnic: Switch to use %ptTd
-Date:   Tue, 14 Mar 2023 17:09:06 +0200
-Message-Id: <20230314150906.52318-1-andriy.shevchenko@linux.intel.com>
+        Tue, 14 Mar 2023 11:43:23 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1465CB1EF2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 08:42:48 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id r4so8862152ila.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 08:42:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678808528; x=1681400528;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDfqgaIEHo4E5opoNKOuRm6CSyleb5F755xTWTdZGVE=;
+        b=cqr2PPTnA1nZdHrmf6ynLY7KqHvs24mqWuD9b4UTcV8vwBkt8C7BS721mkO/wLARIM
+         +rDdw3COcIcK21iwxVG4TeasQsKo6SI0kKe1qcVaynHHCSm1gHlpE2/VEFI+jG2jJxvg
+         W8FsP0bARo5lBcdpu1p0KYFKou5WWlHIXKl0IH4SFpvmTaGm7MJG+rL7YOCgKCAPWwNR
+         +pWt6f0+5dRBri/Mou+XFdZ2ls7xeAM5X4FRZ5XkbtfQN8bQAkOFMvzgeOvqsY0IfHCL
+         F81S1gXguhkq3zwFRis/m0WMJwgtEasbDg0BM6MYGOBjW3tOY4WIEb8m3whw1A3opaqN
+         OzcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678808528; x=1681400528;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bDfqgaIEHo4E5opoNKOuRm6CSyleb5F755xTWTdZGVE=;
+        b=lTmRX4nq5LS9+BuE69MKrsma68ltthRtxQTcxn0Rls3lJAfn4YQT8llK0uTf1E0mpp
+         OrjOulG3HhRAJkcmDKQwMCfI+tse2mw/pJ3ZtZezK+tG2Y7eHapC/qLzeiJXr1hz9ajA
+         yYwZUlVj5yOZeq6isC7TIzJ0wheyU2tqjZSdLZGsIkw42FeZX0SzX/GIkH6u3GJcuSs1
+         FhGDUw84EmTjWycAKmBPQUU3dR3g9tVABhDDGq1IJwHNVVz8OdvFjeqdaVlIrQwPhY3v
+         esKFDQVsMQDqz+LbU3AJoov55sRTR8aJxZPyKmBJ6PW2dMyEef/B+pwjEhJP4qJxpESv
+         msmA==
+X-Gm-Message-State: AO0yUKW/GkMWXNInfIz0omfw1Jqk6m87EIPqJvIECYXiC1k3hdDMueHK
+        hJETZjt7ViziOs/NsGaHugJhQQ==
+X-Google-Smtp-Source: AK7set8JXOA4OeX1nkyB8Dv6R8Jhh4sULF2tTatzvUZs37iVa57yyxmC0xUY9xdRBCeicfIYDqBcNg==
+X-Received: by 2002:a05:6e02:13ef:b0:317:36d8:cfc6 with SMTP id w15-20020a056e0213ef00b0031736d8cfc6mr8747450ilj.3.1678808527599;
+        Tue, 14 Mar 2023 08:42:07 -0700 (PDT)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id u9-20020a02cb89000000b003b0692eb199sm867929jap.20.2023.03.14.08.42.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Mar 2023 08:42:07 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     brauner@kernel.org
+Subject: [PATCHSET v2 for-next 0/3] Add FMODE_NOWAIT support to pipes
+Date:   Tue, 14 Mar 2023 09:42:00 -0600
+Message-Id: <20230314154203.181070-1-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use %ptTd instead of open-coded variant to print contents
-of time64_t type in human readable form.
+One thing that's always been a bit slower than I'd like with io_uring is
+dealing with pipes. They don't support IOCB_NOWAIT, and hence we need to
+punt them to io-wq for handling.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- fs/namespace.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+This series adds support for FMODE_NOWAIT to pipes.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d26ea0d9041f..0e7c69a2009b 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2617,15 +2617,12 @@ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *
- 	   (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
- 		char *buf = (char *)__get_free_page(GFP_KERNEL);
- 		char *mntpath = buf ? d_path(mountpoint, buf, PAGE_SIZE) : ERR_PTR(-ENOMEM);
--		struct tm tm;
- 
--		time64_to_tm(sb->s_time_max, 0, &tm);
--
--		pr_warn("%s filesystem being %s at %s supports timestamps until %04ld (0x%llx)\n",
-+		pr_warn("%s filesystem being %s at %s supports timestamps until %ptTd (0x%llx)\n",
- 			sb->s_type->name,
- 			is_mounted(mnt) ? "remounted" : "mounted",
--			mntpath,
--			tm.tm_year+1900, (unsigned long long)sb->s_time_max);
-+			mntpath, &sb->s_time_max,
-+			(unsigned long long)sb->s_time_max);
- 
- 		free_page((unsigned long)buf);
- 		sb->s_iflags |= SB_I_TS_EXPIRY_WARNED;
+Patch 1 extends pipe_buf_operations->confirm() to accept a nonblock
+parameter, and wires up the caller, pipe_buf_confirm(), to have that
+argument too.
+
+Patch 2 makes pipes deal with IOCB_NOWAIT for locking the pipe, calling
+pipe_buf_confirm(), and for allocating new pages on writes.
+
+Patch 3 flicks the switch and enables FMODE_NOWAIT for pipes.
+
+Curious on how big of a difference this makes, I wrote a small benchmark
+that simply opens 128 pipes and then does 256 rounds of reading and
+writing to them. This was run 10 times, discarding the first run as it's
+always a bit slower. Before the patch:
+
+Avg:	262.52 msec
+Stdev:	  2.12 msec
+Min:	261.07 msec
+Max	267.91 msec
+
+and after the patch:
+
+Avg:	24.14 msec
+Stdev:	 9.61 msec
+Min:	17.84 msec
+Max:	43.75 msec
+
+or about a 10x improvement in performance (and efficiency) for pipes
+being empty on read attempt. If we run the same test but with pipes
+already having data, the improvement is even better (as expected):
+
+Before:
+
+Avg:	249.24 msec
+Stdev:	  0.20 msec
+Min:	248.96 msec
+Max:	249.53 msec
+
+After:
+
+Avg:	 10.86 msec
+Stdev:	  0.91 msec
+Min:	 10.02 msec
+Max:	 12.67 msec
+
+or about a 23x improvement.
+
+I ran the patches through the ltp pipe and splice tests, no regressions
+observed. Looking at io_uring traces, we can see that we no longer have
+any io_uring_queue_async_work() traces after the patch, where previously
+everything was done via io-wq.
+
+Changes since v1:
+- Add acks/reviewed-bys
+- Fix missing __GFP_HARDWALL (willy)
+- Get rid of nasty double ternary (willy,christian)
+
 -- 
-2.39.2
+Jens Axboe
+
 
