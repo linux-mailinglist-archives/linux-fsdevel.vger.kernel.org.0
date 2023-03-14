@@ -2,88 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C25F86BA19B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 22:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EE106BA1B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 23:00:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbjCNVwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 17:52:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44312 "EHLO
+        id S231139AbjCNWAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 18:00:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjCNVwz (ORCPT
+        with ESMTP id S231137AbjCNWAv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 17:52:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B0D5293C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 14:52:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678830734;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KL7RUrUlJgDEAxq9GYJFCawiEJWge2p1Oaahbua9byM=;
-        b=NymZW1cNArKA4tyoK7T6WafryMP69XvmUV9mtRz9RaZSH526BKQlYEPqB25d0WmAIvnPke
-        PUEoYlsHRblLrbZzaBz/tss4dpxUfVEIl4/vNyQMSXEMHmjnhtjSufrGRsQs87cnrXohAh
-        MF4GxOh4tj1Xm1+0zuWxB/ErbNFedPg=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-595-uS-EDXNSN3qnzq1H8duDKw-1; Tue, 14 Mar 2023 17:52:11 -0400
-X-MC-Unique: uS-EDXNSN3qnzq1H8duDKw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 76942385F36D;
-        Tue, 14 Mar 2023 21:52:10 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 21BD9C164E7;
-        Tue, 14 Mar 2023 21:52:08 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <ZBCvqQyOgEa626ON@infradead.org>
-References: <ZBCvqQyOgEa626ON@infradead.org> <20230308165251.2078898-1-dhowells@redhat.com> <20230308165251.2078898-8-dhowells@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Steve French <smfrench@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>, linux-cifs@vger.kernel.org
-Subject: Re: [PATCH v17 07/14] splice: Do splice read from a file without using ITER_PIPE
+        Tue, 14 Mar 2023 18:00:51 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 888CD20045
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 15:00:49 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 32EM0NFT023267
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Mar 2023 18:00:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1678831226; bh=jZq2FCAx4+UPVp4fe06+qIqsoofS9s4XGdZFPeH5OGE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=bokdPH+Fpn1j4xkQSq270U3Vdu8wRviAyIrBwsj0RMmKTyCDLeaD/yg5bQPeVBjCN
+         EG4dk83O8UhzyyyuJ18o6kV5m1UcUWNtD1Mm+CViUu2fpVC/jmUm8Q9UQEEmef33PI
+         awEbBJ0K5rqeBSQI76RjpZqoDnvjSMcz0UGHjROOEjuWE2d9puPSTNJU9ApB6NJJXE
+         FPvIb/nsIz/2vEPIRvlug8c+pMfa1Ks1bGkDWf2AMeIWJS/X+NfozdSHJdD1bxoWge
+         lOUDM5tW3DfAV9x2oo3ejOG/yOPjGDuAz882KTwHvZkx2zLZiT7wXVnkRln4l93wFk
+         4DU+fQhM5uaGA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 6061415C5830; Tue, 14 Mar 2023 18:00:23 -0400 (EDT)
+Date:   Tue, 14 Mar 2023 18:00:23 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 01/31] fs: Add FGP_WRITEBEGIN
+Message-ID: <20230314220023.GP860405@mit.edu>
+References: <20230126202415.1682629-1-willy@infradead.org>
+ <20230126202415.1682629-2-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3826684.1678830727.1@warthog.procyon.org.uk>
-Date:   Tue, 14 Mar 2023 21:52:07 +0000
-Message-ID: <3826685.1678830727@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230126202415.1682629-2-willy@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> wrote:
-
-> > Make cifs use generic_file_splice_read() rather than doing it for itself.
+On Thu, Jan 26, 2023 at 08:23:45PM +0000, Matthew Wilcox (Oracle) wrote:
+> This particular combination of flags is used by most filesystems
+> in their ->write_begin method, although it does find use in a
+> few other places.  Before folios, it warranted its own function
+> (grab_cache_page_write_begin()), but I think that just having specialised
+> flags is enough.  It certainly helps the few places that have been
+> converted from grab_cache_page_write_begin() to __filemap_get_folio().
 > 
-> Please split the cifs patch out into a separate one.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Okay - I've done that.  It needs to go after this one and the unexport of
-filemap_splice_read() needs to go with it (or in a separate follow-up patch).
-
-David
-
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
