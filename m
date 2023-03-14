@@ -2,167 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB8CE6BA20F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 23:11:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98A0B6BA1D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 23:08:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbjCNWLT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 18:11:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39856 "EHLO
+        id S230152AbjCNWIl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 18:08:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231418AbjCNWKD (ORCPT
+        with ESMTP id S231201AbjCNWIh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 18:10:03 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7691B309
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 15:09:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678831742;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gIKMSgtKI0+T2jjDihR3uNZ9dKHoZzHE/RnqYef6EBU=;
-        b=gigarPfncQ24JpmGkxEkWHw52jpUSt1R5Zkkc6NS8lVbiXt8YWMDLy5G0Cm3lolXdf+GAt
-        4jcm63l23iAei4M93G2Myo0QpY90x5qZC6D13mlkjlQsKNIflujGyvJt5lQtwzTRX4wwTb
-        JkRPVXbIHQdYGpLw/EHf/9pqID/kHzA=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-167-ZOrmw3hpN2OQ1vha5UlzMg-1; Tue, 14 Mar 2023 18:08:52 -0400
-X-MC-Unique: ZOrmw3hpN2OQ1vha5UlzMg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 129C91C08791;
-        Tue, 14 Mar 2023 22:08:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EC4CA47507A;
-        Tue, 14 Mar 2023 22:08:48 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v18 15/15] block: convert bio_map_user_iov to use iov_iter_extract_pages
-Date:   Tue, 14 Mar 2023 22:07:57 +0000
-Message-Id: <20230314220757.3827941-16-dhowells@redhat.com>
-In-Reply-To: <20230314220757.3827941-1-dhowells@redhat.com>
-References: <20230314220757.3827941-1-dhowells@redhat.com>
+        Tue, 14 Mar 2023 18:08:37 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D9D9559CF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 15:08:29 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 32EM8Hc3027717
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Mar 2023 18:08:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1678831699; bh=uTzVv+GLchUoYNO2lcP21RTevceX/z3OHphC4GnsC1w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=RG4/tBOU/GN4cTwzuJa2gTrAWXGAtkH/9zMUhlKjzH7QR0sRXn2zkK8TaShsoXT24
+         k/YJH6ZJ2NQ5JaVtDZqFWys7Dl7OjWzLMoTxou3WWYVFGJyz8CEh/3NvtOoPGCTI7m
+         /jNnaRHr6K7+rShO60LXlKvUQbyP2/xfEUzh4cms+RhtE23047CPCme55i3bYejUse
+         Nw3gxuBmDzuM0L/zf06a/SO5xZXXABV6okcQUjp2J4Co4XR7f+ys6VL0wu93xMSO2n
+         Ye0B8gKuPATptMeBJShUQSTaFOxWdAuYhPKXMKYFGFVfe4jDr+Ti3jECtZn5QBz+em
+         4IM0+qHAyXFsQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 6655015C5830; Tue, 14 Mar 2023 18:08:17 -0400 (EDT)
+Date:   Tue, 14 Mar 2023 18:08:17 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/31] ext4: Convert ext4_finish_bio() to use folios
+Message-ID: <20230314220817.GS860405@mit.edu>
+References: <20230126202415.1682629-1-willy@infradead.org>
+ <20230126202415.1682629-5-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230126202415.1682629-5-willy@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This will pin pages or leave them unaltered rather than getting a ref on
-them as appropriate to the iterator.
+On Thu, Jan 26, 2023 at 08:23:48PM +0000, Matthew Wilcox (Oracle) wrote:
+> Prepare ext4 to support large folios in the page writeback path.
+> Also set the actual error in the mapping, not just -EIO.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-The pages need to be pinned for DIO rather than having refs taken on them
-to prevent VM copy-on-write from malfunctioning during a concurrent fork()
-(the result of the I/O could otherwise end up being visible to/affected by
-the child process).
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Jan Kara <jack@suse.cz>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Logan Gunthorpe <logang@deltatee.com>
-cc: linux-block@vger.kernel.org
----
-
-Notes:
-    ver #10)
-     - Drop bio_set_cleanup_mode(), open coding it instead.
-    
-    ver #8)
-     - Split the patch up a bit [hch].
-     - We should only be using pinned/non-pinned pages and not ref'd pages,
-       so adjust the comments appropriately.
-    
-    ver #7)
-     - Don't treat BIO_PAGE_REFFED/PINNED as being the same as FOLL_GET/PIN.
-    
-    ver #5)
-     - Transcribe the FOLL_* flags returned by iov_iter_extract_pages() to
-       BIO_* flags and got rid of bi_cleanup_mode.
-     - Replaced BIO_NO_PAGE_REF to BIO_PAGE_REFFED in the preceding patch.
-
- block/blk-map.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
-
-diff --git a/block/blk-map.c b/block/blk-map.c
-index c77fdb1fbda7..7b12f4bb4d4c 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -280,22 +280,21 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 
- 	if (blk_queue_pci_p2pdma(rq->q))
- 		extraction_flags |= ITER_ALLOW_P2PDMA;
-+	if (iov_iter_extract_will_pin(iter))
-+		bio_set_flag(bio, BIO_PAGE_PINNED);
- 
--	bio_set_flag(bio, BIO_PAGE_REFFED);
- 	while (iov_iter_count(iter)) {
--		struct page **pages, *stack_pages[UIO_FASTIOV];
-+		struct page *stack_pages[UIO_FASTIOV];
-+		struct page **pages = stack_pages;
- 		ssize_t bytes;
- 		size_t offs;
- 		int npages;
- 
--		if (nr_vecs <= ARRAY_SIZE(stack_pages)) {
--			pages = stack_pages;
--			bytes = iov_iter_get_pages(iter, pages, LONG_MAX,
--						   nr_vecs, &offs, extraction_flags);
--		} else {
--			bytes = iov_iter_get_pages_alloc(iter, &pages,
--						LONG_MAX, &offs, extraction_flags);
--		}
-+		if (nr_vecs > ARRAY_SIZE(stack_pages))
-+			pages = NULL;
-+
-+		bytes = iov_iter_extract_pages(iter, &pages, LONG_MAX,
-+					       nr_vecs, extraction_flags, &offs);
- 		if (unlikely(bytes <= 0)) {
- 			ret = bytes ? bytes : -EFAULT;
- 			goto out_unmap;
-@@ -317,7 +316,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 				if (!bio_add_hw_page(rq->q, bio, page, n, offs,
- 						     max_sectors, &same_page)) {
- 					if (same_page)
--						put_page(page);
-+						bio_release_page(bio, page);
- 					break;
- 				}
- 
-@@ -329,7 +328,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 		 * release the pages we didn't map into the bio, if any
- 		 */
- 		while (j < npages)
--			put_page(pages[j++]);
-+			bio_release_page(bio, pages[j++]);
- 		if (pages != stack_pages)
- 			kvfree(pages);
- 		/* couldn't stuff something into bio? */
-
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
