@@ -2,78 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE0656B9F26
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 19:54:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5B7F6B9FC7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 20:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231187AbjCNSx7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 14:53:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37516 "EHLO
+        id S230233AbjCNTa0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 15:30:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231181AbjCNSx5 (ORCPT
+        with ESMTP id S230373AbjCNTaG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 14:53:57 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B90B89EF47;
-        Tue, 14 Mar 2023 11:53:24 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id ED85A7F9;
-        Tue, 14 Mar 2023 18:53:20 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ED85A7F9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1678820001; bh=+lUML7AGokBrjmE+zN0xiWF+xgkeixecRJJs+Y23my8=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=PdGRKgtGSTk4kdt1PvCQDHySTlY6Extsy2W6BsJ8f74JoESYktyqLfu8j8OkVJBx5
-         jdmFLXQ6sduK8orAeUBFjdxwgDiG/CeG5O7AHZAjHqrMAhWmqGtiuHPZU9VIAaG1Yv
-         PWg7CGn8yIdF3S6NTagxSnujaY/pDSiLSbZMdjjVkP8OqOo3X3tnQrB1/MrWGbluX7
-         NnLM3I7wzPb+r/yMR/fjoFaXYxTScF5cvWaOU3ResG0K94Swz5rmsR9rNlQ7rJ0sor
-         OE5J4Co3tEPN61WL+cTGI6LSzLNkeaNod4jiNcwzDLBcC5eOvjEfwuj7K2OeuLBQMI
-         FdEXyAES9dIxg==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Anders Larsen <al@alarsen.net>, linux-doc@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH 0/2] Minor documentation clean-up in fs
-In-Reply-To: <20230220170210.15677-1-lukas.bulwahn@gmail.com>
-References: <20230220170210.15677-1-lukas.bulwahn@gmail.com>
-Date:   Tue, 14 Mar 2023 12:53:20 -0600
-Message-ID: <87sfe7qi5b.fsf@meer.lwn.net>
+        Tue, 14 Mar 2023 15:30:06 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0163212BF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 12:29:57 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id eg48so7244157edb.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 12:29:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1678822196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5XXQN4LaizH2j4eXVSdO1xOJU1STk3wgvGGHOknlOD8=;
+        b=J8J6+IIeTib/o8tn1o3Tm4wf8QCx+CFWcDHRTZMOrLKl9q7F3WPeySOkbmQMgpba/2
+         D+hPq6grcETAnRYaWv/VDaKVx7dSI1wO/e5kPbhofxfK9VlpMq9SmDmR3OnZ21f7nBHJ
+         PNl6Zef7fJUIHqj8/q41bFBFo6p/46nHOjs7Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678822196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5XXQN4LaizH2j4eXVSdO1xOJU1STk3wgvGGHOknlOD8=;
+        b=HYL0OgLT65+6RXiu4YCuffRT5BGhLCCJwXs4ilrjsJcQ9N+xJXRCE4TKPC0GnR1TUC
+         /wCeoUvTtPI8B+3vZr3ICRyJL3uj4b/nXr0MiaYPWGP8m78pEIraNm2lquGlAgdpzJoo
+         iO3UITi311OV3IfdvhryOgy+tmr9Tus3/n7lpZTpvdSGZBARGphCxgG3tzJKS+2Bi9RG
+         Cp0DkOxIBv+H+7HTdxMDD2AdyTMM9Hy/d7w2nQMoG0HhXh5rGqcMDmqV39XbiNUgthn9
+         g1B24vwsIRzgCn5sPuSKUOUGwa6JmEn17aPvp+E/mWXm8NSDmf5KjXK8jEudlJTUUplK
+         bzhA==
+X-Gm-Message-State: AO0yUKWBq+d0iDHpja0j9lOwL+XaE69o5BSLzPRh3xmf/8cgvc8w+yi7
+        KpV/+Gv+AVpvrLB/+xPO+MHgrod0xA3qF/KDiKRpeQ==
+X-Google-Smtp-Source: AK7set+pH/cCYGEkSbtNvRfonxkKcRqDSJfnY9JxW/67BH/4m2Vn7dah+fd2PDRPJnzSaNMv3oLQ3w==
+X-Received: by 2002:aa7:c7cc:0:b0:4fd:298d:2f95 with SMTP id o12-20020aa7c7cc000000b004fd298d2f95mr189989eds.26.1678822196048;
+        Tue, 14 Mar 2023 12:29:56 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id b4-20020a50b404000000b004fcd78d1215sm1477590edh.36.2023.03.14.12.29.55
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Mar 2023 12:29:55 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id o12so66465214edb.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 12:29:55 -0700 (PDT)
+X-Received: by 2002:a50:d506:0:b0:4fb:482b:f93d with SMTP id
+ u6-20020a50d506000000b004fb482bf93dmr106272edi.2.1678820874229; Tue, 14 Mar
+ 2023 12:07:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+References: <20230308165251.2078898-1-dhowells@redhat.com> <20230308165251.2078898-4-dhowells@redhat.com>
+ <CAHk-=wjYR3h5Q-_i3Q2Et=P8WsrjwNA20fYpEQf9nafHwBNALA@mail.gmail.com>
+ <ZBCkDvveAIJENA0G@casper.infradead.org> <CAHk-=wiO-Z7QdKnA+yeLCROiVVE6dBK=TaE7wz4hMc0gE2SPRw@mail.gmail.com>
+ <3761465.1678818404@warthog.procyon.org.uk>
+In-Reply-To: <3761465.1678818404@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 14 Mar 2023 12:07:36 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh-OKQdK2AE+CD_Y5bimnoSH=_4+F5EOZoGUf3SGJdxGA@mail.gmail.com>
+Message-ID: <CAHk-=wh-OKQdK2AE+CD_Y5bimnoSH=_4+F5EOZoGUf3SGJdxGA@mail.gmail.com>
+Subject: Re: [PATCH v17 03/14] shmem: Implement splice-read
+To:     David Howells <dhowells@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Daniel Golle <daniel@makrotopia.org>,
+        Guenter Roeck <groeck7@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Hugh Dickins <hughd@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
-
-> Dear Jonathan,
+On Tue, Mar 14, 2023 at 11:26=E2=80=AFAM David Howells <dhowells@redhat.com=
+> wrote:
 >
-> please pick this minor documentation clean-up in fs. It is not in the
-> Documentation directory, but I would consider these README files also
-> some unsorted largely distributed kernel documentation.
->
-> Here is some trivial and probably little-to-debate clean up.
->  
-> Lukas Bulwahn (2):
->   qnx6: credit contributor and mark filesystem orphan
->   qnx4: credit contributors in CREDITS
->
->  CREDITS        | 16 ++++++++++++++++
->  MAINTAINERS    |  6 ++++++
->  fs/qnx4/README |  9 ---------
->  fs/qnx6/README |  8 --------
->  4 files changed, 22 insertions(+), 17 deletions(-)
->  delete mode 100644 fs/qnx4/README
->  delete mode 100644 fs/qnx6/README
+> Are you okay if we go with my current patch for the moment?
 
-Applied, thanks.
+I  guess.
 
-jon
+But please at least stop doing the
+
+     get_page(buf->page);
+
+on the zero-page (which includes using no-op .get and .put functions
+in  zero_pipe_buf_ops().
+
+Maybe we can do /dev/null some day and actually have a common case for thos=
+e.
+
+             Linus
