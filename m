@@ -2,77 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F64B6BA234
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 23:15:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C3666BA22A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Mar 2023 23:15:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231379AbjCNWPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Mar 2023 18:15:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49838 "EHLO
+        id S231260AbjCNWPT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Mar 2023 18:15:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231501AbjCNWO3 (ORCPT
+        with ESMTP id S231537AbjCNWOt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Mar 2023 18:14:29 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 868D93B0F8;
-        Tue, 14 Mar 2023 15:13:54 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id q16so15702298wrw.2;
-        Tue, 14 Mar 2023 15:13:54 -0700 (PDT)
+        Tue, 14 Mar 2023 18:14:49 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E72305614F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 15:14:08 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id z31-20020a25a122000000b00b38d2b9a2e9so10121091ybh.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Mar 2023 15:14:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678831966;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrgGQA2tyR+reLrtZ5whteGjP4sWvnWfOZPTVunlkec=;
-        b=dootni8CEgUsi8N+v99TYqgtssTXuvVp/SJIRgJDBFOVvoKGidWBw5oOLU/rK6wUYZ
-         cBx4OYl7vRuuganKp+xfQJnhf9PvhzTSn8oqx+UwcFdyCrztDVJrGJ0BoRA61QY8n9dB
-         bXtvntpsQFVfiKpejt/sGKe1X6no2rXrbdem1rvGl/XHFUtjsWOwrpmvjDfAgkESqqOP
-         vPVGUCUMFdm8SPYFo+vC36K2c8rg80rhwuO7T0kmx3c3sTAYmhbzwD7QW75zmHiYXKda
-         J2kdWKdWYyMBKkKuiGaS2WSjV4fjOtcq3NuLxGVaGGfoL4cZqZVpDYgM2dKFjLbFo5l9
-         xkMA==
+        d=google.com; s=20210112; t=1678831985;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v6jdDP8HhF+biD07TiydHxLy71rB2V7SdCiknod97SM=;
+        b=kMu0VK08lTX+5fGCRmCECylQ1aqYZ8mpt4UDxQRqVGr8ZicRslJK6RZfMREIZJzldf
+         b2WpiHLAep+eDhqTStwebxhwBuyEH+w8tmRzHHpxwWyep5Mh0PC88Wl2/3J4e+W7pAzP
+         IDab7doSIoA8eZfk1DgaqTEDzb8HFVVtMZh95QNo3Qmw83r20VOALCNOvfejuXwDyc90
+         CHLqs3kzNMn+KQjv8RdBvB11OBEEcP4lTTTzLF9fXIqz4pDf4RqUprJK1uTU3EK1dgHB
+         BV6/EsDqJO7IonNIQMoqEv6ZVIdGnLhvdlGeLlPDsj6gw1dR15e+Snij3i1HCkBvM6z6
+         bOZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678831966;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qrgGQA2tyR+reLrtZ5whteGjP4sWvnWfOZPTVunlkec=;
-        b=xtRgx2vqdK18atgVeEVtIUtFif7Uj2hF+4+5VeLZf8xSyheIP7OvgCOY+/woeNN8TF
-         qmXPHGjosyXMOQRh2wVNsP50sEz93Cv9lhaqKvB0wacxd936L72F8dm48lpW7Ddce8/u
-         P2BwvyIUKo6mZC3pmT6+vLPmtZxRXgK3Kr2CuTp6W17i4bca6ktvXOFAmr5mNow/GEZV
-         hDPpVMwcvpeammTVGB2WGiWfiBjrAez/Hjjubil3uoiG1/lV/sbIdiR70mJgyAIGB4Kr
-         SiBFx2C8sL3eI+d/fATcE9MJBzHheSsoadlUHeItSQrgtfjK5TJH5t7pW0T4jHDc7Wmy
-         dpVw==
-X-Gm-Message-State: AO0yUKW6HlZIK5XE8FLZ+in97KtVj+yZY/ZKSNi+X6gDHLJdkoaz7rEQ
-        pW3FL7tN68mvAnHDp99HrwQ=
-X-Google-Smtp-Source: AK7set/Oe1mK8ERAeym3Py4UdCVU7k6qkgj+mP/p9KCj/wwe0GCzObLYhzO768PXTzSuipVfAJ9mgw==
-X-Received: by 2002:a5d:4002:0:b0:2ce:a0c2:d9ed with SMTP id n2-20020a5d4002000000b002cea0c2d9edmr363419wrp.32.1678831966299;
-        Tue, 14 Mar 2023 15:12:46 -0700 (PDT)
-Received: from localhost (host86-146-209-214.range86-146.btcentralplus.com. [86.146.209.214])
-        by smtp.gmail.com with ESMTPSA id u7-20020a5d4687000000b002c5544b3a69sm3010241wrq.89.2023.03.14.15.12.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Mar 2023 15:12:45 -0700 (PDT)
-Date:   Tue, 14 Mar 2023 22:12:44 +0000
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        rcu@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 3/7] mm, page_flags: remove PG_slob_free
-Message-ID: <eae5fe2b-aa09-47be-a039-6f518bc4d678@lucifer.local>
-References: <20230310103210.22372-1-vbabka@suse.cz>
- <20230310103210.22372-4-vbabka@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230310103210.22372-4-vbabka@suse.cz>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        d=1e100.net; s=20210112; t=1678831985;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v6jdDP8HhF+biD07TiydHxLy71rB2V7SdCiknod97SM=;
+        b=Yt9gMi7bj+FAeTuUl5FP85wiDPqwa+IQ6vUJU2u64G76gLivOLwDhhAF2lxa/5I+Hc
+         +hGyAswTmQU8j1dRExLXBIcDwKaoa03/Kn87hzbv71R3YVPzQC0tYVK/jZTJNkbUFyaH
+         Ij0BN37OeuHq+3aElz/GMBlwC/SRZRygXPByjkYTo8xqRRHn4igIrl2GeFX3CFfgx3I8
+         emkRW3v6o0tDnCXKdEOsqEXmmLzdcv5Pzp9AArZe06zxidsXJBVPG+iK0TsMZSf7Fkq/
+         lZa8GyRm/corHJ1O2lSwSyIbPN1NytCtWa3V4t3BWsKxEQOfn6qpnSOTA4LXFeBEHyuU
+         qrYg==
+X-Gm-Message-State: AO0yUKWGzvF7N0H6jpHIAjSyuexDcCWTK+IC2LS+8ZVuj/1UUC6CVz9t
+        NcA0pLc4KWv387HmMSj38aV5bGtuCo750O/i8im5
+X-Google-Smtp-Source: AK7set9RXicAeOPxAWz9Bj3vMYwmH12zqvh/H2CP6il+7wLaox5h+GED8g10IS8EvCU0qVZf8Sv5uMcqxHjOD8TzfHqN
+X-Received: from axel.svl.corp.google.com ([2620:15c:2d4:203:21ce:bab3:17ec:2276])
+ (user=axelrasmussen job=sendgmr) by 2002:a81:4512:0:b0:541:9f3a:ac46 with
+ SMTP id s18-20020a814512000000b005419f3aac46mr6045642ywa.8.1678831985320;
+ Tue, 14 Mar 2023 15:13:05 -0700 (PDT)
+Date:   Tue, 14 Mar 2023 15:12:46 -0700
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.40.0.rc1.284.g88254d51c5-goog
+Message-ID: <20230314221250.682452-1-axelrasmussen@google.com>
+Subject: [PATCH v5 0/4] mm: userfaultfd: refactor and add UFFDIO_CONTINUE_MODE_WP
+From:   Axel Rasmussen <axelrasmussen@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Nadav Amit <namit@vmware.com>, Peter Xu <peterx@redhat.com>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     James Houghton <jthoughton@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Axel Rasmussen <axelrasmussen@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,74 +77,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 11:32:05AM +0100, Vlastimil Babka wrote:
-> With SLOB removed we no longer need the PG_slob_free alias for
-> PG_private. Also update tools/mm/page-types.
->
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  include/linux/page-flags.h | 4 ----
->  tools/mm/page-types.c      | 6 +-----
->  2 files changed, 1 insertion(+), 9 deletions(-)
->
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index a7e3a3405520..2bdc41cb0594 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -174,9 +174,6 @@ enum pageflags {
->  	/* Remapped by swiotlb-xen. */
->  	PG_xen_remapped = PG_owner_priv_1,
->
-> -	/* SLOB */
-> -	PG_slob_free = PG_private,
-> -
->  #ifdef CONFIG_MEMORY_FAILURE
->  	/*
->  	 * Compound pages. Stored in first tail page's flags.
-> @@ -483,7 +480,6 @@ PAGEFLAG(Active, active, PF_HEAD) __CLEARPAGEFLAG(Active, active, PF_HEAD)
->  PAGEFLAG(Workingset, workingset, PF_HEAD)
->  	TESTCLEARFLAG(Workingset, workingset, PF_HEAD)
->  __PAGEFLAG(Slab, slab, PF_NO_TAIL)
-> -__PAGEFLAG(SlobFree, slob_free, PF_NO_TAIL)
->  PAGEFLAG(Checked, checked, PF_NO_COMPOUND)	   /* Used by some filesystems */
->
->  /* Xen */
-> diff --git a/tools/mm/page-types.c b/tools/mm/page-types.c
-> index 381dcc00cb62..8d5595b6c59f 100644
-> --- a/tools/mm/page-types.c
-> +++ b/tools/mm/page-types.c
-> @@ -85,7 +85,6 @@
->   */
->  #define KPF_ANON_EXCLUSIVE	47
->  #define KPF_READAHEAD		48
-> -#define KPF_SLOB_FREE		49
->  #define KPF_SLUB_FROZEN		50
->  #define KPF_SLUB_DEBUG		51
->  #define KPF_FILE		61
-> @@ -141,7 +140,6 @@ static const char * const page_flag_names[] = {
->
->  	[KPF_ANON_EXCLUSIVE]	= "d:anon_exclusive",
->  	[KPF_READAHEAD]		= "I:readahead",
-> -	[KPF_SLOB_FREE]		= "P:slob_free",
->  	[KPF_SLUB_FROZEN]	= "A:slub_frozen",
->  	[KPF_SLUB_DEBUG]	= "E:slub_debug",
->
-> @@ -478,10 +476,8 @@ static uint64_t expand_overloaded_flags(uint64_t flags, uint64_t pme)
->  	if ((flags & BIT(ANON)) && (flags & BIT(MAPPEDTODISK)))
->  		flags ^= BIT(MAPPEDTODISK) | BIT(ANON_EXCLUSIVE);
->
-> -	/* SLOB/SLUB overload several page flags */
-> +	/* SLUB overloads several page flags */
->  	if (flags & BIT(SLAB)) {
-> -		if (flags & BIT(PRIVATE))
-> -			flags ^= BIT(PRIVATE) | BIT(SLOB_FREE);
->  		if (flags & BIT(ACTIVE))
->  			flags ^= BIT(ACTIVE) | BIT(SLUB_FROZEN);
->  		if (flags & BIT(ERROR))
-> --
-> 2.39.2
->
+This series, currently based on 6.3-rc1, is divided into two parts:
 
-Looks good to me too,
+- Commits 1-3 refactor userfaultfd ioctl code without behavior changes, with the
+  main goal of improving consistency and reducing the number of function args.
+- Commit 4 adds UFFDIO_CONTINUE_MODE_WP.
 
-Acked-by: Lorenzo Stoakes <lstoakes@gmail.com>
+The refactors are sorted by increasing controversial-ness, the idea being we
+could drop some of the refactors if they are deemed not worth it.
+
+Changelog:
+
+v4->v5:
+ - rename "uffd_flags_has_mode" to "uffd_flags_mode_is"
+ - modify "uffd_flags_set_mode" to clear mode bits before setting new mode
+ - update userfaultfd documentation to describe new mode flag
+
+v3->v4:
+ - massage the uffd_flags_t implementation to eliminate all sparse warnings
+ - add a couple inline helpers to make uffd_flags_t usage easier
+ - drop the refactor passing `struct uffdio_range *` around (previously 4/5)
+ - define a temporary `struct mm_struct *` in function with >=3 `vma->vm_mm`
+ - consistent argument order between `flags` and `pagep`
+ - expand on the use case in patch 4/4 message
+
+v2->v3:
+ - rebase onto 6.3-rc1
+ - typedef a new type for mfill flags in patch 3/5 (suggested by Nadav)
+
+v1->v2:
+ - refactor before adding the new flag, to avoid perpetuating messiness
+
+Axel Rasmussen (4):
+  mm: userfaultfd: rename functions for clarity + consistency
+  mm: userfaultfd: don't pass around both mm and vma
+  mm: userfaultfd: combine 'mode' and 'wp_copy' arguments
+  mm: userfaultfd: add UFFDIO_CONTINUE_MODE_WP to install WP PTEs
+
+ Documentation/admin-guide/mm/userfaultfd.rst |   8 +
+ fs/userfaultfd.c                             |  29 ++--
+ include/linux/hugetlb.h                      |  27 ++-
+ include/linux/shmem_fs.h                     |   9 +-
+ include/linux/userfaultfd_k.h                |  69 +++++---
+ include/uapi/linux/userfaultfd.h             |   7 +
+ mm/hugetlb.c                                 |  28 +--
+ mm/shmem.c                                   |  14 +-
+ mm/userfaultfd.c                             | 170 +++++++++----------
+ tools/testing/selftests/mm/userfaultfd.c     |   4 +
+ 10 files changed, 196 insertions(+), 169 deletions(-)
+
+--
+2.40.0.rc1.284.g88254d51c5-goog
+
