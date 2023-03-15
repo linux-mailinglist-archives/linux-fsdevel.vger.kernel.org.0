@@ -2,113 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A50196BB753
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 16:16:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32EC76BB8C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 16:57:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232649AbjCOPQO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Mar 2023 11:16:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49016 "EHLO
+        id S232641AbjCOP5w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Mar 2023 11:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231405AbjCOPQN (ORCPT
+        with ESMTP id S232541AbjCOP5q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Mar 2023 11:16:13 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0ED0301A1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 08:16:12 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id a13so4129507ilr.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 08:16:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678893372;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OqTD8SXreFBDfGk9Towq94DfzLHb+0jZ+UAuwsdvyrs=;
-        b=DbiyGXz9qNPL9QXHwATP3nJqJD2SOEpz+3WaNAmXAdDOSa+6PxebjQKSFjdsDoeRE+
-         EIzlkSKsmmR4+tGB/OC3K3yeg5CwKJVfpy0abETQ4j6ia7JV/YFHjz9fkVwjVVT01+gA
-         7hoTqPwikzgMhBd/IbtsFOtMFDRt2iakGIh7tF/Hp36/nEeqS3td0uU7ijfWTNGe3lQf
-         mO/JICzYF/5eaBS6SyIKhBxE09oXgH9dGuorB80FRmWmsNxCDXLXMHnN3HjXwVPS92vD
-         xmBgUmXZM0FRqioXTgQ/Xi/HnDcga3X6gKhnw5onh2R+vWCwNGZHnZ3sNJ0wB+9/X8Dk
-         VEhA==
+        Wed, 15 Mar 2023 11:57:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B815E85A42
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 08:56:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678895760;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Pw4eRnmgxAQbUslf97rTqSt6QU+YteWEHOJqAmSsx5g=;
+        b=FX8RWCiEDEdYWKmQkn72PSKCiAEubnzpp9EGNXPXaeoU9xF30JBCJJUz+st/5t/ptqwiPk
+        7+g4R8EyveUfRZGjO2hEVISkoqC7Af1pRqXmcTGyMeHcNH/APR9cm3vLVS1jpDL5jhHkxS
+        yTPEZ1u6sf5r+SKZnsxCGOZsomF4XJI=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-372-AgReRb2oN7OZuiZpevec0A-1; Wed, 15 Mar 2023 11:55:59 -0400
+X-MC-Unique: AgReRb2oN7OZuiZpevec0A-1
+Received: by mail-qv1-f69.google.com with SMTP id jo13-20020a056214500d00b004c6c72bf1d0so11857683qvb.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 08:55:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678893372;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OqTD8SXreFBDfGk9Towq94DfzLHb+0jZ+UAuwsdvyrs=;
-        b=mchxS56dp7/nO6i2WnlFqZvCww7paOaDj9YaWigaVgdD8oRJlVxClXhhaKBRughWCN
-         ZJaXRsWEYl5HEGHua4/1tLPrqontL08GJ9aVpxBbrGVeJnCKkpagXdzZsJbslUZW0Jq9
-         I+kYbitt01I/I7Fa6gzJiHdCbTV552zsntJahog3HlokgUkyDBcXXCELBwvn1m6V6dHQ
-         +b5WBSxzkX5ErWmv+7hVA0LilRvS8L3bsF/mdNwl2/uiC2adPTEjtOfNC3IA2fpKWqCr
-         C18/EKL0hKxuewom/IoMitnrlWMD/PKeGzbgOKqMgiyOa8To/HVVLDlnIPpYpp8apJ+y
-         vm4w==
-X-Gm-Message-State: AO0yUKVrGPbARA1rPA5cYXM2nDaaptTgbcYIzxZXsbjk2BkO8VQ9jZDg
-        9OdnW7hw8P3vc8K6Qv+Ekwqr8g==
-X-Google-Smtp-Source: AK7set9D+WVhXnH07DQJu8SFuTg0UgCSR7HRh/a4BCorTjYCvv5e7XLeWp1lkbRIw8v0oOj0MKiCfA==
-X-Received: by 2002:a92:7406:0:b0:322:fad5:5d8f with SMTP id p6-20020a927406000000b00322fad55d8fmr7964989ilc.2.1678893372045;
-        Wed, 15 Mar 2023 08:16:12 -0700 (PDT)
-Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id y17-20020a056e02119100b0031798b87a14sm1696387ili.19.2023.03.15.08.16.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Mar 2023 08:16:11 -0700 (PDT)
-Message-ID: <5e740404-0890-cf34-94fd-7b929a048f6d@kernel.dk>
-Date:   Wed, 15 Mar 2023 09:16:10 -0600
+        d=1e100.net; s=20210112; t=1678895759; x=1681487759;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pw4eRnmgxAQbUslf97rTqSt6QU+YteWEHOJqAmSsx5g=;
+        b=qlm0izpcLdDxnTnl+UdhUcao0V+5j/AMbZt0FWAjZ0+DdQaHhd+GT5nnh7VPHtas1J
+         EYoMrjcTvs6qdZtBLRkyiIUEmc6/Ip+4cB3J0pey58+EMy3vYVMowQCmeTHgxaEmFX40
+         hvfaE5JTBTWXUWtJUu/kgO/es5HNqU0lyiGtNBmV95apx+bqQ+DK/8kiYOxibYqmQwr0
+         P8Y917L75G4mXcEr/B7FUElVcYoB26rb8KXaaEoPfAsBcG3oEE63MsQ/mCavncIdiLWU
+         Pirb6dOegUKLMaiaNpUsguGbcmk70NOe8+OMdsV+7nO0r47XVrKt4HY9Yy6kWimvgUkD
+         vTGQ==
+X-Gm-Message-State: AO0yUKXbb3jjYID1AhEddwwEw/ygE4sHRQMX9dciNw9Hag7nd2NlJNnx
+        omF/7kfxn3ceACjS8M1Wwya+5rlZvdF/mbyimdM1Q5gqQLQTwEvV4Gk0Z3AvOYV3RFszufo58gv
+        c1JumA3XvAIoRA9XGaGmmpnb9kQ==
+X-Received: by 2002:ac8:5f0f:0:b0:3b9:a4d4:7f37 with SMTP id x15-20020ac85f0f000000b003b9a4d47f37mr7256602qta.3.1678895759073;
+        Wed, 15 Mar 2023 08:55:59 -0700 (PDT)
+X-Google-Smtp-Source: AK7set/eKRMHgAx+CwCeLiCbX9cigeSt/aHmp3juRyE7h21eLYSzPFiMLvDtztWo7Q/hFkgkseO21A==
+X-Received: by 2002:ac8:5f0f:0:b0:3b9:a4d4:7f37 with SMTP id x15-20020ac85f0f000000b003b9a4d47f37mr7256562qta.3.1678895758790;
+        Wed, 15 Mar 2023 08:55:58 -0700 (PDT)
+Received: from x1n (bras-base-aurron9127w-grc-56-70-30-145-63.dsl.bell.ca. [70.30.145.63])
+        by smtp.gmail.com with ESMTPSA id t30-20020a05622a181e00b003ba2a15f93dsm4125741qtc.26.2023.03.15.08.55.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Mar 2023 08:55:58 -0700 (PDT)
+Date:   Wed, 15 Mar 2023 11:55:56 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v11 4/7] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+Message-ID: <ZBHqjBjj6nn1xeTM@x1n>
+References: <20230309135718.1490461-1-usama.anjum@collabora.com>
+ <20230309135718.1490461-5-usama.anjum@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 2/3] pipe: enable handling of IOCB_NOWAIT
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>
-References: <20230314154203.181070-1-axboe@kernel.dk>
- <20230314154203.181070-3-axboe@kernel.dk>
- <20230315082321.47mw5essznhejv7z@wittgenstein>
- <38781e4c-29b7-2fbc-44a9-f365189f5381@kernel.dk>
- <20230315150237.iwhoj7a3nb4vwazd@wittgenstein>
- <f93b4292-9507-5a11-be47-0e0e99a5fe27@kernel.dk>
-In-Reply-To: <f93b4292-9507-5a11-be47-0e0e99a5fe27@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230309135718.1490461-5-usama.anjum@collabora.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/15/23 9:12 AM, Jens Axboe wrote:
-> On 3/15/23 9:02 AM, Christian Brauner wrote:
->> On Wed, Mar 15, 2023 at 08:16:19AM -0600, Jens Axboe wrote:
->>> On 3/15/23 2:23 AM, Christian Brauner wrote:
->>>> On Tue, Mar 14, 2023 at 09:42:02AM -0600, Jens Axboe wrote:
->>>>> In preparation for enabling FMODE_NOWAIT for pipes, ensure that the read
->>>>> and write path handle it correctly. This includes the pipe locking,
->>>>> page allocation for writes, and confirming pipe buffers.
->>>>>
->>>>> Acked-by: Dave Chinner <dchinner@redhat.com>
->>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>>> ---
->>>>
->>>> Looks good,
->>>> Reviewed-by: Christian Brauner <brauner@kernel.org>
->>>
->>> Thanks for the review, I'll add that. Are you OK with me carrying
->>> these patches, or do you want to stage them for 6.4?
->>
->> I'n not fuzzed. Since it's fs only I would lean towards carrying it. I
->> can pick it up now and see if Al has any strong opinions on this one.
-> 
-> Either way is fine with me - let me know if you pick it up, and
-> I can drop it from my tree.
+On Thu, Mar 09, 2023 at 06:57:15PM +0500, Muhammad Usama Anjum wrote:
+> +	for (addr = start; !ret && addr < end; pte++, addr += PAGE_SIZE) {
+> +		pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+> +
+> +		is_writ = !is_pte_uffd_wp(*pte);
+> +		is_file = vma->vm_file;
+> +		is_pres = pte_present(*pte);
+> +		is_swap = is_swap_pte(*pte);
+> +
+> +		pte_unmap_unlock(pte, ptl);
+> +
+> +		ret = pagemap_scan_output(is_writ, is_file, is_pres, is_swap,
+> +					  p, addr, 1);
+> +		if (ret)
+> +			break;
+> +
+> +		if (PM_SCAN_OP_IS_WP(p) && is_writ &&
+> +		    uffd_wp_range(walk->mm, vma, addr, PAGE_SIZE, true) < 0)
+> +			ret = -EINVAL;
+> +	}
 
-Oh and if you do, I should probably send out a v3. Was missing a
-kerneldoc in patch 1, corrected that in my tree but it's not in v2.
-Outside of that one-liner doc change, same patches in my tree.
+This is not real atomic..
+
+Taking the spinlock for eacy pte is not only overkill but wrong in
+atomicity because the pte can change right after spinlock unlocked.
+
+Unfortunately you also cannot reuse uffd_wp_range() because that's not
+atomic either, my fault here.  Probably I was thinking mostly from
+soft-dirty pov on batching the collect+reset.
+
+You need to take the spin lock, collect whatever bits, set/clear whatever
+bits, only until then release the spin lock.
+
+"Not atomic" means you can have some page got dirtied but you could miss
+it.  Depending on how strict you want, I think it'll break apps like CRIU
+if strict atomicity needed for migrating a process.  If we want to have a
+new interface anyway, IMHO we'd better do that in the strict way.
+
+Same comment applies to the THP handling (where I cut from the context).
 
 -- 
-Jens Axboe
-
+Peter Xu
 
