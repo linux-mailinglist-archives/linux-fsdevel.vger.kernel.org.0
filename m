@@ -2,127 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3808E6BBBB3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 19:09:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE31E6BBCD9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 19:59:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232277AbjCOSJE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Mar 2023 14:09:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37346 "EHLO
+        id S232602AbjCOS7Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Mar 2023 14:59:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229769AbjCOSJC (ORCPT
+        with ESMTP id S232698AbjCOS7W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Mar 2023 14:09:02 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7FD61B578;
-        Wed, 15 Mar 2023 11:09:00 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id fm20-20020a05600c0c1400b003ead37e6588so1607242wmb.5;
-        Wed, 15 Mar 2023 11:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678903739;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qBCF9cqRw4//6g0u+mI/EVuBZjaNX/B1r61yKNDclCs=;
-        b=qpQ1v2gyXUCH71U7z2QzOW3U6u4Blf+RAcEIYyql4uAAgr6XUT+/PiWeKmioyWONo3
-         uX+PBqBzOVo64H2ZRV67FZOchfuqosVisOPSEActmD9IECcArStURK0iGUnHhoXJecb3
-         EAZIK7NvZyMrg0AW3ABD+ZCFrCsamfKiPUV1yv7zy+LZyD21gjxYHDVHJCTC/4po4YRr
-         aQeNrNUObp4qI2dclVofqfij6m/e3MatKMXCrHI06EJu/TOGlzVXhXIMhyISnSi/WrBs
-         ghTEvf7J40MkAPWhFwaCZ7OvQozmDljjjy1+O/2YyDPWJa6cFWmh3d8b9hRLRNlW5JIn
-         c5RQ==
+        Wed, 15 Mar 2023 14:59:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F4BC178
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 11:58:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678906713;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Kwq97ii9j4Uobk/QWp3tFh+rm8HJDcqt7MfCwBpcIz0=;
+        b=JioCehB3zRqQtsPPWyVl1sH8PJdBa2ToiHojgWvzuGWmQUsSRlCb0dSkfxvg7OhtrpXUH+
+        dh2T8o+hDDIE+DFo+oqAPQq4Df4ucJxdWM1aBuWUn1I69SxxVWdufQq3Tj1Gqhkdwfv7Cn
+        q++JPAcnpBfQ/d6wptol+QkJrsikldo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-BFw4UqL_P_yG_EwtiGa5ag-1; Wed, 15 Mar 2023 14:58:24 -0400
+X-MC-Unique: BFw4UqL_P_yG_EwtiGa5ag-1
+Received: by mail-wm1-f71.google.com with SMTP id o31-20020a05600c511f00b003ed2ed2acb5so1416271wms.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 11:58:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678903739;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qBCF9cqRw4//6g0u+mI/EVuBZjaNX/B1r61yKNDclCs=;
-        b=txkOE4Rlbgk/KcxQpr9ZS/mvEDUxG3ymAFuIG9wCcvGvgwlIUjQ3xZ6Og9wD05dsoi
-         WW4oiYcye7EuXiy7vGknuo5zwvdOuCaL1X0qHeoD9y01OMNDRU8AA5bOEUyQb1lnY7bv
-         w6YiWsun8rkAONySKcppcqMbUkEG3R0oRsWm4I7FJHg75HBURDFZdCuJEjjldA4JAlkf
-         bs7T3h8Pwv6eAjPHdxj1ZC5dvEFnKC95aUqKDR2A17Pyx3+qmkgK/yfaw/7Tm5vxI1QF
-         5gol4c+IMbJuNGsvunl0V0whwy+Mr5/YFuMVGOvClnLgdTUkYGp0AJQYvi3vyxqSVnaL
-         wF2Q==
-X-Gm-Message-State: AO0yUKVzT9xRDrP+NTQArUmGtk79NzEXJWfn9LTmTgSgMgJklLxSTEuL
-        f8IKnCg99apT6KxlAAjD0ho=
-X-Google-Smtp-Source: AK7set9FZx+p7o40TkVE4eWZX5rluRX08y33bd+HqnyMbHx5qtRZKpex0WkoI0ytCvJ1Q+K9tId6ag==
-X-Received: by 2002:a05:600c:4753:b0:3dd:1c46:b92 with SMTP id w19-20020a05600c475300b003dd1c460b92mr20772979wmo.16.1678903739013;
-        Wed, 15 Mar 2023 11:08:59 -0700 (PDT)
-Received: from suse.localnet (host-79-35-102-94.retail.telecomitalia.it. [79.35.102.94])
-        by smtp.gmail.com with ESMTPSA id 12-20020a05600c240c00b003dc521f336esm2567770wmp.14.2023.03.15.11.08.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 11:08:58 -0700 (PDT)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jan Kara <jack@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [git pull] vfs.git sysv pile
-Date:   Wed, 15 Mar 2023 19:08:57 +0100
-Message-ID: <3019063.4lk9UinFSI@suse>
-In-Reply-To: <Y/9duET0Mt5hPu2L@ZenIV>
-References: <Y/gugbqq858QXJBY@ZenIV> <20230301130018.yqds5yvqj7q26f7e@quack3>
- <Y/9duET0Mt5hPu2L@ZenIV>
+        d=1e100.net; s=20210112; t=1678906703;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kwq97ii9j4Uobk/QWp3tFh+rm8HJDcqt7MfCwBpcIz0=;
+        b=XGtvLOHcYHGRl7hssEKSqRC5UD6I//bmz+DgP38Ln1AjJvUJkySEhjtfByBnr2Hkng
+         IJzlFuV7CFdnMTMJqaclvYgTVm/+1y5yDgpZeUmku5B6EZtmcTaRbEAyJpH5QDFHTd+T
+         Bu7hz2OdVx8iqSYyUtMrLCsoO0ca/qKbzvIGDMLw4n3ABoeCAjXbdsYVuNSi7GYcQyis
+         gV+hrec9KQBDo1+fokoU56MPE9B3bEKk6ZTsiI5lkrJb7c0UaRi/XVPikvcSHmf/VNCA
+         obtYvdELxi9R7REEtHJc07z2zv2yh0zgEY/Kehfb3e3zYimML0KE5Nwrc5aI7b53LamB
+         CPvw==
+X-Gm-Message-State: AO0yUKVpgFBIFaCg6QOcSx/ihjPO3k3Cz1HiLF430uS39NECyd0Fl9Z9
+        cg/w0mM6Qs/P4C2XeJKWu8ml1xqMPHxB0N+gK/qRTflFp2ziM8SaMWv00O8nS85ZVuPtpc0R4RS
+        9EHARRHs3t27TGZD6/vVnoh4c2Q==
+X-Received: by 2002:a05:600c:3591:b0:3e2:1dac:b071 with SMTP id p17-20020a05600c359100b003e21dacb071mr15684805wmq.13.1678906703225;
+        Wed, 15 Mar 2023 11:58:23 -0700 (PDT)
+X-Google-Smtp-Source: AK7set9wHxtbJeJaGu+TUflUL+yBb+lhiGSDGexB3h7ZOMkBv9oBaMw6khZUH1IgPgUBcAEXtdGuIg==
+X-Received: by 2002:a05:600c:3591:b0:3e2:1dac:b071 with SMTP id p17-20020a05600c359100b003e21dacb071mr15684794wmq.13.1678906702944;
+        Wed, 15 Mar 2023 11:58:22 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c702:2f00:2038:213d:e59f:7d44? (p200300cbc7022f002038213de59f7d44.dip0.t-ipconnect.de. [2003:cb:c702:2f00:2038:213d:e59f:7d44])
+        by smtp.gmail.com with ESMTPSA id k26-20020a7bc31a000000b003eb596cbc54sm2862421wmj.0.2023.03.15.11.58.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Mar 2023 11:58:22 -0700 (PDT)
+Message-ID: <c1006976-8166-ca52-33db-d2eda8d8792e@redhat.com>
+Date:   Wed, 15 Mar 2023 19:58:21 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v19 01/15] splice: Clean up direct_splice_read() a bit
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>
+References: <20230315163549.295454-1-dhowells@redhat.com>
+ <20230315163549.295454-2-dhowells@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20230315163549.295454-2-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On mercoled=EC 1 marzo 2023 15:14:16 CET Al Viro wrote:
-> On Wed, Mar 01, 2023 at 02:00:18PM +0100, Jan Kara wrote:
-> > On Wed 01-03-23 12:20:56, Fabio M. De Francesco wrote:
-> > > On venerd=EC 24 febbraio 2023 04:26:57 CET Al Viro wrote:
-> > > > 	Fabio's "switch to kmap_local_page()" patchset (originally after t=
-he
-> > > >=20
-> > > > ext2 counterpart, with a lot of cleaning up done to it; as the matt=
-er=20
-of
-> > > > fact, ext2 side is in need of similar cleanups - calling conventions
-> > > > there
-> > > > are bloody awful).
-> > >=20
+On 15.03.23 17:35, David Howells wrote:
+> Do a couple of cleanups to direct_splice_read():
+> 
+>   (1) Cast to struct page **, not void *.
+> 
+>   (2) Simplify the calculation of the number of pages to keep/reclaim in
+>       direct_splice_read().
+> 
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: David Hildenbrand <david@redhat.com>
+> cc: John Hubbard <jhubbard@nvidia.com>
+> cc: linux-mm@kvack.org
+> cc: linux-block@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> ---
 
-[snip]
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
->=20
-> I think I've pushed a demo patchset to vfs.git at some point back in
-> January... Yep - see #work.ext2 in there; completely untested, though.
+-- 
+Thanks,
 
-The following commits from the VFS tree, #work.ext2 look good to me.
-
-f5b399373756 ("ext2: use offset_in_page() instead of open-coding it as=20
-subtraction")
-c7248e221fb5 ("ext2_get_page(): saner type")
-470e54a09898 ("ext2_put_page(): accept any pointer within the page")
-15abcc147cf7 ("ext2_{set_link,delete_entry}(): don't bother with page_addr")
-16a5ee2027b7 ("ext2_find_entry()/ext2_dotdot(): callers don't need page_add=
-r=20
-anymore")
-
-Reviewed-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
-
-I could only read the code but I could not test it in the same QEMU/KVM x86=
-_32=20
-VM where I test all my HIGHMEM related work.=20
-
-Btrfs as well as all the other filesystems I converted to kmap_local_page()=
-=20
-don't make the processes in the VM to crash, whereas the xfstests on ext2 =
-=20
-trigger the OOM killer at random tests (only sometimes they exit gracefully=
-).
-
-=46YI, I tried to run the tests with 6GB of RAM, booting a kernel with=20
-HIGHMEM64GB enabled. I cannot add my "Tested-by" tag.
-
-=46abio
-
-
+David / dhildenb
 
