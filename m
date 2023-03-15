@@ -2,167 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 948B16BBDBC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 21:01:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BC86BBDD0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 21:14:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232776AbjCOUBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Mar 2023 16:01:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46452 "EHLO
+        id S231964AbjCOUOK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Mar 2023 16:14:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232755AbjCOUBy (ORCPT
+        with ESMTP id S229659AbjCOUOJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Mar 2023 16:01:54 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C88933B645
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 13:01:51 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id l9so7881318iln.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 13:01:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1678910511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QdLj1A8OJQmCn9L+6EagDYwqPweTZs0gPc0iNxYbwNQ=;
-        b=LklbiHJvuZuqc/Bx1Wq8jpqDIoCGLqhnel9DKGs/Hr6pzv1ZAH4iK+hjfl9nfGI+7z
-         y3+pcG/jgu+3VVxyOH/l5ET0gdmJN8aa1jy5ULMS1i61ZoAI0TSA8xnhydXb32yLqvuO
-         X+hOlx/zn/q8aHK0qsN7FB/yOqBXYro4a2OrNdzQED7yTXzq5xFCkWI7aJSV5rWdxIyq
-         ywsZRYeQPuyKEdVm7u4QqA25tA8hMnuzpO38/qpMX8gCltPcINbjt6PqtH1PXN2WN+Jk
-         nW+FQLIO2NCMhb9XhzNdITDuYbA6KgRKI8wnYHArbl/TeDMH+hMPfgsVrLb+OoHy58iD
-         dLxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678910511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QdLj1A8OJQmCn9L+6EagDYwqPweTZs0gPc0iNxYbwNQ=;
-        b=dH2G1Wlb2bNFKs1rPj0R2Usx1uqoJ4Xeqce7ua7lDH+1fCJ96gDl9/bgBPM9m3jO9I
-         ANhvcaDnzSR6IUoafziO3tjo362GfRdOmS6kB2hGv06ApkPsJEhsTVDYqLifFJxZJ2bf
-         og+hoLlXS+vBQCBjpiXythGC0BPorSjf5oEbK1IEtjS2wASEdaEimwowVCbOgPA1M445
-         Z5R5wf+MG1rOw4RGX4WkjzuanqA0+ATinsODE0CsH793kyFvxImQs+eiYdyLiD+CDO4V
-         DFrAVUrP2Xy4lbs2GkJFkbGZZ5Pjsi36GQf4cV55Lo9T+fwRXvFYWD8sxA2p/0My47DE
-         cCgg==
-X-Gm-Message-State: AO0yUKXuJ5dPsXfyfklajm15E/lVpBp85+7z71shSnBwPYfsOrna5CSr
-        qBTmsJ8WGQ4jRJXbnX6nvaNCzlhq5VgA4a5OxZQl9GpDkayAAjSc9M5KTw==
-X-Google-Smtp-Source: AK7set9WGH1pDwg9Oc343uqZgOz19nbKLKKiJkee6xGh4enienlupjLecLu+/AQ9ICV9i8UGt+CllvLOVlLVwVN8HHE=
-X-Received: by 2002:a92:d90b:0:b0:322:fdbc:d1a2 with SMTP id
- s11-20020a92d90b000000b00322fdbcd1a2mr3821819iln.2.1678910510983; Wed, 15 Mar
- 2023 13:01:50 -0700 (PDT)
+        Wed, 15 Mar 2023 16:14:09 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4497A251;
+        Wed, 15 Mar 2023 13:14:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678911247; x=1710447247;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qEn7eVh0qey1R5xO+bISf9zYigLUClqJeIB9C6QUd5k=;
+  b=M/7ZWE86qpa0w3RSBTP7j1hQFvIBBXoE6d9kfMrJ330jfVxpyAojdJax
+   enLha2QoI7/Q9TaXLOxhMK35RRLJdxUGb1fVbd1v9Xkw+r7Msqq/uNxRf
+   62uA62A/ToHQfXXnIZT34s/xjciaLlPSqnz7cCrNBnfHd4PiKFO9f/PJw
+   GqBTX/LbZgs/ycG1WSiLmfzGF+C0Gf92Ezq1cUX+ym6BtCKJMCPIWu5tR
+   jg9zxxzoeajLf5DKwiBYr/9Py4NDdK5MM7U4hO6e1dKb70lj9cTQ0natz
+   1mENKDeZNjJcIhEEpeCRieEojIaQLPqENV8zXDPpyU8hAjWzpjoabzaV3
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10650"; a="424080612"
+X-IronPort-AV: E=Sophos;i="5.98,262,1673942400"; 
+   d="scan'208";a="424080612"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2023 13:14:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10650"; a="743854712"
+X-IronPort-AV: E=Sophos;i="5.98,262,1673942400"; 
+   d="scan'208";a="743854712"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 15 Mar 2023 13:14:04 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pcXVc-00080R-0M;
+        Wed, 15 Mar 2023 20:14:04 +0000
+Date:   Thu, 16 Mar 2023 04:14:04 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        linux-mm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        yebin10@huawei.com
+Subject: Re: [PATCH 4/4] pcpcntr: remove percpu_counter_sum_all()
+Message-ID: <202303160421.bnmiVRCM-lkp@intel.com>
+References: <20230315084938.2544737-5-david@fromorbit.com>
 MIME-Version: 1.0
-References: <20230314235332.50270-1-ebiggers@kernel.org>
-In-Reply-To: <20230314235332.50270-1-ebiggers@kernel.org>
-From:   Victor Hsieh <victorhsieh@google.com>
-Date:   Wed, 15 Mar 2023 13:01:38 -0700
-Message-ID: <CAFCauYOtRO3i0=HuogKngkxO4_au7ftD7aB+M0A-kcsdMUXmfA@mail.gmail.com>
-Subject: Re: [PATCH] fsverity: don't drop pagecache at end of FS_IOC_ENABLE_VERITY
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230315084938.2544737-5-david@fromorbit.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reviewed-by: Victor Hsieh <victorhsieh@google.com>
+Hi Dave,
 
-On Tue, Mar 14, 2023 at 4:55=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> The full pagecache drop at the end of FS_IOC_ENABLE_VERITY is causing
-> performance problems and is hindering adoption of fsverity.  It was
-> intended to solve a race condition where unverified pages might be left
-> in the pagecache.  But actually it doesn't solve it fully.
->
-> Since the incomplete solution for this race condition has too much
-> performance impact for it to be worth it, let's remove it for now.
->
-> Fixes: 3fda4c617e84 ("fs-verity: implement FS_IOC_ENABLE_VERITY ioctl")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/verity/enable.c | 25 +++++++++++++------------
->  1 file changed, 13 insertions(+), 12 deletions(-)
->
-> diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-> index e13db6507b38b..7a0e3a84d370b 100644
-> --- a/fs/verity/enable.c
-> +++ b/fs/verity/enable.c
-> @@ -8,7 +8,6 @@
->  #include "fsverity_private.h"
->
->  #include <linux/mount.h>
-> -#include <linux/pagemap.h>
->  #include <linux/sched/signal.h>
->  #include <linux/uaccess.h>
->
-> @@ -367,25 +366,27 @@ int fsverity_ioctl_enable(struct file *filp, const =
-void __user *uarg)
->                 goto out_drop_write;
->
->         err =3D enable_verity(filp, &arg);
-> -       if (err)
-> -               goto out_allow_write_access;
->
->         /*
-> -        * Some pages of the file may have been evicted from pagecache af=
-ter
-> -        * being used in the Merkle tree construction, then read into pag=
-ecache
-> -        * again by another process reading from the file concurrently.  =
-Since
-> -        * these pages didn't undergo verification against the file diges=
-t which
-> -        * fs-verity now claims to be enforcing, we have to wipe the page=
-cache
-> -        * to ensure that all future reads are verified.
-> +        * We no longer drop the inode's pagecache after enabling verity.=
-  This
-> +        * used to be done to try to avoid a race condition where pages c=
-ould be
-> +        * evicted after being used in the Merkle tree construction, then
-> +        * re-instantiated by a concurrent read.  Such pages are unverifi=
-ed, and
-> +        * the backing storage could have filled them with different cont=
-ent, so
-> +        * they shouldn't be used to fulfill reads once verity is enabled=
-.
-> +        *
-> +        * But, dropping the pagecache has a big performance impact, and =
-it
-> +        * doesn't fully solve the race condition anyway.  So for those r=
-easons,
-> +        * and also because this race condition isn't very important rela=
-tively
-> +        * speaking (especially for small-ish files, where the chance of =
-a page
-> +        * being used, evicted, *and* re-instantiated all while enabling =
-verity
-> +        * is quite small), we no longer drop the inode's pagecache.
->          */
-> -       filemap_write_and_wait(inode->i_mapping);
-> -       invalidate_inode_pages2(inode->i_mapping);
->
->         /*
->          * allow_write_access() is needed to pair with deny_write_access(=
-).
->          * Regardless, the filesystem won't allow writing to verity files=
-.
->          */
-> -out_allow_write_access:
->         allow_write_access(filp);
->  out_drop_write:
->         mnt_drop_write_file(filp);
->
-> base-commit: f959325e6ac3f499450088b8d9c626d1177be160
-> --
-> 2.39.2
->
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.3-rc2 next-20230315]
+[cannot apply to dennis-percpu/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dave-Chinner/cpumask-introduce-for_each_cpu_or/20230315-165202
+patch link:    https://lore.kernel.org/r/20230315084938.2544737-5-david%40fromorbit.com
+patch subject: [PATCH 4/4] pcpcntr: remove percpu_counter_sum_all()
+config: riscv-randconfig-r042-20230313 (https://download.01.org/0day-ci/archive/20230316/202303160421.bnmiVRCM-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install riscv cross compiling tool for clang build
+        # apt-get install binutils-riscv64-linux-gnu
+        # https://github.com/intel-lab-lkp/linux/commit/8360dcb55f1eb08fe7a1f457f3b99bef8e306c8b
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Dave-Chinner/cpumask-introduce-for_each_cpu_or/20230315-165202
+        git checkout 8360dcb55f1eb08fe7a1f457f3b99bef8e306c8b
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash fs/xfs/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303160421.bnmiVRCM-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> fs/xfs/xfs_super.c:1079:9: error: call to undeclared function 'percpu_counter_sum_all'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+                  percpu_counter_sum_all(&mp->m_delalloc_blks) == 0);
+                  ^
+   fs/xfs/xfs_super.c:1079:9: note: did you mean 'percpu_counter_sum'?
+   include/linux/percpu_counter.h:193:19: note: 'percpu_counter_sum' declared here
+   static inline s64 percpu_counter_sum(struct percpu_counter *fbc)
+                     ^
+   1 error generated.
+
+
+vim +/percpu_counter_sum_all +1079 fs/xfs/xfs_super.c
+
+8757c38f2cf6e5 Ian Kent        2019-11-04  1070  
+8757c38f2cf6e5 Ian Kent        2019-11-04  1071  static void
+8757c38f2cf6e5 Ian Kent        2019-11-04  1072  xfs_destroy_percpu_counters(
+8757c38f2cf6e5 Ian Kent        2019-11-04  1073  	struct xfs_mount	*mp)
+8757c38f2cf6e5 Ian Kent        2019-11-04  1074  {
+8757c38f2cf6e5 Ian Kent        2019-11-04  1075  	percpu_counter_destroy(&mp->m_icount);
+8757c38f2cf6e5 Ian Kent        2019-11-04  1076  	percpu_counter_destroy(&mp->m_ifree);
+8757c38f2cf6e5 Ian Kent        2019-11-04  1077  	percpu_counter_destroy(&mp->m_fdblocks);
+75c8c50fa16a23 Dave Chinner    2021-08-18  1078  	ASSERT(xfs_is_shutdown(mp) ||
+c35278f526edf1 Ye Bin          2023-03-14 @1079  	       percpu_counter_sum_all(&mp->m_delalloc_blks) == 0);
+8757c38f2cf6e5 Ian Kent        2019-11-04  1080  	percpu_counter_destroy(&mp->m_delalloc_blks);
+2229276c528326 Darrick J. Wong 2022-04-12  1081  	percpu_counter_destroy(&mp->m_frextents);
+8757c38f2cf6e5 Ian Kent        2019-11-04  1082  }
+8757c38f2cf6e5 Ian Kent        2019-11-04  1083  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
