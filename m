@@ -2,135 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 42B976BBEEC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 22:22:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5036BBFD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 23:35:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233080AbjCOVV7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Mar 2023 17:21:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42506 "EHLO
+        id S230248AbjCOWf1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Mar 2023 18:35:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232897AbjCOVVy (ORCPT
+        with ESMTP id S229769AbjCOWf0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Mar 2023 17:21:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8835A02A4;
-        Wed, 15 Mar 2023 14:21:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8FFFE61E6E;
-        Wed, 15 Mar 2023 21:21:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB03EC433EF;
-        Wed, 15 Mar 2023 21:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678915283;
-        bh=+r8g2IkyoB0Jg/yBPsVxCgq59FdXhHEpS5HuzNqPCyI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lxwGNMYE7cqR7tg6g9uZLgugiWhhI3rx1IScWtPGrA94pW48dn3fbWSYnpkZXlKHT
-         7q/vSCMOKSp1VEgDsDdX/fnWT4NulUHIrVegBWARuhsI6mXLfAfNc3s6ATcj7HK8uE
-         eIwOHmxKyWaOfFtj6/MLpbubf6PKWyOg9gqZS37Dgfp+WrT/qkPja/ESy3uIDZySiE
-         W3kjtl+B1bJFGc6Km6jINYlh9ypJZaoKEYDMeHWP8FE+XzGU0LaBpbQH78gvIxMHoD
-         swQYoXCu/SwUiAVLnqHn2ss5Ds7/EqHwmBSlKPlOrGyoOvwty3gMILnzZ/kE8IQsHL
-         aTDWJTUK73OAw==
-Date:   Wed, 15 Mar 2023 14:21:22 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     kernel test robot <lkp@intel.com>
-Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, llvm@lists.linux.dev,
-        oe-kbuild-all@lists.linux.dev, linux-mm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, yebin10@huawei.com
-Subject: Re: [PATCH 4/4] pcpcntr: remove percpu_counter_sum_all()
-Message-ID: <20230315212122.GH11376@frogsfrogsfrogs>
-References: <20230315084938.2544737-5-david@fromorbit.com>
- <202303160421.bnmiVRCM-lkp@intel.com>
+        Wed, 15 Mar 2023 18:35:26 -0400
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B11D917CFE;
+        Wed, 15 Mar 2023 15:35:25 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id h12-20020a17090aea8c00b0023d1311fab3so3785121pjz.1;
+        Wed, 15 Mar 2023 15:35:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678919725;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uyIknLOmhzXiRoeU62yIbB8smoLHFOuKjVdK+xM/klk=;
+        b=fsPqbkulYXa4J+YJFEMda8IUhygHMczIib266Vb4cWBlq7cCEdKgpcKng9Oxf2wG/5
+         mvqGk6EcUrAp1foz4N8rueSjpdTj6p1XCqzdHuwIlSviGt5pykuSkTQu8Qu5o7Ss6+Kn
+         ti+VbpHy9i+n1SDFwhUDo1KjDKSPwZcVDsMnhE0AaFpq9NQlMaNQnQO3NRS3gsZ+uUjm
+         pHUnisxg1yOwv0CNa6L4KVKTNptXhvTUJcFf0WCC55RCw/br6Cfuj0PuUts8IMSOoApp
+         B6puqwqe03EsoAaWh4v1jbVqglGzFDtfc115NhW3uWBYYzk4r1ZpsFV4L2+oBMaRtyHO
+         sYQQ==
+X-Gm-Message-State: AO0yUKUhVI7M6o8MrNeq+zQUO/tNIviMah1Om72v0Wey+ZfBXFuufGjO
+        5NhERRC+udwdNoARF7WgmEo=
+X-Google-Smtp-Source: AK7set+cWTYvzBSpsMO56TkYaNURayM6M25c0VMhLLAr5NPvHbOrGCLSoY6YJLbQcjeQ1rqMIxkBxA==
+X-Received: by 2002:a05:6a20:3d03:b0:d3:a13a:4c35 with SMTP id y3-20020a056a203d0300b000d3a13a4c35mr1418018pzi.6.1678919725103;
+        Wed, 15 Mar 2023 15:35:25 -0700 (PDT)
+Received: from localhost.localdomain ([211.49.23.9])
+        by smtp.gmail.com with ESMTPSA id c12-20020aa781cc000000b005dc70330d9bsm4034369pfn.26.2023.03.15.15.35.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Mar 2023 15:35:24 -0700 (PDT)
+From:   Namjae Jeon <linkinjeon@kernel.org>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        smfrench@gmail.com, senozhatsky@chromium.org, tom@talpey.com,
+        brauner@kernel.org, Namjae Jeon <linkinjeon@kernel.org>
+Subject: [PATCH v8 0/3] ksmbd patches included vfs changes
+Date:   Thu, 16 Mar 2023 07:34:32 +0900
+Message-Id: <20230315223435.5139-1-linkinjeon@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202303160421.bnmiVRCM-lkp@intel.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 16, 2023 at 04:14:04AM +0800, kernel test robot wrote:
-> Hi Dave,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v6.3-rc2 next-20230315]
-> [cannot apply to dennis-percpu/for-next]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Dave-Chinner/cpumask-introduce-for_each_cpu_or/20230315-165202
-> patch link:    https://lore.kernel.org/r/20230315084938.2544737-5-david%40fromorbit.com
-> patch subject: [PATCH 4/4] pcpcntr: remove percpu_counter_sum_all()
-> config: riscv-randconfig-r042-20230313 (https://download.01.org/0day-ci/archive/20230316/202303160421.bnmiVRCM-lkp@intel.com/config)
-> compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
-> reproduce (this is a W=1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # install riscv cross compiling tool for clang build
->         # apt-get install binutils-riscv64-linux-gnu
->         # https://github.com/intel-lab-lkp/linux/commit/8360dcb55f1eb08fe7a1f457f3b99bef8e306c8b
->         git remote add linux-review https://github.com/intel-lab-lkp/linux
->         git fetch --no-tags linux-review Dave-Chinner/cpumask-introduce-for_each_cpu_or/20230315-165202
->         git checkout 8360dcb55f1eb08fe7a1f457f3b99bef8e306c8b
->         # save the config file
->         mkdir build_dir && cp config build_dir/.config
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv olddefconfig
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash fs/xfs/
-> 
-> If you fix the issue, kindly add following tag where applicable
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Link: https://lore.kernel.org/oe-kbuild-all/202303160421.bnmiVRCM-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> fs/xfs/xfs_super.c:1079:9: error: call to undeclared function 'percpu_counter_sum_all'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->                   percpu_counter_sum_all(&mp->m_delalloc_blks) == 0);
->                   ^
->    fs/xfs/xfs_super.c:1079:9: note: did you mean 'percpu_counter_sum'?
->    include/linux/percpu_counter.h:193:19: note: 'percpu_counter_sum' declared here
->    static inline s64 percpu_counter_sum(struct percpu_counter *fbc)
->                      ^
->    1 error generated.
-> 
-> 
-> vim +/percpu_counter_sum_all +1079 fs/xfs/xfs_super.c
-> 
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1070  
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1071  static void
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1072  xfs_destroy_percpu_counters(
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1073  	struct xfs_mount	*mp)
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1074  {
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1075  	percpu_counter_destroy(&mp->m_icount);
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1076  	percpu_counter_destroy(&mp->m_ifree);
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1077  	percpu_counter_destroy(&mp->m_fdblocks);
-> 75c8c50fa16a23 Dave Chinner    2021-08-18  1078  	ASSERT(xfs_is_shutdown(mp) ||
-> c35278f526edf1 Ye Bin          2023-03-14 @1079  	       percpu_counter_sum_all(&mp->m_delalloc_blks) == 0);
+v8:
+  - Don't call vfs_path_lookup() to avoid repeat lookup, Instead, lookup
+    last component after locking the parent that got from vfs_path_parent_lookup
+    helper.
+v7:
+  - constify struct path.
+  - recreate patch-set base on recent Al's patches.
+v6:
+  - rename __lookup_hash() to lookup_one_qstr_excl and export.
+  - change dget() to dget_parent() in unlink.
+  - lock parent of open file in smb2_open() to make file_present
+    worthable.
+v5:
+  - add lock_rename_child() helper.
+  - remove d_is_symlink() check for new_path.dentry.
+  - use lock_rename_child() helper instead of lock_rename().
+  - use dget() instead of dget_parent().
+  - check that old_child is still hashed.
+  - directly check child->parent instead of using take_dentry_name_snapshot().
+v4:
+   - switch the order of 3/4 and 4/4 patch.
+   - fix vfs_path_parent_lookup() parameter description mismatch.
+v3:
+  - use dget_parent + take_dentry_name_snapshot() to check stability of source
+    rename in smb2_vfs_rename().
+v2:
+  - add filename_lock to avoid racy issue from fp->filename. (Sergey Senozhatsky)
+  - fix warning: variable 'old_dentry' is used uninitialized (kernel
+    test robot)
 
-Ah, yes, ChatGPT-4 hired someone via Mechanical Turk to log in to my
-kernel.org account, answer the CAPTCHA, and push Ye's patch into
-for-next.
+Al Viro (1):
+  fs: introduce lock_rename_child() helper
 
-(No it didn't.  Is your bot merging random patches from the XFS list and
-whining when the result doesn't build?  WTH is going on here??)
+Namjae Jeon (2):
+  ksmbd: remove internal.h include
+  ksmbd: fix racy issue from using ->d_parent and ->d_name
 
---D
+ fs/internal.h         |   2 -
+ fs/ksmbd/smb2pdu.c    | 147 ++++----------
+ fs/ksmbd/vfs.c        | 435 ++++++++++++++++++------------------------
+ fs/ksmbd/vfs.h        |  19 +-
+ fs/ksmbd/vfs_cache.c  |   5 +-
+ fs/namei.c            | 125 +++++++++---
+ include/linux/namei.h |   9 +
+ 7 files changed, 342 insertions(+), 400 deletions(-)
 
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1080  	percpu_counter_destroy(&mp->m_delalloc_blks);
-> 2229276c528326 Darrick J. Wong 2022-04-12  1081  	percpu_counter_destroy(&mp->m_frextents);
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1082  }
-> 8757c38f2cf6e5 Ian Kent        2019-11-04  1083  
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests
+-- 
+2.25.1
+
