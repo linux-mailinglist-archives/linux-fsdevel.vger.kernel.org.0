@@ -2,188 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 988B56BAB1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 09:50:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B19D66BAB16
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 09:50:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231797AbjCOIuA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Mar 2023 04:50:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55392 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231751AbjCOIt6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S231770AbjCOIt6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 15 Mar 2023 04:49:58 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAEF65D47C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 01:49:53 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id j13so2297528pjd.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 01:49:53 -0700 (PDT)
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55408 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231576AbjCOIt4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Mar 2023 04:49:56 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D0495D474
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 01:49:52 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id s17so10342186pgv.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 01:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=fromorbit-com.20210112.gappssmtp.com; s=20210112; t=1678870192;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vsWY3tiIVy0Yn9JroDJe+huBkL6FjkeIMN/r3FyXd5s=;
-        b=Tu1W0IEoh/utfOJuP49Ei0GgUJlOB7C4ob0dWEffMNAq9WjXgZb9jjYQe8No3saiVO
-         bwxNSDjsO64+ejJHsAztdOAUMEOk70GsqiXzzyzN61ovBkH2bktkJXQ/IrOmUXEXUaJC
-         0u9Iv5t8PBcWw61N6NelKZggBjMrf7xlJ5RkUMJL7oLMTpG4iHWP1fRuEFbwt9WFCDyi
-         JxObnAJVTK8vxtpEfm4Rg4gY6h7yTtKOSgNDFGo3zHkJglspgPi534ltLU/OGPH7Uk0W
-         HU1RImDREGGnttx0PKa96eby1VamA1Hr05aCpF/dsFTr8G4sDbFTP/o5Jjx2yJyIwsaU
-         3+Uw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YkxChdLDa4UFijk1Jheg8QY/La3zPetPy6md4h64POE=;
+        b=QjRMzeMPM7bEXlB6ydwS837/NFUyQ8FTlay7FyNeoNs0VDwU6tSXowOh5PEijcS3y8
+         sD6nxAC6h4K1cRCQD9qu0IFALoN8EolNk7Bid2nRlhUXSKUTeDvUpAvWMnwt+HPHUQx/
+         KyyxJcLdPcRikCzCFdYvFjT+Mqx43i8pHeTDS+TQTsjpdDOaSGXHR1WhZ00ymwBzz/6L
+         oUBDFOeHVrVNwCUzNaMl/ntSSHv31y6BC2N0XzgLSBSKpat6+edLAyQmzHqhhsxZ7a1M
+         lj1RUSkyW5Ia0Sp/kwGQHE1me5OM6WQIgiCDHeaI+wyfJ3J//4uGOBLUlhHOul1FoJei
+         V5fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112; t=1678870192;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vsWY3tiIVy0Yn9JroDJe+huBkL6FjkeIMN/r3FyXd5s=;
-        b=B1NRL5S6i1QPBaf0PH2tCFVTTL7GyYDhhpi/K1C8L08TKJA0KucORfHLu63ngduvGg
-         WBQLEbY/KWrDc/5Hw5QQat7xcK9pqAkQHcj2HzciblogWKfGTbHddzigbMwHGnqcbOzV
-         AJzWidQRO+T1tvvq4WN9yiib+bHMkJ1lMcKcxCvCxS5Rvr7AxfVHFt9DGW7xgttNLOQ3
-         qS4AbTD6XvCJxngTLUp5nL+eaTnMMTX2+vkBbmS3QOMY/bhzB8oIgA1C4mB+FtJ7hu1P
-         oueu0UxoYHCMiZ244n0Yyy78keyd6ZSDo/dYkBymW0xG0ngK48gAY/n9atwMuetAjQfw
-         QFjA==
-X-Gm-Message-State: AO0yUKV2o1gfvBZxP3bhcnL2vPhza2Y1DhAfuB02vo5akJI28U7i1frn
-        vetcUoTsEjmXb3LfagBMtirapQ==
-X-Google-Smtp-Source: AK7set+bs54csdRPLZxehylIRo4Xa5sAjj4gyGLb/tRk34uFP8c932/ih+zIiD18/7b0oBgOUsyMZg==
-X-Received: by 2002:a05:6a20:1b1f:b0:d3:7aa2:edb3 with SMTP id ch31-20020a056a201b1f00b000d37aa2edb3mr11528330pzb.55.1678870192441;
-        Wed, 15 Mar 2023 01:49:52 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YkxChdLDa4UFijk1Jheg8QY/La3zPetPy6md4h64POE=;
+        b=3DYdEXpNt8hFGPd/0TWpkIrVD10Cbz19oBNOdSTmMCC72x7Gfp5WJeVffLV2v7J6U8
+         PX5Ea/U2vAO/aIw+jQ+CTm9Ps/nxVegO5szccoR/tIBHXpbZjBJRlOasm0m47xF1x9fa
+         4+Zui60+sc0cr5VTa6XCDSenysHhkT0UCn+fsjpesmA9Nyf/a+a2wFmXQH8GpmPJ9IzN
+         oLUTXKlca5J/QDdXjXAskztT+NFjNbACF/m6hHGV/Me1sVqTTYBbqWsuOeD85hT35UoG
+         gSx9O04rDso+ngUjBa9azSpHmwV2gcZ38TJCliVshbPMbYxgyV8t08K6EuCmaFKyu4C5
+         pdoQ==
+X-Gm-Message-State: AO0yUKUQABLRLB+Z2vPIkQcByKnmo+KOlu58Z+rCsLAcu1CYPHYZWbKD
+        whIfa1J4b0FPAMwYKN9rpVfgPA==
+X-Google-Smtp-Source: AK7set+PAG3sniqSn+uEJTES+NuHK2ZCXd+V9ulDUeNZd08I0VS+GAnsdTPkVoBU/h/tKlRjkhWWSg==
+X-Received: by 2002:aa7:8ec1:0:b0:625:8217:15b9 with SMTP id b1-20020aa78ec1000000b00625821715b9mr3081112pfr.2.1678870191951;
+        Wed, 15 Mar 2023 01:49:51 -0700 (PDT)
 Received: from dread.disaster.area (pa49-186-4-237.pa.vic.optusnet.com.au. [49.186.4.237])
-        by smtp.gmail.com with ESMTPSA id c11-20020a62e80b000000b005abbfa874d9sm2986079pfi.88.2023.03.15.01.49.50
+        by smtp.gmail.com with ESMTPSA id i17-20020aa787d1000000b0058d9058fe8asm2966024pfo.103.2023.03.15.01.49.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 15 Mar 2023 01:49:51 -0700 (PDT)
 Received: from [192.168.253.23] (helo=devoid.disaster.area)
         by dread.disaster.area with esmtp (Exim 4.92.3)
         (envelope-from <dave@fromorbit.com>)
-        id 1pcMpQ-008zeR-1Z; Wed, 15 Mar 2023 19:49:48 +1100
+        id 1pcMpQ-008zeS-2N; Wed, 15 Mar 2023 19:49:48 +1100
 Received: from dave by devoid.disaster.area with local (Exim 4.96)
         (envelope-from <dave@devoid.disaster.area>)
-        id 1pcMpQ-00Ag6I-03;
+        id 1pcMpQ-00Ag6L-0D;
         Wed, 15 Mar 2023 19:49:48 +1100
 From:   Dave Chinner <david@fromorbit.com>
 To:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
 Cc:     linux-mm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         yebin10@huawei.com
-Subject: [PATCH 0/4] pcpctr: fix percpu_counter_sum vs cpu offline race
-Date:   Wed, 15 Mar 2023 19:49:34 +1100
-Message-Id: <20230315084938.2544737-1-david@fromorbit.com>
+Subject: [PATCH 1/4] cpumask: introduce for_each_cpu_or
+Date:   Wed, 15 Mar 2023 19:49:35 +1100
+Message-Id: <20230315084938.2544737-2-david@fromorbit.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230315084938.2544737-1-david@fromorbit.com>
+References: <20230315084938.2544737-1-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ye Bin reported an XFS assert failure when testing CPU hotplug
-recently. During unmount, XFs was asserting that a percpu counter
-value should be zero because at that point in time a non-zero value
-indicates a space accounting leak which is a bug. The details of
-that failure can be found here:
+From: Dave Chinner <dchinner@redhat.com>
 
-https://lore.kernel.org/linux-kernel/20230314090649.326642-1-yebin@huaweicloud.com/
+Equivalent of for_each_cpu_and, except it ORs the two masks together
+so it iterates all the CPUs present in either mask.
 
-Ye Bin then proposed changing the XFS code to use
-percpu_counter_sum_all(), which surprised me because I didn't know
-that function existed at all. Indeed, it was only merged in the
-recent 6.3-rc1 merge window because someone else had noticed a
-pcpctr sum race with hotplug.
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+---
+ include/linux/cpumask.h | 17 +++++++++++++++++
+ include/linux/find.h    | 37 +++++++++++++++++++++++++++++++++++++
+ lib/find_bit.c          |  9 +++++++++
+ 3 files changed, 63 insertions(+)
 
-commit f689054aace2 ("percpu_counter: add percpu_counter_sum_all
-interface") was introduced via the mm tree. Nobody outside that
-scope knew about this, because who bothers to even try to read LKML
-these days? There was little list discussion, and I don't see
-anything other than a cursory review done on the patch.
-
-At minimum, linux-fsdevel should have been cc'd because multiple
-filesystems use percpu counters for both threshold and ENOSPC
-accounting in filesystems.  Hence if there is a problem with
-percpu_counter_sum() leaking, filesystem developers kinda need to
-know about it because leaks like this (as per the XFS bug report)
-can actually result in on-disk corruption occurring.
-
-So, now I know that there is an accuracy problem with
-percpu_counter_sum(), I will assert that we need to fix it properly
-rathern than hack around it by adding a new variant. Leaving people
-who know nothing about cpu hotplug to try to work out if they have a
-hotplug related issue with their use of percpu_counter_sum() is just
-bad code; percpu_counter_sum() should just Do The Right Thing.
-
-Use of the cpu_dying_mask should effectively close this race
-condition.  That is, when we take a CPU offline we effectively do:
-
-	mark cpu dying
-	clear cpu from cpu_online_mask
-	run cpu dead callbacks
-	  ....
-	  <lock counter>
-	  fold pcp count into fbc->count
-	  clear pcp count
-	  <unlock counter>
-	  ...
-	mark CPU dead
-	clear cpu dying
-
-The race condition occurs because we can run a _sum operation
-between the "clear cpu online" mask update and the "pcpctr cpu dead"
-notification runs and fold the pcp counter values back into the
-global count.  The sum sees that the CPU is not online, so it skips
-that CPU even though the count is not zero and hasn't been folded by
-the CPU dead notifier. Hence it skips something that it shouldn't.
-
-However, that race condition doesn't exist if we take cpu_dying_mask
-into account during the sum.  i.e. percpu_counter_sum() should
-iterate every CPU set in either the cpu_online_mask and the
-cpu_dying_mask to capture CPUs that are being taken offline.
-
-If the cpu is not set in the dying mask, then the online or offline
-state of the CPU is correct an there is no notifier pending over
-running and we will skip/sum it correctly.
-
-If the CPU is set in the dying mask, then we need to sum it
-regardless of the online mask state or even whether the cpu dead
-notifier has run.  If the sum wins the race to the pcp counter on
-the dying CPU, it is included in the local sum from the pcp
-variable. If the notifier wins the race, it gets folded back into
-the global count and zeroed before the sum runs. Then the sum
-includes the count in the local sum from the global counter sum
-rather than the percpu counter.
-
-Either way, we get the same correct sum value from
-percpu_counter_sum() regardless of how it races with a CPU being
-removed from the system. And there is no need for
-percpu_count_sum_all() anymore.
-
-This series introduces bitmap operations for finding bits set in
-either of two bitmasks and adds the for_each_cpu_or() wrapper to
-iterate CPUs set in either of the two supplied cpu masks. It then
-converts __percpu_counter_sum_mask() to use this, and have
-__percpu_counter_sum() pass the cpu_dying_mask as the second mask.
-This fixes the race condition with CPUs dying.
-
-It then converts the only user of percpu_counter_sum_all() to use
-percpu_counter_sum() as percpu_counter_sum_all() is now redundant,
-then it removes percpu_counter_sum_all() and recombines
-__percpu_counter_sum_mask() and __percpu_counter_sum().
-
-This effectively undoes all the changes in commit f689054aace2
-except for the small change to use for_each_cpu_or() to fold in the
-cpu_dying_mask made in this patch set to avoid the problematic race
-condition. Hence the cpu unplug race condition is now correctly
-handled by percpu_counter_sum(), and people can go back to being
-blissfully ignorant of how pcpctrs interact with CPU hotplug (which
-is how it should be!).
-
-This has spent the last siz hours running generic/650 on XFS on a
-couple of VMs (on 4p, the other 16p) which stresses the filesystem
-by running a multi-process fsstress invocation whilst randomly
-onlining and offlining CPUs. Hence it's exercising all the percpu
-counter cpu dead paths whilst the filesystem is randomly modifying,
-reading and summing summing the critical counters that XFS needs for
-accurate accounting of resource consumption within the filesystem.
-
-Thoughts, comments and testing welcome!
-
--Dave.
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+index d4901ca8883c..ca736b05ec7b 100644
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -350,6 +350,23 @@ unsigned int __pure cpumask_next_wrap(int n, const struct cpumask *mask, int sta
+ #define for_each_cpu_andnot(cpu, mask1, mask2)				\
+ 	for_each_andnot_bit(cpu, cpumask_bits(mask1), cpumask_bits(mask2), small_cpumask_bits)
+ 
++/**
++ * for_each_cpu_or - iterate over every cpu present in either mask
++ * @cpu: the (optionally unsigned) integer iterator
++ * @mask1: the first cpumask pointer
++ * @mask2: the second cpumask pointer
++ *
++ * This saves a temporary CPU mask in many places.  It is equivalent to:
++ *	struct cpumask tmp;
++ *	cpumask_or(&tmp, &mask1, &mask2);
++ *	for_each_cpu(cpu, &tmp)
++ *		...
++ *
++ * After the loop, cpu is >= nr_cpu_ids.
++ */
++#define for_each_cpu_or(cpu, mask1, mask2)				\
++	for_each_or_bit(cpu, cpumask_bits(mask1), cpumask_bits(mask2), small_cpumask_bits)
++
+ /**
+  * cpumask_any_but - return a "random" in a cpumask, but not this one.
+  * @mask: the cpumask to search
+diff --git a/include/linux/find.h b/include/linux/find.h
+index 4647864a5ffd..5e4f39ef2e72 100644
+--- a/include/linux/find.h
++++ b/include/linux/find.h
+@@ -14,6 +14,8 @@ unsigned long _find_next_and_bit(const unsigned long *addr1, const unsigned long
+ 					unsigned long nbits, unsigned long start);
+ unsigned long _find_next_andnot_bit(const unsigned long *addr1, const unsigned long *addr2,
+ 					unsigned long nbits, unsigned long start);
++unsigned long _find_next_or_bit(const unsigned long *addr1, const unsigned long *addr2,
++					unsigned long nbits, unsigned long start);
+ unsigned long _find_next_zero_bit(const unsigned long *addr, unsigned long nbits,
+ 					 unsigned long start);
+ extern unsigned long _find_first_bit(const unsigned long *addr, unsigned long size);
+@@ -127,6 +129,36 @@ unsigned long find_next_andnot_bit(const unsigned long *addr1,
+ }
+ #endif
+ 
++#ifndef find_next_or_bit
++/**
++ * find_next_or_bit - find the next set bit in either memory regions
++ * @addr1: The first address to base the search on
++ * @addr2: The second address to base the search on
++ * @size: The bitmap size in bits
++ * @offset: The bitnumber to start searching at
++ *
++ * Returns the bit number for the next set bit
++ * If no bits are set, returns @size.
++ */
++static inline
++unsigned long find_next_or_bit(const unsigned long *addr1,
++		const unsigned long *addr2, unsigned long size,
++		unsigned long offset)
++{
++	if (small_const_nbits(size)) {
++		unsigned long val;
++
++		if (unlikely(offset >= size))
++			return size;
++
++		val = (*addr1 | *addr2) & GENMASK(size - 1, offset);
++		return val ? __ffs(val) : size;
++	}
++
++	return _find_next_or_bit(addr1, addr2, size, offset);
++}
++#endif
++
+ #ifndef find_next_zero_bit
+ /**
+  * find_next_zero_bit - find the next cleared bit in a memory region
+@@ -536,6 +568,11 @@ unsigned long find_next_bit_le(const void *addr, unsigned
+ 	     (bit) = find_next_andnot_bit((addr1), (addr2), (size), (bit)), (bit) < (size);\
+ 	     (bit)++)
+ 
++#define for_each_or_bit(bit, addr1, addr2, size) \
++	for ((bit) = 0;									\
++	     (bit) = find_next_or_bit((addr1), (addr2), (size), (bit)), (bit) < (size);\
++	     (bit)++)
++
+ /* same as for_each_set_bit() but use bit as value to start with */
+ #define for_each_set_bit_from(bit, addr, size) \
+ 	for (; (bit) = find_next_bit((addr), (size), (bit)), (bit) < (size); (bit)++)
+diff --git a/lib/find_bit.c b/lib/find_bit.c
+index c10920e66788..32f99e9a670e 100644
+--- a/lib/find_bit.c
++++ b/lib/find_bit.c
+@@ -182,6 +182,15 @@ unsigned long _find_next_andnot_bit(const unsigned long *addr1, const unsigned l
+ EXPORT_SYMBOL(_find_next_andnot_bit);
+ #endif
+ 
++#ifndef find_next_or_bit
++unsigned long _find_next_or_bit(const unsigned long *addr1, const unsigned long *addr2,
++					unsigned long nbits, unsigned long start)
++{
++	return FIND_NEXT_BIT(addr1[idx] | addr2[idx], /* nop */, nbits, start);
++}
++EXPORT_SYMBOL(_find_next_or_bit);
++#endif
++
+ #ifndef find_next_zero_bit
+ unsigned long _find_next_zero_bit(const unsigned long *addr, unsigned long nbits,
+ 					 unsigned long start)
+-- 
+2.39.2
 
