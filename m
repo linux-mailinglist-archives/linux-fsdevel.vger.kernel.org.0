@@ -2,89 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D6E6BB3FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 14:10:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 790F36BB4DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 14:38:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231774AbjCONKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Mar 2023 09:10:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56798 "EHLO
+        id S232242AbjCONiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Mar 2023 09:38:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231154AbjCONKw (ORCPT
+        with ESMTP id S231806AbjCONiw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Mar 2023 09:10:52 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CF45D442
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 06:10:51 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id j13so3012281pjd.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 06:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1678885850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4iM7UqGaYvm7BzQmjPzFTbD+VCi1s05wVU7R+PFPtIQ=;
-        b=d2XRh/0jnDbb8BJSVteBA7TvOKV8xbk6pdCqTOQcoOrShowab5iwHiCFFnz0/Pshsz
-         vS5a48SIWacvJ8o9s8pgarz8rU7Nk6EQDTx80rj/4iNeASMVgpVtyCttdLykp0wEcbMO
-         9ZpYnG0Kd3+JCmpIYNaYbqk+Ms4jtktRfLBDw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678885850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4iM7UqGaYvm7BzQmjPzFTbD+VCi1s05wVU7R+PFPtIQ=;
-        b=MCbAOipT8eZDoM6ElBvFDzsHK4i/eRRva49E+rhMuFLE7v/jHpII5WV5jp8lNFYNjb
-         hB6/mwijEEA43OcM1IFh+cZUGZgXmmLO1qBQNxF4c9rCfm5J2YYsg/x5Bzz7p1+8HsxG
-         4vhEGNhHv1Mm0kOGvtRNFSBix1H6SYXcD0/FE1MzLjkTy8AFCpmro4ch7A62bljlLDlv
-         EWw8ACpMhsQP0Q9ze7Gs5MXw08AlfrlRw861KgUaBhwdb8ZS7WUtvCn3Nxv4usRPRr+f
-         vOC4U6kSFP8NmRppBqejtRYaiqEvGWXkQ7xZcUHy5+1qd6vCjXf5TnwrRd9bbRBKXgnQ
-         QMzg==
-X-Gm-Message-State: AO0yUKXcQ0RqlOo28BuZeXktXLeA+5pXjs6/iXBKqzpodU/uBpvZYMjM
-        Nliov1U+QLcMqIwDZyNh9EDw+Q==
-X-Google-Smtp-Source: AK7set9dN3OnjgQ1zJzmAaDS5Ava8qB+TCv5SKJAmAnQ8LoY5y/PvI+b/14sPf9bRAqmxxxgI5nUMw==
-X-Received: by 2002:a17:902:e5d0:b0:19e:29bd:8411 with SMTP id u16-20020a170902e5d000b0019e29bd8411mr2794015plf.30.1678885850225;
-        Wed, 15 Mar 2023 06:10:50 -0700 (PDT)
-Received: from google.com (KD124209188001.ppp-bb.dion.ne.jp. [124.209.188.1])
-        by smtp.gmail.com with ESMTPSA id d10-20020a170902854a00b001a05bc70e97sm3574903plo.189.2023.03.15.06.10.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 06:10:49 -0700 (PDT)
-Date:   Wed, 15 Mar 2023 22:10:43 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     kernel test robot <yujie.liu@intel.com>, oe-lkp@lists.linux.dev,
-        lkp@intel.com, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jens Axboe <axboe@kernel.dk>,
-        Minchan Kim <minchan@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        linux-fsdevel@vger.kernel.org, ying.huang@intel.com,
-        feng.tang@intel.com, zhengjun.xing@linux.intel.com,
-        fengwei.yin@intel.com
-Subject: Re: [linus:master] [mpage] 7d28631786: fio.write_iops 27.8%
- improvement
-Message-ID: <20230315131043.GA1927891@google.com>
-References: <202303101630.ef282023-yujie.liu@intel.com>
- <20230315075816.GA32694@lst.de>
+        Wed, 15 Mar 2023 09:38:52 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C80D7EFC;
+        Wed, 15 Mar 2023 06:38:49 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 5D8B31FD76;
+        Wed, 15 Mar 2023 13:38:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1678887528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wQFuKBaF6WvGk6vzttY4i4tA7syyP5hs6IrhdtonffA=;
+        b=cqxP2twoRj+fcrs/+8lehtiDgnL4jr0LNZ6a5rdur0lBr0tEWrBncWCbZJ6/bK8EyWpU4x
+        gZ0F+4c+4+XXRkr56WDNiSySqXnP6VfvK3ui99h+DhlZDvTySsKKDiEo77yQOun5YA6Xyt
+        sgYbKyd2dOq4T+lsVt4cYW7F2JRPFGk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1678887528;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wQFuKBaF6WvGk6vzttY4i4tA7syyP5hs6IrhdtonffA=;
+        b=w6coZ/Uw88fhU8aHcGl6eDCI1gHVg0UOGUkVaXsHulRwjbstUIgG9UCupGjq6fQNmDKLo6
+        x/lC0q/mxOCeVZCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0211513A2F;
+        Wed, 15 Mar 2023 13:38:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id e+dPO2fKEWQSLwAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Wed, 15 Mar 2023 13:38:47 +0000
+Message-ID: <14043bee-af7d-38f3-5a46-f63940e56c1e@suse.cz>
+Date:   Wed, 15 Mar 2023 14:38:47 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230315075816.GA32694@lst.de>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 7/7] mm/slab: document kfree() as allowed for
+ kmem_cache_alloc() objects
+Content-Language: en-US
+To:     Mike Rapoport <mike.rapoport@gmail.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        rcu@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+        Mike Rapoport <rppt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>
+References: <20230310103210.22372-1-vbabka@suse.cz>
+ <20230310103210.22372-8-vbabka@suse.cz> <ZA2ic9JYXGVzps1+@kernel.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <ZA2ic9JYXGVzps1+@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On (23/03/15 08:58), Christoph Hellwig wrote:
+On 3/12/23 10:59, Mike Rapoport wrote:
+> On Fri, Mar 10, 2023 at 11:32:09AM +0100, Vlastimil Babka wrote:
+>> This will make it easier to free objects in situations when they can
+>> come from either kmalloc() or kmem_cache_alloc(), and also allow
+>> kfree_rcu() for freeing objects from kmem_cache_alloc().
+>> 
+>> For the SLAB and SLUB allocators this was always possible so with SLOB
+>> gone, we can document it as supported.
+>> 
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Mike Rapoport <rppt@kernel.org>
+>> Cc: Jonathan Corbet <corbet@lwn.net>
+>> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+>> Cc: Frederic Weisbecker <frederic@kernel.org>
+>> Cc: Neeraj Upadhyay <quic_neeraju@quicinc.com>
+>> Cc: Josh Triplett <josh@joshtriplett.org>
+>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+>> Cc: Joel Fernandes <joel@joelfernandes.org>
+>> ---
+>>  Documentation/core-api/memory-allocation.rst | 15 +++++++++++----
+>>  include/linux/rcupdate.h                     |  6 ++++--
+>>  mm/slab_common.c                             |  5 +----
+>>  3 files changed, 16 insertions(+), 10 deletions(-)
+>> 
+>> diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
+>> index 5954ddf6ee13..f9e8d352ed67 100644
+>> --- a/Documentation/core-api/memory-allocation.rst
+>> +++ b/Documentation/core-api/memory-allocation.rst
+>> @@ -170,7 +170,14 @@ should be used if a part of the cache might be copied to the userspace.
+>>  After the cache is created kmem_cache_alloc() and its convenience
+>>  wrappers can allocate memory from that cache.
+>>  
+>> -When the allocated memory is no longer needed it must be freed. You can
+>> -use kvfree() for the memory allocated with `kmalloc`, `vmalloc` and
+>> -`kvmalloc`. The slab caches should be freed with kmem_cache_free(). And
+>> -don't forget to destroy the cache with kmem_cache_destroy().
+>> +When the allocated memory is no longer needed it must be freed. Objects
 > 
-> I think this simply accounts for the I/Os now that were skipped
-> when using the bdev_read/write path before.
+> I'd add a line break before Objects                               ^
+> 
+>> +allocated by `kmalloc` can be freed by `kfree` or `kvfree`.
+>> +Objects allocated by `kmem_cache_alloc` can be freed with `kmem_cache_free`
+>> +or also by `kfree` or `kvfree`, which can be more convenient as it does
+> 
+> Maybe replace 'or also by' with a coma:
+> 
+> Objects allocated by `kmem_cache_alloc` can be freed with `kmem_cache_free`,
+> `kfree` or `kvfree`, which can be more convenient as it does
 
-Oh, that would explain it. Otherwise I was slightly surprised (in a good
-way) and puzzled.
+But then I need to clarify what the "which" applies to?
+
+> 
+>> +not require the kmem_cache pointed.
+> 
+>                              ^ pointer.
+> 
+>> +The rules for _bulk and _rcu flavors of freeing functions are analogical.
+> 
+> Maybe 
+> 
+> The same rules apply to _bulk and _rcu flavors of freeing functions.
+
+So like this incremental diff?
+
+diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
+index f9e8d352ed67..1c58d883b273 100644
+--- a/Documentation/core-api/memory-allocation.rst
++++ b/Documentation/core-api/memory-allocation.rst
+@@ -170,12 +170,14 @@ should be used if a part of the cache might be copied to the userspace.
+ After the cache is created kmem_cache_alloc() and its convenience
+ wrappers can allocate memory from that cache.
+ 
+-When the allocated memory is no longer needed it must be freed. Objects
+-allocated by `kmalloc` can be freed by `kfree` or `kvfree`.
+-Objects allocated by `kmem_cache_alloc` can be freed with `kmem_cache_free`
+-or also by `kfree` or `kvfree`, which can be more convenient as it does
+-not require the kmem_cache pointed.
+-The rules for _bulk and _rcu flavors of freeing functions are analogical.
++When the allocated memory is no longer needed it must be freed.
++
++Objects allocated by `kmalloc` can be freed by `kfree` or `kvfree`. Objects
++allocated by `kmem_cache_alloc` can be freed with `kmem_cache_free`, `kfree`
++or `kvfree`, where the latter two might be more convenient thanks to not
++needing the kmem_cache pointer.
++
++The same rules apply to _bulk and _rcu flavors of freeing functions.
+ 
+ Memory allocated by `vmalloc` can be freed with `vfree` or `kvfree`.
+ Memory allocated by `kvmalloc` can be freed with `kvfree`.
+
