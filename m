@@ -2,149 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE816BB53A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 14:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04EE46BB5BC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 15:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232520AbjCONxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Mar 2023 09:53:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50208 "EHLO
+        id S232744AbjCOOQ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Mar 2023 10:16:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232518AbjCONxV (ORCPT
+        with ESMTP id S232878AbjCOOQm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Mar 2023 09:53:21 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A05461501;
-        Wed, 15 Mar 2023 06:53:17 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 6F9EB1FD79;
-        Wed, 15 Mar 2023 13:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1678888395; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MOPh0muXJMBra7JZNI3t/z2XlH5ZqBP5RrIbmuie1yI=;
-        b=QKY7ReI4YqUdmQ7e0+BHWBqf9m7ixDyOjxCoGENb2xA+1wj7zrm7TjjNGEiobjrXHUVxKf
-        v53hJZpSJX+rpnCBg7mAaf3z3f8Yim7fGJd9aL8fVK4WoJCxBzWUTw1Dsl/FN/k5G2FEEw
-        E4xb1+MFU0eMEOGLtwSgV0hC1IMmwFE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1678888395;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MOPh0muXJMBra7JZNI3t/z2XlH5ZqBP5RrIbmuie1yI=;
-        b=hfK1YuSXzjNyczsp8N+D3Am3mFL+dYrF8UhS3D3/wzfYSwo9B843Z8eGEzC2/Le+8zOIq+
-        7n6wutSBx1+NMzAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0B86A13A2F;
-        Wed, 15 Mar 2023 13:53:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id qcwkAsvNEWSPNgAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Wed, 15 Mar 2023 13:53:15 +0000
-Message-ID: <3018fb77-68d0-fb67-2595-7c58c6cf7a76@suse.cz>
-Date:   Wed, 15 Mar 2023 14:53:14 +0100
+        Wed, 15 Mar 2023 10:16:42 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BCD62597A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 07:16:22 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id q6so7866362iot.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 07:16:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1678889781;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LUr6Z/8eVKfwqMAALi/Nq7GM0PMlYZHl9znx9hFSWjM=;
+        b=NJuoGSTtVhz9FRn0ds9YLYb/zkKXmMoHej1HFmJ68Vj4DHe/UrwzfhHGh19RBbgsLv
+         p9G1Hzs6uJpf3WW42yECxFCi/WFFnICxpL0iYZc1ExEppbUlTD3Nrlr/M8aBspZWgOHs
+         YZIpOmEmO5rIAx3pt3qx4504XOE5tNpowqNF/eYpnjBHBVIwRL7hSSe1SKotUQvnr5HK
+         sH702rXQb/mh1MAuax4Rx2hLEjjGejcWFPyfm/a6AKmqUMQ+3DAEm/SeUAKEkd0Aeva1
+         w5JY40XOZr3xCUEKTyvPuC8YpvXRe5MyqGznnMCrlVGHJTRsLXBPd5NoU5oQ7s03c1Eu
+         zJ6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678889781;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LUr6Z/8eVKfwqMAALi/Nq7GM0PMlYZHl9znx9hFSWjM=;
+        b=cXCBUOorIIXOl7MngCjvz84lcG8B0yvt41chAaaI2EbM6/O+jheYWEQ9IVq7L/HX4I
+         0L6WUVk7KhKUxW6HNWirWrvTJ8FXIbc9kOxYVUtiuhMr+fmOmniMgBCenye4l5swijze
+         XWoEqWletq7L/nMNf7bZjDwOIBRZDnQGIKoOgJSkHLtmb0bmFDqXKf7CClQq1DgyDDNi
+         7nH1Q9cl6j8cVLCIW9UhsrPeKo28K18d56i0VAwQr5LZWvVngInqM5pwnqjWGQuG/wKe
+         ntASatoxE20QlII79UVw7GO57G0i3y0SIUaWbtFL2OcUTKtX7/AehZyWMNq0xzZ77Yqh
+         soCg==
+X-Gm-Message-State: AO0yUKXLBd2j3X8VQ2wLJZahv3DrhZttekETCAlMBNPA1cnpNYPk9i2s
+        WiNL+0ub8Z7bXKhBNgEZMehS4w==
+X-Google-Smtp-Source: AK7set8ksOR6hwFFHfW/ngnN7iiN0RpsWWGboYgCAZHSy6wmeciNhN5f05fOmv9Dr5fx41KCZse6KA==
+X-Received: by 2002:a05:6602:368a:b0:74c:de17:fa3 with SMTP id bf10-20020a056602368a00b0074cde170fa3mr9760617iob.0.1678889781515;
+        Wed, 15 Mar 2023 07:16:21 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id g21-20020a02bb95000000b004051a7ef7f3sm1655405jan.71.2023.03.15.07.16.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Mar 2023 07:16:20 -0700 (PDT)
+Message-ID: <38781e4c-29b7-2fbc-44a9-f365189f5381@kernel.dk>
+Date:   Wed, 15 Mar 2023 08:16:19 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH 0/7] remove SLOB and allow kfree() with kmem_cache_alloc()
+Subject: Re: [PATCH 2/3] pipe: enable handling of IOCB_NOWAIT
 Content-Language: en-US
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Mike Rapoport <mike.rapoport@gmail.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        rcu@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-References: <20230310103210.22372-1-vbabka@suse.cz>
- <ZA2gofYkXRcJ8cLA@kernel.org> <20230313123147.6d28c47e@gandalf.local.home>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20230313123147.6d28c47e@gandalf.local.home>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>
+References: <20230314154203.181070-1-axboe@kernel.dk>
+ <20230314154203.181070-3-axboe@kernel.dk>
+ <20230315082321.47mw5essznhejv7z@wittgenstein>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230315082321.47mw5essznhejv7z@wittgenstein>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_SOFTFAIL,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 3/13/23 17:31, Steven Rostedt wrote:
-> Just remove that comment. And you could even add:
+On 3/15/23 2:23 AM, Christian Brauner wrote:
+> On Tue, Mar 14, 2023 at 09:42:02AM -0600, Jens Axboe wrote:
+>> In preparation for enabling FMODE_NOWAIT for pipes, ensure that the read
+>> and write path handle it correctly. This includes the pipe locking,
+>> page allocation for writes, and confirming pipe buffers.
+>>
+>> Acked-by: Dave Chinner <dchinner@redhat.com>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
 > 
-> Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Fixes: e4c2ce82ca27 ("ring_buffer: allocate buffer page pointer")
+> Looks good,
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
 
-Thanks for the analysis. Want to take the following patch to your tree or
-should I make it part of the series?
+Thanks for the review, I'll add that. Are you OK with me carrying
+these patches, or do you want to stage them for 6.4?
 
-----8<----
-From 297a8c8fda98dc5499cfe0eac6ffabfb19d1b70f Mon Sep 17 00:00:00 2001
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 15 Mar 2023 14:45:15 +0100
-Subject: [PATCH] ring-buffer: remove obsolete comment for free_buffer_page()
-
-The comment refers to mm/slob.o which is being removed. It comes from
-commit ed56829cb319 ("ring_buffer: reset buffer page when freeing") and
-according to Steven the borrowed code was a page mapcount and mapping
-reset, which was later removed by commit e4c2ce82ca27 ("ring_buffer:
-allocate buffer page pointer"). Thus the comment is not accurate anyway,
-remove it.
-
-Reported-by: Mike Rapoport <mike.rapoport@gmail.com>
-Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Fixes: e4c2ce82ca27 ("ring_buffer: allocate buffer page pointer")
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- kernel/trace/ring_buffer.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index af50d931b020..c6f47b6cfd5f 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -354,10 +354,6 @@ static void rb_init_page(struct buffer_data_page *bpage)
- 	local_set(&bpage->commit, 0);
- }
- 
--/*
-- * Also stolen from mm/slob.c. Thanks to Mathieu Desnoyers for pointing
-- * this issue out.
-- */
- static void free_buffer_page(struct buffer_page *bpage)
- {
- 	free_page((unsigned long)bpage->page);
 -- 
-2.39.2
-
+Jens Axboe
 
 
