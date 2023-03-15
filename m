@@ -2,194 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FE316BBB89
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 18:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3808E6BBBB3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Mar 2023 19:09:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231127AbjCOR6I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Mar 2023 13:58:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51496 "EHLO
+        id S232277AbjCOSJE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Mar 2023 14:09:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232143AbjCOR6G (ORCPT
+        with ESMTP id S229769AbjCOSJC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Mar 2023 13:58:06 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA3253345E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 10:57:56 -0700 (PDT)
-Received: by mail-io1-f71.google.com with SMTP id bk9-20020a056602400900b007530180bc25so862574iob.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 10:57:56 -0700 (PDT)
+        Wed, 15 Mar 2023 14:09:02 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7FD61B578;
+        Wed, 15 Mar 2023 11:09:00 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id fm20-20020a05600c0c1400b003ead37e6588so1607242wmb.5;
+        Wed, 15 Mar 2023 11:09:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678903739;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qBCF9cqRw4//6g0u+mI/EVuBZjaNX/B1r61yKNDclCs=;
+        b=qpQ1v2gyXUCH71U7z2QzOW3U6u4Blf+RAcEIYyql4uAAgr6XUT+/PiWeKmioyWONo3
+         uX+PBqBzOVo64H2ZRV67FZOchfuqosVisOPSEActmD9IECcArStURK0iGUnHhoXJecb3
+         EAZIK7NvZyMrg0AW3ABD+ZCFrCsamfKiPUV1yv7zy+LZyD21gjxYHDVHJCTC/4po4YRr
+         aQeNrNUObp4qI2dclVofqfij6m/e3MatKMXCrHI06EJu/TOGlzVXhXIMhyISnSi/WrBs
+         ghTEvf7J40MkAPWhFwaCZ7OvQozmDljjjy1+O/2YyDPWJa6cFWmh3d8b9hRLRNlW5JIn
+         c5RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678903076;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zfP2RrGfa+6Gegi6FbN5052XrJmeuObXATx/IVMNmRc=;
-        b=pqMnAOQ9kNiLSeLtjx4p8WRbYO0ElfxI9hsK2/N0EUymiaKbgyfMEScPKPt8+KUzrA
-         D0CK/MHaJIwQ6c+TlQ/v4lczhOUDLIR+VKrB4S5y436ffhvDyJre74Ag37zHkUulHn+n
-         zkfHNlBAzlkaSepZZL7Jg33Q6zgXPRgJh3N8Mj2NnCrKw8yLK0v2ue9KWh4zZvddmfiO
-         cH7M4p+cRFCxQjN85AM40ERGiSgE/NRZJVP/eb3JJxpKZx3CObJRlILncZp1LggNt+I9
-         rlBBfWsCbjA2rC413pSlhAVPosOlR3lrKcz44nfye0LOOorEwYYeYEh0e0s4NTB2ufGl
-         L7Zw==
-X-Gm-Message-State: AO0yUKWRCgnnDWBi8vdXlOi27MRDtTNVyjmc7/LUSkkZB/WkxjuS2aFu
-        kjQ7tfqlc0hNJZ5sTN15GBk8jeZMpwXp5wqAml7iWde4pSY+
-X-Google-Smtp-Source: AK7set+CvUevlQ/ozJc/gsCV323wqZhj4dpP3PLYQoJzXwEYZLxNHHJY/caAiaGCwPiT2h/UZvutF/h9WRAsjmwizceuLfgm88M8
+        d=1e100.net; s=20210112; t=1678903739;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qBCF9cqRw4//6g0u+mI/EVuBZjaNX/B1r61yKNDclCs=;
+        b=txkOE4Rlbgk/KcxQpr9ZS/mvEDUxG3ymAFuIG9wCcvGvgwlIUjQ3xZ6Og9wD05dsoi
+         WW4oiYcye7EuXiy7vGknuo5zwvdOuCaL1X0qHeoD9y01OMNDRU8AA5bOEUyQb1lnY7bv
+         w6YiWsun8rkAONySKcppcqMbUkEG3R0oRsWm4I7FJHg75HBURDFZdCuJEjjldA4JAlkf
+         bs7T3h8Pwv6eAjPHdxj1ZC5dvEFnKC95aUqKDR2A17Pyx3+qmkgK/yfaw/7Tm5vxI1QF
+         5gol4c+IMbJuNGsvunl0V0whwy+Mr5/YFuMVGOvClnLgdTUkYGp0AJQYvi3vyxqSVnaL
+         wF2Q==
+X-Gm-Message-State: AO0yUKVzT9xRDrP+NTQArUmGtk79NzEXJWfn9LTmTgSgMgJklLxSTEuL
+        f8IKnCg99apT6KxlAAjD0ho=
+X-Google-Smtp-Source: AK7set9FZx+p7o40TkVE4eWZX5rluRX08y33bd+HqnyMbHx5qtRZKpex0WkoI0ytCvJ1Q+K9tId6ag==
+X-Received: by 2002:a05:600c:4753:b0:3dd:1c46:b92 with SMTP id w19-20020a05600c475300b003dd1c460b92mr20772979wmo.16.1678903739013;
+        Wed, 15 Mar 2023 11:08:59 -0700 (PDT)
+Received: from suse.localnet (host-79-35-102-94.retail.telecomitalia.it. [79.35.102.94])
+        by smtp.gmail.com with ESMTPSA id 12-20020a05600c240c00b003dc521f336esm2567770wmp.14.2023.03.15.11.08.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Mar 2023 11:08:58 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jan Kara <jack@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [git pull] vfs.git sysv pile
+Date:   Wed, 15 Mar 2023 19:08:57 +0100
+Message-ID: <3019063.4lk9UinFSI@suse>
+In-Reply-To: <Y/9duET0Mt5hPu2L@ZenIV>
+References: <Y/gugbqq858QXJBY@ZenIV> <20230301130018.yqds5yvqj7q26f7e@quack3>
+ <Y/9duET0Mt5hPu2L@ZenIV>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:d46:b0:310:9d77:6063 with SMTP id
- h6-20020a056e020d4600b003109d776063mr3650597ilj.5.1678903076058; Wed, 15 Mar
- 2023 10:57:56 -0700 (PDT)
-Date:   Wed, 15 Mar 2023 10:57:56 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000075fe1b05f6f415f7@google.com>
-Subject: [syzbot] [ext4?] WARNING in kvfree (2)
-From:   syzbot <syzbot+64b645917ce07d89bde5@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On mercoled=EC 1 marzo 2023 15:14:16 CET Al Viro wrote:
+> On Wed, Mar 01, 2023 at 02:00:18PM +0100, Jan Kara wrote:
+> > On Wed 01-03-23 12:20:56, Fabio M. De Francesco wrote:
+> > > On venerd=EC 24 febbraio 2023 04:26:57 CET Al Viro wrote:
+> > > > 	Fabio's "switch to kmap_local_page()" patchset (originally after t=
+he
+> > > >=20
+> > > > ext2 counterpart, with a lot of cleaning up done to it; as the matt=
+er=20
+of
+> > > > fact, ext2 side is in need of similar cleanups - calling conventions
+> > > > there
+> > > > are bloody awful).
+> > >=20
 
-syzbot found the following issue on:
+[snip]
 
-HEAD commit:    fe15c26ee26e Linux 6.3-rc1
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1100fce2c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7573cbcd881a88c9
-dashboard link: https://syzkaller.appspot.com/bug?extid=64b645917ce07d89bde5
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
+>=20
+> I think I've pushed a demo patchset to vfs.git at some point back in
+> January... Yep - see #work.ext2 in there; completely untested, though.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The following commits from the VFS tree, #work.ext2 look good to me.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89d41abd07bd/disk-fe15c26e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fa75f5030ade/vmlinux-fe15c26e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/590d0f5903ee/Image-fe15c26e.gz.xz
+f5b399373756 ("ext2: use offset_in_page() instead of open-coding it as=20
+subtraction")
+c7248e221fb5 ("ext2_get_page(): saner type")
+470e54a09898 ("ext2_put_page(): accept any pointer within the page")
+15abcc147cf7 ("ext2_{set_link,delete_entry}(): don't bother with page_addr")
+16a5ee2027b7 ("ext2_find_entry()/ext2_dotdot(): callers don't need page_add=
+r=20
+anymore")
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+64b645917ce07d89bde5@syzkaller.appspotmail.com
+Reviewed-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 9389 at mm/slab_common.c:935 free_large_kmalloc+0x34/0x138 mm/slab_common.c:936
-Modules linked in:
-CPU: 1 PID: 9389 Comm: syz-executor.5 Not tainted 6.3.0-rc1-syzkaller-gfe15c26ee26e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : free_large_kmalloc+0x34/0x138 mm/slab_common.c:936
-lr : kfree+0x184/0x228 mm/slab_common.c:1013
-sp : ffff8000227974e0
-x29: ffff8000227974e0 x28: 00000000000003bc x27: ffff000142fd15a4
-x26: dfff800000000000 x25: 0000000000000020 x24: ffff0000c4f01c00
-x23: 0000000000000020 x22: ffff00012f6d48e8 x21: ffff800008829ce8
-x20: ffff000142fd15a4 x19: fffffc00050bf440 x18: ffff8000227970e0
-x17: ffff800015cdd000 x16: ffff800008313a3c x15: 0000000000000000
-x14: 00000000ffff8000 x13: 00000000ecdf532c x12: 0000000000000003
-x11: ff8080000809b854 x10: 0000000000000000 x9 : 05ffc0000000203a
-x8 : ffff8000186ee000 x7 : 0000000000000000 x6 : 000000000000003f
-x5 : 0000000000000040 x4 : fffffffffffffff0 x3 : 0000000000000000
-x2 : 0000000000000006 x1 : ffff000142fd15a4 x0 : fffffc00050bf440
-Call trace:
- free_large_kmalloc+0x34/0x138 mm/slab_common.c:936
- kfree+0x184/0x228 mm/slab_common.c:1013
- kvfree+0x40/0x50 mm/util.c:649
- ext4_xattr_move_to_block fs/ext4/xattr.c:2680 [inline]
- ext4_xattr_make_inode_space fs/ext4/xattr.c:2743 [inline]
- ext4_expand_extra_isize_ea+0xcf8/0x1620 fs/ext4/xattr.c:2835
- __ext4_expand_extra_isize+0x290/0x348 fs/ext4/inode.c:5955
- ext4_try_to_expand_extra_isize fs/ext4/inode.c:5998 [inline]
- __ext4_mark_inode_dirty+0x5dc/0xa94 fs/ext4/inode.c:6076
- __ext4_unlink+0x768/0x998 fs/ext4/namei.c:3256
- ext4_unlink+0x2ec/0xb10 fs/ext4/namei.c:3299
- vfs_unlink+0x2f0/0x508 fs/namei.c:4250
- do_unlinkat+0x4c8/0x82c fs/namei.c:4316
- __do_sys_unlinkat fs/namei.c:4359 [inline]
- __se_sys_unlinkat fs/namei.c:4352 [inline]
- __arm64_sys_unlinkat+0xcc/0xfc fs/namei.c:4352
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
- el0_svc+0x58/0x168 arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-irq event stamp: 3482
-hardirqs last  enabled at (3481): [<ffff80000898bb44>] kasan_quarantine_put+0x1a0/0x1c8 mm/kasan/quarantine.c:242
-hardirqs last disabled at (3482): [<ffff80001245e098>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (3300): [<ffff800008034240>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (3298): [<ffff80000803420c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-object pointer: 0x000000000b8c335f
-==================================================================
-BUG: KASAN: invalid-free in kfree+0x184/0x228 mm/slab_common.c:1013
-Free of addr ffff000142fd15a4 by task syz-executor.5/9389
+I could only read the code but I could not test it in the same QEMU/KVM x86=
+_32=20
+VM where I test all my HIGHMEM related work.=20
 
-CPU: 0 PID: 9389 Comm: syz-executor.5 Tainted: G        W          6.3.0-rc1-syzkaller-gfe15c26ee26e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-Call trace:
- dump_backtrace+0x1c8/0x1f4 arch/arm64/kernel/stacktrace.c:158
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:165
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:319 [inline]
- print_report+0x174/0x514 mm/kasan/report.c:430
- kasan_report_invalid_free+0xc4/0x114 mm/kasan/report.c:501
- __kasan_kfree_large+0xa4/0xc0 mm/kasan/common.c:272
- kasan_kfree_large include/linux/kasan.h:170 [inline]
- free_large_kmalloc+0x70/0x138 mm/slab_common.c:939
- kfree+0x184/0x228 mm/slab_common.c:1013
- kvfree+0x40/0x50 mm/util.c:649
- ext4_xattr_move_to_block fs/ext4/xattr.c:2680 [inline]
- ext4_xattr_make_inode_space fs/ext4/xattr.c:2743 [inline]
- ext4_expand_extra_isize_ea+0xcf8/0x1620 fs/ext4/xattr.c:2835
- __ext4_expand_extra_isize+0x290/0x348 fs/ext4/inode.c:5955
- ext4_try_to_expand_extra_isize fs/ext4/inode.c:5998 [inline]
- __ext4_mark_inode_dirty+0x5dc/0xa94 fs/ext4/inode.c:6076
- __ext4_unlink+0x768/0x998 fs/ext4/namei.c:3256
- ext4_unlink+0x2ec/0xb10 fs/ext4/namei.c:3299
- vfs_unlink+0x2f0/0x508 fs/namei.c:4250
- do_unlinkat+0x4c8/0x82c fs/namei.c:4316
- __do_sys_unlinkat fs/namei.c:4359 [inline]
- __se_sys_unlinkat fs/namei.c:4352 [inline]
- __arm64_sys_unlinkat+0xcc/0xfc fs/namei.c:4352
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
- el0_svc+0x58/0x168 arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+Btrfs as well as all the other filesystems I converted to kmap_local_page()=
+=20
+don't make the processes in the VM to crash, whereas the xfstests on ext2 =
+=20
+trigger the OOM killer at random tests (only sometimes they exit gracefully=
+).
 
-The buggy address belongs to the physical page:
-page:000000004ed01e6f refcount:2 mapcount:0 mapping:0000000047d3c139 index:0x1 pfn:0x182fd1
-memcg:ffff000131a56000
-aops:def_blk_aops ino:700005
-flags: 0x5ffc0000000203a(referenced|dirty|lru|active|private|node=0|zone=2|lastcpupid=0x7ff)
-raw: 05ffc0000000203a fffffc0003531048 fffffc0005118988 ffff0000c0497610
-raw: 0000000000000001 ffff0000e0738cb0 00000002ffffffff ffff000131a56000
-page dumped because: kasan: bad access detected
+=46YI, I tried to run the tests with 6GB of RAM, booting a kernel with=20
+HIGHMEM64GB enabled. I cannot add my "Tested-by" tag.
 
-Memory state around the buggy address:
- ffff000142fd1480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff000142fd1500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff000142fd1580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-                               ^
- ffff000142fd1600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff000142fd1680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
+=46abio
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
