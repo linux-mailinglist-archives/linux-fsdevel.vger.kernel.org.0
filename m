@@ -2,96 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1F556BD57E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 17:25:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72ED36BD692
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 18:02:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbjCPQZn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 12:25:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54068 "EHLO
+        id S229820AbjCPRCH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 13:02:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbjCPQZk (ORCPT
+        with ESMTP id S229631AbjCPRCF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 12:25:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 289411981
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 09:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678983896;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=P2ASxqGtebQqLOzZD8O/ATkw0sdUpI75GL+Hn4BrEXQ=;
-        b=XWgRdlXno374dK87f4S60VmbSPd2K25HqiOEATq+onAeQrPtU46qGy++Cac9JMutmr8qg+
-        7DktyWUOM1CdnKf3aIGwctHcjpme4HsJT1tVl3r0l6/o5b69L300aYUptMqnm5AmXN2WMb
-        e+N0k5RYW6HWjHQ7IxE4V7COO7w28c0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-590-gfY7XOqBPESOSXRoa7US_w-1; Thu, 16 Mar 2023 12:24:55 -0400
-X-MC-Unique: gfY7XOqBPESOSXRoa7US_w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 16 Mar 2023 13:02:05 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43A79B2F7;
+        Thu, 16 Mar 2023 10:01:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 620A93C1068F;
-        Thu, 16 Mar 2023 16:24:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 076984042AC8;
-        Thu, 16 Mar 2023 16:24:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <3DFBF27C-A62B-4AFE-87FD-3DF53FC39E8E@hammerspace.com>
-References: <3DFBF27C-A62B-4AFE-87FD-3DF53FC39E8E@hammerspace.com> <20230316152618.711970-1-dhowells@redhat.com> <20230316152618.711970-28-dhowells@redhat.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
+        by ams.source.kernel.org (Postfix) with ESMTPS id 746D3B8228C;
+        Thu, 16 Mar 2023 17:01:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BABF6C4339B;
+        Thu, 16 Mar 2023 17:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678986117;
+        bh=iAe83v06CelvQ5x9yL4BVebJHJ8BOoQ+WiuxJO46PLc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UrAFSXvLQU2L+HELh4Ww55FjwUFPh88C4WrAY8SuExteQeDon/zQi9uIlnQ0FeLUN
+         IloCjLYHlbUgUQ9Q9TsI1exG7B+AjPZNwB2NWj39PMHS3epq0d2Mth7nidheT4cxW4
+         6qSEwwCxL3uVBH8whbcX+/nskeSD772HAApttUAqVdHZy8vIyYxWVVxNA5XPFAi4m7
+         zQjb2XvY9Mw+JrwQftcZWPS7Jfx/qmNqGiaWa0KcCqz2SuzuIhhWdOqR32100jjvvw
+         f3raN7WrqQRL9KfyDpOifwgo1nJj0rDvM57S64hE+TJjTBKfS/cDZ7fCeanU41XyGw
+         z6eEp+AwgZg0w==
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Jeffrey Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Anna Schumaker <anna@kernel.org>,
-        Charles Edward Lever <chuck.lever@oracle.com>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: [RFC PATCH 27/28] sunrpc: Use sendmsg(MSG_SPLICE_PAGES) rather then sendpage
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     bpf@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Namhyung Kim <namhyung@gmail.com>,
+        Dave Chinner <david@fromorbit.com>
+Subject: [PATCHv3 bpf-next 0/9] mm/bpf/perf: Store build id in file object
+Date:   Thu, 16 Mar 2023 18:01:40 +0100
+Message-Id: <20230316170149.4106586-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <754533.1678983891.1@warthog.procyon.org.uk>
-Date:   Thu, 16 Mar 2023 16:24:51 +0000
-Message-ID: <754534.1678983891@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Trond Myklebust <trondmy@hammerspace.com> wrote:
+hi,
+this patchset adds build id object pointer to struct file object.
 
-> > + buf->bvec += 2;
-> > + buf->bvec[-2].bv_page = NULL;
-> > + buf->bvec[-1].bv_page = NULL;
-> 
-> NACK.
+We have several use cases for build id to be used in BPF programs
+[2][3].
 
-Can you elaborate?
+Having build id pointer stored directly in file object allows to get
+build id reliably regardless of the execution context as described
+in [3].
 
-Is it that you dislike allocating extra slots for protocol bits?  Or just that
-the bvec[] is offset by 2?  Or some other reason?
+Previous iteration [1] stored build id pointer into inode, but it
+became clear that struct file object is better place, because we read 
+the build id when the file is mmap-ed and as Dave Chinner said [4]:
 
-David
+> Yes, the problem being that we can cache hundreds of millions of
+> inodes in memory, and only a very small subset of them are going to
+> have open files associated with them. And an even smaller subset are
+> going to be mmapped.
 
+thanks,
+jirka
+
+
+v3 changes:
+  - moved build id back to file object (discussed in [4])
+  - drop patch 4, it's not needed [Andrii]
+  - added ack to patch 7 [Andrii]
+  - replaced BUILD_ID_SIZE_MAX macro with enum [Andrii]
+  - few re-formatting fixes [Andrii]
+
+v2 changes:
+  - store build id under inode [Matthew Wilcox]
+  - use urandom_read and liburandom_read.so for test [Andrii]
+  - add libelf-based helper to fetch build ID from elf [Andrii]
+  - store build id or error we got when reading it [Andrii]
+  - use full name i_build_id [Andrii]
+  - several tests fixes [Andrii]
+
+
+[1] https://lore.kernel.org/bpf/20230228093206.821563-1-jolsa@kernel.org/
+[2] https://lore.kernel.org/bpf/CA+khW7juLEcrTOd7iKG3C_WY8L265XKNo0iLzV1fE=o-cyeHcQ@mail.gmail.com/
+[3] https://lore.kernel.org/bpf/ZABf26mV0D0LS7r%2F@krava/
+[4] https://lore.kernel.org/bpf/20230228220714.GJ2825702@dread.disaster.area/
+---
+Jiri Olsa (9):
+      mm: Store build id in file object
+      perf: Use file object build id in perf_event_mmap_event
+      bpf: Use file object build id in stackmap
+      bpf: Switch BUILD_ID_SIZE_MAX to enum
+      selftests/bpf: Add read_buildid function
+      selftests/bpf: Add err.h header
+      selftests/bpf: Replace extract_build_id with read_build_id
+      selftests/bpf: Add iter_task_vma_buildid test
+      selftests/bpf: Add file_build_id test
+
+ fs/file_table.c                                                  |  3 +++
+ include/linux/buildid.h                                          | 21 ++++++++++++++++++-
+ include/linux/fs.h                                               |  7 +++++++
+ kernel/bpf/stackmap.c                                            | 24 +++++++++++++++++++++-
+ kernel/events/core.c                                             | 43 ++++++++++++++++++++++++++++++++++----
+ lib/buildid.c                                                    | 42 +++++++++++++++++++++++++++++++++++++
+ mm/Kconfig                                                       |  9 ++++++++
+ mm/mmap.c                                                        | 18 ++++++++++++++++
+ tools/testing/selftests/bpf/Makefile                             |  7 ++++++-
+ tools/testing/selftests/bpf/no_build_id.c                        |  6 ++++++
+ tools/testing/selftests/bpf/prog_tests/bpf_iter.c                | 78 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/bpf/prog_tests/file_build_id.c           | 98 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c     | 19 +++++++----------
+ tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c | 17 ++++++---------
+ tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c    | 56 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/err.h                          | 18 ++++++++++++++++
+ tools/testing/selftests/bpf/progs/file_build_id.c                | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/profiler.inc.h                 |  3 +--
+ tools/testing/selftests/bpf/test_progs.c                         | 25 ----------------------
+ tools/testing/selftests/bpf/test_progs.h                         | 11 +++++++++-
+ tools/testing/selftests/bpf/trace_helpers.c                      | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/bpf/trace_helpers.h                      |  5 +++++
+ 22 files changed, 608 insertions(+), 58 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/no_build_id.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/file_build_id.c
+ create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+ create mode 100644 tools/testing/selftests/bpf/progs/err.h
+ create mode 100644 tools/testing/selftests/bpf/progs/file_build_id.c
