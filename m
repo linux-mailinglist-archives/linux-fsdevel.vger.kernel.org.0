@@ -2,62 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47ADE6BDB22
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 22:52:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C30616BDB53
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 23:08:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbjCPVwJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 17:52:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51824 "EHLO
+        id S230133AbjCPWIG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 18:08:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229758AbjCPVwI (ORCPT
+        with ESMTP id S229669AbjCPWIF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 17:52:08 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9466CC30F;
-        Thu, 16 Mar 2023 14:52:06 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id h8so13223714ede.8;
-        Thu, 16 Mar 2023 14:52:06 -0700 (PDT)
+        Thu, 16 Mar 2023 18:08:05 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B30FD5A74;
+        Thu, 16 Mar 2023 15:07:45 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id w9so13459187edc.3;
+        Thu, 16 Mar 2023 15:07:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679003525;
+        d=gmail.com; s=20210112; t=1679004463;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RtfiY/9Ts/lxuhuIdPnRLbTi5IvroJVQJHVG9Rqr+Bg=;
-        b=PoXtj1HJ3nrMs24bTw7Qvq7nChyhyYPmubiruUJPAEJ70lvXIjOlzac5InPDksRn7i
-         g0aTSuSv2ZdeQDmUNfAP0ynTLMuNjgD5TA7t7p/zrq6jiiqjkLyrJed7r4QtZGCz773h
-         mHmvNU3eDFVPpiqtKMb224poxmWOdQyoVTEFGcLtmv12HsHobRnt81GCeC1yOpu7LZ0O
-         l9kQuz2RB5jFR3IrBjJIV1yYe86PeTOMu1ffEgQ7MQ+pjCE/3p1AqwQH8kWZDBMU6oQt
-         3kNadT6eMf3Q6rQWqZ5qnjyRNU77QxSgP1cdp/w0otNSQ4KFBfD3EQc45LstN16nNTka
-         IaVA==
+        bh=dmkBwYxMQeUctzjrFldtVoaezANsLHjS7h90Bw7aOb8=;
+        b=OX06J91y0AB0jF4YfP4k34mwZrJxn3FEjT8Bs/YRmhC74kY3uZLq9nXirZCLa0sgnk
+         OMKjp9M0BjTPz5I07oYFKPjCj6i7DgmazoDeKkkPn6a3P4tr6NiyFEq2RHhWhOqnSZUf
+         XE8hW5tZUtgGplONZ/EMug8Sd0Os6zkq4hqZYKDpnYZTXcHRrxgR7ede8UjXmk6fNf9w
+         zE0bPmjHeVkfm5AUJlOJ6CIxmb6MKIZtXh4goJ3rWoBIwdPOKYz3Mc96+LF/KHQ9GMoS
+         XuEzlkBtzI/kTsy4EVMFUFT/7ehTvh/ZmVLE5iXZCNKQ7PeWHQhJt3kFoBs3tMntB/R6
+         r2fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679003525;
+        d=1e100.net; s=20210112; t=1679004463;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RtfiY/9Ts/lxuhuIdPnRLbTi5IvroJVQJHVG9Rqr+Bg=;
-        b=5SvdwXiL0OmZjCsa9SLkIdUFcgHVLAN3YKlJXfRzNjiOFrLFZmbCOs05Z1ckPSBCy4
-         Hw6b8QMD3wMh5XnUltCYvJP0O7AhCVOwRc6talSFrbG8LjbTLv2J2IbP45E2ieDZEZSP
-         Qgj1uGJEUMmgL96gEGNpLRKQBc+d03/eEau6w/Uya6/NXxAUlb821osBBAnzTrZeLAxI
-         +ggO6hmNX5tDUrJ6X6CL1Gz40r4FMuymop4FIjOUIhf0LY58usl1wKZAkKzlt/pj2Rin
-         mZil/kqnxlq2nlyIhJ0dBBaW6euEwW5NXrewEicDwttiKVNGjzHtbsxZclVSfCJzkToD
-         fa1Q==
-X-Gm-Message-State: AO0yUKWoMw1c8cajf77oIjVMZSmCQS7gCZdAjG31MrvfPeB+mOOuU53o
-        b7B5jRsnpxXIKhyOKZR2KWkQ+69LHW8TRSfxVo0=
-X-Google-Smtp-Source: AK7set+JHSJCpQhlouI1fR8tmdBnrXTHcd+1Y5inVf/QAlkKqOBIrzQH16xoTjuF0I2vgt3/7fxuTJfLifCY5KSGxyY=
-X-Received: by 2002:a17:906:bc51:b0:923:6595:a81b with SMTP id
- s17-20020a170906bc5100b009236595a81bmr6185367ejv.5.1679003525011; Thu, 16 Mar
- 2023 14:52:05 -0700 (PDT)
+        bh=dmkBwYxMQeUctzjrFldtVoaezANsLHjS7h90Bw7aOb8=;
+        b=bMDY5rjcUg6OJ8kwIhafj6zFnhsKni8OKR5l5f2FdHLriIHU3U6wuE9Pjr3sU+nMHp
+         5pOHxt4pnrVIznUR+upJ7mF2/cFKJMb0T+xktMTU/gsP2F+/8LunRLgYOccmQQn/h0i0
+         GA7OlrRiGqI8Wf3Y4+LbMpMMucsiuVnv2TtdnxdpwHwjOOs14lDaAsGbZgOQqYhNFuW4
+         6KZlGmFGE86Wf/oJ078org7XO7ea5rYF2/vE8Cs5DRi10ZjHMh/AByAltXWk8Iv2ScLq
+         rwwCLFM+wtsB9w/BUSyIS379GPi8XYbmXPq1c+HCcx8+12uLtTIo01UpB+nSX//A3JPS
+         psxw==
+X-Gm-Message-State: AO0yUKUY/SYwXPuNjujpQxfW6CHMNensJEvgYvaQ+t42zGLtlNyaHt+D
+        sl2FeLV9Bb5/gHcfuSl1Z77R4rzAC7vr4l/7nUs=
+X-Google-Smtp-Source: AK7set9ozrlkiM47WoqWKw6CvAMXBMPI57v2AuYyZMo5AdmbLC12BcKAsk6mAq2CFYYmRW2g2Eyy3+GlPBwvyWk5klY=
+X-Received: by 2002:a17:906:8552:b0:8ab:b606:9728 with SMTP id
+ h18-20020a170906855200b008abb6069728mr6158995ejy.5.1679004463514; Thu, 16 Mar
+ 2023 15:07:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230316170149.4106586-1-jolsa@kernel.org> <ZBNTMZjEoETU9d8N@casper.infradead.org>
- <CAP-5=fVYriALLwF2FU1ZUtLuHndnvPw=3SctVqY6Uwex8JfscA@mail.gmail.com>
-In-Reply-To: <CAP-5=fVYriALLwF2FU1ZUtLuHndnvPw=3SctVqY6Uwex8JfscA@mail.gmail.com>
+References: <20230316170149.4106586-1-jolsa@kernel.org> <20230316170149.4106586-4-jolsa@kernel.org>
+In-Reply-To: <20230316170149.4106586-4-jolsa@kernel.org>
 From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 16 Mar 2023 14:51:52 -0700
-Message-ID: <CAEf4BzYgyGTVv=cDwaW+DBke1uk_aLCg3CB_9W6+9tkS8Nyn_Q@mail.gmail.com>
-Subject: Re: [PATCHv3 bpf-next 0/9] mm/bpf/perf: Store build id in file object
-To:     Ian Rogers <irogers@google.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jiri Olsa <jolsa@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
+Date:   Thu, 16 Mar 2023 15:07:31 -0700
+Message-ID: <CAEf4Bzbj03xyVtTH32HS-eN+Ue6sXA7SzU6rHMO+pbZMBAXTdg@mail.gmail.com>
+Subject: Re: [PATCHv3 bpf-next 3/9] bpf: Use file object build id in stackmap
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
         Hao Luo <haoluo@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -65,9 +63,10 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jiri Olsa <jolsa@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
-        bpf@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Matthew Wilcox <willy@infradead.org>, bpf@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Martin KaFai Lau <kafai@fb.com>,
         Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
         John Fastabend <john.fastabend@gmail.com>,
         KP Singh <kpsingh@chromium.org>,
@@ -87,66 +86,74 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 16, 2023 at 10:50=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
-ote:
+On Thu, Mar 16, 2023 at 10:02=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote=
+:
 >
-> On Thu, Mar 16, 2023 at 10:35=E2=80=AFAM Matthew Wilcox <willy@infradead.=
-org> wrote:
-> >
-> > On Thu, Mar 16, 2023 at 06:01:40PM +0100, Jiri Olsa wrote:
-> > > hi,
-> > > this patchset adds build id object pointer to struct file object.
-> > >
-> > > We have several use cases for build id to be used in BPF programs
-> > > [2][3].
-> >
-> > Yes, you have use cases, but you never answered the question I asked:
-> >
-> > Is this going to be enabled by every distro kernel, or is it for specia=
-l
-> > use-cases where only people doing a very specialised thing who are
-> > willing to build their own kernels will use it?
-> >
-> > Saying "hubble/tetragon" doesn't answer that question.  Maybe it does
-> > to you, but I have no idea what that software is.
-> >
-> > Put it another way: how does this make *MY* life better?  Literally me.
-> > How will it affect my life?
+> Use build id from file object in stackmap if it's available.
 >
-> So at Google we use build IDs for all profiling, I believe Meta is the
-> same but obviously I can't speak for them. For BPF program stack
-
-Yep, Meta is also capturing stack traces with build ID as well, if
-possible. Build IDs help with profiling short-lived processes which
-exit before the profiling session is done and user-space tooling is
-able to collect /proc/<pid>/maps contents (which is what Ian is
-referring to here). But also build ID allows to offload more of the
-expensive stack symbolization process (converting raw memory addresses
-into human readable function+offset+file path+line numbers
-information) to dedicated remote servers, by allowing to cache and
-reuse preprocessed DWARF/ELF information based on build ID.
-
-I believe perf tool is also using build ID, so any tool relying on
-perf capturing full and complete profiling data for system-wide
-performance analysis would benefit as well.
-
-Generally speaking, there is a whole ecosystem built on top of
-assumption that binaries have build ID and profiling tooling is able
-to provide more value if those build IDs are more reliably collected.
-Which ultimately benefits the entire open-source ecosystem by allowing
-people to spot issues (not necessarily just performance, it could be
-correctness issues as well) more reliably, fix them, and benefit every
-user.
-
-> traces, using build ID + offset stack traces is preferable to perf's
-> whole system synthesis of mmap events based on data held in
-> /proc/pid/maps. Individual stack traces are larger, but you avoid the
-> ever growing problem of coming up with some initial virtual memory
-> state that will allow you to identify samples.
+> The file's f_build_id is available (for CONFIG_FILE_BUILD_ID option)
+> when the file is mmap-ed, so it will be available (if present) when
+> used by stackmap.
 >
-> This doesn't answer the question about how this will help you, but I
-> expect over time you will see scalability issues and also want to use
-> tools assuming build IDs are present and cheap to access.
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+
+LGTM.
+
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+>  kernel/bpf/stackmap.c | 24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
 >
-> Thanks,
-> Ian
+> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> index 0f1d8dced933..14d27bd83081 100644
+> --- a/kernel/bpf/stackmap.c
+> +++ b/kernel/bpf/stackmap.c
+> @@ -124,6 +124,28 @@ static struct bpf_map *stack_map_alloc(union bpf_att=
+r *attr)
+>         return ERR_PTR(err);
+>  }
+>
+> +#ifdef CONFIG_FILE_BUILD_ID
+> +static int vma_get_build_id(struct vm_area_struct *vma, unsigned char *b=
+uild_id)
+> +{
+> +       struct build_id *bid;
+> +
+> +       if (!vma->vm_file)
+> +               return -EINVAL;
+> +       bid =3D vma->vm_file->f_build_id;
+> +       if (IS_ERR_OR_NULL(bid))
+> +               return bid ? PTR_ERR(bid) : -ENOENT;
+> +       if (bid->sz > BUILD_ID_SIZE_MAX)
+> +               return -EINVAL;
+> +       memcpy(build_id, bid->data, bid->sz);
+> +       return 0;
+> +}
+> +#else
+> +static int vma_get_build_id(struct vm_area_struct *vma, unsigned char *b=
+uild_id)
+> +{
+> +       return build_id_parse(vma, build_id, NULL);
+> +}
+> +#endif
+> +
+>  static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_=
+offs,
+>                                           u64 *ips, u32 trace_nr, bool us=
+er)
+>  {
+> @@ -156,7 +178,7 @@ static void stack_map_get_build_id_offset(struct bpf_=
+stack_build_id *id_offs,
+>                         goto build_id_valid;
+>                 }
+>                 vma =3D find_vma(current->mm, ips[i]);
+> -               if (!vma || build_id_parse(vma, id_offs[i].build_id, NULL=
+)) {
+> +               if (!vma || vma_get_build_id(vma, id_offs[i].build_id)) {
+>                         /* per entry fall back to ips */
+>                         id_offs[i].status =3D BPF_STACK_BUILD_ID_IP;
+>                         id_offs[i].ip =3D ips[i];
+> --
+> 2.39.2
+>
