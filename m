@@ -2,92 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D53CD6BDAF9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 22:29:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47ADE6BDB22
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 22:52:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229948AbjCPV3S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 17:29:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57020 "EHLO
+        id S230077AbjCPVwJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 17:52:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229784AbjCPV3S (ORCPT
+        with ESMTP id S229758AbjCPVwI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 17:29:18 -0400
+        Thu, 16 Mar 2023 17:52:08 -0400
 Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5827BE503E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 14:28:35 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id ek18so13041917edb.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 14:28:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9466CC30F;
+        Thu, 16 Mar 2023 14:52:06 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id h8so13223714ede.8;
+        Thu, 16 Mar 2023 14:52:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1679002113;
+        d=gmail.com; s=20210112; t=1679003525;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0ZZFvbISuU7Kr5YocwlUzhfQ0l5aMSfz79cHUjUmeKc=;
-        b=RM/DAqsOWAj/zxIueQcKaAT7b/EK2lMTEaKAdjsqua7qiTsxOVylyThfsLzZ1UqU6z
-         LvVHtbXXp4PK7o/Fzp4FJvft0BdWOP5vGIswCIddc5iZNkxRKR248bn49hPmAViJHTSA
-         z5SQqSMWpzyrMwQC1NlINfevbnFR3oqMBew7UicRBwWKpnfaxew4EKZykteMCqYM7Jh6
-         51/+FdPFciJS9F8dKQa7n5TPpZmOouo9qZSdFw2LNK4PQVLn9RyGEfpWkxh2Pwqcz8NM
-         9wvbX7b8VsgYTn6KY780z5lVoOWrNxDA98aHlEA6804XQdbGgBHWgkwdy+LuwV1XLogE
-         VwJw==
+        bh=RtfiY/9Ts/lxuhuIdPnRLbTi5IvroJVQJHVG9Rqr+Bg=;
+        b=PoXtj1HJ3nrMs24bTw7Qvq7nChyhyYPmubiruUJPAEJ70lvXIjOlzac5InPDksRn7i
+         g0aTSuSv2ZdeQDmUNfAP0ynTLMuNjgD5TA7t7p/zrq6jiiqjkLyrJed7r4QtZGCz773h
+         mHmvNU3eDFVPpiqtKMb224poxmWOdQyoVTEFGcLtmv12HsHobRnt81GCeC1yOpu7LZ0O
+         l9kQuz2RB5jFR3IrBjJIV1yYe86PeTOMu1ffEgQ7MQ+pjCE/3p1AqwQH8kWZDBMU6oQt
+         3kNadT6eMf3Q6rQWqZ5qnjyRNU77QxSgP1cdp/w0otNSQ4KFBfD3EQc45LstN16nNTka
+         IaVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679002113;
+        d=1e100.net; s=20210112; t=1679003525;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0ZZFvbISuU7Kr5YocwlUzhfQ0l5aMSfz79cHUjUmeKc=;
-        b=0ALxNJ3nIDS1i0mfUTXxgo/m17k92/o9q3iz1PEwLzSD4Ta2Aq4MatwePFKdNq1zzt
-         V4za9LZ1EkykH7Nxk35WqUUDQOvMvp/Ud+F5fwHJCue/EZ0a1PrY8S+zMM+oQqjzsfJh
-         YBCwThlJJFIv+2bAdSWATkBX2HcdQqjTRd9eGn/KwpkN0zo3++Sz2f2Gd9raEYYfEgAb
-         A2Y3bJA+9tbUViGRpE+RFGhkewM3aTDCAkuRxjq4kZSSBq7UmuSjYomm6hLnDNfw5Dsq
-         Kb/Oiknzbni/B8Jc5UoNkfp0kU8IYa1RwqkGn3bG3inR5kgOMshXai+r9EjRmPLgwET3
-         BQlw==
-X-Gm-Message-State: AO0yUKVE4BlC7zVjlgujcZpWGWRJjR1h9HUf6UrRtFAEnIeo8hqh/XqW
-        HsNcRHDrRf/yRvcLPMxkq/SZOQDwIpDzK+WrWeje0Q==
-X-Google-Smtp-Source: AK7set+1IXe6CyS+omuMTDBc+TM0ZSQ18QgINWOoxCmC8BVZSzV9r2xMBN928A6LqGe6I1PNdQEZl3IFCy5g7h9iilU=
-X-Received: by 2002:a17:907:6e9f:b0:920:3bf5:7347 with SMTP id
- sh31-20020a1709076e9f00b009203bf57347mr476944ejc.0.1679002113272; Thu, 16 Mar
- 2023 14:28:33 -0700 (PDT)
+        bh=RtfiY/9Ts/lxuhuIdPnRLbTi5IvroJVQJHVG9Rqr+Bg=;
+        b=5SvdwXiL0OmZjCsa9SLkIdUFcgHVLAN3YKlJXfRzNjiOFrLFZmbCOs05Z1ckPSBCy4
+         Hw6b8QMD3wMh5XnUltCYvJP0O7AhCVOwRc6talSFrbG8LjbTLv2J2IbP45E2ieDZEZSP
+         Qgj1uGJEUMmgL96gEGNpLRKQBc+d03/eEau6w/Uya6/NXxAUlb821osBBAnzTrZeLAxI
+         +ggO6hmNX5tDUrJ6X6CL1Gz40r4FMuymop4FIjOUIhf0LY58usl1wKZAkKzlt/pj2Rin
+         mZil/kqnxlq2nlyIhJ0dBBaW6euEwW5NXrewEicDwttiKVNGjzHtbsxZclVSfCJzkToD
+         fa1Q==
+X-Gm-Message-State: AO0yUKWoMw1c8cajf77oIjVMZSmCQS7gCZdAjG31MrvfPeB+mOOuU53o
+        b7B5jRsnpxXIKhyOKZR2KWkQ+69LHW8TRSfxVo0=
+X-Google-Smtp-Source: AK7set+JHSJCpQhlouI1fR8tmdBnrXTHcd+1Y5inVf/QAlkKqOBIrzQH16xoTjuF0I2vgt3/7fxuTJfLifCY5KSGxyY=
+X-Received: by 2002:a17:906:bc51:b0:923:6595:a81b with SMTP id
+ s17-20020a170906bc5100b009236595a81bmr6185367ejv.5.1679003525011; Thu, 16 Mar
+ 2023 14:52:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230309135718.1490461-1-usama.anjum@collabora.com>
- <20230309135718.1490461-5-usama.anjum@collabora.com> <CABb0KFGU-jn4pCgmTK2zw0J-1-AVert4JsWF2CxgZ7LxckmWCA@mail.gmail.com>
- <3c8d9ea0-1382-be0c-8dd2-d490eedd3b55@collabora.com>
-In-Reply-To: <3c8d9ea0-1382-be0c-8dd2-d490eedd3b55@collabora.com>
-From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-Date:   Thu, 16 Mar 2023 22:28:21 +0100
-Message-ID: <CABb0KFGru9xFCxyVHBcE+dkXe58=5wiCbvZGSWhuTfr4gn=MRQ@mail.gmail.com>
-Subject: Re: [PATCH v11 4/7] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+References: <20230316170149.4106586-1-jolsa@kernel.org> <ZBNTMZjEoETU9d8N@casper.infradead.org>
+ <CAP-5=fVYriALLwF2FU1ZUtLuHndnvPw=3SctVqY6Uwex8JfscA@mail.gmail.com>
+In-Reply-To: <CAP-5=fVYriALLwF2FU1ZUtLuHndnvPw=3SctVqY6Uwex8JfscA@mail.gmail.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Thu, 16 Mar 2023 14:51:52 -0700
+Message-ID: <CAEf4BzYgyGTVv=cDwaW+DBke1uk_aLCg3CB_9W6+9tkS8Nyn_Q@mail.gmail.com>
+Subject: Re: [PATCHv3 bpf-next 0/9] mm/bpf/perf: Store build id in file object
+To:     Ian Rogers <irogers@google.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jiri Olsa <jolsa@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+        linux-perf-users@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Namhyung Kim <namhyung@gmail.com>,
+        Dave Chinner <david@fromorbit.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -95,285 +87,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 16 Mar 2023 at 18:53, Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
+On Thu, Mar 16, 2023 at 10:50=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
 >
-> Hi,
->
-> Thank you so much for reviewing.
->
-> On 3/13/23 9:02=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
-> > On Thu, 9 Mar 2023 at 14:58, Muhammad Usama Anjum
-> > <usama.anjum@collabora.com> wrote:
-[...]
-> >> --- a/fs/proc/task_mmu.c
-> >> +++ b/fs/proc/task_mmu.c
-[...]
-> >> +static int pagemap_scan_output(bool wt, bool file, bool pres, bool sw=
-ap,
-> >> +                              struct pagemap_scan_private *p,
-> >> +                              unsigned long addr, unsigned int n_page=
-s)
-> >> +{
-> >> +       unsigned long bitmap =3D PM_SCAN_BITMAP(wt, file, pres, swap);
-> >> +       struct page_region *cur =3D &p->cur;
-> >> +       bool cpy =3D true;
-> >> +
-> >> +       if (p->max_pages && (p->found_pages =3D=3D p->max_pages))
-> >> +               return -ENOSPC;
-> >> +
-> >> +       if (!n_pages)
-> >> +               return -EINVAL;
-> >> +
-> >> +       if (p->required_mask)
-> >> +               cpy =3D ((p->required_mask & bitmap) =3D=3D p->require=
-d_mask);
-> >> +       if (cpy && p->anyof_mask)
-> >> +               cpy =3D (p->anyof_mask & bitmap);
-> >> +       if (cpy && p->excluded_mask)
-> >> +               cpy =3D !(p->excluded_mask & bitmap);
+> On Thu, Mar 16, 2023 at 10:35=E2=80=AFAM Matthew Wilcox <willy@infradead.=
+org> wrote:
 > >
-> > Since the rest of the code is executed only when `cpy` is true, this
-> > could just return early for easier understanding.
-> Hmm... I'll do the following:
->         if (!cpy || !bitmap)
->                 return 0;
-> > BTW, some of the tests are redundant. Eg: if required_mask =3D=3D 0, th=
-en
-> > `required_mask & x =3D=3D required_mask` will always hold. Same for
-> > `excluded_mask & x =3D=3D 0`.
-> Correct. This is why I'm checking if required_mask is set and then
-> comparing bitmap with it. required_mask may be 0 if not set. This if will
-> ignore the subsequent check.
->
->         if (p->required_mask)
->                 cpy =3D ((p->required_mask & bitmap) =3D=3D p->required_m=
-ask);
->
-> I don't see any redundancy here. Please let me know otherwise?
-[...]
-> >> +       if (cpy && bitmap) {
+> > On Thu, Mar 16, 2023 at 06:01:40PM +0100, Jiri Olsa wrote:
+> > > hi,
+> > > this patchset adds build id object pointer to struct file object.
+> > >
+> > > We have several use cases for build id to be used in BPF programs
+> > > [2][3].
 > >
-> > Assuming early returns on `!cpy` are done earlier:
+> > Yes, you have use cases, but you never answered the question I asked:
 > >
-> > if (!bitmap)
-> >   return 0;
-> I've posted condition above which would better suit here.
-[...]
-
-Since the `cpy` condition is updated and passed to each new branch
-(IOW: after setting cpy =3D 0 for whatever reason all the further code
-is skipped) you can drop the variable and do early returns everywhere.
-E.g.:
-
-if ((bitmap & p->required_mask) !=3D p->required_mask)
-  return 0;
-if (p->anyof_mask && !(bitmap & p->anyof_mask))
-  return 0;
-if (bitmap & p->excluded_mask)
-  return 0;
-if (!bitmap)
-  return 0;
-
-Also you can take the "special" effect of masking with zero to be
-always zero (and in C - false) to avoid testing for an empty mask
-separately in most cases.
-
-> Just for my knowledge, what does "Nit" signify if a comment is marked wit=
-h it?
-
-A low priority / cosmetic item that you might consider ignoring if a
-fix is too expensive or controversial.
-
->> +               if ((cur->len) && (cur->bitmap =3D=3D bitmap) &&
->> +                   (cur->start + cur->len * PAGE_SIZE =3D=3D addr)) {
->
-> I'd recommend removing the extra parentheses as they make the code
-> less readable for me (too many parentheses to match visually).
-I'll remove parenthesis.
-
-[...]
->> The `cur->len` test seems redundant: is it possible to have
->> `cur->start =3D=3D addr` in that case (I guess it would have to get
->> `n_pages =3D=3D 0` in an earlier invocation)?
-> No, both wouldn't work. cur->len =3D=3D 0 means that it has only garbage.=
- It is
-> essential to check the validity from cur->len before performing other
-> checks. Also cur->start can never be equal to addr as we are walking over
-> page addressing in serial manner. We want to see here if the current
-> address matches the previous data by finding the ending address of last
-> stored data (cur->start + cur->len * PAGE_SIZE).
-
-If cur->len =3D=3D 0, then it doesn't matter if it gets merged or not - it
-can be filtered out during the flush (see below).
-
-[...]
-> >> +               } else if ((!p->vec_index) ||
-> >> +                          ((p->vec_index + 1) < p->vec_len)) {
-> >
-> > Can you explain this test? Why not just `p->vec_index < p->vec_len`? Or=
- better:
-> >
-> > if (vec_index >=3D p->vec_len)
-> >     return -ENOSPC;
->
-> No, it'll not work. Lets leave it as it is. :)
->
-> It has gotten somewhat complex, but I don't have any other way to make it
-> simpler which works. First note the following points:
-> 1) We walk over 512 page or 1 thp at a time to not over allocate memory i=
-n
-> kernel (p->vec).
-> 2) We also want to merge the consecutive pages with the same flags into o=
-ne
-> struct page_region. p->vec of current walk may merge with next walk. So w=
-e
-> cannot write to user memory until we find the results of the next walk.
->
-> So most recent data is put into p->cur. When non-intersecting or mergeabl=
-e
-> data is found, we move p->cur to p->vec[p->index] inside the page walk.
-> After the page walk, p->vec[0 to p->index] is moved to arg->vec. After al=
+> > Is this going to be enabled by every distro kernel, or is it for specia=
 l
-> the walks are over. We move the p->cur to arg->vec. It completes the data
-> transfer to user buffer.
-[...]
-> I'm so sorry that it has gotten this much complex. It was way simpler whe=
-n
-> we were walking over all the memory in one go. But then we needed an
-> unbounded memory from the kernel which we don't want.
-[...]
-
-I've gone through and hopefully understood the code. I'm not sure this
-needs to be so complicated: when traversing a single PMD you can
-always copy p->cur to p->vec[p->vec_index++] because you can have at
-most pages_per_PMD non-merges (in the worst case the last page always
-is left in p->cur and whole p->vec is used). After each PMD p->vec
-needs a flush if p->vec_index > 0, skipping the dummy entry at front
-(len =3D=3D 0; if present). (This is mostly how it is implemented now, but
-I propose to remove the "overflow" check and do the starting guard
-removal only every PMD.)
-
-BTW, the pagemap_scan_deposit() got me a bit confused: it seems that
-it is just a copy of the p->vec flush to userspace. Please either use
-it for both p->vec and p->cur flushing or inline.
-
-BTW#2, I think the ENOSPC return in pagemap_scan_output() should
-happen later - only if the pages would match and that caused the count
-to exceed the limit. For THP n_pages should be truncated to the limit
-(and ENOSPC returned right away) only after the pages were verified to
-match.
-
-[...]
-> >> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
-> >> +                                 unsigned long end, struct mm_walk *w=
-alk)
-> >> +{
-> >> +       struct pagemap_scan_private *p =3D walk->private;
-> >> +       struct vm_area_struct *vma =3D walk->vma;
-> >> +       bool is_writ, is_file, is_pres, is_swap;
-> >> +       unsigned long addr =3D end;
-> >> +       spinlock_t *ptl;
-> >> +       int ret =3D 0;
-> >> +       pte_t *pte;
-> >> +
-> >> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> > use-cases where only people doing a very specialised thing who are
+> > willing to build their own kernels will use it?
 > >
-> > Is the `#ifdef` needed? `pmd_trans_huge_lock()` will always return
-> > NULL if transparent hugepages are not compiled in. OTOH I see
-> > BUILD_BUG() is possible in HPAGE_SIZE definition (irrelevant in this
-> > case), so that would need to be worked around first.
-> I'd got the build error [1]. So I'd added these. I've tested it again wit=
-h
-> the same config. We don't need these #ifdef now. I'll remove these.
-
-I mean that there are cases like [1] that actually need the #ifdef at
-least to wrap HPAGE_SIZE usage. But maybe just this constant can be
-wrapped so that we keep the code always compile-tested?
-
-[1] https://elixir.bootlin.com/linux/v6.3-rc2/source/arch/mips/include/asm/=
-page.h#L66
-
-[...]
-> >> +       if (!arg->required_mask && !arg->anyof_mask &&
-> >> +           !arg->excluded_mask)
-> >> +               return false;
+> > Saying "hubble/tetragon" doesn't answer that question.  Maybe it does
+> > to you, but I have no idea what that software is.
 > >
-> > Is there an assumption in the code that those checks are needed? I'd
-> > expect that no selection criteria makes a valid page set?
-> In my view, selection criterion must be specified for the ioctl to work. =
-If
-> there is no criterio, user should go and read pagemap file directly. So t=
-he
-> assumption is that at least one selection criterion must be specified.
+> > Put it another way: how does this make *MY* life better?  Literally me.
+> > How will it affect my life?
+>
+> So at Google we use build IDs for all profiling, I believe Meta is the
+> same but obviously I can't speak for them. For BPF program stack
 
-Yes. I'm not sure we need to prevent multiple ways of doing the same
-thing. But doesn't pagemap reading lack the range aggregation feature?
+Yep, Meta is also capturing stack traces with build ID as well, if
+possible. Build IDs help with profiling short-lived processes which
+exit before the profiling session is done and user-space tooling is
+able to collect /proc/<pid>/maps contents (which is what Ian is
+referring to here). But also build ID allows to offload more of the
+expensive stack symbolization process (converting raw memory addresses
+into human readable function+offset+file path+line numbers
+information) to dedicated remote servers, by allowing to cache and
+reuse preprocessed DWARF/ELF information based on build ID.
 
-[...]
-> >> +       if (!access_ok((void __user *)vec,
-> >> +                      arg->vec_len * sizeof(struct page_region)))
-> >> +               return false;
-> >
-> > Is there a provision that userspace threads are all blocked from
-> > manipulating mmaps during this ioctl()? If not, this is a TOCTOU bug
-> > and the writes should be checked each time as another userspace thread
-> > could remap the memory while the ioctl() is working.
-> mincore() syscall is doing in the same way. It checks the validity in the
-> start only. What provision should I add? Isn't it obvious that the user
-> should not remap such memory?
+I believe perf tool is also using build ID, so any tool relying on
+perf capturing full and complete profiling data for system-wide
+performance analysis would benefit as well.
 
-On the second look, I think the code already checks that while doing
-copy_to_user(), so this check is redundant and can be removed.
+Generally speaking, there is a whole ecosystem built on top of
+assumption that binaries have build ID and profiling tooling is able
+to provide more value if those build IDs are more reliably collected.
+Which ultimately benefits the entire open-source ecosystem by allowing
+people to spot issues (not necessarily just performance, it could be
+correctness issues as well) more reliably, fix them, and benefit every
+user.
 
-> >
-> >> +       if (!IS_ALIGNED(start, PAGE_SIZE))
-> >> +               return false;
-> >> +       if (!access_ok((void __user *)start, arg->len))
-> >> +               return false;
-> >
-> > This I guess wants to check if the range to be scanned is mapped -
-> > but isn't this what the ioctl() should do during the scan? (But, also
-> > see above.)
-> No, start represents the memory which the user wants to watch. User must
-> allocate this memory first and then pass the address to this ioctl to fin=
-d
-> out the flags per page.
-
-From:
-+ * struct pm_scan_arg - Pagemap ioctl argument
-+ * @size:              Size of the structure
-+ * @flags:             Flags for the IOCTL
-+ * @start:             Starting address of the region
-+ * @len:               Length of the region (All the pages in this
-length are included)
-...
-
-I'd expect the `start` field to just be a virtual address to start
-scanning from. Does it need to be mapped? For CRIU usecase I'd start
-with "start =3D 0" to find out all mappings, but 0 is (always) not
-mapped. Is this supposed to only work on already discovered page
-ranges? Anyway, I'd expect the code should be tolerant of another
-thread changing the mappings while this ioctl() is walking the page
-tables - is it so? If yes, then this check serves at most as an
-optimization used only for an invalid call.
-
-> >>  const struct file_operations proc_pagemap_operations =3D {
-> >>         .llseek         =3D mem_lseek, /* borrow this */
-> >>         .read           =3D pagemap_read,
-> >>         .open           =3D pagemap_open,
-> >>         .release        =3D pagemap_release,
-> >> +       .unlocked_ioctl =3D pagemap_scan_ioctl,
-> >> +       .compat_ioctl   =3D pagemap_scan_ioctl,
-> >
-> > Is this correct? Would the code need a different userspace pointer
-> > handling for 32-bit userspace on 64-bit kernel?
-> Yeah, it is needed for 32-bit application to run on 64-bit kernel.
-
-I mean is using the same function for both entry points correct? Don't
-the pointers to userspace memory (e.g. arg->vec) need to be mapped for
-32-bit process?
-
-Best Regards
-
-Micha=C5=82 Miros=C5=82aw
+> traces, using build ID + offset stack traces is preferable to perf's
+> whole system synthesis of mmap events based on data held in
+> /proc/pid/maps. Individual stack traces are larger, but you avoid the
+> ever growing problem of coming up with some initial virtual memory
+> state that will allow you to identify samples.
+>
+> This doesn't answer the question about how this will help you, but I
+> expect over time you will see scalability issues and also want to use
+> tools assuming build IDs are present and cheap to access.
+>
+> Thanks,
+> Ian
