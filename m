@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 62B5D6BD697
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 18:02:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 794006BD69A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 18:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229966AbjCPRCT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 13:02:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32860 "EHLO
+        id S230164AbjCPRCd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 13:02:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229842AbjCPRCQ (ORCPT
+        with ESMTP id S230076AbjCPRCb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 13:02:16 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCF9E6DB2;
-        Thu, 16 Mar 2023 10:02:12 -0700 (PDT)
+        Thu, 16 Mar 2023 13:02:31 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE568E6DA8;
+        Thu, 16 Mar 2023 10:02:24 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AAFCFB820AD;
-        Thu, 16 Mar 2023 17:02:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94DD7C433EF;
-        Thu, 16 Mar 2023 17:02:04 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7F41CB8227C;
+        Thu, 16 Mar 2023 17:02:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A54DC433EF;
+        Thu, 16 Mar 2023 17:02:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678986129;
-        bh=rlnHUcArwM6SIvbHJnlNQfqpKxk+RvN2l+D5fdKLMa8=;
+        s=k20201202; t=1678986142;
+        bh=wPkey4BWxoSwuVm0/JDcphsHh4pWF/uWOFmXxlWLkHg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mko2AyIGWCfuAb/notSpksldx+wnHyuJJ4/SEak6IfxwljXnE+r8/+kMT7THTFZQ5
-         Wncxf77aMXc3FbAfZfDb08GQs5sdSXxJP/oxSMw5mFt26kNKx9/5wT/iIghXvWGrPt
-         p/shHWVxwdSZ8CaChz7D04gE4GZtpXAlZNM9LhqY6aE2MbZAGy6rv+Yt6siwcFcTvz
-         fMFLw05Y8JJ7ka5JyaIx/wptVp0ilYP5XRMB4WqQlNarQsTWdfLNtGysPEqe5mNwBC
-         eGb6hOm37AxCLhqGwPJ7Uf6WZevagTDZ0Lmk5+qQ9EwJwNKT5AqiCYBFavWZH5OdJw
-         czU9fH4Y2iLaw==
+        b=SNv/7OPwD0I0s7lhX5kbFYwqOHQ6BEeVp42wO+mX9PwyPyOWc9aJP8tpSf8pTSmc7
+         aJUi7ueFyPgrnzibcjii0GIA0zBfQ+oVxp0KrZ6owWC8EKweBWjgHUvuX4bvUsGb7K
+         jRQt6UIxSQ6hmnmM4MFepJHDyU9d2by956YrhOlpGLKvW0kO976LhWUg9lFcytBy2I
+         cOPXJzHAAG6XfhpiPaipKG4qKVWkQ9gVWf3V6V9dmCwMAjG+X0ldhsn8+xIPvtS/NU
+         bs9dvCYweuoj4hon4v1BsbRdkf1cx44ZWcTyojzhvrOzQoSNM8qF+wi+IS6ht9pVT0
+         jD7VHR0ypnIDw==
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -52,9 +52,9 @@ Cc:     bpf@vger.kernel.org, linux-mm@kvack.org,
         Daniel Borkmann <daniel@iogearbox.net>,
         Namhyung Kim <namhyung@gmail.com>,
         Dave Chinner <david@fromorbit.com>
-Subject: [PATCHv3 bpf-next 1/9] mm: Store build id in file object
-Date:   Thu, 16 Mar 2023 18:01:41 +0100
-Message-Id: <20230316170149.4106586-2-jolsa@kernel.org>
+Subject: [PATCHv3 bpf-next 2/9] perf: Use file object build id in perf_event_mmap_event
+Date:   Thu, 16 Mar 2023 18:01:42 +0100
+Message-Id: <20230316170149.4106586-3-jolsa@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230316170149.4106586-1-jolsa@kernel.org>
 References: <20230316170149.4106586-1-jolsa@kernel.org>
@@ -69,243 +69,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Storing build id in file object for elf executable with build
-id defined. The build id is stored when file is mmaped.
+Use build id from file object when available for perf's MMAP2 event
+build id data.
 
-The build id object assignment to the file is locked with existing
-file->f_mapping semaphore.
-
-The f_build_id pointer points either build id object or carries
-the error the build id retrieval failed on.
-
-It's hidden behind new config option CONFIG_FILE_BUILD_ID.
+The file's f_build_id is available (for CONFIG_FILE_BUILD_ID option)
+when the file is mmap-ed and before the perf's callback is executed,
+so we can use it, instead of reading it again.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- fs/file_table.c         |  3 +++
- include/linux/buildid.h | 17 +++++++++++++++++
- include/linux/fs.h      |  7 +++++++
- lib/buildid.c           | 42 +++++++++++++++++++++++++++++++++++++++++
- mm/Kconfig              |  9 +++++++++
- mm/mmap.c               | 18 ++++++++++++++++++
- 6 files changed, 96 insertions(+)
+ kernel/events/core.c | 43 +++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 39 insertions(+), 4 deletions(-)
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 372653b92617..d72f72503268 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -29,6 +29,7 @@
- #include <linux/ima.h>
- #include <linux/swap.h>
- #include <linux/kmemleak.h>
-+#include <linux/buildid.h>
- 
- #include <linux/atomic.h>
- 
-@@ -48,6 +49,7 @@ static void file_free_rcu(struct rcu_head *head)
- {
- 	struct file *f = container_of(head, struct file, f_rcuhead);
- 
-+	file_build_id_free(f);
- 	put_cred(f->f_cred);
- 	kmem_cache_free(filp_cachep, f);
- }
-@@ -413,6 +415,7 @@ void __init files_init(void)
- 	filp_cachep = kmem_cache_create("filp", sizeof(struct file), 0,
- 			SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT, NULL);
- 	percpu_counter_init(&nr_files, 0, GFP_KERNEL);
-+	build_id_init();
- }
- 
- /*
-diff --git a/include/linux/buildid.h b/include/linux/buildid.h
-index 3b7a0ff4642f..b8b2e00420d6 100644
---- a/include/linux/buildid.h
-+++ b/include/linux/buildid.h
-@@ -3,9 +3,15 @@
- #define _LINUX_BUILDID_H
- 
- #include <linux/mm_types.h>
-+#include <linux/slab.h>
- 
- #define BUILD_ID_SIZE_MAX 20
- 
-+struct build_id {
-+	u32 sz;
-+	char data[BUILD_ID_SIZE_MAX];
-+};
-+
- int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
- 		   __u32 *size);
- int build_id_parse_buf(const void *buf, unsigned char *build_id, u32 buf_size);
-@@ -17,4 +23,15 @@ void init_vmlinux_build_id(void);
- static inline void init_vmlinux_build_id(void) { }
- #endif
- 
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index f79fd8b87f75..3a5398dda6f6 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8527,6 +8527,9 @@ struct perf_mmap_event {
+ 	u32			prot, flags;
+ 	u8			build_id[BUILD_ID_SIZE_MAX];
+ 	u32			build_id_size;
 +#ifdef CONFIG_FILE_BUILD_ID
-+void __init build_id_init(void);
-+void build_id_free(struct build_id *bid);
-+void file_build_id_free(struct file *f);
-+void vma_read_build_id(struct vm_area_struct *vma, struct build_id **bidp);
-+#else
-+static inline void __init build_id_init(void) { }
-+static inline void build_id_free(struct build_id *bid) { }
-+static inline void file_build_id_free(struct file *f) { }
-+#endif /* CONFIG_FILE_BUILD_ID */
-+
- #endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c85916e9f7db..ce03fd965cdb 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -977,6 +977,13 @@ struct file {
- 	struct address_space	*f_mapping;
- 	errseq_t		f_wb_err;
- 	errseq_t		f_sb_err; /* for syncfs */
-+#ifdef CONFIG_FILE_BUILD_ID
-+	/*
-+	 * Initialized when the file is mmaped (mmap_region),
-+	 * guarded by f_mapping lock.
-+	 */
 +	struct build_id		*f_build_id;
 +#endif
- } __randomize_layout
-   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
  
-diff --git a/lib/buildid.c b/lib/buildid.c
-index dfc62625cae4..04181c0b7c21 100644
---- a/lib/buildid.c
-+++ b/lib/buildid.c
-@@ -5,6 +5,7 @@
- #include <linux/elf.h>
- #include <linux/kernel.h>
- #include <linux/pagemap.h>
-+#include <linux/slab.h>
- 
- #define BUILD_ID 3
- 
-@@ -189,3 +190,44 @@ void __init init_vmlinux_build_id(void)
- 	build_id_parse_buf(&__start_notes, vmlinux_build_id, size);
- }
- #endif
-+
-+#ifdef CONFIG_FILE_BUILD_ID
-+
-+/* SLAB cache for build_id structures */
-+static struct kmem_cache *build_id_cachep;
-+
-+void vma_read_build_id(struct vm_area_struct *vma, struct build_id **bidp)
-+{
-+	struct build_id *bid = ERR_PTR(-ENOMEM);
-+	int err;
-+
-+	bid = kmem_cache_alloc(build_id_cachep, GFP_KERNEL);
-+	if (!bid)
-+		goto out;
-+	err = build_id_parse(vma, bid->data, &bid->sz);
-+	if (err) {
-+		build_id_free(bid);
-+		bid = ERR_PTR(err);
-+	}
-+out:
-+	*bidp = bid;
-+}
-+
-+void file_build_id_free(struct file *f)
-+{
-+	build_id_free(f->f_build_id);
-+}
-+
-+void build_id_free(struct build_id *bid)
-+{
-+	if (IS_ERR_OR_NULL(bid))
-+		return;
-+	kmem_cache_free(build_id_cachep, bid);
-+}
-+
-+void __init build_id_init(void)
-+{
-+	build_id_cachep = kmem_cache_create("build_id", sizeof(struct build_id), 0,
-+				SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT, NULL);
-+}
-+#endif /* CONFIG_FILE_BUILD_ID */
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 4751031f3f05..5e9f48962703 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1202,6 +1202,15 @@ config LRU_GEN_STATS
- 	  This option has a per-memcg and per-node memory overhead.
- # }
- 
-+config FILE_BUILD_ID
-+	bool "Store build id in file object"
-+	default n
-+	help
-+	  Store build id in file object for elf executable with build id
-+	  defined. The build id is stored when file is mmaped.
-+
-+	  It's typically used by eBPF programs and perf subsystem.
-+
- source "mm/damon/Kconfig"
- 
- endmenu
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 20f21f0949dd..1c14e8c84d3a 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2480,6 +2480,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	pgoff_t vm_pgoff;
- 	int error;
- 	VMA_ITERATOR(vmi, mm, addr);
-+	struct build_id *bid = NULL;
- 
- 	/* Check against address space limit. */
- 	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT)) {
-@@ -2575,6 +2576,10 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 		if (error)
- 			goto unmap_and_free_vma;
+ 	struct {
+ 		struct perf_event_header	header;
+@@ -8539,6 +8542,38 @@ struct perf_mmap_event {
+ 	} event_id;
+ };
  
 +#ifdef CONFIG_FILE_BUILD_ID
-+		if (vma->vm_flags & VM_EXEC && !file->f_build_id)
-+			vma_read_build_id(vma, &bid);
++static void build_id_read(struct perf_mmap_event *mmap_event)
++{
++	struct vm_area_struct *vma = mmap_event->vma;
++
++	mmap_event->f_build_id = vma->vm_file ? vma->vm_file->f_build_id : NULL;
++}
++
++static bool has_build_id(struct perf_mmap_event *mmap_event)
++{
++	return !IS_ERR_OR_NULL(mmap_event->f_build_id);
++}
++
++#define build_id_data mmap_event->f_build_id->data
++#define build_id_size mmap_event->f_build_id->sz
++#else
++static void build_id_read(struct perf_mmap_event *mmap_event)
++{
++	struct vm_area_struct *vma = mmap_event->vma;
++
++	build_id_parse(vma, mmap_event->build_id, &mmap_event->build_id_size);
++}
++
++static bool has_build_id(struct perf_mmap_event *mmap_event)
++{
++	return mmap_event->build_id_size;
++}
++
++#define build_id_data mmap_event->build_id
++#define build_id_size mmap_event->build_id_size
 +#endif
- 		/*
- 		 * Expansion is handled above, merging is handled below.
- 		 * Drivers should not alter the address of the VMA.
-@@ -2647,6 +2652,12 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 		if (vma->vm_flags & VM_SHARED)
- 			mapping_allow_writable(vma->vm_file->f_mapping);
- 
-+#ifdef CONFIG_FILE_BUILD_ID
-+		if (bid && !file->f_build_id) {
-+			file->f_build_id = bid;
-+			bid = NULL;
-+		}
-+#endif
- 		flush_dcache_mmap_lock(vma->vm_file->f_mapping);
- 		vma_interval_tree_insert(vma, &vma->vm_file->f_mapping->i_mmap);
- 		flush_dcache_mmap_unlock(vma->vm_file->f_mapping);
-@@ -2667,6 +2678,12 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- expanded:
- 	perf_event_mmap(vma);
- 
-+	/*
-+	 * File can already have f_build_id assigned, so we need to release
-+	 * the build id we just read and did not assign.
-+	 */
-+	build_id_free(bid);
 +
- 	vm_stat_account(mm, vm_flags, len >> PAGE_SHIFT);
- 	if (vm_flags & VM_LOCKED) {
- 		if ((vm_flags & VM_SPECIAL) || vma_is_dax(vma) ||
-@@ -2711,6 +2728,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 		mapping_unmap_writable(file->f_mapping);
- free_vma:
- 	vm_area_free(vma);
-+	build_id_free(bid);
- unacct_error:
- 	if (charged)
- 		vm_unacct_memory(charged);
+ static int perf_event_mmap_match(struct perf_event *event,
+ 				 void *data)
+ {
+@@ -8583,7 +8618,7 @@ static void perf_event_mmap_output(struct perf_event *event,
+ 	mmap_event->event_id.pid = perf_event_pid(event, current);
+ 	mmap_event->event_id.tid = perf_event_tid(event, current);
+ 
+-	use_build_id = event->attr.build_id && mmap_event->build_id_size;
++	use_build_id = event->attr.build_id && has_build_id(mmap_event);
+ 
+ 	if (event->attr.mmap2 && use_build_id)
+ 		mmap_event->event_id.header.misc |= PERF_RECORD_MISC_MMAP_BUILD_ID;
+@@ -8592,10 +8627,10 @@ static void perf_event_mmap_output(struct perf_event *event,
+ 
+ 	if (event->attr.mmap2) {
+ 		if (use_build_id) {
+-			u8 size[4] = { (u8) mmap_event->build_id_size, 0, 0, 0 };
++			u8 size[4] = { (u8) build_id_size, 0, 0, 0 };
+ 
+ 			__output_copy(&handle, size, 4);
+-			__output_copy(&handle, mmap_event->build_id, BUILD_ID_SIZE_MAX);
++			__output_copy(&handle, build_id_data, BUILD_ID_SIZE_MAX);
+ 		} else {
+ 			perf_output_put(&handle, mmap_event->maj);
+ 			perf_output_put(&handle, mmap_event->min);
+@@ -8727,7 +8762,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
+ 	mmap_event->event_id.header.size = sizeof(mmap_event->event_id) + size;
+ 
+ 	if (atomic_read(&nr_build_id_events))
+-		build_id_parse(vma, mmap_event->build_id, &mmap_event->build_id_size);
++		build_id_read(mmap_event);
+ 
+ 	perf_iterate_sb(perf_event_mmap_output,
+ 		       mmap_event,
 -- 
 2.39.2
 
