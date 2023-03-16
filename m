@@ -2,77 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABB5A6BD7CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 19:07:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 740526BD839
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 19:37:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230421AbjCPSHt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 14:07:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53382 "EHLO
+        id S230196AbjCPShF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 14:37:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230416AbjCPSHr (ORCPT
+        with ESMTP id S229754AbjCPShE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 14:07:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7CAA7614F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 11:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678990018;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=z72FvUn0C+zfgOKSCB7WUz6jlvrWtPw83T7jP3vhoiw=;
-        b=BYRDiBJ9ZO8vTjB8+VSWevOeyLwxYNKCO0nF1HbRDz35JtgHLAW2HTBzKE3ZAqT2uoMoGq
-        dx1byxgEcv9odeiUT3UDb+nQAZxJvR2MfpXAPP7Ag3g63a35R6vpEtaXwbGOkr7nR6LojB
-        B5qqs9zj1GXdx1jD/MJ5TKzp8W1bjZA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-383-2akiADSaMgOJWrCm9Xiyrw-1; Thu, 16 Mar 2023 14:06:54 -0400
-X-MC-Unique: 2akiADSaMgOJWrCm9Xiyrw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 80B5D101A54F;
-        Thu, 16 Mar 2023 18:06:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 56F502166B29;
-        Thu, 16 Mar 2023 18:06:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <8F8B62FD-0F16-4383-BB34-97E850DAA7AF@hammerspace.com>
-References: <8F8B62FD-0F16-4383-BB34-97E850DAA7AF@hammerspace.com> <3DFBF27C-A62B-4AFE-87FD-3DF53FC39E8E@hammerspace.com> <20230316152618.711970-1-dhowells@redhat.com> <20230316152618.711970-28-dhowells@redhat.com> <754534.1678983891@warthog.procyon.org.uk>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Thu, 16 Mar 2023 14:37:04 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F363B32A5;
+        Thu, 16 Mar 2023 11:37:03 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id c18so2849142qte.5;
+        Thu, 16 Mar 2023 11:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678991822;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5yHp4jREjQWsbctCYQ1reY9QDPf2OVmLm7z44LvG+Sc=;
+        b=UiJyRovNvybmojhj6CL+YSVtnvvEuY1cQ6QWsePLs0WPo7YG0uIrkqZ2SmyUtAFfCD
+         4lCpZF19u/SwFeuYGg8eaj19uKLxl5ij7W0+GBhutb6Il2sSUS0iUZok2BHLOHmEiZ3l
+         d/6WzPc4WDllIYoi1nHAi1rwfpEgYEOUttx3e+0oP1u/r5qmvflhWl+zySaI4Uwg3bWJ
+         06xS5Kg1whSXqkDgW/O5xgTEkUfxosJJFo9qikUjRVnZnm6SAeBRt2Gx5/izsyJTz93g
+         Jbab2mzAPm0nSbRnno+mRX+6votuVVY+kfAIIdslubgylyz60wpjL5Y757fGjE0N0biu
+         IKGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678991822;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5yHp4jREjQWsbctCYQ1reY9QDPf2OVmLm7z44LvG+Sc=;
+        b=Nt+rq9gOhyN8M2RnfBkaZPcJ8sF2vB172jstOti0tCNwXUEMn9Td68GfCOacWaa9vB
+         NZf+bmfFDHrLLiOnBucRHeZvoor/UdNezJbS26xIvJL1dCAbmIhew9S4bt+NGJmVre87
+         DDAuZvWOZqfCPVbaodNumo6HXG71MsNK10uirncmXX2iGT4tyWw+Kc1QkGGIhcdQZb3u
+         7cXe8LT494/HtQInFUQhK/wAoVLJ+SgqVhtprA5FtrEU6vapOuLcp8vJif0AhoVo6F3G
+         iAyqQ5IbDAgqpaep/8UXM+QhJrg5Dva/E854jf+oU7jBR79BYmQOLCyeven08mDuyHCn
+         cirg==
+X-Gm-Message-State: AO0yUKUJEnDgfT+TOBB2ZJo9Pw4rFW+Cpj5TLLmFBW4heOwFW+bnJJA+
+        +qQ2NsergmH3xVbpwjQBDjs=
+X-Google-Smtp-Source: AK7set89m0NxgI0Dr4tvwq/CeeXie8ta0Jwg+0yZvAdMSGDc1GAqO0zueLl2XM2RZ4hYiuKSDlAdVg==
+X-Received: by 2002:ac8:5dd4:0:b0:3b6:3995:2ec2 with SMTP id e20-20020ac85dd4000000b003b639952ec2mr8002266qtx.19.1678991822174;
+        Thu, 16 Mar 2023 11:37:02 -0700 (PDT)
+Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
+        by smtp.gmail.com with ESMTPSA id j8-20020ac85c48000000b003bf9f9f1844sm6299599qtj.71.2023.03.16.11.37.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Mar 2023 11:37:01 -0700 (PDT)
+Date:   Thu, 16 Mar 2023 14:37:01 -0400
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Jeffrey Layton <jlayton@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Anna Schumaker <anna@kernel.org>,
-        Charles Edward Lever <chuck.lever@oracle.com>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: [RFC PATCH 27/28] sunrpc: Use sendmsg(MSG_SPLICE_PAGES) rather then sendpage
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <809994.1678990010.1@warthog.procyon.org.uk>
-Date:   Thu, 16 Mar 2023 18:06:50 +0000
-Message-ID: <809995.1678990010@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Message-ID: <641361cd8d704_33b0cc20823@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20230316152618.711970-4-dhowells@redhat.com>
+References: <20230316152618.711970-1-dhowells@redhat.com>
+ <20230316152618.711970-4-dhowells@redhat.com>
+Subject: RE: [RFC PATCH 03/28] tcp: Support MSG_SPLICE_PAGES
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,26 +85,75 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Trond Myklebust <trondmy@hammerspace.com> wrote:
+David Howells wrote:
+> Make TCP's sendmsg() support MSG_SPLICE_PAGES.  This causes pages to be
+> spliced from the source iterator if possible (the iterator must be
+> ITER_BVEC and the pages must be spliceable).
+> 
+> This allows ->sendpage() to be replaced by something that can handle
+> multiple multipage folios in a single transaction.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Eric Dumazet <edumazet@google.com>
+> cc: "David S. Miller" <davem@davemloft.net>
+> cc: Jakub Kicinski <kuba@kernel.org>
+> cc: Paolo Abeni <pabeni@redhat.com>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: netdev@vger.kernel.org
+> ---
+>  net/ipv4/tcp.c | 59 +++++++++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 53 insertions(+), 6 deletions(-)
+> 
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index 288693981b00..77c0c69208a5 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -1220,7 +1220,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+>  	int flags, err, copied = 0;
+>  	int mss_now = 0, size_goal, copied_syn = 0;
+>  	int process_backlog = 0;
+> -	bool zc = false;
+> +	int zc = 0;
+>  	long timeo;
+>  
+>  	flags = msg->msg_flags;
+> @@ -1231,17 +1231,24 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+>  		if (msg->msg_ubuf) {
+>  			uarg = msg->msg_ubuf;
+>  			net_zcopy_get(uarg);
+> -			zc = sk->sk_route_caps & NETIF_F_SG;
+> +			if (sk->sk_route_caps & NETIF_F_SG)
+> +				zc = 1;
+>  		} else if (sock_flag(sk, SOCK_ZEROCOPY)) {
+>  			uarg = msg_zerocopy_realloc(sk, size, skb_zcopy(skb));
+>  			if (!uarg) {
+>  				err = -ENOBUFS;
+>  				goto out_err;
+>  			}
+> -			zc = sk->sk_route_caps & NETIF_F_SG;
+> -			if (!zc)
+> +			if (sk->sk_route_caps & NETIF_F_SG)
+> +				zc = 1;
+> +			else
+>  				uarg_to_msgzc(uarg)->zerocopy = 0;
+>  		}
+> +	} else if (unlikely(flags & MSG_SPLICE_PAGES) && size) {
+> +		if (!iov_iter_is_bvec(&msg->msg_iter))
+> +			return -EINVAL;
+> +		if (sk->sk_route_caps & NETIF_F_SG)
+> +			zc = 2;
+>  	}
 
-> 1) This is code that is common to the client and the server. Why are we
-> adding unused 3 bvec slots to every client RPC call?
+The commit message mentions MSG_SPLICE_PAGES as an internal flag.
 
-Fair point, but I'm trying to avoid making four+ sendmsg calls in nfsd rather
-than one.
+It can be passed from userspace. The code anticipates that and checks
+preconditions.
 
-> 2) It obfuscates the existence of these bvec slots.
+A side effect is that legacy applications that may already be setting
+this bit in the flags now start failing. Most socket types are
+historically permissive and simply ignore undefined flags.
 
-True, it'd be nice to find a better way to do it.  Question is, can the client
-make use of MSG_SPLICE_PAGES also?
-
-> 3) knfsd may use splice_direct_to_actor() in order to avoid copying the page
-> cache data into private buffers (it just takes a reference to the
-> pages). Using MSG_SPLICE_PAGES will presumably require it to protect those
-> pages against further writes while the socket is referencing them.
-
-Upstream sunrpc is using sendpage with TCP.  It already has that issue.
-MSG_SPLICE_PAGES is a way of doing sendpage through sendmsg.
-
-David
-
+With MSG_ZEROCOPY we chose to be extra cautious and added
+SOCK_ZEROCOPY, only testing the MSG_ZEROCOPY bit if this socket option
+is explicitly enabled. Perhaps more cautious than necessary, but FYI.
