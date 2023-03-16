@@ -2,174 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1A306BCD46
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 11:52:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F8336BD068
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 14:08:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229638AbjCPKwW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 06:52:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44084 "EHLO
+        id S229807AbjCPNIp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 09:08:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbjCPKvy (ORCPT
+        with ESMTP id S229726AbjCPNIo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 06:51:54 -0400
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9616ED334
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 03:51:51 -0700 (PDT)
-Received: by mail-il1-f200.google.com with SMTP id c7-20020a056e020cc700b0032305bab689so635484ilj.14
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 03:51:51 -0700 (PDT)
+        Thu, 16 Mar 2023 09:08:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7470919138
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 06:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678972076;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=I4vj27Hz37BxjdFryH4DTKt4lnMon3Rk+vYNnIOGHac=;
+        b=A9cMXiVCCmtL+nIMi157m14LR0uE6WcGBBZ3XFgHwdlvWRMpvKP47ugltBLlpRyWk7THOq
+        0+YzXzGwcx2/FTaQoJVMq4tMd+lQgHFcH9qMLIqPpSmdVHxMUTCo6yM0gNFTVJMyzZzujE
+        TzhSwvWk08O1dfRzAM4QJxXrlvWrFeQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-540-iUNFU3hEOm2I9hgA4Bb5LA-1; Thu, 16 Mar 2023 09:07:55 -0400
+X-MC-Unique: iUNFU3hEOm2I9hgA4Bb5LA-1
+Received: by mail-wm1-f72.google.com with SMTP id i8-20020a05600c354800b003ed59bae33bso627488wmq.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 06:07:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678963910;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wlZsmgoHP0KFVkPcMplNL5BB8+emSwJ8ox1cxUzm6Ho=;
-        b=ro6oA53UGc88+D2gy111QRNAcWAuFYwEp1Zn0Olh1LAk7ujfxrgEwnP7BHtnPFp25P
-         xYq9tTGuvIzsQM9Btbj62a4lU+tcqaKv0q8jWdtsgplFl89oMOZBeq5jgkW5qf0tQKz+
-         Lb9MtLmynYmM19BRoHY/Bo9bxrFwPoI6OpxUDoxJcyQbqvUkr8sWq5oP4X8JpWWPeyRr
-         9+mDtWxV4dmApZMZKavy0hRE3vROuUW1sm14Q9X2ivwlYBR2Q6LLB30VFXjqh1Zsr1Jt
-         QcCWHCfg8p6OBVjiCWt3ErhaxvTtc7wpGIt82Wx3bneM22Ns1Vf0ya0jWHQkDPbM9+BN
-         O40g==
-X-Gm-Message-State: AO0yUKUej7zNxi5svV+PIIXce1z9pS/Dx0SrUsDbLPtknCMnFuy2vcGx
-        5T9Qj5cVA3f2h5J2eouikm8CBqgHIbaNMxiLoJckDPzYSj0S
-X-Google-Smtp-Source: AK7set8qR157/5/BdoPXi2VFvXhsr1z8JFosdJN4laZIpbD1DOFpXUsH3JegSIZkzTJWJnhJppa7+trIn0f1qlEK/m+iFbmGMnjF
+        d=1e100.net; s=20210112; t=1678972073;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I4vj27Hz37BxjdFryH4DTKt4lnMon3Rk+vYNnIOGHac=;
+        b=7nQlFtlJgXXG7U5oJ7OXH3LSuIbC5zQyHtsZFKhHO8b5G1I6nfrqNxnmWdxc9UWY2o
+         I9GBO6fYdu9kk5baBPr7P23WVue4DE9up55p62ikOM4EERvq7uku7Jf/2O+TBoi/Yd++
+         r7wY0ZxdoAUWAZD2qegqwPiOiBUhS+ALz3kUlI99F9VmuXhRh1odsT11jW31fVrAbu4L
+         CcIReqMoUGx5PdpbScW43oVHir5cNAu7hT7WaLaNQk6rv0f97WOI+A9nY6bEiMLoBPeT
+         e8pFZUhiwvDU8ob3W2zrgvX9jwZDuKxcmvsf5wG1vjU72km9lfZHdzlc+yZR/RHN0CJx
+         tvqg==
+X-Gm-Message-State: AO0yUKXXZmevn3Dkj3f6UzGi+mHbigTDJ/Nhu5Ocp08Smetmphom0A6x
+        yafzoT19GowwJY5wdaCnBLQ/bX8zW+ot6L8W+UznfXS22GFKpfaaG9kXDLfZRGsEg3JsV6r8qqR
+        ctwdZx6+Ckc+qdezknk8sSwXZ6OAjJoiXs0+Eaw2nnQxyNxhY2LfyMUNMWbzN1kZGgwnaYR0BBs
+        BWIHoV32ieU3Kc
+X-Received: by 2002:adf:e8cd:0:b0:2ca:175b:d850 with SMTP id k13-20020adfe8cd000000b002ca175bd850mr4240833wrn.11.1678972073822;
+        Thu, 16 Mar 2023 06:07:53 -0700 (PDT)
+X-Google-Smtp-Source: AK7set9LHvhEZrQSzipUnLqiW/wptvdsDgTL4g6HkRzIVhGziWAGhpLTd6aBZEyk2PFeQSTNEnBmJA==
+X-Received: by 2002:adf:e8cd:0:b0:2ca:175b:d850 with SMTP id k13-20020adfe8cd000000b002ca175bd850mr4240814wrn.11.1678972073510;
+        Thu, 16 Mar 2023 06:07:53 -0700 (PDT)
+Received: from localhost.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id g8-20020a5d4888000000b002d1959d2cf7sm2451012wrq.111.2023.03.16.06.07.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Mar 2023 06:07:52 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: [PATCH RESEND] fs_context: drop the unused lsm_flags member
+Date:   Thu, 16 Mar 2023 14:07:51 +0100
+Message-Id: <20230316130751.334227-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-X-Received: by 2002:a92:da48:0:b0:314:24e2:5189 with SMTP id
- p8-20020a92da48000000b0031424e25189mr4675569ilq.0.1678963910794; Thu, 16 Mar
- 2023 03:51:50 -0700 (PDT)
-Date:   Thu, 16 Mar 2023 03:51:50 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007e653f05f7023f88@google.com>
-Subject: [syzbot] [ext4?] WARNING: bad unlock balance in ext4_rename
-From:   syzbot <syzbot+636aeec054650b49a379@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+This isn't ever used by VFS now, and it couldn't even work. Any FS that
+uses the SECURITY_LSM_NATIVE_LABELS flag needs to also process the
+value returned back from the LSM, so it needs to do its
+security_sb_set_mnt_opts() call on its own anyway.
 
-syzbot found the following issue on:
-
-HEAD commit:    9c1bec9c0b08 Merge tag 'linux-kselftest-fixes-6.3-rc3' of ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d6a556c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6c84f77790aba2eb
-dashboard link: https://syzkaller.appspot.com/bug?extid=636aeec054650b49a379
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e27b04dd32d0/disk-9c1bec9c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7b5061fb1ef2/vmlinux-9c1bec9c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f36752323820/bzImage-9c1bec9c.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+636aeec054650b49a379@syzkaller.appspotmail.com
-
-ext4 filesystem being mounted at /root/syzkaller-testdir1527489572/syzkaller.Uw8Ert/4184/file0 supports timestamps until 2038 (0x7fffffff)
-EXT4-fs error (device loop4): ext4_get_first_dir_block:3520: inode #12: block 32: comm syz-executor.4: bad entry in directory: rec_len is smaller than minimal - offset=0, inode=67174412, rec_len=0, size=2048 fake=1
-EXT4-fs error (device loop4): ext4_get_first_dir_block:3524: inode #12: comm syz-executor.4: directory missing '.'
-=====================================
-WARNING: bad unlock balance detected!
-6.3.0-rc2-syzkaller-00050-g9c1bec9c0b08 #0 Not tainted
--------------------------------------
-syz-executor.4/25678 is trying to release lock (&type->i_mutex_dir_key) at:
-[<ffffffff8230b319>] inode_unlock include/linux/fs.h:763 [inline]
-[<ffffffff8230b319>] ext4_rename+0x569/0x27c0 fs/ext4/namei.c:4029
-but there are no more locks to release!
-
-other info that might help us debug this:
-2 locks held by syz-executor.4/25678:
- #0: ffff88807a162460 (sb_writers#4){.+.+}-{0:0}, at: do_renameat2+0x37f/0xc90 fs/namei.c:4859
- #1: ffff888084013628 (&type->i_mutex_dir_key#3/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:793 [inline]
- #1: ffff888084013628 (&type->i_mutex_dir_key#3/1){+.+.}-{3:3}, at: lock_rename+0x229/0x280 fs/namei.c:2991
-
-stack backtrace:
-CPU: 0 PID: 25678 Comm: syz-executor.4 Not tainted 6.3.0-rc2-syzkaller-00050-g9c1bec9c0b08 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
- __lock_release kernel/locking/lockdep.c:5346 [inline]
- lock_release+0x4f1/0x670 kernel/locking/lockdep.c:5689
- up_write+0x2a/0x520 kernel/locking/rwsem.c:1625
- inode_unlock include/linux/fs.h:763 [inline]
- ext4_rename+0x569/0x27c0 fs/ext4/namei.c:4029
- ext4_rename2+0x1c7/0x270 fs/ext4/namei.c:4202
- vfs_rename+0xef6/0x17a0 fs/namei.c:4772
- do_renameat2+0xb62/0xc90 fs/namei.c:4923
- __do_sys_renameat2 fs/namei.c:4956 [inline]
- __se_sys_renameat2 fs/namei.c:4953 [inline]
- __x64_sys_renameat2+0xe8/0x120 fs/namei.c:4953
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f762388c0f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7624588168 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
-RAX: ffffffffffffffda RBX: 00007f76239abf80 RCX: 00007f762388c0f9
-RDX: 0000000000000004 RSI: 00000000200001c0 RDI: 0000000000000004
-RBP: 00007f76238e7b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000020000200 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffd99195a8f R14: 00007f7624588300 R15: 0000000000022000
- </TASK>
-------------[ cut here ]------------
-DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff8880870a0390, owner = 0x0, curr 0xffff88802506ba80, list empty
-WARNING: CPU: 1 PID: 25678 at kernel/locking/rwsem.c:1369 __up_write kernel/locking/rwsem.c:1369 [inline]
-WARNING: CPU: 1 PID: 25678 at kernel/locking/rwsem.c:1369 up_write+0x425/0x520 kernel/locking/rwsem.c:1626
-Modules linked in:
-CPU: 1 PID: 25678 Comm: syz-executor.4 Not tainted 6.3.0-rc2-syzkaller-00050-g9c1bec9c0b08 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-RIP: 0010:__up_write kernel/locking/rwsem.c:1369 [inline]
-RIP: 0010:up_write+0x425/0x520 kernel/locking/rwsem.c:1626
-Code: 3c 02 00 0f 85 da 00 00 00 48 8b 55 00 4d 89 f1 53 4d 89 f8 4c 89 e9 48 c7 c6 60 51 4c 8a 48 c7 c7 00 50 4c 8a e8 7b 1b e8 ff <0f> 0b 59 e9 dd fc ff ff 48 89 df e8 eb aa 70 00 e9 1a fc ff ff 48
-RSP: 0018:ffffc9000319f9a0 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffffffff8a4c4f40 RCX: ffffc9000c5aa000
-RDX: 0000000000040000 RSI: ffffffff814b6037 RDI: 0000000000000001
-RBP: ffff8880870a0390 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 57525f4755424544 R12: ffff8880870a0398
-R13: ffff8880870a0390 R14: ffff88802506ba80 R15: 0000000000000000
-FS:  00007f7624588700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020526000 CR3: 000000001cfeb000 CR4: 0000000000350ee0
-Call Trace:
- <TASK>
- inode_unlock include/linux/fs.h:763 [inline]
- ext4_rename+0x569/0x27c0 fs/ext4/namei.c:4029
- ext4_rename2+0x1c7/0x270 fs/ext4/namei.c:4202
- vfs_rename+0xef6/0x17a0 fs/namei.c:4772
- do_renameat2+0xb62/0xc90 fs/namei.c:4923
- __do_sys_renameat2 fs/namei.c:4956 [inline]
- __se_sys_renameat2 fs/namei.c:4953 [inline]
- __x64_sys_renameat2+0xe8/0x120 fs/namei.c:4953
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f762388c0f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7624588168 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
-RAX: ffffffffffffffda RBX: 00007f76239abf80 RCX: 00007f762388c0f9
-RDX: 0000000000000004 RSI: 00000000200001c0 RDI: 0000000000000004
-RBP: 00007f76238e7b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000020000200 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffd99195a8f R14: 00007f7624588300 R15: 0000000000022000
- </TASK>
-
-
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Resending because of no response for almost 2 years...
+
+Previous submission:
+https://lore.kernel.org/linux-fsdevel/20210409111234.271707-1-omosnace@redhat.com/
+
+ Documentation/filesystems/mount_api.rst | 1 -
+ fs/nfs/super.c                          | 3 ---
+ include/linux/fs_context.h              | 1 -
+ include/linux/security.h                | 2 +-
+ 4 files changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
+index 63204d2094fdf..9aaf6ef75eb53 100644
+--- a/Documentation/filesystems/mount_api.rst
++++ b/Documentation/filesystems/mount_api.rst
+@@ -79,7 +79,6 @@ context.  This is represented by the fs_context structure::
+ 		unsigned int		sb_flags;
+ 		unsigned int		sb_flags_mask;
+ 		unsigned int		s_iflags;
+-		unsigned int		lsm_flags;
+ 		enum fs_context_purpose	purpose:8;
+ 		...
+ 	};
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 05ae23657527d..397c096d874eb 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1274,9 +1274,6 @@ int nfs_get_tree_common(struct fs_context *fc)
+ 		if (ctx->clone_data.sb->s_flags & SB_SYNCHRONOUS)
+ 			fc->sb_flags |= SB_SYNCHRONOUS;
+ 
+-	if (server->caps & NFS_CAP_SECURITY_LABEL)
+-		fc->lsm_flags |= SECURITY_LSM_NATIVE_LABELS;
+-
+ 	/* Get a superblock - note that we may end up sharing one that already exists */
+ 	fc->s_fs_info = server;
+ 	s = sget_fc(fc, compare_super, nfs_set_super);
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index 5469ffee21c73..ff6341e09925b 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -104,7 +104,6 @@ struct fs_context {
+ 	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
+ 	unsigned int		sb_flags_mask;	/* Superblock flags that were changed */
+ 	unsigned int		s_iflags;	/* OR'd with sb->s_iflags */
+-	unsigned int		lsm_flags;	/* Information flags from the fs to the LSM */
+ 	enum fs_context_purpose	purpose:8;
+ 	enum fs_context_phase	phase:8;	/* The phase the context is in */
+ 	bool			need_free:1;	/* Need to call ops->free() */
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 5984d0d550b41..db9b659b02b91 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -68,7 +68,7 @@ struct watch_notification;
+ /* If capable is being called by a setid function */
+ #define CAP_OPT_INSETID BIT(2)
+ 
+-/* LSM Agnostic defines for fs_context::lsm_flags */
++/* LSM Agnostic defines for security_sb_set_mnt_opts() flags */
+ #define SECURITY_LSM_NATIVE_LABELS	1
+ 
+ struct ctl_table;
+-- 
+2.39.2
+
