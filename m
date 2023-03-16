@@ -2,78 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AEE46BD13B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 14:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D48A6BD195
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 14:56:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230370AbjCPNrK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 09:47:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48272 "EHLO
+        id S230011AbjCPN4T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 09:56:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230046AbjCPNrJ (ORCPT
+        with ESMTP id S230144AbjCPN4R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 09:47:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F24D4CD655;
-        Thu, 16 Mar 2023 06:46:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3D17F62039;
-        Thu, 16 Mar 2023 13:46:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E162BC433EF;
-        Thu, 16 Mar 2023 13:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678974387;
-        bh=1gVsUfRdT5Jio1KktPVUW54d8HJOPU8c6DUTVfKOJJc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IiRzRXv0Aygh7lxTWPgSOwS0YFasS46i/H/xEVf4HV3XSQ/wqzAVuWc48sZZ/ZBWh
-         /2mLoXnBAPbPNav/XKofl3QhYuG+hl24Aadmo3jTDMua3XXUJczwpALbkhqwjuwnT0
-         B7k1XM5kVp24w9rX4H5m7/JR3eiQzaAiVx76SrLooikKWFzMQ2TBGj0MixvMiaBPNJ
-         NTU+I5DhXKcY6aGBWnQklylmteMZWa9qqzMAhSYbLoq6BBXbfsszAFCK+njdem7L7k
-         +JC5PK7ufH9jzHjr5ZNwE6ZHEsS36RVW9+LKGVKnkLGCvdPkyGd+0SzQ+zBhgocvXS
-         VT14Q4xFDX9iA==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH RESEND] fs_context: drop the unused lsm_flags member
-Date:   Thu, 16 Mar 2023 14:46:17 +0100
-Message-Id: <167897413798.1242423.2984314832830103642.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230316130751.334227-1-omosnace@redhat.com>
-References: <20230316130751.334227-1-omosnace@redhat.com>
+        Thu, 16 Mar 2023 09:56:17 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86DBCB78A1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 06:55:54 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 32GDtS2I018576
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Mar 2023 09:55:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1678974930; bh=b4yJHZSm1FYoCQ7iaTvyJObJNWidspS4Mj0nisvHJ0M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=RAXeP+ooejXrnKCF9isKnOmzIAipeNxJAh3MzkkJdy5XIcFqk41kn3/PvaitgTGuO
+         Pir8RPV4bo4v9pvyWQvqzROWT59MDeGnuDNRsHWtw9A+1GZR65hgY17DRc0OFyHRCq
+         fcIeWlSoWONPKi93EjCV2hpBuwx7N7gtDV5LuNZGnroyf0q6u09y8Ft1SFFlpGWLpo
+         eiNvWi8GsiPGPsrme6UH24p6gx8XGFo312iM/v5ZepYpcw2sxkq62VWGTlpGeGYAi+
+         Cwnr/LLMMHuQrMbfgjagxsVnHKtl/2HYS3P6GO9NHkFwQYfn2dk5TH8uTpiaTDXGGq
+         pPLWFmeRa8aBQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 03BAE15C33A7; Thu, 16 Mar 2023 09:55:28 -0400 (EDT)
+Date:   Thu, 16 Mar 2023 09:55:27 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     syzbot <syzbot+636aeec054650b49a379@syzkaller.appspotmail.com>
+Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ext4?] WARNING: bad unlock balance in ext4_rename
+Message-ID: <20230316135527.GM860405@mit.edu>
+References: <0000000000007e653f05f7023f88@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=712; i=brauner@kernel.org; h=from:subject:message-id; bh=2EaFAKesLtNFKDCybmgNbFYVs7Vix+i69ySP2/aagBo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQIyy4Kn2x66t2rhCurLP2mf3GJiN/ZpiElVrshUON1/73G N5eiOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYS4Mvwv/5cS9/iVHefkrQ/BlFmer NvSM5t8/7izHrgyexFxstNyhj+Jz++zrz2e9zVqyZFIZw7u0+7ZwsrOvlyFXLMFbJ+dzWdHQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000007e653f05f7023f88@google.com>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner (Microsoft) <brauner@kernel.org>
-
-
-On Thu, 16 Mar 2023 14:07:51 +0100, Ondrej Mosnacek wrote:
-> This isn't ever used by VFS now, and it couldn't even work. Any FS that
-> uses the SECURITY_LSM_NATIVE_LABELS flag needs to also process the
-> value returned back from the LSM, so it needs to do its
-> security_sb_set_mnt_opts() call on its own anyway.
+On Thu, Mar 16, 2023 at 03:51:50AM -0700, syzbot wrote:
+> Hello,
 > 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    9c1bec9c0b08 Merge tag 'linux-kselftest-fixes-6.3-rc3' of ..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12d6a556c80000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=6c84f77790aba2eb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=636aeec054650b49a379
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 > 
 
-Seems indeed unused currently. I don't see fc->lsm_flags being used after
-having been set. So applied. Please yell, if there's some subtle place where
-this should matter after all,
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v6.5-rc2
 
-tree: git://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git
-branch: fs.misc
-
-[1/1] fs_context: drop the unused lsm_flags member
-      commit: 4e04143c869c5b6d499fbd5083caa860d5c942c3
