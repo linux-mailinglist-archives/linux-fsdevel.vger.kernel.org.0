@@ -2,150 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F8336BD068
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 14:08:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 360E86BD081
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 14:15:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229807AbjCPNIp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 09:08:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44494 "EHLO
+        id S230004AbjCPNPA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 09:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229726AbjCPNIo (ORCPT
+        with ESMTP id S229638AbjCPNO6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 09:08:44 -0400
+        Thu, 16 Mar 2023 09:14:58 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7470919138
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 06:07:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56A835FE4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 06:14:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678972076;
+        s=mimecast20190719; t=1678972456;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=I4vj27Hz37BxjdFryH4DTKt4lnMon3Rk+vYNnIOGHac=;
-        b=A9cMXiVCCmtL+nIMi157m14LR0uE6WcGBBZ3XFgHwdlvWRMpvKP47ugltBLlpRyWk7THOq
-        0+YzXzGwcx2/FTaQoJVMq4tMd+lQgHFcH9qMLIqPpSmdVHxMUTCo6yM0gNFTVJMyzZzujE
-        TzhSwvWk08O1dfRzAM4QJxXrlvWrFeQ=
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cij1DgoI5i6Ff0Me0upgsjOT5aDaEMgTlpSwTjH71C4=;
+        b=dBjZAXIqiLkW9HrMIdIHRq6ZEwadd4YqX5tBlIdDS/t6/Gv9ahqKH1TdTiwkNDrRiwyx/G
+        4HbBXIWQ7pP8gOaem2fL0E8ut/ukfB6f3tEbP9KTk8DM20f5KQ6JrjBzvAPe5d97btUfUM
+        T9o1RDn4UcvmJmkgYVMDrj7J4C9qfLQ=
 Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
  [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-540-iUNFU3hEOm2I9hgA4Bb5LA-1; Thu, 16 Mar 2023 09:07:55 -0400
-X-MC-Unique: iUNFU3hEOm2I9hgA4Bb5LA-1
-Received: by mail-wm1-f72.google.com with SMTP id i8-20020a05600c354800b003ed59bae33bso627488wmq.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 06:07:55 -0700 (PDT)
+ us-mta-222-9dLL7XG8OkCGkr_9NXPr8Q-1; Thu, 16 Mar 2023 09:14:15 -0400
+X-MC-Unique: 9dLL7XG8OkCGkr_9NXPr8Q-1
+Received: by mail-wm1-f72.google.com with SMTP id n18-20020a05600c501200b003ed24740ea4so2620316wmr.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 06:14:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678972073;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112; t=1678972454;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=I4vj27Hz37BxjdFryH4DTKt4lnMon3Rk+vYNnIOGHac=;
-        b=7nQlFtlJgXXG7U5oJ7OXH3LSuIbC5zQyHtsZFKhHO8b5G1I6nfrqNxnmWdxc9UWY2o
-         I9GBO6fYdu9kk5baBPr7P23WVue4DE9up55p62ikOM4EERvq7uku7Jf/2O+TBoi/Yd++
-         r7wY0ZxdoAUWAZD2qegqwPiOiBUhS+ALz3kUlI99F9VmuXhRh1odsT11jW31fVrAbu4L
-         CcIReqMoUGx5PdpbScW43oVHir5cNAu7hT7WaLaNQk6rv0f97WOI+A9nY6bEiMLoBPeT
-         e8pFZUhiwvDU8ob3W2zrgvX9jwZDuKxcmvsf5wG1vjU72km9lfZHdzlc+yZR/RHN0CJx
-         tvqg==
-X-Gm-Message-State: AO0yUKXXZmevn3Dkj3f6UzGi+mHbigTDJ/Nhu5Ocp08Smetmphom0A6x
-        yafzoT19GowwJY5wdaCnBLQ/bX8zW+ot6L8W+UznfXS22GFKpfaaG9kXDLfZRGsEg3JsV6r8qqR
-        ctwdZx6+Ckc+qdezknk8sSwXZ6OAjJoiXs0+Eaw2nnQxyNxhY2LfyMUNMWbzN1kZGgwnaYR0BBs
-        BWIHoV32ieU3Kc
-X-Received: by 2002:adf:e8cd:0:b0:2ca:175b:d850 with SMTP id k13-20020adfe8cd000000b002ca175bd850mr4240833wrn.11.1678972073822;
-        Thu, 16 Mar 2023 06:07:53 -0700 (PDT)
-X-Google-Smtp-Source: AK7set9LHvhEZrQSzipUnLqiW/wptvdsDgTL4g6HkRzIVhGziWAGhpLTd6aBZEyk2PFeQSTNEnBmJA==
-X-Received: by 2002:adf:e8cd:0:b0:2ca:175b:d850 with SMTP id k13-20020adfe8cd000000b002ca175bd850mr4240814wrn.11.1678972073510;
-        Thu, 16 Mar 2023 06:07:53 -0700 (PDT)
-Received: from localhost.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id g8-20020a5d4888000000b002d1959d2cf7sm2451012wrq.111.2023.03.16.06.07.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Mar 2023 06:07:52 -0700 (PDT)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: [PATCH RESEND] fs_context: drop the unused lsm_flags member
-Date:   Thu, 16 Mar 2023 14:07:51 +0100
-Message-Id: <20230316130751.334227-1-omosnace@redhat.com>
-X-Mailer: git-send-email 2.39.2
+        bh=cij1DgoI5i6Ff0Me0upgsjOT5aDaEMgTlpSwTjH71C4=;
+        b=pVe/izlj6ruuOO4V8uhzS1TpW+8CacaD3b6HYxCUJvvfzH1zrre/6iP6On2PYKxcvY
+         JAMu0FZlp32Jvan6CWeTvBfeCoMh1AqQiDiHYQsuLn2dlOQBYgNqKY4f48H1cjJkQF1n
+         YCZJsom90is6ity8iIPVFhUOhPF5jwGDLnIdcj6FtDS1/gF8CphVN42j5J97YsPC85V/
+         bDc1crZsdhqRWa19mBFPXeVBZrpKeG3mF8UOO59mgX/ObDFZ+R3CJ/asne3xtXj8Tlf6
+         lTPmOXn3r7hrtmXyAHHuRDeKQHSvwu59YIvxwEHWcwPrXynLKWf2SFSrdz1oqLHUxJHk
+         cZug==
+X-Gm-Message-State: AO0yUKV/PlzKiwPTgo99ZqlZubHAwQQnhb5o8+mAYbZ4Xrl6vpTSU2Kq
+        qQSP0hr/cw09EUvd3Swm7w3AEBvu32mxkwsehYot0rB0iuBp87Zb9/+8ssSeyzCb2HSH68EER+3
+        CzdkYKLAuy0UpvwnNJZoFcumqLA==
+X-Received: by 2002:a7b:c394:0:b0:3ed:6693:1388 with SMTP id s20-20020a7bc394000000b003ed66931388mr1025919wmj.18.1678972453933;
+        Thu, 16 Mar 2023 06:14:13 -0700 (PDT)
+X-Google-Smtp-Source: AK7set8ZjMO0Y6+7kxovZnLoqzSDbEfVY0ZYumsiTW725vRLK5qi93k9OiMeyFdN6OokIatcXWlIng==
+X-Received: by 2002:a7b:c394:0:b0:3ed:6693:1388 with SMTP id s20-20020a7bc394000000b003ed66931388mr1025892wmj.18.1678972453636;
+        Thu, 16 Mar 2023 06:14:13 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id k18-20020a056000005200b002c71dd1109fsm7318197wrx.47.2023.03.16.06.14.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Mar 2023 06:14:13 -0700 (PDT)
+Message-ID: <f312327e-c11e-60f4-1367-af4e480b2609@redhat.com>
+Date:   Thu, 16 Mar 2023 14:14:12 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v19 04/15] overlayfs: Implement splice-read
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org
+References: <20230315163549.295454-1-dhowells@redhat.com>
+ <20230315163549.295454-5-dhowells@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20230315163549.295454-5-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This isn't ever used by VFS now, and it couldn't even work. Any FS that
-uses the SECURITY_LSM_NATIVE_LABELS flag needs to also process the
-value returned back from the LSM, so it needs to do its
-security_sb_set_mnt_opts() call on its own anyway.
+On 15.03.23 17:35, David Howells wrote:
+> Implement splice-read for overlayfs by passing the request down a layer
+> rather than going through generic_file_splice_read() which is going to be
+> changed to assume that ->read_folio() is present on buffered files.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Christoph Hellwig <hch@lst.de>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: John Hubbard <jhubbard@nvidia.com>
+> cc: David Hildenbrand <david@redhat.com>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: Miklos Szeredi <miklos@szeredi.hu>
+> cc: linux-unionfs@vger.kernel.org
+> cc: linux-block@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> ---
 
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Resending because of no response for almost 2 years...
-
-Previous submission:
-https://lore.kernel.org/linux-fsdevel/20210409111234.271707-1-omosnace@redhat.com/
-
- Documentation/filesystems/mount_api.rst | 1 -
- fs/nfs/super.c                          | 3 ---
- include/linux/fs_context.h              | 1 -
- include/linux/security.h                | 2 +-
- 4 files changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
-index 63204d2094fdf..9aaf6ef75eb53 100644
---- a/Documentation/filesystems/mount_api.rst
-+++ b/Documentation/filesystems/mount_api.rst
-@@ -79,7 +79,6 @@ context.  This is represented by the fs_context structure::
- 		unsigned int		sb_flags;
- 		unsigned int		sb_flags_mask;
- 		unsigned int		s_iflags;
--		unsigned int		lsm_flags;
- 		enum fs_context_purpose	purpose:8;
- 		...
- 	};
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 05ae23657527d..397c096d874eb 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1274,9 +1274,6 @@ int nfs_get_tree_common(struct fs_context *fc)
- 		if (ctx->clone_data.sb->s_flags & SB_SYNCHRONOUS)
- 			fc->sb_flags |= SB_SYNCHRONOUS;
- 
--	if (server->caps & NFS_CAP_SECURITY_LABEL)
--		fc->lsm_flags |= SECURITY_LSM_NATIVE_LABELS;
--
- 	/* Get a superblock - note that we may end up sharing one that already exists */
- 	fc->s_fs_info = server;
- 	s = sget_fc(fc, compare_super, nfs_set_super);
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index 5469ffee21c73..ff6341e09925b 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -104,7 +104,6 @@ struct fs_context {
- 	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
- 	unsigned int		sb_flags_mask;	/* Superblock flags that were changed */
- 	unsigned int		s_iflags;	/* OR'd with sb->s_iflags */
--	unsigned int		lsm_flags;	/* Information flags from the fs to the LSM */
- 	enum fs_context_purpose	purpose:8;
- 	enum fs_context_phase	phase:8;	/* The phase the context is in */
- 	bool			need_free:1;	/* Need to call ops->free() */
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 5984d0d550b41..db9b659b02b91 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -68,7 +68,7 @@ struct watch_notification;
- /* If capable is being called by a setid function */
- #define CAP_OPT_INSETID BIT(2)
- 
--/* LSM Agnostic defines for fs_context::lsm_flags */
-+/* LSM Agnostic defines for security_sb_set_mnt_opts() flags */
- #define SECURITY_LSM_NATIVE_LABELS	1
- 
- struct ctl_table;
 -- 
-2.39.2
+Thanks,
+
+David / dhildenb
 
