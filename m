@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 794006BD69A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 18:02:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 041896BD69E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 18:02:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230164AbjCPRCd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 13:02:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33280 "EHLO
+        id S230329AbjCPRCu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 13:02:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbjCPRCb (ORCPT
+        with ESMTP id S229870AbjCPRCt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 13:02:31 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE568E6DA8;
-        Thu, 16 Mar 2023 10:02:24 -0700 (PDT)
+        Thu, 16 Mar 2023 13:02:49 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20889E7EF4;
+        Thu, 16 Mar 2023 10:02:38 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7F41CB8227C;
-        Thu, 16 Mar 2023 17:02:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A54DC433EF;
-        Thu, 16 Mar 2023 17:02:16 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 92B11B8227B;
+        Thu, 16 Mar 2023 17:02:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04ED5C433D2;
+        Thu, 16 Mar 2023 17:02:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678986142;
-        bh=wPkey4BWxoSwuVm0/JDcphsHh4pWF/uWOFmXxlWLkHg=;
+        s=k20201202; t=1678986155;
+        bh=GA8tXS4Mul2elWYsjsHoBsAbirrUGLhRxbF2Iayc8rg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SNv/7OPwD0I0s7lhX5kbFYwqOHQ6BEeVp42wO+mX9PwyPyOWc9aJP8tpSf8pTSmc7
-         aJUi7ueFyPgrnzibcjii0GIA0zBfQ+oVxp0KrZ6owWC8EKweBWjgHUvuX4bvUsGb7K
-         jRQt6UIxSQ6hmnmM4MFepJHDyU9d2by956YrhOlpGLKvW0kO976LhWUg9lFcytBy2I
-         cOPXJzHAAG6XfhpiPaipKG4qKVWkQ9gVWf3V6V9dmCwMAjG+X0ldhsn8+xIPvtS/NU
-         bs9dvCYweuoj4hon4v1BsbRdkf1cx44ZWcTyojzhvrOzQoSNM8qF+wi+IS6ht9pVT0
-         jD7VHR0ypnIDw==
+        b=ZhtVj376qlPRWZ1voHqasur/pICqPh2D1iv3o8cqWfD6Tqwvn3vzB/NHNzr5q2zvc
+         Du2DgVvnZu67X8HekIq3/BB471wLGP+xMh44yTpxdsA6MJ4i52t9Npw6fiUxKq79AZ
+         BVAKBWemUcdBpEcTGD1w7L96mTMWWbvInC9HuwInR990nvhl2XzxnJL/fE2VLgeg3z
+         M1me3mgk3ZFsAMmRYmy1tCPnFvQsZ8E0lS7EnHJoajef6uFHZoErIYZA4oTQ5C+GUn
+         /zyUjx1ODsI4xjPqeOEyO5tNqStX53VCPmBS3mjJtL3+81scbzKF/Kf3q+8KkHUC9A
+         CKaZl7dtXKDTg==
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -52,9 +52,9 @@ Cc:     bpf@vger.kernel.org, linux-mm@kvack.org,
         Daniel Borkmann <daniel@iogearbox.net>,
         Namhyung Kim <namhyung@gmail.com>,
         Dave Chinner <david@fromorbit.com>
-Subject: [PATCHv3 bpf-next 2/9] perf: Use file object build id in perf_event_mmap_event
-Date:   Thu, 16 Mar 2023 18:01:42 +0100
-Message-Id: <20230316170149.4106586-3-jolsa@kernel.org>
+Subject: [PATCHv3 bpf-next 3/9] bpf: Use file object build id in stackmap
+Date:   Thu, 16 Mar 2023 18:01:43 +0100
+Message-Id: <20230316170149.4106586-4-jolsa@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230316170149.4106586-1-jolsa@kernel.org>
 References: <20230316170149.4106586-1-jolsa@kernel.org>
@@ -69,102 +69,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use build id from file object when available for perf's MMAP2 event
-build id data.
+Use build id from file object in stackmap if it's available.
 
 The file's f_build_id is available (for CONFIG_FILE_BUILD_ID option)
-when the file is mmap-ed and before the perf's callback is executed,
-so we can use it, instead of reading it again.
+when the file is mmap-ed, so it will be available (if present) when
+used by stackmap.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- kernel/events/core.c | 43 +++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 39 insertions(+), 4 deletions(-)
+ kernel/bpf/stackmap.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f79fd8b87f75..3a5398dda6f6 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8527,6 +8527,9 @@ struct perf_mmap_event {
- 	u32			prot, flags;
- 	u8			build_id[BUILD_ID_SIZE_MAX];
- 	u32			build_id_size;
-+#ifdef CONFIG_FILE_BUILD_ID
-+	struct build_id		*f_build_id;
-+#endif
- 
- 	struct {
- 		struct perf_event_header	header;
-@@ -8539,6 +8542,38 @@ struct perf_mmap_event {
- 	} event_id;
- };
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 0f1d8dced933..14d27bd83081 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -124,6 +124,28 @@ static struct bpf_map *stack_map_alloc(union bpf_attr *attr)
+ 	return ERR_PTR(err);
+ }
  
 +#ifdef CONFIG_FILE_BUILD_ID
-+static void build_id_read(struct perf_mmap_event *mmap_event)
++static int vma_get_build_id(struct vm_area_struct *vma, unsigned char *build_id)
 +{
-+	struct vm_area_struct *vma = mmap_event->vma;
++	struct build_id *bid;
 +
-+	mmap_event->f_build_id = vma->vm_file ? vma->vm_file->f_build_id : NULL;
++	if (!vma->vm_file)
++		return -EINVAL;
++	bid = vma->vm_file->f_build_id;
++	if (IS_ERR_OR_NULL(bid))
++		return bid ? PTR_ERR(bid) : -ENOENT;
++	if (bid->sz > BUILD_ID_SIZE_MAX)
++		return -EINVAL;
++	memcpy(build_id, bid->data, bid->sz);
++	return 0;
 +}
-+
-+static bool has_build_id(struct perf_mmap_event *mmap_event)
-+{
-+	return !IS_ERR_OR_NULL(mmap_event->f_build_id);
-+}
-+
-+#define build_id_data mmap_event->f_build_id->data
-+#define build_id_size mmap_event->f_build_id->sz
 +#else
-+static void build_id_read(struct perf_mmap_event *mmap_event)
++static int vma_get_build_id(struct vm_area_struct *vma, unsigned char *build_id)
 +{
-+	struct vm_area_struct *vma = mmap_event->vma;
-+
-+	build_id_parse(vma, mmap_event->build_id, &mmap_event->build_id_size);
++	return build_id_parse(vma, build_id, NULL);
 +}
-+
-+static bool has_build_id(struct perf_mmap_event *mmap_event)
-+{
-+	return mmap_event->build_id_size;
-+}
-+
-+#define build_id_data mmap_event->build_id
-+#define build_id_size mmap_event->build_id_size
 +#endif
 +
- static int perf_event_mmap_match(struct perf_event *event,
- 				 void *data)
+ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
+ 					  u64 *ips, u32 trace_nr, bool user)
  {
-@@ -8583,7 +8618,7 @@ static void perf_event_mmap_output(struct perf_event *event,
- 	mmap_event->event_id.pid = perf_event_pid(event, current);
- 	mmap_event->event_id.tid = perf_event_tid(event, current);
- 
--	use_build_id = event->attr.build_id && mmap_event->build_id_size;
-+	use_build_id = event->attr.build_id && has_build_id(mmap_event);
- 
- 	if (event->attr.mmap2 && use_build_id)
- 		mmap_event->event_id.header.misc |= PERF_RECORD_MISC_MMAP_BUILD_ID;
-@@ -8592,10 +8627,10 @@ static void perf_event_mmap_output(struct perf_event *event,
- 
- 	if (event->attr.mmap2) {
- 		if (use_build_id) {
--			u8 size[4] = { (u8) mmap_event->build_id_size, 0, 0, 0 };
-+			u8 size[4] = { (u8) build_id_size, 0, 0, 0 };
- 
- 			__output_copy(&handle, size, 4);
--			__output_copy(&handle, mmap_event->build_id, BUILD_ID_SIZE_MAX);
-+			__output_copy(&handle, build_id_data, BUILD_ID_SIZE_MAX);
- 		} else {
- 			perf_output_put(&handle, mmap_event->maj);
- 			perf_output_put(&handle, mmap_event->min);
-@@ -8727,7 +8762,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
- 	mmap_event->event_id.header.size = sizeof(mmap_event->event_id) + size;
- 
- 	if (atomic_read(&nr_build_id_events))
--		build_id_parse(vma, mmap_event->build_id, &mmap_event->build_id_size);
-+		build_id_read(mmap_event);
- 
- 	perf_iterate_sb(perf_event_mmap_output,
- 		       mmap_event,
+@@ -156,7 +178,7 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
+ 			goto build_id_valid;
+ 		}
+ 		vma = find_vma(current->mm, ips[i]);
+-		if (!vma || build_id_parse(vma, id_offs[i].build_id, NULL)) {
++		if (!vma || vma_get_build_id(vma, id_offs[i].build_id)) {
+ 			/* per entry fall back to ips */
+ 			id_offs[i].status = BPF_STACK_BUILD_ID_IP;
+ 			id_offs[i].ip = ips[i];
 -- 
 2.39.2
 
