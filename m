@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F5196BD6B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 18:04:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5306BD6B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 18:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231438AbjCPRE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 13:04:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37360 "EHLO
+        id S231495AbjCPREl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 13:04:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231248AbjCPREL (ORCPT
+        with ESMTP id S231474AbjCPREY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 13:04:11 -0400
+        Thu, 16 Mar 2023 13:04:24 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D2CC2007C;
-        Thu, 16 Mar 2023 10:03:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A0A7AB4;
+        Thu, 16 Mar 2023 10:03:56 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C4E28B8227C;
-        Thu, 16 Mar 2023 17:03:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 333CFC433EF;
-        Thu, 16 Mar 2023 17:03:34 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E2A5BB8227B;
+        Thu, 16 Mar 2023 17:03:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53045C433EF;
+        Thu, 16 Mar 2023 17:03:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678986219;
-        bh=BTNFjFR6qedMLNKodJS0I96kmDjan/r2p24kIgmK3/s=;
+        s=k20201202; t=1678986232;
+        bh=k3FKXivEZQL3axXlXOQ80+3Y8PlgcvRRWyE+8fiPDqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d8LC/I53yNMvhKiJ3Oq2YxbSToYguXOf9YL7kJ0By7G0BvjLuZlszeTUgYFPhKnB6
-         KllaisUOamvTTtPjic6nqgztIrsZwVGjjWK7vG8ozFTcCgp2HkZJ6X4LbSKvyuVkjT
-         qcXbW0Ckyvbgso20/1phg1107C1gTiClR3Hj+lRcjG0M0Ki2RtZMhnjx3Mmkobv12K
-         Xx2SF6Fu+XDxUx7rHArRgUS80ARKH6R5eLB3AJkRH4Tn9g3ZGexQwoFvU3DWzsHOsF
-         9xxpJNXwqQRN1HimKUC14dXXfdR2JKVwCqre7Kw9d/jzAuYtlvOVeUrVxp6AMWSvzO
-         Dkxo8jLgLZv+w==
+        b=HxOQsfSSGaoCqeogPae5AJUpOEd+YvVBDDuK+Eus7fUz8mbGY4O1QvXKR4yOLvQAA
+         nn40HHqQ2kXbrnbDntkEm7qk9ztbPrj2IfSmKS+dfEEI+Uu8M/6aeuUXFhMI9axTfP
+         HDkKdq5eKsi2Ix/bdr8XPpEslpQhCx7Qc5wgm0vwZYWd/45Z90H3PImim3RdiUWp1n
+         5AUn7e7JXRtiwiY9hQqUpXrbHw+IgKDUBiY/nzwm5WhYqV3qjk9ekZS9C5Zo5hARmK
+         RJnlCcshgQi3iZksY69nnMeEW9c1TC7Plz9AHRDpGFuWX1cgHLvO4Hr0DTwXMfFjRk
+         Tj4UwPziJK8aA==
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -52,9 +52,9 @@ Cc:     bpf@vger.kernel.org, linux-mm@kvack.org,
         Daniel Borkmann <daniel@iogearbox.net>,
         Namhyung Kim <namhyung@gmail.com>,
         Dave Chinner <david@fromorbit.com>
-Subject: [PATCHv3 bpf-next 8/9] selftests/bpf: Add iter_task_vma_buildid test
-Date:   Thu, 16 Mar 2023 18:01:48 +0100
-Message-Id: <20230316170149.4106586-9-jolsa@kernel.org>
+Subject: [PATCHv3 bpf-next 9/9] selftests/bpf: Add file_build_id test
+Date:   Thu, 16 Mar 2023 18:01:49 +0100
+Message-Id: <20230316170149.4106586-10-jolsa@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230316170149.4106586-1-jolsa@kernel.org>
 References: <20230316170149.4106586-1-jolsa@kernel.org>
@@ -69,182 +69,273 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Testing iterator access to build id in vma->vm_file object by storing
-each binary with build id into map and checking it against build id
-retrieved in user space.
+The test attaches bpf program to sched_process_exec tracepoint
+and gets build of executed file from bprm->file object.
+
+We use urandom_read as the test program and in addition we also
+attach uprobe to liburandom_read.so:urandlib_read_without_sema
+and retrieve and check build id of that shared library.
+
+Also executing the no_build_id binary to verify the bpf program
+gets the error properly.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- .../selftests/bpf/prog_tests/bpf_iter.c       | 78 +++++++++++++++++++
- .../bpf/progs/bpf_iter_task_vma_buildid.c     | 56 +++++++++++++
- 2 files changed, 134 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+ tools/testing/selftests/bpf/Makefile          |  7 +-
+ tools/testing/selftests/bpf/no_build_id.c     |  6 ++
+ .../selftests/bpf/prog_tests/file_build_id.c  | 98 +++++++++++++++++++
+ .../selftests/bpf/progs/file_build_id.c       | 70 +++++++++++++
+ tools/testing/selftests/bpf/test_progs.h      | 10 ++
+ 5 files changed, 190 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/bpf/no_build_id.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/file_build_id.c
+ create mode 100644 tools/testing/selftests/bpf/progs/file_build_id.c
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/bpf_iter.c b/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-index 1f02168103dd..c7dd89e7cad0 100644
---- a/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-+++ b/tools/testing/selftests/bpf/prog_tests/bpf_iter.c
-@@ -33,6 +33,7 @@
- #include "bpf_iter_bpf_link.skel.h"
- #include "bpf_iter_ksym.skel.h"
- #include "bpf_iter_sockmap.skel.h"
-+#include "bpf_iter_task_vma_buildid.skel.h"
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index 55811c448eb7..cf93a23c7962 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -88,7 +88,7 @@ TEST_GEN_PROGS_EXTENDED = test_sock_addr test_skb_cgroup_id_user \
+ 	xskxceiver xdp_redirect_multi xdp_synproxy veristat xdp_hw_metadata \
+ 	xdp_features
  
- static int duration;
+-TEST_CUSTOM_PROGS = $(OUTPUT)/urandom_read $(OUTPUT)/sign-file
++TEST_CUSTOM_PROGS = $(OUTPUT)/urandom_read $(OUTPUT)/sign-file $(OUTPUT)/no_build_id
+ TEST_GEN_FILES += liburandom_read.so
  
-@@ -1536,6 +1537,81 @@ static void test_task_vma_dead_task(void)
- 	bpf_iter_task_vma__destroy(skel);
- }
+ # Emit succinct information message describing current building step
+@@ -201,6 +201,10 @@ $(OUTPUT)/sign-file: ../../../../scripts/sign-file.c
+ 		  $< -o $@ \
+ 		  $(shell $(HOSTPKG_CONFIG) --libs libcrypto 2> /dev/null || echo -lcrypto)
  
-+#define D_PATH_BUF_SIZE	1024
++$(OUTPUT)/no_build_id: no_build_id.c
++	$(call msg,BINARY,,$@)
++	$(Q)$(CC) $^ -Wl,--build-id=none -o $@
 +
-+struct build_id {
-+	u32 sz;
-+	char data[BPF_BUILD_ID_SIZE];
-+};
-+
-+static void test_task_vma_buildid(void)
-+{
-+	int err, iter_fd = -1, proc_maps_fd = -1, sz;
-+	struct bpf_iter_task_vma_buildid *skel;
-+	char key[D_PATH_BUF_SIZE], *prev_key;
-+	char build_id[BPF_BUILD_ID_SIZE];
-+	int len, files_fd, cnt = 0;
-+	struct build_id val;
-+	char c;
-+
-+	skel = bpf_iter_task_vma_buildid__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "bpf_iter_task_vma_buildid__open_and_load"))
-+		return;
-+
-+	skel->links.proc_maps = bpf_program__attach_iter(
-+		skel->progs.proc_maps, NULL);
-+
-+	if (!ASSERT_OK_PTR(skel->links.proc_maps, "bpf_program__attach_iter")) {
-+		skel->links.proc_maps = NULL;
-+		goto out;
-+	}
-+
-+	iter_fd = bpf_iter_create(bpf_link__fd(skel->links.proc_maps));
-+	if (!ASSERT_GE(iter_fd, 0, "create_iter"))
-+		goto out;
-+
-+	/* trigger the iterator, there's no output, just map */
-+	len = read(iter_fd, &c, 1);
-+	ASSERT_EQ(len, 0, "len_check");
-+
-+	files_fd = bpf_map__fd(skel->maps.files);
-+
-+	prev_key = NULL;
-+
-+	while (true) {
-+		err = bpf_map_get_next_key(files_fd, prev_key, &key);
-+		if (err) {
-+			if (errno == ENOENT)
-+				err = 0;
-+			break;
-+		}
-+		if (bpf_map_lookup_elem(files_fd, key, &val))
-+			break;
-+		if (!ASSERT_LE(val.sz, BPF_BUILD_ID_SIZE, "buildid_size"))
-+			break;
-+
-+		sz = read_build_id(key, build_id);
-+		/* If there's an error, the build id is not present or malformed, kernel
-+		 * should see the same result and bpf program pushed zero build id.
-+		 */
-+		if (sz < 0) {
-+			memset(build_id, 0x0, BPF_BUILD_ID_SIZE);
-+			sz = BPF_BUILD_ID_SIZE;
-+		}
-+		ASSERT_EQ(val.sz, sz, "build_id_size");
-+		ASSERT_MEMEQ(val.data, build_id, sz, "build_id_data");
-+
-+		prev_key = key;
-+		cnt++;
-+	}
-+
-+	printf("checked %d files\n", cnt);
-+out:
-+	close(proc_maps_fd);
-+	close(iter_fd);
-+	bpf_iter_task_vma_buildid__destroy(skel);
-+}
-+
- void test_bpf_sockmap_map_iter_fd(void)
- {
- 	struct bpf_iter_sockmap *skel;
-@@ -1659,6 +1735,8 @@ void test_bpf_iter(void)
- 		test_task_vma();
- 	if (test__start_subtest("task_vma_dead_task"))
- 		test_task_vma_dead_task();
-+	if (test__start_subtest("task_vma_buildid"))
-+		test_task_vma_buildid();
- 	if (test__start_subtest("task_btf"))
- 		test_task_btf();
- 	if (test__start_subtest("tcp4"))
-diff --git a/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
+ $(OUTPUT)/bpf_testmod.ko: $(VMLINUX_BTF) $(wildcard bpf_testmod/Makefile bpf_testmod/*.[ch])
+ 	$(call msg,MOD,,$@)
+ 	$(Q)$(RM) bpf_testmod/bpf_testmod.ko # force re-compilation
+@@ -564,6 +568,7 @@ TRUNNER_EXTRA_FILES := $(OUTPUT)/urandom_read $(OUTPUT)/bpf_testmod.ko	\
+ 		       $(OUTPUT)/liburandom_read.so			\
+ 		       $(OUTPUT)/xdp_synproxy				\
+ 		       $(OUTPUT)/sign-file				\
++		       $(OUTPUT)/no_build_id				\
+ 		       ima_setup.sh 					\
+ 		       verify_sig_setup.sh				\
+ 		       $(wildcard progs/btf_dump_test_case_*.c)		\
+diff --git a/tools/testing/selftests/bpf/no_build_id.c b/tools/testing/selftests/bpf/no_build_id.c
 new file mode 100644
-index 000000000000..11a59c0f1aba
+index 000000000000..a6f28f1c06d5
 --- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
-@@ -0,0 +1,56 @@
++++ b/tools/testing/selftests/bpf/no_build_id.c
+@@ -0,0 +1,6 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+#include "bpf_iter.h"
++int main(void)
++{
++	return 0;
++}
+diff --git a/tools/testing/selftests/bpf/prog_tests/file_build_id.c b/tools/testing/selftests/bpf/prog_tests/file_build_id.c
+new file mode 100644
+index 000000000000..cb233cfd58cb
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/file_build_id.c
+@@ -0,0 +1,98 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <unistd.h>
++#include <test_progs.h>
++#include "file_build_id.skel.h"
++#include "trace_helpers.h"
++
++static void
++test_build_id(const char *bin, const char *lib, long bin_err, long lib_err)
++{
++	int err, child_pid = 0, child_status, c = 1, sz;
++	char build_id[BPF_BUILD_ID_SIZE];
++	struct file_build_id *skel;
++	int go[2] = { -1, -1 };
++
++	if (!ASSERT_OK(pipe(go), "pipe"))
++		return;
++
++	skel = file_build_id__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "file_build_id__open_and_load"))
++		goto out;
++
++	child_pid = fork();
++	if (child_pid < 0)
++		goto out;
++
++	/* child */
++	if (child_pid == 0) {
++		close(go[1]);
++		/* wait for parent's pid update */
++		err = read(go[0], &c, 1);
++		if (!ASSERT_EQ(err, 1, "child_read_pipe"))
++			exit(err);
++
++		execle(bin, bin, NULL, NULL);
++		exit(errno);
++	}
++
++	/* parent, update child's pid and kick it */
++	skel->bss->pid = child_pid;
++
++	close(go[0]);
++
++	err = file_build_id__attach(skel);
++	if (!ASSERT_OK(err, "file_build_id__attach"))
++		goto out;
++
++	err = write(go[1], &c, 1);
++	if (!ASSERT_EQ(err, 1, "child_write_pipe"))
++		goto out;
++
++	/* wait for child to exit */
++	waitpid(child_pid, &child_status, 0);
++	child_pid = 0;
++	if (!ASSERT_EQ(WEXITSTATUS(child_status), 0, "child_exit_value"))
++		goto out;
++
++	/* test binary */
++	sz = read_build_id(bin, build_id);
++	err = sz > 0 ? 0 : sz;
++
++	ASSERT_EQ((long) err, bin_err, "read_build_id_bin_err");
++	ASSERT_EQ(skel->bss->build_id_bin_err, bin_err, "build_id_bin_err");
++
++	if (!err) {
++		ASSERT_EQ(skel->bss->build_id_bin_size, sz, "build_id_bin_size");
++		ASSERT_MEMEQ(skel->bss->build_id_bin, build_id, sz, "build_id_bin");
++	}
++
++	/* test library if present */
++	if (lib) {
++		sz = read_build_id(lib, build_id);
++		err = sz > 0 ? 0 : sz;
++
++		ASSERT_EQ((long) err, lib_err, "read_build_id_lib_err");
++		ASSERT_EQ(skel->bss->build_id_lib_err, lib_err, "build_id_lib_err");
++
++		if (!err) {
++			ASSERT_EQ(skel->bss->build_id_lib_size, sz, "build_id_lib_size");
++			ASSERT_MEMEQ(skel->bss->build_id_lib, build_id, sz, "build_id_lib");
++		}
++	}
++
++out:
++	close(go[1]);
++	close(go[0]);
++	if (child_pid)
++		waitpid(child_pid, &child_status, 0);
++	file_build_id__destroy(skel);
++}
++
++void test_file_build_id(void)
++{
++	if (test__start_subtest("present"))
++		test_build_id("./urandom_read", "./liburandom_read.so", 0, 0);
++	if (test__start_subtest("missing"))
++		test_build_id("./no_build_id", NULL, -EINVAL, 0);
++}
+diff --git a/tools/testing/selftests/bpf/progs/file_build_id.c b/tools/testing/selftests/bpf/progs/file_build_id.c
+new file mode 100644
+index 000000000000..6dc10c8e17ac
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/file_build_id.c
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include "vmlinux.h"
 +#include "err.h"
 +#include <bpf/bpf_helpers.h>
-+#include <string.h>
++#include <bpf/bpf_tracing.h>
++#include <linux/string.h>
 +
 +char _license[] SEC("license") = "GPL";
 +
-+#define VM_EXEC		0x00000004
-+#define D_PATH_BUF_SIZE	1024
++int pid;
 +
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__uint(max_entries, 10000);
-+	__type(key, char[D_PATH_BUF_SIZE]);
-+	__type(value, struct build_id);
-+} files SEC(".maps");
++u32 build_id_bin_size;
++u32 build_id_lib_size;
 +
-+static char path[D_PATH_BUF_SIZE];
-+static struct build_id build_id;
++char build_id_bin[BUILD_ID_SIZE_MAX];
++char build_id_lib[BUILD_ID_SIZE_MAX];
 +
-+SEC("iter/task_vma")
-+int proc_maps(struct bpf_iter__task_vma *ctx)
++long build_id_bin_err;
++long build_id_lib_err;
++
++static int store_build_id(struct file *file, char *build_id, u32 *sz, long *err)
 +{
-+	struct vm_area_struct *vma = ctx->vma;
-+	struct task_struct *task = ctx->task;
-+	struct file *file;
++	struct build_id *bid;
 +
-+	if (task == (void *)0 || vma == (void *)0)
++	bid = file->f_build_id;
++	if (IS_ERR_OR_NULL(bid)) {
++		*err = PTR_ERR(bid);
 +		return 0;
-+
-+	if (!(vma->vm_flags & VM_EXEC))
-+		return 0;
-+
-+	file = vma->vm_file;
-+	if (!file)
-+		return 0;
-+
-+	__builtin_memset(path, 0x0, D_PATH_BUF_SIZE);
-+	bpf_d_path(&file->f_path, (char *) &path, D_PATH_BUF_SIZE);
-+
-+	if (bpf_map_lookup_elem(&files, &path))
-+		return 0;
-+
-+	if (IS_ERR_OR_NULL(file->f_build_id)) {
-+		/* On error return empty build id. */
-+		__builtin_memset(&build_id.data, 0x0, sizeof(build_id.data));
-+		build_id.sz = BUILD_ID_SIZE_MAX;
-+	} else {
-+		__builtin_memcpy(&build_id, file->f_build_id, sizeof(*file->f_build_id));
 +	}
-+
-+	bpf_map_update_elem(&files, &path, &build_id, 0);
++	*sz = bid->sz;
++	if (bid->sz > sizeof(bid->data)) {
++		*err = 1;
++		return 0;
++	}
++	__builtin_memcpy(build_id, bid->data, sizeof(bid->data));
++	*err = 0;
 +	return 0;
 +}
++
++SEC("tp_btf/sched_process_exec")
++int BPF_PROG(prog, struct task_struct *p, pid_t old_pid, struct linux_binprm *bprm)
++{
++	int cur_pid = bpf_get_current_pid_tgid() >> 32;
++
++	if (pid != cur_pid)
++		return 0;
++	if (!bprm->file)
++		return 0;
++	return store_build_id(bprm->file, build_id_bin, &build_id_bin_size, &build_id_bin_err);
++}
++
++static long check_vma(struct task_struct *task, struct vm_area_struct *vma,
++		      void *data)
++{
++	if (!vma || !vma->vm_file || !vma->vm_file)
++		return 0;
++	return store_build_id(vma->vm_file, build_id_lib, &build_id_lib_size, &build_id_lib_err);
++}
++
++SEC("uprobe/./liburandom_read.so:urandlib_read_without_sema")
++int BPF_UPROBE(urandlib_read_without_sema)
++{
++	struct task_struct *task = bpf_get_current_task_btf();
++	int cur_pid = bpf_get_current_pid_tgid() >> 32;
++
++	if (pid != cur_pid)
++		return 0;
++	return bpf_find_vma(task, ctx->ip, check_vma, NULL, 0);
++}
+diff --git a/tools/testing/selftests/bpf/test_progs.h b/tools/testing/selftests/bpf/test_progs.h
+index d91427bfe0d7..285dd5d91426 100644
+--- a/tools/testing/selftests/bpf/test_progs.h
++++ b/tools/testing/selftests/bpf/test_progs.h
+@@ -310,6 +310,16 @@ int test__join_cgroup(const char *path);
+ 	___ok;								\
+ })
+ 
++#define ASSERT_MEMEQ(actual, expected, sz, name) ({			\
++	static int duration = 0;					\
++	const char *___act = actual;					\
++	const char *___exp = expected;					\
++	bool ___ok = memcmp(___act, ___exp, sz) == 0;			\
++	CHECK(!___ok, (name),						\
++	      "unexpected %s does not match\n", (name));		\
++	___ok;								\
++})
++
+ #define ASSERT_STRNEQ(actual, expected, len, name) ({			\
+ 	static int duration = 0;					\
+ 	const char *___act = actual;					\
 -- 
 2.39.2
 
