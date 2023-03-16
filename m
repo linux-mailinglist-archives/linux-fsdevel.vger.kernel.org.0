@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72ED36BD692
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 18:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62B5D6BD697
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 18:02:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229820AbjCPRCH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 13:02:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60804 "EHLO
+        id S229966AbjCPRCT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 13:02:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229631AbjCPRCF (ORCPT
+        with ESMTP id S229842AbjCPRCQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 13:02:05 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43A79B2F7;
-        Thu, 16 Mar 2023 10:01:59 -0700 (PDT)
+        Thu, 16 Mar 2023 13:02:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCF9E6DB2;
+        Thu, 16 Mar 2023 10:02:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 746D3B8228C;
-        Thu, 16 Mar 2023 17:01:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BABF6C4339B;
-        Thu, 16 Mar 2023 17:01:51 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AAFCFB820AD;
+        Thu, 16 Mar 2023 17:02:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94DD7C433EF;
+        Thu, 16 Mar 2023 17:02:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678986117;
-        bh=iAe83v06CelvQ5x9yL4BVebJHJ8BOoQ+WiuxJO46PLc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UrAFSXvLQU2L+HELh4Ww55FjwUFPh88C4WrAY8SuExteQeDon/zQi9uIlnQ0FeLUN
-         IloCjLYHlbUgUQ9Q9TsI1exG7B+AjPZNwB2NWj39PMHS3epq0d2Mth7nidheT4cxW4
-         6qSEwwCxL3uVBH8whbcX+/nskeSD772HAApttUAqVdHZy8vIyYxWVVxNA5XPFAi4m7
-         zQjb2XvY9Mw+JrwQftcZWPS7Jfx/qmNqGiaWa0KcCqz2SuzuIhhWdOqR32100jjvvw
-         f3raN7WrqQRL9KfyDpOifwgo1nJj0rDvM57S64hE+TJjTBKfS/cDZ7fCeanU41XyGw
-         z6eEp+AwgZg0w==
+        s=k20201202; t=1678986129;
+        bh=rlnHUcArwM6SIvbHJnlNQfqpKxk+RvN2l+D5fdKLMa8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mko2AyIGWCfuAb/notSpksldx+wnHyuJJ4/SEak6IfxwljXnE+r8/+kMT7THTFZQ5
+         Wncxf77aMXc3FbAfZfDb08GQs5sdSXxJP/oxSMw5mFt26kNKx9/5wT/iIghXvWGrPt
+         p/shHWVxwdSZ8CaChz7D04gE4GZtpXAlZNM9LhqY6aE2MbZAGy6rv+Yt6siwcFcTvz
+         fMFLw05Y8JJ7ka5JyaIx/wptVp0ilYP5XRMB4WqQlNarQsTWdfLNtGysPEqe5mNwBC
+         eGb6hOm37AxCLhqGwPJ7Uf6WZevagTDZ0Lmk5+qQ9EwJwNKT5AqiCYBFavWZH5OdJw
+         czU9fH4Y2iLaw==
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -52,10 +52,12 @@ Cc:     bpf@vger.kernel.org, linux-mm@kvack.org,
         Daniel Borkmann <daniel@iogearbox.net>,
         Namhyung Kim <namhyung@gmail.com>,
         Dave Chinner <david@fromorbit.com>
-Subject: [PATCHv3 bpf-next 0/9] mm/bpf/perf: Store build id in file object
-Date:   Thu, 16 Mar 2023 18:01:40 +0100
-Message-Id: <20230316170149.4106586-1-jolsa@kernel.org>
+Subject: [PATCHv3 bpf-next 1/9] mm: Store build id in file object
+Date:   Thu, 16 Mar 2023 18:01:41 +0100
+Message-Id: <20230316170149.4106586-2-jolsa@kernel.org>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230316170149.4106586-1-jolsa@kernel.org>
+References: <20230316170149.4106586-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -67,86 +69,243 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-hi,
-this patchset adds build id object pointer to struct file object.
+Storing build id in file object for elf executable with build
+id defined. The build id is stored when file is mmaped.
 
-We have several use cases for build id to be used in BPF programs
-[2][3].
+The build id object assignment to the file is locked with existing
+file->f_mapping semaphore.
 
-Having build id pointer stored directly in file object allows to get
-build id reliably regardless of the execution context as described
-in [3].
+The f_build_id pointer points either build id object or carries
+the error the build id retrieval failed on.
 
-Previous iteration [1] stored build id pointer into inode, but it
-became clear that struct file object is better place, because we read 
-the build id when the file is mmap-ed and as Dave Chinner said [4]:
+It's hidden behind new config option CONFIG_FILE_BUILD_ID.
 
-> Yes, the problem being that we can cache hundreds of millions of
-> inodes in memory, and only a very small subset of them are going to
-> have open files associated with them. And an even smaller subset are
-> going to be mmapped.
-
-thanks,
-jirka
-
-
-v3 changes:
-  - moved build id back to file object (discussed in [4])
-  - drop patch 4, it's not needed [Andrii]
-  - added ack to patch 7 [Andrii]
-  - replaced BUILD_ID_SIZE_MAX macro with enum [Andrii]
-  - few re-formatting fixes [Andrii]
-
-v2 changes:
-  - store build id under inode [Matthew Wilcox]
-  - use urandom_read and liburandom_read.so for test [Andrii]
-  - add libelf-based helper to fetch build ID from elf [Andrii]
-  - store build id or error we got when reading it [Andrii]
-  - use full name i_build_id [Andrii]
-  - several tests fixes [Andrii]
-
-
-[1] https://lore.kernel.org/bpf/20230228093206.821563-1-jolsa@kernel.org/
-[2] https://lore.kernel.org/bpf/CA+khW7juLEcrTOd7iKG3C_WY8L265XKNo0iLzV1fE=o-cyeHcQ@mail.gmail.com/
-[3] https://lore.kernel.org/bpf/ZABf26mV0D0LS7r%2F@krava/
-[4] https://lore.kernel.org/bpf/20230228220714.GJ2825702@dread.disaster.area/
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
-Jiri Olsa (9):
-      mm: Store build id in file object
-      perf: Use file object build id in perf_event_mmap_event
-      bpf: Use file object build id in stackmap
-      bpf: Switch BUILD_ID_SIZE_MAX to enum
-      selftests/bpf: Add read_buildid function
-      selftests/bpf: Add err.h header
-      selftests/bpf: Replace extract_build_id with read_build_id
-      selftests/bpf: Add iter_task_vma_buildid test
-      selftests/bpf: Add file_build_id test
+ fs/file_table.c         |  3 +++
+ include/linux/buildid.h | 17 +++++++++++++++++
+ include/linux/fs.h      |  7 +++++++
+ lib/buildid.c           | 42 +++++++++++++++++++++++++++++++++++++++++
+ mm/Kconfig              |  9 +++++++++
+ mm/mmap.c               | 18 ++++++++++++++++++
+ 6 files changed, 96 insertions(+)
 
- fs/file_table.c                                                  |  3 +++
- include/linux/buildid.h                                          | 21 ++++++++++++++++++-
- include/linux/fs.h                                               |  7 +++++++
- kernel/bpf/stackmap.c                                            | 24 +++++++++++++++++++++-
- kernel/events/core.c                                             | 43 ++++++++++++++++++++++++++++++++++----
- lib/buildid.c                                                    | 42 +++++++++++++++++++++++++++++++++++++
- mm/Kconfig                                                       |  9 ++++++++
- mm/mmap.c                                                        | 18 ++++++++++++++++
- tools/testing/selftests/bpf/Makefile                             |  7 ++++++-
- tools/testing/selftests/bpf/no_build_id.c                        |  6 ++++++
- tools/testing/selftests/bpf/prog_tests/bpf_iter.c                | 78 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- tools/testing/selftests/bpf/prog_tests/file_build_id.c           | 98 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c     | 19 +++++++----------
- tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c | 17 ++++++---------
- tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c    | 56 ++++++++++++++++++++++++++++++++++++++++++++++++++
- tools/testing/selftests/bpf/progs/err.h                          | 18 ++++++++++++++++
- tools/testing/selftests/bpf/progs/file_build_id.c                | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- tools/testing/selftests/bpf/progs/profiler.inc.h                 |  3 +--
- tools/testing/selftests/bpf/test_progs.c                         | 25 ----------------------
- tools/testing/selftests/bpf/test_progs.h                         | 11 +++++++++-
- tools/testing/selftests/bpf/trace_helpers.c                      | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- tools/testing/selftests/bpf/trace_helpers.h                      |  5 +++++
- 22 files changed, 608 insertions(+), 58 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/no_build_id.c
- create mode 100644 tools/testing/selftests/bpf/prog_tests/file_build_id.c
- create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_task_vma_buildid.c
- create mode 100644 tools/testing/selftests/bpf/progs/err.h
- create mode 100644 tools/testing/selftests/bpf/progs/file_build_id.c
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 372653b92617..d72f72503268 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -29,6 +29,7 @@
+ #include <linux/ima.h>
+ #include <linux/swap.h>
+ #include <linux/kmemleak.h>
++#include <linux/buildid.h>
+ 
+ #include <linux/atomic.h>
+ 
+@@ -48,6 +49,7 @@ static void file_free_rcu(struct rcu_head *head)
+ {
+ 	struct file *f = container_of(head, struct file, f_rcuhead);
+ 
++	file_build_id_free(f);
+ 	put_cred(f->f_cred);
+ 	kmem_cache_free(filp_cachep, f);
+ }
+@@ -413,6 +415,7 @@ void __init files_init(void)
+ 	filp_cachep = kmem_cache_create("filp", sizeof(struct file), 0,
+ 			SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT, NULL);
+ 	percpu_counter_init(&nr_files, 0, GFP_KERNEL);
++	build_id_init();
+ }
+ 
+ /*
+diff --git a/include/linux/buildid.h b/include/linux/buildid.h
+index 3b7a0ff4642f..b8b2e00420d6 100644
+--- a/include/linux/buildid.h
++++ b/include/linux/buildid.h
+@@ -3,9 +3,15 @@
+ #define _LINUX_BUILDID_H
+ 
+ #include <linux/mm_types.h>
++#include <linux/slab.h>
+ 
+ #define BUILD_ID_SIZE_MAX 20
+ 
++struct build_id {
++	u32 sz;
++	char data[BUILD_ID_SIZE_MAX];
++};
++
+ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
+ 		   __u32 *size);
+ int build_id_parse_buf(const void *buf, unsigned char *build_id, u32 buf_size);
+@@ -17,4 +23,15 @@ void init_vmlinux_build_id(void);
+ static inline void init_vmlinux_build_id(void) { }
+ #endif
+ 
++#ifdef CONFIG_FILE_BUILD_ID
++void __init build_id_init(void);
++void build_id_free(struct build_id *bid);
++void file_build_id_free(struct file *f);
++void vma_read_build_id(struct vm_area_struct *vma, struct build_id **bidp);
++#else
++static inline void __init build_id_init(void) { }
++static inline void build_id_free(struct build_id *bid) { }
++static inline void file_build_id_free(struct file *f) { }
++#endif /* CONFIG_FILE_BUILD_ID */
++
+ #endif
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c85916e9f7db..ce03fd965cdb 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -977,6 +977,13 @@ struct file {
+ 	struct address_space	*f_mapping;
+ 	errseq_t		f_wb_err;
+ 	errseq_t		f_sb_err; /* for syncfs */
++#ifdef CONFIG_FILE_BUILD_ID
++	/*
++	 * Initialized when the file is mmaped (mmap_region),
++	 * guarded by f_mapping lock.
++	 */
++	struct build_id		*f_build_id;
++#endif
+ } __randomize_layout
+   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
+ 
+diff --git a/lib/buildid.c b/lib/buildid.c
+index dfc62625cae4..04181c0b7c21 100644
+--- a/lib/buildid.c
++++ b/lib/buildid.c
+@@ -5,6 +5,7 @@
+ #include <linux/elf.h>
+ #include <linux/kernel.h>
+ #include <linux/pagemap.h>
++#include <linux/slab.h>
+ 
+ #define BUILD_ID 3
+ 
+@@ -189,3 +190,44 @@ void __init init_vmlinux_build_id(void)
+ 	build_id_parse_buf(&__start_notes, vmlinux_build_id, size);
+ }
+ #endif
++
++#ifdef CONFIG_FILE_BUILD_ID
++
++/* SLAB cache for build_id structures */
++static struct kmem_cache *build_id_cachep;
++
++void vma_read_build_id(struct vm_area_struct *vma, struct build_id **bidp)
++{
++	struct build_id *bid = ERR_PTR(-ENOMEM);
++	int err;
++
++	bid = kmem_cache_alloc(build_id_cachep, GFP_KERNEL);
++	if (!bid)
++		goto out;
++	err = build_id_parse(vma, bid->data, &bid->sz);
++	if (err) {
++		build_id_free(bid);
++		bid = ERR_PTR(err);
++	}
++out:
++	*bidp = bid;
++}
++
++void file_build_id_free(struct file *f)
++{
++	build_id_free(f->f_build_id);
++}
++
++void build_id_free(struct build_id *bid)
++{
++	if (IS_ERR_OR_NULL(bid))
++		return;
++	kmem_cache_free(build_id_cachep, bid);
++}
++
++void __init build_id_init(void)
++{
++	build_id_cachep = kmem_cache_create("build_id", sizeof(struct build_id), 0,
++				SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT, NULL);
++}
++#endif /* CONFIG_FILE_BUILD_ID */
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 4751031f3f05..5e9f48962703 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1202,6 +1202,15 @@ config LRU_GEN_STATS
+ 	  This option has a per-memcg and per-node memory overhead.
+ # }
+ 
++config FILE_BUILD_ID
++	bool "Store build id in file object"
++	default n
++	help
++	  Store build id in file object for elf executable with build id
++	  defined. The build id is stored when file is mmaped.
++
++	  It's typically used by eBPF programs and perf subsystem.
++
+ source "mm/damon/Kconfig"
+ 
+ endmenu
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 20f21f0949dd..1c14e8c84d3a 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2480,6 +2480,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	pgoff_t vm_pgoff;
+ 	int error;
+ 	VMA_ITERATOR(vmi, mm, addr);
++	struct build_id *bid = NULL;
+ 
+ 	/* Check against address space limit. */
+ 	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT)) {
+@@ -2575,6 +2576,10 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 		if (error)
+ 			goto unmap_and_free_vma;
+ 
++#ifdef CONFIG_FILE_BUILD_ID
++		if (vma->vm_flags & VM_EXEC && !file->f_build_id)
++			vma_read_build_id(vma, &bid);
++#endif
+ 		/*
+ 		 * Expansion is handled above, merging is handled below.
+ 		 * Drivers should not alter the address of the VMA.
+@@ -2647,6 +2652,12 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 		if (vma->vm_flags & VM_SHARED)
+ 			mapping_allow_writable(vma->vm_file->f_mapping);
+ 
++#ifdef CONFIG_FILE_BUILD_ID
++		if (bid && !file->f_build_id) {
++			file->f_build_id = bid;
++			bid = NULL;
++		}
++#endif
+ 		flush_dcache_mmap_lock(vma->vm_file->f_mapping);
+ 		vma_interval_tree_insert(vma, &vma->vm_file->f_mapping->i_mmap);
+ 		flush_dcache_mmap_unlock(vma->vm_file->f_mapping);
+@@ -2667,6 +2678,12 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ expanded:
+ 	perf_event_mmap(vma);
+ 
++	/*
++	 * File can already have f_build_id assigned, so we need to release
++	 * the build id we just read and did not assign.
++	 */
++	build_id_free(bid);
++
+ 	vm_stat_account(mm, vm_flags, len >> PAGE_SHIFT);
+ 	if (vm_flags & VM_LOCKED) {
+ 		if ((vm_flags & VM_SPECIAL) || vma_is_dax(vma) ||
+@@ -2711,6 +2728,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 		mapping_unmap_writable(file->f_mapping);
+ free_vma:
+ 	vm_area_free(vma);
++	build_id_free(bid);
+ unacct_error:
+ 	if (charged)
+ 		vm_unacct_memory(charged);
+-- 
+2.39.2
+
