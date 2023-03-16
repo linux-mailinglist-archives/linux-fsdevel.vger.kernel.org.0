@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C30616BDB53
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 23:08:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD5B76BDB58
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 23:08:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230133AbjCPWIG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 18:08:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42234 "EHLO
+        id S229669AbjCPWIU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 18:08:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229669AbjCPWIF (ORCPT
+        with ESMTP id S229897AbjCPWIQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 18:08:05 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B30FD5A74;
-        Thu, 16 Mar 2023 15:07:45 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id w9so13459187edc.3;
-        Thu, 16 Mar 2023 15:07:45 -0700 (PDT)
+        Thu, 16 Mar 2023 18:08:16 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D01580E2C;
+        Thu, 16 Mar 2023 15:07:52 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id w9so13460272edc.3;
+        Thu, 16 Mar 2023 15:07:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679004463;
+        d=gmail.com; s=20210112; t=1679004471;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dmkBwYxMQeUctzjrFldtVoaezANsLHjS7h90Bw7aOb8=;
-        b=OX06J91y0AB0jF4YfP4k34mwZrJxn3FEjT8Bs/YRmhC74kY3uZLq9nXirZCLa0sgnk
-         OMKjp9M0BjTPz5I07oYFKPjCj6i7DgmazoDeKkkPn6a3P4tr6NiyFEq2RHhWhOqnSZUf
-         XE8hW5tZUtgGplONZ/EMug8Sd0Os6zkq4hqZYKDpnYZTXcHRrxgR7ede8UjXmk6fNf9w
-         zE0bPmjHeVkfm5AUJlOJ6CIxmb6MKIZtXh4goJ3rWoBIwdPOKYz3Mc96+LF/KHQ9GMoS
-         XuEzlkBtzI/kTsy4EVMFUFT/7ehTvh/ZmVLE5iXZCNKQ7PeWHQhJt3kFoBs3tMntB/R6
-         r2fA==
+        bh=oOALZKYk87ymZboEEVOkzREhSwRWC8GQ8w6I4E1YkJo=;
+        b=in34xBPeQYTEL3b+BKWYiDFJx3fjRjzM45nuAeTfdrrDD+SWWbSuLVByYQSPYEtyh/
+         LJkQvDM6AfBuXzaSQvLDL6bcHgVM/FajGW2t9QI7EO2B5nJmECSYxhcJUfEmnfjyfo6L
+         3qEh4U2HU4IryoVbYf3ZfYRktGLQXtPrCFHjvzPXNoXBsG10nnJQkG8aq3PiT9E2PNZS
+         Uox6zB00WGxZ2BPU1pXkkyPJ2utVt8tc8SLQCDX5k0/F7Gefv6BTc7YsFqcZB9tQOWQh
+         jlPZyIpvOlWniEoEnLA+2EAJ3OY3tCqS65xiSA2BTnfXirOh5YvXVccb+i3BAUfqbe/b
+         zb3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679004463;
+        d=1e100.net; s=20210112; t=1679004471;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dmkBwYxMQeUctzjrFldtVoaezANsLHjS7h90Bw7aOb8=;
-        b=bMDY5rjcUg6OJ8kwIhafj6zFnhsKni8OKR5l5f2FdHLriIHU3U6wuE9Pjr3sU+nMHp
-         5pOHxt4pnrVIznUR+upJ7mF2/cFKJMb0T+xktMTU/gsP2F+/8LunRLgYOccmQQn/h0i0
-         GA7OlrRiGqI8Wf3Y4+LbMpMMucsiuVnv2TtdnxdpwHwjOOs14lDaAsGbZgOQqYhNFuW4
-         6KZlGmFGE86Wf/oJ078org7XO7ea5rYF2/vE8Cs5DRi10ZjHMh/AByAltXWk8Iv2ScLq
-         rwwCLFM+wtsB9w/BUSyIS379GPi8XYbmXPq1c+HCcx8+12uLtTIo01UpB+nSX//A3JPS
-         psxw==
-X-Gm-Message-State: AO0yUKUY/SYwXPuNjujpQxfW6CHMNensJEvgYvaQ+t42zGLtlNyaHt+D
-        sl2FeLV9Bb5/gHcfuSl1Z77R4rzAC7vr4l/7nUs=
-X-Google-Smtp-Source: AK7set9ozrlkiM47WoqWKw6CvAMXBMPI57v2AuYyZMo5AdmbLC12BcKAsk6mAq2CFYYmRW2g2Eyy3+GlPBwvyWk5klY=
-X-Received: by 2002:a17:906:8552:b0:8ab:b606:9728 with SMTP id
- h18-20020a170906855200b008abb6069728mr6158995ejy.5.1679004463514; Thu, 16 Mar
- 2023 15:07:43 -0700 (PDT)
+        bh=oOALZKYk87ymZboEEVOkzREhSwRWC8GQ8w6I4E1YkJo=;
+        b=Cqx+6BNH43/FlhMY7O5z2uLsSN5RmgkazLtVZyy5RiGvDRknAp8fpBHTqUz5lpa5H4
+         QCt48YkQuSfx3DDEZ5HIIliW9cWFTdLMRKKUX/PopPWmWZb71HyQF3BMpbIaJAhOi1WJ
+         +o860pz+u8guMKwBTe7Bh5b5jTnooYRAZ0pqaXoYWM+RDw3s0rpHe3OF/WYeTb2okl7B
+         xIFu7IUqyhMRM+1MFUtW5OzmX520/P6omZJV9sfA2VuKwAhzQZW7tqJEZAOfeS/BmELP
+         4u77JAFv5PGPjtdTFnNxz6KA1RiLPv2YbkGqc0K0rZCqRNgwacJ3bTyF83gBRJZddSII
+         KxJQ==
+X-Gm-Message-State: AO0yUKUaXDaWaYPxhGeHa92gPIf6ouxK7K68KBkc3cajkxFQSkGjakOi
+        qhsyCYG6yJNB/H0Dc6tb+9/DG1boY4/amGdq7/c=
+X-Google-Smtp-Source: AK7set9oRcqczZSug6uQ8e1BvxXTQIFidg+bqwd+pyGq8dOPEHDoU7I4CesioNRco9SN/0FMKqK741L01oMq1AIZHP8=
+X-Received: by 2002:a17:906:2b09:b0:931:ce20:db96 with SMTP id
+ a9-20020a1709062b0900b00931ce20db96mr16322ejg.5.1679004470876; Thu, 16 Mar
+ 2023 15:07:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230316170149.4106586-1-jolsa@kernel.org> <20230316170149.4106586-4-jolsa@kernel.org>
-In-Reply-To: <20230316170149.4106586-4-jolsa@kernel.org>
+References: <20230316170149.4106586-1-jolsa@kernel.org> <20230316170149.4106586-2-jolsa@kernel.org>
+In-Reply-To: <20230316170149.4106586-2-jolsa@kernel.org>
 From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 16 Mar 2023 15:07:31 -0700
-Message-ID: <CAEf4Bzbj03xyVtTH32HS-eN+Ue6sXA7SzU6rHMO+pbZMBAXTdg@mail.gmail.com>
-Subject: Re: [PATCHv3 bpf-next 3/9] bpf: Use file object build id in stackmap
+Date:   Thu, 16 Mar 2023 15:07:38 -0700
+Message-ID: <CAEf4BzbHk10Tt0h38dt=HLi5U9_4BoWN5NNiwjXy_KoBe2j=SQ@mail.gmail.com>
+Subject: Re: [PATCHv3 bpf-next 1/9] mm: Store build id in file object
 To:     Jiri Olsa <jolsa@kernel.org>
 Cc:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>,
@@ -89,71 +89,152 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Thu, Mar 16, 2023 at 10:02=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote=
 :
 >
-> Use build id from file object in stackmap if it's available.
+> Storing build id in file object for elf executable with build
+> id defined. The build id is stored when file is mmaped.
 >
-> The file's f_build_id is available (for CONFIG_FILE_BUILD_ID option)
-> when the file is mmap-ed, so it will be available (if present) when
-> used by stackmap.
+> The build id object assignment to the file is locked with existing
+> file->f_mapping semaphore.
+>
+> The f_build_id pointer points either build id object or carries
+> the error the build id retrieval failed on.
+>
+> It's hidden behind new config option CONFIG_FILE_BUILD_ID.
 >
 > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
-
-LGTM.
-
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
->  kernel/bpf/stackmap.c | 24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
+>  fs/file_table.c         |  3 +++
+>  include/linux/buildid.h | 17 +++++++++++++++++
+>  include/linux/fs.h      |  7 +++++++
+>  lib/buildid.c           | 42 +++++++++++++++++++++++++++++++++++++++++
+>  mm/Kconfig              |  9 +++++++++
+>  mm/mmap.c               | 18 ++++++++++++++++++
+>  6 files changed, 96 insertions(+)
 >
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 0f1d8dced933..14d27bd83081 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -124,6 +124,28 @@ static struct bpf_map *stack_map_alloc(union bpf_att=
-r *attr)
->         return ERR_PTR(err);
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index 372653b92617..d72f72503268 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/ima.h>
+>  #include <linux/swap.h>
+>  #include <linux/kmemleak.h>
+> +#include <linux/buildid.h>
+>
+>  #include <linux/atomic.h>
+>
+> @@ -48,6 +49,7 @@ static void file_free_rcu(struct rcu_head *head)
+>  {
+>         struct file *f =3D container_of(head, struct file, f_rcuhead);
+>
+> +       file_build_id_free(f);
+>         put_cred(f->f_cred);
+>         kmem_cache_free(filp_cachep, f);
+>  }
+> @@ -413,6 +415,7 @@ void __init files_init(void)
+>         filp_cachep =3D kmem_cache_create("filp", sizeof(struct file), 0,
+>                         SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT, N=
+ULL);
+>         percpu_counter_init(&nr_files, 0, GFP_KERNEL);
+> +       build_id_init();
 >  }
 >
-> +#ifdef CONFIG_FILE_BUILD_ID
-> +static int vma_get_build_id(struct vm_area_struct *vma, unsigned char *b=
-uild_id)
-> +{
-> +       struct build_id *bid;
-> +
-> +       if (!vma->vm_file)
-> +               return -EINVAL;
-> +       bid =3D vma->vm_file->f_build_id;
-> +       if (IS_ERR_OR_NULL(bid))
-> +               return bid ? PTR_ERR(bid) : -ENOENT;
-> +       if (bid->sz > BUILD_ID_SIZE_MAX)
-> +               return -EINVAL;
-> +       memcpy(build_id, bid->data, bid->sz);
-> +       return 0;
-> +}
-> +#else
-> +static int vma_get_build_id(struct vm_area_struct *vma, unsigned char *b=
-uild_id)
-> +{
-> +       return build_id_parse(vma, build_id, NULL);
-> +}
-> +#endif
-> +
->  static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_=
-offs,
->                                           u64 *ips, u32 trace_nr, bool us=
-er)
->  {
-> @@ -156,7 +178,7 @@ static void stack_map_get_build_id_offset(struct bpf_=
-stack_build_id *id_offs,
->                         goto build_id_valid;
->                 }
->                 vma =3D find_vma(current->mm, ips[i]);
-> -               if (!vma || build_id_parse(vma, id_offs[i].build_id, NULL=
-)) {
-> +               if (!vma || vma_get_build_id(vma, id_offs[i].build_id)) {
->                         /* per entry fall back to ips */
->                         id_offs[i].status =3D BPF_STACK_BUILD_ID_IP;
->                         id_offs[i].ip =3D ips[i];
-> --
-> 2.39.2
+>  /*
+> diff --git a/include/linux/buildid.h b/include/linux/buildid.h
+> index 3b7a0ff4642f..b8b2e00420d6 100644
+> --- a/include/linux/buildid.h
+> +++ b/include/linux/buildid.h
+> @@ -3,9 +3,15 @@
+>  #define _LINUX_BUILDID_H
 >
+>  #include <linux/mm_types.h>
+> +#include <linux/slab.h>
+>
+>  #define BUILD_ID_SIZE_MAX 20
+>
+> +struct build_id {
+> +       u32 sz;
+> +       char data[BUILD_ID_SIZE_MAX];
+> +};
+> +
+>  int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
+>                    __u32 *size);
+>  int build_id_parse_buf(const void *buf, unsigned char *build_id, u32 buf=
+_size);
+> @@ -17,4 +23,15 @@ void init_vmlinux_build_id(void);
+>  static inline void init_vmlinux_build_id(void) { }
+>  #endif
+>
+> +#ifdef CONFIG_FILE_BUILD_ID
+> +void __init build_id_init(void);
+> +void build_id_free(struct build_id *bid);
+> +void file_build_id_free(struct file *f);
+> +void vma_read_build_id(struct vm_area_struct *vma, struct build_id **bid=
+p);
+> +#else
+> +static inline void __init build_id_init(void) { }
+> +static inline void build_id_free(struct build_id *bid) { }
+> +static inline void file_build_id_free(struct file *f) { }
+> +#endif /* CONFIG_FILE_BUILD_ID */
+> +
+>  #endif
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index c85916e9f7db..ce03fd965cdb 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -977,6 +977,13 @@ struct file {
+>         struct address_space    *f_mapping;
+>         errseq_t                f_wb_err;
+>         errseq_t                f_sb_err; /* for syncfs */
+> +#ifdef CONFIG_FILE_BUILD_ID
+> +       /*
+> +        * Initialized when the file is mmaped (mmap_region),
+> +        * guarded by f_mapping lock.
+> +        */
+> +       struct build_id         *f_build_id;
+> +#endif
+>  } __randomize_layout
+>    __attribute__((aligned(4))); /* lest something weird decides that 2 is=
+ OK */
+>
+> diff --git a/lib/buildid.c b/lib/buildid.c
+> index dfc62625cae4..04181c0b7c21 100644
+> --- a/lib/buildid.c
+> +++ b/lib/buildid.c
+> @@ -5,6 +5,7 @@
+>  #include <linux/elf.h>
+>  #include <linux/kernel.h>
+>  #include <linux/pagemap.h>
+> +#include <linux/slab.h>
+>
+>  #define BUILD_ID 3
+>
+> @@ -189,3 +190,44 @@ void __init init_vmlinux_build_id(void)
+>         build_id_parse_buf(&__start_notes, vmlinux_build_id, size);
+>  }
+>  #endif
+> +
+> +#ifdef CONFIG_FILE_BUILD_ID
+> +
+> +/* SLAB cache for build_id structures */
+> +static struct kmem_cache *build_id_cachep;
+> +
+> +void vma_read_build_id(struct vm_area_struct *vma, struct build_id **bid=
+p)
+
+this function clearly has a result to return, so why use void function
+and out parameters instead of just returning `struct build_id *`?
+
+> +{
+> +       struct build_id *bid =3D ERR_PTR(-ENOMEM);
+> +       int err;
+> +
+> +       bid =3D kmem_cache_alloc(build_id_cachep, GFP_KERNEL);
+> +       if (!bid)
+> +               goto out;
+> +       err =3D build_id_parse(vma, bid->data, &bid->sz);
+> +       if (err) {
+> +               build_id_free(bid);
+> +               bid =3D ERR_PTR(err);
+> +       }
+
+[...]
