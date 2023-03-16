@@ -2,136 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 946DF6BD7C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 19:05:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABB5A6BD7CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 19:07:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230383AbjCPSFi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 14:05:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51682 "EHLO
+        id S230421AbjCPSHt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 14:07:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229849AbjCPSFg (ORCPT
+        with ESMTP id S230416AbjCPSHr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 14:05:36 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E79BA2B638;
-        Thu, 16 Mar 2023 11:05:34 -0700 (PDT)
-Received: from [192.168.10.39] (unknown [39.37.168.222])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        Thu, 16 Mar 2023 14:07:47 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7CAA7614F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 11:06:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678990018;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=z72FvUn0C+zfgOKSCB7WUz6jlvrWtPw83T7jP3vhoiw=;
+        b=BYRDiBJ9ZO8vTjB8+VSWevOeyLwxYNKCO0nF1HbRDz35JtgHLAW2HTBzKE3ZAqT2uoMoGq
+        dx1byxgEcv9odeiUT3UDb+nQAZxJvR2MfpXAPP7Ag3g63a35R6vpEtaXwbGOkr7nR6LojB
+        B5qqs9zj1GXdx1jD/MJ5TKzp8W1bjZA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-383-2akiADSaMgOJWrCm9Xiyrw-1; Thu, 16 Mar 2023 14:06:54 -0400
+X-MC-Unique: 2akiADSaMgOJWrCm9Xiyrw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 87F6A66030A0;
-        Thu, 16 Mar 2023 18:05:25 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678989932;
-        bh=jwiEZNS4tHI3AyhUR5flPCUmaY4pqgMo6a2MuOTvpgc=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=UIKk2odsIVHeVbbI48EfWDpxnqExfuk36zZrRLgt0Qmook2AMvSibZKa576mOmHG2
-         LZmDmyzgeYfKRefHU/slR1yA/TK2MPeJ5YXaiUvcXZn8Axj9106fZHdh/24kzVSNnx
-         HgRG5pUyDAfAiyBfsnW1T2CrEb/Olz29roFry91NjFaUG2zGVEL0HsFIxaKahufTHH
-         RKbUppqFLOPocBRpG1jm490YFHRkzcLTj5KOMRmSntgsEj/tKOEBJzJK/pIbG1NlL9
-         jvNovDhTa3ZZYMseTC59Kk1llZi/L1UL7KYs8p5rGCxS2p5GW8CHmnon+5TMo6q9i2
-         YEQv+Q0xzRLVA==
-Message-ID: <5750b0af-4028-d9c3-8ae8-432713869a81@collabora.com>
-Date:   Thu, 16 Mar 2023 23:05:21 +0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
-        <emmir@google.com>, Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Nadav Amit <namit@vmware.com>,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 80B5D101A54F;
+        Thu, 16 Mar 2023 18:06:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 56F502166B29;
+        Thu, 16 Mar 2023 18:06:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <8F8B62FD-0F16-4383-BB34-97E850DAA7AF@hammerspace.com>
+References: <8F8B62FD-0F16-4383-BB34-97E850DAA7AF@hammerspace.com> <3DFBF27C-A62B-4AFE-87FD-3DF53FC39E8E@hammerspace.com> <20230316152618.711970-1-dhowells@redhat.com> <20230316152618.711970-28-dhowells@redhat.com> <754534.1678983891@warthog.procyon.org.uk>
+To:     Trond Myklebust <trondmy@hammerspace.com>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Jeffrey Layton <jlayton@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v11 2/7] userfaultfd: Define dummy uffd_wp_range()
-Content-Language: en-US
-To:     Mike Rapoport <rppt@kernel.org>
-References: <20230309135718.1490461-1-usama.anjum@collabora.com>
- <20230309135718.1490461-3-usama.anjum@collabora.com>
- <ZBK+86eMMazwfhdx@kernel.org>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <ZBK+86eMMazwfhdx@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Anna Schumaker <anna@kernel.org>,
+        Charles Edward Lever <chuck.lever@oracle.com>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Subject: Re: [RFC PATCH 27/28] sunrpc: Use sendmsg(MSG_SPLICE_PAGES) rather then sendpage
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <809994.1678990010.1@warthog.procyon.org.uk>
+Date:   Thu, 16 Mar 2023 18:06:50 +0000
+Message-ID: <809995.1678990010@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/16/23 12:02 PM, Mike Rapoport wrote:
-> Hi,
-> 
-> On Thu, Mar 09, 2023 at 06:57:13PM +0500, Muhammad Usama Anjum wrote:
->> Define uffd_wp_range() for the cases when CONFIG_USERFAULTFD isn't set.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>  include/linux/userfaultfd_k.h | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
->> index b680c0ec8b85..fd1a1ecdb5f6 100644
->> --- a/include/linux/userfaultfd_k.h
->> +++ b/include/linux/userfaultfd_k.h
->> @@ -182,6 +182,14 @@ extern int userfaultfd_wp_async(struct vm_area_struct *vma);
->>  
->>  #else /* CONFIG_USERFAULTFD */
->>  
->> +extern inline long uffd_wp_range(struct mm_struct *dst_mm,
-> 
-> static inline
-I'll update.
+Trond Myklebust <trondmy@hammerspace.com> wrote:
 
-> 
->> +				 struct vm_area_struct *vma,
->> +				 unsigned long start, unsigned long len,
->> +				 bool enable_wp)
->> +{
->> +	return 0;
->> +}
->> +
-> 
-> I didn't see uffd_wp_range() defined in the previous patch.
-> Could be a rebase issue?
-> 
-> In any case, the stub should be defined in the same patch as the actual
-> function in order not to break bisectability.
-This 2/7 patch is a preparatory patch for 3/7 patch. I'll merge both then.
+> 1) This is code that is common to the client and the server. Why are we
+> adding unused 3 bvec slots to every client RPC call?
 
-> 
->>  /* mm helpers */
->>  static inline vm_fault_t handle_userfault(struct vm_fault *vmf,
->>  				unsigned long reason)
->> -- 
->> 2.39.2
->>
-> 
+Fair point, but I'm trying to avoid making four+ sendmsg calls in nfsd rather
+than one.
 
--- 
-BR,
-Muhammad Usama Anjum
+> 2) It obfuscates the existence of these bvec slots.
+
+True, it'd be nice to find a better way to do it.  Question is, can the client
+make use of MSG_SPLICE_PAGES also?
+
+> 3) knfsd may use splice_direct_to_actor() in order to avoid copying the page
+> cache data into private buffers (it just takes a reference to the
+> pages). Using MSG_SPLICE_PAGES will presumably require it to protect those
+> pages against further writes while the socket is referencing them.
+
+Upstream sunrpc is using sendpage with TCP.  It already has that issue.
+MSG_SPLICE_PAGES is a way of doing sendpage through sendmsg.
+
+David
+
