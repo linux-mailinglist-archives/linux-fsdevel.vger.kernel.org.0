@@ -2,56 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 864776BC283
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 01:31:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58CC66BC28E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 01:31:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233087AbjCPAbT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Mar 2023 20:31:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33970 "EHLO
+        id S232383AbjCPAbc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Mar 2023 20:31:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233083AbjCPAbP (ORCPT
+        with ESMTP id S233094AbjCPAb2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Mar 2023 20:31:15 -0400
-Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31B68A219F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 17:31:13 -0700 (PDT)
-Received: by mail-pf1-x449.google.com with SMTP id m9-20020a056a00164900b0062300619e03so163969pfc.18
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 17:31:13 -0700 (PDT)
+        Wed, 15 Mar 2023 20:31:28 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA32A0B3B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 17:31:18 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id z31-20020a25a122000000b00b38d2b9a2e9so126739ybh.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Mar 2023 17:31:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1678926672;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hT7y2XaFexWW4GTLeQpLaRg79NNFfwA0Go2glRLgBd0=;
-        b=Nz5kUB5UsktVLM+1ioYn0/f+EE3tG8bYDmBZ7k4J/Gt/p5gTfQtvXXnoIclpQPuDya
-         iUSZv4Ya8c29iPtlOA7O8kWfsasypPc8z6XfRhbOcsmBwYKUvOolqz9fQyk7NgQiLh/7
-         c/HaSbFKMHr9gsoqPFgvukhunTri9uzxM+/T1bb2dlQR9ihIBftzfIgbbB2EA9ig0QfN
-         QH/Qst7Frnk64y0MYkI8/9p+OMNZJnbfWHBkKL+LoqwoHnfU22JRu1wnbHr5/KauoW4g
-         wseQ2RJb2qNMKAO2J1HN6p/Ws+7+zkBAtzloNtEG5key9qZ2BL1aJc7RLJD21ClZZS8U
-         CQZg==
+        d=google.com; s=20210112; t=1678926677;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rreqZKmQJtCTOHmDtxKTKEfGS9dImrAo0RCl95Sk/EE=;
+        b=JJueoK7sdFHQHbdAl5nsqaNs4KCHm7sHzvLB42MnoY5lkfM6ZyYxqRBfJSJa8Yj0AO
+         a2uaVznX+a7AGF4HtGGnVlQphXnV9jEi1nR4tPRumBxVDCE+WOnyJKaxZt8wQIJXoXkp
+         loUdl05RrEtBxZJ1mxGOVb+Igf7OXAXS6g5lENKD5GhCbaaHIbFWr/+X13ZJvgEAeOrT
+         ejL8r4WfIiMkFavlKyXDdwKqsnArh0+uyWf18MM3tbJLCmk8NSuRhA6hTr60P2bZx80K
+         jj0hiuo3QlpYfzngCqcd5OQKvr0RQN1Z1ORNuOh1qFkI0/mHIDpESFq+n7v7NaT1lIXl
+         wVMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678926672;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hT7y2XaFexWW4GTLeQpLaRg79NNFfwA0Go2glRLgBd0=;
-        b=rC317eOMEVHPXH9MeMSJbvlszHJ93ZuCoQXwhQaCJID1VvaHk7KUdr8DlJHMOC8rjH
-         0ZDNmWqajYwijH8stF3HTRrKw1D7TuoftAjvl19juULBH5p9TzD+5OujUMPNEYytI4y0
-         iw/RKk1meTO8NYf5+3VqRpEyQowtrCZna7XJLglwOJ0fNofvQ9BwLlxBnKQuTbt0+ICd
-         UPoG1lL8QQjo7ejPlfoh4A8iZI3qUZgVBrF4AU0+RECp34dwsQ2CXd1ArjWJum84ESjO
-         gHxNodE+SEtSWgPtC3ekqFtjb6orpMO0vUf+f54zTV7Eokxc7DDDbPz7JdTyvjI/NMyo
-         yH1A==
-X-Gm-Message-State: AO0yUKU5LvEaPCeA25iEtPofj8TBgXfdjuY5372IfBr7Z6jwtJq10Ec9
-        L2BBF4YhbfkIp9tP6buaq1bGKOR2P8GJJD4wgA==
-X-Google-Smtp-Source: AK7set8RzBYOsHbOBr2r5L/IBVJur+dXP5lqulE2m7qrJjHyB4MEFVa/vv90/0ZD7J2Luh92QLgQMrMQJM0g7dhFsw==
+        d=1e100.net; s=20210112; t=1678926677;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rreqZKmQJtCTOHmDtxKTKEfGS9dImrAo0RCl95Sk/EE=;
+        b=EM+jC/Rkp+7MlrhxK9ZX/VWCEH6cwKhP9knlxoOsZK2KLxZ9JO+fR8xHAb1f30z/zL
+         /kTI/LTzpPwA33T+HRG8EHahXBhum5ZfgEXL556bwCekDFvDT3YLiQKnCu7a/DsOGadN
+         zZlisY2c8aoSUntm3fz2Cq4FT8+KkPfbKxZ5PLkn3DpFknGO5zAR9QdeG4siFg2rmvjm
+         tHNRmlCKXxzUPBjH/UE+fKvocb3LOYftBSPMoJ1UWPTHrbi2YBdrimQRlsoZYad/LS8a
+         Y5LCFzRqyXHSVeY+X7DkftJnMvvl69blhTSc1dobOUGRdSm5PH5MvFtP9pfTY3mqPr7+
+         ZMjg==
+X-Gm-Message-State: AO0yUKUkN2ypTuM78jFiIddM86xjaSsJTO5M7LBYC8GeERZqUiFFCyC/
+        /6SMdeW2uGddt02apWNWKAGiIHp43ER/kkVxbg==
+X-Google-Smtp-Source: AK7set+ivCVtWOdQbcZQUI9O6fTh7qxu3KKcJWd7M8I6rNN0cLeTsP1prymLMADMTsLDtTPgMIN1PCmQzWdKXvBTyw==
 X-Received: from ackerleytng-cloudtop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:1f5f])
- (user=ackerleytng job=sendgmr) by 2002:a17:90a:ea89:b0:237:2516:f76a with
- SMTP id h9-20020a17090aea8900b002372516f76amr548955pjz.2.1678926672510; Wed,
- 15 Mar 2023 17:31:12 -0700 (PDT)
-Date:   Thu, 16 Mar 2023 00:30:53 +0000
+ (user=ackerleytng job=sendgmr) by 2002:a25:e201:0:b0:b2e:f387:b428 with SMTP
+ id h1-20020a25e201000000b00b2ef387b428mr12671962ybe.5.1678926677076; Wed, 15
+ Mar 2023 17:31:17 -0700 (PDT)
+Date:   Thu, 16 Mar 2023 00:30:54 +0000
+In-Reply-To: <cover.1678926164.git.ackerleytng@google.com>
 Mime-Version: 1.0
+References: <cover.1678926164.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.40.0.rc2.332.ga46443480c-goog
-Message-ID: <cover.1678926164.git.ackerleytng@google.com>
-Subject: [RFC PATCH 00/10] Additional selftests for restrictedmem
+Message-ID: <017a3f68ef7007d72f167f937fabd6d64efb9edc.1678926164.git.ackerleytng@google.com>
+Subject: [RFC PATCH 01/10] KVM: selftests: Test error message fixes for
+ memfd_restricted selftests
 From:   Ackerley Tng <ackerleytng@google.com>
 To:     kvm@vger.kernel.org, linux-api@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
@@ -73,7 +75,6 @@ Cc:     aarcange@redhat.com, ak@linux.intel.com, akpm@linux-foundation.org,
         wei.w.wang@intel.com, x86@kernel.org, yu.c.zhang@linux.intel.com,
         Ackerley Tng <ackerleytng@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
@@ -84,58 +85,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+---
+ tools/testing/selftests/vm/memfd_restricted.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This is a series containing additional selftests for restrictedmem,
-prepared to be used with the next iteration of the restrictedmem
-series after v10.
-
-restrictedmem=C2=A0v10 is available at
-https://lore.kernel.org/lkml/20221202061347.1070246-1-chao.p.peng@linux.int=
-el.com/T/.
-
-The tree can be found at
-https://github.com/googleprodkernel/linux-cc/tree/restrictedmem-additional-=
-selftests-rfc-v1/.
-
-Dependencies
-+ The next iteration of the restrictedmem series
-    + branch: https://github.com/chao-p/linux/commits/privmem-v11.4
-    + commit: https://github.com/chao-p/linux/tree/ddd2c92b268a2fdc6158f82a=
-6169ad1a57f2a01d
-+ Proposed fix to adjust VM's initial stack address to align with SysV
-  ABI spec: https://lore.kernel.org/lkml/20230227180601.104318-1-ackerleytn=
-g@google.com/
-
-Ackerley Tng (10):
-  KVM: selftests: Test error message fixes for memfd_restricted
-    selftests
-  KVM: selftests: Test that ftruncate to non-page-aligned size on a
-    restrictedmem fd should fail
-  KVM: selftests: Test that VM private memory should not be readable
-    from host
-  KVM: selftests: Exercise restrictedmem allocation and truncation code
-    after KVM invalidation code has been unbound
-  KVM: selftests: Generalize private_mem_conversions_test for parallel
-    execution
-  KVM: selftests: Default private_mem_conversions_test to use 1 memslot
-    for test data
-  KVM: selftests: Add vm_userspace_mem_region_add_with_restrictedmem
-  KVM: selftests: Default private_mem_conversions_test to use 1
-    restrictedmem file for test data
-  KVM: selftests: Add tests around sharing a restrictedmem fd
-  KVM: selftests: Test KVM exit behavior for private memory/access
-
- tools/testing/selftests/kvm/Makefile          |   1 +
- .../selftests/kvm/include/kvm_util_base.h     |   4 +
- tools/testing/selftests/kvm/lib/kvm_util.c    |  46 ++-
- .../selftests/kvm/set_memory_region_test.c    |  29 +-
- .../kvm/x86_64/private_mem_conversions_test.c | 295 +++++++++++++++---
- .../kvm/x86_64/private_mem_kvm_exits_test.c   | 124 ++++++++
- tools/testing/selftests/vm/memfd_restricted.c |   9 +-
- 7 files changed, 455 insertions(+), 53 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/x86_64/private_mem_kvm_exit=
-s_test.c
-
---
+diff --git a/tools/testing/selftests/vm/memfd_restricted.c b/tools/testing/selftests/vm/memfd_restricted.c
+index 3a556b570129..43a512f273f7 100644
+--- a/tools/testing/selftests/vm/memfd_restricted.c
++++ b/tools/testing/selftests/vm/memfd_restricted.c
+@@ -49,12 +49,12 @@ static void test_file_size(int fd)
+ 	}
+ 
+ 	if (sb.st_size != page_size) {
+-		fail("unexpected file size after ftruncate");
++		fail("unexpected file size after ftruncate\n");
+ 		return;
+ 	}
+ 
+ 	if (!ftruncate(fd, page_size * 2)) {
+-		fail("unexpected ftruncate\n");
++		fail("size of file cannot be changed once set\n");
+ 		return;
+ 	}
+ 
+-- 
 2.40.0.rc2.332.ga46443480c-goog
+
