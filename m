@@ -2,124 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 360E86BD081
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 14:15:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AEE46BD13B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Mar 2023 14:47:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbjCPNPA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Mar 2023 09:15:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54870 "EHLO
+        id S230370AbjCPNrK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Mar 2023 09:47:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbjCPNO6 (ORCPT
+        with ESMTP id S230046AbjCPNrJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Mar 2023 09:14:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56A835FE4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 06:14:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678972456;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cij1DgoI5i6Ff0Me0upgsjOT5aDaEMgTlpSwTjH71C4=;
-        b=dBjZAXIqiLkW9HrMIdIHRq6ZEwadd4YqX5tBlIdDS/t6/Gv9ahqKH1TdTiwkNDrRiwyx/G
-        4HbBXIWQ7pP8gOaem2fL0E8ut/ukfB6f3tEbP9KTk8DM20f5KQ6JrjBzvAPe5d97btUfUM
-        T9o1RDn4UcvmJmkgYVMDrj7J4C9qfLQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-222-9dLL7XG8OkCGkr_9NXPr8Q-1; Thu, 16 Mar 2023 09:14:15 -0400
-X-MC-Unique: 9dLL7XG8OkCGkr_9NXPr8Q-1
-Received: by mail-wm1-f72.google.com with SMTP id n18-20020a05600c501200b003ed24740ea4so2620316wmr.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Mar 2023 06:14:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678972454;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cij1DgoI5i6Ff0Me0upgsjOT5aDaEMgTlpSwTjH71C4=;
-        b=pVe/izlj6ruuOO4V8uhzS1TpW+8CacaD3b6HYxCUJvvfzH1zrre/6iP6On2PYKxcvY
-         JAMu0FZlp32Jvan6CWeTvBfeCoMh1AqQiDiHYQsuLn2dlOQBYgNqKY4f48H1cjJkQF1n
-         YCZJsom90is6ity8iIPVFhUOhPF5jwGDLnIdcj6FtDS1/gF8CphVN42j5J97YsPC85V/
-         bDc1crZsdhqRWa19mBFPXeVBZrpKeG3mF8UOO59mgX/ObDFZ+R3CJ/asne3xtXj8Tlf6
-         lTPmOXn3r7hrtmXyAHHuRDeKQHSvwu59YIvxwEHWcwPrXynLKWf2SFSrdz1oqLHUxJHk
-         cZug==
-X-Gm-Message-State: AO0yUKV/PlzKiwPTgo99ZqlZubHAwQQnhb5o8+mAYbZ4Xrl6vpTSU2Kq
-        qQSP0hr/cw09EUvd3Swm7w3AEBvu32mxkwsehYot0rB0iuBp87Zb9/+8ssSeyzCb2HSH68EER+3
-        CzdkYKLAuy0UpvwnNJZoFcumqLA==
-X-Received: by 2002:a7b:c394:0:b0:3ed:6693:1388 with SMTP id s20-20020a7bc394000000b003ed66931388mr1025919wmj.18.1678972453933;
-        Thu, 16 Mar 2023 06:14:13 -0700 (PDT)
-X-Google-Smtp-Source: AK7set8ZjMO0Y6+7kxovZnLoqzSDbEfVY0ZYumsiTW725vRLK5qi93k9OiMeyFdN6OokIatcXWlIng==
-X-Received: by 2002:a7b:c394:0:b0:3ed:6693:1388 with SMTP id s20-20020a7bc394000000b003ed66931388mr1025892wmj.18.1678972453636;
-        Thu, 16 Mar 2023 06:14:13 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id k18-20020a056000005200b002c71dd1109fsm7318197wrx.47.2023.03.16.06.14.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Mar 2023 06:14:13 -0700 (PDT)
-Message-ID: <f312327e-c11e-60f4-1367-af4e480b2609@redhat.com>
-Date:   Thu, 16 Mar 2023 14:14:12 +0100
+        Thu, 16 Mar 2023 09:47:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F24D4CD655;
+        Thu, 16 Mar 2023 06:46:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3D17F62039;
+        Thu, 16 Mar 2023 13:46:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E162BC433EF;
+        Thu, 16 Mar 2023 13:46:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678974387;
+        bh=1gVsUfRdT5Jio1KktPVUW54d8HJOPU8c6DUTVfKOJJc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IiRzRXv0Aygh7lxTWPgSOwS0YFasS46i/H/xEVf4HV3XSQ/wqzAVuWc48sZZ/ZBWh
+         /2mLoXnBAPbPNav/XKofl3QhYuG+hl24Aadmo3jTDMua3XXUJczwpALbkhqwjuwnT0
+         B7k1XM5kVp24w9rX4H5m7/JR3eiQzaAiVx76SrLooikKWFzMQ2TBGj0MixvMiaBPNJ
+         NTU+I5DhXKcY6aGBWnQklylmteMZWa9qqzMAhSYbLoq6BBXbfsszAFCK+njdem7L7k
+         +JC5PK7ufH9jzHjr5ZNwE6ZHEsS36RVW9+LKGVKnkLGCvdPkyGd+0SzQ+zBhgocvXS
+         VT14Q4xFDX9iA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH RESEND] fs_context: drop the unused lsm_flags member
+Date:   Thu, 16 Mar 2023 14:46:17 +0100
+Message-Id: <167897413798.1242423.2984314832830103642.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230316130751.334227-1-omosnace@redhat.com>
+References: <20230316130751.334227-1-omosnace@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v19 04/15] overlayfs: Implement splice-read
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-unionfs@vger.kernel.org
-References: <20230315163549.295454-1-dhowells@redhat.com>
- <20230315163549.295454-5-dhowells@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20230315163549.295454-5-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=712; i=brauner@kernel.org; h=from:subject:message-id; bh=2EaFAKesLtNFKDCybmgNbFYVs7Vix+i69ySP2/aagBo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQIyy4Kn2x66t2rhCurLP2mf3GJiN/ZpiElVrshUON1/73G N5eiOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYS4Mvwv/5cS9/iVHefkrQ/BlFmer NvSM5t8/7izHrgyexFxstNyhj+Jz++zrz2e9zVqyZFIZw7u0+7ZwsrOvlyFXLMFbJ+dzWdHQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 15.03.23 17:35, David Howells wrote:
-> Implement splice-read for overlayfs by passing the request down a layer
-> rather than going through generic_file_splice_read() which is going to be
-> changed to assume that ->read_folio() is present on buffered files.
+From: Christian Brauner (Microsoft) <brauner@kernel.org>
+
+
+On Thu, 16 Mar 2023 14:07:51 +0100, Ondrej Mosnacek wrote:
+> This isn't ever used by VFS now, and it couldn't even work. Any FS that
+> uses the SECURITY_LSM_NATIVE_LABELS flag needs to also process the
+> value returned back from the LSM, so it needs to do its
+> security_sb_set_mnt_opts() call on its own anyway.
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Christoph Hellwig <hch@lst.de>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Al Viro <viro@zeniv.linux.org.uk>
-> cc: John Hubbard <jhubbard@nvidia.com>
-> cc: David Hildenbrand <david@redhat.com>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: Miklos Szeredi <miklos@szeredi.hu>
-> cc: linux-unionfs@vger.kernel.org
-> cc: linux-block@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
+> 
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Seems indeed unused currently. I don't see fc->lsm_flags being used after
+having been set. So applied. Please yell, if there's some subtle place where
+this should matter after all,
 
--- 
-Thanks,
+tree: git://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git
+branch: fs.misc
 
-David / dhildenb
-
+[1/1] fs_context: drop the unused lsm_flags member
+      commit: 4e04143c869c5b6d499fbd5083caa860d5c942c3
