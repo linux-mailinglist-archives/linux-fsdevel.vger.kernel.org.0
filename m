@@ -2,182 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B1BB6BE5D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 10:45:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57D836BE6B2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 11:27:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229786AbjCQJpk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Mar 2023 05:45:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37714 "EHLO
+        id S230285AbjCQK15 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Mar 2023 06:27:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjCQJpi (ORCPT
+        with ESMTP id S230326AbjCQK1t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Mar 2023 05:45:38 -0400
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 635EE23316
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Mar 2023 02:45:37 -0700 (PDT)
-Received: by mail-vs1-xe29.google.com with SMTP id s1so3979563vsk.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Mar 2023 02:45:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679046336;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=leONUKnExL8KkeXcoBGwa8J0wA1fBy+ngRQblH20000=;
-        b=T345WpTHHSRzz4GXLLNLSSXlGch6E3tc8TxpRXsn8Uo6rtqcp44+7XtgyNcMRs+yHS
-         nxfgbEO8w+1K1zYZiR2krGaNMpsMFGqBCuKiPys8sFUEdXkvY1zKoWjYqKDsEZ2Sr3fO
-         NTGtaqdUI5fjwwJe8ngm5hlkFfm3vbYIC6p6a22wbnnXMmAze0rm9swcKaEeCzFvyxTs
-         eJuG1I4ScWpJV/eBZUvM90NDhsWYCnqOuD+d8jPOZXg6QcZJkX2thzWIvIUx24cRnq59
-         rE5NIDCK8XR0pFANDsqXBj5LmHOi5yy5I0ybrE9W/+MB+WN4V7NDka5p+5eLA1+j3CJx
-         2+dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679046336;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=leONUKnExL8KkeXcoBGwa8J0wA1fBy+ngRQblH20000=;
-        b=AH1pZhBYIwP5ZZRhBCPvSDLaI6LLQvIyLBVR6m8RwZ/TY5NHAcjncAuoaIczwfYt0I
-         XNYdpvE0ict/FNd4pwwHjFRKwR4OzD8+BvRrISIixajCL6Cu7Jk9b/O5gUP/flyox8Xl
-         Gr+dR8oBIvA5xJ62aUvhDh+ZkMsVeOLAcDj4yhZhIiyl/J/DhAUC1kmMjWx2dN+roZ/g
-         LTPGz0DTIkGBDdDchjAfGuahyQ0Z4OuZjmWmP5sBcs3Fn6JjmVf1V+UfrnChDd+CMQyM
-         74zwyqy3P6nFLmCBb4l0S/hS5kvtXAP6Rr4toVKY4mcf1UDqbLfxQMQxQ1+u1wcXUt5W
-         o5cg==
-X-Gm-Message-State: AO0yUKVXxBF8OLkvjWF/c3+Tsj9jpaTlf2W8dxsxrLxfdKMFblh3qxLd
-        E/V+I1t+uVmNrEERsUYWeXT3y7sB/7vJLbO8adl7RvdXpWw=
-X-Google-Smtp-Source: AK7set9rSyYRGhlrsgJ+dZ533cB0HvbL87VCs1tdW5vQktoQmnLxtXGPIhatetaC0LeFAEYxPtEXBkExBcllVVpTaNQ=
-X-Received: by 2002:a67:e0ca:0:b0:412:5424:e58e with SMTP id
- m10-20020a67e0ca000000b004125424e58emr1552635vsl.0.1679046336385; Fri, 17 Mar
- 2023 02:45:36 -0700 (PDT)
+        Fri, 17 Mar 2023 06:27:49 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68B12E5015;
+        Fri, 17 Mar 2023 03:27:07 -0700 (PDT)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32HABQ9K028404;
+        Fri, 17 Mar 2023 10:26:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=yO8si3+qVNWSrYdd+uGWatDvhebZLLgBBHpS17CbCCk=;
+ b=D2Mw0vVBeTibf/qL3DUCNMTXvMriHeHcOFmJMFOE3NmwvrGVNXZEXXMV7BbEYdCR1BE9
+ 7/rs9sNuZFWIcEYKiSUrjS8YHVqO5jw5g1RcU+Dj5qUZobL+wMq6TnpMXqObbUn1n/vG
+ xjUpCVt46WkAJYFCui0gBNY0JXkhNNt90/6EQWmvxTHuVnIU51rnz8PhuTN39X77dii/
+ Jw2YW1dVU8qQtW9l1GnQsydw79Z2Kcsz69+rS5huZCjnim6IaPbeDKu6CQ3ofV4xkBDc
+ oZHF6VTvxILJzNgvA5tJRjrpUdwhx0tVXR3BW7w3Mt+b1l7Vi2WsIH1qV/yJczQaZogw Fg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pcnjx1d7v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 10:26:56 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32HABVCf029337;
+        Fri, 17 Mar 2023 10:26:55 GMT
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pcnjx1d74-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 10:26:55 +0000
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32GIT4fj027512;
+        Fri, 17 Mar 2023 10:26:53 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+        by ppma03fra.de.ibm.com (PPS) with ESMTPS id 3pbsyxsmbv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 10:26:53 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32HAQpuw62062884
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Mar 2023 10:26:51 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 387352006A;
+        Fri, 17 Mar 2023 10:26:51 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 14B5B20063;
+        Fri, 17 Mar 2023 10:26:49 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.91.202])
+        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Fri, 17 Mar 2023 10:26:48 +0000 (GMT)
+Date:   Fri, 17 Mar 2023 15:56:46 +0530
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>
+Subject: Re: [RFC 04/11] ext4: Convert mballoc cr (criteria) to enum
+Message-ID: <ZBRAZsvbcSBNJ+Pl@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1674822311.git.ojaswin@linux.ibm.com>
+ <9670431b31aa62e83509fa2802aad364910ee52e.1674822311.git.ojaswin@linux.ibm.com>
+ <20230309121122.vzfswandgqqm4yk5@quack3>
 MIME-Version: 1.0
-References: <E12A0E13-3726-4270-806B-B0586D5008D2@columbia.edu>
-In-Reply-To: <E12A0E13-3726-4270-806B-B0586D5008D2@columbia.edu>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 17 Mar 2023 11:45:25 +0200
-Message-ID: <CAOQ4uxhJ0ZYjGcObjhKJ1U5Tew1pZzgh1ACDMZMU4QLsy+81uw@mail.gmail.com>
-Subject: Re: fsnotify: Question on proper use in-kernel
-To:     Ioannis Zarkadas <iz2175@columbia.edu>
-Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230309121122.vzfswandgqqm4yk5@quack3>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 1oTpBwgoKcrO-oSGQ7zgqkLbRV1bPfo5
+X-Proofpoint-ORIG-GUID: wbmmz5BvAKShzth4OIPAAWvkqPugUlUa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-17_06,2023-03-16_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ adultscore=0 clxscore=1015 suspectscore=0 spamscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303170068
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 17, 2023 at 5:23=E2=80=AFAM Ioannis Zarkadas <iz2175@columbia.e=
-du> wrote:
->
-> Hi everyone!
->
-> I'm developing a kernel module and trying to setup a directory watch with=
- fsnotify.
-> I mainly copied existing code paths in the kernel that I found, because I=
- couldn't
-> find any usage documentation.
-> I am using Linux Kernel version 5.12.0.
+On Thu, Mar 09, 2023 at 01:11:22PM +0100, Jan Kara wrote:
+> On Fri 27-01-23 18:07:31, Ojaswin Mujoo wrote:
+> > Convert criteria to be an enum so it easier to maintain. This change
+> > also makes it easier to insert new criterias in the future.
+> > 
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> 
+> Just two small comments below:
+Hi Jan,
 
-I guess the API should be similar to upstream, but I did not check.
+Thanks for the review. 
+> 
+> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > index b8b00457da8d..6037b8e0af86 100644
+> > --- a/fs/ext4/ext4.h
+> > +++ b/fs/ext4/ext4.h
+> > @@ -126,6 +126,14 @@ enum SHIFT_DIRECTION {
+> >  	SHIFT_RIGHT,
+> >  };
+> >  
+> > +/*
+> > + * Number of criterias defined. For each criteria, mballoc has slightly
+> > + * different way of finding the required blocks nad usually, higher the
+> 						   ^^^ and
+> 
+> > + * criteria the slower the allocation. We start at lower criterias and keep
+> > + * falling back to higher ones if we are not able to find any blocks.
+> > + */
+> > +#define EXT4_MB_NUM_CRS 4
+> > +
+> 
+> So defining this in a different header than the enum itself is fragile. I
+> understand you need it in ext4_sb_info declaration so probably I'd move the
+> enum declaration to ext4.h. Alternatively I suppose we could move a lot of
+Got it, I'll try to keep them in the same file.
 
->
-> My issue is the following:
-> - Setting up the watch works initially.
-> - If I remove and reinsert the kernel module, fsnotify_add_inode_mark fai=
-ls with EEXIST.
->
-> So I must be doing something wrong. I am using the put/destroy methods fo=
-r the mark
-> and the put method for the group when unloading the module.
->
-> Here is how I setup the watch:
->
-> > static struct fsnotify_group *group;
-> > static struct fsnotify_mark mark;
-> >
-> > static int setup_sync_dir_watch(char *sync_dir) {
-> >     int ret;
-> >     struct fsnotify_mark *old_mark;
-> >     struct path sync_dir_path;
-> >
-> >     pr_info("%s: Syncing extents for files under '%s'\n", MODULE_NAME,
-> >             sync_dir);
-> >
-> >     group =3D fsnotify_alloc_group(&nvmeof_xrp_fsnotify_ops);
+> mballoc stuff out of ext4_sb_info into a separate struct because there's a
+> lot of it. But that would be much larger undertaking.
+Right, we did notice that as well, but as you said, that's out of scope
+of this patchset.
+> 
+> Also when going for symbolic allocator scan names maybe we could actually
+> make names sensible instead of CR[0-4]? Perhaps like CR_ORDER2_ALIGNED,
+> CR_BEST_LENGHT_FAST, CR_BEST_LENGTH_ALL, CR_ANY_FREE. And probably we could
+> deal with ordered comparisons like in:
+I like this idea, it should make the code a bit more easier to
+understand. However just wondering if I should do it as a part of this
+series or a separate patch since we'll be touching code all around and 
+I don't want to confuse people with the noise :) 
+> 
+>                 if (cr < 2 &&
+>                     (!sbi->s_log_groups_per_flex ||
+>                      ((group & ((1 << sbi->s_log_groups_per_flex) - 1)) != 0)) &
+>                     !(ext4_has_group_desc_csum(sb) &&
+>                       (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT))))
+>                         return 0;
+> 
+> to declare CR_FAST_SCAN = 2, or something like that. What do you think?
+About this, wont it be better to just use something like
 
-You did not mention what your fsnotify_ops contain.
+cr < CR_BEST_LENGTH_ALL 
 
-> >     if (IS_ERR(group)) {
-> >         pr_err("%s: Error allocating fsnotify group!\n", MODULE_NAME);
-> >         return -1;
-> >     }
-> >     ret =3D kern_path(sync_dir, LOOKUP_FOLLOW, &sync_dir_path);
-> >     if (ret) {
-> >         pr_err("%s: Error getting kernel path: %d!\n", MODULE_NAME, ret=
-);
-> >         goto release_group;
-> >     }
-> >     fsnotify_init_mark(&mark, group);
-> >     mark.mask =3D FS_CREATE | FS_DELETE | FS_MODIFY |
-> >                                  FS_CLOSE_WRITE | FS_EVENT_ON_CHILD;
-> >     ret =3D fsnotify_add_inode_mark(&mark,
-> >                                   sync_dir_path.dentry->d_inode, 0);
-> >     path_put(&sync_dir_path);
-> >     if (ret) {
-> >         pr_err("%s: Error adding fsnotify mark! Error code: %d\n", MODU=
-LE_NAME,
-> >                ret);
-> >         goto release_mark;
-> >     }
-> >     return 0;
-> > release_mark:
-> >     fsnotify_destroy_mark(&mark, group);
-> >     fsnotify_put_mark(&mark);
+instead of defining a new CR_FAST_SCAN = 2.
 
-Don't think you need that put.
+The only concern is that if we add a new "fast" CR (say between
+CR_BEST_LENGTH_FAST and CR_BEST_LENGTH_ALL) then we'll need to make
+sure we also update CR_FAST_SCAN to 3 which is easy to miss.
 
-> > release_group:
-> >     fsnotify_put_group(group);
-
-fsnotify_destroy_group()
-
-> >     return ret;
-> > }
->
-> And here is how I clear it when exiting the module:
->
-> > static void __exit module_exit(void) {
-> >     fsnotify_destroy_mark(&mark, group);
-> >     fsnotify_put_mark(&mark);
-> >     fsnotify_put_group(group);
->
-
-I think you only need fsnotify_destroy_group().
-Internally, it will detach the mark, drop its reference and
-fsnotify_wait_marks_destroyed(), because if there are live
-reference to mark, you cannot remove the module.
-
-> I also tried to find the mark and delete it, but it returns NULL even tho=
-ugh
-> fsnotify_add_inode_mark returns EEXISTS:
->
-> > mutex_lock(&group->mark_mutex);
-> > old_mark =3D fsnotify_find_mark(
-> >     &sync_dir_path.dentry->d_inode->i_fsnotify_marks,
-> >     group);
-> > if (old_mark !=3D NULL) {
-> >     pr_info("%s: Found old mark, destroying it...\n", MODULE_NAME);
-> >     fsnotify_destroy_mark(old_mark, group);
-> >     fsnotify_put_mark(old_mark);
-> > }
-> > mutex_unlock(&group->mark_mutex);
->
-
-Not really sure what happened here.
-If this behavior persists after making the changes above, better add debug
-prints to fsnotify_add_mark_list() to understand what is happening.
-
-Thanks,
-Amir.
+Regards,
+Ojaswin
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
