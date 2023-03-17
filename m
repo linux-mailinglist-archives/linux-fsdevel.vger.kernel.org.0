@@ -2,159 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E006BEE07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 17:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D21BB6BEE63
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 17:33:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229809AbjCQQYn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Mar 2023 12:24:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36240 "EHLO
+        id S230071AbjCQQde (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Mar 2023 12:33:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229600AbjCQQYl (ORCPT
+        with ESMTP id S229703AbjCQQdd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Mar 2023 12:24:41 -0400
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D0D9C5AC6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Mar 2023 09:24:40 -0700 (PDT)
-Received: by mail-io1-f69.google.com with SMTP id i2-20020a5d9e42000000b0074cfcc4ed07so2769876ioi.22
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Mar 2023 09:24:40 -0700 (PDT)
+        Fri, 17 Mar 2023 12:33:33 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46EB733CE9;
+        Fri, 17 Mar 2023 09:33:31 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id z21so22702718edb.4;
+        Fri, 17 Mar 2023 09:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679070810;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sOc1064wJwVxntbc0Hg4Pm5Z8bh8eNRp/vDpjqeTV8A=;
+        b=npLaYxhqDOo4k6OjTdGIDQG0WQfkgtv9fM6BdKrkgn40eFBPLGXHs3yWzljccmyqFp
+         9ZPFV+7u4iptswc+firC3lJ9YhcygL+/3eHPtfo5wxoGAuB4gYp2xWIsUES5cUTFkq++
+         xz8PToZXfHlOeG7TmrhhOx53Nog+9wC2ylbmAmjZmwpEN170qmKZukfxhjUX8GuEyda9
+         nJ8Vns+osPqA4HvBdp+PUjkFpCKf/cu1P/jPkbynrcOTe2VmLIAaObRntsQY90dkhDaY
+         cqg/85OMC1OnxVBzE8PYrjQwnyNgcTf7/05NJ9SZNG0+tn97Fo0kTnS/LwY63/7nMi5p
+         3P0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679070279;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j0y9/Ok6+vCNzIdYJxiv4jUMbvf9Rwu/ySfXsPtfW0A=;
-        b=YXr1DjLSwc5PwW5d2HhLZEH9s0WI2QrIV7bKVkdBzQ/1S1jBp/ruX5tLHaU52BRErU
-         U+k7JM9EbqjWzUX4gh57LtPNJOP0vpigO/k3EMUfnzt32Sol+zsJ1j4TAeoO+HY4KN1R
-         MmsiGExZAxPzISkrSL7HOW9oW0rG/9GqMxm9qjXLk54H8rT3cLu4Jk1Mu19PkchZcaIj
-         et94Pbd06oRYtzwOqtxyjdERTvy2Cm43GNIM64QzSB7NV+f2D0zPpDgQRHyk+8+Y6oRz
-         j6u5RBI/njpvdgSwWKa7UmqfQxr5Ts/2P+r8Bmj7XGkGX6m8QlPNMzI5lKf+YVQ2d/Ei
-         +sIQ==
-X-Gm-Message-State: AO0yUKVjLk5ds8dUtRjS/rsutIUUrax3rVUXB3tlPZzee1iFZXLmmJCA
-        6Kg8FwikVqn37PZEPqS2AUfDCWn5StVYgyQhm11jSb/4g4r4
-X-Google-Smtp-Source: AK7set+OMtlyYcxWFmRQyHbPvAkJYa6PMDJgDHLpH8OVq5WotsOwW5ikDZc4bsOtz+9ed8dSigIZoQmfDWqa7g7rZHKsrH0ITRN2
+        d=1e100.net; s=20210112; t=1679070810;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sOc1064wJwVxntbc0Hg4Pm5Z8bh8eNRp/vDpjqeTV8A=;
+        b=hnjnVungEnlFTLIz1SaL0yAbsiOe4s7SehpwgjIObnvWCX9F1Dpf4u1PcJ50cOW4yK
+         obhi3yRoJVQ/eG9BcdvrowI0yAHzMv68QZWiSqnrtGO8YXnIOsu07g6TQpvCGPqzMfIT
+         YYp2CKN3h3HY55CNw7pGKS9Gy8b4EMHBUsZMrO6Epw7x7Zv9jXHj6iNwjGlBuLPAJAQe
+         XDNmZAfpF5NuugBlpT2r6hRCdW2mY7SfH9JrPy6NxRyiGNCW1nS2c55MVnWTtRjqZgW8
+         9cOom/3BIB8HJ8UftedSqS31AE44WA2TelYduKoi0HPOCFiynXNJCX/p4Zfg3roMpy6u
+         UcIg==
+X-Gm-Message-State: AO0yUKXBX2gl9X+5eB/2KawHOAMQLxkzFtY79gUFnT52ExWlqtvY0m0q
+        5H2yFp9Gk238N/9Rg8XjPfsuyROOOzQnRxpJtjY=
+X-Google-Smtp-Source: AK7set+0ohyPqN6E5Ro9SkqCqggHHZv4+NXE5j4GuR8AQ+M1h80H52LGa3htbnGp0mJWOjTgUhvmwUwf1sMfqR3ewCU=
+X-Received: by 2002:a17:906:8552:b0:8ab:b606:9728 with SMTP id
+ h18-20020a170906855200b008abb6069728mr7694310ejy.5.1679070809653; Fri, 17 Mar
+ 2023 09:33:29 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a02:3312:0:b0:3eb:3166:9da4 with SMTP id
- c18-20020a023312000000b003eb31669da4mr47250jae.2.1679070279581; Fri, 17 Mar
- 2023 09:24:39 -0700 (PDT)
-Date:   Fri, 17 Mar 2023 09:24:39 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009146bb05f71b03a0@google.com>
-Subject: [syzbot] [ntfs?] KASAN: use-after-free Read in ntfs_read_folio
-From:   syzbot <syzbot+d3cd38158cd7c8d1432c@syzkaller.appspotmail.com>
-To:     anton@tuxera.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        syzkaller-bugs@googlegroups.com
+References: <20230316170149.4106586-1-jolsa@kernel.org> <ZBNTMZjEoETU9d8N@casper.infradead.org>
+ <CAP-5=fVYriALLwF2FU1ZUtLuHndnvPw=3SctVqY6Uwex8JfscA@mail.gmail.com>
+ <CAEf4BzYgyGTVv=cDwaW+DBke1uk_aLCg3CB_9W6+9tkS8Nyn_Q@mail.gmail.com> <ZBPjs1b8crUv4ur6@casper.infradead.org>
+In-Reply-To: <ZBPjs1b8crUv4ur6@casper.infradead.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Fri, 17 Mar 2023 09:33:17 -0700
+Message-ID: <CAEf4BzbPa-5b9uU0+GN=iaMGc6otje3iNQd+MOg_byTSYU8fEQ@mail.gmail.com>
+Subject: Re: [PATCHv3 bpf-next 0/9] mm/bpf/perf: Store build id in file object
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Namhyung Kim <namhyung@gmail.com>,
+        Dave Chinner <david@fromorbit.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Mar 16, 2023 at 8:51=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Thu, Mar 16, 2023 at 02:51:52PM -0700, Andrii Nakryiko wrote:
+> > Yep, Meta is also capturing stack traces with build ID as well, if
+> > possible. Build IDs help with profiling short-lived processes which
+> > exit before the profiling session is done and user-space tooling is
+> > able to collect /proc/<pid>/maps contents (which is what Ian is
+> > referring to here). But also build ID allows to offload more of the
+> > expensive stack symbolization process (converting raw memory addresses
+> > into human readable function+offset+file path+line numbers
+> > information) to dedicated remote servers, by allowing to cache and
+> > reuse preprocessed DWARF/ELF information based on build ID.
+> >
+> > I believe perf tool is also using build ID, so any tool relying on
+> > perf capturing full and complete profiling data for system-wide
+> > performance analysis would benefit as well.
+> >
+> > Generally speaking, there is a whole ecosystem built on top of
+> > assumption that binaries have build ID and profiling tooling is able
+> > to provide more value if those build IDs are more reliably collected.
+> > Which ultimately benefits the entire open-source ecosystem by allowing
+> > people to spot issues (not necessarily just performance, it could be
+> > correctness issues as well) more reliably, fix them, and benefit every
+> > user.
+>
+> But build IDs are _generally_ available.  The only problem (AIUI)
+> is when you're trying to examine the contents of one container from
+> another container.  And to solve that problem, you're imposing a cost
+> on everybody else with (so far) pretty vague justifications.  I really
+> don't like to see you growing struct file for this (nor struct inode,
+> nor struct vm_area_struct).  It's all quite unsatisfactory and I don't
+> have a good suggestion.
 
-syzbot found the following issue on:
-
-HEAD commit:    fe15c26ee26e Linux 6.3-rc1
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=144bbde2c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7573cbcd881a88c9
-dashboard link: https://syzkaller.appspot.com/bug?extid=d3cd38158cd7c8d1432c
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1314fdaec80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=148332bec80000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89d41abd07bd/disk-fe15c26e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fa75f5030ade/vmlinux-fe15c26e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/590d0f5903ee/Image-fe15c26e.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/863572f0c7ee/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d3cd38158cd7c8d1432c@syzkaller.appspotmail.com
-
-ntfs: (device loop0): ntfs_read_locked_inode(): Failed with error code -5.  Marking corrupt inode 0xa as bad.  Run chkdsk.
-ntfs: (device loop0): load_and_init_upcase(): Failed to load $UpCase from the volume. Using default.
-==================================================================
-BUG: KASAN: use-after-free in ntfs_read_folio+0x6d4/0x200c fs/ntfs/aops.c:489
-Read of size 1 at addr ffff0000e11f617f by task syz-executor319/5946
-
-CPU: 0 PID: 5946 Comm: syz-executor319 Not tainted 6.3.0-rc1-syzkaller-gfe15c26ee26e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-Call trace:
- dump_backtrace+0x1c8/0x1f4 arch/arm64/kernel/stacktrace.c:158
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:165
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:319 [inline]
- print_report+0x174/0x514 mm/kasan/report.c:430
- kasan_report+0xd4/0x130 mm/kasan/report.c:536
- kasan_check_range+0x264/0x2a4 mm/kasan/generic.c:187
- __asan_memcpy+0x48/0x90 mm/kasan/shadow.c:105
- ntfs_read_folio+0x6d4/0x200c fs/ntfs/aops.c:489
- filemap_read_folio+0x14c/0x39c mm/filemap.c:2424
- do_read_cache_folio+0x24c/0x544 mm/filemap.c:3683
- do_read_cache_page mm/filemap.c:3749 [inline]
- read_cache_page+0x6c/0x180 mm/filemap.c:3758
- read_mapping_page include/linux/pagemap.h:769 [inline]
- ntfs_map_page fs/ntfs/aops.h:75 [inline]
- load_and_init_attrdef fs/ntfs/super.c:1617 [inline]
- load_system_files+0x1e34/0x4734 fs/ntfs/super.c:1825
- ntfs_fill_super+0x14e0/0x2314 fs/ntfs/super.c:2900
- mount_bdev+0x26c/0x368 fs/super.c:1371
- ntfs_mount+0x44/0x58 fs/ntfs/super.c:3057
- legacy_get_tree+0xd4/0x16c fs/fs_context.c:610
- vfs_get_tree+0x90/0x274 fs/super.c:1501
- do_new_mount+0x25c/0x8c8 fs/namespace.c:3042
- path_mount+0x590/0xe20 fs/namespace.c:3372
- do_mount fs/namespace.c:3385 [inline]
- __do_sys_mount fs/namespace.c:3594 [inline]
- __se_sys_mount fs/namespace.c:3571 [inline]
- __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3571
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
- el0_svc+0x58/0x168 arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-
-The buggy address belongs to the physical page:
-page:00000000b1c79ae3 refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x1211f6
-flags: 0x5ffc00000000000(node=0|zone=2|lastcpupid=0x7ff)
-raw: 05ffc00000000000 fffffc0003847848 fffffc0003847d48 0000000000000000
-raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff0000e11f6000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff0000e11f6080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->ffff0000e11f6100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                                                                ^
- ffff0000e11f6180: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff0000e11f6200: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-ntfs: volume version 3.1.
-syz-executor319: attempt to access beyond end of device
-loop0: rw=0, sector=2072, nr_sectors = 8 limit=190
-ntfs: (device loop0): ntfs_end_buffer_async_read(): Buffer I/O error, logical block 0x103.
-syz-executor319: attempt to access beyond end of device
-loop0: rw=0, sector=552, nr_sectors = 8 limit=190
-syz-executor319: attempt to access beyond end of device
-loop0: rw=0, sector=224, nr_sectors = 8 limit=190
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+There is a lot of profiling, observability and debugging tooling built
+using BPF. And when capturing stack traces from BPF programs, if the
+build ID note is not physically present in memory, fetching it from
+the BPF program might fail in NMI (and other non-faultable contexts).
+This patch set is about making sure we always can fetch build ID, even
+from most restrictive environments. It's guarded by Kconfig to avoid
+adding 8 bytes of overhead to struct file for environment where this
+might be unacceptable, giving users and distros a choice.
