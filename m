@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4CF6BE71C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 11:44:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD546BE721
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 11:44:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230029AbjCQKn7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Mar 2023 06:43:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35534 "EHLO
+        id S230365AbjCQKoJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Mar 2023 06:44:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbjCQKnw (ORCPT
+        with ESMTP id S230267AbjCQKnz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Mar 2023 06:43:52 -0400
+        Fri, 17 Mar 2023 06:43:55 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A91B1165E;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 596A410F5;
         Fri, 17 Mar 2023 03:43:27 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 449631FE73;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 833B11FE24;
         Fri, 17 Mar 2023 10:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1679049803; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=deQFA7TD3kp7a2tFPZHUMYv9MT3jjYq+TC4fiGinDEs=;
-        b=NmQ1hyth5qRE678Uo3LQnyTdg0QQSYpHOUPH7Uhuc4G43s/Q0vvr/DUvri19hj91joa5LE
-        hFCEleVrUuJbUsG+BimyBZBOCIfxBJiIDV80Z9fsxXw1oySqpE4cp+/zsI1b/NzEN98+ko
-        T131W4JpotVd1/+2SSdSDPm2mvLWoZM=
+        bh=opZ9dJXQ/gPy1wKFz1HBnlxilBrCid46x5IMRJNZcJ0=;
+        b=MZZjD9hVHM7gKzHwGK4akYEL8msOyHYMlyDt1C5GfocojC6f+NXkIb+al3LmVC+wD1dlw6
+        SOQ490rm0HAqVokXr+TPDIl3hoIBWf/9pfJWq+JLan9h7JX7I+7swrBGOo8d+1QnzOMcDw
+        KAAFqj4QupURTMJrCxmCwiMCbNG6WD8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1679049803;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=deQFA7TD3kp7a2tFPZHUMYv9MT3jjYq+TC4fiGinDEs=;
-        b=+NeEMil1mpgbidAjq5vNwGwIMLmjxya2mK0WEBJXywic5vP42eTHWjt9xpdFzGx4iMCyG/
-        Za3BUsW4qdht6PCg==
+        bh=opZ9dJXQ/gPy1wKFz1HBnlxilBrCid46x5IMRJNZcJ0=;
+        b=T6CRAZ6RCxmyHubQmeWmaZWKtEYx5DoL+HGigMmLs233TXhuIdl+b8XlcMYNTVTGiIpPxv
+        fWFFC4pxQr+iy4CQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1478B13A3E;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4B37E1346F;
         Fri, 17 Mar 2023 10:43:23 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id gEpjBEtEFGRgdwAAMHmgww
+        id MJR6EUtEFGRgdwAAMHmgww
         (envelope-from <vbabka@suse.cz>); Fri, 17 Mar 2023 10:43:23 +0000
 From:   Vlastimil Babka <vbabka@suse.cz>
 To:     Christoph Lameter <cl@linux.com>,
@@ -61,9 +61,9 @@ Cc:     Hyeonggon Yoo <42.hyeyoo@gmail.com>,
         linux-kernel@vger.kernel.org, patches@lists.linux.dev,
         linux-doc@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
         Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [PATCH v2 3/6] mm, pagemap: remove SLOB and SLQB from comments and documentation
-Date:   Fri, 17 Mar 2023 11:43:04 +0100
-Message-Id: <20230317104307.29328-4-vbabka@suse.cz>
+Subject: [PATCH v2 4/6] mm/slab: remove CONFIG_SLOB code from slab common code
+Date:   Fri, 17 Mar 2023 11:43:05 +0100
+Message-Id: <20230317104307.29328-5-vbabka@suse.cz>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230317104307.29328-1-vbabka@suse.cz>
 References: <20230317104307.29328-1-vbabka@suse.cz>
@@ -78,72 +78,277 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SLOB has been removed and SLQB never merged, so remove their mentions
-from comments and documentation of pagemap.
-
-In stable_page_flags() also correct an outdated comment mentioning that
-PageBuddy() means a page->_refcount of -1, and remove compound_head()
-from the PageSlab() call, as that's already implicitly there thanks to
-PF_NO_TAIL.
+CONFIG_SLOB has been removed from Kconfig. Remove code and #ifdef's
+specific to SLOB in the slab headers and common code.
 
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Reviewed-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 Acked-by: Lorenzo Stoakes <lstoakes@gmail.com>
 ---
- Documentation/admin-guide/mm/pagemap.rst | 6 +++---
- fs/proc/page.c                           | 9 ++++-----
- 2 files changed, 7 insertions(+), 8 deletions(-)
+ include/linux/slab.h | 39 ----------------------------
+ mm/slab.h            | 61 --------------------------------------------
+ mm/slab_common.c     |  2 --
+ 3 files changed, 102 deletions(-)
 
-diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-index b5f970dc91e7..c8f380271cad 100644
---- a/Documentation/admin-guide/mm/pagemap.rst
-+++ b/Documentation/admin-guide/mm/pagemap.rst
-@@ -91,9 +91,9 @@ Short descriptions to the page flags
-    The page is being locked for exclusive access, e.g. by undergoing read/write
-    IO.
- 7 - SLAB
--   The page is managed by the SLAB/SLOB/SLUB/SLQB kernel memory allocator.
--   When compound page is used, SLUB/SLQB will only set this flag on the head
--   page; SLOB will not flag it at all.
-+   The page is managed by the SLAB/SLUB kernel memory allocator.
-+   When compound page is used, either will only set this flag on the head
-+   page.
- 10 - BUDDY
-     A free memory block managed by the buddy system allocator.
-     The buddy system organizes free memory in blocks of various orders.
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 6249c347809a..195b077c0fac 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -125,7 +125,7 @@ u64 stable_page_flags(struct page *page)
- 	/*
- 	 * pseudo flags for the well known (anonymous) memory mapped pages
- 	 *
--	 * Note that page->_mapcount is overloaded in SLOB/SLUB/SLQB, so the
-+	 * Note that page->_mapcount is overloaded in SLAB, so the
- 	 * simple test in page_mapped() is not enough.
- 	 */
- 	if (!PageSlab(page) && page_mapped(page))
-@@ -165,9 +165,8 @@ u64 stable_page_flags(struct page *page)
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 45af70315a94..7f645a4c1298 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -298,19 +298,6 @@ static inline unsigned int arch_slab_minalign(void)
+ #endif
+ #endif
  
+-#ifdef CONFIG_SLOB
+-/*
+- * SLOB passes all requests larger than one page to the page allocator.
+- * No kmalloc array is necessary since objects of different sizes can
+- * be allocated from the same page.
+- */
+-#define KMALLOC_SHIFT_HIGH	PAGE_SHIFT
+-#define KMALLOC_SHIFT_MAX	(MAX_ORDER + PAGE_SHIFT - 1)
+-#ifndef KMALLOC_SHIFT_LOW
+-#define KMALLOC_SHIFT_LOW	3
+-#endif
+-#endif
+-
+ /* Maximum allocatable size */
+ #define KMALLOC_MAX_SIZE	(1UL << KMALLOC_SHIFT_MAX)
+ /* Maximum size for which we actually use a slab cache */
+@@ -366,7 +353,6 @@ enum kmalloc_cache_type {
+ 	NR_KMALLOC_TYPES
+ };
  
- 	/*
--	 * Caveats on high order pages: page->_refcount will only be set
--	 * -1 on the head page; SLUB/SLQB do the same for PG_slab;
--	 * SLOB won't set PG_slab at all on compound pages.
-+	 * Caveats on high order pages: PG_buddy and PG_slab will only be set
-+	 * on the head page.
- 	 */
- 	if (PageBuddy(page))
- 		u |= 1 << KPF_BUDDY;
-@@ -185,7 +184,7 @@ u64 stable_page_flags(struct page *page)
- 	u |= kpf_copy_bit(k, KPF_LOCKED,	PG_locked);
+-#ifndef CONFIG_SLOB
+ extern struct kmem_cache *
+ kmalloc_caches[NR_KMALLOC_TYPES][KMALLOC_SHIFT_HIGH + 1];
  
- 	u |= kpf_copy_bit(k, KPF_SLAB,		PG_slab);
--	if (PageTail(page) && PageSlab(compound_head(page)))
-+	if (PageTail(page) && PageSlab(page))
- 		u |= 1 << KPF_SLAB;
+@@ -458,7 +444,6 @@ static __always_inline unsigned int __kmalloc_index(size_t size,
+ }
+ static_assert(PAGE_SHIFT <= 20);
+ #define kmalloc_index(s) __kmalloc_index(s, true)
+-#endif /* !CONFIG_SLOB */
  
- 	u |= kpf_copy_bit(k, KPF_ERROR,		PG_error);
+ void *__kmalloc(size_t size, gfp_t flags) __assume_kmalloc_alignment __alloc_size(1);
+ 
+@@ -487,10 +472,6 @@ void kmem_cache_free(struct kmem_cache *s, void *objp);
+ void kmem_cache_free_bulk(struct kmem_cache *s, size_t size, void **p);
+ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size, void **p);
+ 
+-/*
+- * Caller must not use kfree_bulk() on memory not originally allocated
+- * by kmalloc(), because the SLOB allocator cannot handle this.
+- */
+ static __always_inline void kfree_bulk(size_t size, void **p)
+ {
+ 	kmem_cache_free_bulk(NULL, size, p);
+@@ -567,7 +548,6 @@ void *kmalloc_large_node(size_t size, gfp_t flags, int node) __assume_page_align
+  *	Try really hard to succeed the allocation but fail
+  *	eventually.
+  */
+-#ifndef CONFIG_SLOB
+ static __always_inline __alloc_size(1) void *kmalloc(size_t size, gfp_t flags)
+ {
+ 	if (__builtin_constant_p(size) && size) {
+@@ -583,17 +563,7 @@ static __always_inline __alloc_size(1) void *kmalloc(size_t size, gfp_t flags)
+ 	}
+ 	return __kmalloc(size, flags);
+ }
+-#else
+-static __always_inline __alloc_size(1) void *kmalloc(size_t size, gfp_t flags)
+-{
+-	if (__builtin_constant_p(size) && size > KMALLOC_MAX_CACHE_SIZE)
+-		return kmalloc_large(size, flags);
+-
+-	return __kmalloc(size, flags);
+-}
+-#endif
+ 
+-#ifndef CONFIG_SLOB
+ static __always_inline __alloc_size(1) void *kmalloc_node(size_t size, gfp_t flags, int node)
+ {
+ 	if (__builtin_constant_p(size) && size) {
+@@ -609,15 +579,6 @@ static __always_inline __alloc_size(1) void *kmalloc_node(size_t size, gfp_t fla
+ 	}
+ 	return __kmalloc_node(size, flags, node);
+ }
+-#else
+-static __always_inline __alloc_size(1) void *kmalloc_node(size_t size, gfp_t flags, int node)
+-{
+-	if (__builtin_constant_p(size) && size > KMALLOC_MAX_CACHE_SIZE)
+-		return kmalloc_large_node(size, flags, node);
+-
+-	return __kmalloc_node(size, flags, node);
+-}
+-#endif
+ 
+ /**
+  * kmalloc_array - allocate memory for an array.
+diff --git a/mm/slab.h b/mm/slab.h
+index 43966aa5fadf..399966b3ce52 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -51,14 +51,6 @@ struct slab {
+ 	};
+ 	unsigned int __unused;
+ 
+-#elif defined(CONFIG_SLOB)
+-
+-	struct list_head slab_list;
+-	void *__unused_1;
+-	void *freelist;		/* first free block */
+-	long units;
+-	unsigned int __unused_2;
+-
+ #else
+ #error "Unexpected slab allocator configured"
+ #endif
+@@ -72,11 +64,7 @@ struct slab {
+ #define SLAB_MATCH(pg, sl)						\
+ 	static_assert(offsetof(struct page, pg) == offsetof(struct slab, sl))
+ SLAB_MATCH(flags, __page_flags);
+-#ifndef CONFIG_SLOB
+ SLAB_MATCH(compound_head, slab_cache);	/* Ensure bit 0 is clear */
+-#else
+-SLAB_MATCH(compound_head, slab_list);	/* Ensure bit 0 is clear */
+-#endif
+ SLAB_MATCH(_refcount, __page_refcount);
+ #ifdef CONFIG_MEMCG
+ SLAB_MATCH(memcg_data, memcg_data);
+@@ -200,31 +188,6 @@ static inline size_t slab_size(const struct slab *slab)
+ 	return PAGE_SIZE << slab_order(slab);
+ }
+ 
+-#ifdef CONFIG_SLOB
+-/*
+- * Common fields provided in kmem_cache by all slab allocators
+- * This struct is either used directly by the allocator (SLOB)
+- * or the allocator must include definitions for all fields
+- * provided in kmem_cache_common in their definition of kmem_cache.
+- *
+- * Once we can do anonymous structs (C11 standard) we could put a
+- * anonymous struct definition in these allocators so that the
+- * separate allocations in the kmem_cache structure of SLAB and
+- * SLUB is no longer needed.
+- */
+-struct kmem_cache {
+-	unsigned int object_size;/* The original size of the object */
+-	unsigned int size;	/* The aligned/padded/added on size  */
+-	unsigned int align;	/* Alignment as calculated */
+-	slab_flags_t flags;	/* Active flags on the slab */
+-	const char *name;	/* Slab name for sysfs */
+-	int refcount;		/* Use counter */
+-	void (*ctor)(void *);	/* Called on object slot creation */
+-	struct list_head list;	/* List of all slab caches on the system */
+-};
+-
+-#endif /* CONFIG_SLOB */
+-
+ #ifdef CONFIG_SLAB
+ #include <linux/slab_def.h>
+ #endif
+@@ -274,7 +237,6 @@ extern const struct kmalloc_info_struct {
+ 	unsigned int size;
+ } kmalloc_info[];
+ 
+-#ifndef CONFIG_SLOB
+ /* Kmalloc array related functions */
+ void setup_kmalloc_cache_index_table(void);
+ void create_kmalloc_caches(slab_flags_t);
+@@ -286,7 +248,6 @@ void *__kmem_cache_alloc_node(struct kmem_cache *s, gfp_t gfpflags,
+ 			      int node, size_t orig_size,
+ 			      unsigned long caller);
+ void __kmem_cache_free(struct kmem_cache *s, void *x, unsigned long caller);
+-#endif
+ 
+ gfp_t kmalloc_fix_flags(gfp_t flags);
+ 
+@@ -303,33 +264,16 @@ extern void create_boot_cache(struct kmem_cache *, const char *name,
+ int slab_unmergeable(struct kmem_cache *s);
+ struct kmem_cache *find_mergeable(unsigned size, unsigned align,
+ 		slab_flags_t flags, const char *name, void (*ctor)(void *));
+-#ifndef CONFIG_SLOB
+ struct kmem_cache *
+ __kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
+ 		   slab_flags_t flags, void (*ctor)(void *));
+ 
+ slab_flags_t kmem_cache_flags(unsigned int object_size,
+ 	slab_flags_t flags, const char *name);
+-#else
+-static inline struct kmem_cache *
+-__kmem_cache_alias(const char *name, unsigned int size, unsigned int align,
+-		   slab_flags_t flags, void (*ctor)(void *))
+-{ return NULL; }
+-
+-static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
+-	slab_flags_t flags, const char *name)
+-{
+-	return flags;
+-}
+-#endif
+ 
+ static inline bool is_kmalloc_cache(struct kmem_cache *s)
+ {
+-#ifndef CONFIG_SLOB
+ 	return (s->flags & SLAB_KMALLOC);
+-#else
+-	return false;
+-#endif
+ }
+ 
+ /* Legal flag mask for kmem_cache_create(), for various configurations */
+@@ -634,7 +578,6 @@ static inline void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
+ }
+ #endif /* CONFIG_MEMCG_KMEM */
+ 
+-#ifndef CONFIG_SLOB
+ static inline struct kmem_cache *virt_to_cache(const void *obj)
+ {
+ 	struct slab *slab;
+@@ -684,8 +627,6 @@ static inline struct kmem_cache *cache_from_obj(struct kmem_cache *s, void *x)
+ 
+ void free_large_kmalloc(struct folio *folio, void *object);
+ 
+-#endif /* CONFIG_SLOB */
+-
+ size_t __ksize(const void *objp);
+ 
+ static inline size_t slab_ksize(const struct kmem_cache *s)
+@@ -777,7 +718,6 @@ static inline void slab_post_alloc_hook(struct kmem_cache *s,
+ 	memcg_slab_post_alloc_hook(s, objcg, flags, size, p);
+ }
+ 
+-#ifndef CONFIG_SLOB
+ /*
+  * The slab lists for all objects.
+  */
+@@ -824,7 +764,6 @@ static inline struct kmem_cache_node *get_node(struct kmem_cache *s, int node)
+ 	for (__node = 0; __node < nr_node_ids; __node++) \
+ 		 if ((__n = get_node(__s, __node)))
+ 
+-#endif
+ 
+ #if defined(CONFIG_SLAB) || defined(CONFIG_SLUB_DEBUG)
+ void dump_unreclaimable_slab(void);
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index bf4e777cfe90..1522693295f5 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -625,7 +625,6 @@ void kmem_dump_obj(void *object)
+ EXPORT_SYMBOL_GPL(kmem_dump_obj);
+ #endif
+ 
+-#ifndef CONFIG_SLOB
+ /* Create a cache during boot when no slab services are available yet */
+ void __init create_boot_cache(struct kmem_cache *s, const char *name,
+ 		unsigned int size, slab_flags_t flags,
+@@ -1079,7 +1078,6 @@ void *kmalloc_node_trace(struct kmem_cache *s, gfp_t gfpflags,
+ 	return ret;
+ }
+ EXPORT_SYMBOL(kmalloc_node_trace);
+-#endif /* !CONFIG_SLOB */
+ 
+ gfp_t kmalloc_fix_flags(gfp_t flags)
+ {
 -- 
 2.39.2
 
