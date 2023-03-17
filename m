@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 569646BE888
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 12:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA8A46BE890
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 12:50:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229963AbjCQLtC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Mar 2023 07:49:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49930 "EHLO
+        id S230117AbjCQLuW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Mar 2023 07:50:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbjCQLtB (ORCPT
+        with ESMTP id S229868AbjCQLuU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Mar 2023 07:49:01 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33EED4EED;
-        Fri, 17 Mar 2023 04:48:59 -0700 (PDT)
+        Fri, 17 Mar 2023 07:50:20 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E801B422B;
+        Fri, 17 Mar 2023 04:50:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E7656B82560;
-        Fri, 17 Mar 2023 11:48:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7B9C433D2;
-        Fri, 17 Mar 2023 11:48:49 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 21DFEB82560;
+        Fri, 17 Mar 2023 11:50:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8165DC433D2;
+        Fri, 17 Mar 2023 11:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679053736;
-        bh=Ep7xq0TiU+qHaUMEFrkyCD2+t3tCkcfkRWs301HgOUc=;
+        s=k20201202; t=1679053807;
+        bh=T8NNfXFxQwO5AYO7a1OktwX6XNNJlHxRWVwZujDSwwM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G9saBPfdCtC+vAwmfznGdZB2UTqdSQzF263AJzR5mcpKX2ygzQA9bJ0Od2Q9KrrFG
-         0vWoPa2+wsEwNvcGMSYYOmV4zKj0uapfmT7udrufWWgmjAH1SgneGQuO3s+yzqqeCb
-         7HWVNseINxfc9xAm/DlR+pa3mSuP6DU6rDdOgkwf2rhNiM5AwL24XItAK5yhBdIWX1
-         lD3q/+yLOxnjrUatpIrRYGMTlVvujX34ejxxo6K/lOf/wpCQVnf5s03xfC8DfCBGJl
-         cFaZnZ5zillNOYl9Vau9q17yVFSvIzhG/r50v/UJbAsA4R7OqQpKtmhi0pLVq+RwtC
-         6Itb2xlX4MURg==
-Date:   Fri, 17 Mar 2023 13:48:38 +0200
+        b=G3tBAQGWyF+d/xztZGv8w2CJOXhMijhJ4Da4wdAf/DGrDr25vdbpQor3X0mjKeUoA
+         EJAx3W+NLy0rFxU0oLEJVZyZPdpjcfKTe90OZL7MA1MB5qwW+YpJi6NzhnwdvqHows
+         OlJuLWMlWh0AYgxV038lxwTtg3BZ4IVAO/Qe41OVIlyHwVa+F1UtjZ7pwC9Pxck2P9
+         ubkv23es+XVnoLL2NfqNwJ0TnWlU5ZCvQGfLM/gFp8kxDQgXtVgVzaCJFrgVGOFPzM
+         EyVrtvSRLfz6oSyETvktfPDkVXIOxQBg25BXOJBaX3Bxk2xem/ZYHjO+Mclq9iVrAI
+         ACIk3ZQqFNVpw==
+Date:   Fri, 17 Mar 2023 13:49:53 +0200
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Vlastimil Babka <vbabka@suse.cz>
 Cc:     Christoph Lameter <cl@linux.com>,
@@ -44,26 +44,17 @@ Cc:     Christoph Lameter <cl@linux.com>,
         Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         rcu@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH v2 6/6] mm/slab: document kfree() as allowed for
- kmem_cache_alloc() objects
-Message-ID: <ZBRTln2uTN1vj4i9@kernel.org>
+        linux-doc@vger.kernel.org, Lorenzo Stoakes <lstoakes@gmail.com>
+Subject: Re: [PATCH v2 1/6] mm/slob: remove CONFIG_SLOB
+Message-ID: <ZBRT4Q24y1vvioIY@kernel.org>
 References: <20230317104307.29328-1-vbabka@suse.cz>
- <20230317104307.29328-7-vbabka@suse.cz>
+ <20230317104307.29328-2-vbabka@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230317104307.29328-7-vbabka@suse.cz>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+In-Reply-To: <20230317104307.29328-2-vbabka@suse.cz>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,94 +62,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 17, 2023 at 11:43:07AM +0100, Vlastimil Babka wrote:
-> This will make it easier to free objects in situations when they can
-> come from either kmalloc() or kmem_cache_alloc(), and also allow
-> kfree_rcu() for freeing objects from kmem_cache_alloc().
-> 
-> For the SLAB and SLUB allocators this was always possible so with SLOB
-> gone, we can document it as supported.
+On Fri, Mar 17, 2023 at 11:43:02AM +0100, Vlastimil Babka wrote:
+> Remove SLOB from Kconfig and Makefile. Everything under #ifdef
+> CONFIG_SLOB, and mm/slob.c is now dead code.
 > 
 > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Neeraj Upadhyay <quic_neeraju@quicinc.com>
-> Cc: Josh Triplett <josh@joshtriplett.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Acked-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+> Acked-by: Lorenzo Stoakes <lstoakes@gmail.com>
 
-Reviewed-by: Mike Rapoport (IBM) <rppt@kernel.org>
+Acked-by: Mike Rapoport (IBM) <rppt@kernel.org>
 
 > ---
->  Documentation/core-api/memory-allocation.rst | 17 +++++++++++++----
->  include/linux/rcupdate.h                     |  6 ++++--
->  mm/slab_common.c                             |  5 +----
->  3 files changed, 18 insertions(+), 10 deletions(-)
+>  init/Kconfig               |  2 +-
+>  kernel/configs/tiny.config |  1 -
+>  mm/Kconfig                 | 22 ----------------------
+>  mm/Makefile                |  2 --
+>  4 files changed, 1 insertion(+), 26 deletions(-)
 > 
-> diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
-> index 5954ddf6ee13..1c58d883b273 100644
-> --- a/Documentation/core-api/memory-allocation.rst
-> +++ b/Documentation/core-api/memory-allocation.rst
-> @@ -170,7 +170,16 @@ should be used if a part of the cache might be copied to the userspace.
->  After the cache is created kmem_cache_alloc() and its convenience
->  wrappers can allocate memory from that cache.
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 1fb5f313d18f..72ac3f66bc27 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -973,7 +973,7 @@ config MEMCG
 >  
-> -When the allocated memory is no longer needed it must be freed. You can
-> -use kvfree() for the memory allocated with `kmalloc`, `vmalloc` and
-> -`kvmalloc`. The slab caches should be freed with kmem_cache_free(). And
-> -don't forget to destroy the cache with kmem_cache_destroy().
-> +When the allocated memory is no longer needed it must be freed.
-> +
-> +Objects allocated by `kmalloc` can be freed by `kfree` or `kvfree`. Objects
-> +allocated by `kmem_cache_alloc` can be freed with `kmem_cache_free`, `kfree`
-> +or `kvfree`, where the latter two might be more convenient thanks to not
-> +needing the kmem_cache pointer.
-> +
-> +The same rules apply to _bulk and _rcu flavors of freeing functions.
-> +
-> +Memory allocated by `vmalloc` can be freed with `vfree` or `kvfree`.
-> +Memory allocated by `kvmalloc` can be freed with `kvfree`.
-> +Caches created by `kmem_cache_create` should be freed with
-> +`kmem_cache_destroy` only after freeing all the allocated objects first.
-> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> index 094321c17e48..dcd2cf1e8326 100644
-> --- a/include/linux/rcupdate.h
-> +++ b/include/linux/rcupdate.h
-> @@ -976,8 +976,10 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
->   * either fall back to use of call_rcu() or rearrange the structure to
->   * position the rcu_head structure into the first 4096 bytes.
->   *
-> - * Note that the allowable offset might decrease in the future, for example,
-> - * to allow something like kmem_cache_free_rcu().
-> + * The object to be freed can be allocated either by kmalloc() or
-> + * kmem_cache_alloc().
-> + *
-> + * Note that the allowable offset might decrease in the future.
->   *
->   * The BUILD_BUG_ON check must not involve any function calls, hence the
->   * checks are done in macros here.
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 1522693295f5..607249785c07 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -989,12 +989,9 @@ EXPORT_SYMBOL(__kmalloc_node_track_caller);
+>  config MEMCG_KMEM
+>  	bool
+> -	depends on MEMCG && !SLOB
+> +	depends on MEMCG
+>  	default y
 >  
->  /**
->   * kfree - free previously allocated memory
-> - * @object: pointer returned by kmalloc.
-> + * @object: pointer returned by kmalloc() or kmem_cache_alloc()
->   *
->   * If @object is NULL, no operation is performed.
-> - *
-> - * Don't free memory not originally allocated by kmalloc()
-> - * or you will run into trouble.
->   */
->  void kfree(const void *object)
->  {
+>  config BLK_CGROUP
+> diff --git a/kernel/configs/tiny.config b/kernel/configs/tiny.config
+> index c2f9c912df1c..144b2bd86b14 100644
+> --- a/kernel/configs/tiny.config
+> +++ b/kernel/configs/tiny.config
+> @@ -7,6 +7,5 @@ CONFIG_KERNEL_XZ=y
+>  # CONFIG_KERNEL_LZO is not set
+>  # CONFIG_KERNEL_LZ4 is not set
+>  # CONFIG_SLAB is not set
+> -# CONFIG_SLOB_DEPRECATED is not set
+>  CONFIG_SLUB=y
+>  CONFIG_SLUB_TINY=y
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 4751031f3f05..669399ab693c 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -238,30 +238,8 @@ config SLUB
+>  	   and has enhanced diagnostics. SLUB is the default choice for
+>  	   a slab allocator.
+>  
+> -config SLOB_DEPRECATED
+> -	depends on EXPERT
+> -	bool "SLOB (Simple Allocator - DEPRECATED)"
+> -	depends on !PREEMPT_RT
+> -	help
+> -	   Deprecated and scheduled for removal in a few cycles. SLUB
+> -	   recommended as replacement. CONFIG_SLUB_TINY can be considered
+> -	   on systems with 16MB or less RAM.
+> -
+> -	   If you need SLOB to stay, please contact linux-mm@kvack.org and
+> -	   people listed in the SLAB ALLOCATOR section of MAINTAINERS file,
+> -	   with your use case.
+> -
+> -	   SLOB replaces the stock allocator with a drastically simpler
+> -	   allocator. SLOB is generally more space efficient but
+> -	   does not perform as well on large systems.
+> -
+>  endchoice
+>  
+> -config SLOB
+> -	bool
+> -	default y
+> -	depends on SLOB_DEPRECATED
+> -
+>  config SLUB_TINY
+>  	bool "Configure SLUB for minimal memory footprint"
+>  	depends on SLUB && EXPERT
+> diff --git a/mm/Makefile b/mm/Makefile
+> index 8e105e5b3e29..e347958fc6b2 100644
+> --- a/mm/Makefile
+> +++ b/mm/Makefile
+> @@ -22,7 +22,6 @@ KCSAN_INSTRUMENT_BARRIERS := y
+>  # flaky coverage that is not a function of syscall inputs. E.g. slab is out of
+>  # free pages, or a task is migrated between nodes.
+>  KCOV_INSTRUMENT_slab_common.o := n
+> -KCOV_INSTRUMENT_slob.o := n
+>  KCOV_INSTRUMENT_slab.o := n
+>  KCOV_INSTRUMENT_slub.o := n
+>  KCOV_INSTRUMENT_page_alloc.o := n
+> @@ -81,7 +80,6 @@ obj-$(CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP)	+= hugetlb_vmemmap.o
+>  obj-$(CONFIG_NUMA) 	+= mempolicy.o
+>  obj-$(CONFIG_SPARSEMEM)	+= sparse.o
+>  obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
+> -obj-$(CONFIG_SLOB) += slob.o
+>  obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
+>  obj-$(CONFIG_KSM) += ksm.o
+>  obj-$(CONFIG_PAGE_POISONING) += page_poison.o
 > -- 
 > 2.39.2
 > 
