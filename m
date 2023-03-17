@@ -2,86 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ACEA16BE3E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 09:39:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 584D86BE3ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 09:39:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231648AbjCQIjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Mar 2023 04:39:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57494 "EHLO
+        id S231338AbjCQIjT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Mar 2023 04:39:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231201AbjCQIic (ORCPT
+        with ESMTP id S231322AbjCQIig (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Mar 2023 04:38:32 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F24A1631E;
-        Fri, 17 Mar 2023 01:37:57 -0700 (PDT)
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32H8Je3T016514;
-        Fri, 17 Mar 2023 08:37:38 GMT
+        Fri, 17 Mar 2023 04:38:36 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 283D41ACCC;
+        Fri, 17 Mar 2023 01:38:00 -0700 (PDT)
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32H70BsR004924;
+        Fri, 17 Mar 2023 08:37:40 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=44j/rkb/mzYeeWQowCkMiryXGzb4i5J79ee0BAZdui0=;
- b=rgC1PbObEe9ic3zl0iskpsFLEl8wD3NBS1l7uDF8CLRvEjVS1WHuGpqcx7v4P3rAb/wW
- jdZT/MyCIiyfks2qMQYK1OVTQX/rYmIpBdrWiTcwr+HsCe1Yv7Kx581Ij13O6PhIHsw6
- AjkKqr/N/9xqD8QXuqgc+CW+Pb69iJ2DdcU/2546DgS3uNANI8RKSqa94eRkyK6lG6Bm
- q5/qVVka0eT+2wfIkS9hxhs75FsXxOKuogbqkYQWbBtPz5zLpLXYhOZHFzzQZ04xrN/7
- 6MxWu2JeLwmigZzVde/6DhFLlqeIFVbEnvQA3bifQSWsIEehM0377ZRuGw+Ldtabn/XA sA== 
+ : date : message-id : in-reply-to : references : content-transfer-encoding
+ : mime-version; s=pp1; bh=hSpAz0/Gptd847h02VX3CFwUKMDByZ32pZ2ZeItHqQU=;
+ b=EC0ywy3otQwPfFq4YQkXltA4qxNXZuq7r6P5T91AUAijdKOh/+iz+54ow7tth84OH9u3
+ rBnQeMWS/P6NvYUJ5l3iq9qTBckLMan4bTEltypnoKzVqiLycVpELgq/PZUH+uwkKSy7
+ BiGZ1T6Qv+X5Ry/l0ZzIJEcgngKN312ehD7Ftgf5ib3KdzbCLA0XBvY/WMTxXgIs9Kz7
+ lIumC7alatnrCNubRHirZCM1zcgOcMJHQXauEOE8LsBXZYQ1CA3gl6OAvS0JJddKQfc8
+ OzZLBEezxgzA4q0KzEfsTWLwBs2WdHoNvtr6gM5OX8N5SCFui2Xummvw+g7xMe6ypLyi Fw== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pcmkjrb6w-1
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pckedaa78-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 08:37:40 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32H72HhC015398;
+        Fri, 17 Mar 2023 08:37:39 GMT
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pckedaa6j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 08:37:39 +0000
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32GHUhRb024411;
+        Fri, 17 Mar 2023 08:37:38 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+        by ppma02fra.de.ibm.com (PPS) with ESMTPS id 3pbsmbhj1k-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Fri, 17 Mar 2023 08:37:37 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32H8KWDs019446;
-        Fri, 17 Mar 2023 08:37:37 GMT
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pcmkjrb61-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Mar 2023 08:37:37 +0000
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32GHsOSs007768;
-        Fri, 17 Mar 2023 08:37:35 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-        by ppma05fra.de.ibm.com (PPS) with ESMTPS id 3pbsu7hhc2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Mar 2023 08:37:35 +0000
 Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-        by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32H8bXBi19858126
+        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32H8bZAK30540478
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Mar 2023 08:37:33 GMT
+        Fri, 17 Mar 2023 08:37:35 GMT
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F254420F69;
-        Fri, 17 Mar 2023 08:37:32 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 7C95D20F6E;
+        Fri, 17 Mar 2023 08:37:35 +0000 (GMT)
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D0A5720F63;
-        Fri, 17 Mar 2023 08:37:30 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 6069E20F63;
+        Fri, 17 Mar 2023 08:37:33 +0000 (GMT)
 Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.91.202])
         by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 17 Mar 2023 08:37:30 +0000 (GMT)
+        Fri, 17 Mar 2023 08:37:33 +0000 (GMT)
 From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
 To:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
 Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jan Kara <jack@suse.cz>, rookxu <brookxu.cn@gmail.com>,
         Ritesh Harjani <ritesh.list@gmail.com>
-Subject: [PATCH v5 5/9] ext4: Abstract out overlap fix/check logic in ext4_mb_normalize_request()
-Date:   Fri, 17 Mar 2023 14:07:09 +0530
-Message-Id: <be5488251d508d9e6a62bdf72fa27dd2b167ac36.1679042083.git.ojaswin@linux.ibm.com>
+Subject: [PATCH v5 6/9] ext4: Fix best extent lstart adjustment logic in ext4_mb_new_inode_pa()
+Date:   Fri, 17 Mar 2023 14:07:10 +0530
+Message-Id: <e150a656f6c3bc8e1d6104c0ae36b54d666918e0.1679042083.git.ojaswin@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1679042083.git.ojaswin@linux.ibm.com>
 References: <cover.1679042083.git.ojaswin@linux.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -Wowg4qWJQMU9BzXXMe4Ui_STom8GyeX
-X-Proofpoint-ORIG-GUID: lLGjPsTkOMIpa5htBffnpntxsqIhMkKX
+X-Proofpoint-ORIG-GUID: qpZNkgbnKTIoRndN4oGwXgp-fKbb4WdU
+X-Proofpoint-GUID: 0Vi4Ix1WZHPXo4vqXsQWnJSf9-WMpobF
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-03-17_04,2023-03-16_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- impostorscore=0 spamscore=0 priorityscore=1501 bulkscore=0 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 adultscore=0 impostorscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 bulkscore=0 priorityscore=1501 mlxscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2303150002 definitions=main-2303170057
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
@@ -92,156 +92,117 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Abstract out the logic of fixing PA overlaps in ext4_mb_normalize_request
-to improve readability of code. This also makes it easier to make changes
-to the overlap logic in future.
+When the length of best extent found is less than the length of goal extent
+we need to make sure that the best extent atleast covers the start of the
+original request. This is done by adjusting the ac_b_ex.fe_logical (logical
+start) of the extent.
 
-There are no functional changes in this patch
+While doing so, the current logic sometimes results in the best extent's
+logical range overflowing the goal extent. Since this best extent is later
+added to the inode preallocation list, we have a possibility of introducing
+overlapping preallocations. This is discussed in detail here [1].
+
+To fix this, replace the existing logic with the below logic for adjusting
+best extent as it keeps fragmentation in check while ensuring logical range
+of best extent doesn't overflow out of goal extent:
+
+1. Check if best extent can be kept at end of goal range and still cover
+   original start.
+2. Else, check if best extent can be kept at start of goal range and still
+   cover original start.
+3. Else, keep the best extent at start of original request.
+
+Also, add a few extra BUG_ONs that might help catch errors faster.
+
+[1] https://lore.kernel.org/r/Y+OGkVvzPN0RMv0O@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com
 
 Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- fs/ext4/mballoc.c | 109 +++++++++++++++++++++++++++++-----------------
- 1 file changed, 68 insertions(+), 41 deletions(-)
+ fs/ext4/mballoc.c | 49 ++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 31 insertions(+), 18 deletions(-)
 
 diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index daa8411d6b61..37bf6507cbfd 100644
+index 37bf6507cbfd..1304c95d8c59 100644
 --- a/fs/ext4/mballoc.c
 +++ b/fs/ext4/mballoc.c
-@@ -4001,6 +4001,73 @@ ext4_mb_pa_assert_overlap(struct ext4_allocation_context *ac,
- 	rcu_read_unlock();
- }
+@@ -4328,6 +4328,7 @@ static void ext4_mb_use_inode_pa(struct ext4_allocation_context *ac,
+ 	BUG_ON(start < pa->pa_pstart);
+ 	BUG_ON(end > pa->pa_pstart + EXT4_C2B(sbi, pa->pa_len));
+ 	BUG_ON(pa->pa_free < len);
++	BUG_ON(ac->ac_b_ex.fe_len <= 0);
+ 	pa->pa_free -= len;
  
-+/*
-+ * Given an allocation context "ac" and a range "start", "end", check
-+ * and adjust boundaries if the range overlaps with any of the existing
-+ * preallocatoins stored in the corresponding inode of the allocation context.
-+ *
-+ *Parameters:
-+ *	ac			allocation context
-+ *	start			start of the new range
-+ *	end			end of the new range
-+ */
-+static inline void
-+ext4_mb_pa_adjust_overlap(struct ext4_allocation_context *ac,
-+			 ext4_lblk_t *start, ext4_lblk_t *end)
-+{
-+	struct ext4_inode_info *ei = EXT4_I(ac->ac_inode);
-+	struct ext4_sb_info *sbi = EXT4_SB(ac->ac_sb);
-+	struct ext4_prealloc_space *tmp_pa;
-+	ext4_lblk_t new_start, new_end;
-+	ext4_lblk_t tmp_pa_start, tmp_pa_end;
-+
-+	new_start = *start;
-+	new_end = *end;
-+
-+	/* check we don't cross already preallocated blocks */
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(tmp_pa, &ei->i_prealloc_list, pa_inode_list) {
-+		if (tmp_pa->pa_deleted)
-+			continue;
-+		spin_lock(&tmp_pa->pa_lock);
-+		if (tmp_pa->pa_deleted) {
-+			spin_unlock(&tmp_pa->pa_lock);
-+			continue;
-+		}
-+
-+		tmp_pa_start = tmp_pa->pa_lstart;
-+		tmp_pa_end = tmp_pa->pa_lstart + EXT4_C2B(sbi, tmp_pa->pa_len);
-+
-+		/* PA must not overlap original request */
-+		BUG_ON(!(ac->ac_o_ex.fe_logical >= tmp_pa_end ||
-+			ac->ac_o_ex.fe_logical < tmp_pa_start));
-+
-+		/* skip PAs this normalized request doesn't overlap with */
-+		if (tmp_pa_start >= new_end || tmp_pa_end <= new_start) {
-+			spin_unlock(&tmp_pa->pa_lock);
-+			continue;
-+		}
-+		BUG_ON(tmp_pa_start <= new_start && tmp_pa_end >= new_end);
-+
-+		/* adjust start or end to be adjacent to this pa */
-+		if (tmp_pa_end <= ac->ac_o_ex.fe_logical) {
-+			BUG_ON(tmp_pa_end < new_start);
-+			new_start = tmp_pa_end;
-+		} else if (tmp_pa_start > ac->ac_o_ex.fe_logical) {
-+			BUG_ON(tmp_pa_start > new_end);
-+			new_end = tmp_pa_start;
-+		}
-+		spin_unlock(&tmp_pa->pa_lock);
-+	}
-+	rcu_read_unlock();
-+
-+	/* XXX: extra loop to check we really don't overlap preallocations */
-+	ext4_mb_pa_assert_overlap(ac, new_start, new_end);
-+
-+	*start = new_start;
-+	*end = new_end;
-+}
-+
- /*
-  * Normalization means making request better in terms of
-  * size and alignment
-@@ -4016,9 +4083,6 @@ ext4_mb_normalize_request(struct ext4_allocation_context *ac,
- 	loff_t size, start_off;
- 	loff_t orig_size __maybe_unused;
- 	ext4_lblk_t start;
--	struct ext4_inode_info *ei = EXT4_I(ac->ac_inode);
--	struct ext4_prealloc_space *tmp_pa;
--	ext4_lblk_t tmp_pa_start, tmp_pa_end;
+ 	mb_debug(ac->ac_sb, "use %llu/%d from inode pa %p\n", start, len, pa);
+@@ -4666,10 +4667,8 @@ ext4_mb_new_inode_pa(struct ext4_allocation_context *ac)
+ 	pa = ac->ac_pa;
  
- 	/* do normalize only data requests, metadata requests
- 	   do not need preallocation */
-@@ -4119,47 +4183,10 @@ ext4_mb_normalize_request(struct ext4_allocation_context *ac,
+ 	if (ac->ac_b_ex.fe_len < ac->ac_g_ex.fe_len) {
+-		int winl;
+-		int wins;
+-		int win;
+-		int offs;
++		int new_bex_start;
++		int new_bex_end;
  
- 	end = start + size;
+ 		/* we can't allocate as much as normalizer wants.
+ 		 * so, found space must get proper lstart
+@@ -4677,26 +4676,40 @@ ext4_mb_new_inode_pa(struct ext4_allocation_context *ac)
+ 		BUG_ON(ac->ac_g_ex.fe_logical > ac->ac_o_ex.fe_logical);
+ 		BUG_ON(ac->ac_g_ex.fe_len < ac->ac_o_ex.fe_len);
  
--	/* check we don't cross already preallocated blocks */
--	rcu_read_lock();
--	list_for_each_entry_rcu(tmp_pa, &ei->i_prealloc_list, pa_inode_list) {
--		if (tmp_pa->pa_deleted)
--			continue;
--		spin_lock(&tmp_pa->pa_lock);
--		if (tmp_pa->pa_deleted) {
--			spin_unlock(&tmp_pa->pa_lock);
--			continue;
--		}
--
--		tmp_pa_start = tmp_pa->pa_lstart;
--		tmp_pa_end = tmp_pa->pa_lstart + EXT4_C2B(sbi, tmp_pa->pa_len);
--
--		/* PA must not overlap original request */
--		BUG_ON(!(ac->ac_o_ex.fe_logical >= tmp_pa_end ||
--			ac->ac_o_ex.fe_logical < tmp_pa_start));
--
--		/* skip PAs this normalized request doesn't overlap with */
--		if (tmp_pa_start >= end || tmp_pa_end <= start) {
--			spin_unlock(&tmp_pa->pa_lock);
--			continue;
--		}
--		BUG_ON(tmp_pa_start <= start && tmp_pa_end >= end);
-+	ext4_mb_pa_adjust_overlap(ac, &start, &end);
+-		/* we're limited by original request in that
+-		 * logical block must be covered any way
+-		 * winl is window we can move our chunk within */
+-		winl = ac->ac_o_ex.fe_logical - ac->ac_g_ex.fe_logical;
++		/*
++		 * Use the below logic for adjusting best extent as it keeps
++		 * fragmentation in check while ensuring logical range of best
++		 * extent doesn't overflow out of goal extent:
++		 *
++		 * 1. Check if best ex can be kept at end of goal and still
++		 *    cover original start
++		 * 2. Else, check if best ex can be kept at start of goal and
++		 *    still cover original start
++		 * 3. Else, keep the best ex at start of original request.
++		 */
++		new_bex_end = ac->ac_g_ex.fe_logical +
++			EXT4_C2B(sbi, ac->ac_g_ex.fe_len);
++		new_bex_start = new_bex_end - EXT4_C2B(sbi, ac->ac_b_ex.fe_len);
++		if (ac->ac_o_ex.fe_logical >= new_bex_start)
++			goto adjust_bex;
  
--		/* adjust start or end to be adjacent to this pa */
--		if (tmp_pa_end <= ac->ac_o_ex.fe_logical) {
--			BUG_ON(tmp_pa_end < start);
--			start = tmp_pa_end;
--		} else if (tmp_pa_start > ac->ac_o_ex.fe_logical) {
--			BUG_ON(tmp_pa_start > end);
--			end = tmp_pa_start;
--		}
--		spin_unlock(&tmp_pa->pa_lock);
--	}
--	rcu_read_unlock();
- 	size = end - start;
+-		/* also, we should cover whole original request */
+-		wins = EXT4_C2B(sbi, ac->ac_b_ex.fe_len - ac->ac_o_ex.fe_len);
++		new_bex_start = ac->ac_g_ex.fe_logical;
++		new_bex_end =
++			new_bex_start + EXT4_C2B(sbi, ac->ac_b_ex.fe_len);
++		if (ac->ac_o_ex.fe_logical < new_bex_end)
++			goto adjust_bex;
  
--	/* XXX: extra loop to check we really don't overlap preallocations */
--	ext4_mb_pa_assert_overlap(ac, start, end);
--
- 	/*
- 	 * In this function "start" and "size" are normalized for better
- 	 * alignment and length such that we could preallocate more blocks.
+-		/* the smallest one defines real window */
+-		win = min(winl, wins);
++		new_bex_start = ac->ac_o_ex.fe_logical;
++		new_bex_end =
++			new_bex_start + EXT4_C2B(sbi, ac->ac_b_ex.fe_len);
+ 
+-		offs = ac->ac_o_ex.fe_logical %
+-			EXT4_C2B(sbi, ac->ac_b_ex.fe_len);
+-		if (offs && offs < win)
+-			win = offs;
++adjust_bex:
++		ac->ac_b_ex.fe_logical = new_bex_start;
+ 
+-		ac->ac_b_ex.fe_logical = ac->ac_o_ex.fe_logical -
+-			EXT4_NUM_B2C(sbi, win);
+ 		BUG_ON(ac->ac_o_ex.fe_logical < ac->ac_b_ex.fe_logical);
+ 		BUG_ON(ac->ac_o_ex.fe_len > ac->ac_b_ex.fe_len);
++		BUG_ON(new_bex_end > (ac->ac_g_ex.fe_logical +
++				      EXT4_C2B(sbi, ac->ac_g_ex.fe_len)));
+ 	}
+ 
+ 	pa->pa_lstart = ac->ac_b_ex.fe_logical;
 -- 
 2.31.1
 
