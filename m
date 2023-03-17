@@ -2,176 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4394C6BE72B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 11:45:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8CAF6BE756
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Mar 2023 11:55:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230343AbjCQKpB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Mar 2023 06:45:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37018 "EHLO
+        id S229704AbjCQKz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Mar 2023 06:55:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230401AbjCQKo0 (ORCPT
+        with ESMTP id S229494AbjCQKzZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Mar 2023 06:44:26 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A2832D70;
-        Fri, 17 Mar 2023 03:43:52 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 6441E1FE12;
-        Fri, 17 Mar 2023 10:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1679049804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QMYqXFz2IaKT3NUuszy4Agqdpp++dYT+bm01yseqepo=;
-        b=3RpsWYEBsUt1LFWxCtGa654D5WiAY6xlDzmguCq7ZIYVl2lubbeAt4r2RFSsxW0nlHA/eC
-        c3wX6HGC3gUendkoyOfqOmUfJnYC2pOdF4XUXI+knSdJQj7iD7m2tiRkWNW32AwwO/Wf7W
-        +qXw0+FixUwDXTRG+OSphmXADh28IKA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1679049804;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QMYqXFz2IaKT3NUuszy4Agqdpp++dYT+bm01yseqepo=;
-        b=L+rlwaT8LS9vjdsg9XHVyHNS5hCWePW/zbB/fIp1ejwCCCjFDK4vtitN8q9Zka3g3gxPfG
-        K86/MFNPW7+ZsxAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CF23E1346F;
-        Fri, 17 Mar 2023 10:43:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id yMbfMUtEFGRgdwAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Fri, 17 Mar 2023 10:43:23 +0000
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Pekka Enberg <penberg@kernel.org>
-Cc:     Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        rcu@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-        linux-doc@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: [PATCH v2 6/6] mm/slab: document kfree() as allowed for kmem_cache_alloc() objects
-Date:   Fri, 17 Mar 2023 11:43:07 +0100
-Message-Id: <20230317104307.29328-7-vbabka@suse.cz>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230317104307.29328-1-vbabka@suse.cz>
-References: <20230317104307.29328-1-vbabka@suse.cz>
+        Fri, 17 Mar 2023 06:55:25 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7AF9DDF35;
+        Fri, 17 Mar 2023 03:55:23 -0700 (PDT)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32HAe8Pk020672;
+        Fri, 17 Mar 2023 10:55:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=RUMpbwc4wqUe3MjJ+ltbvkY9rJ1XIpkrtSkNguYYYYU=;
+ b=GkYkcWuhW0C7LoU/lfin6dQFbRnhkxk2RMY1SKZNC5RXfjqx6hX+D6vttucVH/4IpdXO
+ h1/2E/MRsRoKkblDQSklJmp/47WjOBX/HLUHRGzNZGgJRJS3es0hLBZzka86kvhF46Sp
+ UgPdk+hcODiPSvZxKZe0Z8aVwCKY5jzMLFcmJnn9J2NJQV3CUre5eFHsGls9Xfylyqjt
+ d/o44ljsO/m+H+oD1iLNGXwJ1hc8e95u4/E1FAy/TkvmKA3e6u89BbZbLuHGZiBgLaCP
+ LgutpWPoXys1I8NIvT+u0yvNx3DwLsCOKD6yg+RAh5HULP9qLnXtQp3J7QGnKuxMK+1c mw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pcjfhpwc9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 10:55:19 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32HAeZfB022275;
+        Fri, 17 Mar 2023 10:55:18 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pcjfhpwbs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 10:55:18 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32H6uoAx022101;
+        Fri, 17 Mar 2023 10:55:16 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+        by ppma04ams.nl.ibm.com (PPS) with ESMTPS id 3pbsvb210m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 10:55:16 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32HAtEkQ8258098
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Mar 2023 10:55:14 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6A0792004B;
+        Fri, 17 Mar 2023 10:55:14 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7A01B20049;
+        Fri, 17 Mar 2023 10:55:12 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.91.202])
+        by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Fri, 17 Mar 2023 10:55:12 +0000 (GMT)
+Date:   Fri, 17 Mar 2023 16:25:04 +0530
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>
+Subject: Re: [RFC 08/11] ext4: Don't skip prefetching BLOCK_UNINIT groups
+Message-ID: <ZBRHCHySeQ0KC/f7@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1674822311.git.ojaswin@linux.ibm.com>
+ <4881693a4f5ba1fed367310b27c793e4e78520d3.1674822311.git.ojaswin@linux.ibm.com>
+ <20230309141422.b2nbl554ngna327k@quack3>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230309141422.b2nbl554ngna327k@quack3>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: D9YVdtmD-D3rJBeAV2lkCzxwOK-kRLei
+X-Proofpoint-ORIG-GUID: JTnpt8bXAF7aeoR6KCJMuv1bUoA8YMJ5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-17_06,2023-03-16_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 adultscore=0
+ impostorscore=0 mlxscore=0 malwarescore=0 spamscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303170071
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This will make it easier to free objects in situations when they can
-come from either kmalloc() or kmem_cache_alloc(), and also allow
-kfree_rcu() for freeing objects from kmem_cache_alloc().
+On Thu, Mar 09, 2023 at 03:14:22PM +0100, Jan Kara wrote:
+> On Fri 27-01-23 18:07:35, Ojaswin Mujoo wrote:
+> > Currently, ext4_mb_prefetch() and ext4_mb_prefetch_fini() skip
+> > BLOCK_UNINIT groups since fetching their bitmaps doesn't need disk IO.
+> > As a consequence, we end not initializing the buddy structures and CR0/1
+> > lists for these BGs, even though it can be done without any disk IO
+> > overhead. Hence, don't skip such BGs during prefetch and prefetch_fini.
+> > 
+> > This improves the accuracy of CR0/1 allocation as earlier, we could have
+> > essentially empty BLOCK_UNINIT groups being ignored by CR0/1 due to their buddy
+> > not being initialized, leading to slower CR2 allocations. With this patch CR0/1
+> > will be able to discover these groups as well, thus improving performance.
+> > 
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> 
+> The patch looks good. I just somewhat wonder - this change may result in
+> uninitialized groups being initialized and used earlier (previously we'd
+> rather search in other already initialized groups) which may spread
+> allocations more. But I suppose that's fine and uninit groups are not
+> really a feature meant to limit fragmentation and as the filesystem ages
+> the differences should be minimal. So feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
+Thanks for the review. As for the allocation spread, I agree that it
+should be something our goal determination logic should take care of
+rather than limiting the BGs available to the allocator.
 
-For the SLAB and SLUB allocators this was always possible so with SLOB
-gone, we can document it as supported.
+Another point I wanted to discuss wrt this patch series was why were the
+BLOCK_UNINIT groups not being prefetched earlier. One point I can think
+of is that this might lead to memory pressure when we have too many
+empty BGs in a very large (say terabytes) disk.
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Neeraj Upadhyay <quic_neeraju@quicinc.com>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>
----
- Documentation/core-api/memory-allocation.rst | 17 +++++++++++++----
- include/linux/rcupdate.h                     |  6 ++++--
- mm/slab_common.c                             |  5 +----
- 3 files changed, 18 insertions(+), 10 deletions(-)
+But i'd still like to know if there's some history behind not
+prefetching block uninit.
 
-diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
-index 5954ddf6ee13..1c58d883b273 100644
---- a/Documentation/core-api/memory-allocation.rst
-+++ b/Documentation/core-api/memory-allocation.rst
-@@ -170,7 +170,16 @@ should be used if a part of the cache might be copied to the userspace.
- After the cache is created kmem_cache_alloc() and its convenience
- wrappers can allocate memory from that cache.
- 
--When the allocated memory is no longer needed it must be freed. You can
--use kvfree() for the memory allocated with `kmalloc`, `vmalloc` and
--`kvmalloc`. The slab caches should be freed with kmem_cache_free(). And
--don't forget to destroy the cache with kmem_cache_destroy().
-+When the allocated memory is no longer needed it must be freed.
-+
-+Objects allocated by `kmalloc` can be freed by `kfree` or `kvfree`. Objects
-+allocated by `kmem_cache_alloc` can be freed with `kmem_cache_free`, `kfree`
-+or `kvfree`, where the latter two might be more convenient thanks to not
-+needing the kmem_cache pointer.
-+
-+The same rules apply to _bulk and _rcu flavors of freeing functions.
-+
-+Memory allocated by `vmalloc` can be freed with `vfree` or `kvfree`.
-+Memory allocated by `kvmalloc` can be freed with `kvfree`.
-+Caches created by `kmem_cache_create` should be freed with
-+`kmem_cache_destroy` only after freeing all the allocated objects first.
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 094321c17e48..dcd2cf1e8326 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -976,8 +976,10 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
-  * either fall back to use of call_rcu() or rearrange the structure to
-  * position the rcu_head structure into the first 4096 bytes.
-  *
-- * Note that the allowable offset might decrease in the future, for example,
-- * to allow something like kmem_cache_free_rcu().
-+ * The object to be freed can be allocated either by kmalloc() or
-+ * kmem_cache_alloc().
-+ *
-+ * Note that the allowable offset might decrease in the future.
-  *
-  * The BUILD_BUG_ON check must not involve any function calls, hence the
-  * checks are done in macros here.
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 1522693295f5..607249785c07 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -989,12 +989,9 @@ EXPORT_SYMBOL(__kmalloc_node_track_caller);
- 
- /**
-  * kfree - free previously allocated memory
-- * @object: pointer returned by kmalloc.
-+ * @object: pointer returned by kmalloc() or kmem_cache_alloc()
-  *
-  * If @object is NULL, no operation is performed.
-- *
-- * Don't free memory not originally allocated by kmalloc()
-- * or you will run into trouble.
-  */
- void kfree(const void *object)
- {
--- 
-2.39.2
-
+Cc'ing Andreas as well to check if they came across anything in Lustre
+in the past.
+> 
+> > ---
+> >  fs/ext4/mballoc.c | 8 ++------
+> >  1 file changed, 2 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> > index 14529d2fe65f..48726a831264 100644
+> > --- a/fs/ext4/mballoc.c
+> > +++ b/fs/ext4/mballoc.c
+> > @@ -2557,9 +2557,7 @@ ext4_group_t ext4_mb_prefetch(struct super_block *sb, ext4_group_t group,
+> >  		 */
+> >  		if (!EXT4_MB_GRP_TEST_AND_SET_READ(grp) &&
+> >  		    EXT4_MB_GRP_NEED_INIT(grp) &&
+> > -		    ext4_free_group_clusters(sb, gdp) > 0 &&
+> > -		    !(ext4_has_group_desc_csum(sb) &&
+> > -		      (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT)))) {
+> > +		    ext4_free_group_clusters(sb, gdp) > 0 ) {
+> >  			bh = ext4_read_block_bitmap_nowait(sb, group, true);
+> >  			if (bh && !IS_ERR(bh)) {
+> >  				if (!buffer_uptodate(bh) && cnt)
+> > @@ -2600,9 +2598,7 @@ void ext4_mb_prefetch_fini(struct super_block *sb, ext4_group_t group,
+> >  		grp = ext4_get_group_info(sb, group);
+> >  
+> >  		if (EXT4_MB_GRP_NEED_INIT(grp) &&
+> > -		    ext4_free_group_clusters(sb, gdp) > 0 &&
+> > -		    !(ext4_has_group_desc_csum(sb) &&
+> > -		      (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT)))) {
+> > +		    ext4_free_group_clusters(sb, gdp) > 0) {
+> >  			if (ext4_mb_init_group(sb, group, GFP_NOFS))
+> >  				break;
+> >  		}
+> > -- 
+> > 2.31.1
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
