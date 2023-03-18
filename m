@@ -2,55 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9405F6BF762
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Mar 2023 03:27:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE936BF832
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Mar 2023 07:03:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230025AbjCRC1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Mar 2023 22:27:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33168 "EHLO
+        id S229954AbjCRGC7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Mar 2023 02:02:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbjCRC1W (ORCPT
+        with ESMTP id S229542AbjCRGC6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Mar 2023 22:27:22 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A724D7C97D
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Mar 2023 19:27:20 -0700 (PDT)
-Received: by mail-io1-f71.google.com with SMTP id f15-20020a05660215cf00b00752dd002fd1so3284491iow.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Mar 2023 19:27:20 -0700 (PDT)
+        Sat, 18 Mar 2023 02:02:58 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B564D60F;
+        Fri, 17 Mar 2023 23:02:57 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id c18so7431716ple.11;
+        Fri, 17 Mar 2023 23:02:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679119377; x=1681711377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HX2Vj0FqJHvCREMyAVXC+Ew/k8upKYV2kIV0kMLwhNg=;
+        b=WrfB2bwZf2cF8EjGCGotHY0Iqb2M32vFcWnZYy51MNfEiG+xiMWsfRbev323QqIHKt
+         /8BdovrzaxckOgWhYGSAnyeNyjZBSUcvDhnAdQz0uRdd1jsT8vJHESzO5MogcW//0DBc
+         EPYEa/i6uuzoNQCL78HMqeQ4tBPR4o1U4xbdOtOVzBxyzgGq6TXRV2Ed+jJ08fQV8LEM
+         HzPAClTyzoWJ/Jl3XUit8q90bkPLX3g12c/XNv9wY4mFXvYkIyT+IVNawlybHZ2EyhRb
+         EbU26IHhL5CPUh+Ef+CJed3KrLK/EDTtKqwHNAVD9sfFEw2cHob78L5blGQjBIfbKFQX
+         qZYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679106440;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0u9iCqtoAmqFPlWvcnYREgJziHl4srI427ufeguhoqM=;
-        b=Tf7ajoeJpM6JOWm2vgLsoOeUvGjyUi3gQ02nM9JcQ/4A2P+lV0Neb4xP9Riui9uegd
-         4eoIDi99tKWUup+KvrMJflqEASSRpTo66zS26tptU7ilZghrbPJdHhRy78KPwG+Ce/Wo
-         1RjR5rZMlzIVyGY6zPfIBekDv0SQn6dQjnZY0RFi26JqcAJhFPHRXmtpQCnyPqUeD4tq
-         6LVscTFgHlYMUS9BemRFNFMvG2fFEimgw65CtQWaNqPWkgmIl9TuW0KMbRjni14h5tDG
-         zrezGYft3zXwmOOnNvIvlatIIOCEUbXxfwL4wVpEgE+D/1iuJS4rejLaxwvAUGswpdCY
-         u6eA==
-X-Gm-Message-State: AO0yUKVIQaXQefqNWyQU8AKsNIvSJ5w7rsWyIbnCacRIuzaY9yocftAI
-        BWydjikirO91pZdTnq8S2ySWd2ZXIL++mACJgfOxufStUeJl
-X-Google-Smtp-Source: AK7set8wss4kUHb8bvkmj46rggkVv7EYWpiCNxgTNjAiaYvE3l2uDADG4+AdbZbUYfVh0de7isnTkVF1g0r5VUiiYVo8PDDYYWkv
+        d=1e100.net; s=20210112; t=1679119377; x=1681711377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HX2Vj0FqJHvCREMyAVXC+Ew/k8upKYV2kIV0kMLwhNg=;
+        b=glZIYw4gGsW65p4/nc2LL7HeSc4i9Hqj6oKsXoMFoQmNIHOnQE05qzOB6iElasNOa+
+         lB7fSiJh58Gb9oQTNcsrHfxquhCdbMaAQPx/Lyokn9u5GapBX60YBF2XuVFZph2vFez4
+         xxl5ZpSHt9m+/bebHewrWhLOBiwfBu53j9j1jFTDsxGS38n8LBk/kk1hZoU+/GfctbNK
+         22Tz6I0wuuChkULGK90X6Yjz7kmhzYDrHaFuxadsEiI24qfvvC1lYqUmJ8MI5jqZKzJO
+         L5rlBbAlZwaUKcmouGr7zUKmX6RadJhsLhdkK0q8+ynEz1YO2GAuR9XPWb5LZf4tUQgs
+         EUsw==
+X-Gm-Message-State: AO0yUKWN3Lb39EdpiilJVK8lDIyLFq5VoVUJduK43Ig+HMrSCBvrzjkj
+        5BVVzOdWKeHWya8V9E5Q820=
+X-Google-Smtp-Source: AK7set+K7UlmFtEWwKIuL52V+E4VXXdLcdzr3Fwir+XXzHSLgkk5cdkYUtRWPlf8aM9oh3Z72NtZ/w==
+X-Received: by 2002:a17:90b:3548:b0:23b:4bce:97de with SMTP id lt8-20020a17090b354800b0023b4bce97demr8523345pjb.4.1679119377133;
+        Fri, 17 Mar 2023 23:02:57 -0700 (PDT)
+Received: from ip-172-31-38-16.us-west-2.compute.internal (ec2-52-37-71-140.us-west-2.compute.amazonaws.com. [52.37.71.140])
+        by smtp.gmail.com with ESMTPSA id w23-20020a17090a15d700b00233b5d6b4b5sm5775920pjd.16.2023.03.17.23.02.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Mar 2023 23:02:56 -0700 (PDT)
+From:   aloktiagi <aloktiagi@gmail.com>
+To:     viro@zeniv.linux.org.uk, David.Laight@ACULAB.COM,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     keescook@chromium.org, hch@infradead.org,
+        aloktiagi <aloktiagi@gmail.com>,
+        Tycho Andersen <tycho@tycho.pizza>
+Subject: [RFC v2 1/3] file: Introduce iterate_fd_locked
+Date:   Sat, 18 Mar 2023 06:02:46 +0000
+Message-Id: <20230318060248.848099-1-aloktiagi@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Received: by 2002:a02:b181:0:b0:3b7:9d19:fec7 with SMTP id
- t1-20020a02b181000000b003b79d19fec7mr266557jah.0.1679106439975; Fri, 17 Mar
- 2023 19:27:19 -0700 (PDT)
-Date:   Fri, 17 Mar 2023 19:27:19 -0700
-In-Reply-To: <000000000000aa58fb05ed5beed6@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e51b9905f7236ef3@google.com>
-Subject: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in dbMount
-From:   syzbot <syzbot+0835e526215d5dcefaa9@syzkaller.appspotmail.com>
-To:     dave.kleikamp@oracle.com, jfs-discussion@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liushixin2@huawei.com, mudongliangabcd@gmail.com,
-        paskripkin@gmail.com, r33s3n6@gmail.com, shaggy@kernel.org,
-        syzkaller-bugs@googlegroups.com, wuhoipok@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,24 +71,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+Callers holding the files->file_lock lock can call iterate_fd_locked instead of
+iterate_fd
 
-commit fad376fce0af58deebc5075b8539dc05bf639af3
-Author: Liu Shixin via Jfs-discussion <jfs-discussion@lists.sourceforge.net>
-Date:   Thu Nov 3 03:01:59 2022 +0000
+Signed-off-by: aloktiagi <aloktiagi@gmail.com>
+Reviewed-by: Tycho Andersen <tycho@tycho.pizza>
+---
+ fs/file.c               | 21 +++++++++++++++------
+ include/linux/fdtable.h |  3 +++
+ 2 files changed, 18 insertions(+), 6 deletions(-)
 
-    fs/jfs: fix shift exponent db_agl2size negative
+diff --git a/fs/file.c b/fs/file.c
+index c942c89ca4cd..4b2346b8a5ee 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1295,15 +1295,12 @@ int f_dupfd(unsigned int from, struct file *file, unsigned flags)
+ 	return err;
+ }
+ 
+-int iterate_fd(struct files_struct *files, unsigned n,
+-		int (*f)(const void *, struct file *, unsigned),
+-		const void *p)
++int iterate_fd_locked(struct files_struct *files, unsigned n,
++                int (*f)(const void *, struct file *, unsigned),
++                const void *p)
+ {
+ 	struct fdtable *fdt;
+ 	int res = 0;
+-	if (!files)
+-		return 0;
+-	spin_lock(&files->file_lock);
+ 	for (fdt = files_fdtable(files); n < fdt->max_fds; n++) {
+ 		struct file *file;
+ 		file = rcu_dereference_check_fdtable(files, fdt->fd[n]);
+@@ -1313,6 +1310,18 @@ int iterate_fd(struct files_struct *files, unsigned n,
+ 		if (res)
+ 			break;
+ 	}
++	return res;
++}
++
++int iterate_fd(struct files_struct *files, unsigned n,
++		int (*f)(const void *, struct file *, unsigned),
++		const void *p)
++{
++	int res = 0;
++	if (!files)
++		return 0;
++	spin_lock(&files->file_lock);
++	res = iterate_fd_locked(files, n, f, p);
+ 	spin_unlock(&files->file_lock);
+ 	return res;
+ }
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index e066816f3519..14882520d1fe 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -122,6 +122,9 @@ void do_close_on_exec(struct files_struct *);
+ int iterate_fd(struct files_struct *, unsigned,
+ 		int (*)(const void *, struct file *, unsigned),
+ 		const void *);
++int iterate_fd_locked(struct files_struct *, unsigned,
++			int (*)(const void *, struct file *, unsigned),
++			const void *);
+ 
+ extern int close_fd(unsigned int fd);
+ extern int __close_range(unsigned int fd, unsigned int max_fd, unsigned int flags);
+-- 
+2.34.1
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10f3046ec80000
-start commit:   513c1a3d3f19 Merge tag 'trace-v6.2-rc6' of git://git.kerne..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6bb1911ff9919df0
-dashboard link: https://syzkaller.appspot.com/bug?extid=0835e526215d5dcefaa9
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d599df480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16bb69a7480000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs/jfs: fix shift exponent db_agl2size negative
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
