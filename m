@@ -2,68 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 420A96BF835
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Mar 2023 07:03:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89E4B6BF845
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Mar 2023 07:09:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbjCRGDK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Mar 2023 02:03:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47848 "EHLO
+        id S230112AbjCRGJE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Mar 2023 02:09:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbjCRGDD (ORCPT
+        with ESMTP id S229590AbjCRGJD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Mar 2023 02:03:03 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91E81252BC;
-        Fri, 17 Mar 2023 23:03:01 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id om3-20020a17090b3a8300b0023efab0e3bfso11212275pjb.3;
-        Fri, 17 Mar 2023 23:03:01 -0700 (PDT)
+        Sat, 18 Mar 2023 02:09:03 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D489F3B664;
+        Fri, 17 Mar 2023 23:08:59 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id y4so28161216edo.2;
+        Fri, 17 Mar 2023 23:08:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679119381;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20210112; t=1679119738;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Tq6dfXGjTtC2KxTe9xblOPYZ48A2UaTNEMDb5IYA2zQ=;
-        b=hu/KLFvFI8MJ+sdDJxKTbHznkpv0LcyD2DeuEMhXykIUyXkkatIZT/IrCRhCwQwdX0
-         eU0ExWqchVTXwtIt2QgVlEf4p5NTB7FOef8JuQulAGV/J/txiHL4hUBLwmOBCvKgTywW
-         mC2cG73+6oEOjZVJNofxcA7u3mbJvfNIOUWApvR18XVQ8pn01OwSErnrupQSBvtak3Vb
-         AcIBu8x7FPRnXw+GAusjACwUIfKnV6XBMviKITfVr7uMUZ8dqe5tYy1kft80RRhrOt/R
-         Zp9N3GS5x8a5oAmEPq+6UAYzdpZT6TbYdjvwZF1hC2qeTXFxDYLqY0mFv0tX35maZ9DG
-         OjIw==
+        bh=kV6D6PWuyY+pzJCeIR0JhzUrH+GgDghjB9uU7AntUqA=;
+        b=ohCbefDAyCpU7VGBYqZpzJHtlEkbOY7Acj9MBcGEFIKZQ02InFEathyokeRbr/+LRi
+         5OaU4RFGmzKS4u7JBelbcT1IDEaXUuEjStkFDpvE45mo2RD1IUSwzC974CU2MgIGXnkI
+         g643/nyEUBUMu0xbJDTEJAUR9Syt+GIoMIYgaWga7pFQzMb4AALVIKcH1d+GVExOoZI5
+         /jdWvi8OKRx5/UJNVM8SBBJLg2oqE5HHWAS70YjOskmsToTtt2yzbeG7Djhfjm7XlIyk
+         qABY68h9/bSktn/pRHowHwANI2c2+bSCdHgZMJa/jupIa6QCDgMnP2IndATSAsbk3CN9
+         3Hzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679119381;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1679119738;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tq6dfXGjTtC2KxTe9xblOPYZ48A2UaTNEMDb5IYA2zQ=;
-        b=Eflm1FvsQhFWatG2Malct0Ooi2N8kBRtrJiNo7EtFmc3FH7ubDMmq049GKj2SMVuLa
-         debQTSgeJ9tSfYTmPw0HzYS5yOewE27cnF9Ymr+recnwjZnADs5u0wdV9NwK46vluCyl
-         coHkICLmeUTtgKjZ8gXbkw9ZKTMFVqqqo0B6VjbFyrMQ6ia7OnCcrQrDYES3Z2eKJFzV
-         xeqcQQ9dBTQ2YSLjbH2elQdsU8b3vOlF94ECkeRJ8H0mwrboN4ysIXZrWm0k0q+WShFR
-         dnwnpdgakR2wC0FJRPU8tEk97LKaB9IUcka4SEqPJm+g4PShJzKSA+aZXf0+1/JDcMYY
-         q9fQ==
-X-Gm-Message-State: AO0yUKUErevOp7vNopVjO8VEE6mQSZ6pODJweMLlQWNEGptkFzerpnq/
-        3CgaypCMa/U0TbX1YFr1XCo=
-X-Google-Smtp-Source: AK7set/raPcHy5ZaoBhtyxBUzGdsyUo4Csevesa8DZdHY5qlp74dGsvzwB7aeBK9G8vkcflG4o9SlQ==
-X-Received: by 2002:a05:6a20:7f8c:b0:d7:3c1a:6caf with SMTP id d12-20020a056a207f8c00b000d73c1a6cafmr8401834pzj.2.1679119380728;
-        Fri, 17 Mar 2023 23:03:00 -0700 (PDT)
-Received: from ip-172-31-38-16.us-west-2.compute.internal (ec2-52-37-71-140.us-west-2.compute.amazonaws.com. [52.37.71.140])
-        by smtp.gmail.com with ESMTPSA id w23-20020a17090a15d700b00233b5d6b4b5sm5775920pjd.16.2023.03.17.23.02.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Mar 2023 23:03:00 -0700 (PDT)
-From:   aloktiagi <aloktiagi@gmail.com>
-To:     viro@zeniv.linux.org.uk, David.Laight@ACULAB.COM,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     keescook@chromium.org, hch@infradead.org,
-        aloktiagi <aloktiagi@gmail.com>,
-        Tycho Andersen <tycho@tycho.pizza>
-Subject: [RFC v2 3/3] file, epoll: Implement do_replace() and eventpoll_replace()
-Date:   Sat, 18 Mar 2023 06:02:48 +0000
-Message-Id: <20230318060248.848099-3-aloktiagi@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230318060248.848099-1-aloktiagi@gmail.com>
-References: <20230318060248.848099-1-aloktiagi@gmail.com>
+        bh=kV6D6PWuyY+pzJCeIR0JhzUrH+GgDghjB9uU7AntUqA=;
+        b=YRMX72YZBCOo+q0UY+4owasXSqitlBxmAKMIljc6TkJOHX+Eu/8hFcIt2/jkVLoPg2
+         WMeFNLwrVUfWCK5N0ORSWlhwNkY2jTKhzxt9O8iGnOOEaA4HQ4/7q5i/gc38iB5LdYfP
+         otSrwGL+aCwwa9E3SJer7S70jUhPOVvu1lBBt9XNOG7yXLDHeDBhfYTReOW3drE1dTja
+         BXnhgfih+7eBE0ZK1AdYjDdtbn87oD4ona3xJfZPYGmt++ila7ol/ZIxMabv6AradPta
+         3i9ArrT5OotD7AbWJFbYT0tYpbFD3AVTzV450KzsqUX/BhqCLGPWt45TN5JqiNsXlaFR
+         68hA==
+X-Gm-Message-State: AO0yUKXgASohUg1A8Tz7HoNJ/BXkasfXOvxzt51q88pOTii5EZhzwn0Q
+        SeUeb/i6yI+cKbHafiqml+KCUCVh9SdAKUwbB0E=
+X-Google-Smtp-Source: AK7set9vNfDYTp13qC3VLlkv2NKrpoWodSQ81WtPPKmcZNYmxSE0tQmMZA6FKAfCBAih1aFLohvSXIcdvr4MosOWD90=
+X-Received: by 2002:a17:906:b4b:b0:931:c1a:b526 with SMTP id
+ v11-20020a1709060b4b00b009310c1ab526mr814048ejg.5.1679119738091; Fri, 17 Mar
+ 2023 23:08:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230316170149.4106586-1-jolsa@kernel.org> <ZBNTMZjEoETU9d8N@casper.infradead.org>
+ <CAP-5=fVYriALLwF2FU1ZUtLuHndnvPw=3SctVqY6Uwex8JfscA@mail.gmail.com>
+ <CAEf4BzYgyGTVv=cDwaW+DBke1uk_aLCg3CB_9W6+9tkS8Nyn_Q@mail.gmail.com>
+ <ZBPjs1b8crUv4ur6@casper.infradead.org> <CAEf4BzbPa-5b9uU0+GN=iaMGc6otje3iNQd+MOg_byTSYU8fEQ@mail.gmail.com>
+ <20230317211403.GZ3390869@ZenIV> <20230317212125.GA3390869@ZenIV>
+In-Reply-To: <20230317212125.GA3390869@ZenIV>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Fri, 17 Mar 2023 23:08:44 -0700
+Message-ID: <CAEf4BzYQ-bktO9s8yhBk7xUoz=2NFrgdGviWsN2=HWPBaGv6hA@mail.gmail.com>
+Subject: Re: [PATCHv3 bpf-next 0/9] mm/bpf/perf: Store build id in file object
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        bpf@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Namhyung Kim <namhyung@gmail.com>,
+        Dave Chinner <david@fromorbit.com>, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
@@ -74,344 +90,120 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce a mechanism to replace a file linked in the epoll interface or a file
-that has been dup'ed by a file received via the replace_fd() interface.
+On Fri, Mar 17, 2023 at 2:21=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Fri, Mar 17, 2023 at 09:14:03PM +0000, Al Viro wrote:
+> > On Fri, Mar 17, 2023 at 09:33:17AM -0700, Andrii Nakryiko wrote:
+> >
+> > > > But build IDs are _generally_ available.  The only problem (AIUI)
+> > > > is when you're trying to examine the contents of one container from
+> > > > another container.  And to solve that problem, you're imposing a co=
+st
+> > > > on everybody else with (so far) pretty vague justifications.  I rea=
+lly
+> > > > don't like to see you growing struct file for this (nor struct inod=
+e,
+> > > > nor struct vm_area_struct).  It's all quite unsatisfactory and I do=
+n't
+> > > > have a good suggestion.
+> > >
+> > > There is a lot of profiling, observability and debugging tooling buil=
+t
+> > > using BPF. And when capturing stack traces from BPF programs, if the
+> > > build ID note is not physically present in memory, fetching it from
+> > > the BPF program might fail in NMI (and other non-faultable contexts).
+> > > This patch set is about making sure we always can fetch build ID, eve=
+n
+> > > from most restrictive environments. It's guarded by Kconfig to avoid
+> > > adding 8 bytes of overhead to struct file for environment where this
+> > > might be unacceptable, giving users and distros a choice.
+> >
+> > Lovely.  As an exercise you might want to collect the stats on the
+> > number of struct file instances on the system vs. the number of files
+> > that happen to be ELF objects and are currently mmapped anywhere.
 
-eventpoll_replace() is called from do_replace() and finds all instances of the
-file to be replaced and replaces them with the new file.
+That's a good suggestion. I wrote a simple script that uses the drgn
+tool ([0]), it enables nice introspection of the state of the kernel
+memory for the running kernel. The script is at the bottom ([1]) for
+anyone to sanity check. I didn't try to figure out which file is
+mmaped as executable and which didn't, so let's do worst case and
+assume that none of the file is executable, and thus that 8 byte
+pointer is a waste for all of them.
 
-do_replace() also replaces the file in the file descriptor table for all fd
-numbers referencing it with the new file.
+On my devserver I got:
 
-We have a use case where multiple IPv6 only network namespaces can use a single
-IPv4 network namespace for IPv4 only egress connectivity by switching their
-sockets from IPv6 to IPv4 network namespace. This allows for migration of
-systems to IPv6 only while keeping their connectivity to IPv4 only destinations
-intact.
+task_cnt=3D15984 uniq_file_cnt=3D56780
 
-Today, we achieve this by setting up seccomp filter to intercept network system
-calls like connect() from a container in a container manager which runs in an
-IPv4 only network namespace. The container manager creates a new IPv4 connection
-and injects the new file descriptor through SECCOMP_NOTIFY_IOCTL_ADDFD replacing
-the original file descriptor from the connect() call. This does not work for
-cases where the original file descriptor is handed off to a system like epoll
-before the connect() call. After a new file descriptor is injected the original
-file descriptor being referenced by the epoll fd is not longer valid leading to
-failures. As a workaround the container manager when intercepting connect()
-loops through all open socket file descriptors to check if they are referencing
-the socket attempting the connect() and replace the reference with the to be
-injected file descriptor. This workaround is cumbersome and makes the solution
-prone to similar yet to be discovered issues.
+On randomly chosen production host I got:
 
-The above change will enable us remove the workaround in the container manager
-and let the kernel handle the replacement correctly.
+task_cnt=3D6387 uniq_file_cnt=3D22514
 
-Signed-off-by: aloktiagi <aloktiagi@gmail.com>
----
- fs/eventpoll.c                                | 38 ++++++++
- fs/file.c                                     | 54 +++++++++++
- include/linux/eventpoll.h                     | 18 ++++
- include/linux/file.h                          |  1 +
- tools/testing/selftests/seccomp/seccomp_bpf.c | 97 +++++++++++++++++++
- 5 files changed, 208 insertions(+)
+So it seems like my devserver is "busier" than the production host. :)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 64659b110973..958ad995fd45 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -935,6 +935,44 @@ void eventpoll_release_file(struct file *file)
- 	mutex_unlock(&epmutex);
- }
- 
-+static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
-+			struct file *tfile, int fd, int full_check);
-+
-+/*
-+ * This is called from eventpoll_replace() to replace a linked file in the epoll
-+ * interface with a new file received from another process. This is useful in
-+ * cases where a process is trying to install a new file for an existing one
-+ * that is linked in the epoll interface
-+ */
-+void eventpoll_replace_file(struct file *toreplace, struct file *file)
-+{
-+	int fd;
-+	struct eventpoll *ep;
-+	struct epitem *epi;
-+	struct hlist_node *next;
-+	struct epoll_event event;
-+
-+	if (!file_can_poll(file))
-+		return;
-+
-+	mutex_lock(&epmutex);
-+	if (unlikely(!toreplace->f_ep)) {
-+		mutex_unlock(&epmutex);
-+		return;
-+	}
-+
-+	hlist_for_each_entry_safe(epi, next, toreplace->f_ep, fllink) {
-+		ep = epi->ep;
-+		mutex_lock(&ep->mtx);
-+		fd = epi->ffd.fd;
-+		event = epi->event;
-+		ep_remove(ep, epi);
-+		ep_insert(ep, &event, file, fd, 1);
-+		mutex_unlock(&ep->mtx);
-+	}
-+	mutex_unlock(&epmutex);
-+}
-+
- static int ep_alloc(struct eventpoll **pep)
- {
- 	int error;
-diff --git a/fs/file.c b/fs/file.c
-index 1716f07103d8..ce691dae1f0e 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -20,10 +20,18 @@
- #include <linux/spinlock.h>
- #include <linux/rcupdate.h>
- #include <linux/close_range.h>
-+#include <linux/eventpoll.h>
- #include <net/sock.h>
- 
- #include "internal.h"
- 
-+struct replace_filefd {
-+        struct files_struct *files;
-+        unsigned fd;
-+        struct file *fdfile;
-+        struct file *file;
-+};
-+
- unsigned int sysctl_nr_open __read_mostly = 1024*1024;
- unsigned int sysctl_nr_open_min = BITS_PER_LONG;
- /* our min() is unusable in constant expressions ;-/ */
-@@ -1133,6 +1141,50 @@ __releases(&files->file_lock)
- 	return -EBUSY;
- }
- 
-+static int do_replace_fd_array(const void *v, struct file *tofree, unsigned int n)
-+{
-+	struct replace_filefd *ffd = (void *)v;
-+	struct fdtable *fdt;
-+
-+	fdt = files_fdtable(ffd->files);
-+
-+	if ((n != ffd->fd) && (tofree == ffd->fdfile)) {
-+		get_file(ffd->file);
-+		rcu_assign_pointer(fdt->fd[n], ffd->file);
-+		tofree = pick_file(ffd->files, n);
-+		filp_close(tofree, ffd->files);
-+	}
-+	return 0;
-+}
-+
-+static void do_replace(struct files_struct *files,
-+        struct file *file, unsigned fd, struct file *fdfile)
-+{
-+	unsigned n = 0;
-+	struct replace_filefd ffd = {
-+		.files = files,
-+		.fd = fd,
-+		.fdfile = fdfile,
-+		.file = file
-+	};
-+
-+	/*
-+	 * Check if the file referenced by the fd number is linked to the epoll
-+	 * interface. If yes, replace the reference with the received file in
-+	 * the epoll interface.
-+	 */
-+	if (fdfile && fdfile->f_ep) {
-+		eventpoll_replace(fdfile, file);
-+	}
-+	/*
-+	 * Install the received file in the file descriptor table for all fd
-+	 * numbers referencing the same file as the one we are trying to
-+	 * replace. Do not install it for the fd number received since that is
-+	 * handled in do_dup2()
-+	 */
-+	iterate_fd_locked(files, n, do_replace_fd_array, &ffd);
-+}
-+
- int replace_fd(unsigned fd, struct file *file, unsigned flags)
- {
- 	int err;
-@@ -1150,8 +1202,10 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
- 	if (unlikely(err < 0))
- 		goto out_unlock;
- 	err = do_dup2(files, file, fd, &fdfile, flags);
-+	do_replace(files, file, fd, fdfile);
- 	if (fdfile)
- 		filp_close(fdfile, files);
-+
- 	return err;
- 
- out_unlock:
-diff --git a/include/linux/eventpoll.h b/include/linux/eventpoll.h
-index 3337745d81bd..38904fce3840 100644
---- a/include/linux/eventpoll.h
-+++ b/include/linux/eventpoll.h
-@@ -25,6 +25,8 @@ struct file *get_epoll_tfile_raw_ptr(struct file *file, int tfd, unsigned long t
- /* Used to release the epoll bits inside the "struct file" */
- void eventpoll_release_file(struct file *file);
- 
-+void eventpoll_replace_file(struct file *toreplace, struct file *file);
-+
- /*
-  * This is called from inside fs/file_table.c:__fput() to unlink files
-  * from the eventpoll interface. We need to have this facility to cleanup
-@@ -53,6 +55,22 @@ static inline void eventpoll_release(struct file *file)
- 	eventpoll_release_file(file);
- }
- 
-+
-+/*
-+ * This is called from fs/file.c:do_replace() to replace a linked file in the
-+ * epoll interface with a new file received from another process. This is useful
-+ * in cases where a process is trying to install a new file for an existing one
-+ * that is linked in the epoll interface
-+ */
-+static inline void eventpoll_replace(struct file *toreplace, struct file *file)
-+{
-+	/*
-+	 * toreplace is the file being replaced. Install the new file for the
-+	 * existing one that is linked in the epoll interface
-+	 */
-+	eventpoll_replace_file(toreplace, file);
-+}
-+
- int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
- 		 bool nonblock);
- 
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 39704eae83e2..80e56b2b44fb 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -36,6 +36,7 @@ struct fd {
- 	struct file *file;
- 	unsigned int flags;
- };
-+
- #define FDPUT_FPUT       1
- #define FDPUT_POS_UNLOCK 2
- 
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 61386e499b77..caf68682519c 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -47,6 +47,7 @@
- #include <linux/kcmp.h>
- #include <sys/resource.h>
- #include <sys/capability.h>
-+#include <sys/epoll.h>
- 
- #include <unistd.h>
- #include <sys/syscall.h>
-@@ -4179,6 +4180,102 @@ TEST(user_notification_addfd)
- 	close(memfd);
- }
- 
-+TEST(user_notification_addfd_with_epoll_replace)
-+{
-+	char c;
-+	pid_t pid;
-+	long ret;
-+	int status, listener, fd;
-+	int efd, sfd[4];
-+	struct epoll_event e;
-+	struct seccomp_notif_addfd addfd = {};
-+	struct seccomp_notif req = {};
-+	struct seccomp_notif_resp resp = {};
-+
-+	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+	ASSERT_EQ(0, ret) {
-+		TH_LOG("Kernel does not support PR_SET_NO_NEW_PRIVS!");
-+	}
-+
-+	listener = user_notif_syscall(__NR_getppid,
-+				      SECCOMP_FILTER_FLAG_NEW_LISTENER);
-+
-+	/* Create two socket pairs sfd[0] <-> sfd[1] and sfd[2] <-> sfd[3] */
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[0]), 0);
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[2]), 0);
-+
-+	pid = fork();
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		efd = epoll_create(1);
-+		if (efd == -1)
-+			exit(1);
-+
-+		e.events = EPOLLIN;
-+		if (epoll_ctl(efd, EPOLL_CTL_ADD, sfd[0], &e) != 0)
-+			exit(1);
-+
-+		/*
-+		 * fd will be added here to replace an existing one linked
-+		 * in the epoll interface.
-+		 */
-+		if (syscall(__NR_getppid) != USER_NOTIF_MAGIC)
-+			exit(1);
-+
-+		/*
-+		 * Write data to the sfd[3] connected to sfd[2], but due to
-+		 * the swap, we should see data on sfd[0]
-+		 */
-+		if (write(sfd[3], "w", 1) != 1)
-+			exit(1);
-+
-+		if (epoll_wait(efd, &e, 1, 0) != 1)
-+			exit(1);
-+
-+		if (read(sfd[0], &c, 1) != 1)
-+			exit(1);
-+
-+		if ('w' != c)
-+			exit(1);
-+
-+		if (epoll_ctl(efd, EPOLL_CTL_DEL, sfd[0], &e) != 0)
-+			exit(1);
-+
-+		close(efd);
-+		close(sfd[0]);
-+		close(sfd[1]);
-+		close(sfd[2]);
-+		close(sfd[3]);
-+		exit(0);
-+	}
-+
-+	ASSERT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, &req), 0);
-+
-+	addfd.srcfd = sfd[2];
-+	addfd.newfd = sfd[0];
-+	addfd.id = req.id;
-+	addfd.flags = SECCOMP_ADDFD_FLAG_SETFD;
-+	addfd.newfd_flags = O_CLOEXEC;
-+
-+	/*
-+	 * Verfiy we can install and replace a file that is linked in the
-+	 * epoll interface. Replace the socket sfd[0] with sfd[2]
-+	 */
-+	fd = ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd);
-+	EXPECT_EQ(fd, sfd[0]);
-+
-+	resp.id = req.id;
-+	resp.error = 0;
-+	resp.val = USER_NOTIF_MAGIC;
-+	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_SEND, &resp), 0);
-+
-+	/* Wait for child to finish. */
-+	EXPECT_EQ(waitpid(pid, &status, 0), pid);
-+	EXPECT_EQ(true, WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+}
-+
- TEST(user_notification_addfd_rlimit)
- {
- 	pid_t pid;
--- 
-2.34.1
+Above numbers suggest that my devserver's kernel has about 57000
+*unique* `struct file *` instances. That's 450KB of overhead. That's
+not much by any modern standard.
 
+But let's say I'm way off, and we have 1 million struct files. That's
+8MB overhead. I'd argue that those 8MB is not a big deal even on a
+normal laptop, even less so on production servers. Especially if you
+have 1 million active struct file instances created in the system, as
+way more will be used for application-specific needs.
+
+
+> > That does depend upon the load, obviously, but it's not hard to collect=
+ -
+> > you already have more than enough hooks inserted in the relevant places=
+.
+> > That might give a better appreciation of the reactions...
+>
+> One possibility would be a bit stolen from inode flags + hash keyed by
+> struct inode address (middle bits make for a decent hash function);
+> inode eviction would check that bit and kick the corresponding thing
+> from hash if the bit is set.
+>
+> Associating that thing with inode =3D> hash lookup/insert + set the bit.
+
+This is an interesting idea, but now we are running into a few
+unnecessary problems. We need to have a global dynamically sized hash
+map in the system. If we fix the number of buckets, we risk either
+wasting memory on an underutilized system (if we oversize), or
+performance problems due to collisions (if we undersize) if we have a
+busy system with lots of executables mapped in memory. If we don't
+pre-size, then we are talking about reallocations, rehashing, and
+doing that under global lock or something like that. Further, we'd
+have to take locks on buckets, which causes further problems for
+looking up build ID from this hashmap in NMI context for perf events
+and BPF programs, as locks can't be safely taken under those
+conditions, and thus fetching build ID would still be unreliable
+(though less so than it is today, of course).
+
+All of this is solvable to some degree (but not perfectly and not with
+simple and elegant approaches), but seems like an unnecessarily
+overcomplication compared to the amount of memory that we hope to
+save. It still feels like a Kconfig-guarded 8 byte field per struct
+file is a reasonable price for gaining reliable build ID information
+for profiling/tracing tools.
+
+
+  [0] https://drgn.readthedocs.io/en/latest/index.html
+
+  [1] Script I used:
+
+from drgn.helpers.linux.pid import for_each_task
+from drgn.helpers.linux.fs import for_each_file
+
+task_cnt =3D 0
+file_set =3D set()
+
+for task in for_each_task(prog):
+    task_cnt +=3D 1
+    try:
+        for (fd, file) in for_each_file(task):
+            file_set.add(file.value_())
+    except:
+        pass
+
+uniq_file_cnt =3D len(file_set)
+print(f"task_cnt=3D{task_cnt} uniq_file_cnt=3D{uniq_file_cnt}")
