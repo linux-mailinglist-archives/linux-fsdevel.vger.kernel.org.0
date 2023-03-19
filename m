@@ -2,132 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD966C0562
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Mar 2023 22:18:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 283E76C05B4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Mar 2023 22:42:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230227AbjCSVSe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Mar 2023 17:18:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33992 "EHLO
+        id S229890AbjCSVmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Mar 2023 17:42:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229806AbjCSVSd (ORCPT
+        with ESMTP id S229825AbjCSVms (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Mar 2023 17:18:33 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 672A2113C3;
-        Sun, 19 Mar 2023 14:18:31 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id l15-20020a05600c4f0f00b003ed58a9a15eso6351334wmq.5;
-        Sun, 19 Mar 2023 14:18:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679260710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xnsyvP8JbNs+veqAm6StM8UbBoUAPhLOI3XAytwZeZo=;
-        b=qVhoiiNy51oSxFQEw23uh1HQRMG+qJploZdK1vaziW+lejF1UsQqj7JzeNQSGMucoo
-         8XPMnjHtu3XJNkHppDZc6Fo/OfJTmfVkMoy1dMicXzE7vPJamVY1sqJz6jnKoMr7R1ay
-         tHqo7M7cQ372T/zX8ngHz0iCtP8ULEAIJbj1zSze80K6c7hihh2+9vfuEi1TMemZB3G6
-         C6x++ua1/dDaj9pNMgCunWevzPYKKTUnKs7TGRf0gtRqrhne1NEHo4/95Jt3J7fOYKa+
-         0E/D+SGMp0doyEV2wxEr56RRBIiNNzDdraA2CvJwm+ilyy84cXoDezGMUBE7pSngPGN+
-         8neg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679260710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xnsyvP8JbNs+veqAm6StM8UbBoUAPhLOI3XAytwZeZo=;
-        b=sR5noHL0PIQ1I+i1tES8w978wUxGSSsM/X8W7b+RmBj5orzvZQ3Ooogo5Nv58lgald
-         X3JZfah2AS5t191Iqa+M8vFWSjDtF015JNujgc7EHUb356ncTdGrQAOna4jtPc/gF7CZ
-         V509x/YpiIjJC/weNp0MGIXuJHAFOQL590VhmsgpTmg9aRFli3mZpczSvu5KlpSnQibM
-         Hll4PEU0dbrRe96ou1hfa86RVkpk5ycVzllCPpcFWevhHC6kMVaZlMa+ZZOt2Ta1KCmG
-         2TY83FkHq4/yuTC82dEdbaAC3+M281wXzDGXQ3UemkrCJBIMPt4Qv1LXKIG+KmrzP0LW
-         89bw==
-X-Gm-Message-State: AO0yUKXjSYuukDW0K4as/t5oqiTFiswpWUcp6nxmQTpSr43k72p79dmx
-        PzNT8f9J9IH4lWQM5RUH2u8=
-X-Google-Smtp-Source: AK7set/tW/8C0xY/SSAu8Z2l3XOOV0YeweYmNiztltrsp6dMlMz2iIEqWHop066JFj2JpYd1xAM+ng==
-X-Received: by 2002:a05:600c:2185:b0:3ed:8780:f27b with SMTP id e5-20020a05600c218500b003ed8780f27bmr8062758wme.16.1679260709651;
-        Sun, 19 Mar 2023 14:18:29 -0700 (PDT)
-Received: from localhost (host86-146-209-214.range86-146.btcentralplus.com. [86.146.209.214])
-        by smtp.gmail.com with ESMTPSA id h4-20020a05600c350400b003eddf20ed5bsm2477581wmq.18.2023.03.19.14.18.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Mar 2023 14:18:28 -0700 (PDT)
-Date:   Sun, 19 Mar 2023 21:16:18 +0000
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Baoquan He <bhe@redhat.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH v2 2/4] mm: vmalloc: use rwsem, mutex for vmap_area_lock
- and vmap_block->lock
-Message-ID: <b4233383-2c87-422f-9f66-3815a6c77372@lucifer.local>
-References: <cover.1679209395.git.lstoakes@gmail.com>
- <6c7f1ac0aeb55faaa46a09108d3999e4595870d9.1679209395.git.lstoakes@gmail.com>
- <20230319131047.174fa4e29cabe4371b298ed0@linux-foundation.org>
- <fadd8558-8917-4012-b5ea-c6376c835cc8@lucifer.local>
- <ZBd00i7fvwrMX/FY@casper.infradead.org>
+        Sun, 19 Mar 2023 17:42:48 -0400
+Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51CF91CF47
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Mar 2023 14:42:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1679262167; x=1710798167;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Ng7kfezo8hw0LOeKsPNHr3k1ksn89DrIOwEfRACFEbw=;
+  b=TX06MnRxYTbc2yyj8BeD6EoE9dQWDASlaQLkAlaYbMfxl0B1h69c49mP
+   bAbAWOYM+pqGQif7/nMtG4Yloa0awPuNWm/ebEesSKoF1ZslGdFes6F15
+   UHikhRbk2cHbXPcblRTe5KsUGq2jmvm71AoCxIVkV3haO4QWQXAH7Wvvr
+   Km554zPFedAFEGKmhFxOgq488ziWRsYCUQgIdvFAk9q+XS0CLt6hJxEAm
+   lznERowNg00WIPAT1Hn7PIVNPGUkTSpnIFW0hVeosHW/VlI3AxTkcYlYb
+   VBrLB1WhPr9OoQYt5yk4clBM17ocPa2HCMbAbmmPg7iT6uRgEuYYiPL20
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.98,274,1673884800"; 
+   d="scan'208";a="224272762"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 20 Mar 2023 05:42:43 +0800
+IronPort-SDR: QeGiFK/XzG/2vxtnj5sMgrgYayvOp/qTPxzkVzFOraqdrE+EKi5VTGY4//rCugtUuM2DLi0HBd
+ qvtq99CQCGRrs5q1c43OjwR6stnXd1JhQzUWYKxDETFmbgb5i5yQtNyOHe150RtrS94utfdzpq
+ pa/aBYmPMYh8Ain2V3TeuRvu2iTNnjuD8Z+8SUohSQEZ+WGZf1mGP6LR3/w6r9hv+Db23Mr0q2
+ 09Lh/2RZ4GPKvAZQ/8Cx8SVEMNk9w8MIJJImAsleqMJ7lTa4c1U3GiLG1PLv6SsQPIXv614OOu
+ f+g=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Mar 2023 13:59:01 -0700
+IronPort-SDR: RxOaDLQuTcRV6p09sbi4I54I1TKy1K+P0ddTE5t5X+yqvkHdWowAwuYmjtdgxYxlGdWRgMwxP8
+ NycXaSKX0VHEKHmMio1WBm1ZAy8mdA9OkiO4ma5khoZMY20Xg314KEBG4ygJLSa2C4noBX7qWf
+ e1GDVmnw1bZy5rDASozl6EJD7bVh5WjJv66MDhi1nPwspSIDfcJIIaVFAFGv8MzphcN7KJRQfx
+ rmLsHxwBDziz0DXInf5C6NWdKwg1/zZACbux7dI4gLOkfWLWGcbe5+bgIGE9VcMOUNyPCI6de6
+ r6A=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Mar 2023 14:42:40 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Pfrv41GrMz1RtVp
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Mar 2023 14:42:40 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1679262159; x=1681854160; bh=Ng7kfezo8hw0LOeKsPNHr3k1ksn89DrIOwE
+        fRACFEbw=; b=r6QvF7zuIXNpXW1h0bPUFVDrbFYPWJdYpnvcZY3PpIIiTte3pNM
+        W1yzPtCNolIWrBUwh1Kt7CHq61FKn4X7ceZtPOTH/muaSQDhVSxGauL1eMquK506
+        h9b7LRsfic9X34KmvFfUq9t5WsC+PR2Nh9VoY7iXcTkYWf1TLhVgDYkZWq51J/5a
+        SBXzCMRtyipdj0uTnwsE6SKNQZE499kXrNCqLf4OH7XK06sqHZcvj1xjjRv+Ngs/
+        4ss+HZYD33FhE0AouSwRKE5QKE2eT+iwSd+RgjQDLv73jdp8mTIXn3jFCuyvouJC
+        RKGXM2msoWQwWPtrzur37eDmQ52uD85QwGA==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id j-KHNlKdqgCv for <linux-fsdevel@vger.kernel.org>;
+        Sun, 19 Mar 2023 14:42:39 -0700 (PDT)
+Received: from [10.225.163.91] (unknown [10.225.163.91])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Pfrv21Jkyz1RtVm;
+        Sun, 19 Mar 2023 14:42:37 -0700 (PDT)
+Message-ID: <e98525c5-9420-63f8-a1f3-009601d02f2c@opensource.wdc.com>
+Date:   Mon, 20 Mar 2023 06:42:36 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZBd00i7fvwrMX/FY@casper.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v2, RESEND 04/10] zonefs: convert to kobject_del_and_put()
+Content-Language: en-US
+To:     Yangtao Li <frank.li@vivo.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230319092641.41917-1-frank.li@vivo.com>
+ <20230319092641.41917-4-frank.li@vivo.com>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <20230319092641.41917-4-frank.li@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 19, 2023 at 08:47:14PM +0000, Matthew Wilcox wrote:
-> On Sun, Mar 19, 2023 at 08:29:16PM +0000, Lorenzo Stoakes wrote:
-> > The basis for saying asynchronous was based on Documentation/filesystems/vfs.rst
-> > describing read_iter() as 'possibly asynchronous read with iov_iter as
-> > destination', and read_iter() is what is (now) invoked when accessing
-> > /proc/kcore.
-> >
-> > However I agree this is vague and it is clearer to refer to the fact that we are
-> > now directly writing to user memory and thus wish to avoid spinlocks as we may
-> > need to fault in user memory in doing so.
-> >
-> > Would it be ok for you to go ahead and replace that final paragraph with the
-> > below?:-
-> >
-> > The reason for making this change is to build a basis for vread() to write
-> > to user memory directly via an iterator; as a result we may cause page
-> > faults during which we must not hold a spinlock. Doing this eliminates the
-> > need for a bounce buffer in read_kcore() and thus permits that to be
-> > converted to also use an iterator, as a read_iter() handler.
->
-> I'd say the purpose of the iterator is to abstract whether we're
-> accessing user memory, kernel memory or a pipe, so I'd suggest:
->
->    The reason for making this change is to build a basis for vread() to
->    write to memory via an iterator; as a result we may cause page faults
->    during which we must not hold a spinlock. Doing this eliminates the
->    need for a bounce buffer in read_kcore() and thus permits that to be
->    converted to also use an iterator, as a read_iter() handler.
->
+On 3/19/23 18:26, Yangtao Li wrote:
+> Use kobject_del_and_put() to simplify code.
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  fs/zonefs/sysfs.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/zonefs/sysfs.c b/fs/zonefs/sysfs.c
+> index 8ccb65c2b419..5e117188fbb5 100644
+> --- a/fs/zonefs/sysfs.c
+> +++ b/fs/zonefs/sysfs.c
+> @@ -113,8 +113,7 @@ void zonefs_sysfs_unregister(struct super_block *sb)
+>  	if (!sbi || !sbi->s_sysfs_registered)
+>  		return;
+>  
+> -	kobject_del(&sbi->s_kobj);
+> -	kobject_put(&sbi->s_kobj);
+> +	kobject_del_and_put(&sbi->s_kobj);
+>  	wait_for_completion(&sbi->s_kobj_unregister);
 
-Thanks, sorry I missed the detail about iterators abstacting the three
-different targets there, that is definitely better!
+There is no function kobject_del_and_put() in rc3. I guess it is introduced by
+this series but since you did not send everything, it is impossible to review.
+Please always send the full patch series so that reviewers have all the context
+that is needed to review/ack.
 
-> I'm still undecided whether this change is really a good thing.  I
-> think we have line-of-sight to making vmalloc (and thus kvmalloc)
-> usable from interrupt context, and this destroys that possibility.
->
-> I wonder if we can't do something like prefaulting the page before
-> taking the spinlock, then use copy_page_to_iter_atomic()
+>  }
+>  
 
-There are a number of aspects of vmalloc that are not atomic-safe,
-e.g. alloc_vmap_area() and vmap_range_noflush() are designated
-might_sleep(), equally vfree().
+-- 
+Damien Le Moal
+Western Digital Research
 
-So I feel that making it safe for atomic context requires a bit more of a
-general rework. Given we would be able to revisit lock types at the point
-we do that (something that would fit very solidly into the context of any
-such change), and given that this patch series establishes that we use an
-iterator, I think it is useful to keep this as-is as defer that change
-until later.
