@@ -2,180 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C19576C10A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Mar 2023 12:20:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E39476C111C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Mar 2023 12:46:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230469AbjCTLUl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Mar 2023 07:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47458 "EHLO
+        id S230116AbjCTLq4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Mar 2023 07:46:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230450AbjCTLUV (ORCPT
+        with ESMTP id S230513AbjCTLqy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Mar 2023 07:20:21 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A98F8526B;
-        Mon, 20 Mar 2023 04:20:08 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id y20so14433882lfj.2;
-        Mon, 20 Mar 2023 04:20:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679311207;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j2UL4IhRczrMrkP5475LvCds4xNJEhrT8X1HycL9bCM=;
-        b=OIKR1gpz9fxP9kEKYvLpG9gFyqB6Ac9wXlzlWqKCzh7tCkMxxd/gjXqirHd1XftHuG
-         pl6B14hklTrpuU2MTnq3CG8+AEHgBWss70azrqAcmCjWhsh8hK9RalzOMx+oMOLjV+Kh
-         fGEDHO3Cx9qtTbqPt3ksSHa5DMp6dIFFr0PUx7l+Ve4vnJodgdc6Dfon1M8Yv0KZuw8C
-         RPU49u3y5rsXo2yToa13w5igQ0YqWyorKvmL35yiO0wAEdmymh5nbOZiIiazFSuXmfdY
-         QQzWNqEfPfcLZnU2SACtJd+qUrhDZsRaz48aFt7l9nIkT7/P7dRcnhKu1JPl01ANuHdy
-         Wxrw==
+        Mon, 20 Mar 2023 07:46:54 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08B781C331
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Mar 2023 04:46:38 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id y195-20020a6bc8cc000000b007537a59961dso5354834iof.17
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Mar 2023 04:46:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679311207;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j2UL4IhRczrMrkP5475LvCds4xNJEhrT8X1HycL9bCM=;
-        b=zjLjs6Z3yb8lRMGDzrSO5iu3DC/+Fb2Nq1Cc6g+pbY5m2Er1caeX0AYl3mlmKk+l8X
-         QLH8h2XvOq5VY8VC0df6dPUwI+sfI4FLUW/IEswiUy+PC08CJxqjm03LROebkrCirm9K
-         m65j/E5Pb7XCGoME6Hn9XE1meR8IK2XbFNDIitRRBX1fOOTYBj9Vj5aiwga45qZQEaxB
-         2K+4FGn0delbc/KsrUZZdjv6QP2cs2jgryf2+lkka7MldK942zfYuur3KkIBx1fqfJPi
-         k3Ae9k9AA7IipyNyRck796YBDt+7LIDyp8WbEfRnU4i76dgp9dylDpH9uq04kZer1o8v
-         Qihw==
-X-Gm-Message-State: AO0yUKVXxRBZ+Ws1tCtJPcv3FTTuyWkgC+ADsMHVxE5otWLzuE5/D+Iu
-        6nUZ2j4vx83hUBjaZEZ/nVo=
-X-Google-Smtp-Source: AK7set9iwMt81SiNTCxVYLtVATbXkAzHAgYDh2+QIEnKRGF458BQJo4CdD5b5KOJsAPUaO9n19BDDQ==
-X-Received: by 2002:ac2:494b:0:b0:4b5:b06d:4300 with SMTP id o11-20020ac2494b000000b004b5b06d4300mr5770655lfi.29.1679311206757;
-        Mon, 20 Mar 2023 04:20:06 -0700 (PDT)
-Received: from pc636 (host-90-235-3-187.mobileonline.telia.com. [90.235.3.187])
-        by smtp.gmail.com with ESMTPSA id u1-20020ac248a1000000b004db51387ad6sm1653571lfg.129.2023.03.20.04.20.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 04:20:06 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Mon, 20 Mar 2023 12:20:02 +0100
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH v2 2/4] mm: vmalloc: use rwsem, mutex for vmap_area_lock
- and vmap_block->lock
-Message-ID: <ZBhBRCIyc5Scx1Kf@pc636>
-References: <cover.1679209395.git.lstoakes@gmail.com>
- <6c7f1ac0aeb55faaa46a09108d3999e4595870d9.1679209395.git.lstoakes@gmail.com>
- <ZBgROQ0uAfZCbScg@pc636>
- <413e0dfe-5a68-4cd9-9036-bed741e4cd22@lucifer.local>
- <ZBgaBqareTrUrasp@pc636>
- <cd91527d-e6e0-4900-a368-dfc9812546da@lucifer.local>
+        d=1e100.net; s=20210112; t=1679312798;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mslEE5rWUccfioYtuxOsHWzuisRr/hUjmrFi31WQruw=;
+        b=VOzlCKjNcBzGLTAgUFEHhAmS75ZUDjxrNszqvjs19V4WPaGF9RMwYPREwFt6ygiF8w
+         Af5s7ZNb5cZHj1cUIEcO3vn3nzXclNr09q5Ho7AhkGzolNtBom9QvIEuCT93wxCZOQoy
+         NenUAzb040EJheX+WE1jrrXNSARw7vJ/tOXQkdQXfyWxulF5Rll99qSB9xyvy5Ft7NqL
+         MGOAkiO1/1etx7E07moXgnnt7H9HNjA2FprJC88Rj7xyfMd6EBXGABR2PE1GdZqWdlDS
+         iZSI1XOVhYNqM63qPnRPipBWpLjZqTYDQSE4ahVXhkL2Q0V5RqlXw3OeQ7aImgVG61IP
+         BEFA==
+X-Gm-Message-State: AO0yUKUqhewHpuCz3CmGpk2xsFwK04YDBbj1kluijCdcfgo+t+o3ENkp
+        tdAFJ+PzEHEiEluSRdMSHdBgoFyPECBxZ5a/d/W4rmujHxqs
+X-Google-Smtp-Source: AK7set/0rQVUEZGLzjwXaJ/Y2YqwXX0xjuD8uMYi9+wp98yMWccuj7RPHLcQnE9ueCWVteXu2kd+XmEcuWmOvcDLpo5ypj6Zcafg
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd91527d-e6e0-4900-a368-dfc9812546da@lucifer.local>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:85a8:0:b0:406:5e9b:87bd with SMTP id
+ d37-20020a0285a8000000b004065e9b87bdmr1959196jai.2.1679312797786; Mon, 20 Mar
+ 2023 04:46:37 -0700 (PDT)
+Date:   Mon, 20 Mar 2023 04:46:37 -0700
+In-Reply-To: <000000000000cd489f05f42f3c52@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c76c5405f7537ae4@google.com>
+Subject: Re: [syzbot] [fat?] possible deadlock in exc_page_fault
+From:   syzbot <syzbot+6d274a5dc4fa0974d4ad@syzkaller.appspotmail.com>
+To:     linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 20, 2023 at 08:35:11AM +0000, Lorenzo Stoakes wrote:
-> On Mon, Mar 20, 2023 at 09:32:06AM +0100, Uladzislau Rezki wrote:
-> > On Mon, Mar 20, 2023 at 08:25:32AM +0000, Lorenzo Stoakes wrote:
-> > > On Mon, Mar 20, 2023 at 08:54:33AM +0100, Uladzislau Rezki wrote:
-> > > > > vmalloc() is, by design, not permitted to be used in atomic context and
-> > > > > already contains components which may sleep, so avoiding spin locks is not
-> > > > > a problem from the perspective of atomic context.
-> > > > >
-> > > > > The global vmap_area_lock is held when the red/black tree rooted in
-> > > > > vmap_are_root is accessed and thus is rather long-held and under
-> > > > > potentially high contention. It is likely to be under contention for reads
-> > > > > rather than write, so replace it with a rwsem.
-> > > > >
-> > > > > Each individual vmap_block->lock is likely to be held for less time but
-> > > > > under low contention, so a mutex is not an outrageous choice here.
-> > > > >
-> > > > > A subset of test_vmalloc.sh performance results:-
-> > > > >
-> > > > > fix_size_alloc_test             0.40%
-> > > > > full_fit_alloc_test		2.08%
-> > > > > long_busy_list_alloc_test	0.34%
-> > > > > random_size_alloc_test		-0.25%
-> > > > > random_size_align_alloc_test	0.06%
-> > > > > ...
-> > > > > all tests cycles                0.2%
-> > > > >
-> > > > > This represents a tiny reduction in performance that sits barely above
-> > > > > noise.
-> > > > >
-> > > > How important to have many simultaneous users of vread()? I do not see a
-> > > > big reason to switch into mutexes due to performance impact and making it
-> > > > less atomic.
-> > >
-> > > It's less about simultaneous users of vread() and more about being able to write
-> > > direct to user memory rather than via a bounce buffer and not hold a spinlock
-> > > over possible page faults.
-> > >
-> > > The performance impact is barely above noise (I got fairly widely varying
-> > > results), so I don't think it's really much of a cost at all. I can't imagine
-> > > there are many users critically dependent on a sub-single digit % reduction in
-> > > speed in vmalloc() allocation.
-> > >
-> > > As I was saying to Willy, the code is already not atomic, or rather needs rework
-> > > to become atomic-safe (there are a smattering of might_sleep()'s throughout)
-> > >
-> > > However, given your objection alongside Willy's, let me examine Willy's
-> > > suggestion that we instead of doing this, prefault the user memory in advance of
-> > > the vread call.
-> > >
-> > Just a quick perf tests shows regression around 6%. 10 workers test_mask is 31:
-> >
-> > # default
-> > [  140.349731] All test took worker0=485061693537 cycles
-> > [  140.386065] All test took worker1=486504572954 cycles
-> > [  140.418452] All test took worker2=467204082542 cycles
-> > [  140.435895] All test took worker3=512591010219 cycles
-> > [  140.458316] All test took worker4=448583324125 cycles
-> > [  140.494244] All test took worker5=501018129647 cycles
-> > [  140.518144] All test took worker6=516224787767 cycles
-> > [  140.535472] All test took worker7=442025617137 cycles
-> > [  140.558249] All test took worker8=503337286539 cycles
-> > [  140.590571] All test took worker9=494369561574 cycles
-> >
-> > # patch
-> > [  144.464916] All test took worker0=530373399067 cycles
-> > [  144.492904] All test took worker1=522641540924 cycles
-> > [  144.528999] All test took worker2=529711158267 cycles
-> > [  144.552963] All test took worker3=527389011775 cycles
-> > [  144.592951] All test took worker4=529583252449 cycles
-> > [  144.610286] All test took worker5=523605706016 cycles
-> > [  144.627690] All test took worker6=531494777011 cycles
-> > [  144.653046] All test took worker7=527150114726 cycles
-> > [  144.669818] All test took worker8=526599712235 cycles
-> > [  144.693428] All test took worker9=526057490851 cycles
-> >
-> 
-> OK ouch, that's worse than I observed! Let me try this prefault approach and
-> then we can revert back to spinlocks.
-> 
-> > > >
-> > > > So, how important for you to have this change?
-> > > >
-> > >
-> > > Personally, always very important :)
-> > >
-> > This is good. Personal opinion always wins :)
-> >
-> 
-> The heart always wins ;) well, an adaption here can make everybody's hearts
-> happy I think.
-> 
-Totally agree :)
+syzbot has found a reproducer for the following issue on:
 
---
-Uladzislau Rezki
+HEAD commit:    e8d018dd0257 Linux 6.3-rc3
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13c23186c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d40f6d44826f6cf7
+dashboard link: https://syzkaller.appspot.com/bug?extid=6d274a5dc4fa0974d4ad
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16713fbec80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132c7281c80000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/36c3f1b07e1e/disk-e8d018dd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b45f2ee6f521/vmlinux-e8d018dd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f03104e87ec4/bzImage-e8d018dd.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2573dec3d16b/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6d274a5dc4fa0974d4ad@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.3.0-rc3-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor377/6548 is trying to acquire lock:
+ffff8880766bc998 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_lock include/linux/mmap_lock.h:117 [inline]
+ffff8880766bc998 (&mm->mmap_lock){++++}-{3:3}, at: do_user_addr_fault arch/x86/mm/fault.c:1358 [inline]
+ffff8880766bc998 (&mm->mmap_lock){++++}-{3:3}, at: handle_page_fault arch/x86/mm/fault.c:1498 [inline]
+ffff8880766bc998 (&mm->mmap_lock){++++}-{3:3}, at: exc_page_fault+0x486/0x7c0 arch/x86/mm/fault.c:1554
+
+but task is already holding lock:
+ffff88807c2640e0 (&sbi->s_lock){+.+.}-{3:3}, at: exfat_iterate+0x171/0x3370 fs/exfat/dir.c:232
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&sbi->s_lock){+.+.}-{3:3}:
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       __mutex_lock_common+0x1d8/0x2530 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:799
+       exfat_get_block+0x1e5/0x2050 fs/exfat/inode.c:280
+       do_mpage_readpage+0x911/0x1fa0 fs/mpage.c:208
+       mpage_readahead+0x454/0x930 fs/mpage.c:356
+       read_pages+0x183/0x830 mm/readahead.c:161
+       page_cache_ra_unbounded+0x697/0x7c0 mm/readahead.c:270
+       page_cache_sync_readahead include/linux/pagemap.h:1214 [inline]
+       filemap_get_pages+0x49c/0x20c0 mm/filemap.c:2598
+       filemap_read+0x45a/0x1170 mm/filemap.c:2693
+       __kernel_read+0x422/0x8a0 fs/read_write.c:428
+       integrity_kernel_read+0xb0/0xf0 security/integrity/iint.c:199
+       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:485 [inline]
+       ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+       ima_calc_file_hash+0xa5b/0x1c00 security/integrity/ima/ima_crypto.c:573
+       ima_collect_measurement+0x3a7/0x880 security/integrity/ima/ima_api.c:293
+       process_measurement+0xfdb/0x1ce0 security/integrity/ima/ima_main.c:341
+       ima_file_check+0xf1/0x170 security/integrity/ima/ima_main.c:539
+       do_open fs/namei.c:3562 [inline]
+       path_openat+0x280a/0x3170 fs/namei.c:3715
+       do_filp_open+0x234/0x490 fs/namei.c:3742
+       do_sys_openat2+0x13f/0x500 fs/open.c:1348
+       do_sys_open fs/open.c:1364 [inline]
+       __do_sys_openat fs/open.c:1380 [inline]
+       __se_sys_openat fs/open.c:1375 [inline]
+       __x64_sys_openat+0x247/0x290 fs/open.c:1375
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #1 (mapping.invalidate_lock#3){.+.+}-{3:3}:
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
+       filemap_invalidate_lock_shared include/linux/fs.h:813 [inline]
+       filemap_fault+0x644/0x1800 mm/filemap.c:3274
+       __do_fault+0x136/0x500 mm/memory.c:4141
+       do_read_fault mm/memory.c:4492 [inline]
+       do_fault mm/memory.c:4621 [inline]
+       handle_pte_fault mm/memory.c:4909 [inline]
+       __handle_mm_fault mm/memory.c:5051 [inline]
+       handle_mm_fault+0x3357/0x51c0 mm/memory.c:5197
+       faultin_page mm/gup.c:925 [inline]
+       __get_user_pages+0x512/0x1180 mm/gup.c:1147
+       __get_user_pages_locked mm/gup.c:1381 [inline]
+       __gup_longterm_locked+0x208c/0x2aa0 mm/gup.c:2079
+       pin_user_pages_remote+0x136/0x200 mm/gup.c:3122
+       process_vm_rw_single_vec mm/process_vm_access.c:105 [inline]
+       process_vm_rw_core mm/process_vm_access.c:215 [inline]
+       process_vm_rw+0x72b/0xcd0 mm/process_vm_access.c:283
+       __do_sys_process_vm_readv mm/process_vm_access.c:295 [inline]
+       __se_sys_process_vm_readv mm/process_vm_access.c:291 [inline]
+       __x64_sys_process_vm_readv+0xe0/0xf0 mm/process_vm_access.c:291
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #0 (&mm->mmap_lock){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3098 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+       validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
+       __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
+       mmap_read_lock include/linux/mmap_lock.h:117 [inline]
+       do_user_addr_fault arch/x86/mm/fault.c:1358 [inline]
+       handle_page_fault arch/x86/mm/fault.c:1498 [inline]
+       exc_page_fault+0x486/0x7c0 arch/x86/mm/fault.c:1554
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+       filldir64+0x30b/0x720 fs/readdir.c:331
+       dir_emit_dot include/linux/fs.h:3144 [inline]
+       dir_emit_dots include/linux/fs.h:3155 [inline]
+       exfat_iterate+0x2b8/0x3370 fs/exfat/dir.c:235
+       iterate_dir+0x228/0x570
+       __do_sys_getdents64 fs/readdir.c:369 [inline]
+       __se_sys_getdents64+0x20d/0x4f0 fs/readdir.c:354
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+other info that might help us debug this:
+
+Chain exists of:
+  &mm->mmap_lock --> mapping.invalidate_lock#3 --> &sbi->s_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sbi->s_lock);
+                               lock(mapping.invalidate_lock#3);
+                               lock(&sbi->s_lock);
+  lock(&mm->mmap_lock);
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor377/6548:
+ #0: ffff88802778c368 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x254/0x2f0 fs/file.c:1047
+ #1: ffff8880747e1cb0 (&sb->s_type->i_mutex_key#14){++++}-{3:3}, at: iterate_dir+0x135/0x570 fs/readdir.c:57
+ #2: ffff88807c2640e0 (&sbi->s_lock){+.+.}-{3:3}, at: exfat_iterate+0x171/0x3370 fs/exfat/dir.c:232
+
+stack backtrace:
+CPU: 0 PID: 6548 Comm: syz-executor377 Not tainted 6.3.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ check_noncircular+0x2fe/0x3b0 kernel/locking/lockdep.c:2178
+ check_prev_add kernel/locking/lockdep.c:3098 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+ validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
+ __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
+ lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+ down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
+ mmap_read_lock include/linux/mmap_lock.h:117 [inline]
+ do_user_addr_fault arch/x86/mm/fault.c:1358 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1498 [inline]
+ exc_page_fault+0x486/0x7c0 arch/x86/mm/fault.c:1554
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+RIP: 0010:filldir64+0x30b/0x720 fs/readdir.c:335
+Code: 48 29 eb 48 89 df 4c 89 e6 e8 11 86 95 ff 85 ed 0f 88 48 02 00 00 4c 39 e3 0f 82 3f 02 00 00 0f 01 cb 0f ae e8 48 8b 44 24 58 <49> 89 44 24 08 48 8b 4c 24 10 48 8b 44 24 50 48 89 01 48 8b 44 24
+RSP: 0018:ffffc9000543f6c8 EFLAGS: 00050206
+RAX: 0000000000000000 RBX: 00007fffffffefe8 RCX: ffff8880275dba80
+RDX: ffff8880275dba80 RSI: 0000000000000000 RDI: 00007fffffffefe8
+RBP: 0000000000000018 R08: ffffffff81f4e91f R09: 0000000000000004
+R10: 0000000000000003 R11: ffff8880275dba80 R12: 0000000000000000
+R13: ffffc9000543fe70 R14: 0000000000000001 R15: ffffffff8afed560
+ dir_emit_dot include/linux/fs.h:3144 [inline]
+ dir_emit_dots include/linux/fs.h:3155 [inline]
+ exfat_iterate+0x2b8/0x3370 fs/exfat/dir.c:235
+ iterate_dir+0x228/0x570
+ __do_sys_getdents64 fs/readdir.c:369 [inline]
+ __se_sys_getdents64+0x20d/0x4f0 fs/readdir.c:354
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f265ea7dab9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2656628208 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 00007f265eb037b8 RCX: 00007f265ea7dab9
+RDX: 0000000000008008 RSI: 0000000000000000 RDI: 0000000000000006
+RBP: 00007f265eb037b0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f265eb037bc
+R13: 00007ffc20585adf R14: 00007f2656628300 R15: 0000000000022000
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	48 29 eb             	sub    %rbp,%rbx
+   3:	48 89 df             	mov    %rbx,%rdi
+   6:	4c 89 e6             	mov    %r12,%rsi
+   9:	e8 11 86 95 ff       	callq  0xff95861f
+   e:	85 ed                	test   %ebp,%ebp
+  10:	0f 88 48 02 00 00    	js     0x25e
+  16:	4c 39 e3             	cmp    %r12,%rbx
+  19:	0f 82 3f 02 00 00    	jb     0x25e
+  1f:	0f 01 cb             	stac
+  22:	0f ae e8             	lfence
+  25:	48 8b 44 24 58       	mov    0x58(%rsp),%rax
+* 2a:	49 89 44 24 08       	mov    %rax,0x8(%r12) <-- trapping instruction
+  2f:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
+  34:	48 8b 44 24 50       	mov    0x50(%rsp),%rax
+  39:	48 89 01             	mov    %rax,(%rcx)
+  3c:	48                   	rex.W
+  3d:	8b                   	.byte 0x8b
+  3e:	44                   	rex.R
+  3f:	24                   	.byte 0x24
+
