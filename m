@@ -2,131 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CF2C6C0B52
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Mar 2023 08:26:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23DE96C0B43
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Mar 2023 08:20:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230050AbjCTH0P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Mar 2023 03:26:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33244 "EHLO
+        id S229892AbjCTHU0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Mar 2023 03:20:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbjCTH0M (ORCPT
+        with ESMTP id S229509AbjCTHUZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Mar 2023 03:26:12 -0400
-Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29CED1CBC2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Mar 2023 00:26:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1679297170; x=1710833170;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PznhUX2rDF8uhJla7kd2cwVnZx5w5yiNB4r5BQcdnfM=;
-  b=hKU0IhkoLA7wSdyhwFX9fIq/U3jl3XuKNQ9IkvYE6J16ulZRCu9MgfS7
-   +n3AfLpDJaT/jdjtcqHeyeiWPFSIvzRzMEjXUdNjCccQx1SXSwc4SxSLr
-   NB/m60C/qA3CZcDekWkTrxmf+8DNlc1kkPqaFvxHSVJhJmKVDqvpW+HjE
-   4fMXJYyyIG0PpOIRrLl3Iu8z9hphNiw/hA9NtwuM6IfiTzuPpCclVDH5e
-   n4CUbc2X0j1YL73n2WsfmIypzBZVV16hXymd0Fl91jTD9H1DG0BeD3j+7
-   uLmUIHTslYw8Rtd99VXrAQSkFwEMDjj3XZgW8l1uLu2OtR3BrZ3FlFIWE
-   A==;
-X-IronPort-AV: E=Sophos;i="5.98,274,1673884800"; 
-   d="scan'208";a="330429281"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Mar 2023 15:26:10 +0800
-IronPort-SDR: DGH6VqZPVdmV9Q2XVhXfIO/A5VYVL7sePGorybAFeAlFBezPukpU8kKLhz01QmKu8Q/JZqkdXu
- KH1ikmt+RJajWqFFyoJe7yUnQMgWxoMG7/kUlD7waxX2tlp+3Y+/aV6mAXL8Hv62JQX2JwcAUK
- 1IN7pkXfwxy3rX2DXNitXQpp63SgckN5E8j1WxofKmdQ14fURo8CV2ui9EegRAPZ78k2ajtTqj
- zhwiCpnUIPQsGMCRSLdqvWBUHS8VbJ5YA3LHUGYukzjWVD/AgjdSDynpSpCYlqSi7jHW6MnEpq
- Nnk=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Mar 2023 23:42:30 -0700
-IronPort-SDR: 0pjxHkPysbAxizIzIca7IfNlTzabT3wS/biQ5tgRupkpve5czoQHQ8xP1SsXKyZcm2fYM2YkLu
- ZegWCTmV7BWRc8AQAIa8EF69i6+8tyKACoUBopyp0EFOCTPqLxCLMpaNEDPrbxrH5fUWcr0YVU
- ASQ1wCvcONW30J0r8QPauIZmmz7WeWBWKM8P1laSpnQ1DrrQRdcrcAgY+0ZCgqm5O2h98UvQaJ
- +unXCQZXNrBS05TZBCOBNV/mzi84iFDObWiPC7YrwT0IFnNcQJrlVPidx4NT+NxxZqFUtvSmXc
- ON0=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Mar 2023 00:26:10 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Pg5rL1vndz1RtW3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Mar 2023 00:26:10 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1679297169; x=1681889170; bh=PznhUX2rDF8uhJla7kd2cwVnZx5w5yiNB4r
-        5BQcdnfM=; b=Ac3sR0XYJ+rryJ+0bDOPKxCm+dcSwHcMLzkGxuGt8+HwZ87G7ax
-        pAFVEfaZLRQ1T7YBu9pTJb2iOB0dq+m2M50+2ySCb+VWMEj6z8KBJcfvkX/VTy5y
-        HdsZwpvEu2xSrqc4DcASona2/D8FSQf2eX7sdS1/ZdFCrT/cmr56n/dcPEizamwB
-        YvpCPWbz6qWy+PWRiDVh/KqVyD37i1IhQ4/yFHZk59+5WH/VWBjihD6KvLqKMHsL
-        iYmgtRtkq5BDuKsPoQJio8UBdylvkAVkIe2vLW8QNxxsm80THSUesX6KayIzGn6+
-        /6kD3KtQY7keflXYjvtNZUIrzhBwhIGlsKA==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id RaKOrd4oURGW for <linux-fsdevel@vger.kernel.org>;
-        Mon, 20 Mar 2023 00:26:09 -0700 (PDT)
-Received: from [10.225.163.91] (unknown [10.225.163.91])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Pg5rB164vz1RtVm;
-        Mon, 20 Mar 2023 00:26:01 -0700 (PDT)
-Message-ID: <982b6aa9-4adb-acef-d9d7-9a1764a66213@opensource.wdc.com>
-Date:   Mon, 20 Mar 2023 16:26:00 +0900
+        Mon, 20 Mar 2023 03:20:25 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4275CFF3E;
+        Mon, 20 Mar 2023 00:20:22 -0700 (PDT)
+Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Pg5fz31lxzKs9C;
+        Mon, 20 Mar 2023 15:18:03 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Mon, 20 Mar 2023 15:20:18 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+CC:     <naoya.horiguchi@nec.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: [PATCH v3] mm: memory-failure: Move memory failure sysctls to its own file
+Date:   Mon, 20 Mar 2023 15:40:10 +0800
+Message-ID: <20230320074010.50875-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v2, RESEND 01/10] kobject: introduce kobject_del_and_put()
-Content-Language: en-US
-To:     Yangtao Li <frank.li@vivo.com>, clm@fb.com, josef@toxicpanda.com,
-        dsterba@suse.com, xiang@kernel.org, chao@kernel.org,
-        huyue2@coolpad.com, jefflexu@linux.alibaba.com, jaegeuk@kernel.org,
-        trond.myklebust@hammerspace.com, anna@kernel.org,
-        konishi.ryusuke@gmail.com, mark@fasheh.com, jlbec@evilplan.org,
-        joseph.qi@linux.alibaba.com, richard@nod.at, djwong@kernel.org,
-        naohiro.aota@wdc.com, jth@kernel.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        linux-mtd@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <e4b8012d-32df-e054-4a2a-772fda228a6a@opensource.wdc.com>
- <20230320071140.44748-1-frank.li@vivo.com>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20230320071140.44748-1-frank.li@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500001.china.huawei.com (7.185.36.107)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/20/23 16:11, Yangtao Li wrote:
-> Hi filesystem maintainers,
-> 
->> Hard to comment on patches with this. It is only 10 patches. So send everything please.
-> 
-> If you are interested in the entire patchset besides Damien,
-> please let me know. I'll resend the email later to cc more people.
+The sysctl_memory_failure_early_kill and memory_failure_recovery
+are only used in memory-failure.c, move them to its own file.
 
-Yes, I said I am interested, twice already. It is IMPOSSIBLE to review a patch
-without the context of other patches before/after said patch. So if you want a
-review/ack for zonefs, then send the entire series.
+Acked-by: Naoya Horiguchi <naoya.horiguchi@nec.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+v3: rebased on sysctl-next, asked by Luis Chamberlain
+ include/linux/mm.h  |  2 --
+ kernel/sysctl.c     | 20 --------------------
+ mm/memory-failure.c | 35 +++++++++++++++++++++++++++++++++--
+ 3 files changed, 33 insertions(+), 24 deletions(-)
 
-> 
-> Thx,
-> Yangtao
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 716d30d93616..1ab157757906 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3459,8 +3459,6 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+ extern int memory_failure(unsigned long pfn, int flags);
+ extern void memory_failure_queue_kick(int cpu);
+ extern int unpoison_memory(unsigned long pfn);
+-extern int sysctl_memory_failure_early_kill;
+-extern int sysctl_memory_failure_recovery;
+ extern void shake_page(struct page *p);
+ extern atomic_long_t num_poisoned_pages __read_mostly;
+ extern int soft_offline_page(unsigned long pfn, int flags);
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ce0297acf97c..0a8a3c9c82e4 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2350,26 +2350,6 @@ static struct ctl_table vm_table[] = {
+ 		.proc_handler	= proc_dointvec,
+ 		.extra1		= SYSCTL_ZERO,
+ 	},
+-#endif
+-#ifdef CONFIG_MEMORY_FAILURE
+-	{
+-		.procname	= "memory_failure_early_kill",
+-		.data		= &sysctl_memory_failure_early_kill,
+-		.maxlen		= sizeof(sysctl_memory_failure_early_kill),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
+-	},
+-	{
+-		.procname	= "memory_failure_recovery",
+-		.data		= &sysctl_memory_failure_recovery,
+-		.maxlen		= sizeof(sysctl_memory_failure_recovery),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
+-	},
+ #endif
+ 	{
+ 		.procname	= "user_reserve_kbytes",
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index c77a9e37e27e..242b6cae0035 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -62,13 +62,14 @@
+ #include <linux/page-isolation.h>
+ #include <linux/pagewalk.h>
+ #include <linux/shmem_fs.h>
++#include <linux/sysctl.h>
+ #include "swap.h"
+ #include "internal.h"
+ #include "ras/ras_event.h"
+ 
+-int sysctl_memory_failure_early_kill __read_mostly = 0;
++static int sysctl_memory_failure_early_kill __read_mostly;
+ 
+-int sysctl_memory_failure_recovery __read_mostly = 1;
++static int sysctl_memory_failure_recovery __read_mostly = 1;
+ 
+ atomic_long_t num_poisoned_pages __read_mostly = ATOMIC_LONG_INIT(0);
+ 
+@@ -87,6 +88,36 @@ inline void num_poisoned_pages_sub(unsigned long pfn, long i)
+ 		memblk_nr_poison_sub(pfn, i);
+ }
+ 
++#ifdef CONFIG_SYSCTL
++static struct ctl_table memory_failure_table[] = {
++	{
++		.procname	= "memory_failure_early_kill",
++		.data		= &sysctl_memory_failure_early_kill,
++		.maxlen		= sizeof(sysctl_memory_failure_early_kill),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
++	{
++		.procname	= "memory_failure_recovery",
++		.data		= &sysctl_memory_failure_recovery,
++		.maxlen		= sizeof(sysctl_memory_failure_recovery),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
++};
++
++static int __init memory_failure_sysctl_init(void)
++{
++	register_sysctl_init("vm", memory_failure_table);
++	return 0;
++}
++late_initcall(memory_failure_sysctl_init);
++#endif /* CONFIG_SYSCTL */
++
+ /*
+  * Return values:
+  *   1:   the page is dissolved (if needed) and taken off from buddy,
 -- 
-Damien Le Moal
-Western Digital Research
+2.27.0
 
