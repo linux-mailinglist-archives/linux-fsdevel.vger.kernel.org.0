@@ -2,140 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 065786C219D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Mar 2023 20:34:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE606C2290
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Mar 2023 21:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230148AbjCTTea (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Mar 2023 15:34:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46426 "EHLO
+        id S230247AbjCTUZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Mar 2023 16:25:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230116AbjCTTd6 (ORCPT
+        with ESMTP id S231230AbjCTUZN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Mar 2023 15:33:58 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94BFC28EBE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Mar 2023 12:28:49 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id h19-20020a056e021d9300b00318f6b50475so6639553ila.21
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Mar 2023 12:28:49 -0700 (PDT)
+        Mon, 20 Mar 2023 16:25:13 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 642F928D2D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Mar 2023 13:25:12 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id b20so18756527edd.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Mar 2023 13:25:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1679343910;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Crb5gaca3LAL3QSUXcVibd0Ph4xO6N/3m0QFmJdNuPA=;
+        b=BLRXv6G1ID56F82XpWEhsLLXGi6naVJ5iSbdkQA7SE/Atqr0psA60I1mjhCS3ExRmt
+         kO7EB0NChmWHwqiRx7d86y1GMB4mdZiKi4Ci8uHv8ZAi7MT/jE9/gM7ABk3rBXSbr1Rd
+         RSrIKRwSr296G/Su9ZKl0smQU9mGe8tS6BCT8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679340529;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=twO0cBgqHVuadLiEtqwEUyKk2bd1+BbcRIByatF2Y98=;
-        b=FmwGzpyhV3Bq/uOGKVIOAf5/VoJxiNwa1gHOdiegOHqCuKlFaO3py3FJvpco4RzEjo
-         6uZCi0lCQyxkTLaMXGAVyrssBvvpRlXq30QUtvYmkJp94GCzcxI0msBJ0rSNKcvJHDc4
-         1hwFmo+5Cv+TgFqVSkdORk/L7I1eTRY+74YwoBxUspjjR57w93CuezgN4KEe/0cPIgVn
-         moJLKqIU2Fs5a0NBJys2K0N5T8k3BbISekSH/vNfCGz6tuFI+8pkSpvjXJdMsIrOBKZP
-         64hbny0E3K2lxX7sTdcpiCchMgdrkBQ4SXUQPxL0sAk8H6Kznrm4UNC0QbTd6hJOhqV9
-         W4OQ==
-X-Gm-Message-State: AO0yUKVeEChgbsZ1hEKkswmu0+22lT/AYG9sxIm3whDFPfettJNsjxLt
-        ZT6GBIvUl+eo/OQ0jQcGvVO1gOuxYn2f4AsCnB4uNB9K+msy
-X-Google-Smtp-Source: AK7set+iH8yfyr5kAlbGh7l8msoSzx8Xt30vZFsOBN5uDeZYu2R+lEcdKLa+MW5d2J+F/gkxELLSa/C7VX9aoMMfCqDkgXX2cSTF
+        d=1e100.net; s=20210112; t=1679343910;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Crb5gaca3LAL3QSUXcVibd0Ph4xO6N/3m0QFmJdNuPA=;
+        b=6sHjMJDMIxyn0ggMBzSS3iSwYmuOtwfF/dnzgnrIQ8egK0fus5Yq9kKlJqVtw6SFJF
+         NvvSxXBKFXMuDeDbDM3RMb4tDxtQJlkSAE+0ozYAfpGG9COpSbtnDf7zRM8l+DX4zCR4
+         LYJ/WQxf5rdCGmfY8C82uv1qFsk5b/5mUpiuElsGplNNjxVhfO5Utwx5kjW9Apx4+jXN
+         W5Lh1WJOgsJ/v6iKl3TQtuMLwROuLkrP/CbNZS5KCYr6Hi3M2Nff3qO9Qy4l8P/tEnBH
+         1CFQCTYbjQfRFL9xbj3qnZgEHJqYufFtQ2Eycn3zV/7eNn+z7Mh7K4+u/pgwku7c2j2U
+         Cpgg==
+X-Gm-Message-State: AO0yUKXifdKC2Nyo8EX+9MLcYPiIuVqWyK5UQi+inrHChXRyZDZR1unm
+        TWN6+znCkWFHHnMd4EH7fOg9vSLBgBc3Xh7BcrzVCJTZ
+X-Google-Smtp-Source: AK7set/3YWsTfqoGoaiE9TNC5+qAvWpXDemlYEbHhj6QisAmlm5GSMVIUQQHE7QzsiXQTUx9nG1gzg==
+X-Received: by 2002:a17:907:2162:b0:92d:44ca:1137 with SMTP id rl2-20020a170907216200b0092d44ca1137mr344828ejb.43.1679343910417;
+        Mon, 20 Mar 2023 13:25:10 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id qh7-20020a170906eca700b0092bea699124sm4837252ejb.106.2023.03.20.13.25.09
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Mar 2023 13:25:10 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id b20so18756257edd.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Mar 2023 13:25:09 -0700 (PDT)
+X-Received: by 2002:a17:906:2c04:b0:931:6e39:3d0b with SMTP id
+ e4-20020a1709062c0400b009316e393d0bmr142412ejh.15.1679343909563; Mon, 20 Mar
+ 2023 13:25:09 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a02:2a04:0:b0:3c4:88e7:14cf with SMTP id
- w4-20020a022a04000000b003c488e714cfmr442022jaw.1.1679340528905; Mon, 20 Mar
- 2023 12:28:48 -0700 (PDT)
-Date:   Mon, 20 Mar 2023 12:28:48 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000aec88d05f759ef57@google.com>
-Subject: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in dbFree
-From:   syzbot <syzbot+d2cd27dcf8e04b232eb2@syzkaller.appspotmail.com>
-To:     jfs-discussion@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+References: <20230320071442.172228-1-pedro.falcato@gmail.com>
+ <20230320115153.7n5cq4wl2hmcbndf@wittgenstein> <CAHk-=wjifBVf3ub0WWBXYg7JAao6V8coCdouseaButR0gi5xmg@mail.gmail.com>
+ <CAKbZUD2Y2F=3+jf+0dRvenNKk=SsYPxKwLuPty_5-ppBPsoUeQ@mail.gmail.com>
+In-Reply-To: <CAKbZUD2Y2F=3+jf+0dRvenNKk=SsYPxKwLuPty_5-ppBPsoUeQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 20 Mar 2023 13:24:52 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgc9qYOtuyW_Tik0AqMrQJK00n-LKWvcBifLyNFUdohDw@mail.gmail.com>
+Message-ID: <CAHk-=wgc9qYOtuyW_Tik0AqMrQJK00n-LKWvcBifLyNFUdohDw@mail.gmail.com>
+Subject: Re: [PATCH] do_open(): Fix O_DIRECTORY | O_CREAT behavior
+To:     Pedro Falcato <pedro.falcato@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,WEIRD_QUOTING autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, Mar 20, 2023 at 12:27=E2=80=AFPM Pedro Falcato <pedro.falcato@gmail=
+.com> wrote:
+>
+> 1) Pre v5.7 Linux did the open-dir-if-exists-else-create-regular-file
+> we all know and """love""".
 
-syzbot found the following issue on:
+So I think we should fall back to this as a last resort, as a "well,
+it's our historical behavior".
 
-HEAD commit:    0ddc84d2dd43 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17f30826c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dbab9019ad6fc418
-dashboard link: https://syzkaller.appspot.com/bug?extid=d2cd27dcf8e04b232eb2
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1211504ac80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1447df1ac80000
+> 2) Post 5.7, we started returning this buggy -ENOTDIR error, even when
+> successfully creating a file.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f1aef650a28e/disk-0ddc84d2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ab9d7540bffe/vmlinux-0ddc84d2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cf0758e28298/bzImage-0ddc84d2.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/bd86262b7da2/mount_0.gz
+Yeah, I think this is the worst of the bunch and has no excuse (unless
+some crazy program has started depending on it, which sounds really
+*really* unlikely).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d2cd27dcf8e04b232eb2@syzkaller.appspotmail.com
+> 3) NetBSD just straight up returns EINVAL on open(O_DIRECTORY | O_CREAT)
+> 4) FreeBSD's open(O_CREAT | O_DIRECTORY) succeeds if the file exists
+> and is a directory. Fails with -ENOENT if it falls onto the "O_CREAT"
+> path (i.e it doesn't try to create the file at all, just ENOENT's;
+> this changed relatively recently, in 2015)
 
-         option from the mount to silence this warning.
-=======================================================
-find_entry called with index = 0
-read_mapping_page failed!
-ERROR: (device loop0): txCommit: 
-ERROR: (device loop0): remounting filesystem as read-only
-================================================================================
-UBSAN: shift-out-of-bounds in fs/jfs/jfs_dmap.c:381:12
-shift exponent 134217736 is too large for 64-bit type 'long long'
-CPU: 1 PID: 5068 Comm: syz-executor350 Not tainted 6.3.0-rc2-syzkaller-00069-g0ddc84d2dd43 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- ubsan_epilogue lib/ubsan.c:217 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c3/0x420 lib/ubsan.c:387
- dbFree+0x46e/0x650 fs/jfs/jfs_dmap.c:381
- txFreeMap+0x96a/0xd50 fs/jfs/jfs_txnmgr.c:2510
- xtTruncate+0xe5c/0x3260 fs/jfs/jfs_xtree.c:2467
- jfs_free_zero_link+0x46e/0x6e0 fs/jfs/namei.c:758
- jfs_evict_inode+0x35f/0x440 fs/jfs/inode.c:153
- evict+0x2a4/0x620 fs/inode.c:665
- __dentry_kill+0x436/0x650 fs/dcache.c:607
- shrink_dentry_list+0x39c/0x6a0 fs/dcache.c:1201
- shrink_dcache_parent+0xcd/0x480
- do_one_tree+0x23/0xe0 fs/dcache.c:1682
- shrink_dcache_for_umount+0x7d/0x120 fs/dcache.c:1699
- generic_shutdown_super+0x67/0x340 fs/super.c:472
- kill_block_super+0x7e/0xe0 fs/super.c:1398
- deactivate_locked_super+0xa4/0x110 fs/super.c:331
- cleanup_mnt+0x426/0x4c0 fs/namespace.c:1177
- task_work_run+0x24a/0x300 kernel/task_work.c:179
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0x68f/0x2290 kernel/exit.c:869
- do_group_exit+0x206/0x2c0 kernel/exit.c:1019
- __do_sys_exit_group kernel/exit.c:1030 [inline]
- __se_sys_exit_group kernel/exit.c:1028 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1028
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fa87e2289b9
-Code: Unable to access opcode bytes at 0x7fa87e22898f.
-RSP: 002b:00007fff4bfe3938 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00007fa87e2a3330 RCX: 00007fa87e2289b9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
-RBP: 0000000000000001 R08: ffffffffffffffc0 R09: 00007fa87e29de40
-R10: 00007fff4bfe3850 R11: 0000000000000246 R12: 00007fa87e2a3330
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
- </TASK>
-================================================================================
+Either of these sound sensible to me.
 
+I suspect (3) is the clearest case.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+And (4) might be warranted just because it's closer to what we used to
+do, and it's *possible* that somebody happens to use O_DIRECTORY |
+O_CREAT on directories that exist, and never noticed how broken that
+was.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+And (4) has another special case: O_EXCL. Because I'm really hoping
+that O_DIRECTORY | O_EXCL will always fail.
+
+Is the proper patch something along the lines of this?
+
+   --- a/fs/open.c
+   +++ b/fs/open.c
+   @@ -1186,6 +1186,8 @@ inline int build_open_flags(const struct
+open_how *how, struct open_flags *op)
+
+        /* Deal with the mode. */
+        if (WILL_CREATE(flags)) {
+   +            if (flags & O_DIRECTORY)
+   +                    return -EINVAL;
+                if (how->mode & ~S_IALLUGO)
+                        return -EINVAL;
+                op->mode =3D how->mode | S_IFREG;
+
+I dunno. Not tested, not thought about very much.
+
+What about O_PATH? I guess it's fine to create a file and only get a
+path fd to the result?
+
+             Linus
