@@ -2,53 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 604CE6C2B11
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 08:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D6CD6C2BA0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 08:46:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230188AbjCUHLw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 03:11:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60408 "EHLO
+        id S230320AbjCUHqa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 03:46:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbjCUHLv (ORCPT
+        with ESMTP id S230171AbjCUHq2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 03:11:51 -0400
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 502EA3BD8D;
-        Tue, 21 Mar 2023 00:11:47 -0700 (PDT)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4PgjTC5G9gz8RV7L;
-        Tue, 21 Mar 2023 15:11:43 +0800 (CST)
-Received: from xaxapp03.zte.com.cn ([10.88.97.17])
-        by mse-fl1.zte.com.cn with SMTP id 32L7BTdq057573;
-        Tue, 21 Mar 2023 15:11:29 +0800 (+08)
-        (envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-        by mapi (Zmail) with MAPI id mid31;
-        Tue, 21 Mar 2023 15:11:31 +0800 (CST)
-Date:   Tue, 21 Mar 2023 15:11:31 +0800 (CST)
-X-Zmail-TransId: 2afa641958a30e8-bba8c
-X-Mailer: Zmail v1.0
-Message-ID: <202303211511314414538@zte.com.cn>
-Mime-Version: 1.0
-From:   <ye.xingchen@zte.com.cn>
-To:     <mcgrof@kernel.org>
-Cc:     <keescook@chromium.org>, <yzaikin@google.com>,
-        <akpm@linux-foundation.org>, <chi.minghao@zte.com.cn>,
-        <linmiaohe@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: =?UTF-8?B?W1BBVENIIFY0IDEvMl0gbW06IGNvbXBhY3Rpb246IG1vdmUgY29tcGFjdGlvbiBzeXNjdGwgdG8gaXRzIG93biBmaWxl?=
-Content-Type: text/plain;
-        charset="UTF-8"
-X-MAIL: mse-fl1.zte.com.cn 32L7BTdq057573
-X-Fangmail-Gw-Spam-Type: 0
-X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 641958AF.003 by FangMail milter!
-X-FangMail-Envelope: 1679382703/4PgjTC5G9gz8RV7L/641958AF.003/10.5.228.132/[10.5.228.132]/mse-fl1.zte.com.cn/<ye.xingchen@zte.com.cn>
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 641958AF.003/4PgjTC5G9gz8RV7L
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+        Tue, 21 Mar 2023 03:46:28 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0904410B9;
+        Tue, 21 Mar 2023 00:46:00 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id r19-20020a05600c459300b003eb3e2a5e7bso8889170wmo.0;
+        Tue, 21 Mar 2023 00:46:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679384759;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WGNPqTjSMUqDfHrgW6kgUvbw3qknVLkyvvVwqcSq3M8=;
+        b=U5P6dkc4hbEDC/eQltNr2iI40AnzZGA5AIz637Rqk5+jaPXD9z2dIAd+F2YMI1opDp
+         8m0wLRKI280ryNuNwnqZxB3JEN6fjayqp4Xc+tzeUMUYjREhDTOYb+1BbmRlDF5jUbHj
+         QlRURQ0Ghzr1+Q8BGWNAyWS/PZ1lBuDsuMdlFzRUFVF0uK6NsxM6vS23THO4+DU2bO4U
+         8Yw6UdqwgwSYIQuROvjkDYl1nmiHE43bXKuw0+o8LpgKXcLPXvx3pI9oU8SmxKK9BZ18
+         wws7FzZx4GkcwtOrC/ZfgzYJ24ndDuqpLa44vt+z61bjHB7xIrdFdazU6a/tAS17I1A6
+         FGMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679384759;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WGNPqTjSMUqDfHrgW6kgUvbw3qknVLkyvvVwqcSq3M8=;
+        b=NFgxrWzTKTv9nEA0B26FJAoq4gMTjtHp2cBolbsFqKDKsSc1Y2UBuZ6Txebff157xl
+         W39lV+pgV7HMCpLMciJGEjBgrMc+T7AlTfVU8srLXLjkFbca6sc13s7Rm5Ycsag/aPJ3
+         P8FGM5Tvb6FJZ7OJ3X0RoPJPmR95PfE9KH+c85cHMWfZJncMqTeGS+wEJdRpuIsY5B5x
+         ua53YTYCKFzn3O3r9Mas2jlzAOq7hUIfnYMm1LCVpGJGIagKQ9Y5t+77H38xCNrJzY9v
+         5EGvS1n3WpAAG6dp/9mLtE/foWC+vf5nxziCHCgCynjPKrxUyhMTn+K7Ts3ZLeGpYb2e
+         7yqw==
+X-Gm-Message-State: AO0yUKXRNZsVtJxmzga3L/zmSVAgn4gkUWdoc5PvFf4YypF/rHUVCYtG
+        T/SQjXak3BM+Ld4xjfVEpH8=
+X-Google-Smtp-Source: AK7set995a5DnVD7LqGUABlMiy0yRpKpPaU+FTuy57OjMDKiF9VDwShiiFTEvhhWTpHc/8vvKPPzhg==
+X-Received: by 2002:a7b:c409:0:b0:3e2:19b0:887d with SMTP id k9-20020a7bc409000000b003e219b0887dmr1539717wmi.25.1679384758498;
+        Tue, 21 Mar 2023 00:45:58 -0700 (PDT)
+Received: from localhost (host86-146-209-214.range86-146.btcentralplus.com. [86.146.209.214])
+        by smtp.gmail.com with ESMTPSA id p5-20020a05600c05c500b003edf2ae2432sm5496183wmd.7.2023.03.21.00.45.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Mar 2023 00:45:57 -0700 (PDT)
+Date:   Tue, 21 Mar 2023 07:45:56 +0000
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [PATCH v2 2/4] mm: vmalloc: use rwsem, mutex for vmap_area_lock
+ and vmap_block->lock
+Message-ID: <8cd31bcd-dad4-44e3-920f-299a656aea98@lucifer.local>
+References: <cover.1679209395.git.lstoakes@gmail.com>
+ <6c7f1ac0aeb55faaa46a09108d3999e4595870d9.1679209395.git.lstoakes@gmail.com>
+ <ZBkDuLKLhsOHNUeG@destitution>
+ <ZBk/Wxj4rXPra/ge@pc636>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZBk/Wxj4rXPra/ge@pc636>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,243 +81,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+On Tue, Mar 21, 2023 at 06:23:39AM +0100, Uladzislau Rezki wrote:
+> On Tue, Mar 21, 2023 at 12:09:12PM +1100, Dave Chinner wrote:
+> > On Sun, Mar 19, 2023 at 07:09:31AM +0000, Lorenzo Stoakes wrote:
+> > > vmalloc() is, by design, not permitted to be used in atomic context and
+> > > already contains components which may sleep, so avoiding spin locks is not
+> > > a problem from the perspective of atomic context.
+> > >
+> > > The global vmap_area_lock is held when the red/black tree rooted in
+> > > vmap_are_root is accessed and thus is rather long-held and under
+> > > potentially high contention. It is likely to be under contention for reads
+> > > rather than write, so replace it with a rwsem.
+> > >
+> > > Each individual vmap_block->lock is likely to be held for less time but
+> > > under low contention, so a mutex is not an outrageous choice here.
+> > >
+> > > A subset of test_vmalloc.sh performance results:-
+> > >
+> > > fix_size_alloc_test             0.40%
+> > > full_fit_alloc_test		2.08%
+> > > long_busy_list_alloc_test	0.34%
+> > > random_size_alloc_test		-0.25%
+> > > random_size_align_alloc_test	0.06%
+> > > ...
+> > > all tests cycles                0.2%
+> > >
+> > > This represents a tiny reduction in performance that sits barely above
+> > > noise.
+> >
+> > I'm travelling right now, but give me a few days and I'll test this
+> > against the XFS workloads that hammer the global vmalloc spin lock
+> > really, really badly. XFS can use vm_map_ram and vmalloc really
+> > heavily for metadata buffers and hit the global spin lock from every
+> > CPU in the system at the same time (i.e. highly concurrent
+> > workloads). vmalloc is also heavily used in the hottest path
+> > throught the journal where we process and calculate delta changes to
+> > several million items every second, again spread across every CPU in
+> > the system at the same time.
+> >
+> > We really need the global spinlock to go away completely, but in the
+> > mean time a shared read lock should help a little bit....
+> >
 
-This moves all compaction sysctls to its own file.
+Hugely appreciated Dave, however I must disappoint on the rwsem as I have now
+reworked my patch set to use the original locks in order to satisfy Willy's
+desire to make vmalloc atomic in future, and Uladzislau's desire to not have a
+~6% performance hit -
+https://lore.kernel.org/all/cover.1679354384.git.lstoakes@gmail.com/
 
-Link: https://lore.kernel.org/all/ZAJwoXJCzfk1WIBx@bombadil.infradead.org/
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
-Signed-off-by: Ye Xingchen <ye.xingchen@zte.com.cn>
----
- include/linux/compaction.h |  7 ----
- kernel/sysctl.c            | 58 -------------------------------
- mm/compaction.c            | 70 ++++++++++++++++++++++++++++++++++----
- 3 files changed, 64 insertions(+), 71 deletions(-)
+> I am working on it. I submitted a proposal how to eliminate it:
+>
+>
+> <snip>
+> Hello, LSF.
+>
+> Title: Introduce a per-cpu-vmap-cache to eliminate a vmap lock contention
+>
+> Description:
+>  Currently the vmap code is not scaled to number of CPU cores in a system
+>  because a global vmap space is protected by a single spinlock. Such approach
+>  has a clear bottleneck if many CPUs simultaneously access to one resource.
+>
+>  In this talk i would like to describe a drawback, show some data related
+>  to contentions and places where those occur in a code. Apart of that i
+>  would like to share ideas how to eliminate it providing a few approaches
+>  and compare them.
+>
+> Requirements:
+>  * It should be a per-cpu approach;
+>  * Search of freed ptrs should not interfere with other freeing(as much as we can);
+>  *   - offload allocated areas(buzy ones) per-cpu;
+>  * Cache ready sized objects or merge them into one big per-cpu-space(split on demand);
+>  * Lazily-freed areas either drained per-cpu individually or by one CPU for all;
+>  * Prefetch a fixed size in front and allocate per-cpu
+>
+> Goals:
+>  * Implement a per-cpu way of allocation to eliminate a contention.
+>
+> Thanks!
+> <snip>
+>
+> --
+> Uladzislau Rezki
+>
 
-diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-index 52a9ff65faee..a6e512cfb670 100644
---- a/include/linux/compaction.h
-+++ b/include/linux/compaction.h
-@@ -81,13 +81,6 @@ static inline unsigned long compact_gap(unsigned int order)
- }
-
- #ifdef CONFIG_COMPACTION
--extern unsigned int sysctl_compaction_proactiveness;
--extern int sysctl_compaction_handler(struct ctl_table *table, int write,
--			void *buffer, size_t *length, loff_t *ppos);
--extern int compaction_proactiveness_sysctl_handler(struct ctl_table *table,
--		int write, void *buffer, size_t *length, loff_t *ppos);
--extern int sysctl_extfrag_threshold;
--extern int sysctl_compact_unevictable_allowed;
-
- extern unsigned int extfrag_for_order(struct zone *zone, unsigned int order);
- extern int fragmentation_index(struct zone *zone, unsigned int order);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ce0297acf97c..49a405447c77 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -746,27 +746,6 @@ int proc_dointvec(struct ctl_table *table, int write, void *buffer,
- 	return do_proc_dointvec(table, write, buffer, lenp, ppos, NULL, NULL);
- }
-
--#ifdef CONFIG_COMPACTION
--static int proc_dointvec_minmax_warn_RT_change(struct ctl_table *table,
--		int write, void *buffer, size_t *lenp, loff_t *ppos)
--{
--	int ret, old;
--
--	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || !write)
--		return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
--
--	old = *(int *)table->data;
--	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
--	if (ret)
--		return ret;
--	if (old != *(int *)table->data)
--		pr_warn_once("sysctl attribute %s changed by %s[%d]\n",
--			     table->procname, current->comm,
--			     task_pid_nr(current));
--	return ret;
--}
--#endif
--
- /**
-  * proc_douintvec - read a vector of unsigned integers
-  * @table: the sysctl table
-@@ -2157,43 +2136,6 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= SYSCTL_FOUR,
- 	},
--#ifdef CONFIG_COMPACTION
--	{
--		.procname	= "compact_memory",
--		.data		= NULL,
--		.maxlen		= sizeof(int),
--		.mode		= 0200,
--		.proc_handler	= sysctl_compaction_handler,
--	},
--	{
--		.procname	= "compaction_proactiveness",
--		.data		= &sysctl_compaction_proactiveness,
--		.maxlen		= sizeof(sysctl_compaction_proactiveness),
--		.mode		= 0644,
--		.proc_handler	= compaction_proactiveness_sysctl_handler,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE_HUNDRED,
--	},
--	{
--		.procname	= "extfrag_threshold",
--		.data		= &sysctl_extfrag_threshold,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE_THOUSAND,
--	},
--	{
--		.procname	= "compact_unevictable_allowed",
--		.data		= &sysctl_compact_unevictable_allowed,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax_warn_RT_change,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--
--#endif /* CONFIG_COMPACTION */
- 	{
- 		.procname	= "min_free_kbytes",
- 		.data		= &min_free_kbytes,
-diff --git a/mm/compaction.c b/mm/compaction.c
-index e689d66cedf4..f56b3dc4563b 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1728,7 +1728,7 @@ typedef enum {
-  * Allow userspace to control policy on scanning the unevictable LRU for
-  * compactable pages.
-  */
--int sysctl_compact_unevictable_allowed __read_mostly = CONFIG_COMPACT_UNEVICTABLE_DEFAULT;
-+static int sysctl_compact_unevictable_allowed __read_mostly = CONFIG_COMPACT_UNEVICTABLE_DEFAULT;
-
- static inline void
- update_fast_start_pfn(struct compact_control *cc, unsigned long pfn)
-@@ -2052,7 +2052,7 @@ static unsigned int fragmentation_score_node(pg_data_t *pgdat)
-
- 	return score;
- }
--
-+unsigned int sysctl_compaction_proactiveness;
- static unsigned int fragmentation_score_wmark(pg_data_t *pgdat, bool low)
- {
- 	unsigned int wmark_low;
-@@ -2228,7 +2228,7 @@ static enum compact_result __compaction_suitable(struct zone *zone, int order,
-
- 	return COMPACT_CONTINUE;
- }
--
-+static int sysctl_extfrag_threshold = 500;
- /*
-  * compaction_suitable: Is this suitable to run compaction on this zone now?
-  * Returns
-@@ -2584,7 +2584,6 @@ static enum compact_result compact_zone_order(struct zone *zone, int order,
- 	return ret;
- }
-
--int sysctl_extfrag_threshold = 500;
-
- /**
-  * try_to_compact_pages - Direct compact to satisfy a high-order allocation
-@@ -2749,7 +2748,7 @@ static void compact_nodes(void)
-  */
- unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
-
--int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
-+static int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
- 		void *buffer, size_t *length, loff_t *ppos)
- {
- 	int rc, nid;
-@@ -2779,7 +2778,7 @@ int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
-  * This is the entry point for compacting all nodes via
-  * /proc/sys/vm/compact_memory
-  */
--int sysctl_compaction_handler(struct ctl_table *table, int write,
-+static int sysctl_compaction_handler(struct ctl_table *table, int write,
- 			void *buffer, size_t *length, loff_t *ppos)
- {
- 	if (write)
-@@ -3074,7 +3073,63 @@ static int kcompactd_cpu_online(unsigned int cpu)
- 	}
- 	return 0;
- }
-+static int proc_dointvec_minmax_warn_RT_change(struct ctl_table *table,
-+		int write, void *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int ret, old;
-
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || !write)
-+		return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+
-+	old = *(int *)table->data;
-+	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+	if (ret)
-+		return ret;
-+	if (old != *(int *)table->data)
-+		pr_warn_once("sysctl attribute %s changed by %s[%d]\n",
-+			     table->procname, current->comm,
-+			     task_pid_nr(current));
-+	return ret;
-+}
-+#ifdef CONFIG_SYSCTL
-+static struct ctl_table vm_compaction[] = {
-+	{
-+		.procname	= "compact_memory",
-+		.data		= NULL,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0200,
-+		.proc_handler	= sysctl_compaction_handler,
-+	},
-+	{
-+		.procname	= "compaction_proactiveness",
-+		.data		= &sysctl_compaction_proactiveness,
-+		.maxlen		= sizeof(sysctl_compaction_proactiveness),
-+		.mode		= 0644,
-+		.proc_handler	= compaction_proactiveness_sysctl_handler,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE_HUNDRED,
-+	},
-+	{
-+		.procname	= "extfrag_threshold",
-+		.data		= &sysctl_extfrag_threshold,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE_THOUSAND,
-+	},
-+	{
-+		.procname	= "compact_unevictable_allowed",
-+		.data		= &sysctl_compact_unevictable_allowed,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax_warn_RT_change,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{ }
-+};
-+#endif
- static int __init kcompactd_init(void)
- {
- 	int nid;
-@@ -3090,6 +3145,9 @@ static int __init kcompactd_init(void)
-
- 	for_each_node_state(nid, N_MEMORY)
- 		kcompactd_run(nid);
-+#ifdef CONFIG_SYSCTL
-+	register_sysctl_init("vm", vm_compaction);
-+#endif
- 	return 0;
- }
- subsys_initcall(kcompactd_init)
--- 
-2.25.1
+That's really awesome! I will come to that talk at LSF/MM :) being able to
+sustain the lock in atomic context seems to be an aspect that is important going
+forward also.
