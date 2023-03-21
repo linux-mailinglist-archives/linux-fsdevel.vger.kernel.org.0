@@ -2,80 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E18406C3CDA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 22:38:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E2BE6C3CF7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 22:48:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229873AbjCUViz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 17:38:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59696 "EHLO
+        id S229808AbjCUVsR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 17:48:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbjCUViy (ORCPT
+        with ESMTP id S229713AbjCUVsQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 17:38:54 -0400
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B689AEB68;
-        Tue, 21 Mar 2023 14:38:51 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 18A5A6431C2E;
-        Tue, 21 Mar 2023 22:38:49 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Me7cS-Nxy2PL; Tue, 21 Mar 2023 22:38:48 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 8671E6431C36;
-        Tue, 21 Mar 2023 22:38:48 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id VGsPHh8GbQMI; Tue, 21 Mar 2023 22:38:48 +0100 (CET)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 54F076431C2E;
-        Tue, 21 Mar 2023 22:38:48 +0100 (CET)
-Date:   Tue, 21 Mar 2023 22:38:48 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>,
-        kuba <kuba@kernel.org>, James Morris <jmorris@namei.org>,
-        Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Ritesh Raj Sarraf <ritesh@collabora.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sjoerd Simons <sjoerd@collabora.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-Message-ID: <1227008149.272858.1679434728169.JavaMail.zimbra@nod.at>
-In-Reply-To: <cb7e6a4b-63d9-ddba-e0fc-d6352df2b3b6@digikod.net>
-References: <20230309165455.175131-1-mic@digikod.net> <cb7e6a4b-63d9-ddba-e0fc-d6352df2b3b6@digikod.net>
-Subject: Re: [PATCH v1 0/5] Landlock support for UML
+        Tue, 21 Mar 2023 17:48:16 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC181B549
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 14:48:15 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id w9so65346755edc.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 14:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1679435293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5xh3paPfK126WRaNNgpf/HW2EljH41BR2zEW9a9muNk=;
+        b=EFxwAMPN5TNr9d2A4kweGJd3JvbAXyVvHd2P4P/SPMq8eJwqHtiU2c608UDjkDSyrz
+         wR9OSjQqsgjrMn3V2brzMT7hrk3n7WySExiC0d5PdJqq8l2DHGZB+gq0rlaX1KwB/rmM
+         fpNw9bEhzSMSgl0yKzTNbCiUhYXsAohTsLFDE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679435293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5xh3paPfK126WRaNNgpf/HW2EljH41BR2zEW9a9muNk=;
+        b=iTjFDCcH2EfLBoMuOmlJMFzupKg7VRmoBRPyrMnr+hFYBITwDm6528cVxNivHb+yeR
+         nLbVQxajYAwyQfxOSBL+gVcCk8yJqzRQ8tNtgpCSLkIY3eYyFILP9HSCXvXdsrPw1Qeg
+         njPgwhQ2M3whYzGpAboBwSvJfVaWPRLDwN2BYk0AmdAfVNNK11fN7WQ67r84kExKJHPz
+         lOMZv/1Ji37T1DlOtqRpLdyLwFrk2vqN7KFu0PmS4zuaq8UN4SAi4D/m5vmw9h0oneeg
+         VHkuYcmxKgLxf/Usz7hNTlHhFY/Q0DNuQXGJUHhAqUSE6POiSCLU0VFUkQ7iPtmPmft4
+         Rhjw==
+X-Gm-Message-State: AO0yUKVhsT8E/Ta0KjU/53ZpAj267tSdd6P5FRCekjQDBvAYRypDqYFY
+        WfABhKU+J62fjc3dj2xJ6UHNhPg2vAcOoi9IFeNr/7pu
+X-Google-Smtp-Source: AK7set8r5pmoGtHSTVFJn6oN+hQ4Pq2URUeKxptKROX382iul8rPSAJyOsCQCSqVT1X48zM8WAm0Sw==
+X-Received: by 2002:a05:6402:60a:b0:4f9:deb4:b97f with SMTP id n10-20020a056402060a00b004f9deb4b97fmr5496584edv.13.1679435293511;
+        Tue, 21 Mar 2023 14:48:13 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id u3-20020a50d503000000b004fcd78d1215sm6918359edi.36.2023.03.21.14.48.12
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Mar 2023 14:48:12 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id y4so65371646edo.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 14:48:12 -0700 (PDT)
+X-Received: by 2002:a17:906:b28e:b0:935:3085:303b with SMTP id
+ q14-20020a170906b28e00b009353085303bmr2028336ejz.15.1679435291907; Tue, 21
+ Mar 2023 14:48:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: Landlock support for UML
-Thread-Index: cDpGZ2uHkUYDwsgQ8r9Yk4fx0jV61w==
-X-Spam-Status: No, score=0.0 required=5.0 tests=SPF_HELO_NONE,T_SPF_PERMERROR
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230320071442.172228-1-pedro.falcato@gmail.com>
+ <20230320115153.7n5cq4wl2hmcbndf@wittgenstein> <CAHk-=wjifBVf3ub0WWBXYg7JAao6V8coCdouseaButR0gi5xmg@mail.gmail.com>
+ <CAKbZUD2Y2F=3+jf+0dRvenNKk=SsYPxKwLuPty_5-ppBPsoUeQ@mail.gmail.com>
+ <CAHk-=wgc9qYOtuyW_Tik0AqMrQJK00n-LKWvcBifLyNFUdohDw@mail.gmail.com>
+ <20230321142413.6mlowi5u6ewecodx@wittgenstein> <20230321161736.njmtnkvjf5rf7x5p@wittgenstein>
+ <CAHk-=wi2mLKn6U7_aXMtP46TVSY6MTHv+ff-+xVFJbO914o65A@mail.gmail.com> <20230321201632.o2wiz5gk7cz36rn3@wittgenstein>
+In-Reply-To: <20230321201632.o2wiz5gk7cz36rn3@wittgenstein>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 21 Mar 2023 14:47:55 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg2nJ3Z8x-nDGi9iCJvDCgbhpN+qnZt6V1JPnHqxX2fhQ@mail.gmail.com>
+Message-ID: <CAHk-=wg2nJ3Z8x-nDGi9iCJvDCgbhpN+qnZt6V1JPnHqxX2fhQ@mail.gmail.com>
+Subject: Re: [PATCH] do_open(): Fix O_DIRECTORY | O_CREAT behavior
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Pedro Falcato <pedro.falcato@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ Ursprüngliche Mail -----
-> Von: "Mickaël Salaün" <mic@digikod.net>
-> Richard, Anton, Johannes, what do you think about these UML changes?
+On Tue, Mar 21, 2023 at 1:16=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> But yes, that is a valid complaint so - without having tested - sm like:
 
-I like them but didn't had a chance for a deeper look so far. :-S
+I'd actually go a bit further, and really spell all the bits out explicitly=
+.
 
-Thanks,
-//richard
+I mean, I was *literally* involved in that original O_TMPFILE_MASK thing:
+
+   https://lore.kernel.org/all/CA+55aFxA3qoM5wpMUya7gEA8SZyJep7kMBRjrPOsOm_=
+OudD8aQ@mail.gmail.com/
+
+with the whole O_DIRECOTY games to make O_TMPFILE safer, but despite
+that I didn't remember this at all, and my suggested "maybe something
+like this" patch was broken for the O_TMPFILE case.
+
+So while we do have all this documented in our history (both git
+commit logs and lore.kernel.org), I actually think it would be lovely
+to just make build_open_flags() be very explicit about all the exact
+O_xyz flags, and really write out the logic fully.
+
+For example, even your clarified version that gets rid of the
+"O_TMPFILE_MASK" thing still eends up doing
+
+        if (flags & __O_TMPFILE) {
+                if ((flags & O_TMPFILE) !=3D O_TMPFILE)
+                        return -EINVAL;
+
+and so when you look at that code, you don't actually realize that
+O_TMPFILE _cotnains_ that __O_TMPFILE bit, and what the above really
+means is "also check O_DIRECTORY".
+
+So considering how I couldn't remember this mess myself, despite
+having been involved with it personally (a decade ago..), I really do
+think that maybe this shoudl be open-coded with a comment, and the
+above code should instead be
+
+        if (flags & __O_TMPFILE) {
+                if (!(flags & O_DIRECTORY))
+                        return -EINVAL;
+
+together with an explicit comment about how O_TMPFILE is the
+*combination* of __O_TMPFILE and O_DIRECTORY, along with a short
+explanation as to why.
+
+Now, I agree that that test for O_DIRECTORY then _looks_ odd, but the
+thing is, it then makes the reality of this all much more explicit.
+
+In contrast, doing that
+
+                if ((flags & O_TMPFILE) !=3D O_TMPFILE)
+
+may *look* more natural in that context, but if you actually start
+thinking about it, that check makes no sense unless you then look up
+what O_TMPFILE is, and the history behind it.
+
+So I'd rather have code that looks a bit odd, but that explains itself
+and is explicit about what it does, than code that _tries_ to look
+natural but actually hides the reason for what it is doing.
+
+And then next time somebody looks at that O_DIRECTORY | O_CREAT
+combination, suddenly the __O_TMPFILE interaction is there, and very
+explicit.
+
+Hmm?
+
+I don't feel *hugely* strongly about this, so in the end I'll bow to
+your decision, but considering that my initial patch looked sane but
+was buggy because I had forgotten about O_TMPFILE, I really think we
+should make this more explicit at a source level..
+
+               Linus
+
+            Linus
