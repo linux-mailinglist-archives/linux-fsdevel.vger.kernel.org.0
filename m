@@ -2,158 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C5CE6C29C7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 06:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 107956C2A2C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 07:05:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbjCUFXs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 01:23:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41128 "EHLO
+        id S229892AbjCUGF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 02:05:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229901AbjCUFXq (ORCPT
+        with ESMTP id S229683AbjCUGF2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 01:23:46 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E54A17AA4;
-        Mon, 20 Mar 2023 22:23:43 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id eh3so55156040edb.11;
-        Mon, 20 Mar 2023 22:23:43 -0700 (PDT)
+        Tue, 21 Mar 2023 02:05:28 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56CE929E0D;
+        Mon, 20 Mar 2023 23:05:27 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id a16so10263120pjs.4;
+        Mon, 20 Mar 2023 23:05:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679376222;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lAuDp41/Jc9fpuI9VECojCxomDXuMmNXR8rPFwVFJCc=;
-        b=BHAOXHiS4k4TJgqRzzZoaBWltYI+Ohh+eodyGTbGiHP8Dg1q0nLI4p+CoX1rwg2w3N
-         tCA9V31XCHJ6itq3dPhid7873bq3r9XGcrKb3qmJ40Pjos0FvDBUhD2DlC8sE1oRoGm3
-         rGnLGz0fVlorTchxIVGSl82Pz+VMyfkYR7rfiKRiQ/1rxCAfy4KPV94TxmwLxBg5/Ctk
-         G2CYMSyllsK0ewyt4sOcNyfo3/2zBrXdsmgtKOYmEkpjEdsO9/MXMr8OnJCAvAi87KiU
-         GZHAihtjaJGaDYUJN1IFTmZ9s22FqTCLJkh3L/egQ75SJgZ6PYCNAbgAsLPCevbYaj2i
-         kzSw==
+        d=gmail.com; s=20210112; t=1679378727;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y+SP907X/SeUBhM/PRlD7SkiAzVdHeJVpNjB8FbspAg=;
+        b=IWxX3ncjwV8aVOOeyMwIHGxyzIurlBvEVpEHWSM02rtq0lQRKKn6Fd0ceiP5HP5QCA
+         6Iri1BCPFS/QW60zHMp0smnIhWfzS7+bHfhpox3t/xQ/Ry+TUDdXsXQJm7+Gm99wsnlR
+         8HxBaXwRi13UHPqf9E7LGmbTbWUCRPhblJv35s8FU5cpbihDifZ+Ymp6S50yCTfU5BZM
+         SvIIkz7y+rDP17894DoDKBX3sFK4C8QVU+tLPJedkVVW13+wCwAw3+16cqW3+9UgOQJd
+         6jfnb2hXYTZTyuVAGDM/MSimYpDNanwaDgOkLEBXrz9GYDk/mtC0jeGqosLeSFjmD/MR
+         4jDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679376222;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lAuDp41/Jc9fpuI9VECojCxomDXuMmNXR8rPFwVFJCc=;
-        b=6aCRE6fPwjcpeEN6YMYi26JBvNEcG1f01YhOzCvtq3f/Uj6qBbzinDAMsHy1bc867X
-         sgYS2kqkzg+HFCLMNVcLubuR53fwc1Tj1Ae/ZeFbm3UZvVH2kbTb2Rj6J1mlRBsTt2rk
-         qroahv8bw2LvHLsjyuDgdr/CFFbeihy4gBRf0QWhViyPPhgsfE4nxxgauAKK4G5ykaVv
-         juxg2/CIUt9EeY8lH84+cV+czs0ECTJfG7ErSrXGQQfiQAQvPiigmpPeqVVKMK8vtvYe
-         vTviDs/innrdvYqw4sNTMR57zmRmfeGY3dXVarEgNK84EJMUvhm8fUwV1yrLJEw894qH
-         IbtQ==
-X-Gm-Message-State: AO0yUKXaEAHdQgw1nLCkP/FzLAjGtIQjDF2vXRrj/eA3wsGbYBNfxb0l
-        trr6SAt7lu+64vdeKxuCIko=
-X-Google-Smtp-Source: AK7set9TcfYfZ/XME1QNGZ73w+jPmylxr6E5FwUlYCjpaqJZ07PpOC7KRKrgFUrwNWcUwK482e0t/g==
-X-Received: by 2002:a17:906:f10c:b0:930:a3a1:bede with SMTP id gv12-20020a170906f10c00b00930a3a1bedemr1546987ejb.50.1679376222041;
-        Mon, 20 Mar 2023 22:23:42 -0700 (PDT)
-Received: from pc636 ([155.137.26.201])
-        by smtp.gmail.com with ESMTPSA id kg2-20020a17090776e200b009334219656dsm3472789ejc.56.2023.03.20.22.23.40
+        d=1e100.net; s=20210112; t=1679378727;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y+SP907X/SeUBhM/PRlD7SkiAzVdHeJVpNjB8FbspAg=;
+        b=r1YfVHU84ak4moC0h6meDHCzQbk8Inb4KeFZpvk7FixHM2AsVKXEYIQJ3zYlwdqZ1V
+         tQ0IHITS1mtesCyQ+LQKBmzhmTB0gq6wyGHQO3YIKO3Q6KSlhxQC7XYyrZWb2PpZezTq
+         P30Ju3vdao+jOp36yh2Zc3p/HrUiDBp4/yv5E4rEKmyknp1TmMqNqMBuFaOp1vSIwR7H
+         c+BjrfGDOSlH1Ce7aFwy5Oz+y9Fp01hA2o9QU+AV4hjJXdszrJXRhn1krATz1o4mqPd7
+         51CLA/iZHZy6yIqrwDOOwYnti8LIxTOxdQR3R/MICxwxNVCCsthE10fQqXe3zh/TIWWh
+         BtvA==
+X-Gm-Message-State: AO0yUKXbJjYp/aDkOaFsx+8mKjVjM3+aE3VbMRhTb8opv3BqmpYeNW2n
+        49Wqb9nuER4eGunTs/RUW5k=
+X-Google-Smtp-Source: AK7set9ukTQm402ocqVk6fh4G3GBri9ryQ7FuCaGIfmYvRLaDVN3QObvZpwlqD55VtxXguDqxQSq2w==
+X-Received: by 2002:a17:902:db12:b0:1a1:d949:a52d with SMTP id m18-20020a170902db1200b001a1d949a52dmr1370406plx.65.1679378726453;
+        Mon, 20 Mar 2023 23:05:26 -0700 (PDT)
+Received: from localhost ([2600:380:4a39:cac0:d7fa:8e4d:47d8:f561])
+        by smtp.gmail.com with ESMTPSA id 13-20020a63134d000000b004fb171df68fsm7157609pgt.7.2023.03.20.23.05.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 22:23:41 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Tue, 21 Mar 2023 06:23:39 +0100
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH v2 2/4] mm: vmalloc: use rwsem, mutex for vmap_area_lock
- and vmap_block->lock
-Message-ID: <ZBk/Wxj4rXPra/ge@pc636>
-References: <cover.1679209395.git.lstoakes@gmail.com>
- <6c7f1ac0aeb55faaa46a09108d3999e4595870d9.1679209395.git.lstoakes@gmail.com>
- <ZBkDuLKLhsOHNUeG@destitution>
+        Mon, 20 Mar 2023 23:05:26 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Mon, 20 Mar 2023 20:05:24 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>, fsverity@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        Nathan Huckleberry <nhuck@google.com>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [GIT PULL] fsverity fixes for v6.3-rc4
+Message-ID: <ZBlJJBR7dH4/kIWD@slm.duckdns.org>
+References: <20230320210724.GB1434@sol.localdomain>
+ <CAHk-=wgE9kORADrDJ4nEsHHLirqPCZ1tGaEPAZejHdZ03qCOGg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZBkDuLKLhsOHNUeG@destitution>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wgE9kORADrDJ4nEsHHLirqPCZ1tGaEPAZejHdZ03qCOGg@mail.gmail.com>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 12:09:12PM +1100, Dave Chinner wrote:
-> On Sun, Mar 19, 2023 at 07:09:31AM +0000, Lorenzo Stoakes wrote:
-> > vmalloc() is, by design, not permitted to be used in atomic context and
-> > already contains components which may sleep, so avoiding spin locks is not
-> > a problem from the perspective of atomic context.
-> > 
-> > The global vmap_area_lock is held when the red/black tree rooted in
-> > vmap_are_root is accessed and thus is rather long-held and under
-> > potentially high contention. It is likely to be under contention for reads
-> > rather than write, so replace it with a rwsem.
-> > 
-> > Each individual vmap_block->lock is likely to be held for less time but
-> > under low contention, so a mutex is not an outrageous choice here.
-> > 
-> > A subset of test_vmalloc.sh performance results:-
-> > 
-> > fix_size_alloc_test             0.40%
-> > full_fit_alloc_test		2.08%
-> > long_busy_list_alloc_test	0.34%
-> > random_size_alloc_test		-0.25%
-> > random_size_align_alloc_test	0.06%
-> > ...
-> > all tests cycles                0.2%
-> > 
-> > This represents a tiny reduction in performance that sits barely above
-> > noise.
+Hello,
+
+(cc'ing Lai.)
+
+On Mon, Mar 20, 2023 at 03:31:13PM -0700, Linus Torvalds wrote:
+> On Mon, Mar 20, 2023 at 2:07 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > Nathan Huckleberry (1):
+> >       fsverity: Remove WQ_UNBOUND from fsverity read workqueue
 > 
-> I'm travelling right now, but give me a few days and I'll test this
-> against the XFS workloads that hammer the global vmalloc spin lock
-> really, really badly. XFS can use vm_map_ram and vmalloc really
-> heavily for metadata buffers and hit the global spin lock from every
-> CPU in the system at the same time (i.e. highly concurrent
-> workloads). vmalloc is also heavily used in the hottest path
-> throught the journal where we process and calculate delta changes to
-> several million items every second, again spread across every CPU in
-> the system at the same time.
+> There's a *lot* of other WQ_UNBOUND users. If it performs that badly,
+> maybe there is something wrong with the workqueue code.
+>
+> Should people be warned to not use WQ_UNBOUND - or is there something
+> very special about fsverity?
 > 
-> We really need the global spinlock to go away completely, but in the
-> mean time a shared read lock should help a little bit....
+> Added Tejun to the cc. With one of the main documented reasons for
+> WQ_UNBOUND being performance (both implicit "try to start execution of
+> work items as soon as possible") and explicit ("CPU intensive
+> workloads which can be better managed by the system scheduler"), maybe
+> it's time to reconsider?
 > 
-I am working on it. I submitted a proposal how to eliminate it:
+> WQ_UNBOUND adds a fair amount of complexity and special cases to the
+> workqueues, and this is now the second "let's remove it because it's
+> hurting things in a big way".
 
+Do you remember what the other case was? Was it also on heterogenous arm
+setup?
 
-<snip>
-Hello, LSF.
+There aren't many differences between unbound workqueues and percpu ones
+that aren't concurrency managed. If there are significant performance
+differences, it's unlikely to be directly from whatever workqueue is doing.
 
-Title: Introduce a per-cpu-vmap-cache to eliminate a vmap lock contention
+One obvious thing that comes to mind is that WQ_UNBOUND may be pushing tasks
+across expensive cache boundaries (e.g. across cores that are living on
+separate L3 complexes). This isn't a totally new problem and workqueue has
+some topology awareness, by default, WQ_UNBOUND pools are segregated across
+NUMA boundaries. This used to be fine but I think it's likely outmoded now.
+given that non-trivial cache hierarchies on top of UMA or inside a node are
+a thing these days.
 
-Description:
- Currently the vmap code is not scaled to number of CPU cores in a system
- because a global vmap space is protected by a single spinlock. Such approach
- has a clear bottleneck if many CPUs simultaneously access to one resource.
+Looking at f959325e6ac3 ("fsverity: Remove WQ_UNBOUND from fsverity read
+workqueue"), I feel a bit uneasy. This would be fine on a setup which does
+moderate amount of IOs on CPUs with quick enough accelration mechanisms, but
+that's not the whole world. Use cases that generate extreme amount of IOs do
+depend on the ability to fan out IO related work items across multiple CPUs
+especially if the IOs coincide with network activities. So, my intuition is
+that the commit is fixing a subset of use cases while likely regressing
+others.
 
- In this talk i would like to describe a drawback, show some data related
- to contentions and places where those occur in a code. Apart of that i
- would like to share ideas how to eliminate it providing a few approaches
- and compare them.
+If the cache theory is correct, the right thing to do would be making
+workqueue init code a bit smarter so that it segements unbound pools on LLC
+boundaries rather than NUMA, which would make more sense on recent AMD chips
+too. Nathan, can you run `hwloc-ls` on the affected setup (or `lstopo
+out.pdf`) and attach the output?
 
-Requirements:
- * It should be a per-cpu approach;
- * Search of freed ptrs should not interfere with other freeing(as much as we can);
- *   - offload allocated areas(buzy ones) per-cpu;
- * Cache ready sized objects or merge them into one big per-cpu-space(split on demand);
- * Lazily-freed areas either drained per-cpu individually or by one CPU for all;
- * Prefetch a fixed size in front and allocate per-cpu
+As for the overhead of supporting WQ_UNBOUND, it does add non-trivial amount
+of complexity but of the boring kind. It's all managerial stuff which isn't
+too difficult to understand and relatively easy to understand and fix when
+something goes wrong, so it isn't expensive in terms of supportability and
+it does address classes of significant use cases, so I think we should just
+fix it.
 
-Goals:
- * Implement a per-cpu way of allocation to eliminate a contention.
+Thanks.
 
-Thanks!
-<snip>
-
---
-Uladzislau Rezki
-
+-- 
+tejun
