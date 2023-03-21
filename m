@@ -2,122 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C978E6C2667
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 01:39:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B72A6C267C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 01:49:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjCUAjh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Mar 2023 20:39:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47464 "EHLO
+        id S229822AbjCUAs6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Mar 2023 20:48:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbjCUAjg (ORCPT
+        with ESMTP id S229750AbjCUAsy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Mar 2023 20:39:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 116F5199C3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Mar 2023 17:38:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679359133;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6wU5XOH729W23QeACiFkmwZYQQNEl+r3lctE+wUBurc=;
-        b=DUZU28e42mxKSrAnEzdVdn34fVg0l2ISRZwmFmM9lEuOkNCdiMCQFBQRSF/aGaBt8TLQ49
-        sYT3WNOZrDv1IYMfxtFyPWtlaIRavM/AZe9KAlszrJd6TvwMh/gQnZ69Jj9VncKTcehUOc
-        MCgKJmPQNiOvawQqS9EhHbft35CCFms=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-436-pOBDWDwgN5yYGvwt9d91KA-1; Mon, 20 Mar 2023 20:38:49 -0400
-X-MC-Unique: pOBDWDwgN5yYGvwt9d91KA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 13447800045;
-        Tue, 21 Mar 2023 00:38:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1F98F175AD;
-        Tue, 21 Mar 2023 00:38:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <6413675eedcfa_33bc9d208e9@willemb.c.googlers.com.notmuch>
-References: <6413675eedcfa_33bc9d208e9@willemb.c.googlers.com.notmuch> <641361cd8d704_33b0cc20823@willemb.c.googlers.com.notmuch> <20230316152618.711970-1-dhowells@redhat.com> <20230316152618.711970-4-dhowells@redhat.com> <811534.1678992280@warthog.procyon.org.uk>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH 03/28] tcp: Support MSG_SPLICE_PAGES
+        Mon, 20 Mar 2023 20:48:54 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF772113FB;
+        Mon, 20 Mar 2023 17:48:51 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id DAE775C019B;
+        Mon, 20 Mar 2023 20:48:49 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 20 Mar 2023 20:48:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1679359729; x=1679446129; bh=oG
+        kjK2TbqrODiZ27bwpufFy80dPhzmLH1tKePfQCcsg=; b=v2FnbI7Rk9K6GPSwoV
+        xTFz47m9B3DRkVgQxdK6L5tpwV54Pkk7nXPDW8hO9SqjDMl1ZpssfT6uEk2Yrbnj
+        95keebwa6R3FM4Pf/+d9dgLdWAhDmVitG2jRZLxpi4Fj9X2ICuP9iusyKQv0yjdV
+        vy6xo2bGVmW2P9VxdwPsscbPDhoLYU4CrDQS9TRgNrj1bs+YmyjAYIfVFNyHwbdN
+        PTjHUe5eyOqJdy5/nDUl2mESU2Nj5bSt8b7fGgACtHwaf+DfXEeltmX7FpBE23oS
+        GF6nRFzvAOu0tobGk2qS0ijszzwi7x63ONxjyyVMfRQUr1ZGxwmrJfkEaoum/gBk
+        EJgg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:message-id:mime-version:reply-to:reply-to:sender
+        :subject:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm2; t=1679359729; x=1679446129; bh=o
+        GkjK2TbqrODiZ27bwpufFy80dPhzmLH1tKePfQCcsg=; b=DzX6tcpSYSk9j7QHV
+        +EMwBA/10OxE8TVWLr6K+huXm9MJ53Bi6IxUgPIubvFX74ivmSImfisv3iXPZAIs
+        uVJo45bg4cO2YTOSRzkZXiBSFQkiuPYjDsuJORjml0Bs/fO+u16RAic6UHbGuIK8
+        BkW333wARlfN/fCdjK1KeJS4UPSDYszqbsUqyVNcOBm47PQqJt5HQ5R5oQ0k9DYJ
+        PQi1X64ymp6bOKP4HS60cIr/T/k1jeklixqZaPsRpz3ERurcT93fmsn/uPNkRrp6
+        g1aKzOcYnI9aUdBrHnAqfYGDjCz8DWeeaAA3vEqEzL0U1fyFK9/gNbyplQlRoCOl
+        HIjEA==
+X-ME-Sender: <xms:8f4YZHEziw9O6xYv0zVNgw6T5KNDv0jZBP24KUVax6_f9c5kAOVfeg>
+    <xme:8f4YZEWJnmADW3GVHsM-lq3Vo3ymhF2A5ylT2oDxdljkzUTMifyYFQgJSHIvbEiyu
+    80JzBBlGIQ-yF2kTA>
+X-ME-Received: <xmr:8f4YZJLI0Osvud0r1x7HmlmDU62gVviQcZlTvhZYd3HoWJtkmTk9c3XWmof7ouDsB8OVe8VMGG6kInjngkkp5PnWUPnpyYQ3mjJjFNNc7tryYJpBTpcDMbztK2E8_Gw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdefledgvdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofhrggfgsedtqhertdertddtnecuhfhrohhmpegkihcujggr
+    nhcuoeiiihdrhigrnhesshgvnhhtrdgtohhmqeenucggtffrrghtthgvrhhnpedvieeutd
+    ehtddthfegveekueevfedvueehjeeltdevgfejteekudfgvdelveekffenucffohhmrghi
+    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepiihirdihrghnsehsvghnthdrtghomh
+X-ME-Proxy: <xmx:8f4YZFH-k8MiCb1AZT43rTC3Iusm4DYChWfdn1O7rbkLHccCwp98ew>
+    <xmx:8f4YZNXSbymnOShVpJgEw9q3xgk_qPF3ltqHwPv9n39b64mXlJys6A>
+    <xmx:8f4YZAO_Sq9MbNIpY2wSkutSGsqo8wyNv-YovTm2jWWDtazPhbQ6rQ>
+    <xmx:8f4YZJr5alsmT1CNYtBtsUXuZPnPu-aGkmIpZ0HUUWBoQeT4MVhU6g>
+Feedback-ID: iccd040f4:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 20 Mar 2023 20:48:49 -0400 (EDT)
+From:   Zi Yan <zi.yan@sent.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        linux-mm@kvack.org
+Cc:     Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: [PATCH 0/5] Split a folio to any lower order folios
+Date:   Mon, 20 Mar 2023 20:48:24 -0400
+Message-Id: <20230321004829.2012847-1-zi.yan@sent.com>
+X-Mailer: git-send-email 2.39.2
+Reply-To: Zi Yan <ziy@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2040078.1679359126.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 21 Mar 2023 00:38:46 +0000
-Message-ID: <2040079.1679359126@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+From: Zi Yan <ziy@nvidia.com>
 
-> David Howells wrote:
-> > Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
-> > =
+Hi all,
 
-> > > The commit message mentions MSG_SPLICE_PAGES as an internal flag.
-> > > =
+File folio supports any order and people would like to support flexible ord=
+ers
+for anonymous folio[1] too. Currently, split_huge_page() only splits a huge
+page to order-0 pages, but splitting to orders higher than 0 is also useful.
+This patchset adds support for splitting a huge page to any lower order pag=
+es
+and uses it during folio truncate operations.
 
-> > > It can be passed from userspace. The code anticipates that and check=
-s
-> > > preconditions.
-> > =
+The patchset is on top of mm-everything-2023-03-19-21-50.
 
-> > Should I add a separate field in the in-kernel msghdr struct for such =
-internal
-> > flags?  That would also avoid putting an internal flag in the same spa=
-ce as
-> > the uapi flags.
-> =
+* Patch 1 and 2 add new_order parameter split_page_memcg() and
+  split_page_owner() and prepare for upcoming changes.
+* Patch 3 adds split_huge_page_to_list_to_order() to split a huge page
+  to any lower order. The original split_huge_page_to_list() calls
+  split_huge_page_to_list_to_order() with new_order =3D 0.
+* Patch 4 uses split_huge_page_to_list_to_order() in large pagecache folio
+  truncation instead of split the large folio all the way down to order-0.
+* Patch 5 adds a test API to debugfs and test cases in
+  split_huge_page_test selftests.
 
-> That would work, if no cost to common paths that don't need it.
+Comments and/or suggestions are welcome.
 
-Actually, it might be tricky.  __ip_append_data() doesn't take a msghdr st=
-ruct
-pointer per se.  The "void *from" argument *might* point to one - but it
-depends on seeing a MSG_SPLICE_PAGES or MSG_ZEROCOPY flag, otherwise we do=
-n't
-know.
+[1] https://lore.kernel.org/linux-mm/Y%2FblF0GIunm+pRIC@casper.infradead.or=
+g/
 
-Possibly this changes if sendpage goes away.
+Zi Yan (5):
+  mm: memcg: make memcg huge page split support any order split.
+  mm: page_owner: add support for splitting to any order in split
+    page_owner.
+  mm: thp: split huge page to any lower order pages.
+  mm: truncate: split huge page cache page to a non-zero order if
+    possible.
+  mm: huge_memory: enable debugfs to split huge pages to any order.
 
-> A not very pretty alternative would be to add an an extra arg to each
-> sendmsg handler that is used only when called from sendpage.
-> =
+ include/linux/huge_mm.h                       |  10 +-
+ include/linux/memcontrol.h                    |   5 +-
+ include/linux/page_owner.h                    |  12 +-
+ mm/huge_memory.c                              | 138 ++++++++---
+ mm/memcontrol.c                               |   8 +-
+ mm/page_alloc.c                               |   8 +-
+ mm/page_owner.c                               |  11 +-
+ mm/truncate.c                                 |  21 +-
+ .../selftests/mm/split_huge_page_test.c       | 225 +++++++++++++++++-
+ 9 files changed, 368 insertions(+), 70 deletions(-)
 
-> There are a few other internal MSG_.. flags, such as
-> MSG_SENDPAGE_NOPOLICY. Those are all limited to sendpage, and ignored
-> in sendmsg, I think. Which would explain why it was clearly safe to
-> add them.
-
-Should those be moved across to the internal flags with MSG_SPLICE_PAGES?
-
-David
+--=20
+2.39.2
 
