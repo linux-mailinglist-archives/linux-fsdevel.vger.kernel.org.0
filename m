@@ -2,418 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A49186C36C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 17:18:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B756B6C3708
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 17:36:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbjCUQR6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 12:17:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46392 "EHLO
+        id S229944AbjCUQgd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 12:36:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbjCUQRv (ORCPT
+        with ESMTP id S229552AbjCUQgc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 12:17:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF654E5EB;
-        Tue, 21 Mar 2023 09:17:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 94DD5B818B9;
-        Tue, 21 Mar 2023 16:17:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD326C433D2;
-        Tue, 21 Mar 2023 16:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679415461;
-        bh=jUbbvcgOdoFVj5tMqmxBLecT89FFBORLuZu1c+v65I8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GuwKJerWp9f+6OyuuHNZbpRfjxV690q1d8+JRUhgTz6VhUrfJIq382zfOczZk/Qk4
-         gqsc6dQd6ZW3P4fVsXe1Wmn9vzjwW0YXPBzqhGMwkYuwhM2kUpRubHuIPazYisraMe
-         J2uVSPToT0J6gBLwZmAb236NZMI1izR2WQlmK0fhL2kTa3ZVolsglIj7z8QNRRJMu2
-         V7/o0c9vZ0eDKtUT8rRO3b4DUIZMHX2npviVzTAdzbzgq78erEyZn3WsN6AGj79XdR
-         5IsHV1lCs0kn9MiUK3rGBH0YjxA3qkN7jPnZ0ylhZpDbEuqF3Ly1h27Bl06CSgVkF+
-         vOQZgxAXsObng==
-Date:   Tue, 21 Mar 2023 17:17:36 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Pedro Falcato <pedro.falcato@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH] do_open(): Fix O_DIRECTORY | O_CREAT behavior
-Message-ID: <20230321161736.njmtnkvjf5rf7x5p@wittgenstein>
-References: <20230320071442.172228-1-pedro.falcato@gmail.com>
- <20230320115153.7n5cq4wl2hmcbndf@wittgenstein>
- <CAHk-=wjifBVf3ub0WWBXYg7JAao6V8coCdouseaButR0gi5xmg@mail.gmail.com>
- <CAKbZUD2Y2F=3+jf+0dRvenNKk=SsYPxKwLuPty_5-ppBPsoUeQ@mail.gmail.com>
- <CAHk-=wgc9qYOtuyW_Tik0AqMrQJK00n-LKWvcBifLyNFUdohDw@mail.gmail.com>
- <20230321142413.6mlowi5u6ewecodx@wittgenstein>
+        Tue, 21 Mar 2023 12:36:32 -0400
+X-Greylist: delayed 156933 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 21 Mar 2023 09:36:23 PDT
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A54450FB3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 09:36:22 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Pgy0h5Y0jzMqhLG;
+        Tue, 21 Mar 2023 17:36:20 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Pgy0g6shxzMtjgj;
+        Tue, 21 Mar 2023 17:36:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1679416580;
+        bh=qumkEvsAHLUYGB0O6o8Z2yH2ETlDqnV8tl0GiTv+1+I=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=CerXSfFaHDYxp5vRzazT1ckjFo4WZAXasujEXYp5dTFn8/expMQC4kaDXPekduvA1
+         SFQcqjA83CLP8oKUDbti6M78609D6mVmihhBz0NTXIM5UvZhq7ro1QnIg/MU/Cm8Vr
+         4512uzd7ekyhfHgVGKWTAvLDIAHtZgCtgxv5TFqo=
+Message-ID: <e70f7926-21b6-fbce-c5d6-7b3899555535@digikod.net>
+Date:   Tue, 21 Mar 2023 17:36:19 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: 
+Subject: Re: Does Landlock not work with eCryptfs?
+Content-Language: en-US
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+Cc:     landlock@lists.linux.dev, Tyler Hicks <code@tyhicks.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <20230319.2139b35f996f@gnoack.org>
+ <c1c9c688-c64d-adf2-cc96-dc2aaaae5944@digikod.net>
+ <20230320.c6b83047622f@gnoack.org>
+ <5d415985-d6ac-2312-3475-9d117f3be30f@digikod.net>
+In-Reply-To: <5d415985-d6ac-2312-3475-9d117f3be30f@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230321142413.6mlowi5u6ewecodx@wittgenstein>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,WEIRD_QUOTING autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Infomaniak-Routing: alpha
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 03:24:19PM +0100, Christian Brauner wrote:
-> On Mon, Mar 20, 2023 at 01:24:52PM -0700, Linus Torvalds wrote:
-> > On Mon, Mar 20, 2023 at 12:27 PM Pedro Falcato <pedro.falcato@gmail.com> wrote:
-> > >
-> > > 1) Pre v5.7 Linux did the open-dir-if-exists-else-create-regular-file
-> > > we all know and """love""".
-> > 
-> > So I think we should fall back to this as a last resort, as a "well,
-> > it's our historical behavior".
-> > 
-> > > 2) Post 5.7, we started returning this buggy -ENOTDIR error, even when
-> > > successfully creating a file.
-> > 
-> > Yeah, I think this is the worst of the bunch and has no excuse (unless
-> > some crazy program has started depending on it, which sounds really
-> > *really* unlikely).
-> > 
-> > > 3) NetBSD just straight up returns EINVAL on open(O_DIRECTORY | O_CREAT)
-> > > 4) FreeBSD's open(O_CREAT | O_DIRECTORY) succeeds if the file exists
-> > > and is a directory. Fails with -ENOENT if it falls onto the "O_CREAT"
-> > > path (i.e it doesn't try to create the file at all, just ENOENT's;
-> > > this changed relatively recently, in 2015)
-> > 
-> > Either of these sound sensible to me.
-> > 
-> > I suspect (3) is the clearest case.
+There is an inconsistency between ecryptfs_dir_open() and 
+ecryptfs_open(). ecryptfs_dir_open() actually checks access right to the 
+lower directory, which is why landlocked processes may not access the 
+upper directory when reading its content. ecryptfs_open() uses a cache 
+for upper files (which could be a problem on its own). The execution 
+flow is:
+
+ecryptfs_open() -> ecryptfs_get_lower_file() -> 
+ecryptfs_init_lower_file() -> ecryptfs_privileged_open()
+
+In ecryptfs_privileged_open(), the dentry_open() call failed if access 
+to the lower file is not allowed by Landlock (or other access-control 
+systems). Then wait_for_completion(&req.done) waits for a kernel's 
+thread executing ecryptfs_threadfn(), which uses the kernel's credential 
+to access the lower file.
+
+I think there are two main solutions to fix this consistency issue:
+- store the mounter credentials and uses them instead of the kernel's 
+credentials for lower file and directory access checks 
+(ecryptfs_dir_open and ecryptfs_threadfn changes);
+- use the kernel's credentials for all lower file/dir access check, 
+especially in ecryptfs_dir_open().
+
+I think using the mounter credentials makes more sense, is much safer, 
+and fits with overlayfs. It may not work in cases where the mounter 
+doesn't have access to the lower file hierarchy though.
+
+File creation calls vfs_*() helpers (lower directory) and there is not 
+path nor file security hook calls for those, so it works unconditionally.
+
+ From Landlock end users point of view, it makes more sense to grants 
+access to a file hierarchy (where access is already allowed) and be 
+allowed to access this file hierarchy, whatever it belongs to a specific 
+filesystem (and whatever the potential lower file hierarchy, which may 
+be unknown to users). This is how it works for overlayfs and I'd like to 
+have the same behavior for ecryptfs.
+
+
+On 20/03/2023 18:21, Mickaël Salaün wrote:
 > 
-> Yeah, we should try that.
+> On 20/03/2023 18:15, Günther Noack wrote:
+>> Hello!
+>>
+>> On Sun, Mar 19, 2023 at 10:00:46PM +0100, Mickaël Salaün wrote:
+>>> Hi Günther,
+>>>
+>>> Thanks for the report, I confirm there is indeed a bug. I tested with a
+>>> Debian distro:
+>>>
+>>> ecryptfs-setup-private --nopwcheck --noautomount
+>>> ecryptfs-mount-private
+>>> # And then with the kernel's sample/landlock/sandboxer:
+>>> LL_FS_RO="/usr" LL_FS_RW="${HOME}/Private" sandboxer ls ~/Private
+>>> ls: cannot open directory '/home/user/Private': Permission denied
+>>>
+>>> Actions other than listing a directory (e.g. creating files/directories,
+>>> reading/writing to files) are controlled as expected. The issue might be
+>>> that directories' inodes are not the same when listing the content of a
+>>> directory or when creating new files/directories (which is weird). My
+>>> hypothesis is that Landlock would then deny directory reading because the
+>>> directory's inode doesn't match any rule. It might be related to the overlay
+>>> nature of ecryptfs.
+>>>
+>>> Tyler, do you have some idea?
+>>
+>> I had a hunch, and found out that the example can be made to work by
+>> granting the LANDLOCK_ACCESS_FS_READ_DIR right on the place where the
+>> *encrypted* version of that home directory lives:
+>>
+>>     err := landlock.V1.RestrictPaths(
+>>             landlock.RODirs(dir),
+>>             landlock.PathAccess(llsys.AccessFSReadDir, "/home/.ecryptfs/gnoack/.Private"),
+>>     )
+>>
+>> It does seem a bit like eCryptfs it calling security_file_open() under
+>> the hood for the encrypted version of that file? Is that correct?
 > 
-> > 
-> > And (4) might be warranted just because it's closer to what we used to
-> > do, and it's *possible* that somebody happens to use O_DIRECTORY |
-> > O_CREAT on directories that exist, and never noticed how broken that
-> > was.
-> 
-> I really really hope that isn't the case because (4) is pretty nasty.
-> Having to put this on a manpage seems nightmarish.
-> 
-> > 
-> > And (4) has another special case: O_EXCL. Because I'm really hoping
-> > that O_DIRECTORY | O_EXCL will always fail.
-> 
-> I've detailed the semantics for that in the commit message below...
-> 
-> > 
-> > Is the proper patch something along the lines of this?
-> 
-> Yeah, I think that would do it and I think that's what we should try to
-> get away with. I just spent time and took a look who passes O_DIRECTORY
-> and O_CREAT and interestingly there are a number of comments roughly
-> along the lines of the following example:
-> 
-> /* Ideally we could use openat(O_DIRECTORY | O_CREAT | O_EXCL) here
->  * to create and open the directory atomically
-> 
-> suggests that people who specify O_DIRECTORY | O_CREAT are interested in
-> creating a directory. But since this never did work they don't tend to
-> use that flag combination (I've collected a few samples in [1] to [4].).
-> 
-> (As a sidenote, posix made an interpretation change a long time ago to
-> at least allow for O_DIRECTORY | O_CREAT to create a directory (see [3]).
-> 
-> But that's a whole different can of worms and I haven't spent any
-> thoughts even on feasibility. And even if we should probably get through
-> a couple of kernels with O_DIRECTORY | O_CREAT failing with EINVAL first.)
-> 
-> > 
-> >    --- a/fs/open.c
-> >    +++ b/fs/open.c
-> >    @@ -1186,6 +1186,8 @@ inline int build_open_flags(const struct
-> > open_how *how, struct open_flags *op)
-> > 
-> >         /* Deal with the mode. */
-> >         if (WILL_CREATE(flags)) {
-> >    +            if (flags & O_DIRECTORY)
-> >    +                    return -EINVAL;
-> 
-> This will be problematic because for weird historical reasons O_TMPFILE
-> includes O_DIRECTORY so this would unfortunately break O_TMPFILE. :/
-> I'll try to have a patch ready in a bit.
-
-So, had to do some testing first:
-
-This survives xfstests:
-        sudo ./check -g unlink,idmapped
-which pounds on the creation and O_TMPFILE paths.
-
-It also survives LTP:
-        # The following includes openat2, openat, open, fsopen, open_tree, etc.
-        sudo ./runtltp -f syscalls open
-
-I've also written a (very nasty) test script:
-
-        #define _GNU_SOURCE
-        #include <fcntl.h>
-        #include <stdio.h>
-        #include <stdlib.h>
-
-        int main(int argc, char *argv[])
-        {
-                int fd;
-
-                fd = open("/tmp/TEST", O_DIRECTORY | O_CREAT);
-                if (fd >= 0)
-                        printf("%d\n", fd);
-                else
-                        printf("%m: fd(%d)\n", fd);
-
-                fd = open("/tmp/TEST", O_DIRECTORY | O_CREAT | O_EXCL);
-                if (fd >= 0)
-                        printf("%d\n", fd);
-                else
-                        printf("%m: fd(%d)\n", fd);
-
-                fd = open("/tmp/TEST", O_DIRECTORY | O_EXCL);
-                if (fd >= 0)
-                        printf("%d\n", fd);
-                else
-                        printf("%m: fd(%d)\n", fd);
-
-                exit(EXIT_SUCCESS);
-        }
-        ubuntu@vm1:~/ssd$ sudo ./create_test
-        Invalid argument: fd(-1)
-        Invalid argument: fd(-1)
-        No such file or directory: fd(-1)
-
-I think this should work. From the commit message it's hopefully clear
-that this is proper semantic change. But I think we might be able to
-pull this off given how rare this combination should be and how
-unnoticed the current regression has gone and for how long...
-
-So I came up with the following description trying to detail the
-semantics prior to v5.7, post v5.7 up until this patch, and then after
-the patch. Linus, I added your SOB to this but tell me if you'd rather
-not be associated with this potential mess...
-
-It would be very nice if we had tests for the new behavior. So if @Pedro
-would be up for it that would be highly appreciated. If not I'll put it
-on my ToDo...
-
-So I can carry this and sent a pr or it can be picked up directly. I'm
-not fuzzed. Hopefully there are no surprises or objections...
-
-From 6bc6e6a4c9ed0dcbe0c85cbbaca90953e27889e5 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 21 Mar 2023 09:18:07 +0100
-Subject: [PATCH] open: return EINVAL for O_DIRECTORY | O_CREAT
-
-After a couple of years and multiple LTS releases we received a report
-that the behavior of O_DIRECTORY | O_CREAT changed starting with v5.7.
-
-On kernels prior to v5.7 combinations of O_DIRECTORY, O_CREAT, O_EXCL
-had the following semantics:
-
-(1) open("/tmp/d", O_DIRECTORY | O_CREAT)
-    * d doesn't exist:                create regular file
-    * d exists and is a regular file: ENOTDIR
-    * d exists and is a directory:    EISDIR
-
-(2) open("/tmp/d", O_DIRECTORY | O_CREAT | O_EXCL)
-    * d doesn't exist:                create regular file
-    * d exists and is a regular file: EEXIST
-    * d exists and is a directory:    EEXIST
-
-(3) open("/tmp/d", O_DIRECTORY | O_EXCL)
-    * d doesn't exist:                ENOENT
-    * d exists and is a regular file: ENOTDIR
-    * d exists and is a directory:    open directory
-
-On kernels since to v5.7 combinations of O_DIRECTORY, O_CREAT, O_EXCL
-have the following semantics:
-
-(1) open("/tmp/d", O_DIRECTORY | O_CREAT)
-    * d doesn't exist:                ENOTDIR (create regular file)
-    * d exists and is a regular file: ENOTDIR
-    * d exists and is a directory:    EISDIR
-
-(2) open("/tmp/d", O_DIRECTORY | O_CREAT | O_EXCL)
-    * d doesn't exist:                ENOTDIR (create regular file)
-    * d exists and is a regular file: EEXIST
-    * d exists and is a directory:    EEXIST
-
-(3) open("/tmp/d", O_DIRECTORY | O_EXCL)
-    * d doesn't exist:                ENOENT
-    * d exists and is a regular file: ENOTDIR
-    * d exists and is a directory:    open directory
-
-This is a fairly substantial semantic change that userspace didn't
-notice until Pedro took the time to deliberately figure out corner
-cases. Since no one noticed this breakage we can somewhat safely assume
-that O_DIRECTORY | O_CREAT combinations are likely unused.
-
-The v5.7 breakage is especially weird because while ENOTDIR is returned
-indicating failure a regular file is actually created. This doesn't make
-a lot of sense.
-
-Time was spent finding potential users of this combination. Searching on
-codesearch.debian.net showed that codebases often express semantical
-expectations about O_DIRECTORY | O_CREAT which are completely contrary
-to what our code has done and currently does.
-
-The expectation often is that this particular combination would create
-and open a directory. This suggests users who tried to use that
-combination would stumble upon the counterintuitive behavior no matter
-if pre-v5.7 or post v5.7 and quickly realize neither semantics give them
-what they want. For some examples see the code examples in [1] to [3]
-and the discussion in [4].
-
-There are various ways to address this issue. The lazy/simple option
-would be to restore the pre-v5.7 behavior and to just live with that bug
-forever. But since there's a real chance that the O_DIRECTORY | O_CREAT
-quirk isn't relied upon we should try to get away with murder(ing bad
-semantics) first. If we need to Frankenstein pre-v5.7 behavior later so
-be it.
-
-So let's simply return EINVAL categorically for O_DIRECTORY | O_CREAT
-combinations. In addition to cleaning up the old bug this also opens up
-the possiblity to make that flag combination do something more intuitive
-in the future.
-
-Starting with this commit the following semantics apply:
-
-(1) open("/tmp/d", O_DIRECTORY | O_CREAT)
-    * d doesn't exist:                EINVAL
-    * d exists and is a regular file: EINVAL
-    * d exists and is a directory:    EINVAL
-
-(2) open("/tmp/d", O_DIRECTORY | O_CREAT | O_EXCL)
-    * d doesn't exist:                EINVAL
-    * d exists and is a regular file: EINVAL
-    * d exists and is a directory:    EINVAL
-
-(3) open("/tmp/d", O_DIRECTORY | O_EXCL)
-    * d doesn't exist:                ENOENT
-    * d exists and is a regular file: ENOTDIR
-    * d exists and is a directory:    open directory
-
-One additional note, O_TMPFILE is implemented as:
-
-    #define __O_TMPFILE    020000000
-    #define O_TMPFILE      (__O_TMPFILE | O_DIRECTORY)
-    #define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)
-
-For older kernels it was important to return an explicit error when
-O_TMPFILE wasn't supported. So it is implemented to look like
-O_DIRECTORY | O_RDWR but without O_CREAT. The reason was that
-O_DIRECTORY | O_CREAT used to work and created a regular file. Allowing
-it to be specified would've potentially caused a regular file to be
-created on older kernels while the caller would believe they created an
-actual O_TMPFILE. So instead O_TMPFILE has included O_DIRECTORY | O_RDWR
-and the code uses O_TMPFILE_MASK to check that O_CREAT isn't specified
-returning EINVAL if it is.
-
-With this patch, we categorically reject O_DIRECTORY | O_CREAT and
-return EINVAL. That means, we could write this in a way that makes the
-if ((flags & O_TMPFILE_MASK) != O_TMPFILE) check superfluous but let's
-not do that. The check documents the peculiar aspects of O_TMPFILE quite
-nicely and can serve as a reminder how easy it is to break.
-
-As Aleksa pointed out O_PATH is unaffected by this change since it
-always returned EINVAL if O_CREAT was specified - with or without
-O_DIRECTORY.
-
-Link: https://lore.kernel.org/lkml/20230320071442.172228-1-pedro.falcato@gmail.com
-Link: https://sources.debian.org/src/flatpak/1.14.4-1/subprojects/libglnx/glnx-dirfd.c/?hl=324#L324 [1]
-Link: https://sources.debian.org/src/flatpak-builder/1.2.3-1/subprojects/libglnx/glnx-shutil.c/?hl=251#L251 [2]
-Link: https://sources.debian.org/src/ostree/2022.7-2/libglnx/glnx-dirfd.c/?hl=324#L324 [3]
-Link: https://www.openwall.com/lists/oss-security/2014/11/26/14 [4]
-Reported-by: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
-This survives xfstests:
-
-        sudo ./check -g unlink,idmapped
-
-which pounds on the creation and O_TMPFILE paths.
-
-It also survives LTP:
-
-        sudo ./runtltp -f syscalls openat2
-        sudo ./runtltp -f syscalls openat
-        # The following includes openat2, openat, open, fsopen, open_tree, etc.
-        sudo ./runtltp -f syscalls open
-        sudo ./runtltp -f syscalls create_file
-        sudo ./runtltp -f syscalls create_files
-
-I've also written a (very nasty) test script:
-
-        #define _GNU_SOURCE
-        #include <fcntl.h>
-        #include <stdio.h>
-        #include <stdlib.h>
-
-        int main(int argc, char *argv[])
-        {
-                int fd;
-
-                fd = open("/tmp/TEST", O_DIRECTORY | O_CREAT);
-                if (fd >= 0)
-                        printf("%d\n", fd);
-                else
-                        printf("%m: fd(%d)\n", fd);
-
-                fd = open("/tmp/TEST", O_DIRECTORY | O_CREAT | O_EXCL);
-                if (fd >= 0)
-                        printf("%d\n", fd);
-                else
-                        printf("%m: fd(%d)\n", fd);
-
-                fd = open("/tmp/TEST", O_DIRECTORY | O_EXCL);
-                if (fd >= 0)
-                        printf("%d\n", fd);
-                else
-                        printf("%m: fd(%d)\n", fd);
-
-                exit(EXIT_SUCCESS);
-        }
-        ubuntu@vm1:~/ssd$ sudo ./create_test
-        Invalid argument: fd(-1)
-        Invalid argument: fd(-1)
-        No such file or directory: fd(-1)
----
- fs/open.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/fs/open.c b/fs/open.c
-index 4401a73d4032..39e360f9490d 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1135,6 +1135,8 @@ struct file *open_with_fake_path(const struct path *path, int flags,
- EXPORT_SYMBOL(open_with_fake_path);
- 
- #define WILL_CREATE(flags)	(flags & (O_CREAT | __O_TMPFILE))
-+#define INVALID_CREATE(flags) \
-+	((flags & (O_DIRECTORY | O_CREAT)) == (O_DIRECTORY | O_CREAT))
- #define O_PATH_FLAGS		(O_DIRECTORY | O_NOFOLLOW | O_PATH | O_CLOEXEC)
- 
- inline struct open_how build_open_how(int flags, umode_t mode)
-@@ -1207,6 +1209,10 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
- 		if (!(acc_mode & MAY_WRITE))
- 			return -EINVAL;
- 	}
-+
-+	if (INVALID_CREATE(flags))
-+		return -EINVAL;
-+
- 	if (flags & O_PATH) {
- 		/* O_PATH only permits certain other flags to be set. */
- 		if (flags & ~O_PATH_FLAGS)
--- 
-2.34.1
-
+> Yes, that's right, the lower directory is used to list the content of
+> the ecryptfs directory:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ecryptfs/file.c#n112
+> iterate_dir(lower_file, …)
