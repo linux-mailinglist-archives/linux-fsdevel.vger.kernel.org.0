@@ -2,73 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C5ADC6C3936
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 19:31:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6656C3986
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 19:49:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbjCUSb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 14:31:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43210 "EHLO
+        id S230456AbjCUStN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 14:49:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbjCUSb4 (ORCPT
+        with ESMTP id S230401AbjCUStM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 14:31:56 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA9A4615F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 11:31:54 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id ek18so63418053edb.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 11:31:54 -0700 (PDT)
+        Tue, 21 Mar 2023 14:49:12 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C619567AF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 11:48:46 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id y4so63646088edo.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 11:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1679423513;
+        d=linux-foundation.org; s=google; t=1679424516;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rarCJTaTo4fdrlFa6VngK6oUmjz7+X/mzHPYdyRgEGI=;
-        b=FF1iHk/5Gnr8aDscZUit9Y8GtXIQAL1e5mjGc2AbjwpZTDOWsV8MomqzMfskU2blnF
-         jmgmomSxcT8rAbFK2fSSYTEs0Hx+ZkUdL++GsJuGjv1xJzo9K3QX8dX2PV34A7FHquep
-         x2+CXrgMgneDP3vHP+8mC3TlA6H/uZyKBD1tM=
+        bh=o0ckUw7dWkverm2igg++8Ynt0yEw3mz/3PbETIyN2lM=;
+        b=QrW8QLlhXRLLsjP3F+4fhjZ2IV7VEOnnPtdH2kcuNjaRfDJSfySxSopa0Z7evi2/vh
+         KzYZQ0l0gdztGMIZz+L+NfeD8ytvURoY+K8KAMU6h0FCLYrEP/O7bEinnhzm8wsuJV9V
+         9+n5ef7AaK2xYbe1rb2jSLzCj4TgJ/mN5USyk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679423513;
+        d=1e100.net; s=20210112; t=1679424516;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rarCJTaTo4fdrlFa6VngK6oUmjz7+X/mzHPYdyRgEGI=;
-        b=P0ohmh1My/dn3WcKwpZjaM18w8skmXwQN2vBVu3LTqwP7ET8Hj3YvB5+DVQiph6LA1
-         hLkHc2GuI96adiQgXGeFor+iIMHV/eplE7PBacaLkKo1LvSNIphDtMRb2inNtcvTG/Ry
-         whwH1+KQvDiMJBgS8iG83kjQgmc3dF0U41mAFqh8Dz+bKkTdSN5U9LdYPaMW3kN0lp9S
-         Ygdf14TjZTrVXJ2uQrr/dldtw6tUTFBg2WceobcNuyLYeM5oXQQi7mkjVABEC/xn1b0k
-         HA0Y/JEYyMEEpJz0I47Mt0D+OxEgqpvL4EXr/D/1nVU+YtHI1/Bpx+8dE7wGTbUv1dwB
-         pJIg==
-X-Gm-Message-State: AO0yUKVUVCI7j6ayE6eLWmk2oemox2o4tKExJFoY0AgFV3qeCt7SwrGL
-        eXC/vLvG5+yTVQ4nqlahINRJHRgUgg98MCqzvStBqw==
-X-Google-Smtp-Source: AK7set/MX26nqDq0eYGgMbs93iPJ+jUTf6aiPyIlw72KhKnmppE68N7sEUx1WImu3baS1A/zSrqBPw==
-X-Received: by 2002:a17:907:6f1b:b0:932:365a:c1e7 with SMTP id sy27-20020a1709076f1b00b00932365ac1e7mr4072532ejc.67.1679423513077;
-        Tue, 21 Mar 2023 11:31:53 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id kg2-20020a17090776e200b009334219656dsm4336725ejc.56.2023.03.21.11.31.52
+        bh=o0ckUw7dWkverm2igg++8Ynt0yEw3mz/3PbETIyN2lM=;
+        b=O4JXko4EiXvjlTJvu7JksrJpEpyqRYrpn8OyFPsv9TzI0zftoGQlwF5xi7k0cNRRso
+         bJhXaHO9q5+npXQWQ/s289Pgp6mr+SJ+XNoI+RcMe7wMhPBc8ReQZiDklH9Ph03ojn8O
+         8Dx64Ru69ymCqaqaSSlUMfzw9vp9odSjrN2BuYIkSUEWF+ny459qGchbH4I3LRr9OXMK
+         bE/9mtlNXO/QTXi8TOQKA3PJfto7YTDbrnIDS/YlYFA1lcYMzyyXeXlV65/a6HLT+b5e
+         LD9L0yG4RQtTcasyu/RcGmCPKFHknIPTNXRJhZ1N8oPhrLAq/Rxl7YYNfRprh4WYIgRQ
+         tOuQ==
+X-Gm-Message-State: AO0yUKWGN+zzb4KpZKambRRXys1ArzcBuodOXsn3q+T7wG+hex9V1dkE
+        q0Glyg2OqGQTUV+UiXVSbvEbmBQbXDrjZA+qcxYNQu0B
+X-Google-Smtp-Source: AK7set/FIbLvlhCVlhZR3JXsbabVGjy2YqkDLPAd/ZHJJnAt3jQ7S2eV0wUvIWeH9drwTapzlYgp6Q==
+X-Received: by 2002:a05:6402:7c8:b0:4af:69b8:52af with SMTP id u8-20020a05640207c800b004af69b852afmr4124528edy.24.1679424516210;
+        Tue, 21 Mar 2023 11:48:36 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id k12-20020a50ce4c000000b004af70c546dasm6684663edj.87.2023.03.21.11.48.34
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Mar 2023 11:31:52 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id cn12so17761639edb.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 11:31:52 -0700 (PDT)
+        Tue, 21 Mar 2023 11:48:35 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id o12so63551002edb.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 11:48:34 -0700 (PDT)
 X-Received: by 2002:a17:907:9b03:b0:932:da0d:9375 with SMTP id
- kn3-20020a1709079b0300b00932da0d9375mr2384431ejc.4.1679423512122; Tue, 21 Mar
- 2023 11:31:52 -0700 (PDT)
+ kn3-20020a1709079b0300b00932da0d9375mr2409395ejc.4.1679424514115; Tue, 21 Mar
+ 2023 11:48:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230320210724.GB1434@sol.localdomain> <CAHk-=wgE9kORADrDJ4nEsHHLirqPCZ1tGaEPAZejHdZ03qCOGg@mail.gmail.com>
- <ZBlJJBR7dH4/kIWD@slm.duckdns.org>
-In-Reply-To: <ZBlJJBR7dH4/kIWD@slm.duckdns.org>
+References: <2851036.1679417029@warthog.procyon.org.uk>
+In-Reply-To: <2851036.1679417029@warthog.procyon.org.uk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 21 Mar 2023 11:31:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh0wxPx1zP1onSs88KB6zOQ0oHyOg_vGr5aK8QJ8fuxnw@mail.gmail.com>
-Message-ID: <CAHk-=wh0wxPx1zP1onSs88KB6zOQ0oHyOg_vGr5aK8QJ8fuxnw@mail.gmail.com>
-Subject: Re: [GIT PULL] fsverity fixes for v6.3-rc4
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>, fsverity@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Nathan Huckleberry <nhuck@google.com>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
+Date:   Tue, 21 Mar 2023 11:48:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh1b0r+5SnwWedx=J4aZhRif1HLN_moxEG9Jzy23S6QUA@mail.gmail.com>
+Message-ID: <CAHk-=wh1b0r+5SnwWedx=J4aZhRif1HLN_moxEG9Jzy23S6QUA@mail.gmail.com>
+Subject: Re: [GIT PULL] keys: Miscellaneous fixes/changes
+To:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Bharath SM <bharathsm@microsoft.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Steve French <smfrench@gmail.com>,
+        Robbie Harwood <rharwood@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        keyrings@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -81,42 +84,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 20, 2023 at 11:05=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+On Tue, Mar 21, 2023 at 9:43=E2=80=AFAM David Howells <dhowells@redhat.com>=
+ wrote:
 >
-> Do you remember what the other case was? Was it also on heterogenous arm
-> setup?
+>  (1) Fix request_key() so that it doesn't cache a looked up key on the
+>      current thread if that thread is a kernel thread.  The cache is
+>      cleared during notify_resume - but that doesn't happen in kernel
+>      threads.  This is causing cifs DNS keys to be un-invalidateable.
 
-Yup. See commit c25da5b7baf1 ("dm verity: stop using WQ_UNBOUND for verify_=
-wq")
+I've pulled this, but I'd like people to look a bit more at this.
 
-But see also 3fffb589b9a6 ("erofs: add per-cpu threads for
-decompression as an option").
+The issue with TIF_NOTIFY_RESUME is that it is only done on return to
+user space.
 
-And you can see the confusion this all has in commit 43fa47cb116d ("dm
-verity: remove WQ_CPU_INTENSIVE flag since using WQ_UNBOUND"), which
-perhaps should be undone now.
+And these days, PF_KTHREAD isn't the only case that never returns to
+user space. PF_IO_WORKER has the exact same behaviour.
 
-> There aren't many differences between unbound workqueues and percpu ones
-> that aren't concurrency managed. If there are significant performance
-> differences, it's unlikely to be directly from whatever workqueue is doin=
-g.
-
-There's a *lot* of special cases for WQ_UNBOUND in the workqueue code,
-and they are a lot less targeted than the other WQ_xyz flags, I feel.
-They have their own cpumask logic, special freeing rules etc etc.
-
-So I would say that the "aren't many differences" is not exactly true.
-There are subtle and random differences, including the very basic
-"queue_work()" workflow.
-
-Now, I assume that the arm cases don't actually use
-wq_unbound_cpumask, so I assume it's mostly the "instead of local cpu
-queue, use the local node queue", and so it's all on random CPU's
-since nobody uses NUMA nodes.
-
-And no, if it's caching effects, doing it on LLC boundaries isn't
-rigth *either*. By default it should probably be on L2 boundaries or
-something, with most non-NUMA setups likely having one single LLC but
-multiple L2 nodes.
+Now, to counteract this, as of this merge window (and marked for
+stable) IO threads do a fake "return to user mode" handling in
+io_run_task_work(), and so I think we're all good, but I'd like people
+to at least think about this.
 
               Linus
