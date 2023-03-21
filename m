@@ -2,147 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE1386C359D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 16:26:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EB656C368B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 17:04:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231486AbjCUP0h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 11:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53060 "EHLO
+        id S230382AbjCUQEn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 12:04:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231350AbjCUP0g (ORCPT
+        with ESMTP id S229878AbjCUQEm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 11:26:36 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E9624FCC1;
-        Tue, 21 Mar 2023 08:26:29 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 06D9A201A2;
-        Tue, 21 Mar 2023 15:26:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1679412387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        Tue, 21 Mar 2023 12:04:42 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6C502A151;
+        Tue, 21 Mar 2023 09:04:37 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 9A62722179;
+        Tue, 21 Mar 2023 16:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1679414676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fHCbxvEjKOCYot1TTU/89XdN70pMiGLRyCU4Q3dVZWM=;
-        b=BqM2UZjmV8ztE6hEHNUxaqezY8+lLRir4PU85eB4qM5Y/TUYY2Yqir8fVHhaUCmOEEEy9W
-        CKpCu6RRvUknfCahvnkNJlKbnWxZhYBpgaCuOkEMV++tgnfWPPMVSqyqFHBoeK59P1z71L
-        6jJ0t/citRikS93ERyilEzC4AYqwjOU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1679412387;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fHCbxvEjKOCYot1TTU/89XdN70pMiGLRyCU4Q3dVZWM=;
-        b=kh4QJnPp6A9z1s/gk+Je+Xxosy5KRUVMUm0VW6U7uzbHD+HZeeMv0Ob6U4C/5Mc5XletR+
-        PG+uzlQE9zmvrcAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=nqV68zFEuPEfvE057sQFY+VG01o4U7Wn4v08os2RZjg=;
+        b=E/OA2UdMgfl8mYCkExoWWAsmR5K7iAcywCkd0mkc3bM+cC1Zm7jk8SljBNAYSCXKQm0luD
+        rP8XBTizJ+Bd3TgkrDMIOL4Zwlh7ojBNLlPVF51RO+i4OmY4bJtNg+2vtTM+LUcDmVWShX
+        ZXlulOVUcvXHutCE17HLUBPQPuMGFno=
+Received: from suse.cz (unknown [10.100.201.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E4A9113440;
-        Tue, 21 Mar 2023 15:26:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id DQ0UN6LMGWRrWAAAMHmgww
-        (envelope-from <hare@suse.de>); Tue, 21 Mar 2023 15:26:26 +0000
-Message-ID: <0e54cc51-e667-b343-74b0-4989e28d8982@suse.de>
-Date:   Tue, 21 Mar 2023 16:26:26 +0100
+        by relay2.suse.de (Postfix) with ESMTPS id 3A3962C141;
+        Tue, 21 Mar 2023 16:04:36 +0000 (UTC)
+Date:   Tue, 21 Mar 2023 17:04:33 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: union: was: Re: [PATCH printk v1 05/18] printk: Add non-BKL console
+ basic infrastructure
+Message-ID: <ZBnVkarywpyWlDWW@alley>
+References: <20230302195618.156940-1-john.ogness@linutronix.de>
+ <20230302195618.156940-6-john.ogness@linutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 1/5] brd: convert to folios
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20230306120127.21375-1-hare@suse.de>
- <20230306120127.21375-2-hare@suse.de> <ZAYk5wOUaXAIouQ5@casper.infradead.org>
- <76613838-fa4c-7f3e-3417-7a803fafc6c2@suse.de>
- <ZAboHUp/YUkEs/D1@casper.infradead.org>
- <a4489f7b-912c-e68f-4a4c-c14d96026bd6@suse.de>
- <ZBnGc4WbBOlnRUgd@casper.infradead.org>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <ZBnGc4WbBOlnRUgd@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230302195618.156940-6-john.ogness@linutronix.de>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/21/23 16:00, Matthew Wilcox wrote:
-> On Tue, Mar 07, 2023 at 09:14:27AM +0100, Hannes Reinecke wrote:
->> On 3/7/23 08:30, Matthew Wilcox wrote:
->>> On Tue, Mar 07, 2023 at 07:55:32AM +0100, Hannes Reinecke wrote:
->>>> On 3/6/23 18:37, Matthew Wilcox wrote:
->>>>> On Mon, Mar 06, 2023 at 01:01:23PM +0100, Hannes Reinecke wrote:
->>>>>> -	page = alloc_page(gfp | __GFP_ZERO | __GFP_HIGHMEM);
->>>>>> -	if (!page)
->>>>>> +	folio = folio_alloc(gfp | __GFP_ZERO, 0);
->>>>>> +	if (!folio)
->>>>>
->>>>> Did you drop HIGHMEM support on purpose?
->>>>
->>>> No; I thought that folios would be doing that implicitely.
->>>> Will be re-adding.
->>>
->>> We can't ... not all filesystems want to allocate every folio from
->>> HIGHMEM.  eg for superblocks, it often makes more sense to allocate the
->>> folio from lowmem than allocate it from highmem and keep it kmapped.
->>> The only GFP flag that folios force-set is __GFP_COMP because folios by
->>> definition are compound pages.
->>
->> Oh well.
->>
->> However, when playing with the modified brd and setting the logical&physical
->> blocksize to 16k the whole thing crashes
->> (not unexpectedly).
->> It does crash, however, in block_read_full_folio(), which rather
->> surprisingly (at least for me) is using create_page_buffers();
->> I would have expected something like create_folio_buffers().
->> Is this work in progress or what is the plan here?
+On Thu 2023-03-02 21:02:05, John Ogness wrote:
+> From: Thomas Gleixner <tglx@linutronix.de>
 > 
-> Supporting folios > PAGE_SIZE in blockdev is definitely still WIP.
-> I know of at least one bug, which is:
+> The current console/printk subsystem is protected by a Big Kernel Lock,
+> (aka console_lock) which has ill defined semantics and is more or less
+> stateless. This puts severe limitations on the console subsystem and
+> makes forced takeover and output in emergency and panic situations a
+> fragile endavour which is based on try and pray.
 > 
-> #define bh_offset(bh)           ((unsigned long)(bh)->b_data & ~PAGE_MASK)
+> The goal of non-BKL consoles is to break out of the console lock jail
+> and to provide a new infrastructure that avoids the pitfalls and
+> allows console drivers to be gradually converted over.
 > 
-> That needs to be something like
+> The proposed infrastructure aims for the following properties:
 > 
-> static size_t bh_offset(const struct buffer_head *bh)
-> {
-> 	return (unsigned long)bh->b_data & (folio_size(bh->b_folio) - 1);
-> }
+>   - Per console locking instead of global locking
+>   - Per console state which allows to make informed decisions
+>   - Stateful handover and takeover
 > 
-> I haven't done a thorough scan for folio-size problems in the block
-> layer; I've just been fixing up things as I notice them.
-> 
-And not to mention the various instances of (PAGE_SHIFT - blkbits)
-which will get happily into negative numbers for large block sizes,
-resulting in interesting effects for a shift left operation ...
+> As a first step state is added to struct console. The per console state
+> is an atomic_long_t with a 32bit bit field and on 64bit also a 32bit
+> sequence for tracking the last printed ringbuffer sequence number. On
+> 32bit the sequence is separate from state for obvious reasons which
+> requires handling a few extra race conditions.
+>
 
-> Yes, create_page_buffers() should now be create_folio_buffers().  Just
-> didn't get round to it yet.
+It is not completely clear that that this struct is stored
+as atomic_long_t atomic_state[2] in struct console.
 
-Ah, so I was on the right track after all.
+What about adding?
 
-But I was wondering ... couldn't we use the physical block size as a 
-hint on how many pages to allocate?
-With that we can work on updating the stack even with existing hardware, 
-and we wouldn't crash immediately if we miss the odd conversion ...
+		atomic_long_t atomic;
 
-Hmm?
+> +		unsigned long	atom;
+> +		struct {
+> +#ifdef CONFIG_64BIT
+> +			u32	seq;
+> +#endif
+> +			union {
+> +				u32	bits;
+> +				struct {
+> +				};
+> +			};
+> +		};
+> +	};
+>  };
+>  
+>  /**
+> @@ -186,6 +214,8 @@ enum cons_flags {
+>   * @dropped:		Number of unreported dropped ringbuffer records
+>   * @data:		Driver private data
+>   * @node:		hlist node for the console list
+> + *
+> + * @atomic_state:	State array for NOBKL consoles; real and handover
+>   */
+>  struct console {
+>  	char			name[16];
+> @@ -205,6 +235,9 @@ struct console {
+>  	unsigned long		dropped;
+>  	void			*data;
+>  	struct hlist_node	node;
+> +
+> +	/* NOBKL console specific members */
+> +	atomic_long_t		__private atomic_state[2];
 
-Cheers,
+and using here
 
-Hannes
+	struct cons_state	__private cons_state[2];
 
+Then we could use cons_state[which].atomic to access it as
+the atomic type.
+
+Or was this on purpose? It is true that only the variable
+in struct console has to be accessed the atomic way.
+
+Anyway, we should at least add a comment into struct console
+about that atomic_state[2] is used to store and access
+struct cons_state an atomic way. Also add a compilation
+check that the size is the same.
+
+Best Regards,
+Petr
