@@ -2,78 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 012F96C2D24
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 09:56:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 381B66C2DFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 10:36:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231324AbjCUI40 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 04:56:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38026 "EHLO
+        id S229786AbjCUJf7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 05:35:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbjCUIzw (ORCPT
+        with ESMTP id S229456AbjCUJf5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 04:55:52 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DFFE268B;
-        Tue, 21 Mar 2023 01:54:54 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id bi9so18135265lfb.12;
-        Tue, 21 Mar 2023 01:54:53 -0700 (PDT)
+        Tue, 21 Mar 2023 05:35:57 -0400
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2612A9BC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 02:35:56 -0700 (PDT)
+Received: by mail-vs1-xe31.google.com with SMTP id cu36so4143775vsb.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 02:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679388869;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ihWLb6YDeUm4LyXoGDvnXvPNh5dZmfkRW4mzY5FPdhM=;
-        b=PUeizF7dzLAZJmmyz4Qbzek28PUiJv9e9blTv2pw/0T3CuhF3KprL7LCtEIm9Jbwme
-         eIkhw77b4qrg8nCvBEJebTu6itTSeuurkArgaVZ1YEkPcyI41jLz43/Vh7vBqquQ8i8U
-         kOx+jzUiRR6h37OW8uI+XYmgIwVnsmTugrhGPhmTmoPmHgPBJyXhBKWg8ayzUhlumy4k
-         bFRdCdg4RWqrwp8zDPG3ryeKWj1ZQnN87by6Y6axKqfevqW3Szk7O42xikCQtp3BpKYk
-         s5e1ElpL/7HIKEX69eQWOzjC5ha2nWhlxFcURYkt8JMO8SSVt3/trvKLrIpSd/krX5YS
-         xniQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679388869;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20210112; t=1679391355;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ihWLb6YDeUm4LyXoGDvnXvPNh5dZmfkRW4mzY5FPdhM=;
-        b=LVAZqXwUv4JeJyz3uKZcGvJQF7++9wyyP6ENQm2XmzNKtgoCSeQ0UyIr3pcsvBjV5C
-         xoTCRLg87dhQec1ZRtSvN/xqQF5uls0KqZ33pdpJMTP3TWljNd+riDPUFKKKWPPnIiW0
-         OysPMXB5wuv6nvJ1PFuifFMDcLGtELQjgdYLsDN3weJFk/b6gz6qygEakFnNH1nWp6h2
-         DwUDjg2GGFJGFu3p8/G8EX0T9TE2CI9W16V0XD/ixpcBeMHOjP/d209CkNagmTEzNJgv
-         NbqbKIGrAkF+XWIRSCCIA6/tUN9bUQrxW1zWWB+1cPEa+Jmg4ra6vblcUJoMDjeHEYBn
-         2yXQ==
-X-Gm-Message-State: AO0yUKXUYQfcziE/Wzyvf4ByOjliI/buxpDWryetFuSfBTYLZn/rVWBQ
-        QZrlalQruehajIvkf4ulSWI=
-X-Google-Smtp-Source: AK7set+HyqoO+eZz5C//84EZqAvcFQ7KS7XwqX9sdZR0jNq+5OaFBZIEVgNAuP9hR3nhr0Nv+lsEZA==
-X-Received: by 2002:ac2:5a1a:0:b0:4d5:a689:7580 with SMTP id q26-20020ac25a1a000000b004d5a6897580mr582688lfn.47.1679388869163;
-        Tue, 21 Mar 2023 01:54:29 -0700 (PDT)
-Received: from pc636 (host-90-233-209-15.mobileonline.telia.com. [90.233.209.15])
-        by smtp.gmail.com with ESMTPSA id h11-20020ac250cb000000b004db3d57c3a8sm2079989lfm.96.2023.03.21.01.54.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Mar 2023 01:54:28 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Tue, 21 Mar 2023 09:54:26 +0100
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH v2 2/4] mm: vmalloc: use rwsem, mutex for vmap_area_lock
- and vmap_block->lock
-Message-ID: <ZBlwwkGrnyF25/Pv@pc636>
-References: <cover.1679209395.git.lstoakes@gmail.com>
- <6c7f1ac0aeb55faaa46a09108d3999e4595870d9.1679209395.git.lstoakes@gmail.com>
- <ZBkDuLKLhsOHNUeG@destitution>
- <ZBk/Wxj4rXPra/ge@pc636>
- <8cd31bcd-dad4-44e3-920f-299a656aea98@lucifer.local>
+        bh=vvc/4VNbB8WBUsx64rJ7I7ZWXs3cL6FlquMrDKUjXFI=;
+        b=Dh1dRRzzTWsqs1rELjj9mln7TzLQ4CdGJIC/lm5XT4cPKCiJ6COS04EbcmA3I1F65r
+         9Qh4EnqJxNOFl+Gcq5dlcEFSimqrfQJZQtuStjKSyMSA/zhuuD6Znrs+Mr96AB+l0wcL
+         oSJTfomHYFGEBIQijuxhKml+kr6OxqJUafeK+BsC2s3f37KuXAlxw42SeNPg762rQwSm
+         bB4u7vnJkjuVjWiJXhIH0lbsndYtAh7QwdZU7eDwvmn3NiyuhJwTpZjfiTfCU+0I2i2a
+         TVL5cGKUriEEEfWjJkokZT6Dy6G1DKEnXKKIiFL+Ns9/X4ZuAHnJeTQIitb3FZ+QSULd
+         7iRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679391355;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vvc/4VNbB8WBUsx64rJ7I7ZWXs3cL6FlquMrDKUjXFI=;
+        b=UobVq4KZB+JEjyN/WArig8554Q9veV5NnxYh+2lFdYn/XW/R/uaEEeNq1797jd8Ih2
+         q/rqL4Q/VzgHPE90LAqipx9+4YqEmVYEJs27Qgam6VtaJkyatFbKjdVijBbMPNi7iCOP
+         wB4tWPFRDh+Hkrtny3lghgTP+0vtc64s7lAz5aNVgIhPOVCDQDChCggbT5ovWjlsb+zC
+         UsfcdY6RzVy7NbwznLhd245PqhcRXkENuLAXMcNWuADKEUAaSHVwX/eRL5HvFN1QCPgE
+         MBXvn9ZfogkrR4dIX4susw+/FQlkrxZkV/dVY9nsyEL121K+zQxYu0njk0JnSQyMjsEB
+         aT8w==
+X-Gm-Message-State: AO0yUKU21IMiny0w0vmzR06pxle6IilrTm9x9/E6DFlJCyT0foXV2S2W
+        ZtY+qWyIfXU9PzWQerOKIjT71k2LgNrkTTXbRgodzvoO
+X-Google-Smtp-Source: AK7set84OnZxccb+XfEWZtoj0MbCa6MkY1bcDlPbTecYs1OsFQye6CYBODR/gLWWg2QuRN9CCItCEyX+6itRD7o/8WM=
+X-Received: by 2002:a67:d31e:0:b0:425:dd2d:1c0 with SMTP id
+ a30-20020a67d31e000000b00425dd2d01c0mr1163828vsj.0.1679391355254; Tue, 21 Mar
+ 2023 02:35:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cd31bcd-dad4-44e3-920f-299a656aea98@lucifer.local>
+References: <20230321011047.3425786-1-bschubert@ddn.com>
+In-Reply-To: <20230321011047.3425786-1-bschubert@ddn.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 21 Mar 2023 11:35:44 +0200
+Message-ID: <CAOQ4uxjXZHr3DZUQVvcTisRy+HYNWSRWvzKDXuHP0w==QR8Yog@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/13] fuse uring communication
+To:     Bernd Schubert <bschubert@ddn.com>
+Cc:     linux-fsdevel@vger.kernel.org, Dharmendra Singh <dsingh@ddn.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        fuse-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -84,96 +70,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 07:45:56AM +0000, Lorenzo Stoakes wrote:
-> On Tue, Mar 21, 2023 at 06:23:39AM +0100, Uladzislau Rezki wrote:
-> > On Tue, Mar 21, 2023 at 12:09:12PM +1100, Dave Chinner wrote:
-> > > On Sun, Mar 19, 2023 at 07:09:31AM +0000, Lorenzo Stoakes wrote:
-> > > > vmalloc() is, by design, not permitted to be used in atomic context and
-> > > > already contains components which may sleep, so avoiding spin locks is not
-> > > > a problem from the perspective of atomic context.
-> > > >
-> > > > The global vmap_area_lock is held when the red/black tree rooted in
-> > > > vmap_are_root is accessed and thus is rather long-held and under
-> > > > potentially high contention. It is likely to be under contention for reads
-> > > > rather than write, so replace it with a rwsem.
-> > > >
-> > > > Each individual vmap_block->lock is likely to be held for less time but
-> > > > under low contention, so a mutex is not an outrageous choice here.
-> > > >
-> > > > A subset of test_vmalloc.sh performance results:-
-> > > >
-> > > > fix_size_alloc_test             0.40%
-> > > > full_fit_alloc_test		2.08%
-> > > > long_busy_list_alloc_test	0.34%
-> > > > random_size_alloc_test		-0.25%
-> > > > random_size_align_alloc_test	0.06%
-> > > > ...
-> > > > all tests cycles                0.2%
-> > > >
-> > > > This represents a tiny reduction in performance that sits barely above
-> > > > noise.
-> > >
-> > > I'm travelling right now, but give me a few days and I'll test this
-> > > against the XFS workloads that hammer the global vmalloc spin lock
-> > > really, really badly. XFS can use vm_map_ram and vmalloc really
-> > > heavily for metadata buffers and hit the global spin lock from every
-> > > CPU in the system at the same time (i.e. highly concurrent
-> > > workloads). vmalloc is also heavily used in the hottest path
-> > > throught the journal where we process and calculate delta changes to
-> > > several million items every second, again spread across every CPU in
-> > > the system at the same time.
-> > >
-> > > We really need the global spinlock to go away completely, but in the
-> > > mean time a shared read lock should help a little bit....
-> > >
-> 
-> Hugely appreciated Dave, however I must disappoint on the rwsem as I have now
-> reworked my patch set to use the original locks in order to satisfy Willy's
-> desire to make vmalloc atomic in future, and Uladzislau's desire to not have a
-> ~6% performance hit -
-> https://lore.kernel.org/all/cover.1679354384.git.lstoakes@gmail.com/
-> 
-> > I am working on it. I submitted a proposal how to eliminate it:
-> >
-> >
-> > <snip>
-> > Hello, LSF.
-> >
-> > Title: Introduce a per-cpu-vmap-cache to eliminate a vmap lock contention
-> >
-> > Description:
-> >  Currently the vmap code is not scaled to number of CPU cores in a system
-> >  because a global vmap space is protected by a single spinlock. Such approach
-> >  has a clear bottleneck if many CPUs simultaneously access to one resource.
-> >
-> >  In this talk i would like to describe a drawback, show some data related
-> >  to contentions and places where those occur in a code. Apart of that i
-> >  would like to share ideas how to eliminate it providing a few approaches
-> >  and compare them.
-> >
-> > Requirements:
-> >  * It should be a per-cpu approach;
-> >  * Search of freed ptrs should not interfere with other freeing(as much as we can);
-> >  *   - offload allocated areas(buzy ones) per-cpu;
-> >  * Cache ready sized objects or merge them into one big per-cpu-space(split on demand);
-> >  * Lazily-freed areas either drained per-cpu individually or by one CPU for all;
-> >  * Prefetch a fixed size in front and allocate per-cpu
-> >
-> > Goals:
-> >  * Implement a per-cpu way of allocation to eliminate a contention.
-> >
-> > Thanks!
-> > <snip>
-> >
-> > --
-> > Uladzislau Rezki
-> >
-> 
-> That's really awesome! I will come to that talk at LSF/MM :) being able to
-> sustain the lock in atomic context seems to be an aspect that is important going
-> forward also.
+On Tue, Mar 21, 2023 at 3:11=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> =
+wrote:
 >
-Uhh... So i need to prepare then :)))
+> This adds support for uring communication between kernel and
+> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
+> appraoch was taken from ublk.  The patches are in RFC state -
+> I'm not sure about all decisions and some questions are marked
+> with XXX.
+>
+> Userspace side has to send IOCTL(s) to configure ring queue(s)
+> and it has the choice to configure exactly one ring or one
+> ring per core. If there are use case we can also consider
+> to allow a different number of rings - the ioctl configuration
+> option is rather generic (number of queues).
+>
+> Right now a queue lock is taken for any ring entry state change,
+> mostly to correctly handle unmount/daemon-stop. In fact,
+> correctly stopping the ring took most of the development
+> time - always new corner cases came up.
+> I had run dozens of xfstest cycles,
+> versions I had once seen a warning about the ring start_stop
+> mutex being the wrong state - probably another stop issue,
+> but I have not been able to track it down yet.
+> Regarding the queue lock - I still need to do profiling, but
+> my assumption is that it should not matter for the
+> one-ring-per-core configuration. For the single ring config
+> option lock contention might come up, but I see this
+> configuration mostly for development only.
+> Adding more complexity and protecting ring entries with
+> their own locks can be done later.
+>
+> Current code also keep the fuse request allocation, initially
+> I only had that for background requests when the ring queue
+> didn't have free entries anymore. The allocation is done
+> to reduce initial complexity, especially also for ring stop.
+> The allocation free mode can be added back later.
+>
+> Right now always the ring queue of the submitting core
+> is used, especially for page cached background requests
+> we might consider later to also enqueue on other core queues
+> (when these are not busy, of course).
+>
+> Splice/zero-copy is not supported yet, all requests go
+> through the shared memory queue entry buffer. I also
+> following splice and ublk/zc copy discussions, I will
+> look into these options in the next days/weeks.
+> To have that buffer allocated on the right numa node,
+> a vmalloc is done per ring queue and on the numa node
+> userspace daemon side asks for.
+> My assumption is that the mmap offset parameter will be
+> part of a debate and I'm curious what other think about
+> that appraoch.
+>
+> Benchmarking and tuning is on my agenda for the next
+> days. For now I only have xfstest results - most longer
+> running tests were running at about 2x, but somehow when
+> I cleaned up the patches for submission I lost that.
+> My development VM/kernel has all sanitizers enabled -
+> hard to profile what happened. Performance
+> results with profiling will be submitted in a few days.
 
---
-Uladzislau Rezki
+When posting those benchmarks and with future RFC posting,
+it's would be useful for people reading this introduction for the
+first time, to explicitly state the motivation of your work, which
+can only be inferred from the mention of "benchmarks".
+
+I think it would also be useful to link to prior work (ZUFS, fuse2)
+and mention the current FUSE performance issues related to
+context switches and cache line bouncing that was discussed in
+those threads.
+
+Thanks,
+Amir.
