@@ -2,68 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ED846C3743
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 17:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1785C6C3777
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 17:56:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbjCUQpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 12:45:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56466 "EHLO
+        id S229970AbjCUQ4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 12:56:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230196AbjCUQo6 (ORCPT
+        with ESMTP id S229749AbjCUQ4K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 12:44:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C989E51F8B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 09:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679417035;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ni73P6iOwq/z06Tc9mCMwHkprsEWFzyatJbBnmGE7Q8=;
-        b=Uo57u9/Sx4m+lXBOPenGtet2NB+Y8dO+s/RqEiUcTQme7jYkYGDPCzLmH/6VQ1slMbCelH
-        199TCXNwgpT1rZdBlYf4Y7gJkKb1jRbBGvbORqntdKc+KGiPxgqTux94G/RXJ/R/mWb5Mt
-        cTYnuY4E4hESXTRuQPHSiJtYPawsZLM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-462-qaZqdp-zNrahOBtwB2l9Lg-1; Tue, 21 Mar 2023 12:43:52 -0400
-X-MC-Unique: qaZqdp-zNrahOBtwB2l9Lg-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F6FC101A54F;
-        Tue, 21 Mar 2023 16:43:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 637B3492C13;
-        Tue, 21 Mar 2023 16:43:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        Bharath SM <bharathsm@microsoft.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Steve French <smfrench@gmail.com>,
-        Robbie Harwood <rharwood@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        keyrings@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] keys: Miscellaneous fixes/changes
+        Tue, 21 Mar 2023 12:56:10 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1E8F3756B;
+        Tue, 21 Mar 2023 09:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=aWRXn4qd7nGpPUiNMqqImVVM3mu78Lrs3TrOsbvgJcA=; b=EcvwQ4+rTdqMikqp4h6IbYe7eq
+        x+/vaeND8+Pnbide5qsQEu7wYbE4sWV7+0lhEEDCDYRV2P022yybUtLmdd5MufQcMXYw1RJ8r16sF
+        sAOns7KcD48sCnMH+KouTPnh2hmZgMDxgUyVMFsNbvgWHWALUWu85iGi2ZUycA8MQWG7U4/aaEjdk
+        fQYCMKCnePPcW9WTTpKSu0A+LWQfKQapAWjYxKLn49WjpJZqxZeSMcsWMxpnWhnJqnuabZ6LBwkp3
+        YJf7QMmkf3Ash6d1yn/7K7EpJYmaIz3Remo7y74HflrHb7rGRZkPNsJo3E1QkOU9Vk+FU1OxRjjvk
+        Braj4VWQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pefHH-00D91D-2j;
+        Tue, 21 Mar 2023 16:56:03 +0000
+Date:   Tue, 21 Mar 2023 09:56:03 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Yangtao Li <frank.li@vivo.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] fs/drop_caches: move drop_caches sysctls into its own
+ file
+Message-ID: <ZBnho5yPbXIQs752@bombadil.infradead.org>
+References: <20230321130908.6972-1-frank.li@vivo.com>
+ <ZBneeOYHKBZl8SGe@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2851035.1679417029.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 21 Mar 2023 16:43:49 +0000
-Message-ID: <2851036.1679417029@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZBneeOYHKBZl8SGe@casper.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,54 +59,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Tue, Mar 21, 2023 at 04:42:32PM +0000, Matthew Wilcox wrote:
+> On Tue, Mar 21, 2023 at 09:09:07PM +0800, Yangtao Li wrote:
+> > +static struct ctl_table drop_caches_table[] = {
+> > +	{
+> > +		.procname	= "drop_caches",
+> > +		.data		= &sysctl_drop_caches,
+> > +		.maxlen		= sizeof(int),
+> > +		.mode		= 0200,
+> > +		.proc_handler	= drop_caches_sysctl_handler,
+> > +		.extra1		= SYSCTL_ONE,
+> > +		.extra2		= SYSCTL_FOUR,
+> > +	},
+> > +	{}
+> > +};
+> 
+> Could we avoid doing this until we no longer need an entire zero entry
+> after the last one? 
 
-Could you pull these fixes/changes for keyrings?
+That may be 2-3 kernel release from now. The way to use ARRAY_SIZE()
+really is to deprecate the crap APIs that allow messy directory sysctl
+structures.
 
- (1) Fix request_key() so that it doesn't cache a looked up key on the
-     current thread if that thread is a kernel thread.  The cache is
-     cleared during notify_resume - but that doesn't happen in kernel
-     threads.  This is causing cifs DNS keys to be un-invalidateable.
+> Also, please post scripts/bloat-o-meter results
+> for before-and-after.
 
- (2) Fix a wrapper check in verify_pefile() to not round up the length.
+It should be one extry ~ ctl_table per move.
 
- (3) Change asymmetric_keys code to log errors to make it easier for users
-     to work out why failures occurred.
-
-Thanks,
-David
----
-The following changes since commit fc89d7fb499b0162e081f434d45e8d1b47e82ec=
-e:
-
-  Merge tag 'for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/m=
-st/vhost (2023-03-13 10:43:09 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/keys-fixes-20230321
-
-for you to fetch changes up to 3584c1dbfffdabf8e3dc1dd25748bb38dd01cd43:
-
-  asymmetric_keys: log on fatal failures in PE/pkcs7 (2023-03-21 16:23:56 =
-+0000)
-
-----------------------------------------------------------------
-keyrings fixes
-
-----------------------------------------------------------------
-David Howells (1):
-      keys: Do not cache key in task struct if key is requested from kerne=
-l thread
-
-Robbie Harwood (2):
-      verify_pefile: relax wrapper length check
-      asymmetric_keys: log on fatal failures in PE/pkcs7
-
- crypto/asymmetric_keys/pkcs7_verify.c  | 10 +++++-----
- crypto/asymmetric_keys/verify_pefile.c | 32 ++++++++++++++++++-----------=
----
- security/keys/request_key.c            |  9 ++++++---
- 3 files changed, 29 insertions(+), 22 deletions(-)
-
+  Luis
