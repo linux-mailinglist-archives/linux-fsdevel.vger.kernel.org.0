@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A4AB66C3B77
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 21:16:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5716C3B7B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 21:16:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230040AbjCUUQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 16:16:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55534 "EHLO
+        id S230101AbjCUUQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 16:16:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229788AbjCUUP7 (ORCPT
+        with ESMTP id S230026AbjCUUQA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 16:15:59 -0400
+        Tue, 21 Mar 2023 16:16:00 -0400
 Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98763EC75
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 845F158B45
         for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 13:15:48 -0700 (PDT)
-Received: by mail-pl1-x64a.google.com with SMTP id a9-20020a170902b58900b0019e2eafafddso9318348pls.7
+Received: by mail-pl1-x64a.google.com with SMTP id c8-20020a170902d48800b001a1e0fd4085so2022401plg.20
         for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 13:15:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1679429744;
+        d=google.com; s=20210112; t=1679429746;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SASYwsYhAQSqNIE6HUln5R808O00UDaM+ugmJxC1i6Y=;
-        b=nkDLVeFOEtNHIk2/9xYa/CQ5Y+2ViSmqdwKS37RKpN9fN1MXmDMz1OU9puFW4g8bxR
-         vii0vfViksMKRckdTjgGuQRIZo78lhmcmIzghCZBBHxvW/ndiQpVU4djvbvM+g/7wUMs
-         +h4BMeKpfniUSkYQ2+iXYK1OzQ6Zixd18XxuCFovZYEJjKkL+JZVoFx8wgMxsnNIhhrW
-         cwAnxft2O57Rn97HBOHm6iE115uNcFbAUa0j/WlnnPQnSn42zEaUa3fkNCQ6d75oG0jY
-         i+hqkZSaarDOufSFczQvwQKpFfhRDRSFIn/93xiAf3T7ZrsK4NycMXJEfB2VVpheLbup
-         9TAw==
+        bh=WUxn3KVcBxbFXkgOhZJm8jHzCo14A+URwIfQXLEPszQ=;
+        b=gOamuZL09TvaiKBWLNigfj5XfPQ9ZV+G8B5xxWIHP7ReVAgFwkb2mMOqoMmAQj4JA5
+         a71uvwvqvuhm9Mla+M6MKfVBfAeZv8j+Ais4qiGHYQbdzN04WOFDIvW+KHiX6/6UcG3g
+         krfkQwX/3y0i/lIiZnvQ0cDeDcI7B671x+yj/K+Slq7czkPMQa4ZsYo4hXCLHwgEBbR6
+         wcEzyW5vDv1w52aGipOfZRkfsbrmcbzAncEZk/uv+Uo6h534K0mNscTMHh24KGiLks3G
+         i+rXSGXGfinc7T1/3sxRE9aQe0lPV9r2mPkO1dm8fdQ094x0CRIh1SLftIFzpGONkFQy
+         Gw5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679429744;
+        d=1e100.net; s=20210112; t=1679429746;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SASYwsYhAQSqNIE6HUln5R808O00UDaM+ugmJxC1i6Y=;
-        b=ATUqup+Xgc0Au0VTs3EJfnyEtvWn0VRonlwvaI535KNgC9e07SjsKmB3+vmjT51nMf
-         wkP86PfiBDWArSgJU9BbchB0+pJrm4x9D9ri7yLhsiQ+z5R3pI+AN2GpIdboxFdQi/Lp
-         gjcP97/GQZFh5cQK0lZ/X+xI3Eaqya1eA3X252w7oL2LOrHErZ4M+k9Opg59sgOAa5A3
-         XEvpVymUIQc4og3UBDSpk1czndIf0v9NQ4fmWbWuLYQeBBEINnNBfbdwdyfUZ86myDAk
-         8RRp8jxrfMfMmnN/wdBJMR4MFFlnqpoK9ttfyD1AGD5rzAkyS1kuFP6OBC7TuNKMYQ1I
-         NA1Q==
-X-Gm-Message-State: AO0yUKVzq+X6XR8w3DKCFsdy3m70R/1UDZO3QixTdW4CcHuktDy2WQqx
-        4b9fc0ElDo/BXxHAwezi8i6Ibpqj0EOAiOlF5A==
-X-Google-Smtp-Source: AK7set/HvJzxMftd1uCLemfdr7EZh/avv/uPbf4VraKazWicqnhqmpj6db9AHljzqSRdUL4ivIO6IsbGNBTLA3WbfA==
+        bh=WUxn3KVcBxbFXkgOhZJm8jHzCo14A+URwIfQXLEPszQ=;
+        b=r6BLEczVS2IsASlkCTEsnbM6Py86JAnL9hPsviMacBvDos0YCgdqCGOUmU4tWUVEdn
+         uc6kZx3GOW9pwtCke8IAwmxhy5LP2s9jJniJfu+I5yYDDTB46ra0y+fcGXRoq1XwlxEE
+         kjCSIWhIq4eupBvyheYtufHsggfF85Xy+7DUgavrNb293uKIlQKhgfblTIiMCkyShb3T
+         wth7hKUGqLcDhs6y10axb8rkJDvSgLPjZoRPuTrLVTT+3jmN4FdZFgqS+b7ZkIC/KD/9
+         tHQf1wTRk/tqNSxkUsoMtrjTAOn4Us9BcHs5TNjaGcE/j9R99YTp7DmPT/28bQ+8N/9W
+         EYpg==
+X-Gm-Message-State: AO0yUKVBiGMkf8qFRL9DbfcT+hXaZSJFRudgNT3WAE9zeHBpqwozcAsW
+        A2cic5LR7uQ6j+7+yzD47yEUEm7PEHjReg3luw==
+X-Google-Smtp-Source: AK7set+dSS5L5IQsR2QM90zFjxvQz3FiYFZP+Sm9POtIwngHMs0+tu5Z0jbahBkmyz+8xgu0gtCE94fpBCegZt4AyQ==
 X-Received: from ackerleytng-cloudtop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:1f5f])
- (user=ackerleytng job=sendgmr) by 2002:a17:902:b612:b0:1a0:51f7:7f5a with
- SMTP id b18-20020a170902b61200b001a051f77f5amr137446pls.13.1679429744410;
- Tue, 21 Mar 2023 13:15:44 -0700 (PDT)
-Date:   Tue, 21 Mar 2023 20:15:32 +0000
+ (user=ackerleytng job=sendgmr) by 2002:a05:6a00:99d:b0:628:fc:9049 with SMTP
+ id u29-20020a056a00099d00b0062800fc9049mr654427pfg.4.1679429746071; Tue, 21
+ Mar 2023 13:15:46 -0700 (PDT)
+Date:   Tue, 21 Mar 2023 20:15:33 +0000
 In-Reply-To: <cover.1679428901.git.ackerleytng@google.com>
 Mime-Version: 1.0
 References: <cover.1679428901.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.40.0.rc2.332.ga46443480c-goog
-Message-ID: <6e800e069c7fc400841b75ea49d1227bd101c1cf.1679428901.git.ackerleytng@google.com>
-Subject: [RFC PATCH v2 1/2] mm: restrictedmem: Allow userspace to specify
- mount for memfd_restricted
+Message-ID: <4db33a8976193f3eff80dbd4515335c36aeeb416.1679428901.git.ackerleytng@google.com>
+Subject: [RFC PATCH v2 2/2] selftests: restrictedmem: Check hugepage-ness of
+ shmem file backing restrictedmem fd
 From:   Ackerley Tng <ackerleytng@google.com>
 To:     kvm@vger.kernel.org, linux-api@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
@@ -77,7 +77,7 @@ Cc:     aarcange@redhat.com, ak@linux.intel.com, akpm@linux-foundation.org,
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,155 +85,564 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-By default, the backing shmem file for a restrictedmem fd is created
-on shmem's kernel space mount.
+For memfd_restricted() calls without a userspace mount, the backing
+file should be the shmem mount in the kernel, and the size of backing
+pages should be as defined by system-wide shmem configuration.
 
-With this patch, an optional tmpfs mount can be specified via an fd,
-which will be used as the mountpoint for backing the shmem file
-associated with a restrictedmem fd.
-
-This change is modeled after how sys_open() can create an unnamed
-temporary file in a given directory with O_TMPFILE.
-
-This will help restrictedmem fds inherit the properties of the
-provided tmpfs mounts, for example, hugepage allocation hints, NUMA
-binding hints, etc.
+If a userspace mount is provided, the size of backing pages should be
+as defined in the mount.
 
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 ---
- include/linux/syscalls.h           |  2 +-
- include/uapi/linux/restrictedmem.h |  8 ++++
- mm/restrictedmem.c                 | 63 +++++++++++++++++++++++++++---
- 3 files changed, 66 insertions(+), 7 deletions(-)
- create mode 100644 include/uapi/linux/restrictedmem.h
+ tools/testing/selftests/Makefile              |   1 +
+ .../selftests/restrictedmem/.gitignore        |   3 +
+ .../testing/selftests/restrictedmem/Makefile  |  15 +
+ .../testing/selftests/restrictedmem/common.c  |   9 +
+ .../testing/selftests/restrictedmem/common.h  |   8 +
+ .../restrictedmem_hugepage_test.c             | 459 ++++++++++++++++++
+ 6 files changed, 495 insertions(+)
+ create mode 100644 tools/testing/selftests/restrictedmem/.gitignore
+ create mode 100644 tools/testing/selftests/restrictedmem/Makefile
+ create mode 100644 tools/testing/selftests/restrictedmem/common.c
+ create mode 100644 tools/testing/selftests/restrictedmem/common.h
+ create mode 100644 tools/testing/selftests/restrictedmem/restrictedmem_hugepage_test.c
 
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index f9e9e0c820c5..a23c4c385cd3 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1056,7 +1056,7 @@ asmlinkage long sys_memfd_secret(unsigned int flags);
- asmlinkage long sys_set_mempolicy_home_node(unsigned long start, unsigned long len,
- 					    unsigned long home_node,
- 					    unsigned long flags);
--asmlinkage long sys_memfd_restricted(unsigned int flags);
-+asmlinkage long sys_memfd_restricted(unsigned int flags, int mount_fd);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/linux/restrictedmem.h b/include/uapi/linux/restrictedmem.h
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index f07aef7c592c..44078eeefb79 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -60,6 +60,7 @@ TARGETS += pstore
+ TARGETS += ptrace
+ TARGETS += openat2
+ TARGETS += resctrl
++TARGETS += restrictedmem
+ TARGETS += rlimits
+ TARGETS += rseq
+ TARGETS += rtc
+diff --git a/tools/testing/selftests/restrictedmem/.gitignore b/tools/testing/selftests/restrictedmem/.gitignore
 new file mode 100644
-index 000000000000..9f108dd1ac4c
+index 000000000000..2581bcc8ff29
 --- /dev/null
-+++ b/include/uapi/linux/restrictedmem.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _UAPI_LINUX_RESTRICTEDMEM_H
-+#define _UAPI_LINUX_RESTRICTEDMEM_H
++++ b/tools/testing/selftests/restrictedmem/.gitignore
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0-only
 +
-+/* flags for memfd_restricted */
-+#define RMFD_TMPFILE		0x0001U
++restrictedmem_hugepage_test
+diff --git a/tools/testing/selftests/restrictedmem/Makefile b/tools/testing/selftests/restrictedmem/Makefile
+new file mode 100644
+index 000000000000..8e5378d20226
+--- /dev/null
++++ b/tools/testing/selftests/restrictedmem/Makefile
+@@ -0,0 +1,15 @@
++# SPDX-License-Identifier: GPL-2.0
 +
-+#endif /* _UAPI_LINUX_RESTRICTEDMEM_H */
-diff --git a/mm/restrictedmem.c b/mm/restrictedmem.c
-index c5d869d8c2d8..4d83b949d84e 100644
---- a/mm/restrictedmem.c
-+++ b/mm/restrictedmem.c
-@@ -1,11 +1,12 @@
- // SPDX-License-Identifier: GPL-2.0
--#include "linux/sbitmap.h"
-+#include <linux/namei.h>
- #include <linux/pagemap.h>
- #include <linux/pseudo_fs.h>
- #include <linux/shmem_fs.h>
- #include <linux/syscalls.h>
- #include <uapi/linux/falloc.h>
- #include <uapi/linux/magic.h>
-+#include <uapi/linux/restrictedmem.h>
- #include <linux/restrictedmem.h>
- 
- struct restrictedmem {
-@@ -189,19 +190,20 @@ static struct file *restrictedmem_file_create(struct file *memfd)
- 	return file;
- }
- 
--SYSCALL_DEFINE1(memfd_restricted, unsigned int, flags)
-+static int restrictedmem_create(struct vfsmount *mount)
- {
- 	struct file *file, *restricted_file;
- 	int fd, err;
- 
--	if (flags)
--		return -EINVAL;
--
- 	fd = get_unused_fd_flags(0);
- 	if (fd < 0)
- 		return fd;
- 
--	file = shmem_file_setup("memfd:restrictedmem", 0, VM_NORESERVE);
-+	if (mount)
-+		file = shmem_file_setup_with_mnt(mount, "memfd:restrictedmem", 0, VM_NORESERVE);
-+	else
-+		file = shmem_file_setup("memfd:restrictedmem", 0, VM_NORESERVE);
++CFLAGS = $(KHDR_INCLUDES)
++CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -std=gnu99
 +
- 	if (IS_ERR(file)) {
- 		err = PTR_ERR(file);
- 		goto err_fd;
-@@ -223,6 +225,55 @@ SYSCALL_DEFINE1(memfd_restricted, unsigned int, flags)
- 	return err;
- }
- 
-+static bool is_shmem_mount(struct vfsmount *mnt)
++TEST_GEN_PROGS += restrictedmem_hugepage_test
++
++include ../lib.mk
++
++EXTRA_CLEAN = $(OUTPUT)/common.o
++
++$(OUTPUT)/common.o: common.c
++	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
++
++$(TEST_GEN_PROGS): $(OUTPUT)/common.o
+diff --git a/tools/testing/selftests/restrictedmem/common.c b/tools/testing/selftests/restrictedmem/common.c
+new file mode 100644
+index 000000000000..03dac843404f
+--- /dev/null
++++ b/tools/testing/selftests/restrictedmem/common.c
+@@ -0,0 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <sys/syscall.h>
++#include <unistd.h>
++
++int memfd_restricted(unsigned int flags, int mount_fd)
 +{
-+	return mnt && mnt->mnt_sb && mnt->mnt_sb->s_magic == TMPFS_MAGIC;
++	return syscall(__NR_memfd_restricted, flags, mount_fd);
 +}
+diff --git a/tools/testing/selftests/restrictedmem/common.h b/tools/testing/selftests/restrictedmem/common.h
+new file mode 100644
+index 000000000000..06284ed86baf
+--- /dev/null
++++ b/tools/testing/selftests/restrictedmem/common.h
+@@ -0,0 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +
-+static int restrictedmem_create_from_file(int mount_fd)
++#ifndef SELFTESTS_RESTRICTEDMEM_COMMON_H
++#define SELFTESTS_RESTRICTEDMEM_COMMON_H
++
++int memfd_restricted(unsigned int flags, int mount_fd);
++
++#endif  // SELFTESTS_RESTRICTEDMEM_COMMON_H
+diff --git a/tools/testing/selftests/restrictedmem/restrictedmem_hugepage_test.c b/tools/testing/selftests/restrictedmem/restrictedmem_hugepage_test.c
+new file mode 100644
+index 000000000000..ae37148342fe
+--- /dev/null
++++ b/tools/testing/selftests/restrictedmem/restrictedmem_hugepage_test.c
+@@ -0,0 +1,459 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#define _GNU_SOURCE /* for O_PATH */
++#define _POSIX_C_SOURCE /* for PATH_MAX */
++#include <limits.h>
++#include <stdio.h>
++#include <string.h>
++#include <sys/mman.h>
++#include <sys/mount.h>
++#include <sys/stat.h>
++#include <unistd.h>
++
++#include "linux/restrictedmem.h"
++
++#include "common.h"
++#include "../kselftest_harness.h"
++
++/*
++ * Expect policy to be one of always, within_size, advise, never,
++ * deny, force
++ */
++#define POLICY_BUF_SIZE 12
++
++static int get_hpage_pmd_size(void)
 +{
-+	int ret;
-+	struct fd f;
-+	struct vfsmount *mnt;
++	FILE *fp;
++	char buf[100];
++	char *ret;
++	int size;
 +
-+	f = fdget_raw(mount_fd);
-+	if (!f.file)
-+		return -EBADF;
++	fp = fopen("/sys/kernel/mm/transparent_hugepage/hpage_pmd_size", "r");
++	if (!fp)
++		return -1;
 +
-+	mnt = f.file->f_path.mnt;
-+	if (!is_shmem_mount(mnt)) {
-+		ret = -EINVAL;
++	ret = fgets(buf, 100, fp);
++	if (ret != buf) {
++		size = -1;
 +		goto out;
 +	}
 +
-+	ret = mnt_want_write(mnt);
-+	if (unlikely(ret))
++	if (sscanf(buf, "%d\n", &size) != 1)
++		size = -1;
++
++out:
++	fclose(fp);
++
++	return size;
++}
++
++static bool is_valid_shmem_thp_policy(char *policy)
++{
++	if (strcmp(policy, "always") == 0)
++		return true;
++	if (strcmp(policy, "within_size") == 0)
++		return true;
++	if (strcmp(policy, "advise") == 0)
++		return true;
++	if (strcmp(policy, "never") == 0)
++		return true;
++	if (strcmp(policy, "deny") == 0)
++		return true;
++	if (strcmp(policy, "force") == 0)
++		return true;
++
++	return false;
++}
++
++static int get_shmem_thp_policy(char *policy)
++{
++	FILE *fp;
++	char buf[100];
++	char *left = NULL;
++	char *right = NULL;
++	int ret = -1;
++
++	fp = fopen("/sys/kernel/mm/transparent_hugepage/shmem_enabled", "r");
++	if (!fp)
++		return -1;
++
++	if (fgets(buf, 100, fp) != buf)
 +		goto out;
 +
-+	ret = restrictedmem_create(mnt);
++	/*
++	 * Expect shmem_enabled to be of format like "always within_size advise
++	 * [never] deny force"
++	 */
++	left = memchr(buf, '[', 100);
++	if (!left)
++		goto out;
 +
-+	mnt_drop_write(mnt);
++	right = memchr(buf, ']', 100);
++	if (!right)
++		goto out;
++
++	memcpy(policy, left + 1, right - left - 1);
++
++	ret = !is_valid_shmem_thp_policy(policy);
++
 +out:
-+	fdput(f);
++	fclose(fp);
++	return ret;
++}
++
++static int write_string_to_file(const char *path, const char *string)
++{
++	FILE *fp;
++	size_t len = strlen(string);
++	int ret = -1;
++
++	fp = fopen(path, "w");
++	if (!fp)
++		return ret;
++
++	if (fwrite(string, 1, len, fp) != len)
++		goto out;
++
++	ret = 0;
++
++out:
++	fclose(fp);
++	return ret;
++}
++
++static int set_shmem_thp_policy(char *policy)
++{
++	int ret = -1;
++	/* +1 for newline */
++	char to_write[POLICY_BUF_SIZE + 1] = { 0 };
++
++	if (!is_valid_shmem_thp_policy(policy))
++		return ret;
++
++	ret = snprintf(to_write, POLICY_BUF_SIZE + 1, "%s\n", policy);
++	if (ret != strlen(policy) + 1)
++		return -1;
++
++	ret = write_string_to_file(
++		"/sys/kernel/mm/transparent_hugepage/shmem_enabled", to_write);
 +
 +	return ret;
 +}
 +
-+SYSCALL_DEFINE2(memfd_restricted, unsigned int, flags, int, mount_fd)
++FIXTURE(reset_shmem_enabled)
 +{
-+	if (flags & ~RMFD_TMPFILE)
-+		return -EINVAL;
++	char shmem_enabled[POLICY_BUF_SIZE];
++};
 +
-+	if (flags == RMFD_TMPFILE) {
-+		if (mount_fd < 0)
-+			return -EINVAL;
++FIXTURE_SETUP(reset_shmem_enabled)
++{
++	memset(self->shmem_enabled, 0, POLICY_BUF_SIZE);
++	ASSERT_EQ(0, get_shmem_thp_policy(self->shmem_enabled));
++}
 +
-+		return restrictedmem_create_from_file(mount_fd);
-+	} else {
-+		return restrictedmem_create(NULL);
++FIXTURE_TEARDOWN(reset_shmem_enabled)
++{
++	ASSERT_EQ(0, set_shmem_thp_policy(self->shmem_enabled));
++}
++
++TEST_F(reset_shmem_enabled, restrictedmem_fstat_shmem_enabled_never)
++{
++	int fd = -1;
++	struct stat stat;
++
++	ASSERT_EQ(0, set_shmem_thp_policy("never"));
++
++	fd = memfd_restricted(0, -1);
++	ASSERT_NE(-1, fd);
++
++	ASSERT_EQ(0, fstat(fd, &stat));
++
++	/*
++	 * st_blksize is set based on the superblock's s_blocksize_bits. For
++	 * shmem, this is set to PAGE_SHIFT
++	 */
++	ASSERT_EQ(stat.st_blksize, getpagesize());
++
++	close(fd);
++}
++
++TEST_F(reset_shmem_enabled, restrictedmem_fstat_shmem_enabled_always)
++{
++	int fd = -1;
++	struct stat stat;
++
++	ASSERT_EQ(0, set_shmem_thp_policy("always"));
++
++	fd = memfd_restricted(0, -1);
++	ASSERT_NE(-1, fd);
++
++	ASSERT_EQ(0, fstat(fd, &stat));
++
++	ASSERT_EQ(stat.st_blksize, get_hpage_pmd_size());
++
++	close(fd);
++}
++
++TEST(restrictedmem_tmpfile_invalid_fd)
++{
++	int fd = memfd_restricted(RMFD_TMPFILE, -2);
++
++	ASSERT_EQ(-1, fd);
++	ASSERT_EQ(EINVAL, errno);
++}
++
++TEST(restrictedmem_tmpfile_fd_not_a_mount)
++{
++	int fd = memfd_restricted(RMFD_TMPFILE, STDOUT_FILENO);
++
++	ASSERT_EQ(-1, fd);
++	ASSERT_EQ(EINVAL, errno);
++}
++
++TEST(restrictedmem_tmpfile_not_tmpfs_mount)
++{
++	int fd = -1;
++	int mfd = -1;
++
++	mfd = open("/proc", O_PATH);
++	ASSERT_NE(-1, mfd);
++
++	fd = memfd_restricted(RMFD_TMPFILE, mfd);
++
++	ASSERT_EQ(-1, fd);
++	ASSERT_EQ(EINVAL, errno);
++}
++
++FIXTURE(tmpfs_hugepage_sfd)
++{
++	int sfd;
++};
++
++FIXTURE_SETUP(tmpfs_hugepage_sfd)
++{
++	self->sfd = fsopen("tmpfs", 0);
++	ASSERT_NE(-1, self->sfd);
++}
++
++FIXTURE_TEARDOWN(tmpfs_hugepage_sfd)
++{
++	close(self->sfd);
++}
++
++TEST_F(tmpfs_hugepage_sfd, restrictedmem_fstat_tmpfs_huge_always)
++{
++	int ret = -1;
++	int fd = -1;
++	int mfd = -1;
++	struct stat stat;
++
++	fsconfig(self->sfd, FSCONFIG_SET_STRING, "huge", "always", 0);
++	fsconfig(self->sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
++
++	mfd = fsmount(self->sfd, 0, 0);
++	ASSERT_NE(-1, mfd);
++
++	fd = memfd_restricted(RMFD_TMPFILE, mfd);
++	ASSERT_NE(-1, fd);
++
++	/* User can close reference to mount */
++	ret = close(mfd);
++	ASSERT_EQ(0, ret);
++
++	ret = fstat(fd, &stat);
++	ASSERT_EQ(0, ret);
++	ASSERT_EQ(stat.st_blksize, get_hpage_pmd_size());
++
++	close(fd);
++}
++
++TEST_F(tmpfs_hugepage_sfd, restrictedmem_fstat_tmpfs_huge_never)
++{
++	int ret = -1;
++	int fd = -1;
++	int mfd = -1;
++	struct stat stat;
++
++	fsconfig(self->sfd, FSCONFIG_SET_STRING, "huge", "never", 0);
++	fsconfig(self->sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
++
++	mfd = fsmount(self->sfd, 0, 0);
++	ASSERT_NE(-1, mfd);
++
++	fd = memfd_restricted(RMFD_TMPFILE, mfd);
++	ASSERT_NE(-1, fd);
++
++	/* User can close reference to mount */
++	ret = close(mfd);
++	ASSERT_EQ(0, ret);
++
++	ret = fstat(fd, &stat);
++	ASSERT_EQ(0, ret);
++	ASSERT_EQ(stat.st_blksize, getpagesize());
++
++	close(fd);
++}
++
++static bool directory_exists(const char *path)
++{
++	struct stat sb;
++
++	return stat(path, &sb) == 0 && S_ISDIR(sb.st_mode);
++}
++
++FIXTURE(tmpfs_hugepage_mount_path)
++{
++	char *mount_path;
++};
++
++FIXTURE_SETUP(tmpfs_hugepage_mount_path)
++{
++	int ret = -1;
++
++	/* /tmp is an FHS-mandated world-writable directory */
++	self->mount_path = "/tmp/restrictedmem-selftest-mnt";
++
++	if (!directory_exists(self->mount_path)) {
++		ret = mkdir(self->mount_path, 0777);
++		ASSERT_EQ(0, ret);
 +	}
 +}
 +
- int restrictedmem_bind(struct file *file, pgoff_t start, pgoff_t end,
- 		       struct restrictedmem_notifier *notifier, bool exclusive)
- {
++FIXTURE_TEARDOWN(tmpfs_hugepage_mount_path)
++{
++	int ret = -1;
++
++	if (!directory_exists(self->mount_path))
++		return;
++
++	ret = umount2(self->mount_path, MNT_FORCE);
++	EXPECT_EQ(0, ret);
++	if (ret == -1 && errno == EINVAL)
++		fprintf(stderr, "%s was not mounted\n", self->mount_path);
++
++	ret = rmdir(self->mount_path);
++	EXPECT_EQ(0, ret);
++	if (ret == -1)
++		fprintf(stderr, "rmdir(%s) failed\n", self->mount_path);
++}
++
++/*
++ * When the restrictedmem's fd is open, a user should not be able to unmount or
++ * remove the mounted directory
++ */
++TEST_F(tmpfs_hugepage_mount_path, restrictedmem_umount_rmdir_while_file_open)
++{
++	int ret = -1;
++	int fd = -1;
++	int mfd = -1;
++	struct stat stat;
++
++	ret = mount("name", self->mount_path, "tmpfs", 0, "huge=always");
++	ASSERT_EQ(0, ret);
++
++	mfd = open(self->mount_path, O_PATH);
++	ASSERT_NE(-1, mfd);
++
++	fd = memfd_restricted(RMFD_TMPFILE, mfd);
++	ASSERT_NE(-1, fd);
++
++	/* We don't need this reference to the mount anymore */
++	ret = close(mfd);
++	ASSERT_EQ(0, ret);
++
++	/* restrictedmem's fd should still be usable */
++	ret = fstat(fd, &stat);
++	ASSERT_EQ(0, ret);
++	ASSERT_EQ(stat.st_blksize, get_hpage_pmd_size());
++
++	/* User should not be able to unmount directory */
++	ret = umount2(self->mount_path, MNT_FORCE);
++	ASSERT_EQ(-1, ret);
++	ASSERT_EQ(EBUSY, errno);
++
++	ret = rmdir(self->mount_path);
++	ASSERT_EQ(-1, ret);
++	ASSERT_EQ(EBUSY, errno);
++
++	close(fd);
++}
++
++/* The fd of a file on the mount can be provided as mount_fd */
++TEST_F(tmpfs_hugepage_mount_path, restrictedmem_provide_fd_of_file)
++{
++	int ret = -1;
++	int fd = -1;
++	int ffd = -1;
++	char tmp_file_path[PATH_MAX] = { 0 };
++	struct stat stat;
++
++	ret = mount("name", self->mount_path, "tmpfs", 0, "huge=always");
++	ASSERT_EQ(0, ret);
++
++	snprintf(tmp_file_path, PATH_MAX, "%s/tmp-file", self->mount_path);
++	ret = write_string_to_file(tmp_file_path, "filler\n");
++	ASSERT_EQ(0, ret);
++
++	ffd = open(tmp_file_path, O_RDWR);
++	ASSERT_NE(-1, ffd);
++
++	fd = memfd_restricted(RMFD_TMPFILE, ffd);
++	ASSERT_NE(-1, fd);
++
++	/* We don't need this reference anymore */
++	ret = close(ffd);
++	ASSERT_EQ(0, ret);
++
++	ret = fstat(fd, &stat);
++	ASSERT_EQ(0, ret);
++	ASSERT_EQ(stat.st_blksize, get_hpage_pmd_size());
++
++	close(fd);
++	remove(tmp_file_path);
++}
++
++/*
++ * The fd of any file on the mount (including subdirectories) can be provided as
++ * mount_fd
++ */
++TEST_F(tmpfs_hugepage_mount_path, restrictedmem_provide_fd_of_file_in_subdir)
++{
++	int ret = -1;
++	int fd = -1;
++	int ffd = -1;
++	char tmp_dir_path[PATH_MAX] = { 0 };
++	char tmp_file_path[PATH_MAX] = { 0 };
++	struct stat stat;
++
++	ret = mount("name", self->mount_path, "tmpfs", 0, "huge=always");
++	ASSERT_EQ(0, ret);
++
++	snprintf(tmp_dir_path, PATH_MAX, "%s/tmp-subdir", self->mount_path);
++	ret = mkdir(tmp_dir_path, 0777);
++	ASSERT_EQ(0, ret);
++
++	snprintf(tmp_file_path, PATH_MAX, "%s/tmp-subdir/tmp-file",
++		 self->mount_path);
++	ret = write_string_to_file(tmp_file_path, "filler\n");
++	ASSERT_EQ(0, ret);
++
++	ffd = open(tmp_file_path, O_RDWR);
++	ASSERT_NE(-1, ffd);
++
++	fd = memfd_restricted(RMFD_TMPFILE, ffd);
++	ASSERT_NE(-1, fd);
++
++	/* We don't need this reference anymore */
++	ret = close(ffd);
++	ASSERT_EQ(0, ret);
++
++	ret = fstat(fd, &stat);
++	ASSERT_EQ(0, ret);
++	ASSERT_EQ(stat.st_blksize, get_hpage_pmd_size());
++
++	close(fd);
++	remove(tmp_file_path);
++	rmdir(tmp_dir_path);
++}
++
++TEST_HARNESS_MAIN
 -- 
 2.40.0.rc2.332.ga46443480c-goog
 
