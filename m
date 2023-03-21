@@ -2,292 +2,346 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC97D6C3548
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 16:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 740056C359A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 16:26:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231511AbjCUPOJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 11:14:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60070 "EHLO
+        id S231478AbjCUP0N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 11:26:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230308AbjCUPOB (ORCPT
+        with ESMTP id S231443AbjCUP0M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 11:14:01 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 027FC5261;
-        Tue, 21 Mar 2023 08:13:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 21 Mar 2023 11:26:12 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 098F24FABF;
+        Tue, 21 Mar 2023 08:26:07 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 03F23B817C0;
-        Tue, 21 Mar 2023 15:13:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B76D0C433EF;
-        Tue, 21 Mar 2023 15:13:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679411619;
-        bh=0Iwy/vDqt7mXeicFOYkbKbYVA6PpicVIbc2RJjP5C5w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rm/TBm5HfiLwVKpaRdbApnoyQi0uEg1tvjLbR8fem1lrcwqoV0KgXzlHJE9DF9qgh
-         wzBnqOSpqVNuzvv9D7V9Q6wVn0XxcR+OiNAW5TcjY6RgNT7N8+EKJuZC/DLA9qJ+tZ
-         MSfKWYF6rTg7Uxq6TfskE0PBdlPZAtSzIUdkFyqmO/lQvm4paaYkBrm6jQNptyVK4H
-         vLNWpAoy4BLqD6c7UzDOaXfoYg3YfwLcx13mh7yPjxHivxA2quoeM0XTTtnivd/0v2
-         S63Td/76u69FidkhYG1QTCMWsJ6coSyVU8AqtYN7/GK78lBdizegA9EJKnfWXnmZFB
-         aY1GpR1uFXh+Q==
-Date:   Tue, 21 Mar 2023 08:13:39 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
-        david@fromorbit.com, dan.j.williams@intel.com,
-        akpm@linux-foundation.org
-Subject: Re: [RFC PATCH] xfs: check shared state of when CoW, update reflink
- flag when io ends
-Message-ID: <20230321151339.GA11376@frogsfrogsfrogs>
-References: <1679025588-21-1-git-send-email-ruansy.fnst@fujitsu.com>
- <20230317203505.GK11394@frogsfrogsfrogs>
- <011cd163-4e6b-40b9-beeb-7fbc55b3a369@fujitsu.com>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 86541201AA;
+        Tue, 21 Mar 2023 15:26:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1679412365; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KhZIrgDPD74P810Uzhm3yzk3QcaPBkmpJ69S46jGLm8=;
+        b=IxufG8ke4f+UKmgoQV9q/5pnK2H7HS/lPMe58VwakCtSSyilAWnUwr9t/Heb37v6HiCLpn
+        BlBwZD3X4kTs66OS+8xPceUvnB8vVapT+XsbC0P54WrH6agpRSpeABAal3nsKcvDzb3feL
+        AdtAeRcqL7372FLZcJ633Tbl2WCYZ1o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1679412365;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KhZIrgDPD74P810Uzhm3yzk3QcaPBkmpJ69S46jGLm8=;
+        b=iifihTlZKLBLfKievhIRtBdtYqOQPT0FlnQAt759dk7MD8H8kl3ugUZvGKgobBxFqe0pRl
+        KGmK57gNjjk1uZDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4922913A9D;
+        Tue, 21 Mar 2023 15:26:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id lAQpEI3MGWQfWAAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Tue, 21 Mar 2023 15:26:05 +0000
+Message-ID: <9952bbf8-cf59-7bea-ce50-0200d4f4165e@suse.cz>
+Date:   Tue, 21 Mar 2023 16:26:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <011cd163-4e6b-40b9-beeb-7fbc55b3a369@fujitsu.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH V4 1/2] mm: compaction: move compaction sysctl to its own
+ file
+Content-Language: en-US
+To:     ye.xingchen@zte.com.cn, mcgrof@kernel.org
+Cc:     keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, chi.minghao@zte.com.cn,
+        linmiaohe@huawei.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <202303211511314414538@zte.com.cn>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <202303211511314414538@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 20, 2023 at 06:02:05PM +0800, Shiyang Ruan wrote:
+On 3/21/23 08:11, ye.xingchen@zte.com.cn wrote:
+> From: Minghao Chi <chi.minghao@zte.com.cn>
 > 
+> This moves all compaction sysctls to its own file.
 > 
-> 在 2023/3/18 4:35, Darrick J. Wong 写道:
-> > On Fri, Mar 17, 2023 at 03:59:48AM +0000, Shiyang Ruan wrote:
-> > > As is mentioned[1] before, the generic/388 will randomly fail with dmesg
-> > > warning.  This case uses fsstress with a lot of random operations.  It is hard
-> > > to  reproduce.  Finally I found a 100% reproduce condition, which is setting
-> > > the seed to 1677104360.  So I changed the generic/388 code: removed the loop
-> > > and used the code below instad:
-> > > ```
-> > > ($FSSTRESS_PROG $FSSTRESS_AVOID -d $SCRATCH_MNT -v -s 1677104360 -n 221 -p 1 >> $seqres.full) > /dev/null 2>&1
-> > > ($FSSTRESS_PROG $FSSTRESS_AVOID -d $SCRATCH_MNT -v -s 1677104360 -n 221 -p 1 >> $seqres.full) > /dev/null 2>&1
-> > > _check_dmesg_for dax_insert_entry
-> > > ```
-> > > 
-> > > According to the operations log, and kernel debug log I added, I found that
-> > > the reflink flag of one inode won't be unset even if there's no more shared
-> > > extents any more.
-> > >    Then write to this file again.  Because of the reflink flag, xfs thinks it
-> > >      needs cow, and extent(called it extA) will be CoWed to a new
-> > >      extent(called it extB) incorrectly.  And extA is not used any more,
-> > >      but didn't be unmapped (didn't do dax_disassociate_entry()).
-> > 
-> > IOWs, dax_iomap_copy_around (or something very near it) should be
-> > calling dax_disassociate_entry on the source range after copying extA's
-> > contents to extB to drop its page->shared count?
+> Link: https://lore.kernel.org/all/ZAJwoXJCzfk1WIBx@bombadil.infradead.org/
+> Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
+> Signed-off-by: Ye Xingchen <ye.xingchen@zte.com.cn>
+> ---
+>  include/linux/compaction.h |  7 ----
+>  kernel/sysctl.c            | 58 -------------------------------
+>  mm/compaction.c            | 70 ++++++++++++++++++++++++++++++++++----
+>  3 files changed, 64 insertions(+), 71 deletions(-)
 > 
-> If extA is a shared extent, its pages will be disassociated correctly by
-> invalidate_inode_pages2_range() in dax_iomap_iter().
+> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+> index 52a9ff65faee..a6e512cfb670 100644
+> --- a/include/linux/compaction.h
+> +++ b/include/linux/compaction.h
+> @@ -81,13 +81,6 @@ static inline unsigned long compact_gap(unsigned int order)
+>  }
 > 
-> But the problem is that extA is not shared but now be CoWed,
-
-Aha!  Ok, I hadn't realized that extA is not shared...
-
-> invalidate_inode_pages2_range() is also called but it can't disassociate the
-> old page (because the page is marked dirty, can't be invalidated)
-
-...so what marked the old page dirty?   Was it the case that the
-unshared extA got marked dirty, then later someone created a cow
-reservation (extB, I guess) that covered the already dirty extA?
-
-Should we be transferring the dirty state from A to B here before the
-invalidate_inode_pages2_range ?
-
-> Is the behavior to do CoW on a non-shared extent allowed?
-
-In general, yes, XFS allows COW on non-shared extents.  The (cow) extent
-size hint provides for cowing the unshared blocks adjacent to a shared
-block to try to combat fragmentation.
-
-> > 
-> > >    The next time we mapwrite to another file, xfs will allocate extA for it,
-> > >      page fault handler do dax_associate_entry().  BUT bucause the extA didn't
-> > >      be unmapped, it still stores old file's info in page->mapping,->index.
-> > >      Then, It reports dmesg warning when it try to sotre the new file's info.
-> > > 
-> > > So, I think:
-> > >    1. reflink flag should be updated after CoW operations.
-> > >    2. xfs_reflink_allocate_cow() should add "if extent is shared" to determine
-> > >       xfs do CoW or not.
-> > > 
-> > > I made the fix patch, it can resolve the fail of generic/388.  But it causes
-> > > other cases fail: generic/127, generic/263, generic/616, xfs/315 xfs/421. I'm
-> > > not sure if the fix is right, or I have missed something somewhere.  Please
-> > > give me some advice.
-> > > 
-> > > Thank you very much!!
-> > > 
-> > > [1]: https://lore.kernel.org/linux-xfs/1669908538-55-1-git-send-email-ruansy.fnst@fujitsu.com/
-> > > 
-> > > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> > > ---
-> > >   fs/xfs/xfs_reflink.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
-> > >   fs/xfs/xfs_reflink.h |  2 ++
-> > >   2 files changed, 46 insertions(+)
-> > > 
-> > > diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-> > > index f5dc46ce9803..a6b07f5c1db2 100644
-> > > --- a/fs/xfs/xfs_reflink.c
-> > > +++ b/fs/xfs/xfs_reflink.c
-> > > @@ -154,6 +154,40 @@ xfs_reflink_find_shared(
-> > >   	return error;
-> > >   }
-> > > +int xfs_reflink_extent_is_shared(
-> > > +	struct xfs_inode	*ip,
-> > > +	struct xfs_bmbt_irec	*irec,
-> > > +	bool			*shared)
-> > > +{
-> > > +	struct xfs_mount	*mp = ip->i_mount;
-> > > +	struct xfs_perag	*pag;
-> > > +	xfs_agblock_t		agbno;
-> > > +	xfs_extlen_t		aglen;
-> > > +	xfs_agblock_t		fbno;
-> > > +	xfs_extlen_t		flen;
-> > > +	int			error = 0;
-> > > +
-> > > +	*shared = false;
-> > > +
-> > > +	/* Holes, unwritten, and delalloc extents cannot be shared */
-> > > +	if (!xfs_bmap_is_written_extent(irec))
-> > > +		return 0;
-> > > +
-> > > +	pag = xfs_perag_get(mp, XFS_FSB_TO_AGNO(mp, irec->br_startblock));
-> > > +	agbno = XFS_FSB_TO_AGBNO(mp, irec->br_startblock);
-> > > +	aglen = irec->br_blockcount;
-> > > +	error = xfs_reflink_find_shared(pag, NULL, agbno, aglen, &fbno, &flen,
-> > > +			true);
-> > > +	xfs_perag_put(pag);
-> > > +	if (error)
-> > > +		return error;
-> > > +
-> > > +	if (fbno != NULLAGBLOCK)
-> > > +		*shared = true;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >   /*
-> > >    * Trim the mapping to the next block where there's a change in the
-> > >    * shared/unshared status.  More specifically, this means that we
-> > > @@ -533,6 +567,12 @@ xfs_reflink_allocate_cow(
-> > >   		xfs_ifork_init_cow(ip);
-> > >   	}
-> > > +	error = xfs_reflink_extent_is_shared(ip, imap, shared);
-> > > +	if (error)
-> > > +		return error;
-> > > +	if (!*shared)
-> > > +		return 0;
-> > > +
-> > >   	error = xfs_find_trim_cow_extent(ip, imap, cmap, shared, &found);
-> > >   	if (error || !*shared)
-> > >   		return error;
-> > > @@ -834,6 +874,10 @@ xfs_reflink_end_cow_extent(
-> > >   	/* Remove the mapping from the CoW fork. */
-> > >   	xfs_bmap_del_extent_cow(ip, &icur, &got, &del);
-> > > +	error = xfs_reflink_clear_inode_flag(ip, &tp);
-> > 
-> > This will disable COW on /all/ blocks in the entire file, including the
-> > shared ones.  At a bare minimum you'd have to scan the entire data fork
-> > to ensure there are no shared extents.  That's probably why doing this
-> > causes so many new regressions.
+>  #ifdef CONFIG_COMPACTION
+> -extern unsigned int sysctl_compaction_proactiveness;
+> -extern int sysctl_compaction_handler(struct ctl_table *table, int write,
+> -			void *buffer, size_t *length, loff_t *ppos);
+> -extern int compaction_proactiveness_sysctl_handler(struct ctl_table *table,
+> -		int write, void *buffer, size_t *length, loff_t *ppos);
+> -extern int sysctl_extfrag_threshold;
+> -extern int sysctl_compact_unevictable_allowed;
 > 
-> This function will search for shared extent before actually clearing the
-> flag.  If no shared extent found, the flag won't be cleared.  The name of
-> this function is not very accurate.
+>  extern unsigned int extfrag_for_order(struct zone *zone, unsigned int order);
+>  extern int fragmentation_index(struct zone *zone, unsigned int order);
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index ce0297acf97c..49a405447c77 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
 
-Oh, right.  I forgot that _reflink_clear_inode_flag walks the entire
-data fork looking for shared extents, and only clears the flag if it
-doesn't find any.
+You should be able to remove the #include <linux/compaction.h> in this file now?
 
-That said, if (say) this is a large sparse file with 300 million extent
-records and extent 299,999,999 is shared, this is going to make write
-completions realllllly slow, as each completion now has to perform its
-own walk...
-
-> BTW, in my thought, the reflink flag is to indicate if a file is now
-> containing any shared extents or not.  So, it should be cleared immediately
-> if no extents shared any more.  Is this right?
-
-...which is why we don't clear the flag immediately.  Or ever.  Only
-repairs take the time to do that.
-
---D
-
+> @@ -746,27 +746,6 @@ int proc_dointvec(struct ctl_table *table, int write, void *buffer,
+>  	return do_proc_dointvec(table, write, buffer, lenp, ppos, NULL, NULL);
+>  }
 > 
+> -#ifdef CONFIG_COMPACTION
+> -static int proc_dointvec_minmax_warn_RT_change(struct ctl_table *table,
+> -		int write, void *buffer, size_t *lenp, loff_t *ppos)
+> -{
+> -	int ret, old;
+> -
+> -	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || !write)
+> -		return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+> -
+> -	old = *(int *)table->data;
+> -	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+> -	if (ret)
+> -		return ret;
+> -	if (old != *(int *)table->data)
+> -		pr_warn_once("sysctl attribute %s changed by %s[%d]\n",
+> -			     table->procname, current->comm,
+> -			     task_pid_nr(current));
+> -	return ret;
+> -}
+> -#endif
+> -
+>  /**
+>   * proc_douintvec - read a vector of unsigned integers
+>   * @table: the sysctl table
+> @@ -2157,43 +2136,6 @@ static struct ctl_table vm_table[] = {
+>  		.extra1		= SYSCTL_ONE,
+>  		.extra2		= SYSCTL_FOUR,
+>  	},
+> -#ifdef CONFIG_COMPACTION
+> -	{
+> -		.procname	= "compact_memory",
+> -		.data		= NULL,
+> -		.maxlen		= sizeof(int),
+> -		.mode		= 0200,
+> -		.proc_handler	= sysctl_compaction_handler,
+> -	},
+> -	{
+> -		.procname	= "compaction_proactiveness",
+> -		.data		= &sysctl_compaction_proactiveness,
+> -		.maxlen		= sizeof(sysctl_compaction_proactiveness),
+> -		.mode		= 0644,
+> -		.proc_handler	= compaction_proactiveness_sysctl_handler,
+> -		.extra1		= SYSCTL_ZERO,
+> -		.extra2		= SYSCTL_ONE_HUNDRED,
+> -	},
+> -	{
+> -		.procname	= "extfrag_threshold",
+> -		.data		= &sysctl_extfrag_threshold,
+> -		.maxlen		= sizeof(int),
+> -		.mode		= 0644,
+> -		.proc_handler	= proc_dointvec_minmax,
+> -		.extra1		= SYSCTL_ZERO,
+> -		.extra2		= SYSCTL_ONE_THOUSAND,
+> -	},
+> -	{
+> -		.procname	= "compact_unevictable_allowed",
+> -		.data		= &sysctl_compact_unevictable_allowed,
+> -		.maxlen		= sizeof(int),
+> -		.mode		= 0644,
+> -		.proc_handler	= proc_dointvec_minmax_warn_RT_change,
+> -		.extra1		= SYSCTL_ZERO,
+> -		.extra2		= SYSCTL_ONE,
+> -	},
+> -
+> -#endif /* CONFIG_COMPACTION */
+>  	{
+>  		.procname	= "min_free_kbytes",
+>  		.data		= &min_free_kbytes,
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index e689d66cedf4..f56b3dc4563b 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -1728,7 +1728,7 @@ typedef enum {
+>   * Allow userspace to control policy on scanning the unevictable LRU for
+>   * compactable pages.
+>   */
+> -int sysctl_compact_unevictable_allowed __read_mostly = CONFIG_COMPACT_UNEVICTABLE_DEFAULT;
+> +static int sysctl_compact_unevictable_allowed __read_mostly = CONFIG_COMPACT_UNEVICTABLE_DEFAULT;
+
+I would move all the sysctl_ variables scattered later in the file to a
+single place here.
+
+>  static inline void
+>  update_fast_start_pfn(struct compact_control *cc, unsigned long pfn)
+> @@ -2052,7 +2052,7 @@ static unsigned int fragmentation_score_node(pg_data_t *pgdat)
 > 
-> --
-> Thanks,
-> Ruan.
+>  	return score;
+>  }
+> -
+> +unsigned int sysctl_compaction_proactiveness;
+
+e.g. this
+
+>  static unsigned int fragmentation_score_wmark(pg_data_t *pgdat, bool low)
+>  {
+>  	unsigned int wmark_low;
+> @@ -2228,7 +2228,7 @@ static enum compact_result __compaction_suitable(struct zone *zone, int order,
 > 
-> PS: Let me paste the log of failed tests:
-> generic/127, generic/263, generic/616 are fsx tests.  Their fail message are
-> meaningless.  I am looking into their difference between good/bad results.
+>  	return COMPACT_CONTINUE;
+>  }
+> -
+> +static int sysctl_extfrag_threshold = 500;
+
+and this.
+
+>  /*
+>   * compaction_suitable: Is this suitable to run compaction on this zone now?
+>   * Returns
+> @@ -2584,7 +2584,6 @@ static enum compact_result compact_zone_order(struct zone *zone, int order,
+>  	return ret;
+>  }
 > 
-> xfs/315 0s ... - output mismatch (see
-> /root/xts/results//dax_reflink/xfs/315.out.bad)
->     --- tests/xfs/315.out       2022-08-03 10:56:02.696212673 +0800
->     +++ /root/xts/results//dax_reflink/xfs/315.out.bad  2023-03-20
-> 17:48:01.780369739 +0800
->     @@ -7,7 +7,6 @@
->      Inject error
->      CoW a few blocks
->      FS should be shut down, touch will fail
->     -touch: cannot touch 'SCRATCH_MNT/badfs': Input/output error
->      Remount to replay log
->      FS should be online, touch should succeed
->      Check files again
->     ...
->     (Run 'diff -u /root/xts/tests/xfs/315.out
-> /root/xts/results//dax_reflink/xfs/315.out.bad'  to see the entire diff)
-> xfs/421 1s ... - output mismatch (see
-> /root/xts/results//dax_reflink/xfs/421.out.bad)
->     --- tests/xfs/421.out       2022-08-03 10:56:02.706212718 +0800
->     +++ /root/xts/results//dax_reflink/xfs/421.out.bad  2023-03-20
-> 17:48:02.222369739 +0800
->     @@ -14,8 +14,6 @@
->      Whence     Result
->      DATA       0
->      HOLE       131072
->     -DATA       196608
->     -HOLE       262144
->      Compare files
->      c2803804acc9936eef8aab42c119bfac  SCRATCH_MNT/test-421/file1
->     ...
->     (Run 'diff -u /root/xts/tests/xfs/421.out
-> /root/xts/results//dax_reflink/xfs/421.out.bad'  to see the entire diff)
+> -int sysctl_extfrag_threshold = 500;
 > 
-> > 
-> > --D
-> > 
-> > > +	if (error)
-> > > +		goto out_cancel;
-> > > +
-> > >   	error = xfs_trans_commit(tp);
-> > >   	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-> > >   	if (error)
-> > > diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
-> > > index 65c5dfe17ecf..d5835814bce6 100644
-> > > --- a/fs/xfs/xfs_reflink.h
-> > > +++ b/fs/xfs/xfs_reflink.h
-> > > @@ -16,6 +16,8 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
-> > >   	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
-> > >   }
-> > > +int xfs_reflink_extent_is_shared(struct xfs_inode *ip,
-> > > +		struct xfs_bmbt_irec *irec, bool *shared);
-> > >   extern int xfs_reflink_trim_around_shared(struct xfs_inode *ip,
-> > >   		struct xfs_bmbt_irec *irec, bool *shared);
-> > >   int xfs_bmap_trim_cow(struct xfs_inode *ip, struct xfs_bmbt_irec *imap,
-> > > -- 
-> > > 2.39.2
-> > > 
+
+Remove newline so that's a single one.
+
+>  /**
+>   * try_to_compact_pages - Direct compact to satisfy a high-order allocation
+> @@ -2749,7 +2748,7 @@ static void compact_nodes(void)
+>   */
+>  unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
+
+Also move this one, and can be also static now?
+
+> -int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
+> +static int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
+>  		void *buffer, size_t *length, loff_t *ppos)
+>  {
+>  	int rc, nid;
+> @@ -2779,7 +2778,7 @@ int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
+>   * This is the entry point for compacting all nodes via
+>   * /proc/sys/vm/compact_memory
+>   */
+> -int sysctl_compaction_handler(struct ctl_table *table, int write,
+> +static int sysctl_compaction_handler(struct ctl_table *table, int write,
+>  			void *buffer, size_t *length, loff_t *ppos)
+>  {
+>  	if (write)
+> @@ -3074,7 +3073,63 @@ static int kcompactd_cpu_online(unsigned int cpu)
+>  	}
+>  	return 0;
+>  }
+
+Please add newline here
+
+> +static int proc_dointvec_minmax_warn_RT_change(struct ctl_table *table,
+> +		int write, void *buffer, size_t *lenp, loff_t *ppos)
+> +{
+> +	int ret, old;
+> 
+> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || !write)
+> +		return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+> +
+> +	old = *(int *)table->data;
+> +	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+> +	if (ret)
+> +		return ret;
+> +	if (old != *(int *)table->data)
+> +		pr_warn_once("sysctl attribute %s changed by %s[%d]\n",
+> +			     table->procname, current->comm,
+> +			     task_pid_nr(current));
+> +	return ret;
+> +}
+
+Newline.
+
+> +#ifdef CONFIG_SYSCTL
+> +static struct ctl_table vm_compaction[] = {
+> +	{
+> +		.procname	= "compact_memory",
+> +		.data		= NULL,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0200,
+> +		.proc_handler	= sysctl_compaction_handler,
+> +	},
+> +	{
+> +		.procname	= "compaction_proactiveness",
+> +		.data		= &sysctl_compaction_proactiveness,
+> +		.maxlen		= sizeof(sysctl_compaction_proactiveness),
+> +		.mode		= 0644,
+> +		.proc_handler	= compaction_proactiveness_sysctl_handler,
+> +		.extra1		= SYSCTL_ZERO,
+> +		.extra2		= SYSCTL_ONE_HUNDRED,
+> +	},
+> +	{
+> +		.procname	= "extfrag_threshold",
+> +		.data		= &sysctl_extfrag_threshold,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec_minmax,
+> +		.extra1		= SYSCTL_ZERO,
+> +		.extra2		= SYSCTL_ONE_THOUSAND,
+> +	},
+> +	{
+> +		.procname	= "compact_unevictable_allowed",
+> +		.data		= &sysctl_compact_unevictable_allowed,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec_minmax_warn_RT_change,
+> +		.extra1		= SYSCTL_ZERO,
+> +		.extra2		= SYSCTL_ONE,
+> +	},
+> +	{ }
+> +};
+> +#endif
+
+Newline.
+
+>  static int __init kcompactd_init(void)
+>  {
+>  	int nid;
+> @@ -3090,6 +3145,9 @@ static int __init kcompactd_init(void)
+> 
+>  	for_each_node_state(nid, N_MEMORY)
+>  		kcompactd_run(nid);
+> +#ifdef CONFIG_SYSCTL
+> +	register_sysctl_init("vm", vm_compaction);
+> +#endif
+>  	return 0;
+>  }
+>  subsys_initcall(kcompactd_init)
+
+Thanks!
+
