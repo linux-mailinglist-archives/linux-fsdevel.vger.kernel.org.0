@@ -2,111 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 43AB96C37D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 18:10:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 350E76C380B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 18:19:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230380AbjCURKw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 13:10:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42462 "EHLO
+        id S230281AbjCURTb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 13:19:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230473AbjCURKt (ORCPT
+        with ESMTP id S230413AbjCURT3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 13:10:49 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C6785372F;
-        Tue, 21 Mar 2023 10:10:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8A0DBB818D3;
-        Tue, 21 Mar 2023 17:09:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21E23C433EF;
-        Tue, 21 Mar 2023 17:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679418590;
-        bh=kdWqS/e+sKonowSJQi5knjG8RtTeulUae8t8lT/tj94=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZgP/zney0RxkfxiYC0h0uNFKINgVFhMRkTFoDjmxpyVIimrPvegj7UxYkRjG86RG+
-         4Ucse6+U0toZ5epVETfe6mlwEKHyODjgRn4liysLMficvDLpDgLKk8tCVPGQyAdDoZ
-         2rSFOupBs0aOwgaD4YASFB01x1OOq/07EQ4C1x70DfUhlljbEvwY0Iyq9Ydeu+rr/f
-         DbHXuTXspAQXbNC7puuXYHlLpml2S+TGs3YxeKPyzaNsyECIkhqKNboa1u/IxoCpGH
-         Ag+47bafIxmFwW21pA+alZjwI8ddcy/NfkKhpUel7FxEEL6h8mE4vmmsI9JCDm9+3x
-         XH1d2qvmIN0dg==
-Date:   Tue, 21 Mar 2023 17:09:44 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     syzbot <syzbot+9f06ddd18bf059dff2ad@syzkaller.appspotmail.com>
-Cc:     akpm@linux-foundation.org, ckeepax@opensource.cirrus.com,
-        jfs-discussion@lists.sourceforge.net,
+        Tue, 21 Mar 2023 13:19:29 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 394B420A20;
+        Tue, 21 Mar 2023 10:19:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PnM8qWjlChOypXMUKbb5rR1MAgOZHr38zSDi4wQUtEs=; b=itI+aaF5dGBBOFEsy3YiNOMlAl
+        ZE6zedAsVcLZYFAXapSlq9yxYkdr5wnMV51b5hKQmGkc5YklHyH3sK1ZHMa4Rl006Ei/U+4z7jHt3
+        Sam887otMU7ecUXQHbpOvg3xvZ9AGY09iUCXhxZnGAhAqrM4jG/PdSNmN/UaejAIFidYARFYs9koz
+        D8UV0ZtBTnMoQI9DOoNYWEHfqb16FHxdarIBqDZCwwOhsiJ/0LYi+l9EivFjkhTjOvt+zlOKsezlU
+        9mPYo8NWAKTaARBja5v7+ulcdCPLeVbfod0YpppcI0oeZSOgujuat80KSr+pkG/ZKhAbAJIspO45H
+        MrAP5B2w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pefdm-002E2a-1j; Tue, 21 Mar 2023 17:19:18 +0000
+Date:   Tue, 21 Mar 2023 17:19:18 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Yangtao Li <frank.li@vivo.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, shaggy@kernel.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Subject: Re: [syzbot] [jfs?] KASAN: invalid-free in sys_mount
-Message-ID: <2d0114ce-a811-47e9-9a76-8c7a80f1faed@sirena.org.uk>
-References: <000000000000698e5d05f76c0adf@google.com>
+        linux-mm@kvack.org
+Subject: Re: [PATCH] fs/drop_caches: move drop_caches sysctls into its own
+ file
+Message-ID: <ZBnnFtKVgAFQ4yeo@casper.infradead.org>
+References: <20230321130908.6972-1-frank.li@vivo.com>
+ <ZBneeOYHKBZl8SGe@casper.infradead.org>
+ <ZBnho5yPbXIQs752@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="UhOUWIYICTHnIC7N"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000698e5d05f76c0adf@google.com>
-X-Cookie: Will it improve my CASH FLOW?
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <ZBnho5yPbXIQs752@bombadil.infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Mar 21, 2023 at 09:56:03AM -0700, Luis Chamberlain wrote:
+> On Tue, Mar 21, 2023 at 04:42:32PM +0000, Matthew Wilcox wrote:
+> > On Tue, Mar 21, 2023 at 09:09:07PM +0800, Yangtao Li wrote:
+> > > +static struct ctl_table drop_caches_table[] = {
+> > > +	{
+> > > +		.procname	= "drop_caches",
+> > > +		.data		= &sysctl_drop_caches,
+> > > +		.maxlen		= sizeof(int),
+> > > +		.mode		= 0200,
+> > > +		.proc_handler	= drop_caches_sysctl_handler,
+> > > +		.extra1		= SYSCTL_ONE,
+> > > +		.extra2		= SYSCTL_FOUR,
+> > > +	},
+> > > +	{}
+> > > +};
+> > 
+> > Could we avoid doing this until we no longer need an entire zero entry
+> > after the last one? 
+> 
+> That may be 2-3 kernel release from now. The way to use ARRAY_SIZE()
+> really is to deprecate the crap APIs that allow messy directory sysctl
+> structures.
 
---UhOUWIYICTHnIC7N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Mar 21, 2023 at 10:04:46AM -0700, syzbot wrote:
-
-> The issue was bisected to:
->=20
-> commit a0b6e4048228829485a43247c12c7774531728c4
-> Author: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Date:   Thu Jun 23 12:52:28 2022 +0000
->=20
->     ASoC: cx20442: Remove now redundant non_legacy_dai_naming flag
-
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D12756e1cc8=
-0000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D11756e1cc8=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16756e1cc80000
-
-This does not seem especially credible for the backtrace provided:
-
->  slab_free mm/slub.c:3787 [inline]
->  __kmem_cache_free+0xaf/0x2d0 mm/slub.c:3800
->  __do_sys_mount fs/namespace.c:3596 [inline]
->  __se_sys_mount fs/namespace.c:3571 [inline]
->  __x64_sys_mount+0x212/0x300 fs/namespace.c:3571
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-which is nowhere near ASoC, let alone that specific driver.
-
---UhOUWIYICTHnIC7N
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQZ5NcACgkQJNaLcl1U
-h9BJBgf/WJnuTPyzPxNZcVE/Y2Nn4WhuqOMTenRwekqMToG4fEK99ITA1NYnWBRy
-ixCUajNCuBvf2X6YmjYiNsf79Nio8JVdamUSEpDV5mHq0zpN4B6txrZCSm1FFXL9
-nrHe02bAEoaYdrLAS8/mYGQRckp8A7cJYEZnzeC1wo43Mk3qbFrnuezKi52VRUNv
-2wGPCVCXAlp7yEDfTObNGAAOg6m6009JBioTcQq9IeCog99a7oFYud7kQhvFebA8
-K7PDgAbUAY+WD9bE0ba/Xg3P6xjpq7KpEW+SIck1UpsrKpLJlK54kP9eXgMzwhRx
-fPddOZeXHclJfKKPwlcYKI6yoZeDsw==
-=uJQW
------END PGP SIGNATURE-----
-
---UhOUWIYICTHnIC7N--
+I'm OK with waiting another year to commence this cleanup.  We've lived
+with the giant tables for decades already.  Better to get the new API
+right than split the tables now, then have to touch all the places
+again.
