@@ -2,96 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2D526C43BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 08:00:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E51F6C43D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 08:08:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229854AbjCVHAD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 03:00:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48432 "EHLO
+        id S229663AbjCVHIV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 03:08:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjCVHAC (ORCPT
+        with ESMTP id S229648AbjCVHIU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 03:00:02 -0400
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1795018B1B;
-        Tue, 21 Mar 2023 23:59:59 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R321e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VePpt3A_1679468391;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0VePpt3A_1679468391)
-          by smtp.aliyun-inc.com;
-          Wed, 22 Mar 2023 14:59:57 +0800
-From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] fs/buffer: Remove redundant assignment to err
-Date:   Wed, 22 Mar 2023 14:59:49 +0800
-Message-Id: <20230322065949.29223-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+        Wed, 22 Mar 2023 03:08:20 -0400
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CC832596E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 00:08:19 -0700 (PDT)
+Received: by mail-ua1-x92f.google.com with SMTP id e12so7041417uaa.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 00:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679468898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DC6OZLr4cZwUV71ctMeJXDNArzScDIZCpc+TqVBiy4c=;
+        b=IJ+7/SEyiDoi+ip7xcwpi38sKd1GAnyDoJwsjhXid0e3ToEM6te8WnPIldwIVcEErO
+         MauSIALxFFrgi+69PNASPufkKXy9K9LA/EcBLd3MSREQoj2g3FIfGiWlJpGC5A/4LtTy
+         xT4r/5bqRxN9Ern2O/ccMyw7+1qnaqXyuNSLVEfo3nbePgoEGoxNQwzMibk9PtPmcoEB
+         ItIc7CguSI+uWvyp+4oPYFxYIjbdmTrOJkmxZLdR+7YuoaXp523WaX79oyBXqAftkOi3
+         ulyiY9wUu+Vh74/N6oE7UQH5C/cJ5ekzFgMq0owpllTpgJCwAvPuMoWTmx3MENf1uRLJ
+         lGxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679468898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DC6OZLr4cZwUV71ctMeJXDNArzScDIZCpc+TqVBiy4c=;
+        b=hbpKKYS/pZtu+FsVlUpW9/S3JQbXXO6eKf2gTZtWxurCmnrckw4ZskhVhgb7Cyi5kQ
+         LXNmYDcXVWHCj9UbBm7LGE/AyCrTtWzrfC4kkORILeg2b/+Ja6FYe2/pIzmJ/wdoUVoV
+         XL/kff2nnx+ZxVgxGcY1D/ZU7LNl49KmWbfy6vDWkZdRe1EM8vf5bMJWuWOXIdJkllE0
+         zgw055+M975hA6lNkcrF0CLVOT2eNv3gOB6NxmUvCqSjMuNCChalVPl4ldZBuD1MJfbr
+         Xzr8GFyXp2dAxPpXkrpJ1COGAGV0XYszsoiqjGXrkdFdyq6u6pok/7jJBf8PxLEjCZcV
+         ohbA==
+X-Gm-Message-State: AO0yUKXLPEOoTzN8LtWARq8MXaZ8qyvD7togsvHaIPpybL+g3J/hBbvV
+        bOQOsPzHCcF4A7tEPgRkI8Fye543GSZJQR7q2ew=
+X-Google-Smtp-Source: AK7set8GFbpWRQKwbeKQKeRAZVZcMD7S66oKQ5y4++vifHdGDnrZgCWFeKGSALErcelDaf2GvyThZBMyg8doCyDaPC8=
+X-Received: by 2002:ac5:c74f:0:b0:401:d1f4:bccf with SMTP id
+ b15-20020ac5c74f000000b00401d1f4bccfmr945552vkn.0.1679468897697; Wed, 22 Mar
+ 2023 00:08:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-8.0 required=5.0 tests=ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230322062519.409752-1-cccheng@synology.com>
+In-Reply-To: <20230322062519.409752-1-cccheng@synology.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 22 Mar 2023 09:08:06 +0200
+Message-ID: <CAOQ4uxiAbMaXqa8r-ErVsM_N1eSNWq+Wnyua4d+Eq89JZWb7sA@mail.gmail.com>
+Subject: Re: [PATCH] splice: report related fsnotify events
+To:     Chung-Chiang Cheng <cccheng@synology.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        shepjeng@gmail.com, kernel@cccheng.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Variable 'err' set but not used.
+On Wed, Mar 22, 2023 at 8:51=E2=80=AFAM Chung-Chiang Cheng <cccheng@synolog=
+y.com> wrote:
+>
+> The fsnotify ACCESS and MODIFY event are missing when manipulating a file
+> with splice(2).
+>
+> Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
 
-fs/buffer.c:2613:2: warning: Value stored to 'err' is never read.
+Looks good.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=4589
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- fs/buffer.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index d759b105c1e7..c844b5b93a89 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2580,7 +2580,7 @@ int block_truncate_page(struct address_space *mapping,
- 	struct inode *inode = mapping->host;
- 	struct page *page;
- 	struct buffer_head *bh;
--	int err;
-+	int err = 0;
- 
- 	blocksize = i_blocksize(inode);
- 	length = offset & (blocksize - 1);
-@@ -2593,9 +2593,8 @@ int block_truncate_page(struct address_space *mapping,
- 	iblock = (sector_t)index << (PAGE_SHIFT - inode->i_blkbits);
- 	
- 	page = grab_cache_page(mapping, index);
--	err = -ENOMEM;
- 	if (!page)
--		goto out;
-+		return -ENOMEM;
- 
- 	if (!page_has_buffers(page))
- 		create_empty_buffers(page, blocksize, 0);
-@@ -2609,7 +2608,6 @@ int block_truncate_page(struct address_space *mapping,
- 		pos += blocksize;
- 	}
- 
--	err = 0;
- 	if (!buffer_mapped(bh)) {
- 		WARN_ON(bh->b_size != blocksize);
- 		err = get_block(inode, iblock, bh, 0);
-@@ -2633,7 +2631,6 @@ int block_truncate_page(struct address_space *mapping,
- 
- 	zero_user(page, offset, length);
- 	mark_buffer_dirty(bh);
--	err = 0;
- 
- unlock:
- 	unlock_page(page);
--- 
-2.20.1.7.g153144c
-
+> ---
+>  fs/splice.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 5969b7a1d353..9cadcaf52a3e 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/export.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/uio.h>
+> +#include <linux/fsnotify.h>
+>  #include <linux/security.h>
+>  #include <linux/gfp.h>
+>  #include <linux/socket.h>
+> @@ -1074,6 +1075,9 @@ long do_splice(struct file *in, loff_t *off_in, str=
+uct file *out,
+>                 ret =3D do_splice_from(ipipe, out, &offset, len, flags);
+>                 file_end_write(out);
+>
+> +               if (ret > 0)
+> +                       fsnotify_modify(out);
+> +
+>                 if (!off_out)
+>                         out->f_pos =3D offset;
+>                 else
+> @@ -1097,6 +1101,10 @@ long do_splice(struct file *in, loff_t *off_in, st=
+ruct file *out,
+>                         flags |=3D SPLICE_F_NONBLOCK;
+>
+>                 ret =3D splice_file_to_pipe(in, opipe, &offset, len, flag=
+s);
+> +
+> +               if (ret > 0)
+> +                       fsnotify_access(in);
+> +
+>                 if (!off_in)
+>                         in->f_pos =3D offset;
+>                 else
+> --
+> 2.34.1
+>
