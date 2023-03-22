@@ -2,74 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF5F6C4A93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 13:30:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 994FD6C4B0D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 13:48:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230318AbjCVMav (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 08:30:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36508 "EHLO
+        id S230081AbjCVMso (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 08:48:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230390AbjCVMan (ORCPT
+        with ESMTP id S230008AbjCVMsm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 08:30:43 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B1E50FA8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 05:30:40 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id k17so9999364ybm.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 05:30:40 -0700 (PDT)
+        Wed, 22 Mar 2023 08:48:42 -0400
+Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5300DB770;
+        Wed, 22 Mar 2023 05:48:41 -0700 (PDT)
+Received: by mail-ua1-x92e.google.com with SMTP id i22so12515324uat.8;
+        Wed, 22 Mar 2023 05:48:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1679488240;
+        d=gmail.com; s=20210112; t=1679489320;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hIDnRaN9sxd0xnZDEDrl7FwoOB+6T8A94tkf+oMcNsM=;
-        b=hwEVw8FNtToCOmLQzJtRNJ/OkEWC4Dguci+blmJcuw5u2JD4IBIE2+21El8yJXYoS4
-         xuyDJwhGLwfaZi4e9bgZZGHhFGtOICW8hbt23BhzniyCEPVGOXnYg5c3h5ZbYmsCAqzr
-         Ul3z2M8L2Z/jcy8nHggkc/OqzRO00lMvkcrhcmAvsTir82DbqXUWHEi1I0pl9naV+vso
-         //rUba+Z/gTIow6PImoH69N7wZehEHDn3oDGDLUfWuVliKEdajCUSZwA9E/tNQddm/fB
-         YJA2gkwEYdZDmOzm1TMbsjMExHS//8LA6sjV4vQxVz+tjTXv/wXuRWBAxV6D3ze4hQfa
-         7+rA==
+        bh=C3oCNWppbROd6SSbXVVTTvNwlzOezQhHcc6I5uo2B6o=;
+        b=jkLoSQeZoj7lPy3YyjlsVsMY8EyX+PKWGwOqo5C2ioV84YccIr3jRx+beabTLQWAcm
+         dX13QrMNNSAdxPuqzedkdFMQqfXagX0CkiBz2fUE+Y46TNyt5Q99WvD1fs4QW36u4UfQ
+         9E7hMp10kDZBAVN0iLRtHEp3FUQOMWgazedgc7NkcEJppi7mbDU0gkt/e3MU2tHfVKqG
+         6iHZjoyEuzH3e/vLmQTkksMyXyP14EFYKysuWwhkPAOwJGqzQFyC+KNPBQa3/69HvG4P
+         l4aohuTWFo3TzEXsEdmqlw40xr7KD9Hqcz+TEDWQH4tm2W7krm6TbbgFL0qjamhLt41r
+         u3uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679488240;
+        d=1e100.net; s=20210112; t=1679489320;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hIDnRaN9sxd0xnZDEDrl7FwoOB+6T8A94tkf+oMcNsM=;
-        b=zWZY862m2B0grnM8D6Oul29jaiudw2OAGQfPuv9hGHF0ZVUfCTaiuTfbat7wLSwSYE
-         eF03lRxDfHCw2ga3siUJK7spenRmGcgoOIoJvD4ZfJ1yq86MpExN0NwCYp1MvwlbAMC3
-         RrsYLlD5/hYY6o5xdB0FE+ysCWkbXAtGhJuplX9+ur9X+3fxkLjJPBA2qznba9BOVStr
-         0SnJgFejGVtLVinzG40DxSxa3hxgLKOWb84Js2rib3TKd9cnn4Cb8gnVjf99k2dgkKRe
-         wr/u1EkmhJ1FdAMf9ZfmvaNAZwwvO7z8cLZSaXMmmZ+1PcqvW7N8Ar0FZzKglvitZpzK
-         Mx5Q==
-X-Gm-Message-State: AAQBX9ePtMFwIt9+NTA358HfuJjgjb2KO6vaOYFFiSFuPklGtO2MKi77
-        QmPFX6IXfupX5agqyBER54Dq9Te+z/Z08OJZzkR9og==
-X-Google-Smtp-Source: AKy350brVrs9DIoKaxSl5+ZQ+gEXyG50JHgNzUqBm/HoXTIpFkpBjkTYSzxIQd9ZikPcfWRmDPMlyrDfrlfnAJgtd8I=
-X-Received: by 2002:a25:d256:0:b0:a3f:191f:dfb4 with SMTP id
- j83-20020a25d256000000b00a3f191fdfb4mr5148818ybg.58.1679488239630; Wed, 22
- Mar 2023 05:30:39 -0700 (PDT)
+        bh=C3oCNWppbROd6SSbXVVTTvNwlzOezQhHcc6I5uo2B6o=;
+        b=nzhiYNubZLmN5l3Er6ZsLrxposCsemrFBbcCrykWENo/sjjmsNrknKj4EfQPl1VD2I
+         ARf/Nt7f3rrOsR0+BrCRiddyQSix5/MDcV4yjGRhTSd0afzqJMhOLu5n7aB0rEkExvpn
+         s7urOS8TzW0R2Mz6FhB4Jos1svXBRQKIwkidbm3lsQDEJeOPX7GZ8LCrslw8F7QAvEnH
+         paN3CuIzx/oHOnq5dVwkaWJZfWsyjZ2v/0aRwWau/I/vYoBHFKt9K0DW81wrTxKRSym4
+         e4RPfMsBf11x+Uo5JiOtXMkAfWY2yH9uccEcqRYU0aZCtv/S2aK+OHs93aHH297o53t5
+         M5ag==
+X-Gm-Message-State: AO0yUKVLqX3mzSTaHKKjIxfjxqCZU+oOt4jUw7mY7IsuDrOUojvrH+MH
+        6DC4qZ/aJ1Z5oizaenXkP9xQZfwD6r1z4xRsx2o=
+X-Google-Smtp-Source: AK7set/X+NyRJ6USDPXg3DEszeyebaLGd4pwgf3cHSfLLffG9nVVa2N7HRukXTPNJdgcyeb18X+C5ORBCTlBy5oo/4s=
+X-Received: by 2002:a1f:1e0a:0:b0:406:6b94:c4fe with SMTP id
+ e10-20020a1f1e0a000000b004066b94c4femr3280697vke.0.1679489320234; Wed, 22 Mar
+ 2023 05:48:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <4b9fc9c6-b48c-198f-5f80-811a44737e5f@suse.cz>
-In-Reply-To: <4b9fc9c6-b48c-198f-5f80-811a44737e5f@suse.cz>
-From:   Binder Makin <merimus@google.com>
-Date:   Wed, 22 Mar 2023 08:30:27 -0400
-Message-ID: <CAANmLtwGS75WJ9AXfmqZv73pNdHJn6zfrrCCWjKK_6jPk9pWRg@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] SLOB+SLAB allocators removal and future SLUB improvements
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org,
-        bpf@vger.kernel.org, linux-xfs@vger.kernel.org,
-        David Rientjes <rientjes@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>
+References: <Yao51m9EXszPsxNN@redhat.com> <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
+ <YapjNRrjpDu2a5qQ@redhat.com> <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
+ <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com>
+ <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com>
+ <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
+ <CAOQ4uxhfU+LGunL3cweorPPdoCXCZU0xMtF=MekOAe-F-68t_Q@mail.gmail.com>
+ <YitWOqzIRjnP1lok@redhat.com> <CAHC9VhQ+x3ko+=oU-P+w4ssqyyskRxaKsBGJLnXtP_NzWNuxHg@mail.gmail.com>
+ <20230322072850.GA18056@suse.de>
+In-Reply-To: <20230322072850.GA18056@suse.de>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 22 Mar 2023 14:48:29 +0200
+Message-ID: <CAOQ4uxgH905R1dkQy5=tuG4nnB-p2XUWcf91vvYbfu2DyftzPw@mail.gmail.com>
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+To:     Johannes Segitz <jsegitz@suse.com>
+Cc:     Paul Moore <paul@paul-moore.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Anderson <dvander@google.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
+        paulmoore@microsoft.com, luca.boccassi@microsoft.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,56 +90,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Was looking at SLAB removal and started by running A/B tests of SLAB
-vs SLUB.  Please note these are only preliminary results.
-
-These were run using 6.1.13 configured for SLAB/SLUB.
-Machines were standard datacenter servers.
-
-Hackbench shows completion time, so smaller is better.
-On all others larger is better.
-https://docs.google.com/spreadsheets/d/e/2PACX-1vQ47Mekl8BOp3ekCefwL6wL8SQi=
-v6Qvp5avkU2ssQSh41gntjivE-aKM4PkwzkC4N_s_MxUdcsokhhz/pubhtml
-
-Some notes:
-SUnreclaim and SReclaimable shows unreclaimable and reclaimable memory.
-Substantially higher with SLUB, but I believe that is to be expected.
-
-Various results showing a 5-10% degradation with SLUB.  That feels
-concerning to me, but I'm not sure what others' tolerance would be.
-
-redis results on AMD show some pretty bad degredations.  10-20% range
-netpipe on Intel also has issues.. 10-17%
-
-
-On Tue, Mar 14, 2023 at 4:05=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
+On Wed, Mar 22, 2023 at 9:28=E2=80=AFAM Johannes Segitz <jsegitz@suse.com> =
+wrote:
 >
-> As you're probably aware, my plan is to get rid of SLOB and SLAB, leaving
-> only SLUB going forward. The removal of SLOB seems to be going well, ther=
-e
-> were no objections to the deprecation and I've posted v1 of the removal
-> itself [1] so it could be in -next soon.
+> On Fri, Mar 11, 2022 at 03:52:54PM -0500, Paul Moore wrote:
+> > On Fri, Mar 11, 2022 at 9:01 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > Agreed. After going through the patch set, I was wondering what's the
+> > > overall security model and how to visualize that.
+> > >
+> > > So probably there needs to be a documentation patch which explains
+> > > what's the new security model and how does it work.
+> >
+> > Yes, of course.  I'll be sure to add a section to the existing docs.
+> >
+> > > Also think both in terms of DAC and MAC. (Instead of just focussing t=
+oo
+> > > hard on SELinux).
+> >
+> > Definitely.  Most of what I've been thinking about the past day or so
+> > has been how to properly handle some of the DAC/capability issues; I
+> > have yet to start playing with the code, but for the most part I think
+> > the MAC/SELinux bits are already working properly.
+> >
+> > > My understanding is that in current model, some of the overlayfs
+> > > operations require priviliges. So mounter is supposed to be privilige=
+d
+> > > and does the operation on underlying layers.
+> > >
+> > > Now in this new model, there will be two levels of check. Both overla=
+y
+> > > level and underlying layer checks will happen in the context of task
+> > > which is doing the operation. So first of all, all tasks will need
+> > > to have enough priviliges to be able to perform various operations
+> > > on lower layer.
+> > >
+> > > If we do checks at both the levels in with the creds of calling task,
+> > > I guess that probably is fine. (But will require a closer code inspec=
+tion
+> > > to make sure there is no privilege escalation both for mounter as wel=
+l
+> > > calling task).
+> >
+> > I have thoughts on this, but I don't think I'm yet in a position to
+> > debate this in depth just yet; I still need to finish poking around
+> > the code and playing with a few things :)
+> >
+> > It may take some time before I'm back with patches, but I appreciate
+> > all of the tips and insight - thank you!
 >
-> The immediate benefit of that is that we can allow kfree() (and kfree_rcu=
-())
-> to free objects from kmem_cache_alloc() - something that IIRC at least xf=
-s
-> people wanted in the past, and SLOB was incompatible with that.
+> Let me resurrect this discussion. With
+> https://github.com/fedora-selinux/selinux-policy/commit/1e8688ea694393c9d=
+918939322b72dfb44a01792
+> the Fedora policy changed kernel_t to a confined domain. This means that
+> many overlayfs setups that are created in initrd will now run into issues=
+,
+> as it will have kernel_t as part of the saved credentials. So while the
+> original use case that inspired the patch set was probably not very commo=
+n
+> that now changed.
+
+I don't remember anyone rejecting the patches on the account that
+the Android use case is not important. It was never the issue.
+
 >
-> For SLAB removal I haven't yet heard any objections (but also didn't
-> deprecate it yet) but if there are any users due to particular workloads
-> doing better with SLAB than SLUB, we can discuss why those would regress =
-and
-> what can be done about that in SLUB.
+> It's tricky to work around this. Loading a policy in initrd causes a lot =
+of
+> issues now that kernel_t isn't unconfined anymore. Once the policy is
+> loaded by systemd changing the mounts is tough since we use it for /etc a=
+nd
+> at this time systemd already has open file handles for policy files in
+> /etc.
 >
-> Once we have just one slab allocator in the kernel, we can take a closer
-> look at what the users are missing from it that forces them to create own
-> allocators (e.g. BPF), and could be considered to be added as a generic
-> implementation to SLUB.
->
-> Thanks,
-> Vlastimil
->
-> [1] https://lore.kernel.org/all/20230310103210.22372-1-vbabka@suse.cz/
->
+
+I've already explained several times on this thread what needs to be
+done in order to move forward - express the security model and
+explain why it is safe.
+
+If the security guys are going to be in LSS in Vancouver, perhaps
+we can have a meetup with overlayfs developers on the overlap
+day with LSFMM (May 10) to try and figure out a path forward.
+
+Thanks,
+Amir.
