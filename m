@@ -2,163 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A31E36C4759
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 11:17:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F796C475C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 11:18:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbjCVKRV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 06:17:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47536 "EHLO
+        id S230054AbjCVKS3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 06:18:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230044AbjCVKRT (ORCPT
+        with ESMTP id S229676AbjCVKS2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 06:17:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C9C95CEDB;
-        Wed, 22 Mar 2023 03:17:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 22 Mar 2023 06:18:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA79A5DCB0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 03:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679480255;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=o1+6B+/0H/fu85Bj7QPMte1NsMQ4eZHLaHKZd7KoZx0=;
+        b=dpP3Wl4ZwwwPCM5GVWyukm/KnMkcE6kR7C1/+QXHjTm5ZqZKStT//qfPGOKh89v5jVhemu
+        zwv/3nxkHyDq+qdKTlBd1RY+C5jq3tNnxKUye9/E6rguYzSUd6d6nZAqY72XWB5EN5LCum
+        7IMzG/nfw+63xkJfMwyQ5feMVZliP5E=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-647-6nORCHWmP_ua3bSCsrLsXw-1; Wed, 22 Mar 2023 06:17:31 -0400
+X-MC-Unique: 6nORCHWmP_ua3bSCsrLsXw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 97BED60AE9;
-        Wed, 22 Mar 2023 10:17:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D4D7C433EF;
-        Wed, 22 Mar 2023 10:17:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679480236;
-        bh=j/clU2QHh0duzkVJY4C46Qu2I56Xdrto7SkpOldAW4g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bwK7kmCPeOwOoNetxPfAW0Qg1+2x7O55qfT3E5VMgPaqEyxbgjHtWtZU5QGQu6US2
-         gaCqVnlcnxSQo7yFg6TFNhCMkNUIaEsHxKPFu5Pk6pq3E5wPR+Oa8ZThLCj7mSj0+s
-         cPkOYSml5qmsdEEPM5S6R8QHAalpSMh8wf102Z6eWq0Hm1hoXMNP/YkMZT57x0sY/W
-         5k//8F3pqjw4jgAOIcqc1CbAMkxWA4iqKD1hRU5tlAVKBaLvranN6mZmVAN/YOtuG0
-         m6uETCB+650rMRABsWR4+YFr0BXBKpGsW+J4DJhcnfQy/qUgWGJCU7Cpo8gNUykNwD
-         IoVFygUIHhhGw==
-Date:   Wed, 22 Mar 2023 11:17:10 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Pedro Falcato <pedro.falcato@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH] do_open(): Fix O_DIRECTORY | O_CREAT behavior
-Message-ID: <20230322101710.6rziolp4sqooqfwq@wittgenstein>
-References: <20230320071442.172228-1-pedro.falcato@gmail.com>
- <20230320115153.7n5cq4wl2hmcbndf@wittgenstein>
- <CAHk-=wjifBVf3ub0WWBXYg7JAao6V8coCdouseaButR0gi5xmg@mail.gmail.com>
- <CAKbZUD2Y2F=3+jf+0dRvenNKk=SsYPxKwLuPty_5-ppBPsoUeQ@mail.gmail.com>
- <CAHk-=wgc9qYOtuyW_Tik0AqMrQJK00n-LKWvcBifLyNFUdohDw@mail.gmail.com>
- <20230321142413.6mlowi5u6ewecodx@wittgenstein>
- <20230321161736.njmtnkvjf5rf7x5p@wittgenstein>
- <CAHk-=wi2mLKn6U7_aXMtP46TVSY6MTHv+ff-+xVFJbO914o65A@mail.gmail.com>
- <20230321201632.o2wiz5gk7cz36rn3@wittgenstein>
- <CAHk-=wg2nJ3Z8x-nDGi9iCJvDCgbhpN+qnZt6V1JPnHqxX2fhQ@mail.gmail.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CED58185A790;
+        Wed, 22 Mar 2023 10:17:30 +0000 (UTC)
+Received: from localhost (ovpn-13-195.pek2.redhat.com [10.72.13.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9CA41140EBF4;
+        Wed, 22 Mar 2023 10:17:29 +0000 (UTC)
+Date:   Wed, 22 Mar 2023 18:17:25 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jiri Olsa <jolsa@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v4 3/4] iov_iter: add copy_page_to_iter_atomic()
+Message-ID: <ZBrVtcqATRybF/hW@MiWiFi-R3L-srv>
+References: <cover.1679431886.git.lstoakes@gmail.com>
+ <31482908634cbb68adafedb65f0b21888c194a1b.1679431886.git.lstoakes@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wg2nJ3Z8x-nDGi9iCJvDCgbhpN+qnZt6V1JPnHqxX2fhQ@mail.gmail.com>
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <31482908634cbb68adafedb65f0b21888c194a1b.1679431886.git.lstoakes@gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 02:47:55PM -0700, Linus Torvalds wrote:
-> On Tue, Mar 21, 2023 at 1:16 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > But yes, that is a valid complaint so - without having tested - sm like:
+On 03/21/23 at 08:54pm, Lorenzo Stoakes wrote:
+> Provide an atomic context equivalent for copy_page_to_iter(). This eschews
+> the might_fault() check copies memory in the same way that
+> copy_page_from_iter_atomic() does.
 > 
-> I'd actually go a bit further, and really spell all the bits out explicitly.
+> This functions assumes a non-compound page, however this mimics the
+> existing behaviour of copy_page_from_iter_atomic(). I am keeping the
+> behaviour consistent between the two, deferring any such change to an
+> explicit folio-fication effort.
 > 
-> I mean, I was *literally* involved in that original O_TMPFILE_MASK thing:
+> This is being added in order that an iteratable form of vread() can be
+> implemented with known prefaulted pages to avoid the need for mutex
+> locking.
 > 
->    https://lore.kernel.org/all/CA+55aFxA3qoM5wpMUya7gEA8SZyJep7kMBRjrPOsOm_OudD8aQ@mail.gmail.com/
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
+>  include/linux/uio.h |  2 ++
+>  lib/iov_iter.c      | 28 ++++++++++++++++++++++++++++
+>  2 files changed, 30 insertions(+)
 > 
-> with the whole O_DIRECOTY games to make O_TMPFILE safer, but despite
-> that I didn't remember this at all, and my suggested "maybe something
-> like this" patch was broken for the O_TMPFILE case.
-> 
-> So while we do have all this documented in our history (both git
-> commit logs and lore.kernel.org), I actually think it would be lovely
-> to just make build_open_flags() be very explicit about all the exact
-> O_xyz flags, and really write out the logic fully.
-> 
-> For example, even your clarified version that gets rid of the
-> "O_TMPFILE_MASK" thing still eends up doing
-> 
->         if (flags & __O_TMPFILE) {
->                 if ((flags & O_TMPFILE) != O_TMPFILE)
->                         return -EINVAL;
-> 
-> and so when you look at that code, you don't actually realize that
-> O_TMPFILE _cotnains_ that __O_TMPFILE bit, and what the above really
-> means is "also check O_DIRECTORY".
-> 
-> So considering how I couldn't remember this mess myself, despite
-> having been involved with it personally (a decade ago..), I really do
-> think that maybe this shoudl be open-coded with a comment, and the
-> above code should instead be
-> 
->         if (flags & __O_TMPFILE) {
->                 if (!(flags & O_DIRECTORY))
->                         return -EINVAL;
-> 
-> together with an explicit comment about how O_TMPFILE is the
-> *combination* of __O_TMPFILE and O_DIRECTORY, along with a short
-> explanation as to why.
-> 
-> Now, I agree that that test for O_DIRECTORY then _looks_ odd, but the
-> thing is, it then makes the reality of this all much more explicit.
-> 
-> In contrast, doing that
-> 
->                 if ((flags & O_TMPFILE) != O_TMPFILE)
-> 
-> may *look* more natural in that context, but if you actually start
-> thinking about it, that check makes no sense unless you then look up
-> what O_TMPFILE is, and the history behind it.
-> 
-> So I'd rather have code that looks a bit odd, but that explains itself
-> and is explicit about what it does, than code that _tries_ to look
-> natural but actually hides the reason for what it is doing.
-> 
-> And then next time somebody looks at that O_DIRECTORY | O_CREAT
-> combination, suddenly the __O_TMPFILE interaction is there, and very
-> explicit.
-> 
-> Hmm?
-> 
-> I don't feel *hugely* strongly about this, so in the end I'll bow to
-> your decision, but considering that my initial patch looked sane but
-> was buggy because I had forgotten about O_TMPFILE, I really think we
-> should make this more explicit at a source level..
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 27e3fd942960..fab07103090f 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -154,6 +154,8 @@ static inline struct iovec iov_iter_iovec(const struct iov_iter *iter)
+>  
+>  size_t copy_page_from_iter_atomic(struct page *page, unsigned offset,
+>  				  size_t bytes, struct iov_iter *i);
+> +size_t copy_page_to_iter_atomic(struct page *page, unsigned offset,
+> +				size_t bytes, struct iov_iter *i);
+>  void iov_iter_advance(struct iov_iter *i, size_t bytes);
+>  void iov_iter_revert(struct iov_iter *i, size_t bytes);
+>  size_t fault_in_iov_iter_readable(const struct iov_iter *i, size_t bytes);
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index 274014e4eafe..48ca1c5dfc04 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -821,6 +821,34 @@ size_t copy_page_from_iter_atomic(struct page *page, unsigned offset, size_t byt
+>  }
+>  EXPORT_SYMBOL(copy_page_from_iter_atomic);
+>  
+> +size_t copy_page_to_iter_atomic(struct page *page, unsigned offset, size_t bytes,
+> +				struct iov_iter *i)
+> +{
+> +	char *kaddr = kmap_local_page(page);
 
-I don't feel strongly about this either and your points are valid. So I
-incorporated that and updated the comments in the code. In case you'd like to
-take another look I've now put this up at:
+I am a little confused about the name of this new function. In its
+conterpart, copy_page_from_iter_atomic(), kmap_atomic()/kunmpa_atomic()
+are used. With them, if CONFIG_HIGHMEM=n, it's like below:
 
-The following changes since commit e8d018dd0257f744ca50a729e3d042cf2ec9da65:
+static inline void *kmap_atomic(struct page *page)
+{
+        if (IS_ENABLED(CONFIG_PREEMPT_RT))
+                migrate_disable();
+        else
+                preempt_disable();
+        pagefault_disable();
+        return page_address(page);
+}
 
-  Linux 6.3-rc3 (2023-03-19 13:27:55 -0700)
+But kmap_local_page() is only having page_address(), the code block
+between kmap_local_page() and kunmap_local() is also atomic, it's a
+little messy in my mind.
 
-are available in the Git repository at:
+static inline void *kmap_local_page(struct page *page)
+{
+        return page_address(page);
+}
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/vfs.open.directory.creat.einval
+> +	char *p = kaddr + offset;
+> +	size_t copied = 0;
+> +
+> +	if (!page_copy_sane(page, offset, bytes) ||
+> +	    WARN_ON_ONCE(i->data_source))
+> +		goto out;
+> +
+> +	if (unlikely(iov_iter_is_pipe(i))) {
+> +		copied = copy_page_to_iter_pipe(page, offset, bytes, i);
+> +		goto out;
+> +	}
+> +
+> +	iterate_and_advance(i, bytes, base, len, off,
+> +		copyout(base, p + off, len),
+> +		memcpy(base, p + off, len)
+> +	)
+> +	copied = bytes;
+> +
+> +out:
+> +	kunmap_local(kaddr);
+> +	return copied;
+> +}
+> +EXPORT_SYMBOL(copy_page_to_iter_atomic);
+> +
+>  static void pipe_advance(struct iov_iter *i, size_t size)
+>  {
+>  	struct pipe_inode_info *pipe = i->pipe;
+> -- 
+> 2.39.2
+> 
 
-for you to fetch changes up to 43b450632676fb60e9faeddff285d9fac94a4f58:
-
-  open: return EINVAL for O_DIRECTORY | O_CREAT (2023-03-22 11:06:55 +0100)
-
-----------------------------------------------------------------
-vfs.open.directory.creat.einval
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      open: return EINVAL for O_DIRECTORY | O_CREAT
-
- fs/open.c                              | 18 +++++++++++++-----
- include/uapi/asm-generic/fcntl.h       |  1 -
- tools/include/uapi/asm-generic/fcntl.h |  1 -
- 3 files changed, 13 insertions(+), 7 deletions(-)
