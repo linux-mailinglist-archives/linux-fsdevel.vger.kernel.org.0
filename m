@@ -2,159 +2,295 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E2BE6C3CF7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Mar 2023 22:48:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E0D6C3FAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 02:22:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229808AbjCUVsR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 17:48:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45502 "EHLO
+        id S229629AbjCVBWr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 21:22:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbjCUVsQ (ORCPT
+        with ESMTP id S229550AbjCVBWq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 17:48:16 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC181B549
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 14:48:15 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id w9so65346755edc.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 14:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1679435293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5xh3paPfK126WRaNNgpf/HW2EljH41BR2zEW9a9muNk=;
-        b=EFxwAMPN5TNr9d2A4kweGJd3JvbAXyVvHd2P4P/SPMq8eJwqHtiU2c608UDjkDSyrz
-         wR9OSjQqsgjrMn3V2brzMT7hrk3n7WySExiC0d5PdJqq8l2DHGZB+gq0rlaX1KwB/rmM
-         fpNw9bEhzSMSgl0yKzTNbCiUhYXsAohTsLFDE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679435293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5xh3paPfK126WRaNNgpf/HW2EljH41BR2zEW9a9muNk=;
-        b=iTjFDCcH2EfLBoMuOmlJMFzupKg7VRmoBRPyrMnr+hFYBITwDm6528cVxNivHb+yeR
-         nLbVQxajYAwyQfxOSBL+gVcCk8yJqzRQ8tNtgpCSLkIY3eYyFILP9HSCXvXdsrPw1Qeg
-         njPgwhQ2M3whYzGpAboBwSvJfVaWPRLDwN2BYk0AmdAfVNNK11fN7WQ67r84kExKJHPz
-         lOMZv/1Ji37T1DlOtqRpLdyLwFrk2vqN7KFu0PmS4zuaq8UN4SAi4D/m5vmw9h0oneeg
-         VHkuYcmxKgLxf/Usz7hNTlHhFY/Q0DNuQXGJUHhAqUSE6POiSCLU0VFUkQ7iPtmPmft4
-         Rhjw==
-X-Gm-Message-State: AO0yUKVhsT8E/Ta0KjU/53ZpAj267tSdd6P5FRCekjQDBvAYRypDqYFY
-        WfABhKU+J62fjc3dj2xJ6UHNhPg2vAcOoi9IFeNr/7pu
-X-Google-Smtp-Source: AK7set8r5pmoGtHSTVFJn6oN+hQ4Pq2URUeKxptKROX382iul8rPSAJyOsCQCSqVT1X48zM8WAm0Sw==
-X-Received: by 2002:a05:6402:60a:b0:4f9:deb4:b97f with SMTP id n10-20020a056402060a00b004f9deb4b97fmr5496584edv.13.1679435293511;
-        Tue, 21 Mar 2023 14:48:13 -0700 (PDT)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id u3-20020a50d503000000b004fcd78d1215sm6918359edi.36.2023.03.21.14.48.12
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Mar 2023 14:48:12 -0700 (PDT)
-Received: by mail-ed1-f46.google.com with SMTP id y4so65371646edo.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 14:48:12 -0700 (PDT)
-X-Received: by 2002:a17:906:b28e:b0:935:3085:303b with SMTP id
- q14-20020a170906b28e00b009353085303bmr2028336ejz.15.1679435291907; Tue, 21
- Mar 2023 14:48:11 -0700 (PDT)
+        Tue, 21 Mar 2023 21:22:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 016BF30E5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 18:22:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679448121;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ji/+gLUq4mhKl4W9bQYaYit7GTsJsCf//IKN0Tq+sKM=;
+        b=YbD5iDlrO0TdBv/WC7aC4lhwHxPjNKCcgjOC1yMFMNpRMCqDb6RUG1P2BPQD1ODd9NnkIK
+        c49/ZG7tb/VLGBda2sxndxp7mSnNqAEyug6E7kF2Xc3nH/I0yJb7bL5atD5JEtgjEC953P
+        vPy5cdSdpv+3vXbZEVDUv+16zsQTEng=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-332-M3QeEbI_OTOy-_W1UUrLAw-1; Tue, 21 Mar 2023 21:15:53 -0400
+X-MC-Unique: M3QeEbI_OTOy-_W1UUrLAw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 14D2D3806106;
+        Wed, 22 Mar 2023 01:15:53 +0000 (UTC)
+Received: from localhost (ovpn-13-195.pek2.redhat.com [10.72.13.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E41496B590;
+        Wed, 22 Mar 2023 01:15:51 +0000 (UTC)
+Date:   Wed, 22 Mar 2023 09:15:48 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jiri Olsa <jolsa@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v4 2/4] fs/proc/kcore: convert read_kcore() to
+ read_kcore_iter()
+Message-ID: <ZBpWxI+LYiwasnvj@MiWiFi-R3L-srv>
+References: <cover.1679431886.git.lstoakes@gmail.com>
+ <a84da6cc458b44d949058b5f475ed3225008cfd9.1679431886.git.lstoakes@gmail.com>
 MIME-Version: 1.0
-References: <20230320071442.172228-1-pedro.falcato@gmail.com>
- <20230320115153.7n5cq4wl2hmcbndf@wittgenstein> <CAHk-=wjifBVf3ub0WWBXYg7JAao6V8coCdouseaButR0gi5xmg@mail.gmail.com>
- <CAKbZUD2Y2F=3+jf+0dRvenNKk=SsYPxKwLuPty_5-ppBPsoUeQ@mail.gmail.com>
- <CAHk-=wgc9qYOtuyW_Tik0AqMrQJK00n-LKWvcBifLyNFUdohDw@mail.gmail.com>
- <20230321142413.6mlowi5u6ewecodx@wittgenstein> <20230321161736.njmtnkvjf5rf7x5p@wittgenstein>
- <CAHk-=wi2mLKn6U7_aXMtP46TVSY6MTHv+ff-+xVFJbO914o65A@mail.gmail.com> <20230321201632.o2wiz5gk7cz36rn3@wittgenstein>
-In-Reply-To: <20230321201632.o2wiz5gk7cz36rn3@wittgenstein>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 21 Mar 2023 14:47:55 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg2nJ3Z8x-nDGi9iCJvDCgbhpN+qnZt6V1JPnHqxX2fhQ@mail.gmail.com>
-Message-ID: <CAHk-=wg2nJ3Z8x-nDGi9iCJvDCgbhpN+qnZt6V1JPnHqxX2fhQ@mail.gmail.com>
-Subject: Re: [PATCH] do_open(): Fix O_DIRECTORY | O_CREAT behavior
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Pedro Falcato <pedro.falcato@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a84da6cc458b44d949058b5f475ed3225008cfd9.1679431886.git.lstoakes@gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 1:16=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> But yes, that is a valid complaint so - without having tested - sm like:
+Hi Lorenzo,
 
-I'd actually go a bit further, and really spell all the bits out explicitly=
-.
+On 03/21/23 at 08:54pm, Lorenzo Stoakes wrote:
+> Now we have eliminated spinlocks from the vread() case, convert
+> read_kcore() to read_kcore_iter().
 
-I mean, I was *literally* involved in that original O_TMPFILE_MASK thing:
+Sorry for late comment.
 
-   https://lore.kernel.org/all/CA+55aFxA3qoM5wpMUya7gEA8SZyJep7kMBRjrPOsOm_=
-OudD8aQ@mail.gmail.com/
+Here I could miss something important, I don't get where we have
+eliminated spinlocks from the vread() case. Do I misunderstand this
+sentence?
 
-with the whole O_DIRECOTY games to make O_TMPFILE safer, but despite
-that I didn't remember this at all, and my suggested "maybe something
-like this" patch was broken for the O_TMPFILE case.
+> 
+> For the time being we still use a bounce buffer for vread(), however in the
+> next patch we will convert this to interact directly with the iterator and
+> eliminate the bounce buffer altogether.
+> 
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
+>  fs/proc/kcore.c | 58 ++++++++++++++++++++++++-------------------------
+>  1 file changed, 29 insertions(+), 29 deletions(-)
+> 
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index 556f310d6aa4..25e0eeb8d498 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -24,7 +24,7 @@
+>  #include <linux/memblock.h>
+>  #include <linux/init.h>
+>  #include <linux/slab.h>
+> -#include <linux/uaccess.h>
+> +#include <linux/uio.h>
+>  #include <asm/io.h>
+>  #include <linux/list.h>
+>  #include <linux/ioport.h>
+> @@ -308,9 +308,12 @@ static void append_kcore_note(char *notes, size_t *i, const char *name,
+>  }
+>  
+>  static ssize_t
+> -read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> +read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
+>  {
+> +	struct file *file = iocb->ki_filp;
+>  	char *buf = file->private_data;
+> +	loff_t *ppos = &iocb->ki_pos;
+> +
+>  	size_t phdrs_offset, notes_offset, data_offset;
+>  	size_t page_offline_frozen = 1;
+>  	size_t phdrs_len, notes_len;
+> @@ -318,6 +321,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  	size_t tsz;
+>  	int nphdr;
+>  	unsigned long start;
+> +	size_t buflen = iov_iter_count(iter);
+>  	size_t orig_buflen = buflen;
+>  	int ret = 0;
+>  
+> @@ -333,7 +337,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  	notes_offset = phdrs_offset + phdrs_len;
+>  
+>  	/* ELF file header. */
+> -	if (buflen && *fpos < sizeof(struct elfhdr)) {
+> +	if (buflen && *ppos < sizeof(struct elfhdr)) {
+>  		struct elfhdr ehdr = {
+>  			.e_ident = {
+>  				[EI_MAG0] = ELFMAG0,
+> @@ -355,19 +359,18 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  			.e_phnum = nphdr,
+>  		};
+>  
+> -		tsz = min_t(size_t, buflen, sizeof(struct elfhdr) - *fpos);
+> -		if (copy_to_user(buffer, (char *)&ehdr + *fpos, tsz)) {
+> +		tsz = min_t(size_t, buflen, sizeof(struct elfhdr) - *ppos);
+> +		if (copy_to_iter((char *)&ehdr + *ppos, tsz, iter) != tsz) {
+>  			ret = -EFAULT;
+>  			goto out;
+>  		}
+>  
+> -		buffer += tsz;
+>  		buflen -= tsz;
+> -		*fpos += tsz;
+> +		*ppos += tsz;
+>  	}
+>  
+>  	/* ELF program headers. */
+> -	if (buflen && *fpos < phdrs_offset + phdrs_len) {
+> +	if (buflen && *ppos < phdrs_offset + phdrs_len) {
+>  		struct elf_phdr *phdrs, *phdr;
+>  
+>  		phdrs = kzalloc(phdrs_len, GFP_KERNEL);
+> @@ -397,22 +400,21 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  			phdr++;
+>  		}
+>  
+> -		tsz = min_t(size_t, buflen, phdrs_offset + phdrs_len - *fpos);
+> -		if (copy_to_user(buffer, (char *)phdrs + *fpos - phdrs_offset,
+> -				 tsz)) {
+> +		tsz = min_t(size_t, buflen, phdrs_offset + phdrs_len - *ppos);
+> +		if (copy_to_iter((char *)phdrs + *ppos - phdrs_offset, tsz,
+> +				 iter) != tsz) {
+>  			kfree(phdrs);
+>  			ret = -EFAULT;
+>  			goto out;
+>  		}
+>  		kfree(phdrs);
+>  
+> -		buffer += tsz;
+>  		buflen -= tsz;
+> -		*fpos += tsz;
+> +		*ppos += tsz;
+>  	}
+>  
+>  	/* ELF note segment. */
+> -	if (buflen && *fpos < notes_offset + notes_len) {
+> +	if (buflen && *ppos < notes_offset + notes_len) {
+>  		struct elf_prstatus prstatus = {};
+>  		struct elf_prpsinfo prpsinfo = {
+>  			.pr_sname = 'R',
+> @@ -447,24 +449,23 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  				  vmcoreinfo_data,
+>  				  min(vmcoreinfo_size, notes_len - i));
+>  
+> -		tsz = min_t(size_t, buflen, notes_offset + notes_len - *fpos);
+> -		if (copy_to_user(buffer, notes + *fpos - notes_offset, tsz)) {
+> +		tsz = min_t(size_t, buflen, notes_offset + notes_len - *ppos);
+> +		if (copy_to_iter(notes + *ppos - notes_offset, tsz, iter) != tsz) {
+>  			kfree(notes);
+>  			ret = -EFAULT;
+>  			goto out;
+>  		}
+>  		kfree(notes);
+>  
+> -		buffer += tsz;
+>  		buflen -= tsz;
+> -		*fpos += tsz;
+> +		*ppos += tsz;
+>  	}
+>  
+>  	/*
+>  	 * Check to see if our file offset matches with any of
+>  	 * the addresses in the elf_phdr on our list.
+>  	 */
+> -	start = kc_offset_to_vaddr(*fpos - data_offset);
+> +	start = kc_offset_to_vaddr(*ppos - data_offset);
+>  	if ((tsz = (PAGE_SIZE - (start & ~PAGE_MASK))) > buflen)
+>  		tsz = buflen;
+>  
+> @@ -497,7 +498,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  		}
+>  
+>  		if (!m) {
+> -			if (clear_user(buffer, tsz)) {
+> +			if (iov_iter_zero(tsz, iter) != tsz) {
+>  				ret = -EFAULT;
+>  				goto out;
+>  			}
+> @@ -508,14 +509,14 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  		case KCORE_VMALLOC:
+>  			vread(buf, (char *)start, tsz);
+>  			/* we have to zero-fill user buffer even if no read */
+> -			if (copy_to_user(buffer, buf, tsz)) {
+> +			if (copy_to_iter(buf, tsz, iter) != tsz) {
+>  				ret = -EFAULT;
+>  				goto out;
+>  			}
+>  			break;
+>  		case KCORE_USER:
+>  			/* User page is handled prior to normal kernel page: */
+> -			if (copy_to_user(buffer, (char *)start, tsz)) {
+> +			if (copy_to_iter((char *)start, tsz, iter) != tsz) {
+>  				ret = -EFAULT;
+>  				goto out;
+>  			}
+> @@ -531,7 +532,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  			 */
+>  			if (!page || PageOffline(page) ||
+>  			    is_page_hwpoison(page) || !pfn_is_ram(pfn)) {
+> -				if (clear_user(buffer, tsz)) {
+> +				if (iov_iter_zero(tsz, iter) != tsz) {
+>  					ret = -EFAULT;
+>  					goto out;
+>  				}
+> @@ -541,25 +542,24 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  		case KCORE_VMEMMAP:
+>  		case KCORE_TEXT:
+>  			/*
+> -			 * We use _copy_to_user() to bypass usermode hardening
+> +			 * We use _copy_to_iter() to bypass usermode hardening
+>  			 * which would otherwise prevent this operation.
+>  			 */
+> -			if (_copy_to_user(buffer, (char *)start, tsz)) {
+> +			if (_copy_to_iter((char *)start, tsz, iter) != tsz) {
+>  				ret = -EFAULT;
+>  				goto out;
+>  			}
+>  			break;
+>  		default:
+>  			pr_warn_once("Unhandled KCORE type: %d\n", m->type);
+> -			if (clear_user(buffer, tsz)) {
+> +			if (iov_iter_zero(tsz, iter) != tsz) {
+>  				ret = -EFAULT;
+>  				goto out;
+>  			}
+>  		}
+>  skip:
+>  		buflen -= tsz;
+> -		*fpos += tsz;
+> -		buffer += tsz;
+> +		*ppos += tsz;
+>  		start += tsz;
+>  		tsz = (buflen > PAGE_SIZE ? PAGE_SIZE : buflen);
+>  	}
+> @@ -603,7 +603,7 @@ static int release_kcore(struct inode *inode, struct file *file)
+>  }
+>  
+>  static const struct proc_ops kcore_proc_ops = {
+> -	.proc_read	= read_kcore,
+> +	.proc_read_iter	= read_kcore_iter,
+>  	.proc_open	= open_kcore,
+>  	.proc_release	= release_kcore,
+>  	.proc_lseek	= default_llseek,
+> -- 
+> 2.39.2
+> 
 
-So while we do have all this documented in our history (both git
-commit logs and lore.kernel.org), I actually think it would be lovely
-to just make build_open_flags() be very explicit about all the exact
-O_xyz flags, and really write out the logic fully.
-
-For example, even your clarified version that gets rid of the
-"O_TMPFILE_MASK" thing still eends up doing
-
-        if (flags & __O_TMPFILE) {
-                if ((flags & O_TMPFILE) !=3D O_TMPFILE)
-                        return -EINVAL;
-
-and so when you look at that code, you don't actually realize that
-O_TMPFILE _cotnains_ that __O_TMPFILE bit, and what the above really
-means is "also check O_DIRECTORY".
-
-So considering how I couldn't remember this mess myself, despite
-having been involved with it personally (a decade ago..), I really do
-think that maybe this shoudl be open-coded with a comment, and the
-above code should instead be
-
-        if (flags & __O_TMPFILE) {
-                if (!(flags & O_DIRECTORY))
-                        return -EINVAL;
-
-together with an explicit comment about how O_TMPFILE is the
-*combination* of __O_TMPFILE and O_DIRECTORY, along with a short
-explanation as to why.
-
-Now, I agree that that test for O_DIRECTORY then _looks_ odd, but the
-thing is, it then makes the reality of this all much more explicit.
-
-In contrast, doing that
-
-                if ((flags & O_TMPFILE) !=3D O_TMPFILE)
-
-may *look* more natural in that context, but if you actually start
-thinking about it, that check makes no sense unless you then look up
-what O_TMPFILE is, and the history behind it.
-
-So I'd rather have code that looks a bit odd, but that explains itself
-and is explicit about what it does, than code that _tries_ to look
-natural but actually hides the reason for what it is doing.
-
-And then next time somebody looks at that O_DIRECTORY | O_CREAT
-combination, suddenly the __O_TMPFILE interaction is there, and very
-explicit.
-
-Hmm?
-
-I don't feel *hugely* strongly about this, so in the end I'll bow to
-your decision, but considering that my initial patch looked sane but
-was buggy because I had forgotten about O_TMPFILE, I really think we
-should make this more explicit at a source level..
-
-               Linus
-
-            Linus
