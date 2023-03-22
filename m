@@ -2,53 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0E76C4D4B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 15:17:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D53C66C4D4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 15:17:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231238AbjCVORp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 10:17:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50334 "EHLO
+        id S229937AbjCVORo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 10:17:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbjCVORn (ORCPT
+        with ESMTP id S229521AbjCVORn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 22 Mar 2023 10:17:43 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEDBA3A870;
-        Wed, 22 Mar 2023 07:17:40 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id j18-20020a05600c1c1200b003ee5157346cso1805110wms.1;
-        Wed, 22 Mar 2023 07:17:40 -0700 (PDT)
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01FF9474FF;
+        Wed, 22 Mar 2023 07:17:41 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id j18-20020a05600c1c1200b003ee5157346cso1805155wms.1;
+        Wed, 22 Mar 2023 07:17:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679494659;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wm1gEgpO8Vn1aWhx1/jlEqhlPh3aI7HtjbvGUfjefuk=;
-        b=I+TiJfxCnhMdPxfbKKNZAHPoiViehkAxhd3pdH+LbUn8Wf5uH2cVN2Rq/bJzSFN6Pd
-         5iVwfwN22RqG1rHKv6w8wmvo0sCXnBDFOMdbl7pG0wx7P/R73ZX/daJgpQ3B8NTa7jhe
-         Ts9qz4l88vSc0aCiBxC/8cJxk+b/1Yb1bsD14ly9rv2OwWsIw3Ra9H6lWxPOUiLvppwx
-         1i+1W4lFGHybdMrndjzvvd3QBNU4ZfH8M/KK2IArxiDMhPTypO4EyzO1nhJdc5g9FFx4
-         YRw9wD8sG3OyAZHBNUUWAhsX+8ujffRBfvDrZV7ydXa9wEplSb5qoBgiIuGFseLes/QF
-         qK+g==
+        d=gmail.com; s=20210112; t=1679494660;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cY5q38znnygXEk7MQGfhMNT6fWhXSJdRMwyHM9vnLSQ=;
+        b=dIwol5PJw0bli8FE/ZdtKot7+ZBxkF2CumwPnWIKpYhM02k1csFlwUqD9UGL9WmVLn
+         3kH6HAxlp3zElAHVcqZypb6dzIguKMqxaZdPSUkRnzfNpZ+N4ajFYn8D3b+VhenoWaBp
+         +nnPFx0qewJW0Z9sGBiil1IqIbwimdDzq+2ZHg5jFcHk4R9l9QrA1w7YDnAlgfbxCbiC
+         L2Vc4UCY2jyTccq0OukQszIqjXzgfCupsM/z8pFZQ9QHNq2a5ZvtpPIZc0orj1WSiBoB
+         rc1D+fk/Dfij3pJZZPenfpqa0GCgLTSnTQgL81J54JFfeZPxhebLOK+xsOuXEpHNlC59
+         2l8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679494659;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wm1gEgpO8Vn1aWhx1/jlEqhlPh3aI7HtjbvGUfjefuk=;
-        b=oXUfbIXokotRvU67EbJi+kUwwjotA3Tu2TdFOOykTyhckeqGizV8s56HBU4htlW9Ec
-         FW/TDOJW8LgoJY/dCRiQURo0sUA2RzgyJjMWLRLYHv1taU0iR9Q9ksN68gPb2tDoRn+D
-         ZzevkZVKVhnHsh86W2VgBRGyjJw2yEmiyRHXoCrOJbMzG1MYPo3h+a1iJXiiplWiS0m1
-         xf715A658VmIOTlPeqYx4YH1Wt/D0G/FymXS+W9BMFwk7rfuUpjRTU6FUdy7NIvfjFeZ
-         a5Bvb3/60nXTi0rcAUyrbRfsRYUoSwYPPWfdrGjgj/ZLLdiiwl+3LQ4rXtE6XxGSygHn
-         r5iA==
-X-Gm-Message-State: AO0yUKWArTpd+Pe4IiITvVWTYb7AWgFV45mf0QUj25zhN8CO9m/q/jSr
-        kW2I/EgPbjBXOCd9nNVgZrHQlkFV6Hw=
-X-Google-Smtp-Source: AK7set+ipKtD0Wir6g+M24jTGeJiII8+dCbOcCWZcovGSONqn+YXHXRjrEIKtv5GgV20uDY2+MmeGQ==
-X-Received: by 2002:a05:600c:2293:b0:3ed:a80e:6dfa with SMTP id 19-20020a05600c229300b003eda80e6dfamr4843778wmf.40.1679494658754;
-        Wed, 22 Mar 2023 07:17:38 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679494660;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cY5q38znnygXEk7MQGfhMNT6fWhXSJdRMwyHM9vnLSQ=;
+        b=3SNGDlVgpcXeSyC9d8rYW24Vuiu2YMIewgIebSZjUeknQPlnxMtFRvpap630jkYjc4
+         QmZipirXJQHqz2de14i3Ndfmku2Ai+u8COeSCjieEY9huCEcbjJ13OwiqjdoIdd1Muiy
+         ol5+13aJKP3Yv8+koVZZIbf1DWNnrUSzMLyaTuKTkeRiRFH30ZlWcH3KeXc64OUZ6uwS
+         HKUv4mq5VjktNoJfILVqhgp5e8w+CCl3J6lCs38f4yaa8aeBIFWrnV/5/xuP7PcziMYk
+         0R/KkVVPpAb2SUsBGGCefA0gkkkw3VIxDidrgh1vkcuRqee1JAeWUZSzkNTGEm4pDFeb
+         bhWQ==
+X-Gm-Message-State: AO0yUKUkqJk3QXngQZSVz2b9Tsg5GvQ7wYxha/4gF8i6tMY7wJcAFdxh
+        Wa/F0fFq52B4aQZayZ4X/szymaDoD7Y=
+X-Google-Smtp-Source: AK7set/t+90cniOBUsMZ86ATkrJz4GVX1skOO3/GxVxqGNazKFn1JFfEJ5wqrdwgjLijJkQ5YI4B9g==
+X-Received: by 2002:a7b:c00b:0:b0:3ed:2b27:5bcc with SMTP id c11-20020a7bc00b000000b003ed2b275bccmr5684047wmb.38.1679494660074;
+        Wed, 22 Mar 2023 07:17:40 -0700 (PDT)
 Received: from lucifer.home ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.googlemail.com with ESMTPSA id h20-20020a1ccc14000000b003dc522dd25esm16824893wmb.30.2023.03.22.07.17.37
+        by smtp.googlemail.com with ESMTPSA id h20-20020a1ccc14000000b003dc522dd25esm16824893wmb.30.2023.03.22.07.17.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 07:17:37 -0700 (PDT)
+        Wed, 22 Mar 2023 07:17:39 -0700 (PDT)
 From:   Lorenzo Stoakes <lstoakes@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>
@@ -59,10 +60,12 @@ Cc:     Baoquan He <bhe@redhat.com>, Uladzislau Rezki <urezki@gmail.com>,
         Jiri Olsa <jolsa@kernel.org>, Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [PATCH v5 0/4] convert read_kcore(), vread() to use iterators
-Date:   Wed, 22 Mar 2023 14:17:31 +0000
-Message-Id: <cover.1679494218.git.lstoakes@gmail.com>
+Subject: [PATCH v5 1/4] fs/proc/kcore: avoid bounce buffer for ktext data
+Date:   Wed, 22 Mar 2023 14:17:32 +0000
+Message-Id: <fd39b0bfa7edc76d360def7d034baaee71d90158.1679494218.git.lstoakes@gmail.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1679494218.git.lstoakes@gmail.com>
+References: <cover.1679494218.git.lstoakes@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
@@ -75,74 +78,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While reviewing Baoquan's recent changes to permit vread() access to
-vm_map_ram regions of vmalloc allocations, Willy pointed out [1] that it
-would be nice to refactor vread() as a whole, since its only user is
-read_kcore() and the existing form of vread() necessitates the use of a
-bounce buffer.
+Commit df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext data")
+introduced the use of a bounce buffer to retrieve kernel text data for
+/proc/kcore in order to avoid failures arising from hardened user copies
+enabled by CONFIG_HARDENED_USERCOPY in check_kernel_text_object().
 
-This patch series does exactly that, as well as adjusting how we read the
-kernel text section to avoid the use of a bounce buffer in this case as
-well.
+We can avoid doing this if instead of copy_to_user() we use _copy_to_user()
+which bypasses the hardening check. This is more efficient than using a
+bounce buffer and simplifies the code.
 
-This has been tested against the test case which motivated Baoquan's
-changes in the first place [2] which continues to function correctly, as do
-the vmalloc self tests.
+We do so as part an overall effort to eliminate bounce buffer usage in the
+function with an eye to converting it an iterator read.
 
-[1] https://lore.kernel.org/all/Y8WfDSRkc%2FOHP3oD@casper.infradead.org/
-[2] https://lore.kernel.org/all/87ilk6gos2.fsf@oracle.com/T/#u
+Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+---
+ fs/proc/kcore.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-v5:
-- Do not rename fpos to ppos in read_kcore_iter() to avoid churn.
-- Fix incorrect commit messages after prior revisions altered the approach.
-- Replace copy_page_to_iter_atomic() with copy_page_to_iter_nofault() and
-  adjust it to be able to handle compound pages. This uses
-  copy_to_user_nofault() which ensures page faults are disabled during copy
-  which kmap_local_page() was not doing.
-- Only try to fault in pages if we are unable to copy in the first place
-  and try only once to avoid any risk of spinning.
-- Do not zero memory in aligned_vread_iter() if we couldn't copy it.
-- Fix mistake in zeroing missing or unpopulated blocks in
-  vmap_ram_vread_iter().
-
-v4:
-- Fixup mistake in email client which orphaned patch emails from the
-  cover letter.
-https://lore.kernel.org/all/cover.1679431886.git.lstoakes@gmail.com
-
-v3:
-- Revert introduction of mutex/rwsem in vmalloc
-- Introduce copy_page_to_iter_atomic() iovec function
-- Update vread_iter() and descendent functions to use only this
-- Fault in user pages before calling vread_iter()
-- Use const char* in vread_iter() and descendent functions
-- Updated commit messages based on feedback
-- Extend vread functions to always check how many bytes we could copy. If
-  at any stage we are unable to copy/zero, abort and return the number of
-  bytes we did copy.
-https://lore.kernel.org/all/cover.1679354384.git.lstoakes@gmail.com/
-
-v2:
-- Fix ordering of vread_iter() parameters
-- Fix nommu vread() -> vread_iter()
-https://lore.kernel.org/all/cover.1679209395.git.lstoakes@gmail.com/
-
-v1:
-https://lore.kernel.org/all/cover.1679183626.git.lstoakes@gmail.com/
-
-Lorenzo Stoakes (4):
-  fs/proc/kcore: avoid bounce buffer for ktext data
-  fs/proc/kcore: convert read_kcore() to read_kcore_iter()
-  iov_iter: add copy_page_to_iter_nofault()
-  mm: vmalloc: convert vread() to vread_iter()
-
- fs/proc/kcore.c         |  78 ++++++--------
- include/linux/uio.h     |   2 +
- include/linux/vmalloc.h |   3 +-
- lib/iov_iter.c          |  36 +++++++
- mm/nommu.c              |  10 +-
- mm/vmalloc.c            | 234 +++++++++++++++++++++++++---------------
- 6 files changed, 224 insertions(+), 139 deletions(-)
-
---
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index 71157ee35c1a..556f310d6aa4 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -541,19 +541,12 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+ 		case KCORE_VMEMMAP:
+ 		case KCORE_TEXT:
+ 			/*
+-			 * Using bounce buffer to bypass the
+-			 * hardened user copy kernel text checks.
++			 * We use _copy_to_user() to bypass usermode hardening
++			 * which would otherwise prevent this operation.
+ 			 */
+-			if (copy_from_kernel_nofault(buf, (void *)start, tsz)) {
+-				if (clear_user(buffer, tsz)) {
+-					ret = -EFAULT;
+-					goto out;
+-				}
+-			} else {
+-				if (copy_to_user(buffer, buf, tsz)) {
+-					ret = -EFAULT;
+-					goto out;
+-				}
++			if (_copy_to_user(buffer, (char *)start, tsz)) {
++				ret = -EFAULT;
++				goto out;
+ 			}
+ 			break;
+ 		default:
+-- 
 2.39.2
+
