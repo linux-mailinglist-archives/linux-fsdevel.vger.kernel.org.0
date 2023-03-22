@@ -2,85 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB5CE6C548B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 20:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48EC66C54DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 20:23:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbjCVTKH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 15:10:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55964 "EHLO
+        id S231231AbjCVTXk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 15:23:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbjCVTKF (ORCPT
+        with ESMTP id S231220AbjCVTXj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 15:10:05 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 886F558B67;
-        Wed, 22 Mar 2023 12:10:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=zT4Z2FZu+6Ql6/R+LRqO3MtZ3q6XuLAuf5XIiRjZ61Q=; b=m6Drqk5niIKGUNGVcTAFXs/Lgh
-        MqxegHXmu8VXR13ByAoNnd/K6Aa4o+zE6CtCkoxUN8JbAsqBkv8zpJ0jN7SxuPz5yfll+636mVTEw
-        lIyvB9aQMc37vJ1RvfipcZ3jwG8LTIBEu2zTJrnkvWVKjaDD933JGA4mCYPBh2F71e/GtmBmDMi+D
-        oXbk+n6zvMkTf70nRnb4U+NdZEpA3unSz3aRHW/VvAqhl30Betp4MrCvCRwH7YtoBHwQY0gdKTaHI
-        rlYtf4rZ0Kq9MYPv4tkLMkRDNCZVaVtrXrkIk677QYlbS+u90jMM3rek8xsarrZc+DsBUsD5Yjakx
-        AtvvFqKQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pf3qE-003GWB-Fr; Wed, 22 Mar 2023 19:09:46 +0000
-Date:   Wed, 22 Mar 2023 19:09:46 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Pankaj Raghav <p.raghav@samsung.com>
-Cc:     senozhatsky@chromium.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        brauner@kernel.org, akpm@linux-foundation.org, minchan@kernel.org,
-        hubcap@omnibond.com, martin@omnibond.com, mcgrof@kernel.org,
-        devel@lists.orangefs.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, gost.dev@samsung.com
-Subject: Re: [RFC v2 0/5] remove page_endio()
-Message-ID: <ZBtSevjWLybE6S07@casper.infradead.org>
-References: <CGME20230322135015eucas1p2ff980e76159f0ceef7bf66934580bd6c@eucas1p2.samsung.com>
- <20230322135013.197076-1-p.raghav@samsung.com>
+        Wed, 22 Mar 2023 15:23:39 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548FA974D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 12:23:36 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id q102so4937198pjq.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 12:23:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679513016;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EgL5DcFp9hxZVsze0lj/Mr8Oi3/8QULjQCWzF+Knqzg=;
+        b=bmrdJHDSuWfbKv+zgoi0s5sq70aaDL2ijBKPX0hWdXBo/ssOtr1uhTMhJM/uGO7IW2
+         +vKKMcLrXXpZXK9/bndiIVMVwpBLvuPIeGtoRvs3AeJ+YsqkFjwTU9mkLYdgXgOctkgO
+         8KrW6yTuMlPFazAD/3jkFzXmoZlsrSoQhW8AnQRoN/D72dKfjeHLfPFYGBMRNF8/gfKM
+         im8kIMaKMc3PoHSB13lf61okGID73bExILn4pqSCCAT4aYyMKUw5A+X6JcesW/sF4xs5
+         h0A8F2E0X/RBHxyU+W4iOI/j1EL4k8BzNmnJ8wOKxLTzkOkGTJH5bQbYN8RjkQihuPGU
+         UoHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679513016;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EgL5DcFp9hxZVsze0lj/Mr8Oi3/8QULjQCWzF+Knqzg=;
+        b=UMOfha/+InSyhvLsyAEAsytAqId2mW5QFR4/OLNaWPW3RLpIQbOAgy5ef4EMdtY+mG
+         AmGRavnkE+vF4aovToQGkrOCL1+9tpOViHbpHDCnia5eO8Er5FKZPHKzXsC0/0esHEo1
+         iofDpQJwPFeg+RWcwa3ZxdsZjuWc4KU6zgHXzhq9F/69EkhKUT7mlkIlO+E5Nztmv3SG
+         GXZo9ht4kFF3BqxIK2NpOTA8F5wfQ+y/S2R3pUHHzCQpLwskYEV0iXL3qn5lKGA2MxiA
+         sTU4hSuK2y0c5qpUPCSl4XmZi86pN5TwYF/3PTA4oMESdR7mSTaqxo6zYapVxE+75qag
+         ArDw==
+X-Gm-Message-State: AO0yUKW9Mzgkw6kqPucGHWZ6esAhHAHfBVAnrPVMrNXwnuGVZtFeH97q
+        v/xGO6owv4k1zAfEn2voSBGvSl56DkYsJK1IFCU=
+X-Google-Smtp-Source: AK7set8xJcNvljrMmwdNaUms/8Ep1ZU+H3InhGsqybamnfB2MFssMsDE1VSCDoiOrQQxth9socYhPrFqvEU4PYW4izo=
+X-Received: by 2002:a17:902:c404:b0:19f:3aa9:9ea1 with SMTP id
+ k4-20020a170902c40400b0019f3aa99ea1mr1431925plk.8.1679513015802; Wed, 22 Mar
+ 2023 12:23:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230322135013.197076-1-p.raghav@samsung.com>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.6
+References: <CADNhMOuFyDv5addXDX3feKGS9edJ3nwBTBh7AB1UY+CYzrreFw@mail.gmail.com>
+ <ZBsVnQatzjB9QgnF@casper.infradead.org>
+In-Reply-To: <ZBsVnQatzjB9QgnF@casper.infradead.org>
+From:   Amol Dixit <amoldd@gmail.com>
+Date:   Wed, 22 Mar 2023 12:13:54 -0700
+Message-ID: <CADNhMOuA+aNdqASoS6AGVx4s2kEZJubzVBi8qVhAO4VubGSBpA@mail.gmail.com>
+Subject: Re: inotify on mmap writes
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 22, 2023 at 02:50:08PM +0100, Pankaj Raghav wrote:
-> It was decided to remove the page_endio() as per the previous RFC
-> discussion[1] of this series and move that functionality into the caller
-> itself. One of the side benefit of doing that is the callers have been
-> modified to directly work on folios as page_endio() already worked on
-> folios.
-> 
-> mpage changes were tested with a simple boot testing. zram and orangefs is
-> only build tested. No functional changes were introduced as a part of
-> this AFAIK.
-> 
-> Open questions:
-> - Willy pointed out that the calls to folio_set_error() and
->   folio_clear_uptodate() are not needed anymore in the read path when an
->   error happens[2]. I still don't understand 100% why they aren't needed
->   anymore as I see those functions are still called in iomap. It will be
->   good to put that rationale as a part of the commit message.
+Thanks for correction. It has been a while for me and I thought
+writepages may be the common denominator (vague memory of reads
+blocking on DIO writeback with writepages casued me to believe it may
+be the path for mmap)...most certainly it is ext4_page_mkwrite that
+does get_block and and ends up with ll_rw_block(), so I stand
+corrected.
 
-page_endio() was generic.  It needed to handle a lot of cases.  When it's
-being inlined into various completion routines, we know which cases we
-need to handle and can omit all the cases which we don't.
+Back to my point of tracking mmap writes to any region of a file. The
+use case is to build on top of inotify to know dirty files and take
+action as the app would wish - so this is more about completion of the
+API to track all writes. Just saw patches in the works for splice() go
+by, also in the same vein.
 
-We know the uptodate flag is clear.  If the uptodate flag is set,
-we don't call the filesystem's read path.  Since we know it's clear,
-we don't need to clear it.
+Ideally I would want to take the inotify interface further, by
+returning offset/length information in the MODIFY event to further
+assist user applications built on this interface. For vfs originated
+events this would be at byte granularity, while for mmap originated
+events this may be at page granularity - in any case this would be
+valuable information surfaced up from the depths of the filesystem up
+to userspace.
 
-We don't need to set the error flag.  Only some filesystems still use
-the error flag, and orangefs isn't one of them.  I'd like to get rid
-of the error flag altogether, and I've sent patches in the past which
-get us a lot closer to that desired outcome.  Not sure we're there yet.
-Regardless, generic code doesn't check the error flag.
+Thanks,
+Amol
+
+
+
+On Wed, Mar 22, 2023 at 7:50=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Tue, Mar 21, 2023 at 06:50:14PM -0700, Amol Dixit wrote:
+> > The lack of file modification notification events (inotify, fanotify)
+> > for mmap() regions is a big hole to anybody watching file changes from
+> > userspace. I can imagine atleast 2 reasons why that support may be
+> > lacking, perhaps there are more:
+> >
+> > 1. mmap() writeback is async (unless msync/fsync triggered) driven by
+> > file IO and page cache writeback mechanims, unlike write system calls
+> > that get funneled via the vfs layer, whih is a convenient common place
+> > to issue notifications. Now mm code would have to find a common ground
+> > with filesystem/vfs, which is messy.
+> >
+> > 2. writepages, being an address-space op is treated by each file
+> > system independently. If mm did not want to get involved, onus would
+> > be on each filesystem to make their .writepages handlers notification
+> > aware. This is probably also considered not worth the trouble.
+> >
+> > So my question is, notwithstanding minor hurdles (like lost events,
+> > hardlinks etc.), would the community like to extend inotify support
+> > for mmap'ed writes to files? Under configs options, would a fix on a
+> > per filesystem basis be an acceptable solution (I can start with say
+> > ext4 writepages linking back to inode/dentry and firing a
+> > notification)?
+>
+> I don't understand why you think writepages is the right place for
+> monitoring.  That tells you when data is leaving the page cache, not
+> when the file is modified.  If you want to know when the file is
+> modified, you need to hook into the page_mkwrite path.
