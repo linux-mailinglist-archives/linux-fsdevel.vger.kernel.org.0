@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0AC76C407F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 03:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23F046C40C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 04:08:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229719AbjCVCqk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Mar 2023 22:46:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37272 "EHLO
+        id S229525AbjCVDIX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Mar 2023 23:08:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjCVCqj (ORCPT
+        with ESMTP id S229584AbjCVDIV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Mar 2023 22:46:39 -0400
+        Tue, 21 Mar 2023 23:08:21 -0400
 Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B1424DBC7;
-        Tue, 21 Mar 2023 19:46:37 -0700 (PDT)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6CC3B458;
+        Tue, 21 Mar 2023 20:08:19 -0700 (PDT)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mxct.zte.com.cn (FangMail) with ESMTPS id 4PhCXq6f09z501RZ;
-        Wed, 22 Mar 2023 10:46:35 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-        by mse-fl2.zte.com.cn with SMTP id 32M2kRx0071270;
-        Wed, 22 Mar 2023 10:46:27 +0800 (+08)
+        by mxct.zte.com.cn (FangMail) with ESMTPS id 4PhD1t1w3Lz501SY;
+        Wed, 22 Mar 2023 11:08:18 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+        by mse-fl1.zte.com.cn with SMTP id 32M384fw094843;
+        Wed, 22 Mar 2023 11:08:04 +0800 (+08)
         (envelope-from ye.xingchen@zte.com.cn)
 Received: from mapi (xaxapp02[null])
         by mapi (Zmail) with MAPI id mid31;
-        Wed, 22 Mar 2023 10:46:28 +0800 (CST)
-Date:   Wed, 22 Mar 2023 10:46:28 +0800 (CST)
-X-Zmail-TransId: 2afa641a6c04ffffffff993-4d9af
+        Wed, 22 Mar 2023 11:08:05 +0800 (CST)
+Date:   Wed, 22 Mar 2023 11:08:05 +0800 (CST)
+X-Zmail-TransId: 2afa641a71157b7-98788
 X-Mailer: Zmail v1.0
-Message-ID: <202303221046286197958@zte.com.cn>
+Message-ID: <202303221108054628708@zte.com.cn>
 Mime-Version: 1.0
 From:   <ye.xingchen@zte.com.cn>
 To:     <mcgrof@kernel.org>
@@ -38,13 +38,13 @@ Cc:     <keescook@chromium.org>, <yzaikin@google.com>,
         <akpm@linux-foundation.org>, <linmiaohe@huawei.com>,
         <chi.minghao@zte.com.cn>, <linux-kernel@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: =?UTF-8?B?W1BBVENIIFY1IDEvMl0gbW06IGNvbXBhY3Rpb246IG1vdmUgY29tcGFjdGlvbiBzeXNjdGwgdG8gaXRzIG93biBmaWxl?=
+Subject: =?UTF-8?B?W1BBVENIIFY2IDEvMl0gbW06IGNvbXBhY3Rpb246IG1vdmUgY29tcGFjdGlvbiBzeXNjdGwgdG8gaXRzIG93biBmaWxl?=
 Content-Type: text/plain;
         charset="UTF-8"
-X-MAIL: mse-fl2.zte.com.cn 32M2kRx0071270
+X-MAIL: mse-fl1.zte.com.cn 32M384fw094843
 X-Fangmail-Gw-Spam-Type: 0
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 641A6C0B.002/4PhCXq6f09z501RZ
+X-Fangmail-MID-QID: 641A7122.001/4PhD1t1w3Lz501SY
 X-Spam-Status: No, score=0.0 required=5.0 tests=SPF_HELO_NONE,SPF_PASS,
         UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
         version=3.4.6
@@ -63,9 +63,9 @@ Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
 Signed-off-by: Ye Xingchen <ye.xingchen@zte.com.cn>
 ---
  include/linux/compaction.h |  7 ----
- kernel/sysctl.c            | 59 -----------------------------
- mm/compaction.c            | 77 ++++++++++++++++++++++++++++++++++----
- 3 files changed, 69 insertions(+), 74 deletions(-)
+ kernel/sysctl.c            | 59 ------------------------------
+ mm/compaction.c            | 73 ++++++++++++++++++++++++++++++++++----
+ 3 files changed, 67 insertions(+), 72 deletions(-)
 
 diff --git a/include/linux/compaction.h b/include/linux/compaction.h
 index 52a9ff65faee..a6e512cfb670 100644
@@ -170,7 +170,7 @@ index ce0297acf97c..e23061f33237 100644
  		.procname	= "min_free_kbytes",
  		.data		= &min_free_kbytes,
 diff --git a/mm/compaction.c b/mm/compaction.c
-index e689d66cedf4..ad5838c7fce7 100644
+index e689d66cedf4..ec2989f2c5d3 100644
 --- a/mm/compaction.c
 +++ b/mm/compaction.c
 @@ -1728,7 +1728,9 @@ typedef enum {
@@ -184,24 +184,6 @@ index e689d66cedf4..ad5838c7fce7 100644
 
  static inline void
  update_fast_start_pfn(struct compact_control *cc, unsigned long pfn)
-@@ -2052,7 +2054,7 @@ static unsigned int fragmentation_score_node(pg_data_t *pgdat)
-
- 	return score;
- }
--
-+unsigned int sysctl_compaction_proactiveness;
- static unsigned int fragmentation_score_wmark(pg_data_t *pgdat, bool low)
- {
- 	unsigned int wmark_low;
-@@ -2228,7 +2230,7 @@ static enum compact_result __compaction_suitable(struct zone *zone, int order,
-
- 	return COMPACT_CONTINUE;
- }
--
-+static int sysctl_extfrag_threshold;
- /*
-  * compaction_suitable: Is this suitable to run compaction on this zone now?
-  * Returns
 @@ -2584,8 +2586,6 @@ static enum compact_result compact_zone_order(struct zone *zone, int order,
  	return ret;
  }
