@@ -2,110 +2,320 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 690696C424B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 06:41:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C13166C42F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 07:19:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229930AbjCVFlu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 01:41:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56676 "EHLO
+        id S229922AbjCVGTo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 02:19:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbjCVFlt (ORCPT
+        with ESMTP id S229812AbjCVGTm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 01:41:49 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5330D3FBBF;
-        Tue, 21 Mar 2023 22:41:46 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id c4so10439242pfl.0;
-        Tue, 21 Mar 2023 22:41:46 -0700 (PDT)
+        Wed, 22 Mar 2023 02:19:42 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 043FF4C3D;
+        Tue, 21 Mar 2023 23:19:37 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id v4-20020a05600c470400b003ee4f06428fso1176442wmo.4;
+        Tue, 21 Mar 2023 23:19:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679463706;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q4AvIXzvw3CsklYuLdsWfKiwZldi09EF5IbRCiC4jps=;
-        b=W53WgOijzJdl9bNR6Y5U3IeV+x7LsP7b5DM7BqVukp+H9lsvLycVb8gMuirAKiMQv8
-         8WkPNdUvCCW2lk7SyFGv1kllOHKbBQ+x1JGDLWtJyi9o339XR+ldbOG4EijMlOYPu7rY
-         qrezg49ISozTc/b/zCxrFfhHnrbCVzBKnSK4q4sPT7KNJbwRfdqjwuAHbSWBvKw+FcfD
-         ly6psFiOj7HX/YhkhUTFFACsnaHhu+jvSf88m76P6fedkICdUDVS/gMd7ryOP4Wbcbjy
-         dBFwW2jfSlIrFbtE9JWNNkePvUWX+ctfJmyK7frAOpE8ONsy7Bd+s3d/G1slIM+kj6uN
-         cEsw==
+        d=gmail.com; s=20210112; t=1679465976;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D3iaW2agAbMwqgiEp5WfNoQ6YhOUN3dC7dOrA2kDLxI=;
+        b=J536LDg3b+r0xbOHBtWGz8F4PNLnCkmSpWzIsL1VgPnRn7BJH1iSL0EOxazEyjPQDX
+         fugbc2Ju4igR5eWHIkEB4UUaXq1m6CVI9N75OtVIy78rqk+I4v0tye6ad3blm71xDfaj
+         aGb/tMtJTBNDWM8iUCDYazou0LqQ9EX3F5j+XuS7M24XrJlRFefUMHHENdQ055n7yLkG
+         bjgggzE7CcVcyXEcN8N4SXUjvk7MA21S39YFaFNcJoDlZL8Qfdu3shmxGQearZXmxsCP
+         ZzC50pxa69r1dDSa6qPFwJJ7F6upavkrvkDCLOvXoKhiAP7oZr1O+6MlrCbK9MTRILlC
+         Dwsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679463706;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q4AvIXzvw3CsklYuLdsWfKiwZldi09EF5IbRCiC4jps=;
-        b=QuPkFVqSOko8JIXUkvQViEoaYxhjxw5ss4WPg7qLsJGNRTL5jA4UFLJxM/F3yADXWJ
-         7HX0mpMz3etsim8nwdE8d15QFzRDYV7l7JD32CUbto4IRSzL+pwKLVdPiO1/ldOVaYii
-         UVmPY1+0TQCY7rkTu6V0HjStVQcbiSZH6PoKvIU36TXVE86v+FQo/gMp4Kfx7tzNZ+8E
-         HQIJoCEMZABLesc0RlYdssPtY+/tJC7aw+/VGdymOCI41W1oJQId7vc0cgxIns+VHjS3
-         8EcZTAeIUHh7zLqrMGEMmk+7r4TiHRqPrLbWqs/WdxzlsKHJRHwjcCTMDzbHb6FsCf7m
-         Emog==
-X-Gm-Message-State: AO0yUKV8g9w5wYEMQqTuw4URMhRGWV3uVSSLEkGPJJcE4MPZaJUwirmY
-        7tLBjxm8uffNMMUCZRq2bRYRF66sCSfZDFirAHc=
-X-Google-Smtp-Source: AK7set9sjy9O1ZU4ulXRaSJ2vkwJpdnlLEUIA+hL7pQ8pbtoxWVAkmgK7pGt2P70e8sjiZQP7aO6FCNgLqa6US4uCfc=
-X-Received: by 2002:a05:6a00:2d10:b0:625:ccea:1627 with SMTP id
- fa16-20020a056a002d1000b00625ccea1627mr1196919pfb.5.1679463705542; Tue, 21
- Mar 2023 22:41:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <00000000000056cdc905f76c0733@google.com>
-In-Reply-To: <00000000000056cdc905f76c0733@google.com>
+        d=1e100.net; s=20210112; t=1679465976;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D3iaW2agAbMwqgiEp5WfNoQ6YhOUN3dC7dOrA2kDLxI=;
+        b=bI+H/ui/KUkcKTAcCWcevURORBlDKytg0PyYHs0SdlL+0KNFzYmlWUliMi61pjWv5e
+         Pe2ljhlRoq/ZfkzhW9d5qiMWmuRcxxH9+FLKVrvAk/jqAEHLmjymouPof6QXxDRNYMl3
+         RvLFuu+thDaI+kVMbDTWvIEViJTFAsVoIOlh1Txh/NvMZuzbmRqylmKeGs87BHCCizMH
+         SvR7vw4nONFoPZ0ABjizDg2201hYFHIVqRW0jJ3PIO8k2PcYYqvRFHoehgNZpfZak9d1
+         g34HZg2pcVZm2R+dmfRf00bb/CxNkgNDPsG7Mn4eb2SFyfHCBKs4P5n780ajrBBGHUcH
+         J4Ag==
+X-Gm-Message-State: AO0yUKU6q0ch3Guyv96Dc0mDyqLDQOYM0n4QFJtHL2Sv2L64+PwWX+ge
+        I0vueTd1n4sBJ89Eqmo2mfA=
+X-Google-Smtp-Source: AK7set+8i9OLhKRz91jbznPxQpXJ1YTazeewWapwy9kjoP2FM+6ggA8XMC6wMajezeQB4sERZ1Lqqw==
+X-Received: by 2002:a05:600c:21cc:b0:3ed:e2e6:8ddb with SMTP id x12-20020a05600c21cc00b003ede2e68ddbmr4273593wmj.35.1679465975948;
+        Tue, 21 Mar 2023 23:19:35 -0700 (PDT)
+Received: from localhost (host86-146-209-214.range86-146.btcentralplus.com. [86.146.209.214])
+        by smtp.gmail.com with ESMTPSA id p11-20020a05600c1d8b00b003daffc2ecdesm21600525wms.13.2023.03.21.23.19.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Mar 2023 23:19:35 -0700 (PDT)
+Date:   Wed, 22 Mar 2023 06:17:24 +0000
 From:   Lorenzo Stoakes <lstoakes@gmail.com>
-Date:   Wed, 22 Mar 2023 05:41:34 +0000
-Message-ID: <CAA5enKbNWqTp13a6dgkbm+aDY-PBr24x=aGXz6=JUxc0OM1UPg@mail.gmail.com>
-Subject: Re: [syzbot] [xfs?] BUG: sleeping function called from invalid
- context in vm_map_ram
-To:     syzbot <syzbot+6d9043ea38ed2b9ef000@syzkaller.appspotmail.com>
-Cc:     akpm@linux-foundation.org, djwong@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=2.3 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jiri Olsa <jolsa@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v4 2/4] fs/proc/kcore: convert read_kcore() to
+ read_kcore_iter()
+Message-ID: <070237be-48a2-4a04-bc19-7217b68c8bcf@lucifer.local>
+References: <cover.1679431886.git.lstoakes@gmail.com>
+ <a84da6cc458b44d949058b5f475ed3225008cfd9.1679431886.git.lstoakes@gmail.com>
+ <ZBpWxI+LYiwasnvj@MiWiFi-R3L-srv>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZBpWxI+LYiwasnvj@MiWiFi-R3L-srv>
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
         DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Level: **
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 21 Mar 2023 at 17:03, syzbot
-<syzbot+6d9043ea38ed2b9ef000@syzkaller.appspotmail.com> wrote:
+On Wed, Mar 22, 2023 at 09:15:48AM +0800, Baoquan He wrote:
+> Hi Lorenzo,
 >
-> Hello,
+> On 03/21/23 at 08:54pm, Lorenzo Stoakes wrote:
+> > Now we have eliminated spinlocks from the vread() case, convert
+> > read_kcore() to read_kcore_iter().
 >
-> syzbot found the following issue on:
+> Sorry for late comment.
 >
-> HEAD commit:    73f2c2a7e1d2 Add linux-next specific files for 20230320
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=11ad6e1cc80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f22105589e896af1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=6d9043ea38ed2b9ef000
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d199bac80000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159c7281c80000
+> Here I could miss something important, I don't get where we have
+> eliminated spinlocks from the vread() case. Do I misunderstand this
+> sentence?
 >
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/2e4e105e18cf/disk-73f2c2a7.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/08d761112297/vmlinux-73f2c2a7.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4b39e3e871ce/bzImage-73f2c2a7.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/662e0db5efdd/mount_0.gz
->
-> The issue was bisected to:
->
-> commit 8f4977bdd77ee3dce8af81488231e7535695f889
-> Author: Lorenzo Stoakes <lstoakes@gmail.com>
-> Date:   Sun Mar 19 07:09:31 2023 +0000
->
->     mm: vmalloc: use rwsem, mutex for vmap_area_lock and vmap_block->lock
 
-This patch has already been dropped in mm-unstable which will
-eventually reach linux-next. The current revision of this patch set
-retains the spinlocks.
+Apologies, I didn't update the commit message after the latest revision! We
+can just drop this sentence altogether.
 
-[snip]
+Andrew - could you change the commit message to simply read:-
 
--- 
-Lorenzo Stoakes
-https://ljs.io
+  For the time being we still use a bounce buffer for vread(), however in the
+  next patch we will convert this to interact directly with the iterator and
+  eliminate the bounce buffer altogether.
+
+Thanks!
+
+> >
+> > For the time being we still use a bounce buffer for vread(), however in the
+> > next patch we will convert this to interact directly with the iterator and
+> > eliminate the bounce buffer altogether.
+> >
+> > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> > ---
+> >  fs/proc/kcore.c | 58 ++++++++++++++++++++++++-------------------------
+> >  1 file changed, 29 insertions(+), 29 deletions(-)
+> >
+> > diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> > index 556f310d6aa4..25e0eeb8d498 100644
+> > --- a/fs/proc/kcore.c
+> > +++ b/fs/proc/kcore.c
+> > @@ -24,7 +24,7 @@
+> >  #include <linux/memblock.h>
+> >  #include <linux/init.h>
+> >  #include <linux/slab.h>
+> > -#include <linux/uaccess.h>
+> > +#include <linux/uio.h>
+> >  #include <asm/io.h>
+> >  #include <linux/list.h>
+> >  #include <linux/ioport.h>
+> > @@ -308,9 +308,12 @@ static void append_kcore_note(char *notes, size_t *i, const char *name,
+> >  }
+> >
+> >  static ssize_t
+> > -read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> > +read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >  {
+> > +	struct file *file = iocb->ki_filp;
+> >  	char *buf = file->private_data;
+> > +	loff_t *ppos = &iocb->ki_pos;
+> > +
+> >  	size_t phdrs_offset, notes_offset, data_offset;
+> >  	size_t page_offline_frozen = 1;
+> >  	size_t phdrs_len, notes_len;
+> > @@ -318,6 +321,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> >  	size_t tsz;
+> >  	int nphdr;
+> >  	unsigned long start;
+> > +	size_t buflen = iov_iter_count(iter);
+> >  	size_t orig_buflen = buflen;
+> >  	int ret = 0;
+> >
+> > @@ -333,7 +337,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> >  	notes_offset = phdrs_offset + phdrs_len;
+> >
+> >  	/* ELF file header. */
+> > -	if (buflen && *fpos < sizeof(struct elfhdr)) {
+> > +	if (buflen && *ppos < sizeof(struct elfhdr)) {
+> >  		struct elfhdr ehdr = {
+> >  			.e_ident = {
+> >  				[EI_MAG0] = ELFMAG0,
+> > @@ -355,19 +359,18 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> >  			.e_phnum = nphdr,
+> >  		};
+> >
+> > -		tsz = min_t(size_t, buflen, sizeof(struct elfhdr) - *fpos);
+> > -		if (copy_to_user(buffer, (char *)&ehdr + *fpos, tsz)) {
+> > +		tsz = min_t(size_t, buflen, sizeof(struct elfhdr) - *ppos);
+> > +		if (copy_to_iter((char *)&ehdr + *ppos, tsz, iter) != tsz) {
+> >  			ret = -EFAULT;
+> >  			goto out;
+> >  		}
+> >
+> > -		buffer += tsz;
+> >  		buflen -= tsz;
+> > -		*fpos += tsz;
+> > +		*ppos += tsz;
+> >  	}
+> >
+> >  	/* ELF program headers. */
+> > -	if (buflen && *fpos < phdrs_offset + phdrs_len) {
+> > +	if (buflen && *ppos < phdrs_offset + phdrs_len) {
+> >  		struct elf_phdr *phdrs, *phdr;
+> >
+> >  		phdrs = kzalloc(phdrs_len, GFP_KERNEL);
+> > @@ -397,22 +400,21 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> >  			phdr++;
+> >  		}
+> >
+> > -		tsz = min_t(size_t, buflen, phdrs_offset + phdrs_len - *fpos);
+> > -		if (copy_to_user(buffer, (char *)phdrs + *fpos - phdrs_offset,
+> > -				 tsz)) {
+> > +		tsz = min_t(size_t, buflen, phdrs_offset + phdrs_len - *ppos);
+> > +		if (copy_to_iter((char *)phdrs + *ppos - phdrs_offset, tsz,
+> > +				 iter) != tsz) {
+> >  			kfree(phdrs);
+> >  			ret = -EFAULT;
+> >  			goto out;
+> >  		}
+> >  		kfree(phdrs);
+> >
+> > -		buffer += tsz;
+> >  		buflen -= tsz;
+> > -		*fpos += tsz;
+> > +		*ppos += tsz;
+> >  	}
+> >
+> >  	/* ELF note segment. */
+> > -	if (buflen && *fpos < notes_offset + notes_len) {
+> > +	if (buflen && *ppos < notes_offset + notes_len) {
+> >  		struct elf_prstatus prstatus = {};
+> >  		struct elf_prpsinfo prpsinfo = {
+> >  			.pr_sname = 'R',
+> > @@ -447,24 +449,23 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> >  				  vmcoreinfo_data,
+> >  				  min(vmcoreinfo_size, notes_len - i));
+> >
+> > -		tsz = min_t(size_t, buflen, notes_offset + notes_len - *fpos);
+> > -		if (copy_to_user(buffer, notes + *fpos - notes_offset, tsz)) {
+> > +		tsz = min_t(size_t, buflen, notes_offset + notes_len - *ppos);
+> > +		if (copy_to_iter(notes + *ppos - notes_offset, tsz, iter) != tsz) {
+> >  			kfree(notes);
+> >  			ret = -EFAULT;
+> >  			goto out;
+> >  		}
+> >  		kfree(notes);
+> >
+> > -		buffer += tsz;
+> >  		buflen -= tsz;
+> > -		*fpos += tsz;
+> > +		*ppos += tsz;
+> >  	}
+> >
+> >  	/*
+> >  	 * Check to see if our file offset matches with any of
+> >  	 * the addresses in the elf_phdr on our list.
+> >  	 */
+> > -	start = kc_offset_to_vaddr(*fpos - data_offset);
+> > +	start = kc_offset_to_vaddr(*ppos - data_offset);
+> >  	if ((tsz = (PAGE_SIZE - (start & ~PAGE_MASK))) > buflen)
+> >  		tsz = buflen;
+> >
+> > @@ -497,7 +498,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> >  		}
+> >
+> >  		if (!m) {
+> > -			if (clear_user(buffer, tsz)) {
+> > +			if (iov_iter_zero(tsz, iter) != tsz) {
+> >  				ret = -EFAULT;
+> >  				goto out;
+> >  			}
+> > @@ -508,14 +509,14 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> >  		case KCORE_VMALLOC:
+> >  			vread(buf, (char *)start, tsz);
+> >  			/* we have to zero-fill user buffer even if no read */
+> > -			if (copy_to_user(buffer, buf, tsz)) {
+> > +			if (copy_to_iter(buf, tsz, iter) != tsz) {
+> >  				ret = -EFAULT;
+> >  				goto out;
+> >  			}
+> >  			break;
+> >  		case KCORE_USER:
+> >  			/* User page is handled prior to normal kernel page: */
+> > -			if (copy_to_user(buffer, (char *)start, tsz)) {
+> > +			if (copy_to_iter((char *)start, tsz, iter) != tsz) {
+> >  				ret = -EFAULT;
+> >  				goto out;
+> >  			}
+> > @@ -531,7 +532,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> >  			 */
+> >  			if (!page || PageOffline(page) ||
+> >  			    is_page_hwpoison(page) || !pfn_is_ram(pfn)) {
+> > -				if (clear_user(buffer, tsz)) {
+> > +				if (iov_iter_zero(tsz, iter) != tsz) {
+> >  					ret = -EFAULT;
+> >  					goto out;
+> >  				}
+> > @@ -541,25 +542,24 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> >  		case KCORE_VMEMMAP:
+> >  		case KCORE_TEXT:
+> >  			/*
+> > -			 * We use _copy_to_user() to bypass usermode hardening
+> > +			 * We use _copy_to_iter() to bypass usermode hardening
+> >  			 * which would otherwise prevent this operation.
+> >  			 */
+> > -			if (_copy_to_user(buffer, (char *)start, tsz)) {
+> > +			if (_copy_to_iter((char *)start, tsz, iter) != tsz) {
+> >  				ret = -EFAULT;
+> >  				goto out;
+> >  			}
+> >  			break;
+> >  		default:
+> >  			pr_warn_once("Unhandled KCORE type: %d\n", m->type);
+> > -			if (clear_user(buffer, tsz)) {
+> > +			if (iov_iter_zero(tsz, iter) != tsz) {
+> >  				ret = -EFAULT;
+> >  				goto out;
+> >  			}
+> >  		}
+> >  skip:
+> >  		buflen -= tsz;
+> > -		*fpos += tsz;
+> > -		buffer += tsz;
+> > +		*ppos += tsz;
+> >  		start += tsz;
+> >  		tsz = (buflen > PAGE_SIZE ? PAGE_SIZE : buflen);
+> >  	}
+> > @@ -603,7 +603,7 @@ static int release_kcore(struct inode *inode, struct file *file)
+> >  }
+> >
+> >  static const struct proc_ops kcore_proc_ops = {
+> > -	.proc_read	= read_kcore,
+> > +	.proc_read_iter	= read_kcore_iter,
+> >  	.proc_open	= open_kcore,
+> >  	.proc_release	= release_kcore,
+> >  	.proc_lseek	= default_llseek,
+> > --
+> > 2.39.2
+> >
+>
