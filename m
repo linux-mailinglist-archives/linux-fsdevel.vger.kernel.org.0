@@ -2,83 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AF806C48AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 12:11:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE30D6C48B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 12:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229975AbjCVLLo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 07:11:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53260 "EHLO
+        id S230114AbjCVLND (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 07:13:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjCVLLm (ORCPT
+        with ESMTP id S229735AbjCVLNC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 07:11:42 -0400
-Received: from mail1.bemta32.messagelabs.com (mail1.bemta32.messagelabs.com [195.245.230.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8900347816
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 04:11:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1679483499; i=@fujitsu.com;
-        bh=D5zehFzp2M705qZ/aeVuz3slw23MEz2KodT39f4ljmo=;
-        h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=xEeHnttUtxqVxN4Kc2mp+ktyb1WbS2bIwf86BE90PUQmSfpAs7K1DFe0ytiv0NVEC
-         0SPai0PMZswz7eOcONciLER3RFbq06SjXDJygEFzUIYayTFfN0xk9NlGfsjKanD+mt
-         g3Zkgo6lOw6qK1hfETc1PgjFpn/YWc6f+c0PhOQaIfw6h2mUcToTGt5+z89NyrPEiJ
-         fpKzxqD5xegFS0YfJgwY1Xqw68vDyeF+5btxh/ArltiCEHMOXe0grhZjgTC5yLpo5P
-         vA0gAnfOfTvszMQteqm3S3uC8yk4dVfbehMRIw47Ny9ZjEVfGU/iQo98YB1EE7zfPK
-         7et4OtYvbitTg==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRWlGSWpSXmKPExsViZ8OxWTf1kVS
-  KwcfNAhZz1q9hs5g+9QKjxeUnfBazpzczWezZe5LFYuWPP6wWv3/MYXNg99i8Qstj8Z6XTB6b
-  VnWyeZyY8ZvF48XmmYweZxYcYff4vEkugD2KNTMvKb8igTXj86bPbAXTuSqOv9VtYNzN0cXIx
-  SEksJFR4tXnXcxdjJxAzhImiX1/CiASxxglzm/exAiSYBPQkbiw4C8riC0iYCux+PYZsDizQI
-  VE46J/QM0cHMICARLT3paDhFkEVCX+vd/LDmLzCjhLND87wARiSwgoSEx5+J4ZIi4ocXLmExa
-  IMRISB1+8YIaoUZK4+PUOK4QNNH76IaheNYmr5zYxT2Dkn4WkfRaS9gWMTKsYzYpTi8pSi3QN
-  zfSSijLTM0pyEzNz9BKrdBP1Ukt1y1OLS3QN9RLLi/VSi4v1iitzk3NS9PJSSzYxAkM/pZj55
-  Q7GE31/9Q4xSnIwKYnyvrkrlSLEl5SfUpmRWJwRX1Sak1p8iFGGg0NJgvfUQ6CcYFFqempFWm
-  YOMA5h0hIcPEoivD/uAaV5iwsSc4sz0yFSpxgVpcR5s0H6BEASGaV5cG2w2L/EKCslzMvIwMA
-  gxFOQWpSbWYIq/4pRnINRSZhXGmQKT2ZeCdz0V0CLmYAWx82QAFlckoiQkmpgal3TIO15rjHZ
-  Zsr2tewTJryJvHyBKeD6vLiKfzM7Ap5czcoOPec5uVgnKHfvw5iswE1sUT3Jhb6Kgbvq/3N8a
-  j8255l8g/WhWe9Ljxxr+jUjVr9I/elRsci17hf+m+e99f08eQLHmvqvoXy+N/hOBv+bunb6iT
-  Nn3pzQuXYrrqji1c2A50nHDG7v669wMj98bP9lpcb0zpevPRTOyz84s/L+ctllmxTdX1w7rnK
-  qofPbwf0XTU2uHdK49Xw6q0lp0iHjnm8zv5zpPXn+nKlpcH3rmZ5L0x08G9YeYajkipNiNfpm
-  +/8yu5An+/mafqvbC1eflbZ9VatVPFXx9kEDMW6uNeyVpdeKwtzSlfSPViqxFGckGmoxFxUnA
-  gCZbnnieAMAAA==
-X-Env-Sender: ruansy.fnst@fujitsu.com
-X-Msg-Ref: server-17.tower-591.messagelabs.com!1679483493!530805!1
-X-Originating-IP: [62.60.8.179]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.104.1; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 6417 invoked from network); 22 Mar 2023 11:11:33 -0000
-Received: from unknown (HELO n03ukasimr04.n03.fujitsu.local) (62.60.8.179)
-  by server-17.tower-591.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 22 Mar 2023 11:11:33 -0000
-Received: from n03ukasimr04.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr04.n03.fujitsu.local (Postfix) with ESMTP id D1096153;
-        Wed, 22 Mar 2023 11:11:32 +0000 (GMT)
-Received: from R01UKEXCASM121.r01.fujitsu.local (R01UKEXCASM121 [10.183.43.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr04.n03.fujitsu.local (Postfix) with ESMTPS id C403E150;
-        Wed, 22 Mar 2023 11:11:32 +0000 (GMT)
-Received: from d45b9faa733c.g08.fujitsu.local (10.167.234.230) by
- R01UKEXCASM121.r01.fujitsu.local (10.183.43.173) with Microsoft SMTP Server
- (TLS) id 15.0.1497.42; Wed, 22 Mar 2023 11:11:29 +0000
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     <linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>
-CC:     <dan.j.williams@intel.com>, <willy@infradead.org>, <jack@suse.cz>,
-        <akpm@linux-foundation.org>, <djwong@kernel.org>
-Subject: [PATCH] fsdax: unshare: zero destination if srcmap is HOLE or UNWRITTEN
-Date:   Wed, 22 Mar 2023 11:11:09 +0000
-Message-ID: <1679483469-2-1-git-send-email-ruansy.fnst@fujitsu.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 22 Mar 2023 07:13:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA3A54DBF8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 04:12:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679483534;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/aPGKaPvh2Lx38+k9wl4Z2hIIrRuiYn/f4bCGiiCybA=;
+        b=WMH0euw30oxSvGcyA9lbm5xZ2qYp5SiCctXlWjBiqO5RlKOSmcyPrvsSTfo6NB4ORBSinA
+        H9DcfmyBP4l/OLzhVupCSLr3P6wdG0KZE2a/G8x6BsKZJ+JMfIYG/MHUFpF+8U+Lc1cy7S
+        T05pjiW7WdzeIXg+jgYfURPVUq1FHMo=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-524-yOSYp042MLSB06IJg2It7g-1; Wed, 22 Mar 2023 07:12:12 -0400
+X-MC-Unique: yOSYp042MLSB06IJg2It7g-1
+Received: by mail-wr1-f70.google.com with SMTP id o3-20020a5d6483000000b002cc4fe0f7fcso2081926wri.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 04:12:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679483531;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/aPGKaPvh2Lx38+k9wl4Z2hIIrRuiYn/f4bCGiiCybA=;
+        b=YH+n/dnmk15nCibTgix248FZ1ghDsmW96Uo3qtRwvbNgD0N4rGncFPEO345vc7CBf4
+         3eY8Hqok6cAS7evx3o5qzal3sX0nVtLeIFCior6hxoQtSfHmeAKmz9f91U6pbQ3+SDP5
+         /N/BcdQU0XUrTX8bNJc2OwKU9zeOStkxF+CU8ewTUsU/vz4tnN6iAdD0Igg8S4d5ZgMs
+         TzNHiKJvfTLzcgCm3AtvgNhayn4g/ZD2JhWDv10iLHOsWuZn0xhoWSWjy0ZSSM4Jcqdy
+         G+E/fKK5qK603kkff02KvrgJ3KsULwHFomCu18DD+hpqLrpBAvj3kRO7oM/mknbAAwv1
+         NfOw==
+X-Gm-Message-State: AO0yUKVvOzy0vnNX6YJU00SEvPHnwC8mYRaf7psrsyTEkELqnMx0zNfs
+        ItHmgmescbiwjRnOtdedqmrnfjaOFRWy+9b6VCZhv/UJaLJgm+uUnTrYWG2Kj24KDGLAiDqu1ix
+        /BJAmuVOv6URftpyQBhfPO49SnA==
+X-Received: by 2002:a05:600c:22cd:b0:3ee:5ea1:65f5 with SMTP id 13-20020a05600c22cd00b003ee5ea165f5mr1343534wmg.26.1679483531548;
+        Wed, 22 Mar 2023 04:12:11 -0700 (PDT)
+X-Google-Smtp-Source: AK7set/sZYFpMjjZHaVQVb3usc140Yjc7XHH7cOoCrF5A+aRLaiPdtgF9CC6V3vYev6u2xlG4xewcA==
+X-Received: by 2002:a05:600c:22cd:b0:3ee:5ea1:65f5 with SMTP id 13-20020a05600c22cd00b003ee5ea165f5mr1343508wmg.26.1679483531254;
+        Wed, 22 Mar 2023 04:12:11 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c703:d00:ca74:d9ea:11e0:dfb? (p200300cbc7030d00ca74d9ea11e00dfb.dip0.t-ipconnect.de. [2003:cb:c703:d00:ca74:d9ea:11e0:dfb])
+        by smtp.gmail.com with ESMTPSA id fc6-20020a05600c524600b003ee04190ddfsm8292351wmb.17.2023.03.22.04.12.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Mar 2023 04:12:10 -0700 (PDT)
+Message-ID: <e2c63348-fbf9-0d2a-7c09-ee14f6106770@redhat.com>
+Date:   Wed, 22 Mar 2023 12:12:09 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.234.230]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM121.r01.fujitsu.local (10.183.43.173)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=unavailable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v4 2/4] fs/proc/kcore: convert read_kcore() to
+ read_kcore_iter()
+Content-Language: en-US
+To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Baoquan He <bhe@redhat.com>, Uladzislau Rezki <urezki@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jiri Olsa <jolsa@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <cover.1679431886.git.lstoakes@gmail.com>
+ <a84da6cc458b44d949058b5f475ed3225008cfd9.1679431886.git.lstoakes@gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <a84da6cc458b44d949058b5f475ed3225008cfd9.1679431886.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,44 +90,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-unshare copies data from source to destination. But if the source is
-HOLE or UNWRITTEN extents, we should zero the destination, otherwise the
-result will be unexpectable.
+On 21.03.23 21:54, Lorenzo Stoakes wrote:
+> Now we have eliminated spinlocks from the vread() case, convert
+> read_kcore() to read_kcore_iter().
+> 
+> For the time being we still use a bounce buffer for vread(), however in the
+> next patch we will convert this to interact directly with the iterator and
+> eliminate the bounce buffer altogether.
+> 
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
+>   fs/proc/kcore.c | 58 ++++++++++++++++++++++++-------------------------
+>   1 file changed, 29 insertions(+), 29 deletions(-)
+> 
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index 556f310d6aa4..25e0eeb8d498 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -24,7 +24,7 @@
+>   #include <linux/memblock.h>
+>   #include <linux/init.h>
+>   #include <linux/slab.h>
+> -#include <linux/uaccess.h>
+> +#include <linux/uio.h>
+>   #include <asm/io.h>
+>   #include <linux/list.h>
+>   #include <linux/ioport.h>
+> @@ -308,9 +308,12 @@ static void append_kcore_note(char *notes, size_t *i, const char *name,
+>   }
+>   
+>   static ssize_t
+> -read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> +read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
+>   {
+> +	struct file *file = iocb->ki_filp;
+>   	char *buf = file->private_data;
+> +	loff_t *ppos = &iocb->ki_pos;
 
-Fixes: d984648e428b ("fsdax,xfs: port unshare to fsdax")
-Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
----
- fs/dax.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Not renaming fpos -> ppos in this patch would result in less noise in 
+this patch. Just like you didn't rename buflen.
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 9800b93ee14d..5d2e9b10030e 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1258,15 +1258,20 @@ static s64 dax_unshare_iter(struct iomap_iter *iter)
- 	/* don't bother with blocks that are not shared to start with */
- 	if (!(iomap->flags & IOMAP_F_SHARED))
- 		return length;
--	/* don't bother with holes or unwritten extents */
--	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
--		return length;
- 
- 	id = dax_read_lock();
- 	ret = dax_iomap_direct_access(iomap, pos, length, &daddr, NULL);
- 	if (ret < 0)
- 		goto out_unlock;
- 
-+	/* zero the distance if srcmap is HOLE or UNWRITTEN */
-+	if (srcmap->flags & IOMAP_F_SHARED || srcmap->type == IOMAP_UNWRITTEN) {
-+		memset(daddr, 0, length);
-+		dax_flush(iomap->dax_dev, daddr, length);
-+		ret = length;
-+		goto out_unlock;
-+	}
-+
- 	ret = dax_iomap_direct_access(srcmap, pos, length, &saddr, NULL);
- 	if (ret < 0)
- 		goto out_unlock;
+In general, LGTM
+
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
 -- 
-2.39.2
+Thanks,
+
+David / dhildenb
 
