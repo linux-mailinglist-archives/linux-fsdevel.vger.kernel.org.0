@@ -2,174 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0830F6C4415
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 08:29:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F306C4477
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 08:55:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjCVH3C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 03:29:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60356 "EHLO
+        id S230035AbjCVHzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 03:55:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbjCVH3B (ORCPT
+        with ESMTP id S229927AbjCVHzX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 03:29:01 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D6E55B9D;
-        Wed, 22 Mar 2023 00:28:54 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 9981B20AD0;
-        Wed, 22 Mar 2023 07:28:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1679470133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cymDLHsKErmhpfJVevitVVO6X1IcQsyXzRz4TMydPWI=;
-        b=HqxxYv8w66oKUKmuICtM7fXmOPOun/5xVYIob9LRuwNBLJJccJqRVEjLEF+OO20vwxgCMr
-        rIsh48lVgxsWOraYch2q8wqcr9tcxnc3E9+VcYojz3Yoc6TPW4JVaceH94Bvd/KVXjIjaB
-        vUhx8C+O+On23OLHzI12eruEYFZpyag=
-Received: from suse.de (unknown [10.163.42.222])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 7AFFB2C141;
-        Wed, 22 Mar 2023 07:28:51 +0000 (UTC)
-Date:   Wed, 22 Mar 2023 08:28:50 +0100
-From:   Johannes Segitz <jsegitz@suse.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Anderson <dvander@google.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
-        paulmoore@microsoft.com, luca.boccassi@microsoft.com
-Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr
- fix
-Message-ID: <20230322072850.GA18056@suse.de>
-References: <Yao51m9EXszPsxNN@redhat.com>
- <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
- <YapjNRrjpDu2a5qQ@redhat.com>
- <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
- <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com>
- <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com>
- <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
- <CAOQ4uxhfU+LGunL3cweorPPdoCXCZU0xMtF=MekOAe-F-68t_Q@mail.gmail.com>
- <YitWOqzIRjnP1lok@redhat.com>
- <CAHC9VhQ+x3ko+=oU-P+w4ssqyyskRxaKsBGJLnXtP_NzWNuxHg@mail.gmail.com>
+        Wed, 22 Mar 2023 03:55:23 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C5C495BC9D;
+        Wed, 22 Mar 2023 00:55:21 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D7984B3;
+        Wed, 22 Mar 2023 00:56:05 -0700 (PDT)
+Received: from [10.57.65.162] (unknown [10.57.65.162])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE8C93F766;
+        Wed, 22 Mar 2023 00:55:19 -0700 (PDT)
+Message-ID: <e8352d76-29e4-5e4a-063b-60e279e0b070@arm.com>
+Date:   Wed, 22 Mar 2023 07:55:18 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQ+x3ko+=oU-P+w4ssqyyskRxaKsBGJLnXtP_NzWNuxHg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.9.0
+Subject: Re: [PATCH 3/5] mm: thp: split huge page to any lower order pages.
+Content-Language: en-US
+To:     Zi Yan <ziy@nvidia.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20230321004829.2012847-1-zi.yan@sent.com>
+ <20230321004829.2012847-4-zi.yan@sent.com>
+From:   Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20230321004829.2012847-4-zi.yan@sent.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.3 required=5.0 tests=NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi,
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm working to enable large, variable-order folios for anonymous memory (see
+RFC, replete with bugs at [1]). This patch set is going to be very useful to me.
+But I have a few questions that I wonder if you can answer, below? I wonder if
+they might relate to the bugs I'm seeing at [1].
 
-On Fri, Mar 11, 2022 at 03:52:54PM -0500, Paul Moore wrote:
-> On Fri, Mar 11, 2022 at 9:01 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > Agreed. After going through the patch set, I was wondering what's the
-> > overall security model and how to visualize that.
-> >
-> > So probably there needs to be a documentation patch which explains
-> > what's the new security model and how does it work.
->=20
-> Yes, of course.  I'll be sure to add a section to the existing docs.
->=20
-> > Also think both in terms of DAC and MAC. (Instead of just focussing too
-> > hard on SELinux).
->=20
-> Definitely.  Most of what I've been thinking about the past day or so
-> has been how to properly handle some of the DAC/capability issues; I
-> have yet to start playing with the code, but for the most part I think
-> the MAC/SELinux bits are already working properly.
->=20
-> > My understanding is that in current model, some of the overlayfs
-> > operations require priviliges. So mounter is supposed to be priviliged
-> > and does the operation on underlying layers.
-> >
-> > Now in this new model, there will be two levels of check. Both overlay
-> > level and underlying layer checks will happen in the context of task
-> > which is doing the operation. So first of all, all tasks will need
-> > to have enough priviliges to be able to perform various operations
-> > on lower layer.
-> >
-> > If we do checks at both the levels in with the creds of calling task,
-> > I guess that probably is fine. (But will require a closer code inspecti=
-on
-> > to make sure there is no privilege escalation both for mounter as well
-> > calling task).
->=20
-> I have thoughts on this, but I don't think I'm yet in a position to
-> debate this in depth just yet; I still need to finish poking around
-> the code and playing with a few things :)
->=20
-> It may take some time before I'm back with patches, but I appreciate
-> all of the tips and insight - thank you!
+[1] https://lore.kernel.org/linux-mm/20230317105802.2634004-1-ryan.roberts@arm.com/
 
-Let me resurrect this discussion. With=20
-https://github.com/fedora-selinux/selinux-policy/commit/1e8688ea694393c9d91=
-8939322b72dfb44a01792
-the Fedora policy changed kernel_t to a confined domain. This means that
-many overlayfs setups that are created in initrd will now run into issues,
-as it will have kernel_t as part of the saved credentials. So while the
-original use case that inspired the patch set was probably not very common
-that now changed.
 
-It's tricky to work around this. Loading a policy in initrd causes a lot of
-issues now that kernel_t isn't unconfined anymore. Once the policy is
-loaded by systemd changing the mounts is tough since we use it for /etc and
-at this time systemd already has open file handles for policy files in
-/etc.
 
-Johannes
---=20
-GPG Key                EE16 6BCE AD56 E034 BFB3  3ADD 7BF7 29D5 E7C8 1FA0
-Subkey fingerprint:    250F 43F5 F7CE 6F1E 9C59  4F95 BC27 DD9D 2CC4 FD66
-SUSE Software Solutions Germany GmbH, Frankenstra=DFe 146, 90461 N=FCrnberg=
-, Germany
-Gesch=E4ftsf=FChrer: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moer=
-man
-(HRB 36809, AG N=FCrnberg)
+On 21/03/2023 00:48, Zi Yan wrote:
+> From: Zi Yan <ziy@nvidia.com>
+> 
+> To split a THP to any lower order pages, we need to reform THPs on
+> subpages at given order and add page refcount based on the new page
+> order. Also we need to reinitialize page_deferred_list after removing
+> the page from the split_queue, otherwise a subsequent split will see
+> list corruption when checking the page_deferred_list again.
+> 
+> It has many uses, like minimizing the number of pages after
+> truncating a huge pagecache page. For anonymous THPs, we can only split
+> them to order-0 like before until we add support for any size anonymous
+> THPs.
+> 
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>  include/linux/huge_mm.h |  10 ++--
+>  mm/huge_memory.c        | 103 +++++++++++++++++++++++++++++-----------
+>  2 files changed, 82 insertions(+), 31 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 20284387b841..32c91e1b59cd 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -147,10 +147,11 @@ void prep_transhuge_page(struct page *page);
+>  void free_transhuge_page(struct page *page);
+>  
+>  bool can_split_folio(struct folio *folio, int *pextra_pins);
+> -int split_huge_page_to_list(struct page *page, struct list_head *list);
+> +int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+> +		unsigned int new_order);
+>  static inline int split_huge_page(struct page *page)
+>  {
+> -	return split_huge_page_to_list(page, NULL);
+> +	return split_huge_page_to_list_to_order(page, NULL, 0);
+>  }
+>  void deferred_split_folio(struct folio *folio);
+>  
+> @@ -297,7 +298,8 @@ can_split_folio(struct folio *folio, int *pextra_pins)
+>  	return false;
+>  }
+>  static inline int
+> -split_huge_page_to_list(struct page *page, struct list_head *list)
+> +split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+> +		unsigned int new_order)
+>  {
+>  	return 0;
+>  }
+> @@ -397,7 +399,7 @@ static inline bool thp_migration_supported(void)
+>  static inline int split_folio_to_list(struct folio *folio,
+>  		struct list_head *list)
+>  {
+> -	return split_huge_page_to_list(&folio->page, list);
+> +	return split_huge_page_to_list_to_order(&folio->page, list, 0);
+>  }
+>  
+>  static inline int split_folio(struct folio *folio)
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 710189885402..f119b9be33f2 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2359,11 +2359,13 @@ void vma_adjust_trans_huge(struct vm_area_struct *vma,
+>  
+>  static void unmap_folio(struct folio *folio)
+>  {
+> -	enum ttu_flags ttu_flags = TTU_RMAP_LOCKED | TTU_SPLIT_HUGE_PMD |
+> -		TTU_SYNC;
+> +	enum ttu_flags ttu_flags = TTU_RMAP_LOCKED | TTU_SYNC;
+>  
+>  	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>  
+> +	if (folio_order(folio) >= HPAGE_PMD_ORDER)
+> +		ttu_flags |= TTU_SPLIT_HUGE_PMD;
+> +
 
---/04w6evG8XlLl3ft
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Why have you changed the code so that this flag is added conditionally on the
+folio being large enough? I've previously looked at this in the context of my
+bug, and concluded that the consumer would ignore the flag if the folio wasn't
+PMD mapped. Did I conclude incorrectly?
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEJQ9D9ffObx6cWU+VvCfdnSzE/WYFAmQarjEACgkQvCfdnSzE
-/WZskw/9FYgktDjOsvztkB5Utny04C0x3z8y+aHfEyEwMndpczZ3CXNIM9mjKu7c
-a1KFZEKqucb1wudqloCPoyleZJ5tym/h5gkyQ6jotEW6Y9+hzfB0pfZhg4ePS0OR
-OXTOuLumVuh/bWOTGbTF87S6Be5jJ1L9OorWC0God5jJwDi37OJURT2pe41DvPGQ
-oWPLmcr8olO7JmdVoFPzoTYqzOyB6eZvNOZX37X9mLowTE7gNIHm9kT01ca2ac3R
-4NoT0zJq4g8ZiW8WcM1GI2FM5B6GJ0DAhqGXAlICBz+K7sD2FrLfye0oJwr1xOZO
-zbA1Gzc0Va9d06mqmXUXM3fKzCko76HSUVSu2JfLs+9ScL9CZb9qyr4W6LjwdbjW
-3ZVswI8wXuuTrcv2+iZ+pr+wrNaOkTZPU3qX78xcBTbkrtDjDJKM2QWJJlbDMSYH
-mjL7A3N7676pwarozT5zmXse599yxTrN/EeRiLevTv4NhVYVzxjOppnXQGrX/s52
-Cy4PO9mR5U2NnbjduvnWhFnTXnmhmtU6pbCg3XSwHbFboquqD9D3IeZExnRhYa7Z
-DgGNPkWjHI+2O2+ZL323i6hJjGGKFUhV41dUrBvE0TBLZNSaBogE9loWvArTd8S0
-fA4gOhtBH68vM0m+OvveqRyFF6jWXQucPS5iTEQvKsEyNmErxbE=
-=+WdL
------END PGP SIGNATURE-----
+>  	/*
+>  	 * Anon pages need migration entries to preserve them, but file
+>  	 * pages can simply be left unmapped, then faulted back on demand.
+> @@ -2395,7 +2397,6 @@ static void lru_add_page_tail(struct page *head, struct page *tail,
+>  		struct lruvec *lruvec, struct list_head *list)
+>  {
+>  	VM_BUG_ON_PAGE(!PageHead(head), head);
+> -	VM_BUG_ON_PAGE(PageCompound(tail), head);
+>  	VM_BUG_ON_PAGE(PageLRU(tail), head);
+>  	lockdep_assert_held(&lruvec->lru_lock);
+>  
+> @@ -2416,9 +2417,10 @@ static void lru_add_page_tail(struct page *head, struct page *tail,
+>  }
+>  
 
---/04w6evG8XlLl3ft--
+[...]
+
+> -int split_huge_page_to_list(struct page *page, struct list_head *list)
+> +int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+> +				     unsigned int new_order)
+>  {
+>  	struct folio *folio = page_folio(page);
+>  	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
+> -	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
+> +	/* reset xarray order to new order after split */
+> +	XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_order);
+>  	struct anon_vma *anon_vma = NULL;
+>  	struct address_space *mapping = NULL;
+>  	int extra_pins, ret;
+> @@ -2649,6 +2676,18 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+>  	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+>  	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>  
+> +	/* Cannot split THP to order-1 (no order-1 THPs) */
+> +	if (new_order == 1) {
+> +		VM_WARN_ONCE(1, "Cannot split to order-1 folio");
+> +		return -EINVAL;
+> +	}
+
+Why can't you split to order-1? I vaguely understand that some data is kept in
+the first 3 struct pages, but I would naively expect the allocator to fail to
+allocate compound pages of order-1 if it was a problem? My large anon folios
+patch is currently allocating order-1 in some circumstances. Perhaps its related
+to my bug?
+
+
+> +
+> +	/* Split anonymous folio to non-zero order not support */
+> +	if (folio_test_anon(folio) && new_order) {
+> +		VM_WARN_ONCE(1, "Split anon folio to non-0 order not support");
+> +		return -EINVAL;
+> +	}
+
+Why don't you support this? What is special about anon folios that means this
+code doesn't work for them?
+
+
+Thanks,
+Ryan
+
+
+
+> +
+>  	is_hzp = is_huge_zero_page(&folio->page);
+>  	VM_WARN_ON_ONCE_FOLIO(is_hzp, folio);
+>  	if (is_hzp)
+> @@ -2744,7 +2783,13 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+>  	if (folio_ref_freeze(folio, 1 + extra_pins)) {
+>  		if (!list_empty(&folio->_deferred_list)) {
+>  			ds_queue->split_queue_len--;
+> -			list_del(&folio->_deferred_list);
+> +			/*
+> +			 * Reinitialize page_deferred_list after removing the
+> +			 * page from the split_queue, otherwise a subsequent
+> +			 * split will see list corruption when checking the
+> +			 * page_deferred_list.
+> +			 */
+> +			list_del_init(&folio->_deferred_list);
+>  		}
+>  		spin_unlock(&ds_queue->split_queue_lock);
+>  		if (mapping) {
+> @@ -2754,14 +2799,18 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+>  			if (folio_test_swapbacked(folio)) {
+>  				__lruvec_stat_mod_folio(folio, NR_SHMEM_THPS,
+>  							-nr);
+> -			} else {
+> +			} else if (!new_order) {
+> +				/*
+> +				 * Decrease THP stats only if split to normal
+> +				 * pages
+> +				 */
+>  				__lruvec_stat_mod_folio(folio, NR_FILE_THPS,
+>  							-nr);
+>  				filemap_nr_thps_dec(mapping);
+>  			}
+>  		}
+>  
+> -		__split_huge_page(page, list, end);
+> +		__split_huge_page(page, list, end, new_order);
+>  		ret = 0;
+>  	} else {
+>  		spin_unlock(&ds_queue->split_queue_lock);
+
