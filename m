@@ -2,199 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB2F36C4227
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 06:24:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 690696C424B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 06:41:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbjCVFYb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 01:24:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36768 "EHLO
+        id S229930AbjCVFlu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 01:41:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbjCVFYa (ORCPT
+        with ESMTP id S229912AbjCVFlt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 01:24:30 -0400
-X-Greylist: delayed 218 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 21 Mar 2023 22:23:58 PDT
-Received: from p3plwbeout18-03.prod.phx3.secureserver.net (p3plsmtp18-03-2.prod.phx3.secureserver.net [173.201.193.186])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B8C92D15C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Mar 2023 22:23:58 -0700 (PDT)
-Received: from mailex.mailcore.me ([94.136.40.145])
-        by :WBEOUT: with ESMTP
-        id eqtXp0r6cqG36eqtXpCYIz; Tue, 21 Mar 2023 22:20:20 -0700
-X-CMAE-Analysis: v=2.4 cv=csVeL30i c=1 sm=1 tr=0 ts=641a9014
- a=7e6w4QD8YWtpVJ/7+iiidw==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=ggZhUymU-5wA:10 a=k__wU0fu6RkA:10 a=FP58Ms26AAAA:8 a=NEAV23lmAAAA:8
- a=dnHKQ0aXFSJ-3baA9N4A:9 a=jGIlq7wQ_eTbAL2R:21
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk  
-X-SID:  eqtXp0r6cqG36
-Received: from 82-69-79-175.dsl.in-addr.zen.co.uk ([82.69.79.175] helo=phoenix.fritz.box)
-        by smtp11.mailcore.me with esmtpa (Exim 4.94.2)
-        (envelope-from <phillip@squashfs.org.uk>)
-        id 1peqtW-0004WB-LA; Wed, 22 Mar 2023 05:20:19 +0000
-From:   Phillip Lougher <phillip@squashfs.org.uk>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        squashfs-devel@lists.sourceforge.net
-Cc:     phillip@squashfs.org.uk
-Subject: [ANN] Squashfs-tools 4.6 released
-Date:   Wed, 22 Mar 2023 05:26:15 +0000
-Message-Id: <20230322052615.28048-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.35.1
+        Wed, 22 Mar 2023 01:41:49 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5330D3FBBF;
+        Tue, 21 Mar 2023 22:41:46 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id c4so10439242pfl.0;
+        Tue, 21 Mar 2023 22:41:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679463706;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=q4AvIXzvw3CsklYuLdsWfKiwZldi09EF5IbRCiC4jps=;
+        b=W53WgOijzJdl9bNR6Y5U3IeV+x7LsP7b5DM7BqVukp+H9lsvLycVb8gMuirAKiMQv8
+         8WkPNdUvCCW2lk7SyFGv1kllOHKbBQ+x1JGDLWtJyi9o339XR+ldbOG4EijMlOYPu7rY
+         qrezg49ISozTc/b/zCxrFfhHnrbCVzBKnSK4q4sPT7KNJbwRfdqjwuAHbSWBvKw+FcfD
+         ly6psFiOj7HX/YhkhUTFFACsnaHhu+jvSf88m76P6fedkICdUDVS/gMd7ryOP4Wbcbjy
+         dBFwW2jfSlIrFbtE9JWNNkePvUWX+ctfJmyK7frAOpE8ONsy7Bd+s3d/G1slIM+kj6uN
+         cEsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679463706;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q4AvIXzvw3CsklYuLdsWfKiwZldi09EF5IbRCiC4jps=;
+        b=QuPkFVqSOko8JIXUkvQViEoaYxhjxw5ss4WPg7qLsJGNRTL5jA4UFLJxM/F3yADXWJ
+         7HX0mpMz3etsim8nwdE8d15QFzRDYV7l7JD32CUbto4IRSzL+pwKLVdPiO1/ldOVaYii
+         UVmPY1+0TQCY7rkTu6V0HjStVQcbiSZH6PoKvIU36TXVE86v+FQo/gMp4Kfx7tzNZ+8E
+         HQIJoCEMZABLesc0RlYdssPtY+/tJC7aw+/VGdymOCI41W1oJQId7vc0cgxIns+VHjS3
+         8EcZTAeIUHh7zLqrMGEMmk+7r4TiHRqPrLbWqs/WdxzlsKHJRHwjcCTMDzbHb6FsCf7m
+         Emog==
+X-Gm-Message-State: AO0yUKV8g9w5wYEMQqTuw4URMhRGWV3uVSSLEkGPJJcE4MPZaJUwirmY
+        7tLBjxm8uffNMMUCZRq2bRYRF66sCSfZDFirAHc=
+X-Google-Smtp-Source: AK7set9sjy9O1ZU4ulXRaSJ2vkwJpdnlLEUIA+hL7pQ8pbtoxWVAkmgK7pGt2P70e8sjiZQP7aO6FCNgLqa6US4uCfc=
+X-Received: by 2002:a05:6a00:2d10:b0:625:ccea:1627 with SMTP id
+ fa16-20020a056a002d1000b00625ccea1627mr1196919pfb.5.1679463705542; Tue, 21
+ Mar 2023 22:41:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailcore-Auth: 439999529
-X-Mailcore-Domain: 1394945
-X-123-reg-Authenticated:  phillip@squashfs.org.uk  
-X-Originating-IP: 82.69.79.175
-X-CMAE-Envelope: MS4xfKhpO4QD0b9vlYESM0WPR/W2B2zY/Ft11vkO+MWtkuPmPo4j4w5ZkWZDCnjCoNPpMLaQGDwTt2lTUB6wmMwNqk4IwrRWKwjrJ0VVh8+dkjgvQL0cy3pZ
- ncieL2zPkpIFtBAPJ+ZLruMWNGjLs30rndJ8pcIA1xd6GpMDlVUbUJwA+hFajsN5S+d8EtvgSWyCI7XCZsqhnPQK3SIm47msNNODMR/CulUo3IhVvLlH+rPh
- SqhRMvSRQaNkHlgkTN9nfA==
-X-Spam-Status: No, score=0.0 required=5.0 tests=RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <00000000000056cdc905f76c0733@google.com>
+In-Reply-To: <00000000000056cdc905f76c0733@google.com>
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+Date:   Wed, 22 Mar 2023 05:41:34 +0000
+Message-ID: <CAA5enKbNWqTp13a6dgkbm+aDY-PBr24x=aGXz6=JUxc0OM1UPg@mail.gmail.com>
+Subject: Re: [syzbot] [xfs?] BUG: sleeping function called from invalid
+ context in vm_map_ram
+To:     syzbot <syzbot+6d9043ea38ed2b9ef000@syzkaller.appspotmail.com>
+Cc:     akpm@linux-foundation.org, djwong@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=2.3 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Tue, 21 Mar 2023 at 17:03, syzbot
+<syzbot+6d9043ea38ed2b9ef000@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    73f2c2a7e1d2 Add linux-next specific files for 20230320
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=11ad6e1cc80000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f22105589e896af1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6d9043ea38ed2b9ef000
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d199bac80000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159c7281c80000
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/2e4e105e18cf/disk-73f2c2a7.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/08d761112297/vmlinux-73f2c2a7.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4b39e3e871ce/bzImage-73f2c2a7.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/662e0db5efdd/mount_0.gz
+>
+> The issue was bisected to:
+>
+> commit 8f4977bdd77ee3dce8af81488231e7535695f889
+> Author: Lorenzo Stoakes <lstoakes@gmail.com>
+> Date:   Sun Mar 19 07:09:31 2023 +0000
+>
+>     mm: vmalloc: use rwsem, mutex for vmap_area_lock and vmap_block->lock
 
-I'm pleased to announce the release of Squashfs tools 4.6.
+This patch has already been dropped in mm-unstable which will
+eventually reach linux-next. The current revision of this patch set
+retains the spinlocks.
 
-The release can be downloaded either from Sourceforge, or GitHub.
+[snip]
 
-https://sourceforge.net/projects/squashfs/files/latest/download
-
-https://github.com/plougher/squashfs-tools/archive/refs/tags/4.6.tar.gz
-
-A summary of the changes is below.  Please see the README-4.6 file in
-the release tarball for more information and the USAGE files.
-
-Phillip
-
-1. Summary of changes
----------------------
-
-1. Extended attribute handling improved in Mksquashfs and Sqfstar
-
-	1.1.New -xattrs-exclude option to exclude extended attributes from files
-	    using a regular expression.
-	1.2 New -xattrs-include option to include extended attributes from files
-	    using a regular expression.
-	1.3 New -xattrs-add option to add extended attributes to files.
-	1.4 New Pseudo file xattr definition to add extended attributes to
-	    files.
-	1.5 New xattrs-add Action to add extended attributes to files
-	    (Mksquashfs only).
-
-2. Extended attribute handling improved in Unsquashfs
-
-	2.1 New -xattrs-exclude option to exclude extended attributes from files
-	    using a regular expression.
-	2.2 New -xattrs-include option to include extended attributes from files
-	     using a regular expression.
-	2.3 Extended attributes are now supported in Pseudo file output.
-
-3. Other major improvements
-
-	3.1 Unsquashfs can now output Pseudo files to standard out.
-	3.2 Mksquashfs can now input Pseudo files from standard in.
-	3.3 Squashfs filesystems can now be converted (different block size
-	    compression etc) without unpacking to an intermediate filesystem or
-	    mounting, by piping the output of Unsquashfs to Mksquashfs.
-	3.4 Pseudo files are now supported by Sqfstar.
-	3.5 "Non-anchored" excludes are now supported by Unsquashfs.
-
-4. Mksquashfs minor improvements
-
-	4.1 A new -max-depth option has been added, which limits the depth
-	    Mksquashfs descends when creating the filesystem.
-	4.2 A new -mem-percent option which allows memory for caches to be
-	    specified as a percentage of physical RAM, rather than requiring an
-	    absolute value.
-	4.3 A new -percentage option added which rather than generating the full
-	    progress-bar instead outputs a percentage.  This can be used with
-	    dialog --gauge etc.
-	4.4 -mkfs-time, -all-time and -root-time options now take a human date
-	    string, in addition to the seconds since the epoch of 1970 00:00
-	    UTC.  For example "now", "last week", "Wed Mar 8 05:55:01 GMT 2023"
-	    are supported.
-	4.5 -root-uid, -root-gid, -force-uid and -force-gid options now take a
-	    user/group name in addition to the integer uid/gid.
-	4.6 A new -mem-default option which displays default memory usage for
-	    caches in Mbytes.
-	4.7 A new -no-compression option which produces no compression, and it
-	    is a short-cut for -noI, -noD, -noF and -noX.
-	4.8 A new -pseudo-override option which makes pseudo file uids and gids
-	    override -all-root, -force-uid and -force-gid options.  Normally
-	    these options take precedence.
-
-5. Unsquashfs minor improvements
-
-	5.1 New -all-time option which sets all file timestamps to <time>,
-	    rather than the time stored in the filesystem inode.  <time> can be
-	    an integer indicating seconds since the epoch (1970-01-01) or a
-	    human string value such as "now", "last week", or
-	    "Wed Feb 15 21:02:39 GMT 2023".
-	5.2 New -full-precision option which uses full precision when displaying
-	    times including seconds.  Use with -linfo, -lls, -lln and -llc
-	    options.
-	5.3 New -match option where Unsquashfs will abort if any extract file
-	    does not match on anything, and can not be resolved.
-	5.4 New -percentage option added which rather than generating the full
-	    progress-bar instead outputs a percentage.  This can be used with
-	    dialog --gauge etc.
-
-6. Sqfstar minor improvements
-
-	6.1 New -ignore-zeros option added which allows tar files to be
-	    concatenated together and fed to Sqfstar.  Normally a tarfile has
-	    two consecutive 512 byte blocks filled with zeros which means EOF
-	    and Sqfstar will stop reading after the first tar file on
-	    encountering them. This option makes Sqfstar ignore the zero filled
-	    blocks.
-	6.2 A new -mem-percent option which allows memory for caches to be
-	    specified as a percentage of physical RAM, rather than requiring an
-	    absolute value.
-	6.3 A new -percentage option added which rather than generating the full
-	    progress-bar instead outputs a percentage.  This can be used with
-	    dialog --gauge etc.
-	6.4 -mkfs-time, -all-time and -root-time options now take a human date
-	     string, in addition to the seconds since the epoch of 1970 00:00
-	     UTC.  For example "now", "last week", "Wed Mar 8 05:55:01 GMT 2023"
-	     are supported.
-	6.5 -root-uid, -root-gid, -force-uid and -force-gid options now take a
-	     user/group name in addition to the integer uid/gid.
-	6.6 A new -mem-default option which displays default memory usage for
-	    caches in Mbytes.
-	6.7 A new -no-compression option which produces no compression, and it
-	    is a short-cut for -noI, -noD, -noF and -noX.
-	6.8 A new -pseudo-override option which makes pseudo file uids and gids
-	    override -all-root, -force-uid and -force-gid options.  Normally
-	    these options take precedence.
-	6.9 Do not abort if ZERO filled blocks indicating end of the TAR archive
-	    are missing.
-
-7. Other minor improvements
-
-	7.1 If Mksquashfs/Unsquashfs fails to execute generating the manpages
-	    because they have been cross-compiled, fall back to using the
-	    pre-built manpages.
-	7.2 Add new Makefile configure option USE_PREBUILT_MANPAGES to always
-	    use pre-built manpages rather than generating them when "make
-	    install" is run.
-
-8. Major bug fixes
-
-	8.1 Following a symlink in Sqfscat or where -follow-symlinks option is
-	    given with Unsquashfs, incorrectly triggered the corrupted
-	    filesystem loop detection code.
-	8.2 In Unsquashfs if a file was not writable it could not add extended
-	    attributes to it.
-	8.3 Sqfstar would incorrectly reject compressor specific options that
-	    have an argument.
-	8.4 Sqfstar would incorrectly strip pathname components in PAX header
-	    linkpath if symbolic.
-	8.5 Sqfstar -root-uid, -root-gid and -root-time options were documented
-	    but not implemented.
-	8.6 Mksquashfs -one-file-system option would not create empty mount
-	    point directory when filesystem boundary crossed.
-	8.7 Mksquashfs did not check the close() return result.
+-- 
+Lorenzo Stoakes
+https://ljs.io
