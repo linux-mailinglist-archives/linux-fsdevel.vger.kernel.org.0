@@ -2,147 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E536C4B3C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 14:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 202FA6C4B51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 14:09:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229937AbjCVNCr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 09:02:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57452 "EHLO
+        id S230270AbjCVNJl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 09:09:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229673AbjCVNCq (ORCPT
+        with ESMTP id S229871AbjCVNJk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 09:02:46 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14C2261888;
-        Wed, 22 Mar 2023 06:02:45 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id gp15-20020a17090adf0f00b0023d1bbd9f9eso23564671pjb.0;
-        Wed, 22 Mar 2023 06:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679490164;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ViRmkYI1T/q9AleFDZxnzz9BK+OfJL44ohwRmj/wb8E=;
-        b=ARhhmfUoXSena1pM+E1Grp6YR3kCOnLV3kdIDePvpVJUQ2dg3kLrsYVgolxTx2noL5
-         sog/oqz4IL9fJBM1nyglLa7MRO/EhEoJ1Jeh3J0ytt7mkrOCD8UwWdeQT1ipF6sruQqO
-         8HoSJW0OcaX4k2Oua8aRQVmQ9Ik3tWCM1ggl+QRNTG9Rtwm/d5rYvl1QKbtiP5tOw0xQ
-         P6vJtMlVTlAXKOnPaESrHNQ3pWA9mdU82lW7FArwmXwdj4ZIm4g9EY9Pt7V/jGiyOJMK
-         LzAC9eu83kinbzMQrsKvkoxtmr7rP0u1E5vHvuMSB5TpJW7X0GsZC5srFqvlKwVD38kZ
-         gN8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679490164;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ViRmkYI1T/q9AleFDZxnzz9BK+OfJL44ohwRmj/wb8E=;
-        b=FmPIwVy268HJjO0k5qISDH4v55lo/C3WKroh4RzhE21xDWHKIgwwWZLsk2wCpocf7z
-         kreHByBSTiY8v0OTInS5xdpwBAZlxg37m6hwcbbG89/1aIITm4wQs/zyndCUz5Zz8mhz
-         POHiPkRNTHru/84c0BQlaAnCdqep5T7fNwVrIHZEU4GrS627t55IO3QkkmxhQ+pe7f9i
-         Ju0gIpGoqwrvdwm2g8o0fLitkYrb7UlEbfCLJDSvBKivR+wcKnhzSAyk3UpXQDFk7CZS
-         j1Q8YEvVy9AcwpAnXeTROJ8HCM6DmNDMHH5CKdFTL0W0cosOqYd7E1pByiq4QPXnxWq3
-         sERw==
-X-Gm-Message-State: AO0yUKVGz2v0S9viB+R3/YE7ABNj2QmgEiAtIYBgvVUKQn0O7mYoLQlO
-        z35ZI+Q76p/qaQF/82MHKyw=
-X-Google-Smtp-Source: AK7set8i0yrjEu/hxv3QebJCfgsiDSAkrFFCBeuESthSVvyA2rynV3aw+/+Dw2F3mR4N9qvZR/IeUQ==
-X-Received: by 2002:a17:90b:4d0d:b0:23a:87d1:9586 with SMTP id mw13-20020a17090b4d0d00b0023a87d19586mr3318684pjb.23.1679490164008;
-        Wed, 22 Mar 2023 06:02:44 -0700 (PDT)
-Received: from hyeyoo ([210.205.188.148])
-        by smtp.gmail.com with ESMTPSA id w5-20020a1709029a8500b001a064cff3c5sm10502457plp.43.2023.03.22.06.02.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 06:02:42 -0700 (PDT)
-Date:   Wed, 22 Mar 2023 22:02:28 +0900
-From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
-To:     Binder Makin <merimus@google.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org,
-        bpf@vger.kernel.org, linux-xfs@vger.kernel.org,
-        David Rientjes <rientjes@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [LSF/MM/BPF TOPIC] SLOB+SLAB allocators removal and future SLUB
- improvements
-Message-ID: <ZBr8Gf53CbJc0b5E@hyeyoo>
-References: <4b9fc9c6-b48c-198f-5f80-811a44737e5f@suse.cz>
- <CAANmLtzajny8ZK_QKVYOxLc8L9gyWG6Uu7YyL-CR-qfwphVTzg@mail.gmail.com>
+        Wed, 22 Mar 2023 09:09:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1020574C9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 06:08:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679490532;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sOkHuOKT5TrdMbQ7ausoErRO6DBZAgZjkwk79qxntJo=;
+        b=YsO3NO5D31n2aM7/sZswjc+hfWhCFyjx+5128q63iKv8i/uRAF5ytkTulE01ZkwzEfRW48
+        E6UavHw8CHTSO9TI/sY73P8Rlg6rA5HaJoC/RD4EHtZrvQATAaProO9b52qRHtV9KstCsz
+        Ok8ZQ/970O61AJiMJ4APqEL5KeQkAFc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-313-iG2ZqcGGOo2BI97vMjqxrQ-1; Wed, 22 Mar 2023 09:08:51 -0400
+X-MC-Unique: iG2ZqcGGOo2BI97vMjqxrQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DD6CE886466;
+        Wed, 22 Mar 2023 13:08:50 +0000 (UTC)
+Received: from localhost (ovpn-13-195.pek2.redhat.com [10.72.13.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0B9A01731B;
+        Wed, 22 Mar 2023 13:08:49 +0000 (UTC)
+Date:   Wed, 22 Mar 2023 21:08:46 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jiri Olsa <jolsa@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v4 3/4] iov_iter: add copy_page_to_iter_atomic()
+Message-ID: <ZBr93qtCxRXl7o0V@MiWiFi-R3L-srv>
+References: <cover.1679431886.git.lstoakes@gmail.com>
+ <31482908634cbb68adafedb65f0b21888c194a1b.1679431886.git.lstoakes@gmail.com>
+ <ZBrVtcqATRybF/hW@MiWiFi-R3L-srv>
+ <a961ab9c-1ced-4db4-a76f-d886bd01c715@lucifer.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAANmLtzajny8ZK_QKVYOxLc8L9gyWG6Uu7YyL-CR-qfwphVTzg@mail.gmail.com>
-X-Spam-Status: No, score=1.8 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
-        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+In-Reply-To: <a961ab9c-1ced-4db4-a76f-d886bd01c715@lucifer.local>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
-X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 22, 2023 at 08:15:28AM -0400, Binder Makin wrote:
-> Was looking at SLAB removal and started by running A/B tests of SLAB vs
-> SLUB.  Please note these are only preliminary results.
-> 
-> These were run using 6.1.13 configured for SLAB/SLUB.
-> Machines were standard datacenter servers.
-> 
-> Hackbench shows completion time, so smaller is better.
-> On all others larger is better.
-> https://docs.google.com/spreadsheets/d/e/2PACX-1vQ47Mekl8BOp3ekCefwL6wL8SQiv6Qvp5avkU2ssQSh41gntjivE-aKM4PkwzkC4N_s_MxUdcsokhhz/pubhtml
->
-> Some notes:
-> SUnreclaim and SReclaimable shows unreclaimable and reclaimable memory.
-> Substantially higher with SLUB, but I believe that is to be expected.
-> 
-> Various results showing a 5-10% degradation with SLUB.  That feels
-> concerning to me, but I'm not sure what others' tolerance would be.
-
-Hello Binder,
-
-Thank you for sharing the data on which workloads
-SLUB performs worse than SLAB. This information is critical for
-improving SLUB and deprecating SLAB.
-
-By the way, it appears that the spreadsheet is currently set to private.
-Could you make it public for me to access?
-
-I am really interested in performing similar experiments on my machines
-to obtain comparable data that can be utilized to enhance SLUB.
-
-Thanks,
-Hyeonggon
-
-> redis results on AMD show some pretty bad degredations.  10-20% range
-> netpipe on Intel also has issues.. 10-17%
-> 
-> On Tue, Mar 14, 2023 at 4:05 AM Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
-> > As you're probably aware, my plan is to get rid of SLOB and SLAB, leaving
-> > only SLUB going forward. The removal of SLOB seems to be going well, there
-> > were no objections to the deprecation and I've posted v1 of the removal
-> > itself [1] so it could be in -next soon.
+On 03/22/23 at 10:32am, Lorenzo Stoakes wrote:
+> On Wed, Mar 22, 2023 at 06:17:25PM +0800, Baoquan He wrote:
+> > On 03/21/23 at 08:54pm, Lorenzo Stoakes wrote:
+> > > Provide an atomic context equivalent for copy_page_to_iter(). This eschews
+> > > the might_fault() check copies memory in the same way that
+> > > copy_page_from_iter_atomic() does.
+> > >
+> > > This functions assumes a non-compound page, however this mimics the
+> > > existing behaviour of copy_page_from_iter_atomic(). I am keeping the
+> > > behaviour consistent between the two, deferring any such change to an
+> > > explicit folio-fication effort.
+> > >
+> > > This is being added in order that an iteratable form of vread() can be
+> > > implemented with known prefaulted pages to avoid the need for mutex
+> > > locking.
+> > >
+> > > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> > > ---
+> > >  include/linux/uio.h |  2 ++
+> > >  lib/iov_iter.c      | 28 ++++++++++++++++++++++++++++
+> > >  2 files changed, 30 insertions(+)
+> > >
+> > > diff --git a/include/linux/uio.h b/include/linux/uio.h
+> > > index 27e3fd942960..fab07103090f 100644
+> > > --- a/include/linux/uio.h
+> > > +++ b/include/linux/uio.h
+> > > @@ -154,6 +154,8 @@ static inline struct iovec iov_iter_iovec(const struct iov_iter *iter)
+> > >
+> > >  size_t copy_page_from_iter_atomic(struct page *page, unsigned offset,
+> > >  				  size_t bytes, struct iov_iter *i);
+> > > +size_t copy_page_to_iter_atomic(struct page *page, unsigned offset,
+> > > +				size_t bytes, struct iov_iter *i);
+> > >  void iov_iter_advance(struct iov_iter *i, size_t bytes);
+> > >  void iov_iter_revert(struct iov_iter *i, size_t bytes);
+> > >  size_t fault_in_iov_iter_readable(const struct iov_iter *i, size_t bytes);
+> > > diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> > > index 274014e4eafe..48ca1c5dfc04 100644
+> > > --- a/lib/iov_iter.c
+> > > +++ b/lib/iov_iter.c
+> > > @@ -821,6 +821,34 @@ size_t copy_page_from_iter_atomic(struct page *page, unsigned offset, size_t byt
+> > >  }
+> > >  EXPORT_SYMBOL(copy_page_from_iter_atomic);
+> > >
+> > > +size_t copy_page_to_iter_atomic(struct page *page, unsigned offset, size_t bytes,
+> > > +				struct iov_iter *i)
+> > > +{
+> > > +	char *kaddr = kmap_local_page(page);
 > >
-> > The immediate benefit of that is that we can allow kfree() (and
-> > kfree_rcu())
-> > to free objects from kmem_cache_alloc() - something that IIRC at least xfs
-> > people wanted in the past, and SLOB was incompatible with that.
+> > I am a little confused about the name of this new function. In its
+> > conterpart, copy_page_from_iter_atomic(), kmap_atomic()/kunmpa_atomic()
+> > are used. With them, if CONFIG_HIGHMEM=n, it's like below:
+> 
+> The reason for this is that:-
+> 
+> 1. kmap_atomic() explicitly states that it is now deprecated and must no longer
+>    be used, and kmap_local_page() should be used instead:-
+> 
+>  * kmap_atomic - Atomically map a page for temporary usage - Deprecated!
+> 
+>  * Do not use in new code. Use kmap_local_page() instead.
+> 
+> 2. kmap_local_page() explicitly states that it can be used in any context:-
+> 
+>  * Can be invoked from any context, including interrupts.
+
+Yeah, I saw that stated in document too. With my understanding, it's the
+page mapping itself will be guaranteed and can be used in any context
+when kmap_local_page() is taken. However, here kmap_local_page() is used
+to make the code block atomic, it could be not achieved.
+
+> 
+> I wanted follow this advice as strictly as I could, hence the change. However,
+> we do need preemption/pagefaults explicitly disabled in this context (we are
+> happy to fail if the faulted in pages are unmapped in meantime), and I didn't
+> check the internals to make sure.
+> 
+> So I think for safety it is better to use k[un]map_atomic() here, I'll respin
+> and put that back in, good catch!
+> 
 > >
-> > For SLAB removal I haven't yet heard any objections (but also didn't
-> > deprecate it yet) but if there are any users due to particular workloads
-> > doing better with SLAB than SLUB, we can discuss why those would regress
-> > and
-> > what can be done about that in SLUB.
+> > static inline void *kmap_atomic(struct page *page)
+> > {
+> >         if (IS_ENABLED(CONFIG_PREEMPT_RT))
+> >                 migrate_disable();
+> >         else
+> >                 preempt_disable();
+> >         pagefault_disable();
+> >         return page_address(page);
+> > }
 > >
-> > Once we have just one slab allocator in the kernel, we can take a closer
-> > look at what the users are missing from it that forces them to create own
-> > allocators (e.g. BPF), and could be considered to be added as a generic
-> > implementation to SLUB.
+> > But kmap_local_page() is only having page_address(), the code block
+> > between kmap_local_page() and kunmap_local() is also atomic, it's a
+> > little messy in my mind.
 > >
-> > Thanks,
-> > Vlastimil
+> > static inline void *kmap_local_page(struct page *page)
+> > {
+> >         return page_address(page);
+> > }
 > >
-> > [1] https://lore.kernel.org/all/20230310103210.22372-1-vbabka@suse.cz/
+> > > +	char *p = kaddr + offset;
+> > > +	size_t copied = 0;
+> > > +
+> > > +	if (!page_copy_sane(page, offset, bytes) ||
+> > > +	    WARN_ON_ONCE(i->data_source))
+> > > +		goto out;
+> > > +
+> > > +	if (unlikely(iov_iter_is_pipe(i))) {
+> > > +		copied = copy_page_to_iter_pipe(page, offset, bytes, i);
+> > > +		goto out;
+> > > +	}
+> > > +
+> > > +	iterate_and_advance(i, bytes, base, len, off,
+> > > +		copyout(base, p + off, len),
+> > > +		memcpy(base, p + off, len)
+> > > +	)
+> > > +	copied = bytes;
+> > > +
+> > > +out:
+> > > +	kunmap_local(kaddr);
+> > > +	return copied;
+> > > +}
+> > > +EXPORT_SYMBOL(copy_page_to_iter_atomic);
+> > > +
+> > >  static void pipe_advance(struct iov_iter *i, size_t size)
+> > >  {
+> > >  	struct pipe_inode_info *pipe = i->pipe;
+> > > --
+> > > 2.39.2
+> > >
+> >
+> 
+
