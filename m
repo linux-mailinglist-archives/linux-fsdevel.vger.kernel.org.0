@@ -2,80 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B1AD06C54AE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 20:15:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 442E16C551C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Mar 2023 20:44:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229939AbjCVTPR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 15:15:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37644 "EHLO
+        id S229864AbjCVToL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 15:44:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbjCVTPQ (ORCPT
+        with ESMTP id S230051AbjCVTn4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 15:15:16 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D4F0497C5;
-        Wed, 22 Mar 2023 12:15:14 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id g17so24777576lfv.4;
-        Wed, 22 Mar 2023 12:15:14 -0700 (PDT)
+        Wed, 22 Mar 2023 15:43:56 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3A912366A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 12:43:55 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id le6so20236270plb.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 12:43:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679512512;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cCBOvdCKd4EqIlOnayTxMvjd+KY/f+rwaK56Y7Wx9rI=;
-        b=QQKl+EQIuLgIWW+CDj2/TlrdtUO0L68jIHNmhN+F2aZQknmUnrA92+rQwESJ57H6jn
-         36KMM4RGtls5WBSsB5a9ym1Wc4YSZdb1MR4vVCHb7zhKQjuYkLv5GA3/2vQj1qpSYMvS
-         ZRxN31yMd3rO/qynuyE7jSPddERYpoUv2K9InOXlSzXKu8qogb6+p0YLHe7y7/Gc21vo
-         R4y9gxCfnn1I6ugbRpTJOMDEjlyukmNVKdn4peDKTjwZ5yvsgkC/8yVqFh9h9OxaYqEv
-         qZSrFZtns2tArlohtOHGlh/geR59d6vTojKXf1LHmWV1VWcptGNxqzyONGdiGt2NYmJ/
-         bTxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679512512;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20210112; t=1679514235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cCBOvdCKd4EqIlOnayTxMvjd+KY/f+rwaK56Y7Wx9rI=;
-        b=y5xSaVnzh6EcZpuC4yghdoavsYFl+7l0Qeo8mNWX66SV0jhLmqmmluTgQ8/rEMMVbg
-         m5UiB3xKsXmP+r/6xCNBpY7PHdk7DkZzYflCQ1NHGj9fDlYTqeGUaiIcza31IksJySES
-         av4mugX65NZN7U/jmeTITC+tO1mfU7dRs6P2pZAnQWO9V6gEoN9W2quUgIU+pYCI+8PC
-         VqvKsmZAfngvKElay+LRO/BZjjxtXTu9NQEMtpo3pCV4OhF727vvMGZUr46h0xMvs9eM
-         rQVhAvIzG6YbLIJtMVnvO+1I8a0sj5kgdKR8DvasmeYvpbxkk/tTunODsolNHkNfyaOf
-         PJAA==
-X-Gm-Message-State: AO0yUKVU+ufBFBC8eAiLtgBAuDy5Edsl2sNngpSSuVjP+z60UcNbXA5s
-        47HWkDwGALuSAeNXnKwSK38=
-X-Google-Smtp-Source: AK7set8QC1xqmQlCK6G97WU8ztT4PvHsdLL5/PtfWwcwvb3Mwf29QeUzPsYgrBWEl2542LYgyzX2Jg==
-X-Received: by 2002:ac2:44d9:0:b0:4dd:ad88:ba5c with SMTP id d25-20020ac244d9000000b004ddad88ba5cmr2335638lfm.4.1679512512076;
-        Wed, 22 Mar 2023 12:15:12 -0700 (PDT)
-Received: from pc636 (host-90-233-209-15.mobileonline.telia.com. [90.233.209.15])
-        by smtp.gmail.com with ESMTPSA id o7-20020a05651238a700b004b4b600c093sm2652682lft.92.2023.03.22.12.15.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 12:15:11 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Wed, 22 Mar 2023 20:15:09 +0100
-To:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH v2 2/4] mm: vmalloc: use rwsem, mutex for vmap_area_lock
- and vmap_block->lock
-Message-ID: <ZBtTvdzgAmsGkQzV@pc636>
-References: <cover.1679209395.git.lstoakes@gmail.com>
- <6c7f1ac0aeb55faaa46a09108d3999e4595870d9.1679209395.git.lstoakes@gmail.com>
- <ZBkDuLKLhsOHNUeG@destitution>
- <ZBsAG5cpOFhFZZG6@pc636>
- <ZBs/MGH+xUAZXNTz@casper.infradead.org>
- <ZBtCl34dolg2YE+3@pc636>
+        bh=azcxcDWGfZ5KxgvpNnRWk6jgJ8R50ScCGC8BUKh0BEM=;
+        b=ft7PgkVgx4Uv3WAl38+A5yWy7xXMu+PEjQ39VUAsnkspho+xToRopd2pY5GokCFoIu
+         8BhiizY+SmT4U8UgC8slF9Eu1Pbwy3QX6qOWiJsVQ22X1vmrduQH7mUPLhT7GtBoBE5L
+         V4nO/YMFTLh76JSH4q/HxFpysBQH8v/H/W09PHZi4bjGyc6E/T/xHpcc+QMk9j2DxDR1
+         vzNtGnPkkBKXzIkMR0kNdqnm/DIr1a4HNoXPqoDynuaF/5Z8ZW0ynugiLK174S2Wtryd
+         ZhqHWBGfh2CzeDYcnCyJYiPGz/FNqeeVTZmBAzsaVQPJsShVMxVc7zO9DEzjLsxZznRn
+         tLAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679514235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=azcxcDWGfZ5KxgvpNnRWk6jgJ8R50ScCGC8BUKh0BEM=;
+        b=4oOIMGeMhmlclaephPV/BzlECp0P7UNAO6vVE6+zPww8ZgtGr7mlvbnv9EQi6I57bY
+         E9buTGYg7qOU1te/D54ykMYACZFQ8sNl8LZIveCBkiAg7iuv4ezuF5IcjUlviOT7IKP/
+         KuK/o+P/ub3KYE9/6ib6lvp6SS6GUYjLv4Tw1XB/Ri2HzPkSAW/IlAypsJf1pvII1WY1
+         GsRv2r5+EtXX+CwGGaedGOE7+z62is5tpG35QbpYIM3EOChPJWM7O1ukyfgRT6CmUg6P
+         p8zUkVKDnO5R9mBkC5ygzJC+BbDTsR0WbBZtOeNmG5lehdh6AqCzbP1BbeVRFwnlHEZJ
+         k7hQ==
+X-Gm-Message-State: AO0yUKUPAl8JO6ak0ASsO6sEkpTTQ/gXMHD+aOCJfonoKauP391hffwk
+        FP5W53KqQYYgLwBnzyPZN8V/jYFBpnmeBhUa5WI=
+X-Google-Smtp-Source: AK7set+OfoSVaFs4hLN/8TO8mxTG40Frvxc9ptFvA0ffP6o6cm6O5jMfuWOHa1DgVL67l/GQK1cAGrurjWkBtOsUEXw=
+X-Received: by 2002:a17:902:b7c8:b0:19f:2c5a:5786 with SMTP id
+ v8-20020a170902b7c800b0019f2c5a5786mr1524466plz.8.1679514235168; Wed, 22 Mar
+ 2023 12:43:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZBtCl34dolg2YE+3@pc636>
+References: <CADNhMOuFyDv5addXDX3feKGS9edJ3nwBTBh7AB1UY+CYzrreFw@mail.gmail.com>
+ <CAOQ4uxjF=oTm8wTJvVd0swfcDP0bRUmHSwq5GATYLzvUOsQfXg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjF=oTm8wTJvVd0swfcDP0bRUmHSwq5GATYLzvUOsQfXg@mail.gmail.com>
+From:   Amol Dixit <amoldd@gmail.com>
+Date:   Wed, 22 Mar 2023 12:43:44 -0700
+Message-ID: <CADNhMOvp3k7fuodMiSzaP-mpf5j1Z7g-_wB5gpJc9p2en6szoA@mail.gmail.com>
+Subject: Re: inotify on mmap writes
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
         DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
@@ -86,128 +69,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 22, 2023 at 07:01:59PM +0100, Uladzislau Rezki wrote:
-> On Wed, Mar 22, 2023 at 05:47:28PM +0000, Matthew Wilcox wrote:
-> > On Wed, Mar 22, 2023 at 02:18:19PM +0100, Uladzislau Rezki wrote:
-> > > Hello, Dave.
-> > > 
-> > > > 
-> > > > I'm travelling right now, but give me a few days and I'll test this
-> > > > against the XFS workloads that hammer the global vmalloc spin lock
-> > > > really, really badly. XFS can use vm_map_ram and vmalloc really
-> > > > heavily for metadata buffers and hit the global spin lock from every
-> > > > CPU in the system at the same time (i.e. highly concurrent
-> > > > workloads). vmalloc is also heavily used in the hottest path
-> > > > throught the journal where we process and calculate delta changes to
-> > > > several million items every second, again spread across every CPU in
-> > > > the system at the same time.
-> > > > 
-> > > > We really need the global spinlock to go away completely, but in the
-> > > > mean time a shared read lock should help a little bit....
-> > > > 
-> > > Could you please share some steps how to run your workloads in order to
-> > > touch vmalloc() code. I would like to have a look at it in more detail
-> > > just for understanding the workloads.
-> > > 
-> > > Meanwhile my grep agains xfs shows:
-> > > 
-> > > <snip>
-> > > urezki@pc638:~/data/raid0/coding/linux-rcu.git/fs/xfs$ grep -rn vmalloc ./
-> > 
-> > You're missing:
-> > 
-> > fs/xfs/xfs_buf.c:                       bp->b_addr = vm_map_ram(bp->b_pages, bp->b_page_count,
-> > 
-> > which i suspect is the majority of Dave's workload.  That will almost
-> > certainly take the vb_alloc() path.
+On Wed, Mar 22, 2023 at 12:16=E2=80=AFAM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+>
+> On Wed, Mar 22, 2023 at 4:13=E2=80=AFAM Amol Dixit <amoldd@gmail.com> wro=
+te:
 > >
-> Then it has nothing to do with vmalloc contention(i mean global KVA allocator), IMHO.
-> Unless:
-> 
-> <snip>
-> void *vm_map_ram(struct page **pages, unsigned int count, int node)
-> {
-> 	unsigned long size = (unsigned long)count << PAGE_SHIFT;
-> 	unsigned long addr;
-> 	void *mem;
-> 
-> 	if (likely(count <= VMAP_MAX_ALLOC)) {
-> 		mem = vb_alloc(size, GFP_KERNEL);
-> 		if (IS_ERR(mem))
-> 			return NULL;
-> 		addr = (unsigned long)mem;
-> 	} else {
-> 		struct vmap_area *va;
-> 		va = alloc_vmap_area(size, PAGE_SIZE,
-> 				VMALLOC_START, VMALLOC_END, node, GFP_KERNEL);
-> 		if (IS_ERR(va))
-> 			return NULL;
-> <snip>
-> 
-> number of pages > VMAP_MAX_ALLOC.
-> 
-> That is why i have asked about workloads because i would like to understand
-> where a "problem" is. A vm_map_ram() access the global vmap space but it happens 
-> when a new vmap block is required and i also think it is not a problem.
-> 
-> But who knows, therefore it makes sense to have a lock at workload.
-> 
-There is a lock-stat statistics for vm_map_ram()/vm_unmap_ram() test.
-I did it on 64 CPUs system with running 64 threads doing mapping/unmapping
-of 1 page. Each thread does 10 000 000 mapping + unmapping in a loop:
+> > Hello,
+> > Apologies if this has been discussed or clarified in the past.
+> >
+> > The lack of file modification notification events (inotify, fanotify)
+> > for mmap() regions is a big hole to anybody watching file changes from
+> > userspace. I can imagine atleast 2 reasons why that support may be
+> > lacking, perhaps there are more:
+> >
+> > 1. mmap() writeback is async (unless msync/fsync triggered) driven by
+> > file IO and page cache writeback mechanims, unlike write system calls
+> > that get funneled via the vfs layer, whih is a convenient common place
+> > to issue notifications. Now mm code would have to find a common ground
+> > with filesystem/vfs, which is messy.
+> >
+> > 2. writepages, being an address-space op is treated by each file
+> > system independently. If mm did not want to get involved, onus would
+> > be on each filesystem to make their .writepages handlers notification
+> > aware. This is probably also considered not worth the trouble.
+> >
+> > So my question is, notwithstanding minor hurdles (like lost events,
+> > hardlinks etc.), would the community like to extend inotify support
+> > for mmap'ed writes to files? Under configs options, would a fix on a
+> > per filesystem basis be an acceptable solution (I can start with say
+> > ext4 writepages linking back to inode/dentry and firing a
+> > notification)?
+> >
+> > Eventually we will have larger support across the board and
+> > inotify/fanotify can be a reliable tracking mechanism for
+> > modifications to files.
+> >
+>
+> What is the use case?
+> Would it be sufficient if you had an OPEN_WRITE event?
+> or if OPEN event had the O_ flags as an extra info to the event?
+> I have a patch for the above and I personally find this information
+> missing from OPEN events.
+>
+> Are you trying to monitor mmap() calls? write to an mmaped area?
+> because writepages() will get you neither of these.
 
-<snip>
-root@pc638:/home/urezki# cat /proc/lock_stat
-lock_stat version 0.4
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-class name    con-bounces    contentions   waittime-min   waittime-max waittime-total   waittime-avg    acq-bounces   acquisitions   holdtime-min   holdtime-max holdtime-total   holdtime-avg
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+OPEN events are not useful to track file modifications in real time,
+although I can do see the usefulness of OPEN_WRITE events to track
+files that can change.
 
-vmap_area_lock:       2554079        2554276           0.06         213.61    11719647.67           4.59        2986513        3005712           0.05          67.02     3573323.37           1.19
-  --------------
-  vmap_area_lock        1297948          [<00000000dd41cbaa>] alloc_vmap_area+0x1c7/0x910
-  vmap_area_lock        1256330          [<000000009d927bf3>] free_vmap_block+0x4a/0xe0
-  vmap_area_lock              1          [<00000000c95c05a7>] find_vm_area+0x16/0x70
-  --------------
-  vmap_area_lock        1738590          [<00000000dd41cbaa>] alloc_vmap_area+0x1c7/0x910
-  vmap_area_lock         815688          [<000000009d927bf3>] free_vmap_block+0x4a/0xe0
-  vmap_area_lock              1          [<00000000c1d619d7>] __get_vm_area_node+0xd2/0x170
+I am trying to track writes to mmaped area (as these are not notified
+using inotify events). I wanted to ask the community of the
+feasibility and usefulness of this. I had some design ideas of
+tracking writes (using jbd commit callbacks for instance) in the
+kernel, but to make it generic sprucing up the inotify interface is a
+much better approach.
 
-.....................................................................................................................................................................................................
-
-vmap_blocks.xa_lock:        862689         862698           0.05          77.74      849325.39           0.98        3005156        3005709           0.12          31.11     1920242.82           0.64
-  -------------------
-  vmap_blocks.xa_lock         378418          [<00000000625a5626>] vm_map_ram+0x359/0x4a0
-  vmap_blocks.xa_lock         484280          [<00000000caa2ef03>] xa_erase+0xe/0x30
-  -------------------
-  vmap_blocks.xa_lock         576226          [<00000000caa2ef03>] xa_erase+0xe/0x30
-  vmap_blocks.xa_lock         286472          [<00000000625a5626>] vm_map_ram+0x359/0x4a0
-
-....................................................................................................................................................................................................
-
-free_vmap_area_lock:        394960         394961           0.05         124.78      448241.23           1.13        1514508        1515077           0.12          30.48     1179167.01           0.78
-  -------------------
-  free_vmap_area_lock         385970          [<00000000955bd641>] alloc_vmap_area+0xe5/0x910
-  free_vmap_area_lock           4692          [<00000000230abf7e>] __purge_vmap_area_lazy+0x10a/0x7d0
-  free_vmap_area_lock           4299          [<00000000eed9ff9e>] alloc_vmap_area+0x497/0x910
-  -------------------
-  free_vmap_area_lock         371734          [<00000000955bd641>] alloc_vmap_area+0xe5/0x910
-  free_vmap_area_lock          17007          [<00000000230abf7e>] __purge_vmap_area_lazy+0x10a/0x7d0
-  free_vmap_area_lock           6220          [<00000000eed9ff9e>] alloc_vmap_area+0x497/0x910
-
-.....................................................................................................................................................................................................
-
-purge_vmap_area_lock:        169307         169312           0.05          31.08       81655.21           0.48        1514794        1515078           0.05          67.73      912391.12           0.60
-  --------------------
-  purge_vmap_area_lock         166409          [<0000000050938075>] free_vmap_area_noflush+0x65/0x370
-  purge_vmap_area_lock           2903          [<00000000fb8b57f7>] __purge_vmap_area_lazy+0x47/0x7d0
-  --------------------
-  purge_vmap_area_lock         167511          [<0000000050938075>] free_vmap_area_noflush+0x65/0x370
-  purge_vmap_area_lock           1801          [<00000000fb8b57f7>] __purge_vmap_area_lazy+0x47/0x7d0
-<snip>
-
-alloc_vmap_area is a top and second one is xa_lock. But the test i have
-done is pretty high concurrent scenario.
-
---
-Uladzislau Rezki
+Hope that provides some context.
+Thanks,
+Amol
