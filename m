@@ -2,116 +2,278 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D336C5EA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 06:17:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD2316C5FC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 07:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230226AbjCWFRm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 01:17:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        id S229617AbjCWGfh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 02:35:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbjCWFRh (ORCPT
+        with ESMTP id S229461AbjCWGfg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 01:17:37 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A54491F4A7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 22:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679548606;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HoUzTMO8R5MhPq7S8OoMssryl9/6eR6zluDti49MEro=;
-        b=gJ3cpX9tru+N6ees3p0i57GTyRybEvg5W/HRaTxhENh7T4bJH+PaFgcaVR/mAbjCMGk1Ia
-        QfO6D9DjWWu8a7Xrumje2mrEoeV55Ksk9e62V45JtZc/vBNQah2lydPjkLUIeD6kTqny3V
-        FCK2bUtU391ID2TUx/uq1dLJJijb1qk=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-179-KY9zo7YzPqyCZhglvOgcqw-1; Thu, 23 Mar 2023 01:16:43 -0400
-X-MC-Unique: KY9zo7YzPqyCZhglvOgcqw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 362258828C2;
-        Thu, 23 Mar 2023 05:16:41 +0000 (UTC)
-Received: from ovpn-8-16.pek2.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6D3854021B1;
-        Thu, 23 Mar 2023 05:16:24 +0000 (UTC)
-Date:   Thu, 23 Mar 2023 13:16:20 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Yangtao Li <frank.li@vivo.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        xiang@kernel.org, chao@kernel.org, huyue2@coolpad.com,
-        jefflexu@linux.alibaba.com, jaegeuk@kernel.org,
-        trond.myklebust@hammerspace.com, anna@kernel.org,
-        konishi.ryusuke@gmail.com, mark@fasheh.com, jlbec@evilplan.org,
-        joseph.qi@linux.alibaba.com, richard@nod.at, djwong@kernel.org,
-        damien.lemoal@opensource.wdc.com, naohiro.aota@wdc.com,
-        jth@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        linux-mtd@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, ming.lei@redhat.com
-Subject: Re: [PATCH v3 01/10] kobject: introduce kobject_del_and_put()
-Message-ID: <ZBvgpBzEuFuyOD/c@ovpn-8-16.pek2.redhat.com>
-References: <20230322165830.55071-1-frank.li@vivo.com>
+        Thu, 23 Mar 2023 02:35:36 -0400
+Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0453E5587
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 23:35:35 -0700 (PDT)
+Received: by mail-vs1-xe2f.google.com with SMTP id c10so10968664vsh.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 23:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679553334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DPt6is3U2U1XQQNwxQuUdtjMS8Jc52BFaQYbPEHRFE4=;
+        b=bGXGwxgqZdOovtJi3cs21gyWM7YM57r5K1O6oAugD9vEYUHRSEF/XOGbjVGh7wpi/u
+         lTotFOWz+7A3/abW9ssy9M6sUXHB26xkixQf5SduwIOkxCv/5Ubg8v1Gu2342d4rsJSm
+         AkBUoNwsz/cZBQEvqRZIBYmdtSVudshOFaDjFHte2a9ec/2fyn+Kjv8S+YYaveZeSMtv
+         fVzEcCAH2IjzuoyVWhgh/wPNEyti/zcslV/VxVJLsq6WVEpRpazWb8X/02iZXnha6iG7
+         czCKk0j7gtjSW6tzPBIqmSMbzZ6WVo3yxmX957gU7LUR64EniZY8gQOYJphdhvFRaZAS
+         iHBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679553334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DPt6is3U2U1XQQNwxQuUdtjMS8Jc52BFaQYbPEHRFE4=;
+        b=oDWMUvSMfYdUs6mmubuEKRlfEen21p+XbReCu86o+5kseMe2vaYWoffoghxnnw/pR5
+         gVDYN75YaHgDlobzFKl+vnJ24Kh7ha1yIuIm4OxL0RGyGqh8sIUV0j0IKKKC/0zNjBpa
+         eZ0BtBDYHwsHig01cf/acf9BFpxQkCBeBZvkJ34KSlrYpG629/IhQQuXa6YktYTTNi1J
+         7OOzlvkFatZOY5KCbsJ3IGb556rQUmv5QI423PTU6DB1T+qhYfrgOaoOaWY8CNxNcqa+
+         xGRJM1dDJeazH7EzlY3uy9uE2yXLQX2Zl2dx4qbEgtBxom+9O7OoxafMiIzCYkfDclLN
+         XFwQ==
+X-Gm-Message-State: AO0yUKUZDbJTy3bfzeTT/K07KH0s2nUhCLA8g0JsDu1Gb28BlowEidNL
+        Nyq+kyRs48+Qfi5BHqoaLToCp8i/8GOQV5ATTXtai79v1MY=
+X-Google-Smtp-Source: AK7set/5VZbLL9EDIdMkbhDUZopLgSr4MIdwf793dlFUevIlAEEnJF4WY+wh3rR62Ymc5JD8/w8u/AycRiSYi+/4p+A=
+X-Received: by 2002:a67:d395:0:b0:412:5424:e58e with SMTP id
+ b21-20020a67d395000000b004125424e58emr1246545vsj.0.1679553333746; Wed, 22 Mar
+ 2023 23:35:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230322165830.55071-1-frank.li@vivo.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <CADNhMOuFyDv5addXDX3feKGS9edJ3nwBTBh7AB1UY+CYzrreFw@mail.gmail.com>
+ <CAOQ4uxjF=oTm8wTJvVd0swfcDP0bRUmHSwq5GATYLzvUOsQfXg@mail.gmail.com>
+ <CADNhMOvp3k7fuodMiSzaP-mpf5j1Z7g-_wB5gpJc9p2en6szoA@mail.gmail.com>
+ <CAOQ4uxhjMfBKYmnvpX29JQkiw+ihFUo5E2RAsoOSxiW+fpzU_w@mail.gmail.com> <CADNhMOtZrRbVdFAR3VmzDtHKShedViyT5B9+JQ79STx=3x=2JQ@mail.gmail.com>
+In-Reply-To: <CADNhMOtZrRbVdFAR3VmzDtHKShedViyT5B9+JQ79STx=3x=2JQ@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 23 Mar 2023 08:35:22 +0200
+Message-ID: <CAOQ4uxhLf1qVc0x-H0jEq+NVOn-sunarzYF-1b9VTWdq0gf0=w@mail.gmail.com>
+Subject: Re: inotify on mmap writes
+To:     Amol Dixit <amoldd@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 12:58:30AM +0800, Yangtao Li wrote:
-> There are plenty of using kobject_del() and kobject_put() together
-> in the kernel tree. This patch wraps these two calls in a single helper.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
-> v3:
-> -convert to inline helper
-> v2:
-> -add kobject_del_and_put() users
->  include/linux/kobject.h | 13 +++++++++++++
->  lib/kobject.c           |  3 +--
->  2 files changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/kobject.h b/include/linux/kobject.h
-> index bdab370a24f4..e21b7c22e355 100644
-> --- a/include/linux/kobject.h
-> +++ b/include/linux/kobject.h
-> @@ -112,6 +112,19 @@ extern struct kobject * __must_check kobject_get_unless_zero(
->  						struct kobject *kobj);
->  extern void kobject_put(struct kobject *kobj);
->  
-> +/**
-> + * kobject_del_and_put() - Delete kobject.
-> + * @kobj: object.
-> + *
-> + * Unlink kobject from hierarchy and decrement the refcount.
-> + * If refcount is 0, call kobject_cleanup().
-> + */
-> +static inline void kobject_del_and_put(struct kobject *kobj)
-> +{
-> +	kobject_del(kobj);
-> +	kobject_put(kobj);
-> +}
+> On Wed, Mar 22, 2023 at 2:12=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+> >
+> > On Wed, Mar 22, 2023 at 9:43 PM Amol Dixit <amoldd@gmail.com> wrote:
+> > >
+> > > On Wed, Mar 22, 2023 at 12:16=E2=80=AFAM Amir Goldstein <amir73il@gma=
+il.com> wrote:
+> > > >
+> > > > On Wed, Mar 22, 2023 at 4:13=E2=80=AFAM Amol Dixit <amoldd@gmail.co=
+m> wrote:
+> > > > >
+> > > > > Hello,
+> > > > > Apologies if this has been discussed or clarified in the past.
+> > > > >
+> > > > > The lack of file modification notification events (inotify, fanot=
+ify)
+> > > > > for mmap() regions is a big hole to anybody watching file changes=
+ from
+> > > > > userspace. I can imagine atleast 2 reasons why that support may b=
+e
+> > > > > lacking, perhaps there are more:
+> > > > >
+> > > > > 1. mmap() writeback is async (unless msync/fsync triggered) drive=
+n by
+> > > > > file IO and page cache writeback mechanims, unlike write system c=
+alls
+> > > > > that get funneled via the vfs layer, whih is a convenient common =
+place
+> > > > > to issue notifications. Now mm code would have to find a common g=
+round
+> > > > > with filesystem/vfs, which is messy.
+> > > > >
+> > > > > 2. writepages, being an address-space op is treated by each file
+> > > > > system independently. If mm did not want to get involved, onus wo=
+uld
+> > > > > be on each filesystem to make their .writepages handlers notifica=
+tion
+> > > > > aware. This is probably also considered not worth the trouble.
+> > > > >
+> > > > > So my question is, notwithstanding minor hurdles (like lost event=
+s,
+> > > > > hardlinks etc.), would the community like to extend inotify suppo=
+rt
+> > > > > for mmap'ed writes to files? Under configs options, would a fix o=
+n a
+> > > > > per filesystem basis be an acceptable solution (I can start with =
+say
+> > > > > ext4 writepages linking back to inode/dentry and firing a
+> > > > > notification)?
+> > > > >
+> > > > > Eventually we will have larger support across the board and
+> > > > > inotify/fanotify can be a reliable tracking mechanism for
+> > > > > modifications to files.
+> > > > >
+> > > >
+> > > > What is the use case?
+> > > > Would it be sufficient if you had an OPEN_WRITE event?
+> > > > or if OPEN event had the O_ flags as an extra info to the event?
+> > > > I have a patch for the above and I personally find this information
+> > > > missing from OPEN events.
+> > > >
+> > > > Are you trying to monitor mmap() calls? write to an mmaped area?
+> > > > because writepages() will get you neither of these.
+> > >
+> > > OPEN events are not useful to track file modifications in real time,
+> > > although I can do see the usefulness of OPEN_WRITE events to track
+> > > files that can change.
+> > >
+> > > I am trying to track writes to mmaped area (as these are not notified
+> > > using inotify events). I wanted to ask the community of the
+> > > feasibility and usefulness of this. I had some design ideas of
+> > > tracking writes (using jbd commit callbacks for instance) in the
+> > > kernel, but to make it generic sprucing up the inotify interface is a
+> > > much better approach.
+> > >
+> > > Hope that provides some context.
+> >
+> > Not enough.
+> >
+> > For a given file mmaped writable by a process that is writing
+> > to that mapped memory all the time for a long time.
+> >
+> > What do you expect to happen?
+> > How many events?
+> > On first time write to a page? To the memory region?
+> > When dirty memory is written back to disk?
+> >
+> > You have mixed a lot of different things in your question.
+> > You need to be more specific about what the purpose
+> > of this monitoring is.
+> >
+> > From all of the above, only MODIFY on mmap() call
+> > seems reasonable to me and MODIFY on first write to
+> > an mmaped area is something that we can consider if
+> > there is very good justification.
+> >
+> > FYI, the existing MODIFY events are from after the
+> > write system call modified the page cache and there is
+> > no guarantee about when writeback to disk is done.
+> >
 
-kobject_put() actually covers kobject removal automatically, which is
-single stage removal. So if you see the two called together, it is
-safe to kill kobject_del() directly.
 
+On Thu, Mar 23, 2023 at 12:13=E2=80=AFAM Amol Dixit <amoldd@gmail.com> wrot=
+e:
+>
+> Thank you Amir for taking the time. I will take another stab at the motiv=
+ation.
 
-thanks,
-Ming
+Please do not "top post" on fsdevel discussions.
 
+>
+> Say I am writing an efficient real time file backup application, and
+> monitoring changes to certain files. The best rsync can do is to chunk
+> and checksum and gather delta regions to transfer. What if, through
+> inotify, the application is alerted of precise extents written to a
+> certain file. This would take the form of <logical file offset,
+> length> tuples in the metadata attached with each MODIFY event. That
+> should be easily possible (just like we add file names to CREATE
+> events). For mmaped regions 'length' would be in page granularity
+> since the kernel wouldn't know precise regions written within a given
+> page.
+>
+> > What do you expect to happen?
+> Notifications can be collapsed until they are read. So if first IO is
+> <0, 20> and second IO is <20, 20>, then the event can be collapsed
+> in-place to read <0, 40>. If they are not contiguous, say second IO is
+
+That can be done.
+I already have patches for FAN_EVENT_INFO_TYPE_RANGE.
+
+> <30, 10>, then we will have 2 extent entries in the metadata of MODIFY
+> event - <0, 20> and <30, 10>, and so on.
+>
+
+That seems like an overkill.
+More than a single extent could just drop the granular range info.
+
+> > How many events?
+> Events are always opportunistic. If too many events of the same kind,
+> a generic "Too many changes" event is enough (CIFS change notification
+> has something similar) to alert the reader.
+>
+> > On first time write to a page?
+> Doesn't help ongoing activity tracking.
+>
+> > To the memory region?
+> Precision as much as possible for offsets and lengths is nice to have.
+>
+> > When dirty memory is written back to disk?
+> Events are more like hints (as you said they do not guarantee
+> writeback to disk anyway). Applications will do their own integrity
+> checks on top of these hints.
+>
+
+Hints, yes, but event do need to guarantee that a change is
+not missed, so in the context of mmaped memory writes that
+means that after the event is consumed by application or after
+the application reads the file content, PTE may need to be setup to
+trigger a new event on the next write.
+
+Doing that on page level seems like an unacceptable overkill
+for the use case of backup applications.
+
+Perhaps a more feasible option is to generate an event when
+an inode or mapping change state into "dirty pages", then backup
+application needs to do:
+
+1. consume pending MODIFY events on file
+2. call fsdatasync()/msync()/sync_file_range()
+3. read content of file to backup
+
+And then we should be able to provide a guarantee
+that if there is any write after #2 returned success,
+a new MODIFY event will be generated.
+
+We should probably make this a new event (e.g. FAN_WRITE)
+because it has different semantics than FAN_MODIFY and it can also
+be useful to non-mmapped writes use case.
+
+None of this is going to be simple though, so to answer your
+original questions:
+
+> So my question is, notwithstanding minor hurdles (like lost events,
+> hardlinks etc.), would the community like to extend inotify support
+> for mmap'ed writes to files?
+
+If you are willing to do the work and you can prove that it does not
+hurt performance of any existing workload when the new feature
+is not in use, I think it would be a nice improvement.
+
+> Under configs options,
+
+No config options please.
+If you cannot make it work without hurting performance, no go.
+
+> would a fix on a per filesystem basis be an acceptable solution
+> (I can start with say ext4 writepages linking back to inode/dentry
+> and firing a notification)?
+
+Solution should be generic in vfs.
+It is possible that this will not be supported for all filesystems,
+but only on some filesystems that implement some vfs operation
+or opt-in with some fs flag, but not a fs specific implementation.
+
+Thanks,
+Amir.
