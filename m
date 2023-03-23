@@ -2,52 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 817966C6FF5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 19:07:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0579A6C7010
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 19:15:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229903AbjCWSHo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 14:07:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57308 "EHLO
+        id S230121AbjCWSPh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 14:15:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229794AbjCWSHm (ORCPT
+        with ESMTP id S229690AbjCWSPg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 14:07:42 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 348A41C307
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 11:07:41 -0700 (PDT)
+        Thu, 23 Mar 2023 14:15:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3464430EA
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 11:15:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DA250B821F7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 18:07:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66DC2C433D2;
-        Thu, 23 Mar 2023 18:07:38 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C321762806
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 18:15:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 30129C433D2;
+        Thu, 23 Mar 2023 18:15:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679594858;
-        bh=oc36L9DihkP06ZEpUiHojWwKvkiSb9SLviWKHIqcMGY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=n6jT3swINPJI7tV0q6QZGo8rRzTvM1sd9hd7nkxZTDCacMbR3qAnqKzHQsBsw+eQK
-         ZmuAKi404zsyXMQAEwXs+F0DIdaglS3txcvnKeGxgPy7tAlUk/JINfzy1cHyqv2AgB
-         zrD3h+Oxsdg+aIE7JTVU8t730BkVIy0jOOALUYVtH0fj00ZtegtO35jn0cZtkJwYW+
-         +PrRVgMfManFNo2hjFeeFzbqDVkUByMs8tl8Y/dwXbGDraXBUhS3kmrSNWnAKdK/4u
-         jUcX4kq+XMiEd+FKyw7MDQpbuL6YU3LZoQV3KRZgKIDHugY/mXLnH+O/fqoaCPVxV2
-         SysveOeAPNmuw==
-Date:   Thu, 23 Mar 2023 13:07:37 -0500
-From:   Seth Forshee <sforshee@kernel.org>
-To:     Anh Tuan Phan <tuananhlfc@gmail.com>
-Cc:     brauner@kernel.org, shuah@kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v1] selftests mount: Fix mount_setattr_test builds failed
-Message-ID: <ZByVac3GsD7RFuaj@do-x1extreme>
-References: <20230323172859.89085-1-tuananhlfc@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230323172859.89085-1-tuananhlfc@gmail.com>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        s=k20201202; t=1679595333;
+        bh=jOEGADeEIKqqI39if9RwXDYnSsczMaARPaRZSkKiHpg=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=vHegQC1fukuS5aLNiG7F7/vCRoquRizNf84kUpc3+55HHyhB/2XvuHlIA6VIANgR1
+         Kbh6TOiDynPlHaLD/RhVgTonNwKERRp/v4IPPowDyEOYQlu98c0RVz/x/3cCf4SShO
+         ajm296cDVYihvjfKO7TolQJYer2k6lKK+HGbRmkrnYELwblFsKTc9trnO5RsGIkng8
+         F5mEmSUd8nPanrKgt15xUwrISLp33DJVunkgNQKq+qsHqJj5+I8SzqxlNoG6fUuD2A
+         +7dD0NIMG0136Qoj/YGJ40PsXySoHkdkmLWGKbOPj9rsOQlQjdrklrW7Bwnm8mdyzV
+         sEnJY42WaS0NA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1D9AAE21ED4;
+        Thu, 23 Mar 2023 18:15:33 +0000 (UTC)
+Subject: Re: [GIT PULL] zonefs fixes for 6.3-rc4
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20230323103530.365717-1-damien.lemoal@opensource.wdc.com>
+References: <20230323103530.365717-1-damien.lemoal@opensource.wdc.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230323103530.365717-1-damien.lemoal@opensource.wdc.com>
+X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs tags/zonefs-6.3-rc4
+X-PR-Tracked-Commit-Id: 88b170088ad2c3e27086fe35769aa49f8a512564
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9fd6ba5420ba2b637d1ecc6de8613ec8b9c87e5a
+Message-Id: <167959533310.31611.3540131458984758190.pr-tracker-bot@kernel.org>
+Date:   Thu, 23 Mar 2023 18:15:33 +0000
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
         SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,37 +60,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 24, 2023 at 12:28:59AM +0700, Anh Tuan Phan wrote:
-> When compiling selftests with target mount_setattr I encountered some errors with the below messages:
-> mount_setattr_test.c: In function ‘mount_setattr_thread’:
-> mount_setattr_test.c:343:16: error: variable ‘attr’ has initializer but incomplete type
->   343 |         struct mount_attr attr = {
->       |                ^~~~~~~~~~
-> 
-> These errors are might be because of linux/mount.h is not included. This patch resolves that issue.
-> 
-> Signed-off-by: Anh Tuan Phan <tuananhlfc@gmail.com>
-> ---
->  tools/testing/selftests/mount_setattr/mount_setattr_test.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> index 582669ca38e9..7ca13a924e34 100644
-> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> @@ -18,6 +18,7 @@
->  #include <grp.h>
->  #include <stdbool.h>
->  #include <stdarg.h>
-> +#include "linux/mount.h"
->  
->  #include "../kselftest_harness.h"
+The pull request you sent on Thu, 23 Mar 2023 19:35:30 +0900:
 
-Oops, I had meant to send this fix before and forgot.
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs tags/zonefs-6.3-rc4
 
-One minor nit. I'd prefer to see angle brackets used for this include,
-since the kernel header path is passed using -isystem and angle brackets
-are more conventional for system includes. It's also how most other
-selftests include kernel headers. But either way:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9fd6ba5420ba2b637d1ecc6de8613ec8b9c87e5a
 
-Acked-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
