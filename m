@@ -2,103 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 53A176C6E7C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 18:15:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1BD26C6ED4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 18:29:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbjCWRPB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 13:15:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46196 "EHLO
+        id S232088AbjCWR3I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 13:29:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230021AbjCWRPA (ORCPT
+        with ESMTP id S231905AbjCWR3H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 13:15:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61DB11ADE2;
-        Thu, 23 Mar 2023 10:14:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LaXylfNi8bpz1BBW0lX81CGYCQrmMNDssRUOAZBiH+U=; b=LKb6v0hDdAu0sIuC5TUubwuEQH
-        dZq0rAHl8Bv+V0o6vCEYEhyDrZw4D+0eDJaTcHieFBl7I4GfHuKQuR6C/Q+iSwROptPZ5n6k+eBdL
-        omZ/QtDRzYoCvaqACYxbyAFBi6pvYcS1ITSft2ggjSe4RCCQOPku66Y8gYHO4VNa++SezkHh/FSPz
-        goZk0MLvYyS8Zc5q/Dv5oZwcE7ptNtXFNyIngzBfjqe22vxzbS/Csz0rbVslNpYPYiaIWEcbJI2tA
-        lh4jm8WlkJ5JbjX0ndOeqcFz/Flj+lHaYhR2TgRPb0BHJkzEp3g2+WlnuncJdyzk6ldgc+EJLsvws
-        HFs3l93A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pfOWd-0046ux-Eq; Thu, 23 Mar 2023 17:14:55 +0000
-Date:   Thu, 23 Mar 2023 17:14:55 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 10/31] ext4: Convert ext4_convert_inline_data_to_extent()
- to use a folio
-Message-ID: <ZByJD2ufs9hM5usF@casper.infradead.org>
-References: <20230126202415.1682629-1-willy@infradead.org>
- <20230126202415.1682629-11-willy@infradead.org>
- <20230314223621.GY860405@mit.edu>
+        Thu, 23 Mar 2023 13:29:07 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EB0C3C0C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 10:29:06 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id qe8-20020a17090b4f8800b0023f07253a2cso2784613pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 10:29:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679592546;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zMZZ6Tcdapuhof/i/nzGFRj0fuePe+lfLjf6gEGMDaA=;
+        b=JJQB8Vr7MplIrOqQUE8j55kUWU8R1tdzDxkeHZs3Z7Nt8qpYMbNhVkS8ZIlr7Uw7Xw
+         YwPNZFfFX4igQz695AHv9CN6P3BZHPaJp3F0FAGBeEo/0TNWPHXta+l7PQTNTu3gmuoD
+         qNfnrAc2JdgzK2eOYF5ncFkLnUQc+hFpc5ehSEYBqqZgX2/tXtuc+sRUJBeUnS9EIl3T
+         F+kNvm169HmX4YwjNGFORfoXD7bseQzue33WIjaqPHRIX7h4RlMf5gEqyrwNe8vOabaO
+         2H9kV7PGuUFH9m7PX5eHbOrslRKoUVAoqUM74pygwOGaVfEWvv+pvqgSXauPrqCvMcjj
+         6DwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679592546;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zMZZ6Tcdapuhof/i/nzGFRj0fuePe+lfLjf6gEGMDaA=;
+        b=hY1iRwkVqQGwg1wmui1YsbpOTRRB7Lw7ZLJC1s0tbiq6Xfk3hWo4gCa2fW/i7bI81a
+         DO3MCLT+fgEulSg7Ydzmg1a87vfr19ssGHJlRT+CwEsmukA9zN3n2o7emPTJh455R4d5
+         INPk7Wobs7Q0u6ap47fG84odZaTc+cveZfJ0OgdIvw/6CSPac0E1ByUelyfCGJdCgUx3
+         XScz2gIP9PlxFzNulzVdGAbFrAiRgef95shBsyuwtZcGnjE19jG57mT/aYYXMGR5DKUN
+         8XM0+8YF58jlUmbaS2VYz0oXwDjoFK3/F+P0ceAS/4zk86C9UXZ/WzV7mjmvUYKa10c+
+         AULw==
+X-Gm-Message-State: AO0yUKX2NJ/wL8z0idThokhSDkiRJ5lPo3GJ4TAmtUYViio+kZ5VvYK5
+        2CP50gYEj9MxD3ESHucVnaEKxjaG4n9bdbGQ
+X-Google-Smtp-Source: AK7set+u9tUFLPhTIUjtBT8TxguYuKCL7Y8+0lU2tr8K8Iyjx83VlHZ5GwHr+11lqr4smZ3/h/bDpA==
+X-Received: by 2002:a05:6a20:49a9:b0:da:5ab7:8cf3 with SMTP id fs41-20020a056a2049a900b000da5ab78cf3mr3492515pzb.30.1679592545666;
+        Thu, 23 Mar 2023 10:29:05 -0700 (PDT)
+Received: from pop-os.lan ([14.232.107.112])
+        by smtp.gmail.com with ESMTPSA id s10-20020a62e70a000000b00593e4e6516csm10706427pfh.124.2023.03.23.10.29.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Mar 2023 10:29:05 -0700 (PDT)
+From:   Anh Tuan Phan <tuananhlfc@gmail.com>
+To:     brauner@kernel.org, sforshee@kernel.org, shuah@kernel.org
+Cc:     Anh Tuan Phan <tuananhlfc@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH v1] selftests mount: Fix mount_setattr_test builds failed
+Date:   Fri, 24 Mar 2023 00:28:59 +0700
+Message-Id: <20230323172859.89085-1-tuananhlfc@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230314223621.GY860405@mit.edu>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 14, 2023 at 06:36:21PM -0400, Theodore Ts'o wrote:
-> On Thu, Jan 26, 2023 at 08:23:54PM +0000, Matthew Wilcox (Oracle) wrote:
-> > Saves a number of calls to compound_head().
-> 
-> Is this left over from an earlier version of this patch series?  There
-> are no changes to calls to compound_head() that I can find in this
-> patch.
+When compiling selftests with target mount_setattr I encountered some errors with the below messages:
+mount_setattr_test.c: In function ‘mount_setattr_thread’:
+mount_setattr_test.c:343:16: error: variable ‘attr’ has initializer but incomplete type
+  343 |         struct mount_attr attr = {
+      |                ^~~~~~~~~~
 
-They're hidden.  Here are the ones from this patch:
+These errors are might be because of linux/mount.h is not included. This patch resolves that issue.
 
--       if (!PageUptodate(page)) {
--               unlock_page(page);
--               put_page(page);
--               unlock_page(page);
--               put_page(page);
+Signed-off-by: Anh Tuan Phan <tuananhlfc@gmail.com>
+---
+ tools/testing/selftests/mount_setattr/mount_setattr_test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-That's five.  I may have missed some.
+diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+index 582669ca38e9..7ca13a924e34 100644
+--- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
++++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+@@ -18,6 +18,7 @@
+ #include <grp.h>
+ #include <stdbool.h>
+ #include <stdarg.h>
++#include "linux/mount.h"
+ 
+ #include "../kselftest_harness.h"
+ 
+-- 
+2.34.1
 
-> > @@ -565,10 +564,9 @@ static int ext4_convert_inline_data_to_extent(struct address_space *mapping,
-> >  
-> >  	/* We cannot recurse into the filesystem as the transaction is already
-> >  	 * started */
-> > -	flags = memalloc_nofs_save();
-> > -	page = grab_cache_page_write_begin(mapping, 0);
-> > -	memalloc_nofs_restore(flags);
-> > -	if (!page) {
-> > +	folio = __filemap_get_folio(mapping, 0, FGP_WRITEBEGIN | FGP_NOFS,
-> > +			mapping_gfp_mask(mapping));
-> > +	if (!folio) {
-> >  		ret = -ENOMEM;
-> >  		goto out;
-> >  	}
-> 
-> Is there a reason why to use FGP_NOFS as opposed to using
-> memalloc_nofs_{save,restore}()?
-> 
-> I thought using memalloc_nofs_save() is considered the perferred
-> approach by mm-folks.
-
-Ideally, yes, we'd use memalloc_nofs_save(), but not like this!  The way
-it's supposed to be used is at the point where you do something which
-makes the fs non-reentrant.  ie when you start the transaction, you should
-be calling memalloc_nofs_save() and when you finish the transaction,
-you should be calling memalloc_nofs_restore().  That way, you don't
-need to adorn the entire filesystem with GFP_NOFS/FGP_NOFS/whatever,
-you have one place where you mark yourself non-reentrant and you're done.
-
-Once ext4 does this every time it starts a transaction, we can drop
-the FGP_NOFS flag usage in ext4, and once every filesystem does it,
-we can drop the entire flag, and that will make me happy.  It's a long
-road, though.
