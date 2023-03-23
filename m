@@ -2,105 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E0946C5CAB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 03:33:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B14E6C5CDC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 03:53:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230038AbjCWCdK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 22:33:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39552 "EHLO
+        id S229694AbjCWCxL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 22:53:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbjCWCdJ (ORCPT
+        with ESMTP id S229522AbjCWCxI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 22:33:09 -0400
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D1D32CC53;
-        Wed, 22 Mar 2023 19:33:07 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VeSSihz_1679538780;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0VeSSihz_1679538780)
-          by smtp.aliyun-inc.com;
-          Thu, 23 Mar 2023 10:33:04 +0800
-From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH v2] fs/buffer: Remove redundant assignment to err
-Date:   Thu, 23 Mar 2023 10:32:59 +0800
-Message-Id: <20230323023259.6924-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+        Wed, 22 Mar 2023 22:53:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A8731F5F7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 19:52:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679539940;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W0ebE6bgoVx/Mv3B6TcJ7pQSb0U66C3AjGiXsmuMBx4=;
+        b=WGrlMBCIHYh8hhVxtHPCCXbdZoWeu/e0DMqETchY3ZR+HmmAYV2zc6yJSZxYb1aadYDFfk
+        6cqssZMmDN5TI/yKedZ8fH3a3PkreDE1Fj+G5GuhRIgp+5Xk3Q+qXFBflzGBkIRY8t+KDD
+        zu/vpPshKPsvfgqUj1r5CEozFM3GrMU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-472-Uu42UDlnMkup59I9Lyv7rg-1; Wed, 22 Mar 2023 22:52:15 -0400
+X-MC-Unique: Uu42UDlnMkup59I9Lyv7rg-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 93FFB8828C0;
+        Thu, 23 Mar 2023 02:52:14 +0000 (UTC)
+Received: from localhost (ovpn-12-97.pek2.redhat.com [10.72.12.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 76B4B4021B1;
+        Thu, 23 Mar 2023 02:52:13 +0000 (UTC)
+Date:   Thu, 23 Mar 2023 10:52:09 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>,
+        David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jiri Olsa <jolsa@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v7 4/4] mm: vmalloc: convert vread() to vread_iter()
+Message-ID: <ZBu+2cPCQvvFF/FY@MiWiFi-R3L-srv>
+References: <cover.1679511146.git.lstoakes@gmail.com>
+ <941f88bc5ab928e6656e1e2593b91bf0f8c81e1b.1679511146.git.lstoakes@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-8.0 required=5.0 tests=ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <941f88bc5ab928e6656e1e2593b91bf0f8c81e1b.1679511146.git.lstoakes@gmail.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Variable 'err' set but not used.
+On 03/22/23 at 06:57pm, Lorenzo Stoakes wrote:
+> Having previously laid the foundation for converting vread() to an iterator
+> function, pull the trigger and do so.
+> 
+> This patch attempts to provide minimal refactoring and to reflect the
+> existing logic as best we can, for example we continue to zero portions of
+> memory not read, as before.
+> 
+> Overall, there should be no functional difference other than a performance
+> improvement in /proc/kcore access to vmalloc regions.
+> 
+> Now we have eliminated the need for a bounce buffer in read_kcore_iter(),
+> we dispense with it, and try to write to user memory optimistically but
+> with faults disabled via copy_page_to_iter_nofault(). We already have
+> preemption disabled by holding a spin lock. We continue faulting in until
+> the operation is complete.
 
-fs/buffer.c:2613:2: warning: Value stored to 'err' is never read.
+I don't understand the sentences here. In vread_iter(), the actual
+content reading is done in aligned_vread_iter(), otherwise we zero
+filling the region. In aligned_vread_iter(), we will use
+vmalloc_to_page() to get the mapped page and read out, otherwise zero
+fill. While in this patch, fault_in_iov_iter_writeable() fault in memory
+of iter one time and will bail out if failed. I am wondering why we 
+continue faulting in until the operation is complete, and how that is done. 
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=4589
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
-Changes in v2:
-  -Remove unused out label.
+If we look into the failing point in vread_iter(), it's mainly coming
+from copy_page_to_iter_nofault(), e.g page_copy_sane() checking failed,
+i->data_source checking failed. If these conditional checking failed,
+should we continue reading again and again? And this is not related to
+memory faulting in. I saw your discussion with David, but I am still a
+little lost. Hope I can learn it, thanks in advance.
 
- fs/buffer.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index d759b105c1e7..b3eb905f87d6 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2580,7 +2580,7 @@ int block_truncate_page(struct address_space *mapping,
- 	struct inode *inode = mapping->host;
- 	struct page *page;
- 	struct buffer_head *bh;
--	int err;
-+	int err = 0;
- 
- 	blocksize = i_blocksize(inode);
- 	length = offset & (blocksize - 1);
-@@ -2593,9 +2593,8 @@ int block_truncate_page(struct address_space *mapping,
- 	iblock = (sector_t)index << (PAGE_SHIFT - inode->i_blkbits);
- 	
- 	page = grab_cache_page(mapping, index);
--	err = -ENOMEM;
- 	if (!page)
--		goto out;
-+		return -ENOMEM;
- 
- 	if (!page_has_buffers(page))
- 		create_empty_buffers(page, blocksize, 0);
-@@ -2609,7 +2608,6 @@ int block_truncate_page(struct address_space *mapping,
- 		pos += blocksize;
- 	}
- 
--	err = 0;
- 	if (!buffer_mapped(bh)) {
- 		WARN_ON(bh->b_size != blocksize);
- 		err = get_block(inode, iblock, bh, 0);
-@@ -2633,12 +2631,11 @@ int block_truncate_page(struct address_space *mapping,
- 
- 	zero_user(page, offset, length);
- 	mark_buffer_dirty(bh);
--	err = 0;
- 
- unlock:
- 	unlock_page(page);
- 	put_page(page);
--out:
-+
- 	return err;
- }
- EXPORT_SYMBOL(block_truncate_page);
--- 
-2.20.1.7.g153144c
+......
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index 08b795fd80b4..25b44b303b35 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+......
+> @@ -507,13 +503,30 @@ read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
+>  
+>  		switch (m->type) {
+>  		case KCORE_VMALLOC:
+> -			vread(buf, (char *)start, tsz);
+> -			/* we have to zero-fill user buffer even if no read */
+> -			if (copy_to_iter(buf, tsz, iter) != tsz) {
+> -				ret = -EFAULT;
+> -				goto out;
+> +		{
+> +			const char *src = (char *)start;
+> +			size_t read = 0, left = tsz;
+> +
+> +			/*
+> +			 * vmalloc uses spinlocks, so we optimistically try to
+> +			 * read memory. If this fails, fault pages in and try
+> +			 * again until we are done.
+> +			 */
+> +			while (true) {
+> +				read += vread_iter(iter, src, left);
+> +				if (read == tsz)
+> +					break;
+> +
+> +				src += read;
+> +				left -= read;
+> +
+> +				if (fault_in_iov_iter_writeable(iter, left)) {
+> +					ret = -EFAULT;
+> +					goto out;
+> +				}
+>  			}
+>  			break;
+> +		}
+>  		case KCORE_USER:
+>  			/* User page is handled prior to normal kernel page: */
+>  			if (copy_to_iter((char *)start, tsz, iter) != tsz) {
 
