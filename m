@@ -2,102 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B40CC6C674A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 12:56:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 813156C681F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 13:23:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231308AbjCWL45 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 07:56:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58666 "EHLO
+        id S230078AbjCWMXt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 08:23:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231317AbjCWL4k (ORCPT
+        with ESMTP id S230121AbjCWMXs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 07:56:40 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 501ED3770B;
-        Thu, 23 Mar 2023 04:56:21 -0700 (PDT)
-Received: from dggpemm500014.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Pj3f065CvzLFVK;
-        Thu, 23 Mar 2023 19:54:00 +0800 (CST)
-Received: from [10.174.178.120] (10.174.178.120) by
- dggpemm500014.china.huawei.com (7.185.36.153) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Thu, 23 Mar 2023 19:56:18 +0800
-Message-ID: <e80ede3b-f92a-294f-64ee-a52cdf6de7a0@huawei.com>
-Date:   Thu, 23 Mar 2023 19:56:18 +0800
+        Thu, 23 Mar 2023 08:23:48 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E48811BEC;
+        Thu, 23 Mar 2023 05:23:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bkZg0fteEv+ot3llQzJst6tGw3eyrfkN8Eh1a5WHKwU=; b=iebeCD1ikKCkOLi2Kft79o/EpL
+        HMA54VQybdeErM4GIeYLu3XCznsTdTk8XlMk+yqVHpdkGLk0EwRnQhw1666LK2hRoyG4ptxuZrP8y
+        DY5Rd7sdL6HWnn1aePKytB+WqSkUfxldpLag6fT5q55gmQLqE1ySDK6T5OkNKaKWY0+O/gk87sdvg
+        urSaKqpmufPn5BZrOZFHbI9KSGtxRDNnGYGA6DBNgsBrMh7OpVvqZvudqs0Cn7D080p8efg0x9ol6
+        o3SJ6PhjM6jmYlojSj+vgrS/0EGym6LDS4ui3k9TEMX3e1zXJnfAWEGf+/zIyU8IgapGgnw/DrRz1
+        2QTJmtRA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pfJyf-003wNM-F2; Thu, 23 Mar 2023 12:23:33 +0000
+Date:   Thu, 23 Mar 2023 12:23:33 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     gouhao@uniontech.com
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/buffer: adjust the order of might_sleep() in
+ __getblk_gfp()
+Message-ID: <ZBxExR3/4bphAUpF@casper.infradead.org>
+References: <20230323093752.17461-1-gouhao@uniontech.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-CC:     <mawupeng1@huawei.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: Re: [PATCH] mm: Return early in truncate_pagecache if newsize
- overflows
-Content-Language: en-US
-To:     <akpm@linux-foundation.org>, <willy@infradead.org>
-References: <20230306113317.2295343-1-mawupeng1@huawei.com>
-From:   mawupeng <mawupeng1@huawei.com>
-In-Reply-To: <20230306113317.2295343-1-mawupeng1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.178.120]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemm500014.china.huawei.com (7.185.36.153)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-2.3 required=5.0 tests=NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230323093752.17461-1-gouhao@uniontech.com>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi maintainers.
+On Thu, Mar 23, 2023 at 05:37:52PM +0800, gouhao@uniontech.com wrote:
+> From: Gou Hao <gouhao@uniontech.com>
+> 
+> If 'bh' is found in cache, just return directly.
+> might_sleep() is only required on slow paths.
 
-Kindly ping.
-
-On 2023/3/6 19:33, Wupeng Ma wrote:
-> From: Ma Wupeng <mawupeng1@huawei.com>
-> 
-> Our own test reports a UBSAN in truncate_pagecache:
-> 
-> UBSAN: Undefined behaviour in mm/truncate.c:788:9
-> signed integer overflow:
-> 9223372036854775807 + 1 cannot be represented in type 'long long int'
-> 
-> Call Trace:
->   truncate_pagecache+0xd4/0xe0
->   truncate_setsize+0x70/0x88
->   simple_setattr+0xdc/0x100
->   notify_change+0x654/0xb00
->   do_truncate+0x108/0x1a8
->   do_sys_ftruncate+0x2ec/0x4a0
->   __arm64_sys_ftruncate+0x5c/0x80
-> 
-> For huge file which pass LONG_MAX to ftruncate, truncate_pagecache() will
-> be called to truncate with newsize be LONG_MAX which will lead to
-> overflow for holebegin:
-> 
->   loff_t holebegin = round_up(newsize, PAGE_SIZE);
-> 
-> Since there is no meaning to truncate a file to LONG_MAX, return here
-> to avoid burn a bunch of cpu cycles.
-> 
-> Signed-off-by: Ma Wupeng <mawupeng1@huawei.com>
-> ---
->  mm/truncate.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/truncate.c b/mm/truncate.c
-> index 7b4ea4c4a46b..99b6ce2d669b 100644
-> --- a/mm/truncate.c
-> +++ b/mm/truncate.c
-> @@ -730,6 +730,9 @@ void truncate_pagecache(struct inode *inode, loff_t newsize)
->  	struct address_space *mapping = inode->i_mapping;
->  	loff_t holebegin = round_up(newsize, PAGE_SIZE);
->  
-> +	if (holebegin < 0)
-> +		return;
-> +
->  	/*
->  	 * unmap_mapping_range is called twice, first simply for
->  	 * efficiency so that truncate_inode_pages does fewer
+You're missing the point.  The caller can't know whether the slow or
+fast path will be taken.  So it must _never_ call this function if it
+cannot sleep.
