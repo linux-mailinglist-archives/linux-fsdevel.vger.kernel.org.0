@@ -2,232 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A756C5B79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 01:41:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDD2B6C5BAF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 02:04:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229905AbjCWAli (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 20:41:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34486 "EHLO
+        id S229691AbjCWBEc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 21:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229766AbjCWAlg (ORCPT
+        with ESMTP id S229713AbjCWBEb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 20:41:36 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6A8E385;
-        Wed, 22 Mar 2023 17:41:33 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id o6-20020a17090a9f8600b0023f32869993so372749pjp.1;
-        Wed, 22 Mar 2023 17:41:33 -0700 (PDT)
+        Wed, 22 Mar 2023 21:04:31 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B4E27D51;
+        Wed, 22 Mar 2023 18:04:29 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id w4so12806565plg.9;
+        Wed, 22 Mar 2023 18:04:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679532093;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nli6dQUADXkCT93kaRog0dXznCLZzv1eET9HwLL1Hk0=;
-        b=EgHbbrk1aauBVwgIaxEGTuMprK1xZNCus6XfsR6fTEbDOFj+ziwreVSGEj/LVGbLgt
-         fpWHEknmI6xPnkL3vhPFM8JUBHK+9DFF2XRnJm2G899AmfDNW5psqAw0j1PgntSJmXKs
-         OaBchepVlSLISwFFVP/DMUdk/Vy9A9+2NtoMqDw7qbw/4InBCaIA9A3AP5CMb7a5rMlP
-         Z0yQiLGinRUrkZV0SfLN2APGES4i35hk6ePSUkjZaTVtkPG1YyZ7rgYx5oJQOyuw/E6b
-         H3NTfoUnIpteFYPhEQmsJE48AKcWflqd9VeHjIWIlcgh99q5GI8HZWlel8dFjcqwWv1A
-         0Qlg==
+        d=gmail.com; s=20210112; t=1679533469;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3MwmtD+ic/YD9AyL8GSa44JOfk9u43RAIZVxl0paBN4=;
+        b=nNWuSwOKH7BEiohFuQh8LGj92GHaM785BhB+8I7fhMFecxliFp4fYI96zs1ZmhCHja
+         /a+Vi96g7rM+x8sytO1qBz2ktxxLSwRH6vFxoqVOkGR51RmwbYn/PrQvf6w88GVdvUd8
+         L5U4qnUn5VDhkQ8Gw73+ibbp/vpz8pW4iw/+qXrbirP2l2pV1P3zccWs2j7vm/Ti5OzF
+         MmplpwhLhrJiWm+yhk6D6jI/H2iATV6+rD0f9tUwQwgtpFSGoG99C/iskLw31MkwqZi1
+         keFZu2EHthZgN/AMoALvbn0c5p8SYC0eXZxVmGHTCc5icFD4ydZxukQhXW4ad/Dqyn3S
+         4M+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679532093;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nli6dQUADXkCT93kaRog0dXznCLZzv1eET9HwLL1Hk0=;
-        b=JfkUflkQdfvr7FPi0yJElQA20VKaU0BkVtFgJGrDQXC7ylTBZrSNMfluzjIrvVdNrt
-         9kH9Aqj/sTpp1lGvf7i/TqL4pgMY0cWTWPjqdMBKFgBBVLAwFyQWXp6ZQdjYFnr56s4c
-         MBIHaFFf4Kz0RzlQFBBD8M/waJRAQf1A7Gf6i6GuxNvO78Fv0UB7ozxYwCSBo3FJkzX9
-         eim4h43IzzvRI4+ZPwCbZYDZgYUbJy6VSu93HbSvh40bRTXc4IrJHZ95q7wUnJWbQHMw
-         gPZldMHC6GvDwRhM8zIkS/p1JjQff0jYD/DTb0af31An3qTpe13TigXlrnnU8rQjeb0B
-         dfhg==
-X-Gm-Message-State: AO0yUKXLWFBmrtjIQJFBO9Hakacsui4P/ZeZrKKAP90R+HmHk+pab1po
-        QNDK1vLpEHBsLnDjIA4bAT0=
-X-Google-Smtp-Source: AK7set8gXt+r3vrcFcNCwocuZTBvWUUZ3nPNYHgXD8Mgde+9UJkFIYJ5dt0UG9U5gaW437O/xM/diQ==
-X-Received: by 2002:a17:90b:384b:b0:23d:5196:eca8 with SMTP id nl11-20020a17090b384b00b0023d5196eca8mr6076318pjb.20.1679532093114;
-        Wed, 22 Mar 2023 17:41:33 -0700 (PDT)
-Received: from localhost ([192.55.54.55])
-        by smtp.gmail.com with ESMTPSA id q61-20020a17090a17c300b00233db0db3dfsm123775pja.7.2023.03.22.17.41.32
+        d=1e100.net; s=20210112; t=1679533469;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3MwmtD+ic/YD9AyL8GSa44JOfk9u43RAIZVxl0paBN4=;
+        b=c20CJd/dI3TYpRYpqw3HP43D3tX4Cg2ZhdzNqDkSXDs4jzOk004Mo2fFzvD6+M6sMB
+         yRVw7LanBDuaI9HZU2zl6WW1xB0Wd+wrvuWqlJkqFX7paJUeoXM0/Bw3ZwU6ahZYmcoH
+         zl8ibDTLIcdJzgB2RYsDuGdcZHSJ1zpKEeQZng9HAIt4g4htWZQa+3JrirP8atn154bF
+         BuhgEeEiRJi+jmtnTHzM0FJOuyFt7I42X75KzoGLhh8hdRHY3Ex1ZlUAzYzxG5DlD35C
+         p64wAroMwyVDyIJmzt/DNDPQLaqFkFLs9Ylm6CxkvjyL4X1EqwvOnZ7XwoBg/3xIS4N6
+         v6yA==
+X-Gm-Message-State: AO0yUKWkjTOzk7jX6Rwt+vrSNgRhoGZXlnIZcj71Eeq+uPCY617y1lku
+        srkuhYKr7v3uMl0X3EOn5lg=
+X-Google-Smtp-Source: AK7set/1gln3iAMgLULjYc0mJevIs3D097MVVyf2kRHldya7bcuKEj6gPk2dSI0VPDXHP267caITgw==
+X-Received: by 2002:a17:903:430c:b0:19f:31cc:47fc with SMTP id jz12-20020a170903430c00b0019f31cc47fcmr3557378plb.39.1679533468693;
+        Wed, 22 Mar 2023 18:04:28 -0700 (PDT)
+Received: from localhost (2603-800c-1a02-1bae-a7fa-157f-969a-4cde.res6.spectrum.com. [2603:800c:1a02:1bae:a7fa:157f:969a:4cde])
+        by smtp.gmail.com with ESMTPSA id o11-20020a1709026b0b00b0019a96d3b456sm7386086plk.44.2023.03.22.18.04.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 17:41:32 -0700 (PDT)
-Date:   Wed, 22 Mar 2023 17:41:31 -0700
-From:   Isaku Yamahata <isaku.yamahata@gmail.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     Ackerley Tng <ackerleytng@google.com>, seanjc@google.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        pbonzini@redhat.com, corbet@lwn.net, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, arnd@arndb.de,
-        naoya.horiguchi@nec.com, linmiaohe@huawei.com, x86@kernel.org,
-        hpa@zytor.com, hughd@google.com, jlayton@kernel.org,
-        bfields@fieldses.org, akpm@linux-foundation.org, shuah@kernel.org,
-        rppt@kernel.org, steven.price@arm.com, mail@maciej.szmigiero.name,
-        vbabka@suse.cz, vannapurve@google.com, yu.c.zhang@linux.intel.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, qperret@google.com, tabba@google.com,
-        michael.roth@amd.com, mhocko@suse.com, wei.w.wang@intel.com,
-        isaku.yamahata@gmail.com
-Subject: Re: [PATCH v10 9/9] KVM: Enable and expose KVM_MEM_PRIVATE
-Message-ID: <20230323004131.GA214881@ls.amr.corp.intel.com>
-References: <20230128140030.GB700688@chaop.bj.intel.com>
- <diqz5ybc3xsr.fsf@ackerleytng-cloudtop.c.googlers.com>
- <20230308074026.GA2183207@chaop.bj.intel.com>
+        Wed, 22 Mar 2023 18:04:28 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Wed, 22 Mar 2023 15:04:26 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>, fsverity@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        Nathan Huckleberry <nhuck@google.com>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [GIT PULL] fsverity fixes for v6.3-rc4
+Message-ID: <ZBulmj3CcYTiCC8z@slm.duckdns.org>
+References: <20230320210724.GB1434@sol.localdomain>
+ <CAHk-=wgE9kORADrDJ4nEsHHLirqPCZ1tGaEPAZejHdZ03qCOGg@mail.gmail.com>
+ <ZBlJJBR7dH4/kIWD@slm.duckdns.org>
+ <CAHk-=wh0wxPx1zP1onSs88KB6zOQ0oHyOg_vGr5aK8QJ8fuxnw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230308074026.GA2183207@chaop.bj.intel.com>
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wh0wxPx1zP1onSs88KB6zOQ0oHyOg_vGr5aK8QJ8fuxnw@mail.gmail.com>
+X-Spam-Status: No, score=0.4 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 08, 2023 at 03:40:26PM +0800,
-Chao Peng <chao.p.peng@linux.intel.com> wrote:
+Hello, Linus.
 
-> On Wed, Mar 08, 2023 at 12:13:24AM +0000, Ackerley Tng wrote:
-> > Chao Peng <chao.p.peng@linux.intel.com> writes:
-> > 
-> > > On Sat, Jan 14, 2023 at 12:01:01AM +0000, Sean Christopherson wrote:
-> > > > On Fri, Dec 02, 2022, Chao Peng wrote:
-> > > ...
-> > > > Strongly prefer to use similar logic to existing code that detects wraps:
-> > 
-> > > > 		mem->restricted_offset + mem->memory_size < mem->restricted_offset
-> > 
-> > > > This is also where I'd like to add the "gfn is aligned to offset"
-> > > > check, though
-> > > > my brain is too fried to figure that out right now.
-> > 
-> > > Used count_trailing_zeros() for this TODO, unsure we have other better
-> > > approach.
-> > 
-> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > > index afc8c26fa652..fd34c5f7cd2f 100644
-> > > --- a/virt/kvm/kvm_main.c
-> > > +++ b/virt/kvm/kvm_main.c
-> > > @@ -56,6 +56,7 @@
-> > >   #include <asm/processor.h>
-> > >   #include <asm/ioctl.h>
-> > >   #include <linux/uaccess.h>
-> > > +#include <linux/count_zeros.h>
-> > 
-> > >   #include "coalesced_mmio.h"
-> > >   #include "async_pf.h"
-> > > @@ -2087,6 +2088,19 @@ static bool kvm_check_memslot_overlap(struct
-> > > kvm_memslots *slots, int id,
-> > >   	return false;
-> > >   }
-> > 
-> > > +/*
-> > > + * Return true when ALIGNMENT(offset) >= ALIGNMENT(gpa).
-> > > + */
-> > > +static bool kvm_check_rmem_offset_alignment(u64 offset, u64 gpa)
-> > > +{
-> > > +	if (!offset)
-> > > +		return true;
-> > > +	if (!gpa)
-> > > +		return false;
-> > > +
-> > > +	return !!(count_trailing_zeros(offset) >= count_trailing_zeros(gpa));
+On Tue, Mar 21, 2023 at 11:31:35AM -0700, Linus Torvalds wrote:
+> On Mon, Mar 20, 2023 at 11:05 PM Tejun Heo <tj@kernel.org> wrote:
+> >
+> > Do you remember what the other case was? Was it also on heterogenous arm
+> > setup?
+> 
+> Yup. See commit c25da5b7baf1 ("dm verity: stop using WQ_UNBOUND for verify_wq")
+> 
+> But see also 3fffb589b9a6 ("erofs: add per-cpu threads for
+> decompression as an option").
+> 
+> And you can see the confusion this all has in commit 43fa47cb116d ("dm
+> verity: remove WQ_CPU_INTENSIVE flag since using WQ_UNBOUND"), which
+> perhaps should be undone now.
 
-This check doesn't work expected. For example, offset = 2GB, gpa=4GB
-this check fails.
-I come up with the following.
+Thanks for the pointers. They all seem plausible symptoms of work items
+getting bounced across slow cache boundaries. I'm off for a few weeks so
+can't really dig in right now but will get to it afterwards.
 
-From ec87e25082f0497431b732702fae82c6a05071bf Mon Sep 17 00:00:00 2001
-Message-Id: <ec87e25082f0497431b732702fae82c6a05071bf.1679531995.git.isaku.yamahata@intel.com>
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-Date: Wed, 22 Mar 2023 15:32:56 -0700
-Subject: [PATCH] KVM: Relax alignment check for restricted mem
+> > There aren't many differences between unbound workqueues and percpu ones
+> > that aren't concurrency managed. If there are significant performance
+> > differences, it's unlikely to be directly from whatever workqueue is doing.
+> 
+> There's a *lot* of special cases for WQ_UNBOUND in the workqueue code,
+> and they are a lot less targeted than the other WQ_xyz flags, I feel.
+> They have their own cpumask logic, special freeing rules etc etc.
+>
+> So I would say that the "aren't many differences" is not exactly true.
+> There are subtle and random differences, including the very basic
+> "queue_work()" workflow.
 
-kvm_check_rmem_offset_alignment() only checks based on offset alignment
-and GPA alignment.  However, the actual alignment for offset depends
-on architecture.  For x86 case, it can be 1G, 2M or 4K.  So even if
-GPA is aligned for 1G+, only 1G-alignment is required for offset.
+Oh yeah, pwq management side is pretty involved, being dynamic and all. I
+just couldn't think of anything in the issue & execution path which would
+explain the reported significant performance penalty. The issue path
+differences come down to node selection and dynamic pwq release handling,
+neither of which should be in play in this case.
 
-Without this patch, gpa=4G, offset=2G results in failure of memory slot
-creation.
+> Now, I assume that the arm cases don't actually use
+> wq_unbound_cpumask, so I assume it's mostly the "instead of local cpu
+> queue, use the local node queue", and so it's all on random CPU's
+> since nobody uses NUMA nodes.
+> 
+> And no, if it's caching effects, doing it on LLC boundaries isn't
+> rigth *either*. By default it should probably be on L2 boundaries or
+> something, with most non-NUMA setups likely having one single LLC but
+> multiple L2 nodes.
 
-Fixes: edc8814b2c77 ("KVM: Require gfn be aligned with restricted offset")
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
----
- arch/x86/include/asm/kvm_host.h | 15 +++++++++++++++
- virt/kvm/kvm_main.c             |  9 ++++++++-
- 2 files changed, 23 insertions(+), 1 deletion(-)
+Hmm... on recent x86 cpus, that'd just end up paring up the hyperthreads,
+which would likely be too narrow especially given that l3's on recent cpus
+seem pretty fast. I think what I need to do is generalizing the numa logic
+so that it can sit on any of these topological boundaries and let arch
+define the default boundary and let each wq to override the selection.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 88e11dd3afde..03af44650f24 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -16,6 +16,7 @@
- #include <linux/irq_work.h>
- #include <linux/irq.h>
- #include <linux/workqueue.h>
-+#include <linux/count_zeros.h>
- 
- #include <linux/kvm.h>
- #include <linux/kvm_para.h>
-@@ -143,6 +144,20 @@
- #define KVM_HPAGE_MASK(x)	(~(KVM_HPAGE_SIZE(x) - 1))
- #define KVM_PAGES_PER_HPAGE(x)	(KVM_HPAGE_SIZE(x) / PAGE_SIZE)
- 
-+#define kvm_arch_required_alignment	kvm_arch_required_alignment
-+static inline int kvm_arch_required_alignment(u64 gpa)
-+{
-+	int zeros = count_trailing_zeros(gpa);
-+
-+	WARN_ON_ONCE(!PAGE_ALIGNED(gpa));
-+	if (zeros >= KVM_HPAGE_SHIFT(PG_LEVEL_1G))
-+		return KVM_HPAGE_SHIFT(PG_LEVEL_1G);
-+	else if (zeros >= KVM_HPAGE_SHIFT(PG_LEVEL_2M))
-+		return KVM_HPAGE_SHIFT(PG_LEVEL_2M);
-+
-+	return PAGE_SHIFT;
-+}
-+
- #define KVM_MEMSLOT_PAGES_TO_MMU_PAGES_RATIO 50
- #define KVM_MIN_ALLOC_MMU_PAGES 64UL
- #define KVM_MMU_HASH_SHIFT 12
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index c9c4eef457b0..f4ff96171d24 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2113,6 +2113,13 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
- 	return false;
- }
- 
-+#ifndef kvm_arch_required_alignment
-+__weak int kvm_arch_required_alignment(u64 gpa)
-+{
-+	return PAGE_SHIFT
-+}
-+#endif
-+
- /*
-  * Return true when ALIGNMENT(offset) >= ALIGNMENT(gpa).
-  */
-@@ -2123,7 +2130,7 @@ static bool kvm_check_rmem_offset_alignment(u64 offset, u64 gpa)
- 	if (!gpa)
- 		return false;
- 
--	return !!(count_trailing_zeros(offset) >= count_trailing_zeros(gpa));
-+	return !!(count_trailing_zeros(offset) >= kvm_arch_required_alignment(gpa));
- }
- 
- /*
--- 
-2.25.1
+Another related shortcoming is that while the unbound wq's say "let the
+scheduler figure out the best solution within the boundary", they don't
+communicate the locality of work item to the scheduler at all, so within
+each boundary, from scheduler pov, the assignment is completely random. Down
+the line, it'd probably help if wq can provide some hints re. the expected
+locality.
 
-
+Thanks.
 
 -- 
-Isaku Yamahata <isaku.yamahata@gmail.com>
+tejun
