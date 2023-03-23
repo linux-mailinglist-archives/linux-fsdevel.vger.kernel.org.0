@@ -2,54 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B99596C6B92
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 15:51:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40A366C6BB6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 16:00:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231934AbjCWOvx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 10:51:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56330 "EHLO
+        id S231722AbjCWPAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 11:00:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231945AbjCWOvu (ORCPT
+        with ESMTP id S231609AbjCWPAE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 10:51:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1203AEFA8;
-        Thu, 23 Mar 2023 07:51:17 -0700 (PDT)
+        Thu, 23 Mar 2023 11:00:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A02C1F919
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 08:00:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B3506277C;
-        Thu, 23 Mar 2023 14:51:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59447C433D2;
-        Thu, 23 Mar 2023 14:51:10 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A4D4FB82142
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 14:59:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AABBC433D2;
+        Thu, 23 Mar 2023 14:59:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679583070;
-        bh=BeVDhTGiIgig9r6zgcWWACDJTJQsieohN3u1+udvr4c=;
+        s=k20201202; t=1679583598;
+        bh=X96U9cRa+WxlSwB3/wjzX6jxPtSOyXv5Ipj7ayZ3RAc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EvSDVKmaRP2hOQQZgVTETO8M7gK7tQu3hLC6odeY4jxOqIyqO+Kti1oz8IQVNIg11
-         sGODTtCQpDy1cjUtsPUngGa26pR1AnIoK+EETfCayMY94TtFtt/r5fzAWT4D4OOqJB
-         Xn7CS/RfLdGA1MBmIjXg/m7R6PFOPMGnQvdGSg+eINMZVyWliVrDGhqPm0X+7x95sB
-         +KfXx1IYJ5fxLuyo010Ye6lrvbfFUJyMUFTLwanbKPnnMRfLl1G+sGFNebT5pPZ2eJ
-         pMeWlXyfx6v1ig5oj1N+EHuqF/cYGqeynz/nLf4D4Cck/CmHhECww3vBZbccXlxpwd
-         i90Gtl0y4xicw==
-Date:   Thu, 23 Mar 2023 07:51:09 -0700
+        b=Bc+RPLy4dNSj/CE1trwGqvcjNNRpfzsFCzT3hGEjSBe5dNL4F/0w9RV3/l6JWEz4p
+         R4S1PxgEIuqfWau3l/D5zjwOTpBXIRMgBrmYtTzDHOhnNC+SMMVss64ztz8XKA6UJB
+         Izuv6ZRMAvWVYBWeY5qbfyACMS6xvv/tymQX6/iY9NYr0bWHOWGxfLjemJM7/hHlpZ
+         WHHwWEcYzWMpintgX10SUA1xAcAZUg4NtM1WgmYr7tkBg0Xy0/+OS0JFpO5hPhTHlx
+         FuI1g8fWdDrcl1ftfnSKlrLpsQBs9lDcSyZ/RR17L/fmyxQ5pN5/nFf/xwIadE/swS
+         ogYLELjWa1CiA==
+Date:   Thu, 23 Mar 2023 07:59:57 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Ritesh Harjani <ritesh.list@gmail.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/31] ext4: Convert ext4_finish_bio() to use folios
-Message-ID: <20230323145109.GA466457@frogsfrogsfrogs>
-References: <20230126202415.1682629-5-willy@infradead.org>
- <87ttyy1bz4.fsf@doe.com>
- <ZBvG8xbGHwQ+PPQa@casper.infradead.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz
+Subject: Re: [PATCH] fsdax: unshare: zero destination if srcmap is HOLE or
+ UNWRITTEN
+Message-ID: <20230323145957.GA466461@frogsfrogsfrogs>
+References: <1679483469-2-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <20230322160311.89efea3493db4c4ccad40a25@linux-foundation.org>
+ <a41f0ea1-c704-7a2e-db6d-93e8bd4fcdea@fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZBvG8xbGHwQ+PPQa@casper.infradead.org>
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a41f0ea1-c704-7a2e-db6d-93e8bd4fcdea@fujitsu.com>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,57 +58,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 03:26:43AM +0000, Matthew Wilcox wrote:
-> On Mon, Mar 06, 2023 at 02:40:55PM +0530, Ritesh Harjani wrote:
-> > "Matthew Wilcox (Oracle)" <willy@infradead.org> writes:
-> > 
-> > > Prepare ext4 to support large folios in the page writeback path.
-> > 
-> > Sure. I am guessing for ext4 to completely support large folio
-> > requires more work like fscrypt bounce page handling doesn't
-> > yet support folios right?
-> > 
-> > Could you please give a little background on what all would be required
-> > to add large folio support in ext4 buffered I/O path?
-> > (I mean ofcourse other than saying move ext4 to iomap ;))
-> > 
-> > What I was interested in was, what other components in particular for
-> > e.g. fscrypt, fsverity, ext4's xyz component needs large folio support?
-> > 
-> > And how should one go about in adding this support? So can we move
-> > ext4's read path to have large folio support to get started?
-> > Have you already identified what all is missing from this path to
-> > convert it?
+On Thu, Mar 23, 2023 at 02:50:38PM +0800, Shiyang Ruan wrote:
 > 
-> Honestly, I don't know what else needs to be done beyond this patch
-> series.  I can point at some stuff and say "This doesn't work", but in
-> general, you have to just enable it and see what breaks.  A lot of the
-> buffer_head code is not large-folio safe right now, so that's somewhere
-> to go and look.  Or maybe we "just" convert to iomap, and never bother
-> fixing the bufferhead code for large folios.
+> 
+> 在 2023/3/23 7:03, Andrew Morton 写道:
+> > On Wed, 22 Mar 2023 11:11:09 +0000 Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
+> > 
+> > > unshare copies data from source to destination. But if the source is
+> > > HOLE or UNWRITTEN extents, we should zero the destination, otherwise the
+> > > result will be unexpectable.
+> > 
+> > Please provide much more detail on the user-visible effects of the bug.
+> > For example, are we leaking kernel memory contents to userspace?
+> 
+> This fixes fail of generic/649.
 
-Yes.  Let's leave bufferheads in the legacy doo-doo-dooooo basement
-instead of wasting more time on them.  Ideally we'd someday run all the
-filesystems through:
+Please make a note of easy(ish) reproducers when you know about them,
+e.g.
 
-bufferheads -> iomap with bufferheads -> iomap with folios -> iomap with
-large folios -> retire to somewhere cheaper than Hawaii
+"Found by running generic/649 while mounting with -o dax=always on
+pmem."
+
+So that anyone scanning around for fix backports has an easier time
+doing an A/B comparison to assess whether or not they need the fix.
+Especially if there's any chance that person is you circa 2024. ;)
 
 --D
 
-> > > Also set the actual error in the mapping, not just -EIO.
-> > 
-> > Right. I looked at the history and I think it always just had EIO.
-> > I think setting the actual err in mapping_set_error() is the right thing
-> > to do here.
-> > 
-> > >
-> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > 
-> > w.r.t this patch series. I reviewed the mechanical changes & error paths
-> > which converts ext4 ext4_finish_bio() to use folio.
-> > 
-> > The changes looks good to me from that perspective. Feel free to add -
-> > Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 > 
-> Thanks!
+> --
+> Thanks,
+> Ruan.
+> 
+> > 
+> > Thanks.
+> > 
+> > 
