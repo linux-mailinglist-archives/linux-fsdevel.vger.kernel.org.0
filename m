@@ -2,118 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 550676C65DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 11:56:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 711906C65EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 11:57:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231687AbjCWK4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 06:56:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41898 "EHLO
+        id S231712AbjCWK5y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 06:57:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231289AbjCWK4V (ORCPT
+        with ESMTP id S231552AbjCWK5a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 06:56:21 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AEF410A96;
-        Thu, 23 Mar 2023 03:55:39 -0700 (PDT)
+        Thu, 23 Mar 2023 06:57:30 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68508211F3;
+        Thu, 23 Mar 2023 03:57:13 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 8EA281FD91;
-        Thu, 23 Mar 2023 10:55:37 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 5F20E1FD91;
+        Thu, 23 Mar 2023 10:57:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1679568937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1679569031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=YwF6wTKRf8byZK5auIOmvz8r+sMLSBZV/2T+3zUIqww=;
-        b=PBAY6JEFTGRFQJTGeTj1kB063NZfdx92B8IWGZ4bFf4q/nu0vAQl/tH8k2c8m9ntaS1wdO
-        +y5PDue0qck38XhgzsEWzqFQ6Vtdup6eExo5lpdDCSIKFUc0ehtPxBUL00w3q1zclieMo7
-        ojq/dJc7ZEW7H+Q5xmMp7Iw8QUReTjI=
+        bh=TvurBpsiIzqWG/nAqLntTGjrhV3SzoNwAZafzGBmxck=;
+        b=X1tecy4IxjxJzYzg/QoDKuQ0BOg44rPkOqUkS/spndV8Qp83qy+BXikquaYCEtVaz+XNU7
+        S1+3djxCvubvSBpjivXSFZ3ph2J4XTvKNpKdKCTCGiBfMbbHFm38wadm6ZPsx3oVUn4Kvc
+        DrY/5zHbE8wHh4VVIlA+t/rE9feIuD8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1679568937;
+        s=susede2_ed25519; t=1679569031;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=YwF6wTKRf8byZK5auIOmvz8r+sMLSBZV/2T+3zUIqww=;
-        b=nJBg5WfzdIvgC1sZCld+XnBkvk8uMNqo+/NbL/LUUjXIhbjgptejUcrJu7OlGkU3fF+Ma1
-        IT5Nibb0+iPcfhDg==
+        bh=TvurBpsiIzqWG/nAqLntTGjrhV3SzoNwAZafzGBmxck=;
+        b=2ToYUX+LlsSoZ18d4vzutPUmD/P0QZV7CzVhAC7fYshG79IHaYhx5xBaeX6QqftD50YpFW
+        Ko/48jelYiYHdUAw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 99BAB13596;
-        Thu, 23 Mar 2023 10:55:37 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6BC0D13596;
+        Thu, 23 Mar 2023 10:57:11 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4iaBJSkwHGScegAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 23 Mar 2023 10:55:37 +0000
+        id V5VGGocwHGR2ewAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 23 Mar 2023 10:57:11 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 0F78BA071C; Thu, 23 Mar 2023 11:55:37 +0100 (CET)
-Date:   Thu, 23 Mar 2023 11:55:37 +0100
+        id DE03DA071C; Thu, 23 Mar 2023 11:57:10 +0100 (CET)
+Date:   Thu, 23 Mar 2023 11:57:10 +0100
 From:   Jan Kara <jack@suse.cz>
 To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
 Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>
-Subject: Re: [RFC 04/11] ext4: Convert mballoc cr (criteria) to enum
-Message-ID: <20230323105537.rrecw5xqqzmw567d@quack3>
+        Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>
+Subject: Re: [RFC 08/11] ext4: Don't skip prefetching BLOCK_UNINIT groups
+Message-ID: <20230323105710.mdhamc3hza4223cb@quack3>
 References: <cover.1674822311.git.ojaswin@linux.ibm.com>
- <9670431b31aa62e83509fa2802aad364910ee52e.1674822311.git.ojaswin@linux.ibm.com>
- <20230309121122.vzfswandgqqm4yk5@quack3>
- <ZBRAZsvbcSBNJ+Pl@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <4881693a4f5ba1fed367310b27c793e4e78520d3.1674822311.git.ojaswin@linux.ibm.com>
+ <20230309141422.b2nbl554ngna327k@quack3>
+ <ZBRHCHySeQ0KC/f7@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZBRAZsvbcSBNJ+Pl@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <ZBRHCHySeQ0KC/f7@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 17-03-23 15:56:46, Ojaswin Mujoo wrote:
-> On Thu, Mar 09, 2023 at 01:11:22PM +0100, Jan Kara wrote:
-> > Also when going for symbolic allocator scan names maybe we could actually
-> > make names sensible instead of CR[0-4]? Perhaps like CR_ORDER2_ALIGNED,
-> > CR_BEST_LENGHT_FAST, CR_BEST_LENGTH_ALL, CR_ANY_FREE. And probably we could
-> > deal with ordered comparisons like in:
-> I like this idea, it should make the code a bit more easier to
-> understand. However just wondering if I should do it as a part of this
-> series or a separate patch since we'll be touching code all around and 
-> I don't want to confuse people with the noise :) 
-
-I guess a mechanical rename should not be really confusing. It just has to
-be a separate patch.
-
+On Fri 17-03-23 16:25:04, Ojaswin Mujoo wrote:
+> On Thu, Mar 09, 2023 at 03:14:22PM +0100, Jan Kara wrote:
+> > On Fri 27-01-23 18:07:35, Ojaswin Mujoo wrote:
+> > > Currently, ext4_mb_prefetch() and ext4_mb_prefetch_fini() skip
+> > > BLOCK_UNINIT groups since fetching their bitmaps doesn't need disk IO.
+> > > As a consequence, we end not initializing the buddy structures and CR0/1
+> > > lists for these BGs, even though it can be done without any disk IO
+> > > overhead. Hence, don't skip such BGs during prefetch and prefetch_fini.
+> > > 
+> > > This improves the accuracy of CR0/1 allocation as earlier, we could have
+> > > essentially empty BLOCK_UNINIT groups being ignored by CR0/1 due to their buddy
+> > > not being initialized, leading to slower CR2 allocations. With this patch CR0/1
+> > > will be able to discover these groups as well, thus improving performance.
+> > > 
+> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 > > 
-> >                 if (cr < 2 &&
-> >                     (!sbi->s_log_groups_per_flex ||
-> >                      ((group & ((1 << sbi->s_log_groups_per_flex) - 1)) != 0)) &
-> >                     !(ext4_has_group_desc_csum(sb) &&
-> >                       (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT))))
-> >                         return 0;
+> > The patch looks good. I just somewhat wonder - this change may result in
+> > uninitialized groups being initialized and used earlier (previously we'd
+> > rather search in other already initialized groups) which may spread
+> > allocations more. But I suppose that's fine and uninit groups are not
+> > really a feature meant to limit fragmentation and as the filesystem ages
+> > the differences should be minimal. So feel free to add:
 > > 
-> > to declare CR_FAST_SCAN = 2, or something like that. What do you think?
-> About this, wont it be better to just use something like
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > 
+> > 								Honza
+> Thanks for the review. As for the allocation spread, I agree that it
+> should be something our goal determination logic should take care of
+> rather than limiting the BGs available to the allocator.
 > 
-> cr < CR_BEST_LENGTH_ALL 
+> Another point I wanted to discuss wrt this patch series was why were the
+> BLOCK_UNINIT groups not being prefetched earlier. One point I can think
+> of is that this might lead to memory pressure when we have too many
+> empty BGs in a very large (say terabytes) disk.
 > 
-> instead of defining a new CR_FAST_SCAN = 2.
+> But i'd still like to know if there's some history behind not
+> prefetching block uninit.
 
-Yeah, that works as well.
-
-> The only concern is that if we add a new "fast" CR (say between
-> CR_BEST_LENGTH_FAST and CR_BEST_LENGTH_ALL) then we'll need to make
-> sure we also update CR_FAST_SCAN to 3 which is easy to miss.
-
-Well, you have that problem with any naming scheme (and even with numbers).
-So as long as names are all defined together, there's reasonable chance
-you'll remember to verify the limits still hold :)
+Hum, I don't remember anything. Maybe Ted will. You can ask him today on a
+call.
 
 								Honza
 -- 
