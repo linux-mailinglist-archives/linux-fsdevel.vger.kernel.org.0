@@ -2,413 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D65AA6C68CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 13:48:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B1B16C695B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 14:18:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231303AbjCWMsC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 08:48:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32780 "EHLO
+        id S231334AbjCWNS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 09:18:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230064AbjCWMsA (ORCPT
+        with ESMTP id S230259AbjCWNSZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 08:48:00 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D059B11168;
-        Thu, 23 Mar 2023 05:47:58 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id cy23so85934768edb.12;
-        Thu, 23 Mar 2023 05:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679575677;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xy8coyLpepNHuKEPO1GA817I3E2vGkE9UKdG0deMIVs=;
-        b=Fa1lfqKDyJxtYpaA+sxRydW/xXhHbzGCTrYauVRT81ZA20HibY/vMUt3VbGcoU2n2a
-         dvyxWYEXaYeP+BiJsr29fzBLvabUK/wrmYcKQbJPjAcPjhKgMGaiq0B5DiZl2jGrFSA+
-         lYWmG+Yl7e2yG5JDreMzBBFrlLE4uWkrwaCemdMCdyMLkT3n9XFi91QCO6W1x9jKwktu
-         0YDA3JtXIzG6GaUCUHp4OPavm42bj88z6N2RdQnS8oUUbdwgXWOfP5yROIM+KZi+DbZh
-         yhqgeL6+t+hJB+j3yc7+LYE/q7VZ5bxXHU/9A6rKWnHcKr5IdiY6TB8iNJjl3nsmdEK+
-         bDhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679575677;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xy8coyLpepNHuKEPO1GA817I3E2vGkE9UKdG0deMIVs=;
-        b=bXqN/majbvNW9CXWF3P4MaebfDJR4d2fekuMcRdT2vklI1Tm5L91ONDhUAvtXg/GhP
-         pWXKRr5nhZ+7xmB2aGR+5q/PcaoL7AIfQ3Fq9YShXy8evuTK//067dkesAukm2UrAyTl
-         NLb0mU4ELvIA48a42Tvco0IwxC//Vjlzrr+mDs4vcD3oD73e8v4HNM3zFR8z0M4N1sg7
-         cqpMJRGmQG0/Fw3rJcCTro6085OMWHVAyk27xWG5uILG8naOvEiZKq0Pp3ktWnXCIFIA
-         mzx4TnR4NRapOgSUtGFjfL5e4RPfkBEqM5TxIavTErGV9feuzw48JI8kgizHrYwPwRMX
-         0DlA==
-X-Gm-Message-State: AO0yUKWetRrYz0UXSKvCD7r4/7SflphroQXiD0R2KmnFfnIOneXZ0hxh
-        DW038BQVjxd70zsu/0f2zKc=
-X-Google-Smtp-Source: AK7set/2zdTJokXt0aHzwViNhJgBvXG4XSWqgbZnwRHWNaNvmKHknHliFX89JShBh9uygrz8oxOLig==
-X-Received: by 2002:a17:906:7cd3:b0:932:c1e2:9983 with SMTP id h19-20020a1709067cd300b00932c1e29983mr9267496ejp.15.1679575677062;
-        Thu, 23 Mar 2023 05:47:57 -0700 (PDT)
-Received: from pc638.lan ([155.137.26.201])
-        by smtp.gmail.com with ESMTPSA id e14-20020a170906044e00b0093204090617sm8351842eja.36.2023.03.23.05.47.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Mar 2023 05:47:56 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
-Date:   Thu, 23 Mar 2023 13:47:54 +0100
-To:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH v2 2/4] mm: vmalloc: use rwsem, mutex for vmap_area_lock
- and vmap_block->lock
-Message-ID: <ZBxKeqeBw9xrynRK@pc638.lan>
-References: <cover.1679209395.git.lstoakes@gmail.com>
- <6c7f1ac0aeb55faaa46a09108d3999e4595870d9.1679209395.git.lstoakes@gmail.com>
- <ZBkDuLKLhsOHNUeG@destitution>
- <ZBsAG5cpOFhFZZG6@pc636>
- <ZBs/MGH+xUAZXNTz@casper.infradead.org>
- <ZBtCl34dolg2YE+3@pc636>
- <ZBtTvdzgAmsGkQzV@pc636>
+        Thu, 23 Mar 2023 09:18:25 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2068.outbound.protection.outlook.com [40.107.243.68])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7157B10E0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 06:18:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gYTTOzjhLzjIg7RlrLIWayl6i+rHG5XBaFI3co4ReK39+Vds1cVbY1QoQSaSIWx/k9fUof8jkV3ztdf1Qw5pjvRPhi5YTdNQQmozNGYf1jnTcJhdYHrIBmldgdLarlpuJoIst6NmJbF4FuUfFCjbeLUSCyTfvzv8vy5u8UkGJSe9TYc370G3RItEV3H2S9BIAqDiUZIQCfLFzhURRn2sI0Ve9qFgAP/0g6RMfgrZe3xdOD5v71uzIaSJwLLt2TOtBm3zRilKKbpcV4tlnS/CX91XX/S/p+Mc00FMeZWGWTbeICgaF/STS5LFMopAPC8Quf1LsS4V3H2YErAR9PPG0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dywJP3BLsp6/5STcP3HnjLLKV3o6QC4AYEUW108gW6U=;
+ b=gLhBAMAec8viAqXN17w7UmSfmPNYIY/JrEpYb4L6ZaQjI65QsoAUUOgAAJfqrb55zyjIsGVBn5vt0r3ZTW1S+64i4lFl2hkfcCw6e6Aggi1ry5xzzcCk3aRQKmN029jsqa1hW1ZwpSt9h1+GLkE3Gtz8y6GVw8ME0asxcuDD9MfKL2BxxH7wiI+VLyfRGDcqYkazRAtkMcbM8KooDLhFF/EZtNb8CTfX8n6erB6oW5ACfymnApZbaqr8s+Oo81cB5hIaFNRqRR+8n6x3Ge9AF1eCYUFmIygnj4EkHDAQo+JqTEUzlFzCPM4ip+6sp6SgF9RgKLFsweWe/3c2xG973w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
+ header.d=ddn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dywJP3BLsp6/5STcP3HnjLLKV3o6QC4AYEUW108gW6U=;
+ b=T5N9rWbzvULX6a4UZiuiw4fwLHfa+upNhQ7v2E5rT2V8KF+Pd2Gb2mQsO3oaVR4EOo4hKg6rQ0yf7REdBZq+cCYtJclBx7sTd7ds5H/+kkI5zpdzcdWewgueBbYfYl4ng024u7jUteGSAJbigsWQqKgHSqn0NyuuQcK9vbRug/M=
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com (2603:10b6:4:aa::29)
+ by MN0PR19MB5804.namprd19.prod.outlook.com (2603:10b6:208:37b::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.24; Thu, 23 Mar
+ 2023 13:18:21 +0000
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::e6d4:29f7:2077:bd69]) by DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::e6d4:29f7:2077:bd69%4]) with mapi id 15.20.6086.024; Thu, 23 Mar 2023
+ 13:18:21 +0000
+From:   Bernd Schubert <bschubert@ddn.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Dharmendra Singh <dsingh@ddn.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "fuse-devel@lists.sourceforge.net" <fuse-devel@lists.sourceforge.net>,
+        Ming Lei <ming.lei@redhat.com>,
+        Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Subject: Re: [PATCH 06/13] fuse: Add an interval ring stop worker/monitor
+Thread-Topic: [PATCH 06/13] fuse: Add an interval ring stop worker/monitor
+Thread-Index: AQHZW5INP1WhR4AlW0WGDgYwsBdWma8ILRSAgAAKLQCAABl7AIAAC/8A
+Date:   Thu, 23 Mar 2023 13:18:21 +0000
+Message-ID: <e0febe95-6d35-636d-1668-84ef16b87370@ddn.com>
+References: <20230321011047.3425786-1-bschubert@ddn.com>
+ <20230321011047.3425786-7-bschubert@ddn.com>
+ <CAJfpegs6z6pvepUx=3zfAYqisumri=2N-_A-nsYHQd62AQRahA@mail.gmail.com>
+ <28a74cb4-57fe-0b21-8663-0668bf55d283@ddn.com>
+ <CAJfpeguvCNUEbcy6VQzVJeNOsnNqfDS=LyRaGvSiDTGerB+iuw@mail.gmail.com>
+In-Reply-To: <CAJfpeguvCNUEbcy6VQzVJeNOsnNqfDS=LyRaGvSiDTGerB+iuw@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ddn.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM5PR1901MB2037:EE_|MN0PR19MB5804:EE_
+x-ms-office365-filtering-correlation-id: a2f00509-f0da-4381-c314-08db2ba1132c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: g7na3A0h9b9gsCAf6qzKufYDdGDJSNle8IcZxinN+4zmWsMY4HFtcBSaFq6CSJMU85+TPhGbQWTfV8BSWoKm/OXOr9zEs82DoN6BxzyXihIYf1t4LCKcEOoi/vXMlCRxmFaGQjDeR+CKx2UpBfyI0V9riHoJeY6ebyvPQAF43mIvpGHRVFhqrVmEKrvSP8gjPeNQkjKgRimgeVh7loS0VYVO6VyWmwuZygXN/zFbAJpP12owV8KUB6RnPHYCcj14lP5EZ0IJBQc0DGn5nXuavIbSLc1bgqgBZIFGnmAvxqbheo3qNkg8MOdTjTEF8pY5d+71IBoC7WsZOiR8eItdH1HMk1/Y6Dc3yWPDSK4mhbob8cAsD9y+aVSE6eYazjM2IzTzRbUbZ+pII+JJgeB2t2nzgW9p0L+dfcU99GdPs1ogmIUncvr9MZXbByVCbRjcmUmvSi9VuJWGsJQVEkXHhzG9H73o4zpc/X9262h5jCjlR8xuMpu5ZDcigJPh2vrNPufuNtS1U11XBFtO03BtQs6BUDaktobiG54a5hCLs8wzG4jp/FXfSVTZOEYW1qmWJfKi7f3400Q0DIdcwzzZn098PihfDswa2+KZLcFVYo19cJdAQx5S3T+KB7w/1EgLPfFhqh//YJ2nIYI1RFXRwZFuKZ0iLtivtnU7FEgzQFaBZXrw5HRSpMIZpEPt2W7UV093IoNSCMAq4KInaXnHCsjrQq3F+NePHC4813CncthA1NK5Sd/GEyJ0omrw9IAcJYzTx9GfKYBpAChFA54jbA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1901MB2037.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39850400004)(376002)(366004)(346002)(396003)(136003)(451199018)(4326008)(5660300002)(8676002)(66446008)(66476007)(66556008)(41300700001)(316002)(6916009)(91956017)(38070700005)(66946007)(2906002)(76116006)(64756008)(86362001)(2616005)(31696002)(122000001)(38100700002)(83380400001)(31686004)(71200400001)(8936002)(36756003)(186003)(6512007)(478600001)(54906003)(6486002)(6506007)(53546011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?K1lJcWRiaXBDbjhjS0F2bEhZMGpoeURUd3VlOFJkMTBFNmYvV29OTHNzazBz?=
+ =?utf-8?B?TGI0NTJzNGtTN2tPckFVTEdrNkdyaDJYTjhIWHUxRDZ6OTJCRTZGTWoxMWly?=
+ =?utf-8?B?MDNwYW9yYlNLWmRla0Rsekp5WlpKZWtMdkRsd2dPekdQRHZZNUl0dVIya0Q3?=
+ =?utf-8?B?ek96ZXIvZVdxMFNGdndBUmMwb25DSlFhck8yVjBuNkFScEZ1QVNUMFdRVVk4?=
+ =?utf-8?B?UFl2SlhsT1pMWWxOZlJqazlCVzNyK1BKUUdtY0tvaTY0MzZWczlPdGdDeFdV?=
+ =?utf-8?B?Nnp6WEFVVGprMEpGQ1ZneEhDYVo4U2p2eGpTL2Z2amtSanlyOHR6L2ZjQ0Fm?=
+ =?utf-8?B?bksxYmZQY012Q0IveFkvZ0tRcVQ2VkZ4SklCVEVoQllZeXRadVd1R2pzNVV6?=
+ =?utf-8?B?eGwrWGZTTVBEZ2RNOXVQWS9EYzBlUUxGMm5Pa2V5ZTE5R2RQaDc1ZGd2aFFE?=
+ =?utf-8?B?THNCUGZDSmJSN1JqRkhOUG1kYkdCaWsyeFpQMEZpQTg5OHl1ek1JNHBEcm84?=
+ =?utf-8?B?UXNUNkY5SjE0TWtFTVFSc1gxeGszWFN2aVlhdktyTFJ3WjN3M05jNitaTkNz?=
+ =?utf-8?B?cFp4Nmx6enY3ZHUrZWpibnEvUmN3Wm4yeW5SdzlJV2l6Vm9DRWN1WHVqdTM2?=
+ =?utf-8?B?bG9JV0o5M2VVbzJuQ1RJeE5TM1YzazBoenlmeWNyNnl3NXFrVmdDdHJ6a3ZE?=
+ =?utf-8?B?NFVGMlhJNUQwTHlKUnMxbFJVdlloOWNkbk9FK0UxcEtDT3A5SFUyNmdDRFZN?=
+ =?utf-8?B?N0luWUY5bkdHOHVqOGtWdHlnLzJWNER6UTI1Q3JTUXhXU3ZyZlIrTGlhaWM2?=
+ =?utf-8?B?bjBCQUVycUhYV3V2ZWtCL04zN1FXYklUYWdXc2UwSGtSeUdrRjB0LzU3TG1Z?=
+ =?utf-8?B?ak52ZE9tWXhYbU9ibmdMMlVLQ0hHa1N2b0VKR0ZRKzFXdWVlM1ZHTnVTVXNT?=
+ =?utf-8?B?cktic0haUk1HWkNhd0RqTjB5c1d3V0lva3JJcURydzQwc3dCS1pNQmJtRUlC?=
+ =?utf-8?B?OXYyM1pqdXdZdGNvVStOcFpkOHlsU3huSXhqSlA0M05JNG9kRXNBM0NqWkwv?=
+ =?utf-8?B?NjdUYjFCRm5yYTJTeERWcUd6Y0M0QnF1OGd2eGVRSjdXQWpLOTNhdTd6RVhj?=
+ =?utf-8?B?LzN2SjhSWkxUZVVObEV1MFN5RUVXSUxJempIcGdzWlZIN1Zuc1RXMnVXT3I4?=
+ =?utf-8?B?UEtNODd0UGoyY0tYVlRhc0d6cXVOdE9QWnJMendpc2VYVFpZRnVHeG10TkRs?=
+ =?utf-8?B?amhmZnBncEdnbXdKOXlRZ3B4RmEzK0xHbFlWL0xHai96YUt6dkI4N2s1ek91?=
+ =?utf-8?B?SGZJWUVQTjUrSHN1TTBRMHFzd3NTbHhpNkNqdjNwWVA4VDdFdTdBaXpwUHFy?=
+ =?utf-8?B?MGJETzRJdmQvdUZPeW4yaTVvaFBSNEIwcDhqK21oRmk3ZExjY0pXaVFPSVlH?=
+ =?utf-8?B?TUIrSEZwREFGTGJ2UXR5TWJveDZNN0s1eWVJT3p4QmU4WTExdE1KcGNQU0lp?=
+ =?utf-8?B?Yjdpa0doUDRrNnNUNDdsSGgzS09SS2dhd1JUTzNQU1pvQnhSZHRIREtRSGdS?=
+ =?utf-8?B?U1ZMK2dxcXhnVndRZU1pZzExUjQ0dnVTMElJbHFnN0xnMWJQLyt0WVJYZzNT?=
+ =?utf-8?B?dGovN2h4b01MSnBZbGsvNWVOV3BFRnlKQ2ZYOWUzVVVoK2VHYkVkWTZTTzU0?=
+ =?utf-8?B?am5ObWlLOE80amJuZzkxOEV4aVdnL3BZcFRRSnFWMVJlYTVUTlBKa2RObUtD?=
+ =?utf-8?B?STdNRkdTckh1SW0zUTh4dFUxWlFGeHc0NVJ6SnBDMkZZbkJnUGtDS2Q3N0Rq?=
+ =?utf-8?B?NFBvRlFaN1Z6UElMdlJORllvaHJUZFFzYjhXNGVpczAxdlJTVzdPOU1zNVJ2?=
+ =?utf-8?B?UEJNa0FXS1dCbjJNa3BQYlU3dUlRaTV5QjVmUE1qYVFEbThjdlB6NjFzd1Jl?=
+ =?utf-8?B?andab0N2MHI2MG5sMGJ0Ulp2azNnS0ZNRXc3b1dBNVdmaE5OUFowdDF1cUo5?=
+ =?utf-8?B?TFFsYXEwbi8wcUtBcmUyQVZFMm9VM3B1MUMyRkwvdTVPK1ZBTk91RWVweHda?=
+ =?utf-8?B?SGlZL0wxQXNIT2ZIMWJEQ0tSdDZMendPVVFoS0FCSmt0YUxBeHNUYWVNTUty?=
+ =?utf-8?B?bW9EeGtWSWxnd1QrQ2ZiSlpET3Z4TW1jL040L1J3aGNxNk03cnlpd0ppZGZR?=
+ =?utf-8?Q?5cZ3Eh7A9eSG3aJ5Gi8jZ4I=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C647BE0A15DDE64F93E37CDC5859A055@namprd19.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZBtTvdzgAmsGkQzV@pc636>
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR1901MB2037.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2f00509-f0da-4381-c314-08db2ba1132c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2023 13:18:21.3861
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PWzf3NCTDErNXFiPyTPiy0fUPUC5e4bNrgeiMAQAUJA5mdEKTenRUob0jF3Vu4YeUAP2EST0aXUdsBO2XCbKRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR19MB5804
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 22, 2023 at 08:15:09PM +0100, Uladzislau Rezki wrote:
-> On Wed, Mar 22, 2023 at 07:01:59PM +0100, Uladzislau Rezki wrote:
-> > On Wed, Mar 22, 2023 at 05:47:28PM +0000, Matthew Wilcox wrote:
-> > > On Wed, Mar 22, 2023 at 02:18:19PM +0100, Uladzislau Rezki wrote:
-> > > > Hello, Dave.
-> > > > 
-> > > > > 
-> > > > > I'm travelling right now, but give me a few days and I'll test this
-> > > > > against the XFS workloads that hammer the global vmalloc spin lock
-> > > > > really, really badly. XFS can use vm_map_ram and vmalloc really
-> > > > > heavily for metadata buffers and hit the global spin lock from every
-> > > > > CPU in the system at the same time (i.e. highly concurrent
-> > > > > workloads). vmalloc is also heavily used in the hottest path
-> > > > > throught the journal where we process and calculate delta changes to
-> > > > > several million items every second, again spread across every CPU in
-> > > > > the system at the same time.
-> > > > > 
-> > > > > We really need the global spinlock to go away completely, but in the
-> > > > > mean time a shared read lock should help a little bit....
-> > > > > 
-> > > > Could you please share some steps how to run your workloads in order to
-> > > > touch vmalloc() code. I would like to have a look at it in more detail
-> > > > just for understanding the workloads.
-> > > > 
-> > > > Meanwhile my grep agains xfs shows:
-> > > > 
-> > > > <snip>
-> > > > urezki@pc638:~/data/raid0/coding/linux-rcu.git/fs/xfs$ grep -rn vmalloc ./
-> > > 
-> > > You're missing:
-> > > 
-> > > fs/xfs/xfs_buf.c:                       bp->b_addr = vm_map_ram(bp->b_pages, bp->b_page_count,
-> > > 
-> > > which i suspect is the majority of Dave's workload.  That will almost
-> > > certainly take the vb_alloc() path.
-> > >
-> > Then it has nothing to do with vmalloc contention(i mean global KVA allocator), IMHO.
-> > Unless:
-> > 
-> > <snip>
-> > void *vm_map_ram(struct page **pages, unsigned int count, int node)
-> > {
-> > 	unsigned long size = (unsigned long)count << PAGE_SHIFT;
-> > 	unsigned long addr;
-> > 	void *mem;
-> > 
-> > 	if (likely(count <= VMAP_MAX_ALLOC)) {
-> > 		mem = vb_alloc(size, GFP_KERNEL);
-> > 		if (IS_ERR(mem))
-> > 			return NULL;
-> > 		addr = (unsigned long)mem;
-> > 	} else {
-> > 		struct vmap_area *va;
-> > 		va = alloc_vmap_area(size, PAGE_SIZE,
-> > 				VMALLOC_START, VMALLOC_END, node, GFP_KERNEL);
-> > 		if (IS_ERR(va))
-> > 			return NULL;
-> > <snip>
-> > 
-> > number of pages > VMAP_MAX_ALLOC.
-> > 
-> > That is why i have asked about workloads because i would like to understand
-> > where a "problem" is. A vm_map_ram() access the global vmap space but it happens 
-> > when a new vmap block is required and i also think it is not a problem.
-> > 
-> > But who knows, therefore it makes sense to have a lock at workload.
-> > 
-> There is a lock-stat statistics for vm_map_ram()/vm_unmap_ram() test.
-> I did it on 64 CPUs system with running 64 threads doing mapping/unmapping
-> of 1 page. Each thread does 10 000 000 mapping + unmapping in a loop:
-> 
-> <snip>
-> root@pc638:/home/urezki# cat /proc/lock_stat
-> lock_stat version 0.4
-> -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-> class name    con-bounces    contentions   waittime-min   waittime-max waittime-total   waittime-avg    acq-bounces   acquisitions   holdtime-min   holdtime-max holdtime-total   holdtime-avg
-> -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-> 
-> vmap_area_lock:       2554079        2554276           0.06         213.61    11719647.67           4.59        2986513        3005712           0.05          67.02     3573323.37           1.19
->   --------------
->   vmap_area_lock        1297948          [<00000000dd41cbaa>] alloc_vmap_area+0x1c7/0x910
->   vmap_area_lock        1256330          [<000000009d927bf3>] free_vmap_block+0x4a/0xe0
->   vmap_area_lock              1          [<00000000c95c05a7>] find_vm_area+0x16/0x70
->   --------------
->   vmap_area_lock        1738590          [<00000000dd41cbaa>] alloc_vmap_area+0x1c7/0x910
->   vmap_area_lock         815688          [<000000009d927bf3>] free_vmap_block+0x4a/0xe0
->   vmap_area_lock              1          [<00000000c1d619d7>] __get_vm_area_node+0xd2/0x170
-> 
-> .....................................................................................................................................................................................................
-> 
-> vmap_blocks.xa_lock:        862689         862698           0.05          77.74      849325.39           0.98        3005156        3005709           0.12          31.11     1920242.82           0.64
->   -------------------
->   vmap_blocks.xa_lock         378418          [<00000000625a5626>] vm_map_ram+0x359/0x4a0
->   vmap_blocks.xa_lock         484280          [<00000000caa2ef03>] xa_erase+0xe/0x30
->   -------------------
->   vmap_blocks.xa_lock         576226          [<00000000caa2ef03>] xa_erase+0xe/0x30
->   vmap_blocks.xa_lock         286472          [<00000000625a5626>] vm_map_ram+0x359/0x4a0
-> 
-> ....................................................................................................................................................................................................
-> 
-> free_vmap_area_lock:        394960         394961           0.05         124.78      448241.23           1.13        1514508        1515077           0.12          30.48     1179167.01           0.78
->   -------------------
->   free_vmap_area_lock         385970          [<00000000955bd641>] alloc_vmap_area+0xe5/0x910
->   free_vmap_area_lock           4692          [<00000000230abf7e>] __purge_vmap_area_lazy+0x10a/0x7d0
->   free_vmap_area_lock           4299          [<00000000eed9ff9e>] alloc_vmap_area+0x497/0x910
->   -------------------
->   free_vmap_area_lock         371734          [<00000000955bd641>] alloc_vmap_area+0xe5/0x910
->   free_vmap_area_lock          17007          [<00000000230abf7e>] __purge_vmap_area_lazy+0x10a/0x7d0
->   free_vmap_area_lock           6220          [<00000000eed9ff9e>] alloc_vmap_area+0x497/0x910
-> 
-> .....................................................................................................................................................................................................
-> 
-> purge_vmap_area_lock:        169307         169312           0.05          31.08       81655.21           0.48        1514794        1515078           0.05          67.73      912391.12           0.60
->   --------------------
->   purge_vmap_area_lock         166409          [<0000000050938075>] free_vmap_area_noflush+0x65/0x370
->   purge_vmap_area_lock           2903          [<00000000fb8b57f7>] __purge_vmap_area_lazy+0x47/0x7d0
->   --------------------
->   purge_vmap_area_lock         167511          [<0000000050938075>] free_vmap_area_noflush+0x65/0x370
->   purge_vmap_area_lock           1801          [<00000000fb8b57f7>] __purge_vmap_area_lazy+0x47/0x7d0
-> <snip>
-> 
-> alloc_vmap_area is a top and second one is xa_lock. But the test i have
-> done is pretty high concurrent scenario.
-> 
-<snip>
-From 32c38d239c6de3f1d3accf97d9d4944ecaa4bccd Mon Sep 17 00:00:00 2001
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Date: Thu, 23 Mar 2023 13:07:27 +0100
-Subject: [PATCH] mm: vmalloc: Remove global vmap_blocks xarray
-
-A global vmap_blocks-xarray array can be contented under
-heavy usage of the vm_map_ram()/vm_unmap_ram() APIs. Under
-stress test the lock-stat shows that a "vmap_blocks.xa_lock"
-lock is a second in a list when it comes to contentions:
-
-<snip>
-----------------------------------------
-class name con-bounces contentions ...
-----------------------------------------
-...
-vmap_blocks.xa_lock:    862689 862698 ...
-  -------------------
-  vmap_blocks.xa_lock   378418    [<00000000625a5626>] vm_map_ram+0x359/0x4a0
-  vmap_blocks.xa_lock   484280    [<00000000caa2ef03>] xa_erase+0xe/0x30
-  -------------------
-  vmap_blocks.xa_lock   576226    [<00000000caa2ef03>] xa_erase+0xe/0x30
-  vmap_blocks.xa_lock   286472    [<00000000625a5626>] vm_map_ram+0x359/0x4a0
-...
-<snip>
-
-that is a result of running vm_map_ram()/vm_unmap_ram() in
-a loop. The test creates 64(on 64 CPUs system) threads and
-each one maps/unmaps 1 page.
-
-After this change the xa_lock is considered as noise in the
-same test condition:
-
-<snip>
-...
-&xa->xa_lock#1:         10333 10394 ...
-  --------------
-  &xa->xa_lock#1        5349      [<00000000bbbc9751>] xa_erase+0xe/0x30
-  &xa->xa_lock#1        5045      [<0000000018def45d>] vm_map_ram+0x3a4/0x4f0
-  --------------
-  &xa->xa_lock#1        7326      [<0000000018def45d>] vm_map_ram+0x3a4/0x4f0
-  &xa->xa_lock#1        3068      [<00000000bbbc9751>] xa_erase+0xe/0x30
-...
-<snip>
-
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- mm/vmalloc.c | 54 +++++++++++++++++++++++++++++-----------------------
- 1 file changed, 30 insertions(+), 24 deletions(-)
-
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 978194dc2bb8..b1e549d152b2 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1911,6 +1911,7 @@ static struct vmap_area *find_unlink_vmap_area(unsigned long addr)
- struct vmap_block_queue {
- 	spinlock_t lock;
- 	struct list_head free;
-+	struct xarray vmap_blocks;
- };
- 
- struct vmap_block {
-@@ -1927,25 +1928,22 @@ struct vmap_block {
- /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
- static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
- 
--/*
-- * XArray of vmap blocks, indexed by address, to quickly find a vmap block
-- * in the free path. Could get rid of this if we change the API to return a
-- * "cookie" from alloc, to be passed to free. But no big deal yet.
-- */
--static DEFINE_XARRAY(vmap_blocks);
--
--/*
-- * We should probably have a fallback mechanism to allocate virtual memory
-- * out of partially filled vmap blocks. However vmap block sizing should be
-- * fairly reasonable according to the vmalloc size, so it shouldn't be a
-- * big problem.
-- */
-+static struct vmap_block_queue *
-+addr_to_vbq(unsigned long addr)
-+{
-+	int cpu = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-+	return &per_cpu(vmap_block_queue, cpu);
-+}
- 
--static unsigned long addr_to_vb_idx(unsigned long addr)
-+static unsigned long
-+addr_to_vb_va_start(unsigned long addr)
- {
--	addr -= VMALLOC_START & ~(VMAP_BLOCK_SIZE-1);
--	addr /= VMAP_BLOCK_SIZE;
--	return addr;
-+	/* Check if aligned. */
-+	if (IS_ALIGNED(addr, VMAP_BLOCK_SIZE))
-+		return addr;
-+
-+	/* A start address of block an address belongs to. */
-+	return rounddown(addr, VMAP_BLOCK_SIZE);
- }
- 
- static void *vmap_block_vaddr(unsigned long va_start, unsigned long pages_off)
-@@ -1953,7 +1951,7 @@ static void *vmap_block_vaddr(unsigned long va_start, unsigned long pages_off)
- 	unsigned long addr;
- 
- 	addr = va_start + (pages_off << PAGE_SHIFT);
--	BUG_ON(addr_to_vb_idx(addr) != addr_to_vb_idx(va_start));
-+	BUG_ON(addr_to_vb_va_start(addr) != addr_to_vb_va_start(va_start));
- 	return (void *)addr;
- }
- 
-@@ -1970,7 +1968,6 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 	struct vmap_block_queue *vbq;
- 	struct vmap_block *vb;
- 	struct vmap_area *va;
--	unsigned long vb_idx;
- 	int node, err;
- 	void *vaddr;
- 
-@@ -2003,8 +2000,8 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 	bitmap_set(vb->used_map, 0, (1UL << order));
- 	INIT_LIST_HEAD(&vb->free_list);
- 
--	vb_idx = addr_to_vb_idx(va->va_start);
--	err = xa_insert(&vmap_blocks, vb_idx, vb, gfp_mask);
-+	vbq = addr_to_vbq(va->va_start);
-+	err = xa_insert(&vbq->vmap_blocks, va->va_start, vb, gfp_mask);
- 	if (err) {
- 		kfree(vb);
- 		free_vmap_area(va);
-@@ -2021,9 +2018,11 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 
- static void free_vmap_block(struct vmap_block *vb)
- {
-+	struct vmap_block_queue *vbq;
- 	struct vmap_block *tmp;
- 
--	tmp = xa_erase(&vmap_blocks, addr_to_vb_idx(vb->va->va_start));
-+	vbq = addr_to_vbq(vb->va->va_start);
-+	tmp = xa_erase(&vbq->vmap_blocks, vb->va->va_start);
- 	BUG_ON(tmp != vb);
- 
- 	spin_lock(&vmap_area_lock);
-@@ -2135,6 +2134,7 @@ static void vb_free(unsigned long addr, unsigned long size)
- 	unsigned long offset;
- 	unsigned int order;
- 	struct vmap_block *vb;
-+	struct vmap_block_queue *vbq;
- 
- 	BUG_ON(offset_in_page(size));
- 	BUG_ON(size > PAGE_SIZE*VMAP_MAX_ALLOC);
-@@ -2143,7 +2143,10 @@ static void vb_free(unsigned long addr, unsigned long size)
- 
- 	order = get_order(size);
- 	offset = (addr & (VMAP_BLOCK_SIZE - 1)) >> PAGE_SHIFT;
--	vb = xa_load(&vmap_blocks, addr_to_vb_idx(addr));
-+
-+	vbq = addr_to_vbq(addr);
-+	vb = xa_load(&vbq->vmap_blocks, addr_to_vb_va_start(addr));
-+
- 	spin_lock(&vb->lock);
- 	bitmap_clear(vb->used_map, offset, (1UL << order));
- 	spin_unlock(&vb->lock);
-@@ -3486,6 +3489,7 @@ static void vmap_ram_vread(char *buf, char *addr, int count, unsigned long flags
- {
- 	char *start;
- 	struct vmap_block *vb;
-+	struct vmap_block_queue *vbq;
- 	unsigned long offset;
- 	unsigned int rs, re, n;
- 
-@@ -3503,7 +3507,8 @@ static void vmap_ram_vread(char *buf, char *addr, int count, unsigned long flags
- 	 * Area is split into regions and tracked with vmap_block, read out
- 	 * each region and zero fill the hole between regions.
- 	 */
--	vb = xa_load(&vmap_blocks, addr_to_vb_idx((unsigned long)addr));
-+	vbq = addr_to_vbq((unsigned long) addr);
-+	vb = xa_load(&vbq->vmap_blocks, addr_to_vb_va_start((unsigned long) addr));
- 	if (!vb)
- 		goto finished;
- 
-@@ -4272,6 +4277,7 @@ void __init vmalloc_init(void)
- 		p = &per_cpu(vfree_deferred, i);
- 		init_llist_head(&p->list);
- 		INIT_WORK(&p->wq, delayed_vfree_work);
-+		xa_init(&vbq->vmap_blocks);
- 	}
- 
- 	/* Import existing vmlist entries. */
--- 
-2.30.2
-<snip>
-
-Any thoughts patch?
-
-I do not consider it as a big improvement in performance. But, it tends
-to remove completely a contention on the "xa_lock" + it refactor slightly
-the per-cpu allocator. XFS workloads can be improved, though.
-
---
-Uladzislau Rezki
+T24gMy8yMy8yMyAxMzozNSwgTWlrbG9zIFN6ZXJlZGkgd3JvdGU6DQo+IE9uIFRodSwgMjMgTWFy
+IDIwMjMgYXQgMTI6MDQsIEJlcm5kIFNjaHViZXJ0IDxic2NodWJlcnRAZGRuLmNvbT4gd3JvdGU6
+DQo+Pg0KPj4gVGhhbmtzIGZvciBsb29raW5nIGF0IHRoZXNlIHBhdGNoZXMhDQo+Pg0KPj4gSSdt
+IGFkZGluZyBpbiBNaW5nIExlaSwgYXMgSSBoYWQgdGFrZW4gc2V2ZXJhbCBpZGVhcyBmcm9tIHVi
+bGttIEkgZ3Vlc3MNCj4+IEkgYWxzbyBzaG91bGQgYWxzbyBleHBsYWluIGluIHRoZSBjb21taXQg
+bWVzc2FnZXMgYW5kIGNvZGUgd2h5IGl0IGlzDQo+PiBkb25lIHRoYXQgd2F5Lg0KPj4NCj4+IE9u
+IDMvMjMvMjMgMTE6MjcsIE1pa2xvcyBTemVyZWRpIHdyb3RlOg0KPj4+IE9uIFR1ZSwgMjEgTWFy
+IDIwMjMgYXQgMDI6MTEsIEJlcm5kIFNjaHViZXJ0IDxic2NodWJlcnRAZGRuLmNvbT4gd3JvdGU6
+DQo+Pj4+DQo+Pj4+IFRoaXMgYWRkcyBhIGRlbGF5ZWQgd29yayBxdWV1ZSB0aGF0IHJ1bnMgaW4g
+aW50ZXJ2YWxzDQo+Pj4+IHRvIGNoZWNrIGFuZCB0byBzdG9wIHRoZSByaW5nIGlmIG5lZWRlZC4g
+RnVzZSBjb25uZWN0aW9uDQo+Pj4+IGFib3J0IG5vdyB3YWl0cyBmb3IgdGhpcyB3b3JrZXIgdG8g
+Y29tcGxldGUuDQo+Pj4NCj4+PiBUaGlzIHNlZW1zIGxpa2UgYSBoYWNrLiAgIENhbiB5b3UgZXhw
+bGFpbiB3aGF0IHRoZSBwcm9ibGVtIGlzPw0KPj4+DQo+Pj4gVGhlIGZpcnN0IHRoaW5nIEkgbm90
+aWNlIGlzIHRoYXQgeW91IHN0b3JlIGEgcmVmZXJlbmNlIHRvIHRoZSB0YXNrDQo+Pj4gdGhhdCBp
+bml0aWF0ZWQgdGhlIHJpbmcgY3JlYXRpb24uICBUaGlzIGFscmVhZHkgbG9va3MgZmlzaHksIGFz
+IHRoZQ0KPj4+IHJpbmcgY291bGQgd2VsbCBzdXJ2aXZlIHRoZSB0YXNrICh0aHJlYWQpIHRoYXQg
+Y3JlYXRlZCBpdCwgbm8/DQo+Pg0KPj4gWW91IG1lYW4gdGhlIGN1cnJlbnRseSBvbmdvaW5nIHdv
+cmssIHdoZXJlIHRoZSBkYWVtb24gY2FuIGJlIHJlc3RhcnRlZD8NCj4+IERhZW1vbiByZXN0YXJ0
+IHdpbGwgbmVlZCBzb21lIHdvcmsgd2l0aCByaW5nIGNvbW11bmljYXRpb24sIEkgd2lsbCB0YWtl
+DQo+PiBjYXJlIG9mIHRoYXQgb25jZSB3ZSBoYXZlIGFncmVlZCBvbiBhbiBhcHByb2FjaC4gW0Fs
+c28gYWRkZWQgaW4gQWxleHNhbmRyZV0uDQo+Pg0KPj4gZnVzZV91cmluZ19zdG9wX21vbigpIGNo
+ZWNrcyBpZiB0aGUgZGFlbW9uIHByb2Nlc3MgaXMgZXhpdGluZyBhbmQgYW5kDQo+PiBsb29rcyBh
+dCBmYy0+cmluZy5kYWVtb24tPmZsYWdzICYgUEZfRVhJVElORyAtIHRoaXMgaXMgd2hhdCB0aGUg
+cHJvY2Vzcw0KPj4gcmVmZXJlbmNlIGlzIGZvci4NCj4gDQo+IE9rYXksIHNvIHlvdSBhcmUgc2F5
+aW5nIHRoYXQgdGhlIGxpZmV0aW1lIG9mIHRoZSByaW5nIGlzIGJvdW5kIHRvIHRoZQ0KPiBsaWZl
+dGltZSBvZiB0aGUgdGhyZWFkIHRoYXQgY3JlYXRlZCBpdD8NCj4gDQo+IFdoeSBpcyB0aGF0Pw0K
+PiANCj4gSSd0cyBtdWNoIG1vcmUgY29tbW9uIHRvIGJpbmQgYSBsaWZldGltZSBvZiBhbiBvYmpl
+Y3QgdG8gdGhhdCBvZiBhbg0KPiBvcGVuIGZpbGUuICBpb191cmluZ19zZXR1cCgpIHdpbGwgZG8g
+dGhhdCBmb3IgZXhhbXBsZS4NCj4gDQo+IEl0J3MgbXVjaCBlYXNpZXIgdG8gaG9vayBpbnRvIHRo
+ZSBkZXN0cnVjdGlvbiBvZiBhbiBvcGVuIGZpbGUsIHRoYW4NCj4gaW50byB0aGUgZGVzdHJ1Y3Rp
+b24gb2YgYSBwcm9jZXNzIChhcyB5b3UndmUgb2JzZXJ2ZWQpLiBBbmQgdGhlIHdheQ0KPiB5b3Ug
+ZG8gaXQgaXMgZXZlbiBtb3JlIGNvbmZ1c2luZyBhcyB0aGUgcmluZyBpcyBkZXN0cm95ZWQgbm90
+IHdoZW4gdGhlDQo+IHByb2Nlc3MgaXMgZGVzdHJveWVkLCBidXQgd2hlbiBhIHNwZWNpZmljIHRo
+cmVhZCBpcyBkZXN0cm95ZWQsIG1ha2luZw0KPiB0aGlzIGEgdGhyZWFkIHNwZWNpZmljIGJlaGF2
+aW9yIHRoYXQgaXMgcHJvYmFibHkgYmVzdCBhdm9pZGVkLg0KPiANCj4gU28gdGhlIG9idmlvdXMg
+c29sdXRpb24gd291bGQgYmUgdG8gZGVzdHJveSB0aGUgcmluZyhzKSBpbg0KPiBmdXNlX2Rldl9y
+ZWxlYXNlKCkuICBXaHkgd291bGRuJ3QgdGhhdCB3b3JrPw0KPiANCg0KSSBfdGhpbmtfIEkgaGFk
+IHRyaWVkIGl0IGF0IHRoZSBiZWdpbm5pbmcgYW5kIHJ1biBpbnRvIGlzc3VlcyBhbmQgdGhlbiAN
+CnN3aXRjaGVkIHRoZSB1YmxrIGFwcHJvYWNoLiBHb2luZyB0byB0cnkgYWdhaW4gbm93Lg0KDQoN
+ClRoYW5rcywNCkJlcm5kDQoNCg==
