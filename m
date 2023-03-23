@@ -2,268 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C1966C6691
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 12:30:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C07B6C673C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 12:56:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbjCWLaf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 07:30:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48196 "EHLO
+        id S230482AbjCWL4H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 07:56:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbjCWLae (ORCPT
+        with ESMTP id S230410AbjCWLzo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 07:30:34 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F3326A58
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 04:30:33 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id C10FF33AFE;
-        Thu, 23 Mar 2023 11:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1679571031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PafqFtBeT3VNjLa3bxD2d3FT8QKiRREDypdho4biGYk=;
-        b=xxk0H1VUm5tlRIPe31O4WpV90ssc0y40SuM926E5ZfiMAmtyd4CYgJHG0fcsAiBinUXarO
-        Icqe7XddkeVqg75Hv1eN0p+TbIOVJVgZ1RuKdHaylEZLaAy44GlebE3yToPzp0VfLpXTim
-        ms6jZbSYQq99XYTO8YaI/dEWrQck1Nk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1679571031;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PafqFtBeT3VNjLa3bxD2d3FT8QKiRREDypdho4biGYk=;
-        b=yRT7BIEczqyllmYv3ubax2JxiGI4JEyo4jgJXH2GJUEHZJ//fRPFVMbnP4CNvx/uEjvtBS
-        B1brXYxd1Z48XqDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AC0D213596;
-        Thu, 23 Mar 2023 11:30:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id RGD1KVc4HGRUEgAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 23 Mar 2023 11:30:31 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 0E952A071C; Thu, 23 Mar 2023 12:30:30 +0100 (CET)
-Date:   Thu, 23 Mar 2023 12:30:30 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <ritesh.list@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, lsf-pc@lists.linux-foundation.org
-Subject: Re: [RFCv1][WIP] ext2: Move direct-io to use iomap
-Message-ID: <20230323113030.ryne2oq27b6cx6xz@quack3>
-References: <87ttz889ns.fsf@doe.com>
- <eae9d2125de1887f55186668937df7475b0a33f4.1678977084.git.ritesh.list@gmail.com>
- <20230320175139.l5oqbwuae4schgcu@quack3>
- <87zg85pa5i.fsf@doe.com>
+        Thu, 23 Mar 2023 07:55:44 -0400
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C330D34C0D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 04:55:30 -0700 (PDT)
+Received: by mail-vs1-xe31.google.com with SMTP id cz11so12245747vsb.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 04:55:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679572530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+g244NDjyuCCq96rI3Y/rJkxFolT/Tu9AzAiuIUfdu4=;
+        b=JfwDhP1tx7yJxFzNVmVcqhNgZk9aVwqRNSMLTlyqYX8LK5WECQSlr+tbcYRmjJLQ+p
+         CoAjpj5Zd7+m1iR/4PiziyLAFOwVkzNsGE3f7nFzjZ4nleczr1pCjv+WIZTLTOb4Hytd
+         uyoJb1sXO67pMbZ7NGUru+LP2Y/VgUzwLbdUptZVQ9i0mf87bWjEQodAg2Wr3AgGvStx
+         +d75i2gEI6FnGIdDxzBwjcsbjLesfzFUPGtFDnQf80AB/ro6RURO9XGW4gh8zNpYQ/1/
+         o879Oxh+STbamrQ6+/fXs40E39bNBF1CPwscOqvoTBVJIOlnm1IZG5e4BHuJje8PUmSW
+         HpVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679572530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+g244NDjyuCCq96rI3Y/rJkxFolT/Tu9AzAiuIUfdu4=;
+        b=NG2QpzWzypaKs8qtkDAkDBWtUhVvwdIsxjrTYZEKQeYqLFETV17HtdcMv+25BKvP/p
+         tuCe3KwkzQZj8SiDppPZsFVpxQlZONzU6bE5M2JGQ3jrcNYhbYFd82/qtjKqoCRt+0Ol
+         b+TRhDSgc3fOQ7oMp4hMdGZGCv1VqOUI3HihZ1hEqOmsu74SHBXyNIhb5ElCTR6H2xhQ
+         vboWCQAJdWKMBWuH3kC0IdD0HiYfQeqKJQVDfCxtHZ9bZeePoX2iet5vVxcFl/a0c9kF
+         q2pelfln2CZ/yPHHwTeVID/xfL98sR5ruyu1aNmPqwmDWQKKRv11latOVncIvg2vqnsg
+         t1AA==
+X-Gm-Message-State: AO0yUKXJi0+KmWoaPGmHBJMZNWhQOTCTow2tb+rnzwSY8dy5jFJ/Ta5r
+        Mi4sTamIKColRI+zk0pIf5c7KJclOBF+vzQmhraK53oH9sQ=
+X-Google-Smtp-Source: AK7set+8CiA8FyRW2yZKmCxGJnXQ5Ysl+y50NH0M6x8pZstrv/FkUweDIO1/ThD+btY9YfmO7bccS6fQV721HFF9dMI=
+X-Received: by 2002:a05:6102:4751:b0:411:ffe1:9c6 with SMTP id
+ ej17-20020a056102475100b00411ffe109c6mr1597686vsb.0.1679572529572; Thu, 23
+ Mar 2023 04:55:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zg85pa5i.fsf@doe.com>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230321011047.3425786-1-bschubert@ddn.com> <CAOQ4uxjXZHr3DZUQVvcTisRy+HYNWSRWvzKDXuHP0w==QR8Yog@mail.gmail.com>
+ <02f19f49-47f8-b1c5-224d-d7233b62bf32@fastmail.fm>
+In-Reply-To: <02f19f49-47f8-b1c5-224d-d7233b62bf32@fastmail.fm>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 23 Mar 2023 13:55:18 +0200
+Message-ID: <CAOQ4uxiDLV2y_HeUy1M-WWrNGdjn-drUxcoNczJBYRKOLXkkUQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/13] fuse uring communication
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
+        Dharmendra Singh <dsingh@ddn.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        fuse-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 22-03-23 12:04:01, Ritesh Harjani wrote:
-> Jan Kara <jack@suse.cz> writes:
-> >> +	pos += size;
-> >> +	if (pos > i_size_read(inode))
-> >> +		i_size_write(inode, pos);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const struct iomap_dio_ops ext2_dio_write_ops = {
-> >> +	.end_io = ext2_dio_write_end_io,
-> >> +};
-> >> +
-> >> +static ssize_t ext2_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> >> +{
-> >> +	struct file *file = iocb->ki_filp;
-> >> +	struct inode *inode = file->f_mapping->host;
-> >> +	ssize_t ret;
-> >> +	unsigned int flags;
-> >> +	unsigned long blocksize = inode->i_sb->s_blocksize;
-> >> +	loff_t offset = iocb->ki_pos;
-> >> +	loff_t count = iov_iter_count(from);
-> >> +
-> >> +
-> >> +	inode_lock(inode);
-> >> +	ret = generic_write_checks(iocb, from);
-> >> +	if (ret <= 0)
-> >> +		goto out_unlock;
-> >> +	ret = file_remove_privs(file);
-> >> +	if (ret)
-> >> +		goto out_unlock;
-> >> +	ret = file_update_time(file);
-> >> +	if (ret)
-> >> +		goto out_unlock;
-> >> +
-> >> +	/*
-> >> +	 * We pass IOMAP_DIO_NOSYNC because otherwise iomap_dio_rw()
-> >> +	 * calls for generic_write_sync in iomap_dio_complete().
-> >> +	 * Since ext2_fsync nmust be called w/o inode lock,
-> >> +	 * hence we pass IOMAP_DIO_NOSYNC and handle generic_write_sync()
-> >> +	 * ourselves.
-> >> +	 */
-> >> +	flags = IOMAP_DIO_NOSYNC;
+On Thu, Mar 23, 2023 at 1:18=E2=80=AFPM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 3/21/23 10:35, Amir Goldstein wrote:
+> > On Tue, Mar 21, 2023 at 3:11=E2=80=AFAM Bernd Schubert <bschubert@ddn.c=
+om> wrote:
+> >>
+> >> This adds support for uring communication between kernel and
+> >> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
+> >> appraoch was taken from ublk.  The patches are in RFC state -
+> >> I'm not sure about all decisions and some questions are marked
+> >> with XXX.
+> >>
+> >> Userspace side has to send IOCTL(s) to configure ring queue(s)
+> >> and it has the choice to configure exactly one ring or one
+> >> ring per core. If there are use case we can also consider
+> >> to allow a different number of rings - the ioctl configuration
+> >> option is rather generic (number of queues).
+> >>
+> >> Right now a queue lock is taken for any ring entry state change,
+> >> mostly to correctly handle unmount/daemon-stop. In fact,
+> >> correctly stopping the ring took most of the development
+> >> time - always new corner cases came up.
+> >> I had run dozens of xfstest cycles,
+> >> versions I had once seen a warning about the ring start_stop
+> >> mutex being the wrong state - probably another stop issue,
+> >> but I have not been able to track it down yet.
+> >> Regarding the queue lock - I still need to do profiling, but
+> >> my assumption is that it should not matter for the
+> >> one-ring-per-core configuration. For the single ring config
+> >> option lock contention might come up, but I see this
+> >> configuration mostly for development only.
+> >> Adding more complexity and protecting ring entries with
+> >> their own locks can be done later.
+> >>
+> >> Current code also keep the fuse request allocation, initially
+> >> I only had that for background requests when the ring queue
+> >> didn't have free entries anymore. The allocation is done
+> >> to reduce initial complexity, especially also for ring stop.
+> >> The allocation free mode can be added back later.
+> >>
+> >> Right now always the ring queue of the submitting core
+> >> is used, especially for page cached background requests
+> >> we might consider later to also enqueue on other core queues
+> >> (when these are not busy, of course).
+> >>
+> >> Splice/zero-copy is not supported yet, all requests go
+> >> through the shared memory queue entry buffer. I also
+> >> following splice and ublk/zc copy discussions, I will
+> >> look into these options in the next days/weeks.
+> >> To have that buffer allocated on the right numa node,
+> >> a vmalloc is done per ring queue and on the numa node
+> >> userspace daemon side asks for.
+> >> My assumption is that the mmap offset parameter will be
+> >> part of a debate and I'm curious what other think about
+> >> that appraoch.
+> >>
+> >> Benchmarking and tuning is on my agenda for the next
+> >> days. For now I only have xfstest results - most longer
+> >> running tests were running at about 2x, but somehow when
+> >> I cleaned up the patches for submission I lost that.
+> >> My development VM/kernel has all sanitizers enabled -
+> >> hard to profile what happened. Performance
+> >> results with profiling will be submitted in a few days.
 > >
-> > Meh, this is kind of ugly and we should come up with something better for
-> > simple filesystems so that they don't have to play these games. Frankly,
-> > these days I doubt there's anybody really needing inode_lock in
-> > __generic_file_fsync(). Neither sync_mapping_buffers() nor
-> > sync_inode_metadata() need inode_lock for their self-consistency. So it is
-> > only about flushing more consistent set of metadata to disk when fsync(2)
-> > races with other write(2)s to the same file so after a crash we have higher
-> > chances of seeing some real state of the file. But I'm not sure it's really
-> > worth keeping for filesystems that are still using sync_mapping_buffers().
-> > People that care about consistency after a crash have IMHO moved to other
-> > filesystems long ago.
+> > When posting those benchmarks and with future RFC posting,
+> > it's would be useful for people reading this introduction for the
+> > first time, to explicitly state the motivation of your work, which
+> > can only be inferred from the mention of "benchmarks".
 > >
-> 
-> One way which hch is suggesting is to use __iomap_dio_rw() -> unlock
-> inode -> call generic_write_sync(). I haven't yet worked on this part.
+> > I think it would also be useful to link to prior work (ZUFS, fuse2)
+> > and mention the current FUSE performance issues related to
+> > context switches and cache line bouncing that was discussed in
+> > those threads.
+>
+> Oh yes sure, entirely forgot to mention the motivation. Will do in the
+> next patch round. You don't have these links by any chance? I know that
 
-So I see two problems with what Christoph suggests:
+I have this thread which you are on:
+https://lore.kernel.org/linux-fsdevel/CAJfpegtjEoE7H8tayLaQHG9fRSBiVuaspnmP=
+r2oQiOZXVB1+7g@mail.gmail.com/
 
-a) It is unfortunate API design to require trivial (and low maintenance)
-   filesystem to do these relatively complex locking games. But this can
-   be solved by providing appropriate wrapper for them I guess.
+> there were several zufs threads, but I don't remember discussions about
+> cache line - maybe I had missed it. I can try to read through the old
+> threads, in case you don't have it.
 
-b) When you unlock the inode, other stuff can happen with the inode. And
-   e.g. i_size update needs to happen after IO is completed so filesystems
-   would have to be taught to avoid say two racing expanding writes. That's
-   IMHO really too much to ask.
+Miklos talked about it somewhere...
 
-> Are you suggesting to rip of inode_lock from __generic_file_fsync()?
-> Won't it have a much larger implications?
+> Our own motivation for ring basically comes from atomic-open benchmarks,
+> which gave totally confusing benchmark results in multi threaded libfuse
+> mode - less requests caused lower IOPs - switching to single threaded
+> then gave expect IOP increase. Part of it was due to a libfuse issue -
+> persistent thread destruction/creation due to min_idle_threads, but
+> another part can be explained with thread switching only. When I added
+> (slight) spinning in fuse_dev_do_read(), the hard part/impossible part
+> was to avoid letting multiple threads spin - even with a single threaded
+> application creating/deleting files (like bonnie++), multiple libfuse
+> threads started to spin for no good reason. So spinning resulted in a
+> much improved latency, but high cpu usage, because multiple threads were
+> spinning. I will add those explanations to the next patch set.
+>
 
-Yes and yes :). But inode writeback already happens from other paths
-without inode_lock so there's hardly any surprise there.
-sync_mapping_buffers() is impossible to "customize" by filesystems and the
-generic code is fine without inode_lock. So I have hard time imagining how
-any filesystem would really depend on inode_lock in this path (famous last
-words ;)).
+That would be great.
 
-> >> +	if (iocb->ki_pos + iov_iter_count(from) > i_size_read(inode) ||
-> >> +	   (!IS_ALIGNED(iocb->ki_pos | iov_iter_alignment(from), blocksize)))
-> >> +		flags |= IOMAP_DIO_FORCE_WAIT;
-> >> +
-> >> +	ret = iomap_dio_rw(iocb, from, &ext2_iomap_ops, &ext2_dio_write_ops,
-> >> +			   flags, NULL, 0);
-> >> +
-> >> +	if (ret == -ENOTBLK)
-> >> +		ret = 0;
-> >
-> > So iomap_dio_rw() doesn't have the DIO_SKIP_HOLES behavior of
-> > blockdev_direct_IO(). Thus you have to implement that in your
-> > ext2_iomap_ops, in particular in iomap_begin...
-> >
-> 
-> Aah yes. Thanks for pointing that out -
-> ext2_iomap_begin() should have something like this -
-> 	/*
-> 	 * We cannot fill holes in indirect tree based inodes as that could
-> 	 * expose stale data in the case of a crash. Use the magic error code
-> 	 * to fallback to buffered I/O.
-> 	 */
-> 
-> Also I think ext2_iomap_end() should also handle a case like in ext4 -
-> 
-> 	/*
-> 	 * Check to see whether an error occurred while writing out the data to
-> 	 * the allocated blocks. If so, return the magic error code so that we
-> 	 * fallback to buffered I/O and attempt to complete the remainder of
-> 	 * the I/O. Any blocks that may have been allocated in preparation for
-> 	 * the direct I/O will be reused during buffered I/O.
-> 	 */
-> 	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
-> 		return -ENOTBLK;
-> 
-> 
-> I am wondering if we have testcases in xfstests which really tests these
-> functionalities also or not? Let me give it a try...
-> ... So I did and somehow couldn't find any testcase which fails w/o
-> above changes.
-
-I guess we don't. It isn't that simple (but certainly possible) to test for
-stale data exposure...
-
-> Another query -
-> 
-> We have this function ext2_iomap_end() (pasted below)
-> which calls ext2_write_failed().
-> 
-> Here IMO two cases are possible -
-> 
-> 1. written is 0. which means an error has occurred.
-> In that case calling ext2_write_failed() make sense.
-> 
-> 2. consider a case where written > 0 && written < length.
-> (This is possible right?). In that case we still go and call
-> ext2_write_failed(). This function will truncate the pagecache and disk
-> blocks beyong i_size. Now we haven't yet updated inode->i_size (we do
-> that in ->end_io which gets called in the end during completion)
-> So that means it just removes everything.
-> 
-> Then in ext2_dax_write_iter(), we might go and update inode->i_size
-> to iocb->ki_pos including for short writes. This looks like it isn't
-> consistent because earlier we had destroyed all the blocks for the short
-> writes and we will be returning ret > 0 to the user saying these many
-> bytes have been written.
-> Again I haven't yet found a test case at least not in xfstests which
-> can trigger this short writes. Let me know your thoughts on this.
-> All of this lies on the fact that there can be a case where
-> written > 0 && written < length. I will read more to see if this even
-> happens or not. But I atleast wanted to capture this somewhere.
-
-So as far as I remember, direct IO writes as implemented in iomap are
-all-or-nothing (see iomap_dio_complete()). But it would be good to assert
-that in ext4 code to avoid surprises if the generic code changes.
-
-> Another thing -
-> In dax while truncating the inode i_size in ext2_setsize(),
-> I think we don't properly call dax_zero_blocks() when we are trying to
-> zero the last block beyond EOF. i.e. for e.g. it can be called with len
-> as 0 if newsize is page_aligned. It then will call ext2_get_blocks() with
-> len = 0 and can bug_on at maxblocks == 0.
-
-How will it call ext2_get_blocks() with len == 0? AFAICS iomap_iter() will
-not call iomap_begin() at all if iter.len == 0.
-
-> I think it should be this. I will spend some more time analyzing this
-> and also test it once against DAX paths.
-> 
-> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-> index 7ff669d0b6d2..cc264b1e288c 100644
-> --- a/fs/ext2/inode.c
-> +++ b/fs/ext2/inode.c
-> @@ -1243,9 +1243,8 @@ static int ext2_setsize(struct inode *inode, loff_t newsize)
->         inode_dio_wait(inode);
-> 
->         if (IS_DAX(inode))
-> -               error = dax_zero_range(inode, newsize,
-> -                                      PAGE_ALIGN(newsize) - newsize, NULL,
-> -                                      &ext2_iomap_ops);
-> +               error = dax_truncate_page(inode, newsize, NULL,
-> +                                         &ext2_iomap_ops);
->         else
->                 error = block_truncate_page(inode->i_mapping,
->                                 newsize, ext2_get_block);
-
-That being said this is indeed a nice cleanup.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Amir.
