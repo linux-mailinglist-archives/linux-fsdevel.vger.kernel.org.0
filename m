@@ -2,177 +2,307 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B1B16C695B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 14:18:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CA8C6C695D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 14:19:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231334AbjCWNS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 09:18:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53730 "EHLO
+        id S231603AbjCWNTf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 09:19:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230259AbjCWNSZ (ORCPT
+        with ESMTP id S230259AbjCWNTd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 09:18:25 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2068.outbound.protection.outlook.com [40.107.243.68])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7157B10E0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 06:18:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gYTTOzjhLzjIg7RlrLIWayl6i+rHG5XBaFI3co4ReK39+Vds1cVbY1QoQSaSIWx/k9fUof8jkV3ztdf1Qw5pjvRPhi5YTdNQQmozNGYf1jnTcJhdYHrIBmldgdLarlpuJoIst6NmJbF4FuUfFCjbeLUSCyTfvzv8vy5u8UkGJSe9TYc370G3RItEV3H2S9BIAqDiUZIQCfLFzhURRn2sI0Ve9qFgAP/0g6RMfgrZe3xdOD5v71uzIaSJwLLt2TOtBm3zRilKKbpcV4tlnS/CX91XX/S/p+Mc00FMeZWGWTbeICgaF/STS5LFMopAPC8Quf1LsS4V3H2YErAR9PPG0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dywJP3BLsp6/5STcP3HnjLLKV3o6QC4AYEUW108gW6U=;
- b=gLhBAMAec8viAqXN17w7UmSfmPNYIY/JrEpYb4L6ZaQjI65QsoAUUOgAAJfqrb55zyjIsGVBn5vt0r3ZTW1S+64i4lFl2hkfcCw6e6Aggi1ry5xzzcCk3aRQKmN029jsqa1hW1ZwpSt9h1+GLkE3Gtz8y6GVw8ME0asxcuDD9MfKL2BxxH7wiI+VLyfRGDcqYkazRAtkMcbM8KooDLhFF/EZtNb8CTfX8n6erB6oW5ACfymnApZbaqr8s+Oo81cB5hIaFNRqRR+8n6x3Ge9AF1eCYUFmIygnj4EkHDAQo+JqTEUzlFzCPM4ip+6sp6SgF9RgKLFsweWe/3c2xG973w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
- header.d=ddn.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dywJP3BLsp6/5STcP3HnjLLKV3o6QC4AYEUW108gW6U=;
- b=T5N9rWbzvULX6a4UZiuiw4fwLHfa+upNhQ7v2E5rT2V8KF+Pd2Gb2mQsO3oaVR4EOo4hKg6rQ0yf7REdBZq+cCYtJclBx7sTd7ds5H/+kkI5zpdzcdWewgueBbYfYl4ng024u7jUteGSAJbigsWQqKgHSqn0NyuuQcK9vbRug/M=
-Received: from DM5PR1901MB2037.namprd19.prod.outlook.com (2603:10b6:4:aa::29)
- by MN0PR19MB5804.namprd19.prod.outlook.com (2603:10b6:208:37b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.24; Thu, 23 Mar
- 2023 13:18:21 +0000
-Received: from DM5PR1901MB2037.namprd19.prod.outlook.com
- ([fe80::e6d4:29f7:2077:bd69]) by DM5PR1901MB2037.namprd19.prod.outlook.com
- ([fe80::e6d4:29f7:2077:bd69%4]) with mapi id 15.20.6086.024; Thu, 23 Mar 2023
- 13:18:21 +0000
-From:   Bernd Schubert <bschubert@ddn.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Dharmendra Singh <dsingh@ddn.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "fuse-devel@lists.sourceforge.net" <fuse-devel@lists.sourceforge.net>,
-        Ming Lei <ming.lei@redhat.com>,
-        Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Subject: Re: [PATCH 06/13] fuse: Add an interval ring stop worker/monitor
-Thread-Topic: [PATCH 06/13] fuse: Add an interval ring stop worker/monitor
-Thread-Index: AQHZW5INP1WhR4AlW0WGDgYwsBdWma8ILRSAgAAKLQCAABl7AIAAC/8A
-Date:   Thu, 23 Mar 2023 13:18:21 +0000
-Message-ID: <e0febe95-6d35-636d-1668-84ef16b87370@ddn.com>
-References: <20230321011047.3425786-1-bschubert@ddn.com>
- <20230321011047.3425786-7-bschubert@ddn.com>
- <CAJfpegs6z6pvepUx=3zfAYqisumri=2N-_A-nsYHQd62AQRahA@mail.gmail.com>
- <28a74cb4-57fe-0b21-8663-0668bf55d283@ddn.com>
- <CAJfpeguvCNUEbcy6VQzVJeNOsnNqfDS=LyRaGvSiDTGerB+iuw@mail.gmail.com>
-In-Reply-To: <CAJfpeguvCNUEbcy6VQzVJeNOsnNqfDS=LyRaGvSiDTGerB+iuw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ddn.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM5PR1901MB2037:EE_|MN0PR19MB5804:EE_
-x-ms-office365-filtering-correlation-id: a2f00509-f0da-4381-c314-08db2ba1132c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: g7na3A0h9b9gsCAf6qzKufYDdGDJSNle8IcZxinN+4zmWsMY4HFtcBSaFq6CSJMU85+TPhGbQWTfV8BSWoKm/OXOr9zEs82DoN6BxzyXihIYf1t4LCKcEOoi/vXMlCRxmFaGQjDeR+CKx2UpBfyI0V9riHoJeY6ebyvPQAF43mIvpGHRVFhqrVmEKrvSP8gjPeNQkjKgRimgeVh7loS0VYVO6VyWmwuZygXN/zFbAJpP12owV8KUB6RnPHYCcj14lP5EZ0IJBQc0DGn5nXuavIbSLc1bgqgBZIFGnmAvxqbheo3qNkg8MOdTjTEF8pY5d+71IBoC7WsZOiR8eItdH1HMk1/Y6Dc3yWPDSK4mhbob8cAsD9y+aVSE6eYazjM2IzTzRbUbZ+pII+JJgeB2t2nzgW9p0L+dfcU99GdPs1ogmIUncvr9MZXbByVCbRjcmUmvSi9VuJWGsJQVEkXHhzG9H73o4zpc/X9262h5jCjlR8xuMpu5ZDcigJPh2vrNPufuNtS1U11XBFtO03BtQs6BUDaktobiG54a5hCLs8wzG4jp/FXfSVTZOEYW1qmWJfKi7f3400Q0DIdcwzzZn098PihfDswa2+KZLcFVYo19cJdAQx5S3T+KB7w/1EgLPfFhqh//YJ2nIYI1RFXRwZFuKZ0iLtivtnU7FEgzQFaBZXrw5HRSpMIZpEPt2W7UV093IoNSCMAq4KInaXnHCsjrQq3F+NePHC4813CncthA1NK5Sd/GEyJ0omrw9IAcJYzTx9GfKYBpAChFA54jbA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1901MB2037.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39850400004)(376002)(366004)(346002)(396003)(136003)(451199018)(4326008)(5660300002)(8676002)(66446008)(66476007)(66556008)(41300700001)(316002)(6916009)(91956017)(38070700005)(66946007)(2906002)(76116006)(64756008)(86362001)(2616005)(31696002)(122000001)(38100700002)(83380400001)(31686004)(71200400001)(8936002)(36756003)(186003)(6512007)(478600001)(54906003)(6486002)(6506007)(53546011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?K1lJcWRiaXBDbjhjS0F2bEhZMGpoeURUd3VlOFJkMTBFNmYvV29OTHNzazBz?=
- =?utf-8?B?TGI0NTJzNGtTN2tPckFVTEdrNkdyaDJYTjhIWHUxRDZ6OTJCRTZGTWoxMWly?=
- =?utf-8?B?MDNwYW9yYlNLWmRla0Rsekp5WlpKZWtMdkRsd2dPekdQRHZZNUl0dVIya0Q3?=
- =?utf-8?B?ek96ZXIvZVdxMFNGdndBUmMwb25DSlFhck8yVjBuNkFScEZ1QVNUMFdRVVk4?=
- =?utf-8?B?UFl2SlhsT1pMWWxOZlJqazlCVzNyK1BKUUdtY0tvaTY0MzZWczlPdGdDeFdV?=
- =?utf-8?B?Nnp6WEFVVGprMEpGQ1ZneEhDYVo4U2p2eGpTL2Z2amtSanlyOHR6L2ZjQ0Fm?=
- =?utf-8?B?bksxYmZQY012Q0IveFkvZ0tRcVQ2VkZ4SklCVEVoQllZeXRadVd1R2pzNVV6?=
- =?utf-8?B?eGwrWGZTTVBEZ2RNOXVQWS9EYzBlUUxGMm5Pa2V5ZTE5R2RQaDc1ZGd2aFFE?=
- =?utf-8?B?THNCUGZDSmJSN1JqRkhOUG1kYkdCaWsyeFpQMEZpQTg5OHl1ek1JNHBEcm84?=
- =?utf-8?B?UXNUNkY5SjE0TWtFTVFSc1gxeGszWFN2aVlhdktyTFJ3WjN3M05jNitaTkNz?=
- =?utf-8?B?cFp4Nmx6enY3ZHUrZWpibnEvUmN3Wm4yeW5SdzlJV2l6Vm9DRWN1WHVqdTM2?=
- =?utf-8?B?bG9JV0o5M2VVbzJuQ1RJeE5TM1YzazBoenlmeWNyNnl3NXFrVmdDdHJ6a3ZE?=
- =?utf-8?B?NFVGMlhJNUQwTHlKUnMxbFJVdlloOWNkbk9FK0UxcEtDT3A5SFUyNmdDRFZN?=
- =?utf-8?B?N0luWUY5bkdHOHVqOGtWdHlnLzJWNER6UTI1Q3JTUXhXU3ZyZlIrTGlhaWM2?=
- =?utf-8?B?bjBCQUVycUhYV3V2ZWtCL04zN1FXYklUYWdXc2UwSGtSeUdrRjB0LzU3TG1Z?=
- =?utf-8?B?ak52ZE9tWXhYbU9ibmdMMlVLQ0hHa1N2b0VKR0ZRKzFXdWVlM1ZHTnVTVXNT?=
- =?utf-8?B?cktic0haUk1HWkNhd0RqTjB5c1d3V0lva3JJcURydzQwc3dCS1pNQmJtRUlC?=
- =?utf-8?B?OXYyM1pqdXdZdGNvVStOcFpkOHlsU3huSXhqSlA0M05JNG9kRXNBM0NqWkwv?=
- =?utf-8?B?NjdUYjFCRm5yYTJTeERWcUd6Y0M0QnF1OGd2eGVRSjdXQWpLOTNhdTd6RVhj?=
- =?utf-8?B?LzN2SjhSWkxUZVVObEV1MFN5RUVXSUxJempIcGdzWlZIN1Zuc1RXMnVXT3I4?=
- =?utf-8?B?UEtNODd0UGoyY0tYVlRhc0d6cXVOdE9QWnJMendpc2VYVFpZRnVHeG10TkRs?=
- =?utf-8?B?amhmZnBncEdnbXdKOXlRZ3B4RmEzK0xHbFlWL0xHai96YUt6dkI4N2s1ek91?=
- =?utf-8?B?SGZJWUVQTjUrSHN1TTBRMHFzd3NTbHhpNkNqdjNwWVA4VDdFdTdBaXpwUHFy?=
- =?utf-8?B?MGJETzRJdmQvdUZPeW4yaTVvaFBSNEIwcDhqK21oRmk3ZExjY0pXaVFPSVlH?=
- =?utf-8?B?TUIrSEZwREFGTGJ2UXR5TWJveDZNN0s1eWVJT3p4QmU4WTExdE1KcGNQU0lp?=
- =?utf-8?B?Yjdpa0doUDRrNnNUNDdsSGgzS09SS2dhd1JUTzNQU1pvQnhSZHRIREtRSGdS?=
- =?utf-8?B?U1ZMK2dxcXhnVndRZU1pZzExUjQ0dnVTMElJbHFnN0xnMWJQLyt0WVJYZzNT?=
- =?utf-8?B?dGovN2h4b01MSnBZbGsvNWVOV3BFRnlKQ2ZYOWUzVVVoK2VHYkVkWTZTTzU0?=
- =?utf-8?B?am5ObWlLOE80amJuZzkxOEV4aVdnL3BZcFRRSnFWMVJlYTVUTlBKa2RObUtD?=
- =?utf-8?B?STdNRkdTckh1SW0zUTh4dFUxWlFGeHc0NVJ6SnBDMkZZbkJnUGtDS2Q3N0Rq?=
- =?utf-8?B?NFBvRlFaN1Z6UElMdlJORllvaHJUZFFzYjhXNGVpczAxdlJTVzdPOU1zNVJ2?=
- =?utf-8?B?UEJNa0FXS1dCbjJNa3BQYlU3dUlRaTV5QjVmUE1qYVFEbThjdlB6NjFzd1Jl?=
- =?utf-8?B?andab0N2MHI2MG5sMGJ0Ulp2azNnS0ZNRXc3b1dBNVdmaE5OUFowdDF1cUo5?=
- =?utf-8?B?TFFsYXEwbi8wcUtBcmUyQVZFMm9VM3B1MUMyRkwvdTVPK1ZBTk91RWVweHda?=
- =?utf-8?B?SGlZL0wxQXNIT2ZIMWJEQ0tSdDZMendPVVFoS0FCSmt0YUxBeHNUYWVNTUty?=
- =?utf-8?B?bW9EeGtWSWxnd1QrQ2ZiSlpET3Z4TW1jL040L1J3aGNxNk03cnlpd0ppZGZR?=
- =?utf-8?Q?5cZ3Eh7A9eSG3aJ5Gi8jZ4I=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C647BE0A15DDE64F93E37CDC5859A055@namprd19.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM5PR1901MB2037.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2f00509-f0da-4381-c314-08db2ba1132c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2023 13:18:21.3861
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PWzf3NCTDErNXFiPyTPiy0fUPUC5e4bNrgeiMAQAUJA5mdEKTenRUob0jF3Vu4YeUAP2EST0aXUdsBO2XCbKRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR19MB5804
+        Thu, 23 Mar 2023 09:19:33 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D7111EBC1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 06:19:32 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id a16so17099311pjs.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 06:19:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679577571;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Xohg3uq6108EmfZvk0MIVoAmjVW9Bugj9pZNC8wNbe0=;
+        b=TkbAP6KqZX03cbb8R+a5mHWL6DpiJOEAM9c0RT2fgi1rkbAOAMdg3Ed2RcNTykbBJx
+         TM836e2J+MIRsHIkc0nTHHPWvnnclzWEZ91aSAI/14z1dRTgqHaJHlApsEz35fRdmr9Y
+         q8Y0Rs1K8ekag1cK02HMYWzFSKD4tJYo1+qqbM1E1om0S3vtwGUNVRenG8xgja38PtG9
+         g6xZlvdRceT1jkKUDqB+Oa4Uc3qtAKmM2OCWqJ4q93zGOSR39NxOttFGOKSiw7/S/Ths
+         9gaI5drEL7g98jibEWSQHAR5PS+Q2BaZEznr1es/aOEVzCXYPOlrUR3yo8aFxZN4gdNI
+         rRJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679577571;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Xohg3uq6108EmfZvk0MIVoAmjVW9Bugj9pZNC8wNbe0=;
+        b=C+idyQq0KRbXk3FD0bm8BbPykokBRdf5O/Fqn/rhqWdY0bC4K692l+uWy4hYW59Jq1
+         I7YWaKw7ckXGDCvn2Btju51W84B/6xFp4DBeJICB9L/jJWM3OXJACTr0cmX2L9jbqzws
+         Cg1Phvs03qQgKv59LnHXbZXAYtKa/YvC5hF4H4HpPc3D/toOzNPK9I1QFyIT+n886j6+
+         kBLHnLH9cW05a2ECSXu2BEk0PI7CqPVpCKFq/QuKCipjic9XjcCkmwdunVV94UW11UxV
+         RcSS62QfqbaOwo4elspTU0eox/7UwFnJ1cI5lWxUzjXCT+eNb5+/vu9vTxBFIVkbzIMF
+         FJtQ==
+X-Gm-Message-State: AO0yUKVvhKwmCcJQl+Z5gWfPS1e9w2apTf5pWjW9ZnKzQQkrDecT+T0z
+        ogws2mEi1IVxOvp+lJ1HdCCxfmWELynmfw==
+X-Google-Smtp-Source: AK7set8K2Xw4AY/Dy+AqAftH72CaH3bRger0FihC6TkZf+3ogu8p2AT/er2GdHy/T/0Aj50wFKT4iA==
+X-Received: by 2002:a17:902:fb10:b0:19e:9807:de48 with SMTP id le16-20020a170902fb1000b0019e9807de48mr5315160plb.23.1679577571459;
+        Thu, 23 Mar 2023 06:19:31 -0700 (PDT)
+Received: from rh-tp ([2406:7400:63:469f:1474:7c59:3a57:aab6])
+        by smtp.gmail.com with ESMTPSA id x17-20020a170902b41100b001992e74d058sm204926plr.7.2023.03.23.06.19.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Mar 2023 06:19:31 -0700 (PDT)
+Date:   Thu, 23 Mar 2023 18:49:10 +0530
+Message-Id: <87wn37ppv5.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, lsf-pc@lists.linux-foundation.org
+Subject: Re: [RFCv1][WIP] ext2: Move direct-io to use iomap
+In-Reply-To: <20230323113030.ryne2oq27b6cx6xz@quack3>
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gMy8yMy8yMyAxMzozNSwgTWlrbG9zIFN6ZXJlZGkgd3JvdGU6DQo+IE9uIFRodSwgMjMgTWFy
-IDIwMjMgYXQgMTI6MDQsIEJlcm5kIFNjaHViZXJ0IDxic2NodWJlcnRAZGRuLmNvbT4gd3JvdGU6
-DQo+Pg0KPj4gVGhhbmtzIGZvciBsb29raW5nIGF0IHRoZXNlIHBhdGNoZXMhDQo+Pg0KPj4gSSdt
-IGFkZGluZyBpbiBNaW5nIExlaSwgYXMgSSBoYWQgdGFrZW4gc2V2ZXJhbCBpZGVhcyBmcm9tIHVi
-bGttIEkgZ3Vlc3MNCj4+IEkgYWxzbyBzaG91bGQgYWxzbyBleHBsYWluIGluIHRoZSBjb21taXQg
-bWVzc2FnZXMgYW5kIGNvZGUgd2h5IGl0IGlzDQo+PiBkb25lIHRoYXQgd2F5Lg0KPj4NCj4+IE9u
-IDMvMjMvMjMgMTE6MjcsIE1pa2xvcyBTemVyZWRpIHdyb3RlOg0KPj4+IE9uIFR1ZSwgMjEgTWFy
-IDIwMjMgYXQgMDI6MTEsIEJlcm5kIFNjaHViZXJ0IDxic2NodWJlcnRAZGRuLmNvbT4gd3JvdGU6
-DQo+Pj4+DQo+Pj4+IFRoaXMgYWRkcyBhIGRlbGF5ZWQgd29yayBxdWV1ZSB0aGF0IHJ1bnMgaW4g
-aW50ZXJ2YWxzDQo+Pj4+IHRvIGNoZWNrIGFuZCB0byBzdG9wIHRoZSByaW5nIGlmIG5lZWRlZC4g
-RnVzZSBjb25uZWN0aW9uDQo+Pj4+IGFib3J0IG5vdyB3YWl0cyBmb3IgdGhpcyB3b3JrZXIgdG8g
-Y29tcGxldGUuDQo+Pj4NCj4+PiBUaGlzIHNlZW1zIGxpa2UgYSBoYWNrLiAgIENhbiB5b3UgZXhw
-bGFpbiB3aGF0IHRoZSBwcm9ibGVtIGlzPw0KPj4+DQo+Pj4gVGhlIGZpcnN0IHRoaW5nIEkgbm90
-aWNlIGlzIHRoYXQgeW91IHN0b3JlIGEgcmVmZXJlbmNlIHRvIHRoZSB0YXNrDQo+Pj4gdGhhdCBp
-bml0aWF0ZWQgdGhlIHJpbmcgY3JlYXRpb24uICBUaGlzIGFscmVhZHkgbG9va3MgZmlzaHksIGFz
-IHRoZQ0KPj4+IHJpbmcgY291bGQgd2VsbCBzdXJ2aXZlIHRoZSB0YXNrICh0aHJlYWQpIHRoYXQg
-Y3JlYXRlZCBpdCwgbm8/DQo+Pg0KPj4gWW91IG1lYW4gdGhlIGN1cnJlbnRseSBvbmdvaW5nIHdv
-cmssIHdoZXJlIHRoZSBkYWVtb24gY2FuIGJlIHJlc3RhcnRlZD8NCj4+IERhZW1vbiByZXN0YXJ0
-IHdpbGwgbmVlZCBzb21lIHdvcmsgd2l0aCByaW5nIGNvbW11bmljYXRpb24sIEkgd2lsbCB0YWtl
-DQo+PiBjYXJlIG9mIHRoYXQgb25jZSB3ZSBoYXZlIGFncmVlZCBvbiBhbiBhcHByb2FjaC4gW0Fs
-c28gYWRkZWQgaW4gQWxleHNhbmRyZV0uDQo+Pg0KPj4gZnVzZV91cmluZ19zdG9wX21vbigpIGNo
-ZWNrcyBpZiB0aGUgZGFlbW9uIHByb2Nlc3MgaXMgZXhpdGluZyBhbmQgYW5kDQo+PiBsb29rcyBh
-dCBmYy0+cmluZy5kYWVtb24tPmZsYWdzICYgUEZfRVhJVElORyAtIHRoaXMgaXMgd2hhdCB0aGUg
-cHJvY2Vzcw0KPj4gcmVmZXJlbmNlIGlzIGZvci4NCj4gDQo+IE9rYXksIHNvIHlvdSBhcmUgc2F5
-aW5nIHRoYXQgdGhlIGxpZmV0aW1lIG9mIHRoZSByaW5nIGlzIGJvdW5kIHRvIHRoZQ0KPiBsaWZl
-dGltZSBvZiB0aGUgdGhyZWFkIHRoYXQgY3JlYXRlZCBpdD8NCj4gDQo+IFdoeSBpcyB0aGF0Pw0K
-PiANCj4gSSd0cyBtdWNoIG1vcmUgY29tbW9uIHRvIGJpbmQgYSBsaWZldGltZSBvZiBhbiBvYmpl
-Y3QgdG8gdGhhdCBvZiBhbg0KPiBvcGVuIGZpbGUuICBpb191cmluZ19zZXR1cCgpIHdpbGwgZG8g
-dGhhdCBmb3IgZXhhbXBsZS4NCj4gDQo+IEl0J3MgbXVjaCBlYXNpZXIgdG8gaG9vayBpbnRvIHRo
-ZSBkZXN0cnVjdGlvbiBvZiBhbiBvcGVuIGZpbGUsIHRoYW4NCj4gaW50byB0aGUgZGVzdHJ1Y3Rp
-b24gb2YgYSBwcm9jZXNzIChhcyB5b3UndmUgb2JzZXJ2ZWQpLiBBbmQgdGhlIHdheQ0KPiB5b3Ug
-ZG8gaXQgaXMgZXZlbiBtb3JlIGNvbmZ1c2luZyBhcyB0aGUgcmluZyBpcyBkZXN0cm95ZWQgbm90
-IHdoZW4gdGhlDQo+IHByb2Nlc3MgaXMgZGVzdHJveWVkLCBidXQgd2hlbiBhIHNwZWNpZmljIHRo
-cmVhZCBpcyBkZXN0cm95ZWQsIG1ha2luZw0KPiB0aGlzIGEgdGhyZWFkIHNwZWNpZmljIGJlaGF2
-aW9yIHRoYXQgaXMgcHJvYmFibHkgYmVzdCBhdm9pZGVkLg0KPiANCj4gU28gdGhlIG9idmlvdXMg
-c29sdXRpb24gd291bGQgYmUgdG8gZGVzdHJveSB0aGUgcmluZyhzKSBpbg0KPiBmdXNlX2Rldl9y
-ZWxlYXNlKCkuICBXaHkgd291bGRuJ3QgdGhhdCB3b3JrPw0KPiANCg0KSSBfdGhpbmtfIEkgaGFk
-IHRyaWVkIGl0IGF0IHRoZSBiZWdpbm5pbmcgYW5kIHJ1biBpbnRvIGlzc3VlcyBhbmQgdGhlbiAN
-CnN3aXRjaGVkIHRoZSB1YmxrIGFwcHJvYWNoLiBHb2luZyB0byB0cnkgYWdhaW4gbm93Lg0KDQoN
-ClRoYW5rcywNCkJlcm5kDQoNCg==
+Jan Kara <jack@suse.cz> writes:
+
+Hi Jan,
+
+> On Wed 22-03-23 12:04:01, Ritesh Harjani wrote:
+>> Jan Kara <jack@suse.cz> writes:
+>> >> +	pos += size;
+>> >> +	if (pos > i_size_read(inode))
+>> >> +		i_size_write(inode, pos);
+>> >> +
+>> >> +	return 0;
+>> >> +}
+>> >> +
+>> >> +static const struct iomap_dio_ops ext2_dio_write_ops = {
+>> >> +	.end_io = ext2_dio_write_end_io,
+>> >> +};
+>> >> +
+>> >> +static ssize_t ext2_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>> >> +{
+>> >> +	struct file *file = iocb->ki_filp;
+>> >> +	struct inode *inode = file->f_mapping->host;
+>> >> +	ssize_t ret;
+>> >> +	unsigned int flags;
+>> >> +	unsigned long blocksize = inode->i_sb->s_blocksize;
+>> >> +	loff_t offset = iocb->ki_pos;
+>> >> +	loff_t count = iov_iter_count(from);
+>> >> +
+>> >> +
+>> >> +	inode_lock(inode);
+>> >> +	ret = generic_write_checks(iocb, from);
+>> >> +	if (ret <= 0)
+>> >> +		goto out_unlock;
+>> >> +	ret = file_remove_privs(file);
+>> >> +	if (ret)
+>> >> +		goto out_unlock;
+>> >> +	ret = file_update_time(file);
+>> >> +	if (ret)
+>> >> +		goto out_unlock;
+>> >> +
+>> >> +	/*
+>> >> +	 * We pass IOMAP_DIO_NOSYNC because otherwise iomap_dio_rw()
+>> >> +	 * calls for generic_write_sync in iomap_dio_complete().
+>> >> +	 * Since ext2_fsync nmust be called w/o inode lock,
+>> >> +	 * hence we pass IOMAP_DIO_NOSYNC and handle generic_write_sync()
+>> >> +	 * ourselves.
+>> >> +	 */
+>> >> +	flags = IOMAP_DIO_NOSYNC;
+>> >
+>> > Meh, this is kind of ugly and we should come up with something better for
+>> > simple filesystems so that they don't have to play these games. Frankly,
+>> > these days I doubt there's anybody really needing inode_lock in
+>> > __generic_file_fsync(). Neither sync_mapping_buffers() nor
+>> > sync_inode_metadata() need inode_lock for their self-consistency. So it is
+>> > only about flushing more consistent set of metadata to disk when fsync(2)
+>> > races with other write(2)s to the same file so after a crash we have higher
+>> > chances of seeing some real state of the file. But I'm not sure it's really
+>> > worth keeping for filesystems that are still using sync_mapping_buffers().
+>> > People that care about consistency after a crash have IMHO moved to other
+>> > filesystems long ago.
+>> >
+>>
+>> One way which hch is suggesting is to use __iomap_dio_rw() -> unlock
+>> inode -> call generic_write_sync(). I haven't yet worked on this part.
+>
+> So I see two problems with what Christoph suggests:
+>
+> a) It is unfortunate API design to require trivial (and low maintenance)
+>    filesystem to do these relatively complex locking games. But this can
+>    be solved by providing appropriate wrapper for them I guess.
+>
+> b) When you unlock the inode, other stuff can happen with the inode. And
+>    e.g. i_size update needs to happen after IO is completed so filesystems
+>    would have to be taught to avoid say two racing expanding writes. That's
+>    IMHO really too much to ask.
+>
+
+yes, that's the reason I was not touching it and I thought I will
+get back to it once I figure out other things.
+
+
+>> Are you suggesting to rip of inode_lock from __generic_file_fsync()?
+>> Won't it have a much larger implications?
+>
+> Yes and yes :). But inode writeback already happens from other paths
+> without inode_lock so there's hardly any surprise there.
+> sync_mapping_buffers() is impossible to "customize" by filesystems and the
+> generic code is fine without inode_lock. So I have hard time imagining how
+> any filesystem would really depend on inode_lock in this path (famous last
+> words ;)).
+>
+
+Ok sure. I will spend sometime looking into this code and history. And
+if everything looks good, will rip off inode_lock() from __generic_file_fsync().
+
+
+>> >> +	if (iocb->ki_pos + iov_iter_count(from) > i_size_read(inode) ||
+>> >> +	   (!IS_ALIGNED(iocb->ki_pos | iov_iter_alignment(from), blocksize)))
+>> >> +		flags |= IOMAP_DIO_FORCE_WAIT;
+>> >> +
+>> >> +	ret = iomap_dio_rw(iocb, from, &ext2_iomap_ops, &ext2_dio_write_ops,
+>> >> +			   flags, NULL, 0);
+>> >> +
+>> >> +	if (ret == -ENOTBLK)
+>> >> +		ret = 0;
+>> >
+>> > So iomap_dio_rw() doesn't have the DIO_SKIP_HOLES behavior of
+>> > blockdev_direct_IO(). Thus you have to implement that in your
+>> > ext2_iomap_ops, in particular in iomap_begin...
+>> >
+>>
+>> Aah yes. Thanks for pointing that out -
+>> ext2_iomap_begin() should have something like this -
+>> 	/*
+>> 	 * We cannot fill holes in indirect tree based inodes as that could
+>> 	 * expose stale data in the case of a crash. Use the magic error code
+>> 	 * to fallback to buffered I/O.
+>> 	 */
+>>
+>> Also I think ext2_iomap_end() should also handle a case like in ext4 -
+>>
+>> 	/*
+>> 	 * Check to see whether an error occurred while writing out the data to
+>> 	 * the allocated blocks. If so, return the magic error code so that we
+>> 	 * fallback to buffered I/O and attempt to complete the remainder of
+>> 	 * the I/O. Any blocks that may have been allocated in preparation for
+>> 	 * the direct I/O will be reused during buffered I/O.
+>> 	 */
+>> 	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
+>> 		return -ENOTBLK;
+>>
+>>
+>> I am wondering if we have testcases in xfstests which really tests these
+>> functionalities also or not? Let me give it a try...
+>> ... So I did and somehow couldn't find any testcase which fails w/o
+>> above changes.
+>
+> I guess we don't. It isn't that simple (but certainly possible) to test for
+> stale data exposure...
+>
+
+Yes, I am currently working on writing a aio dio test case to simulate
+this. AFAIU, the stale data exposure problems with non-extent filesystem
+is because it doesn't support unwritten extents. So in such case, if
+we submit an aio-dio we on a hole (inside file i_size), then a racing
+buffered read can race with it. That is, if the block allocation
+happens via aio-dio then the buffered read can read stale data from
+that block which is within inode i_size.
+
+This is not a problem for extending file writes because we anyway update
+file i_size after the write is done (and aio-dio is also synchronous
+against extending file writes but that's is to avoid race against other
+aio-dio).
+
+And this is not a problem for fileystems which supports unwritten extent
+because we can always allocate an unwritten extent inside a hole and then a
+racing buffered read cannot read stale data (because unwritten extents returns 0).
+Then unwritten to written conversion can happen at the end once the
+data is already written to these blocks.
+
+
+>> Another query -
+>>
+>> We have this function ext2_iomap_end() (pasted below)
+>> which calls ext2_write_failed().
+>>
+>> Here IMO two cases are possible -
+>>
+>> 1. written is 0. which means an error has occurred.
+>> In that case calling ext2_write_failed() make sense.
+>>
+>> 2. consider a case where written > 0 && written < length.
+>> (This is possible right?). In that case we still go and call
+>> ext2_write_failed(). This function will truncate the pagecache and disk
+>> blocks beyong i_size. Now we haven't yet updated inode->i_size (we do
+>> that in ->end_io which gets called in the end during completion)
+>> So that means it just removes everything.
+>>
+>> Then in ext2_dax_write_iter(), we might go and update inode->i_size
+>> to iocb->ki_pos including for short writes. This looks like it isn't
+>> consistent because earlier we had destroyed all the blocks for the short
+>> writes and we will be returning ret > 0 to the user saying these many
+>> bytes have been written.
+>> Again I haven't yet found a test case at least not in xfstests which
+>> can trigger this short writes. Let me know your thoughts on this.
+>> All of this lies on the fact that there can be a case where
+>> written > 0 && written < length. I will read more to see if this even
+>> happens or not. But I atleast wanted to capture this somewhere.
+>
+> So as far as I remember, direct IO writes as implemented in iomap are
+> all-or-nothing (see iomap_dio_complete()). But it would be good to assert
+> that in ext4 code to avoid surprises if the generic code changes.
+>
+
+Ok, I was talking about error paths. But I think I will park this one to
+go through later.
+
+>> Another thing -
+>> In dax while truncating the inode i_size in ext2_setsize(),
+>> I think we don't properly call dax_zero_blocks() when we are trying to
+>> zero the last block beyond EOF. i.e. for e.g. it can be called with len
+>> as 0 if newsize is page_aligned. It then will call ext2_get_blocks() with
+>> len = 0 and can bug_on at maxblocks == 0.
+>
+> How will it call ext2_get_blocks() with len == 0? AFAICS iomap_iter() will
+> not call iomap_begin() at all if iter.len == 0.
+>
+
+It can. In dax_zero_range() if we pass len = 0, then iomap_iter() can get
+can get called with 0 len and it will call ->iomap_begin() with 0
+len.
+Maybe a WARN_ON() would certainly help in iomap_iter() to check against 0
+iter->len to be passed to ->iomap_begin()
+
+(Note iter->len and iter->iomap.length are different)
+
+>> I think it should be this. I will spend some more time analyzing this
+>> and also test it once against DAX paths.
+>>
+>> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+>> index 7ff669d0b6d2..cc264b1e288c 100644
+>> --- a/fs/ext2/inode.c
+>> +++ b/fs/ext2/inode.c
+>> @@ -1243,9 +1243,8 @@ static int ext2_setsize(struct inode *inode, loff_t newsize)
+>>         inode_dio_wait(inode);
+>>
+>>         if (IS_DAX(inode))
+>> -               error = dax_zero_range(inode, newsize,
+>> -                                      PAGE_ALIGN(newsize) - newsize, NULL,
+>> -                                      &ext2_iomap_ops);
+>> +               error = dax_truncate_page(inode, newsize, NULL,
+>> +                                         &ext2_iomap_ops);
+>>         else
+>>                 error = block_truncate_page(inode->i_mapping,
+>>                                 newsize, ext2_get_block);
+>
+> That being said this is indeed a nice cleanup.
+
+Sure. I will add this patch in the beginning of the next revision.
+
+-ritesh
