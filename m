@@ -2,118 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12DB06C5A76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 00:33:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45A756C5B79
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 01:41:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230008AbjCVXdn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Mar 2023 19:33:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46844 "EHLO
+        id S229905AbjCWAli (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Mar 2023 20:41:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230004AbjCVXdl (ORCPT
+        with ESMTP id S229766AbjCWAlg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Mar 2023 19:33:41 -0400
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA2F211EC
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 16:33:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1679528019; x=1711064019;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MH56pcFSkJPYr+IGjg0SEwtb90roDYAAh0io8KA4j4U=;
-  b=lYbnwsPQiK9NsKE/28szRZ61GgKipl1DcJx0Ghluze4uD/5CKf7pNI4s
-   9UwJ2zGhH3C9CcDtmTiYWm5bZP6sAVubt4jBF1fIEmaHkVtLTKEQEZBgR
-   n/r8y8BOIhPizbGxxTuY6WELu7Z5or62Mu78+KOrGX0PMilJRNMsytpD3
-   47IRkRbnrcptt+Y/W77wEyqRrpotx4YwIDPTH1OUjMBOnSNeNaOfUDRgt
-   8FvxUxPVOlQRAQo37w65waX8tI4RMbypeqQGjNjBFlYymlXqXeShyExPc
-   CMxO0cbxjmCE38R16bXh6w2tTxlKawCaxjTBsLZlgXah3TBBR9RZzArcA
-   g==;
-X-IronPort-AV: E=Sophos;i="5.98,283,1673884800"; 
-   d="scan'208";a="226084165"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 23 Mar 2023 07:33:39 +0800
-IronPort-SDR: 9FHWuiEnnQQ9qjfGVhGl6iXFc0a+0UwYoT8TaaZVeyAFi5MK9NLHVikbtc0VNY4sm9t8LZYxUe
- Bw2HH/bOuKKMeeOh6bW4CAS9eVW0Y7GEhuQ75V/irXzrPyxz0k0vw+NMPciwLCFjoPbxH6j84l
- Ryr2Evb0M3DHa0zs6BnG9A5W+tvLUesg6fwPS0BLed99nmffCLvLREHzCHGI56iMvi/5PEunFy
- yPDAtXG3tw27M1/tWvpA7Jzsqt1SyLhppyQ1hWUwWayfMSwTofbvDViEUaO/2YcoEnSHf2nX1m
- NYM=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Mar 2023 15:49:56 -0700
-IronPort-SDR: XWPx+s9FKU5VyVGbY3fiYaCBVlWCrqdp1S1IgxKSGPpctaWCg+RBwTntgiYFS5ZRr41Eb/dm4z
- KLxX55oDs+RSESnXlM/aN++dPZpieoe9lbTproUMpvIyhb7pJdQRqNW0UfevBm5fAZtvZCna75
- 7QKDNoa+PqGKIuaVW2STSJz/0oEApxF4c1glR6jnw7OPVL0RsiuxZEcFzgORzLnAV+FvZKCrCA
- ua6WCTgOb0E52ttVb78450UTG6jk+OCEkjY/2LGZ16t7JvAN4SlePX3/YBFbX9vTG8j2BeoXdH
- LlY=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Mar 2023 16:33:39 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4PhlCk6WL8z1RtVt
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Mar 2023 16:33:38 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1679528018; x=1682120019; bh=MH56pcFSkJPYr+IGjg0SEwtb90roDYAAh0i
-        o8KA4j4U=; b=lsOZKzyr8mqqr5xUx7uIgSjqJfaBO7rblgZod6RTwXifHlSAwz1
-        4UJ3yufvjeP7FMVtoeBsdAu85G3yu6KZze281Lal71XhB7kNIGIoqef64mPlQdAg
-        0djcxVCO1pL/Jmk7+gSb+pgBT3jVGZ9Cfrec4yXtepZB0a+lPTJP1v9KMnNmOUuY
-        G55r5eX6c4LZrxZbrFTj1nhfwpzsm3JCS/xYWLXV8cN3WIKEw3dyNf4DSPnU64jE
-        6HNCzo1IvHZMJzvX/Z/5TRcwVLql9KR7hLFO1VLr9Uo6xNULpH3Ewb1ppfCGXj1C
-        uU9nCSuxmGq1IULB8b+7jQHFFpcVr4ACChw==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 4bxisS7wX-Ee for <linux-fsdevel@vger.kernel.org>;
-        Wed, 22 Mar 2023 16:33:38 -0700 (PDT)
-Received: from [10.225.163.96] (unknown [10.225.163.96])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4PhlCj3CZbz1RtVm;
-        Wed, 22 Mar 2023 16:33:37 -0700 (PDT)
-Message-ID: <89dd308e-2140-921e-6c08-91bf7b1eee63@opensource.wdc.com>
-Date:   Thu, 23 Mar 2023 08:33:36 +0900
+        Wed, 22 Mar 2023 20:41:36 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6A8E385;
+        Wed, 22 Mar 2023 17:41:33 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id o6-20020a17090a9f8600b0023f32869993so372749pjp.1;
+        Wed, 22 Mar 2023 17:41:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679532093;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nli6dQUADXkCT93kaRog0dXznCLZzv1eET9HwLL1Hk0=;
+        b=EgHbbrk1aauBVwgIaxEGTuMprK1xZNCus6XfsR6fTEbDOFj+ziwreVSGEj/LVGbLgt
+         fpWHEknmI6xPnkL3vhPFM8JUBHK+9DFF2XRnJm2G899AmfDNW5psqAw0j1PgntSJmXKs
+         OaBchepVlSLISwFFVP/DMUdk/Vy9A9+2NtoMqDw7qbw/4InBCaIA9A3AP5CMb7a5rMlP
+         Z0yQiLGinRUrkZV0SfLN2APGES4i35hk6ePSUkjZaTVtkPG1YyZ7rgYx5oJQOyuw/E6b
+         H3NTfoUnIpteFYPhEQmsJE48AKcWflqd9VeHjIWIlcgh99q5GI8HZWlel8dFjcqwWv1A
+         0Qlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679532093;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nli6dQUADXkCT93kaRog0dXznCLZzv1eET9HwLL1Hk0=;
+        b=JfkUflkQdfvr7FPi0yJElQA20VKaU0BkVtFgJGrDQXC7ylTBZrSNMfluzjIrvVdNrt
+         9kH9Aqj/sTpp1lGvf7i/TqL4pgMY0cWTWPjqdMBKFgBBVLAwFyQWXp6ZQdjYFnr56s4c
+         MBIHaFFf4Kz0RzlQFBBD8M/waJRAQf1A7Gf6i6GuxNvO78Fv0UB7ozxYwCSBo3FJkzX9
+         eim4h43IzzvRI4+ZPwCbZYDZgYUbJy6VSu93HbSvh40bRTXc4IrJHZ95q7wUnJWbQHMw
+         gPZldMHC6GvDwRhM8zIkS/p1JjQff0jYD/DTb0af31An3qTpe13TigXlrnnU8rQjeb0B
+         dfhg==
+X-Gm-Message-State: AO0yUKXLWFBmrtjIQJFBO9Hakacsui4P/ZeZrKKAP90R+HmHk+pab1po
+        QNDK1vLpEHBsLnDjIA4bAT0=
+X-Google-Smtp-Source: AK7set8gXt+r3vrcFcNCwocuZTBvWUUZ3nPNYHgXD8Mgde+9UJkFIYJ5dt0UG9U5gaW437O/xM/diQ==
+X-Received: by 2002:a17:90b:384b:b0:23d:5196:eca8 with SMTP id nl11-20020a17090b384b00b0023d5196eca8mr6076318pjb.20.1679532093114;
+        Wed, 22 Mar 2023 17:41:33 -0700 (PDT)
+Received: from localhost ([192.55.54.55])
+        by smtp.gmail.com with ESMTPSA id q61-20020a17090a17c300b00233db0db3dfsm123775pja.7.2023.03.22.17.41.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Mar 2023 17:41:32 -0700 (PDT)
+Date:   Wed, 22 Mar 2023 17:41:31 -0700
+From:   Isaku Yamahata <isaku.yamahata@gmail.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     Ackerley Tng <ackerleytng@google.com>, seanjc@google.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        pbonzini@redhat.com, corbet@lwn.net, vkuznets@redhat.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, arnd@arndb.de,
+        naoya.horiguchi@nec.com, linmiaohe@huawei.com, x86@kernel.org,
+        hpa@zytor.com, hughd@google.com, jlayton@kernel.org,
+        bfields@fieldses.org, akpm@linux-foundation.org, shuah@kernel.org,
+        rppt@kernel.org, steven.price@arm.com, mail@maciej.szmigiero.name,
+        vbabka@suse.cz, vannapurve@google.com, yu.c.zhang@linux.intel.com,
+        kirill.shutemov@linux.intel.com, luto@kernel.org,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, qperret@google.com, tabba@google.com,
+        michael.roth@amd.com, mhocko@suse.com, wei.w.wang@intel.com,
+        isaku.yamahata@gmail.com
+Subject: Re: [PATCH v10 9/9] KVM: Enable and expose KVM_MEM_PRIVATE
+Message-ID: <20230323004131.GA214881@ls.amr.corp.intel.com>
+References: <20230128140030.GB700688@chaop.bj.intel.com>
+ <diqz5ybc3xsr.fsf@ackerleytng-cloudtop.c.googlers.com>
+ <20230308074026.GA2183207@chaop.bj.intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v3 04/10] zonefs: convert to kobject_del_and_put()
-Content-Language: en-US
-To:     Yangtao Li <frank.li@vivo.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230322165905.55389-1-frank.li@vivo.com>
- <20230322165905.55389-3-frank.li@vivo.com>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20230322165905.55389-3-frank.li@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230308074026.GA2183207@chaop.bj.intel.com>
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/23/23 01:58, Yangtao Li wrote:
-> Use kobject_del_and_put() to simplify code.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+On Wed, Mar 08, 2023 at 03:40:26PM +0800,
+Chao Peng <chao.p.peng@linux.intel.com> wrote:
 
-Acked-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+> On Wed, Mar 08, 2023 at 12:13:24AM +0000, Ackerley Tng wrote:
+> > Chao Peng <chao.p.peng@linux.intel.com> writes:
+> > 
+> > > On Sat, Jan 14, 2023 at 12:01:01AM +0000, Sean Christopherson wrote:
+> > > > On Fri, Dec 02, 2022, Chao Peng wrote:
+> > > ...
+> > > > Strongly prefer to use similar logic to existing code that detects wraps:
+> > 
+> > > > 		mem->restricted_offset + mem->memory_size < mem->restricted_offset
+> > 
+> > > > This is also where I'd like to add the "gfn is aligned to offset"
+> > > > check, though
+> > > > my brain is too fried to figure that out right now.
+> > 
+> > > Used count_trailing_zeros() for this TODO, unsure we have other better
+> > > approach.
+> > 
+> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > > index afc8c26fa652..fd34c5f7cd2f 100644
+> > > --- a/virt/kvm/kvm_main.c
+> > > +++ b/virt/kvm/kvm_main.c
+> > > @@ -56,6 +56,7 @@
+> > >   #include <asm/processor.h>
+> > >   #include <asm/ioctl.h>
+> > >   #include <linux/uaccess.h>
+> > > +#include <linux/count_zeros.h>
+> > 
+> > >   #include "coalesced_mmio.h"
+> > >   #include "async_pf.h"
+> > > @@ -2087,6 +2088,19 @@ static bool kvm_check_memslot_overlap(struct
+> > > kvm_memslots *slots, int id,
+> > >   	return false;
+> > >   }
+> > 
+> > > +/*
+> > > + * Return true when ALIGNMENT(offset) >= ALIGNMENT(gpa).
+> > > + */
+> > > +static bool kvm_check_rmem_offset_alignment(u64 offset, u64 gpa)
+> > > +{
+> > > +	if (!offset)
+> > > +		return true;
+> > > +	if (!gpa)
+> > > +		return false;
+> > > +
+> > > +	return !!(count_trailing_zeros(offset) >= count_trailing_zeros(gpa));
+
+This check doesn't work expected. For example, offset = 2GB, gpa=4GB
+this check fails.
+I come up with the following.
+
+From ec87e25082f0497431b732702fae82c6a05071bf Mon Sep 17 00:00:00 2001
+Message-Id: <ec87e25082f0497431b732702fae82c6a05071bf.1679531995.git.isaku.yamahata@intel.com>
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+Date: Wed, 22 Mar 2023 15:32:56 -0700
+Subject: [PATCH] KVM: Relax alignment check for restricted mem
+
+kvm_check_rmem_offset_alignment() only checks based on offset alignment
+and GPA alignment.  However, the actual alignment for offset depends
+on architecture.  For x86 case, it can be 1G, 2M or 4K.  So even if
+GPA is aligned for 1G+, only 1G-alignment is required for offset.
+
+Without this patch, gpa=4G, offset=2G results in failure of memory slot
+creation.
+
+Fixes: edc8814b2c77 ("KVM: Require gfn be aligned with restricted offset")
+Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+---
+ arch/x86/include/asm/kvm_host.h | 15 +++++++++++++++
+ virt/kvm/kvm_main.c             |  9 ++++++++-
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 88e11dd3afde..03af44650f24 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -16,6 +16,7 @@
+ #include <linux/irq_work.h>
+ #include <linux/irq.h>
+ #include <linux/workqueue.h>
++#include <linux/count_zeros.h>
+ 
+ #include <linux/kvm.h>
+ #include <linux/kvm_para.h>
+@@ -143,6 +144,20 @@
+ #define KVM_HPAGE_MASK(x)	(~(KVM_HPAGE_SIZE(x) - 1))
+ #define KVM_PAGES_PER_HPAGE(x)	(KVM_HPAGE_SIZE(x) / PAGE_SIZE)
+ 
++#define kvm_arch_required_alignment	kvm_arch_required_alignment
++static inline int kvm_arch_required_alignment(u64 gpa)
++{
++	int zeros = count_trailing_zeros(gpa);
++
++	WARN_ON_ONCE(!PAGE_ALIGNED(gpa));
++	if (zeros >= KVM_HPAGE_SHIFT(PG_LEVEL_1G))
++		return KVM_HPAGE_SHIFT(PG_LEVEL_1G);
++	else if (zeros >= KVM_HPAGE_SHIFT(PG_LEVEL_2M))
++		return KVM_HPAGE_SHIFT(PG_LEVEL_2M);
++
++	return PAGE_SHIFT;
++}
++
+ #define KVM_MEMSLOT_PAGES_TO_MMU_PAGES_RATIO 50
+ #define KVM_MIN_ALLOC_MMU_PAGES 64UL
+ #define KVM_MMU_HASH_SHIFT 12
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index c9c4eef457b0..f4ff96171d24 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2113,6 +2113,13 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
+ 	return false;
+ }
+ 
++#ifndef kvm_arch_required_alignment
++__weak int kvm_arch_required_alignment(u64 gpa)
++{
++	return PAGE_SHIFT
++}
++#endif
++
+ /*
+  * Return true when ALIGNMENT(offset) >= ALIGNMENT(gpa).
+  */
+@@ -2123,7 +2130,7 @@ static bool kvm_check_rmem_offset_alignment(u64 offset, u64 gpa)
+ 	if (!gpa)
+ 		return false;
+ 
+-	return !!(count_trailing_zeros(offset) >= count_trailing_zeros(gpa));
++	return !!(count_trailing_zeros(offset) >= kvm_arch_required_alignment(gpa));
+ }
+ 
+ /*
+-- 
+2.25.1
+
 
 
 -- 
-Damien Le Moal
-Western Digital Research
-
+Isaku Yamahata <isaku.yamahata@gmail.com>
