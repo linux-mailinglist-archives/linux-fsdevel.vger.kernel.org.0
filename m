@@ -2,70 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A3636C6AFC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 15:30:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8885E6C6B15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 15:33:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231304AbjCWOat (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 10:30:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52620 "EHLO
+        id S231478AbjCWOdw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 10:33:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231376AbjCWOas (ORCPT
+        with ESMTP id S229563AbjCWOdu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 10:30:48 -0400
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0992520A0E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 07:30:47 -0700 (PDT)
-Received: by mail-qv1-xf2a.google.com with SMTP id x8so14188837qvr.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 07:30:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20210112.gappssmtp.com; s=20210112; t=1679581846;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DW5cWuSORuMPl9h4M/OMu4zN6Ab689Cgd2Jmn907uzA=;
-        b=uga6xPblyjNwQ0nys0O9OMOnWPlxzoqUx0tub1g4jl3Ds7H0qu2WTey6xF5KYLxKjC
-         SCNdX/4AXYIE5IhDdtecko+9IOBtUIc3U2CM4hPqaHHiSjJXBWP+o6JLCwKslIKRmAED
-         TXE8V7Fa5Vj5MdO1Sgso1Toii0RePFj640IY5JVqwEa1uZwDrQZ5LDzFX93GFGZY9IjQ
-         hb8Z808MK7gqHrpq+J6Wxii0pqN6Kedc0VTbCmzHxDcz5RluBsBf5YY47foQKVJ8WL5w
-         Hhs7tyAu+HDhks/IkXKF2t4EX3GViwlbB8pSikG3+R69thN52bWR4mIjSGgorkjzAiC0
-         GC9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679581846;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DW5cWuSORuMPl9h4M/OMu4zN6Ab689Cgd2Jmn907uzA=;
-        b=nGd4f7M0SZcNVLMVCNpa1uND4m3/6QyojLLBuvYiyKRQJUmgydJE7KOS1GmZ4ZDBR3
-         brFU+I/Xq0ScWMAQvZAi/SDZuMJvZYvgQe43M3I0eDeQxMnRVcVek7c6F37xgXPq2ItD
-         GOdtMFEoQswyRMZjJpw5uTarsn5IQSG/tgB51EAFaZpus3qCqie/XTkTC2jFQKxV/0Kx
-         PcWdXlqvzucf8OAFm/GR2DlxYzT++Bkp1b8jxgaWPc6YWyj/sPEb4vMzzmBbGT7TEEJ5
-         mU9rPQKaUCaJ3iPHyDLsAM3vK1G5EJ3ZY8D76cDbpbUn1J5YvUxwawloDVvanGOeRlbh
-         Ru+Q==
-X-Gm-Message-State: AO0yUKVhNVZTP27XTjWrg5834RUaJfLudHRCqsj+fn3xtlxZaua4Pt6L
-        UMqPS1drGQ81YDBo1US9bdrVkImDONiMdTWzFLp4qQ==
-X-Google-Smtp-Source: AK7set/trVllkfcEi+yg3oqpS8DY+A/uEckTTWNRYDqUdJd5erFFIJB2DTR1p2z4pS/Mo+VlMX55/q/gvrdpE0I/XKA=
-X-Received: by 2002:a05:6214:8c7:b0:537:7476:41f7 with SMTP id
- da7-20020a05621408c700b00537747641f7mr1552535qvb.3.1679581846154; Thu, 23 Mar
- 2023 07:30:46 -0700 (PDT)
+        Thu, 23 Mar 2023 10:33:50 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18D5555AB
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 07:33:50 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 32NEXKRh010278
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 23 Mar 2023 10:33:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1679582002; bh=n243UkKU1dhQVd7DjzyG88PTzABaz+ZslvR4BBb7qqM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=C3A0S93pvXptCixS1bEn3ZWm9blHoINL7rmJpXmQ1AI7LQGCBhlTVKfMLttc30AIn
+         /mAkwxzcSQSI0LfDGTdodwzmQDF1WfDq5nhLyLR5dJSq62jIUF561n3LmfRrhkeXD0
+         jaAKzhThfspyr6g9LbQrIK3tRaZGgeUwWayayD0c30L31WXijUnIdOosyubFeRQUE6
+         Qfph8eAvQVenwT9qIjh04pXV6mIe9Z3kC+ADrsy/sCzGeRJRn7cb5xxItr4H428WNj
+         0vflOAGwsHWvpz0tyfzrhIEfOInbeCSQVJ0tSCX6vFHxeYGYKD85IbOHpNEBve3wDB
+         LUASlnZ/kqEXg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 5669715C4279; Thu, 23 Mar 2023 10:33:20 -0400 (EDT)
+Date:   Thu, 23 Mar 2023 10:33:20 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     viro@zeniv.linux.org.uk, jaegeuk@kernel.org, ebiggers@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, kernel@collabora.com
+Subject: Re: [PATCH 1/7] fs: Expose name under lookup to d_revalidate hook
+Message-ID: <20230323143320.GC136146@mit.edu>
+References: <20220622194603.102655-1-krisman@collabora.com>
+ <20220622194603.102655-2-krisman@collabora.com>
 MIME-Version: 1.0
-References: <CGME20230322135015eucas1p2ff980e76159f0ceef7bf66934580bd6c@eucas1p2.samsung.com>
- <20230322135013.197076-1-p.raghav@samsung.com>
-In-Reply-To: <20230322135013.197076-1-p.raghav@samsung.com>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Thu, 23 Mar 2023 10:30:35 -0400
-Message-ID: <CAOg9mSRvPDysNF-GV_ZGf8bu1-50wA5y7L=LuZwGp+vEVzsu1Q@mail.gmail.com>
-Subject: Re: [RFC v2 0/5] remove page_endio()
-To:     Pankaj Raghav <p.raghav@samsung.com>
-Cc:     senozhatsky@chromium.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        willy@infradead.org, brauner@kernel.org, akpm@linux-foundation.org,
-        minchan@kernel.org, martin@omnibond.com, mcgrof@kernel.org,
-        devel@lists.orangefs.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, gost.dev@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220622194603.102655-2-krisman@collabora.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=DKIM_INVALID,DKIM_SIGNED,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,54 +55,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I have tested this patch on orangefs on top of 6.3.0-rc3, no
-regressions.
+On Wed, Jun 22, 2022 at 03:45:57PM -0400, Gabriel Krisman Bertazi wrote:
+> Negative dentries support on case-insensitive ext4/f2fs will require
+> access to the name under lookup to ensure it matches the dentry.  This
+> adds an optional new flavor of cached dentry revalidation hook to expose
+> this extra parameter.
+> 
+> I'm fine with extending d_revalidate instead of adding a new hook, if
+> it is considered cleaner and the approach is accepted.  I wrote a new
+> hook to simplify reviewing.
+> 
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-It is very easy to build a single host orangefs test system on
-a vm. There are instructions in orangefs.rst, and also I'd
-be glad to help make them better...
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
--Mike
 
-On Wed, Mar 22, 2023 at 9:50=E2=80=AFAM Pankaj Raghav <p.raghav@samsung.com=
-> wrote:
->
-> It was decided to remove the page_endio() as per the previous RFC
-> discussion[1] of this series and move that functionality into the caller
-> itself. One of the side benefit of doing that is the callers have been
-> modified to directly work on folios as page_endio() already worked on
-> folios.
->
-> mpage changes were tested with a simple boot testing. zram and orangefs i=
-s
-> only build tested. No functional changes were introduced as a part of
-> this AFAIK.
->
-> Open questions:
-> - Willy pointed out that the calls to folio_set_error() and
->   folio_clear_uptodate() are not needed anymore in the read path when an
->   error happens[2]. I still don't understand 100% why they aren't needed
->   anymore as I see those functions are still called in iomap. It will be
->   good to put that rationale as a part of the commit message.
->
-> [1] https://lore.kernel.org/linux-mm/ZBHcl8Pz2ULb4RGD@infradead.org/
-> [2] https://lore.kernel.org/linux-mm/ZBSH6Uq6IIXON%2Frh@casper.infradead.=
-org/
->
-> Pankaj Raghav (5):
->   zram: remove zram_page_end_io function
->   orangefs: use folios in orangefs_readahead
->   mpage: split bi_end_io callback for reads and writes
->   mpage: use folios in bio end_io handler
->   filemap: remove page_endio()
->
->  drivers/block/zram/zram_drv.c | 13 +----------
->  fs/mpage.c                    | 44 ++++++++++++++++++++++++++++-------
->  fs/orangefs/inode.c           |  9 +++----
->  include/linux/pagemap.h       |  2 --
->  mm/filemap.c                  | 30 ------------------------
->  5 files changed, 42 insertions(+), 56 deletions(-)
->
-> --
-> 2.34.1
->
+Al, could you take a look and see if you have any objections?
+
+Also, any thoughts about adding the new d_revalidate_name() callback
+as opposed to change d_revalidate() to add an extra parameter?  It
+looks like there are some 33 d_revalidate callbacks, from 24 file
+sysetms, that would have to be changed.
+
+Cheers,
+
+					- Ted
