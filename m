@@ -2,321 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56AAA6C6D1E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 17:15:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E046C6D2E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 17:17:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230038AbjCWQPc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 12:15:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44514 "EHLO
+        id S231776AbjCWQRW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 12:17:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232224AbjCWQPM (ORCPT
+        with ESMTP id S230098AbjCWQRQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 12:15:12 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E16E34C38;
-        Thu, 23 Mar 2023 09:15:10 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 253341FE0C;
-        Thu, 23 Mar 2023 16:15:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1679588109; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Nao5YJy5U8MamFKPwtjtE3/coDYBxSRiD+wySqWUFFg=;
-        b=ZzmDOH7PKtRDNFQCKzB3/DwbckrO6pbYa4doXEGSz2y3e2l0Wzal7+txERSkuW6NZT7H8/
-        9Hwp1U1KBYFVP/3zozE/xwh9grNSt5PB45WVCUzsw3iVWXcQ2al7yimnJ1powbWagKkepP
-        XBGdDWyN716cd0hJhGVQlwdUlRgKwLA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1679588109;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Nao5YJy5U8MamFKPwtjtE3/coDYBxSRiD+wySqWUFFg=;
-        b=/OGtHFA8Cw9F9Twg6BicDum99ioSBoKzFJ3KSm0S9aCrgaOfE8uNHqrXaSkbWUkphXNO/3
-        07sWoT6Ouf/mbyDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F14B513596;
-        Thu, 23 Mar 2023 16:15:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id KGI+Ogx7HGRzQQAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Thu, 23 Mar 2023 16:15:08 +0000
-Message-ID: <704cae66-5128-8628-b7ea-e5e0fe9e0f03@suse.cz>
-Date:   Thu, 23 Mar 2023 17:15:08 +0100
+        Thu, 23 Mar 2023 12:17:16 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72F0D31BEE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 09:17:08 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230323161704euoutp028d7bd735269ff08145b256b79caf55a2~PGJdq3X-90181701817euoutp023
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 16:17:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230323161704euoutp028d7bd735269ff08145b256b79caf55a2~PGJdq3X-90181701817euoutp023
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1679588224;
+        bh=NC0js/0E3Lmn93x2gAtkO3H2r7kJun3rlD/UogXKMmk=;
+        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+        b=Rps3jbjoKJjTPqNLSBDj9URmKyPAV/AbdvYBrpwlA8T2/VndNLxPneUJ8G2VW4mTD
+         oLDjBGfBDWjBr8uVSJubBtbuK+aupoyjFYTxT0M5SwVq4QE76cdfirSpd4wgUUORq2
+         TS0HiPhch1SsDQIhwNUNmFmxEbkZo76ld9vP/hlk=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230323161704eucas1p2faa7b65ac36f6a3d0a17f66f18211380~PGJdJJM6i0730607306eucas1p2C;
+        Thu, 23 Mar 2023 16:17:04 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E3.D0.09503.F7B7C146; Thu, 23
+        Mar 2023 16:17:03 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230323161703eucas1p1eaaf0da321fcbf807af78fb3224baf59~PGJcztT1q1108211082eucas1p1y;
+        Thu, 23 Mar 2023 16:17:03 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230323161703eusmtrp104829574f193b3aac92abd40a47b5760~PGJczCpJZ1658716587eusmtrp1T;
+        Thu, 23 Mar 2023 16:17:03 +0000 (GMT)
+X-AuditID: cbfec7f2-e8fff7000000251f-12-641c7b7fee58
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C6.B6.08862.F7B7C146; Thu, 23
+        Mar 2023 16:17:03 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230323161703eusmtip2214de612046c115e47c514f99c83abf2~PGJcnZBIa0225902259eusmtip2f;
+        Thu, 23 Mar 2023 16:17:03 +0000 (GMT)
+Received: from [106.110.32.65] (106.110.32.65) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Thu, 23 Mar 2023 16:16:59 +0000
+Message-ID: <655ddc1c-8b64-1168-0f6b-76c565363325@samsung.com>
+Date:   Thu, 23 Mar 2023 17:16:59 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH V6 1/2] mm: compaction: move compaction sysctl to its own
- file
+        Thunderbird/102.8.0
+Subject: Re: [RFC v2 0/5] remove page_endio()
 Content-Language: en-US
-To:     ye.xingchen@zte.com.cn, mcgrof@kernel.org
-Cc:     keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, linmiaohe@huawei.com,
-        chi.minghao@zte.com.cn, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <202303221108054628708@zte.com.cn>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <202303221108054628708@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <senozhatsky@chromium.org>, <viro@zeniv.linux.org.uk>,
+        <axboe@kernel.dk>, <brauner@kernel.org>,
+        <akpm@linux-foundation.org>, <minchan@kernel.org>,
+        <hubcap@omnibond.com>, <martin@omnibond.com>, <mcgrof@kernel.org>,
+        <devel@lists.orangefs.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <gost.dev@samsung.com>
+From:   Pankaj Raghav <p.raghav@samsung.com>
+In-Reply-To: <ZBxxPw9BTdkE4KF0@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Originating-IP: [106.110.32.65]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFKsWRmVeSWpSXmKPExsWy7djP87r11TIpBr/X21jMWb+GzWL13X42
+        i9eHPzFa7N88hcmi/W4fk8XeW9oWe/aeZLG4vGsOm8W9Nf9ZLU6u/89scWPCU0aLZV/fs1vs
+        3riIzeL83+OsFr9/zGFz4PeY3XCRxWPzCi2Py2dLPTat6mTz2PRpErvHiRm/WTwapt5i8/h1
+        +w6rx+dNch6bnrxlCuCK4rJJSc3JLEst0rdL4MqYf2U6c8EalorJtywaGHczdzFyckgImEic
+        /vCLpYuRi0NIYAWjRMvnY+wQzhdGiX1fXoBVCQl8ZpT4OsURpuPqpE1sEEXLGSWOthxmhXCA
+        ij7e3w/l7GSUeNu7lKmLkYODV8BOYsJ7X5BuFgFViQMtW9lBbF4BQYmTM5+wgJSICkRJvHhd
+        BhIWFtCVuLinkwXEZhYQl7j1ZD7YFBEBDYk3W4xApjML9DBLLFq7C6yVTUBLorETbCIn0G1v
+        3y9jhWjVlGjd/psdwpaX2P52DtTHihKTbr5nhbBrJU5tucUEMlNC4B6nxLMjh9ghEi4S6x7P
+        gLKFJV4d3wJly0icntzDAmFXSzy98ZsZormFUaJ/53o2kIMkBKwl+s7kQNQ4SuzZfJ4VIswn
+        ceOtIMQ9fBKTtk1nnsCoOgspIGYh+XgWkhdmIXlhASPLKkbx1NLi3PTUYsO81HK94sTc4tK8
+        dL3k/NxNjMDkd/rf8U87GOe++qh3iJGJg/EQowQHs5IIrxuzRIoQb0piZVVqUX58UWlOavEh
+        RmkOFiVxXm3bk8lCAumJJanZqakFqUUwWSYOTqkGpv5rv5R+i8nVBNoYTv7xwn3fJF3Bb/xF
+        M7+fayrzN1wpbmPQWmeUVL3w6el366/4Sqln1SVnMn69cyoz9+O2XXfnaInv9mm0+Ofw9dLh
+        qIqvz9mNZjWcyNzfW9l6ffXHs74PT8Q6nzfMlXY05vz07tzhkLCTsgINfyPiJZ78USzr5jqw
+        V3PiFv2tVv1P8pufOJklKMmu2q7h4i05wz588YmAyk0b6p0vzl3De9dJI6pPgmtVP8+q89Kr
+        rl3dsaBhOa/ByV0zGr5VMfKXhMif8Nxz4E9Iy9Sg0rO1t27rfsrdXDy5PypfqUHrZXBybWH6
+        F+nfx0/OkmiYJN+fNu/g7ejJwQmXfTeELnqRXGaarcRSnJFoqMVcVJwIAOVFs6ftAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsVy+t/xe7r11TIpBve+qFrMWb+GzWL13X42
+        i9eHPzFa7N88hcmi/W4fk8XeW9oWe/aeZLG4vGsOm8W9Nf9ZLU6u/89scWPCU0aLZV/fs1vs
+        3riIzeL83+OsFr9/zGFz4PeY3XCRxWPzCi2Py2dLPTat6mTz2PRpErvHiRm/WTwapt5i8/h1
+        +w6rx+dNch6bnrxlCuCK0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJ
+        Sc3JLEst0rdL0MuYf2U6c8EalorJtywaGHczdzFyckgImEhcnbSJrYuRi0NIYCmjxPv5F9kg
+        EjISn658ZIewhSX+XOuCKvrIKNFw6D8zhLOTUWL6mU+sXYwcHLwCdhIT3vuCNLAIqEocaNkK
+        1swrIChxcuYTFhBbVCBK4umdQ2CbhQV0JS7u6QSLMwuIS9x6Mp8JZIyIgIbEmy1GIOOZBXqY
+        JebPmsoIsWs6k8SFmdPZQYrYBLQkGjvB5nMCffD2/TJWiDmaEq3bf7ND2PIS29/OgfpSUWLS
+        zfesEHatxOe/zxgnMIrOQnLeLCRnzEIyahaSUQsYWVYxiqSWFuem5xYb6hUn5haX5qXrJefn
+        bmIEpo1tx35u3sE479VHvUOMTByMhxglOJiVRHjdmCVShHhTEiurUovy44tKc1KLDzGaAsNo
+        IrOUaHI+MHHllcQbmhmYGpqYWRqYWpoZK4nzehZ0JAoJpCeWpGanphakFsH0MXFwSjUwBXK9
+        7G2peeHeeG6y3EwRrtM/zSLNXgopyy74Vp2p/4Z/7a6qmbO3RSWr3z5/e7Ot9TzGqVZBPs8V
+        V3YenSiwW6VD+UicRKZ9Yf43gxOu7w6LPLmypc+q9P4P7ivcaxzPz+At/H2MaZ7/TfGGG88D
+        uQKV9aeeNOx74C3OHMPPdFjq/Gzn8+JZNyK0VuzcHmvwsC+gKlPPZK47U+49Bf7TdxNvdmpk
+        PzKuf+PcHHNeV+hJ8uo5V943hzJJbGq58T/9RHnf1YW7W/13fzyYYauxfOb1SScZjZdqXXu5
+        uMFuRqeLrZHFw52rG6s/rFS+mHDg2Jz8ws57F963nPSUDPoo8Kk8xV47xHvpWVa71suHlFiK
+        MxINtZiLihMBLWdwS6QDAAA=
+X-CMS-MailID: 20230323161703eucas1p1eaaf0da321fcbf807af78fb3224baf59
+X-Msg-Generator: CA
+X-RootMTR: 20230322135015eucas1p2ff980e76159f0ceef7bf66934580bd6c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230322135015eucas1p2ff980e76159f0ceef7bf66934580bd6c
+References: <CGME20230322135015eucas1p2ff980e76159f0ceef7bf66934580bd6c@eucas1p2.samsung.com>
+        <20230322135013.197076-1-p.raghav@samsung.com>
+        <ZBtSevjWLybE6S07@casper.infradead.org>
+        <fbf5bc8a-6c82-a43e-dd96-8a9d2b7d3bf4@samsung.com>
+        <ZBxxPw9BTdkE4KF0@casper.infradead.org>
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/22/23 04:08, ye.xingchen@zte.com.cn wrote:
-> From: Minghao Chi <chi.minghao@zte.com.cn>
+>> I also changed mpage to **not set** the error flag in the read path. It does beg
+>> the question whether block_read_full_folio() and iomap_finish_folio_read() should
+>> also follow the suit.
 > 
-> This moves all compaction sysctls to its own file.
-> 
-> Link: https://lore.kernel.org/lkml/9952bbf8-cf59-7bea-ce50-0200d4f4165e@suse.cz/
-> Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
-> Signed-off-by: Ye Xingchen <ye.xingchen@zte.com.cn>
-> ---
->  include/linux/compaction.h |  7 ----
->  kernel/sysctl.c            | 59 ------------------------------
->  mm/compaction.c            | 73 ++++++++++++++++++++++++++++++++++----
->  3 files changed, 67 insertions(+), 72 deletions(-)
-> 
-> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-> index 52a9ff65faee..a6e512cfb670 100644
-> --- a/include/linux/compaction.h
-> +++ b/include/linux/compaction.h
-> @@ -81,13 +81,6 @@ static inline unsigned long compact_gap(unsigned int order)
->  }
-> 
->  #ifdef CONFIG_COMPACTION
-> -extern unsigned int sysctl_compaction_proactiveness;
-> -extern int sysctl_compaction_handler(struct ctl_table *table, int write,
-> -			void *buffer, size_t *length, loff_t *ppos);
-> -extern int compaction_proactiveness_sysctl_handler(struct ctl_table *table,
-> -		int write, void *buffer, size_t *length, loff_t *ppos);
-> -extern int sysctl_extfrag_threshold;
-> -extern int sysctl_compact_unevictable_allowed;
-> 
->  extern unsigned int extfrag_for_order(struct zone *zone, unsigned int order);
->  extern int fragmentation_index(struct zone *zone, unsigned int order);
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index ce0297acf97c..e23061f33237 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -42,7 +42,6 @@
->  #include <linux/highuid.h>
->  #include <linux/writeback.h>
->  #include <linux/ratelimit.h>
-> -#include <linux/compaction.h>
->  #include <linux/hugetlb.h>
->  #include <linux/initrd.h>
->  #include <linux/key.h>
-> @@ -746,27 +745,6 @@ int proc_dointvec(struct ctl_table *table, int write, void *buffer,
->  	return do_proc_dointvec(table, write, buffer, lenp, ppos, NULL, NULL);
->  }
-> 
-> -#ifdef CONFIG_COMPACTION
-> -static int proc_dointvec_minmax_warn_RT_change(struct ctl_table *table,
-> -		int write, void *buffer, size_t *lenp, loff_t *ppos)
-> -{
-> -	int ret, old;
-> -
-> -	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || !write)
-> -		return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-> -
-> -	old = *(int *)table->data;
-> -	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-> -	if (ret)
-> -		return ret;
-> -	if (old != *(int *)table->data)
-> -		pr_warn_once("sysctl attribute %s changed by %s[%d]\n",
-> -			     table->procname, current->comm,
-> -			     task_pid_nr(current));
-> -	return ret;
-> -}
-> -#endif
-> -
->  /**
->   * proc_douintvec - read a vector of unsigned integers
->   * @table: the sysctl table
-> @@ -2157,43 +2135,6 @@ static struct ctl_table vm_table[] = {
->  		.extra1		= SYSCTL_ONE,
->  		.extra2		= SYSCTL_FOUR,
->  	},
-> -#ifdef CONFIG_COMPACTION
-> -	{
-> -		.procname	= "compact_memory",
-> -		.data		= NULL,
-> -		.maxlen		= sizeof(int),
-> -		.mode		= 0200,
-> -		.proc_handler	= sysctl_compaction_handler,
-> -	},
-> -	{
-> -		.procname	= "compaction_proactiveness",
-> -		.data		= &sysctl_compaction_proactiveness,
-> -		.maxlen		= sizeof(sysctl_compaction_proactiveness),
-> -		.mode		= 0644,
-> -		.proc_handler	= compaction_proactiveness_sysctl_handler,
-> -		.extra1		= SYSCTL_ZERO,
-> -		.extra2		= SYSCTL_ONE_HUNDRED,
-> -	},
-> -	{
-> -		.procname	= "extfrag_threshold",
-> -		.data		= &sysctl_extfrag_threshold,
-> -		.maxlen		= sizeof(int),
-> -		.mode		= 0644,
-> -		.proc_handler	= proc_dointvec_minmax,
-> -		.extra1		= SYSCTL_ZERO,
-> -		.extra2		= SYSCTL_ONE_THOUSAND,
-> -	},
-> -	{
-> -		.procname	= "compact_unevictable_allowed",
-> -		.data		= &sysctl_compact_unevictable_allowed,
-> -		.maxlen		= sizeof(int),
-> -		.mode		= 0644,
-> -		.proc_handler	= proc_dointvec_minmax_warn_RT_change,
-> -		.extra1		= SYSCTL_ZERO,
-> -		.extra2		= SYSCTL_ONE,
-> -	},
-> -
-> -#endif /* CONFIG_COMPACTION */
->  	{
->  		.procname	= "min_free_kbytes",
->  		.data		= &min_free_kbytes,
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index e689d66cedf4..ec2989f2c5d3 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -1728,7 +1728,9 @@ typedef enum {
->   * Allow userspace to control policy on scanning the unevictable LRU for
->   * compactable pages.
->   */
-> -int sysctl_compact_unevictable_allowed __read_mostly = CONFIG_COMPACT_UNEVICTABLE_DEFAULT;
-> +static int sysctl_compact_unevictable_allowed __read_mostly = CONFIG_COMPACT_UNEVICTABLE_DEFAULT;
-> +unsigned int sysctl_compaction_proactiveness;
-
-Couldn't you move the "__read_mostly" and "= 20" part here as well? And the
-explanatory comment? And make it static too?
-
-> +static int sysctl_extfrag_threshold = 500;
-> 
->  static inline void
->  update_fast_start_pfn(struct compact_control *cc, unsigned long pfn)
-> @@ -2584,8 +2586,6 @@ static enum compact_result compact_zone_order(struct zone *zone, int order,
->  	return ret;
->  }
-> 
-> -int sysctl_extfrag_threshold = 500;
-> -
->  /**
->   * try_to_compact_pages - Direct compact to satisfy a high-order allocation
->   * @gfp_mask: The GFP mask of the current allocation
-> @@ -2748,8 +2748,7 @@ static void compact_nodes(void)
->   * background. It takes values in the range [0, 100].
->   */
->  unsigned int __read_mostly sysctl_compaction_proactiveness = 20;
-
-And remove this.
-
-> -
-> -int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
-> +static int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
->  		void *buffer, size_t *length, loff_t *ppos)
->  {
->  	int rc, nid;
-> @@ -2779,7 +2778,7 @@ int compaction_proactiveness_sysctl_handler(struct ctl_table *table, int write,
->   * This is the entry point for compacting all nodes via
->   * /proc/sys/vm/compact_memory
->   */
-> -int sysctl_compaction_handler(struct ctl_table *table, int write,
-> +static int sysctl_compaction_handler(struct ctl_table *table, int write,
->  			void *buffer, size_t *length, loff_t *ppos)
->  {
->  	if (write)
-> @@ -3075,6 +3074,65 @@ static int kcompactd_cpu_online(unsigned int cpu)
->  	return 0;
->  }
-> 
-> +static int proc_dointvec_minmax_warn_RT_change(struct ctl_table *table,
-> +		int write, void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	int ret, old;
-> +
-> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || !write)
-> +		return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-> +
-> +	old = *(int *)table->data;
-> +	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-> +	if (ret)
-> +		return ret;
-> +	if (old != *(int *)table->data)
-> +		pr_warn_once("sysctl attribute %s changed by %s[%d]\n",
-> +			     table->procname, current->comm,
-> +			     task_pid_nr(current));
-> +	return ret;
-> +}
-> +
-> +#ifdef CONFIG_SYSCTL
-> +static struct ctl_table vm_compaction[] = {
-> +	{
-> +		.procname	= "compact_memory",
-> +		.data		= NULL,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0200,
-> +		.proc_handler	= sysctl_compaction_handler,
-> +	},
-> +	{
-> +		.procname	= "compaction_proactiveness",
-> +		.data		= &sysctl_compaction_proactiveness,
-> +		.maxlen		= sizeof(sysctl_compaction_proactiveness),
-> +		.mode		= 0644,
-> +		.proc_handler	= compaction_proactiveness_sysctl_handler,
-> +		.extra1		= SYSCTL_ZERO,
-> +		.extra2		= SYSCTL_ONE_HUNDRED,
-> +	},
-> +	{
-> +		.procname	= "extfrag_threshold",
-> +		.data		= &sysctl_extfrag_threshold,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dointvec_minmax,
-> +		.extra1		= SYSCTL_ZERO,
-> +		.extra2		= SYSCTL_ONE_THOUSAND,
-> +	},
-> +	{
-> +		.procname	= "compact_unevictable_allowed",
-> +		.data		= &sysctl_compact_unevictable_allowed,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dointvec_minmax_warn_RT_change,
-> +		.extra1		= SYSCTL_ZERO,
-> +		.extra2		= SYSCTL_ONE,
-> +	},
-> +	{ }
-> +};
-> +#endif
-> +
->  static int __init kcompactd_init(void)
->  {
->  	int nid;
-> @@ -3090,6 +3148,9 @@ static int __init kcompactd_init(void)
-> 
->  	for_each_node_state(nid, N_MEMORY)
->  		kcompactd_run(nid);
-> +#ifdef CONFIG_SYSCTL
-> +	register_sysctl_init("vm", vm_compaction);
-> +#endif
->  	return 0;
->  }
->  subsys_initcall(kcompactd_init)
-
+> Wrong.  mpage is used by filesystems which *DO* check the error flag.
+> You can't remove it being set until they're fixed to not check it.
+Got it. I think after your explanation on the Error flag, it makes sense why mpage
+needs to set the error flag, for now. I will change it as a part of the next version
+along with the other comment on Patch 4.
