@@ -2,48 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 949596C6C51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 16:30:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 391F66C6C58
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Mar 2023 16:33:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231127AbjCWPaw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 11:30:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55830 "EHLO
+        id S232165AbjCWPdr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 11:33:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232177AbjCWPau (ORCPT
+        with ESMTP id S232167AbjCWPdi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 11:30:50 -0400
+        Thu, 23 Mar 2023 11:33:38 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3440B34C2E;
-        Thu, 23 Mar 2023 08:30:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42AB776B2;
+        Thu, 23 Mar 2023 08:33:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eeOG5CigAADDhpiWzbHe93M8aJDDgCUGp/z1aQBsav4=; b=XP940pVAUyP7Thq6nocMQueT0P
-        vDcKjK5NtAZ3V18MnVXY3gmuO1GUEaN+iWy1ZK0K3SHEw8qar7B9cx6PxP0FOUu8Oox/JCnAvIDUB
-        393SoMsSZ+bXIrK2X9VE00xgrhDJSCBdjM7uVR81onvctRZqeoG3hAwvFTzWC+9/pI4bztXd4H1lT
-        PUtO2p08y5GpBNutKUHXZ2jPLNGjAdegsS5ttXEYy70LHMaFc6FIt4hoyrh6bd57GM5WJpiWqwkyK
-        OjYNRw7VOVfrMQDQaAJrlTFxUAPPj/TTep2x40iMrCOCgnEp0OPjyJOxNJZGa7jeyNJrHx+pwjYQW
-        sq6mVCZA==;
+        bh=hi678RG+egR/ohgFkrrnz97rFnnIU7oN844J5N2rULQ=; b=YmTajRSERctVdDqthoUzk8V1y5
+        JcXUqGfOrW0uvT2auwRy+Z2MmEoW0In7FSEHQRJgt0bvf7Q3tCok1ZKq2pDmq2U97c/0tltJaxwbC
+        2aGLHCuAGuY3SPkVcxxp9bnm26fMEdA2JRXCE+lyumGZfi5ycDfcHj+wi+a4CbLYuWjJrLd2piPyy
+        VBj0caG5Ainp0pOxP8pKeTJLVQpzm8DRD2cLbALRn+mEiuYDMIJUr7VcsdxbbazF9Rwh+hIZ2QwCv
+        BF3B32nf5/UtTpuotoi1dQ5nFpqTcinuGimhxlVY5TQ0MuwXj8rtoOpZHe7GZ9FpM6PoQf4gk46Tc
+        OxEUTDXg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pfMti-0042lO-Ra; Thu, 23 Mar 2023 15:30:38 +0000
-Date:   Thu, 23 Mar 2023 15:30:38 +0000
+        id 1pfMwJ-0042qM-6r; Thu, 23 Mar 2023 15:33:19 +0000
+Date:   Thu, 23 Mar 2023 15:33:19 +0000
 From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Ritesh Harjani <ritesh.list@gmail.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/31] ext4: Convert ext4_finish_bio() to use folios
-Message-ID: <ZBxwnlKOZxHmLtdR@casper.infradead.org>
-References: <20230126202415.1682629-5-willy@infradead.org>
- <87ttyy1bz4.fsf@doe.com>
- <ZBvG8xbGHwQ+PPQa@casper.infradead.org>
- <20230323145109.GA466457@frogsfrogsfrogs>
+To:     Pankaj Raghav <p.raghav@samsung.com>
+Cc:     senozhatsky@chromium.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        brauner@kernel.org, akpm@linux-foundation.org, minchan@kernel.org,
+        hubcap@omnibond.com, martin@omnibond.com, mcgrof@kernel.org,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, gost.dev@samsung.com
+Subject: Re: [RFC v2 0/5] remove page_endio()
+Message-ID: <ZBxxPw9BTdkE4KF0@casper.infradead.org>
+References: <CGME20230322135015eucas1p2ff980e76159f0ceef7bf66934580bd6c@eucas1p2.samsung.com>
+ <20230322135013.197076-1-p.raghav@samsung.com>
+ <ZBtSevjWLybE6S07@casper.infradead.org>
+ <fbf5bc8a-6c82-a43e-dd96-8a9d2b7d3bf4@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230323145109.GA466457@frogsfrogsfrogs>
+In-Reply-To: <fbf5bc8a-6c82-a43e-dd96-8a9d2b7d3bf4@samsung.com>
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
         DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
         autolearn=unavailable autolearn_force=no version=3.4.6
@@ -53,49 +55,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 07:51:09AM -0700, Darrick J. Wong wrote:
-> On Thu, Mar 23, 2023 at 03:26:43AM +0000, Matthew Wilcox wrote:
-> > On Mon, Mar 06, 2023 at 02:40:55PM +0530, Ritesh Harjani wrote:
-> > > "Matthew Wilcox (Oracle)" <willy@infradead.org> writes:
-> > > 
-> > > > Prepare ext4 to support large folios in the page writeback path.
-> > > 
-> > > Sure. I am guessing for ext4 to completely support large folio
-> > > requires more work like fscrypt bounce page handling doesn't
-> > > yet support folios right?
-> > > 
-> > > Could you please give a little background on what all would be required
-> > > to add large folio support in ext4 buffered I/O path?
-> > > (I mean ofcourse other than saying move ext4 to iomap ;))
-> > > 
-> > > What I was interested in was, what other components in particular for
-> > > e.g. fscrypt, fsverity, ext4's xyz component needs large folio support?
-> > > 
-> > > And how should one go about in adding this support? So can we move
-> > > ext4's read path to have large folio support to get started?
-> > > Have you already identified what all is missing from this path to
-> > > convert it?
-> > 
-> > Honestly, I don't know what else needs to be done beyond this patch
-> > series.  I can point at some stuff and say "This doesn't work", but in
-> > general, you have to just enable it and see what breaks.  A lot of the
-> > buffer_head code is not large-folio safe right now, so that's somewhere
-> > to go and look.  Or maybe we "just" convert to iomap, and never bother
-> > fixing the bufferhead code for large folios.
+On Thu, Mar 23, 2023 at 04:00:37PM +0100, Pankaj Raghav wrote:
+> > We don't need to set the error flag.  Only some filesystems still use
+> > the error flag, and orangefs isn't one of them.  I'd like to get rid
+> > of the error flag altogether, and I've sent patches in the past which
+> > get us a lot closer to that desired outcome.  Not sure we're there yet.
+> > Regardless, generic code doesn't check the error flag.
 > 
-> Yes.  Let's leave bufferheads in the legacy doo-doo-dooooo basement
-> instead of wasting more time on them.  Ideally we'd someday run all the
-> filesystems through:
+> Thanks for the explanation. I think found the series you are referring here.
 > 
-> bufferheads -> iomap with bufferheads -> iomap with folios -> iomap with
-> large folios -> retire to somewhere cheaper than Hawaii
+> https://lore.kernel.org/linux-mm/20220527155036.524743-1-willy@infradead.org/#t
+> 
+> I see orangefs is still setting the error flag in orangefs_read_folio(), so
+> it should be removed at some point?
 
-Places cheaper than Hawaii probably aren't as pretty as Hawaii though :-(
+Yes, OrangeFS only sets the error flag, it never checks it, so it never
+needs to set it.
 
-XFS is fine because it uses xfs_buf, but if we don't add support for
-large folios to bufferheads, we can't support LBA size > PAGE_SIZE even
-to read the superblock.  Maybe that's fine ... only filesystems which
-don't use sb_bread() get to support LBA size > PAGE_SIZE.
+> I also changed mpage to **not set** the error flag in the read path. It does beg
+> the question whether block_read_full_folio() and iomap_finish_folio_read() should
+> also follow the suit.
 
-I really want to see a cheaper abstraction for accessing the block device
-than BHs.  Or xfs_buf for that matter.
+Wrong.  mpage is used by filesystems which *DO* check the error flag.
+You can't remove it being set until they're fixed to not check it.
