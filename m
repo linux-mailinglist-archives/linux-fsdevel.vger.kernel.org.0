@@ -2,47 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 414CE6C775A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 06:29:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AAFB6C7761
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 06:32:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231452AbjCXF3p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Mar 2023 01:29:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47314 "EHLO
+        id S229997AbjCXFcD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Mar 2023 01:32:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231531AbjCXF31 (ORCPT
+        with ESMTP id S229623AbjCXFcC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Mar 2023 01:29:27 -0400
+        Fri, 24 Mar 2023 01:32:02 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA4987EC6;
-        Thu, 23 Mar 2023 22:28:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E01DDF;
+        Thu, 23 Mar 2023 22:32:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TV7YjIHRnPh40nGPyD/b78oZpFAOJePPPC7MTmz9a1E=; b=EIrDU50rOI3Xz29qFSRpu11dlA
-        AedAprTuENA3LXMn+itdT5GR8eAmD+eYCT3X4rZmtp4UwlAAU8ysqXbRrEEaoALSZXOL/lv92RfZ5
-        oedESncsWBOyYdJkBfy9QKdZFQ0kXzMJFlweZE5RgLd+7F+FbeJQX27xvC1kLDBcgOc4gFKjVIW4M
-        9v8nh1N7zFi8SoHMrM1ErH84s8Y/jRKPjVoRo6c/0po/nnr2fqcyF5TCBjFPXdljmDUAmAPIxXO54
-        fanlmz0MKjaVGp95DOScKK1RaL1ogjU/bQShSDQM9950rIzQb8+J5fGUhABDotI4f4zS7lBqqGPE0
-        nBANTGKA==;
+        bh=1BmTo3I8QkfWboWz9yBcSlQ5saXqUc+9dJqdWN9G/vU=; b=AfM5t8sCUNWR8N6YGgoFczZsvS
+        fFFet8zV//rwbX+LCjJZVLEGh2ryAto1FOB9Mt9aDndLMi1O6gCTwGsZ8U/ZYwtPTtyjXbxQkCQvw
+        4lko75Guk0XFB7N0VMUMq2CQCyShHKE5Jm7LtngaCV11rBjjzFS+Pk8c3vEgp3vF/GdYrHCYFJdKh
+        qb6JsVf3Q2Xo0KiKUU8svLDa/TNPjWx5UhZ6UA/unNSgDUcuAjgtQsxOee/QIvyGvetM6eQjTlz+0
+        sEkC+VdWrliorsh+Ttbwz+/Ogd9P6Efn+NOFJiIwDEX7vHf5wgE8MTO7Jc1BtSDInewrBNaksrpEf
+        eNJLscTw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pfZyA-004bql-1q; Fri, 24 Mar 2023 05:28:06 +0000
-Date:   Fri, 24 Mar 2023 05:28:06 +0000
+        id 1pfa1s-004bzx-0b; Fri, 24 Mar 2023 05:31:56 +0000
+Date:   Fri, 24 Mar 2023 05:31:55 +0000
 From:   Matthew Wilcox <willy@infradead.org>
-To:     aloktiagi <aloktiagi@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org,
-        David.Laight@aculab.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        hch@infradead.org, Tycho Andersen <tycho@tycho.pizza>
-Subject: Re: [RFC v3 2/3] file: allow callers to free the old file descriptor
- after dup2
-Message-ID: <ZB005rys4ZTeaQfU@casper.infradead.org>
-References: <20230324051526.963702-1-aloktiagi@gmail.com>
- <20230324051526.963702-2-aloktiagi@gmail.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [PATCH v2 2/4] mm: vmalloc: use rwsem, mutex for vmap_area_lock
+ and vmap_block->lock
+Message-ID: <ZB01yw3MpOswyL1e@casper.infradead.org>
+References: <cover.1679209395.git.lstoakes@gmail.com>
+ <6c7f1ac0aeb55faaa46a09108d3999e4595870d9.1679209395.git.lstoakes@gmail.com>
+ <ZBkDuLKLhsOHNUeG@destitution>
+ <ZBsAG5cpOFhFZZG6@pc636>
+ <ZB00U2S4g+VqzDPL@destitution>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230324051526.963702-2-aloktiagi@gmail.com>
+In-Reply-To: <ZB00U2S4g+VqzDPL@destitution>
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
         DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
         autolearn=unavailable autolearn_force=no version=3.4.6
@@ -52,26 +59,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 24, 2023 at 05:15:25AM +0000, aloktiagi wrote:
-> @@ -1119,8 +1119,12 @@ __releases(&files->file_lock)
->  		__clear_close_on_exec(fd, fdt);
->  	spin_unlock(&files->file_lock);
->  
-> -	if (tofree)
-> -		filp_close(tofree, files);
-> +	if (fdfile) {
-> +		*fdfile = tofree;
-> +	} else {
-> +		if (tofree)
-> +			filp_close(tofree, files);
-> +	}
+On Fri, Mar 24, 2023 at 04:25:39PM +1100, Dave Chinner wrote:
+> Did you read the comment above this function? I mean, it's all about
+> how poorly kvmalloc() works for the highly concurrent, fail-fast
+> context that occurs in the journal commit fast path, and how we open
+> code it with kmalloc and vmalloc to work "ok" in this path.
+> 
+> Then if you go look at the commits related to it, you might find
+> that XFS developers tend to write properly useful changelogs to
+> document things like "it's better, but vmalloc will soon have lock
+> contention problems if we hit it any harder"....
 
-Why not:
-
-	if (fdfile)
-		 *fdfile = tofree;
-	else if (tofree)
-		filp_close(tofree, files);
-
-Shorter and makes the parallel structure more obvious.
-
+The problem with writing whinges like this is that mm developers don't
+read XFS changelogs.  I certainly had no idea this was a problem, and
+I doubt anybody else who could make a start at fixing this problem had
+any idea either.  Why go to all this effort instead of sending an email
+to linux-mm?
