@@ -2,75 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7F606C757E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 03:18:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 293F96C758C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 03:21:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231395AbjCXCST (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 22:18:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53338 "EHLO
+        id S231539AbjCXCVN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 22:21:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229773AbjCXCSS (ORCPT
+        with ESMTP id S231470AbjCXCVK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 22:18:18 -0400
+        Thu, 23 Mar 2023 22:21:10 -0400
 Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBBBF3C03;
-        Thu, 23 Mar 2023 19:18:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 930953C03;
+        Thu, 23 Mar 2023 19:21:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679624296; x=1711160296;
+  t=1679624464; x=1711160464;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=M4FQzDrjs+QeI9XLnd+NfZpr2fRqKi1DscOllLq4wCk=;
-  b=O5J5yxn+c8Ta89rb3pUkoeWY+46g0XRjZ03kQFZPf6iup6EbzEHqfb0J
-   F7zZFa1gH8Ht/kZFyKV3y3FqVZ8q8yI7U7O6qz2jRIc+W/FEvqkKZxL3f
-   FQVm1/rny7bH+iu1mfyHGGxIu+qRJamAWDt+UHEsGWjP5vJT62VU5CWNB
-   pJ/pGMo4c9fb6391lBDXpAC3+X8T5zO5Kk7tAr2mtZDDGfUcm+Gfk9yo3
-   0NPlPVZcW2eNuUHbP6/uS24jZzoD2XGubDM71sMUkfDDexncdUVzDuizc
-   dWec/VdPUBqz0NJyt0mdDqAWnbrgWzwVf2KHvrQb8dFexm/0TzbYSvXFu
+  bh=WC/GKCLsgaUV1To9x+OiRyuA8e2gZbfaT5Wbg90dNqM=;
+  b=AhPApKX0Eb4Ak1S8lBWPCg6hYQk7pV2RhB39omX4jViXIcox2b6EN7Vz
+   kL9ie22HTTI0y7xAMBcpwbTgEQ78f6vkjNKM8WhiOGGKeDwCq8DPDUTqf
+   mk8VwQkqot9BEW0Cd3WfmtknLvly/8HxhuJS7iHaZ8kMB5Ulkn0boJ9+0
+   o8bPAkCjE7B+HhR3zYzDTGcGILsoP3wvdh6iofFHoJiIUaw/FN+PcRpoB
+   TDTU6XcYFejPaiW52+axPOL+M0rq3QKPmfpgilQANmIuceY6qVIfKmzez
+   XaZ40C9WP2Clb3sP7ws6O5N6hMtOU8Pdce+/+Y4VEgTupBvcirHol8cci
    A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10658"; a="338400943"
+X-IronPort-AV: E=McAfee;i="6600,9927,10658"; a="338401271"
 X-IronPort-AV: E=Sophos;i="5.98,286,1673942400"; 
-   d="scan'208";a="338400943"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2023 19:18:15 -0700
+   d="scan'208";a="338401271"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2023 19:21:03 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10658"; a="659886402"
+X-IronPort-AV: E=McAfee;i="6600,9927,10658"; a="746987117"
 X-IronPort-AV: E=Sophos;i="5.98,286,1673942400"; 
-   d="scan'208";a="659886402"
+   d="scan'208";a="746987117"
 Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.105])
-  by orsmga006.jf.intel.com with ESMTP; 23 Mar 2023 19:18:04 -0700
-Date:   Fri, 24 Mar 2023 10:10:29 +0800
+  by fmsmga008.fm.intel.com with ESMTP; 23 Mar 2023 19:20:52 -0700
+Date:   Fri, 24 Mar 2023 10:13:17 +0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Isaku Yamahata <isaku.yamahata@gmail.com>
-Cc:     Ackerley Tng <ackerleytng@google.com>, seanjc@google.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        pbonzini@redhat.com, corbet@lwn.net, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, arnd@arndb.de,
-        naoya.horiguchi@nec.com, linmiaohe@huawei.com, x86@kernel.org,
-        hpa@zytor.com, hughd@google.com, jlayton@kernel.org,
-        bfields@fieldses.org, akpm@linux-foundation.org, shuah@kernel.org,
-        rppt@kernel.org, steven.price@arm.com, mail@maciej.szmigiero.name,
-        vbabka@suse.cz, vannapurve@google.com, yu.c.zhang@linux.intel.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, qperret@google.com, tabba@google.com,
-        michael.roth@amd.com, mhocko@suse.com, wei.w.wang@intel.com
-Subject: Re: [PATCH v10 9/9] KVM: Enable and expose KVM_MEM_PRIVATE
-Message-ID: <20230324021029.GA2774613@chaop.bj.intel.com>
+To:     Michael Roth <michael.roth@amd.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        mhocko@suse.com, wei.w.wang@intel.com
+Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
+Message-ID: <20230324021317.GB2774613@chaop.bj.intel.com>
 Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20230128140030.GB700688@chaop.bj.intel.com>
- <diqz5ybc3xsr.fsf@ackerleytng-cloudtop.c.googlers.com>
- <20230308074026.GA2183207@chaop.bj.intel.com>
- <20230323004131.GA214881@ls.amr.corp.intel.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <Y8H5Z3e4hZkFxAVS@google.com>
+ <20230119111308.GC2976263@ls.amr.corp.intel.com>
+ <Y8lg1G2lRIrI/hld@google.com>
+ <20230119223704.GD2976263@ls.amr.corp.intel.com>
+ <Y880FiYF7YCtsw/i@google.com>
+ <20230213130102.two7q3kkcf254uof@amd.com>
+ <20230221121135.GA1595130@chaop.bj.intel.com>
+ <20230323012737.7vn4ynsbfz7c2ch4@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230323004131.GA214881@ls.amr.corp.intel.com>
+In-Reply-To: <20230323012737.7vn4ynsbfz7c2ch4@amd.com>
 X-Spam-Status: No, score=-2.4 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
         autolearn=unavailable autolearn_force=no version=3.4.6
@@ -80,163 +99,140 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 22, 2023 at 05:41:31PM -0700, Isaku Yamahata wrote:
-> On Wed, Mar 08, 2023 at 03:40:26PM +0800,
-> Chao Peng <chao.p.peng@linux.intel.com> wrote:
+On Wed, Mar 22, 2023 at 08:27:37PM -0500, Michael Roth wrote:
+> On Tue, Feb 21, 2023 at 08:11:35PM +0800, Chao Peng wrote:
+> > > Hi Sean,
+> > > 
+> > > We've rebased the SEV+SNP support onto your updated UPM base support
+> > > tree and things seem to be working okay, but we needed some fixups on
+> > > top of the base support get things working, along with 1 workaround
+> > > for an issue that hasn't been root-caused yet:
+> > > 
+> > >   https://github.com/mdroth/linux/commits/upmv10b-host-snp-v8-wip
+> > > 
+> > >   *stash (upm_base_support): mm: restrictedmem: Kirill's pinning implementation
+> > >   *workaround (use_base_support): mm: restrictedmem: loosen exclusivity check
+> > 
+> > What I'm seeing is Slot#3 gets added first and then deleted. When it's
+> > gets added, Slot#0 already has the same range bound to restrictedmem so
+> > trigger the exclusive check. This check is exactly the current code for.
 > 
-> > On Wed, Mar 08, 2023 at 12:13:24AM +0000, Ackerley Tng wrote:
-> > > Chao Peng <chao.p.peng@linux.intel.com> writes:
-> > > 
-> > > > On Sat, Jan 14, 2023 at 12:01:01AM +0000, Sean Christopherson wrote:
-> > > > > On Fri, Dec 02, 2022, Chao Peng wrote:
-> > > > ...
-> > > > > Strongly prefer to use similar logic to existing code that detects wraps:
-> > > 
-> > > > > 		mem->restricted_offset + mem->memory_size < mem->restricted_offset
-> > > 
-> > > > > This is also where I'd like to add the "gfn is aligned to offset"
-> > > > > check, though
-> > > > > my brain is too fried to figure that out right now.
-> > > 
-> > > > Used count_trailing_zeros() for this TODO, unsure we have other better
-> > > > approach.
-> > > 
-> > > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > > > index afc8c26fa652..fd34c5f7cd2f 100644
-> > > > --- a/virt/kvm/kvm_main.c
-> > > > +++ b/virt/kvm/kvm_main.c
-> > > > @@ -56,6 +56,7 @@
-> > > >   #include <asm/processor.h>
-> > > >   #include <asm/ioctl.h>
-> > > >   #include <linux/uaccess.h>
-> > > > +#include <linux/count_zeros.h>
-> > > 
-> > > >   #include "coalesced_mmio.h"
-> > > >   #include "async_pf.h"
-> > > > @@ -2087,6 +2088,19 @@ static bool kvm_check_memslot_overlap(struct
-> > > > kvm_memslots *slots, int id,
-> > > >   	return false;
-> > > >   }
-> > > 
-> > > > +/*
-> > > > + * Return true when ALIGNMENT(offset) >= ALIGNMENT(gpa).
-> > > > + */
-> > > > +static bool kvm_check_rmem_offset_alignment(u64 offset, u64 gpa)
-> > > > +{
-> > > > +	if (!offset)
-> > > > +		return true;
-> > > > +	if (!gpa)
-> > > > +		return false;
-> > > > +
-> > > > +	return !!(count_trailing_zeros(offset) >= count_trailing_zeros(gpa));
+> With the following change in QEMU, we no longer trigger this check:
 > 
-> This check doesn't work expected. For example, offset = 2GB, gpa=4GB
-> this check fails.
+>   diff --git a/hw/pci-host/q35.c b/hw/pci-host/q35.c
+>   index 20da121374..849b5de469 100644
+>   --- a/hw/pci-host/q35.c
+>   +++ b/hw/pci-host/q35.c
+>   @@ -588,9 +588,9 @@ static void mch_realize(PCIDevice *d, Error **errp)
+>        memory_region_init_alias(&mch->open_high_smram, OBJECT(mch), "smram-open-high",
+>                                 mch->ram_memory, MCH_HOST_BRIDGE_SMRAM_C_BASE,
+>                                 MCH_HOST_BRIDGE_SMRAM_C_SIZE);
+>   +    memory_region_set_enabled(&mch->open_high_smram, false);
+>        memory_region_add_subregion_overlap(mch->system_memory, 0xfeda0000,
+>                                            &mch->open_high_smram, 1);
+>   -    memory_region_set_enabled(&mch->open_high_smram, false);
+> 
+> I'm not sure if QEMU is actually doing something wrong here though or if
+> this check is putting tighter restrictions on userspace than what was
+> expected before. Will look into it more.
 
-This case is expected to fail as Sean initially suggested[*]:
-  I would rather reject memslot if the gfn has lesser alignment than
-  the offset. I'm totally ok with this approach _if_ there's a use case.
-  Until such a use case presents itself, I would rather be conservative
-  from a uAPI perspective.
+I don't think above QEMU change is upstream acceptable. It may break
+functionality for 'normal' VMs.
 
-I understand that we put tighter restriction on this but if you see such
-restriction is really a big issue for real usage, instead of a
-theoretical problem, then we can loosen the check here. But at that time
-below code is kind of x86 specific and may need improve.
+The UPM check does putting tighter restriction, the restriction is that
+you can't bind the same fd range to more than one memslot. For SMRAM in
+QEMU however, it violates this restriction. The right 'fix' is disabling
+SMM in QEMU for UPM usages rather than trying to work around it. There
+is more discussion in below link:
 
-BTW, in latest code, I replaced count_trailing_zeros() with fls64():
-  return !!(fls64(offset) >= fls64(gpa));
-
-[*] https://lore.kernel.org/all/Y8HldeHBrw+OOZVm@google.com/
+  https://lore.kernel.org/all/Y8bOB7VuVIsxoMcn@google.com/
 
 Chao
-> I come up with the following.
+
 > 
-> >From ec87e25082f0497431b732702fae82c6a05071bf Mon Sep 17 00:00:00 2001
-> Message-Id: <ec87e25082f0497431b732702fae82c6a05071bf.1679531995.git.isaku.yamahata@intel.com>
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
-> Date: Wed, 22 Mar 2023 15:32:56 -0700
-> Subject: [PATCH] KVM: Relax alignment check for restricted mem
+> > 
+> > >   *fixup (upm_base_support): KVM: use inclusive ranges for restrictedmem binding/unbinding
+> > >   *fixup (upm_base_support): mm: restrictedmem: use inclusive ranges for issuing invalidations
+> > 
+> > As many kernel APIs treat 'end' as exclusive, I would rather keep using
+> > exclusive 'end' for these APIs(restrictedmem_bind/restrictedmem_unbind
+> > and notifier callbacks) but fix it internally in the restrictedmem. E.g.
+> > all the places where xarray API needs a 'last'/'max' we use 'end - 1'.
+> > See below for the change.
 > 
-> kvm_check_rmem_offset_alignment() only checks based on offset alignment
-> and GPA alignment.  However, the actual alignment for offset depends
-> on architecture.  For x86 case, it can be 1G, 2M or 4K.  So even if
-> GPA is aligned for 1G+, only 1G-alignment is required for offset.
+> Yes I did feel like I was fighting the kernel a bit on that; your
+> suggestion seems like it would be a better fit.
 > 
-> Without this patch, gpa=4G, offset=2G results in failure of memory slot
-> creation.
+> > 
+> > >   *fixup (upm_base_support): KVM: fix restrictedmem GFN range calculations
+> > 
+> > Subtracting slot->restrictedmem.index for start/end in
+> > restrictedmem_get_gfn_range() is the correct fix.
+> > 
+> > >   *fixup (upm_base_support): KVM: selftests: CoCo compilation fixes
+> > > 
+> > > We plan to post an updated RFC for v8 soon, but also wanted to share
+> > > the staging tree in case you end up looking at the UPM integration aspects
+> > > before then.
+> > > 
+> > > -Mike
+> > 
+> > This is the restrictedmem fix to solve 'end' being stored and checked in xarray:
 > 
-> Fixes: edc8814b2c77 ("KVM: Require gfn be aligned with restricted offset")
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> ---
->  arch/x86/include/asm/kvm_host.h | 15 +++++++++++++++
->  virt/kvm/kvm_main.c             |  9 ++++++++-
->  2 files changed, 23 insertions(+), 1 deletion(-)
+> Looks good.
 > 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 88e11dd3afde..03af44650f24 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -16,6 +16,7 @@
->  #include <linux/irq_work.h>
->  #include <linux/irq.h>
->  #include <linux/workqueue.h>
-> +#include <linux/count_zeros.h>
->  
->  #include <linux/kvm.h>
->  #include <linux/kvm_para.h>
-> @@ -143,6 +144,20 @@
->  #define KVM_HPAGE_MASK(x)	(~(KVM_HPAGE_SIZE(x) - 1))
->  #define KVM_PAGES_PER_HPAGE(x)	(KVM_HPAGE_SIZE(x) / PAGE_SIZE)
->  
-> +#define kvm_arch_required_alignment	kvm_arch_required_alignment
-> +static inline int kvm_arch_required_alignment(u64 gpa)
-> +{
-> +	int zeros = count_trailing_zeros(gpa);
-> +
-> +	WARN_ON_ONCE(!PAGE_ALIGNED(gpa));
-> +	if (zeros >= KVM_HPAGE_SHIFT(PG_LEVEL_1G))
-> +		return KVM_HPAGE_SHIFT(PG_LEVEL_1G);
-> +	else if (zeros >= KVM_HPAGE_SHIFT(PG_LEVEL_2M))
-> +		return KVM_HPAGE_SHIFT(PG_LEVEL_2M);
-> +
-> +	return PAGE_SHIFT;
-> +}
-> +
->  #define KVM_MEMSLOT_PAGES_TO_MMU_PAGES_RATIO 50
->  #define KVM_MIN_ALLOC_MMU_PAGES 64UL
->  #define KVM_MMU_HASH_SHIFT 12
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index c9c4eef457b0..f4ff96171d24 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -2113,6 +2113,13 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
->  	return false;
->  }
->  
-> +#ifndef kvm_arch_required_alignment
-> +__weak int kvm_arch_required_alignment(u64 gpa)
-> +{
-> +	return PAGE_SHIFT
-> +}
-> +#endif
-> +
->  /*
->   * Return true when ALIGNMENT(offset) >= ALIGNMENT(gpa).
->   */
-> @@ -2123,7 +2130,7 @@ static bool kvm_check_rmem_offset_alignment(u64 offset, u64 gpa)
->  	if (!gpa)
->  		return false;
->  
-> -	return !!(count_trailing_zeros(offset) >= count_trailing_zeros(gpa));
-> +	return !!(count_trailing_zeros(offset) >= kvm_arch_required_alignment(gpa));
->  }
->  
->  /*
-> -- 
-> 2.25.1
+> Thanks!
 > 
+> -Mike
 > 
-> 
-> -- 
-> Isaku Yamahata <isaku.yamahata@gmail.com>
+> > 
+> > --- a/mm/restrictedmem.c
+> > +++ b/mm/restrictedmem.c
+> > @@ -46,12 +46,12 @@ static long restrictedmem_punch_hole(struct restrictedmem *rm, int mode,
+> >          */
+> >         down_read(&rm->lock);
+> >  
+> > -       xa_for_each_range(&rm->bindings, index, notifier, start, end)
+> > +       xa_for_each_range(&rm->bindings, index, notifier, start, end - 1)
+> >                 notifier->ops->invalidate_start(notifier, start, end);
+> >  
+> >         ret = memfd->f_op->fallocate(memfd, mode, offset, len);
+> >  
+> > -       xa_for_each_range(&rm->bindings, index, notifier, start, end)
+> > +       xa_for_each_range(&rm->bindings, index, notifier, start, end - 1)
+> >                 notifier->ops->invalidate_end(notifier, start, end);
+> >  
+> >         up_read(&rm->lock);
+> > @@ -224,7 +224,7 @@ static int restricted_error_remove_page(struct address_space *mapping,
+> >                 }
+> >                 spin_unlock(&inode->i_lock);
+> >  
+> > -               xa_for_each_range(&rm->bindings, index, notifier, start, end)
+> > +               xa_for_each_range(&rm->bindings, index, notifier, start, end - 1)
+> >                         notifier->ops->error(notifier, start, end);
+> >                 break;
+> >         }
+> > @@ -301,11 +301,12 @@ int restrictedmem_bind(struct file *file, pgoff_t start, pgoff_t end,
+> >                 if (exclusive != rm->exclusive)
+> >                         goto out_unlock;
+> >  
+> > -               if (exclusive && xa_find(&rm->bindings, &start, end, XA_PRESENT))
+> > +               if (exclusive &&
+> > +                   xa_find(&rm->bindings, &start, end - 1, XA_PRESENT))
+> >                         goto out_unlock;
+> >         }
+> >  
+> > -       xa_store_range(&rm->bindings, start, end, notifier, GFP_KERNEL);
+> > +       xa_store_range(&rm->bindings, start, end - 1, notifier, GFP_KERNEL);
+> >         rm->exclusive = exclusive;
+> >         ret = 0;
+> >  out_unlock:
+> > @@ -320,7 +321,7 @@ void restrictedmem_unbind(struct file *file, pgoff_t start, pgoff_t end,
+> >         struct restrictedmem *rm = file->f_mapping->private_data;
+> >  
+> >         down_write(&rm->lock);
+> > -       xa_store_range(&rm->bindings, start, end, NULL, GFP_KERNEL);
+> > +       xa_store_range(&rm->bindings, start, end - 1, NULL, GFP_KERNEL);
+> >         synchronize_rcu();
+> >         up_write(&rm->lock);
+> >  }
