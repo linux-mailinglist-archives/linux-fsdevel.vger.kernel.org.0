@@ -2,87 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C0176C7F05
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 14:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11CB36C7F0D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 14:46:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231892AbjCXNnk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Mar 2023 09:43:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
+        id S231194AbjCXNqs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Mar 2023 09:46:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231874AbjCXNnc (ORCPT
+        with ESMTP id S229729AbjCXNqr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Mar 2023 09:43:32 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF2054C11;
-        Fri, 24 Mar 2023 06:43:21 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1E40C5C0102;
-        Fri, 24 Mar 2023 09:43:19 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 24 Mar 2023 09:43:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1679665399; x=1679751799; bh=9s
-        FuysrRgtAWhnFubN7BKB3n7WSqgiV+U9Y1poJMXZk=; b=EO4otnn8OVCRDKBEPp
-        nfLYUkoiVNfgaF6LAT/kwv2Hahmrclsw7Gkf2sAcok4mZ/Ek2ptD4ecDhs7uglyf
-        s0Bw5QCmxRoooVqFCjYgqTEriMT22Kw1WWsqImDWML8bfWkDVY7dixAREgilrOo5
-        gyN+FZmsakb6Owe4Ijj7r5PiuGLs7NlIT3tj0IwfycA7TeVjZAePxqGKVI6esF87
-        /alVDPkm8iERn9+frjcBHF1sHOMQ0iMwDaue7IDVmlNwqm6OEidVxcStY4lUubJG
-        ORSPRhadFrOgiCQkO94I/Jt2Pa1dkSK0v+D5Z2u20mBbO6lv3bYwHR0Se1Gef/3r
-        4NqQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1679665399; x=1679751799; bh=9sFuysrRgtAWh
-        nFubN7BKB3n7WSqgiV+U9Y1poJMXZk=; b=angCG0f/A6HKFstiCVbGHDiG1S0zl
-        XX58P99xDP4tpZDZY59CpIcEQKSDhTnlZR38iLryrn+/YkAS06cK3ZdVpexcT6x4
-        SF1M2Tw4YEuWH0yR2g4g5MNIJqCKe/+7nBTcKm6aPBeMSMkicG6BrD8LairCdR8b
-        IdKd6Po+iXF3tnE2M3wtPSH5BQB3eMqUvtYaKel+EFf4HYkYPZPiTOFc9km49Tz8
-        DYp9qMGga3C/2yFNIUDk98iRweFwS5iwqENzgh/WQ1Lyp52FWIH/IaiMcrKl9ZZR
-        iLLHLyFWWjrBPw0dYD33rhSP/9tPPnAP8DHA8UcCKl+EaVmy4RQnL8j/w==
-X-ME-Sender: <xms:9qgdZPpTRYBjPGSNwnW2vBm7GLgz88fkSgWSgvIlnVVKPX_vMXwT3g>
-    <xme:9qgdZJp5ZWWkd8frqj3xaEo1GE2ZEWXLYRszpaw2h_p174iZAMw0ruk9zGwfoPKls
-    6BeWANgqvrS65244gY>
-X-ME-Received: <xmr:9qgdZMN6zfSM_IXnMjLNO5Dl9lO9N1aenoLGFF8NQK8pt3eTH_jTdsGy1yMs0g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdegiedgheehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
-    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
-    grthhtvghrnhepleevudetgefhheekueekhfduffethfehteeftdfhvefgteelvedvudev
-    teeufeehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihii
-    iigr
-X-ME-Proxy: <xmx:9qgdZC7jb2KZTh476gKhL2qVluCT-BOz0-B6wOFfPWJd8QKLe7_6LA>
-    <xmx:9qgdZO7Sav6XP40qw-YZczurpPIQBySUIzl7bdSB9TPOD2tR5esF6Q>
-    <xmx:9qgdZKg_TKWVE6Qg-k9aOIzbxeglSyRI8W7lclkYwMVUvl3b8xDPog>
-    <xmx:96gdZFae6FUAp45RgqZ6Ry7q7MqfZ-2rvMHJpOY_K_Zb4KIqvjsK_A>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Mar 2023 09:43:16 -0400 (EDT)
-Date:   Fri, 24 Mar 2023 07:43:13 -0600
-From:   Tycho Andersen <tycho@tycho.pizza>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     aloktiagi <aloktiagi@gmail.com>, viro@zeniv.linux.org.uk,
-        willy@infradead.org, David.Laight@aculab.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, hch@infradead.org
-Subject: Re: [RFC v4 2/2] file, epoll: Implement do_replace() and
- eventpoll_replace()
-Message-ID: <ZB2o8cs+VTQlz5GA@tycho.pizza>
-References: <20230324063422.1031181-2-aloktiagi@gmail.com>
- <ZBzRfDnHaEycE72s@ip-172-31-38-16.us-west-2.compute.internal>
- <20230324082344.xgze2vu3ds2kubcz@wittgenstein>
-MIME-Version: 1.0
+        Fri, 24 Mar 2023 09:46:47 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2068.outbound.protection.outlook.com [40.107.102.68])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671A41286A;
+        Fri, 24 Mar 2023 06:46:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MVoBliKGVMGGOlFcFB6akdceBtJwg8v3RY2TPGH+CcolFJo1niPQ8adxFtEQFNQ5zLC/iadELyDt9IQEIzo41aTHiI19qb6JDMVoV8S5UK+jr+D237/qQwWCYVMoX5B2ptmF+/91HLZISikMJ/x+qjBsNQl8bce/AAXXV8oQ/kdEFfn0W0NgmLmTXV5L0cj3GHdh9q328EZl0V3JZFhwQgHG4q7smIT06W4jFBJhflG2e9rMiJO/ksHDQXpFV+bC20DptT72LDrs0hBGSLQWw/8MMrAl00I8qMOS7udovz7ijwrsBSYYeLmSu5Lqfy75rVl+svi5SwJbOow7Cd0j+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mBDiqo+ZtLOvXfwNlkuF9pt6K6qQgwI+7IlXVScemAI=;
+ b=Chv8BXKXDV4Vb+1nfVUyqtHjAvtjYnMkhO+ur5FOgvW9lVtxT+K1LN7aQOEObZOpbCFmn8meK4BoqI1XW8zmxek+K8Zw7Z4emnp7Y6ZGxYKq8AVN7NT+ZjXpY2w4+dxj0VxxY8YT2X4ThY8b5ZxaP50DDTs9igEIy00RB15Wi3QN9nnGoRMbXEnTdphblWXPqQeRwvNxoks0JQRMyrbc27W9N77W/AiFWmDVZQrYcG540gnW5eldZKAZeVpyX0O+vMTS7eIkEha7EQ6ZplHy9hoDT6/VmNd48OemVm4Ak2u/OsZ06tY/ByPXynW8O7Zd437qi+HdEpa+nFyYu/1fLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=memverge.com; dmarc=pass action=none header.from=memverge.com;
+ dkim=pass header.d=memverge.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=memverge.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mBDiqo+ZtLOvXfwNlkuF9pt6K6qQgwI+7IlXVScemAI=;
+ b=mEbfyvlg0q9Nn555ez5tOR6XaVYR4/+gG7Afk/nBOJnCRGOYXqzmMXdQt0TIDOHp7cAdniLLEBardCMws8JCFivwndqffwwxImsgBjicHxLnj08k4XO1i6aMfAN4KFZLINv8dIkosHCyxTDNM5Wj584KvQjoUijusg4Gg0shlxA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=memverge.com;
+Received: from SJ0PR17MB5512.namprd17.prod.outlook.com (2603:10b6:a03:394::19)
+ by BY5PR17MB3857.namprd17.prod.outlook.com (2603:10b6:a03:239::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.38; Fri, 24 Mar
+ 2023 13:46:39 +0000
+Received: from SJ0PR17MB5512.namprd17.prod.outlook.com
+ ([fe80::12d5:2d24:8d15:1c05]) by SJ0PR17MB5512.namprd17.prod.outlook.com
+ ([fe80::12d5:2d24:8d15:1c05%8]) with mapi id 15.20.6178.038; Fri, 24 Mar 2023
+ 13:46:39 +0000
+Date:   Fri, 24 Mar 2023 09:46:34 -0400
+From:   Gregory Price <gregory.price@memverge.com>
+To:     Kyungsan Kim <ks0204.kim@samsung.com>
+Cc:     ying.huang@intel.com, lsf-pc@lists.linux-foundation.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-cxl@vger.kernel.org, a.manzanares@samsung.com,
+        viacheslav.dubeyko@bytedance.com, dan.j.williams@intel.com
+Subject: Re: RE(4): FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for CXL
+Message-ID: <ZB2pugK9Vu+nINSV@memverge.com>
+References: <87wn37q8v5.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <CGME20230324084808epcas2p354865d38dccddcb5cd46b17610345a5f@epcas2p3.samsung.com>
+ <20230324084808.147885-1-ks0204.kim@samsung.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230324082344.xgze2vu3ds2kubcz@wittgenstein>
-X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
+In-Reply-To: <20230324084808.147885-1-ks0204.kim@samsung.com>
+X-ClientProxiedBy: BY3PR05CA0058.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b::33) To SJ0PR17MB5512.namprd17.prod.outlook.com
+ (2603:10b6:a03:394::19)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR17MB5512:EE_|BY5PR17MB3857:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3c67bac4-a244-49f2-d006-08db2c6e3142
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LF+NDwotpAZ30Dab2tDplg60pGzFOFbeua/qZwE5catfHy1eCd706YmmXLempheQVuzZVzu03ZwHbKXx/WeZ9UPHclTzpPQwA5euxti5AsgfkkuJsWGdkZD57B1EG28sUqFISInTKnsJyuaHRNl6qAokwNQj8v5EChzBh+ZxpRcOuZPunx6h0NkkQ9nsQphfTSU3LSTaSGI7nKRJUwaSRJJ7kzX6jt1/0kSBDD+LfxW7TYVSIDH6PD32p9abGlvJF1shV+LtOqi5LcvWF5GFuYkVdNh4sFLJdt3xnR3VLpTf1S1NAOEllD6LEsos2h+fxFCZQwgjHEpahiCnQ6C8zXqQZzlo2jU22O0Krytgw2bcIEnMQpbZJGkyP1R8MH9PFaJwu3MhRg01xJNXjK+AXhvzBYdBwz4HaPN6NX/5r/yRufH1mjPvd+zcoRVatz7QHAzESzqIYET9jlYX9nqhI1SvUGnrtfFzqxL1I2RDknx7TPyTqns7yXQrVwhj5C3efLaokFhWEC6PkhgeA6Ow64/bysU7yRZUCecbyJSiOp3qN7xhNCj/+r9LWQ2ai+bi1evt/iZOgn9L9dv7Xr+IeorNjxQc0lGBVePkrv/0oa/O29MYvpSqk+lBTuUCnbtMZi5vx6QpD4fe5hmyidtMGTldoN84D1+fIQcnSXxvE+jzJenK/HLKbmwdflQUuDuX
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR17MB5512.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(376002)(366004)(346002)(136003)(396003)(39830400003)(451199018)(38100700002)(2906002)(6486002)(83380400001)(478600001)(186003)(2616005)(86362001)(36756003)(66556008)(8676002)(4326008)(5660300002)(6916009)(66946007)(66476007)(8936002)(6506007)(26005)(6512007)(6666004)(316002)(41300700001)(44832011)(67856001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ENDJ2Dgn1Hv2r7ZsVd7Otxi+S12LroCQltv95ijLpotRndU/BvRUJu4UnV4W?=
+ =?us-ascii?Q?LvGhJKjsU/hKpkac9+7qaYy8KeHTxwO7BzVmakwS/9eJ9HddvVQMQoTe0j8A?=
+ =?us-ascii?Q?De0YrDkVeLYzyecxG8YwkhLO+X+PSO9ppn8wiSLS7OGwP9s5Q8xnOsHAIRM5?=
+ =?us-ascii?Q?0XxLA0r5mUc69d5emheoeOoAYpWyyipbcTjPmJz8p9EYnMtjHLOK8rfZ+mD2?=
+ =?us-ascii?Q?iRlYjZnNR/sb/NDrftkoPuWiqwhc1ans+CUnmPk/npUoPOepopwEXIE78FyF?=
+ =?us-ascii?Q?+C4QNBcRf4zpDPJRSBy9ofTM0Ohc1jmJaKM6TxF1Cw0DUGpeE4Tp3rCy1fRd?=
+ =?us-ascii?Q?cVIxpNpkJw9EiI6Ka38AxuYHSHGj+Uip679s28lNtJpbZP405do4UOd1wXJQ?=
+ =?us-ascii?Q?0TB9JoWmMg18ZioHLRoFDsa3NaWvgDfj6cIA1A1+kDAZfFLCrMkplWTPIb7T?=
+ =?us-ascii?Q?/ch+8ny6gUlzhVf59ykNvybv0W9+typVmmUEtTwUoy4ed1UuUWLjguj1qWn2?=
+ =?us-ascii?Q?77Tst9wKH/v4NpbbFn5by9V/EB+zPDQxWVajHS2Xu/oU0cbfppQFsqMepWE3?=
+ =?us-ascii?Q?+J+ZjVQpkIRShy8H9uvfd3JU0IPQW+fc+IRx8dwmBs+yOMqf6skyyEIma4uk?=
+ =?us-ascii?Q?mQL+tALBbEgPpae9EVwcf7z00kQL3nhlcyxCf5JnFXAB0nsP6qwa0TXWGsFG?=
+ =?us-ascii?Q?4EMi7EIjFUylROfH+UUEr9L3SJRSKmaln0TKkJJ+EunI1VF4LExibnbF3+pr?=
+ =?us-ascii?Q?CwXMxIXbwtkQBWIc8aHTn5buPwTM8WXYIZQztW3LkMwyqGBdTPKDMqC9Xj51?=
+ =?us-ascii?Q?vyPFrh1EKEybpyMFFu0eQIPll8D4sppt9xuc11t6pV63xZNdhaIk/9ujHJ3C?=
+ =?us-ascii?Q?MOyb1zeAyeCV/qCe1TVAfv9LOx7CAgDIQYX4AcAxC3RZb7gjh6xGyGIKeEJW?=
+ =?us-ascii?Q?Yt2ACue+G2P/mJGESM4gDLzLTbKs7VMeynt/1Ug8A1bO2I5RBBve7J+BpILA?=
+ =?us-ascii?Q?AqzIuD9ODk1ObMBPv055Rio0LkG984vK/tSgGF8Rw2McmLgjAiR3ut+Z6azv?=
+ =?us-ascii?Q?TQwJdeq6ujykSbskr4IMU17soEkz87yaQ84i3sc1puVO0uS5QgvzzKepU1th?=
+ =?us-ascii?Q?pSk0oT7vO/Ty8RAMszaqkD8v0xi3GaYj7xJaYhopAjj2LKUMk7f2WGGfeDrp?=
+ =?us-ascii?Q?IIA9Kn+3HCSYyIgiPKe0U89H+B1Wg6UaZRDvgu9bXLgSnodctJEYDa3eVxAu?=
+ =?us-ascii?Q?HTghkvEFkD9cDbpWsmiDcgzrRhABFcHNIOpNCVb796Svvag3a5pYVL1sowSQ?=
+ =?us-ascii?Q?0SMQw2p0SqcG3AuSX2U/aUlG39i6sP7DAOJgK+tSAB7ESiE7O1FpbIoXKLmG?=
+ =?us-ascii?Q?lc6b8wTbAMPz2Sv0zXW5V0r8rl1n1yfLq+oETkqGjgMm62Eccl/GSdfBQFGo?=
+ =?us-ascii?Q?dqbKkxQjZzA7/lYI9cVjfzpnkFoQRMgBMrV2VD/jioiZsdu9Ibjgy31EJLB1?=
+ =?us-ascii?Q?bw1ri1LZEWGhs+ZiVuhTEfe1hihzEOzknyN0ouERtWRfFFopNZ896su+bDDj?=
+ =?us-ascii?Q?MUJWcGHeh7fZv/3VkB59mjCHpfc/pLXna9pnznpkifJE8FqTOQT0lcdcnOnC?=
+ =?us-ascii?Q?uA=3D=3D?=
+X-OriginatorOrg: memverge.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c67bac4-a244-49f2-d006-08db2c6e3142
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR17MB5512.namprd17.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2023 13:46:39.0512
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5c90cb59-37e7-4c81-9c07-00473d5fb682
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yk1KVMEm5o84tK4QaDEUtu5SG3AeKofrMEsNxHVIFZeSToCbJhuf2gdrCT3/ENc4nYO8hOXCovF8lt13IxDa7gsVUe0jUgi2716MwhzGVA0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR17MB3857
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -90,173 +118,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 24, 2023 at 09:23:44AM +0100, Christian Brauner wrote:
-> On Thu, Mar 23, 2023 at 10:23:56PM +0000, Alok Tiagi wrote:
-> > On Mon, Mar 20, 2023 at 03:51:03PM +0100, Christian Brauner wrote:
-> > > On Sat, Mar 18, 2023 at 06:02:48AM +0000, aloktiagi wrote:
-> > > > Introduce a mechanism to replace a file linked in the epoll interface or a file
-> > > > that has been dup'ed by a file received via the replace_fd() interface.
-> > > > 
-> > > > eventpoll_replace() is called from do_replace() and finds all instances of the
-> > > > file to be replaced and replaces them with the new file.
-> > > > 
-> > > > do_replace() also replaces the file in the file descriptor table for all fd
-> > > > numbers referencing it with the new file.
-> > > > 
-> > > > We have a use case where multiple IPv6 only network namespaces can use a single
-> > > > IPv4 network namespace for IPv4 only egress connectivity by switching their
-> > > > sockets from IPv6 to IPv4 network namespace. This allows for migration of
-> > > > systems to IPv6 only while keeping their connectivity to IPv4 only destinations
-> > > > intact.
-> > > > 
-> > > > Today, we achieve this by setting up seccomp filter to intercept network system
-> > > > calls like connect() from a container in a container manager which runs in an
-> > > > IPv4 only network namespace. The container manager creates a new IPv4 connection
-> > > > and injects the new file descriptor through SECCOMP_NOTIFY_IOCTL_ADDFD replacing
-> > > > the original file descriptor from the connect() call. This does not work for
-> > > > cases where the original file descriptor is handed off to a system like epoll
-> > > > before the connect() call. After a new file descriptor is injected the original
-> > > > file descriptor being referenced by the epoll fd is not longer valid leading to
-> > > > failures. As a workaround the container manager when intercepting connect()
-> > > > loops through all open socket file descriptors to check if they are referencing
-> > > > the socket attempting the connect() and replace the reference with the to be
-> > > > injected file descriptor. This workaround is cumbersome and makes the solution
-> > > > prone to similar yet to be discovered issues.
-> > > > 
-> > > > The above change will enable us remove the workaround in the container manager
-> > > > and let the kernel handle the replacement correctly.
-> > > > 
-> > > > Signed-off-by: aloktiagi <aloktiagi@gmail.com>
-> > > > ---
-> > > >  fs/eventpoll.c                                | 38 ++++++++
-> > > >  fs/file.c                                     | 54 +++++++++++
-> > > >  include/linux/eventpoll.h                     | 18 ++++
-> > > >  include/linux/file.h                          |  1 +
-> > > >  tools/testing/selftests/seccomp/seccomp_bpf.c | 97 +++++++++++++++++++
-> > > >  5 files changed, 208 insertions(+)
-> > > > 
-> > > > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > > > index 64659b110973..958ad995fd45 100644
-> > > > --- a/fs/eventpoll.c
-> > > > +++ b/fs/eventpoll.c
-> > > > @@ -935,6 +935,44 @@ void eventpoll_release_file(struct file *file)
-> > > >  	mutex_unlock(&epmutex);
-> > > >  }
-> > > >  
-> > > > +static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
-> > > > +			struct file *tfile, int fd, int full_check);
-> > > > +
-> > > > +/*
-> > > > + * This is called from eventpoll_replace() to replace a linked file in the epoll
-> > > > + * interface with a new file received from another process. This is useful in
-> > > > + * cases where a process is trying to install a new file for an existing one
-> > > > + * that is linked in the epoll interface
-> > > > + */
-> > > > +void eventpoll_replace_file(struct file *toreplace, struct file *file)
-> > > > +{
-> > > > +	int fd;
-> > > > +	struct eventpoll *ep;
-> > > > +	struct epitem *epi;
-> > > > +	struct hlist_node *next;
-> > > > +	struct epoll_event event;
-> > > > +
-> > > > +	if (!file_can_poll(file))
-> > > > +		return;
-> > > > +
-> > > > +	mutex_lock(&epmutex);
-> > > > +	if (unlikely(!toreplace->f_ep)) {
-> > > > +		mutex_unlock(&epmutex);
-> > > > +		return;
-> > > > +	}
-> > > > +
-> > > > +	hlist_for_each_entry_safe(epi, next, toreplace->f_ep, fllink) {
-> > > > +		ep = epi->ep;
-> > > > +		mutex_lock(&ep->mtx);
-> > > > +		fd = epi->ffd.fd;
-> > > > +		event = epi->event;
-> > > > +		ep_remove(ep, epi);
-> > > > +		ep_insert(ep, &event, file, fd, 1);
-> > > 
-> > > So, ep_remove() can't fail but ep_insert() can. Maybe that doesn't
-> > > matter...
-> > > 
-> > > > +		mutex_unlock(&ep->mtx);
-> > > > +	}
-> > > > +	mutex_unlock(&epmutex);
-> > > > +}
-> > > 
-> > > Andrew carries a patchset that may impact the locking here:
-> > > 
-> > > https://lore.kernel.org/linux-fsdevel/323de732635cc3513c1837c6cbb98f012174f994.1678312201.git.pabeni@redhat.com
-> > > 
-> > > I have to say that this whole thing has a very unpleasant taste to it.
-> > > Replacing a single fd from seccomp is fine, wading through the fdtable
-> > > to replace all fds referencing the same file is pretty nasty. Especially
-> > > with the global epoll mutex involved in all of this.
-> > > 
-> > > And what limits this to epoll. I'm seriously asking aren't there
-> > > potentially issues for fds somehow referenced in io_uring instances as
-> > > well?
-> > > 
-> > > I'm not convinced this belongs here yet...
-> > 
-> > Thank you for reviewing and proving a link to Andrew's patch.
-> > 
-> > I think just replacing a single fd from seccomp leaves this feature in an
-> > incomplete state. As a user of this feature, it means I need to figure out what
-> > all file descriptors are referencing this file eg. epoll, dup'ed fds etc. This
-> > patch is an attempt to complete this seccomp feature and also move the logic of
-> > figuring out the references to the kernel.
+On Fri, Mar 24, 2023 at 05:48:08PM +0900, Kyungsan Kim wrote:
 > 
-> I'm still not convinced.
+> Indeed, we tried the approach. It was able to allocate a kernel context from ZONE_MOVABLE using GFP_MOVABLE.
+> However, we think it would be a bad practice for the 2 reasons.
+> 1. It causes oops and system hang occasionally due to kernel page migration while swap or compaction. 
+> 2. Literally, the design intention of ZONE_MOVABLE is to a page movable. So, we thought allocating a kernel context from the zone hurts the intention.
 > 
-> You're changing the semantics of the replace file feature in seccomp
-> drastically. Whereas now it means replace the file a single fd refers to
-> you're now letting it replace multiple fds.
+> Allocating a kernel context out of ZONE_EXMEM is unmovable.
+>   a kernel context -  alloc_pages(GFP_EXMEM,)
 
-Yes; the crux of the patch is really the epoll part, not the multiple
-replace part. IMO, we should drop the multiple replace bit, as I agree
-it is a pretty big change.
+What is the specific use case of this?  If the answer is flexibility in
+low-memory situations, why wouldn't the kernel simply change to free up
+ZONE_NORMAL (swapping user memory, migrating user memory, etc) and
+allocate as needed?
 
-The change in semantics w.r.t. epoll() (and eventually others),
-though, is important. The way it currently works is not really
-helpful.
+I could see allocating kernel memory from local memory expanders
+(directly attached to local CXL port), but I can't think of a case where
+it would be preferable for kernel resources to live on remote memory.
+Since local memory expanders are static devices, there shouldn't be a
+great need for hotplug, which means the memory could be mapped
+ZONE_NORMAL without issue.
 
-Perhaps we could add a flag that people could set from SECCOMP_ADDFD
-asking for this extra behavior?
-
-> > 
-> > The epmutex is taken when the file is replaced in the epoll interface. This is
-> > similar to what would happen when eventpoll_release would be called for this
-> > same file when it is ultimately released from __fput().
-> > 
-> > This is indeed not limited to epoll and the file descriptor table, but this
-> > current patch addresses is limited to these interfaces. We can create a separate
-> > one for io_uring.
+> Allocating a user context out of ZONE_EXMEM is movable.
+>   a user context - mmap(,,MAP_EXMEM,) - syscall - alloc_pages(GFP_EXMEM | GFP_MOVABLE,)
+> This is how ZONE_EXMEM supports the two cases.
 > 
-> The criteria for when it's sensible to update an fd to refer to the new
-> file and when not are murky here and tailored to this very specific
-> use-case. We shouldn't be involved in decisions like that. Userspace is
-> in a much better position to know when it's sensible to replace an fd.
-> 
-> The fdtable is no place to get involved in a game of "if the fd is in a
-> epoll instance, update the epoll instance, if it's in an io_uring
-> instance, update the io_uring instance, ...". That's a complete
-> layerying violation imho.
-> 
-> And even if you'd need to get sign off on this from epoll and io_uring
-> folks as well before we can just reach into other subsytems from the
-> fdtable.
 
-Yep, agreed.
+Is it intended for a user to explicitly request MAP_EXMEM for it to get
+used at all?  As in, if i simply mmap() without MAP_EXMEM, will it
+remain unutilized?
 
-> I'm sorry but this all sounds messy. You can do this just fine in
-> userspace, so please do it in userspace. This all sound very NAKable
-> right now.
-
-We have added lots of APIs for things that are possible from userspace
-already that are made easier with a nice API. The seccomp forwarding
-functionality itself, pidfd_getfd(), etc. I don't see this particular
-bit as a strong argument against.
-
-Tycho
+~Gregory
