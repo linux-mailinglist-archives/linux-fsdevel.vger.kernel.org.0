@@ -2,83 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B5A6C7B71
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 10:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCBA36C7BEA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 10:49:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230267AbjCXJbd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Mar 2023 05:31:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37410 "EHLO
+        id S231194AbjCXJtV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Mar 2023 05:49:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230259AbjCXJbb (ORCPT
+        with ESMTP id S230382AbjCXJtU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Mar 2023 05:31:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FF661E1EE
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Mar 2023 02:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679650243;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=21j5HZHNaqnqYk/qMb/3bvONholuvmzFTx+bQH+Yn+o=;
-        b=h4LU+l3zYuS6MYCtSl+weDUAmxL4XBHHhstguV+0y0Oo0IhQ5W19UkS+ERe196dqWbAKAx
-        7iL7k/UEoVaLEg8AqeLLKamISxpSrLENaCFGzPJpXpJBEaJ8IG0wwtd27/SUQ1LimaPn/k
-        5+JkJqik2sFOrhdl29O30BjWjS7YGzI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-ZPTS5h3fOxqg9jvb3y2LhQ-1; Fri, 24 Mar 2023 05:30:42 -0400
-X-MC-Unique: ZPTS5h3fOxqg9jvb3y2LhQ-1
-Received: by mail-wm1-f69.google.com with SMTP id r11-20020a05600c458b00b003eea8d25f06so562105wmo.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Mar 2023 02:30:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679650241;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=21j5HZHNaqnqYk/qMb/3bvONholuvmzFTx+bQH+Yn+o=;
-        b=Fb3Wj2AnoopaSDUeVvDIPvualcfZgMvxCSVeVPRUXAhJxb1hbInA+Mc5bfCmYMpmXl
-         ccshPqov5ymjke2Xq/CLFc0Sc5UoHM7gwuST33F4k4GTF+AsxlcFP1rrRY0V402mZte+
-         DCGOjmUOI/6Q6/SPPjgV/DOdKna7sBVORG6YhTLzsS7RcBs5S3xuWFOTESzQfq3L/2O0
-         niIen36c2j0Guj28IGTQ1OQ+Xl7ms7CEYtrHjI0KfVWcc+yX76RXcI2ONxWpceT+P7y0
-         oBTiKvSGhdZIY3FGTUOvMu73Nkg0RiHabNIqlmwLiO8y1X0PbHowi7HR+5JTL97PLOGY
-         JABQ==
-X-Gm-Message-State: AO0yUKWxUlo4O4jwSxDPnSUwfLDvikApVzMFvo5VB7wrWPQaKRhkZoN2
-        P5sWfi2+GrkVqG+31774axLDTUGZJhFvc7STQIltghPoQEEUwXQ8jcwFo/4dVq55xmYjSsI4cxk
-        ofSDp90FB8Fxr2a0i5k7uAeR23Q==
-X-Received: by 2002:a05:600c:2289:b0:3df:e468:17dc with SMTP id 9-20020a05600c228900b003dfe46817dcmr1727268wmf.40.1679650240909;
-        Fri, 24 Mar 2023 02:30:40 -0700 (PDT)
-X-Google-Smtp-Source: AK7set/IiMAnVG44QY0lj4W/8T78wkjWb5uNZDBeaBMhsRJC8+SM5VO0asITh0DvQ+GzWK5qGo9Tvg==
-X-Received: by 2002:a05:600c:2289:b0:3df:e468:17dc with SMTP id 9-20020a05600c228900b003dfe46817dcmr1727251wmf.40.1679650240530;
-        Fri, 24 Mar 2023 02:30:40 -0700 (PDT)
-Received: from [10.105.158.254] ([88.128.92.189])
-        by smtp.gmail.com with ESMTPSA id ay6-20020a05600c1e0600b003ee443bf0c7sm1318153wmb.16.2023.03.24.02.30.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Mar 2023 02:30:39 -0700 (PDT)
-Message-ID: <91d02705-1c3f-5f55-158a-1a68120df2f4@redhat.com>
-Date:   Fri, 24 Mar 2023 10:30:32 +0100
+        Fri, 24 Mar 2023 05:49:20 -0400
+Received: from mail1.bemta37.messagelabs.com (mail1.bemta37.messagelabs.com [85.158.142.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41CEF5B81;
+        Fri, 24 Mar 2023 02:49:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1679651356; i=@fujitsu.com;
+        bh=Pxpk4CSw0qrpM2DP+X1AdjLT3KYQnQt8U9Qz9IB7N+U=;
+        h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+         In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        b=wRrqAhZq/4Yj0ectfoivQwTsfOHqmkGelD0V0/AEQsPj2mQG3F9NQU0bywwt0o9ke
+         7VnnPZidpLCt7SD1nH1igc6gQOgUTXMJJ6lJAjkLESlGNaO3mt+OrWHl9hltO4Sdar
+         obtO56zs2Mh1nRCPhCdwmNeWnUD7Ig/0zbIJQ4NUHp+xKkQWh6rxazFHNmKXQ8HKEm
+         e+hH2CL35WMVPDHKvJIw7X2wmmqqu3nSizqv8B+dridieTEAQJWhPR3rxWfQoIwSg8
+         D2S90Jw+cjl2qCzW1u3Vr2ShZTdcZriLymdYCqUt0rmOv3upXF5Kmkrl52d+PcjppL
+         SkPKIlIYW84qA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRWlGSWpSXmKPExsViZ8ORpCtdJJt
+  isGOhnMWc9WvYLKZPvcBoseXYPUaLy0/4LE5PWMRksfv1TTaLPXtPsljcW/Of1WLXnx3sFit/
+  /GG1+P1jDpsDt8epRRIem1doeSze85LJY9OqTjaPTZ8msXucmPGbxePF5pmMHh+f3mLx+LxJL
+  oAzijUzLym/IoE1Y9akBvaCHo2Kps8XGBsYdyh2MXJxCAlsZJTY//wBG4SzhEliSUMDE4SzjV
+  Fiw+Ib7F2MnBy8AnYSWzbNZAaxWQRUJV4tmMwGEReUODnzCQuILSqQLHHsfCtQnINDWMBP4sI
+  ac5Awm4COxIUFf1lBbBEBNYlJk3aAjWEWaGGS2NJdAbFrKpPEuWVNTCAJTgF7iUXd96CKLCQW
+  vznIDmHLSzRvnQ0WlxBQkrj49Q4rhF0h0Tj9EBOErSZx9dwm5gmMQrOQnDcLyahZSEYtYGRex
+  WhenFpUllqka2iil1SUmZ5RkpuYmaOXWKWbqJdaqpuXX1SSoWuol1herJdaXKxXXJmbnJOil5
+  dasokRGJ0pxYnHdzC+6vurd4hRkoNJSZRXIlQ6RYgvKT+lMiOxOCO+qDQntfgQowwHh5IEr1a
+  BbIqQYFFqempFWmYOMFHApCU4eJREeNdnAaV5iwsSc4sz0yFSpxh1OdY2HNjLLMSSl5+XKiXO
+  G1EIVCQAUpRRmgc3Apa0LjHKSgnzMjIwMAjxFKQW5WaWoMq/YhTnYFQS5tXMBZrCk5lXArfpF
+  dARTEBHONfIgBxRkoiQkmpgKuc4EBDT9bzHvyPzY5QHy6nk5zEJD1zUBU+mXzjQsENW90dkT2
+  5wyewnbBvW/GoMFxU5q5wf5R91Os7k9OOHH953X79v/9h85VSL6TOv3Pli4cz0sXrSpVNOzZo
+  /Ej7GTdfvXch1+WHWO3XDIC/T7/f37dlbrzM7fNLKKz/609OkmxatlfJ1KAj0PLtu78eLj64a
+  H7fePqutn3/bNimried1PI5U7rFOKIuQOCX18YJlekPk9eLGuYynX4Zl/zf/H/jze+ZlZi19v
+  14bZbVTz87O9+rPzPzBLF6dUN9tfLSwyO/SXv7klaprDY6+ETHs0qzNNJp9hdHSxYljS92eN1
+  O9ZlgfF45vO/lgY0WCEktxRqKhFnNRcSIA4qC5ctUDAAA=
+X-Env-Sender: ruansy.fnst@fujitsu.com
+X-Msg-Ref: server-2.tower-732.messagelabs.com!1679651354!283082!1
+X-Originating-IP: [62.60.8.98]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.104.1; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 27032 invoked from network); 24 Mar 2023 09:49:15 -0000
+Received: from unknown (HELO n03ukasimr03.n03.fujitsu.local) (62.60.8.98)
+  by server-2.tower-732.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 24 Mar 2023 09:49:15 -0000
+Received: from n03ukasimr03.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTP id C28BC1AF;
+        Fri, 24 Mar 2023 09:49:14 +0000 (GMT)
+Received: from R01UKEXCASM121.r01.fujitsu.local (R01UKEXCASM121 [10.183.43.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTPS id B61461AE;
+        Fri, 24 Mar 2023 09:49:14 +0000 (GMT)
+Received: from [192.168.50.5] (10.167.234.230) by
+ R01UKEXCASM121.r01.fujitsu.local (10.183.43.173) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.42; Fri, 24 Mar 2023 09:49:10 +0000
+Message-ID: <7ba8c1f6-b9fe-714a-cd40-2b9e17ea61e7@fujitsu.com>
+Date:   Fri, 24 Mar 2023 17:49:04 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for CXL
-Content-Language: en-US
-To:     Kyungsan Kim <ks0204.kim@samsung.com>
-Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-cxl@vger.kernel.org,
-        a.manzanares@samsung.com, viacheslav.dubeyko@bytedance.com,
-        dan.j.williams@intel.com
-References: <5536d792-867d-6390-81e2-b1ef135d347d@redhat.com>
- <CGME20230324092731epcas2p315c348bd76ef9fc84bffdb158e4c1aa4@epcas2p3.samsung.com>
- <20230324092731.148023-1-ks0204.kim@samsung.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20230324092731.148023-1-ks0204.kim@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v10 3/3] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     Dave Chinner <david@fromorbit.com>
+CC:     <linux-xfs@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <djwong@kernel.org>, <dan.j.williams@intel.com>,
+        <hch@infradead.org>, <jane.chu@oracle.com>,
+        <akpm@linux-foundation.org>, <willy@infradead.org>
+References: <1676645312-13-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <1676645312-13-4-git-send-email-ruansy.fnst@fujitsu.com>
+ <20230227000759.GZ360264@dread.disaster.area>
+ <56e0a5e8-74db-95eb-d6fb-5d4a3b5cb156@fujitsu.com>
+ <b1d9fc03-1a71-a75f-f87b-5819991e4eb2@fujitsu.com>
+In-Reply-To: <b1d9fc03-1a71-a75f-f87b-5819991e4eb2@fujitsu.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.234.230]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM121.r01.fujitsu.local (10.183.43.173)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -87,73 +99,143 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 24.03.23 10:27, Kyungsan Kim wrote:
->> On 24.03.23 10:09, Kyungsan Kim wrote:
->>> Thank you David Hinderbrand for your interest on this topic.
->>>
->>>>>
->>>>>> Kyungsan Kim wrote:
->>>>>> [..]
->>>>>>>> In addition to CXL memory, we may have other kind of memory in the
->>>>>>>> system, for example, HBM (High Bandwidth Memory), memory in FPGA card,
->>>>>>>> memory in GPU card, etc.  I guess that we need to consider them
->>>>>>>> together.  Do we need to add one zone type for each kind of memory?
->>>>>>>
->>>>>>> We also don't think a new zone is needed for every single memory
->>>>>>> device.  Our viewpoint is the sole ZONE_NORMAL becomes not enough to
->>>>>>> manage multiple volatile memory devices due to the increased device
->>>>>>> types.  Including CXL DRAM, we think the ZONE_EXMEM can be used to
->>>>>>> represent extended volatile memories that have different HW
->>>>>>> characteristics.
->>>>>>
->>>>>> Some advice for the LSF/MM discussion, the rationale will need to be
->>>>>> more than "we think the ZONE_EXMEM can be used to represent extended
->>>>>> volatile memories that have different HW characteristics". It needs to
->>>>>> be along the lines of "yes, to date Linux has been able to describe DDR
->>>>>> with NUMA effects, PMEM with high write overhead, and HBM with improved
->>>>>> bandwidth not necessarily latency, all without adding a new ZONE, but a
->>>>>> new ZONE is absolutely required now to enable use case FOO, or address
->>>>>> unfixable NUMA problem BAR." Without FOO and BAR to discuss the code
->>>>>> maintainability concern of "fewer degress of freedom in the ZONE
->>>>>> dimension" starts to dominate.
->>>>>
->>>>> One problem we experienced was occured in the combination of hot-remove and kerelspace allocation usecases.
->>>>> ZONE_NORMAL allows kernel context allocation, but it does not allow hot-remove because kernel resides all the time.
->>>>> ZONE_MOVABLE allows hot-remove due to the page migration, but it only allows userspace allocation.
->>>>> Alternatively, we allocated a kernel context out of ZONE_MOVABLE by adding GFP_MOVABLE flag.
->>>
->>>> That sounds like a bad hack :) .
->>> I consent you.
->>>
->>>>> In case, oops and system hang has occasionally occured because ZONE_MOVABLE can be swapped.
->>>>> We resolved the issue using ZONE_EXMEM by allowing seletively choice of the two usecases.
->>>
->>>> I once raised the idea of a ZONE_PREFER_MOVABLE [1], maybe that's
->>>> similar to what you have in mind here. In general, adding new zones is
->>>> frowned upon.
->>>
->>> Actually, we have already studied your idea and thought it is similar with us in 2 aspects.
->>> 1. ZONE_PREFER_MOVABLE allows a kernelspace allocation using a new zone
->>> 2. ZONE_PREFER_MOVABLE helps less fragmentation by splitting zones, and ordering allocation requests from the zones.
->>>
->>> We think ZONE_EXMEM also helps less fragmentation.
->>> Because it is a separated zone and handles a page allocation as movable by default.
->>
->> So how is it different that it would justify a different (more confusing
->> IMHO) name? :) Of course, names don't matter that much, but I'd be
->> interested in which other aspect that zone would be "special".
+
+
+在 2023/3/21 18:59, Shiyang Ruan 写道:
 > 
-> FYI for the first time I named it as ZONE_CXLMEM, but we thought it would be needed to cover other extended memory types as well.
-> So I changed it as ZONE_EXMEM.
-> We also would like to point out a "special" zone aspeact, which is different from ZONE_NORMAL for tranditional DDR DRAM.
-> Of course, a symbol naming is important more or less to represent it very nicely, though.
-> Do you prefer ZONE_SPECIAL? :)
+> 
+> 在 2023/2/27 18:06, Shiyang Ruan 写道:
+>>
+>>
+>> 在 2023/2/27 8:07, Dave Chinner 写道:
+>>> On Fri, Feb 17, 2023 at 02:48:32PM +0000, Shiyang Ruan wrote:
+>>>> This patch is inspired by Dan's "mm, dax, pmem: Introduce
+>>>> dev_pagemap_failure()"[1].  With the help of dax_holder and
+>>>> ->notify_failure() mechanism, the pmem driver is able to ask filesystem
+>>>> (or mapped device) on it to unmap all files in use and notify processes
+>>>> who are using those files.
+>>>>
+>>>> Call trace:
+>>>> trigger unbind
+>>>>   -> unbind_store()
+>>>>    -> ... (skip)
+>>>>     -> devres_release_all()   # was pmem driver ->remove() in v1
+>>>>      -> kill_dax()
+>>>>       -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, 
+>>>> MF_MEM_PRE_REMOVE)
+>>>>        -> xfs_dax_notify_failure()
+>>>>
+>>>> Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
+>>>> event.  So do not shutdown filesystem directly if something not
+>>>> supported, or if failure range includes metadata area.  Make sure all
+>>>> files and processes are handled correctly.
+>>>>
+>>>> [1]: 
+>>>> https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
+>>>>
+>>>> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+>>>
+>>> .....
+>>>
+>>>> ---
+>>>> @@ -225,6 +242,15 @@ xfs_dax_notify_failure(
+>>>>       if (offset + len - 1 > ddev_end)
+>>>>           len = ddev_end - offset + 1;
+>>>> +    if (mf_flags & MF_MEM_PRE_REMOVE) {
+>>>> +        xfs_info(mp, "device is about to be removed!");
+>>>> +        error = freeze_super(mp->m_super);
+>>>> +        if (error)
+>>>> +            return error;
+>>>> +        /* invalidate_inode_pages2() invalidates dax mapping */
+>>>> +        super_drop_pagecache(mp->m_super, invalidate_inode_pages2);
+>>>> +    }
+>>>
+>>> Why do you still need to drop the pagecache here? My suggestion was
+>>> to replace it with freezing the filesystem at this point is to stop
+>>> it being dirtied further before the device remove actually occurs.
+>>> The userspace processes will be killed, their DAX mappings reclaimed
+>>> and the filesystem shut down before device removal occurs, so
+>>> super_drop_pagecache() is largely superfluous as it doesn't actually
+>>> provide any protection against racing with new mappings or dirtying
+>>> of existing/newly created mappings.
+>>>
+>>> Freezing doesn't stop the creation of new mappings, either, it just
+>>> cleans all the dirty mappings and halts anything that is trying to
+>>
+>> This is the point I wasn't aware of.
+>>
+>>> dirty existing clean mappings. It's not until we kill the userspace
+>>> processes that new mappings will be stopped, and it's not until we
+>>> shut the filesystem down that the filesystem itself will stop
+>>> accessing the storage.
+>>>
+>>> Hence I don't see why you retained super_drop_pagecache() here at
+>>> all. Can you explain why it is still needed?
+>>
+>>
+>> So I was just afraid that it's not enough for rmap & processes killer 
+>> to invalidate the dax mappings.  If something error happened during 
+>> the rmap walker, the fs will shutdown and there is no chance to 
+>> invalidate the rest mappings whose user didn't be killed yet.
+>>
+>> Now that freezing the fs is enough, I will remove the drop cache code.
+> 
+> I removed the drop cache code, then kernel always went into crash when 
+> running the test[1].  After the investigation, I found that the crash is 
+> cause by accessing (invalidate dax pages when umounting fs) the page of 
+> a pmem while the pmem has been removed.
+> 
+> According to the design, the dax page should have been invalidated by 
+> mf_dax_kill_procs() but it didn't.  I found two reasons:
+>   1. collect_procs_fsdax() only kills the current process
+>   2. unmap_mapping_range() doesn't invalidate the dax pages 
+> (disassociate dax entry in fs/dax.c), which causes the crash in my test
+> 
+> So, I think we should:
+>   1. pass the mf_flag to collect_procs_fsdax() to let it collect all 
+> processes associated with the file on the XFS.
+>   2. drop cache is still needed, but just drop the associated files' 
+> cache after mf_dax_kill_procs(), instead of dropping cache of the whole 
+> filesystem.
+> 
+> Then the logic shuld be looked like this:
+> unbind
+>   `-> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
+>     `-> xfs_dax_notify_failure()
+>       `-> freeze_super()
+>       `-> do xfs rmap
+>         `-> mf_dax_kill_procs()
+>           `-> collect_procs_fsdax()   // all associated
+>           `-> unmap_and_kill()
+>         `-> invalidate_inode_pages2() // drop file's cache
+>       `-> thaw_super()
+> 
+> 
+> [1] The step of unbind test:
+>   1. create fsdax namespace on a pmem
+>   2. mkfs.xfs on it
+>   3. run fsx test in background
+>   4. wait 1s
+>   5. echo "pfn0.1" > unbind
+>   6. wait 1s
+>   7. umount xfs       --> crash happened
+> 
 
-I called it ZONE_PREFER_MOVABLE. If you studied that approach there must 
-be a good reason to name it differently?
+Hi,
 
--- 
-Thanks,
+Any comments?
 
-David / dhildenb
 
+> 
+> -- 
+> Thanks,
+> Ruan.
+> 
+>>
+>>
+>> -- 
+>> Thanks,
+>> Ruan.
+>>
+>>>
+>>> -Dave.
