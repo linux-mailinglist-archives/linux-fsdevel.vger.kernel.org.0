@@ -2,62 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3998F6C74A8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 01:42:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C55C76C7532
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 02:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231269AbjCXAmN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Mar 2023 20:42:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55454 "EHLO
+        id S229997AbjCXBvP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Mar 2023 21:51:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231248AbjCXAmM (ORCPT
+        with ESMTP id S229499AbjCXBvO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Mar 2023 20:42:12 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65642CC55;
-        Thu, 23 Mar 2023 17:42:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679618530; x=1711154530;
-  h=from:to:cc:subject:references:date:in-reply-to:
-   message-id:mime-version;
-  bh=AnfAZEwkzaV+MXfEzXGLd84me6iNy8c8SDgIW7uWzHs=;
-  b=bLYXl7Ao7NWW9z6af7lkHBb+NePfMyCfWXPKrhJgQLmSmKD7DfuZjXiS
-   2GTmGGc65A40Bt27fHGKfgHRcaYLGr0KCC5wKoj8mg+9i7n2DpaNI7g5S
-   86VuypJ348MLKWSVAfZqsxY4VZSH1ATflLBCrVnAcz8DlXd8ZP2Z63j/x
-   aTTUnSzo1saBr1fTpHNpz6ivPjDQrU0gDd+eOHzJS/DwJ6fC0bFtYy4d1
-   ySqTY6y9pbV1IrpithpbEHOS+wSfhZnzG0zOT3SsOTv+R7WqgPYgMEMVq
-   jUwkeo2AIvoj5dDCOO7LmAV9kyIobnimx7Ytsf5E2OO0/gWukrFLYIVXU
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10658"; a="404577358"
-X-IronPort-AV: E=Sophos;i="5.98,286,1673942400"; 
-   d="scan'208";a="404577358"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2023 17:42:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10658"; a="684958656"
-X-IronPort-AV: E=Sophos;i="5.98,286,1673942400"; 
-   d="scan'208";a="684958656"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2023 17:42:08 -0700
-From:   "Huang, Ying" <ying.huang@intel.com>
-To:     Kyungsan Kim <ks0204.kim@samsung.com>
-Cc:     dan.j.williams@intel.com, lsf-pc@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cxl@vger.kernel.org, a.manzanares@samsung.com,
-        viacheslav.dubeyko@bytedance.com
-Subject: Re: RE(2): FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for CXL
-References: <641b7b2117d02_1b98bb294cb@dwillia2-xfh.jf.intel.com.notmuch>
-        <CGME20230323105106epcas2p39ea8de619622376a4698db425c6a6fb3@epcas2p3.samsung.com>
-        <20230323105105.145783-1-ks0204.kim@samsung.com>
-Date:   Fri, 24 Mar 2023 08:41:02 +0800
-In-Reply-To: <20230323105105.145783-1-ks0204.kim@samsung.com> (Kyungsan Kim's
-        message of "Thu, 23 Mar 2023 19:51:05 +0900")
-Message-ID: <87wn37q8v5.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Thu, 23 Mar 2023 21:51:14 -0400
+Received: from mail1.bemta37.messagelabs.com (mail1.bemta37.messagelabs.com [85.158.142.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC45E212A9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Mar 2023 18:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1679622672; i=@fujitsu.com;
+        bh=YXDfWY42T6qJONVQUy0U7qSy0bQjE512aKax5Mg1h+g=;
+        h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+         In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        b=YMGbvUatmXw2F9DWAw+vI/DNEObTeDkrlZ/B5iF7UWOUjmKZOhDwMd9JtgXUHXSjY
+         c9QDCJs6vai5ZYrpMDSu7+T0UitzRLgcD6O1AcpOaFB8HUA/P038KcA9wPhvxCFw0b
+         3yT6hsOLy66T8gVueejSfOfK8asZcbanugen5DYF6k4dgBwXwF4kBPkkTdJGg8juzk
+         f05cbJNUKAtdOe4DeH2mJvQqEw4imivwdNqgOkeiJV6nM7hi2y6Plkg8WvWG7LtRZn
+         RkZf2qzQmuyDrxA6oAj39YAFMDHO0+9g1m/DsGgTGyAqwVWfXaUQpGX6mgvTfwtewV
+         BIgkRAx0m+Ebw==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJKsWRWlGSWpSXmKPExsViZ8ORpMvJJJt
+  i0NMuYTFn/Ro2i+lTLzBaXH7CZzF7ejOTxZ69J1ksVv74w2rx+8ccNgd2j80rtDwW73nJ5LFp
+  VSebx4kZv1k8XmyeyehxZsERdo/Pm+QC2KNYM/OS8isSWDPm/t/OWvCZs6Ll6hy2BsZ+ji5GL
+  g4hgY2MEtd+XGSDcJYwSTxbsYgVwtnGKPF/0wOgDCcHr4CdRPfTZywgNouAqsTK1ZNYIeKCEi
+  dnPgGLiwokSxw73wpUz8EhLBAqcXSNI0hYREBXYtXzXcwgM5kFpjNKTGpqYYRY8J1RYsLxlWC
+  D2AR0JC4s+Atmcwp4S1zbdooZxGYWsJBY/OYgO4QtL9G8dTZYXEJASeLi1zusEHaFROP0Q0wQ
+  tprE1XObmCcwCs1Cct8sJKNmIRm1gJF5FaNZcWpRWWqRrqleUlFmekZJbmJmjl5ilW6iXmqpb
+  l5+UUmGrqFeYnmxXmpxsV5xZW5yTopeXmrJJkZgjKUUJzPsYOzs+6t3iFGSg0lJlFciVDpFiC
+  8pP6UyI7E4I76oNCe1+BCjDAeHkgSv63+ZFCHBotT01Iq0zBxgvMOkJTh4lER45/0DSvMWFyT
+  mFmemQ6ROMSpKifMaMMimCAmAJDJK8+DaYCnmEqOslDAvIwMDgxBPQWpRbmYJqvwrRnEORiVh
+  3jcg23ky80rgpr8CWswEtNi5BmxxSSJCSqqBScD2l8TrHsllQpN5sgLWbz39MG7Xyua48+oCB
+  +f8loqsurt63beF36ZN6Ixnd0jdf+rHlqVrOMv4p57KSb59pkOOVz02bkrSwecXm0xWWd9b9J
+  lLcs/5mw93FB+oFo/yP/XlWeGNM/373/+3ET9Y7W67rODTxV0ftY5+E02Rje1POlzJ/94sSGW
+  z2P6rbalXm4Ubk/xzphnuO7lwvY3TvLcOUTcDJ6yza7igd2bVZJZrMtIhTN49nOcyLDn3cjRL
+  r9ylqKOQxVagrrZs2Z8wt3k6sZkuP4/86f/t6hgnvOWtlsX2J+oL6u4/OHuscWHKwoda9i7Gy
+  pVMSyvvppkky37e+P/y7vD3U1O8/ZS/OiuxFGckGmoxFxUnAgAF+rL5rAMAAA==
+X-Env-Sender: ruansy.fnst@fujitsu.com
+X-Msg-Ref: server-4.tower-745.messagelabs.com!1679622664!650496!1
+X-Originating-IP: [62.60.8.98]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.104.1; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 19407 invoked from network); 24 Mar 2023 01:51:05 -0000
+Received: from unknown (HELO n03ukasimr03.n03.fujitsu.local) (62.60.8.98)
+  by server-4.tower-745.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 24 Mar 2023 01:51:05 -0000
+Received: from n03ukasimr03.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTP id BB3E21B0;
+        Fri, 24 Mar 2023 01:51:04 +0000 (GMT)
+Received: from R01UKEXCASM121.r01.fujitsu.local (R01UKEXCASM121 [10.183.43.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTPS id AFBEF1AF;
+        Fri, 24 Mar 2023 01:51:04 +0000 (GMT)
+Received: from [192.168.50.5] (10.167.234.230) by
+ R01UKEXCASM121.r01.fujitsu.local (10.183.43.173) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.42; Fri, 24 Mar 2023 01:51:01 +0000
+Message-ID: <a30006e8-2896-259e-293b-2a5d873d42aa@fujitsu.com>
+Date:   Fri, 24 Mar 2023 09:50:54 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] fsdax: unshare: zero destination if srcmap is HOLE or
+ UNWRITTEN
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <dan.j.williams@intel.com>, <willy@infradead.org>, <jack@suse.cz>,
+        <djwong@kernel.org>
+References: <1679483469-2-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <20230322160311.89efea3493db4c4ccad40a25@linux-foundation.org>
+ <a41f0ea1-c704-7a2e-db6d-93e8bd4fcdea@fujitsu.com>
+ <20230323151112.1cc3cf57b35f2dc704ff1af8@linux-foundation.org>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+In-Reply-To: <20230323151112.1cc3cf57b35f2dc704ff1af8@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.234.230]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM121.r01.fujitsu.local (10.183.43.173)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -66,53 +96,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kyungsan Kim <ks0204.kim@samsung.com> writes:
 
-> I appreciate dan for the careful advice.
->
->>Kyungsan Kim wrote:
->>[..]
->>> >In addition to CXL memory, we may have other kind of memory in the
->>> >system, for example, HBM (High Bandwidth Memory), memory in FPGA card,
->>> >memory in GPU card, etc.  I guess that we need to consider them
->>> >together.  Do we need to add one zone type for each kind of memory?
->>> 
->>> We also don't think a new zone is needed for every single memory
->>> device.  Our viewpoint is the sole ZONE_NORMAL becomes not enough to
->>> manage multiple volatile memory devices due to the increased device
->>> types.  Including CXL DRAM, we think the ZONE_EXMEM can be used to
->>> represent extended volatile memories that have different HW
->>> characteristics.
+
+在 2023/3/24 6:11, Andrew Morton 写道:
+> On Thu, 23 Mar 2023 14:50:38 +0800 Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
+> 
 >>
->>Some advice for the LSF/MM discussion, the rationale will need to be
->>more than "we think the ZONE_EXMEM can be used to represent extended
->>volatile memories that have different HW characteristics". It needs to
->>be along the lines of "yes, to date Linux has been able to describe DDR
->>with NUMA effects, PMEM with high write overhead, and HBM with improved
->>bandwidth not necessarily latency, all without adding a new ZONE, but a
->>new ZONE is absolutely required now to enable use case FOO, or address
->>unfixable NUMA problem BAR." Without FOO and BAR to discuss the code
->>maintainability concern of "fewer degress of freedom in the ZONE
->>dimension" starts to dominate.
->
-> One problem we experienced was occured in the combination of hot-remove and kerelspace allocation usecases.
-> ZONE_NORMAL allows kernel context allocation, but it does not allow hot-remove because kernel resides all the time.
-> ZONE_MOVABLE allows hot-remove due to the page migration, but it only allows userspace allocation.
-> Alternatively, we allocated a kernel context out of ZONE_MOVABLE by adding GFP_MOVABLE flag.
-> In case, oops and system hang has occasionally occured because ZONE_MOVABLE can be swapped.
-> We resolved the issue using ZONE_EXMEM by allowing seletively choice of the two usecases.
+>>
+>> 在 2023/3/23 7:03, Andrew Morton 写道:
+>>> On Wed, 22 Mar 2023 11:11:09 +0000 Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
+>>>
+>>>> unshare copies data from source to destination. But if the source is
+>>>> HOLE or UNWRITTEN extents, we should zero the destination, otherwise the
+>>>> result will be unexpectable.
+>>>
+>>> Please provide much more detail on the user-visible effects of the bug.
+>>> For example, are we leaking kernel memory contents to userspace?
+>>
+>> This fixes fail of generic/649.
+> 
+> OK, but this doesn't really help.  I'm trying to determine whether this
+> fix should be backported into -stable kernels and whether it should be
+> fast-tracked into Linus's current -rc tree.
+> 
+> But to determine this I (and others) need to know what effect the bug
+> has upon our users.
 
-Sorry, I don't get your idea.  You want the memory range
+I didn't get any bug report form users.  I just found this by running 
+xfstests.  The phenomenon of this problem is: if we funshare a reflinked 
+file which contains HOLE extents, the result of the HOLE extents should 
+be zero but actually not (unexpectable data).
 
- 1. can be hot-removed
- 2. allow kernel context allocation
+The other patch also has no reports from users.
 
-This appears impossible for me.  Why cannot you just use ZONE_MOVABLE?
 
-Best Regards,
-Huang, Ying
-
-> As you well know, among heterogeneous DRAM devices, CXL DRAM is the first PCIe basis device, which allows hot-pluggability, different RAS, and extended connectivity.
-> So, we thought it could be a graceful approach adding a new zone and separately manage the new features.
->
-> Kindly let me know any advice or comment on our thoughts.
+--
+Thanks,
+Ruan.
