@@ -2,106 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3C1B6C8759
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 22:15:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 275F46C87BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 22:52:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230196AbjCXVPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Mar 2023 17:15:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53750 "EHLO
+        id S232069AbjCXVwM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Mar 2023 17:52:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjCXVPU (ORCPT
+        with ESMTP id S232002AbjCXVwM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Mar 2023 17:15:20 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4812511EA6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Mar 2023 14:15:18 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id b20so12932911edd.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Mar 2023 14:15:18 -0700 (PDT)
+        Fri, 24 Mar 2023 17:52:12 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E669A1E9C2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Mar 2023 14:52:10 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id x15so2654624pjk.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Mar 2023 14:52:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1679692516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fn1VMftCU2wccLoRUjjDC7/RS1kW8D9l9MfK+gvDeEE=;
-        b=hx3qSfQuA/ooCvOGT3qtjnG8D2r6/kpjrTkalHlbb8wj/Iif5lN7/TKQqtyXwePwMk
-         5/Dcc1B4Jwa32UafAdNvrhznivEhs8l9aKvzhZFeTOrxLX1lCBLz3bCRBJgX1YqkmIHS
-         TI3lkyJzlHnm35QCWyS9l5HiTFsg+2zO/NusE=
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679694730; x=1682286730;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jbVtUmnKCTzykcbhJ/O8jygDhhkOOUy4wDLBYjGN00s=;
+        b=Olgawl+wwtJod7z8SJ3X+dfhZElbJNehOzRbG1K+PbvWWSukEvtJmOF+874H/VT6fD
+         ywrJxBOmKrV4JRwV5FKhhKAB1OstZLfD/tbGuueH3EnnOkrvI66HyOhTcAXYDC7Csf3x
+         74gGD7YERis7pJQw2iJUl1JlNYOj/fZBebiedi6M9HZLClXBVWT7IQFqISzpR4D3+xyh
+         fM5KKyo9GwBUdqZv/EotwBA7Ys6hfUzTb/BvjhVbPMSr0yI92PZXHmVb/a8XImQ4vxSV
+         xKzUwVAk7mb5Enu/wL5635d8Ja0TAxb9f8uZJKVidQuj/8QcD0kelhO4U/VgY/JEFP5y
+         7tgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679692516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fn1VMftCU2wccLoRUjjDC7/RS1kW8D9l9MfK+gvDeEE=;
-        b=WtFTTgMKIIICC6PoQXx7T3cRd1nZKVpoVZ1/1/V2AG5X+ofO9bQw48OsWKFbtibqWk
-         q/TJwG+A9ZS+I3Dt+VEXeFjjgfaVaGHausTcjN2w5CSOrX3lm2gbtkkwkizXHqUGAJwM
-         vxDqqMOzncfR3e3+V7OBpVZiPpgha8EmqyAVwrjWTpguZjV8SDArp//jPNtsQNEWpqx/
-         5iy+CUOUcid/S9N9xrwvpGMV3D6jk6oCvtTaA9C2SOIXGVuLz1FFaSrxUYZsYa/zQejK
-         +UQCQupzOk/RIJpHW3JoxYzs+EMGqNDHO3zBeJoa/bo+ohiytiVVamFn2DixFYulr0pP
-         0Uuw==
-X-Gm-Message-State: AAQBX9fpIZTYP1PA7aQR/mB6DG+eVtnPypoPDtf9lvJA5CHahOtoD0Lk
-        CNCwttAnknfYDeVpsgI2ltxWu5GgotzEGh+hIVCc7b5J
-X-Google-Smtp-Source: AKy350Yjq2C5wS0LcJoFYE+rCdhI/iOakHwtQmMDXR/jvjAOOb09CV0Bc8yvHxjIqJJ7e7yRYkRpEg==
-X-Received: by 2002:a17:906:d283:b0:925:b187:ce5f with SMTP id ay3-20020a170906d28300b00925b187ce5fmr4062096ejb.35.1679692516352;
-        Fri, 24 Mar 2023 14:15:16 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id d14-20020a1709064c4e00b009336df45226sm8381769ejw.64.2023.03.24.14.15.15
-        for <linux-fsdevel@vger.kernel.org>
+        d=1e100.net; s=20210112; t=1679694730; x=1682286730;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jbVtUmnKCTzykcbhJ/O8jygDhhkOOUy4wDLBYjGN00s=;
+        b=bZ8a2W6GmqYaRmD9n+SAcToot+FnUoIBWgAa/JQsVKexzPy0qok88b8/0qtfS+B6vX
+         X4TIKe3wUduNC/SSP/9RreoLaEU4DCbP7QQ/+ng78N5tRUUSmMIraRv/pLH0q28x3YzW
+         64/ER9YoZBz6gEKaP0aUN4D4Mtxu3gmxeSEHPiNrbryHuJ1nFcKUQUhm0jP6v9PCTMkx
+         EXGPZNJ+4p4JHuVPtOXkw/8H7vnV1YkLOlTRtvPI+mmp9jdQPO7EG/lF3artA1xXcFV4
+         MZCy0bTH7gWjdv56aoAHcFAeMnLnM4e7r8wuo7TDn6Mmqk3Cj07IX6ts+cqfMSqQN80F
+         3CXw==
+X-Gm-Message-State: AO0yUKWhSIA56K2OSz7ty29P3wUZh2o6gi3UjIKOa5n9QOKGZdUNzAi4
+        KUSCHOvLPtCbdPQA5nSIMvIMcw==
+X-Google-Smtp-Source: AK7set9jtBg/SciPuVcdZFWZLDuDVQh3mbSEl+6WtkQ4j0PUKSyEKi8VHRpJ0ECN3NetPiy57cQnRw==
+X-Received: by 2002:a05:6a20:6914:b0:cc:bf13:7b1c with SMTP id q20-20020a056a20691400b000ccbf137b1cmr3047635pzj.0.1679694730257;
+        Fri, 24 Mar 2023 14:52:10 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id t19-20020a62ea13000000b005a8de0f4c64sm14268726pfh.82.2023.03.24.14.52.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Mar 2023 14:15:15 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id i5so13053701eda.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Mar 2023 14:15:15 -0700 (PDT)
-X-Received: by 2002:a50:9f66:0:b0:502:227a:d0d9 with SMTP id
- b93-20020a509f66000000b00502227ad0d9mr1508268edf.2.1679692515353; Fri, 24 Mar
- 2023 14:15:15 -0700 (PDT)
+        Fri, 24 Mar 2023 14:52:09 -0700 (PDT)
+Message-ID: <45c46ee9-8479-4114-6ce9-ae3082335cb8@kernel.dk>
+Date:   Fri, 24 Mar 2023 15:52:08 -0600
 MIME-Version: 1.0
-References: <20230324204443.45950-1-axboe@kernel.dk>
-In-Reply-To: <20230324204443.45950-1-axboe@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 24 Mar 2023 14:14:58 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgjPAUwbQ9bf764x6xL8Ht56CGX79OLTG-fCS6u8yLaCA@mail.gmail.com>
-Message-ID: <CAHk-=wgjPAUwbQ9bf764x6xL8Ht56CGX79OLTG-fCS6u8yLaCA@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
 Subject: Re: [PATCHSET 0/2] Turn single segment imports into ITER_UBUF
-To:     Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, brauner@kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=0.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+References: <20230324204443.45950-1-axboe@kernel.dk>
+ <CAHk-=wgjPAUwbQ9bf764x6xL8Ht56CGX79OLTG-fCS6u8yLaCA@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHk-=wgjPAUwbQ9bf764x6xL8Ht56CGX79OLTG-fCS6u8yLaCA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 24, 2023 at 1:44=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> We've been doing a few conversions of ITER_IOVEC to ITER_UBUF in select
-> spots, as the latter is cheaper to iterate and hence saves some cycles.
-> I recently experimented [1] with io_uring converting single segment READV
-> and WRITEV into non-vectored variants, as we can save some cycles through
-> that as well.
->
-> But there's really no reason why we can't just do this further down,
-> enabling it for everyone. It's quite common to use vectored reads or
-> writes even with a single segment, unfortunately, even for cases where
-> there's no specific reason to do so. From a bit of non-scientific
-> testing on a vm on my laptop, I see about 60% of the import_iovec()
-> calls being for a single segment.
+On 3/24/23 3:14?PM, Linus Torvalds wrote:
+> On Fri, Mar 24, 2023 at 1:44?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> We've been doing a few conversions of ITER_IOVEC to ITER_UBUF in select
+>> spots, as the latter is cheaper to iterate and hence saves some cycles.
+>> I recently experimented [1] with io_uring converting single segment READV
+>> and WRITEV into non-vectored variants, as we can save some cycles through
+>> that as well.
+>>
+>> But there's really no reason why we can't just do this further down,
+>> enabling it for everyone. It's quite common to use vectored reads or
+>> writes even with a single segment, unfortunately, even for cases where
+>> there's no specific reason to do so. From a bit of non-scientific
+>> testing on a vm on my laptop, I see about 60% of the import_iovec()
+>> calls being for a single segment.
+> 
+> I obviously think this is the RightThing(tm) to do, but it's probably
+> too late for 6.3 since there is the worry that somebody "knows" that
+> it's a IOVEC somewhere.
+> 
+> Even if it sounds unlikely, and wrong.
 
-I obviously think this is the RightThing(tm) to do, but it's probably
-too late for 6.3 since there is the worry that somebody "knows" that
-it's a IOVEC somewhere.
+Agree, wasn't really targeting 6.3 though after looking over it, I do
+feel better about the whole thing.
 
-Even if it sounds unlikely, and wrong.
+I already ran the io_uring test and it showed a nice win, wrote a small
+micro benchmark that just does 10M 4k reads from /dev/zero. First
+observation from the below numbers is that copying just a single vec is
+EXPENSIVE. But I already knew that from the io_uring testing, where
+we're spending ~8% just on that alone. Secondly, readv(..., 1) saves
+about 3% with the patches in this series.
 
-Adding Al, who tends to be the main iovec person.
+read-zero takes on argument, which is to do vectored reads or not.
 
-Al, see
+Stock kernel:
 
-   https://lore.kernel.org/all/20230324204443.45950-1-axboe@kernel.dk/
+axboe@r7525 ~> time taskset -c 0 ./read-zero 0
+________________________________________________________
+Executed in  859.98 millis    fish           external
+   usr time  210.10 millis  291.00 micros  209.81 millis
+   sys time  649.42 millis    0.00 micros  649.42 millis
 
-for the series if you didn't already see it on fsdevel.
+axboe@r7525 ~> time taskset -c 0 ./read-zero 0
+________________________________________________________
+Executed in  853.82 millis    fish           external
+   usr time  228.45 millis  304.00 micros  228.15 millis
+   sys time  624.92 millis    0.00 micros  624.92 millis
 
-                  Linus
+axboe@r7525 ~> time taskset -c 0 ./read-zero 1
+________________________________________________________
+Executed in    1.84 secs    fish           external
+   usr time    0.21 secs  218.00 micros    0.21 secs
+   sys time    1.63 secs  101.00 micros    1.63 secs
+
+axboe@r7525 ~> time taskset -c 0 ./read-zero 1
+________________________________________________________
+Executed in    1.83 secs    fish           external
+   usr time    0.18 secs  594.00 micros    0.18 secs
+   sys time    1.64 secs    0.00 micros    1.64 secs
+
+And with the patches:
+
+axboe@r7525 ~> time taskset -c 0 ./read-zero 1
+________________________________________________________
+Executed in    1.78 secs    fish           external
+   usr time    0.22 secs  141.00 micros    0.22 secs
+   sys time    1.56 secs  141.00 micros    1.56 secs
+
+axboe@r7525 ~> time taskset -c 0 ./read-zero 1
+________________________________________________________
+Executed in    1.78 secs    fish           external
+   usr time    0.19 secs    0.00 micros    0.19 secs
+   sys time    1.59 secs  509.00 micros    1.59 secs
+
+read-zero 0 the same with patches, as expected.
+
+> Adding Al, who tends to be the main iovec person.
+> 
+> Al, see
+> 
+>    https://lore.kernel.org/all/20230324204443.45950-1-axboe@kernel.dk/
+> 
+> for the series if you didn't already see it on fsdevel.
+
+Yep sorry, forgot to add Al.
+
+-- 
+Jens Axboe
+
