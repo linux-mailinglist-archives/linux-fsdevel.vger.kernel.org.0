@@ -2,49 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 562F36C8074
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 15:55:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3031F6C80FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 16:17:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231215AbjCXOzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Mar 2023 10:55:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59964 "EHLO
+        id S231393AbjCXPRW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Mar 2023 11:17:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231877AbjCXOzn (ORCPT
+        with ESMTP id S229540AbjCXPRV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Mar 2023 10:55:43 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA93411147;
-        Fri, 24 Mar 2023 07:55:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eTcXgqk2rzRigxmbJ3ABqXEIuWKSD+gs6tvhN/boums=; b=NCsmFY/Lysf9dov02yXtwZY+a7
-        gdMqk3opPGE7GRSUOwdRJ+aA3XqQ7BoEg/EMAsSRDc2IG9h3/9LZArrdeImlHy/FLRj6+DFkTrRsU
-        odxkREjbZLEtyJCq1dIYWSyZMfi9u1jNv0jM0UrrVyMxlH0CCsNjkAoImoJY/Wbpiej8HfqHr4t9z
-        3OLUz4rB7ZkwYNk7WAwds0HVS5A/A3mVZzBx31FYp/89aRPyz0VvCGGgInCWOe7dIIP3jk1aZc8zT
-        IbrB5ONEwGqjTb8kMU6KuBx1VBd1YnXNdDvSc2cG6Ynz0t70Yrfr2PrXLUHOeXLKA/5H0UsiZfEUX
-        CNWOgZzQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pfioo-00504p-5t; Fri, 24 Mar 2023 14:55:02 +0000
-Date:   Fri, 24 Mar 2023 14:55:02 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kyungsan Kim <ks0204.kim@samsung.com>
-Cc:     dan.j.williams@intel.com, lsf-pc@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cxl@vger.kernel.org, a.manzanares@samsung.com,
-        viacheslav.dubeyko@bytedance.com, ying.huang@intel.com
-Subject: Re: RE(2): FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for CXL
-Message-ID: <ZB25xqRMgTrQas5W@casper.infradead.org>
-References: <641b7b2117d02_1b98bb294cb@dwillia2-xfh.jf.intel.com.notmuch>
- <CGME20230323105106epcas2p39ea8de619622376a4698db425c6a6fb3@epcas2p3.samsung.com>
- <20230323105105.145783-1-ks0204.kim@samsung.com>
+        Fri, 24 Mar 2023 11:17:21 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BBE4131;
+        Fri, 24 Mar 2023 08:17:20 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D912D1FEF6;
+        Fri, 24 Mar 2023 15:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1679671038; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bwervvL2VqoJp7Lysjwx0FFEhlsKTjSqVYYrPqe2D7Q=;
+        b=TgmwsbLl+DA5Nt70AmZzlhUhFnz2I8NZtHoXA9KZt0n0xrFCGQ/YcA+FBZzx5Gd9YKiOCI
+        bHaGK3KdSJtjWhbFYpt8xp9g3zTgsEdqgjVpEmsD/3IKuaTKEB23gX1Z7Zdt3DkXUwoRe5
+        7mksq3ezMiaJva+j+TCZ+oYN/uUqCH0=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7BAF4138ED;
+        Fri, 24 Mar 2023 15:17:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id EG8sHf6+HWQUZwAAMHmgww
+        (envelope-from <mkoutny@suse.com>); Fri, 24 Mar 2023 15:17:18 +0000
+Date:   Fri, 24 Mar 2023 16:17:17 +0100
+From:   Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To:     Zi Yan <ziy@nvidia.com>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 2/5] mm: page_owner: add support for splitting to any
+ order in split page_owner.
+Message-ID: <20230324151717.hawuy5gs6cnxql55@blackpad>
+References: <20230321004829.2012847-1-zi.yan@sent.com>
+ <20230321004829.2012847-3-zi.yan@sent.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="exvxtogrhnfaw26c"
 Content-Disposition: inline
-In-Reply-To: <20230323105105.145783-1-ks0204.kim@samsung.com>
+In-Reply-To: <20230321004829.2012847-3-zi.yan@sent.com>
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,26 +66,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 07:51:05PM +0900, Kyungsan Kim wrote:
-> One problem we experienced was occured in the combination of hot-remove and kerelspace allocation usecases.
-> ZONE_NORMAL allows kernel context allocation, but it does not allow hot-remove because kernel resides all the time.
-> ZONE_MOVABLE allows hot-remove due to the page migration, but it only allows userspace allocation.
 
-No, that's not true.  You can allocate kernel memory from ZONE_MOVABLE.
-You have to be careful when you do that, but eg filesystems put symlinks
-and directories in ZONE_MOVABLE, and zswap allocates memory from
-ZONE_MOVABLE.  Of course, then you have to be careful that the kernel
-doesn't try to move it while you're accessing it.  That's the tradeoff.
+--exvxtogrhnfaw26c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Alternatively, we allocated a kernel context out of ZONE_MOVABLE by adding GFP_MOVABLE flag.
-> In case, oops and system hang has occasionally occured because ZONE_MOVABLE can be swapped.
+Hello.
 
-I think you mean "migrated".  It can't be swapped unless you put the
-page on the LRU list, inviting the kernel to swap it.
+On Mon, Mar 20, 2023 at 08:48:26PM -0400, Zi Yan <zi.yan@sent.com> wrote:
+> @@ -5746,8 +5746,8 @@ static void *make_alloc_exact(unsigned long addr, u=
+nsigned int order,
+>  		struct page *page =3D virt_to_page((void *)addr);
+>  		struct page *last =3D page + nr;
+> =20
+> -		split_page_owner(page, 1 << order);
+> -		split_page_memcg(page, 1 << order);
+> +		split_page_owner(page, 1 << order, 1);
+> +		split_page_memcg(page, 1 << order, 1);
 
-> We resolved the issue using ZONE_EXMEM by allowing seletively choice of the two usecases.
+I think here should be
 
-This sounds dangerously confused.  Do you want the EXMEM to be removable
-or not?  If you do, then allocations from it have to be movable.  If
-you don't, why go to all this trouble?
+> +		split_page_owner(page, order, 0);
+> +		split_page_memcg(page, 1 << order, 1);
 
+because I was wondering why split_page_memcg() doesn't use orders too?
+(E.g. it wouldn't work well if nr % new_new !=3D 0).
+
+Thanks,
+Michal
+
+--exvxtogrhnfaw26c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTrXXag4J0QvXXBmkMkDQmsBEOquQUCZB2++wAKCRAkDQmsBEOq
+uZYWAQCFTMigwoG6hG2bxKjAJtYDo8OWh0BZq1aPs9LM+QVdBwEAvayit0OXGxQ2
+MDrtNVNB0nXobbi8EK0m4EAaSr9tCQA=
+=FNxP
+-----END PGP SIGNATURE-----
+
+--exvxtogrhnfaw26c--
