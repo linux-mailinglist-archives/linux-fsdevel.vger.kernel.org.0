@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C0CCA6C8465
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 19:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7696C8467
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Mar 2023 19:04:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232470AbjCXSDq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Mar 2023 14:03:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47612 "EHLO
+        id S231668AbjCXSD6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Mar 2023 14:03:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231156AbjCXSC0 (ORCPT
+        with ESMTP id S232268AbjCXSC1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Mar 2023 14:02:26 -0400
+        Fri, 24 Mar 2023 14:02:27 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5642ABDEA;
-        Fri, 24 Mar 2023 11:02:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C2DEC52;
+        Fri, 24 Mar 2023 11:02:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=cqYywlF2Q8R7QGX+jBw+CyvKUU8XyfAKGjEliwwm+0k=; b=O+Seyi/tLmdWgO7M8pqpiZ/QKQ
-        QEQNVi1tSvPg/yRwLy3E11c6JSUPKauXGBHlksxQ4R7HOySGc8u2FLySj02+UKCanOLdZiw+5COi7
-        b0rXSP+d4ec+gZHoRzHvFCPgiPXAgdgnCCqvIEzc0NYy+HS6F09L4xBfV4cB9iNwP3n1eOos94C2Q
-        51qB9NkG1hcUJIKymEROE71kGcqyfNgfl5uxa12lJ/ACONOMLBw5Epf6BAYqlfgMnqd2aWTySiZtw
-        ShZ8Z/6kDysO2BrpbF1s9KytGb3WUmr4d8JVPA0BstlO1jvbLRG6iWBNRezFc7AoHc/OLA2B1meSt
-        JpMS3JLA==;
+        bh=B6M8HuoWV6vZq+HMi8zcrk8fjpiDsrISnaLF7YRAHOY=; b=KvL9qXX6w7RiaracFLnGlfezyO
+        YFGcVYwxZUeQJee0ZL/tcTMh2Lj6U1hftWLJjgkyQIJd5ORdxDgjB10rp0C7EocV8mcDZuU0Pe9A1
+        q6lGqGWsB3/oXYcx9B+T2w+AkG6dIR6e5Onh6CssNaC06+mn3WTnIg+feeXKtCOPH5iaFayJ0VnYd
+        yjMPasR7ugNpnGqWRu4rJ1epLGXRaNp4smI810C68/IFBf2P6PzPuXh5rgmjv1LKw+M6y9xYlSFr6
+        LFGTSBPjnruH/7bzoRVRPQUUPK9/a/CfPsoTPi6mOIpSV1GBVgJc0InZfu7JMUpTHWh837YDjW+hT
+        cxo9Da7g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pfljO-0057bv-Fq; Fri, 24 Mar 2023 18:01:38 +0000
+        id 1pfljO-0057c3-Ki; Fri, 24 Mar 2023 18:01:38 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     tytso@mit.edu, adilger.kernel@dilger.ca
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 27/29] ext4: Convert mext_page_mkuptodate() to take a folio
-Date:   Fri, 24 Mar 2023 18:01:27 +0000
-Message-Id: <20230324180129.1220691-28-willy@infradead.org>
+Subject: [PATCH v2 28/29] ext4: Convert pagecache_read() to use a folio
+Date:   Fri, 24 Mar 2023 18:01:28 +0000
+Message-Id: <20230324180129.1220691-29-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230324180129.1220691-1-willy@infradead.org>
 References: <20230324180129.1220691-1-willy@infradead.org>
@@ -48,88 +48,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use a folio throughout.  Does not support large folios due to
-an array sized for MAX_BUF_PER_PAGE, but it does remove a few
-calls to compound_head().
+Use the folio API and support folios of arbitrary sizes.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ext4/move_extent.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ fs/ext4/verity.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index a84a794fed56..b5af2fc03b2f 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -168,25 +168,27 @@ mext_folio_double_lock(struct inode *inode1, struct inode *inode2,
- 
- /* Force page buffers uptodate w/o dropping page's lock */
- static int
--mext_page_mkuptodate(struct page *page, unsigned from, unsigned to)
-+mext_page_mkuptodate(struct folio *folio, unsigned from, unsigned to)
+diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+index e4da1704438e..afe847c967a4 100644
+--- a/fs/ext4/verity.c
++++ b/fs/ext4/verity.c
+@@ -42,18 +42,16 @@ static int pagecache_read(struct inode *inode, void *buf, size_t count,
+ 			  loff_t pos)
  {
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = folio->mapping->host;
- 	sector_t block;
- 	struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
- 	unsigned int blocksize, block_start, block_end;
- 	int i, err,  nr = 0, partial = 0;
--	BUG_ON(!PageLocked(page));
--	BUG_ON(PageWriteback(page));
-+	BUG_ON(!folio_test_locked(folio));
-+	BUG_ON(folio_test_writeback(folio));
+ 	while (count) {
+-		size_t n = min_t(size_t, count,
+-				 PAGE_SIZE - offset_in_page(pos));
+-		struct page *page;
++		struct folio *folio;
++		size_t n;
  
--	if (PageUptodate(page))
-+	if (folio_test_uptodate(folio))
- 		return 0;
+-		page = read_mapping_page(inode->i_mapping, pos >> PAGE_SHIFT,
++		folio = read_mapping_folio(inode->i_mapping, pos >> PAGE_SHIFT,
+ 					 NULL);
+-		if (IS_ERR(page))
+-			return PTR_ERR(page);
+-
+-		memcpy_from_page(buf, page, offset_in_page(pos), n);
++		if (IS_ERR(folio))
++			return PTR_ERR(folio);
  
- 	blocksize = i_blocksize(inode);
--	if (!page_has_buffers(page))
--		create_empty_buffers(page, blocksize, 0);
-+	head = folio_buffers(folio);
-+	if (!head) {
-+		create_empty_buffers(&folio->page, blocksize, 0);
-+		head = folio_buffers(folio);
-+	}
+-		put_page(page);
++		n = memcpy_from_file_folio(buf, folio, pos, count);
++		folio_put(folio);
  
--	head = page_buffers(page);
--	block = (sector_t)page->index << (PAGE_SHIFT - inode->i_blkbits);
-+	block = (sector_t)folio->index << (PAGE_SHIFT - inode->i_blkbits);
- 	for (bh = head, block_start = 0; bh != head || !block_start;
- 	     block++, block_start = block_end, bh = bh->b_this_page) {
- 		block_end = block_start + blocksize;
-@@ -200,11 +202,11 @@ mext_page_mkuptodate(struct page *page, unsigned from, unsigned to)
- 		if (!buffer_mapped(bh)) {
- 			err = ext4_get_block(inode, block, bh, 0);
- 			if (err) {
--				SetPageError(page);
-+				folio_set_error(folio);
- 				return err;
- 			}
- 			if (!buffer_mapped(bh)) {
--				zero_user(page, block_start, blocksize);
-+				folio_zero_range(folio, block_start, blocksize);
- 				set_buffer_uptodate(bh);
- 				continue;
- 			}
-@@ -226,7 +228,7 @@ mext_page_mkuptodate(struct page *page, unsigned from, unsigned to)
- 	}
- out:
- 	if (!partial)
--		SetPageUptodate(page);
-+		folio_mark_uptodate(folio);
- 	return 0;
- }
- 
-@@ -354,7 +356,7 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- 		goto unlock_folios;
- 	}
- data_copy:
--	*err = mext_page_mkuptodate(&folio[0]->page, from, from + replaced_size);
-+	*err = mext_page_mkuptodate(folio[0], from, from + replaced_size);
- 	if (*err)
- 		goto unlock_folios;
- 
+ 		buf += n;
+ 		pos += n;
 -- 
 2.39.2
 
