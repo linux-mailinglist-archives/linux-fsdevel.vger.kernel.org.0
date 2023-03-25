@@ -2,62 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88CAB6C8B32
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Mar 2023 07:01:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76D286C8C49
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Mar 2023 08:45:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231659AbjCYGBL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Mar 2023 02:01:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42150 "EHLO
+        id S231786AbjCYHpM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Mar 2023 03:45:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjCYGBK (ORCPT
+        with ESMTP id S229699AbjCYHpK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Mar 2023 02:01:10 -0400
-Received: from 167-179-156-38.a7b39c.syd.nbn.aussiebb.net (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974D719685;
-        Fri, 24 Mar 2023 23:01:08 -0700 (PDT)
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1pfwx2-008XUY-Ph; Sat, 25 Mar 2023 14:00:29 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 25 Mar 2023 14:00:28 +0800
-Date:   Sat, 25 Mar 2023 14:00:28 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     David Howells <dhowells@redhat.com>
-Cc:     willy@infradead.org, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, viro@zeniv.linux.org.uk,
-        hch@infradead.org, axboe@kernel.dk, jlayton@kernel.org,
-        brauner@kernel.org, torvalds@linux-foundation.org,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-crypto@vger.kernel.org
+        Sat, 25 Mar 2023 03:45:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB4821515C
+        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Mar 2023 00:44:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679730264;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=c1fqtu9LBWrWaCQxQTVjr0cxRai+bTqOnRnWXMB8NKA=;
+        b=Lrebst2fhCQJFf/n0wvwPtURU9Ptbu+J7u/8kygv5vQ8nkLcsQ84ZioTZULbw/QjE5X5jK
+        0td/0o41+g5pGmxPULbhxPoi+7Fm27huqtMRGMEq5J7vGIqUUwyiqteXvR0KUTCNMeyTB2
+        agHVeFcYvvcUGxc+jEMkJDykH/RWjpo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-413-H1kqNBBlOki1ozjiPf4r0w-1; Sat, 25 Mar 2023 03:44:18 -0400
+X-MC-Unique: H1kqNBBlOki1ozjiPf4r0w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 698D385C06B;
+        Sat, 25 Mar 2023 07:44:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 55749175AD;
+        Sat, 25 Mar 2023 07:44:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <ZB6N/H27oeWqouyb@gondor.apana.org.au>
+References: <ZB6N/H27oeWqouyb@gondor.apana.org.au> <ZBPTC9WPYQGhFI30@gondor.apana.org.au> <3763055.1679676470@warthog.procyon.org.uk>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     dhowells@redhat.com, willy@infradead.org, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        viro@zeniv.linux.org.uk, hch@infradead.org, axboe@kernel.dk,
+        jlayton@kernel.org, brauner@kernel.org,
+        torvalds@linux-foundation.org, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-crypto@vger.kernel.org
 Subject: Re: [RFC PATCH 23/28] algif: Remove hash_sendpage*()
-Message-ID: <ZB6N/H27oeWqouyb@gondor.apana.org.au>
-References: <ZBPTC9WPYQGhFI30@gondor.apana.org.au>
- <3763055.1679676470@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3763055.1679676470@warthog.procyon.org.uk>
-X-Spam-Status: No, score=4.3 required=5.0 tests=HELO_DYNAMIC_IPADDR2,
-        PDS_RDNS_DYNAMIC_FP,RDNS_DYNAMIC,SPF_HELO_NONE,SPF_PASS,TVD_RCVD_IP
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3792016.1679730254.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Sat, 25 Mar 2023 07:44:14 +0000
+Message-ID: <3792017.1679730254@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 24, 2023 at 04:47:50PM +0000, David Howells wrote:
->
-> I must be missing something, I think.  What's particularly optimal about the
-> code in hash_sendpage() but not hash_sendmsg()?  Is it that the former uses
-> finup/digest, but the latter ony does update+final?
+Herbert Xu <herbert@gondor.apana.org.au> wrote:
 
-A lot of hardware hashes can't perform partial updates, so they
-will always fall back to software unless you use finup/digest.
+> > I must be missing something, I think.  What's particularly optimal abo=
+ut the
+> > code in hash_sendpage() but not hash_sendmsg()?  Is it that the former=
+ uses
+> > finup/digest, but the latter ony does update+final?
+> =
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> A lot of hardware hashes can't perform partial updates, so they
+> will always fall back to software unless you use finup/digest.
+
+Okay.  Btw, how much of a hard limit is ALG_MAX_PAGES?  Multipage folios c=
+an
+exceed the current limit (16 pages, 64K) in size.  Is it just to prevent t=
+oo
+much memory being pinned at once?
+
+David
+
