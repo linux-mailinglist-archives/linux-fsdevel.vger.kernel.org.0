@@ -2,123 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C557E6C8E91
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Mar 2023 14:41:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED2FD6C8EE2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Mar 2023 15:42:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231778AbjCYNlx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Mar 2023 09:41:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34134 "EHLO
+        id S231576AbjCYOmy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Mar 2023 10:42:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231359AbjCYNlw (ORCPT
+        with ESMTP id S230392AbjCYOmx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Mar 2023 09:41:52 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21BFD1025B
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Mar 2023 06:41:51 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id d12-20020a056e020bec00b00325e125fbe5so2422402ilu.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Mar 2023 06:41:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679751710;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ixifmir7ualllnwN46FhGK6UkJX1AD6Gkf3lIcbzhSQ=;
-        b=fiaUMxzfqvGVCLcYdocsurZJ7IphxZFNF4hZSOER5QaorI1z++1aBamJBdOU/1Vslk
-         IiWfEqqMEvDF8x/CW2qbfFGoZpV00yJk+LUdpKciyODeL7p+dzmL69U0ZgzIRTqNe/w6
-         X8Pu2V/tVEmRcy+704qMIRfL84gZ5aKSXU93db2WV1psDmbUCA83tyf+tPRI1pHgtSvn
-         O7eAI7UtGMvVCQoBWrnXNayHG9oewEjLKNdqUy+Cv9tk++BWUqpNYovAtix9VQQEYEsI
-         8muCLR8OAF1YXaVU2u/9QxS40OvVatZ6q4nO6GlgaiJwXCyKHZPzPUZyf80ragVbd6zN
-         LmDw==
-X-Gm-Message-State: AO0yUKWl2Q/YzmpPLi2YaBs+5y5obhQUHBXRLakGXr12M/g64372V3Wu
-        tu+dpGoEdM1xE/ScrYgbYzooTJnfWu1iBoeczqxQUV0kIsc4
-X-Google-Smtp-Source: AK7set80ynXrN1yvTOZK3lcRrM71sUr1hmFzudml79RxjjkBoqaEKJjHFC0FcyzvbvhRO20HngARnfv4jIyxANdNzEjDj4GeBukD
-MIME-Version: 1.0
-X-Received: by 2002:a5e:9901:0:b0:753:cd5:abde with SMTP id
- t1-20020a5e9901000000b007530cd5abdemr2508825ioj.4.1679751710442; Sat, 25 Mar
- 2023 06:41:50 -0700 (PDT)
-Date:   Sat, 25 Mar 2023 06:41:50 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000030b7e05f7b9ac32@google.com>
-Subject: [syzbot] [ntfs3?] WARNING in attr_data_get_block (2)
-From:   syzbot <syzbot+a98f21ebda0a437b04d7@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
+        Sat, 25 Mar 2023 10:42:53 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91DEA244;
+        Sat, 25 Mar 2023 07:42:51 -0700 (PDT)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32PAbT16025455;
+        Sat, 25 Mar 2023 14:42:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=N/CPr3QIyT6WYPDl4+fUfmsOxwKhosOCupRnS3AUqtE=;
+ b=V/bthX4On+RqhQtQqJSIEg7tA2iPc2+/hYfukB+fk/ewXLEr9tvGeQDvxDpG+JZmF8GD
+ AQvff8AotrCQAx4328F0BLOKIjRiNtcElHSk3rPoMUJoJLOPxEU9s1+V4dyl0KAC3sdY
+ Q8ic3wiTsyxDRjZtuN+DlmhNRxHVG59o/5Uo3TJ+4+dwf25gQ3HyNIWmJvK/mw6GksB0
+ TEz107BRISgJY3jq12CAtIqwT3sc8o1sUfM5w98NVUBKoqR1YPZrp1S/khTQZ9qOZmmo
+ AUd18ix2eDIM/X+cqmFwZ393QqOx5bbpWAJFd78fqcWprHPtb7qrTOxxJ4shCBbk0T7L Eg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3phse7fx04-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 25 Mar 2023 14:42:45 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32PEWqeQ005044;
+        Sat, 25 Mar 2023 14:42:45 GMT
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3phse7fwyv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 25 Mar 2023 14:42:45 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32P2TOaI006609;
+        Sat, 25 Mar 2023 14:42:43 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+        by ppma06fra.de.ibm.com (PPS) with ESMTPS id 3phr7frgk3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 25 Mar 2023 14:42:43 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+        by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32PEgeD332047740
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 25 Mar 2023 14:42:40 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BD7A020040;
+        Sat, 25 Mar 2023 14:42:40 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA73F2004B;
+        Sat, 25 Mar 2023 14:42:38 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.64.140])
+        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Sat, 25 Mar 2023 14:42:38 +0000 (GMT)
+Date:   Sat, 25 Mar 2023 20:12:36 +0530
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+        Ritesh Harjani <ritesh.list@gmail.com>
+Subject: Re: [RFC 04/11] ext4: Convert mballoc cr (criteria) to enum
+Message-ID: <ZB8IB14yLaoY4+19@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1674822311.git.ojaswin@linux.ibm.com>
+ <9670431b31aa62e83509fa2802aad364910ee52e.1674822311.git.ojaswin@linux.ibm.com>
+ <20230309121122.vzfswandgqqm4yk5@quack3>
+ <ZBRAZsvbcSBNJ+Pl@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <20230323105537.rrecw5xqqzmw567d@quack3>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230323105537.rrecw5xqqzmw567d@quack3>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: fvLv7ewZvA-5Bl0JOk1yX1J20ivXn3C6
+X-Proofpoint-GUID: A3uJjfTn_KbSt2kaqhkW-lovkw8mw1gP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-24_11,2023-03-24_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ mlxlogscore=925 malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0
+ impostorscore=0 priorityscore=1501 clxscore=1015 lowpriorityscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2303250120
+X-Spam-Status: No, score=-0.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Mar 23, 2023 at 11:55:37AM +0100, Jan Kara wrote:
+> On Fri 17-03-23 15:56:46, Ojaswin Mujoo wrote:
+> > On Thu, Mar 09, 2023 at 01:11:22PM +0100, Jan Kara wrote:
+> > > Also when going for symbolic allocator scan names maybe we could actually
+> > > make names sensible instead of CR[0-4]? Perhaps like CR_ORDER2_ALIGNED,
+> > > CR_BEST_LENGHT_FAST, CR_BEST_LENGTH_ALL, CR_ANY_FREE. And probably we could
+> > > deal with ordered comparisons like in:
+> > I like this idea, it should make the code a bit more easier to
+> > understand. However just wondering if I should do it as a part of this
+> > series or a separate patch since we'll be touching code all around and 
+> > I don't want to confuse people with the noise :) 
+> 
+> I guess a mechanical rename should not be really confusing. It just has to
+> be a separate patch.
+Alright, got it.
+> 
+> > > 
+> > >                 if (cr < 2 &&
+> > >                     (!sbi->s_log_groups_per_flex ||
+> > >                      ((group & ((1 << sbi->s_log_groups_per_flex) - 1)) != 0)) &
+> > >                     !(ext4_has_group_desc_csum(sb) &&
+> > >                       (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT))))
+> > >                         return 0;
+> > > 
+> > > to declare CR_FAST_SCAN = 2, or something like that. What do you think?
+> > About this, wont it be better to just use something like
+> > 
+> > cr < CR_BEST_LENGTH_ALL 
+> > 
+> > instead of defining a new CR_FAST_SCAN = 2.
+> 
+> Yeah, that works as well.
+> 
+> > The only concern is that if we add a new "fast" CR (say between
+> > CR_BEST_LENGTH_FAST and CR_BEST_LENGTH_ALL) then we'll need to make
+> > sure we also update CR_FAST_SCAN to 3 which is easy to miss.
+> 
+> Well, you have that problem with any naming scheme (and even with numbers).
+> So as long as names are all defined together, there's reasonable chance
+> you'll remember to verify the limits still hold :)
+haha that's true. Anyways, I'll try a few things and see what looks
+good. Thanks for the suggestions.
 
-syzbot found the following issue on:
-
-HEAD commit:    17214b70a159 Merge tag 'fsverity-for-linus' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17331931c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d40f6d44826f6cf7
-dashboard link: https://syzkaller.appspot.com/bug?extid=a98f21ebda0a437b04d7
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d166fda7fbbd/disk-17214b70.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0c16461022b9/vmlinux-17214b70.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/53e9e40da8bb/bzImage-17214b70.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a98f21ebda0a437b04d7@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 24195 at fs/ntfs3/attrib.c:1060 attr_data_get_block+0x1926/0x2da0
-Modules linked in:
-CPU: 0 PID: 24195 Comm: syz-executor.2 Not tainted 6.3.0-rc3-syzkaller-00012-g17214b70a159 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-RIP: 0010:attr_data_get_block+0x1926/0x2da0 fs/ntfs3/attrib.c:1060
-Code: 80 e1 07 80 c1 03 38 c1 0f 8c 48 ff ff ff 48 8d bc 24 e0 01 00 00 e8 19 5b 1b ff 48 8b 54 24 58 e9 31 ff ff ff e8 9a a9 c5 fe <0f> 0b bb ea ff ff ff e9 11 fa ff ff e8 89 a9 c5 fe e9 0f f9 ff ff
-RSP: 0018:ffffc9002245fac0 EFLAGS: 00010293
-RAX: ffffffff82c4c386 RBX: 00000000ffffffff RCX: ffff88801f029d40
-RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 00000000ffffffff
-RBP: ffffc9002245fd28 R08: ffffffff82c4be5f R09: fffffbfff205c062
-R10: 0000000000000000 R11: dffffc0000000001 R12: 1ffff9200448bf78
-R13: 0000000000000032 R14: ffff88803fd81760 R15: dffffc0000000000
-FS:  00007f61ad5ea700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4db29fe800 CR3: 000000002fb69000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ntfs_fallocate+0xca4/0x1190 fs/ntfs3/file.c:614
- vfs_fallocate+0x54b/0x6b0 fs/open.c:324
- ksys_fallocate fs/open.c:347 [inline]
- __do_sys_fallocate fs/open.c:355 [inline]
- __se_sys_fallocate fs/open.c:353 [inline]
- __x64_sys_fallocate+0xbd/0x100 fs/open.c:353
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f61ac88c0f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f61ad5ea168 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
-RAX: ffffffffffffffda RBX: 00007f61ac9ac120 RCX: 00007f61ac88c0f9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000008
-RBP: 00007f61ac8e7b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000ff8000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffc8413a04f R14: 00007f61ad5ea300 R15: 0000000000022000
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Regards,
+ojaswin
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
