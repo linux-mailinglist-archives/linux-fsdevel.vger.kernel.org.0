@@ -2,67 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 128366CA0D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 12:08:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36E1E6CA102
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 12:13:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233393AbjC0KI2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 06:08:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38556 "EHLO
+        id S233517AbjC0KNW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 06:13:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233345AbjC0KI0 (ORCPT
+        with ESMTP id S233424AbjC0KNU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 06:08:26 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3BF649E5;
-        Mon, 27 Mar 2023 03:08:24 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id t17-20020a05600c451100b003edc906aeeaso4664901wmo.1;
-        Mon, 27 Mar 2023 03:08:23 -0700 (PDT)
+        Mon, 27 Mar 2023 06:13:20 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB06C1;
+        Mon, 27 Mar 2023 03:13:11 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id p34so4705710wms.3;
+        Mon, 27 Mar 2023 03:13:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679911702;
+        d=gmail.com; s=20210112; t=1679911990;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ns8gSkJtJW5rMO78ceC2Rx9q40ENuy+LObl6UHDFr0s=;
-        b=A2s+PhaodoqCLLLRJguEBx3d5jAeCOVtN7rBoBFlXu4437lLyE5qxigqlp4rG92yr1
-         95tnxTkjrJRU+2curSzfyWYGqUI9PFyA+vw8bvMSo2OLtOlgcuhmqIwSkBoQn2Z3L4Oz
-         bQH5pite9NsfEJGM1KMxUYko0n6Gf0/RfwC7sMZY+cozQICRQumh2MntgVQix2tSURR6
-         u9ZU90VaKlX+Rleu38iP/x8C3PQgyYqAhCpUICjvzUUczbgigBTGA3rdOOJaf0Gxqu42
-         +RelkfsqsxBzsuNlGOk4Df0s9hs8dQdhm5p7S2IO4XRDARLrno7uMkeQr/S8crbwaEMl
-         r59w==
+        bh=59tA2lCnliRvQCtKSZm7EmR6QrSpBlAsOZLbQEqcLPI=;
+        b=BrWg7aw+Awtki2c0xRG2ewC1alYtCx/pT1kjf6sk3heQGvoWLEwubOi09TCbNZmlud
+         tDZEzXQOmyhGGBwDLLMtQaA3TFwfRDMTZhtWme1IzfOCf01ybA0rKvEshjt4ToqZZAky
+         QHPuu4VIvjk2WA0TJkDDZzgC35QuerjpKMOvL7UKuinwM9PCEYL/3LOSStS9c+DRIB2c
+         +s5BdQB0FBfonPrM8RMASE5nuTxYSaarbcUJWY8QkUjaxbvUnsKYMM9dI8LKhqbRGpqq
+         5jxL9NDpKc5P7o3hr4ae0HlVGMQxhPhgNZBEfkg2M00nNeBQnAR8db5nw8+fmxKXaLY3
+         B+kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679911702;
+        d=1e100.net; s=20210112; t=1679911990;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ns8gSkJtJW5rMO78ceC2Rx9q40ENuy+LObl6UHDFr0s=;
-        b=VhgDudWGdKrhCwjqacLbTeAQ0b993omBtQHP/VDrFzxBBogZCq4bcnZwrJYLJqzVWG
-         +x7tQBTjNCo7pPzKEc/t+twC2zjmU8mAYs4vQQyO1d4313ooJXjAKsATs+P8yLUXEDat
-         2ghq4vMXRfTqnfMduJbr/Pj/DiJw0TMOxiRYl+uwZGWTDYOMQjpgoxJBzrzVbrwa0Nqw
-         4B0qRQ8OfQmkFVnKsROZ1qOEYQWylWOobV0JOLXMOKJuOghA3crYo9UjXZcTLTRoznta
-         To4F3QL4GWYc67uhibQE2bchJ5OQlRxD16rC8MfikeXp13v8zC1p4E63/xEwR2xTlulg
-         +gCQ==
-X-Gm-Message-State: AO0yUKXIE4+i+8mCnQUdy4KdwCfeIMqQ1Mos2LijgJYRR0603/Ga+MdW
-        GfumjrcZ8pJbklgPzM4xm60=
-X-Google-Smtp-Source: AK7set/OUvcas6A4CNBYtPhi8pDjfVzAQ9EoB/9pQmPLmbliqfY1SslWKQkt44yWgum//NbLWWwBEQ==
-X-Received: by 2002:a7b:ca4a:0:b0:3ed:af6b:7fb3 with SMTP id m10-20020a7bca4a000000b003edaf6b7fb3mr9147943wml.2.1679911702205;
-        Mon, 27 Mar 2023 03:08:22 -0700 (PDT)
+        bh=59tA2lCnliRvQCtKSZm7EmR6QrSpBlAsOZLbQEqcLPI=;
+        b=naZaffRl1kBabtGKCOmXrwGNL/N9np03BG1tNv3IPmXLWCPKscEoqMMfAgGoyW2v+G
+         Z9/37wHMFMYDu7y0a5AFVo6uwewYbS8Vi2WXd9/dJJ1GoJlx14JAljZrgG3TAi0s3GOF
+         /JEh7QWrEC8MZQ8xPOu8eIQ8GFjvF9VTCGTfkFpN7kXubkSnRIeI7apDs1dY3hKRMDhb
+         igxckX5giqmv7OyN8we7mIwbxevA7vJ5TOcHGaWfsFo1VJbshslYjntMnJUhVEm7/gpy
+         S3rd5JHsEW/owoG7Z5OLe9PokplKvzAs7tl8iRnBqxkHnpQQlTMa3jdfoNuE6E8mS+xh
+         PrGg==
+X-Gm-Message-State: AO0yUKXMZB92R2krX2I+N4DXhnHlpZ7YLaAtdZ9q4hNuEcFFrRMQWr6L
+        ChyJz62PNeZEc6KqQiUU1oE=
+X-Google-Smtp-Source: AK7set+bVHe7/hUAi2tiQsz/edpntTs8WNPcsTWmy0dO5OdEOWbwFoLcz9zWHfUpADOBZILauD9d1Q==
+X-Received: by 2002:a7b:c5c1:0:b0:3ee:5bd8:d537 with SMTP id n1-20020a7bc5c1000000b003ee5bd8d537mr8837744wmk.5.1679911990061;
+        Mon, 27 Mar 2023 03:13:10 -0700 (PDT)
 Received: from suse.localnet (host-87-19-99-235.retail.telecomitalia.it. [87.19.99.235])
-        by smtp.gmail.com with ESMTPSA id n10-20020a05600c3b8a00b003ede3f5c81fsm8404891wms.41.2023.03.27.03.08.20
+        by smtp.gmail.com with ESMTPSA id j19-20020a05600c1c1300b003ede2c4701dsm8317814wms.14.2023.03.27.03.13.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 03:08:21 -0700 (PDT)
+        Mon, 27 Mar 2023 03:13:09 -0700 (PDT)
 From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Benjamin LaHaise <bcrl@kvack.org>, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, linux-kernel@vger.kernel.org,
-        "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Kent Overstreet <kent.overstreet@linux.dev>
-Subject: Re: [PATCH v3] fs/aio: Replace kmap{,_atomic}() with kmap_local_page()
-Date:   Mon, 27 Mar 2023 12:08:20 +0200
-Message-ID: <2114426.VsPgYW4pTa@suse>
-In-Reply-To: <20230119162055.20944-1-fmdefrancesco@gmail.com>
-References: <20230119162055.20944-1-fmdefrancesco@gmail.com>
+To:     Evgeniy Dushistov <dushistov@mail.ru>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 0/4] fs/ufs: Replace kmap() with kmap_local_page
+Date:   Mon, 27 Mar 2023 12:13:08 +0200
+Message-ID: <11383508.F0gNSz5aLb@suse>
+In-Reply-To: <20221229225100.22141-1-fmdefrancesco@gmail.com>
+References: <20221229225100.22141-1-fmdefrancesco@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
@@ -76,9 +73,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On gioved=C3=AC 19 gennaio 2023 17:20:55 CEST Fabio M. De Francesco wrote:
-> The use of kmap() and kmap_atomic() are being deprecated in favor of
-> kmap_local_page().
+On gioved=C3=AC 29 dicembre 2022 23:50:56 CEST Fabio M. De Francesco wrote:
+> kmap() is being deprecated in favor of kmap_local_page().
 >=20
 > There are two main problems with kmap(): (1) It comes with an overhead as
 > the mapping space is restricted and protected by a global lock for
@@ -93,203 +89,111 @@ lly
 > the tasks can be preempted and, when they are scheduled to run again, the
 > kernel virtual addresses are restored and still valid.
 >=20
-> The use of kmap_local_page() in fs/aio.c is "safe" in the sense that the
-> code don't hands the returned kernel virtual addresses to other threads
-> and there are no nesting which should be handled with the stack based
-> (LIFO) mappings/un-mappings order. Furthermore, the code between the old
-> kmap_atomic()/kunmap_atomic() did not depend on disabling page-faults
-> and/or preemption, so that there is no need to call pagefault_disable()
-> and/or preempt_disable() before the mappings.
+> Since its use in fs/ufs is safe everywhere, it should be preferred.
 >=20
-> Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
-> fs/aio.c.
->=20
-> Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
-> with HIGHMEM64GB enabled.
->
+> Therefore, replace kmap() with kmap_local_page() in fs/ufs. kunmap_local()
+> requires the mapping address, so return that address from ufs_get_page()
+> to be used in ufs_put_page().
+
 Hi Al,
 
-I see that this patch is here since Jan 19, 2023.
-Is there anything that prevents its merging? Am I expected to do further=20
-changes? Please notice that it already had three "Reviewed-by:" tags (again=
-=20
-thanks to Ira, Jeff and Kent).=20
-
-Can you please take it in your three?
+I see that this series is here since Dec 29, 2022.
+Is there anything that prevents its merging?=20
+Can you please its four patches in your tree?
 
 Thanks,
 
 =46abio
+
 >=20
-> Cc: "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>
-> Suggested-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-> Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+> This series could have not been ever made because nothing prevented the
+> previous patch from working properly but Al Viro made a long series of
+> very appreciated comments about how many unnecessary and redundant lines
+> of code I could have removed. He could see things I was entirely unable
+> to notice. Furthermore, he also provided solutions and details about how
+> I could decompose a single patch into a small series of three
+> independent units.[1][2][3]
+>=20
+> I want to thank him so much for the patience, kindness and the time he
+> decided to spend to provide those analysis and write three messages full
+> of interesting insights.[1][2][3]
+>=20
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Ira Weiny <ira.weiny@intel.com>
 > Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
-> ---
->=20
-> I've tested with "./check -g aio". The tests in this group fail 3/26
-> times, with and without my patch. Therefore, these changes don't introduce
-> further errors. I'm not aware of any other tests which I may run, so that
-> any suggestions would be precious and much appreciated :-)
->=20
-> I'm resending this patch because some recipients were missing in the
-> previous submissions. In the meantime I'm also adding some more informati=
-on
-> in the commit message. There are no changes in the code.
 >=20
 > Changes from v1:
->         Add further information in the commit message, and the
->         "Reviewed-by" tags from Ira and Jeff (thanks!).
+> 	1/3: No changes.
+> 	2/3: Restore the return of "err" that was mistakenly deleted
+> 	     together with the removal of the "out" label in
+> 	     ufs_add_link(). Thanks to Al Viro.[4]
+> 	     Return the address of the kmap()'ed page instead of a
+> 	     pointer to a pointer to the mapped page; a page_address()
+> 	     had been overlooked in ufs_get_page(). Thanks to Al
+> 	     Viro.[5]
+> 	3/3: Return the kernel virtual address got from the call to
+> 	     kmap_local_page() after conversion from kmap(). Again
+> 	     thanks to Al Viro.[6]
 >=20
 > Changes from v2:
-> 	Rewrite a block of code between mapping/un-mapping to improve
-> 	readability in aio_setup_ring() and add a missing call to
-> 	flush_dcache_page() in ioctx_add_table() (thanks to Al Viro);
-> 	Add a "Reviewed-by" tag from Kent Overstreet (thanks).
+> 	1/3: No changes.
+> 	2/3: Rework ufs_get_page() because the previous version had two
+> 	     errors: (1) It could return an invalid pages with the out
+> 	     argument "page" and (2) it could return "page_address(page)"
+> 	     also in cases where read_mapping_page() returned an error
+> 	     and the page is never kmap()'ed. Thanks to Al Viro.[7]
+> 	3/3: Rework ufs_get_page() after conversion to
+> 	     kmap_local_page(), in accordance to the last changes in 2/3.
 >=20
->  fs/aio.c | 46 +++++++++++++++++++++-------------------------
->  1 file changed, 21 insertions(+), 25 deletions(-)
+> Changes from v3:
+> 	1/3: No changes.
+> 	2/3: No changes.
+> 	3/3: Replace kunmap() with kunmap_local().
 >=20
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 562916d85cba..9b39063dc7ac 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -486,7 +486,6 @@ static const struct address_space_operations=20
-aio_ctx_aops
-> =3D {
+> Changes from v4:
+> 	1/4: It was 1/3.
+> 	2/4: Move the declaration of a page into an inner loop. Add Ira
+> 	     Weiny's "Reviewed-by" tag (thanks!).
+> 	3/4: Add this patch to use ufs_put_page() to replace three kunmap()
+> 	     and put_page() in namei.c. Thanks to Ira Weiny who noticed that
+> 	     I had overlooked their presence.
+> 	4/4: Remove an unnecessary masking that is already carried out by
+> 	     kunmap_local() via kunmap_local_indexed(). Add a comment to
+> 	     clarify that a ufs_dir_entry passed to ufs_delete_entry()
+> 	     points in the same page we need the address of. Suggested by
+> 	     Ira Weiny.
 >=20
->  static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
->  {
-> -	struct aio_ring *ring;
->  	struct mm_struct *mm =3D current->mm;
->  	unsigned long size, unused;
->  	int nr_pages;
-> @@ -567,16 +566,12 @@ static int aio_setup_ring(struct kioctx *ctx, unsig=
-ned
-> int nr_events) ctx->user_id =3D ctx->mmap_base;
->  	ctx->nr_events =3D nr_events; /* trusted copy */
+> [1] https://lore.kernel.org/lkml/Y4E++JERgUMoqfjG@ZenIV/#t
+> [2] https://lore.kernel.org/lkml/Y4FG0O7VWTTng5yh@ZenIV/#t
+> [3] https://lore.kernel.org/lkml/Y4ONIFJatIGsVNpf@ZenIV/#t
+> [4] https://lore.kernel.org/lkml/Y5Zc0qZ3+zsI74OZ@ZenIV/#t
+> [5] https://lore.kernel.org/lkml/Y5ZZy23FFAnQDR3C@ZenIV/#t
+> [6] https://lore.kernel.org/lkml/Y5ZcMPzPG9h6C9eh@ZenIV/#t
+> [7] https://lore.kernel.org/lkml/Y5glgpD7fFifC4Fi@ZenIV/#t
 >=20
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> -	ring->nr =3D nr_events;	/* user copy */
-> -	ring->id =3D ~0U;
-> -	ring->head =3D ring->tail =3D 0;
-> -	ring->magic =3D AIO_RING_MAGIC;
-> -	ring->compat_features =3D AIO_RING_COMPAT_FEATURES;
-> -	ring->incompat_features =3D AIO_RING_INCOMPAT_FEATURES;
-> -	ring->header_length =3D sizeof(struct aio_ring);
-> -	kunmap_atomic(ring);
-> -	flush_dcache_page(ctx->ring_pages[0]);
-> +	memcpy_to_page(ctx->ring_pages[0], 0, (const char *)&(struct=20
-aio_ring) {
-> +		       .nr =3D nr_events, .id =3D ~0U, .magic =3D=20
-AIO_RING_MAGIC,
-> +		       .compat_features =3D AIO_RING_COMPAT_FEATURES,
-> +		       .incompat_features =3D AIO_RING_INCOMPAT_FEATURES,
-> +		       .header_length =3D sizeof(struct aio_ring) },
-> +		       sizeof(struct aio_ring));
+> The cover letter of the v1 series is at
+> https://lore.kernel.org/lkml/20221211213111.30085-1-fmdefrancesco@gmail.c=
+om/
+> The cover letter of the v2 series is at
+> https://lore.kernel.org/lkml/20221212231906.19424-1-fmdefrancesco@gmail.c=
+om/
+> The cover letter of the v3 series is at
+> https://lore.kernel.org/lkml/20221217184749.968-1-fmdefrancesco@gmail.com/
+> The cover letter of the v4 series is at
+> https://lore.kernel.org/lkml/20221221172802.18743-1-fmdefrancesco@gmail.c=
+om/
 >=20
->  	return 0;
->  }
-> @@ -678,9 +673,10 @@ static int ioctx_add_table(struct kioctx *ctx, struct
-> mm_struct *mm) * we are protected from page migration
->  					 * changes ring_pages by -
->ring_lock.
->  					 */
-> -					ring =3D kmap_atomic(ctx-
->ring_pages[0]);
-> +					ring =3D kmap_local_page(ctx-
->ring_pages[0]);
->  					ring->id =3D ctx->id;
-> -					kunmap_atomic(ring);
-> +					kunmap_local(ring);
-> +					flush_dcache_page(ctx-
->ring_pages[0]);
->  					return 0;
->  				}
+> Fabio M. De Francesco (4):
+>   fs/ufs: Use the offset_in_page() helper
+>   fs/ufs: Change the signature of ufs_get_page()
+>   fs/ufs: Use ufs_put_page() in ufs_rename()
+>   fs/ufs: Replace kmap() with kmap_local_page()
 >=20
-> @@ -1021,9 +1017,9 @@ static void user_refill_reqs_available(struct kioctx
-> *ctx) * against ctx->completed_events below will make sure we do the
->  		 * safe/right thing.
->  		 */
-> -		ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +		ring =3D kmap_local_page(ctx->ring_pages[0]);
->  		head =3D ring->head;
-> -		kunmap_atomic(ring);
-> +		kunmap_local(ring);
+>  fs/ufs/dir.c   | 131 +++++++++++++++++++++++++++----------------------
+>  fs/ufs/namei.c |  11 ++---
+>  fs/ufs/ufs.h   |   1 +
+>  3 files changed, 78 insertions(+), 65 deletions(-)
 >=20
->  		refill_reqs_available(ctx, head, ctx->tail);
->  	}
-> @@ -1129,12 +1125,12 @@ static void aio_complete(struct aio_kiocb *iocb)
->  	if (++tail >=3D ctx->nr_events)
->  		tail =3D 0;
->=20
-> -	ev_page =3D kmap_atomic(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
-> +	ev_page =3D kmap_local_page(ctx->ring_pages[pos /=20
-AIO_EVENTS_PER_PAGE]);
->  	event =3D ev_page + pos % AIO_EVENTS_PER_PAGE;
->=20
->  	*event =3D iocb->ki_res;
->=20
-> -	kunmap_atomic(ev_page);
-> +	kunmap_local(ev_page);
->  	flush_dcache_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
->=20
->  	pr_debug("%p[%u]: %p: %p %Lx %Lx %Lx\n", ctx, tail, iocb,
-> @@ -1148,10 +1144,10 @@ static void aio_complete(struct aio_kiocb *iocb)
->=20
->  	ctx->tail =3D tail;
->=20
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	head =3D ring->head;
->  	ring->tail =3D tail;
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->  	flush_dcache_page(ctx->ring_pages[0]);
->=20
->  	ctx->completed_events++;
-> @@ -1211,10 +1207,10 @@ static long aio_read_events_ring(struct kioctx *c=
-tx,
->  	mutex_lock(&ctx->ring_lock);
->=20
->  	/* Access to ->ring_pages here is protected by ctx->ring_lock. */
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	head =3D ring->head;
->  	tail =3D ring->tail;
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->=20
->  	/*
->  	 * Ensure that once we've read the current tail pointer, that
-> @@ -1246,10 +1242,10 @@ static long aio_read_events_ring(struct kioctx *c=
-tx,
->  		avail =3D min(avail, nr - ret);
->  		avail =3D min_t(long, avail, AIO_EVENTS_PER_PAGE - pos);
->=20
-> -		ev =3D kmap(page);
-> +		ev =3D kmap_local_page(page);
->  		copy_ret =3D copy_to_user(event + ret, ev + pos,
->  					sizeof(*ev) * avail);
-> -		kunmap(page);
-> +		kunmap_local(ev);
->=20
->  		if (unlikely(copy_ret)) {
->  			ret =3D -EFAULT;
-> @@ -1261,9 +1257,9 @@ static long aio_read_events_ring(struct kioctx *ctx,
->  		head %=3D ctx->nr_events;
->  	}
->=20
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	ring->head =3D head;
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->  	flush_dcache_page(ctx->ring_pages[0]);
->=20
->  	pr_debug("%li  h%u t%u\n", ret, head, tail);
 > --
 > 2.39.0
 
