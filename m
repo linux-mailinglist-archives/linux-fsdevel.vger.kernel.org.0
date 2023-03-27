@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF4DC6CAC9E
+	by mail.lfdr.de (Postfix) with ESMTP id 94F596CAC9D
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 20:05:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232429AbjC0SFE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 14:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43480 "EHLO
+        id S232446AbjC0SFF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 14:05:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229829AbjC0SE6 (ORCPT
+        with ESMTP id S231990AbjC0SE7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 14:04:58 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 271EB3A81
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 11:04:58 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id ca18e2360f4ac-752fe6c6d5fso5196939f.1
+        Mon, 27 Mar 2023 14:04:59 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050103AAC
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 11:04:59 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id ca18e2360f4ac-752fe6c6d5fso5197139f.1
         for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 11:04:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679940297;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1679940298;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oNiZElylqd4oRsTQgc5WV3Ag1/Bvc2tTEOYDdozkUio=;
-        b=3EjGDt5/YbxFXYxnvhi7Sb3qTRKFQWxan3eGqdFzFwvjVRhSQCUim7vOVia6mKtAjd
-         bB2vAUiuTmDg88jukpFFKOhOf381yB+jdqEIaEAjCOa9BIhuSI6tfu6XMXOgDIFFW+lo
-         BhLxM4R0T4JwxYl3eSI+Nt0AT+feun3lGJlcuBrAV3m9Ic3HLE2VBO75LlUi5LIx4uau
-         5Q/dRKx2EHICHPwjSmaJjV7QLkk7isw9pSsr9vzWgoJRZ3QThXMK/Fz0338HcWGCK0jW
-         OWVChrzYa2qhneTK2LBxyQlUu4Tn7u1W1INcdaG/iMHUPQrbwnoXP76JSszA1SoPrPFD
-         MyJg==
+        bh=VRuLnY8LfItYmha1a1+5ihq4yOs2ex342r7sq+hJ1lo=;
+        b=c53GxGsaME1PuxlxsP1Vkgso5etFHpCP8C3QispDf2mjuqP0jv2NRJvHlsmpgTT8yr
+         qMd8w8M2rdWb4vo//MSvfGx2Q3qfXywpzUj7PdSHJF2rNW1oN0jgIZ80s29Jby2IZtwK
+         itw+wc/ET9ZgwOG8FTSLS3J7WFZqW9T9AVPvajCFVqN8lltH9N1u/2GPGsYo0uiJR9FF
+         Tk1w9TZHP3sqORGFlmdLiVb5wb2Zh0fvsloFEhETrN/iOXJJDGCFtmBioAQh1Yde+tu1
+         QtFI8waLbjQlcFVemgtprDChu4E9Uh6Sxd/9c2EPYcUmhFNp3dGKgiN54CdOKy9oe7e6
+         XN8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679940297;
+        d=1e100.net; s=20210112; t=1679940298;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oNiZElylqd4oRsTQgc5WV3Ag1/Bvc2tTEOYDdozkUio=;
-        b=dpDYHh1bMNaPzhBGzM1KDHivSwCmtUhqqo1c1juSJeuWwbFhHMP5tRCIsMc4YGyaT1
-         z0rWEw1ktrkgI8Qam89F1aA2gx0j0RBaOlA089Mg8o5X0NEa0gcAHfWTv+m3oo4GZX6W
-         sVD0sWADzkpyd3hyPzc/sB+kG7A27cpuU2Y9xUxBLPUlgh4nG23dagPyiGyOC6kVwaiD
-         3JNmBdZIp+HmU0bZAhq+7JP/bK3AG1x3qeXC7pY7ngnE1SRZV4AW5exMo+qN002ta7Sc
-         bzfghgLXZxz3P+tPnwqbuBRe6vEl83myoONoTBSct1qwBEsn7ZYw04UHpSVnHDx6cwEV
-         2NZg==
-X-Gm-Message-State: AAQBX9e+DZy4OOohJ5XV2YhKGHSwUF4U/qWC7cO01duNN/v4WLeIKRCe
-        koR4C6UJJLZ6GhFQhwS6Vy7YwhbRrOXfQbw/tjbTtA==
-X-Google-Smtp-Source: AKy350aQJmrR+de0MRoP9/0Z2RHP0l/2slVlUluaT0k+KFu9KsOl1biHEGzFLNH9eilmnJ70zDXboQ==
-X-Received: by 2002:a92:6701:0:b0:318:8674:be8 with SMTP id b1-20020a926701000000b0031886740be8mr5240414ilc.2.1679940297156;
-        Mon, 27 Mar 2023 11:04:57 -0700 (PDT)
+        bh=VRuLnY8LfItYmha1a1+5ihq4yOs2ex342r7sq+hJ1lo=;
+        b=drLGTtI2TCR2RrjLvL7q0HzQEKa/G/ROgixYVxJPmU/xFROt7rdOzS/ZUevSwRmCHv
+         5ecTFxJbpxhqjIyUhjYZERaJXkUd7MtZXir/JP0SediYYTtCS2ak2aus/YO3fU4+oF68
+         HWnsAIfoqezqZN5oW1N6jDcOcPdmBJS6qZbDIQKpSaKF7nmOOGpTrTYbFt2A81XgbACm
+         /9hPe8W1pwQbbvPze/Typ1vdo0LRT6mB2XD0pAxlKpY3Z4Zuzh6lmHan+nVtIGhFZqZc
+         ioLjR+sY6enfqs6ZxszB//L4ASsVKHOrK9ZHsD44iuspSSdZ27Ko7uUKpJceKZkvG1CC
+         UfUg==
+X-Gm-Message-State: AO0yUKUtvGNvDh09zNfs/jN3gdb3Iyj8pcza5j2RIuptIhw/YdgQ6jO0
+        1CK4QrcRN3MGCX2IL8O5vrWDgDrx3mUhB2FCO5dk5g==
+X-Google-Smtp-Source: AK7set/RwkNZtja9qv8eRxy3SfWj5mxh8eSuD7R/eplf4EodBLpNHsTFWpSUcfl3XbHWQpv0mHIS3g==
+X-Received: by 2002:a05:6602:2d87:b0:759:485:41d with SMTP id k7-20020a0566022d8700b007590485041dmr7343013iow.0.1679940298064;
+        Mon, 27 Mar 2023 11:04:58 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e28-20020a0566380cdc00b0040634c51861sm8853235jak.132.2023.03.27.11.04.56
+        by smtp.gmail.com with ESMTPSA id e28-20020a0566380cdc00b0040634c51861sm8853235jak.132.2023.03.27.11.04.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 11:04:56 -0700 (PDT)
+        Mon, 27 Mar 2023 11:04:57 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, brauner@kernel.org,
         viro@zeniv.linux.org.uk, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/4] iov_iter: convert import_single_range() to ITER_UBUF
-Date:   Mon, 27 Mar 2023 12:04:48 -0600
-Message-Id: <20230327180449.87382-4-axboe@kernel.dk>
+Subject: [PATCH 4/4] iov_iter: import single vector iovecs as ITER_UBUF
+Date:   Mon, 27 Mar 2023 12:04:49 -0600
+Message-Id: <20230327180449.87382-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230327180449.87382-1-axboe@kernel.dk>
 References: <20230327180449.87382-1-axboe@kernel.dk>
@@ -71,30 +71,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since we're just importing a single vector, we don't have to turn it
-into an ITER_IOVEC. Instead turn it into an ITER_UBUF, which is cheaper
-to iterate.
+Add a special case to __import_iovec(), which imports a single segment
+iovec as an ITER_UBUF rather than an ITER_IOVEC. ITER_UBUF is cheaper
+to iterate than ITER_IOVEC, and for a single segment iovec, there's no
+point in using a segmented iterator.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- lib/iov_iter.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ lib/iov_iter.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 274014e4eafe..fc82cc42ffe6 100644
+index fc82cc42ffe6..63cf9997bd50 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1866,9 +1866,7 @@ int import_single_range(int rw, void __user *buf, size_t len,
- 	if (unlikely(!access_ok(buf, len)))
- 		return -EFAULT;
- 
--	iov->iov_base = buf;
--	iov->iov_len = len;
--	iov_iter_init(i, rw, iov, 1, len);
-+	iov_iter_ubuf(i, rw, buf, len);
- 	return 0;
+@@ -1780,6 +1780,30 @@ struct iovec *iovec_from_user(const struct iovec __user *uvec,
+ 	return iov;
  }
- EXPORT_SYMBOL(import_single_range);
+ 
++/*
++ * Single segment iovec supplied by the user, import it as ITER_UBUF.
++ */
++static ssize_t __import_iovec_ubuf(int type, const struct iovec __user *uvec,
++				   struct iovec **iovp, struct iov_iter *i,
++				   bool compat)
++{
++	struct iovec *iov = *iovp;
++	ssize_t ret;
++
++	if (compat)
++		ret = copy_compat_iovec_from_user(iov, uvec, 1);
++	else
++		ret = copy_iovec_from_user(iov, uvec, 1);
++	if (unlikely(ret))
++		return ret;
++
++	ret = import_ubuf(type, iov->iov_base, iov->iov_len, i);
++	if (unlikely(ret))
++		return ret;
++	*iovp = NULL;
++	return i->count;
++}
++
+ ssize_t __import_iovec(int type, const struct iovec __user *uvec,
+ 		 unsigned nr_segs, unsigned fast_segs, struct iovec **iovp,
+ 		 struct iov_iter *i, bool compat)
+@@ -1788,6 +1812,9 @@ ssize_t __import_iovec(int type, const struct iovec __user *uvec,
+ 	unsigned long seg;
+ 	struct iovec *iov;
+ 
++	if (nr_segs == 1)
++		return __import_iovec_ubuf(type, uvec, iovp, i, compat);
++
+ 	iov = iovec_from_user(uvec, nr_segs, fast_segs, *iovp, compat);
+ 	if (IS_ERR(iov)) {
+ 		*iovp = NULL;
 -- 
 2.39.2
 
