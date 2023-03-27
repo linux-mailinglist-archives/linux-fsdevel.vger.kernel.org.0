@@ -2,145 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD26F6CA11F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 12:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC38B6CA11B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 12:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233554AbjC0KU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 06:20:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53136 "EHLO
+        id S233561AbjC0KUc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 06:20:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233420AbjC0KUz (ORCPT
+        with ESMTP id S233548AbjC0KU2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 06:20:55 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D340249E9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 03:20:43 -0700 (PDT)
-Received: from fsav116.sakura.ne.jp (fsav116.sakura.ne.jp [27.133.134.243])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 32RAJmSJ002733;
-        Mon, 27 Mar 2023 19:19:48 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav116.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp);
- Mon, 27 Mar 2023 19:19:48 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 32RAJmN0002730
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 27 Mar 2023 19:19:48 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <6bfca9e9-d4d8-37ec-d53c-0c77e7c70e85@I-love.SAKURA.ne.jp>
-Date:   Mon, 27 Mar 2023 19:19:47 +0900
+        Mon, 27 Mar 2023 06:20:28 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 955284C0F;
+        Mon, 27 Mar 2023 03:20:26 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id d11-20020a05600c3acb00b003ef6e6754c5so1542499wms.5;
+        Mon, 27 Mar 2023 03:20:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679912425;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kVN4bA3aMNTKiMhToGO/PROcH1X2ZJW5cID3K62e6GM=;
+        b=a4fDsZTwGNNI91uKTkqzjm+dkquVOWwnodNN7eiOn76lmDnJkT7YfvYfW0J271gkiQ
+         6wWbLEl9gP++PdhBVVWn4vOp3nHvQCOFbC0GCMy4skKcJzugaPPcSaUrLvpwfMYIlW5B
+         YBaUiiMl0Ljyp/CNS0I4KB2OkeeXs7gm8HBxyjij4Otj9R7PzOHb25AWeqxRQMqFdTrW
+         xVR3Kr7NbIB81qUIJG7pwB9X2nYFkWjlYDUnboueecvTUxT3IR4zCLA7R51yIk0Qj0QY
+         bue4JPDm9lzu7N1xgcxiii3tyuV4lGHlVjasuFOqCc//Y3IY4PS0Egv5lZ6DyjJunkXu
+         crnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679912425;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kVN4bA3aMNTKiMhToGO/PROcH1X2ZJW5cID3K62e6GM=;
+        b=aai3E8QN5J29SdWvP52m0D1Wgf3wV4JqyThpgpGfWy7HkWZohpYVKBB/EM7RezMw7D
+         jUxjZQ/TNLI+3t5zpLy/fwCQdmRqmf5Mv2NOm1ZMhyml9fvDvKXtqA8a3+KkBmX8xX2v
+         iAvjJMinfGTXoH0BChdQvl03i/QWjUkQkBN5aEzA8WFbvKGss/q9QbwpYkL5sl2gguM/
+         9uS3osXOJXImRBPVOdD/QAor8g/2lOOHWBhkp+R3GCxMrjDLTu7upHvZpm6d7Snv/mtE
+         vOagXKFCNZiXSb8Rep1n35D9Lj+VT04AtlYT6+y2xLeZkOy7E5fQDHZECoXLZ/EE72nL
+         qNHA==
+X-Gm-Message-State: AAQBX9erCYsYFLj0GIJdwhiR5a3p09SDvRRRSymvL91eCVWxYneVksOF
+        m10jK9WjvrA/jtvjsGoGK2I=
+X-Google-Smtp-Source: AKy350bQs7h8xcV9TLEaRh7IH0YWMQ3rbMxAMmlsx9SInDtkuyNK9/Z8KgJP1hVh7ALS06wFopyFrg==
+X-Received: by 2002:a1c:f216:0:b0:3ef:5e17:1ed9 with SMTP id s22-20020a1cf216000000b003ef5e171ed9mr6667246wmc.31.1679912424956;
+        Mon, 27 Mar 2023 03:20:24 -0700 (PDT)
+Received: from suse.localnet (host-87-19-99-235.retail.telecomitalia.it. [87.19.99.235])
+        by smtp.gmail.com with ESMTPSA id j6-20020a05600c190600b003ef6bc71cccsm4401373wmq.27.2023.03.27.03.20.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Mar 2023 03:20:24 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ira.weiny@intel.com
+Subject: Re: [git pull] common helper for kmap_local_page() users in local filesystems
+Date:   Mon, 27 Mar 2023 12:20:23 +0200
+Message-ID: <2729240.9PvXe5no7K@suse>
+In-Reply-To: <8232398.NyiUUSuA9g@suse>
+References: <20230310204431.GW3390869@ZenIV> <8232398.NyiUUSuA9g@suse>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] sysv: convert pointers_lock from rw_lock to rw_sem
-Content-Language: en-US
-To:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
-Cc:     syzbot <syzbot+69b40dc5fd40f32c199f@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Chen Zhongjin <chenzhongjin@huawei.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Christian Brauner <brauner@kernel.org>
-References: <0000000000000ccf9a05ee84f5b0@google.com>
- <6fcbdc89-6aff-064b-a040-0966152856e0@I-love.SAKURA.ne.jp>
- <20230327000440.GF3390869@ZenIV>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20230327000440.GF3390869@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=0.0 required=5.0 tests=NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_NONE autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023/03/27 9:04, Al Viro wrote:
-> However, I don't think this is the right fix.  Note that the problem is
-> with get_branch() done under the rwlock; all other places are safe.  But
-> in get_branch() we only need the lock (and only shared, at that) around
-> the verify+add pair.  See how it's done in fs/minix/itree_common.c...
-> Something like this:
+On sabato 11 marzo 2023 18:11:01 CEST Fabio M. De Francesco wrote:
+> On venerd=EC 10 marzo 2023 21:44:31 CET Al Viro wrote:
+> > 	kmap_local_page() conversions in local filesystems keep running into
+> >=20
+> > kunmap_local_page()+put_page() combinations; we can keep inventing names
+> > for identical inline helpers, but it's getting rather inconvenient.  I'=
+ve
+> > added a trivial helper to linux/highmem.h instead.
+>=20
+> Yeah, "put_and_unmap_page()". Nice helper :-)
 
-I can see fs/minix/itree_common.c is doing similar things. But since I'm not
-familiar with filesystems, I can't be convinced that minix's assumption is safe.
+[snip]
 
->  static Indirect *find_shared(struct inode *inode,
->                                 int depth,
->                                 int offsets[],
->                                 Indirect chain[],
->                                 sysv_zone_t *top)
->  {
->         Indirect *partial, *p;
->         int k, err;
-> 
->         *top = 0;
->         for (k = depth; k > 1 && !offsets[k-1]; k--)
->                 ;
-> 
-> -       write_lock(&pointers_lock);
->         partial = get_branch(inode, k, offsets, chain, &err);
+Hi Al,=20
 
-Does the result of verify_chain() from get_branch() remain valid even after
-sleep by preemption at this line made get_branch() to execute "*err = -EAGAIN;"
-line rather than "return NULL;" line?
+> Why did you name it "put_and_unmap_page()" instead of=20
+"unmap_and_put_page()",
+> for we always unmap first _and_ put the page immediately the unmapping?
+>
+> It seems it want to imply that instead we put first and unmap later (which
+> would be wrong). That name sounds misleading to me and not sound (logical=
+ly
+> speaking).
+>=20
+> Am I missing some obscure convention behind your choice of that name for =
+the
+> helper?
 
->         if (!partial)
->                 partial = chain + k-1;
+Can you please explain what I'm missing behind your motivation?
 
-Can sleep by preemption at this line or
+Thanks,
 
-> +
-> +       write_lock(&pointers_lock);
->         /*
->          * If the branch acquired continuation since we've looked at it -
->          * fine, it should all survive and (new) top doesn't belong to us.
->          */
->         if (!partial->key && *partial->p) {
->                 write_unlock(&pointers_lock);
+=46abio
 
-at this line change the result of "!partial->key && *partial->p" test above?
+P.S.: Adding Ira to the Cc list, since he's been doing kmap() and=20
+kmap_atomic() conversions long time before I too started with them.
 
->                 goto no_top;
->         }
->         for (p=partial; p>chain && all_zeroes((sysv_zone_t*)p->bh->b_data,p->p); p--)
->                 ;
->         /*
->          * OK, we've found the last block that must survive. The rest of our
->          * branch should be detached before unlocking. However, if that rest
->          * of branch is all ours and does not grow immediately from the inode
->          * it's easier to cheat and just decrement partial->p.
->          */
->         if (p == chain + k - 1 && p > chain) {
->                 p->p--;
->         } else {
->                 *top = *p->p;
->                 *p->p = 0;
->         }
->         write_unlock(&pointers_lock);
->  
->         while (partial > p) {
->                 brelse(partial->bh);
->                 partial--;
->         }
->  no_top:
->         return partial;
->  }
-
-I feel worried about
-
-	/*
-	 * Indirect block might be removed by truncate while we were
-	 * reading it. Handling of that case (forget what we've got and
-	 * reread) is taken out of the main path.
-	 */
-	if (err == -EAGAIN)
-		goto changed;
-
-in get_block()...
 
