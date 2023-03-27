@@ -2,83 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D6386CA5B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 15:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4D1D6CA673
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 15:50:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232678AbjC0NY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 09:24:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36288 "EHLO
+        id S232848AbjC0Nub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 09:50:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232607AbjC0NYj (ORCPT
+        with ESMTP id S232225AbjC0NuL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 09:24:39 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F1D5FE1;
-        Mon, 27 Mar 2023 06:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=RLzmFr8AmbjIY1B1jEN0btaao1pVMqT2Dh1OkNlg1IM=; b=kZE665LhpJ3pAkpkQurCtqXGr3
-        3ns14crmk1+cSV3MbJ381mXQgOVruGRvb0wNz6zz0OWOrD+mymMFNQhzD5qB4YlOKjyklu6nqm6N1
-        OxJAHqaBZAGvOYqhVubOZ0pQci0Fe2P6ntLZp0+G3hrS4oTPKlM4IvDxW06wGHxhfnZL0rgIXKcGQ
-        u0EQovuNQNfH3oZ91DVUoB3NR5BlFDVzTwTCpTwaQ6AspmC/PimietJjPZLnOYbp3WfRffIO/BQI+
-        /4tfsenPBcqrfX3Z9vjvbnuRBHhlGKiwgZ6XNUAYUvGFlCl2mau/rw+73gPHEBvbxRWHsvCaPq+oV
-        bYib1JZA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pgmp3-007QOk-NL; Mon, 27 Mar 2023 13:23:41 +0000
-Date:   Mon, 27 Mar 2023 14:23:41 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Cc:     Evgeniy Dushistov <dushistov@mail.ru>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 0/4] fs/ufs: Replace kmap() with kmap_local_page
-Message-ID: <ZCGY3c5avRefahms@casper.infradead.org>
-References: <20221229225100.22141-1-fmdefrancesco@gmail.com>
- <11383508.F0gNSz5aLb@suse>
+        Mon, 27 Mar 2023 09:50:11 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B2A6729B;
+        Mon, 27 Mar 2023 06:48:49 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B5E6F21EFF;
+        Mon, 27 Mar 2023 13:48:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1679924927;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lLZ1tOH+2IQe9KNBkCOduf46JwkVP7E5NFMbAeK+g0c=;
+        b=wCrUqDGGkVY91bPwyB4sKnxEuP4mikf5NEyxFiPcU35xaIOlDqLcyokCLFiG+JNPJSHvn3
+        ZAeRqlVqf461/gWCnsRQuZw1feCMUo14Yd9SCu1bLurzSX9WzzqBkwnSa3XfoaIkYOxR7P
+        0rXNnaAotneuHk9dOnMW+xq2BLEb3wA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1679924927;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lLZ1tOH+2IQe9KNBkCOduf46JwkVP7E5NFMbAeK+g0c=;
+        b=U+TejpDKl5C4Rt5qFxt4ivAQLJBhX5lzpC9S5ByUqJ5CQETauQ9p0GqWEeKWL4pH/c5Gs8
+        qbRyffZS2aUMENBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7FBE313482;
+        Mon, 27 Mar 2023 13:48:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 5j8wHr+eIWQAfAAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Mon, 27 Mar 2023 13:48:47 +0000
+Date:   Mon, 27 Mar 2023 15:42:34 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     syzbot <syzbot+list32e5d8c30adcfd4f0ca2@syzkaller.appspotmail.com>
+Cc:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs] Monthly Report
+Message-ID: <20230327134234.GE10580@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <000000000000b4315105f7a7d014@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <11383508.F0gNSz5aLb@suse>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <000000000000b4315105f7a7d014@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-1.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 12:13:08PM +0200, Fabio M. De Francesco wrote:
-> On giovedì 29 dicembre 2022 23:50:56 CEST Fabio M. De Francesco wrote:
-> > kmap() is being deprecated in favor of kmap_local_page().
-> > 
-> > There are two main problems with kmap(): (1) It comes with an overhead as
-> > the mapping space is restricted and protected by a global lock for
-> > synchronization and (2) it also requires global TLB invalidation when the
-> > kmap’s pool wraps and it might block when the mapping space is fully
-> > utilized until a slot becomes available.
-> > 
-> > With kmap_local_page() the mappings are per thread, CPU local, can take
-> > page faults, and can be called from any context (including interrupts).
-> > It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
-> > the tasks can be preempted and, when they are scheduled to run again, the
-> > kernel virtual addresses are restored and still valid.
-> > 
-> > Since its use in fs/ufs is safe everywhere, it should be preferred.
-> > 
-> > Therefore, replace kmap() with kmap_local_page() in fs/ufs. kunmap_local()
-> > requires the mapping address, so return that address from ufs_get_page()
-> > to be used in ufs_put_page().
+On Fri, Mar 24, 2023 at 09:23:36AM -0700, syzbot wrote:
+> Hello btrfs maintainers/developers,
 > 
-> Hi Al,
+> This is a 30-day syzbot report for btrfs subsystem.
+> All related reports/information can be found at:
+> https://syzkaller.appspot.com/upstream/s/btrfs
 > 
-> I see that this series is here since Dec 29, 2022.
-> Is there anything that prevents its merging? 
-> Can you please its four patches in your tree?
+> During the period, 3 new issues were detected and 0 were fixed.
+> In total, 53 issues are still open and 29 have been fixed so far.
 
-I'm pretty sure UFS directories should simply be allocated from lowmem.
-There's really no reason to put them in highmem these days.
+The overview is convenient and monthly frequency is reasonable, thanks.
