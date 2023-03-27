@@ -2,92 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F20F36CABF5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 19:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 052026CAC18
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 19:45:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbjC0Riy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 13:38:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42058 "EHLO
+        id S231433AbjC0Rpi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 13:45:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjC0Riw (ORCPT
+        with ESMTP id S230005AbjC0Rpf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 13:38:52 -0400
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751FE172E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 10:38:50 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id b12-20020a6bb20c000000b007585c93862aso6010480iof.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 10:38:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679938729;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=86xtUdlUoaFaW4jF9AAQbjpLasDppMrDiecKJxkCSqk=;
-        b=TMIULVjdSmQ8Wor1JuaXdmIf7ZNwqOHDOPUq4L2dXHtmfpXvMxs2cV4DteL2Bvu3DD
-         7uTrn0RuQYrnmruIsMcM6RqYTc8OJKesVJTGD1hAcAAx/ymOu/2n5hXgHBem3KEfKD11
-         gg6Iimvk6uc1iP1q78RkqgeobxKoTWWE85ls57rXpR+U7IL5UBJ+nA+Y8wPMG10czvwn
-         NZxvKfgBTqcK+VU1v9KkftEfqZM6Bw5gg8mCndHw4DFjWqMWjN/5Nrm/Wo/OsoodfaXn
-         RDVGCODn/vS0S4Jbi4lieyuI5Yo9/znaWqgDor0zE3XDgFoNxEnrEikAVDvtnZ5v1Sm4
-         voqw==
-X-Gm-Message-State: AO0yUKXaxbPjBHo4PZqWbZndBnxkZFptaXUMbetJp3i73YpomZOQxPNu
-        pzrOkZ1JRu1cazaIPkZoFHqUMpUbdMwdkLMxMn/v5tAR2s7E
-X-Google-Smtp-Source: AK7set8PWIAiENHl4ch+8KDhGfPfcKelKlwfLIIESpa9o1Z4COxo6QpBPC3CTaW2/+ol7A39UEFF/ZFpYC8MrnvUIAbOn6uFpWrt
+        Mon, 27 Mar 2023 13:45:35 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5830D199F;
+        Mon, 27 Mar 2023 10:45:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=aQoxK5bb3Ohj4wJwxB+pr91NWfdUFrQCSHmRCFwcTDI=; b=pL1HS0Vi5KNmMOvGFuFYKGyM7r
+        RsRG6kESDdHW3rUE914SVA3v4+ORiCdJhgEXpKzxb0r1OYeOb9YL04JZ5P75ET62PLuGsFK8ikaUs
+        YkCjV5/EQJXciHGuL7KFMg/ObjTqn45UygqJCJ5p+X0r5zOCqwI5uwL0kkvZM0gB7P7+B3rze6n8G
+        hrXufeB7Jmfac8IZYbZOWf02r4k4kJ5iXnR/fzuocp26M94/gyQJVF8NQqzWlZRsP7LazJrIXH8Y4
+        Mxn9B7y/NJSjReinYvyK+0zEtOaWQdqcdCNB6ZJfId/4ogXaniqasz0+V30rRHPOz8q895SBprFkM
+        q/Hp9rEA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pgquI-007bGS-7C; Mon, 27 Mar 2023 17:45:22 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v2 0/3] Prevent ->map_pages from sleeping
+Date:   Mon, 27 Mar 2023 18:45:12 +0100
+Message-Id: <20230327174515.1811532-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-X-Received: by 2002:a02:3313:0:b0:3c5:df3:a58b with SMTP id
- c19-20020a023313000000b003c50df3a58bmr4951042jae.2.1679938729792; Mon, 27 Mar
- 2023 10:38:49 -0700 (PDT)
-Date:   Mon, 27 Mar 2023 10:38:49 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003bfb4a05f7e537a7@google.com>
-Subject: [syzbot] Monthly ntfs3 report
-From:   syzbot <syzbot+list1f86ee42427f86558b42@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello ntfs3 maintainers/developers,
+In preparation for a larger patch series which will handle (some, easy)
+page faults protected only by RCU, change the two filesystems which have
+sleeping locks to not take them and hold the RCU lock around calls to
+->map_page to prevent other filesystems from adding sleeping locks.
 
-This is a 30-day syzbot report for the ntfs3 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs3
+v2:
+ - Add tags from David Howells
+ - Go into more detail about the locking in the XFS patch
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 61 issues are still open and 20 have been fixed so far.
+Matthew Wilcox (Oracle) (3):
+  xfs: Remove xfs_filemap_map_pages() wrapper
+  afs: Split afs_pagecache_valid() out of afs_validate()
+  mm: Hold the RCU read lock over calls to ->map_pages
 
-Some of the still happening issues:
+ Documentation/filesystems/locking.rst |  4 ++--
+ fs/afs/file.c                         | 14 ++------------
+ fs/afs/inode.c                        | 27 +++++++++++++++++++--------
+ fs/afs/internal.h                     |  1 +
+ fs/xfs/xfs_file.c                     | 17 +----------------
+ mm/memory.c                           | 11 ++++++++---
+ 6 files changed, 33 insertions(+), 41 deletions(-)
 
-Crashes Repro Title
-3452    Yes   KASAN: slab-out-of-bounds Read in ntfs_iget5
-              https://syzkaller.appspot.com/bug?extid=b4084c18420f9fad0b4f
-897     Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
-              https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
-840     Yes   possible deadlock in ni_fiemap
-              https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
-658     Yes   UBSAN: shift-out-of-bounds in ntfs_fill_super (2)
-              https://syzkaller.appspot.com/bug?extid=478c1bf0e6bf4a8f3a04
-606     Yes   possible deadlock in attr_data_get_block
-              https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
-243     Yes   possible deadlock in mi_read
-              https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
-182     Yes   possible deadlock in ntfs_set_state
-              https://syzkaller.appspot.com/bug?extid=f91c29a5d5a01ada051a
-178     Yes   possible deadlock in ntfs_fiemap
-              https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
-128     No    possible deadlock in ntfs_mark_rec_free
-              https://syzkaller.appspot.com/bug?extid=f83f0dbef763c426e3cf
-56      Yes   WARNING in do_symlinkat
-              https://syzkaller.appspot.com/bug?extid=e78eab0c1cf4649256ed
+-- 
+2.39.2
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
