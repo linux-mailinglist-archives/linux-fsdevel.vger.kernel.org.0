@@ -2,70 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC38B6CA11B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 12:20:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B4486CA15F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 12:27:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233561AbjC0KUc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 06:20:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52064 "EHLO
+        id S233633AbjC0K1v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 06:27:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233548AbjC0KU2 (ORCPT
+        with ESMTP id S232944AbjC0K1h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 06:20:28 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 955284C0F;
-        Mon, 27 Mar 2023 03:20:26 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id d11-20020a05600c3acb00b003ef6e6754c5so1542499wms.5;
-        Mon, 27 Mar 2023 03:20:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679912425;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kVN4bA3aMNTKiMhToGO/PROcH1X2ZJW5cID3K62e6GM=;
-        b=a4fDsZTwGNNI91uKTkqzjm+dkquVOWwnodNN7eiOn76lmDnJkT7YfvYfW0J271gkiQ
-         6wWbLEl9gP++PdhBVVWn4vOp3nHvQCOFbC0GCMy4skKcJzugaPPcSaUrLvpwfMYIlW5B
-         YBaUiiMl0Ljyp/CNS0I4KB2OkeeXs7gm8HBxyjij4Otj9R7PzOHb25AWeqxRQMqFdTrW
-         xVR3Kr7NbIB81qUIJG7pwB9X2nYFkWjlYDUnboueecvTUxT3IR4zCLA7R51yIk0Qj0QY
-         bue4JPDm9lzu7N1xgcxiii3tyuV4lGHlVjasuFOqCc//Y3IY4PS0Egv5lZ6DyjJunkXu
-         crnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679912425;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kVN4bA3aMNTKiMhToGO/PROcH1X2ZJW5cID3K62e6GM=;
-        b=aai3E8QN5J29SdWvP52m0D1Wgf3wV4JqyThpgpGfWy7HkWZohpYVKBB/EM7RezMw7D
-         jUxjZQ/TNLI+3t5zpLy/fwCQdmRqmf5Mv2NOm1ZMhyml9fvDvKXtqA8a3+KkBmX8xX2v
-         iAvjJMinfGTXoH0BChdQvl03i/QWjUkQkBN5aEzA8WFbvKGss/q9QbwpYkL5sl2gguM/
-         9uS3osXOJXImRBPVOdD/QAor8g/2lOOHWBhkp+R3GCxMrjDLTu7upHvZpm6d7Snv/mtE
-         vOagXKFCNZiXSb8Rep1n35D9Lj+VT04AtlYT6+y2xLeZkOy7E5fQDHZECoXLZ/EE72nL
-         qNHA==
-X-Gm-Message-State: AAQBX9erCYsYFLj0GIJdwhiR5a3p09SDvRRRSymvL91eCVWxYneVksOF
-        m10jK9WjvrA/jtvjsGoGK2I=
-X-Google-Smtp-Source: AKy350bQs7h8xcV9TLEaRh7IH0YWMQ3rbMxAMmlsx9SInDtkuyNK9/Z8KgJP1hVh7ALS06wFopyFrg==
-X-Received: by 2002:a1c:f216:0:b0:3ef:5e17:1ed9 with SMTP id s22-20020a1cf216000000b003ef5e171ed9mr6667246wmc.31.1679912424956;
-        Mon, 27 Mar 2023 03:20:24 -0700 (PDT)
-Received: from suse.localnet (host-87-19-99-235.retail.telecomitalia.it. [87.19.99.235])
-        by smtp.gmail.com with ESMTPSA id j6-20020a05600c190600b003ef6bc71cccsm4401373wmq.27.2023.03.27.03.20.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 03:20:24 -0700 (PDT)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ira.weiny@intel.com
-Subject: Re: [git pull] common helper for kmap_local_page() users in local filesystems
-Date:   Mon, 27 Mar 2023 12:20:23 +0200
-Message-ID: <2729240.9PvXe5no7K@suse>
-In-Reply-To: <8232398.NyiUUSuA9g@suse>
-References: <20230310204431.GW3390869@ZenIV> <8232398.NyiUUSuA9g@suse>
+        Mon, 27 Mar 2023 06:27:37 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A7F040C6;
+        Mon, 27 Mar 2023 03:27:20 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 1E78121C2D;
+        Mon, 27 Mar 2023 10:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1679912839; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6zeAapTweggWvHmqJXKCAVkq4U6iU7yqVvakxDRPJlY=;
+        b=ZZLqyqejDT1+lC/IQ0gMRG3AlrSFychR3wkDlFd5FSCq4EHG5rTAB/qYAVNJQbOIZaa/tE
+        9cEv58WBEa0T1IlSWuMEanv6r13TJnifohbH+RP8aLpowMFBupa8uoRGKOlpODLKZ3rmVy
+        pQUpQMYyyQA6DFVHIlMKLaykAM7kom4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1679912839;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6zeAapTweggWvHmqJXKCAVkq4U6iU7yqVvakxDRPJlY=;
+        b=Ogoao4Ypl7iEHpBZ/JQCvSxu+zhkwLijk7xqr9zPLv5AZW9ZPSzECLFMgU2/19hvPq5spU
+        YIMBoNA3iXeoSNBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D3BF313329;
+        Mon, 27 Mar 2023 10:27:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id NGBvMoZvIWTTBgAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Mon, 27 Mar 2023 10:27:18 +0000
+Message-ID: <067f7347-ba10-5405-920c-0f5f985c84f4@suse.cz>
+Date:   Mon, 27 Mar 2023 12:27:18 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH V5 1/2] mm: compaction: move compaction sysctl to its own
+ file
+Content-Language: en-US
+To:     ye xingchen <yexingchen116@gmail.com>, mcgrof@kernel.org
+Cc:     akpm@linux-foundation.org, chi.minghao@zte.com.cn,
+        hch@infradead.org, keescook@chromium.org, linmiaohe@huawei.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, willy@infradead.org, ye.xingchen@zte.com.cn,
+        yzaikin@google.com
+References: <ZB3n1pJZsOK+E/Zk@bombadil.infradead.org>
+ <20230327024939.75976-1-ye.xingchen@zte.com.cn>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20230327024939.75976-1-ye.xingchen@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,41 +79,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On sabato 11 marzo 2023 18:11:01 CEST Fabio M. De Francesco wrote:
-> On venerd=EC 10 marzo 2023 21:44:31 CET Al Viro wrote:
-> > 	kmap_local_page() conversions in local filesystems keep running into
-> >=20
-> > kunmap_local_page()+put_page() combinations; we can keep inventing names
-> > for identical inline helpers, but it's getting rather inconvenient.  I'=
-ve
-> > added a trivial helper to linux/highmem.h instead.
->=20
-> Yeah, "put_and_unmap_page()". Nice helper :-)
+On 3/27/23 04:49, ye xingchen wrote:
+>>> >$ ./scripts/bloat-o-meter vmlinux.old vmlinux
+>>> >add/remove: 1/0 grow/shrink: 1/2 up/down: 346/-350 (-4)
+>>> >Function                                     old     new   delta
+>>> >vm_compaction                                  -     320    +320
+>>> >kcompactd_init                               167     193     +26
+>>> >proc_dointvec_minmax_warn_RT_change          104      10     -94
+>>> >vm_table                                    2112    1856    -256
+>>> >Total: Before=19287558, After=19287554, chg -0.00%
+>>> >
+>>> >So I don't think we need to pause this move or others where are have savings.
+>>> >
+>>> >Minghao, can you fix the commit log, and explain how you are also saving
+>>> >4 bytes as per the above bloat-o-meter results?
+>>> 
+>>> $ ./scripts/bloat-o-meter vmlinux vmlinux.new
+>>> add/remove: 1/0 grow/shrink: 1/1 up/down: 350/-256 (94)
+>>> Function                                     old     new   delta
+>>> vm_compaction                                  -     320    +320
+>>> kcompactd_init                               180     210     +30
+>>> vm_table                                    2112    1856    -256
+>>> Total: Before=21104198, After=21104292, chg +0.00%
+>>> 
+>>> In my environment, kcompactd_init increases by 30 instead of 26.
+>>> And proc_dointvec_minmax_warn_RT_change No expansion.
+>>
+>>How about a defconfig + compaction enabled? Provide that information
+>>and let Vlastimal ACK/NACK the patch.
+> I use x86_defconfig and linux-next-20230327 branch
+> $ make defconfig;make all -j120
+> CONFIG_COMPACTION=y
+> 
+> add/remove: 1/0 grow/shrink: 1/1 up/down: 350/-256 (94)
+> Function                                     old     new   delta
+> vm_compaction                                  -     320    +320
+> kcompactd_init                               180     210     +30
+> vm_table                                    2112    1856    -256
+> Total: Before=21119987, After=21120081, chg +0.00%
 
-[snip]
-
-Hi Al,=20
-
-> Why did you name it "put_and_unmap_page()" instead of=20
-"unmap_and_put_page()",
-> for we always unmap first _and_ put the page immediately the unmapping?
->
-> It seems it want to imply that instead we put first and unmap later (which
-> would be wrong). That name sounds misleading to me and not sound (logical=
-ly
-> speaking).
->=20
-> Am I missing some obscure convention behind your choice of that name for =
-the
-> helper?
-
-Can you please explain what I'm missing behind your motivation?
-
-Thanks,
-
-=46abio
-
-P.S.: Adding Ira to the Cc list, since he's been doing kmap() and=20
-kmap_atomic() conversions long time before I too started with them.
-
-
+No savings then, but to me the patch still seems a worthwile cleanup. But if
+others think the 94 bytes are an issue, it can wait for the new APIs.
