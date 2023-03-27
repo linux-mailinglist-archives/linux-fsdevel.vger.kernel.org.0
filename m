@@ -2,92 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F19336CA22A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 13:08:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D416CA2E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 13:54:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbjC0LI3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 07:08:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53986 "EHLO
+        id S230135AbjC0Lyw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 07:54:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232391AbjC0LIT (ORCPT
+        with ESMTP id S229452AbjC0Lyv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 07:08:19 -0400
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 665EA3C3F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 04:07:56 -0700 (PDT)
-Received: by mail-io1-f70.google.com with SMTP id w4-20020a5d9604000000b0074d326b26bcso5315790iol.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 04:07:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679915265;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K61iKQKSs+OrqcUFMOs1tqEbYkL/JzmFJpzxpBoo9/Y=;
-        b=1Ydlp5ION53fNui/RtYTKMrm29wH+boDb4esuW0Trslt9Hdg87yPed/4UYoe/5lyEt
-         ML5OCkzQGJIQyz8rOWtcAmP6qeJwuA3haMfBWtN4Oc9JPQAEniuU//88z2m97ko1WKOZ
-         WX/lBfOq/9dTllDQb57DlqwvG9v7GHVtashdSLapcOTd2uGubp70SCym/B0Li0bWG+Be
-         pS41bIWxqSl+Sogo1smMZbvF9O99Fb5PfEz8bUmXtb7oVDEOwMD3dEpH48f1hfdDcOIz
-         tXkklMlaT/AJht5jVV0FnvqfNqJRlYeZQ22Loe9XuUVmCgNP729KR5bLpnRJk21ke8M2
-         DcSQ==
-X-Gm-Message-State: AO0yUKUi1fIWVMDTbqrEn47S706cjjpvZNr3BywV9Hn5lIhLYjjDE+wE
-        U6ekJFz/pvAlkv4M2ZEKmlKe5iqHCatbEd3kvZzebv89YK7U
-X-Google-Smtp-Source: AK7set/AbmrXI+T3WJykTpI+bZx/cHOnLM5/1nMiicru5dkQn8cykmtMfNsJKgxbNW4GPZytHAHHu3UV8vIgKnycTN17u0CYtPX2
+        Mon, 27 Mar 2023 07:54:51 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DB723595;
+        Mon, 27 Mar 2023 04:54:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 01951B81116;
+        Mon, 27 Mar 2023 11:54:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13D51C433EF;
+        Mon, 27 Mar 2023 11:54:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679918087;
+        bh=cx5vKI/ygapCQHMUJQtB0SDRpCRJAmHk+8n3arL1sPg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=htnJslidLiwhm5BRGlFi/1Rd07JYW0gSph998eLUjbwgGnaKBsWBPIIlP1IXJ7zMw
+         sf9wVe4tz4eJC8JnM2f+jVj6HRWMxZ60WE/Ttk+fsnzRIPYwov6JNNrTjGe9324KQr
+         M0qGj+/bjgD7WdjEU4UADNfXrRBdkJBxfZN+xe6+/FHmllfbJsVCDE+jNB22FzeN0v
+         mmb8iML6SSz6QUwGPkveifEtyuzphTN0eRPI9WIFJL69j1G+cuKZVbOtfvZl5WU+u6
+         85guMRYy1zpKMI1FG5gAnFzffJZdXwqmRQhkB5f+Y9gxJPi4DAq8RgH0+p1DbrtJHU
+         u3prtLEh4kxOw==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Stephen Kitt <steve@sk2.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Update relatime comments to include equality
+Date:   Mon, 27 Mar 2023 13:54:37 +0200
+Message-Id: <167991793868.1703100.49513335049030523.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230325082232.2017437-1-steve@sk2.org>
+References: <20230325082232.2017437-1-steve@sk2.org>
 MIME-Version: 1.0
-X-Received: by 2002:a02:2208:0:b0:3ad:65e:e489 with SMTP id
- o8-20020a022208000000b003ad065ee489mr4526318jao.1.1679915265502; Mon, 27 Mar
- 2023 04:07:45 -0700 (PDT)
-Date:   Mon, 27 Mar 2023 04:07:45 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a739a605f7dfc08d@google.com>
-Subject: [syzbot] Monthly jfs report
-From:   syzbot <syzbot+list0253d0b13abd2f4c7f49@syzkaller.appspotmail.com>
-To:     jfs-discussion@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=727; i=brauner@kernel.org; h=from:subject:message-id; bh=VkKmONLeacXghE/+OSQuqF8ac8wcW+WUUVla2l6udEc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQoNv8I3HKe6/C97az8m9aKxoiet1rlGPOxfGn4sgC9p9st Xh/l6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI61+G/0EKE4oWZN8K2sLJ7sPM8C rAP+BmqU7z5xUC2o5neDibvBn+x/J9SNNckd9V5CFmupDpcvbM+hkrz504WDDh+3aHBzp8vAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello jfs maintainers/developers,
 
-This is a 30-day syzbot report for the jfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/jfs
+On Sat, 25 Mar 2023 09:22:32 +0100, Stephen Kitt wrote:
+> relatime also updates atime if the previous atime is equal to one or
+> both of the ctime and mtime; a non-strict interpretation of "earlier
+> than" and "younger than" in the comments allows this, but for clarity,
+> this makes it explicit.
+> 
+> Pointed out by "epiii2" and "ctrl-alt-delor" in
+> https://unix.stackexchange.com/q/740862/86440.
+> 
+> [...]
 
-During the period, 3 new issues were detected and 0 were fixed.
-In total, 69 issues are still open and 7 have been fixed so far.
+Seems userspace documentation has been update accordingly. So looks good to me,
 
-Some of the still happening issues:
+tree: https://lore.kernel.org/lkml/20230325082232.2017437-1-steve@sk2.org
+branch: fs.misc
+[1/1] Update relatime comments to include equality
+      commit: d98ffa1aca264ce547b9135135f83d81cfe4345f
 
-Crashes Repro Title
-3712    Yes   UBSAN: shift-out-of-bounds in extAlloc
-              https://syzkaller.appspot.com/bug?extid=5f088f29593e6b4c8db8
-828     Yes   UBSAN: array-index-out-of-bounds in xtInsert
-              https://syzkaller.appspot.com/bug?extid=55a7541cfd25df68109e
-483     Yes   general protection fault in lmLogSync (2)
-              https://syzkaller.appspot.com/bug?extid=e14b1036481911ae4d77
-326     Yes   kernel BUG in jfs_evict_inode
-              https://syzkaller.appspot.com/bug?extid=9c0c58ea2e4887ab502e
-282     Yes   general protection fault in write_special_inodes
-              https://syzkaller.appspot.com/bug?extid=c732e285f8fc38d15916
-184     Yes   kernel BUG in txUnlock
-              https://syzkaller.appspot.com/bug?extid=a63afa301d1258d09267
-143     Yes   UBSAN: array-index-out-of-bounds in txCommit
-              https://syzkaller.appspot.com/bug?extid=0558d19c373e44da3c18
-102     Yes   general protection fault in jfs_flush_journal
-              https://syzkaller.appspot.com/bug?extid=194bfe3476f96782c0b6
-74      Yes   kernel BUG in dbFindLeaf
-              https://syzkaller.appspot.com/bug?extid=dcea2548c903300a400e
-51      Yes   KASAN: use-after-free Read in diFree
-              https://syzkaller.appspot.com/bug?extid=1964c915c8c3913b3d7a
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks!
+Christian
