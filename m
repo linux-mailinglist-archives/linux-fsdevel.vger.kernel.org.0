@@ -2,116 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD8ED6CB009
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 22:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A48E36CB041
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 23:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbjC0Ujo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 16:39:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36994 "EHLO
+        id S231437AbjC0VCH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 17:02:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229601AbjC0Ujn (ORCPT
+        with ESMTP id S231433AbjC0VCD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 16:39:43 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9D35135;
-        Mon, 27 Mar 2023 13:39:42 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id mp3-20020a17090b190300b0023fcc8ce113so13047481pjb.4;
-        Mon, 27 Mar 2023 13:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679949582; x=1682541582;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObIVazuLedmhVZJez+PSFU43TenUmtQ8TSYcPMuU/jk=;
-        b=Vcc3QbMUdQltz74zXwK4M3A/gD/97stMVMWaQSV+2Ak2Pbw0qIpiyaOo6vNPB9fA2T
-         YbFyqCYxP5WnDiT3Tql0Y+n2ZpdB36iiX8gxne/BzqT/GCUorTV+4ORYL/sH85DJrWJM
-         zJheGLpXByjCjyUPuy5X3A4KjRSu/oEOyWDztRVi/ZBozTF24fndbycuDnBMmhTPOM0k
-         FAinhpprVUfX/7JwXnvSJYSBAEIn9C45p3HdMhuMA8ZWEQBxVSsmWwebIaboKh2Li81p
-         WZGFN6G4U7eYqP2UztmtHPloBvAtUEUX+li5Ib2zV4XB51UlzDQe52vvmOXozgZpNIth
-         szCA==
+        Mon, 27 Mar 2023 17:02:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D2D1FC7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 14:01:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679950877;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pePBFHN5s0mkHf+iMKhZSRwNai0pCDXlXPyFKRXDXsc=;
+        b=MUVjvo1pdwxdHsylps3sXG7iZ/5f4LMl2PTjL7L7TvxNObywROTE6gWZcMH816tN3XeGxa
+        R0hPo40b3vIDnXZCGrerGcRN9XdrJbIdZjRnmkqSrnQdDoGFTRa79a3CCW/heFQ7lH8pzA
+        Sp2PAa4Dbxy28GoxiVFypA96W+9Lngo=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-78-9Cz0b-TWPHO6i-COynT2tQ-1; Mon, 27 Mar 2023 17:01:16 -0400
+X-MC-Unique: 9Cz0b-TWPHO6i-COynT2tQ-1
+Received: by mail-qv1-f69.google.com with SMTP id w2-20020a0cc242000000b00583d8e55181so4137282qvh.23
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 14:01:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679949582; x=1682541582;
+        d=1e100.net; s=20210112; t=1679950875; x=1682542875;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ObIVazuLedmhVZJez+PSFU43TenUmtQ8TSYcPMuU/jk=;
-        b=moYRurV1eSk9cVugMKGMpXAc5wZ3fycEpy6kgCYN5EXIFEi8p1EdpWzTEeKcV40Pnd
-         iF6FnujxpFYBYrijB2CigKQmejmhv9epknPdYJCjCIByaiqeBvtiMnWGXE2aFDZg7jKZ
-         T2SoZLhKvHs9ZIPVkPIl+ZLypT5w78p8WP2UVwKjWBfoI6fyogm9oK6cNUrKw1oDw4dn
-         kS0/5sxnG84lA7BJPsRXhcDER8m/ZwsYzYP/eJjHDKqL4vKvdfH/CKjNjtbnmGLwjGWM
-         /hoPqEoW1c6b3a+zlgeRSlOZzv/nLgEYnAgjcR1rpRIhJmDmZIkfvog5q43m7X1kN2YH
-         dqfw==
-X-Gm-Message-State: AAQBX9dM/WfWbxvsc0ZGWLACxNO4+5S2m4Cb1UYrOrvb/YfGn77m/K3Y
-        0hFcJpqjAyi6V/QM/Fb9N6o=
-X-Google-Smtp-Source: AK7set/QzeY8WJz+u9vl8XJyFVi5CfiNP74RpD3vaKFutxcPxN/4hVtPKppeKkaI6JT3PA5UawxOSA==
-X-Received: by 2002:a17:90b:1241:b0:233:a836:15f4 with SMTP id gx1-20020a17090b124100b00233a83615f4mr10440658pjb.1.1679949582086;
-        Mon, 27 Mar 2023 13:39:42 -0700 (PDT)
-Received: from ip-172-31-38-16.us-west-2.compute.internal (ec2-52-37-71-140.us-west-2.compute.amazonaws.com. [52.37.71.140])
-        by smtp.gmail.com with ESMTPSA id s24-20020a170902b19800b0019e5fc21663sm19387378plr.218.2023.03.27.13.39.41
+        bh=pePBFHN5s0mkHf+iMKhZSRwNai0pCDXlXPyFKRXDXsc=;
+        b=MZ1C/RyIrAZ6AHxjs63mkkaLxqLlyVpdsDqp4uRj4ljWCX3Yqw4m8vp2nnAZo4FpqQ
+         i6JaAb/UdIgw1TjInRVF98fjbsE+mj8Glg7ePvrUx/vW/ZTOepcR0xYCeX6xywszLidt
+         s/ptIMuUleZCcu3i77kztn0/n2PRviTmopQY3kWMd3FVH1vw8RxZkHNVOGWEp4ZlNHak
+         tdN/OPhhCS5YgAqRNsl90oEq9XIPImXn1f8ykuH2NfAdOEXbA2GTrKZTUBmYJ+RepiLN
+         3e2DDcR8nQFbgu5J6g1NUw2ggAKh1kVa9kAsYoU5dIG3yiQNOxcOlbuJNWdn3AKLLfNT
+         SPzA==
+X-Gm-Message-State: AAQBX9c6r5HIQIb3RgFmHdye0EXXUsV7oJMtTYaagVYr9B7XcLZ4qkpd
+        IEUXxk45d567bcC5CL7HkY8RPfk5qJtdS0/duX95rFcdlFVFvb4wmgYzgoCR/p2pM7taC9iKfPf
+        YAjfueibkHRRXjP4B5Z9uES654g==
+X-Received: by 2002:a05:6214:528f:b0:5af:3a13:202d with SMTP id kj15-20020a056214528f00b005af3a13202dmr20867695qvb.4.1679950875515;
+        Mon, 27 Mar 2023 14:01:15 -0700 (PDT)
+X-Google-Smtp-Source: AKy350aVDWYJQwWqIHwZUh5ktHNEupzgPiHGj1mY8GkaRJKKsVQEhsdqRHbLM5b4eazfi17GQ4yXtw==
+X-Received: by 2002:a05:6214:528f:b0:5af:3a13:202d with SMTP id kj15-20020a056214528f00b005af3a13202dmr20867635qvb.4.1679950875081;
+        Mon, 27 Mar 2023 14:01:15 -0700 (PDT)
+Received: from x1n (bras-base-aurron9127w-grc-40-70-52-229-124.dsl.bell.ca. [70.52.229.124])
+        by smtp.gmail.com with ESMTPSA id jh19-20020a0562141fd300b005dd8b93457csm3195224qvb.20.2023.03.27.14.01.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 13:39:41 -0700 (PDT)
-Date:   Mon, 27 Mar 2023 20:39:39 +0000
-From:   Alok Tiagi <aloktiagi@gmail.com>
-To:     Tycho Andersen <tycho@tycho.pizza>
-Cc:     Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
-        willy@infradead.org, David.Laight@aculab.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, hch@infradead.org, aloktiagi@gmail.com
-Subject: Re: [RFC v4 2/2] file, epoll: Implement do_replace() and
- eventpoll_replace()
-Message-ID: <ZCH/C89TwQ/aM1Rr@ip-172-31-38-16.us-west-2.compute.internal>
-References: <20230324063422.1031181-2-aloktiagi@gmail.com>
- <ZBzRfDnHaEycE72s@ip-172-31-38-16.us-west-2.compute.internal>
- <20230324082344.xgze2vu3ds2kubcz@wittgenstein>
- <ZB2o8cs+VTQlz5GA@tycho.pizza>
- <20230327090106.zylztuk77vble7ye@wittgenstein>
- <ZCGU5JBg02+DU6JN@tycho.pizza>
- <ZCGXNwvymHVJ7O6K@tycho.pizza>
+        Mon, 27 Mar 2023 14:01:14 -0700 (PDT)
+Date:   Mon, 27 Mar 2023 17:01:13 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] userfaultfd: don't fail on unrecognized features
+Message-ID: <ZCIEGblnsWHKF8RD@x1n>
+References: <20220722201513.1624158-1-axelrasmussen@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZCGXNwvymHVJ7O6K@tycho.pizza>
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220722201513.1624158-1-axelrasmussen@google.com>
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 07:16:39AM -0600, Tycho Andersen wrote:
-> On Mon, Mar 27, 2023 at 07:06:46AM -0600, Tycho Andersen wrote:
-> > On Mon, Mar 27, 2023 at 11:01:06AM +0200, Christian Brauner wrote:
-> > > On Fri, Mar 24, 2023 at 07:43:13AM -0600, Tycho Andersen wrote:
-> > > > Perhaps we could add a flag that people could set from SECCOMP_ADDFD
-> > > > asking for this extra behavior?
-> > > 
-> > >         +       if (fd > 0 && addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_EPOLL) {
-> > >         +               /*
-> > >         +                * - retrieve old struct file that addfd->fd refered to if any.
-> > >         +                * - call your epoll seccomp api to update the references in the epoll instance
-> > >         +                */
-> > > 			epoll_seccomp_notify()
-> > >         +       }
-> > >         +
-> > >         +       if (fd > 0 && addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_IO_URING) {
-> > >         +               /*
-> > >         +                * - call your io_uring seccomp api to update the references in the io_uring instance
-> > >         +                */
-> > > 			io_uring_seccomp_notify()
-> > >         +       }
-> > 
-> > Looks reasonable to me, thanks.
-> 
-> One change I might suggest is only using a single flag bit -- we don't
-> need to consume all of seccomp's remaining flag bits with the various
-> subsystems. If you want to do this logic for epoll, you almost
-> certainly want it for io_uring, select, and whatever else is out
-> there.
-> 
-> Tycho
+I think I overlooked this patch..
 
-Thank you for your comment and thoughts on this Christian. The per-subsystem
-helper and calling this from seccomp add fd looks like a cleaner API. I'll
-address the changes in v5.
+Axel, could you explain why this patch is correct?  Comments inline.
+
+On Fri, Jul 22, 2022 at 01:15:13PM -0700, Axel Rasmussen wrote:
+> The basic interaction for setting up a userfaultfd is, userspace issues
+> a UFFDIO_API ioctl, and passes in a set of zero or more feature flags,
+> indicating the features they would prefer to use.
+> 
+> Of course, different kernels may support different sets of features
+> (depending on kernel version, kconfig options, architecture, etc).
+> Userspace's expectations may also not match: perhaps it was built
+> against newer kernel headers, which defined some features the kernel
+> it's running on doesn't support.
+> 
+> Currently, if userspace passes in a flag we don't recognize, the
+> initialization fails and we return -EINVAL. This isn't great, though.
+
+Why?  IIUC that's the major way for user app to detect any misconfig of
+feature list so it can bail out early.
+
+Quoting from man page (ioctl_userfaultfd(2)):
+
+UFFDIO_API
+       (Since Linux 4.3.)  Enable operation of the userfaultfd and perform API handshake.
+
+       ...
+
+           struct uffdio_api {
+               __u64 api;        /* Requested API version (input) */
+               __u64 features;   /* Requested features (input/output) */
+               __u64 ioctls;     /* Available ioctl() operations (output) */
+           };
+
+       ...
+
+       For Linux kernel versions before 4.11, the features field must be
+       initialized to zero before the call to UFFDIO_API, and zero (i.e.,
+       no feature bits) is placed in the features field by the kernel upon
+       return from ioctl(2).
+
+       ...
+
+       To enable userfaultfd features the application should set a bit
+       corresponding to each feature it wants to enable in the features
+       field.  If the kernel supports all the requested features it will
+       enable them.  Otherwise it will zero out the returned uffdio_api
+       structure and return EINVAL.
+
+IIUC the right way to use this API is first probe with features==0, then
+the kernel will return all the supported features, then the user app should
+enable only a subset (or all, but not a superset) of supported ones in the
+next UFFDIO_API with a new uffd.
+
+> Userspace doesn't have an obvious way to react to this; sure, one of the
+> features I asked for was unavailable, but which one? The only option it
+> has is to turn off things "at random" and hope something works.
+> 
+> Instead, modify UFFDIO_API to just ignore any unrecognized feature
+> flags. The interaction is now that the initialization will succeed, and
+> as always we return the *subset* of feature flags that can actually be
+> used back to userspace.
+> 
+> Now userspace has an obvious way to react: it checks if any flags it
+> asked for are missing. If so, it can conclude this kernel doesn't
+> support those, and it can either resign itself to not using them, or
+> fail with an error on its own, or whatever else.
+> 
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> ---
+>  fs/userfaultfd.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index e943370107d0..4974da1f620c 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -1923,10 +1923,8 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
+>  	ret = -EFAULT;
+>  	if (copy_from_user(&uffdio_api, buf, sizeof(uffdio_api)))
+>  		goto out;
+> -	features = uffdio_api.features;
+> -	ret = -EINVAL;
+> -	if (uffdio_api.api != UFFD_API || (features & ~UFFD_API_FEATURES))
+> -		goto err_out;
+
+What's worse is that I think you removed the only UFFD_API check.  Although
+I'm not sure whether it'll be extended in the future or not at all (very
+possible we keep using 0xaa forever..), but removing this means we won't be
+able to extend it to a new api version in the future, and misconfig of
+uffdio_api will wrongly succeed I think:
+
+	/* Test wrong UFFD_API */
+	uffdio_api.api = 0xab;
+	uffdio_api.features = 0;
+	if (ioctl(uffd, UFFDIO_API, &uffdio_api) == 0)
+		err("UFFDIO_API should fail but didn't");
+
+> +	/* Ignore unsupported features (userspace built against newer kernel) */
+> +	features = uffdio_api.features & UFFD_API_FEATURES;
+>  	ret = -EPERM;
+>  	if ((features & UFFD_FEATURE_EVENT_FORK) && !capable(CAP_SYS_PTRACE))
+>  		goto err_out;
+> -- 
+> 2.37.1.359.gd136c6c3e2-goog
+> 
+
+-- 
+Peter Xu
+
