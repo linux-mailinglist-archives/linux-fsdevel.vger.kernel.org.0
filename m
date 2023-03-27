@@ -2,354 +2,297 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D05FE6C9ECD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 11:03:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 128366CA0D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 12:08:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233108AbjC0JDf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 05:03:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42072 "EHLO
+        id S233393AbjC0KI2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 06:08:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232542AbjC0JDE (ORCPT
+        with ESMTP id S233345AbjC0KI0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 05:03:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483DB7A89;
-        Mon, 27 Mar 2023 02:01:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BA80061147;
-        Mon, 27 Mar 2023 09:01:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 950AAC433D2;
-        Mon, 27 Mar 2023 09:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679907671;
-        bh=ulak5wtyiQ4tNHvUePs8KMYfCLZkRQN1k1n818e0xfE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QHgELZK5b3dPPohgvz4/Ntoi0Hr0Kr1wg97opwEiGqA1m/ITRmWBpGzvZMxcRQ/SO
-         BZQg2aaBVc/eoUkbtPAsYHrX7hG5qbG/eGYOK4SwWJ8K27PgRJOjDtnmX631tSTLpl
-         KoFafui0vN3xZBSsDRLL5qksRXPOTGk46gRhD5RRB1pqmxx+CTzTCDAoKVMZXRQnG/
-         brh17kxidevKbNBBNx/9ECm3Y4Z/w/b8l76NH6Y4valaWK+8fRE/WSxqNZbcxRia69
-         Drjj7XHr8VsrwUsUp/mgtzg8cce0AqhhB5ThSnssgBoz35BI3s8uQfsIAorj39SNOW
-         34Lx271kejJ/Q==
-Date:   Mon, 27 Mar 2023 11:01:06 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Tycho Andersen <tycho@tycho.pizza>
-Cc:     aloktiagi <aloktiagi@gmail.com>, viro@zeniv.linux.org.uk,
-        willy@infradead.org, David.Laight@aculab.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, hch@infradead.org
-Subject: Re: [RFC v4 2/2] file, epoll: Implement do_replace() and
- eventpoll_replace()
-Message-ID: <20230327090106.zylztuk77vble7ye@wittgenstein>
-References: <20230324063422.1031181-2-aloktiagi@gmail.com>
- <ZBzRfDnHaEycE72s@ip-172-31-38-16.us-west-2.compute.internal>
- <20230324082344.xgze2vu3ds2kubcz@wittgenstein>
- <ZB2o8cs+VTQlz5GA@tycho.pizza>
+        Mon, 27 Mar 2023 06:08:26 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3BF649E5;
+        Mon, 27 Mar 2023 03:08:24 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id t17-20020a05600c451100b003edc906aeeaso4664901wmo.1;
+        Mon, 27 Mar 2023 03:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679911702;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ns8gSkJtJW5rMO78ceC2Rx9q40ENuy+LObl6UHDFr0s=;
+        b=A2s+PhaodoqCLLLRJguEBx3d5jAeCOVtN7rBoBFlXu4437lLyE5qxigqlp4rG92yr1
+         95tnxTkjrJRU+2curSzfyWYGqUI9PFyA+vw8bvMSo2OLtOlgcuhmqIwSkBoQn2Z3L4Oz
+         bQH5pite9NsfEJGM1KMxUYko0n6Gf0/RfwC7sMZY+cozQICRQumh2MntgVQix2tSURR6
+         u9ZU90VaKlX+Rleu38iP/x8C3PQgyYqAhCpUICjvzUUczbgigBTGA3rdOOJaf0Gxqu42
+         +RelkfsqsxBzsuNlGOk4Df0s9hs8dQdhm5p7S2IO4XRDARLrno7uMkeQr/S8crbwaEMl
+         r59w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679911702;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ns8gSkJtJW5rMO78ceC2Rx9q40ENuy+LObl6UHDFr0s=;
+        b=VhgDudWGdKrhCwjqacLbTeAQ0b993omBtQHP/VDrFzxBBogZCq4bcnZwrJYLJqzVWG
+         +x7tQBTjNCo7pPzKEc/t+twC2zjmU8mAYs4vQQyO1d4313ooJXjAKsATs+P8yLUXEDat
+         2ghq4vMXRfTqnfMduJbr/Pj/DiJw0TMOxiRYl+uwZGWTDYOMQjpgoxJBzrzVbrwa0Nqw
+         4B0qRQ8OfQmkFVnKsROZ1qOEYQWylWOobV0JOLXMOKJuOghA3crYo9UjXZcTLTRoznta
+         To4F3QL4GWYc67uhibQE2bchJ5OQlRxD16rC8MfikeXp13v8zC1p4E63/xEwR2xTlulg
+         +gCQ==
+X-Gm-Message-State: AO0yUKXIE4+i+8mCnQUdy4KdwCfeIMqQ1Mos2LijgJYRR0603/Ga+MdW
+        GfumjrcZ8pJbklgPzM4xm60=
+X-Google-Smtp-Source: AK7set/OUvcas6A4CNBYtPhi8pDjfVzAQ9EoB/9pQmPLmbliqfY1SslWKQkt44yWgum//NbLWWwBEQ==
+X-Received: by 2002:a7b:ca4a:0:b0:3ed:af6b:7fb3 with SMTP id m10-20020a7bca4a000000b003edaf6b7fb3mr9147943wml.2.1679911702205;
+        Mon, 27 Mar 2023 03:08:22 -0700 (PDT)
+Received: from suse.localnet (host-87-19-99-235.retail.telecomitalia.it. [87.19.99.235])
+        by smtp.gmail.com with ESMTPSA id n10-20020a05600c3b8a00b003ede3f5c81fsm8404891wms.41.2023.03.27.03.08.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Mar 2023 03:08:21 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Benjamin LaHaise <bcrl@kvack.org>, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, linux-kernel@vger.kernel.org,
+        "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Kent Overstreet <kent.overstreet@linux.dev>
+Subject: Re: [PATCH v3] fs/aio: Replace kmap{,_atomic}() with kmap_local_page()
+Date:   Mon, 27 Mar 2023 12:08:20 +0200
+Message-ID: <2114426.VsPgYW4pTa@suse>
+In-Reply-To: <20230119162055.20944-1-fmdefrancesco@gmail.com>
+References: <20230119162055.20944-1-fmdefrancesco@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZB2o8cs+VTQlz5GA@tycho.pizza>
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 24, 2023 at 07:43:13AM -0600, Tycho Andersen wrote:
-> On Fri, Mar 24, 2023 at 09:23:44AM +0100, Christian Brauner wrote:
-> > On Thu, Mar 23, 2023 at 10:23:56PM +0000, Alok Tiagi wrote:
-> > > On Mon, Mar 20, 2023 at 03:51:03PM +0100, Christian Brauner wrote:
-> > > > On Sat, Mar 18, 2023 at 06:02:48AM +0000, aloktiagi wrote:
-> > > > > Introduce a mechanism to replace a file linked in the epoll interface or a file
-> > > > > that has been dup'ed by a file received via the replace_fd() interface.
-> > > > > 
-> > > > > eventpoll_replace() is called from do_replace() and finds all instances of the
-> > > > > file to be replaced and replaces them with the new file.
-> > > > > 
-> > > > > do_replace() also replaces the file in the file descriptor table for all fd
-> > > > > numbers referencing it with the new file.
-> > > > > 
-> > > > > We have a use case where multiple IPv6 only network namespaces can use a single
-> > > > > IPv4 network namespace for IPv4 only egress connectivity by switching their
-> > > > > sockets from IPv6 to IPv4 network namespace. This allows for migration of
-> > > > > systems to IPv6 only while keeping their connectivity to IPv4 only destinations
-> > > > > intact.
-> > > > > 
-> > > > > Today, we achieve this by setting up seccomp filter to intercept network system
-> > > > > calls like connect() from a container in a container manager which runs in an
-> > > > > IPv4 only network namespace. The container manager creates a new IPv4 connection
-> > > > > and injects the new file descriptor through SECCOMP_NOTIFY_IOCTL_ADDFD replacing
-> > > > > the original file descriptor from the connect() call. This does not work for
-> > > > > cases where the original file descriptor is handed off to a system like epoll
-> > > > > before the connect() call. After a new file descriptor is injected the original
-> > > > > file descriptor being referenced by the epoll fd is not longer valid leading to
-> > > > > failures. As a workaround the container manager when intercepting connect()
-> > > > > loops through all open socket file descriptors to check if they are referencing
-> > > > > the socket attempting the connect() and replace the reference with the to be
-> > > > > injected file descriptor. This workaround is cumbersome and makes the solution
-> > > > > prone to similar yet to be discovered issues.
-> > > > > 
-> > > > > The above change will enable us remove the workaround in the container manager
-> > > > > and let the kernel handle the replacement correctly.
-> > > > > 
-> > > > > Signed-off-by: aloktiagi <aloktiagi@gmail.com>
-> > > > > ---
-> > > > >  fs/eventpoll.c                                | 38 ++++++++
-> > > > >  fs/file.c                                     | 54 +++++++++++
-> > > > >  include/linux/eventpoll.h                     | 18 ++++
-> > > > >  include/linux/file.h                          |  1 +
-> > > > >  tools/testing/selftests/seccomp/seccomp_bpf.c | 97 +++++++++++++++++++
-> > > > >  5 files changed, 208 insertions(+)
-> > > > > 
-> > > > > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > > > > index 64659b110973..958ad995fd45 100644
-> > > > > --- a/fs/eventpoll.c
-> > > > > +++ b/fs/eventpoll.c
-> > > > > @@ -935,6 +935,44 @@ void eventpoll_release_file(struct file *file)
-> > > > >  	mutex_unlock(&epmutex);
-> > > > >  }
-> > > > >  
-> > > > > +static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
-> > > > > +			struct file *tfile, int fd, int full_check);
-> > > > > +
-> > > > > +/*
-> > > > > + * This is called from eventpoll_replace() to replace a linked file in the epoll
-> > > > > + * interface with a new file received from another process. This is useful in
-> > > > > + * cases where a process is trying to install a new file for an existing one
-> > > > > + * that is linked in the epoll interface
-> > > > > + */
-> > > > > +void eventpoll_replace_file(struct file *toreplace, struct file *file)
-> > > > > +{
-> > > > > +	int fd;
-> > > > > +	struct eventpoll *ep;
-> > > > > +	struct epitem *epi;
-> > > > > +	struct hlist_node *next;
-> > > > > +	struct epoll_event event;
-> > > > > +
-> > > > > +	if (!file_can_poll(file))
-> > > > > +		return;
-> > > > > +
-> > > > > +	mutex_lock(&epmutex);
-> > > > > +	if (unlikely(!toreplace->f_ep)) {
-> > > > > +		mutex_unlock(&epmutex);
-> > > > > +		return;
-> > > > > +	}
-> > > > > +
-> > > > > +	hlist_for_each_entry_safe(epi, next, toreplace->f_ep, fllink) {
-> > > > > +		ep = epi->ep;
-> > > > > +		mutex_lock(&ep->mtx);
-> > > > > +		fd = epi->ffd.fd;
-> > > > > +		event = epi->event;
-> > > > > +		ep_remove(ep, epi);
-> > > > > +		ep_insert(ep, &event, file, fd, 1);
-> > > > 
-> > > > So, ep_remove() can't fail but ep_insert() can. Maybe that doesn't
-> > > > matter...
-> > > > 
-> > > > > +		mutex_unlock(&ep->mtx);
-> > > > > +	}
-> > > > > +	mutex_unlock(&epmutex);
-> > > > > +}
-> > > > 
-> > > > Andrew carries a patchset that may impact the locking here:
-> > > > 
-> > > > https://lore.kernel.org/linux-fsdevel/323de732635cc3513c1837c6cbb98f012174f994.1678312201.git.pabeni@redhat.com
-> > > > 
-> > > > I have to say that this whole thing has a very unpleasant taste to it.
-> > > > Replacing a single fd from seccomp is fine, wading through the fdtable
-> > > > to replace all fds referencing the same file is pretty nasty. Especially
-> > > > with the global epoll mutex involved in all of this.
-> > > > 
-> > > > And what limits this to epoll. I'm seriously asking aren't there
-> > > > potentially issues for fds somehow referenced in io_uring instances as
-> > > > well?
-> > > > 
-> > > > I'm not convinced this belongs here yet...
-> > > 
-> > > Thank you for reviewing and proving a link to Andrew's patch.
-> > > 
-> > > I think just replacing a single fd from seccomp leaves this feature in an
-> > > incomplete state. As a user of this feature, it means I need to figure out what
-> > > all file descriptors are referencing this file eg. epoll, dup'ed fds etc. This
-> > > patch is an attempt to complete this seccomp feature and also move the logic of
-> > > figuring out the references to the kernel.
-> > 
-> > I'm still not convinced.
-> > 
-> > You're changing the semantics of the replace file feature in seccomp
-> > drastically. Whereas now it means replace the file a single fd refers to
-> > you're now letting it replace multiple fds.
-> 
-> Yes; the crux of the patch is really the epoll part, not the multiple
-> replace part. IMO, we should drop the multiple replace bit, as I agree
-> it is a pretty big change.
-> 
-> The change in semantics w.r.t. epoll() (and eventually others),
-> though, is important. The way it currently works is not really
-> helpful.
-> 
-> Perhaps we could add a flag that people could set from SECCOMP_ADDFD
-> asking for this extra behavior?
+On gioved=C3=AC 19 gennaio 2023 17:20:55 CEST Fabio M. De Francesco wrote:
+> The use of kmap() and kmap_atomic() are being deprecated in favor of
+> kmap_local_page().
+>=20
+> There are two main problems with kmap(): (1) It comes with an overhead as
+> the mapping space is restricted and protected by a global lock for
+> synchronization and (2) it also requires global TLB invalidation when the
+> kmap=E2=80=99s pool wraps and it might block when the mapping space is fu=
+lly
+> utilized until a slot becomes available.
+>=20
+> With kmap_local_page() the mappings are per thread, CPU local, can take
+> page faults, and can be called from any context (including interrupts).
+> It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
+> the tasks can be preempted and, when they are scheduled to run again, the
+> kernel virtual addresses are restored and still valid.
+>=20
+> The use of kmap_local_page() in fs/aio.c is "safe" in the sense that the
+> code don't hands the returned kernel virtual addresses to other threads
+> and there are no nesting which should be handled with the stack based
+> (LIFO) mappings/un-mappings order. Furthermore, the code between the old
+> kmap_atomic()/kunmap_atomic() did not depend on disabling page-faults
+> and/or preemption, so that there is no need to call pagefault_disable()
+> and/or preempt_disable() before the mappings.
+>=20
+> Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
+> fs/aio.c.
+>=20
+> Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
+> with HIGHMEM64GB enabled.
+>
+Hi Al,
 
-So I've been thinking about this. I still maintain that fdtable helpers
-such as replace_fd() are the wrong place to solve any of this. Again,
-they shouldn't interfer with other subsystems like epoll or io_uring in
-any semantically fundamental way. The exception I can see is that when
-the type of fd/file requires specific actions to be performed during
-replace such as sockets.
+I see that this patch is here since Jan 19, 2023.
+Is there anything that prevents its merging? Am I expected to do further=20
+changes? Please notice that it already had three "Reviewed-by:" tags (again=
+=20
+thanks to Ira, Jeff and Kent).=20
 
-The reason why I keep stressing this is because you'll almost certainly
-will come around the corner with more patches in the future to update
-other places where the replaced fd implicitly references the old file
-even though the fdtable has already been updated to point to the new
-file. And if you don't someone else might.
+Can you please take it in your three?
 
-And that to me implies that we want per-subsystem helpers to update the
-old file references. What references to update should be selectable by
-the supervisor for backward compatibility.
+Thanks,
 
-I think that's cleaner API wise and doesn't violate layering quite as badly.
+=46abio
+>=20
+> Cc: "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>
+> Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+> Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+> ---
+>=20
+> I've tested with "./check -g aio". The tests in this group fail 3/26
+> times, with and without my patch. Therefore, these changes don't introduce
+> further errors. I'm not aware of any other tests which I may run, so that
+> any suggestions would be precious and much appreciated :-)
+>=20
+> I'm resending this patch because some recipients were missing in the
+> previous submissions. In the meantime I'm also adding some more informati=
+on
+> in the commit message. There are no changes in the code.
+>=20
+> Changes from v1:
+>         Add further information in the commit message, and the
+>         "Reviewed-by" tags from Ira and Jeff (thanks!).
+>=20
+> Changes from v2:
+> 	Rewrite a block of code between mapping/un-mapping to improve
+> 	readability in aio_setup_ring() and add a missing call to
+> 	flush_dcache_page() in ioctx_add_table() (thanks to Al Viro);
+> 	Add a "Reviewed-by" tag from Kent Overstreet (thanks).
+>=20
+>  fs/aio.c | 46 +++++++++++++++++++++-------------------------
+>  1 file changed, 21 insertions(+), 25 deletions(-)
+>=20
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 562916d85cba..9b39063dc7ac 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -486,7 +486,6 @@ static const struct address_space_operations=20
+aio_ctx_aops
+> =3D {
+>=20
+>  static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+>  {
+> -	struct aio_ring *ring;
+>  	struct mm_struct *mm =3D current->mm;
+>  	unsigned long size, unused;
+>  	int nr_pages;
+> @@ -567,16 +566,12 @@ static int aio_setup_ring(struct kioctx *ctx, unsig=
+ned
+> int nr_events) ctx->user_id =3D ctx->mmap_base;
+>  	ctx->nr_events =3D nr_events; /* trusted copy */
+>=20
+> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
+> -	ring->nr =3D nr_events;	/* user copy */
+> -	ring->id =3D ~0U;
+> -	ring->head =3D ring->tail =3D 0;
+> -	ring->magic =3D AIO_RING_MAGIC;
+> -	ring->compat_features =3D AIO_RING_COMPAT_FEATURES;
+> -	ring->incompat_features =3D AIO_RING_INCOMPAT_FEATURES;
+> -	ring->header_length =3D sizeof(struct aio_ring);
+> -	kunmap_atomic(ring);
+> -	flush_dcache_page(ctx->ring_pages[0]);
+> +	memcpy_to_page(ctx->ring_pages[0], 0, (const char *)&(struct=20
+aio_ring) {
+> +		       .nr =3D nr_events, .id =3D ~0U, .magic =3D=20
+AIO_RING_MAGIC,
+> +		       .compat_features =3D AIO_RING_COMPAT_FEATURES,
+> +		       .incompat_features =3D AIO_RING_INCOMPAT_FEATURES,
+> +		       .header_length =3D sizeof(struct aio_ring) },
+> +		       sizeof(struct aio_ring));
+>=20
+>  	return 0;
+>  }
+> @@ -678,9 +673,10 @@ static int ioctx_add_table(struct kioctx *ctx, struct
+> mm_struct *mm) * we are protected from page migration
+>  					 * changes ring_pages by -
+>ring_lock.
+>  					 */
+> -					ring =3D kmap_atomic(ctx-
+>ring_pages[0]);
+> +					ring =3D kmap_local_page(ctx-
+>ring_pages[0]);
+>  					ring->id =3D ctx->id;
+> -					kunmap_atomic(ring);
+> +					kunmap_local(ring);
+> +					flush_dcache_page(ctx-
+>ring_pages[0]);
+>  					return 0;
+>  				}
+>=20
+> @@ -1021,9 +1017,9 @@ static void user_refill_reqs_available(struct kioctx
+> *ctx) * against ctx->completed_events below will make sure we do the
+>  		 * safe/right thing.
+>  		 */
+> -		ring =3D kmap_atomic(ctx->ring_pages[0]);
+> +		ring =3D kmap_local_page(ctx->ring_pages[0]);
+>  		head =3D ring->head;
+> -		kunmap_atomic(ring);
+> +		kunmap_local(ring);
+>=20
+>  		refill_reqs_available(ctx, head, ctx->tail);
+>  	}
+> @@ -1129,12 +1125,12 @@ static void aio_complete(struct aio_kiocb *iocb)
+>  	if (++tail >=3D ctx->nr_events)
+>  		tail =3D 0;
+>=20
+> -	ev_page =3D kmap_atomic(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+> +	ev_page =3D kmap_local_page(ctx->ring_pages[pos /=20
+AIO_EVENTS_PER_PAGE]);
+>  	event =3D ev_page + pos % AIO_EVENTS_PER_PAGE;
+>=20
+>  	*event =3D iocb->ki_res;
+>=20
+> -	kunmap_atomic(ev_page);
+> +	kunmap_local(ev_page);
+>  	flush_dcache_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+>=20
+>  	pr_debug("%p[%u]: %p: %p %Lx %Lx %Lx\n", ctx, tail, iocb,
+> @@ -1148,10 +1144,10 @@ static void aio_complete(struct aio_kiocb *iocb)
+>=20
+>  	ctx->tail =3D tail;
+>=20
+> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
+> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
+>  	head =3D ring->head;
+>  	ring->tail =3D tail;
+> -	kunmap_atomic(ring);
+> +	kunmap_local(ring);
+>  	flush_dcache_page(ctx->ring_pages[0]);
+>=20
+>  	ctx->completed_events++;
+> @@ -1211,10 +1207,10 @@ static long aio_read_events_ring(struct kioctx *c=
+tx,
+>  	mutex_lock(&ctx->ring_lock);
+>=20
+>  	/* Access to ->ring_pages here is protected by ctx->ring_lock. */
+> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
+> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
+>  	head =3D ring->head;
+>  	tail =3D ring->tail;
+> -	kunmap_atomic(ring);
+> +	kunmap_local(ring);
+>=20
+>  	/*
+>  	 * Ensure that once we've read the current tail pointer, that
+> @@ -1246,10 +1242,10 @@ static long aio_read_events_ring(struct kioctx *c=
+tx,
+>  		avail =3D min(avail, nr - ret);
+>  		avail =3D min_t(long, avail, AIO_EVENTS_PER_PAGE - pos);
+>=20
+> -		ev =3D kmap(page);
+> +		ev =3D kmap_local_page(page);
+>  		copy_ret =3D copy_to_user(event + ret, ev + pos,
+>  					sizeof(*ev) * avail);
+> -		kunmap(page);
+> +		kunmap_local(ev);
+>=20
+>  		if (unlikely(copy_ret)) {
+>  			ret =3D -EFAULT;
+> @@ -1261,9 +1257,9 @@ static long aio_read_events_ring(struct kioctx *ctx,
+>  		head %=3D ctx->nr_events;
+>  	}
+>=20
+> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
+> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
+>  	ring->head =3D head;
+> -	kunmap_atomic(ring);
+> +	kunmap_local(ring);
+>  	flush_dcache_page(ctx->ring_pages[0]);
+>=20
+>  	pr_debug("%li  h%u t%u\n", ret, head, tail);
+> --
+> 2.39.0
 
-Another thing that struck me is that you don't require none of the
-fdtable locks to do other updates. So here's my
-UNTESTED+NON-COMPILING+DRAFT+STRAWMAN+SKETCH proposal:
 
-        diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-        index 0fdc6ef02b94..82beca4c24da 100644
-        --- a/include/uapi/linux/seccomp.h
-        +++ b/include/uapi/linux/seccomp.h
-        @@ -118,6 +118,13 @@ struct seccomp_notif_resp {
-         /* valid flags for seccomp_notif_addfd */
-         #define SECCOMP_ADDFD_FLAG_SETFD       (1UL << 0) /* Specify remote fd */
-         #define SECCOMP_ADDFD_FLAG_SEND                (1UL << 1) /* Addfd and return it, atomically */
-        +#define SECCOMP_ADDFD_FLAG_EPOLL       (1UL << 2) /* Update epoll references */
-        +#define SECCOMP_ADDFD_FLAG_IOURING     (1UL << 3) /* Update io_uring references */
-        +#define SECCOMP_ADDFD_FLAG_FANOTIFY    (1UL << 4) /* Update fanotify references (probably nonsensical, but just here for illustration purposes) */
-        +
-        +#define SECOMP_ADDFD_FLAG_EVENTS                                 \
-        +       (SECCOMP_ADDFD_FLAG_EPOLL | SECCOMP_ADDFD_FLAG_IOURING | \
-        +        SECCOMP_ADDFD_FLAG_FANOTIFY)
-        
-         /**
-          * struct seccomp_notif_addfd
-        diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-        index cebf26445f9e..02f8b67a9ba2 100644
-        --- a/kernel/seccomp.c
-        +++ b/kernel/seccomp.c
-        @@ -1066,6 +1066,24 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
-                        fd = receive_fd(addfd->file, addfd->flags);
-                else
-                        fd = receive_fd_replace(addfd->fd, addfd->file, addfd->flags);
-        +
-        +       if (fd > 0 && addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_EPOLL) {
-        +               /*
-        +                * - retrieve old struct file that addfd->fd refered to if any.
-        +                * - call your epoll seccomp api to update the references in the epoll instance
-        +                */
-			epoll_seccomp_notify()
-        +       }
-        +
-        +       if (fd > 0 && addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_IO_URING) {
-        +               /*
-        +                * - call your io_uring seccomp api to update the references in the io_uring instance
-        +                */
-			io_uring_seccomp_notify()
-        +       }
-        +
-        +       .
-        +       . I WILL DEFO NOT COMPILE
-        +       .
-        +
-                addfd->ret = fd;
-        
-                if (addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_SEND) {
-        @@ -1613,12 +1631,16 @@ static long seccomp_notify_addfd(struct seccomp_filter *filter,
-                if (addfd.newfd_flags & ~O_CLOEXEC)
-                        return -EINVAL;
-        
-        -       if (addfd.flags & ~(SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_SEND))
-        +       if (addfd.flags & ~(SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_SEND |
-        +                           SECCOMP_ADDFD_FLAG_EPOLL))
-                        return -EINVAL;
-        
-                if (addfd.newfd && !(addfd.flags & SECCOMP_ADDFD_FLAG_SETFD))
-                        return -EINVAL;
-        
-        +       if ((flags & SECCOMP_ADDFD_FLAG_EPOLL) && !add.newfd)
-        +               return -EINVAL;
-        +
-                kaddfd.file = fget(addfd.srcfd);
-                if (!kaddfd.file)
-                        return -EBADF;
 
-You might want to add a new member to struct seccomp_kaddfd so when you replace
-the file you can stash the reference to the old file and pass it to the helpers
-where things get updated:
 
-        struct seccomp_kaddfd {
-               struct file *file;
-        +      struct file *old_file;
-               int fd;
-               unsigned int flags;
-               __u32 ioctl_flags;
-
-With this added you can int the future go to each subsystem and ask them to
-expose you a function to update file references after you updated it in
-the caller's fdtable. But the VFS/fdtable needs nothing to do with this
-after replace_fd() has been called.
-
-So then we can place all of these updates under new addfd flags and
-maintain backward compatibility for older seccomp clients which I
-pointed out in the other mail (So basically yes, we should do flags as
-you also asked/suggested in your reply.).
-
-For convenience we can expose defines like SECOMP_ADDFD_FLAG_EVENTS that
-allow userspace to specify that they want the full shebang update.
-
-Since the seccomp addfd uapi struct is extensible you should be pretty
-much future prove as well.
-
-I'm sure there's subtleties I miss but I think that's a better way forward.
-
-> 
-> > > 
-> > > The epmutex is taken when the file is replaced in the epoll interface. This is
-> > > similar to what would happen when eventpoll_release would be called for this
-> > > same file when it is ultimately released from __fput().
-> > > 
-> > > This is indeed not limited to epoll and the file descriptor table, but this
-> > > current patch addresses is limited to these interfaces. We can create a separate
-> > > one for io_uring.
-> > 
-> > The criteria for when it's sensible to update an fd to refer to the new
-> > file and when not are murky here and tailored to this very specific
-> > use-case. We shouldn't be involved in decisions like that. Userspace is
-> > in a much better position to know when it's sensible to replace an fd.
-> > 
-> > The fdtable is no place to get involved in a game of "if the fd is in a
-> > epoll instance, update the epoll instance, if it's in an io_uring
-> > instance, update the io_uring instance, ...". That's a complete
-> > layerying violation imho.
-> > 
-> > And even if you'd need to get sign off on this from epoll and io_uring
-> > folks as well before we can just reach into other subsytems from the
-> > fdtable.
-> 
-> Yep, agreed.
-> 
-> > I'm sorry but this all sounds messy. You can do this just fine in
-> > userspace, so please do it in userspace. This all sound very NAKable
-> > right now.
-> 
-> We have added lots of APIs for things that are possible from userspace
-> already that are made easier with a nice API. The seccomp forwarding
-> functionality itself, pidfd_getfd(), etc. I don't see this particular
-> bit as a strong argument against.
-
-It's always a question of how much burden we shift into the kernel or a
-specific subsystem. IOW, if this results in really clunky apis then it's
-probably not something we should o.
