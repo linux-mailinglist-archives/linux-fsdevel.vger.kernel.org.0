@@ -2,122 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 310556CA55E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 15:16:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 595BB6CA5B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 15:24:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232350AbjC0NQq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 09:16:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56182 "EHLO
+        id S232593AbjC0NY4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 09:24:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjC0NQp (ORCPT
+        with ESMTP id S232659AbjC0NY3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 09:16:45 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD281985;
-        Mon, 27 Mar 2023 06:16:44 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7CC275C00F3;
-        Mon, 27 Mar 2023 09:16:43 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 27 Mar 2023 09:16:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1679923003; x=1680009403; bh=PM
-        Ybv6lzMtV9aBsvN9bUd8L45MF7C3r1CJYwE0yaT8c=; b=dObTmFqWuQq4O1QxWL
-        axiTetLUSGpUp88T5qYMZOgBlWuyrI3p91pD0WcrZxqJspmncBSXXdIA2RHvQzDo
-        legvDcHDa2XA7ivgIJUGIzLyYVHzm92gQAK7nFvy9Xvvc3yCSXMzFrpjAymR7L8D
-        cQblmLAFh/SjQcB2trKJnHHiKCWpDjXMfbZpydcg50g4i0qZ7Ehxv2p8PNPhaJrh
-        cLKaI25cRC2+7vtK5so8eUy8XOpI35khdTpN9SuPofR+ojhwVOzmaE5FXVaVt+LL
-        cNGhHD9GpGvlUMg33HncCt+dPBt0VEWvk+CWUt72E8yf0YyOfmlSTJT4DpaHUwXP
-        o6Ug==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1679923003; x=1680009403; bh=PMYbv6lzMtV9a
-        BsvN9bUd8L45MF7C3r1CJYwE0yaT8c=; b=M4Hh45eJ8jVZqVk+rC75IIspBdWrw
-        VXTjZZJXIJMfei/INdp9skdKGBm0Nt8AjQTBWJuiRQnUFCs2hvZ7z/rNhYnu3G1Q
-        N5ybBP7gPGr6btaD+U0r0cYJ084kUeVAfaqIJPO8E+ADG+MI/k8hp5XGTVL+1omP
-        u0T9EGfNlZh6rSgi4EI2acuop2cJhgRjKPtc8BNqUFGouOV+fD9USxfy+qrWEjcw
-        RDNs2/HRtEQLpcW2Zq4zGEbmnaGc5riNJRxU5vTZP4Sx1Tf6uB4H0sjkkB5IWt+D
-        JLmlw1XixHPsqq1/qOn+561kJszua4nBou2ECKiVxNtn8WxQqD/MLc2Xw==
-X-ME-Sender: <xms:O5chZJWIY09st7tvRJB1Olv8Nxz1dIx-G4T4qS_OeJy_J6-c2FSc-w>
-    <xme:O5chZJkhaaH_wsZG5bhBCykjO27FdXuQy9TyV0qxcJEvUPHsJkr-vSq-LSwSyTKbh
-    5fNJHydYI9NjV3HzKE>
-X-ME-Received: <xmr:O5chZFYcX8xys0oNIrYeg9vDijg0w8r143KJ2VhcdLc7iLOTYB6-Eu6SsqkdlA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehvddgieefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
-    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
-    grthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifeduleegjedutdefffetkeel
-    hfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epthihtghhohesthihtghhohdrphhiiiiirg
-X-ME-Proxy: <xmx:O5chZMXAH3DmQEklLFJ0MAQg714IPGcf9z_Y64FfvFKBFSXQo5B7XQ>
-    <xmx:O5chZDnWlQz_KVL_lkxtIPxSzjRhEqHUZnGqzwqrFM8cXWzfesrsDA>
-    <xmx:O5chZJcItmUmZvr4NR_1f2T7hV2zAHPA0s81uvzi-DhzezYS4kj0vQ>
-    <xmx:O5chZBVEslk11RufJp5QNts12fsPkagVrs01kzSi1d6bvDBtMXyvuA>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Mar 2023 09:16:41 -0400 (EDT)
-Date:   Mon, 27 Mar 2023 07:16:39 -0600
-From:   Tycho Andersen <tycho@tycho.pizza>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     aloktiagi <aloktiagi@gmail.com>, viro@zeniv.linux.org.uk,
-        willy@infradead.org, David.Laight@aculab.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, hch@infradead.org
-Subject: Re: [RFC v4 2/2] file, epoll: Implement do_replace() and
- eventpoll_replace()
-Message-ID: <ZCGXNwvymHVJ7O6K@tycho.pizza>
-References: <20230324063422.1031181-2-aloktiagi@gmail.com>
- <ZBzRfDnHaEycE72s@ip-172-31-38-16.us-west-2.compute.internal>
- <20230324082344.xgze2vu3ds2kubcz@wittgenstein>
- <ZB2o8cs+VTQlz5GA@tycho.pizza>
- <20230327090106.zylztuk77vble7ye@wittgenstein>
- <ZCGU5JBg02+DU6JN@tycho.pizza>
+        Mon, 27 Mar 2023 09:24:29 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4A2B35B7;
+        Mon, 27 Mar 2023 06:23:45 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id t10so36051907edd.12;
+        Mon, 27 Mar 2023 06:23:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679923425;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hh/IM+UHRneqBffkgUbLi5lZIJUZtOKuvrQyazPYma0=;
+        b=Qbju3h85lOm7GzltrAWgCkcahYK2RIUINNaIWnr+UhDD8gQ3aMD2aHxAfcez96lklh
+         1oJyTDLk8I+/UeqfAqBf1SIN1JTP+QXsScRiGpIwQ+5kb/2unYYDjM0dLvKxI/mMq84j
+         TqMFu+Xo5DW6NAiwlb3+adGnEGjydpIXMMDuE/P9or0uVbz8d3u50j7mnMzxpIHl1xu8
+         cdQeFLf4RJEIb2ZDwm4JbgkVeNeYas/YJnQqnaPb6N6i/OlSco6PXKNtTlj5eow3Cm5Y
+         Jk6uWGWxxFHHRzonNcmz+aLWxC9NIusHo9tXl+F/6ViVpRE6NcS8a/tHl7JSrcJiLXPf
+         274A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679923425;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hh/IM+UHRneqBffkgUbLi5lZIJUZtOKuvrQyazPYma0=;
+        b=WQ7zncLXdzgllJJbGeSyMPKSrkIWzWmg5g9xeVNxVdNFMMuYfr468A+l7B30pNHNSk
+         94tyoHCQF33JNOKcEq65050O+qdJNH7vPxxzlxpbMT380XwcyUOmaP3CsLl6eSoZUdfz
+         go+V7IEp6FcHuaopDgREHwI4v/61JBSzEA33eE2aDS2tBw/k6tyJ4ByVigsmWuOIiV9g
+         v0uTDyz3FDegziX5OangouHcqsr2EVQvq7LCdxMFlTAyRimKM/sffxnJHheXm/qhwyi0
+         3LUanCHpAkGTv+s1mykAsxMhSV6AtuxXO8c/Nc9tkAZ/IbS20cElrjFCxoI9yoLlHBYW
+         oFyQ==
+X-Gm-Message-State: AAQBX9d8HEG82kaZUbF9AJ8HjNjGDTeTQCDRx1dHb92yS00ssLIWfitJ
+        RDXk/n51+tO1LtEAWZHvQIs=
+X-Google-Smtp-Source: AKy350YI+C7OCA8kH8iUdcpJdj98lI9A/waYrW7dZXRKHvQP76HxtRwOEH9jGK5De/IlJbEqpPoFVA==
+X-Received: by 2002:aa7:c942:0:b0:4fc:782c:dc9b with SMTP id h2-20020aa7c942000000b004fc782cdc9bmr10608050edt.40.1679923425085;
+        Mon, 27 Mar 2023 06:23:45 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:1063])
+        by smtp.gmail.com with ESMTPSA id b15-20020a50b40f000000b0050221d6768csm4789777edh.11.2023.03.27.06.23.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Mar 2023 06:23:44 -0700 (PDT)
+Message-ID: <a2fbe689-40e6-c01f-3616-4f42ae14347b@gmail.com>
+Date:   Mon, 27 Mar 2023 14:22:11 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZCGU5JBg02+DU6JN@tycho.pizza>
-X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 06/13] fuse: Add an interval ring stop worker/monitor
+Content-Language: en-US
+To:     Bernd Schubert <bschubert@ddn.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Dharmendra Singh <dsingh@ddn.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "fuse-devel@lists.sourceforge.net" <fuse-devel@lists.sourceforge.net>,
+        Ming Lei <ming.lei@redhat.com>,
+        Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+References: <20230321011047.3425786-1-bschubert@ddn.com>
+ <20230321011047.3425786-7-bschubert@ddn.com>
+ <CAJfpegs6z6pvepUx=3zfAYqisumri=2N-_A-nsYHQd62AQRahA@mail.gmail.com>
+ <28a74cb4-57fe-0b21-8663-0668bf55d283@ddn.com>
+ <CAJfpeguvCNUEbcy6VQzVJeNOsnNqfDS=LyRaGvSiDTGerB+iuw@mail.gmail.com>
+ <e0febe95-6d35-636d-1668-84ef16b87370@ddn.com>
+ <a1b51f8c-06b9-8f89-f60e-ee2051069a51@ddn.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <a1b51f8c-06b9-8f89-f60e-ee2051069a51@ddn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 07:06:46AM -0600, Tycho Andersen wrote:
-> On Mon, Mar 27, 2023 at 11:01:06AM +0200, Christian Brauner wrote:
-> > On Fri, Mar 24, 2023 at 07:43:13AM -0600, Tycho Andersen wrote:
-> > > Perhaps we could add a flag that people could set from SECCOMP_ADDFD
-> > > asking for this extra behavior?
-> > 
-> >         +       if (fd > 0 && addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_EPOLL) {
-> >         +               /*
-> >         +                * - retrieve old struct file that addfd->fd refered to if any.
-> >         +                * - call your epoll seccomp api to update the references in the epoll instance
-> >         +                */
-> > 			epoll_seccomp_notify()
-> >         +       }
-> >         +
-> >         +       if (fd > 0 && addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_IO_URING) {
-> >         +               /*
-> >         +                * - call your io_uring seccomp api to update the references in the io_uring instance
-> >         +                */
-> > 			io_uring_seccomp_notify()
-> >         +       }
+On 3/23/23 20:51, Bernd Schubert wrote:
+> On 3/23/23 14:18, Bernd Schubert wrote:
+>> On 3/23/23 13:35, Miklos Szeredi wrote:
+>>> On Thu, 23 Mar 2023 at 12:04, Bernd Schubert <bschubert@ddn.com> wrote:
+[...]
+> Found the reason why I complete SQEs when the daemon stops - on daemon
+> side I have
 > 
-> Looks reasonable to me, thanks.
+> ret = io_uring_wait_cqe(&queue->ring, &cqe);
+> 
+> and that hangs when you stop user side with SIGTERM/SIGINT. Maybe that
+> could be solved with io_uring_wait_cqe_timeout() /
+> io_uring_wait_cqe_timeout(), but would that really be a good solution?
 
-One change I might suggest is only using a single flag bit -- we don't
-need to consume all of seccomp's remaining flag bits with the various
-subsystems. If you want to do this logic for epoll, you almost
-certainly want it for io_uring, select, and whatever else is out
-there.
+It can be some sort of an eventfd triggered from the signal handler
+and waited upon by an io_uring poll/read request. Or maybe signalfd.
 
-Tycho
+> We would now have CPU activity in intervals on the daemon side for now
+> good reason - the more often the faster SIGTERM/SIGINT works.
+> So at best, it should be uring side that stops to wait on a receiving a
+> signal.
+
+FWIW, io_uring (i.e. kernel side) will stop waiting if there are pending
+signals, and we'd need to check liburing to honour it, e.g. not to retry
+waiting.
+
+-- 
+Pavel Begunkov
