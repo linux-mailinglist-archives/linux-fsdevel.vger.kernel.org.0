@@ -2,103 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE6BC6CAF83
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 22:13:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A6B56CAFE7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Mar 2023 22:25:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231266AbjC0UNc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 16:13:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39050 "EHLO
+        id S231892AbjC0UZR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 16:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbjC0UNb (ORCPT
+        with ESMTP id S230005AbjC0UZP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 16:13:31 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751891FDC;
-        Mon, 27 Mar 2023 13:13:30 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id le6so9555233plb.12;
-        Mon, 27 Mar 2023 13:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679948010;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=omEl4yPfArYML/MdFjW82OoYkdDQuGLeGfrwdlfaKrg=;
-        b=QGjjwRzZJt5yGnesyULsZv/7aHlvCOSyO1UNz437t4YzKqMngupfpEIyXf7Zuofvy9
-         lpl/fIZxi/xIyjF7Pw1u+/ZCmpjaOTr66PkxvbjlKLK+clkXcosJl3F5NOW6mSL2uDv6
-         W7HjzXYlMxeJQTA5ck8o/Ov4jJq0E/0i4aMSX8Y4InePMgTpJEPCoC+k3+DAhhgwhjAT
-         PWew0ycuYdPwCV9E1f0tqBhr6DphXpFtuFqY+L2VWZz1Rkz4aaS/48OyN5K/6JLMDDK1
-         tG6T4FUku6+cHN/klrXvde1j7EOckLt6UVNjy5sbwkEDzD5LZLOQwujSKQpdhPfG+vOK
-         7rzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679948010;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=omEl4yPfArYML/MdFjW82OoYkdDQuGLeGfrwdlfaKrg=;
-        b=1roopirG7bJGwNrekivDPHwZuDLQ+ysuPSA6ncDQpXrVN6WbXhz0+Hgi1RD1IG5xJI
-         R1dO59nmstKoSNpGPBf9I2bPZXIwdAIXabZwuUPE/n5Q1FFrp0bYxcsvlTGKZ3XYbCHo
-         uMz1FyCs5FPKcvvfZJiImiz5O55KdqnGCP6xCRYSeNUAWKRZeKCTeFUOP3qDEa8x9enE
-         LghlGjxeSI3weX8EmK/GEkwhk9QZXUnBDzTEFdtHVPgY9n5XJTM5mHCtrZg5flz9p7eS
-         pAjz+p8dD5Z39Ee2GiDtX0Y4iNPFUGPoslFggDfC80Ebo7LIgtAgni+rahL8dqqdRYSc
-         azGg==
-X-Gm-Message-State: AAQBX9dxFu1+1coQs57teaAv6HbfCJovj7YDFJ766xN57FgZunShEcXN
-        wTgPsC/JSYXVdQDN8p19J9v3oCx6RGFxxCGJbec=
-X-Google-Smtp-Source: AKy350aNiJJYg1pVi5jljr7P/uYj83cSXmoeVmyfrJMT8aKXA5hgmHOHjBThH5lOnKJr0KlUD6Xnt/ABJTsC+1ocoIg=
-X-Received: by 2002:a17:902:7d81:b0:1a0:52f1:8ea7 with SMTP id
- a1-20020a1709027d8100b001a052f18ea7mr4581982plm.12.1679948009875; Mon, 27 Mar
- 2023 13:13:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230320071442.172228-1-pedro.falcato@gmail.com>
- <20230320115153.7n5cq4wl2hmcbndf@wittgenstein> <CAHk-=wjifBVf3ub0WWBXYg7JAao6V8coCdouseaButR0gi5xmg@mail.gmail.com>
- <CAKbZUD2Y2F=3+jf+0dRvenNKk=SsYPxKwLuPty_5-ppBPsoUeQ@mail.gmail.com>
- <CAHk-=wgc9qYOtuyW_Tik0AqMrQJK00n-LKWvcBifLyNFUdohDw@mail.gmail.com>
- <20230321142413.6mlowi5u6ewecodx@wittgenstein> <20230321161736.njmtnkvjf5rf7x5p@wittgenstein>
-In-Reply-To: <20230321161736.njmtnkvjf5rf7x5p@wittgenstein>
-From:   Pedro Falcato <pedro.falcato@gmail.com>
-Date:   Mon, 27 Mar 2023 21:13:18 +0100
-Message-ID: <CAKbZUD1N-jsrro_9ix12vNmjL0iUqqvicCv7MHyj19O5LJs1aQ@mail.gmail.com>
-Subject: Re: [PATCH] do_open(): Fix O_DIRECTORY | O_CREAT behavior
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,WEIRD_QUOTING autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Mon, 27 Mar 2023 16:25:15 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8856C40D8;
+        Mon, 27 Mar 2023 13:24:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 13255B818FF;
+        Mon, 27 Mar 2023 20:24:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79299C4339C;
+        Mon, 27 Mar 2023 20:24:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1679948690;
+        bh=N1WaErzy1aVrss+F2Tlq1e+e984QICgfVMB42UQuv/A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=b7ZC1e0rUfVUTI8qESO2ggXs1Z771nCiXAtpckba3SE1FkHYbuPf3FYmJybIDLZ/n
+         v++d9p2fLpS+QRbGM4XsvtNS/OprMVctCp3VYvWZSWZfasLLonROFN/LQ0oobNDVlV
+         lL6P7oViw+Is2VoYMQPfthpQVys5NHrvTq7gOQxI=
+Date:   Mon, 27 Mar 2023 13:24:49 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     <linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <linux-xfs@vger.kernel.org>, <dan.j.williams@intel.com>,
+        <willy@infradead.org>, <jack@suse.cz>, <djwong@kernel.org>
+Subject: Re: [PATCH] fsdax: force clear dirty mark if CoW
+Message-Id: <20230327132449.b7389c3c00602b8e0e0d8d3f@linux-foundation.org>
+In-Reply-To: <05b9f49f-16ce-be40-4d42-049f8b3825c5@fujitsu.com>
+References: <1679653680-2-1-git-send-email-ruansy.fnst@fujitsu.com>
+        <20230324124242.c881cf384ab8a37716850413@linux-foundation.org>
+        <05b9f49f-16ce-be40-4d42-049f8b3825c5@fujitsu.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 4:17=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> It would be very nice if we had tests for the new behavior. So if @Pedro
-> would be up for it that would be highly appreciated. If not I'll put it
-> on my ToDo...
+On Mon, 27 Mar 2023 11:19:01 +0800 Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
 
-Where do you want them? selftests? I have a relatively self-contained
-""testsuite"" of namei stuff that could fit in there well, after some
-cleanup.
+> 
+> 
+> 在 2023/3/25 3:42, Andrew Morton 写道:
+> > On Fri, 24 Mar 2023 10:28:00 +0000 Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
+> > 
+> >> XFS allows CoW on non-shared extents to combat fragmentation[1].  The
+> >> old non-shared extent could be mwrited before, its dax entry is marked
+> >> dirty.  To be able to delete this entry, clear its dirty mark before
+> >> invalidate_inode_pages2_range().
+> > 
+> > What are the user-visible runtime effects of this flaw?
+> 
+> This bug won't leak or mess up the data of filesystem.  In dmesg it will 
+> show like this:
+> 
+> [   28.512349] ------------[ cut here ]------------
+> [   28.512622] WARNING: CPU: 2 PID: 5255 at fs/dax.c:390 
+> dax_insert_entry+0x342/0x390
+> 
+> ...
+>
+>  >
+>  > Are we able to identify a Fixes: target for this?  Perhaps
+>  > f80e1668888f3 ("fsdax: invalidate pages when CoW")?
+>  >
+> 
+> Yes, it is to fix this commit.
 
-> The expectation often is that this particular combination would create
-> and open a directory. This suggests users who tried to use that
-> combination would stumble upon the counterintuitive behavior no matter
-> if pre-v5.7 or post v5.7 and quickly realize neither semantics give them
-> what they want. For some examples see the code examples in [1] to [3]
-> and the discussion in [4].
+OK, thanks.  I added the extra changelog info, added the Fixes and a
+cc:stable.
 
-Ok so, silly question: Could it not be desirable to have these
-semantics (open a dir or mkdir, atomically)?
-It does seem to be why POSIX left this edge case implementation
-defined, and if folks are asking for it, could it be the right move?
+Some review from other fsdax developers would be helpful, please.
 
-And yes, I do understand (from reading the room) that no one here is
-too excited about this possibility.
-
---=20
-Pedro
