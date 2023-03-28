@@ -2,227 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54E5F6CCA9D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 21:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F225B6CCAA3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 21:31:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229531AbjC1T3k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 15:29:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45508 "EHLO
+        id S229500AbjC1TbB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 15:31:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjC1T3j (ORCPT
+        with ESMTP id S229461AbjC1TbA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 15:29:39 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B1D26B7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 12:29:37 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id c29so17235798lfv.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 12:29:37 -0700 (PDT)
+        Tue, 28 Mar 2023 15:31:00 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 552173582
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 12:30:59 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1a261eb6821so460285ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 12:30:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680031776;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sze0hZQs4AzNTu34VgpoyYMvtZyrr4yHRgV/mYMoCA0=;
-        b=TucsBd+N/AQxtwaL0+o5NkcY9MSe4BBeB7YoVEYpkQV8wnCSGXj8+ipQbmuXWEzW2A
-         GM8O3lhwnn4JcP6ON75Pevuhje9cNtUFHOjcmISo50lT1G41d+14fgUUHDcPconVy0fS
-         5PyjuLBTZNnd8kgM55m7WRtrqA2p/Dke0lm/uMTLsExLNM2SVAfj8g2kHorU2izEeIs7
-         JT0edO0vY6WohLcj+qnliJeULIVv2uKBg3zZMuw3hiFBAvgOPLrcRvcvRUfnSQrjuCqm
-         8SMJTfWqtJaEUmUpAZoIkvXoKJ2nWCFOyhRwp9XoL7vyAyRpajv034xLjjtBT8WlcCJn
-         nKUg==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680031859;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=chnOnEtMLrTfYzot3SaGbzCiGQEAj56MZNFl4JNPiEc=;
+        b=DrjW3Pzw9A7q1V7K5toumS4iKxg20nJEpAFiHotAhMLuT5LN2AZc7eg01QuMB3rNoH
+         HhaO3p2ydAtb1UFMW/bNvRxGDS4gnBJM68HeNL7uHnDHi/S7wZ8a76VVeubodoJebTBa
+         x/LWgZOTgc1M+VGNqlOfgYF+mGPcdBUKdwWSQupJdZpEZfRP8e1mzoDAFMo03gvfGhSN
+         2oJnoDP6YgOlIZ5Apog14os/stwShjmZXrjSdf7UNwGKilpeSyrPind8CGwvRvlhIPaK
+         /p0dzGubtBStRJCxZWTqtqQM94Xb1QrqfYjuFmPFanUBIUmf6jL9bagDHHRiXJZADENr
+         LfGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680031776;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sze0hZQs4AzNTu34VgpoyYMvtZyrr4yHRgV/mYMoCA0=;
-        b=Bs1hpLHf3EjQPdgFguwXL8nny31e3FTIQjDKEkewrHzrDIxqNMm5urUHXEG9WdyVzP
-         xMqlGNlgR6MY6sPtceNMUcO0rxK/K0h+39ztxVJ+Y+Tn+3IIszN/Lms4B23Ta80ll118
-         EtBo/k3n6UoAjxJd/RDZgZ8uRS9NwTtp+JJMywKX2iN2aPfBM9gBAFlqn2A5bg9NN7TR
-         Q4qbITP3NrLmnv5+U/YzXY2obyGsT0YKgatPYh/eQzbJra5M4W7uLhM+iq3f099IRGDl
-         qi5b0aYXa7EWZxRSOHmgBvaJY47hVnCz/oss36o/mqTZKcRwTAEAqbVjz8WLxWRm0vYP
-         +GtA==
-X-Gm-Message-State: AAQBX9dVj8li9KcPnZfZurXbUybYZO72uLKkIpPpVX8dPpKfGJd2f4XA
-        Si8qDjtksD8ma+75fPlWGVmzUufmuC+nde0IhZh/vw==
-X-Google-Smtp-Source: AKy350YFSKMXJnqTblo/+gcV15ljJSRH6Afdq3y71v4w821k/pohARkBmE7hu6p9kVh0UhqyN06tpfTIQVNOXx2mkYI=
-X-Received: by 2002:a05:6512:4ca:b0:4d5:ca32:6ed5 with SMTP id
- w10-20020a05651204ca00b004d5ca326ed5mr5233121lfq.3.1680031775704; Tue, 28 Mar
- 2023 12:29:35 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680031859;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=chnOnEtMLrTfYzot3SaGbzCiGQEAj56MZNFl4JNPiEc=;
+        b=7Egjy0KjNzuZIJxRJWsk/E8FcHEcXyraB2fdi3+Pn2xdDp+NdQvVk92lTeD369tsCo
+         PeEHPkU9xegowAB7v3L/pjq3eVYwUb24tGD5qJ0f8BAncLO8ZAFwGA/4WB0o5JD1SXcF
+         m7aeCBtc+bTsVxjKoCONTeYp3oAI3/sDG+NuIuE7kMrrnFnFLDr6hTP18pz1aICgJHWc
+         smy/aGRdkQJcdvG9JukcXJg/iZ+OVxyEgGmWDU2mtE5/A8kztw1hQ7SDkn6bFddRDetq
+         l71faG3ty42BLHILR+rRsLgxK7PsdFQMuks+eghqOJjZPLg6bFFkvrVrgz+TXCUnmh3I
+         EksQ==
+X-Gm-Message-State: AAQBX9fXovEzASaZ4pK8epElVyQSYpH7v2eOICJZFfksoWUuAfrDdWB9
+        ivheuAYwdh0/1P+oZhPfrmzPKPYFxUyjUaxBj/wnJg==
+X-Google-Smtp-Source: AKy350ZmYGtwUOWne/Utk7GkQuWJqWrfqT91iS+F5pYmG3pyp7m+1ZNcdqcTZcNMTwVydR8OBM0v+g==
+X-Received: by 2002:a17:902:864b:b0:1a1:d395:e85c with SMTP id y11-20020a170902864b00b001a1d395e85cmr13841905plt.0.1680031858692;
+        Tue, 28 Mar 2023 12:30:58 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id o11-20020a1709026b0b00b0019a96d3b456sm17723739plk.44.2023.03.28.12.30.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Mar 2023 12:30:58 -0700 (PDT)
+Message-ID: <24f2a3e6-804b-d9aa-ae5d-a44f71516983@kernel.dk>
+Date:   Tue, 28 Mar 2023 13:30:57 -0600
 MIME-Version: 1.0
-References: <20220722201513.1624158-1-axelrasmussen@google.com> <ZCIEGblnsWHKF8RD@x1n>
-In-Reply-To: <ZCIEGblnsWHKF8RD@x1n>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Tue, 28 Mar 2023 12:28:59 -0700
-Message-ID: <CAJHvVcj5ysY-xqKLL8f48-vFhpAB+qf4cN0AesQEd7Kvsi9r_A@mail.gmail.com>
-Subject: Re: [PATCH] userfaultfd: don't fail on unrecognized features
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 5/8] IB/hfi1: make hfi1_write_iter() deal with ITER_UBUF
+ iov_iter
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+        viro@zeniv.linux.org.uk
+References: <20230328173613.555192-1-axboe@kernel.dk>
+ <20230328173613.555192-6-axboe@kernel.dk>
+ <CAHk-=wj=21dt1ASqkvaNXenzQCEZHydYE39+YOj8AAfzeL5HOQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHk-=wj=21dt1ASqkvaNXenzQCEZHydYE39+YOj8AAfzeL5HOQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=3.6 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 2:01=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> I think I overlooked this patch..
->
-> Axel, could you explain why this patch is correct?  Comments inline.
->
-> On Fri, Jul 22, 2022 at 01:15:13PM -0700, Axel Rasmussen wrote:
-> > The basic interaction for setting up a userfaultfd is, userspace issues
-> > a UFFDIO_API ioctl, and passes in a set of zero or more feature flags,
-> > indicating the features they would prefer to use.
-> >
-> > Of course, different kernels may support different sets of features
-> > (depending on kernel version, kconfig options, architecture, etc).
-> > Userspace's expectations may also not match: perhaps it was built
-> > against newer kernel headers, which defined some features the kernel
-> > it's running on doesn't support.
-> >
-> > Currently, if userspace passes in a flag we don't recognize, the
-> > initialization fails and we return -EINVAL. This isn't great, though.
->
-> Why?  IIUC that's the major way for user app to detect any misconfig of
-> feature list so it can bail out early.
->
-> Quoting from man page (ioctl_userfaultfd(2)):
->
-> UFFDIO_API
->        (Since Linux 4.3.)  Enable operation of the userfaultfd and perfor=
-m API handshake.
->
->        ...
->
->            struct uffdio_api {
->                __u64 api;        /* Requested API version (input) */
->                __u64 features;   /* Requested features (input/output) */
->                __u64 ioctls;     /* Available ioctl() operations (output)=
- */
->            };
->
->        ...
->
->        For Linux kernel versions before 4.11, the features field must be
->        initialized to zero before the call to UFFDIO_API, and zero (i.e.,
->        no feature bits) is placed in the features field by the kernel upo=
-n
->        return from ioctl(2).
->
->        ...
->
->        To enable userfaultfd features the application should set a bit
->        corresponding to each feature it wants to enable in the features
->        field.  If the kernel supports all the requested features it will
->        enable them.  Otherwise it will zero out the returned uffdio_api
->        structure and return EINVAL.
->
-> IIUC the right way to use this API is first probe with features=3D=3D0, t=
-hen
-> the kernel will return all the supported features, then the user app shou=
-ld
-> enable only a subset (or all, but not a superset) of supported ones in th=
-e
-> next UFFDIO_API with a new uffd.
+On 3/28/23 12:43?PM, Linus Torvalds wrote:
+> On Tue, Mar 28, 2023 at 10:36?AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> Don't assume that a user backed iterator is always of the type
+>> ITER_IOVEC. Handle the single segment case separately, then we can
+>> use the same logic for ITER_UBUF and ITER_IOVEC.
+> 
+> Ugh. This is ugly.
+> 
+> Yes,. the original code is ugly too, but this makes it worse.
 
-Hmm, I think doing a two-step handshake just overcomplicates things.
+Hah I know, I did feel dirty writing that patch... The existing code is
+pretty ugly as-is, but it sure didn't get better.
 
-Isn't it simpler to just have userspace ask for the features it wants
-up front, and then the kernel responds with the subset of features it
-actually supports? In the common case (all features were supported),
-there is nothing more to do. Userspace is free to detect the uncommon
-case where some features it asked for are missing, and handle that
-however it likes.
+> You have that helper for "give me the number of iovecs" and that just
+> works automatically with the ITER_UBUF case. But this code (and the
+> sound driver code in the previous patch), really lso wants a helper to
+> just return the 'iov' array.
+> 
+> And I think you should just do exactly that. The problem with
+> 'iov_iter_iovec()' is that it doesn't return the array, it just
+> returns the first entry, so it's unusable for this case, and then you
+> have all these special "do something else for the single-entry
+> situation" cases.
+> 
+> And iov_iter_iovec() actually tries to be nice and clever and add the
+> iov_offset, so that you can actually do the proper iov_iter_advance()
+> on it etc, but again, this is not what any of this code wants, it just
+> wants the raw iov array, and the base will always be zero, because
+> this code just doesn't *work* on the iter level, and never advances
+> the iterator, it just advances the array index.
+> 
+> And the thing is, I think you could easily just add a
+> 
+>    const struct iovec *iov_iter_iovec_array(iter);
+> 
+> helper that just always returns a valid array of iov's.
+> 
+> For a ITER_IOV, it would just return the raw iov pointer.
+> 
+> And for a ITER_UBUF, we could either
+> 
+>  (a) just always pass in a single-entry auto iov that gets filled in
+> and the pointer to it returned
+> 
+>  (b) be *really* clever (or ugly, depending on how you want to see
+> it), and do something like this:
+> 
+>         --- a/include/linux/uio.h
+>         +++ b/include/linux/uio.h
+>         @@ -49,14 +49,23 @@ struct iov_iter {
+>                         size_t iov_offset;
+>                         int last_offset;
+>                 };
+>         -       size_t count;
+>         -       union {
+>         -               const struct iovec *iov;
+>         -               const struct kvec *kvec;
+>         -               const struct bio_vec *bvec;
+>         -               struct xarray *xarray;
+>         -               struct pipe_inode_info *pipe;
+>         -               void __user *ubuf;
+>         +
+>         +       /*
+>         +        * This has the same layout as 'struct iovec'!
+>         +        * In particular, the ITER_UBUF form can create
+>         +        * a single-entry 'struct iovec' by casting the
+>         +        * address of the 'ubuf' member to that.
+>         +        */
+>         +       struct {
+>         +               union {
+>         +                       const struct iovec *iov;
+>         +                       const struct kvec *kvec;
+>         +                       const struct bio_vec *bvec;
+>         +                       struct xarray *xarray;
+>         +                       struct pipe_inode_info *pipe;
+>         +                       void __user *ubuf;
+>         +               };
+>         +               size_t count;
+>                 };
+>                 union {
+>                         unsigned long nr_segs;
+> 
+> and if you accept the above, then you can do
+> 
+>    #define iter_ubuf_to_iov(iter) ((const struct iovec *)&(iter)->ubuf)
+> 
+> which I will admit is not *pretty*, but it's kind of clever, I think.
+> 
+> So now you can trivially turn a user-backed iov_iter into the related
+> 'struct iovec *' by just doing
+> 
+>    #define iov_iter_iovec_array(iter) \
+>      ((iter)->type == ITER_UBUF ? iter_ubuf_to_iov(iter) : (iter)->iov)
+> 
+> or something like that.
+> 
+> And no, the above is NOT AT ALL TESTED. Caveat emptor.
+> 
+> And if you go blind from looking at that patch, I will not accept
+> responsibility.
 
-I think this patch is backwards compatible with the two-step approach, too.
+I pondered something like that too, but balked at adding to iov_iter and
+then didn't pursue that any further.
 
-I do agree the man page could use some work. I don't think it
-describes the two-step handshake process correctly, either. It just
-says, "ask for the features you want, and the kernel will either give
-them to you or fail". If we really did want to keep the two-step
-process, it should describe it (set features =3D=3D 0 first, then ask only
-for the ones you want which are supported), and the example program
-should demonstrate it.
+But bundled nicely, it should work out quite fine in the union. So I
+like the suggestion, and then just return a pointer to the vec rather
+than the copy, unifying the two cases.
 
-But, I think it's simpler to just have the kernel do what the man page
-describes. Userspace asks for the features up front, kernel responds
-with the subset that are actually supported. No need to return EINVAL
-if unsupported features were requested.
+Thanks for the review and suggestion, I'll make that change.
 
->
-> > Userspace doesn't have an obvious way to react to this; sure, one of th=
-e
-> > features I asked for was unavailable, but which one? The only option it
-> > has is to turn off things "at random" and hope something works.
-> >
-> > Instead, modify UFFDIO_API to just ignore any unrecognized feature
-> > flags. The interaction is now that the initialization will succeed, and
-> > as always we return the *subset* of feature flags that can actually be
-> > used back to userspace.
-> >
-> > Now userspace has an obvious way to react: it checks if any flags it
-> > asked for are missing. If so, it can conclude this kernel doesn't
-> > support those, and it can either resign itself to not using them, or
-> > fail with an error on its own, or whatever else.
-> >
-> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> > ---
-> >  fs/userfaultfd.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > index e943370107d0..4974da1f620c 100644
-> > --- a/fs/userfaultfd.c
-> > +++ b/fs/userfaultfd.c
-> > @@ -1923,10 +1923,8 @@ static int userfaultfd_api(struct userfaultfd_ct=
-x *ctx,
-> >       ret =3D -EFAULT;
-> >       if (copy_from_user(&uffdio_api, buf, sizeof(uffdio_api)))
-> >               goto out;
-> > -     features =3D uffdio_api.features;
-> > -     ret =3D -EINVAL;
-> > -     if (uffdio_api.api !=3D UFFD_API || (features & ~UFFD_API_FEATURE=
-S))
-> > -             goto err_out;
->
-> What's worse is that I think you removed the only UFFD_API check.  Althou=
-gh
-> I'm not sure whether it'll be extended in the future or not at all (very
-> possible we keep using 0xaa forever..), but removing this means we won't =
-be
-> able to extend it to a new api version in the future, and misconfig of
-> uffdio_api will wrongly succeed I think:
->
->         /* Test wrong UFFD_API */
->         uffdio_api.api =3D 0xab;
->         uffdio_api.features =3D 0;
->         if (ioctl(uffd, UFFDIO_API, &uffdio_api) =3D=3D 0)
->                 err("UFFDIO_API should fail but didn't");
+-- 
+Jens Axboe
 
-Agreed, we should add back the UFFD_API check - I am happy to send a
-patch for this.
-
->
-> > +     /* Ignore unsupported features (userspace built against newer ker=
-nel) */
-> > +     features =3D uffdio_api.features & UFFD_API_FEATURES;
-> >       ret =3D -EPERM;
-> >       if ((features & UFFD_FEATURE_EVENT_FORK) && !capable(CAP_SYS_PTRA=
-CE))
-> >               goto err_out;
-> > --
-> > 2.37.1.359.gd136c6c3e2-goog
-> >
->
-> --
-> Peter Xu
->
