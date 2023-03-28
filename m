@@ -2,89 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FA816CC7BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 18:19:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5C16CC7E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 18:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233095AbjC1QTJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 12:19:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57690 "EHLO
+        id S232475AbjC1Q21 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 12:28:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbjC1QTG (ORCPT
+        with ESMTP id S232667AbjC1Q2Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 12:19:06 -0400
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 683D8DBE0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 09:19:03 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id b26-20020a5d805a000000b0074cfe3a44aeso7887143ior.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 09:19:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680020342;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uUmhFgO4DgVeQ/XfsIdy7DmZvXaLy08CKPEqlD1Ap8w=;
-        b=uS+e3DJAVMspJ6pmEtcGE/BHe54RqI3a5qSD2G5WwtPyGelZsINIlYp8plFiE1RuK1
-         bLT0lmumChyokbU1VZ+0cCDL02U6FUrZq3Djp83uFMbJLK5L+CzxqvaZ3Xx44imouJSp
-         jB8kjAuNDXFfClR5nhHk7t1UuhSI4OaYxVPREl+JsfjfFeiZh+RRabL6Fh2T9/KQnjj/
-         2FvBzvux4ibIxIaQNpAKzf82J3LO/AO+jvqBGhIm+AqODDcryoCJSa1HjDaDx4i4D7cg
-         yMGgXUv7gkkpSWUTsZAHUpvGy9LOlLnm1Ygr0k0d+pTq+17TOyXRuzW4RKOZ+8gHckPP
-         NZAA==
-X-Gm-Message-State: AO0yUKWO57Nuos+QdF31KPOqnbFCoh6g+67RsxIPf4zgo0Z8cO+DQVEy
-        SsNhbh4Mc5uKUwguyzk0ljNbfzqW7ta8MSDTs3fr5Pg4ZjlD
-X-Google-Smtp-Source: AK7set+a+nG6UvEk6DzS+O8bKQF4xx/PkpBKjqaS27yRXr8A3RZJnR2EZofwn0eShxUNr2MY2VYDxCuO4XPYF4DiC1D2614hCSp5
+        Tue, 28 Mar 2023 12:28:25 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B57DCDE5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 09:28:23 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id C0FD6219CF;
+        Tue, 28 Mar 2023 16:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1680020901; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=glRWKttHyaif3Tia9UrJ1ZD1++zoH7ejygPsJmWo4d4=;
+        b=LPlAN7P2uIWMgLwg9r6zUkNGLsk2dckGJ1bnEYYrE+NjPo5eRwv4RYtsU6bTKXYKB+yH8f
+        V2tmh9lXJxLj6l5Q/ln4pKAO3yRGm39zi+FhUv5G/cMBOJJZPsWXV8WzY/jeM+hFWbFc6v
+        Fo9l90V1cdqmNFYSXizsQfNo7rsmIL4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1680020901;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=glRWKttHyaif3Tia9UrJ1ZD1++zoH7ejygPsJmWo4d4=;
+        b=5T5jIDSLku2md3VhIgIaKIINvKwPxGl9KX554aQsTeJ0ua5FXq5VsrpSkrhONZMUqdTWLl
+        GDnFgxnqyGFs4gAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A8FC71390B;
+        Tue, 28 Mar 2023 16:28:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id jg+iKKUVI2S5PAAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Tue, 28 Mar 2023 16:28:21 +0000
+Message-ID: <115288f8-bd28-f01f-dd91-63015dcc635d@suse.cz>
+Date:   Tue, 28 Mar 2023 18:28:21 +0200
 MIME-Version: 1.0
-X-Received: by 2002:a02:7a5d:0:b0:3c4:e84b:2a3a with SMTP id
- z29-20020a027a5d000000b003c4e84b2a3amr6569678jad.4.1680020342682; Tue, 28 Mar
- 2023 09:19:02 -0700 (PDT)
-Date:   Tue, 28 Mar 2023 09:19:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bdc7df05f7f837ff@google.com>
-Subject: [syzbot] Monthly cluster report
-From:   syzbot <syzbot+list6e220af77940a0f2148c@syzkaller.appspotmail.com>
-To:     cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [LSF/MM/BPF TOPIC] Memory profiling using code tagging
+Content-Language: en-US
+To:     Suren Baghdasaryan <surenb@google.com>,
+        lsf-pc@lists.linux-foundation.org
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Kent Overstreet <kent.overstreet@linux.dev>
+References: <CAJuCfpHJX8zeQY6t5rrKps6GxbadRZBE+Pzk21wHfqZC8PFVCA@mail.gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <CAJuCfpHJX8zeQY6t5rrKps6GxbadRZBE+Pzk21wHfqZC8PFVCA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello cluster maintainers/developers,
+On 2/22/23 20:31, Suren Baghdasaryan wrote:
+> We would like to continue the discussion about code tagging use for
+> memory allocation profiling. The code tagging framework [1] and its
+> applications were posted as an RFC [2] and discussed at LPC 2022. It
+> has many applications proposed in the RFC but we would like to focus
+> on its application for memory profiling. It can be used as a
+> low-overhead solution to track memory leaks, rank memory consumers by
+> the amount of memory they use, identify memory allocation hot paths
+> and possible other use cases.
+> Kent Overstreet and I worked on simplifying the solution, minimizing
+> the overhead and implementing features requested during RFC review.
 
-This is a 30-day syzbot report for the cluster subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/cluster
+IIRC one large objection was the use of page_ext, I don't recall if you
+found another solution to that?
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 23 issues are still open and 12 have been fixed so far.
+> Kent Overstreet, Michal Hocko, Johannes Weiner, Matthew Wilcox, Andrew
+> Morton, David Hildenbrand, Vlastimil Babka, Roman Gushchin would be
+> good participants.
+> 
+> [1] https://lwn.net/Articles/906660/
+> [2] https://lore.kernel.org/all/20220830214919.53220-1-surenb@google.com/
+> 
 
-Some of the still happening issues:
-
-Crashes Repro Title
-237     Yes   kernel BUG in gfs2_glock_nq (2)
-              https://syzkaller.appspot.com/bug?extid=70f4e455dee59ab40c80
-111     Yes   INFO: task hung in gfs2_jhead_process_page
-              https://syzkaller.appspot.com/bug?extid=b9c5afe053a08cd29468
-108     Yes   general protection fault in gfs2_evict_inode (2)
-              https://syzkaller.appspot.com/bug?extid=8a5fc6416c175cecea34
-23      Yes   INFO: task hung in __gfs2_trans_begin
-              https://syzkaller.appspot.com/bug?extid=a159cc6676345e04ff7d
-21      Yes   WARNING in gfs2_check_blk_type
-              https://syzkaller.appspot.com/bug?extid=092b28923eb79e0f3c41
-18      Yes   UBSAN: array-index-out-of-bounds in __gfs2_iomap_get
-              https://syzkaller.appspot.com/bug?extid=45d4691b1ed3c48eba05
-13      Yes   INFO: task hung in gfs2_gl_hash_clear (3)
-              https://syzkaller.appspot.com/bug?extid=ed7d0f71a89e28557a77
-6       No    KMSAN: uninit-value in inode_go_dump
-              https://syzkaller.appspot.com/bug?extid=79333ce1ae874ab7ffbb
-3       Yes   general protection fault in gfs2_dump_glock (2)
-              https://syzkaller.appspot.com/bug?extid=427fed3295e9a7e887f2
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
