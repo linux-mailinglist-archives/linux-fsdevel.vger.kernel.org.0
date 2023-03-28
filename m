@@ -2,120 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B03C96CB3A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 04:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93F696CB45D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 04:53:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232183AbjC1CP6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Mar 2023 22:15:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40960 "EHLO
+        id S230431AbjC1Cxd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Mar 2023 22:53:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbjC1CPz (ORCPT
+        with ESMTP id S229767AbjC1Cxc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Mar 2023 22:15:55 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A3BF26A2;
-        Mon, 27 Mar 2023 19:15:53 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 2EB55320024A;
-        Mon, 27 Mar 2023 22:15:51 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 27 Mar 2023 22:15:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        joshtriplett.org; h=cc:cc:content-transfer-encoding:content-type
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm1; t=1679969750; x=1680056150; bh=VSoRs4qx31
-        DQtHX69enCiD9vEWuY3FDOWU9BPyRADKQ=; b=pCSi51z70vfQIiYPF5Z2HW2KIV
-        wgdN8H2gqjkHakQc6TFWUcoZTlCahT+CIy0+eMf0v0mdaqY1QgibuREKwJko419G
-        G/138jn6znYMEvLBp4qFGMO+Pxj9yuktt8grhXyNCLjuKEpQna/4FJCeoyQxTKqI
-        ymTyGoZxWLicwZVkFOFDXGf1n1xa0ov35/G5IHr6d3/w2bPC4JDXMthIk9SdslI7
-        ntrE7zxuVbRIQSnMwmOv7qj7h/T58ahBi43PsslLphRF3H93RgViSHxzab424yJS
-        4qAJtcdo9HXlZsuqnsYBTH6XWkpjzlXGiajgF0T2hZvbdeRhZmsNkzmw+y3Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1679969750; x=1680056150; bh=VSoRs4qx31DQtHX69enCiD9vEWuY3FDOWU9
-        BPyRADKQ=; b=IvmlCEWAfUTMyy+re14E5OJOlIckx+q1aRHrEtm9Yvxe4PW1uYx
-        ZyB/4SioVTlWZQTgUHEW7yZTR6BfdFwgLPiowT/NIcQjhh2jj2iQDvyVnDXUUXdJ
-        bbqP5P8pE1XpgQx1XPkCkIagwl3lDpQFGclO5nHro55Hik6yKqYsmQ7hK2k+iOdk
-        OVCu1eVJz2QVSQ3/5ilLiNvXys/SHf9B+548a+ca5xg6d1NIdzHLWoo4ExNd/TOc
-        AMrWNF8GZGq8oGelz5cjurXBPBFrCVhQF9LnZhzHsr4gACspDni+gzpKn1FPT5Q+
-        IeIdeuvTI3quhY0OAH/XoIKmbj2aW/Xs+Bg==
-X-ME-Sender: <xms:1k0iZE-iCoEkelN8O2NMkpYy_otvOHoOREhtDgf35zlrWQtZC4pcKw>
-    <xme:1k0iZMsxJOrsIRb5BPcIdDH_xFETWP3R7K9TN6N-xz8i7DYyLUwCEwFNM2605aXn3
-    milNz4ucysTJwpwa80>
-X-ME-Received: <xmr:1k0iZKDtqR5gmM1RCaKDD9jypzlh2iXYGOYcYHIzTZn1X0rhufXpmCSkOxALJdDjGlO9JrLJ_w4sDR4Qw0zxg-APUmCDf_viUY4u_4c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehfedgheelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeflohhs
-    hhcuvfhrihhplhgvthhtuceojhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgheqne
-    cuggftrfgrthhtvghrnhepgeeihfevvdeklefggfejjeeugfduudeggffhjeehkeegheel
-    tddujeffjeekheefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepjhhoshhhsehjohhshhhtrhhiphhlvghtthdrohhrgh
-X-ME-Proxy: <xmx:1k0iZEdZO86Tv0ffeWGU37_QIGFI6S_aEBax-8WO7lKkaXpPtUROMw>
-    <xmx:1k0iZJORMj3IF25mqjkH7k7qucnoGjbvNlYAcT6cL0T41J6waXj7ng>
-    <xmx:1k0iZOmpvKt13ndo2DOfUUj-ozfTQTUjOQY5Yw0zFd5jHG4ZnLfBJw>
-    <xmx:1k0iZOrqmsKYkRlrvXJOV9QrvGNWpa3iPHuRo6QarwIwwMgjdagXMw>
-Feedback-ID: i83e94755:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Mar 2023 22:15:48 -0400 (EDT)
-Date:   Tue, 28 Mar 2023 11:15:45 +0900
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Pedro Falcato <pedro.falcato@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] do_open(): Fix O_DIRECTORY | O_CREAT behavior
-Message-ID: <ZCJN0aaVPFouMkxp@localhost>
-References: <20230320071442.172228-1-pedro.falcato@gmail.com>
- <20230320115153.7n5cq4wl2hmcbndf@wittgenstein>
- <CAHk-=wjifBVf3ub0WWBXYg7JAao6V8coCdouseaButR0gi5xmg@mail.gmail.com>
+        Mon, 27 Mar 2023 22:53:32 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B74A1FF3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 19:53:31 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id r7-20020a17090b050700b002404be7920aso9762264pjz.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Mar 2023 19:53:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112; t=1679972011;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lWYTBx2VZ6h71XcB6iH3aK5E1JWkHx/k2gKbXvik2bo=;
+        b=N0B1misASakytjT3U6HWfwjK7TnGyvBOU1hSRBFekqJBvXuuYgEgZr3oywZehRUqSY
+         r6xJkpQnhBXpoiIERUOnR17ot0i6ekYp7QKoU5b+ny//OXTf/u3IjjLcc3AVUM6IiHnu
+         yGpo+pIqcyIV84FL57vU3VmbM4zWQEA93ts7zeVf7tNsIx9g+w8uVmRrcsOUL3BWHO0T
+         C3IDOlZ5YYsUx6RRBRbF8qpZ0suvkx+r13FGHA9FHG7SU/Hzil4SxmqAgg/6Hxcudyqw
+         awqnfY4yXMNAnzDVermXFJyWwEhGy2bh3B5WNUaKSHGo/nL/va41TlAWwL09K70fwBME
+         t1VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679972011;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lWYTBx2VZ6h71XcB6iH3aK5E1JWkHx/k2gKbXvik2bo=;
+        b=tX+sAex8hvQIj2rLH4438gpRx/5U8ChkXSDCRO2iIuWQX5DDF+/NLqBCcOf2cagnAz
+         teQJYZxy1TZ5chBvzEuPsJxJk20CQnFHbosqVfhOWTvnEvEFP2IyRou1VfNyGPSqsaPH
+         +Iv7/7v0xCWr1JsjIKTDXt4utW2cZQwCrfgkVPNs0YwSIX6OHFNXypeKywoWWwdbzdwg
+         I5AqQ1oGOo9OYMl8DdUErvuDrbfH6XyPEaXjRmz5D7c6Bisu8+wal5HMSl+4blmMdpaM
+         uUQVANt8Mh3K3R560HI7Vc7jwD0P9tdLVWTcumsORsYefrvtzOdNXbjzs+hK/yyYyq9N
+         fMsQ==
+X-Gm-Message-State: AAQBX9fApgtk0KysSbe49H4/hsqAob69IrsEbqTPWyDfxTZ0NYZBtqWj
+        cCygX3DYjx1BTHtIUuqkOoYc7Q==
+X-Google-Smtp-Source: AKy350byEc3xPciw99yzx3LG7BZcgX8rx3fuloOHYBrG7cPj7FynObI6wypzA54S/DK4tOoVGIQszA==
+X-Received: by 2002:a17:90b:1d11:b0:23d:1bf6:5c74 with SMTP id on17-20020a17090b1d1100b0023d1bf65c74mr15002378pjb.41.1679972010979;
+        Mon, 27 Mar 2023 19:53:30 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-91-157.pa.nsw.optusnet.com.au. [49.181.91.157])
+        by smtp.gmail.com with ESMTPSA id s19-20020a170902989300b00186cf82717fsm19877007plp.165.2023.03.27.19.53.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Mar 2023 19:53:30 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pgzSh-00E0io-6O; Tue, 28 Mar 2023 13:53:27 +1100
+Date:   Tue, 28 Mar 2023 13:53:27 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [PATCH v2 2/4] mm: vmalloc: use rwsem, mutex for vmap_area_lock
+ and vmap_block->lock
+Message-ID: <20230328025327.GB3222767@dread.disaster.area>
+References: <cover.1679209395.git.lstoakes@gmail.com>
+ <6c7f1ac0aeb55faaa46a09108d3999e4595870d9.1679209395.git.lstoakes@gmail.com>
+ <ZBkDuLKLhsOHNUeG@destitution>
+ <ZBsAG5cpOFhFZZG6@pc636>
+ <ZB00U2S4g+VqzDPL@destitution>
+ <ZCHQ5Pdr203+2LMI@pc636>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wjifBVf3ub0WWBXYg7JAao6V8coCdouseaButR0gi5xmg@mail.gmail.com>
-X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <ZCHQ5Pdr203+2LMI@pc636>
+X-Spam-Status: No, score=0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 20, 2023 at 10:14:29AM -0700, Linus Torvalds wrote:
-> On Mon, Mar 20, 2023 at 4:52 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > So before we continue down that road should we maybe treat this as a
-> > chance to fix the old bug? Because this behavior of returning -ENOTDIR
-> > has existed ever since v5.7 now. Since that time we had three LTS
-> > releases all returning ENOTDIR even if the file was created.
+On Mon, Mar 27, 2023 at 07:22:44PM +0200, Uladzislau Rezki wrote:
+> >     So, this patch open codes the kvmalloc() in the commit path to have
+> >     the above described behaviour. The result is we more than halve the
+> >     CPU time spend doing kvmalloc() in this path and transaction commits
+> >     with 64kB objects in them more than doubles. i.e. we get ~5x
+> >     reduction in CPU usage per costly-sized kvmalloc() invocation and
+> >     the profile looks like this:
+> >     
+> >       - 37.60% xlog_cil_commit
+> >             16.01% memcpy_erms
+> >           - 8.45% __kmalloc
+> >              - 8.04% kmalloc_order_trace
+> >                 - 8.03% kmalloc_order
+> >                    - 7.93% alloc_pages
+> >                       - 7.90% __alloc_pages
+> >                          - 4.05% __alloc_pages_slowpath.constprop.0
+> >                             - 2.18% get_page_from_freelist
+> >                             - 1.77% wake_all_kswapds
+> >     ....
+> >                                         - __wake_up_common_lock
+> >                                            - 0.94% _raw_spin_lock_irqsave
+> >                          - 3.72% get_page_from_freelist
+> >                             - 2.43% _raw_spin_lock_irqsave
+> >           - 5.72% vmalloc
+> >              - 5.72% __vmalloc_node_range
+> >                 - 4.81% __get_vm_area_node.constprop.0
+> >                    - 3.26% alloc_vmap_area
+> >                       - 2.52% _raw_spin_lock
+> >                    - 1.46% _raw_spin_lock
+> >                   0.56% __alloc_pages_bulk
+> >           - 4.66% kvfree
+> >              - 3.25% vfree
+> OK, i see. I tried to use the fs_mark in different configurations. For
+> example:
 > 
-> Ack.
+> <snip>
+> time fs_mark -D 10000 -S0 -n 100000 -s 0 -L 32 -d ./scratch/0 -d ./scratch/1 -d ./scratch/2  \
+> -d ./scratch/3 -d ./scratch/4 -d ./scratch/5 -d ./scratch/6 -d ./scratch/7 -d ./scratch/8 \
+> -d ./scratch/9 -d ./scratch/10 -d ./scratch/11 -d ./scratch/12 -d ./scratch/13 \
+> -d ./scratch/14 -d ./scratch/15 -t 64 -F
+> <snip>
 > 
-> I think considering that the return value has been broken for so long,
-> I think we can pretty much assume that there are no actual users of
-> it, and we might as well clean up the semantics properly.
+> But i did not manage to trigger xlog_cil_commit() to fallback to vmalloc
+> code. I think i should reduce an amount of memory on my kvm-pc and
+> repeat the tests!
 
-If there are no users of this and we can clean up the semantics, is
-there a strong reason *not* to make `O_DIRECTORY | O_CREATE` actually
-create a directory and atomically return a file descriptor for that
-directory? That seems like genuinely useful behavior that we don't
-currently have a syscall for. I didn't see any suggestion in the thread
-for reasons why we can't or shouldn't do that.
+Simple way of doing is to use directory blocks that are larger than
+page size:
 
-Would that break some existing software? It doesn't *sound* like it
-would.
+mkfs.xfs -n size=64k ....
 
-As far as I can tell, that *also* wouldn't cause a problem with
-O_TMPFILE, because older kernels will still fail as desired, and we
-wouldn't change the behavior of O_TMPFILE on new kernels (it'd still
-create a temporary file, not a directory).
+We can hit that path in other ways - large attributes will hit it in
+the attr buffer allocation path, enabling the new attribute
+intent-based logging mode will hit it in the xlog_cil_commit path as
+well. IIRC, the above profile comes from the latter case, creating
+lots of zero length files with 64kB xattrs attached via fsmark.
 
-- Josh Triplett
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
