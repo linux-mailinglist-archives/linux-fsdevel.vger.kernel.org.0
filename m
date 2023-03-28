@@ -2,87 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C35076CC994
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 19:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D99486CC9A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 19:51:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229659AbjC1Rqs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 13:46:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58210 "EHLO
+        id S229734AbjC1RvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 13:51:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbjC1Rqs (ORCPT
+        with ESMTP id S229468AbjC1RvA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 13:46:48 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C45D1;
-        Tue, 28 Mar 2023 10:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Y9+w3S5J3Vw2FuGbI9EqpsTol39UocOltTUjYy56Ws4=; b=H4RJjAuNFBRkz6dH6ykqU0ih3r
-        NQsUFwJozFJ1SE0+eYgfPSdIWrRdNZSw1w0jQ2D6YSBSQ5lB6BibYdrSonVIO6sBOU7vAZhZ2+JxZ
-        Yqv2GfSj3MsuHi3kIyJOq1jOQeG1codlZUTC4wTbkof/pbBDsyKy5bdpS+Rbsppv/KlnlsblBCETg
-        d3by0muu5JlA5BgXtSKEMJDu7XJgmkrFcCxr3Y2DI9A9IlYjrNNuO9RDLx+V9Tz6DA0mlRJiTx/HT
-        D/yx0NZlaPGnISqiFVnl2qQunqS4WXNHEbGDzq6UUtZlMrHkSIAFbW5fjemrbafOppGey6U1fPLFZ
-        Mf/VpBBA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1phDP6-00FMVR-1L;
-        Tue, 28 Mar 2023 17:46:40 +0000
-Date:   Tue, 28 Mar 2023 10:46:40 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     ye.xingchen@zte.com.cn, keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, chi.minghao@zte.com.cn,
-        linmiaohe@huawei.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH V8 1/2] mm: compaction: move compaction sysctl to its own
- file
-Message-ID: <ZCMoAKgGj3PnOtMw@bombadil.infradead.org>
-References: <202303281446280457758@zte.com.cn>
- <a231f05c-b157-f495-bf06-8aca903c7e17@suse.cz>
+        Tue, 28 Mar 2023 13:51:00 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66335CDD2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 10:50:59 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id x3so52955430edb.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 10:50:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1680025857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FI2j61yMJdf7TnvRj6afVXARazuag284JZGLVkHrmP0=;
+        b=LN0dotD8i4gIsy+r2eCiG0mN80eNBlHw8YGR/lk+YUv47bRoPOy3yYvLZmaisLBkTY
+         OVAnuHCC0c8wCiWK1OlouE0q1kuqBkkkFyt2HnX7BbN8o8IWhUiWtMWVdEf5vgblMCaK
+         53ngzENpTeHoEWbh+cMecjTybqHL3QzMdvS2Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680025857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FI2j61yMJdf7TnvRj6afVXARazuag284JZGLVkHrmP0=;
+        b=suqU9T5iugG7UslBDPXJHA7dr8dBtJMeqYOay91Nzym9VE+oEVM2nqYEBpoHduuMNp
+         wl9j5NvUKUUdE+JKqdo88nRQhtbTAbkFegjambC8SI3nTI4BJVBw0KfkVSmkFbsaqU8Q
+         OEtyJjE/4f6jp3JPZ5heHCWM4YmpSk8z7E7RXcf6zqspPU6wBdNRr8GO9b3BBZIJXsq7
+         KqIbY5YoK1VPXrJOZGdB025JQLLiqKPn9IzeEJYxg/OW/qxjxLsLZvI+IYEY5qAur0I9
+         DGAkvuQ8vXsiGz9VPiYvUgAkS2P0YD7yhGF5Vr5LqA6414Ybuchy9aYBOFxUVBjI1ppI
+         vS1Q==
+X-Gm-Message-State: AAQBX9emeDM8al53x5jEOvFlloClnH8VeBGn57pCMOQd8uxj/i6KSc7s
+        vILYiFCHxWfLUtu5C9DLEWIpIqpNWQJF5rGMIFVmKQ==
+X-Google-Smtp-Source: AKy350ZMYYYyVq9hcHnltdpg97fMcySpWhCP/BIqUMTC5kZmufSse4U5KCF2KjYeybaavYmoCnibOg==
+X-Received: by 2002:a17:907:6a11:b0:93e:5a85:ad3c with SMTP id rf17-20020a1709076a1100b0093e5a85ad3cmr16821528ejc.57.1680025857625;
+        Tue, 28 Mar 2023 10:50:57 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id lm15-20020a170906980f00b008c76facbbf7sm15642960ejb.171.2023.03.28.10.50.56
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Mar 2023 10:50:57 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id r11so53051649edd.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 10:50:56 -0700 (PDT)
+X-Received: by 2002:a17:907:7b8a:b0:931:6e39:3d0b with SMTP id
+ ne10-20020a1709077b8a00b009316e393d0bmr8463575ejc.15.1680025856622; Tue, 28
+ Mar 2023 10:50:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a231f05c-b157-f495-bf06-8aca903c7e17@suse.cz>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <20230328173613.555192-1-axboe@kernel.dk> <20230328173613.555192-5-axboe@kernel.dk>
+In-Reply-To: <20230328173613.555192-5-axboe@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 28 Mar 2023 10:50:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whiy4UmtfcpMSWSWRGvS1XGkqsPhZkLzi+Cph18FPJzbQ@mail.gmail.com>
+Message-ID: <CAHk-=whiy4UmtfcpMSWSWRGvS1XGkqsPhZkLzi+Cph18FPJzbQ@mail.gmail.com>
+Subject: Re: [PATCH 4/8] snd: make snd_map_bufs() deal with ITER_UBUF
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=0.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 10:56:52AM +0200, Vlastimil Babka wrote:
-> On 3/28/23 08:46, ye.xingchen@zte.com.cn wrote:
-> > From: Minghao Chi <chi.minghao@zte.com.cn>
-> > 
-> > This moves all compaction sysctls to its own file.
-> > 
-> > Move sysctl to where the functionality truly belongs to improve
-> > readability, reduce merge conflicts, and facilitate maintenance.
-> > 
-> > I use x86_defconfig and linux-next-20230327 branch
-> > $ make defconfig;make all -jn
-> > CONFIG_COMPACTION=y
-> > 
-> > add/remove: 1/0 grow/shrink: 1/1 up/down: 350/-256 (94)
-> > Function                                     old     new   delta
-> > vm_compaction                                  -     320    +320
-> > kcompactd_init                               180     210     +30
-> > vm_table                                    2112    1856    -256
-> > Total: Before=21119987, After=21120081, chg +0.00%
-> > 
-> > Despite the addition of 94 bytes the patch still seems a worthwile
-> > cleanup.
-> > 
-> > Link: https://lore.kernel.org/lkml/067f7347-ba10-5405-920c-0f5f985c84f4@suse.cz/
-> > Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
-> 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+On Tue, Mar 28, 2023 at 10:36=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote=
+:
+>
+> @@ -3516,23 +3516,28 @@ static void __user **snd_map_bufs(struct snd_pcm_=
+runtime *runtime,
+>                                   struct iov_iter *iter,
+>                                   snd_pcm_uframes_t *frames, int max_segs=
+)
+>  {
+> +       int nr_segs =3D iovec_nr_user_vecs(iter);
 
-Thanks, queued up on sysctl-next.
+This has a WARN_ON_ONCE() for !user_backed, but then..
 
-  Luis
+>         void __user **bufs;
+> +       struct iovec iov;
+>         unsigned long i;
+>
+>         if (!iter->user_backed)
+>                 return ERR_PTR(-EFAULT);
+
+here the code tries to deal with it.
+
+So I think the two should probably be switched around.
+
+                 Linus
