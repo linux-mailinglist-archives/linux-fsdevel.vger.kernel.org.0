@@ -2,100 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA84F6CCA7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 21:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 749536CCA97
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 21:27:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229864AbjC1TRH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 15:17:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39584 "EHLO
+        id S229759AbjC1T1h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 15:27:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229794AbjC1TRH (ORCPT
+        with ESMTP id S229493AbjC1T1g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 15:17:07 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DACA030FF
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 12:17:05 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id x3so53890336edb.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 12:17:05 -0700 (PDT)
+        Tue, 28 Mar 2023 15:27:36 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9828D359A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 12:27:34 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id f22so8598265plr.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 12:27:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1680031024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vm1VqZUWtkJ38uebeausfTvsxID+l11PQ35yQ5LqQq0=;
-        b=KZXYrMniq9cU/mZMnPE/ulQ8B/yPayVVxHQxyZMwEiXJhBCPY77FqstOunUeYNNmms
-         QFxq4zfMPoyXLB+xXMNnH0OkqdwRNGBFE4NBMMfpftd92krETEdeslENJFszdrOUGK8a
-         X15OaBPNPyOWI8GEUGVFruAfs1jDitF8ExSmE=
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680031654; x=1682623654;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yoe83wTu4JiEC2nD57kWaKyFdNwq3IRhPc/h90ghRUM=;
+        b=Y2ZF26k6H7LsSWQIOTWNZ/cnifeC3yYN0AxD7Lim/rzV4kSQc/Od1V0WqF5HecDpK1
+         6t60QcbkXSn7KYEriXxdZnee3CSO3rtYhwqHWzgGpRDA8inp0XgtjgvK1nJreY0rTCqf
+         aLcL4i+741OUax/+C3dUJgN58J0EZHNXwxnFN7/yeZbEP0/2uITehUzw4QteVybFLS8j
+         QqsqOqix7swy21P6UwCsCNv/vwRyyDj6UHIahiJxSAzZNaVhWrKhGvlN2bYNLVTubs1X
+         bQjnkzkLmsosyJBFTGmpkxgFSTJ6bzYCGxAkhmCUjX5kleYoBBykcN8VWyL5nwk7pGft
+         BHCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680031024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vm1VqZUWtkJ38uebeausfTvsxID+l11PQ35yQ5LqQq0=;
-        b=rWt2sJXJQ4YUjwgn6lyRFNG6wvZrPIVqf3gxJLPlF+DF13BmvbXjud0w3NJMwdj4Hu
-         KAhqrPh6OKEyiKxk8nmp2bZvTYs0A21k5gDidjHF85YXanQaXCy8mZb5A2g6sS6QhhFS
-         PadbZ/nrXMJjXu3x09EvWxvYjuAWt24zoJnx0vrrahLa8zgxOF9DPhRt4Yq2rmyW1YB5
-         QzsHtWvZTXG9vUlwh+jMHwtCDK9EWwl35EQIJzWEYcnycEvl1exYq8PSS/HIjvRsAjdp
-         Ksfbm6Hn0ntU1WLmiTBgEvfE47wEqv0Cp9y/etqZCFhDGIYSyo/SdrlycYZ0xQnqkSTm
-         GYnA==
-X-Gm-Message-State: AAQBX9d3RYrZ8q6B097S1fTCvuSlfuHswAdurafY684O8R8f9u1xk7b8
-        9TgzXvbWekPjv9y3J+TLJGS1m/lIodMKKXm59gsaAg==
-X-Google-Smtp-Source: AKy350ZhyRhahWeEjdRXlcENPgrLKGwgQjKl9vVlqy709F/Oc8x3Nechpg6JkrTlom1SvSyFBHzr+g==
-X-Received: by 2002:a17:906:385b:b0:930:d552:5c23 with SMTP id w27-20020a170906385b00b00930d5525c23mr15261412ejc.56.1680031024168;
-        Tue, 28 Mar 2023 12:17:04 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id kg2-20020a17090776e200b009334219656dsm13829549ejc.56.2023.03.28.12.17.03
-        for <linux-fsdevel@vger.kernel.org>
+        d=1e100.net; s=20210112; t=1680031654; x=1682623654;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yoe83wTu4JiEC2nD57kWaKyFdNwq3IRhPc/h90ghRUM=;
+        b=GsupYq8utNnWSNppUQTzHpf0A6KsYEUMntRbT89JByP6ZFRGpL9VD3HH1sSTVpZRkg
+         P+xOZQaz8xcY5EXc11SaHiNWpQUxeVCY04PhPFjcfSZHkZW5kgtu2p4iojsnhHc63rL5
+         7N3R1Z+7mPPv11m1Bf4LLY5YPJhX45yTL7a7ZJEGjdH+NNwlRDzC8HQeZjuYv2Rcay3O
+         Fk8QOeC3wq15EEQUcD7QDd0Q/fYIYzPVy2uFNsA/e1K+uwxhaNcAk+40wIWT+rVhehSN
+         h16FSp7VALj2LhWdpzEL7R8uRyysYtcRY2+MPbn/TwXR88+hHijhU3mlpHQfbPvaZtlC
+         XOZQ==
+X-Gm-Message-State: AAQBX9dEVBZRJmL2cmsj7WwMJgMeFOgS0fuFhtgX7IaqffWdqX4J138p
+        ezVZhhHQwd+F8xKpw1jnzy7p9Q==
+X-Google-Smtp-Source: AKy350ZngWPeQURhxkfQ4ZeTDsrKiHyRIPgDVfvzNcAIyfDL5KyNEtKqpdTppyGYYdYaq1/9KNodpA==
+X-Received: by 2002:a17:90a:c296:b0:23b:4bce:97de with SMTP id f22-20020a17090ac29600b0023b4bce97demr14286197pjt.4.1680031653898;
+        Tue, 28 Mar 2023 12:27:33 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id s19-20020a170902989300b00186cf82717fsm21508365plp.165.2023.03.28.12.27.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Mar 2023 12:17:03 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id r11so53988493edd.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 12:17:03 -0700 (PDT)
-X-Received: by 2002:a17:907:2c66:b0:931:faf0:3db1 with SMTP id
- ib6-20020a1709072c6600b00931faf03db1mr12358943ejc.4.1680031023202; Tue, 28
- Mar 2023 12:17:03 -0700 (PDT)
+        Tue, 28 Mar 2023 12:27:33 -0700 (PDT)
+Message-ID: <8f36e443-e072-3c85-4ff9-b76476d7b98f@kernel.dk>
+Date:   Tue, 28 Mar 2023 13:27:32 -0600
 MIME-Version: 1.0
-References: <20230328173613.555192-1-axboe@kernel.dk> <20230328173613.555192-6-axboe@kernel.dk>
- <CAHk-=wj=21dt1ASqkvaNXenzQCEZHydYE39+YOj8AAfzeL5HOQ@mail.gmail.com>
- <ZCM4KsKa3xQR2IOv@casper.infradead.org> <CAHk-=wgxYOFJ-95gPk9uo1B6mTd0hx1oyybCuQKnfWD1yP=kjw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgxYOFJ-95gPk9uo1B6mTd0hx1oyybCuQKnfWD1yP=kjw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 28 Mar 2023 12:16:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wggKW9VQSUzGGpC9Rq3HYiEEsFM3cn2cvAJsUBbU=zEzA@mail.gmail.com>
-Message-ID: <CAHk-=wggKW9VQSUzGGpC9Rq3HYiEEsFM3cn2cvAJsUBbU=zEzA@mail.gmail.com>
-Subject: Re: [PATCH 5/8] IB/hfi1: make hfi1_write_iter() deal with ITER_UBUF iov_iter
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        brauner@kernel.org, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=0.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 2/8] iov_iter: add iovec_nr_user_vecs() helper
+Content-Language: en-US
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        brauner@kernel.org
+References: <20230328173613.555192-1-axboe@kernel.dk>
+ <20230328173613.555192-3-axboe@kernel.dk> <20230328184220.GL3390869@ZenIV>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230328184220.GL3390869@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=3.6 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 12:05=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> But it's not like adding a 'struct iovec' explicitly to the members
-> just as extra "code documentation" would be wrong.
->
-> I don't think it really helps, though, since you have to have that
-> other explicit structure there anyway to get the member names right.
+On 3/28/23 12:42 PM, Al Viro wrote:
+> On Tue, Mar 28, 2023 at 11:36:07AM -0600, Jens Axboe wrote:
+>> This returns the number of user segments in an iov_iter. The input can
+>> either be an ITER_IOVEC, where it'll return the number of iovecs. Or it
+>> can be an ITER_UBUF, in which case the number of segments is always 1.
+>>
+>> Outside of those two, no user backed iterators exist. Just return 0 for
+>> those.
+> 
+> Umm...  Why not set ->nr_segs to 1 in iov_iter_ubuf() instead?  Note that
+> it won't be more costly; that part of struct iov_iter (8 bytes at offset 40
+> on amd64) is *not* left uninitialized - zero gets stored there.  That way
+> you'll get constant 1 stored there, which is just as cheap...
 
-Actually, thinking a bit more about it, adding a
+Good point, let's have a prep patch that does that too.
 
-    const struct iovec xyzzy;
+-- 
+Jens Axboe
 
-member might be a good idea just to avoid a cast. Then that
-iter_ubuf_to_iov() macro becomes just
 
-   #define iter_ubuf_to_iov(iter) (&(iter)->xyzzy)
-
-and that looks much nicer (plus still acts kind of as a "code comment"
-to clarify things).
-
-                Linus
