@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6DA06CCC71
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 23:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CAC96CCC73
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 23:58:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230063AbjC1V6g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 17:58:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55514 "EHLO
+        id S230072AbjC1V6j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 17:58:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230023AbjC1V6Y (ORCPT
+        with ESMTP id S230058AbjC1V60 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 17:58:24 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77C39D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 14:58:23 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id x15so12201045pjk.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 14:58:23 -0700 (PDT)
+        Tue, 28 Mar 2023 17:58:26 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2A210CC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 14:58:25 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id iw3so13057077plb.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 14:58:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680040703; x=1682632703;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680040704; x=1682632704;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kqXz3jKUOGYMfoB2fVfbZkg4ok5uwxBojJ+q0N/MO50=;
-        b=v0kII7enXzDQtsNe2aHoy7IY3IFfasxoRdJul4DcyZBSECh7runwrstcL7201Asqm+
-         LHeSN0iSXtlTi6q3uu3/wfU/9nyhrIE/Xc+We/xr2L3w1vGe4org/kxuB0JbpmkldMJK
-         WPQRhFKAqlumaNWfG+nItns5jD+Xdd7UqvuNQUWLKf4iCC/UzCEdqvSD2Kjqqz5XmbFp
-         TLV8HQ+32BpukpfrUZYAFK2uNB7vyc6MG3do7p9PIFA5L+PmfW7lnl50UyupQFnelorq
-         HrHj1CeLVpmntq2Y2R1B5mDeJBMMPcvt7DQ1HAtTQ/dUx/7Hh+wS2X5Ub2aWo8PSdgmH
-         HTOg==
+        bh=oNiZElylqd4oRsTQgc5WV3Ag1/Bvc2tTEOYDdozkUio=;
+        b=iEgLbG9r6XFXfGtaFXYy7mZRK4UqzdhYqC84CtABUu5KKp3+efJcbGIAJ1/LAf0hob
+         tkYdnCYJrC5UcutiQ3Km4pyRNp/llUDC53N0dc4/jsCC/Tpq+tTaaRqTvOWb2d5gTaLS
+         4h4cCxuvtVnNRV7ezypeBWbXyZgVkw+YFDb+bPgMGrbUovySXMoNbqVAmPkPyu+iwyRg
+         8SP6JoLCEOPdTFKWUzOUXK3EXY1SgYayGpfptiz4jhQ7yhh4i6ciDS0lfGEhbVvWfgQv
+         8FpAAwJPrdqgaJ4ZR8fM7r8sBCKviktOcUGFHpbQoPn8EDCCCLeZKiQU33RkhyWsha0O
+         6NIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680040703; x=1682632703;
+        d=1e100.net; s=20210112; t=1680040704; x=1682632704;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kqXz3jKUOGYMfoB2fVfbZkg4ok5uwxBojJ+q0N/MO50=;
-        b=qJ0mXv9KouqZyDYFR72aryVU0LApWMZtNXGVcq+YQ4587UxNnEfcb1UUh0U0C9trwC
-         xSOg+KB0VRQU7Et71jP2hYScec+vHpV69WAjFbVwlGw2gUfn2jZoblJzxZZIoTDJPpzf
-         WuvVbQOU7lLqzEKxnyUONL8wj5GoWFzOxZGUwc4TERTJZl0ZIaO1zG1Jc3SaYeDEygkC
-         LxHpw9aG7e0UdEs9FLkEC1VLnKk2IoI9f1wfD7mNpSJC3qc1A+cDgkoGH6P9lWZSZ25w
-         nIWZBB+jHUqsad31NjMNRIzyk60Tpz9XnRMFuo4bUr6pzyG7Sj1AVzs+vZejFybRlQHN
-         vMXQ==
-X-Gm-Message-State: AAQBX9d30Nabfegrioac0GtlOyGOTSo5Q2qxclUnNeuAceYm5f4uUkrV
-        nBcj9Tg3WApsJzCQAWbbZdDwg0ZtAEmAWsLPJUJTTw==
-X-Google-Smtp-Source: AKy350Ylh4oAVC+KUc9SpRSILAeqF0geA1ZnRnE5IsUVUwKPZC6oReIX3r8V3w5x64cbi230ZciPjg==
-X-Received: by 2002:a17:902:9309:b0:1a1:956d:2281 with SMTP id bc9-20020a170902930900b001a1956d2281mr14193655plb.3.1680040703138;
-        Tue, 28 Mar 2023 14:58:23 -0700 (PDT)
+        bh=oNiZElylqd4oRsTQgc5WV3Ag1/Bvc2tTEOYDdozkUio=;
+        b=wudn5dypM4SlADKco1ifJMiBvBG6AeBaaGMYbqE4QsTHQ0ZfY/vH0dFvZwTV1a2w8L
+         a8wQL69BtVqVCBilD88VDVdxAVjDDL25xEMUtWFVtF6dwyBK3VDYlaTu3QvsnUwe6K5N
+         tBdYbxsxtdznZnertRzfDpACkAcwDSrNbr2PzYMwYMMCPhgi3MBC2yq5wslOG3YjVhmN
+         bEsPbHW+EqBb20rhKuLB9IOX/aXm8bjNnIjDlzBuUOqsmtFTAO9PT1kaBfHjbmVqB2R1
+         OAzlnifvjBiHVD2Z7n7ljyudrsHcr1iUfa455gaE2oW5ewQAnlGco/vKDGDfONXnBiWa
+         R11w==
+X-Gm-Message-State: AAQBX9fTkjAXKaJr2onoJZ0D+LK/mG3xste4daRW9qOAhdXY7ibc7jcF
+        OU9Zo5JTKuiXwiytY6DUTtLSL3kLxx9VL5O4FG+R6Q==
+X-Google-Smtp-Source: AKy350aBZmSxVCYzTJ87/4lMPgOjJSn67tUb/ixJ/7DpMtLCk4TXH9KmIYAMrrF9JHYn/MfDrF0xwg==
+X-Received: by 2002:a17:902:f943:b0:19a:839d:b67a with SMTP id kx3-20020a170902f94300b0019a839db67amr14620207plb.5.1680040704275;
+        Tue, 28 Mar 2023 14:58:24 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id t20-20020a1709028c9400b001a04b92ddffsm21560171plo.140.2023.03.28.14.58.22
+        by smtp.gmail.com with ESMTPSA id t20-20020a1709028c9400b001a04b92ddffsm21560171plo.140.2023.03.28.14.58.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 14:58:22 -0700 (PDT)
+        Tue, 28 Mar 2023 14:58:23 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, brauner@kernel.org,
         viro@zeniv.linux.org.uk, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 7/9] ALSA: pcm: check for user backed iterator, not specific iterator type
-Date:   Tue, 28 Mar 2023 15:58:09 -0600
-Message-Id: <20230328215811.903557-8-axboe@kernel.dk>
+Subject: [PATCH 8/9] iov_iter: convert import_single_range() to ITER_UBUF
+Date:   Tue, 28 Mar 2023 15:58:10 -0600
+Message-Id: <20230328215811.903557-9-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230328215811.903557-1-axboe@kernel.dk>
 References: <20230328215811.903557-1-axboe@kernel.dk>
@@ -72,36 +72,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In preparation for switching single segment iterators to using ITER_UBUF,
-swap the check for whether we are user backed or not.
+Since we're just importing a single vector, we don't have to turn it
+into an ITER_IOVEC. Instead turn it into an ITER_UBUF, which is cheaper
+to iterate.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- sound/core/pcm_native.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lib/iov_iter.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index 331380c2438b..8bfc40b358da 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -3530,7 +3530,7 @@ static ssize_t snd_pcm_readv(struct kiocb *iocb, struct iov_iter *to)
- 	if (runtime->state == SNDRV_PCM_STATE_OPEN ||
- 	    runtime->state == SNDRV_PCM_STATE_DISCONNECTED)
- 		return -EBADFD;
--	if (!iter_is_iovec(to))
-+	if (!to->user_backed)
- 		return -EINVAL;
- 	if (to->nr_segs > 1024 || to->nr_segs != runtime->channels)
- 		return -EINVAL;
-@@ -3567,7 +3567,7 @@ static ssize_t snd_pcm_writev(struct kiocb *iocb, struct iov_iter *from)
- 	if (runtime->state == SNDRV_PCM_STATE_OPEN ||
- 	    runtime->state == SNDRV_PCM_STATE_DISCONNECTED)
- 		return -EBADFD;
--	if (!iter_is_iovec(from))
-+	if (!from->user_backed)
- 		return -EINVAL;
- 	if (from->nr_segs > 128 || from->nr_segs != runtime->channels ||
- 	    !frame_aligned(runtime, from->iov->iov_len))
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 274014e4eafe..fc82cc42ffe6 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1866,9 +1866,7 @@ int import_single_range(int rw, void __user *buf, size_t len,
+ 	if (unlikely(!access_ok(buf, len)))
+ 		return -EFAULT;
+ 
+-	iov->iov_base = buf;
+-	iov->iov_len = len;
+-	iov_iter_init(i, rw, iov, 1, len);
++	iov_iter_ubuf(i, rw, buf, len);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(import_single_range);
 -- 
 2.39.2
 
