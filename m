@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E2E06CC960
+	by mail.lfdr.de (Postfix) with ESMTP id DE9F76CC962
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 19:36:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229940AbjC1Rga (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 13:36:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45564 "EHLO
+        id S229956AbjC1Rgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 13:36:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbjC1RgX (ORCPT
+        with ESMTP id S229725AbjC1RgZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 13:36:23 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C40D525
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 10:36:22 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id e6so6705016ilu.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 10:36:22 -0700 (PDT)
+        Tue, 28 Mar 2023 13:36:25 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42517D50D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 10:36:23 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id h187so3961067iof.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 10:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680024981; x=1682616981;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680024982; x=1682616982;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DPgTwTI5W0XG5CA6xrGMyHEB/r6kqIaXzt06jC3ZMH8=;
-        b=oeXvDUR0AZKAhQ0k5Iy9bee7rVqzn/+yJiqzvDVjOs/gNRBTeTqIcH9PSMUu2JBwYG
-         5Efqizb3FNsWIORmmQU5Help56rkF50zYVbbcMba+XBnPenQlfaGI+shqmA3/QMu4n6z
-         0YN8ZrTStVyyo7Sd3niWg35UK6uN/wtJ3soSzfXATvGDsee62QhpWlFK7SsJpBHEdqqg
-         DVQdUORC92wCgKld8k2MRjDS03ldTuPIVIpBbD0DqE9Z5icg1MvKEPIA6xRPwtUPU93x
-         qKjV7npgsdo8iOTsK629wA+3xf9q3GZFifj7j5tcd/wtC8X/c2HLhNdjz0nrLmOi9rNf
-         tlUg==
+        bh=xwwpNkl97QizhYZnvuFRLqCzVAAtNtlsaziCI/Oydsc=;
+        b=uzI0rbxg++PYHO5BNhGjMza/dk1NgVjdshDWsWlmzRr7H9YLnZ2uzOMJIPUL6MrY5U
+         +J72JK4IxZjkavNlbXYHgIcFNKFoIwbDgCQUldQc9GMb/CEAv7RlnA7OdotBxGEeRwL3
+         VpY90c8tpQ86DzcEprOw1DJohaOMUAS4gVnGEiUdhDTsnS5Lf+JeaWB7N3XXNyAxrMFW
+         fWk2o8BZYS2O8+i6XDPRKkwLzRLDTQXaLd2PnPkM/XiDge2ERGWB/g8bWCQze+ubcAda
+         PiJDkoDEvdfkB5gwktticUujhs2vLt3u3aOfb21ct9UF2FxfmSSwlhEz/vHywcsE+IZj
+         sHdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680024981; x=1682616981;
+        d=1e100.net; s=20210112; t=1680024982; x=1682616982;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DPgTwTI5W0XG5CA6xrGMyHEB/r6kqIaXzt06jC3ZMH8=;
-        b=Gamfl0xfDGBKAxxq96FF8L4wDwkg0vKxuGmRadPh+sRlCXEahzPJeJSnqLBUAO3VGl
-         TrA/tvLiZeM0/Ek3P75AJgZyF2jttqRscS6PfquRag25SRVXCFbHLuVZ4/URP8TlUMk1
-         NMxraY4LvB5SeZnfynZoVIWr+FUco8Jgjh489Xg63miI6Fu9hHNq1UXUP8n0Zyhhu4lN
-         ongsC2AJwuEh39xinbBuvNL8XLJLCmDbEUzRgjXJt9lOyf3MQXfXcMgS5vLpPi6lh6hB
-         5eG/oYk+NGEPoifc8Dmy2QOh5vLw6VUItKyRa0xN3G32NzzcTOGjJ3R5XS2+60/gUsDj
-         FQNw==
-X-Gm-Message-State: AAQBX9ctU9hj547E/mPtZLW8v29vbcAs5XGsqiKj5bonPI0udau3JBKm
-        bEv4FilgAcXao+hoM6q7oA/MRn7uOCnAAq4mWsW5JQ==
-X-Google-Smtp-Source: AKy350ay90y+Kneb0/E4isuJGqd8++H7ZLqHYkpd7CGo2euqKdd9KOQY8UO6SdcsPgr5lu0TJrGXEA==
-X-Received: by 2002:a05:6e02:1bcf:b0:326:1e9e:d204 with SMTP id x15-20020a056e021bcf00b003261e9ed204mr2180551ilv.3.1680024981371;
-        Tue, 28 Mar 2023 10:36:21 -0700 (PDT)
+        bh=xwwpNkl97QizhYZnvuFRLqCzVAAtNtlsaziCI/Oydsc=;
+        b=4DowxogwG2soX/zurOGtMQvNHHViNHHjuYUlbpI6QOr8NuUFkH2dcIHWhqLXkbq9td
+         MLfblVTvuvrMjirQkzhz6/5Y+0xtxn7NEqOed+Nu6a9FkuAjuWwUzrrbvCJkEZzG8HUe
+         kUOt1jlFd6Df+tcafpvj4ss20Vn+KX4sQYdKZMYzMIP3nNCHMcokhgk+hVo2GNZuaJW0
+         EXYP65Pr1mfDWWQP6boM/QS6fy8ygcIeu/r/gCcmiMbziiNaCMuUO9Gb3sSCVxEqO5eK
+         T0JwNIeHnXt0VJw1mB2ELtYoeWwXOegaVYJBFcYsOevcV0chvev4fPvpLlU7VVNXUqoC
+         yMMg==
+X-Gm-Message-State: AO0yUKX3p37agAzOW0JfsbJG5FKbZvRWhXm7XwKjcma06eRDeHbdDygB
+        2MRCw+XqPJOTRSn5jQCLUwhS3VCFJO7nrJ9ebKHUtw==
+X-Google-Smtp-Source: AK7set/Un9qW8bmzOkq5SY8B6Vw038uDJX44LA+Y2DrfyekNDESqBLes3NC6vzqrx9n6Qq0/fZB2Vg==
+X-Received: by 2002:a05:6602:2f04:b0:758:9dcb:5d1a with SMTP id q4-20020a0566022f0400b007589dcb5d1amr11766576iow.2.1680024982329;
+        Tue, 28 Mar 2023 10:36:22 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id p15-20020a056638216f00b00403089c2a1dsm9994115jak.108.2023.03.28.10.36.20
+        by smtp.gmail.com with ESMTPSA id p15-20020a056638216f00b00403089c2a1dsm9994115jak.108.2023.03.28.10.36.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 10:36:21 -0700 (PDT)
+        Tue, 28 Mar 2023 10:36:22 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, brauner@kernel.org,
         viro@zeniv.linux.org.uk, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5/8] IB/hfi1: make hfi1_write_iter() deal with ITER_UBUF iov_iter
-Date:   Tue, 28 Mar 2023 11:36:10 -0600
-Message-Id: <20230328173613.555192-6-axboe@kernel.dk>
+Subject: [PATCH 6/8] IB/qib: make qib_write_iter() deal with ITER_UBUF iov_iter
+Date:   Tue, 28 Mar 2023 11:36:11 -0600
+Message-Id: <20230328173613.555192-7-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230328173613.555192-1-axboe@kernel.dk>
 References: <20230328173613.555192-1-axboe@kernel.dk>
@@ -77,83 +77,33 @@ use the same logic for ITER_UBUF and ITER_IOVEC.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- drivers/infiniband/hw/hfi1/file_ops.c | 42 ++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 17 deletions(-)
+ drivers/infiniband/hw/qib/qib_file_ops.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/file_ops.c b/drivers/infiniband/hw/hfi1/file_ops.c
-index b1d6ca7e9708..f52f57c30429 100644
---- a/drivers/infiniband/hw/hfi1/file_ops.c
-+++ b/drivers/infiniband/hw/hfi1/file_ops.c
-@@ -262,11 +262,17 @@ static ssize_t hfi1_write_iter(struct kiocb *kiocb, struct iov_iter *from)
- 	struct hfi1_user_sdma_pkt_q *pq;
- 	struct hfi1_user_sdma_comp_q *cq = fd->cq;
- 	int done = 0, reqs = 0;
--	unsigned long dim = from->nr_segs;
-+	unsigned long dim;
- 	int idx;
+diff --git a/drivers/infiniband/hw/qib/qib_file_ops.c b/drivers/infiniband/hw/qib/qib_file_ops.c
+index 80fe92a21f96..577d972ba048 100644
+--- a/drivers/infiniband/hw/qib/qib_file_ops.c
++++ b/drivers/infiniband/hw/qib/qib_file_ops.c
+@@ -2244,10 +2244,18 @@ static ssize_t qib_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	struct qib_filedata *fp = iocb->ki_filp->private_data;
+ 	struct qib_ctxtdata *rcd = ctxt_fp(iocb->ki_filp);
+ 	struct qib_user_sdma_queue *pq = fp->pq;
++	int nr_segs = iovec_nr_user_vecs(from);
  
- 	if (!HFI1_CAP_IS_KSET(SDMA))
- 		return -EINVAL;
+-	if (!iter_is_iovec(from) || !from->nr_segs || !pq)
 +	if (!from->user_backed)
 +		return -EFAULT;
-+	dim = iovec_nr_user_vecs(from);
-+	if (!dim)
-+		return -EINVAL;
-+
- 	idx = srcu_read_lock(&fd->pq_srcu);
- 	pq = srcu_dereference(fd->pq, &fd->pq_srcu);
- 	if (!cq || !pq) {
-@@ -274,11 +280,6 @@ static ssize_t hfi1_write_iter(struct kiocb *kiocb, struct iov_iter *from)
- 		return -EIO;
- 	}
++	if (!nr_segs || !pq)
+ 		return -EINVAL;
  
--	if (!iter_is_iovec(from) || !dim) {
--		srcu_read_unlock(&fd->pq_srcu, idx);
--		return -EINVAL;
--	}
--
- 	trace_hfi1_sdma_request(fd->dd, fd->uctxt->ctxt, fd->subctxt, dim);
- 
- 	if (atomic_read(&pq->n_reqs) == pq->n_max_reqs) {
-@@ -286,20 +287,27 @@ static ssize_t hfi1_write_iter(struct kiocb *kiocb, struct iov_iter *from)
- 		return -ENOSPC;
- 	}
- 
--	while (dim) {
--		int ret;
-+	if (dim == 1) {
++	if (nr_segs == 1) {
 +		struct iovec iov = iov_iter_iovec(from);
- 		unsigned long count = 0;
- 
--		ret = hfi1_user_sdma_process_request(
--			fd, (struct iovec *)(from->iov + done),
--			dim, &count);
--		if (ret) {
--			reqs = ret;
--			break;
-+		reqs = hfi1_user_sdma_process_request(fd, &iov, 1, &count);
-+	} else {
-+		while (dim) {
-+			int ret;
-+			unsigned long count = 0;
++		return qib_user_sdma_writev(rcd, pq, &iov, 1);
++	}
 +
-+			ret = hfi1_user_sdma_process_request(fd,
-+					(struct iovec *)(from->iov + done),
-+					dim, &count);
-+			if (ret) {
-+				reqs = ret;
-+				break;
-+			}
-+			dim -= count;
-+			done += count;
-+			reqs++;
- 		}
--		dim -= count;
--		done += count;
--		reqs++;
- 	}
+ 	return qib_user_sdma_writev(rcd, pq, from->iov, from->nr_segs);
+ }
  
- 	srcu_read_unlock(&fd->pq_srcu, idx);
 -- 
 2.39.2
 
