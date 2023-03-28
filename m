@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D72AE6CC7A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 18:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F41E6CC7A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 18:13:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232753AbjC1QNi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 12:13:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49618 "EHLO
+        id S229801AbjC1QNp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 12:13:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232747AbjC1QNf (ORCPT
+        with ESMTP id S232518AbjC1QNg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 12:13:35 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178BFE3B4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 09:13:26 -0700 (PDT)
+        Tue, 28 Mar 2023 12:13:36 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F802E3A7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 09:13:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 948FBB81DA5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 16:13:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5EFC4339E;
-        Tue, 28 Mar 2023 16:13:22 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 7F5E7CE1C27
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 16:13:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4AE2C433D2;
+        Tue, 28 Mar 2023 16:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680020003;
-        bh=IMnzmusWqH/wdAAywJGvV4jW/PNRucB2FHw5lIG7LRk=;
+        s=k20201202; t=1680020004;
+        bh=gg6Xm+04eTNW6tA5oB3NAg3zpvyGDFAMW2ThjNZK8Zc=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=Zkuf1TjwjolI/E2x2I1c63SG3BGVT9VxWoOC1C4XX+dc0E15/f37tvYqGNHXaZJpE
-         30hWG6ut5M59VLGJKcJtIpK4GqN1hU+vYxLtLdKTCgDVL3gMLK9XNMh/M8f6ht4XN5
-         3A51lMDSDj8yMssa4Wh5AYzmZVozIy9rUomP0VPwq4wQx+1iFBTTIZ8jkwPxC678Hl
-         kn6pElFyChl1QiBVKmd4GLYaXxWFuCPUDIDiOAGiCiJ5ldrf1lnKOKmB4OaJIr/fyc
-         vJM6PJo3f+SGZzSlhiskvGUtn0IL7+Ohm6MJJrlLnqw40km4XlolQdE+4lH9d+X0SC
-         inx1XRgWuYU3A==
+        b=VYIHcRGU/YItRMRX/ZjP577DthSoWeMHWo4eGaewxGJ1x5onU3cvsbsb4i8oRAvs+
+         jFUG5JuCkj4AxRARCi91gjAW4U5niDqTL2Ye+aSp9i4t2BzBrgLTzkgxaN3LuO43/S
+         vU3t68HNIpyU/wXWwtTwkueqW5LuqOKCiO6Sj8x5Efwe/4LwooRw0hfaA/UHwV0xDW
+         YjsBYJcgGE/P9sZ+56Dbo0v5k/kgTSUruiTGnzK0sHcIv3WmPL9rXTFektXHZM/B02
+         GSwB4ZMikL0//Q/AV8pVH4prZgCniOa2J+TDN6wWscx/MFeKqsMswRUkbpTW6xd/2Q
+         VrupJuPoVe15Q==
 From:   Christian Brauner <brauner@kernel.org>
-Date:   Tue, 28 Mar 2023 18:13:06 +0200
-Subject: [PATCH v2 1/5] fs: add path_mounted()
+Date:   Tue, 28 Mar 2023 18:13:07 +0200
+Subject: [PATCH v2 2/5] pnode: pass mountpoint directly
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230202-fs-move-mount-replace-v2-1-f53cd31d6392@kernel.org>
+Message-Id: <20230202-fs-move-mount-replace-v2-2-f53cd31d6392@kernel.org>
 References: <20230202-fs-move-mount-replace-v2-0-f53cd31d6392@kernel.org>
 In-Reply-To: <20230202-fs-move-mount-replace-v2-0-f53cd31d6392@kernel.org>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
@@ -46,11 +46,11 @@ To:     Al Viro <viro@zeniv.linux.org.uk>,
 Cc:     linux-fsdevel@vger.kernel.org,
         Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.13-dev-00303
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4051; i=brauner@kernel.org;
- h=from:subject:message-id; bh=IMnzmusWqH/wdAAywJGvV4jW/PNRucB2FHw5lIG7LRk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQoC8l/e1+5jis7vVf3d2H/1KKMGbefxNUHRiZNDGxK+C+p
- +PRWRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETKlzH8ZFTaVPb7jK/DgrQpz1R41j
- fZZTX2yFyrl7uevCW/Tbf2PMNfEbZpnTox6fN3/FXmOvzVfG/xd3lDTz6+tfuOXfQ6NjWGHQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2724; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=gg6Xm+04eTNW6tA5oB3NAg3zpvyGDFAMW2ThjNZK8Zc=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQoC8nv89eTn6S7ecb76fypXzeoGKjIni1PTp6uESvXUW23
+ bHZwRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEScnRn+qRZ5HXhgrS868ba5Z8ulg7
+ Ps5ENTbfMvhCTb2lrHfF7HwMgwb2rXJkvTVZw2vP38C5ztG5fIL9iX13dilfzOz3szrgWwAAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
@@ -62,128 +62,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a small helper to check whether a path refers to the root of the
-mount instead of open-coding this everywhere.
+Currently, we use a global variable to stash the destination
+mountpoint. All global variables are changed in propagate_one(). The
+mountpoint variable is one of the few which doesn't change after
+initialization. Instead, just pass the destination mountpoint directly
+making it easy to verify directly in propagate_mnt() that the
+destination mountpoint never changes.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/namespace.c | 36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+ fs/pnode.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index bc0f15257b49..154569fd7343 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1767,6 +1767,19 @@ bool may_mount(void)
- 	return ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN);
+diff --git a/fs/pnode.c b/fs/pnode.c
+index 468e4e65a615..3cede8b18c8b 100644
+--- a/fs/pnode.c
++++ b/fs/pnode.c
+@@ -214,7 +214,6 @@ static struct mount *next_group(struct mount *m, struct mount *origin)
+ 
+ /* all accesses are serialized by namespace_sem */
+ static struct mount *last_dest, *first_source, *last_source, *dest_master;
+-static struct mountpoint *mp;
+ static struct hlist_head *list;
+ 
+ static inline bool peers(struct mount *m1, struct mount *m2)
+@@ -222,7 +221,7 @@ static inline bool peers(struct mount *m1, struct mount *m2)
+ 	return m1->mnt_group_id == m2->mnt_group_id && m1->mnt_group_id;
  }
  
-+/**
-+ * path_mounted - check whether path is mounted
-+ * @path: path to check
-+ *
-+ * Determine whether @path refers to the root of a mount.
-+ *
-+ * Return: true if @path is the root of a mount, false if not.
-+ */
-+static inline bool path_mounted(const struct path *path)
-+{
-+	return path->mnt->mnt_root == path->dentry;
-+}
-+
- static void warn_mandlock(void)
+-static int propagate_one(struct mount *m)
++static int propagate_one(struct mount *m, struct mountpoint *dest_mp)
  {
- 	pr_warn_once("=======================================================\n"
-@@ -1782,7 +1795,7 @@ static int can_umount(const struct path *path, int flags)
- 
- 	if (!may_mount())
- 		return -EPERM;
--	if (path->dentry != path->mnt->mnt_root)
-+	if (!path_mounted(path))
- 		return -EINVAL;
- 	if (!check_mnt(mnt))
- 		return -EINVAL;
-@@ -2367,7 +2380,7 @@ static int do_change_type(struct path *path, int ms_flags)
+ 	struct mount *child;
  	int type;
- 	int err = 0;
+@@ -230,7 +229,7 @@ static int propagate_one(struct mount *m)
+ 	if (IS_MNT_NEW(m))
+ 		return 0;
+ 	/* skip if mountpoint isn't covered by it */
+-	if (!is_subdir(mp->m_dentry, m->mnt.mnt_root))
++	if (!is_subdir(dest_mp->m_dentry, m->mnt.mnt_root))
+ 		return 0;
+ 	if (peers(m, last_dest)) {
+ 		type = CL_MAKE_SHARED;
+@@ -262,7 +261,7 @@ static int propagate_one(struct mount *m)
+ 	if (IS_ERR(child))
+ 		return PTR_ERR(child);
+ 	read_seqlock_excl(&mount_lock);
+-	mnt_set_mountpoint(m, mp, child);
++	mnt_set_mountpoint(m, dest_mp, child);
+ 	if (m->mnt_master != dest_master)
+ 		SET_MNT_MARK(m->mnt_master);
+ 	read_sequnlock_excl(&mount_lock);
+@@ -299,13 +298,12 @@ int propagate_mnt(struct mount *dest_mnt, struct mountpoint *dest_mp,
+ 	last_dest = dest_mnt;
+ 	first_source = source_mnt;
+ 	last_source = source_mnt;
+-	mp = dest_mp;
+ 	list = tree_list;
+ 	dest_master = dest_mnt->mnt_master;
  
--	if (path->dentry != path->mnt->mnt_root)
-+	if (!path_mounted(path))
- 		return -EINVAL;
- 
- 	type = flags_to_propagation_type(ms_flags);
-@@ -2646,7 +2659,7 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
- 	if (!check_mnt(mnt))
- 		return -EINVAL;
- 
--	if (path->dentry != mnt->mnt.mnt_root)
-+	if (!path_mounted(path))
- 		return -EINVAL;
- 
- 	if (!can_change_locked_flags(mnt, mnt_flags))
-@@ -2685,7 +2698,7 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
- 	if (!check_mnt(mnt))
- 		return -EINVAL;
- 
--	if (path->dentry != path->mnt->mnt_root)
-+	if (!path_mounted(path))
- 		return -EINVAL;
- 
- 	if (!can_change_locked_flags(mnt, mnt_flags))
-@@ -2775,9 +2788,9 @@ static int do_set_group(struct path *from_path, struct path *to_path)
- 
- 	err = -EINVAL;
- 	/* To and From paths should be mount roots */
--	if (from_path->dentry != from_path->mnt->mnt_root)
-+	if (!path_mounted(from_path))
- 		goto out;
--	if (to_path->dentry != to_path->mnt->mnt_root)
-+	if (!path_mounted(to_path))
- 		goto out;
- 
- 	/* Setting sharing groups is only allowed across same superblock */
-@@ -2858,7 +2871,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
- 	if (old->mnt.mnt_flags & MNT_LOCKED)
- 		goto out;
- 
--	if (old_path->dentry != old_path->mnt->mnt_root)
-+	if (!path_mounted(old_path))
- 		goto out;
- 
- 	if (d_is_dir(new_path->dentry) !=
-@@ -2940,8 +2953,7 @@ static int do_add_mount(struct mount *newmnt, struct mountpoint *mp,
+ 	/* all peers of dest_mnt, except dest_mnt itself */
+ 	for (n = next_peer(dest_mnt); n != dest_mnt; n = next_peer(n)) {
+-		ret = propagate_one(n);
++		ret = propagate_one(n, dest_mp);
+ 		if (ret)
+ 			goto out;
  	}
- 
- 	/* Refuse the same filesystem on the same mount point */
--	if (path->mnt->mnt_sb == newmnt->mnt.mnt_sb &&
--	    path->mnt->mnt_root == path->dentry)
-+	if (path->mnt->mnt_sb == newmnt->mnt.mnt_sb && path_mounted(path))
- 		return -EBUSY;
- 
- 	if (d_is_symlink(newmnt->mnt.mnt_root))
-@@ -3920,11 +3932,11 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 	if (new_mnt == root_mnt || old_mnt == root_mnt)
- 		goto out4; /* loop, on the same file system  */
- 	error = -EINVAL;
--	if (root.mnt->mnt_root != root.dentry)
-+	if (!path_mounted(&root))
- 		goto out4; /* not a mountpoint */
- 	if (!mnt_has_parent(root_mnt))
- 		goto out4; /* not attached */
--	if (new.mnt->mnt_root != new.dentry)
-+	if (!path_mounted(&new))
- 		goto out4; /* not a mountpoint */
- 	if (!mnt_has_parent(new_mnt))
- 		goto out4; /* not attached */
-@@ -4127,7 +4139,7 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
- 	struct mount *mnt = real_mount(path->mnt);
- 	int err = 0;
- 
--	if (path->dentry != mnt->mnt.mnt_root)
-+	if (!path_mounted(path))
- 		return -EINVAL;
- 
- 	if (kattr->mnt_userns) {
+@@ -316,7 +314,7 @@ int propagate_mnt(struct mount *dest_mnt, struct mountpoint *dest_mp,
+ 		/* everything in that slave group */
+ 		n = m;
+ 		do {
+-			ret = propagate_one(n);
++			ret = propagate_one(n, dest_mp);
+ 			if (ret)
+ 				goto out;
+ 			n = next_peer(n);
 
 -- 
 2.34.1
