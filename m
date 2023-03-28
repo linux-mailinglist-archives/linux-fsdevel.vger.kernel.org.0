@@ -2,134 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA9156CCC0E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 23:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3015A6CCC2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 23:37:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229816AbjC1VVZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 17:21:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56860 "EHLO
+        id S229875AbjC1VhX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 17:37:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbjC1VVY (ORCPT
+        with ESMTP id S229626AbjC1VhW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 17:21:24 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 413232111
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 14:21:23 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1a25eabf3f1so839645ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 14:21:23 -0700 (PDT)
+        Tue, 28 Mar 2023 17:37:22 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B39BE26BD
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 14:37:21 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id j18-20020a05600c1c1200b003ee5157346cso10279300wms.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 14:37:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680038483;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=37w/mLz1/IeQYM1YNH9T1OFwsYSh/RWHj4RxdebIIUI=;
-        b=q7ieAfxaMY2RuLOBs87DAWPjueycwFn6qnWlqTo/0PDEPmHAJDIpVM09ilJU6ZFU94
-         yJG7WrKB0EEHXmAeZqRPqWSzk+0AqO9mn2UMDn/XCvXIt3hDlXwl50YaAyEh+iZ+oPI+
-         Q4zbglxX5JvDwhRjOH6i3NGSkwtPNhThgEdzoauMyXZ1bkPHbaHJNQtkPtK8wJMiAdiL
-         ya0BgFpvIBBM/FJAcDBcYoPqRfgwTuENjHQi4WID89611jFT4gY5nZqVC9gvxE5ovyEM
-         eE8qatpJwgNWx71/+AmxT6RuG6BOQ7mUE0KF/axdqYm4D3VYyYArWPfjS+RlCV8UQhNa
-         L5ZQ==
+        d=google.com; s=20210112; t=1680039440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l9mUXY2fTp3NpOaMf13/AXwcN1BdLxB4JshaRfNkkvA=;
+        b=LsC0TDGpc5Du89+i6T9O/0y/rdDEZpI33OIi6rTu0HJXqcnv10YD2NUgQykhUk1v/b
+         A+b0IwRBQlkKyJB48ScP2fXhRLx3+WuuhabEiodSaO4Xz/8HiLtUxJ0w2QPe+atXlQRF
+         xMaZo8OdLA8evF21KLR2tJanXPrAcRTPZj8JIlGnFQitATkZZbW4ibzqIeHlsOVrjZj+
+         k9FKArAVlZxFkWgxGehyFi7mBvlEPsCFV5bQqyLaoRvQ2CaZcqgyxS2QYqk5lz9OJnTI
+         A69ZJL7OLbAfOhssyltoYuAbAEb5ZVIof4zFH+2MXotfRoXF1g1x9tiDne74vTTNQC5R
+         qUtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680038483;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=37w/mLz1/IeQYM1YNH9T1OFwsYSh/RWHj4RxdebIIUI=;
-        b=3EdGa4i5CS8cnRu2rP1flllgNTR6HlgzBMJHGITKVkxJSx38RwW8unva/OOG1s8A3A
-         w/wM5jv3++3sNPD2pGZOgbj0m+QA8uzD5wHk9Gu5ofxCxbTEVh5ToDvZsW9CGygIyjiB
-         6efJgp3VWOaGaccvrLto1ctJGQraofrXjQ8Zfn1OQb6nlR/jcmmU8FYVHN9lPHnw47h7
-         NRc6Fnyh/1rM40yeGVT1tZn31lcTssRDhpAgCj1YzGFPQoFurO7VPHU1pS1RCvvW1Hll
-         JFHS7ITXPfRxcR/z7xDxt0ldmftOdhQAcn/wAVtcVTgpnzzpwPG5I0lAZzqr3s9MTlu7
-         rszQ==
-X-Gm-Message-State: AAQBX9eoecrqTC/Ro3ItnfyKr96HTEwDFHl/XgP1nYjt9AWmLVPNUSz2
-        Abrr3/Inw3gH6+qrZ5GT8DrO8w==
-X-Google-Smtp-Source: AKy350aQQY9coHnT+dtPzsbvSIUtav3IUlX1I7tlsQhU+xktYU9SDeQlAC2Iu8x7TzfR3q9AcesSmg==
-X-Received: by 2002:a17:90b:4007:b0:23f:6872:e37c with SMTP id ie7-20020a17090b400700b0023f6872e37cmr12349853pjb.0.1680038482677;
-        Tue, 28 Mar 2023 14:21:22 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d7-20020a17090a498700b002340d317f3esm9561280pjh.52.2023.03.28.14.21.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Mar 2023 14:21:22 -0700 (PDT)
-Message-ID: <fc3e4956-9956-01ee-7c11-e9eef59b5e38@kernel.dk>
-Date:   Tue, 28 Mar 2023 15:21:21 -0600
+        d=1e100.net; s=20210112; t=1680039440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l9mUXY2fTp3NpOaMf13/AXwcN1BdLxB4JshaRfNkkvA=;
+        b=U405ooC2zrvbRoNZA6lgz0+CmQB05WSXbrDGF/1adeUBx0LD3B4mhaz9XP9N3Yg2ts
+         5ao7KYp1Ne9vagk2KbvrZ376EKdOof+VRwzN+npgIpCmwSn47wUW+C2YUV6nKSp5lr+S
+         h068VapmYvrb7aI5jSsOU4urqlhtK+89dn8v65+ahMVYUew40F4wRt6E/m930Ua5BZlI
+         gPD6KklnuIMhKBe3ZqZev7HRc095B0fYpki1pgfiALheptKT2Urd4cIXOruCZJZT5gxC
+         wSJ6DxY/69cN0e7SourN+5utfyMlkdFpas+wBYu/zIG/dgQV2Xff+qcbcvljzb1uvFDf
+         QOmA==
+X-Gm-Message-State: AO0yUKVivXkRYPrvsQ/gSCG+NKUecWpH+ZKhHGhnbYxZ/FMpQy2xiwrQ
+        Wi4jexIWoG26Rhalf84prVMisM9ehQaLGLyfOYKBWA==
+X-Google-Smtp-Source: AK7set/3zq6EZKdAG8vT7X0NpWPNFSiINcfJerOMaDKlpJ3vkgVdChsQLfIjZCF5YHgXXZGQ4WkEOetwa87H4mFEV3o=
+X-Received: by 2002:a05:600c:228f:b0:3ed:5c86:d828 with SMTP id
+ 15-20020a05600c228f00b003ed5c86d828mr3765570wmf.6.1680039440043; Tue, 28 Mar
+ 2023 14:37:20 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 5/8] IB/hfi1: make hfi1_write_iter() deal with ITER_UBUF
- iov_iter
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-        viro@zeniv.linux.org.uk
-References: <20230328173613.555192-1-axboe@kernel.dk>
- <20230328173613.555192-6-axboe@kernel.dk>
- <CAHk-=wj=21dt1ASqkvaNXenzQCEZHydYE39+YOj8AAfzeL5HOQ@mail.gmail.com>
- <ZCM4KsKa3xQR2IOv@casper.infradead.org>
- <CAHk-=wgxYOFJ-95gPk9uo1B6mTd0hx1oyybCuQKnfWD1yP=kjw@mail.gmail.com>
- <CAHk-=wggKW9VQSUzGGpC9Rq3HYiEEsFM3cn2cvAJsUBbU=zEzA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=wggKW9VQSUzGGpC9Rq3HYiEEsFM3cn2cvAJsUBbU=zEzA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=3.6 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ***
+References: <20230320210724.GB1434@sol.localdomain> <CAHk-=wgE9kORADrDJ4nEsHHLirqPCZ1tGaEPAZejHdZ03qCOGg@mail.gmail.com>
+ <ZBlJJBR7dH4/kIWD@slm.duckdns.org> <CAHk-=wh0wxPx1zP1onSs88KB6zOQ0oHyOg_vGr5aK8QJ8fuxnw@mail.gmail.com>
+ <ZBulmj3CcYTiCC8z@slm.duckdns.org> <CAHk-=wgT2TJO6+B=Pho1VOtND-qC_d1PM1FC-Snf+sRpLhR=hg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgT2TJO6+B=Pho1VOtND-qC_d1PM1FC-Snf+sRpLhR=hg@mail.gmail.com>
+From:   Nathan Huckleberry <nhuck@google.com>
+Date:   Tue, 28 Mar 2023 14:36:00 -0700
+Message-ID: <CAJkfWY6JkiZKdM0AwS0QPsoVhxru0g3g9NWwM=5BbK61c1N5ZA@mail.gmail.com>
+Subject: Re: [GIT PULL] fsverity fixes for v6.3-rc4
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Tejun Heo <tj@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
+        fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
+        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/28/23 1:16?PM, Linus Torvalds wrote:
-> On Tue, Mar 28, 2023 at 12:05?PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> But it's not like adding a 'struct iovec' explicitly to the members
->> just as extra "code documentation" would be wrong.
->>
->> I don't think it really helps, though, since you have to have that
->> other explicit structure there anyway to get the member names right.
-> 
-> Actually, thinking a bit more about it, adding a
-> 
->     const struct iovec xyzzy;
-> 
-> member might be a good idea just to avoid a cast. Then that
-> iter_ubuf_to_iov() macro becomes just
-> 
->    #define iter_ubuf_to_iov(iter) (&(iter)->xyzzy)
-> 
-> and that looks much nicer (plus still acts kind of as a "code comment"
-> to clarify things).
+Hey all,
+On Thu, Mar 23, 2023 at 11:04=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, Mar 22, 2023 at 6:04=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+> >
+> > Thanks for the pointers. They all seem plausible symptoms of work items
+> > getting bounced across slow cache boundaries. I'm off for a few weeks s=
+o
+> > can't really dig in right now but will get to it afterwards.
+>
+> So just as a gut feeling, I suspect that one solution would be to
+> always *start* the work on the local CPU (where "local" might be the
+> same, or at least a sibling).
+>
+> The only reason to migrate to another CPU would be if the work is
+> CPU-intensive, and I do suspect that is commonly not really the case.
+>
+> And I strongly suspect that our WQ_CPU_INTENSIVE flag is pure garbage,
+> and should just be gotten rid of, because what could be considered
+> "CPU intensive" in under one situation might not be CPU intensive in
+> another one, so trying to use some static knowledge about it is just
+> pure guess-work.
+>
+> The different situations might be purely contextual things ("heavy
+> network traffic when NAPI polling kicks in"), but it might also be
+> purely hardware-related (ie "this is heavy if we don't have CPU hw
+> acceleration for crypto, but cheap if we do").
+>
+> So I really don't think it should be some static decision, either
+> through WQ_CPU_INTENSIVE _or_ through "WQ_UNBOUND means schedule on
+> first available CPU".
 
-I went down this path, and it _mostly_ worked out. You can view the
-series here, I'll send it out when I've actually tested it:
+I agree that these flags are prone to misuse. In most cases, there's
+no explanation for why the flags are being used. Either the flags were
+enabled unintentionally or the author never posted a performance
+justification.
 
-https://git.kernel.dk/cgit/linux-block/log/?h=iter-ubuf
+Imo figuring out which set of flags to set on which architecture is
+too much of a burden for each workqueue user.
 
-A few mental notes I made along the way:
+>
+> Wouldn't it be much nicer if we just noticed it dynamically, and
+> WQ_UNBOUND would mean that the workqueue _can_ be scheduled on another
+> CPU if it ends up being advantageous?
+>
+> And we actually kind of have that dynamic flag already, in the form of
+> the scheduler. It might even be explicit in the context of the
+> workqueue (with "need_resched()" being true and the workqueue code
+> itself might notice it and explicitly then try to spread it out), but
+> with preemption it's more implicit and maybe it needs a bit of
+> tweaking help.
+>
+> So that's what I mean by "start the work as local CPU work" - use that
+> as the baseline decision (since it's going to be the case that has
+> cache locality), and actively try to avoid spreading things out unless
+> we have an explicit reason to, and that reason we could just get from
+> the scheduler.
 
-- The IB/sound changes are now just replacing an inappropriate
-  iter_is_iovec() with iter->user_backed. That's nice and simple.
+This would work for the use cases I'm worried about. Most of the work
+items used for IO post-processing are really fast. I suspect that the
+interaction between frequency scaling and WQ_UNBOUND is causing the
+slowdowns.
 
-- The iov_iter_iovec() case becomes a bit simpler. Or so I thought,
-  because we still need to add in the offset so we can't just use
-  out embedded iovec for that. The above branch is just using the
-  iovec, but I don't think this is right.
+>
+> The worker code already has that "wq_worker_sleeping()" callback from
+> the scheduler, but that only triggers when a worker is going to sleep.
+> I'm saying that the "scheduler decided to schedule out a worker" case
+> might be used as a "Oh, this is CPU intensive, let's try to spread it
+> out".
+>
+> See what I'm trying to say?
+>
+> And yes, the WQ_UNBOUND case does have a weak "prefer local CPU" in
+> how it basically tends to try to pick the current CPU unless there is
+> some active reason not to (ie the whole "wq_select_unbound_cpu()"
+> code), but I suspect that is then counter-acted by the fact that it
+> will always pick the workqueue pool by node - so the "current CPU"
+> ends up probably being affected by what random CPU that pool was
+> running on.
+>
+> An alternative to any scheduler interaction thing might be to just
+> tweak "first_idle_worker()". I get the feeling that that choice is
+> just horrid, and that is another area that could really try to take
+> locality into account. insert_work() realyl seems to pick a random
+> worker from the pool - which is fine when the pool is per-cpu, but
+> when it's the unbound "random node" pool, I really suspect that it
+> might be much better to try to pick a worker that is on the right cpu.
+>
+> But hey, I may be missing something. You know this code much better than =
+I do.
+>
+>                   Linus
 
-- Looks like it exposed a block bug, where the copy in
-  bio_alloc_map_data() was obvious garbage but happened to work
-  before.
-
-I'm still inclined to favor this approach over the previous, even if the
-IB driver is a pile of garbage and lighting it a bit more on fire would
-not really hurt.
-
-Opinions? Or do you want me to just send it out for easier reading
-
-
--- 
-Jens Axboe
-
+Thanks,
+Huck
