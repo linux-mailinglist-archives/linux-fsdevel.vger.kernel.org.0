@@ -2,776 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E326CC7A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 18:13:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAC956CC7B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 18:17:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232644AbjC1QN4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 12:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49624 "EHLO
+        id S232984AbjC1QRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 12:17:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232940AbjC1QNi (ORCPT
+        with ESMTP id S231593AbjC1QRS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 12:13:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1970AE187
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 09:13:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 50369618A2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 16:13:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D95C4339E;
-        Tue, 28 Mar 2023 16:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680020009;
-        bh=QDGM3i7M7TedQf5hTEVjzRDTdOi0RxQLyndknohXzS0=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=XXq3ioVFx9QV8wuA4zCX8dbsxkbRXXGPOW28+72mpFfKOOOxWWMil7tn9mejOjRbR
-         orUktKw8UvGgrPiURTw3Ng3oDhwzPkuP8n96K5YDFC3do7bEIT6niVTQW0DtUJKwmC
-         J5odxjUDlK4ZSYgFrUN7B49GCF0xiMqlNP1iFIx3oOsY6jysw5MmdnpIIb0rP7/10M
-         Qb4dwV4uk7AvGk2BOBqrJUkthDp2WHhAVqCNx62DPTPwg+FREIROzBzSyXh8RsRFlF
-         RR5xwae4UFTqTSqGaLt49hxeGIEI1USst/Jhc45H8vJmqdpht6AENSnPaHGaZa5WZu
-         nq8qGr3F2Syzg==
-From:   Christian Brauner <brauner@kernel.org>
-Date:   Tue, 28 Mar 2023 18:13:10 +0200
-Subject: [PATCH v2 5/5] fs: allow to mount beneath top mount
+        Tue, 28 Mar 2023 12:17:18 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF68FBDD1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 09:17:16 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230328161715euoutp018da4add1f25d0250ee1412c7483d6262~QoYC8mT4B2949429494euoutp01x
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 16:17:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230328161715euoutp018da4add1f25d0250ee1412c7483d6262~QoYC8mT4B2949429494euoutp01x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1680020235;
+        bh=mqLdRjs5YCQMtwNo6iN1eWz3Bgl+agNA8ISno6XaIPg=;
+        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+        b=WYxOq+kwk7VUFdcCKV9Yen8Bm5utlrcKFTrH7FgZE1ZS8ez7qAN4QOVyaKYpXI8+b
+         Yvd9QgMFijBu/sxxRSDnx75/hMhBWOIWDKX2xhjMwa4a/bvi52/XM93rlcO1fwPN4D
+         xHvTiWz/AzJGdzoK2om5MZn82pSyqDoh2SV5tRB4=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230328161714eucas1p24ad41a96092cf0b451efd29aa33f047b~QoYCAI75o2141921419eucas1p2B;
+        Tue, 28 Mar 2023 16:17:14 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E3.72.09503.A0313246; Tue, 28
+        Mar 2023 17:17:14 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230328161713eucas1p263e3a9167f956e10e522c91ae316b244~QoYBmJhZk1672516725eucas1p2N;
+        Tue, 28 Mar 2023 16:17:13 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230328161713eusmtrp2aefa500222b07e9fb50fbfd5a23e1f5c~QoYBlbmRk1088210882eusmtrp26;
+        Tue, 28 Mar 2023 16:17:13 +0000 (GMT)
+X-AuditID: cbfec7f2-e8fff7000000251f-78-6423130a41e6
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 81.97.08862.90313246; Tue, 28
+        Mar 2023 17:17:13 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230328161713eusmtip11c9b253d7b3c5c5f3a304baaefc01afc~QoYBZuuzm1480014800eusmtip1a;
+        Tue, 28 Mar 2023 16:17:13 +0000 (GMT)
+Received: from [192.168.8.209] (106.210.248.108) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Tue, 28 Mar 2023 17:17:12 +0100
+Message-ID: <5865a840-cb5e-ead1-f168-100869081f84@samsung.com>
+Date:   Tue, 28 Mar 2023 18:17:11 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20230202-fs-move-mount-replace-v2-5-f53cd31d6392@kernel.org>
-References: <20230202-fs-move-mount-replace-v2-0-f53cd31d6392@kernel.org>
-In-Reply-To: <20230202-fs-move-mount-replace-v2-0-f53cd31d6392@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <sforshee@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.13-dev-00303
-X-Developer-Signature: v=1; a=openpgp-sha256; l=29230; i=brauner@kernel.org;
- h=from:subject:message-id; bh=QDGM3i7M7TedQf5hTEVjzRDTdOi0RxQLyndknohXzS0=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQoCynsbD2y+pTwgYcnHl34GWIetzrE36K79eoGg9QDUjp2
- 880cO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbSoMzwV5bl/7xtptxfQhh33FY88r
- //uMXT49fCz4VmHQ5jS1OvucbIcH/C7Enaqewfz1XM2XPu+hTGpDcPYvj5J0/9+bxi78s0W3YA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+        Thunderbird/102.9.0
+Subject: Re: [PATCH 1/5] zram: remove the call to page_endio in the bio
+ end_io handler
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>
+CC:     <martin@omnibond.com>, <axboe@kernel.dk>, <minchan@kernel.org>,
+        <akpm@linux-foundation.org>, <hubcap@omnibond.com>,
+        <viro@zeniv.linux.org.uk>, <senozhatsky@chromium.org>,
+        <brauner@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <mcgrof@kernel.org>,
+        <linux-block@vger.kernel.org>, <gost.dev@samsung.com>,
+        <linux-mm@kvack.org>, <devel@lists.orangefs.org>
+From:   Pankaj Raghav <p.raghav@samsung.com>
+In-Reply-To: <ZCMFcTHkTe/1WapL@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [106.210.248.108]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOKsWRmVeSWpSXmKPExsWy7djP87pcwsopBl/ucVrMWb+GzWL13X42
+        i9eHPzFa7N88hcli5eqjTBbtd/uYLPbe0rbYs/cki8XlXXPYLO6t+c9qcXL9f2aLGxOeMlos
+        +/qe3WL3xkVsFuf/Hme1+P1jDpuDgMfshossHptXaHlcPlvqsWlVJ5vHpk+T2D1OzPjN4tEw
+        9Rabx+6bDWwev27fYfX4vEnOY9OTt0wB3FFcNimpOZllqUX6dglcGZs2n2Ep+MJW0XPoNnMD
+        4z7WLkZODgkBE4ldi36ydTFycQgJrGCUmLLlASuE84VRYsn2dkYI5zOjxJoXfXAtX+b2sEMk
+        ljNKfNs9gRmuasrRr1DDdjNKHDq4gQmkhVfATuLF9NXMIDaLgKrEzcZJbBBxQYmTM5+wgNii
+        AlESfbc3ga0QFoiQOPR2OyOIzSwgLnHryXywOSICHhL//+wC28Ys0MMs8W3KVqAEBwebgJZE
+        Yyc7iMkJdN6sE7kQrZoSrdt/s0PY8hLb385hBimREFCW+H3eH+KZWolTW24xgUyUEHjHKXFu
+        0yV2iISLxL3f51ggbGGJV8e3QMVlJP7vhDhHQqBa4umN38wQzS2MEv0717NBLLCW6DuTA1Hj
+        KPF4+05WiDCfxI23ghDn8ElM2jadeQKj6iykgJiF5OFZSD6YheSDBYwsqxjFU0uLc9NTiw3z
+        Usv1ihNzi0vz0vWS83M3MQLT4ul/xz/tYJz76qPeIUYmDsZDjBIczEoivL+vKaUI8aYkVlal
+        FuXHF5XmpBYfYpTmYFES59W2PZksJJCeWJKanZpakFoEk2Xi4JRqYNKu8Z3VdVhr0ZXqSv9q
+        j/n6S6L8rrK+1GU852PwroW7RmR6MMc1e2YBv9YzOtF78/OLrQ7tUMuU8lNOLlnxsM1xloHi
+        CXuxC3tZlF+uzZiZNGlX8nyBU9NfHeXjXBdct+p9zZrvTX/a+jTlTWbd0Q84u9VF8b2uyrNr
+        h4trEwt2nDmmdMRm4vI7vB9EJ/Uddm5/9fn0tlnBU3bf0Y90KbDa6CL1wHf6rrDtkq3X1QNC
+        vj9OW/RdZ9eZbwV2ekvrJ4n801xb8fLOD56NRy3PScyUmaC/3M770FuxZT/m6xbOnxEeqd5w
+        WO6GMvvDTye2lsga/M7YcqR228Xc1+rJWqmPJ8d9X5HYb/FbqLm0qVeJpTgj0VCLuag4EQB0
+        Dd9x+gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDKsWRmVeSWpSXmKPExsVy+t/xu7qcwsopBq33dC3mrF/DZrH6bj+b
+        xevDnxgt9m+ewmSxcvVRJov2u31MFntvaVvs2XuSxeLyrjlsFvfW/Ge1OLn+P7PFjQlPGS2W
+        fX3PbrF74yI2i/N/j7Na/P4xh81BwGN2w0UWj80rtDwuny312LSqk81j06dJ7B4nZvxm8WiY
+        eovNY/fNBjaPX7fvsHp83iTnsenJW6YA7ig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1D
+        Y/NYKyNTJX07m5TUnMyy1CJ9uwS9jE2bz7AUfGGr6Dl0m7mBcR9rFyMnh4SAicSXuT3sXYxc
+        HEICSxkldlxbwwaRkJH4dOUjO4QtLPHnWhcbRNFHRokL3w+yQji7GSWm7F0M1sErYCfxYvpq
+        ZhCbRUBV4mbjJKi4oMTJmU9YQGxRgSiJzwdawKYKC0RILJ0wFayeWUBc4taT+UwgtoiAh8T/
+        P7uYQRYwC/QwS3ybspUJYttzRomGPVeBVnNwsAloSTR2soOYnEA/zDqRCzFHU6J1+292CFte
+        YvvbOcwgJRICyhK/z/tDPFMr8fnvM8YJjKKzkFw3C8kVs5BMmoVk0gJGllWMIqmlxbnpucWG
+        esWJucWleel6yfm5mxiByWTbsZ+bdzDOe/VR7xAjEwfjIUYJDmYlEd7f15RShHhTEiurUovy
+        44tKc1KLDzGaAoNoIrOUaHI+MJ3llcQbmhmYGpqYWRqYWpoZK4nzehZ0JAoJpCeWpGanphak
+        FsH0MXFwSjUwcYQlLegyS4trW/1dx+j8tFe8n058DIzYMGPv922t++f53mJNNL+RVJzQqKPF
+        pr9wL/uzpbvtfjIdkLTMcFq4v9XyjdXG0/YL1L+EhKh5ZB9Lkjv0Jffj/AOVvA4OMSy+5lzs
+        N5Yr3oub/6Hj8l31RZomek9vrZDmUi/bdo5zw9SC/dqFkXeMDvC6T33pwbUsZfe7D9MmRtzO
+        XJ5fkuxZ9rZZurF26+QOk0VTKyZ+N110yF979gSzuvn1XSbzr17wblVh3sbyMjTLZFbzRYsf
+        IjpBKulcP9odPJTbg0WVOx81nbvVZ6FllaMsdGPil+OtEz5s6PZUV7vkwbTqfuTyK/+DEiY7
+        MOc33hD3+D1RiaU4I9FQi7moOBEA8MWRRq8DAAA=
+X-CMS-MailID: 20230328161713eucas1p263e3a9167f956e10e522c91ae316b244
+X-Msg-Generator: CA
+X-RootMTR: 20230328112718eucas1p214a859cfb3d7b45523356bcc16c373b1
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230328112718eucas1p214a859cfb3d7b45523356bcc16c373b1
+References: <20230328112716.50120-1-p.raghav@samsung.com>
+        <CGME20230328112718eucas1p214a859cfb3d7b45523356bcc16c373b1@eucas1p2.samsung.com>
+        <20230328112716.50120-2-p.raghav@samsung.com>
+        <ZCMFcTHkTe/1WapL@casper.infradead.org>
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Various distributions are adding or are in the process of adding support
-for system extensions and in the future configuration extensions through
-various tools. A more detailed explanation on system and configuration
-extensions can be found on the manpage which is listed below at [1].
-
-System extension images may – dynamically at runtime — extend the /usr/
-and /opt/ directory hierarchies with additional files. This is
-particularly useful on immutable system images where a /usr/ and/or
-/opt/ hierarchy residing on a read-only file system shall be extended
-temporarily at runtime without making any persistent modifications.
-
-When one or more system extension images are activated, their /usr/ and
-/opt/ hierarchies are combined via overlayfs with the same hierarchies
-of the host OS, and the host /usr/ and /opt/ overmounted with it
-("merging"). When they are deactivated, the mount point is disassembled
-— again revealing the unmodified original host version of the hierarchy
-("unmerging"). Merging thus makes the extension's resources suddenly
-appear below the /usr/ and /opt/ hierarchies as if they were included in
-the base OS image itself. Unmerging makes them disappear again, leaving
-in place only the files that were shipped with the base OS image itself.
-
-System configuration images are similar but operate on directories
-containing system or service configuration.
-
-On nearly all modern distributions mount propagation plays a crucial
-role and the rootfs of the OS is a shared mount in a peer group (usually
-with peer group id 1):
-
-       TARGET  SOURCE  FSTYPE  PROPAGATION  MNT_ID  PARENT_ID
-       /       /       ext4    shared:1     29      1
-
-On such systems all services and containers run in a separate mount
-namespace and are pivot_root()ed into their rootfs. A separate mount
-namespace is almost always used as it is the minimal isolation mechanism
-services have. But usually they are even much more isolated up to the
-point where they almost become indistinguishable from containers.
-
-Mount propagation again plays a crucial role here. The rootfs of all
-these services is a slave mount to the peer group of the host rootfs.
-This is done so the service will receive mount propagation events from
-the host when certain files or directories are updated.
-
-In addition, the rootfs of each service, container, and sandbox is also
-a shared mount in its separate peer group:
-
-       TARGET  SOURCE  FSTYPE  PROPAGATION         MNT_ID  PARENT_ID
-       /       /       ext4    shared:24 master:1  71      47
-
-For people not too familar with mount propagation, the master:1 means
-that this is a slave mount to peer group 1. Which as one can see is the
-host rootfs as indicated by shared:1 above. The shared:24 indicates that
-the service rootfs is a shared mount in a separate peer group with peer
-group id 24.
-
-A service may run other services. Such nested services will also have a
-rootfs mount that is a slave to the peer group of the outer service
-rootfs mount.
-
-For containers things are just slighly different. A container's rootfs
-isn't a slave to the service's or host rootfs' peer group. The rootfs
-mount of a container is simply a shared mount in its own peer group:
-
-       TARGET                    SOURCE  FSTYPE  PROPAGATION  MNT_ID  PARENT_ID
-       /home/ubuntu/debian-tree  /       ext4    shared:99    61      60
-
-So whereas services are isolated OS components a container is treated
-like a separate world and mount propagation into it is restricted to a
-single well known mount that is a slave to the peer group of the shared
-mount /run on the host:
-
-       TARGET                  SOURCE              FSTYPE  PROPAGATION  MNT_ID  PARENT_ID
-       /propagate/debian-tree  /run/host/incoming  tmpfs   master:5     71      68
-
-Here, the master:5 indicates that this mount is a slave to the peer
-group with peer group id 5. This allows to propagate mounts into the
-container and served as a workaround for not being able to insert mounts
-into mount namespaces directly. But the new mount api does support
-inserting mounts directly. For the interested reader the blogpost in [2]
-might be worth reading where I explain the old and the new approach to
-inserting mounts into mount namespaces.
-
-Containers of course, can themselves be run as services. They often run
-full systems themselves which means they again run services and
-containers with the exact same propagation settings explained above.
-
-The whole system is designed so that it can be easily updated, including
-all services in various fine-grained ways without having to enter every
-single service's mount namespace which would be prohibitively expensive.
-The mount propagation layout has been carefully chosen so it is possible
-to propagate updates for system extensions and configurations from the
-host into all services.
-
-The simplest model to update the whole system is to mount on top of
-/usr, /opt, or /etc on the host. The new mount on /usr, /opt, or /etc
-will then propagate into every service. This works cleanly the first
-time. However, when the sytems is updated multiple times it becomes
-necessary to unmount the first update on /opt, /usr, /etc and then
-propagate the new update. But this means, there's an interval where the
-old base system is accessible. This has to be avoided to protect against
-downgrade attacks.
-
-The vfs already exposes a mechanism to userspace whereby mounts can be
-mounted beneath an existing mount. Such mounts are internally refered to
-as "tucked". The patch series exposes the ability to mount beneath a top
-mount through the new MOVE_MOUNT_BENEATH flag for the move_mount()
-system call. This allows userspace to seamlessly upgrade mounts. After
-this series the only thing that will have changed is that mounting
-beneath an existing mount can be done explicitly instead of just
-implicitly.
-
-Today, there are two scenarios where a mount can be mounted beneath an
-existing mount instead of on top of it:
-
-(1) When a service or container is started in a new mount namespace and
-    pivot_root()s into its new rootfs. The way this is done is by
-    mounting the new rootfs beneath the old rootfs:
-
-            fd_newroot = open("/var/lib/machines/fedora", ...);
-            fd_oldroot = open("/", ...);
-            fchdir(fd_newroot);
-            pivot_root(".", ".");
-
-    After the pivot_root(".", ".") call the new rootfs is mounted
-    beneath the old rootfs which can then be unmounted to reveal the
-    underlying mount:
-
-            fchdir(fd_oldroot);
-            umount2(".", MNT_DETACH);
-
-    Since pivot_root() moves the caller into a new rootfs no mounts must
-    be propagated out of the new rootfs as a consequence of the
-    pivot_root() call. Thus, the mounts cannot be shared.
-
-(2) When a mount is propagated to a mount that already has another mount
-    mounted on the same dentry.
-
-    The easiest example for this is to create a new mount namespace. The
-    following commands will create a mount namespace where the rootfs
-    mount / will be a slave to the peer group of the host rootfs /
-    mount's peer group. IOW, it will receive propagation from the host:
-
-            mount --make-shared /
-            unshare --mount --propagation=slave
-
-    Now a new mount on the /mnt dentry in that mount namespace is
-    created. (As it can be confusing it should be spelled out that the
-    tmpfs mount on the /mnt dentry that was just created doesn't
-    propagate back to the host because the rootfs mount / of the mount
-    namespace isn't a peer of the host rootfs.):
-
-            mount -t tmpfs tmpfs /mnt
-
-            TARGET  SOURCE  FSTYPE  PROPAGATION
-            └─/mnt  tmpfs   tmpfs
-
-    Now another terminal in the host mount namespace can observe that
-    the mount indeed hasn't propagated back to into the host mount
-    namespace. A new mount can now be created on top of the /mnt dentry
-    with the rootfs mount / as its parent:
-
-            mount --bind /opt /mnt
-
-            TARGET  SOURCE           FSTYPE  PROPAGATION
-            └─/mnt  /dev/sda2[/opt]  ext4    shared:1
-
-    The mount namespace that was created earlier can now observe that
-    the bind mount created on the host has propagated into it:
-
-            TARGET    SOURCE           FSTYPE  PROPAGATION
-            └─/mnt    /dev/sda2[/opt]  ext4    master:1
-              └─/mnt  tmpfs            tmpfs
-
-    But instead of having been mounted on top of the tmpfs mount at the
-    /mnt dentry the /opt mount has been mounted on top of the rootfs
-    mount at the /mnt dentry. And the tmpfs mount has been remounted on
-    top of the propagated /opt mount at the /opt dentry. So in other
-    words, the propagated mount has been mounted beneath the preexisting
-    mount in that mount namespace.
-
-    Mount namespaces make this easy to illustrate but it's also easy to
-    mount beneath an existing mount in the same mount namespace
-    (The following example assumes a shared rootfs mount / with peer
-     group id 1):
-
-            mount --bind /opt /opt
-
-            TARGET   SOURCE          FSTYPE  MNT_ID  PARENT_ID  PROPAGATION
-            └─/opt  /dev/sda2[/opt]  ext4    188     29         shared:1
-
-    If another mount is mounted on top of the /opt mount at the /opt
-    dentry:
-
-            mount --bind /tmp /opt
-
-    The following clunky mount tree will result:
-
-            TARGET      SOURCE           FSTYPE  MNT_ID  PARENT_ID  PROPAGATION
-            └─/opt      /dev/sda2[/tmp]  ext4    405      29        shared:1
-              └─/opt    /dev/sda2[/opt]  ext4    188     405        shared:1
-                └─/opt  /dev/sda2[/tmp]  ext4    404     188        shared:1
-
-    The /tmp mount is mounted beneath the /opt mount and another copy is
-    mounted on top of the /opt mount. This happens because the rootfs /
-    and the /opt mount are shared mounts in the same peer group.
-
-    When the new /tmp mount is supposed to be mounted at the /opt dentry
-    then the /tmp mount first propagates to the root mount at the /opt
-    dentry. But there already is the /opt mount mounted at the /opt
-    dentry. So the old /opt mount at the /opt dentry will be mounted on
-    top of the new /tmp mount at the /tmp dentry, i.e. @opt->mnt_parent
-    is @tmp and @opt->mnt_mountpoint is /tmp (Note that @opt->mnt_root
-    is /opt which is what shows up as /opt under SOURCE). So again, a
-    mount will be mounted beneath a preexisting mount.
-
-    (Fwiw, a few iterations of mount --bind /opt /opt in a loop on a
-     shared rootfs is a good example of what could be referred to as
-     mount explosion.)
-
-The main point is that such mounts allows userspace to umount a top
-mount and reveal an underlying mount. So for example, umounting the
-tmpfs mount on /mnt that was created in example (1) using mount
-namespaces reveals the /opt mount which was mounted beneath it.
-
-In (2) where a mount was mounted beneath the top mount in the same mount
-namespace unmounting the top mount would unmount both the top mount and
-the mount beneath. In the process the original mount would be remounted
-on top of the rootfs mount / at the /opt dentry again.
-
-This again, is a result of mount propagation only this time it's umount
-propagation. However, this can be avoided by simply making the parent
-mount / of the @opt mount a private or slave mount. Then the top mount
-and the original mount can be unmounted to reveal the mount beneath.
-
-These two examples are fairly arcane and are merely added to make it
-clear how mount propagation has effects on current and future features.
-
-More common use-cases will just be things like:
-
-        mount -t btrfs /dev/sdA /mnt
-        mount -t xfs   /dev/sdB --beneath /mnt
-        umount /mnt
-
-after which we'll have updated from a btrfs filesystem to a xfs
-filesystem without ever revealing the underlying mountpoint.
-
-The clear is that the proposed mechanism already exists and that it is
-powerful enough to cover cases where mounts are supposed to be updated
-with new versions. Crucially, it offers an important flexibility. Namely
-that updates to a system may either be forced or can be delayed and the
-umount of the top mount be left to a service if it is a cooperative one.
-
-This adds a new flag to move_mount() that allows to explicitly move a
-beneath the top mount adhering to the following semantics:
-
-* Mounts cannot be mounted beneath the rootfs. This restriction
-  encompasses the rootfs but also chroots via chroot() and pivot_root().
-  To mount a mount beneath the rootfs or a chroot, pivot_root() can be
-  used as illustrated above.
-* The source mount must be a private mount to force the kernel to
-  allocate a new, unused peer group id. This isn't a required
-  restriction but a voluntary one. It avoids repeating a semantical
-  quirk that already exists today. If bind mounts which already have a
-  peer group id are inserted into mount trees that have the same peer
-  group id this can cause a lot of mount propagation events to be
-  generated (For example, consider running mount --bind /opt /opt in a
-  loop where the parent mount is a shared mount.).
-* Avoid getting rid of the top mount in the kernel. Cooperative services
-  need to be able to unmount the top mount themselves.
-  This also avoids a good deal of additional complexity. The umount
-  would have to be propagated which would be another rather expensive
-  operation. So namespace_lock() and lock_mount_hash() would potentially
-  have to be held for a long time for both a mount and umount
-  propagation. That should be avoided.
-* The path to mount beneath must be mounted and attached.
-* The top mount and its parent must be in the caller's mount namespace
-  and the caller must be able to mount in that mount namespace.
-* The caller must be able to unmount the top mount to prove that they
-  could reveal the underlying mount.
-* The propagation tree is calculated based on the destination mount's
-  parent mount and the destination mount's mountpoint on the parent
-  mount. Of course, if the parent of the destination mount and the
-  destination mount are shared mounts in the same peer group and the
-  mountpoint of the new mount to be mounted is a subdir of their
-  ->mnt_root then both will receive a mount of /opt. That's probably
-  easier to understand with an example. Assuming a standard shared
-  rootfs /:
-
-          mount --bind /opt /opt
-          mount --bind /tmp /opt
-
-  will cause the same mount tree as:
-
-          mount --bind /opt /opt
-          mount --beneath /tmp /opt
-
-  because both / and /opt are shared mounts/peers in the same peer
-  group and the /opt dentry is a subdirectory of both the parent's and
-  the child's ->mnt_root. If a mount tree like that is created it almost
-  always is an accident or abuse of mount propagation. Realistically
-  what most people probably mean in this scenarios is:
-
-          mount --bind /opt /opt
-          mount --make-private /opt
-          mount --make-shared /opt
-
-  This forces the allocation of a new separate peer group for the /opt
-  mount. Aferwards a mount --bind or mount --beneath actually makes
-  sense as the / and /opt mount belong to different peer groups. Before
-  that it's likely just confusion about what the user wanted to achieve.
-
-Link: https://man7.org/linux/man-pages/man8/systemd-sysext.8.html [1]
-Link: https://brauner.io/2023/02/28/mounting-into-mount-namespaces.html [2]
-Link: https://github.com/flatcar/sysext-bakery
-Link: https://fedoraproject.org/wiki/Changes/Unified_Kernel_Support_Phase_1
-Link: https://fedoraproject.org/wiki/Changes/Unified_Kernel_Support_Phase_2
-Link: https://github.com/systemd/systemd/pull/26013
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/namespace.c             | 235 +++++++++++++++++++++++++++++++++++++++------
- include/uapi/linux/mount.h |   3 +-
- 2 files changed, 210 insertions(+), 28 deletions(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 7f22fcfd8eab..fdb30842f3aa 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -935,6 +935,63 @@ static void attach_mnt(struct mount *mnt,
- 	__attach_mnt(mnt, parent);
- }
- 
-+/**
-+ * mnt_set_mountpoint_beneath - mount a mount beneath another one
-+ *
-+ * @new_parent: the source mount
-+ * @top_mnt:	the mount beneath which @new_parent is mounted
-+ * @new_mp:	the new mountpoint of @top_mnt on @new_parent
-+ *
-+ * Remove @top_mnt from its current mountpoint @top_mnt->mnt_mp and
-+ * parent @top_mnt->mnt_parent and mount it on top of @new_parent at
-+ * @new_mp. And mount @new_parent on the old parent and old
-+ * mountpoint of @top_mnt.
-+ *
-+ * Note that we keep the reference count in tact when we remove @top_mnt
-+ * from its old mountpoint and parent to prevent UAF issues. Once we've
-+ * mounted @top_mnt on @new_parent the reference count gets bumped once
-+ * more. So make sure that we drop it to not leak the mount and
-+ * mountpoint.
-+ */
-+static void mnt_set_mountpoint_beneath(struct mount *new_parent,
-+				       struct mount *top_mnt,
-+				       struct mountpoint *new_mp)
-+{
-+	struct mount *old_top_parent = top_mnt->mnt_parent;
-+	struct mountpoint *old_top_mp;
-+
-+	old_top_mp = unhash_mnt(top_mnt);
-+	attach_mnt(top_mnt, new_parent, new_mp);
-+	mnt_set_mountpoint(old_top_parent, old_top_mp, new_parent);
-+	put_mountpoint(old_top_mp);
-+	mnt_add_count(old_top_parent, -1);
-+}
-+
-+/**
-+ * mnt_beneath - mount a mount beneath another one, attach to
-+ *               @mount_hashtable and parent's list of child mounts
-+ *
-+ * @new_parent: the source mount
-+ * @top_mnt:	the mount beneath which @new_parent is mounted
-+ * @new_mp:	the new mountpoint of @top_mnt on @new_parent
-+ *
-+ * Remove @top_mnt from its current parent and mountpoint and mount it
-+ * on @new_mp on @new_parent, and mount @new_parent on the old parent
-+ * and old mountpoint of @top_mnt. Finally, attach @new_parent mount to
-+ * @mnt_hashtable and @new_parent->mnt_parent->mnt_mounts.
-+ *
-+ * Note, when we call __attach_mnt() we've already mounted @new_parent
-+ * on top of @top_mnt's old parent so @new_parent->mnt_parent will point
-+ * to the correct parent.
-+ */
-+static void attach_mnt_beneath(struct mount *new_parent,
-+		     struct mount *top_mnt,
-+		     struct mountpoint *new_mp)
-+{
-+	mnt_set_mountpoint_beneath(new_parent, top_mnt, new_mp);
-+	__attach_mnt(new_parent, new_parent->mnt_parent);
-+}
-+
- void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp, struct mount *mnt)
- {
- 	struct mountpoint *old_mp = mnt->mnt_mp;
-@@ -2154,12 +2211,16 @@ int count_mounts(struct mnt_namespace *ns, struct mount *mnt)
- 	return 0;
- }
- 
-+typedef enum mnt_tree_flags_t {
-+	MNT_TREE_MOVE		= BIT(0),
-+	MNT_TREE_BENEATH	= BIT(1),
-+} mnt_tree_flags_t;
-+
- /*
-  *  @source_mnt : mount tree to be attached
-- *  @nd         : place the mount tree @source_mnt is attached
-- *  @parent_nd  : if non-null, detach the source_mnt from its parent and
-- *  		   store the parent mount and mountpoint dentry.
-- *  		   (done when source_mnt is moved)
-+ *  @top_mnt	: mount that @source_mnt will be mounted on or mounted beneath
-+ *  @dest_mp	: the mountpoint @source_mnt will be mounted at
-+ *  @flags	: modify how @source_mnt is supposed to be attached
-  *
-  *  NOTE: in the table below explains the semantics when a source mount
-  *  of a given type is attached to a destination mount of a given type.
-@@ -2218,20 +2279,21 @@ int count_mounts(struct mnt_namespace *ns, struct mount *mnt)
-  * in allocations.
-  */
- static int attach_recursive_mnt(struct mount *source_mnt,
--			struct mount *dest_mnt,
--			struct mountpoint *dest_mp,
--			bool moving)
-+				struct mount *top_mnt,
-+				struct mountpoint *dest_mp,
-+				mnt_tree_flags_t flags)
- {
- 	struct user_namespace *user_ns = current->nsproxy->mnt_ns->user_ns;
- 	HLIST_HEAD(tree_list);
--	struct mnt_namespace *ns = dest_mnt->mnt_ns;
-+	struct mnt_namespace *ns = top_mnt->mnt_ns;
- 	struct mountpoint *smp;
--	struct mount *child, *p;
-+	struct mount *child, *dest_mnt, *p;
- 	struct hlist_node *n;
--	int err;
-+	int err = 0;
-+	bool moving = flags & MNT_TREE_MOVE, beneath = flags & MNT_TREE_BENEATH;
- 
- 	/* Preallocate a mountpoint in case the new mounts need
--	 * to be tucked under other mounts.
-+	 * to be mounted beneath under other mounts.
- 	 */
- 	smp = get_mountpoint(source_mnt->mnt.mnt_root);
- 	if (IS_ERR(smp))
-@@ -2244,29 +2306,48 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- 			goto out;
- 	}
- 
-+	if (beneath)
-+		dest_mnt = top_mnt->mnt_parent;
-+	else
-+		dest_mnt = top_mnt;
-+
- 	if (IS_MNT_SHARED(dest_mnt)) {
- 		err = invent_group_ids(source_mnt, true);
- 		if (err)
- 			goto out;
- 		err = propagate_mnt(dest_mnt, dest_mp, source_mnt, &tree_list);
--		lock_mount_hash();
--		if (err)
--			goto out_cleanup_ids;
-+	}
-+	lock_mount_hash();
-+	if (err)
-+		goto out_cleanup_ids;
-+
-+	/* Recheck with lock_mount_hash() held. */
-+	if (beneath && IS_MNT_LOCKED(top_mnt)) {
-+		err = -EINVAL;
-+		goto out_cleanup_ids;
-+	}
-+
-+	if (IS_MNT_SHARED(dest_mnt)) {
- 		for (p = source_mnt; p; p = next_mnt(p, source_mnt))
- 			set_mnt_shared(p);
--	} else {
--		lock_mount_hash();
- 	}
-+
- 	if (moving) {
- 		unhash_mnt(source_mnt);
--		attach_mnt(source_mnt, dest_mnt, dest_mp);
-+		if (beneath)
-+			attach_mnt_beneath(source_mnt, top_mnt, smp);
-+		else
-+			attach_mnt(source_mnt, dest_mnt, dest_mp);
- 		touch_mnt_namespace(source_mnt->mnt_ns);
- 	} else {
- 		if (source_mnt->mnt_ns) {
- 			/* move from anon - the caller will destroy */
- 			list_del_init(&source_mnt->mnt_ns->list);
- 		}
--		mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
-+		if (beneath)
-+			mnt_set_mountpoint_beneath(source_mnt, top_mnt, smp);
-+		else
-+			mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
- 		commit_tree(source_mnt);
- 	}
- 
-@@ -2306,14 +2387,36 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- 	return err;
- }
- 
--static struct mountpoint *lock_mount(struct path *path)
-+/**
-+ * lock_mount_mountpoint - lock mount and mountpoint
-+ * @path: target path
-+ * @beneath: whether we intend to mount beneath @path
-+ *
-+ * Follow the mount stack on @path until the top mount is found.
-+ *
-+ * If we intend to mount on top of @path->mnt acquire the inode_lock()
-+ * for the top mount's ->mnt_root to protect against concurrent removal
-+ * of our prospective mountpoint from another mount namespace.
-+ *
-+ * If we intend to mount beneath the top mount @m acquire the
-+ * inode_lock() on @m's mountpoint @mp on @m->mnt_parent. Otherwise we
-+ * risk racing with someone who unlinked @mp from another mount
-+ * namespace where @m doesn't have a child mount mounted @mp. We don't
-+ * care if @m->mnt_root/@path->dentry is removed (as long as
-+ * @path->dentry isn't equal to @m->mnt_mountpoint of course).
-+ *
-+ * Return: Either the target mountpoint on the top mount or the top
-+ *         mount's mountpoint.
-+ */
-+static struct mountpoint *lock_mount_mountpoint(struct path *path, bool beneath)
- {
- 	struct vfsmount *mnt = path->mnt;
- 	struct dentry *dentry;
- 	struct mountpoint *mp;
- 
- 	for (;;) {
--		dentry = path->dentry;
-+		dentry = beneath ? real_mount(mnt)->mnt_mountpoint :
-+				   path->dentry;
- 		inode_lock(dentry->d_inode);
- 		if (unlikely(cant_mount(dentry))) {
- 			inode_unlock(dentry->d_inode);
-@@ -2343,6 +2446,11 @@ static struct mountpoint *lock_mount(struct path *path)
- 	return mp;
- }
- 
-+static inline struct mountpoint *lock_mount(struct path *path)
-+{
-+	return lock_mount_mountpoint(path, false);
-+}
-+
- static void unlock_mount(struct mountpoint *where)
- {
- 	struct dentry *dentry = where->m_dentry;
-@@ -2364,7 +2472,7 @@ static int graft_tree(struct mount *mnt, struct mount *p, struct mountpoint *mp)
- 	      d_is_dir(mnt->mnt.mnt_root))
- 		return -ENOTDIR;
- 
--	return attach_recursive_mnt(mnt, p, mp, false);
-+	return attach_recursive_mnt(mnt, p, mp, 0);
- }
- 
- /*
-@@ -2849,7 +2957,64 @@ static int do_set_group(struct path *from_path, struct path *to_path)
- 	return err;
- }
- 
--static int do_move_mount(struct path *old_path, struct path *new_path)
-+/**
-+ * can_move_mount_beneath - check that we can mount beneath the top mount
-+ * @from: mount to mount beneath
-+ * @to:   mount under which to mount
-+ *
-+ * - Make sure that the source mount isn't a shared mount so we force
-+ *   the kernel to allocate a new peer group id. This simplifies the
-+ *   mount trees that can be created and limits propagation events in
-+ *   cases where @to, and/or @to->mnt_parent are in the same peer group.
-+ *   Something that's a nuisance already today.
-+ * - Make sure that @to->dentry is actually the root of a mount under
-+ *   which we can mount another mount.
-+ * - Make sure that nothing can be mounted beneath under the caller's
-+ *   current root or the rootfs of the namespace.
-+ * - Make sure that the caller can unmount the topmost mount ensuring
-+ *   that the caller could reveal the underlying mountpoint.
-+ *
-+ * Return: On success 0, and on error a negative error code is returned.
-+ */
-+static int can_move_mount_beneath(struct path *from, struct path *to)
-+{
-+	struct mount *mnt_from = real_mount(from->mnt),
-+		     *mnt_to = real_mount(to->mnt);
-+
-+	if (!check_mnt(mnt_to))
-+		return -EINVAL;
-+
-+	if (!mnt_has_parent(mnt_to))
-+		return -EINVAL;
-+
-+	if (IS_MNT_SHARED(mnt_from))
-+		return -EINVAL;
-+
-+	if (!path_mounted(to))
-+		return -EINVAL;
-+
-+	if (mnt_from == mnt_to)
-+		return -EINVAL;
-+
-+	/*
-+	 * Mounting beneath the rootfs only makes sense when the
-+	 * semantics of pivot_root(".", ".") are used.
-+	 */
-+	if (&mnt_to->mnt == current->fs->root.mnt)
-+		return -EINVAL;
-+	if (mnt_to->mnt_parent == current->nsproxy->mnt_ns->root)
-+		return -EINVAL;
-+
-+	for (struct mount *p = mnt_from; mnt_has_parent(p); p = p->mnt_parent)
-+		if (p == mnt_to)
-+			return -EINVAL;
-+
-+	/* Ensure the caller could reveal the underlying mount. */
-+	return can_umount(to, 0);
-+}
-+
-+static int do_move_mount(struct path *old_path, struct path *new_path,
-+			 bool beneath)
- {
- 	struct mnt_namespace *ns;
- 	struct mount *p;
-@@ -2858,8 +3023,9 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
- 	struct mountpoint *mp, *old_mp;
- 	int err;
- 	bool attached;
-+	mnt_tree_flags_t flags = 0;
- 
--	mp = lock_mount(new_path);
-+	mp = lock_mount_mountpoint(new_path, beneath);
- 	if (IS_ERR(mp))
- 		return PTR_ERR(mp);
- 
-@@ -2867,9 +3033,20 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
- 	p = real_mount(new_path->mnt);
- 	parent = old->mnt_parent;
- 	attached = mnt_has_parent(old);
-+	if (attached)
-+		flags |= MNT_TREE_MOVE;
- 	old_mp = old->mnt_mp;
- 	ns = old->mnt_ns;
- 
-+	if (beneath) {
-+		err = can_move_mount_beneath(old_path, new_path);
-+		if (err)
-+			goto out;
-+
-+		p = p->mnt_parent;
-+		flags |= MNT_TREE_BENEATH;
-+	}
-+
- 	err = -EINVAL;
- 	/* The mountpoint must be in our namespace. */
- 	if (!check_mnt(p))
-@@ -2910,8 +3087,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
- 		if (p == old)
- 			goto out;
- 
--	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
--				   attached);
-+	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp, flags);
- 	if (err)
- 		goto out;
- 
-@@ -2943,7 +3119,7 @@ static int do_move_mount_old(struct path *path, const char *old_name)
- 	if (err)
- 		return err;
- 
--	err = do_move_mount(&old_path, path);
-+	err = do_move_mount(&old_path, path, false);
- 	path_put(&old_path);
- 	return err;
- }
-@@ -3807,6 +3983,10 @@ SYSCALL_DEFINE5(move_mount,
- 	if (flags & ~MOVE_MOUNT__MASK)
- 		return -EINVAL;
- 
-+	if ((flags & (MOVE_MOUNT_BENEATH | MOVE_MOUNT_SET_GROUP)) ==
-+	    (MOVE_MOUNT_BENEATH | MOVE_MOUNT_SET_GROUP))
-+		return -EINVAL;
-+
- 	/* If someone gives a pathname, they aren't permitted to move
- 	 * from an fd that requires unmount as we can't get at the flag
- 	 * to clear it afterwards.
-@@ -3836,7 +4016,8 @@ SYSCALL_DEFINE5(move_mount,
- 	if (flags & MOVE_MOUNT_SET_GROUP)
- 		ret = do_set_group(&from_path, &to_path);
- 	else
--		ret = do_move_mount(&from_path, &to_path);
-+		ret = do_move_mount(&from_path, &to_path,
-+				    (flags & MOVE_MOUNT_BENEATH));
- 
- out_to:
- 	path_put(&to_path);
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 4d93967f8aea..8eb0d7b758d2 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -74,7 +74,8 @@
- #define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
- #define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
- #define MOVE_MOUNT_SET_GROUP		0x00000100 /* Set sharing group instead */
--#define MOVE_MOUNT__MASK		0x00000177
-+#define MOVE_MOUNT_BENEATH		0x00000200 /* Mount beneath top mount */
-+#define MOVE_MOUNT__MASK		0x00000377
- 
- /*
-  * fsopen() flags.
-
--- 
-2.34.1
-
+On 2023-03-28 17:19, Matthew Wilcox wrote:
+> On Tue, Mar 28, 2023 at 01:27:12PM +0200, Pankaj Raghav wrote:
+>> -static void zram_page_end_io(struct bio *bio)
+>> +static void zram_read_end_io(struct bio *bio)
+>>  {
+>> -	struct page *page = bio_first_page_all(bio);
+>> -
+>> -	page_endio(page, op_is_write(bio_op(bio)),
+>> -			blk_status_to_errno(bio->bi_status));
+>>  	bio_put(bio);
+>>  }
+>>  
+>> @@ -635,7 +631,7 @@ static int read_from_bdev_async(struct zram *zram, struct bio_vec *bvec,
+>>  	}
+>>  
+>>  	if (!parent)
+>> -		bio->bi_end_io = zram_page_end_io;
+>> +		bio->bi_end_io = zram_read_end_io;
+> 
+> Can we just do:
+> 
+> 	if (!parent)
+> 		bio->bi_end_io = bio_put;
+> 
+
+Looks neat. I will wait for Christoph to comment whether just a bio_put() call
+is enough in this case for non-chained bios before making this change for the
+next version.
+
+Thanks.
