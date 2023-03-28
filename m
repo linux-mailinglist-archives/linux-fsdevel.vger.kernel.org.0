@@ -2,79 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D088F6CB966
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 10:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C76876CB9F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 10:56:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232206AbjC1IaP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 04:30:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48794 "EHLO
+        id S230215AbjC1I44 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 04:56:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232256AbjC1IaM (ORCPT
+        with ESMTP id S229610AbjC1I4z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 04:30:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE9A03C34;
-        Tue, 28 Mar 2023 01:30:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 28 Mar 2023 04:56:55 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76BED19A1;
+        Tue, 28 Mar 2023 01:56:54 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2788F6155E;
-        Tue, 28 Mar 2023 08:30:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 934D6C433EF;
-        Tue, 28 Mar 2023 08:30:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679992207;
-        bh=57O8SXNkoQuVQhQlA6YOIdV+n7nmtB7ImkM0TollDxE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UH0Bpsdj7JJwhRJgS8Cizn5aCDGc3hjM1vT2wXHx2MtYLBADvs9H2TXvkp0QYcV8j
-         jnVWh/MGBZQr8YKuIS0lqbasqkeI8FfVdgFAeGVPCRVFYfZhWXd9peNt0x6flQfTpD
-         uvT/qMLOGo3yAIZk581lp8CImiMbvVHndk357O8OsuTr+l4PbBAgdPRtsiHYkEfomX
-         aJ3vSvHaELl+PGSOmHlJhTGzKyNKleK0ve0gCWM42Ga8KSzgAY2WPr4yiHx7xcj5Ji
-         /c01c0NEhe9N3M5LLEC/Gg1jXnLllIR6uA2Z6wqsB4zJDElJu+jIEVAWHtMbDvp9Y/
-         uewV1EiFcSC7w==
-Date:   Tue, 28 Mar 2023 10:30:02 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2] nfs: use vfs setgid helper
-Message-ID: <20230328083002.5yn5ggpqpe7caeuz@wittgenstein>
-References: <20230313-fs-nfs-setgid-v2-1-9a59f436cfc0@kernel.org>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 34513219C2;
+        Tue, 28 Mar 2023 08:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1679993813; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Nh59YKaOupZZpTW1uDmCRUQ1aAKohqr+w5EA7d7jR+o=;
+        b=t2sipxadwSudSlY5Uvh6MJVXEiPOV924bCkqtrbZIXG9TkRf6kcSA5opwqRVMm50tG08H7
+        NMLk4pWmyyRlCWYTkuMZVw823ynOk0+WT1aqAEdwyRdusV+U2XIC0M+4OU0xC8BpQJN3Zo
+        aJAjx9sOTgpWEcZaBn/Z8VELsr7fE6M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1679993813;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Nh59YKaOupZZpTW1uDmCRUQ1aAKohqr+w5EA7d7jR+o=;
+        b=ZPtqPIHV2b/ncSH9qfDV+t916jW0VhX2ALCoE49wzX5TOKprWRiheCiQVk9+9cdvDibeyk
+        WNOTkluVrkaC4+DQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0BAEE1390B;
+        Tue, 28 Mar 2023 08:56:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id zhMtAtWrImRqNQAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Tue, 28 Mar 2023 08:56:53 +0000
+Message-ID: <a231f05c-b157-f495-bf06-8aca903c7e17@suse.cz>
+Date:   Tue, 28 Mar 2023 10:56:52 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230313-fs-nfs-setgid-v2-1-9a59f436cfc0@kernel.org>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH V8 1/2] mm: compaction: move compaction sysctl to its own
+ file
+Content-Language: en-US
+To:     ye.xingchen@zte.com.cn, mcgrof@kernel.org
+Cc:     keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, chi.minghao@zte.com.cn,
+        linmiaohe@huawei.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <202303281446280457758@zte.com.cn>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <202303281446280457758@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 14, 2023 at 12:51:10PM +0100, Christian Brauner wrote:
-> We've aligned setgid behavior over multiple kernel releases. The details
-> can be found in the following two merge messages:
-> cf619f891971 ("Merge tag 'fs.ovl.setgid.v6.2')
-> 426b4ca2d6a5 ("Merge tag 'fs.setgid.v6.0')
-> Consistent setgid stripping behavior is now encapsulated in the
-> setattr_should_drop_sgid() helper which is used by all filesystems that
-> strip setgid bits outside of vfs proper. Switch nfs to rely on this
-> helper as well. Without this patch the setgid stripping tests in
-> xfstests will fail.
+On 3/28/23 08:46, ye.xingchen@zte.com.cn wrote:
+> From: Minghao Chi <chi.minghao@zte.com.cn>
 > 
-> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> ---
-> Changes in v2:
-> - Christoph Hellwig <hch@lst.de>:
->   * Export setattr_should_sgid() so it actually can be used by filesystems
-> - Link to v1: https://lore.kernel.org/r/20230313-fs-nfs-setgid-v1-1-5b1fa599f186@kernel.org
-> ---
+> This moves all compaction sysctls to its own file.
+> 
+> Move sysctl to where the functionality truly belongs to improve
+> readability, reduce merge conflicts, and facilitate maintenance.
+> 
+> I use x86_defconfig and linux-next-20230327 branch
+> $ make defconfig;make all -jn
+> CONFIG_COMPACTION=y
+> 
+> add/remove: 1/0 grow/shrink: 1/1 up/down: 350/-256 (94)
+> Function                                     old     new   delta
+> vm_compaction                                  -     320    +320
+> kcompactd_init                               180     210     +30
+> vm_table                                    2112    1856    -256
+> Total: Before=21119987, After=21120081, chg +0.00%
+> 
+> Despite the addition of 94 bytes the patch still seems a worthwile
+> cleanup.
+> 
+> Link: https://lore.kernel.org/lkml/067f7347-ba10-5405-920c-0f5f985c84f4@suse.cz/
+> Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
 
-If someone has a few cycles to give this a review it would be
-appreciated. I'm happy to carry this patch or the NFS tree can.
-I'm not fussed.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+Thanks.
