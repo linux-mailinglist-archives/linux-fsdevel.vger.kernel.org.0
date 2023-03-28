@@ -2,69 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B806CCCCA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 00:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3B0C6CCD10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 00:18:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230063AbjC1WGZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 18:06:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60652 "EHLO
+        id S230214AbjC1WR7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 18:17:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbjC1WGY (ORCPT
+        with ESMTP id S229765AbjC1WRb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 18:06:24 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C1461BFE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:06:22 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id i5so55833493eda.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:06:22 -0700 (PDT)
+        Tue, 28 Mar 2023 18:17:31 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B0972736
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:17:15 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id cn12so55744304edb.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:17:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1680041181;
+        d=linux-foundation.org; s=google; t=1680041828;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+6X1gaSjcd/OPJc5YxcrIHG+oIFT5xfmwVSAaxclDfE=;
-        b=GTH7CqD8UgqPILImsxDUAt/BNdW2L5RiMQIaPOtrbNOKQ793UEec9kppopO2GAsl02
-         TUpQspCE10j3kcTY+T1Naux/Vwiq01hVa4hUTQvkKyiuErRMcV6turCH414tPb/vHoEe
-         YR905Gx75ae5S6GP+7Co5bUJdTQVmWkay9hpo=
+        bh=0dSEscDt0KCn6pzVxlB9bklM+qdV+JY2pxB29KbWzX8=;
+        b=WmBAbVqMaIgZ/JdVdoTjBrC4sYHO6T5RJFbIgAVF+hbrsW+nnIF5NwXTnoerrwfx/a
+         lEI5dLIwXy9ouJMa2VRj9JGx37iO6uwq53KuLdLN2Nz/5hgErd4Bf8UwOZatOB7DVoWi
+         5DU5cTx7PaVb6vkU4k23MH2y00Wzk5oPACQ4I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680041181;
+        d=1e100.net; s=20210112; t=1680041828;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+6X1gaSjcd/OPJc5YxcrIHG+oIFT5xfmwVSAaxclDfE=;
-        b=vSi978dQt6Ervr4LaPrEmDXLzgYjAIyZg64uW5/vZKzp4suFL3eVvhfjSRkDKrKNRe
-         93Pg2kGGO0AK0OCaUWbh9brGKx3dLZ8b+IhQZQ8CNuJ4NuGW58w9vgoW5N79g2MLcF4W
-         p+qcWB4MbYDktd+nZxWMRSu9g72HPYWOhH4/+FV5Ol+WZfHqHcTir43PgPjPD7mkvi/H
-         zrWaWwQGA942A/xpZ2PFnHsWQOED2WbQ6Ffy+TEYLX1fFcSTS1zoj3LLznMVh6ibkpQY
-         8UnycHYKXZASimAgzs87paA6jfR3h1NNl18axo5dNUQTh3im68Dz9CVDH5RfFWiaGFJk
-         evhA==
-X-Gm-Message-State: AAQBX9flRE1ZZCMBA0jQtyNsQiRNFfFdtdS/wBVyXX7rZhSZ7qswY2AM
-        g5aPrO5OOTRITw+t1UluT9y/2jJc3NV2wafxys8stQ==
-X-Google-Smtp-Source: AKy350YUtECRwMiHxN8oX0WzmGFUZR/NNhd3YNk1Kg/Mv/NPJ2fuP+BKRjQ7yncO57GdxQXzb3r9Sg==
-X-Received: by 2002:a17:907:7ea6:b0:944:18ef:c970 with SMTP id qb38-20020a1709077ea600b0094418efc970mr13945705ejc.32.1680041180761;
-        Tue, 28 Mar 2023 15:06:20 -0700 (PDT)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id be1-20020a1709070a4100b009447277c2aasm3207453ejc.39.2023.03.28.15.06.20
+        bh=0dSEscDt0KCn6pzVxlB9bklM+qdV+JY2pxB29KbWzX8=;
+        b=HnsVs4AdHFOdBOzPUwjO5zUooOjDyvrioIm5aQruRO8NAF0yAXENjZmW4UsQfpDVCB
+         4Y2uXKDcrTZtt2u2y55rppq/Wxecijr1hpfLckwCRB3dtaDBE394vLPI9GqqYw2GQJoJ
+         6bPC/t79sLj2u0B7zWt/5ojv5cUgaKTJjdTRLAFb3zOT5YblFSzBJhumZP7ZN+PImQ5v
+         GBFqoMzyeY6tklHlKGok95gmOh1euLKCe/0UQ8TQCmQkhKfGfLRFJpjTy59/uO3Edx+c
+         G2Ud8k5aBHSnqjWspDJgWX2MU8i2hUoweCNnR8dSmFXYaPOUtEWnD77xqVh9jmgD/Foa
+         gXtw==
+X-Gm-Message-State: AAQBX9eiVYthS8hxEpZFedqFpx2qGPZrvJBM7UzSA6aITlqRkbtlEa+8
+        y7YLaxQQaiaY7pzeeqtpKA6rghOtRZpy1p+Jrtbdiw==
+X-Google-Smtp-Source: AKy350agq1e1UO0Ky+l6QB4J11MFcefebJSkpU4hLEdCiuQ1k/VQKyPzybc05rCwNw6uPXowEjQraw==
+X-Received: by 2002:aa7:c305:0:b0:502:246e:6739 with SMTP id l5-20020aa7c305000000b00502246e6739mr15401493edq.27.1680041828423;
+        Tue, 28 Mar 2023 15:17:08 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id x30-20020a50d61e000000b004c30e2fc6e5sm16203481edi.65.2023.03.28.15.17.07
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Mar 2023 15:06:20 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id i5so55833219eda.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:06:20 -0700 (PDT)
-X-Received: by 2002:a50:a6d1:0:b0:4fb:4a9f:eb95 with SMTP id
- f17-20020a50a6d1000000b004fb4a9feb95mr8881233edc.2.1680041179844; Tue, 28 Mar
- 2023 15:06:19 -0700 (PDT)
+        Tue, 28 Mar 2023 15:17:07 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id ew6so55653077edb.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:17:07 -0700 (PDT)
+X-Received: by 2002:a17:907:9870:b0:8b1:28f6:8ab3 with SMTP id
+ ko16-20020a170907987000b008b128f68ab3mr9055817ejc.15.1680041827272; Tue, 28
+ Mar 2023 15:17:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230328173613.555192-1-axboe@kernel.dk> <20230328173613.555192-6-axboe@kernel.dk>
- <CAHk-=wj=21dt1ASqkvaNXenzQCEZHydYE39+YOj8AAfzeL5HOQ@mail.gmail.com> <20230328203803.GN3390869@ZenIV>
-In-Reply-To: <20230328203803.GN3390869@ZenIV>
+References: <20230328215811.903557-1-axboe@kernel.dk> <20230328215811.903557-4-axboe@kernel.dk>
+In-Reply-To: <20230328215811.903557-4-axboe@kernel.dk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 28 Mar 2023 15:06:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whLdEWoYeudhXf-V=e8am6Xrp1f8yqa8PkRoEMfK+Dmyg@mail.gmail.com>
-Message-ID: <CAHk-=whLdEWoYeudhXf-V=e8am6Xrp1f8yqa8PkRoEMfK+Dmyg@mail.gmail.com>
-Subject: Re: [PATCH 5/8] IB/hfi1: make hfi1_write_iter() deal with ITER_UBUF iov_iter
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        brauner@kernel.org
+Date:   Tue, 28 Mar 2023 15:16:50 -0700
+X-Gmail-Original-Message-ID: <CAHk-=winXSHgikHZSyDrmoN=WNZWKoR1JrKGW6Vv4mqn6F4EmA@mail.gmail.com>
+Message-ID: <CAHk-=winXSHgikHZSyDrmoN=WNZWKoR1JrKGW6Vv4mqn6F4EmA@mail.gmail.com>
+Subject: Re: [PATCH 3/9] iov_iter: overlay struct iovec and ubuf/len
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+        viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=0.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
@@ -76,34 +75,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 1:38=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
+On Tue, Mar 28, 2023 at 2:58=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
 >
-> ... and all that, er, cleverness - for the sake of a single piece of shit
-> driver for piece of shit hardware *and* equally beautiful ABI.
+> +               struct iovec __ubuf_iovec;
 
-Now, I wish we didn't have any of those 'walk the iov{} array', but
-sadly we do, and it's not just a single case.
+This really should be "const struct iovec".
 
-It's also that pcm_native.c case, it's the qib rdma driver.
+The only valid use for this is as an alternative to "iter->iov", and
+that one is a 'const' pointer too:
 
-So if we didn't have people walking the iov[] array, I'd hate to add this.
+> +                               const struct iovec *iov;
 
-But considering that we *do* have people walking the iov[] array, I'd
-rather unify the two user-mode cases than have them do the whole "do
-two different things for the ITER_UBUF vs ITER_IOV case".
+and any code that tries to use it as a non-const iovec entry really is
+very very wrong.
 
-> Is it really worth bothering with?  And if anyone has doubts about the
-> inturdprize kwality of the ABI in question, I suggest taking a look at
-> hfi1_user_sdma_process_request() - that's where the horrors are.
+And yes, the current infiniband/hw/hfi1/* code does indeed do all of
+this wrong and cast the pointer to a non-const one, but that's
+actually just because somebody didn't do the const conversion right.
 
-Yes. I started out my email to Jens by suggesting that instead of
-passing down the iov[] pointer, he should just pass down the iter
-instead.
+That cast should just go away, and hfi1_user_sdma_process_request()
+should just take a 'const struct iovec *iovec' argument.  It doesn't
+actually want to write to it anyway, so it's literally just a "change
+the prototype of the function" change.
 
-And then I looked at that code and went "yeah, no way do I want to touch it=
-".
-
-Which then got me to that "could we at least *unify* these two cases".
-
-                    Linus
+              Linus
