@@ -2,218 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C8696CC719
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 17:52:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EAD76CC75E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 18:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233277AbjC1PwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 11:52:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46170 "EHLO
+        id S230470AbjC1QCU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 12:02:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbjC1PwF (ORCPT
+        with ESMTP id S230380AbjC1QCR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 11:52:05 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9666F1B3;
-        Tue, 28 Mar 2023 08:52:03 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id n125so15639377ybg.7;
-        Tue, 28 Mar 2023 08:52:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680018723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e3G5lMN0QEUYC4Qox2hs9k7l4ZdTOZOuw9tIXiq/0Fg=;
-        b=DPPJhfzTip0i0zk2bPuZuLckRa2iJVTpAHAnPvYVJp5dAFt4JERB8z7Mho/gcph0IV
-         lgIgOW0VTQdrHNgQ0+OkoFcVDywTJku3c31KHPVHctSzJLWqZzRXPMuYf9piRBhlIlt0
-         tLrTRlZHaz7CjEKgvjFyCdZu0MAfONMKRhxonCo5ST8w/OEU9LArkGtF4YKUh9W5MOYR
-         e9jhZEKpa+WMihQMl9hi1kvgfgJRPhEcDvqmrtP/3/OJ3GUbtQ/SSbEtc5vYfeugulIv
-         E1UxrQ/NmhGrUoJAnNU56HUoRU7xZ7WPiKXJcw1WqGZiIK3D+2VtIKsD1MhNPSvqs38B
-         cKXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680018723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e3G5lMN0QEUYC4Qox2hs9k7l4ZdTOZOuw9tIXiq/0Fg=;
-        b=NdDwiYOlx0GdzHD9yjWoJum6hFhn9MiOtaU4HhkVM/PeuU1/rMBTjMMomxs5fJcWNR
-         tztDi8fzGY2TKpym/AC5n5HRi/7bo0z/eL3H0SDWP2UnM6adtOFp0babedkbSN/K+TyM
-         CYyHHZExJwMbk/HgHKiynupplActzhqRGWs4PVN4y6IhYjA0EfYgIPd1wJPutShqMAXe
-         xgFzEWAG+BWA89fimo8KdC+/t2PFWTaEng08YLpmUv+b1mp36HA8XlTbRVor30y34+PI
-         euEgg0l8sE4nPBRmyocRQyxWy/3mc2dXf3ApU2vksJzSRlCZLhUF9LoU5/Gk/wdyMxeX
-         5YYQ==
-X-Gm-Message-State: AAQBX9cn5ZRzNJMJDiUvAQDgqE/iEIEDqz0XipDY4f7aJQB6II9B4dWX
-        W9nDw+yWevgEOA6V4icJjhxqDCKy4B9spdzvNt3de6UQHTfL/CEb
-X-Google-Smtp-Source: AKy350ZfTgUeEwFQTG2UMGEsb0KpsteEhATGz400mc3KzrBJRXixMW1G6R2KRNzU29dD9BMfwWo93zONg0vVXS+TKD4=
-X-Received: by 2002:a05:6902:18d5:b0:b75:3fd4:1b31 with SMTP id
- ck21-20020a05690218d500b00b753fd41b31mr10707743ybb.1.1680018722397; Tue, 28
- Mar 2023 08:52:02 -0700 (PDT)
+        Tue, 28 Mar 2023 12:02:17 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E484CA36
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 09:02:14 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230328160212euoutp02f563fe4055dcdf640eaa23b6c0dcd89a~QoK5tN1Lb1093310933euoutp02q
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 16:02:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230328160212euoutp02f563fe4055dcdf640eaa23b6c0dcd89a~QoK5tN1Lb1093310933euoutp02q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1680019332;
+        bh=7dPe4cUrgnbdf3HAeVnRIAMKKWilzlUiWCOWvNtQztM=;
+        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+        b=oxjP2lIeoHPtK6uDyeQva4IinKzim3e/3wEGlLCzicvmhTcDFodP2vDr1huNrWOEJ
+         moFxNh2fqkH7ZJ0Vm2H+U+3+08d+HcWx9EpbG8ifiCYR2ncITiGgakSP4yDHxFvWSe
+         lFXzx9dYDwgrB2o5qv/c8HcEq7qJqLulE1Yx85Co=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230328160211eucas1p1658d4fb55db67a0b9fb10fe0d25b6003~QoK5aNQ3s0751007510eucas1p1V;
+        Tue, 28 Mar 2023 16:02:11 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 22.48.10014.38F03246; Tue, 28
+        Mar 2023 17:02:11 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230328160211eucas1p15999058f9b91a8f58b22e648703641d1~QoK5Brd_u2348323483eucas1p1q;
+        Tue, 28 Mar 2023 16:02:11 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230328160211eusmtrp237848036f912b54a84cd65576e23ed3f~QoK5A_VU60282702827eusmtrp2z;
+        Tue, 28 Mar 2023 16:02:11 +0000 (GMT)
+X-AuditID: cbfec7f5-b8bff7000000271e-91-64230f83c407
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E4.ED.09583.38F03246; Tue, 28
+        Mar 2023 17:02:11 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230328160211eusmtip1270d47cc2f9bd98b238cf47fc5736bb7~QoK42ZgMs0950009500eusmtip1C;
+        Tue, 28 Mar 2023 16:02:11 +0000 (GMT)
+Received: from [192.168.8.209] (106.210.248.108) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Tue, 28 Mar 2023 17:02:09 +0100
+Message-ID: <970b8475-a52e-9adc-65cf-5a95220bd35b@samsung.com>
+Date:   Tue, 28 Mar 2023 18:02:09 +0200
 MIME-Version: 1.0
-References: <ZCEIEKC0s/MFReT0@7e9e31583646> <3443961.DhAEVoPbTG@silver>
-In-Reply-To: <3443961.DhAEVoPbTG@silver>
-From:   Eric Van Hensbergen <ericvh@gmail.com>
-Date:   Tue, 28 Mar 2023 10:51:51 -0500
-Message-ID: <CAFkjPT=j1esw=q-w5KTyHKDZ42BEKCERy-56TiP+Z7tdC=y05w@mail.gmail.com>
-Subject: Re: [PATCH] fs/9p: Add new options to Documentation
-To:     Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc:     v9fs-developer@lists.sourceforge.net,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        asmadeus@codewreck.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+        Thunderbird/102.9.0
+Subject: Re: [PATCH 2/5] orangefs: use folios in orangefs_readahead
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <martin@omnibond.com>, <axboe@kernel.dk>, <minchan@kernel.org>,
+        <akpm@linux-foundation.org>, <hubcap@omnibond.com>,
+        <viro@zeniv.linux.org.uk>, <senozhatsky@chromium.org>,
+        <brauner@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <mcgrof@kernel.org>,
+        <linux-block@vger.kernel.org>, <gost.dev@samsung.com>,
+        <linux-mm@kvack.org>, <devel@lists.orangefs.org>
+Content-Language: en-US
+From:   Pankaj Raghav <p.raghav@samsung.com>
+In-Reply-To: <ZCMF+QjynkdSHbn0@casper.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [106.210.248.108]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLKsWRmVeSWpSXmKPExsWy7djP87rN/MopBnv+q1jMWb+GzWL13X42
+        i9eHPzFa7N88hcmi/W4fk8XeW9oWe/aeZLG4vGsOm8W9Nf9ZLU6u/89scWPCU0aLZV/fs1vs
+        3riIzeL83+OsFr9/zGFz4PeY3XCRxWPzCi2Py2dLPTat6mTz2PRpErvHiRm/WTwapt5i8/h1
+        +w6rx+dNch6bnrxlCuCK4rJJSc3JLEst0rdL4Mr4uryXuWATa8W3yeeYGxjXs3QxcnJICJhI
+        3Nz4lKmLkYtDSGAFo8T+hW9YIZwvjBKbni6HynxmlFi0ZyFcy5tty5ghEssZJeb+bmGGqzr0
+        r5MNwtnNKHFk0jYmkBZeATuJ/rUzWEFsFgFViQeHJzJCxAUlTs58AjZWVCBKou/2JrAaYQFn
+        ic7Fk9m7GDk4RAQ0JN5sMQKZySzQwyzxbcpWsJnMAuISt57MZwKpYRPQkmjsZAcJcwJdd79x
+        KxtEiaZE6/bf7BC2vMT2t3OYQcolBJQlfp/3h3imVuLUlltgX0oI3OOUaPzazgaRcJHYe2Ef
+        I4QtLPHq+BZ2CFtG4v/O+UwQdrXE0xu/mSGaWxgl+neuZ4NYYC3RdyYHosZR4nz7Eqi9fBI3
+        3gpCnMMnMWnbdOYJjKqzkAJiFpLHZiH5YBaSDxYwsqxiFE8tLc5NTy02zkst1ytOzC0uzUvX
+        S87P3cQITIGn/x3/uoNxxauPeocYmTgYDzFKcDArifD+vqaUIsSbklhZlVqUH19UmpNafIhR
+        moNFSZxX2/ZkspBAemJJanZqakFqEUyWiYNTqoFp5RynzmWcXBGHDtxc63kg5swp0UTpvlS/
+        q+J5O/V/zqj217SScnmUXBXN69RfnvREsvJwVvvH2cJHCluEW6eaXvZYaHRxx9K5NYa3/j35
+        Jfavn/vvpZbbXCz2b++8+Pnu8NcQtsvuKWzFX9cap+aum+ixbsHLc+YJO48YTfQOWbTH5HT+
+        x4PRdr1+fpecg4wTGnrK1q06vey3zetDqt5sRnuNf6bNjbG/b3jywc5XUmcDF5tdN0qJsBOq
+        WtsstG5C8ATGnvp909zqt2xi4KqQdPJY27Jxya2ATXaaS6tbDXdG9D9Y8oVV4canXZ4rIkW2
+        5igenvL6VLvG4pm2W7hPBk+I0An8t+vH27Oa8nF5SizFGYmGWsxFxYkAr25n7/ADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsVy+t/xu7rN/MopBks/8VjMWb+GzWL13X42
+        i9eHPzFa7N88hcmi/W4fk8XeW9oWe/aeZLG4vGsOm8W9Nf9ZLU6u/89scWPCU0aLZV/fs1vs
+        3riIzeL83+OsFr9/zGFz4PeY3XCRxWPzCi2Py2dLPTat6mTz2PRpErvHiRm/WTwapt5i8/h1
+        +w6rx+dNch6bnrxlCuCK0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJ
+        Sc3JLEst0rdL0Mv4uryXuWATa8W3yeeYGxjXs3QxcnJICJhIvNm2jBnEFhJYyigx6aE5RFxG
+        4tOVj+wQtrDEn2tdbF2MXEA1Hxkl+hc+Z4JwdjNKdG/+yQhSxStgJ9G/dgYriM0ioCrx4PBE
+        qLigxMmZT8C2iQpESXw+0AI2VVjAWaJz8WQgm4NDREBD4s0WI5CZzAI9zBLfpmyFWvCcUeLw
+        p342kAZmAXGJW0/mM4E0sAloSTR2gs3hBPrgfuNWqBJNidbtv9khbHmJ7W/nMIOUSwgoS/w+
+        7w/xTK3E57/PGCcwis5Cct0sJAtmIZk0C8mkBYwsqxhFUkuLc9Nzi430ihNzi0vz0vWS83M3
+        MQLTxrZjP7fsYFz56qPeIUYmDsZDjBIczEoivL+vKaUI8aYkVlalFuXHF5XmpBYfYjQFBtFE
+        ZinR5Hxg4soriTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJITyxJzU5NLUgtgulj4uCUamBi/Kdy
+        89c9DllBva1zvSWUpu+cwsnYJ9D8efV/yxgrgQiu5JKVXPOFX4ZOVcnXOBBXdcbwWt2ddZk8
+        /k+sBJaec9vWnRfxaZ7OnzkCUy9vUZW7bZYjvmudeeeB1Jwbm18qiJ1NNXnW+XTS7IiTbQpH
+        lk/sehKQlrGs0WeV2cPpXiscDvjnqE+5uczkjQg/0+mGx766Cw5Xb/u59fl+vmvec9Q37tu+
+        dTO/QGF9yrmMN/v2qp730X1p/zDje3Xuws8v/wsYh76Za3N08jrP3X1S5iuvfVjTIMe2KN5U
+        /DuboCHby+qK+taA8CfJYhaSd6xmhl1RWsdrO+P4dsGTWv3eYu+dm6sd1Lcweu6tnqGnxFKc
+        kWioxVxUnAgAIoc0dKQDAAA=
+X-CMS-MailID: 20230328160211eucas1p15999058f9b91a8f58b22e648703641d1
+X-Msg-Generator: CA
+X-RootMTR: 20230328112718eucas1p263dacecb2a59f5fce510f81685f9d497
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230328112718eucas1p263dacecb2a59f5fce510f81685f9d497
+References: <20230328112716.50120-1-p.raghav@samsung.com>
+        <CGME20230328112718eucas1p263dacecb2a59f5fce510f81685f9d497@eucas1p2.samsung.com>
+        <20230328112716.50120-3-p.raghav@samsung.com>
+        <ZCMF+QjynkdSHbn0@casper.infradead.org>
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As I work through the documentation rework and to some extent the
-testing matrix -- I am reconsidering some choices and wanted to open
-up the discussion here.
+On 2023-03-28 17:21, Matthew Wilcox wrote:
+> On Tue, Mar 28, 2023 at 01:27:13PM +0200, Pankaj Raghav wrote:
+>> Convert orangefs_readahead() from using struct page to struct folio.
+>> This conversion removes the call to page_endio() which is soon to be
+>> removed, and simplifies the final page handling.
+>>
+>> The page error flags is not required to be set in the error case as
+>> orangefs doesn't depend on them.
+>>
+>> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> 
+> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> 
+> Shouldn't Mike's tested-by be in here?
 
-TLDR; I'm thinking of reworking the cache options before the merge
-window to keep things simple while setting up for some of the future
-options.
-
-While we have a bunch of new options, in practice I expect users to
-probably consolidate around three models: no caching, tight caches,
-and expiring caches with fscache being an orthogonal add-on to the
-last two.
-
-The ultimate goal is to simplify the options based on expected use models:
-
-- cache=3D[ none, file, all ] (none is currently default)
-- write_policy =3D [ *writethrough, writeback ] (writethrough would be defa=
-ult)
-- cache_validate =3D [ never, *open, x (seconds) ]  (cache_validate
-would default to open)
-- fscache
-
-So, mapping of existing (deprecated) legacy modes:
-- none (obvious) write_policy=3Dwritethrough
-- *readahead -> cache=3Dfile cache_validate_open write_policy=3Dwritethroug=
-h
-- mmap -> cache=3Dfile cache_validate=3Dopen write_policy=3Dwriteback
-- loose -> cache=3Dall cache_validate=3Dnever write_policy=3Dwriteback
-- fscache -> cache=3Dall cache_validate=3Dnever write_policy=3Dwriteback &
-fscache enabled
-
-Some things I'm less certain of: cache_validation is probably an
-imperfect term as is using 'open' as one of the options, in this case
-I'm envisioning 'open' to mean open-to-close coherency for file
-caching (cache is only validated on open) and validation on lookup for
-dir-cache coherency (using qid.version). Specifying a number here
-expires existing caches and requires validation after a certain number
-of seconds (is that the right granularity)?
-
-So, I think this is more clear from a documentation standpoint, but
-unfortuantely I haven't reduced the test matrix much - in fact I've
-probably made it worse. I expect the common cases to basically be:
-- cache=3Dnone
-- new default? (cache=3Dall, write_policy=3Dwriteback, cache_validate=3Dope=
-n)
-- fscache w/(cache=3Dall, write_policy=3Dwriteback, cache_validate=3D5)
-
-Which would give us 3 configurations to test against versus 25
-(assuming testing for one time value for cache-validate=3Dx). Important
-to remember that this is just cache mode tests, the other mount
-options act as multipliers.
-
-Thoughts?  Alternatives?
-
-        -eric
-
-On Mon, Mar 27, 2023 at 10:38=E2=80=AFAM Christian Schoenebeck
-<linux_oss@crudebyte.com> wrote:
->
-> On Monday, March 27, 2023 5:05:52 AM CEST Eric Van Hensbergen wrote:
-> > Need to update the documentation for new mount flags
-> > and cache modes.
-> >
-> > Signed-off-by: Eric Van Hensbergen <ericvh@kernel.org>
-> > ---
-> >  Documentation/filesystems/9p.rst | 29 ++++++++++++++++-------------
-> >  1 file changed, 16 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesyste=
-ms/9p.rst
-> > index 0e800b8f73cc..6d257854a02a 100644
-> > --- a/Documentation/filesystems/9p.rst
-> > +++ b/Documentation/filesystems/9p.rst
-> > @@ -78,19 +78,18 @@ Options
-> >               offering several exported file systems.
-> >
-> >    cache=3Dmode specifies a caching policy.  By default, no caches are =
-used.
-> > -
-> > -                        none
-> > -                             default no cache policy, metadata and dat=
-a
-> > -                                alike are synchronous.
-> > -                     loose
-> > -                             no attempts are made at consistency,
-> > -                                intended for exclusive, read-only moun=
-ts
-> > -                        fscache
-> > -                             use FS-Cache for a persistent, read-only
-> > -                             cache backend.
-> > -                        mmap
-> > -                             minimal cache that is only used for read-=
-write
-> > -                                mmap.  Northing else is cached, like c=
-ache=3Dnone
-> > +             Modes are progressive and inclusive.  For example, specif=
-ying fscache
-> > +             will use loose caches, writeback, and readahead.  Due to =
-their
-> > +             inclusive nature, only one cache mode can be specified pe=
-r mount.
->
-> I would highly recommend to rather specify below for each option "this op=
-tion
-> implies writeback, readahead ..." etc., as it is not obvious otherwise wh=
-ich
-> option would exactly imply what. It is worth those extra few lines IMO to
-> avoid confusion.
->
-> > +
-> > +                     =3D=3D=3D=3D=3D=3D=3D=3D=3D       =3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +                     none            no cache of file or metadata
-> > +                     readahead       readahead caching of files
-> > +                     writeback       delayed writeback of files
-> > +                     mmap            support mmap operations read/writ=
-e with cache
-> > +                     loose           meta-data and file cache with no =
-coherency
-> > +                     fscache         use FS-Cache for a persistent cac=
-he backend
-> > +                     =3D=3D=3D=3D=3D=3D=3D=3D=3D       =3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> >    debug=3Dn    specifies debug level.  The debug level is a bitmask.
-> >
-> > @@ -137,6 +136,10 @@ Options
-> >               This can be used to share devices/named pipes/sockets bet=
-ween
-> >               hosts.  This functionality will be expanded in later vers=
-ions.
-> >
-> > +  directio   bypass page cache on all read/write operations
-> > +
-> > +  ignoreqv   ignore qid.version=3D=3D0 as a marker to ignore cache
-> > +
-> >    noxattr    do not offer xattr functions on this mount.
-> >
-> >    access     there are four access modes.
-> >
->
->
->
->
+I mentioned that he tested in my cover letter as I didn't receive a Tested-by
+tag from him.
