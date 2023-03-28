@@ -2,52 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61C446CCA49
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 20:52:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EE076CCA54
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Mar 2023 20:55:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229544AbjC1Swm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 14:52:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53950 "EHLO
+        id S229544AbjC1Szn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 14:55:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229930AbjC1Swk (ORCPT
+        with ESMTP id S229491AbjC1Szm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 14:52:40 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF5772135
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 11:52:28 -0700 (PDT)
+        Tue, 28 Mar 2023 14:55:42 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E357E2139
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 11:55:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-        bh=BSOO71k3mqXO50E+4CfFzLkct+DKBDc3qM3+oxNcLUE=; b=G3bu1FZGh7+vS1fCT+huZjZaee
-        6A7skAPCgAbAm2DEfmqKKBOiV9tCbHxJxKko5PTh0B2/NvapKVYPWAy7rfzPP8owP03eDsKPekBbr
-        C9hGSlA3rG4ljyr888bP8yqeoRW+KcZ96cNk+WWN14VSQVs8thTY58/l95XFjw8QThUXUoUPNOwkB
-        ebDf2ZSAnB+Rdf/PdLj4YXtcAGhfVGzTFmtjfmblqnPkX3YBD/S4mzAYe0GpcV0cAKmYhVBBFT3Ur
-        OAFGVrjZAYjmcD58q2mY0BLGxAC5cJc5hE+/OvvrOvzeEe6Cgw5f0Nocq/dX8sWVb9uzF2ze4ETiD
-        WM+UdLTA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1phEQi-002uzb-2s;
-        Tue, 28 Mar 2023 18:52:25 +0000
-Date:   Tue, 28 Mar 2023 19:52:24 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Re: [PATCH 4/8] snd: make snd_map_bufs() deal with ITER_UBUF
-Message-ID: <20230328185224.GM3390869@ZenIV>
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=LLoGba4n/Ljmj34YCe/oWRPa+B1VMNuM/hnH6FqG084=; b=XTzRc4W/iQtRM8xBAS4CeLacwW
+        P3obiadE121PvCyfMpIN24HFvwjShWnFlLCNOpuMqgHewv/aMOV12OCiITcP5e41QwJ2As/l21X9V
+        1QWehpfenth/AUDADBks7D7RB2D2yI/cUaYMaEH9VlPQtGVdAKONZu+snZQifhKCYLQ/xmxWWVnIL
+        a0pcgxffhG5Fpyk++cJGDzBUWpkoM340oq5MsaSzcmbO+qCQ2p0VjwLyzSbUoEpM55OzrLOtDTV1B
+        FjLSwceuLctjMflWt7uI7KobddBsGaW4jt/e07MWru/8r28/qhd5nXXl1eJpibvxza+Wa1hdTQzzE
+        qUr07XFA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1phETq-008gKh-92; Tue, 28 Mar 2023 18:55:38 +0000
+Date:   Tue, 28 Mar 2023 19:55:38 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        brauner@kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 5/8] IB/hfi1: make hfi1_write_iter() deal with ITER_UBUF
+ iov_iter
+Message-ID: <ZCM4KsKa3xQR2IOv@casper.infradead.org>
 References: <20230328173613.555192-1-axboe@kernel.dk>
- <20230328173613.555192-5-axboe@kernel.dk>
- <CAHk-=whiy4UmtfcpMSWSWRGvS1XGkqsPhZkLzi+Cph18FPJzbQ@mail.gmail.com>
- <2f94dc05-6803-e65c-196d-6b23cb56bc40@kernel.dk>
+ <20230328173613.555192-6-axboe@kernel.dk>
+ <CAHk-=wj=21dt1ASqkvaNXenzQCEZHydYE39+YOj8AAfzeL5HOQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2f94dc05-6803-e65c-196d-6b23cb56bc40@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.4 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+In-Reply-To: <CAHk-=wj=21dt1ASqkvaNXenzQCEZHydYE39+YOj8AAfzeL5HOQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,35 +51,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 11:52:10AM -0600, Jens Axboe wrote:
-> On 3/28/23 11:50 AM, Linus Torvalds wrote:
-> > On Tue, Mar 28, 2023 at 10:36 AM Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> @@ -3516,23 +3516,28 @@ static void __user **snd_map_bufs(struct snd_pcm_runtime *runtime,
-> >>                                   struct iov_iter *iter,
-> >>                                   snd_pcm_uframes_t *frames, int max_segs)
-> >>  {
-> >> +       int nr_segs = iovec_nr_user_vecs(iter);
-> > 
-> > This has a WARN_ON_ONCE() for !user_backed, but then..
-> > 
-> >>         void __user **bufs;
-> >> +       struct iovec iov;
-> >>         unsigned long i;
-> >>
-> >>         if (!iter->user_backed)
-> >>                 return ERR_PTR(-EFAULT);
-> > 
-> > here the code tries to deal with it.
-> > 
-> > So I think the two should probably be switched around.
+On Tue, Mar 28, 2023 at 11:43:34AM -0700, Linus Torvalds wrote:
+>         -       size_t count;
+>         -       union {
+>         -               const struct iovec *iov;
+>         -               const struct kvec *kvec;
+>         -               const struct bio_vec *bvec;
+>         -               struct xarray *xarray;
+>         -               struct pipe_inode_info *pipe;
+>         -               void __user *ubuf;
+>         +
+>         +       /*
+>         +        * This has the same layout as 'struct iovec'!
+>         +        * In particular, the ITER_UBUF form can create
+>         +        * a single-entry 'struct iovec' by casting the
+>         +        * address of the 'ubuf' member to that.
+>         +        */
+>         +       struct {
+>         +               union {
+>         +                       const struct iovec *iov;
+>         +                       const struct kvec *kvec;
+>         +                       const struct bio_vec *bvec;
+>         +                       struct xarray *xarray;
+>         +                       struct pipe_inode_info *pipe;
+>         +                       void __user *ubuf;
+>         +               };
+>         +               size_t count;
+>                 };
+>                 union {
+>                         unsigned long nr_segs;
 > 
-> True, it was actually like that before I refactored it to include
-> that common helper. I'll swap them around, thanks.
+> and if you accept the above, then you can do
+> 
+>    #define iter_ubuf_to_iov(iter) ((const struct iovec *)&(iter)->ubuf)
+> 
+> which I will admit is not *pretty*, but it's kind of clever, I think.
 
-Umm...  That looks really weird - if nothing else, it seems that this
-thing quietly ignores the ->iov_len on all but the first iovec.
+I think it'll annoy gcc, and particularly the randstruct plugin.
+How about:
 
-Might make sense to ask ALSA folks what the hell is going on there;
-it's readv()/writev() on pcm device, and it looks like userland ABI
-is really perverted here... ;-/
+	union {
+		struct iovec ubuf;
+		struct {
+			const struct iovec *iov;
+			size_t count; /* Also valid for subsequent types */
+		};
+		const struct kvec *kvec;
+		const struct bio_vec *bvec;
+		struct xarray *xarray;
+		struct pipe_inode_info *pipe;
+	}
+
