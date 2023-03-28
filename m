@@ -2,115 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F07BE6CCD39
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 00:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C99106CCD46
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 00:35:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229621AbjC1Wae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 18:30:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54700 "EHLO
+        id S229604AbjC1WfC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 18:35:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjC1Wac (ORCPT
+        with ESMTP id S229536AbjC1WfC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 18:30:32 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 947E7135
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:30:31 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id eg48so55727290edb.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:30:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1680042630; x=1682634630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RJfRco4kA86ZpVUshPX/QvkQ5+1BbmuE5+EK3S/1HNE=;
-        b=IFvdJr5SpSCWBTxW9Ub40K5VEnCg/3bb8AgPBueBVJtTS3qQOrHjbPdbLqIWxUmPIJ
-         T3OCeDRDhK2DRvSCu9+a9I4lmOk/PejF3szbSkx5hUr+596xEPsGwstOxANovht8jEnP
-         q2vpnazE0w0PIrqFxjfmuTPYEDt7fK0D1bYDw=
+        Tue, 28 Mar 2023 18:35:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C9FF1FF3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:34:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680042845;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vkpdjubpMQjiQrtoGJ7oK57t1Yfgq8+XT8+ZZ9ZSzy4=;
+        b=UiWHKJJ6ICsP19TzoZ0Hg9Dpc643ubm3785YrpgSvXM+oQfLs00vtfnl0euY8vn7UoGmXv
+        D2flF0HuDlbpBwSBeNkiVf7h6PfNhq8cr9CBv50j7UvCw9AwEIF87pdECBB4TnJdFwQngy
+        h0OlFh97Fk3XFhX2x19UzFy5RuXHsMU=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-82-uAtcAMphPtStZVPLwQ3WAw-1; Tue, 28 Mar 2023 18:34:04 -0400
+X-MC-Unique: uAtcAMphPtStZVPLwQ3WAw-1
+Received: by mail-qk1-f198.google.com with SMTP id 198-20020a370bcf000000b007468cffa4e2so6406933qkl.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:34:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680042630; x=1682634630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RJfRco4kA86ZpVUshPX/QvkQ5+1BbmuE5+EK3S/1HNE=;
-        b=3Fsk8dCiMBU3aCaEvqjSpyPdKV2DOVxvyoHDWD3IB8JBl7DX5k8OOfjnjQa/ism39W
-         tDafiTIOwvYQOnQVCn6s299ouiP4OBs9Bp5ZapZLKbPOGTZBnjaU8QOVTaoszaRvg+99
-         skdN6XdleidVX38oOcjvy8CGlO6i+Uzzu9M2RrM4TgM6947a5GuC7GPzBP9Fc9gnCI3b
-         zbCUyBbPcsL/MUlS7oJl8NcBZ9GXrKiC74/0j3GmpDojSSxzpoLG4Of2A3wvPG2GOz88
-         JhqWIy8lB4FJTRAWQ12mEig62od+lPryGt7yJ7SJwcyVTUDWnPVVQcaBNhZFkPrcx/8h
-         iFhQ==
-X-Gm-Message-State: AAQBX9dacNjgpBm23GwGFeD37/YKknJ9mo/ZV1EXd0NNV5PUy+LSTE0w
-        vdDmI9Xp4sXxGMlJvHroWkSd9/b+z+0gQaObl5T+aQ==
-X-Google-Smtp-Source: AKy350b7UUWD5Ots7MwCDgaXMxyEiOxWUgq2ek5zR9dYSt2DjWzIGgoig/QFOuUKASUbQ/SbhatshA==
-X-Received: by 2002:a17:906:8398:b0:900:a150:cea3 with SMTP id p24-20020a170906839800b00900a150cea3mr17770530ejx.9.1680042629775;
-        Tue, 28 Mar 2023 15:30:29 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id jj4-20020a170907984400b009323f08827dsm15497020ejc.13.2023.03.28.15.30.29
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Mar 2023 15:30:29 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id eg48so55727021edb.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 15:30:29 -0700 (PDT)
-X-Received: by 2002:a17:907:7b8a:b0:931:6e39:3d0b with SMTP id
- ne10-20020a1709077b8a00b009316e393d0bmr8855650ejc.15.1680042628829; Tue, 28
- Mar 2023 15:30:28 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680042844; x=1682634844;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vkpdjubpMQjiQrtoGJ7oK57t1Yfgq8+XT8+ZZ9ZSzy4=;
+        b=w9x6Y/93a9LPTJquhPsU3rtPTMTOJ8R9bdt7j9dr30mMXJeuAM38VLpZkZIsk1jhhO
+         dtwDfSuBsFtYP4q41Kepkom6nXN7w8vtQsO91Vv15QMs6Ipp+NuE01PkN4NKUWp4HA6r
+         5x9ej4O85OFetoT/7rU4IEGdhv6eK/PUbFkzSG2F9rNI4uFj7rsUcInWQwcfO+MxclwF
+         lqgIPj4v135ahDW80x68Zr7AP6/xJ6vBjY76qVHHI1RcvFeKjOcboJhOFxJKG7BkyK3l
+         zJ2QpifGmZwbfJU6ImvPjQVtKGPlAfcu1DHnsi6nhTe7Fw7jep2qr7LzI7vWxcMSQFy8
+         c5Og==
+X-Gm-Message-State: AAQBX9cJcDljIXLU7vLTNWjjJtLioUWgHtimmhjuF2wHTONFP2/8Sx6S
+        FqTtDGDWQBWjNm6aN5CG0hmjZn9Uz+MWQeaTLIc337iarhk9WO0Ys17beu3rbQF/+AccOE8J+tn
+        tGBrGkDvWzl5B7cr2KllqOKXkyg==
+X-Received: by 2002:a05:6214:5193:b0:5de:5da:b873 with SMTP id kl19-20020a056214519300b005de05dab873mr18587370qvb.3.1680042843876;
+        Tue, 28 Mar 2023 15:34:03 -0700 (PDT)
+X-Google-Smtp-Source: AKy350ZlkAe0JI1+oDavIAHK0xd280kRJjj3GuPG2q8zblgmaz2X3JUxxxw5dA5sSDbyGlM93yJtow==
+X-Received: by 2002:a05:6214:5193:b0:5de:5da:b873 with SMTP id kl19-20020a056214519300b005de05dab873mr18587348qvb.3.1680042843586;
+        Tue, 28 Mar 2023 15:34:03 -0700 (PDT)
+Received: from x1n (bras-base-aurron9127w-grc-40-70-52-229-124.dsl.bell.ca. [70.52.229.124])
+        by smtp.gmail.com with ESMTPSA id 11-20020a37030b000000b00745a55db5a3sm12310243qkd.24.2023.03.28.15.34.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Mar 2023 15:34:02 -0700 (PDT)
+Date:   Tue, 28 Mar 2023 18:34:01 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] userfaultfd: don't fail on unrecognized features
+Message-ID: <ZCNrWRKl4nCJX3pg@x1n>
+References: <20220722201513.1624158-1-axelrasmussen@google.com>
+ <ZCIEGblnsWHKF8RD@x1n>
+ <CAJHvVcj5ysY-xqKLL8f48-vFhpAB+qf4cN0AesQEd7Kvsi9r_A@mail.gmail.com>
+ <ZCNDxhANoQmgcufM@x1n>
+ <CAJHvVcjU8QRLqFmk5GXbmOJgKp+XyVHMCS0hABtWmHTDuCusLA@mail.gmail.com>
+ <ZCNPFDK0vmzyGIHb@x1n>
+ <CAJHvVciwT0xw3Nu2Fpi-7H9iR92xK7VB31dYLfmJF5K3vQxvFQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20230328215811.903557-1-axboe@kernel.dk> <20230328215811.903557-4-axboe@kernel.dk>
- <CAHk-=winXSHgikHZSyDrmoN=WNZWKoR1JrKGW6Vv4mqn6F4EmA@mail.gmail.com> <416ec013-72db-7ef0-2205-e8fa0165b712@kernel.dk>
-In-Reply-To: <416ec013-72db-7ef0-2205-e8fa0165b712@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 28 Mar 2023 15:30:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi-mSanfxOGr4i4_TsYvxQVpzCWCsqdZr3LACHWfdVnhw@mail.gmail.com>
-Message-ID: <CAHk-=wi-mSanfxOGr4i4_TsYvxQVpzCWCsqdZr3LACHWfdVnhw@mail.gmail.com>
-Subject: Re: [PATCH 3/9] iov_iter: overlay struct iovec and ubuf/len
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=0.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJHvVciwT0xw3Nu2Fpi-7H9iR92xK7VB31dYLfmJF5K3vQxvFQ@mail.gmail.com>
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- thing
+On Tue, Mar 28, 2023 at 02:52:35PM -0700, Axel Rasmussen wrote:
+> I don't see being very strict here as useful. Another example might be
+> madvise() - for example trying to MADV_PAGEOUT on a kernel that
+> doesn't support it. There is no way the kernel can proceed here, since
+> it simply doesn't know how to do what you're asking for. In this case
+> an error makes sense.
 
-On Tue, Mar 28, 2023 at 3:19=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> Nobody should use it, though. The one case where I thought we'd use
-> it was iov_iter_iovec(), but that doesn't work...
+IMHO, PAGEOUT is not a great example.  I wished we can have a way to probe
+what madvise() the system supports, and I know many people wanted that too.
+I even had a feeling that we'll have it some day.
 
-You only think that because all your conversions are bogus and wrong.
+So now I'm going back to look at this patch assuming I'm reviewing it, I'm
+still not convinced the old API needs changing.
 
-Your latest "[PATCH 7/9] ALSA: pcm.. " patch is just wrong.
+Userfaultfd allows probing with features=0 with/without this patch, so I
+see this patch as something that doesn't bring a direct functional benefit,
+but some kind of api change due to subjective preferences which I cannot
+say right or wrong.  Now the patch is already merged.  If we need to change
+either this patch or the man page to make them match again, again I'd
+prefer we simply revert it to keep everything like before and copy stable.
 
-Doing this:
+Thanks,
 
--       if (!iter_is_iovec(from))
-+       if (!from->user_backed)
+-- 
+Peter Xu
 
-does not work AT ALL. You also need to switch all the uses of
-"from->iov" to use the "iter_iov()" helper (that you didn't use).
-
-Because "from->iov" is _only_ valid as a iov pointer for an ITER_IOV.
-
-For an ITER_UBUF, that will be the user pointer in the union, and to
-get the iov, you need to do that
-
-    iov =3D &from->ubuf_iov
-
-thing.
-
-The "overlay ubuf as an iov" does *not* make "from->iov" work at all.
-Really. You still need to *generate* that pointer from the overlaid
-data.
-
-So your latest patches may build, but they most definitely won't work.
-
-I would in fact suggest renaming the "iov" member entirely, to make
-sure that nobody uses the "direct access" model ever.
-
-           Linus
