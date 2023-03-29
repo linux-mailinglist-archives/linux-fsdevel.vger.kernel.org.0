@@ -2,198 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B1836CCFAB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 03:56:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E314C6CD0AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 05:30:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229525AbjC2B4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 21:56:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50562 "EHLO
+        id S230115AbjC2DaC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 23:30:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbjC2B4J (ORCPT
+        with ESMTP id S230057AbjC2D3y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 21:56:09 -0400
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4731BE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 18:56:06 -0700 (PDT)
-Received: by mail-il1-f208.google.com with SMTP id z8-20020a92cd08000000b00317b27a795aso9230972iln.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 18:56:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680054966; x=1682646966;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c7OaTw+zxVPVnks4Ao3yniimiWG4rRyV6sGIIqnIQ6Y=;
-        b=KznKQ4TVsimXf5CJ5TtVWG4d3ME/cnkSWwW2RrMulO2LtU8GDCKsskykjx8FYBk2ai
-         ejBRlYW1VWEUffLPsDIql4ldW0c6WRjG4uQPTbEVN2348p/z+6WfDm7UH7h8K952/Pfv
-         aa7GVYsSApXN4TfToMcvSwd4nct6UkJt9oHPMaoAj0obsG1/IoHQrO01+CwFhqcP2AQK
-         okpoFxEtHuly+UYy9Pi8yxDk1eTZzFhSq9wGxRnlzz6dRSI2PtSAfg3gf7/ZQcWYleWS
-         qs6jEjK7d5tkuHGQ+VttDE/qEzI+1A93kvyiwEhpiiFUlcJh+SaXx0xrsudGRhcaGC7/
-         8UAA==
-X-Gm-Message-State: AO0yUKXoG4OLSCG/RKZLifiPEMIO9SVb1FIyRIM690ek/3ntJLM4Ki57
-        Bm+pRd66o7C/oLHMjzQlFz2rVoITPb5Q7pkiy2vd4Ar3vS6AWaRd2g==
-X-Google-Smtp-Source: AK7set+oreVjgeOsML0wV2RDLYCUBNxUnqkhxRyFotcall1m3vxcdziests59jDEjmoC9zigti6mLiym9dcAbKazLRDmAVZaN+yi
+        Tue, 28 Mar 2023 23:29:54 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E0A35A0;
+        Tue, 28 Mar 2023 20:29:52 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32T10d0M030341;
+        Wed, 29 Mar 2023 03:29:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=qMYAKtazM96mw3n7WQj57jjWCtzRMxVdu0bjew/CIUQ=;
+ b=hWnSrtkOyATP2EWkQt/uGjIkjpH4L1+0mzXYUdHHRKEb03/70AFokB30g74ptKEKMnVO
+ 694iGbLXzSQNKlZDwGfxNDHSNk00THNNgibyP0QwkaWQugvidj3u/iKrVDhdfZukkFDZ
+ IE9efFFCgokl2qrxXkj/RIpeWJ0gA3XSEeEBUVJMeF9Nx+0H3788WAq0YRtYe92UG851
+ zNNTSBju8LmQjDu7HzGbEDPnaYJPHARH1Sg7vdFIFi4VEvfBC/OKQctWBkabFY1v6vmB
+ MkvZ9aowTyHr4ZOSA8IroglMa/BiwHjLQW9dueNv10XprlnI9qvQykCYfFkm76GkvrCl LA== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pmb8h08g8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 29 Mar 2023 03:29:43 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32T3Th8Y008673
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 29 Mar 2023 03:29:43 GMT
+Received: from hu-cgoldswo-sd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Tue, 28 Mar 2023 20:29:42 -0700
+Date:   Tue, 28 Mar 2023 20:29:41 -0700
+From:   Chris Goldsworthy <quic_cgoldswo@quicinc.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Multi-index entries, clarifying storage overhead with respect to
+ range alignment
+Message-ID: <20230329032731.GA3319@hu-cgoldswo-sd.qualcomm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:cc1:b0:404:4ebe:4e5b with SMTP id
- e1-20020a0566380cc100b004044ebe4e5bmr7008740jak.5.1680054966118; Tue, 28 Mar
- 2023 18:56:06 -0700 (PDT)
-Date:   Tue, 28 Mar 2023 18:56:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007584ba05f80047bb@google.com>
-Subject: [syzbot] [reiserfs?] KASAN: use-after-free Read in reiserfs_get_unused_objectid
-From:   syzbot <syzbot+04e8b36eaa27ecf7f840@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 1aF1erczc4A0QE5ciVsbovgA7QCO6-hB
+X-Proofpoint-GUID: 1aF1erczc4A0QE5ciVsbovgA7QCO6-hB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-24_11,2023-03-28_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ malwarescore=0 priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 adultscore=0 bulkscore=0 suspectscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2303290027
+X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi Matthew,
 
-syzbot found the following issue on:
+Consider the following excerpt from the Xarray documentation on multi-index
+entries, summarizing the [2^N, 2^(N+1) - 1] alignment requirement for
+utilizing multi-index entries [1]:
 
-HEAD commit:    1e760fa3596e Merge tag 'gfs2-v6.3-rc3-fix' of git://git.ke..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1746cb0ec80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=acdb62bf488a8fe5
-dashboard link: https://syzkaller.appspot.com/bug?extid=04e8b36eaa27ecf7f840
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d5c261c80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=155eba51c80000
+"The current implementation only allows tying ranges which are aligned powers of
+two together; eg indices 64-127 may be tied together, but 2-6 may not be. This
+may save substantial quantities of memory; for example tying 512 entries
+together will save over 4kB."
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/17229b6e6fe0/disk-1e760fa3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/69b5d310fba0/vmlinux-1e760fa3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0c65624aace9/bzImage-1e760fa3.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/18aebd583db0/mount_0.gz
+Won't we still use multi-index entries for power-of-two ranges that are aligned
+for the size of the range? That is, the range [i, j] satisfies:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+04e8b36eaa27ecf7f840@syzkaller.appspotmail.com
+	(A): j - i = 2^k for some k and i % 2^k == 0 .
 
-REISERFS (device loop0): journal params: device loop0, size 512, journal first block 18, max trans len 256, max batch 225, max commit age 30, max trans age 30
-REISERFS (device loop0): checking transaction log (loop0)
-REISERFS (device loop0): Using r5 hash to sort names
-==================================================================
-BUG: KASAN: use-after-free in reiserfs_get_unused_objectid+0x231/0x490 fs/reiserfs/objectid.c:87
-Read of size 250888 at addr ffff888073c6b058 by task syz-executor137/5072
+This is more permissive than [2^N, 2^(N+1) - 1] . I'm basing this assumption
+(calling it this as I'm not 100% certain yet) off of the following:
 
-CPU: 1 PID: 5072 Comm: syz-executor137 Not tainted 6.3.0-rc3-syzkaller-00031-g1e760fa3596e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:319 [inline]
- print_report+0x163/0x540 mm/kasan/report.c:430
- kasan_report+0x176/0x1b0 mm/kasan/report.c:536
- kasan_check_range+0x283/0x290 mm/kasan/generic.c:187
- __asan_memmove+0x29/0x70 mm/kasan/shadow.c:94
- reiserfs_get_unused_objectid+0x231/0x490 fs/reiserfs/objectid.c:87
- reiserfs_new_inode+0x2bc/0x1da0 fs/reiserfs/inode.c:1944
- reiserfs_mkdir+0x5b0/0x8f0 fs/reiserfs/namei.c:845
- xattr_mkdir fs/reiserfs/xattr.c:76 [inline]
- create_privroot fs/reiserfs/xattr.c:882 [inline]
- reiserfs_xattr_init+0x34c/0x730 fs/reiserfs/xattr.c:1005
- reiserfs_fill_super+0x2207/0x2620 fs/reiserfs/super.c:2175
- mount_bdev+0x271/0x3a0 fs/super.c:1380
- legacy_get_tree+0xef/0x190 fs/fs_context.c:610
- vfs_get_tree+0x8c/0x270 fs/super.c:1510
- do_new_mount+0x28f/0xae0 fs/namespace.c:3042
- do_mount fs/namespace.c:3385 [inline]
- __do_sys_mount fs/namespace.c:3594 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3571
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f650fbcb3aa
-Code: 48 c7 c2 c0 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 f8 03 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc35632868 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f650fbcb3aa
-RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007ffc35632880
-RBP: 00007ffc35632880 R08: 00007ffc356328c0 R09: 0000000000001132
-R10: 0000000000008008 R11: 0000000000000286 R12: 0000000000000004
-R13: 0000555555df42c0 R14: 0000000000008008 R15: 00007ffc356328c0
- </TASK>
+(1) Counting the number of kmem_cache_alloc_lru() calls using ranges satisfying (A)
+whilst varying the starting position.
 
-The buggy address belongs to the physical page:
-page:ffffea0001cf1ac0 refcount:3 mapcount:0 mapping:ffff888144c549f8 index:0x10 pfn:0x73c6b
-memcg:ffff888140196000
-aops:def_blk_aops ino:700000
-flags: 0xfff00000002022(referenced|active|private|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000002022 0000000000000000 dead000000000122 ffff888144c549f8
-raw: 0000000000000010 ffff8880751fc910 00000003ffffffff ffff888140196000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Movable, gfp_mask 0x148c48(GFP_NOFS|__GFP_NOFAIL|__GFP_COMP|__GFP_HARDWALL|__GFP_MOVABLE), pid 5072, tgid 5072 (syz-executor137), ts 69127009678, free_ts 60810646673
- prep_new_page mm/page_alloc.c:2552 [inline]
- get_page_from_freelist+0x3246/0x33c0 mm/page_alloc.c:4325
- __alloc_pages+0x255/0x670 mm/page_alloc.c:5591
- folio_alloc+0x1e/0x60 mm/mempolicy.c:2293
- filemap_alloc_folio+0xde/0x500 mm/filemap.c:976
- __filemap_get_folio+0x719/0xe50 mm/filemap.c:1970
- pagecache_get_page+0x2c/0x240 mm/folio-compat.c:99
- find_or_create_page include/linux/pagemap.h:632 [inline]
- grow_dev_page fs/buffer.c:989 [inline]
- grow_buffers fs/buffer.c:1054 [inline]
- __getblk_slow fs/buffer.c:1081 [inline]
- __getblk_gfp+0x215/0xa40 fs/buffer.c:1376
- __bread_gfp+0x2e/0x380 fs/buffer.c:1410
- sb_bread include/linux/buffer_head.h:341 [inline]
- read_super_block+0x91/0x800 fs/reiserfs/super.c:1604
- reiserfs_fill_super+0x912/0x2620 fs/reiserfs/super.c:1966
- mount_bdev+0x271/0x3a0 fs/super.c:1380
- legacy_get_tree+0xef/0x190 fs/fs_context.c:610
- vfs_get_tree+0x8c/0x270 fs/super.c:1510
- do_new_mount+0x28f/0xae0 fs/namespace.c:3042
- do_mount fs/namespace.c:3385 [inline]
- __do_sys_mount fs/namespace.c:3594 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3571
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1453 [inline]
- free_pcp_prepare mm/page_alloc.c:1503 [inline]
- free_unref_page_prepare+0xe2f/0xe70 mm/page_alloc.c:3387
- free_unref_page_list+0x596/0x830 mm/page_alloc.c:3528
- release_pages+0x219e/0x2470 mm/swap.c:1042
- tlb_batch_pages_flush mm/mmu_gather.c:97 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:292 [inline]
- tlb_flush_mmu+0x100/0x210 mm/mmu_gather.c:299
- tlb_finish_mmu+0xd4/0x1f0 mm/mmu_gather.c:391
- exit_mmap+0x2c9/0x850 mm/mmap.c:3047
- __mmput+0x115/0x3c0 kernel/fork.c:1209
- exit_mm+0x227/0x310 kernel/exit.c:563
- do_exit+0x612/0x2290 kernel/exit.c:856
- do_group_exit+0x206/0x2c0 kernel/exit.c:1019
- __do_sys_exit_group kernel/exit.c:1030 [inline]
- __se_sys_exit_group kernel/exit.c:1028 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1028
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
+(2) Walking through xa_store_range(). The call to xas_set_range() [2] sets the
+final xa_shift S that corresponds to the range we want to cover. When calling
+xas_store() [3], inside of which is a call to xas_create() [4], the shift of the
+lowest-level node [5] we allocate is no smaller than S - XA_CHUNK_SHIFT + 1,
+i.e. the entry will still cover multiple entries so long as S is large enough
+(though we still might need multiple entries to do this). This will happen
+despite the alignment of things, based of what happens in xas_store_range(). Let
+me know if I'm misinterpreting something.
 
-Memory state around the buggy address:
- ffff888073c6bf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888073c6bf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff888073c6c000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                   ^
- ffff888073c6c080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888073c6c100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
+Thanks,
 
+Chris.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+[1] https://docs.kernel.org/core-api/xarray.html#multi-index-entries
+[2] https://elixir.bootlin.com/linux/latest/source/lib/xarray.c#L1740
+[3] https://elixir.bootlin.com/linux/latest/source/lib/xarray.c#L1741
+[4] https://elixir.bootlin.com/linux/latest/source/lib/xarray.c#L789
+[5] https://elixir.bootlin.com/linux/latest/source/lib/xarray.c#L679
