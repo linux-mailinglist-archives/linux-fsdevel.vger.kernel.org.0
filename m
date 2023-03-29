@@ -2,110 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7368E6CD3EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 10:03:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6877F6CD40E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 10:09:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230107AbjC2IDp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 04:03:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57518 "EHLO
+        id S229955AbjC2IJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 04:09:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbjC2IDl (ORCPT
+        with ESMTP id S229807AbjC2IJS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 04:03:41 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C605A3AB8;
-        Wed, 29 Mar 2023 01:03:39 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 7F852219E7;
-        Wed, 29 Mar 2023 08:03:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1680077018; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ICn2IUeBEefhWUnrVwwgjW98U4BhJgsWujMRsb5uiew=;
-        b=FJS+18HMODTwNmHvvxxOJaelViHM+6afdk9Pgzu6vt4DkahdE6qeAZmAS2mImejCjWuCod
-        pTjIstQ62m9cov9oi8oweZjZvdtEDYtmSxnvHBCOYsAua1FNyY8AJlOgQhvCm5e1mw8hV9
-        oNbWsqoqiejrQuKT5r84TeQdZ9c2enk=
-Received: from suse.cz (unknown [10.100.208.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id E98FB2C141;
-        Wed, 29 Mar 2023 08:03:36 +0000 (UTC)
-Date:   Wed, 29 Mar 2023 10:03:34 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        David Gow <davidgow@google.com>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        tangmeng <tangmeng@uniontech.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Subject: Re: locking API: was: [PATCH printk v1 00/18] serial: 8250:
- implement non-BKL console
-Message-ID: <ZCPw1pEakE7SGsKg@alley>
-References: <20230302195618.156940-1-john.ogness@linutronix.de>
- <87wn3zsz5x.fsf@jogness.linutronix.de>
- <ZCLsuln0nHr7S9a5@alley>
- <87a5zxger3.fsf@jogness.linutronix.de>
- <ZCMDVKy1Ir0rvi5g@alley>
- <87ilekmtuj.fsf@jogness.linutronix.de>
+        Wed, 29 Mar 2023 04:09:18 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B641FFC
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 01:08:55 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id gp15-20020a17090adf0f00b0023d1bbd9f9eso17834859pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 01:08:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1680077335;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mVRpG2dAr/nWYNSNRqghl5EEZFHlwrwTvwCgPASuUmU=;
+        b=fjjwB2zFeG+SwWg0X1rPzwBGeccQqbojBL/azxEx/VC8yg0Qm5Sb+t0NfVOmibaucZ
+         xCgCSTAIberX+90M1I05lsnIAWZKnB9rzQvEI+zmLP7W6dQiMeldn5j/30ESU917A/WM
+         M2GmpY7IWQv5hQ/xwVyvv5I7gclcVvyIFEgTQzrHMxoWyew0bdrXRzjjgHy4jT+Wb9xQ
+         jhWoxfiaJE+omv3VTH98A/tO9knUn3mdNKnpogad+NtkOsQmhW0NzBJWE4hOwd3sZ1G2
+         hxIXxoA+eJranOTs/dIbHJr/Ou4JCMK7MpqYQkOj3ZMsr7b/0+6HdBldsI8pWLe8CIwl
+         rgig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680077335;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mVRpG2dAr/nWYNSNRqghl5EEZFHlwrwTvwCgPASuUmU=;
+        b=pf3FtBO/Yg488cpKXk5H+m7MMQ57B8vEqPRAXUhLFfrbmQ/D0mm5QFvk61W3Ttv+c/
+         t2eGgfa2j2r0CaXaUjnILtySeA+4vhBIBgFq0Y/cTv4HSuNrAPFFUMXxD34BUL2p3FFl
+         RwG4/OvZ81PAdUqXapgj9Qt4PDvSO+o393o8Hc1r/aEV7tzuBKG8mm3VrwhQ8MOMLZlP
+         /pnePmjz9uc8ei6fSY8kFKvtEgaDso2QMsiDSZBpVvORGDixqBbod626+gDzJHgvzx7g
+         VN2CLgrq8v5lauxJ74QDkf0ki78x+oz9dgAPqknO5hbwL3W5dwPOHbRYHyK7Awgwtp5v
+         q5Ag==
+X-Gm-Message-State: AAQBX9fohnwEsu59TnlW32sDV1BD+JZTHIptyIYCC43b4QwgO3SFloHt
+        mwxQQNqh/jbusl/53PPv31W1EQ==
+X-Google-Smtp-Source: AKy350YkuPVOI4SkoYUmjVLLsU+g0OQwvsA0hoKkKc7WLUm0Sa5StE4Ydf+KVToEOuvk5LGwIcWN8g==
+X-Received: by 2002:a17:90b:3ece:b0:23f:6edd:41da with SMTP id rm14-20020a17090b3ece00b0023f6edd41damr20304030pjb.29.1680077335048;
+        Wed, 29 Mar 2023 01:08:55 -0700 (PDT)
+Received: from [10.3.144.50] ([61.213.176.11])
+        by smtp.gmail.com with ESMTPSA id b15-20020a17090ae38f00b002369e16b276sm859568pjz.32.2023.03.29.01.08.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Mar 2023 01:08:54 -0700 (PDT)
+Message-ID: <2a39ced1-05f1-d696-1905-4ff5199fa41b@bytedance.com>
+Date:   Wed, 29 Mar 2023 16:08:49 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ilekmtuj.fsf@jogness.linutronix.de>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.9.0
+Subject: Re: [External] Re: [PATCH V4 4/5] cachefiles: narrow the scope of
+ triggering EPOLLIN events in ondemand mode
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xin Yin <yinxin.x@bytedance.com>,
+        Jingbo Xu <jefflexu@linux.alibaba.com>, zhujia.zj@bytedance.com
+References: <20230111052515.53941-5-zhujia.zj@bytedance.com>
+ <20230111052515.53941-1-zhujia.zj@bytedance.com>
+ <133078.1680013145@warthog.procyon.org.uk>
+From:   Jia Zhu <zhujia.zj@bytedance.com>
+In-Reply-To: <133078.1680013145@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 2023-03-28 23:53:16, John Ogness wrote:
-> On 2023-03-28, Petr Mladek <pmladek@suse.com> wrote:
-> >> If an atomic context loses ownership while doing certain activities,
-> >> it may need to re-acquire ownership in order to finish or cleanup
-> >> what it started.
-> >
-> > This sounds suspicious. If a console/writer context has lost the lock
-> > then all shared/locked resources might already be used by the new
-> > owner.
-> 
-> Correct.
-> 
-> > I would expect that the context could touch only non-shared resources
-> > after loosing the lock.
-> 
-> Correct.
-> 
-> The 8250 driver must disable interrupts before writing to the TX
-> FIFO. After writing it re-enables the interrupts. However, it might be
-> the case that the interrupts were already disabled, in which case after
-> writing they are left disabled.
 
-I see. The reacquire() makes sense now.
 
-Thanks a lot for explanation.
-
-Best Regards,
-Petr
+在 2023/3/28 22:19, David Howells 写道:
+> Jia Zhu <zhujia.zj@bytedance.com> wrote:
+> 
+>> +		if (!xa_empty(xa)) {
+>> +			xa_lock(xa);
+>> +			xa_for_each_marked(xa, index, req, CACHEFILES_REQ_NEW) {
+>> +				if (!cachefiles_ondemand_is_reopening_read(req)) {
+>> +					mask |= EPOLLIN;
+>> +					break;
+>> +				}
+>> +			}
+>> +			xa_unlock(xa);
+>> +		}
+> 
+> I wonder if there's a more efficient way to do this.  I guess it depends on
+> how many reqs you expect to get in a queue.  It might be worth taking the
+> rcu_read_lock before calling xa_lock() and holding it over the whole loop.
+> 
+Thanks for the advice, will use rcu_read_lock（unlock） to replace it.
+> David
+> 
