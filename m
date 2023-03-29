@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 684CE6CF254
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 20:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 289EB6CF255
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 20:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229723AbjC2SlN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 14:41:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44618 "EHLO
+        id S229703AbjC2SlO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 14:41:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbjC2SlF (ORCPT
+        with ESMTP id S229605AbjC2SlG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 14:41:05 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD54E1FDA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 11:41:03 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id bl9so7234784iob.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 11:41:03 -0700 (PDT)
+        Wed, 29 Mar 2023 14:41:06 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C17304C2C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 11:41:04 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id x6so8583837ile.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 11:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680115263; x=1682707263;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680115264;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DC1PRKIPWeSwJmEnC4u8bQghfT4SJuLeGzSfXQEaX64=;
-        b=XMkysAG5kgc7/AQwMJFGJ3Cx++C0nMIt19OeWo+dMA5bB+K70IHOX8vJm0FrOySfhi
-         fLFxfN6H54P2yip53Hwtx1zlgsX3CIn+gW6Jm64qYvuFd96VyLZYIPGvNMyQCYou4+cK
-         CokCVreTCQhWO18DaVkafXVOokAJ7AByD/xVmhxWPodoZU+KbggQI4zLvuInnL2Mrawx
-         qt5I94PPDvP0klXxyQnz+RkINfXZrkNhmFyw5oHJ1/kjTh5Sp+ebMtG3Oha9cPDimwng
-         8lrNxW60rNrP1NREdcvwFBrLztB9GICjxPYMTxB+HnKJsjOhDu5hf6eXB/si0xcYKJaJ
-         28vg==
+        bh=jpwUjTOd1XNUvc/0wj6/ArC+MvM71+0/O8hmrQy2F/M=;
+        b=qdi43+mLD0a4vUBOb613AgoA7UaRrr2PLFq8vlQHDsbqpvZzh7a3Tgz7O4g2DyihAo
+         GFQIKSg9EQ5ZKL16bA8AgX0oA5+oOf+NtGLiKJN085iduJOpO150CkxUhdUXkSldMse5
+         uqZfSrbU7TbtUFJ+1x7gXbrURttTEPskYQQg92QPax8uPNbdOShEgMhzUTB5pJCz0CX5
+         slcyweq3LMpo9mv9VjVbKVRcbHB6IbCm7jP3Rfim4a+JdgWiBY+8VSIlnQsGierDctkm
+         oI1F4RoYl2u4CaGoyZTwuyfgCG9CH1em7OEQlN+/PvhCTikZHq5vknfyUiTCcLY1SJX1
+         zVXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680115263; x=1682707263;
+        d=1e100.net; s=20210112; t=1680115264;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DC1PRKIPWeSwJmEnC4u8bQghfT4SJuLeGzSfXQEaX64=;
-        b=2b6zwbv1gmjwKfRtiAPbiOuBawi4eCOfzaECbjqN8lXBB6c5q30LW6hJHKyUQ7n5bm
-         Kfto/VgSUMBhc6UV76Ez/FrmurcELBOucsKzb1dmjcRg08Q/wDabO3eGiQf+GVQVvZKh
-         Pb8iFAE+1oSVOUO/KOuh9j3VFl/eIeWxmYtbjb534pm0w5qseXME1JU/nL9ieOEC+cuL
-         t+ucBYDMMtmKp+2GfgaRkMMq3eQ3mqb+ixWmcaCappofmrLVk9IYx09Uyy9DEAJeqC5G
-         XTYFS8K+Q1BJ/sis8u1+4lfsNx6cpxSLljmMpba3ahcSyw9bfHDcDTTSKw05p8pWYfdF
-         /sJA==
-X-Gm-Message-State: AO0yUKV7NDCBQH2FNbiD/81yKvyZklqEGMWOq91KqKB3cVERHHhIJHW2
-        fK3LOn00yOyhdgfc8YePo7zWCUcIo+qlICDy7WywoA==
-X-Google-Smtp-Source: AK7set9SGE/l+jD1Q12SLn6zOemkfTfgQlkhrS2CqmKaDVbimHfLRdVLDiSvIX/6Vjpwa4B9GU6LGQ==
-X-Received: by 2002:a05:6602:1246:b0:758:5525:860a with SMTP id o6-20020a056602124600b007585525860amr11266384iou.0.1680115262710;
-        Wed, 29 Mar 2023 11:41:02 -0700 (PDT)
+        bh=jpwUjTOd1XNUvc/0wj6/ArC+MvM71+0/O8hmrQy2F/M=;
+        b=HSPtBQ5PaKSziskWlXzMsR/LzmHFxrunXNuZr1nfcPo7hMURw4iy2ZWJ2bBW/+2dSj
+         0MY8M+qAxPuEvLOIR7U/vn79TkxxMHb+Zgoq+sbV4FhC5aDmzfbY56IRGsZuAYk6BPNS
+         k+imJSmLGbJ552TC7zkb7sy951gepMPxnxCVhFU3+ql4rRPOD8DQvGN9g3myhXYp01Kr
+         +YS5zmKWRsJaxiEmTp11HtebA4nJaPqmrbCwSFflO9LEDhVnA4nSuRBgMK0o1/LiX6yD
+         EStT0N6HyC6H8We3Kgzqn/Y+Kg9Tnw/chA7jR362lbQnJt4RIKVWA055Mp5p6gtlDDa3
+         hoEg==
+X-Gm-Message-State: AAQBX9eyediL2iU4MY8pV0iq1fKMAxSCgqMMWAcucDdjvRqfCnz/XUQ3
+        0eV+yGcw1hNNoq7KZaZZ92sPVAbSh/u3yfWGAB2M1w==
+X-Google-Smtp-Source: AKy350aSEj5hRiKjuwniCuaVLNY/j5/Zxm+O3ifltJIIAcBB0G3x7Q+R8kmMoWblHZBgmhSQ4TDO/Q==
+X-Received: by 2002:a92:cda6:0:b0:31f:9b6e:2f52 with SMTP id g6-20020a92cda6000000b0031f9b6e2f52mr12817007ild.0.1680115263827;
+        Wed, 29 Mar 2023 11:41:03 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id m36-20020a056638272400b004063e6fb351sm10468087jav.89.2023.03.29.11.41.01
+        by smtp.gmail.com with ESMTPSA id m36-20020a056638272400b004063e6fb351sm10468087jav.89.2023.03.29.11.41.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 11:41:02 -0700 (PDT)
+        Wed, 29 Mar 2023 11:41:03 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, brauner@kernel.org,
         viro@zeniv.linux.org.uk, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 03/11] iov_iter: add iter_iov_addr() and iter_iov_len() helpers
-Date:   Wed, 29 Mar 2023 12:40:47 -0600
-Message-Id: <20230329184055.1307648-4-axboe@kernel.dk>
+Subject: [PATCH 04/11] iov_iter: remove iov_iter_iovec()
+Date:   Wed, 29 Mar 2023 12:40:48 -0600
+Message-Id: <20230329184055.1307648-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230329184055.1307648-1-axboe@kernel.dk>
 References: <20230329184055.1307648-1-axboe@kernel.dk>
@@ -71,145 +71,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These just return the address and length of the current iovec segment
-in the iterator. Convert existing iov_iter_iovec() users to use them
-instead of getting a copy of the current vec.
+No more users are left of this function.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/read_write.c     | 11 +++++------
- include/linux/uio.h |  2 ++
- io_uring/rw.c       | 27 +++++++++++++--------------
- mm/madvise.c        |  9 ++++-----
- 4 files changed, 24 insertions(+), 25 deletions(-)
+ include/linux/uio.h | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 7a2ff6157eda..a21ba3be7dbe 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -749,15 +749,14 @@ static ssize_t do_loop_readv_writev(struct file *filp, struct iov_iter *iter,
- 		return -EOPNOTSUPP;
- 
- 	while (iov_iter_count(iter)) {
--		struct iovec iovec = iov_iter_iovec(iter);
- 		ssize_t nr;
- 
- 		if (type == READ) {
--			nr = filp->f_op->read(filp, iovec.iov_base,
--					      iovec.iov_len, ppos);
-+			nr = filp->f_op->read(filp, iter_iov_addr(iter),
-+						iter_iov_len(iter), ppos);
- 		} else {
--			nr = filp->f_op->write(filp, iovec.iov_base,
--					       iovec.iov_len, ppos);
-+			nr = filp->f_op->write(filp, iter_iov_addr(iter),
-+						iter_iov_len(iter), ppos);
- 		}
- 
- 		if (nr < 0) {
-@@ -766,7 +765,7 @@ static ssize_t do_loop_readv_writev(struct file *filp, struct iov_iter *iter,
- 			break;
- 		}
- 		ret += nr;
--		if (nr != iovec.iov_len)
-+		if (nr != iter_iov_len(iter))
- 			break;
- 		iov_iter_advance(iter, nr);
- 	}
 diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 4218624b7f78..b7fce87b720e 100644
+index b7fce87b720e..7f585ceedcb2 100644
 --- a/include/linux/uio.h
 +++ b/include/linux/uio.h
-@@ -70,6 +70,8 @@ struct iov_iter {
- };
+@@ -148,15 +148,6 @@ static inline size_t iov_length(const struct iovec *iov, unsigned long nr_segs)
+ 	return ret;
+ }
  
- #define iter_iov(iter)	(iter)->__iov
-+#define iter_iov_addr(iter)	(iter_iov(iter)->iov_base + (iter)->iov_offset)
-+#define iter_iov_len(iter)	(iter_iov(iter)->iov_len - (iter)->iov_offset)
- 
- static inline enum iter_type iov_iter_type(const struct iov_iter *i)
- {
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 7573a34ea42a..f33ba6f28247 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -447,26 +447,25 @@ static ssize_t loop_rw_iter(int ddir, struct io_rw *rw, struct iov_iter *iter)
- 	ppos = io_kiocb_ppos(kiocb);
- 
- 	while (iov_iter_count(iter)) {
--		struct iovec iovec;
-+		void __user *addr;
-+		size_t len;
- 		ssize_t nr;
- 
- 		if (iter_is_ubuf(iter)) {
--			iovec.iov_base = iter->ubuf + iter->iov_offset;
--			iovec.iov_len = iov_iter_count(iter);
-+			addr = iter->ubuf + iter->iov_offset;
-+			len = iov_iter_count(iter);
- 		} else if (!iov_iter_is_bvec(iter)) {
--			iovec = iov_iter_iovec(iter);
-+			addr = iter_iov_addr(iter);
-+			len = iter_iov_len(iter);
- 		} else {
--			iovec.iov_base = u64_to_user_ptr(rw->addr);
--			iovec.iov_len = rw->len;
-+			addr = u64_to_user_ptr(rw->addr);
-+			len = rw->len;
- 		}
- 
--		if (ddir == READ) {
--			nr = file->f_op->read(file, iovec.iov_base,
--					      iovec.iov_len, ppos);
--		} else {
--			nr = file->f_op->write(file, iovec.iov_base,
--					       iovec.iov_len, ppos);
--		}
-+		if (ddir == READ)
-+			nr = file->f_op->read(file, addr, len, ppos);
-+		else
-+			nr = file->f_op->write(file, addr, len, ppos);
- 
- 		if (nr < 0) {
- 			if (!ret)
-@@ -482,7 +481,7 @@ static ssize_t loop_rw_iter(int ddir, struct io_rw *rw, struct iov_iter *iter)
- 			if (!rw->len)
- 				break;
- 		}
--		if (nr != iovec.iov_len)
-+		if (nr != len)
- 			break;
- 	}
- 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 340125d08c03..9f389c5304d2 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -1456,7 +1456,7 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, const struct iovec __user *, vec,
- 		size_t, vlen, int, behavior, unsigned int, flags)
- {
- 	ssize_t ret;
--	struct iovec iovstack[UIO_FASTIOV], iovec;
-+	struct iovec iovstack[UIO_FASTIOV];
- 	struct iovec *iov = iovstack;
- 	struct iov_iter iter;
- 	struct task_struct *task;
-@@ -1503,12 +1503,11 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, const struct iovec __user *, vec,
- 	total_len = iov_iter_count(&iter);
- 
- 	while (iov_iter_count(&iter)) {
--		iovec = iov_iter_iovec(&iter);
--		ret = do_madvise(mm, (unsigned long)iovec.iov_base,
--					iovec.iov_len, behavior);
-+		ret = do_madvise(mm, (unsigned long)iter_iov_addr(&iter),
-+					iter_iov_len(&iter), behavior);
- 		if (ret < 0)
- 			break;
--		iov_iter_advance(&iter, iovec.iov_len);
-+		iov_iter_advance(&iter, iter_iov_len(&iter));
- 	}
- 
- 	ret = (total_len - iov_iter_count(&iter)) ? : ret;
+-static inline struct iovec iov_iter_iovec(const struct iov_iter *iter)
+-{
+-	return (struct iovec) {
+-		.iov_base = iter_iov(iter)->iov_base + iter->iov_offset,
+-		.iov_len = min(iter->count,
+-			       iter_iov(iter)->iov_len - iter->iov_offset),
+-	};
+-}
+-
+ size_t copy_page_from_iter_atomic(struct page *page, unsigned offset,
+ 				  size_t bytes, struct iov_iter *i);
+ void iov_iter_advance(struct iov_iter *i, size_t bytes);
 -- 
 2.39.2
 
