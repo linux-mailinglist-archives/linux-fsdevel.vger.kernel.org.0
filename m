@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0900E6CCF64
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 03:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98FC26CCF6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 03:17:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbjC2BRo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 21:17:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56378 "EHLO
+        id S229797AbjC2BRq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 21:17:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjC2BRj (ORCPT
+        with ESMTP id S229753AbjC2BRl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 21:17:39 -0400
+        Tue, 28 Mar 2023 21:17:41 -0400
 Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28546D3;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F8DF269A;
         Tue, 28 Mar 2023 18:17:38 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 8B7F55C0045;
-        Tue, 28 Mar 2023 21:17:37 -0400 (EDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 5A4385C004E;
+        Tue, 28 Mar 2023 21:17:38 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 28 Mar 2023 21:17:37 -0400
+  by compute4.internal (MEProxy); Tue, 28 Mar 2023 21:17:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
         :cc:content-transfer-encoding:content-type:date:date:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
         :reply-to:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1680052657; x=1680139057; bh=aUMOD1VSwlpi8SU9QPM0FjnDI83YsOvX8fZ
-        YLAjytoI=; b=iU4MYKvhUukywGLlEKLDX1/HMUmgD5WUDx2430lFmQsZIhey7CK
-        7JjS1kU6XkWTAoOQySY0cHobbSepGAIj7sJqRg0shuxUR+44r6AfYijMOePSVmDu
-        DQqtqV9U1nPHSYreR1ohCXfx08+8zUUk4VkO1guvg3/16I712KrD7IxqENlmJuVB
-        3Pw+iNLUhjVEidWtwAgnY+6k+6wY64IS5cwhi2KETMbEoNs+LqE/YC61mXtbosuX
-        mQbcG4K6YMloRXpM7MhLr2L6Nrnv6Zw4H9P3zuS9xfKFh4NA0gFxIozLf4/Q0LM8
-        anDlvpywXGYBrDSdsc7hdaMA9hqFSWYEG6Q==
+        1680052658; x=1680139058; bh=aksTP0wsXOFiVzEDaAS1LD1g3uMK0049FZH
+        tL5zgUuw=; b=Dcx3mJCj4o/cBPXDOYcGgRdRyQ22nxQrHFPcYotx3tHmmsZNLsv
+        pc0x43YARWo7R8Tqa3EaIKAbKNE+0dRgqNWVcRVoy+0PxoLEQQaiOB/l5qyeDT9J
+        3PLItl508JNOwnt22szn4kU16TwEaDvKiGzEZOoMmHoaRFAXcwzDPdE5PvI/I4c7
+        lFh6WtsgPKLc0qmP5EvR/8VAwNrseIoXBxH4mctVa/vYd+N8MdVV8dqdCag8THBV
+        ambmpdoNRVsvS5ewLMZefNnrjQfD4U4bA6yt7Kj8na9oZv2T+TnlIQHFp532+HK8
+        JK/6U/GLNSaKw114/Wktuy06Ml4goA2jpUw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:date:date:feedback-id:feedback-id:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
         :reply-to:reply-to:sender:subject:subject:to:to:x-me-proxy
         :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1680052657; x=1680139057; bh=aUMOD1VSwlpi8SU9QPM0FjnDI83YsOvX8fZ
-        YLAjytoI=; b=Hg04jMI5y3sqbJL6KV0puzCcXMJARxNuBYPS6DXyJRqHRSi38BA
-        RIQXYJy5djVGBfx+pbu9ZoFt0zLAoA9tr2R8JLVaa6ByVUbM/0MxNAIvTNTopG4U
-        IqpDwFiiNQ5HcqX4arm4qukeaMS0uz8t8qgz7+eoyz2hBNELSlD3LZTsLBD1/y9O
-        P/86PYDBX42C6WQrws1vMnWuHR9JLtUqpmQbLw162AINMkLSCCk2fCzAqV0L6m8u
-        5SBW+pJxXniU5RcZzhgXL0DvAv8g4gQ946LkSzyZXUx+fDXd9CwKHpFPqnw7WsM9
-        fC2COPUF0IOLnOu/YPq9aI6zMJ6JNNsuRMw==
-X-ME-Sender: <xms:sZEjZOZkWw_LJihxVyIoSX70kxEFSmnTGc9gY4LpXI-vV82CExrD_w>
-    <xme:sZEjZBa2jmYl8-FoXQtQ-j190vg9lmMmghft9uMfa0miPA4uCFCiK2nLal9vCwG2R
-    PGYQGUPAD9-1dcLNA>
-X-ME-Received: <xmr:sZEjZI-jA8rT76we75EcGsbnHOxIDE7hoyjP-KRxdIe5zc6GVB2HqxbjDcmK3zFlUxYONfXXo7qTtQX8rXcIyRka6-Ds-jYw9EqcBGaz31PJFNlt0q7dG1UVuHbNXC8>
+        1680052658; x=1680139058; bh=aksTP0wsXOFiVzEDaAS1LD1g3uMK0049FZH
+        tL5zgUuw=; b=FQWPDPtJoRCHisa6cyVyXovcOgzDabdSzVHuAQpVaoZ8GhDerNv
+        WaAwl7o6sgJXyQt4BquNq3jju6RIzlxOaS5CpNynUu53oH1/HCDhKQtsa48WmSv9
+        N1QKxGvk4JX0DQzrYbQ8+kLu/rp7kpH+JBuA9kcdZIqeD61GN5NplJbRcuRDib8R
+        Y1KpgpsJ4mRy7T8NkvgtT+pFOgnYsK6Gh6l19k5Nfx1jbVt5BVOi/IkcPMuszTeD
+        xeHGZ/TuxVdVK8thoUEV/hdIPJ/cwTnMeuILSYET0xmwXEBq31CJP23zYEZJlYN5
+        ZbG+sRbM4hJetbu2u+ebpQkqGYdib4LM8mQ==
+X-ME-Sender: <xms:spEjZJv9spavZQ8U9dTWragTyXgmF0vBHYk4i3kNyNnzTQkXOBCL5g>
+    <xme:spEjZCdZ6Xa74DZKKqO7bBkTf-fT2XYmLKS8lXmEUi81IppsocgRkeQVqUbA0TPvL
+    9HOj_fO_ZWYLgEAWA>
+X-ME-Received: <xmr:spEjZMxXyED1Dq-eX5tyV-ZCtlvenxBCN2hRNdVSl3STDfgZorBQa6YXj1eO8WagpEZ5rSnOYRdaeZmPO-DPQx2djCQinx8h-wZoMe18JSyk6sA4f7YaC-k-Z7mcgoc>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehhedggeehucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -56,13 +56,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehhedggeehucetufdoteggod
     ehudfgudduvdelheehteegledtteeiveeuhfffveekhfevueefieeijeegvdenucevlhhu
     shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpeiiihdrhigrnhessh
     gvnhhtrdgtohhm
-X-ME-Proxy: <xmx:sZEjZAqKNlfFxrtgkmTRIdQEtsN2YN1Qc_0pcRldBrlQKFxphL0KmQ>
-    <xmx:sZEjZJqGuUvbx7hGVbSfJEY1A5PDM_zOtORAl5P99fRSUK_xM3Dr9A>
-    <xmx:sZEjZORHyw-OI2PxuZ-Nc9gTREU6u_4xANwCwOAGnmH7tcrJFs1nEA>
-    <xmx:sZEjZK6ee-XhjOn6_HLs25arF2OvW_HP6kf_w_QkzqVfs-nMFFBD_A>
+X-ME-Proxy: <xmx:spEjZAMWIrH3TGKJjVnaOK9nC9mWbJxM-K6KfgS3vTDokickBSPTuQ>
+    <xmx:spEjZJ_VUSzsMRziK5tbL-HzYgNEofeNQ01eUfdM1zLSTSmOEoKRWg>
+    <xmx:spEjZAVrP7ZgTxKWFFTQLnJ_LUwMFZ_NiFgN2MId0ejBktOuutwl6g>
+    <xmx:spEjZHcFw_Ztv-qHD_S1fycRx60WfzyTLGSv1ZuQYRo8gL0HWCZzjw>
 Feedback-ID: iccd040f4:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 28 Mar 2023 21:17:36 -0400 (EDT)
+ 28 Mar 2023 21:17:37 -0400 (EDT)
 From:   Zi Yan <zi.yan@sent.com>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
@@ -76,9 +76,9 @@ Cc:     Zi Yan <ziy@nvidia.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 4/7] mm: page_owner: add support for splitting to any order in split page_owner.
-Date:   Tue, 28 Mar 2023 21:17:09 -0400
-Message-Id: <20230329011712.3242298-5-zi.yan@sent.com>
+Subject: [PATCH v2 5/7] mm: thp: split huge page to any lower order pages.
+Date:   Tue, 28 Mar 2023 21:17:10 -0400
+Message-Id: <20230329011712.3242298-6-zi.yan@sent.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230329011712.3242298-1-zi.yan@sent.com>
 References: <20230329011712.3242298-1-zi.yan@sent.com>
@@ -97,132 +97,335 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Zi Yan <ziy@nvidia.com>
 
-It adds a new_order parameter to set new page order in page owner.
-It prepares for upcoming changes to support split huge page to any
-lower order.
+To split a THP to any lower order pages, we need to reform THPs on
+subpages at given order and add page refcount based on the new page
+order. Also we need to reinitialize page_deferred_list after removing
+the page from the split_queue, otherwise a subsequent split will see
+list corruption when checking the page_deferred_list again.
+
+It has many uses, like minimizing the number of pages after
+truncating a huge pagecache page. For anonymous THPs, we can only split
+them to order-0 like before until we add support for any size anonymous
+THPs.
 
 Signed-off-by: Zi Yan <ziy@nvidia.com>
 ---
- include/linux/page_owner.h | 10 +++++-----
- mm/huge_memory.c           |  2 +-
- mm/page_alloc.c            |  4 ++--
- mm/page_owner.c            | 11 ++++++-----
- 4 files changed, 14 insertions(+), 13 deletions(-)
+ include/linux/huge_mm.h |  10 ++--
+ mm/huge_memory.c        | 102 +++++++++++++++++++++++++++++-----------
+ 2 files changed, 81 insertions(+), 31 deletions(-)
 
-diff --git a/include/linux/page_owner.h b/include/linux/page_owner.h
-index d7878523adfc..a784ba69f67f 100644
---- a/include/linux/page_owner.h
-+++ b/include/linux/page_owner.h
-@@ -11,7 +11,7 @@ extern struct page_ext_operations page_owner_ops;
- extern void __reset_page_owner(struct page *page, unsigned short order);
- extern void __set_page_owner(struct page *page,
- 			unsigned short order, gfp_t gfp_mask);
--extern void __split_page_owner(struct page *page, int order);
-+extern void __split_page_owner(struct page *page, int old_order, int new_o=
-rder);
- extern void __folio_copy_owner(struct folio *newfolio, struct folio *old);
- extern void __set_page_owner_migrate_reason(struct page *page, int reason);
- extern void __dump_page_owner(const struct page *page);
-@@ -31,10 +31,10 @@ static inline void set_page_owner(struct page *page,
- 		__set_page_owner(page, order, gfp_mask);
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 20284387b841..32c91e1b59cd 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -147,10 +147,11 @@ void prep_transhuge_page(struct page *page);
+ void free_transhuge_page(struct page *page);
+=20
+ bool can_split_folio(struct folio *folio, int *pextra_pins);
+-int split_huge_page_to_list(struct page *page, struct list_head *list);
++int split_huge_page_to_list_to_order(struct page *page, struct list_head *=
+list,
++		unsigned int new_order);
+ static inline int split_huge_page(struct page *page)
+ {
+-	return split_huge_page_to_list(page, NULL);
++	return split_huge_page_to_list_to_order(page, NULL, 0);
+ }
+ void deferred_split_folio(struct folio *folio);
+=20
+@@ -297,7 +298,8 @@ can_split_folio(struct folio *folio, int *pextra_pins)
+ 	return false;
+ }
+ static inline int
+-split_huge_page_to_list(struct page *page, struct list_head *list)
++split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
++		unsigned int new_order)
+ {
+ 	return 0;
+ }
+@@ -397,7 +399,7 @@ static inline bool thp_migration_supported(void)
+ static inline int split_folio_to_list(struct folio *folio,
+ 		struct list_head *list)
+ {
+-	return split_huge_page_to_list(&folio->page, list);
++	return split_huge_page_to_list_to_order(&folio->page, list, 0);
  }
 =20
--static inline void split_page_owner(struct page *page, int order)
-+static inline void split_page_owner(struct page *page, int old_order, int =
-new_order)
- {
- 	if (static_branch_unlikely(&page_owner_inited))
--		__split_page_owner(page, order);
-+		__split_page_owner(page, old_order, new_order);
- }
- static inline void folio_copy_owner(struct folio *newfolio, struct folio *=
-old)
- {
-@@ -56,11 +56,11 @@ static inline void reset_page_owner(struct page *page, =
-unsigned short order)
- {
- }
- static inline void set_page_owner(struct page *page,
--			unsigned int order, gfp_t gfp_mask)
-+			unsigned short order, gfp_t gfp_mask)
- {
- }
- static inline void split_page_owner(struct page *page,
--			int order)
-+			int old_order, int new_order)
- {
- }
- static inline void folio_copy_owner(struct folio *newfolio, struct folio *=
-folio)
+ static inline int split_folio(struct folio *folio)
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 106cde74d933..f8a8a72b207d 100644
+index f8a8a72b207d..619d25278340 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -2557,7 +2557,7 @@ static void __split_huge_page(struct page *page, stru=
-ct list_head *list,
+@@ -2359,11 +2359,13 @@ void vma_adjust_trans_huge(struct vm_area_struct *v=
+ma,
+=20
+ static void unmap_folio(struct folio *folio)
+ {
+-	enum ttu_flags ttu_flags =3D TTU_RMAP_LOCKED | TTU_SPLIT_HUGE_PMD |
+-		TTU_SYNC;
++	enum ttu_flags ttu_flags =3D TTU_RMAP_LOCKED | TTU_SYNC;
+=20
+ 	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+=20
++	if (folio_test_pmd_mappable(folio))
++		ttu_flags |=3D TTU_SPLIT_HUGE_PMD;
++
+ 	/*
+ 	 * Anon pages need migration entries to preserve them, but file
+ 	 * pages can simply be left unmapped, then faulted back on demand.
+@@ -2395,7 +2397,6 @@ static void lru_add_page_tail(struct page *head, stru=
+ct page *tail,
+ 		struct lruvec *lruvec, struct list_head *list)
+ {
+ 	VM_BUG_ON_PAGE(!PageHead(head), head);
+-	VM_BUG_ON_PAGE(PageCompound(tail), head);
+ 	VM_BUG_ON_PAGE(PageLRU(tail), head);
+ 	lockdep_assert_held(&lruvec->lru_lock);
+=20
+@@ -2416,7 +2417,7 @@ static void lru_add_page_tail(struct page *head, stru=
+ct page *tail,
+ }
+=20
+ static void __split_huge_page_tail(struct page *head, int tail,
+-		struct lruvec *lruvec, struct list_head *list)
++		struct lruvec *lruvec, struct list_head *list, unsigned int new_order)
+ {
+ 	struct page *page_tail =3D head + tail;
+=20
+@@ -2483,10 +2484,15 @@ static void __split_huge_page_tail(struct page *hea=
+d, int tail,
+ 	 * which needs correct compound_head().
+ 	 */
+ 	clear_compound_head(page_tail);
++	if (new_order) {
++		prep_compound_page(page_tail, new_order);
++		prep_transhuge_page(page_tail);
++	}
+=20
+ 	/* Finally unfreeze refcount. Additional reference from page cache. */
+-	page_ref_unfreeze(page_tail, 1 + (!PageAnon(head) ||
+-					  PageSwapCache(head)));
++	page_ref_unfreeze(page_tail, 1 + ((!PageAnon(head) ||
++					   PageSwapCache(head)) ?
++						thp_nr_pages(page_tail) : 0));
+=20
+ 	if (page_is_young(head))
+ 		set_page_young(page_tail);
+@@ -2504,7 +2510,7 @@ static void __split_huge_page_tail(struct page *head,=
+ int tail,
+ }
+=20
+ static void __split_huge_page(struct page *page, struct list_head *list,
+-		pgoff_t end)
++		pgoff_t end, unsigned int new_order)
+ {
+ 	struct folio *folio =3D page_folio(page);
+ 	struct page *head =3D &folio->page;
+@@ -2512,11 +2518,12 @@ static void __split_huge_page(struct page *page, st=
+ruct list_head *list,
+ 	struct address_space *swap_cache =3D NULL;
+ 	unsigned long offset =3D 0;
+ 	unsigned int nr =3D thp_nr_pages(head);
++	unsigned int new_nr =3D 1 << new_order;
+ 	int order =3D folio_order(folio);
+ 	int i;
+=20
+ 	/* complete memcg works before add pages to LRU */
+-	split_page_memcg(head, order, 0);
++	split_page_memcg(head, order, new_order);
+=20
+ 	if (PageAnon(head) && PageSwapCache(head)) {
+ 		swp_entry_t entry =3D { .val =3D page_private(head) };
+@@ -2531,14 +2538,14 @@ static void __split_huge_page(struct page *page, st=
+ruct list_head *list,
+=20
+ 	ClearPageHasHWPoisoned(head);
+=20
+-	for (i =3D nr - 1; i >=3D 1; i--) {
+-		__split_huge_page_tail(head, i, lruvec, list);
++	for (i =3D nr - new_nr; i >=3D new_nr; i -=3D new_nr) {
++		__split_huge_page_tail(head, i, lruvec, list, new_order);
+ 		/* Some pages can be beyond EOF: drop them from page cache */
+ 		if (head[i].index >=3D end) {
+ 			struct folio *tail =3D page_folio(head + i);
+=20
+ 			if (shmem_mapping(head->mapping))
+-				shmem_uncharge(head->mapping->host, 1);
++				shmem_uncharge(head->mapping->host, new_nr);
+ 			else if (folio_test_clear_dirty(tail))
+ 				folio_account_cleaned(tail,
+ 					inode_to_wb(folio->mapping->host));
+@@ -2548,29 +2555,38 @@ static void __split_huge_page(struct page *page, st=
+ruct list_head *list,
+ 			__xa_store(&head->mapping->i_pages, head[i].index,
+ 					head + i, 0);
+ 		} else if (swap_cache) {
++			/*
++			 * split anonymous THPs (including swapped out ones) to
++			 * non-zero order not supported
++			 */
++			VM_WARN_ONCE(new_order,
++				"Split swap-cached anon folio to non-0 order not supported");
+ 			__xa_store(&swap_cache->i_pages, offset + i,
+ 					head + i, 0);
+ 		}
+ 	}
+=20
+-	ClearPageCompound(head);
++	if (!new_order)
++		ClearPageCompound(head);
++	else
++		set_compound_order(head, new_order);
  	unlock_page_lruvec(lruvec);
  	/* Caller disabled irqs, so they are still disabled here */
 =20
--	split_page_owner(head, order);
-+	split_page_owner(head, order, 0);
+-	split_page_owner(head, order, 0);
++	split_page_owner(head, order, new_order);
 =20
  	/* See comment in __split_huge_page_tail() */
  	if (PageAnon(head)) {
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index ef559795525b..4845ff6c4223 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2780,7 +2780,7 @@ void split_page(struct page *page, unsigned int order)
-=20
- 	for (i =3D 1; i < (1 << order); i++)
- 		set_page_refcounted(page + i);
--	split_page_owner(page, order);
-+	split_page_owner(page, order, 0);
- 	split_page_memcg(page, order, 0);
- }
- EXPORT_SYMBOL_GPL(split_page);
-@@ -4996,7 +4996,7 @@ static void *make_alloc_exact(unsigned long addr, uns=
-igned int order,
- 		struct page *page =3D virt_to_page((void *)addr);
- 		struct page *last =3D page + nr;
-=20
--		split_page_owner(page, order);
-+		split_page_owner(page, order, 0);
- 		split_page_memcg(page, order, 0);
- 		while (page < --last)
- 			set_page_refcounted(last);
-diff --git a/mm/page_owner.c b/mm/page_owner.c
-index 64233b5b09d5..347861fe9c50 100644
---- a/mm/page_owner.c
-+++ b/mm/page_owner.c
-@@ -211,20 +211,21 @@ void __set_page_owner_migrate_reason(struct page *pag=
-e, int reason)
- 	page_ext_put(page_ext);
- }
-=20
--void __split_page_owner(struct page *page, int order)
-+void __split_page_owner(struct page *page, int old_order, int new_order)
- {
- 	int i;
- 	struct page_ext *page_ext =3D page_ext_get(page);
- 	struct page_owner *page_owner;
--	unsigned int nr =3D 1 << order;
-+	unsigned int old_nr =3D 1 << old_order;
-+	unsigned int new_nr =3D 1 << new_order;
-=20
- 	if (unlikely(!page_ext))
- 		return;
+ 		/* Additional pin to swap cache */
+ 		if (PageSwapCache(head)) {
+-			page_ref_add(head, 2);
++			page_ref_add(head, 1 + new_nr);
+ 			xa_unlock(&swap_cache->i_pages);
+ 		} else {
+ 			page_ref_inc(head);
+ 		}
+ 	} else {
+ 		/* Additional pin to page cache */
+-		page_ref_add(head, 2);
++		page_ref_add(head, 1 + new_nr);
+ 		xa_unlock(&head->mapping->i_pages);
+ 	}
+ 	local_irq_enable();
+@@ -2583,7 +2599,15 @@ static void __split_huge_page(struct page *page, str=
+uct list_head *list,
+ 		split_swap_cluster(entry);
+ 	}
 =20
 -	for (i =3D 0; i < nr; i++) {
-+	for (i =3D 0; i < old_nr; i +=3D new_nr) {
-+		page_ext =3D lookup_page_ext(page + i);
- 		page_owner =3D get_page_owner(page_ext);
--		page_owner->order =3D 0;
--		page_ext =3D page_ext_next(page_ext);
-+		page_owner->order =3D new_order;
- 	}
- 	page_ext_put(page_ext);
++	/*
++	 * set page to its compound_head when split to non order-0 pages, so
++	 * we can skip unlocking it below, since PG_locked is transferred to
++	 * the compound_head of the page and the caller will unlock it.
++	 */
++	if (new_order)
++		page =3D compound_head(page);
++
++	for (i =3D 0; i < nr; i +=3D new_nr) {
+ 		struct page *subpage =3D head + i;
+ 		if (subpage =3D=3D page)
+ 			continue;
+@@ -2617,29 +2641,31 @@ bool can_split_folio(struct folio *folio, int *pext=
+ra_pins)
  }
+=20
+ /*
+- * This function splits huge page into normal pages. @page can point to any
+- * subpage of huge page to split. Split doesn't change the position of @pa=
+ge.
++ * This function splits huge page into pages in @new_order. @page can poin=
+t to
++ * any subpage of huge page to split. Split doesn't change the position of
++ * @page.
+  *
+  * Only caller must hold pin on the @page, otherwise split fails with -EBU=
+SY.
+  * The huge page must be locked.
+  *
+  * If @list is null, tail pages will be added to LRU list, otherwise, to @=
+list.
+  *
+- * Both head page and tail pages will inherit mapping, flags, and so on fr=
+om
+- * the hugepage.
++ * Pages in new_order will inherit mapping, flags, and so on from the huge=
+page.
+  *
+- * GUP pin and PG_locked transferred to @page. Rest subpages can be freed =
+if
+- * they are not mapped.
++ * GUP pin and PG_locked transferred to @page or the compound page @page b=
+elongs
++ * to. Rest subpages can be freed if they are not mapped.
+  *
+  * Returns 0 if the hugepage is split successfully.
+  * Returns -EBUSY if the page is pinned or if anon_vma disappeared from un=
+der
+  * us.
+  */
+-int split_huge_page_to_list(struct page *page, struct list_head *list)
++int split_huge_page_to_list_to_order(struct page *page, struct list_head *=
+list,
++				     unsigned int new_order)
+ {
+ 	struct folio *folio =3D page_folio(page);
+ 	struct deferred_split *ds_queue =3D get_deferred_split_queue(folio);
+-	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
++	/* reset xarray order to new order after split */
++	XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_order);
+ 	struct anon_vma *anon_vma =3D NULL;
+ 	struct address_space *mapping =3D NULL;
+ 	int extra_pins, ret;
+@@ -2649,6 +2675,18 @@ int split_huge_page_to_list(struct page *page, struc=
+t list_head *list)
+ 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+ 	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+=20
++	/* Cannot split THP to order-1 (no order-1 THPs) */
++	if (new_order =3D=3D 1) {
++		VM_WARN_ONCE(1, "Cannot split to order-1 folio");
++		return -EINVAL;
++	}
++
++	/* Split anonymous folio to non-zero order not support */
++	if (folio_test_anon(folio) && new_order) {
++		VM_WARN_ONCE(1, "Split anon folio to non-0 order not support");
++		return -EINVAL;
++	}
++
+ 	is_hzp =3D is_huge_zero_page(&folio->page);
+ 	VM_WARN_ON_ONCE_FOLIO(is_hzp, folio);
+ 	if (is_hzp)
+@@ -2744,7 +2782,13 @@ int split_huge_page_to_list(struct page *page, struc=
+t list_head *list)
+ 	if (folio_ref_freeze(folio, 1 + extra_pins)) {
+ 		if (!list_empty(&folio->_deferred_list)) {
+ 			ds_queue->split_queue_len--;
+-			list_del(&folio->_deferred_list);
++			/*
++			 * Reinitialize page_deferred_list after removing the
++			 * page from the split_queue, otherwise a subsequent
++			 * split will see list corruption when checking the
++			 * page_deferred_list.
++			 */
++			list_del_init(&folio->_deferred_list);
+ 		}
+ 		spin_unlock(&ds_queue->split_queue_lock);
+ 		if (mapping) {
+@@ -2754,14 +2798,18 @@ int split_huge_page_to_list(struct page *page, stru=
+ct list_head *list)
+ 			if (folio_test_swapbacked(folio)) {
+ 				__lruvec_stat_mod_folio(folio, NR_SHMEM_THPS,
+ 							-nr);
+-			} else {
++			} else if (!new_order) {
++				/*
++				 * Decrease THP stats only if split to normal
++				 * pages
++				 */
+ 				__lruvec_stat_mod_folio(folio, NR_FILE_THPS,
+ 							-nr);
+ 				filemap_nr_thps_dec(mapping);
+ 			}
+ 		}
+=20
+-		__split_huge_page(page, list, end);
++		__split_huge_page(page, list, end, new_order);
+ 		ret =3D 0;
+ 	} else {
+ 		spin_unlock(&ds_queue->split_queue_lock);
 --=20
 2.39.2
 
