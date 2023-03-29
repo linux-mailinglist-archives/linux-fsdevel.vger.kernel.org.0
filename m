@@ -2,119 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB2D6CF6AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 01:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 988F26CF713
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 01:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230497AbjC2XEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 19:04:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46196 "EHLO
+        id S230410AbjC2X3Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 19:29:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230481AbjC2XEM (ORCPT
+        with ESMTP id S231156AbjC2X3X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 19:04:12 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D933B4C13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 16:03:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680130997;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=dvCH/Q/mYXYnFPxo1Zw9BF/bBxj1AhUZU0zHEiex0ss=;
-        b=KrZPL3d83M6B2DMLHBy+acqogwMi6a3juYjDzT7NJCVG1bUxct0m+jiPOtNvgCPTgSlW8l
-        Xj3JZUhTT6EeaCyUtHF1tQoe/Vq2yPSsRqZeFn+Oee+2cRDZQj4lVK9CCLy5mpLeE2irI4
-        IqulyNFalauUVhZg+I7JBE0Pe7EM32A=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-500-aH2EvEnbNympchLlqx-8Kg-1; Wed, 29 Mar 2023 19:03:15 -0400
-X-MC-Unique: aH2EvEnbNympchLlqx-8Kg-1
-Received: by mail-qv1-f72.google.com with SMTP id h7-20020a0cd807000000b005dd254e7babso7350231qvj.14
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 16:03:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680130995;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dvCH/Q/mYXYnFPxo1Zw9BF/bBxj1AhUZU0zHEiex0ss=;
-        b=b7U3G+xSv5SXgQ1BZIPBg4w5ExJCAwci7PSmBl+uV13yZSybCwNSfEe13YI1RzRgzR
-         Rt5cud7w+SE7Ct1bvC5oX/FmwWJ1LuxafzBqgEP96gnOcXmHHkG1uZRd9kznUuGARYL/
-         DT/2Jxs62F1GPSVsigFr19rKDrwVjX46aDKjGjoESoovtp7FKb4zwxf4usdgfFmoKDSd
-         yMEsU5E5dif59jwyIpIOUmdpxaHkwVtD5CfHyubkoaiDAN39CISv5dY+e8N4mSX/mxme
-         wZzlOJqseAYW27YKBu1Owscmlh3tg03JARi3sP/Zz2E1qKHIQjROhCk14XluaGYAFOhU
-         rHDg==
-X-Gm-Message-State: AO0yUKVq1GSeCEApbd1IlvOkXOaGGUugusoDEdZzoqji7TyCzKH7vWYq
-        GwweXnC7cRyEbs07WkJBR8RcijqdrMMK08bt1RSZaGp0AdqELlfA1W2G7gJrgGvtP2QpPcaRLmK
-        yqGDaftDsu5dXJw5aFTa1ad0m7XY2Zzp/9w==
-X-Received: by 2002:ac8:5ad1:0:b0:3bd:140c:91f7 with SMTP id d17-20020ac85ad1000000b003bd140c91f7mr35157017qtd.40.1680130995198;
-        Wed, 29 Mar 2023 16:03:15 -0700 (PDT)
-X-Google-Smtp-Source: AKy350Z8o7ID5Y2qg2JO2AE3/F9MkoBdJxNI1wNK4jnkhkFlSdNW84WEhZHG+3IOdDu05fJRwkkzYw==
-X-Received: by 2002:ac8:5ad1:0:b0:3bd:140c:91f7 with SMTP id d17-20020ac85ad1000000b003bd140c91f7mr35156994qtd.40.1680130994961;
-        Wed, 29 Mar 2023 16:03:14 -0700 (PDT)
-Received: from dell-per740-01.7a2m.lab.eng.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id 12-20020a370b0c000000b0074680682acdsm14392346qkl.76.2023.03.29.16.03.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 16:03:14 -0700 (PDT)
-From:   Tom Rix <trix@redhat.com>
-To:     hdegoede@redhat.com, nathan@kernel.org, ndesaulniers@google.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, Tom Rix <trix@redhat.com>
-Subject: [PATCH] fs: vboxsf: remove unused out_len variable
-Date:   Wed, 29 Mar 2023 19:03:10 -0400
-Message-Id: <20230329230310.1816101-1-trix@redhat.com>
-X-Mailer: git-send-email 2.27.0
+        Wed, 29 Mar 2023 19:29:23 -0400
+Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C174E35AD
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 16:29:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1680132562; x=1711668562;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=a+NVpLO2XQBp6iZs+ex8RERrDcsLfBZuQOxHVIXweuE=;
+  b=rfMii3AkZFug5eMwEbD9IIqjmoyt2+3MWOSja5U4iawTj499qH3unRo1
+   x80cwtQWY3AocVd2KRjNcpznqSQOo1dzMJupWFKAO447J77H3tofZtKRQ
+   l7c+OGgNiMK1vDgG1rlQmf0UlgaUhQNnwp5Mdnk5TwF9VdmkaZw5U2H8X
+   pTdvRUGfTMtONeWblRUHWA4PSpoODL6Ti57Dlv6+LBr/hESYV1IQo49bC
+   357/TGGn1SDjPh+uS5N0mq9wxswJsgY1eDKW9NguSo7aQbqnLN+JEDwav
+   juAqmcNZzdLgAh9+YOJqr+x+1wfKaU/kmOX+TwOAkbpQbGGEG0+kGSwbW
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.98,301,1673884800"; 
+   d="scan'208";a="226647948"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 30 Mar 2023 07:29:21 +0800
+IronPort-SDR: kl/VUq7q4BpMyJYKBM4/34E0nowyUuyiktlukKAJd8Ead/9+r5J0zAksZCTJ1yzF7v6ZD9Bnxh
+ C2o8m+vUXq7lJzj2VkHb3hjLr0cPuR25h6CnQkRD0XsglLF2E0lPHL1i9PMH/ZRErUMAoxKPVz
+ ZHgzgzFiBSoWV5AgMVWjilc7RV/AwXdi8C0KOsjzRVcIUkUWxgZv1XxTlIywQBhIcWOyPKHzHU
+ DiEy32wcP2KVYyqgKFAsBIzgshRxG1+vaKTeI2jkaAB3t71RlpAbGPFU7CXnBWKFLMgO0biG6I
+ wmg=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 15:39:49 -0700
+IronPort-SDR: MDNYBYB86f9om74+MyYa60BHIIOA0cNtcl98k4HW/H8EvnKY22kYjUUJjeZPVSTDpRygR+5jgv
+ a/F3nJ32+0ynfdbQjszG0GojNqziNYP6mLh/yfn2kVC39dOw2kwUoPBH9xypRRkPATbq6Q7nqI
+ NGvpgUKeDrsPm/eO8gk7Hk+WYSA3UsZIhQHCciwWbhanmZzjJyORD5Nb15JnTURl05VLvj01o9
+ WYYmU0sjTw8hshGvpP5JjUD0ysH8FJHtXq3FpdJw/qmBnYU0VXOAJxEFsOxGOuYb5stVgVD6Vv
+ Ztg=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 16:29:21 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Pn2nX2Tfxz1RtW2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 16:29:20 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1680132559; x=1682724560; bh=a+NVpLO2XQBp6iZs+ex8RERrDcsLfBZuQOx
+        HVIXweuE=; b=ey2f3kk11MiZ8fW2lBsVE6iqLCNprO9dciEEFxTXxN+atK95JFm
+        GeL4fdna7sGh5OA3GyhTl6dDgM1awPXCw/oh0ur/h+S4H1cvx8Kq82Mw1Vc30qtY
+        Nl4miDGl6PutBI7w7Ra2ULynQ0KRR2jk5wsVgu1BGOTa2pU2ZCzd8135B1HLnAHe
+        bwtsBUtPmdPVK5BZusnYQ0LO/k1J1+NHVVOZRXZOFswL4vtTAlv9VzJwO/o1EGqz
+        GHmTvBtmOh6QS/VJ7nCVRUApfB8c0Gn/ArE3TTpQ9cCBP794K0T3HJ8VeF0pNwdv
+        NXyennxT++lsXIsW0TYKGI/+C0BsoiTHPVQ==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 9nYIYOELpQ1u for <linux-fsdevel@vger.kernel.org>;
+        Wed, 29 Mar 2023 16:29:19 -0700 (PDT)
+Received: from [10.225.163.116] (unknown [10.225.163.116])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Pn2nR75BJz1RtVm;
+        Wed, 29 Mar 2023 16:29:15 -0700 (PDT)
+Message-ID: <a3e8f1cb-4d76-dcb0-41a7-43b015d25dd4@opensource.wdc.com>
+Date:   Thu, 30 Mar 2023 08:29:14 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 01/19] swap: use __bio_add_page to add page to bio
+Content-Language: en-US
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        dm-devel@redhat.com, Song Liu <song@kernel.org>,
+        linux-raid@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+References: <cover.1680108414.git.johannes.thumshirn@wdc.com>
+ <7849b142e073b20f033e5124a39080f59e5f19d2.1680108414.git.johannes.thumshirn@wdc.com>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <7849b142e073b20f033e5124a39080f59e5f19d2.1680108414.git.johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-clang with W=1 reports
-fs/vboxsf/utils.c:442:9: error: variable
-  'out_len' set but not used [-Werror,-Wunused-but-set-variable]
-        size_t out_len;
-               ^
-This variable is not used so remove it.
+On 3/30/23 02:05, Johannes Thumshirn wrote:
+> The swap code only adds a single page to a newly created bio. So use
+> __bio_add_page() to add the page which is guaranteed to succeed in this
+> case.
+> 
+> This brings us closer to marking bio_add_page() as __must_check.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Signed-off-by: Tom Rix <trix@redhat.com>
----
- fs/vboxsf/utils.c | 3 ---
- 1 file changed, 3 deletions(-)
+Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
 
-diff --git a/fs/vboxsf/utils.c b/fs/vboxsf/utils.c
-index dd0ae1188e87..ab0c9b01a0c2 100644
---- a/fs/vboxsf/utils.c
-+++ b/fs/vboxsf/utils.c
-@@ -439,7 +439,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
- {
- 	const char *in;
- 	char *out;
--	size_t out_len;
- 	size_t out_bound_len;
- 	size_t in_bound_len;
- 
-@@ -447,7 +446,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
- 	in_bound_len = utf8_len;
- 
- 	out = name;
--	out_len = 0;
- 	/* Reserve space for terminating 0 */
- 	out_bound_len = name_bound_len - 1;
- 
-@@ -468,7 +466,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
- 
- 		out += nb;
- 		out_bound_len -= nb;
--		out_len += nb;
- 	}
- 
- 	*out = 0;
 -- 
-2.27.0
+Damien Le Moal
+Western Digital Research
 
