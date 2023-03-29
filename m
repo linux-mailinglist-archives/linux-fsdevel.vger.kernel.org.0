@@ -2,116 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D7656CEBF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 16:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E866CEC19
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 16:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230329AbjC2Onp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 10:43:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41150 "EHLO
+        id S229907AbjC2OtY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 10:49:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbjC2OnS (ORCPT
+        with ESMTP id S229960AbjC2OtN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 10:43:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABC9C6EBF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 07:39:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680100783;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=eOGvCBK3xTc7UhN8iQW8f99rBt5fCj0lar0/GGKSAUo=;
-        b=H1gL32Xd8l9r+stE1zqaSSIkEvool+TK9K3ywF5RPyJqZ4sgmRtPTgRVYnmlMTGYU/8nou
-        8Olg5i+vH8R7M1uuLjxAiD5odE14uqNlBNiK7W8L7rnAQzOAyH6DFlZh0/s476DBoVL3yC
-        XRVleiX1YtKOUEaKP7JcDg7WRS3eQ6M=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-586-OX_M3mnhOyOLIjTwhOpgsw-1; Wed, 29 Mar 2023 10:39:40 -0400
-X-MC-Unique: OX_M3mnhOyOLIjTwhOpgsw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 52F783C10ED2;
-        Wed, 29 Mar 2023 14:39:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 900FA2166B33;
-        Wed, 29 Mar 2023 14:39:34 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <e128356a-f56f-4c02-7437-dfea38e4194b@suse.de>
-References: <e128356a-f56f-4c02-7437-dfea38e4194b@suse.de> <20230329141354.516864-1-dhowells@redhat.com> <20230329141354.516864-49-dhowells@redhat.com>
-To:     Hannes Reinecke <hare@suse.de>
-cc:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-doc@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-sctp@vger.kernel.org, linux-afs@lists.infradead.org,
-        rds-devel@oss.oracle.com, linux-x25@vger.kernel.org,
-        dccp@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-wpan@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-can@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-hams@vger.kernel.org,
-        mptcp@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <brauner@kernel.org>, netdev@vger.kernel.org,
-        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        tipc-discussion@lists.sourceforge.net,
-        linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        bpf@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC PATCH v2 48/48] sock: Remove ->sendpage*() in favour of sendmsg(MSG_SPLICE_PAGES)
+        Wed, 29 Mar 2023 10:49:13 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8005B55AF;
+        Wed, 29 Mar 2023 07:49:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1680101340; x=1711637340;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/JwzapEZeOEBEAVO2IFsUIdXBxnyulcntsu8vKQEY0I=;
+  b=PEpHPACXgoLWWEev4d5mOiNasffK/Sbxm0fkkYdUCIWJGsCmqSNSpLy0
+   v3T8EX+qtf1OT7SRX64ApqV1IfPXNdV2RubOpNl/+630gLg8zr4DpHawX
+   A/O2RKxPUNgv8oTLH/SAhXgPRC/DiYoOL60Lt/s2eeLB6nGIWs7/HQeu+
+   eFXXneNpDuk6tTPVb+S6jxgvVGxat73KE/QW54CoLhTAi9Jmmy9Qz5z63
+   YX3KzQk6abDVyuy7WRvti99rZ0WAAnmZFNQnz17KNeMHygcacE9cpniDt
+   JOZRi6+iPrZ43rjdtcM/pDNlEVLL1/InbCvbZNu34nMbOf3TyG6OEedC1
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10664"; a="340916867"
+X-IronPort-AV: E=Sophos;i="5.98,301,1673942400"; 
+   d="scan'208";a="340916867"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2023 07:49:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10664"; a="748798605"
+X-IronPort-AV: E=Sophos;i="5.98,301,1673942400"; 
+   d="scan'208";a="748798605"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 29 Mar 2023 07:48:56 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1phX6d-000Jdg-1Y;
+        Wed, 29 Mar 2023 14:48:55 +0000
+Date:   Wed, 29 Mar 2023 22:48:41 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Zi Yan <zi.yan@sent.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        linux-mm@kvack.org
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        Zi Yan <ziy@nvidia.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Zach O'Keefe <zokeefe@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] mm: page_owner: add support for splitting to any
+ order in split page_owner.
+Message-ID: <202303292237.pg39cTKv-lkp@intel.com>
+References: <20230329011712.3242298-5-zi.yan@sent.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <518630.1680100773.1@warthog.procyon.org.uk>
-Date:   Wed, 29 Mar 2023 15:39:33 +0100
-Message-ID: <518631.1680100773@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230329011712.3242298-5-zi.yan@sent.com>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hannes Reinecke <hare@suse.de> wrote:
+Hi Zi,
 
-> > [!] Note: This is a work in progress.  At the moment, some things won't
-> >      build if this patch is applied.  nvme, kcm, smc, tls.
+Thank you for the patch! Yet something to improve:
 
-Actually, that needs updating.  nvme and smc now build.
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.3-rc4 next-20230329]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> Weelll ... what happens to consumers of kernel_sendpage()?
-> (Let's call them nvme ...)
-> Should they be moved over, too?
+url:    https://github.com/intel-lab-lkp/linux/commits/Zi-Yan/mm-memcg-use-order-instead-of-nr-in-split_page_memcg/20230329-091809
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20230329011712.3242298-5-zi.yan%40sent.com
+patch subject: [PATCH v2 4/7] mm: page_owner: add support for splitting to any order in split page_owner.
+config: x86_64-randconfig-a016 (https://download.01.org/0day-ci/archive/20230329/202303292237.pg39cTKv-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/6d1831c0e01a1a742e026454fe6e5643e08c5985
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Zi-Yan/mm-memcg-use-order-instead-of-nr-in-split_page_memcg/20230329-091809
+        git checkout 6d1831c0e01a1a742e026454fe6e5643e08c5985
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
 
-Patch 42 should address NVMe, I think.  I can't test it, though, as I don't
-have hardware.
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303292237.pg39cTKv-lkp@intel.com/
 
-There should be no callers of kernel_sendmsg() by the end of this patchset,
-and the only remaining implementors of sendpage are Chelsio-TLS, AF_TLS and
-AF_KCM, which as stated in the cover, aren't yet converted and won't build.
+All error/warnings (new ones prefixed by >>):
 
-> Or what is the general consensus here?
-> 
-> (And what do we do with TLS? It does have a ->sendpage() version, too ...)
+>> mm/page_owner.c:226:14: error: implicit declaration of function 'lookup_page_ext' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+                   page_ext = lookup_page_ext(page + i);
+                              ^
+>> mm/page_owner.c:226:12: warning: incompatible integer to pointer conversion assigning to 'struct page_ext *' from 'int' [-Wint-conversion]
+                   page_ext = lookup_page_ext(page + i);
+                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning and 1 error generated.
 
-I know.  There are three things left that I need to tackle, but I'd like to
-get opinions on some of the other bits and I might need some help with AF_TLS
-and AF_KCM.
 
-That said, should I just remove tls_sw_do_sendpage() since presumably the data
-is going to get copied(?) and encrypted and the source pages aren't going to
-be held onto?
+vim +/lookup_page_ext +226 mm/page_owner.c
 
-David
+   213	
+   214	void __split_page_owner(struct page *page, int old_order, int new_order)
+   215	{
+   216		int i;
+   217		struct page_ext *page_ext = page_ext_get(page);
+   218		struct page_owner *page_owner;
+   219		unsigned int old_nr = 1 << old_order;
+   220		unsigned int new_nr = 1 << new_order;
+   221	
+   222		if (unlikely(!page_ext))
+   223			return;
+   224	
+   225		for (i = 0; i < old_nr; i += new_nr) {
+ > 226			page_ext = lookup_page_ext(page + i);
+   227			page_owner = get_page_owner(page_ext);
+   228			page_owner->order = new_order;
+   229		}
+   230		page_ext_put(page_ext);
+   231	}
+   232	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
