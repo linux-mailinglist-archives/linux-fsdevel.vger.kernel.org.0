@@ -2,175 +2,268 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 339646CD950
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 14:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEBC06CDA48
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 15:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230052AbjC2MY0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 08:24:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35190 "EHLO
+        id S230153AbjC2NRK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 09:17:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229736AbjC2MYV (ORCPT
+        with ESMTP id S230016AbjC2NRI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 08:24:21 -0400
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D94ED30FF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 05:24:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1680092660; x=1711628660;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2dcvqV87tiaXbc2Uo11d6o/I39/nMjI+zlAAi+6Vbgk=;
-  b=cTX0GS2IKZnCMfsKm8zQNlEEbV9p/LdDu3BpumtG/rnrgh6Ne7jUTXuE
-   VH1oNuMboBV97WVy9+qORKJw4m+KEhJUsblv035y/+VNJm7BbUHKsVEF6
-   kZ0EQMJ/ljwlnn8HzgZgNjK64saSGC4u6fPSOV79R1YkKUJehEa/61gr5
-   eQAGti/+oWsReJeUMksj7I7g22XCVKwqQ9wZDQYYlz1SjzmRKhzDX20Tr
-   JbSniU+9YwcHKLgh6GJJtKIbwuNzvUxkZl1K8rYrewY5VILxNpwr6yXvF
-   i1Tkem7eS/U9HqkxMs4SPgJ37DnvqcWFJNUYaN7FriYywDMO+c5iRa5F/
-   w==;
-X-IronPort-AV: E=Sophos;i="5.98,300,1673884800"; 
-   d="scan'208";a="231763317"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 29 Mar 2023 20:24:19 +0800
-IronPort-SDR: /yIUlHv/g1r4gRLYIpkdJzzFsNb1CyHOzg2z60+eWO6ocZ51TLdsOB8sLfclEDvCmntok7Ng+G
- uPFtHkHcvTAeX6qT+8555nBeD0p/JURBAfWtd2LGa+gNvKxjZ3FFs5LH5P2dwKCRXYrJP4B7cd
- jyqStAkNj7jlOz4ne3+l+H2NizVLyfR5qg+fO90QYTbS2cSzTJEW2rh0iXShmm2gr6xMUxnxuo
- LiozX8c7JTXo39HveIwtiLB/REUPLg6vopgEmikrusOeICuSagKhoMLXrsepgyEEGnA8te5B/x
- rBY=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 04:40:28 -0700
-IronPort-SDR: sGwqyXzsjqDBrcdRUlRnU/qPq2LlEI3w0R7mVonKiLR3hwBrQt3XkHjkfb1BCsn3Y2ndr9MIyC
- 4qRLgK0d97vPyLQCg0jxnK7ZfQfaxwR4ZuLznN9uG9Jhg3gGWEDvPHIUNi9BUlKoIBOvFl+OuV
- Cvm0Kj+2RcS/4AVR57JmxgjRndELkyjjoAX3b0Bjw2p8/KqMYiimt0RF4Qj9aX4sl9UXQ+pdyV
- WChp85tgsfhXF5YDEOn3Gze6z1jI6OcKNBd6a96tq+igLv2Mgd8Otfk9Y46nIhwvlnTV+YObUp
- Rjw=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 05:24:19 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Pmm2B5cs9z1RtW3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 05:24:18 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1680092657; x=1682684658; bh=2dcvqV87tiaXbc2Uo11d6o/I39/nMjI+zlA
-        Ai+6Vbgk=; b=aYJDL/Wv2IOTx8UdzJQy6vhK6Cwx6WbFawjWCYauh4DMUjt8PUN
-        9x0lBBLgBT/IjyJZGV1IULqpb87tc8FlfO62FSSzocE5VAR0WX6HRUoEfOG+mAEG
-        rS94t5CfBpzIdV/6jIaxzIRNmFgSzvpryU3Z3Hgv220Wql3f6LJqko6ekzg49x+7
-        qeUNMP4r4fsY+rjt2ddmQ5DpVwco7it1Uwnyd0bFSBOYjcGo49ZkFsBrbmu/9pYw
-        AfMs3umVUAn9mMkkU82WMd1B4ReuDbvk0vLFAQHC/dPMQD3ZYGm0zN4Yjco6S7g1
-        yw6PpaghAYhqlgVGMdPjU7T3BSfmuLdDP4g==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id NCqd4GuUp2yW for <linux-fsdevel@vger.kernel.org>;
-        Wed, 29 Mar 2023 05:24:17 -0700 (PDT)
-Received: from [10.225.163.116] (unknown [10.225.163.116])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Pmm253ydnz1RtVm;
-        Wed, 29 Mar 2023 05:24:13 -0700 (PDT)
-Message-ID: <03c647ff-3c4f-a810-12c4-06a9dc62c90e@opensource.wdc.com>
-Date:   Wed, 29 Mar 2023 21:24:11 +0900
+        Wed, 29 Mar 2023 09:17:08 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2048.outbound.protection.outlook.com [40.107.244.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0450D5258;
+        Wed, 29 Mar 2023 06:16:37 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k1r1z/q233HrrjpZSVvkbNwy6IkW6VFKJfOxrK3bLh/lOLB5yeRfO+6p/I72vO9jdpBWR6tgXq3pXKRM8hyfzXvitunR2RkJk4s1UA3hLfgIJC7z2OHxAJbNlTkzCPROLtfVlVZly9JwM1YYs/xxLyu7MWlc7JtGyEPvN1fDuFyRJEralbmuOLNHSvhNaUswwfQea1mX5B9fz2JFLMAfq/6v2v9TTzVDBsprF3xYJnjgmGzk+KzmGYFf6FoCFZimj2L8eJPk0BbTbpYxYtWfNhusvTuyoA23o0LQOuGppMNpOMmMjBIYSHt4vxaFK/dIp6xx265rjEDORixuXvaMCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EkkfzvzIrc/sY02IgoyBaFfrBtVtIdUj4W8RRCy6PQ0=;
+ b=ExnGe8JzQydcC0dO7PZiM7Uxg8wAYEVIwzPJ3v+CeNe23rhz6WppObR/hIUrJUqpjmdN1G/LAdWZ1tdUs79Dx3VAp78G9MEXO73fQ3GGApxMVG6X2jSHYuHjvBPwGgpRv8zKvGGo0a9KcCe9Tm1IebZT8Uvd5llMHy+jzUqDcGBg3VQRfHGFZbiIWJGvnTKz/FFKwES7pOvYnvfo804Uwh7Xhe4v/cHAKeNpxGk4LM+RSXYoXIEhCkPPwbAz7AiJ5/UUU8vIUlaI/H0X6li8WyDkVIC69IBtTTweB4x62zIgNGZsoxO6h8zmDnaP3zTlZZEgZvWl0NRwWtI+fVtNuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EkkfzvzIrc/sY02IgoyBaFfrBtVtIdUj4W8RRCy6PQ0=;
+ b=J89lKcoDAW48rBtQCezx6f8FZtHF5CqZB6eDEoSllKLeycwGUuOmSh5G2WBdAIzgSNtaTAYmYJf+IOapbai0awSimU81EPqPHVHlsQeRvgQDxK7IaYUZxyYCwxMIsaE1OOXWT9ekm/e1gnNV844d58ni7bMl2fCmcLB+UqvZ3Alk6MPI3n7Qv+Pwa/M8yfi+A2nhktnmTOMCBQZyVePIjmkVy6g+wVxGkWo1ZXWdVV2O7LXi+sIsB+bpIOSovyNrZ2//aNgF8ACSBzwzlucojYYdNlgFSKY8WOV17ZFM7oDMVgLyOnxV76Wl8eckl18TVUx4OM92gzJUmP823jApbA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
+ DS0PR12MB7970.namprd12.prod.outlook.com (2603:10b6:8:149::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6222.33; Wed, 29 Mar 2023 13:16:35 +0000
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::bb0b:f14a:c49a:9cd7]) by DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::bb0b:f14a:c49a:9cd7%6]) with mapi id 15.20.6222.028; Wed, 29 Mar 2023
+ 13:16:35 +0000
+From:   Zi Yan <ziy@nvidia.com>
+To:     kernel test robot <lkp@intel.com>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        linux-mm@kvack.org, oe-kbuild-all@lists.linux.dev,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        "Zach O'Keefe" <zokeefe@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] mm: page_owner: add support for splitting to any
+ order in split page_owner.
+Date:   Wed, 29 Mar 2023 09:16:32 -0400
+X-Mailer: MailMate (1.14r5963)
+Message-ID: <657AFA72-1604-4FFF-8F40-1B6CFB0B5061@nvidia.com>
+In-Reply-To: <202303291732.7OqWI96E-lkp@intel.com>
+References: <20230329011712.3242298-5-zi.yan@sent.com>
+ <202303291732.7OqWI96E-lkp@intel.com>
+Content-Type: multipart/signed;
+ boundary="=_MailMate_4B7CCE87-645F-4425-A0C9-5A14AB99006F_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+X-ClientProxiedBy: BL0PR02CA0045.namprd02.prod.outlook.com
+ (2603:10b6:207:3d::22) To DS7PR12MB5744.namprd12.prod.outlook.com
+ (2603:10b6:8:73::18)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v8 1/9] block: Introduce queue limits for copy-offload
- support
-Content-Language: en-US
-To:     Nitesh Shetty <nj.shetty@samsung.com>
-Cc:     Anuj Gupta <anuj20.g@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, bvanassche@acm.org,
-        hare@suse.de, ming.lei@redhat.com, joshi.k@samsung.com,
-        nitheshshetty@gmail.com, gost.dev@samsung.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-References: <20230327084103.21601-1-anuj20.g@samsung.com>
- <CGME20230327084216epcas5p3945507ecd94688c40c29195127ddc54d@epcas5p3.samsung.com>
- <20230327084103.21601-2-anuj20.g@samsung.com>
- <e725768d-19f5-a78a-2b05-c0b189624fea@opensource.wdc.com>
- <20230329104142.GA11932@green5>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20230329104142.GA11932@green5>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|DS0PR12MB7970:EE_
+X-MS-Office365-Filtering-Correlation-Id: e1480b92-7687-4100-0ae1-08db3057d25f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Z+1qp/DAuNZKY9tvAJegJB6xNj0P/0LREnMogsr6288zOMg7YZojVzMCz8g+H0LAClISX7DdnweYEJPiZVjKyhgE9JrPlqZOr0R4iZL/fYAol43uFRskZMndpPzPbOWd+gKBnwqbGX8D7LYj/VS1j4ZJEGuieITSE9jVN+PQvhaMIwTtt+/evR0hjiJgSF051H4GP9pF1jwueo3RSW5Ug36/JYkS3qgx9fJMT4grkePCniP6yHsSdIiZgDfqA9Rtpx6Ti2vPfg9CJWYIHtSKsO/J5KuH+Rpzi0yK6cAd4LKZIhFcPwoOf9uih+X3Hyi+HvITZ3Bkc+DCUZD+ZXcsVbbbbCxxqWLqIn9HMbUK4lTHX5JrN44YvesIcSkacHuqEM5OeI8huIFpbwYMIuAC/h9SLY4EmKBHBqTvdzCt6KAVdzbTCl0E1RrMjpzZY/KJh+wq96SZ1J5T9oaV2HDbpYGV2LBSXEDUEwkAMZ9hOaV8Q8hmPCL95TnVPKnz82bcObh6KZRKVX3GjsbvTE4NNzYnaF9Rad/GdWr13EqtdMLDb7eMh0r2iBqnX7HudfSHBCDA5wq3hJbytIsJigbeI9vW5e8y8Uxt8890oH+YJe8C1u+hBmV/qgx1xJV/D/ok/L63xMitTMCnhYhQ7N8lj+N+8JJbXXZarzgHxeO2iSBwtfVhgWue/QHtHU+lWLhdgE8JWweXh3vqCf2y5IMnWQdTQtcBEBMgJqbXCxuZ9FY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39860400002)(376002)(346002)(396003)(136003)(451199021)(26005)(4326008)(6916009)(41300700001)(8676002)(66476007)(66556008)(66946007)(478600001)(6666004)(966005)(6486002)(2616005)(6506007)(53546011)(316002)(186003)(54906003)(6512007)(86362001)(235185007)(36756003)(2906002)(33656002)(5660300002)(38100700002)(7416002)(8936002)(83380400001)(45980500001)(72826004);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DIKOMZrWR9ryow+iXOsSv9/DiaWXCs1N9zhYi//6Yu2SbYQtEvF7YSVsVYCs?=
+ =?us-ascii?Q?1f6meDUbP9zN7uIuhctvNoY9PHKmLc08B/18Su1naxCcWQQuYz+aMr7K6WVh?=
+ =?us-ascii?Q?yu4c6wodVo4YRQeAgEuqESmlql9UCR8J7AIdykLlWtcDPCh8w5kwTKGGJyex?=
+ =?us-ascii?Q?FJKwC+L8ZYaEwyb3SJa67T4xHfGuHD+iAd6rOfX5tNp95jA+SfcB4zfwJp+w?=
+ =?us-ascii?Q?qX2mBwiocRIcvXaSX8Tv7De1o2TVPGb6vNFl0sJ+IKWVUniRZwNFvBp1j9Ls?=
+ =?us-ascii?Q?Hs3hK7DxkAW920QlgDiyVRBW1I0JhLMf5a/183Y0FWNv2dEooUu2oasA/dhc?=
+ =?us-ascii?Q?PPjhHQn0ZF2+RDLhwV4nr1LjJFXFwmFT9U5NO91bE7w6hPXaMpLrnMYRz7DP?=
+ =?us-ascii?Q?wlAnq4dDvRE1qCqzfvq/NGrwwFNO6sNcgs/WmmM8GsVS8c1LQvtjheun0fQF?=
+ =?us-ascii?Q?G330p81PblQ8lYfs5kqR3Mc/0VvkR4NDitVkxaOeJADSncCxY4v8OKYv+kol?=
+ =?us-ascii?Q?TqJCY1BpSE8bSRQ/ljWO3cTmc8S+p23KlNCEbg7/CkBfY2FmbCyOI/wR28Bj?=
+ =?us-ascii?Q?c1dBmYcXcIcoyo3w+gS3P/UlTgu9Tifl/ygH0SneOqo0eIQVHpEWOzMVpcKM?=
+ =?us-ascii?Q?0yjkTr6w7ZiRMCHZsxNR/IhZyInJGo0UM8tsV3d0Pd4Caoq4yxyX+k6Q1OD6?=
+ =?us-ascii?Q?3u2rLSkSZwvVZy6bySAKgivDkds5J8wUl+mtCP0MYfIjqM43shqafXzpIH75?=
+ =?us-ascii?Q?5JNni+Hj9JBSUY+OsmyqfsixQBOLZ4PKjKV+SFFANVZEXa1Vs5JgfmYjvFbn?=
+ =?us-ascii?Q?aoxpQXkG2lux8ujXuJREJFZKgjQ1iS1ya5KATIGp3Khaj7NUNUU4wWX8Tdzl?=
+ =?us-ascii?Q?kESgDancewypMsk8EnZNNqj/Nbo1V2X2wbsMwdOBML7HbwACF28b3/3GJlE3?=
+ =?us-ascii?Q?2LNhYUzOsa5hr2S5VmZs+ILmmCfIf4gRXrduuEnIx3H7iG430cPe+CqG0xTQ?=
+ =?us-ascii?Q?nRPz0obEiZifdrGjqfU7OUCXPqBWMtbk0ROHyMi9+GoKiuWAGmEyK8+Izap/?=
+ =?us-ascii?Q?baT9p7PBJG2tvbctDhv7DPLjJ0x6jfN9VPYE3ebZ00tC66GVuXkOmuq3qptt?=
+ =?us-ascii?Q?mncTC5CiDgrpfa2uu7NC/AJlN6JPaFTlvhQTOmks5liQm6VXYTvH54ueL6Ca?=
+ =?us-ascii?Q?+ti5MuOLbqCe9eaM7rLusWLrbSRoXaFP3IFfE5K+2jGMoYf4T2B62qnsOL44?=
+ =?us-ascii?Q?dVBfo7g/lb2REEt7s53OxgbTzqiDvjp8NgGF2+IGTfyPdSqs6cLXKkNdR2Ez?=
+ =?us-ascii?Q?zK6V2lgRglFGAZkrabcPn2Aw+AaiEzyCekwdcLdR17ph5Ugr7hXZGPjJpA05?=
+ =?us-ascii?Q?a3ZnQ3GyO6tP+aQ3qjiBC5n9N4zIJqXnhc6QW1BfXNvlmpBmbDw5FWGSdyUg?=
+ =?us-ascii?Q?aTBQBLAKswHZg3VUlUKLVbYNveSWasl1ysq85I1lcuuLTpVqK/hKBqvHpxwu?=
+ =?us-ascii?Q?KTX5hrSWSAS/UYZRfUKBlWGNRDTebJOqneSqDQEkeM+fBtqZ/xy+LuJgGqT/?=
+ =?us-ascii?Q?OQ3VARcxjC8N9x1YY7I=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1480b92-7687-4100-0ae1-08db3057d25f
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Mar 2023 13:16:35.4366
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dL11tB5NWs9Ms0X1GRwYE5nWYCUwCBZx05CS6RkfCHEBd4WNUcarsEJLKm2RT+PX
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7970
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/29/23 19:41, Nitesh Shetty wrote:
->>> +What:		/sys/block/<disk>/queue/copy_max_bytes
->>> +Date:		November 2022
->>> +Contact:	linux-block@vger.kernel.org
->>> +Description:
->>> +		[RW] While 'copy_max_bytes_hw' is the hardware limit for the
->>> +		device, 'copy_max_bytes' setting is the software limit.
->>> +		Setting this value lower will make Linux issue smaller size
->>> +		copies from block layer.
->>
->> 		This is the maximum number of bytes that the block
->>                 layer will allow for a copy request. Must be smaller than
->>                 or equal to the maximum size allowed by the hardware indicated
-> 
-> Looks good.  Will update in next version. We took reference from discard. 
-> 
->> 		by copy_max_bytes_hw. Write 0 to use the default kernel
->> 		settings.
->>
-> 
-> Nack, writing 0 will not set it to default value. (default value is
-> copy_max_bytes = copy_max_bytes_hw)
+--=_MailMate_4B7CCE87-645F-4425-A0C9-5A14AB99006F_=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-It is trivial to make it work that way, which would match how max_sectors_kb
-works. Write 0 to return copy_max_bytes being equal to the default
-copy_max_bytes_hw.
+On 29 Mar 2023, at 5:58, kernel test robot wrote:
 
-The other possibility that is also interesting is "write 0 to disable copy
-offload and use emulation". This one may actually be more useful.
+> Hi Zi,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on akpm-mm/mm-everything]
+> [also build test ERROR on linus/master v6.3-rc4 next-20230329]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.=
 
-> 
->>> +
->>> +
->>> +What:		/sys/block/<disk>/queue/copy_max_bytes_hw
->>> +Date:		November 2022
->>> +Contact:	linux-block@vger.kernel.org
->>> +Description:
->>> +		[RO] Devices that support offloading copy functionality may have
->>> +		internal limits on the number of bytes that can be offloaded
->>> +		in a single operation. The `copy_max_bytes_hw`
->>> +		parameter is set by the device driver to the maximum number of
->>> +		bytes that can be copied in a single operation. Copy
->>> +		requests issued to the device must not exceed this limit.
->>> +		A value of 0 means that the device does not
->>> +		support copy offload.
->>
->> 		[RO] This is the maximum number of kilobytes supported in a
->>                 single data copy offload operation. A value of 0 means that the
->> 		device does not support copy offload.
->>
-> 
-> Nack, value is in bytes. Same as discard.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Zi-Yan/mm-memcg-=
+use-order-instead-of-nr-in-split_page_memcg/20230329-091809
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-=
+everything
+> patch link:    https://lore.kernel.org/r/20230329011712.3242298-5-zi.ya=
+n%40sent.com
+> patch subject: [PATCH v2 4/7] mm: page_owner: add support for splitting=
+ to any order in split page_owner.
+> config: i386-randconfig-m021 (https://download.01.org/0day-ci/archive/2=
+0230329/202303291732.7OqWI96E-lkp@intel.com/config)
+> compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
+> reproduce (this is a W=3D1 build):
+>         # https://github.com/intel-lab-lkp/linux/commit/6d1831c0e01a1a7=
+42e026454fe6e5643e08c5985
+>         git remote add linux-review https://github.com/intel-lab-lkp/li=
+nux
+>         git fetch --no-tags linux-review Zi-Yan/mm-memcg-use-order-inst=
+ead-of-nr-in-split_page_memcg/20230329-091809
+>         git checkout 6d1831c0e01a1a742e026454fe6e5643e08c5985
+>         # save the config file
+>         mkdir build_dir && cp config build_dir/.config
+>         make W=3D1 O=3Dbuild_dir ARCH=3Di386 olddefconfig
+>         make W=3D1 O=3Dbuild_dir ARCH=3Di386 SHELL=3D/bin/bash
+>
+> If you fix the issue, kindly add following tag where applicable
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Link: https://lore.kernel.org/oe-kbuild-all/202303291732.7OqWI96E-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    mm/page_owner.c: In function '__split_page_owner':
+>>> mm/page_owner.c:226:28: error: implicit declaration of function 'look=
+up_page_ext' [-Werror=3Dimplicit-function-declaration]
+>      226 |                 page_ext =3D lookup_page_ext(page + i);
+>          |                            ^~~~~~~~~~~~~~~
+>    mm/page_owner.c:226:26: warning: assignment to 'struct page_ext *' f=
+rom 'int' makes pointer from integer without a cast [-Wint-conversion]
+>      226 |                 page_ext =3D lookup_page_ext(page + i);
+>          |                          ^
+>    cc1: some warnings being treated as errors
+>
+>
+> vim +/lookup_page_ext +226 mm/page_owner.c
+>
+>    213	=
 
-Typo. I meant Bytes. Your text is too long an too convoluted, so unclear.
+>    214	void __split_page_owner(struct page *page, int old_order, int ne=
+w_order)
+>    215	{
+>    216		int i;
+>    217		struct page_ext *page_ext =3D page_ext_get(page);
+>    218		struct page_owner *page_owner;
+>    219		unsigned int old_nr =3D 1 << old_order;
+>    220		unsigned int new_nr =3D 1 << new_order;
+>    221	=
 
--- 
-Damien Le Moal
-Western Digital Research
+>    222		if (unlikely(!page_ext))
+>    223			return;
+>    224	=
 
+>    225		for (i =3D 0; i < old_nr; i +=3D new_nr) {
+>> 226			page_ext =3D lookup_page_ext(page + i);
+>    227			page_owner =3D get_page_owner(page_ext);
+>    228			page_owner->order =3D new_order;
+>    229		}
+>    230		page_ext_put(page_ext);
+>    231	}
+>    232	=
+
+>
+> -- =
+
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests
+
+It can be fixed by the patch below. I will fix it in the next version. Th=
+anks.
+
+diff --git a/mm/page_owner.c b/mm/page_owner.c
+index 347861fe9c50..72244a4f1a31 100644
+--- a/mm/page_owner.c
++++ b/mm/page_owner.c
+@@ -223,9 +223,9 @@ void __split_page_owner(struct page *page, int old_or=
+der, int new_order)
+                return;
+
+        for (i =3D 0; i < old_nr; i +=3D new_nr) {
+-               page_ext =3D lookup_page_ext(page + i);
+                page_owner =3D get_page_owner(page_ext);
+                page_owner->order =3D new_order;
++               page_ext =3D page_ext_next(page_ext);
+        }
+        page_ext_put(page_ext);
+ }
+
+
+--
+Best Regards,
+Yan, Zi
+
+--=_MailMate_4B7CCE87-645F-4425-A0C9-5A14AB99006F_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmQkOjEPHHppeUBudmlk
+aWEuY29tAAoJEOJ/noEUByhUZQYP/2fsS7bSqo6psiOKF+rRUEoXRLNZFwYTAZeX
+GQLwQyGkW5S5ZVcMX144LIRSjZcTRsMeW86XRytL6O4ZD/yOrWCYx0c9y7mj1Hzs
+JXWI5o1C50V9E6b8okKuWunOor976Ynw3qlJ0y2LOkTuE1SqO4ZnllM9TgYfcSxo
+xEyNX9LxBcjui7oG6b6cNC/zyNtEmfhdfGOfB29wLJdj8ALfZhQDfeaeJLTQ/mWW
+1Kb7h6ECknbZQSRs7yMKrlW7lgtMkxaN++MuimtJt6yLtpxLnZluRhMG02KONf4n
+1D018vdWK38KkBMj7jGkOhA+TCFYp9gyiMeBUi3G3w2S0yY7xxNHtxePQ3+jviwx
+9WbZ8HSPfabztXY0YD7sRLxO2gD/tMuclmSgY4lksloACt0bwZ3PCbZcwRtwRzhK
+rAFkWIOQSYqQSUcsKSYrhmSvT8SCOX8Eyn1cnQXDDhSQ0+8eCyVIhsCOGg9XSCps
+a3FkVlXoaJ9WF1Mdcq8YBUtmxNKL1YA3mQEIane7gN+IGCYaqXm14MbBvn2ioLgE
+xOBIaxcJAIFMOMIBRGigXyFIUD4cB8RAk5tf3lr32DEi6pBDgZn1/DwLDgVynqtC
+RsuUmg/wjYz3fm143q9gxGELQHaSU1Ri0AjGqTX4DCW0Cxo4VoL4vwTeFrn6elwH
+feV9Fe9u
+=sAUa
+-----END PGP SIGNATURE-----
+
+--=_MailMate_4B7CCE87-645F-4425-A0C9-5A14AB99006F_=--
