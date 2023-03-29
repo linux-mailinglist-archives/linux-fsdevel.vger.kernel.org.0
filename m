@@ -2,522 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D011C6CCF6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 03:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B1836CCFAB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 03:56:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbjC2BRs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Mar 2023 21:17:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56470 "EHLO
+        id S229525AbjC2B4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Mar 2023 21:56:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229762AbjC2BRm (ORCPT
+        with ESMTP id S229470AbjC2B4J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Mar 2023 21:17:42 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 901AC270B;
-        Tue, 28 Mar 2023 18:17:40 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id CB9E35C00EA;
-        Tue, 28 Mar 2023 21:17:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 28 Mar 2023 21:17:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1680052659; x=1680139059; bh=BxqGc0evZec652+iCiid1CZrCHeD4aKdhQK
-        P2Da/cdE=; b=WLPo7fI0z9NuknUbDxKzkiZcoueiJ0DMONyqrTBCIctzyn2PZE4
-        C63FkhOUBLOMKZZGlMX8U/Wcpwyn9rDM2gIrH/Zx9fZSqAY9YivFElDw0/M/OMBU
-        WkSUDvCL12p8WYbfb9oCoTxV8j5UTAd2cTGpDQOBaHTYIU7tcIkFj9Oa9S1QcFcn
-        l6yqxkTcT/brSQuaJdpdxRQ+52HanqxvlJkz8qQSK/mnJkYeizdyeYqrb2wCotOI
-        JvG0e1HjbplbsdjmVZQIRwj0O+HxPnvHtQL/+h+w3RsZYEBWhov3wXQcrFrF00Xl
-        YXF1aQEsSQoCQAn434g4CwueoSyIsAGmTzg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1680052659; x=1680139059; bh=BxqGc0evZec652+iCiid1CZrCHeD4aKdhQK
-        P2Da/cdE=; b=KjgraFA3pUHek1i5HwjjNMt0bKZi7Mlgtm1I8nt/SmiRLfwtIEH
-        o0KKM3WEc53CcB39sq7h/B4ZY447nyikhA65HgU0nmB5kMgHoiemfFb+MQ3PYppE
-        tb2IUNCVEz477UksEOHPnXBOUabJr6fLunpKycJMMk3O06l+WLBB7DJ0U2NaJWh/
-        ZlarVVl909onmO11QKfuoriFSPsmxuhGKbr7WzF31IHIJvUlgwNak2Wms3MhbKhs
-        WZj5kts2CfnRIXTiqYUNBrI2qZ+7ukRemXvCRisq+6lGDL0RNbMtCf/e6wdW2hBv
-        iuneQU4pEwOi5DyiD6TRjhHeG8v6YYzPZ5g==
-X-ME-Sender: <xms:s5EjZC5mBrSnNnoexY0cT9uShKToNOgCstwp5ndh4kVDzGFtQw71wQ>
-    <xme:s5EjZL7x5MTPlGnlgPEBCSH9xmLQfPrUaPUyfgIrxpMUGYH7TUy5NWMl3BseKkiYz
-    ou1rla6USXOj_PyAg>
-X-ME-Received: <xmr:s5EjZBf6Mx3TSwv6m3VzjEYDIZlw4vxxL0hCwvIddSl4wJOrz3XUTUddvUVCfcHm3CrLBtPcik2NPu1ljfqUi-JlfZv1XMkPttD5-MCcCC5nxjTtAvWBEVq4e4wtGAo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehhedggeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofgjfhhrggfgsedtqhertdertddtnecuhfhrohhmpegkihcu
-    jggrnhcuoeiiihdrhigrnhesshgvnhhtrdgtohhmqeenucggtffrrghtthgvrhhnpeegge
-    ehudfgudduvdelheehteegledtteeiveeuhfffveekhfevueefieeijeegvdenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpeiiihdrhigrnhessh
-    gvnhhtrdgtohhm
-X-ME-Proxy: <xmx:s5EjZPKR6eV1v1qnKMGWaIyY9P-JQa3QmddjGFTdq8MUlb0UyiZtfw>
-    <xmx:s5EjZGJU7mCbmqdvR9vDiTYaptEe5gaEssziFvF9D4ePhfWdBrumKA>
-    <xmx:s5EjZAyWiKxiuPgWNC6-wGolUCD5gTbBx5MiGR0QV9FhHjUGAWOGEQ>
-    <xmx:s5EjZBanMpwN9CGDKy0165vpTBFfn1k5NP6h9X4yuOmJYGyTfzubLw>
-Feedback-ID: iccd040f4:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 28 Mar 2023 21:17:39 -0400 (EDT)
-From:   Zi Yan <zi.yan@sent.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        linux-mm@kvack.org
-Cc:     Zi Yan <ziy@nvidia.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        "Zach O'Keefe" <zokeefe@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 7/7] mm: huge_memory: enable debugfs to split huge pages to any order.
-Date:   Tue, 28 Mar 2023 21:17:12 -0400
-Message-Id: <20230329011712.3242298-8-zi.yan@sent.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230329011712.3242298-1-zi.yan@sent.com>
-References: <20230329011712.3242298-1-zi.yan@sent.com>
-Reply-To: Zi Yan <ziy@nvidia.com>
+        Tue, 28 Mar 2023 21:56:09 -0400
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4731BE
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 18:56:06 -0700 (PDT)
+Received: by mail-il1-f208.google.com with SMTP id z8-20020a92cd08000000b00317b27a795aso9230972iln.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 18:56:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680054966; x=1682646966;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c7OaTw+zxVPVnks4Ao3yniimiWG4rRyV6sGIIqnIQ6Y=;
+        b=KznKQ4TVsimXf5CJ5TtVWG4d3ME/cnkSWwW2RrMulO2LtU8GDCKsskykjx8FYBk2ai
+         ejBRlYW1VWEUffLPsDIql4ldW0c6WRjG4uQPTbEVN2348p/z+6WfDm7UH7h8K952/Pfv
+         aa7GVYsSApXN4TfToMcvSwd4nct6UkJt9oHPMaoAj0obsG1/IoHQrO01+CwFhqcP2AQK
+         okpoFxEtHuly+UYy9Pi8yxDk1eTZzFhSq9wGxRnlzz6dRSI2PtSAfg3gf7/ZQcWYleWS
+         qs6jEjK7d5tkuHGQ+VttDE/qEzI+1A93kvyiwEhpiiFUlcJh+SaXx0xrsudGRhcaGC7/
+         8UAA==
+X-Gm-Message-State: AO0yUKXoG4OLSCG/RKZLifiPEMIO9SVb1FIyRIM690ek/3ntJLM4Ki57
+        Bm+pRd66o7C/oLHMjzQlFz2rVoITPb5Q7pkiy2vd4Ar3vS6AWaRd2g==
+X-Google-Smtp-Source: AK7set+oreVjgeOsML0wV2RDLYCUBNxUnqkhxRyFotcall1m3vxcdziests59jDEjmoC9zigti6mLiym9dcAbKazLRDmAVZaN+yi
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:cc1:b0:404:4ebe:4e5b with SMTP id
+ e1-20020a0566380cc100b004044ebe4e5bmr7008740jak.5.1680054966118; Tue, 28 Mar
+ 2023 18:56:06 -0700 (PDT)
+Date:   Tue, 28 Mar 2023 18:56:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007584ba05f80047bb@google.com>
+Subject: [syzbot] [reiserfs?] KASAN: use-after-free Read in reiserfs_get_unused_objectid
+From:   syzbot <syzbot+04e8b36eaa27ecf7f840@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Zi Yan <ziy@nvidia.com>
+Hello,
 
-It is used to test split_huge_page_to_list_to_order for pagecache THPs.
-Also add test cases for split_huge_page_to_list_to_order via both
-debugfs, truncating a file, and punching holes in a file.
+syzbot found the following issue on:
 
-Signed-off-by: Zi Yan <ziy@nvidia.com>
+HEAD commit:    1e760fa3596e Merge tag 'gfs2-v6.3-rc3-fix' of git://git.ke..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1746cb0ec80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=acdb62bf488a8fe5
+dashboard link: https://syzkaller.appspot.com/bug?extid=04e8b36eaa27ecf7f840
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d5c261c80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=155eba51c80000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/17229b6e6fe0/disk-1e760fa3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/69b5d310fba0/vmlinux-1e760fa3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0c65624aace9/bzImage-1e760fa3.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/18aebd583db0/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+04e8b36eaa27ecf7f840@syzkaller.appspotmail.com
+
+REISERFS (device loop0): journal params: device loop0, size 512, journal first block 18, max trans len 256, max batch 225, max commit age 30, max trans age 30
+REISERFS (device loop0): checking transaction log (loop0)
+REISERFS (device loop0): Using r5 hash to sort names
+==================================================================
+BUG: KASAN: use-after-free in reiserfs_get_unused_objectid+0x231/0x490 fs/reiserfs/objectid.c:87
+Read of size 250888 at addr ffff888073c6b058 by task syz-executor137/5072
+
+CPU: 1 PID: 5072 Comm: syz-executor137 Not tainted 6.3.0-rc3-syzkaller-00031-g1e760fa3596e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:319 [inline]
+ print_report+0x163/0x540 mm/kasan/report.c:430
+ kasan_report+0x176/0x1b0 mm/kasan/report.c:536
+ kasan_check_range+0x283/0x290 mm/kasan/generic.c:187
+ __asan_memmove+0x29/0x70 mm/kasan/shadow.c:94
+ reiserfs_get_unused_objectid+0x231/0x490 fs/reiserfs/objectid.c:87
+ reiserfs_new_inode+0x2bc/0x1da0 fs/reiserfs/inode.c:1944
+ reiserfs_mkdir+0x5b0/0x8f0 fs/reiserfs/namei.c:845
+ xattr_mkdir fs/reiserfs/xattr.c:76 [inline]
+ create_privroot fs/reiserfs/xattr.c:882 [inline]
+ reiserfs_xattr_init+0x34c/0x730 fs/reiserfs/xattr.c:1005
+ reiserfs_fill_super+0x2207/0x2620 fs/reiserfs/super.c:2175
+ mount_bdev+0x271/0x3a0 fs/super.c:1380
+ legacy_get_tree+0xef/0x190 fs/fs_context.c:610
+ vfs_get_tree+0x8c/0x270 fs/super.c:1510
+ do_new_mount+0x28f/0xae0 fs/namespace.c:3042
+ do_mount fs/namespace.c:3385 [inline]
+ __do_sys_mount fs/namespace.c:3594 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3571
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f650fbcb3aa
+Code: 48 c7 c2 c0 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 f8 03 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc35632868 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f650fbcb3aa
+RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007ffc35632880
+RBP: 00007ffc35632880 R08: 00007ffc356328c0 R09: 0000000000001132
+R10: 0000000000008008 R11: 0000000000000286 R12: 0000000000000004
+R13: 0000555555df42c0 R14: 0000000000008008 R15: 00007ffc356328c0
+ </TASK>
+
+The buggy address belongs to the physical page:
+page:ffffea0001cf1ac0 refcount:3 mapcount:0 mapping:ffff888144c549f8 index:0x10 pfn:0x73c6b
+memcg:ffff888140196000
+aops:def_blk_aops ino:700000
+flags: 0xfff00000002022(referenced|active|private|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000002022 0000000000000000 dead000000000122 ffff888144c549f8
+raw: 0000000000000010 ffff8880751fc910 00000003ffffffff ffff888140196000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Movable, gfp_mask 0x148c48(GFP_NOFS|__GFP_NOFAIL|__GFP_COMP|__GFP_HARDWALL|__GFP_MOVABLE), pid 5072, tgid 5072 (syz-executor137), ts 69127009678, free_ts 60810646673
+ prep_new_page mm/page_alloc.c:2552 [inline]
+ get_page_from_freelist+0x3246/0x33c0 mm/page_alloc.c:4325
+ __alloc_pages+0x255/0x670 mm/page_alloc.c:5591
+ folio_alloc+0x1e/0x60 mm/mempolicy.c:2293
+ filemap_alloc_folio+0xde/0x500 mm/filemap.c:976
+ __filemap_get_folio+0x719/0xe50 mm/filemap.c:1970
+ pagecache_get_page+0x2c/0x240 mm/folio-compat.c:99
+ find_or_create_page include/linux/pagemap.h:632 [inline]
+ grow_dev_page fs/buffer.c:989 [inline]
+ grow_buffers fs/buffer.c:1054 [inline]
+ __getblk_slow fs/buffer.c:1081 [inline]
+ __getblk_gfp+0x215/0xa40 fs/buffer.c:1376
+ __bread_gfp+0x2e/0x380 fs/buffer.c:1410
+ sb_bread include/linux/buffer_head.h:341 [inline]
+ read_super_block+0x91/0x800 fs/reiserfs/super.c:1604
+ reiserfs_fill_super+0x912/0x2620 fs/reiserfs/super.c:1966
+ mount_bdev+0x271/0x3a0 fs/super.c:1380
+ legacy_get_tree+0xef/0x190 fs/fs_context.c:610
+ vfs_get_tree+0x8c/0x270 fs/super.c:1510
+ do_new_mount+0x28f/0xae0 fs/namespace.c:3042
+ do_mount fs/namespace.c:3385 [inline]
+ __do_sys_mount fs/namespace.c:3594 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3571
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1453 [inline]
+ free_pcp_prepare mm/page_alloc.c:1503 [inline]
+ free_unref_page_prepare+0xe2f/0xe70 mm/page_alloc.c:3387
+ free_unref_page_list+0x596/0x830 mm/page_alloc.c:3528
+ release_pages+0x219e/0x2470 mm/swap.c:1042
+ tlb_batch_pages_flush mm/mmu_gather.c:97 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:292 [inline]
+ tlb_flush_mmu+0x100/0x210 mm/mmu_gather.c:299
+ tlb_finish_mmu+0xd4/0x1f0 mm/mmu_gather.c:391
+ exit_mmap+0x2c9/0x850 mm/mmap.c:3047
+ __mmput+0x115/0x3c0 kernel/fork.c:1209
+ exit_mm+0x227/0x310 kernel/exit.c:563
+ do_exit+0x612/0x2290 kernel/exit.c:856
+ do_group_exit+0x206/0x2c0 kernel/exit.c:1019
+ __do_sys_exit_group kernel/exit.c:1030 [inline]
+ __se_sys_exit_group kernel/exit.c:1028 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1028
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Memory state around the buggy address:
+ ffff888073c6bf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888073c6bf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff888073c6c000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                   ^
+ ffff888073c6c080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff888073c6c100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
 ---
- mm/huge_memory.c                              |  34 ++-
- .../selftests/mm/split_huge_page_test.c       | 225 +++++++++++++++++-
- 2 files changed, 242 insertions(+), 17 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 619d25278340..ad5b29558a51 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3023,7 +3023,7 @@ static inline bool vma_not_suitable_for_thp_split(str=
-uct vm_area_struct *vma)
- }
-=20
- static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
--				unsigned long vaddr_end)
-+				unsigned long vaddr_end, unsigned int new_order)
- {
- 	int ret =3D 0;
- 	struct task_struct *task;
-@@ -3085,13 +3085,19 @@ static int split_huge_pages_pid(int pid, unsigned l=
-ong vaddr_start,
- 			goto next;
-=20
- 		total++;
--		if (!can_split_folio(page_folio(page), NULL))
-+		/*
-+		 * For folios with private, split_huge_page_to_list_to_order()
-+		 * will try to drop it before split and then check if the folio
-+		 * can be split or not. So skip the check here.
-+		 */
-+		if (!folio_test_private(page_folio(page)) &&
-+		    !can_split_folio(page_folio(page), NULL))
- 			goto next;
-=20
- 		if (!trylock_page(page))
- 			goto next;
-=20
--		if (!split_huge_page(page))
-+		if (!split_huge_page_to_list_to_order(page, NULL, new_order))
- 			split++;
-=20
- 		unlock_page(page);
-@@ -3109,7 +3115,7 @@ static int split_huge_pages_pid(int pid, unsigned lon=
-g vaddr_start,
- }
-=20
- static int split_huge_pages_in_file(const char *file_path, pgoff_t off_sta=
-rt,
--				pgoff_t off_end)
-+				pgoff_t off_end, unsigned int new_order)
- {
- 	struct filename *file;
- 	struct file *candidate;
-@@ -3148,7 +3154,7 @@ static int split_huge_pages_in_file(const char *file_=
-path, pgoff_t off_start,
- 		if (!folio_trylock(folio))
- 			goto next;
-=20
--		if (!split_folio(folio))
-+		if (!split_huge_page_to_list_to_order(&folio->page, NULL, new_order))
- 			split++;
-=20
- 		folio_unlock(folio);
-@@ -3173,10 +3179,14 @@ static ssize_t split_huge_pages_write(struct file *=
-file, const char __user *buf,
- {
- 	static DEFINE_MUTEX(split_debug_mutex);
- 	ssize_t ret;
--	/* hold pid, start_vaddr, end_vaddr or file_path, off_start, off_end */
-+	/*
-+	 * hold pid, start_vaddr, end_vaddr, new_order or
-+	 * file_path, off_start, off_end, new_order
-+	 */
- 	char input_buf[MAX_INPUT_BUF_SZ];
- 	int pid;
- 	unsigned long vaddr_start, vaddr_end;
-+	unsigned int new_order =3D 0;
-=20
- 	ret =3D mutex_lock_interruptible(&split_debug_mutex);
- 	if (ret)
-@@ -3205,29 +3215,29 @@ static ssize_t split_huge_pages_write(struct file *=
-file, const char __user *buf,
- 			goto out;
- 		}
-=20
--		ret =3D sscanf(buf, "0x%lx,0x%lx", &off_start, &off_end);
--		if (ret !=3D 2) {
-+		ret =3D sscanf(buf, "0x%lx,0x%lx,%d", &off_start, &off_end, &new_order);
-+		if (ret !=3D 2 && ret !=3D 3) {
- 			ret =3D -EINVAL;
- 			goto out;
- 		}
--		ret =3D split_huge_pages_in_file(file_path, off_start, off_end);
-+		ret =3D split_huge_pages_in_file(file_path, off_start, off_end, new_orde=
-r);
- 		if (!ret)
- 			ret =3D input_len;
-=20
- 		goto out;
- 	}
-=20
--	ret =3D sscanf(input_buf, "%d,0x%lx,0x%lx", &pid, &vaddr_start, &vaddr_en=
-d);
-+	ret =3D sscanf(input_buf, "%d,0x%lx,0x%lx,%d", &pid, &vaddr_start, &vaddr=
-_end, &new_order);
- 	if (ret =3D=3D 1 && pid =3D=3D 1) {
- 		split_huge_pages_all();
- 		ret =3D strlen(input_buf);
- 		goto out;
--	} else if (ret !=3D 3) {
-+	} else if (ret !=3D 3 && ret !=3D 4) {
- 		ret =3D -EINVAL;
- 		goto out;
- 	}
-=20
--	ret =3D split_huge_pages_pid(pid, vaddr_start, vaddr_end);
-+	ret =3D split_huge_pages_pid(pid, vaddr_start, vaddr_end, new_order);
- 	if (!ret)
- 		ret =3D strlen(input_buf);
- out:
-diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/test=
-ing/selftests/mm/split_huge_page_test.c
-index b8558c7f1a39..cbb5e6893cbf 100644
---- a/tools/testing/selftests/mm/split_huge_page_test.c
-+++ b/tools/testing/selftests/mm/split_huge_page_test.c
-@@ -16,6 +16,7 @@
- #include <sys/mount.h>
- #include <malloc.h>
- #include <stdbool.h>
-+#include <time.h>
- #include "vm_util.h"
-=20
- uint64_t pagesize;
-@@ -23,10 +24,12 @@ unsigned int pageshift;
- uint64_t pmd_pagesize;
-=20
- #define SPLIT_DEBUGFS "/sys/kernel/debug/split_huge_pages"
-+#define SMAP_PATH "/proc/self/smaps"
-+#define THP_FS_PATH "/mnt/thp_fs"
- #define INPUT_MAX 80
-=20
--#define PID_FMT "%d,0x%lx,0x%lx"
--#define PATH_FMT "%s,0x%lx,0x%lx"
-+#define PID_FMT "%d,0x%lx,0x%lx,%d"
-+#define PATH_FMT "%s,0x%lx,0x%lx,%d"
-=20
- #define PFN_MASK     ((1UL<<55)-1)
- #define KPF_THP      (1UL<<22)
-@@ -113,7 +116,7 @@ void split_pmd_thp(void)
-=20
- 	/* split all THPs */
- 	write_debugfs(PID_FMT, getpid(), (uint64_t)one_page,
--		(uint64_t)one_page + len);
-+		(uint64_t)one_page + len, 0);
-=20
- 	for (i =3D 0; i < len; i++)
- 		if (one_page[i] !=3D (char)i) {
-@@ -203,7 +206,7 @@ void split_pte_mapped_thp(void)
-=20
- 	/* split all remapped THPs */
- 	write_debugfs(PID_FMT, getpid(), (uint64_t)pte_mapped,
--		      (uint64_t)pte_mapped + pagesize * 4);
-+		      (uint64_t)pte_mapped + pagesize * 4, 0);
-=20
- 	/* smap does not show THPs after mremap, use kpageflags instead */
- 	thp_size =3D 0;
-@@ -269,7 +272,7 @@ void split_file_backed_thp(void)
- 	}
-=20
- 	/* split the file-backed THP */
--	write_debugfs(PATH_FMT, testfile, pgoff_start, pgoff_end);
-+	write_debugfs(PATH_FMT, testfile, pgoff_start, pgoff_end, 0);
-=20
- 	status =3D unlink(testfile);
- 	if (status)
-@@ -290,20 +293,232 @@ void split_file_backed_thp(void)
- 	printf("file-backed THP split test done, please check dmesg for more info=
-rmation\n");
- }
-=20
-+void create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int=
- *fd, char **addr)
-+{
-+	size_t i;
-+	int dummy;
-+
-+	srand(time(NULL));
-+
-+	*fd =3D open(testfile, O_CREAT | O_RDWR, 0664);
-+	if (*fd =3D=3D -1) {
-+		perror("Failed to create a file at "THP_FS_PATH);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	for (i =3D 0; i < fd_size; i++) {
-+		unsigned char byte =3D (unsigned char)i;
-+
-+		write(*fd, &byte, sizeof(byte));
-+	}
-+	close(*fd);
-+	sync();
-+	*fd =3D open("/proc/sys/vm/drop_caches", O_WRONLY);
-+	if (*fd =3D=3D -1) {
-+		perror("open drop_caches");
-+		goto err_out_unlink;
-+	}
-+	if (write(*fd, "3", 1) !=3D 1) {
-+		perror("write to drop_caches");
-+		goto err_out_unlink;
-+	}
-+	close(*fd);
-+
-+	*fd =3D open(testfile, O_RDWR);
-+	if (*fd =3D=3D -1) {
-+		perror("Failed to open a file at "THP_FS_PATH);
-+		goto err_out_unlink;
-+	}
-+
-+	*addr =3D mmap(NULL, fd_size, PROT_READ|PROT_WRITE, MAP_SHARED, *fd, 0);
-+	if (*addr =3D=3D (char *)-1) {
-+		perror("cannot mmap");
-+		goto err_out_close;
-+	}
-+	madvise(*addr, fd_size, MADV_HUGEPAGE);
-+
-+	for (size_t i =3D 0; i < fd_size; i++)
-+		dummy +=3D *(*addr + i);
-+
-+	if (!check_huge_file(*addr, fd_size / pmd_pagesize, pmd_pagesize)) {
-+		printf("No pagecache THP generated, please mount a filesystem supporting=
- pagecache THP at "THP_FS_PATH"\n");
-+		goto err_out_close;
-+	}
-+	return;
-+err_out_close:
-+	close(*fd);
-+err_out_unlink:
-+	unlink(testfile);
-+	exit(EXIT_FAILURE);
-+}
-+
-+void split_thp_in_pagecache_to_order(size_t fd_size, int order)
-+{
-+	int fd;
-+	char *addr;
-+	size_t i;
-+	const char testfile[] =3D THP_FS_PATH "/test";
-+	int err =3D 0;
-+
-+	create_pagecache_thp_and_fd(testfile, fd_size, &fd, &addr);
-+
-+	printf("split %ld kB PMD-mapped pagecache page to order %d ... ", fd_size=
- >> 10, order);
-+	write_debugfs(PID_FMT, getpid(), (uint64_t)addr, (uint64_t)addr + fd_size=
-, order);
-+
-+	for (i =3D 0; i < fd_size; i++)
-+		if (*(addr + i) !=3D (char)i) {
-+			printf("%lu byte corrupted in the file\n", i);
-+			err =3D EXIT_FAILURE;
-+			goto out;
-+		}
-+
-+	if (!check_huge_file(addr, 0, pmd_pagesize)) {
-+		printf("Still FilePmdMapped not split\n");
-+		err =3D EXIT_FAILURE;
-+		goto out;
-+	}
-+
-+	printf("done\n");
-+out:
-+	close(fd);
-+	unlink(testfile);
-+	if (err)
-+		exit(err);
-+}
-+
-+void truncate_thp_in_pagecache_to_order(size_t fd_size, int order)
-+{
-+	int fd;
-+	char *addr;
-+	size_t i;
-+	const char testfile[] =3D THP_FS_PATH "/test";
-+	int err =3D 0;
-+
-+	create_pagecache_thp_and_fd(testfile, fd_size, &fd, &addr);
-+
-+	printf("truncate %ld kB PMD-mapped pagecache page to size %lu kB ... ",
-+		fd_size >> 10, 4UL << order);
-+	ftruncate(fd, pagesize << order);
-+
-+	for (i =3D 0; i < (pagesize << order); i++)
-+		if (*(addr + i) !=3D (char)i) {
-+			printf("%lu byte corrupted in the file\n", i);
-+			err =3D EXIT_FAILURE;
-+			goto out;
-+		}
-+
-+	if (!check_huge_file(addr, 0, pmd_pagesize)) {
-+		printf("Still FilePmdMapped not split after truncate\n");
-+		err =3D EXIT_FAILURE;
-+		goto out;
-+	}
-+
-+	printf("done\n");
-+out:
-+	close(fd);
-+	unlink(testfile);
-+	if (err)
-+		exit(err);
-+}
-+
-+void punch_hole_in_pagecache_thp(size_t fd_size, off_t offset[], off_t len=
-[],
-+			int n, int num_left_thps)
-+{
-+	int fd, j;
-+	char *addr;
-+	size_t i;
-+	const char testfile[] =3D THP_FS_PATH "/test";
-+	int err =3D 0;
-+
-+	create_pagecache_thp_and_fd(testfile, fd_size, &fd, &addr);
-+
-+	for (j =3D 0; j < n; j++) {
-+		printf("punch a hole to %ld kB PMD-mapped pagecache page at addr: %lx, o=
-ffset %ld, and len %ld ...\n",
-+			fd_size >> 10, (unsigned long)addr, offset[j], len[j]);
-+		fallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE, offset[j], len[j=
-]);
-+	}
-+
-+	for (i =3D 0; i < fd_size; i++) {
-+		int in_hole =3D 0;
-+
-+		for (j =3D 0; j < n; j++)
-+			if (i >=3D offset[j] && i < (offset[j] + len[j])) {
-+				in_hole =3D 1;
-+				break;
-+			}
-+
-+		if (in_hole) {
-+			if (*(addr + i)) {
-+				printf("%lu byte non-zero after punch\n", i);
-+				err =3D EXIT_FAILURE;
-+				goto out;
-+			}
-+			continue;
-+		}
-+		if (*(addr + i) !=3D (char)i) {
-+			printf("%lu byte corrupted in the file\n", i);
-+			err =3D EXIT_FAILURE;
-+			goto out;
-+		}
-+	}
-+
-+	if (!check_huge_file(addr, num_left_thps, pmd_pagesize)) {
-+		printf("Still FilePmdMapped not split after punch\n");
-+		goto out;
-+	}
-+	printf("done\n");
-+out:
-+	close(fd);
-+	unlink(testfile);
-+	if (err)
-+		exit(err);
-+}
-+
- int main(int argc, char **argv)
- {
-+	int i;
-+	size_t fd_size;
-+	off_t offset[2], len[2];
-+
- 	if (geteuid() !=3D 0) {
- 		printf("Please run the benchmark as root\n");
- 		exit(EXIT_FAILURE);
- 	}
-=20
-+	setbuf(stdout, NULL);
-+
- 	pagesize =3D getpagesize();
- 	pageshift =3D ffs(pagesize) - 1;
- 	pmd_pagesize =3D read_pmd_pagesize();
-+	fd_size =3D 2 * pmd_pagesize;
-=20
- 	split_pmd_thp();
- 	split_pte_mapped_thp();
- 	split_file_backed_thp();
-=20
-+	for (i =3D 8; i >=3D 0; i--)
-+		if (i !=3D 1)
-+			split_thp_in_pagecache_to_order(fd_size, i);
-+
-+	/*
-+	 * for i is 1, truncate code in the kernel should create order-0 pages
-+	 * instead of order-1 THPs, since order-1 THP is not supported. No error
-+	 * is expected.
-+	 */
-+	for (i =3D 8; i >=3D 0; i--)
-+		truncate_thp_in_pagecache_to_order(fd_size, i);
-+
-+	offset[0] =3D 123;
-+	offset[1] =3D 4 * pagesize;
-+	len[0] =3D 200 * pagesize;
-+	len[1] =3D 16 * pagesize;
-+	punch_hole_in_pagecache_thp(fd_size, offset, len, 2, 1);
-+
-+	offset[0] =3D 259 * pagesize + pagesize / 2;
-+	offset[1] =3D 33 * pagesize;
-+	len[0] =3D 129 * pagesize;
-+	len[1] =3D 16 * pagesize;
-+	punch_hole_in_pagecache_thp(fd_size, offset, len, 2, 1);
-+
- 	return 0;
- }
---=20
-2.39.2
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
