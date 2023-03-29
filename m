@@ -2,90 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EFF66CD149
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 06:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8B626CD169
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 07:06:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229840AbjC2Eyf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 00:54:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37886 "EHLO
+        id S229755AbjC2FGl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 01:06:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229675AbjC2Eye (ORCPT
+        with ESMTP id S229566AbjC2FGk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 00:54:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A0D2D46
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 21:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680065633;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=S01Y/zhEA4qaJvTIo0c2m8xjYqU32cqDPsOeaeS0mgQ=;
-        b=VN8RSeU1m2u2IXd36Idhjio0ZJmk5FM0ysvBTKtA6T9ri03CeopGAe1fCWEOTvKGp1OqVI
-        8hWe1+7XZpOwmBFiK0XbHbw1cYP2r7WlPREYYstPp/QG7XQTQc5xBTZjSajYjAFH5iKD01
-        W0H3NmOOL4Z2bqhdsrO5IE8INF/c/1Y=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-271-Ii-LZ0zMOzmqRxZZOA6_Ig-1; Wed, 29 Mar 2023 00:53:50 -0400
-X-MC-Unique: Ii-LZ0zMOzmqRxZZOA6_Ig-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 418F6101A531;
-        Wed, 29 Mar 2023 04:53:49 +0000 (UTC)
-Received: from localhost (ovpn-12-137.pek2.redhat.com [10.72.12.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D181B1121331;
-        Wed, 29 Mar 2023 04:53:36 +0000 (UTC)
-Date:   Wed, 29 Mar 2023 12:53:33 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Jiri Olsa <jolsa@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v8 0/4] convert read_kcore(), vread() to use iterators
-Message-ID: <ZCPETTt8g6+kL5GX@MiWiFi-R3L-srv>
-References: <cover.1679566220.git.lstoakes@gmail.com>
+        Wed, 29 Mar 2023 01:06:40 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 470FB2723
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 22:06:15 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id l9-20020a17090a3f0900b0023d32684e7fso2967705pjc.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Mar 2023 22:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1680066375;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GjcLq9TYMSCEM1QxXkGT3Sk7emAp6wIFay5f/IdlFCI=;
+        b=K0sDjl31CF3wQLECFV0Z+qXmmfbY6/nvHtwhUV+gdNIgedwU6XnM9SL+lkP0AsQS72
+         h6FxRX1Eba/67jysjsw+a3Yg3lcjnZNMuWL/RMxYWI13y5cB+OWEQQ5vydbpAzqNjOfr
+         b7BgjW9UGv41y2niEKTHlC7uvanY/p4+VdnazRZTgxEnDnuI2QnVTCawr5ErsQq7ZI8k
+         lIYedhZETnOaE3WYyVtJvhXlboS0gTCezU1Pd9aJj7DQehQBnzls4sKZdMakWjKkTLth
+         +8aoJlNSoZ+4tCtPM3zmqdzgfHonxHFdWY5hrfTP0NiwZkAODT53YYfRkVzOwV90Jka/
+         Hw2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680066375;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GjcLq9TYMSCEM1QxXkGT3Sk7emAp6wIFay5f/IdlFCI=;
+        b=DZhBtGC0xmmcTZhPnUC4lx9SjUauRPYsAqowmjnW7Qon0Mk1DERvBekFxiyhMj0ybn
+         gy/NvCSwimMlvL0DrBVnNo8V7zqxo80B5/ZqOEPbLVKCMySf4lpIEAeNNWNsrEyFZJK6
+         vApTlUwMvFBZFBMW0ORS4vXt86d0RGwENmqaC3/Tg9fIGSxZwSfvPW53DcUddfG1Uqqo
+         phpHkJIVnN8YXh+c1uPDoUyEJW2ZlPFslEX8hvLJPT0+Rzt1bdA73toreJ5BxGvBQNnt
+         CkyL64KS8e4/XGFBfQOMC6LouOgUlXiqNK7wkQSglJO96dgJ95GbIXAegmDKyeioGSOo
+         F4Ig==
+X-Gm-Message-State: AAQBX9e7xB5YR6Ug8ynn5EoxcEMrHyt3K6Ay/v5+FeJxNjCedl1qilBa
+        xfr78GVSyj4OGq2bpc8q+mLUgQ==
+X-Google-Smtp-Source: AKy350ZTGNkadk5EkErfDhJ6zlZsX/8WZzxktyRHEWZEs7dxg+S3jbdRlD777MfiA6AK1tAh84FLZg==
+X-Received: by 2002:a17:90b:1a88:b0:23e:aba9:d51d with SMTP id ng8-20020a17090b1a8800b0023eaba9d51dmr19242110pjb.7.1680066374750;
+        Tue, 28 Mar 2023 22:06:14 -0700 (PDT)
+Received: from [10.3.144.50] ([61.213.176.7])
+        by smtp.gmail.com with ESMTPSA id dw24-20020a17090b095800b0023cff7e39a6sm463394pjb.22.2023.03.28.22.06.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Mar 2023 22:06:14 -0700 (PDT)
+Message-ID: <1b99542d-f21b-a27b-fc59-d4fe38e893de@bytedance.com>
+Date:   Wed, 29 Mar 2023 13:06:09 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1679566220.git.lstoakes@gmail.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.9.0
+Subject: Re: Re: [PATCH V4 2/5] cachefiles: extract ondemand info field from
+ cachefiles_object
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jingbo Xu <jefflexu@linux.alibaba.com>, zhujia.zj@bytedance.com
+References: <20230111052515.53941-3-zhujia.zj@bytedance.com>
+ <20230111052515.53941-1-zhujia.zj@bytedance.com>
+ <132137.1680011908@warthog.procyon.org.uk>
+From:   Jia Zhu <zhujia.zj@bytedance.com>
+In-Reply-To: <132137.1680011908@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 03/23/23 at 10:15am, Lorenzo Stoakes wrote:
-> While reviewing Baoquan's recent changes to permit vread() access to
-> vm_map_ram regions of vmalloc allocations, Willy pointed out [1] that it
-> would be nice to refactor vread() as a whole, since its only user is
-> read_kcore() and the existing form of vread() necessitates the use of a
-> bounce buffer.
-> 
-> This patch series does exactly that, as well as adjusting how we read the
-> kernel text section to avoid the use of a bounce buffer in this case as
-> well.
-> 
-> This has been tested against the test case which motivated Baoquan's
-> changes in the first place [2] which continues to function correctly, as do
-> the vmalloc self tests.
-> 
-> [1] https://lore.kernel.org/all/Y8WfDSRkc%2FOHP3oD@casper.infradead.org/
-> [2] https://lore.kernel.org/all/87ilk6gos2.fsf@oracle.com/T/#u
 
-The whole series looks good to me.
 
-Reviewed-by: Baoquan He <bhe@redhat.com>
+在 2023/3/28 21:58, David Howells 写道:
+> Jia Zhu <zhujia.zj@bytedance.com> wrote:
+> 
+>> @@ -65,10 +71,7 @@ struct cachefiles_object {
+>>   	enum cachefiles_content		content_info:8;	/* Info about content presence */
+>>   	unsigned long			flags;
+>>   #define CACHEFILES_OBJECT_USING_TMPFILE	0		/* Have an unlinked tmpfile */
+>> -#ifdef CONFIG_CACHEFILES_ONDEMAND
+>> -	int				ondemand_id;
+>> -	enum cachefiles_object_state	state;
+>> -#endif
+>> +	struct cachefiles_ondemand_info	*private;
+> 
+> Why is this no longer inside "#ifdef CONFIG_CACHEFILES_ONDEMAND"?
+> 
 
+I'll revise it in next version.
+
+> Also, please don't call it "private", but rather something like "ondemand" or
+> "ondemand_info".
+
+I'll use @ondemand to replace it.
+Thanks.
+> 
+> David
+> 
