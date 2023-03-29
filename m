@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 649416CF064
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 19:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC216CF066
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 19:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231460AbjC2RHp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 13:07:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54310 "EHLO
+        id S231397AbjC2RHs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 13:07:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231311AbjC2RHO (ORCPT
+        with ESMTP id S231392AbjC2RHP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 13:07:14 -0400
+        Wed, 29 Mar 2023 13:07:15 -0400
 Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D28A6A77;
-        Wed, 29 Mar 2023 10:06:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD1E7289;
+        Wed, 29 Mar 2023 10:06:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1680109615; x=1711645615;
+  t=1680109617; x=1711645617;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=i7JyUij1Ub1O7HqbOeYPQInyJM26bTtTnu0sfac9RNQ=;
-  b=MBZ941axfw85eQJDG5jKlsJCB+VJWs/z2sA6T7eFhYyRLxgHhQk5MCZ1
-   4HRWuhBCipbuTJc9kjG+bqRzbrgSThu164Js3tpGkVC1X3OeG/NGFHvgo
-   13qsE+KjvBRl6eg0kYLFsuiqqKanUprGECF5neuOE4EZlwqfDj2GxeWkY
-   8kwmYcmNr3STjK2hkNWmjaPmYKPPQ+hBoouh9VE4QeRUr+GywxoBW2jo1
-   SClrfs3I/pTV4AA1HxI/jZc/X6geaGUSu3tXPAiDKwU/x0N/a59QR9zyP
-   JKCd1JR0RBl30pza33+IAbwYKzb07qiIED9YIbMln54yhMLga+IySL9Q1
+  bh=HVSOyDSmhD70Nv/fkBkDeTGlq4JItHI/qNc4UYNza9Y=;
+  b=biPMa8xS3Rnj83hzBKqEyQsITW3qoUKVYwMKa93XFEIVWmCVDKEVeWoJ
+   xY5qUk0DmcyqM/HPvJOE7mRniXJT4ZceGh6QrX1ppGquCJMdaD2VMqm3j
+   vizSAByGuGK8A2cAox8Mke2ybuHk6TUSCdQQpsnzm34mWy/33oNOzyCvV
+   VSGpW1/lUZKnggtrq6H8+Nv4uIB9qK6MKO1TXU6+oMQ8wQPekR0OPNbX7
+   YK6LH0LXk9MNC+Yg7oO0bgHZzhpzn7bmNkGDQGgW+AVBNvm4x5CvzT+Qx
+   8LcPH/1Ql6C09aXRU40wojzvUcKq6+Kr9B9aCMc+DJfEohSoSInFXsTkp
    w==;
 X-IronPort-AV: E=Sophos;i="5.98,301,1673884800"; 
-   d="scan'208";a="225092872"
+   d="scan'208";a="225092876"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Mar 2023 01:06:49 +0800
-IronPort-SDR: Ca3xb+X5kMhnI9t31wKcbKKBTNem+M7h5BTp+CW5effDJU4N/XNiML4fI0+Mfx1vxMHFQDLI/5
- z833ie5Fp5DptOY43hPWrf9qcCdHf9Up92omfNpwW308gcoaXXm6VEtHdlvs6txhmujy9nDhjl
- kCZh+p+dmNV0ZLiyVD0KHeCAJpXZdTWJd40z84bZg/2bDifE1qp3wqqViEy0UrenN+zNREc61T
- dW7hfuiZreNrgp9RjW3pI87R90rcXR84IclKUAZpI5oKiDKDtoMkC18nj9bA1UiKgXdr70CxbD
- /5g=
+  by ob1.hgst.iphmx.com with ESMTP; 30 Mar 2023 01:06:52 +0800
+IronPort-SDR: f2hPzcXXYqz6+fXzp5wbFvq+dM06E2iTM05Bw6GPMXdFDI8eUKjQhLxDLNDP7bSpAR23TV1Mze
+ Ahh6yY09/T5NQ4+9PaT7RC78D+apJoKcBQB8yN5lNrf2XjYj5lOyy0KTXNM8sv2iplj45wCd5Y
+ b0DJ7F7GSYlxg/Uloem3wy0CSjKGsy/l1thrKjwx2bEItvM05xxtqUTgO9KlrcCgrwiMkkIVIL
+ NBjIYxFMZGdyp6+E3S0rbzLhp19A3nVzFdZ4QE46HKt8CQ2vjVcBLh2DdgzCs6YtCePvPuMZKF
+ 5VE=
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 09:22:58 -0700
-IronPort-SDR: qYm/yHxdWsn4PdNU7In0p9zW29uqLpM/KDDhaShYGqmgAouVltU23pwtiDrLcUkxqLoKGpWanX
- KdIaI00A9Tcxh5akMv0Mg9mzy1VnQEctwuee7xO/j/DPrFAHW8t1jmq6JmwNycdN5GKOwv9LqD
- EwWq9gZmEVjS+Nt+UWUBK3vepfteneMD0hPTTSlwc9wqo7tnmscJXQAHH1TYXa775C3cNxwC/g
- gWNbfWYibYW6ZAMQvInFb5YgbQ/DLueK88vnvV9kIxEJhKmn5O2bRK+Mb1jpC7O7+PM6IArPK7
- iYU=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 09:23:01 -0700
+IronPort-SDR: BQgCe592q5M7/+hA4h11/kqfHityq5CvcyPS2rBc00hC4byMFoMSONh7xRqYNa59BKcDsROUUt
+ MTkgPvmq53Jx71bmK390FtI6XSqL4/k6hBD0d81URBbk3Tt/Bm6YA0CRTta2rw15YqZZnZQclD
+ 83BsLqej3Hs6EnxH5F5Dgte4ie6E3NSwc71KxqXcfciRA6bA8kvbBkRQZrz0pjrsGYBhyfiXmH
+ Sm7ISx3Sy7yOK8htnsoXxQlu9j3TpCWlBVFzghrqQFDWQ1hiGWMf+dYL6Bi+aoFos5RsnY2nEB
+ 30k=
 WDCIronportException: Internal
 Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.72])
-  by uls-op-cesaip01.wdc.com with ESMTP; 29 Mar 2023 10:06:48 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 29 Mar 2023 10:06:51 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
@@ -63,9 +63,9 @@ Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 10/19] jfs: logmgr: use __bio_add_page to add single page to bio
-Date:   Wed, 29 Mar 2023 10:05:56 -0700
-Message-Id: <902f83de56c67b333959d8b8b4cf37a25414e927.1680108414.git.johannes.thumshirn@wdc.com>
+Subject: [PATCH 11/19] gfs: use __bio_add_page for adding single page to bio
+Date:   Wed, 29 Mar 2023 10:05:57 -0700
+Message-Id: <51e47d746d16221473851e06f86b5d90a904f41d.1680108414.git.johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <cover.1680108414.git.johannes.thumshirn@wdc.com>
 References: <cover.1680108414.git.johannes.thumshirn@wdc.com>
@@ -80,8 +80,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The JFS IO code uses bio_add_page() to add a page to a newly created bio.
-bio_add_page() can fail, but the return value is never checked.
+The GFS superblock reading code uses bio_add_page() to add a page to a
+newly created bio. bio_add_page() can fail, but the return value is never
+checked.
 
 Use __bio_add_page() as adding a single page to a newly created bio is
 guaranteed to succeed.
@@ -90,31 +91,22 @@ This brings us a step closer to marking bio_add_page() as __must_check.
 
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- fs/jfs/jfs_logmgr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/gfs2/ops_fstype.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index 695415cbfe98..15c645827dec 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -1974,7 +1974,7 @@ static int lbmRead(struct jfs_log * log, int pn, struct lbuf ** bpp)
+diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+index 6de901c3b89b..e0cd0d43b12f 100644
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -254,7 +254,7 @@ static int gfs2_read_super(struct gfs2_sbd *sdp, sector_t sector, int silent)
  
- 	bio = bio_alloc(log->bdev, 1, REQ_OP_READ, GFP_NOFS);
- 	bio->bi_iter.bi_sector = bp->l_blkno << (log->l2bsize - 9);
--	bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
-+	__bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
- 	BUG_ON(bio->bi_iter.bi_size != LOGPSIZE);
+ 	bio = bio_alloc(sb->s_bdev, 1, REQ_OP_READ | REQ_META, GFP_NOFS);
+ 	bio->bi_iter.bi_sector = sector * (sb->s_blocksize >> 9);
+-	bio_add_page(bio, page, PAGE_SIZE, 0);
++	__bio_add_page(bio, page, PAGE_SIZE, 0);
  
- 	bio->bi_end_io = lbmIODone;
-@@ -2115,7 +2115,7 @@ static void lbmStartIO(struct lbuf * bp)
- 
- 	bio = bio_alloc(log->bdev, 1, REQ_OP_WRITE | REQ_SYNC, GFP_NOFS);
- 	bio->bi_iter.bi_sector = bp->l_blkno << (log->l2bsize - 9);
--	bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
-+	__bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
- 	BUG_ON(bio->bi_iter.bi_size != LOGPSIZE);
- 
- 	bio->bi_end_io = lbmIODone;
+ 	bio->bi_end_io = end_bio_io_page;
+ 	bio->bi_private = page;
 -- 
 2.39.2
 
