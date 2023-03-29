@@ -2,149 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA9656CEEF3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 18:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E3B6CF023
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 19:06:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbjC2QOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 12:14:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56940 "EHLO
+        id S231240AbjC2RGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 13:06:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbjC2QOA (ORCPT
+        with ESMTP id S231233AbjC2RGd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 12:14:00 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D4145BB8;
-        Wed, 29 Mar 2023 09:13:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680106409; x=1711642409;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Hps5jsYWZuWMPz8GSp0n187O/lBhXc5uhNP4MtLz8+s=;
-  b=lvzNv4cTwi9VAQB9w6MSNEWUDichAPg73M5vZb7dYgo0n/7FybQyHb5Z
-   fcjrRO5CDu8QWLslbgs6b76AvSXcn96NJuDuAyF58K2JNyD4BuuN89m8Y
-   TO6pCLQNewMlgDZPxRhL0ykqpiL/77cVhD/K5ecBFzH9byGjyvu0Is5Y6
-   OX/XFJ3Sp4K+GKbikfdWWsR05RKiVTBC7ifI7nzITZveMwnKMbZdb6MIh
-   RLoDR5JYVQ/b1Unzt5pr2oCOhuWtQmmd0yGHihojkc4QXlc7XR7o9/hej
-   SvQi3DzANVkQgbDcGLIaI40SfzzNr3XZSs48aoQOWrtJdEqIS/BY/e7Ld
+        Wed, 29 Mar 2023 13:06:33 -0400
+Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A50B44B8;
+        Wed, 29 Mar 2023 10:06:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1680109581; x=1711645581;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+NnexQOsAOUbE/augeQOa8oyAzkSCsYrdZjdeoHBcjs=;
+  b=eegj7RVxqxvbatq8B2uigrOeBNSe47E0Vr4CJ8Q5pb5LijBYIm2SIfFD
+   LmEpn7ZqRZu8K7NlRYIXfxRgKuoXzpgL+S+kdiGPf4S63OWbc00evtNDX
+   u0RqjBgp1ahJavAYLCQrJbym3ZF/KYloSVIcUo5/Up+eIuseu3XHDhwMA
+   u6XaWsGMkW2SzgXHlOeRKRRkMyQjz7vzNeTCYURvHDR6bR0Nb8CX2GpC9
+   uDuDyx1CrojNNEygT6rnLH7F45mwKe4qwVqoJotcbRzfduHllM+Mhm4+i
+   kx9cbNPJcKVJT9FA4pKEPEUuaBQ3wlVwXkfoJnszNCJyYKEaZApIa6pQM
    w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10664"; a="340947587"
-X-IronPort-AV: E=Sophos;i="5.98,301,1673942400"; 
-   d="scan'208";a="340947587"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2023 09:12:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10664"; a="748828855"
-X-IronPort-AV: E=Sophos;i="5.98,301,1673942400"; 
-   d="scan'208";a="748828855"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 29 Mar 2023 09:12:01 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1phYP2-000Jhk-0j;
-        Wed, 29 Mar 2023 16:12:00 +0000
-Date:   Thu, 30 Mar 2023 00:11:57 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Zi Yan <zi.yan@sent.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        linux-mm@kvack.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Zi Yan <ziy@nvidia.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Zach O'Keefe <zokeefe@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] mm: page_owner: add support for splitting to any
- order in split page_owner.
-Message-ID: <202303300056.N12iGUqy-lkp@intel.com>
-References: <20230329011712.3242298-5-zi.yan@sent.com>
+X-IronPort-AV: E=Sophos;i="5.98,301,1673884800"; 
+   d="scan'208";a="225092813"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 30 Mar 2023 01:06:20 +0800
+IronPort-SDR: 4Czs/V3uRtbM6T8bvTpWTqKbjnAK/1BA1wnwQ618CHNP6O3qWFFXQgMtwW381tq8vRP7vmUzco
+ 5OdSPUve1Wg3TyLP439ObjlmQAT5IqMRIOCF+m8PxMJQQJ7zq2k9vckW0MjO5b1jZK742Wybhg
+ roJ3UQGbmRyori1AlsQhFqctlQhwnYfTIKjSFz+DTepWukNpOnhnURkj3FK1aTZgWYb0xWjfGg
+ A9TUYIpxbMaFxD73OaXs4XgaoPlP8/+dHnvKiZKQEYFM0G90aZPc+/cuKWAOCk5pVE+D2L0DJa
+ IYM=
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 09:22:30 -0700
+IronPort-SDR: 5o43zE44ApvlLKedTs27i6ZN/lELa7pMrmIJQK40gUpdn2C4UtQdcwlIfjiKh1n/bPpGX2YXq8
+ YJJVJzgPqspxZi96lPe0WBzcRw9V0Z9BQK2DV4YAFsTQkHP1VrCBf6vXbgxIZ7J5vpxE0lTn/0
+ xSGPZVtghIG7ljFrff33/jPHtv9RuCOmJLd+y2rtbDipZfTukm+09qiddbRkAF472QN1YGPAI9
+ JwRocCI6ASGu/e1WbcS3qvfbyDLv4KkKB37h7xOPvZEpnFh7bqGxuER/H3ZfH5Gd/fUWjoHgjr
+ ZXs=
+WDCIronportException: Internal
+Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.72])
+  by uls-op-cesaip01.wdc.com with ESMTP; 29 Mar 2023 10:06:20 -0700
+From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        dm-devel@redhat.com, Song Liu <song@kernel.org>,
+        linux-raid@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH 00/19] bio: check return values of bio_add_page
+Date:   Wed, 29 Mar 2023 10:05:46 -0700
+Message-Id: <cover.1680108414.git.johannes.thumshirn@wdc.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230329011712.3242298-5-zi.yan@sent.com>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Zi,
+We have two functions for adding a page to a bio, __bio_add_page() which is
+used to add a single page to a freshly created bio and bio_add_page() which is
+used to add a page to an existing bio.
 
-Thank you for the patch! Yet something to improve:
+While __bio_add_page() is expected to succeed, bio_add_page() can fail.
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.3-rc4 next-20230329]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This series converts the callers of bio_add_page() which can easily use
+__bio_add_page() to using it and checks the return of bio_add_page() for
+callers that don't work on a freshly created bio.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zi-Yan/mm-memcg-use-order-instead-of-nr-in-split_page_memcg/20230329-091809
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20230329011712.3242298-5-zi.yan%40sent.com
-patch subject: [PATCH v2 4/7] mm: page_owner: add support for splitting to any order in split page_owner.
-config: riscv-buildonly-randconfig-r006-20230329 (https://download.01.org/0day-ci/archive/20230330/202303300056.N12iGUqy-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install riscv cross compiling tool for clang build
-        # apt-get install binutils-riscv64-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/6d1831c0e01a1a742e026454fe6e5643e08c5985
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Zi-Yan/mm-memcg-use-order-instead-of-nr-in-split_page_memcg/20230329-091809
-        git checkout 6d1831c0e01a1a742e026454fe6e5643e08c5985
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash
+Lastly it marks bio_add_page() as __must_check so we don't have to go again
+and audit all callers.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303300056.N12iGUqy-lkp@intel.com/
+Johannes Thumshirn (19):
+  swap: use __bio_add_page to add page to bio
+  drbd: use __bio_add_page to add page to bio
+  dm: dm-zoned: use __bio_add_page for adding single metadata page
+  fs: buffer: use __bio_add_page to add single page to bio
+  md: use __bio_add_page to add single page
+  md: raid5-log: use __bio_add_page to add single page
+  md: raid5: use __bio_add_page to add single page to new bio
+  btrfs: repair: use __bio_add_page for adding single page
+  btrfs: raid56: use __bio_add_page to add single page
+  jfs: logmgr: use __bio_add_page to add single page to bio
+  gfs: use __bio_add_page for adding single page to bio
+  zonefs: use __bio_add_page for adding single page to bio
+  zram: use __bio_add_page for adding single page to bio
+  floppy: use __bio_add_page for adding single page to bio
+  md: check for failure when adding pages in alloc_behind_master_bio
+  md: raid1: use __bio_add_page for adding single page to bio
+  md: raid1: check if adding pages to resync bio fails
+  dm-crypt: check if adding pages to clone bio fails
+  block: mark bio_add_page as __must_check
 
-All errors (new ones prefixed by >>):
-
->> mm/page_owner.c:226:14: error: call to undeclared function 'lookup_page_ext'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-                   page_ext = lookup_page_ext(page + i);
-                              ^
->> mm/page_owner.c:226:12: error: incompatible integer to pointer conversion assigning to 'struct page_ext *' from 'int' [-Wint-conversion]
-                   page_ext = lookup_page_ext(page + i);
-                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~
-   2 errors generated.
-
-
-vim +/lookup_page_ext +226 mm/page_owner.c
-
-   213	
-   214	void __split_page_owner(struct page *page, int old_order, int new_order)
-   215	{
-   216		int i;
-   217		struct page_ext *page_ext = page_ext_get(page);
-   218		struct page_owner *page_owner;
-   219		unsigned int old_nr = 1 << old_order;
-   220		unsigned int new_nr = 1 << new_order;
-   221	
-   222		if (unlikely(!page_ext))
-   223			return;
-   224	
-   225		for (i = 0; i < old_nr; i += new_nr) {
- > 226			page_ext = lookup_page_ext(page + i);
-   227			page_owner = get_page_owner(page_ext);
-   228			page_owner->order = new_order;
-   229		}
-   230		page_ext_put(page_ext);
-   231	}
-   232	
+ drivers/block/drbd/drbd_bitmap.c |  8 +++++---
+ drivers/block/floppy.c           |  2 +-
+ drivers/block/zram/zram_drv.c    |  2 +-
+ drivers/md/dm-crypt.c            |  9 ++++++++-
+ drivers/md/dm-zoned-metadata.c   |  6 +++---
+ drivers/md/md.c                  |  4 ++--
+ drivers/md/raid1-10.c            |  7 ++++++-
+ drivers/md/raid1.c               |  5 +++--
+ drivers/md/raid10.c              | 12 ++++++++++--
+ drivers/md/raid5-cache.c         |  2 +-
+ drivers/md/raid5-ppl.c           |  4 ++--
+ fs/btrfs/bio.c                   |  2 +-
+ fs/btrfs/raid56.c                |  2 +-
+ fs/buffer.c                      |  2 +-
+ fs/gfs2/ops_fstype.c             |  2 +-
+ fs/jfs/jfs_logmgr.c              |  4 ++--
+ fs/zonefs/super.c                |  2 +-
+ include/linux/bio.h              |  2 +-
+ mm/page_io.c                     |  8 ++++----
+ 19 files changed, 54 insertions(+), 31 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.39.2
+
