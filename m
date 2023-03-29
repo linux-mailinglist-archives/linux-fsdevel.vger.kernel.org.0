@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E2F96CF05D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 19:07:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 649416CF064
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 19:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231453AbjC2RHi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 13:07:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53662 "EHLO
+        id S231460AbjC2RHp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 13:07:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231222AbjC2RHE (ORCPT
+        with ESMTP id S231311AbjC2RHO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 13:07:04 -0400
+        Wed, 29 Mar 2023 13:07:14 -0400
 Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58C756A6E;
-        Wed, 29 Mar 2023 10:06:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D28A6A77;
+        Wed, 29 Mar 2023 10:06:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1680109611; x=1711645611;
+  t=1680109615; x=1711645615;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=k8CT487ce4SSO54vpXkhaUXbrl//N6dfoaIHSNrZXSc=;
-  b=cvjI9T4NpMyGrsXyMKCF/YTUcRswLSHgmPeiLwnshMRYJYfZRx5wcAzc
-   x/xWhlKqmtBvGp6UhJzi+b3xcIqQKfHysRNaYJcp3Iu4C7bMh5y4LLMx1
-   FZA46EX4RWvCfQpG4d25/Xxno2Dr5zqsxHnY8ZVy29VqsOP+gQpcRonQ2
-   VbUctEpEELzigrf/9mQKsmsyg3fGKgG2wMif2xo3/RGYN+W9NFZHVTgqu
-   ZhFVGq9eHmrNh3noqwprIRZGnIisq19CUlxrz00eHhTNismtjvQz3CmWX
-   72GmsnUBHs9Qf5iBg1gu+B/3yKGhAmoY1XUgBUcAEd9b11O1LlFTEm1nh
-   g==;
+  bh=i7JyUij1Ub1O7HqbOeYPQInyJM26bTtTnu0sfac9RNQ=;
+  b=MBZ941axfw85eQJDG5jKlsJCB+VJWs/z2sA6T7eFhYyRLxgHhQk5MCZ1
+   4HRWuhBCipbuTJc9kjG+bqRzbrgSThu164Js3tpGkVC1X3OeG/NGFHvgo
+   13qsE+KjvBRl6eg0kYLFsuiqqKanUprGECF5neuOE4EZlwqfDj2GxeWkY
+   8kwmYcmNr3STjK2hkNWmjaPmYKPPQ+hBoouh9VE4QeRUr+GywxoBW2jo1
+   SClrfs3I/pTV4AA1HxI/jZc/X6geaGUSu3tXPAiDKwU/x0N/a59QR9zyP
+   JKCd1JR0RBl30pza33+IAbwYKzb07qiIED9YIbMln54yhMLga+IySL9Q1
+   w==;
 X-IronPort-AV: E=Sophos;i="5.98,301,1673884800"; 
-   d="scan'208";a="225092863"
+   d="scan'208";a="225092872"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Mar 2023 01:06:46 +0800
-IronPort-SDR: vcvmRrQ4S2B+63W7V4UqEeL03WkSdRSW3imt7pOzXsyDk3TLjtyfxZCtq2iA+qFGSaweCwvftO
- 6+SaNmxB0IBqEWRFrm/gwTTC2++upJajw1BBurT3wVILj5O+voyYQoh+jlu8hKQ2nTSt6q0tUI
- GZZxElfT78NzGiFCDkE4wI9WpijvnaebQSoLLIxd8F2Z2mHVvwfxsDRiDzI88zD0JZMqX7snqv
- MFOQeB68w2ZthG9ajIM+vuOXsPc12vYbDNIHmN+2rIuOnqL7kHx9I3xDTo/HIH+obJ+XYlZP5l
- ows=
+  by ob1.hgst.iphmx.com with ESMTP; 30 Mar 2023 01:06:49 +0800
+IronPort-SDR: Ca3xb+X5kMhnI9t31wKcbKKBTNem+M7h5BTp+CW5effDJU4N/XNiML4fI0+Mfx1vxMHFQDLI/5
+ z833ie5Fp5DptOY43hPWrf9qcCdHf9Up92omfNpwW308gcoaXXm6VEtHdlvs6txhmujy9nDhjl
+ kCZh+p+dmNV0ZLiyVD0KHeCAJpXZdTWJd40z84bZg/2bDifE1qp3wqqViEy0UrenN+zNREc61T
+ dW7hfuiZreNrgp9RjW3pI87R90rcXR84IclKUAZpI5oKiDKDtoMkC18nj9bA1UiKgXdr70CxbD
+ /5g=
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 09:22:56 -0700
-IronPort-SDR: MOOXixcYEV1/J4lyBRhkoD3BrfkuwpVTjAnSNbGauDrQItggC4QoQ11Hy/5dh8cwJqG4TR0IkO
- Lnow8+4PjvklzXGKvuMnewjdhwfoe2RXCWLLrlvUTUex+DEDozd3vEEbQbLHW3vObVIOGbX5+L
- 9twd+og8XKgLZTmhzd7AQK5yODOqOEQMLfsU73Gxn69Zp7ZgBbmVcFqWvAs2LM4xS7ajmwhg/x
- f+DcHorKiciGGPhCff17T/c0ZTt7hWf/JGR8UxngNwnUUQ1TMJefX0ET3IFIG0c8MJgSPEpX7y
- R+E=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 09:22:58 -0700
+IronPort-SDR: qYm/yHxdWsn4PdNU7In0p9zW29uqLpM/KDDhaShYGqmgAouVltU23pwtiDrLcUkxqLoKGpWanX
+ KdIaI00A9Tcxh5akMv0Mg9mzy1VnQEctwuee7xO/j/DPrFAHW8t1jmq6JmwNycdN5GKOwv9LqD
+ EwWq9gZmEVjS+Nt+UWUBK3vepfteneMD0hPTTSlwc9wqo7tnmscJXQAHH1TYXa775C3cNxwC/g
+ gWNbfWYibYW6ZAMQvInFb5YgbQ/DLueK88vnvV9kIxEJhKmn5O2bRK+Mb1jpC7O7+PM6IArPK7
+ iYU=
 WDCIronportException: Internal
 Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.72])
-  by uls-op-cesaip01.wdc.com with ESMTP; 29 Mar 2023 10:06:45 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 29 Mar 2023 10:06:48 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
@@ -63,9 +63,9 @@ Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 09/19] btrfs: raid56: use __bio_add_page to add single page
-Date:   Wed, 29 Mar 2023 10:05:55 -0700
-Message-Id: <5ce38530bc488f9d4f1692d701ca7ad5ea8ca3e9.1680108414.git.johannes.thumshirn@wdc.com>
+Subject: [PATCH 10/19] jfs: logmgr: use __bio_add_page to add single page to bio
+Date:   Wed, 29 Mar 2023 10:05:56 -0700
+Message-Id: <902f83de56c67b333959d8b8b4cf37a25414e927.1680108414.git.johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <cover.1680108414.git.johannes.thumshirn@wdc.com>
 References: <cover.1680108414.git.johannes.thumshirn@wdc.com>
@@ -80,9 +80,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The btrfs raid58 sector submission code uses bio_add_page() to add a page
-to a newly created bio. bio_add_page() can fail, but the return value is
-never checked.
+The JFS IO code uses bio_add_page() to add a page to a newly created bio.
+bio_add_page() can fail, but the return value is never checked.
 
 Use __bio_add_page() as adding a single page to a newly created bio is
 guaranteed to succeed.
@@ -91,22 +90,31 @@ This brings us a step closer to marking bio_add_page() as __must_check.
 
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- fs/btrfs/raid56.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/jfs/jfs_logmgr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
-index 642828c1b299..c8173e003df6 100644
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -1108,7 +1108,7 @@ static int rbio_add_io_sector(struct btrfs_raid_bio *rbio,
- 	bio->bi_iter.bi_sector = disk_start >> 9;
- 	bio->bi_private = rbio;
+diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
+index 695415cbfe98..15c645827dec 100644
+--- a/fs/jfs/jfs_logmgr.c
++++ b/fs/jfs/jfs_logmgr.c
+@@ -1974,7 +1974,7 @@ static int lbmRead(struct jfs_log * log, int pn, struct lbuf ** bpp)
  
--	bio_add_page(bio, sector->page, sectorsize, sector->pgoff);
-+	__bio_add_page(bio, sector->page, sectorsize, sector->pgoff);
- 	bio_list_add(bio_list, bio);
- 	return 0;
- }
+ 	bio = bio_alloc(log->bdev, 1, REQ_OP_READ, GFP_NOFS);
+ 	bio->bi_iter.bi_sector = bp->l_blkno << (log->l2bsize - 9);
+-	bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
++	__bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
+ 	BUG_ON(bio->bi_iter.bi_size != LOGPSIZE);
+ 
+ 	bio->bi_end_io = lbmIODone;
+@@ -2115,7 +2115,7 @@ static void lbmStartIO(struct lbuf * bp)
+ 
+ 	bio = bio_alloc(log->bdev, 1, REQ_OP_WRITE | REQ_SYNC, GFP_NOFS);
+ 	bio->bi_iter.bi_sector = bp->l_blkno << (log->l2bsize - 9);
+-	bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
++	__bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
+ 	BUG_ON(bio->bi_iter.bi_size != LOGPSIZE);
+ 
+ 	bio->bi_end_io = lbmIODone;
 -- 
 2.39.2
 
