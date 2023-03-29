@@ -2,68 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 559646CF3C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 21:56:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AABFF6CF3CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Mar 2023 21:56:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229643AbjC2T4D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 15:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48680 "EHLO
+        id S229754AbjC2T4S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 15:56:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjC2T4C (ORCPT
+        with ESMTP id S229592AbjC2T4R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 15:56:02 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6479CA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 12:55:57 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id s1so8680854ild.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 12:55:57 -0700 (PDT)
+        Wed, 29 Mar 2023 15:56:17 -0400
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C3BFCA
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 12:56:14 -0700 (PDT)
+Received: by mail-io1-xd2e.google.com with SMTP id n28so2924331ioz.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 12:56:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680119757;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680119773;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/wg3YbcX6eqfscs3MgrIjDmGZert1ueovnXqRGD0eH4=;
-        b=7jDv4qJn6lqY+MBvZA0T847PxhJwJpCp099Sr8ASWgNh6mItBs+fanGYDzcsfbwMey
-         ESZwAM+kmDFKojOg3bA16f/yNlPKezFA+Rjabl4tSjuHWVZKT0ZKZ4aKx/GEL4/he/8+
-         mC7E6ImvldFHwCRrmMQDOMjxnCfAKEimPpJ6btH/cyPK9BGua7ImJ0TaWnt8tgsyFJUI
-         HuDm4L98jJxkyWoiXDyMns+HpBFFhGqpWwrvEd1NxZiDUY5uVRKnV7PQF6bgXcCo8wEH
-         cGKh8cH6+orNTGh4dnEck3m2IgvKQuXBggsHg1WVItz8FGP7ocBtqmAGrlZ2iH2b+kb3
-         rXeQ==
+        bh=7pXp3m3d9IDqixUl8JRvLmjh2RWPB2gpeXs5rdNpUYk=;
+        b=5gnOYqTrly8M8PxrrcrWxJVVcQ8Xqr2Ed6B60jSZr7epSZ5MVTgVHv2afTK1Fd8POl
+         YHDsFyO5SqN0gAxc29NF0/kFqeuvkEd3v+87BE1H012Wlvm/0ARnXKQCuhrxUvygffdd
+         UalPtMVTncsNSqTTt31GwMus53/7NmJ9zo8h4MAAVbpkibAmjZjag42aOIHwFyI4nn0Y
+         DpjCGwqO/yCT651fqcL2uhxjjzMOfyiSkQVUe3fvyGwmQHQL8ZWSeObXZNIMJYA+gJMq
+         BpeWwRPRwl0DgXHognjDwuLZT6NVX5MXzg7bEFCX+D86eFn5wJ3kGtoccCyb8dQRsxeq
+         5tYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680119757;
+        d=1e100.net; s=20210112; t=1680119773;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/wg3YbcX6eqfscs3MgrIjDmGZert1ueovnXqRGD0eH4=;
-        b=lzzMMXEGdvz4PtiF9IqtX9x6dXG7yTarNQmsYF7KSnpPLGFzl29nVZ7x2uIsR5CyFm
-         ZUsYS5wGupuyd9yUM1/s7gZYb8sKk2k7kUkvCy3x8c/jwKGKZJJPQX5Rrd9Y6Y7vVZFw
-         8pixYhQ859PyTf+hC1Nu0DAV9E+7JhSQ63YCkZft2HccQyfgRxYUflkU98Ce4zNxcFVU
-         g93jGMZAFyzN2J79xZM5MheN0rHoXJXcnotTon7wtxPdPLTIMWY+YmqJYBpS6qhJmUvi
-         pVRzHiERdNbb+HMtL49zOfEQWS/LcBH6EgSwC50Ko3jLQGG7e6p9cEdJy9tsMdIBDLl1
-         5Sdg==
-X-Gm-Message-State: AAQBX9fLxgtBkq8E/Znz1EtKcI5jHyJD9yd/VlL8oLKxFSSN9VE5+ItD
-        AB+uiMVVrUWu653KPnXAldrKDA==
-X-Google-Smtp-Source: AKy350Y3uuXd9pWnGZscnwUH4n7UjAlp5l1ARThZAMN12i7WAmorNLmfOfgIyer/PTjUiMTjWv8m6g==
-X-Received: by 2002:a92:cda6:0:b0:31f:9b6e:2f52 with SMTP id g6-20020a92cda6000000b0031f9b6e2f52mr12896572ild.0.1680119757044;
-        Wed, 29 Mar 2023 12:55:57 -0700 (PDT)
+        bh=7pXp3m3d9IDqixUl8JRvLmjh2RWPB2gpeXs5rdNpUYk=;
+        b=i/8St0bsu14Wzs4NeClt41ca1YnIbV2jAQKc84ttrr9K9SZ1vu/okn6MdvU6OuisxL
+         RetPTmc/RUeskGxzSHOuyDXuBiDv0Dy9XGTVK23FCl2gNrSddDM5iG03S49CqGqT/+Rq
+         y1eFotSf0SzL0ITbDfuJVNfq94m7ZWGNsR83wvNbAQsdWopCsUusR+FbccbnFgnI7FEm
+         OlBMZnzT/guyVRRluQHFS0E6MNDjQf9a8y4brJhVjTZdnZQFfF0OcbDNMDXnfdk8qGuC
+         IGA5BoojllhaXkRdvymfoybtQS0rKF6ejZurBmgFwo1yFIjqDrt4zxClprS3se3g2IfM
+         QzjA==
+X-Gm-Message-State: AO0yUKXwjr3IaXAPPMBzqabMZ5F3IQG9LMxBASNLDCyCypbag4nE0AjW
+        kh4VaJqVtN54AtvMR5EDPBYPuA==
+X-Google-Smtp-Source: AK7set/eLKmhbiH4LKCGcDLOq1DWmaCU71y+dUHaG+LcDbex+Zkqg2PNFSHqyj6j79fHhjTeq+Pe5w==
+X-Received: by 2002:a05:6602:1301:b0:758:6ae8:8e92 with SMTP id h1-20020a056602130100b007586ae88e92mr11312073iov.1.1680119773477;
+        Wed, 29 Mar 2023 12:56:13 -0700 (PDT)
 Received: from [192.168.1.94] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id y17-20020a927d11000000b00325cdcd8ac6sm4825969ilc.74.2023.03.29.12.55.56
+        by smtp.gmail.com with ESMTPSA id m15-20020a02a14f000000b003e4a3c070adsm10298440jah.133.2023.03.29.12.56.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Mar 2023 12:55:56 -0700 (PDT)
-Message-ID: <a28ab6a2-23fc-91a3-e75a-3e23097fbb58@kernel.dk>
-Date:   Wed, 29 Mar 2023 13:55:55 -0600
+        Wed, 29 Mar 2023 12:56:12 -0700 (PDT)
+Message-ID: <3274c95f-b102-139d-0688-be688d799c20@kernel.dk>
+Date:   Wed, 29 Mar 2023 13:56:12 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCHSET v6 0/11] Turn single segment imports into ITER_UBUF
+Subject: Re: [PATCH 06/11] iov_iter: overlay struct iovec and ubuf/len
 Content-Language: en-US
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, brauner@kernel.org,
         viro@zeniv.linux.org.uk
 References: <20230329184055.1307648-1-axboe@kernel.dk>
- <CAHk-=whjCu0Scau47RAGXO5FF8Xtc__Nw11Qh50gyMNWVcwh_A@mail.gmail.com>
+ <20230329184055.1307648-7-axboe@kernel.dk>
+ <CAHk-=wg2q64+WLKE+0+UNeZav=LjXJZx2gHJ5NR3_5LxvQC8Mg@mail.gmail.com>
+ <554cd099-aa7f-361a-2397-515f7a9f7191@kernel.dk>
+ <a0911019-9eb9-bf2a-783d-fe5b5d8a9ec0@kernel.dk>
+ <f12452c7-0bab-3b5d-024c-6ab76672068f@kernel.dk>
+ <CAHk-=wg4J1+Ses2rY0xBhWxyfTDNW+H_ujpcwngKG5tp0y_Fxw@mail.gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=whjCu0Scau47RAGXO5FF8Xtc__Nw11Qh50gyMNWVcwh_A@mail.gmail.com>
+In-Reply-To: <CAHk-=wg4J1+Ses2rY0xBhWxyfTDNW+H_ujpcwngKG5tp0y_Fxw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
@@ -75,41 +80,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/29/23 1:44 PM, Linus Torvalds wrote:
-> On Wed, Mar 29, 2023 at 11:41 AM Jens Axboe <axboe@kernel.dk> wrote:
+On 3/29/23 1:52 PM, Linus Torvalds wrote:
+> On Wed, Mar 29, 2023 at 12:49 PM Jens Axboe <axboe@kernel.dk> wrote:
 >>
->> Passes testing, and verified we do the right thing for 1 and multi
->> segments.
+>> We can get rid of these if we convert the iov_iter initializers to
+>> just assign the members rather than the copy+zero fill. The automatic
+>> zero fill is nice though, in terms of sanity.
 > 
-> Apart from the pointer casting rant, this looks sane to me.
+> The automatic zero fill is good, but I think it should be fixed by
+> just not making that
 > 
-> I feel like 02/11 has a few potential cleanups:
+>         const struct iovec __ubuf_iovec;
 > 
->  (a) it feels like a few too many "iter.__iov" uses remaining, but
-> they mostly (all?) look like assignments.
+> member be the first member of a union.
 > 
-> I do get the feeling that any time you assign __iov, you should also
-> assign "nr_segs", and it worries me a bit that I see one without the
-> other. Maybe room for another helper that enforces a "if you set the
-> __iov pointer, you must be setting nr_segs too"?
+> The way union initializers work is that if they aren't named, they are
+> for the first member.
 > 
-> And maybe I'm just being difficult.
+> So I *think* the reason you get that warning is literally just because
+> the __ubuf_iovec member is first in that union, and moving it down to
+> below the other struct will just fix things.
 
-No, I think that's valid, and the cover letter does touch upon that.
-The thought of doing an iov assign helper has occurred to me as well.
-I just wanted to get general feelings on the direction first, then
-do a round of polish when prudent rather than prematurely.
-
->  (b) I see at least one "iov = iter_iov(from)" that precedes a later
-> check for "iter_is_iovec()", which again means that *if* we add some
-> debug sanity test to "iter_iov()", it might trigger when it shouldn't?
-> 
-> The one I see is in snd_pcm_writev(), but I th ink the same thing
-> happens in snd_pcm_readv() but just isn't visible in the patch due to
-> not having the context lines.
-
-I think that's mostly a patch ordering issue. Should probably just
-push the sound and IB patches to the front of the series.
+Nope, still fails with it moved below.
 
 -- 
 Jens Axboe
