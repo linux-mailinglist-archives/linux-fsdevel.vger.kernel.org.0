@@ -2,148 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 432536CFF28
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 10:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A40B36CFFC9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 11:30:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229538AbjC3IxG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Mar 2023 04:53:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47730 "EHLO
+        id S230094AbjC3JaA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Mar 2023 05:30:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbjC3Iww (ORCPT
+        with ESMTP id S230016AbjC3J37 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Mar 2023 04:52:52 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84B847AA2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 01:52:50 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id d75a77b69052e-3e390e23f83so462601cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 01:52:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680166369;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/pUGbSJeXIbqbiydf5b6Zg3qCqAFB/oHTtk54OkF+CA=;
-        b=UL5A7+vSaNkedjf0RM940TocfhoumuI7tBaS0YWz+AHdmXrZAsaX8wgg+j5w7RF298
-         Ekgfde63pCUQs435mfNAHjovy4bNbY4sepG9CY+NHWzSERKuHVeenfS0xlvcOAc3APQ7
-         vbdswldNEjf9OgMR1peH6SZRFXCyErykMe0XvFX5aBgj1YS2y9b3ZrM8ZBkPRXLIvapG
-         gT+rAgFbSqezQkJTs8u5i/mu+uOUu17Ry9YM25/tirUXp0lFmsR4PwhRjtPvvznbAmC5
-         H0OTEqHc5CS0RO2tYLKZWyoL9owm0IDNggklzhiqErGjZMAmBziQW5MRyNb4ipAFwD7W
-         JzjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680166369;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/pUGbSJeXIbqbiydf5b6Zg3qCqAFB/oHTtk54OkF+CA=;
-        b=YaaNqKEh/LW5ely/qFmwP2LBfYJs9bwAdpmESRsUh5/gofWGvK7MUTKp4o6NYdChfp
-         4V67jWJoZC9l1HDRg0TK6ug2HCvAt9LiWu4ZMmckknu9Un+jl97+qJ9s6A8gjUICuFFg
-         VVsQhYGAevtLCDnrlMNAx28XW6tN4g4OSu/Aj+WNx/bjdnFnbbCz1fIe/xAjcct83qQS
-         YsByKM0fsTi9ZRBuseNvOrRH7Mrx7536HP+uiAyqpRfhEzBMXNeyezrXLTlYJ8FBEppC
-         jSOzW6hWe8pbYOiWXu/rKkw3cj15NipOEnCHKrDm8nIPBvbM0eO56miWGtkIpnjcKqjm
-         +HuQ==
-X-Gm-Message-State: AAQBX9cU1p2fqhR89rNNnvZdh0hsXGm7S89et/J8s6E9sEkiFVuxSNrS
-        G3MYqM0/TuhGx/crkpOt/zXOogRFG9oGhHVsH1lTvL1pnWmVEGmDl+WKNRGd
-X-Google-Smtp-Source: AKy350ZKnJPUXGH+1G0Afn3Z7bkEXPAEpBUNjaFNIywn5HYu6iVE5EFId6tutzAEuEg2L9ihnJWELlyjXRdqhcEtQqg=
-X-Received: by 2002:ac8:5dd0:0:b0:3bf:c406:3a5f with SMTP id
- e16-20020ac85dd0000000b003bfc4063a5fmr75067qtx.7.1680166369621; Thu, 30 Mar
- 2023 01:52:49 -0700 (PDT)
+        Thu, 30 Mar 2023 05:29:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD007693
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 02:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680168556;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+XgWAMkX5gl81w36XkfWKNCMFULxOFJmmzo6Xs6xITY=;
+        b=VyxB1NNhEjH7AWD1MbEBKslgSyYpUSp5adkL4tMexfkhgWiiPhOB4nqlORqhrTog/JXJoT
+        2GlNw0o8u2L3iC5jFQWSObYr+cnP4foLvYEgxtIPde4nh1KX9gkASmhRhIf3ZQ6lBhV2Em
+        bTQVmbCyDGTD2O+N45hsZ7EbZmcFi+Q=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-544-jczfNWu4OtqMRHX0J7vacA-1; Thu, 30 Mar 2023 05:29:11 -0400
+X-MC-Unique: jczfNWu4OtqMRHX0J7vacA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8C7768828CB;
+        Thu, 30 Mar 2023 09:29:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BE8D34020C82;
+        Thu, 30 Mar 2023 09:29:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <6F2985FF-2474-4F36-BD94-5F8E97E46AC2@oracle.com>
+References: <6F2985FF-2474-4F36-BD94-5F8E97E46AC2@oracle.com> <20230329141354.516864-1-dhowells@redhat.com> <20230329141354.516864-41-dhowells@redhat.com>
+To:     Chuck Lever III <chuck.lever@oracle.com>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 40/48] sunrpc: Use sendmsg(MSG_SPLICE_PAGES) rather then sendpage
 MIME-Version: 1.0
-References: <0000000000003da76805f8021fb5@google.com> <20230330012750.GF3223426@dread.disaster.area>
-In-Reply-To: <20230330012750.GF3223426@dread.disaster.area>
-From:   Aleksandr Nogikh <nogikh@google.com>
-Date:   Thu, 30 Mar 2023 10:52:37 +0200
-Message-ID: <CANp29Y6XNE_wxx1Osa+RrfqOUP9PZhScGnMUDgQ-qqHzYe9KFg@mail.gmail.com>
-Subject: Re: [syzbot] [xfs?] WARNING in xfs_bmap_extents_to_btree
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     syzbot <syzbot+0c383e46e9b4827b01b1@syzkaller.appspotmail.com>,
-        djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <777294.1680168547.1@warthog.procyon.org.uk>
+Date:   Thu, 30 Mar 2023 10:29:07 +0100
+Message-ID: <777295.1680168547@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 30, 2023 at 3:27=E2=80=AFAM 'Dave Chinner' via syzkaller-bugs
-<syzkaller-bugs@googlegroups.com> wrote:
->
-> On Tue, Mar 28, 2023 at 09:08:01PM -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    1e760fa3596e Merge tag 'gfs2-v6.3-rc3-fix' of git://git=
-.ke..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D16f83651c80=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dacdb62bf488=
-a8fe5
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D0c383e46e9b48=
-27b01b1
-> > compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for D=
-ebian) 2.35.2
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/17229b6e6fe0/d=
-isk-1e760fa3.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/69b5d310fba0/vmli=
-nux-1e760fa3.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/0c65624aace9=
-/bzImage-1e760fa3.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+0c383e46e9b4827b01b1@syzkaller.appspotmail.com
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 1 PID: 24101 at fs/xfs/libxfs/xfs_bmap.c:660 xfs_bmap_ext=
-ents_to_btree+0xe1b/0x1190
->
-> Allocation got an unexpected ENOSPC when it was supposed to have a
-> valid reservation for the space. Likely because of an inconsistency
-> that had been induced into the filesystem where superblock space
-> accounting doesn't exactly match the AG space accounting and/or the
-> tracked free space.
->
-> Given this is a maliciously corrupted filesystem image, this sort of
-> warning is expected and there's probably nothing we can do to avoid
-> it short of a full filesystem verification pass during mount.
-> That's not a viable solution, so I think we should just ignore
-> syzbot when it generates this sort of warning....
+Chuck Lever III <chuck.lever@oracle.com> wrote:
 
-If it's not a warning about a kernel bug, then WARN_ON should probably
-be replaced by some more suitable reporting mechanism. Kernel coding
-style document explicitly says:
+> It seems to me that you could eliminate the kernel_sendpage()
+> consumer here in svc_tcp_sendmsg() without also replacing the
+> kernel_sendmsg() calls. That would be a conservative step-wise
+> approach which would carry less risk, and would accomplish
+> your stated goal without more radical surgery.
 
-"WARN*() must not be used for a condition that is expected to trigger
-easily, for example, by user space actions. pr_warn_once() is a
-possible alternative, if you need to notify the user of a problem."
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Doc=
-umentation/process/coding-style.rst?id=3D1e760fa3596e8c7f08412712c168288b79=
-670d78#n1223
+Note that only the marker is sent with kernel_sendmsg() in the unmodified
+code; the head and tail are sent with svc_tcp_send_kvec()... which uses
+kernel_sendpage() which needs to be changed in my patchset.  I can make it do
+individual sendmsg calls for all those for now.
 
---
-Aleksandr
+David
 
->
-> i.e. we actually want this warning to be issued if it happens in
-> normal production situations, but given that it's relatively trivial
-> to create an inconsistent filesystem image that can trigger this we
-> should just ignore it when it is generated by such means.
->
-> -Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
->
