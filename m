@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AAA86D0BAB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 18:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 635066D0BAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 18:47:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232452AbjC3Qr0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Mar 2023 12:47:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53330 "EHLO
+        id S231358AbjC3Qr3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Mar 2023 12:47:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232317AbjC3QrL (ORCPT
+        with ESMTP id S232324AbjC3QrL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 30 Mar 2023 12:47:11 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A1ECDF7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 09:47:09 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id e13so8562962ioc.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 09:47:09 -0700 (PDT)
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DCBD321
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 09:47:10 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id bl9so8534180iob.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 09:47:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680194829; x=1682786829;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4xGS1WJPD4n46wbrdJA3HTeawxdexvwLRq+jxow2GHk=;
-        b=Pm080zNxEKZihq5GCHr1WApWy6jkwiuEYJ71qEAmlp6adzXucMDNsMWMLV2yARIa20
-         ArosHCZXaw1A0j1C6MkBECtcfZYECQkUa+ydrZ63aJDp5XsltUDkKfPHstWqALvD5dr8
-         zn9YGjZtPZ3Tqy5cSNXl7WzYhxKfe9rE6nbV0LQFD8uM+9Fj456ELIR5V866prwPBq3L
-         t4ujRGHi86iBwUbWGKTGgFcIPUvOiSfId+V8tYf6DX54m/GFpa5gcd6PArm/R+KCzjS4
-         hG4NCHxQkmQhfp94rd8QpX8fTZVR1EB/jxopy9+fuwTQtaMhFYYtDewwzSTUqGVsG6aU
-         h38g==
+        bh=kbAbvx+wulf4ZJIYePr1YK4tcZKpHnBQRhSua/RrBns=;
+        b=kL1/24VbKbclc2SL6+pLwEoAwOn+lLr8s8ZhOEEwS7zybypTEX+bmLnySP0qETe4L7
+         YR5nuACtL2KzdXUhdkdEeN4126lrd2ddDVv6zD1UeXe8nc+RcbkradeC4LdBH0eRpViy
+         SqorCzyTPS19rTISlGmMoTzk/Fnb7S3n7gl4lrpfe6DjSHgu2hM9sv+WrhaIsMKgivvF
+         7Kp5ao7+f0p4DLSqFY5VaYyZ3vc8kkD9vUca3lSCnxHB4vXe82zQnx5L6MOXaoSlzaYZ
+         jF4wOsEz+4wI6a6GzcKTApsvz7wm/MJNY0DNEfqVBoJbPjtr/1u1aIf5/kLMgoRluum/
+         HnAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112; t=1680194829; x=1682786829;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4xGS1WJPD4n46wbrdJA3HTeawxdexvwLRq+jxow2GHk=;
-        b=vGnLnkmYpimk78DUq0+XAXuh0gIWBMQhXzM8V0Pm7RhlnPCJ4HvztODDMmbrJ2k9sq
-         ppv9Di7rwiQHrW091IgtUf1TTq6eVJ7lSPSCgOHYTXai9IpUD+EpbZfLkx7TbOv1sfsG
-         Gl0fKI4KBZdw59rWIl9F5+KorOreEdd0OU/MEK4J9RQY/swKgAHcVBqCxeB89TcABJi4
-         ZJpD1wt2oYW1Ltg/ZdzqdgNMYsFRpJhNlwiS7SniN4r4ViHPfv5N7kE+i/OY6kPTiqsm
-         2I/sEfS5p2rsfSoqBYwWcm+yHHJIMzG65q5erg0smGyq8QPAK8UWenH/mb+r+ofTHB7m
-         SBRQ==
-X-Gm-Message-State: AO0yUKXZjoHbTSkwFYnENBb3L5+3Uh7o24EPDhkuhOgqtJkPk2lZWIup
-        W7oow41iQSHS/80G0W5/4/sZBmKXXnXejZthONQP9A==
-X-Google-Smtp-Source: AK7set/t0aXp+50AvjikBji+4hFd3QZt8YBWpHXN4zlaXGaQ9GF8mFpKHnacNLf++FhLec5k+dDWAA==
-X-Received: by 2002:a5d:9d96:0:b0:757:f2a2:affa with SMTP id ay22-20020a5d9d96000000b00757f2a2affamr14783063iob.1.1680194828806;
-        Thu, 30 Mar 2023 09:47:08 -0700 (PDT)
+        bh=kbAbvx+wulf4ZJIYePr1YK4tcZKpHnBQRhSua/RrBns=;
+        b=M+8jpFuKKVkc9Y5noxFTtbosWSpLwYqMhEaiXkGNoeN1cv1yfPi0gAz0Tz4l6yO7WY
+         Ict4wdEvBWwgKa41OyTNVcla9kY6owwpp5G8MVu//F5e92kNWc4HTyd1+IARlYTpMi90
+         uLuo5V6hbv6PQPq0SrNNYwYrfqouDEjJWFYyG1twfrYbTsEts2nzV7UWEzMI6tjXa7II
+         J9EhWx9WKhC7/O/PUosWnBa7x8qq7la1FrNMLZnUuhrGM7sAK4eRIeX1WICwc7NxwR9r
+         JlVYHexWxEfQEsd0KBy8yquv3LAtYkFVGIBwD+8Zhno3wmgRYqmUuoSMTtW4QWkCcOlt
+         jIwQ==
+X-Gm-Message-State: AAQBX9c/5Da/fn0mHPFuW3Z2c0EOVnogLijuWII63EMtxL5/Bz4P8kgE
+        /sIDq6puz/EdwS4Bqz8Hzbq/ws+wD/cLf+ArR2avQw==
+X-Google-Smtp-Source: AKy350bnN5FddadbaEMOudAStd3VJtKvQcQK/dO0ZTlvJH28BAglkAMw3/Nn8Akv4zU9xVyk1aq3mw==
+X-Received: by 2002:a6b:8d8c:0:b0:758:9dcb:5d1a with SMTP id p134-20020a6b8d8c000000b007589dcb5d1amr1413507iod.2.1680194829721;
+        Thu, 30 Mar 2023 09:47:09 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id v21-20020a056638251500b003a53692d6dbsm20876jat.124.2023.03.30.09.47.07
+        by smtp.gmail.com with ESMTPSA id v21-20020a056638251500b003a53692d6dbsm20876jat.124.2023.03.30.09.47.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Mar 2023 09:47:08 -0700 (PDT)
+        Thu, 30 Mar 2023 09:47:09 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, brauner@kernel.org,
         viro@zeniv.linux.org.uk, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 03/11] IB/hfi1: check for user backed iterator, not specific iterator type
-Date:   Thu, 30 Mar 2023 10:46:54 -0600
-Message-Id: <20230330164702.1647898-4-axboe@kernel.dk>
+Subject: [PATCH 04/11] IB/qib: check for user backed iterator, not specific iterator type
+Date:   Thu, 30 Mar 2023 10:46:55 -0600
+Message-Id: <20230330164702.1647898-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230330164702.1647898-1-axboe@kernel.dk>
 References: <20230330164702.1647898-1-axboe@kernel.dk>
@@ -72,39 +72,26 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 In preparation for switching single segment iterators to using ITER_UBUF,
-swap the check for whether we are user backed or not. While at it, move
-it outside the srcu locking area to clean up the code a bit.
+swap the check for whether we are user backed or not.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- drivers/infiniband/hw/hfi1/file_ops.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/infiniband/hw/qib/qib_file_ops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/file_ops.c b/drivers/infiniband/hw/hfi1/file_ops.c
-index 3065db9d6bb9..f3d6ce45c397 100644
---- a/drivers/infiniband/hw/hfi1/file_ops.c
-+++ b/drivers/infiniband/hw/hfi1/file_ops.c
-@@ -267,6 +267,8 @@ static ssize_t hfi1_write_iter(struct kiocb *kiocb, struct iov_iter *from)
+diff --git a/drivers/infiniband/hw/qib/qib_file_ops.c b/drivers/infiniband/hw/qib/qib_file_ops.c
+index 4cee39337866..815ea72ad473 100644
+--- a/drivers/infiniband/hw/qib/qib_file_ops.c
++++ b/drivers/infiniband/hw/qib/qib_file_ops.c
+@@ -2245,7 +2245,7 @@ static ssize_t qib_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	struct qib_ctxtdata *rcd = ctxt_fp(iocb->ki_filp);
+ 	struct qib_user_sdma_queue *pq = fp->pq;
  
- 	if (!HFI1_CAP_IS_KSET(SDMA))
+-	if (!iter_is_iovec(from) || !from->nr_segs || !pq)
++	if (!from->user_backed || !from->nr_segs || !pq)
  		return -EINVAL;
-+	if (!from->user_backed)
-+		return -EINVAL;
- 	idx = srcu_read_lock(&fd->pq_srcu);
- 	pq = srcu_dereference(fd->pq, &fd->pq_srcu);
- 	if (!cq || !pq) {
-@@ -274,11 +276,6 @@ static ssize_t hfi1_write_iter(struct kiocb *kiocb, struct iov_iter *from)
- 		return -EIO;
- 	}
  
--	if (!iter_is_iovec(from) || !dim) {
--		srcu_read_unlock(&fd->pq_srcu, idx);
--		return -EINVAL;
--	}
--
- 	trace_hfi1_sdma_request(fd->dd, fd->uctxt->ctxt, fd->subctxt, dim);
- 
- 	if (atomic_read(&pq->n_reqs) == pq->n_max_reqs) {
+ 	return qib_user_sdma_writev(rcd, pq, iter_iov(from), from->nr_segs);
 -- 
 2.39.2
 
