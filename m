@@ -2,138 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33F6B6D0D25
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 19:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CBF46D0D2A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 19:52:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230521AbjC3Ru2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Mar 2023 13:50:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57542 "EHLO
+        id S232097AbjC3RwF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Mar 2023 13:52:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232097AbjC3RuF (ORCPT
+        with ESMTP id S229847AbjC3RwE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Mar 2023 13:50:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD711CDC8;
-        Thu, 30 Mar 2023 10:50:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 45B5F6212D;
-        Thu, 30 Mar 2023 17:50:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63F9FC433D2;
-        Thu, 30 Mar 2023 17:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680198601;
-        bh=ICH3ESIl1CksscQBcyysCyhAmW3u/rrPOIwMKWe+Uxw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ERMQcPrsVpQMqPZ+tcWr1mym91c1P6qzcSxgnFDkeN/NoNz+oXJcGSDMmu2Zy7W9Y
-         CxwC28c5KNlESVXyCzOjHGtCFpkewkyKHaI1HKarCPshhjR12IyDiZgEFmhDYwv2ev
-         YBV8NioXLtZiznXnBtQzqje7hcRWJTauVXMtbcGCH7QxLS59gUpX6eNp+ch5a1s8Bn
-         36mfNePmJVUgxkb5OIu3emHOnOmEFtsN4rjxXoBnOdKdBzxCXnBVnkxzRbZFHtMDl3
-         Th1UKvq6Mpv88xu+RAwwZGjNV7wYt++xeGS+AJQDX+L0nIe0/uxgd9BbE2wMehRZV4
-         WCdVSYunlxQWQ==
-Date:   Thu, 30 Mar 2023 13:50:00 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: AUTOSEL process
-Message-ID: <ZCXLyBejq8U6dts1@sashalap>
-References: <Y/zswi91axMN8OsA@sol.localdomain>
- <Y/zxKOBTLXFjSVyI@sol.localdomain>
- <Y/0U8tpNkgePu00M@sashalap>
- <Y/0i5pGYjrVw59Kk@gmail.com>
- <Y/0wMiOwoeLcFefc@sashalap>
- <Y/01z4EJNfioId1d@casper.infradead.org>
- <Y/1QV9mQ31wbqFnp@sashalap>
- <ZCTS4Yc44DN+cqcX@gmail.com>
- <ZCWXM5onHfLbcIDN@sashalap>
- <20230330172210.GB881@sol.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20230330172210.GB881@sol.localdomain>
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+        Thu, 30 Mar 2023 13:52:04 -0400
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A223CDC8;
+        Thu, 30 Mar 2023 10:52:03 -0700 (PDT)
+Received: by mail-qv1-xf30.google.com with SMTP id x8so14622239qvr.9;
+        Thu, 30 Mar 2023 10:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680198723; x=1682790723;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4IR9SAM3kCBb7sI+E1m5cavLGwgTgCiGLAf0/i0xTGs=;
+        b=o7CzjEeQkNqDVNYK9ZnwI2yCezVyErPe1bfsZYKe324dISFuAjnC9kXBtg1xMLfdbf
+         5eIhKSt8RhpS0p4Ik5nSvdwuQQ2J5AZAqXsFhSzgtDm/CUBlq6rUQnGdtkPiXQ908d0g
+         JrNT4/HXtOupKtl4CcG91+u6pcUNImv8gngeCfB76s9stPqOejEnl87S90EWoaHtQ08J
+         +e9ZsfIt1JjLI+oFXe58W1NSYR1RkrWd8GsGchwWZHisJS1jUPWAgg+ftSMt7pUmXoVf
+         I92ZsAVjDQYvANzw1rk3HXfZL+erRw9vAj2mTQF4A/31YdbXsyZuh4MaMQGXP+16MSvy
+         OB9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680198723; x=1682790723;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4IR9SAM3kCBb7sI+E1m5cavLGwgTgCiGLAf0/i0xTGs=;
+        b=SqMT8JtQjLtZugviocfMDZ1EFV7L2raqHODJKipib8sK+fx3XirvKPjspr+K6yDX6c
+         f1wJYcGu+/FRH00mHH6HRIH/qy4e0zhSupCPIIpiIhPML6qAXwuyqZYIJNACBCYBAwvm
+         33KcYaQDjOkKqtT/YPM8NbhHryFpxVrwhN++LE9qIzp/OkuGnz0CoA8Az0J8DMiHdwNq
+         Oe4sUPtNZ6qFtbuQSF+s/EfOWa7BDEQPIA4k2V3U71uldVcchIfLvRJdXsOaZ6RvZbIA
+         c/xJMrYj2QOr3n4vf1NWO1xNGjk0sg/C9qBJgoks/wWpLXEaH66g1iQ/EYWvuBumL+oG
+         rQng==
+X-Gm-Message-State: AAQBX9fEswe1VX0p3o48zHEWN1hbsxg/EJ6jg2r5eAUf50IF9VU8P2Fl
+        ei3p3vCBHnl/h2AnjbmtbbQ=
+X-Google-Smtp-Source: AKy350Z8Mtc2vYf4x+x2ABACFrvEg6sLt6QSC1cYwtcxUxIYKqmd/KO0J/rRV8HKQmERsmUh/XLC0w==
+X-Received: by 2002:a05:6214:b64:b0:5b8:1f61:a20 with SMTP id ey4-20020a0562140b6400b005b81f610a20mr45046940qvb.35.1680198722777;
+        Thu, 30 Mar 2023 10:52:02 -0700 (PDT)
+Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
+        by smtp.gmail.com with ESMTPSA id z6-20020a0cfec6000000b005dd8b9345a0sm5617916qvs.56.2023.03.30.10.51.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Mar 2023 10:51:57 -0700 (PDT)
+Date:   Thu, 30 Mar 2023 13:51:56 -0400
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To:     David Howells <dhowells@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Message-ID: <6425cc3c9d750_21f56920832@willemb.c.googlers.com.notmuch>
+In-Reply-To: <854582.1680188845@warthog.procyon.org.uk>
+References: <64259c7b2b327_21883920818@willemb.c.googlers.com.notmuch>
+ <20230329141354.516864-1-dhowells@redhat.com>
+ <20230329141354.516864-5-dhowells@redhat.com>
+ <854582.1680188845@warthog.procyon.org.uk>
+Subject: Re: [RFC PATCH v2 04/48] net: Declare MSG_SPLICE_PAGES internal
+ sendmsg() flag
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 30, 2023 at 10:22:10AM -0700, Eric Biggers wrote:
->On Thu, Mar 30, 2023 at 10:05:39AM -0400, Sasha Levin wrote:
->> On Thu, Mar 30, 2023 at 12:08:01AM +0000, Eric Biggers wrote:
->> > Hi Sasha,
->> >
->> > On Mon, Feb 27, 2023 at 07:52:39PM -0500, Sasha Levin wrote:
->> > > > Sasha, 7 days is too short.  People have to be allowed to take holiday.
->> > >
->> > > That's true, and I don't have strong objections to making it longer. How
->> > > often did it happen though? We don't end up getting too many replies
->> > > past the 7 day window.
->> > >
->> > > I'll bump it to 14 days for a few months and see if it changes anything.
->> >
->> > I see that for recent AUTOSEL patches you're still using 7 days.  In fact, it
->> > seems you may have even decreased it further to 5 days:
->> >
->> >    Sent Mar 14: https://lore.kernel.org/stable/20230314124435.471553-2-sashal@kernel.org
->> >    Commited Mar 19: https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/commit/?id=69aaf98f41593b95c012d91b3e5adeb8360b4b8d
->> >
->> > Any update on your plan to increase it to 14 days?
->>
->> The commit you've pointed to was merged into Linus's tree on Feb 28th,
->> and the first LTS tree that it was released in went out on March 22nd.
->>
->> Quoting the concern you've raised around the process:
->>
->> > BTW, another cause of this is that the commit (66f99628eb24) was AUTOSEL'd after
->> > only being in mainline for 4 days, and *released* in all LTS kernels after only
->> > being in mainline for 12 days.  Surely that's a timeline befitting a critical
->> > security vulnerability, not some random neural-network-selected commit that
->> > wasn't even fixing anything?
->>
->> So now there's at least 14 days between mainline inclusion and a release
->> in an LTS kernel, does that not conform with what you thought I'd be
->> doing?
->
->Not quite.  There are actually two different time periods:
->
->1. The time from mainline to release
->2. The time from AUTOSEL email to release
->
->(1) is a superset of (2), but concerns were raised about *both* time periods
->being too short.  Especially (1), but also (2) because reviewers can miss the
->7-day review e.g. if they are on vacation for a week.  Yes, they can of course
->miss non-AUTOSEL patches too, *if* they happen to get merged quickly enough
->(most kernel patches take several weeks just to get to mainline).  But, AUTOSEL
->patches are known to be low quality submissions that really need that review.
->
->I'm glad to hear that you've increased (1) to 14 days!  However, that does not
->address (2).  It also does not feel like much of a difference, since 12 days for
->(1) already seemed too short.
->
->To be honest, I hesitate a bit to give you a precise suggestion, as it's liable
->to be used to push back on future suggestions as "this is what people agreed on
->before".  (Just as you did in this thread, with saying 7 days had been agreed on
->before.)  And it's not like there are any magic numbers -- we just know that the
->current periods seem to be too short.  But, for a simple change, I think
->increasing (2) to 14 days would be reasonable, as that automatically gives 14
->days for (1) too.  If it isn't too much trouble to separate the periods, though,
->it would also be reasonable to choose something a bit higher for (1), like 18-21
->days, and something a bit lower for (2), like 10-12 days.
+David Howells wrote:
+> Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+> 
+> > No need to modify __sys_sendmmsg explicitly, as it ends up calling
+> > __sys_sendmsg?
+> > 
+> > Also, sendpage does this flags masking in the internal sock_FUNC
+> > helpers rather than __sys_FUNC. Might be preferable.
+> 
+> I was wondering whether other flags, such as MSG_BATCH should be added to the
+> list.  Is it bad if userspace sets that in sendmsg()?  AF_KCM, at least, looks
+> at it.
 
-No objection on my end, I can enforce 18+ days for (1) and 14+ days for (2).
-
-I'd note that this isn't too far from what happened in the example in
-the previous mail:
-
-  (1) happened in 23 days.
-  (2) happened in 9 days.
-
--- 
-Thanks,
-Sasha
+That flag was added exactly for AF_KCM. A process that explicitly
+sets it might experience bad behavior (increased latency), but
+there are no legacy AF_KCM applications that precede the flag.
