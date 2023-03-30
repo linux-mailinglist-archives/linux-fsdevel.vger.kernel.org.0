@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A40B36CFFC9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 11:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED16B6CFFFA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 11:42:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230094AbjC3JaA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Mar 2023 05:30:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56352 "EHLO
+        id S229470AbjC3JmS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Mar 2023 05:42:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230016AbjC3J37 (ORCPT
+        with ESMTP id S229585AbjC3JmP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Mar 2023 05:29:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD007693
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 02:29:17 -0700 (PDT)
+        Thu, 30 Mar 2023 05:42:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B95967A87
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 02:41:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680168556;
+        s=mimecast20190719; t=1680169291;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=+XgWAMkX5gl81w36XkfWKNCMFULxOFJmmzo6Xs6xITY=;
-        b=VyxB1NNhEjH7AWD1MbEBKslgSyYpUSp5adkL4tMexfkhgWiiPhOB4nqlORqhrTog/JXJoT
-        2GlNw0o8u2L3iC5jFQWSObYr+cnP4foLvYEgxtIPde4nh1KX9gkASmhRhIf3ZQ6lBhV2Em
-        bTQVmbCyDGTD2O+N45hsZ7EbZmcFi+Q=
+        bh=mdeKPljJ04L5Zu/e3M2HbmrNI2/PIT36ixWTFqAG+bc=;
+        b=NARIvNOztsRzqg3UGR8KcVVu1ntw4cKRq1LfV0hwMM1x/Def0KxJo+TJnWdu85hUA9s2uJ
+        lX94Dy6aMg/79UFGtbufZDhPAb6+zXpgNz5DNBs3LeA6A1EAmP6L+m4acIFB1LKlzVckEf
+        f+tkqWyna3fHiuwN0cnPLE5DcWujcW8=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-544-jczfNWu4OtqMRHX0J7vacA-1; Thu, 30 Mar 2023 05:29:11 -0400
-X-MC-Unique: jczfNWu4OtqMRHX0J7vacA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+ us-mta-29-iTWDHOayP72Oh1RXlrE68w-1; Thu, 30 Mar 2023 05:41:21 -0400
+X-MC-Unique: iTWDHOayP72Oh1RXlrE68w-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8C7768828CB;
-        Thu, 30 Mar 2023 09:29:10 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F3986185A792;
+        Thu, 30 Mar 2023 09:41:19 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BE8D34020C82;
-        Thu, 30 Mar 2023 09:29:07 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D4032492C3E;
+        Thu, 30 Mar 2023 09:41:17 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
@@ -65,10 +65,10 @@ Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
 Subject: Re: [RFC PATCH v2 40/48] sunrpc: Use sendmsg(MSG_SPLICE_PAGES) rather then sendpage
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <777294.1680168547.1@warthog.procyon.org.uk>
-Date:   Thu, 30 Mar 2023 10:29:07 +0100
-Message-ID: <777295.1680168547@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+Content-ID: <778589.1680169277.1@warthog.procyon.org.uk>
+Date:   Thu, 30 Mar 2023 10:41:17 +0100
+Message-ID: <778590.1680169277@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -81,16 +81,12 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Chuck Lever III <chuck.lever@oracle.com> wrote:
 
-> It seems to me that you could eliminate the kernel_sendpage()
-> consumer here in svc_tcp_sendmsg() without also replacing the
-> kernel_sendmsg() calls. That would be a conservative step-wise
-> approach which would carry less risk, and would accomplish
-> your stated goal without more radical surgery.
+> > +	if (ret > 0)
+> > +		*sentp = ret;
 
-Note that only the marker is sent with kernel_sendmsg() in the unmodified
-code; the head and tail are sent with svc_tcp_send_kvec()... which uses
-kernel_sendpage() which needs to be changed in my patchset.  I can make it do
-individual sendmsg calls for all those for now.
+Should that be:
+
+		*sentp = ret - sizeof(marker);
 
 David
 
