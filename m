@@ -2,86 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E5F186D0F50
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 21:50:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48CE46D10AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 23:17:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbjC3TuA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Mar 2023 15:50:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50978 "EHLO
+        id S229874AbjC3VRh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Mar 2023 17:17:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbjC3Tt7 (ORCPT
+        with ESMTP id S229840AbjC3VRg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Mar 2023 15:49:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5C64FE
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 12:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680205756;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SddvNhZVCnLkOCaJmUvGyihusO+BbFPSsMBYa6D5skE=;
-        b=HFg5+SY2XAdbhFrHWGWlSci/Ns4uxyLhS9PTN77AztVzTyPV4fs9U+bCEZm2lfKOXLahUL
-        tYM1VBCtumix/mU33wNRzi/toE8mZISBQfHx/zfVmAOjGEjAFPMPzExVeq43se3BmF1PWW
-        9N6xbLOmr2JjxUmwvLMNv3D3o92sXs0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-99-g-3msm29M0yAeG9HEBlmEg-1; Thu, 30 Mar 2023 15:49:12 -0400
-X-MC-Unique: g-3msm29M0yAeG9HEBlmEg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 30 Mar 2023 17:17:36 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F2C919A6;
+        Thu, 30 Mar 2023 14:17:34 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 22C3B3814593;
-        Thu, 30 Mar 2023 19:49:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2EE222166B33;
-        Thu, 30 Mar 2023 19:49:09 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <6425cd07c25dc_21f56920810@willemb.c.googlers.com.notmuch>
-References: <6425cd07c25dc_21f56920810@willemb.c.googlers.com.notmuch> <64259aca22046_21883920890@willemb.c.googlers.com.notmuch> <20230329141354.516864-1-dhowells@redhat.com> <20230329141354.516864-17-dhowells@redhat.com> <854811.1680189069@warthog.procyon.org.uk>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 16/48] ip, udp: Support MSG_SPLICE_PAGES
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 46306219C3;
+        Thu, 30 Mar 2023 21:17:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1680211053; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XDpjBQjPx/Cm6DB4FecJ0EA4XNsAu0nyZ0g7+LvXuic=;
+        b=fSv8LA1kQQQhxKTvS6jzcSnbb51cz/MyciUpw7ICiNWNBed3fE0s3JQkQ6GS6B+2sj4x0z
+        enWDBO1LU7Hdai+y4f3p3anvtICUah5RfpAYispxWpCfDc5Q2qsEabbY+DcIg2JrcNepSW
+        T5m9IOrh4oLpM8FwWBUD+woG8XxjS+k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1680211053;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XDpjBQjPx/Cm6DB4FecJ0EA4XNsAu0nyZ0g7+LvXuic=;
+        b=2XKtwizXGxkGw/dUw5fnR3rchsECyBf95u6Ix8oYpzPgTHoWYp1S+b769qTrfzHzmYpexP
+        z304ldSj9qUrE2DA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 17463133E0;
+        Thu, 30 Mar 2023 21:17:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 6ocIBG38JWSecgAAMHmgww
+        (envelope-from <ddiss@suse.de>); Thu, 30 Mar 2023 21:17:33 +0000
+Date:   Thu, 30 Mar 2023 23:19:10 +0200
+From:   David Disseldorp <ddiss@suse.de>
+To:     Steve French <smfrench@gmail.com>
+Cc:     linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] cifs: fix DFS traversal oops without
+ CONFIG_CIFS_DFS_UPCALL
+Message-ID: <20230330231910.1bed68a1@echidna.fritz.box>
+In-Reply-To: <CAH2r5mtEXtRWbtf9OAzwWa2Wm6fUR+fZrU=OmtiP3E0VQpn+2w@mail.gmail.com>
+References: <20230329202406.15762-1-ddiss@suse.de>
+        <CAH2r5mtEXtRWbtf9OAzwWa2Wm6fUR+fZrU=OmtiP3E0VQpn+2w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1024851.1680205748.1@warthog.procyon.org.uk>
-Date:   Thu, 30 Mar 2023 20:49:08 +0100
-Message-ID: <1024852.1680205748@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+Hi Steve,
 
-> Yes exactly. I wasn't sure whether the inner loops required access to
-> too many function scope variables to pull this off. But seems like it
-> is doable. Great.
+On Wed, 29 Mar 2023 18:20:33 -0500, Steve French wrote:
 
-The same helpers can be used for both ipv4 and ipv6 as it turns out.
+> merged into cifs-2.6.git for-next and added Paulo's Reviewed-by
 
-David
+Thanks, although I'm only aware of Ronnie's review (in this thread).
 
+> On Wed, Mar 29, 2023 at 3:23=E2=80=AFPM David Disseldorp <ddiss@suse.de> =
+wrote:
+>=20
+> > When compiled with CONFIG_CIFS_DFS_UPCALL disabled, cifs_dfs_d_automount
+> > NULL. cifs.ko logic for mapping CIFS_FATTR_DFS_REFERRAL attributes to
+    ^^
+If you're fixing the reviewed-by, then please also add the missing
+"is" between "cifs_dfs_d_automount NULL".
+
+Cheers, David
