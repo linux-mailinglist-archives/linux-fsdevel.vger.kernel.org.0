@@ -2,98 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D81546CFD86
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 09:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4165E6CFE17
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 10:21:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229924AbjC3H7I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Mar 2023 03:59:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35788 "EHLO
+        id S230476AbjC3IUj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Mar 2023 04:20:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229904AbjC3H7H (ORCPT
+        with ESMTP id S230302AbjC3IUW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Mar 2023 03:59:07 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10hn2208.outbound.protection.outlook.com [52.100.155.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F10C418F;
-        Thu, 30 Mar 2023 00:59:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ES4FZ+f8YrrblWamVwGMNQ+l4TwnJS95d0EaqUnVASkp8SvrYiv6xiZ9OcYfF5L3fODfWESsl2IsnVs0Nnv8BlRWUVJQlRfrKOkUCdiA2TsbC+XHuPQ2Ug1YhNJqgg/n3+YE5CTRFQe6kA6ae7xJd14uPm0vZLAlomKBZVhQMK5QWoATDcrbqVotpUvuKeOR3lUsw/pzhMsXY4qsA2FsstOmZkjxAr8m22eN5Tfk8zUStDwNG3LUVOC8LgIvDXbBD0P6EAJnO3sWeYXy115HrbMxcou7ho5FBZjfOK4s3YfBJJa+8V6DimI/uvIT4Ka6YLZIejEMDFfTSkdIldH0Lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G4LsvzOsnlj7xL/z34pqZ5k95dBpzOzNg24T2nzOzs0=;
- b=A96EduvljmvTBR+tA2LUCSj9j37YSyP08PCV21KIBqkiLkgYsIfCMlNoSRBTI7n7UjhgoyQ23Wz53ut/Z0PYy9ITy/NrqRsOZO3Wx691gxbxHmk0+kZ6xOg/k1uSgxuXQDD9UN1yrMS90MNm7G4NG+IT8a6QXgUlWIw0J71BcIO0Gg7AFFj9cOJzWMa4s2t/vqYxnfxlZZJe42/ZqkpGUd2I19cON66wkAfYjVZaa5TvTxR7L+5QXelPGgfGPtXFOTNmuQ21zAH2AVRf0rZYzNgYNG1mHFyQQnZP3IrzHSmHhZ4nH3BRSLWPGcPAOLa3xkMNxzFskSwsQzA/py0CNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 201.217.50.26) smtp.rcpttodomain=yahoo.com smtp.mailfrom=ips.gov.py;
- dmarc=bestguesspass action=none header.from=ips.gov.py; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ipspy.onmicrosoft.com;
- s=selector2-ipspy-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G4LsvzOsnlj7xL/z34pqZ5k95dBpzOzNg24T2nzOzs0=;
- b=azCyvfo6zC7yeq3RRij4rRfk2r1QyGqojSh/pe2zrOyL3zItS4UvhcRPph3Kf/XTHT+JHi19PpN2kiEKUOKnUBQ/52gHB2xdOwhq1BWm5VSxAfFrJcptlOjV+xfV84Bq782ZWhF9aOMYt8+00TSVo8TMsFAAQcajrp9Ltjuxnqc=
-Received: from DM6PR07CA0103.namprd07.prod.outlook.com (2603:10b6:5:330::35)
- by CPTP152MB4406.LAMP152.PROD.OUTLOOK.COM (2603:10d6:103:fd::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.20; Thu, 30 Mar
- 2023 07:58:57 +0000
-Received: from DM6NAM10FT028.eop-nam10.prod.protection.outlook.com
- (2603:10b6:5:330:cafe::c1) by DM6PR07CA0103.outlook.office365.com
- (2603:10b6:5:330::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.22 via Frontend
- Transport; Thu, 30 Mar 2023 07:58:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 201.217.50.26)
- smtp.mailfrom=ips.gov.py; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=ips.gov.py;
-Received-SPF: Pass (protection.outlook.com: domain of ips.gov.py designates
- 201.217.50.26 as permitted sender) receiver=protection.outlook.com;
- client-ip=201.217.50.26; helo=mail.ips.gov.py; pr=C
-Received: from mail.ips.gov.py (201.217.50.26) by
- DM6NAM10FT028.mail.protection.outlook.com (10.13.152.240) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.6222.17 via Frontend Transport; Thu, 30 Mar 2023 07:58:57 +0000
-Received: from VS-W12-EXCH-01.ips.intranet.local (10.20.11.161) by
- vs-w12-exch-02.ips.intranet.local (10.20.11.162) with Microsoft SMTP Server
- (TLS) id 15.0.1497.42; Thu, 30 Mar 2023 03:58:52 -0400
-Received: from VS-W12-EXCH-01.ips.intranet.local ([fe80::4157:7765:5532:ff9a])
- by vs-w12-exch-01.ips.intranet.local ([fe80::4157:7765:5532:ff9a%14]) with
- mapi id 15.00.1497.042; Thu, 30 Mar 2023 03:58:52 -0400
-From:   Sara Mereles Colman <smereles@ips.gov.py>
-To:     "21@hotmail.com" <21@hotmail.com>
-Subject: =?iso-8859-1?Q?MAESTR=CDA?=
-Thread-Topic: =?iso-8859-1?Q?MAESTR=CDA?=
-Thread-Index: AQHZYtydIuxelvslgkGsEfuqOp6JkQ==
-Date:   Thu, 30 Mar 2023 07:58:52 +0000
-Message-ID: <1680163095518.37954@ips.gov.py>
-Accept-Language: es-PY, es-PE, en-US
-Content-Language: es-PY
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [191.96.227.51]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 30 Mar 2023 04:20:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 120A71727
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 01:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680164374;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=F6jCDp5R5UTDCRaJgvAusDHOREnAzeh37U4DgZVNJuM=;
+        b=cAIrlPIG5njsVVlW0HKNysgG0csXoyGqeyhzugJ65zhvFwlFLwMV8RytU6XrFnu+riB10c
+        ZWV8qf4mdCHh9bWSWXMn7q2iByjRzJ71eXe1JrgpmKG9rP5vkFIKtCjsrbmgGJaV3oV+Bn
+        IWQbzLhKUCetZDwOJrsNX6lyfcaqTy4=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-468-GOgSTpdJOKW7Tx_pCT246A-1; Thu, 30 Mar 2023 04:19:32 -0400
+X-MC-Unique: GOgSTpdJOKW7Tx_pCT246A-1
+Received: by mail-ed1-f72.google.com with SMTP id s30-20020a508d1e000000b005005cf48a93so25886928eds.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 01:19:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680164371;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F6jCDp5R5UTDCRaJgvAusDHOREnAzeh37U4DgZVNJuM=;
+        b=dAnqvyFHToZTlw891uvSpaiGA9Ji58o9IuPckEgTdOnZS4XcveC79By6LttroaZaL7
+         PXyn5+cF2Iw4wk7Vnu3ymPpASyTuH+YPMB8KV8xW4bMcq+70mVzFrFsXozvfQQkHCTiQ
+         BBuIcUZtQ40f+WrAxXtSgHWZ6SaO1US+I9exp7amEyEzcNSHTCku2Ta2i5+zaR40bupA
+         BMZQyR0J3gRJz39aCcWavCwFZKDk6bA+bliqLlCKyPsF1qU/lJFHxLluKEQjNPuYjQ4P
+         66t1FPks/fxKQtzdUjlf5+4kgdTAWtPR3chsyIXc76ehgw2mFG6VUVabIgO8elwhV3tg
+         t1Xw==
+X-Gm-Message-State: AAQBX9exYS6HsZPh51jUztSSkM6vYyx9IdQ60rp8V+LjwkvD6laIGsf8
+        gswDqK+TU1iZjX4CJjGmE6v3woAG9L+bInp5NuhmYfAzvB/hEE37RIh9trOHUxtJqebR8EoGD11
+        TI7KOoGLFhFOJGmTsijfmkLxYoA==
+X-Received: by 2002:aa7:ccc7:0:b0:4ac:b614:dd00 with SMTP id y7-20020aa7ccc7000000b004acb614dd00mr20695727edt.30.1680164371221;
+        Thu, 30 Mar 2023 01:19:31 -0700 (PDT)
+X-Google-Smtp-Source: AKy350apSQp5MBlS/cA/cdZpOW4RsJ11da4ieQjuIibFRO7HEAy3t2ntlH34TjEdg6AUTexNtD9DcA==
+X-Received: by 2002:aa7:ccc7:0:b0:4ac:b614:dd00 with SMTP id y7-20020aa7ccc7000000b004acb614dd00mr20695718edt.30.1680164370986;
+        Thu, 30 Mar 2023 01:19:30 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id v15-20020a50c40f000000b004d8d2735251sm18024701edf.43.2023.03.30.01.19.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Mar 2023 01:19:30 -0700 (PDT)
+Message-ID: <1e6460f9-5dbe-57a4-2986-ff3cbf5a39ad@redhat.com>
+Date:   Thu, 30 Mar 2023 10:19:29 +0200
 MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM10FT028:EE_|CPTP152MB4406:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c08420c-cc1f-4e39-8ad1-08db30f49d66
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: JAJixl3Kzi5Ek9MCH8z2aeKvpbYkaL7r86F/frYqLOJbp9ZPdEnCn5x29UgflclWsWB/0JiTrkeFE+1OTWACKCTPbuIw6KZu8oN9ISWk76S8MbBNamUMnUU08s01v72eQDSdmNf1Ew+rC3PywFJxtoWyg9IjmdZf147V0LpgqBoX5QNVEitEOGyvKYs+105qPlHs2WRa5ffuQRRhro+d6WsUFx0c4G/B7fxH4lP4GhDGdiDgdKiFOgvknxLHvjpg4WmPS+Wyz5CIZttOkV9i1ESBFAHYvNBADsXbn7YGWm9+DLMEwYRou9YZ/XD3/3R4/N0cwp5UOFdnfPB22DoALf3W4+sVtNr9LOy2jnlfLbowVRrbXn1HK9O65JHZkM92J+so9IGX1g3AHNVANA/0NFFDfuqwuRUN2JO9FOJ+yh19AuGqShrTKj9Iw4LXVKNdAXdNbMa/1ENclaKuq88QA1lRwFYv4zbDq4c1HnGvTKnR3tglRFZMb4+kRLReCFqVx4uy0rt9XMpgw4G0X0iyDvR0kfgLDKfZEV4bUowfwo9DxUMdjRn2ijEiUInLfuyjgRCZhuoL7fq6nGSFgELGJxmkwfzYZaugPD/GfslZrXogm9pKKgsMe69h6nGIE6HX+NpIhIeG9SaRE1MM38UD3c4jAgJx+oUP9zqoM/cew9J1KaGDzNWObaLvSjik4Gkoyb3AF4U3rvz+SX8xSKoaJuQgcJ6fezf6psUQ30Bcn6TM0fSkakJ2oDHgIg7jouqRsRThaZ9zsi3CfpkWIEu97g==
-X-Forefront-Antispam-Report: CIP:201.217.50.26;CTRY:PY;LANG:es;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.ips.gov.py;PTR:mail.ips.gov.py;CAT:NONE;SFS:(13230028)(376002)(396003)(136003)(39860400002)(346002)(451199021)(40470700004)(36840700001)(46966006)(2906002)(6862004)(8936002)(86362001)(66899021)(41300700001)(70206006)(70586007)(186003)(36756003)(316002)(55236004)(7336002)(7416002)(47076005)(224303003)(26005)(7366002)(7276002)(7406005)(356005)(82310400005)(4744005)(5660300002)(83380400001)(40480700001)(36860700001)(2616005)(66574015)(336012)(478600001)(7596003)(82740400003)(40460700003)(567454004)(17680700008)(487294008);DIR:OUT;SFP:1501;
-X-OriginatorOrg: ips.gov.py
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2023 07:58:57.0672
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c08420c-cc1f-4e39-8ad1-08db30f49d66
-X-MS-Exchange-CrossTenant-Id: 601d630b-0433-4b64-9f43-f0b9b1dcab7f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=601d630b-0433-4b64-9f43-f0b9b1dcab7f;Ip=[201.217.50.26];Helo=[mail.ips.gov.py]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM10FT028.eop-nam10.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CPTP152MB4406
-X-Spam-Status: No, score=-0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] fs: vboxsf: remove unused out_len variable
+Content-Language: en-US, nl
+To:     Tom Rix <trix@redhat.com>, nathan@kernel.org,
+        ndesaulniers@google.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+References: <20230329230310.1816101-1-trix@redhat.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20230329230310.1816101-1-trix@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -101,149 +82,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I have a project offer for you. contact my private email below.
+Hi,
+
+On 3/30/23 01:03, Tom Rix wrote:
+> clang with W=1 reports
+> fs/vboxsf/utils.c:442:9: error: variable
+>   'out_len' set but not used [-Werror,-Wunused-but-set-variable]
+>         size_t out_len;
+>                ^
+> This variable is not used so remove it.
+> 
+> Signed-off-by: Tom Rix <trix@redhat.com>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  fs/vboxsf/utils.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/fs/vboxsf/utils.c b/fs/vboxsf/utils.c
+> index dd0ae1188e87..ab0c9b01a0c2 100644
+> --- a/fs/vboxsf/utils.c
+> +++ b/fs/vboxsf/utils.c
+> @@ -439,7 +439,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
+>  {
+>  	const char *in;
+>  	char *out;
+> -	size_t out_len;
+>  	size_t out_bound_len;
+>  	size_t in_bound_len;
+>  
+> @@ -447,7 +446,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
+>  	in_bound_len = utf8_len;
+>  
+>  	out = name;
+> -	out_len = 0;
+>  	/* Reserve space for terminating 0 */
+>  	out_bound_len = name_bound_len - 1;
+>  
+> @@ -468,7 +466,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
+>  
+>  		out += nb;
+>  		out_bound_len -= nb;
+> -		out_len += nb;
+>  	}
+>  
+>  	*out = 0;
 
-E-Mail: :drcc7072@gmail.com
-
-
-for more information.??
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-MAESTR=CDA
-Maestr=EDa en Direcci=F3n y Administraci=F3n de Empresas (ver+)
-Maestr=EDa en Asuntos P=FAblicos y Gobernabilidad (ver+)
-Maestr=EDa en Gesti=F3n P=FAblica (ver+)
-Maestr=EDa en Prevenci=F3n de Riesgos Laborales (ver+)
-Maestr=EDa en Derecho Penal y Procesal Penal (ver+)
-ESPECIALIZACI=D3N
-Especializaci=F3n en Cirug=EDa Dentoalveolar (ver+)
-
-
-PUBLICACI=D3N DEL DEPARTAMENTO DE COMUNICACI=D3N SOCIAL Y PRENSA DEL IPS??
