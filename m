@@ -2,164 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF7966D0176
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 12:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41B666D01B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 12:45:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230355AbjC3Klx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Mar 2023 06:41:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60002 "EHLO
+        id S231179AbjC3KpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Mar 2023 06:45:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229655AbjC3Klv (ORCPT
+        with ESMTP id S231216AbjC3Koe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Mar 2023 06:41:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E6E83FC;
-        Thu, 30 Mar 2023 03:41:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8E8A4B82761;
-        Thu, 30 Mar 2023 10:41:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA350C433EF;
-        Thu, 30 Mar 2023 10:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680172907;
-        bh=xbkcH3z5FERTunIMLkCwebfkN7aRmZeu7yuUR3+B4d4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=n1XIdtVxMHmSTRrgkn/rALXQTyYMIl/jH9+CoGRRp+bZe6wQ7+sqGlLDLca8L67Ou
-         UZj0GsUDJw3mRpzIkImt71YEux6mS4XItoC2y0ZfvdtFhAt6/zNnjtTIxsabW7zqBP
-         YRSiS0zsV2nbQYostyrOXpx6pwnl5fTOJfyVinA5bCiNOjutnZC1Q0VbvY5O5OPg9d
-         73tahkLP4LYXk+bXr4mmk04xBTRTh+YvMhJeCeylUctMxIE2GCgtne1oCQMyyAiT3w
-         ItaNvzmAWYj48Aln6964DOTawaeIZtH/X1W7FhnZo2u3DCcl1FpclEXv/cWTwrzqys
-         yinIDlNnGt7sw==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Joel Becker <jlbec@evilplan.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     v9fs-developer@lists.sourceforge.net,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Phillip Potter <phil@philpotter.co.uk>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: consolidate duplicate dt_type helpers
-Date:   Thu, 30 Mar 2023 06:41:43 -0400
-Message-Id: <20230330104144.75547-1-jlayton@kernel.org>
+        Thu, 30 Mar 2023 06:44:34 -0400
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246977ED7;
+        Thu, 30 Mar 2023 03:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1680173052; x=1711709052;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pah75tbPpb3psPa1ecpfetIOIRQ7nD0HV9ZPD7l84bo=;
+  b=iaW6jdfzOcsIkgftcWn7/dnvqLqTRb3aGOTUxb9YfoNdpfVo7/LvkmPf
+   UPLCpg0fYpFWEDLaMiJrQxC/i10Xqxn0tE1/MGk8mLIfWpgxhMRJ+yX+6
+   qvM6+Dak+trLscusnfdS6lBN7MsY3Ra5D5tRwDiWOR2TM+hbLtDIieYq1
+   phVMmCgd37Vyslf1oR/vd2sMxQiGjWw0S5gCAZxv0mzmfPz+vRRfH7www
+   6iCu2acuxnCdkU9JduKRbxB7GfDnfQiWHYkZVVrGDMAF0zR/rt5sjz0xU
+   5nZWpoYCtnk/L/pRt2qkeIl4VU2yx95KwTVBWgNXRSzbsgP0+m4zWqUxM
+   g==;
+X-IronPort-AV: E=Sophos;i="5.98,303,1673884800"; 
+   d="scan'208";a="331317770"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 30 Mar 2023 18:44:06 +0800
+IronPort-SDR: X18T+XH+rcQzbvvo/sNc7r7XEZR5juL8F/K3BFdQXNZHlsghLM5dhSwLJkvPmejKGLPpzx+DTD
+ PaXAI2gp+CnUXYNNezZcy8sjUNzINUoFmcdQLIwMCGkrhqEC5giciE1ACB7ITa801AvqFqDUQG
+ LXYVokCCWDQ6z8nO0f2kzcGSELvl9w3TSEhQoNE8tZcixzAefTakVmkx03kJdKa5QyhxBZItqn
+ Xd/3oJeRkSfF1AZWASXpm2C0ZeCH55hyfmzY4DQzluRb7ARAWJybw1f8rpFkI/p5a6ZeLJVkVu
+ oVI=
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Mar 2023 03:00:14 -0700
+IronPort-SDR: 7gJ8K2GWS1teEbx0EpcTaAq94qX8hrpZe2o+rF7L8m3YPiilRNcRHQOtOnWBcq5Kei46943ftQ
+ AatOKxtS7MFwij2h5iQz2mMf16oXYsi9K+DB6MmYEWH2/wKf6Jhq67kl7/JyCoJSGg9MiCS+W9
+ mrW9LYIwkiiSRZtD5ihMJA2XMHB607JeeUDkojW0OuDyFEQQTb0fVeDCKSKcOQwZLNq8tnSX6N
+ qQnaGAEAQ/tKNJ8ofe6AZpbyjdYyM/XDWamw0cI3BKjamWYlDUpPV17GiKF2irYNfORElYpHoT
+ AxU=
+WDCIronportException: Internal
+Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.72])
+  by uls-op-cesaip01.wdc.com with ESMTP; 30 Mar 2023 03:44:04 -0700
+From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        dm-devel@redhat.com, Song Liu <song@kernel.org>,
+        linux-raid@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v2 00/19] bio: check return values of bio_add_page
+Date:   Thu, 30 Mar 2023 03:43:42 -0700
+Message-Id: <cover.1680172791.git.johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There are three copies of the same dt_type helper sprinkled around the
-tree. Convert them to use the common fs_umode_to_dtype function instead,
-which has the added advantage of properly returning DT_UNKNOWN when
-given a mode that contains an unrecognized type.
+We have two functions for adding a page to a bio, __bio_add_page() which is
+used to add a single page to a freshly created bio and bio_add_page() which is
+used to add a page to an existing bio.
 
-Cc: Chuck Lever <chuck.lever@oracle.com>
-Cc: Phillip Potter <phil@philpotter.co.uk>
-Suggested-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/configfs/dir.c | 9 ++-------
- fs/kernfs/dir.c   | 8 +-------
- fs/libfs.c        | 9 ++-------
- 3 files changed, 5 insertions(+), 21 deletions(-)
+While __bio_add_page() is expected to succeed, bio_add_page() can fail.
 
-v2: consolidate S_DT helper as well
-v3: switch existing dt_type helpers to use fs_umode_to_dtype
-    drop v9fs hunks since they're no longer needed
+This series converts the callers of bio_add_page() which can easily use
+__bio_add_page() to using it and checks the return of bio_add_page() for
+callers that don't work on a freshly created bio.
 
-diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
-index 4afcbbe63e68..18677cd4e62f 100644
---- a/fs/configfs/dir.c
-+++ b/fs/configfs/dir.c
-@@ -1599,12 +1599,6 @@ static int configfs_dir_close(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
--/* Relationship between s_mode and the DT_xxx types */
--static inline unsigned char dt_type(struct configfs_dirent *sd)
--{
--	return (sd->s_mode >> 12) & 15;
--}
--
- static int configfs_readdir(struct file *file, struct dir_context *ctx)
- {
- 	struct dentry *dentry = file->f_path.dentry;
-@@ -1654,7 +1648,8 @@ static int configfs_readdir(struct file *file, struct dir_context *ctx)
- 		name = configfs_get_name(next);
- 		len = strlen(name);
- 
--		if (!dir_emit(ctx, name, len, ino, dt_type(next)))
-+		if (!dir_emit(ctx, name, len, ino,
-+			      fs_umode_to_dtype(next->s_mode)))
- 			return 0;
- 
- 		spin_lock(&configfs_dirent_lock);
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index ef00b5fe8cee..90de0e498371 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -1748,12 +1748,6 @@ int kernfs_rename_ns(struct kernfs_node *kn, struct kernfs_node *new_parent,
- 	return error;
- }
- 
--/* Relationship between mode and the DT_xxx types */
--static inline unsigned char dt_type(struct kernfs_node *kn)
--{
--	return (kn->mode >> 12) & 15;
--}
--
- static int kernfs_dir_fop_release(struct inode *inode, struct file *filp)
- {
- 	kernfs_put(filp->private_data);
-@@ -1831,7 +1825,7 @@ static int kernfs_fop_readdir(struct file *file, struct dir_context *ctx)
- 	     pos;
- 	     pos = kernfs_dir_next_pos(ns, parent, ctx->pos, pos)) {
- 		const char *name = pos->name;
--		unsigned int type = dt_type(pos);
-+		unsigned int type = fs_umode_to_dtype(pos->mode);
- 		int len = strlen(name);
- 		ino_t ino = kernfs_ino(pos);
- 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 4eda519c3002..89cf614a3271 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -174,12 +174,6 @@ loff_t dcache_dir_lseek(struct file *file, loff_t offset, int whence)
- }
- EXPORT_SYMBOL(dcache_dir_lseek);
- 
--/* Relationship between i_mode and the DT_xxx types */
--static inline unsigned char dt_type(struct inode *inode)
--{
--	return (inode->i_mode >> 12) & 15;
--}
--
- /*
-  * Directory is locked and all positive dentries in it are safe, since
-  * for ramfs-type trees they can't go away without unlink() or rmdir(),
-@@ -206,7 +200,8 @@ int dcache_readdir(struct file *file, struct dir_context *ctx)
- 
- 	while ((next = scan_positives(cursor, p, 1, next)) != NULL) {
- 		if (!dir_emit(ctx, next->d_name.name, next->d_name.len,
--			      d_inode(next)->i_ino, dt_type(d_inode(next))))
-+			      d_inode(next)->i_ino,
-+			      fs_umode_to_dtype(d_inode(next)->i_mode)))
- 			break;
- 		ctx->pos++;
- 		p = &next->d_child;
+Lastly it marks bio_add_page() as __must_check so we don't have to go again
+and audit all callers.
+
+Changes to v1:
+- Removed pointless comment pointed out by Willy
+- Changed commit messages pointed out by Damien
+- Colledted Damien's Reviews and Acks
+
+Johannes Thumshirn (19):
+  swap: use __bio_add_page to add page to bio
+  drbd: use __bio_add_page to add page to bio
+  dm: dm-zoned: use __bio_add_page for adding single metadata page
+  fs: buffer: use __bio_add_page to add single page to bio
+  md: use __bio_add_page to add single page
+  md: raid5-log: use __bio_add_page to add single page
+  md: raid5: use __bio_add_page to add single page to new bio
+  btrfs: repair: use __bio_add_page for adding single page
+  btrfs: raid56: use __bio_add_page to add single page
+  jfs: logmgr: use __bio_add_page to add single page to bio
+  gfs: use __bio_add_page for adding single page to bio
+  zonefs: use __bio_add_page for adding single page to bio
+  zram: use __bio_add_page for adding single page to bio
+  floppy: use __bio_add_page for adding single page to bio
+  md: check for failure when adding pages in alloc_behind_master_bio
+  md: raid1: use __bio_add_page for adding single page to bio
+  md: raid1: check if adding pages to resync bio fails
+  dm-crypt: check if adding pages to clone bio fails
+  block: mark bio_add_page as __must_check
+
+ drivers/block/drbd/drbd_bitmap.c |  4 +---
+ drivers/block/floppy.c           |  2 +-
+ drivers/block/zram/zram_drv.c    |  2 +-
+ drivers/md/dm-crypt.c            |  9 ++++++++-
+ drivers/md/dm-zoned-metadata.c   |  6 +++---
+ drivers/md/md.c                  |  4 ++--
+ drivers/md/raid1-10.c            |  7 ++++++-
+ drivers/md/raid1.c               |  5 +++--
+ drivers/md/raid10.c              | 12 ++++++++++--
+ drivers/md/raid5-cache.c         |  2 +-
+ drivers/md/raid5-ppl.c           |  4 ++--
+ fs/btrfs/bio.c                   |  2 +-
+ fs/btrfs/raid56.c                |  2 +-
+ fs/buffer.c                      |  2 +-
+ fs/gfs2/ops_fstype.c             |  2 +-
+ fs/jfs/jfs_logmgr.c              |  4 ++--
+ fs/zonefs/super.c                |  2 +-
+ include/linux/bio.h              |  2 +-
+ mm/page_io.c                     |  8 ++++----
+ 19 files changed, 50 insertions(+), 31 deletions(-)
+
 -- 
 2.39.2
 
