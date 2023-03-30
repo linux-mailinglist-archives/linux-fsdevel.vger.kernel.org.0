@@ -2,91 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED16B6CFFFA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 11:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29AB96D005F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 11:58:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229470AbjC3JmS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Mar 2023 05:42:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38928 "EHLO
+        id S230181AbjC3J6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Mar 2023 05:58:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbjC3JmP (ORCPT
+        with ESMTP id S230107AbjC3J6v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Mar 2023 05:42:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B95967A87
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 02:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680169291;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mdeKPljJ04L5Zu/e3M2HbmrNI2/PIT36ixWTFqAG+bc=;
-        b=NARIvNOztsRzqg3UGR8KcVVu1ntw4cKRq1LfV0hwMM1x/Def0KxJo+TJnWdu85hUA9s2uJ
-        lX94Dy6aMg/79UFGtbufZDhPAb6+zXpgNz5DNBs3LeA6A1EAmP6L+m4acIFB1LKlzVckEf
-        f+tkqWyna3fHiuwN0cnPLE5DcWujcW8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-29-iTWDHOayP72Oh1RXlrE68w-1; Thu, 30 Mar 2023 05:41:21 -0400
-X-MC-Unique: iTWDHOayP72Oh1RXlrE68w-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F3986185A792;
-        Thu, 30 Mar 2023 09:41:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D4032492C3E;
-        Thu, 30 Mar 2023 09:41:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <6F2985FF-2474-4F36-BD94-5F8E97E46AC2@oracle.com>
-References: <6F2985FF-2474-4F36-BD94-5F8E97E46AC2@oracle.com> <20230329141354.516864-1-dhowells@redhat.com> <20230329141354.516864-41-dhowells@redhat.com>
-To:     Chuck Lever III <chuck.lever@oracle.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 40/48] sunrpc: Use sendmsg(MSG_SPLICE_PAGES) rather then sendpage
+        Thu, 30 Mar 2023 05:58:51 -0400
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D767D9A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 02:58:44 -0700 (PDT)
+Received: by mail-il1-f199.google.com with SMTP id i17-20020a056e020d9100b00325a80f683cso12219235ilj.22
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 02:58:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680170324; x=1682762324;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xGovrt1tYy7j+8AtskWTAwdmn8Xhh+IrCSWGXn5YPcQ=;
+        b=dL8L/yAMzKLntw2RnIKzJ4bi0em7G67Q6ZIuF/ilbgWHi4VR4BCsVEb0Q+FjvXwfiq
+         fTynP+qupNd1r8ONKuz1GaWdmL81RSUqJrhy6pV5z33ihHHgzhnVCGO4nnAwJcrx27W+
+         1eyd8lPx31FXLKbNOl876ruAJ1SI5vwGFvBT2VR28bY0UVkW1dFXvC18yCJeoyX6I72k
+         FU7hzK6Fz+F3/pjPsIYORrdfe2J6VKcf+v7MsOV1c3a9y1ujLhHbfFajLtoHp5eXfYJj
+         5ftsrItnp0E6XY1HerclFLWPF6fbOUpvIGJAD66Mrl6RVPee+BiRCWOYZx8wmCpVz4jg
+         ISbQ==
+X-Gm-Message-State: AO0yUKVdLakBrCh8xchJgHfAG4Z8sRxMprf493rqljdzfIoQr8ikkRmt
+        mTjdaKddSvVJg/rR2ggP9J7/HZllGaF55IYcgFu1VDOl/Yle
+X-Google-Smtp-Source: AK7set/3qpUPZ/vKm9iQhB0jKlR95UM8plR+f7zsB8xlWGCd8sD3uW/SDnWAJSOd8mlrJQkL8A5+d85Za+lAuW2zjfwF2/QLoA5y
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <778589.1680169277.1@warthog.procyon.org.uk>
-Date:   Thu, 30 Mar 2023 10:41:17 +0100
-Message-ID: <778590.1680169277@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a5d:9e12:0:b0:745:70d7:4962 with SMTP id
+ h18-20020a5d9e12000000b0074570d74962mr9108124ioh.0.1680170323973; Thu, 30 Mar
+ 2023 02:58:43 -0700 (PDT)
+Date:   Thu, 30 Mar 2023 02:58:43 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000529f1805f81b23c2@google.com>
+Subject: [syzbot] Monthly xfs report
+From:   syzbot <syzbot+listea0b12829deaef4101fd@syzkaller.appspotmail.com>
+To:     djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Chuck Lever III <chuck.lever@oracle.com> wrote:
+Hello xfs maintainers/developers,
 
-> > +	if (ret > 0)
-> > +		*sentp = ret;
+This is a 30-day syzbot report for the xfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/xfs
 
-Should that be:
+During the period, 5 new issues were detected and 0 were fixed.
+In total, 23 issues are still open and 15 have been fixed so far.
 
-		*sentp = ret - sizeof(marker);
+Some of the still happening issues:
 
-David
+Crashes Repro Title
+327     Yes   INFO: task hung in xlog_grant_head_check
+              https://syzkaller.appspot.com/bug?extid=568245b88fbaedcb1959
+85      Yes   KASAN: stack-out-of-bounds Read in xfs_buf_lock
+              https://syzkaller.appspot.com/bug?extid=0bc698a422b5e4ac988c
+81      Yes   WARNING in xfs_qm_dqget_cache_insert
+              https://syzkaller.appspot.com/bug?extid=6ae213503fb12e87934f
+47      Yes   WARNING in xfs_bmapi_convert_delalloc
+              https://syzkaller.appspot.com/bug?extid=53b443b5c64221ee8bad
+44      Yes   INFO: task hung in xfs_buf_item_unpin
+              https://syzkaller.appspot.com/bug?extid=3f083e9e08b726fcfba2
+13      Yes   general protection fault in __xfs_free_extent
+              https://syzkaller.appspot.com/bug?extid=bfbc1eecdfb9b10e5792
+5       Yes   KASAN: use-after-free Read in xfs_btree_lookup_get_block
+              https://syzkaller.appspot.com/bug?extid=7e9494b8b399902e994e
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
