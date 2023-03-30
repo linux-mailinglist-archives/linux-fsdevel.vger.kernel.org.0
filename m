@@ -2,80 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A56776D0313
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 13:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECF076D03F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 13:52:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231251AbjC3L0M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Mar 2023 07:26:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38910 "EHLO
+        id S231138AbjC3Lwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Mar 2023 07:52:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbjC3L0L (ORCPT
+        with ESMTP id S229883AbjC3LwX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Mar 2023 07:26:11 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 507A65266
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 04:26:10 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id er13so34076090edb.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Mar 2023 04:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20210112.gappssmtp.com; s=20210112; t=1680175569;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LbmV1/m0iRIMdszEiLFpPm23pb+GM+oKJhybgX4Y/q0=;
-        b=7npEB7Z2mF4pks1IcI6W2x4mTelolPmRdjaXE8hualLkYH55VmpK9v4BgVGFuka1O3
-         Wqamvk55RwgaLHKcKD1rfIKU5ngqot31zwFYC+nA+eZRlHTV++HwsiVDN22oCc09yb+8
-         +CLeNOP455QI0vk8gnVSe7M4onJY9w0hluBGbca2rTzbLNfhzISqjvVEyl/kJVU7k7xb
-         QwhYOa4TmKcZ0SHXVNjziBhYy5cIfyzy9KL99CGZ2ItVZQOvUgHwcPJJkUNgbiSrVvLB
-         XLCRqPGN8hsEH+N5ZL6eg9XP4S+IsYVcmlvO2iZh3yNed7dBgOA7rnzeAxjnXsfoszNu
-         TZzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680175569;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LbmV1/m0iRIMdszEiLFpPm23pb+GM+oKJhybgX4Y/q0=;
-        b=nMhVjIoHkrU8EN2h8V9N+b+3Fmm16rv9N2I+PeWVHXU/x+QnaG/db6vbjDagFBNs32
-         a6LiZ41wMfz18/VhFII6z2hNAArqjj8Db8HhBGAqpUfe8kETFgD/sNlrPxNp9amIDl9c
-         BjGI3QrluWhmFyRPuOrS9y92mYd5effBLFUToghxyQy5KsqjWol0WtUdIcbvM0EByZWM
-         p6w+HFNeC2Sptz0qJs3ENYS2Gvw8xPG8hJ4CdwABSRCWsT0fsYyPJA48PPI2ywItpV52
-         1aDQ10muID5VEjjXTy2G0At0DwieNB3qGlPev88cgYh9wJ1OPUzaX3fSkONzS+FM3k0M
-         mBEg==
-X-Gm-Message-State: AAQBX9eda8cjn6CN4P+ea+I9638udy25d2Q5tzI8jbXqgirWgwxhPDzo
-        ARYBTodbTWV3KW49V4ZOhRyumvdLEcTMHomr9wRRQMEUv9PMaSOgd2V2vA==
-X-Google-Smtp-Source: AKy350bgmLfs1LFLrqhexga8ZEzABdyA+ciyi2w0mH5aVm7e2T7BHhL+Iw1dn+GzK7sctP8HmCzrOsB0IyHLxDr96xM=
-X-Received: by 2002:a17:906:bc94:b0:8e6:266c:c75e with SMTP id
- lv20-20020a170906bc9400b008e6266cc75emr12086032ejb.14.1680175568761; Thu, 30
- Mar 2023 04:26:08 -0700 (PDT)
+        Thu, 30 Mar 2023 07:52:23 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BF6BBB80;
+        Thu, 30 Mar 2023 04:51:49 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 799F5B81F8C;
+        Thu, 30 Mar 2023 11:51:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 427C1C4339B;
+        Thu, 30 Mar 2023 11:50:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680177064;
+        bh=BnoKw5KS7SaKCVrfQPGiM/jICK730a3ZjfwXB5RR3CQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=POlSe6LxoYYMKbOiomn7vKJp1daNhA6zBC3zbpCeTB4hXDqhO0tiu7Irhbleqmyoh
+         bVdkiG8ecEwGX0RJLtjhgdAUCXM88VWMlIzcgz4X1mngjoDCgum1CR5cUg/89XYeE4
+         arNDkDUF76ddVJRN+kv8eJYiTYX0Bsszqn7d8ysfY+zv55o2QYUBHeurP+KIIr0pCL
+         k010QikBosvJljfbjsVYAOGXHUY2bsoXfvT9f+KE5ZeqGvPxRRVt7iNfR76kPbHF43
+         ff8LKFXEDxHJdXd82kaFS+8UqWPeBljy2Jf/Olkrdpv9/DGuu16BC4F1H2Zx3/2lsf
+         34icUZTPUUzhQ==
+Date:   Thu, 30 Mar 2023 13:50:56 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Joel Becker <jlbec@evilplan.org>,
+        Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        v9fs-developer@lists.sourceforge.net,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: consolidate duplicate dt_type helpers
+Message-ID: <20230330-plunder-revert-f6b2d3199766@brauner>
+References: <20230330104144.75547-1-jlayton@kernel.org>
+ <ZCVpAyA__NrAOVOg@kroah.com>
+ <31bd4a176344cd0746f1ec519eb8caca2ef2ba68.camel@kernel.org>
 MIME-Version: 1.0
-References: <20230330015423.2170293-1-damien.lemoal@opensource.wdc.com> <74e8bca1-a09d-fe6b-36bf-f9030612601e@wdc.com>
-In-Reply-To: <74e8bca1-a09d-fe6b-36bf-f9030612601e@wdc.com>
-From:   Hans Holmberg <hans@owltronix.com>
-Date:   Thu, 30 Mar 2023 13:25:58 +0200
-Message-ID: <CANr-nt0Fma_tbTxo9SKFFgkEYNW+v4h8aDmGYEqfmeSQES89aw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] zonefs: Fix data corruption and error return
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <31bd4a176344cd0746f1ec519eb8caca2ef2ba68.camel@kernel.org>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Retested with this series, and it solves the reported issue.
+On Thu, Mar 30, 2023 at 07:15:36AM -0400, Jeff Layton wrote:
+> On Thu, 2023-03-30 at 12:48 +0200, Greg Kroah-Hartman wrote:
+> > On Thu, Mar 30, 2023 at 06:41:43AM -0400, Jeff Layton wrote:
+> > > There are three copies of the same dt_type helper sprinkled around the
+> > > tree. Convert them to use the common fs_umode_to_dtype function instead,
+> > > which has the added advantage of properly returning DT_UNKNOWN when
+> > > given a mode that contains an unrecognized type.
+> > > 
+> > > Cc: Chuck Lever <chuck.lever@oracle.com>
+> > > Cc: Phillip Potter <phil@philpotter.co.uk>
+> > > Suggested-by: Christian Brauner <brauner@kernel.org>
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/configfs/dir.c | 9 ++-------
+> > >  fs/kernfs/dir.c   | 8 +-------
+> > >  fs/libfs.c        | 9 ++-------
+> > >  3 files changed, 5 insertions(+), 21 deletions(-)
+> > > 
+> > > v2: consolidate S_DT helper as well
+> > > v3: switch existing dt_type helpers to use fs_umode_to_dtype
+> > >     drop v9fs hunks since they're no longer needed
+> > 
+> > You forgot the "v3" in the subject line :(
+> > 
+> 
+> Yeah, I noticed, sorry. It's the attention to detail that makes me such
+> a successful kernel developer! ;)
 
-Tested-by: Hans Holmberg <hans.holmberg@wdc.com>
+/me hides from his own syzbot "good morning" message from earlier today...
 
-On Thu, Mar 30, 2023 at 10:46=E2=80=AFAM Johannes Thumshirn
-<Johannes.Thumshirn@wdc.com> wrote:
->
-> Looks good,
-> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+But honestly, I don't think it's worth resending just to add v3.
