@@ -2,150 +2,305 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC716D11FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 00:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9CA36D11F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 00:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230048AbjC3WMp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Mar 2023 18:12:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46900 "EHLO
+        id S230141AbjC3WHs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Mar 2023 18:07:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjC3WMo (ORCPT
+        with ESMTP id S230329AbjC3WGz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Mar 2023 18:12:44 -0400
-Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5DE6103;
-        Thu, 30 Mar 2023 15:12:42 -0700 (PDT)
-X-Sender-Id: dreamhost|x-authsender|dragan@stancevic.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id E28485C10EC;
-        Thu, 30 Mar 2023 22:03:28 +0000 (UTC)
-Received: from pdx1-sub0-mail-a294.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 1DB9A5C0FBE;
-        Thu, 30 Mar 2023 22:03:28 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1680213808; a=rsa-sha256;
-        cv=none;
-        b=XMaUq83XK1kmiBrVQCBLGELpfGgEqlBZ4POvnXd6Ic9+Js2rKrQc3JQHOgxDHzMMHdHZjX
-        IXkjGVQaJmfdt7UFBG8WX29gnsttJ7DNDYXln+SwfKnnOdnqQcC8gxMEQ4SOHANZq7r47O
-        nwZRfd1yzSIZ7crc/iOAg3oTcYfGePJTK5jYw/cmk6QCUHFfrkTn5aBy8BS2bzP34COw6x
-        dZJ/o6ocv79eaDc/C/sd9MjPdKaqBp5ShwvUeT8XoUWKSf3YKRhdWkN4XrKjuD3Y4juYmp
-        zsMdTvjxEM50ZgfD2OZ/9zrayPxlryo7esfT/43qDYioBchn9CkV0XxnYsoq1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-        s=arc-2022; t=1680213808;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:dkim-signature;
-        bh=yPCzU6F6owMOhqlBeNEFKP1Ymsp3uChE2AkQ2JDym7k=;
-        b=NWs1za+wNjVq6VIWH/eoSppAKw8d4ZBSK6dEk/aghERKTYPh9ypBV9q+JYMxZxlLRcfqCR
-        pqqfDDB6+G1pNcGuFzN6Q8qArtQdgUlbXOidp67tDHAPAvT19OIO5NxCnGFCqzIOYpkVuc
-        6+CKAbMGTgNxX3DwhfVk7RhgdSttTjRl+eRS9Szq/VaYntF4iDSiJlmbjAkpTkyF5Q5N7g
-        dxx1uKXLK8xskkjdpaypCGZRreoJTHrbyEFCylc9/KtYjrZ/K1ognh45NCyOgSC2j+foLq
-        UNXaR+OtH7yC/vfk7eVD9Q2iF91EZBjQxSI47BxFVxI0W2IAOm+cMUCkRcRJkg==
-ARC-Authentication-Results: i=1;
-        rspamd-786cb55f77-rg9g4;
-        auth=pass smtp.auth=dreamhost smtp.mailfrom=dragan@stancevic.com
-X-Sender-Id: dreamhost|x-authsender|dragan@stancevic.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dragan@stancevic.com
-X-MailChannels-Auth-Id: dreamhost
-X-Print-Spicy: 279d1eea155a1243_1680213808495_2461694109
-X-MC-Loop-Signature: 1680213808495:2329669094
-X-MC-Ingress-Time: 1680213808495
-Received: from pdx1-sub0-mail-a294.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.101.8.122 (trex/6.7.2);
-        Thu, 30 Mar 2023 22:03:28 +0000
-Received: from [192.168.1.31] (99-160-136-52.lightspeed.nsvltn.sbcglobal.net [99.160.136.52])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        (Authenticated sender: dragan@stancevic.com)
-        by pdx1-sub0-mail-a294.dreamhost.com (Postfix) with ESMTPSA id 4Pncqx3tpMzJJ;
-        Thu, 30 Mar 2023 15:03:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stancevic.com;
-        s=dreamhost; t=1680213807;
-        bh=yPCzU6F6owMOhqlBeNEFKP1Ymsp3uChE2AkQ2JDym7k=;
-        h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
-        b=hk403yWltsydDPdv3hVya3gI5wErNS+3eFchygO3ZCDDhUtXuy64l4J4TN6pAIzzp
-         7JjTOwoeSQ3o+vMrVSWUD5d2vfd0KpHqIOgqh5RlitqZN9ZBq0qtguqIpWoDSaRBQw
-         w6dbIsv4NUDDyoY5bU1TwJ0Jaq1hZ/D7JuS35V+EC51zKC2cZFC43K6bTP0bZyLaXz
-         3ybyVSQ8y1xfKIEgBlFGf1Jiv+MboNE1jDrhF2T008wRHZSmsVfRdapWu7XQVW/yaG
-         CYepfy9XIhzyS+RtjxIKyBHyhPNYmNx1SsBJ8eilgHjsRZrXHu00KoarGx135BkbNq
-         miT3qQaFr40Ow==
-Message-ID: <362a9e19-fea5-e45a-3c22-3aa47e851aea@stancevic.com>
-Date:   Thu, 30 Mar 2023 17:03:24 -0500
+        Thu, 30 Mar 2023 18:06:55 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 755FC11EB7;
+        Thu, 30 Mar 2023 15:05:32 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id l15-20020a05600c4f0f00b003ef6d684102so8918919wmq.3;
+        Thu, 30 Mar 2023 15:05:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680213931;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vn1y/TSQU/s4um/hYxW7MiRhdM9UUyXaGxedueCrmV0=;
+        b=H1JOaltVeZZCCsf2+4gSMJWB/xFr9MQhe7OJsxlrKiZG9lfCq4J6Gq0qOb8EGSo6Kp
+         PSmEEJ2X8+dihMWZMtPqtxZ3Yj/J9x0qpgZ5ra/zm9oeFwyDkEIa25sweaM1LsI4ejVz
+         GD9TZGcmecknzIg8E23rJfVeb0Z0xCsIVEDULJ/UUJ8E1oTMr728LmE6kclGF6WJa4kp
+         5Nj6ON3y5s8eWVDJhEWTaJND31LCqECdsVXQLP5PHJlvHKcx7HP/RVv52jDk8G1Hvx24
+         yVXkVyERPeoA22ufzn/HUyrqIVRAcmSW3F4SZgBJu4hWUz/CmM2lQbikPj0VggOVGx0d
+         g1JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680213931;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vn1y/TSQU/s4um/hYxW7MiRhdM9UUyXaGxedueCrmV0=;
+        b=PkRKyOSititEV6pZtfrJiessym98cYEJSypC2s/++5rPOiOrbswpuKg8vq+/AdQWXI
+         eZSI15d1ScRx9ZArZNbAX7NEGWWXayTDMIockxqsV0RMGEQQIt3ITLWWeznGXNFN4NOY
+         CuiAkfP4sPOoasRq2n3f968/YOEv2fCLrut2EV+2JqqRIvxzqu/ycsNki7mIcgO81iIS
+         V8XabT3Ohy9cE2T+u9gPCiMvwLUMsvhjmuSKdz36yT3Dt6hmLydeE4qWZ6UUPUkUv5+1
+         RZA14MAFam4/1m97nDNwAXEXufRAiLmsDKjr1oh2RtgXGjEDw/jTZGWdMljC0iOmSwWj
+         i59Q==
+X-Gm-Message-State: AAQBX9fylcj7ZHPJXYz/EJ4MbjYF2N0wKcS9mrLw3boMzUhqoQ3W/v37
+        pLRZubRowUvSt9E9GZqMzFg=
+X-Google-Smtp-Source: AKy350ZICrrUdVQb3X+xMlyj7UWwKz5tGv0mqHXM0pgeTHRgxsGX051MDWvlpYxSDr8+m0SD3v5WWA==
+X-Received: by 2002:a05:600c:21cd:b0:3ef:6e1c:3fe9 with SMTP id x13-20020a05600c21cd00b003ef6e1c3fe9mr12576272wmj.16.1680213930692;
+        Thu, 30 Mar 2023 15:05:30 -0700 (PDT)
+Received: from krava ([83.240.63.154])
+        by smtp.gmail.com with ESMTPSA id s7-20020a5d4ec7000000b002c5544b3a69sm424300wrv.89.2023.03.30.15.05.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Mar 2023 15:05:30 -0700 (PDT)
+From:   Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date:   Fri, 31 Mar 2023 00:05:28 +0200
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, bpf@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Namhyung Kim <namhyung@gmail.com>,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCHv3 bpf-next 5/9] selftests/bpf: Add read_buildid function
+Message-ID: <ZCYHqBECVe4SAEr4@krava>
+References: <20230316170149.4106586-1-jolsa@kernel.org>
+ <20230316170149.4106586-6-jolsa@kernel.org>
+ <CAEf4BzZpXK0_k0Z8BmAB1-Edpc_BZYsu5wt9XVEJ4ryAxDYewA@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for CXL
-Content-Language: en-US
-To:     Mike Rapoport <rppt@kernel.org>,
-        Kyungsan Kim <ks0204.kim@samsung.com>
-Cc:     dan.j.williams@intel.com, lsf-pc@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cxl@vger.kernel.org, a.manzanares@samsung.com,
-        viacheslav.dubeyko@bytedance.com, ying.huang@intel.com,
-        nil-migration@lists.linux.dev
-References: <641b7b2117d02_1b98bb294cb@dwillia2-xfh.jf.intel.com.notmuch>
- <CGME20230323105106epcas2p39ea8de619622376a4698db425c6a6fb3@epcas2p3.samsung.com>
- <20230323105105.145783-1-ks0204.kim@samsung.com>
- <ZB/yb9n6e/eNtNsf@kernel.org>
-From:   Dragan Stancevic <dragan@stancevic.com>
-In-Reply-To: <ZB/yb9n6e/eNtNsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZpXK0_k0Z8BmAB1-Edpc_BZYsu5wt9XVEJ4ryAxDYewA@mail.gmail.com>
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/26/23 02:21, Mike Rapoport wrote:
-> Hi,
+On Thu, Mar 16, 2023 at 03:23:03PM -0700, Andrii Nakryiko wrote:
+> On Thu, Mar 16, 2023 at 10:03 AM Jiri Olsa <jolsa@kernel.org> wrote:
+> >
+> > Adding read_build_id function that parses out build id from
+> > specified binary.
+> >
+> > It will replace extract_build_id and also be used in following
+> > changes.
+> >
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+
+I'll send this separatelly as bpf/selftests fix so doesn't get lost
+
+> > ---
+> >  tools/testing/selftests/bpf/trace_helpers.c | 86 +++++++++++++++++++++
+> >  tools/testing/selftests/bpf/trace_helpers.h |  5 ++
+> >  2 files changed, 91 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/bpf/trace_helpers.c b/tools/testing/selftests/bpf/trace_helpers.c
+> > index 934bf28fc888..72b38a41f574 100644
+> > --- a/tools/testing/selftests/bpf/trace_helpers.c
+> > +++ b/tools/testing/selftests/bpf/trace_helpers.c
+> > @@ -11,6 +11,9 @@
+> >  #include <linux/perf_event.h>
+> >  #include <sys/mman.h>
+> >  #include "trace_helpers.h"
+> > +#include <linux/limits.h>
+> > +#include <libelf.h>
+> > +#include <gelf.h>
+> >
+> >  #define TRACEFS_PIPE   "/sys/kernel/tracing/trace_pipe"
+> >  #define DEBUGFS_PIPE   "/sys/kernel/debug/tracing/trace_pipe"
+> > @@ -234,3 +237,86 @@ ssize_t get_rel_offset(uintptr_t addr)
+> >         fclose(f);
+> >         return -EINVAL;
+> >  }
+> > +
+> > +static int
+> > +parse_build_id_buf(const void *note_start, Elf32_Word note_size,
+> > +                  char *build_id)
 > 
-> [..] >> One problem we experienced was occured in the combination of 
-hot-remove and kerelspace allocation usecases.
->> ZONE_NORMAL allows kernel context allocation, but it does not allow hot-remove because kernel resides all the time.
->> ZONE_MOVABLE allows hot-remove due to the page migration, but it only allows userspace allocation.
->> Alternatively, we allocated a kernel context out of ZONE_MOVABLE by adding GFP_MOVABLE flag.
->> In case, oops and system hang has occasionally occured because ZONE_MOVABLE can be swapped.
->> We resolved the issue using ZONE_EXMEM by allowing seletively choice of the two usecases.
->> As you well know, among heterogeneous DRAM devices, CXL DRAM is the first PCIe basis device, which allows hot-pluggability, different RAS, and extended connectivity.
->> So, we thought it could be a graceful approach adding a new zone and separately manage the new features.
+> nit: single line
+
+ok
+
 > 
-> This still does not describe what are the use cases that require having
-> kernel allocations on CXL.mem.
+> should we pass buffer size instead of assuming at least BPF_BUILD_ID_SIZE below?
+
+ok
+
 > 
-> I believe it's important to start with explanation *why* it is important to
-> have kernel allocations on removable devices.
+> > +{
+> > +       Elf32_Word note_offs = 0, new_offs;
+> > +
+> > +       while (note_offs + sizeof(Elf32_Nhdr) < note_size) {
+> > +               Elf32_Nhdr *nhdr = (Elf32_Nhdr *)(note_start + note_offs);
+> > +
+> > +               if (nhdr->n_type == 3 && nhdr->n_namesz == sizeof("GNU") &&
+> > +                   !strcmp((char *)(nhdr + 1), "GNU") && nhdr->n_descsz > 0 &&
+> > +                   nhdr->n_descsz <= BPF_BUILD_ID_SIZE) {
+> > +                       memcpy(build_id, note_start + note_offs +
+> > +                              ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhdr), nhdr->n_descsz);
+> > +                       memset(build_id + nhdr->n_descsz, 0, BPF_BUILD_ID_SIZE - nhdr->n_descsz);
+> > +                       return (int) nhdr->n_descsz;
+> > +               }
+> > +
+> > +               new_offs = note_offs + sizeof(Elf32_Nhdr) +
+> > +                          ALIGN(nhdr->n_namesz, 4) + ALIGN(nhdr->n_descsz, 4);
+> > +               if (new_offs >= note_size)
+> > +                       break;
+> 
+> while condition() above would handle this, so this check appears not necessary?
+> 
+> so just assign note_offs directly?
 
-Hi Mike,
+good idea, it will simplify that
 
-not speaking for Kyungsan here, but I am starting to tackle hypervisor 
-clustering and VM migration over cxl.mem [1].
+> 
+> 
+> > +               note_offs = new_offs;
+> > +       }
+> > +
+> > +       return -EINVAL;
+> 
+> nit: -ENOENT or -ESRCH?
 
-And in my mind, at least one reason that I can think of having kernel 
-allocations from cxl.mem devices is where you have multiple VH 
-connections sharing the memory [2]. Where for example you have a user 
-space application stored in cxl.mem, and then you want the metadata 
-about this process/application that the kernel keeps on one hypervisor 
-be "passed on" to another hypervisor. So basically the same way 
-processors in a single hypervisors cooperate on memory, you extend that 
-across processors that span over physical hypervisors. If that makes 
-sense...
+I kept the same error as is in kernel, but ENOENT makes more sense
 
+> 
+> > +}
+> > +
+> > +/* Reads binary from *path* file and returns it in the *build_id*
+> > + * which is expected to be at least BPF_BUILD_ID_SIZE bytes.
+> > + * Returns size of build id on success. On error the error value
+> > + * is returned.
+> > + */
+> > +int read_build_id(const char *path, char *build_id)
+> > +{
+> > +       int fd, err = -EINVAL;
+> > +       Elf *elf = NULL;
+> > +       GElf_Ehdr ehdr;
+> > +       size_t max, i;
+> > +
+> > +       fd = open(path, O_RDONLY | O_CLOEXEC);
+> > +       if (fd < 0)
+> > +               return -errno;
+> > +
+> > +       (void)elf_version(EV_CURRENT);
+> > +
+> > +       elf = elf_begin(fd, ELF_C_READ, NULL);
+> 
+> ELF_C_READ_MMAP ?
 
-[1] A high-level explanation is at http://nil-migration.org
-[2] Compute Express Link Specification r3.0, v1.0 8/1/22, Page 51, 
-figure 1-4, black color scheme circle(3) and bars.
+ok
 
---
-Peace can only come as a natural consequence
-of universal enlightenment -Dr. Nikola Tesla
+> 
+> > +       if (!elf)
+> > +               goto out;
+> > +       if (elf_kind(elf) != ELF_K_ELF)
+> > +               goto out;
+> > +       if (gelf_getehdr(elf, &ehdr) == NULL)
+> 
+> nit: !gelf_getehdr()
+
+ok
+
+> 
+> > +               goto out;
+> > +       if (ehdr.e_ident[EI_CLASS] != ELFCLASS64)
+> > +               goto out;
+> 
+> does this have to be 64-bit specific?... you are using gelf stuff, you
+> can be bitness-agnostic here
+
+right, I don't think it's needed, will check
+
+> 
+> > +
+> > +       for (i = 0; i < ehdr.e_phnum; i++) {
+> > +               GElf_Phdr mem, *phdr;
+> > +               char *data;
+> > +
+> > +               phdr = gelf_getphdr(elf, i, &mem);
+> > +               if (!phdr)
+> > +                       goto out;
+> > +               if (phdr->p_type != PT_NOTE)
+> > +                       continue;
+> 
+> I don't know where ELF + build ID spec is (if at all), but it seems to
+> always be in the ".note.gnu.build-id" section, so should we check the
+> name here?
+
+this section name is not manadatory as stated in
+  https://fedoraproject.org/wiki/RolandMcGrath/BuildID
+
+  The new section is canonically called .note.gnu.build-id, but the name is not normative,
+  and the section can be merged with other SHT_NOTE sections. The ELF note headers give
+  name "GNU" and type 3 (NT_GNU_BUILD_ID) for a build ID note.
+
+> 
+> 
+> > +               data = elf_rawfile(elf, &max);
+> > +               if (!data)
+> > +                       goto out;
+> > +               if (phdr->p_offset >= max || (phdr->p_offset + phdr->p_memsz >= max))
+> 
+> `phdr->p_offset + phdr->p_memsz == max` would be fine, no?
+
+right, will change
+
+thanks,
+jirka
+
+> 
+> > +                       goto out;
+> > +               err = parse_build_id_buf(data + phdr->p_offset, phdr->p_memsz, build_id);
+> > +               if (err > 0)
+> > +                       goto out;
+> > +               err = -EINVAL;
+> > +       }
+> > +
+> > +out:
+> > +       if (elf)
+> > +               elf_end(elf);
+> > +       close(fd);
+> > +       return err;
+> > +}
+> > diff --git a/tools/testing/selftests/bpf/trace_helpers.h b/tools/testing/selftests/bpf/trace_helpers.h
+> > index 53efde0e2998..bc3b92057033 100644
+> > --- a/tools/testing/selftests/bpf/trace_helpers.h
+> > +++ b/tools/testing/selftests/bpf/trace_helpers.h
+> > @@ -4,6 +4,9 @@
+> >
+> >  #include <bpf/libbpf.h>
+> >
+> > +#define __ALIGN_MASK(x, mask)  (((x)+(mask))&~(mask))
+> > +#define ALIGN(x, a)            __ALIGN_MASK(x, (typeof(x))(a)-1)
+> > +
+> >  struct ksym {
+> >         long addr;
+> >         char *name;
+> > @@ -23,4 +26,6 @@ void read_trace_pipe(void);
+> >  ssize_t get_uprobe_offset(const void *addr);
+> >  ssize_t get_rel_offset(uintptr_t addr);
+> >
+> > +int read_build_id(const char *path, char *build_id);
+> > +
+> >  #endif
+> > --
+> > 2.39.2
+> >
