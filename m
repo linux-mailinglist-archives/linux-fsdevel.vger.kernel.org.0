@@ -2,252 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5537B6CF8CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 03:46:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 203656CF8E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 03:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229791AbjC3Bqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 21:46:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59012 "EHLO
+        id S229871AbjC3Byh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 21:54:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbjC3Bqd (ORCPT
+        with ESMTP id S229610AbjC3Byg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 21:46:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A61E4EEB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 18:45:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680140745;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kv0JdKs3b/J2KtWtqtGbcl417IkaIZ3v3L6FuRPDYCY=;
-        b=h/Uqi4yGR08up02Zp61RPKEXUyJbWh7djpHoEcS1vpEhk5cFUREN3od4Xp+SOdecmDEp++
-        uRgLPTR3Yt7sFw0/BDaNmO/dn5DO0A+6D1F3gB53VMxX1BYQ7LoJ6B7eRRcmnLeH68Ig62
-        AKn6DIFn+JwzjwWji6sVZEp/xxaVCdA=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-237-X7vSrBHRNJ2t0ptqejN04w-1; Wed, 29 Mar 2023 21:45:44 -0400
-X-MC-Unique: X7vSrBHRNJ2t0ptqejN04w-1
-Received: by mail-pg1-f198.google.com with SMTP id q30-20020a631f5e000000b0050760997f4dso4793057pgm.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 18:45:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680140743;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kv0JdKs3b/J2KtWtqtGbcl417IkaIZ3v3L6FuRPDYCY=;
-        b=OCxbeF85g6C3UjvtpqZaFkAeOSKr3bwwvvacJKtxlCD3cEMf56K0XYwIUrG1z67/7d
-         IrLa5RC/WHjtXcXap2RNpxBbt5WMc4CqJPBSZvILcACCeBR7pRM2jYke/FzJPuTyDyag
-         YxHx9HfBu3k9+TSbRp/ZcwI8PyceRVIsD99duXQp8k7eR7q+wN30OzlHX2ni3R99JYNs
-         SQ5srwNfmmRnNFF9egsRFYa++BYPhho2q9cKfraXK/c2QUR+r6pDHV+aPNgTfGffe8OF
-         B9GvKKlrlz/srHmasv6t4jyM+bzAuitPwFYIAXpKoyKY/qagMrWT5zTX7A4U/q3qinW6
-         0Bzg==
-X-Gm-Message-State: AAQBX9fq0nIntby+4JuW8/bhfgXiyueJZaUTBowcjcrbYBeTaZII+WsN
-        ddV+RDrJdnX+VI3AXvemfzmuNw15KVdAgNIqlwMIdfgDmxYkB6oaMkWXWrWSgR6J5gPiq860Jkt
-        33xuyvuKJogHy1BKLnCIGlwT43w==
-X-Received: by 2002:a17:903:22d2:b0:19a:7217:32a9 with SMTP id y18-20020a17090322d200b0019a721732a9mr4636118plg.26.1680140743029;
-        Wed, 29 Mar 2023 18:45:43 -0700 (PDT)
-X-Google-Smtp-Source: AKy350ZC7R/sqsXLmXMgRh5yYmDYt07re8Mz0pqFOB7hKr/eVqrBonJ1fWeZySGpK6QRntg/4jjpKg==
-X-Received: by 2002:a17:903:22d2:b0:19a:7217:32a9 with SMTP id y18-20020a17090322d200b0019a721732a9mr4636092plg.26.1680140742679;
-        Wed, 29 Mar 2023 18:45:42 -0700 (PDT)
-Received: from [10.72.12.51] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id jj2-20020a170903048200b0019fea4bb887sm23709042plb.157.2023.03.29.18.45.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Mar 2023 18:45:42 -0700 (PDT)
-Message-ID: <7f7947d6-2a03-688b-dc5e-3887553f0106@redhat.com>
-Date:   Thu, 30 Mar 2023 09:45:32 +0800
+        Wed, 29 Mar 2023 21:54:36 -0400
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5249119B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 18:54:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1680141267; x=1711677267;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=CeEhaDsLJaXZ9ZMzK+AvVog1yjOeCC+Udbd/NKVAvH4=;
+  b=pwslH6wFHs7rQFA8xzhxZnyz0O5gnLr13oUth4rtLmnQntnMow6daVwS
+   tm0YOsIYFOjtqwYK5AzQ8gtd46OglOnUb4pt8eW4VJTcO+W5RhCVCW1Jz
+   XsMA31PkTxV4xtAXLItLcsrdqxvd5BZ/zprCcHR19GVsR9SfHe8PngW0Q
+   hLA0X1jX7YsuQzkCnvfhuazjx8QST8IWcHMkp4l6VyvsfOuB5u1UD57ot
+   oFdU0gw7XTwbTaQXst4RkxH0rMGJA4YTnCBH/BnO7ZgS2TZjFJ++5bn3c
+   7RCjxP8KaepVrnWUyRlJPSEKQXAMGt7pdmOdDNcwPrIhu5hU66JlZh+oD
+   g==;
+X-IronPort-AV: E=Sophos;i="5.98,301,1673884800"; 
+   d="scan'208";a="338912431"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 30 Mar 2023 09:54:26 +0800
+IronPort-SDR: YO6tFTVd2xZ/U9Sq2FI5FWtG97mo7FBQaoZumxfLGZzwaz0rDPYo2P2jUJbIIi5ysQ9U5IXojM
+ XcaPSka0XrFt0QqSFUvRUC+RoGRwPflskrBjd7yR1s9yuNXxUB9DFwrW3JY4JHZnj4MwgLuCEp
+ 7CIgvuegnf+SqcL8Js8gh1OlJ3xzQSQvsKsJLpiO6BT1apXLL74T14s0QTONOyKsrnBt8DTyYu
+ wR/0SisLslRvK8iD9br+4Mvfy/qcEUuO7k1YSMQl57uI9bjd7PK3DN2FPEgnxoGR9kuDvfN7Wr
+ z9I=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 18:10:35 -0700
+IronPort-SDR: 0ViQ0aJ6xEIqM0vji3IeF99QlzknnAV4TXkIiCqGQf+eFUyHGpGkurmOLI4z9ot+zZmY3PB4E2
+ uljrxy1AbqAo82xDFlYVOLiAvZwmMYCuUrXSHLtU2u6Xmrk1TK3RRc7Eo/73zvYdfunhVHu/h/
+ c6jnVuWH0cVq8D4gKer07k+/ADbb3dJI6cEOmA5rlcsfBp9rzp+T7tXddkyPqOQLXjeFlK8/GW
+ pCheIBYstKrM3gLvR+Mi4HAS5DCAtWlLuk4Pzu5I5JkzSVniPxnxQHEkhGtu3+6uVzwtf++9+w
+ qR0=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Mar 2023 18:54:27 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Pn60y3D4Kz1RtVt
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 18:54:26 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:mime-version
+        :x-mailer:message-id:date:subject:to:from; s=dkim; t=1680141266;
+         x=1682733267; bh=CeEhaDsLJaXZ9ZMzK+AvVog1yjOeCC+Udbd/NKVAvH4=; b=
+        WJFdqYPIkXy7w+clTOmGbZpukpdQecq7ehM4GOXgp3NmhPvsYsEoAzBeZr6kma+P
+        F2rQ6i5BASwauBwZRZmrK/SBQxiEzyXmFYMHBdlhRDO5Z1cGDgoAHdyyXBBQiKtj
+        PJBfQeaLRj4B3nIT897icKOfRHW0NO2IrB2y8L9n6GGuZ57q51wVLZ5mAPeaiRNH
+        qlt9ka9bP/9YeUUIZtcQ2CyeLiqkpixdsD7TDTky4qn6G3kN5GUG3cKDKhsM445p
+        3UTJK9f6vebqAmswLNI93yXwIVFCI0CsJq2pkGpMGpj2S9MQ2nsGtxus3Iq72RU6
+        EnauJT7mww1x5BTP7k2Fbw==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id wgvHmtgj1ST6 for <linux-fsdevel@vger.kernel.org>;
+        Wed, 29 Mar 2023 18:54:26 -0700 (PDT)
+Received: from washi.fujisawa.hgst.com (washi.fujisawa.hgst.com [10.149.53.254])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Pn60x1T2hz1RtVm;
+        Wed, 29 Mar 2023 18:54:24 -0700 (PDT)
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Hans Holmberg <hans.holmberg@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v2 0/2] zonefs: Fix data corruption and error return
+Date:   Thu, 30 Mar 2023 10:54:21 +0900
+Message-Id: <20230330015423.2170293-1-damien.lemoal@opensource.wdc.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [RFC PATCH v2 37/48] ceph: Use sendmsg(MSG_SPLICE_PAGES) rather
- than sendpage()
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-References: <20230329141354.516864-1-dhowells@redhat.com>
- <20230329141354.516864-38-dhowells@redhat.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20230329141354.516864-38-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David,
+Patch 1 fixes a potential data corruption when the last page of the
+inode is cached and a sync append direct write partially modify the
+data of that page on disk. The second patch avoids propagating to user
+space the -ENOTBLK error potentially returned by iomap_dio_rw().
 
-BTW, will this two patch depend on the others in this patch series ?
+Changes from v1:
+ - Reworked patch 1 commit message and use an exact end argument for the
+   call to invalidate_inode_pages2_range().
+ - Added patch 2.
 
-I am planing to run a test with these two later.
+Damien Le Moal (2):
+  zonefs: Always invalidate last cached page on append write
+  zonefs: Do not propagate iomap_dio_rw() ENOTBLK error to user space
 
-Thanks
+ fs/zonefs/file.c | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-- Xiubo
-
-On 29/03/2023 22:13, David Howells wrote:
-> Use sendmsg() and MSG_SPLICE_PAGES rather than sendpage in ceph when
-> transmitting data.  For the moment, this can only transmit one page at a
-> time because of the architecture of net/ceph/, but if
-> write_partial_message_data() can be given a bvec[] at a time by the
-> iteration code, this would allow pages to be sent in a batch.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Ilya Dryomov <idryomov@gmail.com>
-> cc: Xiubo Li <xiubli@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: "David S. Miller" <davem@davemloft.net>
-> cc: Eric Dumazet <edumazet@google.com>
-> cc: Jakub Kicinski <kuba@kernel.org>
-> cc: Paolo Abeni <pabeni@redhat.com>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: ceph-devel@vger.kernel.org
-> cc: netdev@vger.kernel.org
-> ---
->   net/ceph/messenger_v2.c | 89 +++++++++--------------------------------
->   1 file changed, 18 insertions(+), 71 deletions(-)
->
-> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-> index 301a991dc6a6..1637a0c21126 100644
-> --- a/net/ceph/messenger_v2.c
-> +++ b/net/ceph/messenger_v2.c
-> @@ -117,91 +117,38 @@ static int ceph_tcp_recv(struct ceph_connection *con)
->   	return ret;
->   }
->   
-> -static int do_sendmsg(struct socket *sock, struct iov_iter *it)
-> -{
-> -	struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
-> -	int ret;
-> -
-> -	msg.msg_iter = *it;
-> -	while (iov_iter_count(it)) {
-> -		ret = sock_sendmsg(sock, &msg);
-> -		if (ret <= 0) {
-> -			if (ret == -EAGAIN)
-> -				ret = 0;
-> -			return ret;
-> -		}
-> -
-> -		iov_iter_advance(it, ret);
-> -	}
-> -
-> -	WARN_ON(msg_data_left(&msg));
-> -	return 1;
-> -}
-> -
-> -static int do_try_sendpage(struct socket *sock, struct iov_iter *it)
-> -{
-> -	struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
-> -	struct bio_vec bv;
-> -	int ret;
-> -
-> -	if (WARN_ON(!iov_iter_is_bvec(it)))
-> -		return -EINVAL;
-> -
-> -	while (iov_iter_count(it)) {
-> -		/* iov_iter_iovec() for ITER_BVEC */
-> -		bvec_set_page(&bv, it->bvec->bv_page,
-> -			      min(iov_iter_count(it),
-> -				  it->bvec->bv_len - it->iov_offset),
-> -			      it->bvec->bv_offset + it->iov_offset);
-> -
-> -		/*
-> -		 * sendpage cannot properly handle pages with
-> -		 * page_count == 0, we need to fall back to sendmsg if
-> -		 * that's the case.
-> -		 *
-> -		 * Same goes for slab pages: skb_can_coalesce() allows
-> -		 * coalescing neighboring slab objects into a single frag
-> -		 * which triggers one of hardened usercopy checks.
-> -		 */
-> -		if (sendpage_ok(bv.bv_page)) {
-> -			ret = sock->ops->sendpage(sock, bv.bv_page,
-> -						  bv.bv_offset, bv.bv_len,
-> -						  CEPH_MSG_FLAGS);
-> -		} else {
-> -			iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bv, 1, bv.bv_len);
-> -			ret = sock_sendmsg(sock, &msg);
-> -		}
-> -		if (ret <= 0) {
-> -			if (ret == -EAGAIN)
-> -				ret = 0;
-> -			return ret;
-> -		}
-> -
-> -		iov_iter_advance(it, ret);
-> -	}
-> -
-> -	return 1;
-> -}
-> -
->   /*
->    * Write as much as possible.  The socket is expected to be corked,
->    * so we don't bother with MSG_MORE/MSG_SENDPAGE_NOTLAST here.
->    *
->    * Return:
-> - *   1 - done, nothing (else) to write
-> + *  >0 - done, nothing (else) to write
->    *   0 - socket is full, need to wait
->    *  <0 - error
->    */
->   static int ceph_tcp_send(struct ceph_connection *con)
->   {
-> +	struct msghdr msg = {
-> +		.msg_iter	= con->v2.out_iter,
-> +		.msg_flags	= CEPH_MSG_FLAGS,
-> +	};
->   	int ret;
->   
-> +	if (WARN_ON(!iov_iter_is_bvec(&con->v2.out_iter)))
-> +		return -EINVAL;
-> +
-> +	if (con->v2.out_iter_sendpage)
-> +		msg.msg_flags |= MSG_SPLICE_PAGES;
-> +
->   	dout("%s con %p have %zu try_sendpage %d\n", __func__, con,
->   	     iov_iter_count(&con->v2.out_iter), con->v2.out_iter_sendpage);
-> -	if (con->v2.out_iter_sendpage)
-> -		ret = do_try_sendpage(con->sock, &con->v2.out_iter);
-> -	else
-> -		ret = do_sendmsg(con->sock, &con->v2.out_iter);
-> +
-> +	ret = sock_sendmsg(con->sock, &msg);
-> +	if (ret > 0)
-> +		iov_iter_advance(&con->v2.out_iter, ret);
-> +	else if (ret == -EAGAIN)
-> +		ret = 0;
-> +
->   	dout("%s con %p ret %d left %zu\n", __func__, con, ret,
->   	     iov_iter_count(&con->v2.out_iter));
->   	return ret;
->
--- 
-Best Regards,
-
-Xiubo Li (李秀波)
-
-Email: xiubli@redhat.com/xiubli@ibm.com
-Slack: @Xiubo Li
+--=20
+2.39.2
 
