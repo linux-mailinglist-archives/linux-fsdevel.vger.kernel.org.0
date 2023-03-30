@@ -2,71 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE01C6CF8B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 03:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5537B6CF8CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Mar 2023 03:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbjC3B16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Mar 2023 21:27:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50732 "EHLO
+        id S229791AbjC3Bqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Mar 2023 21:46:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbjC3B14 (ORCPT
+        with ESMTP id S229672AbjC3Bqd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Mar 2023 21:27:56 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 621805596
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 18:27:54 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id ix20so16687247plb.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 18:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112; t=1680139674;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7LG6zXCslOH9ykBZv6LzrhqoYBSGwMfp0vnybvkLtvU=;
-        b=7cwCfUZihuwFWuyjGpryi3QxY+znpqBQL/fcVMbx9a9FMGQ758jNlvp6w23kygFdWg
-         WfKMJ+K0Bd7CYIwZWELQ4zaddZsh34aZsKMiR7Joo0DvUg/1/wIWfgJ8llMUdq7/h/lB
-         DYtokS+Hgms4LetTxbyetQItSWriDKNasjVILiBbMdzrCiSlIVJIIyWvBfAWyEIQZoFB
-         ClMJgwSzbt6KvGVvRL1kH+T1Y20JiOMQjQMqzBMSCe7MrIXRgwzK1ImjDiZR2lv5AFEh
-         JY3eE5wH0wxauurmVfUKeBPASYH3Bim3wntM1UnLnLoBgtZfWxs0p21/8pa2ppAbboyZ
-         y4eQ==
+        Wed, 29 Mar 2023 21:46:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A61E4EEB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 18:45:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680140745;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kv0JdKs3b/J2KtWtqtGbcl417IkaIZ3v3L6FuRPDYCY=;
+        b=h/Uqi4yGR08up02Zp61RPKEXUyJbWh7djpHoEcS1vpEhk5cFUREN3od4Xp+SOdecmDEp++
+        uRgLPTR3Yt7sFw0/BDaNmO/dn5DO0A+6D1F3gB53VMxX1BYQ7LoJ6B7eRRcmnLeH68Ig62
+        AKn6DIFn+JwzjwWji6sVZEp/xxaVCdA=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-237-X7vSrBHRNJ2t0ptqejN04w-1; Wed, 29 Mar 2023 21:45:44 -0400
+X-MC-Unique: X7vSrBHRNJ2t0ptqejN04w-1
+Received: by mail-pg1-f198.google.com with SMTP id q30-20020a631f5e000000b0050760997f4dso4793057pgm.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Mar 2023 18:45:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680139674;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7LG6zXCslOH9ykBZv6LzrhqoYBSGwMfp0vnybvkLtvU=;
-        b=v4YK9D/iUaMMKbBpIZgB1Xs6ryN29gnGFygnYzD3UFP9PuRUpeI83QmwNKg6IRd2Fs
-         ue6RXDMxDAEL8GdRhG25P3QUOjBzohW7zkYTzdT1A+YRMrE7f5iYbxjWxhdBoJOZCkns
-         6/HhaCQZoH9drPE1msPHZyB6O5mBWjD34gaXS1CZHlV8mXhLOg54pY5gkZ2wOgMOISAB
-         +b3KGKbKPefmaFwfHC4kroQAaCiI839rLWl/OgLxZY4lgcAbWeS+dr/ma0W6+XCSHFL+
-         ITNTGf/5UvMuLuDc/QJDxKzIS/ZQWZZPivyarw3VXHiXTRq1zgJoUfsl462DFvW3cznd
-         mxCw==
-X-Gm-Message-State: AAQBX9cHWrkzf9reSSjdqwGV/STVbVQ3En/2d74WPC3rZxPJ+9CP6QpB
-        ZfRZNlngaqDP2eLx/Lz2tzsy5u5IIt9/1oVrEA0=
-X-Google-Smtp-Source: AKy350YNia8nunEpPiMYAsmXC+XRMQnuqnKoMOd3eQc8oJChyk2J10Q7EoYfJ/ROs/AL3g3Q1/AYpw==
-X-Received: by 2002:a17:902:e743:b0:1a2:19c1:a96d with SMTP id p3-20020a170902e74300b001a219c1a96dmr4877567plf.23.1680139673792;
-        Wed, 29 Mar 2023 18:27:53 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-91-157.pa.nsw.optusnet.com.au. [49.181.91.157])
-        by smtp.gmail.com with ESMTPSA id q13-20020a170902bd8d00b0019e8c3cd3f4sm23541416pls.201.2023.03.29.18.27.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 18:27:53 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1phh4w-00EmYd-FB; Thu, 30 Mar 2023 12:27:50 +1100
-Date:   Thu, 30 Mar 2023 12:27:50 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     syzbot <syzbot+0c383e46e9b4827b01b1@syzkaller.appspotmail.com>
-Cc:     djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] WARNING in xfs_bmap_extents_to_btree
-Message-ID: <20230330012750.GF3223426@dread.disaster.area>
-References: <0000000000003da76805f8021fb5@google.com>
+        d=1e100.net; s=20210112; t=1680140743;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kv0JdKs3b/J2KtWtqtGbcl417IkaIZ3v3L6FuRPDYCY=;
+        b=OCxbeF85g6C3UjvtpqZaFkAeOSKr3bwwvvacJKtxlCD3cEMf56K0XYwIUrG1z67/7d
+         IrLa5RC/WHjtXcXap2RNpxBbt5WMc4CqJPBSZvILcACCeBR7pRM2jYke/FzJPuTyDyag
+         YxHx9HfBu3k9+TSbRp/ZcwI8PyceRVIsD99duXQp8k7eR7q+wN30OzlHX2ni3R99JYNs
+         SQ5srwNfmmRnNFF9egsRFYa++BYPhho2q9cKfraXK/c2QUR+r6pDHV+aPNgTfGffe8OF
+         B9GvKKlrlz/srHmasv6t4jyM+bzAuitPwFYIAXpKoyKY/qagMrWT5zTX7A4U/q3qinW6
+         0Bzg==
+X-Gm-Message-State: AAQBX9fq0nIntby+4JuW8/bhfgXiyueJZaUTBowcjcrbYBeTaZII+WsN
+        ddV+RDrJdnX+VI3AXvemfzmuNw15KVdAgNIqlwMIdfgDmxYkB6oaMkWXWrWSgR6J5gPiq860Jkt
+        33xuyvuKJogHy1BKLnCIGlwT43w==
+X-Received: by 2002:a17:903:22d2:b0:19a:7217:32a9 with SMTP id y18-20020a17090322d200b0019a721732a9mr4636118plg.26.1680140743029;
+        Wed, 29 Mar 2023 18:45:43 -0700 (PDT)
+X-Google-Smtp-Source: AKy350ZC7R/sqsXLmXMgRh5yYmDYt07re8Mz0pqFOB7hKr/eVqrBonJ1fWeZySGpK6QRntg/4jjpKg==
+X-Received: by 2002:a17:903:22d2:b0:19a:7217:32a9 with SMTP id y18-20020a17090322d200b0019a721732a9mr4636092plg.26.1680140742679;
+        Wed, 29 Mar 2023 18:45:42 -0700 (PDT)
+Received: from [10.72.12.51] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id jj2-20020a170903048200b0019fea4bb887sm23709042plb.157.2023.03.29.18.45.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Mar 2023 18:45:42 -0700 (PDT)
+Message-ID: <7f7947d6-2a03-688b-dc5e-3887553f0106@redhat.com>
+Date:   Thu, 30 Mar 2023 09:45:32 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000003da76805f8021fb5@google.com>
-X-Spam-Status: No, score=0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [RFC PATCH v2 37/48] ceph: Use sendmsg(MSG_SPLICE_PAGES) rather
+ than sendpage()
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+References: <20230329141354.516864-1-dhowells@redhat.com>
+ <20230329141354.516864-38-dhowells@redhat.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20230329141354.516864-38-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,49 +95,159 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 09:08:01PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    1e760fa3596e Merge tag 'gfs2-v6.3-rc3-fix' of git://git.ke..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16f83651c80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=acdb62bf488a8fe5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0c383e46e9b4827b01b1
-> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/17229b6e6fe0/disk-1e760fa3.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/69b5d310fba0/vmlinux-1e760fa3.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/0c65624aace9/bzImage-1e760fa3.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+0c383e46e9b4827b01b1@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 24101 at fs/xfs/libxfs/xfs_bmap.c:660 xfs_bmap_extents_to_btree+0xe1b/0x1190
+David,
 
-Allocation got an unexpected ENOSPC when it was supposed to have a
-valid reservation for the space. Likely because of an inconsistency
-that had been induced into the filesystem where superblock space
-accounting doesn't exactly match the AG space accounting and/or the
-tracked free space.
+BTW, will this two patch depend on the others in this patch series ?
 
-Given this is a maliciously corrupted filesystem image, this sort of
-warning is expected and there's probably nothing we can do to avoid
-it short of a full filesystem verification pass during mount.
-That's not a viable solution, so I think we should just ignore
-syzbot when it generates this sort of warning....
+I am planing to run a test with these two later.
 
-i.e. we actually want this warning to be issued if it happens in
-normal production situations, but given that it's relatively trivial
-to create an inconsistent filesystem image that can trigger this we
-should just ignore it when it is generated by such means.
+Thanks
 
--Dave.
+- Xiubo
+
+On 29/03/2023 22:13, David Howells wrote:
+> Use sendmsg() and MSG_SPLICE_PAGES rather than sendpage in ceph when
+> transmitting data.  For the moment, this can only transmit one page at a
+> time because of the architecture of net/ceph/, but if
+> write_partial_message_data() can be given a bvec[] at a time by the
+> iteration code, this would allow pages to be sent in a batch.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Xiubo Li <xiubli@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: "David S. Miller" <davem@davemloft.net>
+> cc: Eric Dumazet <edumazet@google.com>
+> cc: Jakub Kicinski <kuba@kernel.org>
+> cc: Paolo Abeni <pabeni@redhat.com>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: ceph-devel@vger.kernel.org
+> cc: netdev@vger.kernel.org
+> ---
+>   net/ceph/messenger_v2.c | 89 +++++++++--------------------------------
+>   1 file changed, 18 insertions(+), 71 deletions(-)
+>
+> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+> index 301a991dc6a6..1637a0c21126 100644
+> --- a/net/ceph/messenger_v2.c
+> +++ b/net/ceph/messenger_v2.c
+> @@ -117,91 +117,38 @@ static int ceph_tcp_recv(struct ceph_connection *con)
+>   	return ret;
+>   }
+>   
+> -static int do_sendmsg(struct socket *sock, struct iov_iter *it)
+> -{
+> -	struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
+> -	int ret;
+> -
+> -	msg.msg_iter = *it;
+> -	while (iov_iter_count(it)) {
+> -		ret = sock_sendmsg(sock, &msg);
+> -		if (ret <= 0) {
+> -			if (ret == -EAGAIN)
+> -				ret = 0;
+> -			return ret;
+> -		}
+> -
+> -		iov_iter_advance(it, ret);
+> -	}
+> -
+> -	WARN_ON(msg_data_left(&msg));
+> -	return 1;
+> -}
+> -
+> -static int do_try_sendpage(struct socket *sock, struct iov_iter *it)
+> -{
+> -	struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
+> -	struct bio_vec bv;
+> -	int ret;
+> -
+> -	if (WARN_ON(!iov_iter_is_bvec(it)))
+> -		return -EINVAL;
+> -
+> -	while (iov_iter_count(it)) {
+> -		/* iov_iter_iovec() for ITER_BVEC */
+> -		bvec_set_page(&bv, it->bvec->bv_page,
+> -			      min(iov_iter_count(it),
+> -				  it->bvec->bv_len - it->iov_offset),
+> -			      it->bvec->bv_offset + it->iov_offset);
+> -
+> -		/*
+> -		 * sendpage cannot properly handle pages with
+> -		 * page_count == 0, we need to fall back to sendmsg if
+> -		 * that's the case.
+> -		 *
+> -		 * Same goes for slab pages: skb_can_coalesce() allows
+> -		 * coalescing neighboring slab objects into a single frag
+> -		 * which triggers one of hardened usercopy checks.
+> -		 */
+> -		if (sendpage_ok(bv.bv_page)) {
+> -			ret = sock->ops->sendpage(sock, bv.bv_page,
+> -						  bv.bv_offset, bv.bv_len,
+> -						  CEPH_MSG_FLAGS);
+> -		} else {
+> -			iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bv, 1, bv.bv_len);
+> -			ret = sock_sendmsg(sock, &msg);
+> -		}
+> -		if (ret <= 0) {
+> -			if (ret == -EAGAIN)
+> -				ret = 0;
+> -			return ret;
+> -		}
+> -
+> -		iov_iter_advance(it, ret);
+> -	}
+> -
+> -	return 1;
+> -}
+> -
+>   /*
+>    * Write as much as possible.  The socket is expected to be corked,
+>    * so we don't bother with MSG_MORE/MSG_SENDPAGE_NOTLAST here.
+>    *
+>    * Return:
+> - *   1 - done, nothing (else) to write
+> + *  >0 - done, nothing (else) to write
+>    *   0 - socket is full, need to wait
+>    *  <0 - error
+>    */
+>   static int ceph_tcp_send(struct ceph_connection *con)
+>   {
+> +	struct msghdr msg = {
+> +		.msg_iter	= con->v2.out_iter,
+> +		.msg_flags	= CEPH_MSG_FLAGS,
+> +	};
+>   	int ret;
+>   
+> +	if (WARN_ON(!iov_iter_is_bvec(&con->v2.out_iter)))
+> +		return -EINVAL;
+> +
+> +	if (con->v2.out_iter_sendpage)
+> +		msg.msg_flags |= MSG_SPLICE_PAGES;
+> +
+>   	dout("%s con %p have %zu try_sendpage %d\n", __func__, con,
+>   	     iov_iter_count(&con->v2.out_iter), con->v2.out_iter_sendpage);
+> -	if (con->v2.out_iter_sendpage)
+> -		ret = do_try_sendpage(con->sock, &con->v2.out_iter);
+> -	else
+> -		ret = do_sendmsg(con->sock, &con->v2.out_iter);
+> +
+> +	ret = sock_sendmsg(con->sock, &msg);
+> +	if (ret > 0)
+> +		iov_iter_advance(&con->v2.out_iter, ret);
+> +	else if (ret == -EAGAIN)
+> +		ret = 0;
+> +
+>   	dout("%s con %p ret %d left %zu\n", __func__, con, ret,
+>   	     iov_iter_count(&con->v2.out_iter));
+>   	return ret;
+>
 -- 
-Dave Chinner
-david@fromorbit.com
+Best Regards,
+
+Xiubo Li (李秀波)
+
+Email: xiubli@redhat.com/xiubli@ibm.com
+Slack: @Xiubo Li
+
