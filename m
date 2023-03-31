@@ -2,53 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D60E46D26EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 19:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72B046D271E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 19:54:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229483AbjCaRsM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Mar 2023 13:48:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44158 "EHLO
+        id S232591AbjCaRyV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Mar 2023 13:54:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232021AbjCaRsK (ORCPT
+        with ESMTP id S231251AbjCaRyU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Mar 2023 13:48:10 -0400
+        Fri, 31 Mar 2023 13:54:20 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1323386B5;
-        Fri, 31 Mar 2023 10:48:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FEDA1A453;
+        Fri, 31 Mar 2023 10:54:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A35CC62AAA;
-        Fri, 31 Mar 2023 17:48:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 135B4C4339B;
-        Fri, 31 Mar 2023 17:48:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D08B962AF4;
+        Fri, 31 Mar 2023 17:54:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9B9C433AA;
+        Fri, 31 Mar 2023 17:54:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680284889;
-        bh=74+LZlMHcYsg/Kzq6hhnAAWL6JxtgVVZqUzMUNQ+9TU=;
+        s=k20201202; t=1680285257;
+        bh=Ijr+WNx7ld4U5ZO+OP83Langs78qK2JwUNbqX48Y74E=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UNa2dSd/YJ3OWEt3ocKdwXDSECZsjwAF+sgSOAj6rFRP2uU2VTSgrqv+37/KyZX0R
-         Oa1rtE+HdXQ57EsXLRKHed0PUtcB3r+HUl/slAbr9KmCT64nkPp9C+L1muC7g3AYko
-         x0HBD6mpFklhLAfXpr0SD/mHaJE60Egn1Ycyil95DM5uvLwv9pThyu4kj7cYW1NKJF
-         2wC/BMl/Rt3SgA7s4BBVRPvEoNk6D0IGSJ+LyklyB5bOM8Dyygz3S3NAt75B2Yz5Vj
-         FQihqGTii7u0idc33UB7apbMcdVFciTSFoYsqCVC8+voSaZG1pMqDFFi0B8kda72KB
-         7Vx6VY6n2wEGA==
-Received: by mail-lf1-f42.google.com with SMTP id x17so29954460lfu.5;
-        Fri, 31 Mar 2023 10:48:08 -0700 (PDT)
-X-Gm-Message-State: AAQBX9emNXqW9x2+wlan4pGD9Hnhwxo+6IZH0J7sfPjzsFdkjFColwXt
-        RWB8Rf3xBqFx4rrO5nagN7ioSbFAqqkOKFj7bpI=
-X-Google-Smtp-Source: AKy350aGmAaw8YhQDsMHFPqOZHOf0YFrm6+Qrmu1o39ibtrUhRAoJ2hJNrBTR72DBPR1w52lhQ7Kxsz8Es6oFrG/it4=
-X-Received: by 2002:ac2:5d72:0:b0:4ea:e296:fead with SMTP id
- h18-20020ac25d72000000b004eae296feadmr8226352lft.3.1680284887179; Fri, 31 Mar
- 2023 10:48:07 -0700 (PDT)
+        b=NlUsYXunWuWGa5qJtzHr2cVFf2mzdtZdXDwqqDzEtj1erN4/UEH5oBLlA+R2q+o1M
+         an2FD0E0FdazXGvuATGaJmC6tuT0zRlQ77fXpvY6pFX1I42bhRwtRYb4EwVwsSCshv
+         /w7kqF7Q3A9R8Y/I8mdEGr3HrwyFsaYA6YJOFbpxZM1X9TKmHN/m1uW21mhvN0lJMK
+         W/4KbeJ5FOFz+PGsFgDTzifZVWsSERPeuLJNL5OC6eK7xe2WmPdFCF+EV4iuGiHj1+
+         6zB4x/ZbN1oFJEdXH97hYDgTq4gsGJ14oSMEKjopTYWGs3WLQoStd3EbVOC7opi8re
+         k+Npd+3KW4cdA==
+Received: by mail-lf1-f44.google.com with SMTP id c9so19523126lfb.1;
+        Fri, 31 Mar 2023 10:54:17 -0700 (PDT)
+X-Gm-Message-State: AAQBX9cEEI7El3iei4b7177WNMJsNMfSrtfbAb0MAFju7Ui/J6ACt5dV
+        r9xU4T8J6lHjGciZXzKFH1wKvIOOyyZkKhCxHB0=
+X-Google-Smtp-Source: AKy350YvKqb0dBoMYfGdDtedXvU05FWt6KdyndNuIJije8MdSUJrkHi6AamvXBmeJg5t6pczjm2RarPTQzd6MOIJepA=
+X-Received: by 2002:ac2:5610:0:b0:4dd:a4e1:4861 with SMTP id
+ v16-20020ac25610000000b004dda4e14861mr8234430lfd.3.1680285255256; Fri, 31 Mar
+ 2023 10:54:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1680172791.git.johannes.thumshirn@wdc.com> <29a2488aa641319199c597d1dc1151c700e32430.1680172791.git.johannes.thumshirn@wdc.com>
-In-Reply-To: <29a2488aa641319199c597d1dc1151c700e32430.1680172791.git.johannes.thumshirn@wdc.com>
+References: <cover.1680172791.git.johannes.thumshirn@wdc.com> <07ae41b981f1b5f8de80a3f0a8ab2f34034077a6.1680172791.git.johannes.thumshirn@wdc.com>
+In-Reply-To: <07ae41b981f1b5f8de80a3f0a8ab2f34034077a6.1680172791.git.johannes.thumshirn@wdc.com>
 From:   Song Liu <song@kernel.org>
-Date:   Fri, 31 Mar 2023 10:47:55 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7HoY_0fW12egZuirTX22LTQJvBw49MEaT5_sh4ty+xCw@mail.gmail.com>
-Message-ID: <CAPhsuW7HoY_0fW12egZuirTX22LTQJvBw49MEaT5_sh4ty+xCw@mail.gmail.com>
-Subject: Re: [PATCH v2 07/19] md: raid5: use __bio_add_page to add single page
- to new bio
+Date:   Fri, 31 Mar 2023 10:54:03 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4gxjRx-X6d46O7SsNb=nesrUKVv+s76C1DtkZdcGmyXw@mail.gmail.com>
+Message-ID: <CAPhsuW4gxjRx-X6d46O7SsNb=nesrUKVv+s76C1DtkZdcGmyXw@mail.gmail.com>
+Subject: Re: [PATCH v2 15/19] md: check for failure when adding pages in alloc_behind_master_bio
 To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
         Hannes Reinecke <hare@suse.de>,
@@ -79,17 +78,33 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Thu, Mar 30, 2023 at 3:44=E2=80=AFAM Johannes Thumshirn
 <johannes.thumshirn@wdc.com> wrote:
 >
-> The raid5-ppl submission code uses bio_add_page() to add a page to a
-> newly created bio. bio_add_page() can fail, but the return value is never
-> checked. For adding consecutive pages, the return is actually checked and
-> a new bio is allocated if adding the page fails.
+> alloc_behind_master_bio() can possibly add multiple pages to a bio, but i=
+t
+> is not checking for the return value of bio_add_page() if adding really
+> succeeded.
 >
-> Use __bio_add_page() as adding a single page to a newly created bio is
-> guaranteed to succeed.
->
-> This brings us a step closer to marking bio_add_page() as __must_check.
+> Check if the page adding succeeded and if not bail out.
 >
 > Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+> ---
+>  drivers/md/raid1.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 68a9e2d9985b..bd7c339a84a1 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -1147,7 +1147,8 @@ static void alloc_behind_master_bio(struct r1bio *r=
+1_bio,
+>                 if (unlikely(!page))
+>                         goto free_pages;
+>
+> -               bio_add_page(behind_bio, page, len, 0);
+> +               if (!bio_add_page(behind_bio, page, len, 0))
+> +                       goto free_pages;
 
-Acked-by: Song Liu <song@kernel.org>
+We will leak page here, no?
+
+Thanks,
+Song
