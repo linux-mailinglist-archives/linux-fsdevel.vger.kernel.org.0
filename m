@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A6E96D2871
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 21:06:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B6A26D2891
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 21:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232343AbjCaTGC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Mar 2023 15:06:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41070 "EHLO
+        id S231837AbjCaTQa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Mar 2023 15:16:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232051AbjCaTGA (ORCPT
+        with ESMTP id S231241AbjCaTQ3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Mar 2023 15:06:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F5F422E8C;
-        Fri, 31 Mar 2023 12:05:59 -0700 (PDT)
+        Fri, 31 Mar 2023 15:16:29 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8349D22933;
+        Fri, 31 Mar 2023 12:16:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D9E8E62B55;
-        Fri, 31 Mar 2023 19:05:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC5DC433D2;
-        Fri, 31 Mar 2023 19:05:56 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 31520B831F0;
+        Fri, 31 Mar 2023 19:16:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C4C3C433D2;
+        Fri, 31 Mar 2023 19:16:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680289558;
-        bh=iO9lT4G+VhW54/C/njgyZWfDAkyGJR8Jg6RkIdRfetY=;
+        s=k20201202; t=1680290185;
+        bh=67/RGvHHjDJru2OHFghr0M4JV0SNZ9LI/thmTUTVZmM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ph/7mpr4I+PN8mUUNwZLB+N2Azsxl/vFp3YIJ+bdZhdrmM4ACyFf68tVeZCpFqJG4
-         gYjtsRlbUi3rt2F9V/ekTIedom19mcF67u0Ch4XpJIjyvWzzBtAx+3bj/VRKKxEW/+
-         SWyMTy2b9bFUbg9eU6qlA3Rys87qUQ/eOnI7py4DPEK3IcLOV8NnQkRv2fcS64pA1w
-         98pL9Ki9Of2ltspo2xcVvu5zw2hfke7ybOVlOg9XHOEFACFeFvDfdShI1GIrA7Hig9
-         b9RS5F1AabdNZIwjBa+O/XRFXlF+UlMwZYbtoQUUBprHWaK0lCbQGZqEY65cOKa93M
-         +j9o2x3pShS/g==
-Message-ID: <a6adab95d955065dd05c78ac462c32dfd146e820.camel@kernel.org>
-Subject: Re: [PATCH v3 01/55] netfs: Fix netfs_extract_iter_to_sg() for
- ITER_UBUF/IOVEC
+        b=aNACXKQuDUI3+ZSSXDzQ9hXLgYS/6W4y1lJmYGI2AJCSAQ8gI9vK5YAaMB8YjWfP/
+         WxGuNi/5prRbfRHJ0LhidgHqMFjXaxIdnQozGH7K21NYrdLAXP+9qfLPtx+gYg6xmq
+         +zFk4DvuEQp6bd0mcn73ISpURphCWTxSfdCHgjN60tbEmU50HlnqBjc7jgSeOHIg8p
+         HSRGQKxhzfS0gjSoDOEvJndbHRrOa1zeZ1IfRvLFmtk9oxsqCkvs09h0TaijHb57lp
+         6792bIjh8vmBYuk6G9//dekKpnzDUNzXv64+Yw4y/LEQrIO6OC98qEN7xx92VF6c18
+         kp5BsgidzrtsA==
+Message-ID: <6a0e9fd260a9ef373b5a9f64af46974f73201760.camel@kernel.org>
+Subject: Re: [PATCH v3 02/55] iov_iter: Remove last_offset member
 From:   Jeff Layton <jlayton@kernel.org>
 To:     David Howells <dhowells@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
@@ -50,14 +49,11 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org
-Date:   Fri, 31 Mar 2023 15:05:55 -0400
-In-Reply-To: <20230331160914.1608208-2-dhowells@redhat.com>
+        linux-nfs@vger.kernel.org
+Date:   Fri, 31 Mar 2023 15:16:22 -0400
+In-Reply-To: <20230331160914.1608208-3-dhowells@redhat.com>
 References: <20230331160914.1608208-1-dhowells@redhat.com>
-         <20230331160914.1608208-2-dhowells@redhat.com>
+         <20230331160914.1608208-3-dhowells@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
@@ -72,43 +68,39 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, 2023-03-31 at 17:08 +0100, David Howells wrote:
-> Fix netfs_extract_iter_to_sg() for ITER_UBUF and ITER_IOVEC to set the si=
-ze
-> of the page to the part of the page extracted, not the remaining amount o=
-f
-> data in the extracted page array at that point.
+> With the removal of ITER_PIPE, the last_offset member of struct iov_iter =
+is
+> no longer used, so remove it and un-unionise the remaining member.
 >=20
-> This doesn't yet affect anything as cifs, the only current user, only
-> passes in non-user-backed iterators.
->=20
-> Fixes: 018584697533 ("netfs: Add a function to extract an iterator into a=
- scatterlist")
 > Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: Alexander Viro <viro@zeniv.linux.org.uk>
 > cc: Jeff Layton <jlayton@kernel.org>
-> cc: Steve French <sfrench@samba.org>
-> cc: Shyam Prasad N <nspmangalore@gmail.com>
-> cc: Rohith Surabattula <rohiths.msft@gmail.com>
-> cc: linux-cachefs@redhat.com
-> cc: linux-cifs@vger.kernel.org
+> cc: linux-nfs@vger.kernel.org
 > cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> cc: netdev@vger.kernel.org
 > ---
->  fs/netfs/iterator.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  include/linux/uio.h | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 >=20
-> diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
-> index e9a45dea748a..8a4c86687429 100644
-> --- a/fs/netfs/iterator.c
-> +++ b/fs/netfs/iterator.c
-> @@ -139,7 +139,7 @@ static ssize_t netfs_extract_user_to_sg(struct iov_it=
-er *iter,
->  			size_t seg =3D min_t(size_t, PAGE_SIZE - off, len);
-> =20
->  			*pages++ =3D NULL;
-> -			sg_set_page(sg, page, len, off);
-> +			sg_set_page(sg, page, seg, off);
->  			sgtable->nents++;
->  			sg++;
->  			len -=3D seg;
->=20
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 74598426edb4..2d8a70cb9b26 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -43,10 +43,7 @@ struct iov_iter {
+>  	bool nofault;
+>  	bool data_source;
+>  	bool user_backed;
+> -	union {
+> -		size_t iov_offset;
+> -		int last_offset;
+> -	};
+> +	size_t iov_offset;
+>  	size_t count;
+>  	union {
+>  		const struct iovec *iov;
+
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
