@@ -2,183 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 770E26D1F27
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 13:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 541776D1F3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 13:37:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231888AbjCaLem (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Mar 2023 07:34:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46108 "EHLO
+        id S231621AbjCaLh0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Mar 2023 07:37:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231953AbjCaLec (ORCPT
+        with ESMTP id S231628AbjCaLhW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Mar 2023 07:34:32 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0295171F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 04:34:21 -0700 (PDT)
+        Fri, 31 Mar 2023 07:37:22 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11811D874
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 04:37:20 -0700 (PDT)
 Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230331113420epoutp02e8522528f3cd7211ae2ab1ebdf8f4660~Rfc4lgDHP2677926779epoutp02o
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 11:34:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230331113420epoutp02e8522528f3cd7211ae2ab1ebdf8f4660~Rfc4lgDHP2677926779epoutp02o
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230331113718epoutp042bf4968484b0904906a17b9ae030324a~RffeOB9Ut1719817198epoutp04R
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 11:37:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230331113718epoutp042bf4968484b0904906a17b9ae030324a~RffeOB9Ut1719817198epoutp04R
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1680262460;
-        bh=pTAoPsTYMf5uRNFA7Dctv3mKoae3M7AjuQn6oIpo9Lw=;
+        s=mail20170921; t=1680262638;
+        bh=ZuZHSgpRkzMy+3V8gsdvemF+mSJo0V42S23UhOB8beA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zqov9iCynZ0guXnPUOb005JNCXZ4MVVt6ZJQAb+J7uO0d181uXJpXKFo6i8b+MBhG
-         FNTpPPM6ufr0qV2kfMQd9wpOmN4CR5XX5yx21hqNOEfFLmDs1T7xTo4NRBH7sF/Ryd
-         PBrdNZyRC+LFTjf9+xBFX999hTxtolQSDcwz/WTI=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        b=KwoDN7rJP9M6YKXfOMztsSS0Iydzy2Xac5l0j8nSTr86qgfJnywYDbIDSaTTrnqrh
+         D2kSlK6WNl9b9+OlLQ78lPLD4KWKDa3LDfao1FjvlYwTcQLeiBlKltKrJC82Wm/x/W
+         0u54/frt7s9DhM9hIhSkGRPGuGa2aUcYV3UDESF4=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
         epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20230331113419epcas2p42081172994e81f630bae550425c951ae~Rfc3YUC2j1265512655epcas2p4P;
-        Fri, 31 Mar 2023 11:34:19 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.89]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4PnyqZ2vQ1z4x9Pw; Fri, 31 Mar
-        2023 11:34:18 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        20230331113717epcas2p4372eeecc0e0249d4720c35d0c34f1b20~Rffdr2tl-2783927839epcas2p44;
+        Fri, 31 Mar 2023 11:37:17 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.92]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4Pnyv06lFbz4x9Ps; Fri, 31 Mar
+        2023 11:37:16 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
         epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        24.BB.61927.A35C6246; Fri, 31 Mar 2023 20:34:18 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230331113417epcas2p20a886e1712dbdb1f8eec03a2ac0a47e2~Rfc2RA8Oa2604426044epcas2p2J;
-        Fri, 31 Mar 2023 11:34:17 +0000 (GMT)
+        EB.9C.61927.CE5C6246; Fri, 31 Mar 2023 20:37:16 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230331113715epcas2p13127b95af4000ec1ed96a2e9d89b7444~RffcE-8Ge2391623916epcas2p1t;
+        Fri, 31 Mar 2023 11:37:15 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230331113417epsmtrp1a363905f732f20f4e2e51d34acbe777d~Rfc2QQr-R0759407594epsmtrp1O;
-        Fri, 31 Mar 2023 11:34:17 +0000 (GMT)
-X-AuditID: b6c32a45-8bdf87000001f1e7-f0-6426c53a8b87
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230331113715epsmtrp2897a245f7160bcef2225149387e7d053~RffcDpyEf0503605036epsmtrp2b;
+        Fri, 31 Mar 2023 11:37:15 +0000 (GMT)
+X-AuditID: b6c32a45-671ff7000001f1e7-51-6426c5ec4cf6
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B5.D1.31821.935C6246; Fri, 31 Mar 2023 20:34:17 +0900 (KST)
+        DC.F1.31821.BE5C6246; Fri, 31 Mar 2023 20:37:15 +0900 (KST)
 Received: from dell-Precision-7920-Tower.dsn.sec.samsung.com (unknown
-        [10.229.83.99]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230331113417epsmtip212672f647a7582cd7394d08215b4ca55~Rfc2Gu3GE2862228622epsmtip2C;
-        Fri, 31 Mar 2023 11:34:17 +0000 (GMT)
+        [10.229.83.99]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230331113715epsmtip16ab6295c10357528db019d6576e3a8e6~Rffb4eUtH0924509245epsmtip1R;
+        Fri, 31 Mar 2023 11:37:15 +0000 (GMT)
 From:   Kyungsan Kim <ks0204.kim@samsung.com>
-To:     gregory.price@memverge.com
+To:     willy@infradead.org
 Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-cxl@vger.kernel.org,
         a.manzanares@samsung.com, viacheslav.dubeyko@bytedance.com,
         dan.j.williams@intel.com, seungjun.ha@samsung.com,
         wj28.lee@samsung.com
-Subject: RE: RE: RE(4): FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for
- CXL 
-Date:   Fri, 31 Mar 2023 20:34:17 +0900
-Message-Id: <20230331113417.400072-1-ks0204.kim@samsung.com>
+Subject: RE: Re: RE(2): FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for
+ CXL
+Date:   Fri, 31 Mar 2023 20:37:15 +0900
+Message-Id: <20230331113715.400135-1-ks0204.kim@samsung.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <ZB2pugK9Vu+nINSV@memverge.com>
+In-Reply-To: <ZB3ijJBf3SEF+Xl2@casper.infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmqa7VUbUUg8NdIhbTDytaTJ96gdGi
-        oekRi8X5WadYLPbsPclicW/Nf1aLfa/3Mlu86DzOZNGx4Q2jxcb779gcuDz+nVjD5rF4z0sm
-        j02fJrF7TL6xnNFj48f/7B59W1YxenzeJBfAHpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9q
-        ZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0npJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1
-        ICWnwLxArzgxt7g0L10vL7XEytDAwMgUqDAhO+P951fMBdelKp5++M7ewHhdtIuRk0NCwERi
-        87bPbF2MXBxCAjsYJU50H2KEcD4xSsxf28oM4XxmlJix/TIrTMvTU/+YIBK7GCV2/VgD1dLF
-        JHFw9XoWkCo2AW2JP1fOs4HYIgJyEhf2XQOzmQX+MUrsuSwJYgsLBEksefoHrJ5FQFXi0Jx+
-        RhCbV8BGYu6re0wQ2+QlZl76zg5icwroSNxcPIUZokZQ4uTMJywQM+UlmrfOBjtVQqCVQ+LE
-        vLlsEM0uEr0dO5ghbGGJV8e3sEPYUhIv+9ug7GKJx6//QdklEoeX/GaBsI0l3t18DvQyB9AC
-        TYn1u/RBTAkBZYkjt6DW8kl0HP7LDhHmlehoE4JoVJHY/m85M8yi0/s3QQ33kDi89gU4DIUE
-        6iUmnvjFNoFRYRaSZ2YheWYWwt4FjMyrGMVSC4pz01OLjQoM4RGcnJ+7iRGcWrVcdzBOfvtB
-        7xAjEwfjIUYJDmYlEd5CY9UUId6UxMqq1KL8+KLSnNTiQ4ymwKCeyCwlmpwPTO55JfGGJpYG
-        JmZmhuZGpgbmSuK80rYnk4UE0hNLUrNTUwtSi2D6mDg4pRqYFlpt7UnPLlLs2T53+XmOq40N
-        UZxa5Rk9+onFTwTXe884/mp6cPra6K6TIu3c7u/Wlf9el/Vmoepy79XXur5OSbr2w2+vRcs2
-        ddlja0Mnbpy/WG4fT/dUl8X/j/3fNePAkoml0XuOZ0/OW7u3dZPn+zcX5GXz3K1ET5YuWCnK
-        0qL5TiPpzybJjvPLV3TdDW5gkE123Rr/99/z+t6j4n8uvq37EDp7sZ+wzj7jaRwbOZ/eXPxd
-        zzvZNonjcN/Ffyfar3lmTPm0p1GnL8L0zpn/LP94mW6KbFLbncTfNm/bsc9lyx+4HJu8xq/H
-        0Ne7znuFafENadv5dcKTS6wLFkXoZKstXcv7onbDOcGPZw6ePKfEUpyRaKjFXFScCABt1HeD
-        NgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsWy7bCSvK7lUbUUg0Mv9CymH1a0mD71AqNF
-        Q9MjFovzs06xWOzZe5LF4t6a/6wW+17vZbZ40XmcyaJjwxtGi43337E5cHn8O7GGzWPxnpdM
-        Hps+TWL3mHxjOaPHxo//2T36tqxi9Pi8SS6APYrLJiU1J7MstUjfLoEr4/3nV8wF16Uqnn74
-        zt7AeF20i5GTQ0LAROLpqX9MILaQwA5GiV0f0yHiUhLvT7exQ9jCEvdbjrBC1HQwSXz+Jgli
-        swloS/y5cp4NxBYRkJO4sO8akM3FwQxSs/XydLCEsECAxLaDL8CaWQRUJQ7N6WcEsXkFbCTm
-        vrrHBLFAXmLmpe9gyzgFdCRuLp7CDLFMW+Ll90XMEPWCEidnPmEBsZmB6pu3zmaewCgwC0lq
-        FpLUAkamVYySqQXFuem5xYYFRnmp5XrFibnFpXnpesn5uZsYwVGgpbWDcc+qD3qHGJk4GA8x
-        SnAwK4nwFhqrpgjxpiRWVqUW5ccXleakFh9ilOZgURLnvdB1Ml5IID2xJDU7NbUgtQgmy8TB
-        KdXAVOp34c/puTJ1Xe06vmEyshOV2hiWvVq/s/Nrrk76VXGrg5pXUrdYzrxaN1exPCuYoVOO
-        4+qUU3rnalksrgXfE2hKjjP4IXxCR2mdlluA5aoY2aMX3VYH2V4x+Wvkd33NIokZtlOucpy7
-        z78n5vGimM6mxqi/j++xzdDO9rm5pHXu/eWnpktufB8/T+88y3xB3j0SrxP5jrskqh3U3PxK
-        4NnFQ68dlGRjbKJ/XgjKFNp/Nude5Z7gijMKK7xSriywE+62Xd1ieotb4nHP9xT5yJ7y9cuP
-        6UlZ/jFqMT8RsPX/HJ+ZLd3SLHu0l5XLsk9/+PtL/a6w2dEumTe+alw6FBx9qoCL/7dUYUTV
-        +lnLlFiKMxINtZiLihMBNLZBL/ECAAA=
-X-CMS-MailID: 20230331113417epcas2p20a886e1712dbdb1f8eec03a2ac0a47e2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmme6bo2opBisXGVtMP6xoMX3qBUaL
+        87NOsVjs2XuSxeLemv+sFvte72W2eNF5nMmiY8MbRovfP+awWWy8/47Ngcvj34k1bB6bV2h5
+        LN7zkslj06dJ7B6Tbyxn9OjbsorR4/MmuQD2qGybjNTElNQihdS85PyUzLx0WyXv4HjneFMz
+        A0NdQ0sLcyWFvMTcVFslF58AXbfMHKDrlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkF
+        KTkF5gV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGZ+//GAu2Cxasbn9LksD407BLkZODgkBE4mm
+        SQ/ZQWwhgR2MEu+3q3cxcgHZnxgl1qzrYIVwPjNK/P+9mQ2m4/3NPWwQiV2MEqtvX2OEcLqY
+        JHr7voHNYhPQlvhz5TxYh4iAuMSxqScZQWxmgX+MEnsuS4LYwgKBEs1LtjKD2CwCqhJrr/WD
+        1fAK2Eh8XLufCWKbvMTMS9/BZnICbb4y/ScTRI2gxMmZT1ggZspLNG+dzQxyhIRAK4fEicXz
+        GCGaXSQerNnBCmELS7w6voUdwpaS+PxuL9Q7xRKPX/+DipdIHF7ymwXCNpZ4d/M5UC8H0AJN
+        ifW79EFMCQFliSO3oNbySXQc/ssOEeaV6GgTgmhUkdj+bzkzzKLT+zdBDfeQePzyPzSo2hkl
+        5q/+wziBUWEWkm9mIflmFsLiBYzMqxjFUguKc9NTi40KDOERnJyfu4kRnFi1XHcwTn77Qe8Q
+        IxMH4yFGCQ5mJRHeQmPVFCHelMTKqtSi/Pii0pzU4kOMpsCwnsgsJZqcD0zteSXxhiaWBiZm
+        ZobmRqYG5krivNK2J5OFBNITS1KzU1MLUotg+pg4OKUamLz2l/+p1k0080g11v6jOFW1tstG
+        fk/7j7Tph3/LnHWYy9j//lOAXWevTSmv+IWy2d8V9JK3mQdkrHKOMArju8Nz4mTLCf9tPntz
+        SgWP9S/Ik1kivfr/6bM/8lVfbub5I/R0iqZWcaTGZ0fR5Z25C5ICXv699UmtfPqB+dPXndFU
+        j4+TXBQwayFLy45ei8aF4gHv9tuf0ZRR27pE+NeMJ1ynew5m7o3aXNFa0LQ/5sddxQcnngUJ
+        nD9TIKS+Rsf3u9LUVWvFla/tuMCUJmAV66J9YZba44wN3P0v3yt18k5vD5ty7cPUZ2rbH1ha
+        eErPDHtm90Xwrkndu0/3Zn/9vqyau1Vd3s/u/yQD73NeS5RYijMSDbWYi4oTATYbRrE1BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsWy7bCSnO7ro2opBrt+6llMP6xoMX3qBUaL
+        87NOsVjs2XuSxeLemv+sFvte72W2eNF5nMmiY8MbRovfP+awWWy8/47Ngcvj34k1bB6bV2h5
+        LN7zkslj06dJ7B6Tbyxn9OjbsorR4/MmuQD2KC6blNSczLLUIn27BK6Mz19+MBdsFq3Y3H6X
+        pYFxp2AXIyeHhICJxPube9hAbCGBHYwSne/jIOJSEu9Pt7FD2MIS91uOsHYxcgHVdDBJvH91
+        BizBJqAt8efKebBmEQFxiWNTTzKCFDGDFG29PB0sISzgL3H01RlWEJtFQFVi7bV+RhCbV8BG
+        4uPa/UwQG+QlZl76DjaUE+iiK9N/MkFcZCxxuWMxM0S9oMTJmU9YQGxmoPrmrbOZJzAKzEKS
+        moUktYCRaRWjZGpBcW56brFhgVFearlecWJucWleul5yfu4mRnAUaGntYNyz6oPeIUYmDsZD
+        jBIczEoivIXGqilCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeS90nYwXEkhPLEnNTk0tSC2CyTJx
+        cEo1MLH2vROdp3e0V4C3x9DatlhYzyryyQXtrJsa2+/fPhZj+pcxYsa0mr3LP+0tcXz0MlxF
+        PErdwHn/vHOffFl+Tj7+U1yz9qLyuzO6vB1ysd9zdhawVX+R+y6+fweDfrLYQ49PnQLRyg63
+        ZQX+zm5zi+68ynWu7cg+x/sWnvsmGdiobpat4tz/N3rT95O1yv/P3+CVk3pe8u/aVqlog9m/
+        4/fmHapUDBFJFchNW7C96HZd65YnTCt6D8W2FqiJqdU5zjyfLDDvyI6zF65eO7hAt7Tjbc6X
+        FG9Rk31iT//XT2JKUZdRjVt6b6ICx7rpYsVbxYPZ9/vu538k05DX39ollnigfan8JsX0Gv8r
+        7VmmSizFGYmGWsxFxYkA8NKVSvECAAA=
+X-CMS-MailID: 20230331113715epcas2p13127b95af4000ec1ed96a2e9d89b7444
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230331113417epcas2p20a886e1712dbdb1f8eec03a2ac0a47e2
-References: <ZB2pugK9Vu+nINSV@memverge.com>
-        <CGME20230331113417epcas2p20a886e1712dbdb1f8eec03a2ac0a47e2@epcas2p2.samsung.com>
+X-CMS-RootMailID: 20230331113715epcas2p13127b95af4000ec1ed96a2e9d89b7444
+References: <ZB3ijJBf3SEF+Xl2@casper.infradead.org>
+        <CGME20230331113715epcas2p13127b95af4000ec1ed96a2e9d89b7444@epcas2p1.samsung.com>
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Gregory Price. 
-Thank you for joining this topic and share your viewpoint.
-I'm sorry for late reply due to some major tasks of our team this week.
+Hi Matthew Wilcox. 
+We appreciate you join this topic and revise our sentences sophisticatedly.
 
->On Fri, Mar 24, 2023 at 05:48:08PM +0900, Kyungsan Kim wrote:
->> 
->> Indeed, we tried the approach. It was able to allocate a kernel context from ZONE_MOVABLE using GFP_MOVABLE.
->> However, we think it would be a bad practice for the 2 reasons.
->> 1. It causes oops and system hang occasionally due to kernel page migration while swap or compaction. 
->> 2. Literally, the design intention of ZONE_MOVABLE is to a page movable. So, we thought allocating a kernel context from the zone hurts the intention.
->> 
->> Allocating a kernel context out of ZONE_EXMEM is unmovable.
->>   a kernel context -  alloc_pages(GFP_EXMEM,)
+>On Thu, Mar 23, 2023 at 07:51:05PM +0900, Kyungsan Kim wrote:
+>> One problem we experienced was occured in the combination of hot-remove and kerelspace allocation usecases.
+>> ZONE_NORMAL allows kernel context allocation, but it does not allow hot-remove because kernel resides all the time.
+>> ZONE_MOVABLE allows hot-remove due to the page migration, but it only allows userspace allocation.
 >
->What is the specific use case of this?  If the answer is flexibility in
->low-memory situations, why wouldn't the kernel simply change to free up
->ZONE_NORMAL (swapping user memory, migrating user memory, etc) and
->allocate as needed?
->
->I could see allocating kernel memory from local memory expanders
->(directly attached to local CXL port), but I can't think of a case where
->it would be preferable for kernel resources to live on remote memory.
+>No, that's not true.  You can allocate kernel memory from ZONE_MOVABLE.
+>You have to be careful when you do that, but eg filesystems put symlinks
+>and directories in ZONE_MOVABLE, and zswap allocates memory from
+>ZONE_MOVABLE.  Of course, then you have to be careful that the kernel
+>doesn't try to move it while you're accessing it.  That's the tradeoff.
 
-We have thought kernelspace memory tiering cases.
-What memory tiering we assumes is to locate a hot data in fast memory and a cold data in slow memory.
-We think zswap, pagecache, and Meta TPP(page promotion/demotion among nodes) as the kernelspace memory tiering cases.
+You are correct.
+In fact, the intention of the sentence was to generally explain the movability preference of a kernel and user context.
+We have been aware that a kernel context is able to allocate from ZONE_MOVABLE
+using GFP_MOVABLE and implementing the movable callbacks, migrate_page(), putback_page(), isolate_page().
+We had studied that the z3fold/zsmalloc allocator of zswap also allocate from ZONE_MOVABLE.
+But we did not aware that symlinks and dentries are allocated from ZONE_MOVABLE.
+Thank you for letting us know the additional cases.
 
->Since local memory expanders are static devices, there shouldn't be a
->great need for hotplug, which means the memory could be mapped
->ZONE_NORMAL without issue.
->
-
-IMHO, we think hot-add/remove is one of the key feature of CXL due to the composability aspect.
-Right now, CXL device and system connection is limited. 
-But industry is preparing a CXL capable system that allows more than 10 CXL channels at backplane, pluggable with EDSFF. 
-Not only that, along with the progress of CXL topology - from direct-attached to switch, multi-level switch, and fabric connection -
-I think the hot-add/remove usecase would become more important.
-
-
->> Allocating a user context out of ZONE_EXMEM is movable.
->>   a user context - mmap(,,MAP_EXMEM,) - syscall - alloc_pages(GFP_EXMEM | GFP_MOVABLE,)
->> This is how ZONE_EXMEM supports the two cases.
->> 
->
->Is it intended for a user to explicitly request MAP_EXMEM for it to get
->used at all?  As in, if i simply mmap() without MAP_EXMEM, will it
->remain unutilized?
-
-Our intention is to allow below 3 cases
-1. Explicit DDR allocation - mmap(,,MAP_NORMAL,)
- : allocation from ZONE_NORMAL or ZONE_MOVABLE, or allocation fails.
-2. Explicit CXL allocation - mmap(,,MAP_EXMEM,)
- : allocation from ZONE_EXMEM, of allocation fails.
-3. Implicit Memory allocation - mmap(,,,) 
- : allocation from ZONE_NORMAL, ZONE_MOVABLE, or ZONE_EXMEM. In other words, no matter where DDR or CXL DRAM.
-
-Among that, 3 is similar with vanilla kernel operation in that the allocation request traverses among multiple zones or nodes.
-We think it would be good or bad for the mmap caller point of view.
-It is good because memory is allocated, while it could be bad because the caller does not have idea of allocated memory type.
-The later would hurt QoS metrics or userspace memory tiering operation, which expects near/far memory.
+Let me revise the part. In regards to page movability, 
+a kernel context prefers unmovable in general, but some kernel contexts are movable such as symlink, dentry, and zswap.
+an user context prefers movable in general, but some user contexts are unmovable such as DMA buffer.
 
 >
->~Gregory
+>> Alternatively, we allocated a kernel context out of ZONE_MOVABLE by adding GFP_MOVABLE flag.
+>> In case, oops and system hang has occasionally occured because ZONE_MOVABLE can be swapped.
+>
+>I think you mean "migrated".  It can't be swapped unless you put the
+>page on the LRU list, inviting the kernel to swap it.
+
+"migrated" is correct.
+
+>
+>> We resolved the issue using ZONE_EXMEM by allowing seletively choice of the two usecases.
+>
+>This sounds dangerously confused.  Do you want the EXMEM to be removable
+>or not?  If you do, then allocations from it have to be movable.  If
+>you don't, why go to all this trouble?
+
+I'm sorry to make you confused. We will try more to clearly explain our thought.
+We think the CXL DRAM device should be removable along with HW pluggable nature.
+For MM point of view, we think a page of CXL DRAM can be both movable and unmovable. 
+An user or kernel context should be able to determine it. Thus, we think dedication on the ZONE_NORMAL or the ZONE_MOVABLE is not enough.
+
