@@ -2,84 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B6556D19C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 10:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 947286D1CCB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 11:43:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231373AbjCaI0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Mar 2023 04:26:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44566 "EHLO
+        id S231368AbjCaJn3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Mar 2023 05:43:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231293AbjCaIZx (ORCPT
+        with ESMTP id S231579AbjCaJnY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Mar 2023 04:25:53 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C010A1D84F;
-        Fri, 31 Mar 2023 01:25:43 -0700 (PDT)
-Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4PntZ63ZxnzgZTg;
-        Fri, 31 Mar 2023 16:22:22 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Fri, 31 Mar 2023 16:25:41 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-CC:     <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>,
+        Fri, 31 Mar 2023 05:43:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6CDEB61;
+        Fri, 31 Mar 2023 02:42:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E8C20626BB;
+        Fri, 31 Mar 2023 09:42:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3E97C4339B;
+        Fri, 31 Mar 2023 09:42:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1680255743;
+        bh=y87xyZCMd1W1yjQaxVv+iKe9SRDUeqhLoz5FppjxSlc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=d5hDTbJ+gBS/Ug4zSYOmCSs5dPqePtZKLDcHOT17nlVNdfwPutORilUzz/38cNlyQ
+         KsZa9xdZfux+JiaFmm/KXvESqGZsFIFmbFzRs3QvlsCouUA+jWOV6M8rksSD254PqH
+         WGXqZmPGorQScZdi0hfej+zkOO5LILTPfFQZk3DY=
+Date:   Fri, 31 Mar 2023 11:42:20 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Joel Becker <jlbec@evilplan.org>, Tejun Heo <tj@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH] fs: fix sysctls.c built
-Date:   Fri, 31 Mar 2023 16:45:02 +0800
-Message-ID: <20230331084502.155284-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.35.3
+        v9fs-developer@lists.sourceforge.net,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: consolidate duplicate dt_type helpers
+Message-ID: <ZCaq_LKzU7RKm4PL@kroah.com>
+References: <20230330104144.75547-1-jlayton@kernel.org>
+ <20230331-floss-occultist-0335eb57e847@brauner>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-2.3 required=5.0 tests=RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230331-floss-occultist-0335eb57e847@brauner>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-'obj-$(CONFIG_SYSCTL) += sysctls.o' must be moved after "obj-y :=",
-or it won't be built as it is overwrited.
+On Fri, Mar 31, 2023 at 10:16:20AM +0200, Christian Brauner wrote:
+> On Thu, Mar 30, 2023 at 06:41:43AM -0400, Jeff Layton wrote:
+> > There are three copies of the same dt_type helper sprinkled around the
+> > tree. Convert them to use the common fs_umode_to_dtype function instead,
+> > which has the added advantage of properly returning DT_UNKNOWN when
+> > given a mode that contains an unrecognized type.
+> > 
+> > Cc: Chuck Lever <chuck.lever@oracle.com>
+> > Cc: Phillip Potter <phil@philpotter.co.uk>
+> > Suggested-by: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> 
+> Greg, Christoph, if you have a minute could you please take a look
+> again and re-add your acks?
 
-Fixes: ab171b952c6e ("fs: move namespace sysctls and declare fs base directory")
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- fs/Makefile | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/Makefile b/fs/Makefile
-index 05f89b5c962f..8d4736fcc766 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -6,7 +6,6 @@
- # Rewritten to use lists instead of if-statements.
- # 
- 
--obj-$(CONFIG_SYSCTL)		+= sysctls.o
- 
- obj-y :=	open.o read_write.o file_table.o super.o \
- 		char_dev.o stat.o exec.o pipe.o namei.o fcntl.o \
-@@ -50,7 +49,7 @@ obj-$(CONFIG_FS_MBCACHE)	+= mbcache.o
- obj-$(CONFIG_FS_POSIX_ACL)	+= posix_acl.o
- obj-$(CONFIG_NFS_COMMON)	+= nfs_common/
- obj-$(CONFIG_COREDUMP)		+= coredump.o
--obj-$(CONFIG_SYSCTL)		+= drop_caches.o
-+obj-$(CONFIG_SYSCTL)		+= drop_caches.o sysctls.o
- 
- obj-$(CONFIG_FHANDLE)		+= fhandle.o
- obj-y				+= iomap/
--- 
-2.35.3
-
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
