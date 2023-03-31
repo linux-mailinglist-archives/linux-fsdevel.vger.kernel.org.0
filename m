@@ -2,90 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3811C6D2363
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 17:01:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23C1C6D2406
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 17:31:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233029AbjCaPBH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Mar 2023 11:01:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49234 "EHLO
+        id S232623AbjCaPbT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Mar 2023 11:31:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230398AbjCaPAz (ORCPT
+        with ESMTP id S231247AbjCaPbS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Mar 2023 11:00:55 -0400
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2723CD527
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 08:00:46 -0700 (PDT)
-Received: by mail-io1-f69.google.com with SMTP id i189-20020a6b3bc6000000b00758a1ed99c2so13534990ioa.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 08:00:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680274845; x=1682866845;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xXJeCN66PsTRTpcJxolDc689G/RLppmQwQj5w4uhgxs=;
-        b=jXWAM9tUXBbtC7p2S93YuFpWEviguMBfvYCEiOhTtXxDIu64dUxLRFZTxP3fE3X2PF
-         uskNNAAtwj5wcotS/pNiKwrXuXKvWnjMpkjcQQkI8V+qqY712MjqqIMjIoWDz6PlX4Gf
-         k3NRyMTr/1vVYzaP31B5qx1YbJJRH8Sfoltizy6Z0jJoVcLt3xjLRFxwOvqVfm0qgUCE
-         hMWGDYqzBtsi5TVFILzuPfMguWgq522UzirMblMZ6epG4C8c87I7udAdLpj4OGYxDbOR
-         hFzMtDJgjzooMlFL3ZSpshibhsra50K33gmLL+yZTvRjJMnt256L3kEP0u/+b5nIs3yI
-         hXTw==
-X-Gm-Message-State: AAQBX9dXEsM9WLIa3IEC+nAIfYKKXYk2CFXkVEVN2bVBgxpVGHOzecUn
-        due0J913e1pLnBbVafjJsWXARvpH+7LLObLi0XGja10dCQwJ
-X-Google-Smtp-Source: AKy350ZX/pvMQTmLXUtbAKlExwmzb2czsedhAzyocEligNmGlu56sU1PUdvDN7qEP3HNKw6brs1mPomqbsL0ucNreL8RaX2VMmoG
+        Fri, 31 Mar 2023 11:31:18 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A60EB1D2E7;
+        Fri, 31 Mar 2023 08:31:17 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 5D86C219C6;
+        Fri, 31 Mar 2023 15:31:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1680276676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Mjlb0/eHfvgS2ZXDdMn4kdD62mILFu+OjmdPhxiyTJU=;
+        b=RRIGNMGk6XvNTiArrMsl+QcESXBJGs9NjtsuoiZC2LuAzOVV+RQqa5rh5aA2pqiT9wuhHO
+        /eKtlv46Iov/okzaFBNkqjlowo5qfqoDb9FZno0NVJvTNrYSSSLZ1loy7H463xuedzRcya
+        7/VqOltMaqAYn2YSeO3ic/w2iYOmYhs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1680276676;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Mjlb0/eHfvgS2ZXDdMn4kdD62mILFu+OjmdPhxiyTJU=;
+        b=AYJWCk4OYFBa7u8prX6m7h4FVCbcEypLc/iV6GW7AjiptLQSdX4is1shSP8Hshubtx8riE
+        0Sfpm5wwLn8grHCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CBC8B133B6;
+        Fri, 31 Mar 2023 15:31:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 4LwCJMP8JmQMDAAAMHmgww
+        (envelope-from <krisman@suse.de>); Fri, 31 Mar 2023 15:31:15 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     kernel@collabora.com, tytso@mit.edu,
+        linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
+        linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH 3/7] libfs: Validate negative dentries in
+ case-insensitive directories
+References: <20220622194603.102655-1-krisman@collabora.com>
+        <20220622194603.102655-4-krisman@collabora.com>
+        <20230326044627.GD3390869@ZenIV>
+Date:   Fri, 31 Mar 2023 12:31:13 -0300
+In-Reply-To: <20230326044627.GD3390869@ZenIV> (Al Viro's message of "Sun, 26
+        Mar 2023 05:46:27 +0100")
+Message-ID: <874jq10wfy.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c47:b0:326:2900:f494 with SMTP id
- d7-20020a056e021c4700b003262900f494mr5214354ilg.4.1680274845143; Fri, 31 Mar
- 2023 08:00:45 -0700 (PDT)
-Date:   Fri, 31 Mar 2023 08:00:45 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000045192105f8337955@google.com>
-Subject: [syzbot] Monthly ntfs report
-From:   syzbot <syzbot+list699b83da9318c0cd04e4@syzkaller.appspotmail.com>
-To:     anton@tuxera.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,
+        T_FILL_THIS_FORM_SHORT autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello ntfs maintainers/developers,
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-This is a 30-day syzbot report for the ntfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs
+> On Wed, Jun 22, 2022 at 03:45:59PM -0400, Gabriel Krisman Bertazi wrote:
+>
+>> +static inline int generic_ci_d_revalidate(struct dentry *dentry,
+>> +					  const struct qstr *name,
+>> +					  unsigned int flags)
+>> +{
+>> +	int is_creation = flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET);
+>> +
+>> +	if (d_is_negative(dentry)) {
+>> +		const struct dentry *parent = READ_ONCE(dentry->d_parent);
+>> +		const struct inode *dir = READ_ONCE(parent->d_inode);
+>> +
+>> +		if (dir && needs_casefold(dir)) {
+>> +			if (!d_is_casefold_lookup(dentry))
+>> +				return 0;
+>
+> 	In which conditions does that happen?
 
-During the period, 4 new issues were detected and 0 were fixed.
-In total, 22 issues are still open and 6 have been fixed so far.
+Hi Al,
 
-Some of the still happening issues:
+This can happen right after a case-sensitive directory is converted to
+case-insensitive. A previous case-sensitive lookup could have left a
+negative dentry in the dcache that we need to reject, because it doesn't
+have the same assurance of absence of all-variation of names as a
+negative dentry created during a case-insensitive lookup.
 
-Crashes Repro Title
-935     Yes   possible deadlock in ntfs_read_folio
-              https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
-581     Yes   kernel BUG in __ntfs_grab_cache_pages
-              https://syzkaller.appspot.com/bug?extid=01b3ade7c86f7dd584d7
-261     No    KASAN: use-after-free Read in ntfs_test_inode
-              https://syzkaller.appspot.com/bug?extid=2751da923b5eb8307b0b
-171     Yes   possible deadlock in map_mft_record
-              https://syzkaller.appspot.com/bug?extid=cb1fdea540b46f0ce394
-112     No    possible deadlock in __ntfs_clear_inode
-              https://syzkaller.appspot.com/bug?extid=5ebb8d0e9b8c47867596
-77      Yes   INFO: rcu detected stall in sys_mount (6)
-              https://syzkaller.appspot.com/bug?extid=ee7d095f44a683a195f8
-4       Yes   KASAN: use-after-free Read in ntfs_attr_find (2)
-              https://syzkaller.appspot.com/bug?extid=ef50f8eb00b54feb7ba2
-4       Yes   kernel BUG in ntfs_lookup_inode_by_name
-              https://syzkaller.appspot.com/bug?extid=d532380eef771ac0034b
-2       Yes   KASAN: use-after-free Read in ntfs_lookup_inode_by_name
-              https://syzkaller.appspot.com/bug?extid=3625b78845a725e80f61
+>> +			if (is_creation &&
+>> +			    (dentry->d_name.len != name->len ||
+>> +			     memcmp(dentry->d_name.name, name->name, name->len)))
+>> +				return 0;
+>> +		}
+>> +	}
+>> +	return 1;
+>> +}
+>
+> 	Analysis of stability of ->d_name, please.  It's *probably* safe, but
+> the details are subtle and IMO should be accompanied by several asserts.
+> E.g. "we never get LOOKUP_CREATE in op->intent without O_CREAT in op->open_flag
+> for such and such reasons, and we verify that in such and such place"...
+>
+> 	A part of that would be "the call in lookup_dcache() can only get there
+> with non-zero flags when coming from __lookup_hash(), and that has parent locked,
+> stabilizing the name; the same goes for the call in __lookup_slow(), with the
+> only call chain with possibly non-zero flags is through lookup_slow(), where we
+> have the parent locked".  However, lookup_fast() and lookup_open() have the
+> flags come from nd->flags, and LOOKUP_CREATE can be found there in several areas.
+> I _think_ we are guaranteed the parent locked in all such call chains, but that
+> is definitely worth at least a comment.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks for the example of the analysis what you are looking for here.
+That will help me quite a bit.  I wrote this code a while ago and I
+don't recall the exact details.  I will go through the code again and
+send a new version with the detailed analysis.
+
+-- 
+Gabriel Krisman Bertazi
