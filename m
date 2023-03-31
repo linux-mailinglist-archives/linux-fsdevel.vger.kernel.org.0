@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E5896D252C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 18:17:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 872486D2565
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 18:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233352AbjCaQRm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Mar 2023 12:17:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45882 "EHLO
+        id S232834AbjCaQYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Mar 2023 12:24:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232661AbjCaQRQ (ORCPT
+        with ESMTP id S232823AbjCaQY0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Mar 2023 12:17:16 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66E35D4F96
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 09:11:31 -0700 (PDT)
+        Fri, 31 Mar 2023 12:24:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8221223687
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 09:18:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680279066;
+        s=mimecast20190719; t=1680279435;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ecYVxyEqGMFmF1eT8L3egIdesMHxN/xKxl+aET3XOq4=;
-        b=fxjt3gXXXOhRVTEzfPskZ+Hu8Hj5ZhbGf4w9mgBYs6QOsCCdmqIzYx9Hz4FVQnSz6/NkKl
-        nIhJ2HSR+zH9JM9NBZ4GWhZj52R4fo5c8ywjgnf/EKtw86Je+2eTi4CmIMV74mFuBkovAq
-        l3QqBEAslRnLZsi9TH029AxQDGD74Ts=
+        bh=BwLwJU8AwjD+1uYy2mnm7V08kEOLBE2Z8d7v3yKcDiA=;
+        b=WPE1q1MFm1s8303Hy1K1Wo7i89erM13YCWD2k2cMlqliOoajHYAuc0cw7GYojCa0hjX3Mo
+        6NkAJxUBRzdBy4OQFI/fWrRRv9Xd9jBzv7e+WHUf/h0Le0pbaZhwi1lPHKfZLmumtWBUBk
+        U0249Cuy96qNbKCikx0A6vKf4VX9EAc=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-364-3bh1vnySPnOS90RyB8ZPRw-1; Fri, 31 Mar 2023 12:11:04 -0400
-X-MC-Unique: 3bh1vnySPnOS90RyB8ZPRw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+ us-mta-557-yXllut-UOFGxacMfCAiErA-1; Fri, 31 Mar 2023 12:11:05 -0400
+X-MC-Unique: yXllut-UOFGxacMfCAiErA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 61AEC88606A;
-        Fri, 31 Mar 2023 16:11:00 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DF65D85A5A3;
+        Fri, 31 Mar 2023 16:11:02 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7FD721121314;
-        Fri, 31 Mar 2023 16:10:58 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF7242166B33;
+        Fri, 31 Mar 2023 16:11:00 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Matthew Wilcox <willy@infradead.org>,
         "David S. Miller" <davem@davemloft.net>,
@@ -53,14 +53,14 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH v3 36/55] splice, net: Reimplement splice_to_socket() to pass multiple bufs to sendmsg()
-Date:   Fri, 31 Mar 2023 17:08:55 +0100
-Message-Id: <20230331160914.1608208-37-dhowells@redhat.com>
+Subject: [PATCH v3 37/55] Remove file->f_op->sendpage
+Date:   Fri, 31 Mar 2023 17:08:56 +0100
+Message-Id: <20230331160914.1608208-38-dhowells@redhat.com>
 In-Reply-To: <20230331160914.1608208-1-dhowells@redhat.com>
 References: <20230331160914.1608208-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -71,8 +71,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reimplement splice_to_socket() so that it can pass multiple pipe buffer
-pages to sendmsg() in a single go.
+Remove file->f_op->sendpage as splicing to a socket now calls sendmsg
+rather than sendpage.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: "David S. Miller" <davem@davemloft.net>
@@ -83,173 +83,19 @@ cc: Jens Axboe <axboe@kernel.dk>
 cc: Matthew Wilcox <willy@infradead.org>
 cc: netdev@vger.kernel.org
 ---
- fs/splice.c | 148 ++++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 120 insertions(+), 28 deletions(-)
+ include/linux/fs.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 23ead122d631..d5bc28b59720 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -411,33 +411,6 @@ const struct pipe_buf_operations nosteal_pipe_buf_ops = {
- };
- EXPORT_SYMBOL(nosteal_pipe_buf_ops);
- 
--#ifdef CONFIG_NET
--/*
-- * Send 'sd->len' bytes to socket from 'sd->file' at position 'sd->pos'
-- * using sendpage(). Return the number of bytes sent.
-- */
--static int pipe_to_sendmsg(struct pipe_inode_info *pipe,
--			   struct pipe_buffer *buf, struct splice_desc *sd)
--{
--	struct socket *sock = sock_from_file(sd->u.file);
--	struct bio_vec bvec;
--	struct msghdr msg = {
--		.msg_flags = MSG_SPLICE_PAGES,
--	};
--
--	if (sd->flags & SPLICE_F_MORE)
--		msg.msg_flags |= MSG_MORE;
--
--	if (sd->len < sd->total_len &&
--	    pipe_occupancy(pipe->head, pipe->tail) > 1)
--		msg.msg_flags |= MSG_MORE;
--
--	bvec_set_page(&bvec, buf->page, sd->len, buf->offset);
--	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, sd->len);
--	return sock_sendmsg(sock, &msg);
--}
--#endif
--
- static void wakeup_pipe_writers(struct pipe_inode_info *pipe)
- {
- 	smp_mb();
-@@ -816,7 +789,126 @@ EXPORT_SYMBOL(iter_file_splice_write);
- ssize_t splice_to_socket(struct pipe_inode_info *pipe, struct file *out,
- 			 loff_t *ppos, size_t len, unsigned int flags)
- {
--	return splice_from_pipe(pipe, out, ppos, len, flags, pipe_to_sendmsg);
-+	struct socket *sock = sock_from_file(out);
-+	struct bio_vec bvec[16];
-+	struct msghdr msg = {};
-+	ssize_t ret;
-+	size_t spliced = 0;
-+	bool need_wakeup = false;
-+
-+	pipe_lock(pipe);
-+
-+	while (len > 0) {
-+		unsigned int head, tail, mask, bc = 0;
-+		size_t remain = len;
-+
-+		/*
-+		 * Check for signal early to make process killable when there
-+		 * are always buffers available
-+		 */
-+		ret = -ERESTARTSYS;
-+		if (signal_pending(current))
-+			break;
-+
-+		while (pipe_empty(pipe->head, pipe->tail)) {
-+			ret = 0;
-+			if (!pipe->writers)
-+				goto out;
-+
-+			if (spliced)
-+				goto out;
-+
-+			ret = -EAGAIN;
-+			if (flags & SPLICE_F_NONBLOCK)
-+				goto out;
-+
-+			ret = -ERESTARTSYS;
-+			if (signal_pending(current))
-+				goto out;
-+
-+			if (need_wakeup) {
-+				wakeup_pipe_writers(pipe);
-+				need_wakeup = false;
-+			}
-+
-+			pipe_wait_readable(pipe);
-+		}
-+
-+		head = pipe->head;
-+		tail = pipe->tail;
-+		mask = pipe->ring_size - 1;
-+
-+		while (!pipe_empty(head, tail)) {
-+			struct pipe_buffer *buf = &pipe->bufs[tail & mask];
-+			size_t seg;
-+
-+			if (!buf->len) {
-+				tail++;
-+				continue;
-+			}
-+
-+			seg = min_t(size_t, remain, buf->len);
-+			seg = min_t(size_t, seg, PAGE_SIZE);
-+
-+			ret = pipe_buf_confirm(pipe, buf);
-+			if (unlikely(ret)) {
-+				if (ret == -ENODATA)
-+					ret = 0;
-+				break;
-+			}
-+
-+			bvec_set_page(&bvec[bc++], buf->page, seg, buf->offset);
-+			remain -= seg;
-+			if (seg >= buf->len)
-+				tail++;
-+			if (bc >= ARRAY_SIZE(bvec))
-+				break;
-+		}
-+
-+		if (!bc)
-+			break;
-+
-+		msg.msg_flags = 0;
-+		if (flags & SPLICE_F_MORE)
-+			msg.msg_flags = MSG_MORE;
-+		if (remain && pipe_occupancy(pipe->head, tail) > 0)
-+			msg.msg_flags = MSG_MORE;
-+		msg.msg_flags |= MSG_SPLICE_PAGES;
-+
-+		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, bvec, bc, len - remain);
-+		ret = sock_sendmsg(sock, &msg);
-+		if (ret <= 0)
-+			break;
-+
-+		spliced += ret;
-+		len -= ret;
-+		tail = pipe->tail;
-+		while (ret > 0) {
-+			struct pipe_buffer *buf = &pipe->bufs[tail & mask];
-+			size_t seg = min_t(size_t, ret, buf->len);
-+
-+			buf->offset += seg;
-+			buf->len -= seg;
-+			ret -= seg;
-+
-+			if (!buf->len) {
-+				pipe_buf_release(pipe, buf);
-+				tail++;
-+			}
-+		}
-+
-+		if (tail != pipe->tail) {
-+			pipe->tail = tail;
-+			if (pipe->files)
-+				need_wakeup = true;
-+		}
-+	}
-+
-+out:
-+	pipe_unlock(pipe);
-+	if (need_wakeup)
-+		wakeup_pipe_writers(pipe);
-+	return spliced ?: ret;
- }
- #endif
- 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f3ccc243851e..a9f1b2543d2c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1773,7 +1773,6 @@ struct file_operations {
+ 	int (*fsync) (struct file *, loff_t, loff_t, int datasync);
+ 	int (*fasync) (int, struct file *, int);
+ 	int (*lock) (struct file *, int, struct file_lock *);
+-	ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int);
+ 	unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
+ 	int (*check_flags)(int);
+ 	int (*flock) (struct file *, int, struct file_lock *);
 
