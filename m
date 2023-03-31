@@ -2,125 +2,384 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D8316D2481
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 17:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AE246D24B2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 18:10:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232921AbjCaP5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Mar 2023 11:57:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50752 "EHLO
+        id S231851AbjCaQKf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Mar 2023 12:10:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232986AbjCaP5J (ORCPT
+        with ESMTP id S231721AbjCaQKV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Mar 2023 11:57:09 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 286CFFF0D
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 08:57:07 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id ew6so91394892edb.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 08:57:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680278225;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QUqPxRAuAHrc1y6VCqhIsZPLfTNQYcDlCWZh8QFbAXg=;
-        b=bkZ4l/r93KAdsfu5vhV8HHA7H+tUt8+RCUdzBWrzIs7sG+RCRM8k4Y3YH7QTYnsH/W
-         9oXe2S3FFnucf0XXTHbmngcR/JOQsMaGTcztEr+Rz83Zi7jLjQ01txfmjjQ3K2d2NCYJ
-         vKjMYcQFsFhfJjhZf5QxUh5bcJSbEGuqESthyKBchb5q/IWM4c2k7EHOd4IRAK3T4YPy
-         M2DgTeRmyJpBvjyFLsScUlylCNVe+bxzq2LlDxmvBCawObRb5Z4U1gEB3nPmVRpTN9TF
-         N/wvzvo4hcCvNpviCA8V4IbPZ27nOJBomb9wTvpV6D6RQCvluq7bpN7aPhjhiGMexceG
-         wQng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680278225;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QUqPxRAuAHrc1y6VCqhIsZPLfTNQYcDlCWZh8QFbAXg=;
-        b=EL81sTclcYpDN9K4kM3c/+SdRCT2jTLvIiKqcRTh1oxThUNyYkNxWZfF8jqUKm8dVv
-         uXfSMrxp6/jsNT8aGgohKIEiuFJL+F59xCuJR74SVxxq67j8szRN//pkmVR4XX8hxwZ2
-         9s0J95PbPUKhJrNPGpEOQul30JQW678Qx0QMsvSgDGRcrfBDkgN1fAUXSaOiJZSD84Zj
-         okJqyD2hv5VuE4YP60RD6RImOp3lF+aVdqsXswz2+mT0cV6iO0p3wDGc7cA0ffU0OJdG
-         gaa7wJbz8R8p752E9KG6X43Xpab8hg4CzPQgypXIhJ85aiF+yiQoiFbvVsz4tLdJigkZ
-         yk0g==
-X-Gm-Message-State: AAQBX9fIgMEMCjQkpf8f9/309w1vVCk6t9v8LOrBtD+RInYuXIzOou8h
-        ILC352+cvptJ+dhVBWqfR3QZRhUSlskmrlTu8BSjwA==
-X-Google-Smtp-Source: AKy350YeU3SBnfFyD4Pfud1dHmqGIMxXnNo9n3lah5R3ayWKJr0l5EdZnUMm+T5gAOWjW7sp5RniVOOJKfQVkRGy9IU=
-X-Received: by 2002:a50:ce58:0:b0:502:6d4b:40f5 with SMTP id
- k24-20020a50ce58000000b005026d4b40f5mr3720859edj.7.1680278225487; Fri, 31 Mar
- 2023 08:57:05 -0700 (PDT)
+        Fri, 31 Mar 2023 12:10:21 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DCEC20C29
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 09:09:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680278965;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=TrM3FV9yUJu11xxe+B6pkEMKfEy/1PmRJ+mwB6z84Mo=;
+        b=YdZbS+olioXG1IzxHpf/HOmiUwS4ZfZcol3b1yAWsLHG5X2C2c2qWDGviR9SdTsneo84Vo
+        uE1++OnId7gV3cWcC/ORgqoH68lRlKQIHe75H0huQ5tZ/Xr2+wClU3kQRvDsQfeiYtrRvU
+        4aq68PLGzgSfSEDpyFAm+QnOHoqqv58=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-347-71hJcF8XPTKVTsiDQtuGSg-1; Fri, 31 Mar 2023 12:09:22 -0400
+X-MC-Unique: 71hJcF8XPTKVTsiDQtuGSg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 38F753C1178B;
+        Fri, 31 Mar 2023 16:09:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B376440DD;
+        Fri, 31 Mar 2023 16:09:18 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v3 00/55] splice, net: Replace sendpage with sendmsg(MSG_SPLICE_PAGES)
+Date:   Fri, 31 Mar 2023 17:08:19 +0100
+Message-Id: <20230331160914.1608208-1-dhowells@redhat.com>
 MIME-Version: 1.0
-References: <7c7933df-43da-24e3-2144-0551cde05dcd@redhat.com>
- <CGME20230331114220epcas2p2d5734efcbdd8956f861f8e7178cd5288@epcas2p2.samsung.com>
- <20230331114220.400297-1-ks0204.kim@samsung.com> <ZCbjRsmoy1acVN0Z@casper.infradead.org>
-In-Reply-To: <ZCbjRsmoy1acVN0Z@casper.infradead.org>
-From:   Frank van der Linden <fvdl@google.com>
-Date:   Fri, 31 Mar 2023 08:56:54 -0700
-Message-ID: <CAPTztWYGdkcdq+yO4aG2C8YYZ0SokxhHQxQK7JmRxXLAuwV00Q@mail.gmail.com>
-Subject: Re: RE: FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for CXL
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Kyungsan Kim <ks0204.kim@samsung.com>, david@redhat.com,
-        lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-cxl@vger.kernel.org,
-        a.manzanares@samsung.com, viacheslav.dubeyko@bytedance.com,
-        dan.j.williams@intel.com, seungjun.ha@samsung.com,
-        wj28.lee@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 31, 2023 at 6:42=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Fri, Mar 31, 2023 at 08:42:20PM +0900, Kyungsan Kim wrote:
-> > Given our experiences/design and industry's viewpoints/inquiries,
-> > I will prepare a few slides in the session to explain
-> >   1. Usecase - user/kernespace memory tiering for near/far placement, m=
-emory virtualization between hypervisor/baremetal OS
-> >   2. Issue - movability(movable/unmovable), allocation(explicit/implici=
-t), migration(intented/unintended)
-> >   3. HW - topology(direct, switch, fabric), feature(pluggability,error-=
-handling,etc)
->
-> I think you'll find everybody else in the room understands these issues
-> rather better than you do.  This is hardly the first time that we've
-> talked about CXL, and CXL is not the first time that people have
-> proposed disaggregated memory, nor heterogenous latency/bandwidth
-> systems.  All the previous attempts have failed, and I expect this
-> one to fail too.  Maybe there's something novel that means this time
-> it really will work, so any slides you do should focus on that.
->
-> A more profitable discussion might be:
->
-> 1. Should we have the page allocator return pages from CXL or should
->    CXL memory be allocated another way?
-> 2. Should there be a way for userspace to indicate that it prefers CXL
->    memory when it calls mmap(), or should it always be at the discretion
->    of the kernel?
-> 3. Do we continue with the current ZONE_DEVICE model, or do we come up
->    with something new?
->
->
+Hi Willy, Dave, et al.,
 
-Point 2 is what I proposed talking about here:
-https://lore.kernel.org/linux-mm/a80a4d4b-25aa-a38a-884f-9f119c03a1da@googl=
-e.com/T/
+I've been looking at how to make pipes handle the splicing in of multipage
+folios and also looking to see if I could implement a suggestion from Willy
+that pipe_buffers could perhaps hold a list of pages (which could make
+splicing simpler - an entire splice segment would go in a single
+pipe_buffer).
 
-With the current cxl-as-numa-node model, an application can express a
-preference through mbind(). But that also means that mempolicy and
-madvise (e.g. MADV_COLD) are starting to overlap if the intention is
-to use cxl as a second tier for colder memory.  Are these the right
-abstractions? Might it be more flexible to attach properties to memory
-ranges, and have applications hint which properties they prefer?
+There are a couple of issues here:
 
-It's an interesting discussion, and I hope it'll be touched on at
-LSF/MM, happy to participate there.
+ (1) Gifting/stealing a multipage folio is really tricky.  I think that if
+     a multipage folio if gifted, the gift flag should be quietly dropped.
+     Userspace has no control over what splice() and vmsplice() will see in
+     the pagecache.
 
-- Frank
+ (2) The sendpage op expects to be given a single page and various network
+     protocols just attach that to a socket buffer.
+
+This patchset aims to deal with the second by removing the ->sendpage()
+operation and replacing it with sendmsg() and a new internal flag
+MSG_SPLICE_PAGES.  As sendmsg() takes an I/O iterator, this also affords
+the opportunity to pass a slew of pages in one go, rather than one at a
+time.
+
+If MSG_SPLICE_PAGES is set, the protocol sendmsg() instance will attempt to
+splice the pages out of the buffer, copying into individual fragments those
+that it can't (e.g. because they belong to the slab).
+
+The patchset consists of the following parts:
+
+ (1) A couple of fixes.
+
+ (2) Define the MSG_SPLICE_PAGES flag.
+
+ (3) The page_frag_alloc_align() allocator is overhauled:
+
+     (a) Split it out from mm/page_alloc.c into its own file,
+     mm/page_frag_alloc.c.
+
+     (b) Make it use multipage folios rather than compound pages.
+
+     (c) Give it per-cpu buckets to allocate from so no locking is
+     required.
+
+     (d) The netdev_alloc_cache and the napi fragment cache are then cast
+     in terms of this and some private allocators are removed.
+
+     I'm not sure that the existing allocator is 100% multithread safe.
+
+ (4) Implement MSG_SPLICE_PAGES support in TCP.
+
+ (5) Make MSG_SPLICE_PAGES copy unspliceable pages (eg. slab pages).
+
+ (6) Make do_tcp_sendpages() just wrap sendmsg() and then fold it in to its
+     various callers.
+
+ (7) Implement MSG_SPLICE_PAGES support in IP and make udp_sendpage() just
+     a wrapper around sendmsg().
+
+ (8) Make IP/UDP copy unspliceable pages.
+
+ (9) Implement MSG_SPLICE_PAGES support in AF_UNIX.
+
+(10) Make AF_UNIX copy unspliceable pages.
+
+(11) Make AF_ALG use netfs_extract_iter_to_sg().
+
+(12) Make AF_ALG implement MSG_SPLICE_PAGES and make af_alg_sendpage() just
+     a wrapper around sendmsg().
+
+(13) Make AF_ALG/hash implement MSG_SPLICE_PAGES.
+
+(14) Make TLS implement MSG_SPLICE_PAGES and make its sendpage
+     implementations just a wrapper.
+
+     [!] Note that tls_sw_sendpage_locked() appears to have the wrong
+     	 locking upstream.  I think the caller will only hold the socket
+     	 lock, but it should hold tls_ctx->tx_lock too.
+
+(15) Make Chelsio's chtls implement MSG_SPLICE_PAGES.
+
+(16) Make AF_KCM implement MSG_SPLICE_PAGES.
+
+(17) Rename pipe_to_sendpage() to pipe_to_sendmsg() and make it a wrapper
+     around sendmsg().
+
+(18) Replace splice_to_socket() with an implementation that doesn't use
+     splice_from_pipe() to push one page at a time, but rather something
+     that splices up to 16 pages at once.  This absorbs pipe_to_sendmsg().
+
+(19) Remove sendpage file operation.
+
+(20) Convert siw, ceph, iscsi and tcp_bpf to use sendmsg() instead of
+     tcp_sendpage().
+
+(21) Make skb_send_sock() use sendmsg().
+
+(22) Convert ceph, rds, dlm, sunrpc, nvme, kcm, smc, ocfs2 and drbd to use
+     sendmsg().
+
+(23) Make drbd delegate copying of slab pages to TCP and pass an entire
+     bio's bvec to sendmsg at a time.  Delegate copying of unspliceable
+     pages to TCP.
+
+(24) Remove the sendpage socket operation.
+
+I've killed off all uses of kernel_sendpage() and all uses of sendpage_ok()
+outside of the protocols.
+
+I have tested AF_UNIX splicing - which, surprisingly, seems nearly twice as
+fast - TCP splicing, the siw driver (softIWarp RDMA with nfs and cifs),
+sunrpc (with nfsd), UDP (using a patched rxrpc) and TLS/sw.
+
+I've pushed the patches here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-sendpage
+
+David
+
+Changes
+=======
+ver #3)
+ - Dropped the iterator-of-iterators patch.
+ - Only expunge MSG_SPLICE_PAGES in sys_send[m]msg, not sys_recv[m]msg.
+ - Split MSG_SPLICE_PAGES code in __ip_append_data() out into helper
+   functions.
+ - Implement MSG_SPLICE_PAGES support in __ip6_append_data() using the
+   above helper functions.
+ - Rename 'xlength' to 'initial_length'.
+ - Minimise the changes to sunrpc for the moment.
+ - Don't give -EOPNOTSUPP if NETIF_F_SG not available, just copy instead.
+ - Implemented MSG_SPLICE_PAGES support in the TLS, Chelsio-TLS and AF_KCM
+   code.
+ 
+ver #2)
+ - Overhauled the page_frag_alloc() allocator: large folios and per-cpu.
+   - Got rid of my own zerocopy allocator.
+ - Use iov_iter_extract_pages() rather poking in iter->bvec.
+ - Made page splicing fall back to page copying on a page-by-page basis.
+ - Made splice_to_socket() pass 16 pipe buffers at a time.
+ - Made AF_ALG/hash use finup/digest where possible in sendmsg.
+ - Added an iterator-of-iterators, ITER_ITERLIST.
+ - Made sunrpc use the iterator-of-iterators.
+ - Converted more drivers.
+
+Link: https://lore.kernel.org/r/20230316152618.711970-1-dhowells@redhat.com/ # v1
+Link: https://lore.kernel.org/r/20230329141354.516864-1-dhowells@redhat.com/ # v2
+
+David Howells (55):
+  netfs: Fix netfs_extract_iter_to_sg() for ITER_UBUF/IOVEC
+  iov_iter: Remove last_offset member
+  net: Declare MSG_SPLICE_PAGES internal sendmsg() flag
+  mm: Move the page fragment allocator from page_alloc.c into its own
+    file
+  mm: Make the page_frag_cache allocator use multipage folios
+  mm: Make the page_frag_cache allocator use per-cpu
+  tcp: Support MSG_SPLICE_PAGES
+  tcp: Make sendmsg(MSG_SPLICE_PAGES) copy unspliceable data
+  tcp: Convert do_tcp_sendpages() to use MSG_SPLICE_PAGES
+  tcp_bpf: Inline do_tcp_sendpages as it's now a wrapper around
+    tcp_sendmsg
+  espintcp: Inline do_tcp_sendpages()
+  tls: Inline do_tcp_sendpages()
+  siw: Inline do_tcp_sendpages()
+  tcp: Fold do_tcp_sendpages() into tcp_sendpage_locked()
+  ip, udp: Support MSG_SPLICE_PAGES
+  ip, udp: Make sendmsg(MSG_SPLICE_PAGES) copy unspliceable data
+  ip6, udp6: Support MSG_SPLICE_PAGES
+  udp: Convert udp_sendpage() to use MSG_SPLICE_PAGES
+  af_unix: Support MSG_SPLICE_PAGES
+  af_unix: Make sendmsg(MSG_SPLICE_PAGES) copy unspliceable data
+  crypto: af_alg: Pin pages rather than ref'ing if appropriate
+  crypto: af_alg: Use netfs_extract_iter_to_sg() to create scatterlists
+  crypto: af_alg: Indent the loop in af_alg_sendmsg()
+  crypto: af_alg: Support MSG_SPLICE_PAGES
+  crypto: af_alg: Convert af_alg_sendpage() to use MSG_SPLICE_PAGES
+  crypto: af_alg/hash: Support MSG_SPLICE_PAGES
+  tls/device: Support MSG_SPLICE_PAGES
+  tls/device: Convert tls_device_sendpage() to use MSG_SPLICE_PAGES
+  tls/sw: Support MSG_SPLICE_PAGES
+  tls/sw: Convert tls_sw_sendpage() to use MSG_SPLICE_PAGES
+  chelsio: Support MSG_SPLICE_PAGES
+  chelsio: Convert chtls_sendpage() to use MSG_SPLICE_PAGES
+  kcm: Support MSG_SPLICE_PAGES
+  kcm: Convert kcm_sendpage() to use MSG_SPLICE_PAGES
+  splice, net: Use sendmsg(MSG_SPLICE_PAGES) rather than ->sendpage()
+  splice, net: Reimplement splice_to_socket() to pass multiple bufs to
+    sendmsg()
+  Remove file->f_op->sendpage
+  siw: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage to transmit
+  ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage
+  iscsi: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage
+  iscsi: Assume "sendpage" is okay in iscsi_tcp_segment_map()
+  tcp_bpf: Make tcp_bpf_sendpage() go through
+    tcp_bpf_sendmsg(MSG_SPLICE_PAGES)
+  net: Use sendmsg(MSG_SPLICE_PAGES) not sendpage in skb_send_sock()
+  algif: Remove hash_sendpage*()
+  ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage()
+  rds: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage
+  dlm: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage
+  sunrpc: Use sendmsg(MSG_SPLICE_PAGES) rather then sendpage
+  nvme: Use sendmsg(MSG_SPLICE_PAGES) rather then sendpage
+  kcm: Use sendmsg(MSG_SPLICE_PAGES) rather then sendpage
+  smc: Drop smc_sendpage() in favour of smc_sendmsg() + MSG_SPLICE_PAGES
+  ocfs2: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage()
+  drbd: Use sendmsg(MSG_SPLICE_PAGES) rather than sendmsg()
+  drdb: Send an entire bio in a single sendmsg
+  sock: Remove ->sendpage*() in favour of sendmsg(MSG_SPLICE_PAGES)
+
+ Documentation/networking/scaling.rst          |   4 +-
+ crypto/Kconfig                                |   1 +
+ crypto/af_alg.c                               | 194 +++++--------
+ crypto/algif_aead.c                           |  52 ++--
+ crypto/algif_hash.c                           | 171 +++++------
+ crypto/algif_rng.c                            |   2 -
+ crypto/algif_skcipher.c                       |  24 +-
+ drivers/block/drbd/drbd_main.c                |  86 ++----
+ drivers/infiniband/sw/siw/siw_qp_tx.c         | 227 +++------------
+ .../chelsio/inline_crypto/chtls/chtls.h       |   2 -
+ .../chelsio/inline_crypto/chtls/chtls_io.c    | 169 ++++-------
+ .../chelsio/inline_crypto/chtls/chtls_main.c  |   1 -
+ drivers/net/ethernet/mediatek/mtk_wed_wo.c    |  19 +-
+ drivers/net/ethernet/mediatek/mtk_wed_wo.h    |   2 -
+ drivers/nvme/host/tcp.c                       |  63 ++--
+ drivers/nvme/target/tcp.c                     |  69 +++--
+ drivers/scsi/iscsi_tcp.c                      |  31 +-
+ drivers/scsi/iscsi_tcp.h                      |   2 +-
+ drivers/scsi/libiscsi_tcp.c                   |  13 +-
+ drivers/target/iscsi/iscsi_target_util.c      |  14 +-
+ fs/dlm/lowcomms.c                             |  10 +-
+ fs/netfs/iterator.c                           |   2 +-
+ fs/ocfs2/cluster/tcp.c                        | 107 +++----
+ fs/splice.c                                   | 158 ++++++++--
+ include/crypto/if_alg.h                       |   7 +-
+ include/linux/fs.h                            |   3 -
+ include/linux/gfp.h                           |  17 +-
+ include/linux/mm_types.h                      |  13 +-
+ include/linux/net.h                           |   8 -
+ include/linux/socket.h                        |   3 +
+ include/linux/splice.h                        |   2 +
+ include/linux/sunrpc/svc.h                    |  11 +-
+ include/linux/uio.h                           |   5 +-
+ include/net/inet_common.h                     |   2 -
+ include/net/ip.h                              |   4 +
+ include/net/sock.h                            |   6 -
+ include/net/tcp.h                             |   2 -
+ include/net/tls.h                             |   2 +-
+ mm/Makefile                                   |   2 +-
+ mm/page_alloc.c                               | 126 --------
+ mm/page_frag_alloc.c                          | 201 +++++++++++++
+ net/appletalk/ddp.c                           |   1 -
+ net/atm/pvc.c                                 |   1 -
+ net/atm/svc.c                                 |   1 -
+ net/ax25/af_ax25.c                            |   1 -
+ net/caif/caif_socket.c                        |   2 -
+ net/can/bcm.c                                 |   1 -
+ net/can/isotp.c                               |   1 -
+ net/can/j1939/socket.c                        |   1 -
+ net/can/raw.c                                 |   1 -
+ net/ceph/messenger_v1.c                       |  58 ++--
+ net/ceph/messenger_v2.c                       |  89 ++----
+ net/core/skbuff.c                             |  81 +++---
+ net/core/sock.c                               |  35 +--
+ net/dccp/ipv4.c                               |   1 -
+ net/dccp/ipv6.c                               |   1 -
+ net/ieee802154/socket.c                       |   2 -
+ net/ipv4/af_inet.c                            |  21 --
+ net/ipv4/ip_output.c                          | 122 +++++++-
+ net/ipv4/tcp.c                                | 274 ++++++------------
+ net/ipv4/tcp_bpf.c                            |  72 +----
+ net/ipv4/tcp_ipv4.c                           |   1 -
+ net/ipv4/udp.c                                |  54 ----
+ net/ipv4/udp_impl.h                           |   2 -
+ net/ipv4/udplite.c                            |   1 -
+ net/ipv6/af_inet6.c                           |   3 -
+ net/ipv6/ip6_output.c                         |  28 +-
+ net/ipv6/raw.c                                |   1 -
+ net/ipv6/tcp_ipv6.c                           |   1 -
+ net/kcm/kcmsock.c                             | 249 ++++++----------
+ net/key/af_key.c                              |   1 -
+ net/l2tp/l2tp_ip.c                            |   1 -
+ net/l2tp/l2tp_ip6.c                           |   1 -
+ net/llc/af_llc.c                              |   1 -
+ net/mctp/af_mctp.c                            |   1 -
+ net/mptcp/protocol.c                          |   2 -
+ net/netlink/af_netlink.c                      |   1 -
+ net/netrom/af_netrom.c                        |   1 -
+ net/packet/af_packet.c                        |   2 -
+ net/phonet/socket.c                           |   2 -
+ net/qrtr/af_qrtr.c                            |   1 -
+ net/rds/af_rds.c                              |   1 -
+ net/rds/tcp_send.c                            |  86 +++---
+ net/rose/af_rose.c                            |   1 -
+ net/rxrpc/af_rxrpc.c                          |   1 -
+ net/sctp/protocol.c                           |   1 -
+ net/smc/af_smc.c                              |  29 --
+ net/smc/smc_stats.c                           |   2 +-
+ net/smc/smc_stats.h                           |   1 -
+ net/smc/smc_tx.c                              |  16 -
+ net/smc/smc_tx.h                              |   2 -
+ net/socket.c                                  |  76 +----
+ net/sunrpc/svcsock.c                          |  38 +--
+ net/tipc/socket.c                             |   3 -
+ net/tls/tls_device.c                          |  91 +++---
+ net/tls/tls_main.c                            |  31 +-
+ net/tls/tls_sw.c                              | 215 ++++++--------
+ net/unix/af_unix.c                            | 254 +++++++---------
+ net/vmw_vsock/af_vsock.c                      |   3 -
+ net/x25/af_x25.c                              |   1 -
+ net/xdp/xsk.c                                 |   1 -
+ net/xfrm/espintcp.c                           |  10 +-
+ 102 files changed, 1519 insertions(+), 2301 deletions(-)
+ create mode 100644 mm/page_frag_alloc.c
+
