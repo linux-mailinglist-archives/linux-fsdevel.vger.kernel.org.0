@@ -2,114 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C90C06D1F69
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 13:47:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C39F6D2010
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 14:22:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231290AbjCaLrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Mar 2023 07:47:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60248 "EHLO
+        id S232335AbjCaMWG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Mar 2023 08:22:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbjCaLrR (ORCPT
+        with ESMTP id S232323AbjCaMVm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Mar 2023 07:47:17 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091501E724
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 04:46:52 -0700 (PDT)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230331114651epoutp043ce381b734f1bf975f2066a123576fa6~Rfn0GUPSM2486224862epoutp04Y
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 11:46:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230331114651epoutp043ce381b734f1bf975f2066a123576fa6~Rfn0GUPSM2486224862epoutp04Y
+        Fri, 31 Mar 2023 08:21:42 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B97571EFFA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 05:21:12 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230331122047euoutp023cdaa314321d9051455b3db38e5ba7aa~RgFcODn2x2998929989euoutp02m
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 12:20:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230331122047euoutp023cdaa314321d9051455b3db38e5ba7aa~RgFcODn2x2998929989euoutp02m
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1680263211;
-        bh=Elvc3NDLcXtB7fip/yBqKkhlU5FfkiSc7O30H4CxdNk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F0mUtfYXBJNsYG3nfruPR5Gmhy9fusPyaOEoGFqjZnUk+y+AJ45J4Xk59tzgqT6jf
-         fMwqdvZkFJ5N+6uCyUlUVzXUojSp9kFTfIIMJ4iwnopm2hbWfVlIDzxIp+Bm2TKlc/
-         OAyi3bVfLGHVaFCLvD1yym51ytnccbUwD2TB9iow=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20230331114650epcas2p28970002302e889ad7a030982bd9dd4ee~Rfnzql2Th1108511085epcas2p2O;
-        Fri, 31 Mar 2023 11:46:50 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.101]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Pnz622HVsz4x9Pp; Fri, 31 Mar
-        2023 11:46:50 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        28.61.27926.A28C6246; Fri, 31 Mar 2023 20:46:50 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230331114649epcas2p23d52cd1d224085e6192a0aaf22948e3e~RfnymVtVK2893028930epcas2p2-;
-        Fri, 31 Mar 2023 11:46:49 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230331114649epsmtrp2ba6137db1fb1281dc84a9aa05d21a935~RfnylDZ8X1084510845epsmtrp2I;
-        Fri, 31 Mar 2023 11:46:49 +0000 (GMT)
-X-AuditID: b6c32a46-a4bff70000006d16-9a-6426c82ad749
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1E.06.18071.928C6246; Fri, 31 Mar 2023 20:46:49 +0900 (KST)
-Received: from dell-Precision-7920-Tower.dsn.sec.samsung.com (unknown
-        [10.229.83.99]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230331114649epsmtip15e76f833be6302e8058f00f8dafc8eaf~RfnyV6-m91642716427epsmtip1x;
-        Fri, 31 Mar 2023 11:46:49 +0000 (GMT)
-From:   Kyungsan Kim <ks0204.kim@samsung.com>
-To:     dragan@stancevic.com
-Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-cxl@vger.kernel.org,
-        a.manzanares@samsung.com, viacheslav.dubeyko@bytedance.com,
-        dan.j.williams@intel.com, seungjun.ha@samsung.com,
-        wj28.lee@samsung.com
-Subject: Re: Re: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for CXL
-Date:   Fri, 31 Mar 2023 20:46:49 +0900
-Message-Id: <20230331114649.400453-1-ks0204.kim@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <e4a8433a-fdca-e806-c7e9-750e81176228@stancevic.com>
+        s=mail20170921; t=1680265247;
+        bh=RG0AskesBGxejlTr4JHEhK02MF/IWOxvFzpfN3R7npc=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=sEWO2dKySJf9bqBkoq2fkNFxwAwamiqJ5bOxce1NxpZX61XpF66PidxaF84lkquev
+         ++ETNPtaWZbvBoFM+W6uSokTPuVsDNzpbcAsQREz9177zRQ6KDcSJVKD666vQWplV9
+         jUBvS2BYT6A/G1RW/hKzXwYnSiqMy+MammGcX9dw=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230331122046eucas1p2dd047848b60f9ddc31dd7b266bd86d77~RgFbxwOsi1098310983eucas1p24;
+        Fri, 31 Mar 2023 12:20:46 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 14.78.09503.E10D6246; Fri, 31
+        Mar 2023 13:20:46 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230331122046eucas1p247e0cd2d06229a6b7cae9cb26ea43d5b~RgFbZahPc1098310983eucas1p23;
+        Fri, 31 Mar 2023 12:20:46 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230331122046eusmtrp238c8959c39aa187032906ac97e80131b~RgFbYiwNm2670526705eusmtrp2U;
+        Fri, 31 Mar 2023 12:20:46 +0000 (GMT)
+X-AuditID: cbfec7f2-ea5ff7000000251f-bf-6426d01eee9e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id F3.4E.09583.E10D6246; Fri, 31
+        Mar 2023 13:20:46 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230331122046eusmtip2b8baf2b87eb1e2370ba007aa92d0a40b~RgFbLcVLU2523725237eusmtip2g;
+        Fri, 31 Mar 2023 12:20:46 +0000 (GMT)
+Received: from localhost (106.110.32.140) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Fri, 31 Mar 2023 13:20:45 +0100
+Date:   Fri, 31 Mar 2023 14:12:29 +0200
+From:   Pankaj Raghav <p.raghav@samsung.com>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+CC:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        "Hannes Reinecke" <hare@suse.de>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Ming Lei <ming.lei@redhat.com>, <linux-block@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <dm-devel@redhat.com>, Song Liu <song@kernel.org>,
+        <linux-raid@vger.kernel.org>, Mike Snitzer <snitzer@kernel.org>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        <jfs-discussion@lists.sourceforge.net>, <cluster-devel@redhat.com>,
+        "Bob Peterson" <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        David Sterba <dsterba@suse.com>, <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH 01/19] swap: use __bio_add_page to add page to bio
+Message-ID: <20230331121156.7c7nbxfhagdufpzo@blixen>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmqa7WCbUUg223OS2mH1a0mD71AqPF
-        obk32S3OzzrFYrFn70kWi3tr/rNa7Hu9l9niRedxJouODW8YLTbef8fmwOXx78QaNo/Fe14y
-        eWz6NIndY/KN5YwefVtWMXosXmrj8XmTXAB7VLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZ
-        gaGuoaWFuZJCXmJuqq2Si0+ArltmDtB1SgpliTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSC
-        lJwC8wK94sTc4tK8dL281BIrQwMDI1OgwoTsjNNbZ7IUrJOs2POgiaWBcZpoFyMnh4SAicSR
-        E8tZuxi5OIQEdjBKnP/7gg0kISTwiVHi2E8tiMQ3RomJnV8ZYToOHjnBBpHYyyjx7c4BVoiO
-        LiaJY1+qQGw2AW2JP1fOg00SEZCQ2LdmEVgzs8A/Rok9lyVBbGEBF4ndN/ewg9gsAqoSC2fM
-        BrN5BWwkdr56zQaxTF5i5qXvYHFOAUeJtr5trBA1ghInZz5hgZgpL9G8dTYzyEESAp0cEm+6
-        30Fd6iLRsXg9C4QtLPHq+BZ2CFtK4vO7vVALiiUev/4HFS+ROLzkN1S9scS7m8+BlnEALdCU
-        WL9LH8SUEFCWOHILai2fRMfhv+wQYV6JjjYhiEYVie3/ljPDLDq9fxPUcA+JtY2rGCHBNoVR
-        4vDkX+wTGBVmIflmFpJvZiEsXsDIvIpRLLWgODc9tdiowAgev8n5uZsYwWlVy20H45S3H/QO
-        MTJxMB5ilOBgVhLhLTRWTRHiTUmsrEotyo8vKs1JLT7EaAoM64nMUqLJ+cDEnlcSb2hiaWBi
-        ZmZobmRqYK4kzittezJZSCA9sSQ1OzW1ILUIpo+Jg1OqgaleiuPclIIC7rkrCxJFj3R+PeHd
-        sInf/JVBkaHwbcna06dkbTPeyEYZ+JyM7nb6GVp9IHnRXEd5Q0/rdXuNxNKmqRsY+6xIniR0
-        7daNkzbdbLHFiwp6+yLDNbd/WjHpj7nhx/KJn3aU+h5WDmmNO/lp5zm2O/sLQw3/XffdyPva
-        jufhtek8Jxbt/LDZaF39lvVPmsydVdbIhCWfUux8/lfb/+GXqLlfHVW6thav7nWaqB4Vc7d/
-        yhuO9Y3qE8u8PvEZPKzR6+WaGlGa8vBWycugYxdXlkznFloRsafn3bv3lcx3uBU0Z2xtqio7
-        F1wQq2hu0W+mstK9saNR1DdkxYforSZt07L4L/X3fl0Rr8RSnJFoqMVcVJwIALJBKA40BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsWy7bCSnK7mCbUUg9er1C2mH1a0mD71AqPF
-        obk32S3OzzrFYrFn70kWi3tr/rNa7Hu9l9niRedxJouODW8YLTbef8fmwOXx78QaNo/Fe14y
-        eWz6NIndY/KN5YwefVtWMXosXmrj8XmTXAB7FJdNSmpOZllqkb5dAlfG6a0zWQrWSVbsedDE
-        0sA4TbSLkZNDQsBE4uCRE2xdjFwcQgK7GSXuT/jNDJGQknh/uo0dwhaWuN9yhBWiqINJ4tnq
-        BSwgCTYBbYk/V86zgdgiAhIS+9YsYgQpYgYp2np5OlhCWMBFYvfNPWCTWARUJRbOmA1m8wrY
-        SOx89ZoNYoO8xMxL38HinAKOEm1921hBbCEBB4npyxZD1QtKnJz5BGwxM1B989bZzBMYBWYh
-        Sc1CklrAyLSKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4DrQ0dzBuX/VB7xAjEwfj
-        IUYJDmYlEd5CY9UUId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZ
-        ODilGpgCr9epx1/nEl6gLzRXSrRpRgOf6XSzVIs1HjnTenvWz0voM9A/JX3DfA9vsnO0XlL6
-        xEXmVrYJYhsPKv7m2a2/7vukP0duOR70Pi1g+/hD0N9rU2NDEj54NtzktVfx19q9fc9xg3Dl
-        3/dkP/xvz/x+LsDz49GZRlHX8yc/eev+X+C+h8irrCO35f4vftP3rkl/8vY9sp82sq8JdExQ
-        K3BkKUmJSvt1RNjO2u++e5CSruSyy2xXDR3mHK/UMb4mUOahstn9qvW6k00c9evkt6g7S56b
-        mb7sPePOui/SqnPehW/TFf52bsXyJoU17wLfWwqJOy4U/8PE6ueftdh1/smc2pIX3QWRW2vj
-        JHMKNiixFGckGmoxFxUnAgDcHQgw8gIAAA==
-X-CMS-MailID: 20230331114649epcas2p23d52cd1d224085e6192a0aaf22948e3e
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7849b142e073b20f033e5124a39080f59e5f19d2.1680108414.git.johannes.thumshirn@wdc.com>
+X-Originating-IP: [106.110.32.140]
+X-ClientProxiedBy: CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBKsWRmVeSWpSXmKPExsWy7djPc7pyF9RSDBZPM7TYtm43u8Xqu/1s
+        FidXP2azaG3/xmSx991sVosLPxqZLPYsmsRksXL1USaLix9bmSz+dt1jsnh6dRZQyS1ti0uP
+        V7Bb7Nl7ksXi3pr/rBbt83cxWhya3Mxk0TW7lc3i9p0fzBYnbklbHF/+l83i9485bA5iHptX
+        aHlcPlvqsWlVJ5vHpk+T2D12L/jM5LH7ZgObR2/zOzaP9/uusnms33KVxWPz6WqPz5vkPNoP
+        dDMF8ERx2aSk5mSWpRbp2yVwZcz/doOtYCNzxfprsQ2Mj5i6GDk5JARMJI5NaGHsYuTiEBJY
+        wSixunsRG4TzhVFi1+QXrBDOZ0aJ7a+uw7WceLyHBSKxnFFiX9M2Rriq46eeQjlbGCUuntsE
+        1sIioCqx4etl9i5GDg42AS2Jxk52kLCIgLHEle8LwSYxC5xmlVh4/QsrSEJYwE2ibepCsCJe
+        oHVH7ixnhLAFJU7OfMICYjML6Egs2P2JDWQms4C0xPJ/HCBhToFEiZt7FkBdqiTRsPkMC4Rd
+        K7G3+QA7hP2NU+LUCiEI20Vix+rNUPXCEq+Ob4GqkZH4v3M+VLxa4umN38wgd0oItDBK9O9c
+        D7ZXQsBaou9MDoTpKLFrii2EySdx460gxJF8EpO2TWeGCPNKdLRBLVWT2NG0lXECo/IsJG/N
+        QvLWLIS3FjAyr2IUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAhMnKf/Hf+0g3Huq496hxiZ
+        OBgPMUpwMCuJ8BYaq6YI8aYkVlalFuXHF5XmpBYfYpTmYFES59W2PZksJJCeWJKanZpakFoE
+        k2Xi4JRqYGJ/Mq99ttHmVS9fhk9x2O7O7HvTf+/R+lhRfRXOv75H4oX0PF9zSC0zsTrB2Hsi
+        eKO1iPxXL+MvIfrzNi9OcG46+ol153PN+JnpYbKbTDaqOVs9D1OquC2Qvc6bJZbv0SouaanZ
+        J+X3chn66V2wn3wx+Nano/cD+ev+KYgXdvDKXHV6X3w0czGPM8dGn7d1vwrNFazUsroWMtkd
+        +Ls72vL37s3Kn4871TzKdpGfZlo61e5ruFDCKqVOfjP5pt+WNy4fDn79+XDsAe7Oo6avAv35
+        39y5bHdLp1fXyF+qKOcGH9MF62viPsXSs85vcJbSfPmjgyG4/s+0ABtmk9XT80s+SRrPL0wQ
+        ULNpnrtUiaU4I9FQi7moOBEAP8WwqwsEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGKsWRmVeSWpSXmKPExsVy+t/xe7pyF9RSDK5cErfYtm43u8Xqu/1s
+        FidXP2azaG3/xmSx991sVosLPxqZLPYsmsRksXL1USaLix9bmSz+dt1jsnh6dRZQyS1ti0uP
+        V7Bb7Nl7ksXi3pr/rBbt83cxWhya3Mxk0TW7lc3i9p0fzBYnbklbHF/+l83i9485bA5iHptX
+        aHlcPlvqsWlVJ5vHpk+T2D12L/jM5LH7ZgObR2/zOzaP9/uusnms33KVxWPz6WqPz5vkPNoP
+        dDMF8ETp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXo
+        Zcz/doOtYCNzxfprsQ2Mj5i6GDk5JARMJE483sMCYgsJLGWUeLRWCiIuI/Hpykd2CFtY4s+1
+        LrYuRi6gmo+MEptubYFytjBKfJz6G6yKRUBVYsPXy0A2BwebgJZEYydYWETAWOLK94UsIPXM
+        AqdZJT7PfskIkhAWcJNom7oQrIgX6Iojd5YzQlwxhVFi8msViLigxMmZT8CuYxbQkViw+xMb
+        yHxmAWmJ5f84QMKcAokSN/csgHpGSaJh8xkWCLtWovPVabYJjMKzkEyahWTSLIRJCxiZVzGK
+        pJYW56bnFhvpFSfmFpfmpesl5+duYgQmkG3Hfm7Zwbjy1Ue9Q4xMHIyHGCU4mJVEeAuNVVOE
+        eFMSK6tSi/Lji0pzUosPMZoCQ2Iis5Rocj4wheWVxBuaGZgamphZGphamhkrifN6FnQkCgmk
+        J5akZqemFqQWwfQxcXBKNTDFVzyrFHN98C7HflXCTe5DketvM5byVt4rXXFnmnXppfPP/gtl
+        BZ5b8vLrudR/D3Iz/Fasl/4UvMc041N88wNOBgf+xBThdu+rZRy24sznqrl8jSra+Ll+/Yzt
+        3xBydFb+naTaadW32p4G3VITy/E2PH3Ft25+7jOHcJGd0efa9vScOnT3UZHSofkuTbK2e6aF
+        OpbGm31dtmbVN/uOqc+ubDQIvfkv/5/Jt4LA442q4pY3XU00w07n5CmwnVj63Te1aaPR/7fN
+        6xx/JofOXyfrWGzyV7Sgq/yyyfkbxVGrbKvEPRfzpB0tL9sqLRthkNB5f0FPx8pVbt/eSXo8
+        /JRkIvyyfrYM914byRPTBJRYijMSDbWYi4oTAXZ/WI2pAwAA
+X-CMS-MailID: 20230331122046eucas1p247e0cd2d06229a6b7cae9cb26ea43d5b
 X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230331114649epcas2p23d52cd1d224085e6192a0aaf22948e3e
-References: <e4a8433a-fdca-e806-c7e9-750e81176228@stancevic.com>
-        <CGME20230331114649epcas2p23d52cd1d224085e6192a0aaf22948e3e@epcas2p2.samsung.com>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+X-RootMTR: 20230331122046eucas1p247e0cd2d06229a6b7cae9cb26ea43d5b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230331122046eucas1p247e0cd2d06229a6b7cae9cb26ea43d5b
+References: <cover.1680108414.git.johannes.thumshirn@wdc.com>
+        <7849b142e073b20f033e5124a39080f59e5f19d2.1680108414.git.johannes.thumshirn@wdc.com>
+        <CGME20230331122046eucas1p247e0cd2d06229a6b7cae9cb26ea43d5b@eucas1p2.samsung.com>
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -118,57 +132,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Dragan Stancevic.
-Thank you for your interests and joning the discussion.
+On Wed, Mar 29, 2023 at 10:05:47AM -0700, Johannes Thumshirn wrote:
+> The swap code only adds a single page to a newly created bio. So use
+> __bio_add_page() to add the page which is guaranteed to succeed in this
+> case.
+> 
+> This brings us closer to marking bio_add_page() as __must_check.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
->On 2/20/23 19:41, Kyungsan Kim wrote:
->> CXL is a promising technology that leads to fundamental changes in computing architecture.
->> To facilitate adoption and widespread of CXL memory, we are developing a memory tiering solution, called SMDK[1][2].
->> Using SMDK and CXL RAM device, our team has been working with industry and academic partners over last year.
->> Also, thanks to many researcher's effort, CXL adoption stage is gradually moving forward from basic enablement to real-world composite usecases.
->> At this moment, based on the researches and experiences gained working on SMDK, we would like to suggest a session at LSF/MM/BFP this year
->> to propose possible Linux MM changes with a brief of SMDK.
->> 
->> Adam Manzanares kindly adviced me that it is preferred to discuss implementation details on given problem and consensus at LSF/MM/BFP.
->> Considering the adoption stage of CXL technology, however, let me suggest a design level discussion on the two MM expansions of SMDK this year.
->> When we have design consensus with participants, we want to continue follow-up discussions with additional implementation details, hopefully.
->> 
->>   
->> 1. A new zone, ZONE_EXMEM
->> We added ZONE_EXMEM to manage CXL RAM device(s), separated from ZONE_NORMAL for usual DRAM due to the three reasons below.
->
->Hi Kyungsan-
->
->I read through your links and I am very interested in this 
->talk/discussion from the perspective of cloud/virtualization hypervisor 
->loads.
->
->The problem that I am starting to tackle is clustering of hypervisors 
->over cxl.mem for high availability of virtual machines. Or live 
->migration of virtual machines between hypervisors using cxl.mem [1].
->
->
->So I was wondering, with regards to the ZONE_XMEM, has any thought been 
->given to the shared memory across virtual hierarchies [2], where you 
->have cxl.mem access over cxl switches by multiple VH connections. It 
->seems to me that there might be a need for differentiation of direct 
->cxl.mem and switched cxl.mem. At least from the point of view where you 
->have multiple hypervisors sharing the memory over a switch. Where they 
->would potentially have to synchronize state/metadata about the memory.
-
-At first, in general we have thought that more SW layers(baremetal, virtualization, orchestration) would be related
-along with the progress of CXL topology(direct attached, switch/multilevel switch, rackscale/inter-rackscale with fabric).
-We think ZONE_EXMEM can be used as a static CXL identifier between hypervisor and host OS interaction for memory inflation/deflation, transcendent memory interface(frontswap/cleancache)[1], and isolation.
-
-
-[1] https://lwn.net/Articles/454795
-
->
->[1] A high-level explanation is at https://protect2.fireeye.com/v1/url?k=6962eb99-098076c4-696360d6-000babd9f1ba-f4ae8300c44044a7&q=1&e=fca5fea0-6b57-4874-8ec1-637a6c1019b6&u=http%3A%2F%2Fnil-migration.org%2F
->[2] Compute Express Link Specification r3.0, v1.0 8/1/22, Page 51, 
->figure 1-4, black color scheme circle(3) and bars.
->
->
->--
->Peace can only come as a natural consequence
->of universal enlightenment -Dr. Nikola Tesla
+Looks good,
+Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
