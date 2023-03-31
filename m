@@ -2,52 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72B046D271E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 19:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E7A56D276F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 20:01:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232591AbjCaRyV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Mar 2023 13:54:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53458 "EHLO
+        id S233067AbjCaSBB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Mar 2023 14:01:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231251AbjCaRyU (ORCPT
+        with ESMTP id S232607AbjCaSAi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Mar 2023 13:54:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FEDA1A453;
-        Fri, 31 Mar 2023 10:54:18 -0700 (PDT)
+        Fri, 31 Mar 2023 14:00:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3492023B67;
+        Fri, 31 Mar 2023 11:00:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D08B962AF4;
-        Fri, 31 Mar 2023 17:54:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9B9C433AA;
-        Fri, 31 Mar 2023 17:54:17 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C21BB62B01;
+        Fri, 31 Mar 2023 18:00:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C3E2C4339B;
+        Fri, 31 Mar 2023 18:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680285257;
-        bh=Ijr+WNx7ld4U5ZO+OP83Langs78qK2JwUNbqX48Y74E=;
+        s=k20201202; t=1680285611;
+        bh=9tXVcu579pVEe31v3uq18Kz/aIIJc6OZT76XuWimyYY=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=NlUsYXunWuWGa5qJtzHr2cVFf2mzdtZdXDwqqDzEtj1erN4/UEH5oBLlA+R2q+o1M
-         an2FD0E0FdazXGvuATGaJmC6tuT0zRlQ77fXpvY6pFX1I42bhRwtRYb4EwVwsSCshv
-         /w7kqF7Q3A9R8Y/I8mdEGr3HrwyFsaYA6YJOFbpxZM1X9TKmHN/m1uW21mhvN0lJMK
-         W/4KbeJ5FOFz+PGsFgDTzifZVWsSERPeuLJNL5OC6eK7xe2WmPdFCF+EV4iuGiHj1+
-         6zB4x/ZbN1oFJEdXH97hYDgTq4gsGJ14oSMEKjopTYWGs3WLQoStd3EbVOC7opi8re
-         k+Npd+3KW4cdA==
-Received: by mail-lf1-f44.google.com with SMTP id c9so19523126lfb.1;
-        Fri, 31 Mar 2023 10:54:17 -0700 (PDT)
-X-Gm-Message-State: AAQBX9cEEI7El3iei4b7177WNMJsNMfSrtfbAb0MAFju7Ui/J6ACt5dV
-        r9xU4T8J6lHjGciZXzKFH1wKvIOOyyZkKhCxHB0=
-X-Google-Smtp-Source: AKy350YvKqb0dBoMYfGdDtedXvU05FWt6KdyndNuIJije8MdSUJrkHi6AamvXBmeJg5t6pczjm2RarPTQzd6MOIJepA=
-X-Received: by 2002:ac2:5610:0:b0:4dd:a4e1:4861 with SMTP id
- v16-20020ac25610000000b004dda4e14861mr8234430lfd.3.1680285255256; Fri, 31 Mar
- 2023 10:54:15 -0700 (PDT)
+        b=YgNZHmOLXZ1VOoy/QrY5pCHfzk02sSFrQTFY8GMr48v+dR8Qt80AuSqjMT9CMiyQP
+         ysZNr5rNQY3tgaZGR4Y4E1KmqnncUybRBlI9djM6dnMAKa0tGiX2HdStla1bqU8Rui
+         SX81lbv3qxEedlQfzWSfKo2BQGXsCELkmxicunMqhmL9LK/7cwUaFfqONAQAgbsMka
+         lq0p/rO2GGulMBtdSYkbfCG6qYULmX+4wfIogx/OKsjD4vMqSwXtkoGVEEvklS8Xlc
+         lwmpE8dJGYL0g76IAqUKiRhYvDAfDoXONYgDuBSUCv3CEfs4DoVFQS7aOkePgsQ0J5
+         lFU05B2XGayvg==
+Received: by mail-lj1-f173.google.com with SMTP id h9so23934671ljq.2;
+        Fri, 31 Mar 2023 11:00:11 -0700 (PDT)
+X-Gm-Message-State: AAQBX9ez3i9uLcd7FRlo1TlPyn0LkWVnPKum46Tb6ws1Aq1n0WckI5nw
+        3GQEOHRE5nw+ipDHLEB++sVkHtQPbu2onHm9Ij8=
+X-Google-Smtp-Source: AKy350ZgbNojOjOEEz2nHphY2xJCW9wwsXYrrgwE3PRrjnKQvmDG5MKMnwlOL72DBVmaW0fPmBMmrb5gTNKFPGLQqzY=
+X-Received: by 2002:a2e:a556:0:b0:29b:d43f:f68f with SMTP id
+ e22-20020a2ea556000000b0029bd43ff68fmr5465915ljn.5.1680285609272; Fri, 31 Mar
+ 2023 11:00:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1680172791.git.johannes.thumshirn@wdc.com> <07ae41b981f1b5f8de80a3f0a8ab2f34034077a6.1680172791.git.johannes.thumshirn@wdc.com>
-In-Reply-To: <07ae41b981f1b5f8de80a3f0a8ab2f34034077a6.1680172791.git.johannes.thumshirn@wdc.com>
+References: <cover.1680172791.git.johannes.thumshirn@wdc.com> <4c9eaedd34f80d3477a5049f49610a8da8859744.1680172791.git.johannes.thumshirn@wdc.com>
+In-Reply-To: <4c9eaedd34f80d3477a5049f49610a8da8859744.1680172791.git.johannes.thumshirn@wdc.com>
 From:   Song Liu <song@kernel.org>
-Date:   Fri, 31 Mar 2023 10:54:03 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4gxjRx-X6d46O7SsNb=nesrUKVv+s76C1DtkZdcGmyXw@mail.gmail.com>
-Message-ID: <CAPhsuW4gxjRx-X6d46O7SsNb=nesrUKVv+s76C1DtkZdcGmyXw@mail.gmail.com>
-Subject: Re: [PATCH v2 15/19] md: check for failure when adding pages in alloc_behind_master_bio
+Date:   Fri, 31 Mar 2023 10:59:57 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7AAKXuPtvfjR-UBq=QCbHOkqCQQk=GTAWZH0ysVxhECQ@mail.gmail.com>
+Message-ID: <CAPhsuW7AAKXuPtvfjR-UBq=QCbHOkqCQQk=GTAWZH0ysVxhECQ@mail.gmail.com>
+Subject: Re: [PATCH v2 16/19] md: raid1: use __bio_add_page for adding single
+ page to bio
 To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
         Hannes Reinecke <hare@suse.de>,
@@ -66,8 +67,8 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
         Damien Le Moal <damien.lemoal@opensource.wdc.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,33 +79,18 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Thu, Mar 30, 2023 at 3:44=E2=80=AFAM Johannes Thumshirn
 <johannes.thumshirn@wdc.com> wrote:
 >
-> alloc_behind_master_bio() can possibly add multiple pages to a bio, but i=
-t
-> is not checking for the return value of bio_add_page() if adding really
-> succeeded.
+> The sync request code uses bio_add_page() to add a page to a newly create=
+d bio.
+> bio_add_page() can fail, but the return value is never checked.
 >
-> Check if the page adding succeeded and if not bail out.
+> Use __bio_add_page() as adding a single page to a newly created bio is
+> guaranteed to succeed.
+>
+> This brings us a step closer to marking bio_add_page() as __must_check.
 >
 > Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-> ---
->  drivers/md/raid1.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 68a9e2d9985b..bd7c339a84a1 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1147,7 +1147,8 @@ static void alloc_behind_master_bio(struct r1bio *r=
-1_bio,
->                 if (unlikely(!page))
->                         goto free_pages;
->
-> -               bio_add_page(behind_bio, page, len, 0);
-> +               if (!bio_add_page(behind_bio, page, len, 0))
-> +                       goto free_pages;
 
-We will leak page here, no?
+Acked-by: Song Liu <song@kernel.org>
 
-Thanks,
-Song
+Thanks!
