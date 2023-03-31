@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ABFC6D24A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 18:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79F6E6D24A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Mar 2023 18:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231616AbjCaQKU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Mar 2023 12:10:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60614 "EHLO
+        id S230354AbjCaQKP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Mar 2023 12:10:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230183AbjCaQKS (ORCPT
+        with ESMTP id S230183AbjCaQKO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Mar 2023 12:10:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483492032E
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 09:09:32 -0700 (PDT)
+        Fri, 31 Mar 2023 12:10:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8088E1FD2C
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Mar 2023 09:09:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680278971;
+        s=mimecast20190719; t=1680278970;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fsOLHSRSLMInNcD449MTPXsGwp1kWYvONeYqTpf/Ez4=;
-        b=e+orkJzFD76gmRpxn+WfSAxlz7D1UIfey4LCbc+UnzrKaZI7sAkekmGuhKPriGs/8aBWjn
-        GNXiES0l004Z7wkuBP3/SwMcOTRzI7JipycWosaEmAocG1Jz+hFSK9494ZhhKc6sJ0zrf3
-        6nCJfl0IhdZud6zHT4MSW+BqXL9nAIg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=s7FY6IkB7NRnaaunO8kQ3wM8dgoy+C5dVBJnz6ApgXk=;
+        b=IC87XOZQ8+h7m5JVlSqQWQHZlqlhL1paKnF+Ss33JMjU7jrzWGBgxNOsJcNAEVgpWJCy+4
+        dHKpEAI2r8tzwGDV0BdQTDwn38ZStcSPNfxks9y4Czsfa+x6CjgrXx2A6epTQSf7RhCKku
+        6Trji61mvDYFIq8FdojWALN9YJPjpRI=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-613-JBunTOtONMCZ2eDMDHE0OA-1; Fri, 31 Mar 2023 12:09:25 -0400
-X-MC-Unique: JBunTOtONMCZ2eDMDHE0OA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+ us-mta-364-gA1T6ksvPKuG1wGWcmZ53Q-1; Fri, 31 Mar 2023 12:09:28 -0400
+X-MC-Unique: gA1T6ksvPKuG1wGWcmZ53Q-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 56800855425;
-        Fri, 31 Mar 2023 16:09:24 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 12E9D1C05159;
+        Fri, 31 Mar 2023 16:09:27 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CF52D4042AC0;
-        Fri, 31 Mar 2023 16:09:21 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 15A39140E94F;
+        Fri, 31 Mar 2023 16:09:24 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Matthew Wilcox <willy@infradead.org>,
         "David S. Miller" <davem@davemloft.net>,
@@ -53,18 +53,15 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org
-Subject: [PATCH v3 01/55] netfs: Fix netfs_extract_iter_to_sg() for ITER_UBUF/IOVEC
-Date:   Fri, 31 Mar 2023 17:08:20 +0100
-Message-Id: <20230331160914.1608208-2-dhowells@redhat.com>
+        linux-nfs@vger.kernel.org
+Subject: [PATCH v3 02/55] iov_iter: Remove last_offset member
+Date:   Fri, 31 Mar 2023 17:08:21 +0100
+Message-Id: <20230331160914.1608208-3-dhowells@redhat.com>
 In-Reply-To: <20230331160914.1608208-1-dhowells@redhat.com>
 References: <20230331160914.1608208-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -75,37 +72,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix netfs_extract_iter_to_sg() for ITER_UBUF and ITER_IOVEC to set the size
-of the page to the part of the page extracted, not the remaining amount of
-data in the extracted page array at that point.
+With the removal of ITER_PIPE, the last_offset member of struct iov_iter is
+no longer used, so remove it and un-unionise the remaining member.
 
-This doesn't yet affect anything as cifs, the only current user, only
-passes in non-user-backed iterators.
-
-Fixes: 018584697533 ("netfs: Add a function to extract an iterator into a scatterlist")
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>
 cc: Jeff Layton <jlayton@kernel.org>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: linux-cachefs@redhat.com
-cc: linux-cifs@vger.kernel.org
+cc: linux-nfs@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+cc: netdev@vger.kernel.org
 ---
- fs/netfs/iterator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/uio.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
-index e9a45dea748a..8a4c86687429 100644
---- a/fs/netfs/iterator.c
-+++ b/fs/netfs/iterator.c
-@@ -139,7 +139,7 @@ static ssize_t netfs_extract_user_to_sg(struct iov_iter *iter,
- 			size_t seg = min_t(size_t, PAGE_SIZE - off, len);
- 
- 			*pages++ = NULL;
--			sg_set_page(sg, page, len, off);
-+			sg_set_page(sg, page, seg, off);
- 			sgtable->nents++;
- 			sg++;
- 			len -= seg;
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 74598426edb4..2d8a70cb9b26 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -43,10 +43,7 @@ struct iov_iter {
+ 	bool nofault;
+ 	bool data_source;
+ 	bool user_backed;
+-	union {
+-		size_t iov_offset;
+-		int last_offset;
+-	};
++	size_t iov_offset;
+ 	size_t count;
+ 	union {
+ 		const struct iovec *iov;
 
