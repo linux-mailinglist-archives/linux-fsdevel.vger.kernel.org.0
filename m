@@ -2,119 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A2086D474C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04D4E6D47C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:23:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233032AbjDCOTA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 10:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38568 "EHLO
+        id S233181AbjDCOXA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 10:23:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233023AbjDCOS5 (ORCPT
+        with ESMTP id S233158AbjDCOW7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 10:18:57 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31BE42C9EE;
-        Mon,  3 Apr 2023 07:18:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 3 Apr 2023 10:22:59 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D38C32CAF0;
+        Mon,  3 Apr 2023 07:22:42 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C5B37B81BA8;
-        Mon,  3 Apr 2023 14:18:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEC28C433D2;
-        Mon,  3 Apr 2023 14:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1680531533;
-        bh=23ce0YqyjdydrJ6eTt5+gYdCKYYGWRIVlyFT2GNleRQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BmOxiF05ScxRzqaXDUd/GCgBHbSxr0M1z+t9RP37cEPd7j8e9P0rMeP9G8co6M2G4
-         AQxRkDOIH/K+GAQ3rnQs9BJQlNpHKlmU2p7OvCNaRr0u/64vIhK1F6ZYpv/MbNUksG
-         nhVHBfPsOT7lHFaD5JSXCnPrR+NvQuqoRzXFLKhU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, Bharath SM <bharathsm@microsoft.com>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Steve French <smfrench@gmail.com>, keyrings@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 015/104] keys: Do not cache key in task struct if key is requested from kernel thread
-Date:   Mon,  3 Apr 2023 16:08:07 +0200
-Message-Id: <20230403140404.785142940@linuxfoundation.org>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230403140403.549815164@linuxfoundation.org>
-References: <20230403140403.549815164@linuxfoundation.org>
-User-Agent: quilt/0.67
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 86BEC21DCA;
+        Mon,  3 Apr 2023 14:22:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1680531761; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R46s3dzmAWjax7iXZKikFYCLr1xSbo6uFhX0zzjg4pU=;
+        b=XViU3+ETjmX+Zv1i3Q4VVTn7Ny+KHI+pcGRnoPPT3r61aXIzJBxPYzNkNl9++TJ9aBjV6M
+        pj5xzmCEcljzJ3VrWr7zg8WDaJErfGUilAp+755lKhp6uAWpsjuSCcyiyy9snmSveJO8Pa
+        dYp4hCNxKq+rm1Sy8iI/zHvhEXqBk/Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1680531761;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R46s3dzmAWjax7iXZKikFYCLr1xSbo6uFhX0zzjg4pU=;
+        b=U1FjLpLfehFJEz9putWhis2w9XqHu0U3h3oaiL98jCSHliu31HtoSv01Qgpvds/nc1S0hp
+        frS9z8ZPoJjwAoCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 773A813416;
+        Mon,  3 Apr 2023 14:22:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id nFUjHTHhKmRzFQAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 03 Apr 2023 14:22:41 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id EF44AA0723; Mon,  3 Apr 2023 16:22:40 +0200 (CEST)
+Date:   Mon, 3 Apr 2023 16:22:40 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
+        devel@lists.orangefs.org, reiserfs-devel@vger.kernel.org,
+        Evgeniy Dushistov <dushistov@mail.ru>
+Subject: Re: RFC: Filesystem metadata in HIGHMEM
+Message-ID: <20230403142240.ftkywr3vn3r73yva@quack3>
+References: <ZBCJ11qT8AWGA9y8@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZBCJ11qT8AWGA9y8@casper.infradead.org>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+On Tue 14-03-23 14:51:03, Matthew Wilcox wrote:
+> TLDR: I think we should rip out support for fs metadata in highmem
+> 
+> We want to support filesystems on devices with LBA size > PAGE_SIZE.
+> That's subtly different and slightly harder than fsblk size > PAGE_SIZE.
+> We can use large folios to read the blocks into, but reading/writing
+> the data in those folios is harder if it's in highmem.  The kmap family
+> of functions can only map a single page at a time (and changing that
+> is hard).  We could vmap, but that's slow and can't be used from atomic
+> context.  Working a single page at a time can be tricky (eg consider an
+> ext2 directory entry that spans a page boundary).
+> 
+> Many filesystems do not support having their metadata in highmem.
+> ext4 doesn't.  xfs doesn't.  f2fs doesn't.  afs, ceph, ext2, hfs,
+> minix, nfs, nilfs2, ntfs, ntfs3, ocfs2, orangefs, qnx6, reiserfs, sysv
+> and ufs do.
+> 
+> Originally, ext2 directories in the page cache were done by Al Viro
+> in 2001.  At that time, the important use-case was machines with tens of
+> gigabytes of highmem and ~800MB of lowmem.  Since then, the x86 systems
+> have gone to 64-bit and the only real uses for highmem are cheap systems
+> with ~8GB of memory total and 2-4GB of lowmem.  These systems really
+> don't need to keep directories in highmem; using highmem for file &
+> anon memory is enough to keep the system in balance.
+> 
+> So let's just rip out the ability to keep directories (and other fs
+> metadata) in highmem.  Many filesystems already don't support this,
+> and it makes supporting LBA size > PAGE_SIZE hard.
+> 
+> I'll turn this into an LSFMM topic if we don't reach resolution on the
+> mailing list, but I'm optimistic that everybody will just agree with
+> me ;-)
 
-[ Upstream commit 47f9e4c924025c5be87959d3335e66fcbb7f6b5c ]
+FWIW I won't object for the local filesystems I know about ;). But you
+mention some networking filesystems above like NFS, AFS, orangefs - how are
+they related to the LBA size problem you mention and what exactly you want
+to get rid of there? FWIW I can imagine some 32-bit system (possibly
+diskless) that uses NFS and that would benefit in caching stuff in
+highmem...
 
-The key which gets cached in task structure from a kernel thread does not
-get invalidated even after expiry.  Due to which, a new key request from
-kernel thread will be served with the cached key if it's present in task
-struct irrespective of the key validity.  The change is to not cache key in
-task_struct when key requested from kernel thread so that kernel thread
-gets a valid key on every key request.
+								Honza
 
-The problem has been seen with the cifs module doing DNS lookups from a
-kernel thread and the results getting pinned by being attached to that
-kernel thread's cache - and thus not something that can be easily got rid
-of.  The cache would ordinarily be cleared by notify-resume, but kernel
-threads don't do that.
-
-This isn't seen with AFS because AFS is doing request_key() within the
-kernel half of a user thread - which will do notify-resume.
-
-Fixes: 7743c48e54ee ("keys: Cache result of request_key*() temporarily in task_struct")
-Signed-off-by: Bharath SM <bharathsm@microsoft.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Steve French <smfrench@gmail.com>
-cc: keyrings@vger.kernel.org
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/CAGypqWw951d=zYRbdgNR4snUDvJhWL=q3=WOyh7HhSJupjz2vA@mail.gmail.com/
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/keys/request_key.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 957b9e3e14924..17c9c0cfb6f59 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -38,9 +38,12 @@ static void cache_requested_key(struct key *key)
- #ifdef CONFIG_KEYS_REQUEST_CACHE
- 	struct task_struct *t = current;
- 
--	key_put(t->cached_requested_key);
--	t->cached_requested_key = key_get(key);
--	set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
-+	/* Do not cache key if it is a kernel thread */
-+	if (!(t->flags & PF_KTHREAD)) {
-+		key_put(t->cached_requested_key);
-+		t->cached_requested_key = key_get(key);
-+		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
-+	}
- #endif
- }
- 
 -- 
-2.39.2
-
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
