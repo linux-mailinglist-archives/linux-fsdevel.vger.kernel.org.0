@@ -2,110 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F41696D4155
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 11:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B60C76D41E7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 12:24:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231786AbjDCJxl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 05:53:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36474 "EHLO
+        id S231925AbjDCKX7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 06:23:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231761AbjDCJxY (ORCPT
+        with ESMTP id S231852AbjDCKX5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 05:53:24 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9281111E8F
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 02:51:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680515453;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fhMzb4M7buCw/z89I96CjAU7IGJVjjKJKkPGs/PZ09w=;
-        b=G7slEEDAMruZ7G9z/a9Es+Apl9zIXGbX+hXqeSIHv5Lo6qL8exM/j1w8AxeJafiS+7PMrD
-        WENgRugehiJOe7cYXVG95zG5KH1LP3ZNjytjSgkU7zkPjzUY3sVc+PhXQZDTO7gliDmHpH
-        IltxnHVVHZ4GHb6idSpc1/RNH3MGrQA=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-39-4-IXX9ZSPZipH8aFkS7Z8Q-1; Mon, 03 Apr 2023 05:50:50 -0400
-X-MC-Unique: 4-IXX9ZSPZipH8aFkS7Z8Q-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 3 Apr 2023 06:23:57 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA91E212B
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 03:23:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 416BE1C05147;
-        Mon,  3 Apr 2023 09:50:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 52E2BC15BA0;
-        Mon,  3 Apr 2023 09:50:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <64299af9e8861_2d2a20208e6@willemb.c.googlers.com.notmuch>
-References: <64299af9e8861_2d2a20208e6@willemb.c.googlers.com.notmuch> <20230331160914.1608208-1-dhowells@redhat.com> <20230331160914.1608208-16-dhowells@redhat.com>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3 15/55] ip, udp: Support MSG_SPLICE_PAGES
+        by smtp-out1.suse.de (Postfix) with ESMTPS id AB28B21AB4;
+        Mon,  3 Apr 2023 10:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1680517435; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7L4iCu8UDKsr3R80mYIINoq3rDNNc4DxoBUxCYPGwho=;
+        b=Y6qnWkatcA4T5d84MhS9mbD+PceKfO5nwiBOv3sC9oqO60kilGP2h0Uk97sFXpEWj2q6+S
+        A7ShcbLQUvroC5O7VUyBJ2wgAOq3Ab34y8z4oLnCv8TCzIhUc6z8lL7B0r+VHnZFg9aCy8
+        S6guGXHa593ZbNSNspKWkve2XSxYmvY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1680517435;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7L4iCu8UDKsr3R80mYIINoq3rDNNc4DxoBUxCYPGwho=;
+        b=II11lOigKOGJf+Miarb2cKhTFRmPSInyNAH/JrfBdJvcnRRksQnpE2fHTvXVZvUh2kotiu
+        4tezM4Rn8xDQdlCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 979151331A;
+        Mon,  3 Apr 2023 10:23:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 4X/+JDupKmQcBAAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 03 Apr 2023 10:23:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id E16A4A0723; Mon,  3 Apr 2023 12:23:54 +0200 (CEST)
+Date:   Mon, 3 Apr 2023 12:23:54 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     cem@kernel.org
+Cc:     hughd@google.com, jack@suse.cz, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org
+Subject: Re: [PATCH 2/6] shmem: make shmem_get_inode() return ERR_PTR instead
+ of NULL
+Message-ID: <20230403102354.jnwrqdbhpysttkxm@quack3>
+References: <20230403084759.884681-1-cem@kernel.org>
+ <20230403084759.884681-3-cem@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1818503.1680515446.1@warthog.procyon.org.uk>
-Date:   Mon, 03 Apr 2023 10:50:46 +0100
-Message-ID: <1818504.1680515446@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230403084759.884681-3-cem@kernel.org>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
-
-> > +	} else if ((flags & MSG_SPLICE_PAGES) && length) {
-> > +		if (inet->hdrincl)
-> > +			return -EPERM;
-> > +		if (rt->dst.dev->features & NETIF_F_SG)
-> > +			/* We need an empty buffer to attach stuff to */
-> > +			initial_length = transhdrlen;
+On Mon 03-04-23 10:47:55, cem@kernel.org wrote:
+> From: Lukas Czerner <lczerner@redhat.com>
 > 
-> I still don't entirely understand what initial_length means.
+> Make shmem_get_inode() return ERR_PTR instead of NULL on error. This will be
+> useful later when we introduce quota support.
 > 
-> More importantly, transhdrlen can be zero. If not called for UDP
-> but for RAW. Or if this is a subsequent call to a packet that is
-> being held with MSG_MORE.
+> There should be no functional change.
 > 
-> This works fine for existing use-cases, which go to alloc_new_skb.
-> Not sure how this case would be different. But the comment alludes
-> that it does.
+> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
 
-The problem is that in the non-MSG_ZEROCOPY case, __ip_append_data() assumes
-that it's going to copy the data it is given and will allocate sufficient
-space in the skb in advance to hold it - but I don't want to do that because I
-want to splice in the pages holding the data instead.  However, I do need to
-allocate space to hold the transport header.
+One comment below:
 
-Maybe I should change 'initial_length' to 'initial_alloc'?  It represents the
-amount I think we should allocate.  Or maybe I should have a separate
-allocation clause for MSG_SPLICE_PAGES?
+> @@ -2958,21 +2967,24 @@ shmem_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
+>  	      struct file *file, umode_t mode)
+>  {
+>  	struct inode *inode;
+> -	int error = -ENOSPC;
+> +	int error;
+>  
+>  	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, 0, VM_NORESERVE);
+> -	if (inode) {
+> -		error = security_inode_init_security(inode, dir,
+> -						     NULL,
+> -						     shmem_initxattrs, NULL);
+> -		if (error && error != -EOPNOTSUPP)
+> -			goto out_iput;
+> -		error = simple_acl_create(dir, inode);
+> -		if (error)
+> -			goto out_iput;
+> -		d_tmpfile(file, inode);
+> -	}
+> +
+> +	if (IS_ERR(inode))
+> +		return PTR_ERR(inode);
 
-I also wonder if __ip_append_data() really needs two places that call
-getfrag().
+This doesn't look correct. Previously, we've called
+finish_open_simple(file, error), now you just return error... Otherwise the
+patch looks good to me.
 
-David
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
