@@ -2,477 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 985266D50F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 20:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A3906D5216
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 22:19:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233381AbjDCSqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 14:46:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53684 "EHLO
+        id S232870AbjDCUTI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 16:19:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233411AbjDCSqi (ORCPT
+        with ESMTP id S229446AbjDCUTH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 14:46:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A524496
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 11:46:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BC2F7627BD
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 18:46:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2409FC433EF;
-        Mon,  3 Apr 2023 18:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680547586;
-        bh=x9ckSO/lS+yvVg+e0NiGXP1fNum+g2DgXFf53DrkcUM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EoIdpn8qrcd1s3X4IFt7cvAArxX7tDxK4rzQES8bKWgd5V8P0erdnos3SQqh6CkOV
-         va804oIlcK04QBR9OR9wPG8uREKDKJA5lcxmNu0XWDcD2xZrWBvbg8FTrvzg710mW3
-         lIFgty9nmbcK58kHLt2fjgOAc78wBCUlYUsKDh2ZKYbqIZRzSSfh2POG7fzgfQLVO+
-         UEhA27RHppS1M9M1lngd1u7cHza1j8hJEdnM77GSSyDIycZd5eQ/obo3y9vhIvSP1O
-         oC2RnhWMUhBKJXiTc8ZHq5B/cAwyHvlsCD7UAPIe4IMXO+ENuRxTBeHeAprZ67qhdr
-         Z+QMr3aijnPag==
-Date:   Mon, 3 Apr 2023 11:46:25 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     cem@kernel.org
-Cc:     hughd@google.com, jack@suse.cz, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/6] shmem: quota support
-Message-ID: <20230403184625.GA379281@frogsfrogsfrogs>
-References: <20230403084759.884681-1-cem@kernel.org>
- <20230403084759.884681-6-cem@kernel.org>
+        Mon, 3 Apr 2023 16:19:07 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8913F3586;
+        Mon,  3 Apr 2023 13:19:06 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 3E05D5C0081;
+        Mon,  3 Apr 2023 16:19:03 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 03 Apr 2023 16:19:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1680553143; x=1680639543; bh=Pt
+        E34Mi5e7fcyqY/yn1ZOTjs4FeBAcshGnyuLTQZvAU=; b=B9s/caMaukwcV+M6dZ
+        kL9rfGdE67qmnEh6DZ+AUJ55B1lwYnKkiaFZvFvxWifT6Qeb1s+1Qzsdmuhybud9
+        yEJBjwhl17/yloWHzzlfAv0RE9u/jJDvDsBPxlC3V/+RtFzChmK/Iew9OQXh+BnW
+        vTvWyK6zGm2BkJ3cYwL/+pUM0bq2Q/612wWE9WO7Y8w7gx1bxVRfySjBY8ffm+2S
+        ouTUAk1Df/BVj5cSdbAM3AJY67x4h7boC1NsLkdywmHS5e/oU/GBeCPrrA795zDu
+        mVP7OA8dK3cDuGuXOCDx9ca+E4uiXThMzuwRIeF+5edpSmRg7vFYqsxfu4jyB/j7
+        HY4A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:message-id:mime-version:reply-to:reply-to:sender
+        :subject:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm2; t=1680553143; x=1680639543; bh=P
+        tE34Mi5e7fcyqY/yn1ZOTjs4FeBAcshGnyuLTQZvAU=; b=hdQl9dH6VQ/26IqYX
+        DLyWdDnhElnsE5R5dMTtqP9vEPsjctti3fMutSNYYpRDF6z4WAhpyOlLdqQR/y5Z
+        xko0rDzCgzEgEh/VJwcwic9W9BvKECkYWUtgNXga7PhLmmQUFPmi0LC5kx6zvKlX
+        1q18Xnd7DIGG0EupwueU/TfD14QpewPnBuxdDStvScTEMTYwylClaaoqhqvvJ/o2
+        9rLR0o+Q1ksTidiE0O+b+/7jCIzNyYaI/CLOfG5Gt6AJaT+HqXYBkhxzxzPOSGrU
+        gE+Kd3Bjs59c9LjTGyD/ArDHxMJ9XS4JJwvMONKrytkBORXYOG7b4UYyTpZGs09T
+        c9qqA==
+X-ME-Sender: <xms:tjQrZMN2gja3Oe5fG7-mKFH26_rU4ABTH8Q8XFg3Ck9OnfER9W4oLQ>
+    <xme:tjQrZC_f-UlcEhOO_rDCm_iS505hYekLK2Zf-fCS-sCnqzfQbnplx4ovSgHPkjwz5
+    LSwwIhAXiai0kghVw>
+X-ME-Received: <xmr:tjQrZDSZnHaRL67rW-lUftdyWfADOJRfA1FfRjBBBdyyuA5oafyJ4s_MGAFYyU_aiqE_iiWzJfyOpWzU1pRTsEiuQLOf_pc8DYLYOombcgwPZEoP1sZydDOAOh8N5rA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeijedgudegkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvfevufffkfforhgggfestdhqredtredttdenucfhrhhomhepkghiucgj
+    rghnuceoiihirdihrghnsehsvghnthdrtghomheqnecuggftrfgrthhtvghrnhepvdeiue
+    dthedttdfhgeevkeeuveefvdeuheejledtvefgjeetkedugfdvleevkeffnecuffhomhgr
+    ihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpeiiihdrhigrnhesshgvnhhtrdgtohhm
+X-ME-Proxy: <xmx:tjQrZEtfJcvkWMD1pazyxNcS_IWGnXUBPXziAvubh5OtKHfW1FDfzw>
+    <xmx:tjQrZEe57jG9TosSu5qJGEMlrRhJ_YJ34dLFONQ3XnLt7WdtamoInw>
+    <xmx:tjQrZI1JdZ2HM4jBSSaFS1pAii6POwCAZdUJHbdghkb-6LtWKPJbxA>
+    <xmx:tzQrZD-dvR3Mok-Pdf0cwl473T7rMI5nUHfW4RMNGwangipgprf2hg>
+Feedback-ID: iccd040f4:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Apr 2023 16:19:02 -0400 (EDT)
+From:   Zi Yan <zi.yan@sent.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        linux-mm@kvack.org
+Cc:     Zi Yan <ziy@nvidia.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        "Zach O'Keefe" <zokeefe@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: [PATCH v3 0/7] Split a folio to any lower order folios
+Date:   Mon,  3 Apr 2023 16:18:32 -0400
+Message-Id: <20230403201839.4097845-1-zi.yan@sent.com>
+X-Mailer: git-send-email 2.39.2
+Reply-To: Zi Yan <ziy@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230403084759.884681-6-cem@kernel.org>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 03, 2023 at 10:47:58AM +0200, cem@kernel.org wrote:
-> From: Lukas Czerner <lczerner@redhat.com>
-> 
-> Now the basic infra-structure is in place, enable quota support for tmpfs.
-> 
-> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-> ---
->  Documentation/filesystems/tmpfs.rst |  12 +++
->  include/linux/shmem_fs.h            |   9 ++
->  mm/shmem.c                          | 162 ++++++++++++++++++++++++++--
->  3 files changed, 174 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-> index 0408c245785e3..3f8d89bb7e1a5 100644
-> --- a/Documentation/filesystems/tmpfs.rst
-> +++ b/Documentation/filesystems/tmpfs.rst
-> @@ -86,6 +86,18 @@ use up all the memory on the machine; but enhances the scalability of
->  that instance in a system with many CPUs making intensive use of it.
->  
->  
-> +tmpfs also supports quota with the following mount options
-> +
-> +========  =============================================================
-> +quota     User and group quota accounting and enforcement is enabled on
-> +          the mount. Tmpfs is using hidden system quota files that are
-> +          initialized on mount.
-> +usrquota  User quota accounting and enforcement is enabled on the
-> +          mount.
-> +grpquota  Group quota accounting and enforcement is enabled on the
-> +          mount.
-> +========  =============================================================
-> +
->  tmpfs has a mount option to set the NUMA memory allocation policy for
->  all files in that instance (if CONFIG_NUMA is enabled) - which can be
->  adjusted on the fly via 'mount -o remount ...'
-> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> index cf38381bdb4c1..3e7e18726feb5 100644
-> --- a/include/linux/shmem_fs.h
-> +++ b/include/linux/shmem_fs.h
-> @@ -26,6 +26,9 @@ struct shmem_inode_info {
->  	atomic_t		stop_eviction;	/* hold when working on inode */
->  	struct timespec64	i_crtime;	/* file creation time */
->  	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
-> +#ifdef CONFIG_TMPFS_QUOTA
-> +	struct dquot		*i_dquot[MAXQUOTAS];
+From: Zi Yan <ziy@nvidia.com>
 
-Why allocate three dquot pointers here...
+Hi all,
 
-> +#endif
->  	struct inode		vfs_inode;
->  };
->  
-> @@ -171,4 +174,10 @@ extern int shmem_mfill_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
->  #define SHMEM_QUOTA_MAX_SPC_LIMIT 0x7fffffffffffffffLL /* 2^63-1 */
->  #define SHMEM_QUOTA_MAX_INO_LIMIT 0x7fffffffffffffffLL
->  
-> +#ifdef CONFIG_TMPFS_QUOTA
-> +#define SHMEM_MAXQUOTAS 2
+File folio supports any order and people would like to support flexible ord=
+ers
+for anonymous folio[1] too. Currently, split_huge_page() only splits a huge
+page to order-0 pages, but splitting to orders higher than 0 is also useful.
+This patchset adds support for splitting a huge page to any lower order pag=
+es
+and uses it during file folio truncate operations.
 
-...when you're only allowing user and group quotas?
+The patchset is on top of mm-everything-2023-03-27-21-20.
 
-(Or: Why not allow project quotas?  But that's outside the scope you
-defined.)
+Changelog=20
+=3D=3D=3D
+Since v2
+---
+1. Fixed an issue in __split_page_owner() introduced during my rebase
 
---D
+Since v1
+---
+1. Changed split_page_memcg() and split_page_owner() parameter to use order
+2. Used folio_test_pmd_mappable() in place of the equivalent code
 
-> +extern const struct dquot_operations shmem_quota_operations;
-> +extern struct quota_format_type shmem_quota_format;
-> +#endif /* CONFIG_TMPFS_QUOTA */
-> +
->  #endif
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 88e13930fc013..d7529c883eaf5 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -79,6 +79,7 @@ static struct vfsmount *shm_mnt;
->  #include <linux/userfaultfd_k.h>
->  #include <linux/rmap.h>
->  #include <linux/uuid.h>
-> +#include <linux/quotaops.h>
->  
->  #include <linux/uaccess.h>
->  
-> @@ -116,10 +117,12 @@ struct shmem_options {
->  	bool full_inums;
->  	int huge;
->  	int seen;
-> +	unsigned short quota_types;
->  #define SHMEM_SEEN_BLOCKS 1
->  #define SHMEM_SEEN_INODES 2
->  #define SHMEM_SEEN_HUGE 4
->  #define SHMEM_SEEN_INUMS 8
-> +#define SHMEM_SEEN_QUOTA 16
->  };
->  
->  #ifdef CONFIG_TMPFS
-> @@ -211,8 +214,11 @@ static inline int shmem_inode_acct_block(struct inode *inode, long pages)
->  		if (percpu_counter_compare(&sbinfo->used_blocks,
->  					   sbinfo->max_blocks - pages) > 0)
->  			goto unacct;
-> +		if ((err = dquot_alloc_block_nodirty(inode, pages)) != 0)
-> +			goto unacct;
->  		percpu_counter_add(&sbinfo->used_blocks, pages);
-> -	}
-> +	} else if ((err = dquot_alloc_block_nodirty(inode, pages)) != 0)
-> +		goto unacct;
->  
->  	return 0;
->  
-> @@ -226,6 +232,8 @@ static inline void shmem_inode_unacct_blocks(struct inode *inode, long pages)
->  	struct shmem_inode_info *info = SHMEM_I(inode);
->  	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
->  
-> +	dquot_free_block_nodirty(inode, pages);
-> +
->  	if (sbinfo->max_blocks)
->  		percpu_counter_sub(&sbinfo->used_blocks, pages);
->  	shmem_unacct_blocks(info->flags, pages);
-> @@ -254,6 +262,47 @@ bool vma_is_shmem(struct vm_area_struct *vma)
->  static LIST_HEAD(shmem_swaplist);
->  static DEFINE_MUTEX(shmem_swaplist_mutex);
->  
-> +#ifdef CONFIG_TMPFS_QUOTA
-> +
-> +static int shmem_enable_quotas(struct super_block *sb,
-> +			       unsigned short quota_types)
-> +{
-> +	int type, err = 0;
-> +
-> +	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
-> +	for (type = 0; type < SHMEM_MAXQUOTAS; type++) {
-> +		if (!(quota_types & (1 << type)))
-> +			continue;
-> +		err = dquot_load_quota_sb(sb, type, QFMT_SHMEM,
-> +					  DQUOT_USAGE_ENABLED |
-> +					  DQUOT_LIMITS_ENABLED);
-> +		if (err)
-> +			goto out_err;
-> +	}
-> +	return 0;
-> +
-> +out_err:
-> +	pr_warn("tmpfs: failed to enable quota tracking (type=%d, err=%d)\n",
-> +		type, err);
-> +	for (type--; type >= 0; type--)
-> +		dquot_quota_off(sb, type);
-> +	return err;
-> +}
-> +
-> +static void shmem_disable_quotas(struct super_block *sb)
-> +{
-> +	int type;
-> +
-> +	for (type = 0; type < SHMEM_MAXQUOTAS; type++)
-> +		dquot_quota_off(sb, type);
-> +}
-> +
-> +static struct dquot **shmem_get_dquots(struct inode *inode)
-> +{
-> +	return SHMEM_I(inode)->i_dquot;
-> +}
-> +#endif /* CONFIG_TMPFS_QUOTA */
-> +
->  /*
->   * shmem_reserve_inode() performs bookkeeping to reserve a shmem inode, and
->   * produces a novel ino for the newly allocated inode.
-> @@ -360,7 +409,6 @@ static void shmem_recalc_inode(struct inode *inode)
->  	freed = info->alloced - info->swapped - inode->i_mapping->nrpages;
->  	if (freed > 0) {
->  		info->alloced -= freed;
-> -		inode->i_blocks -= freed * BLOCKS_PER_PAGE;
->  		shmem_inode_unacct_blocks(inode, freed);
->  	}
->  }
-> @@ -378,7 +426,6 @@ bool shmem_charge(struct inode *inode, long pages)
->  
->  	spin_lock_irqsave(&info->lock, flags);
->  	info->alloced += pages;
-> -	inode->i_blocks += pages * BLOCKS_PER_PAGE;
->  	shmem_recalc_inode(inode);
->  	spin_unlock_irqrestore(&info->lock, flags);
->  
-> @@ -394,7 +441,6 @@ void shmem_uncharge(struct inode *inode, long pages)
->  
->  	spin_lock_irqsave(&info->lock, flags);
->  	info->alloced -= pages;
-> -	inode->i_blocks -= pages * BLOCKS_PER_PAGE;
->  	shmem_recalc_inode(inode);
->  	spin_unlock_irqrestore(&info->lock, flags);
->  
-> @@ -1133,6 +1179,15 @@ static int shmem_setattr(struct mnt_idmap *idmap,
->  		}
->  	}
->  
-> +	/* Transfer quota accounting */
-> +	if (i_uid_needs_update(idmap, attr, inode) ||
-> +	    i_gid_needs_update(idmap, attr,inode)) {
-> +		error = dquot_transfer(idmap, inode, attr);
-> +
-> +		if (error)
-> +			return error;
-> +	}
-> +
->  	setattr_copy(idmap, inode, attr);
->  	if (attr->ia_valid & ATTR_MODE)
->  		error = posix_acl_chmod(idmap, dentry, inode->i_mode);
-> @@ -1178,7 +1233,9 @@ static void shmem_evict_inode(struct inode *inode)
->  	simple_xattrs_free(&info->xattrs);
->  	WARN_ON(inode->i_blocks);
->  	shmem_free_inode(inode->i_sb);
-> +	dquot_free_inode(inode);
->  	clear_inode(inode);
-> +	dquot_drop(inode);
->  }
->  
->  static int shmem_find_swap_entries(struct address_space *mapping,
-> @@ -1975,7 +2032,6 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
->  
->  	spin_lock_irq(&info->lock);
->  	info->alloced += folio_nr_pages(folio);
-> -	inode->i_blocks += (blkcnt_t)BLOCKS_PER_PAGE << folio_order(folio);
->  	shmem_recalc_inode(inode);
->  	spin_unlock_irq(&info->lock);
->  	alloced = true;
-> @@ -2346,9 +2402,10 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
->  #define shmem_initxattrs NULL
->  #endif
->  
-> -static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block *sb,
-> -				     struct inode *dir, umode_t mode, dev_t dev,
-> -				     unsigned long flags)
-> +static struct inode *shmem_get_inode_noquota(struct mnt_idmap *idmap,
-> +					     struct super_block *sb,
-> +					     struct inode *dir, umode_t mode,
-> +					     dev_t dev, unsigned long flags)
->  {
->  	struct inode *inode;
->  	struct shmem_inode_info *info;
-> @@ -2422,6 +2479,37 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
->  	return inode;
->  }
->  
-> +static struct inode *shmem_get_inode(struct mnt_idmap *idmap,
-> +				     struct super_block *sb, struct inode *dir,
-> +				     umode_t mode, dev_t dev, unsigned long flags)
-> +{
-> +	int err;
-> +	struct inode *inode;
-> +
-> +	inode = shmem_get_inode_noquota(idmap, sb, dir, mode, dev, flags);
-> +	if (IS_ERR(inode))
-> +		return inode;
-> +
-> +	err = dquot_initialize(inode);
-> +	if (err)
-> +		goto errout;
-> +
-> +	err = dquot_alloc_inode(inode);
-> +	if (err) {
-> +		dquot_drop(inode);
-> +		goto errout;
-> +	}
-> +	return inode;
-> +
-> +errout:
-> +	inode->i_flags |= S_NOQUOTA;
-> +	iput(inode);
-> +	shmem_free_inode(sb);
-> +	if (err)
-> +		return ERR_PTR(err);
-> +	return NULL;
-> +}
-> +
->  #ifdef CONFIG_USERFAULTFD
->  int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
->  			   pmd_t *dst_pmd,
-> @@ -2525,7 +2613,6 @@ int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
->  
->  	spin_lock_irq(&info->lock);
->  	info->alloced++;
-> -	inode->i_blocks += BLOCKS_PER_PAGE;
->  	shmem_recalc_inode(inode);
->  	spin_unlock_irq(&info->lock);
->  
-> @@ -3372,6 +3459,7 @@ static ssize_t shmem_listxattr(struct dentry *dentry, char *buffer, size_t size)
->  
->  static const struct inode_operations shmem_short_symlink_operations = {
->  	.getattr	= shmem_getattr,
-> +	.setattr	= shmem_setattr,
->  	.get_link	= simple_get_link,
->  #ifdef CONFIG_TMPFS_XATTR
->  	.listxattr	= shmem_listxattr,
-> @@ -3380,6 +3468,7 @@ static const struct inode_operations shmem_short_symlink_operations = {
->  
->  static const struct inode_operations shmem_symlink_inode_operations = {
->  	.getattr	= shmem_getattr,
-> +	.setattr	= shmem_setattr,
->  	.get_link	= shmem_get_link,
->  #ifdef CONFIG_TMPFS_XATTR
->  	.listxattr	= shmem_listxattr,
-> @@ -3478,6 +3567,9 @@ enum shmem_param {
->  	Opt_uid,
->  	Opt_inode32,
->  	Opt_inode64,
-> +	Opt_quota,
-> +	Opt_usrquota,
-> +	Opt_grpquota,
->  };
->  
->  static const struct constant_table shmem_param_enums_huge[] = {
-> @@ -3499,6 +3591,11 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
->  	fsparam_u32   ("uid",		Opt_uid),
->  	fsparam_flag  ("inode32",	Opt_inode32),
->  	fsparam_flag  ("inode64",	Opt_inode64),
-> +#ifdef CONFIG_TMPFS_QUOTA
-> +	fsparam_flag  ("quota",		Opt_quota),
-> +	fsparam_flag  ("usrquota",	Opt_usrquota),
-> +	fsparam_flag  ("grpquota",	Opt_grpquota),
-> +#endif
->  	{}
->  };
->  
-> @@ -3582,6 +3679,18 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
->  		ctx->full_inums = true;
->  		ctx->seen |= SHMEM_SEEN_INUMS;
->  		break;
-> +	case Opt_quota:
-> +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> +		ctx->quota_types |= (QTYPE_MASK_USR | QTYPE_MASK_GRP);
-> +		break;
-> +	case Opt_usrquota:
-> +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> +		ctx->quota_types |= QTYPE_MASK_USR;
-> +		break;
-> +	case Opt_grpquota:
-> +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> +		ctx->quota_types |= QTYPE_MASK_GRP;
-> +		break;
->  	}
->  	return 0;
->  
-> @@ -3681,6 +3790,12 @@ static int shmem_reconfigure(struct fs_context *fc)
->  		goto out;
->  	}
->  
-> +	if (ctx->seen & SHMEM_SEEN_QUOTA &&
-> +	    !sb_any_quota_loaded(fc->root->d_sb)) {
-> +		err = "Cannot enable quota on remount";
-> +		goto out;
-> +	}
-> +
->  	if (ctx->seen & SHMEM_SEEN_HUGE)
->  		sbinfo->huge = ctx->huge;
->  	if (ctx->seen & SHMEM_SEEN_INUMS)
-> @@ -3763,6 +3878,9 @@ static void shmem_put_super(struct super_block *sb)
->  {
->  	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
->  
-> +#ifdef CONFIG_TMPFS_QUOTA
-> +	shmem_disable_quotas(sb);
-> +#endif
->  	free_percpu(sbinfo->ino_batch);
->  	percpu_counter_destroy(&sbinfo->used_blocks);
->  	mpol_put(sbinfo->mpol);
-> @@ -3841,6 +3959,17 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
->  #endif
->  	uuid_gen(&sb->s_uuid);
->  
-> +#ifdef CONFIG_TMPFS_QUOTA
-> +	if (ctx->seen & SHMEM_SEEN_QUOTA) {
-> +		sb->dq_op = &shmem_quota_operations;
-> +		sb->s_qcop = &dquot_quotactl_sysfile_ops;
-> +		sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
-> +
-> +		if (shmem_enable_quotas(sb, ctx->quota_types))
-> +			goto failed;
-> +	}
-> +#endif /* CONFIG_TMPFS_QUOTA */
-> +
->  	inode = shmem_get_inode(&nop_mnt_idmap, sb, NULL, S_IFDIR | sbinfo->mode, 0,
->  				VM_NORESERVE);
->  	if (IS_ERR(inode)) {
-> @@ -4016,6 +4145,9 @@ static const struct super_operations shmem_ops = {
->  #ifdef CONFIG_TMPFS
->  	.statfs		= shmem_statfs,
->  	.show_options	= shmem_show_options,
-> +#endif
-> +#ifdef CONFIG_TMPFS_QUOTA
-> +	.get_dquots	= shmem_get_dquots,
->  #endif
->  	.evict_inode	= shmem_evict_inode,
->  	.drop_inode	= generic_delete_inode,
-> @@ -4082,6 +4214,14 @@ void __init shmem_init(void)
->  
->  	shmem_init_inodecache();
->  
-> +#ifdef CONFIG_TMPFS_QUOTA
-> +	error = register_quota_format(&shmem_quota_format);
-> +	if (error < 0) {
-> +		pr_err("Could not register quota format\n");
-> +		goto out3;
-> +	}
-> +#endif
-> +
->  	error = register_filesystem(&shmem_fs_type);
->  	if (error) {
->  		pr_err("Could not register tmpfs\n");
-> @@ -4106,6 +4246,10 @@ void __init shmem_init(void)
->  out1:
->  	unregister_filesystem(&shmem_fs_type);
->  out2:
-> +#ifdef CONFIG_TMPFS_QUOTA
-> +	unregister_quota_format(&shmem_quota_format);
-> +#endif
-> +out3:
->  	shmem_destroy_inodecache();
->  	shm_mnt = ERR_PTR(error);
->  }
-> -- 
-> 2.30.2
-> 
+Details
+=3D=3D=3D
+
+* Patch 1 changes split_page_memcg() to use order instead of nr_pages
+* Patch 2 changes split_page_owner() to use order instead of nr_pages
+* Patch 3 and 4 add new_order parameter split_page_memcg() and
+  split_page_owner() and prepare for upcoming changes.
+* Patch 5 adds split_huge_page_to_list_to_order() to split a huge page
+  to any lower order. The original split_huge_page_to_list() calls
+  split_huge_page_to_list_to_order() with new_order =3D 0.
+* Patch 6 uses split_huge_page_to_list_to_order() in large pagecache folio
+  truncation instead of split the large folio all the way down to order-0.
+* Patch 7 adds a test API to debugfs and test cases in
+  split_huge_page_test selftests.
+
+Comments and/or suggestions are welcome.
+
+[1] https://lore.kernel.org/linux-mm/Y%2FblF0GIunm+pRIC@casper.infradead.or=
+g/
+
+Zi Yan (7):
+  mm/memcg: use order instead of nr in split_page_memcg()
+  mm/page_owner: use order instead of nr in split_page_owner()
+  mm: memcg: make memcg huge page split support any order split.
+  mm: page_owner: add support for splitting to any order in split
+    page_owner.
+  mm: thp: split huge page to any lower order pages.
+  mm: truncate: split huge page cache page to a non-zero order if
+    possible.
+  mm: huge_memory: enable debugfs to split huge pages to any order.
+
+ include/linux/huge_mm.h                       |  10 +-
+ include/linux/memcontrol.h                    |   4 +-
+ include/linux/page_owner.h                    |  10 +-
+ mm/huge_memory.c                              | 137 ++++++++---
+ mm/memcontrol.c                               |  10 +-
+ mm/page_alloc.c                               |   8 +-
+ mm/page_owner.c                               |   8 +-
+ mm/truncate.c                                 |  21 +-
+ .../selftests/mm/split_huge_page_test.c       | 225 +++++++++++++++++-
+ 9 files changed, 365 insertions(+), 68 deletions(-)
+
+--=20
+2.39.2
+
