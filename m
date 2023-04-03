@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4758A6D4A68
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:46:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70E766D4A5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:46:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234082AbjDCOqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 10:46:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36718 "EHLO
+        id S233979AbjDCOqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 10:46:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233996AbjDCOqg (ORCPT
+        with ESMTP id S233981AbjDCOq1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 10:46:36 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07134D4F85
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 07:46:18 -0700 (PDT)
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        Mon, 3 Apr 2023 10:46:27 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE16016967
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 07:46:05 -0700 (PDT)
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 7127B3F241
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 14:45:38 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 2DE0C3F23C
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 14:45:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1680533138;
-        bh=jf893Mr1zYfCNeUs9dWOENLdN29rryafRcjFVjzmYec=;
+        s=20210705; t=1680533139;
+        bh=bVeWuEcFFA9BOaey9u9VyyM5TuRxdAhm6TBxfMNpyiQ=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=eCq3NwXmcQ+rj3YxAF9NeovFVyRLHMHqpEwk36O58poscmOSDnBbURKIf+96sPeff
-         kDuOo7eUWZdyXlTjvHSo6J4wY1rwo7mcQSSagaLGorLHPve2WnS5CPgjbXVaAVjce5
-         xpf/jqDrU9hWtZ3gGQhrYH/83Upx69ppL08wI4h0MMcTiPWNKNWafKfMh2CLiTc9ft
-         hqDJKUdUxqG+Id6EZxJVUiKEWFgID+Yg3LazRmuhDXykI2NfVnPktuUTGae4X0ZCC7
-         ne8Cnxh/adgZqP/bxcEtHxvDmxTuCfs6qmpXfQZrhFcqxLm+BMYsh213/pyjQGtYJK
-         9yXDVahlDta7g==
-Received: by mail-ed1-f70.google.com with SMTP id c11-20020a509f8b000000b00501e2facf47so41750537edf.16
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Apr 2023 07:45:38 -0700 (PDT)
+        b=ShYw+yvJL3g/L8PFFXuhOLMPSmHDcwKtiig9o+g++ghQw5cyNK5YLs1v/t0eeO+5M
+         pVi+aMy3pt6lzrIFAnqeA9YKnyiXRRjjfmeHJc2+hqUc2mrSKz5AlO/HMyWmuvzWYe
+         kEWpW4V9lU1nJuTfbaGCyBvv5guwZ3xPpCLSAhQ0bepQEysnDWYE+bIJ9mxuEVgXAV
+         VAVDj70o5s5AtOk22X04GNoQGCjSzqmCOq6W//FZV9XzeYFGvGnsM0pUMwGkCRQuwk
+         fMfbtHQq3yC2JwgP/g0fBi+VknXyPgkGB3xJeGDjYwTZOS0gOg7Sr0gYNZn28wJ/EE
+         pIlrdoSwLaAUA==
+Received: by mail-ed1-f69.google.com with SMTP id u30-20020a50c05e000000b0050299de3f82so5792556edd.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Apr 2023 07:45:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680533137;
+        d=1e100.net; s=20210112; t=1680533139;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jf893Mr1zYfCNeUs9dWOENLdN29rryafRcjFVjzmYec=;
-        b=5IcF7l68AtYtUJHajVJgsGdidbP13EN+7rsDaj+05hXnc7uY0qma2Vqd0I+D1LpmXf
-         WMi0Ou4mgmc9t27Dw/M7pis4fQCmQj2+a8zXYPuBLlBs6FdlLPoYHCbUE+r5uwxIE1BR
-         qGCmNgIUitimCASniHQplMP4PTQs7vTowCrOosmp+j0AbLprCne7qWUQlbl14HJTHeYM
-         fFs6YCrqV8jhpMZqXVJalwxMARabIrbPfNWn9ojGO3TEmHIgOCmfc1XOlioCY010qhZI
-         iZuAFfFUs0CYjViTa5ntjk6Q8oYfcypjMlHmYqnodXpY2o18hUo7pxipwmB4LHKbuz9V
-         guww==
-X-Gm-Message-State: AAQBX9dZ/wRwCduTtOR5OFnXZdS3KXm2w7tV7pEqRFf/kv8tKHT7Qoea
-        pKZ1gFzSqMCm1aNVeSCpGjZJC2ncdtrWZ/6O67jJeGICH4+qkwW5W6azHF9nu4E8NMKsqB+PNr8
-        Kvrzv1ZEDw1BMNVP9+nl0DpJr7zaKnPzwz2Lh7ToTJSY=
-X-Received: by 2002:a05:6402:411:b0:502:251b:3a4c with SMTP id q17-20020a056402041100b00502251b3a4cmr30174836edv.20.1680533137391;
-        Mon, 03 Apr 2023 07:45:37 -0700 (PDT)
-X-Google-Smtp-Source: AKy350Y2rjRNMEkLgRsNMhCzFqQP4n3HXkdsPLW/Km+pP6VRt/Ch2WbGOlygJD5M5eF9DG+YVUx8kw==
-X-Received: by 2002:a05:6402:411:b0:502:251b:3a4c with SMTP id q17-20020a056402041100b00502251b3a4cmr30174814edv.20.1680533137108;
-        Mon, 03 Apr 2023 07:45:37 -0700 (PDT)
+        bh=bVeWuEcFFA9BOaey9u9VyyM5TuRxdAhm6TBxfMNpyiQ=;
+        b=O8tZ2L5udIPLSL4zgNgHDJYoGYjLS1PSqWp3BuCU5Si+iAWoBvZjq4mLJHRp/a4W+u
+         xHlP/vcLc+axFu2Yo+X0afta8FvIrt52WIPRZNk5umyVijnTIDu/bCD6nJ5XLqeQmDkA
+         tOJxs5z3+2Tjly/Xt0rfpanb5JtxoDx5IFNZY2tqbzxF3zOIvOOqjRx7ntk4fsNE4L4s
+         pHw+3MDZCxkFOfhwBnhe3JqLHve/ehlXmt+qUh/HRppfc9fkmZR+3Q1mHbWV5nA4OcIV
+         2M9IM/6ImlhY0TWRiK6UTa9u+/wzsVqhCN626zbaR+ueC/CXhQsUNSVn1pdzA9pGYT66
+         paLw==
+X-Gm-Message-State: AAQBX9eVfYU6RIcFa6vKj4dc5YtaTJwyDJ3KVVl+frUg/ROPgnk443vq
+        HRlUeBlIxh6PvtZaGvzz7LUpktoLZnsyIr83GG6mbuaQGdlRirdpyI0oKyw9qERFOUW0QSkfIGa
+        0rhufpG4PF/ItjYOuoJswNQwTduJVE+Sx8zKIJ58ALCI=
+X-Received: by 2002:a05:6402:8d9:b0:4fe:19cb:4788 with SMTP id d25-20020a05640208d900b004fe19cb4788mr32810321edz.42.1680533138915;
+        Mon, 03 Apr 2023 07:45:38 -0700 (PDT)
+X-Google-Smtp-Source: AKy350bS7ivnPsfOURPfqkG6FOqAtwZfDP530jIkSKpQXVUZ0EH3RYfr+0dokF69qX0VO76OHuKjPA==
+X-Received: by 2002:a05:6402:8d9:b0:4fe:19cb:4788 with SMTP id d25-20020a05640208d900b004fe19cb4788mr32810305edz.42.1680533138636;
+        Mon, 03 Apr 2023 07:45:38 -0700 (PDT)
 Received: from amikhalitsyn.. (ip5f5bd076.dynamic.kabel-deutschland.de. [95.91.208.118])
-        by smtp.gmail.com with ESMTPSA id i5-20020a50d745000000b004fa19f5ba99sm4735804edj.79.2023.04.03.07.45.36
+        by smtp.gmail.com with ESMTPSA id i5-20020a50d745000000b004fa19f5ba99sm4735804edj.79.2023.04.03.07.45.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 07:45:36 -0700 (PDT)
+        Mon, 03 Apr 2023 07:45:38 -0700 (PDT)
 From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To:     mszeredi@redhat.com
 Cc:     flyingpeng@tencent.com,
@@ -72,9 +72,9 @@ Cc:     flyingpeng@tencent.com,
         Bernd Schubert <bschubert@ddn.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         criu@openvz.org
-Subject: [RFC PATCH v2 1/9] fuse: move FUSE_DEFAULT_* defines to fuse common header
-Date:   Mon,  3 Apr 2023 16:45:09 +0200
-Message-Id: <20230403144517.347517-2-aleksandr.mikhalitsyn@canonical.com>
+Subject: [RFC PATCH v2 2/9] fuse: add const qualifiers to common fuse helpers
+Date:   Mon,  3 Apr 2023 16:45:10 +0200
+Message-Id: <20230403144517.347517-3-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230403144517.347517-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20230403144517.347517-1-aleksandr.mikhalitsyn@canonical.com>
@@ -104,44 +104,70 @@ Cc: linux-kernel@vger.kernel.org
 Cc: criu@openvz.org
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 ---
- fs/fuse/fuse_i.h | 6 ++++++
- fs/fuse/inode.c  | 6 ------
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ fs/fuse/fuse_i.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 9b7fc7d3c7f1..69af0acecb69 100644
+index 69af0acecb69..6d3d3ca4f136 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -47,6 +47,12 @@
- /** Number of dentries for each connection in the control filesystem */
- #define FUSE_CTL_NUM_DENTRIES 5
+@@ -870,32 +870,32 @@ struct fuse_mount {
+ 	struct list_head fc_entry;
+ };
  
-+/** Maximum number of outstanding background requests */
-+#define FUSE_DEFAULT_MAX_BACKGROUND 12
-+
-+/** Congestion starts at 75% of maximum */
-+#define FUSE_DEFAULT_CONGESTION_THRESHOLD (FUSE_DEFAULT_MAX_BACKGROUND * 3 / 4)
-+
- /** List of active connections */
- extern struct list_head fuse_conn_list;
+-static inline struct fuse_mount *get_fuse_mount_super(struct super_block *sb)
++static inline struct fuse_mount *get_fuse_mount_super(const struct super_block *sb)
+ {
+ 	return sb->s_fs_info;
+ }
  
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 660be31aaabc..3de950104f15 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -53,12 +53,6 @@ MODULE_PARM_DESC(max_user_congthresh,
+-static inline struct fuse_conn *get_fuse_conn_super(struct super_block *sb)
++static inline struct fuse_conn *get_fuse_conn_super(const struct super_block *sb)
+ {
+ 	return get_fuse_mount_super(sb)->fc;
+ }
  
- #define FUSE_DEFAULT_BLKSIZE 512
+-static inline struct fuse_mount *get_fuse_mount(struct inode *inode)
++static inline struct fuse_mount *get_fuse_mount(const struct inode *inode)
+ {
+ 	return get_fuse_mount_super(inode->i_sb);
+ }
  
--/** Maximum number of outstanding background requests */
--#define FUSE_DEFAULT_MAX_BACKGROUND 12
--
--/** Congestion starts at 75% of maximum */
--#define FUSE_DEFAULT_CONGESTION_THRESHOLD (FUSE_DEFAULT_MAX_BACKGROUND * 3 / 4)
--
- #ifdef CONFIG_BLOCK
- static struct file_system_type fuseblk_fs_type;
- #endif
+-static inline struct fuse_conn *get_fuse_conn(struct inode *inode)
++static inline struct fuse_conn *get_fuse_conn(const struct inode *inode)
+ {
+ 	return get_fuse_mount_super(inode->i_sb)->fc;
+ }
+ 
+-static inline struct fuse_inode *get_fuse_inode(struct inode *inode)
++static inline struct fuse_inode *get_fuse_inode(const struct inode *inode)
+ {
+ 	return container_of(inode, struct fuse_inode, inode);
+ }
+ 
+-static inline u64 get_node_id(struct inode *inode)
++static inline u64 get_node_id(const struct inode *inode)
+ {
+ 	return get_fuse_inode(inode)->nodeid;
+ }
+@@ -905,7 +905,7 @@ static inline int invalid_nodeid(u64 nodeid)
+ 	return !nodeid || nodeid == FUSE_ROOT_ID;
+ }
+ 
+-static inline u64 fuse_get_attr_version(struct fuse_conn *fc)
++static inline u64 fuse_get_attr_version(const struct fuse_conn *fc)
+ {
+ 	return atomic64_read(&fc->attr_version);
+ }
+@@ -923,7 +923,7 @@ static inline void fuse_make_bad(struct inode *inode)
+ 	set_bit(FUSE_I_BAD, &get_fuse_inode(inode)->state);
+ }
+ 
+-static inline bool fuse_is_bad(struct inode *inode)
++static inline bool fuse_is_bad(const struct inode *inode)
+ {
+ 	return unlikely(test_bit(FUSE_I_BAD, &get_fuse_inode(inode)->state));
+ }
 -- 
 2.34.1
 
