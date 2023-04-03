@@ -2,55 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CDFC6D3F55
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 10:45:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE1376D3F61
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 10:48:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231683AbjDCIo6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 04:44:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38004 "EHLO
+        id S231865AbjDCIsU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 04:48:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231817AbjDCIop (ORCPT
+        with ESMTP id S231778AbjDCIsQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 04:44:45 -0400
+        Mon, 3 Apr 2023 04:48:16 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 782BA901F;
-        Mon,  3 Apr 2023 01:44:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FEC08682
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 01:48:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2E126B815B8;
-        Mon,  3 Apr 2023 08:44:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F63C433EF;
-        Mon,  3 Apr 2023 08:44:27 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AA4C3B815C3
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 08:48:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4152C433D2;
+        Mon,  3 Apr 2023 08:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680511469;
-        bh=rcNTkexBq3Q+uJyB3j6QpUz1kVSfgLh2+uusgW7/vik=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=athY3XDRKOfxSL5sGLnDLlGzre4UmRyr1xaYX9FpdWCv+iyibHSeO+JqhP5tfpvBp
-         AsWg7CGZzp2vcQY4jZAbSmmtiZ92SK6bfW7/Bz0PQLeraEQQU483gjwuHdADaSJuoA
-         kgI2jW9Lo7p56UaSfv2c1etvhGJ9kyL6o6GuFZXqekORJFwQRKzxyjUGu4olLqM0Yn
-         kR9FM0/wQLmiCN3AnanGE6blZPurvXcCDzZcOeZc1qiin92YzvdOnt1n88FVpIF7/V
-         Y591H2k+t4U4mLMIXhtBqBOVX4cL0QvUUvca9lmtX05Km670+t/EuWCVyJkkqBsxO2
-         xkWojXuUymQ+w==
-Date:   Mon, 3 Apr 2023 11:44:23 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Dragan Stancevic <dragan@stancevic.com>
-Cc:     Kyungsan Kim <ks0204.kim@samsung.com>, dan.j.williams@intel.com,
-        lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-cxl@vger.kernel.org,
-        a.manzanares@samsung.com, viacheslav.dubeyko@bytedance.com,
-        ying.huang@intel.com, nil-migration@lists.linux.dev
-Subject: Re: FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for CXL
-Message-ID: <ZCqR55Ryrewmy6Bo@kernel.org>
-References: <641b7b2117d02_1b98bb294cb@dwillia2-xfh.jf.intel.com.notmuch>
- <CGME20230323105106epcas2p39ea8de619622376a4698db425c6a6fb3@epcas2p3.samsung.com>
- <20230323105105.145783-1-ks0204.kim@samsung.com>
- <ZB/yb9n6e/eNtNsf@kernel.org>
- <362a9e19-fea5-e45a-3c22-3aa47e851aea@stancevic.com>
+        s=k20201202; t=1680511693;
+        bh=WFpcu3jPpBE2YFKVZd2NuKIP5d21v3quSUR0d+rf6yU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mXZ7yyaVOVp7KOPzUUqJeiiHWQC8V25Hlhr9HKtDNhmEnkQ2KSQHlFzRRuTWJFL8g
+         Ob1dVuZt5qWBIG0Q0CqjXld47rTcEg/u57m7ISrAqvFa2rMDYYWIrohftUHjExdzkq
+         aCZZb/RTUaFOJXyg4pU3+839XTi3caY3l93GktdNYnjWBf2e/0zlTqrlEt+/q0CH57
+         zx7bdsxeffEsd0tdHuiqkuvhJ9tJI+M094HrqaeLVG9RD4gmGqTBT6/UE3kTtQXEZM
+         nBGk6I/zm7ZZkn5UemaQoYoS5DtU+c8zbjPA4in1kyJsHrRZORe+p84SOsekEfXo4i
+         LMn6Y1vKAjJ8g==
+From:   cem@kernel.org
+To:     hughd@google.com
+Cc:     jack@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        djwong@kernel.org
+Subject: [PATCH 0/6] shmem: Add user and group quota support for tmpfs
+Date:   Mon,  3 Apr 2023 10:47:53 +0200
+Message-Id: <20230403084759.884681-1-cem@kernel.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <362a9e19-fea5-e45a-3c22-3aa47e851aea@stancevic.com>
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
@@ -60,59 +51,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Dragan,
+From: Carlos Maiolino <cmaiolino@redhat.com>
 
-On Thu, Mar 30, 2023 at 05:03:24PM -0500, Dragan Stancevic wrote:
-> On 3/26/23 02:21, Mike Rapoport wrote:
-> > Hi,
-> > 
-> > [..] >> One problem we experienced was occured in the combination of
-> hot-remove and kerelspace allocation usecases.
-> > > ZONE_NORMAL allows kernel context allocation, but it does not allow hot-remove because kernel resides all the time.
-> > > ZONE_MOVABLE allows hot-remove due to the page migration, but it only allows userspace allocation.
-> > > Alternatively, we allocated a kernel context out of ZONE_MOVABLE by adding GFP_MOVABLE flag.
-> > > In case, oops and system hang has occasionally occured because ZONE_MOVABLE can be swapped.
-> > > We resolved the issue using ZONE_EXMEM by allowing seletively choice of the two usecases.
-> > > As you well know, among heterogeneous DRAM devices, CXL DRAM is the first PCIe basis device, which allows hot-pluggability, different RAS, and extended connectivity.
-> > > So, we thought it could be a graceful approach adding a new zone and separately manage the new features.
-> > 
-> > This still does not describe what are the use cases that require having
-> > kernel allocations on CXL.mem.
-> > 
-> > I believe it's important to start with explanation *why* it is important to
-> > have kernel allocations on removable devices.
-> 
-> Hi Mike,
-> 
-> not speaking for Kyungsan here, but I am starting to tackle hypervisor
-> clustering and VM migration over cxl.mem [1].
-> 
-> And in my mind, at least one reason that I can think of having kernel
-> allocations from cxl.mem devices is where you have multiple VH connections
-> sharing the memory [2]. Where for example you have a user space application
-> stored in cxl.mem, and then you want the metadata about this
-> process/application that the kernel keeps on one hypervisor be "passed on"
-> to another hypervisor. So basically the same way processors in a single
-> hypervisors cooperate on memory, you extend that across processors that span
-> over physical hypervisors. If that makes sense...
+Hi folks. this work has been done originally by Lukas, but he left the company,
+so I'm taking over his work from where he left it of. This series is virtually
+done, and he had updated it with comments from the last version, but, I'm
+initially posting it as a RFC because it's been a while since he posted the
+last version.
+Most of what I did here was rebase his last work on top of current Linus's tree.
 
-Let me reiterate to make sure I understand your example.
-If we focus on VM usecase, your suggestion is to store VM's memory and
-associated KVM structures on a CXL.mem device shared by several nodes.  
-Even putting aside the aspect of keeping KVM structures on presumably
-slower memory, what ZONE_EXMEM will provide that cannot be accomplished
-with having the cxl memory in a memoryless node and using that node to
-allocate VM metadata?
- 
-> [1] A high-level explanation is at http://nil-migration.org
-> [2] Compute Express Link Specification r3.0, v1.0 8/1/22, Page 51, figure
-> 1-4, black color scheme circle(3) and bars.
-> 
-> --
-> Peace can only come as a natural consequence
-> of universal enlightenment -Dr. Nikola Tesla
-> 
+Honza, there is one patch from you in this series, which I believe you had it
+suggested to Lukas on a previous version.
+
+The original cover-letter follows...
+
+people have been asking for quota support in tmpfs many times in the past
+mostly to avoid one malicious user, or misbehaving user/program to consume
+all of the system memory. This has been partially solved with the size
+mount option, but some problems still prevail.
+
+One of the problems is the fact that /dev/shm is still generally unprotected
+with this and another is administration overhead of managing multiple tmpfs
+mounts and lack of more fine grained control.
+
+Quota support can solve all these problems in a somewhat standard way
+people are already familiar with from regular file systems. It can give us
+more fine grained control over how much memory user/groups can consume.
+Additionally it can also control number of inodes and with special quota
+mount options introduced with a second patch we can set global limits
+allowing us to replace the size mount option with quota entirely.
+
+Currently the standard userspace quota tools (quota, xfs_quota) are only
+using quotactl ioctl which is expecting a block device. I patched quota [1]
+and xfs_quota [2] to use quotactl_fd in case we want to run the tools on
+mount point directory to work nicely with tmpfs.
+
+The implementation was tested on patched version of xfstests [3].
+
+
+Jan Kara (1):
+  quota: Check presence of quota operation structures instead of
+    ->quota_read and ->quota_write callbacks
+
+Lukas Czerner (5):
+  shmem: make shmem_inode_acct_block() return error
+  shmem: make shmem_get_inode() return ERR_PTR instead of NULL
+  shmem: prepare shmem quota infrastructure
+  shmem: quota support
+  Add default quota limit mount options
+
+ Documentation/filesystems/tmpfs.rst |  28 ++
+ fs/Kconfig                          |  12 +
+ fs/quota/dquot.c                    |   2 +-
+ include/linux/shmem_fs.h            |  25 ++
+ include/uapi/linux/quota.h          |   1 +
+ mm/Makefile                         |   2 +-
+ mm/shmem.c                          | 452 +++++++++++++++++++++-------
+ mm/shmem_quota.c                    | 327 ++++++++++++++++++++
+ 8 files changed, 740 insertions(+), 109 deletions(-)
+ create mode 100644 mm/shmem_quota.c
 
 -- 
-Sincerely yours,
-Mike.
+2.30.2
+
