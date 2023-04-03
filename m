@@ -2,161 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C68726D4B0F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:52:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38CF86D4B12
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234286AbjDCOwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 10:52:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48674 "EHLO
+        id S234244AbjDCOxl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 10:53:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234043AbjDCOwG (ORCPT
+        with ESMTP id S234064AbjDCOxa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 10:52:06 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C0D29BCD
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 07:51:49 -0700 (PDT)
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com [209.85.219.198])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BA3B83F23A
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 14:51:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1680533507;
-        bh=XBz1zna37ysInm5qeEZxPeU0HrWb4OHRI+Pz2i9OGHc=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=bcBGm75mUP1+EgKudfIRC72QtMZSAvRStaB488pqxSolGC19Dj8ZtjUy5GYmCQ5Ir
-         gPyZsC5WSyhHFo7xF3mRW83W4Ri73847v/hzvpQHh36KNvNeAjHHp0haLcgJYQX4uJ
-         uN0hqTxMbShZm6NWrYSIakx4cllgWoPcrfODjXtSgpzeNYnzSbF1KfJ5U2Pe35iiQV
-         OUFAbdBwJbfMKvRqSrKvgIKfW+bS0FPWGwPoT78g0BZlq9mn+uAR5z/0R2hICm2xdB
-         o6DBbykHyzqApNxZYuxQ4F7IaTAPLBy5VEXKA83FT2TBLminGQA0BQmpYFKglMmkRU
-         ueWUeOpMfeb/Q==
-Received: by mail-yb1-f198.google.com with SMTP id z4-20020a25bb04000000b00b392ae70300so29200722ybg.21
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Apr 2023 07:51:47 -0700 (PDT)
+        Mon, 3 Apr 2023 10:53:30 -0400
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 723F8113C4
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 07:53:00 -0700 (PDT)
+Received: by mail-qv1-xf2c.google.com with SMTP id t13so21298149qvn.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Apr 2023 07:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1680533579;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PUO/KjMRf7ccJa58/ksmOm78AxORGxzl+O/+LUACmVM=;
+        b=iEQPySr4AvS2/y19Q8XQChnc8kEE6OKeQBoO/ux+vRpC4bSqWh9jxf646NwjiGwl0c
+         +P1SkvpwR8fp03ZQfQjoDOMsJs2mWhSAGOwBrAj39YVwLGScCRdb6VM8mRSnG3vSP+mf
+         5hWNcXFejUK1jETlnB2WXyq26k5DUY3rz4kb2DfwMuQgT7w8sInyi5LB7rneB/hrj3vt
+         uC7q+rqPfn/azR5QPx5J5tdH+stdF37ftRkf69idQZQlKNGBhAd6Wm/MYh5c8TwyU+3l
+         8eBqbEIX+6M5AJHR2RDda2+PmjjQxuBQi3MsQf48HEjOVxTDu/BkpEtJBbwot6EG19j0
+         W+2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680533506;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XBz1zna37ysInm5qeEZxPeU0HrWb4OHRI+Pz2i9OGHc=;
-        b=Sh3LnvTN3rTEFuK+Uyzy116Wv8KpFgByJHm+iU/H6BAXzNaoBaN+5o+oehg7D/CeMb
-         qIf/YPs4pj73kSOhc1kbHw7vuwUR1DTUbz7o+6HsO7pbxBaXDdUskl3JYMko/sNu9uZT
-         4qhHCW4PP+oBad2VWUCR9LqYY/E+6NyxyZGyYdgGuxrZFTrK3Bt4BjmY2T8R3WEELWO4
-         6EzkpFc6cM2lQBZTwMv/P/55B/utjiSXvE4SpGIpJctgsi31bOlAdKFPA/iuPNSi+Zqg
-         5E7MRjR+9NBTt09r+bFBJTk9g7fZp814MalFC3frb6zShncva16Aa4/D53BTpTnakoNw
-         /NQQ==
-X-Gm-Message-State: AAQBX9d6NzhmGK204/v4EBaif18GLVX+X3bI24x92X8r0DwmLJXFXpbb
-        ROVGuXIqu9rzuyFLbbLbTkcjGDvOcJl9HDX2ItH6352xRQH3s01aEWMdIZGhAvWwYxD0B/jGrNg
-        6rtMvOVuRMCDy95xHgDf+K9tsBlXeZr+ADI24WyIICSn2YS0zI8Nsq4REaRWE9zU60jtY1Q==
-X-Received: by 2002:a25:d784:0:b0:b76:3b21:b1dc with SMTP id o126-20020a25d784000000b00b763b21b1dcmr11288527ybg.0.1680533505809;
-        Mon, 03 Apr 2023 07:51:45 -0700 (PDT)
-X-Google-Smtp-Source: AKy350aqgVvrDZpj3W0dpqiva+R1snhDKUQ7qQHwf84isS5iLyZponbAZ23XQDzrn0oLSQL21JAYXzfwIO48DtPuJpY=
-X-Received: by 2002:a25:d784:0:b0:b76:3b21:b1dc with SMTP id
- o126-20020a25d784000000b00b763b21b1dcmr11288511ybg.0.1680533505602; Mon, 03
- Apr 2023 07:51:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230220193754.470330-1-aleksandr.mikhalitsyn@canonical.com>
- <20230220193754.470330-8-aleksandr.mikhalitsyn@canonical.com>
- <381a19bb-d17e-b48b-8259-6287dbe170df@fastmail.fm> <CAEivzxf8HKs2FJwTohzGVcb0TRNy9QJbEALC3dni3zx+tOb9Gg@mail.gmail.com>
-In-Reply-To: <CAEivzxf8HKs2FJwTohzGVcb0TRNy9QJbEALC3dni3zx+tOb9Gg@mail.gmail.com>
-From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date:   Mon, 3 Apr 2023 16:51:34 +0200
-Message-ID: <CAEivzxdjjJmwPaxe5miWPxun_ZCRt-wjuCCA2nzOWWyzZZUuOg@mail.gmail.com>
-Subject: Re: [RFC PATCH 7/9] fuse: add fuse device ioctl(FUSE_DEV_IOC_REINIT)
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     mszeredi@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>,
-        =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
-        Seth Forshee <sforshee@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        d=1e100.net; s=20210112; t=1680533579;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PUO/KjMRf7ccJa58/ksmOm78AxORGxzl+O/+LUACmVM=;
+        b=lz90rv/fBpFRDt0OKN2rkUMIkSHzpbUNJxvdRvVv+rCdqvIrYE34ZNFBlW0/Tz4bZE
+         m3Xe7rZtSKico6hWQ13mRllMarApo+MQ5ZNFexvvyRhPl8jo8vh1cBnQuFzNlna4IyQt
+         WV/db4USilnn/ayE1ZWSeQkfIUNx8ZUGKxqtaSU2owuqUTSscIJw0cMSdIqwinSrxnnR
+         0JB/RWFmGGjFEESQzs2cawFIjnyaAVsX2BcQ8h1hxuQuEsH9lZKbD3HPPixd37L0LP51
+         t6Oa07G/hL2Gh89O/r4RTxVsB3BLrB+qFoDwz8sHqywQVmoXVA+yXmlWCY3GkHH3v6oE
+         OzUA==
+X-Gm-Message-State: AAQBX9fCkKO0TWRuyEbjpx7Pos39Ap5Gg5sU5Vpyjk2SATHIxg+OzfSi
+        rBZvN2/q8E9nCcATVHyHUwun8g==
+X-Google-Smtp-Source: AKy350Z/o+tPlLNvTbsM001xQWI9G0TJ9RcF3+LkMsE21GwUwGyBHbbQjAvEWF7Lm/ODUr1cvcHuZQ==
+X-Received: by 2002:a05:6214:2528:b0:537:6416:fc2b with SMTP id gg8-20020a056214252800b005376416fc2bmr63124779qvb.52.1680533579550;
+        Mon, 03 Apr 2023 07:52:59 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-25-194.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.25.194])
+        by smtp.gmail.com with ESMTPSA id z7-20020a0cf007000000b005e3d3cafc16sm211260qvk.73.2023.04.03.07.52.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Apr 2023 07:52:59 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1pjLYI-006MBH-Bu;
+        Mon, 03 Apr 2023 11:52:58 -0300
+Date:   Mon, 3 Apr 2023 11:52:58 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Steven Price <steven.price@arm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        criu@openvz.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Christoph Hellwig <hch@lst.de>,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] smaps: Fix defined but not used smaps_shmem_walk_ops
+Message-ID: <ZCroShx7wdvYW2lS@ziepe.ca>
+References: <20230403111255.141623-1-steven.price@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230403111255.141623-1-steven.price@arm.com>
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 6, 2023 at 3:09=E2=80=AFPM Aleksandr Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com> wrote:
->
-> On Fri, Mar 3, 2023 at 8:26=E2=80=AFPM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
-> >
-> >
-> >
-> > On 2/20/23 20:37, Alexander Mikhalitsyn wrote:
-> > > This ioctl aborts fuse connection and then reinitializes it,
-> > > sends FUSE_INIT request to allow a new userspace daemon
-> > > to pick up the fuse connection.
-> > >
-> > > Cc: Miklos Szeredi <mszeredi@redhat.com>
-> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > Cc: Amir Goldstein <amir73il@gmail.com>
-> > > Cc: St=C3=83=C2=A9phane Graber <stgraber@ubuntu.com>
-> > > Cc: Seth Forshee <sforshee@kernel.org>
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: Andrei Vagin <avagin@gmail.com>
-> > > Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-> > > Cc: linux-fsdevel@vger.kernel.org
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Cc: criu@openvz.org
-> > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical=
-.com>
-> > > ---
-> > >   fs/fuse/dev.c             | 132 +++++++++++++++++++++++++++++++++++=
-+++
-> > >   include/uapi/linux/fuse.h |   1 +
-> > >   2 files changed, 133 insertions(+)
-> > >
-> > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > > index 737764c2295e..0f53ffd63957 100644
-> > > --- a/fs/fuse/dev.c
-> > > +++ b/fs/fuse/dev.c
-> > > @@ -2187,6 +2187,112 @@ void fuse_abort_conn(struct fuse_conn *fc)
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(fuse_abort_conn);
-> > >
-> > > +static int fuse_reinit_conn(struct fuse_conn *fc)
-> > > +{
-> > > +     struct fuse_iqueue *fiq =3D &fc->iq;
-> > > +     struct fuse_dev *fud;
-> > > +     unsigned int i;
-> > > +
-> > > +     if (fc->conn_gen + 1 < fc->conn_gen)
-> > > +             return -EOVERFLOW;
-> > > +
-> > > +     fuse_abort_conn(fc);
-> > > +     fuse_wait_aborted(fc);
-> >
-> > Shouldn't this also try to flush all data first?
+On Mon, Apr 03, 2023 at 12:12:55PM +0100, Steven Price wrote:
+> When !CONFIG_SHMEM smaps_shmem_walk_ops is defined but not used,
+> triggering a compiler warning. Surround the definition with an #ifdef to
+> keep the compiler happy.
+> 
+> Fixes: 7b86ac3371b7 ("pagewalk: separate function pointers from iterator data")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Link: https://lore.kernel.org/oe-kbuild-all/202304031749.UiyJpxzF-lkp@intel.com/
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>  fs/proc/task_mmu.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Dear Bernd,
+I think it would be better to enclose the definition of
+shmem_swap_usage() in its header with a stub like shmem_mapping and
+remove the ifdef completely. shmem_mapping() is already compile time
+false.
 
-I've reviewed this place 2nd time and I'm not sure that we have to
-perform any flushing there, because userspace daemon can be dead or
-stuck.
-Technically, if userspace knows that daemon is alive then it can call
-fsync/sync before doing reinit.
+#ifdef CONFIG_SHMEM
+        if (vma->vm_file && shmem_mapping(vma->vm_file->f_mapping)) {
+                /*
+                 * For shared or readonly shmem mappings we know that all
+                 * swapped out pages belong to the shmem object, and we can
+                 * obtain the swap value much more efficiently. For private
+                 * writable mappings, we might have COW pages that are
+                 * not affected by the parent swapped out pages of the shmem
+                 * object, so we have to distinguish them during the page walk.
+                 * Unless we know that the shmem object (or the part mapped by
+                 * our VMA) has no swapped out pages at all.
+                 */
+                unsigned long shmem_swapped = shmem_swap_usage(vma);
 
-What do you think about it?
+                if (!start && (!shmem_swapped || (vma->vm_flags & VM_SHARED) ||
+                                        !(vma->vm_flags & VM_WRITE))) {
+                        mss->swap += shmem_swapped;
+                } else {
+                        ops = &smaps_shmem_walk_ops;
+                }
+        }
+#endif
 
-Kind regards,
-Alex
 
->
-> I think we should. Thanks for pointing to that!
->
-> I've read all your comments and I'll prepare -v2 series soon.
->
-> Thanks a lot, Bernd!
->
-> >
+Jason
