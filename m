@@ -2,142 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A47C06D48D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:32:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB74D6D4A67
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:46:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233517AbjDCOcZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 10:32:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36908 "EHLO
+        id S234020AbjDCOqt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 10:46:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233518AbjDCOcX (ORCPT
+        with ESMTP id S234016AbjDCOqf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 10:32:23 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99737D4FA1
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 07:32:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680532336; x=1712068336;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DtoY6cP52YP2Cu2+OF1/+fMaIeXSxtRw1d6XEdQKqaI=;
-  b=YKoPC+9PhNROdwr4uqiTOKhM98UkS17P6Cx4oJEq9nZ7hEIe37zAUcHu
-   G7NSvG4029kPRf0koY5WwR2nsfFFgkpP7OQURSCP06/i0XyZ/in/PZFgT
-   9kpvZx37W4SrWqitokT94GLM/EYgJMrWgEss3TaKtiYmhQMGgVprtHMo+
-   AsmHAHqQ1V95/9RrBGyGeUktJobLTDrqmOHUW6hB43dntEvwXTbrF0hX9
-   lLp0MGoV2vvdwmE4C96j6Y7qbGuhChoTC7Rb4HkSeR2OQE7a8U+zC42yk
-   saxe3V3Qw5qhyE4diJEed6goRM/ONL/5ySXw4Hdv6a9USAZ2/Xp53uNoe
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10669"; a="322309310"
-X-IronPort-AV: E=Sophos;i="5.98,314,1673942400"; 
-   d="scan'208";a="322309310"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2023 07:32:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10669"; a="860225308"
-X-IronPort-AV: E=Sophos;i="5.98,314,1673942400"; 
-   d="scan'208";a="860225308"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 03 Apr 2023 07:32:13 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pjLEC-000OPj-2m;
-        Mon, 03 Apr 2023 14:32:12 +0000
-Date:   Mon, 3 Apr 2023 22:31:19 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     cem@kernel.org, hughd@google.com
-Cc:     oe-kbuild-all@lists.linux.dev, jack@suse.cz, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, djwong@kernel.org
-Subject: Re: [PATCH 5/6] shmem: quota support
-Message-ID: <202304032216.0SXl7l2X-lkp@intel.com>
-References: <20230403084759.884681-6-cem@kernel.org>
+        Mon, 3 Apr 2023 10:46:35 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 098EAD4F87
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 07:46:18 -0700 (PDT)
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 080843F22F
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 14:45:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1680533138;
+        bh=vnzySuWpn2fzOdO5+1JPUkZQvxbNLkst5PcVHPdiSbI=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=UrdbwBLW2fiG3+1zCVc7wG7YvXHv1I8lNBh2leqWhiXJQHwfhkIkoOQ0VZ2/pEuaj
+         VDjc1acMDlSjLTn4VJ2c5p7omY7pp/GR3Z84BXdEPkRqoCjKihF/L/583/ZGJIbn1h
+         bqaQJ6YVlWKlxFqXa2vvKNc2Fef31tRVQp7O3j+fX0IEE8utICNZuNYdvo4oxcXFVy
+         NcJqTH+8spqt1VmYviq3InQbN2NkDWR0n5a0/XCfQqCLD8vY/24OImmwkDZDvNfcid
+         3Wm7r5eIGXTXm+LYyyxkNoPDnrgzNKqstFZMH+3wGf+pd4Atk2ZtUBfEdhRZHVX1MM
+         qQ4onVFoTehoA==
+Received: by mail-ed1-f70.google.com with SMTP id k30-20020a50ce5e000000b00500544ebfb1so41340722edj.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Apr 2023 07:45:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680533135;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vnzySuWpn2fzOdO5+1JPUkZQvxbNLkst5PcVHPdiSbI=;
+        b=hfGUBdvrkD4BLOmykR6nYgBhMhC04292VaFyhg9XFpNdlHfYGLecCpgGvgqA+a89EB
+         NlBnpxkIDt7/jMlVPreadq0HbiEy3V1MnKKfLggZHo9PqeyC2upwYALx5jq2nfKBu6YL
+         m8QHXdluDXPnOlscl4zUoxrLMMRFScRI6+o5qtU/dGPGjBVLVKfBK8go6lErIDGsNGDs
+         2eVy26wGbmUVfOXq6hgjVS5vIlB8adwfZDolGSQW3hyZemckleLa83dpPNzo7T1yCA1K
+         I54MFpOd2dGdNwZrGKW6jsGw+sOYwQSojRvpxcZX4P5AWFnvI3Lh5IdRJ5qqBPtFJ8Qp
+         DLSA==
+X-Gm-Message-State: AAQBX9elvdJZMsr4oOyMTN7BuepUYj4ev4suIiRg3JIIN8vqDf9Al5hK
+        425hjHE7mxrQ01D5/6yJDFY7QVX00ehXLWoApf2xaLZ3XpMKi246sojSBfeSgFC7hw8ijljCu6z
+        qob10sKR8nmShhsWCW0Ug3muOjIPmDXsFc8EZ14LU7RA=
+X-Received: by 2002:a17:906:a8d:b0:878:52cd:9006 with SMTP id y13-20020a1709060a8d00b0087852cd9006mr37906944ejf.69.1680533135532;
+        Mon, 03 Apr 2023 07:45:35 -0700 (PDT)
+X-Google-Smtp-Source: AKy350bAiuVh3lsBhMr+h30HHvifpPWJUO8Mib81eersEgBb0Rdw76ve5q7xt8XBTouzFay6aan3FA==
+X-Received: by 2002:a17:906:a8d:b0:878:52cd:9006 with SMTP id y13-20020a1709060a8d00b0087852cd9006mr37906922ejf.69.1680533135221;
+        Mon, 03 Apr 2023 07:45:35 -0700 (PDT)
+Received: from amikhalitsyn.. (ip5f5bd076.dynamic.kabel-deutschland.de. [95.91.208.118])
+        by smtp.gmail.com with ESMTPSA id i5-20020a50d745000000b004fa19f5ba99sm4735804edj.79.2023.04.03.07.45.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Apr 2023 07:45:34 -0700 (PDT)
+From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To:     mszeredi@redhat.com
+Cc:     flyingpeng@tencent.com,
+        Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
+        Seth Forshee <sforshee@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Bernd Schubert <bschubert@ddn.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        criu@openvz.org
+Subject: [RFC PATCH v2 0/9] fuse: API for Checkpoint/Restore
+Date:   Mon,  3 Apr 2023 16:45:08 +0200
+Message-Id: <20230403144517.347517-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230403084759.884681-6-cem@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=unavailable autolearn_force=no version=3.4.6
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hello everyone,
 
-Thank you for the patch! Perhaps something to improve:
+It would be great to hear your comments regarding this proof-of-concept Checkpoint/Restore API for FUSE.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.3-rc5]
-[cannot apply to akpm-mm/mm-everything next-20230403]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Support of FUSE C/R is a challenging task for CRIU [1]. Last year I've given a brief talk on LPC 2022
+about how we handle files C/R in CRIU and which blockers we have for FUSE filesystems. [2]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/cem-kernel-org/shmem-make-shmem_inode_acct_block-return-error/20230403-165022
-patch link:    https://lore.kernel.org/r/20230403084759.884681-6-cem%40kernel.org
-patch subject: [PATCH 5/6] shmem: quota support
-config: i386-allnoconfig (https://download.01.org/0day-ci/archive/20230403/202304032216.0SXl7l2X-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
-reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/e060b9e86fd92d5e87f5b0c447e4bc610a3d3bbe
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review cem-kernel-org/shmem-make-shmem_inode_acct_block-return-error/20230403-165022
-        git checkout e060b9e86fd92d5e87f5b0c447e4bc610a3d3bbe
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=i386 olddefconfig
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
+The main problem for CRIU is that we have to restore mount namespaces and memory mappings before the process tree.
+It means that when CRIU is performing mount of fuse filesystem it can't use the original FUSE daemon from the
+restorable process tree, but instead use a "fake daemon".
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304032216.0SXl7l2X-lkp@intel.com/
+This leads to many other technical problems:
+* "fake" daemon has to reply to FUSE_INIT request from the kernel and initialize fuse connection somehow.
+This setup can be not consistent with the original daemon (protocol version, daemon capabilities/settings
+like no_open, no_flush, readahead, and so on).
+* each fuse request has a unique ID. It could confuse userspace if this unique ID sequence was reset.
 
-All warnings (new ones prefixed by >>):
+We can workaround some issues and implement fragile and limited support of FUSE in CRIU but it doesn't make any sense, IMHO.
+Btw, I've enumerated only CRIU restore-stage problems there. The dump stage is another story...
 
-   mm/shmem.c: In function 'shmem_init':
->> mm/shmem.c:4252:1: warning: label 'out3' defined but not used [-Wunused-label]
-    4252 | out3:
-         | ^~~~
+My proposal is not only about CRIU. The same interface can be useful for FUSE mounts recovery after daemon crashes.
+LXC project uses LXCFS [3] as a procfs/cgroupfs/sysfs emulation layer for containers. We are using a scheme when
+one LXCFS daemon handles all the work for all the containers and we use bindmounts to overmount particular
+files/directories in procfs/cgroupfs/sysfs. If this single daemon crashes for some reason we are in trouble,
+because we have to restart all the containers (fuse bindmounts become invalid after the crash).
+The solution is fairly easy:
+allow somehow to reinitialize the existing fuse connection and replace the daemon on the fly
+This case is a little bit simpler than CRIU cause we don't need to care about the previously opened files
+and other stuff, we are only interested in mounts.
+
+Current PoC implementation was developed and tested with this "recovery case".
+Right now I only have LXCFS patched and have nothing for CRIU. But I wanted to discuss this idea before going forward with CRIU.
+
+Brief API/design description.
+
+I've added two ioctl's:
+* ioctl(FUSE_DEV_IOC_REINIT)
+Performs fuse connection abort and then reinitializes all internal fuse structures as "brand new".
+Then sends a FUSE_INIT request, so a new userspace daemon can reply to it and start processing fuse reqs.
+
+* ioctl(FUSE_DEV_IOC_BM_REVAL)
+A little bit hacky thing. Traverses all the bindmounts of existing fuse mount and performs relookup
+of (struct vfsmount)->mnt_root dentries with the new daemon and reset them to new dentries.
+Pretty useful for the recovery case (for instance, LXCFS).
+
+Now about the dentry/inode invalidation mechanism.
+* added the "fuse connection generation" concept.
+When reinit is performed then connection generation is increased by 1.
+Each fuse inode stores the generation of the connection it was allocated with.
+
+* perform dentry revalidation if it has an old generation [fuse_dentry_revalidate]
+The current implementation of fuse_dentry_revalidate follows a simple and elegant idea. When we
+want to revalidate the dentry we just send a FUSE_LOOKUP request to the userspace
+for the parent dentry with the name of the current dentry and check which attributes/inode id
+it gets. If inode ids are the same and attributes (provided by the userspace) are valid
+then we mark dentry valid and it continues to live (with inode).
+I've only added a connection generation check to the condition when we have to perform revalidation
+and added an inode connection generation reset (to actual connection gen) if the new userspace
+daemon has looked up the same inode id (important for the CRIU case!).
+
+Thank you for your attention and I'm waiting for your feedback :)
+
+Branch link: https://github.com/mihalicyn/linux/commits/fuse_cr_rev0
+
+References:
+[1] Support FUSE mountpoints https://github.com/checkpoint-restore/criu/issues/53
+[2] Bringing up FUSE mounts C/R support https://lpc.events/event/16/contributions/1243/
+[3] LXCFS https://github.com/lxc/lxcfs
+
+Kind regards,
+Alex
+
+--
+
+v2:
+	- rebased
+	- fixes according to review comments from Bernd Schubert
+--
+
+Cc: Miklos Szeredi <mszeredi@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Stéphane Graber <stgraber@ubuntu.com>
+Cc: Seth Forshee <sforshee@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Andrei Vagin <avagin@gmail.com>
+Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc: Bernd Schubert <bschubert@ddn.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: criu@openvz.org
+
+Alexander Mikhalitsyn (9):
+  fuse: move FUSE_DEFAULT_* defines to fuse common header
+  fuse: add const qualifiers to common fuse helpers
+  fuse: add fuse connection generation
+  fuse: handle stale inode connection in fuse_queue_forget
+  fuse: move fuse connection flags to the separate structure
+  fuse: take fuse connection generation into account
+  fuse: add fuse device ioctl(FUSE_DEV_IOC_REINIT)
+  namespace: add sb_revalidate_bindmounts helper
+  fuse: add fuse device ioctl(FUSE_DEV_IOC_BM_REVAL)
+
+ fs/fuse/acl.c                 |   6 +-
+ fs/fuse/dev.c                 | 187 +++++++++++++++++++++-
+ fs/fuse/dir.c                 |  38 ++---
+ fs/fuse/file.c                |  92 ++++++-----
+ fs/fuse/fuse_i.h              | 287 ++++++++++++++++++++--------------
+ fs/fuse/inode.c               |  62 ++++----
+ fs/fuse/readdir.c             |   8 +-
+ fs/fuse/xattr.c               |  18 +--
+ fs/namespace.c                |  90 +++++++++++
+ include/linux/mnt_namespace.h |   3 +
+ include/uapi/linux/fuse.h     |   2 +
+ 11 files changed, 563 insertions(+), 230 deletions(-)
 
 
-vim +/out3 +4252 mm/shmem.c
-
-  4224	
-  4225		error = register_filesystem(&shmem_fs_type);
-  4226		if (error) {
-  4227			pr_err("Could not register tmpfs\n");
-  4228			goto out2;
-  4229		}
-  4230	
-  4231		shm_mnt = kern_mount(&shmem_fs_type);
-  4232		if (IS_ERR(shm_mnt)) {
-  4233			error = PTR_ERR(shm_mnt);
-  4234			pr_err("Could not kern_mount tmpfs\n");
-  4235			goto out1;
-  4236		}
-  4237	
-  4238	#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-  4239		if (has_transparent_hugepage() && shmem_huge > SHMEM_HUGE_DENY)
-  4240			SHMEM_SB(shm_mnt->mnt_sb)->huge = shmem_huge;
-  4241		else
-  4242			shmem_huge = SHMEM_HUGE_NEVER; /* just in case it was patched */
-  4243	#endif
-  4244		return;
-  4245	
-  4246	out1:
-  4247		unregister_filesystem(&shmem_fs_type);
-  4248	out2:
-  4249	#ifdef CONFIG_TMPFS_QUOTA
-  4250		unregister_quota_format(&shmem_quota_format);
-  4251	#endif
-> 4252	out3:
-  4253		shmem_destroy_inodecache();
-  4254		shm_mnt = ERR_PTR(error);
-  4255	}
-  4256	
-
+base-commit: c68ea140050e631d24d61b6e399ca8224a4a2219
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.34.1
+
