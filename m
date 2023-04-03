@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9C416D47FA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A2086D474C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233245AbjDCOY4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 10:24:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51342 "EHLO
+        id S233032AbjDCOTA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 10:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233254AbjDCOYs (ORCPT
+        with ESMTP id S233023AbjDCOS5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 10:24:48 -0400
+        Mon, 3 Apr 2023 10:18:57 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49D022CAC0;
-        Mon,  3 Apr 2023 07:24:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31BE42C9EE;
+        Mon,  3 Apr 2023 07:18:56 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EF281B81BE9;
-        Mon,  3 Apr 2023 14:24:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A138C4339E;
-        Mon,  3 Apr 2023 14:24:38 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C5B37B81BA8;
+        Mon,  3 Apr 2023 14:18:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEC28C433D2;
+        Mon,  3 Apr 2023 14:18:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1680531878;
-        bh=4Y8/xJhwU7aJXJUzYvMwx8jzSFFEXA9tPwndwM5aX+Q=;
+        s=korg; t=1680531533;
+        bh=23ce0YqyjdydrJ6eTt5+gYdCKYYGWRIVlyFT2GNleRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KWbO8cTRdTL1cuoQD+uO583ek8vpfgsMhapjFsXBe1qtu7tTWu/GAEck+CK2fgCO9
-         lNhxG0naigLaOD7hV69J3dtSyKeI998q9fWxLn9wNqv8Av9TnNwA96IKvfUysUtios
-         xTZDPzaUAnAappaJvW+H0iCymYE3fhLPGVxtCOdw=
+        b=BmOxiF05ScxRzqaXDUd/GCgBHbSxr0M1z+t9RP37cEPd7j8e9P0rMeP9G8co6M2G4
+         AQxRkDOIH/K+GAQ3rnQs9BJQlNpHKlmU2p7OvCNaRr0u/64vIhK1F6ZYpv/MbNUksG
+         nhVHBfPsOT7lHFaD5JSXCnPrR+NvQuqoRzXFLKhU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -39,12 +39,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Steve French <smfrench@gmail.com>, keyrings@vger.kernel.org,
         linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.10 041/173] keys: Do not cache key in task struct if key is requested from kernel thread
-Date:   Mon,  3 Apr 2023 16:07:36 +0200
-Message-Id: <20230403140415.734756121@linuxfoundation.org>
+Subject: [PATCH 5.4 015/104] keys: Do not cache key in task struct if key is requested from kernel thread
+Date:   Mon,  3 Apr 2023 16:08:07 +0200
+Message-Id: <20230403140404.785142940@linuxfoundation.org>
 X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230403140414.174516815@linuxfoundation.org>
-References: <20230403140414.174516815@linuxfoundation.org>
+In-Reply-To: <20230403140403.549815164@linuxfoundation.org>
+References: <20230403140403.549815164@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -94,7 +94,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 2da4404276f0f..07a0ef2baacd8 100644
+index 957b9e3e14924..17c9c0cfb6f59 100644
 --- a/security/keys/request_key.c
 +++ b/security/keys/request_key.c
 @@ -38,9 +38,12 @@ static void cache_requested_key(struct key *key)
