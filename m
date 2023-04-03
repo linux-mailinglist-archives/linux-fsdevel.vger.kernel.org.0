@@ -2,98 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 526246D3D42
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 08:24:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B28DE6D3E16
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 09:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231532AbjDCGYI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 02:24:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36992 "EHLO
+        id S231425AbjDCH3i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 03:29:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231523AbjDCGYG (ORCPT
+        with ESMTP id S231395AbjDCH3g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 02:24:06 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02D0B9746
-        for <linux-fsdevel@vger.kernel.org>; Sun,  2 Apr 2023 23:24:01 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id by14so9957421ljb.12
-        for <linux-fsdevel@vger.kernel.org>; Sun, 02 Apr 2023 23:24:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680503039;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W7w4rGa/weBc1zd5RCUfFwg9my+z3GfiaxEfVPR6qPM=;
-        b=XAde3x1gIDwAVlFF6Q2P0euzBv22cdcnPyHN0iV3N2ZxoaWO7DDwOYRLlJRLMS9Hx2
-         W6pn7qC0dSgPm3YAY0bsSYuAnUPuL0gQNtPvH9s81sgoMV9t+yTO0XRhExmwp3gH2mqM
-         ssyxL1PzI1rgm83o5pzuoL3G9hViHkHKiKcrjsLbd5jgV9uGDO7vVkGz2EYVUgTnBchR
-         TndVJ3G6skkMYkpZQzqyFbm6u+v7gNFPtHn/G9MUc+TeqtP5XWPk0MrU+XoHpGU1qz30
-         opuNj1qW/l3dwo4ZGpT0uWFZUc7NLNB4dp5i/cbm85wFMlrKVzM6wKRVrWSdiaWoGHwE
-         7ung==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680503039;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W7w4rGa/weBc1zd5RCUfFwg9my+z3GfiaxEfVPR6qPM=;
-        b=zmVRlRR2vwT0mUIDDMVgfmb66UDSGvdtxLtsChZzLWGdjwEyq4LRvoU/zp0l4gTHcN
-         uwZNgMG3cBfg768FnQv4cs2hb8ETEFlRMPGJBr4RRLleTrP5FQcl7QqTIjUjPepC5art
-         rS0SuBreyqObLoKvrf1UNUtsKN5NMMQVxOLfpkQ9+JfnNfyDj+n0JPelVD9QSLeVbtyT
-         9GTAMzXHU/+oVd/G48iNHFiEZPMvEsmRWKoQEdrr4UlcpqPaHIhqvCq6e0ermcnUinxt
-         IrgrpBR/nU4t/Y539mobWYFr+s5B6rbwdvXUqkrETwH9LJdNDrsPEcY2i9zn13uY52xa
-         BPQg==
-X-Gm-Message-State: AAQBX9cbWl7gFvbgGcuSAPIdpbGuMXZpo2+Lgt0rF6IMdUCCEa/DPIQ9
-        7RrmAsIgMQZqtwKbTDDaNdNkkdgf+tnRNXEzbjTPabupEpaJlnt3pFd9gw==
-X-Google-Smtp-Source: AKy350bJP8hcMb0K78DAucUuYayCrBxYFM/TvgmfmxSZKvb+iazC1gPiY1hRi8e9bdoSA0h6qpcLdhF83FqJ5pksWI0=
-X-Received: by 2002:a05:651c:104d:b0:298:b32c:e4f0 with SMTP id
- x13-20020a05651c104d00b00298b32ce4f0mr10594874ljm.8.1680503038799; Sun, 02
- Apr 2023 23:23:58 -0700 (PDT)
+        Mon, 3 Apr 2023 03:29:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D5F483FC;
+        Mon,  3 Apr 2023 00:29:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A71BA6155B;
+        Mon,  3 Apr 2023 07:29:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89D8FC433D2;
+        Mon,  3 Apr 2023 07:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680506975;
+        bh=lQcjagvQW5vaKjYm9FM3pRh642wat0HtPZnNd6xz+c0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=N7io5QkHpEI2QN6UpD2VmiAswDOIIp1DM7o4nOxJKwqIDAZT6vBS4OEc9QGsbHx6/
+         eWglYVbCgvn9waOVIPUg/kEKy8loKzgK8uZusMUHNcYzyrc3fPfSBzBU/kLfe1rQrd
+         B4hmSlx83bj2+Zbd8lVv18yjY3c6lkZ5jSRYwDfK4GUKosy/1QbvXsMXaxnn3F9MC+
+         Ioz9AMty2OOYXwGdWvefIrreav4Xiq5BTZ+9BV5NA1fqje3ZmNv1NWvhSQ8MjQLBpG
+         jOTno9/vlsHwGv/8M7RrhvuXKxRlrBYNDqKYxG7o5JiTvEsYAetBWzjHWQb7k7w7r0
+         D4NnRDCqPgUOQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Joel Becker <jlbec@evilplan.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: consolidate duplicate dt_type helpers
+Date:   Mon,  3 Apr 2023 09:28:07 +0200
+Message-Id: <20230403-zealous-refusal-b811eb5e1cdf@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230330104144.75547-1-jlayton@kernel.org>
+References: <20230330104144.75547-1-jlayton@kernel.org>
 MIME-Version: 1.0
-References: <000000000000b9753505eaa93b18@google.com> <00000000000084824b05f7a66a52@google.com>
-In-Reply-To: <00000000000084824b05f7a66a52@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 3 Apr 2023 08:23:46 +0200
-Message-ID: <CACT4Y+aPAjP_2ay89aqTzZxaGEMX9rNncJOfaw9++gOsADZyzw@mail.gmail.com>
-Subject: Re: [syzbot] [cluster?] possible deadlock in freeze_super (2)
-To:     syzbot <syzbot+be899d4f10b2a9522dce@syzkaller.appspotmail.com>
-Cc:     agruenba@redhat.com, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rpeterso@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=560; i=brauner@kernel.org; h=from:subject:message-id; bh=g7myO4zItbTFXcpfnu52zRNrXg6NcZ41DX48kuLxQ7o=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRo1T9/Ejv77vLS841zEjJjrzBVuqu/OWR8ateJIwttVLQy PotM6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI0yRGhl8LcxlEbDJUJ+xl3J+6KT bt9q9j99YtDPhyrnV60M5nvvUM/xT7krZFGW014ZkX/rJe9Xeo0DTx7e3TDXlqDD0WCnruZQUA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 24 Mar 2023 at 15:43, syzbot
-<syzbot+be899d4f10b2a9522dce@syzkaller.appspotmail.com> wrote:
->
-> syzbot suspects this issue was fixed by commit:
->
-> commit b66f723bb552ad59c2acb5d45ea45c890f84498b
-> Author: Andreas Gruenbacher <agruenba@redhat.com>
-> Date:   Tue Jan 31 14:06:53 2023 +0000
->
->     gfs2: Improve gfs2_make_fs_rw error handling
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=117e2e29c80000
-> start commit:   4a7d37e824f5 Merge tag 'hardening-v6.3-rc1' of git://git.k..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8b969c5af147d31c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=be899d4f10b2a9522dce
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11484328c80000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=127093a0c80000
->
-> If the result looks correct, please mark the issue as fixed by replying with:
->
-> #syz fix: gfs2: Improve gfs2_make_fs_rw error handling
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Looks reasonable:
+On Thu, 30 Mar 2023 06:41:43 -0400, Jeff Layton wrote:
+> There are three copies of the same dt_type helper sprinkled around the
+> tree. Convert them to use the common fs_umode_to_dtype function instead,
+> which has the added advantage of properly returning DT_UNKNOWN when
+> given a mode that contains an unrecognized type.
+> 
+> 
 
-#syz fix: gfs2: Improve gfs2_make_fs_rw error handling
+I've picked this up now,
+
+tree: git://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git
+branch: fs.misc
+[1/1] fs: consolidate duplicate dt_type helpers
+      commit: 364595a6851bf64e1c38224ae68f5dd6651906d1
