@@ -2,150 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E5856D4614
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 15:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C416D47FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 16:24:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232646AbjDCNqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 09:46:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49032 "EHLO
+        id S233245AbjDCOY4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 10:24:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232323AbjDCNqd (ORCPT
+        with ESMTP id S233254AbjDCOYs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 09:46:33 -0400
-Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD4330CF;
-        Mon,  3 Apr 2023 06:46:32 -0700 (PDT)
-Received: by mail-qt1-x829.google.com with SMTP id ga7so28335643qtb.2;
-        Mon, 03 Apr 2023 06:46:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680529591; x=1683121591;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lmBfHIegQyI1FRFG7cpgsbaaSUI++p7T5PaE/RkUk90=;
-        b=aZAY6OIApLntdoao50EqoWIIO78Bd6VomixfHjKViIWPqX9L5HsySoUqj9WkCqTOo6
-         +YAEn+5eyrJX85NpSFKwhQTkgFkgZ6HUb0PoGHuhOSYoyfnnMjHH/8dJ5sKtzRC3z7Ll
-         EwVVngSnBy1NB4hrEWHD54MDD6sSG0OYyRORtk+GZqbWqP3Mke7SLfSt6Tf6QYste1th
-         GuSr5YLq24iuIUL5lOQShiylIg4whh+j0V4slhAPA423iFofpjctOb+VSvoTv49PmNYl
-         6IktRcEXJU1oxwL6IcbgJi2RW0Bycc0zvP7r0WX2Lxp/0qhEzH0gLD2ex455Zu6kMl2b
-         rEpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680529591; x=1683121591;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lmBfHIegQyI1FRFG7cpgsbaaSUI++p7T5PaE/RkUk90=;
-        b=SVD8l4azqxKOXxeUAsjbFEuQvC76Fz+6cvhcLurzRu9g6KdLOZWyayGc6140TaRvBL
-         3EmRC7EpgqVQh/rv50HGRw3eLshi774BpYFABeb+wQnYMPC6qWJuGe5ixbAOD6a38fKI
-         XmAR40AuGdQIbAFSOSta5HrizbF8emBgz3d97ttCg3QmckqBPJOk2Owj20yz8w3ISJz5
-         D2CWiqQfYEZd2WUmWNcuWxTO0xf2CulD0hGJ0c0BH17P9QtvnJ8e2s505YzZkJUUemp/
-         atswsBW/AjpdmjTYPdt1saVOwgR0kvNoyWCI0wVNip+1qImmqNzugIKXyubEBzFyZ6Kv
-         C7LA==
-X-Gm-Message-State: AAQBX9eby+kKzIeJwr4yK1BfA8RABVebDlKLfWszZLyOgrfEAZqutc3/
-        fBxpS1z1MU+5c9ROkIINuQ+0eHZaP4A=
-X-Google-Smtp-Source: AKy350bRUIG8K9LjvA1b9EuTwsk3AQLD39qLhO6S6LUfgGDpNedlRhLzUDv7B2/uoLhMI5WTUiFchA==
-X-Received: by 2002:a05:622a:1104:b0:3e4:e9e4:5d0e with SMTP id e4-20020a05622a110400b003e4e9e45d0emr45040970qty.50.1680529591144;
-        Mon, 03 Apr 2023 06:46:31 -0700 (PDT)
-Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id c70-20020a379a49000000b00746ae84ea6csm2814958qke.3.2023.04.03.06.46.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 06:46:30 -0700 (PDT)
-Date:   Mon, 03 Apr 2023 09:46:30 -0400
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To:     David Howells <dhowells@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Message-ID: <642ad8b66acfe_302ae1208e7@willemb.c.googlers.com.notmuch>
-In-Reply-To: <1818504.1680515446@warthog.procyon.org.uk>
-References: <64299af9e8861_2d2a20208e6@willemb.c.googlers.com.notmuch>
- <20230331160914.1608208-1-dhowells@redhat.com>
- <20230331160914.1608208-16-dhowells@redhat.com>
- <1818504.1680515446@warthog.procyon.org.uk>
-Subject: Re: [PATCH v3 15/55] ip, udp: Support MSG_SPLICE_PAGES
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Mon, 3 Apr 2023 10:24:48 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49D022CAC0;
+        Mon,  3 Apr 2023 07:24:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EF281B81BE9;
+        Mon,  3 Apr 2023 14:24:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A138C4339E;
+        Mon,  3 Apr 2023 14:24:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1680531878;
+        bh=4Y8/xJhwU7aJXJUzYvMwx8jzSFFEXA9tPwndwM5aX+Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KWbO8cTRdTL1cuoQD+uO583ek8vpfgsMhapjFsXBe1qtu7tTWu/GAEck+CK2fgCO9
+         lNhxG0naigLaOD7hV69J3dtSyKeI998q9fWxLn9wNqv8Av9TnNwA96IKvfUysUtios
+         xTZDPzaUAnAappaJvW+H0iCymYE3fhLPGVxtCOdw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     stable@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        patches@lists.linux.dev, Bharath SM <bharathsm@microsoft.com>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Steve French <smfrench@gmail.com>, keyrings@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.10 041/173] keys: Do not cache key in task struct if key is requested from kernel thread
+Date:   Mon,  3 Apr 2023 16:07:36 +0200
+Message-Id: <20230403140415.734756121@linuxfoundation.org>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230403140414.174516815@linuxfoundation.org>
+References: <20230403140414.174516815@linuxfoundation.org>
+User-Agent: quilt/0.67
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells wrote:
-> Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
-> 
-> > > +	} else if ((flags & MSG_SPLICE_PAGES) && length) {
-> > > +		if (inet->hdrincl)
-> > > +			return -EPERM;
-> > > +		if (rt->dst.dev->features & NETIF_F_SG)
-> > > +			/* We need an empty buffer to attach stuff to */
-> > > +			initial_length = transhdrlen;
-> > 
-> > I still don't entirely understand what initial_length means.
-> > 
-> > More importantly, transhdrlen can be zero. If not called for UDP
-> > but for RAW. Or if this is a subsequent call to a packet that is
-> > being held with MSG_MORE.
-> > 
-> > This works fine for existing use-cases, which go to alloc_new_skb.
-> > Not sure how this case would be different. But the comment alludes
-> > that it does.
-> 
-> The problem is that in the non-MSG_ZEROCOPY case, __ip_append_data() assumes
-> that it's going to copy the data it is given and will allocate sufficient
-> space in the skb in advance to hold it - but I don't want to do that because I
-> want to splice in the pages holding the data instead.  However, I do need to
-> allocate space to hold the transport header.
-> 
-> Maybe I should change 'initial_length' to 'initial_alloc'?  It represents the
-> amount I think we should allocate.  Or maybe I should have a separate
-> allocation clause for MSG_SPLICE_PAGES?
+From: David Howells <dhowells@redhat.com>
 
-The code already has to avoid allocation in the MSG_ZEROCOPY case. I
-added alloc_len and paged_len for that purpose.
+[ Upstream commit 47f9e4c924025c5be87959d3335e66fcbb7f6b5c ]
 
-Only the transhdrlen will be copied with getfrag due to
+The key which gets cached in task structure from a kernel thread does not
+get invalidated even after expiry.  Due to which, a new key request from
+kernel thread will be served with the cached key if it's present in task
+struct irrespective of the key validity.  The change is to not cache key in
+task_struct when key requested from kernel thread so that kernel thread
+gets a valid key on every key request.
 
-    copy = datalen - transhdrlen - fraggap - pagedlen
+The problem has been seen with the cifs module doing DNS lookups from a
+kernel thread and the results getting pinned by being attached to that
+kernel thread's cache - and thus not something that can be easily got rid
+of.  The cache would ordinarily be cleared by notify-resume, but kernel
+threads don't do that.
 
-On next iteration in the loop, when remaining data fits in the skb,
-there are three cases. The first is skipped due to !NETIF_F_SG. The
-other two are either copy to page frags or zerocopy page frags.
+This isn't seen with AFS because AFS is doing request_key() within the
+kernel half of a user thread - which will do notify-resume.
 
-I think your code should be able to fit in. Maybe easier if it could
-reuse the existing alloc_new_skb code to copy the transport header, as
-MSG_ZEROCOPY does, rather than adding a new __ip_splice_alloc branch
-that short-circuits that. Then __ip_splice_pages also does not need
-code to copy the initial header. But this is trickier. It's fine to
-leave as is.
+Fixes: 7743c48e54ee ("keys: Cache result of request_key*() temporarily in task_struct")
+Signed-off-by: Bharath SM <bharathsm@microsoft.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Steve French <smfrench@gmail.com>
+cc: keyrings@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/CAGypqWw951d=zYRbdgNR4snUDvJhWL=q3=WOyh7HhSJupjz2vA@mail.gmail.com/
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/keys/request_key.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Since your code currently does call continue before executing the rest
-of that branch, no need to modify any code there? Notably replacing
-length with initial_length, which itself is initialized to length in
-all cases expect for MSG_SPLICE_PAGES.
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 2da4404276f0f..07a0ef2baacd8 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -38,9 +38,12 @@ static void cache_requested_key(struct key *key)
+ #ifdef CONFIG_KEYS_REQUEST_CACHE
+ 	struct task_struct *t = current;
+ 
+-	key_put(t->cached_requested_key);
+-	t->cached_requested_key = key_get(key);
+-	set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
++	/* Do not cache key if it is a kernel thread */
++	if (!(t->flags & PF_KTHREAD)) {
++		key_put(t->cached_requested_key);
++		t->cached_requested_key = key_get(key);
++		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
++	}
+ #endif
+ }
+ 
+-- 
+2.39.2
 
-Just hardcode transhdrlen as the copy argument to __ip_splice_pages.
-> I also wonder if __ip_append_data() really needs two places that call
-> getfrag().
-> 
-> David
-> 
 
 
