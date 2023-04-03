@@ -2,74 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9A6E6D4E60
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 18:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B8456D4E74
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 18:55:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232930AbjDCQvW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 12:51:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32854 "EHLO
+        id S232971AbjDCQzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 12:55:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232825AbjDCQvV (ORCPT
+        with ESMTP id S232529AbjDCQzK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 12:51:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1302186;
-        Mon,  3 Apr 2023 09:51:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 50B8E61E92;
-        Mon,  3 Apr 2023 16:51:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BA629C433D2;
-        Mon,  3 Apr 2023 16:51:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680540678;
-        bh=7e8Tl7hvfn6U4ZWD4kurl8I6KmecwzxwRF5MbcFRC2k=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=SMFj/7hmMB0OeTHdixOGJpqG7GKFC09pGLZsPJIcuKT/rFAieaJ2gIWaqhcYWpoR5
-         W8MHEpdIrtHITCnpN1QM3nx7/6iOZBVSxmjpyMfMg67gtIlZ2Gbaccc7APwvz0gkdy
-         BDcHqHNOVYR+TT3HjSPis3nlE6SfzXWlcEHOadeV+G3i8pFVNUqh0al3gWAjc7/96Z
-         O7QQe8McSDoAGW9wdLJ+QaCQWTQTKcpoQrhVi6gT8+4LKW+ElNjsH2yKAlDc6pDLje
-         liaCGGsCUWlgK0o1sjn/IS6iiRAsOnSEIsRbTDlhhAEfMZGcWr4Oges8wNThd/adut
-         4/NFHfJgwpPIw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9E117C41670;
-        Mon,  3 Apr 2023 16:51:18 +0000 (UTC)
-Subject: Re: [GIT PULL] vfs fixes
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230403-hardener-elevate-44493c0e466b@brauner>
-References: <20230403-hardener-elevate-44493c0e466b@brauner>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230403-hardener-elevate-44493c0e466b@brauner>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/vfs.misc.fixes.v6.3-rc6
-X-PR-Tracked-Commit-Id: cb2239c198ad9fbd5aced22cf93e45562da781eb
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 148341f0a2f53b5e8808d093333d85170586a15d
-Message-Id: <168054067863.29791.2106328294277907380.pr-tracker-bot@kernel.org>
-Date:   Mon, 03 Apr 2023 16:51:18 +0000
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+        Mon, 3 Apr 2023 12:55:10 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F7DFEC;
+        Mon,  3 Apr 2023 09:55:10 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id d3so7708426ybu.1;
+        Mon, 03 Apr 2023 09:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680540909;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rMlyMyGAXV0z5XSp7j3z7zp9mBm9G15dE1BDQjwHdxU=;
+        b=bosEISgEfdGd9gNK+e3A+56FgWcCYT5jER74Pcqc7gO/KnZ8ObCBY2cq8iDHmysdV1
+         9lJYeXHAHNY8vf/RKMIrGYDpZJkVWLaU+MJO7GZIZtY30um97/x3afEZ/SZK6fXWNiaT
+         cJbPR/MWm6cON7kcu74SLYWsQa5oi1wZvqF8rt/2+RxFPmioH6/tnGOoSir44Ii7wIZS
+         GifZfrCRm75k5xx/WRPn7/XchWFnVBBc1/owhXfw5MAys4O0FRzq0c9Te30BtWWZuScZ
+         jXudfAArolpXSXwb/4bJmpFlz6QKptG3//O41YhyN5umPnF+lMiNR+1VT59o9LSwqsA6
+         nZYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680540909;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rMlyMyGAXV0z5XSp7j3z7zp9mBm9G15dE1BDQjwHdxU=;
+        b=kTscbyZsFj140csJlLCpQpq6GaeBYGrOBLfa0puJE8ggnT1YetQ1o0LF62HgLN98Mb
+         xlu84ULAEl2NMnVTYvOiM+iSSWrMhFcFG4Zd9z4goMaNlNY3woLZ4CGs1Z6mVqO/G8/Y
+         4jRGr9hIghkBBUwJ2vzbFaajnPLXH4E/kKDzPy5TW/kSKciTmiwuQjjVANXtBCx0EdfX
+         IGsdCO2ewOsjrmSCZFEfQO4uoLDh3RY4MHK7IfdX4CPgW8JCCYFBdhJu366toGgzxWjC
+         0pjKzmEe9FKtjSvcHSYdLKWrRrEjdDGrX0CybUwmmQ5s/xYaww5TZkwPhrRS1CarXkVo
+         AYuw==
+X-Gm-Message-State: AAQBX9eiO/WENOcluEMKPvVUvJWHw2e1okfroIAxBJZ10cx1XnWBmZip
+        rdLZoEqiFOgDZ845rTDkyyKzEAAX03GsHZN4BpqRLbv+Hece/A==
+X-Google-Smtp-Source: AKy350aUUNo2n+WNF3q2RMSZ0x+sRA1uHxlbAoCwHryV90v1ngfbP44KPIfhD8VJpynhgfJqBs64RmoGeYVx2lDivdE=
+X-Received: by 2002:a25:688a:0:b0:b46:c5aa:86ef with SMTP id
+ d132-20020a25688a000000b00b46c5aa86efmr19051459ybc.12.1680540909346; Mon, 03
+ Apr 2023 09:55:09 -0700 (PDT)
+MIME-Version: 1.0
+From:   Askar Safin <safinaskar@gmail.com>
+Date:   Mon, 3 Apr 2023 19:54:33 +0300
+Message-ID: <CAPnZJGB2fyTS07W4dzSPUbGm9R_27bKL4UamLb63g1PCQJHTOA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/9] fuse: API for Checkpoint/Restore
+To:     aleksandr.mikhalitsyn@canonical.com
+Cc:     criu@openvz.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ptikhomirov@virtuozzo.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Mon,  3 Apr 2023 13:04:58 +0200:
+These patches seem to be related to the well-known suspend+fuse problem
+(see my comment here:
+https://bugzilla.kernel.org/show_bug.cgi?id=34932#c12 ). Still
+reproducible on modern kernels. Please, somehow address this
+long-standing problem.
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/vfs.misc.fixes.v6.3-rc6
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/148341f0a2f53b5e8808d093333d85170586a15d
-
-Thank you!
+CC me when answering
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Askar Safin
