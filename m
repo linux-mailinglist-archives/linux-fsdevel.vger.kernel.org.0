@@ -2,124 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7DB96D4534
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 15:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32FF06D454A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 15:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232490AbjDCNED (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 09:04:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57836 "EHLO
+        id S232501AbjDCNJN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 09:09:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232489AbjDCND5 (ORCPT
+        with ESMTP id S232489AbjDCNJM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 09:03:57 -0400
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A0495260
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 06:03:47 -0700 (PDT)
-Received: by mail-il1-f205.google.com with SMTP id a9-20020a921a09000000b003264524481cso6806814ila.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Apr 2023 06:03:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680527026; x=1683119026;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UeW8ljnyP6swcMnfaUC9awkjoZoVFaQ6LdG1DUitAXs=;
-        b=qssY1acTSrjL5/zb3l+YYr9acc0clD2kRscnsliB0YXs8o67TORafE3lQMWXTY8Y0h
-         Llm7Wq2pOLZiAn9XuV/2IJvEVp4+IlVFQBAZUDNILIYXmv8kcZBwmPrM+RgUfo08zZXk
-         ThCgTdtulfkw6Vu4lDAA97Web4EF4yMez3Wk+5eW56tNiEby8osqSgJll3nEVW11e06p
-         YBcV2V1w2aVNg3mmCw2TBQYmrscq5tScwL9GV3q5OS1Hm5ewny9SvUnroruQ5PyjFZXl
-         WvaDKlF62Gx5DX7CGvF6YJthuSiCczXUuI4jHBzYBxYBEfhyjSy1sq/FX/cNuserqUgz
-         zu0g==
-X-Gm-Message-State: AAQBX9cF5LuIr/DRRzy6Unt1CjU0ZLNBOz6OZllb50rgjlKBnixuiI0r
-        welPmG+pw2eq29AeY+3yFhHe97YefS/caN9dpdUTdEqcBYi/
-X-Google-Smtp-Source: AKy350ZwMHK9GlM9NB+l45StTEeFEY2I9o7NtOhRqFo/jS2Mo2/nF7emiLmnqIYqLlap8/XeB+AaSP8IC5hwqZ064lvA1k92ZIWw
+        Mon, 3 Apr 2023 09:09:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B831D1285D
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 06:09:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 956DF60ADE
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 13:09:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A4FAC433EF;
+        Mon,  3 Apr 2023 13:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680527344;
+        bh=8bS1uWrUaV2kO9198fDp+33cnxkYiJWsqxfcZ3cBBMY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QA7fJ3S17K0Z6ywWVF/F0gaR6xxdFFfkyaxda3ncksv6VeVVA1Cu73ZMFA0cdENEt
+         He0xU+j8lJJTyVxRP7DBOGIOodwq5803gbCbqHB4xbfjSPZswgnQ18kqncfonFX8i6
+         h75OXDd0RGJn89ouT5rG11BMZyeuKWEdD1ZCYxCnAvaYCtA0A+P4fdpMUFt3EhRobh
+         FljSXCrvRIG+T+9XHu6bJcl/smGj/OCmx5j47NdAgjCQJnNVG0pkPSwCloQP7y1yCl
+         cZPSFVXLnQE2dP8KFqL1rGbu7lfzMe3NopKr7zX5Kdcb4bQOeKV8SFE+g1UhRnxAMY
+         GAf8w5iu3d+lQ==
+Date:   Mon, 3 Apr 2023 15:08:57 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Ian Kent <raven@themaw.net>
+Cc:     Karel Zak <kzak@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Steve French <smfrench@gmail.com>,
+        Tom Moyer <tom.moyer@canonical.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Paulo Alcantara <pc@cjr.nz>,
+        Leif Sahlberg <lsahlber@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        NeilBrown <neilb@suse.com>, Steve Dickson <steved@redhat.com>
+Subject: Re: [RFC PATCH] Legacy mount option "sloppy" support
+Message-ID: <20230403-disarm-awhile-621819599ecb@brauner>
+References: <167963629788.253682.5439077048343743982.stgit@donald.themaw.net>
+ <20230328184815.ycgxqen7difgnjt3@ws.net.home>
+ <27b8d5a5-9ab9-c418-ce9c-0faf90677bde@themaw.net>
 MIME-Version: 1.0
-X-Received: by 2002:a92:7b06:0:b0:326:61cb:5f3b with SMTP id
- w6-20020a927b06000000b0032661cb5f3bmr3181458ilc.3.1680527026483; Mon, 03 Apr
- 2023 06:03:46 -0700 (PDT)
-Date:   Mon, 03 Apr 2023 06:03:46 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007301c505f86e3072@google.com>
-Subject: [syzbot] [ntfs3?] UBSAN: shift-out-of-bounds in attr_set_size
-From:   syzbot <syzbot+14a2433710a3affee84e@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <27b8d5a5-9ab9-c418-ce9c-0faf90677bde@themaw.net>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Mar 29, 2023 at 09:03:51AM +0800, Ian Kent wrote:
+> On 29/3/23 02:48, Karel Zak wrote:
+> > On Fri, Mar 24, 2023 at 01:39:09PM +0800, Ian Kent wrote:
+> > > Karel do you find what I'm saying is accurate?
+> > > Do you think we will be able to get rid of the sloppy option over
+> > > time with the move to use the mount API?
+> > The question is what we're talking about :-)
+> > 
+> > For mount(8) and libmount, there is nothing like the "sloppy" mount option.
+> > 
+> > If you use it in your fstab or as "mount -o sloppy" on the command line,
+> > then it's used as any other fs-specific mount option; the library copies
+> > the string to mount(2) or fsconfig(2) syscall. The library has no clue
+> > what the string means (it's the same as "mount -o foobar").
+> 
+> Which is what the problem really is.
+> 
+> 
+> If anyone uses this option with a file system that has previously
+> 
+> allowed it then mounts fail if it isn't handled properly. Then the
+> 
+> intended purpose of it is irrelevant because it causes a fail.
+> 
+> 
+> I guess the notion of ignoring it for fsconfig(), assuming it isn't
+> 
+> actually needed for the option handling, might not be a viable idea
+> 
+> ... although I haven't actually added that to fsconfig(), I probably
+> 
+> should add that to this series.
+> 
+> 
+> But first the question of whether the option is actually needed anymore
+> 
+> by those that allow it needs to be answered.
+> 
+> 
+> In case anyone has forgotten it was introduced because, at one time
+> 
+> different OSes supported slightly different options for for the same
+> 
+> thing and one could not include multiple options for the same thing
+> 
+> in automount map entries without causing the mount to fail.
+> 
+> 
+> So we also need to answer, is this option conflict still present for
+> 
+> any of the file systems that allow it, currently nfs, cifs and ntfs
+> 
+> (I'll need to look up the ntfs maintainer but lets answer this for
+> 
+> nfs and cifs first).
+> 
+> 
+> If it isn't actually needed ignoring it in fsconfig() (a deprecation
+> 
+> warning would be in order) and eventually getting rid of it would be
+> 
+> a good idea, yes?
 
-syzbot found the following issue on:
-
-HEAD commit:    7e364e56293b Linux 6.3-rc5
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a94395c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9a438ce47536f0c
-dashboard link: https://syzkaller.appspot.com/bug?extid=14a2433710a3affee84e
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/54c56bddacf4/disk-7e364e56.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/447e5d1af596/vmlinux-7e364e56.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3e2d1545e7be/bzImage-7e364e56.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+14a2433710a3affee84e@syzkaller.appspotmail.com
-
-================================================================================
-UBSAN: shift-out-of-bounds in fs/ntfs3/attrib.c:450:9
-shift exponent 64 is too large for 32-bit type 'u32' (aka 'unsigned int')
-CPU: 1 PID: 1832 Comm: syz-executor.1 Not tainted 6.3.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- ubsan_epilogue lib/ubsan.c:217 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c3/0x420 lib/ubsan.c:387
- attr_set_size+0x32c2/0x4290 fs/ntfs3/attrib.c:450
- ntfs_extend_mft+0x188/0x4b0 fs/ntfs3/fsntfs.c:511
- ntfs_look_free_mft+0x43d/0x10b0 fs/ntfs3/fsntfs.c:589
- ntfs_create_inode+0x4d7/0x3830 fs/ntfs3/inode.c:1296
- ntfs_atomic_open+0x3db/0x530 fs/ntfs3/namei.c:424
- atomic_open fs/namei.c:3279 [inline]
- lookup_open fs/namei.c:3387 [inline]
- open_last_lookups fs/namei.c:3484 [inline]
- path_openat+0x103c/0x3170 fs/namei.c:3712
- do_filp_open+0x234/0x490 fs/namei.c:3742
- do_sys_openat2+0x13f/0x500 fs/open.c:1348
- do_sys_open fs/open.c:1364 [inline]
- __do_sys_open fs/open.c:1372 [inline]
- __se_sys_open fs/open.c:1368 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1368
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f99f548c0f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f99f622e168 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f99f55abf80 RCX: 00007f99f548c0f9
-RDX: 0000000000000000 RSI: 0000000000060142 RDI: 0000000020000000
-RBP: 00007f99f54e7b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffd74d2bccf R14: 00007f99f622e300 R15: 0000000000022000
- </TASK>
-================================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Yes, I think this is a good idea.
+The whole reason for this mount option seems a bit hacky tbh so getting
+rid of it would be great.
