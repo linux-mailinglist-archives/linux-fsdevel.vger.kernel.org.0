@@ -2,85 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B89B56D4345
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 13:19:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2CE96D444C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 14:24:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232387AbjDCLTP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 07:19:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46316 "EHLO
+        id S231934AbjDCMYw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 08:24:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjDCLTO (ORCPT
+        with ESMTP id S232132AbjDCMYv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 07:19:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A54C1167D
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 04:18:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680520701;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3+8yBXuWwYwm/RpoWa1fwtJLk+q+QMOFz0XiMtf0/1A=;
-        b=aYU42de/JjgcINdfKiHq0vBvfQFnHVhGnU4F6weCQDUJ56dhVTdisY286ngnXav+8hq4R2
-        EUN0rrZaN9SYcoqYQqCRxR8/7ZcL/bJQQ5fa0zuAGAQGv1fNzlGjvo8qS637dNboA8vQ2L
-        gJeeX2RE47kI0H323bXs2Jf7VBaYu4s=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-620-IM_VxcVZO1G8AD9YNK54hg-1; Mon, 03 Apr 2023 07:18:18 -0400
-X-MC-Unique: IM_VxcVZO1G8AD9YNK54hg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 3 Apr 2023 08:24:51 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB8E30CF;
+        Mon,  3 Apr 2023 05:24:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9BE111C06EC7;
-        Mon,  3 Apr 2023 11:18:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A1D8140C20FA;
-        Mon,  3 Apr 2023 11:18:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <64299af9e8861_2d2a20208e6@willemb.c.googlers.com.notmuch>
-References: <64299af9e8861_2d2a20208e6@willemb.c.googlers.com.notmuch> <20230331160914.1608208-1-dhowells@redhat.com> <20230331160914.1608208-16-dhowells@redhat.com>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3 15/55] ip, udp: Support MSG_SPLICE_PAGES
+        by ams.source.kernel.org (Postfix) with ESMTPS id CB3FCB81977;
+        Mon,  3 Apr 2023 12:24:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E4CEC433EF;
+        Mon,  3 Apr 2023 12:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680524687;
+        bh=2Msi5SZ8ml19YSOMiyhl4op0vJSG4H+HQne13hB3oLs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a6ZDaZshWlVKwPc84AxzulMoL+CYRlewZd5DR0MJ2l/j8cfd4u4QSQdeVlnuUc3V/
+         eJ9e1U/DSqiKM/2f9C0O7p/L5LSEA5ZIMKP8QRLpryDSUhisoDm7Q3QX0+upg06ZFm
+         2t19hxCKseQBFKgoxSJwlv1VKWyElkaQh+OKx1cYVceEZKo7RA0JBuvcQFg4T8pqtl
+         XO7vXd2ITb10dCXzT83Fw6ypJQhwZXIbXHMPSI1muLmrEOxP4HItpx8oK6p7NG/SAz
+         2m9ylqFGTKttPBVvmcRcdrlVkxeFtV1H6S2r822+B0DhBAx9PKgpgZEuhLzsKCorIu
+         pbHV7GIG6zIUw==
+Date:   Mon, 3 Apr 2023 14:24:42 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCHSET for-next 0/2] Flag file systems as supporting parallel
+ dio writes
+Message-ID: <20230403-wound-roundworm-c1660e059b8c@brauner>
+References: <20230307172015.54911-1-axboe@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1822262.1680520695.1@warthog.procyon.org.uk>
-Date:   Mon, 03 Apr 2023 12:18:15 +0100
-Message-ID: <1822263.1680520695@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230307172015.54911-1-axboe@kernel.dk>
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+On Tue, Mar 07, 2023 at 10:20:13AM -0700, Jens Axboe wrote:
+> Hi,
+> 
+> This has been on my TODO list for a while, and now that ext4 supports
+> parallel dio writes as well, time to dust it off and send it out... This
+> adds an FMODE flag to inform users that a given file supports parallel
+> dio writes. io_uring can use this to avoid serializing dio writes
+> upfront, in case it isn't needed. A few details in patch #2, patch 1 does
+> nothing by itself.
 
-> These functions are derived from and replace ip_append_page.
-> That can be removed once udp_sendpage is converted?
-
-Yeah, looks like it.
-
-David
-
+Looks good,
+Reviewed-by: Christian Brauner <brauner@kernel.org>
