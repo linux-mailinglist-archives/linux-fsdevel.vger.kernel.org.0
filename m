@@ -2,49 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2CE96D444C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 14:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07EC16D447C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Apr 2023 14:34:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231934AbjDCMYw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 08:24:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46578 "EHLO
+        id S231497AbjDCMeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 08:34:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232132AbjDCMYv (ORCPT
+        with ESMTP id S231808AbjDCMeG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 08:24:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB8E30CF;
-        Mon,  3 Apr 2023 05:24:50 -0700 (PDT)
+        Mon, 3 Apr 2023 08:34:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C91656197
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 05:34:04 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CB3FCB81977;
-        Mon,  3 Apr 2023 12:24:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E4CEC433EF;
-        Mon,  3 Apr 2023 12:24:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5838161A40
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 12:34:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5B79C433EF;
+        Mon,  3 Apr 2023 12:34:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680524687;
-        bh=2Msi5SZ8ml19YSOMiyhl4op0vJSG4H+HQne13hB3oLs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a6ZDaZshWlVKwPc84AxzulMoL+CYRlewZd5DR0MJ2l/j8cfd4u4QSQdeVlnuUc3V/
-         eJ9e1U/DSqiKM/2f9C0O7p/L5LSEA5ZIMKP8QRLpryDSUhisoDm7Q3QX0+upg06ZFm
-         2t19hxCKseQBFKgoxSJwlv1VKWyElkaQh+OKx1cYVceEZKo7RA0JBuvcQFg4T8pqtl
-         XO7vXd2ITb10dCXzT83Fw6ypJQhwZXIbXHMPSI1muLmrEOxP4HItpx8oK6p7NG/SAz
-         2m9ylqFGTKttPBVvmcRcdrlVkxeFtV1H6S2r822+B0DhBAx9PKgpgZEuhLzsKCorIu
-         pbHV7GIG6zIUw==
-Date:   Mon, 3 Apr 2023 14:24:42 +0200
+        s=k20201202; t=1680525243;
+        bh=A4yxim+Df4LNcC7uLPEDuZHC4+/karCiWJvO1YmRups=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fjI3mp4B9bQ1qB7DeHCmg3yBmNfjd6LEl1XpM4ntZPrGwA3QJU9Pp0OPl+w+8yRA7
+         XfpTmZleIcA8jD9NLRQ88Q2xlbUK32msHUSyIjM7QNjNiG28u8rIL5KCn55Z/GqxL0
+         9PqkjWTnT0YjbJsJs1i2ODRIza6x/NgVZn1CjXuBm7PUBFMkbYkk39lTwW+B/+/Xfv
+         xk7uESauqWMvy3iIBlQP7mWIO/RI3seNOxwRVgDV8FajJ7YOm1qiBkw5+oBoMW21k3
+         hLPJKidNi7n1hkk1GclEz+5stt0k84mHXFMUicUIs429FP0EY9lRIa/MXe+z3XU8HX
+         yidGz/Z/tAi0Q==
 From:   Christian Brauner <brauner@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCHSET for-next 0/2] Flag file systems as supporting parallel
- dio writes
-Message-ID: <20230403-wound-roundworm-c1660e059b8c@brauner>
-References: <20230307172015.54911-1-axboe@kernel.dk>
+To:     Chung-Chiang Cheng <cccheng@synology.com>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>, shepjeng@gmail.com,
+        kernel@cccheng.net, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] splice: report related fsnotify events
+Date:   Mon,  3 Apr 2023 14:31:41 +0200
+Message-Id: <20230403-albatross-unusable-75d4f6bdaa92@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230322062519.409752-1-cccheng@synology.com>
+References: <20230322062519.409752-1-cccheng@synology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230307172015.54911-1-axboe@kernel.dk>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=383; i=brauner@kernel.org; h=from:subject:message-id; bh=Uo3NwmZtWGB7lTFo2b/P8BkGigwKI8wmQRjU5P1P59A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRoHRcttFOZ2/bCabdK1okOVdd1VxYuKpix6JdnlvTSuApp 35TkjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkE/GL4H9pxQ2XJj5UPFSYqT/T3kQ o5I/PwtUzCl8fflos1lPfNmMPI8G19scqBqJR8T1Ydq/OTA0rW1t7O3uCzIlz2sJLg/fe/eAE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
         SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
@@ -54,15 +58,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 07, 2023 at 10:20:13AM -0700, Jens Axboe wrote:
-> Hi,
-> 
-> This has been on my TODO list for a while, and now that ext4 supports
-> parallel dio writes as well, time to dust it off and send it out... This
-> adds an FMODE flag to inform users that a given file supports parallel
-> dio writes. io_uring can use this to avoid serializing dio writes
-> upfront, in case it isn't needed. A few details in patch #2, patch 1 does
-> nothing by itself.
 
-Looks good,
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+On Wed, 22 Mar 2023 14:25:19 +0800, Chung-Chiang Cheng wrote:
+> The fsnotify ACCESS and MODIFY event are missing when manipulating a file
+> with splice(2).
+> 
+> 
+
+I've picked this up,
+
+tree: git://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git
+branch: fs.misc
+[1/1] splice: report related fsnotify events
+      commit: 4f61a69edcf33a66269f65500434b584ee8d405e
