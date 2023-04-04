@@ -2,50 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A10876D6A40
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 19:17:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68F686D6ABA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 19:36:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235919AbjDDRRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Apr 2023 13:17:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40606 "EHLO
+        id S235389AbjDDRgh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Apr 2023 13:36:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235916AbjDDRRs (ORCPT
+        with ESMTP id S234979AbjDDRgg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Apr 2023 13:17:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCE1010FA
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 10:17:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680628619;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9/qlLB/Y+0maKwWIY7hsMZMlokqBZ5/HAXA6LW4lTOs=;
-        b=ieslbXWYbROfs/lx/6xdE4OnNJBbr3NMx+quuqf/d+Q1EEPlmpO6Pu44PVMfdEZ/+36KQd
-        R+0WtNxRJ+eH4Wj4nV0Fli12TuPuBSjgobiGF7qbj6wDU5Myv9t27vp1QCmLEAQPNz4vIH
-        opqL4aUNlVkqAmi+2YydpsA3pIruFZw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-68-G6S7IDCqOw2DtHaojdd83w-1; Tue, 04 Apr 2023 13:16:57 -0400
-X-MC-Unique: G6S7IDCqOw2DtHaojdd83w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8BA5B857FB7;
-        Tue,  4 Apr 2023 17:16:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 56604C33187;
-        Tue,  4 Apr 2023 17:16:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <642c5731a7cc5_337e2c208b0@willemb.c.googlers.com.notmuch>
-References: <642c5731a7cc5_337e2c208b0@willemb.c.googlers.com.notmuch> <642ad8b66acfe_302ae1208e7@willemb.c.googlers.com.notmuch> <64299af9e8861_2d2a20208e6@willemb.c.googlers.com.notmuch> <20230331160914.1608208-1-dhowells@redhat.com> <20230331160914.1608208-16-dhowells@redhat.com> <1818504.1680515446@warthog.procyon.org.uk> <2258798.1680559496@warthog.procyon.org.uk>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+        Tue, 4 Apr 2023 13:36:36 -0400
+Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEC6C5FD9;
+        Tue,  4 Apr 2023 10:36:14 -0700 (PDT)
+Received: by mail-qv1-xf2e.google.com with SMTP id ny16so923460qvb.4;
+        Tue, 04 Apr 2023 10:36:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680629773; x=1683221773;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Z1DSaq3VFchGKzMkuppKkMuZ02nBNd6ugtDdxGTU1k=;
+        b=f5gX2wkqrAoiMblcAQuuJb8lAFGg23a2sQHkp6HtVaJg8FDt2ejL5nTg1wHkUJvrui
+         jaaEEnLdaxr69bom2j9BD9wRgQgSArQP7KUL22iOL2NM0bGEsqBXBZoWgyeNW0KpnlVq
+         SMjoGHIMxlFjMmWnwdLP0cisFpmszR0uefaLEboVei3ol7U8Jp3PmQRh091YPdIvxgol
+         4Kled2XQqKbOunVH9s6yqb8iQbezNK7IJUKeSSWqqmzsoP8AF9wHC1hhM0IijQXpG3oy
+         ATKK/WTaFZGvkz26pkXdfYEjGwkkH2dWTsgLjOINF2TZHj3Z3qLrFIqs9JEP+DqBHFS3
+         aTMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680629773; x=1683221773;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4Z1DSaq3VFchGKzMkuppKkMuZ02nBNd6ugtDdxGTU1k=;
+        b=q6HGaXmPQEYOnJB4/pQPqMimABzl76TrYq3+uAdFR6nTRK1phKJoQtDmV2LXxxnAXm
+         I5gyfJJ/rk4VRHpXrhlDADzgbJSQUequqiRGgO3iGbwkiKb0RYcmlWWcLqM8NnpBOUlT
+         2F/XClj9MYe8mYc6LsIMyaZYPIeN6tcnY3rNliEbvILTh0/VzULwrCd0aDyki+36y3Vn
+         Nj7rq5h/I9bcVWrNqChatfO9IlqG8asWQTSV4Lfzm0LJm/eXar6R6f2poOyQ5zdbgcr7
+         ly4wIdVc9dJEjVyuesfpsJIg7/1ARu3u/8CcD+xUXREqVULs+hPQF4C0D46s4MrifWDE
+         csoQ==
+X-Gm-Message-State: AAQBX9fyVrqRmCFI2226+X6El2l9En2HEx1mSYcqr9+vrrbbC0JXfs28
+        TbxFNT9K0BqJEXbLmX3/xDY=
+X-Google-Smtp-Source: AKy350Z23k8fMVTzMdrsIJFMN4WdkO04DiDvcgHJCEHpVKeNB/JKhOJwLjldeAZHPeYbENi695HiOA==
+X-Received: by 2002:a05:6214:e6b:b0:5ba:852:272c with SMTP id jz11-20020a0562140e6b00b005ba0852272cmr4398157qvb.8.1680629773236;
+        Tue, 04 Apr 2023 10:36:13 -0700 (PDT)
+Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
+        by smtp.gmail.com with ESMTPSA id kr22-20020a0562142b9600b005e45f6cb74bsm836386qvb.79.2023.04.04.10.36.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Apr 2023 10:36:12 -0700 (PDT)
+Date:   Tue, 04 Apr 2023 13:36:12 -0400
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To:     David Howells <dhowells@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>
 Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
@@ -59,43 +67,46 @@ Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Message-ID: <642c600c428d2_339347208d8@willemb.c.googlers.com.notmuch>
+In-Reply-To: <2688906.1680628610@warthog.procyon.org.uk>
+References: <642c5731a7cc5_337e2c208b0@willemb.c.googlers.com.notmuch>
+ <642ad8b66acfe_302ae1208e7@willemb.c.googlers.com.notmuch>
+ <64299af9e8861_2d2a20208e6@willemb.c.googlers.com.notmuch>
+ <20230331160914.1608208-1-dhowells@redhat.com>
+ <20230331160914.1608208-16-dhowells@redhat.com>
+ <1818504.1680515446@warthog.procyon.org.uk>
+ <2258798.1680559496@warthog.procyon.org.uk>
+ <2688906.1680628610@warthog.procyon.org.uk>
 Subject: Re: [PATCH v3 15/55] ip, udp: Support MSG_SPLICE_PAGES
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2688905.1680628610.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 04 Apr 2023 18:16:50 +0100
-Message-ID: <2688906.1680628610@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+David Howells wrote:
+> Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+> 
+> > > Okay.  How about the attached?  This seems to work.  Just setting "paged" to
+> > > true seems to do the right thing in __ip_append_data() when allocating /
+> > > setting up the skbuff, and then __ip_splice_pages() is called to add the
+> > > pages.
+> > 
+> > If this works, much preferred. Looks great to me.
+> 
+> :-)
+> 
+> > As said, then __ip_splice_pages() probably no longer needs the
+> > preamble to copy initial header bytes.
+> 
+> Sorry, what?  It only attaches pages extracted from the iterator.
 
-> > Okay.  How about the attached?  This seems to work.  Just setting "pag=
-ed" to
-> > true seems to do the right thing in __ip_append_data() when allocating=
- /
-> > setting up the skbuff, and then __ip_splice_pages() is called to add t=
-he
-> > pages.
-> =
-
-> If this works, much preferred. Looks great to me.
-
-:-)
-
-> As said, then __ip_splice_pages() probably no longer needs the
-> preamble to copy initial header bytes.
-
-Sorry, what?  It only attaches pages extracted from the iterator.
-
-David
-
+Ehm indeed. Never mind.
