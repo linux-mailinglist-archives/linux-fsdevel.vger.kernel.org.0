@@ -2,49 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1B806D6515
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 16:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C8A6D652E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 16:23:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235649AbjDDOUw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Apr 2023 10:20:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48710 "EHLO
+        id S235842AbjDDOXy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Apr 2023 10:23:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235533AbjDDOUs (ORCPT
+        with ESMTP id S235790AbjDDOXx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Apr 2023 10:20:48 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A50AD268C
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 07:20:46 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id h1-20020a92d841000000b0031b4d3294dfso21395544ilq.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Apr 2023 07:20:46 -0700 (PDT)
+        Tue, 4 Apr 2023 10:23:53 -0400
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 182222135
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 07:23:52 -0700 (PDT)
+Received: by mail-io1-f70.google.com with SMTP id v126-20020a6bac84000000b007587234a54cso20036283ioe.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Apr 2023 07:23:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680618046; x=1683210046;
+        d=1e100.net; s=20210112; t=1680618231; x=1683210231;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=eMNGtlJZv/4J3QkC2pyZ771io5e3UBz8yYy+eISdalI=;
-        b=TUQuOxqlarMsBHdXlkOQG1h9DIY59k4iHyv6QkAiozk5BKQcODVxO9UdFt0Q/U1qOl
-         Ayi4y23gm4D/tG7hwvoqOsLY3Gi9RsH9ak4OCGrJ6J9O9Q6TfMarDIH9nqbpwOlzD0/N
-         rEOsKEi8GLNyhTo8QkKKpLEUxk7TwgZEDkglOYTKcjhCADMDlOUA1H3jTW/domEe+FDU
-         ui/zu5l+29zGLul8lR2aHAjvqL9pyeRLHy1hpCTuUG+8FTIxilAWmsTs/widTfUtSH9w
-         1AnoILZlXyV4Od5drLyqet2m73hcj45lcTz7cGtVvGXmvXSg4/+PML+s2VCftqKSP6YV
-         3acg==
-X-Gm-Message-State: AAQBX9dtn8ujx1pdtPiGwjaPmjmJ2qsz/y8wpTOjGyF3936qvgi2IP7q
-        kIXRCRq4EAI9g7TwTnBBV6pF0oAY8j3K0RDL+sV48s6Iwc5u
-X-Google-Smtp-Source: AKy350a+WL44nLl7X2R0Ry2vo6oea+fMVyYo4ZSOxn5TAfx3lixq7DYBV37bw38GjRlTrpDS2wQW27XIXgwOnFzkuRQ5bR5OF19O
+        bh=5BNqqFtf7JwuYu6Ei0uZGROtb30sqE96jVdSj88Tz84=;
+        b=hiP5ksyoPfsX1dZeVOIYb5LyqBRSNMxAXwi0knUQz0z+LlJUwdT+CvMpn9u6XfqjBw
+         +iUl/Rwjv+btTxGyftwi/YJlp7Dk0qe5pmvdF/DuCkR3krmHuaYViQLo+AHzSHt35qQ5
+         9jRU37CXhCZOV/+h3N9bp7jTMRrc+u60MxH7C5OeLqygQbhh6Lg/T1rfVW4NQpNbu9yw
+         sjH3zxg6yUTD7NMXRd9Q6stbIxn+KyB2idDbdtw+0KQ7tUD93uzawnFMC1Cyw5QlSRIx
+         byGhViAdCRqiEFrGiNH5En+elLJ3+RqySc8zV84owjH7jryaYHK3/xl0HVNwTMM/0DYm
+         U59w==
+X-Gm-Message-State: AAQBX9e9dofiNklyzFwjzTPjt7MrSa3uBA9BsjJyXwJKCYEHOIUEFAZG
+        559ZPMqi3nVXrD0Ng2KSEUCGfrCi1fzRBNfShKN6Tfj+7f07
+X-Google-Smtp-Source: AKy350YKvCfdVTXWwCh818WfIpJY9etqGm/HKYrokWNTRx5GLwU6zDCeB04HzFsrgA+bglLgIGB5eb2ZGhqv3RBLt31kPDqTxdkE
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:22d2:b0:752:fa5a:6188 with SMTP id
- e18-20020a05660222d200b00752fa5a6188mr1676000ioe.1.1680618045959; Tue, 04 Apr
- 2023 07:20:45 -0700 (PDT)
-Date:   Tue, 04 Apr 2023 07:20:45 -0700
+X-Received: by 2002:a05:6e02:1208:b0:317:9096:e80f with SMTP id
+ a8-20020a056e02120800b003179096e80fmr1687253ilq.4.1680618231424; Tue, 04 Apr
+ 2023 07:23:51 -0700 (PDT)
+Date:   Tue, 04 Apr 2023 07:23:51 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a1f44605f8836188@google.com>
-Subject: [syzbot] Monthly f2fs report
-From:   syzbot <syzbot+listc9c597f02f7166815d68@syzkaller.appspotmail.com>
-To:     chao@kernel.org, jaegeuk@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000afecda05f8836cba@google.com>
+Subject: [syzbot] Monthly kernfs report
+From:   syzbot <syzbot+lista7ffef781c2be09ec037@syzkaller.appspotmail.com>
+To:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tj@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
@@ -55,24 +54,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello f2fs maintainers/developers,
+Hello kernfs maintainers/developers,
 
-This is a 30-day syzbot report for the f2fs subsystem.
+This is a 30-day syzbot report for the kernfs subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/f2fs
+https://syzkaller.appspot.com/upstream/s/kernfs
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 16 issues are still open and 27 have been fixed so far.
+During the period, 0 new issues were detected and 1 were fixed.
+In total, 12 issues are still open and 18 have been fixed so far.
 
 Some of the still happening issues:
 
 Crashes Repro Title
-77      Yes   INFO: task hung in f2fs_balance_fs
-              https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
-23      Yes   kernel BUG in f2fs_evict_inode
-              https://syzkaller.appspot.com/bug?extid=e1246909d526a9d470fa
-4       No    BUG: unable to handle kernel NULL pointer dereference in f2fs_release_folio
-              https://syzkaller.appspot.com/bug?extid=00e671c059932a115ea4
+86      Yes   WARNING in kernfs_remove_by_name_ns (3)
+              https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
+49      Yes   inconsistent lock state in find_vmap_area
+              https://syzkaller.appspot.com/bug?extid=8d19062486784d15dda9
+28      Yes   KASAN: use-after-free Read in kernfs_add_one
+              https://syzkaller.appspot.com/bug?extid=ef17b5b364116518fd65
+23      Yes   WARNING: suspicious RCU usage in mas_start
+              https://syzkaller.appspot.com/bug?extid=d79e205d463e603f47ff
 
 ---
 This report is generated by a bot. It may contain errors.
