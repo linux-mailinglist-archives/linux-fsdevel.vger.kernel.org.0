@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 168936D8363
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 18:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B5A06D8367
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 18:16:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232695AbjDEQQQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 12:16:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44090 "EHLO
+        id S232991AbjDEQQT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 12:16:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232896AbjDEQPw (ORCPT
+        with ESMTP id S230059AbjDEQP5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 12:15:52 -0400
+        Wed, 5 Apr 2023 12:15:57 -0400
 Received: from mx2.veeam.com (mx2.veeam.com [64.129.123.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B98727DAC;
-        Wed,  5 Apr 2023 09:15:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A987ECC;
+        Wed,  5 Apr 2023 09:15:13 -0700 (PDT)
 Received: from mx1.veeam.com (mx1.veeam.com [172.18.34.147])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx2.veeam.com (Postfix) with ESMTPS id 601D440FFD;
+        by mx2.veeam.com (Postfix) with ESMTPS id 69A13411C6;
         Wed,  5 Apr 2023 12:13:42 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
         s=mx2-2022; t=1680711222;
-        bh=3UR7des7d1SNvYKVMBIh+qNln+2BT+04uvAOd7yuI2M=;
+        bh=vI25glQHCKQl7a1zjzkrzoHXKxdZUuMwIgZtjSxTbJw=;
         h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=RIn3+U5jfhLQPg7zRfvsc7fK79NALYNvCq4O6/oPagmitiWZ7B2wDCCLFlXAP+LR+
-         z2uKPTyIUEEdZfx/9JeZlVdmA9RJVJhtO2IZ99bG8jQZSqa0ct/Mh1G8MUyfGEvPRk
-         MKIRN+m7/95OUFkeL5gKOAubKH34DQHNY82brfnxaOToZO/FsHRll99hx7rW8WVCcl
-         +FK7hNt54IxmfOxlZu2YPHPRd/zNxbrJ3Ka8miSsvrXjRQ0vPO5h0bv++yX97cnYqg
-         PnYEiXSISZcIX8fSGK+KuaHxdbuT0QImTaOk0KbUvT7ngJCEE6qSuQU29LsNkOFPtk
-         mr6GLnSZrsE/A==
+        b=nFlhpqtpYB21tDmChegSoSKngtgm1BJNb/Xk63WwbFXUitFDzNDcD/F0cB4r4A8oV
+         qQnwY+2RfZWJMsdm8xXTJgbOerebZKE+DOp6Q5KMANO67VLGB4YrReOU6DP+FKhwhu
+         095IYv2+P4xCuOB1aawe7cybi93kGSn/NtXnW2RQrdWGFTvkEIb3Gcmt9CSbQebRKM
+         079JoZu2wofXuRFJh+JUROWmok6e72DBcoLCIThNFUSNVx6XmlTdXvoHp7AV15d+jv
+         V2MANM0hRph5Uc24z7JRxnyxWeaWY2BcOd1xkCXcULSSmzRDNlGyysZBbW+pZlfTz6
+         ERmRCV3a/cCBA==
 Received: from mx4.veeam.com (mx4.amust.local [172.31.224.40])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.veeam.com (Postfix) with ESMTPS id 5664A42411;
+        by mx1.veeam.com (Postfix) with ESMTPS id 56437423F1;
         Wed,  5 Apr 2023 06:09:16 -0400 (EDT)
 Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx4.veeam.com (Postfix) with ESMTPS id 65A047D65D;
-        Tue,  4 Apr 2023 17:09:03 +0300 (MSK)
+        by mx4.veeam.com (Postfix) with ESMTPS id 85C267D642;
+        Tue,  4 Apr 2023 17:09:04 +0300 (MSK)
 Received: from ssh-deb10-ssd-vb.amust.local (172.24.10.107) by
  prgmbx01.amust.local (172.24.128.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 4 Apr 2023 16:08:59 +0200
+ 15.2.1118.26; Tue, 4 Apr 2023 16:09:01 +0200
 From:   Sergei Shtepa <sergei.shtepa@veeam.com>
 To:     <axboe@kernel.dk>, <hch@infradead.org>, <corbet@lwn.net>,
         <snitzer@kernel.org>
@@ -54,9 +54,9 @@ CC:     <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
         <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <sergei.shtepa@veeam.com>
-Subject: [PATCH v3 02/11] block: Block Device Filtering Mechanism
-Date:   Tue, 4 Apr 2023 16:08:26 +0200
-Message-ID: <20230404140835.25166-3-sergei.shtepa@veeam.com>
+Subject: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
+Date:   Tue, 4 Apr 2023 16:08:27 +0200
+Message-ID: <20230404140835.25166-4-sergei.shtepa@veeam.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230404140835.25166-1-sergei.shtepa@veeam.com>
 References: <20230404140835.25166-1-sergei.shtepa@veeam.com>
@@ -71,615 +71,408 @@ X-EsetId: 37303A2924031554657367
 X-Veeam-MMEX: True
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_FILL_THIS_FORM_SHORT autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The block device filtering mechanism is an API that allows to attach
-block device filters. Block device filters allow perform additional
-processing for I/O units.
+The document contains:
+* Describes the purpose of the mechanism
+* Description of features
+* Description of algorithms
+* Recommendations about using the module from the user-space side
+* Reference to module interface description
 
-The idea of handling I/O units on block devices is not new. Back in the
-2.6 kernel, there was an undocumented possibility of handling I/O units
-by substituting the make_request_fn() function, which belonged to the
-request_queue structure. But none of the in-tree kernel modules used
-this feature, and it was eliminated in the 5.10 kernel.
-
-The block device filtering mechanism returns the ability to handle I/O
-units. It is possible to safely attach filter to a block device "on the
-fly" without changing the structure of block devices stack.
-
-Co-developed-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
 ---
- MAINTAINERS                     |   3 +
- block/Makefile                  |   2 +-
- block/bdev.c                    |   1 +
- block/blk-core.c                |  40 ++++++-
- block/blk-filter.c              | 199 ++++++++++++++++++++++++++++++++
- block/blk.h                     |  10 ++
- block/genhd.c                   |   2 +
- block/ioctl.c                   |   7 ++
- block/partitions/core.c         |   2 +
- include/linux/blk-filter.h      |  51 ++++++++
- include/linux/blk_types.h       |   2 +
- include/linux/blkdev.h          |   1 +
- include/uapi/linux/blk-filter.h |  35 ++++++
- include/uapi/linux/fs.h         |   5 +
- 14 files changed, 357 insertions(+), 3 deletions(-)
- create mode 100644 block/blk-filter.c
- create mode 100644 include/linux/blk-filter.h
- create mode 100644 include/uapi/linux/blk-filter.h
+ Documentation/block/blksnap.rst | 345 ++++++++++++++++++++++++++++++++
+ Documentation/block/index.rst   |   1 +
+ MAINTAINERS                     |   6 +
+ 3 files changed, 352 insertions(+)
+ create mode 100644 Documentation/block/blksnap.rst
 
+diff --git a/Documentation/block/blksnap.rst b/Documentation/block/blksnap.rst
+new file mode 100644
+index 000000000000..7752f33809bb
+--- /dev/null
++++ b/Documentation/block/blksnap.rst
+@@ -0,0 +1,345 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++========================================
++Block Devices Snapshots Module (blksnap)
++========================================
++
++Introduction
++============
++
++At first glance, there is no novelty in the idea of creating snapshots for
++block devices. The Linux kernel already has mechanisms for creating snapshots.
++Device Mapper includes dm-snap, which allows to create snapshots of block
++devices. BTRFS supports snapshots at the file system level. However, both
++of these options have flaws that do not allow to use them as a universal
++tool for creating backups.
++
++The main properties that a backup tool should have are:
++
++- Simplicity and versatility of use
++- Reliability
++- Minimal consumption of system resources during backup
++- Minimal time required for recovery or replication of the entire system
++
++Therefore, the features of the blksnap module are:
++
++- Change tracker
++- Snapshots at the block device level
++- Dynamic allocation of space for storing differences
++- Snapshot overflow resistance
++- Coherent snapshot of multiple block devices
++
++Features
++========
++
++Change tracker
++--------------
++
++The change tracker allows to determine which blocks were changed during the
++time between the last snapshot created and any of the previous snapshots.
++Having a map of changes, it is enough to copy only the changed blocks, and
++no need to reread the entire block device completely. The change tracker
++allows to implement the logic of both incremental and differential backups.
++Incremental backup is critical for large file repositories whose size can be
++hundreds of terabytes and whose full backup time can take more than a day.
++On such servers, the use of backup tools without a change tracker becomes
++practically impossible.
++
++Snapshot at the block device level
++----------------------------------
++
++A snapshot at the block device level allows to simplify the backup algorithm
++and reduce consumption of system resources. It also allows to perform linear
++reading of disk space directly, which allows to achieve maximum reading speed
++with minimal use of processor time. At the same time, the versatility of
++creating snapshots for any block device is achieved, regardless of the file
++system located on it. The exceptions are BTRFS, ZFS and cluster file systems.
++
++Dynamic allocation of storage space for differences
++---------------------------------------------------
++
++To store differences, the module does not require a pre-reserved block
++device range. A range of sectors can be allocated on any block device
++immediately before creating a snapshot in individual files on the file
++system. In addition, the size of the difference storage can be increased
++after the snapshot is created by adding new sector ranges on block devices.
++Sector ranges can be allocated on any block devices of the system, including
++those on which the snapshot was created. A shared difference storage for
++all images of snapshot block devices allows to optimize the use of disk space.
++
++Snapshot overflow resistance
++----------------------------
++
++To create images of snapshots of block devices, the module stores blocks
++of the original block device that have been changed since the snapshot
++was taken. To do this, the module handles write requests and reads blocks
++that need to be overwritten. This algorithm guarantees safety of the data
++of the original block device in the event of an overflow of the snapshot,
++and even in the case of unpredictable critical errors. If a problem occurs
++during backup, the difference storage is released, the snapshot is closed,
++no backup is created, but the server continues to work.
++
++Coherent snapshot of multiple block devices
++-------------------------------------------
++
++A snapshot is created simultaneously for all block devices for which a backup
++is being created, ensuring their coherent state.
++
++
++Algorithms
++==========
++
++Overview
++--------
++
++The blksnap module is a block-level filter. It handles all write I/O units.
++The filter is attached to the block device when the snapshot is created
++for the first time. The change tracker marks all overwritten blocks.
++Information about the history of changes on the block device is available
++while holding the snapshot. The module reads the blocks that need to be
++overwritten and stores them in the difference storage. When reading from
++a snapshot image, reading is performed either from the original device or
++from the difference storage.
++
++Change tracking
++---------------
++
++A change tracker map is created for each block device. One byte
++of this map corresponds to one block. The block size is set by the
++``tracking_block_minimum_shift`` and ``tracking_block_maximum_count``
++module parameters. The ``tracking_block_minimum_shift`` parameter limits
++the minimum block size for tracking, while ``tracking_block_maximum_count``
++defines the maximum allowed number of blocks. The size of the change tracker
++block is determined depending on the size of the block device when adding
++a tracking device, that is, when the snapshot is taken for the first time.
++The block size must be a power of two. The ``tracking_block_maximum_shift``
++module parameter allows to limit the maximum block size for tracking. If the
++block size reaches the allowable limit, the number of blocks will exceed the
++``tracking_block_maximum_count`` parameter.
++
++The byte of the change map stores a number from 0 to 255. This is the
++snapshot number, since the creation of which there have been changes in
++the block. Each time a snapshot is created, the number of the current
++snapshot is increased by one. This number is written to the cell of the
++change map when writing to the block. Thus, knowing the number of one of
++the previous snapshots and the number of the last snapshot, one can determine
++from the change map which blocks have been changed. When the number of the
++current change reaches the maximum allowed value for the map of 255, at the
++time when the next snapshot is created, the map of changes is reset to zero,
++and the number of the current snapshot is assigned the value 1. The change
++tracker is reset, and a new UUID is generated - a unique identifier of the
++snapshot generation. The snapshot generation identifier allows to identify
++that a change tracking reset has been performed.
++
++The change map has two copies. One copy is active, it tracks the current
++changes on the block device. The second copy is available for reading
++while the snapshot is being held, and contains the history up to the moment
++the snapshot is taken. Copies are synchronized at the moment of snapshot
++creation. After the snapshot is released, a second copy of the map is not
++needed, but it is not released, so as not to allocate memory for it again
++the next time the snapshot is created.
++
++Copy on write
++-------------
++
++Data is copied in blocks, or rather in chunks. The term "chunk" is used to
++avoid confusion with change tracker blocks and I/O blocks. In addition,
++the "chunk" in the blksnap module means about the same as the "chunk" in
++the dm-snap module.
++
++The size of the chunk is determined by the ``chunk_minimum_shift`` and
++``chunk_maximum_count`` module parameters. The ``chunk_minimum_shift``
++parameter limits the minimum size of the chunk, while ``chunk_maximum_count``
++defines the maximum allowed number of chunks. The size of the chunk is
++determined depending on the size of the block device at the time of taking the
++snapshot. The size of the chunk must be a power of two. The module parameter
++``chunk_maximum_shift`` allows to limit the maximum chunk size. If the chunk
++size reaches the allowable limit, the number of chunks will exceed the
++``chunk_maximum_count`` parameter.
++
++One chunk is described by the ``struct chunk`` structure. An array of structures
++is created for each block device. The structure contains all the necessary
++information to copy the chunks data from the original block device to the
++difference storage. This information allows to describe the snapshot image.
++A semaphore is located in the structure, which allows synchronization of threads
++accessing the chunk.
++
++The block level has a feature. If a read I/O unit was sent, and a write I/O
++unit was sent after it, then a write can be performed first, and only then
++a read. Therefore, the copy-on-write algorithm is executed synchronously.
++If a write request is handled, the execution of this I/O unit will be
++delayed until the overwritten chunks are copied to the difference storage.
++But if, when handling a write I/O unit, it turns out that the recorded range
++of sectors has already been copied to the difference storage, then the I/O
++unit is simply passed.
++
++This algorithm allows to efficiently perform backups of systems that run
++Round Robin Database. Such databases can be overwritten several times during
++the system backup. Of course, the value of a backup of the RRD monitoring
++system data can be questioned. However, it is often a task to make a backup
++of the entire enterprise infrastructure in order to restore or replicate it
++entirely in case of problems.
++
++There is also a flaw in the algorithm. When overwriting at least one sector,
++an entire chunk is copied. Thus, a situation of rapid filling of the difference
++storage when writing data to a block device in small portions in random order
++is possible. This situation is possible in case of strong fragmentation of
++data on the file system. But it must be borne in mind that with such data
++fragmentation, performance of systems usually degrades greatly. So, this
++problem does not occur on real servers, although it can easily be created
++by artificial tests.
++
++Difference storage
++------------------
++
++The difference storage is a pool of disk space areas, and it is shared with
++all block devices in the snapshot. Therefore, there is no need to divide
++the difference storage area between block devices, and the difference storage
++itself can be located on different block devices.
++
++There is no need to allocate a large disk space immediately before creating
++a snapshot. Even while the snapshot is being held, the difference storage
++can be expanded. It is enough to have free space on the file system.
++
++Areas of disk space can be allocated on the file system using fallocate(),
++and the file location can be requested using Fiemap Ioctl or Fibmap Ioctl.
++Unfortunately, not all file systems support these mechanisms, but the most
++common XFS, EXT4 and BTRFS file systems support it. BTRFS requires additional
++conversion of virtual offsets to physical ones.
++
++While holding the snapshot, the user process can poll the status of the module.
++When free space in the difference storage is reduced to a threshold value, the
++module generates an event about it. The user process can prepare a new area
++and pass it to the module to expand the difference storage. The threshold
++value is determined as half of the value of the ``diff_storage_minimum``
++module parameter.
++
++If free space in the difference storage runs out, an event is generated about
++the overflow of the snapshot. Such a snapshot is considered corrupted, and
++read I/O units to snapshot images will be terminated with an error code.
++The difference storage stores outdated data required for snapshot images,
++so when the snapshot is overflowed, the backup process is interrupted,
++but the system maintains its operability without data loss.
++
++Performing I/O for a snapshot image
++-----------------------------------
++
++To read snapshot data, when taking a snapshot, block devices of snapshot images
++are created. The snapshot image block devices support the write operation.
++This allows to perform additional data preparation on the file system before
++creating a backup.
++
++To process the I/O unit, clones of the I/O unit are created, which redirect
++the I/O unit either to the original block device or to the difference storage.
++When processing of cloned I/O units is completed, the original I/O unit is
++marked as completed too.
++
++An I/O unit can be partially processed without accessing to block devices if
++the I/O unit refers to a chunk that is in the queue for storing to the
++difference storage. In this case, the data is read or written in a buffer in
++memory.
++
++If, when processing the write I/O unit, it turns out that the data of the
++referred chunk has not yet been stored to the difference storage or has not
++even been read from the original device, then an I/O unit to read data from the
++original device is initiated beforehand. After the reading from original device
++is performed, their data from the I/O unit is partially overwritten directly in
++the buffer of the chunk in memory, and the chunk is scheduled to be saved to the
++difference storage.
++
++How to use
++==========
++
++Depending on the needs and the selected license, you can choose different
++options for managing the module:
++
++- Using ioctl directly
++- Using a static C++ library
++- Using the blksnap console tool
++
++Using a BLKFILTER_CTL for block device
++--------------------------------------
++
++BLKFILTER_CTL allows to send a filter-specific command to the filter on block
++device and get the result of its execution. The module provides the
++``include/uapi/blksnap.h`` header file with a description of the commands and
++their data structures.
++
++1. ``blkfilter_ctl_blksnap_cbtinfo`` allows to get information from the
++   change tracker.
++2. ``blkfilter_ctl_blksnap_cbtmap`` reads the change tracker table. If a write
++   operation was performed for the snapshot, then the change tracker takes this
++   into account. Therefore, it is necessary to receive tracker data after write
++   operations have been completed.
++3. ``blkfilter_ctl_blksnap_cbtdirty`` mark blocks as changed in the change
++   tracker table. This is necessary if post-processing is performed after the
++   backup is created, which changes the backup blocks.
++4. ``blkfilter_ctl_blksnap_snapshotadd`` adds a block device to the snapshot.
++5. ``blkfilter_ctl_blksnap_snapshotinfo`` allows to get the name of the snapshot
++   image block device and the presence of an error.
++
++Using ioctl
++-----------
++
++Using a BLKFILTER_CTL ioctl does not allow to fully implement the management of
++the blksnap module. A control file ``blksnap-control`` is created to manage
++snapshots. The control commands are also described in the file
++``include/uapi/blksnap.h``.
++
++1. ``blksnap_ioctl_version`` get the version number.
++2. ``blk_snap_ioctl_snapshot_create`` initiates the snapshot creation process.
++3. ``blk_snap_ioctl_snapshot_append_storage`` add the range of blocks to
++   difference storage.
++4. ``blk_snap_ioctl_snapshot_take`` creates block devices of block device
++   snapshot images.
++5. ``blk_snap_ioctl_snapshot_collect`` collect all created snapshots.
++6. ``blk_snap_ioctl_snapshot_wait_event`` allows to track the status of
++   snapshots and receive events about the requirement to expand the difference
++   storage or about snapshot overflow.
++7. ``blk_snap_ioctl_snapshot_destroy`` releases the snapshot.
++
++Static C++ library
++------------------
++
++The [#userspace_libs]_ library was created primarily to simplify creation of
++tests in C++, and it is also a good example of using the module interface.
++When creating applications, direct use of control calls is preferable.
++However, the library can be used in an application with a GPL-2+ license,
++or a library with an LGPL-2+ license can be created, with which even a
++proprietary application can be dynamically linked.
++
++blksnap console tool
++--------------------
++
++The blksnap [#userspace_tools]_ console tool allows to control the module
++from the command line. The tool contains detailed built-in help. To get
++the list of commands, enter the ``blksnap --help`` command. The ``blksnap
++<command name> --help`` command allows to get detailed information about the
++parameters of each command call. This option may be convenient when creating
++proprietary software, as it allows not to compile with the open source code.
++At the same time, the blksnap tool can be used for creating backup scripts.
++For example, rsync can be called to synchronize files on the file system of
++the mounted snapshot image and files in the archive on a file system that
++supports compression.
++
++Tests
++-----
++
++A set of tests was created for regression testing [#userspace_tests]_.
++Tests with simple algorithms that use the ``blksnap`` console tool to
++control the module are written in Bash. More complex testing algorithms
++are implemented in C++.
++
++References
++==========
++
++.. [#userspace_libs] https://github.com/veeam/blksnap/tree/stable-v2.0/lib
++
++.. [#userspace_tools] https://github.com/veeam/blksnap/tree/stable-v2.0/tools
++
++.. [#userspace_tests] https://github.com/veeam/blksnap/tree/stable-v2.0/tests
++
++Module interface description
++============================
++
++.. kernel-doc:: include/uapi/linux/blksnap.h
+diff --git a/Documentation/block/index.rst b/Documentation/block/index.rst
+index e56d89db7b85..34937516c865 100644
+--- a/Documentation/block/index.rst
++++ b/Documentation/block/index.rst
+@@ -11,6 +11,7 @@ Block
+    biovecs
+    blk-mq
+    blkfilter
++   blksnap
+    cmdline-partition
+    data-integrity
+    deadline-iosched
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 2cbe4331ac97..fb6b7abe83e1 100644
+index fb6b7abe83e1..4bdb30369a74 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -3576,6 +3576,9 @@ M:	Sergei Shtepa <sergei.shtepa@veeam.com>
- L:	linux-block@vger.kernel.org
- S:	Supported
- F:	Documentation/block/blkfilter.rst
-+F:	block/blk-filter.c
-+F:	include/linux/blk-filter.h
-+F:	include/uapi/linux/blk-filter.h
+@@ -3580,6 +3580,12 @@ F:	block/blk-filter.c
+ F:	include/linux/blk-filter.h
+ F:	include/uapi/linux/blk-filter.h
  
++BLOCK DEVICE SNAPSHOTS MODULE
++M:	Sergei Shtepa <sergei.shtepa@veeam.com>
++L:	linux-block@vger.kernel.org
++S:	Supported
++F:	Documentation/block/blksnap.rst
++
  BLOCK LAYER
  M:	Jens Axboe <axboe@kernel.dk>
-diff --git a/block/Makefile b/block/Makefile
-index 4e01bb71ad6e..d4671c7e499c 100644
---- a/block/Makefile
-+++ b/block/Makefile
-@@ -9,7 +9,7 @@ obj-y		:= bdev.o fops.o bio.o elevator.o blk-core.o blk-sysfs.o \
- 			blk-lib.o blk-mq.o blk-mq-tag.o blk-stat.o \
- 			blk-mq-sysfs.o blk-mq-cpumap.o blk-mq-sched.o ioctl.o \
- 			genhd.o ioprio.o badblocks.o partitions/ blk-rq-qos.o \
--			disk-events.o blk-ia-ranges.o
-+			disk-events.o blk-ia-ranges.o blk-filter.o
- 
- obj-$(CONFIG_BOUNCE)		+= bounce.o
- obj-$(CONFIG_BLK_DEV_BSG_COMMON) += bsg.o
-diff --git a/block/bdev.c b/block/bdev.c
-index 1795c7d4b99e..e290020810dd 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -424,6 +424,7 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
- 		return NULL;
- 	}
- 	bdev->bd_disk = disk;
-+	bdev->bd_filter = NULL;
- 	return bdev;
- }
- 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 42926e6cb83c..179a1c9ecc90 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -18,6 +18,7 @@
- #include <linux/blkdev.h>
- #include <linux/blk-pm.h>
- #include <linux/blk-integrity.h>
-+#include <linux/blk-filter.h>
- #include <linux/highmem.h>
- #include <linux/mm.h>
- #include <linux/pagemap.h>
-@@ -591,10 +592,32 @@ static inline blk_status_t blk_check_zone_append(struct request_queue *q,
- 	return BLK_STS_OK;
- }
- 
-+static bool submit_bio_filter(struct bio *bio)
-+{
-+	/*
-+	 * If this bio came from the filter driver, send it straight down to the
-+	 * actual device and clear the filtered flag, as the bio could be passed
-+	 * on to another device that might have a filter attached again.
-+	 */
-+	if (bio_flagged(bio, BIO_FILTERED)) {
-+		bio_clear_flag(bio, BIO_FILTERED);
-+		return false;
-+	}
-+	bio_set_flag(bio, BIO_FILTERED);
-+	return bio->bi_bdev->bd_filter->ops->submit_bio(bio);
-+}
-+
- static void __submit_bio(struct bio *bio)
- {
- 	struct gendisk *disk = bio->bi_bdev->bd_disk;
- 
-+	/*
-+	 * If there is a filter driver attached, check if the BIO needs to go to
-+	 * the filter driver first, which can then pass on the bio or consume it.
-+	 */
-+	if (bio->bi_bdev->bd_filter && submit_bio_filter(bio))
-+		return;
-+
- 	if (unlikely(!blk_crypto_bio_prep(&bio)))
- 		return;
- 
-@@ -682,6 +705,15 @@ static void __submit_bio_noacct_mq(struct bio *bio)
- 	current->bio_list = NULL;
- }
- 
-+/**
-+ * submit_bio_noacct_nocheck - re-submit a bio to the block device layer for I/O
-+ *	from block device filter.
-+ * @bio:  The bio describing the location in memory and on the device.
-+ *
-+ * This is a version of submit_bio() that shall only be used for I/O that is
-+ * resubmitted to lower level by block device filters.  All file  systems and
-+ * other upper level users of the block layer should use submit_bio() instead.
-+ */
- void submit_bio_noacct_nocheck(struct bio *bio)
- {
- 	blk_cgroup_bio_start(bio);
-@@ -702,13 +734,17 @@ void submit_bio_noacct_nocheck(struct bio *bio)
- 	 * to collect a list of requests submited by a ->submit_bio method while
- 	 * it is active, and then process them after it returned.
- 	 */
--	if (current->bio_list)
-+	if (current->bio_list) {
- 		bio_list_add(&current->bio_list[0], bio);
--	else if (!bio->bi_bdev->bd_disk->fops->submit_bio)
-+		return;
-+	}
-+
-+	if (!bio->bi_bdev->bd_disk->fops->submit_bio)
- 		__submit_bio_noacct_mq(bio);
- 	else
- 		__submit_bio_noacct(bio);
- }
-+EXPORT_SYMBOL_GPL(submit_bio_noacct_nocheck);
- 
- /**
-  * submit_bio_noacct - re-submit a bio to the block device layer for I/O
-diff --git a/block/blk-filter.c b/block/blk-filter.c
-new file mode 100644
-index 000000000000..5e9d884fad4d
---- /dev/null
-+++ b/block/blk-filter.c
-@@ -0,0 +1,199 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (C) 2023 Veeam Software Group GmbH */
-+#include <linux/blk-filter.h>
-+#include <linux/blk-mq.h>
-+#include <linux/module.h>
-+
-+#include "blk.h"
-+
-+static LIST_HEAD(blkfilters);
-+static DEFINE_SPINLOCK(blkfilters_lock);
-+
-+static inline struct blkfilter_operations *__blkfilter_find(const char *name)
-+{
-+	struct blkfilter_operations *ops;
-+
-+	list_for_each_entry(ops, &blkfilters, link)
-+		if (strncmp(ops->name, name, BLKFILTER_NAME_LENGTH) == 0)
-+			return ops;
-+
-+	return NULL;
-+}
-+
-+static inline struct blkfilter_operations *blkfilter_find_get(const char *name)
-+{
-+	struct blkfilter_operations *ops;
-+
-+	spin_lock(&blkfilters_lock);
-+	ops = __blkfilter_find(name);
-+	if (ops && !try_module_get(ops->owner))
-+		ops = NULL;
-+	spin_unlock(&blkfilters_lock);
-+
-+	return ops;
-+}
-+
-+int blkfilter_ioctl_attach(struct block_device *bdev,
-+		    struct blkfilter_name __user *argp)
-+{
-+	struct blkfilter_name name;
-+	struct blkfilter_operations *ops;
-+	struct blkfilter *flt;
-+	int ret;
-+
-+	if (copy_from_user(&name, argp, sizeof(name)))
-+		return -EFAULT;
-+
-+	ops = blkfilter_find_get(name.name);
-+	if (!ops)
-+		return -ENOENT;
-+
-+	ret = freeze_bdev(bdev);
-+	if (ret)
-+		goto out_put_module;
-+	blk_mq_freeze_queue(bdev->bd_queue);
-+
-+	if (bdev->bd_filter) {
-+		if (bdev->bd_filter->ops == ops)
-+			ret = -EALREADY;
-+		else
-+			ret = -EBUSY;
-+		goto out_unfreeze;
-+	}
-+
-+	flt = ops->attach(bdev);
-+	if (IS_ERR(flt)) {
-+		ret = PTR_ERR(flt);
-+		goto out_unfreeze;
-+	}
-+
-+	flt->ops = ops;
-+	bdev->bd_filter = flt;
-+
-+out_unfreeze:
-+	blk_mq_unfreeze_queue(bdev->bd_queue);
-+	thaw_bdev(bdev);
-+out_put_module:
-+	if (ret)
-+		module_put(ops->owner);
-+	return ret;
-+}
-+
-+static void __blkfilter_detach(struct block_device *bdev)
-+{
-+	struct blkfilter *flt = bdev->bd_filter;
-+	const struct blkfilter_operations *ops = flt->ops;
-+
-+	bdev->bd_filter = NULL;
-+	ops->detach(flt);
-+	module_put(ops->owner);
-+}
-+
-+void blkfilter_detach(struct block_device *bdev)
-+{
-+	if (bdev->bd_filter) {
-+		blk_mq_freeze_queue(bdev->bd_queue);
-+		__blkfilter_detach(bdev);
-+		blk_mq_unfreeze_queue(bdev->bd_queue);
-+	}
-+}
-+
-+int blkfilter_ioctl_detach(struct block_device *bdev,
-+		    struct blkfilter_name __user *argp)
-+{
-+	struct blkfilter_name name;
-+	int error = 0;
-+
-+	if (copy_from_user(&name, argp, sizeof(name)))
-+		return -EFAULT;
-+
-+	blk_mq_freeze_queue(bdev->bd_queue);
-+	if (!bdev->bd_filter) {
-+		error = -ENOENT;
-+		goto out_unfreeze;
-+	}
-+	if (strncmp(bdev->bd_filter->ops->name, name.name,
-+			BLKFILTER_NAME_LENGTH)) {
-+		error = -EINVAL;
-+		goto out_unfreeze;
-+	}
-+
-+	__blkfilter_detach(bdev);
-+out_unfreeze:
-+	blk_mq_unfreeze_queue(bdev->bd_queue);
-+	return error;
-+}
-+
-+int blkfilter_ioctl_ctl(struct block_device *bdev,
-+		    struct blkfilter_ctl __user *argp)
-+{
-+	struct blkfilter_ctl ctl;
-+	struct blkfilter *flt;
-+	int ret;
-+
-+	if (copy_from_user(&ctl, argp, sizeof(ctl)))
-+		return -EFAULT;
-+
-+	ret = blk_queue_enter(bdev_get_queue(bdev), 0);
-+	if (ret)
-+		return ret;
-+
-+	flt = bdev->bd_filter;
-+	if (!flt || strncmp(flt->ops->name, ctl.name, BLKFILTER_NAME_LENGTH)) {
-+		ret = -ENOENT;
-+		goto out_queue_exit;
-+	}
-+
-+	if (!flt->ops->ctl) {
-+		ret = -ENOTTY;
-+		goto out_queue_exit;
-+	}
-+
-+	ret = flt->ops->ctl(flt, ctl.cmd, u64_to_user_ptr(ctl.opt),
-+			    &ctl.optlen);
-+out_queue_exit:
-+	blk_queue_exit(bdev_get_queue(bdev));
-+	return ret;
-+}
-+
-+/**
-+ * blkfilter_register() - Register block device filter operations
-+ * @ops:	The operations to register.
-+ *
-+ * Return:
-+ *	0 if succeeded,
-+ *	-EBUSY if a block device filter with the same name is already
-+ *	registered.
-+ */
-+int blkfilter_register(struct blkfilter_operations *ops)
-+{
-+	struct blkfilter_operations *found;
-+	int ret = 0;
-+
-+	spin_lock(&blkfilters_lock);
-+	found = __blkfilter_find(ops->name);
-+	if (found)
-+		ret = -EBUSY;
-+	else
-+		list_add_tail(&ops->link, &blkfilters);
-+	spin_unlock(&blkfilters_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(blkfilter_register);
-+
-+/**
-+ * blkfilter_unregister() - Unregister block device filter operations
-+ * @ops:	The operations to unregister.
-+ *
-+ * Important: before unloading, it is necessary to detach the filter from all
-+ * block devices.
-+ *
-+ */
-+void blkfilter_unregister(struct blkfilter_operations *ops)
-+{
-+	spin_lock(&blkfilters_lock);
-+	list_del(&ops->link);
-+	spin_unlock(&blkfilters_lock);
-+}
-+EXPORT_SYMBOL_GPL(blkfilter_unregister);
-diff --git a/block/blk.h b/block/blk.h
-index cc4e8873dfde..3500e46368e3 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -7,6 +7,8 @@
- #include <xen/xen.h>
- #include "blk-crypto-internal.h"
- 
-+struct blkfilter_ctl;
-+struct blkfilter_name;
- struct elevator_type;
- 
- /* Max future timer expiry for timeouts */
-@@ -454,6 +456,14 @@ long compat_blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg);
- 
- extern const struct address_space_operations def_blk_aops;
- 
-+int blkfilter_ioctl_attach(struct block_device *bdev,
-+		    struct blkfilter_name __user *argp);
-+int blkfilter_ioctl_detach(struct block_device *bdev,
-+		    struct blkfilter_name __user *argp);
-+int blkfilter_ioctl_ctl(struct block_device *bdev,
-+		    struct blkfilter_ctl __user *argp);
-+void blkfilter_detach(struct block_device *bdev);
-+
- int disk_register_independent_access_ranges(struct gendisk *disk);
- void disk_unregister_independent_access_ranges(struct gendisk *disk);
- 
-diff --git a/block/genhd.c b/block/genhd.c
-index 02d9cfb9e077..b23ceea895de 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -25,6 +25,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/badblocks.h>
- #include <linux/part_stat.h>
-+#include <linux/blk-filter.h>
- #include "blk-throttle.h"
- 
- #include "blk.h"
-@@ -625,6 +626,7 @@ void del_gendisk(struct gendisk *disk)
- 
- 	fsync_bdev(disk->part0);
- 	__invalidate_device(disk->part0, true);
-+	blkfilter_detach(disk->part0);
- 
- 	/*
- 	 * Fail any new I/O.
-diff --git a/block/ioctl.c b/block/ioctl.c
-index 9c5f637ff153..e840150e1aa8 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -2,6 +2,7 @@
- #include <linux/capability.h>
- #include <linux/compat.h>
- #include <linux/blkdev.h>
-+#include <linux/blk-filter.h>
- #include <linux/export.h>
- #include <linux/gfp.h>
- #include <linux/blkpg.h>
-@@ -545,6 +546,12 @@ static int blkdev_common_ioctl(struct block_device *bdev, fmode_t mode,
- 		return blkdev_pr_preempt(bdev, argp, true);
- 	case IOC_PR_CLEAR:
- 		return blkdev_pr_clear(bdev, argp);
-+	case BLKFILTER_ATTACH:
-+		return blkfilter_ioctl_attach(bdev, argp);
-+	case BLKFILTER_DETACH:
-+		return blkfilter_ioctl_detach(bdev, argp);
-+	case BLKFILTER_CTL:
-+		return blkfilter_ioctl_ctl(bdev, argp);
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
-diff --git a/block/partitions/core.c b/block/partitions/core.c
-index 7b8ef6296abd..0b5e3a3f7c31 100644
---- a/block/partitions/core.c
-+++ b/block/partitions/core.c
-@@ -10,6 +10,7 @@
- #include <linux/ctype.h>
- #include <linux/vmalloc.h>
- #include <linux/raid/detect.h>
-+#include <linux/blk-filter.h>
- #include "check.h"
- 
- static int (*check_part[])(struct parsed_partitions *) = {
-@@ -277,6 +278,7 @@ static void delete_partition(struct block_device *part)
- 
- 	fsync_bdev(part);
- 	__invalidate_device(part, true);
-+	blkfilter_detach(part);
- 
- 	xa_erase(&part->bd_disk->part_tbl, part->bd_partno);
- 	kobject_put(part->bd_holder_dir);
-diff --git a/include/linux/blk-filter.h b/include/linux/blk-filter.h
-new file mode 100644
-index 000000000000..0afdb40f3bab
---- /dev/null
-+++ b/include/linux/blk-filter.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2023 Veeam Software Group GmbH */
-+#ifndef _LINUX_BLK_FILTER_H
-+#define _LINUX_BLK_FILTER_H
-+
-+#include <uapi/linux/blk-filter.h>
-+
-+struct bio;
-+struct block_device;
-+struct blkfilter_operations;
-+
-+/**
-+ * struct blkfilter - Block device filter.
-+ *
-+ * @ops:	Block device filter operations.
-+ *
-+ * For each filtered block device, the filter creates a data structure
-+ * associated with this device. The data in this structure is specific to the
-+ * filter, but it must contain a pointer to the block device filter account.
-+ */
-+struct blkfilter {
-+	const struct blkfilter_operations *ops;
-+};
-+
-+/**
-+ * struct blkfilter_operations - Block device filter operations.
-+ *
-+ * @link:	Entry in the global list of filter drivers
-+ *		(must not be accessed by the driver).
-+ * @owner:	Module implementing the filter driver.
-+ * @name:	Name of the filter driver.
-+ * @attach:	Attach the filter driver to the block device.
-+ * @detach:	Detach the filter driver from the block device.
-+ * @ctl:	Send a control command to the filter driver.
-+ * @submit_bio:	Handle bio submissions to the filter driver.
-+ */
-+struct blkfilter_operations {
-+	struct list_head link;
-+	struct module *owner;
-+	const char *name;
-+	struct blkfilter *(*attach)(struct block_device *bdev);
-+	void (*detach)(struct blkfilter *flt);
-+	int (*ctl)(struct blkfilter *flt, const unsigned int cmd,
-+		   __u8 __user *buf, __u32 *plen);
-+	bool (*submit_bio)(struct bio *bio);
-+};
-+
-+int blkfilter_register(struct blkfilter_operations *ops);
-+void blkfilter_unregister(struct blkfilter_operations *ops);
-+
-+#endif /* _UAPI_LINUX_BLK_FILTER_H */
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 99be590f952f..b140ddd9b7ab 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -68,6 +68,7 @@ struct block_device {
- #ifdef CONFIG_FAIL_MAKE_REQUEST
- 	bool			bd_make_it_fail;
- #endif
-+	struct blkfilter	*bd_filter;
- } __randomize_layout;
- 
- #define bdev_whole(_bdev) \
-@@ -333,6 +334,7 @@ enum {
- 	BIO_QOS_MERGED,		/* but went through rq_qos merge path */
- 	BIO_REMAPPED,
- 	BIO_ZONE_WRITE_LOCKED,	/* Owns a zoned device zone write lock */
-+	BIO_FILTERED,		/* bio has already been filtered */
- 	BIO_FLAG_LAST
- };
- 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 941304f17492..25ebbf296f35 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -854,6 +854,7 @@ void blk_request_module(dev_t devt);
- 
- extern int blk_register_queue(struct gendisk *disk);
- extern void blk_unregister_queue(struct gendisk *disk);
-+void submit_bio_noacct_nocheck(struct bio *bio);
- void submit_bio_noacct(struct bio *bio);
- struct bio *bio_split_to_limits(struct bio *bio);
- 
-diff --git a/include/uapi/linux/blk-filter.h b/include/uapi/linux/blk-filter.h
-new file mode 100644
-index 000000000000..18885dc1b717
---- /dev/null
-+++ b/include/uapi/linux/blk-filter.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/* Copyright (C) 2023 Veeam Software Group GmbH */
-+#ifndef _UAPI_LINUX_BLK_FILTER_H
-+#define _UAPI_LINUX_BLK_FILTER_H
-+
-+#include <linux/types.h>
-+
-+#define BLKFILTER_NAME_LENGTH	32
-+
-+/**
-+ * struct blkfilter_name - parameter for BLKFILTER_ATTACH and BLKFILTER_DETACH
-+ *      ioctl.
-+ *
-+ * @name:       Name of block device filter.
-+ */
-+struct blkfilter_name {
-+	__u8 name[BLKFILTER_NAME_LENGTH];
-+};
-+
-+/**
-+ * struct blkfilter_ctl - parameter for BLKFILTER_CTL ioctl
-+ *
-+ * @name:	Name of block device filter.
-+ * @cmd:	The filter-specific operation code of the command.
-+ * @optlen:	Size of data at @opt.
-+ * @opt:	Userspace buffer with options.
-+ */
-+struct blkfilter_ctl {
-+	__u8 name[BLKFILTER_NAME_LENGTH];
-+	__u32 cmd;
-+	__u32 optlen;
-+	__u64 opt;
-+};
-+
-+#endif /* _UAPI_LINUX_BLK_FILTER_H */
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index b7b56871029c..1848d62979a4 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -185,6 +185,11 @@ struct fsxattr {
- #define BLKROTATIONAL _IO(0x12,126)
- #define BLKZEROOUT _IO(0x12,127)
- #define BLKGETDISKSEQ _IOR(0x12,128,__u64)
-+/* 13* is defined in linux/blkzoned.h */
-+#define BLKFILTER_ATTACH	_IOWR(0x12, 140, struct blkfilter_name)
-+#define BLKFILTER_DETACH	_IOWR(0x12, 141, struct blkfilter_name)
-+#define BLKFILTER_CTL		_IOWR(0x12, 142, struct blkfilter_ctl)
-+
- /*
-  * A jump here: 130-136 are reserved for zoned block devices
-  * (see uapi/linux/blkzoned.h)
+ L:	linux-block@vger.kernel.org
 -- 
 2.20.1
 
