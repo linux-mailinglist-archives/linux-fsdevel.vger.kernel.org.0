@@ -2,283 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 787166D6C0E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 20:30:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 073FC6D6CC3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 21:00:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236432AbjDDSaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Apr 2023 14:30:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50920 "EHLO
+        id S236032AbjDDTAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Apr 2023 15:00:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236624AbjDDS3z (ORCPT
+        with ESMTP id S235324AbjDDTAB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Apr 2023 14:29:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8CB276B3;
-        Tue,  4 Apr 2023 11:27:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 598D263873;
-        Tue,  4 Apr 2023 18:26:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 117CDC433D2;
-        Tue,  4 Apr 2023 18:26:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680632804;
-        bh=x2wyUxBizg5qidb4H+M74LzbnnW05NTYCqgru/fINxI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=XOTcdld9uG1GKtPDTrmdNRirxmLz4r/kc2PmPEvW9ik/76ho6EVxAfHvDE3Hk57nE
-         Vkl4zjfJeqbvmi9jI+0qPNaM6ARzU44sEcE0lsWwr9c8coaDAUYVcZL/mlmL+jPkfP
-         6oDIY8VBRQPVbHXqV8rjueqDUq0S17slhHz8WI438K7rVhe8FlFjLXjTJtbW4ReEse
-         GNlLqRnFfMg1Vi80nuAP5C2Tqcx4Gn464M3lkQL3Z0hYYjnvVsQulQ4v/rUeJ+60b2
-         4NAQLdYZzJ8mmf1bhNeSJ4mWDbP8aY048zY6/QihWJGEjrfv3YMxn6oFKjWkAwt0PZ
-         hXhtipRRrrapw==
-Message-ID: <a7458f6fdfcf902e620fefb7f44a7e4700f761ae.camel@kernel.org>
-Subject: Re: [PATCH] fs/9p: Add new options to Documentation
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Schoenebeck <linux_oss@crudebyte.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>
-Cc:     v9fs-developer@lists.sourceforge.net,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        asmadeus@codewreck.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 04 Apr 2023 14:26:42 -0400
-In-Reply-To: <5898218.pUKYPoVZaQ@silver>
-References: <ZCEIEKC0s/MFReT0@7e9e31583646> <3443961.DhAEVoPbTG@silver>
-         <CAFkjPT=j1esw=q-w5KTyHKDZ42BEKCERy-56TiP+Z7tdC=y05w@mail.gmail.com>
-         <5898218.pUKYPoVZaQ@silver>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 4 Apr 2023 15:00:01 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11095D2
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 11:59:36 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-54606036bb3so468069047b3.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Apr 2023 11:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1680634775; x=1683226775;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XXO/sPKYiSh7df3RL6T1nFQFdO3JNbaBjCjcp7Ezoio=;
+        b=ZxnTqbt+6n8xVZ2L1KjX6Vxemx3sc/bCFzGlsXD8i/h258Tut+QudOL21vMWxdtnLv
+         PQ0I0a7b3ybZfO5OzC5BDRoiSUbomrKlPxEchuya/pbPJNQRohpQVcA2xPlqQfxJiGVg
+         qw7v6JjzcUXXPK5MexwHW0fGxt37thpVYrE0sUdEynyLqygCupwHmp/It8ILmvwvOES8
+         vFM2dzIwzF6C81f7LiYJfI/FdIVoV+0uo3H3Q8fzHDaHt8JCeFL+H1iwqcEw+TzGZIXA
+         zAi1q3zUv1q5qqh7YKu4FvQ/rvnAgETdBqXw1bZafgcS6l7EecmXZGT6VWTiEKl1JL0M
+         skwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680634775; x=1683226775;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XXO/sPKYiSh7df3RL6T1nFQFdO3JNbaBjCjcp7Ezoio=;
+        b=zdCWXnx9OdjhgVnicYLfmLqR+BoQaN0ee2uDCmAXIKoOPkQ9H/rbkn+nNB6a0CH2Ey
+         abBUR/h9DIVFLjoA9XbNfMuqLnQhrFHckJegVWyYZLRxNThmmdP4BYKPkTPPUpGCjDzP
+         cxiabZfash/FJ/0D7BMGqMztS8CUEdwHz9J7NnR8wY55BmwjWDMFgQ7WkC/XMg4loZmq
+         zoDxEnpem+5dJC0Oh/rFCS5asX50eKg8aNpq0Epm5kg72rd0L60aMg864mMp+sf1dEBT
+         0HIR+abVyYETeQ0iJQmphBIoXeeqW7oM6YiY9S19Qgvfs1VSECM1UpsI58yX4IHecFBN
+         MRYw==
+X-Gm-Message-State: AAQBX9cOff6OylqAxmZ2YNQksumFzs+2j68g/IUya8dYr4Ytw33Hftr+
+        kPJJGf2fqhbgrylhm1F1V0lihw==
+X-Google-Smtp-Source: AKy350akuu8WNjqJI/OZZxOT3oKDvAK+k25HVUtFYCx5qfBTo1XdxOnKMEZfhrxaZAxyhBMpnNhZ4Q==
+X-Received: by 2002:a0d:d857:0:b0:541:826c:20fd with SMTP id a84-20020a0dd857000000b00541826c20fdmr3545786ywe.13.1680634775128;
+        Tue, 04 Apr 2023 11:59:35 -0700 (PDT)
+Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
+        by smtp.gmail.com with ESMTPSA id df18-20020a05690c0f9200b0054643d99e21sm3390137ywb.133.2023.04.04.11.59.33
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Apr 2023 11:59:34 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.400.51.1.1\))
+Subject: Re: [External] RE(2): FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes
+ for CXL
+From:   "Viacheslav A.Dubeyko" <viacheslav.dubeyko@bytedance.com>
+In-Reply-To: <ZCgMlc63gnhHgwuD@memverge.com>
+Date:   Tue, 4 Apr 2023 11:59:22 -0700
+Cc:     Adam Manzanares <a.manzanares@samsung.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Kyungsan Kim <ks0204.kim@samsung.com>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "seungjun.ha@samsung.com" <seungjun.ha@samsung.com>,
+        "wj28.lee@samsung.com" <wj28.lee@samsung.com>
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
-MIME-Version: 1.0
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+Message-Id: <D0C2ADD0-35C4-4BE4-9330-A81D7326A588@bytedance.com>
+References: <ZB/yb9n6e/eNtNsf@kernel.org>
+ <CGME20230331114526epcas2p2b6f1d4c8c1c0b2e3c12a425b6e48c0d8@epcas2p2.samsung.com>
+ <20230331114525.400375-1-ks0204.kim@samsung.com>
+ <ZCvgTA5uk/HcyMAk@kernel.org> <20230404175754.GA633356@bgt-140510-bm01>
+ <ZCgMlc63gnhHgwuD@memverge.com>
+To:     Gregory Price <gregory.price@memverge.com>
+X-Mailer: Apple Mail (2.3731.400.51.1.1)
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2023-04-02 at 16:07 +0200, Christian Schoenebeck wrote:
-> +CC: Jeff for experience on this caching issue with NFS ...
->=20
-> On Tuesday, March 28, 2023 5:51:51 PM CEST Eric Van Hensbergen wrote:
-> > As I work through the documentation rework and to some extent the
-> > testing matrix -- I am reconsidering some choices and wanted to open
-> > up the discussion here.
-> >=20
-> > TLDR; I'm thinking of reworking the cache options before the merge
-> > window to keep things simple while setting up for some of the future
-> > options.
->=20
-> Yeah, revising the 9p cache options highly makes sense!
->=20
-> So what is the plan on this now? I saw you sent a new patch with the "old=
-"
-> options today? So is this one here deferred?
->=20
-> > While we have a bunch of new options, in practice I expect users to
-> > probably consolidate around three models: no caching, tight caches,
-> > and expiring caches with fscache being an orthogonal add-on to the
-> > last two.
->=20
-> Actually as of today I don't know why somebody would want to use fscache
-> instead of loose. Does it actually make sense to keep fscache and if yes =
-why?
->=20
-> > The ultimate goal is to simplify the options based on expected use mode=
-ls:
-> >=20
-> > - cache=3D[ none, file, all ] (none is currently default)
->=20
-> dir?
->=20
-> > - write_policy =3D [ *writethrough, writeback ] (writethrough would be =
-default)
-> > - cache_validate =3D [ never, *open, x (seconds) ]  (cache_validate
-> > would default to open)
->=20
-> Jeff came up with the point that NFS uses a slicing time window for NFS. =
-So
-> the question is, would it make sense to add an option x seconds that migh=
-t be
-> dropped soon anyway?
-
-See the acregmin/acregmax/acdirmin/acdirmax settings in nfs(5). What
-you're talking about is basically adding an actimeo=3D option.
-
-If you're revising options for this stuff, then consider following NFS's
-naming. Not that they are better in any sense, but they are at least
-familiar to administrators.
-
-As far as the sliding window goes, the way it tracks that is a bit
-arcane, but in include/linux/nfs_fs.h:
 
 
-        /*
-         * read_cache_jiffies is when we started read-caching this inode.
-         * attrtimeo is for how long the cached information is assumed
-         * to be valid. A successful attribute revalidation doubles
-         * attrtimeo (up to acregmax/acdirmax), a failure resets it to
-         * acregmin/acdirmin.
-         *
-         * We need to revalidate the cached attrs for this inode if
-         *
-         *      jiffies - read_cache_jiffies >=3D attrtimeo
-         *
-         * Please note the comparison is greater than or equal
-         * so that zero timeout values can be specified.
-         */
-
-
-That's probably what I'd aim for here.
-
-> > - fscache
-> >=20
-> > So, mapping of existing (deprecated) legacy modes:
-> > - none (obvious) write_policy=3Dwritethrough
-> > - *readahead -> cache=3Dfile cache_validate_open write_policy=3Dwriteth=
-rough
-> > - mmap -> cache=3Dfile cache_validate=3Dopen write_policy=3Dwriteback
+> On Apr 1, 2023, at 3:51 AM, Gregory Price <gregory.price@memverge.com> =
+wrote:
 >=20
-> Mmm, why is that "file"? To me "file" sounds like any access to files is
-> cached, whereas cache=3Dmmap just uses the cache if mmap() was called, no=
-t for
-> any other file access.
+> On Tue, Apr 04, 2023 at 05:58:05PM +0000, Adam Manzanares wrote:
+>> On Tue, Apr 04, 2023 at 11:31:08AM +0300, Mike Rapoport wrote:
+>>>=20
+>>> The point of zswap IIUC is to have small and fast swap device and
+>>> compression is required to better utilize DRAM capacity at expense =
+of CPU
+>>> time.
+>>>=20
+>>> Presuming CXL memory will have larger capacity than DRAM, why not =
+skip the
+>>> compression and use CXL as a swap device directly?
+>>=20
+>> I like to shy away from saying CXL memory should be used for swap. I =
+see a=20
+>> swap device as storing pages in a manner that is no longer directly =
+addressable
+>> by the cpu.=20
+>>=20
+>> Migrating pages to a CXL device is a reasonable approach and I =
+believe we
+>> have the ability to do this in the page reclaim code.=20
+>>=20
 >=20
-> > - loose -> cache=3Dall cache_validate=3Dnever write_policy=3Dwriteback
-> > - fscache -> cache=3Dall cache_validate=3Dnever write_policy=3Dwritebac=
-k &
-> > fscache enabled
-> >=20
-> > Some things I'm less certain of: cache_validation is probably an
-> > imperfect term as is using 'open' as one of the options, in this case
-> > I'm envisioning 'open' to mean open-to-close coherency for file
-> > caching (cache is only validated on open) and validation on lookup for
-> > dir-cache coherency (using qid.version). Specifying a number here
-> > expires existing caches and requires validation after a certain number
-> > of seconds (is that the right granularity)?
+> The argument is "why do you need swap if memory itself is elastic", =
+and
+> I think there are open questions about how performant using large
+> amounts of high-latency memory is.
 >=20
-> Personally I would then really call it open-to-close or opentoclose and w=
-aste
-> some more characters in favour of clarity.
+> Think 1us-1.5us+ cross-rack attached memory.
 >=20
-> > So, I think this is more clear from a documentation standpoint, but
-> > unfortuantely I haven't reduced the test matrix much - in fact I've
-> > probably made it worse. I expect the common cases to basically be:
-> > - cache=3Dnone
-> > - new default? (cache=3Dall, write_policy=3Dwriteback, cache_validate=
-=3Dopen)
-> > - fscache w/(cache=3Dall, write_policy=3Dwriteback, cache_validate=3D5)
-> >=20
-> > Which would give us 3 configurations to test against versus 25
-> > (assuming testing for one time value for cache-validate=3Dx). Important
-> > to remember that this is just cache mode tests, the other mount
-> > options act as multipliers.
-> >=20
-> > Thoughts?  Alternatives?
-> >=20
-> >         -eric
-> >=20
-> > On Mon, Mar 27, 2023 at 10:38=E2=80=AFAM Christian Schoenebeck
-> > <linux_oss@crudebyte.com> wrote:
-> > >=20
-> > > On Monday, March 27, 2023 5:05:52 AM CEST Eric Van Hensbergen wrote:
-> > > > Need to update the documentation for new mount flags
-> > > > and cache modes.
-> > > >=20
-> > > > Signed-off-by: Eric Van Hensbergen <ericvh@kernel.org>
-> > > > ---
-> > > >  Documentation/filesystems/9p.rst | 29 ++++++++++++++++------------=
--
-> > > >  1 file changed, 16 insertions(+), 13 deletions(-)
-> > > >=20
-> > > > diff --git a/Documentation/filesystems/9p.rst b/Documentation/files=
-ystems/9p.rst
-> > > > index 0e800b8f73cc..6d257854a02a 100644
-> > > > --- a/Documentation/filesystems/9p.rst
-> > > > +++ b/Documentation/filesystems/9p.rst
-> > > > @@ -78,19 +78,18 @@ Options
-> > > >               offering several exported file systems.
-> > > >=20
-> > > >    cache=3Dmode specifies a caching policy.  By default, no caches =
-are used.
-> > > > -
-> > > > -                        none
-> > > > -                             default no cache policy, metadata and=
- data
-> > > > -                                alike are synchronous.
-> > > > -                     loose
-> > > > -                             no attempts are made at consistency,
-> > > > -                                intended for exclusive, read-only =
-mounts
-> > > > -                        fscache
-> > > > -                             use FS-Cache for a persistent, read-o=
-nly
-> > > > -                             cache backend.
-> > > > -                        mmap
-> > > > -                             minimal cache that is only used for r=
-ead-write
-> > > > -                                mmap.  Northing else is cached, li=
-ke cache=3Dnone
-> > > > +             Modes are progressive and inclusive.  For example, sp=
-ecifying fscache
-> > > > +             will use loose caches, writeback, and readahead.  Due=
- to their
-> > > > +             inclusive nature, only one cache mode can be specifie=
-d per mount.
-> > >=20
-> > > I would highly recommend to rather specify below for each option "thi=
-s option
-> > > implies writeback, readahead ..." etc., as it is not obvious otherwis=
-e which
-> > > option would exactly imply what. It is worth those extra few lines IM=
-O to
-> > > avoid confusion.
-> > >=20
-> > > > +
-> > > > +                     =3D=3D=3D=3D=3D=3D=3D=3D=3D       =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > +                     none            no cache of file or metadata
-> > > > +                     readahead       readahead caching of files
-> > > > +                     writeback       delayed writeback of files
-> > > > +                     mmap            support mmap operations read/=
-write with cache
-> > > > +                     loose           meta-data and file cache with=
- no coherency
-> > > > +                     fscache         use FS-Cache for a persistent=
- cache backend
-> > > > +                     =3D=3D=3D=3D=3D=3D=3D=3D=3D       =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >=20
-> > > >    debug=3Dn    specifies debug level.  The debug level is a bitmas=
-k.
-> > > >=20
-> > > > @@ -137,6 +136,10 @@ Options
-> > > >               This can be used to share devices/named pipes/sockets=
- between
-> > > >               hosts.  This functionality will be expanded in later =
-versions.
-> > > >=20
-> > > > +  directio   bypass page cache on all read/write operations
-> > > > +
-> > > > +  ignoreqv   ignore qid.version=3D=3D0 as a marker to ignore cache
-> > > > +
-> > > >    noxattr    do not offer xattr functions on this mount.
-> > > >=20
-> > > >    access     there are four access modes.
-> > > >=20
-> > >=20
-> > >=20
-> > >=20
-> > >=20
-> >=20
+> Does it make sense to use that as CPU-addressible and migrate it on
+> first use?  Isn't that just swap with more steps?  What happens if we
+> just use it as swap, is the performance all that different?
 >=20
->=20
->=20
+> I think there's a reasonable argument for exploring the idea at the
+> higher ends of the latency spectrum.  And the simplicity of using an
+> existing system (swap) to implement a form of proto-tiering is rather
+> attractive in my opinion.
 >=20
 
---=20
-Jeff Layton <jlayton@kernel.org>
+I think the problem with swap that we need to take into account the =
+additional
+latency of swap-in/swap-out logic. I assume that this logic is expensive =
+enough.
+And if we considering the huge graph, for example, I am afraid the =
+swap-in/swap-out
+logic could be expensive. So, the question here is about use-case. Which =
+use-case could
+have benefits to employ the swap as a big space of high-latency memory? =
+I see your point
+that such swap could be faster than persistent storage. But which =
+use-case can be happy
+user of this space of high-latency memory?
+
+Thanks,
+Slava.
+
