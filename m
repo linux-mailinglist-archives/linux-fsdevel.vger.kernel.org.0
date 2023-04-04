@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8D26D709B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 01:23:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C95786D70A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 01:26:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236587AbjDDXXK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Apr 2023 19:23:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48030 "EHLO
+        id S236549AbjDDX0W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Apr 2023 19:26:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236379AbjDDXXJ (ORCPT
+        with ESMTP id S236093AbjDDX0T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Apr 2023 19:23:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E1434481;
-        Tue,  4 Apr 2023 16:23:03 -0700 (PDT)
+        Tue, 4 Apr 2023 19:26:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED10DFB;
+        Tue,  4 Apr 2023 16:26:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1F75663886;
-        Tue,  4 Apr 2023 23:23:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D3E7C433EF;
-        Tue,  4 Apr 2023 23:23:02 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 88A1D639EB;
+        Tue,  4 Apr 2023 23:26:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E20C1C433D2;
+        Tue,  4 Apr 2023 23:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680650582;
-        bh=n/9jmBZO4HC87mIQyzeLEmcpGLyNDj01f1vbSC9mn1Q=;
+        s=k20201202; t=1680650777;
+        bh=/JyZmGk+myakLaCI1hhSwfIXR6hWB6PhXWV1RmrEmtQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b5+6maz5xNhwYCtGwMq8kBY6ewuVOIdTUKUDsuMQwiiVGRZ4JLKIYUBPjB2R83qK2
-         jmGenLfcD91UqsPu8iPNLDQItXW3gHeC3I3+QXoAFh+P/RTje+RB6N+AVCH6go5t7H
-         lFGiVsSBrnYilekJWLE6vxyxrlVTrpCB4T4Y9zy6W5+71+O7LZHNDuLkkIeCmSFMdd
-         LnjJ5ISVLkFIasoDRJ2L6Z+C/842tcZjmW0jqL8fTsEkpwRvnDkEqNPwfaJWuniC/G
-         qFkKLchRB/hFADz1nfVP1I1Ba9kxaadE3S8FPdnJd+Kyn/HycjKR2qAf5p461PbUhh
-         fEgpj2mzxoQVg==
-Date:   Tue, 4 Apr 2023 16:23:02 -0700
+        b=SAMn41ZDLqNoE6Vm+Ws6NlgV5JNtcTsUfptIJYmSWkQXDoMlNthiN90l/6s3+s165
+         zakb05T4J4axjmNGiNnSg/PLXu2mm3dIwNe0EsxcSRGtsA6eQKHcGUglH5oPWJiPln
+         Dnh6qUYxcYXaByVI2SRX7KIUb5nJ3EW1SYPR/1H9VUb+ZU1nIskrAL356E3Fr1G3fL
+         phSprFPiWpHqQwH9IaxCrGVhnGNlQ+9W281nygerSAi/jRifQP+6OPEKpbziDA2KNC
+         ugBoZkZROddJxKcgQ9Fr3rXsP5BUTRC+q5V4S69CQ1Y9d015ztJzol3MHxJztXrSe+
+         8F3ncUmDR1/ag==
+Date:   Tue, 4 Apr 2023 16:26:16 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Zorro Lang <zlang@kernel.org>
 Cc:     fstests@vger.kernel.org, linux-btrfs@vger.kernel.org,
@@ -43,16 +43,17 @@ Cc:     fstests@vger.kernel.org, linux-btrfs@vger.kernel.org,
         jack@suse.com, linux-xfs@vger.kernel.org, fdmanana@suse.com,
         ebiggers@google.com, brauner@kernel.org, amir73il@gmail.com,
         anand.jain@oracle.com
-Subject: Re: [PATCH 4/5] fstests/MAINTAINERS: add some specific reviewers
-Message-ID: <20230404232302.GD109960@frogsfrogsfrogs>
+Subject: Re: [PATCH 5/5] fstests/MAINTAINERS: add a co-maintainer for btrfs
+ testing part
+Message-ID: <20230404232616.GE109960@frogsfrogsfrogs>
 References: <20230404171411.699655-1-zlang@kernel.org>
- <20230404171411.699655-5-zlang@kernel.org>
+ <20230404171411.699655-6-zlang@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230404171411.699655-5-zlang@kernel.org>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+In-Reply-To: <20230404171411.699655-6-zlang@kernel.org>
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
         SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,79 +61,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 05, 2023 at 01:14:10AM +0800, Zorro Lang wrote:
-> Some people contribute to someone specific fs testing mostly, record
-> some of them as Reviewer.
+On Wed, Apr 05, 2023 at 01:14:11AM +0800, Zorro Lang wrote:
+> Darrick J. Wong would like to nominate Anand Jain to help more on
+
+In case anyone's wondering how this all came about -- Anand asked me how
+he could do more upstream fstests review work, so I suggested that he
+and I talk to Zorro about delegating some of the review and maintainer
+work so that it's not all on Zorro to keep everything running.
+
+> btrfs testing part (tests/btrfs and common/btrfs). He would like to
+> be a co-maintainer of btrfs part, will help to review and test
+> fstests btrfs related patches, and I might merge from him if there's
+> big patchset. So CC him besides send to fstests@ list, when you have
+> a btrfs fstests patch.
 > 
 > Signed-off-by: Zorro Lang <zlang@kernel.org>
 > ---
 > 
-> If someone doesn't want to be in cc list of related fstests patch, please
-> reply this email, I'll remove that reviewer line.
-> 
-> Or if someone else (who contribute to fstests very much) would like to a
-> specific reviewer, nominate yourself to get a review.
+> Please btrfs list help to review this change, if you agree (or no objection),
+> then I'll push this change.
+
+This is what Zorro, Anand, and I sketched out as far as co-maintainer
+resposibilities go:
+
+> A co-maintainer will do:
+> 1) Review patches are related with him.
+> 2) Merge and test patches in his local git repo, and give the patch an ACK.
+> 3) Maintainer will trust the ack from co-maintainer more (might merge directly).
+> 4) Maintainer might merge from co-maintainer when he has a big patchset wait for
+>    merging.
 > 
 > Thanks,
 > Zorro
 > 
->  MAINTAINERS | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 > diff --git a/MAINTAINERS b/MAINTAINERS
-> index 620368cb..0ad12a38 100644
+> index 0ad12a38..9fc6c6b5 100644
 > --- a/MAINTAINERS
 > +++ b/MAINTAINERS
 > @@ -108,6 +108,7 @@ Maintainers List
 >  	  or reviewer or co-maintainer can be in cc list.
 >  
 >  BTRFS
-> +R:	Filipe Manana <fdmanana@suse.com>
->  L:	linux-btrfs@vger.kernel.org
->  S:	Supported
->  F:	tests/btrfs/
-> @@ -137,16 +138,19 @@ F:	tests/f2fs/
->  F:	common/f2fs
->  
->  FSVERITY
-> +R:	Eric Biggers <ebiggers@google.com>
->  L:	fsverity@lists.linux.dev
->  S:	Supported
->  F:	common/verity
->  
->  FSCRYPT
-> +R:	Eric Biggers <ebiggers@google.com>
->  L:      linux-fscrypt@vger.kernel.org
->  S:	Supported
->  F:	common/encrypt
->  
->  FS-IDMAPPED
-> +R:	Christian Brauner <brauner@kernel.org>
->  L:	linux-fsdevel@vger.kernel.org
->  S:	Supported
->  F:	src/vfs/
-> @@ -163,6 +167,7 @@ S:	Supported
->  F:	tests/ocfs2/
->  
->  OVERLAYFS
-> +R:	Amir Goldstein <amir73il@gmail.com>
->  L:	linux-unionfs@vger.kernel.org
->  S:	Supported
->  F:	tests/overlay
-> @@ -174,6 +179,7 @@ S:	Supported
->  F:	tests/udf/
->  
->  XFS
-> +R:	Darrick J. Wong <djwong@kernel.org>
+> +M:	Anand Jain <anand.jain@oracle.com>
 
-For this one hunk,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+I would like to hear agreement from the btrfs community about this
+before making this particular change official.
 
 --D
 
->  L:	linux-xfs@vger.kernel.org
+>  R:	Filipe Manana <fdmanana@suse.com>
+>  L:	linux-btrfs@vger.kernel.org
 >  S:	Supported
->  F:	common/dump
 > -- 
 > 2.39.2
 > 
