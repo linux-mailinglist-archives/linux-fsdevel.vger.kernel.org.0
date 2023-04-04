@@ -2,103 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AC4E6D56F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 04:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6D876D577D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 06:27:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232921AbjDDC55 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 22:57:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53604 "EHLO
+        id S231906AbjDDE1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Apr 2023 00:27:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229815AbjDDC54 (ORCPT
+        with ESMTP id S231450AbjDDE1F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 22:57:56 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F70219BF;
-        Mon,  3 Apr 2023 19:57:54 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 95FD55C00D0;
-        Mon,  3 Apr 2023 22:57:50 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 03 Apr 2023 22:57:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tyhicks.com; h=
-        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1680577070; x=1680663470; bh=h6
-        jLTmnRVW7snfNMmkgCLHM59jUMA2sAlcMAGdnV2Xw=; b=MBIg+WLiErbILUNtQa
-        S2T/3Hu+7s7AciF4vUlBsJCrOXevl/qXdAYvyINUHVIsPS96cjOZ06+FsarDzPxO
-        BJaJTc51YGnlLnJBv80xiFtRDpfW5hWcEoq8aEF2p2RQMN1J1803VoMkItMhLOTK
-        0Ma73UFs0mRaKmeJTxdXg+q4NbAHpoVEdsX/vyvZP3beLqjmWaqufC0voZVKvOl5
-        14sKq3Jf+NIc/QmkZWdC4uF5940OW3w4NBRlbyyDJmChtrDQ+U46JHljbtu9U/Sc
-        V/LJrfMRf3ASvgaZklOHb/50Ycr5HNgcLSbFC3T9AfhP2ptW4r+pN/gjNsSaqnwN
-        ri2A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1680577070; x=1680663470; bh=h6jLTmnRVW7sn
-        fNMmkgCLHM59jUMA2sAlcMAGdnV2Xw=; b=N/q4XmWRayOyGwwitHNVIU3hybttd
-        T4kvZk7GWXCoNHPK995+hwrukRNqXtljw3xLvYA+H+adVwdvlNs7JVdv6qdulKNo
-        9TXB452tOfRLvdZgK4qFzJH4R7oefJmDmRq+LM1o7b72uyNpqC2AxAez6pp36cb2
-        DqnHvligJ+ByDK8mR5pVISgUrOWHnZ46/fxK4rYrRruK1c1AeV6ZQ6YWOKkL8xSJ
-        BvvD//OKSyiY2PK/E55bcxJVoPg6MheBkE0dj6zCxI6GodC1NJPeOD66GJ+oBlco
-        pHN8IRnJoUFbbjCBZNEbZ1swHHmXQnYt676qxaY9ur/UjIafBHMpUmlvA==
-X-ME-Sender: <xms:LpIrZKezI0kCc0MjYdNwLwl101Th2ey2KOY8GOnJekpdq-x_neieAA>
-    <xme:LpIrZEOkhe9wtiSSQUu_TYakg1okJsh-sAiKPE0UzWVErR2UPx7s88sbRcBfTu5dL
-    eoBjWzPBWw2H-gBJ-w>
-X-ME-Received: <xmr:LpIrZLh6n4xwUz6RhSYaHcyi5H622He1BJQg5v0D1X14wv1uLW1e2P1MPJ0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeikedggeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttd
-    ertddttddvnecuhfhrohhmpedfvfihlhgvrhcujfhitghkshculdfoihgtrhhoshhofhht
-    mddfuceotghouggvsehthihhihgtkhhsrdgtohhmqeenucggtffrrghtthgvrhhnpeehie
-    eiueevgfetlefhjeekleeutddtudelveevhfekgefhhffhtedtffehuedvteenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegtohguvgesthihhh
-    hitghkshdrtghomh
-X-ME-Proxy: <xmx:LpIrZH_8qx56kyJOj0JSvTg4me-cjY-401L8xAXiH0AdjK4fY331Pw>
-    <xmx:LpIrZGtgbLeJhKIImAHQyuhAi8M6FywVUifzFsSmrtvMrgHvyMrCpg>
-    <xmx:LpIrZOHLT6Ufm1Osxv4VtLSHYIIz2qm0N2eljrtGfOn6Qu3nCMT6ug>
-    <xmx:LpIrZIJsfm60sLY0A_0UZxeWbrmNicGDmyrNJPHfkIZXsIE_aK3Vkg>
-Feedback-ID: i78e14604:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Apr 2023 22:57:49 -0400 (EDT)
-Date:   Mon, 3 Apr 2023 21:57:48 -0500
-From:   "Tyler Hicks (Microsoft)" <code@tyhicks.com>
-To:     Yangtao Li <frank.li@vivo.com>
-Cc:     brauner@kernel.org, ecryptfs@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: mark ecryptfs as orphan state
-Message-ID: <ZCuSLNnFQEdOHW0c@sequoia>
-References: <20230403-frolic-constant-bc5d0fb13196@brauner>
- <20230403134432.46726-1-frank.li@vivo.com>
+        Tue, 4 Apr 2023 00:27:05 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F341BE2
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 21:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1680582424; x=1712118424;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Lj5XWWDTc4taxfcqzqpVs4yKUk2XcTdv2lZpVWLffVI=;
+  b=eQwfC4Db2ODDrqa/9W39/zPWPfJNG0+MEVUxVCdZJUySGonJOm9hlBm2
+   h5ZESLCCnXtuwDUwuvAF+cJ1eoUWJ65BySP5oxvO5uFmqnbicvJJF1l2F
+   yAlVPG7W8NH8TwD5cuHXzpw1KMre7AIXMgsjQbdB3Fj/L3X0FMWTqYj31
+   km3/bvL59s5seH1jEMzPTbIFJpZkLUUU5GcD4QC6isFBM1HpS2oCKCxqx
+   CvL2KqGphArXykmTM1m18FC3Dr2xaxuG6s5d42porbe+bZDFXNFy/338w
+   wIPGBFRrV3Trpt8m2LPBuPrn5lvw26QH8ChAoVT0J5QUqSY+30FTENF24
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10669"; a="343785816"
+X-IronPort-AV: E=Sophos;i="5.98,316,1673942400"; 
+   d="scan'208";a="343785816"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2023 21:27:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10669"; a="797368710"
+X-IronPort-AV: E=Sophos;i="5.98,316,1673942400"; 
+   d="scan'208";a="797368710"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 03 Apr 2023 21:27:02 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pjYG5-000PBC-1V;
+        Tue, 04 Apr 2023 04:27:01 +0000
+Date:   Tue, 4 Apr 2023 12:26:24 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     cem@kernel.org, hughd@google.com
+Cc:     oe-kbuild-all@lists.linux.dev, jack@suse.cz, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org
+Subject: Re: [PATCH 2/6] shmem: make shmem_get_inode() return ERR_PTR instead
+ of NULL
+Message-ID: <202304041204.sEsaejmQ-lkp@intel.com>
+References: <20230403084759.884681-3-cem@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230403134432.46726-1-frank.li@vivo.com>
-X-Spam-Status: No, score=-0.9 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230403084759.884681-3-cem@kernel.org>
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BODY_ENHANCEMENT2,
+        DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-04-03 21:44:32, Yangtao Li wrote:
-> > I can devote some time to limping it by until removal but would also 
-> > appreciate a hand if anyone has time/interest.
-> 
-> I have time and interest, if possible, I would like to be a reviewer
-> before ecryptfs is removed.
+Hi,
 
-Hi - I don't think an additional reviewer is going to be sufficient to
-get eCryptfs into a good state long term. There are fairly large design
-problems that need more attention. I'll send a patch to deprecate and
-mark for removal in 2025.
+kernel test robot noticed the following build errors:
 
-I'll happily add you as a reviewer and appreciate your interest in
-helping.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.3-rc5]
+[cannot apply to akpm-mm/mm-everything next-20230403]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Tyler
+url:    https://github.com/intel-lab-lkp/linux/commits/cem-kernel-org/shmem-make-shmem_inode_acct_block-return-error/20230403-165022
+patch link:    https://lore.kernel.org/r/20230403084759.884681-3-cem%40kernel.org
+patch subject: [PATCH 2/6] shmem: make shmem_get_inode() return ERR_PTR instead of NULL
+config: arm-randconfig-r033-20230403 (https://download.01.org/0day-ci/archive/20230404/202304041204.sEsaejmQ-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/98aa926ee22a768f6a2dc8b0b897d018fc47497e
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review cem-kernel-org/shmem-make-shmem_inode_acct_block-return-error/20230403-165022
+        git checkout 98aa926ee22a768f6a2dc8b0b897d018fc47497e
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202304041204.sEsaejmQ-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   mm/shmem.c: In function '__shmem_file_setup':
+>> mm/shmem.c:4260:33: error: passing argument 1 of 'shmem_get_inode' from incompatible pointer type [-Werror=incompatible-pointer-types]
+    4260 |         inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
+         |                                 ^~~~~~~~~~~~~~
+         |                                 |
+         |                                 struct mnt_idmap *
+   mm/shmem.c:4231:65: note: expected 'struct super_block *' but argument is of type 'struct mnt_idmap *'
+    4231 | static inline struct inode *shmem_get_inode(struct super_block *sb, struct inode *dir,
+         |                                             ~~~~~~~~~~~~~~~~~~~~^~
+   mm/shmem.c:4260:52: error: passing argument 2 of 'shmem_get_inode' from incompatible pointer type [-Werror=incompatible-pointer-types]
+    4260 |         inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
+         |                                                 ~~~^~~~~~~~
+         |                                                    |
+         |                                                    struct super_block *
+   mm/shmem.c:4231:83: note: expected 'struct inode *' but argument is of type 'struct super_block *'
+    4231 | static inline struct inode *shmem_get_inode(struct super_block *sb, struct inode *dir,
+         |                                                                     ~~~~~~~~~~~~~~^~~
+   In file included from include/uapi/linux/posix_types.h:5,
+                    from include/uapi/linux/types.h:14,
+                    from include/linux/types.h:6,
+                    from include/linux/kasan-checks.h:5,
+                    from include/asm-generic/rwonce.h:26,
+                    from ./arch/arm/include/generated/asm/rwonce.h:1,
+                    from include/linux/compiler.h:247,
+                    from include/linux/build_bug.h:5,
+                    from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/wait.h:7,
+                    from include/linux/wait_bit.h:8,
+                    from include/linux/fs.h:6,
+                    from mm/shmem.c:24:
+>> include/linux/stddef.h:8:14: warning: passing argument 3 of 'shmem_get_inode' makes integer from pointer without a cast [-Wint-conversion]
+       8 | #define NULL ((void *)0)
+         |              ^~~~~~~~~~~
+         |              |
+         |              void *
+   mm/shmem.c:4260:62: note: in expansion of macro 'NULL'
+    4260 |         inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
+         |                                                              ^~~~
+   mm/shmem.c:4232:53: note: expected 'umode_t' {aka 'short unsigned int'} but argument is of type 'void *'
+    4232 |                                             umode_t mode, dev_t dev, unsigned long flags)
+         |                                             ~~~~~~~~^~~~
+>> mm/shmem.c:4260:17: error: too many arguments to function 'shmem_get_inode'
+    4260 |         inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
+         |                 ^~~~~~~~~~~~~~~
+   mm/shmem.c:4231:29: note: declared here
+    4231 | static inline struct inode *shmem_get_inode(struct super_block *sb, struct inode *dir,
+         |                             ^~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/shmem_get_inode +4260 mm/shmem.c
+
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4241  
+703321b60b605b Matthew Auld      2017-10-06  4242  static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, loff_t size,
+c7277090927a5e Eric Paris        2013-12-02  4243  				       unsigned long flags, unsigned int i_flags)
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4244  {
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4245  	struct inode *inode;
+93dec2da7b2349 Al Viro           2018-07-08  4246  	struct file *res;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4247  
+703321b60b605b Matthew Auld      2017-10-06  4248  	if (IS_ERR(mnt))
+703321b60b605b Matthew Auld      2017-10-06  4249  		return ERR_CAST(mnt);
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4250  
+285b2c4fdd69ea Hugh Dickins      2011-08-03  4251  	if (size < 0 || size > MAX_LFS_FILESIZE)
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4252  		return ERR_PTR(-EINVAL);
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4253  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4254  	if (shmem_acct_size(flags, size))
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4255  		return ERR_PTR(-ENOMEM);
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4256  
+7a80e5b8c6fa7d Giuseppe Scrivano 2023-01-20  4257  	if (is_idmapped_mnt(mnt))
+7a80e5b8c6fa7d Giuseppe Scrivano 2023-01-20  4258  		return ERR_PTR(-EINVAL);
+7a80e5b8c6fa7d Giuseppe Scrivano 2023-01-20  4259  
+7a80e5b8c6fa7d Giuseppe Scrivano 2023-01-20 @4260  	inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
+7a80e5b8c6fa7d Giuseppe Scrivano 2023-01-20  4261  				S_IFREG | S_IRWXUGO, 0, flags);
+98aa926ee22a76 Lukas Czerner     2023-04-03  4262  
+98aa926ee22a76 Lukas Czerner     2023-04-03  4263  	if (IS_ERR(inode)) {
+dac2d1f6cbfe3f Al Viro           2018-06-09  4264  		shmem_unacct_size(flags, size);
+98aa926ee22a76 Lukas Czerner     2023-04-03  4265  		return ERR_CAST(inode);
+dac2d1f6cbfe3f Al Viro           2018-06-09  4266  	}
+c7277090927a5e Eric Paris        2013-12-02  4267  	inode->i_flags |= i_flags;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4268  	inode->i_size = size;
+6d6b77f163c7ea Miklos Szeredi    2011-10-28  4269  	clear_nlink(inode);	/* It is unlinked */
+26567cdbbf1a6b Al Viro           2013-03-01  4270  	res = ERR_PTR(ramfs_nommu_expand_for_mapping(inode, size));
+93dec2da7b2349 Al Viro           2018-07-08  4271  	if (!IS_ERR(res))
+93dec2da7b2349 Al Viro           2018-07-08  4272  		res = alloc_file_pseudo(inode, mnt, name, O_RDWR,
+4b42af81f0d7f9 Al Viro           2009-08-05  4273  				&shmem_file_operations);
+6b4d0b2793337c Al Viro           2013-02-14  4274  	if (IS_ERR(res))
+93dec2da7b2349 Al Viro           2018-07-08  4275  		iput(inode);
+6b4d0b2793337c Al Viro           2013-02-14  4276  	return res;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  4277  }
+c7277090927a5e Eric Paris        2013-12-02  4278  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
