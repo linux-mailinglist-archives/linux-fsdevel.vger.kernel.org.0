@@ -2,146 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 500646D7FD9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 16:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B806D6515
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 16:20:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238601AbjDEOpT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 10:45:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57850 "EHLO
+        id S235649AbjDDOUw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Apr 2023 10:20:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238532AbjDEOpR (ORCPT
+        with ESMTP id S235533AbjDDOUs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 10:45:17 -0400
-Received: from mx2.veeam.com (mx2.veeam.com [64.129.123.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D345658A;
-        Wed,  5 Apr 2023 07:45:07 -0700 (PDT)
-Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx2.veeam.com (Postfix) with ESMTPS id 03AB6417B5;
-        Tue,  4 Apr 2023 10:09:22 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
-        s=mx2-2022; t=1680617362;
-        bh=11GGAKNFFOnfpIak6NFTdMWk1LHfY/KVoSOPzye48Ng=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=NwRiJb+gjJQznZhakZ0C7bUEf34GSJBKlvcPoWpcMHZ9QHbtkNs01RsrHFl+bFyLj
-         Q42amjZbjhbrBDYerYo0B0V/43066nm4UD1ODEPGmQ+jFrBqIaud7ynUGT+NYTiLm6
-         lhpA5/OFGwQSDHUHSNU/7C7iYTQinGpOcc8OhuJ9SJ/hvTgGUwqOQUh/GW2cK9eLqw
-         a3Oxnkro3HJH3xTE8NW+yI/Z8W5Ml762h3I4Pskr9d9+AZ0AjKhNLzr0kaqeQogy3a
-         HfHkkveZLo92DtUSuPrL4+VwU66eP9Htg09Wb0OayTzKHhyoqeIsoGuWDWgrMIqPHJ
-         +OWAy0x3s+kuw==
-Received: from ssh-deb10-ssd-vb.amust.local (172.24.10.107) by
- prgmbx01.amust.local (172.24.128.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 4 Apr 2023 16:09:15 +0200
-From:   Sergei Shtepa <sergei.shtepa@veeam.com>
-To:     <axboe@kernel.dk>, <hch@infradead.org>, <corbet@lwn.net>,
-        <snitzer@kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-        <willy@infradead.org>, <kch@nvidia.com>,
-        <martin.petersen@oracle.com>, <vkoul@kernel.org>,
-        <ming.lei@redhat.com>, <gregkh@linuxfoundation.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <sergei.shtepa@veeam.com>
-Subject: [PATCH v3 11/11] blksnap: Kconfig and Makefile
-Date:   Tue, 4 Apr 2023 16:08:35 +0200
-Message-ID: <20230404140835.25166-12-sergei.shtepa@veeam.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20230404140835.25166-1-sergei.shtepa@veeam.com>
-References: <20230404140835.25166-1-sergei.shtepa@veeam.com>
+        Tue, 4 Apr 2023 10:20:48 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A50AD268C
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 07:20:46 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id h1-20020a92d841000000b0031b4d3294dfso21395544ilq.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Apr 2023 07:20:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680618046; x=1683210046;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eMNGtlJZv/4J3QkC2pyZ771io5e3UBz8yYy+eISdalI=;
+        b=TUQuOxqlarMsBHdXlkOQG1h9DIY59k4iHyv6QkAiozk5BKQcODVxO9UdFt0Q/U1qOl
+         Ayi4y23gm4D/tG7hwvoqOsLY3Gi9RsH9ak4OCGrJ6J9O9Q6TfMarDIH9nqbpwOlzD0/N
+         rEOsKEi8GLNyhTo8QkKKpLEUxk7TwgZEDkglOYTKcjhCADMDlOUA1H3jTW/domEe+FDU
+         ui/zu5l+29zGLul8lR2aHAjvqL9pyeRLHy1hpCTuUG+8FTIxilAWmsTs/widTfUtSH9w
+         1AnoILZlXyV4Od5drLyqet2m73hcj45lcTz7cGtVvGXmvXSg4/+PML+s2VCftqKSP6YV
+         3acg==
+X-Gm-Message-State: AAQBX9dtn8ujx1pdtPiGwjaPmjmJ2qsz/y8wpTOjGyF3936qvgi2IP7q
+        kIXRCRq4EAI9g7TwTnBBV6pF0oAY8j3K0RDL+sV48s6Iwc5u
+X-Google-Smtp-Source: AKy350a+WL44nLl7X2R0Ry2vo6oea+fMVyYo4ZSOxn5TAfx3lixq7DYBV37bw38GjRlTrpDS2wQW27XIXgwOnFzkuRQ5bR5OF19O
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [172.24.10.107]
-X-ClientProxiedBy: prgmbx02.amust.local (172.24.128.103) To
- prgmbx01.amust.local (172.24.128.102)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2924031554657367
-X-Veeam-MMEX: True
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6602:22d2:b0:752:fa5a:6188 with SMTP id
+ e18-20020a05660222d200b00752fa5a6188mr1676000ioe.1.1680618045959; Tue, 04 Apr
+ 2023 07:20:45 -0700 (PDT)
+Date:   Tue, 04 Apr 2023 07:20:45 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a1f44605f8836188@google.com>
+Subject: [syzbot] Monthly f2fs report
+From:   syzbot <syzbot+listc9c597f02f7166815d68@syzkaller.appspotmail.com>
+To:     chao@kernel.org, jaegeuk@kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allows to build a module and add the blksnap to the kernel tree.
+Hello f2fs maintainers/developers,
 
-Co-developed-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
+This is a 30-day syzbot report for the f2fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/f2fs
+
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 16 issues are still open and 27 have been fixed so far.
+
+Some of the still happening issues:
+
+Crashes Repro Title
+77      Yes   INFO: task hung in f2fs_balance_fs
+              https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
+23      Yes   kernel BUG in f2fs_evict_inode
+              https://syzkaller.appspot.com/bug?extid=e1246909d526a9d470fa
+4       No    BUG: unable to handle kernel NULL pointer dereference in f2fs_release_folio
+              https://syzkaller.appspot.com/bug?extid=00e671c059932a115ea4
+
 ---
- drivers/block/Kconfig          |  2 ++
- drivers/block/Makefile         |  2 ++
- drivers/block/blksnap/Kconfig  | 12 ++++++++++++
- drivers/block/blksnap/Makefile | 15 +++++++++++++++
- 4 files changed, 31 insertions(+)
- create mode 100644 drivers/block/blksnap/Kconfig
- create mode 100644 drivers/block/blksnap/Makefile
-
-diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
-index f79f20430ef7..5fc38a7ed822 100644
---- a/drivers/block/Kconfig
-+++ b/drivers/block/Kconfig
-@@ -387,4 +387,6 @@ config BLK_DEV_UBLK
- 
- source "drivers/block/rnbd/Kconfig"
- 
-+source "drivers/block/blksnap/Kconfig"
-+
- endif # BLK_DEV
-diff --git a/drivers/block/Makefile b/drivers/block/Makefile
-index 101612cba303..9a2a9a56a247 100644
---- a/drivers/block/Makefile
-+++ b/drivers/block/Makefile
-@@ -40,3 +40,5 @@ obj-$(CONFIG_BLK_DEV_NULL_BLK)	+= null_blk/
- obj-$(CONFIG_BLK_DEV_UBLK)			+= ublk_drv.o
- 
- swim_mod-y	:= swim.o swim_asm.o
-+
-+obj-$(CONFIG_BLKSNAP) += blksnap/
-diff --git a/drivers/block/blksnap/Kconfig b/drivers/block/blksnap/Kconfig
-new file mode 100644
-index 000000000000..14081359847b
---- /dev/null
-+++ b/drivers/block/blksnap/Kconfig
-@@ -0,0 +1,12 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Block device snapshot module configuration
-+#
-+
-+config BLKSNAP
-+	tristate "Block Devices Snapshots Module (blksnap)"
-+	help
-+	  Allow to create snapshots and track block changes for block devices.
-+	  Designed for creating backups for simple block devices. Snapshots are
-+	  temporary and are released then backup is completed. Change block
-+	  tracking allows to create incremental or differential backups.
-diff --git a/drivers/block/blksnap/Makefile b/drivers/block/blksnap/Makefile
-new file mode 100644
-index 000000000000..8d528b95579a
---- /dev/null
-+++ b/drivers/block/blksnap/Makefile
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+blksnap-y := 		\
-+	cbt_map.o	\
-+	chunk.o		\
-+	diff_area.o	\
-+	diff_buffer.o	\
-+	diff_storage.o	\
-+	event_queue.o	\
-+	main.o		\
-+	snapimage.o	\
-+	snapshot.o	\
-+	tracker.o
-+
-+obj-$(CONFIG_BLKSNAP)	 += blksnap.o
--- 
-2.20.1
-
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
