@@ -2,162 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6A3F6D5575
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 02:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38AE36D564B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 03:52:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231906AbjDDAOQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Apr 2023 20:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41346 "EHLO
+        id S230125AbjDDBwr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Apr 2023 21:52:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231741AbjDDAOE (ORCPT
+        with ESMTP id S229699AbjDDBwq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Apr 2023 20:14:04 -0400
-Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47CFF4229
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 17:14:02 -0700 (PDT)
-Received: by mail-pj1-x104a.google.com with SMTP id ie7-20020a17090b400700b0023f06808981so8021137pjb.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Apr 2023 17:14:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680567242;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QYyKpmgAe3S55Nk5FWRs2dH0UIocesat7xjNxdFTU4k=;
-        b=W5WukSX7xVU0/vv5ALD+tup9Pddeb9Iipi9kb8kJt/jBn+TQTiZoJyEWgKO/OQ61Jh
-         2tDeM9kRzvnDYGPtmMlhz5iVehjZJg/jQ63YFUQ7WbbPKq0AY2cM2cHrwogahpd+PgEG
-         XwtqC+dGnvs0z0/3t8FCcMDB2O7fMVf3H3E2qFVcjwb9hPLZO3zgEa2XrTMXRi9MFCHf
-         WEtCE6c9sD8f7AqxvmgV8c+yt8qmrF2I9lAqEvjVuhsI1HciUBrepOGZet31fNCDDW8P
-         oX+wUwY7aO9vBuigwgimgUP/rKThFLYxYAVKIiGShyp9evKm8iqS6ChI4jTiXqDaT7MQ
-         ct3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680567242;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QYyKpmgAe3S55Nk5FWRs2dH0UIocesat7xjNxdFTU4k=;
-        b=u1TvPNC/oiSDBdpCRgh+2Q3211+t+TjreY9GXKh6uke0d7FgTiHzsgyKNaen64MUQC
-         i3CZrR3cquV11Oe6uAFMPxRrcmCmDnEEIY1EtzWs0hGHMEKRQqixQSzrs/IUIJGGG0aU
-         eheQ0kNSO3F9ngV+Du9tSqM3kKsjZsBlCUif8f6JmS/agVPeoRfyPNlACt4/CqiygRE8
-         sCLR/nRbO5fR10OLKLllPeqjmOQgv8aj5iZ9fS+RXTyjXMV6N+eYg1wcnxbxnNsSjfGn
-         UMzrU98Izv1f6QBW+UhuzWqUPVPADTNsOL3ST0Ldab/Pcrh8Hrw27j9zVINxiYmYavxD
-         eChw==
-X-Gm-Message-State: AAQBX9e/LySkJ6uhVfEQJXiCF520kYmM2kDU62VAirvJeKjF7eqdFW7i
-        O3iOunhXdj/uNwjOpN9LzOWgL42nAaNfdE6w
-X-Google-Smtp-Source: AKy350a8jpmup3Y0AoRXTeOyKKcgC2LVL+csu37K+C5/P3dMmovoTexr82+Hd4O52pTXV8PmQrABJAtIr5EvWJJc
-X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:2327])
- (user=yosryahmed job=sendgmr) by 2002:a05:6a00:2e14:b0:627:e6d5:ba2d with
- SMTP id fc20-20020a056a002e1400b00627e6d5ba2dmr223605pfb.6.1680567241767;
- Mon, 03 Apr 2023 17:14:01 -0700 (PDT)
-Date:   Tue,  4 Apr 2023 00:13:53 +0000
-In-Reply-To: <20230404001353.468224-1-yosryahmed@google.com>
-Mime-Version: 1.0
-References: <20230404001353.468224-1-yosryahmed@google.com>
-X-Mailer: git-send-email 2.40.0.348.gf938b09366-goog
-Message-ID: <20230404001353.468224-4-yosryahmed@google.com>
-Subject: [PATCH v4 3/3] mm: vmscan: ignore non-LRU-based reclaim in memcg reclaim
-From:   Yosry Ahmed <yosryahmed@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        David Hildenbrand <david@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@kernel.org>, Yu Zhao <yuzhao@google.com>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Mon, 3 Apr 2023 21:52:46 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 621A8B4
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Apr 2023 18:52:43 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id D91433200912;
+        Mon,  3 Apr 2023 21:52:40 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Mon, 03 Apr 2023 21:52:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1680573160; x=1680659560; bh=6QBSqk0m7gPVqBLQ1BupZhOV6Ead0SRn9TL
+        hYFE1bXw=; b=a939VzUPSkxVAFoTIPysWRWfDvAPZFrx5IT2Mhqj9MuHQ7y8/9i
+        D/c9e0uUDgONVXeVYKnckcGW+ZcluryA0eDhxplf/Ldoko28gY4rMWFlgHLYHNJp
+        YtI7AZk63vSPyUvvEOdllDn7eDj25/i6yeCuMKw3RN8W6YFjb8ITh8KSfJ9kHidl
+        k1srtUA7tyVgRd1IK0AA40psWYYNRCD4+Nc13dIihLIKRxqfD378+K5Eqlbu6p5t
+        cD5+1uskJLFvUsz6ljwp3MJGAxhvoY4zuZaT86aMmIfAjexu8A4TJxSffCSB8S+P
+        jLIV3sCoI7KZj4Ixc6dRc6ld9zq6Ssp3ztg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1680573160; x=1680659560; bh=6QBSqk0m7gPVqBLQ1BupZhOV6Ead0SRn9TL
+        hYFE1bXw=; b=ZhxIdKMhmk5CSk5flpUm0M/U6NMM0LmihcJEIHqAxWeOJ1GlCAC
+        VjboR79z/GpGh7NfTSM0ySTfV1SeMMShafVZmEltw7rm52qek/Y98J/+1XnLXy3G
+        ax1xqVfseJmomFHg0zjlaFjd5Tdo7SvhYbWg97OGeMnDpuDBJoDy1kzF61NuXeJq
+        xtkqtkDbDvuDwAhL9RQOM15NhIS+yR1cKDoHeaVwU0+yaFrgnOvvvxGu+qLWsG69
+        Q1AjbpmfJpI/JnoFcW/yAbRTQp+sKTwRd4KCMkx6G2wZuyu7gkW+ULVanF3NwLJJ
+        er6zJ5F0BYw4gPWcdDuoY0iv0i+jyht3YLA==
+X-ME-Sender: <xms:54IrZNllAMDAMoFNhFOfcEV59fahsuZ64C-jT05IEmt_Ai8xKogL0A>
+    <xme:54IrZI1vrnWZRAHPM3APE-cOyF0lzzfWwMESLsaBbP-NZHfEqx-4E2OIe6AEedSEv
+    BOo4AjenauK>
+X-ME-Received: <xmr:54IrZDqF2uak-hfNy8J3n5QtFlKcaPLYmG2rbZ6zaMSEg1cNXoDDDhyXZkWbD5R1SN-CcCuBFQl34JWp571oPkJrcLDG7yvkYgPUCufHW3RfRBSy9L6X>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeikedgfeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epuefhueeiieejueevkefgiedtteehgfdutdelfffhleeflefhudeuvdefhfeghfehnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
+    esthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:54IrZNlBGAFBbBFKSY42evyh7mboR5SriPBNufJe6_5wKBfBVLFhyg>
+    <xmx:54IrZL3DzGAN66EtL_xd4sGhg4DG6aLZT5_we2dyuHnprKYtf5nHhw>
+    <xmx:54IrZMvBLQgWsZwYXPmQzT3O3jAP1PyhIjUqnrUJAXgGNpVmI7UFAg>
+    <xmx:6IIrZJMeVbITTATcMesehFuvSG-zgz0JUPeo9NObExq5SWL-4svq9g>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Apr 2023 21:52:33 -0400 (EDT)
+Message-ID: <a5581bc7-c522-33a1-4e11-31b71bafd8cc@themaw.net>
+Date:   Tue, 4 Apr 2023 09:52:27 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [RFC PATCH] Legacy mount option "sloppy" support
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Karel Zak <kzak@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Steve French <smfrench@gmail.com>,
+        Tom Moyer <tom.moyer@canonical.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Paulo Alcantara <pc@cjr.nz>,
+        Leif Sahlberg <lsahlber@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        NeilBrown <neilb@suse.com>, Steve Dickson <steved@redhat.com>
+References: <167963629788.253682.5439077048343743982.stgit@donald.themaw.net>
+ <20230328184815.ycgxqen7difgnjt3@ws.net.home>
+ <27b8d5a5-9ab9-c418-ce9c-0faf90677bde@themaw.net>
+ <20230403-disarm-awhile-621819599ecb@brauner>
+Content-Language: en-US
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <20230403-disarm-awhile-621819599ecb@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We keep track of different types of reclaimed pages through
-reclaim_state->reclaimed, and we add them to the reported number of
-reclaimed pages. For non-memcg reclaim, this makes sense. For memcg
-reclaim, we have no clue if those pages are charged to the memcg under
-reclaim.
+On 3/4/23 21:08, Christian Brauner wrote:
+> On Wed, Mar 29, 2023 at 09:03:51AM +0800, Ian Kent wrote:
+>> On 29/3/23 02:48, Karel Zak wrote:
+>>> On Fri, Mar 24, 2023 at 01:39:09PM +0800, Ian Kent wrote:
+>>>> Karel do you find what I'm saying is accurate?
+>>>> Do you think we will be able to get rid of the sloppy option over
+>>>> time with the move to use the mount API?
+>>> The question is what we're talking about :-)
+>>>
+>>> For mount(8) and libmount, there is nothing like the "sloppy" mount option.
+>>>
+>>> If you use it in your fstab or as "mount -o sloppy" on the command line,
+>>> then it's used as any other fs-specific mount option; the library copies
+>>> the string to mount(2) or fsconfig(2) syscall. The library has no clue
+>>> what the string means (it's the same as "mount -o foobar").
+>> Which is what the problem really is.
+>>
+>>
+>> If anyone uses this option with a file system that has previously
+>>
+>> allowed it then mounts fail if it isn't handled properly. Then the
+>>
+>> intended purpose of it is irrelevant because it causes a fail.
+>>
+>>
+>> I guess the notion of ignoring it for fsconfig(), assuming it isn't
+>>
+>> actually needed for the option handling, might not be a viable idea
+>>
+>> ... although I haven't actually added that to fsconfig(), I probably
+>>
+>> should add that to this series.
+>>
+>>
+>> But first the question of whether the option is actually needed anymore
+>>
+>> by those that allow it needs to be answered.
+>>
+>>
+>> In case anyone has forgotten it was introduced because, at one time
+>>
+>> different OSes supported slightly different options for for the same
+>>
+>> thing and one could not include multiple options for the same thing
+>>
+>> in automount map entries without causing the mount to fail.
+>>
+>>
+>> So we also need to answer, is this option conflict still present for
+>>
+>> any of the file systems that allow it, currently nfs, cifs and ntfs
+>>
+>> (I'll need to look up the ntfs maintainer but lets answer this for
+>>
+>> nfs and cifs first).
+>>
+>>
+>> If it isn't actually needed ignoring it in fsconfig() (a deprecation
+>>
+>> warning would be in order) and eventually getting rid of it would be
+>>
+>> a good idea, yes?
+> Yes, I think this is a good idea.
+> The whole reason for this mount option seems a bit hacky tbh so getting
+> rid of it would be great.
 
-Slab pages are shared by different memcgs, so a freed slab page may have
-only been partially charged to the memcg under reclaim. The same goes
-for clean file pages from pruned inodes (on highmem systems) or xfs
-buffer pages, there is no simple way to currently link them to the memcg
-under reclaim.
+Thanks for thinking about this Christian.
 
-Stop reporting those freed pages as reclaimed pages during memcg
-reclaim. This should make the return value of writing to memory.reclaim,
-and may help reduce unnecessary reclaim retries during memcg charging.
-Writing to memory.reclaim on the root memcg is considered as
-cgroup_reclaim(), but for this case we want to include any freed pages,
-so use the global_reclaim() check instead.
+It is something that has concerned me for a long time now.
 
-Generally, this should make the return value of
-try_to_free_mem_cgroup_pages() more accurate. In some limited cases (e.g.
-freed a slab page that was mostly charged to the memcg under reclaim),
-the return value of try_to_free_mem_cgroup_pages() can be
-underestimated, but this should be fine. The freed pages will be
-uncharged anyway, and we can charge the memcg the next time around as we
-usually do memcg reclaim in a retry loop.
 
-Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
----
- mm/vmscan.c | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+I know the impression that people get is that it's hacky and it's
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 8f0e7c4e91ae3..049e39202e6ce 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -518,7 +518,35 @@ static void set_task_reclaim_state(struct task_struct *task,
- static void flush_reclaim_state(struct scan_control *sc,
- 				struct reclaim_state *rs)
- {
--	if (rs) {
-+	/*
-+	 * Currently, reclaim_state->reclaimed includes three types of pages
-+	 * freed outside of vmscan:
-+	 * (1) Slab pages.
-+	 * (2) Clean file pages from pruned inodes.
-+	 * (3) XFS freed buffer pages.
-+	 *
-+	 * For all of these cases, we have no way of finding out whether these
-+	 * pages were related to the memcg under reclaim. For example, a freed
-+	 * slab page could have had only a single object charged to the memcg
-+	 * under reclaim. Also, populated inodes are not on shrinker LRUs
-+	 * anymore except on highmem systems.
-+	 *
-+	 * Instead of over-reporting the reclaimed pages in a memcg reclaim,
-+	 * only count such pages in global reclaim. This prevents unnecessary
-+	 * retries during memcg charging and false positive from proactive
-+	 * reclaim (memory.reclaim).
-+	 *
-+	 * For uncommon cases were the freed pages were actually significantly
-+	 * charged to the memcg under reclaim, and we end up under-reporting, it
-+	 * should be fine. The freed pages will be uncharged anyway, even if
-+	 * they are not reported properly, and we will be able to make forward
-+	 * progress in charging (which is usually in a retry loop).
-+	 *
-+	 * We can go one step further, and report the uncharged objcg pages in
-+	 * memcg reclaim, to make reporting more accurate and reduce
-+	 * under-reporting, but it's probably not worth the complexity for now.
-+	 */
-+	if (rs && global_reclaim(sc)) {
- 		sc->nr_reclaimed += rs->reclaimed;
- 		rs->reclaimed = 0;
- 	}
--- 
-2.40.0.348.gf938b09366-goog
+accurate to an extent but there was real need and value for it at
+
+one point (although it was around before my time).
+
+
+But now we get tripped up because trying to get rid of it causes
+
+the problem of the option itself not working which tends to obscure
+
+the actual use case of users.
+
+
+I think the change to use the mount API is the best opportunity we've
+
+had to clean this up in forever, particularly since the mount API
+
+makes it particularly hard to continue to use it.
+
+
+I'm still thinking about it and I'll post an updated patch and
+
+accompanying discussion at some point. At the very least we need a
+
+clear upstream position on it to allow those of us with customers
+
+that think they need it to pass on the deprecation notice and reasoning.
+
+
+It might end up we have to revisit it but at least if that's the case
+
+we should have more detailed use cases that are current.
+
+
+Ian
 
