@@ -2,48 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D83F6D8381
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 18:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6475C6D834E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 18:14:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233001AbjDEQUY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 12:20:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52682 "EHLO
+        id S229925AbjDEQOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 12:14:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233803AbjDEQUQ (ORCPT
+        with ESMTP id S229533AbjDEQOf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 12:20:16 -0400
+        Wed, 5 Apr 2023 12:14:35 -0400
+X-Greylist: delayed 5343 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Apr 2023 09:14:11 PDT
 Received: from mx2.veeam.com (mx2.veeam.com [64.129.123.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE13173E;
-        Wed,  5 Apr 2023 09:20:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86BF37293;
+        Wed,  5 Apr 2023 09:14:11 -0700 (PDT)
 Received: from mx1.veeam.com (mx1.veeam.com [172.18.34.147])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx2.veeam.com (Postfix) with ESMTPS id 0C93941450;
+        by mx2.veeam.com (Postfix) with ESMTPS id 1B949418AA;
         Wed,  5 Apr 2023 12:13:40 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
         s=mx2-2022; t=1680711220;
-        bh=znObU4UF+Olqt26EUzuZdy91yy1lR2Qb8Z/TdIa3Vb0=;
+        bh=Ze5QjE1yiwPMlIFa9p4GDtorLv/PPi0SS6nJAo7avL0=;
         h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=I8WpK3mqduIMKORLJt8maw4w80iFKVWHhXQ2O6o5OIgRzOa3N+NGyUxqZshyi3Fz6
-         s7g8C2wWze6hNPhTH9/4aX7P4yL6E4YOYUYIRuP2RTvxKYHKDxlhCtJsz02ionBdAX
-         d1KOH3URD5BLXNrGHX38wCHbEBc768yjTIl9e5rfjh56Hvd6HRYXkaDgf5Gaiu5g9T
-         BgaT57rpg/ipY5iFeK9Q+m+xyU26rqL+YqdpQuHijzMmFs69VS0LL6gw+QDPsk8+Pa
-         uKuogGCxbNdI7PKsYKXCjRUWQ4q66KJW/CbbOZ0OS8drIZ8IdhlQagas43f3rpHip1
-         JfElmRNMxvzNA==
+        b=kMifM/iDzpTuM/LeLqWyMF8FbQZS1wTJqi6gvF6qg9JlvjvvBPgNL9QVg8hW7suZE
+         cMtMPDRDpiwPXrqgYE+JY/apEqmyHOICatAJx9bm95ddRCbajZmBQsnptZJ3F1DNgo
+         akonCBI0lPpM4AuLuGurDyznVLfWAKejqwpF6RK7j9T3+a0VCM92KYsDTh9nsHUJ1S
+         q4eO6dhdEqRurQJz+Es+IEbYD9j1pQmBKP0qD4l+CHeGd8FpFp67pV/xdcCMhA5Rxn
+         0g8RRUyPOb1qFHUSOhuS9ODFCymxdT1CKFT54mxPeKytULiv3Xt1JFIn7qtgKahrMd
+         uBh8CkeVbDxwg==
 Received: from mx4.veeam.com (mx4.amust.local [172.31.224.40])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.veeam.com (Postfix) with ESMTPS id 98B2741D08;
+        by mx1.veeam.com (Postfix) with ESMTPS id 8DF6B41DC1;
         Wed,  5 Apr 2023 06:09:15 -0400 (EDT)
 Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx4.veeam.com (Postfix) with ESMTPS id A6C7F7D663;
-        Tue,  4 Apr 2023 17:09:05 +0300 (MSK)
+        by mx4.veeam.com (Postfix) with ESMTPS id BE44DA234B;
+        Tue,  4 Apr 2023 17:09:06 +0300 (MSK)
 Received: from ssh-deb10-ssd-vb.amust.local (172.24.10.107) by
  prgmbx01.amust.local (172.24.128.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 4 Apr 2023 16:09:03 +0200
+ 15.2.1118.26; Tue, 4 Apr 2023 16:09:04 +0200
 From:   Sergei Shtepa <sergei.shtepa@veeam.com>
 To:     <axboe@kernel.dk>, <hch@infradead.org>, <corbet@lwn.net>,
         <snitzer@kernel.org>
@@ -54,9 +55,9 @@ CC:     <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
         <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <sergei.shtepa@veeam.com>
-Subject: [PATCH v3 04/11] blksnap: header file of the module interface
-Date:   Tue, 4 Apr 2023 16:08:28 +0200
-Message-ID: <20230404140835.25166-5-sergei.shtepa@veeam.com>
+Subject: [PATCH v3 05/11] blksnap: module management interface functions
+Date:   Tue, 4 Apr 2023 16:08:29 +0200
+Message-ID: <20230404140835.25166-6-sergei.shtepa@veeam.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230404140835.25166-1-sergei.shtepa@veeam.com>
 References: <20230404140835.25166-1-sergei.shtepa@veeam.com>
@@ -78,457 +79,490 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The header file contains a set of declarations, structures and control
-requests (ioctl) that allows to manage the module from the user space.
+Contains callback functions for loading and unloading the module and
+implementation of module management interface functions. The module
+parameters and other mandatory declarations for the kernel module are
+also defined.
 
 Co-developed-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
 ---
- MAINTAINERS                  |   1 +
- include/uapi/linux/blksnap.h | 421 +++++++++++++++++++++++++++++++++++
- 2 files changed, 422 insertions(+)
- create mode 100644 include/uapi/linux/blksnap.h
+ MAINTAINERS                    |   1 +
+ drivers/block/blksnap/main.c   | 428 +++++++++++++++++++++++++++++++++
+ drivers/block/blksnap/params.h |  16 ++
+ 3 files changed, 445 insertions(+)
+ create mode 100644 drivers/block/blksnap/main.c
+ create mode 100644 drivers/block/blksnap/params.h
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 4bdb30369a74..d4a9b44521dd 100644
+index d4a9b44521dd..570333ee3801 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
 @@ -3585,6 +3585,7 @@ M:	Sergei Shtepa <sergei.shtepa@veeam.com>
  L:	linux-block@vger.kernel.org
  S:	Supported
  F:	Documentation/block/blksnap.rst
-+F:	include/uapi/linux/blksnap.h
++F:	drivers/block/blksnap/*
+ F:	include/uapi/linux/blksnap.h
  
  BLOCK LAYER
- M:	Jens Axboe <axboe@kernel.dk>
-diff --git a/include/uapi/linux/blksnap.h b/include/uapi/linux/blksnap.h
+diff --git a/drivers/block/blksnap/main.c b/drivers/block/blksnap/main.c
 new file mode 100644
-index 000000000000..2bfcf9031e95
+index 000000000000..dd43e8877da1
 --- /dev/null
-+++ b/include/uapi/linux/blksnap.h
-@@ -0,0 +1,421 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++++ b/drivers/block/blksnap/main.c
+@@ -0,0 +1,428 @@
++// SPDX-License-Identifier: GPL-2.0
 +/* Copyright (C) 2023 Veeam Software Group GmbH */
-+#ifndef _UAPI_LINUX_BLKSNAP_H
-+#define _UAPI_LINUX_BLKSNAP_H
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 +
-+#include <linux/types.h>
++#include <linux/module.h>
++#include <linux/miscdevice.h>
++#include <linux/build_bug.h>
++#include <uapi/linux/blksnap.h>
++#include "snapimage.h"
++#include "snapshot.h"
++#include "tracker.h"
++#include "chunk.h"
++#include "params.h"
 +
-+#define BLKSNAP_CTL "blksnap-control"
-+#define BLKSNAP_IMAGE_NAME "blksnap-image"
-+#define BLKSNAP 'V'
-+
-+/**
-+ * DOC: Block device filter interface.
-+ *
-+ * Control commands that are transmitted through the block device filter
-+ * interface.
++/*
++ * The power of 2 for minimum tracking block size.
++ * If we make the tracking block size small, we will get detailed information
++ * about the changes, but the size of the change tracker table will be too
++ * large, which will lead to inefficient memory usage.
 + */
++int tracking_block_minimum_shift = 16;
 +
-+/**
-+ * enum blkfilter_ctl_blksnap - List of commands for BLKFILTER_CTL ioctl
-+ *
-+ * @blkfilter_ctl_blksnap_cbtinfo:
-+ *	Get CBT information.
-+ *	The result of executing the command is a &struct blksnap_cbtinfo.
-+ *	Return 0 if succeeded, negative errno otherwise.
-+ * @blkfilter_ctl_blksnap_cbtmap:
-+ *	Read the CBT map.
-+ *	The option passes the &struct blksnap_cbtmap.
-+ *	The size of the table can be quite large. Thus, the table is read in
-+ *	a loop, in each cycle of which the next offset is set to
-+ *	&blksnap_tracker_read_cbt_bitmap.offset.
-+ *	Return a count of bytes read if succeeded, negative errno otherwise.
-+ * @blkfilter_ctl_blksnap_cbtdirty:
-+ *	Set dirty blocks in the CBT map.
-+ *	The option passes the &struct blksnap_cbtdirty.
-+ *	There are cases when some blocks need to be marked as changed.
-+ *	This ioctl allows to do this.
-+ *	Return 0 if succeeded, negative errno otherwise.
-+ * @blkfilter_ctl_blksnap_snapshotadd:
-+ *	Add device to snapshot.
-+ *	The option passes the &struct blksnap_snapshotadd.
-+ *	Return 0 if succeeded, negative errno otherwise.
-+ * @blkfilter_ctl_blksnap_snapshotinfo:
-+ *	Get information about snapshot.
-+ *	The result of executing the command is a &struct blksnap_snapshotinfo.
-+ *	Return 0 if succeeded, negative errno otherwise.
++/*
++ * The maximum number of tracking blocks.
++ * A table is created to store information about the status of all tracking
++ * blocks in RAM. So, if the size of the tracking block is small, then the size
++ * of the table turns out to be large and memory is consumed inefficiently.
++ * As the size of the block device grows, the size of the tracking block
++ * size should also grow. For this purpose, the limit of the maximum
++ * number of block size is set.
 + */
-+enum blkfilter_ctl_blksnap {
-+	blkfilter_ctl_blksnap_cbtinfo,
-+	blkfilter_ctl_blksnap_cbtmap,
-+	blkfilter_ctl_blksnap_cbtdirty,
-+	blkfilter_ctl_blksnap_snapshotadd,
-+	blkfilter_ctl_blksnap_snapshotinfo,
++int tracking_block_maximum_count = 2097152;
++
++/*
++ * The power of 2 for maximum tracking block size.
++ * On very large capacity disks, the block size may be too large. To prevent
++ * this, the maximum block size is limited.
++ * If the limit on the maximum block size has been reached, then the number of
++ * blocks may exceed the tracking_block_maximum_count.
++ */
++int tracking_block_maximum_shift = 26;
++
++/*
++ * The power of 2 for minimum chunk size.
++ * The size of the chunk depends on how much data will be copied to the
++ * difference storage when at least one sector of the block device is changed.
++ * If the size is small, then small I/O units will be generated, which will
++ * reduce performance. Too large a chunk size will lead to inefficient use of
++ * the difference storage.
++ */
++int chunk_minimum_shift = 18;
++
++/*
++ * The maximum number of chunks.
++ * To store information about the state of all the chunks, a table is created
++ * in RAM. So, if the size of the chunk is small, then the size of the table
++ * turns out to be large and memory is consumed inefficiently.
++ * As the size of the block device grows, the size of the chunk should also
++ * grow. For this purpose, the maximum number of chunks is set.
++ */
++int chunk_maximum_count = 2097152;
++
++/*
++ * The power of 2 for maximum chunk size.
++ * On very large capacity disks, the block size may be too large. To prevent
++ * this, the maximum block size is limited.
++ * If the limit on the maximum block size has been reached, then the number of
++ * blocks may exceed the chunk_maximum_count.
++ */
++int chunk_maximum_shift = 26;
++/*
++ * The maximum number of chunks in queue.
++ * The chunk is not immediately stored to the difference storage. The chunks
++ * are put in a store queue. The store queue allows to postpone the operation
++ * of storing a chunks data to the difference storage and perform it later in
++ * the worker thread.
++ */
++int chunk_maximum_in_queue = 16;
++
++/*
++ * The size of the pool of preallocated difference buffers.
++ * A buffer can be allocated for each chunk. After use, this buffer is not
++ * released immediately, but is sent to the pool of free buffers.
++ * However, if there are too many free buffers in the pool, then these free
++ * buffers will be released immediately.
++ */
++int free_diff_buffer_pool_size = 128;
++
++/*
++ * The minimum allowable size of the difference storage in sectors.
++ * The difference storage is a part of the disk space allocated for storing
++ * snapshot data. If there is less free space in the storage than the minimum,
++ * an event is generated about the lack of free space.
++ */
++int diff_storage_minimum = 2097152;
++
++#define VERSION_STR "2.0.0.0"
++static const struct blksnap_version version = {
++	.major = 2,
++	.minor = 0,
++	.revision = 0,
++	.build = 0,
 +};
 +
-+#ifndef UUID_SIZE
-+#define UUID_SIZE 16
-+#endif
++int get_tracking_block_minimum_shift(void)
++{
++	return tracking_block_minimum_shift;
++}
++int get_tracking_block_maximum_shift(void)
++{
++	return tracking_block_maximum_shift;
++}
++int get_tracking_block_maximum_count(void)
++{
++	return tracking_block_maximum_count;
++}
++int get_chunk_minimum_shift(void)
++{
++	return chunk_minimum_shift;
++}
++int get_chunk_maximum_shift(void)
++{
++	return chunk_maximum_shift;
++}
++int get_chunk_maximum_count(void)
++{
++	return chunk_maximum_count;
++}
++int get_chunk_maximum_in_queue(void)
++{
++	return chunk_maximum_in_queue;
++}
++int get_free_diff_buffer_pool_size(void)
++{
++	return free_diff_buffer_pool_size;
++}
++int get_diff_storage_minimum(void)
++{
++	return diff_storage_minimum;
++}
 +
-+/**
-+ * struct blksnap_uuid - Unique 16-byte identifier.
-+ *
-+ * @b:
-+ *	An array of 16 bytes.
-+ */
-+struct blksnap_uuid {
-+	__u8 b[UUID_SIZE];
++static int ioctl_version(unsigned long arg)
++{
++	struct blksnap_version __user *user_version = (void *)arg;
++
++	if (copy_to_user(user_version, &version, sizeof(version))) {
++		pr_err("Unable to get version: invalid user buffer\n");
++		return -ENODATA;
++	}
++
++	return 0;
++}
++
++static_assert(sizeof(uuid_t) == sizeof(struct blksnap_uuid),
++	"Invalid size of struct blksnap_uuid.");
++
++static int ioctl_snapshot_create(unsigned long arg)
++{
++	struct blksnap_uuid __user *user_id = (void *)arg;
++	uuid_t kernel_id;
++	int ret;
++
++	ret = snapshot_create(&kernel_id);
++	if (ret)
++		return ret;
++
++	if (copy_to_user(user_id->b, kernel_id.b, sizeof(uuid_t))) {
++		pr_err("Unable to create snapshot: invalid user buffer\n");
++		return -ENODATA;
++	}
++
++	return 0;
++}
++
++static int ioctl_snapshot_destroy(unsigned long arg)
++{
++	struct blksnap_uuid __user *user_id = (void *)arg;
++	uuid_t kernel_id;
++
++	if (copy_from_user(kernel_id.b, user_id->b, sizeof(uuid_t))) {
++		pr_err("Unable to destroy snapshot: invalid user buffer\n");
++		return -ENODATA;
++	}
++
++	return snapshot_destroy(&kernel_id);
++}
++
++static int ioctl_snapshot_append_storage(unsigned long arg)
++{
++	int ret;
++	struct blksnap_snapshot_append_storage __user *uarg = (void *)arg;
++	struct blksnap_snapshot_append_storage karg;
++	char *bdev_path = NULL;
++
++	pr_debug("Append difference storage\n");
++
++	if (copy_from_user(&karg, uarg, sizeof(karg))) {
++		pr_err("Unable to append difference storage: invalid user buffer\n");
++		return -EINVAL;
++	}
++
++	bdev_path = strndup_user(karg.bdev_path, karg.bdev_path_size);
++	if (IS_ERR(bdev_path)) {
++		pr_err("Unable to append difference storage: invalid block device name buffer\n");
++		return PTR_ERR(bdev_path);
++	}
++
++	ret = snapshot_append_storage((uuid_t *)karg.id.b, bdev_path,
++				       karg.ranges, karg.count);
++	kfree(bdev_path);
++	return ret;
++}
++
++static int ioctl_snapshot_take(unsigned long arg)
++{
++	struct blksnap_uuid __user *user_id = (void *)arg;
++	uuid_t kernel_id;
++
++	if (copy_from_user(kernel_id.b, user_id->b, sizeof(uuid_t))) {
++		pr_err("Unable to take snapshot: invalid user buffer\n");
++		return -ENODATA;
++	}
++
++	return snapshot_take(&kernel_id);
++}
++
++static int ioctl_snapshot_collect(unsigned long arg)
++{
++	int ret;
++	struct blksnap_snapshot_collect karg;
++
++	if (copy_from_user(&karg, (void *)arg, sizeof(karg))) {
++		pr_err("Unable to collect available snapshots: invalid user buffer\n");
++		return -ENODATA;
++	}
++
++	ret = snapshot_collect(&karg.count, karg.ids);
++
++	if (copy_to_user((void *)arg, &karg, sizeof(karg))) {
++		pr_err("Unable to collect available snapshots: invalid user buffer\n");
++		return -ENODATA;
++	}
++
++	return ret;
++}
++
++static_assert(sizeof(struct blksnap_snapshot_event) == 4096,
++	"The size struct blksnap_snapshot_event should be equal to the size of the page.");
++
++static int ioctl_snapshot_wait_event(unsigned long arg)
++{
++	int ret = 0;
++	struct blksnap_snapshot_event __user *uarg = (void *)arg;
++	struct blksnap_snapshot_event *karg;
++	struct event *ev;
++
++	karg = kzalloc(sizeof(struct blksnap_snapshot_event), GFP_KERNEL);
++	if (!karg)
++		return -ENOMEM;
++
++	/* Copy only snapshot ID and timeout*/
++	if (copy_from_user(karg, uarg, sizeof(uuid_t) + sizeof(__u32))) {
++		pr_err("Unable to get snapshot event. Invalid user buffer\n");
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ev = snapshot_wait_event((uuid_t *)karg->id.b, karg->timeout_ms);
++	if (IS_ERR(ev)) {
++		ret = PTR_ERR(ev);
++		goto out;
++	}
++
++	pr_debug("Received event=%lld code=%d data_size=%d\n", ev->time,
++		 ev->code, ev->data_size);
++	karg->code = ev->code;
++	karg->time_label = ev->time;
++
++	if (ev->data_size > sizeof(karg->data)) {
++		pr_err("Event size %d is too big\n", ev->data_size);
++		ret = -ENOSPC;
++		/* If we can't copy all the data, we copy only part of it. */
++	}
++	memcpy(karg->data, ev->data, ev->data_size);
++	event_free(ev);
++
++	if (copy_to_user(uarg, karg, sizeof(struct blksnap_snapshot_event))) {
++		pr_err("Unable to get snapshot event. Invalid user buffer\n");
++		ret = -EINVAL;
++	}
++out:
++	kfree(karg);
++
++	return ret;
++}
++
++static int (*const blksnap_ioctl_table[])(unsigned long arg) = {
++	ioctl_version,
++	ioctl_snapshot_create,
++	ioctl_snapshot_destroy,
++	ioctl_snapshot_append_storage,
++	ioctl_snapshot_take,
++	ioctl_snapshot_collect,
++	ioctl_snapshot_wait_event,
 +};
 +
-+/**
-+ * struct blksnap_cbtinfo - Result for the command
-+ *	&blkfilter_ctl_blksnap.blkfilter_ctl_blksnap_cbtinfo.
-+ *
-+ * @device_capacity:
-+ *	Device capacity in bytes.
-+ * @block_size:
-+ *	Block size in bytes.
-+ * @block_count:
-+ *	Number of blocks.
-+ * @generation_id:
-+ *	Unique identifier of change tracking generation.
-+ * @changes_number:
-+ *	Current changes number.
-+ */
-+struct blksnap_cbtinfo {
-+	__u64 device_capacity;
-+	__u32 block_size;
-+	__u32 block_count;
-+	struct blksnap_uuid generation_id;
-+	__u8 changes_number;
++static_assert(
++	sizeof(blksnap_ioctl_table) ==
++	((blksnap_ioctl_snapshot_wait_event + 1) * sizeof(void *)),
++	"The size of table blksnap_ioctl_table does not match the enum blksnap_ioctl.");
++
++static long ctrl_unlocked_ioctl(struct file *filp, unsigned int cmd,
++				unsigned long arg)
++{
++	int nr = _IOC_NR(cmd);
++
++	if (nr > (sizeof(blksnap_ioctl_table) / sizeof(void *)))
++		return -ENOTTY;
++
++	if (!blksnap_ioctl_table[nr])
++		return -ENOTTY;
++
++	return blksnap_ioctl_table[nr](arg);
++}
++
++static const struct file_operations blksnap_ctrl_fops = {
++	.owner		= THIS_MODULE,
++	.unlocked_ioctl	= ctrl_unlocked_ioctl,
 +};
 +
-+/**
-+ * struct blksnap_cbtmap - Option for the command
-+ *	&blkfilter_ctl_blksnap.blkfilter_ctl_blksnap_cbtmap.
-+ *
-+ * @offset:
-+ *	Offset from the beginning of the CBT bitmap in bytes.
-+ * @length:
-+ *	Size of @buff in bytes.
-+ * @buffer:
-+ *	Pointer to the buffer for output.
-+ */
-+struct blksnap_cbtmap {
-+	__u32 offset;
-+	__u32 length;
-+	__u8 *buffer;
++static struct miscdevice blksnap_ctrl_misc = {
++	.minor		= MISC_DYNAMIC_MINOR,
++	.name		= BLKSNAP_CTL,
++	.fops		= &blksnap_ctrl_fops,
 +};
 +
-+/**
-+ * struct blksnap_sectors - Description of the block device region.
-+ *
-+ * @offset:
-+ *	Offset from the beginning of the disk in sectors.
-+ * @count:
-+ *	Count of sectors.
-+ */
-+struct blksnap_sectors {
-+	__u64 offset;
-+	__u64 count;
-+};
++static int __init blksnap_init(void)
++{
++	int ret;
 +
-+/**
-+ * struct blksnap_cbtdirty - Option for the command
-+ *	&blkfilter_ctl_blksnap.blkfilter_ctl_blksnap_cbtdirty.
-+ *
-+ * @count:
-+ *	Count of elements in the @dirty_sectors.
-+ * @dirty_sectors:
-+ *	Pointer to the array of &struct blksnap_sectors.
-+ */
-+struct blksnap_cbtdirty {
-+	__u32 count;
-+	struct blksnap_sectors *dirty_sectors;
-+};
++	pr_debug("Loading\n");
++	pr_debug("Version: %s\n", VERSION_STR);
++	pr_debug("tracking_block_minimum_shift: %d\n",
++		 tracking_block_minimum_shift);
++	pr_debug("tracking_block_maximum_count: %d\n",
++		 tracking_block_maximum_count);
++	pr_debug("chunk_minimum_shift: %d\n", chunk_minimum_shift);
++	pr_debug("chunk_maximum_count: %d\n", chunk_maximum_count);
++	pr_debug("chunk_maximum_in_queue: %d\n", chunk_maximum_in_queue);
++	pr_debug("free_diff_buffer_pool_size: %d\n",
++		 free_diff_buffer_pool_size);
++	pr_debug("diff_storage_minimum: %d\n", diff_storage_minimum);
 +
-+/**
-+ * struct blksnap_snapshotadd - Option for the command
-+ *	&blkfilter_ctl_blksnap.blkfilter_ctl_blksnap_snapshotadd.
-+ *
-+ * @id:
-+ *	ID of the snapshot to which the block device should be added.
-+ */
-+struct blksnap_snapshotadd {
-+	struct blksnap_uuid id;
-+};
++	ret = chunk_init();
++	if (ret)
++		goto fail_chunk_init;
 +
-+#define IMAGE_DISK_NAME_LEN 32
++	ret = tracker_init();
++	if (ret)
++		goto fail_tracker_init;
 +
-+/**
-+ * struct blksnap_snapshotinfo - Result for the command
-+ *	&blkfilter_ctl_blksnap.blkfilter_ctl_blksnap_snapshotinfo.
-+ *
-+ * @error_code:
-+ *	Zero if there were no errors while holding the snapshot.
-+ *	The error code -ENOSPC means that while holding the snapshot, a snapshot
-+ *	overflow situation has occurred. Other error codes mean other reasons
-+ *	for failure.
-+ *	The error code is reset when the device is added to a new snapshot.
-+ * @image:
-+ *	If the snapshot was taken, it stores the block device name of the
-+ *	image, or empty string otherwise.
-+ */
-+struct blksnap_snapshotinfo {
-+	__s32 error_code;
-+	__u8 image[IMAGE_DISK_NAME_LEN];
-+};
++	ret = misc_register(&blksnap_ctrl_misc);
++	if (ret)
++		goto fail_misc_register;
 +
-+/**
-+ * DOC: Interface for managing snapshots
-+ *
-+ * Control commands that are transmitted through the blksnap module interface.
-+ */
-+enum blksnap_ioctl {
-+	blksnap_ioctl_version,
-+	blksnap_ioctl_snapshot_create,
-+	blksnap_ioctl_snapshot_destroy,
-+	blksnap_ioctl_snapshot_append_storage,
-+	blksnap_ioctl_snapshot_take,
-+	blksnap_ioctl_snapshot_collect,
-+	blksnap_ioctl_snapshot_wait_event,
-+};
++	return 0;
 +
-+/**
-+ * struct blksnap_version - Module version.
-+ *
-+ * @major:
-+ *	Version major part.
-+ * @minor:
-+ *	Version minor part.
-+ * @revision:
-+ *	Revision number.
-+ * @build:
-+ *	Build number. Should be zero.
-+ */
-+struct blksnap_version {
-+	__u16 major;
-+	__u16 minor;
-+	__u16 revision;
-+	__u16 build;
-+};
++fail_misc_register:
++	tracker_done();
++fail_tracker_init:
++	chunk_done();
++fail_chunk_init:
 +
-+/**
-+ * define IOCTL_BLKSNAP_VERSION - Get module version.
-+ *
-+ * The version may increase when the API changes. But linking the user space
-+ * behavior to the version code does not seem to be a good idea.
-+ * To ensure backward compatibility, API changes should be made by adding new
-+ * ioctl without changing the behavior of existing ones. The version should be
-+ * used for logs.
-+ *
-+ * Return: 0 if succeeded, negative errno otherwise.
-+ */
-+#define IOCTL_BLKSNAP_VERSION							\
-+	_IOW(BLKSNAP, blksnap_ioctl_version, struct blksnap_version)
++	return ret;
++}
 +
++static void __exit blksnap_exit(void)
++{
++	pr_debug("Unloading module\n");
 +
-+/**
-+ * define IOCTL_BLKSNAP_SNAPSHOT_CREATE - Create snapshot.
-+ *
-+ * Creates a snapshot structure in the memory and allocates an identifier for
-+ * it. Further interaction with the snapshot is possible by this identifier.
-+ * A snapshot is created for several block devices at once.
-+ * Several snapshots can be created at the same time, but with the condition
-+ * that one block device can only be included in one snapshot.
-+ *
-+ * Return: 0 if succeeded, negative errno otherwise.
-+ */
-+#define IOCTL_BLKSNAP_SNAPSHOT_CREATE						\
-+	_IOW(BLKSNAP, blksnap_ioctl_snapshot_create,				\
-+	     struct blksnap_uuid)
++	misc_deregister(&blksnap_ctrl_misc);
 +
++	chunk_done();
++	snapshot_done();
++	tracker_done();
 +
-+/**
-+ * define IOCTL_BLKSNAP_SNAPSHOT_DESTROY - Release and destroy the snapshot.
-+ *
-+ * Destroys snapshot with &blksnap_snapshot_destroy.id. This leads to the
-+ * deletion of all block device images of the snapshot. The difference storage
-+ * is being released. But the change tracker keeps tracking.
-+ *
-+ * Return: 0 if succeeded, negative errno otherwise.
-+ */
-+#define IOCTL_BLKSNAP_SNAPSHOT_DESTROY						\
-+	_IOR(BLKSNAP, blksnap_ioctl_snapshot_destroy,				\
-+	     struct blksnap_uuid)
++	pr_debug("Module was unloaded\n");
++}
 +
-+/**
-+ * struct blksnap_snapshot_append_storage - Argument for the
-+ *	&IOCTL_BLKSNAP_SNAPSHOT_APPEND_STORAGE control.
-+ *
-+ * @id:
-+ *	Snapshot ID.
-+ * @bdev_path:
-+ *	Device path string buffer.
-+ * @bdev_path_size:
-+ *	Device path string buffer size.
-+ * @count:
-+ *	Size of @ranges in the number of &struct blksnap_sectors.
-+ * @ranges:
-+ *	Pointer to the array of &struct blksnap_sectors.
-+ */
-+struct blksnap_snapshot_append_storage {
-+	struct blksnap_uuid id;
-+	__u8 *bdev_path;
-+	__u32 bdev_path_size;
-+	__u32 count;
-+	struct blksnap_sectors *ranges;
-+};
++module_init(blksnap_init);
++module_exit(blksnap_exit);
 +
-+/**
-+ * define IOCTL_BLKSNAP_SNAPSHOT_APPEND_STORAGE - Append storage to the
-+ *	difference storage of the snapshot.
-+ *
-+ * The snapshot difference storage can be set either before or after creating
-+ * the snapshot images. This allows to dynamically expand the difference
-+ * storage while holding the snapshot.
-+ *
-+ * Return: 0 if succeeded, negative errno otherwise.
-+ */
-+#define IOCTL_BLKSNAP_SNAPSHOT_APPEND_STORAGE					\
-+	_IOW(BLKSNAP, blksnap_ioctl_snapshot_append_storage,			\
-+	     struct blksnap_snapshot_append_storage)
++module_param_named(tracking_block_minimum_shift, tracking_block_minimum_shift,
++		   int, 0644);
++MODULE_PARM_DESC(tracking_block_minimum_shift,
++		 "The power of 2 for minimum tracking block size");
++module_param_named(tracking_block_maximum_count, tracking_block_maximum_count,
++		   int, 0644);
++MODULE_PARM_DESC(tracking_block_maximum_count,
++		 "The maximum number of tracking blocks");
++module_param_named(tracking_block_maximum_shift, tracking_block_maximum_shift,
++		   int, 0644);
++MODULE_PARM_DESC(tracking_block_maximum_shift,
++		 "The power of 2 for maximum trackings block size");
++module_param_named(chunk_minimum_shift, chunk_minimum_shift, int, 0644);
++MODULE_PARM_DESC(chunk_minimum_shift,
++		 "The power of 2 for minimum chunk size");
++module_param_named(chunk_maximum_count, chunk_maximum_count, int, 0644);
++MODULE_PARM_DESC(chunk_maximum_count,
++		 "The maximum number of chunks");
++module_param_named(chunk_maximum_shift, chunk_maximum_shift, int, 0644);
++MODULE_PARM_DESC(chunk_maximum_shift,
++		 "The power of 2 for maximum snapshots chunk size");
++module_param_named(chunk_maximum_in_queue, chunk_maximum_in_queue, int, 0644);
++MODULE_PARM_DESC(chunk_maximum_in_queue,
++		 "The maximum number of chunks in store queue");
++module_param_named(free_diff_buffer_pool_size, free_diff_buffer_pool_size, int,
++		   0644);
++MODULE_PARM_DESC(free_diff_buffer_pool_size,
++		 "The size of the pool of preallocated difference buffers");
++module_param_named(diff_storage_minimum, diff_storage_minimum, int, 0644);
++MODULE_PARM_DESC(diff_storage_minimum,
++	"The minimum allowable size of the difference storage in sectors");
 +
-+/**
-+ * define IOCTL_BLKSNAP_SNAPSHOT_TAKE - Take snapshot.
-+ *
-+ * Creates snapshot images of block devices and switches change trackers tables.
-+ * The snapshot must be created before this call, and the areas of block
-+ * devices should be added to the difference storage.
-+ *
-+ * Return: 0 if succeeded, negative errno otherwise.
-+ */
-+#define IOCTL_BLKSNAP_SNAPSHOT_TAKE						\
-+	_IOR(BLKSNAP, blksnap_ioctl_snapshot_take,				\
-+	     struct blksnap_uuid)
++MODULE_DESCRIPTION("Block Device Snapshots Module");
++MODULE_VERSION(VERSION_STR);
++MODULE_AUTHOR("Veeam Software Group GmbH");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/block/blksnap/params.h b/drivers/block/blksnap/params.h
+new file mode 100644
+index 000000000000..36d4748a22c1
+--- /dev/null
++++ b/drivers/block/blksnap/params.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (C) 2023 Veeam Software Group GmbH */
++#ifndef __BLKSNAP_PARAMS_H
++#define __BLKSNAP_PARAMS_H
 +
-+/**
-+ * struct blksnap_snapshot_collect - Argument for the
-+ *	&IOCTL_BLKSNAP_SNAPSHOT_COLLECT control.
-+ *
-+ * @count:
-+ *	Size of &blksnap_snapshot_collect.ids in the number of 16-byte UUID.
-+ * @ids:
-+ *	Pointer to the array with the snapshot ID for output.
-+ */
-+struct blksnap_snapshot_collect {
-+	__u32 count;
-+	struct blksnap_uuid *ids;
-+};
++int get_tracking_block_minimum_shift(void);
++int get_tracking_block_maximum_shift(void);
++int get_tracking_block_maximum_count(void);
++int get_chunk_minimum_shift(void);
++int get_chunk_maximum_shift(void);
++int get_chunk_maximum_count(void);
++int get_chunk_maximum_in_queue(void);
++int get_free_diff_buffer_pool_size(void);
++int get_diff_storage_minimum(void);
 +
-+/**
-+ * define IOCTL_BLKSNAP_SNAPSHOT_COLLECT - Get collection of created snapshots.
-+ *
-+ * Multiple snapshots can be created at the same time. This allows for one
-+ * system to create backups for different data with a independent schedules.
-+ *
-+ * If in &blksnap_snapshot_collect.count is less than required to store the
-+ * &blksnap_snapshot_collect.ids, the array is not filled, and the ioctl
-+ * returns the required count for &blksnap_snapshot_collect.ids.
-+ *
-+ * So, it is recommended to call the ioctl twice. The first call with an null
-+ * pointer &blksnap_snapshot_collect.ids and a zero value in
-+ * &blksnap_snapshot_collect.count. It will set the required array size in
-+ * &blksnap_snapshot_collect.count. The second call with a pointer
-+ * &blksnap_snapshot_collect.ids to an array of the required size will allow to
-+ * get collection of active snapshots.
-+ *
-+ * Return: 0 if succeeded, -ENODATA if there is not enough space in the array
-+ * to store collection of active snapshots, or negative errno otherwise.
-+ */
-+#define IOCTL_BLKSNAP_SNAPSHOT_COLLECT						\
-+	_IOW(BLKSNAP, blksnap_ioctl_snapshot_collect,				\
-+	     struct blksnap_snapshot_collect)
-+
-+/**
-+ * enum blksnap_event_codes - Variants of event codes.
-+ *
-+ * @blksnap_event_code_low_free_space:
-+ *	Low free space in difference storage event.
-+ *	If the free space in the difference storage is reduced to the specified
-+ *	limit, the module generates this event.
-+ * @blksnap_event_code_corrupted:
-+ *	Snapshot image is corrupted event.
-+ *	If a chunk could not be allocated when trying to save data to the
-+ *	difference storage, this event is generated. However, this does not mean
-+ *	that the backup process was interrupted with an error. If the snapshot
-+ *	image has been read to the end by this time, the backup process is
-+ *	considered successful.
-+ */
-+enum blksnap_event_codes {
-+	blksnap_event_code_low_free_space,
-+	blksnap_event_code_corrupted,
-+};
-+
-+/**
-+ * struct blksnap_snapshot_event - Argument for the
-+ *	&IOCTL_BLKSNAP_SNAPSHOT_WAIT_EVENT control.
-+ *
-+ * @id:
-+ *	Snapshot ID.
-+ * @timeout_ms:
-+ *	Timeout for waiting in milliseconds.
-+ * @time_label:
-+ *	Timestamp of the received event.
-+ * @code:
-+ *	Code of the received event &enum blksnap_event_codes.
-+ * @data:
-+ *	The received event body.
-+ */
-+struct blksnap_snapshot_event {
-+	struct blksnap_uuid id;
-+	__u32 timeout_ms;
-+	__u32 code;
-+	__s64 time_label;
-+	__u8 data[4096 - 32];
-+};
-+
-+/**
-+ * define IOCTL_BLKSNAP_SNAPSHOT_WAIT_EVENT - Wait and get the event from the
-+ *	snapshot.
-+ *
-+ * While holding the snapshot, the kernel module can transmit information about
-+ * changes in its state in the form of events to the user level.
-+ * It is very important to receive these events as quickly as possible, so the
-+ * user's thread is in the state of interruptable sleep.
-+ *
-+ * Return: 0 if succeeded, negative errno otherwise.
-+ */
-+#define IOCTL_BLKSNAP_SNAPSHOT_WAIT_EVENT					\
-+	_IOW(BLKSNAP, blksnap_ioctl_snapshot_wait_event,			\
-+	     struct blksnap_snapshot_event)
-+
-+/**
-+ * struct blksnap_event_low_free_space - Data for the
-+ *	&blksnap_event_code_low_free_space event.
-+ *
-+ * @requested_nr_sect:
-+ *	The required number of sectors.
-+ */
-+struct blksnap_event_low_free_space {
-+	__u64 requested_nr_sect;
-+};
-+
-+/**
-+ * struct blksnap_event_corrupted - Data for the
-+ *	&blksnap_event_code_corrupted event.
-+ *
-+ * @dev_id_mj:
-+ *	Major part of original device ID.
-+ * @dev_id_mn:
-+ *	Minor part of original device ID.
-+ * @err_code:
-+ *	Error code.
-+ */
-+struct blksnap_event_corrupted {
-+	__u32 dev_id_mj;
-+	__u32 dev_id_mn;
-+	__s32 err_code;
-+};
-+
-+#endif /* _UAPI_LINUX_BLKSNAP_H */
++#endif /* __BLKSNAP_PARAMS_H */
 -- 
 2.20.1
 
