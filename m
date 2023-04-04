@@ -2,49 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6475C6D834E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 18:14:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EE496D835E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 18:16:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229925AbjDEQOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 12:14:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43126 "EHLO
+        id S229958AbjDEQPF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 12:15:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjDEQOf (ORCPT
+        with ESMTP id S229533AbjDEQOi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 12:14:35 -0400
-X-Greylist: delayed 5343 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Apr 2023 09:14:11 PDT
+        Wed, 5 Apr 2023 12:14:38 -0400
 Received: from mx2.veeam.com (mx2.veeam.com [64.129.123.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86BF37293;
-        Wed,  5 Apr 2023 09:14:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E6FB72A6;
+        Wed,  5 Apr 2023 09:14:13 -0700 (PDT)
 Received: from mx1.veeam.com (mx1.veeam.com [172.18.34.147])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx2.veeam.com (Postfix) with ESMTPS id 1B949418AA;
+        by mx2.veeam.com (Postfix) with ESMTPS id 857F141A9C;
         Wed,  5 Apr 2023 12:13:40 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
         s=mx2-2022; t=1680711220;
-        bh=Ze5QjE1yiwPMlIFa9p4GDtorLv/PPi0SS6nJAo7avL0=;
+        bh=LhDV5mScfcrjHxBu+auv0MbfrxnthkmjqU+cPTdkMCI=;
         h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=kMifM/iDzpTuM/LeLqWyMF8FbQZS1wTJqi6gvF6qg9JlvjvvBPgNL9QVg8hW7suZE
-         cMtMPDRDpiwPXrqgYE+JY/apEqmyHOICatAJx9bm95ddRCbajZmBQsnptZJ3F1DNgo
-         akonCBI0lPpM4AuLuGurDyznVLfWAKejqwpF6RK7j9T3+a0VCM92KYsDTh9nsHUJ1S
-         q4eO6dhdEqRurQJz+Es+IEbYD9j1pQmBKP0qD4l+CHeGd8FpFp67pV/xdcCMhA5Rxn
-         0g8RRUyPOb1qFHUSOhuS9ODFCymxdT1CKFT54mxPeKytULiv3Xt1JFIn7qtgKahrMd
-         uBh8CkeVbDxwg==
+        b=Sqnx7/GRBKbL2aL1s5y+t23/f1up1Ndgp5aSpJmUtFB5lYmx59SJ44Llvt8oYm9dd
+         i961EK719Tvi34iWFuOEruLc8VTX6WvYbHm7YoVlUwpHSCqByHs6bP0LJm0aRv/nHG
+         5YMyvDBBCKDA/7yNSWAMbsNb9r0FaGfB98Gjmccl6gQ5+1fxAJ0X6+0hBdxV0seDcg
+         11AJuQ75LAP+eSmxOT9G4FKA4oQ575UI0uOpl8dk0JByqKHRdfOdUp3BQOGP2gBv2Z
+         vt3ILGyy3bWFc0rvC+DkXQbPpn0fXrm90Q796DSkBTQn8fuI3zOElZ+EQ5NkWGgUWH
+         ARzX2HJruNlkQ==
 Received: from mx4.veeam.com (mx4.amust.local [172.31.224.40])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.veeam.com (Postfix) with ESMTPS id 8DF6B41DC1;
+        by mx1.veeam.com (Postfix) with ESMTPS id CC6EC42401;
         Wed,  5 Apr 2023 06:09:15 -0400 (EDT)
 Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx4.veeam.com (Postfix) with ESMTPS id BE44DA234B;
-        Tue,  4 Apr 2023 17:09:06 +0300 (MSK)
+        by mx4.veeam.com (Postfix) with ESMTPS id 56633CB7C0;
+        Tue,  4 Apr 2023 17:09:08 +0300 (MSK)
 Received: from ssh-deb10-ssd-vb.amust.local (172.24.10.107) by
  prgmbx01.amust.local (172.24.128.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 4 Apr 2023 16:09:04 +0200
+ 15.2.1118.26; Tue, 4 Apr 2023 16:09:06 +0200
 From:   Sergei Shtepa <sergei.shtepa@veeam.com>
 To:     <axboe@kernel.dk>, <hch@infradead.org>, <corbet@lwn.net>,
         <snitzer@kernel.org>
@@ -55,9 +54,9 @@ CC:     <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
         <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <sergei.shtepa@veeam.com>
-Subject: [PATCH v3 05/11] blksnap: module management interface functions
-Date:   Tue, 4 Apr 2023 16:08:29 +0200
-Message-ID: <20230404140835.25166-6-sergei.shtepa@veeam.com>
+Subject: [PATCH v3 06/11] blksnap: handling and tracking I/O units
+Date:   Tue, 4 Apr 2023 16:08:30 +0200
+Message-ID: <20230404140835.25166-7-sergei.shtepa@veeam.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230404140835.25166-1-sergei.shtepa@veeam.com>
 References: <20230404140835.25166-1-sergei.shtepa@veeam.com>
@@ -79,490 +78,761 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Contains callback functions for loading and unloading the module and
-implementation of module management interface functions. The module
-parameters and other mandatory declarations for the kernel module are
-also defined.
+The struct tracker contains callback functions for handling a I/O units
+of a block device. When a write request is handled, the change block
+tracking (CBT) map functions are called and initiates the process of
+copying data from the original block device to the change store.
+Registering and unregistering the tracker is provided by the functions
+blkfilter_register() and blkfilter_unregister().
+The struct cbt_map allows to store the history of block device changes.
 
 Co-developed-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
 ---
- MAINTAINERS                    |   1 +
- drivers/block/blksnap/main.c   | 428 +++++++++++++++++++++++++++++++++
- drivers/block/blksnap/params.h |  16 ++
- 3 files changed, 445 insertions(+)
- create mode 100644 drivers/block/blksnap/main.c
- create mode 100644 drivers/block/blksnap/params.h
+ drivers/block/blksnap/cbt_map.c | 228 +++++++++++++++++++++++
+ drivers/block/blksnap/cbt_map.h |  90 +++++++++
+ drivers/block/blksnap/tracker.c | 320 ++++++++++++++++++++++++++++++++
+ drivers/block/blksnap/tracker.h |  71 +++++++
+ 4 files changed, 709 insertions(+)
+ create mode 100644 drivers/block/blksnap/cbt_map.c
+ create mode 100644 drivers/block/blksnap/cbt_map.h
+ create mode 100644 drivers/block/blksnap/tracker.c
+ create mode 100644 drivers/block/blksnap/tracker.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d4a9b44521dd..570333ee3801 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3585,6 +3585,7 @@ M:	Sergei Shtepa <sergei.shtepa@veeam.com>
- L:	linux-block@vger.kernel.org
- S:	Supported
- F:	Documentation/block/blksnap.rst
-+F:	drivers/block/blksnap/*
- F:	include/uapi/linux/blksnap.h
- 
- BLOCK LAYER
-diff --git a/drivers/block/blksnap/main.c b/drivers/block/blksnap/main.c
+diff --git a/drivers/block/blksnap/cbt_map.c b/drivers/block/blksnap/cbt_map.c
 new file mode 100644
-index 000000000000..dd43e8877da1
+index 000000000000..b233adc32f1a
 --- /dev/null
-+++ b/drivers/block/blksnap/main.c
-@@ -0,0 +1,428 @@
++++ b/drivers/block/blksnap/cbt_map.c
+@@ -0,0 +1,228 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/* Copyright (C) 2023 Veeam Software Group GmbH */
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++#define pr_fmt(fmt) KBUILD_MODNAME "-cbt_map: " fmt
 +
-+#include <linux/module.h>
-+#include <linux/miscdevice.h>
-+#include <linux/build_bug.h>
++#include <linux/slab.h>
++#include <linux/vmalloc.h>
 +#include <uapi/linux/blksnap.h>
-+#include "snapimage.h"
-+#include "snapshot.h"
-+#include "tracker.h"
-+#include "chunk.h"
++#include "cbt_map.h"
 +#include "params.h"
 +
-+/*
-+ * The power of 2 for minimum tracking block size.
-+ * If we make the tracking block size small, we will get detailed information
-+ * about the changes, but the size of the change tracker table will be too
-+ * large, which will lead to inefficient memory usage.
-+ */
-+int tracking_block_minimum_shift = 16;
-+
-+/*
-+ * The maximum number of tracking blocks.
-+ * A table is created to store information about the status of all tracking
-+ * blocks in RAM. So, if the size of the tracking block is small, then the size
-+ * of the table turns out to be large and memory is consumed inefficiently.
-+ * As the size of the block device grows, the size of the tracking block
-+ * size should also grow. For this purpose, the limit of the maximum
-+ * number of block size is set.
-+ */
-+int tracking_block_maximum_count = 2097152;
-+
-+/*
-+ * The power of 2 for maximum tracking block size.
-+ * On very large capacity disks, the block size may be too large. To prevent
-+ * this, the maximum block size is limited.
-+ * If the limit on the maximum block size has been reached, then the number of
-+ * blocks may exceed the tracking_block_maximum_count.
-+ */
-+int tracking_block_maximum_shift = 26;
-+
-+/*
-+ * The power of 2 for minimum chunk size.
-+ * The size of the chunk depends on how much data will be copied to the
-+ * difference storage when at least one sector of the block device is changed.
-+ * If the size is small, then small I/O units will be generated, which will
-+ * reduce performance. Too large a chunk size will lead to inefficient use of
-+ * the difference storage.
-+ */
-+int chunk_minimum_shift = 18;
-+
-+/*
-+ * The maximum number of chunks.
-+ * To store information about the state of all the chunks, a table is created
-+ * in RAM. So, if the size of the chunk is small, then the size of the table
-+ * turns out to be large and memory is consumed inefficiently.
-+ * As the size of the block device grows, the size of the chunk should also
-+ * grow. For this purpose, the maximum number of chunks is set.
-+ */
-+int chunk_maximum_count = 2097152;
-+
-+/*
-+ * The power of 2 for maximum chunk size.
-+ * On very large capacity disks, the block size may be too large. To prevent
-+ * this, the maximum block size is limited.
-+ * If the limit on the maximum block size has been reached, then the number of
-+ * blocks may exceed the chunk_maximum_count.
-+ */
-+int chunk_maximum_shift = 26;
-+/*
-+ * The maximum number of chunks in queue.
-+ * The chunk is not immediately stored to the difference storage. The chunks
-+ * are put in a store queue. The store queue allows to postpone the operation
-+ * of storing a chunks data to the difference storage and perform it later in
-+ * the worker thread.
-+ */
-+int chunk_maximum_in_queue = 16;
-+
-+/*
-+ * The size of the pool of preallocated difference buffers.
-+ * A buffer can be allocated for each chunk. After use, this buffer is not
-+ * released immediately, but is sent to the pool of free buffers.
-+ * However, if there are too many free buffers in the pool, then these free
-+ * buffers will be released immediately.
-+ */
-+int free_diff_buffer_pool_size = 128;
-+
-+/*
-+ * The minimum allowable size of the difference storage in sectors.
-+ * The difference storage is a part of the disk space allocated for storing
-+ * snapshot data. If there is less free space in the storage than the minimum,
-+ * an event is generated about the lack of free space.
-+ */
-+int diff_storage_minimum = 2097152;
-+
-+#define VERSION_STR "2.0.0.0"
-+static const struct blksnap_version version = {
-+	.major = 2,
-+	.minor = 0,
-+	.revision = 0,
-+	.build = 0,
-+};
-+
-+int get_tracking_block_minimum_shift(void)
++static inline unsigned long long count_by_shift(sector_t capacity,
++						unsigned long long shift)
 +{
-+	return tracking_block_minimum_shift;
-+}
-+int get_tracking_block_maximum_shift(void)
-+{
-+	return tracking_block_maximum_shift;
-+}
-+int get_tracking_block_maximum_count(void)
-+{
-+	return tracking_block_maximum_count;
-+}
-+int get_chunk_minimum_shift(void)
-+{
-+	return chunk_minimum_shift;
-+}
-+int get_chunk_maximum_shift(void)
-+{
-+	return chunk_maximum_shift;
-+}
-+int get_chunk_maximum_count(void)
-+{
-+	return chunk_maximum_count;
-+}
-+int get_chunk_maximum_in_queue(void)
-+{
-+	return chunk_maximum_in_queue;
-+}
-+int get_free_diff_buffer_pool_size(void)
-+{
-+	return free_diff_buffer_pool_size;
-+}
-+int get_diff_storage_minimum(void)
-+{
-+	return diff_storage_minimum;
++	sector_t blk_size = 1ull << (shift - SECTOR_SHIFT);
++
++	return round_up(capacity, blk_size) / blk_size;
 +}
 +
-+static int ioctl_version(unsigned long arg)
++static void cbt_map_calculate_block_size(struct cbt_map *cbt_map)
 +{
-+	struct blksnap_version __user *user_version = (void *)arg;
++	unsigned long long count;
++	unsigned long long shift = min(get_tracking_block_minimum_shift(),
++				       get_tracking_block_maximum_shift());
 +
-+	if (copy_to_user(user_version, &version, sizeof(version))) {
-+		pr_err("Unable to get version: invalid user buffer\n");
-+		return -ENODATA;
++	pr_debug("Device capacity %llu sectors\n", cbt_map->device_capacity);
++	/*
++	 * The size of the tracking block is calculated based on the size of the disk
++	 * so that the CBT table does not exceed a reasonable size.
++	 */
++	count = count_by_shift(cbt_map->device_capacity, shift);
++	pr_debug("Blocks count %llu\n", count);
++	while (count > get_tracking_block_maximum_count()) {
++		if (shift >= get_tracking_block_maximum_shift()) {
++			pr_info("The maximum allowable CBT block size has been reached.\n");
++			break;
++		}
++		shift = shift + 1ull;
++		count = count_by_shift(cbt_map->device_capacity, shift);
++		pr_debug("Blocks count %llu\n", count);
 +	}
 +
-+	return 0;
++	cbt_map->blk_size_shift = shift;
++	cbt_map->blk_count = count;
++	pr_debug("The optimal CBT block size was calculated as %llu bytes\n",
++		 (1ull << cbt_map->blk_size_shift));
 +}
 +
-+static_assert(sizeof(uuid_t) == sizeof(struct blksnap_uuid),
-+	"Invalid size of struct blksnap_uuid.");
-+
-+static int ioctl_snapshot_create(unsigned long arg)
++static int cbt_map_allocate(struct cbt_map *cbt_map)
 +{
-+	struct blksnap_uuid __user *user_id = (void *)arg;
-+	uuid_t kernel_id;
-+	int ret;
++	unsigned char *read_map = NULL;
++	unsigned char *write_map = NULL;
++	size_t size = cbt_map->blk_count;
 +
-+	ret = snapshot_create(&kernel_id);
-+	if (ret)
-+		return ret;
++	pr_debug("Allocate CBT map of %zu blocks\n", size);
 +
-+	if (copy_to_user(user_id->b, kernel_id.b, sizeof(uuid_t))) {
-+		pr_err("Unable to create snapshot: invalid user buffer\n");
-+		return -ENODATA;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ioctl_snapshot_destroy(unsigned long arg)
-+{
-+	struct blksnap_uuid __user *user_id = (void *)arg;
-+	uuid_t kernel_id;
-+
-+	if (copy_from_user(kernel_id.b, user_id->b, sizeof(uuid_t))) {
-+		pr_err("Unable to destroy snapshot: invalid user buffer\n");
-+		return -ENODATA;
-+	}
-+
-+	return snapshot_destroy(&kernel_id);
-+}
-+
-+static int ioctl_snapshot_append_storage(unsigned long arg)
-+{
-+	int ret;
-+	struct blksnap_snapshot_append_storage __user *uarg = (void *)arg;
-+	struct blksnap_snapshot_append_storage karg;
-+	char *bdev_path = NULL;
-+
-+	pr_debug("Append difference storage\n");
-+
-+	if (copy_from_user(&karg, uarg, sizeof(karg))) {
-+		pr_err("Unable to append difference storage: invalid user buffer\n");
++	if (cbt_map->read_map || cbt_map->write_map)
 +		return -EINVAL;
-+	}
 +
-+	bdev_path = strndup_user(karg.bdev_path, karg.bdev_path_size);
-+	if (IS_ERR(bdev_path)) {
-+		pr_err("Unable to append difference storage: invalid block device name buffer\n");
-+		return PTR_ERR(bdev_path);
-+	}
-+
-+	ret = snapshot_append_storage((uuid_t *)karg.id.b, bdev_path,
-+				       karg.ranges, karg.count);
-+	kfree(bdev_path);
-+	return ret;
-+}
-+
-+static int ioctl_snapshot_take(unsigned long arg)
-+{
-+	struct blksnap_uuid __user *user_id = (void *)arg;
-+	uuid_t kernel_id;
-+
-+	if (copy_from_user(kernel_id.b, user_id->b, sizeof(uuid_t))) {
-+		pr_err("Unable to take snapshot: invalid user buffer\n");
-+		return -ENODATA;
-+	}
-+
-+	return snapshot_take(&kernel_id);
-+}
-+
-+static int ioctl_snapshot_collect(unsigned long arg)
-+{
-+	int ret;
-+	struct blksnap_snapshot_collect karg;
-+
-+	if (copy_from_user(&karg, (void *)arg, sizeof(karg))) {
-+		pr_err("Unable to collect available snapshots: invalid user buffer\n");
-+		return -ENODATA;
-+	}
-+
-+	ret = snapshot_collect(&karg.count, karg.ids);
-+
-+	if (copy_to_user((void *)arg, &karg, sizeof(karg))) {
-+		pr_err("Unable to collect available snapshots: invalid user buffer\n");
-+		return -ENODATA;
-+	}
-+
-+	return ret;
-+}
-+
-+static_assert(sizeof(struct blksnap_snapshot_event) == 4096,
-+	"The size struct blksnap_snapshot_event should be equal to the size of the page.");
-+
-+static int ioctl_snapshot_wait_event(unsigned long arg)
-+{
-+	int ret = 0;
-+	struct blksnap_snapshot_event __user *uarg = (void *)arg;
-+	struct blksnap_snapshot_event *karg;
-+	struct event *ev;
-+
-+	karg = kzalloc(sizeof(struct blksnap_snapshot_event), GFP_KERNEL);
-+	if (!karg)
++	read_map = __vmalloc(size, GFP_NOIO | __GFP_ZERO);
++	if (!read_map)
 +		return -ENOMEM;
 +
-+	/* Copy only snapshot ID and timeout*/
-+	if (copy_from_user(karg, uarg, sizeof(uuid_t) + sizeof(__u32))) {
-+		pr_err("Unable to get snapshot event. Invalid user buffer\n");
-+		ret = -EINVAL;
-+		goto out;
++	write_map = __vmalloc(size, GFP_NOIO | __GFP_ZERO);
++	if (!write_map) {
++		vfree(read_map);
++		return -ENOMEM;
 +	}
 +
-+	ev = snapshot_wait_event((uuid_t *)karg->id.b, karg->timeout_ms);
-+	if (IS_ERR(ev)) {
-+		ret = PTR_ERR(ev);
-+		goto out;
-+	}
++	cbt_map->read_map = read_map;
++	cbt_map->write_map = write_map;
 +
-+	pr_debug("Received event=%lld code=%d data_size=%d\n", ev->time,
-+		 ev->code, ev->data_size);
-+	karg->code = ev->code;
-+	karg->time_label = ev->time;
-+
-+	if (ev->data_size > sizeof(karg->data)) {
-+		pr_err("Event size %d is too big\n", ev->data_size);
-+		ret = -ENOSPC;
-+		/* If we can't copy all the data, we copy only part of it. */
-+	}
-+	memcpy(karg->data, ev->data, ev->data_size);
-+	event_free(ev);
-+
-+	if (copy_to_user(uarg, karg, sizeof(struct blksnap_snapshot_event))) {
-+		pr_err("Unable to get snapshot event. Invalid user buffer\n");
-+		ret = -EINVAL;
-+	}
-+out:
-+	kfree(karg);
-+
-+	return ret;
-+}
-+
-+static int (*const blksnap_ioctl_table[])(unsigned long arg) = {
-+	ioctl_version,
-+	ioctl_snapshot_create,
-+	ioctl_snapshot_destroy,
-+	ioctl_snapshot_append_storage,
-+	ioctl_snapshot_take,
-+	ioctl_snapshot_collect,
-+	ioctl_snapshot_wait_event,
-+};
-+
-+static_assert(
-+	sizeof(blksnap_ioctl_table) ==
-+	((blksnap_ioctl_snapshot_wait_event + 1) * sizeof(void *)),
-+	"The size of table blksnap_ioctl_table does not match the enum blksnap_ioctl.");
-+
-+static long ctrl_unlocked_ioctl(struct file *filp, unsigned int cmd,
-+				unsigned long arg)
-+{
-+	int nr = _IOC_NR(cmd);
-+
-+	if (nr > (sizeof(blksnap_ioctl_table) / sizeof(void *)))
-+		return -ENOTTY;
-+
-+	if (!blksnap_ioctl_table[nr])
-+		return -ENOTTY;
-+
-+	return blksnap_ioctl_table[nr](arg);
-+}
-+
-+static const struct file_operations blksnap_ctrl_fops = {
-+	.owner		= THIS_MODULE,
-+	.unlocked_ioctl	= ctrl_unlocked_ioctl,
-+};
-+
-+static struct miscdevice blksnap_ctrl_misc = {
-+	.minor		= MISC_DYNAMIC_MINOR,
-+	.name		= BLKSNAP_CTL,
-+	.fops		= &blksnap_ctrl_fops,
-+};
-+
-+static int __init blksnap_init(void)
-+{
-+	int ret;
-+
-+	pr_debug("Loading\n");
-+	pr_debug("Version: %s\n", VERSION_STR);
-+	pr_debug("tracking_block_minimum_shift: %d\n",
-+		 tracking_block_minimum_shift);
-+	pr_debug("tracking_block_maximum_count: %d\n",
-+		 tracking_block_maximum_count);
-+	pr_debug("chunk_minimum_shift: %d\n", chunk_minimum_shift);
-+	pr_debug("chunk_maximum_count: %d\n", chunk_maximum_count);
-+	pr_debug("chunk_maximum_in_queue: %d\n", chunk_maximum_in_queue);
-+	pr_debug("free_diff_buffer_pool_size: %d\n",
-+		 free_diff_buffer_pool_size);
-+	pr_debug("diff_storage_minimum: %d\n", diff_storage_minimum);
-+
-+	ret = chunk_init();
-+	if (ret)
-+		goto fail_chunk_init;
-+
-+	ret = tracker_init();
-+	if (ret)
-+		goto fail_tracker_init;
-+
-+	ret = misc_register(&blksnap_ctrl_misc);
-+	if (ret)
-+		goto fail_misc_register;
++	cbt_map->snap_number_previous = 0;
++	cbt_map->snap_number_active = 1;
++	generate_random_uuid(cbt_map->generation_id.b);
++	cbt_map->is_corrupted = false;
 +
 +	return 0;
-+
-+fail_misc_register:
-+	tracker_done();
-+fail_tracker_init:
-+	chunk_done();
-+fail_chunk_init:
-+
-+	return ret;
 +}
 +
-+static void __exit blksnap_exit(void)
++static void cbt_map_deallocate(struct cbt_map *cbt_map)
 +{
-+	pr_debug("Unloading module\n");
++	cbt_map->is_corrupted = false;
 +
-+	misc_deregister(&blksnap_ctrl_misc);
++	if (cbt_map->read_map) {
++		vfree(cbt_map->read_map);
++		cbt_map->read_map = NULL;
++	}
 +
-+	chunk_done();
-+	snapshot_done();
-+	tracker_done();
-+
-+	pr_debug("Module was unloaded\n");
++	if (cbt_map->write_map) {
++		vfree(cbt_map->write_map);
++		cbt_map->write_map = NULL;
++	}
 +}
 +
-+module_init(blksnap_init);
-+module_exit(blksnap_exit);
++int cbt_map_reset(struct cbt_map *cbt_map, sector_t device_capacity)
++{
++	cbt_map_deallocate(cbt_map);
 +
-+module_param_named(tracking_block_minimum_shift, tracking_block_minimum_shift,
-+		   int, 0644);
-+MODULE_PARM_DESC(tracking_block_minimum_shift,
-+		 "The power of 2 for minimum tracking block size");
-+module_param_named(tracking_block_maximum_count, tracking_block_maximum_count,
-+		   int, 0644);
-+MODULE_PARM_DESC(tracking_block_maximum_count,
-+		 "The maximum number of tracking blocks");
-+module_param_named(tracking_block_maximum_shift, tracking_block_maximum_shift,
-+		   int, 0644);
-+MODULE_PARM_DESC(tracking_block_maximum_shift,
-+		 "The power of 2 for maximum trackings block size");
-+module_param_named(chunk_minimum_shift, chunk_minimum_shift, int, 0644);
-+MODULE_PARM_DESC(chunk_minimum_shift,
-+		 "The power of 2 for minimum chunk size");
-+module_param_named(chunk_maximum_count, chunk_maximum_count, int, 0644);
-+MODULE_PARM_DESC(chunk_maximum_count,
-+		 "The maximum number of chunks");
-+module_param_named(chunk_maximum_shift, chunk_maximum_shift, int, 0644);
-+MODULE_PARM_DESC(chunk_maximum_shift,
-+		 "The power of 2 for maximum snapshots chunk size");
-+module_param_named(chunk_maximum_in_queue, chunk_maximum_in_queue, int, 0644);
-+MODULE_PARM_DESC(chunk_maximum_in_queue,
-+		 "The maximum number of chunks in store queue");
-+module_param_named(free_diff_buffer_pool_size, free_diff_buffer_pool_size, int,
-+		   0644);
-+MODULE_PARM_DESC(free_diff_buffer_pool_size,
-+		 "The size of the pool of preallocated difference buffers");
-+module_param_named(diff_storage_minimum, diff_storage_minimum, int, 0644);
-+MODULE_PARM_DESC(diff_storage_minimum,
-+	"The minimum allowable size of the difference storage in sectors");
++	cbt_map->device_capacity = device_capacity;
++	cbt_map_calculate_block_size(cbt_map);
 +
-+MODULE_DESCRIPTION("Block Device Snapshots Module");
-+MODULE_VERSION(VERSION_STR);
-+MODULE_AUTHOR("Veeam Software Group GmbH");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/block/blksnap/params.h b/drivers/block/blksnap/params.h
++	return cbt_map_allocate(cbt_map);
++}
++
++void cbt_map_destroy(struct cbt_map *cbt_map)
++{
++	pr_debug("CBT map destroy\n");
++
++	cbt_map_deallocate(cbt_map);
++	kfree(cbt_map);
++}
++
++struct cbt_map *cbt_map_create(struct block_device *bdev)
++{
++	struct cbt_map *cbt_map = NULL;
++	int ret;
++
++	pr_debug("CBT map create\n");
++
++	cbt_map = kzalloc(sizeof(struct cbt_map), GFP_KERNEL);
++	if (cbt_map == NULL)
++		return NULL;
++
++	cbt_map->device_capacity = bdev_nr_sectors(bdev);
++	cbt_map_calculate_block_size(cbt_map);
++
++	ret = cbt_map_allocate(cbt_map);
++	if (ret) {
++		pr_err("Failed to create tracker. errno=%d\n", abs(ret));
++		cbt_map_destroy(cbt_map);
++		return NULL;
++	}
++
++	spin_lock_init(&cbt_map->locker);
++	cbt_map->is_corrupted = false;
++
++	return cbt_map;
++}
++
++void cbt_map_switch(struct cbt_map *cbt_map)
++{
++	pr_debug("CBT map switch\n");
++	spin_lock(&cbt_map->locker);
++
++	cbt_map->snap_number_previous = cbt_map->snap_number_active;
++	++cbt_map->snap_number_active;
++	if (cbt_map->snap_number_active == 256) {
++		cbt_map->snap_number_active = 1;
++
++		memset(cbt_map->write_map, 0, cbt_map->blk_count);
++
++		generate_random_uuid(cbt_map->generation_id.b);
++
++		pr_debug("CBT reset\n");
++	} else
++		memcpy(cbt_map->read_map, cbt_map->write_map, cbt_map->blk_count);
++	spin_unlock(&cbt_map->locker);
++}
++
++static inline int _cbt_map_set(struct cbt_map *cbt_map, sector_t sector_start,
++			       sector_t sector_cnt, u8 snap_number,
++			       unsigned char *map)
++{
++	int res = 0;
++	u8 num;
++	size_t inx;
++	size_t cbt_block_first = (size_t)(
++		sector_start >> (cbt_map->blk_size_shift - SECTOR_SHIFT));
++	size_t cbt_block_last = (size_t)(
++		(sector_start + sector_cnt - 1) >>
++		(cbt_map->blk_size_shift - SECTOR_SHIFT));
++
++	for (inx = cbt_block_first; inx <= cbt_block_last; ++inx) {
++		if (unlikely(inx >= cbt_map->blk_count)) {
++			pr_err("Block index is too large\n");
++			pr_err("Block #%zu was demanded, map size %zu blocks\n",
++			       inx, cbt_map->blk_count);
++			res = -EINVAL;
++			break;
++		}
++
++		num = map[inx];
++		if (num < snap_number)
++			map[inx] = snap_number;
++	}
++	return res;
++}
++
++int cbt_map_set(struct cbt_map *cbt_map, sector_t sector_start,
++		sector_t sector_cnt)
++{
++	int res;
++
++	spin_lock(&cbt_map->locker);
++	if (unlikely(cbt_map->is_corrupted)) {
++		spin_unlock(&cbt_map->locker);
++		return -EINVAL;
++	}
++	res = _cbt_map_set(cbt_map, sector_start, sector_cnt,
++			   (u8)cbt_map->snap_number_active, cbt_map->write_map);
++	if (unlikely(res))
++		cbt_map->is_corrupted = true;
++
++	spin_unlock(&cbt_map->locker);
++
++	return res;
++}
++
++int cbt_map_set_both(struct cbt_map *cbt_map, sector_t sector_start,
++		     sector_t sector_cnt)
++{
++	int res;
++
++	spin_lock(&cbt_map->locker);
++	if (unlikely(cbt_map->is_corrupted)) {
++		spin_unlock(&cbt_map->locker);
++		return -EINVAL;
++	}
++	res = _cbt_map_set(cbt_map, sector_start, sector_cnt,
++			   (u8)cbt_map->snap_number_active, cbt_map->write_map);
++	if (!res)
++		res = _cbt_map_set(cbt_map, sector_start, sector_cnt,
++				   (u8)cbt_map->snap_number_previous,
++				   cbt_map->read_map);
++	spin_unlock(&cbt_map->locker);
++
++	return res;
++}
+diff --git a/drivers/block/blksnap/cbt_map.h b/drivers/block/blksnap/cbt_map.h
 new file mode 100644
-index 000000000000..36d4748a22c1
+index 000000000000..f87bffd5b3a7
 --- /dev/null
-+++ b/drivers/block/blksnap/params.h
-@@ -0,0 +1,16 @@
++++ b/drivers/block/blksnap/cbt_map.h
+@@ -0,0 +1,90 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/* Copyright (C) 2023 Veeam Software Group GmbH */
-+#ifndef __BLKSNAP_PARAMS_H
-+#define __BLKSNAP_PARAMS_H
++#ifndef __BLKSNAP_CBT_MAP_H
++#define __BLKSNAP_CBT_MAP_H
 +
-+int get_tracking_block_minimum_shift(void);
-+int get_tracking_block_maximum_shift(void);
-+int get_tracking_block_maximum_count(void);
-+int get_chunk_minimum_shift(void);
-+int get_chunk_maximum_shift(void);
-+int get_chunk_maximum_count(void);
-+int get_chunk_maximum_in_queue(void);
-+int get_free_diff_buffer_pool_size(void);
-+int get_diff_storage_minimum(void);
++#include <linux/kernel.h>
++#include <linux/kref.h>
++#include <linux/uuid.h>
++#include <linux/spinlock.h>
++#include <linux/blkdev.h>
 +
-+#endif /* __BLKSNAP_PARAMS_H */
++struct blksnap_sectors;
++
++/**
++ * struct cbt_map - The table of changes for a block device.
++ *
++ * @locker:
++ *	Locking for atomic modification of structure members.
++ * @blk_size_shift:
++ *	The power of 2 used to specify the change tracking block size.
++ * @blk_count:
++ *	The number of change tracking blocks.
++ * @device_capacity:
++ *	The actual capacity of the device.
++ * @read_map:
++ *	A table of changes available for reading. This is the table that can
++ *	be read after taking a snapshot.
++ * @write_map:
++ *	The current table for tracking changes.
++ * @snap_number_active:
++ *	The current sequential number of changes. This is the number that is written to
++ *	the current table when the block data changes.
++ * @snap_number_previous:
++ *	The previous sequential number of changes. This number is used to identify the
++ *	blocks that were changed between the penultimate snapshot and the last snapshot.
++ * @generation_id:
++ *	UUID of the generation of changes.
++ * @is_corrupted:
++ *	A flag that the change tracking data is no longer reliable.
++ *
++ * The change block tracking map is a byte table. Each byte stores the
++ * sequential number of changes for one block. To determine which blocks have changed
++ * since the previous snapshot with the change number 4, it is enough to
++ * find all bytes with the number more than 4.
++ *
++ * Since one byte is allocated to track changes in one block, the change
++ * table is created again at the 255th snapshot. At the same time, a new
++ * unique generation identifier is generated. Tracking changes is
++ * possible only for tables of the same generation.
++ *
++ * There are two tables on the change block tracking map. One is
++ * available for reading, and the other is available for writing. At the moment of taking
++ * a snapshot, the tables are synchronized. The user's process, when
++ * calling the corresponding ioctl, can read the readable table.
++ * At the same time, the change tracking mechanism continues to work with
++ * the writable table.
++ *
++ * To provide the ability to mount a snapshot image as writeable, it is
++ * possible to make changes to both of these tables simultaneously.
++ *
++ */
++struct cbt_map {
++	spinlock_t locker;
++
++	size_t blk_size_shift;
++	size_t blk_count;
++	sector_t device_capacity;
++
++	unsigned char *read_map;
++	unsigned char *write_map;
++
++	unsigned long snap_number_active;
++	unsigned long snap_number_previous;
++	uuid_t generation_id;
++
++	bool is_corrupted;
++};
++
++struct cbt_map *cbt_map_create(struct block_device *bdev);
++int cbt_map_reset(struct cbt_map *cbt_map, sector_t device_capacity);
++
++void cbt_map_destroy(struct cbt_map *cbt_map);
++
++void cbt_map_switch(struct cbt_map *cbt_map);
++int cbt_map_set(struct cbt_map *cbt_map, sector_t sector_start,
++		sector_t sector_cnt);
++int cbt_map_set_both(struct cbt_map *cbt_map, sector_t sector_start,
++		     sector_t sector_cnt);
++
++#endif /* __BLKSNAP_CBT_MAP_H */
+diff --git a/drivers/block/blksnap/tracker.c b/drivers/block/blksnap/tracker.c
+new file mode 100644
+index 000000000000..3f6586b86f24
+--- /dev/null
++++ b/drivers/block/blksnap/tracker.c
+@@ -0,0 +1,320 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (C) 2023 Veeam Software Group GmbH */
++#define pr_fmt(fmt) KBUILD_MODNAME "-tracker: " fmt
++
++#include <linux/slab.h>
++#include <linux/blk-mq.h>
++#include <linux/sched/mm.h>
++#include <linux/build_bug.h>
++#include <uapi/linux/blksnap.h>
++#include "tracker.h"
++#include "cbt_map.h"
++#include "diff_area.h"
++#include "snapimage.h"
++#include "snapshot.h"
++
++void tracker_free(struct kref *kref)
++{
++	struct tracker *tracker = container_of(kref, struct tracker, kref);
++
++	might_sleep();
++
++	pr_debug("Free tracker for device [%u:%u]\n", MAJOR(tracker->dev_id),
++		 MINOR(tracker->dev_id));
++
++	if (tracker->diff_area)
++		diff_area_free(tracker->diff_area);
++	if (tracker->cbt_map)
++		cbt_map_destroy(tracker->cbt_map);
++
++	kfree(tracker);
++}
++
++static bool tracker_submit_bio(struct bio *bio)
++{
++	struct blkfilter *flt = bio->bi_bdev->bd_filter;
++	struct tracker *tracker = container_of(flt, struct tracker, filter);
++	sector_t count = bio_sectors(bio);
++	struct bvec_iter copy_iter;
++
++	if (!op_is_write(bio_op(bio)) || !count)
++		return false;
++
++	copy_iter = bio->bi_iter;
++	if (bio_flagged(bio, BIO_REMAPPED))
++		copy_iter.bi_sector -= bio->bi_bdev->bd_start_sect;
++
++	if (cbt_map_set(tracker->cbt_map, copy_iter.bi_sector, count) ||
++	    !atomic_read(&tracker->snapshot_is_taken) ||
++	    diff_area_is_corrupted(tracker->diff_area))
++		return false;
++
++	return diff_area_cow(bio, tracker->diff_area, &copy_iter);
++}
++
++static struct blkfilter *tracker_attach(struct block_device *bdev)
++{
++	struct tracker *tracker = NULL;
++	struct cbt_map *cbt_map;
++
++	pr_debug("Creating tracker for device [%u:%u]\n",
++		 MAJOR(bdev->bd_dev), MINOR(bdev->bd_dev));
++
++	cbt_map = cbt_map_create(bdev);
++	if (!cbt_map) {
++		pr_err("Failed to create CBT map for device [%u:%u]\n",
++		       MAJOR(bdev->bd_dev), MINOR(bdev->bd_dev));
++		return ERR_PTR(-ENOMEM);
++	}
++
++	tracker = kzalloc(sizeof(struct tracker), GFP_KERNEL);
++	if (tracker == NULL) {
++		cbt_map_destroy(cbt_map);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	INIT_LIST_HEAD(&tracker->link);
++	kref_init(&tracker->kref);
++	tracker->dev_id = bdev->bd_dev;
++	atomic_set(&tracker->snapshot_is_taken, false);
++	tracker->cbt_map = cbt_map;
++	tracker->diff_area = NULL;
++
++	pr_debug("New tracker for device [%u:%u] was created\n",
++		 MAJOR(tracker->dev_id), MINOR(tracker->dev_id));
++
++	return &tracker->filter;
++}
++
++static void tracker_detach(struct blkfilter *flt)
++{
++	struct tracker *tracker = container_of(flt, struct tracker, filter);
++
++	pr_debug("Detach tracker from device [%u:%u]\n",
++		 MAJOR(tracker->dev_id), MINOR(tracker->dev_id));
++
++	tracker_put(tracker);
++}
++
++static int ctl_cbtinfo(struct tracker *tracker, __u8 __user *buf, __u32 *plen)
++{
++	struct cbt_map *cbt_map = tracker->cbt_map;
++	struct blksnap_cbtinfo arg;
++
++	if (!cbt_map)
++		return -ESRCH;
++
++	if (*plen < sizeof(arg))
++		return -EINVAL;
++
++	arg.device_capacity = (__u64)(cbt_map->device_capacity << SECTOR_SHIFT);
++	arg.block_size = (__u32)(1 << cbt_map->blk_size_shift);
++	arg.block_count = (__u32)cbt_map->blk_count;
++	export_uuid(arg.generation_id.b, &cbt_map->generation_id);
++	arg.changes_number = (__u8)cbt_map->snap_number_previous;
++
++	if (copy_to_user(buf, &arg, sizeof(arg)))
++		return -ENODATA;
++
++	*plen = sizeof(arg);
++	return 0;
++}
++
++static int ctl_cbtmap(struct tracker *tracker, __u8 __user *buf, __u32 *plen)
++{
++	struct cbt_map *cbt_map = tracker->cbt_map;
++	struct blksnap_cbtmap arg;
++
++	if (!cbt_map)
++		return -ESRCH;
++
++	if (unlikely(cbt_map->is_corrupted)) {
++		pr_err("CBT table was corrupted\n");
++		return -EFAULT;
++	}
++
++	if (*plen < sizeof(arg))
++		return -EINVAL;
++
++	if (copy_from_user(&arg, buf, sizeof(arg)))
++		return -ENODATA;
++
++	if (copy_to_user(arg.buffer, cbt_map->read_map + arg.offset,
++			 min_t(unsigned int, cbt_map->blk_count - arg.offset, arg.length)))
++		return -EINVAL;
++
++	*plen = 0;
++	return 0;
++}
++static int ctl_cbtdirty(struct tracker *tracker, __u8 __user *buf, __u32 *plen)
++{
++	struct cbt_map *cbt_map = tracker->cbt_map;
++	struct blksnap_cbtdirty arg;
++	unsigned int inx;
++
++	if (!cbt_map)
++		return -ESRCH;
++
++	if (*plen < sizeof(arg))
++		return -EINVAL;
++
++	if (copy_from_user(&arg, buf, sizeof(arg)))
++		return -ENODATA;
++
++	for (inx = 0; inx < arg.count; inx++) {
++		struct blksnap_sectors range;
++		int ret;
++
++		if (copy_from_user(&range, arg.dirty_sectors, sizeof(range)))
++			return -ENODATA;
++
++		ret = cbt_map_set_both(cbt_map, range.offset, range.count);
++		if (ret)
++			return ret;
++	}
++	*plen = 0;
++	return 0;
++}
++static int ctl_snapshotadd(struct tracker *tracker,
++			   __u8 __user *buf, __u32 *plen)
++{
++	struct blksnap_snapshotadd arg;
++
++	if (*plen < sizeof(arg))
++		return -EINVAL;
++
++	if (copy_from_user(&arg, buf, sizeof(arg)))
++		return -ENODATA;
++
++	*plen = 0;
++	return  snapshot_add_device((uuid_t *)&arg.id, tracker);
++}
++static int ctl_snapshotinfo(struct tracker *tracker,
++			    __u8 __user *buf, __u32 *plen)
++{
++	struct blksnap_snapshotinfo arg = {0};
++
++	if (*plen < sizeof(arg))
++		return -EINVAL;
++
++	if (copy_from_user(&arg, buf, sizeof(arg)))
++		return -ENODATA;
++
++
++	if (tracker->diff_area && diff_area_is_corrupted(tracker->diff_area))
++		arg.error_code = tracker->diff_area->error_code;
++	else
++		arg.error_code = 0;
++
++	if (tracker->snap_disk)
++		strncpy(arg.image, tracker->snap_disk->disk_name, IMAGE_DISK_NAME_LEN);
++
++	if (copy_to_user(buf, &arg, sizeof(arg)))
++		return -ENODATA;
++
++	*plen = sizeof(arg);
++	return 0;
++}
++
++static int (*const ctl_table[])(struct tracker *tracker,
++				__u8 __user *buf, __u32 *plen) = {
++	ctl_cbtinfo,
++	ctl_cbtmap,
++	ctl_cbtdirty,
++	ctl_snapshotadd,
++	ctl_snapshotinfo,
++};
++
++static int tracker_ctl(struct blkfilter *flt, const unsigned int cmd,
++		       __u8 __user *buf, __u32 *plen)
++{
++	struct tracker *tracker = container_of(flt, struct tracker, filter);
++
++	if (cmd > ARRAY_SIZE(ctl_table))
++		return -ENOTTY;
++
++	return ctl_table[cmd](tracker, buf, plen);
++}
++
++static struct blkfilter_operations tracker_ops = {
++	.owner		= THIS_MODULE,
++	.name		= "blksnap",
++	.attach		= tracker_attach,
++	.detach		= tracker_detach,
++	.ctl		= tracker_ctl,
++	.submit_bio	= tracker_submit_bio,
++};
++
++int tracker_take_snapshot(struct tracker *tracker)
++{
++	int ret = 0;
++	bool cbt_reset_needed = false;
++	struct block_device *orig_bdev = tracker->diff_area->orig_bdev;
++	sector_t capacity;
++	unsigned int current_flag;
++
++	blk_mq_freeze_queue(orig_bdev->bd_queue);
++	current_flag = memalloc_noio_save();
++
++	if (tracker->cbt_map->is_corrupted) {
++		cbt_reset_needed = true;
++		pr_warn("Corrupted CBT table detected. CBT fault\n");
++	}
++
++	capacity = bdev_nr_sectors(orig_bdev);
++	if (tracker->cbt_map->device_capacity != capacity) {
++		cbt_reset_needed = true;
++		pr_warn("Device resize detected. CBT fault\n");
++	}
++
++	if (cbt_reset_needed) {
++		ret = cbt_map_reset(tracker->cbt_map, capacity);
++		if (ret) {
++			pr_err("Failed to create tracker. errno=%d\n",
++			       abs(ret));
++			return ret;
++		}
++	}
++
++	cbt_map_switch(tracker->cbt_map);
++	atomic_set(&tracker->snapshot_is_taken, true);
++
++	memalloc_noio_restore(current_flag);
++	blk_mq_unfreeze_queue(orig_bdev->bd_queue);
++
++	return 0;
++}
++
++void tracker_release_snapshot(struct tracker *tracker)
++{
++	if (tracker->diff_area) {
++		blk_mq_freeze_queue(tracker->diff_area->orig_bdev->bd_queue);
++
++		pr_debug("Tracker for device [%u:%u] release snapshot\n",
++			 MAJOR(tracker->dev_id), MINOR(tracker->dev_id));
++
++		atomic_set(&tracker->snapshot_is_taken, false);
++
++		blk_mq_unfreeze_queue(tracker->diff_area->orig_bdev->bd_queue);
++	}
++	snapimage_free(tracker);
++
++	if (tracker->diff_area) {
++		diff_area_free(tracker->diff_area);
++		tracker->diff_area = NULL;
++	}
++}
++
++int __init tracker_init(void)
++{
++	pr_debug("Register filter '%s'", tracker_ops.name);
++
++	return blkfilter_register(&tracker_ops);
++}
++
++void tracker_done(void)
++{
++	pr_debug("Unregister filter '%s'", tracker_ops.name);
++
++	blkfilter_unregister(&tracker_ops);
++}
+diff --git a/drivers/block/blksnap/tracker.h b/drivers/block/blksnap/tracker.h
+new file mode 100644
+index 000000000000..d0972994d528
+--- /dev/null
++++ b/drivers/block/blksnap/tracker.h
+@@ -0,0 +1,71 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (C) 2023 Veeam Software Group GmbH */
++#ifndef __BLKSNAP_TRACKER_H
++#define __BLKSNAP_TRACKER_H
++
++#include <linux/blk-filter.h>
++#include <linux/kref.h>
++#include <linux/spinlock.h>
++#include <linux/list.h>
++#include <linux/rwsem.h>
++#include <linux/blkdev.h>
++#include <linux/fs.h>
++
++struct cbt_map;
++struct diff_area;
++
++/**
++ * struct tracker - Tracker for a block device.
++ *
++ * @filter:
++ *	The block device filter structure.
++ * @link:
++ *	List header. Allows to combine trackers into a list in a snapshot.
++ * @kref:
++ *	The link counter allows to control the lifetime of the tracker.
++ * @dev_id:
++ *	Original block device ID.
++ * @snapshot_is_taken:
++ *	Indicates that a snapshot was taken for the device whose I/O unit are
++ *	handled by this tracker.
++ * @cbt_map:
++ *	Pointer to a change block tracker map.
++ * @diff_area:
++ *	Pointer to a difference area.
++ * @snap_disk:
++ *	Snapshot image disk.
++ *
++ * The goal of the tracker is to handle I/O unit. The tracker detectes
++ * the range of sectors that will change and transmits them to the CBT map
++ * and to the difference area.
++ */
++struct tracker {
++	struct blkfilter filter;
++	struct list_head link;
++	struct kref kref;
++	dev_t dev_id;
++
++	atomic_t snapshot_is_taken;
++
++	struct cbt_map *cbt_map;
++	struct diff_area *diff_area;
++	struct gendisk *snap_disk;
++};
++
++int __init tracker_init(void);
++void tracker_done(void);
++
++void tracker_free(struct kref *kref);
++static inline void tracker_put(struct tracker *tracker)
++{
++	if (likely(tracker))
++		kref_put(&tracker->kref, tracker_free);
++};
++static inline void tracker_get(struct tracker *tracker)
++{
++	kref_get(&tracker->kref);
++};
++int tracker_take_snapshot(struct tracker *tracker);
++void tracker_release_snapshot(struct tracker *tracker);
++
++#endif /* __BLKSNAP_TRACKER_H */
 -- 
 2.20.1
 
