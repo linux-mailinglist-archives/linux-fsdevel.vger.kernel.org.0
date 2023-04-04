@@ -2,452 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E77E6D6380
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 15:41:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 504F36D63B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 15:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235298AbjDDNls (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Apr 2023 09:41:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58794 "EHLO
+        id S233852AbjDDNqd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Apr 2023 09:46:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235260AbjDDNli (ORCPT
+        with ESMTP id S235319AbjDDNqP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Apr 2023 09:41:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 756F23C00
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 06:41:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9EE236302A
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 13:41:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9315BC433EF;
-        Tue,  4 Apr 2023 13:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680615684;
-        bh=7Eu9DbVJEq82+SCEaKk+DvzoL3wKW/2UU4XSJvV4dk8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s9l/JArCK49XD2VaCDThsBMwJ2vFo+GaMgbV2miPws9FLVBZ710MmoorOScd8wp+Y
-         DUuRMq35mTzbbViX1NWPiTDQKq3KuEZAzVo/vJzlde4A4IDxxWhdXvbaktMt6cDEPK
-         6HwjJye5npIVb7Fy6q7f2Oh5NgXrKI6L6KUTVELqPkUWR3mlgwAV/rSPewxnTbs4J1
-         UjtjVLRbU1CJi+k9t0rSBG98+IPF4bnDWxt4hdlDLq5od/ZN8CcJirjN8Mnfs91V/C
-         GfiIc8DuJq3PajFgcKtMeawIbyF7bt44J74bJfKh0kZNrS8DC6KMTxi7E6XJl/AwI8
-         v29qjOxbOMViw==
-Date:   Tue, 4 Apr 2023 15:41:19 +0200
-From:   Carlos Maiolino <cem@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     hughd@google.com, jack@suse.cz, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/6] shmem: quota support
-Message-ID: <20230404134119.egxr4ypiwlbhwm7v@andromeda>
-References: <20230403084759.884681-1-cem@kernel.org>
- <20230403084759.884681-6-cem@kernel.org>
- <0mQXCgnCByEywhSdM0tfzTKIZ3fMw49KdlQoFnlUn_Pey7-3hSgewu91nMZH-C8fITLI_QPYXFCRsUMyzs6jWA==@protonmail.internalid>
- <20230403184625.GA379281@frogsfrogsfrogs>
+        Tue, 4 Apr 2023 09:46:15 -0400
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A5875248
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 06:45:59 -0700 (PDT)
+Received: by mail-ua1-x933.google.com with SMTP id e12so23311883uaa.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Apr 2023 06:45:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680615958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JLuB22DJ95IrMYf0oxR3oaM5hvr+ULcAoWT4C+7bcXs=;
+        b=bKQQECAyesieGLTaHOt1AqGsp6esAhybn3oofwA3s+nFNQbWuokaHYDGOfvTJ8A0fd
+         pct8pzHRASqhtPn+G+FBUhrtHaLXPCG9zTMPnhHu6Awg9tXxdSkut41dV433g1fF1dTA
+         dVYfdRgh7q2dd7H84z7UtA9k2VdlMOL0cwnhBiT1p3i9EwnFsKNp9/UHoQghRWNPjh+a
+         1sxanEuXHPldDPtC14t5T/24NQY57fK4m/0NnNu3D1W23dlLD6ojztnYxNcAlN5ygbve
+         N3Dr14WpEINGBhPkkTKqdubHsZwVxIa8Cqxx//vqxJJ9h7UDFQFIts6JSYQPjchh1yYS
+         5jRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680615958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JLuB22DJ95IrMYf0oxR3oaM5hvr+ULcAoWT4C+7bcXs=;
+        b=Mu7klpvdnw17XiOJ/oGwR020FJOxFe8xOCckk6KGs5A/jsgzYlvd7GqCve+8mGnGa/
+         cDYWwVmhUY4KJRsupbKkxuKLCd+AcGLzIVD0ERmFteIP7IU4NeMtztIBlm85iUJtVH25
+         YoneRvbmzdcrXNXiLzdvwW9ziksK5KuvQqB71UFrMhn1JNLD03hyUUdQ8VsWW12MOAcj
+         M56Y+WSRcjMt4WrC5c4CkXW/yg3mfus3pl3voTZnLnSkzCxjA3ztHgbCGCVWumaat4Jh
+         V5n6kKIcXVR3rSmeVt5Xcaqk35B/XeM81IvYLwJXzahSZws6jDEoWllWIuCxRl21uZ95
+         3wfA==
+X-Gm-Message-State: AAQBX9fNNbeVkV7FC8aMe96HLyIK+5KTxt6MG04tjwSoXikpiGKoMYou
+        Tj/be26P8JsMS4gj8ujcUJwoEQOBks4DbrWC+UE=
+X-Google-Smtp-Source: AKy350ZvQWmunb3ZmdGz75zZC2NP3k84REWOVJQg8lYqjBWhG7Yzo9vJzEWzsrl84OodKBjK4hYOi0vCaZqrcYeh+0g=
+X-Received: by 2002:a9f:3110:0:b0:68a:a9d:13f5 with SMTP id
+ m16-20020a9f3110000000b0068a0a9d13f5mr1718115uab.1.1680615957953; Tue, 04 Apr
+ 2023 06:45:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230403184625.GA379281@frogsfrogsfrogs>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230322062519.409752-1-cccheng@synology.com> <CAOQ4uxiAbMaXqa8r-ErVsM_N1eSNWq+Wnyua4d+Eq89JZWb7sA@mail.gmail.com>
+ <CAOQ4uxg_=7ypNL1nZKQ-=Sp-Q11sQjA4Jbws3Zgxgvirdw242w@mail.gmail.com>
+ <cd875f29-7dd8-58bd-1c81-af82a6f1cb88@kernel.dk> <CAOQ4uxjf2rHyUWYB+K-YqKBxq_0mLpOMfqnFm4njPJ+z+6nGcw@mail.gmail.com>
+ <80ccc66e-b414-6b68-ae10-59cf38745b45@kernel.dk> <20230404092109.evsvdcv6p2e5bvtf@quack3>
+In-Reply-To: <20230404092109.evsvdcv6p2e5bvtf@quack3>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 4 Apr 2023 16:45:46 +0300
+Message-ID: <CAOQ4uxiCKRVe_hVM7e8t3UGcnbBNEBUiZPa5Jrmh02hCkAPq8w@mail.gmail.com>
+Subject: Re: [PATCH] splice: report related fsnotify events
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jens Axboe <axboe@kernel.dk>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, shepjeng@gmail.com,
+        kernel@cccheng.net, Chung-Chiang Cheng <cccheng@synology.com>,
+        Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi.
+On Tue, Apr 4, 2023 at 12:21=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 03-04-23 11:23:25, Jens Axboe wrote:
+> > On 4/3/23 11:15?AM, Amir Goldstein wrote:
+> > >> On 4/3/23 11:00?AM, Amir Goldstein wrote:
+> > >> io_uring does do it for non-polled IO, I don't think there's much po=
+int
+> > >> in adding it to IOPOLL however. Not really seeing any use cases wher=
+e
+> > >> that would make sense.
+> > >>
+> > >
+> > > Users subscribe to fsnotify because they want to be notified of chang=
+es/
+> > > access to a file.
+> > > Why do you think that polled IO should be exempt?
+> >
+> > Because it's a drastically different use case. If you're doing high
+> > performance polled IO, then you'd never rely on something as slow as
+> > fsnotify to tell you of any changes that happened to a device or file.
+> > That would be counter productive.
+>
+> Well, I guess Amir wanted to say that the application using fsnotify is n=
+ot
+> necessarily the one doing high performance polled IO. You could have e.g.
+> data mirroring application A tracking files that need mirroring to anothe=
+r
+> host using fsnotify and if some application B uses high performance polle=
+d
+> IO to modify a file, application A could miss the modified file.
+>
+> That being said if I look at exact details, currently I don't see a very
+> realistic usecase that would have problems (people don't depend on
+> FS_MODIFY or FS_ACCESS events too much, usually they just use FS_OPEN /
+> FS_CLOSE), which is likely why nobody reported these issues yet :).
+>
 
-> >  	atomic_t		stop_eviction;	/* hold when working on inode */
-> >  	struct timespec64	i_crtime;	/* file creation time */
-> >  	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
-> > +#ifdef CONFIG_TMPFS_QUOTA
-> > +	struct dquot		*i_dquot[MAXQUOTAS];
-> 
-> Why allocate three dquot pointers here...
-> 
-> > +#endif
-> >  	struct inode		vfs_inode;
-> >  };
-> >
-> > @@ -171,4 +174,10 @@ extern int shmem_mfill_atomic_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
-> >  #define SHMEM_QUOTA_MAX_SPC_LIMIT 0x7fffffffffffffffLL /* 2^63-1 */
-> >  #define SHMEM_QUOTA_MAX_INO_LIMIT 0x7fffffffffffffffLL
-> >
-> > +#ifdef CONFIG_TMPFS_QUOTA
-> > +#define SHMEM_MAXQUOTAS 2
-> 
-> ...when you're only allowing user and group quotas?
+I guess so.
+Our monitoring application also does not rely on FS_MODIFY/FS_ACCESS
+as they could be too noisy.
 
-My bad, I should have used SHMEM_MAXQUOTAS to define the i_dquot
+The thing that I find missing is being able to tell if a file was *actually=
+*
+accessed/modified in between open and close.
+This information could be provided with FS_CLOSE event
 
-> 
-> (Or: Why not allow project quotas?  But that's outside the scope you
-> defined.)
-
-This is indeed on my plan, which I want to do later, I want to deal with the
-'avoid users to consume all memory' issue, then I want to add prjquotas here. I
-want to limit the scope of this series by now to avoid it snowballing with more
-and more features.
-
-> 
-> --D
-> 
-> > +extern const struct dquot_operations shmem_quota_operations;
-> > +extern struct quota_format_type shmem_quota_format;
-> > +#endif /* CONFIG_TMPFS_QUOTA */
-> > +
-> >  #endif
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index 88e13930fc013..d7529c883eaf5 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -79,6 +79,7 @@ static struct vfsmount *shm_mnt;
-> >  #include <linux/userfaultfd_k.h>
-> >  #include <linux/rmap.h>
-> >  #include <linux/uuid.h>
-> > +#include <linux/quotaops.h>
-> >
-> >  #include <linux/uaccess.h>
-> >
-> > @@ -116,10 +117,12 @@ struct shmem_options {
-> >  	bool full_inums;
-> >  	int huge;
-> >  	int seen;
-> > +	unsigned short quota_types;
-> >  #define SHMEM_SEEN_BLOCKS 1
-> >  #define SHMEM_SEEN_INODES 2
-> >  #define SHMEM_SEEN_HUGE 4
-> >  #define SHMEM_SEEN_INUMS 8
-> > +#define SHMEM_SEEN_QUOTA 16
-> >  };
-> >
-> >  #ifdef CONFIG_TMPFS
-> > @@ -211,8 +214,11 @@ static inline int shmem_inode_acct_block(struct inode *inode, long pages)
-> >  		if (percpu_counter_compare(&sbinfo->used_blocks,
-> >  					   sbinfo->max_blocks - pages) > 0)
-> >  			goto unacct;
-> > +		if ((err = dquot_alloc_block_nodirty(inode, pages)) != 0)
-> > +			goto unacct;
-> >  		percpu_counter_add(&sbinfo->used_blocks, pages);
-> > -	}
-> > +	} else if ((err = dquot_alloc_block_nodirty(inode, pages)) != 0)
-> > +		goto unacct;
-> >
-> >  	return 0;
-> >
-> > @@ -226,6 +232,8 @@ static inline void shmem_inode_unacct_blocks(struct inode *inode, long pages)
-> >  	struct shmem_inode_info *info = SHMEM_I(inode);
-> >  	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
-> >
-> > +	dquot_free_block_nodirty(inode, pages);
-> > +
-> >  	if (sbinfo->max_blocks)
-> >  		percpu_counter_sub(&sbinfo->used_blocks, pages);
-> >  	shmem_unacct_blocks(info->flags, pages);
-> > @@ -254,6 +262,47 @@ bool vma_is_shmem(struct vm_area_struct *vma)
-> >  static LIST_HEAD(shmem_swaplist);
-> >  static DEFINE_MUTEX(shmem_swaplist_mutex);
-> >
-> > +#ifdef CONFIG_TMPFS_QUOTA
-> > +
-> > +static int shmem_enable_quotas(struct super_block *sb,
-> > +			       unsigned short quota_types)
-> > +{
-> > +	int type, err = 0;
-> > +
-> > +	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
-> > +	for (type = 0; type < SHMEM_MAXQUOTAS; type++) {
-> > +		if (!(quota_types & (1 << type)))
-> > +			continue;
-> > +		err = dquot_load_quota_sb(sb, type, QFMT_SHMEM,
-> > +					  DQUOT_USAGE_ENABLED |
-> > +					  DQUOT_LIMITS_ENABLED);
-> > +		if (err)
-> > +			goto out_err;
-> > +	}
-> > +	return 0;
-> > +
-> > +out_err:
-> > +	pr_warn("tmpfs: failed to enable quota tracking (type=%d, err=%d)\n",
-> > +		type, err);
-> > +	for (type--; type >= 0; type--)
-> > +		dquot_quota_off(sb, type);
-> > +	return err;
-> > +}
-> > +
-> > +static void shmem_disable_quotas(struct super_block *sb)
-> > +{
-> > +	int type;
-> > +
-> > +	for (type = 0; type < SHMEM_MAXQUOTAS; type++)
-> > +		dquot_quota_off(sb, type);
-> > +}
-> > +
-> > +static struct dquot **shmem_get_dquots(struct inode *inode)
-> > +{
-> > +	return SHMEM_I(inode)->i_dquot;
-> > +}
-> > +#endif /* CONFIG_TMPFS_QUOTA */
-> > +
-> >  /*
-> >   * shmem_reserve_inode() performs bookkeeping to reserve a shmem inode, and
-> >   * produces a novel ino for the newly allocated inode.
-> > @@ -360,7 +409,6 @@ static void shmem_recalc_inode(struct inode *inode)
-> >  	freed = info->alloced - info->swapped - inode->i_mapping->nrpages;
-> >  	if (freed > 0) {
-> >  		info->alloced -= freed;
-> > -		inode->i_blocks -= freed * BLOCKS_PER_PAGE;
-> >  		shmem_inode_unacct_blocks(inode, freed);
-> >  	}
-> >  }
-> > @@ -378,7 +426,6 @@ bool shmem_charge(struct inode *inode, long pages)
-> >
-> >  	spin_lock_irqsave(&info->lock, flags);
-> >  	info->alloced += pages;
-> > -	inode->i_blocks += pages * BLOCKS_PER_PAGE;
-> >  	shmem_recalc_inode(inode);
-> >  	spin_unlock_irqrestore(&info->lock, flags);
-> >
-> > @@ -394,7 +441,6 @@ void shmem_uncharge(struct inode *inode, long pages)
-> >
-> >  	spin_lock_irqsave(&info->lock, flags);
-> >  	info->alloced -= pages;
-> > -	inode->i_blocks -= pages * BLOCKS_PER_PAGE;
-> >  	shmem_recalc_inode(inode);
-> >  	spin_unlock_irqrestore(&info->lock, flags);
-> >
-> > @@ -1133,6 +1179,15 @@ static int shmem_setattr(struct mnt_idmap *idmap,
-> >  		}
-> >  	}
-> >
-> > +	/* Transfer quota accounting */
-> > +	if (i_uid_needs_update(idmap, attr, inode) ||
-> > +	    i_gid_needs_update(idmap, attr,inode)) {
-> > +		error = dquot_transfer(idmap, inode, attr);
-> > +
-> > +		if (error)
-> > +			return error;
-> > +	}
-> > +
-> >  	setattr_copy(idmap, inode, attr);
-> >  	if (attr->ia_valid & ATTR_MODE)
-> >  		error = posix_acl_chmod(idmap, dentry, inode->i_mode);
-> > @@ -1178,7 +1233,9 @@ static void shmem_evict_inode(struct inode *inode)
-> >  	simple_xattrs_free(&info->xattrs);
-> >  	WARN_ON(inode->i_blocks);
-> >  	shmem_free_inode(inode->i_sb);
-> > +	dquot_free_inode(inode);
-> >  	clear_inode(inode);
-> > +	dquot_drop(inode);
-> >  }
-> >
-> >  static int shmem_find_swap_entries(struct address_space *mapping,
-> > @@ -1975,7 +2032,6 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
-> >
-> >  	spin_lock_irq(&info->lock);
-> >  	info->alloced += folio_nr_pages(folio);
-> > -	inode->i_blocks += (blkcnt_t)BLOCKS_PER_PAGE << folio_order(folio);
-> >  	shmem_recalc_inode(inode);
-> >  	spin_unlock_irq(&info->lock);
-> >  	alloced = true;
-> > @@ -2346,9 +2402,10 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
-> >  #define shmem_initxattrs NULL
-> >  #endif
-> >
-> > -static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block *sb,
-> > -				     struct inode *dir, umode_t mode, dev_t dev,
-> > -				     unsigned long flags)
-> > +static struct inode *shmem_get_inode_noquota(struct mnt_idmap *idmap,
-> > +					     struct super_block *sb,
-> > +					     struct inode *dir, umode_t mode,
-> > +					     dev_t dev, unsigned long flags)
-> >  {
-> >  	struct inode *inode;
-> >  	struct shmem_inode_info *info;
-> > @@ -2422,6 +2479,37 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
-> >  	return inode;
-> >  }
-> >
-> > +static struct inode *shmem_get_inode(struct mnt_idmap *idmap,
-> > +				     struct super_block *sb, struct inode *dir,
-> > +				     umode_t mode, dev_t dev, unsigned long flags)
-> > +{
-> > +	int err;
-> > +	struct inode *inode;
-> > +
-> > +	inode = shmem_get_inode_noquota(idmap, sb, dir, mode, dev, flags);
-> > +	if (IS_ERR(inode))
-> > +		return inode;
-> > +
-> > +	err = dquot_initialize(inode);
-> > +	if (err)
-> > +		goto errout;
-> > +
-> > +	err = dquot_alloc_inode(inode);
-> > +	if (err) {
-> > +		dquot_drop(inode);
-> > +		goto errout;
-> > +	}
-> > +	return inode;
-> > +
-> > +errout:
-> > +	inode->i_flags |= S_NOQUOTA;
-> > +	iput(inode);
-> > +	shmem_free_inode(sb);
-> > +	if (err)
-> > +		return ERR_PTR(err);
-> > +	return NULL;
-> > +}
-> > +
-> >  #ifdef CONFIG_USERFAULTFD
-> >  int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
-> >  			   pmd_t *dst_pmd,
-> > @@ -2525,7 +2613,6 @@ int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
-> >
-> >  	spin_lock_irq(&info->lock);
-> >  	info->alloced++;
-> > -	inode->i_blocks += BLOCKS_PER_PAGE;
-> >  	shmem_recalc_inode(inode);
-> >  	spin_unlock_irq(&info->lock);
-> >
-> > @@ -3372,6 +3459,7 @@ static ssize_t shmem_listxattr(struct dentry *dentry, char *buffer, size_t size)
-> >
-> >  static const struct inode_operations shmem_short_symlink_operations = {
-> >  	.getattr	= shmem_getattr,
-> > +	.setattr	= shmem_setattr,
-> >  	.get_link	= simple_get_link,
-> >  #ifdef CONFIG_TMPFS_XATTR
-> >  	.listxattr	= shmem_listxattr,
-> > @@ -3380,6 +3468,7 @@ static const struct inode_operations shmem_short_symlink_operations = {
-> >
-> >  static const struct inode_operations shmem_symlink_inode_operations = {
-> >  	.getattr	= shmem_getattr,
-> > +	.setattr	= shmem_setattr,
-> >  	.get_link	= shmem_get_link,
-> >  #ifdef CONFIG_TMPFS_XATTR
-> >  	.listxattr	= shmem_listxattr,
-> > @@ -3478,6 +3567,9 @@ enum shmem_param {
-> >  	Opt_uid,
-> >  	Opt_inode32,
-> >  	Opt_inode64,
-> > +	Opt_quota,
-> > +	Opt_usrquota,
-> > +	Opt_grpquota,
-> >  };
-> >
-> >  static const struct constant_table shmem_param_enums_huge[] = {
-> > @@ -3499,6 +3591,11 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
-> >  	fsparam_u32   ("uid",		Opt_uid),
-> >  	fsparam_flag  ("inode32",	Opt_inode32),
-> >  	fsparam_flag  ("inode64",	Opt_inode64),
-> > +#ifdef CONFIG_TMPFS_QUOTA
-> > +	fsparam_flag  ("quota",		Opt_quota),
-> > +	fsparam_flag  ("usrquota",	Opt_usrquota),
-> > +	fsparam_flag  ("grpquota",	Opt_grpquota),
-> > +#endif
-> >  	{}
-> >  };
-> >
-> > @@ -3582,6 +3679,18 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
-> >  		ctx->full_inums = true;
-> >  		ctx->seen |= SHMEM_SEEN_INUMS;
-> >  		break;
-> > +	case Opt_quota:
-> > +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> > +		ctx->quota_types |= (QTYPE_MASK_USR | QTYPE_MASK_GRP);
-> > +		break;
-> > +	case Opt_usrquota:
-> > +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> > +		ctx->quota_types |= QTYPE_MASK_USR;
-> > +		break;
-> > +	case Opt_grpquota:
-> > +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> > +		ctx->quota_types |= QTYPE_MASK_GRP;
-> > +		break;
-> >  	}
-> >  	return 0;
-> >
-> > @@ -3681,6 +3790,12 @@ static int shmem_reconfigure(struct fs_context *fc)
-> >  		goto out;
-> >  	}
-> >
-> > +	if (ctx->seen & SHMEM_SEEN_QUOTA &&
-> > +	    !sb_any_quota_loaded(fc->root->d_sb)) {
-> > +		err = "Cannot enable quota on remount";
-> > +		goto out;
-> > +	}
-> > +
-> >  	if (ctx->seen & SHMEM_SEEN_HUGE)
-> >  		sbinfo->huge = ctx->huge;
-> >  	if (ctx->seen & SHMEM_SEEN_INUMS)
-> > @@ -3763,6 +3878,9 @@ static void shmem_put_super(struct super_block *sb)
-> >  {
-> >  	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
-> >
-> > +#ifdef CONFIG_TMPFS_QUOTA
-> > +	shmem_disable_quotas(sb);
-> > +#endif
-> >  	free_percpu(sbinfo->ino_batch);
-> >  	percpu_counter_destroy(&sbinfo->used_blocks);
-> >  	mpol_put(sbinfo->mpol);
-> > @@ -3841,6 +3959,17 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
-> >  #endif
-> >  	uuid_gen(&sb->s_uuid);
-> >
-> > +#ifdef CONFIG_TMPFS_QUOTA
-> > +	if (ctx->seen & SHMEM_SEEN_QUOTA) {
-> > +		sb->dq_op = &shmem_quota_operations;
-> > +		sb->s_qcop = &dquot_quotactl_sysfile_ops;
-> > +		sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
-> > +
-> > +		if (shmem_enable_quotas(sb, ctx->quota_types))
-> > +			goto failed;
-> > +	}
-> > +#endif /* CONFIG_TMPFS_QUOTA */
-> > +
-> >  	inode = shmem_get_inode(&nop_mnt_idmap, sb, NULL, S_IFDIR | sbinfo->mode, 0,
-> >  				VM_NORESERVE);
-> >  	if (IS_ERR(inode)) {
-> > @@ -4016,6 +4145,9 @@ static const struct super_operations shmem_ops = {
-> >  #ifdef CONFIG_TMPFS
-> >  	.statfs		= shmem_statfs,
-> >  	.show_options	= shmem_show_options,
-> > +#endif
-> > +#ifdef CONFIG_TMPFS_QUOTA
-> > +	.get_dquots	= shmem_get_dquots,
-> >  #endif
-> >  	.evict_inode	= shmem_evict_inode,
-> >  	.drop_inode	= generic_delete_inode,
-> > @@ -4082,6 +4214,14 @@ void __init shmem_init(void)
-> >
-> >  	shmem_init_inodecache();
-> >
-> > +#ifdef CONFIG_TMPFS_QUOTA
-> > +	error = register_quota_format(&shmem_quota_format);
-> > +	if (error < 0) {
-> > +		pr_err("Could not register quota format\n");
-> > +		goto out3;
-> > +	}
-> > +#endif
-> > +
-> >  	error = register_filesystem(&shmem_fs_type);
-> >  	if (error) {
-> >  		pr_err("Could not register tmpfs\n");
-> > @@ -4106,6 +4246,10 @@ void __init shmem_init(void)
-> >  out1:
-> >  	unregister_filesystem(&shmem_fs_type);
-> >  out2:
-> > +#ifdef CONFIG_TMPFS_QUOTA
-> > +	unregister_quota_format(&shmem_quota_format);
-> > +#endif
-> > +out3:
-> >  	shmem_destroy_inodecache();
-> >  	shm_mnt = ERR_PTR(error);
-> >  }
-> > --
-> > 2.30.2
-> >
-
--- 
-Carlos Maiolino
+Thanks,
+Amir.
