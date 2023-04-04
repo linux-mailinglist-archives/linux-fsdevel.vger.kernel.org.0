@@ -2,70 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D7EF16D6D6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 21:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C2936D6EAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 23:10:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236166AbjDDTwW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Apr 2023 15:52:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45482 "EHLO
+        id S234428AbjDDVJq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Apr 2023 17:09:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230004AbjDDTwU (ORCPT
+        with ESMTP id S232313AbjDDVJp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Apr 2023 15:52:20 -0400
-Received: from domac.alu.hr (domac.alu.unizg.hr [161.53.235.3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0CF11705;
-        Tue,  4 Apr 2023 12:52:17 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by domac.alu.hr (Postfix) with ESMTP id DA44A604F7;
-        Tue,  4 Apr 2023 21:52:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-        t=1680637935; bh=517XR0X/jWCzTJ7yxauRblo40oIwOYagNQNSBg+Elk8=;
-        h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-        b=vbr463yLg6E/91ja4r5cUTG4PFXK6EE2y/wP/YOQolcwyCqDrW+cwvb4T3lJG0fIT
-         1NsS4sN2IWO11KVqNzyx8zrTjJ1MOtmdvhsbDzAOd7qGi7+mxnaMKIgWzk5lqpbFA9
-         43k/ZrYET1d17fDawSzGxKdqdy/33DTAAHtOkVT3Dydzg6tRVMcFCHXuXwyapg99N9
-         YylAZe+ysoN0dVM51AeznBFhLmxPUh5Xk6dJAgaTi110PTzMoq/CYn4zWdCUKnPbdc
-         ybdGOkgJnorco6VLHlusvU+TqVZ5eq0wuCgasDavAzazFJi2Ekg/pfkPfwUVBUyXiv
-         cKc+hUKeuhPgg==
-X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
-Received: from domac.alu.hr ([127.0.0.1])
-        by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id tpLIWn--HPqm; Tue,  4 Apr 2023 21:52:12 +0200 (CEST)
-Received: from [192.168.1.4] (unknown [94.250.188.177])
-        by domac.alu.hr (Postfix) with ESMTPSA id B2C90604F5;
-        Tue,  4 Apr 2023 21:52:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-        t=1680637932; bh=517XR0X/jWCzTJ7yxauRblo40oIwOYagNQNSBg+Elk8=;
-        h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-        b=QndEKGPN3KzRPtffYaMI11AaybT1KKz461JBirev43xcrCnGGOfbEk34KUSxiIkzM
-         WiGlvBuUCSKCc2BLwPtgRXixp2TBiaqZeRnhkzjfZn2EzhJ+ddC4E3qnL8j2Rg9XgG
-         4yohloX2Z7bOK/asPheDOnmtH6hQf33SX8mWdVGtlN9FinfW1Bxx7u/KFSVvlnMycy
-         gYFhns5UokvpbuCh5Ju4Ph9/M1k8OmEUktS4O8nk080bnCaVJqr+fW1a43n2slsp9D
-         ZI4pCBtkGrsk11E+498fgyP+HIzOhH/k3BHTpSg2aLcj22jQxNCSKuAsXdPxcuFFFy
-         g7GnZeFVGeJpA==
-Message-ID: <76134d9f-a5ba-6a0d-37b3-28310b4a1e91@alu.unizg.hr>
-Date:   Tue, 4 Apr 2023 21:52:10 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-From:   Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
-Subject: Re: [BUG RESEND] [BISECTED]: selftest: ftracetest: memleak in
- vfs_write()
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-References: <ca4dca01-66ce-c1a9-23cd-9d83b0d2c4b0@alu.unizg.hr>
-Content-Language: en-US, hr
-In-Reply-To: <ca4dca01-66ce-c1a9-23cd-9d83b0d2c4b0@alu.unizg.hr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS
+        Tue, 4 Apr 2023 17:09:45 -0400
+Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF10310CC
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 14:09:18 -0700 (PDT)
+Received: by mail-qv1-xf31.google.com with SMTP id oe8so24934163qvb.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Apr 2023 14:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1680642558; x=1683234558;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t2JNoT5A3zpIgQHs9Kbz57lZw1UiuEoQ6fylZEBtymY=;
+        b=XWiCM8gFxm3oq2a6moSMkkMk6X/ShvPDWip+ctZ0eEgRG1P8Fo4tvKepmno5aioT+H
+         rp3TyI3aQgxpU0e2vM5cKJ8L1kx4930mRnpbVoalkJLAKbkVIQ+JEbBqQO/NolSZnmdU
+         dkhV4iUQlvtSrVX5Vu2Qii8gHtMbYxmxKesatR891rF6co5WSWjaPjgd7Vp6RE/z+S4D
+         sQf1OpImqtHlw2aUgJjHbB39RNNR7g2XxjGIFK6f6EgC26poRIh0q15tcYT2vbPJx5M3
+         Amc9P1l2I6ni91ANzWWGohZfpqdzLmxUS/l8elcWXF5YMeqjBAMEVSEgGaGallblu9Pp
+         5SSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680642558; x=1683234558;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t2JNoT5A3zpIgQHs9Kbz57lZw1UiuEoQ6fylZEBtymY=;
+        b=f90XFx7S3ave23scCa9c1tgpJabM8UbduPrz5NpcJErdwfWkwR26NnqDs0zppc6zFb
+         /jIQDKMLlOqAUthoc42cIqLLCWVCkckYUVXc1WnGLio0sTlfUw2Td/c5M7TvDPAxA75g
+         wcmFPF6a5nJgtQppnwi/CBCbGee/cRLaZjWLZsHEk4ZN3Vq1IKARfZxQty27TMMxykJu
+         LV0ixC9XrjoRZsJpwISwPnD56K5FJq7wkGF/9EqKbBTbq4PrZthrMGfLUYbS9Vtz3Gts
+         ywJmSRI+oLTiNONtHUSZDKBQrXWVNX9vnnHOixcOPZEUq6QyjCxPT46DYM/f/kuncS2J
+         epLQ==
+X-Gm-Message-State: AAQBX9cyQd8s/H3JAUlpkXXe/vGU+fev2VwFZXBL9sfjqkXw04WwlVjj
+        JVWSi37x1wgBUdG9xGwA3X20cA==
+X-Google-Smtp-Source: AKy350aJx3/Yq4mFTh+fAUblqwl9Aw93NKCtrOL/zeep7ssRyt7SXJjL8ss2WiTYDRZm2FBtLW/Eqw==
+X-Received: by 2002:a05:6214:c81:b0:5e0:f92c:4558 with SMTP id r1-20020a0562140c8100b005e0f92c4558mr5677194qvr.10.1680642557870;
+        Tue, 04 Apr 2023 14:09:17 -0700 (PDT)
+Received: from smtpclient.apple (ec2-52-9-159-93.us-west-1.compute.amazonaws.com. [52.9.159.93])
+        by smtp.gmail.com with ESMTPSA id 21-20020a370415000000b0074683c45f6csm3907764qke.1.2023.04.04.14.09.15
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Apr 2023 14:09:17 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.400.51.1.1\))
+Subject: Re: [External] RE(2): FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes
+ for CXL
+From:   "Viacheslav A.Dubeyko" <viacheslav.dubeyko@bytedance.com>
+In-Reply-To: <ZCgasNpBjtQje8k+@memverge.com>
+Date:   Tue, 4 Apr 2023 14:09:04 -0700
+Cc:     Adam Manzanares <a.manzanares@samsung.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Kyungsan Kim <ks0204.kim@samsung.com>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "seungjun.ha@samsung.com" <seungjun.ha@samsung.com>,
+        "wj28.lee@samsung.com" <wj28.lee@samsung.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C539716C-B936-4AC6-814D-8DB6C44C81F2@bytedance.com>
+References: <ZB/yb9n6e/eNtNsf@kernel.org>
+ <CGME20230331114526epcas2p2b6f1d4c8c1c0b2e3c12a425b6e48c0d8@epcas2p2.samsung.com>
+ <20230331114525.400375-1-ks0204.kim@samsung.com>
+ <ZCvgTA5uk/HcyMAk@kernel.org> <20230404175754.GA633356@bgt-140510-bm01>
+ <ZCgMlc63gnhHgwuD@memverge.com>
+ <D0C2ADD0-35C4-4BE4-9330-A81D7326A588@bytedance.com>
+ <ZCgasNpBjtQje8k+@memverge.com>
+To:     Gregory Price <gregory.price@memverge.com>
+X-Mailer: Apple Mail (2.3731.400.51.1.1)
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,204 +89,163 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
 
-No progress on this bug report, so it is still unpatched in 6.3-rc5 so I am
-submitting again.
 
-Please see the relevant data at the bottom:
+> On Apr 1, 2023, at 4:51 AM, Gregory Price <gregory.price@memverge.com> =
+wrote:
+>=20
+> On Tue, Apr 04, 2023 at 11:59:22AM -0700, Viacheslav A.Dubeyko wrote:
+>>=20
+>>=20
+>>> On Apr 1, 2023, at 3:51 AM, Gregory Price =
+<gregory.price@memverge.com> wrote:
+>>>=20
+>>> On Tue, Apr 04, 2023 at 05:58:05PM +0000, Adam Manzanares wrote:
+>>>> On Tue, Apr 04, 2023 at 11:31:08AM +0300, Mike Rapoport wrote:
+>>>>>=20
+>>>>> The point of zswap IIUC is to have small and fast swap device and
+>>>>> compression is required to better utilize DRAM capacity at expense =
+of CPU
+>>>>> time.
+>>>>>=20
+>>>>> Presuming CXL memory will have larger capacity than DRAM, why not =
+skip the
+>>>>> compression and use CXL as a swap device directly?
+>>>>=20
+>>>> I like to shy away from saying CXL memory should be used for swap. =
+I see a=20
+>>>> swap device as storing pages in a manner that is no longer directly =
+addressable
+>>>> by the cpu.=20
+>>>>=20
+>>>> Migrating pages to a CXL device is a reasonable approach and I =
+believe we
+>>>> have the ability to do this in the page reclaim code.=20
+>>>>=20
+>>>=20
+>>> The argument is "why do you need swap if memory itself is elastic", =
+and
+>>> I think there are open questions about how performant using large
+>>> amounts of high-latency memory is.
+>>>=20
+>>> Think 1us-1.5us+ cross-rack attached memory.
+>>>=20
+>>> Does it make sense to use that as CPU-addressible and migrate it on
+>>> first use?  Isn't that just swap with more steps?  What happens if =
+we
+>>> just use it as swap, is the performance all that different?
+>>>=20
+>>> I think there's a reasonable argument for exploring the idea at the
+>>> higher ends of the latency spectrum.  And the simplicity of using an
+>>> existing system (swap) to implement a form of proto-tiering is =
+rather
+>>> attractive in my opinion.
+>>>=20
+>>=20
+>> I think the problem with swap that we need to take into account the =
+additional
+>> latency of swap-in/swap-out logic. I assume that this logic is =
+expensive enough.
+>> And if we considering the huge graph, for example, I am afraid the =
+swap-in/swap-out
+>> logic could be expensive. So, the question here is about use-case. =
+Which use-case could
+>> have benefits to employ the swap as a big space of high-latency =
+memory? I see your point
+>> that such swap could be faster than persistent storage. But which =
+use-case can be happy
+>> user of this space of high-latency memory?
+>>=20
+>> Thanks,
+>> Slava.
+>>=20
+>=20
+> Just spitballing here - to me this problem is two fold:
+>=20
+> I think the tiering use case and the swap use case are exactly the =
+same.
+> If tiering is sufficiently valuable, there exists a spectrum of =
+compute
+> density (cpu:dram:cxl:far-cxl) where simply using far-cxl as fast-swap
+> becomes easier and less expensive than a complex tiering system.
+>=20
+> So rather than a single use-case question, it reads like a tiering
+> question to me:
+>=20
+> 1) Where on the 1us-20us (far cxl : nvme) spectrum does it make sense =
+to
+>   switch from a swap mechanism to simply byte-addressable memory?
+>   There's a point, somewhere, where promote on first access =
+(effectively
+>   swap) is the same performance as active tiering (for a given =
+workload).
+>=20
+>   If that point is under 2us, there's a good chance that a =
+high-latency
+>   CXL swap-system would be a major win for any workload on any =
+cloud-based
+>   system.  It's simple, clean, and reclaim doesn't have to worry about =
+the
+>   complexities of hotpluggable memory zones.
+>=20
+>=20
+> Beyond that, to your point, what use-case is happy with this class of
+> memory, and in what form?
+>=20
+> 2) This is likely obscurred by the fact that many large-memory
+>   applications avoid swap like the plague by sharding data and =
+creating
+>   clusters. So it's hard to answer this until it's tested, and you
+>   can't test it unless you make it... woo!
+>=20
+>   Bit of a chicken/egg in here.  I don't know that anyone can say
+>   definitively what workload can make use of it, but that doesn't mean
+>   there isn't one.  So in the spectrum of risk/reward, at least
+>   enabling some simple mechanism for the sake of exploration feels
+>   exciting to say the least.
+>=20
+>=20
+> More generally, I think a cxl-swap (cswap? ;V) would be useful exactly =
+to
+> help identify when watch-and-wait tiering becomes more performant than
+> promote-on-first-use.  If you can't beat a simple fast-swap, why =
+bother?
+>=20
+> Again, I think this is narrowly applicable to high-latency CXL. My gut
+> tells me that anything under 1us is better used in a byte-addressable
+> manner, but once you start hitting 1us "It makes me go hmmm..."
+>=20
+> I concede this is largely conjecture until someone tests it out, but
+> certainly a fun thing to discess.
+>=20
 
-On 27. 01. 2023. 19:36, Mirsad Goran Todorovac wrote:
-> Hi all,
-> 
-> I came across a memory leak with the vanilla mainline Torvalds tree kernel
-> with MGLRU and CONFIG_KMEMLEAK enabled:
-> 
-> unreferenced object 0xffff8d7c92ad5180 (size 192):
->   comm "ftracetest", pid 2738512, jiffies 4335176273 (age 4842.976s)
->   hex dump (first 32 bytes):
->     c0 59 ad 92 7c 8d ff ff 60 dd d7 31 7c 8d ff ff  .Y..|...`..1|...
->     60 55 df 97 ff ff ff ff 09 00 02 00 00 00 00 00  `U..............
->   backtrace:
->     [<ffffffff965d9bf0>] __kmem_cache_alloc_node+0x1e0/0x340
->     [<ffffffff96556dda>] kmalloc_trace+0x2a/0xa0
->     [<ffffffff964382fc>] tracing_log_err+0x16c/0x1b0
->     [<ffffffff96451963>] append_filter_err+0x113/0x1d0
->     [<ffffffff96453c0a>] create_event_filter+0xba/0xe0
->     [<ffffffff96454b18>] set_trigger_filter+0x98/0x160
->     [<ffffffff96456554>] event_trigger_parse+0x104/0x180
->     [<ffffffff96455823>] trigger_process_regex+0xc3/0x110
->     [<ffffffff964558f7>] event_trigger_write+0x77/0xe0
->     [<ffffffff96623a41>] vfs_write+0xd1/0x420
->     [<ffffffff9662413b>] ksys_write+0x7b/0x100
->     [<ffffffff966241e9>] __x64_sys_write+0x19/0x20
->     [<ffffffff971c9188>] do_syscall_64+0x58/0x80
->     [<ffffffff972000aa>] entry_SYSCALL_64_after_hwframe+0x72/0xdc
-> unreferenced object 0xffff8d7b076be000 (size 32):
->   comm "ftracetest", pid 2738512, jiffies 4335176273 (age 4842.976s)
->   hex dump (first 32 bytes):
->     0a 20 20 43 6f 6d 6d 61 6e 64 3a 20 61 0a 00 00  .  Command: a...
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<ffffffff965d9bf0>] __kmem_cache_alloc_node+0x1e0/0x340
->     [<ffffffff96557a8d>] __kmalloc+0x4d/0xd0
->     [<ffffffff96438314>] tracing_log_err+0x184/0x1b0
->     [<ffffffff96451963>] append_filter_err+0x113/0x1d0
->     [<ffffffff96453c0a>] create_event_filter+0xba/0xe0
->     [<ffffffff96454b18>] set_trigger_filter+0x98/0x160
->     [<ffffffff96456554>] event_trigger_parse+0x104/0x180
->     [<ffffffff96455823>] trigger_process_regex+0xc3/0x110
->     [<ffffffff964558f7>] event_trigger_write+0x77/0xe0
->     [<ffffffff96623a41>] vfs_write+0xd1/0x420
->     [<ffffffff9662413b>] ksys_write+0x7b/0x100
->     [<ffffffff966241e9>] __x64_sys_write+0x19/0x20
->     [<ffffffff971c9188>] do_syscall_64+0x58/0x80
->     [<ffffffff972000aa>] entry_SYSCALL_64_after_hwframe+0x72/0xdc
-> unreferenced object 0xffff8d7c92ad59c0 (size 192):
->   comm "ftracetest", pid 2738512, jiffies 4335176280 (age 4843.088s)
->   hex dump (first 32 bytes):
->     c0 5c ad 92 7c 8d ff ff 80 51 ad 92 7c 8d ff ff  .\..|....Q..|...
->     60 55 df 97 ff ff ff ff 01 00 0b 00 00 00 00 00  `U..............
->   backtrace:
->     [<ffffffff965d9bf0>] __kmem_cache_alloc_node+0x1e0/0x340
->     [<ffffffff96556dda>] kmalloc_trace+0x2a/0xa0
->     [<ffffffff964382fc>] tracing_log_err+0x16c/0x1b0
->     [<ffffffff96451963>] append_filter_err+0x113/0x1d0
->     [<ffffffff96453c0a>] create_event_filter+0xba/0xe0
->     [<ffffffff96454b18>] set_trigger_filter+0x98/0x160
->     [<ffffffff96456554>] event_trigger_parse+0x104/0x180
->     [<ffffffff96455823>] trigger_process_regex+0xc3/0x110
->     [<ffffffff964558f7>] event_trigger_write+0x77/0xe0
->     [<ffffffff96623a41>] vfs_write+0xd1/0x420
->     [<ffffffff9662413b>] ksys_write+0x7b/0x100
->     [<ffffffff966241e9>] __x64_sys_write+0x19/0x20
->     [<ffffffff971c9188>] do_syscall_64+0x58/0x80
->     [<ffffffff972000aa>] entry_SYSCALL_64_after_hwframe+0x72/0xdc
-> 
-> The bug was noticed on Lenovo desktop 10TX000VCR (LENOVO_MT_10TX_BU_Lenovo_FM_V530S-07ICB)
-> running AlmaLinux 8.7 (Stone Smilodon), a CentOS clone, with the compiler:
-> 
-> mtodorov@domac:~/linux/kernel/linux_torvalds$ gcc --version
-> gcc (Debian 8.3.0-6) 8.3.0
-> Copyright (C) 2018 Free Software Foundation, Inc.
-> This is free software; see the source for copying conditions.  There is NO
-> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-> mtodorov@domac:~/linux/kernel/linux_torvalds$ 
-> 
-> Bisecting gave the following culprit commit:
-> 
-> git bisect good a92ce570c81dc0feaeb12a429b4bc65686d17967
-> # good: [c6f613e5f35b0e2154d5ca12f0e8e0be0c19be9a] ipmi/watchdog: use strscpy() to instead of strncpy()
-> git bisect good c6f613e5f35b0e2154d5ca12f0e8e0be0c19be9a
-> # good: [90b12f423d3c8a89424c7bdde18e1923dfd0941e] Merge tag 'for-linus-6.2-1' of https://github.com/cminyard/linux-ipmi
-> git bisect good 90b12f423d3c8a89424c7bdde18e1923dfd0941e
-> # first bad commit: [71946a25f357a51dcce849367501d7fb04c0465b] Merge tag 'mmc-v6.2' of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc
-> 
-> The commit was merged on December 13th 2022.
-> 
-> It is a huge commit.
-> 
-> The selftests/ftrace/ftracetest triggers this leak, sometimes several times in a run.
-> ftracetest requires root permission to run, but I haven't yet realised whether a non-superuser
-> could devise an automated script to abuse this leak exhausting all kernel's memory.
-> 
-> Non-root user gets a EPERM error when trying to access /proc/sys/kernel internals:
-> 
-> [marvin@pc-mtodorov linux_torvalds]$ tools/testing/selftests/ftrace/ftracetest 
-> Error: this must be run by root user
-> tools/testing/selftests/ftrace/ftracetest: line 46: /proc/sys/kernel/sched_rt_runtime_us: Permission denied
-> [marvin@pc-mtodorov linux_torvalds]$ 
-> 
-> Hope this helps.
-> 
-> According to the Code of Conduct, I have Cc:-ed maintainers from get_maintainers.pl and
-> I will add Thorsten because this is sort of a regression :-)
+OK. I am buying your point. :) But, at first I need to allocate memory.
+The really important point of CXL memory is the opportunity to extend
+the memory space. So, swap is not addressable memory and it is useless
+for memory space extension. Let=E2=80=99s imagine I have small local =
+DRAM (and
+maybe some amount of =E2=80=9Cfast=E2=80=9D CXL) + huge far CXL as swap =
+space. But I cannot
+use the swap space for allocation. So, this swap looks like useless =
+space.
+At first, I need to extend my memory by means of =E2=80=9Cfast=E2=80=9D =
+CXL. And if I have
+enough =E2=80=9Cfast=E2=80=9D CXL, then I don=E2=80=99t need in far CXL =
+memory. OK, it=E2=80=99s always
+not enough memory but we are hungry for addressable memory.
 
-The debug output is like follows:
+Large memory application would like to see the whole data set in memory.
+But it means that this data set needs to be addressable. Technically =
+speaking,
+it is possible to imagine that partially data set can be in the swap.
+But the first step is memory allocation and prefetching data from =
+persistent
+memory. Bus, as far as I can imagine, memory allocator will be limited =
+by
+addressable memory. So, I cannot have the whole data set in memory =
+because
+memory allocator stops me.
 
-unreferenced object 0xffff93a3dc2d1e18 (size 192):
-  comm "ftracetest", pid 12451, jiffies 4295087353 (age 463.476s)
-  hex dump (first 32 bytes):
-    20 08 2d dc a3 93 ff ff c0 bd 5d cd a3 93 ff ff   .-.......].....
-    c0 bf 85 b6 ff ff ff ff 09 00 02 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffffb4afb23c>] slab_post_alloc_hook+0x8c/0x3e0
-    [<ffffffffb4b02b19>] __kmem_cache_alloc_node+0x1d9/0x2a0
-    [<ffffffffb4a7693e>] kmalloc_trace+0x2e/0xc0
-    [<ffffffffb493a8fb>] tracing_log_err+0x18b/0x1d0
-    [<ffffffffb4959049>] append_filter_err.isra.13+0x119/0x190
-    [<ffffffffb495a89f>] create_filter+0xbf/0xe0
-    [<ffffffffb495ab10>] create_event_filter+0x10/0x20
-    [<ffffffffb495c040>] set_trigger_filter+0xa0/0x180
-    [<ffffffffb495d745>] event_trigger_parse+0xf5/0x160
-    [<ffffffffb495c889>] trigger_process_regex+0xc9/0x120
-    [<ffffffffb495c976>] event_trigger_write+0x86/0xf0
-    [<ffffffffb4b52dc2>] vfs_write+0xf2/0x520
-    [<ffffffffb4b533d8>] ksys_write+0x68/0xe0
-    [<ffffffffb4b5347e>] __x64_sys_write+0x1e/0x30
-    [<ffffffffb586619c>] do_syscall_64+0x5c/0x90
-    [<ffffffffb5a000ae>] entry_SYSCALL_64_after_hwframe+0x72/0xdc
-unreferenced object 0xffff93a3873dda20 (size 32):
-  comm "ftracetest", pid 12451, jiffies 4295087353 (age 463.476s)
-  hex dump (first 32 bytes):
-    0a 20 20 43 6f 6d 6d 61 6e 64 3a 20 61 0a 00 00  .  Command: a...
-    00 00 cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-  backtrace:
-    [<ffffffffb4afb23c>] slab_post_alloc_hook+0x8c/0x3e0
-    [<ffffffffb4b02b19>] __kmem_cache_alloc_node+0x1d9/0x2a0
-    [<ffffffffb4a77785>] __kmalloc+0x55/0x160
-    [<ffffffffb493a913>] tracing_log_err+0x1a3/0x1d0
-    [<ffffffffb4959049>] append_filter_err.isra.13+0x119/0x190
-    [<ffffffffb495a89f>] create_filter+0xbf/0xe0
-    [<ffffffffb495ab10>] create_event_filter+0x10/0x20
-    [<ffffffffb495c040>] set_trigger_filter+0xa0/0x180
-    [<ffffffffb495d745>] event_trigger_parse+0xf5/0x160
-    [<ffffffffb495c889>] trigger_process_regex+0xc9/0x120
-    [<ffffffffb495c976>] event_trigger_write+0x86/0xf0
-    [<ffffffffb4b52dc2>] vfs_write+0xf2/0x520
-    [<ffffffffb4b533d8>] ksys_write+0x68/0xe0
-    [<ffffffffb4b5347e>] __x64_sys_write+0x1e/0x30
-    [<ffffffffb586619c>] do_syscall_64+0x5c/0x90
-    [<ffffffffb5a000ae>] entry_SYSCALL_64_after_hwframe+0x72/0xdc
-
-Please find the complete debug info at the URL:
-
-https://domac.alu.unizg.hr/~mtodorov/linux/bugreports/ftracetest/
-
-Bisect log is [edited]:
-
-> git bisect good a92ce570c81dc0feaeb12a429b4bc65686d17967
-> # good: [c6f613e5f35b0e2154d5ca12f0e8e0be0c19be9a] ipmi/watchdog: use strscpy() to instead of strncpy()
-> git bisect good c6f613e5f35b0e2154d5ca12f0e8e0be0c19be9a
-> # good: [90b12f423d3c8a89424c7bdde18e1923dfd0941e] Merge tag 'for-linus-6.2-1' of https://github.com/cminyard/linux-ipmi
-> git bisect good 90b12f423d3c8a89424c7bdde18e1923dfd0941e
-> # first bad commit: [71946a25f357a51dcce849367501d7fb04c0465b] Merge tag 'mmc-v6.2' of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc
-> 
-> The commit was merged on December 13th 2022.
-
-The amount of applied diffs in the culprit commit 71946a25f357a51dcce849367501d7fb04c0465b
-prevents me from bisecting further - I do not know which changes depend of which, and which
-can be tested independently.
-
-Hopefully I might come up with a reproducer, but I need some feedback first. Maybe there
-are ways to narrow down the lines of code that could have caused the leaks, yet I am
-completely new to the kernel/trace subtree.
-
-Apologies for not Cc:ing Ulf nine weeks ago, but it was an omission, not deliberate act.
-
-Best regards,
-Mirsad
-
--- 
-Mirsad Goran Todorovac
-Sistem inženjer
-Grafički fakultet | Akademija likovnih umjetnosti
-Sveučilište u Zagrebu
- 
-System engineer
-Faculty of Graphic Arts | Academy of Fine Arts
-University of Zagreb, Republic of Croatia
-The European Union
-
-"I see something approaching fast ... Will it be friends with me?"
+Thanks,
+Slava.
 
