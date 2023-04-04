@@ -2,315 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40DC06D63FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 15:53:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D08BB6D6475
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Apr 2023 16:00:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235738AbjDDNxw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Apr 2023 09:53:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53182 "EHLO
+        id S235782AbjDDOAT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Apr 2023 10:00:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235742AbjDDNxk (ORCPT
+        with ESMTP id S235899AbjDDOAE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Apr 2023 09:53:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B72574224;
-        Tue,  4 Apr 2023 06:53:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4159E61FF6;
-        Tue,  4 Apr 2023 13:53:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01718C4339B;
-        Tue,  4 Apr 2023 13:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680616407;
-        bh=/XmQ33Vz5rwMvBxocOUTIIX51AasQPq8MBzmwbLl0tM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j3pvbEx+ZOhkZUE1LhdjIxby9njBvyhGGDw8XHNztZL/HYm+7Hxi7G2yVH87tLGXc
-         8CnD+aWL0pEfl8K8eEelOm98QkGvx9t82yLNNIDbeUQbrNgrgJfn5szL4qfacmifzK
-         rPf45WV4a2jbZGv1xNcqWD6pLaJXwrjXc0olsbyf9BBEd2EZkpozWqX1cpZJ+N/H4B
-         DgcmwjDTRFPqxMyHwoKOds6qUcJuJA5u8+/FD/+XXp0LvwfGWk4fHYFr/UhTWZm0gV
-         fPQ9esbG+NnpA8lDyV4zQGiCjpZvv+DaqXProbhEGTYkWTuiPCv+24pkuCN8MpR4Xn
-         uVKJnk0xDg9EA==
-Date:   Tue, 4 Apr 2023 15:53:13 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Ackerley Tng <ackerleytng@google.com>
-Cc:     kvm@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, qemu-devel@nongnu.org, aarcange@redhat.com,
-        ak@linux.intel.com, akpm@linux-foundation.org, arnd@arndb.de,
-        bfields@fieldses.org, bp@alien8.de, chao.p.peng@linux.intel.com,
-        corbet@lwn.net, dave.hansen@intel.com, david@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com, hpa@zytor.com,
-        hughd@google.com, jlayton@kernel.org, jmattson@google.com,
-        joro@8bytes.org, jun.nakajima@intel.com,
-        kirill.shutemov@linux.intel.com, linmiaohe@huawei.com,
-        luto@kernel.org, mail@maciej.szmigiero.name, mhocko@suse.com,
-        michael.roth@amd.com, mingo@redhat.com, naoya.horiguchi@nec.com,
-        pbonzini@redhat.com, qperret@google.com, rppt@kernel.org,
-        seanjc@google.com, shuah@kernel.org, steven.price@arm.com,
-        tabba@google.com, tglx@linutronix.de, vannapurve@google.com,
-        vbabka@suse.cz, vkuznets@redhat.com, wanpengli@tencent.com,
-        wei.w.wang@intel.com, x86@kernel.org, yu.c.zhang@linux.intel.com
-Subject: Re: [RFC PATCH v3 1/2] mm: restrictedmem: Allow userspace to specify
- mount for memfd_restricted
-Message-ID: <20230404-amnesty-untying-01de932d4945@brauner>
-References: <cover.1680306489.git.ackerleytng@google.com>
- <592ebd9e33a906ba026d56dc68f42d691706f865.1680306489.git.ackerleytng@google.com>
+        Tue, 4 Apr 2023 10:00:04 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91EBD35B7
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 06:59:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=Ppztqzi2Gw646l+hIyTnCePJrLfpu78r8b6P3LTQWro=; b=QKtJNp4eL+NLKoIYZbLEmbEGis
+        1qdDzcW0CcwQ29e84+KiR3pVsW6g6OntvQTB+mAqEuOKqIYap9JvAgvO0T+7PJXH8ugpx5+JVTnoD
+        snk9NZgn+wdjGWSwu4NFqsi6+bG2AqhvrxkuVmBDbxFfffr3U8UH/tm1G1IxczdInG6JVD0QKhcPm
+        HBnoWqq4DnsfJDZchMdMiEEzyfJhITGbfk5Swvh4slxDsFyb3QWrAmNeHUsFvML3JL0hD5h1iEltf
+        O7wamIL02Wro9+OM/ml7U9mwh2uF+V3G6vdyXobRIWR8ABTZ3cMFiOJThLPe27oES5R20uxnt1s3v
+        5JtoEU9A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pjhBU-00FPcd-1A; Tue, 04 Apr 2023 13:58:52 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Punit Agrawal <punit.agrawal@bytedance.com>
+Subject: [PATCH 0/6] Avoid the mmap lock for fault-around
+Date:   Tue,  4 Apr 2023 14:58:44 +0100
+Message-Id: <20230404135850.3673404-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <592ebd9e33a906ba026d56dc68f42d691706f865.1680306489.git.ackerleytng@google.com>
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 31, 2023 at 11:50:39PM +0000, Ackerley Tng wrote:
-> By default, the backing shmem file for a restrictedmem fd is created
-> on shmem's kernel space mount.
-> 
-> With this patch, an optional tmpfs mount can be specified via an fd,
-> which will be used as the mountpoint for backing the shmem file
-> associated with a restrictedmem fd.
-> 
-> This will help restrictedmem fds inherit the properties of the
-> provided tmpfs mounts, for example, hugepage allocation hints, NUMA
-> binding hints, etc.
-> 
-> Permissions for the fd passed to memfd_restricted() is modeled after
-> the openat() syscall, since both of these allow creation of a file
-> upon a mount/directory.
-> 
-> Permission to reference the mount the fd represents is checked upon fd
-> creation by other syscalls (e.g. fsmount(), open(), or open_tree(),
-> etc) and any process that can present memfd_restricted() with a valid
-> fd is expected to have obtained permission to use the mount
-> represented by the fd. This behavior is intended to parallel that of
-> the openat() syscall.
-> 
-> memfd_restricted() will check that the tmpfs superblock is
-> writable, and that the mount is also writable, before attempting to
-> create a restrictedmem file on the mount.
-> 
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> ---
->  include/linux/syscalls.h           |  2 +-
->  include/uapi/linux/restrictedmem.h |  8 ++++
->  mm/restrictedmem.c                 | 74 +++++++++++++++++++++++++++---
->  3 files changed, 77 insertions(+), 7 deletions(-)
->  create mode 100644 include/uapi/linux/restrictedmem.h
-> 
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index f9e9e0c820c5..a23c4c385cd3 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -1056,7 +1056,7 @@ asmlinkage long sys_memfd_secret(unsigned int flags);
->  asmlinkage long sys_set_mempolicy_home_node(unsigned long start, unsigned long len,
->  					    unsigned long home_node,
->  					    unsigned long flags);
-> -asmlinkage long sys_memfd_restricted(unsigned int flags);
-> +asmlinkage long sys_memfd_restricted(unsigned int flags, int mount_fd);
-> 
->  /*
->   * Architecture-specific system calls
-> diff --git a/include/uapi/linux/restrictedmem.h b/include/uapi/linux/restrictedmem.h
-> new file mode 100644
-> index 000000000000..22d6f2285f6d
-> --- /dev/null
-> +++ b/include/uapi/linux/restrictedmem.h
-> @@ -0,0 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +#ifndef _UAPI_LINUX_RESTRICTEDMEM_H
-> +#define _UAPI_LINUX_RESTRICTEDMEM_H
-> +
-> +/* flags for memfd_restricted */
-> +#define RMFD_USERMNT		0x0001U
-> +
-> +#endif /* _UAPI_LINUX_RESTRICTEDMEM_H */
-> diff --git a/mm/restrictedmem.c b/mm/restrictedmem.c
-> index c5d869d8c2d8..f7b62364a31a 100644
-> --- a/mm/restrictedmem.c
-> +++ b/mm/restrictedmem.c
-> @@ -1,11 +1,12 @@
->  // SPDX-License-Identifier: GPL-2.0
-> -#include "linux/sbitmap.h"
-> +#include <linux/namei.h>
->  #include <linux/pagemap.h>
->  #include <linux/pseudo_fs.h>
->  #include <linux/shmem_fs.h>
->  #include <linux/syscalls.h>
->  #include <uapi/linux/falloc.h>
->  #include <uapi/linux/magic.h>
-> +#include <uapi/linux/restrictedmem.h>
->  #include <linux/restrictedmem.h>
-> 
->  struct restrictedmem {
-> @@ -189,19 +190,20 @@ static struct file *restrictedmem_file_create(struct file *memfd)
->  	return file;
->  }
-> 
-> -SYSCALL_DEFINE1(memfd_restricted, unsigned int, flags)
-> +static int restrictedmem_create(struct vfsmount *mount)
->  {
->  	struct file *file, *restricted_file;
->  	int fd, err;
-> 
-> -	if (flags)
-> -		return -EINVAL;
-> -
->  	fd = get_unused_fd_flags(0);
+The linux-next tree currently contains patches (mostly from Suren)
+which handle some page faults without the protection of the mmap lock.
+This patchset adds the ability to handle page faults on parts of files
+which are already in the page cache without taking the mmap lock.
 
-Any reasons the file descriptors aren't O_CLOEXEC by default? I don't
-see any reasons why we should introduce new fdtypes that aren't
-O_CLOEXEC by default. The "don't mix-and-match" train has already left
-the station anyway as we do have seccomp noitifer fds and pidfds both of
-which are O_CLOEXEC by default.
+I've taken a very gradual approach to pushing the lock down.  I'm not 100%
+confident in my ability to grasp all the finer aspects of VMA handling,
+so some reviewrs may well feel that I could have combined some of
+these patches.  I did try to skip one of these steps and it had a bug,
+so I feel justified in proceeding cautiously.
 
->  	if (fd < 0)
->  		return fd;
-> 
-> -	file = shmem_file_setup("memfd:restrictedmem", 0, VM_NORESERVE);
-> +	if (mount)
-> +		file = shmem_file_setup_with_mnt(mount, "memfd:restrictedmem", 0, VM_NORESERVE);
-> +	else
-> +		file = shmem_file_setup("memfd:restrictedmem", 0, VM_NORESERVE);
-> +
->  	if (IS_ERR(file)) {
->  		err = PTR_ERR(file);
->  		goto err_fd;
-> @@ -223,6 +225,66 @@ SYSCALL_DEFINE1(memfd_restricted, unsigned int, flags)
->  	return err;
->  }
-> 
-> +static bool is_shmem_mount(struct vfsmount *mnt)
-> +{
-> +	return mnt && mnt->mnt_sb && mnt->mnt_sb->s_magic == TMPFS_MAGIC;
+Several people have volunteered to run benchmarks on this, so I haven't.
+I have run it through xfstests and it doesn't appear to introduce any
+regressions.
 
-This can just be if (mnt->mnt_sb->s_magic == TMPFS_MAGIC).
+Matthew Wilcox (Oracle) (6):
+  mm: Allow per-VMA locks on file-backed VMAs
+  mm: Move FAULT_FLAG_VMA_LOCK check from handle_mm_fault()
+  mm: Move FAULT_FLAG_VMA_LOCK check into handle_pte_fault()
+  mm: Move FAULT_FLAG_VMA_LOCK check down in handle_pte_fault()
+  mm: Move the FAULT_FLAG_VMA_LOCK check down from do_pte_missing()
+  mm: Run the fault-around code under the VMA lock
 
-> +}
-> +
-> +static bool is_mount_root(struct file *file)
-> +{
-> +	return file->f_path.dentry == file->f_path.mnt->mnt_root;
+ mm/hugetlb.c |  4 ++++
+ mm/memory.c  | 28 +++++++++++++++++++---------
+ 2 files changed, 23 insertions(+), 9 deletions(-)
 
-mount -t tmpfs tmpfs /mnt
-touch /mnt/bla
-touch /mnt/ble
-mount --bind /mnt/bla /mnt/ble
-fd = open("/mnt/ble")
-fd_restricted = memfd_restricted(fd)
+-- 
+2.39.2
 
-IOW, this doesn't restrict it to the tmpfs root. It only restricts it to
-paths that refer to the root of any tmpfs mount. To exclude bind-mounts
-that aren't bind-mounts of the whole filesystem you want:
-
-path->dentry == path->mnt->mnt_root && 
-path->mnt->mnt_root == path->mnt->mnt_sb->s_root
-
-> +}
-> +
-> +static int restrictedmem_create_on_user_mount(int mount_fd)
-> +{
-> +	int ret;
-> +	struct fd f;
-> +	struct vfsmount *mnt;
-> +
-> +	f = fdget_raw(mount_fd);
-> +	if (!f.file)
-> +		return -EBADF;
-> +
-> +	ret = -EINVAL;
-> +	if (!is_mount_root(f.file))
-> +		goto out;
-> +
-> +	mnt = f.file->f_path.mnt;
-> +	if (!is_shmem_mount(mnt))
-> +		goto out;
-> +
-> +	ret = file_permission(f.file, MAY_WRITE | MAY_EXEC);
-
-With the current semantics you're asking whether you have write
-permissions on the /mnt/ble file in order to get answer to the question
-whether you're allowed to create an unlinked restricted memory file.
-That doesn't make much sense afaict.
-
-> +	if (ret)
-> +		goto out;
-> +
-> +	ret = mnt_want_write(mnt);
-> +	if (unlikely(ret))
-> +		goto out;
-> +
-> +	ret = restrictedmem_create(mnt);
-> +
-> +	mnt_drop_write(mnt);
-> +out:
-> +	fdput(f);
-> +
-> +	return ret;
-> +}
-> +
-> +SYSCALL_DEFINE2(memfd_restricted, unsigned int, flags, int, mount_fd)
-> +{
-> +	if (flags & ~RMFD_USERMNT)
-> +		return -EINVAL;
-> +
-> +	if (flags == RMFD_USERMNT) {
-
-Why do you even need this flag? It seems that @mount_fd being < 0 is
-sufficient to indicate that a new restricted memory fd is supposed to be
-created in the system instance.
-
-> +		if (mount_fd < 0)
-> +			return -EINVAL;
-> +
-> +		return restrictedmem_create_on_user_mount(mount_fd);
-> +	} else {
-> +		return restrictedmem_create(NULL);
-> +	}
-> +}
-
-I have to say that I'm very confused by all of this the more I look at it.
-
-Effectively memfd restricted functions as a wrapper filesystem around
-the tmpfs filesystem. This is basically a weird overlay filesystem.
-You're allocating tmpfs files that you stash in restrictedmem files. 
-I have to say that this seems very hacky. I didn't get this at all at
-first.
-
-So what does the caller get if they call statx() on a restricted memfd?
-Do they get the device number of the tmpfs mount and the inode numbers
-of the tmpfs mount? Because it looks like they would:
-
-static int restrictedmem_getattr(struct user_namespace *mnt_userns,
-				 const struct path *path, struct kstat *stat,
-				 u32 request_mask, unsigned int query_flags)
-{
-	struct inode *inode = d_inode(path->dentry);
-	struct restrictedmem *rm = inode->i_mapping->private_data;
-	struct file *memfd = rm->memfd;
-
-	return memfd->f_inode->i_op->getattr(mnt_userns, path, stat,
-					     request_mask, query_flags);
-
-That @memfd would be a struct file allocated in a tmpfs instance, no? So
-you'd be calling the inode operation of the tmpfs file meaning that
-struct kstat will be filled up with the info from the tmpfs instance.
-
-But then if I call statfs() and check the fstype I would get
-RESTRICTEDMEM_MAGIC, no? This is... unorthodox?
-
-I'm honestly puzzled and this sounds really strange. There must be a
-better way to implement all of this.
-
-Shouldn't you try and make this a part of tmpfs proper? Make a really
-separate filesystem and add a memfs library that both tmpfs and
-restrictedmemfs can use? Add a mount option to tmpfs that makes it a
-restricted tmpfs?
