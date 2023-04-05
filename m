@@ -2,77 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB236D77A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 11:01:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D43A26D78E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 11:52:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237650AbjDEJBB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 05:01:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60232 "EHLO
+        id S237699AbjDEJwh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 05:52:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237503AbjDEJA6 (ORCPT
+        with ESMTP id S230103AbjDEJwe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 05:00:58 -0400
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84DE555BD
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 02:00:44 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id h136-20020a6bb78e000000b00758b105cdd3so22150941iof.23
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Apr 2023 02:00:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680685242; x=1683277242;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zTNZysYHQS0b2FE+g6aMtRxrh6qH9orUWgF0r43WgUQ=;
-        b=k2BUP5GI93YlByhd0GZ/ONhtEI8y9Ik/ZO9PRo8r8jMF5OYah39lW2QOyuGanWieq2
-         neQrTO739i3REO3uYqiCx1p7ME0T62tByNXQ0l2pambzFOeLLUZCcIoDhoAxKNv/Oqi4
-         JbUWOEx+iyZUfLIGriDFECwloeCLctT5d3+jX1a9tuEmCvU0srjzsVnJJlpjOkyXKqHP
-         73+7HGPYceKXg6XmLDkeSk+S2Z99hIOvEkxc6ZvAhP4I+1igl3Ab2N7LhnUIH1zvsNHq
-         18VJVjLQtQaOx9O2z6SzrK8rqdkfrBPs8FkvGn/osXLJkElFZIkg6WqivsEZVVlgcFSK
-         Ai/A==
-X-Gm-Message-State: AAQBX9cavVqkfBHhGs71KI/pf48BUG3OwDxtpCGAlDpQQchlaUZsJWIn
-        L40cOpDjcYfGNkIImsb0VwIqnUX2YtVcBqD42GgNMqZMPZvQjEk=
-X-Google-Smtp-Source: AKy350Yb3PbjA9xjWvuhrssojAZ5Gu0qd8YrGc9fQPzRMI2kC91RdfFipNX9PmYnaDtezk9BtZAE76wjXUvXa5Qavf5mb0AHZTph
+        Wed, 5 Apr 2023 05:52:34 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89E6E91;
+        Wed,  5 Apr 2023 02:52:21 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 1A3AB20685;
+        Wed,  5 Apr 2023 09:52:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1680688340; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5kxEOZs1Ac76OBwtijAiq1LEHzxrTF/ESnoZeBX1s5U=;
+        b=IRxH5dLldXbzWoseDDJFLON27UWQisexrdux6pTmZwMEJUh7+KDDgOL2FFGwMdw4qXX+88
+        SZXtRstArd4pzrgcJ8oig7KPreFloNY/MGYHpRLp72bp2qfZlFYU7wFiZqAGyQ0vGW2203
+        wLigaRb7GuLAIa/y7Wt2ZqyTi00uXvE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1680688340;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5kxEOZs1Ac76OBwtijAiq1LEHzxrTF/ESnoZeBX1s5U=;
+        b=9GU3V54N4nWUFuOORZ946DHhtbHXxKXuPtMcQGot4qVFgX8PM9hEOJcrOnifZQlqrRHef3
+        ++8hpDdRa+nWC8Dg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E15F713A31;
+        Wed,  5 Apr 2023 09:52:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id rfgAN9NELWQFbwAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 05 Apr 2023 09:52:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 1E028A0729; Wed,  5 Apr 2023 11:52:19 +0200 (CEST)
+Date:   Wed, 5 Apr 2023 11:52:19 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Zorro Lang <zlang@kernel.org>
+Cc:     fstests@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-unionfs@vger.kernel.org,
+        jack@suse.com, linux-xfs@vger.kernel.org, fdmanana@suse.com,
+        ebiggers@google.com, brauner@kernel.org, amir73il@gmail.com,
+        djwong@kernel.org, anand.jain@oracle.com
+Subject: Re: [PATCH 3/5] fstests/MAINTAINERS: add supported mailing list
+Message-ID: <20230405095219.fx2lw4dt25gn34ib@quack3>
+References: <20230404171411.699655-1-zlang@kernel.org>
+ <20230404171411.699655-4-zlang@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1949:b0:326:b2af:72d3 with SMTP id
- x9-20020a056e02194900b00326b2af72d3mr2706739ilu.3.1680685242097; Wed, 05 Apr
- 2023 02:00:42 -0700 (PDT)
-Date:   Wed, 05 Apr 2023 02:00:42 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d5a93805f8930638@google.com>
-Subject: [syzbot] Monthly fuse report
-From:   syzbot <syzbot+list69b50efce6f847334104@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230404171411.699655-4-zlang@kernel.org>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello fuse maintainers/developers,
+On Wed 05-04-23 01:14:09, Zorro Lang wrote:
+> The fstests supports different kind of fs testing, better to cc
+> specific fs mailing list for specific fs testing, to get better
+> reviewing points. So record these mailing lists and files related
+> with them in MAINTAINERS file.
+> 
+> Signed-off-by: Zorro Lang <zlang@kernel.org>
+> ---
 
-This is a 30-day syzbot report for the fuse subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/fuse
+Looks good to me. Feel free to add:
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 8 issues are still open and 34 have been fixed so far.
+Acked-by: Jan Kara <jack@suse.cz>
 
-Some of the still happening issues:
+								Honza
 
-Crashes Repro Title
-146     Yes   INFO: task hung in fuse_simple_request
-              https://syzkaller.appspot.com/bug?extid=46fe899420456e014d6b
-26      Yes   INFO: task hung in lookup_slow (3)
-              https://syzkaller.appspot.com/bug?extid=7cfc6a4f6b025f710423
-13      Yes   INFO: task hung in walk_component (5)
-              https://syzkaller.appspot.com/bug?extid=8fba0e0286621ce71edd
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> If someone mailing list doesn't want to be in cc list of related fstests
+> patch, please reply this email, I'll remove that line.
+> 
+> Or if I missed someone mailing list, please feel free to tell me.
+> 
+> Thanks,
+> Zorro
+> 
+>  MAINTAINERS | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 77 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 09b1a5a3..620368cb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -107,6 +107,83 @@ Maintainers List
+>  	  should send patch to fstests@ at least. Other relevant mailing list
+>  	  or reviewer or co-maintainer can be in cc list.
+>  
+> +BTRFS
+> +L:	linux-btrfs@vger.kernel.org
+> +S:	Supported
+> +F:	tests/btrfs/
+> +F:	common/btrfs
+> +
+> +CEPH
+> +L:	ceph-devel@vger.kernel.org
+> +S:	Supported
+> +F:	tests/ceph/
+> +F:	common/ceph
+> +
+> +CIFS
+> +L:	linux-cifs@vger.kernel.org
+> +S:	Supported
+> +F:	tests/cifs
+> +
+> +EXT4
+> +L:	linux-ext4@vger.kernel.org
+> +S:	Supported
+> +F:	tests/ext4/
+> +F:	common/ext4
+> +
+> +F2FS
+> +L:	linux-f2fs-devel@lists.sourceforge.net
+> +S:	Supported
+> +F:	tests/f2fs/
+> +F:	common/f2fs
+> +
+> +FSVERITY
+> +L:	fsverity@lists.linux.dev
+> +S:	Supported
+> +F:	common/verity
+> +
+> +FSCRYPT
+> +L:      linux-fscrypt@vger.kernel.org
+> +S:	Supported
+> +F:	common/encrypt
+> +
+> +FS-IDMAPPED
+> +L:	linux-fsdevel@vger.kernel.org
+> +S:	Supported
+> +F:	src/vfs/
+> +
+> +NFS
+> +L:	linux-nfs@vger.kernel.org
+> +S:	Supported
+> +F:	tests/nfs/
+> +F:	common/nfs
+> +
+> +OCFS2
+> +L:	ocfs2-devel@oss.oracle.com
+> +S:	Supported
+> +F:	tests/ocfs2/
+> +
+> +OVERLAYFS
+> +L:	linux-unionfs@vger.kernel.org
+> +S:	Supported
+> +F:	tests/overlay
+> +F:	common/overlay
+> +
+> +UDF
+> +R:	Jan Kara <jack@suse.com>
+> +S:	Supported
+> +F:	tests/udf/
+> +
+> +XFS
+> +L:	linux-xfs@vger.kernel.org
+> +S:	Supported
+> +F:	common/dump
+> +F:	common/fuzzy
+> +F:	common/inject
+> +F:	common/populate
+> +F:	common/repair
+> +F:	common/xfs
+> +F:	tests/xfs/
+> +
+>  ALL
+>  M:	Zorro Lang <zlang@kernel.org>
+>  L:	fstests@vger.kernel.org
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
