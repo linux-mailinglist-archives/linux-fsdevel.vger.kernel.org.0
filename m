@@ -2,199 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D43A26D78E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 11:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1322E6D7962
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 12:16:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237699AbjDEJwh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 05:52:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59248 "EHLO
+        id S237802AbjDEKQK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 06:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230103AbjDEJwe (ORCPT
+        with ESMTP id S237786AbjDEKQJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 05:52:34 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89E6E91;
-        Wed,  5 Apr 2023 02:52:21 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Wed, 5 Apr 2023 06:16:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69518198D
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 03:15:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680689720;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=5IwQffGQgbW5+GGPT7GHsPI80Xqx/MpQcxXTIga+7R4=;
+        b=GPMjrMQr05PHMZ3cLWHZT2z9uMrneIdRPL0Ouvz9QfmAKmNNBYubOraoeOuRaqc+76GDQT
+        ort14g5BDjtE2y7JnCee2o+gbI3NYhGpP1CzFPNmakEW3zkNlk2Y4+3YUTgB80A/PRZwxf
+        TlZnzG306Fc3KySsiViyIebFpJRKkB8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-454-h9N5vcbAOs2WQe-xnr3Yfg-1; Wed, 05 Apr 2023 06:15:19 -0400
+X-MC-Unique: h9N5vcbAOs2WQe-xnr3Yfg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 1A3AB20685;
-        Wed,  5 Apr 2023 09:52:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1680688340; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5kxEOZs1Ac76OBwtijAiq1LEHzxrTF/ESnoZeBX1s5U=;
-        b=IRxH5dLldXbzWoseDDJFLON27UWQisexrdux6pTmZwMEJUh7+KDDgOL2FFGwMdw4qXX+88
-        SZXtRstArd4pzrgcJ8oig7KPreFloNY/MGYHpRLp72bp2qfZlFYU7wFiZqAGyQ0vGW2203
-        wLigaRb7GuLAIa/y7Wt2ZqyTi00uXvE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1680688340;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5kxEOZs1Ac76OBwtijAiq1LEHzxrTF/ESnoZeBX1s5U=;
-        b=9GU3V54N4nWUFuOORZ946DHhtbHXxKXuPtMcQGot4qVFgX8PM9hEOJcrOnifZQlqrRHef3
-        ++8hpDdRa+nWC8Dg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E15F713A31;
-        Wed,  5 Apr 2023 09:52:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id rfgAN9NELWQFbwAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 05 Apr 2023 09:52:19 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 1E028A0729; Wed,  5 Apr 2023 11:52:19 +0200 (CEST)
-Date:   Wed, 5 Apr 2023 11:52:19 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Zorro Lang <zlang@kernel.org>
-Cc:     fstests@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, linux-unionfs@vger.kernel.org,
-        jack@suse.com, linux-xfs@vger.kernel.org, fdmanana@suse.com,
-        ebiggers@google.com, brauner@kernel.org, amir73il@gmail.com,
-        djwong@kernel.org, anand.jain@oracle.com
-Subject: Re: [PATCH 3/5] fstests/MAINTAINERS: add supported mailing list
-Message-ID: <20230405095219.fx2lw4dt25gn34ib@quack3>
-References: <20230404171411.699655-1-zlang@kernel.org>
- <20230404171411.699655-4-zlang@kernel.org>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6D560185A790;
+        Wed,  5 Apr 2023 10:15:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1665F440D6;
+        Wed,  5 Apr 2023 10:15:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+cc:     dhowells@redhat.com, Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iov_iter: Remove last_offset member
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230404171411.699655-4-zlang@kernel.org>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2933617.1680689716.1@warthog.procyon.org.uk>
+Date:   Wed, 05 Apr 2023 11:15:16 +0100
+Message-ID: <2933618.1680689716@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 05-04-23 01:14:09, Zorro Lang wrote:
-> The fstests supports different kind of fs testing, better to cc
-> specific fs mailing list for specific fs testing, to get better
-> reviewing points. So record these mailing lists and files related
-> with them in MAINTAINERS file.
-> 
-> Signed-off-by: Zorro Lang <zlang@kernel.org>
-> ---
+Hi Jens,
 
-Looks good to me. Feel free to add:
+Can you add this to the block tree?
 
-Acked-by: Jan Kara <jack@suse.cz>
+David
+---
+iov_iter: Remove last_offset member
 
-								Honza
+With the removal of ITER_PIPE, the last_offset member of struct iov_iter is
+no longer used, so remove it and un-unionise the remaining member.
 
-> 
-> If someone mailing list doesn't want to be in cc list of related fstests
-> patch, please reply this email, I'll remove that line.
-> 
-> Or if I missed someone mailing list, please feel free to tell me.
-> 
-> Thanks,
-> Zorro
-> 
->  MAINTAINERS | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 77 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 09b1a5a3..620368cb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -107,6 +107,83 @@ Maintainers List
->  	  should send patch to fstests@ at least. Other relevant mailing list
->  	  or reviewer or co-maintainer can be in cc list.
->  
-> +BTRFS
-> +L:	linux-btrfs@vger.kernel.org
-> +S:	Supported
-> +F:	tests/btrfs/
-> +F:	common/btrfs
-> +
-> +CEPH
-> +L:	ceph-devel@vger.kernel.org
-> +S:	Supported
-> +F:	tests/ceph/
-> +F:	common/ceph
-> +
-> +CIFS
-> +L:	linux-cifs@vger.kernel.org
-> +S:	Supported
-> +F:	tests/cifs
-> +
-> +EXT4
-> +L:	linux-ext4@vger.kernel.org
-> +S:	Supported
-> +F:	tests/ext4/
-> +F:	common/ext4
-> +
-> +F2FS
-> +L:	linux-f2fs-devel@lists.sourceforge.net
-> +S:	Supported
-> +F:	tests/f2fs/
-> +F:	common/f2fs
-> +
-> +FSVERITY
-> +L:	fsverity@lists.linux.dev
-> +S:	Supported
-> +F:	common/verity
-> +
-> +FSCRYPT
-> +L:      linux-fscrypt@vger.kernel.org
-> +S:	Supported
-> +F:	common/encrypt
-> +
-> +FS-IDMAPPED
-> +L:	linux-fsdevel@vger.kernel.org
-> +S:	Supported
-> +F:	src/vfs/
-> +
-> +NFS
-> +L:	linux-nfs@vger.kernel.org
-> +S:	Supported
-> +F:	tests/nfs/
-> +F:	common/nfs
-> +
-> +OCFS2
-> +L:	ocfs2-devel@oss.oracle.com
-> +S:	Supported
-> +F:	tests/ocfs2/
-> +
-> +OVERLAYFS
-> +L:	linux-unionfs@vger.kernel.org
-> +S:	Supported
-> +F:	tests/overlay
-> +F:	common/overlay
-> +
-> +UDF
-> +R:	Jan Kara <jack@suse.com>
-> +S:	Supported
-> +F:	tests/udf/
-> +
-> +XFS
-> +L:	linux-xfs@vger.kernel.org
-> +S:	Supported
-> +F:	common/dump
-> +F:	common/fuzzy
-> +F:	common/inject
-> +F:	common/populate
-> +F:	common/repair
-> +F:	common/xfs
-> +F:	tests/xfs/
-> +
->  ALL
->  M:	Zorro Lang <zlang@kernel.org>
->  L:	fstests@vger.kernel.org
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>
+cc: linux-nfs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+cc: netdev@vger.kernel.org
+---
+ include/linux/uio.h |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 74598426edb4..2d8a70cb9b26 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -43,10 +43,7 @@ struct iov_iter {
+ 	bool nofault;
+ 	bool data_source;
+ 	bool user_backed;
+-	union {
+-		size_t iov_offset;
+-		int last_offset;
+-	};
++	size_t iov_offset;
+ 	size_t count;
+ 	union {
+ 		const struct iovec *iov;
+
