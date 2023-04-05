@@ -2,48 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDFDB6D7765
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 10:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB236D77A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 11:01:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237196AbjDEIzw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 04:55:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50950 "EHLO
+        id S237650AbjDEJBB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 05:01:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236840AbjDEIzu (ORCPT
+        with ESMTP id S237503AbjDEJA6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 04:55:50 -0400
+        Wed, 5 Apr 2023 05:00:58 -0400
 Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 412EA30EE
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 01:55:48 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id b2-20020a6bcb02000000b0075e09ef5a2eso7764943iog.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Apr 2023 01:55:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84DE555BD
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 02:00:44 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id h136-20020a6bb78e000000b00758b105cdd3so22150941iof.23
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Apr 2023 02:00:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680684947; x=1683276947;
+        d=1e100.net; s=20210112; t=1680685242; x=1683277242;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gW9o6KUk5mM/VZpzbUF/+r0YpaUIjfVWfRZvrqXmET0=;
-        b=64YU/ytEZbr8WbR7CWbEHSDQKXoxhtURym2nB2h8zsjTjLchuPUarE9NPoAC464F53
-         jnTrbDIc+cpVP8dD2sMDE0LbQptUQfbBYiZ4bc4XIteHkHBtvfqph5UslYGWxcdNLw7b
-         FemcC6GcwXL8fpg9WIPlTc1VKDeSV+gRrKBbUl4Y7+W3IWMZ8QCXiPUWL3eJoauhBPW8
-         04XhSmZkaZAm1yCzhQVBwDNaRmoDuqwHMe/uhLG059OvCVDyKDZ0BFpRr88p1sfgRYP4
-         vyEgQR21AiI1EhpfzFb6X1d0JG24GJTXfOkFRnBHWG96xCTcOPtk/52/N2Q/pfM0IHUD
-         0jZw==
-X-Gm-Message-State: AAQBX9exvFaTaN7pIrDwHHSvRuFrJqkBFilMVIMVLBE/sw+8anhjN8d1
-        h8D/PVh5kFOhKSc+UOL8OFoGN641HzVZlK2t1Xv5IILSI464Vqw=
-X-Google-Smtp-Source: AKy350atZsR/b5sleI6/xqFnXJtAo9+T2biISUU0v4Uh7Q8dqJLG414PZJ4xP/gkMcG6kCKaWHaCmXz7Hj2Uq6AIUvo2bLyT7LJT
+        bh=zTNZysYHQS0b2FE+g6aMtRxrh6qH9orUWgF0r43WgUQ=;
+        b=k2BUP5GI93YlByhd0GZ/ONhtEI8y9Ik/ZO9PRo8r8jMF5OYah39lW2QOyuGanWieq2
+         neQrTO739i3REO3uYqiCx1p7ME0T62tByNXQ0l2pambzFOeLLUZCcIoDhoAxKNv/Oqi4
+         JbUWOEx+iyZUfLIGriDFECwloeCLctT5d3+jX1a9tuEmCvU0srjzsVnJJlpjOkyXKqHP
+         73+7HGPYceKXg6XmLDkeSk+S2Z99hIOvEkxc6ZvAhP4I+1igl3Ab2N7LhnUIH1zvsNHq
+         18VJVjLQtQaOx9O2z6SzrK8rqdkfrBPs8FkvGn/osXLJkElFZIkg6WqivsEZVVlgcFSK
+         Ai/A==
+X-Gm-Message-State: AAQBX9cavVqkfBHhGs71KI/pf48BUG3OwDxtpCGAlDpQQchlaUZsJWIn
+        L40cOpDjcYfGNkIImsb0VwIqnUX2YtVcBqD42GgNMqZMPZvQjEk=
+X-Google-Smtp-Source: AKy350Yb3PbjA9xjWvuhrssojAZ5Gu0qd8YrGc9fQPzRMI2kC91RdfFipNX9PmYnaDtezk9BtZAE76wjXUvXa5Qavf5mb0AHZTph
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b21:b0:326:1bf1:234 with SMTP id
- e1-20020a056e020b2100b003261bf10234mr3330838ilu.3.1680684947582; Wed, 05 Apr
- 2023 01:55:47 -0700 (PDT)
-Date:   Wed, 05 Apr 2023 01:55:47 -0700
+X-Received: by 2002:a05:6e02:1949:b0:326:b2af:72d3 with SMTP id
+ x9-20020a056e02194900b00326b2af72d3mr2706739ilu.3.1680685242097; Wed, 05 Apr
+ 2023 02:00:42 -0700 (PDT)
+Date:   Wed, 05 Apr 2023 02:00:42 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000047b8d005f892f5f0@google.com>
-Subject: [syzbot] Monthly overlayfs report
-From:   syzbot <syzbot+listf458cf6e943ee253729f@syzkaller.appspotmail.com>
+Message-ID: <000000000000d5a93805f8930638@google.com>
+Subject: [syzbot] Monthly fuse report
+From:   syzbot <syzbot+list69b50efce6f847334104@syzkaller.appspotmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        syzkaller-bugs@googlegroups.com
+        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
@@ -54,26 +53,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello overlayfs maintainers/developers,
+Hello fuse maintainers/developers,
 
-This is a 30-day syzbot report for the overlayfs subsystem.
+This is a 30-day syzbot report for the fuse subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/overlayfs
+https://syzkaller.appspot.com/upstream/s/fuse
 
 During the period, 0 new issues were detected and 0 were fixed.
-In total, 11 issues are still open and 17 have been fixed so far.
+In total, 8 issues are still open and 34 have been fixed so far.
 
 Some of the still happening issues:
 
 Crashes Repro Title
-785     Yes   possible deadlock in ovl_maybe_copy_up
-              https://syzkaller.appspot.com/bug?extid=c18f2f6a7b08c51e3025
-442     Yes   possible deadlock in mnt_want_write (2)
-              https://syzkaller.appspot.com/bug?extid=b42fe626038981fb7bfa
-24      Yes   BUG: unable to handle kernel paging request in take_dentry_name_snapshot
-              https://syzkaller.appspot.com/bug?extid=90392eaed540afcc8fc3
-11      Yes   WARNING: locking bug in take_dentry_name_snapshot
-              https://syzkaller.appspot.com/bug?extid=5a195884ee3ad761db4e
+146     Yes   INFO: task hung in fuse_simple_request
+              https://syzkaller.appspot.com/bug?extid=46fe899420456e014d6b
+26      Yes   INFO: task hung in lookup_slow (3)
+              https://syzkaller.appspot.com/bug?extid=7cfc6a4f6b025f710423
+13      Yes   INFO: task hung in walk_component (5)
+              https://syzkaller.appspot.com/bug?extid=8fba0e0286621ce71edd
 
 ---
 This report is generated by a bot. It may contain errors.
