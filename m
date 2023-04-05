@@ -2,64 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A31E56D7DD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 15:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46C916D7DD6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 15:37:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238282AbjDENhY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 09:37:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47702 "EHLO
+        id S238284AbjDENhZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 09:37:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237308AbjDENhW (ORCPT
+        with ESMTP id S238281AbjDENhX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 09:37:22 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B1D549D1
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 06:37:21 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id ca18e2360f4ac-7589c3519bfso735639f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Apr 2023 06:37:21 -0700 (PDT)
+        Wed, 5 Apr 2023 09:37:23 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE444C28
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 06:37:22 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id ca18e2360f4ac-7585535bd79so18329539f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Apr 2023 06:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680701840; x=1683293840;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112; t=1680701841;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7n3Dd3wLUrv6THF4QasOZFx/ZAjwTDcu8/29+Cnketk=;
-        b=EJUwJE2db/kuNms39eohucGNWESj9Vuc1oM/6xGOpmWN7Ai7RQkPCtXGkCyBSaXzMo
-         3MXjE4nATna9CJXtjiHk4tUkNrRvZZump40KwkLE3WFaMEzfitslqeWOLKadckqeOH5j
-         zCWC41F8tDXx7oIVk6CemSnCe/sKWMMNXl9CNUh6g+xB3KSQ5B1zPAWl9fHgEXWQPAKA
-         CDzlqIzZhaVXrGpxAMCPa8Z3JdTWYLeULvoYBy+ZEZexfNy5IqcGcUb+d61H8fL2L+S7
-         iNRWGc/pWmGLAS51QeciELoSZeDWhrfMst4dlzwnZQt1ODIAW/p4j8Hy3N7x7g0FL0OD
-         TMsg==
+        bh=SMACiJoNW6UL2b8KEXrA9z4AHCYPwLvMVkZG5jbqYsU=;
+        b=0SbrqR9Hi2bWm4bLG/5yE8o+jagwr5aLVKJ10+MOeHuh65tZpSboNe3YBLIJb9yRma
+         6aUGVy1vXvM9WHZcuJ3OQo07NKs96I5Pu8c4KAqH+7vjm0A0eBmGar9GQDAoiEfTjjKI
+         S77L3SLvhI36dkqqUyiNoPqE0OVa6SKvTXMvrb8r9IfNXxNvVRpx1Ft/If7yFlbSqLx6
+         nufX8WVg0Hw9mjQl/rwT5c5W3dGWXWkGQXWLpFBUf0IdN1BJ/2CnQYHiB6usAZa8n4x2
+         Ep9AWHFYMdIINBv3I1yMNN1PxKW3yZOIpxjzEIokw95DLH2rr2gTYrnnjOiKrpNoIbTy
+         B/tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680701840; x=1683293840;
+        d=1e100.net; s=20210112; t=1680701841;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7n3Dd3wLUrv6THF4QasOZFx/ZAjwTDcu8/29+Cnketk=;
-        b=kdy0sdrMV1hWO3Woe8va25JsPxsXIMzXYQsVOyd4ueLrzzCNrjXC9eOb7ulLotMqkn
-         6Ru50HwfalEcYrYuLNQvxNoHY0nw620hcr0NeCKtzq/3b5radIdj20K/S/hpElW4BinM
-         0hOlkNMsdyj2g5kj+RWm5qtetu9Ut1nBMxggmwZzxdROfDqmEy1dtq6UUMpv1oD5px/X
-         DuwU+4OzvqrojTpSNDFfIG2nOhqNVlsMHMBXUkEwXFasDOysAkQLFlwXDUkvaF72gf7m
-         lAEYiGHNUkbxe9AF7SuByA1tRtRIhCop8uRrjjatyj0KhBSO9RSRZ/fDOeYEPoE/U6tv
-         KgGA==
-X-Gm-Message-State: AAQBX9cpj56MDD65EvWc+2FzTShJIujAgxIV9Uxnerm8nAvzO2zr6VXx
-        ocds+tJ20U4Z480VDpVulC+3Pg==
-X-Google-Smtp-Source: AKy350bz00fEFRi/9hCOEIHnt3vZTqhFxkc9MqZ0YsNJDytuzyoGRJ58X1C9Cg6KmkPzNWJlKDHvHw==
-X-Received: by 2002:a6b:b48f:0:b0:758:5525:860a with SMTP id d137-20020a6bb48f000000b007585525860amr1312027iof.0.1680701840316;
-        Wed, 05 Apr 2023 06:37:20 -0700 (PDT)
+        bh=SMACiJoNW6UL2b8KEXrA9z4AHCYPwLvMVkZG5jbqYsU=;
+        b=fw9qQ4jGiooZpaz9h6kmw2f2pa4vqs9oxHc0h6/vy71gvB564dTftXE26AlsHj46qw
+         gGpLZv+OUJXPAoVn0jwoKJg3upUCax2EWNkGF6we/Yqf7sGFwry5OTs/gjgl9gaGyUt8
+         Lx8K/RsMZ6qF/qDOSUgcZ2w4o4wt/TjhAQsqxzTbTwDAfiwhQY9n0Etm0gVC3SA46oNb
+         rd+7vsPe43DOGdaM5mGPDrmnb4ZcIkKiyn9gwtE3dfOc06/bzkLyBAJ4gBgTJXHMBMFl
+         qyyBvBg2ViqtY/l5H6tCO1TsERKecVsMyB0+mZy8tS7Aw2eoXRmdoRA9dTGwHdhWiG0O
+         egnA==
+X-Gm-Message-State: AAQBX9eOdCMnfXw05vJHNhx/wmiUJOwctmeEP/L8ewugiLqowxQXBF9F
+        gdK2bRaauWykORd3wmY6g0/2Pw==
+X-Google-Smtp-Source: AKy350Zi/uU7mBlI7a3mLEo2lbcBTqjpeVirj1zVYuJdxOFP0K02w1bg5MQyzg/cTnEsUTe/dc0ljQ==
+X-Received: by 2002:a05:6602:3941:b0:758:9c9e:d6c6 with SMTP id bt1-20020a056602394100b007589c9ed6c6mr1788054iob.2.1680701841412;
+        Wed, 05 Apr 2023 06:37:21 -0700 (PDT)
 Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id u19-20020a02b1d3000000b0040b4ac6490dsm680489jah.96.2023.04.05.06.37.19
+        by smtp.gmail.com with ESMTPSA id u19-20020a02b1d3000000b0040b4ac6490dsm680489jah.96.2023.04.05.06.37.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 06:37:19 -0700 (PDT)
+        Wed, 05 Apr 2023 06:37:21 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dhowells@redhat.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-In-Reply-To: <20230403142543.1913749-2-hch@lst.de>
-References: <20230403142543.1913749-1-hch@lst.de>
- <20230403142543.1913749-2-hch@lst.de>
-Subject: Re: [PATCH 1/3] iov_iter: remove iov_iter_get_pages
-Message-Id: <168070183967.176456.4699260871355757122.b4-ty@kernel.dk>
-Date:   Wed, 05 Apr 2023 07:37:19 -0600
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <2933618.1680689716@warthog.procyon.org.uk>
+References: <2933618.1680689716@warthog.procyon.org.uk>
+Subject: Re: [PATCH] iov_iter: Remove last_offset member
+Message-Id: <168070184053.176456.9607242016242560793.b4-ty@kernel.dk>
+Date:   Wed, 05 Apr 2023 07:37:20 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -74,19 +77,17 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On Mon, 03 Apr 2023 16:25:41 +0200, Christoph Hellwig wrote:
-> All previous users have been converted to the FOLL_PIN based interfaces.
+On Wed, 05 Apr 2023 11:15:16 +0100, David Howells wrote:
+> Can you add this to the block tree?
+> 
+> David
 > 
 > 
 
 Applied, thanks!
 
-[1/3] iov_iter: remove iov_iter_get_pages
-      commit: b6eaf73268c819c170266ba1b83e4d08f973aea5
-[2/3] iov_iter: remove iov_iter_get_pages_alloc
-      commit: ce6b98c2d64bcb9bf4844800ec4e0ebf130ce3df
-[3/3] iov_iter: remove the extraction_flags argument to __iov_iter_get_pages_alloc
-      commit: 1b8d72fb6bea91d2fbfa487891d2ddbcb85f7eda
+[1/1] iov_iter: Remove last_offset member
+      commit: 867e1cbba73ea240f9417439479df7eb74b1299c
 
 Best regards,
 -- 
