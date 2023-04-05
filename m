@@ -2,134 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA18B6D8660
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 20:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8DB36D86C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 21:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232897AbjDES4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 14:56:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51376 "EHLO
+        id S233654AbjDETWN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 15:22:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230465AbjDES4c (ORCPT
+        with ESMTP id S231574AbjDETWM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 14:56:32 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5ED259E2
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 11:56:31 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id ek18so143597360edb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Apr 2023 11:56:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680720990;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KUHx9jRHzGk0Yj8qja9+zPdMg8UV3tc3NMpsClxL/uU=;
-        b=PcOksGvousVNSQ3cXdcS8HWqwXWWJcKA52C1lMjGVEUryaoo1tPpsv5kRcDXnrszeS
-         JdYnxSepPg5yJ/fPSprlLRsupbI62wkDmZPCcKllTgOwxHqMqudEkwjw8ZhEs+8EK2a1
-         NUk4+UWeR0EaIswYspERC1kivvjsa0dWn2wnvu2WB9gk8GukcN9hVPDOmbhPQBLeN2uB
-         1jkZr4RwvxyVz3l3W89ZzOJwJB0ceoUCOYSHY8WiICNTCCA85y6wjPi+rNU0oBwOYs2l
-         N/U/n1chu5ml11hqxoxCZ1NlwaqbYeH6RnTye7Bn3qrwMNnUgKCvlLNecFKJWushISY0
-         CU7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680720990;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KUHx9jRHzGk0Yj8qja9+zPdMg8UV3tc3NMpsClxL/uU=;
-        b=SCaMBVbUXCygdxbIWnY/dtjvMCwziDiYZv1xrs+dbnIhVSfXE0jqmRjnc20P3KZS9G
-         skfEM4v8SaO9mTkWOeXLX8IP7zoQE8gkqweNlNp/VSyV5J/+4vLllxMGp42X63VMiyXt
-         JMTObY5UYp8OSC4DV4Nc6Vd7X/HY+N9i4YarDZirYBnuOKjkt50VGOy1xNvf4sH17gnH
-         Uu2DiecNJe26yG0KxBvCqi53mqxz4QZdq9lZT9n7lIiz0csuF14tnDDckb8Kjq7ZSZGh
-         ugRXSrDHiAJEFb9/na2SQJqvmRQGgI0x3ZcJQc+//LWRcrznyMJOYBsSC0gOCq492Olv
-         LGRA==
-X-Gm-Message-State: AAQBX9fy9JtnOr57MLc7mh/M29ghMC/ffGbrBaPMgoAn58kg/AtUoocp
-        ASUlfl5pO2AIh0qgsWVg2RVVCMUCk6j8wRJ54JlBmA==
-X-Google-Smtp-Source: AKy350bHaZuNUXPKWqtZZFlNYtm/KTUiWTEcxIzQpbSGE4xeqztd4ciQVHBO4lwV5nrlqSYhHlA8ehPxdZppf/JJggY=
-X-Received: by 2002:a17:906:95cf:b0:933:f6e8:26d9 with SMTP id
- n15-20020a17090695cf00b00933f6e826d9mr2247603ejy.15.1680720989801; Wed, 05
- Apr 2023 11:56:29 -0700 (PDT)
+        Wed, 5 Apr 2023 15:22:12 -0400
+Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20FF2619B;
+        Wed,  5 Apr 2023 12:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1680722526;
+        bh=bxOssrZ9p9edKrGOiBzAQqPL3Zbov8F9eu6w8/r57AY=;
+        h=From:To:Cc:Subject:Date;
+        b=h83ld2ciRGFg9XAgqEoFGe8kahjEeACGalZ/CsGFBDZuFiqIqHfBvKday4N7B/S1L
+         ekypLw9t6sdxIF+zC6niQdnhF9s9sQdZsWezfa4e1Gx6oMUXgkHDDJaQgeBWuIvwkd
+         4c8ogu7/IzzMVaJFhFNuTeoTQgPWDMDKR7WSBoLg=
+Received: from wen-VirtualBox.lan ([106.92.97.36])
+        by newxmesmtplogicsvrszc2-1.qq.com (NewEsmtp) with SMTP
+        id 5808F8A9; Thu, 06 Apr 2023 03:22:00 +0800
+X-QQ-mid: xmsmtpt1680722520tvhd1dmos
+Message-ID: <tencent_16F9553E8354D950D704214D6EA407315F0A@qq.com>
+X-QQ-XMAILINFO: MRw/zKT/0BpPOmBcxVwbT4iLv0RSfXAa7tRZuGbItYjMP9KJbNXJQY5dn8EsQt
+         iu0FXvaWDBoaAcra6QNRb3xk0UE75zAziNTY90gkuUOEfpmhRSRu2A/sxRdznXgE6AfFGtYfeiZh
+         dn/E+1u9TuLo0y+8CtMZ9vhoy/aecXGy1vKRJg3t8Fv1plWPaKMGn/lfPL+wZ5ZTEr/wv928k9IS
+         z0dEVqVQ6ztthcBEUhQAVQ3ywD6VIRJNOlhU8xX75l0alv8sSlmFzrdND94QxwTfxPFzHZsquheJ
+         ANFQgOmwUIu5fOpnAGjn1pq0/l5TUsGkuskS9pemxOTz3D51Kfd973Q1R4MWYsQ2D6EhUAksoqjr
+         QjnvRRiGA6zuZFL8jExCLDiqRySkbZOHIUEiSpDiVC28IduPBljyVgyfjRZLHG4rWMABxyNm2bfk
+         eRaXoo3t+U3J4xVrseT2jXVlp0Bmrj5sKEB4RcpaPHnYyJlwO67Eyfoy5SRdSacuV1B9f8o6mJc0
+         JpuV1WOs6VTL/8Dr00keXy1mvwR3fwQAIE3axisJcAqQizQ8wbZ3w7tZzrVUXwk7i/bBj2PtVBqo
+         u9RYa/SSJZT8PvlZsds1AiIi8r4J5a52F/0BBb/oSlwLgmaiRYryKNDL0ub7pRpWmj66Xo6mRuhS
+         g47YiFBpFKdo3N5Z423y9ufqQm9OdyqUl8yBfg2/I02YiXmpPCEjdJFpmOsEf0Z2GOycG+/BdK0x
+         WeN17gj4M9B4xXnDDt4Ou+VJAXWIMOUIY7m2QZL91Cbq43SthOvYN4dbTomOL0W0ga/7eraGKPch
+         M7fkeAQboG50+PCeEwGTasIFUwX319+WtkX4sCZCkqAIr91MI/ccy6hQEHJ9c9QngbwbakL09vcQ
+         YSX3XFc5sA8aWMJTBkJ5H9STKw53BunIfLllhyhCPGaeyfL/zwm9hrLA9SPOb3jJToaTcEOcy2Hi
+         7B/CDNt4bsNBusZRkdLKTBoyn7TddAUsIyOu1ctmoNta6jmx8iwrx2ldmtigkQsEw+w+IOC333Uf
+         qhgWeWBekwdmXolNFg
+From:   wenyang.linux@foxmail.com
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Wen Yang <wenyang.linux@foxmail.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
+        David Woodhouse <dwmw@amazon.co.uk>, Fu Wei <wefu@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Michal Nazarewicz <m.nazarewicz@samsung.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2] eventfd: use wait_event_interruptible_locked_irq() helper
+Date:   Thu,  6 Apr 2023 03:20:02 +0800
+X-OQ-MSGID: <20230405192002.48836-1-wenyang.linux@foxmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-References: <20230404001353.468224-1-yosryahmed@google.com>
- <20230404143824.a8c57452f04929da225a17d0@linux-foundation.org>
- <CAJD7tkbZgA7QhkuxEbp=Sam6NCA0i3cZJYF4Z1nrLK1=Rem+Gg@mail.gmail.com>
- <20230404145830.b34afedb427921de2f0e2426@linux-foundation.org>
- <CAJD7tkZCmkttJo+6XGROo+pmfQ+ppQp6=qukwvAGSeSBEGF+nQ@mail.gmail.com>
- <20230404152816.cec6d41bfb9de4680ae8c787@linux-foundation.org>
- <20230404153124.b0fa5074cf9fc3b9925e8000@linux-foundation.org>
- <CAJD7tkYFZGJqZ278stOWDyW3HgMP8iyAZu8hSG+bV-p9YoVxig@mail.gmail.com> <20230405114841.248dffb65526383823c71d60@linux-foundation.org>
-In-Reply-To: <20230405114841.248dffb65526383823c71d60@linux-foundation.org>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Wed, 5 Apr 2023 11:55:53 -0700
-Message-ID: <CAJD7tkZm2-Xx1axfhMH9wD4cJK5ySwg=kn9oXWeSBAR4npNp2Q@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] Ignore non-LRU-based reclaim in memcg reclaim
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        David Hildenbrand <david@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@kernel.org>, Yu Zhao <yuzhao@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=3.4 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HELO_DYNAMIC_IPADDR,
+        RCVD_IN_DNSWL_NONE,RDNS_DYNAMIC,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 5, 2023 at 11:48=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Tue, 4 Apr 2023 16:46:30 -0700 Yosry Ahmed <yosryahmed@google.com> wro=
-te:
->
-> > > But the key question remains: how desirable is a backport?
-> > >
-> > > Looking at the changelogs I'm not seeing a clear statement of the
-> > > impact upon real-world users' real-world workloads.  (This is a hint)=
-.
-> > > So I am unable to judge.
-> > >
-> > > Please share your thoughts on this.
-> >
-> > I think it's nice to have but not really important. It occasionally
-> > causes writes to memory.reclaim to report false positives and *might*
-> > cause unnecessary retrying when charging memory, but probably too rare
-> > to be a practical problem.
-> >
-> > Personally, I intend to backport to our kernel at Google because it's
-> > a simple enough fix and we have occasionally seen test flakiness
-> > without it.
-> >
-> > I have a reworked version of the series that only has 2 patches:
-> > - simple-two-liner-patch (actually 5 lines)
-> > - one patch including all refactoring squashed (introducing
-> > flush_reclaim_state() with the huge comment, introducing
-> > mm_account_reclaimed_pages(), and moving set_task_reclaim_state()
-> > around).
-> >
-> > Let me know if you want me to send it as v5, or leave the current v4
-> > if you think backporting is not generally important.
->
-> Let's have a look at that v5 and see what people think?
+From: Wen Yang <wenyang.linux@foxmail.com>
 
-Sent v5 [1]. Thanks Andrew!
+wait_event_interruptible_locked_irq was introduced by commit 22c43c81a51e
+("wait_event_interruptible_locked() interface"), but older code such as
+eventfd_{write,read} still uses the open code implementation.
+Inspired by commit 8120a8aadb20
+("fs/timerfd.c: make use of wait_event_interruptible_locked_irq()"), this
+patch replaces the open code implementation with a single macro call.
 
-[1]https://lore.kernel.org/lkml/20230405185427.1246289-1-yosryahmed@google.=
-com/
+No functional change intended.
+
+Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
+Reviewed-by: Eric Biggers <ebiggers@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Dylan Yudaken <dylany@fb.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Fu Wei <wefu@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Michal Nazarewicz <m.nazarewicz@samsung.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ fs/eventfd.c | 41 +++++++----------------------------------
+ 1 file changed, 7 insertions(+), 34 deletions(-)
+
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index 249ca6c0b784..95850a13ce8d 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -228,7 +228,6 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
+ 	struct file *file = iocb->ki_filp;
+ 	struct eventfd_ctx *ctx = file->private_data;
+ 	__u64 ucnt = 0;
+-	DECLARE_WAITQUEUE(wait, current);
+ 
+ 	if (iov_iter_count(to) < sizeof(ucnt))
+ 		return -EINVAL;
+@@ -239,23 +238,11 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
+ 			spin_unlock_irq(&ctx->wqh.lock);
+ 			return -EAGAIN;
+ 		}
+-		__add_wait_queue(&ctx->wqh, &wait);
+-		for (;;) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			if (ctx->count)
+-				break;
+-			if (signal_pending(current)) {
+-				__remove_wait_queue(&ctx->wqh, &wait);
+-				__set_current_state(TASK_RUNNING);
+-				spin_unlock_irq(&ctx->wqh.lock);
+-				return -ERESTARTSYS;
+-			}
++
++		if (wait_event_interruptible_locked_irq(ctx->wqh, ctx->count)) {
+ 			spin_unlock_irq(&ctx->wqh.lock);
+-			schedule();
+-			spin_lock_irq(&ctx->wqh.lock);
++			return -ERESTARTSYS;
+ 		}
+-		__remove_wait_queue(&ctx->wqh, &wait);
+-		__set_current_state(TASK_RUNNING);
+ 	}
+ 	eventfd_ctx_do_read(ctx, &ucnt);
+ 	current->in_eventfd = 1;
+@@ -275,7 +262,6 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+ 	struct eventfd_ctx *ctx = file->private_data;
+ 	ssize_t res;
+ 	__u64 ucnt;
+-	DECLARE_WAITQUEUE(wait, current);
+ 
+ 	if (count < sizeof(ucnt))
+ 		return -EINVAL;
+@@ -288,23 +274,10 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+ 	if (ULLONG_MAX - ctx->count > ucnt)
+ 		res = sizeof(ucnt);
+ 	else if (!(file->f_flags & O_NONBLOCK)) {
+-		__add_wait_queue(&ctx->wqh, &wait);
+-		for (res = 0;;) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			if (ULLONG_MAX - ctx->count > ucnt) {
+-				res = sizeof(ucnt);
+-				break;
+-			}
+-			if (signal_pending(current)) {
+-				res = -ERESTARTSYS;
+-				break;
+-			}
+-			spin_unlock_irq(&ctx->wqh.lock);
+-			schedule();
+-			spin_lock_irq(&ctx->wqh.lock);
+-		}
+-		__remove_wait_queue(&ctx->wqh, &wait);
+-		__set_current_state(TASK_RUNNING);
++		res = wait_event_interruptible_locked_irq(ctx->wqh,
++				ULLONG_MAX - ctx->count > ucnt);
++		if (!res)
++			res = sizeof(ucnt);
+ 	}
+ 	if (likely(res > 0)) {
+ 		ctx->count += ucnt;
+-- 
+2.37.2
+
