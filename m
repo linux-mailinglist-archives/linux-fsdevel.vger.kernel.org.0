@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6D816D724B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 04:09:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 654346D7252
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 04:17:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236647AbjDECJ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Apr 2023 22:09:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37166 "EHLO
+        id S236202AbjDECRE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Apr 2023 22:17:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232695AbjDECJ1 (ORCPT
+        with ESMTP id S231166AbjDECRD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Apr 2023 22:09:27 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D6294224
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 19:09:20 -0700 (PDT)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230405020918epoutp02795a32c6140d0852f494b2b5eb5f4b00~S59_rbEKn1604416044epoutp02O
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 02:09:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230405020918epoutp02795a32c6140d0852f494b2b5eb5f4b00~S59_rbEKn1604416044epoutp02O
+        Tue, 4 Apr 2023 22:17:03 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 798A230EE
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Apr 2023 19:16:59 -0700 (PDT)
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230405021657epoutp040ef6bc80fdcc89e48c196c6796eb3c7c~S6EqAtTnw3250632506epoutp04N
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 02:16:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230405021657epoutp040ef6bc80fdcc89e48c196c6796eb3c7c~S6EqAtTnw3250632506epoutp04N
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1680660558;
-        bh=62lr6fHerbCsH4KsNTWzIhJm5iXBX/NtBiCLYeGuN3g=;
+        s=mail20170921; t=1680661017;
+        bh=TASeBulOKnK9uOD6DLtvLBlcZ0VhGhS0gc0yz9WQ99E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UFu0vJoskf8PUu0IbayuL0ymrMOqroB4wX+J5oFMflGuJGDzKFJUB3GYGatJj/hgb
-         B8FM2AU+1q0tR5+sHpCljdbA0hxxvAkNhKdeUIBhvAXxjEogoY91Y8fKgc5o+jfJOi
-         TWVJz3pKXS0Z5naQhUyY9PA6WU4cA5Fc0ZSgAVQc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20230405020917epcas2p4d0c5877db3bf21015930f6d67b52d736~S5992Ne792889228892epcas2p4o;
-        Wed,  5 Apr 2023 02:09:17 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.91]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4Prp3K1yppz4x9QN; Wed,  5 Apr
-        2023 02:09:17 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F8.62.61927.D48DC246; Wed,  5 Apr 2023 11:09:17 +0900 (KST)
+        b=L4rRTD97qMXAp3gyaLAwyU7Odda92EC3KM1kQY4+KSgn1RYZ7MGVu/HXF6cEUgl7D
+         J5B85jVT2vIwiq2TebTjFZMBoePyh+bGCCPhAC8Io6oG9F4wxRoV12s0Tm84kUE/dW
+         NTDDpUdXEKJm6UXn7Usk4v47Ldx7MHqgCx4EFY9c=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20230405021657epcas2p25842d152a1d86755d4b1da9f16b34261~S6EpeS4Wb1436014360epcas2p24;
+        Wed,  5 Apr 2023 02:16:57 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.69]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4PrpD83whpz4x9Pv; Wed,  5 Apr
+        2023 02:16:56 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C4.23.35469.81ADC246; Wed,  5 Apr 2023 11:16:56 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230405020916epcas2p24cf04f5354c12632eba50b64b217e403~S598fBaVf1189611896epcas2p2u;
-        Wed,  5 Apr 2023 02:09:16 +0000 (GMT)
+        20230405021655epcas2p2364b1f56dcde629bbd05bc796c2896aa~S6EoaXcFb1436014360epcas2p20;
+        Wed,  5 Apr 2023 02:16:55 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230405020916epsmtrp17d1adca4cec149afe52da6c2999d29b7~S598d7S1F0650206502epsmtrp1k;
-        Wed,  5 Apr 2023 02:09:16 +0000 (GMT)
-X-AuditID: b6c32a45-671ff7000001f1e7-c4-642cd84d63a8
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        20230405021655epsmtrp14393599d913c95745972bdaf357c1fc5~S6EoZlzUm1107711077epsmtrp1m;
+        Wed,  5 Apr 2023 02:16:55 +0000 (GMT)
+X-AuditID: b6c32a48-9e7f970000008a8d-d9-642cda18325a
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        85.07.31821.C48DC246; Wed,  5 Apr 2023 11:09:16 +0900 (KST)
+        C9.B7.31821.71ADC246; Wed,  5 Apr 2023 11:16:55 +0900 (KST)
 Received: from dell-Precision-7920-Tower.dsn.sec.samsung.com (unknown
-        [10.229.83.99]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230405020916epsmtip2c72f40eb5d89f397e2a072275bd91a1c~S598QDqwg1984819848epsmtip2W;
-        Wed,  5 Apr 2023 02:09:16 +0000 (GMT)
+        [10.229.83.99]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230405021655epsmtip1043f2cbb011fa63232a39b84ceb3a0de~S6EoNACwb2274822748epsmtip1x;
+        Wed,  5 Apr 2023 02:16:55 +0000 (GMT)
 From:   Kyungsan Kim <ks0204.kim@samsung.com>
 To:     david@redhat.com
 Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
@@ -60,173 +60,124 @@ Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
         dan.j.williams@intel.com, seungjun.ha@samsung.com,
         wj28.lee@samsung.com
 Subject: RE: Re: FW: [LSF/MM/BPF TOPIC] SMDK inspired MM changes for CXL
-Date:   Wed,  5 Apr 2023 11:09:16 +0900
-Message-Id: <20230405020916.414045-1-ks0204.kim@samsung.com>
+Date:   Wed,  5 Apr 2023 11:16:55 +0900
+Message-Id: <20230405021655.414131-1-ks0204.kim@samsung.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <25451d4f-978e-8106-3ee6-e9b382bb87a3@redhat.com>
+In-Reply-To: <5d6a35c8-94cd-5968-3110-7ea4737e728b@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="yes"
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRmVeSWpSXmKPExsWy7bCmma7vDZ0Ug+bPbBbTDytaTJ96gdHi
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmha7ELZ0Ug5YfUhbTDytaTJ96gdHi
         6/pfzBbnZ51isdiz9ySLxb01/1kt9r3ey2zxovM4k0XHhjeMFhvvv2Nz4PL4d2INm8fiPS+Z
         PDZ9msTuMfnGckaP9/uusnn0bVnF6PF5k1wAe1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7yp
         mYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QeUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XU
-        gpScAvMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IxJE+cyF+yxrPhx4xR7A+ML/S5GTg4JAROJ
-        9k0HmbsYuTiEBHYwSnxrecME4XxilDj74i8jhPOZUWLvpeksMC2H/nexQyR2MUqcn/eDGSQh
-        JNDFJDGllw/EZhPQlvhz5TwbiC0iICLx4+FLRhCbWeAfo8Sey5JdjBwcwgIeEmuncICEWQRU
-        Ja79OM0EYvMK2Eh8fHeNCWKXvMTMS9/ZQWxOATuJaxdOskDUCEqcnPmEBWKkusThK3OgxstL
-        NG+dDfaOhMBcDolrryYzQgxykXgxrY0NwhaWeHV8CzuELSXxsr8Nyi6WePz6H5RdInF4yW+o
-        h40l3t18zgpys4SAssSRW1B7+SQ6Dv9lhwjzSnS0CUFUq0hs/7ecGWb66f2boCZ6SEzdNA0a
-        bBMZJba+vMI6gVFhFpJ3ZiF5ZxaSdxYwMq9iFEstKM5NTy02KjCEx3Byfu4mRnBy1XLdwTj5
-        7Qe9Q4xMHIyHGCU4mJVEeFW7tFKEeFMSK6tSi/Lji0pzUosPMZoCQ3sis5Rocj4wveeVxBua
-        WBqYmJkZmhuZGpgrifNK255MFhJITyxJzU5NLUgtgulj4uCUamDSPWNaOSHvsbRrjf/TfY3e
-        zEzni1cWFPUUrHf7waIZbJO0kCs+3cxJY80mwV19djpBzCcXijMcNZ1Y9LB3nw3Lxi+WT3+n
-        qeurarL01R67ulWsdemkFavkGYpMT/6w0I5etrByQpeOlWz7hvZ3u55ZblpzdsHhCfXG62xV
-        FrV/0C16vWPiwub0uVOaAs6GLWzL1SxcZNwz5/G0c1EKhbxPVyUpTjPdGTD74f7j/+WMLU8/
-        2ZNR9W3bqRDj/K0LlBP/vAvgDd31ToxF30XnYPaB5jtH731Srrv26t70O3Hs5xc7dh5UmH14
-        soZzwpvNHkefJv9bVyx0q0hVyXDOtuKuhbJsQmcNb+tfyZn/zilOiaU4I9FQi7moOBEA4z8n
-        STcEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsWy7bCSvK7PDZ0Ug1enhCymH1a0mD71AqPF
+        gpScAvMCveLE3OLSvHS9vNQSK0MDAyNToMKE7Ixjff2sBeukK1bfn8bewLhArIuRg0NCwETi
+        Wx9jFyMXh5DADkaJpr517BDOJ0aJ/g1v2CCcz4wSZ8/dZO1i5ATrePftJjNEYhejxOLmX1BO
+        F5PE51df2UGq2AS0Jf5cOc8GYosIiEj8ePiSEcRmFvjHKLHnsiTIbmEBD4m1Uzi6GNk5WARU
+        JVo8QAp4BWwkdn/uYYRYJS8x89J3sIGcAnYSh9b0skDUCEqcnPmEBWKgusThK3OghstLNG+d
+        DXaNhMBcDokv804wQQxykbi3ZifU/cISr45vYYewpSRe9rdB2cUSj1//g7JLJA4v+c0CYRtL
+        vLv5nBUSWsoSR25B7eWT6Dj8lx0izCvR0SYEUa0isf3fcmaY6af3b4Ka6CGxZMkjJkhATWSU
+        uNB6jnkCo8IsJO/MQvLOLCTvLGBkXsUollpQnJueWmxUYAKP3+T83E2M4MSq5bGDcfbbD3qH
+        GJk4GA8xSnAwK4nwqnZppQjxpiRWVqUW5ccXleakFh9iNAWG9URmKdHkfGBqzyuJNzSxNDAx
+        MzM0NzI1MFcS5/3YoZwiJJCeWJKanZpakFoE08fEwSnVwJT+5jozu9Fe5jvx0R/y/y07uc74
+        yNfiifzVDq82Xn979Oz3dcltuTW9cwIfK68Q/+zqsptX9R1DoI7xtK9tyzf/zT+eZxwjqzVB
+        VMyzOeUTg7bnuQMnTc1N9jS+47ng5//wwpvQyM1qDDP+irWLxrQmT5pkI2u//3be+7qZuUwL
+        /ovt6b3n3XLzl/hKv/MnLTR2v9sV2r/ny+baqBPaOXPWGl5dPzMl4Vmqi5dtIG/f37VsKRer
+        Nor8/TNXLEzm46kFvYe1l3yx042Y/KjVQFDOzcpvi8jd00XSaVEsPVtnbn8gm75ntss5R6fs
+        gwcSdvDo+RXsWqiuKNQ3sb7ZVsQ0yHeCW4njh73rJndOWavEUpyRaKjFXFScCADejQwYNQQA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSnK74LZ0Ug+MXDS2mH1a0mD71AqPF
         1/W/mC3OzzrFYrFn70kWi3tr/rNa7Hu9l9niRedxJouODW8YLTbef8fmwOXx78QaNo/Fe14y
-        eWz6NIndY/KN5Ywe7/ddZfPo27KK0ePzJrkA9igum5TUnMyy1CJ9uwSujEkT5zIX7LGs+HHj
-        FHsD4wv9LkZODgkBE4lD/7vYuxi5OIQEdjBKbGw5xgyRkJJ4f7qNHcIWlrjfcoQVoqiDSeJI
-        8zQ2kASbgLbEnyvnwWwRARGJHw9fMoIUMYMUbb08HSjBwSEs4CGxdgoHSA2LgKrEtR+nmUBs
-        XgEbiY/vrjFBLJCXmHnpO9gyTgE7iWsXTrKA2EICthJXpi1lhqgXlDg58wlYnBlozuN9J9kg
-        bHmJ5q2zmScwCs5CUjYLSdksJGULGJlXMUqmFhTnpucWGxYY5aWW6xUn5haX5qXrJefnbmIE
-        x42W1g7GPas+6B1iZOJgPMQowcGsJMKr2qWVIsSbklhZlVqUH19UmpNafIhRmoNFSZz3QtfJ
-        eCGB9MSS1OzU1ILUIpgsEwenVAPTBXbl8ktZp8qCJ4o7ed7dlHUp8WbcBbdVy2PFq4Tu7j9Y
-        fS9hsunhpif8hp489lMntXv9PirxXDLn0V6Wp9eX7kuM4s8+/5z99a8+Vm4lmUtPf2l+ve95
-        3+A9+/EFR27nnU246cf77O/ZvU5bBUQqdG1jVZx+NPFP/RLPJrzo6uWzvpX7tK6XXFwtdN7Y
-        spzT88ANniNbV11eqHN6e2SdgsQl/umXNzrwhf17d/NMyaf9B9dXh2UFevt9clZOtmsz1Nbg
-        39Rw4+EsEW5X5sLjK0LkRFqf/2ovf6tbMH89f9DXJXV/XxhsTvctvpGirNBQmS7/fducpxt+
-        Rl9cqSvL2nDKhunntIv/Qy6oPfSzU2Ipzkg01GIuKk4EAIdndnIKAwAA
-X-CMS-MailID: 20230405020916epcas2p24cf04f5354c12632eba50b64b217e403
+        eWz6NIndY/KN5Ywe7/ddZfPo27KK0ePzJrkA9igum5TUnMyy1CJ9uwSujGN9/awF66QrVt+f
+        xt7AuECsi5GTQ0LAROLdt5vMXYxcHEICOxglbi06yQiRkJJ4f7qNHcIWlrjfcoQVoqiDSeLK
+        xK+sIAk2AW2JP1fOs4HYIgIiEj8evmQEKWIGKdp6eTpQgoNDWMBDYu0Uji5Gdg4WAVWJFg+Q
+        al4BG4ndn3ugVslLzLz0HWwVp4CdxKE1vSwgtpCArcThFc9ZIOoFJU7OfAJmMwNNebzvJBuE
+        LS/RvHU28wRGwVlIymYhKZuFpGwBI/MqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzg
+        mNHS2sG4Z9UHvUOMTByMhxglOJiVRHhVu7RShHhTEiurUovy44tKc1KLDzFKc7AoifNe6DoZ
+        LySQnliSmp2aWpBaBJNl4uCUamDaHjxR/Diz6uziiZ/TGs/f/xnjv1dtgvDCGGfd9xbHOYtP
+        7plZ9D9lavSqlvnhIl4fbdaZCMibKd9nnpw6/WlUlUSFoc+vxeJtOvukZyha3i3teqPJHKwY
+        ZLjPhDX/q0fO/La0HS3eJUWJKbmG0wI4r6Yfk774xG/V3pcxcZcW7NlhE9v2Pe3B9kn8Xw+9
+        feH9rlxOijvAvGPdht/ZrO/5tVnTGVuDDhfcsZpdkl7yZ+9V7Zc1AWY723j3bt2QLveCu15k
+        c5f91L259/TV44+5hJ46f3bbxyvfGq7zzvjSNTP2xyWHFbNEj/1Q0bBZZ1U3q1rqyvWTDgeM
+        wwy6Pt26f0fmyar5Feq8q3JV77IpsRRnJBpqMRcVJwIAN6FIGwgDAAA=
+X-CMS-MailID: 20230405021655epcas2p2364b1f56dcde629bbd05bc796c2896aa
 X-Msg-Generator: CA
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230405020916epcas2p24cf04f5354c12632eba50b64b217e403
-References: <25451d4f-978e-8106-3ee6-e9b382bb87a3@redhat.com>
-        <CGME20230405020916epcas2p24cf04f5354c12632eba50b64b217e403@epcas2p2.samsung.com>
+X-CMS-RootMailID: 20230405021655epcas2p2364b1f56dcde629bbd05bc796c2896aa
+References: <5d6a35c8-94cd-5968-3110-7ea4737e728b@redhat.com>
+        <CGME20230405021655epcas2p2364b1f56dcde629bbd05bc796c2896aa@epcas2p2.samsung.com>
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->On 31.03.23 13:42, Kyungsan Kim wrote:
->>> On 24.03.23 14:08, Jørgen Hansen wrote:
->>>>
->>>>> On 24 Mar 2023, at 10.50, Kyungsan Kim <ks0204.kim@samsung.com> wrote:
->>>>>
->>>>>> On 24.03.23 10:27, Kyungsan Kim wrote:
->>>>>>>> On 24.03.23 10:09, Kyungsan Kim wrote:
->>>>>>>>> Thank you David Hinderbrand for your interest on this topic.
->>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>>> Kyungsan Kim wrote:
->>>>>>>>>>>> [..]
->>>>>>>>>>>>>> In addition to CXL memory, we may have other kind of memory in the
->>>>>>>>>>>>>> system, for example, HBM (High Bandwidth Memory), memory in FPGA card,
->>>>>>>>>>>>>> memory in GPU card, etc.  I guess that we need to consider them
->>>>>>>>>>>>>> together.  Do we need to add one zone type for each kind of memory?
->>>>>>>>>>>>>
->>>>>>>>>>>>> We also don't think a new zone is needed for every single memory
->>>>>>>>>>>>> device.  Our viewpoint is the sole ZONE_NORMAL becomes not enough to
->>>>>>>>>>>>> manage multiple volatile memory devices due to the increased device
->>>>>>>>>>>>> types.  Including CXL DRAM, we think the ZONE_EXMEM can be used to
->>>>>>>>>>>>> represent extended volatile memories that have different HW
->>>>>>>>>>>>> characteristics.
->>>>>>>>>>>>
->>>>>>>>>>>> Some advice for the LSF/MM discussion, the rationale will need to be
->>>>>>>>>>>> more than "we think the ZONE_EXMEM can be used to represent extended
->>>>>>>>>>>> volatile memories that have different HW characteristics". It needs to
->>>>>>>>>>>> be along the lines of "yes, to date Linux has been able to describe DDR
->>>>>>>>>>>> with NUMA effects, PMEM with high write overhead, and HBM with improved
->>>>>>>>>>>> bandwidth not necessarily latency, all without adding a new ZONE, but a
->>>>>>>>>>>> new ZONE is absolutely required now to enable use case FOO, or address
->>>>>>>>>>>> unfixable NUMA problem BAR." Without FOO and BAR to discuss the code
->>>>>>>>>>>> maintainability concern of "fewer degress of freedom in the ZONE
->>>>>>>>>>>> dimension" starts to dominate.
->>>>>>>>>>>
->>>>>>>>>>> One problem we experienced was occured in the combination of hot-remove and kerelspace allocation usecases.
->>>>>>>>>>> ZONE_NORMAL allows kernel context allocation, but it does not allow hot-remove because kernel resides all the time.
->>>>>>>>>>> ZONE_MOVABLE allows hot-remove due to the page migration, but it only allows userspace allocation.
->>>>>>>>>>> Alternatively, we allocated a kernel context out of ZONE_MOVABLE by adding GFP_MOVABLE flag.
->>>>>>>>>
->>>>>>>>>> That sounds like a bad hack :) .
->>>>>>>>> I consent you.
->>>>>>>>>
->>>>>>>>>>> In case, oops and system hang has occasionally occured because ZONE_MOVABLE can be swapped.
->>>>>>>>>>> We resolved the issue using ZONE_EXMEM by allowing seletively choice of the two usecases.
->>>>>>>>>
->>>>>>>>>> I once raised the idea of a ZONE_PREFER_MOVABLE [1], maybe that's
->>>>>>>>>> similar to what you have in mind here. In general, adding new zones is
->>>>>>>>>> frowned upon.
->>>>>>>>>
->>>>>>>>> Actually, we have already studied your idea and thought it is similar with us in 2 aspects.
->>>>>>>>> 1. ZONE_PREFER_MOVABLE allows a kernelspace allocation using a new zone
->>>>>>>>> 2. ZONE_PREFER_MOVABLE helps less fragmentation by splitting zones, and ordering allocation requests from the zones.
->>>>>>>>>
->>>>>>>>> We think ZONE_EXMEM also helps less fragmentation.
->>>>>>>>> Because it is a separated zone and handles a page allocation as movable by default.
->>>>>>>>
->>>>>>>> So how is it different that it would justify a different (more confusing
->>>>>>>> IMHO) name? :) Of course, names don't matter that much, but I'd be
->>>>>>>> interested in which other aspect that zone would be "special".
->>>>>>>
->>>>>>> FYI for the first time I named it as ZONE_CXLMEM, but we thought it would be needed to cover other extended memory types as well.
->>>>>>> So I changed it as ZONE_EXMEM.
->>>>>>> We also would like to point out a "special" zone aspeact, which is different from ZONE_NORMAL for tranditional DDR DRAM.
->>>>>>> Of course, a symbol naming is important more or less to represent it very nicely, though.
->>>>>>> Do you prefer ZONE_SPECIAL? :)
->>>>>>
->>>>>> I called it ZONE_PREFER_MOVABLE. If you studied that approach there must
->>>>>> be a good reason to name it differently?
->>>>>>
->>>>>
->>>>> The intention of ZONE_EXMEM is a separated logical management dimension originated from the HW diffrences of extended memory devices.
->>>>> Althought the ZONE_EXMEM considers the movable and frementation aspect, it is not all what ZONE_EXMEM considers.
->>>>> So it is named as it.
->>>>
->>>> Given that CXL memory devices can potentially cover a wide range of technologies with quite different latency and bandwidth metrics, will one zone serve as the management vehicle that you seek? If a system contains both CXL attached DRAM and, let say, a byte-addressable CXL SSD - both used as (different) byte addressable tiers in a tiered memory hierarchy, allocating memory from the ZONE_EXMEM doesn’t really tell you much about what you get. So the client would still need an orthogonal method to characterize the desired performance characteristics. This method could be combined with a fabric independent zone such as ZONE_PREFER_MOVABLE to address the kernel allocation issue. At the same time, this new zone could also be useful in other cases, such as virtio-mem.
+>On 31.03.23 17:56, Frank van der Linden wrote:
+>> On Fri, Mar 31, 2023 at 6:42 AM Matthew Wilcox <willy@infradead.org> wrote:
 >>>
->>> Yes. I still did not get a satisfying answer to my original question:
->>> what would be the differences between both zones from a MM point of
->>> view? We can discuss that in the session, of course.
+>>> On Fri, Mar 31, 2023 at 08:42:20PM +0900, Kyungsan Kim wrote:
+>>>> Given our experiences/design and industry's viewpoints/inquiries,
+>>>> I will prepare a few slides in the session to explain
+>>>>    1. Usecase - user/kernespace memory tiering for near/far placement, memory virtualization between hypervisor/baremetal OS
+>>>>    2. Issue - movability(movable/unmovable), allocation(explicit/implicit), migration(intented/unintended)
+>>>>    3. HW - topology(direct, switch, fabric), feature(pluggability,error-handling,etc)
 >>>
->>> Regarding performance differences, I thought the idea was to go with
->>> different nodes to express (and model) such.
+>>> I think you'll find everybody else in the room understands these issues
+>>> rather better than you do.  This is hardly the first time that we've
+>>> talked about CXL, and CXL is not the first time that people have
+>>> proposed disaggregated memory, nor heterogenous latency/bandwidth
+>>> systems.  All the previous attempts have failed, and I expect this
+>>> one to fail too.  Maybe there's something novel that means this time
+>>> it really will work, so any slides you do should focus on that.
+>>>
+>>> A more profitable discussion might be:
+>>>
+>>> 1. Should we have the page allocator return pages from CXL or should
+>>>     CXL memory be allocated another way?
+>>> 2. Should there be a way for userspace to indicate that it prefers CXL
+>>>     memory when it calls mmap(), or should it always be at the discretion
+>>>     of the kernel?
+>>> 3. Do we continue with the current ZONE_DEVICE model, or do we come up
+>>>     with something new?
+>>>
 >>>
 >> 
->>  From a MM point of view on the movability aspect, a kernel context is not allocated from ZONE_EXMEM without using GFP_EXMEM explicitly.
->> In contrast, if we understand the design of ZONE_PREFER_MOVABLE correctly, a kernel context can be allocated from ZONE_PREFER_MOVABLE implicitly as the fallback of ZONE_NORMAL allocation.
->> However, the movable attribute is not all we are concerning.
->> In addition, we experienced page allocation and migration issue on the heterogeneous memories.
+>> Point 2 is what I proposed talking about here:
+>> https://lore.kernel.org/linux-mm/a80a4d4b-25aa-a38a-884f-9f119c03a1da@google.com/T/
 >> 
->> Given our experiences/design and industry's viewpoints/inquiries,
->> I will prepare a few slides in the session to explain
->>    1. Usecase - user/kernespace memory tiering for near/far placement, memory virtualization between hypervisor/baremetal OS
->>    2. Issue - movability(movable/unmovable), allocation(explicit/implicit), migration(intented/unintended)
->>    3. HW - topology(direct, switch, fabric), feature(pluggability,error-handling,etc)
+>> With the current cxl-as-numa-node model, an application can express a
+>> preference through mbind(). But that also means that mempolicy and
+>> madvise (e.g. MADV_COLD) are starting to overlap if the intention is
+>> to use cxl as a second tier for colder memory.  Are these the right
+>> abstractions? Might it be more flexible to attach properties to memory
+>> ranges, and have applications hint which properties they prefer?
 >
->Yes, especially a motivation for GFP_EXMEM and ZONE_EXMEM would be 
->great. New GFP flags and zone are very likely a lot of upstream 
->pushback. So we need a clear motivation and discussion of alternatives 
->(and why this memory has to be treated so special but still wants to be 
->managed by the buddy).
+>I think history told us that the discussions always go like "but user 
+>space wants more control, let's give user space all the power", and a 
+>couple of months later we get "but we cannot possibly enlighten all 
+>applications, and user space does not have sufficient information: we 
+>need the kernel to handle this transparently."
 >
->Willy raises some very good points.
+>It seems to be a steady back and forth. Most probably we want something 
+>in between: cxl-as-numa-node model is already a pretty good and 
+>simplistic abstractions. Avoid too many new special user-space knobs is 
+>most probably the way to go.
+>
+>Interesting discussion, I agree. And we had plenty of similar ones 
+>already with PMEM and NUMA in general.
 >
 
-Please find the slide in preparation[1].
-To help clarity, we included SW blocks and interaction of the proposal.
-
-[1] https://github.com/OpenMPDK/SMDK/wiki/93.-%5BLSF-MM-BPF-TOPIC%5D-SMDK-inspired-MM-changes-for-CXL
+Haha. funny sentences. IMHO the two kind of contradictory needs exists all the time in real-world.
+Based on my experiences, some userlands prefer transparent use, others eager to an optimization chance. 
+I also would put higher priority on transparent side, though. 
+On linux point of view as the general purpose OS, I believe it has been also a common approach that Linux supports a basic operation, and further provides tunables through API or configurations to support a variety of needs as many as possible.
 
 >-- 
 >Thanks,
