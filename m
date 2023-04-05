@@ -2,134 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D1C36D775C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 10:52:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C92366D775B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Apr 2023 10:52:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237158AbjDEIw5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 04:52:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48460 "EHLO
+        id S236936AbjDEIw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 04:52:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237575AbjDEIwv (ORCPT
+        with ESMTP id S237500AbjDEIwt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 04:52:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679292736
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 01:52:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D27B26250C
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 08:52:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78696C433EF;
-        Wed,  5 Apr 2023 08:52:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680684769;
-        bh=wYgRmC8GHygAyGX9rI+0LgBMbN+B6EtuGOcgW3nxjjM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KW5wp09ogccYlGl2btqkOVLVWsWyHLw3Ty3dy6n9wJyx+4B3AYDub8WdUX+YlJg1m
-         E/vj3Rcvp63JEGim++24FcL1N8TyBYr2Aw5JWm9XLpRjAh53nLa3lCzOejwqH5MwKi
-         nuLKnxrPuUwBaTDBjVFNsXpIeaXaKb8SKJWfDblVqIVN+BxCLGusFWt/UB8bnix9/1
-         gnsamDqAN01klfi4OQav+my7V/097GE2/1OXzWf7JvOKvjg9LKyJiyhxEErIcH8DkH
-         JtBsqka1NFmVKaTGpkO0T7i4Xi95ow0CBHhRh8JZbLWb1iZT4a345a7DjrLpfAhsOb
-         fYoWH93OCByoA==
-Date:   Wed, 5 Apr 2023 10:52:44 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     cem@kernel.org
-Cc:     hughd@google.com, jack@suse.cz, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, djwong@kernel.org
-Subject: Re: [PATCH 0/6] shmem: Add user and group quota support for tmpfs
-Message-ID: <20230405-klarkommen-zellkern-03af0950b80f@brauner>
-References: <20230403084759.884681-1-cem@kernel.org>
+        Wed, 5 Apr 2023 04:52:49 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98A7940D3
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 01:52:48 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id q17-20020a056e020c3100b003245df8be9fso23148459ilg.14
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Apr 2023 01:52:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680684768; x=1683276768;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fgv8LX1m6yE10SJc77E8GCboqg+CgsCzqQTgSByACsM=;
+        b=BtxK26GDnFC7vw21LwsPQfdskF/xV46PJaECZ2RwO1RU+coeu/xykotMhpQzuCiGu+
+         LlV4YMRoMC3e+eV9i5NWgRYkUCj+PzEIYsmdSBPcWfhfaUuWxLK1QPRljvUffEEwdhHb
+         4I1U83SbHg6CS0n4bycnhIcuNRpXnKqcbgZQjapR834/WQf4zJo7/06KvK7fx/HmVsKY
+         EuMWjtQKpK+D0akN0FbWAdWJQNof65W3XkWnBZ/V6dJb2ztii0K/J+O8a9BlwQuBSsI1
+         +Rb+ZixFuNhf3QLiq/nXWli9L8FuR9jaNMrCwyyFS0ZC/jtu/TXfofKRwal6iyiUUaE9
+         TMHA==
+X-Gm-Message-State: AAQBX9fHfxA2FtwyboAlqHVxx//k9kGHBxdrP+id6UWNH6DVwxpHM1kC
+        hrsdXmAbgWopTKmDRYsWRZ18cEg+KsK0loXyHm0T0ICQvfRz
+X-Google-Smtp-Source: AKy350aDy+SJnARuW8p3OFw/aBEmHTM3p6MWOiqFBSJ9ycko5efa2tb6tJT2WLIrGg0FIGDjK/kW+sbgVvLjKpelYbgHBb7cABdR
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230403084759.884681-1-cem@kernel.org>
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:85ae:0:b0:3a7:e46f:2a32 with SMTP id
+ d43-20020a0285ae000000b003a7e46f2a32mr2922800jai.6.1680684767986; Wed, 05 Apr
+ 2023 01:52:47 -0700 (PDT)
+Date:   Wed, 05 Apr 2023 01:52:47 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000934dff05f892ea11@google.com>
+Subject: [syzbot] Monthly udf report
+From:   syzbot <syzbot+list5f419159526a7a05336e@syzkaller.appspotmail.com>
+To:     jack@suse.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 03, 2023 at 10:47:53AM +0200, cem@kernel.org wrote:
-> From: Carlos Maiolino <cmaiolino@redhat.com>
-> 
-> Hi folks. this work has been done originally by Lukas, but he left the company,
-> so I'm taking over his work from where he left it of. This series is virtually
-> done, and he had updated it with comments from the last version, but, I'm
+Hello udf maintainers/developers,
 
-I've commented on the last version:
+This is a 30-day syzbot report for the udf subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/udf
 
-https://lore.kernel.org/linux-fsdevel/20221129112133.rrpoywlwdw45k3qa@wittgenstein
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 16 issues are still open and 16 have been fixed so far.
 
-trying to point out that tmpfs can be mounted in user namespaces. Which
-means that the quota uids and gids need to take the idmapping of the
-user namespace in which the tmpfs instances is mounted in into account;
-not the one on the host.
+Some of the still happening issues:
 
-See the link above for some details. Before we can merge this it would
-be very good if we could get tests that verify tmpfs being mounted
-inside a userns with quotas enabled because I don't think this is
-covered yet by xfstests. Or you punt on it for now and restricted quotas
-to tmpfs instances mounted on the host.
+Crashes Repro Title
+328     Yes   WARNING in udf_truncate_extents
+              https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
+29      Yes   KASAN: use-after-free Read in crc_itu_t
+              https://syzkaller.appspot.com/bug?extid=d8fc21bfa138a5ae916d
+28      Yes   KASAN: use-after-free Write in udf_close_lvid
+              https://syzkaller.appspot.com/bug?extid=60864ed35b1073540d57
+3       No    WARNING in udf_new_block
+              https://syzkaller.appspot.com/bug?extid=cc717c6c5fee9ed6e41d
 
-> initially posting it as a RFC because it's been a while since he posted the
-> last version.
-> Most of what I did here was rebase his last work on top of current Linus's tree.
-> 
-> Honza, there is one patch from you in this series, which I believe you had it
-> suggested to Lukas on a previous version.
-> 
-> The original cover-letter follows...
-> 
-> people have been asking for quota support in tmpfs many times in the past
-> mostly to avoid one malicious user, or misbehaving user/program to consume
-> all of the system memory. This has been partially solved with the size
-> mount option, but some problems still prevail.
-> 
-> One of the problems is the fact that /dev/shm is still generally unprotected
-> with this and another is administration overhead of managing multiple tmpfs
-> mounts and lack of more fine grained control.
-> 
-> Quota support can solve all these problems in a somewhat standard way
-> people are already familiar with from regular file systems. It can give us
-> more fine grained control over how much memory user/groups can consume.
-> Additionally it can also control number of inodes and with special quota
-> mount options introduced with a second patch we can set global limits
-> allowing us to replace the size mount option with quota entirely.
-> 
-> Currently the standard userspace quota tools (quota, xfs_quota) are only
-> using quotactl ioctl which is expecting a block device. I patched quota [1]
-> and xfs_quota [2] to use quotactl_fd in case we want to run the tools on
-> mount point directory to work nicely with tmpfs.
-> 
-> The implementation was tested on patched version of xfstests [3].
-> 
-> 
-> Jan Kara (1):
->   quota: Check presence of quota operation structures instead of
->     ->quota_read and ->quota_write callbacks
-> 
-> Lukas Czerner (5):
->   shmem: make shmem_inode_acct_block() return error
->   shmem: make shmem_get_inode() return ERR_PTR instead of NULL
->   shmem: prepare shmem quota infrastructure
->   shmem: quota support
->   Add default quota limit mount options
-> 
->  Documentation/filesystems/tmpfs.rst |  28 ++
->  fs/Kconfig                          |  12 +
->  fs/quota/dquot.c                    |   2 +-
->  include/linux/shmem_fs.h            |  25 ++
->  include/uapi/linux/quota.h          |   1 +
->  mm/Makefile                         |   2 +-
->  mm/shmem.c                          | 452 +++++++++++++++++++++-------
->  mm/shmem_quota.c                    | 327 ++++++++++++++++++++
->  8 files changed, 740 insertions(+), 109 deletions(-)
->  create mode 100644 mm/shmem_quota.c
-> 
-> -- 
-> 2.30.2
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
