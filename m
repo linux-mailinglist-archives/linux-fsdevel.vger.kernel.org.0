@@ -2,77 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C660A6D9FBB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 20:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D7C06D9FC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 20:26:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240121AbjDFSZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 14:25:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41460 "EHLO
+        id S240151AbjDFS0N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 14:26:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239721AbjDFSZe (ORCPT
+        with ESMTP id S240155AbjDFS0J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 14:25:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FAE57DB6;
-        Thu,  6 Apr 2023 11:25:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B5AF60F37;
-        Thu,  6 Apr 2023 18:25:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5529AC433D2;
-        Thu,  6 Apr 2023 18:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680805527;
-        bh=TjkZqObnX6Ozi0JkMk8YeQobLclqYcS5rFl3Axh7jNI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EySMTc1+Gui6oWZ3Z73LoRaOkTzZnNKvZ5OShzR8luJnMJwt+oCjo1sSBbSzI+abI
-         jt6UrOwjuwQz1dykl2pTeGQoqJgiHjW93tnj5iZdIUUPaXLx0WhEDhbErqRH5kHp4c
-         HFCgYVOVuo5dEDfsEVteXRF9Fa2z2ia7HYRGBmW8zXvLSewntDNo4pRjclV218Ubjo
-         gNmq/ed3w5JuVZtcyIfCatHFZ1B/7wW7X+C8fPWhi392wagflK4w9xVSQen+UKeL7z
-         uTZ1ddwj/GcVRrf1NJGVKqSd5drJQvjyLx0vq8GYVD8b1wzcBBnRjGxSpZzsH/q0Ih
-         fAS5jgNIn8JMA==
-Date:   Thu, 6 Apr 2023 11:25:25 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     fsverity@lists.linux.dev
+        Thu, 6 Apr 2023 14:26:09 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13A4A258;
+        Thu,  6 Apr 2023 11:26:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1680805563; x=1712341563;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=71j8wA/jyuLPVIohqa23wmw7xUhIc2C3rcA0pSOT7kQ=;
+  b=SwLzY0vIgdnUNoYOiwBiqZYCm7dTXGe9Iodg3/63HWpZmAiYk2brQJDv
+   X2fYKsEyXsEUlvaU6hIniOeTXqbP5Y9rwdyqJeSNhUtnLU3Z7OJsyFw8D
+   jz63OtW0dH8joET+smqIiunQCB3i97Z1UW9+iYXy5lQngL6+4iTY4jsat
+   vdAr2yGTDJ1fO8NCaB131xbxzL2io/p3sgEzGOWtxfVXaDgDx7AQ5xiYp
+   XdEFB2pwfEBSQgKZ4EnmG6j0Jy6kvuqPhwEjs1wgwUrKb5A86SRrkuQ/j
+   gPHcnpFR7xBeVM19OvJTiv/RZy4JkUM8h2BGu3LZyUbLxocUrDgBpi6zJ
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10672"; a="370642729"
+X-IronPort-AV: E=Sophos;i="5.98,323,1673942400"; 
+   d="scan'208";a="370642729"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2023 11:26:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10672"; a="811093631"
+X-IronPort-AV: E=Sophos;i="5.98,323,1673942400"; 
+   d="scan'208";a="811093631"
+Received: from ticela-az-114.amr.corp.intel.com (HELO [10.251.3.106]) ([10.251.3.106])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2023 11:26:02 -0700
+Message-ID: <83b2cb8017b945b2b3d3c9e65a3ba94a510ac20f.camel@linux.intel.com>
+Subject: Re: [PATCH mm-unstable RFC 0/5] cgroup: eliminate atomic rstat
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+To:     Yosry Ahmed <yosryahmed@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH v2] fsverity: use WARN_ON_ONCE instead of WARN_ON
-Message-ID: <20230406182525.GA1190@sol.localdomain>
-References: <20230406181542.38894-1-ebiggers@kernel.org>
+        cgroups@vger.kernel.org, linux-mm@kvack.org
+Date:   Thu, 06 Apr 2023 11:26:02 -0700
+In-Reply-To: <CAJD7tkZ5vh5ssDux1LStX9ZivmGmXsFyxfADGJD5AXDaMnGWRQ@mail.gmail.com>
+References: <20230403220337.443510-1-yosryahmed@google.com>
+         <CAJD7tkZ5vh5ssDux1LStX9ZivmGmXsFyxfADGJD5AXDaMnGWRQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230406181542.38894-1-ebiggers@kernel.org>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.4 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_EF,RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 11:15:42AM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> As per Linus's suggestion
-> (https://lore.kernel.org/r/CAHk-=whefxRGyNGzCzG6BVeM=5vnvgb-XhSeFJVxJyAxAF8XRA@mail.gmail.com),
-> use WARN_ON_ONCE instead of WARN_ON.  This barely adds any extra
-> overhead, and it makes it so that if any of these ever becomes reachable
-> (they shouldn't, but that's the point), the logs can't be flooded.
-> 
-> Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/verity/enable.c       | 4 ++--
->  fs/verity/hash_algs.c    | 4 ++--
->  fs/verity/open.c         | 2 +-
->  include/linux/fsverity.h | 6 +++---
->  4 files changed, 8 insertions(+), 8 deletions(-)
+On Mon, 2023-04-03 at 15:04 -0700, Yosry Ahmed wrote:
+> On Mon, Apr 3, 2023 at 3:03=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com=
+> wrote:
+> >=20
+> > A previous patch series ([1] currently in mm-unstable) changed most
+>=20
+> .. and I naturally forgot to link this:
+> [1] https://lore.kernel.org/linux-mm/20230330191801.1967435-1-yosryahmed@=
+google.com/
 
-Sorry, forgot changelog:
+Thanks. Saw this after I sent my request for link.
 
-v2: also convert the three WARN_ON in include/linux/fsverity.h
-
-- Eric
+Tim
