@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A36956D93F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 12:26:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CE4B6D93F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 12:27:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237023AbjDFK0x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 06:26:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52966 "EHLO
+        id S236543AbjDFK1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 06:27:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236968AbjDFK0u (ORCPT
+        with ESMTP id S235933AbjDFK1e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 06:26:50 -0400
+        Thu, 6 Apr 2023 06:27:34 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E51510D5;
-        Thu,  6 Apr 2023 03:26:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACE4C1721;
+        Thu,  6 Apr 2023 03:27:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 32C5360C98;
-        Thu,  6 Apr 2023 10:26:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21BA4C433EF;
-        Thu,  6 Apr 2023 10:26:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3C12160B4C;
+        Thu,  6 Apr 2023 10:27:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C02DC4339B;
+        Thu,  6 Apr 2023 10:27:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1680776806;
-        bh=Bsh9tIqIOFj0EL11HwEKb+7UATkQiSzOLRPewqBv8aw=;
+        s=korg; t=1680776851;
+        bh=2I1CdpyLXu6CoUaYPP0j1AjlhRFqWROonYBrtW7gQeo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aidUVLAQPrfxqyxIJ8H2KA3Iu3QUlCzSt1mPN2LXJAUinCNhCQr5NOIsC93/jkqT3
-         LMgoBgHx7BDkNBDJfjglJhI+glRVMJuDVKQ98K3XACArPJs4SZXBxgU+WaAWjnfA/0
-         PsjsODrFNVfT/dKlZgVxaQ14zXY1RQo9rPK5RSAE=
-Date:   Thu, 6 Apr 2023 12:26:44 +0200
+        b=W6ejsOyMYFneGRNKAuwdNh/Nzyau/DK+D4hbt9CUY3WC7Qy+mkBsD3SS9efS2k4A2
+         Jz2+dw96XmkymLxPrhTcZd1/XpLDrefy//S2kdIlgssz5LPo3hdxiH/QUam95+Tt+T
+         Udc7Mb22gMr99CXcr5M6Zb/Nifcjh31P1n/afIcg=
+Date:   Thu, 6 Apr 2023 12:27:29 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Damien Le Moal <dlemoal@fastmail.com>
+To:     Gao Xiang <hsiangkao@linux.alibaba.com>
 Cc:     Yangtao Li <frank.li@vivo.com>, xiang@kernel.org, chao@kernel.org,
         huyue2@coolpad.com, jefflexu@linux.alibaba.com,
         damien.lemoal@opensource.wdc.com, naohiro.aota@wdc.com,
         jth@kernel.org, rafael@kernel.org, linux-erofs@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] zonefs: convert to use kobject_is_added()
-Message-ID: <2023040627-paver-recipient-3713@gregkh>
+Subject: Re: [PATCH 2/3] erofs: convert to use kobject_is_added()
+Message-ID: <2023040654-protrude-unlucky-f164@gregkh>
 References: <20230406093056.33916-1-frank.li@vivo.com>
- <20230406093056.33916-3-frank.li@vivo.com>
- <2023040616-armory-unmade-4422@gregkh>
- <8ca8c138-67fd-73ed-1ce5-c090d49f31e9@fastmail.com>
+ <20230406093056.33916-2-frank.li@vivo.com>
+ <2023040635-duty-overblown-7b4d@gregkh>
+ <cc219a52-e89c-b7e7-5bfd-0124f881a29f@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8ca8c138-67fd-73ed-1ce5-c090d49f31e9@fastmail.com>
+In-Reply-To: <cc219a52-e89c-b7e7-5bfd-0124f881a29f@linux.alibaba.com>
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
@@ -56,71 +56,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 07:13:38PM +0900, Damien Le Moal wrote:
-> On 4/6/23 19:05, Greg KH wrote:
-> > On Thu, Apr 06, 2023 at 05:30:56PM +0800, Yangtao Li wrote:
-> >> Use kobject_is_added() instead of local `s_sysfs_registered` variables.
-> >> BTW kill kobject_del() directly, because kobject_put() actually covers
-> >> kobject removal automatically.
-> >>
-> >> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> >> ---
-> >>  fs/zonefs/sysfs.c  | 11 +++++------
-> >>  fs/zonefs/zonefs.h |  1 -
-> >>  2 files changed, 5 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/fs/zonefs/sysfs.c b/fs/zonefs/sysfs.c
-> >> index 8ccb65c2b419..f0783bf7a25c 100644
-> >> --- a/fs/zonefs/sysfs.c
-> >> +++ b/fs/zonefs/sysfs.c
-> >> @@ -101,8 +101,6 @@ int zonefs_sysfs_register(struct super_block *sb)
-> >>  		return ret;
-> >>  	}
-> >>  
-> >> -	sbi->s_sysfs_registered = true;
-> > 
-> > You know this, why do you need to have a variable tell you this or not?
+On Thu, Apr 06, 2023 at 06:13:05PM +0800, Gao Xiang wrote:
+> Hi Greg,
 > 
-> If kobject_init_and_add() fails, zonefs_sysfs_register() returns an error and
-> fill_super will also return that error. vfs will then call kill_super, which
-> calls zonefs_sysfs_unregister(). For that case, we need to know that we actually
-> added the kobj.
-
-Ok, but then why not just 0 out the kobject pointer here instead?  That
-way you will always know if it's a valid pointer or not and you don't
-have to rely on some other variable?  Use the one that you have already :)
-
-And you really don't even need to check anything, just pass in NULL to
-kobject_del() and friends, it should handle it.
-
-> >> -
-> >>  	return 0;
-> >>  }
-> >>  
-> >> @@ -110,12 +108,13 @@ void zonefs_sysfs_unregister(struct super_block *sb)
-> >>  {
-> >>  	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
-> >>  
-> >> -	if (!sbi || !sbi->s_sysfs_registered)
+> On 2023/4/6 18:03, Greg KH wrote:
+> > On Thu, Apr 06, 2023 at 05:30:55PM +0800, Yangtao Li wrote:
+> > > Use kobject_is_added() instead of directly accessing the internal
+> > > variables of kobject. BTW kill kobject_del() directly, because
+> > > kobject_put() actually covers kobject removal automatically.
+> > > 
+> > > Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> > > ---
+> > >   fs/erofs/sysfs.c | 3 +--
+> > >   1 file changed, 1 insertion(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
+> > > index 435e515c0792..daac23e32026 100644
+> > > --- a/fs/erofs/sysfs.c
+> > > +++ b/fs/erofs/sysfs.c
+> > > @@ -240,8 +240,7 @@ void erofs_unregister_sysfs(struct super_block *sb)
+> > >   {
+> > >   	struct erofs_sb_info *sbi = EROFS_SB(sb);
+> > > -	if (sbi->s_kobj.state_in_sysfs) {
+> > > -		kobject_del(&sbi->s_kobj);
+> > > +	if (kobject_is_added(&sbi->s_kobj)) {
 > > 
-> > How can either of these ever be true?  Note, sbi should be passed here
-> > to this function, not the super block as that is now unregistered from
-> > the system.  Looks like no one has really tested this codepath that much
-> > :(
-> > 
-> >> +	if (!sbi)
-> >>  		return;
-> > 
-> > this can not ever be true, right?
+> > I do not understand why this check is even needed, I do not think it
+> > should be there at all as obviously the kobject was registered if it now
+> > needs to not be registered.
 > 
-> Yes it can, if someone attempt to mount a non zoned device. In that case,
-> fill_super returns early without setting sb->s_fs_info but vfs still calls
-> kill_super.
+> I think Yangtao sent a new patchset which missed the whole previous
+> background discussions as below:
+> https://lore.kernel.org/r/028a1b56-72c9-75f6-fb68-1dc5181bf2e8@linux.alibaba.com
+> 
+> It's needed because once a syzbot complaint as below:
+> https://lore.kernel.org/r/CAD-N9QXNx=p3-QoWzk6pCznF32CZy8kM3vvo8mamfZZ9CpUKdw@mail.gmail.com
+> 
+> I'd suggest including the previous backgrounds at least in the newer patchset,
+> otherwise it makes me explain again and again...
 
-But you already had a sbi pointer in the place that this was called, so
-you "know" if you need to even call into here or not.  You are having to
-look up the same pointer multiple times in this call chain, there's no
-need for that.
+That would be good, as I do not think this is correct, it should be
+fixed in a different way, see my response to the zonefs patch in this
+series as a much simpler method to use.
 
 thanks,
 
