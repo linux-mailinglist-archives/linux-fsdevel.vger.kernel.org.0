@@ -2,76 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DFBBF6D8D15
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 03:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB9306D8D5D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 04:19:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229520AbjDFBzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 21:55:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55754 "EHLO
+        id S234222AbjDFCTT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 22:19:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230527AbjDFBzK (ORCPT
+        with ESMTP id S229631AbjDFCTS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 21:55:10 -0400
+        Wed, 5 Apr 2023 22:19:18 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C59A283CA;
-        Wed,  5 Apr 2023 18:54:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3BC36EAF;
+        Wed,  5 Apr 2023 19:19:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 07C10618D7;
-        Thu,  6 Apr 2023 01:53:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65538C433EF;
-        Thu,  6 Apr 2023 01:53:38 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D37D63E67;
+        Thu,  6 Apr 2023 02:19:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F9AAC433EF;
+        Thu,  6 Apr 2023 02:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680746022;
-        bh=RU0Q3vUCSoOriMTSmQ2CiAo6okbHQsDApEtyfqhB/os=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=FbWqGQ0wbGurzrP9KVHM0SNw0YC9GyWApFTXwdNVcK2A0TiZtlGaba89nxCOMrOnv
-         LWjeD76eOESSoHb3bjdBWreXKq9o6hYFzR7svS/T2cmmEB82GOCY4PQ4xwOErbFzpU
-         hmcAghCKLKqbx4A0blihXUGzlq7+9VmymPLp1sU/9GKwTNgaMazWLz2aF2o38rqb3J
-         b3LRiP0wTjMiqcG9t360E1ofmIBaOFnuhJb3uzgevc579iZR/wnVuIvdPxErd0uHqj
-         plvf4gfX7jEtsbHb5zbnA4A6/Ie41UsiXOM4Khj5aTYqCMkOCJ9lIg3iiItz27lqAh
-         KTIvUAvOE5HOQ==
-Message-ID: <b0214d14-aa0e-f1df-4ff3-02304b710a6e@kernel.org>
-Date:   Thu, 6 Apr 2023 09:53:36 +0800
+        s=k20201202; t=1680747556;
+        bh=1nRUB8kn7dBx6kv26QS2b/95TXcbg7BEirY4c1cIg3s=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FHXl4MeNWtrJ2T3BaSvNeP5v9JGOs+IKsSu76OBsT2BlVKTlVQqvgJ2Njtb/af/c7
+         viqutAh6LkRabq39fLxnxrtpLwNhwiaVdDM9Q1XgySzykLZCCr+kPoeL8PnIrGsZn3
+         WeOxlEGNkrqXjst3MC1CGB5AUkZW/4A9ZUidv8F3ueAlhrw7vwZ/qReYaGW9biXB0e
+         wKBhzi8wXuutO7OGIOu4YmYMaNDiqBeQvSSTr6S4krMdPr+fJLK1sFyYrUl5POvYPa
+         Bau71+iNh4jGA6TFOS4XqnFmFkdqrB+9GfTBs0hzXbAKgxd9dMwyS2+HQSCfDxrhcC
+         2luPkqbAF7GBw==
+Date:   Wed, 5 Apr 2023 19:19:15 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH net-next v4 00/20] splice, net: Replace sendpage with
+ sendmsg(MSG_SPLICE_PAGES), part 1
+Message-ID: <20230405191915.041c2834@kernel.org>
+In-Reply-To: <20230405165339.3468808-1-dhowells@redhat.com>
+References: <20230405165339.3468808-1-dhowells@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [f2fs-dev] [PATCH 3/5] fstests/MAINTAINERS: add supported mailing
- list
-Content-Language: en-US
-To:     Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org
-Cc:     brauner@kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, ebiggers@google.com, djwong@kernel.org,
-        amir73il@gmail.com, linux-unionfs@vger.kernel.org,
-        anand.jain@oracle.com, linux-f2fs-devel@lists.sourceforge.net,
-        linux-xfs@vger.kernel.org, fdmanana@suse.com,
-        ocfs2-devel@oss.oracle.com, jack@suse.com,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-References: <20230404171411.699655-1-zlang@kernel.org>
- <20230404171411.699655-4-zlang@kernel.org>
-From:   Chao Yu <chao@kernel.org>
-In-Reply-To: <20230404171411.699655-4-zlang@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.6 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023/4/5 1:14, Zorro Lang wrote:
-> +F2FS
-> +L:	linux-f2fs-devel@lists.sourceforge.net
-> +S:	Supported
-> +F:	tests/f2fs/
-> +F:	common/f2fs
+On Wed,  5 Apr 2023 17:53:19 +0100 David Howells wrote:
+> Here's the first tranche of patches towards providing a MSG_SPLICE_PAGES
+> internal sendmsg flag that is intended to replace the ->sendpage() op with
+> calls to sendmsg().  MSG_SPLICE is a hint that tells the protocol that it
+> should splice the pages supplied if it can and copy them if not.
 
-Acked-by: Chao Yu <chao@kernel.org>
-
-Thanks,
+Thanks for splitting off a smaller series!
+My day is out of hours so just a trivial comment, in case kbuild bot
+hasn't pinged you - this appears to break the build on the relatively
+recently added page_frag_cache in google's vNIC (gve).
