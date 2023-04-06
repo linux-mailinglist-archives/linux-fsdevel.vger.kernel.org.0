@@ -2,169 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E326D96B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 14:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7750B6D96C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 14:07:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236539AbjDFMFM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 08:05:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42444 "EHLO
+        id S235542AbjDFMHe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 08:07:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238612AbjDFME6 (ORCPT
+        with ESMTP id S229620AbjDFMHd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 08:04:58 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03589974E;
-        Thu,  6 Apr 2023 05:03:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680782597; x=1712318597;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Y0+dFDwT+bRH/eVHXMTL+q8aR+Moi88tLPH/nkhsKhc=;
-  b=oCL/PTZIQ7iK6pS0Qbp89WOVAwMbogTGUnUGlp6ffdZmWn9f24yM0M8V
-   1XgTnt39idyegrOGc7+wlw/AvYaN3hTXU7s2zPJqGUpuzDmF1LvB9VBdi
-   hAJwGPAQM1Fz0FjEtIvzZmVvsIXEYSCQSKF0G3bXTz5QOujWGP6Ar+TFT
-   vxKFbsR7LauKRVl/hAzFEnwCs3P/OopbIxqInGcI8qnHqMdgeDmlKZ+mj
-   66rZggJfidTuTx6IgPnyh3XybTtL7Bg+KTDL76zIhJd4ktMKT0SPwheOa
-   sKrDWwrqbOlRLOIKXkXEr1uTpMycgo2jMymJXrbEThw30ppjMpzZs0ooC
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10671"; a="429001074"
-X-IronPort-AV: E=Sophos;i="5.98,323,1673942400"; 
-   d="scan'208";a="429001074"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2023 05:01:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10671"; a="1016843428"
-X-IronPort-AV: E=Sophos;i="5.98,323,1673942400"; 
-   d="scan'208";a="1016843428"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Apr 2023 05:01:50 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pkOJJ-000RLK-1Z;
-        Thu, 06 Apr 2023 12:01:49 +0000
-Date:   Thu, 6 Apr 2023 20:00:52 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Greg KH <greg@kroah.com>
-Subject: Re: [PATCH v12 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-Message-ID: <202304061924.m0OL9fIj-lkp@intel.com>
-References: <20230406074005.1784728-3-usama.anjum@collabora.com>
+        Thu, 6 Apr 2023 08:07:33 -0400
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2112.outbound.protection.outlook.com [40.107.117.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B3DBD3;
+        Thu,  6 Apr 2023 05:07:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JbFf7W1F8+wdqBNkCOiMrIisJr/OL1XD5aJ0OhfPhuW20thp8TkZQ/1B7HVi/xIsZT6ZT0Jy874rPqIffAJmj2lRFzBrHjQh5+EM7jrdSsRtcyvPtx3/oJUkMbOC8ixQh3uOHnapHhnXp5zkeODRmVuXEHjpw54vK6I0k67rMHnTXXSzzzrUuyqJLgJ0Q8KbaLFnEty2/dnXuPH1kvGoi0+D6UIRQMFM2HlXFrUJ1rxSsFiZR6shrmaV/VmcItYBDV3XdiBExM0qZ3NNCz0HsHrQYVizlHFy/8AYKwlaOuNCtaBKqhiXuEzwXfs1OYnrhmoYK4ZSySyyjr1xnInYig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/+Ck+2lE0MtdhErnUlr5PFQx4kEw0dEhHa/v9MlT438=;
+ b=bR8Z5sC7HCIXMX9imjTDgYyjJ6OfSl7aBTr7ks7srlxborUT3L7jYoHFl7NwU4QszCyvH2hXLBUFXUBpyvPUVzrCq/alTlGbn9n4dSx5apW7VZ1SFO4NT9PTIzMN9ppu7d+KWugWoipgBTDFEYl1FxbwLNl+w2MaFbkScmGXX8mSFAM7bUl74SmkFuD+l7+/b8j2TrSS90SlO9hrCi56O8pH9aoSPdKwcCINgMOygh+6ooYoq1RS2Tlw0Tf3ZDET3Qsf+5g25neVVpNBhXX2NH+Cg752rqcJfARzf72zIQ3JRgtrP+464deXXzlk3CT5CM4dTfSnmj6qgs8F1xJhzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/+Ck+2lE0MtdhErnUlr5PFQx4kEw0dEhHa/v9MlT438=;
+ b=W7fUHsN/MmVNbiVctoKE+zNjHoWcfoTdueUlYGOcJULd8rjFsNh3mSCC5gzG6XW1vgC1MQpQQ3j3W4oL8HJw5MQWhYNlfQIkVHMBndmi6ndSvZ5Hf3C5YNWoO0CVeUzn+0Pg+qAqLP9Pso9oel/rZhuHQ4hfHWbverYLPJH3XtxDLKSQxizhdORsSQl1Gd0bMqytI1vFkycEg4bOPvtG74YfqE4W9azKYVNsUxrZvKMdoVuPaVVc5rErRg7z7HBhwCWiOX8VLGRJdaxpMpSK3kDbwfAkpAVTnVdJmWbsPPufFRBj/1Y1GxlT9GPfCrlzbrfcc34Nus7xrJ42qNyRrQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by KL1PR0601MB5461.apcprd06.prod.outlook.com (2603:1096:820:c0::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.30; Thu, 6 Apr
+ 2023 12:07:27 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::a3a1:af8e:be1e:437c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::a3a1:af8e:be1e:437c%6]) with mapi id 15.20.6277.031; Thu, 6 Apr 2023
+ 12:07:26 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     gregkh@linuxfoundation.org
+Cc:     chao@kernel.org, damien.lemoal@opensource.wdc.com,
+        frank.li@vivo.com, huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+        jth@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        naohiro.aota@wdc.com, rafael@kernel.org, xiang@kernel.org
+Subject: Re: [PATCH 2/3] erofs: convert to use kobject_is_added()
+Date:   Thu,  6 Apr 2023 20:07:16 +0800
+Message-Id: <20230406120716.80980-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <2023040635-duty-overblown-7b4d@gregkh>
+References: <2023040635-duty-overblown-7b4d@gregkh>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0002.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::16) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230406074005.1784728-3-usama.anjum@collabora.com>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=unavailable autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|KL1PR0601MB5461:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9327f43-e919-4449-4969-08db36977cc3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vejkLj8hzS3eOGUD5ZqzzlIkEOwyJ/h5GX6FX7ohXh2ASS7D0k70nOIPzEJWWXoQ8YgHjXgeujEBL6kMMNEPvrM7jdflJj1QxZgSLeZZZpJ1YWPTjAv1PpGcT7LJH5HTRrUFTv35vp13Cuzr1tJRgwFz8OcpGC8KIvrXcFkSEqLq9ViBygPqWD9UicemdoO7z9NDrKhRaHl2e+bhVKtXtRPF1n/cJfq92lDcuzH9r+FeXj+B0KcQQlKssvzwxJnx0mQHl8f+LZlhfr682OAr7IkDNv+noAoMsGe9OjHO/+Xf2dFBYUZdLa1cXfs5pCJV051GGKH78XFFzEhtZ9IULlAo45EJ4ZvJwkpCgZ0oxDBorUvUwxmHqeBkFn1ifd3NoWYN9d+Wm0dU9d7gX+6+MqDDemdIpP8pTcfhPoZm0F9hXCYera99/8p9IJCgZa0bhdGVJZehuKygwOSDogyhQclvCAGcE7szQFbRHtI9Oqp/6PPEhQnNHf7ABN3zwoOKWQzUNK7o33LGFZ7Y1QVov8bRkbgbIL4yb1ThXJKrTzg4sJWkJayMPIhsezzOxJxCDfzkCaHZ0Z1lAPnVIpZ7V9emjyeYI+LLgy5YNTQ4Hn6oijhOkUcuwHSpG8gJm+cu
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(376002)(136003)(346002)(366004)(451199021)(6666004)(6486002)(478600001)(38100700002)(38350700002)(36756003)(86362001)(2616005)(52116002)(7416002)(2906002)(4744005)(316002)(26005)(6512007)(6506007)(1076003)(186003)(8936002)(8676002)(5660300002)(6916009)(4326008)(66556008)(66946007)(66476007)(41300700001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?I5fmB+06wjRU5CDcW8wHymm8YwX+fhTdIcaUfflNi+olUk14sqfJuQoRCDwC?=
+ =?us-ascii?Q?w0ndce3QylzEDR9I7jT1MuK+GZ93SGU0PoB2rpIQW9RZKjqAcST73dCPfHtP?=
+ =?us-ascii?Q?749+Rmg9f+Ms1REu2VRXScKBehbB5caxZ431JSib5naRdJLhq+bW9aM+U7Br?=
+ =?us-ascii?Q?xAbKfgugdG+BwCU0b5nRGwrs2GhOpwThrAu8rSKQZFeqn1BA/KkV6c79utHj?=
+ =?us-ascii?Q?zbrR2GrZQt4uqsRgi1LKwFtdxJiblbUq+c3oqmPjQ/9+PRFfrfAx33ZJdm38?=
+ =?us-ascii?Q?9XT6w04ERKjQGygvBmSiw2oxFWl1YJW5EQuLA1kDGnSrE2X3by+7+Vg6YjBW?=
+ =?us-ascii?Q?HmbTOBur7uujZ6VeKUDJPSYk82leDn4LV40OvnqkGU+vFUuh4B/RfEcEzijA?=
+ =?us-ascii?Q?6wPiA5ABlMm4nIKeKt3qL7pMoQ0UB+Ea7l+b2VCpC8mVk3uVPhsTITCrUC/z?=
+ =?us-ascii?Q?kVOglGpxc09yZ81Fq9BBFSIjExIYh0HcqoTeylEStl3o+8bJ2ayHx4Z9SdGw?=
+ =?us-ascii?Q?BHLw4RVx2VcwlsKGTwxCTKcu1m2mZM90g62VP6yS/lWwETCJ04a6/jIFWyXl?=
+ =?us-ascii?Q?9fYHf2DIvkNjgeXp9hbvzdqFtAED6cTgOO/hnLuDxhOfiZr7ib8sg1veQ1lQ?=
+ =?us-ascii?Q?cxDbOH+4cFJfNlwUE0CWubZeEvcl42v4iiHSU/nHrhbvfeLdh4Vn/t+os9Od?=
+ =?us-ascii?Q?cus711/QBVzwSbja+M6L9ulfI/VTbrdtuf213T5yrIjAb0KPxV+tAk/+CnIP?=
+ =?us-ascii?Q?cjRQwpJIHdwH5VkyJFj9B+sQZqN2JaJXLjxKwMTUt/uRoqV8Dmw9dZ2j5ZrT?=
+ =?us-ascii?Q?MsqlJW37RFEIbqR/qnxcMCqKgyxq2IsAFajXTDOEqzZSJPsiIEvrDi4L0ZKd?=
+ =?us-ascii?Q?wn2bViVNU1rqJWwc4ON+h9VKNp4KqewfBxF0WdW0L6D4POqCpguFzxuVFV/h?=
+ =?us-ascii?Q?C3H9v+X/2sRlhqQDWv+1NBktv5YuinRvD8oE1gf+LeTCerPesF850GNITbF+?=
+ =?us-ascii?Q?mU8u+cqc/VP8jEGN6AN/yClKRek6cbOwjZ1O4OA0KcoK96o0qkk7YJJAG4Pa?=
+ =?us-ascii?Q?8udeMQlX9VAQjtUdCajGq+KOr2HbGKUjyt2OawLmxNZ83Nsu+yMrqECYVBQY?=
+ =?us-ascii?Q?WPU3aq2pEHLQEXH1QukdFAMpL1vpBX5bJ9OsDIL9Ys47C7xz3aKKvaExbjiu?=
+ =?us-ascii?Q?y1i11A17F2+qd9DtoiaN5RMOF+9KZtr2sNbRDfQ0eVOerzcF4AolmeYmAZiL?=
+ =?us-ascii?Q?yjV1BxMLauyu7oq1x4Pyip0Rl08+m1WHk6QtnRlsLDK/guUjcxv7IK4qqnms?=
+ =?us-ascii?Q?ZrmCNYK9FPmMPxEbx9nRpn2ZkDMIPsidp1rMR8oGo9meFpGA7nJjkUcA2Ckf?=
+ =?us-ascii?Q?eOxmNTjrsT/LnjNaV2d1lEf0YlnuGQKssJyN/ocFdXJ35oJhfC3v8OwmbfdQ?=
+ =?us-ascii?Q?a3nZTscC9xOHdTKTkfFZzMbjr6PVsm8tEF3PAapRvfdZ8DB/gQv/IpcTnI3r?=
+ =?us-ascii?Q?N9GYrYiKksLOACoPQaL5cmKiWILSr2NMJbFmVOqaHjCUXBzjKRmKGO07NDyc?=
+ =?us-ascii?Q?JDidaJbPtCQLv0jd9VXttJna3TfvIIa/FBaseBP6?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9327f43-e919-4449-4969-08db36977cc3
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2023 12:07:26.6655
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: c4eGhBazu+NgFBmWG1cBIvQYIG8wdXJFszf2xXb/lIKQBst7Aj/uqqq6U+efaucV07L4mABU+BfcbuJz60fcLg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5461
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Muhammad,
+> Meta-comment, we need to come up with a "filesystem kobject type" to get
+> rid of lots of the boilerplate filesystem kobject logic as it's
+> duplicated in every filesystem in tiny different ways and lots of times
+> (like here), it's wrong.
 
-kernel test robot noticed the following build errors:
+Can we add the following structure?
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on next-20230406]
-[cannot apply to linus/master v6.3-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+struct filesystem_kobject {
+        struct kobject kobject;
+        struct completion unregister;
+};
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Muhammad-Usama-Anjum/userfaultfd-UFFD_FEATURE_WP_ASYNC/20230406-154314
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20230406074005.1784728-3-usama.anjum%40collabora.com
-patch subject: [PATCH v12 2/5] fs/proc/task_mmu: Implement IOCTL to get and optionally clear info about PTEs
-config: arm-randconfig-r021-20230405 (https://download.01.org/0day-ci/archive/20230406/202304061924.m0OL9fIj-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm cross compiling tool for clang build
-        # apt-get install binutils-arm-linux-gnueabi
-        # https://github.com/intel-lab-lkp/linux/commit/f13abb36f64c77913509da8ca157512d2fb9f031
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Muhammad-Usama-Anjum/userfaultfd-UFFD_FEATURE_WP_ASYNC/20230406-154314
-        git checkout f13abb36f64c77913509da8ca157512d2fb9f031
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash fs/
+w/ it, we can simplify something:
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304061924.m0OL9fIj-lkp@intel.com/
+1. merge init_completion and kobject_init_and_add
 
-All errors (new ones prefixed by >>):
+2. merge kobject_put and wait_for_completion
 
->> fs/proc/task_mmu.c:1965:47: error: too few arguments to function call, expected 5, have 4
-                       uffd_wp_range(vma, addr, PAGE_SIZE, true) < 0)
-                       ~~~~~~~~~~~~~                           ^
-   include/linux/userfaultfd_k.h:215:20: note: 'uffd_wp_range' declared here
-   static inline long uffd_wp_range(struct mm_struct *dst_mm,
-                      ^
-   1 error generated.
+3. we can have a common release func for kobj_type release
 
-
-vim +1965 fs/proc/task_mmu.c
-
-  1948	
-  1949		for (addr = start; addr < end && !ret; pte++, addr += PAGE_SIZE) {
-  1950			pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
-  1951	
-  1952			is_written = !is_pte_uffd_wp(*pte);
-  1953			is_file = vma->vm_file;
-  1954			is_present = pte_present(*pte);
-  1955			is_swap = is_swap_pte(*pte);
-  1956	
-  1957			pte_unmap_unlock(pte, ptl);
-  1958	
-  1959			ret = pagemap_scan_output(is_written, is_file, is_present,
-  1960						  is_swap, p, addr, 1);
-  1961			if (ret < 0)
-  1962				return ret;
-  1963	
-  1964			if (is_written && PM_SCAN_OP_IS_WP(p) &&
-> 1965			    uffd_wp_range(vma, addr, PAGE_SIZE, true) < 0)
-  1966				return -EINVAL;
-  1967		}
-  1968	
-  1969		cond_resched();
-  1970		return ret;
-  1971	}
-  1972	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+MBR,
+Yangtao
