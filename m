@@ -2,47 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E99E6D947E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 12:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04F376D9488
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 12:57:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237377AbjDFKzs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 06:55:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49700 "EHLO
+        id S236795AbjDFK5Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 06:57:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236736AbjDFKzr (ORCPT
+        with ESMTP id S236536AbjDFK5W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 06:55:47 -0400
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196DA7A8D;
-        Thu,  6 Apr 2023 03:55:44 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R251e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0VfSuMsQ_1680778540;
-Received: from 30.97.49.15(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VfSuMsQ_1680778540)
-          by smtp.aliyun-inc.com;
-          Thu, 06 Apr 2023 18:55:41 +0800
-Message-ID: <589f6665-824f-bf08-3458-d3986d88f7fc@linux.alibaba.com>
-Date:   Thu, 6 Apr 2023 18:55:40 +0800
+        Thu, 6 Apr 2023 06:57:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1AC65B6
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Apr 2023 03:56:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680778601;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=zMeQxZQg6MXfV4MGHzz3ouxaZBZa4sXe5adkrdIvgDA=;
+        b=h1kRa8TsbkiRR7MDE8muDt6upawdYYnAIe/YYxvx8FpAy5higCcTOr5p0hPapNKfj5Cwl/
+        XLiz8DTBe1LHNupaEipjSEwuyAOGJrc0jqIBgfg9v8zfb8mvn4Ga+UuOyO8ub+8VJNDbe2
+        lc38DKDNFHKVAfPajvDDDE8HzOx40Ys=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-616-dI7Qid53N0-2fcggxMEYxg-1; Thu, 06 Apr 2023 06:56:38 -0400
+X-MC-Unique: dI7Qid53N0-2fcggxMEYxg-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 01EB9384708E;
+        Thu,  6 Apr 2023 10:56:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B936492C14;
+        Thu,  6 Apr 2023 10:56:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CANn89iLFc3gxo-5gEn36VFYdocXQPiAqRsTPEHcB8JA3mw8+8g@mail.gmail.com>
+References: <CANn89iLFc3gxo-5gEn36VFYdocXQPiAqRsTPEHcB8JA3mw8+8g@mail.gmail.com> <20230406094245.3633290-1-dhowells@redhat.com>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH net-next v5 00/19] splice, net: Replace sendpage with sendmsg(MSG_SPLICE_PAGES), part 1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.9.0
-Subject: Re: [PATCH 2/3] erofs: convert to use kobject_is_added()
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Yangtao Li <frank.li@vivo.com>, xiang@kernel.org, chao@kernel.org,
-        huyue2@coolpad.com, jefflexu@linux.alibaba.com,
-        damien.lemoal@opensource.wdc.com, naohiro.aota@wdc.com,
-        jth@kernel.org, rafael@kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20230406093056.33916-1-frank.li@vivo.com>
- <20230406093056.33916-2-frank.li@vivo.com>
- <2023040635-duty-overblown-7b4d@gregkh>
- <cc219a52-e89c-b7e7-5bfd-0124f881a29f@linux.alibaba.com>
- <2023040654-protrude-unlucky-f164@gregkh>
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <2023040654-protrude-unlucky-f164@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-10.2 required=5.0 tests=ENV_AND_HDR_SPF_MATCH,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=unavailable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3636417.1680778595.1@warthog.procyon.org.uk>
+Date:   Thu, 06 Apr 2023 11:56:35 +0100
+Message-ID: <3636418.1680778595@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -50,67 +76,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Eric Dumazet <edumazet@google.com> wrote:
 
-
-On 2023/4/6 18:27, Greg KH wrote:
-> On Thu, Apr 06, 2023 at 06:13:05PM +0800, Gao Xiang wrote:
->> Hi Greg,
->>
->> On 2023/4/6 18:03, Greg KH wrote:
->>> On Thu, Apr 06, 2023 at 05:30:55PM +0800, Yangtao Li wrote:
->>>> Use kobject_is_added() instead of directly accessing the internal
->>>> variables of kobject. BTW kill kobject_del() directly, because
->>>> kobject_put() actually covers kobject removal automatically.
->>>>
->>>> Signed-off-by: Yangtao Li <frank.li@vivo.com>
->>>> ---
->>>>    fs/erofs/sysfs.c | 3 +--
->>>>    1 file changed, 1 insertion(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
->>>> index 435e515c0792..daac23e32026 100644
->>>> --- a/fs/erofs/sysfs.c
->>>> +++ b/fs/erofs/sysfs.c
->>>> @@ -240,8 +240,7 @@ void erofs_unregister_sysfs(struct super_block *sb)
->>>>    {
->>>>    	struct erofs_sb_info *sbi = EROFS_SB(sb);
->>>> -	if (sbi->s_kobj.state_in_sysfs) {
->>>> -		kobject_del(&sbi->s_kobj);
->>>> +	if (kobject_is_added(&sbi->s_kobj)) {
->>>
->>> I do not understand why this check is even needed, I do not think it
->>> should be there at all as obviously the kobject was registered if it now
->>> needs to not be registered.
->>
->> I think Yangtao sent a new patchset which missed the whole previous
->> background discussions as below:
->> https://lore.kernel.org/r/028a1b56-72c9-75f6-fb68-1dc5181bf2e8@linux.alibaba.com
->>
->> It's needed because once a syzbot complaint as below:
->> https://lore.kernel.org/r/CAD-N9QXNx=p3-QoWzk6pCznF32CZy8kM3vvo8mamfZZ9CpUKdw@mail.gmail.com
->>
->> I'd suggest including the previous backgrounds at least in the newer patchset,
->> otherwise it makes me explain again and again...
+> > Here's the first tranche of patches towards providing a MSG_SPLICE_PAGES
+> > internal sendmsg flag that is intended to replace the ->sendpage() op with
+> > calls to sendmsg().  MSG_SPLICE is a hint that tells the protocol that it
+> > should splice the pages supplied if it can and copy them if not.
+> >
 > 
-> That would be good, as I do not think this is correct, it should be
-> fixed in a different way, see my response to the zonefs patch in this
-> series as a much simpler method to use.
+> I find this patch series quite big/risky for 6.4
 
-Yes, but here (sbi->s_kobj) is not a kobject pointer (also at a quick
-glance it seems that zonefs has similar code), and also we couldn't
-just check the sbi is NULL or not here only, since sbi is already
-non-NULL in this path and there are some others in sbi to free in
-other functions.
+If you want me to hold this till after the merge window, that's fine.
 
-s_kobj could be changed into a pointer if needed.  I'm all fine with
-either way since as you said, it's a boilerplate filesystem kobject
-logic duplicated from somewhere.  Hopefully Yangtao could help take
-this task since he sent me patches about this multiple times.
+> Can you spell out why we need "unspliceable pages support" ?
+> This seems to add quite a lot of code in fast paths.
 
-Thanks,
-Gao Xiang
+The patches to copy unspliceable pages (patches 6, 14 and 19) only really add
+to the MSG_SPLICE_PAGES path - I don't know whether you count this as a fast
+path or not.  (Or are you objecting to MSG_SPLICE_PAGES and getting rid of
+sendpage in general?)
 
-> 
-> thanks,
-> 
-> greg k-h
+What I'm trying to do with this aspect is twofold:
+
+Firstly, I'm trying to make it such that the layer above can send each
+message in a single sendmsg() if possible.  This is possible with sunrpc and
+siw, for example, but currently they make a whole bunch of separate calls into
+the transport layer - typically at least three for header, body, trailer.
+
+Secondly, I'm trying to avoid a double copy.  The layer above TCP/UDP/etc
+(sunrpc[*], siw, etc.) needs to glue protocol bits on either end of the
+message body and it may have this data in the slab or on the stack - which it
+would then need to copy into a page fragment so that it can be zero-copied.
+However, if the device can handle this or we don't have sufficient frags, the
+network layer may decide to copy it anyway - I'm not sure how the higher layer
+can determine this.
+
+It just seems there are fewer places this is required if it can be done in the
+network protocol.  Note that userspace cannot make use of this since they're
+not allowed to set MSG_SPLICE_PAGES.
+
+However, I have kept these bits separate and discard them if it's considered a
+bad idea and that MSG_SPLICE_PAGES should, say, give an error in such a case.
+
+David
+
+[*] sunrpc, at least, seems to store the header and trailer in zerocopyable
+    pages, but has an additional bit on the front that's not.
+
