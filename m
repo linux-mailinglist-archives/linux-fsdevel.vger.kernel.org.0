@@ -2,85 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33A0B6D924E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 11:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 729EE6D9265
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 11:13:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232038AbjDFJJs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 05:09:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49858 "EHLO
+        id S235422AbjDFJNZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 05:13:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235234AbjDFJJr (ORCPT
+        with ESMTP id S229613AbjDFJNY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 05:09:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EF7183;
-        Thu,  6 Apr 2023 02:09:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 6 Apr 2023 05:13:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BDCA171E
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Apr 2023 02:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680772345;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Sv2PpChimMYumCFtZaOaAxih1ECUzoRlTNbMO8Dqb/8=;
+        b=CMx9dd82lwO2xDRwp8QSHHckYfDPR322XeRMy3dsjzyOQIVbdfuRSeVI2RlPZzMsl5lu2q
+        lJ1d44w9NIU3Q0DT+9FtuAjV8RWJ+bUBLO9nYXvvGRuNlplT0GG74Q3IHeTVHkRT2jILar
+        npgtSMN8YqeRSJK7G+6FUDrWb7K31so=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-499-bbJHhxB2MTulRR-9lYLWOw-1; Thu, 06 Apr 2023 05:12:22 -0400
+X-MC-Unique: bbJHhxB2MTulRR-9lYLWOw-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A8F07615D9;
-        Thu,  6 Apr 2023 09:09:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D30C433EF;
-        Thu,  6 Apr 2023 09:09:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680772186;
-        bh=89z7jVK3dMAn7VBgMvt/Ijr6T41u1MDrt2CMwepk5+I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QbyqOtXES+6s3UGbMFP8FMuAHD6hWRHCnzSXh+Ei6nLb45TKssOVaR5L9G3M/PgKb
-         4zC+6ZjxTh5L+JCtpYV5dJ88XUgvSct1hbBKrs9Na0/8ghNg0lqtHTV4+kndvmRTPR
-         Qen0JBYFDgJzje2h4WjF7zJ0HMWILRM6HzTzTyMdcAo/7xNwm/XCUWUzshLA+LVvAH
-         Fu5C1LkS5GnaDDkoULrsDeCUQi4XDGnoEN7IjzcuO9I1pmecj1ERfqr/QozHEZwBHY
-         cwwolBs64zxuXQzA0CLzaTZUz0PEA69QyqJJiX4/zigzzKrV3cWReZmM8ep2uvOTih
-         A6/WRwYpv/KYw==
-From:   Christian Brauner <brauner@kernel.org>
-To:     wenyang.linux@foxmail.com
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
-        David Woodhouse <dwmw@amazon.co.uk>, Fu Wei <wefu@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Michal Nazarewicz <m.nazarewicz@samsung.com>,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7FBCA38123B9;
+        Thu,  6 Apr 2023 09:12:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 84D22492C14;
+        Thu,  6 Apr 2023 09:12:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20230405191915.041c2834@kernel.org>
+References: <20230405191915.041c2834@kernel.org> <20230405165339.3468808-1-dhowells@redhat.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
         Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [RESEND PATCH v2] eventfd: use wait_event_interruptible_locked_irq() helper
-Date:   Thu,  6 Apr 2023 11:08:49 +0200
-Message-Id: <20230406-kernig-parabel-d12963a4e7fa@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <tencent_16F9553E8354D950D704214D6EA407315F0A@qq.com>
-References: <tencent_16F9553E8354D950D704214D6EA407315F0A@qq.com>
+        linux-mm@kvack.org
+Subject: Re: [PATCH net-next v4 00/20] splice, net: Replace sendpage with sendmsg(MSG_SPLICE_PAGES), part 1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=817; i=brauner@kernel.org; h=from:subject:message-id; bh=K8ik1op6ugu9bhhVGatLJ3Hq0wNNQNCodDUXq+Rpsfk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTo9bD7Rip5Hvrd1Tqvcn/pXNF1hls9FdIl/s58+u2N5nt9 swr1jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlsOs/IMP2xcdDhLnu7bznSL1YeU9 t89Pq1QmV/0+1uPJsX/3GtD2D471fUFv12cc2t1lnn1qYcXMXs7HZubRzj+yPiH1QFjpfUcwMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3629143.1680772339.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 06 Apr 2023 10:12:19 +0100
+Message-ID: <3629144.1680772339@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-On Thu, 06 Apr 2023 03:20:02 +0800, wenyang.linux@foxmail.com wrote:
-> wait_event_interruptible_locked_irq was introduced by commit 22c43c81a51e
-> ("wait_event_interruptible_locked() interface"), but older code such as
-> eventfd_{write,read} still uses the open code implementation.
-> Inspired by commit 8120a8aadb20
-> ("fs/timerfd.c: make use of wait_event_interruptible_locked_irq()"), this
-> patch replaces the open code implementation with a single macro call.
-> 
-> [...]
+> Thanks for splitting off a smaller series!
+> My day is out of hours so just a trivial comment, in case kbuild bot
+> hasn't pinged you - this appears to break the build on the relatively
+> recently added page_frag_cache in google's vNIC (gve).
 
-I ran LTP with ./runltp -f syscalls -s eventfd passes and aligns with what was
-done for timerfd.
+Yep.  I've just been fixing that up.
 
-Applied, thanks!
+I'll also break off the samples patch and that can go by itself.  Is there=
+ a
+problem with the 32-bit userspace build environment that patchwork is usin=
+g?
+The sample programs that patch adds are all userspace helpers.  It seems t=
+hat
+<features.h> is referencing a file that doesn't exist:
 
-tree: git://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git
-branch: fs.misc
-[1/1] eventfd: use wait_event_interruptible_locked_irq() helper
-      commit: 113348a44b8622b497fb884f41c8659481ad0b04
+In file included from /usr/include/features.h:514,
+                 from /usr/include/bits/libc-header-start.h:33,
+                 from /usr/include/stdio.h:27,
+                 from ../samples/net/alg-hash.c:9:
+/usr/include/gnu/stubs.h:7:11: fatal error: gnu/stubs-32.h: No such file o=
+r directory
+    7 | # include <gnu/stubs-32.h>
+      |           ^~~~~~~~~~~~~~~~
+compilation terminated.
+
+Excerpt from:
+
+https://patchwork.hopto.org/static/nipa/737278/13202278/build_32bit/
+
+https://patchwork.kernel.org/project/netdevbpf/patch/20230405165339.346880=
+8-2-dhowells@redhat.com/
+
+David
+
