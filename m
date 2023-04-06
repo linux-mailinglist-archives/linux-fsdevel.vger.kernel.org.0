@@ -2,47 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BAF286D932B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 11:47:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 014606D9352
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 11:52:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235613AbjDFJqx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 05:46:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54666 "EHLO
+        id S236912AbjDFJwt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 05:52:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236852AbjDFJpg (ORCPT
+        with ESMTP id S236672AbjDFJte (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 05:45:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 290628A7D
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Apr 2023 02:43:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680774233;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ryfphnd6F+ChdmyXxRDqpuzs5jttBzLaOe0KjWoTLBo=;
-        b=Tydb6yb9FpcQ4kCLxVCUN4ucYsFbEpWra7soMnWICTIB/cmDEqmfUgHsh1Xwzzm0RpLLfs
-        y+WSAZiexdOwltfq7VmkGDdwwPz4umRrDzjlg7005yrU0752ST6o8zrL5a1rq+igre1Mb2
-        bhSn0ptjIKNNzKedOhokwl8Yzh4J6c4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-316-BqhN1L0dM6OPW16vDF8pVA-1; Thu, 06 Apr 2023 05:43:48 -0400
-X-MC-Unique: BqhN1L0dM6OPW16vDF8pVA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 61D36185A78F;
-        Thu,  6 Apr 2023 09:43:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E84618EC6;
-        Thu,  6 Apr 2023 09:43:45 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
+        Thu, 6 Apr 2023 05:49:34 -0400
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA338A273
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Apr 2023 02:47:55 -0700 (PDT)
+Received: by mail-yb1-xb2a.google.com with SMTP id n125so45468974ybg.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Apr 2023 02:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1680774414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FazgrPFY3djyzZPHPYX9nbN/ODMQXNog1/KIwCKeFDY=;
+        b=X7uAqrbGclHVXqbYHSh/EAecrBEubuaY39NatmOxJE0XIXqV8zUrvnNRbRfyxqZkbc
+         XoA5P3emiPKJCmTlP8dTV7Z7PY/gLsd/EA3OPXruLvTILNv4BQvr7691dHmjCJoCu/dv
+         kSRJzazXWogjQWoS6uAM9rQR0SRZevXHSTgZ1puYjHxUEYABV/qTIeaV4IoGBLHRBG7z
+         7vkXzUZTZ4IM1ED3JJwGLf2MYawCXHKQPp+q1lhO2vhETvQE8NZGWsn24RSx8ZXnImfR
+         UcpU6yox1sEmDInIwFUPnzBR2K9m7QrY5R2HDAjL51azojaPsgDh33MezwbrMapIA5Yz
+         d2+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680774414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FazgrPFY3djyzZPHPYX9nbN/ODMQXNog1/KIwCKeFDY=;
+        b=a2Yc3A7lOXesFqVfGA/GSig3VH33oxZmwUOX9sstweP1J7BN5B9JVT7WaQUWiXLRbN
+         CVqdZZVRmQQiYFKHKrJD0RYWx+xwsZHLsRjEWcJHDGmlTD9S26Sml0hqPqDuFmkvBeSs
+         Q/skajyyItIbBFRVTeiLupgSnJlNpdu589bxwdttt8B7Ou12o6bflmV9Zb8noV0a9WkR
+         1w0m4ZKekIz3PMt/AYH5ZN2rdEEX1fb96k2jbYf1XnCctKE+izslaGsxmciC0XOVfh3v
+         Ju4OhK0A0khk0oS7NRIgekpxiGMdAkmCDt3EGQ4RvQHI1w5JxLuFSJV2Yf1R8KnSZVJs
+         O7jg==
+X-Gm-Message-State: AAQBX9eR5qHpAyGcnCxfn+U83QwH/kPOOozVOc0tFsKCVNziiRmjTFrc
+        zkh08Qypy2CexbLvC/2ZVhRQinNmKhqZmE06PXvNMQ==
+X-Google-Smtp-Source: AKy350bq1WlXWlO1l5s2v33lxsNrk8T8LtvMzV0VPBJGlSoPDOhtqDrZ3Ce6iIYQONUD9yoeD0168koK8RkL0a8PXBY=
+X-Received: by 2002:a25:da46:0:b0:b09:6f3d:ea1f with SMTP id
+ n67-20020a25da46000000b00b096f3dea1fmr1704437ybf.4.1680774414032; Thu, 06 Apr
+ 2023 02:46:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230406094245.3633290-1-dhowells@redhat.com>
+In-Reply-To: <20230406094245.3633290-1-dhowells@redhat.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Thu, 6 Apr 2023 11:46:42 +0200
+Message-ID: <CANn89iLFc3gxo-5gEn36VFYdocXQPiAqRsTPEHcB8JA3mw8+8g@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 00/19] splice, net: Replace sendpage with
+ sendmsg(MSG_SPLICE_PAGES), part 1
+To:     David Howells <dhowells@redhat.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
         Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
@@ -54,130 +68,32 @@ Cc:     David Howells <dhowells@redhat.com>,
         Chuck Lever III <chuck.lever@oracle.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Kuniyuki Iwashima <kuniyu@amazon.com>
-Subject: [PATCH net-next v5 19/19] af_unix: Make sendmsg(MSG_SPLICE_PAGES) copy unspliceable data
-Date:   Thu,  6 Apr 2023 10:42:45 +0100
-Message-Id: <20230406094245.3633290-20-dhowells@redhat.com>
-In-Reply-To: <20230406094245.3633290-1-dhowells@redhat.com>
-References: <20230406094245.3633290-1-dhowells@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
+        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If sendmsg() with MSG_SPLICE_PAGES encounters a page that shouldn't be
-spliced - a slab page, for instance, or one with a zero count - make
-unix_extract_bvec_to_skb() copy it.
+On Thu, Apr 6, 2023 at 11:42=E2=80=AFAM David Howells <dhowells@redhat.com>=
+ wrote:
+>
+> Here's the first tranche of patches towards providing a MSG_SPLICE_PAGES
+> internal sendmsg flag that is intended to replace the ->sendpage() op wit=
+h
+> calls to sendmsg().  MSG_SPLICE is a hint that tells the protocol that it
+> should splice the pages supplied if it can and copy them if not.
+>
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: netdev@vger.kernel.org
----
- net/unix/af_unix.c | 44 +++++++++++++++++++++++++++++++++-----------
- 1 file changed, 33 insertions(+), 11 deletions(-)
+I find this patch series quite big/risky for 6.4
 
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index fee431a089d3..6941be8dae7e 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -2160,12 +2160,12 @@ static int queue_oob(struct socket *sock, struct msghdr *msg, struct sock *other
- /*
-  * Extract pages from an iterator and add them to the socket buffer.
-  */
--static ssize_t unix_extract_bvec_to_skb(struct sk_buff *skb,
--					struct iov_iter *iter, ssize_t maxsize)
-+static ssize_t unix_extract_bvec_to_skb(struct sk_buff *skb, struct iov_iter *iter,
-+					ssize_t maxsize, gfp_t gfp)
- {
- 	struct page *pages[8], **ppages = pages;
- 	unsigned int i, nr;
--	ssize_t ret = 0;
-+	ssize_t spliced = 0, ret = 0;
- 
- 	while (iter->count > 0) {
- 		size_t off, len;
-@@ -2177,31 +2177,52 @@ static ssize_t unix_extract_bvec_to_skb(struct sk_buff *skb,
- 
- 		len = iov_iter_extract_pages(iter, &ppages, maxsize, nr, 0, &off);
- 		if (len <= 0) {
--			if (!ret)
--				ret = len ?: -EIO;
-+			ret = len ?: -EIO;
- 			break;
- 		}
- 
- 		i = 0;
- 		do {
-+			struct page *page = pages[i++];
- 			size_t part = min_t(size_t, PAGE_SIZE - off, len);
-+			bool put = false;
-+
-+			if (!sendpage_ok(page)) {
-+				const void *p = kmap_local_page(page);
-+				void *q;
-+
-+				q = page_frag_memdup(NULL, p + off, part, gfp,
-+						     ULONG_MAX);
-+				kunmap_local(p);
-+				if (!q) {
-+					iov_iter_revert(iter, len);
-+					ret = -ENOMEM;
-+					goto out;
-+				}
-+				page = virt_to_page(q);
-+				off = offset_in_page(q);
-+				put = true;
-+			}
- 
--			if (skb_append_pagefrags(skb, pages[i++], off, part) < 0) {
--				if (!ret)
--					ret = -EMSGSIZE;
-+			ret = skb_append_pagefrags(skb, page, off, part);
-+			if (put)
-+				put_page(page);
-+			if (ret < 0) {
-+				iov_iter_revert(iter, len);
- 				goto out;
- 			}
- 			off = 0;
--			ret += part;
-+			spliced += part;
- 			maxsize -= part;
- 			len -= part;
- 		} while (len > 0);
-+
- 		if (maxsize <= 0)
- 			break;
- 	}
- 
- out:
--	return ret;
-+	return spliced ?: ret;
- }
- 
- static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
-@@ -2278,7 +2299,8 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
- 		fds_sent = true;
- 
- 		if (unlikely(msg->msg_flags & MSG_SPLICE_PAGES)) {
--			size = unix_extract_bvec_to_skb(skb, &msg->msg_iter, size);
-+			size = unix_extract_bvec_to_skb(skb, &msg->msg_iter, size,
-+							sk->sk_allocation);
- 			skb->data_len += size;
- 			skb->len += size;
- 			skb->truesize += size;
-
+Can you spell out why we need "unspliceable pages support" ?
+This seems to add quite a lot of code in fast paths.
+Thanks.
