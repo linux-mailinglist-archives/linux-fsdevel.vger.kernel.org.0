@@ -2,130 +2,262 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A74B6D8D66
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 04:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F22A86D8DF0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 05:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234625AbjDFCYF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Apr 2023 22:24:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51286 "EHLO
+        id S234954AbjDFDSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Apr 2023 23:18:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229631AbjDFCYE (ORCPT
+        with ESMTP id S235096AbjDFDSh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Apr 2023 22:24:04 -0400
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D97C37ED3
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Apr 2023 19:24:02 -0700 (PDT)
-Received: by mail-il1-f206.google.com with SMTP id g12-20020a056e021e0c00b00327c0e193b1so2264123ila.21
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Apr 2023 19:24:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680747842; x=1683339842;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2+mKu+ujEdL90lRYA9dnzg2MP3Ci3br+oGe4ZowcyVo=;
-        b=pX0IwNpZqvz34zERxkfbPXJIxz5sJyxABBkWPeGFU/sdd5ljOnzREDKsAP5ZVetZ0m
-         MBP4q91buT7Bm4N7qqVnGdYQUHX+rs2l6aWKp5tiw+yNE/ZDAcPS0p81TLd+YDIQm0ta
-         37d7zcGDDWIM0Dc9Vfxzw6qn3DUpP3mln+v3NxIh72WoDUjufV5e5U4NhtC2avUIOP6o
-         14hnFoUv9Ty4GzfMVAA963PR0C5MW7IW7qyyMAaoF/7SCpEoDmmabkTwqkoBfyc30GvS
-         fT47HzT5wrMEwkR/GuAzVLKNU4LcmJEGx8a9ko73maN0r9TY9z6T9QEzUC7CNOa/7CoG
-         L83A==
-X-Gm-Message-State: AAQBX9fo4QYnSCTDrsN4jOmpUv0eCN2hLbx3DW/YskuqJopI61zExlkb
-        I4qDr6T53i547aNf6JA562C1OKAEBRE8+4lOBfBp32zsh8uU
-X-Google-Smtp-Source: AKy350ZZRAK/3QQ6Z9pkFGX8KPQ+PFWJNZSoRngGCZmHIgNS0GVtfMhBAaFQO8qMnQ8S1eSqjw2T1sKJGi4i1649CG3xTTfkaIJC
+        Wed, 5 Apr 2023 23:18:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96175273D;
+        Wed,  5 Apr 2023 20:18:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 244C962D37;
+        Thu,  6 Apr 2023 03:18:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C9A4C433D2;
+        Thu,  6 Apr 2023 03:18:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680751115;
+        bh=gAmdsJOvAvFD8Pw7Hham6hOYozB50NHRKYgiFOuCPfA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=l2e0pGTXGAtAPzTTnr66THH9X6WCwGZ71B0GcYDBdAK4iVE/qpW+Vtje9oULjo760
+         C5fztSxMeSDI8CzgyFHNRkyg+a9kC4Vi1DovQ8vNEuX7+ys99emvilPhFqCwpIXBVh
+         DgYJ2pRns+U1kFi23a6LQ/OXgp8PZIkOxQWq6caHPxMRZXHyj1fyNDJMWCNDkYy/gn
+         QvLv1yhW7zZCo+kogFEvq8IMXBGO83iezovNVY7TPMBKwEqpIoC2KSqzt0G52Ap8an
+         hjRuZy5m5WDR5mPWwI3m6GSLA0PtdDWeVORjmyhT1++sCVH3cvM7bQTu07dKxho6dk
+         GIgXlbYEmhXTg==
+Date:   Wed, 5 Apr 2023 20:18:33 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, stable@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH] f2fs: get out of a repeat loop when getting a
+ locked data page
+Message-ID: <ZC46Ccm8xTT4OlE3@google.com>
+References: <20230323213919.1876157-1-jaegeuk@kernel.org>
+ <8aea02b0-86f9-539a-02e9-27b381e68b66@kernel.org>
+ <ZCG2mfviZfY1dqb4@google.com>
+ <ZCHCykI/BLcfDzt7@casper.infradead.org>
+ <ZC2kSfNUXKK4PfpM@google.com>
+ <9dc4ba32-5be5-26d8-5dd2-9bd48d6b0af4@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a02:856f:0:b0:40b:4e80:f37f with SMTP id
- g102-20020a02856f000000b0040b4e80f37fmr4662870jai.3.1680747842184; Wed, 05
- Apr 2023 19:24:02 -0700 (PDT)
-Date:   Wed, 05 Apr 2023 19:24:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000172fc905f8a19ab5@google.com>
-Subject: [syzbot] [btrfs?] WARNING in btrfs_commit_transaction (2)
-From:   syzbot <syzbot+dafbca0e20fbc5946925@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=3.1 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ***
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9dc4ba32-5be5-26d8-5dd2-9bd48d6b0af4@kernel.org>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 04/06, Chao Yu wrote:
+> On 2023/4/6 0:39, Jaegeuk Kim wrote:
+> > On 03/27, Matthew Wilcox wrote:
+> > > On Mon, Mar 27, 2023 at 08:30:33AM -0700, Jaegeuk Kim wrote:
+> > > > On 03/26, Chao Yu wrote:
+> > > > > On 2023/3/24 5:39, Jaegeuk Kim wrote:
+> > > > > > https://bugzilla.kernel.org/show_bug.cgi?id=216050
+> > > > > > 
+> > > > > > Somehow we're getting a page which has a different mapping.
+> > > > > > Let's avoid the infinite loop.
+> > > > > > 
+> > > > > > Cc: <stable@vger.kernel.org>
+> > > > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > > > > ---
+> > > > > >    fs/f2fs/data.c | 8 ++------
+> > > > > >    1 file changed, 2 insertions(+), 6 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > > > > > index bf51e6e4eb64..80702c93e885 100644
+> > > > > > --- a/fs/f2fs/data.c
+> > > > > > +++ b/fs/f2fs/data.c
+> > > > > > @@ -1329,18 +1329,14 @@ struct page *f2fs_get_lock_data_page(struct inode *inode, pgoff_t index,
+> > > > > >    {
+> > > > > >    	struct address_space *mapping = inode->i_mapping;
+> > > > > >    	struct page *page;
+> > > > > > -repeat:
+> > > > > > +
+> > > > > >    	page = f2fs_get_read_data_page(inode, index, 0, for_write, NULL);
+> > > > > >    	if (IS_ERR(page))
+> > > > > >    		return page;
+> > > > > >    	/* wait for read completion */
+> > > > > >    	lock_page(page);
+> > > > > > -	if (unlikely(page->mapping != mapping)) {
+> > > > > 
+> > > > > How about using such logic only for move_data_page() to limit affect for
+> > > > > other paths?
+> > > > 
+> > > > Why move_data_page() only? If this happens, we'll fall into a loop in anywhere?
+> > > > 
+> > > > > 
+> > > > > Jaegeuk, any thoughts about why mapping is mismatch in between page's one and
+> > > > > inode->i_mapping?
+> > > > 
+> > > > > 
+> > > > > After several times code review, I didn't get any clue about why f2fs always
+> > > > > get the different mapping in a loop.
+> > > > 
+> > > > I couldn't find the path to happen this. So weird. Please check the history in the
+> > > > bug.
+> > > > 
+> > > > > 
+> > > > > Maybe we can loop MM guys to check whether below folio_file_page() may return
+> > > > > page which has different mapping?
+> > > > 
+> > > > Matthew may have some idea on this?
+> > > 
+> > > There's a lot of comments in the bug ... hard to come into this one
+> > > cold.
+> > > 
+> > > I did notice this one (#119):
+> > > : Interestingly, ref count is 514, which looks suspiciously as a binary
+> > > : flag 1000000010. Is it possible that during 5.17/5.18 implementation
+> > > : of a "pin", somehow binary flag was written to ref count, or something
+> > > : like '1 << ...' happens?
+> > > 
+> > > That indicates to me that somehow you've got hold of a THP that is in
+> > > the page cache.  Probably shmem/tmpfs.  That indicate to me a refcount
+> > > problem that looks something like this:
+> > > 
+> > > f2fs allocates a page
+> > > f2fs adds the page to the page cache
+> > > f2fs puts the reference to the page without removing it from the
+> > > page cache (how?)
+> > 
+> > Is it somewhat related to setting a bit in private field?
+> 
+> IIUC, it looks the page reference is added/removed as pair.
+> 
+> > 
+> > When we migrate the blocks, we do:
+> > 1) get_lock_page()
+> 
+> - f2fs_grab_cache_page
+>  - pagecache_get_page
+>   - __filemap_get_folio
+>    - no_page  -> filemap_alloc_folio  page_ref = 1 (referenced by caller)
+>     - filemap_add_folio page_ref = 2 (referenced by radix tree)
+> 
+> > 2) submit read
+> > 3) lock_page()
+> > 3) set_page_dirty()
+> > 4) set_page_private_gcing(page)
+> 
+> page_ref = 3 (reference by private data)
+> 
+> > 
+> > --- in fs/f2fs/f2fs.h
+> > 1409 #define PAGE_PRIVATE_SET_FUNC(name, flagname) \
+> > 1410 static inline void set_page_private_##name(struct page *page) \
+> > 1411 { \
+> > 1412         if (!PagePrivate(page)) { \
+> > 1413                 get_page(page); \
+> > 1414                 SetPagePrivate(page); \
+> > 1415                 set_page_private(page, 0); \
+> > 1416         } \
+> > 1417         set_bit(PAGE_PRIVATE_NOT_POINTER, &page_private(page)); \
+> > 1418         set_bit(PAGE_PRIVATE_##flagname, &page_private(page)); \
+> > 1419 }
+> > 
+> > 
+> > 5) set_page_writebac()
+> > 6) submit write
+> > 7) unlock_page()
+> > 8) put_page(page)
+> 
+> page_ref = 2 (ref by caller was removed)
+> 
+> > 
+> > Later, f2fs_invalidate_folio will do put_page again by:
+> > clear_page_private_gcing(&folio->page);
+> 
+> page_ref = 1 (ref by private was removed, and the last left ref is hold by radix tree)
+> 
+> > 
+> > --- in fs/f2fs/f2fs.h
+> > 1421 #define PAGE_PRIVATE_CLEAR_FUNC(name, flagname) \
+> > 1422 static inline void clear_page_private_##name(struct page *page) \
+> > 1423 { \
+> > 1424         clear_bit(PAGE_PRIVATE_##flagname, &page_private(page)); \
+> > 1425         if (page_private(page) == BIT(PAGE_PRIVATE_NOT_POINTER)) { \
+> > 1426                 set_page_private(page, 0); \
+> > 1427                 if (PagePrivate(page)) { \
+> > 1428                         ClearPagePrivate(page); \
+> 
+> Since PagePrivate was cleared, so folio_detach_private in
+> f2fs_invalidate_folio()/f2fs_release_folio will just skip drop reference.
+> 
+> static inline void *folio_detach_private(struct folio *folio)
+> {
+> 	void *data = folio_get_private(folio);
+> 
+> 	if (!folio_test_private(folio))
+> 		return NULL;
+> 	folio_clear_private(folio);
+> 	folio->private = NULL;
+> 	folio_put(folio);
+> 
+> 	return data;
+> }
+> 
+> Or am I missing something?
 
-syzbot found the following issue on:
+Ah, I missed folio_test_private() tho, can we really expect get_page(),
+SetPagePrivate(), and set_page_private() is in pair with folio_detach_private()?
+I feel attach/detach_page_private would look better?
 
-HEAD commit:    00c7b5f4ddc5 Merge tag 'input-for-v6.3-rc4' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=138b98c9c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e626f76ad59b1c14
-dashboard link: https://syzkaller.appspot.com/bug?extid=dafbca0e20fbc5946925
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4738db235f4a/disk-00c7b5f4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/db62da5dcb6b/vmlinux-00c7b5f4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1e596cad760c/bzImage-00c7b5f4.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dafbca0e20fbc5946925@syzkaller.appspotmail.com
-
-BTRFS info (device loop5): auto enabling async discard
-BTRFS warning (device loop5: state M): Skipping commit of aborted transaction.
-------------[ cut here ]------------
-BTRFS: Transaction aborted (error -28)
-WARNING: CPU: 0 PID: 28430 at fs/btrfs/transaction.c:1984 cleanup_transaction fs/btrfs/transaction.c:1984 [inline]
-WARNING: CPU: 0 PID: 28430 at fs/btrfs/transaction.c:1984 btrfs_commit_transaction+0x34c6/0x4410 fs/btrfs/transaction.c:2558
-Modules linked in:
-CPU: 0 PID: 28430 Comm: syz-executor.5 Not tainted 6.3.0-rc4-syzkaller-00224-g00c7b5f4ddc5 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-RIP: 0010:cleanup_transaction fs/btrfs/transaction.c:1984 [inline]
-RIP: 0010:btrfs_commit_transaction+0x34c6/0x4410 fs/btrfs/transaction.c:2558
-Code: c8 fe ff ff be 02 00 00 00 e8 f6 c5 ab 00 e9 7e d0 ff ff e8 4c d1 1e fe 8b b5 20 ff ff ff 48 c7 c7 a0 89 94 8a e8 7a 57 e7 fd <0f> 0b c7 85 00 ff ff ff 01 00 00 00 e9 d0 dc ff ff e8 24 d1 1e fe
-RSP: 0018:ffffc900043efa48 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: 0000000044ea0001 RCX: ffffc90003c0b000
-RDX: 0000000000040000 RSI: ffffffff814a8037 RDI: 0000000000000001
-RBP: ffffc900043efbc8 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff888044ea0000
-R13: ffff88803479ac60 R14: ffff88803479adc8 R15: ffff888044ea0000
-FS:  00007f69217cb700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002024a030 CR3: 0000000047942000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_set_free_space_cache_v1_active+0x1ae/0x2a0 fs/btrfs/free-space-cache.c:4139
- btrfs_remount_cleanup fs/btrfs/super.c:1677 [inline]
- btrfs_remount+0x57b/0x1850 fs/btrfs/super.c:1867
- legacy_reconfigure+0x119/0x180 fs/fs_context.c:633
- reconfigure_super+0x40c/0xa30 fs/super.c:956
- vfs_fsconfig_locked fs/fsopen.c:254 [inline]
- __do_sys_fsconfig+0xa3a/0xc20 fs/fsopen.c:439
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f6920a8c0f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f69217cb168 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
-RAX: ffffffffffffffda RBX: 00007f6920babf80 RCX: 00007f6920a8c0f9
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000004
-RBP: 00007f6920ae7b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffe61745aff R14: 00007f69217cb300 R15: 0000000000022000
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> Thanks,
+> 
+> > 1429                         put_page(page); \
+> > 1430                 }\
+> > 1431         } \
+> > 1432 }
+> > 
+> > > page is now free, gets reallocated into a THP
+> > > lookup from the f2fs file finds the new THP
+> > > things explode messily
+> > > 
+> > > Checking page->mapping is going to avoid the messy explosion, but
+> > > you'll still have a page in the page cache which doesn't actually
+> > > belong to you, and that's going to lead to subtle data corruption.
+> > > 
+> > > This should be caught by page_expected_state(), called from
+> > > free_page_is_bad(), called from free_pages_prepare().  Do your testers
+> > > have CONFIG_DEBUG_VM enabled?  That might give you a fighting chance at
+> > > finding the last place which called put_page().  It won't necessarily be
+> > > the _wrong_ place to call put_page() (that may have happened earlier),
+> > > but it may give you a clue.
+> > > 
+> > > > > 
+> > > > > struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
+> > > > > 		int fgp_flags, gfp_t gfp)
+> > > > > {
+> > > > > 	struct folio *folio;
+> > > > > 
+> > > > > 	folio = __filemap_get_folio(mapping, index, fgp_flags, gfp);
+> > > > > 	if (IS_ERR(folio))
+> > > > > 		return NULL;
+> > > > > 	return folio_file_page(folio, index);
+> > > > > }
+> > > > > 
+> > > > > Thanks,
+> > > > > 
+> > > > > > -		f2fs_put_page(page, 1);
+> > > > > > -		goto repeat;
+> > > > > > -	}
+> > > > > > -	if (unlikely(!PageUptodate(page))) {
+> > > > > > +	if (unlikely(page->mapping != mapping || !PageUptodate(page))) {
+> > > > > >    		f2fs_put_page(page, 1);
+> > > > > >    		return ERR_PTR(-EIO);
+> > > > > >    	}
