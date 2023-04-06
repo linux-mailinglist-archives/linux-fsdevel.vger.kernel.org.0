@@ -2,86 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A01C6D9F41
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 19:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A6E36D9F45
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 19:53:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240112AbjDFRwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 13:52:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44720 "EHLO
+        id S239335AbjDFRxh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 13:53:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239233AbjDFRwu (ORCPT
+        with ESMTP id S240113AbjDFRx2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 13:52:50 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9619083FB
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Apr 2023 10:52:43 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id j22so3327514ejv.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Apr 2023 10:52:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680803562; x=1683395562;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mso+OWc0NQ4kyA8lIzevjY2mQtAeqGXpiGyLYztjC/Y=;
-        b=s5QCc1DIbED97dHwuf8rxyDbmRf2F4IYzf5opI/14uRp1aXTwC4lD0imTvSCQufV6B
-         X0LmlL3+zP8Z4+S2CPA1qLby3O9EvzYfOd0VlUOegtwFw6pN04N3xs0l0SfgmXCp+Yv3
-         obuyFP4UksfJ/LCY10Bv8YdngrpN6Ziv6pIeqVKvlelCn/SZJrC4lvU00uCyAVAg9c7/
-         vXr6CTPZM0eiUEplNIqwYWehXL/xeBf2y+OIS1s95p4Dq+QA6RKjZ2S4xG5hPXqhPPzr
-         xUsFMkVvjX9m/peKtPgc07nKE12zWeXLBHDpjWUnNBSegsQnBUBs9Og/n3QELi1H/cmZ
-         HSNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680803562; x=1683395562;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mso+OWc0NQ4kyA8lIzevjY2mQtAeqGXpiGyLYztjC/Y=;
-        b=q7pvWUFxh4Q1NHmdrqW2wGA8vb4mDk5AaPgjA7V4tG0r1O/yHFkhLVyA9Tk5nX7unq
-         kQeHQT3HCWuA2GQ7bPPwji4ed1Vlx9NmUY/Z5jzWoYc2EguFFRGFDweITnSd7iecIdkr
-         hmaoT1iJrv6OwPiU7xGYh+FIokUtoJPXx5lHGl7zzeTsg4mDdAAi/SL7o5IKcl9DHurC
-         G9SrRv8AkY1zXRk+Ikg+/oQJLKtGkfEX1xxSLLTZWoMMKz+5c9cLXQkUTwNgXUQDVpzL
-         dzJsp3Y5AIO4COUD18nPn0rHtAzP89wbKfcEgQg//KFncNAV0bvDRqQCIUAWNDDnhcgA
-         mFFQ==
-X-Gm-Message-State: AAQBX9djOJmDh1jZoXPgC4j7fsPXYrY4xES3AAMWhL1XUW6KrsJnIYZp
-        PDgBZ/rv1iS0JzZCXKAtNcNA3R2TBn74hKuHpU9bJg==
-X-Google-Smtp-Source: AKy350a/zH2HmIWU3g5/OCjvmyr0CzZS6J95jcesZjoDC13AW/qyRPcnARZrC8SELVEDgBE6kxWR4pkbhrYcIo9w1Ew=
-X-Received: by 2002:a17:906:3393:b0:933:7658:8b44 with SMTP id
- v19-20020a170906339300b0093376588b44mr3571466eja.15.1680803561756; Thu, 06
- Apr 2023 10:52:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230405185427.1246289-1-yosryahmed@google.com>
- <20230405185427.1246289-2-yosryahmed@google.com> <a8cb406a-70cd-aa47-fdda-50cd0eb8c941@redhat.com>
- <CAJD7tkbNsLo8Cd0nOm22oxD14GMppPoLNOHx2f8BJZA1wkpWnQ@mail.gmail.com> <14d50ddd-507e-46e7-1a32-72466dec2a40@redhat.com>
-In-Reply-To: <14d50ddd-507e-46e7-1a32-72466dec2a40@redhat.com>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Thu, 6 Apr 2023 10:52:05 -0700
-Message-ID: <CAJD7tkY42_Vw8e+h4uHAfXZex3JS4dGzYJcHiz9mjpWBAQQS3g@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] mm: vmscan: ignore non-LRU-based reclaim in memcg reclaim
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@kernel.org>, Yu Zhao <yuzhao@google.com>,
-        Dave Chinner <david@fromorbit.com>,
+        Thu, 6 Apr 2023 13:53:28 -0400
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2093.outbound.protection.outlook.com [40.107.215.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B382AD03;
+        Thu,  6 Apr 2023 10:53:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=loAI7Syg3ij6yHw/FCU47KtDiv8zsq/BGqFExNSDvG4YUdainoFpXFHmTOtijSd5wUc9uom8YmpKgx//Bl7Rn/vWMzlwpUqmPbej5Y7/UOGE0J6KQsh4Y1GnBVZSGCIsFX8FBl+OSFwi8IfqTM+TjtR68cGv6lz6eXdj8Pp2YvE3F4/EHBeTERkIaANLEdUFsgT5i7Zzzk/8kQc9mKvayDEC9vL4kQTFIJzH89UWWtS1b9GbBwhYKkmsdfITjHSDRjjp3xqm7sYF8zxlg8i5wGVJOGyfVvCMm9XSbCxOC8ehy531IKX2aGODC66CczfjZ1pL4Vs2KupES1yPcLNEyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hvdgo3q2wtfhSX6j55NnXnxWVi567KxzvFAQDdxw0o4=;
+ b=IG5qiYcnW4HYCcRZcj9CjKXYg5+Gsz10Y1BpKLK5yjN82bnXKGIJZolSzm6SQvbe51RlTxsHW9oiw4h/jeAsRcH8qC/1nYwFyvxDJ5fhlhhUoEZq6f26CEy1/vhdmc2RM+IzEsAy8xwXbFPNa8Ruhv2xR+73slXaiOg/5AaR/bRDWojvl1QsxdBpchWk80UMxnOKS8OSmjXPv/difnmE4xqgYGf07RN+IvRNPVHgn63oBP5VSvmgwNfb3rEcii1P7+0pGhC3wlmqD80lVvWTu5Lw+5yqpc0n/vKDOiqVuoADREYI2LIXEdm6QA5u+WCqp+JmglFA7Y/lC3ybm+fwuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hvdgo3q2wtfhSX6j55NnXnxWVi567KxzvFAQDdxw0o4=;
+ b=QMV0CdKdWYIXCJFdyNmQcX0sPsJGYDg7ZX6epLiqllZdsw9UtsEJ11qevvJbBS7mh8tG1paHAaN2kL9Kqb1DeA/U0s4J1zrMV9Kt/qgRYu9NtR1BXWs7Q2HlQbL/G/1PAIQK/SfSvhRyoQFuptjLB9fl8wsMZ2cSzfkMypfQQCB0wyt1EBX9R1ciWO7ZupLeHpMl7jOmUh87ZBkROhHgcDpoM05g+d77mOFHLLAocm+fyXRPDr4jrbard8V4z/QyrxkBr+bkggs3jhYubdq07gM22LAc+BF2ePxHhTJ50NsAhu0FuULvcBy/UrY8XtIxeF7dLQQeS3VAI/wuFxZaSA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by SI2PR06MB4012.apcprd06.prod.outlook.com (2603:1096:4:f9::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.37; Thu, 6 Apr
+ 2023 17:53:10 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::a3a1:af8e:be1e:437c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::a3a1:af8e:be1e:437c%6]) with mapi id 15.20.6277.031; Thu, 6 Apr 2023
+ 17:53:10 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     gregkh@linuxfoundation.org
+Cc:     chao@kernel.org, damien.lemoal@opensource.wdc.com,
+        frank.li@vivo.com, huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+        jth@kernel.org, linux-erofs@lists.ozlabs.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
+        naohiro.aota@wdc.com, rafael@kernel.org, xiang@kernel.org
+Subject: Re: [PATCH 2/3] erofs: convert to use kobject_is_added()
+Date:   Fri,  7 Apr 2023 01:52:59 +0800
+Message-Id: <20230406175259.37978-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <2023040602-stack-overture-d418@gregkh>
+References: <2023040602-stack-overture-d418@gregkh>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0093.apcprd02.prod.outlook.com
+ (2603:1096:4:90::33) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SI2PR06MB4012:EE_
+X-MS-Office365-Filtering-Correlation-Id: e5d01177-a988-4ebd-f7e8-08db36c7c889
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: +lgatNWkdv5Vl0LfZPks2lpSFBiO8IDpBLxG9MRpnxXF29YIb+8JND+KYjmEVi1PFDUDhv2M6vJGZb15MYJgoyRzMqsoydN6QQHexFO5Zf9smMymBy+dffONWa+xXosMbtVbWBBWR0aoOG/SoqylWquThJL0JnBv1eTVeqdKMjCzL5N7D3HSu50YIgQPkyxRK6WpLGVt3QYLNd6OFwhd2E2LQnN/C2sr7YFXnJ5e9lUGCRXABWL6vDOrkl0w9DPU1bQLD46GAZu4WS9XXRlfVd09OPQSrh8zcWYLF4kTk2nrFEhmX+V7sfKbj9Py6+vT47Zs3f5MNL29Z7IYiz7LCvt/dlxJxd3uRLs0cC6LjY7fd+xJ6uXv5IJX6rzRqaFzGXxGO1P9ERV7VdosT+nrLVeIBaOCtyMyUzt5yR3vqPymdfexm39A/rI+gGCC2x/gwY2q29S8WeMZc0az6Ynj/tLzsmU7r2x1zmI3Ged03lfdGraDh7OM7GKx6bLiLLEpYdmrHJtNoS/Xxc77PMZ0JTWSzfr7l4VOUysxkp459EfY8QKvtoQo7IULdnWETcGlXiUdGE/0fnWCfX0wGgo3C1DiA+w0pey3IPcNmwWLA0W3+YQTGKSxG26QNprSMO6e
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(366004)(346002)(396003)(376002)(136003)(451199021)(83380400001)(38350700002)(36756003)(86362001)(38100700002)(478600001)(316002)(6486002)(4744005)(41300700001)(8936002)(5660300002)(52116002)(7416002)(6916009)(4326008)(8676002)(2906002)(66476007)(66946007)(66556008)(186003)(2616005)(26005)(1076003)(6666004)(6506007)(6512007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+HFSpdJbwX0JTjvK9VVVjMABFJd5TckprXlj8oyfZyxhjCNWzDkW3526CrPb?=
+ =?us-ascii?Q?7oYSdCQAYRTHbnPMjAN7u0hYNHmxK48XQYx+tdNwk3w3SeQBFPXWR5IHadEC?=
+ =?us-ascii?Q?pLlsT1lXRww6/89hk9H9ycIsT+GEG/uswlv/R+ZPlJWxHAriBHxgqjsh2r9n?=
+ =?us-ascii?Q?vIdW0Z5Hlpcn5oMbCGyi3QtCXkkuWQMJ8fj6DhkBZshdUWkQpP82o/q+BTkn?=
+ =?us-ascii?Q?9VJJFcLQk7qHtdNRxrLA9UFVgloTeimjOlsHpv1XfZx6Zqxc32LytP2ZRKFH?=
+ =?us-ascii?Q?33BBVvT37XazUZYaP/FwiTSV6KWo+p7o67AsQekgKX8kkvUPJweW65jjY4Zv?=
+ =?us-ascii?Q?531lFMRSUDTrNd47L28G4zpzAfePaX05RmzNSquajE5dJMVhmT3OpA/yJBDm?=
+ =?us-ascii?Q?Fe1f92qZDxHw3FE/mv95I6t4BEJc7T2Vi/cpmtAppkIz+/2jI7q7vFP1I2pv?=
+ =?us-ascii?Q?3GRAYM3BZT71vfmiyySOiA6DmMVE9CxFKaDql+mS0UHri8BmJFvfu66QDqCK?=
+ =?us-ascii?Q?D7zmzr5JW22mf71JG8nz5+y+d7xMSP4dmlR/19B8tRNVj6Skl2MR4lDobEjk?=
+ =?us-ascii?Q?ejdcLNOjlVaXzBxiVcQu6dsNqTzAlvrQtA5dgBehzp3aPiOdUc3qQrzUXYGd?=
+ =?us-ascii?Q?A02yKkMW1FoV10FFZs77cyGmDlq3dXXJRNsjP3UVsYiWbRO0CRBMBLThQ4nr?=
+ =?us-ascii?Q?nuFOvoiZK+zujDFiopHXqadWgfEHA2ODa21PZ9+VjlWjt/CKX+Hu++sj63Gw?=
+ =?us-ascii?Q?8XIkayY0iUOeA0z70UalrbE134u4IX2uCxG/o2pV4TqmWkAbA5wmzvMyjPux?=
+ =?us-ascii?Q?VXGx2BBGnL9/+Q2vUHF4W36er/3FDp13o50cb7hq68CTLfIMTORWNoOf3L6X?=
+ =?us-ascii?Q?rH0FAt6Xkd+yEZYLDX8+3iRUdquwBWx8pK1zHDpCQIAWamQ0YhXShPsm1R+M?=
+ =?us-ascii?Q?jDj5MO2thXcX7F+6t+1E3QA6UhGSYHyKk72dm7oCvLMWndFO7YilfEBuhyu5?=
+ =?us-ascii?Q?hNxMgwqXRpQDbNPz8ThUp/yYM6H3PHjISOQ2MsN9kXxx7VSn7p7CJ2Z9uDOj?=
+ =?us-ascii?Q?VfkTxM9UKTr0RKIaLuHyKaDBZaHUHAcrrQ4fM3I0Hp0TcZRBmAt3sPOS4SsX?=
+ =?us-ascii?Q?CSIgggtdk8M2W1+WDzCvEYTUPOwQTQV3j5zeyMemXTHhbc/z2IdThjWxIpju?=
+ =?us-ascii?Q?BYBPD8H0U1NUvmb3Eo9r8oSiBXRQjeg4pbp1JhGkYrwZ2sH2UIIQvcWNUPPz?=
+ =?us-ascii?Q?aPHdSpO/aAcKW3dNf/AINH0/kXIzmqoSvyVZ7aGL1yDfvyQkNjIRRiT2PMQt?=
+ =?us-ascii?Q?j6osEhqSE5XhregRz6D6ym2I0GJADQ/Y3qSl79GKQbIoRxvepNcIljmrh0RZ?=
+ =?us-ascii?Q?dbvHLXs8ZHUQ5VH15Vk5VSmyc3LhxecsSxwzNDfyN3EDi7Pm6qZxXpohnfKJ?=
+ =?us-ascii?Q?iP869LvT2pa6HaxZ8LchoqekZpAABM6KjEhkdpjtwFVnfaSmhSN+4bHNsQ59?=
+ =?us-ascii?Q?SDPf+Lr/xwLmY77Iaqf/TmmBK4F1ouOufD43MPXlh/5dY7kgh1XVaarfPBna?=
+ =?us-ascii?Q?St0dSg9b/Aupf/UaQmYvpNA1hDfYL8pnVq6Dv8vI?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5d01177-a988-4ebd-f7e8-08db36c7c889
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2023 17:53:10.0122
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kkDCxcZhhq4matg7v9OBhItQVLelhKXCv4plZQcyeOeQ/5SZQJQdUQ3Bd5WLeb8PINvhJctCJPDNIaWgXjRrNA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB4012
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -89,203 +116,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 6, 2023 at 10:50=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 06.04.23 16:07, Yosry Ahmed wrote:
-> > Thanks for taking a look, David!
-> >
-> > On Thu, Apr 6, 2023 at 3:31=E2=80=AFAM David Hildenbrand <david@redhat.=
-com> wrote:
-> >>
-> >> On 05.04.23 20:54, Yosry Ahmed wrote:
-> >>> We keep track of different types of reclaimed pages through
-> >>> reclaim_state->reclaimed_slab, and we add them to the reported number
-> >>> of reclaimed pages.  For non-memcg reclaim, this makes sense. For mem=
-cg
-> >>> reclaim, we have no clue if those pages are charged to the memcg unde=
-r
-> >>> reclaim.
-> >>>
-> >>> Slab pages are shared by different memcgs, so a freed slab page may h=
-ave
-> >>> only been partially charged to the memcg under reclaim.  The same goe=
-s for
-> >>> clean file pages from pruned inodes (on highmem systems) or xfs buffe=
-r
-> >>> pages, there is no simple way to currently link them to the memcg und=
-er
-> >>> reclaim.
-> >>>
-> >>> Stop reporting those freed pages as reclaimed pages during memcg recl=
-aim.
-> >>> This should make the return value of writing to memory.reclaim, and m=
-ay
-> >>> help reduce unnecessary reclaim retries during memcg charging.  Writi=
-ng to
-> >>> memory.reclaim on the root memcg is considered as cgroup_reclaim(), b=
-ut
-> >>> for this case we want to include any freed pages, so use the
-> >>> global_reclaim() check instead of !cgroup_reclaim().
-> >>>
-> >>> Generally, this should make the return value of
-> >>> try_to_free_mem_cgroup_pages() more accurate. In some limited cases (=
-e.g.
-> >>> freed a slab page that was mostly charged to the memcg under reclaim)=
-,
-> >>> the return value of try_to_free_mem_cgroup_pages() can be underestima=
-ted,
-> >>> but this should be fine. The freed pages will be uncharged anyway, an=
-d we
-> >>
-> >> Can't we end up in extreme situations where
-> >> try_to_free_mem_cgroup_pages() returns close to 0 although a huge amou=
-nt
-> >> of memory for that cgroup was freed up.
-> >>
-> >> Can you extend on why "this should be fine" ?
-> >>
-> >> I suspect that overestimation might be worse than underestimation. (se=
-e
-> >> my comment proposal below)
-> >
-> > In such extreme scenarios even though try_to_free_mem_cgroup_pages()
-> > would return an underestimated value, the freed memory for the cgroup
-> > will be uncharged. try_charge() (and most callers of
-> > try_to_free_mem_cgroup_pages()) do so in a retry loop, so even if
-> > try_to_free_mem_cgroup_pages() returns an underestimated value
-> > charging will succeed the next time around.
-> >
-> > The only case where this might be a problem is if it happens in the
-> > final retry, but I guess we need to be *really* unlucky for this
-> > extreme scenario to happen. One could argue that if we reach such a
-> > situation the cgroup will probably OOM soon anyway.
-> >
-> >>
-> >>> can charge the memcg the next time around as we usually do memcg recl=
-aim
-> >>> in a retry loop.
-> >>>
-> >>> The next patch performs some cleanups around reclaim_state and adds a=
-n
-> >>> elaborate comment explaining this to the code. This patch is kept
-> >>> minimal for easy backporting.
-> >>>
-> >>> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-> >>> Cc: stable@vger.kernel.org
-> >>
-> >> Fixes: ?
-> >>
-> >> Otherwise it's hard to judge how far to backport this.
-> >
-> > It's hard to judge. The issue has been there for a while, but
-> > memory.reclaim just made it more user visible. I think we can
-> > attribute it to per-object slab accounting, because before that any
-> > freed slab pages in cgroup reclaim would be entirely charged to that
-> > cgroup.
-> >
-> > Although in all fairness, other types of freed pages that use
-> > reclaim_state->reclaimed_slab cannot be attributed to the cgroup under
-> > reclaim have been there before that. I guess slab is the most
-> > significant among them tho, so for the purposes of backporting I
-> > guess:
-> >
-> > Fixes: f2fe7b09a52b ("mm: memcg/slab: charge individual slab objects
-> > instead of pages")
-> >
-> >>
-> >>> ---
-> >>>
-> >>> global_reclaim(sc) does not exist in kernels before 6.3. It can be
-> >>> replaced with:
-> >>> !cgroup_reclaim(sc) || mem_cgroup_is_root(sc->target_mem_cgroup)
-> >>>
-> >>> ---
-> >>>    mm/vmscan.c | 8 +++++---
-> >>>    1 file changed, 5 insertions(+), 3 deletions(-)
-> >>>
-> >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> >>> index 9c1c5e8b24b8f..c82bd89f90364 100644
-> >>> --- a/mm/vmscan.c
-> >>> +++ b/mm/vmscan.c
-> >>> @@ -5346,8 +5346,10 @@ static int shrink_one(struct lruvec *lruvec, s=
-truct scan_control *sc)
-> >>>                vmpressure(sc->gfp_mask, memcg, false, sc->nr_scanned =
-- scanned,
-> >>>                           sc->nr_reclaimed - reclaimed);
-> >>>
-> >>> -     sc->nr_reclaimed +=3D current->reclaim_state->reclaimed_slab;
-> >>> -     current->reclaim_state->reclaimed_slab =3D 0;
-> >>
-> >> Worth adding a comment like
-> >>
-> >> /*
-> >>    * Slab pages cannot universally be linked to a single memcg. So onl=
-y
-> >>    * account them as reclaimed during global reclaim. Note that we mig=
-ht
-> >>    * underestimate the amount of memory reclaimed (but won't overestim=
-ate
-> >>    * it).
-> >>    */
-> >>
-> >> but ...
-> >>
-> >>> +     if (global_reclaim(sc)) {
-> >>> +             sc->nr_reclaimed +=3D current->reclaim_state->reclaimed=
-_slab;
-> >>> +             current->reclaim_state->reclaimed_slab =3D 0;
-> >>> +     }
-> >>>
-> >>>        return success ? MEMCG_LRU_YOUNG : 0;
-> >>>    }
-> >>> @@ -6472,7 +6474,7 @@ static void shrink_node(pg_data_t *pgdat, struc=
-t scan_control *sc)
-> >>>
-> >>>        shrink_node_memcgs(pgdat, sc);
-> >>>
-> >>
-> >> ... do we want to factor the add+clear into a simple helper such that =
-we
-> >> can have above comment there?
-> >>
-> >> static void cond_account_reclaimed_slab(reclaim_state, sc)
-> >> {
-> >>          /*
-> >>           * Slab pages cannot universally be linked to a single memcg.=
- So
-> >>           * only account them as reclaimed during global reclaim. Note
-> >>           * that we might underestimate the amount of memory reclaimed
-> >>           * (but won't overestimate it).
-> >>           */
-> >>          if (global_reclaim(sc)) {
-> >>                  sc->nr_reclaimed +=3D reclaim_state->reclaimed_slab;
-> >>                  reclaim_state->reclaimed_slab =3D 0;
-> >>          }
-> >> }
-> >>
-> >> Yes, effective a couple LOC more, but still straight-forward for a
-> >> stable backport
-> >
-> > The next patch in the series performs some refactoring and cleanups,
-> > among which we add a helper called flush_reclaim_state() that does
-> > exactly that and contains a sizable comment. I left this outside of
-> > this patch in v5 to make the effective change as small as possible for
-> > backporting. Looks like it can be confusing tho without the comment.
-> >
-> > How about I pull this part to this patch as well for v6?
->
-> As long as it's a helper similar to what I proposed, I think that makes
-> a lot of sense (and doesn't particularly bloat this patch).
+Hi Greg,
 
-Sounds good to me, I will do that and respin.
+> That isn't going to work, and as proof of that, the release callback
+> should be a simple call to kfree(), NOT as a completion notification
+> which then something else will go off and free the memory here.  That
+> implies that there are multiple reference counting structures happening
+> on the same structure, which is not ok.
 
-Thanks David!
+The release() function did nothing inside, but we need to wait asynchronously...
 
->
-> --
-> Thanks,
->
-> David / dhildenb
->
->
+Can we directly export the kobject_cleanup(kobj) interface so that
+kobj_type->release() doesn't have to do anything?
+
+If do it, the use of init_completion, wait_for_completion, etc. will no longer be needed.
+
+> OR we pull it out of the structure and just let it hang off as a separate
+> structure (i.e. a pointer to something else.)
+
+Make something like sbi->s_kobj a pointer instead of data embedded in sbi?
+When kobject_init_and_add fails, call kobject_put(sbi->s_kobj), and assign
+sbi->s_kobj = NULL at the same time?
+
+Thx,
+Yangtao
