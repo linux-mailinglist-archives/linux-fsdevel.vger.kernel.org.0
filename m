@@ -2,79 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 014606D9352
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 11:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7760E6D9371
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 12:00:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236912AbjDFJwt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 05:52:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60534 "EHLO
+        id S236825AbjDFJ7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 05:59:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236672AbjDFJte (ORCPT
+        with ESMTP id S236408AbjDFJ7V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 05:49:34 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA338A273
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Apr 2023 02:47:55 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id n125so45468974ybg.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Apr 2023 02:47:55 -0700 (PDT)
+        Thu, 6 Apr 2023 05:59:21 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6743E9ED2;
+        Thu,  6 Apr 2023 02:58:20 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id he13so2677852wmb.2;
+        Thu, 06 Apr 2023 02:58:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680774414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FazgrPFY3djyzZPHPYX9nbN/ODMQXNog1/KIwCKeFDY=;
-        b=X7uAqrbGclHVXqbYHSh/EAecrBEubuaY39NatmOxJE0XIXqV8zUrvnNRbRfyxqZkbc
-         XoA5P3emiPKJCmTlP8dTV7Z7PY/gLsd/EA3OPXruLvTILNv4BQvr7691dHmjCJoCu/dv
-         kSRJzazXWogjQWoS6uAM9rQR0SRZevXHSTgZ1puYjHxUEYABV/qTIeaV4IoGBLHRBG7z
-         7vkXzUZTZ4IM1ED3JJwGLf2MYawCXHKQPp+q1lhO2vhETvQE8NZGWsn24RSx8ZXnImfR
-         UcpU6yox1sEmDInIwFUPnzBR2K9m7QrY5R2HDAjL51azojaPsgDh33MezwbrMapIA5Yz
-         d2+g==
+        d=gmail.com; s=20210112; t=1680775098;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ex1nEQ6SQPtfsRcSCBNx1zccngQ8xlE989ZM/J7JAV8=;
+        b=SUVvqtgw+8Reap0kc38YG9Xj5gMs5DnRXcEvzLPHcQqHVQRmFoTWex7gIqRil3Uvih
+         0nI4iq2JUjU0wQwe2qYm+4YihTfeYQ8vxsopWEatlZtdYot1dABUFUVQ1zZ/nJgFchQc
+         PpozKMvS+q1jwypkGMgeLXoNqGcWNRK2WkOGaqDx6ecWRktLYUzokS8eoxvNloUrYH96
+         Wn90X9HG/08iZz4eideXBNLFAek4MNS/BIqR9bVU7nvMWn3Hv4R/KsAVBs5fNL2otgn6
+         68z/pLK8GVKoBebayGixq3rtMrWDhaRZXdBpO2FMQECoruYlgo5jcTFkQrKL4hoPlMya
+         5unA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680774414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FazgrPFY3djyzZPHPYX9nbN/ODMQXNog1/KIwCKeFDY=;
-        b=a2Yc3A7lOXesFqVfGA/GSig3VH33oxZmwUOX9sstweP1J7BN5B9JVT7WaQUWiXLRbN
-         CVqdZZVRmQQiYFKHKrJD0RYWx+xwsZHLsRjEWcJHDGmlTD9S26Sml0hqPqDuFmkvBeSs
-         Q/skajyyItIbBFRVTeiLupgSnJlNpdu589bxwdttt8B7Ou12o6bflmV9Zb8noV0a9WkR
-         1w0m4ZKekIz3PMt/AYH5ZN2rdEEX1fb96k2jbYf1XnCctKE+izslaGsxmciC0XOVfh3v
-         Ju4OhK0A0khk0oS7NRIgekpxiGMdAkmCDt3EGQ4RvQHI1w5JxLuFSJV2Yf1R8KnSZVJs
-         O7jg==
-X-Gm-Message-State: AAQBX9eR5qHpAyGcnCxfn+U83QwH/kPOOozVOc0tFsKCVNziiRmjTFrc
-        zkh08Qypy2CexbLvC/2ZVhRQinNmKhqZmE06PXvNMQ==
-X-Google-Smtp-Source: AKy350bq1WlXWlO1l5s2v33lxsNrk8T8LtvMzV0VPBJGlSoPDOhtqDrZ3Ce6iIYQONUD9yoeD0168koK8RkL0a8PXBY=
-X-Received: by 2002:a25:da46:0:b0:b09:6f3d:ea1f with SMTP id
- n67-20020a25da46000000b00b096f3dea1fmr1704437ybf.4.1680774414032; Thu, 06 Apr
- 2023 02:46:54 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680775098;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ex1nEQ6SQPtfsRcSCBNx1zccngQ8xlE989ZM/J7JAV8=;
+        b=gP+NX+saola7LjDo+nXHwN0JfYshDP1kbY2+CPk1JzO5qidQajFsa7rTgH1vYLMOFY
+         kXOos9FVojbzPdFm4uxGwLNueC7cBMQ0ygE0TA1Gnnke2NtA3QA4zNARpNI8i58rVGBC
+         zAGdpUNXyVAOaMROz+Z3k1w7ex0rXUyF7IEDQCM1KriSNAdVDBtkkBHd2Z9BzN1lR49H
+         xQudrwOkb0T5ESgYmnqsWvtxI17QWPpbz3KlGFMnkNIaxh8Y8rGUpkYRNZp8e6SflsQP
+         jAk96RCegH+kgy3dx1urR0EH3RwtHb4YiA7KmDWhaFsFfwQEv7PgVl+Lfy3bTGR0NX/N
+         ZxcA==
+X-Gm-Message-State: AAQBX9ftjHLXiR1d2rVOIFigbF0+oFCKFwusumuKl+a6+Z3xwrCPwVxF
+        paUcyBFAfBg8HmWL9ArVRWVjPfcwJZVZHA==
+X-Google-Smtp-Source: AKy350Zux8V6KhIk5EJGtTxXKWqrSUKbPeyWhFoOBzbCBoAQYkRGI3z7v1OKijEF3TqVfycDvCCnBQ==
+X-Received: by 2002:a7b:c85a:0:b0:3eb:3998:8c05 with SMTP id c26-20020a7bc85a000000b003eb39988c05mr4046048wml.6.1680775098452;
+        Thu, 06 Apr 2023 02:58:18 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id i7-20020a05600c290700b003ee70225ed2sm1123446wmd.15.2023.04.06.02.58.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Apr 2023 02:58:18 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mm: truncate: remove redundant initialization of new_order
+Date:   Thu,  6 Apr 2023 10:58:17 +0100
+Message-Id: <20230406095817.703426-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20230406094245.3633290-1-dhowells@redhat.com>
-In-Reply-To: <20230406094245.3633290-1-dhowells@redhat.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Thu, 6 Apr 2023 11:46:42 +0200
-Message-ID: <CANn89iLFc3gxo-5gEn36VFYdocXQPiAqRsTPEHcB8JA3mw8+8g@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 00/19] splice, net: Replace sendpage with
- sendmsg(MSG_SPLICE_PAGES), part 1
-To:     David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,18 +71,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 6, 2023 at 11:42=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Here's the first tranche of patches towards providing a MSG_SPLICE_PAGES
-> internal sendmsg flag that is intended to replace the ->sendpage() op wit=
-h
-> calls to sendmsg().  MSG_SPLICE is a hint that tells the protocol that it
-> should splice the pages supplied if it can and copy them if not.
->
+Variable new_order is being initialized with a value that is not read,
+the variable is being re-assigned later. Remove the initialization.
 
-I find this patch series quite big/risky for 6.4
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ mm/truncate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can you spell out why we need "unspliceable pages support" ?
-This seems to add quite a lot of code in fast paths.
-Thanks.
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 817efd5e94b4..d8dd7ee1654d 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -213,7 +213,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+ {
+ 	loff_t pos = folio_pos(folio);
+ 	unsigned int offset, length, remaining;
+-	unsigned int new_order = folio_order(folio);
++	unsigned int new_order;
+ 
+ 	if (pos < start)
+ 		offset = start - pos;
+-- 
+2.30.2
+
