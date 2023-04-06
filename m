@@ -2,54 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 475376D93EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 12:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A36956D93F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 12:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236857AbjDFK0X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 06:26:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52384 "EHLO
+        id S237023AbjDFK0x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 06:26:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235604AbjDFK0V (ORCPT
+        with ESMTP id S236968AbjDFK0u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 06:26:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53BC21713;
-        Thu,  6 Apr 2023 03:26:20 -0700 (PDT)
+        Thu, 6 Apr 2023 06:26:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E51510D5;
+        Thu,  6 Apr 2023 03:26:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D5DB3642B5;
-        Thu,  6 Apr 2023 10:26:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB72C433D2;
-        Thu,  6 Apr 2023 10:26:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680776779;
-        bh=yVOn8o+5hTtwRbr8XWL47ZWTuN1kQFTfBsh5tqfXXsQ=;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 32C5360C98;
+        Thu,  6 Apr 2023 10:26:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21BA4C433EF;
+        Thu,  6 Apr 2023 10:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1680776806;
+        bh=Bsh9tIqIOFj0EL11HwEKb+7UATkQiSzOLRPewqBv8aw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QWYNS0Io9NTLz6QIIXU25HZjd2/sgvoDoIrhLx/Yz50kimlZLKl7PXdLTeRCF0E+F
-         TTLD39rqPrNIE5+pZd8q1vXeULBayb9zSJbktxLOl/65+bAcfLNlTCkGBqHMrJaMwc
-         KUc7zYbWYouSEJKxP5Sh2yWpPuLjnyRRJ30d4suhCC/CiMiHFAynVIIVf/UUWWPQ4i
-         XYBdhcocsdcpgZGnu2YYh3FhbABlkQX3a/UxiH+1AAtce8afGlPO/ekJSSfOYld9Ml
-         S8giSIw0VqfkGjV9gnpZf0KtdAdBVHyXkut8KomvYWM1D2yX/s9riOcAWU7ALSjpkP
-         lg0/Q0/5zKwQw==
-Date:   Thu, 6 Apr 2023 12:26:13 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        miklos@szeredi.hu, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        amir73il@gmail.com
-Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after
- writes
-Message-ID: <20230406-diffamieren-langhaarig-87511897e77d@brauner>
-References: <20230405171449.4064321-1-stefanb@linux.ibm.com>
+        b=aidUVLAQPrfxqyxIJ8H2KA3Iu3QUlCzSt1mPN2LXJAUinCNhCQr5NOIsC93/jkqT3
+         LMgoBgHx7BDkNBDJfjglJhI+glRVMJuDVKQ98K3XACArPJs4SZXBxgU+WaAWjnfA/0
+         PsjsODrFNVfT/dKlZgVxaQ14zXY1RQo9rPK5RSAE=
+Date:   Thu, 6 Apr 2023 12:26:44 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Damien Le Moal <dlemoal@fastmail.com>
+Cc:     Yangtao Li <frank.li@vivo.com>, xiang@kernel.org, chao@kernel.org,
+        huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+        damien.lemoal@opensource.wdc.com, naohiro.aota@wdc.com,
+        jth@kernel.org, rafael@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/3] zonefs: convert to use kobject_is_added()
+Message-ID: <2023040627-paver-recipient-3713@gregkh>
+References: <20230406093056.33916-1-frank.li@vivo.com>
+ <20230406093056.33916-3-frank.li@vivo.com>
+ <2023040616-armory-unmade-4422@gregkh>
+ <8ca8c138-67fd-73ed-1ce5-c090d49f31e9@fastmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230405171449.4064321-1-stefanb@linux.ibm.com>
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+In-Reply-To: <8ca8c138-67fd-73ed-1ce5-c090d49f31e9@fastmail.com>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,53 +56,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 05, 2023 at 01:14:49PM -0400, Stefan Berger wrote:
-> Overlayfs fails to notify IMA / EVM about file content modifications
-> and therefore IMA-appraised files may execute even though their file
-> signature does not validate against the changed hash of the file
-> anymore. To resolve this issue, add a call to integrity_notify_change()
-> to the ovl_release() function to notify the integrity subsystem about
-> file changes. The set flag triggers the re-evaluation of the file by
-> IMA / EVM once the file is accessed again.
+On Thu, Apr 06, 2023 at 07:13:38PM +0900, Damien Le Moal wrote:
+> On 4/6/23 19:05, Greg KH wrote:
+> > On Thu, Apr 06, 2023 at 05:30:56PM +0800, Yangtao Li wrote:
+> >> Use kobject_is_added() instead of local `s_sysfs_registered` variables.
+> >> BTW kill kobject_del() directly, because kobject_put() actually covers
+> >> kobject removal automatically.
+> >>
+> >> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> >> ---
+> >>  fs/zonefs/sysfs.c  | 11 +++++------
+> >>  fs/zonefs/zonefs.h |  1 -
+> >>  2 files changed, 5 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/fs/zonefs/sysfs.c b/fs/zonefs/sysfs.c
+> >> index 8ccb65c2b419..f0783bf7a25c 100644
+> >> --- a/fs/zonefs/sysfs.c
+> >> +++ b/fs/zonefs/sysfs.c
+> >> @@ -101,8 +101,6 @@ int zonefs_sysfs_register(struct super_block *sb)
+> >>  		return ret;
+> >>  	}
+> >>  
+> >> -	sbi->s_sysfs_registered = true;
+> > 
+> > You know this, why do you need to have a variable tell you this or not?
 > 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->  fs/overlayfs/file.c       |  4 ++++
->  include/linux/integrity.h |  6 ++++++
->  security/integrity/iint.c | 13 +++++++++++++
->  3 files changed, 23 insertions(+)
-> 
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index 6011f955436b..19b8f4bcc18c 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -13,6 +13,7 @@
->  #include <linux/security.h>
->  #include <linux/mm.h>
->  #include <linux/fs.h>
-> +#include <linux/integrity.h>
->  #include "overlayfs.h"
->  
->  struct ovl_aio_req {
-> @@ -169,6 +170,9 @@ static int ovl_open(struct inode *inode, struct file *file)
->  
->  static int ovl_release(struct inode *inode, struct file *file)
->  {
-> +	if (file->f_flags & O_ACCMODE)
-> +		integrity_notify_change(inode);
-> +
->  	fput(file->private_data);
->  
->  	return 0;
-> diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-> index 2ea0f2f65ab6..cefdeccc1619 100644
-> --- a/include/linux/integrity.h
-> +++ b/include/linux/integrity.h
-> @@ -23,6 +23,7 @@ enum integrity_status {
->  #ifdef CONFIG_INTEGRITY
->  extern struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
->  extern void integrity_inode_free(struct inode *inode);
-> +extern void integrity_notify_change(struct inode *inode);
+> If kobject_init_and_add() fails, zonefs_sysfs_register() returns an error and
+> fill_super will also return that error. vfs will then call kill_super, which
+> calls zonefs_sysfs_unregister(). For that case, we need to know that we actually
+> added the kobj.
 
-I thought we concluded that ima is going to move into the security hook
-infrastructure so it seems this should be a proper LSM hook?
+Ok, but then why not just 0 out the kobject pointer here instead?  That
+way you will always know if it's a valid pointer or not and you don't
+have to rely on some other variable?  Use the one that you have already :)
+
+And you really don't even need to check anything, just pass in NULL to
+kobject_del() and friends, it should handle it.
+
+> >> -
+> >>  	return 0;
+> >>  }
+> >>  
+> >> @@ -110,12 +108,13 @@ void zonefs_sysfs_unregister(struct super_block *sb)
+> >>  {
+> >>  	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> >>  
+> >> -	if (!sbi || !sbi->s_sysfs_registered)
+> > 
+> > How can either of these ever be true?  Note, sbi should be passed here
+> > to this function, not the super block as that is now unregistered from
+> > the system.  Looks like no one has really tested this codepath that much
+> > :(
+> > 
+> >> +	if (!sbi)
+> >>  		return;
+> > 
+> > this can not ever be true, right?
+> 
+> Yes it can, if someone attempt to mount a non zoned device. In that case,
+> fill_super returns early without setting sb->s_fs_info but vfs still calls
+> kill_super.
+
+But you already had a sbi pointer in the place that this was called, so
+you "know" if you need to even call into here or not.  You are having to
+look up the same pointer multiple times in this call chain, there's no
+need for that.
+
+thanks,
+
+greg k-h
