@@ -2,56 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E3FB6D9B54
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 16:55:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A82E16D9B7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Apr 2023 17:01:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230091AbjDFOzT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 10:55:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34304 "EHLO
+        id S239201AbjDFPBX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 11:01:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230070AbjDFOzI (ORCPT
+        with ESMTP id S230085AbjDFPBW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 10:55:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B746E1AB;
-        Thu,  6 Apr 2023 07:54:58 -0700 (PDT)
+        Thu, 6 Apr 2023 11:01:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2438895;
+        Thu,  6 Apr 2023 08:01:21 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 434A0617CF;
-        Thu,  6 Apr 2023 14:54:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A21C433EF;
-        Thu,  6 Apr 2023 14:54:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B6A24647F4;
+        Thu,  6 Apr 2023 15:01:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EF86C433EF;
+        Thu,  6 Apr 2023 15:01:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680792897;
-        bh=HuI9W99A8CxAJgp7e+iARnTJDjpne92LxO3a37p4g5w=;
+        s=k20201202; t=1680793280;
+        bh=67Z2E96bZy7BCqWEhCsj19y7v8ycg2iEwkSVbNFV43s=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M40sUvNa4WolG0ThDDeOA3l6v9Un3q/Uy6jEqu3lKRBqc22fMCboQ+1+MyGd9BZxx
-         ays4FVMa14pJ4DzZqMv8ZP4b2yvgzS28u6CdDb24K4DCEUsH0GTDfXvnu+JnQIBT2Z
-         hLd8KbyVMM8Yimsl5AbqcDa7ncIt99r+A95BLo5Nle2ge5/yfOSJq5lieZrPgi9KjH
-         9y1/EIFLQvtCBk/HiSa33d3wlRqeHGsrE590G+1rZyzPHnlLvsy69NXuVnBs46iu4u
-         NMxPkXUUWk8SDzAPs6CZFOpgh6f/yeB86uUheADhiCcebzQTUThJrEZ61LNnCbNZdK
-         W6XxlCBT4VA+A==
-Date:   Thu, 6 Apr 2023 07:54:57 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH v11 2/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-Message-ID: <20230406145457.GA360881@frogsfrogsfrogs>
-References: <1679996506-2-1-git-send-email-ruansy.fnst@fujitsu.com>
- <1679996506-2-3-git-send-email-ruansy.fnst@fujitsu.com>
- <20230404174517.GF109974@frogsfrogsfrogs>
- <58328778-6fdb-db03-6156-6c6f6b203ef1@fujitsu.com>
+        b=mqkD+bXl9Cv9PACGClbea7PmXsLCGtizGea6Q8cX5/eZndr3cFfCgtw+tyDvaV0T+
+         tzKBnG97kn83kKwcRwuNLTD29F9X+L5ujbC74XEZhx3lg2lxSbMViVVzCWo9EL51Ex
+         3/uIfnE+3EcUu0IDvVLb0YCXXnP1cOFR8Fxo/vAeoUmhb+EXqB4GDzzhDyO2i1FDwB
+         nDhi0z3niUDYiWqFuyvDCOcCR4jypMI4rST4i/PVQQKByDTAPOxdmiM96KuL2UV799
+         mvV2ss6tx1VAeGl1qNnFnQP/FFXbgqwoP3zE6lvgDNYeDxC+W6IaV5UExMf0LXeTUG
+         QypH2nv5YMheQ==
+Date:   Thu, 6 Apr 2023 17:01:13 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Stefan Berger <stefanb@linux.ibm.com>, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        amir73il@gmail.com, Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after
+ writes
+Message-ID: <20230406-wasser-zwanzig-791bc0bf416c@brauner>
+References: <20230405171449.4064321-1-stefanb@linux.ibm.com>
+ <20230406-diffamieren-langhaarig-87511897e77d@brauner>
+ <CAHC9VhQsnkLzT7eTwVr-3SvUs+mcEircwztfaRtA+4ZaAh+zow@mail.gmail.com>
+ <a6c6e0e4-047f-444b-3343-28b71ddae7ae@linux.ibm.com>
+ <CAHC9VhQyWa1OnsOvoOzD37EmDnESfo4Rxt2eCSUgu+9U8po-CA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <58328778-6fdb-db03-6156-6c6f6b203ef1@fujitsu.com>
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+In-Reply-To: <CAHC9VhQyWa1OnsOvoOzD37EmDnESfo4Rxt2eCSUgu+9U8po-CA@mail.gmail.com>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,287 +63,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 06:50:22PM +0800, Shiyang Ruan wrote:
+On Thu, Apr 06, 2023 at 10:36:41AM -0400, Paul Moore wrote:
+> On Thu, Apr 6, 2023 at 10:20 AM Stefan Berger <stefanb@linux.ibm.com> wrote:
+> > On 4/6/23 10:05, Paul Moore wrote:
+> > > On Thu, Apr 6, 2023 at 6:26 AM Christian Brauner <brauner@kernel.org> wrote:
+> > >> On Wed, Apr 05, 2023 at 01:14:49PM -0400, Stefan Berger wrote:
+> > >>> Overlayfs fails to notify IMA / EVM about file content modifications
+> > >>> and therefore IMA-appraised files may execute even though their file
+> > >>> signature does not validate against the changed hash of the file
+> > >>> anymore. To resolve this issue, add a call to integrity_notify_change()
+> > >>> to the ovl_release() function to notify the integrity subsystem about
+> > >>> file changes. The set flag triggers the re-evaluation of the file by
+> > >>> IMA / EVM once the file is accessed again.
+> > >>>
+> > >>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > >>> ---
+> > >>>   fs/overlayfs/file.c       |  4 ++++
+> > >>>   include/linux/integrity.h |  6 ++++++
+> > >>>   security/integrity/iint.c | 13 +++++++++++++
+> > >>>   3 files changed, 23 insertions(+)
+> > >>>
+> > >>> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> > >>> index 6011f955436b..19b8f4bcc18c 100644
+> > >>> --- a/fs/overlayfs/file.c
+> > >>> +++ b/fs/overlayfs/file.c
+> > >>> @@ -13,6 +13,7 @@
+> > >>>   #include <linux/security.h>
+> > >>>   #include <linux/mm.h>
+> > >>>   #include <linux/fs.h>
+> > >>> +#include <linux/integrity.h>
+> > >>>   #include "overlayfs.h"
+> > >>>
+> > >>>   struct ovl_aio_req {
+> > >>> @@ -169,6 +170,9 @@ static int ovl_open(struct inode *inode, struct file *file)
+> > >>>
+> > >>>   static int ovl_release(struct inode *inode, struct file *file)
+> > >>>   {
+> > >>> +     if (file->f_flags & O_ACCMODE)
+> > >>> +             integrity_notify_change(inode);
+> > >>> +
+> > >>>        fput(file->private_data);
+> > >>>
+> > >>>        return 0;
+> > >>> diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+> > >>> index 2ea0f2f65ab6..cefdeccc1619 100644
+> > >>> --- a/include/linux/integrity.h
+> > >>> +++ b/include/linux/integrity.h
+> > >>> @@ -23,6 +23,7 @@ enum integrity_status {
+> > >>>   #ifdef CONFIG_INTEGRITY
+> > >>>   extern struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
+> > >>>   extern void integrity_inode_free(struct inode *inode);
+> > >>> +extern void integrity_notify_change(struct inode *inode);
+> > >>
+> > >> I thought we concluded that ima is going to move into the security hook
+> > >> infrastructure so it seems this should be a proper LSM hook?
+> > >
+> > > We are working towards migrating IMA/EVM to the LSM layer, but there
+> > > are a few things we need to fix/update/remove first; if anyone is
+> > > curious, you can join the LSM list as we've been discussing some of
+> > > these changes this week.  Bug fixes like this should probably remain
+> > > as IMA/EVM calls for the time being, with the understanding that they
+> > > will migrate over with the rest of IMA/EVM.
+> > >
+> > > That said, we should give Mimi a chance to review this patch as it is
+> > > possible there is a different/better approach.  A bit of patience may
+> > > be required as I know Mimi is very busy at the moment.
+> >
+> > There may be a better approach actually by increasing the inode's i_version,
+> > which then should trigger the appropriate path in ima_check_last_writer().
 > 
+> I'm not the VFS/inode expert here, but I thought the inode's i_version
+> field was only supposed to be bumped when the inode metadata changed,
+> not necessarily the file contents, right?
 > 
-> 在 2023/4/5 1:45, Darrick J. Wong 写道:
-> > On Tue, Mar 28, 2023 at 09:41:46AM +0000, Shiyang Ruan wrote:
-> > > This patch is inspired by Dan's "mm, dax, pmem: Introduce
-> > > dev_pagemap_failure()"[1].  With the help of dax_holder and
-> > > ->notify_failure() mechanism, the pmem driver is able to ask filesystem
-> > > (or mapped device) on it to unmap all files in use and notify processes
-> > > who are using those files.
-> > > 
-> > > Call trace:
-> > > trigger unbind
-> > >   -> unbind_store()
-> > >    -> ... (skip)
-> > >     -> devres_release_all()
-> > >      -> kill_dax()
-> > >       -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
-> > >        -> xfs_dax_notify_failure()
-> > >        `-> freeze_super()
-> > >        `-> do xfs rmap
-> > >        ` -> mf_dax_kill_procs()
-> > >        `  -> collect_procs_fsdax()    // all associated
-> > >        `  -> unmap_and_kill()
-> > >        ` -> invalidate_inode_pages2() // drop file's cache
-> > >        `-> thaw_super()
-> > > 
-> > > Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
-> > > event.  Freeze the filesystem to prevent new dax mapping being created.
-> > > And do not shutdown filesystem directly if something not supported, or
-> > > if failure range includes metadata area.  Make sure all files and
-> > > processes are handled correctly.  Also drop the cache of associated
-> > > files before pmem is removed.
-> > > 
-> > > [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
-> > > 
-> > > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> > > ---
-> > >   drivers/dax/super.c         |  3 +-
-> > >   fs/xfs/xfs_notify_failure.c | 56 +++++++++++++++++++++++++++++++++----
-> > >   include/linux/mm.h          |  1 +
-> > >   mm/memory-failure.c         | 17 ++++++++---
-> > >   4 files changed, 67 insertions(+), 10 deletions(-)
-> > > 
-> > > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> > > index c4c4728a36e4..2e1a35e82fce 100644
-> > > --- a/drivers/dax/super.c
-> > > +++ b/drivers/dax/super.c
-> > > @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
-> > >   		return;
-> > >   	if (dax_dev->holder_data != NULL)
-> > > -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
-> > > +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
-> > > +				MF_MEM_PRE_REMOVE);
-> > >   	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
-> > >   	synchronize_srcu(&dax_srcu);
-> > > diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-> > > index 1e2eddb8f90f..1b4eff43f9b5 100644
-> > > --- a/fs/xfs/xfs_notify_failure.c
-> > > +++ b/fs/xfs/xfs_notify_failure.c
-> > > @@ -22,6 +22,7 @@
-> > >   #include <linux/mm.h>
-> > >   #include <linux/dax.h>
-> > > +#include <linux/fs.h>
-> > >   struct xfs_failure_info {
-> > >   	xfs_agblock_t		startblock;
-> > > @@ -73,10 +74,16 @@ xfs_dax_failure_fn(
-> > >   	struct xfs_mount		*mp = cur->bc_mp;
-> > >   	struct xfs_inode		*ip;
-> > >   	struct xfs_failure_info		*notify = data;
-> > > +	struct address_space		*mapping;
-> > > +	pgoff_t				pgoff;
-> > > +	unsigned long			pgcnt;
-> > >   	int				error = 0;
-> > >   	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
-> > >   	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-> > > +		/* The device is about to be removed.  Not a really failure. */
-> > > +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
-> > > +			return 0;
-> > >   		notify->want_shutdown = true;
-> > >   		return 0;
-> > >   	}
-> > > @@ -92,10 +99,18 @@ xfs_dax_failure_fn(
-> > >   		return 0;
-> > >   	}
-> > > -	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
-> > > -				  xfs_failure_pgoff(mp, rec, notify),
-> > > -				  xfs_failure_pgcnt(mp, rec, notify),
-> > > -				  notify->mf_flags);
-> > > +	mapping = VFS_I(ip)->i_mapping;
-> > > +	pgoff = xfs_failure_pgoff(mp, rec, notify);
-> > > +	pgcnt = xfs_failure_pgcnt(mp, rec, notify);
-> > > +
-> > > +	/* Continue the rmap query if the inode isn't a dax file. */
-> > > +	if (dax_mapping(mapping))
-> > > +		error = mf_dax_kill_procs(mapping, pgoff, pgcnt,
-> > > +				notify->mf_flags);
-> > > +
-> > > +	/* Invalidate the cache anyway. */
-> > > +	invalidate_inode_pages2_range(mapping, pgoff, pgoff + pgcnt - 1);
-> > > +
-> > >   	xfs_irele(ip);
-> > >   	return error;
-> > >   }
-> > > @@ -164,11 +179,25 @@ xfs_dax_notify_ddev_failure(
-> > >   	}
-> > >   	xfs_trans_cancel(tp);
-> > > +
-> > > +	/* Unfreeze filesystem anyway if it is freezed before. */
-> > > +	if (mf_flags & MF_MEM_PRE_REMOVE) {
-> > > +		error = thaw_super(mp->m_super);
-> > > +		if (error)
-> > > +			return error;
-> > 
-> > If someone *else* wanders in and thaws the fs, you'll get EINVAL here.
-> > 
-> > I guess that's useful for knowing if someone's screwed up the freeze
-> > state on us, but ... really, don't you want to make sure you've gotten
-> > the freeze and nobody else can take it away?
-> 
-> Ok, I know it now.
-> > 
-> > I think you want the kernel-initiated freeze proposed by Luis here:
-> > https://lore.kernel.org/linux-fsdevel/20230114003409.1168311-4-mcgrof@kernel.org/
-> 
-> This patch gives userspace higher priority to do freeze/thaw then
-> kernelspace.  Userspace can thaw it even when kernelspace needs the freeze
-> state.  But I think it can't happen in this case.  Kernelspace(in this case)
-> should hold the freeze state and, IOW, has higher priority than userspace.
-> I think we could change the @usercall to @priority.
-> 
-> -int freeze_super(struct super_block *sb)
-> +int freeze_super(struct super_block *sb, int priority)
-> 
-> And priority definitions like:
-> #define FREEZE_PRO_AUTO           0  // for auto freeze
+> That said, overlayfs is a bit different so maybe that's okay, but I
+> think we would need to hear from the VFS folks if this is acceptable.
 
-What is an auto-freeze, and who would be calling it?  I suspect we
-could get by with "exclusive" and "non-exclusive".  Non-exclusive is the
-free-for-all we have now where any userspace can thaw, and exclusive is
-for kernel users (like PRE_REMOVE) who want to block everyone else from
-thawing.
+Ccing Jeff for awareness since he did the i_version rework a short time ago.
 
-> #define FREEZE_PRO_USERCALL       1  // for user call
-> #define FREEZE_PRO_KERNELCALL     2  // for kernel call
+The documentation in include/linux/iversion.h states:
 
-"Linux 6.5, now with FREEZE PRO!!!!" ;)
+ * [...] The i_version must
+ * appear larger to observers if there was an explicit change to the inode's
+ * data or metadata since it was last queried.
 
-THAW_PROT_* since we're really protecting who gets to thaw the fs; and
-"PROT" is a more customary mnemonic for 'protection.
+what I'm less sure in all of this is why this is called in ovl_release() and
+whether it's correct to increment the overlayfs inode's i_version.
 
---D
-
-> 
-> 
-> --
-> Thanks,
-> Ruan.
-> 
-> > 
-> > Also: Is Fujitsu still pursuing pmem products?  Even though Optane is
-> > dead?  I'm no longer sure of what the roadmap is for all this fsdax code
-> > and whatnot.
-> > 
-> > --D
-> > 
-> > > +	}
-> > > +
-> > > +	/*
-> > > +	 * Determine how to shutdown the filesystem according to the
-> > > +	 * error code and flags.
-> > > +	 */
-> > >   	if (error || notify.want_shutdown) {
-> > >   		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-> > >   		if (!error)
-> > >   			error = -EFSCORRUPTED;
-> > > -	}
-> > > +	} else if (mf_flags & MF_MEM_PRE_REMOVE)
-> > > +		xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
-> > > +
-> > >   	return error;
-> > >   }
-> > > @@ -182,6 +211,7 @@ xfs_dax_notify_failure(
-> > >   	struct xfs_mount	*mp = dax_holder(dax_dev);
-> > >   	u64			ddev_start;
-> > >   	u64			ddev_end;
-> > > +	int			error;
-> > >   	if (!(mp->m_super->s_flags & SB_BORN)) {
-> > >   		xfs_warn(mp, "filesystem is not ready for notify_failure()!");
-> > > @@ -196,6 +226,8 @@ xfs_dax_notify_failure(
-> > >   	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
-> > >   	    mp->m_logdev_targp != mp->m_ddev_targp) {
-> > > +		if (mf_flags & MF_MEM_PRE_REMOVE)
-> > > +			return 0;
-> > >   		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
-> > >   		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-> > >   		return -EFSCORRUPTED;
-> > > @@ -209,6 +241,12 @@ xfs_dax_notify_failure(
-> > >   	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
-> > >   	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
-> > > +	/* Notify failure on the whole device. */
-> > > +	if (offset == 0 && len == U64_MAX) {
-> > > +		offset = ddev_start;
-> > > +		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
-> > > +	}
-> > > +
-> > >   	/* Ignore the range out of filesystem area */
-> > >   	if (offset + len - 1 < ddev_start)
-> > >   		return -ENXIO;
-> > > @@ -225,6 +263,14 @@ xfs_dax_notify_failure(
-> > >   	if (offset + len - 1 > ddev_end)
-> > >   		len = ddev_end - offset + 1;
-> > > +	if (mf_flags & MF_MEM_PRE_REMOVE) {
-> > > +		xfs_info(mp, "device is about to be removed!");
-> > > +		/* Freeze the filesystem to prevent new mappings created. */
-> > > +		error = freeze_super(mp->m_super);
-> > > +		if (error)
-> > > +			return error;
-> > > +	}
-> > > +
-> > >   	return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), BTOBB(len),
-> > >   			mf_flags);
-> > >   }
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index 1f79667824eb..ac3f22c20e1d 100644
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@ -3436,6 +3436,7 @@ enum mf_flags {
-> > >   	MF_UNPOISON = 1 << 4,
-> > >   	MF_SW_SIMULATED = 1 << 5,
-> > >   	MF_NO_RETRY = 1 << 6,
-> > > +	MF_MEM_PRE_REMOVE = 1 << 7,
-> > >   };
-> > >   int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
-> > >   		      unsigned long count, int mf_flags);
-> > > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> > > index fae9baf3be16..6e6acec45568 100644
-> > > --- a/mm/memory-failure.c
-> > > +++ b/mm/memory-failure.c
-> > > @@ -623,7 +623,7 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
-> > >    */
-> > >   static void collect_procs_fsdax(struct page *page,
-> > >   		struct address_space *mapping, pgoff_t pgoff,
-> > > -		struct list_head *to_kill)
-> > > +		struct list_head *to_kill, bool pre_remove)
-> > >   {
-> > >   	struct vm_area_struct *vma;
-> > >   	struct task_struct *tsk;
-> > > @@ -631,8 +631,15 @@ static void collect_procs_fsdax(struct page *page,
-> > >   	i_mmap_lock_read(mapping);
-> > >   	read_lock(&tasklist_lock);
-> > >   	for_each_process(tsk) {
-> > > -		struct task_struct *t = task_early_kill(tsk, true);
-> > > +		struct task_struct *t = tsk;
-> > > +		/*
-> > > +		 * Search for all tasks while MF_MEM_PRE_REMOVE, because the
-> > > +		 * current may not be the one accessing the fsdax page.
-> > > +		 * Otherwise, search for the current task.
-> > > +		 */
-> > > +		if (!pre_remove)
-> > > +			t = task_early_kill(tsk, true);
-> > >   		if (!t)
-> > >   			continue;
-> > >   		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
-> > > @@ -1732,6 +1739,7 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
-> > >   	dax_entry_t cookie;
-> > >   	struct page *page;
-> > >   	size_t end = index + count;
-> > > +	bool pre_remove = mf_flags & MF_MEM_PRE_REMOVE;
-> > >   	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
-> > > @@ -1743,9 +1751,10 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
-> > >   		if (!page)
-> > >   			goto unlock;
-> > > -		SetPageHWPoison(page);
-> > > +		if (!pre_remove)
-> > > +			SetPageHWPoison(page);
-> > > -		collect_procs_fsdax(page, mapping, index, &to_kill);
-> > > +		collect_procs_fsdax(page, mapping, index, &to_kill, pre_remove);
-> > >   		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
-> > >   				index, mf_flags);
-> > >   unlock:
-> > > -- 
-> > > 2.39.2
-> > > 
+The change is done to the inode of the copied up/modified file's inode in the
+upper layer. So the i_version should already be incremented when we call into
+the upper layer usually via vfs_*() methods.
