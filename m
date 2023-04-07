@@ -2,68 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 303446DA9B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 10:04:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D118B6DA9BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 10:09:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239021AbjDGIEk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Apr 2023 04:04:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47734 "EHLO
+        id S231724AbjDGIJh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Apr 2023 04:09:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231982AbjDGIEj (ORCPT
+        with ESMTP id S229441AbjDGIJg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Apr 2023 04:04:39 -0400
-Received: from mail.feshiecree.pl (mail.feshiecree.pl [89.40.114.103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 926B07DB3
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Apr 2023 01:04:37 -0700 (PDT)
-Received: by mail.feshiecree.pl (Postfix, from userid 1001)
-        id 0FA4F8AD45; Fri,  7 Apr 2023 08:56:53 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=feshiecree.pl;
-        s=mail; t=1680854297;
-        bh=hFxZwVw4rIL+JwfEOGI47p+fdoVOAeqVswP6NWoHSHQ=;
-        h=Date:From:To:Subject:From;
-        b=bMJbatjegss3L7EMxo/2qeiIlUl0GcxXs5cRoYwWCdLFpVFjSwPmgZ8xcTApdEJn7
-         lD2zbC7TpnZdbUYjmKntFM8+EJqZDQnr1QGJb6VM8X7Des6FsT6X4DmN+0Esuv2e+1
-         E8z370GKdfG0Y683g54qsFZiDoYPfPun1e0NvUcsNwZBlX2gKxNkj9I6bi8LOWi8eZ
-         sV9Nk3+0BzhQvJw71kIIvqKZdifDnbiJqovTs2UENvZEsLrPvyIg/bTbgXrLOioiXJ
-         KiYYwwlWkf/dsO3hsczkL1hl4g7BvWdVqvWxfZlzMizkf+4moSekaukzo9GI8pSIRB
-         o1HzbZQ2zhUew==
-Received: by mail.feshiecree.pl for <linux-fsdevel@vger.kernel.org>; Fri,  7 Apr 2023 07:56:07 GMT
-Message-ID: <20230407074501-0.1.1w.7kyr.0.am60boi13u@feshiecree.pl>
-Date:   Fri,  7 Apr 2023 07:56:07 GMT
-From:   "Krystian Wieczorek" <krystian.wieczorek@feshiecree.pl>
-To:     <linux-fsdevel@vger.kernel.org>
-Subject: W sprawie samochodu
-X-Mailer: mail.feshiecree.pl
+        Fri, 7 Apr 2023 04:09:36 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDCA68A6D;
+        Fri,  7 Apr 2023 01:09:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=u92BVdgQKegL160NbY8VQjrkAm
+        FthmCgSAk57TlSJXN246SaiNK2vFGb4hHkEj950B4r8dlHMAUKp9AbGj1xRMTh2Af6eJ2dFqfOTzM
+        z2AfxEQG43NGWlWyR1LF97r0DjaH9wew6/C2T1Ussf30U6+H2fIb5GNXY/sXQcNZmUg0m7NhGqF2I
+        dxRMtwXhs6yjCi0w2fo2cTMtePsBgzcq0a1Ig+ZhmrqT1/tiyaf5keLcwFRHIzbuUilhwlvWvqC2T
+        mTGgHN6FH0OUq15vDekea+pl392Pqz2fiBcdEYpGNtD/hJejR9gSE58fqHmZJDwLv7rNVe59Jghet
+        7VNSI1Ow==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pkhA4-009RsN-2O;
+        Fri, 07 Apr 2023 08:09:32 +0000
+Date:   Fri, 7 Apr 2023 01:09:32 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org,
+        syzbot+51177e4144d764827c45@syzkaller.appspotmail.com
+Subject: Re: [PATCH] fsverity: reject FS_IOC_ENABLE_VERITY on mode 3 fds
+Message-ID: <ZC/PvPK/e0j5mZ7o@infradead.org>
+References: <20230406215106.235829-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=1.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_SORBS_DUL,RCVD_IN_VALIDITY_RPBL,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230406215106.235829-1-ebiggers@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Looks good:
 
-chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
-, je=C5=9Bli chodzi o system monitoringu GPS.
-
-Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
-e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
-a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
-
-Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
-dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
-szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
-mne znaczenie.
-
-Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
-b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
-
-
-Pozdrawiam
-Krystian Wieczorek
+Reviewed-by: Christoph Hellwig <hch@lst.de>
