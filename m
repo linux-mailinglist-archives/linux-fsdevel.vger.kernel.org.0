@@ -2,84 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 92CD86DA6C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 03:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 363046DA71F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 03:57:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231743AbjDGBDj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Apr 2023 21:03:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54186 "EHLO
+        id S239193AbjDGB5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Apr 2023 21:57:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230151AbjDGBDi (ORCPT
+        with ESMTP id S229585AbjDGB47 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Apr 2023 21:03:38 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7933B83F2
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Apr 2023 18:03:36 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id l15so5297758ejq.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Apr 2023 18:03:36 -0700 (PDT)
+        Thu, 6 Apr 2023 21:56:59 -0400
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F3A5FF9;
+        Thu,  6 Apr 2023 18:56:57 -0700 (PDT)
+Received: by mail-ua1-x933.google.com with SMTP id i22so28967686uat.8;
+        Thu, 06 Apr 2023 18:56:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680829415; x=1683421415;
+        d=gmail.com; s=20210112; t=1680832616; x=1683424616;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I1XvlUCiR72ZgTzOM/og5L0+VnHEni2vL4kpkj08keI=;
-        b=Gi1Y36e4Jc0UALptyl/LTUaKrFpOmFC+j8X9vJU+aUHaJ3V/nAFb/UcxcPBuAejvaH
-         /DykQnS/vNIUGvAj/vpicf1rCmjLItBkP+bLF+dGVfixHnNW+5CvjeDuW4eo191qm+tD
-         /Nq+T7LDKnMVZlYaOt6vDiKYbS+KZVpU3p3A8de2y3YKNEYQKgxNxXTk0yrPUZn575XF
-         mnbdm2DvXhWi2hHHHAf/oVSgR8l2Df2pc7SE6ASCqpyOOXjWD43ob5Yvini26m7y0KFt
-         weAJHGxy1ugwudrZ9aw5LDrjquxkqb8elbQYiLtsZ+UmZCKrfLf6fl9xA0VwSR5qwu3S
-         lr/w==
+        bh=ePvYWF3LgrcJpSASOA2Qoq+JJD21U5lACk4RrX/7jlk=;
+        b=g2mZYAJJnU1KnfR/yHCsvDwnCfuYElvYtsT/kyxkU0tRQGasWF1Sy+DZHkx1V9Op+d
+         iwlFDMTYW/Nq2m2ZFQzcXOadB4I9ZZn2PGjQcJEp2RvZWcFrvqBprNTgD+Sb0YoW61GT
+         ZYVJFDxzzUW/wRM7T1S4rWLlEhNqthJUPa2nEQAZNC4m50hH3EzQEbOywTZgkmQ1vwHy
+         7MxVJwMokNAymJvD5IZ9lxjaO+tTVCacb5krBZbjWKKveoJAf72XO1bMruMAee4CXols
+         HGDO78FAtsTCsI5SI0xOpIVwj8JShB8es/McNabo22aHe/xjChP3o9rQoo1eFcDxHnsp
+         1vgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680829415; x=1683421415;
+        d=1e100.net; s=20210112; t=1680832616; x=1683424616;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I1XvlUCiR72ZgTzOM/og5L0+VnHEni2vL4kpkj08keI=;
-        b=WStDHjZvTSgZxtjnXmerdW74mcxAGhv2CihgTX3IQVyvAhPEmZHz+WumGiyfW0pU4V
-         627NjySqv+dvh/angWsiRaXpvZ2l0uoQa958X+jtyvqu26s0xycC3V7/Q/ZRc6JYHUb6
-         lBDDAu3THfZQ+prjyj5JWusX7giLIxgLXqb4iGA57WCqhkTLYgbzlo7RtldrbrPNA/Ow
-         MHIrjzgnblbKE6b6e/RS03AVvYCSiywj4c7LlVbPkSaFTNRNVSixVgc9z/NuuieVIJyz
-         5mUzR9VB45ZLDSgaLVShEH7RVe+eFXRJznYyVeh1mh47puJZ8DZeqVXz6WUoOYD0VB73
-         k5vA==
-X-Gm-Message-State: AAQBX9e1PW0RAbagYdli/SyMAuC/MoUIddgq24eCdxPH3Hu2l0SfLLU3
-        kXFfGSa+HrMkHXrRaR7wSi+7QkfChHno2Rqdt830CA==
-X-Google-Smtp-Source: AKy350bKwpPCq7aUCh6NiZcMFFssax3P1vh2/SYajMVgSOKC2SUmSEJRZckrVOXLSYAQz7B816irIxnvUuw5f1vCMFM=
-X-Received: by 2002:a17:906:d976:b0:931:2bcd:ee00 with SMTP id
- rp22-20020a170906d97600b009312bcdee00mr332600ejb.15.1680829414816; Thu, 06
- Apr 2023 18:03:34 -0700 (PDT)
+        bh=ePvYWF3LgrcJpSASOA2Qoq+JJD21U5lACk4RrX/7jlk=;
+        b=FcVIjKyG8cSjbFFUOk5RYzoJm1V0uPbiWKiULmXxKB07MvYIg87uPGadR+7IXSHo2C
+         BgSIKIen+N3qFS0KXZplJPjBe+uT7FidLzlbjUhYeeBplaJBX2kmNwEFMPYY8xmXWIbM
+         LVRjCqhMw1l0+/JCEcmQYaEzVd6r2JGBd5FPY6/fvAtJ4BzMYJk8R3spMhl+GI3UzJ1D
+         sLzV1B18Rq7XdYrnXizchL6c9tM/XjoGTwvf/e1tIkmBzRZp8b5fJNFZQK8w7xQkkVJ8
+         RMJJW2oU1SFW7jp7PpRd7s9cWdeaBBikfRb/TzePSUXiM4wMbRXwjKXLEwp50KJYYSfb
+         290g==
+X-Gm-Message-State: AAQBX9fVdYZf+5ubm1xEweH7H2n7o3wjeHNeqn+JzbFnfO4XQLbE8xYe
+        LeT8jumZXpGVQTPmMPuGOeOJM5nwqnqcXuOoVA8=
+X-Google-Smtp-Source: AKy350aN1EG3BFhPHsmtekMoLwM0M28+ANFkN2MoPqmBdJx+Rgl+3U1I8HzoiHBTu1F37NkXpx33PJMqLfkoDTHUFzk=
+X-Received: by 2002:ab0:539b:0:b0:6cd:2038:4911 with SMTP id
+ k27-20020ab0539b000000b006cd20384911mr258188uaa.1.1680832616636; Thu, 06 Apr
+ 2023 18:56:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230405185427.1246289-1-yosryahmed@google.com>
- <20230405185427.1246289-3-yosryahmed@google.com> <ZC8vTi3SlKwnYv5i@x1n>
-In-Reply-To: <ZC8vTi3SlKwnYv5i@x1n>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Thu, 6 Apr 2023 18:02:58 -0700
-Message-ID: <CAJD7tkbGhkBW+3yzGyzg6t9RPDOrqhGJPgdjLVA-BW0x0SqW4g@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] mm: vmscan: refactor reclaim_state helpers
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        David Hildenbrand <david@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        NeilBrown <neilb@suse.de>, Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@kernel.org>, Yu Zhao <yuzhao@google.com>,
-        Dave Chinner <david@fromorbit.com>,
+References: <20230406094245.3633290-1-dhowells@redhat.com> <20230406094245.3633290-6-dhowells@redhat.com>
+In-Reply-To: <20230406094245.3633290-6-dhowells@redhat.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Thu, 6 Apr 2023 21:56:19 -0400
+Message-ID: <CAF=yD-+QCYsjuRvzTOjhn=sKCWwOd5ZWxG6VS-xkYEoxzGkUkA@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 05/19] tcp: Support MSG_SPLICE_PAGES
+To:     David Howells <dhowells@redhat.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
+        linux-mm@kvack.org, David Ahern <dsahern@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -87,170 +80,163 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 6, 2023 at 1:45=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+On Thu, Apr 6, 2023 at 5:43=E2=80=AFAM David Howells <dhowells@redhat.com> =
+wrote:
 >
-> Hi, Yosry,
+> Make TCP's sendmsg() support MSG_SPLICE_PAGES.  This causes pages to be
+> spliced from the source iterator.
 >
-> On Wed, Apr 05, 2023 at 06:54:27PM +0000, Yosry Ahmed wrote:
+> This allows ->sendpage() to be replaced by something that can handle
+> multiple multipage folios in a single transaction.
 >
-> [...]
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Eric Dumazet <edumazet@google.com>
+> cc: "David S. Miller" <davem@davemloft.net>
+> cc: David Ahern <dsahern@kernel.org>
+> cc: Jakub Kicinski <kuba@kernel.org>
+> cc: Paolo Abeni <pabeni@redhat.com>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: netdev@vger.kernel.org
+> ---
+>  net/ipv4/tcp.c | 67 ++++++++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 60 insertions(+), 7 deletions(-)
 >
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index c82bd89f90364..049e39202e6ce 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -188,18 +188,6 @@ struct scan_control {
-> >   */
-> >  int vm_swappiness =3D 60;
-> >
-> > -static void set_task_reclaim_state(struct task_struct *task,
-> > -                                struct reclaim_state *rs)
-> > -{
-> > -     /* Check for an overwrite */
-> > -     WARN_ON_ONCE(rs && task->reclaim_state);
-> > -
-> > -     /* Check for the nulling of an already-nulled member */
-> > -     WARN_ON_ONCE(!rs && !task->reclaim_state);
-> > -
-> > -     task->reclaim_state =3D rs;
-> > -}
-> > -
-> >  LIST_HEAD(shrinker_list);
-> >  DECLARE_RWSEM(shrinker_rwsem);
-> >
-> > @@ -511,6 +499,59 @@ static bool writeback_throttling_sane(struct scan_=
-control *sc)
-> >  }
-> >  #endif
-> >
-> > +static void set_task_reclaim_state(struct task_struct *task,
-> > +                                struct reclaim_state *rs)
-> > +{
-> > +     /* Check for an overwrite */
-> > +     WARN_ON_ONCE(rs && task->reclaim_state);
-> > +
-> > +     /* Check for the nulling of an already-nulled member */
-> > +     WARN_ON_ONCE(!rs && !task->reclaim_state);
-> > +
-> > +     task->reclaim_state =3D rs;
-> > +}
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index fd68d49490f2..510bacc7ce7b 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -1221,7 +1221,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msgh=
+dr *msg, size_t size)
+>         int flags, err, copied =3D 0;
+>         int mss_now =3D 0, size_goal, copied_syn =3D 0;
+>         int process_backlog =3D 0;
+> -       bool zc =3D false;
+> +       int zc =3D 0;
+>         long timeo;
 >
-> Nit: I just think such movement not necessary while it loses the "git
-> blame" information easily.
+>         flags =3D msg->msg_flags;
+> @@ -1232,17 +1232,22 @@ int tcp_sendmsg_locked(struct sock *sk, struct ms=
+ghdr *msg, size_t size)
+>                 if (msg->msg_ubuf) {
+>                         uarg =3D msg->msg_ubuf;
+>                         net_zcopy_get(uarg);
+> -                       zc =3D sk->sk_route_caps & NETIF_F_SG;
+> +                       if (sk->sk_route_caps & NETIF_F_SG)
+> +                               zc =3D 1;
+>                 } else if (sock_flag(sk, SOCK_ZEROCOPY)) {
+>                         uarg =3D msg_zerocopy_realloc(sk, size, skb_zcopy=
+(skb));
+>                         if (!uarg) {
+>                                 err =3D -ENOBUFS;
+>                                 goto out_err;
+>                         }
+> -                       zc =3D sk->sk_route_caps & NETIF_F_SG;
+> -                       if (!zc)
+> +                       if (sk->sk_route_caps & NETIF_F_SG)
+> +                               zc =3D 1;
+> +                       else
+>                                 uarg_to_msgzc(uarg)->zerocopy =3D 0;
+>                 }
+> +       } else if (unlikely(msg->msg_flags & MSG_SPLICE_PAGES) && size) {
+> +               if (sk->sk_route_caps & NETIF_F_SG)
+> +                       zc =3D 2;
+>         }
 >
-> Instead of moving this here without major benefit, why not just define
-> flush_reclaim_state() right after previous set_task_reclaim_state()?
+>         if (unlikely(flags & MSG_FASTOPEN || inet_sk(sk)->defer_connect) =
+&&
+> @@ -1305,7 +1310,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msgh=
+dr *msg, size_t size)
+>                 goto do_error;
+>
+>         while (msg_data_left(msg)) {
+> -               int copy =3D 0;
+> +               ssize_t copy =3D 0;
+>
+>                 skb =3D tcp_write_queue_tail(sk);
+>                 if (skb)
+> @@ -1346,7 +1351,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msgh=
+dr *msg, size_t size)
+>                 if (copy > msg_data_left(msg))
+>                         copy =3D msg_data_left(msg);
+>
+> -               if (!zc) {
+> +               if (zc =3D=3D 0) {
+>                         bool merge =3D true;
+>                         int i =3D skb_shinfo(skb)->nr_frags;
+>                         struct page_frag *pfrag =3D sk_page_frag(sk);
+> @@ -1391,7 +1396,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msgh=
+dr *msg, size_t size)
+>                                 page_ref_inc(pfrag->page);
+>                         }
+>                         pfrag->offset +=3D copy;
+> -               } else {
+> +               } else if (zc =3D=3D 1)  {
 
-An earlier version did that, but we would have to add a forward
-declaration of global_reclaim() (or cgroup_reclaim()), as they are
-defined after the previous position of set_task_reclaim_state().
+Instead of 1 and 2, MSG_ZEROCOPY and MSG_SPLICE_PAGES make the code
+more self-documenting.
 
->
-> > +
-> > +/*
-> > + * flush_reclaim_state(): add pages reclaimed outside of LRU-based rec=
-laim to
-> > + * scan_control->nr_reclaimed.
-> > + */
-> > +static void flush_reclaim_state(struct scan_control *sc,
-> > +                             struct reclaim_state *rs)
-> > +{
-> > +     /*
-> > +      * Currently, reclaim_state->reclaimed includes three types of pa=
-ges
-> > +      * freed outside of vmscan:
-> > +      * (1) Slab pages.
-> > +      * (2) Clean file pages from pruned inodes.
-> > +      * (3) XFS freed buffer pages.
-> > +      *
-> > +      * For all of these cases, we have no way of finding out whether =
-these
-> > +      * pages were related to the memcg under reclaim. For example, a =
-freed
-> > +      * slab page could have had only a single object charged to the m=
-emcg
-> > +      * under reclaim. Also, populated inodes are not on shrinker LRUs
-> > +      * anymore except on highmem systems.
-> > +      *
-> > +      * Instead of over-reporting the reclaimed pages in a memcg recla=
-im,
-> > +      * only count such pages in global reclaim. This prevents unneces=
-sary
-> > +      * retries during memcg charging and false positive from proactiv=
-e
-> > +      * reclaim (memory.reclaim).
-> > +      *
-> > +      * For uncommon cases were the freed pages were actually signific=
-antly
-> > +      * charged to the memcg under reclaim, and we end up under-report=
-ing, it
-> > +      * should be fine. The freed pages will be uncharged anyway, even=
- if
-> > +      * they are not reported properly, and we will be able to make fo=
-rward
-> > +      * progress in charging (which is usually in a retry loop).
-> > +      *
-> > +      * We can go one step further, and report the uncharged objcg pag=
-es in
-> > +      * memcg reclaim, to make reporting more accurate and reduce
-> > +      * under-reporting, but it's probably not worth the complexity fo=
-r now.
-> > +      */
-> > +     if (rs && global_reclaim(sc)) {
-> > +             sc->nr_reclaimed +=3D rs->reclaimed;
-> > +             rs->reclaimed =3D 0;
-> > +     }
-> > +}
-> > +
-> >  static long xchg_nr_deferred(struct shrinker *shrinker,
-> >                            struct shrink_control *sc)
-> >  {
-> > @@ -5346,10 +5387,7 @@ static int shrink_one(struct lruvec *lruvec, str=
-uct scan_control *sc)
-> >               vmpressure(sc->gfp_mask, memcg, false, sc->nr_scanned - s=
-canned,
-> >                          sc->nr_reclaimed - reclaimed);
-> >
-> > -     if (global_reclaim(sc)) {
-> > -             sc->nr_reclaimed +=3D current->reclaim_state->reclaimed_s=
-lab;
-> > -             current->reclaim_state->reclaimed_slab =3D 0;
-> > -     }
-> > +     flush_reclaim_state(sc, current->reclaim_state);
-> >
-> >       return success ? MEMCG_LRU_YOUNG : 0;
-> >  }
-> > @@ -6474,10 +6512,7 @@ static void shrink_node(pg_data_t *pgdat, struct=
- scan_control *sc)
-> >
-> >       shrink_node_memcgs(pgdat, sc);
-> >
-> > -     if (reclaim_state && global_reclaim(sc)) {
-> > -             sc->nr_reclaimed +=3D reclaim_state->reclaimed_slab;
-> > -             reclaim_state->reclaimed_slab =3D 0;
-> > -     }
-> > +     flush_reclaim_state(sc, reclaim_state);
->
-> IIUC reclaim_state here still points to current->reclaim_state.  Could it
-> change at all?
->
-> Is it cleaner to make flush_reclaim_state() taking "sc" only if it always
-> references current->reclaim_state?
+>                         /* First append to a fragless skb builds initial
+>                          * pure zerocopy skb
+>                          */
+> @@ -1412,6 +1417,54 @@ int tcp_sendmsg_locked(struct sock *sk, struct msg=
+hdr *msg, size_t size)
+>                         if (err < 0)
+>                                 goto do_error;
+>                         copy =3D err;
+> +               } else if (zc =3D=3D 2) {
+> +                       /* Splice in data. */
+> +                       struct page *page =3D NULL, **pages =3D &page;
+> +                       size_t off =3D 0, part;
+> +                       bool can_coalesce;
+> +                       int i =3D skb_shinfo(skb)->nr_frags;
+> +
+> +                       copy =3D iov_iter_extract_pages(&msg->msg_iter, &=
+pages,
+> +                                                     copy, 1, 0, &off);
+> +                       if (copy <=3D 0) {
+> +                               err =3D copy ?: -EIO;
+> +                               goto do_error;
+> +                       }
+> +
+> +                       can_coalesce =3D skb_can_coalesce(skb, i, page, o=
+ff);
+> +                       if (!can_coalesce && i >=3D READ_ONCE(sysctl_max_=
+skb_frags)) {
+> +                               tcp_mark_push(tp, skb);
+> +                               iov_iter_revert(&msg->msg_iter, copy);
+> +                               goto new_segment;
+> +                       }
+> +                       if (tcp_downgrade_zcopy_pure(sk, skb)) {
+> +                               iov_iter_revert(&msg->msg_iter, copy);
+> +                               goto wait_for_space;
+> +                       }
+> +
+> +                       part =3D tcp_wmem_schedule(sk, copy);
+> +                       iov_iter_revert(&msg->msg_iter, copy - part);
+> +                       if (!part)
+> +                               goto wait_for_space;
+> +                       copy =3D part;
+> +
+> +                       if (can_coalesce) {
+> +                               skb_frag_size_add(&skb_shinfo(skb)->frags=
+[i - 1], copy);
+> +                       } else {
+> +                               get_page(page);
+> +                               skb_fill_page_desc_noacc(skb, i, page, of=
+f, copy);
+> +                       }
+> +                       page =3D NULL;
+> +
+> +                       if (!(flags & MSG_NO_SHARED_FRAGS))
+> +                               skb_shinfo(skb)->flags |=3D SKBFL_SHARED_=
+FRAG;
+> +
+> +                       skb->len +=3D copy;
+> +                       skb->data_len +=3D copy;
+> +                       skb->truesize +=3D copy;
+> +                       sk_wmem_queued_add(sk, copy);
+> +                       sk_mem_charge(sk, copy);
+> +
 
-Good point. I think it's always current->reclaim_state.
-
-I think we can make flush_reclaim_state() only take "sc" as an
-argument, and remove the "reclaim_state" local variable in
-shrink_node() completely.
-
->
-> >
-> >       /* Record the subtree's reclaim efficiency */
-> >       if (!sc->proactive)
-> > --
-> > 2.40.0.348.gf938b09366-goog
-> >
->
-> --
-> Peter Xu
->
+Similar to udp, perhaps in a helper?
