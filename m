@@ -2,70 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CEFB6DAB30
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 12:04:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14E266DAB34
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 12:04:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240260AbjDGKET (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Apr 2023 06:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40318 "EHLO
+        id S240322AbjDGKEt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Apr 2023 06:04:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjDGKER (ORCPT
+        with ESMTP id S240356AbjDGKEr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Apr 2023 06:04:17 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 859A459C1
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Apr 2023 03:04:16 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9341434fe3cso190752566b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Apr 2023 03:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680861855;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vPQGp8DUY8W9IGUTHTlsTXZsaE+QtLNfRWEOu4cQss8=;
-        b=VWJjsNJosuq2jvCi47QZbfxKB/4eNXh3nr0Y6k4rsHO9NBcxy+RZaO3tpu1IPvC9R1
-         r4AyoWtsTC6mZOIFGNcugTFYaMOchIV6Xbh3rJtnw3TSFW3jH1dxAjTv5rIj4uQ+9cVe
-         6ReCOw8pNkNXZS62YMs4h0zXIeR8H0U0Fex+fln5fUvo1GfYD6EyCdCdYeQ5/674V1uY
-         Fv+nzRUdJq+IibYOLQyvan2jw4MdwXDFZgjBcDZdrCALqelePxYd5BtNox7YpB5AFNG8
-         pwSUXFXY11LmyfLHhQ2MzIEwizQ0xVEILd3tpmxkWYcD5he/q9xGbxzcDh2OR3Joug5U
-         iBTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680861855;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vPQGp8DUY8W9IGUTHTlsTXZsaE+QtLNfRWEOu4cQss8=;
-        b=jKrB85Y28ZwMiIDyTRCnYxdKoy6X2Zk27CgCBOm7QmVJJeTuroWdTy7jFKSwHDw6Z7
-         Hz7MlBcC820z8NwnuVz+fs8pu1fYfqyGSffEmHycjPa/2RdP94saYaJCv6hIdaZeN00o
-         OrtA546tUfZeDxTO8D7wkrdOd8jcmPV+6uuJtQxhwiMtOayi0QeIoE03cLkgCih5YRQo
-         zHsqA1R6deTf8twa/Bjwsq6aBw8Vp6ZBSESL5UDu4RqUCoiP/IVMvkDTw/2WIwbD8fYr
-         oXBRbFv3hQGATgbM6DpJ6JPxGyoAytMNHagW3w/ErmGmUoMpPUp89di/L0o14WfcNDm7
-         4EOQ==
-X-Gm-Message-State: AAQBX9fTbyd/a5Dh+QDZ2GvTB1mx7CN4TSCH7xp79yvCLVXSGYiwmUpz
-        wc0Ce9Mb7AB2tgAkZKjlUcl/881Py3gg5Y40UksthQ==
-X-Google-Smtp-Source: AKy350bmDKnskEhSU/k39PBr/b5AfSt9nDX3ik+DWAn0sMFTB4UltL1+/LRu/rfJnj85LVDre3Mnnq/y6fQ4tMnM3bY=
-X-Received: by 2002:a50:d55a:0:b0:504:7857:d739 with SMTP id
- f26-20020a50d55a000000b005047857d739mr1000696edj.7.1680861854780; Fri, 07 Apr
- 2023 03:04:14 -0700 (PDT)
+        Fri, 7 Apr 2023 06:04:47 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B53D5FCF;
+        Fri,  7 Apr 2023 03:04:45 -0700 (PDT)
+Received: from [192.168.10.39] (unknown [119.155.57.40])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8B91B6603131;
+        Fri,  7 Apr 2023 11:04:36 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1680861883;
+        bh=wFFs5e3pfOXut0j6vcW6vIOzD590TwbnJcENFZLGENs=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=YABez8d+ezmohaCrrAMeuJ5vhrOQlRBCRbpj0t/ZT9Nhx6Augb9Va7SJ+T2hHGLci
+         Z5/RthfmMWVw8PQiUEtH6nHOsqCcWawoxuh/4rSCmj4DR2JSkb3yG+VgA35T1WuJXC
+         IwZWmQY5AiHRIFRlx8am/puvZw/Pk0bVcsuoB867j97ObAXfE+pQ0fXD1nT4DIto5r
+         o6QC2VKQSZd/9NkPLhvLp35+Cu5i2ZTGTAvcENt2jX2RSgIHXTjupDiQAEtq0b+6GE
+         rrkII83vrqNlrkluNVttJxthsXgU5S2/dXAZGt0dzL6OnawCnp6M/P2HlUEo7WQYkY
+         8okPpbvEYGu5Q==
+Message-ID: <c5b9201d-141c-10ae-0475-4b230d36508b@collabora.com>
+Date:   Fri, 7 Apr 2023 15:04:32 +0500
 MIME-Version: 1.0
-References: <20230406074005.1784728-1-usama.anjum@collabora.com>
- <20230406074005.1784728-3-usama.anjum@collabora.com> <CABb0KFFTb3LCbyPWLSodtntw=tizYki-pc4nSHBmQOFhKoNYfA@mail.gmail.com>
- <b737dceb-a228-7ffe-0758-421505f1a61d@collabora.com> <CABb0KFF+sKSv7jdxBbXpt5A2WO83tKb9viq-kKurXN_e1VcFhQ@mail.gmail.com>
- <c535ce4a-d7da-1ce2-9883-7cefb6dd88a2@collabora.com>
-In-Reply-To: <c535ce4a-d7da-1ce2-9883-7cefb6dd88a2@collabora.com>
-From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-Date:   Fri, 7 Apr 2023 12:04:03 +0200
-Message-ID: <CABb0KFE8pn+VORr8c=HWzKzJ5L5ZBRZMg2Q1dEZGU9gLqGZNLQ@mail.gmail.com>
-Subject: Re: [PATCH v12 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andrei Vagin <avagin@gmail.com>,
         Danylo Mocherniuk <mdanylo@google.com>,
         Paul Gofman <pgofman@codeweavers.com>,
         Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Nadav Amit <namit@vmware.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Shuah Khan <shuah@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
@@ -83,80 +63,171 @@ Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
         Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Subject: Re: [PATCH v12 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+Content-Language: en-US
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+References: <20230406074005.1784728-1-usama.anjum@collabora.com>
+ <20230406074005.1784728-3-usama.anjum@collabora.com>
+ <CABb0KFHZpYVML2e+Xg9+kwjyhqQkikPBhymO=EXoQnO2xjfG4g@mail.gmail.com>
+ <0351b563-5193-6431-aa9c-c5bf5741b791@collabora.com>
+ <CABb0KFE4ruptVXDpCk5MB6nkh9WeKTcKfROnx0ecoy-k1eCKCw@mail.gmail.com>
+ <8a837998-604f-a871-729e-aa274a621481@collabora.com>
+ <CABb0KFEBqAMWWpAeBfqzA4JrHo3yLyaT0rqKTUn28O0hE+szBA@mail.gmail.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CABb0KFEBqAMWWpAeBfqzA4JrHo3yLyaT0rqKTUn28O0hE+szBA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 7 Apr 2023 at 11:35, Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
-> On 4/7/23 12:23=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
-> > On Thu, 6 Apr 2023 at 23:12, Muhammad Usama Anjum
-> > <usama.anjum@collabora.com> wrote:
-> >> On 4/7/23 1:12=E2=80=AFAM, Micha=C5=82 Miros=C5=82aw wrote:
-> >>> On Thu, 6 Apr 2023 at 09:40, Muhammad Usama Anjum
-> >>> <usama.anjum@collabora.com> wrote:
-> >>> [...]
-> >>>> --- a/fs/proc/task_mmu.c
-> >>>> +++ b/fs/proc/task_mmu.c
-> >>> [...]
-> >>>> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
-> >>>> +                                 unsigned long end, struct mm_walk =
-*walk)
-> >>>> +{
-> > [...]
-> >>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >>>> +       ptl =3D pmd_trans_huge_lock(pmd, vma);
-> >>>> +       if (ptl) {
-> >>> [...]
-> >>>> +               return ret;
-> >>>> +       }
-> >>>> +process_smaller_pages:
-> >>>> +       if (pmd_trans_unstable(pmd))
-> >>>> +               return 0;
-> >>>
-> >>> Why pmd_trans_unstable() is needed here and not only after split_huge=
-_pmd()?
-> >> I'm not entirely sure. But the idea is if THP is unstable, we should
-> >> return. As it doesn't seem like after splitting THP can be unstable, w=
-e
-> >> should not check it. Do you agree with the following?
-> >
-> > The description of pmd_trans_unstable() [1] seems to indicate that it
-> > is needed only after split_huge_pmd().
-> >
-> > [1] https://elixir.bootlin.com/linux/v6.3-rc5/source/include/linux/pgta=
-ble.h#L1394
-> Sorry, yeah pmd_trans_unstable() is need after split. But it is also need=
-ed
-> in normal case when ptl is NULL to rule out the case if pmd is unstable
-> before performing operation on normal pages:
->
-> ptl =3D pmd_trans_huge_lock(pmd, vma);
-> if (ptl) {
-> ...
-> }
-> if (pmd_trans_unstable(pmd))
->         return 0;
->
-> This file has usage examples of pmd_trans_unstable():
->
-> https://elixir.bootlin.com/linux/v6.3-rc5/source/fs/proc/task_mmu.c#L634
-> https://elixir.bootlin.com/linux/v6.3-rc5/source/fs/proc/task_mmu.c#L1195
-> https://elixir.bootlin.com/linux/v6.3-rc5/source/fs/proc/task_mmu.c#L1543
-> https://elixir.bootlin.com/linux/v6.3-rc5/source/fs/proc/task_mmu.c#L1887
->
-> So we are good with what we have in this patch.
+On 4/7/23 12:34 PM, Michał Mirosław wrote:
+> On Thu, 6 Apr 2023 at 23:04, Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
+>> On 4/7/23 1:00 AM, Michał Mirosław wrote:
+>>> On Thu, 6 Apr 2023 at 19:58, Muhammad Usama Anjum
+>>> <usama.anjum@collabora.com> wrote:
+> [...]
+>>>>>> +               cur->len += n_pages;
+>>>>>> +               p->found_pages += n_pages;
+>>>>>> +
+>>>>>> +               if (p->max_pages && (p->found_pages == p->max_pages))
+>>>>>> +                       return PM_SCAN_FOUND_MAX_PAGES;
+>>>>>> +
+>>>>>> +               return 0;
+>>>>>> +       }
+>>>>>> +
+>>>>>> +       if (!p->vec_index || ((p->vec_index + 1) < p->vec_len)) {
+>>>>>
+>>>>> It looks that `if (p->vec_index < p->vec_len)` is enough here - if we
+>>>>> have vec_len == 0 here, then we'd not fit the entry in the userspace
+>>>>> buffer anyway. Am I missing something?
+>>>> No. I'd explained it with diagram last time:
+>>>> https://lore.kernel.org/all/3c8d9ea0-1382-be0c-8dd2-d490eedd3b55@collabora.com
+>>>>
+>>>> I'll add a concise comment here.
+>>>
+>>> So it seems, but I think the code changed a bit and maybe could be
+>>> simplified now? Since p->vec_len == 0 is currently not valid, the
+>>> field could count only the entries available in p->vec[] -- IOW: not
+>>> include p->cur in the count.
+>> I see. But this'll not work as we need to count p->cur to don't go above
+>> the maximum count, p->vec_size.
+> 
+> You can subtract 1 from p->vec_size before the page walk to account
+> for the buffer in `cur`.
+Yeah, it can be done. But I've thought about it. It would look more uglier.
+I'll have to subtract 1 from vec_len in the start and then add 1 in the
+end. The current algorithm seems simpler.
 
-Shouldn't we signal ACTION_AGAIN then in order to call .pte_hole?
+> 
+> [...]
+>>>>>> +static inline int pagemap_scan_deposit(struct pagemap_scan_private *p,
+>>>>>> +                                      struct page_region __user *vec,
+>>>>>> +                                      unsigned long *vec_index)
+>>>>>
+>>>>> ..._deposit() is used only in single place - please inline.
+>>>> It is already inline.
+>>>
+>>> Sorry. I mean: please paste the code in place of the single call.
+>> I've made it a separate function to make the code look better in the caller
+>> function and logically easier to understand. This function is ugly.
+>> do_pagemap_scan() is also already very long function with lots of things
+>> happening. If you still insist, I'll remove this function.
+> 
+> Please do remove - it will make the copy to userspace code all neatly together.
+Will remove it.
 
-Best Regards
-Micha=C5=82 Miros=C5=82aw
+> 
+> [...]
+>>>>>> +                */
+>>>>>> +               if (is_written && PM_SCAN_OP_IS_WP(p) &&
+>>>>>> +                   ((end - start < HPAGE_SIZE) ||
+>>>>>> +                    (p->max_pages &&
+>>>>>> +                     (p->max_pages - p->found_pages) < n_pages))) {
+>>>>>> +
+>>>>>> +                       split_huge_pmd(vma, pmd, start);
+>>>>>> +                       goto process_smaller_pages;
+>>>>>> +               }
+>>>>>> +
+>>>>>> +               if (p->max_pages &&
+>>>>>> +                   p->found_pages + n_pages > p->max_pages)
+>>>>>> +                       n_pages = p->max_pages - p->found_pages;
+>>>>>> +
+>>>>>> +               ret = pagemap_scan_output(is_written, is_file, is_present,
+>>>>>> +                                         is_swap, p, start, n_pages);
+>>>>>> +               if (ret < 0)
+>>>>>> +                       return ret;
+>>>
+>>> So let's simplify this:
+>>>
+>>> if (p->max_pages && n_pages > max_pages - found_pages)
+>>>   n_pages = max_pages - found_pages;
+>>>
+>>> if (is_written && DO_WP && n_pages != HPAGE_SIZE / PAGE_SIZE) {
+>>>   split_thp();
+>>>   goto process_smaller_pages;
+>>> }
+>> Clever!! This looks very sleek.
+>>
+>>>
+>>> BTW, THP handling could be extracted to a function that would return
+>>> -EAGAIN if it has split the page or it wasn't a THP -- and that would
+>>> mean `goto process_smaller_pages`.
+>> Other functions in this file handle the THP in this same way. So it feels
+>> like more intuitive that we follow to same pattern in this file.
+> 
+> I'll leave it to you. Extracting THP support would avoid a goto and
+> #ifdef inside a function, though (and make the function smaller).
+> 
+>>>>>> +       /*
+>>>>>> +        * Allocate smaller buffer to get output from inside the page walk
+>>>>>> +        * functions and walk page range in PAGEMAP_WALK_SIZE size chunks. As
+>>>>>> +        * we want to return output to user in compact form where no two
+>>>>>> +        * consecutive regions should be continuous and have the same flags.
+>>>>>> +        * So store the latest element in p.cur between different walks and
+>>>>>> +        * store the p.cur at the end of the walk to the user buffer.
+>>>>>> +        */
+>>>>>> +       p.vec = kmalloc_array(p.vec_len, sizeof(struct page_region),
+>>>>>> +                             GFP_KERNEL);
+>>>>>> +       if (!p.vec)
+>>>>>> +               return -ENOMEM;
+>>>>>> +
+>>>>>> +       walk_start = walk_end = start;
+>>>>>> +       while (walk_end < end && !ret) {
+>>>>>
+>>>>> The loop will stop if a previous iteration returned ENOSPC (and the
+>>>>> error will be lost) - is it intended?
+>>>> It is intentional. -ENOSPC means that the user buffer is full even though
+>>>> there was more memory to walk over. We don't treat this error. So when
+>>>> buffer gets full, we stop walking over further as user buffer has gotten
+>>>> full and return as success.
+>>>
+>>> Thanks. What's the difference between -ENOSPC and
+>>> PM_SCAN_FOUND_MAX_PAGES? They seem to result in the same effect (code
+>>> flow).
+>> -ENOSPC --> user buffer has been filled completely
+>> PM_SCAN_FOUND_MAX_PAGES --> max_pages have been found, user buffer may
+>>                             still have more space
+> 
+> What is the difference in code behaviour when those two cases are
+> compared? (I'd expect none.)
+There is difference:
+We add data to user buffer. If it succeeds with return code 0, we engage
+the WP. If it succeeds with PM_SCAN_FOUND_MAX_PAGES, we still engage the
+WP. But if we get -ENOSPC, we don't perform engage as the data wasn't added
+to the user buffer.
+
+> 
+> Best Regards
+> Michał Mirosław
+
+-- 
+BR,
+Muhammad Usama Anjum
