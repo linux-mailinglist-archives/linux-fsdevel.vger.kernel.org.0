@@ -2,117 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 503C76DB119
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 19:05:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 375B06DB21C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 19:54:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbjDGRE7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Apr 2023 13:04:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41234 "EHLO
+        id S229643AbjDGRyO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Apr 2023 13:54:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229910AbjDGRE6 (ORCPT
+        with ESMTP id S229600AbjDGRyN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Apr 2023 13:04:58 -0400
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6742BDD3
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Apr 2023 10:04:50 -0700 (PDT)
-Received: by mail-il1-f199.google.com with SMTP id n9-20020a056e02100900b00325c9240af7so28061237ilj.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Apr 2023 10:04:50 -0700 (PDT)
+        Fri, 7 Apr 2023 13:54:13 -0400
+Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77E05597
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Apr 2023 10:54:12 -0700 (PDT)
+Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-54c17fa9ae8so87514137b3.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Apr 2023 10:54:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1680890052; x=1683482052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jrpM89/D2Jn+yeowi/ZK21yY3Yfqiq0AvpzdxVqWoEM=;
+        b=nlyl4ar9a4UnjXUJbWwyNT15heLTVsga62hvSGc21eVb9UWoJwENRKkCHxa5FPQFr9
+         gV7S7wullm2HeT+4AnshpPvxPoc/bNK/lK5bxw46U43/wq8KTCAnbWtb7nYMzxxq+js4
+         gx9NNQ0o1nOvjfjqnRtpyeOHYZEyeZY/lF05JYz9AH77KPg1uvmSWOFtB3qzl8QQFq47
+         bkJGzSNqCUpT8YN+koW5g5N2kmWIE+HBHTgYdM4i+KlqZZmyuI2GFondvb232fl7KZcA
+         lNPtUD76pkAQ0gaFS5pqXOo4GPKrRbHy9B5f8zhLtwJDUdFxoCT2eSYxdEJz9vdTlMDa
+         hU/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680887089; x=1683479089;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9TnUl47z21Nij35fj9d1jh5EYMecekHF/0+bl/JRlgg=;
-        b=Opf/gIMsgWSfpL12//DlBa1MRyX2k+kHvSOSUkrB7RzEOlQV6YWuzItmTMLZNVDlIU
-         1/wNSNQ14k+BO3/rWgXNOjq8EnWMQVPVyzBAfwGMUlvI6l3rhJFTTzyzsmzF3/vfhKEu
-         VCOIxJogABN6wFKu9buPN8z3h/mKwFtaUsVGzKWeTAMjrvin4t23+J9FGPjCuitOyiqO
-         +9eEwJZ4/0IjPWCA3RNlsomF21YMHJ54JFBmaA+pj5kHIU40l9ZkeheeL0Dyr4t95DLl
-         EEi8vzNYCQMQL/qel9WfrS+Mk/qwLzm5k0FgeNUc+hDcJDlf+J5P2yRqIU837Jyi/QQ6
-         QFXg==
-X-Gm-Message-State: AAQBX9euJ774R+UWLLQM54XSGMtDn8W2O9BWuyYSn5eYoQVq7M4Q8Gor
-        K/Vjf5UsDqJxEJ9SYTqzw/w8fcEKH03Q0ecVIVl0zb+rdLWA
-X-Google-Smtp-Source: AKy350biinDzzhkhVthNzHEgvyUE51wzgBH//6QJSL+3xEpJXEcKQzJ99r6k94HByXhCpL3u0tpGJC9mbMQJUFPotUKTtGn8XkeH
+        d=1e100.net; s=20210112; t=1680890052; x=1683482052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jrpM89/D2Jn+yeowi/ZK21yY3Yfqiq0AvpzdxVqWoEM=;
+        b=cUPUw8QoQJcqHbbQL4zlErY6Cj8LAdneM+2ikeeWWtRHmCjRj7WlIX8CD07oktdDwN
+         ODUthOfvKmsTovNgjvfjRPgp6gLV0yu38rE2iY2nIliFqT+POCYa+jlrIqvfF2+A+E9c
+         yWdPjmoXXWqoVBile2o2T233RyvLWS/fU7lQPwx5F+nQaGgBpH3RGb+YqDvAFpEFO+FY
+         +4C6Q0cbqV2Q/eyxnzawCMwNgvVod6kjWZmCsweH4fdIBMQaId/ktnCw3uJXfQNqQNbt
+         us6y4fFWysec//s+HM7XYZ4ist7Ug0vtVQPX38LoYSaETLJLs40AZsDC6hXxRTMPK8dj
+         FaYA==
+X-Gm-Message-State: AAQBX9dhwVMmIYOE29AEkaNAA1LwFKtqkA/w7UM0wAocceSCqAgAN2ys
+        zUrWFesGpuHZktucViGp2GlwlJG+uGy+ZbC9N5cHbw==
+X-Google-Smtp-Source: AKy350ZWpvYDt+JfeFh+Py8WeV6sDraw/et/qng2n8kcHk5mR5OCQ9G6DpPScjEmkGgZVMaXtvyqeGRFv8+flPdxkmY=
+X-Received: by 2002:a81:ad0b:0:b0:54c:2723:55ff with SMTP id
+ l11-20020a81ad0b000000b0054c272355ffmr1456279ywh.1.1680890051783; Fri, 07 Apr
+ 2023 10:54:11 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a61:b0:326:3f06:a0d7 with SMTP id
- w1-20020a056e021a6100b003263f06a0d7mr1616499ilv.0.1680887089848; Fri, 07 Apr
- 2023 10:04:49 -0700 (PDT)
-Date:   Fri, 07 Apr 2023 10:04:49 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e5f10505f8c205bc@google.com>
-Subject: [syzbot] [xfs?] WARNING in __queue_delayed_work
-From:   syzbot <syzbot+5ed016962f5137a09c7c@syzkaller.appspotmail.com>
-To:     djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+References: <20230404135850.3673404-1-willy@infradead.org> <20230404135850.3673404-2-willy@infradead.org>
+In-Reply-To: <20230404135850.3673404-2-willy@infradead.org>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 7 Apr 2023 10:54:00 -0700
+Message-ID: <CAJuCfpGPYNerqu6EjRNX2ov4uaFOawmXf1bS_xYPX5b6BAnaWg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] mm: Allow per-VMA locks on file-backed VMAs
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Punit Agrawal <punit.agrawal@bytedance.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
+        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Apr 4, 2023 at 6:59=E2=80=AFAM Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
+>
+> The fault path will immediately fail in handle_mm_fault(), so this
+> is the minimal step which allows the per-VMA lock to be taken on
+> file-backed VMAs.  There may be a small performance reduction as a
+> little unnecessary work will be done on each page fault.  See later
+> patches for the improvement.
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  mm/memory.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index fdaec7772fff..f726f85f0081 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -5223,6 +5223,9 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *v=
+ma, unsigned long address,
+>                                             flags & FAULT_FLAG_REMOTE))
+>                 return VM_FAULT_SIGSEGV;
+>
+> +       if ((flags & FAULT_FLAG_VMA_LOCK) && !vma_is_anonymous(vma))
+> +               return VM_FAULT_RETRY;
+> +
 
-syzbot found the following issue on:
+There are count_vm_event(PGFAULT) and count_memcg_event_mm(vma->vm_mm,
+PGFAULT) earlier in this function. Returning here and retrying I think
+will double-count this page fault. Returning before this accounting
+should fix this issue.
 
-HEAD commit:    7e364e56293b Linux 6.3-rc5
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13241195c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e3b9dc6616d797bb
-dashboard link: https://syzkaller.appspot.com/bug?extid=5ed016962f5137a09c7c
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5ed016962f5137a09c7c@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 102 at kernel/workqueue.c:1445 __queue_work+0xd44/0x1120 kernel/workqueue.c:1444
-Modules linked in:
-CPU: 1 PID: 102 Comm: kswapd0 Not tainted 6.3.0-rc5-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-RIP: 0010:__queue_work+0xd44/0x1120 kernel/workqueue.c:1444
-Code: e0 07 83 c0 03 38 d0 7c 09 84 d2 74 05 e8 74 0c 81 00 8b 5b 2c 31 ff 83 e3 20 89 de e8 c5 fb 2f 00 85 db 75 42 e8 6c ff 2f 00 <0f> 0b e9 3c f9 ff ff e8 60 ff 2f 00 0f 0b e9 ce f8 ff ff e8 54 ff
-RSP: 0000:ffffc90000ce7638 EFLAGS: 00010093
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff888015f73a80 RSI: ffffffff8152d854 RDI: 0000000000000005
-RBP: 0000000000000002 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffe8ffffb03348
-R13: ffff888078462000 R14: ffffe8ffffb03390 R15: ffff888078462000
-FS:  0000000000000000(0000) GS:ffff88802ca80000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000cfa5bb CR3: 0000000025fde000 CR4: 0000000000150ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __queue_delayed_work+0x1c8/0x270 kernel/workqueue.c:1672
- mod_delayed_work_on+0xe1/0x220 kernel/workqueue.c:1746
- xfs_inodegc_shrinker_scan fs/xfs/xfs_icache.c:2212 [inline]
- xfs_inodegc_shrinker_scan+0x250/0x4f0 fs/xfs/xfs_icache.c:2191
- do_shrink_slab+0x428/0xaa0 mm/vmscan.c:853
- shrink_slab+0x175/0x660 mm/vmscan.c:1013
- shrink_one+0x502/0x810 mm/vmscan.c:5343
- shrink_many mm/vmscan.c:5394 [inline]
- lru_gen_shrink_node mm/vmscan.c:5511 [inline]
- shrink_node+0x2064/0x35f0 mm/vmscan.c:6459
- kswapd_shrink_node mm/vmscan.c:7262 [inline]
- balance_pgdat+0xa02/0x1ac0 mm/vmscan.c:7452
- kswapd+0x677/0xd60 mm/vmscan.c:7712
- kthread+0x2e8/0x3a0 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>         /*
+>          * Enable the memcg OOM handling for faults triggered in user
+>          * space.  Kernel faults are handled more gracefully.
+> @@ -5275,12 +5278,8 @@ struct vm_area_struct *lock_vma_under_rcu(struct m=
+m_struct *mm,
+>         if (!vma)
+>                 goto inval;
+>
+> -       /* Only anonymous vmas are supported for now */
+> -       if (!vma_is_anonymous(vma))
+> -               goto inval;
+> -
+>         /* find_mergeable_anon_vma uses adjacent vmas which are not locke=
+d */
+> -       if (!vma->anon_vma)
+> +       if (vma_is_anonymous(vma) && !vma->anon_vma)
+>                 goto inval;
+>
+>         if (!vma_start_read(vma))
+> --
+> 2.39.2
+>
