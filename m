@@ -2,145 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 092D16DB531
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 22:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 390756DB56B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 22:42:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbjDGU0X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Apr 2023 16:26:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52740 "EHLO
+        id S230060AbjDGUmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Apr 2023 16:42:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229982AbjDGU0W (ORCPT
+        with ESMTP id S229717AbjDGUml (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Apr 2023 16:26:22 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C01439741
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Apr 2023 13:26:20 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id m16so29702912ybk.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Apr 2023 13:26:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680899180; x=1683491180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t2NqYlcKqgDnAnT0HPL/Dc2jZTE5h8otlUAIYBQqrsY=;
-        b=LyUFqBdHt3HstpmCxJDLHznbXkUKMQCBVOcDrhcSWGPV2clUI7KGrXj+BDzWGwX8VJ
-         T1qSwzrSjwMcATdMr9urS7O90fpnG7OQt4+pt5eheWtynm6YfQznt+nwfVmVQq5ZooxI
-         Y0cpernEQYYIy9/FVxuKwnoO1DCk+m+ySxhrz8ZrdDNjH7K0Vuna1hn4/BkNroieMUbU
-         Bzc3z+ofVnWcsJ3E/oayf2mlS4quXK7A3Ojh6ti0Dm220Zc2a0qr8FHhdkXne/7sgFD7
-         IStlkz6Ge/0zdePxZaNL0W+QPsC7W7KvSJQOn8Pot7El96JZog1IZriaCmELrexhd5s/
-         LZAg==
+        Fri, 7 Apr 2023 16:42:41 -0400
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA1908F
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Apr 2023 13:42:39 -0700 (PDT)
+Received: by mail-io1-f78.google.com with SMTP id d204-20020a6bb4d5000000b00758cfdd36c3so26426172iof.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Apr 2023 13:42:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680899180; x=1683491180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t2NqYlcKqgDnAnT0HPL/Dc2jZTE5h8otlUAIYBQqrsY=;
-        b=stz2S9CKz3baVfJGE5LkR398DJeQ1Zvnqs7Rcu6O+7dUOK6KIx85VHnsPNhHXQVNwg
-         VWcJodkEy7q/zb2fsenBl6OuMmXjHImsGuzxIrc63R72an3zvkjzOroTw3JmL6DKQ9Gb
-         5b0ge4WQkTe+aeN5u7ECO6j5c1gkFK1HPqu0yO+5Oj4wzDdTDzRcSHvavmwwj6dksDYt
-         /ppQVlkYXXTDuM0A28oqQq6OUeocAoVQ5lQCmF5ZUmNZoWkpu/Sofp/AasV0j5H0kV+E
-         gsovDdyUsKE95uv9YEJi1H2cN+YqlgdV5HWm/ouNr0woyFxVxCJG06iYZ5OFgif/OViD
-         MFMA==
-X-Gm-Message-State: AAQBX9fblRtS2VzmHZaS2S4XTbO1es/gAEDuSQ1Zx1PUrlHhAs20lF0X
-        5rqY2OOr1d1hMtJu3O1b7p/5VxCh7mrCKRb+HssmCP9jC+hPnc+eRn3dAw==
-X-Google-Smtp-Source: AKy350bNRvmBvqysEH9bkgyjNJ9/qzq8pKeMuUwAjJWaQLfb2Rq1z0Gwcm8eBbXO0ndmuvmOfgiOu8GJ/Uz4cJ+Gxgs=
-X-Received: by 2002:a25:d995:0:b0:b8b:f2cc:7043 with SMTP id
- q143-20020a25d995000000b00b8bf2cc7043mr132939ybg.12.1680899179760; Fri, 07
- Apr 2023 13:26:19 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680900159; x=1683492159;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gQByD6ZheusKw4EUPL21I5e6W15h+91cn8nxJKCDnUQ=;
+        b=ba+etWT/lWmhkZyZDGDSQZanGSmMufNnefqUdq5UvxW1t2bbGl3oDrSixrG+NZZJS+
+         t5aXYB4O8a5d95xo1C2SKDqCJeY6R3WFnqAgFhoUzL+lXQEBYrZOz6uSul6pfislU8nB
+         C1W5MTT2jyPo2H6tXxGkmHZnvBq7COGb6mLjB6I8Z5PNZInXOPgK6BGSdYhBZOwpxTku
+         1scpqjQAUpPTbsvTtHVaQPwS8psmGkbEOniY11z7cH2URBkDyj8wahzqnulZ2AYL4DId
+         1EkCSbwlUkPGGc2TPvdpORNU+JEClxqSNho2BAXzyOb9oSJ6d4+1GeXvctHKk6o5YQAm
+         uDXA==
+X-Gm-Message-State: AAQBX9e4PMybstU7FPAaEX3ovM+5UT8mTJn0mH7HSjQAzURDMUU1dW/e
+        PHjNp9TrEVvY5btqLszleYsFhSOEoIPIy5KEwHrIGbUCZS0O
+X-Google-Smtp-Source: AKy350ae+AUWLw4Mw5OZ5Dy4N02Ue1UkxOTTZAl5a+SgyBcLUo5wADk9Sfadd1r+b3mdAKf9kNhV0Mr44Q1jE5AaJugcyS1BFgHA
 MIME-Version: 1.0
-References: <20230404135850.3673404-1-willy@infradead.org> <20230404135850.3673404-2-willy@infradead.org>
- <CAJuCfpGPYNerqu6EjRNX2ov4uaFOawmXf1bS_xYPX5b6BAnaWg@mail.gmail.com> <ZDB5OsBc3R7o489l@casper.infradead.org>
-In-Reply-To: <ZDB5OsBc3R7o489l@casper.infradead.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Fri, 7 Apr 2023 13:26:08 -0700
-Message-ID: <CAJuCfpGMsSRQU1Oob2HNn8PFxTx2REtiUOZfB87hYokLCBU=Bw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] mm: Allow per-VMA locks on file-backed VMAs
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Punit Agrawal <punit.agrawal@bytedance.com>
+X-Received: by 2002:a05:6602:1808:b0:752:fc52:a200 with SMTP id
+ t8-20020a056602180800b00752fc52a200mr1644029ioh.2.1680900159001; Fri, 07 Apr
+ 2023 13:42:39 -0700 (PDT)
+Date:   Fri, 07 Apr 2023 13:42:38 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e15c0905f8c5101b@google.com>
+Subject: [syzbot] [ext4?] possible deadlock in ext4_multi_mount_protect
+From:   syzbot <syzbot+6b7df7d5506b32467149@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 7, 2023 at 1:12=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
- wrote:
->
-> On Fri, Apr 07, 2023 at 10:54:00AM -0700, Suren Baghdasaryan wrote:
-> > On Tue, Apr 4, 2023 at 6:59=E2=80=AFAM Matthew Wilcox (Oracle)
-> > <willy@infradead.org> wrote:
-> > >
-> > > The fault path will immediately fail in handle_mm_fault(), so this
-> > > is the minimal step which allows the per-VMA lock to be taken on
-> > > file-backed VMAs.  There may be a small performance reduction as a
-> > > little unnecessary work will be done on each page fault.  See later
-> > > patches for the improvement.
-> > >
-> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > ---
-> > >  mm/memory.c | 9 ++++-----
-> > >  1 file changed, 4 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/mm/memory.c b/mm/memory.c
-> > > index fdaec7772fff..f726f85f0081 100644
-> > > --- a/mm/memory.c
-> > > +++ b/mm/memory.c
-> > > @@ -5223,6 +5223,9 @@ vm_fault_t handle_mm_fault(struct vm_area_struc=
-t *vma, unsigned long address,
-> > >                                             flags & FAULT_FLAG_REMOTE=
-))
-> > >                 return VM_FAULT_SIGSEGV;
-> > >
-> > > +       if ((flags & FAULT_FLAG_VMA_LOCK) && !vma_is_anonymous(vma))
-> > > +               return VM_FAULT_RETRY;
-> > > +
-> >
-> > There are count_vm_event(PGFAULT) and count_memcg_event_mm(vma->vm_mm,
-> > PGFAULT) earlier in this function. Returning here and retrying I think
-> > will double-count this page fault. Returning before this accounting
-> > should fix this issue.
->
-> You're right, but this will be an issue with later patches in the series
-> anyway as we move the check further and further down the call-chain.
-> For that matter, it's an issue in do_swap_page() right now, isn't it?
-> I suppose we don't care too much because it's the rare case where we go
-> into do_swap_page() and so the stats are "correct enough".
+Hello,
 
-True. do_swap_page() has the same issue. Can we move these
-count_vm_event() calls to the end of handle_mm_fault():
+syzbot found the following issue on:
 
-vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long addres=
-s,
-   unsigned int flags, struct pt_regs *regs)
-{
-       vm_fault_t ret;
+HEAD commit:    f2afccfefe7b Merge tag 'net-6.3-rc6-2' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10094d79c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d3500b143c204867
+dashboard link: https://syzkaller.appspot.com/bug?extid=6b7df7d5506b32467149
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
-       __set_current_state(TASK_RUNNING);
+Unfortunately, I don't have any reproducer for this issue yet.
 
--       count_vm_event(PGFAULT);
--       count_memcg_event_mm(vma->vm_mm, PGFAULT);
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a183ba13acb3/disk-f2afccfe.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ffdb9ee4cb62/vmlinux-f2afccfe.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8e8bbb25f0c1/bzImage-f2afccfe.xz
 
-       ret =3D sanitize_fault_flags(vma, &flags);
-       if (ret)
--              return ret;
--              goto out;
-       ...
-       mm_account_fault(regs, address, flags, ret);
-+out:
-+       if (ret !=3D VM_FAULT_RETRY) {
-+              count_vm_event(PGFAULT);
-+              count_memcg_event_mm(vma->vm_mm, PGFAULT);
-+       }
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6b7df7d5506b32467149@syzkaller.appspotmail.com
 
-       return ret;
-}
+======================================================
+WARNING: possible circular locking dependency detected
+6.3.0-rc5-syzkaller-00137-gf2afccfefe7b #0 Not tainted
+------------------------------------------------------
+syz-executor.3/27708 is trying to acquire lock:
+ffff888065700460 (sb_writers#4){.+.+}-{0:0}, at: ext4_multi_mount_protect+0x50d/0xac0 fs/ext4/mmp.c:343
 
-?
+but task is already holding lock:
+ffff8880657000e0 (&type->s_umount_key#31){++++}-{3:3}, at: vfs_fsconfig_locked fs/fsopen.c:253 [inline]
+ffff8880657000e0 (&type->s_umount_key#31){++++}-{3:3}, at: __do_sys_fsconfig+0xa30/0xc20 fs/fsopen.c:439
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&type->s_umount_key#31){++++}-{3:3}:
+       down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
+       __do_sys_quotactl_fd+0x27e/0x3f0 fs/quota/quota.c:999
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #0 (sb_writers#4){.+.+}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3098 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+       validate_chain kernel/locking/lockdep.c:3832 [inline]
+       __lock_acquire+0x2ec7/0x5d40 kernel/locking/lockdep.c:5056
+       lock_acquire kernel/locking/lockdep.c:5669 [inline]
+       lock_acquire+0x1af/0x520 kernel/locking/lockdep.c:5634
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1477 [inline]
+       sb_start_write include/linux/fs.h:1552 [inline]
+       write_mmp_block+0xc4/0x820 fs/ext4/mmp.c:50
+       ext4_multi_mount_protect+0x50d/0xac0 fs/ext4/mmp.c:343
+       __ext4_remount fs/ext4/super.c:6543 [inline]
+       ext4_reconfigure+0x242b/0x2b60 fs/ext4/super.c:6642
+       reconfigure_super+0x40c/0xa30 fs/super.c:956
+       vfs_fsconfig_locked fs/fsopen.c:254 [inline]
+       __do_sys_fsconfig+0xa3a/0xc20 fs/fsopen.c:439
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&type->s_umount_key#31);
+                               lock(sb_writers#4);
+                               lock(&type->s_umount_key#31);
+  lock(sb_writers#4);
+
+ *** DEADLOCK ***
+
+2 locks held by syz-executor.3/27708:
+ #0: ffff888078129070 (&fc->uapi_mutex){+.+.}-{3:3}, at: __do_sys_fsconfig+0x521/0xc20 fs/fsopen.c:437
+ #1: ffff8880657000e0 (&type->s_umount_key#31){++++}-{3:3}, at: vfs_fsconfig_locked fs/fsopen.c:253 [inline]
+ #1: ffff8880657000e0 (&type->s_umount_key#31){++++}-{3:3}, at: __do_sys_fsconfig+0xa30/0xc20 fs/fsopen.c:439
+
+stack backtrace:
+CPU: 0 PID: 27708 Comm: syz-executor.3 Not tainted 6.3.0-rc5-syzkaller-00137-gf2afccfefe7b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2178
+ check_prev_add kernel/locking/lockdep.c:3098 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+ validate_chain kernel/locking/lockdep.c:3832 [inline]
+ __lock_acquire+0x2ec7/0x5d40 kernel/locking/lockdep.c:5056
+ lock_acquire kernel/locking/lockdep.c:5669 [inline]
+ lock_acquire+0x1af/0x520 kernel/locking/lockdep.c:5634
+ percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+ __sb_start_write include/linux/fs.h:1477 [inline]
+ sb_start_write include/linux/fs.h:1552 [inline]
+ write_mmp_block+0xc4/0x820 fs/ext4/mmp.c:50
+ ext4_multi_mount_protect+0x50d/0xac0 fs/ext4/mmp.c:343
+ __ext4_remount fs/ext4/super.c:6543 [inline]
+ ext4_reconfigure+0x242b/0x2b60 fs/ext4/super.c:6642
+ reconfigure_super+0x40c/0xa30 fs/super.c:956
+ vfs_fsconfig_locked fs/fsopen.c:254 [inline]
+ __do_sys_fsconfig+0xa3a/0xc20 fs/fsopen.c:439
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f4a4d08c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4a4dd13168 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+RAX: ffffffffffffffda RBX: 00007f4a4d1ac050 RCX: 00007f4a4d08c169
+RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000004
+RBP: 00007f4a4d0e7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffc3d17db8f R14: 00007f4a4dd13300 R15: 0000000000022000
+ </TASK>
+EXT4-fs (loop3): re-mounted 00000000-0000-0000-0000-000000000000. Quota mode: writeback.
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
