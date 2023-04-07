@@ -2,121 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AEFF6DA8BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 08:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D88186DA906
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 08:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231508AbjDGGJQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Apr 2023 02:09:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41496 "EHLO
+        id S231666AbjDGGm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Apr 2023 02:42:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229783AbjDGGJP (ORCPT
+        with ESMTP id S229441AbjDGGm4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Apr 2023 02:09:15 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2127.outbound.protection.outlook.com [40.107.117.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F8CA10A;
-        Thu,  6 Apr 2023 23:09:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mkkZdWHz/6dB9hkOtGQTexvoAEPDVba9u197pPDe8KnsS5Qbnz3pvdIfDgDy/eFuwwSXui3zPuRQ1EMnTM3JDJFA1QSVjFVcJZxI80S3r8KxdMdQeAj59xmbKV1X0xBSpkAuMTvXYsWmwjZhmBFxhewdonuz+JHyMPLJf1u7ojZLfBgK5nbZ0j9gpaNVJ4e/0f1qqetvLcUdIRibQVulLPyMMij2Nz3lInkP+uusl0l+Y6Jv5BYpN9qtZU6GpKmsfpwzw/1+npqHmh/DAUz+i96uJ17j+M6RXp2/OmQAf6Zg7HhG5NjYaSgZidt1Ng/zWF1nLvsK38bR9okXTgim4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U2f0eVhQyzx3bjJQ9y3gm/qKkBhpK4y77kbZLGkY6s4=;
- b=Eo9nKPOCFGj2sKX+7Yp0hTGD46vtZ+6o+6FTygx14BuokY3HHLUiOouGp5//Vn7kKzTNPta7is4S+Q2zLV1PYgWdyU6hir77oJWx8wc/BHHWYgeU+Ze/M58/2Ar7YFEW9us7+KJJ8ZECN5RvmJbWgvOumhOB/ifugHFD/QO8Jsp5n3L/ocZUy75A6S8FB9Z0FDMTFMzK1P+jehFkx5xERHlQlUjUyyjEuY7GljgxaIxiDUOWJrFeb6aSGlqYxp7uaI/YQkc/KqG6uneYtNFDJsLlQe3oOAO6Z07RYz3rpPXt9HN+DlTM6gcziMDFWDN5hyQpKPh0vqtBPiytaR+X9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U2f0eVhQyzx3bjJQ9y3gm/qKkBhpK4y77kbZLGkY6s4=;
- b=owD8ZGPa2IqlzPrR3Yx4ccLQHZbjwzz1owWMF1VBDaoUqEAWoKJTEcd/TKBJHUjQXQmn8wndB7dD8MTTh9lD6FeSZMFBRLfrg7kOpqOVEBeJMjvwTGEL5t9kPB0+giWIroJUYrbRmZm6By0VwdAk6/9i6eFfI4q0p/a/XXWu5Yu9Asr7DvjvS/ZkH+ghvC3vaF9/quHadZ2rOEexCy9Cc+yySHRFiV7XWk2bnI/BHsZoJ2q4179ipkv/D7tUqhSjCZqt2HzyEKTEmAQVB6tnrDVsKTXG3VJmr81frrxEWud5Jb8T5hb3D6TaJNpbG9fT1b+fdiTkATn8havBYWZSOg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by TYUPR06MB6079.apcprd06.prod.outlook.com (2603:1096:400:347::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.33; Fri, 7 Apr
- 2023 06:09:10 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::a3a1:af8e:be1e:437c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::a3a1:af8e:be1e:437c%6]) with mapi id 15.20.6277.031; Fri, 7 Apr 2023
- 06:09:10 +0000
-From:   Yangtao Li <frank.li@vivo.com>
-To:     gregkh@linuxfoundation.org
-Cc:     chao@kernel.org, damien.lemoal@opensource.wdc.com,
-        frank.li@vivo.com, huyue2@coolpad.com, jefflexu@linux.alibaba.com,
-        jth@kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        naohiro.aota@wdc.com, rafael@kernel.org, xiang@kernel.org
-Subject: Re: [PATCH 2/3] erofs: convert to use kobject_is_added()
-Date:   Fri,  7 Apr 2023 14:09:00 +0800
-Message-Id: <20230407060901.22446-1-frank.li@vivo.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <2023040602-stack-overture-d418@gregkh>
-References: <2023040602-stack-overture-d418@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR04CA0171.apcprd04.prod.outlook.com (2603:1096:4::33)
- To SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+        Fri, 7 Apr 2023 02:42:56 -0400
+Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D01165FCB;
+        Thu,  6 Apr 2023 23:42:55 -0700 (PDT)
+Received: by mail-vs1-xe2a.google.com with SMTP id z17so29618828vsf.4;
+        Thu, 06 Apr 2023 23:42:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680849775; x=1683441775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ORI0Nb0EBCw0cSM2p/7ooZHHouYocddDjv9zZfdUt+I=;
+        b=J2o/4Ycq1LbUJeuY1/DMJqlbK41yvanateGMhgJCRcDIjZoYU02dMFKxgeKzsxwdGM
+         QjdVLPHeW+sgF/pjOfNWsfmSUYSjn964LY7FrVIQ8vaf7+EEcHkJtd3ZQi3xRjAaeu86
+         cMU+8M3qZ0ehPeP5XfjZn6AxF6xJU7bNmBfDkis55rxrr2/Ok1VD0OWTKmdrHq8249LZ
+         AetOgT3CYHM+QxZi/D0kDTxQ8zbX9iV2xlDJLh9EQNna8mnE1xxJ9qcrnnf1GWsfdAYF
+         cFlYT1mklyrOvIE1nYkcr1sYCPrAkGBtxR3NP9eWmAfJm9XeOK2WiTm/a1OKrn6Gz9k3
+         Geag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680849775; x=1683441775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ORI0Nb0EBCw0cSM2p/7ooZHHouYocddDjv9zZfdUt+I=;
+        b=QjkNWQIf6IXxXeYyIUz0NxE8jtEw/jX6+s6XnRlRuxcTWem7Ow9JMbeQ089szOXjXw
+         a3z+frxSeRNqHuf9HlRsq1acPXRz2+RFa5dxwgmKGhKfpF5FcNtIu7IJC0vw2B/RYgWr
+         vJrgY70rg4RAiefBV5d6PXRSjmxiKKIbNCerDjPtK3L3WTvkeDYYo7kBT/1YVMJsqoaD
+         e3OY0wCqWgkHrxl2CoNRbNRmh6a6x9i0c9XVeVkeb+g2x/AU3lvrlk2Ehz3CZ0zF/TR1
+         5jWG4J4Yj34tKvwcgyQcAqfdUB6OXffAk4RvCYUlCMogSrJ0YUtTuy998yGUcyxLT//3
+         Ylaw==
+X-Gm-Message-State: AAQBX9d1QmmnqkFlJtb2L5VpfRFhYxA2anl4/Rpank0SvR1jVhWY5g4K
+        BcE/LNHYuiJtrhx+AS/nnCnoIEv/o4NRnvFCJkn9CTlB+Vk=
+X-Google-Smtp-Source: AKy350aiJxvHCooewzozXsmKXARhpAB0L47fNUhL40jANTXN6c8HxALaTorTsW7+fopE4GfIBFZFlh/LwyQMVxLoH7k=
+X-Received: by 2002:a67:d59c:0:b0:42a:2785:102e with SMTP id
+ m28-20020a67d59c000000b0042a2785102emr644152vsj.0.1680849774774; Thu, 06 Apr
+ 2023 23:42:54 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TYUPR06MB6079:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4b22288-b0c3-428d-bb9b-08db372e9a17
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tu31TZIxdZa84B8QPjWjhRtM7/krRjuSDbWyWA34iCcdU/mevIf1+kGnt54C0sIBlRcso2hEDnLjfG3a2F4yoCsXu3jSMahFZizBRFcKSFRiiAmthXrcdf7Fah1VRCGOK8u7v453TjBaQueukRgyLeUorYRrJ2wSKJuCfbtlp5jyW0YoMcNj48lnWuWqGZwQqX2ntPEkf4uJbLQEJ/U845e1i1Bj6r9NOwtQiJIyDkpFqoNPSK+u60vvkOgDQzh5mx32oWdSLi/x0qaimh7j2yzAkU3P5xo+/oq553xwMHGc0qkjxsVt9SqVmuJ7xeX2VtkdD8iJ+hGYTlEloH1vi0guGgWm0pGd1cxt2heuxvkOvK+osF24bzoKzb/bazNWIwgqj+TgarPJTW/i9W6tVy930LbYnC1COy22h5z9ud7WkdsPEEIpy5q1MQaqfp7LRmi3+4iWgJjwtCYWc9XBFqoQQIA58+grX78kH/ZfATRgSBJXUhx1tgWPT3StyyZsOsIFWF+heA093ICWGUGNQLx5lzD2flDYl0vgc24p40vNRR6KMjP2mGyKMEP6J+FwZ4xRkSbRRGsHA1MqG3EIXo0v2ZH3u9Wk1Ff9w0VdXbl6+VX7iIIXaVHx3kwryqO8
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(346002)(376002)(366004)(136003)(451199021)(7416002)(36756003)(2906002)(8676002)(8936002)(5660300002)(38350700002)(38100700002)(86362001)(478600001)(6486002)(52116002)(6666004)(2616005)(316002)(186003)(26005)(6512007)(6506007)(1076003)(66476007)(4326008)(6916009)(66556008)(66946007)(41300700001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TmxZcDQyaHdUTFdMYjNnRkV5OTNJeUZNKzRCVU9RQlNIbTlpZUlzV1YyWXVr?=
- =?utf-8?B?UnBVVTRwQVRxMmtjZmFET0ttNmhibHFmUTdlM0duclowRFVCMkhDbWpDMmsr?=
- =?utf-8?B?Tlo0dnI5dUloR2JNN1h4R3RtVlk0WVV4YmZ1bjkwLzRSQzdzY25jZGlwRmkr?=
- =?utf-8?B?RDFnVGVjNGsrS29BR1Vqbi9RelZWeUF3WUZEeXEwSXpvS01veVZJaFIxUG8v?=
- =?utf-8?B?eEZRTWdNZ2dHd0J3ZlpxRFdxUTd6OTl1UXhYTy9ENjZjdktBY0ZtRVJXV3Uy?=
- =?utf-8?B?Nk1abEdmRHYyMnJTV2h1Z2JkNkowS05sVTd5WFoyRmM2eFl5OHBLYkFqeTJ6?=
- =?utf-8?B?UWJZZGk2WCtIOUlIaTdkRGlpTi94QkVtbmMwMGI2Z0VzODJzTjlwakloem1S?=
- =?utf-8?B?dFNSN2VZYkRON0ZyVlJpaTZVQ3ZUblB0VWRTYTlQTHBSZ3NiUDR5czZUbW5x?=
- =?utf-8?B?SGo3KzBpUUx5ZGdUMjVqUFk1Z2N0N25tT1A1akd6T2Q2OHFqNDVibUpPV29u?=
- =?utf-8?B?Uk1pWkE0MDBKSUg5SEdHeXoxTW5NMTV0UU5yQW10eUNBN3FuU3pBUUVPaU5F?=
- =?utf-8?B?R2xsU2xUbW1Qd2NRdTBkU1lLVWxTSEVmMG5maGsrKzVIWWF1bytZUERFSmxz?=
- =?utf-8?B?RHdPNjNxUnVtd0taT28wU3hJVThZSkIzdUhHNU9sODhWMUZSUGhpcitqTXhx?=
- =?utf-8?B?M3RDYzAzakVDMFFaYlZ2ZmNYamUyWkI0YWFSb1dMSVVueitZWW9VbDM4YXZv?=
- =?utf-8?B?UUxGYVl0cSs3a0xTMDdjQlU4SkVzUWdLTXEyMW1DemtocS9HT3lOY2Z1N01m?=
- =?utf-8?B?R0wzaGhmSXNuTi9BbVhkdFpvYUhMZ1Q2WFFRT3U5dTZLRWR3a1NmT25EZWhj?=
- =?utf-8?B?RHE5SE1YbXQyNjhuZHc2d213Q28yOVgrNFo0RWpES1BqNGRDMWtTb1JJaHJX?=
- =?utf-8?B?SmdiT2FEOGZ4SmdSaGlHK1hWRFZJakV2MkNZRmdCSmtDdlpyY3BUa0Rqcm1y?=
- =?utf-8?B?Qm4wWkZhU3l3b2pwUi9qYUxJME1Ram9QT2E5SzQ3SGhlTmpZdDc4bUNzRTNG?=
- =?utf-8?B?T0RwZDBHKzNNbjdqWVBFOURXcUpraEpCNldNU0NwdjZqL0VPa2x0YWw1bTRG?=
- =?utf-8?B?cVg3eldpTkZBMFBLMzFJZkMzZDZsWnlGMWd6cExNSkIxL2tNTVJXTk83dDhi?=
- =?utf-8?B?S1BPZ0ZHMlVnWk9QYTE3Vmc4ZXIxSnVidGQ3aFR5UTN1WXl3UU1tSW04QWJp?=
- =?utf-8?B?dUtGTmpFdkZlbzVlU2FiMmxsdGF0WXRadUNzNmM0encvTVg2RlB4Y0M3OHpi?=
- =?utf-8?B?S01pb3lLTFU3aTBYMTVSc3ExTDFHQTdJdkpHdkRzQlJ5eFJEQyt5dkU1VS9u?=
- =?utf-8?B?WUJNWmFmWEFrcFpRY0hiRHN1TUtGT2RvSHpDd3BZM3pCekU5K1FlOVVZSy9m?=
- =?utf-8?B?cU9ETmJNb1ZiM01OKzFldjdxSVhvK0NoOWNPWk5IYWlpWXQ3MVBnYXA0OTNW?=
- =?utf-8?B?N2hLUHN0eC9QZ2h1cnlLVHpUUk9OS0VSb1U0T1dJVVlzV2V2TUx3RWdCMkJW?=
- =?utf-8?B?MGc5KytCbjJlTERPY2t2NHJjVUxsQkVlNVMybERFT2EybFU1TUZ6VnErbFM0?=
- =?utf-8?B?Wm5CcDY4azBFZ3pBM1VzcHMyOE43c1ZXbVBPc003T0lINzBUcVhuMSsxdEVL?=
- =?utf-8?B?YUM1U005dXJ6K3BGQTUvSXNpZGZSSjR5M2JFUCsyL09xR2ZJRzVLMHBJUGsv?=
- =?utf-8?B?MHI5QmdYK01GaXpXUWhrbEpKU0d4Y2t6clc2TzJXSnNzb2ZKWUJTY2NwNWdz?=
- =?utf-8?B?cHMwdlI4SXVIVHpBbVV2YWNkOVNmRHZEL0djNmU2RDJUd3NkaS9CN0E4cmFF?=
- =?utf-8?B?MHFOTmEvend6TWJEbmxnZmJjb0l2cURIa3RsTVIyRmN6Mk5lVldLTHJFenI5?=
- =?utf-8?B?amdUWWhyR1BrNHFGTVNJcEJ3aVIvNjYzS005MnZFS1BEa3VUY1p5aEZEZ29J?=
- =?utf-8?B?WWZ4UUYrV1hKakQ2MHpPRGozM0xkSHNLQzNXdVJEcGl5UlF1cWE2emxCV21W?=
- =?utf-8?B?NXZENjNmeTlnTlNJaE9udTZVT25zd2kzbjhXUDlDaDIzaVJ4aGhIOGtOMUdB?=
- =?utf-8?Q?C/I6CJVRdIgo1XnXlA4jCozIg?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4b22288-b0c3-428d-bb9b-08db372e9a17
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2023 06:09:10.0107
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aVEbf2mKqBLfs/qRd4eJ1RId5rF6FMaAvh2c2YfABXnRoFYT0rA72zFVKKw+miTPVOKvEv9m3knkqoBDUsAJSA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB6079
+References: <20230405171449.4064321-1-stefanb@linux.ibm.com>
+ <20230406-diffamieren-langhaarig-87511897e77d@brauner> <CAHC9VhQsnkLzT7eTwVr-3SvUs+mcEircwztfaRtA+4ZaAh+zow@mail.gmail.com>
+ <a6c6e0e4-047f-444b-3343-28b71ddae7ae@linux.ibm.com> <CAHC9VhQyWa1OnsOvoOzD37EmDnESfo4Rxt2eCSUgu+9U8po-CA@mail.gmail.com>
+ <20230406-wasser-zwanzig-791bc0bf416c@brauner> <546145ecbf514c4c1a997abade5f74e65e5b1726.camel@kernel.org>
+ <45a9c575-0b7e-f66a-4765-884865d14b72@linux.ibm.com> <60339e3bd08a18358ac8c8a16dc67c74eb8ba756.camel@kernel.org>
+ <d61ed13b-0fd2-0283-96d2-0ff9c5e0a2f9@linux.ibm.com>
+In-Reply-To: <d61ed13b-0fd2-0283-96d2-0ff9c5e0a2f9@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 7 Apr 2023 09:42:43 +0300
+Message-ID: <CAOQ4uxgoMsQnoe7VFtTDCGK_FWk==fCa8rfJ0uUr2XeWpKLy=g@mail.gmail.com>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after writes
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Paul Moore <paul@paul-moore.com>, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -124,32 +79,126 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Greg,
+On Thu, Apr 6, 2023 at 11:23=E2=80=AFPM Stefan Berger <stefanb@linux.ibm.co=
+m> wrote:
+>
+>
+>
+> On 4/6/23 15:37, Jeff Layton wrote:
+> > On Thu, 2023-04-06 at 15:11 -0400, Stefan Berger wrote:
+> >>
+> >> On 4/6/23 14:46, Jeff Layton wrote:
+> >>> On Thu, 2023-04-06 at 17:01 +0200, Christian Brauner wrote:
+> >>>> On Thu, Apr 06, 2023 at 10:36:41AM -0400, Paul Moore wrote:
+> >>
+> >>>
+> >>> Correct. As long as IMA is also measuring the upper inode then it see=
+ms
+> >>> like you shouldn't need to do anything special here.
+> >>
+> >> Unfortunately IMA does not notice the changes. With the patch provided=
+ in the other email IMA works as expected.
+> >>
+> >
+> >
+> > It looks like remeasurement is usually done in ima_check_last_writer.
+> > That gets called from __fput which is called when we're releasing the
+> > last reference to the struct file.
+> >
+> > You've hooked into the ->release op, which gets called whenever
+> > filp_close is called, which happens when we're disassociating the file
+> > from the file descriptor table.
+> >
+> > So...I don't get it. Is ima_file_free not getting called on your file
+> > for some reason when you go to close it? It seems like that should be
+> > handling this.
+>
+> I would ditch the original proposal in favor of this 2-line patch shown h=
+ere:
+>
+> https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468-ecbde3b22=
+1af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
+>
+>
+> The new proposed i_version increase occurs on the inode that IMA sees lat=
+er on for
+> the file that's being executed and on which it must do a re-evaluation.
+>
+> Upon file changes ima_inode_free() seems to see two ima_file_free() calls=
+,
+> one for what seems to be the upper layer (used for vfs_* functions below)
+> and once for the lower one.
+> The important thing is that IMA will see the lower one when the file gets
+> executed later on and this is the one that I instrumented now to have its
+> i_version increased, which in turn triggers the re-evaluation of the file=
+ post
+> modification.
+>
+> static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+> [...]
+>         struct fd real;
+> [...]
+>         ret =3D ovl_real_fdget(file, &real);
+>         if (ret)
+>                 goto out_unlock;
+>
+> [...]
+>         if (is_sync_kiocb(iocb)) {
+>                 file_start_write(real.file);
+> -->             ret =3D vfs_iter_write(real.file, iter, &iocb->ki_pos,
+>                                      ovl_iocb_to_rwf(ifl));
+>                 file_end_write(real.file);
+>                 /* Update size */
+>                 ovl_copyattr(inode);
+>         } else {
+>                 struct ovl_aio_req *aio_req;
+>
+>                 ret =3D -ENOMEM;
+>                 aio_req =3D kmem_cache_zalloc(ovl_aio_request_cachep, GFP=
+_KERNEL);
+>                 if (!aio_req)
+>                         goto out;
+>
+>                 file_start_write(real.file);
+>                 /* Pacify lockdep, same trick as done in aio_write() */
+>                 __sb_writers_release(file_inode(real.file)->i_sb,
+>                                      SB_FREEZE_WRITE);
+>                 aio_req->fd =3D real;
+>                 real.flags =3D 0;
+>                 aio_req->orig_iocb =3D iocb;
+>                 kiocb_clone(&aio_req->iocb, iocb, real.file);
+>                 aio_req->iocb.ki_flags =3D ifl;
+>                 aio_req->iocb.ki_complete =3D ovl_aio_rw_complete;
+>                 refcount_set(&aio_req->ref, 2);
+> -->             ret =3D vfs_iocb_iter_write(real.file, &aio_req->iocb, it=
+er);
+>                 ovl_aio_put(aio_req);
+>                 if (ret !=3D -EIOCBQUEUED)
+>                         ovl_aio_cleanup_handler(aio_req);
+>         }
+>          if (ret > 0)                                           <--- this=
+ get it to work
+>                  inode_maybe_inc_iversion(inode, false);                <=
+--- since this inode is known to IMA
 
-> just let it hang off as a separate structure (i.e. a pointer to something else.)
+If the aio is queued, then I think increasing i_version here may be prematu=
+re.
 
-I have made some attempts. According to my understanding, the reason why the
-filesystem needs to embed the kobj structure (not a pointer) is that the kobj_to_sbi
-method is required in the attr_store/attr_show method for subsequent data processing.
+Note that in this code flow, the ovl ctime is updated in
+ovl_aio_cleanup_handler() =3D> ovl_copyattr()
+after file_end_write(), similar to the is_sync_kiocb() code patch.
 
-130 static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
-131                                                 const char *buf, size_t len)
-132 {
-133         struct erofs_sb_info *sbi = container_of(kobj, struct erofs_sb_info,
-134                                                 s_kobj);
+It probably makes most sense to include i_version in ovl_copyattr().
+Note that this could cause ovl i_version to go backwards on copy up
+(i.e. after first open for write) when switching from the lower inode
+i_version to the upper inode i_version.
 
-If we turn the kobject in sbi into a pointer, then we need to insert a pointer
-to sbi in the kobject, or perform the following encapsulation.
+Jeff's proposal to use vfs_getattr_nosec() in IMA code is fine too.
+It will result in the same i_version jump.
 
-struct filesystem_kobject {
-        struct kobject kobject;
-	void *private;
-};
+IMO it wouldn't hurt to have a valid i_version value in the ovl inode
+as well. If the ovl inode values would not matter, we would not have
+needed  ovl_copyattr() at all, but it's not good to keep vfs in the dark...
 
-Later, I thought I could send some demo code that strips the kobject in sbi into a pointer.
-
-BTW, Now sysfs.c in many file systems is full of a lot of repetitive code, maybe we can abstract the common part?
-Like filesystem_attr、filesystem_kobject_ops、filesystem_kobject_ktype...
-
-Thx,
-Yangtao
+Thanks,
+Amir.
