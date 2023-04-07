@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C638A6DABA3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 12:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 307D86DAC1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Apr 2023 13:11:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240607AbjDGKub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Apr 2023 06:50:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41384 "EHLO
+        id S229609AbjDGLLI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Apr 2023 07:11:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231175AbjDGKu3 (ORCPT
+        with ESMTP id S231915AbjDGLLG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Apr 2023 06:50:29 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD7CB49DB;
-        Fri,  7 Apr 2023 03:50:27 -0700 (PDT)
+        Fri, 7 Apr 2023 07:11:06 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B5547ECB;
+        Fri,  7 Apr 2023 04:11:05 -0700 (PDT)
 Received: from [192.168.10.39] (unknown [119.155.57.40])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 88EE466031A4;
-        Fri,  7 Apr 2023 11:50:19 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 5F33E66031A4;
+        Fri,  7 Apr 2023 12:10:57 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1680864625;
-        bh=P8yF/E8G1GvIUrwOi1mexCebBBHEtFanTu2WunsLvz4=;
+        s=mail; t=1680865863;
+        bh=B0IW8AxLLQ/M9fKJHJt4ViUXFpwbhTGWKP+3cfqzxFg=;
         h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=jwsJ0V8HH/MiLKUqPJXwtPH6Cl83QV0xaT69QVX8eGPFiWvWj8onH2k5LGYcN4h8w
-         XfloZVX9ALnP7RHZEPNb2uxErVmxGpCvgPU1ffnVok7cBtsgxlQ35pcDL2nAFMJi8P
-         GwqeZprQyFMOK2RDiGC8gLvsUEiYqpZF/AFsPUvY5/2Gj95lm0KzBA1IbaJ7vXJxIu
-         kxb21+y0GPZ3FQs4IastwAuTWZMp57lfLSQPC8yf/TE3oW12EX2SvQ8B3JpsSLmHhv
-         qjWxUWksyd9RvWdjYnAT+MoupIMjYuGVrfL+QEJfXraDttUg/ZVa7FUi1pVrqXzUDR
-         m0yoRpQKaxJ2g==
-Message-ID: <2992d40c-ddac-ed5f-ca80-8d3fc08b10e6@collabora.com>
-Date:   Fri, 7 Apr 2023 15:50:14 +0500
+        b=Xn0pM5CwwZf3DBlCqByzYb2srNvK6Qsouf17RM6648RFVLhn+gQGdMjOePDCDjphn
+         JcSpxS7uKiK7UvQds03zKV0j9nPHJ/q2OwifkwvL0drbd7AWYKRVODQi5j6WxHH9NT
+         qKANjVs8LTaIHfjbdqqzBN0NAw0yznOUMW7id71VTMOrNTAzYfjjt3w9UNIbi24ECl
+         D1AVay9dwuc9ZO2xLnW8+1AnHVwIaP2ZVB4tJY2L28ImkpMh1/IL0cq1c/jtgCgREi
+         ixdBN9y45uRzNgCEoD8KCBkoqLnb8CX++e4Mhi5im273IpjyPXNNQ7D4+HkW+/0BR4
+         NUsIPoRTYp/bw==
+Message-ID: <05e14540-7092-5dd2-d503-473b673af716@collabora.com>
+Date:   Fri, 7 Apr 2023 16:10:51 +0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
+        Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
         David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andrei Vagin <avagin@gmail.com>,
         Danylo Mocherniuk <mdanylo@google.com>,
         Paul Gofman <pgofman@codeweavers.com>,
         Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Nadav Amit <namit@vmware.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Shuah Khan <shuah@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
@@ -69,15 +69,15 @@ Content-Language: en-US
 To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
 References: <20230406074005.1784728-1-usama.anjum@collabora.com>
  <20230406074005.1784728-3-usama.anjum@collabora.com>
- <CABb0KFFTb3LCbyPWLSodtntw=tizYki-pc4nSHBmQOFhKoNYfA@mail.gmail.com>
- <b737dceb-a228-7ffe-0758-421505f1a61d@collabora.com>
- <CABb0KFF+sKSv7jdxBbXpt5A2WO83tKb9viq-kKurXN_e1VcFhQ@mail.gmail.com>
- <c535ce4a-d7da-1ce2-9883-7cefb6dd88a2@collabora.com>
- <CABb0KFE8pn+VORr8c=HWzKzJ5L5ZBRZMg2Q1dEZGU9gLqGZNLQ@mail.gmail.com>
- <b3e4d688-b96f-7c44-a6be-375d44263c85@collabora.com>
- <CABb0KFE=zevnsxk7U726efu8gg=9dpGyDLAwL0ShS2ZygQVhMA@mail.gmail.com>
+ <CABb0KFHZpYVML2e+Xg9+kwjyhqQkikPBhymO=EXoQnO2xjfG4g@mail.gmail.com>
+ <0351b563-5193-6431-aa9c-c5bf5741b791@collabora.com>
+ <CABb0KFE4ruptVXDpCk5MB6nkh9WeKTcKfROnx0ecoy-k1eCKCw@mail.gmail.com>
+ <8a837998-604f-a871-729e-aa274a621481@collabora.com>
+ <CABb0KFEBqAMWWpAeBfqzA4JrHo3yLyaT0rqKTUn28O0hE+szBA@mail.gmail.com>
+ <c5b9201d-141c-10ae-0475-4b230d36508b@collabora.com>
+ <CABb0KFH3mj5qt22qDLHRKjh-wB7Jrn6Pz8h-QARaf9oR65U0Qg@mail.gmail.com>
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CABb0KFE=zevnsxk7U726efu8gg=9dpGyDLAwL0ShS2ZygQVhMA@mail.gmail.com>
+In-Reply-To: <CABb0KFH3mj5qt22qDLHRKjh-wB7Jrn6Pz8h-QARaf9oR65U0Qg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
@@ -89,76 +89,74 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/7/23 3:21 PM, Michał Mirosław wrote:
-> On Fri, 7 Apr 2023 at 12:15, Muhammad Usama Anjum
+On 4/7/23 3:14 PM, Michał Mirosław wrote:
+> On Fri, 7 Apr 2023 at 12:04, Muhammad Usama Anjum
 > <usama.anjum@collabora.com> wrote:
->> On 4/7/23 3:04 PM, Michał Mirosław wrote:
->>> On Fri, 7 Apr 2023 at 11:35, Muhammad Usama Anjum
+>> On 4/7/23 12:34 PM, Michał Mirosław wrote:
+>>> On Thu, 6 Apr 2023 at 23:04, Muhammad Usama Anjum
 >>> <usama.anjum@collabora.com> wrote:
->>>> On 4/7/23 12:23 PM, Michał Mirosław wrote:
->>>>> On Thu, 6 Apr 2023 at 23:12, Muhammad Usama Anjum
+>>>> On 4/7/23 1:00 AM, Michał Mirosław wrote:
+>>>>> On Thu, 6 Apr 2023 at 19:58, Muhammad Usama Anjum
 >>>>> <usama.anjum@collabora.com> wrote:
->>>>>> On 4/7/23 1:12 AM, Michał Mirosław wrote:
->>>>>>> On Thu, 6 Apr 2023 at 09:40, Muhammad Usama Anjum
->>>>>>> <usama.anjum@collabora.com> wrote:
->>>>>>> [...]
->>>>>>>> --- a/fs/proc/task_mmu.c
->>>>>>>> +++ b/fs/proc/task_mmu.c
->>>>>>> [...]
->>>>>>>> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->>>>>>>> +                                 unsigned long end, struct mm_walk *walk)
->>>>>>>> +{
->>>>> [...]
->>>>>>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>>>>>> +       ptl = pmd_trans_huge_lock(pmd, vma);
->>>>>>>> +       if (ptl) {
->>>>>>> [...]
->>>>>>>> +               return ret;
->>>>>>>> +       }
->>>>>>>> +process_smaller_pages:
->>>>>>>> +       if (pmd_trans_unstable(pmd))
->>>>>>>> +               return 0;
+> [...]
+>>>>>>>> +       /*
+>>>>>>>> +        * Allocate smaller buffer to get output from inside the page walk
+>>>>>>>> +        * functions and walk page range in PAGEMAP_WALK_SIZE size chunks. As
+>>>>>>>> +        * we want to return output to user in compact form where no two
+>>>>>>>> +        * consecutive regions should be continuous and have the same flags.
+>>>>>>>> +        * So store the latest element in p.cur between different walks and
+>>>>>>>> +        * store the p.cur at the end of the walk to the user buffer.
+>>>>>>>> +        */
+>>>>>>>> +       p.vec = kmalloc_array(p.vec_len, sizeof(struct page_region),
+>>>>>>>> +                             GFP_KERNEL);
+>>>>>>>> +       if (!p.vec)
+>>>>>>>> +               return -ENOMEM;
+>>>>>>>> +
+>>>>>>>> +       walk_start = walk_end = start;
+>>>>>>>> +       while (walk_end < end && !ret) {
 >>>>>>>
->>>>>>> Why pmd_trans_unstable() is needed here and not only after split_huge_pmd()?
->>>>>> I'm not entirely sure. But the idea is if THP is unstable, we should
->>>>>> return. As it doesn't seem like after splitting THP can be unstable, we
->>>>>> should not check it. Do you agree with the following?
+>>>>>>> The loop will stop if a previous iteration returned ENOSPC (and the
+>>>>>>> error will be lost) - is it intended?
+>>>>>> It is intentional. -ENOSPC means that the user buffer is full even though
+>>>>>> there was more memory to walk over. We don't treat this error. So when
+>>>>>> buffer gets full, we stop walking over further as user buffer has gotten
+>>>>>> full and return as success.
 >>>>>
->>>>> The description of pmd_trans_unstable() [1] seems to indicate that it
->>>>> is needed only after split_huge_pmd().
->>>>>
->>>>> [1] https://elixir.bootlin.com/linux/v6.3-rc5/source/include/linux/pgtable.h#L1394
->>>> Sorry, yeah pmd_trans_unstable() is need after split. But it is also needed
->>>> in normal case when ptl is NULL to rule out the case if pmd is unstable
->>>> before performing operation on normal pages:
->>>>
->>>> ptl = pmd_trans_huge_lock(pmd, vma);
->>>> if (ptl) {
->>>> ...
->>>> }
->>>> if (pmd_trans_unstable(pmd))
->>>>         return 0;
->>>>
->>>> This file has usage examples of pmd_trans_unstable():
->>>>
->>>> https://elixir.bootlin.com/linux/v6.3-rc5/source/fs/proc/task_mmu.c#L634
->>>> https://elixir.bootlin.com/linux/v6.3-rc5/source/fs/proc/task_mmu.c#L1195
->>>> https://elixir.bootlin.com/linux/v6.3-rc5/source/fs/proc/task_mmu.c#L1543
->>>> https://elixir.bootlin.com/linux/v6.3-rc5/source/fs/proc/task_mmu.c#L1887
->>>>
->>>> So we are good with what we have in this patch.
+>>>>> Thanks. What's the difference between -ENOSPC and
+>>>>> PM_SCAN_FOUND_MAX_PAGES? They seem to result in the same effect (code
+>>>>> flow).
+>>>> -ENOSPC --> user buffer has been filled completely
+>>>> PM_SCAN_FOUND_MAX_PAGES --> max_pages have been found, user buffer may
+>>>>                             still have more space
 >>>
->>> Shouldn't we signal ACTION_AGAIN then in order to call .pte_hole?
->> I'm not sure. I've not done research on it if we need to signal
->> ACTION_AGAIN as this function pagemap_scan_pmd_entry() mimics how
->> pagemap_pmd_range() handles reads to the pagemap file. pagemap_pmd_range()
->> isn't doing anything if pmd is unstable. Hence we also not doing anything.
+>>> What is the difference in code behaviour when those two cases are
+>>> compared? (I'd expect none.)
+>> There is difference:
+>> We add data to user buffer. If it succeeds with return code 0, we engage
+>> the WP. If it succeeds with PM_SCAN_FOUND_MAX_PAGES, we still engage the
+>> WP. But if we get -ENOSPC, we don't perform engage as the data wasn't added
+>> to the user buffer.
 > 
-> Doesn't this mean that if we scan a file-backed vma we would miss
-> non-present parts of the mapping in the output?
-I'm trying to mimic the same information through ioctl which is attained by
-reading the file. We'll only miss the unstable VMA here. I'm don't know
-about how often the PMD is unstable and its effects.
+> Thanks! I see it now. I see a few more corner cases here:
+> 1. If we did engage WP but fail to copy the vector we return -EFAULT
+> but the WP is already engaged. I'm not sure this is something worth
+> guarding against, but documenting that would be helpful I think.
+Sure.
+
+> 2. If uffd_wp_range() fails, but we have already processed pages
+> earlier, we should treat the error like ENOSPC and back out the failed
+> range (the earier changes would be lost otherwise).
+Backing out is easier to do for hugepages. But for normal pages, we'll have
+to write some code to find where the current data was added (in cur or in
+vec) and back out from that. I'll have to write some more code to avoid the
+side-effects as well.
+
+But aren't we going over-engineering here? Error occurred and we are trying
+to keep the previously generated correct data and returning successfully
+still to the user? I don't think we should do this. An error is error. We
+should return the error simply even if the memory flags would get lost. We
+don't know what caused the error in uffd_wp_range(). Under normal
+situation, we there shouldn't have had error.
 
 
 > 
