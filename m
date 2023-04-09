@@ -2,291 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D28D6DBBEA
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Apr 2023 17:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4084C6DC08E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Apr 2023 17:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230044AbjDHPaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Apr 2023 11:30:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56352 "EHLO
+        id S229600AbjDIPW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Apr 2023 11:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229778AbjDHPaY (ORCPT
+        with ESMTP id S229445AbjDIPW4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Apr 2023 11:30:24 -0400
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DECE31707;
-        Sat,  8 Apr 2023 08:30:21 -0700 (PDT)
-Received: from [192.168.1.190] (ip5b426bea.dynamic.kabel-deutschland.de [91.66.107.234])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Sun, 9 Apr 2023 11:22:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E802D4A;
+        Sun,  9 Apr 2023 08:22:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: buczek)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 14E8E60027FE8;
-        Sat,  8 Apr 2023 17:30:20 +0200 (CEST)
-Message-ID: <793db44e-9e6d-d118-3f88-cdbffc9ad018@molgen.mpg.de>
-Date:   Sat, 8 Apr 2023 17:30:19 +0200
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B564060C08;
+        Sun,  9 Apr 2023 15:22:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71EE2C433D2;
+        Sun,  9 Apr 2023 15:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681053774;
+        bh=JoFbzbecQMar72QvO0uBIMm1UiIbJWJem2Ie54x9qbA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ESnq4grFoKkT4WAbHlcu94zOs2tgO4EKL0auznMVcvldsb9SuYy0kJPvOZWsLb5+X
+         ZVBGj9jj2B9melGWpNTqh6CJqzokKZFxLNGokUTE7Q9KbzLXbBkuuJrE0aw3B9+4cR
+         fXbEEBHNndTwwFzevhNcaroQm50QPgFUdni4i1ii/x/nLWMvTi5N67rwqobmJ6y3IA
+         oqRUa5pENSBGdmF5o6+cTQ2LxoOc2wAmJtrWLQlHpH03x9E3PI/mX6i4Yj9M9XP1pv
+         k628DafFoMZXLLlfuKJApX8XgTAxPD/vW8yOA36uHZ1BWoGK3VOMQcbzDLFz1O1bAs
+         QxzLSBDS2+gow==
+Date:   Sun, 9 Apr 2023 17:22:47 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after
+ writes
+Message-ID: <20230409-genick-pelikan-a1c534c2a3c1@brauner>
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+ <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v3 02/11] block: Block Device Filtering Mechanism
-Content-Language: en-US
-To:     Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk,
-        hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org,
-        kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org,
-        ming.lei@redhat.com, gregkh@linuxfoundation.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20230404140835.25166-1-sergei.shtepa@veeam.com>
- <20230404140835.25166-3-sergei.shtepa@veeam.com>
-From:   Donald Buczek <buczek@molgen.mpg.de>
-In-Reply-To: <20230404140835.25166-3-sergei.shtepa@veeam.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Sergei,
-
-On 4/4/23 16:08, Sergei Shtepa wrote:
-> The block device filtering mechanism is an API that allows to attach
-> block device filters. Block device filters allow perform additional
-> processing for I/O units.
+On Fri, Apr 07, 2023 at 09:29:29AM -0400, Jeff Layton wrote:
+> > > > > 
+> > > > > I would ditch the original proposal in favor of this 2-line patch shown here:
+> > > > > 
+> > > > > https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468-ecbde3b221af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
+> > 
+> > We should cool it with the quick hacks to fix things. :)
+> > 
 > 
-> The idea of handling I/O units on block devices is not new. Back in the
-> 2.6 kernel, there was an undocumented possibility of handling I/O units
-> by substituting the make_request_fn() function, which belonged to the
-> request_queue structure. But none of the in-tree kernel modules used
-> this feature, and it was eliminated in the 5.10 kernel.
+> Yeah. It might fix this specific testcase, but I think the way it uses
+> the i_version is "gameable" in other situations. Then again, I don't
+> know a lot about IMA in this regard.
 > 
-> The block device filtering mechanism returns the ability to handle I/O
-> units. It is possible to safely attach filter to a block device "on the
-> fly" without changing the structure of block devices stack.
+> When is it expected to remeasure? If it's only expected to remeasure on
+> a close(), then that's one thing. That would be a weird design though.
 > 
-> Co-developed-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
-> ---
->   MAINTAINERS                     |   3 +
->   block/Makefile                  |   2 +-
->   block/bdev.c                    |   1 +
->   block/blk-core.c                |  40 ++++++-
->   block/blk-filter.c              | 199 ++++++++++++++++++++++++++++++++
->   block/blk.h                     |  10 ++
->   block/genhd.c                   |   2 +
->   block/ioctl.c                   |   7 ++
->   block/partitions/core.c         |   2 +
->   include/linux/blk-filter.h      |  51 ++++++++
->   include/linux/blk_types.h       |   2 +
->   include/linux/blkdev.h          |   1 +
->   include/uapi/linux/blk-filter.h |  35 ++++++
->   include/uapi/linux/fs.h         |   5 +
->   14 files changed, 357 insertions(+), 3 deletions(-)
->   create mode 100644 block/blk-filter.c
->   create mode 100644 include/linux/blk-filter.h
->   create mode 100644 include/uapi/linux/blk-filter.h
+> > > > > 
+> > > > > 
+> > > > 
+> > > > Ok, I think I get it. IMA is trying to use the i_version from the
+> > > > overlayfs inode.
+> > > > 
+> > > > I suspect that the real problem here is that IMA is just doing a bare
+> > > > inode_query_iversion. Really, we ought to make IMA call
+> > > > vfs_getattr_nosec (or something like it) to query the getattr routine in
+> > > > the upper layer. Then overlayfs could just propagate the results from
+> > > > the upper layer in its response.
+> > > > 
+> > > > That sort of design may also eventually help IMA work properly with more
+> > > > exotic filesystems, like NFS or Ceph.
+> > > > 
+> > > > 
+> > > > 
+> > > 
+> > > Maybe something like this? It builds for me but I haven't tested it. It
+> > > looks like overlayfs already should report the upper layer's i_version
+> > > in getattr, though I haven't tested that either:
+> > > 
+> > > -----------------------8<---------------------------
+> > > 
+> > > [PATCH] IMA: use vfs_getattr_nosec to get the i_version
+> > > 
+> > > IMA currently accesses the i_version out of the inode directly when it
+> > > does a measurement. This is fine for most simple filesystems, but can be
+> > > problematic with more complex setups (e.g. overlayfs).
+> > > 
+> > > Make IMA instead call vfs_getattr_nosec to get this info. This allows
+> > > the filesystem to determine whether and how to report the i_version, and
+> > > should allow IMA to work properly with a broader class of filesystems in
+> > > the future.
+> > > 
+> > > Reported-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > 
+> > So, I think we want both; we want the ovl_copyattr() and the
+> > vfs_getattr_nosec() change:
+> > 
+> > (1) overlayfs should copy up the inode version in ovl_copyattr(). That
+> >     is in line what we do with all other inode attributes. IOW, the
+> >     overlayfs inode's i_version counter should aim to mirror the
+> >     relevant layer's i_version counter. I wouldn't know why that
+> >     shouldn't be the case. Asking the other way around there doesn't
+> >     seem to be any use for overlayfs inodes to have an i_version that
+> >     isn't just mirroring the relevant layer's i_version.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2cbe4331ac97..fb6b7abe83e1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3576,6 +3576,9 @@ M:	Sergei Shtepa <sergei.shtepa@veeam.com>
->   L:	linux-block@vger.kernel.org
->   S:	Supported
->   F:	Documentation/block/blkfilter.rst
-> +F:	block/blk-filter.c
-> +F:	include/linux/blk-filter.h
-> +F:	include/uapi/linux/blk-filter.h
->   
->   BLOCK LAYER
->   M:	Jens Axboe <axboe@kernel.dk>
-> diff --git a/block/Makefile b/block/Makefile
-> index 4e01bb71ad6e..d4671c7e499c 100644
-> --- a/block/Makefile
-> +++ b/block/Makefile
-> @@ -9,7 +9,7 @@ obj-y		:= bdev.o fops.o bio.o elevator.o blk-core.o blk-sysfs.o \
->   			blk-lib.o blk-mq.o blk-mq-tag.o blk-stat.o \
->   			blk-mq-sysfs.o blk-mq-cpumap.o blk-mq-sched.o ioctl.o \
->   			genhd.o ioprio.o badblocks.o partitions/ blk-rq-qos.o \
-> -			disk-events.o blk-ia-ranges.o
-> +			disk-events.o blk-ia-ranges.o blk-filter.o
->   
->   obj-$(CONFIG_BOUNCE)		+= bounce.o
->   obj-$(CONFIG_BLK_DEV_BSG_COMMON) += bsg.o
-> diff --git a/block/bdev.c b/block/bdev.c
-> index 1795c7d4b99e..e290020810dd 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -424,6 +424,7 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
->   		return NULL;
->   	}
->   	bdev->bd_disk = disk;
-> +	bdev->bd_filter = NULL;
->   	return bdev;
->   }
->   
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index 42926e6cb83c..179a1c9ecc90 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -18,6 +18,7 @@
->   #include <linux/blkdev.h>
->   #include <linux/blk-pm.h>
->   #include <linux/blk-integrity.h>
-> +#include <linux/blk-filter.h>
->   #include <linux/highmem.h>
->   #include <linux/mm.h>
->   #include <linux/pagemap.h>
-> @@ -591,10 +592,32 @@ static inline blk_status_t blk_check_zone_append(struct request_queue *q,
->   	return BLK_STS_OK;
->   }
->   
-> +static bool submit_bio_filter(struct bio *bio)
-> +{
-> +	/*
-> +	 * If this bio came from the filter driver, send it straight down to the
-> +	 * actual device and clear the filtered flag, as the bio could be passed
-> +	 * on to another device that might have a filter attached again.
-> +	 */
-> +	if (bio_flagged(bio, BIO_FILTERED)) {
-> +		bio_clear_flag(bio, BIO_FILTERED);
-> +		return false;
-> +	}
-> +	bio_set_flag(bio, BIO_FILTERED);
-> +	return bio->bi_bdev->bd_filter->ops->submit_bio(bio);
-> +}
-> +
->   static void __submit_bio(struct bio *bio)
->   {
->   	struct gendisk *disk = bio->bi_bdev->bd_disk;
->   
-> +	/*
-> +	 * If there is a filter driver attached, check if the BIO needs to go to
-> +	 * the filter driver first, which can then pass on the bio or consume it.
-> +	 */
-> +	if (bio->bi_bdev->bd_filter && submit_bio_filter(bio))
-> +		return;
-> +
->   	if (unlikely(!blk_crypto_bio_prep(&bio)))
->   		return;
->   
-> @@ -682,6 +705,15 @@ static void __submit_bio_noacct_mq(struct bio *bio)
->   	current->bio_list = NULL;
->   }
->   
-> +/**
-> + * submit_bio_noacct_nocheck - re-submit a bio to the block device layer for I/O
-> + *	from block device filter.
-> + * @bio:  The bio describing the location in memory and on the device.
-> + *
-> + * This is a version of submit_bio() that shall only be used for I/O that is
-> + * resubmitted to lower level by block device filters.  All file  systems and
-> + * other upper level users of the block layer should use submit_bio() instead.
-> + */
->   void submit_bio_noacct_nocheck(struct bio *bio)
->   {
->   	blk_cgroup_bio_start(bio);
-> @@ -702,13 +734,17 @@ void submit_bio_noacct_nocheck(struct bio *bio)
->   	 * to collect a list of requests submited by a ->submit_bio method while
->   	 * it is active, and then process them after it returned.
->   	 */
-> -	if (current->bio_list)
-> +	if (current->bio_list) {
->   		bio_list_add(&current->bio_list[0], bio);
-> -	else if (!bio->bi_bdev->bd_disk->fops->submit_bio)
-> +		return;
-> +	}
-> +
-> +	if (!bio->bi_bdev->bd_disk->fops->submit_bio)
->   		__submit_bio_noacct_mq(bio);
->   	else
->   		__submit_bio_noacct(bio);
->   }
-> +EXPORT_SYMBOL_GPL(submit_bio_noacct_nocheck);
->   
->   /**
->    * submit_bio_noacct - re-submit a bio to the block device layer for I/O
-> diff --git a/block/blk-filter.c b/block/blk-filter.c
-> new file mode 100644
-> index 000000000000..5e9d884fad4d
-> --- /dev/null
-> +++ b/block/blk-filter.c
-> @@ -0,0 +1,199 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (C) 2023 Veeam Software Group GmbH */
-> +#include <linux/blk-filter.h>
-> +#include <linux/blk-mq.h>
-> +#include <linux/module.h>
-> +
-> +#include "blk.h"
-> +
-> +static LIST_HEAD(blkfilters);
-> +static DEFINE_SPINLOCK(blkfilters_lock);
-> +
-> +static inline struct blkfilter_operations *__blkfilter_find(const char *name)
-> +{
-> +	struct blkfilter_operations *ops;
-> +
-> +	list_for_each_entry(ops, &blkfilters, link)
-> +		if (strncmp(ops->name, name, BLKFILTER_NAME_LENGTH) == 0)
-> +			return ops;
-> +
-> +	return NULL;
-> +}
-> +
-> +static inline struct blkfilter_operations *blkfilter_find_get(const char *name)
-> +{
-> +	struct blkfilter_operations *ops;
-> +
-> +	spin_lock(&blkfilters_lock);
-> +	ops = __blkfilter_find(name);
-> +	if (ops && !try_module_get(ops->owner))
-> +		ops = NULL;
-> +	spin_unlock(&blkfilters_lock);
-> +
-> +	return ops;
-> +}
-> +
-> +int blkfilter_ioctl_attach(struct block_device *bdev,
-> +		    struct blkfilter_name __user *argp)
-> +{
-> +	struct blkfilter_name name;
-> +	struct blkfilter_operations *ops;
-> +	struct blkfilter *flt;
-> +	int ret;
-> +
-> +	if (copy_from_user(&name, argp, sizeof(name)))
-> +		return -EFAULT;
-> +
-> +	ops = blkfilter_find_get(name.name);
-> +	if (!ops)
-> +		return -ENOENT;
-> +
-> +	ret = freeze_bdev(bdev);
-> +	if (ret)
-> +		goto out_put_module;
-> +	blk_mq_freeze_queue(bdev->bd_queue);
-> +
-> +	if (bdev->bd_filter) {
-> +		if (bdev->bd_filter->ops == ops)
-> +			ret = -EALREADY;
-> +		else
-> +			ret = -EBUSY;
-> +		goto out_unfreeze;
-> +	}
+> It's less than ideal to do this IMO, particularly with an IS_I_VERSION
+> inode.
+> 
+> You can't just copy up the value from the upper. You'll need to call
+> inode_query_iversion(upper_inode), which will flag the upper inode for a
+> logged i_version update on the next write. IOW, this could create some
+> (probably minor) metadata write amplification in the upper layer inode
+> with IS_I_VERSION inodes.
 
-Maybe detach the old filter and attach the new one instead? An atomic replace might be usefull and it wouldn't complicate the code to do that instead. If its the same filter, maybe just return success and don't go through ops->detach and ops->attach?
+I'm likely just missing context and am curious about this so bear with me. Why
+do we need to flag the upper inode for a logged i_version update? Any required
+i_version interactions should've already happened when overlayfs called into
+the upper layer. So all that's left to do is for overlayfs' to mirror the
+i_version value after the upper operation has returned.
 
-D.
+ovl_copyattr() - which copies the inode attributes - is always called after the
+operation on the upper inode has finished. So the additional query seems odd at
+first glance. But there might well be a good reason for it. In my naive
+approach I would've thought that sm along the lines of:
 
-> [...]
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 923d66d131c1..8b089035b9b3 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -1119,4 +1119,5 @@ void ovl_copyattr(struct inode *inode)
+        inode->i_mtime = realinode->i_mtime;
+        inode->i_ctime = realinode->i_ctime;
+        i_size_write(inode, i_size_read(realinode));
++       inode_set_iversion_raw(inode, inode_peek_iversion_raw(realinode));
+ }
 
--- 
-Donald Buczek
-buczek@molgen.mpg.de
-Tel: +49 30 8413 1433
+would've been sufficient.
+
+Since overlayfs' does explicitly disallow changes to the upper and lower trees
+while overlayfs is mounted it seems intuitive that it should just mirror the
+relevant layer's i_version.
+
+If we don't do this, then we should probably document that i_version doesn't
+have a meaning yet for the inodes of stacking filesystems.
+
+> 
+> 
+> > (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
+> >     Currently, ima assumes that it will get the correct i_version from
+> >     an inode but that just doesn't hold for stacking filesystem.
+> > 
+> > While (1) would likely just fix the immediate bug (2) is correct and
+> > _robust_. If we change how attributes are handled vfs_*() helpers will
+> > get updated and ima with it. Poking at raw inodes without using
+> > appropriate helpers is much more likely to get ima into trouble.
+> 
+> This will fix it the right way, I think (assuming it actually works),
+> and should open the door for IMA to work properly with networked
+> filesystems that support i_version as well.
+> 
+> Note that there Stephen is correct that calling getattr is probably
+> going to be less efficient here since we're going to end up calling
+> generic_fillattr unnecessarily, but I still think it's the right thing
+> to do.
+> 
+> If it turns out to cause measurable performance regressions though,
+> maybe we can look at adding a something that still calls ->getattr if it
+> exists but only returns the change_cookie value.
+
+Sounds good to me.
