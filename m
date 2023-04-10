@@ -2,285 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AE626DC56A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Apr 2023 11:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB5AC6DC685
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Apr 2023 14:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229700AbjDJJ5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Apr 2023 05:57:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44566 "EHLO
+        id S229802AbjDJMF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Apr 2023 08:05:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbjDJJ5G (ORCPT
+        with ESMTP id S229660AbjDJMF6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Apr 2023 05:57:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 345AB2728;
-        Mon, 10 Apr 2023 02:57:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C6B5C612FB;
-        Mon, 10 Apr 2023 09:57:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F046C433D2;
-        Mon, 10 Apr 2023 09:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681120624;
-        bh=Qb9Wmug4U9+BqbWJHo9Bbrc1/cehXaMbdrrOHYrt/Sk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=a3Qd6K9WNjaL9sCU0jBGqmkdQUiwzR8CF68FMp0t7DYxl42rv1nxllaeBuyKId8p7
-         cPWTFNwkkeIsNxxc1wjI132N7kjQ+CmFErDfvosiiJC1y8LLlvxHJeDQgFfNdWm8Ew
-         jMtXj32hgAE6iE6UmzzjRBQbZRu9OsfEnEpa2GefZGXkwEx2EDI47/GIpwUwZ9VcnF
-         N8GE1vMdcAKotPpgTqWuBqv8G331dKAlW7Sux50duSdPPbBv9qAYpquzqNJuT9nx38
-         iBdIEkoh6TDvNcHrj/cAX+koN48pEkknnEh8kxKDf5pjGlsLe4/HonZwTUbdAt2NLB
-         WCXziAQL0P4rg==
-Message-ID: <c07853c1-6512-6539-a9dd-d9681dd51727@kernel.org>
-Date:   Mon, 10 Apr 2023 17:57:00 +0800
+        Mon, 10 Apr 2023 08:05:58 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C179559C1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Apr 2023 05:05:56 -0700 (PDT)
+Received: from fsav411.sakura.ne.jp (fsav411.sakura.ne.jp [133.242.250.110])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 33AC4rko034005;
+        Mon, 10 Apr 2023 21:04:53 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav411.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp);
+ Mon, 10 Apr 2023 21:04:53 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 33AC4qLx033995
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 10 Apr 2023 21:04:52 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <0d195f93-a22a-49a2-0020-103534d6f7f6@I-love.SAKURA.ne.jp>
+Date:   Mon, 10 Apr 2023 21:04:50 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.1
-Subject: Re: [f2fs-dev] [PATCH] f2fs: get out of a repeat loop when getting a
- locked data page
+Subject: [PATCH] sysv: don't call sb_bread() with pointers_lock held
 Content-Language: en-US
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, stable@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-References: <20230323213919.1876157-1-jaegeuk@kernel.org>
- <8aea02b0-86f9-539a-02e9-27b381e68b66@kernel.org>
- <ZCG2mfviZfY1dqb4@google.com> <ZCHCykI/BLcfDzt7@casper.infradead.org>
- <ZC2kSfNUXKK4PfpM@google.com>
- <9dc4ba32-5be5-26d8-5dd2-9bd48d6b0af4@kernel.org>
- <ZC46Ccm8xTT4OlE3@google.com>
-From:   Chao Yu <chao@kernel.org>
-In-Reply-To: <ZC46Ccm8xTT4OlE3@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     syzbot <syzbot+69b40dc5fd40f32c199f@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Chen Zhongjin <chenzhongjin@huawei.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <0000000000000ccf9a05ee84f5b0@google.com>
+ <6fcbdc89-6aff-064b-a040-0966152856e0@I-love.SAKURA.ne.jp>
+ <20230327000440.GF3390869@ZenIV>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20230327000440.GF3390869@ZenIV>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.7 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=0.0 required=5.0 tests=SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023/4/6 11:18, Jaegeuk Kim wrote:
-> On 04/06, Chao Yu wrote:
->> On 2023/4/6 0:39, Jaegeuk Kim wrote:
->>> On 03/27, Matthew Wilcox wrote:
->>>> On Mon, Mar 27, 2023 at 08:30:33AM -0700, Jaegeuk Kim wrote:
->>>>> On 03/26, Chao Yu wrote:
->>>>>> On 2023/3/24 5:39, Jaegeuk Kim wrote:
->>>>>>> https://bugzilla.kernel.org/show_bug.cgi?id=216050
->>>>>>>
->>>>>>> Somehow we're getting a page which has a different mapping.
->>>>>>> Let's avoid the infinite loop.
->>>>>>>
->>>>>>> Cc: <stable@vger.kernel.org>
->>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>> ---
->>>>>>>     fs/f2fs/data.c | 8 ++------
->>>>>>>     1 file changed, 2 insertions(+), 6 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>>>> index bf51e6e4eb64..80702c93e885 100644
->>>>>>> --- a/fs/f2fs/data.c
->>>>>>> +++ b/fs/f2fs/data.c
->>>>>>> @@ -1329,18 +1329,14 @@ struct page *f2fs_get_lock_data_page(struct inode *inode, pgoff_t index,
->>>>>>>     {
->>>>>>>     	struct address_space *mapping = inode->i_mapping;
->>>>>>>     	struct page *page;
->>>>>>> -repeat:
->>>>>>> +
->>>>>>>     	page = f2fs_get_read_data_page(inode, index, 0, for_write, NULL);
->>>>>>>     	if (IS_ERR(page))
->>>>>>>     		return page;
->>>>>>>     	/* wait for read completion */
->>>>>>>     	lock_page(page);
->>>>>>> -	if (unlikely(page->mapping != mapping)) {
->>>>>>
->>>>>> How about using such logic only for move_data_page() to limit affect for
->>>>>> other paths?
->>>>>
->>>>> Why move_data_page() only? If this happens, we'll fall into a loop in anywhere?
->>>>>
->>>>>>
->>>>>> Jaegeuk, any thoughts about why mapping is mismatch in between page's one and
->>>>>> inode->i_mapping?
->>>>>
->>>>>>
->>>>>> After several times code review, I didn't get any clue about why f2fs always
->>>>>> get the different mapping in a loop.
->>>>>
->>>>> I couldn't find the path to happen this. So weird. Please check the history in the
->>>>> bug.
->>>>>
->>>>>>
->>>>>> Maybe we can loop MM guys to check whether below folio_file_page() may return
->>>>>> page which has different mapping?
->>>>>
->>>>> Matthew may have some idea on this?
->>>>
->>>> There's a lot of comments in the bug ... hard to come into this one
->>>> cold.
->>>>
->>>> I did notice this one (#119):
->>>> : Interestingly, ref count is 514, which looks suspiciously as a binary
->>>> : flag 1000000010. Is it possible that during 5.17/5.18 implementation
->>>> : of a "pin", somehow binary flag was written to ref count, or something
->>>> : like '1 << ...' happens?
->>>>
->>>> That indicates to me that somehow you've got hold of a THP that is in
->>>> the page cache.  Probably shmem/tmpfs.  That indicate to me a refcount
->>>> problem that looks something like this:
->>>>
->>>> f2fs allocates a page
->>>> f2fs adds the page to the page cache
->>>> f2fs puts the reference to the page without removing it from the
->>>> page cache (how?)
->>>
->>> Is it somewhat related to setting a bit in private field?
->>
->> IIUC, it looks the page reference is added/removed as pair.
->>
->>>
->>> When we migrate the blocks, we do:
->>> 1) get_lock_page()
->>
->> - f2fs_grab_cache_page
->>   - pagecache_get_page
->>    - __filemap_get_folio
->>     - no_page  -> filemap_alloc_folio  page_ref = 1 (referenced by caller)
->>      - filemap_add_folio page_ref = 2 (referenced by radix tree)
->>
->>> 2) submit read
->>> 3) lock_page()
->>> 3) set_page_dirty()
->>> 4) set_page_private_gcing(page)
->>
->> page_ref = 3 (reference by private data)
->>
->>>
->>> --- in fs/f2fs/f2fs.h
->>> 1409 #define PAGE_PRIVATE_SET_FUNC(name, flagname) \
->>> 1410 static inline void set_page_private_##name(struct page *page) \
->>> 1411 { \
->>> 1412         if (!PagePrivate(page)) { \
->>> 1413                 get_page(page); \
->>> 1414                 SetPagePrivate(page); \
->>> 1415                 set_page_private(page, 0); \
->>> 1416         } \
->>> 1417         set_bit(PAGE_PRIVATE_NOT_POINTER, &page_private(page)); \
->>> 1418         set_bit(PAGE_PRIVATE_##flagname, &page_private(page)); \
->>> 1419 }
->>>
->>>
->>> 5) set_page_writebac()
->>> 6) submit write
->>> 7) unlock_page()
->>> 8) put_page(page)
->>
->> page_ref = 2 (ref by caller was removed)
->>
->>>
->>> Later, f2fs_invalidate_folio will do put_page again by:
->>> clear_page_private_gcing(&folio->page);
->>
->> page_ref = 1 (ref by private was removed, and the last left ref is hold by radix tree)
->>
->>>
->>> --- in fs/f2fs/f2fs.h
->>> 1421 #define PAGE_PRIVATE_CLEAR_FUNC(name, flagname) \
->>> 1422 static inline void clear_page_private_##name(struct page *page) \
->>> 1423 { \
->>> 1424         clear_bit(PAGE_PRIVATE_##flagname, &page_private(page)); \
->>> 1425         if (page_private(page) == BIT(PAGE_PRIVATE_NOT_POINTER)) { \
->>> 1426                 set_page_private(page, 0); \
->>> 1427                 if (PagePrivate(page)) { \
->>> 1428                         ClearPagePrivate(page); \
->>
->> Since PagePrivate was cleared, so folio_detach_private in
->> f2fs_invalidate_folio()/f2fs_release_folio will just skip drop reference.
->>
->> static inline void *folio_detach_private(struct folio *folio)
->> {
->> 	void *data = folio_get_private(folio);
->>
->> 	if (!folio_test_private(folio))
->> 		return NULL;
->> 	folio_clear_private(folio);
->> 	folio->private = NULL;
->> 	folio_put(folio);
->>
->> 	return data;
->> }
->>
->> Or am I missing something?
-> 
-> Ah, I missed folio_test_private() tho, can we really expect get_page(),
-> SetPagePrivate(), and set_page_private() is in pair with folio_detach_private()?
+syzbot is reporting sleep in atomic context in SysV filesystem [1], for
+sb_bread() is called with rw_spinlock held.
 
-I guess we are trying to maintain PagePrivate and page_private w/
-inner {set,clear}_page_private_* functions, if they are called in paired correctly,
-we don't need to call folio_detach_private() additionally in .release_folio and
-.invalid_folio, right? Otherwise there must be a bug.
+A "write_lock(&pointers_lock) => read_lock(&pointers_lock) deadlock" bug
+and a "sb_bread() with write_lock(&pointers_lock)" bug were introduced by
+"Replace BKL for chain locking with sysvfs-private rwlock" in Linux 2.5.12.
 
-In this patch, I use bug_on to instead folio_detach_private().
-https://lore.kernel.org/linux-f2fs-devel/20230410022418.1843178-1-chao@kernel.org/
+Then, "[PATCH] err1-40: sysvfs locking fix" in Linux 2.6.8 fixed the
+former bug by moving pointers_lock lock to the callers, but instead
+introduced a "sb_bread() with read_lock(&pointers_lock)" bug (which made
+this problem easier to hit).
 
-In this patch, I use {attach,detach}_page_private() to clean up openned codes.
-https://lore.kernel.org/linux-f2fs-devel/20230410022418.1843178-2-chao@kernel.org/
+Al Viro suggested that why not to do like get_branch()/get_block()/
+find_shared() in Minix filesystem does. And doing like that is almost a
+revert of "[PATCH] err1-40: sysvfs locking fix" except that get_branch()
+ from with find_shared() is called without write_lock(&pointers_lock).
 
-With above two patches, I didn't hit any panic or use-after-free issue when testing
-xfstest until now.
+Reported-by: syzbot <syzbot+69b40dc5fd40f32c199f@syzkaller.appspotmail.com>
+Link: https://syzkaller.appspot.com/bug?extid=69b40dc5fd40f32c199f
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ fs/sysv/itree.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Thanks,
+diff --git a/fs/sysv/itree.c b/fs/sysv/itree.c
+index b22764fe669c..ab4756c94755 100644
+--- a/fs/sysv/itree.c
++++ b/fs/sysv/itree.c
+@@ -82,9 +82,6 @@ static inline sysv_zone_t *block_end(struct buffer_head *bh)
+ 	return (sysv_zone_t*)((char*)bh->b_data + bh->b_size);
+ }
+ 
+-/*
+- * Requires read_lock(&pointers_lock) or write_lock(&pointers_lock)
+- */
+ static Indirect *get_branch(struct inode *inode,
+ 			    int depth,
+ 			    int offsets[],
+@@ -104,15 +101,18 @@ static Indirect *get_branch(struct inode *inode,
+ 		bh = sb_bread(sb, block);
+ 		if (!bh)
+ 			goto failure;
++		read_lock(&pointers_lock);
+ 		if (!verify_chain(chain, p))
+ 			goto changed;
+ 		add_chain(++p, bh, (sysv_zone_t*)bh->b_data + *++offsets);
++		read_unlock(&pointers_lock);
+ 		if (!p->key)
+ 			goto no_block;
+ 	}
+ 	return NULL;
+ 
+ changed:
++	read_unlock(&pointers_lock);
+ 	brelse(bh);
+ 	*err = -EAGAIN;
+ 	goto no_block;
+@@ -214,9 +214,7 @@ static int get_block(struct inode *inode, sector_t iblock, struct buffer_head *b
+ 		goto out;
+ 
+ reread:
+-	read_lock(&pointers_lock);
+ 	partial = get_branch(inode, depth, offsets, chain, &err);
+-	read_unlock(&pointers_lock);
+ 
+ 	/* Simplest case - block found, no allocation needed */
+ 	if (!partial) {
+@@ -286,9 +284,9 @@ static Indirect *find_shared(struct inode *inode,
+ 	*top = 0;
+ 	for (k = depth; k > 1 && !offsets[k-1]; k--)
+ 		;
++	partial = get_branch(inode, k, offsets, chain, &err);
+ 
+ 	write_lock(&pointers_lock);
+-	partial = get_branch(inode, k, offsets, chain, &err);
+ 	if (!partial)
+ 		partial = chain + k-1;
+ 	/*
+-- 
+2.34.1
 
-
-> I feel attach/detach_page_private would look better?
-> 
->>
->> Thanks,
->>
->>> 1429                         put_page(page); \
->>> 1430                 }\
->>> 1431         } \
->>> 1432 }
->>>
->>>> page is now free, gets reallocated into a THP
->>>> lookup from the f2fs file finds the new THP
->>>> things explode messily
->>>>
->>>> Checking page->mapping is going to avoid the messy explosion, but
->>>> you'll still have a page in the page cache which doesn't actually
->>>> belong to you, and that's going to lead to subtle data corruption.
->>>>
->>>> This should be caught by page_expected_state(), called from
->>>> free_page_is_bad(), called from free_pages_prepare().  Do your testers
->>>> have CONFIG_DEBUG_VM enabled?  That might give you a fighting chance at
->>>> finding the last place which called put_page().  It won't necessarily be
->>>> the _wrong_ place to call put_page() (that may have happened earlier),
->>>> but it may give you a clue.
->>>>
->>>>>>
->>>>>> struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
->>>>>> 		int fgp_flags, gfp_t gfp)
->>>>>> {
->>>>>> 	struct folio *folio;
->>>>>>
->>>>>> 	folio = __filemap_get_folio(mapping, index, fgp_flags, gfp);
->>>>>> 	if (IS_ERR(folio))
->>>>>> 		return NULL;
->>>>>> 	return folio_file_page(folio, index);
->>>>>> }
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>> -		f2fs_put_page(page, 1);
->>>>>>> -		goto repeat;
->>>>>>> -	}
->>>>>>> -	if (unlikely(!PageUptodate(page))) {
->>>>>>> +	if (unlikely(page->mapping != mapping || !PageUptodate(page))) {
->>>>>>>     		f2fs_put_page(page, 1);
->>>>>>>     		return ERR_PTR(-EIO);
->>>>>>>     	}
