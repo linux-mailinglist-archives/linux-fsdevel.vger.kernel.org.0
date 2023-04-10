@@ -2,148 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB0096DC2DA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Apr 2023 05:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A1546DC2F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Apr 2023 05:19:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbjDJDFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Apr 2023 23:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56146 "EHLO
+        id S229678AbjDJDTh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Apr 2023 23:19:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjDJDFp (ORCPT
+        with ESMTP id S229591AbjDJDTh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Apr 2023 23:05:45 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F209B3A85
-        for <linux-fsdevel@vger.kernel.org>; Sun,  9 Apr 2023 20:05:42 -0700 (PDT)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230410030536epoutp0495d5992f3ada28dd10d8b8dc7b5aa79b~Uc9joSus80873108731epoutp04C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Apr 2023 03:05:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230410030536epoutp0495d5992f3ada28dd10d8b8dc7b5aa79b~Uc9joSus80873108731epoutp04C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1681095936;
-        bh=SRTeLE9lQ3b/QiJsBXYPDVIGRjiZ1RqLSwa/G+aVphI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QY28z1y5nnvErGsEEOshEXhyonfXsQNp8DcyAE2njfK/489zUHWcfjBuB6TfoV0Tn
-         AndF/8vO9UPAMpeoAxxPFj6zWyf7hejMmHKJiyqQpldLoZSsm7t92/VKMarzqC2Zl+
-         rfAIQ573pkLD42kQUnDTOdcGvBs7/Tv7oN1tq3/g=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20230410030534epcas2p167ef3050097e2507e98f957af3e96d7b~Uc9hhQAue1950019500epcas2p1M;
-        Mon, 10 Apr 2023 03:05:34 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.69]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4Pvv3x2lNkz4x9Pv; Mon, 10 Apr
-        2023 03:05:33 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A1.87.09650.DFC73346; Mon, 10 Apr 2023 12:05:33 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230410030532epcas2p49eae675396bf81658c1a3401796da1d4~Uc9gRgJqf0469904699epcas2p4O;
-        Mon, 10 Apr 2023 03:05:32 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230410030532epsmtrp2e937a887cd70c1d269f082f6e901f107~Uc9gQwOwZ2512825128epsmtrp2e;
-        Mon, 10 Apr 2023 03:05:32 +0000 (GMT)
-X-AuditID: b6c32a48-dc7ff700000025b2-34-64337cfd53e7
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B6.84.08609.CFC73346; Mon, 10 Apr 2023 12:05:32 +0900 (KST)
-Received: from dell-Precision-7920-Tower.dsn.sec.samsung.com (unknown
-        [10.229.83.99]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230410030532epsmtip1b9af32e7980eee83fb3add941a66ca7d~Uc9gC5Wx_0228302283epsmtip1Y;
-        Mon, 10 Apr 2023 03:05:32 +0000 (GMT)
-From:   Kyungsan Kim <ks0204.kim@samsung.com>
-To:     dragan@stancevic.com
-Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-cxl@vger.kernel.org,
-        a.manzanares@samsung.com, viacheslav.dubeyko@bytedance.com,
-        dan.j.williams@intel.com, seungjun.ha@samsung.com,
-        wj28.lee@samsung.com
-Subject: RE: [LSF/MM/BPF TOPIC] BoF VM live migration over CXL memory
-Date:   Mon, 10 Apr 2023 12:05:32 +0900
-Message-Id: <20230410030532.427842-1-ks0204.kim@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <5d1156eb-02ae-a6cc-54bb-db3df3ca0597@stancevic.com>
+        Sun, 9 Apr 2023 23:19:37 -0400
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4831DF0
+        for <linux-fsdevel@vger.kernel.org>; Sun,  9 Apr 2023 20:19:35 -0700 (PDT)
+Received: by mail-io1-f77.google.com with SMTP id r14-20020a5e950e000000b0074cc9aba965so2859724ioj.11
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Apr 2023 20:19:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681096774; x=1683688774;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r7yRHWFPppOqFB/wqW1+J9Lrkdgg9pyRRB0DdRZBUOA=;
+        b=y7uoMD5Ul7uBbhbtTNN8gengmXIDdyZ26e0B+lTdZy53bMIrVrNYJZzCie+B8NZ+i7
+         oRAdPXxkeWVxans8wElIhXMvH1cVtJhnajd2YumDCW368nDtnx/I286guX0PFSb8Lu67
+         6Uup1n3rZc58eAgem8p72Q+1ploW+ZH4/kTDZdbrj8pbf4D0bYTk7iugf77U32D4/Wq5
+         TkxwRuVuAfeohOHznduJ8lpgFQbe4WkeSluH+5KAgs+coVNBjR4gtsVsgt+fgmfJeOCj
+         JURWhvkpwOxqS+Ph083U5dpD4F192jZn5PPgHpxvwGUM8TkJwP34LQDoVCq3e5dOW02/
+         HRqA==
+X-Gm-Message-State: AAQBX9e0RfIRhPGpyyMtl+BD6L137m4lEqk94NLd/u2Gzt1DrH0hvmxu
+        YN6MSv60n0P6ShT1ig60rtQX49T+CjTkQKrxzJ401DMoo6q7
+X-Google-Smtp-Source: AKy350bOmpUHaAdGCHmz4X1aCdsD+ximqKkWVSJWxue5Ect/utk68/h/Zgdq16fOS43dGFoFTKHxHsa6NMfI+Focm56OglBNd0bJ
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmqe7fGuMUg5c3hS2mH1a0mD71AqPF
-        obk32S3OzzrFYrFn70kWi3tr/rNa7Hu9l9niRedxJouODW8YLTbef8fmwOXx78QaNo/Fe14y
-        eWz6NIndY/KN5YwefVtWMXosXmrj8XmTXAB7VLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZ
-        gaGuoaWFuZJCXmJuqq2Si0+ArltmDtB1SgpliTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSC
-        lJwC8wK94sTc4tK8dL281BIrQwMDI1OgwoTsjFO/eQqOc1Qs2SbQwPidrYuRk0NCwETie8cB
-        IJuLQ0hgB6PEqmlTGUESQgKfGCU+HwmCSHxmlNi04wQLTMfPB5dYIBK7GCWuTWiFau9ikri+
-        /S9YFZuAtsSfK+fBdogISEjsW7MIbCyzwD9GiT2XJUFsYQFXif2/1zOD2CwCqhJ981ewg9i8
-        AjYSk2fthdomLzHz0newOKeAo0T3s89MEDWCEidnPmGBmCkv0bx1NjPIERICrRwS5979YIVo
-        dpGY2PIHapCwxKvjW9ghbCmJz+/2QgOgWOLx639Q8RKJw0t+Q9UbS7y7+RxoDgfQAk2J9bv0
-        QUwJAWWJI7eg1vJJdBz+yw4R5pXoaBOCaFSR2P5vOTPMotP7N0EN95BoP7CZGRJUUxglbi65
-        xjSBUWEWkm9mIflmFsLiBYzMqxjFUguKc9NTi40KTODRm5yfu4kRnFS1PHYwzn77Qe8QIxMH
-        4yFGCQ5mJRFeG26DFCHelMTKqtSi/Pii0pzU4kOMpsCwnsgsJZqcD0zreSXxhiaWBiZmZobm
-        RqYG5krivB87lFOEBNITS1KzU1MLUotg+pg4OKUamLZaXnz16nGv1bMFkf8tpmns3nif5ebk
-        JdHPjHlZ8n21RN8KJ3hrSF945/hMaX709FiOuY9lHn5Z7PJR97WMzM9X/fNWP1zIZyy/6u5h
-        XbGn5W6d709e+9a1xGSJ4NN3qj97LNYm1yr+ESwI3dHWFx4mWm3M/f+3TNGJne8bl81sYz6r
-        VFNgv8nchPdY7LQ9r1T6GzbIqJiZ5vw8afH4a6te1ff8+Wlt0+Pt0k732yTXFk20Sq/S23Yp
-        U7DhDuOEV0/uGymb/at4MacrPmEOa6bUraywPawrLdWOPtXfaTmZ6eaWW+uaA1v79fVy3JWm
-        PIo9c+HJIblpHwJnrl5VuzM/tre7pplzfbj29ZV6nkosxRmJhlrMRcWJAP0ort8zBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDLMWRmVeSWpSXmKPExsWy7bCSnO6fGuMUg0crtCymH1a0mD71AqPF
-        obk32S3OzzrFYrFn70kWi3tr/rNa7Hu9l9niRedxJouODW8YLTbef8fmwOXx78QaNo/Fe14y
-        eWz6NIndY/KN5YwefVtWMXosXmrj8XmTXAB7FJdNSmpOZllqkb5dAlfGqd88Bcc5KpZsE2hg
-        /M7WxcjJISFgIvHzwSWWLkYuDiGBHYwSO6bfZIRISEm8P93GDmELS9xvOcIKYgsJdDBJHP9Q
-        D2KzCWhL/LlyHmyQiICExL41ixhBBjGD1Gy9PB0sISzgKrH/93pmEJtFQFWib/4KsKG8AjYS
-        k2ftZYFYIC8x89J3sDingKNE97PPTBDLHCSutdxhhqgXlDg58wlYPTNQffPW2cwTGAVmIUnN
-        QpJawMi0ilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOAK0tHYw7ln1Qe8QIxMH4yFG
-        CQ5mJRFeG26DFCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pOxgsJpCeWpGanphakFsFkmTg4
-        pRqYVjDXBD05W//Xaw8z4923USLLJyl1XNp76G2A054twv86LtvNevntXsXPdecZviXc7N2s
-        nC1149KBLjZOtrlr7p6fcHBR0cZlWxTDXUMuC+dlfgkzrpKa1lR4Vnaj1Qd3Yc73eVaeIndn
-        LxEX+fMuei6zeXpXwuIvFjJLfM+Z3zWxLeK6ePvRnfydr+Z7+EmdDEg7fk7Hd5PdqzPBhzW/
-        zvt57a2i8s3++hq2xuqAm37XSw354nvywtfKVk5+yugvY2nSKPlWZybfzINFX9+4+P3s0Vor
-        KbeeX9d3VeNzgb1GgW8fz9p359/y6cYslkLzLxUZLgsUUT3uEfV1z0qHX9Mv+jrcnWZfcmr/
-        nq+8qUosxRmJhlrMRcWJACcs5mrvAgAA
-X-CMS-MailID: 20230410030532epcas2p49eae675396bf81658c1a3401796da1d4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230410030532epcas2p49eae675396bf81658c1a3401796da1d4
-References: <5d1156eb-02ae-a6cc-54bb-db3df3ca0597@stancevic.com>
-        <CGME20230410030532epcas2p49eae675396bf81658c1a3401796da1d4@epcas2p4.samsung.com>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a5d:85c5:0:b0:740:7bea:5287 with SMTP id
+ e5-20020a5d85c5000000b007407bea5287mr4103012ios.3.1681096774633; Sun, 09 Apr
+ 2023 20:19:34 -0700 (PDT)
+Date:   Sun, 09 Apr 2023 20:19:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000015cf6405f8f2d817@google.com>
+Subject: [syzbot] [btrfs?] WARNING in btrfs_free_block_groups
+From:   syzbot <syzbot+ba5b9ee1d6b1efe0eacf@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=3.1 required=5.0 tests=FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->Hi folks-
->
->if it's not too late for the schedule...
->
->I am starting to tackle VM live migration and hypervisor clustering over
->switched CXL memory[1][2], intended for cloud virtualization types of loads.
->
->I'd be interested in doing a small BoF session with some slides and get
->into a discussion/brainstorming with other people that deal with VM/LM
->cloud loads. Among other things to discuss would be page migrations over
->switched CXL memory, shared in-memory ABI to allow VM hand-off between
->hypervisors, etc...
->
->A few of us discussed some of this under the ZONE_XMEM thread, but I
->figured it might be better to start a separate thread.
->
->If there is interested, thank you.
+Hello,
 
-I would like join the discussion as well.
-Let me kindly suggest it would be more great if it includes the data flow of VM/hypervisor as background and kernel interaction expected.
+syzbot found the following issue on:
 
->
->
->[1]. High-level overview available at http://nil-migration.org/
->[2]. Based on CXL spec 3.0
->
->--
->Peace can only come as a natural consequence
->of universal enlightenment -Dr. Nikola Tesla
+HEAD commit:    99ddf2254feb Merge tag 'trace-v6.3-rc5' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10d37ab3c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5666fa6aca264e42
+dashboard link: https://syzkaller.appspot.com/bug?extid=ba5b9ee1d6b1efe0eacf
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/907a43450c5c/disk-99ddf225.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a142637e5396/vmlinux-99ddf225.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/447736ad6200/bzImage-99ddf225.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ba5b9ee1d6b1efe0eacf@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5126 at fs/btrfs/block-group.c:4290 btrfs_free_block_groups+0xbb9/0xe80 fs/btrfs/block-group.c:4289
+Modules linked in:
+CPU: 1 PID: 5126 Comm: syz-executor.4 Not tainted 6.3.0-rc5-syzkaller-00032-g99ddf2254feb #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
+RIP: 0010:btrfs_free_block_groups+0xbb9/0xe80 fs/btrfs/block-group.c:4289
+Code: ef e8 9b 9a 36 fe 48 8d 83 50 ff ff ff 48 89 44 24 08 48 8b 6d 00 31 ff 48 89 ee e8 41 e6 e0 fd 48 85 ed 74 1c e8 f7 e1 e0 fd <0f> 0b 48 8b 7c 24 10 48 8b 74 24 08 31 d2 31 c9 e8 c2 e4 fd ff eb
+RSP: 0018:ffffc900047bfab8 EFLAGS: 00010293
+RAX: ffffffff83a9832a RBX: ffff8881465a30b0 RCX: ffff888024043a80
+RDX: 0000000000000000 RSI: 000000000005e000 RDI: 0000000000000000
+RBP: 000000000005e000 R08: ffffffff83a980c8 R09: ffffed1028cb4601
+R10: 0000000000000000 R11: dffffc0000000001 R12: ffff8880303c9128
+R13: dffffc0000000000 R14: 1ffff11006079225 R15: ffff8880303c9a00
+FS:  0000555556f8e400(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555555ced708 CR3: 000000002ffce000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ close_ctree+0x742/0xd30 fs/btrfs/disk-io.c:4635
+ generic_shutdown_super+0x134/0x340 fs/super.c:500
+ kill_anon_super+0x3b/0x60 fs/super.c:1107
+ btrfs_kill_super+0x41/0x50 fs/btrfs/super.c:2133
+ deactivate_locked_super+0xa4/0x110 fs/super.c:331
+ cleanup_mnt+0x426/0x4c0 fs/namespace.c:1177
+ task_work_run+0x24a/0x300 kernel/task_work.c:179
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ exit_to_user_mode_loop+0xd9/0x100 kernel/entry/common.c:171
+ exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:204
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
+ syscall_exit_to_user_mode+0x64/0x280 kernel/entry/common.c:297
+ do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f019388d5d7
+Code: ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdff37d528 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f019388d5d7
+RDX: 00007ffdff37d5fb RSI: 000000000000000a RDI: 00007ffdff37d5f0
+RBP: 00007ffdff37d5f0 R08: 00000000ffffffff R09: 00007ffdff37d3c0
+R10: 0000555556f8f8b3 R11: 0000000000000246 R12: 00007f01938e6cdc
+R13: 00007ffdff37e6b0 R14: 0000555556f8f810 R15: 00007ffdff37e6f0
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
