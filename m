@@ -2,230 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D75E86DC1DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Apr 2023 00:12:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A306B6DC21D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Apr 2023 02:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229541AbjDIWMQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Apr 2023 18:12:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38608 "EHLO
+        id S229592AbjDJAAu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Apr 2023 20:00:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjDIWMP (ORCPT
+        with ESMTP id S229516AbjDJAAt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Apr 2023 18:12:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAD57273A;
-        Sun,  9 Apr 2023 15:12:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 61E6A60C49;
-        Sun,  9 Apr 2023 22:12:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6BF3C433EF;
-        Sun,  9 Apr 2023 22:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681078331;
-        bh=iKKzZ35bTSCsFycUs3feaPq1NWCyx9wZ4gEzz4E9H8A=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=TLcYbsnWmSWZ+x4GeoFgnM2PSC5M5CRQInLyKR+UEpobnUhRuIU7wzJHAWSaIRbx9
-         +Xh8IbKBWArLh13D+1Lm0orYydVqfsbzcmRlCWVtePKJkABDG2nyik15HUbXRbuFV/
-         z5Aef0Fbs80wCVZZb4wYJ8aDyju330OdfbZOXftY5/O+RM/UiNHxHP18ida63sv6WG
-         Hs4XMOqaRVQ4o6r6wujf3FB8QLmD6O7T7X220WCAfIfFmJCEgxJQnFGoFJrT5YeLA6
-         ZxZNXZZa06h2ZQ8MwFoZWU7jfREzOjUT/V++zJmMarHrQHzEmR5POxVWHdz9sV4cIK
-         D35ZqnpGWGk2A==
-Message-ID: <b2591695afc11a8924a56865c5cd2d59e125413c.camel@kernel.org>
-Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM
- after writes
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Date:   Sun, 09 Apr 2023 18:12:09 -0400
-In-Reply-To: <20230409-genick-pelikan-a1c534c2a3c1@brauner>
-References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
-         <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
-         <20230409-genick-pelikan-a1c534c2a3c1@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+        Sun, 9 Apr 2023 20:00:49 -0400
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D5C430FA
+        for <linux-fsdevel@vger.kernel.org>; Sun,  9 Apr 2023 17:00:48 -0700 (PDT)
+Received: by mail-il1-f205.google.com with SMTP id d11-20020a056e020c0b00b00326156e3a8bso25744182ile.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Apr 2023 17:00:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681084847; x=1683676847;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KUe7oj9hTq5hcskImUR6Y1MNxIs+QSkpYtdEdfE2RGE=;
+        b=x6a5z64PzYLGlZWtLHnjiTZl1Mh9aE8sxKloMCIqaICzSLyqc6d6TAbO8SM85e+m0R
+         fJbYd+b0ofSz7zcgzekOzmOFp8DFYb6dHjpMufZDXp7rlhQRZAWlCbNYb41wZP7T116a
+         1kCHxfL3aMn16khmSJJpDqexFuwkvSnsRP7TL4a8tCE5uwJFDvR15/EN1SL+EdY+OcJA
+         4nJ0ytb7X8h1RNHMVMf0+1pFFpAcG7Ysm2PnZxDt8tLyF5ECdOBBR6oQGtjqA4I8A0PV
+         b0n6Kpe765F7x3gYYJOqDVnyqieGo7NxtNusvQQY/TiA79QUAjwwCS/iPL68viaimXsY
+         HbxA==
+X-Gm-Message-State: AAQBX9eB4DvNgDxhwewW2Oyn9Y8iWpya1OYZZ0ZWfRl8Kz7At25Nyi11
+        f171zzsM4yXh+1PItGH1XWoztt+8CNlhGjOy71zRb5oGtk/v
+X-Google-Smtp-Source: AKy350Y/UG//8klK566koPPD5BsMP1Bvg8PQE7X+VafGvAkCN6LUNSl8FL7vkqf5L+9ttMzMuNMOVW72CaxQf3qr+T/vlE2/xNcc
 MIME-Version: 1.0
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a5e:8e4a:0:b0:71b:8c6:6123 with SMTP id
+ r10-20020a5e8e4a000000b0071b08c66123mr3904508ioo.3.1681084847398; Sun, 09 Apr
+ 2023 17:00:47 -0700 (PDT)
+Date:   Sun, 09 Apr 2023 17:00:47 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002aa60c05f8f0114b@google.com>
+Subject: [syzbot] [ntfs3?] WARNING in errseq_set
+From:   syzbot <syzbot+e08a9f98656d7a208859@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
+        trix@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=3.1 required=5.0 tests=FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2023-04-09 at 17:22 +0200, Christian Brauner wrote:
-> On Fri, Apr 07, 2023 at 09:29:29AM -0400, Jeff Layton wrote:
-> > > > > >=20
-> > > > > > I would ditch the original proposal in favor of this 2-line pat=
-ch shown here:
-> > > > > >=20
-> > > > > > https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468=
--ecbde3b221af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
-> > >=20
-> > > We should cool it with the quick hacks to fix things. :)
-> > >=20
-> >=20
-> > Yeah. It might fix this specific testcase, but I think the way it uses
-> > the i_version is "gameable" in other situations. Then again, I don't
-> > know a lot about IMA in this regard.
-> >=20
-> > When is it expected to remeasure? If it's only expected to remeasure on
-> > a close(), then that's one thing. That would be a weird design though.
-> >=20
-> > > > > >=20
-> > > > > >=20
-> > > > >=20
-> > > > > Ok, I think I get it. IMA is trying to use the i_version from the
-> > > > > overlayfs inode.
-> > > > >=20
-> > > > > I suspect that the real problem here is that IMA is just doing a =
-bare
-> > > > > inode_query_iversion. Really, we ought to make IMA call
-> > > > > vfs_getattr_nosec (or something like it) to query the getattr rou=
-tine in
-> > > > > the upper layer. Then overlayfs could just propagate the results =
-from
-> > > > > the upper layer in its response.
-> > > > >=20
-> > > > > That sort of design may also eventually help IMA work properly wi=
-th more
-> > > > > exotic filesystems, like NFS or Ceph.
-> > > > >=20
-> > > > >=20
-> > > > >=20
-> > > >=20
-> > > > Maybe something like this? It builds for me but I haven't tested it=
-. It
-> > > > looks like overlayfs already should report the upper layer's i_vers=
-ion
-> > > > in getattr, though I haven't tested that either:
-> > > >=20
-> > > > -----------------------8<---------------------------
-> > > >=20
-> > > > [PATCH] IMA: use vfs_getattr_nosec to get the i_version
-> > > >=20
-> > > > IMA currently accesses the i_version out of the inode directly when=
- it
-> > > > does a measurement. This is fine for most simple filesystems, but c=
-an be
-> > > > problematic with more complex setups (e.g. overlayfs).
-> > > >=20
-> > > > Make IMA instead call vfs_getattr_nosec to get this info. This allo=
-ws
-> > > > the filesystem to determine whether and how to report the i_version=
-, and
-> > > > should allow IMA to work properly with a broader class of filesyste=
-ms in
-> > > > the future.
-> > > >=20
-> > > > Reported-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > >=20
-> > > So, I think we want both; we want the ovl_copyattr() and the
-> > > vfs_getattr_nosec() change:
-> > >=20
-> > > (1) overlayfs should copy up the inode version in ovl_copyattr(). Tha=
-t
-> > >     is in line what we do with all other inode attributes. IOW, the
-> > >     overlayfs inode's i_version counter should aim to mirror the
-> > >     relevant layer's i_version counter. I wouldn't know why that
-> > >     shouldn't be the case. Asking the other way around there doesn't
-> > >     seem to be any use for overlayfs inodes to have an i_version that
-> > >     isn't just mirroring the relevant layer's i_version.
-> >=20
-> > It's less than ideal to do this IMO, particularly with an IS_I_VERSION
-> > inode.
-> >=20
-> > You can't just copy=A0up the value from the upper. You'll need to call
-> > inode_query_iversion(upper_inode), which will flag the upper inode for =
-a
-> > logged i_version update on the next write. IOW, this could create some
-> > (probably minor) metadata write amplification in the upper layer inode
-> > with IS_I_VERSION inodes.
->=20
-> I'm likely just missing context and am curious about this so bear with me=
-. Why
-> do we need to flag the upper inode for a logged i_version update? Any req=
-uired
-> i_version interactions should've already happened when overlayfs called i=
-nto
-> the upper layer. So all that's left to do is for overlayfs' to mirror the
-> i_version value after the upper operation has returned.
+Hello,
 
-> ovl_copyattr() - which copies the inode attributes - is always called aft=
-er the
-> operation on the upper inode has finished. So the additional query seems =
-odd at
-> first glance. But there might well be a good reason for it. In my naive
-> approach I would've thought that sm along the lines of:
->
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index 923d66d131c1..8b089035b9b3 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -1119,4 +1119,5 @@ void ovl_copyattr(struct inode *inode)
->         inode->i_mtime =3D realinode->i_mtime;
->         inode->i_ctime =3D realinode->i_ctime;
->         i_size_write(inode, i_size_read(realinode));
-> +       inode_set_iversion_raw(inode, inode_peek_iversion_raw(realinode))=
-;
->  }
->=20
-> would've been sufficient.
->=20
+syzbot found the following issue on:
 
-Nope, because then you wouldn't get any updates to i_version after that
-point.
+HEAD commit:    99ddf2254feb Merge tag 'trace-v6.3-rc5' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a3ec8dc80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5666fa6aca264e42
+dashboard link: https://syzkaller.appspot.com/bug?extid=e08a9f98656d7a208859
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
 
-Note that with an IS_I_VERSION inode we only update the i_version when
-there has been a query since the last update. What you're doing above is
-circumventing that mechanism. You'll get the i_version at the time of of
-the ovl_copyattr, but there won't be any updates of it after that point
-because the QUERIED bit won't end up being set on realinode.
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/907a43450c5c/disk-99ddf225.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a142637e5396/vmlinux-99ddf225.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/447736ad6200/bzImage-99ddf225.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e08a9f98656d7a208859@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+err = 556
+WARNING: CPU: 1 PID: 46 at lib/errseq.c:75 errseq_set+0xf2/0x120 lib/errseq.c:74
+Modules linked in:
+CPU: 1 PID: 46 Comm: kworker/u4:3 Not tainted 6.3.0-rc5-syzkaller-00032-g99ddf2254feb #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
+Workqueue: writeback wb_workfn (flush-7:0)
+RIP: 0010:errseq_set+0xf2/0x120 lib/errseq.c:74
+Code: fd 89 e8 5b 41 5c 41 5e 41 5f 5d c3 e8 f7 4d 5a fd 44 89 e5 eb eb e8 ed 4d 5a fd 48 c7 c7 c0 c0 37 8b 44 89 fe e8 4e 65 22 fd <0f> 0b 44 89 e5 eb d0 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 2a ff
+RSP: 0018:ffffc90000b770f0 EFLAGS: 00010246
+RAX: 4af338da7583c100 RBX: ffff888074f98bd8 RCX: ffff888017d23a80
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 000000000000022c R08: ffffffff81527c82 R09: ffffed101732515b
+R10: 0000000000000000 R11: dffffc0000000001 R12: 0000000000000000
+R13: 1ffff1100e9f317b R14: ffff888074f98da0 R15: 000000000000022c
+FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd05cb85998 CR3: 000000006cd24000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __filemap_set_wb_err+0x22/0x1e0 mm/filemap.c:698
+ mapping_set_error include/linux/pagemap.h:224 [inline]
+ ntfs_resident_writepage+0x90/0x150 fs/ntfs3/inode.c:848
+ write_cache_pages+0x89e/0x12c0 mm/page-writeback.c:2473
+ do_writepages+0x3a6/0x670 mm/page-writeback.c:2551
+ __writeback_single_inode+0x155/0xfb0 fs/fs-writeback.c:1600
+ writeback_sb_inodes+0x8ef/0x11d0 fs/fs-writeback.c:1891
+ wb_writeback+0x458/0xc70 fs/fs-writeback.c:2065
+ wb_do_writeback fs/fs-writeback.c:2208 [inline]
+ wb_workfn+0x400/0xff0 fs/fs-writeback.c:2248
+ process_one_work+0x8a0/0x10e0 kernel/workqueue.c:2390
+ worker_thread+0xa63/0x1210 kernel/workqueue.c:2537
+ kthread+0x270/0x300 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
 
 
-> Since overlayfs' does explicitly disallow changes to the upper and lower =
-trees
-> while overlayfs is mounted it seems intuitive that it should just mirror =
-the
-> relevant layer's i_version.
->
->
-> If we don't do this, then we should probably document that i_version does=
-n't
-> have a meaning yet for the inodes of stacking filesystems.
->=20
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Trying to cache the i_version is counterproductive, IMO, at least with
-an IS_I_VERSION inode.
-
-The problem is that a query against the i_version has a side-effect. It
-has to (atomically) mark the inode for an update on the next change.
-
-If you try to cache that value, you'll likely end up doing more queries
-than you really need to (because you'll need to keep the cache up to
-date) and you'll have an i_version that will necessarily lag the one in
-the upper layer inode.
-
-The whole point of the change attribute is to get the value as it is at
-this very moment so we can check whether there have been changes. A
-laggy value is not terribly useful.
-
-Overlayfs should just always call the upper layer's ->getattr to get the
-version. I wouldn't even bother copying it up in the first place. Doing
-so is just encouraging someone to try use the value in the overlayfs
-inode, when they really need to go through ->getattr and get the one
-from the upper layer.
->=20
---=20
-Jeff Layton <jlayton@kernel.org>
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
