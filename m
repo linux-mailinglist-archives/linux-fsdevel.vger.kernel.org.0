@@ -2,63 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5522A6DD17F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 07:22:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AD356DD181
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 07:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229883AbjDKFWN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 01:22:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39880 "EHLO
+        id S229897AbjDKFWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 01:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbjDKFWM (ORCPT
+        with ESMTP id S229671AbjDKFWO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 01:22:12 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F29E7C;
-        Mon, 10 Apr 2023 22:22:12 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id la3so6613081plb.11;
-        Mon, 10 Apr 2023 22:22:12 -0700 (PDT)
+        Tue, 11 Apr 2023 01:22:14 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49844E7C;
+        Mon, 10 Apr 2023 22:22:14 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id px4so4703468pjb.3;
+        Mon, 10 Apr 2023 22:22:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1681190531; x=1683782531;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Rmngkbu524+forBMckeuIV6oxujm7LgVJnw1wudpvY=;
-        b=C1UQJgTBdnT01wX3/PJMrVIGuvITewpd17pvzSzGl2ACOgWq/Re1MqSSe9lo065iXi
-         DkkzL+CgUE+SN2oaDUU6sxJScnB7YbIucBQnD0/NuBFZY+txYDoPPA3ZNGZX/I1vTPTw
-         DHov2hswa3NiIqk2g8zSF5krOJJgP1xATGWWYTHzU+mkKLSiHpJSrgq4g1QWKhyo2WfC
-         I5SjX2KmY761+BYk+PFWFb1WNq54mnELFbpB3YmFPjxRZR7E2cnnxbYIC03QYX2D+53G
-         XnsnOoZoRs42APUuIf9PNPhl9J1o7XvC0bXkBjzsHhTFlMaJFjQYtzveV9VhhCq7ckp9
-         PRtg==
+        d=gmail.com; s=20210112; t=1681190533; x=1683782533;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OL81fOb/bghP+KZDYyDUZj7Mds0Dml+eVfKAg+fWsIE=;
+        b=QaRnQs/Bg3Ezx63GwrfdxzmhHh68Ea5XVD5c17J0Rfo0C6YMuicLZpeNQxFx8Jzt4r
+         WMg4IPFU69EK37SFlm4gdaH6P4T0/KdpIHVV0j93KXTGRCYikBKyNCzhky6Xpsc0pOzT
+         1TRzf+8iGjZBnQjpDJ5ISTP4b6u89Kjj/30kp7S91PM8WyOIZ5NdPIlk41X0iIt4Pe8a
+         H5TLK8RiRvC4n7a9hC7RdoWU4o8b1byfu2Ad648ypi+Xt9wC+lhjHjJXEn52op6v8bjH
+         /1zuxyXik9yfc6DjdB8QTtZIz4FwKjE4xG0bAb/DVyIZZVt3EZAGTaTqA/QOaqbcDJGI
+         bnfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681190531; x=1683782531;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/Rmngkbu524+forBMckeuIV6oxujm7LgVJnw1wudpvY=;
-        b=X3gP+6TAxXHMFdL03+gsGexsetmDHgU4gHCLT3fomZKvKkamz4RtHuR2LessCavqDE
-         ioZlLBFeOrWtnEabv4TUCjVzs079870azL2gVXr04pZ5ULccnILBnk0Z0Rreg8umJEDM
-         vGbu1VMRIl5K4zulTYCDseBeeZ7+mzgweMKdZhDeukNa7j1BqhTfI5btNUu8Q7arxDgA
-         6F3QSVMOhR6u5BvMrdsqajAK/X6lXyOC6iZH+Os1yAw3awjLtdURMRQtEL5CbHmXjprl
-         ui9J4j7t4zdfo3x91l7MYhzuoYnh16HPBps6bOiXzx4VoUf8arZQqFJig0hacgD0Tk5l
-         bBJA==
-X-Gm-Message-State: AAQBX9epweDcqsOeYJbNth4tR09NfItnDLyiITBhbMMMGh88GYqpXPTE
-        OhK6CZFmwmhtWGq2RDNWiO/NetSCmiQ=
-X-Google-Smtp-Source: AKy350YfHzq+dXJwPIrRmxMWCEnQZqwUQxe9hKS5nqIRni3Xiu7BgROZMES62WI262xjIwzz4u81RQ==
-X-Received: by 2002:a17:903:11c7:b0:19a:727e:d4f3 with SMTP id q7-20020a17090311c700b0019a727ed4f3mr23001940plh.5.1681190530770;
-        Mon, 10 Apr 2023 22:22:10 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1681190533; x=1683782533;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OL81fOb/bghP+KZDYyDUZj7Mds0Dml+eVfKAg+fWsIE=;
+        b=P09EuNIi+JQh3SDkz6jj0HnTVL97QolW+PpBAoyDHp2zF2IWdYa5HK7LFhu7Z0f/8s
+         LstSyWFittyEh49EoL1i7YIBvnIsVjzfgdt5FmFa/lPg163uE31seEjXi/ICMTWsyChw
+         r5JcLY+YnAQNwYqr+FCZQtkwdBrE6p3zRwL8E4JI7XMVXreZxVOf9eWZcbbsppfjmbaa
+         BFhtoFSrUCrPjjx5qJ9RHo0tAP/ohXyF8ghmVlLqOidXeP7tScf0q7jTVWllwqVc4WEr
+         Fp56lvOvJoQwW0coniHP970tLM3aOJx3tKZwyTWEIjvFZ2iOVndSKuBD+/btJg7Iqf+v
+         E71Q==
+X-Gm-Message-State: AAQBX9eD07rwf8G6V3DT7ir+1hgZWddrx+OQj1JydVfzQy62Og13gQfV
+        0K83ApapU518ZR+mpaeaNL95J6wQhvs=
+X-Google-Smtp-Source: AKy350atJBErmdMpdhpSIiNUncNs8hiibGPc2Efo3Sxq0jhq3xVfvIhCPqK6DXm5RrrDbIWLFdC1UA==
+X-Received: by 2002:a17:90b:33c3:b0:236:73d5:82cf with SMTP id lk3-20020a17090b33c300b0023673d582cfmr13080391pjb.9.1681190533476;
+        Mon, 10 Apr 2023 22:22:13 -0700 (PDT)
 Received: from rh-tp.ibmuc.com ([2406:7400:63:7035:9095:349e:5f0b:ded0])
-        by smtp.gmail.com with ESMTPSA id v19-20020a17090abb9300b00246d7cd7327sm646154pjr.51.2023.04.10.22.22.08
+        by smtp.gmail.com with ESMTPSA id v19-20020a17090abb9300b00246d7cd7327sm646154pjr.51.2023.04.10.22.22.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Apr 2023 22:22:10 -0700 (PDT)
+        Mon, 10 Apr 2023 22:22:13 -0700 (PDT)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
         "Darrick J . Wong" <djwong@kernel.org>,
         Ojaswin Mujoo <ojaswin@linux.ibm.com>,
         "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFCv2 0/8] ext2: DIO to use iomap
-Date:   Tue, 11 Apr 2023 10:51:48 +0530
-Message-Id: <cover.1681188927.git.ritesh.list@gmail.com>
+Subject: [RFCv2 1/8] ext2/dax: Fix ext2_setsize when len is page aligned
+Date:   Tue, 11 Apr 2023 10:51:49 +0530
+Message-Id: <131a7e4a0e020a94c719994867484ba248316d13.1681188927.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1681188927.git.ritesh.list@gmail.com>
+References: <cover.1681188927.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
@@ -71,52 +74,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Please find the series which moves ext2 direct-io to use modern iomap interface.
+PAGE_ALIGN(x) macro gives the next highest value which is multiple of
+pagesize. But if x is already page aligned then it simply returns x.
+So, if x passed is 0 in dax_zero_range() function, that means the
+length gets passed as 0 to ->iomap_begin().
 
-Here are some more details -
-1. Patch-1: Fixes a kernel bug_on problem with ext2 dax code (found during code
-   review and testing).
-2. Patch-2: Adds a __generic_file_fsync_nolock implementation as we had
-   discussed.
-3. Patch-3 & Patch-4: Moves ext4 nojournal and ext2 to use _nolock method.
-4. Patch-5: This is the main patch which moves ext2 direct-io to use iomap.
-   (more details can be found in the patch)
-5. Patch-6: Kills IOMAP_DIO_NOSYNC flag as it is not in use by any filesystem.
-6. Patch-7: adds IOCB_STRINGS macro for use in trace events for better trace
-   output of iocb flags.
-7. Patch-8: Add ext2 trace point for DIO.
+In ext2 it then calls ext2_get_blocks -> max_blocks as 0 and hits bug_on
+here in ext2_get_blocks().
+	BUG_ON(maxblocks == 0);
 
-Testing:
-=========
-This passes ext2 "auto" group testing for fstests. There were no new failures
-with this patches.
+Instead we should be calling dax_truncate_page() here which takes
+care of it. i.e. it only calls dax_zero_range if the offset is not
+page/block aligned.
 
+This can be easily triggered with following on fsdax mounted pmem
+device.
 
-Ritesh Harjani (IBM) (8):
-  ext2/dax: Fix ext2_setsize when len is page aligned
-  libfs: Add __generic_file_fsync_nolock implementation
-  ext4: Use __generic_file_fsync_nolock implementation
-  ext2: Use __generic_file_fsync_nolock implementation
-  ext2: Move direct-io to use iomap
-  iomap: Remove IOMAP_DIO_NOSYNC unused dio flag
-  fs.h: Add IOCB_STRINGS for use in trace points
-  ext2: Add direct-io trace points
+dd if=/dev/zero of=file count=1 bs=512
+truncate -s 0 file
 
- fs/ext2/Makefile      |   2 +-
- fs/ext2/ext2.h        |   1 +
- fs/ext2/file.c        | 127 +++++++++++++++++++++++++++++++++++++++++-
- fs/ext2/inode.c       |  57 +++++++++++--------
- fs/ext2/trace.c       |   5 ++
- fs/ext2/trace.h       |  61 ++++++++++++++++++++
- fs/ext4/fsync.c       |  31 +++++------
- fs/iomap/direct-io.c  |   2 +-
- fs/libfs.c            |  43 ++++++++++++++
- include/linux/fs.h    |  15 +++++
- include/linux/iomap.h |   6 --
- 11 files changed, 303 insertions(+), 47 deletions(-)
- create mode 100644 fs/ext2/trace.c
- create mode 100644 fs/ext2/trace.h
+[79.525838] EXT2-fs (pmem0): DAX enabled. Warning: EXPERIMENTAL, use at your own risk
+[79.529376] ext2 filesystem being mounted at /mnt1/test supports timestamps until 2038 (0x7fffffff)
+[93.793207] ------------[ cut here ]------------
+[93.795102] kernel BUG at fs/ext2/inode.c:637!
+[93.796904] invalid opcode: 0000 [#1] PREEMPT SMP PTI
+[93.798659] CPU: 0 PID: 1192 Comm: truncate Not tainted 6.3.0-rc2-xfstests-00056-g131086faa369 #139
+[93.806459] RIP: 0010:ext2_get_blocks.constprop.0+0x524/0x610
+<...>
+[93.835298] Call Trace:
+[93.836253]  <TASK>
+[93.837103]  ? lock_acquire+0xf8/0x110
+[93.838479]  ? d_lookup+0x69/0xd0
+[93.839779]  ext2_iomap_begin+0xa7/0x1c0
+[93.841154]  iomap_iter+0xc7/0x150
+[93.842425]  dax_zero_range+0x6e/0xa0
+[93.843813]  ext2_setsize+0x176/0x1b0
+[93.845164]  ext2_setattr+0x151/0x200
+[93.846467]  notify_change+0x341/0x4e0
+[93.847805]  ? lock_acquire+0xf8/0x110
+[93.849143]  ? do_truncate+0x74/0xe0
+[93.850452]  ? do_truncate+0x84/0xe0
+[93.851739]  do_truncate+0x84/0xe0
+[93.852974]  do_sys_ftruncate+0x2b4/0x2f0
+[93.854404]  do_syscall_64+0x3f/0x90
+[93.855789]  entry_SYSCALL_64_after_hwframe+0x72/0xdc
 
---
+Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+---
+ fs/ext2/inode.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 26f135e7ffce..dc76147e7b07 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -1259,9 +1259,8 @@ static int ext2_setsize(struct inode *inode, loff_t newsize)
+ 	inode_dio_wait(inode);
+ 
+ 	if (IS_DAX(inode))
+-		error = dax_zero_range(inode, newsize,
+-				       PAGE_ALIGN(newsize) - newsize, NULL,
+-				       &ext2_iomap_ops);
++		error = dax_truncate_page(inode, newsize, NULL,
++					  &ext2_iomap_ops);
+ 	else
+ 		error = block_truncate_page(inode->i_mapping,
+ 				newsize, ext2_get_block);
+-- 
 2.39.2
 
