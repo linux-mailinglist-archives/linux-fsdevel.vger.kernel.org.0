@@ -2,71 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C6E66DE1C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 19:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 351A16DE1E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 19:09:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229792AbjDKRAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 13:00:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44020 "EHLO
+        id S229828AbjDKRJO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 13:09:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229820AbjDKRAl (ORCPT
+        with ESMTP id S229611AbjDKRJN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 13:00:41 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7453ABA
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 10:00:15 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id xi5so22104048ejb.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 10:00:15 -0700 (PDT)
+        Tue, 11 Apr 2023 13:09:13 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7C4A1991
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 10:09:12 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id d204so539829ybh.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 10:09:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1681232412; x=1683824412;
+        d=google.com; s=20221208; t=1681232952;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l3nf45VfTna2qtmHbcyQx3azMJIZK67P9z9b6hMPmWY=;
-        b=ygamK3A3NM1JD2kKgXRiue98TQPKvYM28SIh/wf7BXymkX7onuXLJL3zdwCTUe/eVe
-         SIrwlFECWwZJJri9YnaDb7qj+p3Fx8mztu1CVpQMc/XKpJLJlWPcEMyzHAaCZxvxJUip
-         7FrcmhZzUhSkqU/9ce+HuOqM+20Y6naugqTmb3UDLmOMbosxkWeNqwmpF/mr+icSJFEA
-         DkfsjBlrrbGUYgnxglGGrWrB3iI0El6Hk8tD6oRP64tYwrP2NsbfZPf5khW44kuDdufB
-         HB1CpOLX1xMCVefNbt6lQkTWz8mUP82sqHSntwR7puMl5Pt+e551R9IduCfw125lUGRr
-         smYA==
+        bh=Gm7xePjxYk7+XJPNyNCPc3m+W8vE886GdLa6QN77x1c=;
+        b=Dt/fnq5Rohg8OvlruMfiPphHzl880reg7mPfS4YNa5TmiKezMqJU7c5N642pzetXf2
+         6NbxlvK5ktk5iVQVml81CM9HQp85vFnzaieIFuuBqYSPu6WYL5u9tdlk4I6vgkBMqUvC
+         w6wRpn8CV3RHhSbKqat6mlHmMYEYrkecxwv76tB8yR+Z9cCcwUm2we4/xm2upTtQATqH
+         K4dsin1oFx+mWY14ixXb3oYb59cL4azDcD+rWQMZleC8KPvs8F+48Wq+ejwmTxLhkXPf
+         IQbCu9aPtXBDaBDRLeDoRMpbwBZMZsK7uZVTPVozcyVwBpKD7OpdbHbV6DcndD7Ixvtu
+         1lzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681232412; x=1683824412;
+        d=1e100.net; s=20210112; t=1681232952;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=l3nf45VfTna2qtmHbcyQx3azMJIZK67P9z9b6hMPmWY=;
-        b=dO6MolhBekLwfiwLyWN1lW1UcwBw5dN9+go4NwucUSRq2dUqHySzaP5diVrVfEoPqp
-         U+tusCJYHPQYZWvo/n+wL19wfVK4pK4dWlfZZv9r5sE6kswZz9crUG1oIbJgDCkXXBcK
-         bhqckrA00Z9jfvwaYR9RfA3+lqoetz/e74S4dOFqYvatErOOu7YvbRB8AxI1U+vuZnGz
-         IKe6KxXjv/Pv4HqNol2JcPHvHVwHi1twEZ57oryOWNAi0b1v4er3pmdFJKY+KOhvTlwd
-         JJDT1aMp1LFPdu9UQ/S72oFpIK8R95wxQzsc0CZFNqTjizf90BTT85Pfa+fvV32156hC
-         lyPg==
-X-Gm-Message-State: AAQBX9e2JJ5XhHSs7tdJ6P9QWt0PBkxZOujjKIcZXR2xn3do0VJtaNUJ
-        /4Qb+jPNqsXqUAHodo9eYO9k2brB92f7YTIl/hHOLQ==
-X-Google-Smtp-Source: AKy350ZW8S84YwpJunppz3ww3yhitaeClTtiiyiJjfqra0sZdbCcVIjRXcLCOKK5B5VWEIh0bCIqB8Wu+sY8Gfrx4pU=
-X-Received: by 2002:a17:906:2556:b0:94b:d619:e773 with SMTP id
- j22-20020a170906255600b0094bd619e773mr1626314ejb.15.1681232411678; Tue, 11
- Apr 2023 10:00:11 -0700 (PDT)
+        bh=Gm7xePjxYk7+XJPNyNCPc3m+W8vE886GdLa6QN77x1c=;
+        b=0PpQsZHtEvhNRb44NGcbO4rLi1ns/0kXWKKFPFbEgmn+IVeYvS7dE5Dmxd+/Nyq3kB
+         BKZpqIxLNanp9cA4TrWGqFyDUqEp2eZvQUmzkD2yjum1mFPpiXr3YawSgtwjCdtcSXC3
+         NOwLX6V87EVNHC6SAFh5HTWDYz/ht6Sn4RjMTCg1VGMl7O/mmC8xrlFjBiHzs1aPrx/U
+         aEBoBhcvkjT/YeXh4lZtiUt5XzoiwK8bugiVHDisVznYeSdAatpa7l9dlx7njBWDaWRf
+         tAwahtobPepJe3m0p+l2+mmMLeNqK+6H/z/svr0RCH0fqDy6kTMqOMJxuMb41058rx5g
+         TvCA==
+X-Gm-Message-State: AAQBX9c9U0s8TaILlMZQ8sc1ULE0naqMP2zksdk8Lx7cY92EWNhPz3fl
+        g+iBUoQQe40uplRS+q8hqU0mi6RuoLEysur01wl1bw==
+X-Google-Smtp-Source: AKy350b8jaqgaAHh8wLrh+Z1EDrMUNUXWA3JcWdiVtFGHsb3jqA9X9Y6psDGOt8LUL6EO2xtyY+DLjKwwfub7Ud1Mfs=
+X-Received: by 2002:a25:7347:0:b0:b8f:892:3967 with SMTP id
+ o68-20020a257347000000b00b8f08923967mr2861731ybc.4.1681232951657; Tue, 11 Apr
+ 2023 10:09:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230403220337.443510-1-yosryahmed@google.com>
- <20230403220337.443510-4-yosryahmed@google.com> <rdjvbr5zuwic27s27xcmguce2wfbqiyeu4bjr5pfxhprlxecui@4wsoogvb4ivp>
-In-Reply-To: <rdjvbr5zuwic27s27xcmguce2wfbqiyeu4bjr5pfxhprlxecui@4wsoogvb4ivp>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Tue, 11 Apr 2023 09:59:35 -0700
-Message-ID: <CAJD7tkZvRek3hJ1AyC7rPjTJTkKCM0DNLaTu1XXLGKmc3gdztA@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable RFC 3/5] memcg: calculate root usage from
- global state
-To:     =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+References: <20230411160902.4134381-1-dhowells@redhat.com> <20230411160902.4134381-8-dhowells@redhat.com>
+In-Reply-To: <20230411160902.4134381-8-dhowells@redhat.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Tue, 11 Apr 2023 19:09:00 +0200
+Message-ID: <CANn89iLW3_1SZV4EV3h2W45B_+b+R67fp40t8OaqpqLnVEhTew@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 07/18] tcp: Support MSG_SPLICE_PAGES
+To:     David Howells <dhowells@redhat.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Shakeel Butt <shakeelb@google.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-mm@kvack.org
+        linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
@@ -80,32 +82,74 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 5:53=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.co=
-m> wrote:
+On Tue, Apr 11, 2023 at 6:09=E2=80=AFPM David Howells <dhowells@redhat.com>=
+ wrote:
 >
-> On Mon, Apr 03, 2023 at 10:03:35PM +0000, Yosry Ahmed <yosryahmed@google.=
-com> wrote:
-> > Instead, approximate the root usage from global state. This is not 100%
-> > accurate, but the root usage has always been ill-defined anyway.
+> Make TCP's sendmsg() support MSG_SPLICE_PAGES.  This causes pages to be
+> spliced or copied (if it cannot be spliced) from the source iterator.
 >
-> Technically, this approximation should be closer to truth because global
-> counters aren't subject to flushing "delay".
+> This allows ->sendpage() to be replaced by something that can handle
+> multiple multipage folios in a single transaction.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Eric Dumazet <edumazet@google.com>
+> cc: "David S. Miller" <davem@davemloft.net>
+> cc: David Ahern <dsahern@kernel.org>
+> cc: Jakub Kicinski <kuba@kernel.org>
+> cc: Paolo Abeni <pabeni@redhat.com>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: netdev@vger.kernel.org
+> ---
+>
+> Notes:
+>     ver #6)
+>      - Use common helper.
+>
+>  net/ipv4/tcp.c | 43 ++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 36 insertions(+), 7 deletions(-)
+>
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index fd68d49490f2..0b2213da5aaf 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -1221,7 +1221,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msgh=
+dr *msg, size_t size)
+>         int flags, err, copied =3D 0;
+>         int mss_now =3D 0, size_goal, copied_syn =3D 0;
+>         int process_backlog =3D 0;
+> -       bool zc =3D false;
+> +       int zc =3D 0;
+>         long timeo;
+>
+>         flags =3D msg->msg_flags;
+> @@ -1232,17 +1232,22 @@ int tcp_sendmsg_locked(struct sock *sk, struct ms=
+ghdr *msg, size_t size)
+>                 if (msg->msg_ubuf) {
+>                         uarg =3D msg->msg_ubuf;
+>                         net_zcopy_get(uarg);
+> -                       zc =3D sk->sk_route_caps & NETIF_F_SG;
+> +                       if (sk->sk_route_caps & NETIF_F_SG)
+> +                               zc =3D 1;
 
-It is a tiny bit different when some pages are in swap, probably
-because of swap slot caching and other swap specifics. At least in
-cgroup v1, the swap uncharging and freeing of the underlying swap
-entry may happen at different times. I think it practically doesn't
-really matter though.
+zc is set to 0, 1, MSG_ZEROCOPY ,   MSG_SPLICE_PAGES
 
->
-> >
-> > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-> > ---
-> >  mm/memcontrol.c | 24 +++++-------------------
-> >  1 file changed, 5 insertions(+), 19 deletions(-)
->
-> But feel free to add
-> Reviewed-by: Michal Koutn=C3=BD <mkoutny@suse.com>
+I find this a bit confusing. Maybe use a private enum ?
 
-Thanks!
->
+>                 } else if (sock_flag(sk, SOCK_ZEROCOPY)) {
+>                         uarg =3D msg_zerocopy_realloc(sk, size, skb_zcopy=
+(skb));
+>                         if (!uarg) {
+>                                 err =3D -ENOBUFS;
+>                                 goto out_err;
+>                         }
+> -                       zc =3D sk->sk_route_caps & NETIF_F_SG;
+> -                       if (!zc)
+> +                       if (sk->sk_route_caps & NETIF_F_SG)
+> +                               zc =3D MSG_ZEROCOPY;
+> +                       else
+>                                 uarg_to_msgzc(uarg)->zerocopy =3D 0;
+>                 }
+> +       } else if (unlikely(msg->msg_flags & MSG_SPLICE_PAGES) && size) {
+> +               if (sk->sk_route_caps & NETIF_F_SG)
+> +                       zc =3D MSG_SPLICE_PAGES;
