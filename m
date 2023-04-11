@@ -2,89 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55E906DD0B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 06:14:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 695FE6DD0F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 06:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229777AbjDKEOy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 00:14:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34428 "EHLO
+        id S230130AbjDKEbe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 00:31:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229694AbjDKEOs (ORCPT
+        with ESMTP id S229998AbjDKEbc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 00:14:48 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD33B2691;
-        Mon, 10 Apr 2023 21:14:47 -0700 (PDT)
-Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4PwXSq23j9zSnTr;
-        Tue, 11 Apr 2023 12:10:51 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Tue, 11 Apr 2023 12:14:45 +0800
-Message-ID: <66c0e8b6-64d1-5be6-cd4d-9700d84e1b84@huawei.com>
-Date:   Tue, 11 Apr 2023 12:14:44 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH] fs: fix sysctls.c built
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>
-CC:     <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-References: <20230331084502.155284-1-wangkefeng.wang@huawei.com>
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <20230331084502.155284-1-wangkefeng.wang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        Tue, 11 Apr 2023 00:31:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2E2010E;
+        Mon, 10 Apr 2023 21:31:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7483061A4E;
+        Tue, 11 Apr 2023 04:31:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E83C433EF;
+        Tue, 11 Apr 2023 04:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1681187490;
+        bh=UMffUmwIMqiyU5UEzuN4976TTEXDP9TPdjyhgMkWT4M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PHuqvFNEJrcTTZehVURel6pvMxSQSQP3xjWTrs9QuevRX0eQSR5KeWtJ56mF0OcW0
+         aEqUniHL+M0Z+UE/BhmzAsukPR7zLQ2h7TCbR/Cho5BwOVlM5CSgxD3SGrI0WCheLT
+         cgdWifzhlzscoDKTVx7FVWzN9ACF8QplOnsiDWW8=
+Date:   Mon, 10 Apr 2023 21:31:29 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     <yang.yang29@zte.com.cn>
+Cc:     <bsingharora@gmail.com>, <mingo@redhat.com>, <corbet@lwn.net>,
+        <juri.lelli@redhat.com>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-doc@vger.kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH =?ISO-8859-1?Q?linux-next]=A0delayacct:?= track delays
+ from IRQ/SOFTIRQ
+Message-Id: <20230410213129.1d11261892767a61eacaefba@linux-foundation.org>
+In-Reply-To: <202304081728353557233@zte.com.cn>
+References: <202304081728353557233@zte.com.cn>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.177.243]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-5.5 required=5.0 tests=NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-8.4 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-/proc/sys/fs/overflowuid and overflowgid  will be lost without
-building this file, kindly ping, any comments, thanks.
+On Sat, 8 Apr 2023 17:28:35 +0800 (CST) <yang.yang29@zte.com.cn> wrote:
 
+> From: Yang Yang <yang.yang19@zte.com.cn>
+> 
+> Delay accounting does not track the delay of IRQ/SOFTIRQ.  While
+> IRQ/SOFTIRQ could have obvious impact on some workloads productivity,
+> such as when workloads are running on system which is busy handling
+> network IRQ/SOFTIRQ.
+> 
+> Get the delay of IRQ/SOFTIRQ could help users to reduce such delay.
+> Such as setting interrupt affinity or task affinity, using kernel thread for
+> NAPI etc. This is inspired by "sched/psi: Add PSI_IRQ to track IRQ/SOFTIRQ
+> pressure"[1]. Also fix some code indent problems of older code.
+> 
+> And update tools/accounting/getdelays.c:
+>     / # ./getdelays -p 156 -di
+>     print delayacct stats ON
+>     printing IO accounting
+>     PID     156
+> 
+>     CPU             count     real total  virtual total    delay total  delay average
+>                        15       15836008       16218149      275700790         18.380ms
+>     IO              count    delay total  delay average
+>                         0              0          0.000ms
+>     SWAP            count    delay total  delay average
+>                         0              0          0.000ms
+>     RECLAIM         count    delay total  delay average
+>                         0              0          0.000ms
+>     THRASHING       count    delay total  delay average
+>                         0              0          0.000ms
+>     COMPACT         count    delay total  delay average
+>                         0              0          0.000ms
+>     WPCOPY          count    delay total  delay average
+>                        36        7586118          0.211ms
+>     IRQ             count    delay total  delay average
+>                        42         929161          0.022ms
 
-On 2023/3/31 16:45, Kefeng Wang wrote:
-> 'obj-$(CONFIG_SYSCTL) += sysctls.o' must be moved after "obj-y :=",
-> or it won't be built as it is overwrited.
-> 
-> Fixes: ab171b952c6e ("fs: move namespace sysctls and declare fs base directory")
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> ---
->   fs/Makefile | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/Makefile b/fs/Makefile
-> index 05f89b5c962f..8d4736fcc766 100644
-> --- a/fs/Makefile
-> +++ b/fs/Makefile
-> @@ -6,7 +6,6 @@
->   # Rewritten to use lists instead of if-statements.
->   #
->   
-> -obj-$(CONFIG_SYSCTL)		+= sysctls.o
->   
->   obj-y :=	open.o read_write.o file_table.o super.o \
->   		char_dev.o stat.o exec.o pipe.o namei.o fcntl.o \
-> @@ -50,7 +49,7 @@ obj-$(CONFIG_FS_MBCACHE)	+= mbcache.o
->   obj-$(CONFIG_FS_POSIX_ACL)	+= posix_acl.o
->   obj-$(CONFIG_NFS_COMMON)	+= nfs_common/
->   obj-$(CONFIG_COREDUMP)		+= coredump.o
-> -obj-$(CONFIG_SYSCTL)		+= drop_caches.o
-> +obj-$(CONFIG_SYSCTL)		+= drop_caches.o sysctls.o
->   
->   obj-$(CONFIG_FHANDLE)		+= fhandle.o
->   obj-y				+= iomap/
+Seems sensible.  I'm not sure who's the best person to review/ack this
+nowadays.
+
+We're somewhat double-accounting.  Delays due to, for example, IO will
+already include delays from IRQ activity.  But it's presumably a minor
+thing and I don't see why anyone would care.
+
