@@ -2,154 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 351A16DE1E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 19:09:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24ABE6DE1F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 19:11:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229828AbjDKRJO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 13:09:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56878 "EHLO
+        id S229974AbjDKRLP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 13:11:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbjDKRJN (ORCPT
+        with ESMTP id S229899AbjDKRLM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 13:09:13 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7C4A1991
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 10:09:12 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id d204so539829ybh.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 10:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1681232952;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gm7xePjxYk7+XJPNyNCPc3m+W8vE886GdLa6QN77x1c=;
-        b=Dt/fnq5Rohg8OvlruMfiPphHzl880reg7mPfS4YNa5TmiKezMqJU7c5N642pzetXf2
-         6NbxlvK5ktk5iVQVml81CM9HQp85vFnzaieIFuuBqYSPu6WYL5u9tdlk4I6vgkBMqUvC
-         w6wRpn8CV3RHhSbKqat6mlHmMYEYrkecxwv76tB8yR+Z9cCcwUm2we4/xm2upTtQATqH
-         K4dsin1oFx+mWY14ixXb3oYb59cL4azDcD+rWQMZleC8KPvs8F+48Wq+ejwmTxLhkXPf
-         IQbCu9aPtXBDaBDRLeDoRMpbwBZMZsK7uZVTPVozcyVwBpKD7OpdbHbV6DcndD7Ixvtu
-         1lzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681232952;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gm7xePjxYk7+XJPNyNCPc3m+W8vE886GdLa6QN77x1c=;
-        b=0PpQsZHtEvhNRb44NGcbO4rLi1ns/0kXWKKFPFbEgmn+IVeYvS7dE5Dmxd+/Nyq3kB
-         BKZpqIxLNanp9cA4TrWGqFyDUqEp2eZvQUmzkD2yjum1mFPpiXr3YawSgtwjCdtcSXC3
-         NOwLX6V87EVNHC6SAFh5HTWDYz/ht6Sn4RjMTCg1VGMl7O/mmC8xrlFjBiHzs1aPrx/U
-         aEBoBhcvkjT/YeXh4lZtiUt5XzoiwK8bugiVHDisVznYeSdAatpa7l9dlx7njBWDaWRf
-         tAwahtobPepJe3m0p+l2+mmMLeNqK+6H/z/svr0RCH0fqDy6kTMqOMJxuMb41058rx5g
-         TvCA==
-X-Gm-Message-State: AAQBX9c9U0s8TaILlMZQ8sc1ULE0naqMP2zksdk8Lx7cY92EWNhPz3fl
-        g+iBUoQQe40uplRS+q8hqU0mi6RuoLEysur01wl1bw==
-X-Google-Smtp-Source: AKy350b8jaqgaAHh8wLrh+Z1EDrMUNUXWA3JcWdiVtFGHsb3jqA9X9Y6psDGOt8LUL6EO2xtyY+DLjKwwfub7Ud1Mfs=
-X-Received: by 2002:a25:7347:0:b0:b8f:892:3967 with SMTP id
- o68-20020a257347000000b00b8f08923967mr2861731ybc.4.1681232951657; Tue, 11 Apr
- 2023 10:09:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230411160902.4134381-1-dhowells@redhat.com> <20230411160902.4134381-8-dhowells@redhat.com>
-In-Reply-To: <20230411160902.4134381-8-dhowells@redhat.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Tue, 11 Apr 2023 19:09:00 +0200
-Message-ID: <CANn89iLW3_1SZV4EV3h2W45B_+b+R67fp40t8OaqpqLnVEhTew@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 07/18] tcp: Support MSG_SPLICE_PAGES
-To:     David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 11 Apr 2023 13:11:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BE71469F;
+        Tue, 11 Apr 2023 10:11:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BBB6E629B1;
+        Tue, 11 Apr 2023 17:11:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 726DBC4339B;
+        Tue, 11 Apr 2023 17:11:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681233061;
+        bh=Z1vS1CZUHcjyBePBOAorksWeXWINj9Fg7ftzrrGoqxU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=D0mVuMS2zEpPUjigFlE+EG/i7FtUIzq9DWNMZrbNP02GSjlSx+VrJFn659veZib9A
+         Pmghq1klwiischli2dMlSeIv9OCE2CZx3Ko3oQzqtb14e91cPTupLaGRmpQlJubhFm
+         kB2g5LdxaWodBIWODzACWRjkUuggJV/FaImRE0szEgFpeC9v44Y2LZEL7yJIeP0/mn
+         mu9VeRTtrAfLG8QpXohhbNRoGzERHlwNfon4EFbA8eWo8uW+HnxqAz3dGG5qqaK7DV
+         15F7jyBTlSkcjgeH4Bz0C34vVHFDoIaIFgptFqHLqvmLAsaOku76d71SPmLorUwPQT
+         m2h8+2C0ItDUw==
+Message-ID: <b18204512e016fe986bfbc707201d4ccd50dbf79.camel@kernel.org>
+Subject: Re: [PATCH v2] nfs: use vfs setgid helper
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org
+Date:   Tue, 11 Apr 2023 13:10:59 -0400
+In-Reply-To: <20230313-fs-nfs-setgid-v2-1-9a59f436cfc0@kernel.org>
+References: <20230313-fs-nfs-setgid-v2-1-9a59f436cfc0@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 6:09=E2=80=AFPM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Make TCP's sendmsg() support MSG_SPLICE_PAGES.  This causes pages to be
-> spliced or copied (if it cannot be spliced) from the source iterator.
->
-> This allows ->sendpage() to be replaced by something that can handle
-> multiple multipage folios in a single transaction.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Eric Dumazet <edumazet@google.com>
-> cc: "David S. Miller" <davem@davemloft.net>
-> cc: David Ahern <dsahern@kernel.org>
-> cc: Jakub Kicinski <kuba@kernel.org>
-> cc: Paolo Abeni <pabeni@redhat.com>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: netdev@vger.kernel.org
+On Tue, 2023-03-14 at 12:51 +0100, Christian Brauner wrote:
+> We've aligned setgid behavior over multiple kernel releases. The details
+> can be found in the following two merge messages:
+> cf619f891971 ("Merge tag 'fs.ovl.setgid.v6.2')
+> 426b4ca2d6a5 ("Merge tag 'fs.setgid.v6.0')
+> Consistent setgid stripping behavior is now encapsulated in the
+> setattr_should_drop_sgid() helper which is used by all filesystems that
+> strip setgid bits outside of vfs proper. Switch nfs to rely on this
+> helper as well. Without this patch the setgid stripping tests in
+> xfstests will fail.
+>=20
+> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 > ---
->
-> Notes:
->     ver #6)
->      - Use common helper.
->
->  net/ipv4/tcp.c | 43 ++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 36 insertions(+), 7 deletions(-)
->
-> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-> index fd68d49490f2..0b2213da5aaf 100644
-> --- a/net/ipv4/tcp.c
-> +++ b/net/ipv4/tcp.c
-> @@ -1221,7 +1221,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msgh=
-dr *msg, size_t size)
->         int flags, err, copied =3D 0;
->         int mss_now =3D 0, size_goal, copied_syn =3D 0;
->         int process_backlog =3D 0;
-> -       bool zc =3D false;
-> +       int zc =3D 0;
->         long timeo;
->
->         flags =3D msg->msg_flags;
-> @@ -1232,17 +1232,22 @@ int tcp_sendmsg_locked(struct sock *sk, struct ms=
-ghdr *msg, size_t size)
->                 if (msg->msg_ubuf) {
->                         uarg =3D msg->msg_ubuf;
->                         net_zcopy_get(uarg);
-> -                       zc =3D sk->sk_route_caps & NETIF_F_SG;
-> +                       if (sk->sk_route_caps & NETIF_F_SG)
-> +                               zc =3D 1;
+> Changes in v2:
+> - Christoph Hellwig <hch@lst.de>:
+>   * Export setattr_should_sgid() so it actually can be used by filesystem=
+s
+> - Link to v1: https://lore.kernel.org/r/20230313-fs-nfs-setgid-v1-1-5b1fa=
+599f186@kernel.org
+> ---
+>  fs/attr.c          | 1 +
+>  fs/internal.h      | 2 --
+>  fs/nfs/inode.c     | 4 +---
+>  include/linux/fs.h | 2 ++
+>  4 files changed, 4 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/fs/attr.c b/fs/attr.c
+> index aca9ff7aed33..d60dc1edb526 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -47,6 +47,7 @@ int setattr_should_drop_sgid(struct mnt_idmap *idmap,
+>  		return ATTR_KILL_SGID;
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(setattr_should_drop_sgid);
+> =20
+>  /**
+>   * setattr_should_drop_suidgid - determine whether the set{g,u}id bit ne=
+eds to
+> diff --git a/fs/internal.h b/fs/internal.h
+> index dc4eb91a577a..ab36ed8fa41c 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -259,8 +259,6 @@ ssize_t __kernel_write_iter(struct file *file, struct=
+ iov_iter *from, loff_t *po
+>  /*
+>   * fs/attr.c
+>   */
+> -int setattr_should_drop_sgid(struct mnt_idmap *idmap,
+> -			     const struct inode *inode);
+>  struct mnt_idmap *alloc_mnt_idmap(struct user_namespace *mnt_userns);
+>  struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
+>  void mnt_idmap_put(struct mnt_idmap *idmap);
+> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+> index 222a28320e1c..97a76706fd54 100644
+> --- a/fs/nfs/inode.c
+> +++ b/fs/nfs/inode.c
+> @@ -717,9 +717,7 @@ void nfs_setattr_update_inode(struct inode *inode, st=
+ruct iattr *attr,
+>  		if ((attr->ia_valid & ATTR_KILL_SUID) !=3D 0 &&
+>  		    inode->i_mode & S_ISUID)
+>  			inode->i_mode &=3D ~S_ISUID;
+> -		if ((attr->ia_valid & ATTR_KILL_SGID) !=3D 0 &&
+> -		    (inode->i_mode & (S_ISGID | S_IXGRP)) =3D=3D
+> -		     (S_ISGID | S_IXGRP))
+> +		if (setattr_should_drop_sgid(&nop_mnt_idmap, inode))
+>  			inode->i_mode &=3D ~S_ISGID;
+>  		if ((attr->ia_valid & ATTR_MODE) !=3D 0) {
+>  			int mode =3D attr->ia_mode & S_IALLUGO;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index c85916e9f7db..af95b64fc810 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2675,6 +2675,8 @@ extern struct inode *new_inode(struct super_block *=
+sb);
+>  extern void free_inode_nonrcu(struct inode *inode);
+>  extern int setattr_should_drop_suidgid(struct mnt_idmap *, struct inode =
+*);
+>  extern int file_remove_privs(struct file *);
+> +int setattr_should_drop_sgid(struct mnt_idmap *idmap,
+> +			     const struct inode *inode);
+> =20
+>  /*
+>   * This must be used for allocating filesystems specific inodes to set
+>=20
+> ---
+> base-commit: eeac8ede17557680855031c6f305ece2378af326
+> change-id: 20230313-fs-nfs-setgid-659410a10b25
+>=20
 
-zc is set to 0, 1, MSG_ZEROCOPY ,   MSG_SPLICE_PAGES
-
-I find this a bit confusing. Maybe use a private enum ?
-
->                 } else if (sock_flag(sk, SOCK_ZEROCOPY)) {
->                         uarg =3D msg_zerocopy_realloc(sk, size, skb_zcopy=
-(skb));
->                         if (!uarg) {
->                                 err =3D -ENOBUFS;
->                                 goto out_err;
->                         }
-> -                       zc =3D sk->sk_route_caps & NETIF_F_SG;
-> -                       if (!zc)
-> +                       if (sk->sk_route_caps & NETIF_F_SG)
-> +                               zc =3D MSG_ZEROCOPY;
-> +                       else
->                                 uarg_to_msgzc(uarg)->zerocopy =3D 0;
->                 }
-> +       } else if (unlikely(msg->msg_flags & MSG_SPLICE_PAGES) && size) {
-> +               if (sk->sk_route_caps & NETIF_F_SG)
-> +                       zc =3D MSG_SPLICE_PAGES;
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
