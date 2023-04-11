@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD356DD181
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 07:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3CD46DD184
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 07:22:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbjDKFWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 01:22:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39898 "EHLO
+        id S229988AbjDKFWT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 01:22:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbjDKFWO (ORCPT
+        with ESMTP id S229974AbjDKFWR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 01:22:14 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49844E7C;
-        Mon, 10 Apr 2023 22:22:14 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id px4so4703468pjb.3;
-        Mon, 10 Apr 2023 22:22:14 -0700 (PDT)
+        Tue, 11 Apr 2023 01:22:17 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8FB6269E;
+        Mon, 10 Apr 2023 22:22:16 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id n14so31895592plc.8;
+        Mon, 10 Apr 2023 22:22:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1681190533; x=1683782533;
+        d=gmail.com; s=20210112; t=1681190536; x=1683782536;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OL81fOb/bghP+KZDYyDUZj7Mds0Dml+eVfKAg+fWsIE=;
-        b=QaRnQs/Bg3Ezx63GwrfdxzmhHh68Ea5XVD5c17J0Rfo0C6YMuicLZpeNQxFx8Jzt4r
-         WMg4IPFU69EK37SFlm4gdaH6P4T0/KdpIHVV0j93KXTGRCYikBKyNCzhky6Xpsc0pOzT
-         1TRzf+8iGjZBnQjpDJ5ISTP4b6u89Kjj/30kp7S91PM8WyOIZ5NdPIlk41X0iIt4Pe8a
-         H5TLK8RiRvC4n7a9hC7RdoWU4o8b1byfu2Ad648ypi+Xt9wC+lhjHjJXEn52op6v8bjH
-         /1zuxyXik9yfc6DjdB8QTtZIz4FwKjE4xG0bAb/DVyIZZVt3EZAGTaTqA/QOaqbcDJGI
-         bnfQ==
+        bh=uGx1WHHG4yxIoqah22dglkintMa8RBxc6irauTziWjw=;
+        b=dqcyZPAimsqjJnqhoUSzDw1jR6VKKfiHPJcTVneeGgAfFOzEQiC3AyncvfpFRq5KNW
+         7WSZW/0N1i+RjrKKO948b9dZgP+97/TjZalZZ9M6eD/pJpckLc6BNu0UYNl6gzjmubVB
+         M3Ge7vUcxWZ3E3lLZlsC47lfgYSU4LZskUViPu+QMFbN+U9Hexn8jOQP3sNuXeOlbvam
+         7/vTCBpPjQdQnSGMJlu/3udMGJwn3EBxkkt4YMYlYsX0majZajBa73fd7QDO2z18+TtV
+         j5bhGm/HSFlf75WJ9OoFhktC0WwUk9I/J1u2s/+jbTtmrHa/GcMcCmvWUw2GOdyB+ckv
+         tIyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681190533; x=1683782533;
+        d=1e100.net; s=20210112; t=1681190536; x=1683782536;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OL81fOb/bghP+KZDYyDUZj7Mds0Dml+eVfKAg+fWsIE=;
-        b=P09EuNIi+JQh3SDkz6jj0HnTVL97QolW+PpBAoyDHp2zF2IWdYa5HK7LFhu7Z0f/8s
-         LstSyWFittyEh49EoL1i7YIBvnIsVjzfgdt5FmFa/lPg163uE31seEjXi/ICMTWsyChw
-         r5JcLY+YnAQNwYqr+FCZQtkwdBrE6p3zRwL8E4JI7XMVXreZxVOf9eWZcbbsppfjmbaa
-         BFhtoFSrUCrPjjx5qJ9RHo0tAP/ohXyF8ghmVlLqOidXeP7tScf0q7jTVWllwqVc4WEr
-         Fp56lvOvJoQwW0coniHP970tLM3aOJx3tKZwyTWEIjvFZ2iOVndSKuBD+/btJg7Iqf+v
-         E71Q==
-X-Gm-Message-State: AAQBX9eD07rwf8G6V3DT7ir+1hgZWddrx+OQj1JydVfzQy62Og13gQfV
-        0K83ApapU518ZR+mpaeaNL95J6wQhvs=
-X-Google-Smtp-Source: AKy350atJBErmdMpdhpSIiNUncNs8hiibGPc2Efo3Sxq0jhq3xVfvIhCPqK6DXm5RrrDbIWLFdC1UA==
-X-Received: by 2002:a17:90b:33c3:b0:236:73d5:82cf with SMTP id lk3-20020a17090b33c300b0023673d582cfmr13080391pjb.9.1681190533476;
-        Mon, 10 Apr 2023 22:22:13 -0700 (PDT)
+        bh=uGx1WHHG4yxIoqah22dglkintMa8RBxc6irauTziWjw=;
+        b=gwd8hzoRLH+k8Z7A6sh4YNu5IzfU+qltd503jShuR6zqgBvFq8x9c769beKFMiU+0H
+         PC4ACT/Jx3n3256lMXnFp+3sNjxqja4IHjOMJJJ7mPuotmtiRun5vFZsG7V9aZ0lifdA
+         YVV2zFnBYNblHQEt4g1AjD/Y+bhk+AH/bfwP8Cm50oP/dHIK6qGcg+cstrwS2QFEHwlM
+         8E+CGario2ubYYZRiYhNp/Tvd5jdrx1pYWlN2DIuugnaP7q4ZdmULqH0ukcMRx1IqelB
+         qwp5MOsI3FFAgGUSK8zs0PHJSJC5KPfmv1TuibcZas/3ev8pmEpqNeeg8+BhJppodXLH
+         UcXQ==
+X-Gm-Message-State: AAQBX9dCAE9xlueiAkrwlE5Ar2WGtyrd3OUb8ykVxGi9Pv3ufosu5aQO
+        ygjbxjuH/+ZralMFadKoytrsFZI+gV4=
+X-Google-Smtp-Source: AKy350bLyBje4Yn44rTqdahx13I4lTgh3dsSWuRTr/wCvqCgPI6NyaDSA5EC3X8tSudQJTFZnlv+zw==
+X-Received: by 2002:a17:90b:4a4e:b0:246:b635:b7fc with SMTP id lb14-20020a17090b4a4e00b00246b635b7fcmr5703080pjb.5.1681190536064;
+        Mon, 10 Apr 2023 22:22:16 -0700 (PDT)
 Received: from rh-tp.ibmuc.com ([2406:7400:63:7035:9095:349e:5f0b:ded0])
-        by smtp.gmail.com with ESMTPSA id v19-20020a17090abb9300b00246d7cd7327sm646154pjr.51.2023.04.10.22.22.11
+        by smtp.gmail.com with ESMTPSA id v19-20020a17090abb9300b00246d7cd7327sm646154pjr.51.2023.04.10.22.22.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Apr 2023 22:22:13 -0700 (PDT)
+        Mon, 10 Apr 2023 22:22:15 -0700 (PDT)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
         "Darrick J . Wong" <djwong@kernel.org>,
         Ojaswin Mujoo <ojaswin@linux.ibm.com>,
         "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFCv2 1/8] ext2/dax: Fix ext2_setsize when len is page aligned
-Date:   Tue, 11 Apr 2023 10:51:49 +0530
-Message-Id: <131a7e4a0e020a94c719994867484ba248316d13.1681188927.git.ritesh.list@gmail.com>
+Subject: [RFCv2 2/8] libfs: Add __generic_file_fsync_nolock implementation
+Date:   Tue, 11 Apr 2023 10:51:50 +0530
+Message-Id: <6fad2ec25bccbbb9b3effbd18c2d6d6965b9a33c.1681188927.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <cover.1681188927.git.ritesh.list@gmail.com>
 References: <cover.1681188927.git.ritesh.list@gmail.com>
@@ -74,72 +74,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PAGE_ALIGN(x) macro gives the next highest value which is multiple of
-pagesize. But if x is already page aligned then it simply returns x.
-So, if x passed is 0 in dax_zero_range() function, that means the
-length gets passed as 0 to ->iomap_begin().
+Some of the higher layers like iomap takes inode_lock() when calling
+generic_write_sync().
+Also writeback already happens from other paths without inode lock,
+so it's difficult to say that we really need sync_mapping_buffers() to
+take any inode locking here. Having said that, let's add a _nolock
+variant of this function in libfs for now so that filesystems like
+ext2 and ext4's nojournal mode can use it.
 
-In ext2 it then calls ext2_get_blocks -> max_blocks as 0 and hits bug_on
-here in ext2_get_blocks().
-	BUG_ON(maxblocks == 0);
+Ext4 when got converted to iomap for direct-io already copied it's own
+variant of __generic_file_fsync() without lock. Hence let's add a helper
+API and use it both in ext2 and ext4.
 
-Instead we should be calling dax_truncate_page() here which takes
-care of it. i.e. it only calls dax_zero_range if the offset is not
-page/block aligned.
-
-This can be easily triggered with following on fsdax mounted pmem
-device.
-
-dd if=/dev/zero of=file count=1 bs=512
-truncate -s 0 file
-
-[79.525838] EXT2-fs (pmem0): DAX enabled. Warning: EXPERIMENTAL, use at your own risk
-[79.529376] ext2 filesystem being mounted at /mnt1/test supports timestamps until 2038 (0x7fffffff)
-[93.793207] ------------[ cut here ]------------
-[93.795102] kernel BUG at fs/ext2/inode.c:637!
-[93.796904] invalid opcode: 0000 [#1] PREEMPT SMP PTI
-[93.798659] CPU: 0 PID: 1192 Comm: truncate Not tainted 6.3.0-rc2-xfstests-00056-g131086faa369 #139
-[93.806459] RIP: 0010:ext2_get_blocks.constprop.0+0x524/0x610
-<...>
-[93.835298] Call Trace:
-[93.836253]  <TASK>
-[93.837103]  ? lock_acquire+0xf8/0x110
-[93.838479]  ? d_lookup+0x69/0xd0
-[93.839779]  ext2_iomap_begin+0xa7/0x1c0
-[93.841154]  iomap_iter+0xc7/0x150
-[93.842425]  dax_zero_range+0x6e/0xa0
-[93.843813]  ext2_setsize+0x176/0x1b0
-[93.845164]  ext2_setattr+0x151/0x200
-[93.846467]  notify_change+0x341/0x4e0
-[93.847805]  ? lock_acquire+0xf8/0x110
-[93.849143]  ? do_truncate+0x74/0xe0
-[93.850452]  ? do_truncate+0x84/0xe0
-[93.851739]  do_truncate+0x84/0xe0
-[93.852974]  do_sys_ftruncate+0x2b4/0x2f0
-[93.854404]  do_syscall_64+0x3f/0x90
-[93.855789]  entry_SYSCALL_64_after_hwframe+0x72/0xdc
+Later we can review other filesystems as well to see if we can make
+_nolock as the default path if inode_lock() is not necessary here.
 
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- fs/ext2/inode.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/libfs.c         | 43 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  1 +
+ 2 files changed, 44 insertions(+)
 
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 26f135e7ffce..dc76147e7b07 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -1259,9 +1259,8 @@ static int ext2_setsize(struct inode *inode, loff_t newsize)
- 	inode_dio_wait(inode);
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 4eda519c3002..d2dfb72e3cf8 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1110,6 +1110,49 @@ struct dentry *generic_fh_to_parent(struct super_block *sb, struct fid *fid,
+ }
+ EXPORT_SYMBOL_GPL(generic_fh_to_parent);
  
- 	if (IS_DAX(inode))
--		error = dax_zero_range(inode, newsize,
--				       PAGE_ALIGN(newsize) - newsize, NULL,
--				       &ext2_iomap_ops);
-+		error = dax_truncate_page(inode, newsize, NULL,
-+					  &ext2_iomap_ops);
- 	else
- 		error = block_truncate_page(inode->i_mapping,
- 				newsize, ext2_get_block);
++/**
++ * __generic_file_fsync_nolock - generic fsync implementation for simple
++ * filesystems with no inode lock
++ *
++ * @file:	file to synchronize
++ * @start:	start offset in bytes
++ * @end:	end offset in bytes (inclusive)
++ * @datasync:	only synchronize essential metadata if true
++ *
++ * This is a generic implementation of the fsync method for simple
++ * filesystems which track all non-inode metadata in the buffers list
++ * hanging off the address_space structure.
++ */
++int __generic_file_fsync_nolock(struct file *file, loff_t start, loff_t end,
++				 int datasync)
++{
++	struct inode *inode = file->f_mapping->host;
++	int err;
++	int ret;
++
++	err = file_write_and_wait_range(file, start, end);
++	if (err)
++		return err;
++
++	ret = sync_mapping_buffers(inode->i_mapping);
++	if (!(inode->i_state & I_DIRTY_ALL))
++		goto out;
++	if (datasync && !(inode->i_state & I_DIRTY_DATASYNC))
++		goto out;
++
++	err = sync_inode_metadata(inode, 1);
++	if (ret == 0)
++		ret = err;
++
++out:
++	/* check and advance again to catch errors after syncing out buffers */
++	err = file_check_and_advance_wb_err(file);
++	if (ret == 0)
++		ret = err;
++	return ret;
++}
++EXPORT_SYMBOL(__generic_file_fsync_nolock);
++
+ /**
+  * __generic_file_fsync - generic fsync implementation for simple filesystems
+  *
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c85916e9f7db..21d2b5670308 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2935,6 +2935,7 @@ extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
+ extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
+ 		const void __user *from, size_t count);
+ 
++extern int __generic_file_fsync_nolock(struct file *, loff_t, loff_t, int);
+ extern int __generic_file_fsync(struct file *, loff_t, loff_t, int);
+ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
+ 
 -- 
 2.39.2
 
