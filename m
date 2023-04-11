@@ -2,51 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C56446DD378
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 08:54:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F8F46DD375
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 08:54:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230463AbjDKGyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 02:54:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43410 "EHLO
+        id S230501AbjDKGyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 02:54:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230459AbjDKGyF (ORCPT
+        with ESMTP id S230315AbjDKGyE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 02:54:05 -0400
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55E141BCA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Apr 2023 23:53:47 -0700 (PDT)
-Received: by mail-il1-f197.google.com with SMTP id w14-20020a056e0213ee00b0032827955ae6so8448700ilj.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Apr 2023 23:53:47 -0700 (PDT)
+        Tue, 11 Apr 2023 02:54:04 -0400
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFFB12D6B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Apr 2023 23:53:46 -0700 (PDT)
+Received: by mail-io1-f77.google.com with SMTP id r14-20020a5e950e000000b0074cc9aba965so4922824ioj.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Apr 2023 23:53:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112; t=1681196026; x=1683788026;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=AGVH0WnSXrVNezxRIYrXgrKByqgiTSx6uDX6MYjCj6s=;
-        b=pDry32a1SG4VwoHU6ruTpoUX9+7QUiHoEyDnpZOOA2+QK0Ln5VW4bczontm4YVdqGj
-         RnB1EMcjWl4jeKXbXPHYSy2JG2CfiEZ4NQD9bps+4GpXfyH9HrRGBQkC9FbzxMSeR3x1
-         0RV/0Jl2JQNuijEbglwA7GHCE4eaxdwqFgWLV8ohFmqC+kB22RC2g0h2H28gUwkZz/Gz
-         FN/3+EnRGGyzLRnr3bw+ZCokeUtGXCZl6kgFQ23uCE6GmVxq8hGTy4dSmR6u2RooV6mK
-         uU+GaPDoAyPqhrvvR9Ctyes1tabPork18PByZhM4KM2TK0SQNXnuZ60FQXbMz9vVs+gJ
-         0jIQ==
-X-Gm-Message-State: AAQBX9e50Oz3OXMneqNVAmspYMb8dZ/CMo1zSJvJHH8tmUMlE6Now3cU
-        HrjS+9HBU/mo2mJmOvMcPfyCqZJEG+fA//P1HCai25GYDQv6
-X-Google-Smtp-Source: AKy350Ybvq13Jj9CD7o5yV7zJ0tsyR7cl/QgQ5hkiVaSJ9UiBO8pKc2KDAB7FBx12cxcSKcLaMFRetmcfDdu4yqBHZoOpdEJRmwQ
+        bh=yjfsXRlkEt9BMh+Ls8OP9AtDqH9PnXX74RZjpl1iflk=;
+        b=Nfk7cnk7XU7HgDpDAce6BBcdUbqD69tcc58wqh786zHvGZpAsez+4o0xJ6C7asSZEM
+         FxMiBNG94e7AQjiETgklTCP5wtjMUY8g90OacDW7toAaUuhQOsc9Z+fYvWwaQwFDsEQJ
+         hZNAZ+2BuKxDs2NeXB0djAWzoO6Codds2c1OkfUwkRNu48pbY7i1dCl3oBOU5rOHV9iV
+         76W31OODAgSf9gGjAYiYcdmm2gQGEW6xvLlysaVno3OxlNDy2yPptrrppMGQHfdxDt8S
+         Nr2O4+uty5Q+d6M0wB7/RM/sEfGDOEZ2uiwcWo2yepDqiQ3u/8Mv9McnjpiLTn0DxMpg
+         oFcw==
+X-Gm-Message-State: AAQBX9dcAWlVANJvKRsFKQUZAOon0/TfTiBysLljriW9qywjv+Hbl5S5
+        BjXOStscLbzxIqzgooQqgcdtPhAcPCkGuBlfjZ58uwscBBl4
+X-Google-Smtp-Source: AKy350aMIDRPsi0/gD3o1b/CgK2Nz0VIcM4ypkAi64sp6tgY2HHOVM5eQVductsNrk+6/lC5p71oZ5gmdXT8UeblyQxZS52w5Gr+
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:216f:b0:3fc:e1f5:961a with SMTP id
- p15-20020a056638216f00b003fce1f5961amr5148091jak.2.1681196026533; Mon, 10 Apr
+X-Received: by 2002:a6b:dc13:0:b0:745:4154:b571 with SMTP id
+ s19-20020a6bdc13000000b007454154b571mr5119982ioc.3.1681196026048; Mon, 10 Apr
  2023 23:53:46 -0700 (PDT)
 Date:   Mon, 10 Apr 2023 23:53:46 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f59d0a05f909f300@google.com>
-Subject: [syzbot] [ntfs3?] kernel panic: stack is corrupted in __kmem_cache_alloc_node
-From:   syzbot <syzbot+4c1f1aff5637977d5ba9@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000ee3a3005f909f30a@google.com>
+Subject: [syzbot] [fs?] possible deadlock in sys_quotactl_fd
+From:   syzbot <syzbot+aacb82fca60873422114@syzkaller.appspotmail.com>
+To:     jack@suse.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_DIGITS,
+        FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,58 +57,113 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    6ab608fe852b Merge tag 'for-6.3-rc4-tag' of git://git.kern..
+HEAD commit:    76f598ba7d8e Merge tag 'for-linus' of git://git.kernel.org..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=102ad495c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e626f76ad59b1c14
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c1f1aff5637977d5ba9
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+console output: https://syzkaller.appspot.com/x/log.txt?x=13965b21c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5666fa6aca264e42
+dashboard link: https://syzkaller.appspot.com/bug?extid=aacb82fca60873422114
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4c1f1aff5637977d5ba9@syzkaller.appspotmail.com
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1f01c9748997/disk-76f598ba.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b3afb4fc86b9/vmlinux-76f598ba.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8908040d7a31/bzImage-76f598ba.xz
 
-ntfs3: loop3: Different NTFS' sector size (1024) and media sector size (512)
-Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: __kmem_cache_alloc_node+0x3a7/0x3f0 mm/slab.c:3543
-CPU: 1 PID: 5830 Comm: syz-executor.3 Not tainted 6.3.0-rc4-syzkaller-00243-g6ab608fe852b #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+aacb82fca60873422114@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.3.0-rc5-syzkaller-00022-g76f598ba7d8e #0 Not tainted
+------------------------------------------------------
+syz-executor.0/17940 is trying to acquire lock:
+ffff88802a89e0e0 (&type->s_umount_key#31){++++}-{3:3}, at: __do_sys_quotactl_fd fs/quota/quota.c:999 [inline]
+ffff88802a89e0e0 (&type->s_umount_key#31){++++}-{3:3}, at: __se_sys_quotactl_fd+0x2fb/0x440 fs/quota/quota.c:972
+
+but task is already holding lock:
+ffff88802a89e460 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:394
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (sb_writers#4){.+.+}-{0:0}:
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1477 [inline]
+       sb_start_write include/linux/fs.h:1552 [inline]
+       write_mmp_block+0xe5/0x930 fs/ext4/mmp.c:50
+       ext4_multi_mount_protect+0x364/0x990 fs/ext4/mmp.c:343
+       __ext4_remount fs/ext4/super.c:6543 [inline]
+       ext4_reconfigure+0x29a8/0x3280 fs/ext4/super.c:6642
+       reconfigure_super+0x3c9/0x7c0 fs/super.c:956
+       vfs_fsconfig_locked fs/fsopen.c:254 [inline]
+       __do_sys_fsconfig fs/fsopen.c:439 [inline]
+       __se_sys_fsconfig+0xa29/0xf70 fs/fsopen.c:314
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #0 (&type->s_umount_key#31){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3098 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+       validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
+       __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
+       __do_sys_quotactl_fd fs/quota/quota.c:999 [inline]
+       __se_sys_quotactl_fd+0x2fb/0x440 fs/quota/quota.c:972
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(sb_writers#4);
+                               lock(&type->s_umount_key#31);
+                               lock(sb_writers#4);
+  lock(&type->s_umount_key#31);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.0/17940:
+ #0: ffff88802a89e460 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:394
+
+stack backtrace:
+CPU: 0 PID: 17940 Comm: syz-executor.0 Not tainted 6.3.0-rc5-syzkaller-00022-g76f598ba7d8e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
 Call Trace:
  <TASK>
  __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
- panic+0x688/0x730 kernel/panic.c:340
- __stack_chk_fail+0x19/0x20 kernel/panic.c:759
- __kmem_cache_alloc_node+0x3a7/0x3f0 mm/slab.c:3543
- __do_kmalloc_node mm/slab_common.c:966 [inline]
- __kmalloc+0x4e/0x190 mm/slab_common.c:980
- kmalloc include/linux/slab.h:584 [inline]
- mi_init+0x90/0x100 fs/ntfs3/record.c:105
- ntfs_read_mft fs/ntfs3/inode.c:53 [inline]
- ntfs_iget5+0x3ff/0x3310 fs/ntfs3/inode.c:518
- ntfs_fill_super+0x3138/0x3ab0 fs/ntfs3/super.c:1244
- get_tree_bdev+0x444/0x760 fs/super.c:1303
- vfs_get_tree+0x8d/0x350 fs/super.c:1510
- do_new_mount fs/namespace.c:3042 [inline]
- path_mount+0x1342/0x1e40 fs/namespace.c:3372
- do_mount fs/namespace.c:3385 [inline]
- __do_sys_mount fs/namespace.c:3594 [inline]
- __se_sys_mount fs/namespace.c:3571 [inline]
- __x64_sys_mount+0x283/0x300 fs/namespace.c:3571
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ check_noncircular+0x2fe/0x3b0 kernel/locking/lockdep.c:2178
+ check_prev_add kernel/locking/lockdep.c:3098 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+ validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
+ __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
+ lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+ down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
+ __do_sys_quotactl_fd fs/quota/quota.c:999 [inline]
+ __se_sys_quotactl_fd+0x2fb/0x440 fs/quota/quota.c:972
  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f92a728d62a
-Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f92a8085f88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 000000000001f762 RCX: 00007f92a728d62a
-RDX: 0000000020000000 RSI: 000000002001f740 RDI: 00007f92a8085fe0
-RBP: 00007f92a8086020 R08: 00007f92a8086020 R09: 0000000001000000
-R10: 0000000001000000 R11: 0000000000000202 R12: 0000000020000000
-R13: 000000002001f740 R14: 00007f92a8085fe0 R15: 0000000020000040
+RIP: 0033:0x7f3c2aa8c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3c2b826168 EFLAGS: 00000246 ORIG_RAX: 00000000000001bb
+RAX: ffffffffffffffda RBX: 00007f3c2ababf80 RCX: 00007f3c2aa8c169
+RDX: ffffffffffffffff RSI: ffffffff80000601 RDI: 0000000000000003
+RBP: 00007f3c2aae7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000200024c0 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffd71f38adf R14: 00007f3c2b826300 R15: 0000000000022000
  </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
 
 
 ---
