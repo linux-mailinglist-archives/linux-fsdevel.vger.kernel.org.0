@@ -2,55 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A56B6DDD24
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 16:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91B8E6DDD4B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 16:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbjDKOBm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 10:01:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56634 "EHLO
+        id S229692AbjDKOJB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 10:09:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231267AbjDKOBg (ORCPT
+        with ESMTP id S230146AbjDKOIx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 10:01:36 -0400
+        Tue, 11 Apr 2023 10:08:53 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B0B4EDA;
-        Tue, 11 Apr 2023 07:01:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8450D359D;
+        Tue, 11 Apr 2023 07:08:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 47B646270A;
-        Tue, 11 Apr 2023 14:01:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA439C433EF;
-        Tue, 11 Apr 2023 14:01:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 20ABB624C2;
+        Tue, 11 Apr 2023 14:08:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB463C433EF;
+        Tue, 11 Apr 2023 14:08:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681221686;
-        bh=bh4S6Aaz0/IhrcgisyiKrZkqvR1FMBsHKNOalcM5KTo=;
+        s=k20201202; t=1681222131;
+        bh=1wTmbDFMmZMHkjXWXCkKRvh7H1u8fZyis15UjyxfO04=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J96mmwfc22cFnqRer3iiimgMcd8ZJxl5kqeMIvCGmj7UZWOYW4QUV7XI/0NtwLjc2
-         TVdJj1huHkX4PJEVh7G/bZ0Rw9s6fvFHp1XqqACPyvRZkFcf2eEraW6V6Pg3hGFb58
-         EX4g6AMPpeRAUCJKhNQk7vIfOX8p6L7ztuzzRxUvQKeuZp12BUAXx4H/8ABaiHEJs8
-         LaVPyB0Jpl6n1icMA+f/7xlGzi/vnMNqYamEzZfK1qe+hG1kW3jYb9TInQsg5+b3Ih
-         MLK55Hf6ChOe49xqzdQE+EvhcgfmcpS9cbQ4B5bAXLKmoV8fwZReLOaqGtCaNAuXse
-         BDXMmpS3qqdoA==
-Date:   Tue, 11 Apr 2023 16:01:16 +0200
+        b=Jvr7LGbPu0Hjg/6fhItPXnVsmIPdZ4C0Zl7PSo4Y8DfX7Ue+CGX1k24T7+l1dBbK/
+         hqsGYn+bDNthjyxTyv1vfJHsQff2DALRhPpY11G5gcYPelbwdBGVCy/NSL5I9E8vh3
+         eurt5MGGZfTARqEjkQ5owsv5rzYQky1d5g80gSzM04Smp+apH0Q2GKvMGOmP/CI70/
+         9DzW9LwWWSKtJsBrGbOr6U8xhm+v8alYhNgmrg5Pw2pap4CQ6aNQuYJ6E1H0DnZ2T7
+         aowEs5t2cuszJgaI2Z9A5CHEstRcA+EgcGuppzTEHknB2PwoQllEPaR2oWZ5efFuCE
+         IP+a7u6XGOQ8w==
+Date:   Tue, 11 Apr 2023 16:08:45 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     jack@suse.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+cdcd444e4d3a256ada13@syzkaller.appspotmail.com>,
-        syzbot <syzbot+aacb82fca60873422114@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [fs?] possible deadlock in quotactl_fd
-Message-ID: <20230411-skandal-global-379ddaf6e66a@brauner>
-References: <000000000000f1a9d205f909f327@google.com>
- <000000000000ee3a3005f909f30a@google.com>
- <20230411-sendung-apokalypse-05af1adb8889@brauner>
- <20230411105542.6dee4qf2tgt5scwx@quack3>
- <20230411-stich-tonart-8da033e58554@brauner>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after
+ writes
+Message-ID: <20230411-abartig-relikt-9785cfe2b604@brauner>
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+ <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
+ <20230409-genick-pelikan-a1c534c2a3c1@brauner>
+ <b2591695afc11a8924a56865c5cd2d59e125413c.camel@kernel.org>
+ <20230411-umgewandelt-gastgewerbe-870e4170781c@brauner>
+ <8f5cc243398d5bae731a26e674bdeff465da3968.camel@kernel.org>
+ <20230411-holzbalken-stuben-6cea8b722a1b@brauner>
+ <b137033f3cd971b0cfc71045cab63440dfe9c7f8.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230411-stich-tonart-8da033e58554@brauner>
+In-Reply-To: <b137033f3cd971b0cfc71045cab63440dfe9c7f8.camel@kernel.org>
 X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
@@ -60,121 +66,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 03:40:25PM +0200, Christian Brauner wrote:
-> On Tue, Apr 11, 2023 at 12:55:42PM +0200, Jan Kara wrote:
-> > On Tue 11-04-23 12:11:52, Christian Brauner wrote:
-> > > On Mon, Apr 10, 2023 at 11:53:46PM -0700, syzbot wrote:
-> > > > Hello,
-> > > > 
-> > > > syzbot found the following issue on:
-> > > > 
-> > > > HEAD commit:    0d3eb744aed4 Merge tag 'urgent-rcu.2023.04.07a' of git://g..
-> > > > git tree:       upstream
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=11798e4bc80000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c21559e740385326
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=cdcd444e4d3a256ada13
-> > > > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > > > 
-> > > > Unfortunately, I don't have any reproducer for this issue yet.
-> > > > 
-> > > > Downloadable assets:
-> > > > disk image: https://storage.googleapis.com/syzbot-assets/a02928003efa/disk-0d3eb744.raw.xz
-> > > > vmlinux: https://storage.googleapis.com/syzbot-assets/7839447005a4/vmlinux-0d3eb744.xz
-> > > > kernel image: https://storage.googleapis.com/syzbot-assets/d26ab3184148/bzImage-0d3eb744.xz
-> > > > 
-> > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > > Reported-by: syzbot+cdcd444e4d3a256ada13@syzkaller.appspotmail.com
-> > > > 
-> > > > ======================================================
-> > > > WARNING: possible circular locking dependency detected
-> > > > 6.3.0-rc6-syzkaller-00016-g0d3eb744aed4 #0 Not tainted
-> > > > ------------------------------------------------------
-> > > > syz-executor.3/11858 is trying to acquire lock:
-> > > > ffff88802a3bc0e0 (&type->s_umount_key#31){++++}-{3:3}, at: __do_sys_quotactl_fd+0x174/0x3f0 fs/quota/quota.c:997
-> > > > 
-> > > > but task is already holding lock:
-> > > > ffff88802a3bc460 (sb_writers#4){.+.+}-{0:0}, at: __do_sys_quotactl_fd+0xd3/0x3f0 fs/quota/quota.c:990
-> > > > 
-> > > > which lock already depends on the new lock.
-> > > > 
-> > > > 
-> > > > the existing dependency chain (in reverse order) is:
-> > > > 
-> > > > -> #1 (sb_writers#4){.+.+}-{0:0}:
-> > > >        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-> > > >        __sb_start_write include/linux/fs.h:1477 [inline]
-> > > >        sb_start_write include/linux/fs.h:1552 [inline]
-> > > >        write_mmp_block+0xc4/0x820 fs/ext4/mmp.c:50
-> > > >        ext4_multi_mount_protect+0x50d/0xac0 fs/ext4/mmp.c:343
-> > > >        __ext4_remount fs/ext4/super.c:6543 [inline]
-> > > >        ext4_reconfigure+0x242b/0x2b60 fs/ext4/super.c:6642
-> > > >        reconfigure_super+0x40c/0xa30 fs/super.c:956
-> > > >        vfs_fsconfig_locked fs/fsopen.c:254 [inline]
-> > > >        __do_sys_fsconfig+0xa3a/0xc20 fs/fsopen.c:439
-> > > >        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> > > >        do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
-> > > >        entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> > > > 
-> > > > -> #0 (&type->s_umount_key#31){++++}-{3:3}:
-> > > >        check_prev_add kernel/locking/lockdep.c:3098 [inline]
-> > > >        check_prevs_add kernel/locking/lockdep.c:3217 [inline]
-> > > >        validate_chain kernel/locking/lockdep.c:3832 [inline]
-> > > >        __lock_acquire+0x2ec7/0x5d40 kernel/locking/lockdep.c:5056
-> > > >        lock_acquire kernel/locking/lockdep.c:5669 [inline]
-> > > >        lock_acquire+0x1af/0x520 kernel/locking/lockdep.c:5634
-> > > >        down_write+0x92/0x200 kernel/locking/rwsem.c:1573
-> > > >        __do_sys_quotactl_fd+0x174/0x3f0 fs/quota/quota.c:997
-> > > >        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> > > >        do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
-> > > >        entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> > > > 
-> > > > other info that might help us debug this:
-> > > > 
-> > > >  Possible unsafe locking scenario:
-> > > > 
-> > > >        CPU0                    CPU1
-> > > >        ----                    ----
-> > > >   lock(sb_writers#4);
-> > > >                                lock(&type->s_umount_key#31);
-> > > >                                lock(sb_writers#4);
-> > > >   lock(&type->s_umount_key#31);
-> > > > 
-> > > >  *** DEADLOCK ***
+On Tue, Apr 11, 2023 at 06:13:15AM -0400, Jeff Layton wrote:
+> On Tue, 2023-04-11 at 11:49 +0200, Christian Brauner wrote:
+> > 
 > > > 
-> > > Hmkay, I understand how this happens, I think:
+> > > > Afaict, filesystems that persist i_version to disk automatically raise
+> > > > SB_I_VERSION. I would guess that it be considered a bug if a filesystem
+> > > > would persist i_version to disk and not raise SB_I_VERSION. If so IMA
+> > > > should probably be made to check for IS_I_VERSION() and it will probably
+> > > > get that by switching to vfs_getattr_nosec().
 > > > 
-> > > fsconfig(FSCONFIG_CMD_RECONFIGURE)                      quotactl_fd(Q_QUOTAON/Q_QUOTAOFF/Q_XQUOTAON/Q_XQUOTAOFF)
-> > > 							-> mnt_want_write(f.file->f_path.mnt);
-> > > -> down_write(&sb->s_umount);                              -> __sb_start_write(sb, SB_FREEZE_WRITE) 
-> > > -> reconfigure_super(fc);
-> > >    -> ext4_multi_mount_protect()
-> > >       -> __sb_start_write(sb, SB_FREEZE_WRITE)         -> down_write(&sb->s_umount);
-> > > -> up_write(&sb->s_umount);
+> > > Not quite. SB_I_VERSION tells the vfs that the filesystem wants the
+> > > kernel to manage the increment of the i_version for it. The filesystem
+> > > is still responsible for persisting that value to disk (if appropriate).
 > > 
-> > Thanks for having a look!
+> > Yes, sure it's the filesystems responsibility to persist it to disk or
+> > not. What I tried to ask was that when a filesystem does persist
+> > i_version to disk then would it be legal to mount it without
+> > SB_I_VERSION (because ext2/ext3 did use to have that mount option)? If
+> > it would then the filesystem would probably need to take care to leave
+> > the i_version field in struct inode uninitialized to avoid confusion or
+> > would that just work? (Mere curiosity, don't feel obligated to go into
+> > detail here. I don't want to hog your time.)
 > > 
-> > > I have to step away from the computer now for a bit but naively it seem
-> > > that the locking order for quotactl_fd() should be the other way around.
-> > > 
-> > > But while I'm here, why does quotactl_fd() take mnt_want_write() but
-> > > quotactl() doesn't? It seems that if one needs to take it both need to
-> > > take it.
-> > 
-> > Couple of notes here:
-> > 
-> > 1) quotactl() handles the filesystem freezing by grabbing the s_umount
-> > semaphore, checking the superblock freeze state (it cannot change while
-> > s_umount is held) and proceeding if fs is not frozen. This logic is hidden
-> > in quotactl_block().
-> > 
-> > 2) The proper lock ordering is indeed freeze-protection -> s_umount because
-> > that is implicitely dictated by how filesystem freezing works. If you grab
 > 
-> Yep.
+> In modern kernels, not setting SB_I_VERSION would mainly have the effect
+> of stopping increments of i_version field on write. It would also mean
+> that the STATX_CHANGE_COOKIE is not automatically reported via getattr.
 
-One final thought about this. quotactl() and quotactl_fd() could do the
-same thing though, right? quotactl() could just be made to use the same
-locking scheme as quotactl_fd(). Not saying it has to, but the code
-would probably be easier to understand/maintain if both would use the same.
+Ah, good.
 
+> 
+> You probably wouldn't want to mount the fs without SB_I_VERSION set. The
+> missing increments could trick an observer into believing that nothing
+> had changed in the file across mounts when it actually had.
+
+Yeah, that's what I thought and that would potentially be an attack on
+IMA which is why I asked.
+
+Thanks!
 Christian
