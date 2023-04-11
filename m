@@ -2,248 +2,314 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BBBF6DD77C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 12:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D07B6DD790
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 12:12:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229548AbjDKKIj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 06:08:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60252 "EHLO
+        id S229559AbjDKKMB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 06:12:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbjDKKIi (ORCPT
+        with ESMTP id S229452AbjDKKMA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 06:08:38 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3504B172C;
-        Tue, 11 Apr 2023 03:08:36 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Tue, 11 Apr 2023 06:12:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6F671BC8;
+        Tue, 11 Apr 2023 03:11:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id DE20C1FE09;
-        Tue, 11 Apr 2023 10:08:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1681207714; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lR71N1mYm36JOq5VF9CaSZ6QT7xQUnDPq3n8X/2hNUA=;
-        b=OHtmcVW/1PLrds+bk1wJbaT0/VSElwTMtqL3RObpXG0Y3czGe55zl2TYdJboVgbebhSu//
-        DRrWo/PFctezzue0a4fnn3wdAJTKlR6YysJy+7IjwkVgaxNunCDs1swxBKGysUO+KZQHbM
-        wXyivsTEydWZQgHuRaerWWS8V5MXayE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1681207714;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lR71N1mYm36JOq5VF9CaSZ6QT7xQUnDPq3n8X/2hNUA=;
-        b=JaXpYwHfOL7K2A339hNzEy/0W47aGoheDtgbI9Vb9SVPLhHuMyr4jRLJ++t37r0Rdu1y/b
-        uaoJfCypNgIkl3DQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BEFBE13638;
-        Tue, 11 Apr 2023 10:08:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id OXZuLqIxNWRDQAAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 11 Apr 2023 10:08:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9B03CA0732; Tue, 11 Apr 2023 12:08:33 +0200 (CEST)
-Date:   Tue, 11 Apr 2023 12:08:33 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Baokun Li <libaokun1@huawei.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, jack@suse.cz, tj@kernel.org, dennis@kernel.org,
-        adilger.kernel@dilger.ca, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-        yangerkun@huawei.com, houtao1@huawei.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2] writeback, cgroup: fix null-ptr-deref write in
- bdi_split_work_to_wbs
-Message-ID: <20230411100833.jlqyprce6qbphr6q@quack3>
-References: <20230410130826.1492525-1-libaokun1@huawei.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 64064620A2;
+        Tue, 11 Apr 2023 10:11:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30973C433EF;
+        Tue, 11 Apr 2023 10:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681207917;
+        bh=iPhJ+PT74k+Ojqf9oZmTCOxVydbNMIVqAj1Dp5wdI3A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=nZU5p7Ewy0YdE+9WhKppwY7C55S/ytiD3N3DtF32KGozO0PB5msztTA0yNg+wpga3
+         5K0zWqM6ZBgqBYYenrBNdaLMZ68ioLhbyLaLsoM3jrxTBz9ybHwcgu7krs5K0xYCIb
+         FkxKvJhVBv4PfLnyV0XZnHXNmaRvdgdObEs7B8OCHX3Ug0WLSBrF1vQJlO0wuKSo8M
+         BC72g0hu68U5PclLEXFqeCBXbMWM5CkEq+uRMlwqqniuUU/sbhxs2As2rGNLdrxal6
+         Xaa8VT9HzY3JnLx/sVaWnAA5zYo77EF2jNbo9n0bmyCJWOwuY9Ih7A+szSfIOEYnn9
+         x0b6PVYkIDHQQ==
+Date:   Tue, 11 Apr 2023 12:11:52 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     jack@suse.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+cdcd444e4d3a256ada13@syzkaller.appspotmail.com>,
+        syzbot <syzbot+aacb82fca60873422114@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [fs?] possible deadlock in quotactl_fd
+Message-ID: <20230411-sendung-apokalypse-05af1adb8889@brauner>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230410130826.1492525-1-libaokun1@huawei.com>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <000000000000f1a9d205f909f327@google.com>
+ <000000000000ee3a3005f909f30a@google.com>
+X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 10-04-23 21:08:26, Baokun Li wrote:
-> KASAN report null-ptr-deref:
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in bdi_split_work_to_wbs+0x5c5/0x7b0
-> Write of size 8 at addr 0000000000000000 by task sync/943
-> CPU: 5 PID: 943 Comm: sync Tainted: 6.3.0-rc5-next-20230406-dirty #461
+On Mon, Apr 10, 2023 at 11:53:46PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    0d3eb744aed4 Merge tag 'urgent-rcu.2023.04.07a' of git://g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11798e4bc80000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c21559e740385326
+> dashboard link: https://syzkaller.appspot.com/bug?extid=cdcd444e4d3a256ada13
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/a02928003efa/disk-0d3eb744.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/7839447005a4/vmlinux-0d3eb744.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d26ab3184148/bzImage-0d3eb744.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+cdcd444e4d3a256ada13@syzkaller.appspotmail.com
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.3.0-rc6-syzkaller-00016-g0d3eb744aed4 #0 Not tainted
+> ------------------------------------------------------
+> syz-executor.3/11858 is trying to acquire lock:
+> ffff88802a3bc0e0 (&type->s_umount_key#31){++++}-{3:3}, at: __do_sys_quotactl_fd+0x174/0x3f0 fs/quota/quota.c:997
+> 
+> but task is already holding lock:
+> ffff88802a3bc460 (sb_writers#4){.+.+}-{0:0}, at: __do_sys_quotactl_fd+0xd3/0x3f0 fs/quota/quota.c:990
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #1 (sb_writers#4){.+.+}-{0:0}:
+>        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+>        __sb_start_write include/linux/fs.h:1477 [inline]
+>        sb_start_write include/linux/fs.h:1552 [inline]
+>        write_mmp_block+0xc4/0x820 fs/ext4/mmp.c:50
+>        ext4_multi_mount_protect+0x50d/0xac0 fs/ext4/mmp.c:343
+>        __ext4_remount fs/ext4/super.c:6543 [inline]
+>        ext4_reconfigure+0x242b/0x2b60 fs/ext4/super.c:6642
+>        reconfigure_super+0x40c/0xa30 fs/super.c:956
+>        vfs_fsconfig_locked fs/fsopen.c:254 [inline]
+>        __do_sys_fsconfig+0xa3a/0xc20 fs/fsopen.c:439
+>        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>        do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+>        entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 
+> -> #0 (&type->s_umount_key#31){++++}-{3:3}:
+>        check_prev_add kernel/locking/lockdep.c:3098 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+>        validate_chain kernel/locking/lockdep.c:3832 [inline]
+>        __lock_acquire+0x2ec7/0x5d40 kernel/locking/lockdep.c:5056
+>        lock_acquire kernel/locking/lockdep.c:5669 [inline]
+>        lock_acquire+0x1af/0x520 kernel/locking/lockdep.c:5634
+>        down_write+0x92/0x200 kernel/locking/rwsem.c:1573
+>        __do_sys_quotactl_fd+0x174/0x3f0 fs/quota/quota.c:997
+>        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>        do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+>        entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 
+> other info that might help us debug this:
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(sb_writers#4);
+>                                lock(&type->s_umount_key#31);
+>                                lock(sb_writers#4);
+>   lock(&type->s_umount_key#31);
+> 
+>  *** DEADLOCK ***
+
+Hmkay, I understand how this happens, I think:
+
+fsconfig(FSCONFIG_CMD_RECONFIGURE)                      quotactl_fd(Q_QUOTAON/Q_QUOTAOFF/Q_XQUOTAON/Q_XQUOTAOFF)
+							-> mnt_want_write(f.file->f_path.mnt);
+-> down_write(&sb->s_umount);                              -> __sb_start_write(sb, SB_FREEZE_WRITE) 
+-> reconfigure_super(fc);
+   -> ext4_multi_mount_protect()
+      -> __sb_start_write(sb, SB_FREEZE_WRITE)         -> down_write(&sb->s_umount);
+-> up_write(&sb->s_umount);
+
+I have to step away from the computer now for a bit but naively it seem
+that the locking order for quotactl_fd() should be the other way around.
+
+But while I'm here, why does quotactl_fd() take mnt_want_write() but
+quotactl() doesn't? It seems that if one needs to take it both need to
+take it.
+
+> 
+> 1 lock held by syz-executor.3/11858:
+>  #0: ffff88802a3bc460 (sb_writers#4){.+.+}-{0:0}, at: __do_sys_quotactl_fd+0xd3/0x3f0 fs/quota/quota.c:990
+> 
+> stack backtrace:
+> CPU: 0 PID: 11858 Comm: syz-executor.3 Not tainted 6.3.0-rc6-syzkaller-00016-g0d3eb744aed4 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
 > Call Trace:
 >  <TASK>
->  dump_stack_lvl+0x7f/0xc0
->  print_report+0x2ba/0x340
->  kasan_report+0xc4/0x120
->  kasan_check_range+0x1b7/0x2e0
->  __kasan_check_write+0x24/0x40
->  bdi_split_work_to_wbs+0x5c5/0x7b0
->  sync_inodes_sb+0x195/0x630
->  sync_inodes_one_sb+0x3a/0x50
->  iterate_supers+0x106/0x1b0
->  ksys_sync+0x98/0x160
-> [...]
-> ==================================================================
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+>  check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2178
+>  check_prev_add kernel/locking/lockdep.c:3098 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+>  validate_chain kernel/locking/lockdep.c:3832 [inline]
+>  __lock_acquire+0x2ec7/0x5d40 kernel/locking/lockdep.c:5056
+>  lock_acquire kernel/locking/lockdep.c:5669 [inline]
+>  lock_acquire+0x1af/0x520 kernel/locking/lockdep.c:5634
+>  down_write+0x92/0x200 kernel/locking/rwsem.c:1573
+>  __do_sys_quotactl_fd+0x174/0x3f0 fs/quota/quota.c:997
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> RIP: 0033:0x7f81d2e8c169
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f81d3b29168 EFLAGS: 00000246 ORIG_RAX: 00000000000001bb
+> RAX: ffffffffffffffda RBX: 00007f81d2fabf80 RCX: 00007f81d2e8c169
+> RDX: 0000000000000000 RSI: ffffffff80000300 RDI: 0000000000000003
+> RBP: 00007f81d2ee7ca1 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fffeeb18d7f R14: 00007f81d3b29300 R15: 0000000000022000
+>  </TASK>
 > 
-> The race that causes the above issue is as follows:
 > 
->            cpu1                     cpu2
-> -------------------------|-------------------------
-> inode_switch_wbs
->  INIT_WORK(&isw->work, inode_switch_wbs_work_fn)
->  queue_rcu_work(isw_wq, &isw->work)
->  // queue_work async
->   inode_switch_wbs_work_fn
->    wb_put_many(old_wb, nr_switched)
->     percpu_ref_put_many
->      ref->data->release(ref)
->      cgwb_release
->       queue_work(cgwb_release_wq, &wb->release_work)
->       // queue_work async
->        &wb->release_work
->        cgwb_release_workfn
->                             ksys_sync
->                              iterate_supers
->                               sync_inodes_one_sb
->                                sync_inodes_sb
->                                 bdi_split_work_to_wbs
->                                  kmalloc(sizeof(*work), GFP_ATOMIC)
->                                  // alloc memory failed
->         percpu_ref_exit
->          ref->data = NULL
->          kfree(data)
->                                  wb_get(wb)
->                                   percpu_ref_get(&wb->refcnt)
->                                    percpu_ref_get_many(ref, 1)
->                                     atomic_long_add(nr, &ref->data->count)
->                                      atomic64_add(i, v)
->                                      // trigger null-ptr-deref
-> 
-> bdi_split_work_to_wbs() traverses &bdi->wb_list to split work into all wbs.
-> If the allocation of new work fails, the on-stack fallback will be used and
-> the reference count of the current wb is increased afterwards. If cgroup
-> writeback membership switches occur before getting the reference count and
-> the current wb is released as old_wd, then calling wb_get() or wb_put()
-> will trigger the null pointer dereference above.
-> 
-> This issue was introduced in v4.3-rc7 (see fix tag1). Both sync_inodes_sb()
-> and __writeback_inodes_sb_nr() calls to bdi_split_work_to_wbs() can trigger
-> this issue. For scenarios called via sync_inodes_sb(), originally commit
-> 7fc5854f8c6e ("writeback: synchronize sync(2) against cgroup writeback
-> membership switches") reduced the possibility of the issue by adding
-> wb_switch_rwsem, but in v5.14-rc1 (see fix tag2) removed the
-> "inode_io_list_del_locked(inode, old_wb)" from inode_switch_wbs_work_fn()
-> so that wb->state contains WB_has_dirty_io, thus old_wb is not skipped
-> when traversing wbs in bdi_split_work_to_wbs(), and the issue becomes
-> easily reproducible again.
-> 
-> To solve this problem, percpu_ref_exit() is called under RCU protection
-> to avoid race between cgwb_release_workfn() and bdi_split_work_to_wbs().
-> Moreover, replace wb_get() with wb_tryget() in bdi_split_work_to_wbs(),
-> and skip the current wb if wb_tryget() fails because the wb has already
-> been shutdown.
-> 
-> Fixes: b817525a4a80 ("writeback: bdi_writeback iteration must not skip dying ones")
-> Fixes: f3b6a6df38aa ("writeback, cgroup: keep list of inodes attached to bdi_writeback")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 > ---
-> V1->V2:
-> 	Use RCU instead of wb_switch_rwsem to avoid race.
-
-The cgwb shutdown code is really messy. But your change looks good to me
-and I don't see an easier way around this race. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 > 
->  fs/fs-writeback.c | 17 ++++++++++-------
->  mm/backing-dev.c  | 12 ++++++++++--
->  2 files changed, 20 insertions(+), 9 deletions(-)
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+On Mon, Apr 10, 2023 at 11:53:46PM -0700, syzbot wrote:
+> Hello,
 > 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 195dc23e0d83..1db3e3c24b43 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -978,6 +978,16 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
->  			continue;
->  		}
->  
-> +		/*
-> +		 * If wb_tryget fails, the wb has been shutdown, skip it.
-> +		 *
-> +		 * Pin @wb so that it stays on @bdi->wb_list.  This allows
-> +		 * continuing iteration from @wb after dropping and
-> +		 * regrabbing rcu read lock.
-> +		 */
-> +		if (!wb_tryget(wb))
-> +			continue;
-> +
->  		/* alloc failed, execute synchronously using on-stack fallback */
->  		work = &fallback_work;
->  		*work = *base_work;
-> @@ -986,13 +996,6 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
->  		work->done = &fallback_work_done;
->  
->  		wb_queue_work(wb, work);
-> -
-> -		/*
-> -		 * Pin @wb so that it stays on @bdi->wb_list.  This allows
-> -		 * continuing iteration from @wb after dropping and
-> -		 * regrabbing rcu read lock.
-> -		 */
-> -		wb_get(wb);
->  		last_wb = wb;
->  
->  		rcu_read_unlock();
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index ad011308cebe..43b48750b491 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -507,6 +507,15 @@ static LIST_HEAD(offline_cgwbs);
->  static void cleanup_offline_cgwbs_workfn(struct work_struct *work);
->  static DECLARE_WORK(cleanup_offline_cgwbs_work, cleanup_offline_cgwbs_workfn);
->  
-> +static void cgwb_free_rcu(struct rcu_head *rcu_head)
-> +{
-> +	struct bdi_writeback *wb = container_of(rcu_head,
-> +			struct bdi_writeback, rcu);
-> +
-> +	percpu_ref_exit(&wb->refcnt);
-> +	kfree(wb);
-> +}
-> +
->  static void cgwb_release_workfn(struct work_struct *work)
->  {
->  	struct bdi_writeback *wb = container_of(work, struct bdi_writeback,
-> @@ -529,11 +538,10 @@ static void cgwb_release_workfn(struct work_struct *work)
->  	list_del(&wb->offline_node);
->  	spin_unlock_irq(&cgwb_lock);
->  
-> -	percpu_ref_exit(&wb->refcnt);
->  	wb_exit(wb);
->  	bdi_put(bdi);
->  	WARN_ON_ONCE(!list_empty(&wb->b_attached));
-> -	kfree_rcu(wb, rcu);
-> +	call_rcu(&wb->rcu, cgwb_free_rcu);
->  }
->  
->  static void cgwb_release(struct percpu_ref *refcnt)
-> -- 
-> 2.31.1
+> syzbot found the following issue on:
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> HEAD commit:    76f598ba7d8e Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13965b21c80000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5666fa6aca264e42
+> dashboard link: https://syzkaller.appspot.com/bug?extid=aacb82fca60873422114
+> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/1f01c9748997/disk-76f598ba.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/b3afb4fc86b9/vmlinux-76f598ba.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/8908040d7a31/bzImage-76f598ba.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+aacb82fca60873422114@syzkaller.appspotmail.com
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.3.0-rc5-syzkaller-00022-g76f598ba7d8e #0 Not tainted
+> ------------------------------------------------------
+> syz-executor.0/17940 is trying to acquire lock:
+> ffff88802a89e0e0 (&type->s_umount_key#31){++++}-{3:3}, at: __do_sys_quotactl_fd fs/quota/quota.c:999 [inline]
+> ffff88802a89e0e0 (&type->s_umount_key#31){++++}-{3:3}, at: __se_sys_quotactl_fd+0x2fb/0x440 fs/quota/quota.c:972
+> 
+> but task is already holding lock:
+> ffff88802a89e460 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:394
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #1 (sb_writers#4){.+.+}-{0:0}:
+>        lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+>        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+>        __sb_start_write include/linux/fs.h:1477 [inline]
+>        sb_start_write include/linux/fs.h:1552 [inline]
+>        write_mmp_block+0xe5/0x930 fs/ext4/mmp.c:50
+>        ext4_multi_mount_protect+0x364/0x990 fs/ext4/mmp.c:343
+>        __ext4_remount fs/ext4/super.c:6543 [inline]
+>        ext4_reconfigure+0x29a8/0x3280 fs/ext4/super.c:6642
+>        reconfigure_super+0x3c9/0x7c0 fs/super.c:956
+>        vfs_fsconfig_locked fs/fsopen.c:254 [inline]
+>        __do_sys_fsconfig fs/fsopen.c:439 [inline]
+>        __se_sys_fsconfig+0xa29/0xf70 fs/fsopen.c:314
+>        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>        do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+>        entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 
+> -> #0 (&type->s_umount_key#31){++++}-{3:3}:
+>        check_prev_add kernel/locking/lockdep.c:3098 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+>        validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
+>        __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
+>        lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+>        down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
+>        __do_sys_quotactl_fd fs/quota/quota.c:999 [inline]
+>        __se_sys_quotactl_fd+0x2fb/0x440 fs/quota/quota.c:972
+>        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>        do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+>        entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 
+> other info that might help us debug this:
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(sb_writers#4);
+>                                lock(&type->s_umount_key#31);
+>                                lock(sb_writers#4);
+>   lock(&type->s_umount_key#31);
+> 
+>  *** DEADLOCK ***
+> 
+> 1 lock held by syz-executor.0/17940:
+>  #0: ffff88802a89e460 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:394
+> 
+> stack backtrace:
+> CPU: 0 PID: 17940 Comm: syz-executor.0 Not tainted 6.3.0-rc5-syzkaller-00022-g76f598ba7d8e #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+>  check_noncircular+0x2fe/0x3b0 kernel/locking/lockdep.c:2178
+>  check_prev_add kernel/locking/lockdep.c:3098 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+>  validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
+>  __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
+>  lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+>  down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
+>  __do_sys_quotactl_fd fs/quota/quota.c:999 [inline]
+>  __se_sys_quotactl_fd+0x2fb/0x440 fs/quota/quota.c:972
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> RIP: 0033:0x7f3c2aa8c169
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f3c2b826168 EFLAGS: 00000246 ORIG_RAX: 00000000000001bb
+> RAX: ffffffffffffffda RBX: 00007f3c2ababf80 RCX: 00007f3c2aa8c169
+> RDX: ffffffffffffffff RSI: ffffffff80000601 RDI: 0000000000000003
+> RBP: 00007f3c2aae7ca1 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00000000200024c0 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007ffd71f38adf R14: 00007f3c2b826300 R15: 0000000000022000
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
