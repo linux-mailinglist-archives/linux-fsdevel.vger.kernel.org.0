@@ -2,163 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E08B6DDF65
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 17:17:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47F186DDF7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 17:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231310AbjDKPR1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 11:17:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51962 "EHLO
+        id S229833AbjDKPWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 11:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231329AbjDKPRN (ORCPT
+        with ESMTP id S229717AbjDKPWR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 11:17:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C94BB65AC;
-        Tue, 11 Apr 2023 08:16:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D4C1E6284B;
-        Tue, 11 Apr 2023 15:15:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65855C433D2;
-        Tue, 11 Apr 2023 15:15:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681226124;
-        bh=kRbdgrXjLG5GyyTrGV82AnFP0qt1dfRAJUPj3Z2Dpg0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O0hExX+iuTqWf56efMiKBf61MZJGoDdlaLysDm8q4AO9oaXzSZsBEtS58Z9PjvN5V
-         +YBrx26G5BwtJSPnbjXm38d5X6N3cpU0dse51LLkdvBHPJTDx9e9+t1qVDaHtc1/vM
-         DvnejoQm+RVzZwERNT/nODPoYtR/vKKoXwwZWOkaQ6CpZgrNmaJsnA24N5aDjGEvzp
-         mqFGNDXOEGb9QqEBqOCQu4HGJVS9fv34lsz07HD6I8OrDiEOxG6mQ+1ul6PKBygvqP
-         v1wg5F1KQ4zyu2TBXi58pceLgCqsxGwgHA/y5ad7qrFCHnbOA4gv/DzgavKraTIjC6
-         iObWhxjBsDn6g==
-Date:   Tue, 11 Apr 2023 17:15:17 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [RFC PATCH 3/3][RESEND] xfs: mark the inode for high-res
- timestamp update in getattr
-Message-ID: <20230411-schokolade-hegemonie-83b1f0ecfd6c@brauner>
-References: <20230411143702.64495-1-jlayton@kernel.org>
- <20230411143702.64495-4-jlayton@kernel.org>
- <20230411145446.GG360895@frogsfrogsfrogs>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230411145446.GG360895@frogsfrogsfrogs>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+        Tue, 11 Apr 2023 11:22:17 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F8355261;
+        Tue, 11 Apr 2023 08:21:41 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id j8so6729705pjy.4;
+        Tue, 11 Apr 2023 08:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1681226490; x=1683818490;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7lhq/v+qbsPhCdc8vPT1tzfkDyW/FEXRjLecDKzEEgU=;
+        b=GS17BeUpbmnej+XE4Fe6hg2h73OLk7WefDVYhpoIfFoAh7Lzl+FvhPf5or2SrdeVWp
+         DJ3EPczcKzSP9TNtU/TDHcybfek5yPeh/lUBa0lHLTvk13P/fbtw5HIgAkB21RHeMJ9j
+         Ewg2bMF1+LFjDhFdM5WFzJBazw7m09IaSZV1apKO6Y33zaZgxOm5sBa37n0Ywf2VPtXi
+         7MmERL/QE01gmcgu1fmfpLZGuahdN+btdS6f1mgKMr7dfvSWI7hjvwhI3IFiGFzp50eA
+         V67z5WB2tFEfeMaUVhHv7HDA8n5UBd8Qnj9TQ9Wnv3MNkSqTdoRggTjxG1u+/WUpGox5
+         WvIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681226490; x=1683818490;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7lhq/v+qbsPhCdc8vPT1tzfkDyW/FEXRjLecDKzEEgU=;
+        b=PivfDScD1LdmghxwltMRoelmSCefNlBiCzn1LToaGVWdF5nCCVsPkKdlcLie8Lb0Sg
+         2Xgp5LsBPSg1nCNy3bLdB+7PQQEJWLa+karUACDWpZmYadc6uSzdmNlRSPSPrntYburl
+         qifsjunIvkJGL57t1sjKUTsgeMSOpwIU8fdTUbvQZRYeEsf11Xe3F7qClFh2Jn5j22pP
+         z2PCdjmNLCaUIpjE8j6iVcygPZsl/iYx6qdAcBViZFFrb3Tsh7w6IddSMz8HegryXjtZ
+         6+N6nlJAjCiBrX/ud7Xmd1HXl7mwzBatYglwu+8ju5OS9+rcaVPLk9zcrLF1fzUwnu+G
+         /2CA==
+X-Gm-Message-State: AAQBX9crePuxPsZkvQ2c5wwdZWFXiSjyZn8XYMmPRbMQcbryg23qUzQt
+        q/CEK7UqodKzFHCS/t+fzp+M9luJT0o=
+X-Google-Smtp-Source: AKy350bpQbuo7Je/C80QZyADu/vZZK3hcRBcmHIOYoqaKCSCeKTZv1XQuv/La3HFGs9Z6axN0Lqflw==
+X-Received: by 2002:a17:902:d511:b0:1a1:b172:5428 with SMTP id b17-20020a170902d51100b001a1b1725428mr21686310plg.18.1681226490464;
+        Tue, 11 Apr 2023 08:21:30 -0700 (PDT)
+Received: from rh-tp ([2406:7400:63:7035:9095:349e:5f0b:ded0])
+        by smtp.gmail.com with ESMTPSA id c16-20020a170902b69000b001a0742b0806sm9852218pls.108.2023.04.11.08.21.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Apr 2023 08:21:30 -0700 (PDT)
+Date:   Tue, 11 Apr 2023 20:51:24 +0530
+Message-Id: <87wn2izbpn.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Subject: Re: [RFCv2 5/8] ext2: Move direct-io to use iomap
+In-Reply-To: <ZDT0JFmwg/9ijdcv@infradead.org>
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 07:54:46AM -0700, Darrick J. Wong wrote:
-> On Tue, Apr 11, 2023 at 10:37:02AM -0400, Jeff Layton wrote:
-> > When the mtime or ctime is being queried via getattr, ensure that we
-> > mark the inode for a high-res timestamp update on the next pass. Also,
-> > switch to current_cmtime for other c/mtime updates.
-> > 
-> > With this change, we're better off having the NFS server just ignore
-> > the i_version field and have it use the ctime instead, so clear the
-> > STATX_CHANGE_COOKIE flag in the result mask in ->getattr.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/xfs/libxfs/xfs_trans_inode.c |  2 +-
-> >  fs/xfs/xfs_acl.c                |  2 +-
-> >  fs/xfs/xfs_inode.c              |  2 +-
-> >  fs/xfs/xfs_iops.c               | 15 ++++++++++++---
-> >  4 files changed, 15 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
-> > index 8b5547073379..9ad7c229c617 100644
-> > --- a/fs/xfs/libxfs/xfs_trans_inode.c
-> > +++ b/fs/xfs/libxfs/xfs_trans_inode.c
-> > @@ -63,7 +63,7 @@ xfs_trans_ichgtime(
-> >  	ASSERT(tp);
-> >  	ASSERT(xfs_isilocked(ip, XFS_ILOCK_EXCL));
-> >  
-> > -	tv = current_time(inode);
-> > +	tv = current_cmtime(inode);
-> >  
-> >  	if (flags & XFS_ICHGTIME_MOD)
-> >  		inode->i_mtime = tv;
-> > diff --git a/fs/xfs/xfs_acl.c b/fs/xfs/xfs_acl.c
-> > index 791db7d9c849..461adc58cf8c 100644
-> > --- a/fs/xfs/xfs_acl.c
-> > +++ b/fs/xfs/xfs_acl.c
-> > @@ -233,7 +233,7 @@ xfs_acl_set_mode(
-> >  	xfs_ilock(ip, XFS_ILOCK_EXCL);
-> >  	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
-> >  	inode->i_mode = mode;
-> > -	inode->i_ctime = current_time(inode);
-> > +	inode->i_ctime = current_cmtime(inode);
-> 
-> Hmm, now we're adding a spinlock to all these updates.
-> Does lockdep have anything exciting to say about this?
-> 
-> (I don't think it will, just wondering aloud...)
-> 
-> >  	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
-> >  
-> >  	if (xfs_has_wsync(mp))
-> > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > index 5808abab786c..80f9d731e261 100644
-> > --- a/fs/xfs/xfs_inode.c
-> > +++ b/fs/xfs/xfs_inode.c
-> > @@ -843,7 +843,7 @@ xfs_init_new_inode(
-> >  	ip->i_df.if_nextents = 0;
-> >  	ASSERT(ip->i_nblocks == 0);
-> >  
-> > -	tv = current_time(inode);
-> > +	tv = current_cmtime(inode);
-> >  	inode->i_mtime = tv;
-> >  	inode->i_atime = tv;
-> >  	inode->i_ctime = tv;
-> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > index 24718adb3c16..a0b07f90e16c 100644
-> > --- a/fs/xfs/xfs_iops.c
-> > +++ b/fs/xfs/xfs_iops.c
-> > @@ -565,6 +565,15 @@ xfs_vn_getattr(
-> >  	if (xfs_is_shutdown(mp))
-> >  		return -EIO;
-> >  
-> > +	/*
-> > +	 * XFS uses the i_version infrastructure to track any change to
-> > +	 * the inode, including atime updates. This means that the i_version
-> > +	 * returned by getattr doesn't conform to what the callers expect.
-> > +	 * Clear it here so that nfsd will fake up a change cookie from the
-> > +	 * ctime instead.
-> > +	 */
-> > +	stat->result_mask &= ~STATX_CHANGE_COOKIE;
-> > +
-> >  	stat->size = XFS_ISIZE(ip);
-> >  	stat->dev = inode->i_sb->s_dev;
-> >  	stat->mode = inode->i_mode;
-> > @@ -573,8 +582,8 @@ xfs_vn_getattr(
-> >  	stat->gid = vfsgid_into_kgid(vfsgid);
-> >  	stat->ino = ip->i_ino;
-> >  	stat->atime = inode->i_atime;
-> > -	stat->mtime = inode->i_mtime;
-> > -	stat->ctime = inode->i_ctime;
-> > +	if (request_mask & (STATX_CTIME|STATX_MTIME))
-> > +		fill_cmtime_and_mark(inode, stat);
-> 
-> Should we be setting STATX_[CM]TIME in the result_mask, just in case the
-> caller asked for ctime and not mtime?
+Christoph Hellwig <hch@infradead.org> writes:
 
-I think the expectation is that everything in STATX_BASIC_MASK is always
-returned to allow equivalence between stat() and statx(). So requesting
-STATX_CTIME separately from STATX_MTIME isn't implemented widely, maybe
-even not at atll?, yet.
+> On Tue, Apr 11, 2023 at 10:51:53AM +0530, Ritesh Harjani (IBM) wrote:
+>> +extern void ext2_write_failed(struct address_space *mapping, loff_t to);
+>
+> No need for the extern.
+>
+
+Sure will drop it.
+
+>> +	/* handle case for partial write and for fallback to buffered write */
+>> +	if (ret >= 0 && iov_iter_count(from)) {
+>> +		loff_t pos, endbyte;
+>> +		ssize_t status;
+>> +		int ret2;
+>> +
+>> +		iocb->ki_flags &= ~IOCB_DIRECT;
+>> +		pos = iocb->ki_pos;
+>> +		status = generic_perform_write(iocb, from);
+>> +		if (unlikely(status < 0)) {
+>> +			ret = status;
+>> +			goto out_unlock;
+>> +		}
+>> +
+>> +		iocb->ki_pos += status;
+>> +		ret += status;
+>> +		endbyte = pos + status - 1;
+>> +		ret2 = filemap_write_and_wait_range(inode->i_mapping, pos,
+>> +						    endbyte);
+>> +		if (!ret2)
+>> +			invalidate_mapping_pages(inode->i_mapping,
+>> +						 pos >> PAGE_SHIFT,
+>> +						 endbyte >> PAGE_SHIFT);
+>> +		if (ret > 0)
+>> +			generic_write_sync(iocb, ret);
+>> +	}
+>
+> Nit, but to me it would seem cleaner if all the fallback handling
+> was moved into a separate helper function.  Or in fact by not
+> using generic_file_write_iter even for buffered I/O and at doing
+> the pre-I/O checks and the final generic_write_sync in common code in
+> ext2 for direct and buffered I/O.
+>
+
+Make sense. However, since we are on the path to modify ext2 buffered-io
+code as well to move to iomap interface, I wouldn't bother too much as
+of now for this code as, all of this is going to go away anyways.
+
+
+>> +	/*
+>> +	 * For writes that could fill holes inside i_size on a
+>> +	 * DIO_SKIP_HOLES filesystem we forbid block creations: only
+>> +	 * overwrites are permitted.
+>> +	 */
+>> +	if ((flags & IOMAP_DIRECT) && (first_block << blkbits < i_size_read(inode)))
+>> +		create = 0;
+>
+> No need for braes around the < operation, but I think you might need
+> them around the shift.
+
+left-shift has a higher precedence. But let me make it more clear in
+next rev.
+
+>
+> Also an overly long line here.
+>
+
+Sure, will see to it.
+
+>> +	if ((flags & IOMAP_WRITE) && (offset + length > i_size_read(inode)))
+>
+> No need for the second set of inner braces here either.
+
+It's just avoids any confusion this way.
+
+-ritesh
