@@ -2,82 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F6866DCF48
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 03:29:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C8296DCF66
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 03:35:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230010AbjDKB3q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Apr 2023 21:29:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35556 "EHLO
+        id S230039AbjDKBfT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Apr 2023 21:35:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229975AbjDKB3m (ORCPT
+        with ESMTP id S229882AbjDKBfS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Apr 2023 21:29:42 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E70719A8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Apr 2023 18:29:40 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-54ee1fd7876so71730287b3.23
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Apr 2023 18:29:40 -0700 (PDT)
+        Mon, 10 Apr 2023 21:35:18 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 912162690
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Apr 2023 18:35:16 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id y6so5245044plp.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Apr 2023 18:35:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1681176580;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SUMdFa7+PPMn99YcGlnAfohLLYbWjlEJWXPRhdQ3G0w=;
-        b=O5jPzmxvpGvZW7A15nBNKVb9+WZg0AxtgKYK/czsKaQti101N5gb12ZgJwZ79KOqCf
-         /7nLUbSt/ecPSttKIZWx6hQc09RPO2HLTAVpaRmG4dxWAxUD1XW4CPBxQwX91bGClxCM
-         n9SwpkbUTkagt1qddJ5g+Zlprvg9Qx83RwrnKQyRHDiuW/iPXyr64Ji+vFI/hXtaItGe
-         bKQE6xEnoGEp/6S1qqA8RVOleosKH8GoiYUjrxCrkffvfodFdsATKBc1Df5vA9mW7O0G
-         wEsFs+d31y4Hn8W1fVVU7JSdUXy353YUcUPYXkJGfyphlSLdBo0eGJEp/ecFM45BsrMI
-         v+pQ==
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112; t=1681176916;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S518XHoIGyP+f1W0+oLc45AmArtwLicSVB0jPKCMEaE=;
+        b=XP6OuqjHAxklvaB1XLZhIKDQny0K8+ZkV2w+KqCh+ECxPbZPLbKX+xYe5m06qHXJ81
+         8ZfWlcmtMxNzgIGZLLlcWwpyiJGxEDgCf9n02GAbBS0eOeB5JVDYsJh/ZnMoLu3du9n+
+         FGQ/THIb2mCXZ9++QkLllYhUPmaH/lhO897p/B0QKhGiII8oLe7hT8Hl5Z5A9fOkQgeF
+         Cy+mfRNjp8MgLEj5kirtE5JOWTFcN+YfKt3Og2p3Fczv5s1kHm9i8cE9Vc15xGbMgUSY
+         iRpuflu/gqrI/GmmX2B0MCTaYNNLcVGA8bz7n68iJW+xQCrKv4dR4N067BAVlUhBat8X
+         XONw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681176580;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SUMdFa7+PPMn99YcGlnAfohLLYbWjlEJWXPRhdQ3G0w=;
-        b=d6026xAMygNcf9EB10JrN4vj5KmNl9GMyZIbX3jk8TrwZOy4HeCF6Q3sPhKiKDBkez
-         +7yUJ8xl1XjGGW1xtyD7ejLG1xpyicHFKzFo3OVb4reWQafeo5gguo3KlA0TxIRVS/fI
-         N+t55e1xWuak3F5BDMPjtJXhGx/YvJp3rdL+bAN3y+9IbYR8G1o1BUfs+pIap2SRcGN0
-         bzv1ozHWA1LJ3l32p+CsYfNMxM/S3SzLXhsRbEVmc2kWBkjGo8s0blxhVc2E21vEn+6Q
-         A62loPBHWqI1i0pwWDTNVBI56rG6tVuY+Hgwu2T2jc5Z+Hqzoid+2jBtsKqgGU4MlGOX
-         IZ0A==
-X-Gm-Message-State: AAQBX9fnRM9pciMB3GHVJQ6x7Ysu5g8VueQmUYflwDeU4BAW2+bth6En
-        3pq6rARSRHJpoxOEiJF/ohO3eUER/bm/BeNOWQ==
-X-Google-Smtp-Source: AKy350aWx1LEWUOf1FrnrMDEm7YGoW5Jf5E4LFqJ8ZnxfEUyPVRZ2iMsx9R9r5E7bVHQTgok7giMc8dxwwldHsZMKw==
-X-Received: from ackerleytng-cloudtop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:1f5f])
- (user=ackerleytng job=sendgmr) by 2002:a05:6902:909:b0:a27:3ecc:ffe7 with
- SMTP id bu9-20020a056902090900b00a273eccffe7mr10712313ybb.3.1681176579771;
- Mon, 10 Apr 2023 18:29:39 -0700 (PDT)
-Date:   Tue, 11 Apr 2023 01:29:33 +0000
-In-Reply-To: <cover.1681176340.git.ackerleytng@google.com>
-Mime-Version: 1.0
-References: <cover.1681176340.git.ackerleytng@google.com>
-X-Mailer: git-send-email 2.40.0.577.gac1e443424-goog
-Message-ID: <2a733e3ed673c3b9d6b1a5fcb6625953da042f42.1681176340.git.ackerleytng@google.com>
-Subject: [RFC PATCH v4 2/2] selftests: restrictedmem: Check
- memfd_restricted()'s handling of provided userspace mount
-From:   Ackerley Tng <ackerleytng@google.com>
-To:     kvm@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, qemu-devel@nongnu.org
-Cc:     aarcange@redhat.com, ak@linux.intel.com, akpm@linux-foundation.org,
-        arnd@arndb.de, bfields@fieldses.org, bp@alien8.de,
-        chao.p.peng@linux.intel.com, corbet@lwn.net, dave.hansen@intel.com,
-        david@redhat.com, ddutile@redhat.com, dhildenb@redhat.com,
-        hpa@zytor.com, hughd@google.com, jlayton@kernel.org,
-        jmattson@google.com, joro@8bytes.org, jun.nakajima@intel.com,
-        kirill.shutemov@linux.intel.com, linmiaohe@huawei.com,
-        luto@kernel.org, mail@maciej.szmigiero.name, mhocko@suse.com,
-        michael.roth@amd.com, mingo@redhat.com, naoya.horiguchi@nec.com,
-        pbonzini@redhat.com, qperret@google.com, rppt@kernel.org,
-        seanjc@google.com, shuah@kernel.org, steven.price@arm.com,
-        tabba@google.com, tglx@linutronix.de, vannapurve@google.com,
-        vbabka@suse.cz, vkuznets@redhat.com, wanpengli@tencent.com,
-        wei.w.wang@intel.com, x86@kernel.org, yu.c.zhang@linux.intel.com,
-        Ackerley Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+        d=1e100.net; s=20210112; t=1681176916;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S518XHoIGyP+f1W0+oLc45AmArtwLicSVB0jPKCMEaE=;
+        b=Cc6/z5v/3MQoMoV2iJcudnjbMTs2+VioYz8ij8RV3klKAyawCan2BDKxBgcgbfT3lO
+         SzZ8EAjsiKSvCNx8CFj9JNFb5bftl/AwMjtTcr9g3Trp6s9nqzrXkHBz8QSj2hNS6HGq
+         eZGbnX63k87kt03JWg6BJV06xMOWlw6qIb3hcCROLqrIyqmm2zgvky33NYdxGKsFHuys
+         CweOAgvmTT0tMYs3REjQkgq+fmrk84AnPd45r5gVajq2uGVthkla3BZgDroJD5O4EoGz
+         zOjBNFx5FzdsaniWJOnLLiFRr7sY+ngjmuPHEL7qZfQWS27Fi8ntwyzOtHcExFfxISmf
+         Nk7Q==
+X-Gm-Message-State: AAQBX9cbAfYYneKfxfE9AI3R7f3BaM1Np0XzK6tuGddgYDnr6XeHaBZD
+        lJblF/P/xa9tFpZsiq7/Q7OiIw==
+X-Google-Smtp-Source: AKy350a5yTDJ/77c3MBtQrXVH4tcuNMWZG9l8/8jGYSJQlNEGhs9lC+lFEf2Z96Aqe7w9jXg5LWn+Q==
+X-Received: by 2002:a05:6a20:b930:b0:c7:717f:4863 with SMTP id fe48-20020a056a20b93000b000c7717f4863mr13355983pzb.21.1681176916062;
+        Mon, 10 Apr 2023 18:35:16 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-41-174.pa.nsw.optusnet.com.au. [49.180.41.174])
+        by smtp.gmail.com with ESMTPSA id w26-20020aa7859a000000b0063418ea5032sm4490115pfn.1.2023.04.10.18.35.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Apr 2023 18:35:15 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pm2ue-001uua-Od; Tue, 11 Apr 2023 11:35:12 +1000
+Date:   Tue, 11 Apr 2023 11:35:12 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     syzbot <syzbot+listea0b12829deaef4101fd@syzkaller.appspotmail.com>
+Cc:     djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] Monthly xfs report
+Message-ID: <20230411013512.GX3223426@dread.disaster.area>
+References: <000000000000529f1805f81b23c2@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000529f1805f81b23c2@google.com>
+X-Spam-Status: No, score=0.0 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,605 +74,135 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For memfd_restricted() calls without a userspace mount, the backing
-file should be the shmem mount in the kernel, and the size of backing
-pages should be as defined by system-wide shmem configuration.
+On Thu, Mar 30, 2023 at 02:58:43AM -0700, syzbot wrote:
+> Hello xfs maintainers/developers,
+> 
+> This is a 30-day syzbot report for the xfs subsystem.
+> All related reports/information can be found at:
+> https://syzkaller.appspot.com/upstream/s/xfs
+> 
+> During the period, 5 new issues were detected and 0 were fixed.
+> In total, 23 issues are still open and 15 have been fixed so far.
+> 
+> Some of the still happening issues:
+> 
+> Crashes Repro Title
+> 327     Yes   INFO: task hung in xlog_grant_head_check
+>               https://syzkaller.appspot.com/bug?extid=568245b88fbaedcb1959
 
-If a userspace mount is provided, the size of backing pages should be
-as defined in the mount.
+[  501.289306][ T5098] XFS (loop0): Mounting V4 Filesystem 5e6273b8-2167-42bb-911b-418aa14a1261
+[  501.299015][ T5098] XFS (loop0): Log size 128 blocks too small, minimum size is 2880 blocks
+[  501.307608][ T5098] XFS (loop0): Log size out of supported range.
+[  501.313866][ T5098] XFS (loop0): Continuing onwards, but if log hangs are experienced then please report this message in the bug report.
 
-Also includes negative tests for invalid inputs, including fds
-representing read-only superblocks/mounts.
+Syzbot doing something stupid - syzbot needs to stop testing the
+deprecated and soon to be unsupported v4 filesystem format.
 
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
----
- tools/testing/selftests/mm/.gitignore         |   1 +
- tools/testing/selftests/mm/Makefile           |   1 +
- .../selftests/mm/memfd_restricted_usermnt.c   | 529 ++++++++++++++++++
- tools/testing/selftests/mm/run_vmtests.sh     |   3 +
- 4 files changed, 534 insertions(+)
- create mode 100644 tools/testing/selftests/mm/memfd_restricted_usermnt.c
+Invalid.
 
-diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
-index fb6e4233374d..dba320c8151a 100644
---- a/tools/testing/selftests/mm/.gitignore
-+++ b/tools/testing/selftests/mm/.gitignore
-@@ -31,6 +31,7 @@ map_fixed_noreplace
- write_to_hugetlbfs
- hmm-tests
- memfd_restricted
-+memfd_restricted_usermnt
- memfd_secret
- soft-dirty
- split_huge_page_test
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index 5ec338ea1fed..2f5df7a12ea5 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -46,6 +46,7 @@ TEST_GEN_FILES += map_fixed_noreplace
- TEST_GEN_FILES += map_hugetlb
- TEST_GEN_FILES += map_populate
- TEST_GEN_FILES += memfd_restricted
-+TEST_GEN_FILES += memfd_restricted_usermnt
- TEST_GEN_FILES += memfd_secret
- TEST_GEN_FILES += migration
- TEST_GEN_FILES += mlock-random-test
-diff --git a/tools/testing/selftests/mm/memfd_restricted_usermnt.c b/tools/testing/selftests/mm/memfd_restricted_usermnt.c
-new file mode 100644
-index 000000000000..0be04e3d714d
---- /dev/null
-+++ b/tools/testing/selftests/mm/memfd_restricted_usermnt.c
-@@ -0,0 +1,529 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#define _GNU_SOURCE /* for O_PATH */
-+#define _POSIX_C_SOURCE /* for PATH_MAX */
-+#include <limits.h>
-+#include <sys/syscall.h>
-+#include <sys/mount.h>
-+#include <sys/stat.h>
-+
-+#include "linux/restrictedmem.h"
-+
-+#include "../kselftest_harness.h"
-+
-+static int memfd_restricted(unsigned int flags, int fd)
-+{
-+	return syscall(__NR_memfd_restricted, flags, fd);
-+}
-+
-+static int get_hpage_pmd_size(void)
-+{
-+	FILE *fp;
-+	char buf[100];
-+	char *ret;
-+	int size;
-+
-+	fp = fopen("/sys/kernel/mm/transparent_hugepage/hpage_pmd_size", "r");
-+	if (!fp)
-+		return -1;
-+
-+	ret = fgets(buf, 100, fp);
-+	if (ret != buf) {
-+		size = -1;
-+		goto out;
-+	}
-+
-+	if (sscanf(buf, "%d\n", &size) != 1)
-+		size = -1;
-+
-+out:
-+	fclose(fp);
-+
-+	return size;
-+}
-+
-+static int write_string_to_file(const char *path, const char *string)
-+{
-+	FILE *fp;
-+	size_t len = strlen(string);
-+	int ret = -1;
-+
-+	fp = fopen(path, "w");
-+	if (!fp)
-+		return ret;
-+
-+	if (fwrite(string, 1, len, fp) != len)
-+		goto out;
-+
-+	ret = 0;
-+
-+out:
-+	fclose(fp);
-+	return ret;
-+}
-+
-+/*
-+ * Expect shmem thp policy to be one of always, within_size, advise, never,
-+ * deny, force
-+ */
-+#define POLICY_BUF_SIZE 12
-+
-+static bool is_valid_shmem_thp_policy(char *policy)
-+{
-+	if (strcmp(policy, "always") == 0)
-+		return true;
-+	if (strcmp(policy, "within_size") == 0)
-+		return true;
-+	if (strcmp(policy, "advise") == 0)
-+		return true;
-+	if (strcmp(policy, "never") == 0)
-+		return true;
-+	if (strcmp(policy, "deny") == 0)
-+		return true;
-+	if (strcmp(policy, "force") == 0)
-+		return true;
-+
-+	return false;
-+}
-+
-+static int get_shmem_thp_policy(char *policy)
-+{
-+	FILE *fp;
-+	char buf[100];
-+	char *left = NULL;
-+	char *right = NULL;
-+	int ret = -1;
-+
-+	fp = fopen("/sys/kernel/mm/transparent_hugepage/shmem_enabled", "r");
-+	if (!fp)
-+		return -1;
-+
-+	if (fgets(buf, 100, fp) != buf)
-+		goto out;
-+
-+	/*
-+	 * Expect shmem_enabled to be of format like "always within_size advise
-+	 * [never] deny force"
-+	 */
-+	left = memchr(buf, '[', 100);
-+	if (!left)
-+		goto out;
-+
-+	right = memchr(buf, ']', 100);
-+	if (!right)
-+		goto out;
-+
-+	memcpy(policy, left + 1, right - left - 1);
-+
-+	ret = !is_valid_shmem_thp_policy(policy);
-+
-+out:
-+	fclose(fp);
-+	return ret;
-+}
-+
-+static int set_shmem_thp_policy(char *policy)
-+{
-+	int ret = -1;
-+	/* +1 for newline */
-+	char to_write[POLICY_BUF_SIZE + 1] = { 0 };
-+
-+	if (!is_valid_shmem_thp_policy(policy))
-+		return ret;
-+
-+	ret = snprintf(to_write, POLICY_BUF_SIZE + 1, "%s\n", policy);
-+	if (ret != strlen(policy) + 1)
-+		return -1;
-+
-+	ret = write_string_to_file(
-+		"/sys/kernel/mm/transparent_hugepage/shmem_enabled", to_write);
-+
-+	return ret;
-+}
-+
-+FIXTURE(reset_shmem_enabled)
-+{
-+	char shmem_enabled[POLICY_BUF_SIZE];
-+};
-+
-+FIXTURE_SETUP(reset_shmem_enabled)
-+{
-+	memset(self->shmem_enabled, 0, POLICY_BUF_SIZE);
-+	ASSERT_EQ(get_shmem_thp_policy(self->shmem_enabled), 0);
-+}
-+
-+FIXTURE_TEARDOWN(reset_shmem_enabled)
-+{
-+	ASSERT_EQ(set_shmem_thp_policy(self->shmem_enabled), 0);
-+}
-+
-+TEST_F(reset_shmem_enabled, restrictedmem_fstat_shmem_enabled_never)
-+{
-+	int fd = -1;
-+	struct stat stat;
-+
-+	ASSERT_EQ(set_shmem_thp_policy("never"), 0);
-+
-+	fd = memfd_restricted(0, -1);
-+	ASSERT_GT(fd, 0);
-+
-+	ASSERT_EQ(fstat(fd, &stat), 0);
-+
-+	/*
-+	 * st_blksize is set based on the superblock's s_blocksize_bits. For
-+	 * shmem, this is set to PAGE_SHIFT
-+	 */
-+	ASSERT_EQ(stat.st_blksize, getpagesize());
-+
-+	close(fd);
-+}
-+
-+TEST_F(reset_shmem_enabled, restrictedmem_fstat_shmem_enabled_always)
-+{
-+	int fd = -1;
-+	struct stat stat;
-+
-+	ASSERT_EQ(set_shmem_thp_policy("always"), 0);
-+
-+	fd = memfd_restricted(0, -1);
-+	ASSERT_GT(fd, 0);
-+
-+	ASSERT_EQ(fstat(fd, &stat), 0);
-+
-+	ASSERT_EQ(stat.st_blksize, get_hpage_pmd_size());
-+
-+	close(fd);
-+}
-+
-+TEST(restrictedmem_tmpfile_invalid_fd)
-+{
-+	int fd = memfd_restricted(MEMFD_RSTD_USERMNT, -2);
-+
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_EQ(errno, EBADF);
-+}
-+
-+TEST(restrictedmem_tmpfile_fd_not_a_mount)
-+{
-+	int fd = memfd_restricted(MEMFD_RSTD_USERMNT, STDOUT_FILENO);
-+
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+}
-+
-+TEST(restrictedmem_tmpfile_not_tmpfs_mount)
-+{
-+	int fd = -1;
-+	int mfd = -1;
-+
-+	mfd = open("/proc", O_PATH);
-+	ASSERT_NE(mfd, -1);
-+
-+	fd = memfd_restricted(MEMFD_RSTD_USERMNT, mfd);
-+
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+}
-+
-+FIXTURE(tmpfs_sfd)
-+{
-+	int sfd;
-+};
-+
-+FIXTURE_SETUP(tmpfs_sfd)
-+{
-+	self->sfd = fsopen("tmpfs", 0);
-+	ASSERT_NE(self->sfd, -1);
-+}
-+
-+FIXTURE_TEARDOWN(tmpfs_sfd)
-+{
-+	EXPECT_EQ(close(self->sfd), 0);
-+}
-+
-+TEST_F(tmpfs_sfd, restrictedmem_fstat_tmpfs_huge_always)
-+{
-+	int ret = -1;
-+	int fd = -1;
-+	int mfd = -1;
-+	struct stat stat;
-+
-+	fsconfig(self->sfd, FSCONFIG_SET_STRING, "huge", "always", 0);
-+	fsconfig(self->sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-+
-+	mfd = fsmount(self->sfd, 0, 0);
-+	ASSERT_NE(mfd, -1);
-+
-+	fd = memfd_restricted(MEMFD_RSTD_USERMNT, mfd);
-+	ASSERT_GT(fd, 0);
-+
-+	/* User can close reference to mount */
-+	ret = close(mfd);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = fstat(fd, &stat);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(stat.st_blksize, get_hpage_pmd_size());
-+
-+	close(fd);
-+}
-+
-+TEST_F(tmpfs_sfd, restrictedmem_fstat_tmpfs_huge_never)
-+{
-+	int ret = -1;
-+	int fd = -1;
-+	int mfd = -1;
-+	struct stat stat;
-+
-+	fsconfig(self->sfd, FSCONFIG_SET_STRING, "huge", "never", 0);
-+	fsconfig(self->sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-+
-+	mfd = fsmount(self->sfd, 0, 0);
-+	ASSERT_NE(mfd, -1);
-+
-+	fd = memfd_restricted(MEMFD_RSTD_USERMNT, mfd);
-+	ASSERT_GT(fd, 0);
-+
-+	/* User can close reference to mount */
-+	ret = close(mfd);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = fstat(fd, &stat);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(stat.st_blksize, getpagesize());
-+
-+	close(fd);
-+}
-+
-+TEST_F(tmpfs_sfd, restrictedmem_check_mount_flags)
-+{
-+	int ret = -1;
-+	int fd = -1;
-+	int mfd = -1;
-+
-+	fsconfig(self->sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-+
-+	mfd = fsmount(self->sfd, 0, MOUNT_ATTR_RDONLY);
-+	ASSERT_NE(mfd, -1);
-+
-+	fd = memfd_restricted(MEMFD_RSTD_USERMNT, mfd);
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_EQ(errno, EROFS);
-+
-+	ret = close(mfd);
-+	ASSERT_EQ(ret, 0);
-+}
-+
-+TEST_F(tmpfs_sfd, restrictedmem_check_superblock_flags)
-+{
-+	int ret = -1;
-+	int fd = -1;
-+	int mfd = -1;
-+
-+	fsconfig(self->sfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-+	fsconfig(self->sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-+
-+	mfd = fsmount(self->sfd, 0, 0);
-+	ASSERT_NE(mfd, -1);
-+
-+	fd = memfd_restricted(MEMFD_RSTD_USERMNT, mfd);
-+	ASSERT_EQ(fd, -1);
-+	ASSERT_EQ(errno, EROFS);
-+
-+	ret = close(mfd);
-+	ASSERT_EQ(ret, 0);
-+}
-+
-+static bool directory_exists(const char *path)
-+{
-+	struct stat sb;
-+
-+	return stat(path, &sb) == 0 && S_ISDIR(sb.st_mode);
-+}
-+
-+FIXTURE(restrictedmem_test_mount_path)
-+{
-+	char *mount_path;
-+};
-+
-+FIXTURE_SETUP(restrictedmem_test_mount_path)
-+{
-+	int ret = -1;
-+
-+	/* /tmp is an FHS-mandated world-writable directory */
-+	self->mount_path = "/tmp/restrictedmem-selftest-mnt";
-+
-+	if (!directory_exists(self->mount_path)) {
-+		ret = mkdir(self->mount_path, 0777);
-+		ASSERT_EQ(ret, 0);
-+	}
-+}
-+
-+FIXTURE_TEARDOWN(restrictedmem_test_mount_path)
-+{
-+	int ret = -1;
-+
-+	if (!directory_exists(self->mount_path))
-+		return;
-+
-+	ret = umount2(self->mount_path, MNT_FORCE);
-+	EXPECT_EQ(ret, 0);
-+	if (ret == -1 && errno == EINVAL)
-+		fprintf(stderr, "  %s was not mounted\n", self->mount_path);
-+
-+	ret = rmdir(self->mount_path);
-+	EXPECT_EQ(ret, 0);
-+	if (ret == -1)
-+		fprintf(stderr, "  rmdir(%s) failed: %m\n", self->mount_path);
-+}
-+
-+/*
-+ * memfd_restricted() syscall can only be used with the fd of the root of the
-+ * mount. When the restrictedmem's fd is open, a user should not be able to
-+ * unmount or remove the mounted directory
-+ */
-+TEST_F(restrictedmem_test_mount_path, restrictedmem_umount_rmdir_while_file_open)
-+{
-+	int ret = -1;
-+	int fd = -1;
-+	int mfd = -1;
-+	struct stat stat;
-+
-+	ret = mount("name", self->mount_path, "tmpfs", 0, "huge=always");
-+	ASSERT_EQ(ret, 0);
-+
-+	mfd = open(self->mount_path, O_PATH);
-+	ASSERT_NE(mfd, -1);
-+
-+	fd = memfd_restricted(MEMFD_RSTD_USERMNT, mfd);
-+	ASSERT_GT(fd, 0);
-+
-+	/* We don't need this reference to the mount anymore */
-+	ret = close(mfd);
-+	ASSERT_EQ(ret, 0);
-+
-+	/* restrictedmem's fd should still be usable */
-+	ret = fstat(fd, &stat);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(stat.st_blksize, get_hpage_pmd_size());
-+
-+	/* User should not be able to unmount directory */
-+	ret = umount2(self->mount_path, MNT_FORCE);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EBUSY);
-+
-+	ret = rmdir(self->mount_path);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EBUSY);
-+
-+	close(fd);
-+}
-+
-+/* The fd of a file on the mount cannot be provided as mount_fd */
-+TEST_F(restrictedmem_test_mount_path, restrictedmem_provide_fd_of_file)
-+{
-+	int ret = -1;
-+	int fd = -1;
-+	int ffd = -1;
-+	char tmp_file_path[PATH_MAX] = { 0 };
-+
-+	ret = mount("name", self->mount_path, "tmpfs", 0, "huge=always");
-+	ASSERT_EQ(ret, 0);
-+
-+	snprintf(tmp_file_path, PATH_MAX, "%s/tmp-file", self->mount_path);
-+	ret = write_string_to_file(tmp_file_path, "filler\n");
-+	ASSERT_EQ(ret, 0);
-+
-+	ffd = open(tmp_file_path, O_RDWR);
-+	ASSERT_GT(ffd, 0);
-+
-+	fd = memfd_restricted(MEMFD_RSTD_USERMNT, ffd);
-+	ASSERT_LT(fd, 0);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ret = close(ffd);
-+	ASSERT_EQ(ret, 0);
-+
-+	close(fd);
-+	remove(tmp_file_path);
-+}
-+
-+/* The fd of files on the mount cannot be provided as mount_fd */
-+TEST_F(restrictedmem_test_mount_path, restrictedmem_provide_fd_of_file_in_subdir)
-+{
-+	int ret = -1;
-+	int fd = -1;
-+	int ffd = -1;
-+	char tmp_dir_path[PATH_MAX] = { 0 };
-+	char tmp_file_path[PATH_MAX] = { 0 };
-+
-+	ret = mount("name", self->mount_path, "tmpfs", 0, "huge=always");
-+	ASSERT_EQ(ret, 0);
-+
-+	snprintf(tmp_dir_path, PATH_MAX, "%s/tmp-subdir", self->mount_path);
-+	ret = mkdir(tmp_dir_path, 0777);
-+	ASSERT_EQ(ret, 0);
-+
-+	snprintf(tmp_file_path, PATH_MAX, "%s/tmp-subdir/tmp-file",
-+		 self->mount_path);
-+	ret = write_string_to_file(tmp_file_path, "filler\n");
-+	ASSERT_EQ(ret, 0);
-+
-+	ffd = open(tmp_file_path, O_RDWR);
-+	ASSERT_NE(ffd, -1);
-+
-+	fd = memfd_restricted(MEMFD_RSTD_USERMNT, ffd);
-+	ASSERT_LT(fd, 0);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ret = close(ffd);
-+	ASSERT_EQ(ret, 0);
-+
-+	remove(tmp_file_path);
-+	rmdir(tmp_dir_path);
-+}
-+
-+/*
-+ * fds representing bind mounts must represent the root of the original
-+ * filesystem
-+ */
-+TEST_F(restrictedmem_test_mount_path, restrictedmem_provide_fd_of_original_fs)
-+{
-+	int ret = -1;
-+	int fd = -1;
-+	int mfd = -1;
-+	char tmp_dir_path_0[PATH_MAX] = { 0 };
-+	char tmp_dir_path_1[PATH_MAX] = { 0 };
-+
-+	ret = mount("name", self->mount_path, "tmpfs", 0, "huge=always");
-+	ASSERT_EQ(ret, 0);
-+
-+	snprintf(tmp_dir_path_0, PATH_MAX, "%s/tmp-subdir-0", self->mount_path);
-+	ret = mkdir(tmp_dir_path_0, 0777);
-+	ASSERT_EQ(ret, 0);
-+
-+	snprintf(tmp_dir_path_1, PATH_MAX, "%s/tmp-subdir-1", self->mount_path);
-+	ret = mkdir(tmp_dir_path_1, 0777);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = mount(tmp_dir_path_0, tmp_dir_path_1, "tmpfs", MS_BIND, NULL);
-+	ASSERT_EQ(ret, 0);
-+
-+	mfd = open(tmp_dir_path_1, O_PATH);
-+	ASSERT_NE(mfd, -1);
-+
-+	fd = memfd_restricted(MEMFD_RSTD_USERMNT, mfd);
-+	ASSERT_LT(fd, 0);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ret = close(mfd);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = umount2(tmp_dir_path_1, MNT_FORCE);
-+	ASSERT_EQ(ret, 0);
-+
-+	rmdir(tmp_dir_path_0);
-+	rmdir(tmp_dir_path_1);
-+}
-+
-+TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
-index 53de84e3ec2c..04238f86f037 100644
---- a/tools/testing/selftests/mm/run_vmtests.sh
-+++ b/tools/testing/selftests/mm/run_vmtests.sh
-@@ -40,6 +40,8 @@ separated by spaces:
- 	test memadvise(2) MADV_POPULATE_{READ,WRITE} options
- - memfd_restricted_
- 	test memfd_restricted(2)
-+- memfd_restricted_usermnt
-+	test memfd_restricted(2)'s handling of provided userspace mounts
- - memfd_secret
- 	test memfd_secret(2)
- - process_mrelease
-@@ -239,6 +241,7 @@ CATEGORY="hmm" run_test ./test_hmm.sh smoke
- CATEGORY="madv_populate" run_test ./madv_populate
- 
- CATEGORY="memfd_restricted" run_test ./memfd_restricted
-+CATEGORY="memfd_restricted_usermnt" run_test ./memfd_restricted_usermnt
- 
- CATEGORY="memfd_secret" run_test ./memfd_secret
- 
+> 85      Yes   KASAN: stack-out-of-bounds Read in xfs_buf_lock
+>               https://syzkaller.appspot.com/bug?extid=0bc698a422b5e4ac988c
+
+Bisection result is garbage.
+
+Looks like a race between dquot shrinker grabbing a dquot buffer to
+write back a dquot and the dquot buffer being reclaimed before it is
+submitted from the delwri list. Something is dropping a buffer
+reference on the floor...
+
+More investigation needed.
+
+> 81      Yes   WARNING in xfs_qm_dqget_cache_insert
+>               https://syzkaller.appspot.com/bug?extid=6ae213503fb12e87934f
+
+That'll be an ENOMEM warning on radix tree insert.
+
+No big deal, the code cleans up and retries the lookup/insert
+process cleanly. Could just remove the warning.
+
+Low priority, low severity.
+
+> 47      Yes   WARNING in xfs_bmapi_convert_delalloc
+>               https://syzkaller.appspot.com/bug?extid=53b443b5c64221ee8bad
+
+Unexpected ENOSPC because syzbot has created a inconsistency between
+superblock counters and the free space btrees.  Warning is expected
+as it indicates user data loss is going to occur, doesn't happen in
+typical production operation, generally requires malicious
+corruption of the filesystem to trigger.
+
+Not a bug, won't fix.
+
+> 44      Yes   INFO: task hung in xfs_buf_item_unpin
+>               https://syzkaller.appspot.com/bug?extid=3f083e9e08b726fcfba2
+
+Yup, that's a deadlock on the superblock buffer.
+
+xfs_sync_sb_buf() is called from an ioctl of some kind, gets stuck
+in the log force waiting for iclogs to complete. xfs_sync_sb_buf()
+holds the buffer across the transaction commit, so the sb buffer is
+locked while waiting for the log force.
+
+At just the wrong time, the filesystem gets shut down:
+
+  [  484.946965][ T5959] syz-executor360: attempt to access beyond end of device
+  [  484.946965][ T5959] loop0: rw=432129, sector=65536, nr_sectors = 64 limit=65536
+  [  484.950756][   T52] XFS (loop0): log I/O error -5
+  [  484.952017][   T52] XFS (loop0): Filesystem has been shut down due to log error (0x2).
+  [  484.953902][   T52] XFS (loop0): Please unmount the filesystem and rectify the problem(s).
+  [  714.735393][   T28] INFO: task kworker/1:1H:52 blocked for more than 143 seconds.
+
+And the iclog IO completion tries to unpin and abort all the log
+items in the current checkpoint. One of those is the superblock
+buffer, and because this is an abort:
+
+[  714.754433][   T28]  xfs_buf_lock+0x264/0xa68
+[  714.755623][   T28]  xfs_buf_item_unpin+0x2c4/0xc18
+[  714.756875][   T28]  xfs_trans_committed_bulk+0x2d8/0x73c
+[  714.758236][   T28]  xlog_cil_committed+0x210/0xef8
+
+The unpin code tries to lock the buffer to pass it through to IO
+completion to mark it as failed.
+
+Real deadlock, I think it might be able to occur on any synchronous
+transaction commit that holds a buffer locked across it. No
+immediate fix comes to mind right now. Can only occur on a journal
+IO triggered shutdown, so not somethign that happens typically in
+production systems.
+
+Low priority, medium severity.
+
+
+> 13      Yes   general protection fault in __xfs_free_extent
+>               https://syzkaller.appspot.com/bug?extid=bfbc1eecdfb9b10e5792
+
+Growfs issue. Looks like a NULL pag, which means the fsbno passed
+to __xfs_free_extent() is invalid. Without looking further, this
+looks like it's a corrupt AGF length or superblock size and this has
+resulted in the calculated fsbno starting beyond the end of the last
+AG that we are about to grow. That means the agno is beyond EOFS,
+xfs_perag_get(agno) ends up NULL, and __xfs_free_extent() goes
+splat.  Likely requires corruption to trigger.
+
+Low priority, low severity.
+
+> 5       Yes   KASAN: use-after-free Read in xfs_btree_lookup_get_block
+>               https://syzkaller.appspot.com/bug?extid=7e9494b8b399902e994e
+
+Recovery of reflink COW extents, we have a corrupted journal
+
+   [   52.495566][ T5067] XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
+   [   52.599681][ T5067] XFS (loop0): Torn write (CRC failure) detected at log block 0x180. Truncating head block from 0x200.
+   [   52.636680][ T5067] XFS (loop0): Starting recovery (logdev: internal)
+
+And then it looks to have a UAF on the refcountbt cursor that is
+first initialised in xfs_refcount_recover_cow_leftovers(). Likely
+tripping over a corrupted refcount btree of some kind. Probably one
+for Darrick to look into.
+
+Low priority, low severity.
+
+-Dave.
 -- 
-2.40.0.577.gac1e443424-goog
-
+Dave Chinner
+david@fromorbit.com
