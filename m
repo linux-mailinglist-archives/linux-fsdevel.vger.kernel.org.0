@@ -2,176 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 155056DD639
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 11:07:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 523DE6DD6B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Apr 2023 11:31:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229759AbjDKJHN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 05:07:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54760 "EHLO
+        id S229816AbjDKJa2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 05:30:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229687AbjDKJGw (ORCPT
+        with ESMTP id S229822AbjDKJaB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 05:06:52 -0400
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DECA14C2C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 02:05:41 -0700 (PDT)
-Received: by mail-il1-f208.google.com with SMTP id a3-20020a92c543000000b0032651795968so19939488ilj.19
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 02:05:41 -0700 (PDT)
+        Tue, 11 Apr 2023 05:30:01 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EE893C10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 02:29:58 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id xi5so18674185ejb.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 02:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1681205396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BJF2YBEivbAPJS4QQn75FqV7euOHKuYSxMpUJHAYYIA=;
+        b=D8673ys/7alW1jYcJSvlooEOVSYGU8uFheQLlNiFLSREDV21ZsPJJr5Ktj3FomPy1E
+         q4UadnXFYbOVxKWzwM1TMkIW2DiaNaPZFbAtk1NR5AW1Mz3rUvyJ62gS8KNTEGEPMIJr
+         66R7URAlRwCf3NLhtBLiJkfBf4KNLQoRMGsIhOQNRbsbNTknittQa03UbKCj2/eIUpSV
+         ZA0McsK4guufSrWQVyGAxkhJXtNLC/M7HRUVoUdTwV5kTxVBpucMQGtRDQJj5MSOweJq
+         OQmAaUK10c1W1OGocYhQNAyA/2YkBs5gPkucrRt4Zv/xI3pHcg5OxmxRQQQrKc/+UWJf
+         Ms1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681203941; x=1683795941;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y7OruruCyWaSan793MP3isUIe/2SK0TYeCu2Yy1zYas=;
-        b=BkW5Uhtns6ij9Gfi1AwHkEjvK4sHTmKkGDZBaIvHHhqK3zvqzS6YynWSfP7EQPPk22
-         EyS40MLBGT3tcdU1BIHtb9cgZa+odzU+n3574UIvVporhOstPgTWX8WEf3xc0GbingYk
-         7T7zwOpeR88/qcgoVHAvXOgFmvpQxYZ8kEChGcK+2cZH5/mH1m5onGya94YCc4gSL/sx
-         +KXyPsvrn8tEHOvZFcLlH89YYVF0nIw/zfdTPQaJ3qf3ClK8rUbubpm5ua2UiV1hQAEf
-         zEl/Kp3/hK9RnqLWiSvGmzgaBdZUxkeaijePwZfhJX3CKggA+hVoTt71iPHkd/lJbQNm
-         qg3w==
-X-Gm-Message-State: AAQBX9dV6lh9145LKCz/xph93T4d9WxONrrSRMjKeREGDE0h6lLxtC6L
-        pOnYCQ7WaiW8Hxa3ZfNxV0L19S/YSAuTjlaEV8Xm/2iylsly
-X-Google-Smtp-Source: AKy350a3iundpBJrZ2/usBcSc4917ckQNlHlUflX+OekSLp/owPyj/xHnaeA+4ffXREVRfSpRS8TuzDyG1nQTKetvEEMFkXbfovY
+        d=1e100.net; s=20210112; t=1681205397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BJF2YBEivbAPJS4QQn75FqV7euOHKuYSxMpUJHAYYIA=;
+        b=UKH8Xkm58/alqaKrVqJZm9AqByysSgzf6aZw+EAfEnm6LaXrdzitdC1P0oqGHIdiK6
+         wXleWKcrVYvg/m0z3JVh7wE0QsSidCB6Ay0TCsAn47OKf06OfkXxqJL/c6FO80dnNIqo
+         Sao5UsRQ2wS52jd4SmpP857u620badSbBrNMqhe35pMss0dGM5nsi7wDE30yZEwGZEOw
+         UUF7ucFp3+xIR/3bmEKu6F2J6icEJ+ACDQ2cacUFsPiYk34u2/A2BnRkl2HZ5n8/J6O+
+         fcU3KB9blkqRtEh8tCqCv9AH1lJQoGWmoM6HQDkwgzgj4ZxloMcmqfj+yHZklwl3Yykx
+         jB+Q==
+X-Gm-Message-State: AAQBX9cSb/8UNWkdqi/ZgEHuU72EUK1ZwGurYURjVELC7S1evNGrcfPL
+        EcPbWjBg6H1XreJueqEpAw9lxnoSvsD24gx2TSfyvA==
+X-Google-Smtp-Source: AKy350YciC056geHubwxcdJsmaoBPi16cp8aurI4qOglRyDHG/cvxK/Ql9YEmFxW0jx+zwWEqAPGI0ZBL6z80oGpEw0=
+X-Received: by 2002:a17:906:11d8:b0:94e:fdd:9319 with SMTP id
+ o24-20020a17090611d800b0094e0fdd9319mr1132630eja.15.1681205396442; Tue, 11
+ Apr 2023 02:29:56 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a02:b1d9:0:b0:3a9:5ec2:ef41 with SMTP id
- u25-20020a02b1d9000000b003a95ec2ef41mr657115jah.3.1681203940869; Tue, 11 Apr
- 2023 02:05:40 -0700 (PDT)
-Date:   Tue, 11 Apr 2023 02:05:40 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b0cabf05f90bcb15@google.com>
-Subject: [syzbot] [ntfs3?] general protection fault in ni_readpage_cmpr
-From:   syzbot <syzbot+af224b63e76b2d869bc3@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+References: <20230406074005.1784728-1-usama.anjum@collabora.com>
+ <20230406074005.1784728-3-usama.anjum@collabora.com> <CABb0KFHZpYVML2e+Xg9+kwjyhqQkikPBhymO=EXoQnO2xjfG4g@mail.gmail.com>
+ <0351b563-5193-6431-aa9c-c5bf5741b791@collabora.com> <CABb0KFE4ruptVXDpCk5MB6nkh9WeKTcKfROnx0ecoy-k1eCKCw@mail.gmail.com>
+ <8a837998-604f-a871-729e-aa274a621481@collabora.com> <CABb0KFEBqAMWWpAeBfqzA4JrHo3yLyaT0rqKTUn28O0hE+szBA@mail.gmail.com>
+ <c5b9201d-141c-10ae-0475-4b230d36508b@collabora.com> <CABb0KFH3mj5qt22qDLHRKjh-wB7Jrn6Pz8h-QARaf9oR65U0Qg@mail.gmail.com>
+ <05e14540-7092-5dd2-d503-473b673af716@collabora.com>
+In-Reply-To: <05e14540-7092-5dd2-d503-473b673af716@collabora.com>
+From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Date:   Tue, 11 Apr 2023 11:29:44 +0200
+Message-ID: <CABb0KFE6Y=a5DQKjy3vKeP9YURwri3JHNKTCnN7PzOPOxr9SKQ@mail.gmail.com>
+Subject: Re: [PATCH v12 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-15.7 required=5.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL,
+        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, 7 Apr 2023 at 13:11, Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+> On 4/7/23 3:14=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> > On Fri, 7 Apr 2023 at 12:04, Muhammad Usama Anjum
+> > <usama.anjum@collabora.com> wrote:
+> >> On 4/7/23 12:34=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> >>> On Thu, 6 Apr 2023 at 23:04, Muhammad Usama Anjum
+> >>> <usama.anjum@collabora.com> wrote:
+> >>>> On 4/7/23 1:00=E2=80=AFAM, Micha=C5=82 Miros=C5=82aw wrote:
+> >>>>> On Thu, 6 Apr 2023 at 19:58, Muhammad Usama Anjum
+> >>>>> <usama.anjum@collabora.com> wrote:
+> > [...]
+> >>>>>>>> +       /*
+> >>>>>>>> +        * Allocate smaller buffer to get output from inside the=
+ page walk
+> >>>>>>>> +        * functions and walk page range in PAGEMAP_WALK_SIZE si=
+ze chunks. As
+> >>>>>>>> +        * we want to return output to user in compact form wher=
+e no two
+> >>>>>>>> +        * consecutive regions should be continuous and have the=
+ same flags.
+> >>>>>>>> +        * So store the latest element in p.cur between differen=
+t walks and
+> >>>>>>>> +        * store the p.cur at the end of the walk to the user bu=
+ffer.
+> >>>>>>>> +        */
+> >>>>>>>> +       p.vec =3D kmalloc_array(p.vec_len, sizeof(struct page_re=
+gion),
+> >>>>>>>> +                             GFP_KERNEL);
+> >>>>>>>> +       if (!p.vec)
+> >>>>>>>> +               return -ENOMEM;
+> >>>>>>>> +
+> >>>>>>>> +       walk_start =3D walk_end =3D start;
+> >>>>>>>> +       while (walk_end < end && !ret) {
+> >>>>>>>
+> >>>>>>> The loop will stop if a previous iteration returned ENOSPC (and t=
+he
+> >>>>>>> error will be lost) - is it intended?
+> >>>>>> It is intentional. -ENOSPC means that the user buffer is full even=
+ though
+> >>>>>> there was more memory to walk over. We don't treat this error. So =
+when
+> >>>>>> buffer gets full, we stop walking over further as user buffer has =
+gotten
+> >>>>>> full and return as success.
+> >>>>>
+> >>>>> Thanks. What's the difference between -ENOSPC and
+> >>>>> PM_SCAN_FOUND_MAX_PAGES? They seem to result in the same effect (co=
+de
+> >>>>> flow).
+> >>>> -ENOSPC --> user buffer has been filled completely
+> >>>> PM_SCAN_FOUND_MAX_PAGES --> max_pages have been found, user buffer m=
+ay
+> >>>>                             still have more space
+> >>>
+> >>> What is the difference in code behaviour when those two cases are
+> >>> compared? (I'd expect none.)
+> >> There is difference:
+> >> We add data to user buffer. If it succeeds with return code 0, we enga=
+ge
+> >> the WP. If it succeeds with PM_SCAN_FOUND_MAX_PAGES, we still engage t=
+he
+> >> WP. But if we get -ENOSPC, we don't perform engage as the data wasn't =
+added
+> >> to the user buffer.
+> >
+> > Thanks! I see it now. I see a few more corner cases here:
+> > 1. If we did engage WP but fail to copy the vector we return -EFAULT
+> > but the WP is already engaged. I'm not sure this is something worth
+> > guarding against, but documenting that would be helpful I think.
+> Sure.
+>
+> > 2. If uffd_wp_range() fails, but we have already processed pages
+> > earlier, we should treat the error like ENOSPC and back out the failed
+> > range (the earier changes would be lost otherwise).
+> Backing out is easier to do for hugepages. But for normal pages, we'll ha=
+ve
+> to write some code to find where the current data was added (in cur or in
+> vec) and back out from that. I'll have to write some more code to avoid t=
+he
+> side-effects as well.
 
-syzbot found the following issue on:
+If I read the code correctly, the last page should always be in `cur`
+and on failure only a single page is needed to be backed out. Did I
+miss something?
 
-HEAD commit:    aa318c48808c Merge tag 'gpio-fixes-for-v6.3-rc6' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10496611c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=adfc55aec6afccdd
-dashboard link: https://syzkaller.appspot.com/bug?extid=af224b63e76b2d869bc3
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> But aren't we going over-engineering here? Error occurred and we are tryi=
+ng
+> to keep the previously generated correct data and returning successfully
+> still to the user? I don't think we should do this. An error is error. We
+> should return the error simply even if the memory flags would get lost. W=
+e
+> don't know what caused the error in uffd_wp_range(). Under normal
+> situation, we there shouldn't have had error.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+In this case it means that on (intermittent) allocation error we get
+inconsistent or non-deterministic results. I wouldn't want to be the
+one debugging this later - I'd prefer either the syscall be
+"exception-safe" (give consistent and predictable output) or kill the
+process.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3f2cda6aed35/disk-aa318c48.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b3abc5d6e123/vmlinux-aa318c48.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5e21f7b0c192/bzImage-aa318c48.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+af224b63e76b2d869bc3@syzkaller.appspotmail.com
-
-RBP: 00007f5102ac71d0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0001000000201005 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffd8c6b1d4f R14: 00007f5102ac7300 R15: 0000000000022000
- </TASK>
-general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 PID: 21645 Comm: syz-executor.1 Not tainted 6.3.0-rc5-syzkaller-00153-gaa318c48808c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
-RIP: 0010:_compound_head include/linux/page-flags.h:251 [inline]
-RIP: 0010:unlock_page+0x25/0x130 mm/folio-compat.c:21
-Code: 00 00 00 00 00 f3 0f 1e fa 41 54 55 48 89 fd 53 e8 c0 24 d2 ff 48 8d 7d 08 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 e4 00 00 00 4c 8b 65 08 31 ff 4c 89 e3 83 e3 01
-RSP: 0018:ffffc900047e7520 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000008 RCX: ffffc90003b51000
-RDX: 0000000000000001 RSI: ffffffff81afd3b0 RDI: 0000000000000008
-RBP: 0000000000000000 R08: 0000000000000004 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff88801e052988 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f5102ac7700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5102ac8000 CR3: 000000007c8da000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ni_readpage_cmpr+0x44a/0xcd0 fs/ntfs3/frecord.c:2149
- ntfs_read_folio+0x101/0x1e0 fs/ntfs3/inode.c:703
- filemap_read_folio+0xdb/0x2c0 mm/filemap.c:2424
- filemap_create_folio mm/filemap.c:2552 [inline]
- filemap_get_pages+0x42a/0x1620 mm/filemap.c:2605
- filemap_read+0x35e/0xc70 mm/filemap.c:2693
- generic_file_read_iter+0x3ad/0x5b0 mm/filemap.c:2840
- ntfs_file_read_iter+0x1b8/0x270 fs/ntfs3/file.c:758
- call_read_iter include/linux/fs.h:1845 [inline]
- generic_file_splice_read+0x182/0x4b0 fs/splice.c:402
- do_splice_to+0x1b9/0x240 fs/splice.c:885
- splice_direct_to_actor+0x2ab/0x8a0 fs/splice.c:956
- do_splice_direct+0x1ab/0x280 fs/splice.c:1065
- do_sendfile+0xb19/0x12c0 fs/read_write.c:1255
- __do_sys_sendfile64 fs/read_write.c:1323 [inline]
- __se_sys_sendfile64 fs/read_write.c:1309 [inline]
- __x64_sys_sendfile64+0x1d0/0x210 fs/read_write.c:1309
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f5101c8c169
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5102ac7168 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f5101dabf80 RCX: 00007f5101c8c169
-RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000004
-RBP: 00007f5102ac71d0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0001000000201005 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffd8c6b1d4f R14: 00007f5102ac7300 R15: 0000000000022000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:_compound_head include/linux/page-flags.h:251 [inline]
-RIP: 0010:unlock_page+0x25/0x130 mm/folio-compat.c:21
-Code: 00 00 00 00 00 f3 0f 1e fa 41 54 55 48 89 fd 53 e8 c0 24 d2 ff 48 8d 7d 08 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 e4 00 00 00 4c 8b 65 08 31 ff 4c 89 e3 83 e3 01
-RSP: 0018:ffffc900047e7520 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000008 RCX: ffffc90003b51000
-RDX: 0000000000000001 RSI: ffffffff81afd3b0 RDI: 0000000000000008
-RBP: 0000000000000000 R08: 0000000000000004 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff88801e052988 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f5102ac7700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5102ac8000 CR3: 000000007c8da000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	00 00                	add    %al,(%rax)
-   4:	00 f3                	add    %dh,%bl
-   6:	0f 1e fa             	nop    %edx
-   9:	41 54                	push   %r12
-   b:	55                   	push   %rbp
-   c:	48 89 fd             	mov    %rdi,%rbp
-   f:	53                   	push   %rbx
-  10:	e8 c0 24 d2 ff       	callq  0xffd224d5
-  15:	48 8d 7d 08          	lea    0x8(%rbp),%rdi
-  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  20:	fc ff df
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2e:	0f 85 e4 00 00 00    	jne    0x118
-  34:	4c 8b 65 08          	mov    0x8(%rbp),%r12
-  38:	31 ff                	xor    %edi,%edi
-  3a:	4c 89 e3             	mov    %r12,%rbx
-  3d:	83 e3 01             	and    $0x1,%ebx
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Best Regards
+Micha=C5=82 Miros=C5=82aw
