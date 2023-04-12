@@ -2,135 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66D306DF409
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 13:45:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D1DC6DF4EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 14:20:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229753AbjDLLp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Apr 2023 07:45:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51178 "EHLO
+        id S231367AbjDLMT6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Apr 2023 08:19:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbjDLLp2 (ORCPT
+        with ESMTP id S230377AbjDLMTw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Apr 2023 07:45:28 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C3AC9C;
-        Wed, 12 Apr 2023 04:45:27 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Wed, 12 Apr 2023 08:19:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C3CF30F5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 05:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681301943;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=oDvpuO+outR1fzDI82r+racSPaiTDWT0/eKdzaYnWqM=;
+        b=iyFJ1xz0NAPGUSQEnitdCPlzXkaczjKazrmow+HyOuX8T4xeg1j7QnVVqPTHK5qHqxv7O5
+        kOVJ8pJnqeRZA5e8tCtPBrTLzyvP/w2yvhF+G6LDnH+4cam5w7PhBVyx6z85QyAzphLgBX
+        P3xXuXpt40e/kkZ6p1UVzYwyjo5lU0M=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-263-mTzkuoVFP_29896gGCW_Bg-1; Wed, 12 Apr 2023 08:19:00 -0400
+X-MC-Unique: mTzkuoVFP_29896gGCW_Bg-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id D9E251F890;
-        Wed, 12 Apr 2023 11:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1681299925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mESrJnTzm2y58henCgzCU9PCm8C7jVKTEVEsRs//lzk=;
-        b=BbgVtPjM9egpg70/sSFltKsb64f/A8zX+kVtG3nQ8E54BE1yiZvlNZXgxwRrSqSMmbMlfI
-        TWnUkqjIEzZZAevly8G0KmNVqoThiIZYOQlbe3lcH6gSOLvAPThNlbHvu+S9UpJWA8Tibb
-        A7yrANkRutl8YwOBrmKevFghYRaUIec=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1681299925;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mESrJnTzm2y58henCgzCU9PCm8C7jVKTEVEsRs//lzk=;
-        b=wGvKfFAI76TLGeAd12Lo2SRdD1zJV07HuOk2NWoe4dLqrP4CQAfZ/dkt/zKkWwb0Hpa4Gm
-        AmrQxOgYXNwLC6AA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CDF3913498;
-        Wed, 12 Apr 2023 11:45:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id SMM4MtWZNmQtQAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 12 Apr 2023 11:45:25 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 620DAA0732; Wed, 12 Apr 2023 13:45:25 +0200 (CEST)
-Date:   Wed, 12 Apr 2023 13:45:25 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Subject: Re: [RFCv2 0/8] ext2: DIO to use iomap
-Message-ID: <20230412114525.m7rjvq3pr3aad2al@quack3>
-References: <cover.1681188927.git.ritesh.list@gmail.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7959780C8C1;
+        Wed, 12 Apr 2023 12:18:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.177])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 378F0492B00;
+        Wed, 12 Apr 2023 12:18:58 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: Fix netfs_extract_iter_to_sg() for ITER_UBUF/IOVEC
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1681188927.git.ritesh.list@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <110099.1681301937.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 12 Apr 2023 13:18:57 +0100
+Message-ID: <110100.1681301937@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Ritesh!
+Hi Linus,
 
-On Tue 11-04-23 10:51:48, Ritesh Harjani (IBM) wrote:
-> Please find the series which moves ext2 direct-io to use modern iomap interface.
-> 
-> Here are some more details -
-> 1. Patch-1: Fixes a kernel bug_on problem with ext2 dax code (found during code
->    review and testing).
-> 2. Patch-2: Adds a __generic_file_fsync_nolock implementation as we had
->    discussed.
-> 3. Patch-3 & Patch-4: Moves ext4 nojournal and ext2 to use _nolock method.
-> 4. Patch-5: This is the main patch which moves ext2 direct-io to use iomap.
->    (more details can be found in the patch)
-> 5. Patch-6: Kills IOMAP_DIO_NOSYNC flag as it is not in use by any filesystem.
-> 6. Patch-7: adds IOCB_STRINGS macro for use in trace events for better trace
->    output of iocb flags.
-> 7. Patch-8: Add ext2 trace point for DIO.
-> 
-> Testing:
-> =========
-> This passes ext2 "auto" group testing for fstests. There were no new failures
-> with this patches.
+Could you apply this, please?  It doesn't affect anything yet, but I have
+patches in the works that will use it.
 
-I went through the patches and I have no further comments besides what has
-been already said. So feel free to update patches based on other feedback,
-I'll do the last round of review and can queue the patches to my tree.
+Thanks,
+David
+---
+netfs: Fix netfs_extract_iter_to_sg() for ITER_UBUF/IOVEC
 
-								Honza
+Fix netfs_extract_iter_to_sg() for ITER_UBUF and ITER_IOVEC to set the siz=
+e
+of the page to the part of the page extracted, not the remaining amount of
+data in the extracted page array at that point.
 
-> 
-> 
-> Ritesh Harjani (IBM) (8):
->   ext2/dax: Fix ext2_setsize when len is page aligned
->   libfs: Add __generic_file_fsync_nolock implementation
->   ext4: Use __generic_file_fsync_nolock implementation
->   ext2: Use __generic_file_fsync_nolock implementation
->   ext2: Move direct-io to use iomap
->   iomap: Remove IOMAP_DIO_NOSYNC unused dio flag
->   fs.h: Add IOCB_STRINGS for use in trace points
->   ext2: Add direct-io trace points
-> 
->  fs/ext2/Makefile      |   2 +-
->  fs/ext2/ext2.h        |   1 +
->  fs/ext2/file.c        | 127 +++++++++++++++++++++++++++++++++++++++++-
->  fs/ext2/inode.c       |  57 +++++++++++--------
->  fs/ext2/trace.c       |   5 ++
->  fs/ext2/trace.h       |  61 ++++++++++++++++++++
->  fs/ext4/fsync.c       |  31 +++++------
->  fs/iomap/direct-io.c  |   2 +-
->  fs/libfs.c            |  43 ++++++++++++++
->  include/linux/fs.h    |  15 +++++
->  include/linux/iomap.h |   6 --
->  11 files changed, 303 insertions(+), 47 deletions(-)
->  create mode 100644 fs/ext2/trace.c
->  create mode 100644 fs/ext2/trace.h
-> 
-> --
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+This doesn't yet affect anything as cifs, the only current user, only
+passes in non-user-backed iterators.
+
+Fixes: 018584697533 ("netfs: Add a function to extract an iterator into a =
+scatterlist")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: linux-cachefs@redhat.com
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/iterator.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
+index e9a45dea748a..8a4c86687429 100644
+--- a/fs/netfs/iterator.c
++++ b/fs/netfs/iterator.c
+@@ -139,7 +139,7 @@ static ssize_t netfs_extract_user_to_sg(struct iov_ite=
+r *iter,
+ 			size_t seg =3D min_t(size_t, PAGE_SIZE - off, len);
+ =
+
+ 			*pages++ =3D NULL;
+-			sg_set_page(sg, page, len, off);
++			sg_set_page(sg, page, seg, off);
+ 			sgtable->nents++;
+ 			sg++;
+ 			len -=3D seg;
+
