@@ -2,99 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A38476DF7B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 15:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFAF86DF7E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 16:02:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230130AbjDLNwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Apr 2023 09:52:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55088 "EHLO
+        id S230334AbjDLOCz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Apr 2023 10:02:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229805AbjDLNwy (ORCPT
+        with ESMTP id S229792AbjDLOCx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Apr 2023 09:52:54 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0513D10CA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 06:52:51 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id f26so22926542ejb.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 06:52:50 -0700 (PDT)
+        Wed, 12 Apr 2023 10:02:53 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C3E7ABC;
+        Wed, 12 Apr 2023 07:02:46 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id p8so11553138plk.9;
+        Wed, 12 Apr 2023 07:02:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1681307569; x=1683899569;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6UePRKxgzqqhv0WlMFum5WhT8Fo7qQq0HQsLtF573Ck=;
-        b=nNjqd5iAbQJvG1BOO2ScAd8XxlysS0/k6N6xZoBrsOnwZiCxolUsWjUzeojO9Bw/BA
-         Q/YxqlyLYlP/QnraJ9W1MM7DjQPP2yd3h/w28kk+zee3irMayubbsOs1XWitUfr9H4n8
-         fPPBQVcFVDEIN9WNmA24dIRWyVwqfNeBEtEqQ=
+        d=gmail.com; s=20221208; t=1681308166; x=1683900166;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LfXiPKzEOSNYmq3ecIzWJmmSwndeoTw2yVUw7BNVDQk=;
+        b=DJnhf3fs41FSBzBsQ4sNxLRnb7Ikaefu3ml2kqh9buX9ZLG+RNpovZYAjkZ2+yH5mc
+         G4MrLN5O43+BymtlqHKG93wnmFRakY0r+IinxHMyltQmrhjd1woRTgtRwV1Qk+0G3cna
+         yCQF6lerBcHHiBL5fD73M5Mu5b2QTDDFYTUfYWhy7e+i/ZGTKd9pRpjtiM5FOdallRoF
+         6q90bgJV3gO9Gr65EBWEkKfdDM7d6SS459JHLUlU+DPJMLrMLH5zZ2tixBBYxGfNvRdM
+         eGw5W9Q8BZ8VtEJhKITNgTnSpk8FKvmduTpj0zy8k4Z1bBz3Rr10vUcNA/jn9yKKEYpr
+         XOpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681307569; x=1683899569;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6UePRKxgzqqhv0WlMFum5WhT8Fo7qQq0HQsLtF573Ck=;
-        b=Kd9wDQ0wOit11qqxSMQnMVjxZD0ohCtG1Bwaogb3v310kMY2tzAca5vvWOJWgjqwIL
-         eaYq/Z53qVv3UuulgMF3ETpbmNTFTqJzVK0Ba64r2LyHiUGJ8a/NIkgLqCl8BLLiZ18T
-         3OgFf0jsZv7PVvSnQaobnqaWnQuFkxORX0VikLgEemED8SEjHDWazj58K2OIGx5TIukL
-         ap8KuEFlwbo87QCnnWJ2GWFyouRuHHbifW9JrVGICOSdcbu4Ma/zLOfEW8+alFj3LNlf
-         s1pj5rWJE+B76q57IczuS09Ij59BaB2y/m6DowNTQhdsXj1HOxt5Sk9XbRzR3fo+Auxt
-         06bg==
-X-Gm-Message-State: AAQBX9e55J+Ql9ekISwxxGf4Hlp6xhWNvwPtX7l93fpNHDUxD1iu4uj3
-        sBKNpJRkhnanNRvQGhMXdGZpUes17CGoIPzu+r43CA==
-X-Google-Smtp-Source: AKy350akVDMxSYmf1op8qd/cRmhdUF+2E8mr/Y5rK3scyaFV3IDiLFABZDIDUsam4fuTMbxVVnF0LQsl/7CPk9Lm6Gg=
-X-Received: by 2002:a17:907:d609:b0:92b:ec37:e4b7 with SMTP id
- wd9-20020a170907d60900b0092bec37e4b7mr1322484ejc.14.1681307569396; Wed, 12
- Apr 2023 06:52:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000d5a93805f8930638@google.com>
-In-Reply-To: <000000000000d5a93805f8930638@google.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 12 Apr 2023 15:52:37 +0200
-Message-ID: <CAJfpegsGjFQX9t_NS8-oiE0K8Y0xEmr60VXMg6d4HQCCXOrOXg@mail.gmail.com>
-Subject: Re: [syzbot] Monthly fuse report
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+list69b50efce6f847334104@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        d=1e100.net; s=20210112; t=1681308166; x=1683900166;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LfXiPKzEOSNYmq3ecIzWJmmSwndeoTw2yVUw7BNVDQk=;
+        b=XZIFkc1esqIFMMH73k9dwFnuCF0ys8+xeekNIUQ5j8OlnXDmYGDjCTj0yyquQZc91l
+         IoItoVf5pFnR83ntOvpphjJ8+WRN8/A5jFOOrhGzKRt4ZUtMuokucBlEXheDzB/eaAHB
+         xoSJBiuplu7V+oOUg3MRx0TMLUqPpC0hbAIri9vX8/LnRTJIXVy/MAOSSmI1mOEWYZde
+         a7lA0cr2jcPPPv91wj1Iss7MeIB/1aVnzy/BcwDe8w2PmTUSfjvdLSAI7z+BT37tfL8y
+         hMConv7ugq07Nas5v7P3QQ4sB0/Im31BaZgTU3RTmdss0QIf9Pqc8KL9TiTZDWy7VDq2
+         E16A==
+X-Gm-Message-State: AAQBX9fgjYmY5SlwZWclAHHw00yRlsrHTcBqtfuidkgCgVeHakTMopvc
+        lWL86DDwsdT0HkoTmbxweEo=
+X-Google-Smtp-Source: AKy350bSp9UPumlasOzyS9Qp1iCUEvudsyXlEcrurZEpT46AQyGod/0s8YOQGN7REaieXLVAi2Ka5A==
+X-Received: by 2002:a17:902:7fc5:b0:1a1:cce7:94ed with SMTP id t5-20020a1709027fc500b001a1cce794edmr17725943plb.67.1681308165007;
+        Wed, 12 Apr 2023 07:02:45 -0700 (PDT)
+Received: from rh-tp ([2406:7400:63:7035:9095:349e:5f0b:ded0])
+        by smtp.gmail.com with ESMTPSA id m18-20020a170902bb9200b0019d1f42b00csm10486254pls.17.2023.04.12.07.02.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Apr 2023 07:02:44 -0700 (PDT)
+Date:   Wed, 12 Apr 2023 19:32:26 +0530
+Message-Id: <87ttxlyz9p.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Subject: Re: [RFCv2 2/8] libfs: Add __generic_file_fsync_nolock implementation
+In-Reply-To: <ZDaZR+zHcpUyNOND@infradead.org>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 5 Apr 2023 at 11:00, syzbot
-<syzbot+list69b50efce6f847334104@syzkaller.appspotmail.com> wrote:
->
-> Hello fuse maintainers/developers,
->
-> This is a 30-day syzbot report for the fuse subsystem.
-> All related reports/information can be found at:
-> https://syzkaller.appspot.com/upstream/s/fuse
->
-> During the period, 0 new issues were detected and 0 were fixed.
-> In total, 8 issues are still open and 34 have been fixed so far.
->
-> Some of the still happening issues:
->
-> Crashes Repro Title
-> 146     Yes   INFO: task hung in fuse_simple_request
->               https://syzkaller.appspot.com/bug?extid=46fe899420456e014d6b
-> 26      Yes   INFO: task hung in lookup_slow (3)
->               https://syzkaller.appspot.com/bug?extid=7cfc6a4f6b025f710423
-> 13      Yes   INFO: task hung in walk_component (5)
->               https://syzkaller.appspot.com/bug?extid=8fba0e0286621ce71edd
+Christoph Hellwig <hch@infradead.org> writes:
 
-Hi Dmitry,
+> On Tue, Apr 11, 2023 at 01:33:17PM +0100, Matthew Wilcox wrote:
+>> On Mon, Apr 10, 2023 at 10:27:10PM -0700, Christoph Hellwig wrote:
+>> > On Tue, Apr 11, 2023 at 10:51:50AM +0530, Ritesh Harjani (IBM) wrote:
+>> > > +/**
+>> > > + * __generic_file_fsync_nolock - generic fsync implementation for simple
+>> > > + * filesystems with no inode lock
+>> >
+>> > No reallz need for the __ prefix in the name.
+>>
+>> It kind of makes sense though.
+>>
+>> generic_file_fsync does the flush
+>> __generic_file_fsync doesn't do the flush
+>> __generic_file_fsync_nolock doesn't do the flush and doesn't lock/unlock
+>
+> Indeed.  Part of it is that the naming is a bit horrible.
+> Maybe it should move to buffer.c and be called generic_buffer_fsync,
+> or generic_block_fsync which still wouldn't be perfect but match the
+> buffer.c naming scheme.
+>
 
-These all look like non-kernel deadlocks.
+Eventually it anyways needs some work to see if we can kill the lock
+variant all together. I didn't do that in this series which is
+focused on ext2 conversion of iomap.
+So, if it's not that bad, I would like to keep both function
+definitions at one place so that it can be worked out later.
 
-AFAIR syzbot was taught about breaking these by "umount -f" or "echo 1
-> /sys/fs/fuse/connections/$DEV/abort", right?
+>>
+>> > > +extern int __generic_file_fsync_nolock(struct file *, loff_t, loff_t, int);
+>> >
+>> > No need for the extern.  And at least I personally prefer to spell out
+>> > the parameter names to make the prototype much more readable.
+>>
+>> Agreed, although I make an exception for the 'struct file *'.  Naming that
+>> parameter adds no value, but a plain int is just obscene.
+>>
+>> int __generic_file_fsync_nolock(struct file *, loff_t start, loff_t end,
+>> 		bool datasync);
+>
+> While I agree that it's not needed for the file, leaving it out is a bit
+> silly.
+>
 
-I wonder why they are still triggering a report then.
+Sure. Will fix it.
 
-Thanks,
-Miklos
+>> (yes, the other variants don't use a bool for datasync, but they should)
+>
+> .. including the ->fsync prototype to make it work ..
+
+Sure, this work should go as a seperate series.
+
+-ritesh
