@@ -2,64 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFAF86DF7E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 16:02:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE2256DF7F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 16:04:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230334AbjDLOCz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Apr 2023 10:02:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35288 "EHLO
+        id S230365AbjDLOEA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Apr 2023 10:04:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229792AbjDLOCx (ORCPT
+        with ESMTP id S229555AbjDLOD7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Apr 2023 10:02:53 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C3E7ABC;
-        Wed, 12 Apr 2023 07:02:46 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id p8so11553138plk.9;
-        Wed, 12 Apr 2023 07:02:46 -0700 (PDT)
+        Wed, 12 Apr 2023 10:03:59 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78DC319A4;
+        Wed, 12 Apr 2023 07:03:58 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id jx2-20020a17090b46c200b002469a9ff94aso9827253pjb.3;
+        Wed, 12 Apr 2023 07:03:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681308166; x=1683900166;
+        d=gmail.com; s=20221208; t=1681308238; x=1683900238;
         h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=LfXiPKzEOSNYmq3ecIzWJmmSwndeoTw2yVUw7BNVDQk=;
-        b=DJnhf3fs41FSBzBsQ4sNxLRnb7Ikaefu3ml2kqh9buX9ZLG+RNpovZYAjkZ2+yH5mc
-         G4MrLN5O43+BymtlqHKG93wnmFRakY0r+IinxHMyltQmrhjd1woRTgtRwV1Qk+0G3cna
-         yCQF6lerBcHHiBL5fD73M5Mu5b2QTDDFYTUfYWhy7e+i/ZGTKd9pRpjtiM5FOdallRoF
-         6q90bgJV3gO9Gr65EBWEkKfdDM7d6SS459JHLUlU+DPJMLrMLH5zZ2tixBBYxGfNvRdM
-         eGw5W9Q8BZ8VtEJhKITNgTnSpk8FKvmduTpj0zy8k4Z1bBz3Rr10vUcNA/jn9yKKEYpr
-         XOpQ==
+        bh=topQsDNAh5OJ4afV28lmdimpoxO70P5sf2cG8WEdKI4=;
+        b=WwJGiVe3K0IMN0tRP1AypK4QIvNxGc+X7e9jaOemfCFNhoJMvHbiMqeK9ho6cDIdy4
+         T90NzAFo1IE+h/5Yx78hEbD27kW/6sBi+bSTXtKyk/yBONhvDl7Ln68VBuyGu8O8jC2m
+         o8vuEVNvS18dPcWSigv4iiSWTOX1/pcMxYXWeaoy+PwR1/coTdVpvMJHQVzwWd08iu1s
+         YDoN0sdbr6is0iTSI8Xboq0RZgiPOcGPOyJ/BcN8cU1M+Z3dII2c9iWpzqcl3rk9sBvM
+         w1SY9QPtfJOjupgeYUec5VQCYrKcv5zCz9IySbDjNjfBcF4iGNMAMtYAmbtK6aPUtAX1
+         7Uhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681308166; x=1683900166;
+        d=1e100.net; s=20210112; t=1681308238; x=1683900238;
         h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LfXiPKzEOSNYmq3ecIzWJmmSwndeoTw2yVUw7BNVDQk=;
-        b=XZIFkc1esqIFMMH73k9dwFnuCF0ys8+xeekNIUQ5j8OlnXDmYGDjCTj0yyquQZc91l
-         IoItoVf5pFnR83ntOvpphjJ8+WRN8/A5jFOOrhGzKRt4ZUtMuokucBlEXheDzB/eaAHB
-         xoSJBiuplu7V+oOUg3MRx0TMLUqPpC0hbAIri9vX8/LnRTJIXVy/MAOSSmI1mOEWYZde
-         a7lA0cr2jcPPPv91wj1Iss7MeIB/1aVnzy/BcwDe8w2PmTUSfjvdLSAI7z+BT37tfL8y
-         hMConv7ugq07Nas5v7P3QQ4sB0/Im31BaZgTU3RTmdss0QIf9Pqc8KL9TiTZDWy7VDq2
-         E16A==
-X-Gm-Message-State: AAQBX9fgjYmY5SlwZWclAHHw00yRlsrHTcBqtfuidkgCgVeHakTMopvc
-        lWL86DDwsdT0HkoTmbxweEo=
-X-Google-Smtp-Source: AKy350bSp9UPumlasOzyS9Qp1iCUEvudsyXlEcrurZEpT46AQyGod/0s8YOQGN7REaieXLVAi2Ka5A==
-X-Received: by 2002:a17:902:7fc5:b0:1a1:cce7:94ed with SMTP id t5-20020a1709027fc500b001a1cce794edmr17725943plb.67.1681308165007;
-        Wed, 12 Apr 2023 07:02:45 -0700 (PDT)
+        bh=topQsDNAh5OJ4afV28lmdimpoxO70P5sf2cG8WEdKI4=;
+        b=SQiSzJGQpdLXCcyzFoMWQSoWFqCKHgHXddnIRZmo2Vhe3Rrv5FocAx1gbQe8ftwkmr
+         hcvNPVHHfJh7ZIXJ30WVQBjqbfpHCTnfXlKM60XPlYDj5vxmUo52IdR0Pe1TNXs0zmno
+         cMTP4hzwru8fMEwx3HgH0oaNiaZjXfQ2EAGoevOAVFRpG+tNTq3w2ixZHoI/KCss6ini
+         HebTxMHU4Oth+WegKPfkkdQ0XXvwtUEU8npDj2tZBistmVt5kCijsY6n8iKd+ULaqJOt
+         22i08bXvFniJmWaooirfDGVXyPXqedt1ARPqS5SkzL7xa/c+gKyxQGulXVCHkh/64UG3
+         ZGLw==
+X-Gm-Message-State: AAQBX9cKcypo9Nfkz1o+EotxsYuDcfI6RIZYdbWvtB2RTWJidw3ENyUD
+        rjIw2sDpOQaVP+c3SAyKg+M=
+X-Google-Smtp-Source: AKy350Y8uTYZqxLUBt0TeQ2KxXo5K/VBf3ia2WY3D+9i4n1SqwhQOsckypZveGrZrR765ZPwCMwb3A==
+X-Received: by 2002:a17:90b:3b4a:b0:23f:618a:6bed with SMTP id ot10-20020a17090b3b4a00b0023f618a6bedmr24389082pjb.47.1681308237783;
+        Wed, 12 Apr 2023 07:03:57 -0700 (PDT)
 Received: from rh-tp ([2406:7400:63:7035:9095:349e:5f0b:ded0])
-        by smtp.gmail.com with ESMTPSA id m18-20020a170902bb9200b0019d1f42b00csm10486254pls.17.2023.04.12.07.02.42
+        by smtp.gmail.com with ESMTPSA id iw22-20020a170903045600b001a1add0d616sm8933016plb.161.2023.04.12.07.03.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Apr 2023 07:02:44 -0700 (PDT)
-Date:   Wed, 12 Apr 2023 19:32:26 +0530
-Message-Id: <87ttxlyz9p.fsf@doe.com>
+        Wed, 12 Apr 2023 07:03:57 -0700 (PDT)
+Date:   Wed, 12 Apr 2023 19:33:51 +0530
+Message-Id: <87r0spyz7c.fsf@doe.com>
 From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Christoph Hellwig <hch@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Jan Kara <jack@suse.cz>,
         "Darrick J . Wong" <djwong@kernel.org>,
         Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Subject: Re: [RFCv2 2/8] libfs: Add __generic_file_fsync_nolock implementation
-In-Reply-To: <ZDaZR+zHcpUyNOND@infradead.org>
+Subject: Re: [RFCv2 5/8] ext2: Move direct-io to use iomap
+In-Reply-To: <ZDaZfuq+wi5KKRfs@infradead.org>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -72,55 +71,17 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Christoph Hellwig <hch@infradead.org> writes:
 
-> On Tue, Apr 11, 2023 at 01:33:17PM +0100, Matthew Wilcox wrote:
->> On Mon, Apr 10, 2023 at 10:27:10PM -0700, Christoph Hellwig wrote:
->> > On Tue, Apr 11, 2023 at 10:51:50AM +0530, Ritesh Harjani (IBM) wrote:
->> > > +/**
->> > > + * __generic_file_fsync_nolock - generic fsync implementation for simple
->> > > + * filesystems with no inode lock
+> On Tue, Apr 11, 2023 at 08:51:24PM +0530, Ritesh Harjani wrote:
+>> >> +	if ((flags & IOMAP_WRITE) && (offset + length > i_size_read(inode)))
 >> >
->> > No reallz need for the __ prefix in the name.
+>> > No need for the second set of inner braces here either.
 >>
->> It kind of makes sense though.
->>
->> generic_file_fsync does the flush
->> __generic_file_fsync doesn't do the flush
->> __generic_file_fsync_nolock doesn't do the flush and doesn't lock/unlock
+>> It's just avoids any confusion this way.
 >
-> Indeed.  Part of it is that the naming is a bit horrible.
-> Maybe it should move to buffer.c and be called generic_buffer_fsync,
-> or generic_block_fsync which still wouldn't be perfect but match the
-> buffer.c naming scheme.
->
+> Does it?  Except for some really weird places it is very unusual in
+> the kernel.  To me it really does add confusion.
 
-Eventually it anyways needs some work to see if we can kill the lock
-variant all together. I didn't do that in this series which is
-focused on ext2 conversion of iomap.
-So, if it's not that bad, I would like to keep both function
-definitions at one place so that it can be worked out later.
+Ok, In that case, will change it.
 
->>
->> > > +extern int __generic_file_fsync_nolock(struct file *, loff_t, loff_t, int);
->> >
->> > No need for the extern.  And at least I personally prefer to spell out
->> > the parameter names to make the prototype much more readable.
->>
->> Agreed, although I make an exception for the 'struct file *'.  Naming that
->> parameter adds no value, but a plain int is just obscene.
->>
->> int __generic_file_fsync_nolock(struct file *, loff_t start, loff_t end,
->> 		bool datasync);
->
-> While I agree that it's not needed for the file, leaving it out is a bit
-> silly.
->
-
-Sure. Will fix it.
-
->> (yes, the other variants don't use a bool for datasync, but they should)
->
-> .. including the ->fsync prototype to make it work ..
-
-Sure, this work should go as a seperate series.
-
+Thanks for the review!
 -ritesh
