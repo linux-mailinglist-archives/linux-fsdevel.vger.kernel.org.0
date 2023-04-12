@@ -2,122 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A8F66DF733
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 15:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 722B66DF783
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 15:42:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbjDLNan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Apr 2023 09:30:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60856 "EHLO
+        id S230371AbjDLNmA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Apr 2023 09:42:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjDLNal (ORCPT
+        with ESMTP id S230033AbjDLNl5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Apr 2023 09:30:41 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035AC8A68
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 06:30:13 -0700 (PDT)
-Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 33CDTcCi076644;
-        Wed, 12 Apr 2023 22:29:38 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
- Wed, 12 Apr 2023 22:29:38 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 33CDTbZx076638
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 12 Apr 2023 22:29:37 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <60f6bb85-825c-95e2-79b8-25a2d0e9979e@I-love.SAKURA.ne.jp>
-Date:   Wed, 12 Apr 2023 22:29:37 +0900
+        Wed, 12 Apr 2023 09:41:57 -0400
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2043.outbound.protection.outlook.com [40.107.96.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 525FE5B93;
+        Wed, 12 Apr 2023 06:41:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S7dQ6i8ERKm5Nihj9NtJILKzULilYBipSU0X37XbCA2UW/yFRZ5y5FTdkZA7c1MQfeeUGmFkMqvgs7gvt3U2CyusgPSNoeVI68ivfEIKv8vLG4O05MPnoml4c+p7/dfGfOHf+eky8iRsmm6YxF43dxyMcWsUxxnvmal8xZNePRGTCKrFJDi3tM4eqpGwVCrq5Qs17uVheWYU6LpIUHMO6XKCqBVOtIvXkUZ/eQZDeoiJAiV5XVkBaleaSdvLYR64plwPVeZ9WD2Plq+A+pc2zy3ZeV9s8VOjy3p+raAU/Z4P1hL5fGfD7sSs85GofPsfxYDIbmvWiftx+4UcR+M5mA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6NtRM6foZVF7dirdFvnADX4sX/vedPPdl7yQXNLwDEw=;
+ b=a+ZMLE2eG94509lG88G2rYPVgIv3Ozz3B7WVBYOiHodhJX31O0IorKQRgIAVpXuSu/XZXYbc336qDWskrgOGsOH+lKFbHIclBCUV1wfan4F+rdM0k5hxvO1kpXGcnz7eMZgKDccvxoYNMvEMy97auZIx1KMxFON6XSH4Q8LMhy3AbCTFnKf6nEi5lVMOrnZPSzHm8TQ19g8Gb3ADOGRxYdzrk8ox102a86uw1b9BKkOn+wqt6J2AowoWCFTm6t0B6QDJgwxgGc0SzpnNgOChhxuYMwVvYrg9DiqyR5nD5BGm1nsM5AVRZuu40dew9Ry3AShPSMiKAMaBU5ydGfuaVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6NtRM6foZVF7dirdFvnADX4sX/vedPPdl7yQXNLwDEw=;
+ b=Sm8tLO4sZMy+nvNoH3FlqqNXdZ6rZv8Wtu0ovdakcNunjEVu8H6U+Vnab6NrJHKJaAgHNgQ4J2ZS6SyWdNZg95DUlr6wqFWBlTbe/BObdetfFNN8gnz5pwIeQMgB61Sw+yOl07GYzFY3cAs1HdjJ+k6WSLOiNHo+g8D6BFCoHgs=
+Received: from DM6PR07CA0108.namprd07.prod.outlook.com (2603:10b6:5:330::14)
+ by SN7PR19MB6879.namprd19.prod.outlook.com (2603:10b6:806:260::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.34; Wed, 12 Apr
+ 2023 13:41:42 +0000
+Received: from DM6NAM04FT062.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:5:330:cafe::77) by DM6PR07CA0108.outlook.office365.com
+ (2603:10b6:5:330::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.40 via Frontend
+ Transport; Wed, 12 Apr 2023 13:41:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
+ smtp.mailfrom=ddn.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ddn.com;
+Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
+ 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
+Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
+ DM6NAM04FT062.mail.protection.outlook.com (10.13.158.72) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6298.31 via Frontend Transport; Wed, 12 Apr 2023 13:41:41 +0000
+Received: from localhost (unknown [10.68.0.8])
+        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 4C8B920C687A;
+        Wed, 12 Apr 2023 07:42:49 -0600 (MDT)
+From:   Bernd Schubert <bschubert@ddn.com>
+To:     axboe@kernel.dk
+Cc:     io-uring@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        dsingh@ddn.com, bschubert@ddn.com
+Subject: [PATCH 1/2] fs: add FMODE_DIO_PARALLEL_WRITE flag
+Date:   Wed, 12 Apr 2023 15:40:57 +0200
+Message-Id: <20230412134057.381941-1-bschubert@ddn.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230307172015.54911-2-axboe@kernel.dk>
+References: <20230307172015.54911-2-axboe@kernel.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH] fs/ntfs3: disable page fault during ntfs_fiemap()
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     syzbot <syzbot+96cee7d33ca3f87eee86@syzkaller.appspotmail.com>,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Hillf Danton <hdanton@sina.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, trix@redhat.com,
-        ndesaulniers@google.com, nathan@kernel.org
-References: <000000000000e2102c05eeaf9113@google.com>
- <00000000000031b80705ef5d33d1@google.com>
- <f649c9c0-6c0c-dd0d-e3c9-f0c580a11cd9@I-love.SAKURA.ne.jp>
- <ZDaujCO3Azv92JxX@casper.infradead.org>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <ZDaujCO3Azv92JxX@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM04FT062:EE_|SN7PR19MB6879:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: f40167ea-4c4d-43fa-c74e-08db3b5ba633
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: dz7Tqvn2HDepCbqgEBoyFPVHorpGCDi1kxQKIufW+IHlhsdGDvJZvVvWOX60rfAl0murbmLVm5CTL8KQKZVNQl3ce0xGoJ+gSvRfFCWuOv/254Y8OfWDi2Q5yltMq8KooaEhu3TfkedqNyXBQvfGXihEuNPtCos69hxN2Ewb39UVyFmbEhMhsSl2pTKw7NV/mUrDZye5drQFfwrIuQbJeQIciEk366s0zd7TcpAGMa/rALPSt00byBwb6Ngc32UujVYedGnZ7q22jg0YJFlOAiqODpNFJwUW0GlytDyKpBu4UxyR6KnxYN1f9FHXEeeK0A1Ms8t3uYOW3+uTxHqiRtLp8isb3tD/EZrKYrIuv/kxnloa6UkoOYftsTjcl0vNd36qY0WpU5Y1ht7iNJow2GSmiuzSnM8HTip3GRK1ExcPlL7aBW0U3ImwTsq4V0oHJdTcNu8466kvs44SL3DxEDnasCxMkOUxs8P5BIE3Uj3w9qrb/8/g7rjnvxMoA4PNkSVqc2wxvQzF8gOO4AqWNlP9c+6NTq5qohwKsQUMhOqpc5sIi/YTJhlj3c6Hi+z3q5yun8IV7kiu74ojA8tsMB1SJSRQdD7DncIt4wXGsK43pMsQ8XanQEHhxqE4XkgRt8kU5PUqSSSu0ywW63X+wmHfILAg0F0060EqvgSo5fC5zsh1wuRn7gTV6L4pXL/r63/BB6zx5ZYPilF8V28Kqg==
+X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(396003)(39850400004)(346002)(376002)(136003)(451199021)(46966006)(36840700001)(36860700001)(6666004)(70586007)(82740400003)(81166007)(5660300002)(4744005)(2906002)(8676002)(316002)(8936002)(40480700001)(86362001)(36756003)(82310400005)(4326008)(356005)(70206006)(6916009)(41300700001)(26005)(336012)(2616005)(47076005)(1076003)(6266002)(478600001)(186003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2023 13:41:41.8749
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f40167ea-4c4d-43fa-c74e-08db3b5ba633
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM04FT062.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR19MB6879
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023/04/12 22:13, Matthew Wilcox wrote:
->> Also, since Documentation/filesystems/fiemap.rst says that "If an error
->> is encountered while copying the extent to user memory, -EFAULT will be
->> returned.", I assume that ioctl(FS_IOC_FIEMAP) users can handle -EFAULT
->> error.
-> 
-> What?  No, that doesn't mean "You can return -EFAULT because random luck".
-> That means "If you pass it an invalid address, you'll get -EFAULT back".
-> 
-> NACK.
+Miklos, Jens,
 
-Then, why does fiemap.rst say "If an error is encountered" rather than
-"If an invalid address is passed" ?
+could we please also set this flag for fuse?
 
-Does the definition of -EFAULT limited to "the caller does not have permission
-to access this address" ?
 
-----------
-int fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
-			    u64 phys, u64 len, u32 flags)
-{
-	struct fiemap_extent extent;
-	struct fiemap_extent __user *dest = fieinfo->fi_extents_start;
+Thanks,
+Bernd
 
-	/* only count the extents */
-	if (fieinfo->fi_extents_max == 0) {
-		fieinfo->fi_extents_mapped++;
-		return (flags & FIEMAP_EXTENT_LAST) ? 1 : 0;
-	}
 
-	if (fieinfo->fi_extents_mapped >= fieinfo->fi_extents_max)
-		return 1;
+fuse: Set FMODE_DIO_PARALLEL_WRITE flag
 
-	if (flags & SET_UNKNOWN_FLAGS)
-		flags |= FIEMAP_EXTENT_UNKNOWN;
-	if (flags & SET_NO_UNMOUNTED_IO_FLAGS)
-		flags |= FIEMAP_EXTENT_ENCODED;
-	if (flags & SET_NOT_ALIGNED_FLAGS)
-		flags |= FIEMAP_EXTENT_NOT_ALIGNED;
+From: Bernd Schubert <bschubert@ddn.com>
 
-	memset(&extent, 0, sizeof(extent));
-	extent.fe_logical = logical;
-	extent.fe_physical = phys;
-	extent.fe_length = len;
-	extent.fe_flags = flags;
+Fuse can also do parallel DIO writes, if userspace has enabled it.
 
-	dest += fieinfo->fi_extents_mapped;
-	if (copy_to_user(dest, &extent, sizeof(extent)))
-		return -EFAULT;
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+---
+ fs/fuse/file.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-	fieinfo->fi_extents_mapped++;
-	if (fieinfo->fi_extents_mapped == fieinfo->fi_extents_max)
-		return 1;
-	return (flags & FIEMAP_EXTENT_LAST) ? 1 : 0;
-}
-----------
-
-If copy_to_user() must not fail other than "the caller does not have
-permission to access this address", what should we do for now?
-Just remove ntfs_fiemap() and return -EOPNOTSUPP ?
-
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 875314ee6f59..46e7f1196fd1 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -215,6 +215,9 @@ void fuse_finish_open(struct inode *inode, struct file *file)
+ 	}
+ 	if ((file->f_mode & FMODE_WRITE) && fc->writeback_cache)
+ 		fuse_link_write_file(file);
++
++	if (ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES)
++		file->f_mode |= FMODE_DIO_PARALLEL_WRITE;
+ }
+ 
+ int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
