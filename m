@@ -2,137 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA866E013B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 23:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27B946E019C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 00:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbjDLVyV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Apr 2023 17:54:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48208 "EHLO
+        id S229996AbjDLWBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Apr 2023 18:01:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjDLVyU (ORCPT
+        with ESMTP id S229949AbjDLWBp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Apr 2023 17:54:20 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D0F949EA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 14:54:19 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id c3so14049970pjg.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 14:54:19 -0700 (PDT)
+        Wed, 12 Apr 2023 18:01:45 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43AED6A72
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 15:01:43 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-54be7584b28so250798267b3.16
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 15:01:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1681336459;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o22buf+xWsiAjf8q6ZesO0xScrJcUXPqlMC3QN5HAOw=;
-        b=Yy3j4sLbegTgjTgcaNkTrZN/7M/ZDOBxoDHaSLn5Pvs9AGyWlutR7JOp3C/z4US/gp
-         JNPTAtUNdJOlsJMwAZAYLjjXgeUJyPzUdHpGtSOGmX5lYsrPKucYHAo/cYimJILvx4gB
-         OKFw08M/dWu59tVxZ7w1Dzgj3U+EnZFrEXJ64FYZtEh1KqO/19LCCZEvZWCjoKE9pdAr
-         vs2zzEf263lIvs3SmG2hUA02lOqYO8qc3/+kQc9ScXsTt2CnOeRnQUKRL1IcGhl/LPN8
-         a8PKswraiwJP8W5Xv2F1/P+DwTWy25rTTwzQ3gnPCBPPhpnguImNFaCwzMSw5648XLbi
-         eIiA==
+        d=google.com; s=20221208; t=1681336902; x=1683928902;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FXF6AhQnwp1n/IhYSnfZVqcASsRtZ9yL6mJXzW8Mi9w=;
+        b=itcYyHsTjH+BWioeMOzHRsDUxYxnEou8ifBndkBXI6TNX5xq/HUkT1AyyhCCB+jlgg
+         3qhGiIFyP5GPmeAb9F/cGYLL0T6ndH4Anu3KiFTJ2zgUv7rYRpICAgBSTO4SmMWQG2dj
+         4lYV/RthfLCJMCgdpXeycR2egix1Qp8q862Y6ehJoE8Zrk7VpCCp7zEkzxGBY8nv1lJY
+         RZQCmJ4imt199cSg173cMIapT9cfLep+3yZW0B5b36RF/xqQ9iUnS4egjGE1JSQeu6db
+         gbh/vWlrrOQUF9lx8wSU9AC22JYq+cM0a/46K9zgrM+CGG4alQS9oe5dHDfglVggicdO
+         Y9Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681336459;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o22buf+xWsiAjf8q6ZesO0xScrJcUXPqlMC3QN5HAOw=;
-        b=NpibfwJ+kKCNUdLOkDtrEAp+W42TF4TxtLrarx9fLVx2I1R2CosAtjMzFi+wkepvJ3
-         mIwr6ihl7F4LpHcE3XG2shDRbqFjgtl/mUA4D2RDK3kALv3Sv5po50OXK3m3dQeATFuZ
-         hsTMESd+1yxJbVwTl4E9fEompmKClTsaSZ422poeEJVul2P9GwBq0iINSXqGa2LARbDa
-         ETM6Qq9UFhduyj8idXbIIcFGVFa/x1kGY7wbKeIb5s+2YcUq6w78B6EffzxsJD2cRQbI
-         pwL3DRRTzMx0PORdvx/0zgMVaK1t49iM+XhSByGtRUzdq725aNFSrHe37ykX4HaQaCj9
-         OCKQ==
-X-Gm-Message-State: AAQBX9f2b3n8K+cyQ7cT48+FiImYKL2F2u1sWX8tyA55dEDagcsBaA5r
-        nZbgUCZ4Bkw88Av4oPpdjCu8Mw==
-X-Google-Smtp-Source: AKy350aC1dzQ8x6PzYL+9Tqb4+YvtNMti2RvQcBthymKE8OIbVbW6YHQBEHsX8JXr4+ccGakpel1Hg==
-X-Received: by 2002:a17:902:c713:b0:1a4:fcc9:ec61 with SMTP id p19-20020a170902c71300b001a4fcc9ec61mr332187plp.5.1681336458813;
-        Wed, 12 Apr 2023 14:54:18 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-41-174.pa.nsw.optusnet.com.au. [49.180.41.174])
-        by smtp.gmail.com with ESMTPSA id i4-20020a1709026ac400b001a1b66af22fsm71183plt.62.2023.04.12.14.54.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Apr 2023 14:54:18 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pmiPv-002eH2-Dy; Thu, 13 Apr 2023 07:54:15 +1000
-Date:   Thu, 13 Apr 2023 07:54:15 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     syzbot <syzbot+listea0b12829deaef4101fd@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] Monthly xfs report
-Message-ID: <20230412215415.GM3223426@dread.disaster.area>
-References: <000000000000529f1805f81b23c2@google.com>
- <20230411013512.GX3223426@dread.disaster.area>
- <20230411043517.GC360895@frogsfrogsfrogs>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230411043517.GC360895@frogsfrogsfrogs>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        d=1e100.net; s=20221208; t=1681336902; x=1683928902;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FXF6AhQnwp1n/IhYSnfZVqcASsRtZ9yL6mJXzW8Mi9w=;
+        b=LvTfcsZyr9wKQuaVFzfGi+KoOJzBEIxEgjDyd0sawsv55cYcechvFf+2U8nFGFsv7v
+         juKoGbM3LjQgq+DQKryM0rH6oTM2jwz+uY1lz0p3A1ipZudWxs0fWDvXjmNOcbBRLIZ+
+         +wzJqqC3uwo+eyXyWQ1DtGpMaOkU85rzFm89OamK4Q/BZnAgu7TAO7J8J4ZrZg/R11wV
+         Gqs5/GI3ignFfrBzb1U7oROVgy0dO1DS2olUCKCmglsBRC72FKYRNL6XT9ALWOXHDoj+
+         dDBpBMAAPd59f3pxIiR0ru9+glkVCK+aKhJyp0GPz7gD6Mj91M0RbUAt25ShhRtjoxKb
+         vyfw==
+X-Gm-Message-State: AAQBX9cdfDlTcehDPgf/V21TaN5Y4XcLmwyE4PBjVMFhoKsj3Aj7pQXc
+        cqgJibFHLe7UjbC+9eEHokM5PVWWAk8=
+X-Google-Smtp-Source: AKy350artxVLouCy5UXXqGRd6vaUaGCzjJlbptUimGvT0630mPFw3RBlFaQsm42qDt42zFcnXgHxxlmRTKU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:cc07:0:b0:b8b:fe5f:2eaa with SMTP id
+ l7-20020a25cc07000000b00b8bfe5f2eaamr43241ybf.2.1681336902548; Wed, 12 Apr
+ 2023 15:01:42 -0700 (PDT)
+Date:   Wed, 12 Apr 2023 15:01:41 -0700
+In-Reply-To: <20230323012737.7vn4ynsbfz7c2ch4@amd.com>
+Mime-Version: 1.0
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <Y8H5Z3e4hZkFxAVS@google.com> <20230119111308.GC2976263@ls.amr.corp.intel.com>
+ <Y8lg1G2lRIrI/hld@google.com> <20230119223704.GD2976263@ls.amr.corp.intel.com>
+ <Y880FiYF7YCtsw/i@google.com> <20230213130102.two7q3kkcf254uof@amd.com>
+ <20230221121135.GA1595130@chaop.bj.intel.com> <20230323012737.7vn4ynsbfz7c2ch4@amd.com>
+Message-ID: <ZDcqRY6UMmpyf/so@google.com>
+Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
+From:   Sean Christopherson <seanjc@google.com>
+To:     Michael Roth <michael.roth@amd.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        mhocko@suse.com, wei.w.wang@intel.com
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 10, 2023 at 09:35:17PM -0700, Darrick J. Wong wrote:
-> On Tue, Apr 11, 2023 at 11:35:12AM +1000, Dave Chinner wrote:
-> > On Thu, Mar 30, 2023 at 02:58:43AM -0700, syzbot wrote:
+On Wed, Mar 22, 2023, Michael Roth wrote:
+> On Tue, Feb 21, 2023 at 08:11:35PM +0800, Chao Peng wrote:
+> > >   *fixup (upm_base_support): KVM: use inclusive ranges for restrictedmem binding/unbinding
+> > >   *fixup (upm_base_support): mm: restrictedmem: use inclusive ranges for issuing invalidations
 > > 
-> > > 13      Yes   general protection fault in __xfs_free_extent
-> > >               https://syzkaller.appspot.com/bug?extid=bfbc1eecdfb9b10e5792
-> > 
-> > Growfs issue. Looks like a NULL pag, which means the fsbno passed
-> > to __xfs_free_extent() is invalid. Without looking further, this
-> > looks like it's a corrupt AGF length or superblock size and this has
-> > resulted in the calculated fsbno starting beyond the end of the last
-> > AG that we are about to grow. That means the agno is beyond EOFS,
-> > xfs_perag_get(agno) ends up NULL, and __xfs_free_extent() goes
-> > splat.  Likely requires corruption to trigger.
-> > 
-> > Low priority, low severity.
+> > As many kernel APIs treat 'end' as exclusive, I would rather keep using
+> > exclusive 'end' for these APIs(restrictedmem_bind/restrictedmem_unbind
+> > and notifier callbacks) but fix it internally in the restrictedmem. E.g.
+> > all the places where xarray API needs a 'last'/'max' we use 'end - 1'.
+> > See below for the change.
 > 
-> I've been wondering for quite a while if the code that creates those
-> defer items ought to be shutting down the fs if they can't get a perag
-> to stuff in the intent.  xfs_perag_intent_get seems like a reasonable
-> place to shut down the fs with a corruption warning if someone feeds in
-> a totally garbage fsblock range.
+> Yes I did feel like I was fighting the kernel a bit on that; your
+> suggestion seems like it would be a better fit.
 
-You know, I think this might be the same as thex  case below where
-a bogus AGF field is getting past the verifiers in recovery...
-
-> 
-> > > 5       Yes   KASAN: use-after-free Read in xfs_btree_lookup_get_block
-> > >               https://syzkaller.appspot.com/bug?extid=7e9494b8b399902e994e
-> > 
-> > Recovery of reflink COW extents, we have a corrupted journal
-> > 
-> >    [   52.495566][ T5067] XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
-> >    [   52.599681][ T5067] XFS (loop0): Torn write (CRC failure) detected at log block 0x180. Truncating head block from 0x200.
-> >    [   52.636680][ T5067] XFS (loop0): Starting recovery (logdev: internal)
-> > 
-> > And then it looks to have a UAF on the refcountbt cursor that is
-> > first initialised in xfs_refcount_recover_cow_leftovers(). Likely
-> > tripping over a corrupted refcount btree of some kind. Probably one
-> > for Darrick to look into.
-> 
-> Somehow the bogus refcount level field in the AGF is getting past the
-> verifiers.  I'll look into this later.
-
-... because like this one, it seems to require corruption getting
-deep into the modification operation without being detected.
-
-As for shutdown when a perag cannot be obtained by defer items, I'm
-hoping that the perag get operations slowly disappear from those as
-we slowly move the perag references higher up the heirarchy. The
-perag should not go away in the middle of a defer chain, so I don't
-think we should ever get a NULL from a lookup except in the case of
-buggy code....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Comically belated +1, XArray is the odd one here.
