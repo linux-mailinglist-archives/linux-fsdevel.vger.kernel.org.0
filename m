@@ -2,80 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B0AC16E008B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 23:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE7CF6E0122
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 23:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230011AbjDLVMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Apr 2023 17:12:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43980 "EHLO
+        id S229775AbjDLVqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Apr 2023 17:46:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229728AbjDLVMT (ORCPT
+        with ESMTP id S229628AbjDLVqd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Apr 2023 17:12:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C146A7F;
-        Wed, 12 Apr 2023 14:12:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 12 Apr 2023 17:46:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA4C85241
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 14:45:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681335946;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2ilGBHufiMuaxBpgsvUmfNQz6PArJGM0NKDutiuuFlQ=;
+        b=VjerENfEFFyhNv6Rs8FB2fhZlfFriasdxfy5tkmDSZjLYlDUe6idhedAPyB5zf/NigtUdw
+        ST6kLG/JXcv+RmTA9p0zRExgmUFDPMCAyK5lKj3a+Apfxy2/oR7SkwG9YX8amkcpGRnnV+
+        jRY618CZCoTgTw2SSHABvu17TSAa8dU=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-312-Xgs_wkh3NcKNsJv-O4nu6Q-1; Wed, 12 Apr 2023 17:45:44 -0400
+X-MC-Unique: Xgs_wkh3NcKNsJv-O4nu6Q-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F3DFD632B0;
-        Wed, 12 Apr 2023 21:12:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39BE7C433D2;
-        Wed, 12 Apr 2023 21:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1681333937;
-        bh=9gB2mGFB6sk7lKqjsy7MbN72ZEJ0ICs26aBiPeN3y+Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=rjkrSfP2YwvvRScBvxWN9x84liozbr35remjUYkZHRlO/Cswc2psrGCU0AdeqpNjf
-         hOz2ECYBBlmIf7gRobYBN7hw44whuZGlFeHWZIQwkZlNGnCYf8TOSySYm8PrVoDKij
-         6UfVjVrA3O7JqxPGsGDWuMBtgewVER+Cn6EyBTQw=
-Date:   Wed, 12 Apr 2023 14:12:16 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Chunguang Wu <aman2008@qq.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: [PATCH] fs/proc: add Kthread flag to /proc/$pid/status
-Message-Id: <20230412141216.c8f2c1313f34ee0100ac9ae4@linux-foundation.org>
-In-Reply-To: <tencent_3E1CBD85D91AD4CDDCB5F429A3948EB94306@qq.com>
-References: <tencent_3E1CBD85D91AD4CDDCB5F429A3948EB94306@qq.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 784D43C10EC1;
+        Wed, 12 Apr 2023 21:45:44 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.177])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D6BC61121320;
+        Wed, 12 Apr 2023 21:45:43 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20230403142543.1913749-3-hch@lst.de>
+References: <20230403142543.1913749-3-hch@lst.de> <20230403142543.1913749-1-hch@lst.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dhowells@redhat.com, axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] iov_iter: remove iov_iter_get_pages_alloc
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <394965.1681335943.1@warthog.procyon.org.uk>
+Date:   Wed, 12 Apr 2023 22:45:43 +0100
+Message-ID: <394966.1681335943@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 12 Apr 2023 22:34:02 +0800 Chunguang Wu <aman2008@qq.com> wrote:
+Christoph Hellwig <hch@lst.de> wrote:
 
-> user can know that a process is kernel thread or not.
-> 
-> ...
->
-> --- a/fs/proc/array.c
-> +++ b/fs/proc/array.c
-> @@ -434,6 +434,12 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
->  
->  	task_state(m, ns, pid, task);
->  
-> +	if ((mm == NULL) || (task->flags & PF_KTHREAD)) {
-> +		seq_puts(m, "Kthread:\tYes\n");
-> +	} else {
-> +		seq_puts(m, "Kthread:\tNo\n");
-> +	}
-> +
->  	if (mm) {
->  		task_mem(m, mm);
->  		task_core_dumping(m, task);
+> -EXPORT_SYMBOL(iov_iter_get_pages_alloc2);
+> +EXPORT_SYMBOL_GPL(iov_iter_get_pages_alloc2);
 
-Well..   Why is this information useful?  What is the use case?
+This is not within the description of the patch and should probably be a
+separate patch.
 
-There are many ways of working this out from the existing output - why
-is this change required?
+David
 
