@@ -2,71 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D57966DEA56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 06:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB5B46DECA0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 09:36:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229652AbjDLEUj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Apr 2023 00:20:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49522 "EHLO
+        id S229578AbjDLHgU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Apr 2023 03:36:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbjDLEUf (ORCPT
+        with ESMTP id S229450AbjDLHgS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Apr 2023 00:20:35 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FED6468D;
-        Tue, 11 Apr 2023 21:20:33 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id w11so10116534plp.13;
-        Tue, 11 Apr 2023 21:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681273233; x=1683865233;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fj4539GRLzHrVjHF0YP2KCnSKVF667Aka0F9BXIi3mU=;
-        b=L9bn1Uy9ZXyU4c2skop7NnOpJ783KAWnLv+DSKPy+O9P73HjGoQhpPvx21a8nwFD+w
-         szf6+k4wRFaNokO5DN5vrW6T0QTDG+8owlauiKfUbD8WGxlyClz95UNp4C1AKMkuQfXV
-         4ptnwpWjQgQJHqydTqfu6M0FDoPrH0cMzh7SFFmvT3JwijVVofm0yZ5jsOuuYImRwzYJ
-         ddtZPbEqdsMmC7LGdAFybURgN8aUY3V9zR8NvqX/nacHyW5cErL2SL6MpY/56zLWAE56
-         VdTPSkBzRW8EQ446uoe98hu50hRmqst3TjP5lUgtjOX6SDbtql9vlkIV5RSnK7QEeXYD
-         HlPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681273233; x=1683865233;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fj4539GRLzHrVjHF0YP2KCnSKVF667Aka0F9BXIi3mU=;
-        b=tLHKcU90Gz5FGjchDi0lNu4L+0G2Us6yaoDFpLMvAjRFRPrsWWL55FChPVnu6RU5t/
-         8vMvy/+gqVyPHcA0a28rIW12hWgf17x7GDSm85+DX6a38rTeeNq6LI7gOyvyD5bts4oO
-         BeImACFs2tGdNdmIv64AQCZEOiswcBqt//iZf6O5PkC13RZsqYKVsqkoGFsDtZdi66KE
-         UXmGHMDYmQxZ8qU5IQo7jkUWevxW5uuHwHnC6TZfMxrHQ9mKjv3v9ux0IkYv5KLLxb9L
-         MAuHl5yusyfkyufNTU7899IBCTvqnUaNyXx/1BhbpCJYi0Qbt6KKWiYW7g3JpCSCuR2I
-         KaAQ==
-X-Gm-Message-State: AAQBX9fUGvk02TlDVkDiikVIQ/HEvyHFqrUECeGElXOVGVO8aOvSVGsf
-        WZ1BiQK4SUJYfw/eVSgPTx8nKNP115gQMA==
-X-Google-Smtp-Source: AKy350ZCblxshNg2TUjU+Q2T9I52ivh7UQcGFvEW1+kLUl5HMRubiptxO9qqwmpPqG5LiEXf1HRCUQ==
-X-Received: by 2002:a17:903:41c5:b0:19c:b7da:fbdf with SMTP id u5-20020a17090341c500b0019cb7dafbdfmr1209855ple.26.1681273233120;
-        Tue, 11 Apr 2023 21:20:33 -0700 (PDT)
-Received: from virtualbox.www.tendawifi.com ([47.96.236.37])
-        by smtp.gmail.com with ESMTPSA id t13-20020a1709028c8d00b001a19196af48sm10412381plo.64.2023.04.11.21.20.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Apr 2023 21:20:32 -0700 (PDT)
-From:   Yang Bo <yyyeer.bo@gmail.com>
-X-Google-Original-From: Yang Bo <yb203166@antfin.com>
-To:     stable@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, mszeredi@redhat.com,
-        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
-        Yang Bo <yb203166@antfin.com>
-Subject: [PATCH 6/6] fuse: fix deadlock between atomic O_TRUNC and page invalidation
-Date:   Wed, 12 Apr 2023 12:19:35 +0800
-Message-Id: <20230412041935.1556-7-yb203166@antfin.com>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230412041935.1556-1-yb203166@antfin.com>
-References: <20230412041935.1556-1-yb203166@antfin.com>
-MIME-Version: 1.0
+        Wed, 12 Apr 2023 03:36:18 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 702AB19AB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 00:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681284977; x=1712820977;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=IT3iBaqUQpw5hFdP6LVxiSGgkecNGcDpat/1de0MDbs=;
+  b=iKS+3qZ26jKsBrRAPrzjgXxpU1SAQktvlcBLZRZJGGrgL39sUIhgZKS/
+   wQIyhCMU3EFdTGKTkR68uuQuDcQkC7zHqEHomxWt1L17lseTPN+4tJOt+
+   NGPxEoG8Hs1ydsQWWAykHIk2BRZZwIjZGTIMpBx0vtFTRyXo0nHQNJr2M
+   y8gtpyezvAztNU2sUgI/7GApp0qcecMVAPJEEDEyn0R/4pfMlAxFe4e9N
+   XBfTf0NWWRsxtIuu5socMOU+yR67bqV0C19T2MTLeN75Gc1xpxEsOJ5Nr
+   Ge4auEq/1UfTnaAeUF+b2glhc3/p8vARggynxj6mR9zTVl7UpMWWrvS0n
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10677"; a="430113202"
+X-IronPort-AV: E=Sophos;i="5.98,338,1673942400"; 
+   d="scan'208";a="430113202"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2023 00:36:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10677"; a="778213268"
+X-IronPort-AV: E=Sophos;i="5.98,338,1673942400"; 
+   d="scan'208";a="778213268"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by FMSMGA003.fm.intel.com with ESMTP; 12 Apr 2023 00:36:05 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Wed, 12 Apr 2023 00:36:05 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23 via Frontend Transport; Wed, 12 Apr 2023 00:36:05 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.170)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.23; Wed, 12 Apr 2023 00:36:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LtxX6IqGzYy17Tv//kRaikAntN1k95HqI5DemTCViaiIv6f+dlC2DODSqr/CU9emN2Ue/vDTQ3+j1LVqhscVHPDzdkjEtHAomThZEOYk53RO1K7Gkhz+KS5S1f6CF90tQsSqUNZ4vl5YljHn1RxSb/JD7M5JT0zxuc7AEzQc3eozAOmQtBJFJTZbRM59DrX9zQNHi74++s4EB4pGhik1XnXgtpV/p/3LgLrUlkoNlkeBMrI+nOLKKKcPILkXatoPyc7aIxjNPG9nW6fOuyNj0i+YsWBe3QfvoYs9fzyJgSKSn0/zjGXubpd68i7HyW+Fsg32PU4EMPr04DjagK6vZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+GEbOORqZLYrChPUmgcha8UwMfxV2a+9d1m2/0wIGXQ=;
+ b=awgslHoiYsGS2rFuGvttrwFFeoKhGVsGS7IZyotQcwOh1uoHGgVDdhg9GYiS1FyUB8MA4ehBRWtLQLDdAJGZplM3zrE9qvDNUlb499b2w40u3M5TejxQh1YK5U4hzBcsdTp31rVqAR1696PeCWpstq52l7CPgTPpOlcdMHh5ID79Oh8bPuQOpJd8oWbDtYuiCD1GryWTOCsf36+Mbdl0q1c4SFmwjzoeju/nt1nnu/VRcAu0eJIHnSgdvcoc0/jvXxjJunErUqs5nGt1/e3miJw67sP0/0lZ6wL5pimg0ULu3duKwYteG9yflaYjv4hzEoH+q96LPX3RA3JV0cavcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB4820.namprd11.prod.outlook.com (2603:10b6:303:6f::8)
+ by DS0PR11MB7786.namprd11.prod.outlook.com (2603:10b6:8:f2::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6277.35; Wed, 12 Apr 2023 07:35:57 +0000
+Received: from CO1PR11MB4820.namprd11.prod.outlook.com
+ ([fe80::f670:cacc:d75f:fcc4]) by CO1PR11MB4820.namprd11.prod.outlook.com
+ ([fe80::f670:cacc:d75f:fcc4%6]) with mapi id 15.20.6277.038; Wed, 12 Apr 2023
+ 07:35:56 +0000
+Message-ID: <4e8b083c-cdb4-a5e3-abb5-2aae259bd2d7@intel.com>
+Date:   Wed, 12 Apr 2023 15:35:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.9.1
+Subject: Re: [PATCH 6/6] mm: Run the fault-around code under the VMA lock
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     "surenb@google.com" <surenb@google.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Agrawal, Punit" <punit.agrawal@bytedance.com>
+References: <20230404135850.3673404-1-willy@infradead.org>
+ <20230404135850.3673404-7-willy@infradead.org>
+ <ZCxA+DYkzVWbLAod@casper.infradead.org>
+ <1c700db59114617ca0a7b6e40754a6ea0dbb86e0.camel@intel.com>
+ <ZDQZBdJNiG0lIw2v@casper.infradead.org>
+Content-Language: en-US
+From:   "Yin, Fengwei" <fengwei.yin@intel.com>
+In-Reply-To: <ZDQZBdJNiG0lIw2v@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
-        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-ClientProxiedBy: SG2PR04CA0188.apcprd04.prod.outlook.com
+ (2603:1096:4:14::26) To CO1PR11MB4820.namprd11.prod.outlook.com
+ (2603:10b6:303:6f::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB4820:EE_|DS0PR11MB7786:EE_
+X-MS-Office365-Filtering-Correlation-Id: 27d023ec-876e-413f-7781-08db3b288db3
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: eG28absmxGSla/+xfCFJIV5gtQTzD0P8z0DO8Lci9W6I3xPYQZPwO1GUwkPk82NnpwAwLV/g63LSkyDExN7WHVg56z7TA3PU3AbalWhpJZiWNaaFsLqieG6ATGjdCzYRMjma6H4ttKlz03RNG+pYRzO9QdvXcfLFOzh5DwoBNAGqzJAnXp5W4bBaVK6Hzcqy/tBKrKT8pkvHmcA8BQ5vBiCAQb/jwxvHixxpPpQ9j7Wd94/gw8Cf9bMXau+LTL2+okbKwbnq3H2Dcx96b4ZYP5Rw4Qe7GpiBlTb3QVfz7pjlj9N0kfsqMtZEvts4akhgdzxHv1kBOBmqUOVA27HdqnaL6hKz7xogdBTOcEa/AU+NB6JeS8RIbFMkaDOqk0igqyOQnLJmK2UVihHHUj++x9bfv+fHut2Hbg/rIy8pwIf34kI9qwwotjPjT9S2yVVo1CCtsEU7bbQO/q0DhO4gcAZZDXXqyYLW3MNjm98zdxxdqNob+LJphhO31VKBEmnptLbbehOma4NwR5xtkjJgkc9pGkleMovm64W0FHM9vUYTsQrbqxipldDMyx8ZvSmZSmJJZuGxggO63wCELmCd7gOimi1RjKDOp/3ZgbobtWU3PNmQ2CS3wmBPE+e1bMNHylF5JUgzznLi4+ilTXzRWg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB4820.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(136003)(376002)(396003)(366004)(346002)(39860400002)(451199021)(6666004)(8936002)(6486002)(966005)(5660300002)(86362001)(31696002)(4326008)(66946007)(2906002)(66556008)(66476007)(8676002)(478600001)(6916009)(38100700002)(316002)(31686004)(82960400001)(54906003)(53546011)(6512007)(6506007)(26005)(2616005)(83380400001)(41300700001)(36756003)(186003)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cU4yakpVZzRpeThxd1p0QkN3ZGVtV1hKQm9qZkZVRkZVZFB0MGIzWE8wMTVS?=
+ =?utf-8?B?SXRQZUFGeUYwMFUzMGNoL2JZNlQrQmFxdHVKT2xpNTcvRTBha1lZN3M5VGU2?=
+ =?utf-8?B?S3QzVS8zSUpqaHlSSUJ1TDhoazB5SnF6aU9PS09KdytpT0V4OTlNZlBJUTVh?=
+ =?utf-8?B?a2lRN2NqdUdtTmtpdVI4NHBxRzljSkorTDhqWjJYRnhzM3YyQnVpQVcyZDdB?=
+ =?utf-8?B?MFRqOFlxb3U2MHROblNOdytpSVcvbFpYc2doWkl4V29KcTRHOU1aTjhTZ0VZ?=
+ =?utf-8?B?OFZlcFhja0F3T0dZUjdxQkpVNXVFY2Y2RkU3YjQzNnprTlIzakNmaTRvbWh0?=
+ =?utf-8?B?bXBaSTUrN0tqVDg0UUNnSTVtZXlUdXYvWmZEU1htWW8vaU42YjkvRUpkV2xa?=
+ =?utf-8?B?L2JWckVZYkg0T2R6MGVOaUxJME4xbUtSMVJuUGlmOXdLU2kvdklTdWQya2ZO?=
+ =?utf-8?B?TUlpcTNKWGJ0VVlEU0x6a0w1bGFFNGpoWlE0Rmp3VXp5aHVJTUZYSUNrUFdh?=
+ =?utf-8?B?dG1jL3EvZ2xOaGlvaXJ4VlpTd0FqalErNnBiZ0g0YnlQTFhpK1F5bEwyMGMy?=
+ =?utf-8?B?aGZSUk9heWVocXBOSVo2bWEwQzZIS0JheUQ1dGNaZUFXR0EyM0hFZVVJR1pm?=
+ =?utf-8?B?aER0ajFUMzlDUlk5cEx1dS9mdVVMNTFJem1aNUVnRyt2VVRqTEFZOG1XWEFB?=
+ =?utf-8?B?alN5KzdxQ1ZJeVgwd0t6dFN4U1FvVGxkTlR3NzBNZzZVSU45bW9CR1JQcFhu?=
+ =?utf-8?B?RFZSait0VXVrMlVZYnhGMEFGVUpkRVB2TzFPbUZ3V3VuVUluUlJCOVNFVWZo?=
+ =?utf-8?B?OTF6bkFkRXJHU3REaVJyWG5WSTlUQnRaaVhhNStuTkQvdG5wUkMwa0g4Znpa?=
+ =?utf-8?B?clBDYllaaXJFNW9xVDdTSlBiaG9BeFhjRVcxeVJKL0lkM0hsdGVTa0Y0Z0Ft?=
+ =?utf-8?B?N1BNcWcxSGZhaGFScysvc0k2QUlvUDVuMFpjNzJpa3ZkbWl6cVQxVWV2WG9a?=
+ =?utf-8?B?bFZDYTk5b0E3MU9RVkpqNmNocTZlQkVmakgvNytydWhWOUN2a3BMRnd1ZkFT?=
+ =?utf-8?B?Mkx3VllRTk9BRHpRYnhBNm9VRElhNWsySURNOGs5ZjhTeWQ1ZXVreEVkcmp3?=
+ =?utf-8?B?U3FXWmVNc05TRS9IZzg4c0xDV29RWVpkT2l3MlFwU2FsTE11YnJjYzJ1b2pM?=
+ =?utf-8?B?cm1IT3U5b0NEQ0IwaW1LeCtlK1ROMGFyenRCY0h6NDhxL1E1dFg1Mi96Vlp6?=
+ =?utf-8?B?aHJqMHlOVlNuc2lIUFA2MktHa0xPcTdwZzFMM2ZEUXRSUlNSZ1ZMcVdZQVFl?=
+ =?utf-8?B?a0xjK3NKUUFCMStqSE5zTjZmZHJoVElkV0gybVBFUGphTk1GWlJxcXF1Q2RK?=
+ =?utf-8?B?L085UWxGVDRYSlhBWDZ3ZkhZNGM0ZU5hTTdyeGpmc1pLWGxTRW5KSFF6ck91?=
+ =?utf-8?B?L00vYS9iQnRvbUxaV2tkMkJ6WnVRVG9NcUxiSVU0NFFkSkxBWEZXYU8yRWRT?=
+ =?utf-8?B?dWFOb2xKVjdWVWdTMi9jNHVDTUxra3V5ZXoxRXdyRndPS2llM1FqVk5NM29N?=
+ =?utf-8?B?MXoxaEhzMk9ZSWc4cEhEQzJqN2dMU1pOWkpnRjdPUGZrQ2tXNmVEU2J6M3h6?=
+ =?utf-8?B?ZkRWbER4OEhndXVtbmJ3M2ZVRzQ5RnVjdHV5ZG5mMEV1WjN4RFMyZDQwWkhr?=
+ =?utf-8?B?UGJzS0RETUNaVUk3TFM2dGdwd3BWRWdzb1RvakZ2UGRycTlGdDRIWGhwNTZ6?=
+ =?utf-8?B?bFFlNURDM3g2Wld5bTRKMzBNNjIzV3pGbmdmVExUM0FWbVkydzBKSkVjcDhu?=
+ =?utf-8?B?SlVBSVZqVjdYWnl3cStpbjBKOHJmYnE0RGZ4TzE1RW1HS3Q2U3BSNmpHcnhv?=
+ =?utf-8?B?eEJwaitzVUJ3L2YzeUk2NzM3OFFqeERpUitYNkxGSmMyWVU3cTlBeDFNeHVv?=
+ =?utf-8?B?RGEzcE9JQ0REYnp3OUYyK2oyTjNtSDJZN1hvOWUzYWFwTFBKVU4wUzJnRWZw?=
+ =?utf-8?B?TjVZODIvTWQxWlgxdmloRFhJOTErSzFJek1zdzFFcUlhTW5nUGMraTZvQ01t?=
+ =?utf-8?B?dWJRQmU0NUNOSFd1OVpLQmtuZ2Z5Mm1sQXZDSXpBS1Vua0VxL0NaY3UyQmtQ?=
+ =?utf-8?Q?+4LO3I2M36GlapeROLfGz6Dai?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27d023ec-876e-413f-7781-08db3b288db3
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB4820.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2023 07:35:56.8789
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jk4cvHOUmxgvX11UliDiMMxXCrG7hehx3pB9d+zZyUZ5zyNwTE44nYJcyL1g4jmTeBHfDQNAbYNiNnDKZH0OBQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7786
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,168 +162,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 2fdbb8dd01556e1501132b5ad3826e8f71e24a8b upstream.
 
-[backport for 5.10.y]
+On 4/10/2023 10:11 PM, Matthew Wilcox wrote:
+> On Mon, Apr 10, 2023 at 04:53:19AM +0000, Yin, Fengwei wrote:
+>> On Tue, 2023-04-04 at 16:23 +0100, Matthew Wilcox wrote:
+>>> On Tue, Apr 04, 2023 at 02:58:50PM +0100, Matthew Wilcox (Oracle)
+>>> wrote:
+>>>> The map_pages fs method should be safe to run under the VMA lock
+>>>> instead
+>>>> of the mmap lock.  This should have a measurable reduction in
+>>>> contention
+>>>> on the mmap lock.
+>>>
+>>> https://github.com/antonblanchard/will-it-scale/pull/37/files should
+>>> be a good microbenchmark to report numbers from.  Obviously real-
+>>> world
+>>> benchmarks will be more compelling.
+>>>
+>>
+>> Test result in my side with page_fault4 of will-it-scale in thread 
+>> mode is:
+>>   15274196 (without the patch) -> 17291444 (with the patch)
+>>
+>> 13.2% improvement on a Ice Lake with 48C/96T + 192G RAM + ext4 
+>> filesystem.
+> 
+> Thanks!  That is really good news.
+> 
+>> The perf showed the mmap_lock contention reduced a lot:
+>> (Removed the grandson functions of do_user_addr_fault()) 
+>>
+>> latest linux-next with the patch:
+>>     51.78%--do_user_addr_fault
+>>             |          
+>>             |--49.09%--handle_mm_fault
+>>             |--1.19%--lock_vma_under_rcu
+>>             --1.09%--down_read
+>>
+>> latest linux-next without the patch:
+>>     73.65%--do_user_addr_fault
+>>             |          
+>>             |--28.65%--handle_mm_fault
+>>             |--17.22%--down_read_trylock
+>>             |--10.92%--down_read
+>>             |--9.20%--up_read
+>>             --7.30%--find_vma
+>>
+>> My understanding is down_read_trylock, down_read and up_read all are
+>> related with mmap_lock. So the mmap_lock contention reduction is quite
+>> obvious.
+> 
+> Absolutely.  I'm a little surprised that find_vma() basically disappeared
+> from the perf results.  I guess that it was cache cold after contending
+> on the mmap_lock rwsem.  But this is a very encouraging result.
 
-fuse_finish_open() will be called with FUSE_NOWRITE set in case of atomic
-O_TRUNC open(), so commit 76224355db75 ("fuse: truncate pagecache on
-atomic_o_trunc") replaced invalidate_inode_pages2() by truncate_pagecache()
-in such a case to avoid the A-A deadlock. However, we found another A-B-B-A
-deadlock related to the case above, which will cause the xfstests
-generic/464 testcase hung in our virtio-fs test environment.
+Yes. find_vma() was surprise. So I did more check about it.
+1. re-run the testing for more 3 times in case I made stupid mistake.
+   All testing show same behavior for find_vma().
 
-For example, consider two processes concurrently open one same file, one
-with O_TRUNC and another without O_TRUNC. The deadlock case is described
-below, if open(O_TRUNC) is already set_nowrite(acquired A), and is trying
-to lock a page (acquiring B), open() could have held the page lock
-(acquired B), and waiting on the page writeback (acquiring A). This would
-lead to deadlocks.
+2. perf report for find_vma() shows:
+	6.26%--find_vma                                       
+		|                                             
+		--0.66%--mt_find                             
+			|                                  
+			--0.60%--mtree_range_walk
 
-open(O_TRUNC)
-----------------------------------------------------------------
-fuse_open_common
-  inode_lock            [C acquire]
-  fuse_set_nowrite      [A acquire]
+   The most time used in find_vma() is not mt_find. It's mmap_assert_locked(mm).
 
-  fuse_finish_open
-    truncate_pagecache
-      lock_page         [B acquire]
-      truncate_inode_page
-      unlock_page       [B release]
+3. perf annotate of find_vma shows:
+          │    ffffffffa91e9f20 <load0>:                                                                                                                         
+     0.07 │      nop                                                                                                                                             
+     0.07 │      sub  $0x10,%rsp                                                                                                                                 
+     0.01 │      mov  %gs:0x28,%rax                                                                                                                              
+     0.05 │      mov  %rax,0x8(%rsp)                                                                                                                             
+     0.02 │      xor  %eax,%eax                                                                                                                                  
+          │      mov  %rsi,(%rsp)                                                                                                                                
+     0.00 │      mov  0x70(%rdi),%rax     --> This is rwsem_is_locked(&mm->mmap_lock)                                                                                                                      
+    99.60 │      test %rax,%rax                                                                                                                                  
+          │    ↓ je   4e                                                                                                                                         
+     0.09 │      mov  $0xffffffffffffffff,%rdx                                                                                                                   
+          │      mov  %rsp,%rsi
 
-  fuse_release_nowrite  [A release]
-  inode_unlock          [C release]
-----------------------------------------------------------------
+   I believe the line "mov  0x70(%rdi),%rax" should occupy 99.60% runtime of find_vma()
+   instead of line "test %rax,%rax". And it's accessing the mmap_lock. With this series,
+   the mmap_lock contention is reduced a lot with page_fault4 of will-it-scale. It
+   makes mmap_lock access fast also.
 
-open()
-----------------------------------------------------------------
-fuse_open_common
-  fuse_finish_open
-    invalidate_inode_pages2
-      lock_page         [B acquire]
-        fuse_launder_page
-          fuse_wait_on_page_writeback [A acquire & release]
-      unlock_page       [B release]
-----------------------------------------------------------------
 
-Besides this case, all calls of invalidate_inode_pages2() and
-invalidate_inode_pages2_range() in fuse code also can deadlock with
-open(O_TRUNC).
-
-Fix by moving the truncate_pagecache() call outside the nowrite protected
-region.  The nowrite protection is only for delayed writeback
-(writeback_cache) case, where inode lock does not protect against
-truncation racing with writes on the server.  Write syscalls racing with
-page cache truncation still get the inode lock protection.
-
-This patch also changes the order of filemap_invalidate_lock()
-vs. fuse_set_nowrite() in fuse_open_common().  This new order matches the
-order found in fuse_file_fallocate() and fuse_do_setattr().
-
-Reported-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Fixes: e4648309b85a ("fuse: truncate pending writes on O_TRUNC")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Yang Bo <yb203166@antfin.com>
----
- fs/fuse/dir.c  |  5 +++++
- fs/fuse/file.c | 29 +++++++++++++++++------------
- 2 files changed, 22 insertions(+), 12 deletions(-)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index bdb04bea0da9..e3b9b7d188e6 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -537,6 +537,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	struct fuse_entry_out outentry;
- 	struct fuse_inode *fi;
- 	struct fuse_file *ff;
-+	bool trunc = flags & O_TRUNC;
- 
- 	/* Userspace expects S_IFREG in create mode */
- 	BUG_ON((mode & S_IFMT) != S_IFREG);
-@@ -604,6 +605,10 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	} else {
- 		file->private_data = ff;
- 		fuse_finish_open(inode, file);
-+		if (fm->fc->atomic_o_trunc && trunc)
-+			truncate_pagecache(inode, 0);
-+		else if (!(ff->open_flags & FOPEN_KEEP_CACHE))
-+			invalidate_inode_pages2(inode->i_mapping);
- 	}
- 	return err;
- 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 94fe2c690676..13d97547eaf6 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -206,14 +206,10 @@ void fuse_finish_open(struct inode *inode, struct file *file)
- 		fi->attr_version = atomic64_inc_return(&fc->attr_version);
- 		i_size_write(inode, 0);
- 		spin_unlock(&fi->lock);
--		truncate_pagecache(inode, 0);
- 		fuse_invalidate_attr(inode);
- 		if (fc->writeback_cache)
- 			file_update_time(file);
--	} else if (!(ff->open_flags & FOPEN_KEEP_CACHE)) {
--		invalidate_inode_pages2(inode->i_mapping);
- 	}
--
- 	if ((file->f_mode & FMODE_WRITE) && fc->writeback_cache)
- 		fuse_link_write_file(file);
- }
-@@ -236,30 +232,39 @@ int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
- 	if (err)
- 		return err;
- 
--	if (is_wb_truncate || dax_truncate) {
-+	if (is_wb_truncate || dax_truncate)
- 		inode_lock(inode);
--		fuse_set_nowrite(inode);
--	}
- 
- 	if (dax_truncate) {
- 		down_write(&get_fuse_inode(inode)->i_mmap_sem);
- 		err = fuse_dax_break_layouts(inode, 0, 0);
- 		if (err)
--			goto out;
-+			goto out_inode_unlock;
- 	}
- 
-+	if (is_wb_truncate || dax_truncate)
-+		fuse_set_nowrite(inode);
-+
- 	err = fuse_do_open(fm, get_node_id(inode), file, isdir);
- 	if (!err)
- 		fuse_finish_open(inode, file);
- 
--out:
-+	if (is_wb_truncate || dax_truncate)
-+		fuse_release_nowrite(inode);
-+	if (!err) {
-+		struct fuse_file *ff = file->private_data;
-+
-+		if (fc->atomic_o_trunc && (file->f_flags & O_TRUNC))
-+			truncate_pagecache(inode, 0);
-+		else if (!(ff->open_flags & FOPEN_KEEP_CACHE))
-+			invalidate_inode_pages2(inode->i_mapping);
-+	}
- 	if (dax_truncate)
- 		up_write(&get_fuse_inode(inode)->i_mmap_sem);
- 
--	if (is_wb_truncate | dax_truncate) {
--		fuse_release_nowrite(inode);
-+out_inode_unlock:
-+	if (is_wb_truncate || dax_truncate)
- 		inode_unlock(inode);
--	}
- 
- 	return err;
- }
--- 
-2.40.0
-
+Regards
+Yin, Fengwei
