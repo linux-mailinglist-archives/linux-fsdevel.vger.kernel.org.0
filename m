@@ -2,55 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA2836DEFF4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 10:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF14E6DF026
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 11:20:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbjDLI7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Apr 2023 04:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51320 "EHLO
+        id S229671AbjDLJUE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Apr 2023 05:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229720AbjDLI67 (ORCPT
+        with ESMTP id S229477AbjDLJUD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Apr 2023 04:58:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6189883DE;
-        Wed, 12 Apr 2023 01:58:41 -0700 (PDT)
+        Wed, 12 Apr 2023 05:20:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBC046EAE;
+        Wed, 12 Apr 2023 02:20:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DF5CE631EE;
-        Wed, 12 Apr 2023 08:58:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B61BC433EF;
-        Wed, 12 Apr 2023 08:58:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8F09F63145;
+        Wed, 12 Apr 2023 09:20:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 617D1C433D2;
+        Wed, 12 Apr 2023 09:19:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681289917;
-        bh=gPq043utUs6vGpTj521da5rkcFzomQPjKBNSTssrroo=;
+        s=k20201202; t=1681291201;
+        bh=Wl8EToeONddCkJlYNi+bIXDPpeyQMnzc28iy+VsV/6s=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Lxf5Toj26s7hLfVEqbE7Q5jleBdWRUze8l7oi7slbCFsOIEEApZdF5lkE2/WKbJg3
-         Ua1p/X8m5G4dWmt4B76B2nDBNycrfzMVb8v3Ri+Lgj+Egz25t3MBB6vdW9GnOnjeqb
-         U4ajd8zGiFM9a9+UADrZIvGXorAtjF5PatItkUEqKcOCGtWri0Q2pZgKxPInC/IGKo
-         59TzAkh7vWjY30FdYiGacw8moJVeIfpBrnck5pCRQN6+QQqMwPX4Eaw/7Qmth+tyY8
-         dO/xqqxC8V7f3J8G1M+h0w9DfGPbZ+Ktj06eYqL6/MDqTiD8wW84lGWIcXwovtf+C2
-         q+RikUpKBBgrA==
-Date:   Wed, 12 Apr 2023 10:58:31 +0200
+        b=mO4PQ0c/BBOsynBdBXBT0cu/swFC10YtWAEYX2TK36LSSJDp0Idi+uN7ok7phCoUX
+         1N80H9Wlh/G+Gdyb9FEJJoOvK6UCELVs6BalUK65gvoBjiu3Wz2u531oRRrortaueP
+         FL00QFvdnSC6Z4TF9IuuepdxfBdhSMRfMKr4AVsxWsXjAdJLdLqbmle9NAl+rZ6+hZ
+         xw9CvqK8Z4XlWhYMyXunhEIIo6q+Z7aLOogOP3KCk0XeU8RKEpaYxhCu0uCTcBITmh
+         YLdHMOssh+sUwWYoMTvsPV7Zu7d+PGj7QL9dFwfm2xpS61GghvbCXD0rDBEub3z4aR
+         55OxI9LH+8g1g==
+Date:   Wed, 12 Apr 2023 11:19:56 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Anna Schumaker <anna@kernel.org>
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2] nfs: use vfs setgid helper
-Message-ID: <20230412-parodie-leitung-9da1a5dbf9ef@brauner>
-References: <20230313-fs-nfs-setgid-v2-1-9a59f436cfc0@kernel.org>
- <CAFX2JfkZr4qC9dgxsUxUqsLVKhosmn59BoKig4o5oPT_jBUodg@mail.gmail.com>
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: fix sysctls.c built
+Message-ID: <20230412-sympathie-haltbar-da2d2183067b@brauner>
+References: <20230331084502.155284-1-wangkefeng.wang@huawei.com>
+ <66c0e8b6-64d1-5be6-cd4d-9700d84e1b84@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFX2JfkZr4qC9dgxsUxUqsLVKhosmn59BoKig4o5oPT_jBUodg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+In-Reply-To: <66c0e8b6-64d1-5be6-cd4d-9700d84e1b84@huawei.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,81 +57,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 12:54:25PM -0400, Anna Schumaker wrote:
-> Hi Christian,
+On Tue, Apr 11, 2023 at 12:14:44PM +0800, Kefeng Wang wrote:
+> /proc/sys/fs/overflowuid and overflowgid  will be lost without
+> building this file, kindly ping, any comments, thanks.
 > 
-> On Tue, Mar 14, 2023 at 7:51 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > We've aligned setgid behavior over multiple kernel releases. The details
-> > can be found in the following two merge messages:
-> > cf619f891971 ("Merge tag 'fs.ovl.setgid.v6.2')
-> > 426b4ca2d6a5 ("Merge tag 'fs.setgid.v6.0')
-> > Consistent setgid stripping behavior is now encapsulated in the
-> > setattr_should_drop_sgid() helper which is used by all filesystems that
-> > strip setgid bits outside of vfs proper. Switch nfs to rely on this
-> > helper as well. Without this patch the setgid stripping tests in
-> > xfstests will fail.
-> >
-> > Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> 
+> On 2023/3/31 16:45, Kefeng Wang wrote:
+> > 'obj-$(CONFIG_SYSCTL) += sysctls.o' must be moved after "obj-y :=",
+> > or it won't be built as it is overwrited.
+> > 
+> > Fixes: ab171b952c6e ("fs: move namespace sysctls and declare fs base directory")
+> > Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 > > ---
-> > Changes in v2:
-> > - Christoph Hellwig <hch@lst.de>:
-> >   * Export setattr_should_sgid() so it actually can be used by filesystems
-> > - Link to v1: https://lore.kernel.org/r/20230313-fs-nfs-setgid-v1-1-5b1fa599f186@kernel.org
-> > ---
-> >  fs/attr.c          | 1 +
-> >  fs/internal.h      | 2 --
-> >  fs/nfs/inode.c     | 4 +---
-> >  include/linux/fs.h | 2 ++
-> >  4 files changed, 4 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/fs/attr.c b/fs/attr.c
-> > index aca9ff7aed33..d60dc1edb526 100644
-> > --- a/fs/attr.c
-> > +++ b/fs/attr.c
-> > @@ -47,6 +47,7 @@ int setattr_should_drop_sgid(struct mnt_idmap *idmap,
-> >                 return ATTR_KILL_SGID;
-> >         return 0;
-> >  }
-> > +EXPORT_SYMBOL(setattr_should_drop_sgid);
-> >
-> >  /**
-> >   * setattr_should_drop_suidgid - determine whether the set{g,u}id bit needs to
-> > diff --git a/fs/internal.h b/fs/internal.h
-> > index dc4eb91a577a..ab36ed8fa41c 100644
-> > --- a/fs/internal.h
-> > +++ b/fs/internal.h
-> > @@ -259,8 +259,6 @@ ssize_t __kernel_write_iter(struct file *file, struct iov_iter *from, loff_t *po
-> >  /*
-> >   * fs/attr.c
-> >   */
-> > -int setattr_should_drop_sgid(struct mnt_idmap *idmap,
-> > -                            const struct inode *inode);
-> >  struct mnt_idmap *alloc_mnt_idmap(struct user_namespace *mnt_userns);
-> >  struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
-> >  void mnt_idmap_put(struct mnt_idmap *idmap);
-> > diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-> > index 222a28320e1c..97a76706fd54 100644
-> > --- a/fs/nfs/inode.c
-> > +++ b/fs/nfs/inode.c
-> > @@ -717,9 +717,7 @@ void nfs_setattr_update_inode(struct inode *inode, struct iattr *attr,
-> >                 if ((attr->ia_valid & ATTR_KILL_SUID) != 0 &&
-> >                     inode->i_mode & S_ISUID)
-> >                         inode->i_mode &= ~S_ISUID;
-> > -               if ((attr->ia_valid & ATTR_KILL_SGID) != 0 &&
-> > -                   (inode->i_mode & (S_ISGID | S_IXGRP)) ==
-> > -                    (S_ISGID | S_IXGRP))
-> > +               if (setattr_should_drop_sgid(&nop_mnt_idmap, inode))
-> >                         inode->i_mode &= ~S_ISGID;
-> >                 if ((attr->ia_valid & ATTR_MODE) != 0) {
-> >                         int mode = attr->ia_mode & S_IALLUGO;
-> 
-> Will this be going through your tree (due to the VFS leve changes)?
-> If so, you can add:
-> 
-> Acked-by: Anna Schumaker <anna.schumaker@netapp.com>
+> >   fs/Makefile | 3 +--
+> >   1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/Makefile b/fs/Makefile
+> > index 05f89b5c962f..8d4736fcc766 100644
+> > --- a/fs/Makefile
+> > +++ b/fs/Makefile
+> > @@ -6,7 +6,6 @@
+> >   # Rewritten to use lists instead of if-statements.
+> >   #
+> > -obj-$(CONFIG_SYSCTL)		+= sysctls.o
+> >   obj-y :=	open.o read_write.o file_table.o super.o \
+> >   		char_dev.o stat.o exec.o pipe.o namei.o fcntl.o \
+> > @@ -50,7 +49,7 @@ obj-$(CONFIG_FS_MBCACHE)	+= mbcache.o
+> >   obj-$(CONFIG_FS_POSIX_ACL)	+= posix_acl.o
+> >   obj-$(CONFIG_NFS_COMMON)	+= nfs_common/
+> >   obj-$(CONFIG_COREDUMP)		+= coredump.o
+> > -obj-$(CONFIG_SYSCTL)		+= drop_caches.o
+> > +obj-$(CONFIG_SYSCTL)		+= drop_caches.o sysctls.o
+> >   obj-$(CONFIG_FHANDLE)		+= fhandle.o
+> >   obj-y				+= iomap/
 
-Yes, I have it applied to fs.misc. There should be a corresponding
-"applied message" I've sent last week. Thanks for taking a look!
+Given the description in
+ab171b952c6e ("fs: move namespace sysctls and declare fs base directory")
+you probably want to move this earlier.
 
-Christian
