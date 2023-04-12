@@ -2,78 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BBFC06DE7DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 01:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8416B6DE9DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 05:19:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbjDKXNw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Apr 2023 19:13:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56798 "EHLO
+        id S229692AbjDLDTX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Apr 2023 23:19:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjDKXNu (ORCPT
+        with ESMTP id S229452AbjDLDTW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Apr 2023 19:13:50 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55AE3171B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 16:13:49 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id c10-20020a17090abf0a00b0023d1bbd9f9eso12734747pjs.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Apr 2023 16:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112; t=1681254829;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cm7n7h0+YQqhaMN60giOfNLEV6DHkhKIhtK3vaJrO+s=;
-        b=UBHxzOgxwXGsNLNd5A9P7VT4b7Po+zYBdXSmczVUbcnEawjNUyc6Q0yDVbqcVgbHAg
-         QTmK+YIBP35K5pUYpip9sBXhtyUf3gX81/VeiKVT9jXLZfpHY4YVEyyU98F+6x0du6WZ
-         0zcsJKBeXD/aW3FwNY4xrZy9lJPBMYsetXsgXCawQz79UCg/xkbw2C6P4uSHEP5b0LeH
-         Yp4N8YFsCKela8bX7OHmf/BCOT0KrvQlxQBmDffLwLAoPcYTSBOAI1r/FXscGJF4uU+I
-         h84W2aDFzxwDHnMk2PUzMcRvbOJzzT7/wuUQYX4/fg8IeZhrkFXJLIAckBOjX9w41HXp
-         ooow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681254829;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cm7n7h0+YQqhaMN60giOfNLEV6DHkhKIhtK3vaJrO+s=;
-        b=4bElQLR36zgZo1KebryAgEoQZT2c8+ZvHU3Whkj54+uLOvaSQzowJR7EUmhM9WTRWC
-         U8gR4eIRvjBrclDAY+6xeC4fR74+mokiLDsqY3CAa6boupdp78BcwosIUFbHzO0G6L8Z
-         bLU/TT5BgZxwe421hcXeCGsKEF+PSqL4iRk7XRQRnm+gf08K4QrYYqqhlnYxczs5cmdn
-         DMZ2X3XHGijcA/7Kv/F5/vERE1MXGJIuumsUGNrIUoeN1JhrelMCOmfHROXavOPvfBNl
-         /tem6gtFahSKP9wVlDxVwDNwnUVX6UKgBcXZVk9fBTii4+9xMGLL90ZsjM4F+na3B2Cp
-         kSLQ==
-X-Gm-Message-State: AAQBX9cj+gMXYSvqkceI8ie5NFdhqElHr9mYnPs+GADMqFn7ihP2rZ5z
-        TMCG48VzXMvu1dqzTToWdiV71g==
-X-Google-Smtp-Source: AKy350bcqK4pAcsiH06EOT8P/jZME+o+zads0C6tIbm53vEQbRbnDvgTAjpPgh+ebvn7V4wp2JvjLw==
-X-Received: by 2002:a17:90a:6b09:b0:23d:16d6:2f05 with SMTP id v9-20020a17090a6b0900b0023d16d62f05mr17621391pjj.22.1681254828818;
-        Tue, 11 Apr 2023 16:13:48 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-41-174.pa.nsw.optusnet.com.au. [49.180.41.174])
-        by smtp.gmail.com with ESMTPSA id jh6-20020a170903328600b001a64011899asm330544plb.25.2023.04.11.16.13.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Apr 2023 16:13:48 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pmNBJ-002H1W-AF; Wed, 12 Apr 2023 09:13:45 +1000
-Date:   Wed, 12 Apr 2023 09:13:45 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3][RESEND] fs: opportunistic high-res file
- timestamps
-Message-ID: <20230411231345.GB3223426@dread.disaster.area>
-References: <20230411143702.64495-1-jlayton@kernel.org>
+        Tue, 11 Apr 2023 23:19:22 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2099.outbound.protection.outlook.com [40.107.255.99])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE15910F8;
+        Tue, 11 Apr 2023 20:19:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FrdgKy6KYJmk5+H8pzbm0lh9bOcf1bruD8Ge+cl/pB/MWSg+BM2r2BjCjKRQOwmh5+hCrOAv8QnZYGgjHielfUM6qnKqcsNHWFAPMEKJVin2GpLVXEwpTh/IX9wmoNjXD+b1YeNngIql4BcSt9O8GBe8Qndt0zlf2IaR2oOCclUmHQWcKMDS5QQhrGtzs/YuTSbJszBqCDZcNLjxnaBcNM+UEtp5QzUILGnDSwv+1mXywtq6JOe8ijgLoVGU8EWHLQGaaTuGlQnkDUhQkgagqf0Mic3Shqp1Fd/qgm1loqEPB+tCxY9WMs+EpsWSKagcUJW/W26kMpmyutWEYQsMbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A/XAATz7Qf6xVv95kgrKP6iKiYSa4DUzHwDzSuFAPzA=;
+ b=ZVt80cHem4jlNgXKnX0Bys9MmMBSQnYUHahVyurLD6LgmXLidEvkUQ7RajuZa9nvR+ShpcgFe+LjKzWZnUQWlvQro9QmOVkD54m2bdkgTjdaeJbE/s5SNsszfhhQqSyVMiht67ZMlOciALN39sRzzf+jdHwwA3m1YKb+fRF2sUoNfAh6Dm1+8MglHvJTrF2FZwKTOTFHLNF5Rc2+NwGxqmlhvCFRMYLvwk6vRZsnH1WSnHe1SUyErh+TkDF+8KncbmMw+Ix92jT0/Y4/NY2YyO3whEl9vVbyrZz2stnZjLtHcf0WazZ/vjpfziKPan0wYEM/cW9kHaFOfqxw1tnvgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A/XAATz7Qf6xVv95kgrKP6iKiYSa4DUzHwDzSuFAPzA=;
+ b=JCyBFSNTg0K1Fv1UcY4uxXQfaVGNw4rf4YItMv+ZyK2hdxdVbAmcO1l/cOrIAlavHwSxR6lxyPSTlBTb1M3afkcu4lG/AXpT+Wm8K7xCIQaKrNbQqhNVFiJ2QBCUVGAIGuxzfatw3MumisgeNfrZs4f1lpTyFU9TJDPylbg1JY0BtvIqqgvSZmqVtvRq9bI4cPvwmttc1xBnhdZF6s/N5yO9DiSfoIHt8HKXel3RCo0KenlLmXfAIUvnQeD8BTUz2IYn6SJ/LCJ5Wp0EIk6+YhLwdA343j0B/D/GILRYFeWab/4808oesHhMsSVvFrLunnSmZssAgXJr1w9eIMbvTA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by TY0PR06MB5681.apcprd06.prod.outlook.com (2603:1096:400:275::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.34; Wed, 12 Apr
+ 2023 03:19:16 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::a3a1:af8e:be1e:437c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::a3a1:af8e:be1e:437c%6]) with mapi id 15.20.6277.038; Wed, 12 Apr 2023
+ 03:19:16 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>
+Cc:     Yangtao Li <frank.li@vivo.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] zonefs: remove unnecessary kobject_del()
+Date:   Wed, 12 Apr 2023 11:19:04 +0800
+Message-Id: <20230412031904.13739-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.35.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0008.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::14) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230411143702.64495-1-jlayton@kernel.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TY0PR06MB5681:EE_
+X-MS-Office365-Filtering-Correlation-Id: a2bb22b2-4324-4349-853f-08db3b04b290
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 3jWBntZ3bvcD8VqpW3lVq8oE6CmDBdlIbAapIwq9HhXVa+ow2krL9imXelbxTcSkHT+6tDhEoS5tTlSvX1F9XxkIZQuE1CBgjAcImi+ZSWwkIFAFI1lH0PA2th6WSt41tLbbeDt/wlN04WyhnP0MF0UQeRqqNhw1beOV10rzkDhGToJL0YMAQnhk/x1I/Kvo8O4Agg5OVNhLigfs5aU+WSMAbIhpPGgtE8UI77jKNQYkPicgB4Wxs7GqmWQLyv+dkRz14mvsFNt+kDTg36bL6QFe6IBwt+E/plj3YQk7yEdpXN9bPGRtWUdAr/g5DR9riSnhbSRfof8VQJc9qhr6rd9JgG9a3HKgZvaajYHS6KCICMIlEZ/nzwFtIPgh2N61T6c7a3ZvKXa9Dbry4yrMevg5aaCRiOGxTLHzomHPa+ARG24ILXatjKXNyt/IpC+K7vU2ASe/hEnEJDS/L0Du+D+5DUY0mKe9pAJw5OQQkmtPd2K3PQtzFh9VBNiDBGzLVKOUU5LMcpDUDVWj3dqwkq/KjzzUH9mB7OuQxc9tN1g0MsKPfZj9XCqbfLFFKvs6hDsdBi/7MOPzh/pReJrMJt+3KEhklvm/zHgaU1wPX8VJ85r19+i3BvE2QIUYmmcg
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(366004)(396003)(376002)(39860400002)(346002)(451199021)(8676002)(8936002)(5660300002)(41300700001)(2906002)(4744005)(38350700002)(4326008)(66556008)(66946007)(66476007)(86362001)(38100700002)(110136005)(478600001)(316002)(83380400001)(52116002)(6486002)(6666004)(2616005)(1076003)(36756003)(186003)(6512007)(26005)(6506007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?fQB9v0uiPNpKmLel6DigxBRkL+2EBZm4OvLI9N5mppqa2BulE3Wf2Z4ouXM7?=
+ =?us-ascii?Q?FREPauLTXU7GyYqXMtidDDfFviiSP1P/p5xflMduRw+tIkrulGl1R6Gx9gWI?=
+ =?us-ascii?Q?4WPfI/ghsUIcFnTjxl1vlmlUGvxwoKmC4sG3l2lKbbtnsN73Ci0i3lpMtkL6?=
+ =?us-ascii?Q?nQeUF0GNTnMbn8ARyJEnzCtnfKGCjuLXBK+AFHQpQra0CshO8Tl1JbtheQL5?=
+ =?us-ascii?Q?OdHU9ISaKYNsIQytiGMei+aRvu0MTEH2Tm7Vip+SSzx1GFSCCJZHYPi8+wnP?=
+ =?us-ascii?Q?rPTI/HLSKLyD3Aiq50D7gllkaK8YmDXK/L6qvovy09BmZMBhPi46WrpxQiSD?=
+ =?us-ascii?Q?+YcnVntv/NSrrmi+gLazc2AAt+w+xVBIHaLDh8uNPcFj2RLKvD8j27RJtISH?=
+ =?us-ascii?Q?4IouhUB6hVZnK93Q5oadVGjsjN9LwQ5/vfEXvoz+9MQFw6EQQRdz9nDmcUVA?=
+ =?us-ascii?Q?Sswynv+03SQaa4pf4NBiruc77mpJmcr0T10UJhYR6zpCthEuwZVPFIuIUJiD?=
+ =?us-ascii?Q?1sL/YO1i8k5y+WzKXw+JTvlYEVFGW3N5u2IBbnkBjkCMn3gymJgo+Oc4bTdI?=
+ =?us-ascii?Q?8KEjlVYLrOEE52uxK8t3G9FdGF7URKyx0PSrjRW6ghHk8mSsC2nmsDJmalv0?=
+ =?us-ascii?Q?Upe9wX140tFvLq0Ghrx95PJiyElRNI4e3mDh2kftiAHKe9jXU5wiEFWiQksC?=
+ =?us-ascii?Q?azTqCbKGqi9gZAI/aKJDUawl6V2sAABoiFZbDBA630sLJ/0QTqxL1Z7rU+q6?=
+ =?us-ascii?Q?moHHhB4aJn0YaYaoArSllUPzdx3lOoSru0Vpi4mrw0PO6r15H7R8c12AIccJ?=
+ =?us-ascii?Q?PyUEqxct8atsl43zMNO3Efxs8X3wEqqPiQBjo1SvdFabgynLIxwuQS01cHem?=
+ =?us-ascii?Q?2z9F1kEq53GLNkEjWN4ID5mejD+B4fFTu27SZgDyL4JN8JbzqCpHsfqSVydB?=
+ =?us-ascii?Q?WjTbAqKjTSleGwPm073h+jQIjCcT0BdcsT73pJa/8RA16vcoR83zr3ViiSO+?=
+ =?us-ascii?Q?ZRMtKwiFO4VzuTFZSwoWkpEcISP+ww0hNDGyqpRi5f8CDjts95J0epgvdnMr?=
+ =?us-ascii?Q?rv2yaGEYaX41QQ3BIoqi0HYPQTprHlioPOGAeYuUrrf1cWPMpSam028EKfd+?=
+ =?us-ascii?Q?qcmUiLMgo8zkuG5usMoovySj6a9xOpr4hLXwYKexD/gQsO3r5MqZmMO1dLLQ?=
+ =?us-ascii?Q?6QmxisWCA7hbZjdSos40wvfsc0fNyyereuZYaTMPCYyNKMzatrUgA+7l0VEZ?=
+ =?us-ascii?Q?vhy9eM9KvMu1Rw6XrIWsuuqGwP4AjOJntek/9Hc2Yt8rV8f5CkrHJrb6XQOj?=
+ =?us-ascii?Q?w51gnnav2B0lbkEtVmOW75MIY+wROitND0F8JJxG4fHHkGOTYuUN4UY8NNBh?=
+ =?us-ascii?Q?fHImjFcGm2YRqHDaqosT6aI+Njvm4zRB9D0H2N2IGSmWrFC5T6xYXIdcohnS?=
+ =?us-ascii?Q?7fC3b1UJUvuGgaQC7mP0IHHxC0eEFBbeQPXMDX+HpARnBbqOJm2h2SLZ+sbc?=
+ =?us-ascii?Q?skQy2MFlxsVZ8kwFIbA4DAYBospl65YkFnMH/CIuZT/nnXvMq3QFE8CCkb1C?=
+ =?us-ascii?Q?VS+0i6AfAygYgG163SDQfveSvwLJaKsvkj5msfTc?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2bb22b2-4324-4349-853f-08db3b04b290
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2023 03:19:16.7168
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WaAkdNzqnatCTluQtjmRc3kzCUDsj/APc3bPCu+yGYfm16Q8evqbESSeZztiCN1NEnOAIFf/zm+QQGJO6KAxog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5681
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,81 +113,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 10:36:59AM -0400, Jeff Layton wrote:
-> (Apologies for the resend, but I didn't send this with a wide enough
-> distribution list originally).
-> 
-> A few weeks ago, during one of the discussions around i_version, Dave
-> Chinner wrote this:
-> 
-> "You've missed the part where I suggested lifting the "nfsd sampled
-> i_version" state into an inode state flag rather than hiding it in
-> the i_version field. At that point, we could optimise away the
-> secondary ctime updates just like you are proposing we do with the
-> i_version updates.  Further, we could also use that state it to
-> decide whether we need to use high resolution timestamps when
-> recording ctime updates - if the nfsd has not sampled the
-> ctime/i_version, we don't need high res timestamps to be recorded
-> for ctime...."
-> 
-> While I don't think we can practically optimize away ctime updates
-> like we do with i_version, I do like the idea of using this scheme to
-> indicate when we need to use a high-res timestamp.
-> 
-> This patchset is a first stab at a scheme to do this. It declares a new
-> i_state flag for this purpose and adds two new vfs-layer functions to
-> implement conditional high-res timestamp fetching. It then converts both
-> tmpfs and xfs to use it.
-> 
-> This seems to behave fine under xfstests, but I haven't yet done
-> any performance testing with it. I wouldn't expect it to create huge
-> regressions though since we're only grabbing high res timestamps after
-> each query.
-> 
-> I like this scheme because we can potentially convert any filesystem to
-> use it. No special storage requirements like with i_version field.  I
-> think it'd potentially improve NFS cache coherency with a whole swath of
-> exportable filesystems, and helps out NFSv3 too.
-> 
-> This is really just a proof-of-concept. There are a number of things we
-> could change:
-> 
-> 1/ We could use the top bit in the tv_sec field as the flag. That'd give
->    us different flags for ctime and mtime. We also wouldn't need to use
->    a spinlock.
-> 
-> 2/ We could probably optimize away the high-res timestamp fetch in more
->    cases. Basically, always do a coarse-grained ts fetch and only fetch
->    the high-res ts when the QUERIED flag is set and the existing time
->    hasn't changed.
-> 
-> If this approach looks reasonable, I'll plan to start working on
-> converting more filesystems.
+kobject_put() actually covers kobject removal automatically, which is
+single stage removal. So kill kobject_del() directly.
 
-Seems reasonable to me. In terms of testing, I suspect the main
-impact is going to be the additionaly overhead of taking a spinlock
-in normal stat calls. In which case, testing common tools like giti
-would be useful.  e.g. `git status` runs about 170k stat calls on a
-typical kernel tree. If anything is going to be noticed by users
-that actually care, it'll be workloads like this...
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ fs/zonefs/sysfs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-If we manage to elide the spinlock altogether, then I don't think
-we're going to be able to measure any sort perf difference on modern
-hardware short of high end NFS benchmarks that drive servers to
-their CPU usage limits....
-
-> One thing I'm not clear on is how widely available high res timestamps
-> are. Is this something we need to gate on particular CONFIG_* options?
-
-Don't think so - the kernel should always provide the highest
-resoultion it can through the get_time interfaces - the _coarse
-variants simple return what was read from the high res timer at the
-last scheduler tick, hence avoiding the hardware timer overhead when
-high res timer resolution is not needed.....
-
-Cheers,
-
-Dave.
+diff --git a/fs/zonefs/sysfs.c b/fs/zonefs/sysfs.c
+index 8ccb65c2b419..a535bdea1097 100644
+--- a/fs/zonefs/sysfs.c
++++ b/fs/zonefs/sysfs.c
+@@ -113,7 +113,6 @@ void zonefs_sysfs_unregister(struct super_block *sb)
+ 	if (!sbi || !sbi->s_sysfs_registered)
+ 		return;
+ 
+-	kobject_del(&sbi->s_kobj);
+ 	kobject_put(&sbi->s_kobj);
+ 	wait_for_completion(&sbi->s_kobj_unregister);
+ }
 -- 
-Dave Chinner
-david@fromorbit.com
+2.35.1
+
