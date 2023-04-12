@@ -2,79 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 880016DFA78
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 17:41:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6DEA6DFB59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Apr 2023 18:27:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230340AbjDLPlI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Apr 2023 11:41:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46274 "EHLO
+        id S229881AbjDLQ15 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Apr 2023 12:27:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229811AbjDLPlH (ORCPT
+        with ESMTP id S229469AbjDLQ14 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Apr 2023 11:41:07 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A05087DBF;
-        Wed, 12 Apr 2023 08:40:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=S+JPhOC4mHSW7Yql8JWRNkc2K96tHyEjqwlM7RJtLSE=; b=gBzCukKQ4bWrpsCivmFA++zJi4
-        JcoxoSh6eWewNUxaf+yEnzSFEhTStPhSsVyeAAfKsN6nSt0yYBFl/xNDDmSmk6OhLOB3ZfLVRKS/G
-        k33+gTJZGBlELnVWBJfX1g4EhDg+7nHzPLepSNyJx98qz2q2RsrNkabH4FL2wfANj7LEcbCEJX4pU
-        NND3HRha2bVsuYStdRRds3OVQq+2qpvaErKjQVtMlCitmiZStDSYb3uA8lLB47SAleeD/es2HFom2
-        t5iULsH9MbGQifwgz1foqKxttSo5MTPulBQOgyCRrlroPSfF6uMycsiFhPmageHcszhEhcCBoZIhc
-        BHy6Bkhw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pmca4-006zfX-GL; Wed, 12 Apr 2023 15:40:20 +0000
-Date:   Wed, 12 Apr 2023 16:40:20 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kyungsan Kim <ks0204.kim@samsung.com>
-Cc:     david@redhat.com, lsf-pc@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cxl@vger.kernel.org, a.manzanares@samsung.com,
-        viacheslav.dubeyko@bytedance.com, dan.j.williams@intel.com,
-        seungjun.ha@samsung.com, wj28.lee@samsung.com
-Subject: Re: FW: [LSF/MM/BPF TOPIC] BoF VM live migration over CXL memory
-Message-ID: <ZDbQ5O7LAmGbhqFw@casper.infradead.org>
-References: <f4f9eedf-c514-3388-29ad-dcb497a19303@redhat.com>
- <CGME20230412111034epcas2p1b46d2a26b7d3ac5db3b0e454255527b0@epcas2p1.samsung.com>
- <20230412111033.434644-1-ks0204.kim@samsung.com>
+        Wed, 12 Apr 2023 12:27:56 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1487EDC
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 09:27:53 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id os24so652560ejb.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 09:27:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1681316871; x=1683908871;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LlbBUU3Heh2HbQgGaI5PMM5WO9GB4tDWoyyHCpBYNx4=;
+        b=efCuKwNHI+e5ttjxepW1uvimCACd89PmCHF1VAnRqej2/xLnn9b8tpJu36F2CiP0yr
+         Mep67bOSUqLiuHmV6LGR3innHFLBaL5lRzkYPl4+RyyWC7AGHf6ZvvLwLkZlMxLZ967B
+         rsBZ88WVUh/FexU/p8WdLfDSH8dpH1Gbxfd/E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681316871; x=1683908871;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LlbBUU3Heh2HbQgGaI5PMM5WO9GB4tDWoyyHCpBYNx4=;
+        b=ZnkFKzj4fWtP/dgNHKAG/ie68IJklZTfuZ28ER8hiUyC/5MsGDil+HGpj2h2EHNYiS
+         sz6u+VXVMMgeiP15p3Gxy5pfJ6zTfd4RkiNcztxJHQiNms5qwndSZFEc21MnIXMhGsKW
+         JFy2sfoy+PU05OXGeDHeSC37OCWoyFj73cnW0SRvDi7FWoE55SFCycPDDkoNM+5lyBOM
+         xtWxTXH/VrvNIGoZH26ri2oZmD41bmTQIPwmFrCYZyi2lIg630ey+LQsvOjx58kUpP+7
+         UXzAJ0oKbV9DRY5FjSjT/pY2zf68dqvdSGAhikszTcry2NmjDJ8G55KkMLiutRIKsby1
+         vKWQ==
+X-Gm-Message-State: AAQBX9fTcDKwZ/Yzy5ivrBtdbca08PYWWiq5bAMXLXE4JAxqI1kgTF+A
+        6oR6mlpeCMUO1K5S5T6H/rEbi7y/I0ZUMUT/SqsSzQ==
+X-Google-Smtp-Source: AKy350ZShjUewaP0dI0mbr5BhC/0jX7Va2VbCckOlAeF9EbKuz//Us+Dm5XOGJAIqbM3jx3Ylwi49Q==
+X-Received: by 2002:a17:906:aacb:b0:94a:682f:7744 with SMTP id kt11-20020a170906aacb00b0094a682f7744mr12520798ejb.16.1681316871268;
+        Wed, 12 Apr 2023 09:27:51 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id o12-20020a1709064f8c00b0093f322187f0sm7411418eju.189.2023.04.12.09.27.50
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Apr 2023 09:27:50 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5055141a8fdso277171a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Apr 2023 09:27:50 -0700 (PDT)
+X-Received: by 2002:a50:9fa2:0:b0:504:81d3:48f with SMTP id
+ c31-20020a509fa2000000b0050481d3048fmr3195779edf.2.1681316870239; Wed, 12 Apr
+ 2023 09:27:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230412111033.434644-1-ks0204.kim@samsung.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+References: <110100.1681301937@warthog.procyon.org.uk>
+In-Reply-To: <110100.1681301937@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 12 Apr 2023 09:27:33 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjJt-6_PJ=hm2_TzwVHcWSatMCiByrFiUizpteogGNibA@mail.gmail.com>
+Message-ID: <CAHk-=wjJt-6_PJ=hm2_TzwVHcWSatMCiByrFiUizpteogGNibA@mail.gmail.com>
+Subject: Re: [PATCH] netfs: Fix netfs_extract_iter_to_sg() for ITER_UBUF/IOVEC
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 12, 2023 at 08:10:33PM +0900, Kyungsan Kim wrote:
-> Pinning and plubbability is mutual exclusive so it can not happen at the same time.
-> What we argue is ZONE_EXMEM does not "confine movability". an allocation context can determine the movability attribute.
-> Even one unmovable allocation will make the entire CXL DRAM unpluggable. 
-> When you see ZONE_EXMEM just on movable/unmoable aspect, we think it is the same with ZONE_NORMAL,
-> but ZONE_EXMEM works on an extended memory, as of now CXL DRAM.
-> 
-> Then why ZONE_EXMEM is, ZONE_EXMEM considers not only the pluggability aspect, but CXL identifier for user/kenelspace API, 
-> the abstraction of multiple CXL DRAM channels, and zone unit algorithm for CXL HW characteristics.
-> The last one is potential at the moment, though.
-> 
-> As mentioned in ZONE_EXMEM thread, we are preparing slides to explain experiences and proposals.
-> It it not final version now[1].
-> [1] https://github.com/OpenMPDK/SMDK/wiki/93.-%5BLSF-MM-BPF-TOPIC%5D-SMDK-inspired-MM-changes-for-CXL
+On Wed, Apr 12, 2023 at 5:19=E2=80=AFAM David Howells <dhowells@redhat.com>=
+ wrote:
+>
+> Could you apply this, please?  It doesn't affect anything yet, but I have
+> patches in the works that will use it.
 
-The problem is that you're starting out with a solution.  Tell us what
-your requirements are, at a really high level, then walk us through
-why ZONE_EXMEM is the best way to satisfy those requirements.
+Applied,
 
-Also, those slides are terrible.  Even at 200% zoom, the text is tiny.
-
-There is no MAP_NORMAL argument to mmap(), there are no GFP flags to
-sys_mmap() and calling mmap() does not typically cause alloc_page() to
-be called.  I'm not sure that putting your thoughts onto slides is
-making them any better organised.
+             Linus
