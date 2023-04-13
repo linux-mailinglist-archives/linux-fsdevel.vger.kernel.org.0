@@ -2,133 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD54D6E1630
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 23:01:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61FFA6E1633
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 23:01:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229917AbjDMVBC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Apr 2023 17:01:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43386 "EHLO
+        id S230206AbjDMVBU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Apr 2023 17:01:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbjDMVBB (ORCPT
+        with ESMTP id S230033AbjDMVBT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Apr 2023 17:01:01 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E06F18697
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 14:00:55 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-634b28df952so1368762b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 14:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1681419655; x=1684011655;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Po7kMV6PWfvJ0JdTbzWxvRcPOaOmD0dTKySmuNSlDE8=;
-        b=5SO+s+WzALNpDN1F2r4RktSFMbeXUOZ5ZZ4imLVAQoXA9/lC9hm3pg4FQZHjcgDFRr
-         1W6P7WWYojNsiIJnPi5nuXNn2irghWpItwRXONlnThqo2JXE5P7eGdXskbXOeHw4pfWs
-         e4/5GvOocPYZ3hDXjojyciRevZvF858Azln1xhdoJbybRGFGIr/n4fs/v2L8hdzg9s+o
-         8ZlfxWTij0X1M7Oqj0eJgBUQGLAU22t8D3AGl9hVEvZT5GMRqEz+FbjOT15elBmGEZRc
-         Ug46SqyE6nfY3hF8oRes80r0DASMIbliHC9taLr+InAecO1VhkSBXbyNobEJYqH1kvC8
-         qBig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681419655; x=1684011655;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Po7kMV6PWfvJ0JdTbzWxvRcPOaOmD0dTKySmuNSlDE8=;
-        b=RfTf2N9kA5cLe5QiI/HPJ6o/J7ceIGRI9kxGAauNkY0K8j6IoEivruNH1eMN55P0uD
-         cMgYeOlzzpfP4JmSAoqPTorBGMnwB0A/rE2YrvGJ5Gn9uUwaBE72Yb8dHDzZcJdD91Ai
-         HyUtIWawTSbBkgyIfyY0JdDkFaVvo9WMuVf0U36mVeyfpNSRTUyIXBTfdEIgIno2rNQS
-         z5xomspKStq237e5VjWlCiX4hN4zbH6y4QyFg7O73WlJ9dV4rBy8ezS3bwJScqvlBd+n
-         PBcX/joZfSMcm7yGpSRVcOrd4p14F/yqLIpmg4aYkyDNKcpnMLtNmmzcNQWOU9EWcBXN
-         80ug==
-X-Gm-Message-State: AAQBX9fp6D+1ZeCM4+DX6f2T923xY/O9Els4FB2ofKR4isN8tXjTSAYM
-        cotfBKo6EllS3MKnD9mCjUAFBw==
-X-Google-Smtp-Source: AKy350ZeUgwDYY5eMW7ZOlxK2igrJRw/XaGk5mqSdFs2oVNX3KK71uxfEiOe9qiJLyAHAqLgA8MlqA==
-X-Received: by 2002:a05:6a00:2e9c:b0:636:d5be:982f with SMTP id fd28-20020a056a002e9c00b00636d5be982fmr6073105pfb.6.1681419655345;
-        Thu, 13 Apr 2023 14:00:55 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-41-174.pa.nsw.optusnet.com.au. [49.180.41.174])
-        by smtp.gmail.com with ESMTPSA id w5-20020aa78585000000b0063824fef27asm1871769pfn.13.2023.04.13.14.00.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 14:00:54 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pn43n-00322H-2A; Fri, 14 Apr 2023 07:00:51 +1000
-Date:   Fri, 14 Apr 2023 07:00:51 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yosry Ahmed <yosryahmed@google.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@kernel.org>, Yu Zhao <yuzhao@google.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
+        Thu, 13 Apr 2023 17:01:19 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15E9093D9;
+        Thu, 13 Apr 2023 14:01:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KYHbzCI9LXyDIUFvJhYJMsas+FJ9lhW+iBOsXt4bUjI=; b=m9duPWlEGjDU8+VCf197UaEupq
+        LmiGNeX5d9YHt6/xhMqh+0OMTFW2a1Be1J2tKTGq1r1+Uchpe6v/yGf/0R05b3zOb8PzC6kRvN0vm
+        fb1Y8c7xO8rUV2GDKMtTbRV168AyJyngsher5v7fO3ZqvKWN07iACzr2Nk7RcJrNv7w/fJVJaz1Q/
+        zEC+jLGw5Z+eEZ3NfEdQj6G3mxmH0IWXUq1pwbhKiK0lWDR3gFKtrLQd52tuvgF/ZmBzpyfEnReLY
+        9wHZvOc3wwBjlXfE9JnBb88p9qZPL2b62vsOxxoUKoJrB4jUOtWElqTKhCcuTIiyPquDP3jUKF/Xw
+        k9u+K00Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pn448-008kCS-2f;
+        Thu, 13 Apr 2023 21:01:12 +0000
+Date:   Thu, 13 Apr 2023 22:01:12 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 3/3] mm: vmscan: refactor updating
- current->reclaim_state
-Message-ID: <20230413210051.GO3223426@dread.disaster.area>
-References: <20230413104034.1086717-1-yosryahmed@google.com>
- <20230413104034.1086717-4-yosryahmed@google.com>
- <b7fe839d-d914-80f7-6b96-f5f3a9d0c9b0@redhat.com>
- <CAJD7tkae0uDuRG77nQEtzkV1abGstjF-1jfsCguR3jLNW=Cg5w@mail.gmail.com>
+        linux-mm@kvack.org, Willem de Bruijn <willemb@google.com>
+Subject: Re: [PATCH net-next v6 01/18] net: Declare MSG_SPLICE_PAGES internal
+ sendmsg() flag
+Message-ID: <20230413210112.GD3390869@ZenIV>
+References: <20230413042917.GA3390869@ZenIV>
+ <20230411160902.4134381-1-dhowells@redhat.com>
+ <20230411160902.4134381-2-dhowells@redhat.com>
+ <20230413005129.GZ3390869@ZenIV>
+ <1147766.1681418362@warthog.procyon.org.uk>
+ <20230413204918.GC3390869@ZenIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkae0uDuRG77nQEtzkV1abGstjF-1jfsCguR3jLNW=Cg5w@mail.gmail.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230413204918.GC3390869@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 13, 2023 at 04:29:43AM -0700, Yosry Ahmed wrote:
-> On Thu, Apr 13, 2023 at 4:21 AM David Hildenbrand <david@redhat.com> wrote:
-> >
-> > On 13.04.23 12:40, Yosry Ahmed wrote:
-> > > During reclaim, we keep track of pages reclaimed from other means than
-> > > LRU-based reclaim through scan_control->reclaim_state->reclaimed_slab,
-> > > which we stash a pointer to in current task_struct.
-> > >
-> > > However, we keep track of more than just reclaimed slab pages through
-> > > this. We also use it for clean file pages dropped through pruned inodes,
-> > > and xfs buffer pages freed. Rename reclaimed_slab to reclaimed, and add
-> >
-> > Would "reclaimed_non_lru" be more expressive? Then,
-> >
-> > mm_account_reclaimed_pages() -> mm_account_non_lru_reclaimed_pages()
-> >
-> >
-> > Apart from that LGTM.
+On Thu, Apr 13, 2023 at 09:49:18PM +0100, Al Viro wrote:
+> On Thu, Apr 13, 2023 at 09:39:22PM +0100, David Howells wrote:
+> > Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > 
+> > > Note that io_sendmsg_prep() handles both IORING_OP_SENDMSG and IORING_OP_SEND,
+> > > so this pair of functions can hit the same request.  And sqe->msg_flags is
+> > > not sanitized at all - it comes straight from user buffer.
+> > 
+> > Assuming ____sys_sendmsg() is fixed, I think it should be sufficient to make
+> > io_send() and io_send_zc().  io_sendmsg() and io_sendmsg_zc() will go through
+> > ____sys_sendmsg().
 > 
-> Thanks!
-> 
-> I suck at naming things. If you think "reclaimed_non_lru" is better,
-> then we can do that. FWIW mm_account_reclaimed_pages() was taken from
-> a suggestion from Dave Chinner. My initial version had a terrible
-> name: report_freed_pages(), so I am happy with whatever you see fit.
-> 
-> Should I re-spin for this or can we change it in place?
+> 	Sure; what I wanted to point out was that despite the name,
+> io_sendmsg_prep() gets used not only with io_sendmsg().  io_sendmsg()
+> does go through ____sys_sendmsg(), but io_send() goes straight to
+> sock_sendmsg() and evades all your checks...
 
-I don't care for the noise all the bikeshed painting has generated
-for a simple change like this.  If it's a fix for a bug, and the
-naming is good enough, just merge it already, ok?
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+	Incidentally, having ____sendmsg and ___sendmsg in the same file
+is more than slightly antisocial - compiler can sort it out, but there
+are human readers as well.  We have
+____sys_sendmsg
+___sys_sendmsg
+__sys_sendmsg
+__sys_sendmmsg
+next to each other.  Maze of twisty little identifiers, all alike...
