@@ -2,117 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ADAA6E1325
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 19:06:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB4F16E1368
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 19:22:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230129AbjDMRGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Apr 2023 13:06:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39014 "EHLO
+        id S229845AbjDMRWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Apr 2023 13:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229841AbjDMRGl (ORCPT
+        with ESMTP id S229924AbjDMRWQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Apr 2023 13:06:41 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7DB61B3;
-        Thu, 13 Apr 2023 10:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=FWNdRPWwZIBOUH8O1nX0Jh8GOMtO3mkwP8PTJkAEW0Q=; b=LQWB9l7qZaWxf8UflsvmZ+wIIq
-        UF3zLo4TvW35Q5imqsrf3yqsQT6EqtmrxoSu/XHuAvekpk/IKCOklrUWVJRmElAkIZseIeJVtwEkf
-        gKr5eBelaUAzJvqFS9tmxlEQ77Byc91505FskaWdCiol7I/eyhoBTejMEcvw0MYC/Q05dT/zfb7Dd
-        lMjrBOzEV7rvUuUttb/2X/coWbS3PK0L6aUQ7JW3M7gjOJ+718WBlwEfTr/zss0xLsbsJ0kuNiiD3
-        hiqjY7imMX4a0ul0JBKyMRYWgm9+AoGuwENm9iiAmaSqMRS16tdwkXrFZpvOJMlqSH9fGzkgPPW4g
-        OLHgUD7Q==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pn0P5-006lZO-28;
-        Thu, 13 Apr 2023 17:06:35 +0000
-Date:   Thu, 13 Apr 2023 10:06:35 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: fix sysctls.c built
-Message-ID: <ZDg2m/U1NasHfK4j@bombadil.infradead.org>
-References: <20230331084502.155284-1-wangkefeng.wang@huawei.com>
- <66c0e8b6-64d1-5be6-cd4d-9700d84e1b84@huawei.com>
- <20230412-sympathie-haltbar-da2d2183067b@brauner>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230412-sympathie-haltbar-da2d2183067b@brauner>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+        Thu, 13 Apr 2023 13:22:16 -0400
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 516BA7EE8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 10:22:14 -0700 (PDT)
+Received: by mail-pl1-x649.google.com with SMTP id s18-20020a170902ea1200b001a1f4137086so8440489plg.14
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 10:22:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1681406534; x=1683998534;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MUWO1kZAYR92KIzOOxoAG6fgcpTDrbsTBnBgIaXB7SI=;
+        b=k9K7/cx14r1rZ44+YUmMJA/zyDFSnSwd4M/yoOo6MK1lBZbqEHHMPLqbgmJy4VHzWr
+         BHtqD7duSRrul042d0Suw2viax09pK0xMVdFhDXpoxoBfhFfIuBKNDsrnzf3PtlFwTe0
+         xZs14NrJu4rjfC+GuieNJRVga4Qv8eQWhGsY7num3+DbmUoQdqIvovvw7B75AYwZTkKG
+         iKlZHnMH6l41XSupS5sXqcJVcqX0LpFcpp/+2ct//bBU6UJaLCpcjq4ly/wd092FSy5B
+         RAM7fGGTnnv8Bkbvo6qpHrJ0vab0jDHA6Sxzq0hjEQ4MKc/Y3j5NGUn0fKFRnXbWoeyn
+         RO7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681406534; x=1683998534;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MUWO1kZAYR92KIzOOxoAG6fgcpTDrbsTBnBgIaXB7SI=;
+        b=gXD2QsQApKqrUXkSIVJAfzK91VdLvNIaw7chpUtY22bBcaNoVbmTmj4NyOuDKU6u2r
+         JuZS0KlzjAJX/tM4TuTSJbnjv3WTDCjOyFpj6SGoEcxTvOS1vkvZpMeyXDE7GFY1Eb8O
+         PZbBvGl88DHLpr2haP9U60nMBgkYtlw7hnR+tduvXC8oKoLyTWdLldYYduU2dgFj4YB6
+         YwU1kOS2cQ5YfTbPzPsx/uH07oM3N2XzLUNdlrZGZa9AfgvPRkGingXI+RYvvnd3yP5I
+         0oxfZd3WnbeFVaDn92PFSKQ17MO6SpmZTK9FnTrY+Bir5F2GzA0lewW+04h4P1zmYp1H
+         oxPw==
+X-Gm-Message-State: AAQBX9dVjgAxm9znMmzve/ZatfeWNgSkYLan0nF4pFBDjWQj9U1K3pwF
+        gkXLDVM7TO2uoSTvk2Qje2/s3P/+8cVMysjzrg==
+X-Google-Smtp-Source: AKy350buit0TKoFObhZndLsv+Oe7SecvOYrJwebJQwpxXJ4Pb+22Ci4SNV5J0w0/4fgc4zy9sZpOZtI2T9SDAix8Kg==
+X-Received: from ackerleytng-cloudtop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:1f5f])
+ (user=ackerleytng job=sendgmr) by 2002:a17:90b:815:b0:246:a1b2:77fe with SMTP
+ id bk21-20020a17090b081500b00246a1b277femr2564960pjb.3.1681406533842; Thu, 13
+ Apr 2023 10:22:13 -0700 (PDT)
+Date:   Thu, 13 Apr 2023 17:22:12 +0000
+In-Reply-To: <20221202061347.1070246-2-chao.p.peng@linux.intel.com> (message
+ from Chao Peng on Fri,  2 Dec 2022 14:13:39 +0800)
+Mime-Version: 1.0
+Message-ID: <diqzh6tjofy3.fsf@ackerleytng-cloudtop.c.googlers.com>
+Subject: Re: [PATCH v10 1/9] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        pbonzini@redhat.com, corbet@lwn.net, seanjc@google.com,
+        vkuznets@redhat.com, wanpengli@tencent.com, jmattson@google.com,
+        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, arnd@arndb.de, naoya.horiguchi@nec.com,
+        linmiaohe@huawei.com, x86@kernel.org, hpa@zytor.com,
+        hughd@google.com, jlayton@kernel.org, bfields@fieldses.org,
+        akpm@linux-foundation.org, shuah@kernel.org, rppt@kernel.org,
+        steven.price@arm.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        vannapurve@google.com, yu.c.zhang@linux.intel.com,
+        chao.p.peng@linux.intel.com, kirill.shutemov@linux.intel.com,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com, qperret@google.com,
+        tabba@google.com, michael.roth@amd.com, mhocko@suse.com,
+        wei.w.wang@intel.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 12, 2023 at 11:19:56AM +0200, Christian Brauner wrote:
-> On Tue, Apr 11, 2023 at 12:14:44PM +0800, Kefeng Wang wrote:
-> > /proc/sys/fs/overflowuid and overflowgid  will be lost without
-> > building this file, kindly ping, any comments, thanks.
-> > 
-> > 
-> > On 2023/3/31 16:45, Kefeng Wang wrote:
-> > > 'obj-$(CONFIG_SYSCTL) += sysctls.o' must be moved after "obj-y :=",
-> > > or it won't be built as it is overwrited.
-> > > 
-> > > Fixes: ab171b952c6e ("fs: move namespace sysctls and declare fs base directory")
-> > > Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> > > ---
-> > >   fs/Makefile | 3 +--
-> > >   1 file changed, 1 insertion(+), 2 deletions(-)
-> > > 
-> > > diff --git a/fs/Makefile b/fs/Makefile
-> > > index 05f89b5c962f..8d4736fcc766 100644
-> > > --- a/fs/Makefile
-> > > +++ b/fs/Makefile
-> > > @@ -6,7 +6,6 @@
-> > >   # Rewritten to use lists instead of if-statements.
-> > >   #
-> > > -obj-$(CONFIG_SYSCTL)		+= sysctls.o
-> > >   obj-y :=	open.o read_write.o file_table.o super.o \
-> > >   		char_dev.o stat.o exec.o pipe.o namei.o fcntl.o \
-> > > @@ -50,7 +49,7 @@ obj-$(CONFIG_FS_MBCACHE)	+= mbcache.o
-> > >   obj-$(CONFIG_FS_POSIX_ACL)	+= posix_acl.o
-> > >   obj-$(CONFIG_NFS_COMMON)	+= nfs_common/
-> > >   obj-$(CONFIG_COREDUMP)		+= coredump.o
-> > > -obj-$(CONFIG_SYSCTL)		+= drop_caches.o
-> > > +obj-$(CONFIG_SYSCTL)		+= drop_caches.o sysctls.o
-> > >   obj-$(CONFIG_FHANDLE)		+= fhandle.o
-> > >   obj-y				+= iomap/
-> 
-> Given the description in
-> ab171b952c6e ("fs: move namespace sysctls and declare fs base directory")
-> you probably want to move this earlier.
+Chao Peng <chao.p.peng@linux.intel.com> writes:
 
-I was being *way* too cautious and I was wrong, so I'll take Kefang's patch as
-I can verify now that order does not matter and his patch is correct.
-I've corrected the documentation and clarified this on sysctl-next and
-so reflected on linux-next too with these two patches:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-sysctl: clarify register_sysctl_init() base directory order
-https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/commit/?h=sysctl-next-20230413&id=8ae59580f2b0529b6dd1a1cda6b838cfb268cb87
+> Introduce 'memfd_restricted' system call with the ability to create
+> memory areas that are restricted from userspace access through ordinary
+> MMU operations (e.g. read/write/mmap). The memory content is expected to
+> be used through the new in-kernel interface by a third kernel module.
 
-proc_sysctl: move helper which creates required subdirectories
-https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/commit/?h=sysctl-next-20230413&id=f4c09b14073513efd581459520a01c4c88cb24d7
+> ...
 
-proc_sysctl: update docs for __register_sysctl_table()
-https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/commit/?h=sysctl-next-20230413&id=d59d91edd67ec4cef62f26249510fe08b291ae72
+> diff --git a/mm/restrictedmem.c b/mm/restrictedmem.c
+> new file mode 100644
+> index 000000000000..56953c204e5c
+> --- /dev/null
+> +++ b/mm/restrictedmem.c
+> @@ -0,0 +1,318 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include "linux/sbitmap.h"
+> +#include <linux/pagemap.h>
+> +#include <linux/pseudo_fs.h>
+> +#include <linux/shmem_fs.h>
+> +#include <linux/syscalls.h>
+> +#include <uapi/linux/falloc.h>
+> +#include <uapi/linux/magic.h>
+> +#include <linux/restrictedmem.h>
+> +
+> +struct restrictedmem_data {
+> +	struct mutex lock;
+> +	struct file *memfd;
 
-proc_sysctl: enhance documentation
-https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/commit/?h=sysctl-next-20230413&id=eb472aa0678fd03321093bffeb9c7fd7f5035844
+Can this be renamed to file, or lower_file (as in stacking filesystems)?
 
-And so something we can do eventually is do away with all the base stuff.
-For now it's fine, it's not creating an issue.
+It's a little confusing because this pointer doesn't actually refer to
+an fd.
 
-  Luis
+'memfd' is already used by udmabuf to refer to an actual fd [1], which
+makes this a little misleading.
+
+[1]  
+https://elixir.bootlin.com/linux/v6.2.10/source/tools/testing/selftests/drivers/dma-buf/udmabuf.c#L63
+
+> +	struct list_head notifiers;
+> +};
+> +
+> ...
+
