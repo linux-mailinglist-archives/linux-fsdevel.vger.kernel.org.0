@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4B56E0917
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 10:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AF826E091B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 10:41:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229828AbjDMIl2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Apr 2023 04:41:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40472 "EHLO
+        id S229983AbjDMIln (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Apr 2023 04:41:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjDMIl0 (ORCPT
+        with ESMTP id S229871AbjDMIl3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Apr 2023 04:41:26 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E74286A8;
-        Thu, 13 Apr 2023 01:41:25 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id la3so14112739plb.11;
-        Thu, 13 Apr 2023 01:41:25 -0700 (PDT)
+        Thu, 13 Apr 2023 04:41:29 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AF0B83F8;
+        Thu, 13 Apr 2023 01:41:28 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-63b27afefacso113848b3a.1;
+        Thu, 13 Apr 2023 01:41:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681375284; x=1683967284;
+        d=gmail.com; s=20221208; t=1681375287; x=1683967287;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R/tKSXJd14VMawLIxQYv8XyFgKpy9j//5eTEj3JDvMA=;
-        b=YyIJ7Ton/QAEow2aJtckC1lIlyypXnanyOlCc1P3qTLQlwurZEdvoKEmUHu5ml/i5u
-         xMQdRGObgFaLbWyIoD7UvvwluyKlFhrI2FNUQ98An30mQrYAfL+FYBbfOSQlLma/x2PB
-         ZDdHfxDjZaUPHH/mjqC7dfrTk5r74ue3bTTdlKj60TJQ6uwGA4RiBgyPm8ZzTbZmezcO
-         aCVUEPEZy8GOcYjW0rqshM6nrYZ/Pm2rKyst2tvM5tsoP0V7IkKiTxtljuFKIXYBA5vs
-         k2No/2PotyUZsdMZyUNx8+ZXBkRjwqFu61s01qFLdaGig5aiTp1YpqquhhpkWj3ueI1v
-         HTaw==
+        bh=MNOw2u2eN+tovkE55NV5VEud2NLie+WZxAuBLZs7iOE=;
+        b=WZ2z9ywkElikDuGBRjkOaReSMnzPZ6MVKwHDMlVy6nmkUvJN7CSRpAxRWzK/9P3UxL
+         ih9eDFYAYSONYEL8mi57kf4vI7tzjKrRrIC6/fRhyWOR6XB2pRN9V8tnAdhcO5y6+2fs
+         ayjJ3Ac8gcNVn48O35WpeVY1oBIUVUcVxmPdeIrVzS02aIc2U+65Dt4CW7gR/5xjHgXR
+         4kfMLQRdZ5+hEeaUb4XRRXmYy6fsdOQc6+ov0duxRUK+Jn+dA0U06KKQFuN0+Wpe14nB
+         YGelnSyu9UsP0EJDOuWefc88avoznLIZIRAUl9Q5JtplTQRkim+DUW4dq/0L8rAwA4/N
+         nUjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681375284; x=1683967284;
+        d=1e100.net; s=20221208; t=1681375287; x=1683967287;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R/tKSXJd14VMawLIxQYv8XyFgKpy9j//5eTEj3JDvMA=;
-        b=lIIoch3AkNaJ9VkwoJ/Sd91vqWOz4JFr8whoEiNu5eJnWHJXsdiW9UO4nHmJKoNDDy
-         KpCE6lL8MSKYjr+L8TxBNarS+IQJPIOM7xv2Vew02cjtma/Ly6oYCr6ZGa40aPqRjTnI
-         hGDheSNVF10hX0LcJM9aJZ8U3BA085pfG0GFDjwjCQXmEUlQIVA7AgimbrH0oROqAoV3
-         WJsraoQpvZBYbRV4zVh/3QFIsuBqVr6vXNPq4X1ER93Tm8o8tXIBDfzt0vNw3T6i2GQ8
-         pPfzvohMYcj56VMSoo2vbeK9Dm8j0BdIBiz2AB080v4xzDteGMBxc10pMMvp22PwrT5i
-         w6Mw==
-X-Gm-Message-State: AAQBX9cRNgCrMJs2gLh4X2cBP7N2qGHmfMSoixr8CJA+C4slHER5aBiK
-        4cO5kd2+SIPumz9dufVZwNs1T0Elj9Q=
-X-Google-Smtp-Source: AKy350ZQTECUP7uwFEK2/w30a6eRITyXMcTSsz/4BJ5NXDkwVQe1MIrU52ZfQVqzAljLH6D1v0y0OQ==
-X-Received: by 2002:a05:6a20:89a8:b0:d3:72c6:b018 with SMTP id h40-20020a056a2089a800b000d372c6b018mr1161686pzg.39.1681375284573;
-        Thu, 13 Apr 2023 01:41:24 -0700 (PDT)
+        bh=MNOw2u2eN+tovkE55NV5VEud2NLie+WZxAuBLZs7iOE=;
+        b=dpLh5WNMkbfwjcr8tNJ5nfOdMpGkGwn3BIk+pLiDUkppO4XnfvWZaTIF8LoO46ekjg
+         2VcGwXm0r0K/f5tGlkzu0lPe/gILAW9Fdh6QcpvWK4SM2SFIRtIsiQ9TG8hInlKDk+on
+         8WSptnfV7G63nQq/xWwPAkST6mbrxstik0PLRF4S4EnQrZoUHccV4uzrbjPoTBG4O12k
+         BezDNzu8cYrKlgpVXFK2Gjy6GjV3AzQeujw9d05h4lsq4ukXjdPaqE1IbwxnErYCjcT8
+         KMVrHu1es/Sag/l70dvjCcuDXsCKWyJjnTlHQF/3hpcwTzFGJjIDM3YObZ7C6fpcOrmz
+         I8Yg==
+X-Gm-Message-State: AAQBX9dHhlhhBRJNBeiLgaW6GWWZFQUpQ/uIfXl5oG/8MRa3J13McwMU
+        9K68sUYGqcE8860T0UkSP3w/RV0Msxg=
+X-Google-Smtp-Source: AKy350aoUTUzMsqvzqRMnUga31Qax0vGfLL3jvS3AOEmZ2sEeXA2MD3TKRqq8riz4b/GZXoq+Atzhg==
+X-Received: by 2002:a05:6a00:2448:b0:63a:cefa:9d44 with SMTP id d8-20020a056a00244800b0063acefa9d44mr2306945pfj.14.1681375287294;
+        Thu, 13 Apr 2023 01:41:27 -0700 (PDT)
 Received: from rh-tp.. ([2406:7400:63:7035:9095:349e:5f0b:ded0])
-        by smtp.gmail.com with ESMTPSA id g8-20020aa78188000000b0063b23c92d02sm817243pfi.212.2023.04.13.01.41.22
+        by smtp.gmail.com with ESMTPSA id g8-20020aa78188000000b0063b23c92d02sm817243pfi.212.2023.04.13.01.41.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 01:41:24 -0700 (PDT)
+        Thu, 13 Apr 2023 01:41:27 -0700 (PDT)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
@@ -57,9 +57,9 @@ Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
         Ojaswin Mujoo <ojaswin@linux.ibm.com>,
         Disha Goel <disgoel@linux.ibm.com>,
         "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFCv3 03/10] ext4: Use __generic_file_fsync_nolock implementation
-Date:   Thu, 13 Apr 2023 14:10:25 +0530
-Message-Id: <334f21c733db6a9a872e91d81af18e9286a88781.1681365596.git.ritesh.list@gmail.com>
+Subject: [RFCv3 04/10] ext2: Use __generic_file_fsync_nolock implementation
+Date:   Thu, 13 Apr 2023 14:10:26 +0530
+Message-Id: <41ba782c0467b46a6cf9e69bd651fbb3c33a78f4.1681365596.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <cover.1681365596.git.ritesh.list@gmail.com>
 References: <cover.1681365596.git.ritesh.list@gmail.com>
@@ -75,81 +75,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ext4 when got converted to iomap for dio, it copied __generic_file_fsync
-implementation to avoid taking inode_lock in order to avoid any deadlock
-(since iomap takes an inode_lock while calling generic_write_sync()).
+Next patch converts ext2 to use iomap interface for DIO.
+iomap layer can call generic_write_sync() -> ext2_fsync() from
+iomap_dio_complete while still holding the inode_lock().
 
-The previous patch already added it's _nolock variant. Hence kill the
-redundant code and use __generic_file_fsync_nolock() function instead.
+Now writeback from other paths doesn't need inode_lock().
+It seems there is also no need of an inode_lock for
+sync_mapping_buffers(). It uses it's own mapping->private_lock
+for it's buffer list handling.
+Hence this patch is in preparation to move ext2 to iomap.
+This uses __generic_file_fsync_nolock() variant in ext2_fsync().
 
 Tested-by: Disha Goel <disgoel@linux.ibm.com>
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- fs/ext4/fsync.c | 31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+ fs/ext2/file.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext4/fsync.c b/fs/ext4/fsync.c
-index 027a7d7037a0..bf1d1b7f4ec7 100644
---- a/fs/ext4/fsync.c
-+++ b/fs/ext4/fsync.c
-@@ -78,21 +78,13 @@ static int ext4_sync_parent(struct inode *inode)
- 	return ret;
- }
+diff --git a/fs/ext2/file.c b/fs/ext2/file.c
+index 6b4bebe982ca..1d0bc3fc88bb 100644
+--- a/fs/ext2/file.c
++++ b/fs/ext2/file.c
+@@ -153,7 +153,9 @@ int ext2_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ 	int ret;
+ 	struct super_block *sb = file->f_mapping->host->i_sb;
  
--static int ext4_fsync_nojournal(struct inode *inode, bool datasync,
--				bool *needs_barrier)
-+static int ext4_fsync_nojournal(struct file *file, loff_t start, loff_t end,
-+				int datasync, bool *needs_barrier)
- {
--	int ret, err;
--
--	ret = sync_mapping_buffers(inode->i_mapping);
--	if (!(inode->i_state & I_DIRTY_ALL))
--		return ret;
--	if (datasync && !(inode->i_state & I_DIRTY_DATASYNC))
--		return ret;
--
--	err = sync_inode_metadata(inode, 1);
--	if (!ret)
--		ret = err;
-+	struct inode *inode = file->f_inode;
-+	int ret;
- 
+-	ret = generic_file_fsync(file, start, end, datasync);
 +	ret = __generic_file_fsync_nolock(file, start, end, datasync);
- 	if (!ret)
- 		ret = ext4_sync_parent(inode);
- 	if (test_opt(inode->i_sb, BARRIER))
-@@ -148,6 +140,14 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 		goto out;
- 	}
- 
-+	if (!sbi->s_journal) {
-+		ret = ext4_fsync_nojournal(file, start, end, datasync,
-+					   &needs_barrier);
-+		if (needs_barrier)
-+			goto issue_flush;
-+		goto out;
-+	}
-+
- 	ret = file_write_and_wait_range(file, start, end);
- 	if (ret)
- 		goto out;
-@@ -166,13 +166,12 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 	 *  (they were dirtied by commit).  But that's OK - the blocks are
- 	 *  safe in-journal, which is all fsync() needs to ensure.
- 	 */
--	if (!sbi->s_journal)
--		ret = ext4_fsync_nojournal(inode, datasync, &needs_barrier);
--	else if (ext4_should_journal_data(inode))
-+	if (ext4_should_journal_data(inode))
- 		ret = ext4_force_commit(inode->i_sb);
- 	else
- 		ret = ext4_fsync_journal(inode, datasync, &needs_barrier);
- 
-+issue_flush:
- 	if (needs_barrier) {
- 		err = blkdev_issue_flush(inode->i_sb->s_bdev);
- 		if (!ret)
++	if (!ret)
++		ret = blkdev_issue_flush(sb->s_bdev);
+ 	if (ret == -EIO)
+ 		/* We don't really know where the IO error happened... */
+ 		ext2_error(sb, __func__,
 -- 
 2.39.2
 
