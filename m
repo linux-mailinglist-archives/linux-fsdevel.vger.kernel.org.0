@@ -2,71 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CE8E6E0C5A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 13:21:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2F9B6E0C68
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 13:26:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229864AbjDMLVr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Apr 2023 07:21:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54368 "EHLO
+        id S230032AbjDML0X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Apr 2023 07:26:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbjDMLVo (ORCPT
+        with ESMTP id S229764AbjDML0V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Apr 2023 07:21:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 928454217
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 04:21:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681384863;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jSfTt/FpZ51XsXOxa366XVa7DCOmNmyBB//s/oWzTsk=;
-        b=JDOOxtWbitDg6ieKXAAtF1fKPzvtcwi5u7mhzpeUSH/kuacWvPM1GRBQzKKEHtQUgTdCh3
-        /WPG9Fd115PYJOCRVcneUMcynSWcYdlBKtFPlI2zJDftCkf6fEycJ/2OsLZOci3dM0Itce
-        iHtzY1nRR3+avE0TUsvBOKTQN4F5QiQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-403-SdaylSguO5y1L_H8XNS9jQ-1; Thu, 13 Apr 2023 07:21:02 -0400
-X-MC-Unique: SdaylSguO5y1L_H8XNS9jQ-1
-Received: by mail-wm1-f69.google.com with SMTP id ay4-20020a05600c1e0400b003f0ad935168so242679wmb.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 04:21:02 -0700 (PDT)
+        Thu, 13 Apr 2023 07:26:21 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D429893ED
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 04:26:19 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id f26so30441500ejb.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 04:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1681385178; x=1683977178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/msDqown+gsJEVmOfzlTbyMpOATpYD/kAuVh4jdSmEQ=;
+        b=5X4Hzoh0yu7xqdwwMJzwItqZb349+O2XmbtGc4wZmScFAqWvlR41kAHd/G5vSmTdDF
+         TwSmjXYnk9aPqmBudu5HRQ7zA/ir998f3C3tqlhsSrkLHO55EPx0PfVVmMpqYWWkOJpb
+         imDolCRSJyxiT9KHMkA7gTmjWXGiEGjBwi8klJF2gTlMsBjFY/21FgAgdWU8XajThuUA
+         lwN8zY2rSBiCbMYkGiBVOd5ryjonht9HXZclfR96nSJog5pVB2LQaE8JGIpPAk6Z/xS8
+         f0qjtt+zifDG3ra3wpDJdgipm+7YwCPJqZAbXKu2sAgEpn5ndWNmktL/wZgIKOUXGXaU
+         CRxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681384861; x=1683976861;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jSfTt/FpZ51XsXOxa366XVa7DCOmNmyBB//s/oWzTsk=;
-        b=WBGn2Ff2gY+03lC8NmXfA+W9QJqo2svDyS/pD35FLx16i9bKzTIZCHHTrByl4BuxMN
-         4soQ9m8sd0bklgTyJ5Efms9Tg+JlU6eTmPTKeOKhcjurzIdxZJcrueNi8FJDqh4MHMqX
-         cIyl7nEjN/ghhHxi3VLPNb9+RKg1jiR45Tg2TTd9k+NPJz9dzFB7t6seEPkBP2/SKKwN
-         uC/PwAgs3Y82GZ2aOom+kvskG7PxkU/SGsWZ6nJkYSldcsWGMiykK9XkB4MmyOeLwMMN
-         iA195zLgvfR8ijbqKexUX3wXw1G7CapjHZ9IJ+idp3hkWV3K57alTZY0ayt4dpUtCb1L
-         D6vg==
-X-Gm-Message-State: AAQBX9d/MAatHHt7+rQJsWbzL2FlwemInfak7UBY2/sZVQnRZN7CvTSo
-        6yVuTdCF43lXXAuLRbs/i/WmUJV9HgRzL8WPk82MiOw4Ou4YKeFDtBRdFD9e6bhD602i3U8Z28o
-        MahL16SOm63N/vHbZiGcnLDWi5g==
-X-Received: by 2002:a5d:4748:0:b0:2f4:bc68:3493 with SMTP id o8-20020a5d4748000000b002f4bc683493mr1179292wrs.34.1681384861480;
-        Thu, 13 Apr 2023 04:21:01 -0700 (PDT)
-X-Google-Smtp-Source: AKy350aqjI6Q+vFzM2qin74WRIRynSqW3dUlzZ+lzWRnT/FaK8OWoaXuG4EWNsNhSjPY7wORElSWBA==
-X-Received: by 2002:a5d:4748:0:b0:2f4:bc68:3493 with SMTP id o8-20020a5d4748000000b002f4bc683493mr1179271wrs.34.1681384861121;
-        Thu, 13 Apr 2023 04:21:01 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id f4-20020adff584000000b002f008477522sm1086917wro.24.2023.04.13.04.20.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Apr 2023 04:21:00 -0700 (PDT)
-Message-ID: <b7fe839d-d914-80f7-6b96-f5f3a9d0c9b0@redhat.com>
-Date:   Thu, 13 Apr 2023 13:20:59 +0200
+        d=1e100.net; s=20221208; t=1681385178; x=1683977178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/msDqown+gsJEVmOfzlTbyMpOATpYD/kAuVh4jdSmEQ=;
+        b=lBUUT35iE3TGA63pQVVUPLCHkHFCE0N46Dc7pEnbbIrCW4XZ4VTiVqQ5fXey9NB/k+
+         98Z5RTp7Pylh0cqNfLPUMtvanSI/Uidar4ZLJov/QWSGSTqjbBDt/HNZc9pd0p7O6/zn
+         U/WPy734kOXZNTECyRbnhPYQi9bVVFFTNqLc7uoeBKASz0bRGpw+Js1tW3p+q67Jgx3p
+         brE30N+A3+dF8gniDKsblCh/uWJDjwEMUpbcPhHyn8rQYUj8OKAlbRH2HE/htvNB4C94
+         zXf6EaOB+1fGZI/Z1Wkz3DlnZdvpDfwrIjihxyb2S1Fequ2q9ZOmlI9+nEw66x0jHUv9
+         HDZw==
+X-Gm-Message-State: AAQBX9fN9V+2iePUQhJsXNwdkqt3HbVuQcowuNnbrip9SnLBgBG7vNvj
+        NtVBDXmYH380QVcQktgEb4F2stg4J4lB7dZwKfoPSA==
+X-Google-Smtp-Source: AKy350YRtD2zTQ9+KiMShjAtzx5fwXvp2NVZX/rprSwV/8Ili7SCqCDXg2Nd5gR33WR1gOzoPiUyEAxmvMQmLGcaIa8=
+X-Received: by 2002:a17:906:2c1a:b0:94e:8e6f:4f1c with SMTP id
+ e26-20020a1709062c1a00b0094e8e6f4f1cmr1086817ejh.15.1681385178080; Thu, 13
+ Apr 2023 04:26:18 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v6 3/3] mm: vmscan: refactor updating
- current->reclaim_state
-Content-Language: en-US
-To:     Yosry Ahmed <yosryahmed@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+References: <20230413104034.1086717-1-yosryahmed@google.com>
+ <20230413104034.1086717-2-yosryahmed@google.com> <0340c57b-dcec-42ba-eb6e-dd5599722ea4@redhat.com>
+In-Reply-To: <0340c57b-dcec-42ba-eb6e-dd5599722ea4@redhat.com>
+From:   Yosry Ahmed <yosryahmed@google.com>
+Date:   Thu, 13 Apr 2023 04:25:41 -0700
+Message-ID: <CAJD7tkZ-6oJewNfPrz+cdd304kr_LKWTHSKeaHUyOQ-8HAw-MA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/3] mm: vmscan: ignore non-LRU-based reclaim in memcg reclaim
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Darrick J. Wong" <djwong@kernel.org>,
         Christoph Lameter <cl@linux.com>,
@@ -82,44 +72,76 @@ To:     Yosry Ahmed <yosryahmed@google.com>,
         Shakeel Butt <shakeelb@google.com>,
         Michal Hocko <mhocko@kernel.org>, Yu Zhao <yuzhao@google.com>,
         Dave Chinner <david@fromorbit.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-mm@kvack.org
-References: <20230413104034.1086717-1-yosryahmed@google.com>
- <20230413104034.1086717-4-yosryahmed@google.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20230413104034.1086717-4-yosryahmed@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 13.04.23 12:40, Yosry Ahmed wrote:
-> During reclaim, we keep track of pages reclaimed from other means than
-> LRU-based reclaim through scan_control->reclaim_state->reclaimed_slab,
-> which we stash a pointer to in current task_struct.
-> 
-> However, we keep track of more than just reclaimed slab pages through
-> this. We also use it for clean file pages dropped through pruned inodes,
-> and xfs buffer pages freed. Rename reclaimed_slab to reclaimed, and add
+On Thu, Apr 13, 2023 at 4:16=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 13.04.23 12:40, Yosry Ahmed wrote:
+> > We keep track of different types of reclaimed pages through
+> > reclaim_state->reclaimed_slab, and we add them to the reported number
+> > of reclaimed pages.  For non-memcg reclaim, this makes sense. For memcg
+> > reclaim, we have no clue if those pages are charged to the memcg under
+> > reclaim.
+> >
+> > Slab pages are shared by different memcgs, so a freed slab page may hav=
+e
+> > only been partially charged to the memcg under reclaim.  The same goes =
+for
+> > clean file pages from pruned inodes (on highmem systems) or xfs buffer
+> > pages, there is no simple way to currently link them to the memcg under
+> > reclaim.
+> >
+> > Stop reporting those freed pages as reclaimed pages during memcg reclai=
+m.
+> > This should make the return value of writing to memory.reclaim, and may
+> > help reduce unnecessary reclaim retries during memcg charging.  Writing=
+ to
+> > memory.reclaim on the root memcg is considered as cgroup_reclaim(), but
+> > for this case we want to include any freed pages, so use the
+> > global_reclaim() check instead of !cgroup_reclaim().
+> >
+> > Generally, this should make the return value of
+> > try_to_free_mem_cgroup_pages() more accurate. In some limited cases (e.=
+g.
+> > freed a slab page that was mostly charged to the memcg under reclaim),
+> > the return value of try_to_free_mem_cgroup_pages() can be underestimate=
+d,
+> > but this should be fine. The freed pages will be uncharged anyway, and =
+we
+> > can charge the memcg the next time around as we usually do memcg reclai=
+m
+> > in a retry loop.
+> >
+> > Fixes: f2fe7b09a52b ("mm: memcg/slab: charge individual slab objects
+> > instead of pages")
+> >
+> > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> > ---
+>
+> LGTM, hopefully the underestimation won't result in a real issue.
+>
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-Would "reclaimed_non_lru" be more expressive? Then,
+Thanks!
 
-mm_account_reclaimed_pages() -> mm_account_non_lru_reclaimed_pages()
-
-
-Apart from that LGTM.
-
--- 
-Thanks,
-
-David / dhildenb
-
+>
+> --
+> Thanks,
+>
+> David / dhildenb
+>
