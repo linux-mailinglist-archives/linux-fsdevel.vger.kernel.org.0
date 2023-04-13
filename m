@@ -2,57 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 793DF6E0485
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 04:39:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 430716E057F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 05:55:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230473AbjDMCja (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Apr 2023 22:39:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35668 "EHLO
+        id S229622AbjDMDzO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Apr 2023 23:55:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229920AbjDMCiy (ORCPT
+        with ESMTP id S229484AbjDMDzM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Apr 2023 22:38:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A64E08698;
-        Wed, 12 Apr 2023 19:37:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7DA9463A9B;
-        Thu, 13 Apr 2023 02:37:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9FEFC433D2;
-        Thu, 13 Apr 2023 02:37:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681353461;
-        bh=3mEJP8tmz/XW5HcFioTquKyOJJLG48D3oWkCAML/yZA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VFrpm/FyfMkwZa8FLObMAtXBOWJhCOW8xxarl4pIGx1OlZ1mmVdxgn4xDUW7U5VQX
-         weA/9t/m+obpOLuy64MR4leWxUBkarf48a4fRP8KLo0XingoJAwmZaZaRSbCCEg4uc
-         1KabZRH5UlVhsBH79/uS+lHiWYYO8E7Tc8gG+fsXUNHB4JyontPqqXilO58ttwfMe+
-         oo4OmOnYh1r6lHM1HhXZlYz/mWzGAIZ9W+MieyTZJoiVhde2UONZ306dguQ6ejCBNJ
-         9/7jWBQhFwVHtQvbz+fJ3tDQo9gBlubx69u5yssAiDMt6UX3zboL4Toidv3Jjh4bHJ
-         VMkQVbQCvggTg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anh Tuan Phan <tuananhlfc@gmail.com>,
+        Wed, 12 Apr 2023 23:55:12 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 487C84EE8;
+        Wed, 12 Apr 2023 20:55:09 -0700 (PDT)
+Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Pxm070TYNzrZm9;
+        Thu, 13 Apr 2023 11:53:43 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Thu, 13 Apr 2023 11:55:06 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, sforshee@kernel.org,
-        shuah@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 6/8] selftests mount: Fix mount_setattr_test builds failed
-Date:   Wed, 12 Apr 2023 22:37:23 -0400
-Message-Id: <20230413023727.74875-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230413023727.74875-1-sashal@kernel.org>
-References: <20230413023727.74875-1-sashal@kernel.org>
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     Miaohe Lin <linmiaohe@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <tongtiangen@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: [PATCH] mm: hwpoison: coredump: support recovery from dump_user_range()
+Date:   Thu, 13 Apr 2023 12:13:36 +0800
+Message-ID: <20230413041336.26874-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500001.china.huawei.com (7.185.36.107)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,38 +49,189 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Anh Tuan Phan <tuananhlfc@gmail.com>
+The dump_user_range() is used to copy the user page to a coredump
+file, but if a hardware memory error occurred during copy, which
+called from __kernel_write_iter() in dump_user_range(), it crashs,
 
-[ Upstream commit f1594bc676579133a3cd906d7d27733289edfb86 ]
+ CPU: 112 PID: 7014 Comm: mca-recover Not tainted 6.3.0-rc2 #425
 
-When compiling selftests with target mount_setattr I encountered some errors with the below messages:
-mount_setattr_test.c: In function ‘mount_setattr_thread’:
-mount_setattr_test.c:343:16: error: variable ‘attr’ has initializer but incomplete type
-  343 |         struct mount_attr attr = {
-      |                ^~~~~~~~~~
+ pc : __memcpy+0x110/0x260
+ lr : _copy_from_iter+0x3bc/0x4c8
+ ...
+ Call trace:
+  __memcpy+0x110/0x260
+  copy_page_from_iter+0xcc/0x130
+  pipe_write+0x164/0x6d8
+  __kernel_write_iter+0x9c/0x210
+  dump_user_range+0xc8/0x1d8
+  elf_core_dump+0x308/0x368
+  do_coredump+0x2e8/0xa40
+  get_signal+0x59c/0x788
+  do_signal+0x118/0x1f8
+  do_notify_resume+0xf0/0x280
+  el0_da+0x130/0x138
+  el0t_64_sync_handler+0x68/0xc0
+  el0t_64_sync+0x188/0x190
 
-These errors might be because of linux/mount.h is not included. This patch resolves that issue.
+Generally, the '->write_iter' of file ops will use copy_page_from_iter()
+and copy_page_from_iter_atomic(), change memcpy() to copy_mc_to_kernel()
+in both of them to handle #MC during source read, which stop coredump
+processing and kill the task instead of kernel panic, but the source
+address may not always an user address, so introduce a new copy_mc flag
+in struct iov_iter{} to indicate that the iter could do a safe memory
+copy, also introduce the helpers to set/clear/check the flag, for now,
+it's only used in coredump's dump_user_range(), but it could expand to
+any other scenarios to fix the similar issue.
 
-Signed-off-by: Anh Tuan Phan <tuananhlfc@gmail.com>
-Acked-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- tools/testing/selftests/mount_setattr/mount_setattr_test.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/coredump.c       |  2 ++
+ include/linux/uio.h | 26 ++++++++++++++++++++++++++
+ lib/iov_iter.c      | 17 +++++++++++++++--
+ 3 files changed, 43 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-index 8c5fea68ae677..969647228817b 100644
---- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-+++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-@@ -18,6 +18,7 @@
- #include <grp.h>
- #include <stdbool.h>
- #include <stdarg.h>
-+#include <linux/mount.h>
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 5df1e6e1eb2b..d1c82ec86797 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -882,7 +882,9 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ 	pos = file->f_pos;
+ 	bvec_set_page(&bvec, page, PAGE_SIZE, 0);
+ 	iov_iter_bvec(&iter, ITER_SOURCE, &bvec, 1, PAGE_SIZE);
++	iov_iter_set_copy_mc(&iter);
+ 	n = __kernel_write_iter(cprm->file, &iter, &pos);
++	iov_iter_clear_copy_mc(&iter);
+ 	if (n != PAGE_SIZE)
+ 		return 0;
+ 	file->f_pos = pos;
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index c459e1d5772b..4a549ce2f6d9 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -43,6 +43,7 @@ struct iov_iter {
+ 	bool nofault;
+ 	bool data_source;
+ 	bool user_backed;
++	bool copy_mc;
+ 	size_t iov_offset;
+ 	/*
+ 	 * Hack alert: overlay ubuf_iovec with iovec + count, so
+@@ -142,6 +143,30 @@ static inline bool user_backed_iter(const struct iov_iter *i)
+ 	return i->user_backed;
+ }
  
- #include "../kselftest_harness.h"
++#ifdef CONFIG_ARCH_HAS_COPY_MC
++static inline void iov_iter_set_copy_mc(struct iov_iter *i)
++{
++	i->copy_mc = true;
++}
++
++static inline void iov_iter_clear_copy_mc(struct iov_iter *i)
++{
++	i->copy_mc = false;
++}
++
++static inline bool iov_iter_is_copy_mc(const struct iov_iter *i)
++{
++	return i->copy_mc;
++}
++#else
++static inline void iov_iter_set_copy_mc(struct iov_iter *i) { }
++static inline void iov_iter_clear_copy_mc(struct iov_iter *i) {}
++static inline bool iov_iter_is_copy_mc(const struct iov_iter *i)
++{
++	return false;
++}
++#endif
++
+ /*
+  * Total number of bytes covered by an iovec.
+  *
+@@ -359,6 +384,7 @@ static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direction,
+ 		.iter_type = ITER_UBUF,
+ 		.user_backed = true,
+ 		.data_source = direction,
++		.copy_mc = false,
+ 		.ubuf = buf,
+ 		.count = count,
+ 		.nr_segs = 1
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 6d0203a3c00a..84bdb09e64a7 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -291,6 +291,7 @@ void iov_iter_init(struct iov_iter *i, unsigned int direction,
+ 		.nofault = false,
+ 		.user_backed = true,
+ 		.data_source = direction,
++		.copy_mc = false,
+ 		.__iov = iov,
+ 		.nr_segs = nr_segs,
+ 		.iov_offset = 0,
+@@ -371,6 +372,14 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
+ EXPORT_SYMBOL_GPL(_copy_mc_to_iter);
+ #endif /* CONFIG_ARCH_HAS_COPY_MC */
  
++static void *memcpy_from_iter(struct iov_iter *i, void *to, const void *from,
++				 size_t size)
++{
++       if (iov_iter_is_copy_mc(i))
++               return (void *)copy_mc_to_kernel(to, from, size);
++	return memcpy(to, from, size);
++}
++
+ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
+ {
+ 	if (WARN_ON_ONCE(!i->data_source))
+@@ -380,7 +389,7 @@ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
+ 		might_fault();
+ 	iterate_and_advance(i, bytes, base, len, off,
+ 		copyin(addr + off, base, len),
+-		memcpy(addr + off, base, len)
++		memcpy_from_iter(i, addr + off, base, len)
+ 	)
+ 
+ 	return bytes;
+@@ -571,7 +580,7 @@ size_t copy_page_from_iter_atomic(struct page *page, unsigned offset, size_t byt
+ 	}
+ 	iterate_and_advance(i, bytes, base, len, off,
+ 		copyin(p + off, base, len),
+-		memcpy(p + off, base, len)
++		memcpy_from_iter(i, p + off, base, len)
+ 	)
+ 	kunmap_atomic(kaddr);
+ 	return bytes;
+@@ -705,6 +714,7 @@ void iov_iter_kvec(struct iov_iter *i, unsigned int direction,
+ 	*i = (struct iov_iter){
+ 		.iter_type = ITER_KVEC,
+ 		.data_source = direction,
++		.copy_mc = false,
+ 		.kvec = kvec,
+ 		.nr_segs = nr_segs,
+ 		.iov_offset = 0,
+@@ -721,6 +731,7 @@ void iov_iter_bvec(struct iov_iter *i, unsigned int direction,
+ 	*i = (struct iov_iter){
+ 		.iter_type = ITER_BVEC,
+ 		.data_source = direction,
++		.copy_mc = false,
+ 		.bvec = bvec,
+ 		.nr_segs = nr_segs,
+ 		.iov_offset = 0,
+@@ -749,6 +760,7 @@ void iov_iter_xarray(struct iov_iter *i, unsigned int direction,
+ 	*i = (struct iov_iter) {
+ 		.iter_type = ITER_XARRAY,
+ 		.data_source = direction,
++		.copy_mc = false,
+ 		.xarray = xarray,
+ 		.xarray_start = start,
+ 		.count = count,
+@@ -772,6 +784,7 @@ void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count)
+ 	*i = (struct iov_iter){
+ 		.iter_type = ITER_DISCARD,
+ 		.data_source = false,
++		.copy_mc = false,
+ 		.count = count,
+ 		.iov_offset = 0
+ 	};
 -- 
-2.39.2
+2.35.3
 
