@@ -2,136 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 901DF6E0D33
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 14:06:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91F246E0E18
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Apr 2023 15:09:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjDMMGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Apr 2023 08:06:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60892 "EHLO
+        id S230134AbjDMNJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Apr 2023 09:09:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbjDMMGd (ORCPT
+        with ESMTP id S230211AbjDMNJS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Apr 2023 08:06:33 -0400
+        Thu, 13 Apr 2023 09:09:18 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17BA2269E;
-        Thu, 13 Apr 2023 05:06:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71AEF93F2;
+        Thu, 13 Apr 2023 06:09:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A2CF76151A;
-        Thu, 13 Apr 2023 12:06:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32A6EC433EF;
-        Thu, 13 Apr 2023 12:06:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0260762E89;
+        Thu, 13 Apr 2023 13:09:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA5C8C433EF;
+        Thu, 13 Apr 2023 13:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681387591;
-        bh=hz2w5nal7eVLlA7Xa6WHUXAtrQ6t9Pp72sNtrEuy3o4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=snY5lLk1fn1oIcjN4BkdeAWylnRoDON8emgSmmuYmNxxElnJsyCBtnSZiUAGCib0t
-         /xGfIoo/VpGtAA/ViWp1ZFxy848h9vALpU1euR51Elhk2OSLOppmaJHLUGZHnbxwBT
-         rB9C7TBUQV1qK2/YABH3aWxqFFHVLsAsLYsckrsI1KbWm+WYeK3zw3m0WUsouucsQc
-         8Z7jM4J30zrwcNomyHfhb8I8yDVF2DzKu2bHpCeFyAPkeL+nEjMLWxO6PTjoyf4CkX
-         KiQ0Ncjbpvhoznd2ltc/pQ70gx8stRVL7WtYFxPtekaHRUxxTeE1DJ6eHDe6xHyHH4
-         ILXUOQ+aVkmkg==
-Date:   Thu, 13 Apr 2023 14:06:24 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: fix sysctls.c built
-Message-ID: <20230413-gepfiffen-hochphase-e98047bd16bd@brauner>
-References: <20230331084502.155284-1-wangkefeng.wang@huawei.com>
- <66c0e8b6-64d1-5be6-cd4d-9700d84e1b84@huawei.com>
- <20230412-sympathie-haltbar-da2d2183067b@brauner>
- <a01a789c-8965-d1dc-cb45-ea9901a9af34@huawei.com>
- <20230413-kufen-infekt-02c7eb2a9adc@brauner>
- <3c98309c-eb56-1aee-5a6a-8f0a4c84d378@huawei.com>
+        s=k20201202; t=1681391356;
+        bh=AWbmYvm0BaPLBXxQYzVBS7Z1o98tfRJX55ZZ9uopePg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=cW5WbjWN+LmvoIXAVWeBWo780XujpOR9w00INy4sikwvZCRjBX3zEEzo+EVjYogN8
+         fvqSjMiMXtZsNLPRdyDuqdDN+EsC+tIXPC0N72FJjIhnLj98jK79Ud3gcDC2nsGERH
+         KtoH+iV5egkyplBkJjIiOgQlZprWEHg01/ZSc1DxriqKYVQ2q2tBVJbhk60dww458r
+         tOJHG+fF6iSbzuxreJnUJwpUdw1XcfktVGcwt60BdsR1Y9gbmqS/acs1gpZRTuQ9ps
+         B5CXZluaFTT+8J5z8eUd0TwIVlugjryhKP1m/lyH6yvWNHgdCpc/KIkOK6keuTboKK
+         hgPz0FsfMX9iw==
+Message-ID: <a486f239b361a6f03cf40c3762876e206c5dbfd8.camel@kernel.org>
+Subject: Re: [LSF/MM/BPF TOPIC] BoF for nfsd
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>
+Cc:     "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Date:   Thu, 13 Apr 2023 09:09:14 -0400
+In-Reply-To: <20230413-perspektive-glasur-6e2685229a95@brauner>
+References: <FF0202C3-7500-4BB3-914B-DBAA3E0EA3D7@oracle.com>
+         <20230413-perspektive-glasur-6e2685229a95@brauner>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3c98309c-eb56-1aee-5a6a-8f0a4c84d378@huawei.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 13, 2023 at 05:45:20PM +0800, Kefeng Wang wrote:
-> 
-> 
-> On 2023/4/13 16:35, Christian Brauner wrote:
-> > On Thu, Apr 13, 2023 at 09:34:54AM +0800, Kefeng Wang wrote:
-> > > 
-> > > 
-> > > On 2023/4/12 17:19, Christian Brauner wrote:
-> > > > On Tue, Apr 11, 2023 at 12:14:44PM +0800, Kefeng Wang wrote:
-> > > > > /proc/sys/fs/overflowuid and overflowgid  will be lost without
-> > > > > building this file, kindly ping, any comments, thanks.
-> > > > > 
-> > > > > 
-> > > > > On 2023/3/31 16:45, Kefeng Wang wrote:
-> > > > > > 'obj-$(CONFIG_SYSCTL) += sysctls.o' must be moved after "obj-y :=",
-> > > > > > or it won't be built as it is overwrited.
-> > > 
-> > > ...
-> > > 
-> > > > Given the description in
-> > > > ab171b952c6e ("fs: move namespace sysctls and declare fs base directory")
-> > > > you probably want to move this earlier.
-> > > 
-> > > Oh, missing that part, but the /proc/sys/fs/overflowuid and overflowgid are
-> > > lost after it, is it expected? Luis, could you take a look? thanks.
-> > 
-> > No, /proc/sys/fs/overflow{g,u}id need to be there of course. What I mean
-> > is something like the following (similar to how net/core/ does it):
-> > 
-> 
-> Thanks for your explanation,
-> 
-> > UNTESTED
-> 
-> Will try,
-> 
-> > ---
-> >   fs/Makefile | 24 +++++++++++++-----------
-> >   1 file changed, 13 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/fs/Makefile b/fs/Makefile
-> > index 05f89b5c962f..dfaea8a28d92 100644
-> > --- a/fs/Makefile
-> > +++ b/fs/Makefile
-> > @@ -6,17 +6,19 @@
-> >   # Rewritten to use lists instead of if-statements.
-> >   #
-> > 
-> > -obj-$(CONFIG_SYSCTL)           += sysctls.o
-> > -
-> > -obj-y :=       open.o read_write.o file_table.o super.o \
-> > -               char_dev.o stat.o exec.o pipe.o namei.o fcntl.o \
-> > -               ioctl.o readdir.o select.o dcache.o inode.o \
-> > -               attr.o bad_inode.o file.o filesystems.o namespace.o \
-> > -               seq_file.o xattr.o libfs.o fs-writeback.o \
-> > -               pnode.o splice.o sync.o utimes.o d_path.o \
-> > -               stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
-> > -               fs_types.o fs_context.o fs_parser.o fsopen.o init.o \
-> > -               kernel_read_file.o mnt_idmapping.o remap_range.o
-> > +obj-y                  := fs_types.o
-> > +obj-$(CONFIG_SYSCTL)   += sysctls.o
-> > +obj-y                  += open.o read_write.o file_table.o super.o \
-> > +                          char_dev.o stat.o exec.o pipe.o namei.o \
-> > +                          fcntl.o ioctl.o readdir.o select.o dcache.o \
-> > +                          inode.o attr.o bad_inode.o file.o \
-> > +                          filesystems.o namespace.o seq_file.o \
-> > +                          xattr.o libfs.o fs-writeback.o pnode.o \
-> > +                          splice.o sync.o utimes.o d_path.o stack.o \
-> > +                          fs_struct.o statfs.o fs_pin.o nsfs.o \
-> > +                          fs_types.o fs_context.o fs_parser.o \
-> 
-> drop this fs_types.o ?
+On Thu, 2023-04-13 at 11:33 +0200, Christian Brauner wrote:
+> On Wed, Apr 12, 2023 at 06:27:07PM +0000, Chuck Lever III wrote:
+> > I'd like to request some time for those interested specifically
+> > in NFSD to gather and discuss some topics. Not a network file
+> > system free-for-all, but specifically for NFSD, because there
+> > is a long list of potential topics:
+> >=20
+> >     =E2=80=A2 Progress on using iomap for NFSD READ/READ_PLUS (anna)
+> >     =E2=80=A2 Replacing nfsd_splice_actor (all)
+> >     =E2=80=A2 Transition from page arrays to bvecs (dhowells, hch)
+> >     =E2=80=A2 tmpfs directory cookie stability (cel)
+> >     =E2=80=A2 timestamp resolution and i_version (jlayton)
+>=20
+> I'd attend this one.
+>=20
 
-Yes.
+I wonder if we ought to propose a separate FS track spot for this? I
+sort of expect some lively discussion, and this may be of more interest
+than just nfsd folks.
+
+> >     =E2=80=A2 GSS Kerberos futures (dhowells)
+> >     =E2=80=A2 NFS/NFSD CI (jlayton)
+> >     =E2=80=A2 NFSD POSIX to NFSv4 ACL translation - writing down the ru=
+les (all)
+>=20
+> I have some experience dealing with ACLs so I'm happy to attend just in
+> case I may be useful.
+
+That would be helpful! I'll note that there was a draft RFC for this
+many years ago, but it expired:
+
+  =C2=A0https://datatracker.ietf.org/doc/html/draft-ietf-nfsv4-acl-mapping-=
+05
+
+I think most of the rules are laid out there, but there are some areas
+where things just don't work right.
+
+A more radical idea:
+
+I wonder if we could get any traction at the IETF on a POSIX ACL
+extension for NFSv4? Basically, we could resurrect the old v3 nfsacl
+protocol as new operations for v4, and allow the client and server to
+negotiate on using them.
+
+Given that almost all the clients and servers in operation on the planet
+have to translate these, it makes some sense to avoid the translation
+when we can.
+
+--=20
+Jeff Layton <jlayton@kernel.org>
