@@ -2,49 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 566C66E23FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 15:06:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2049C6E2408
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 15:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbjDNNGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 09:06:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47008 "EHLO
+        id S229772AbjDNNMF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 09:12:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbjDNNGw (ORCPT
+        with ESMTP id S229540AbjDNNME (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 09:06:52 -0400
+        Fri, 14 Apr 2023 09:12:04 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76B6A269E;
-        Fri, 14 Apr 2023 06:06:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 793673A9C;
+        Fri, 14 Apr 2023 06:12:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=a7uVri7lJkNYdLXa9nTsHNwRFKHH3fmlJle0oiZUJUc=; b=QOZk1zGQh/c8rQTFozR3dgbCES
-        4H1pF/gCflNH8O5Xcq30nz0QZZ0O3g8IDItFc2bF24qc3HRJI21Eh+vYEjS1pB/rl8M6XrqPjtx9v
-        6YY2yoNXcSdsrPUfqx8uBWjNNHzX9cGU/LK2mczlGV1wKE1JK9x9gF/jFrPbVbWEXDVCE3aJlxNS6
-        QIV2rLiaLvSz6JVv63J2vhX58n+QcFbUw3gCVcs+616iWL+f5kdyooWwg6n9N8OwaWj/XMhamlUAj
-        rXw6G2gtRnHbOQLKH69zJRfcFFe536SqCzTA8mn1Inm4xVFo0kFgXvUtFqZ4isy2SyT5x15E0p07K
-        XAQLzLaQ==;
+        bh=LL1q5+2/qoyTMAi0m5Inbcnk8ARxhmQA/eDmbuGrVFI=; b=Kh6UZuqbs5BYZHX/qXCrMWvBed
+        sJUUix+JdjmyxKIEMeJJtEqqZgKn8yyQULC6IyHM46/A2tyZ6xZJmpmn0RK+tr5XQ+tBkknUMz6Rl
+        p2VklbLcmZqQh5lqGXnQER9H/UtNUWCyo5itilat+q+I40osSQMULhltAr7xwqSL9sssNjHljay86
+        HNZArBFFZTEuoIJ4Oqj1FBvOOsOJ3wphSEgn4DWTi6FibfUTG1r3bN1o58zgJ7EseaJNEAtERayoj
+        Dhbi/isUG25Pm1jO3oSXXnCHeGtwr741SJfWpfZSQGyP5toHjMjdx/MdRmovRpqNYdkyefMjJfFjk
+        k5s7BE3w==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pnJ8a-009dKj-39;
-        Fri, 14 Apr 2023 13:06:48 +0000
-Date:   Fri, 14 Apr 2023 06:06:48 -0700
+        id 1pnJDc-009eNP-38;
+        Fri, 14 Apr 2023 13:12:00 +0000
+Date:   Fri, 14 Apr 2023 06:12:00 -0700
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Ritesh Harjani <ritesh.list@gmail.com>
+To:     Jan Kara <jack@suse.cz>
 Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.cz>,
         "Darrick J . Wong" <djwong@kernel.org>,
         Ojaswin Mujoo <ojaswin@linux.ibm.com>,
         Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [RFCv3 10/10] iomap: Add trace points for DIO path
-Message-ID: <ZDlP6EiwKDE35ZG7@infradead.org>
-References: <ZDjs+/T/mf1nHUHI@infradead.org>
- <877cuezykp.fsf@doe.com>
+Subject: Re: [RFCv3 02/10] libfs: Add __generic_file_fsync_nolock
+ implementation
+Message-ID: <ZDlRIEiEm+CRDJxG@infradead.org>
+References: <cover.1681365596.git.ritesh.list@gmail.com>
+ <e65768eb0fe145c803ba4afdc869a1757d51d758.1681365596.git.ritesh.list@gmail.com>
+ <ZDjrvCbCwxN+mRUS@infradead.org>
+ <20230414125148.du7r6ljdyzckoysh@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <877cuezykp.fsf@doe.com>
+In-Reply-To: <20230414125148.du7r6ljdyzckoysh@quack3>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -56,10 +59,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 01:26:38PM +0530, Ritesh Harjani wrote:
-> How about this below change? Does this look good to you?
-> It should cover all error types and both entry and exit.
+On Fri, Apr 14, 2023 at 02:51:48PM +0200, Jan Kara wrote:
+> On Thu 13-04-23 22:59:24, Christoph Hellwig wrote:
+> > Still no fan of the naming and placement here.  This is specific
+> > to the fs/buffer.c infrastructure.
+> 
+> I'm fine with moving generic_file_fsync() & friends to fs/buffer.c and
+> creating the new function there if it makes you happier. But I think
+> function names should be consistent (hence the new function would be named
+> __generic_file_fsync_nolock()). I agree the name is not ideal and would use
+> cleanup (along with transitioning everybody to not take i_rwsem) but I
+> don't want to complicate this series by touching 13+ callsites of
+> generic_file_fsync() and __generic_file_fsync(). That's for a separate
+> series.
 
-I don't think it is very useful.  The complete tracepoint is the
-end of the I/O.  Having a separate end one doesn't make sense.
-That's why I suggested a queued one for the asynchronous case.
+I would not change the existing function.  Just do the right thing for
+the new helper and slowly migrate over without complicating this series.
