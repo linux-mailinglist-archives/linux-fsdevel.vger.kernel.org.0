@@ -2,67 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5DF56E23B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 14:55:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD81E6E241C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 15:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229864AbjDNMzN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 08:55:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38830 "EHLO
+        id S229935AbjDNNQ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 09:16:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229720AbjDNMzM (ORCPT
+        with ESMTP id S229457AbjDNNQ5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 08:55:12 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D0076BBA8;
-        Fri, 14 Apr 2023 05:54:55 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A0EC4B3;
-        Fri, 14 Apr 2023 05:55:40 -0700 (PDT)
-Received: from [10.57.20.128] (unknown [10.57.20.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 03D943F6C4;
-        Fri, 14 Apr 2023 05:54:53 -0700 (PDT)
-Message-ID: <3a43f6f8-c34e-72a3-f7c2-7dde96e54e59@arm.com>
-Date:   Fri, 14 Apr 2023 13:54:52 +0100
+        Fri, 14 Apr 2023 09:16:57 -0400
+Received: from mail.posteburundi.bi (mail.posteburundi.bi [196.2.15.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8185F3A8D;
+        Fri, 14 Apr 2023 06:16:54 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.posteburundi.bi (Postfix) with ESMTP id 0410F21C3EA1;
+        Fri, 14 Apr 2023 14:57:47 +0200 (CAT)
+Received: from mail.posteburundi.bi ([127.0.0.1])
+        by localhost (mail.posteburundi.bi [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id l3mJ685kePPU; Fri, 14 Apr 2023 14:57:46 +0200 (CAT)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.posteburundi.bi (Postfix) with ESMTP id B1C4221C4653;
+        Fri, 14 Apr 2023 14:57:46 +0200 (CAT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.posteburundi.bi B1C4221C4653
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteburundi.bi;
+        s=49734F3E-B0A3-11EC-9971-1E25BC38DE0A; t=1681477066;
+        bh=dfzNWNrtmGnDzpFfAqoHDukvC9bBVQxHlsvV6ZwOE+8=;
+        h=MIME-Version:To:From:Date:Message-Id;
+        b=anzM3foL0am+x2h25cxcLLcvknrJHsSVxF9MKsUN9m1ZpGNN0pUCyU4QGkU1sw2AS
+         KTZbojrEixWZEd8Orkbq7bjo/0MvuzAp2kQ4nHiXs3//ZbjqJd/1EymqL2Iu72LI19
+         O+cd+3a7LNj/AgbXCq9jAQOW+N5ypEUCVaSvLuwDzCfCiYKCUTYw+vizc7F/sglJjv
+         icDchdVH32nyzWDFbLAuO6w03BqzzXB9clo+ngGYm65h4cxnlgjtIJRUgPdXtZ6zWl
+         KCAjCJhTlMocYdGjOlmOmzUPS8loo/nHa9q6+JD/JV9lhJL8OlaYH0QYAwnAM0yDHQ
+         7WtnKiGzL4U4g==
+X-Virus-Scanned: amavisd-new at posteburundi.bi
+Received: from mail.posteburundi.bi ([127.0.0.1])
+        by localhost (mail.posteburundi.bi [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id TCfkmwAJqP-Z; Fri, 14 Apr 2023 14:57:46 +0200 (CAT)
+Received: from [192.168.8.101] (unknown [41.85.163.110])
+        by mail.posteburundi.bi (Postfix) with ESMTPSA id 090AA21C3EA1;
+        Fri, 14 Apr 2023 14:57:38 +0200 (CAT)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.10.0
-Subject: Re: [PATCH 0/5] Alter fcntl to handle int arguments correctly
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        David Laight <David.Laight@ACULAB.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-fsdevel@vger.kernel.org,
-        Luca Vizzarro <Luca.Vizzarro@arm.com>
-References: <20230414100212.766118-1-Luca.Vizzarro@arm.com>
- <20230414-krumm-dekorativ-60ed7358b587@brauner>
-From:   Luca Vizzarro <Luca.Vizzarro@arm.com>
-In-Reply-To: <20230414-krumm-dekorativ-60ed7358b587@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.5 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Representative Needed
+To:     Recipients <info@posteburundi.bi>
+From:   Global Trader Company Ltd UK <info@posteburundi.bi>
+Date:   Fri, 14 Apr 2023 13:57:22 +0100
+Reply-To: potterroger68@gmail.com
+Message-Id: <20230414125739.090AA21C3EA1@mail.posteburundi.bi>
+X-Spam-Status: No, score=3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14/04/2023 13:37, Christian Brauner wrote
-> Fyi, this blurb at the end breaks applying this series.
-> 
-> It means when someone pulls these patches down they get corrupted git
-> patches. You should fix your setup to not have this nonsense in your
-> mails. I tried to apply this for review to v6.2 up until v6.3-mainline
-> until I realized that the patches are corrupted by the blurb at the
-> end...
+My name is , Mrs Rita Potter Rogers we need a Company Representative in you=
+r city location, you can work online or at home and get good payment, conta=
+ct us if interested on this Email: potterroger68@gmail.com
 
-Apologies! There was an error in my end with the selection of the SMTP 
-server. That was definitely not meant to be there! Will make sure to 
-repost correctly.
+
