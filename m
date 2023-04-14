@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 655326E26E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 17:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 313476E26EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 17:27:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230432AbjDNP0w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 11:26:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46548 "EHLO
+        id S231389AbjDNP1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 11:27:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229932AbjDNP0m (ORCPT
+        with ESMTP id S231236AbjDNP1D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 11:26:42 -0400
+        Fri, 14 Apr 2023 11:27:03 -0400
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 68D7BCC26;
-        Fri, 14 Apr 2023 08:26:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F0073CC39;
+        Fri, 14 Apr 2023 08:26:32 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F7DD1756;
-        Fri, 14 Apr 2023 08:26:05 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B11A41758;
+        Fri, 14 Apr 2023 08:26:07 -0700 (PDT)
 Received: from localhost.localdomain (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E1DE73F6C4;
-        Fri, 14 Apr 2023 08:25:18 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2F1813F6C4;
+        Fri, 14 Apr 2023 08:25:21 -0700 (PDT)
 From:   Luca Vizzarro <Luca.Vizzarro@arm.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Luca Vizzarro <Luca.Vizzarro@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+Cc:     Luca Vizzarro <Luca.Vizzarro@arm.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         Jeff Layton <jlayton@kernel.org>,
@@ -35,11 +35,10 @@ Cc:     Luca Vizzarro <Luca.Vizzarro@arm.com>,
         "Theodore Ts'o" <tytso@mit.edu>,
         David Laight <David.Laight@ACULAB.com>,
         Mark Rutland <Mark.Rutland@arm.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-morello@op-lists.linaro.org
-Subject: [PATCH v2 4/5] memfd: Pass argument of memfd_fcntl as int
-Date:   Fri, 14 Apr 2023 16:24:58 +0100
-Message-Id: <20230414152459.816046-5-Luca.Vizzarro@arm.com>
+        linux-fsdevel@vger.kernel.org, linux-morello@op-lists.linaro.org
+Subject: [PATCH v2 5/5] dnotify: Pass argument of fcntl_dirnotify as int
+Date:   Fri, 14 Apr 2023 16:24:59 +0100
+Message-Id: <20230414152459.816046-6-Luca.Vizzarro@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230414152459.816046-1-Luca.Vizzarro@arm.com>
 References: <20230414152459.816046-1-Luca.Vizzarro@arm.com>
@@ -55,14 +54,12 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 The interface for fcntl expects the argument passed for the command
-F_ADD_SEALS to be of type int. The current code wrongly treats it as
+F_DIRNOTIFY to be of type int. The current code wrongly treats it as
 a long. In order to avoid access to undefined bits, we should explicitly
 cast the argument to int.
 
-This commit changes the signature of all the related and helper
-functions so that they treat the argument as int instead of long.
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Jeff Layton <jlayton@kernel.org>
@@ -74,52 +71,58 @@ Cc: "Theodore Ts'o" <tytso@mit.edu>
 Cc: David Laight <David.Laight@ACULAB.com>
 Cc: Mark Rutland <Mark.Rutland@arm.com>
 Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
 Cc: linux-morello@op-lists.linaro.org
+Acked-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Luca Vizzarro <Luca.Vizzarro@arm.com>
 ---
- include/linux/memfd.h | 4 ++--
- mm/memfd.c            | 6 +-----
- 2 files changed, 3 insertions(+), 7 deletions(-)
+ fs/notify/dnotify/dnotify.c | 4 ++--
+ include/linux/dnotify.h     | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/memfd.h b/include/linux/memfd.h
-index 4f1600413f91..e7abf6fa4c52 100644
---- a/include/linux/memfd.h
-+++ b/include/linux/memfd.h
-@@ -5,9 +5,9 @@
- #include <linux/file.h>
+diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+index 190aa717fa32..ebdcc25df0f7 100644
+--- a/fs/notify/dnotify/dnotify.c
++++ b/fs/notify/dnotify/dnotify.c
+@@ -199,7 +199,7 @@ void dnotify_flush(struct file *filp, fl_owner_t id)
+ }
  
- #ifdef CONFIG_MEMFD_CREATE
--extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned long arg);
-+extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned int arg);
+ /* this conversion is done only at watch creation */
+-static __u32 convert_arg(unsigned long arg)
++static __u32 convert_arg(unsigned int arg)
+ {
+ 	__u32 new_mask = FS_EVENT_ON_CHILD;
+ 
+@@ -258,7 +258,7 @@ static int attach_dn(struct dnotify_struct *dn, struct dnotify_mark *dn_mark,
+  * up here.  Allocate both a mark for fsnotify to add and a dnotify_struct to be
+  * attached to the fsnotify_mark.
+  */
+-int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
++int fcntl_dirnotify(int fd, struct file *filp, unsigned int arg)
+ {
+ 	struct dnotify_mark *new_dn_mark, *dn_mark;
+ 	struct fsnotify_mark *new_fsn_mark, *fsn_mark;
+diff --git a/include/linux/dnotify.h b/include/linux/dnotify.h
+index b1d26f9f1c9f..9f183a679277 100644
+--- a/include/linux/dnotify.h
++++ b/include/linux/dnotify.h
+@@ -30,7 +30,7 @@ struct dnotify_struct {
+ 			    FS_MOVED_FROM | FS_MOVED_TO)
+ 
+ extern void dnotify_flush(struct file *, fl_owner_t);
+-extern int fcntl_dirnotify(int, struct file *, unsigned long);
++extern int fcntl_dirnotify(int, struct file *, unsigned int);
+ 
  #else
--static inline long memfd_fcntl(struct file *f, unsigned int c, unsigned long a)
-+static inline long memfd_fcntl(struct file *f, unsigned int c, unsigned int a)
+ 
+@@ -38,7 +38,7 @@ static inline void dnotify_flush(struct file *filp, fl_owner_t id)
+ {
+ }
+ 
+-static inline int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
++static inline int fcntl_dirnotify(int fd, struct file *filp, unsigned int arg)
  {
  	return -EINVAL;
  }
-diff --git a/mm/memfd.c b/mm/memfd.c
-index a0a7a37e8177..69b90c31d38c 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -243,16 +243,12 @@ static int memfd_get_seals(struct file *file)
- 	return seals ? *seals : -EINVAL;
- }
- 
--long memfd_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
-+long memfd_fcntl(struct file *file, unsigned int cmd, unsigned int arg)
- {
- 	long error;
- 
- 	switch (cmd) {
- 	case F_ADD_SEALS:
--		/* disallow upper 32bit */
--		if (arg > UINT_MAX)
--			return -EINVAL;
--
- 		error = memfd_add_seals(file, arg);
- 		break;
- 	case F_GET_SEALS:
 -- 
 2.34.1
 
