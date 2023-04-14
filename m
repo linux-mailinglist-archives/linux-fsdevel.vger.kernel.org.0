@@ -2,79 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8840F6E1B06
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 06:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D9226E1B7D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 07:11:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229618AbjDNEVO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 00:21:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55102 "EHLO
+        id S229716AbjDNFLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 01:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbjDNEVN (ORCPT
+        with ESMTP id S229766AbjDNFLc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 00:21:13 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B5444B2;
-        Thu, 13 Apr 2023 21:21:11 -0700 (PDT)
+        Fri, 14 Apr 2023 01:11:32 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 067D440C0;
+        Thu, 13 Apr 2023 22:11:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jdps3r6fgYR8iwPcyplXDldaP6A4WGQs91BonlW9KMQ=; b=sx9fxINcbWPbnHjCjX/Y3sAUiX
-        iSBpALQJKnaqvR0yvC2UpxuEidZ7a9t7Sil+lSqVyIEAyfub2n2JNx0fuCS4ziQwAmiEUgNZvWit9
-        LWecx1R12XcwTI7pCuqNsLPROaTYLbohdohSsZrIDOZ9+zSE2WIjuivYu3FfdZcj0+r1RnHuhbNl0
-        iv5jxfUfA8wQ/QRhb8nWru0sz7Zay1b8KBgtz6J7KQa4V6jIKGwdnTknxkFzTrxqyRhRuAJmjXjUI
-        N3NqGqqp46x97lR599e8n6fQNSEtjF9suyq3Wxo1fOXzhk0jNqTiYckhS+vn7NV+9TQCKYAZfAFqk
-        tR98CjTQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pnAvo-008qNF-2r;
-        Fri, 14 Apr 2023 04:21:04 +0000
-Date:   Fri, 14 Apr 2023 05:21:04 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     Neil Brown <neilb@suse.de>, Jeffrey Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: allowing for a completely cached umount(2) pathwalk
-Message-ID: <20230414042104.GI3390869@ZenIV>
-References: <95ee689c76bf034fa2fe9fade0bccdb311f3a04f.camel@kernel.org>
- <168142566371.24821.15867603327393356000@noble.neil.brown.name>
- <20230414024312.GF3390869@ZenIV>
- <8EC5C625-ACD6-4BA0-A190-21A73CCBAC34@hammerspace.com>
- <20230414035104.GH3390869@ZenIV>
- <93A5B3C4-0E20-4531-9B65-0D24C092CE70@hammerspace.com>
+        bh=WNOpNMH/eVLZcNAlnGp7soNPe+TQ073CyBzF+5FM2Ds=; b=K0qBJEdDeP8bxy0/G8rBpyKSSg
+        xp0T/wvagY9TVPFgsUvWcAz+bmk5DHUusDpNl1DxzquVfg2R+5bV7o24jjVsT5h9JqagvZWLBK9Sp
+        KxlO4JJOZfO8AxZrHpuNjEQaLZHjrNQvj76TnQ0gPUMFyMHP5yZthzbs2/XPlW1a0yiKgAPrak9oX
+        fgTuEH2nmivhPfks5SoR+ZGTaD3SgXEDu+f0cjd1MbGeMCZUQo7M7vkFFpxWrUVG82sy5rsZsxOAb
+        eg3Otbqk3VqZvHuog9uT6uGBc2ZVQB6meB5n312fEo/ivl74F2a68RcayscAlTlJLd+euMKFsTp3k
+        05BT889Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pnBia-008KcZ-0w;
+        Fri, 14 Apr 2023 05:11:28 +0000
+Date:   Thu, 13 Apr 2023 22:11:28 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Bernd Schubert <bschubert@ddn.com>, axboe@kernel.dk,
+        io-uring@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        dsingh@ddn.com
+Subject: Re: [PATCH 1/2] fs: add FMODE_DIO_PARALLEL_WRITE flag
+Message-ID: <ZDjggMCGautPUDpW@infradead.org>
+References: <20230307172015.54911-2-axboe@kernel.dk>
+ <20230412134057.381941-1-bschubert@ddn.com>
+ <CAJfpegt_ZCVodOhQCzF9OqKnCr65mKax0Gu4OTN8M51zP+8TcA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <93A5B3C4-0E20-4531-9B65-0D24C092CE70@hammerspace.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CAJfpegt_ZCVodOhQCzF9OqKnCr65mKax0Gu4OTN8M51zP+8TcA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 04:06:03AM +0000, Trond Myklebust wrote:
+On Thu, Apr 13, 2023 at 09:40:29AM +0200, Miklos Szeredi wrote:
+> fuse_direct_write_iter():
 > 
+> bool exclusive_lock =
+>     !(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES) ||
+>     iocb->ki_flags & IOCB_APPEND ||
+>     fuse_direct_write_extending_i_size(iocb, from);
 > 
-> > On Apr 13, 2023, at 23:51, Al Viro <viro@ZenIV.linux.org.uk> wrote:
-> > 
-> > On Fri, Apr 14, 2023 at 03:28:45AM +0000, Trond Myklebust wrote:
-> > 
-> >> We already have support for directory file descriptors when mounting with move_mount(). Why not add a umountat() with similar support for the unmount side?
-> >> Then add a syscall to allow users with (e.g.) the CAP_DAC_OVERRIDE privilege to convert the mount-id into an O_PATH file descriptor.
-> > 
-> > You can already do umount -l /proc/self/fd/69 if you have a descriptor.
-> > Converting mount-id to O_PATH... might be an interesting idea.
+> If the write is size extending, then it will take the lock exclusive.
+> OTOH, I guess that it would be unusual for lots of  size extending
+> writes to be done in parallel.
 > 
-> A dedicated umountat() might avoid the need for the lazy flag, if it were allowed to close the descriptor on success for the special case of an empty path.
+> What would be the effect of giving the  FMODE_DIO_PARALLEL_WRITE hint
+> and then still serializing the writes?
 
-No.  It's a wrong abstraction layer, anyway - "close the descriptor"
-!= "make the opened file close", nevermind that it's a very odd
-corner case that will cause a lot of headache down the road.
+I have no idea how this flags work, but XFS also takes i_rwsem
+exclusively for appends, when the positions and size aren't aligned to
+the block size, and a few other cases.
