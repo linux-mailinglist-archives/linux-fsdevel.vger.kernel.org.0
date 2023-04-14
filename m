@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3F846E259C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:25:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 419956E259E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:26:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230503AbjDNOZx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 10:25:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49434 "EHLO
+        id S230477AbjDNO0F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 10:26:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230499AbjDNOZf (ORCPT
+        with ESMTP id S230491AbjDNOZl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 10:25:35 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A945C159;
-        Fri, 14 Apr 2023 07:25:08 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id z11-20020a17090abd8b00b0024721c47ceaso4803623pjr.3;
-        Fri, 14 Apr 2023 07:25:08 -0700 (PDT)
+        Fri, 14 Apr 2023 10:25:41 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F0BC174;
+        Fri, 14 Apr 2023 07:25:17 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id n17so2474695pln.8;
+        Fri, 14 Apr 2023 07:25:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681482307; x=1684074307;
+        d=gmail.com; s=20221208; t=1681482316; x=1684074316;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dV/mcZq3W0H+ZVjv4/WnTWEPlbKKMR+weOFNfLWMeuE=;
-        b=BQzfiDtPhE/M68lDOGSaU8+eH4GXZloBn+mcpK/aB1N6LYOdAjEHlkaXhXyCfvnuvb
-         CEpHvh+6L7eTtlX4yjqbuSmzGdE8fDpHFFYGnZbcZ6MNJT9ylYo2GZtipXJ+6+UzOHTP
-         D9tDXMnJaFlxK7VzjklsrLI+Av/83wf+aOZbs0pt3RSvdic9m6nNNQPQNVFeZpQ+CdQC
-         995Zkm9AnPgmLkqehhkRv+/kwi2qGfOnf/V+BnSYKMp7WXLrh660WuQiac7blN5+7+zM
-         OxDurW2yAjeOkZJcY9VilooGc5d9qjlhXDXtnE3QoGRPpuKLJN+X+vr5d2OKSx411qOk
-         mH+A==
+        bh=NclmCECex/CFHpfM/6wkOB23PF4WtO4cEeKh/pps1Cs=;
+        b=V/AYfRJNaMRNYL9IFUoiq8cp7WDMTq2GdsZvRBqNgIQMjdcljye7UNo4NkMi4droC4
+         g5yT7eVZsB6DEJwhMaSh3Br5JzCqVkrbV1+D6X5yYOdeaazRSZc17CpFg5tcLGYOjwQT
+         97ybU/LG3FFdXqYCQI8mH9xuTMVWg1lxOxMNJFuV2OvfA9O6XB/Fg78pyV5CD0wc+3v4
+         BUCcN4TLNpn2PMDRaTahfhVrMZNCmzTbW/+ugSX+IsLMaYMGzhOgUaEZ+bYBSMuxem1z
+         mpC8ySmb9LnKke2HRfRgo/xQlUYMkO3YtXm14ThPJznVqyVcaH20JK5Gwte/rlNF4GH/
+         3Irw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681482307; x=1684074307;
+        d=1e100.net; s=20221208; t=1681482316; x=1684074316;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dV/mcZq3W0H+ZVjv4/WnTWEPlbKKMR+weOFNfLWMeuE=;
-        b=PncXfUVSv4SOYf3jdUX0J4/cn3EljQIX9CeIJfVVkBnOldqJcpOoqmRqK+GFyUxA2/
-         uGuGxRxk0rb2AAg14iqE3Laa/F15zI0hQpFWxh2wKbqelbZF5+c3r5XDcoNh/Gc8xbqX
-         nZcFa7mAlSekRCI5ckUlK1rBbI/hn/9vnrJsQcORP22xXD834IT++R32bgYtfNn9STgJ
-         Qd6Ozlp87AZfXUTzEMJfUvnFTBHUXIuhgoN2CSITq2cZ7OEC8503x7ckP3LRVY8o0d0H
-         2bR7i9oOw1BhGD/39gmunyZDqslab/v1FlfEM3HK6lRAzYbGUSU2QcHMZpsItktuKAIq
-         Qg2g==
-X-Gm-Message-State: AAQBX9fILVNpyWWN90rMbvcZoeligUZojvtgYqb5EvDnPOD0asfqCa68
-        hz7AJ9CMmTfF/tCFM6t+Img=
-X-Google-Smtp-Source: AKy350aLkOiAuG932gYmw+BNYfvRwYLr6hT7jeWvEtEaIuQt7YrDBI1fGEqKpu+mP4tyXM4ARraeiA==
-X-Received: by 2002:a17:902:ce89:b0:19f:2dff:21a4 with SMTP id f9-20020a170902ce8900b0019f2dff21a4mr3285427plg.16.1681482307277;
-        Fri, 14 Apr 2023 07:25:07 -0700 (PDT)
+        bh=NclmCECex/CFHpfM/6wkOB23PF4WtO4cEeKh/pps1Cs=;
+        b=hFRxCaokBTIcSxQPcIA8ssdBIleLZVURsfkAo3+eg5koiv6I7tsdJgF/FxlV3hAIEF
+         926WfCaRz3x2Rgsna1SaG8pP0Q24lG9+AMc1e8tPprb8ZKmArLzXaSc8uGOjdLCa4X23
+         H0BgOxcW+IszZaByY+uAR4NEbshXCJPXASzPRSaH/1x6HZosBQEHiHYxbhVixdoX3xd/
+         8b0ZiOj62d2ocl2FoWQszLZHSD1hGtG4Il3HY5NlX8R2Mpl3uUAKy8K9PD0vQU5W2KwV
+         M2DeFO5wsityzxZqVrotTRZ+u/Xb09uS0o9GusUMqbcjyFlJCf1fOj6azOwcUs1SpZmf
+         rwvw==
+X-Gm-Message-State: AAQBX9eB7tKWvfTWqfahePpz30Kbl9DJlrHw0/P+Ze2AGXO3/gD/vW+h
+        4JY1yJMAmQzCSLXC3AuBB+I=
+X-Google-Smtp-Source: AKy350ZPU+Edlq0VRRV3L/JnX2VakyMBg2O0FN77xU7rql7Qa95cBelgIKvLqgkAsYrK6MRTS18ulw==
+X-Received: by 2002:a17:90a:7382:b0:244:af48:c4f3 with SMTP id j2-20020a17090a738200b00244af48c4f3mr5780766pjg.7.1681482316538;
+        Fri, 14 Apr 2023 07:25:16 -0700 (PDT)
 Received: from strix-laptop.. (2001-b011-20e0-1499-8303-7502-d3d7-e13b.dynamic-ip6.hinet.net. [2001:b011:20e0:1499:8303:7502:d3d7:e13b])
-        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.24.58
+        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.25.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Apr 2023 07:25:06 -0700 (PDT)
+        Fri, 14 Apr 2023 07:25:16 -0700 (PDT)
 From:   Chih-En Lin <shiyn.lin@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Qi Zheng <zhengqi.arch@bytedance.com>,
@@ -111,9 +111,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Pedro Fonseca <pfonseca@purdue.edu>,
         Jim Huang <jserv@ccns.ncku.edu.tw>,
         Huichun Feng <foxhoundsk.tw@gmail.com>
-Subject: [PATCH v5 05/17] mm: Handle COW-ed PTE during zapping
-Date:   Fri, 14 Apr 2023 22:23:29 +0800
-Message-Id: <20230414142341.354556-6-shiyn.lin@gmail.com>
+Subject: [PATCH v5 06/17] mm/rmap: Break COW PTE in rmap walking
+Date:   Fri, 14 Apr 2023 22:23:30 +0800
+Message-Id: <20230414142341.354556-7-shiyn.lin@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230414142341.354556-1-shiyn.lin@gmail.com>
 References: <20230414142341.354556-1-shiyn.lin@gmail.com>
@@ -129,165 +129,116 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-To support the zap functionally for COW-ed PTE, we need to zap the
-entire PTE table each time instead of partially zapping pages.
-Therefore, if the zap range covers the entire PTE table, we can
-handle de-account, remove the rmap, etc. However we shouldn't modify
-the entries when there are still someone references to the COW-ed
-PTE. Otherwise, if only the zapped process references to this COW-ed
-PTE, we just reuse it and do the normal zapping.
+Some of the features (unmap, migrate, device exclusive, mkclean, etc)
+might modify the pte entry via rmap. Add a new page vma mapped walk
+flag, PVMW_BREAK_COW_PTE, to indicate the rmap walking to break COW PTE.
 
 Signed-off-by: Chih-En Lin <shiyn.lin@gmail.com>
 ---
- mm/memory.c | 92 ++++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 87 insertions(+), 5 deletions(-)
+ include/linux/rmap.h | 2 ++
+ mm/migrate.c         | 3 ++-
+ mm/page_vma_mapped.c | 4 ++++
+ mm/rmap.c            | 9 +++++----
+ mm/vmscan.c          | 3 ++-
+ 5 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index f8a87a0fc382..7908e20f802a 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -192,6 +192,12 @@ static inline void free_pmd_range(struct mmu_gather *tlb, pud_t *pud,
- 	pmd = pmd_offset(pud, addr);
- 	do {
- 		next = pmd_addr_end(addr, end);
-+#ifdef CONFIG_COW_PTE
-+		if (test_bit(MMF_COW_PTE, &tlb->mm->flags)) {
-+			if (!pmd_none(*pmd) && !pmd_write(*pmd))
-+				VM_WARN_ON(cow_pte_count(pmd) != 1);
-+		}
-+#endif
- 		if (pmd_none_or_clear_bad(pmd))
+diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+index b87d01660412..57e9b72dc63a 100644
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -377,6 +377,8 @@ int make_device_exclusive_range(struct mm_struct *mm, unsigned long start,
+ #define PVMW_SYNC		(1 << 0)
+ /* Look for migration entries rather than present PTEs */
+ #define PVMW_MIGRATION		(1 << 1)
++/* Break COW-ed PTE during walking */
++#define PVMW_BREAK_COW_PTE	(1 << 2)
+ 
+ struct page_vma_mapped_walk {
+ 	unsigned long pfn;
+diff --git a/mm/migrate.c b/mm/migrate.c
+index db3f154446af..38933993af14 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -184,7 +184,8 @@ void putback_movable_pages(struct list_head *l)
+ static bool remove_migration_pte(struct folio *folio,
+ 		struct vm_area_struct *vma, unsigned long addr, void *old)
+ {
+-	DEFINE_FOLIO_VMA_WALK(pvmw, old, vma, addr, PVMW_SYNC | PVMW_MIGRATION);
++	DEFINE_FOLIO_VMA_WALK(pvmw, old, vma, addr,
++			      PVMW_SYNC | PVMW_MIGRATION | PVMW_BREAK_COW_PTE);
+ 
+ 	while (page_vma_mapped_walk(&pvmw)) {
+ 		rmap_t rmap_flags = RMAP_NONE;
+diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
+index 4e448cfbc6ef..1750b3460828 100644
+--- a/mm/page_vma_mapped.c
++++ b/mm/page_vma_mapped.c
+@@ -254,6 +254,10 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
+ 			step_forward(pvmw, PMD_SIZE);
  			continue;
- 		free_pte_range(tlb, pmd, addr);
-@@ -1656,6 +1662,7 @@ zap_install_uffd_wp_if_needed(struct vm_area_struct *vma,
- 
- #define ZAP_PTE_INIT 0x0000
- #define ZAP_PTE_FORCE_FLUSH 0x0001
-+#define ZAP_PTE_IS_SHARED 0x0002
- 
- struct zap_pte_details {
- 	pte_t **pte;
-@@ -1681,9 +1688,13 @@ zap_present_pte(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	if (unlikely(!should_zap_page(details, page)))
- 		return 0;
- 
--	ptent = ptep_get_and_clear_full(mm, addr, pte, tlb->fullmm);
-+	if (pte_details->flags & ZAP_PTE_IS_SHARED)
-+		ptent = ptep_get(pte);
-+	else
-+		ptent = ptep_get_and_clear_full(mm, addr, pte, tlb->fullmm);
- 	tlb_remove_tlb_entry(tlb, pte, addr);
--	zap_install_uffd_wp_if_needed(vma, addr, pte, details, ptent);
-+	if (!(pte_details->flags & ZAP_PTE_IS_SHARED))
-+		zap_install_uffd_wp_if_needed(vma, addr, pte, details, ptent);
- 	if (unlikely(!page))
- 		return 0;
- 
-@@ -1767,8 +1778,10 @@ zap_nopresent_pte(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		/* We should have covered all the swap entry types */
- 		WARN_ON_ONCE(1);
- 	}
--	pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
--	zap_install_uffd_wp_if_needed(vma, addr, pte, details, ptent);
-+	if (!(pte_details->flags & ZAP_PTE_IS_SHARED)) {
-+		pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
-+		zap_install_uffd_wp_if_needed(vma, addr, pte, details, ptent);
-+	}
- }
- 
- static unsigned long zap_pte_range(struct mmu_gather *tlb,
-@@ -1785,6 +1798,36 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 		.flags = ZAP_PTE_INIT,
- 		.pte = &pte,
- 	};
-+#ifdef CONFIG_COW_PTE
-+	unsigned long orig_addr = addr;
-+
-+	if (test_bit(MMF_COW_PTE, &mm->flags) && !pmd_write(*pmd)) {
-+		if (!range_in_vma(vma, addr & PMD_MASK,
-+				  (addr + PMD_SIZE) & PMD_MASK)) {
-+			/*
-+			 * We cannot promise this COW-ed PTE will also be zap
-+			 * with the rest of VMAs. So, break COW PTE here.
-+			 */
-+			break_cow_pte(vma, pmd, addr);
-+		} else {
-+			/*
-+			 * We free the batched memory before we handle
-+			 * COW-ed PTE.
-+			 */
-+			tlb_flush_mmu(tlb);
-+			end = (addr + PMD_SIZE) & PMD_MASK;
-+			addr = addr & PMD_MASK;
-+			start_pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
-+			if (cow_pte_count(pmd) == 1) {
-+				/* Reuse COW-ed PTE */
-+				pmd_t new = pmd_mkwrite(*pmd);
-+				set_pmd_at(tlb->mm, addr, pmd, new);
-+			} else
-+				pte_details.flags |= ZAP_PTE_IS_SHARED;
-+			pte_unmap_unlock(start_pte, ptl);
+ 		}
++		if (pvmw->flags & PVMW_BREAK_COW_PTE) {
++			if (break_cow_pte(vma, pvmw->pmd, pvmw->address))
++				return not_found(pvmw);
 +		}
-+	}
-+#endif
+ 		if (!map_pte(pvmw))
+ 			goto next_pte;
+ this_pte:
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 8632e02661ac..5582da6d72fc 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1006,7 +1006,8 @@ static int page_vma_mkclean_one(struct page_vma_mapped_walk *pvmw)
+ static bool page_mkclean_one(struct folio *folio, struct vm_area_struct *vma,
+ 			     unsigned long address, void *arg)
+ {
+-	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, PVMW_SYNC);
++	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address,
++			      PVMW_SYNC | PVMW_BREAK_COW_PTE);
+ 	int *cleaned = arg;
  
- 	tlb_change_page_size(tlb, PAGE_SIZE);
- again:
-@@ -1828,7 +1871,16 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 	 */
- 	if (pte_details.flags & ZAP_PTE_FORCE_FLUSH) {
- 		pte_details.flags &= ~ZAP_PTE_FORCE_FLUSH;
--		tlb_flush_mmu(tlb);
-+		/*
-+		 * With COW-ed PTE, we defer freeing the batched memory until
-+		 * after we have actually cleared the COW-ed PTE's pmd entry.
-+		 * Since, if we are the only ones still referencing the COW-ed
-+		 * PTe table after we have freed the batched memory, the page
-+		 * table check will report a bug with anon_map_count != 0 in
-+		 * page_table_check_zero().
-+		 */
-+		if (!(pte_details.flags & ZAP_PTE_IS_SHARED))
-+			tlb_flush_mmu(tlb);
- 	}
+ 	*cleaned += page_vma_mkclean_one(&pvmw);
+@@ -1450,7 +1451,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 		     unsigned long address, void *arg)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+-	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
++	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, PVMW_BREAK_COW_PTE);
+ 	pte_t pteval;
+ 	struct page *subpage;
+ 	bool anon_exclusive, ret = true;
+@@ -1810,7 +1811,7 @@ static bool try_to_migrate_one(struct folio *folio, struct vm_area_struct *vma,
+ 		     unsigned long address, void *arg)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+-	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
++	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, PVMW_BREAK_COW_PTE);
+ 	pte_t pteval;
+ 	struct page *subpage;
+ 	bool anon_exclusive, ret = true;
+@@ -2177,7 +2178,7 @@ static bool page_make_device_exclusive_one(struct folio *folio,
+ 		struct vm_area_struct *vma, unsigned long address, void *priv)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+-	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
++	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, PVMW_BREAK_COW_PTE);
+ 	struct make_exclusive_args *args = priv;
+ 	pte_t pteval;
+ 	struct page *subpage;
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 9c1c5e8b24b8..4abbd036f927 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1892,7 +1892,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
  
- 	if (addr != end) {
-@@ -1836,6 +1888,36 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 		goto again;
- 	}
- 
-+#ifdef CONFIG_COW_PTE
-+	if (pte_details.flags & ZAP_PTE_IS_SHARED) {
-+		start_pte = pte_offset_map_lock(mm, pmd, orig_addr, &ptl);
-+		if (!pmd_put_pte(pmd)) {
-+			pmd_t new = pmd_mkwrite(*pmd);
-+			set_pmd_at(tlb->mm, addr, pmd, new);
-+			/*
-+			 * We are the only ones who still referencing this.
-+			 * Clear the page table check before we free the
-+			 * batched memory.
-+			 */
-+			page_table_check_pte_clear_range(mm, orig_addr, *pmd);
-+			pte_unmap_unlock(start_pte, ptl);
-+			/* free the batched memory and flush the TLB. */
-+			tlb_flush_mmu(tlb);
-+			free_pte_range(tlb, pmd, addr);
-+		} else {
-+			pmd_clear(pmd);
-+			pte_unmap_unlock(start_pte, ptl);
-+			mm_dec_nr_ptes(tlb->mm);
-+			/*
-+			 * Someone still referencing to the table,
-+			 * we just flush TLB here.
-+			 */
-+			flush_tlb_range(vma, addr & PMD_MASK,
-+					(addr + PMD_SIZE) & PMD_MASK);
-+		}
-+	}
-+#endif
-+
- 	return addr;
- }
- 
+ 		/*
+ 		 * The folio is mapped into the page tables of one or more
+-		 * processes. Try to unmap it here.
++		 * processes. Try to unmap it here. Also, since it will write
++		 * to the page tables, break COW PTE if they are.
+ 		 */
+ 		if (folio_mapped(folio)) {
+ 			enum ttu_flags flags = TTU_BATCH_FLUSH;
 -- 
 2.34.1
 
