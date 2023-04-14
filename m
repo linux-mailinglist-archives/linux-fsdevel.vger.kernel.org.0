@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B51E66E25A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7096E25AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231233AbjDNO0z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 10:26:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50470 "EHLO
+        id S230182AbjDNO1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 10:27:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231182AbjDNO01 (ORCPT
+        with ESMTP id S231209AbjDNO0j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 10:26:27 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E88C144;
-        Fri, 14 Apr 2023 07:25:54 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id kh6so16856994plb.0;
-        Fri, 14 Apr 2023 07:25:54 -0700 (PDT)
+        Fri, 14 Apr 2023 10:26:39 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29C79A5DE;
+        Fri, 14 Apr 2023 07:26:04 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id v9so23781319pjk.0;
+        Fri, 14 Apr 2023 07:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681482353; x=1684074353;
+        d=gmail.com; s=20221208; t=1681482363; x=1684074363;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/tVFETdIXCOfqp++FbGXI8ZTRFNtRU4kz7mKWpQ0TKQ=;
-        b=V/L9mGM5vRCilsgFuug2qDo+tf+mz8X3NMe4ExWTkIzgp5PoriAleb9ABHiqBVuzoB
-         llo+kuyF6EvctKAWOk7/AgctLIF5nzoIZG8o22MemV1Trqr4GMU4SWQjs7lk4AFfxWZs
-         fEFh+J5+1k4h11tgMkVGCwcojSc3VhOk+jlEQkXDF+LG7ADIDJS5DzduuXdI5BA3XzGA
-         o5xxBjrwCkRjOkZx09CVQJsh7Y3tKhqCo7zRr9YQVNfXI9o2wXUwtf+xHKgwJyn/eUFx
-         DbBL8+08eqWZGvXOjPhYZPEEOFvmlvTmXp2I+hQAV+uqiFqt7yhXiTpblR0eG92ZfVyg
-         zMBg==
+        bh=JhJhY1i1X+rQfu4Bn4P5O3hneE5Ahqf44H1V3MlMZSE=;
+        b=WVSBGvQEWeeZCzJHUSLw6TdU7X7htMEhqLVUOYjuOm5exiNC5ijdRkufnNFt84Bcvp
+         nBa+HXyOE083VwztPKaRnxXoBufXzhDqGmx5EU3nQdOfFARZyba4elQgihG66ZdIP+us
+         AWQNBgqB3ZgRwKcjr/anLW7Yt0XHKvMOhoHHSJ+HOxL3sObVLefIP9AIAVNCeVEtEv1h
+         XIqwvMreBHtnZXG4BLKofcPieosXJ8aJJOZrrwvezai6c/gmMsNouFT0iBOD95fZd4ZF
+         KiC837Ko9b7VgCfyYEEiAshz0fl07KLeKm1Og9HKhxYYplg/Ram9QSDXV5nmw7PrXhcj
+         UxEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681482353; x=1684074353;
+        d=1e100.net; s=20221208; t=1681482363; x=1684074363;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/tVFETdIXCOfqp++FbGXI8ZTRFNtRU4kz7mKWpQ0TKQ=;
-        b=eAPdAV+Kwf65yINl2J7xlqvEhtlEmrmfgl7zcXjoRNq2ut85AxNxMm/B/qpkDvURqm
-         n70T0uvgHehhjQlbGgd2nc6usPdIBPLDOV9eDSPQEcHCxzYPMpeSyb462HDPLjw55tiB
-         VfBz7Bpl29QVEqOFgKivBwIXpIDP2rP1ZrZ6ref+UTVbZfXu6c2r026gBa8mXYDn4FSM
-         farVAKNMoiyvdclGlusE/lb2fi9HxisBp85pcMWutEb/R3ST/3yoLfISEeuLm3GifoPy
-         iaW4XTT6bMm/5F+N+ZEl/i8KUkHDD/pCEyrqUVBZ1YFJeHOWGRo272+Pa8Y8q7IvMCoq
-         +Ceg==
-X-Gm-Message-State: AAQBX9c+2cqRwF/sZoOKMFhddEReArpFrc2jGHH1sqGiSi5VW4vwSqu+
-        AMB0DmU8oSQYNN259RbfwXA=
-X-Google-Smtp-Source: AKy350bY4APGkMEn5jnT3hrPcgD0IFpWnxPux4TPQ74b4zdNFtZk3bMgcaFkmd5oasXe2ggPZ2CL0Q==
-X-Received: by 2002:a17:903:22ce:b0:1a5:f:a7c7 with SMTP id y14-20020a17090322ce00b001a5000fa7c7mr3342685plg.0.1681482353510;
-        Fri, 14 Apr 2023 07:25:53 -0700 (PDT)
+        bh=JhJhY1i1X+rQfu4Bn4P5O3hneE5Ahqf44H1V3MlMZSE=;
+        b=I3yWmk9/SnuWH4NgGe/+okpq54cUPsfNpqIcFmHifKA1FfwZZ7KAwF2ybTXSpjvd/N
+         GG3BtDGjhDKwGiXFS3bVKAdycnUK/yYnBDp0xB9JXlpJVWwgwuKgrfvBTMYsetvlFpEV
+         gIlTsNa9mnDW8YgjN4e3zKcuEtWxEpsrI9b6o9x+sW2vlqrJVf2Ew0LFW6IhvKoCF+d4
+         F/a3vGHUWNbh3XDRaGBYBVEFBpHiMoSVOc8/LvKIhb7JOP0ZLVrI1aeBZadllmjN8w2X
+         IRTEfCLAEEIYdGSSrybFatLVqsdCMO+yU+oiz5NZsRs//BVklMxfFrgf1ztxR3k6YXPC
+         bjjA==
+X-Gm-Message-State: AAQBX9esOUpz2Nj3PX+L3kYvJCBkcBpLxU8H133ucw/GKr8+KndtpioT
+        +dwIOBxcWSWSRl0qlDwHN2s=
+X-Google-Smtp-Source: AKy350Y3WXBAfHkfEIZhG0ei3Tp0PNc3fK1Ni3ksxBjZThrmtWAJdx1hd2dMChF2jmP20depYO7fIQ==
+X-Received: by 2002:a17:90a:5b12:b0:244:9385:807f with SMTP id o18-20020a17090a5b1200b002449385807fmr5616908pji.44.1681482362745;
+        Fri, 14 Apr 2023 07:26:02 -0700 (PDT)
 Received: from strix-laptop.. (2001-b011-20e0-1499-8303-7502-d3d7-e13b.dynamic-ip6.hinet.net. [2001:b011:20e0:1499:8303:7502:d3d7:e13b])
-        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.25.44
+        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.25.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Apr 2023 07:25:53 -0700 (PDT)
+        Fri, 14 Apr 2023 07:26:02 -0700 (PDT)
 From:   Chih-En Lin <shiyn.lin@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Qi Zheng <zhengqi.arch@bytedance.com>,
@@ -111,9 +111,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Pedro Fonseca <pfonseca@purdue.edu>,
         Jim Huang <jserv@ccns.ncku.edu.tw>,
         Huichun Feng <foxhoundsk.tw@gmail.com>
-Subject: [PATCH v5 10/17] mm/gup: Trigger break COW PTE before calling follow_pfn_pte()
-Date:   Fri, 14 Apr 2023 22:23:34 +0800
-Message-Id: <20230414142341.354556-11-shiyn.lin@gmail.com>
+Subject: [PATCH v5 11/17] mm/mprotect: Break COW PTE before changing protection
+Date:   Fri, 14 Apr 2023 22:23:35 +0800
+Message-Id: <20230414142341.354556-12-shiyn.lin@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230414142341.354556-1-shiyn.lin@gmail.com>
 References: <20230414142341.354556-1-shiyn.lin@gmail.com>
@@ -129,41 +129,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In most of cases, GUP will not modify the page table, excluding
-follow_pfn_pte(). To deal with COW PTE, Trigger the break COW
-PTE fault before calling follow_pfn_pte().
+If the PTE table is COW-ed, break it before changing the protection.
 
 Signed-off-by: Chih-En Lin <shiyn.lin@gmail.com>
 ---
- mm/gup.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ mm/mprotect.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index eab18ba045db..325424c02ca6 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -544,7 +544,8 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
- 			 (FOLL_PIN | FOLL_GET)))
- 		return ERR_PTR(-EINVAL);
--	if (unlikely(pmd_bad(*pmd)))
-+	/* COW-ed PTE has write protection which can trigger pmd_bad(). */
-+	if (unlikely(pmd_write(*pmd) && pmd_bad(*pmd)))
- 		return no_page_table(vma, flags);
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 13e84d8c0797..a33f23a73fa5 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -103,6 +103,9 @@ static long change_pte_range(struct mmu_gather *tlb,
+ 	if (pmd_trans_unstable(pmd))
+ 		return 0;
  
- 	ptep = pte_offset_map_lock(mm, pmd, address, &ptl);
-@@ -587,6 +588,11 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 		if (is_zero_pfn(pte_pfn(pte))) {
- 			page = pte_page(pte);
- 		} else {
-+			if (test_bit(MMF_COW_PTE, &mm->flags) &&
-+			    !pmd_write(*pmd)) {
-+				page = ERR_PTR(-EMLINK);
-+				goto out;
-+			}
- 			ret = follow_pfn_pte(vma, address, ptep, flags);
- 			page = ERR_PTR(ret);
- 			goto out;
++	if (break_cow_pte(vma, pmd, addr))
++		return 0;
++
+ 	/*
+ 	 * The pmd points to a regular pte so the pmd can't change
+ 	 * from under us even if the mmap_lock is only hold for
+@@ -312,6 +315,12 @@ static inline int pmd_none_or_clear_bad_unless_trans_huge(pmd_t *pmd)
+ 		return 1;
+ 	if (pmd_trans_huge(pmdval))
+ 		return 0;
++	/*
++	 * If the entry point to COW-ed PTE, it's write protection bit
++	 * will cause pmd_bad().
++	 */
++	if (!pmd_write(pmdval))
++		return 0;
+ 	if (unlikely(pmd_bad(pmdval))) {
+ 		pmd_clear_bad(pmd);
+ 		return 1;
 -- 
 2.34.1
 
