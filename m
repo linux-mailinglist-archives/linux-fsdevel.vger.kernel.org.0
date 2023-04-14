@@ -2,72 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7879F6E246D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 15:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C40F06E2479
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 15:41:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229864AbjDNNkU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 09:40:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33396 "EHLO
+        id S229962AbjDNNlU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 09:41:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbjDNNkT (ORCPT
+        with ESMTP id S229625AbjDNNlS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 09:40:19 -0400
-Received: from mx1.veeam.com (mx1.veeam.com [216.253.77.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C31E77D90;
-        Fri, 14 Apr 2023 06:40:17 -0700 (PDT)
-Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
+        Fri, 14 Apr 2023 09:41:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91F2B9767;
+        Fri, 14 Apr 2023 06:41:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.veeam.com (Postfix) with ESMTPS id C027741C70;
-        Fri, 14 Apr 2023 09:40:10 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
-        s=mx1-2022; t=1681479611;
-        bh=5ZfR/VR7XwIlnUKAwCwTcnTBsRgdwQ0T4cmQ7Jf9od8=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To:From;
-        b=sOz5OJNAhKo96IYXETOEtDOEjT144qiybYpenX9d9MdAjWZJEOlvz8dwQm8rLQHA4
-         4C3dFTdeIjdvy0kkQpv7Kv2yhHBFsSe6EDOyUyebaR2Sf3dkuEi+/KxAWGbc3eW0f7
-         JEu5IS22FYzRd4Rh01dGrEzqXBtiG+0uygxVbIhK9jEPd85uQk0qvRnw0UPgBwFQ/O
-         ZDUEn1GdJCvekOGk4XmtOntu1Gv3aR1WJfDxcH9AV/mqchoA4x6O77+AkR71W5AXAK
-         Lj304TsHBbVd1OnISj+r8gBjbiIHB9yPszIgoZc9I8nNcf8JUlL/8tCxRvc2a/9OT8
-         zibD8wXbUwVCg==
-Received: from [172.24.10.107] (172.24.10.107) by prgmbx01.amust.local
- (172.24.128.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.26; Fri, 14 Apr
- 2023 15:40:08 +0200
-Message-ID: <93fbcd21-14e3-a46e-91ab-8cc7ca9ed550@veeam.com>
-Date:   Fri, 14 Apr 2023 15:39:59 +0200
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 22F376481B;
+        Fri, 14 Apr 2023 13:41:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A83C4339B;
+        Fri, 14 Apr 2023 13:41:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681479667;
+        bh=OQSBRh1Pyn9f1qpl5ItWY38UJ7ErfhmCLeQGiieKP3U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SEsHDQVCCSqfwwGSVMzY6ea+SPRafgN6d8m0KgbS2kqV00DU7cY2TINDgaIARyurQ
+         hG6FZO1nIsgQFYjKtrs6/8D4gZdMP9P3LuziWjaavz8YzIiH3GhPhMHaPTb6jG/9To
+         yTmK8vi2G21ZD14CYaQwB6t8pr+getC8vkrxlUU1aGE/RWQegpWy5er0HuEqz8ugRQ
+         2LgUa4BbhLoKCybEuhI/ETTuRioEi7B6VmQylqUBACLJEfjEJ9eNaXYNgs6wDTkYTO
+         dWaVof6Z6nH7UShViqn3vi1V0j1DoneMSidOKx8hE0LUOkfbOPNaFNu55PlY6RwXdf
+         We3g5+danuP4Q==
+Date:   Fri, 14 Apr 2023 15:41:02 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, NeilBrown <neilb@suse.de>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: allowing for a completely cached umount(2) pathwalk
+Message-ID: <20230414-sowas-unmittelbar-67fdae9ca5cd@brauner>
+References: <95ee689c76bf034fa2fe9fade0bccdb311f3a04f.camel@kernel.org>
+ <168142566371.24821.15867603327393356000@noble.neil.brown.name>
+ <20230414024312.GF3390869@ZenIV>
+ <2631cb9c05087ddd917679b7cebc58cb42cd2de6.camel@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v3 02/11] block: Block Device Filtering Mechanism
-Content-Language: en-US
-To:     Donald Buczek <buczek@molgen.mpg.de>,
-        Christoph Hellwig <hch@infradead.org>
-CC:     <axboe@kernel.dk>, <corbet@lwn.net>, <snitzer@kernel.org>,
-        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-        <willy@infradead.org>, <kch@nvidia.com>,
-        <martin.petersen@oracle.com>, <vkoul@kernel.org>,
-        <ming.lei@redhat.com>, <gregkh@linuxfoundation.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <20230404140835.25166-1-sergei.shtepa@veeam.com>
- <20230404140835.25166-3-sergei.shtepa@veeam.com>
- <793db44e-9e6d-d118-3f88-cdbffc9ad018@molgen.mpg.de>
- <ZDT9PjLeQgjVA16P@infradead.org>
- <50d131e3-7528-2064-fbe6-65482db46ae4@veeam.com>
- <9d598566-5729-630e-5025-b4173cf307e4@molgen.mpg.de>
-From:   Sergei Shtepa <sergei.shtepa@veeam.com>
-In-Reply-To: <9d598566-5729-630e-5025-b4173cf307e4@molgen.mpg.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [172.24.10.107]
-X-ClientProxiedBy: prgmbx02.amust.local (172.24.128.103) To
- prgmbx01.amust.local (172.24.128.102)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2924031554647264
-X-Veeam-MMEX: True
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2631cb9c05087ddd917679b7cebc58cb42cd2de6.camel@kernel.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -76,107 +61,97 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 4/12/23 21:59, Donald Buczek wrote:
-> Subject:
-> Re: [PATCH v3 02/11] block: Block Device Filtering Mechanism
-> From:
-> Donald Buczek <buczek@molgen.mpg.de>
-> Date:
-> 4/12/23, 21:59
+On Fri, Apr 14, 2023 at 06:06:38AM -0400, Jeff Layton wrote:
+> On Fri, 2023-04-14 at 03:43 +0100, Al Viro wrote:
+> > On Fri, Apr 14, 2023 at 08:41:03AM +1000, NeilBrown wrote:
+> > 
+> > > The path name that appears in /proc/mounts is the key that must be used
+> > > to find and unmount a filesystem.  When you do that "find"ing you are
+> > > not looking up a name in a filesystem, you are looking up a key in the
+> > > mount table.
+> > 
+> > No.  The path name in /proc/mounts is *NOT* a key - it's a best-effort
+> > attempt to describe the mountpoint.  Pathname resolution does not work
+> > in terms of "the longest prefix is found and we handle the rest within
+> > that filesystem".
+> > 
+> > > We could, instead, create an api that is given a mount-id (first number
+> > > in /proc/self/mountinfo) and unmounts that.  Then /sbin/umount could
+> > > read /proc/self/mountinfo, find the mount-id, and unmount it - all
+> > > without ever doing path name lookup in the traditional sense.
+> > > 
+> > > But I prefer your suggestion.  LOOKUP_MOUNTPOINT could be renamed
+> > > LOOKUP_CACHED, and it only finds paths that are in the dcache, never
+> > > revalidates, at most performs simple permission checks based on cached
+> > > content.
+> > 
+> > umount /proc/self/fd/42/barf/something
+> > 
 > 
-> To:
-> Sergei Shtepa <sergei.shtepa@veeam.com>, Christoph Hellwig <hch@infradead.org>
-> CC:
-> axboe@kernel.dk, corbet@lwn.net, snitzer@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org, kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org, ming.lei@redhat.com, gregkh@linuxfoundation.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+> Does any of that involve talking to the server? I don't necessarily see
+> a problem with doing the above. If "something" is in cache then that
+> should still work.
 > 
+> The main idea here is that we want to avoid communicating with the
+> backing store during the umount(2) pathwalk.
 > 
-> On 4/12/23 12:43, Sergei Shtepa wrote:
->>
->>
->> On 4/11/23 08:25, Christoph Hellwig wrote:
->>> Subject:
->>> Re: [PATCH v3 02/11] block: Block Device Filtering Mechanism
->>> From:
->>> Christoph Hellwig <hch@infradead.org>
->>> Date:
->>> 4/11/23, 08:25
->>>
->>> To:
->>> Donald Buczek <buczek@molgen.mpg.de>
->>> CC:
->>> Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org, kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org, ming.lei@redhat.com, gregkh@linuxfoundation.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
->>>
->>>
->>> On Sat, Apr 08, 2023 at 05:30:19PM +0200, Donald Buczek wrote:
->>>> Maybe detach the old filter and attach the new one instead? An atomic replace might be usefull and it wouldn't complicate the code to do that instead. If its the same filter, maybe just return success and don't go through ops->detach and ops->attach?
->>> I don't think a replace makes any sense.  We might want multiple
->>> filters eventually, but unless we have a good use case for even just
->>> more than a single driver we can deal with that once needed.  The
->>> interface is prepared to support multiple attached filters already.
->>>
->>
->>
->> Thank you Donald for your comment. It got me thinking.
->>
->> Despite the fact that only one filter is currently offered for the kernel,
->> I think that out-of-tree filters of block devices may appear very soon.
->> It would be good to think about it in advance.
->> And, I agree with Christophe, we would not like to redo the blk-filter interface
->> when new filters appear in the tree.
->>
->> We can consider a block device as a resource that two actor want to take over.
->> There are two possible behavioral strategies:
->> 1. If one owner occupies a resource, then for other actors, the ownership
->> request will end with a refusal. The owner will not lose his resource.
->> 2. Any actor can take away a resource from the owner and inform him about its
->> loss using a callback.
->>
->> I think the first strategy is safer. When calling ioctl BLKFILTER_ATTACH, the
->> kernel informs the actor that the resource is busy.
->> Of course, there is still an option to grab someone else's occupied resource.
->> To do this, he will have to call ioctl BLKFILTER_DETACH, specifying the name
->> of the filter that needs to be detached. It is assumed that such detached
->> should be performed by the same actor that attached it there.
->>
->> If we replace the owner at each ioctl BLKFILTER_ATTACH, then we can get a
->> situation of competition between two actors. At the same time, they won't
->> even get a message that something is going wrong.
->>
->> An example from life. The user compares different backup tools. Install one,
->> then another. Each uses its own filter (And why not? this is technically
->> possible).
->> With the first strategy, the second tool will make it clear to the user that
->> it cannot work, since the resource is already occupied by another.
->> The user will have to experiment first with one tool, uninstall it, and then
->> experiment with another.
->> With the second strategy, both tools will unload each other's filters. In the
->> best case, this will lead to disruption of their work. At a minimum, blksnap,
->> when detached, will reset the change tracker and each backup will perform a
->> full read of the block device. As a result, the user will receive distorted
->> data, the system will not work as planned, although there will be no error
->> message.
+> > Discuss.
+> > 
+> > OTON, umount-by-mount-id is an interesting idea, but we'll need to decide
+> > what would the right permissions be for it.
+> > 
+> > But please, lose the "mount table is a mapping from path prefix to filesystem"
+> > notion - it really, really is not.  IIRC, there are systems that work that way,
+> > but it's nowhere near the semantics used by any Unices, all variants of Linux
+> > included.
 > 
-> I had a more complicated scenario in mind. For example, some kind of live migration
-> from one block device to another, when you switch from the filter which clones from the
-> source device to the target device to the filter which just redirects from the source
-> device to the target device as the last step.
+> I'm not opposed to something by umount-by-mount-id either. All of this
+> seems like something that should probably rely on CAP_SYS_ADMIN.
 
-'Live migration' - I've heard that idea before.
-I think it makes sense to create a description of what 'live migration' should
-look like for Linux. Describe the purpose, what cases it would be useful, the
-general algorithm of work.
-It seems to me that the implementation of 'live migration' may be similar to
-what is implemented in blksnap. Perhaps I could be useful in such a project. 
+The permission model needs to account for the fact that mount ids are
+global and as such you could in principle unmount any mount in any mount
+namespace. IOW, you can circumvent lookup restrictions completely.
 
-> OTOH, that may be a very distant vision. Plus, one single and simple filter, which
-> redirects I/O into a DM stack, would be enough or better anyway to do the more
-> complicated things using the DM features, which include atomic replacement and
-> stacking and everything.
-> 
-> I don't have a strong opinion.
+So we could resolve the mnt-id to an FMODE_PATH and then very roughly
+with no claim to solving everything:
 
-About one single and simple filter, which redirects I/O into a DM stack.
-Yes, at first glance, such an implementation looks simple and obvious.
-I tried to go this way - I failed. Maybe someone can do it. I'll be glad.
+may_umount_by_mnt_id(struct path *opath)
+{
+	struct path root;
+	bool reachable;
+
+	// caller in principle able to circumvent lookup restrictions
+        if (!may_cap_dac_readsearch())
+		return false;
+
+	// caller can mount in their mountns
+	if (!may_mount())
+		return false;
+
+	// target mount and caller in the same mountns
+	if (!check_mnt())
+		return false;
+
+	// caller could in principle reach mount from it's root
+	get_fs_root(current->fs, &root);
+        reachable = is_path_reachable(real_mount(opath->mnt), opath->dentry, &root);
+	path_put(&root);
+
+	return reachable;
+}
+
+However, that still means that we have laxer restrictions on unmounting
+by mount-id then on unmount with lookup as for lookup just having
+CAP_DAC_READ_SEARCH isn't enough. Usually - at least for filesytems
+without custom permission handlers - we also establish that the inode
+can be mapped into the caller's idmapping.
+
+So that would mean that unmounting by mount-id would allow you to
+unmount mounts in cases where you wouldn't with umount. That might be
+fine though as that's ultimately the goal here in a way.
+
+One could also see a very useful feature in this where you require
+capable(CAP_DAC_READ_SEARCH) and capable(CAP_SYS_ADMIN) and then allow
+unmounting any mount in the system by mount-id. This would obviously be
+very useful for privileged service managers but I haven't thought this
+through.
