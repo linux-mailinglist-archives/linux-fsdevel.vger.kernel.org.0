@@ -2,185 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C5596E21C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 13:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F8826E21E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 13:17:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231124AbjDNLIg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 07:08:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44548 "EHLO
+        id S229497AbjDNLRD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 07:17:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230385AbjDNLIc (ORCPT
+        with ESMTP id S230146AbjDNLRB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 07:08:32 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40DBE2683
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 04:08:30 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230414110829euoutp02af8c0c92427fff057ed68d6ca9b76c6a~VyITtjsUI0816708167euoutp02Q
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 11:08:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230414110829euoutp02af8c0c92427fff057ed68d6ca9b76c6a~VyITtjsUI0816708167euoutp02Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1681470509;
-        bh=mYP1zNZlkNSFYYEZy1X4gVz5Ukcj0nQ95dBohrnlJJM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fbx4sqB55TW2FIa6EbR+LpMXJuU6PZqdqlPW/7FVdgNspqOTNdJZizrnu3VNCjKVj
-         MDk67wo/G75wy+a3bsVu0xUQ5UBYyzQbr4ayulLqmdMgKGD4REB/O6NVtKTZw5tJch
-         GpZavB1tnFRYrQEdoVsy0S4bYjXMx2/UdbJ2HMHE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230414110828eucas1p27a02cf6a0489c892cebb71a142cd12d6~VyIS6P83_0295002950eucas1p2D;
-        Fri, 14 Apr 2023 11:08:28 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 73.9A.09503.C2439346; Fri, 14
-        Apr 2023 12:08:28 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230414110827eucas1p20e5f6bc74025acfb62b13465f267fa84~VyISX3-6I0896208962eucas1p2W;
-        Fri, 14 Apr 2023 11:08:27 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230414110827eusmtrp23a6f6eb3620adf6cec0cd8f777b64956~VyISXJW7G0913109131eusmtrp2X;
-        Fri, 14 Apr 2023 11:08:27 +0000 (GMT)
-X-AuditID: cbfec7f2-ea5ff7000000251f-9f-6439342c4e39
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id DF.39.34412.B2439346; Fri, 14
-        Apr 2023 12:08:27 +0100 (BST)
-Received: from localhost (unknown [106.210.248.243]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230414110827eusmtip23f72b25a7070947a365203c3b088f67a~VyISIV5tx2822728227eusmtip2L;
-        Fri, 14 Apr 2023 11:08:27 +0000 (GMT)
-From:   Pankaj Raghav <p.raghav@samsung.com>
-To:     brauner@kernel.org, willy@infradead.org, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mcgrof@kernel.org, gost.dev@samsung.com, hare@suse.de,
-        Pankaj Raghav <p.raghav@samsung.com>
-Subject: [RFC 4/4] fs/buffer: convert create_page_buffers to
- create_folio_buffers
-Date:   Fri, 14 Apr 2023 13:08:21 +0200
-Message-Id: <20230414110821.21548-5-p.raghav@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230414110821.21548-1-p.raghav@samsung.com>
+        Fri, 14 Apr 2023 07:17:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6FBC9019;
+        Fri, 14 Apr 2023 04:16:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5211D646D8;
+        Fri, 14 Apr 2023 11:16:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72259C433EF;
+        Fri, 14 Apr 2023 11:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681471011;
+        bh=J5/c5HwC8g/Oc7bpdijzK2LOpYemXEpG0yZE4puCamw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M7kVPMZp9pulhGpovfkZJNN/7YgeIUGWz+35i1O1tlsftQgMzBYBoM3SJh0Ph9fPc
+         NebblWOtn19uejh8fU3b52om8Oc541uG94SQVDnAzxOJM1vyxVeiYg+Bx221zTOY2v
+         fdZELOFqZemL1+cmbHsIxiJFko03PcNuiIs4PjDp++oeyEI+gSJK2b/nXxa5aEdEX9
+         l1gM/MEi6egpwNfjof5kh61KAWL0AtqzL2o1cN2rxeOOkla9zxJwJX8m+E7uOI6Iox
+         MzOUYHe+IoRNVUMADQ6WCkdPfqvYpj4aN3Kkvt9BwaZBOqhT8Oc4WFXzGVAubacQ8J
+         xEY71mekQTu1A==
+Date:   Fri, 14 Apr 2023 13:16:45 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Neil Brown <neilb@suse.de>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: allowing for a completely cached umount(2) pathwalk
+Message-ID: <20230414-gerissen-bemessen-835e95dc7552@brauner>
+References: <95ee689c76bf034fa2fe9fade0bccdb311f3a04f.camel@kernel.org>
+ <168142566371.24821.15867603327393356000@noble.neil.brown.name>
+ <20230414024312.GF3390869@ZenIV>
+ <8EC5C625-ACD6-4BA0-A190-21A73CCBAC34@hammerspace.com>
+ <20230414035104.GH3390869@ZenIV>
+ <20230414-leihgabe-eisig-71fb7bb44d49@brauner>
+ <3492fa76339672ccc48995ccf934744c63db4b80.camel@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsWy7djP87o6JpYpBk/XcVjMWb+GzeL14U+M
-        FjcP7GSy2LNoEpDYe5LF4vKuOWwWNyY8ZbT4vLSF3eL83+OsFr9/zGFz4PLYvELLY9OqTjaP
-        EzN+s3j0bVnF6LH5dLXH501yHpuevGUKYI/isklJzcksSy3St0vgytjbuJCxoF244tduqQbG
-        y/xdjJwcEgImEtOOXGTpYuTiEBJYwSjRsuAmE4TzhVFi9c6b7BDOZ0aJxdP+M8O0XN92gBEi
-        sRwo0TwFynnJKLFxfS9bFyMHB5uAlkRjJzuIKSKQKHHzvQJICbPAAkaJW7ffs4MMEhYIlpi3
-        ZS0TiM0ioCpx6/hONhCbV8BS4vDazewQy+Ql9h88C7aYU8BK4s2yC1A1ghInZz5hAbGZgWqa
-        t85mBlkgIXCFQ+LciYNQl7pIPL7eDmULS7w6vgVqqIzE/53zmSDsaomnN35DNbcwSvTvXA/2
-        gISAtUTfmRwQk1lAU2L9Ln2IckeJf5f+s0BU8EnceCsIcQKfxKRt05khwrwSHW1CENVKEjt/
-        PoFaKiFxuWkOC4TtIbHgwTzGCYyKs5A8MwvJM7MQ9i5gZF7FKJ5aWpybnlpsmJdarlecmFtc
-        mpeul5yfu4kRmJRO/zv+aQfj3Fcf9Q4xMnEwHmKU4GBWEuH94WKaIsSbklhZlVqUH19UmpNa
-        fIhRmoNFSZxX2/ZkspBAemJJanZqakFqEUyWiYNTqoEpfqVWstrffW9YZ7zkV8wu+ZJ28hcj
-        Z8GJ4mQp/5r+3pfum5b2eZ4yUNwot+TcgeItUbVbHJw810jaX+fV/PU1qCzo7cTQ+K5LQrsm
-        6Zzu1ji9hX2KToxo9Zaa1j3JbysaLLpsHBZEZ304yCNgZMNzZMGMqK0pPMmHVJacSZh4LM72
-        lG/mtoBQNuar79qNNEq+pTDtnzQz+k3ZGsE65z/3N21f8uacffBswS0NsTfFDyQddr5XZZbw
-        7sUTr/x9P/Oke0pOiFs9O3Gzp8DQfHO65I+GV+vv3SrdEK2t5Vmt2JexY0Yut72KPWvnSluW
-        A1EWtd3sTTO2f2Tx871XInPXZ+tpPbfw5FybP9dc3yixFGckGmoxFxUnAgAU/upCuQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGIsWRmVeSWpSXmKPExsVy+t/xe7raJpYpBn+nKVvMWb+GzeL14U+M
-        FjcP7GSy2LNoEpDYe5LF4vKuOWwWNyY8ZbT4vLSF3eL83+OsFr9/zGFz4PLYvELLY9OqTjaP
-        EzN+s3j0bVnF6LH5dLXH501yHpuevGUKYI/SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQz
-        NDaPtTIyVdK3s0lJzcksSy3St0vQy9jbuJCxoF244tduqQbGy/xdjJwcEgImEte3HWDsYuTi
-        EBJYyihx7vEadoiEhMTthU2MELawxJ9rXWwQRc8ZJW6fX8jcxcjBwSagJdHYCVYvIpAqcfrE
-        R7AaZoFljBJr5r5gA0kICwRKrJ9+GMxmEVCVuHV8J5jNK2ApcXjtZqhl8hL7D55lBrE5Bawk
-        3iy7AFYjBFTTvmUJC0S9oMTJmU/AbGag+uats5knMArMQpKahSS1gJFpFaNIamlxbnpusZFe
-        cWJucWleul5yfu4mRmAEbTv2c8sOxpWvPuodYmTiYDzEKMHBrCTC+8PFNEWINyWxsiq1KD++
-        qDQntfgQoynQ3ROZpUST84ExnFcSb2hmYGpoYmZpYGppZqwkzutZ0JEoJJCeWJKanZpakFoE
-        08fEwSnVwMT7/2TDms6105SNpu9nZNOK+uijlX7i3v5gRmdzb0nvkGjdBRtuZbIKcJvt6pOc
-        t1htV7GXiL9+gHr1PC6rurkX7z0+73D2dZ92euW+s8es/5zV9Lt83VvnvNbW6sCXsyfs/Dc/
-        fK1qZE0c56Svhu7KNvPZ9V6onSsXV8pc9FPX+rLVw8vXdVOTzX97vGXPkC5SUWc7GxCy1k3n
-        zCm5cLXVHu/Ko5bEHPKpCZRLYlL52a63Yv0LpxNBalN3TWUr3nxs63qvBfcnTfFJ97fyuHF0
-        9pxVd2w2l7/e8CJ/y8t0tdql1Y4+taxL/PKF3YsF9DhsLm/w+N24MPzfzay5Z1/8kk59XM95
-        dNucwoqrm5VYijMSDbWYi4oTAdGKN2opAwAA
-X-CMS-MailID: 20230414110827eucas1p20e5f6bc74025acfb62b13465f267fa84
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230414110827eucas1p20e5f6bc74025acfb62b13465f267fa84
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230414110827eucas1p20e5f6bc74025acfb62b13465f267fa84
-References: <20230414110821.21548-1-p.raghav@samsung.com>
-        <CGME20230414110827eucas1p20e5f6bc74025acfb62b13465f267fa84@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3492fa76339672ccc48995ccf934744c63db4b80.camel@kernel.org>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fs/buffer do not support large folios as there are many assumptions on
-the folio size to be the host page size. This conversion is one step
-towards removing that assumption. Also this conversion will reduce calls
-to compound_head() if create_folio_buffers() calls
-folio_create_empty_buffers().
+On Fri, Apr 14, 2023 at 06:09:46AM -0400, Jeff Layton wrote:
+> On Fri, 2023-04-14 at 11:41 +0200, Christian Brauner wrote:
+> > On Fri, Apr 14, 2023 at 04:51:04AM +0100, Al Viro wrote:
+> > > On Fri, Apr 14, 2023 at 03:28:45AM +0000, Trond Myklebust wrote:
+> > > 
+> > > > We already have support for directory file descriptors when mounting with move_mount(). Why not add a umountat() with similar support for the unmount side?
+> > > > Then add a syscall to allow users with (e.g.) the CAP_DAC_OVERRIDE privilege to convert the mount-id into an O_PATH file descriptor.
+> > > 
+> > > You can already do umount -l /proc/self/fd/69 if you have a descriptor.
+> > 
+> > Way back when we put together stuff for [2] we had umountat() as an item
+> > but decided against it because it's mostely useful when used as AT_EMPTY_PATH.
+> > 
+> > umount("/proc/self/fd/<nr>", ...) is useful when you don't trust the
+> > path and you need to resolve it with lookup restrictions. Then path
+> > resolution restrictions of openat2() can be used to get an fd. Which can
+> > be passed to umount().
+> > 
+> > I need to step outside so this is a halfway-out-the-door thought but
+> > given your description of the problem Jeff, why doesn't the following
+> > work (Just sketching this, you can't call openat2() like that.):
+> > 
+> >         fd_mnt = openat2("/my/funky/nfs/share/mount", RESOLVE_CACHED)
+> >         umount("/proc/self/fd/fd_mnt", MNT_DETACH)
+> 
+> Something like that might work. A RESOLVE_CACHED flag is something that
+> would involve more than just umount(2) though. That said, it could be
+> useful in other situations.
 
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- fs/buffer.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+I think I introduced an ambiguity by accident. What I meant by "you
+can't call openat2() like that" is that it takes a struct open_how
+argument not just a simple flags argument.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 9e6a1a738fb5..a83d9bf78ca5 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1802,14 +1802,17 @@ static inline int block_size_bits(unsigned int blocksize)
- 	return ilog2(blocksize);
- }
- 
--static struct buffer_head *create_page_buffers(struct page *page, struct inode *inode, unsigned int b_state)
-+static struct buffer_head *create_folio_buffers(struct folio *folio,
-+						struct inode *inode,
-+						unsigned int b_state)
- {
--	BUG_ON(!PageLocked(page));
-+	BUG_ON(!folio_test_locked(folio));
- 
--	if (!page_has_buffers(page))
--		create_empty_buffers(page, 1 << READ_ONCE(inode->i_blkbits),
--				     b_state);
--	return page_buffers(page);
-+	if (!folio_buffers(folio))
-+		folio_create_empty_buffers(folio,
-+					   1 << READ_ONCE(inode->i_blkbits),
-+					   b_state);
-+	return folio_buffers(folio);
- }
- 
- /*
-@@ -1853,8 +1856,8 @@ int __block_write_full_page(struct inode *inode, struct page *page,
- 	int nr_underway = 0;
- 	blk_opf_t write_flags = wbc_to_write_flags(wbc);
- 
--	head = create_page_buffers(page, inode,
--					(1 << BH_Dirty)|(1 << BH_Uptodate));
-+	head = create_folio_buffers(page_folio(page), inode,
-+				    (1 << BH_Dirty) | (1 << BH_Uptodate));
- 
- 	/*
- 	 * Be very careful.  We have no exclusion from block_dirty_folio
-@@ -2117,7 +2120,7 @@ int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
- 	BUG_ON(to > PAGE_SIZE);
- 	BUG_ON(from > to);
- 
--	head = create_page_buffers(&folio->page, inode, 0);
-+	head = create_folio_buffers(folio, inode, 0);
- 	blocksize = head->b_size;
- 	bbits = block_size_bits(blocksize);
- 
-@@ -2403,7 +2406,7 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
- 
- 	VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
- 
--	head = create_page_buffers(&folio->page, inode, 0);
-+	head = create_folio_buffers(folio, inode, 0);
- 	blocksize = head->b_size;
- 	bbits = block_size_bits(blocksize);
- 
--- 
-2.34.1
+The flag I was talking about, RESOLVE_CACHED, does exist already. So it
+is already possible to use openat2() to resolve paths like that. See
+include/uapi/linux/openat2.h
 
+> 
+> > 
+> > > Converting mount-id to O_PATH... might be an interesting idea.
+> > 
+> > I think using mount-ids would be nice and fwiw, something we considered
+> > as an alternative to umountat(). Not just can they be gotten from
+> > /proc/<pid>/mountinfo but we also do expose the mount id to userspace
+> > nowadays through:
+> > 
+> >         STATX_MNT_ID
+> >         __u64	stx_mnt_id;
+> > 
+> > which also came out of [2]. And it should be safe to do via
+> > AT_STATX_DONT_SYNC:
+> > 
+> >         statx(my_cached_fd, AT_NO_AUTOMOUNT|AT_SYMLINK_NOFOLLOW|AT_STATX_DONT_SYNC)
+> > 
+> > using STATX_ATTR_MOUNT_ROOT to identify a potential mountpoint. Then
+> > pass that mount-id to the new system call.
+> > 
+> > [2]: https://github.com/uapi-group/kernel-features
+> 
+> This is generating a lot of good ideas! Maybe we should plan to discuss
+> this further at LSF/MM?
+
+Sure, happy to.
