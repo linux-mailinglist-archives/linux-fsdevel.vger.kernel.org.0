@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 713356E2594
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:24:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8AA76E2596
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:25:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230352AbjDNOYs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 10:24:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48364 "EHLO
+        id S230401AbjDNOY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 10:24:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230431AbjDNOYn (ORCPT
+        with ESMTP id S230493AbjDNOYy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 10:24:43 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F144C152;
-        Fri, 14 Apr 2023 07:24:31 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id f2so9911822pjs.3;
-        Fri, 14 Apr 2023 07:24:31 -0700 (PDT)
+        Fri, 14 Apr 2023 10:24:54 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E02BC140;
+        Fri, 14 Apr 2023 07:24:40 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id cm18-20020a17090afa1200b0024713adf69dso6267251pjb.3;
+        Fri, 14 Apr 2023 07:24:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681482270; x=1684074270;
+        d=gmail.com; s=20221208; t=1681482280; x=1684074280;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uu2tvK/dyE/2iioL4m/q+1zLO0tq6AJoZ0N1fRXdBLI=;
-        b=VZpG6YhRv9cCG3dhHA4pW1dfvwCMu8AdyhCK9POKf5RMu8MA/hMLmX9JH6IlIvozl1
-         1fVKpFWNxMc57Q90dZ7CxY5g8ZjQa98VKAWwZZYhMZCFgRuJLaCo0ene2tZmu1p3/eXY
-         vgGdzYayeuafSTKmDbbuUID2tYVhNc9bsT3u2L34Qz3Sk4G3BHCgygYiRqeJFkwIHjs2
-         Nr2TTPHguT7oEswc2lYK0IYXrvHQR6EAjkurHZk2S7EXlB2uNgw4hengUxVBmEPCr65L
-         0Jsxm3ALANv9sKddMqxMVD0nh2jBBNUv96/3Ut35UTZ1DS0w9BP0/MQAFy73Zj+IzSAG
-         mDuA==
+        bh=EI/xgA3T+jD6+X1P1tFB/fdrO9EhnI4pOgRfKhyKXi8=;
+        b=dp9B4As7NRowFOhmFgHptzwRqDpv7/qxF2zrakWreLkouXNX+Ey0loxIIQdV0mAyjL
+         wbB5XAF4XVWn7QWMCRTQsmGD65y5w+/3d5YZz+ZuQURVTP5mQmbfpw6uP6zYos/mTpxi
+         Z2hMRosDak5Clhncc6D/belgtQPtCjSdu0z42/aBMHdBa3D3dMT8E2ppfvQuohvqykwf
+         DKHGG/m/ZpQ6kgNHGpm5DTfDKIRJF+FpahmqHY2B6kez9gLckPsly4+UQSub9VJUk4mA
+         UmGR+EpFifjGDLsruJ//xx4xJj9JDgYl1bK+1deT7vfi23+wJW8oTTmCtvanwFXVxaJf
+         ifng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681482270; x=1684074270;
+        d=1e100.net; s=20221208; t=1681482280; x=1684074280;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uu2tvK/dyE/2iioL4m/q+1zLO0tq6AJoZ0N1fRXdBLI=;
-        b=A1ixAIeOTQNaUx4ylEcA1Fn9UbDYq6LFOnlnJPwuQS5fGU4vv+QbuIh5ypSFTqej7M
-         IzY2uyxSbTte/Z+rlz+bpH2/0tCnrtQ8e4MwnjieVjMaqJ1vXlYFKEmxTJTkXDNu/B8u
-         UWmMoFZmy46mKARpxeMWadb1UjIM0Ovg8j+eLHQ0OruNx4TH834Z94PC+MiYhzxENkJ3
-         AZIc6MUdpB20DXaUY3GvUQGgRtS70JK5vUHhfmZIIaVnsdNCOgy9QpHuuRm+bC+mLX3V
-         axOaFMxyruswCAwY1B051W/s07G1nLfOXbTHa0oqSOvkz8saYq6rlSap18Wm5+etLL4D
-         SlYw==
-X-Gm-Message-State: AAQBX9d2laPtzEyhRItEj0sN/O15AE8IEnzY/k5DmXPLFQC65BRfuzA2
-        ulLrx5di0vezqRwiXGh2qqI=
-X-Google-Smtp-Source: AKy350YJJQnFLpjJ1GWwTuBA1s0UTSEAKxeCsIUIoR1dqPUv21yoi97HToCfZrLndDVV2aGKaYjHpw==
-X-Received: by 2002:a17:90a:4a17:b0:247:2d48:76f7 with SMTP id e23-20020a17090a4a1700b002472d4876f7mr4010602pjh.44.1681482270305;
-        Fri, 14 Apr 2023 07:24:30 -0700 (PDT)
+        bh=EI/xgA3T+jD6+X1P1tFB/fdrO9EhnI4pOgRfKhyKXi8=;
+        b=bglvtuH5/hADmO8XMJyTq/8ZPtQvG71S7GEwWrJKkcfMC/OHlGTh4JYFhdyUL4kM0r
+         aKqsSjVYz9N9xv2jiYkt8lsst/cyKknEYcDUOoG125Xnm0uONVg0C0KQjtx3xEtxI3rt
+         QTNfijMOLW4RBbtT1Gxu5NsOcOLXPXLzfIv2yBfbSRiykJuux8iWKtpoyKx4wFUSfxWK
+         at+tvCDk+yjX/HtpzXC4g6tdqUO2QioaklQgfyrv5tkZGDO4hrR/N7+hX1B1If7PPrTd
+         cHLS/KSifXpJxg7fIfFWUKBQ/fKTYpz8CFwU4eEQGwsBXLErigeIupjmlgrDGKVyY2r6
+         ZHqg==
+X-Gm-Message-State: AAQBX9cXYvRdfHJOcPC/gJgw5J4jICfVgR/yo1JrvvVeyb7oeyFaFMgD
+        vkJKW0vmRsSfjsvuw94vdvs=
+X-Google-Smtp-Source: AKy350bVGay/l+iKywICpX6DkfyRQb5ITLNSdlflzo3Pxj01rUABeJIlD5c4oSXbLyfahy3pI5Uy8Q==
+X-Received: by 2002:a17:90a:fc6:b0:237:97a3:1479 with SMTP id 64-20020a17090a0fc600b0023797a31479mr6207174pjz.28.1681482279586;
+        Fri, 14 Apr 2023 07:24:39 -0700 (PDT)
 Received: from strix-laptop.. (2001-b011-20e0-1499-8303-7502-d3d7-e13b.dynamic-ip6.hinet.net. [2001:b011:20e0:1499:8303:7502:d3d7:e13b])
-        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.24.21
+        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.24.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Apr 2023 07:24:29 -0700 (PDT)
+        Fri, 14 Apr 2023 07:24:39 -0700 (PDT)
 From:   Chih-En Lin <shiyn.lin@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Qi Zheng <zhengqi.arch@bytedance.com>,
@@ -111,9 +111,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Pedro Fonseca <pfonseca@purdue.edu>,
         Jim Huang <jserv@ccns.ncku.edu.tw>,
         Huichun Feng <foxhoundsk.tw@gmail.com>
-Subject: [PATCH v5 01/17] mm: Split out the present cases from zap_pte_range()
-Date:   Fri, 14 Apr 2023 22:23:25 +0800
-Message-Id: <20230414142341.354556-2-shiyn.lin@gmail.com>
+Subject: [PATCH v5 02/17] mm: Allow user to control COW PTE via prctl
+Date:   Fri, 14 Apr 2023 22:23:26 +0800
+Message-Id: <20230414142341.354556-3-shiyn.lin@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230414142341.354556-1-shiyn.lin@gmail.com>
 References: <20230414142341.354556-1-shiyn.lin@gmail.com>
@@ -129,285 +129,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As the complexity of zap_pte_range() has increased, The readability
-and maintainability are becoming more difficult. To simplfy and
-improve the expandability of zap PTE part, split the present and
-non-present cases from zap_pte_range() and replace the individual
-flag variable by the single flag with bitwise operations.
+Add a new prctl, PR_SET_COW_PTE, to allow the user to enable COW PTE.
+Since it has a time gap between using the prctl to enable the COW PTE
+and doing the fork, we use two states (MMF_COW_PTE_READY and MMF_COW_PTE)
+to determine the task that wants to do COW PTE or already doing it.
+
+The MMF_COW_PTE_READY flag marks the task to do COW PTE in the next time
+of fork(). During fork(), if MMF_COW_PTE_READY set, fork() will unset the
+flag and set the MMF_COW_PTE flag. After that, fork() might shares PTEs
+instead of duplicates it.
 
 Signed-off-by: Chih-En Lin <shiyn.lin@gmail.com>
 ---
- mm/memory.c | 217 +++++++++++++++++++++++++++++++---------------------
- 1 file changed, 129 insertions(+), 88 deletions(-)
+ include/linux/sched/coredump.h | 13 ++++++++++++-
+ include/uapi/linux/prctl.h     |  6 ++++++
+ kernel/sys.c                   | 11 +++++++++++
+ 3 files changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 01a23ad48a04..0476cf22ea33 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1351,29 +1351,147 @@ zap_install_uffd_wp_if_needed(struct vm_area_struct *vma,
- 	pte_install_uffd_wp_if_needed(vma, addr, pte, pteval);
+diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
+index 0e17ae7fbfd3..dff4b0938c39 100644
+--- a/include/linux/sched/coredump.h
++++ b/include/linux/sched/coredump.h
+@@ -87,7 +87,18 @@ static inline int get_dumpable(struct mm_struct *mm)
+ 
+ #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+ 
++/*
++ * MMF_COW_PTE_READY: Marking the task to do COW PTE in the next time of
++ * fork(). During fork(), if MMF_COW_PTE_READY set, fork() will unset the
++ * flag and set the MMF_COW_PTE flag. After that, fork() might shares PTEs
++ * rather than duplicates it.
++ */
++#define MMF_COW_PTE_READY	29 /* Share PTE tables in next time of fork() */
++#define MMF_COW_PTE		30 /* PTE tables are shared between processes */
++#define MMF_COW_PTE_MASK	(1 << MMF_COW_PTE)
++
+ #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+-				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK)
++				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
++				 MMF_COW_PTE_MASK)
+ 
+ #endif /* _LINUX_SCHED_COREDUMP_H */
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 1312a137f7fb..8fc82ced80b5 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -290,4 +290,10 @@ struct prctl_mm_map {
+ #define PR_SET_VMA		0x53564d41
+ # define PR_SET_VMA_ANON_NAME		0
+ 
++/*
++ * Set the prepare flag, MMF_COW_PTE_READY, to do the share (copy-on-write)
++ * page table in the next time of fork.
++ */
++#define PR_SET_COW_PTE			65
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 495cd87d9bf4..eb1c38c4bad2 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2377,6 +2377,14 @@ static inline int prctl_get_mdwe(unsigned long arg2, unsigned long arg3,
+ 		PR_MDWE_REFUSE_EXEC_GAIN : 0;
  }
  
-+#define ZAP_PTE_INIT 0x0000
-+#define ZAP_PTE_FORCE_FLUSH 0x0001
-+
-+struct zap_pte_details {
-+	pte_t **pte;
-+	unsigned long *addr;
-+	unsigned int flags;
-+	int rss[NR_MM_COUNTERS];
-+};
-+
-+/* Return 0 to continue, 1 to break. */
-+static inline int
-+zap_present_pte(struct mmu_gather *tlb, struct vm_area_struct *vma,
-+		struct zap_details *details,
-+		struct zap_pte_details *pte_details)
++static int prctl_set_cow_pte(struct mm_struct *mm)
 +{
-+	struct mm_struct *mm = tlb->mm;
-+	struct page *page;
-+	unsigned int delay_rmap;
-+	unsigned long addr = *pte_details->addr;
-+	pte_t *pte = *pte_details->pte;
-+	pte_t ptent = *pte;
-+
-+	page = vm_normal_page(vma, addr, ptent);
-+	if (unlikely(!should_zap_page(details, page)))
-+		return 0;
-+
-+	ptent = ptep_get_and_clear_full(mm, addr, pte, tlb->fullmm);
-+	tlb_remove_tlb_entry(tlb, pte, addr);
-+	zap_install_uffd_wp_if_needed(vma, addr, pte, details, ptent);
-+	if (unlikely(!page))
-+		return 0;
-+
-+	delay_rmap = 0;
-+	if (!PageAnon(page)) {
-+		if (pte_dirty(ptent)) {
-+			set_page_dirty(page);
-+			if (tlb_delay_rmap(tlb)) {
-+				delay_rmap = 1;
-+				pte_details->flags |= ZAP_PTE_FORCE_FLUSH;
-+			}
-+		}
-+		if (pte_young(ptent) && likely(vma_has_recency(vma)))
-+			mark_page_accessed(page);
-+
-+	}
-+	pte_details->rss[mm_counter(page)]--;
-+	if (!delay_rmap) {
-+		page_remove_rmap(page, vma, false);
-+		if (unlikely(page_mapcount(page) < 0))
-+			print_bad_pte(vma, addr, ptent, page);
-+	}
-+	if (unlikely(__tlb_remove_page(tlb, page, delay_rmap))) {
-+		*pte_details->addr += PAGE_SIZE;
-+		pte_details->flags |= ZAP_PTE_FORCE_FLUSH;
-+		return 1;
-+	}
-+
++	if (test_bit(MMF_COW_PTE, &mm->flags))
++		return -EINVAL;
++	set_bit(MMF_COW_PTE_READY, &mm->flags);
 +	return 0;
 +}
 +
-+static inline void
-+zap_nopresent_pte(struct mmu_gather *tlb, struct vm_area_struct *vma,
-+		  struct zap_details *details,
-+		  struct zap_pte_details *pte_details)
-+{
-+	struct mm_struct *mm = tlb->mm;
-+	struct page *page;
-+	unsigned long addr = *pte_details->addr;
-+	pte_t *pte = *pte_details->pte;
-+	pte_t ptent = *pte;
-+	swp_entry_t entry = pte_to_swp_entry(ptent);
-+
-+	if (is_device_private_entry(entry) ||
-+	    is_device_exclusive_entry(entry)) {
-+		page = pfn_swap_entry_to_page(entry);
-+		if (unlikely(!should_zap_page(details, page)))
-+			return;
-+		/*
-+		 * Both device private/exclusive mappings should only
-+		 * work with anonymous page so far, so we don't need to
-+		 * consider uffd-wp bit when zap. For more information,
-+		 * see zap_install_uffd_wp_if_needed().
-+		 */
-+		WARN_ON_ONCE(!vma_is_anonymous(vma));
-+		pte_details->rss[mm_counter(page)]--;
-+		if (is_device_private_entry(entry))
-+			page_remove_rmap(page, vma, false);
-+		put_page(page);
-+	} else if (!non_swap_entry(entry)) {
-+		/* Genuine swap entry, hence a private anon page */
-+		if (!should_zap_cows(details))
-+			return;
-+		pte_details->rss[MM_SWAPENTS]--;
-+		if (unlikely(!free_swap_and_cache(entry)))
-+			print_bad_pte(vma, addr, ptent, NULL);
-+	} else if (is_migration_entry(entry)) {
-+		page = pfn_swap_entry_to_page(entry);
-+		if (!should_zap_page(details, page))
-+			return;
-+		pte_details->rss[mm_counter(page)]--;
-+	} else if (pte_marker_entry_uffd_wp(entry)) {
-+		/* Only drop the uffd-wp marker if explicitly requested */
-+		if (!zap_drop_file_uffd_wp(details))
-+			return;
-+	} else if (is_hwpoison_entry(entry) ||
-+		   is_swapin_error_entry(entry)) {
-+		if (!should_zap_cows(details))
-+			return;
-+	} else {
-+		/* We should have covered all the swap entry types */
-+		WARN_ON_ONCE(1);
-+	}
-+	pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
-+	zap_install_uffd_wp_if_needed(vma, addr, pte, details, ptent);
-+}
-+
- static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 				struct vm_area_struct *vma, pmd_t *pmd,
- 				unsigned long addr, unsigned long end,
- 				struct zap_details *details)
+ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 		unsigned long, arg4, unsigned long, arg5)
  {
- 	struct mm_struct *mm = tlb->mm;
--	int force_flush = 0;
--	int rss[NR_MM_COUNTERS];
- 	spinlock_t *ptl;
- 	pte_t *start_pte;
- 	pte_t *pte;
--	swp_entry_t entry;
-+	struct zap_pte_details pte_details = {
-+		.addr = &addr,
-+		.flags = ZAP_PTE_INIT,
-+		.pte = &pte,
-+	};
- 
- 	tlb_change_page_size(tlb, PAGE_SIZE);
- again:
--	init_rss_vec(rss);
-+	init_rss_vec(pte_details.rss);
- 	start_pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
- 	pte = start_pte;
- 	flush_tlb_batched_pending(mm);
- 	arch_enter_lazy_mmu_mode();
- 	do {
- 		pte_t ptent = *pte;
--		struct page *page;
- 
- 		if (pte_none(ptent))
- 			continue;
-@@ -1382,95 +1500,18 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 			break;
- 
- 		if (pte_present(ptent)) {
--			unsigned int delay_rmap;
--
--			page = vm_normal_page(vma, addr, ptent);
--			if (unlikely(!should_zap_page(details, page)))
--				continue;
--			ptent = ptep_get_and_clear_full(mm, addr, pte,
--							tlb->fullmm);
--			tlb_remove_tlb_entry(tlb, pte, addr);
--			zap_install_uffd_wp_if_needed(vma, addr, pte, details,
--						      ptent);
--			if (unlikely(!page))
--				continue;
--
--			delay_rmap = 0;
--			if (!PageAnon(page)) {
--				if (pte_dirty(ptent)) {
--					set_page_dirty(page);
--					if (tlb_delay_rmap(tlb)) {
--						delay_rmap = 1;
--						force_flush = 1;
--					}
--				}
--				if (pte_young(ptent) && likely(vma_has_recency(vma)))
--					mark_page_accessed(page);
--			}
--			rss[mm_counter(page)]--;
--			if (!delay_rmap) {
--				page_remove_rmap(page, vma, false);
--				if (unlikely(page_mapcount(page) < 0))
--					print_bad_pte(vma, addr, ptent, page);
--			}
--			if (unlikely(__tlb_remove_page(tlb, page, delay_rmap))) {
--				force_flush = 1;
--				addr += PAGE_SIZE;
-+			if (zap_present_pte(tlb, vma, details, &pte_details))
- 				break;
--			}
- 			continue;
- 		}
--
--		entry = pte_to_swp_entry(ptent);
--		if (is_device_private_entry(entry) ||
--		    is_device_exclusive_entry(entry)) {
--			page = pfn_swap_entry_to_page(entry);
--			if (unlikely(!should_zap_page(details, page)))
--				continue;
--			/*
--			 * Both device private/exclusive mappings should only
--			 * work with anonymous page so far, so we don't need to
--			 * consider uffd-wp bit when zap. For more information,
--			 * see zap_install_uffd_wp_if_needed().
--			 */
--			WARN_ON_ONCE(!vma_is_anonymous(vma));
--			rss[mm_counter(page)]--;
--			if (is_device_private_entry(entry))
--				page_remove_rmap(page, vma, false);
--			put_page(page);
--		} else if (!non_swap_entry(entry)) {
--			/* Genuine swap entry, hence a private anon page */
--			if (!should_zap_cows(details))
--				continue;
--			rss[MM_SWAPENTS]--;
--			if (unlikely(!free_swap_and_cache(entry)))
--				print_bad_pte(vma, addr, ptent, NULL);
--		} else if (is_migration_entry(entry)) {
--			page = pfn_swap_entry_to_page(entry);
--			if (!should_zap_page(details, page))
--				continue;
--			rss[mm_counter(page)]--;
--		} else if (pte_marker_entry_uffd_wp(entry)) {
--			/* Only drop the uffd-wp marker if explicitly requested */
--			if (!zap_drop_file_uffd_wp(details))
--				continue;
--		} else if (is_hwpoison_entry(entry) ||
--			   is_swapin_error_entry(entry)) {
--			if (!should_zap_cows(details))
--				continue;
--		} else {
--			/* We should have covered all the swap entry types */
--			WARN_ON_ONCE(1);
--		}
--		pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
--		zap_install_uffd_wp_if_needed(vma, addr, pte, details, ptent);
-+		zap_nopresent_pte(tlb, vma, details, &pte_details);
- 	} while (pte++, addr += PAGE_SIZE, addr != end);
- 
--	add_mm_rss_vec(mm, rss);
-+	add_mm_rss_vec(mm, pte_details.rss);
- 	arch_leave_lazy_mmu_mode();
- 
- 	/* Do the actual TLB flush before dropping ptl */
--	if (force_flush) {
-+	if (pte_details.flags & ZAP_PTE_FORCE_FLUSH) {
- 		tlb_flush_mmu_tlbonly(tlb);
- 		tlb_flush_rmaps(tlb, vma);
- 	}
-@@ -1482,8 +1523,8 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 	 * entries before releasing the ptl), free the batched
- 	 * memory too. Restart if we didn't do everything.
- 	 */
--	if (force_flush) {
--		force_flush = 0;
-+	if (pte_details.flags & ZAP_PTE_FORCE_FLUSH) {
-+		pte_details.flags &= ~ZAP_PTE_FORCE_FLUSH;
- 		tlb_flush_mmu(tlb);
- 	}
- 
+@@ -2661,6 +2669,9 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 	case PR_SET_VMA:
+ 		error = prctl_set_vma(arg2, arg3, arg4, arg5);
+ 		break;
++	case PR_SET_COW_PTE:
++		error = prctl_set_cow_pte(me->mm);
++		break;
+ 	default:
+ 		error = -EINVAL;
+ 		break;
 -- 
 2.34.1
 
