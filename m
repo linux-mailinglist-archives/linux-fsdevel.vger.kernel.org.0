@@ -2,106 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 361CC6E24DB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 15:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F31E26E24DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 15:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbjDNN4Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 09:56:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45686 "EHLO
+        id S230070AbjDNN4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 09:56:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229659AbjDNN4W (ORCPT
+        with ESMTP id S230081AbjDNN4c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 09:56:22 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90C6A276;
-        Fri, 14 Apr 2023 06:56:20 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7F1B1219D7;
-        Fri, 14 Apr 2023 13:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1681480579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=96hCN+ciy7etdeUypDLwA2iULJg5jzHgXTrCStgsPRM=;
-        b=b9bUP/oVyJdI6rufBFfxFaCns6kjsy22eY89h1bV1yHE0SBPZ4FgSbzPwwuTXX0A+xE3q3
-        4gx1Un8T/RAqBTWsMcB8UmBsTaMFmQ7jbEDw5Rf3JLrAMRQ62Xhc41ViLOk5Gpzn4c2uge
-        i+y6WyzR1YV/G0HTF40lkDllrbCkCTA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1681480579;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=96hCN+ciy7etdeUypDLwA2iULJg5jzHgXTrCStgsPRM=;
-        b=+08MtxAiw/YvXwRixi37dgpuSbF+Vm5iw0N+K4DkbYEw2nACwa0f7rg/MxzJNBmHBxzRdO
-        dsb9g9xJlBN3MVBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6A7C813498;
-        Fri, 14 Apr 2023 13:56:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id AKmJGYNbOWTbFgAAMHmgww
-        (envelope-from <hare@suse.de>); Fri, 14 Apr 2023 13:56:19 +0000
-Message-ID: <d7bc4553-05c7-f4db-e38a-19980cec90d6@suse.de>
-Date:   Fri, 14 Apr 2023 15:56:19 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [RFC 0/4] convert create_page_buffers to create_folio_buffers
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Pankaj Raghav <p.raghav@samsung.com>, brauner@kernel.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        Fri, 14 Apr 2023 09:56:32 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 738F0B440;
+        Fri, 14 Apr 2023 06:56:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uV+XYY5M3RiINYeFePo3Mw428wUkDdAGAuIh9HbihLU=; b=EY1gdrnuV8Pcz7OrjfDTgvAM5d
+        ttQJHwwR29r08aEE1oa9hyYRfEDy1162MKZfVwuei3O6b+BEtXV2g1IOhnVljijREtZkF/HSymIB5
+        Q0mzGPVprAu0AC/ELmNU6YK1v7wVIqhdjb0O76B3i/WHOiAXtq2XZvkIod3vBVuiTxDyVSnmmGGFt
+        4z+seGjV7oNpriysatUUQCuO74I5F7NNvpZhwfcH/bVtg5pv5TtMWYcrvVer4ZtntbygqEWHm4754
+        2F7/dArbgksI/ErOC6bCaE5fFlPRyDz2uLS9VxnO9sFMLP3kU4qDu8Jv4gF5KIQDtov3OPW97EjJK
+        VKNrfEGg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pnJub-008naW-G2; Fri, 14 Apr 2023 13:56:25 +0000
+Date:   Fri, 14 Apr 2023 14:56:25 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     Pankaj Raghav <p.raghav@samsung.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mcgrof@kernel.org, gost.dev@samsung.com
-References: <CGME20230414110825eucas1p1ed4d16627889ef8542dfa31b1183063d@eucas1p1.samsung.com>
- <20230414110821.21548-1-p.raghav@samsung.com>
- <1e68a118-d177-a218-5139-c8f13793dbbf@suse.de>
- <ZDlaaJxjXFbh+xSI@casper.infradead.org>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <ZDlaaJxjXFbh+xSI@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        mcgrof@kernel.org
+Subject: Re: [PATCH] mm/filemap: allocate folios according to the blocksize
+Message-ID: <ZDlbidnLtgYGMXie@casper.infradead.org>
+References: <20230414134908.103932-1-hare@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230414134908.103932-1-hare@suse.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/14/23 15:51, Matthew Wilcox wrote:
-> On Fri, Apr 14, 2023 at 03:47:13PM +0200, Hannes Reinecke wrote:
->> BTW; I've got another patch replacing 'writepage' with 'write_folio'
->> (and the corresponding argument update). Is that a direction you want to go?
-> 
-> No; ->writepage is being deleted.  It's already gone from ext4 and xfs.
+On Fri, Apr 14, 2023 at 03:49:08PM +0200, Hannes Reinecke wrote:
+> If the blocksize is larger than the pagesize allocate folios
+> with the correct order.
 
-Aw.
-And here's me having converted block/fops over to using iomap w/ 
-iomap_writepage(). Tough.
+I think you also need to get the one in page_cache_ra_unbounded()
+and page_cache_ra_order() also needs some love?
 
-Oh well.
-Wasn't a great fit anyway as for a sb_bread() replacement we would need 
-a sub-page access for iomap.
-Question is whether we really need that or shouldn't read PAGE_SIZE 
-sectors always. Surely would make life easier. And would save us all the 
-logic with bh_lru etc as we can rely on the page cache.
-
-But probably an item for the iomap discussion at LSF.
-
-Unless you got plans already ...
-
-Cheers,
-
-Hannes
-
+It might help to put an assertion in __filemap_add_folio() to be sure
+we're not doing something unacceptable.
