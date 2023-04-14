@@ -2,126 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C39356E2580
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F9CD6E2591
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229930AbjDNOVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 10:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45604 "EHLO
+        id S230288AbjDNOYZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 10:24:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbjDNOVG (ORCPT
+        with ESMTP id S230003AbjDNOYX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 10:21:06 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2124.outbound.protection.outlook.com [40.107.223.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BE94F2;
-        Fri, 14 Apr 2023 07:21:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LYuy1H95Lr7pEwzZKXgTyohUOEIJhsxV6UmkXUOB/O6705qmbqETF8Qg2nP2pZtlNVQuSlvxilhcxfGsC9w+mAO3y0tpmfWhkWELZ+PKKlAHpo8Ji83RaS7J8G+5l/GRxh2FycfWn8ItBCGqABjaevfoZLGkupkRWyXi52MZulzKhN47doHTJxZZpHdKjHM1QWLwCTh63zHwDLOMEvo7WemlsPm1k0C6M/g/BvR6uEjOdmQ5WMfzEPdyrqwJ3oxZYn/ssil1EOVNslH/kybQppFxHVmNQ+Q+Y2SclZJK3PMcJtfsigB8JsFBVFgJ/XFfZ69TsX5ZBGMJUklLGoKP4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qtfvpAjRVLXREya7a1p9YxfyvVjGCpyVcl68pfkbYUQ=;
- b=I28kw5oyILXpX8kP6wM70NNYiM5OUJmhtlcNfiuEDjudgbLPyUGwSeCzpBojU8kLURoL3QPnURNStF8s0ig4zoz4cypJBK8WReyNMg2FkiFbKu+Rnp2ISH8jmVbT+OVX2Ihm4kqHUmXxYnB4C3abL5zw2s7omsd50Xg0d+7r4x3ADVChhM6lI8XaVQsujordd0x1uICKnEH/j3lfTTkn7saJLYjvvy+eR1/1fcZoWrGvIJ2qNMOaNaNEOHxET7EEpK+FLAY/E1DUWJT10c3hdlsWPgVctD5Hu50Y7cHBBmTB0xjXlisQyrJz3uL6J87+bt+mdct0zM/TiXdcEcScGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hammerspace.com; dmarc=pass action=none
- header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qtfvpAjRVLXREya7a1p9YxfyvVjGCpyVcl68pfkbYUQ=;
- b=SsoSuFilI+hHKUtA0TgDC3zNmHXd/Rs1NxwvRBiBmKN1RWLNkzO7us6oAhhAB7XdKwC5Yy748qemBP2CD47CZv/3C1rIrhuNpuls+EJ6hb9nFamjX605ndHRmVL0r0MKISMrXDORoaCl16VObu09STgI3iLEef6xEOo5rvnjYfU=
-Received: from CH0PR13MB5084.namprd13.prod.outlook.com (2603:10b6:610:111::7)
- by BN0PR13MB4712.namprd13.prod.outlook.com (2603:10b6:408:128::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.30; Fri, 14 Apr
- 2023 14:21:01 +0000
-Received: from CH0PR13MB5084.namprd13.prod.outlook.com
- ([fe80::3627:d466:b0ae:1740]) by CH0PR13MB5084.namprd13.prod.outlook.com
- ([fe80::3627:d466:b0ae:1740%3]) with mapi id 15.20.6298.030; Fri, 14 Apr 2023
- 14:21:01 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     Christian Brauner <brauner@kernel.org>
-CC:     Jeffrey Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Neil Brown <neilb@suse.de>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: allowing for a completely cached umount(2) pathwalk
-Thread-Topic: allowing for a completely cached umount(2) pathwalk
-Thread-Index: AQHZblNqsf7f4dFF3kOaw1n+rBD0gK8p1WaAgABDqACAAHvlAIAAO+cAgAALHwA=
-Date:   Fri, 14 Apr 2023 14:21:00 +0000
-Message-ID: <9192A185-03BF-4062-B12F-E7EF52578014@hammerspace.com>
-References: <95ee689c76bf034fa2fe9fade0bccdb311f3a04f.camel@kernel.org>
- <168142566371.24821.15867603327393356000@noble.neil.brown.name>
- <20230414024312.GF3390869@ZenIV>
- <2631cb9c05087ddd917679b7cebc58cb42cd2de6.camel@kernel.org>
- <20230414-sowas-unmittelbar-67fdae9ca5cd@brauner>
-In-Reply-To: <20230414-sowas-unmittelbar-67fdae9ca5cd@brauner>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3731.500.231)
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=hammerspace.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH0PR13MB5084:EE_|BN0PR13MB4712:EE_
-x-ms-office365-filtering-correlation-id: 00e6b783-86fa-4b53-8469-08db3cf37909
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nD5KEXH6ks2ws1eBTqKOCj79KfkwDKSUZwklRYu6AfCdYrVAsnKJsmgWVbs8l6ifjHq7EzabdLlbsKAP5+BlboN1tiwwRkeoZoGkglZyUWa/yIHhCB2W7dDQ7RaYwh2TCMYrT3B231ykFmmPJQ7x2kflXj+BQk745e65rdOTI4QY/ZMINluHB92COdVBCb73B4mEBpEPsuNW2EwyL6Abb6RX7D3K/yjgv4k05l6emW0tWCd2HcXWRm3kPLIUr25y6+aV8P8oQqn7/ga2/mFP3dy65GN+7jyJRM0Hvwj7yZLhxDPt7S/wwIIrP4pKUgWWR/utN7FtiHtVjat/2hwH/vOxS5g+cDVzU85/1JXxPuKBTxPxAOdhCfgBTvrqDx5v7MxZqrI8nWGgxHMZVb/GWWBducEK8TJuXiJ/pllv3T2YcbOWhAxwrob7lBaQvGCPTDrT3HSV5QWDq8H6cY516Oh+6ibKKyJ131o1WkT0316xNU5KF/FNYffFNp5SClzxMy2K4w0/vuQpEwnMZQ+buIjETrB5aiTlx/Xs7arkWfkF+RqcpSLKWOlqCKykd0zGHYwJGwipTemrjPseBqwO2MBrMfJ89EyIBkQF4t5SjPIf8vjI3vjU8zmk1GRqqnUis+JmzVqsEIdXDSGcuT02Cw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR13MB5084.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(136003)(376002)(346002)(396003)(39840400004)(451199021)(86362001)(54906003)(316002)(478600001)(33656002)(41300700001)(122000001)(8936002)(38100700002)(8676002)(5660300002)(66476007)(64756008)(76116006)(66446008)(66556008)(53546011)(6512007)(6506007)(36756003)(38070700005)(26005)(186003)(66946007)(4326008)(6916009)(83380400001)(71200400001)(2906002)(6486002)(2616005)(45980500001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?laZVNv+SpfuHULRptt8d0D2VrMvsc39sOl860AICSQjOm985adjuKG+SIS7S?=
- =?us-ascii?Q?I18WyEhTyCCY9Omta63kcjrEBvmFnPaGLgvRQDml0KGdBSf/k4cvXsy+TDhA?=
- =?us-ascii?Q?wii1tstgpxw9k55iBfercI57dpZq9O9txoE7juIWWKYcgkrFGB2Mpbmsnols?=
- =?us-ascii?Q?1GB8LFLRncq8QXsnnUrH6xbYMxxYg82GVU1MdHV9+kYlTVl4b5G3fO0Kew9f?=
- =?us-ascii?Q?ooXtfRS5Ke12gauDDsQ1ArVPHyupVpj5eqCi4OjhoJjfFGRT2Sxso66pI1fT?=
- =?us-ascii?Q?MVL3H7iTWI1JcK9oyP/qZJZXKstJakHTMesMLY6AKdFOvOhaATi4B/NuJ4QX?=
- =?us-ascii?Q?coze9rsQ90KhFcbHmFwM7bnH+58xHimy4LugQ+OVnT4DTGRCX+d22tQop+zU?=
- =?us-ascii?Q?MX9+XPMA7hkm4kflLErrwvyPkpbbiXqOTxqjtQ8smXchWfcnbMYGwY79NH5H?=
- =?us-ascii?Q?4Y4mbZ3EY7Ooz8EzEjX/6J161IOSN1YFTHHJbKX2kGuxpIUM0wzJFv21Xu0O?=
- =?us-ascii?Q?nAk2cQrlqtkN1B1SbG+2QIN0wIHHUrTpzEpyoAKUUqDIqREuZUDSVqOWFd1m?=
- =?us-ascii?Q?6ibBwIB3G9Au5l0emXrfQc3F84Z27Fxhu8cu9Wi4sIRpCsAQRO6PPAT5aebA?=
- =?us-ascii?Q?0Unqf8OTjFt1OoasjA5OB76mZ1c0KU8H8j0xa+WFh32qdiOdLZdTHTnhJi6L?=
- =?us-ascii?Q?K5/K1mqdrwCpb7uqMIddL3M5MGot9RSthB0rUNLf6d9S//u9BcTSfWmxNgiD?=
- =?us-ascii?Q?hEfIFnzy+cw5To/0x22waGjL522UEVblEvg7GUKqSXrG2+JGXv4gjPykqlB8?=
- =?us-ascii?Q?yB5VqlRexKKkZJCZkQYQsMc1uWdq5kX1iYe///E1sfQ/w6lLCAjJM+W9kDdI?=
- =?us-ascii?Q?/+f1Ml6lRZojwO8Bnrm6EJ1/LIAio5/HntXbQJB1DKhZ2nsYG8DvWj2dj80m?=
- =?us-ascii?Q?NtRVJzY8wpeTH0pUMomhKZRsAY25mJuI1yLsva1qHg18VqasldSIyZNcY5+e?=
- =?us-ascii?Q?38waQMkhUMfUvPrEi42KpP7UUkI1izcuGoskrBmBBaG1qpn2x0zeJrDH6RHA?=
- =?us-ascii?Q?Uch6XXJg7jZMLVBSR6NRsYlm1yGmriFj3O3Hd6GgN7VfZ91GdVuvqSRTgr0M?=
- =?us-ascii?Q?4tsundSimK3QD479qUcgZpNX8N/i50xA75eu58+hUL70QYcgLB3yMNozRDpG?=
- =?us-ascii?Q?xaGq5x21ca+yz9GpCXhq3xq4rhrBvfsE6f1yM+132XCs5YV38SWWu8G2Wp9q?=
- =?us-ascii?Q?HiQ2JOlu+XJXxOhSR8OOrkR4kvn2lrKa44nxCDC/WR6v4ii7WZNsBv1ER4rk?=
- =?us-ascii?Q?VlS7haleKtDJBMbIDUSgD1/HVhfQ5hPpDYGU2YX114qjFsXJ2+VXkmDkkVrq?=
- =?us-ascii?Q?A5A83wGhSX/v6KZdSkGkgduUBv0xQSU1hPJHzBAzTEKytk0gLET4FZozZEWU?=
- =?us-ascii?Q?o5qvOHM9Htoht5QioXn0MZ+e8LW4kZIkEazl1DCNaFFM4JYLbB1g2ptdtf6e?=
- =?us-ascii?Q?5mwvh6l5lSkHU9zu8nZsaX5qg3rC2qOa7IsHWqTJLSmS/offq3M6TUsgtbzT?=
- =?us-ascii?Q?rEFcotsacM+NX0W1f1udl+V618fctdUHMn89Vak5V0tl3Ck6sb9Yv2UkaTBI?=
- =?us-ascii?Q?jA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E0D20E1B05163D4C9A11D832AEB8524C@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 14 Apr 2023 10:24:23 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB6193A84;
+        Fri, 14 Apr 2023 07:24:21 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id z11-20020a17090abd8b00b0024721c47ceaso4801373pjr.3;
+        Fri, 14 Apr 2023 07:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681482261; x=1684074261;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pLDZpwX/rnxh7wvus4iLYvr6Kw41bfVo1r+q2Drwt2c=;
+        b=T+glq+ymF5gcgbFjZAvpQEsn0ZyIVezfJfGliW8ets9mw8l9+nmLiPuzXCNUZuZ5k0
+         tFiQpiX4LU+S+/HWpZ2M/X7edr6KRb8IyAt/FK641TB1EV6ErFwnfPAQXEjzP86+AUKQ
+         +sXPUnH7xCIC1YwuPSB5FX3b/acL7pSznZDebEI55BaQ4mDIf8QfbLNi6m6VPc5BX4to
+         Gh/KfDxmVQGWjK5v7NuhJLXxsOzjHQOe3WsDPCtNrXQeWkjuTDNbbOJ9sQ07Fw/28QFq
+         zDl/KkJZmweWRrxNGL8OKIPcDMF3C4qpTQhB9dTrkqQPMpytbEIlfFBgEOQsr6SShirW
+         gjSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681482261; x=1684074261;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pLDZpwX/rnxh7wvus4iLYvr6Kw41bfVo1r+q2Drwt2c=;
+        b=eYqP5ooAJ8lMKgAhxMyMl9INnZiQDrdJaBX7okQVJLpRBkO2ETP9ch+a7fkxp5F5Mw
+         UDWBz2iOThHkSo/yW4Tt+URA+l9gla7Rca64I+bGWHD+5sbrUid7FQaIdgX6SKf0aWVX
+         Su3UnCI9JomINwX8CUygsMc6e3Z9Dcr7DBbSdc0+p06EorSr5yQeMK2L75hlAFELVB5P
+         6+1N/hnEz/ae8HDO+Fe6QDI3yvRBU28zStUbq3VzSe5VJNmsjRda22Yr41n1oUmRgGYv
+         wFcAbBHE6iJd9XY3wa9P9j9x9TEmLHbqAOdaiCAN3dlBix9AmP+BjmWJeM1s+xnvTKxd
+         ImRg==
+X-Gm-Message-State: AAQBX9dxzbPVKNXgk6mgbuZTvbiHt73Rm6ArghGtA+AkIaB2ynz38jbo
+        x3KG9N8kvO6Xy+W/ZsP7VFk=
+X-Google-Smtp-Source: AKy350b7zOnHJA/MbH+TwreyPJVFtUg2DPanIi5ILYPj9Xf8QJfLXnnhyD+HbkEtJPYqE02GD6sgWQ==
+X-Received: by 2002:a17:90a:3e41:b0:234:5d3c:b02b with SMTP id t1-20020a17090a3e4100b002345d3cb02bmr5548629pjm.42.1681482261057;
+        Fri, 14 Apr 2023 07:24:21 -0700 (PDT)
+Received: from strix-laptop.. (2001-b011-20e0-1499-8303-7502-d3d7-e13b.dynamic-ip6.hinet.net. [2001:b011:20e0:1499:8303:7502:d3d7:e13b])
+        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.24.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Apr 2023 07:24:20 -0700 (PDT)
+From:   Chih-En Lin <shiyn.lin@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        David Hildenbrand <david@redhat.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Nadav Amit <namit@vmware.com>, Barry Song <baohua@kernel.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Yu Zhao <yuzhao@google.com>,
+        Steven Barrett <steven@liquorix.net>,
+        Juergen Gross <jgross@suse.com>, Peter Xu <peterx@redhat.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Tong Tiangen <tongtiangen@huawei.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Li kunyu <kunyu@nfschina.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Joey Gouly <joey.gouly@arm.com>,
+        Chih-En Lin <shiyn.lin@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        "Zach O'Keefe" <zokeefe@google.com>,
+        Gautam Menghani <gautammenghani201@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Daniel Bristot de Oliveira <bristot@kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Gladkov <legion@kernel.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Dinglan Peng <peng301@purdue.edu>,
+        Pedro Fonseca <pfonseca@purdue.edu>,
+        Jim Huang <jserv@ccns.ncku.edu.tw>,
+        Huichun Feng <foxhoundsk.tw@gmail.com>
+Subject: [PATCH v5 00/17] Introduce Copy-On-Write to Page Table
+Date:   Fri, 14 Apr 2023 22:23:24 +0800
+Message-Id: <20230414142341.354556-1-shiyn.lin@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR13MB5084.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00e6b783-86fa-4b53-8469-08db3cf37909
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Apr 2023 14:21:00.8170
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ewOqh/VP/KMsvQXHUHo+QJUBaKpfGe8x4g8ztqjjyzdkV8gAXu3VIvMhEUwJJCC6S/3lj99srCUmVDUIR2IqNA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR13MB4712
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -129,126 +127,326 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+NOTE
+====
+This patch is primarily aimed at optimizing the memory usage of page
+table in processes with large address space, which can potentailly lead
+to improved the fork system calll latency under certain conditions.
+However, we're planning to improve the fork latency in the future but
+not in this patch.
+
+---
+
+v4 -> v5
+- Split the present and non-present parts of zap_pte_range.
+- Remove the incorrect assertion of mmap lock rwitability in handle_cow_pte_fault.
+- In break COW PTe fault handler, to avoid the situation where someone may
+  allocate the new PTE table due to clearing the pmd entry before duplicating
+  COW-ed PTE, we update the pmd entry with new PTE table after we finish the
+  duplication.
+- Add a second chance to break COW PTE after the allocation fails at first time,
+  if second time stil fails, kill the failed process by OOM killer.
+- Extract the zap part of COW-ed PTE from break COW PTE fault commit.
+- In zap part, clear the pmd entry which assigned to COW-ed PTE instead of
+  clearing it in free page table part. Before this change, it was possible
+  to access the COW-ed PTe after it had been zapped.
+- In zap part, we flush TLB and free the batched memory before we handle
+  the COW-ed PTE. And, during zapping COW-ed PTE, we defer flushing TLB
+  and freeing the batched memory until after we have cleared the pmd entry.
+- Add the COW-ed PTE table sanity check to page table check.
+
+v4: https://lore.kernel.org/linux-mm/20230207035139.272707-1-shiyn.lin@gmail.com/
+
+v3 -> v4
+- Add Kconfig, CONFIG_COW_PTE, since some of the architectures, e.g.,
+  s390 and powerpc32, don't support the PMD entry and PTE table
+  operations.
+- Fix unmatch type of break_cow_pte_range() in
+  migrate_vma_collect_pmd().
+- Don’t break COW PTE in folio_referenced_one().
+- Fix the wrong VMA range checking in break_cow_pte_range().
+- Only break COW when we modify the soft-dirty bit in
+  clear_refs_pte_range().
+- Handle do_swap_page() with COW PTE in mm/memory.c and mm/khugepaged.c.
+- Change the tlb flush from flush_tlb_mm_range() (x86 specific) to
+  tlb_flush_pmd_range().
+- Handle VM_DONTCOPY with COW PTE fork.
+- Fix the wrong address and invalid vma in recover_pte_range().
+- Fix the infinite page fault loop in GUP routine.
+  In mm/gup.c:follow_pfn_pte(), instead of calling the break COW PTE
+  handler, we return -EMLINK to let the GUP handles the page fault
+  (call faultin_page() in __get_user_pages()).
+- return not_found(pvmw) if the break COW PTE failed in
+  page_vma_mapped_walk().
+- Since COW PTE has the same result as the normal COW selftest, it
+  probably passed the COW selftest.
+
+	# [RUN] vmsplice() + unmap in child ... with hugetlb (2048 kB)
+	not ok 33 No leak from parent into child
+	# [RUN] vmsplice() + unmap in child with mprotect() optimization ... with hugetlb (2048 kB)
+	not ok 44 No leak from parent into child
+	# [RUN] vmsplice() before fork(), unmap in parent after fork() ... with hugetlb (2048 kB)
+	not ok 55 No leak from child into parent
+	# [RUN] vmsplice() + unmap in parent after fork() ... with hugetlb (2048 kB)
+	not ok 66 No leak from child into parent
+
+	Bail out! 4 out of 147 tests failed
+	# Totals: pass:143 fail:4 xfail:0 xpass:0 skip:0 error:0
+  See the more information about anon cow hugetlb tests:
+    https://patchwork.kernel.org/project/linux-mm/patch/20220927110120.106906-5-david@redhat.com/
 
 
-> On Apr 14, 2023, at 09:41, Christian Brauner <brauner@kernel.org> wrote:
->=20
-> On Fri, Apr 14, 2023 at 06:06:38AM -0400, Jeff Layton wrote:
->> On Fri, 2023-04-14 at 03:43 +0100, Al Viro wrote:
->>> On Fri, Apr 14, 2023 at 08:41:03AM +1000, NeilBrown wrote:
->>>=20
->>>> The path name that appears in /proc/mounts is the key that must be use=
-d
->>>> to find and unmount a filesystem.  When you do that "find"ing you are
->>>> not looking up a name in a filesystem, you are looking up a key in the
->>>> mount table.
->>>=20
->>> No.  The path name in /proc/mounts is *NOT* a key - it's a best-effort
->>> attempt to describe the mountpoint.  Pathname resolution does not work
->>> in terms of "the longest prefix is found and we handle the rest within
->>> that filesystem".
->>>=20
->>>> We could, instead, create an api that is given a mount-id (first numbe=
-r
->>>> in /proc/self/mountinfo) and unmounts that.  Then /sbin/umount could
->>>> read /proc/self/mountinfo, find the mount-id, and unmount it - all
->>>> without ever doing path name lookup in the traditional sense.
->>>>=20
->>>> But I prefer your suggestion.  LOOKUP_MOUNTPOINT could be renamed
->>>> LOOKUP_CACHED, and it only finds paths that are in the dcache, never
->>>> revalidates, at most performs simple permission checks based on cached
->>>> content.
->>>=20
->>> umount /proc/self/fd/42/barf/something
->>>=20
->>=20
->> Does any of that involve talking to the server? I don't necessarily see
->> a problem with doing the above. If "something" is in cache then that
->> should still work.
->>=20
->> The main idea here is that we want to avoid communicating with the
->> backing store during the umount(2) pathwalk.
->>=20
->>> Discuss.
->>>=20
->>> OTON, umount-by-mount-id is an interesting idea, but we'll need to deci=
-de
->>> what would the right permissions be for it.
->>>=20
->>> But please, lose the "mount table is a mapping from path prefix to file=
-system"
->>> notion - it really, really is not.  IIRC, there are systems that work t=
-hat way,
->>> but it's nowhere near the semantics used by any Unices, all variants of=
- Linux
->>> included.
->>=20
->> I'm not opposed to something by umount-by-mount-id either. All of this
->> seems like something that should probably rely on CAP_SYS_ADMIN.
->=20
-> The permission model needs to account for the fact that mount ids are
-> global and as such you could in principle unmount any mount in any mount
-> namespace. IOW, you can circumvent lookup restrictions completely.
->=20
-> So we could resolve the mnt-id to an FMODE_PATH and then very roughly
-> with no claim to solving everything:
->=20
-> may_umount_by_mnt_id(struct path *opath)
-> {
-> struct path root;
-> bool reachable;
->=20
-> // caller in principle able to circumvent lookup restrictions
->        if (!may_cap_dac_readsearch())
-> return false;
->=20
-> // caller can mount in their mountns
-> if (!may_mount())
-> return false;
->=20
-> // target mount and caller in the same mountns
-> if (!check_mnt())
-> return false;
->=20
-> // caller could in principle reach mount from it's root
-> get_fs_root(current->fs, &root);
->        reachable =3D is_path_reachable(real_mount(opath->mnt), opath->den=
-try, &root);
-> path_put(&root);
->=20
-> return reachable;
-> }
->=20
-> However, that still means that we have laxer restrictions on unmounting
-> by mount-id then on unmount with lookup as for lookup just having
-> CAP_DAC_READ_SEARCH isn't enough. Usually - at least for filesytems
-> without custom permission handlers - we also establish that the inode
-> can be mapped into the caller's idmapping.
->=20
-> So that would mean that unmounting by mount-id would allow you to
-> unmount mounts in cases where you wouldn't with umount. That might be
-> fine though as that's ultimately the goal here in a way.
->=20
-> One could also see a very useful feature in this where you require
-> capable(CAP_DAC_READ_SEARCH) and capable(CAP_SYS_ADMIN) and then allow
-> unmounting any mount in the system by mount-id. This would obviously be
-> very useful for privileged service managers but I haven't thought this
-> Through.
+v3: https://lore.kernel.org/linux-mm/20221220072743.3039060-1-shiyn.lin@gmail.com/T/
 
-That is exactly why having a separate syscall to do the lookup of the mount=
--id is good: it provides separation of privilege.
+RFC v2 -> v3
+- Change the sysctl with PID to prctl(PR_SET_COW_PTE).
+- Account all the COW PTE mapped pages in fork() instead of defer it to
+  page fault (break COW PTE).
+- If there is an unshareable mapped page (maybe pinned or private
+  device), recover all the entries that are already handled by COW PTE
+  fork, then copy to the new one.
+- Remove COW_PTE_OWNER_EXCLUSIVE flag and handle the only case of GUP,
+  follow_pfn_pte().
+- Remove the PTE ownership since we don't need it.
+- Use pte lock to protect the break COW PTE and free COW-ed PTE.
+- Do TLB flushing in break COW PTE handler.
+- Handle THP, KSM, madvise, mprotect, uffd and migrate device.
+- Handle the replacement page of uprobe.
+- Handle the clear_refs_write() of fs/proc.
+- All of the benchmarks dropped since the accounting and pte lock.
+  The benchmarks of v3 is worse than RFC v2, most of the cases are
+  similar to the normal fork, but there still have an use case
+  (TriforceAFL) is better than the normal fork version.
 
-The conversion of mount-id to an O_PATH file descriptor is just akin to a p=
-ath lookup, so only needs CAP_DAC_READ_SEARCH (since you require privilege =
-only to bypass the ACL directory read and lookup restrictions). The resulti=
-ng O_PATH file descriptor has no special properties that require any furthe=
-r privilege.
+RFC v2: https://lore.kernel.org/linux-mm/20220927162957.270460-1-shiyn.lin@gmail.com/T/
 
-Then use that resulting file descriptor for the umount, which normally requ=
-ires CAP_SYS_ADMIN.
+RFC v1 -> RFC v2
+- Change the clone flag method to sysctl with PID.
+- Change the MMF_COW_PGTABLE flag to two flags, MMF_COW_PTE and
+  MMF_COW_PTE_READY, for the sysctl.
+- Change the owner pointer to use the folio padding.
+- Handle all the VMAs that cover the PTE table when doing the break COW PTE.
+- Remove the self-defined refcount to use the _refcount for the page
+  table page.
+- Add the exclusive flag to let the page table only own by one task in
+  some situations.
+- Invalidate address range MMU notifier and start the write_seqcount
+  when doing the break COW PTE.
+- Handle the swap cache and swapoff.
 
-_________________________________
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trond.myklebust@hammerspace.com
+RFC v1: https://lore.kernel.org/all/20220519183127.3909598-1-shiyn.lin@gmail.com/
+
+---
+
+Currently, copy-on-write is only used for the mapped memory; the child
+process still needs to copy the entire page table from the parent
+process during forking. The parent process might take a lot of time and
+memory to copy the page table when the parent has a big page table
+allocated. For example, the memory usage of a process after forking with
+1 GB mapped memory is as follows:
+
+              DEFAULT FORK
+          parent         child
+VmRSS:   1049688 kB    1048688 kB
+VmPTE:      2096 kB       2096 kB
+
+This patch introduces copy-on-write (COW) for the PTE level page tables.
+COW PTE conditionally improves performance in the situation where the
+user needs copies of the program to run on isolated environments.
+Feedback-based fuzzers (e.g., AFL) and serverless/microservice frameworks
+are two major examples. For instance, COW PTE achieves a 1.03x throughput
+increase when running TriforceAFL.
+
+After applying COW to PTE, the memory usage after forking is as follows:
+
+                 COW PTE
+          parent         child
+VmRSS:	 1049968 kB       2576 kB
+VmPTE:	    2096 kB         44 kB
+
+The results show that this patch significantly decreases memory usage.
+The other number of latencies are discussed later.
+
+Real-world application benchmarks
+=================================
+
+We run benchmarks of fuzzing and VM cloning. The experiments were
+done with the normal fork or the fork with COW PTE.
+
+With AFL (LLVM mode) and SQLite, COW PTE (52.15 execs/sec) is a
+little bit worse than the normal fork version (53.50 execs/sec).
+
+                   fork
+       execs_per_sec     unix_time        time
+count    28.000000  2.800000e+01   28.000000
+mean     53.496786  1.671270e+09   96.107143
+std       3.625060  7.194717e+01   71.947172
+min      35.350000  1.671270e+09    0.000000
+25%      53.967500  1.671270e+09   33.750000
+50%      54.235000  1.671270e+09   92.000000
+75%      54.525000  1.671270e+09  149.250000
+max      55.100000  1.671270e+09  275.000000
+
+                 COW PTE
+       execs_per_sec     unix_time        time
+count    34.000000  3.400000e+01   34.000000
+mean     52.150000  1.671268e+09  103.323529
+std       3.218271  7.507682e+01   75.076817
+min      34.250000  1.671268e+09    0.000000
+25%      52.500000  1.671268e+09   42.250000
+50%      52.750000  1.671268e+09   94.500000
+75%      52.952500  1.671268e+09  150.750000
+max      53.680000  1.671268e+09  285.000000
+
+
+With TriforceAFL which is for kernel fuzzing with QEMU, COW PTE
+(105.54 execs/sec) achieves a 1.05x throughput increase over the
+normal fork version (102.30 execs/sec).
+
+                   fork
+     execs_per_sec     unix_time        time
+count    38.000000  3.800000e+01   38.000000
+mean    102.299737  1.671269e+09  156.289474
+std      20.139268  8.717113e+01   87.171130
+min       6.600000  1.671269e+09    0.000000
+25%      95.657500  1.671269e+09   82.250000
+50%     109.950000  1.671269e+09  176.500000
+75%     113.972500  1.671269e+09  223.750000
+max     118.790000  1.671269e+09  281.000000
+
+                 COW PTE
+     execs_per_sec     unix_time        time
+count    42.000000  4.200000e+01   42.000000
+mean    105.540714  1.671269e+09  163.476190
+std      19.443517  8.858845e+01   88.588453
+min       6.200000  1.671269e+09    0.000000
+25%      96.585000  1.671269e+09  123.500000
+50%     113.925000  1.671269e+09  180.500000
+75%     116.940000  1.671269e+09  233.500000
+max     121.090000  1.671269e+09  286.000000
+
+Microbenchmark - syscall latency
+================================
+
+We run microbenchmarks to measure the latency of a fork syscall with
+sizes of mapped memory ranging from 0 to 512 MB. The results show that
+the latency of a normal fork reaches 10 ms. The latency of a fork with
+COW PTE is also around 10 ms.
+
+Microbenchmark - page fault latency
+====================================
+
+We conducted some microbenchmarks to measure page fault latency with
+different patterns of accesses to a 512 MB memory buffer after forking.
+
+In the first experiment, the program accesses the entire 512 MB memory
+by writing to all the pages consecutively. The experiment is done with
+normal fork, fork with COW PTE and calculates the single access average
+latency. COW PTE page fault latency (0.000795 ms) and the normal fork
+fault latency (0.000770 ms). Here are the raw numbers:
+
+Page fault - Access to the entire 512 MB memory
+
+fork mean: 0.000770 ms
+fork median: 0.000769 ms
+fork std: 0.000010 ms
+
+COW PTE mean: 0.000795 ms
+COW PTE median: 0.000795 ms
+COW PTE std: 0.000009 ms
+
+The second experiment simulates real-world applications with sparse
+accesses. The program randomly accesses the memory by writing to one
+random page 1 million times and calculates the average access time,
+after that, we run both 100 times to get the averages. The result shows
+that COW PTE (0.000029 ms) is similar to the normal fork (0.000026 ms).
+
+Page fault - Random access
+
+fork mean: 0.000026 ms
+fork median: 0.000025 ms
+fork std: 0.000002 ms
+
+COW PTE mean: 0.000029 ms
+COW PTE median: 0.000026 ms
+COW PTE std: 0.000004 ms
+
+All the tests were run with QEMU and the kernel was built with
+the x86_64 default config (v3 patch set).
+
+Summary
+=======
+
+In summary, COW PTE reduces the memory footprint of processes and
+conditionally improve the latency of fork syscall.
+
+This patch is based on the paper "On-demand-fork: a microsecond fork
+for memory-intensive and latency-sensitive applications" [1] from
+Purdue University.
+
+Any comments and suggestions are welcome.
+
+Thanks,
+Chih-En Lin
+
+---
+
+[1] https://dl.acm.org/doi/10.1145/3447786.3456258
+
+This patch is based on v6.3-rc6.
+
+---
+
+Chih-En Lin (17):
+  mm: Split out the present cases from zap_pte_range()
+  mm: Allow user to control COW PTE via prctl
+  mm: Add Copy-On-Write PTE to fork()
+  mm: Add break COW PTE fault and helper functions
+  mm: Handle COW-ed PTE during zapping
+  mm/rmap: Break COW PTE in rmap walking
+  mm/khugepaged: Break COW PTE before scanning pte
+  mm/ksm: Break COW PTE before modify shared PTE
+  mm/madvise: Handle COW-ed PTE with madvise()
+  mm/gup: Trigger break COW PTE before calling follow_pfn_pte()
+  mm/mprotect: Break COW PTE before changing protection
+  mm/userfaultfd: Support COW PTE
+  mm/migrate_device: Support COW PTE
+  fs/proc: Support COW PTE with clear_refs_write
+  events/uprobes: Break COW PTE before replacing page
+  mm: fork: Enable COW PTE to fork system call
+  mm: Check the unexpected modification of COW-ed PTE
+
+ arch/x86/include/asm/pgtable.h     |   1 +
+ fs/proc/task_mmu.c                 |   5 +
+ include/linux/mm.h                 |  37 ++
+ include/linux/page_table_check.h   |  62 ++
+ include/linux/pgtable.h            |   6 +
+ include/linux/rmap.h               |   2 +
+ include/linux/sched/coredump.h     |  13 +-
+ include/trace/events/huge_memory.h |   1 +
+ include/uapi/linux/prctl.h         |   6 +
+ kernel/events/uprobes.c            |   2 +-
+ kernel/fork.c                      |   7 +
+ kernel/sys.c                       |  11 +
+ mm/Kconfig                         |   9 +
+ mm/gup.c                           |   8 +-
+ mm/khugepaged.c                    |  35 +-
+ mm/ksm.c                           |   4 +-
+ mm/madvise.c                       |  13 +
+ mm/memory.c                        | 926 ++++++++++++++++++++++++++---
+ mm/migrate.c                       |   3 +-
+ mm/migrate_device.c                |   2 +
+ mm/mmap.c                          |   4 +
+ mm/mprotect.c                      |   9 +
+ mm/mremap.c                        |   2 +
+ mm/page_table_check.c              |  58 ++
+ mm/page_vma_mapped.c               |   4 +
+ mm/rmap.c                          |   9 +-
+ mm/swapfile.c                      |   2 +
+ mm/userfaultfd.c                   |   6 +
+ mm/vmscan.c                        |   3 +-
+ 29 files changed, 1149 insertions(+), 101 deletions(-)
+
+-- 
+2.34.1
 
