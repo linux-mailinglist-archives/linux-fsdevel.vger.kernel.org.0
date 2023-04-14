@@ -2,195 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A3DB6E1CB6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 08:33:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99BF46E1DA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 09:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230030AbjDNGdR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 02:33:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34928 "EHLO
+        id S229845AbjDNH5N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 03:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229989AbjDNGdP (ORCPT
+        with ESMTP id S230011AbjDNH4z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 02:33:15 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4369455B4;
-        Thu, 13 Apr 2023 23:33:10 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D950D219BF;
-        Fri, 14 Apr 2023 06:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1681453988; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xslQPF17zT9apx+cU2US+PpxMshzU35IKYkk2wpIDLg=;
-        b=DJN+y564b8swWIzIhMyoJZmTzvSqa6m/5QtSbnrPb54+xfDbvOpGA38sWt+1Iy8fdfPh8j
-        /+hfnbGVW18WolgOUyQInIsmtDRk1oPV2dCNEN5y/6IV7iJSpAtkQDgSz9Z+XWZ5eKGQbL
-        /2OIoGOXmGQ9yUAigxFE1FWMOYCh4zM=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B0322139FC;
-        Fri, 14 Apr 2023 06:33:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id YpWfKqTzOGQiNgAAMHmgww
-        (envelope-from <mhocko@suse.com>); Fri, 14 Apr 2023 06:33:08 +0000
-Date:   Fri, 14 Apr 2023 08:33:08 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Ackerley Tng <ackerleytng@google.com>
-Cc:     kvm@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, qemu-devel@nongnu.org, aarcange@redhat.com,
-        ak@linux.intel.com, akpm@linux-foundation.org, arnd@arndb.de,
-        bfields@fieldses.org, bp@alien8.de, chao.p.peng@linux.intel.com,
-        corbet@lwn.net, dave.hansen@intel.com, david@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com, hpa@zytor.com,
-        hughd@google.com, jlayton@kernel.org, jmattson@google.com,
-        joro@8bytes.org, jun.nakajima@intel.com,
-        kirill.shutemov@linux.intel.com, linmiaohe@huawei.com,
-        luto@kernel.org, mail@maciej.szmigiero.name, michael.roth@amd.com,
-        mingo@redhat.com, naoya.horiguchi@nec.com, pbonzini@redhat.com,
-        qperret@google.com, rppt@kernel.org, seanjc@google.com,
-        shuah@kernel.org, steven.price@arm.com, tabba@google.com,
-        tglx@linutronix.de, vannapurve@google.com, vbabka@suse.cz,
-        vkuznets@redhat.com, wanpengli@tencent.com, wei.w.wang@intel.com,
-        x86@kernel.org, yu.c.zhang@linux.intel.com, muchun.song@linux.dev,
-        feng.tang@intel.com, brgerst@gmail.com, rdunlap@infradead.org,
-        masahiroy@kernel.org, mailhol.vincent@wanadoo.fr
-Subject: Re: [RFC PATCH 0/6] Setting memory policy for restrictedmem file
-Message-ID: <ZDjzpKL9Omcox991@dhcp22.suse.cz>
-References: <cover.1681430907.git.ackerleytng@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1681430907.git.ackerleytng@google.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 14 Apr 2023 03:56:55 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEE357ECD;
+        Fri, 14 Apr 2023 00:56:53 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id z11-20020a17090abd8b00b0024721c47ceaso3911628pjr.3;
+        Fri, 14 Apr 2023 00:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681459013; x=1684051013;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h8Po7L2XXvw2on2O9WIZJmGP5CTPRpEak29+DCnGfNg=;
+        b=Ony+F6GHx4EYgX/W+q0UgO9ijATGHm2Gljo8mPlLnGX3hWMH+uSK3APyQosX5uuonz
+         EjIj+dDlXMpypvQDh4tzKXRUM/Psn/igpGUCp264t+DzJpqvsGWwlPine/prPNPLXmeb
+         tl5nk7DEN56Aja2CdtLsZBpeSnYHBHJQ1UqBY8AZ71uoNRaLEHZ7E5J9VhsigJrdm0Pb
+         VHDXpluEaGE9QqOQuzmD77OM2ikwfyFbYMJQp7hBFjQbstm9Qy3OcYpgpMm/vgaTxCsD
+         2PGTqZlgc6e5g9qBPX0QCaqMawc/fCiR295zSak7p+zCwV+Un7wdvfvNBQSTm20X6rAW
+         gpbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681459013; x=1684051013;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h8Po7L2XXvw2on2O9WIZJmGP5CTPRpEak29+DCnGfNg=;
+        b=gryS6M7xtIL0Lr3iA2K6COLGWETptYKVyl50by4VvwwDcRa3YT1/LUiwftjPPsOVLn
+         npFhUqoEXwxA1OVpCKBsltSR9t8MdAZvb2JFPaffs98HOJPb68kvkGXdsGy0OWlUmyoW
+         siAZDqG7vgtz8CKihaHjPftac3engupUYbGIkoktT08zHfbSQRIN+gfuQ+5JY0DIRg/G
+         mWhCOE2G75bBQfzFUVHS37eBkgnCFno7mZb9pKeyYH6oiDEULzqLx4v/LtnWu4tBk9jS
+         03ZHCj/bFc8crI5zaZgMU9P/WJMfhrXmUJV0ErtR2WtqEgOkefv/6tyUW6TU8nZrJwQN
+         sjdg==
+X-Gm-Message-State: AAQBX9cZn4HXJWJO5+ebAa/CKYqXW/RaoILB+GElQSnycl3fBqI5lTAi
+        HO90+INK9a4RC5eFWvluqkQ=
+X-Google-Smtp-Source: AKy350YmjBaj2fXQxZIdfjgZ2NXdGPYqX6S1fjYIMiEQyVk/oEdC958n1/GJxTmTWUmvtAK9cXOhpg==
+X-Received: by 2002:a17:902:da8f:b0:1a6:9794:a4 with SMTP id j15-20020a170902da8f00b001a6979400a4mr2234893plx.63.1681459013419;
+        Fri, 14 Apr 2023 00:56:53 -0700 (PDT)
+Received: from rh-tp ([2406:7400:63:7035:9095:349e:5f0b:ded0])
+        by smtp.gmail.com with ESMTPSA id p18-20020a170902ead200b001a63d8902b6sm2578912pld.93.2023.04.14.00.56.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Apr 2023 00:56:53 -0700 (PDT)
+Date:   Fri, 14 Apr 2023 13:26:38 +0530
+Message-Id: <877cuezykp.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>
+Subject: Re: [RFCv3 10/10] iomap: Add trace points for DIO path
+In-Reply-To: <ZDjs+/T/mf1nHUHI@infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 14-04-23 00:11:49, Ackerley Tng wrote:
-> Hello,
-> 
-> This patchset builds upon the memfd_restricted() system call that was
-> discussed in the 'KVM: mm: fd-based approach for supporting KVM' patch
-> series [1].
-> 
-> The tree can be found at:
-> https://github.com/googleprodkernel/linux-cc/tree/restrictedmem-set-memory-policy
-> 
-> In this patchset, a new syscall is introduced, which allows userspace
-> to set the memory policy (e.g. NUMA bindings) for a restrictedmem
-> file, to the granularity of offsets within the file.
-> 
-> The offset/length tuple is termed a file_range which is passed to the
-> kernel via a pointer to get around the limit of 6 arguments for a
-> syscall.
-> 
-> The following other approaches were also considered:
-> 
-> 1. Pre-configuring a mount with a memory policy and providing that
->    mount to memfd_restricted() as proposed at [2].
->     + Pro: It allows choice of a specific backing mount with custom
->       memory policy configurations
->     + Con: Will need to create an entire new mount just to set memory
->       policy for a restrictedmem file; files on the same mount cannot
->       have different memory policies.
+Christoph Hellwig <hch@infradead.org> writes:
 
-Could you expand on this some more please? How many restricted
-files/mounts do we expect? My understanding was that this would be
-essentially a backing store for guest memory so it would scale with the
-number of guests.
+>> +	trace_iomap_dio_rw_begin(iocb, iter, dio_flags, done_before, ret);
+>>  	dio = __iomap_dio_rw(iocb, iter, ops, dops, dio_flags, private,
+>>  			     done_before);
+>>  	if (IS_ERR_OR_NULL(dio)) {
+>> @@ -689,6 +691,7 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>>  	}
+>>  	ret = iomap_dio_complete(dio);
+>>  out:
+>> +	trace_iomap_dio_rw_end(iocb, iter, dio_flags, done_before, ret);
+>
+> The trace_iomap_dio_rw_end tracepoint heere seems a bit weird,
+> and we'll miss it for file systems using  __iomap_dio_rw directly.
 
-> 2. Passing memory policy to the memfd_restricted() syscall at creation time.
->     + Pro: Only need to make a single syscall to create a file with a
->       given memory policy
->     + Con: At creation time, the kernel doesn’t know the size of the
->       restrictedmem file. Given that memory policy is stored in the
->       inode based on ranges (start, end), it is awkward for the kernel
->       to store the memory policy and then add hooks to set the memory
->       policy when allocation is done.
-> 
-> 3. A more generic fbind(): it seems like this new functionality is
->    really only needed for restrictedmem files, hence a separate,
->    specific syscall was proposed to avoid complexities with handling
->    conflicting policies that may be specified via other syscalls like
->    mbind()
+Sorry, yes you are right.
 
-I do not think it is a good idea to make the syscall restrict mem
-specific. History shows that users are much more creative when it comes
-to usecases than us. I do understand that the nature of restricted
-memory is that it is not mapable but memory policies without a mapping
-are a reasonable concept in genereal. After all this just tells where
-the memory should be allocated from. Do we need to implement that for
-any other fs? No, you can safely return EINVAL for anything but
-memfd_restricted fd for now but you shouldn't limit usecases upfront.
+>
+> I'd instead add a trace_iomap_dio_rw_queued for the case where
+> __iomap_dio_rw returns ERR_PTR(-EIOCBQUEUED), as otherwise we're
+> nicely covered by the complete trace points.
+>
 
-> 
-> TODOs
+How about this below change? Does this look good to you?
+It should cover all error types and both entry and exit.
 
-How do you query a policy for the specific fd? Are there any plans to
-add a syscall for that as well but you just wait for the direction for
-the set method?
+And should I fold this entire change in 1 patch or should I split the
+refactoring of common out routine into a seperate one?
 
-> + Return -EINVAL if file_range is not within the size of the file and
->   tests for this
-> 
-> Dependencies:
-> 
-> + Chao’s work on UPM [3]
-> 
-> [1] https://lore.kernel.org/lkml/20221202061347.1070246-1-chao.p.peng@linux.intel.com/T/
-> [2] https://lore.kernel.org/lkml/cover.1681176340.git.ackerleytng@google.com/T/
-> [3] https://github.com/chao-p/linux/commits/privmem-v11.5
-> 
-> ---
-> 
-> Ackerley Tng (6):
->   mm: shmem: Refactor out shmem_shared_policy() function
->   mm: mempolicy: Refactor out mpol_init_from_nodemask
->   mm: mempolicy: Refactor out __mpol_set_shared_policy()
->   mm: mempolicy: Add and expose mpol_create
->   mm: restrictedmem: Add memfd_restricted_bind() syscall
->   selftests: mm: Add selftest for memfd_restricted_bind()
-> 
->  arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
->  arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
->  include/linux/mempolicy.h                     |   4 +
->  include/linux/shmem_fs.h                      |   7 +
->  include/linux/syscalls.h                      |   5 +
->  include/uapi/asm-generic/unistd.h             |   5 +-
->  include/uapi/linux/mempolicy.h                |   7 +-
->  kernel/sys_ni.c                               |   1 +
->  mm/mempolicy.c                                | 100 ++++++++++---
->  mm/restrictedmem.c                            |  75 ++++++++++
->  mm/shmem.c                                    |  10 +-
->  scripts/checksyscalls.sh                      |   1 +
->  tools/testing/selftests/mm/.gitignore         |   1 +
->  tools/testing/selftests/mm/Makefile           |   8 +
->  .../selftests/mm/memfd_restricted_bind.c      | 139 ++++++++++++++++++
->  .../mm/restrictedmem_testmod/Makefile         |  21 +++
->  .../restrictedmem_testmod.c                   |  89 +++++++++++
->  tools/testing/selftests/mm/run_vmtests.sh     |   6 +
->  18 files changed, 454 insertions(+), 27 deletions(-)
->  create mode 100644 tools/testing/selftests/mm/memfd_restricted_bind.c
->  create mode 100644 tools/testing/selftests/mm/restrictedmem_testmod/Makefile
->  create mode 100644 tools/testing/selftests/mm/restrictedmem_testmod/restrictedmem_testmod.c
-> 
-> --
-> 2.40.0.634.g4ca3ef3211-goog
 
--- 
-Michal Hocko
-SUSE Labs
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 5871956ee880..e412fdc4ee86 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -130,6 +130,7 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
+        if (ret > 0)
+                ret += dio->done_before;
+
++       trace_iomap_dio_complete(iocb, dio->error, ret);
+        kfree(dio);
+
+        return ret;
+@@ -493,12 +494,15 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+        struct blk_plug plug;
+        struct iomap_dio *dio;
+
++       trace_iomap_dio_rw_begin(iocb, iter, dio_flags, done_before, ret);
+        if (!iomi.len)
+-               return NULL;
++               goto out;
+
+        dio = kmalloc(sizeof(*dio), GFP_KERNEL);
+-       if (!dio)
+-               return ERR_PTR(-ENOMEM);
++       if (!dio) {
++               ret = -ENOMEM;
++               goto out;
++       }
+
+        dio->iocb = iocb;
+        atomic_set(&dio->ref, 1);
+@@ -650,8 +654,11 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+         */
+        dio->wait_for_completion = wait_for_completion;
+        if (!atomic_dec_and_test(&dio->ref)) {
+-               if (!wait_for_completion)
+-                       return ERR_PTR(-EIOCBQUEUED);
++               if (!wait_for_completion) {
++                       ret = -EIOCBQUEUED;
++                       goto out;
++               }
++
+
+                for (;;) {
+                        set_current_state(TASK_UNINTERRUPTIBLE);
+@@ -663,10 +670,13 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+                __set_current_state(TASK_RUNNING);
+        }
+
++       trace_iomap_dio_rw_end(iocb, iter, dio_flags, done_before, ret);
+        return dio;
+
+ out_free_dio:
+        kfree(dio);
++out:
++       trace_iomap_dio_rw_end(iocb, iter, dio_flags, done_before, ret);
+        if (ret)
+                return ERR_PTR(ret);
+        return NULL;
+
+
+>> +		  __print_flags(__entry->dio_flags, "|", TRACE_IOMAP_DIO_STRINGS),
+>
+> Please avoid the overly lone line here.
+
+Somehow my checkpatch never gave a warning about it.
+I will check why was that. But yes, I have anyways made the name to
+IOMAP_DIO_STRINGS similar to other namings used in fs/iomap/trace.h
+
+-ritesh
