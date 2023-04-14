@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8DAA6E25B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 793AC6E25B2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:27:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbjDNO1p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 10:27:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50652 "EHLO
+        id S231315AbjDNO1y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 10:27:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230387AbjDNO1L (ORCPT
+        with ESMTP id S230136AbjDNO1V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 10:27:11 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA40BB466;
-        Fri, 14 Apr 2023 07:26:32 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id pm7-20020a17090b3c4700b00246f00dace2so10889278pjb.2;
-        Fri, 14 Apr 2023 07:26:32 -0700 (PDT)
+        Fri, 14 Apr 2023 10:27:21 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E17C14C;
+        Fri, 14 Apr 2023 07:26:41 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id p17so7278698pla.3;
+        Fri, 14 Apr 2023 07:26:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681482390; x=1684074390;
+        d=gmail.com; s=20221208; t=1681482400; x=1684074400;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rbLbXdRuHfxtXDKPQRm3+FT68gnEt5TFpjsogoRT0lI=;
-        b=HmAKDMksf6xnRVcfcxIezwmEPoznukRB4mgVdijUHQ21YemDDShfTmL8ccYJJy/uIv
-         m8wcVocb0Vu9eVxKqU1s7MpYGhcuKa+oShTZ+fEaDuq206zVo4U+a6BLfds/qNiJyf9P
-         aBJBBXz5pGWdJwCV/ISvkd5f2lPY9+MmyenS3R3CLgKuxE1lM3D7qGDF37xFAjH6b+F4
-         3VsNve3Y7ot1RL+o7x7nuJ4ZPPVWRZ9yCgTv0NDTjoGu5zBmi13H0UBJOVTjJJqfyBjX
-         eBme7l2CRwYd3A7kXwU5eY0/p3lxE6ieNay2Hkcq0BUNNIpDcn+prGiU5zYTEFJds9wk
-         5U3g==
+        bh=pkKoN7JGClqVnt1AeoWnxp66FVN/o5YfrH8QxbWcJ4w=;
+        b=GRybeaFMg+Tlp7YS9TVn4xA45yiEJL0qMT1inOuLZsGOXPVD2E/YaXnYcgYTXRUz//
+         QvmpHhgCwPci58KuGNuLYdFMpZPK6bnXEcnxiRsfm/bCSZrOLaHnj/SEZDBWYisnuRM2
+         +DmqjELMmOt4orXaPNd0id1kWz9cyVowFUg4AyBtYjiUc+UmYRPdjKRwUOeizBqMFH1Y
+         7D+lI6PErU4cZ0n1S53tvBs5zsPXdak3yH0KqfblvcF/6rQEuvpqrSOwPDxRwOk2GHaL
+         +RbWVZRrlnha4CkqVW6/HiukXtBUoOII7B692mHbsqKGp5WGuHfv+sJ9KmHFUGHLUnyc
+         jtWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681482390; x=1684074390;
+        d=1e100.net; s=20221208; t=1681482400; x=1684074400;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rbLbXdRuHfxtXDKPQRm3+FT68gnEt5TFpjsogoRT0lI=;
-        b=MG1A1b6BuApdHyK70zewH85v7y3usbnlluqUZo/wRglrBC6ImPTv9phRjx3khES7P1
-         4khJKGBKdAjyGQgTqLQprzNl9tvZ8cxfLs37QqYkXOBr/McDherszCPRNAa02Nm/UA2o
-         VqwFq+syFhVY4bIi3xwMNm3cuJnu27HSVPq7vkKb5rOawvxFtUPF4GLDHtlpD0IUEk8y
-         QjgOHYWsBZf+Wd7gBom8fdFzstsXESFWqNjUMGMHxuzsWSfYG2K8TaWLdWafA7uWC5Px
-         Y85F0bDrPTXw25N7Y+fJP6cNCOKppBSEQ4mrTB0m7F5BQfSs/yciwi97dO3Vs3eJL3UQ
-         qcXA==
-X-Gm-Message-State: AAQBX9fMNhgc9pYynaOUkGECM5Pm/mWbnJfjWZNE12Jw0xF0TYt0zpwU
-        MM/y6PoU4VAFuNmItQ32Q9M=
-X-Google-Smtp-Source: AKy350aqLfuqbdu67mJ4nM0k7rzcjp896bC+PGdAfO2G4R7flBKcTTuNhdwRHh+IhJRQkBKzvLByHQ==
-X-Received: by 2002:a17:90a:2c05:b0:247:1e1e:57c0 with SMTP id m5-20020a17090a2c0500b002471e1e57c0mr5918775pjd.14.1681482390502;
-        Fri, 14 Apr 2023 07:26:30 -0700 (PDT)
+        bh=pkKoN7JGClqVnt1AeoWnxp66FVN/o5YfrH8QxbWcJ4w=;
+        b=AEbkhT1zxlE560LGxj1aMgVQVpWCcAFl5hpsAGqlbAab3XCB1LSwz/Q9klw8851QD+
+         XNd0d/d9S7d2mr+fFF9vpM78obyYtAN6YqzLzGoODfxLr9oLG+hIpgX34I3N4CQvEtO0
+         Fz9EwH2Akc8uhTA5Xid6tD6ylVt7BLZNSLqxljlTYnncaEKhS6Vnf+55moIRnTx5zUp2
+         veVswsYcVgG/Q/wQiK1twLGvYQoceJwFFL3oXflC6JCryLGSGnNlKUv/RSvtSdlCNuov
+         re3uR1PbqO8wabjDS5lpKDaL1e7lWu3qBP8z25MdxWXbi1uWM/89Os1HbEOPARnQ5xU9
+         yJXw==
+X-Gm-Message-State: AAQBX9dRR1fNjs8pKcBYPLK1iT4nCjoj/O7StaiFCvq92l8eFX2vpQB7
+        CpD1uLnCa5C/xMxSvHfCkrA=
+X-Google-Smtp-Source: AKy350Y5ToRmeTXJN5+SiXzLMP/O2AXtSNTAG2ikMyRrX7oX9xVsgnswEEqRZu4VkIFIeAnepJcLLg==
+X-Received: by 2002:a17:90b:19c3:b0:246:cf0c:ecd7 with SMTP id nm3-20020a17090b19c300b00246cf0cecd7mr5668320pjb.16.1681482399689;
+        Fri, 14 Apr 2023 07:26:39 -0700 (PDT)
 Received: from strix-laptop.. (2001-b011-20e0-1499-8303-7502-d3d7-e13b.dynamic-ip6.hinet.net. [2001:b011:20e0:1499:8303:7502:d3d7:e13b])
-        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.26.21
+        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.26.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Apr 2023 07:26:30 -0700 (PDT)
+        Fri, 14 Apr 2023 07:26:39 -0700 (PDT)
 From:   Chih-En Lin <shiyn.lin@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Qi Zheng <zhengqi.arch@bytedance.com>,
@@ -111,9 +111,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Pedro Fonseca <pfonseca@purdue.edu>,
         Jim Huang <jserv@ccns.ncku.edu.tw>,
         Huichun Feng <foxhoundsk.tw@gmail.com>
-Subject: [PATCH v5 14/17] fs/proc: Support COW PTE with clear_refs_write
-Date:   Fri, 14 Apr 2023 22:23:38 +0800
-Message-Id: <20230414142341.354556-15-shiyn.lin@gmail.com>
+Subject: [PATCH v5 15/17] events/uprobes: Break COW PTE before replacing page
+Date:   Fri, 14 Apr 2023 22:23:39 +0800
+Message-Id: <20230414142341.354556-16-shiyn.lin@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230414142341.354556-1-shiyn.lin@gmail.com>
 References: <20230414142341.354556-1-shiyn.lin@gmail.com>
@@ -129,29 +129,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Before clearing the entry in COW-ed PTE, break COW PTE first.
+Break COW PTE if we want to replace the page which
+resides in COW-ed PTE.
 
 Signed-off-by: Chih-En Lin <shiyn.lin@gmail.com>
 ---
- fs/proc/task_mmu.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/events/uprobes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 6a96e1713fd5..c76b74029dfd 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1195,6 +1195,11 @@ static int clear_refs_pte_range(pmd_t *pmd, unsigned long addr,
- 	if (pmd_trans_unstable(pmd))
- 		return 0;
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 59887c69d54c..db6bfaab928d 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -156,7 +156,7 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
+ 	struct folio *old_folio = page_folio(old_page);
+ 	struct folio *new_folio;
+ 	struct mm_struct *mm = vma->vm_mm;
+-	DEFINE_FOLIO_VMA_WALK(pvmw, old_folio, vma, addr, 0);
++	DEFINE_FOLIO_VMA_WALK(pvmw, old_folio, vma, addr, PVMW_BREAK_COW_PTE);
+ 	int err;
+ 	struct mmu_notifier_range range;
  
-+	/* Only break COW when we modify the soft-dirty bit. */
-+	if (cp->type == CLEAR_REFS_SOFT_DIRTY &&
-+	    break_cow_pte(vma, pmd, addr))
-+		return 0;
-+
- 	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
- 	for (; addr != end; pte++, addr += PAGE_SIZE) {
- 		ptent = *pte;
 -- 
 2.34.1
 
