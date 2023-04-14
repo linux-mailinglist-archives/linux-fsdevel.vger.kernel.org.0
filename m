@@ -2,116 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B40FA6E265A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 17:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C466E265E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 17:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbjDNPAq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 11:00:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53688 "EHLO
+        id S230481AbjDNPBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 11:01:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230374AbjDNPAo (ORCPT
+        with ESMTP id S229663AbjDNPBy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 11:00:44 -0400
+        Fri, 14 Apr 2023 11:01:54 -0400
 Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD64E6E8F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 08:00:41 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230414150039euoutp01d45a9f27e921a435932ddad5197f090d~V1TBPcj9D0862308623euoutp01O
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 15:00:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230414150039euoutp01d45a9f27e921a435932ddad5197f090d~V1TBPcj9D0862308623euoutp01O
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 332571710
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 08:01:51 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230414150150euoutp01f9c2ce4cd173db073347001cbd042426~V1UDFs4--0481704817euoutp01U
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 15:01:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230414150150euoutp01f9c2ce4cd173db073347001cbd042426~V1UDFs4--0481704817euoutp01U
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1681484439;
-        bh=ibChgCKjv6ZNfmfGmvDkXir9juzYcVtKHbDliZZElaE=;
+        s=mail20170921; t=1681484510;
+        bh=k2KMSY3rEPC/l3wXRBxqdB3ENhOA3GWRhLXn6UokrYg=;
         h=Date:Subject:To:CC:From:In-Reply-To:References:From;
-        b=b690qyFDFwdcZ4VpnIRFLL/sUbT6SKTU5rccJefapP1Sc1SdUqZVPKF8BapH2rn1P
-         tMvqlriK162g7L5dsDz0/eHqz/THTrnO2cnb86Q3d9haatkjOYZdzlTHbdc6zsP2bv
-         HWyS0Cl3/3wCVJGW6hSRBj+qk5YRqZE8+wh93ctA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        b=Ncz0YzLo1qqj+ch4v7bUvJJXCgwLKsEPK9l45RyoZdy6Re9wKeeWsAPS7OUvNr9Tb
+         hluSI+0SskDxTDzCmAZpz3CVupM3qtk4E5ZHB3E1ymr06yODepqJ5QyRugAKxXnBdr
+         9NjW7NC41M1IBrwiAU1NtRlDHH0+AD7CaoecEfdY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230414150039eucas1p2a78fe0f14bab4af8b151f58376e57051~V1TBGk7b_0877108771eucas1p2m;
-        Fri, 14 Apr 2023 15:00:39 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 35.24.10014.79A69346; Fri, 14
-        Apr 2023 16:00:39 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        20230414150149eucas1p28c28debfd8970a58a0f7aad4911ed40e~V1UC3sMaI3175731757eucas1p2W;
+        Fri, 14 Apr 2023 15:01:49 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 19.16.09966.DDA69346; Fri, 14
+        Apr 2023 16:01:49 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230414150038eucas1p2149867beb4014958519034201f06b78e~V1TAwwbuA3074830748eucas1p2A;
-        Fri, 14 Apr 2023 15:00:38 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230414150038eusmtrp18f1f982ab0452497f21645f8377db0c8~V1TAwKdSE1449714497eusmtrp1b;
-        Fri, 14 Apr 2023 15:00:38 +0000 (GMT)
-X-AuditID: cbfec7f5-ba1ff7000000271e-0d-64396a97478d
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 49.D8.22108.69A69346; Fri, 14
-        Apr 2023 16:00:38 +0100 (BST)
+        20230414150149eucas1p2530c12531599e6fd376a19f8a7d59740~V1UCcvLn-1376713767eucas1p21;
+        Fri, 14 Apr 2023 15:01:49 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230414150149eusmtrp2ffa4c4747cf08e810cdb7586e9c84a38~V1UCcMMtp2102421024eusmtrp2t;
+        Fri, 14 Apr 2023 15:01:49 +0000 (GMT)
+X-AuditID: cbfec7f4-d39ff700000026ee-3a-64396add5e29
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 0B.E9.34412.DDA69346; Fri, 14
+        Apr 2023 16:01:49 +0100 (BST)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230414150038eusmtip13ca9996d02463ff786bf3a84ff4d3a95~V1TAlif7k0761007610eusmtip1h;
-        Fri, 14 Apr 2023 15:00:38 +0000 (GMT)
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230414150149eusmtip2609769cecb935de635342ecd39098ad9~V1UCPooxn2857528575eusmtip2U;
+        Fri, 14 Apr 2023 15:01:49 +0000 (GMT)
 Received: from [106.110.32.65] (106.110.32.65) by CAMSVWEXC02.scsc.local
         (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 14 Apr 2023 16:00:37 +0100
-Message-ID: <58ba1aec-f42b-f896-617f-a3720c09b30f@samsung.com>
-Date:   Fri, 14 Apr 2023 17:00:19 +0200
+        Fri, 14 Apr 2023 16:01:48 +0100
+Message-ID: <505f1aac-8348-56c2-b925-6a905af9be24@samsung.com>
+Date:   Fri, 14 Apr 2023 17:01:47 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
         Thunderbird/102.10.0
-Subject: Re: [RFC 0/4] convert create_page_buffers to create_folio_buffers
+Subject: Re: [RFC 2/4] buffer: add alloc_folio_buffers() helper
 Content-Language: en-US
-To:     Hannes Reinecke <hare@suse.de>, <brauner@kernel.org>,
-        <willy@infradead.org>, <viro@zeniv.linux.org.uk>,
-        <akpm@linux-foundation.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mcgrof@kernel.org>, <gost.dev@samsung.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <brauner@kernel.org>, <viro@zeniv.linux.org.uk>,
+        <akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>,
+        <gost.dev@samsung.com>, <hare@suse.de>
 From:   Pankaj Raghav <p.raghav@samsung.com>
-In-Reply-To: <1e68a118-d177-a218-5139-c8f13793dbbf@suse.de>
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZDlP2fevtfD5gMPd@casper.infradead.org>
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [106.110.32.65]
 X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
         CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7djP87rTsyxTDOYe4rSYs34Nm8Xrw58Y
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMKsWRmVeSWpSXmKPExsWy7djPc7p3syxTDM691rWYs34Nm8Xrw58Y
         LfYsmsRksWfvSRaLy7vmsFncmPCU0eL83+OsFr9/zGFz4PDYvELLY9OqTjaPEzN+s3hsPl3t
-        8XmTnMemJ2+ZAtiiuGxSUnMyy1KL9O0SuDK2PjzMVvCev2Jzz0nGBsYVvF2MnBwSAiYSq+4v
-        ZAGxhQRWMEqsna7YxcgFZH9hlLh3uJEJwvnMKPF99j02mI7+QxuYIRLLGSUezfnLCtEOVPXh
-        vxZEYifQqKdPGEESvAJ2Eht7njOB2CwCqhJXp35lgogLSpyc+QRst6hAtMTifVOAbA4OYQEv
-        iR+9SSBhZgFxiVtP5oNdISLQDXTS9c/MEIkiicXPljGB1LMJaEk0drKDhDkFrCUmPmxggyiR
-        l2jeOpsZ4mhFiUk337NC2LUSp7bcApspIdDPKfFx/R2oz1wkvq3/yQhhC0u8Or6FHcKWkTg9
-        uYcFwq6WeHrjNzNEcwujRP/O9WwgR0gAbe47kwNiMgtoSqzfpQ9R7ijRd3kfI0QFn8SNt4IQ
-        p/FJTNo2nXkCo+ospICYheTjWUg+mIUwdAEjyypG8dTS4tz01GLjvNRyveLE3OLSvHS95Pzc
-        TYzAhHT63/GvOxhXvPqod4iRiYPxEKMEB7OSCG+VpWWKEG9KYmVValF+fFFpTmrxIUZpDhYl
-        cV5t25PJQgLpiSWp2ampBalFMFkmDk6pBqZNdfNLPtQlC2bMastJmfq6IcR8g2DJupp53k7f
-        896lLHng/yZ115dGl+aHi2U4ee3PV04Sv1FR1nNRpzBpVrrZam2etk+bbuUu6t0s6zrRoEy8
-        bV2typEnersdLK0/33OyM5bZtejO4b+7NrS5Kn8MFvLy/zh/av21fWHCJ+ZGZfGIthW5Ptl7
-        aN7Weyp3ynhk2p+mhwU9L1LoVnU+IbFSxPPf7i3WpieWO/zd/7OXeUmw/NFd09OfrS59cmqX
-        vZ/Y+ll2E9wnbOfpvLXhil+tpc7RDczpFgsVQiZ+jC5P7NpjpxOuZmpb/23r59VZQT/T2sJW
-        WXybG5v2feGtwEe3/QV+mCdFSCkrWPzfkafEUpyRaKjFXFScCAAJJ+gXtwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRmVeSWpSXmKPExsVy+t/xu7rTsixTDF7d07OYs34Nm8Xrw58Y
+        8XmTnMemJ2+ZAtiiuGxSUnMyy1KL9O0SuDK2zHvDWPCHrWJ+g1oD4yXWLkZODgkBE4nfc6Yy
+        dzFycQgJrGCUOP3zFwuE84VRYv7Tm+wQzmdGif+t/UwwLWsfvGWCSCxnlJj36CMjXNWMVQ/A
+        BgsJ7GSU+HcrF8TmFbCTWHmtkR3EZhFQlbj8so8RIi4ocXLmExYQW1QgWmLxvilgtrCAvUTH
+        iY3MIDazgLjErSfzgbZxcIgIaEi82WIEsotZ4AqjxNM7R1hA4mwCWhKNnWDjOYGOa1v4G6pV
+        XmL72znMEEcrSky6+R7q51qJU1tugT0gIdDNKfF5xkp2iISLxN8THxghbGGJV8e3QMVlJP7v
+        nA/1fbXE0xu/mSGaWxgl+neuZwM5QkLAWqLvTA6IySygKbF+lz5E1FHixFoeCJNP4sZbQYjL
+        +CQmbZvOPIFRdRZSOMxC8u8sJA/MQpi5gJFlFaN4amlxbnpqsVFearlecWJucWleul5yfu4m
+        RmA6Ov3v+JcdjMtffdQ7xMjEwXiIUYKDWUmEt8rSMkWINyWxsiq1KD++qDQntfgQozQHi5I4
+        r7btyWQhgfTEktTs1NSC1CKYLBMHp1QDk87CGwpHS45v+SqmPTFTba704n8vX05Wrb0rknP/
+        bUSd+pOoA8VnyqasKbWMWvrqjovIlGlairNcs3jF7GYsk7ax7/b9Kn9UuYytMcv12zs3kx6+
+        lV0JDTqc67l/Tnp9boPi4XvCeit8YtYtvWtq3vJhhZKB/pbeORbb3Beu4pz53CBC9kqnzZ0L
+        827a12kIKc3McGC2zPTcIhe6vmWH9zThP9uka3Ll9atFv24x2Xmv4xDH/VeFR0umZqpUNwh/
+        7xBuW7c8e5Lu74dMR02Wdly8/dL8tjjDons9mc9r1O1lA+68O//Ms+KK+LasoErnA3tZvS/O
+        us+mJxr7zULtrc6rPeWpRa2T57F0X519QYmlOCPRUIu5qDgRAOzELsa2AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xe7p3syxTDM694reYs34Nm8Xrw58Y
         LfYsmsRksWfvSRaLy7vmsFncmPCU0eL83+OsFr9/zGFz4PDYvELLY9OqTjaPEzN+s3hsPl3t
         8XmTnMemJ2+ZAtii9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMy
-        y1KL9O0S9DK2PjzMVvCev2Jzz0nGBsYVvF2MnBwSAiYS/Yc2MHcxcnEICSxllPjzeQILREJG
-        YuOXq6wQtrDEn2tdbBBFHxkl7r7+xgrh7GSUaDt5CqyKV8BOYmPPcyYQm0VAVeLq1K9MEHFB
-        iZMzn4BNFRWIlrix/BtQnINDWMBL4kdvEkiYWUBc4taT+UwgM0UEOhklti47xgiRKJJY/GwZ
-        E8SyfYwSfy8+YwVpZhPQkmjsZAep4RSwlpj4sIENol5TonX7b3YIW16ieetsZogPFCUm3XwP
-        9U2txOe/zxgnMIrOQnLeLCR3zEIyahaSUQsYWVYxiqSWFuem5xYb6hUn5haX5qXrJefnbmIE
-        xvO2Yz8372Cc9+qj3iFGJg7GQ4wSHMxKIrxVlpYpQrwpiZVVqUX58UWlOanFhxhNgWE0kVlK
-        NDkfmFDySuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4pRqYXF6WdcUl
-        y1+cIOk8q+nP5NNsbk7n12+yluH6+3YrQ4SR51KBaSVhK6bclvm/V+TZZVu/GQVVf3Yx9AZO
-        W/3lROK3+3t9Uiw4VpZ9V+DtcOnmMpbi+tOU6yz9+p01e/zLS3+qU+rCTfTUK81KHv2de99W
-        LFJ88nymiiNnLp6TYNmn8PxVnvPsnS/LTLkfXml5pm52y0aFmXH/W+bySMnnTNLTz9+dsfhP
-        U+G9q9V7dpY03OPoOCPqpMcwpzmY4W/QNM+FC3eeurOJSeQK16PPW+SNm4UlbvxSMpqmVSvs
-        IP9+mvTK36UL5u956d8nJGi/0fDvujc9zI8/7Yu6NGe36yfL4n+11fqe/C3nfwb8U2Ipzkg0
-        1GIuKk4EAKw5vklwAwAA
-X-CMS-MailID: 20230414150038eucas1p2149867beb4014958519034201f06b78e
+        y1KL9O0S9DK2zHvDWPCHrWJ+g1oD4yXWLkZODgkBE4m1D94ydTFycQgJLGWU2P79O1RCRmLj
+        l6tQtrDEn2tdbBBFHxklFq0EKQJxdjJKTL63nBGkilfATmLltUZ2EJtFQFXi8ss+qLigxMmZ
+        T1hAbFGBaIkby78xgdjCAvYSHSc2MoPYzALiEreezAeKc3CICGhIvNliBDKfWeAKo8TTO0dY
+        IJY9Z5S4+2wmG0gRm4CWRGMn2C5OoBfaFv6GmqMp0br9NzuELS+x/e0cZogPFCUm3XwP9U2t
+        xOe/zxgnMIrOQnLeLCRnzEIyahaSUQsYWVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIERvO2
+        Yz+37GBc+eqj3iFGJg7GQ4wSHMxKIrxVlpYpQrwpiZVVqUX58UWlOanFhxhNgWE0kVlKNDkf
+        mE7ySuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4pRqYmOsTFhQdVZm6
+        WPOmSqBVaNTP6EiTG2u+vrQKOvT5pPjlT73yer7+OnO+9OmuV835eGC90vmgHQsf/n9w4pDe
+        3p7ZR0TZd0ucL5/ffXxe/ZYWBT5mwaJXtUuDnd5+vfbvw7ZE32Oc6o8udTnZt4tkSH25pxtS
+        6j93EpPS1679t4yduRaeafXedydmkZjHfOdXyxZ/uOFnOu9i+oLMU/8Cd/iqvfxZbpQ7Yauf
+        vkPi1GIJuwkLP+5lsG7LuTDp8e17gu29W00ZpTy/sylZebtsuG3otjTg3Ku3HzeaSj3VzJAJ
+        qk5I+jxrglbGm8yI3cUtLJ03O+K3pei+KHYpihW+urTl9v9vHOJPy2btDli3VYmlOCPRUIu5
+        qDgRACVJkUxvAwAA
+X-CMS-MailID: 20230414150149eucas1p2530c12531599e6fd376a19f8a7d59740
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230414110825eucas1p1ed4d16627889ef8542dfa31b1183063d
+X-RootMTR: 20230414110826eucas1p2c5afcbd64c536a803751b41d03eb9e99
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20230414110825eucas1p1ed4d16627889ef8542dfa31b1183063d
-References: <CGME20230414110825eucas1p1ed4d16627889ef8542dfa31b1183063d@eucas1p1.samsung.com>
-        <20230414110821.21548-1-p.raghav@samsung.com>
-        <1e68a118-d177-a218-5139-c8f13793dbbf@suse.de>
+X-CMS-RootMailID: 20230414110826eucas1p2c5afcbd64c536a803751b41d03eb9e99
+References: <20230414110821.21548-1-p.raghav@samsung.com>
+        <CGME20230414110826eucas1p2c5afcbd64c536a803751b41d03eb9e99@eucas1p2.samsung.com>
+        <20230414110821.21548-3-p.raghav@samsung.com>
+        <ZDlP2fevtfD5gMPd@casper.infradead.org>
 X-Spam-Status: No, score=-9.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
@@ -123,48 +124,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> Pankaj Raghav (4):
->>    fs/buffer: add set_bh_folio helper
->>    buffer: add alloc_folio_buffers() helper
->>    fs/buffer: add folio_create_empty_buffers helper
->>    fs/buffer: convert create_page_buffers to create_folio_buffers
+On 2023-04-14 15:06, Matthew Wilcox wrote:
+> On Fri, Apr 14, 2023 at 01:08:19PM +0200, Pankaj Raghav wrote:
+>> Folio version of alloc_page_buffers() helper. This is required to convert
+>> create_page_buffers() to create_folio_buffers() later in the series.
 >>
->>   fs/buffer.c                 | 131 +++++++++++++++++++++++++++++++++---
->>   include/linux/buffer_head.h |   4 ++
->>   2 files changed, 125 insertions(+), 10 deletions(-)
->>
-> Funnily enough, I've been tinkering along the same lines, and ended up with pretty similar patches.
-> I've had to use two additional patches to get my modified 'brd' driver off the ground with logical
-> blocksize of 16k:
+>> It removes one call to compound_head() compared to alloc_page_buffers().
+> 
+> I would convert alloc_page_buffers() to folio_alloc_buffers() and
+> add
+> 
+> static struct buffer_head *alloc_page_buffers(struct page *page,
+> 		unsigned long size, bool retry)
+> {
+> 	return folio_alloc_buffers(page_folio(page), size, retry);
+> }
+> 
+> in buffer_head.h
+> 
+> (there are only five callers, so this feels like a better tradeoff
+> than creating a new function)
+> 
+That is a good idea and follows the usual pattern for folio conversion. I will
+send a new version soon with your other comments as well.
 
-Good to know that we are working on a similar direction here.
-
-> - mm/filemap: allocate folios according to the blocksize
->   (will be sending the patch separately)
-> - Modify read_folio() to use the correct order:
-> 
-> @@ -2333,13 +2395,15 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
->         if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
->                 limit = inode->i_sb->s_maxbytes;
-> 
-> -       VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
-> -
->         head = create_folio_buffers(folio, inode, 0);
->         blocksize = head->b_size;
->         bbits = block_size_bits(blocksize);
-> 
-> -       iblock = (sector_t)folio->index << (PAGE_SHIFT - bbits);
-> +       if (WARN_ON(PAGE_SHIFT < bbits)) {
-> +               iblock = (sector_t)folio->index >> (bbits - PAGE_SHIFT);
-> +       } else {
-> +               iblock = (sector_t)folio->index << (PAGE_SHIFT - bbits);
-> +       }
->         lblock = (limit+blocksize-1) >> bbits;
->         bh = head;
->         nr = 0;
-> 
-> 
-> With that (and my modified brd driver) I've been able to set the logical blocksize to 16k for brd
-> and have it happily loaded.
-
-I will give your patches a try as well.
+--
+Pankaj
