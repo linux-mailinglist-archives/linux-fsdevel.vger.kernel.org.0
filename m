@@ -2,126 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D5C6E204C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 12:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDA026E2136
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 12:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbjDNKJy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 06:09:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47100 "EHLO
+        id S230031AbjDNKqb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 06:46:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230004AbjDNKJv (ORCPT
+        with ESMTP id S229479AbjDNKq3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 06:09:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B61641FF7;
-        Fri, 14 Apr 2023 03:09:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 14 Apr 2023 06:46:29 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC2895;
+        Fri, 14 Apr 2023 03:46:27 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 44ED06223F;
-        Fri, 14 Apr 2023 10:09:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2A50C433D2;
-        Fri, 14 Apr 2023 10:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681466988;
-        bh=nr947F56m6325zW1COKJH1Btv7pX83NFx31ZY+F3jos=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=AoI0sBfkcJo7DfGfxxMHZWdJFGiAzxoV8tRDhx+Hjw9vu/yDqabcnHhykbQfeg9ir
-         5OlyLR6QiKDIX9Kme+DWEPcmINxGT8H8Ztknd6ph0Op9pt8Yg4W0lzUI1FBQ5bWmoI
-         oQNZhi5a8FTVl1SP1S4tVHnSxQT/D9Fxw7TOHGa3Jpsb+lSDLar/PU+hbO4c2dw0ZU
-         cIuDnzudL5ah2BFOpelHShA1YvKEkruE0PiRmojAw/InDAqgi3+gvqdsa8ZRpBhXzC
-         Jc7WLPYdqWuqdYtTBvLQV1i3TtZqvg24eqstUOsFaE50s5kJQsiZoiODXoLhquqGbx
-         alklAFuxvTypw==
-Message-ID: <3492fa76339672ccc48995ccf934744c63db4b80.camel@kernel.org>
-Subject: Re: allowing for a completely cached umount(2) pathwalk
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Neil Brown <neilb@suse.de>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>
-Date:   Fri, 14 Apr 2023 06:09:46 -0400
-In-Reply-To: <20230414-leihgabe-eisig-71fb7bb44d49@brauner>
-References: <95ee689c76bf034fa2fe9fade0bccdb311f3a04f.camel@kernel.org>
-         <168142566371.24821.15867603327393356000@noble.neil.brown.name>
-         <20230414024312.GF3390869@ZenIV>
-         <8EC5C625-ACD6-4BA0-A190-21A73CCBAC34@hammerspace.com>
-         <20230414035104.GH3390869@ZenIV>
-         <20230414-leihgabe-eisig-71fb7bb44d49@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+        by smtp-out2.suse.de (Postfix) with ESMTPS id DD51E1FD95;
+        Fri, 14 Apr 2023 10:46:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1681469185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NaDKrVzHktRGkhvNC8mOy7GLmS2NFDSAPBln7UTiz9Q=;
+        b=Mi9ou96w9xvxbp6Exkd6EGylmL5lp7Mu33FedVadh7SrkmmJPYwKGBSwr9zJxRKgFsdGb7
+        gHW0oGlD26djN5njEDeceOD4h9KXHxQfSrM6AgaOkZx0T9uJ+nQ3T2QvyTdd0PB26aCbvP
+        X2ib6TA2fZs8xpSyoIDbx+IyyN2tXFw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1681469185;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NaDKrVzHktRGkhvNC8mOy7GLmS2NFDSAPBln7UTiz9Q=;
+        b=9vWudS8M5XsxTuY0B046MKslysKF1mrmztRo4UGnWT4XH9akLQKLv9snoIat72AImT6d6c
+        CRVVTnSwo1nRYXAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CD957139FC;
+        Fri, 14 Apr 2023 10:46:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id zkolMgEvOWSNMgAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 14 Apr 2023 10:46:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 4AD65A0732; Fri, 14 Apr 2023 12:46:25 +0200 (CEST)
+Date:   Fri, 14 Apr 2023 12:46:25 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Luca Vizzarro <Luca.Vizzarro@arm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        David Laight <David.Laight@ACULAB.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH 5/5] dnotify: Pass argument of fcntl_dirnotify as int
+Message-ID: <20230414104625.gyzuswldwil4jlfw@quack3>
+References: <20230414100212.766118-1-Luca.Vizzarro@arm.com>
+ <20230414100212.766118-6-Luca.Vizzarro@arm.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230414100212.766118-6-Luca.Vizzarro@arm.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2023-04-14 at 11:41 +0200, Christian Brauner wrote:
-> On Fri, Apr 14, 2023 at 04:51:04AM +0100, Al Viro wrote:
-> > On Fri, Apr 14, 2023 at 03:28:45AM +0000, Trond Myklebust wrote:
-> >=20
-> > > We already have support for directory file descriptors when mounting =
-with move_mount(). Why not add a umountat() with similar support for the un=
-mount side?
-> > > Then add a syscall to allow users with (e.g.) the CAP_DAC_OVERRIDE pr=
-ivilege to convert the mount-id into an O_PATH file descriptor.
-> >=20
-> > You can already do umount -l /proc/self/fd/69 if you have a descriptor.
->=20
-> Way back when we put together stuff for [2] we had umountat() as an item
-> but decided against it because it's mostely useful when used as AT_EMPTY_=
-PATH.
->=20
-> umount("/proc/self/fd/<nr>", ...) is useful when you don't trust the
-> path and you need to resolve it with lookup restrictions. Then path
-> resolution restrictions of openat2() can be used to get an fd. Which can
-> be passed to umount().
->=20
-> I need to step outside so this is a halfway-out-the-door thought but
-> given your description of the problem Jeff, why doesn't the following
-> work (Just sketching this, you can't call openat2() like that.):
->=20
->         fd_mnt =3D openat2("/my/funky/nfs/share/mount", RESOLVE_CACHED)
->         umount("/proc/self/fd/fd_mnt", MNT_DETACH)
+On Fri 14-04-23 11:02:12, Luca Vizzarro wrote:
+> The interface for fcntl expects the argument passed for the command
+> F_DIRNOTIFY to be of type int. The current code wrongly treats it as
+> a long. In order to avoid access to undefined bits, we should explicitly
+> cast the argument to int.
+> 
+> Cc: Kevin Brodsky <Kevin.Brodsky@arm.com>
+> Cc: Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: David Laight <David.Laight@ACULAB.com>
+> Cc: Mark Rutland <Mark.Rutland@arm.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Chuck Lever <chuck.lever@oracle.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Luca Vizzarro <Luca.Vizzarro@arm.com>
 
-Something like that might work. A RESOLVE_CACHED flag is something that
-would involve more than just umount(2) though. That said, it could be
-useful in other situations.
+Looks good to me. Do you plan to merge this series together (perhaps
+Christian could?) or should I pick up the dnotify patch? In case someone
+else will merge the patch feel free to add:
 
->=20
-> > Converting mount-id to O_PATH... might be an interesting idea.
->=20
-> I think using mount-ids would be nice and fwiw, something we considered
-> as an alternative to umountat(). Not just can they be gotten from
-> /proc/<pid>/mountinfo but we also do expose the mount id to userspace
-> nowadays through:
->=20
->         STATX_MNT_ID
->         __u64	stx_mnt_id;
->=20
-> which also came out of [2]. And it should be safe to do via
-> AT_STATX_DONT_SYNC:
->=20
->         statx(my_cached_fd, AT_NO_AUTOMOUNT|AT_SYMLINK_NOFOLLOW|AT_STATX_=
-DONT_SYNC)
->=20
-> using STATX_ATTR_MOUNT_ROOT to identify a potential mountpoint. Then
-> pass that mount-id to the new system call.
->=20
-> [2]: https://github.com/uapi-group/kernel-features
+Acked-by: Jan Kara <jack@suse.cz>
 
-This is generating a lot of good ideas! Maybe we should plan to discuss
-this further at LSF/MM?
+								Honza
 
---=20
-Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/notify/dnotify/dnotify.c | 4 ++--
+>  include/linux/dnotify.h     | 4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+> index 190aa717fa32..ebdcc25df0f7 100644
+> --- a/fs/notify/dnotify/dnotify.c
+> +++ b/fs/notify/dnotify/dnotify.c
+> @@ -199,7 +199,7 @@ void dnotify_flush(struct file *filp, fl_owner_t id)
+>  }
+> 
+>  /* this conversion is done only at watch creation */
+> -static __u32 convert_arg(unsigned long arg)
+> +static __u32 convert_arg(unsigned int arg)
+>  {
+>         __u32 new_mask = FS_EVENT_ON_CHILD;
+> 
+> @@ -258,7 +258,7 @@ static int attach_dn(struct dnotify_struct *dn, struct dnotify_mark *dn_mark,
+>   * up here.  Allocate both a mark for fsnotify to add and a dnotify_struct to be
+>   * attached to the fsnotify_mark.
+>   */
+> -int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
+> +int fcntl_dirnotify(int fd, struct file *filp, unsigned int arg)
+>  {
+>         struct dnotify_mark *new_dn_mark, *dn_mark;
+>         struct fsnotify_mark *new_fsn_mark, *fsn_mark;
+> diff --git a/include/linux/dnotify.h b/include/linux/dnotify.h
+> index b1d26f9f1c9f..9f183a679277 100644
+> --- a/include/linux/dnotify.h
+> +++ b/include/linux/dnotify.h
+> @@ -30,7 +30,7 @@ struct dnotify_struct {
+>                             FS_MOVED_FROM | FS_MOVED_TO)
+> 
+>  extern void dnotify_flush(struct file *, fl_owner_t);
+> -extern int fcntl_dirnotify(int, struct file *, unsigned long);
+> +extern int fcntl_dirnotify(int, struct file *, unsigned int);
+> 
+>  #else
+> 
+> @@ -38,7 +38,7 @@ static inline void dnotify_flush(struct file *filp, fl_owner_t id)
+>  {
+>  }
+> 
+> -static inline int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
+> +static inline int fcntl_dirnotify(int fd, struct file *filp, unsigned int arg)
+>  {
+>         return -EINVAL;
+>  }
+> --
+> 2.34.1
+> 
+> IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
