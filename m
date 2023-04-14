@@ -2,132 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EF116E2B09
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 22:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5F916E2B1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 22:32:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbjDNUTz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 16:19:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36912 "EHLO
+        id S229908AbjDNUcY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 16:32:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230004AbjDNUTx (ORCPT
+        with ESMTP id S229586AbjDNUcX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 16:19:53 -0400
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B176A6F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 13:19:50 -0700 (PDT)
-Received: by mail-il1-f208.google.com with SMTP id d20-20020a056e020c1400b003261821bf26so5092321ile.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 13:19:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681503590; x=1684095590;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PZJFh2lneSO2O2apuZY38a9QpaHYW44PXRNeRva/kLA=;
-        b=dB76uK8hTJnHg04qrLea3eM91wonOP5aOybfY7cvL6Xh00kwS6tyyjC9wXx2n7nzvw
-         YPZbjmbvzLBRHJ2LGsPo2lVnJjtgzpvp73XWO1hw73r7cg4TCkyeb+A5tCe0V8bJtiV4
-         Orby9mYI3sFaXAouZfuApGCfwZEE+DrPUIFKzqxeMXVC22hnrLopGg4rFvfF+a1tbFfx
-         KUxXuk9yoLR2Dl9B7GZ+QZKPmIH9xXU+9znHpiLY5rmxpjPE+0VpIrjbYNbw10AaCoK6
-         cblQCFshRiSxG1n3Q4kAGotKXDMe2LrLQDTwzh1zucytTPEA28KIxuQ9z02waQpyToYA
-         YYDA==
-X-Gm-Message-State: AAQBX9e8QgXpeXgKGf7+IVLkyi5xvm+OLG5uZpES5XVXMRNhUoxJfs7+
-        nhFfpHuDkQIrCxjfLM9a4e21EMqwSSfdY2bC13cZWnlE0j4L
-X-Google-Smtp-Source: AKy350buB1FR3HC2W63OvVvWcogrZGb23vOC1mxQwtrXgZDnuMfzHNlsggYdBDoairXrtR01lwqfLiJilwpTBHRA6lLEXVhJrrbA
-MIME-Version: 1.0
-X-Received: by 2002:a02:624d:0:b0:406:5e9b:87bd with SMTP id
- d74-20020a02624d000000b004065e9b87bdmr2681488jac.2.1681503590185; Fri, 14 Apr
- 2023 13:19:50 -0700 (PDT)
-Date:   Fri, 14 Apr 2023 13:19:50 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002e88ef05f9519048@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in btrfs_remove_ordered_extent
-From:   syzbot <syzbot+f7df8841df368e155864@syzkaller.appspotmail.com>
-To:     chris@chrisdown.name, clm@fb.com, dsterba@suse.com,
-        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+        Fri, 14 Apr 2023 16:32:23 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 320205B93;
+        Fri, 14 Apr 2023 13:32:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zkJ52LKFN3KW2VRgFxWenolm+nSjIO2xurI61vRkfQg=; b=F61Xsi7hJg8p79oBCG/Ya4KZTs
+        NYyItO8lVqFUsyrFHUeHuSURJ8s59rMlIiWS7BsvUy4qB3i5uzGwW+rdiuBav36hIRnTg46zEearw
+        Xnseesrp3Lz6ju4rdZfBg9QAqsDrYMYtutNLh339JNW6vkxUIa4JL2Cbc/iTetC3zgnKGnAH1MCIg
+        AiM6IMqSgf0hcUWq/q1jH4TL5Q7NyoJixXwfUwfFjE1D9amcThVPP3aqN4qX/zKxhYnHJ93qN/xTW
+        cqlx53Uk6XjvJNHnU7VSi9nk/bQuOX061GIoEoD2sgE2fW8toStzRjxFgZ6LUsEpK1+Jjy9Nh4AP+
+        cmvyNvcw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pnQ5P-0093og-C7; Fri, 14 Apr 2023 20:31:59 +0000
+Date:   Fri, 14 Apr 2023 21:31:59 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@suse.com,
+        josef@toxicpanda.com, jack@suse.cz, ldufour@linux.ibm.com,
+        laurent.dufour@fr.ibm.com, michel@lespinasse.org,
+        liam.howlett@oracle.com, jglisse@google.com, vbabka@suse.cz,
+        minchan@google.com, dave@stgolabs.net, punit.agrawal@bytedance.com,
+        lstoakes@gmail.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+        kernel-team@android.com
+Subject: Re: [PATCH 1/1] mm: handle swap page faults if the faulting page can
+ be locked
+Message-ID: <ZDm4P37XXyMBOMdZ@casper.infradead.org>
+References: <20230414180043.1839745-1-surenb@google.com>
+ <ZDmetaUdmlEz/W8Q@casper.infradead.org>
+ <CAJuCfpFPNiZmqQPP+K7CAuiFP5qLdd6W9T84VQNdRsN-9ggm1w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpFPNiZmqQPP+K7CAuiFP5qLdd6W9T84VQNdRsN-9ggm1w@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Apr 14, 2023 at 12:48:54PM -0700, Suren Baghdasaryan wrote:
+> >  - We can call migration_entry_wait().  This will wait for PG_locked to
+> >    become clear (in migration_entry_wait_on_locked()).  As previously
+> >    discussed offline, I think this is safe to do while holding the VMA
+> >    locked.
 
-syzbot found the following issue on:
+Just to be clear, this particular use of PG_locked is not during I/O,
+it's during page migration.  This is a few orders of magnitude
+different.
 
-HEAD commit:    09a9639e56c0 Linux 6.3-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16491af9c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=759d5e665e47a55
-dashboard link: https://syzkaller.appspot.com/bug?extid=f7df8841df368e155864
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+> >  - We can call swap_readpage() if we allocate a new folio.  I haven't
+> >    traced through all this code to tell if it's OK.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+... whereas this will wait for I/O.  If we decide that's not OK, we'll
+need to test for FAULT_FLAG_VMA_LOCK and bail out of this path.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/322ee98e9b51/disk-09a9639e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b7f428bb61b7/vmlinux-09a9639e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8c3310bcdc76/bzImage-09a9639e.xz
+> > So ... I believe this is all OK, but we're definitely now willing to
+> > wait for I/O from the swap device while holding the VMA lock when we
+> > weren't before.  And maybe we should make a bigger deal of it in the
+> > changelog.
+> >
+> > And maybe we shouldn't just be failing the folio_lock_or_retry(),
+> > maybe we should be waiting for the folio lock with the VMA locked.
+> 
+> Wouldn't that cause holding the VMA lock for the duration of swap I/O
+> (something you said we want to avoid in the previous paragraph) and
+> effectively undo d065bd810b6d ("mm: retry page fault when blocking on
+> disk transfer") for VMA locks?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f7df8841df368e155864@syzkaller.appspotmail.com
+I'm not certain we want to avoid holding the VMA lock for the duration
+of an I/O.  Here's how I understand the rationale for avoiding holding
+the mmap_lock while we perform I/O (before the existence of the VMA lock):
 
-assertion failed: trans, in fs/btrfs/ordered-data.c:586
-------------[ cut here ]------------
-kernel BUG at fs/btrfs/messages.c:259!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 17716 Comm: kworker/u4:17 Not tainted 6.3.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
-Workqueue: btrfs-endio-write btrfs_work_helper
-RIP: 0010:btrfs_assertfail+0x18/0x20 fs/btrfs/messages.c:259
-Code: df e8 2c 6c 43 f7 e9 50 fb ff ff e8 42 80 01 00 66 90 66 0f 1f 00 89 d1 48 89 f2 48 89 fe 48 c7 c7 80 ee 2b 8b e8 e8 60 ff ff <0f> 0b 66 0f 1f 44 00 00 66 0f 1f 00 53 48 89 fb e8 a3 ab ed f6 48
-RSP: 0018:ffffc900163ef998 EFLAGS: 00010246
-RAX: 0000000000000037 RBX: ffff88802c25c538 RCX: 34a4a5ce511e7800
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff816df7fc R09: fffff52002c7deed
-R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88802c25cc10
-R13: ffff88802c25c000 R14: ffff88802bad71f0 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f900f261000 CR3: 000000000cd30000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_remove_ordered_extent+0x7f0/0x9b0 fs/btrfs/ordered-data.c:586
- btrfs_finish_ordered_io+0x153e/0x1cc0 fs/btrfs/inode.c:3328
- btrfs_work_helper+0x380/0xbe0 fs/btrfs/async-thread.c:280
- process_one_work+0x8a0/0x10e0 kernel/workqueue.c:2390
- worker_thread+0xa63/0x1210 kernel/workqueue.c:2537
- kthread+0x270/0x300 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:btrfs_assertfail+0x18/0x20 fs/btrfs/messages.c:259
-Code: df e8 2c 6c 43 f7 e9 50 fb ff ff e8 42 80 01 00 66 90 66 0f 1f 00 89 d1 48 89 f2 48 89 fe 48 c7 c7 80 ee 2b 8b e8 e8 60 ff ff <0f> 0b 66 0f 1f 44 00 00 66 0f 1f 00 53 48 89 fb e8 a3 ab ed f6 48
-RSP: 0018:ffffc900163ef998 EFLAGS: 00010246
-RAX: 0000000000000037 RBX: ffff88802c25c538 RCX: 34a4a5ce511e7800
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff816df7fc R09: fffff52002c7deed
-R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88802c25cc10
-R13: ffff88802c25c000 R14: ffff88802bad71f0 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa101bad988 CR3: 00000000323b9000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ - If everybody is doing page faults, there is no specific problem;
+   we all hold the lock for read and multiple page faults can be handled
+   in parallel.
+ - As soon as one thread attempts to manipulate the tree (eg calls
+   mmap()), all new readers must wait (as the rwsem is fair), and the
+   writer must wait for all existing readers to finish.  That's
+   potentially milliseconds for an I/O during which time all page faults
+   stop.
 
+Now we have the per-VMA lock, faults which can be handled without taking
+the mmap_lock can still be satisfied, as long as that VMA is not being
+modified.  It is rare for a real application to take a page fault on a
+VMA which is being modified.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+So modifications to the tree will generally not take VMA locks on VMAs
+which are currently handling faults, and new faults will generally not
+find a VMA which is write-locked.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+When we find a locked folio (presumably for I/O, although folios are
+locked for other reasons), if we fall back to taking the mmap_lock
+for read, we increase contention on the mmap_lock and make the page
+fault wait on any mmap() operation.  If we simply sleep waiting for the
+I/O, we make any mmap() operation _which touches this VMA_ wait for
+the I/O to complete.  But I think that's OK, because new page faults
+can continue to be serviced ... as long as they don't need to take
+the mmap_lock.
+
+So ... I think what we _really_ want here is ...
+
++++ b/mm/filemap.c
+@@ -1690,7 +1690,8 @@ static int __folio_lock_async(struct folio *folio, struct wait_page_queue *wait)
+ bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
+                         unsigned int flags)
+ {
+-       if (fault_flag_allow_retry_first(flags)) {
++       if (!(flags & FAULT_FLAG_VMA_LOCK) &&
++           fault_flag_allow_retry_first(flags)) {
+                /*
+                 * CAUTION! In this case, mmap_lock is not released
+                 * even though return 0.
+@@ -1710,7 +1711,8 @@ bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
+
+                ret = __folio_lock_killable(folio);
+                if (ret) {
+-                       mmap_read_unlock(mm);
++                       if (!(flags & FAULT_FLAG_VMA_LOCK))
++                               mmap_read_unlock(mm);
+                        return false;
+                }
+        } else {
+
