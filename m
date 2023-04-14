@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6368C6E1896
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 02:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D48606E1892
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 02:02:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230293AbjDNACr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Apr 2023 20:02:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40588 "EHLO
+        id S230298AbjDNACv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Apr 2023 20:02:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230117AbjDNACo (ORCPT
+        with ESMTP id S229656AbjDNACq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Apr 2023 20:02:44 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 164AF3C21
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 17:02:42 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id kh6so15182856plb.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 17:02:42 -0700 (PDT)
+        Thu, 13 Apr 2023 20:02:46 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B763C1E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 17:02:43 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id c10-20020a17090abf0a00b0023d1bbd9f9eso20082003pjs.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Apr 2023 17:02:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1681430561; x=1684022561;
+        d=chromium.org; s=google; t=1681430563; x=1684022563;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1v27frhDXboIukcqHIRkhbLm0yBxlDAQEyM68TRxYVI=;
-        b=evpnsSXO3QeKoUCOGzQrXtpjpUo8CPT4/cFAQs85kUQ2oJZlH42N6agRF28k0Mpq2E
-         okhlWB7GvDGOGF3oP2qsjB9Fhkp7DClSckedUiVVUXpZ8iuSXPpJIKo2pVeM9d3lFucf
-         gXPN5S1ABp8OD67nhmjcU2Wwhjf6JWHdBWHLY=
+        bh=BbgRTE0x4Vz9bKIXx5TwXFxZnllEKND24a06IseMh6w=;
+        b=J924py0HmWPxuONvev1tIDUqUjf7hA6nM89DwsvTXcqSkYCCQZLWUjUt/k+HM1FjQC
+         G+VDAZC4VQpvgoWnHmV9J+893oVIcJ4VWbWfzgqCWtDzVczJCwZlq14h3qxGBh7BYtIe
+         96nys3WELbf5RZXAZkhasmJotINZywaUNgWyE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681430561; x=1684022561;
+        d=1e100.net; s=20221208; t=1681430563; x=1684022563;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1v27frhDXboIukcqHIRkhbLm0yBxlDAQEyM68TRxYVI=;
-        b=Vj8sCavMZaEyi7BEJIEZROgNQKm9iCp+wweTRLxFFckwOvHl8fFQOD5MVDb3rneev5
-         sEonmZql/TWfFbZNFLjfRyrlna13AISCk82thraWQErBF7PpUf++qeL/3Ta2zatdUUJI
-         wL8WI2oboyNiAV2hx5MTZwHXJ3tUOPICQucCKm18GCaXBfbF0KvzmbfB3aD+HdKLocbT
-         ldItykBf5NiqRWOlJrhqYm4HFO3eX5g0pcN3VIF4WrZUeSTmBXMPKv5Opa566AE6Xh7s
-         VT+baoDYTsfjNv6ad0TnPGeFeANPafqUSO3sJIhZzZcIyyWmj3IeyzWuGRog41qpWXtz
-         aGgQ==
-X-Gm-Message-State: AAQBX9caxgtynJMxYfoisgDCxb0eT6azb3lj6IhzY9yiyyQ6W7nRZgT3
-        D/CbeJUtkzgYu5lY+CLZBW9E8g==
-X-Google-Smtp-Source: AKy350bsCzhCErOgvyUWg+gFxIVn0gvgfymer0DPSV09zh4cR+UNuAgmRiHK1Mydt0y0aacyGPzsYg==
-X-Received: by 2002:a17:90b:1e49:b0:246:b2aa:c08 with SMTP id pi9-20020a17090b1e4900b00246b2aa0c08mr3842591pjb.22.1681430561466;
-        Thu, 13 Apr 2023 17:02:41 -0700 (PDT)
+        bh=BbgRTE0x4Vz9bKIXx5TwXFxZnllEKND24a06IseMh6w=;
+        b=PQgWqXd6lgYKB4VUC1VqRZGyvLLoLAFZAq6YCokH+dEh4noHUMSqLDs6AAZkmspALy
+         0cnL91hIpq1nvVbuxsS7vpU/RRwpIYpeeOXBK64t/+yBGgmTVMmtd7QbfEfVHpogGNWx
+         47X5Gba5lQJRh6wYb8h/UV/LpFQEBIxwTorW5mzhOuf24GP082ln1H3Bfa4OuQGBJTO/
+         KVlaltoQYkKRyAgiiIk2WXJ+IIUF7xJ5wIXkPUyXdW01EVgWs7wNro0Wf1LdwkhH+Nuk
+         bDU1q16+3TK3sWThKtLLtgh1rH4aGbydZbUaIlmIx8UdZuuB1JIxVQ3iITuwFomrvBA3
+         8ecg==
+X-Gm-Message-State: AAQBX9fUmVv3sn2n/g2o3q0Xyf0r08Ff4lwVZBoqGLQfNHE8r0EBNBLn
+        /dQGbzXj0RCbD/vKd2phGnP4/A==
+X-Google-Smtp-Source: AKy350a3orAemKhQwWjvUDNZ3/O00wopkJZ0ap82QvyONMfrDVr1qEWggV6UX8mwCxKt9zLwNu4mdQ==
+X-Received: by 2002:a17:90a:784e:b0:233:ee67:8eb3 with SMTP id y14-20020a17090a784e00b00233ee678eb3mr3507664pjl.24.1681430563219;
+        Thu, 13 Apr 2023 17:02:43 -0700 (PDT)
 Received: from sarthakkukreti-glaptop.corp.google.com ([2620:15c:9d:200:72cc:7fa5:adcb:7c02])
-        by smtp.gmail.com with ESMTPSA id u18-20020a17090a891200b002470f179b92sm2212939pjn.43.2023.04.13.17.02.39
+        by smtp.gmail.com with ESMTPSA id u18-20020a17090a891200b002470f179b92sm2212939pjn.43.2023.04.13.17.02.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 17:02:40 -0700 (PDT)
+        Thu, 13 Apr 2023 17:02:42 -0700 (PDT)
 From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
 To:     sarthakkukreti@google.com, dm-devel@redhat.com,
         linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         Bart Van Assche <bvanassche@google.com>,
         Daniil Lunev <dlunev@google.com>,
         "Darrick J. Wong" <djwong@kernel.org>
-Subject: [PATCH v3 1/3] block: Introduce provisioning primitives
-Date:   Thu, 13 Apr 2023 17:02:17 -0700
-Message-ID: <20230414000219.92640-2-sarthakkukreti@chromium.org>
+Subject: [PATCH v3 2/3] dm: Add support for block provisioning
+Date:   Thu, 13 Apr 2023 17:02:18 -0700
+Message-ID: <20230414000219.92640-3-sarthakkukreti@chromium.org>
 X-Mailer: git-send-email 2.40.0.634.g4ca3ef3211-goog
 In-Reply-To: <20230414000219.92640-1-sarthakkukreti@chromium.org>
 References: <20221229071647.437095-1-sarthakkukreti@chromium.org>
@@ -75,381 +75,407 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce block request REQ_OP_PROVISION. The intent of this request
-is to request underlying storage to preallocate disk space for the given
-block range. Block devices that support this capability will export
-a provision limit within their request queues.
+Add support to dm devices for REQ_OP_PROVISION. The default mode
+is to passthrough the request to the underlying device, if it
+supports it. dm-thinpool uses the provision request to provision
+blocks for a dm-thin device. dm-thinpool currently does not
+pass through REQ_OP_PROVISION to underlying devices.
 
-This patch also adds the capability to call fallocate() in mode 0
-on block devices, which will send REQ_OP_PROVISION to the block
-device for the specified range,
+For shared blocks, provision requests will break sharing and copy the
+contents of the entire block.
 
 Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
 ---
- block/blk-core.c          |  5 ++++
- block/blk-lib.c           | 53 +++++++++++++++++++++++++++++++++++++++
- block/blk-merge.c         | 18 +++++++++++++
- block/blk-settings.c      | 19 ++++++++++++++
- block/blk-sysfs.c         |  8 ++++++
- block/bounce.c            |  1 +
- block/fops.c              | 14 ++++++++---
- include/linux/bio.h       |  6 +++--
- include/linux/blk_types.h |  5 +++-
- include/linux/blkdev.h    | 16 ++++++++++++
- 10 files changed, 138 insertions(+), 7 deletions(-)
+ drivers/md/dm-crypt.c         |   4 +-
+ drivers/md/dm-linear.c        |   1 +
+ drivers/md/dm-snap.c          |   7 +++
+ drivers/md/dm-table.c         |  25 ++++++++
+ drivers/md/dm-thin.c          | 110 +++++++++++++++++++++++++++++++---
+ drivers/md/dm.c               |   4 ++
+ include/linux/device-mapper.h |  11 ++++
+ 7 files changed, 153 insertions(+), 9 deletions(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 42926e6cb83c..4a2342ba3a8b 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -123,6 +123,7 @@ static const char *const blk_op_name[] = {
- 	REQ_OP_NAME(WRITE_ZEROES),
- 	REQ_OP_NAME(DRV_IN),
- 	REQ_OP_NAME(DRV_OUT),
-+	REQ_OP_NAME(PROVISION)
- };
- #undef REQ_OP_NAME
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 3ba53dc3cc3f..5c655bfd4686 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -3087,6 +3087,8 @@ static int crypt_ctr_optional(struct dm_target *ti, unsigned int argc, char **ar
+ 	if (ret)
+ 		return ret;
  
-@@ -798,6 +799,10 @@ void submit_bio_noacct(struct bio *bio)
- 		if (!q->limits.max_write_zeroes_sectors)
- 			goto not_supported;
++	ti->num_provision_bios = 1;
++
+ 	while (opt_params--) {
+ 		opt_string = dm_shift_arg(&as);
+ 		if (!opt_string) {
+@@ -3390,7 +3392,7 @@ static int crypt_map(struct dm_target *ti, struct bio *bio)
+ 	 * - for REQ_OP_DISCARD caller must use flush if IO ordering matters
+ 	 */
+ 	if (unlikely(bio->bi_opf & REQ_PREFLUSH ||
+-	    bio_op(bio) == REQ_OP_DISCARD)) {
++	    bio_op(bio) == REQ_OP_DISCARD || bio_op(bio) == REQ_OP_PROVISION)) {
+ 		bio_set_dev(bio, cc->dev->bdev);
+ 		if (bio_sectors(bio))
+ 			bio->bi_iter.bi_sector = cc->start +
+diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
+index 3e622dcc9dbd..7843e548e850 100644
+--- a/drivers/md/dm-linear.c
++++ b/drivers/md/dm-linear.c
+@@ -62,6 +62,7 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	ti->num_discard_bios = 1;
+ 	ti->num_secure_erase_bios = 1;
+ 	ti->num_write_zeroes_bios = 1;
++	ti->num_provision_bios = 1;
+ 	ti->private = lc;
+ 	return 0;
+ 
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index f766c21408f1..f6b224a12000 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -1358,6 +1358,7 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	if (s->discard_zeroes_cow)
+ 		ti->num_discard_bios = (s->discard_passdown_origin ? 2 : 1);
+ 	ti->per_io_data_size = sizeof(struct dm_snap_tracked_chunk);
++	ti->num_provision_bios = 1;
+ 
+ 	/* Add snapshot to the list of snapshots for this origin */
+ 	/* Exceptions aren't triggered till snapshot_resume() is called */
+@@ -2003,6 +2004,11 @@ static int snapshot_map(struct dm_target *ti, struct bio *bio)
+ 	/* If the block is already remapped - use that, else remap it */
+ 	e = dm_lookup_exception(&s->complete, chunk);
+ 	if (e) {
++		if (unlikely(bio_op(bio) == REQ_OP_PROVISION)) {
++			bio_endio(bio);
++			r = DM_MAPIO_SUBMITTED;
++			goto out_unlock;
++		}
+ 		remap_exception(s, e, bio, chunk);
+ 		if (unlikely(bio_op(bio) == REQ_OP_DISCARD) &&
+ 		    io_overlaps_chunk(s, bio)) {
+@@ -2413,6 +2419,7 @@ static void snapshot_io_hints(struct dm_target *ti, struct queue_limits *limits)
+ 		/* All discards are split on chunk_size boundary */
+ 		limits->discard_granularity = snap->store->chunk_size;
+ 		limits->max_discard_sectors = snap->store->chunk_size;
++		limits->max_provision_sectors = snap->store->chunk_size;
+ 
+ 		up_read(&_origins_lock);
+ 	}
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 2055a758541d..5985343384a7 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1850,6 +1850,26 @@ static bool dm_table_supports_write_zeroes(struct dm_table *t)
+ 	return true;
+ }
+ 
++static int device_provision_capable(struct dm_target *ti, struct dm_dev *dev,
++				    sector_t start, sector_t len, void *data)
++{
++	return !bdev_max_provision_sectors(dev->bdev);
++}
++
++static bool dm_table_supports_provision(struct dm_table *t)
++{
++	for (unsigned int i = 0; i < t->num_targets; i++) {
++		struct dm_target *ti = dm_table_get_target(t, i);
++
++		if (ti->provision_supported ||
++		    (ti->type->iterate_devices &&
++		    ti->type->iterate_devices(ti, device_provision_capable, NULL)))
++			return true;
++	}
++
++	return false;
++}
++
+ static int device_not_nowait_capable(struct dm_target *ti, struct dm_dev *dev,
+ 				     sector_t start, sector_t len, void *data)
+ {
+@@ -1983,6 +2003,11 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 	if (!dm_table_supports_write_zeroes(t))
+ 		q->limits.max_write_zeroes_sectors = 0;
+ 
++	if (dm_table_supports_provision(t))
++		blk_queue_max_provision_sectors(q, UINT_MAX >> 9);
++	else
++		q->limits.max_provision_sectors = 0;
++
+ 	dm_table_verify_integrity(t);
+ 
+ 	/*
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index 13d4677baafd..b08b7ae617be 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -909,7 +909,8 @@ static void __inc_remap_and_issue_cell(void *context,
+ 	struct bio *bio;
+ 
+ 	while ((bio = bio_list_pop(&cell->bios))) {
+-		if (op_is_flush(bio->bi_opf) || bio_op(bio) == REQ_OP_DISCARD)
++		if (op_is_flush(bio->bi_opf) || bio_op(bio) == REQ_OP_DISCARD ||
++		    bio_op(bio) == REQ_OP_PROVISION)
+ 			bio_list_add(&info->defer_bios, bio);
+ 		else {
+ 			inc_all_io_entry(info->tc->pool, bio);
+@@ -1013,6 +1014,15 @@ static void process_prepared_mapping(struct dm_thin_new_mapping *m)
+ 		goto out;
+ 	}
+ 
++	/*
++	 * For provision requests, once the prepared block has been inserted
++	 * into the mapping btree, return.
++	 */
++	if (bio && bio_op(bio) == REQ_OP_PROVISION) {
++		bio_endio(bio);
++		return;
++	}
++
+ 	/*
+ 	 * Release any bios held while the block was being provisioned.
+ 	 * If we are processing a write bio that completely covers the block,
+@@ -1241,7 +1251,7 @@ static int io_overlaps_block(struct pool *pool, struct bio *bio)
+ 
+ static int io_overwrites_block(struct pool *pool, struct bio *bio)
+ {
+-	return (bio_data_dir(bio) == WRITE) &&
++	return (bio_data_dir(bio) == WRITE) && bio_op(bio) != REQ_OP_PROVISION &&
+ 		io_overlaps_block(pool, bio);
+ }
+ 
+@@ -1334,10 +1344,11 @@ static void schedule_copy(struct thin_c *tc, dm_block_t virt_block,
+ 	/*
+ 	 * IO to pool_dev remaps to the pool target's data_dev.
+ 	 *
+-	 * If the whole block of data is being overwritten, we can issue the
+-	 * bio immediately. Otherwise we use kcopyd to clone the data first.
++	 * If the whole block of data is being overwritten and if this is not a
++	 * provision request, we can issue the bio immediately.
++	 * Otherwise we use kcopyd to clone the data first.
+ 	 */
+-	if (io_overwrites_block(pool, bio))
++	if (io_overwrites_block(pool, bio) && bio_op(bio) != REQ_OP_PROVISION)
+ 		remap_and_issue_overwrite(tc, bio, data_dest, m);
+ 	else {
+ 		struct dm_io_region from, to;
+@@ -1356,7 +1367,8 @@ static void schedule_copy(struct thin_c *tc, dm_block_t virt_block,
+ 		/*
+ 		 * Do we need to zero a tail region?
+ 		 */
+-		if (len < pool->sectors_per_block && pool->pf.zero_new_blocks) {
++		if (len < pool->sectors_per_block && pool->pf.zero_new_blocks &&
++		    bio_op(bio) != REQ_OP_PROVISION) {
+ 			atomic_inc(&m->prepare_actions);
+ 			ll_zero(tc, m,
+ 				data_dest * pool->sectors_per_block + len,
+@@ -1390,6 +1402,10 @@ static void schedule_zero(struct thin_c *tc, dm_block_t virt_block,
+ 	m->data_block = data_block;
+ 	m->cell = cell;
+ 
++	/* Provision requests are chained on the original bio. */
++	if (bio && bio_op(bio) == REQ_OP_PROVISION)
++		m->bio = bio;
++
+ 	/*
+ 	 * If the whole block of data is being overwritten or we are not
+ 	 * zeroing pre-existing data, we can issue the bio immediately.
+@@ -1865,7 +1881,8 @@ static void process_shared_bio(struct thin_c *tc, struct bio *bio,
+ 
+ 	if (bio_data_dir(bio) == WRITE && bio->bi_iter.bi_size) {
+ 		break_sharing(tc, bio, block, &key, lookup_result, data_cell);
+-		cell_defer_no_holder(tc, virt_cell);
++		if (bio_op(bio) != REQ_OP_PROVISION)
++			cell_defer_no_holder(tc, virt_cell);
+ 	} else {
+ 		struct dm_thin_endio_hook *h = dm_per_bio_data(bio, sizeof(struct dm_thin_endio_hook));
+ 
+@@ -1982,6 +1999,73 @@ static void process_cell(struct thin_c *tc, struct dm_bio_prison_cell *cell)
+ 	}
+ }
+ 
++static void process_provision_cell(struct thin_c *tc, struct dm_bio_prison_cell *cell)
++{
++	int r;
++	struct pool *pool = tc->pool;
++	struct bio *bio = cell->holder;
++	dm_block_t begin, end;
++	struct dm_thin_lookup_result lookup_result;
++
++	if (tc->requeue_mode) {
++		cell_requeue(pool, cell);
++		return;
++	}
++
++	get_bio_block_range(tc, bio, &begin, &end);
++
++	while (begin != end) {
++		r = ensure_next_mapping(pool);
++		if (r)
++			/* we did our best */
++			return;
++
++		r = dm_thin_find_block(tc->td, begin, 1, &lookup_result);
++		switch (r) {
++		case 0:
++			if (lookup_result.shared)
++				process_shared_bio(tc, bio, begin,
++						   &lookup_result, cell);
++			begin++;
++			break;
++		case -ENODATA:
++			bio_inc_remaining(bio);
++			provision_block(tc, bio, begin, cell);
++			begin++;
++			break;
++		default:
++			DMERR_LIMIT(
++				"%s: dm_thin_find_block() failed: error = %d",
++				__func__, r);
++			cell_defer_no_holder(tc, cell);
++			bio_io_error(bio);
++			begin++;
++			break;
++		}
++	}
++	bio_endio(bio);
++	cell_defer_no_holder(tc, cell);
++}
++
++static void process_provision_bio(struct thin_c *tc, struct bio *bio)
++{
++	dm_block_t begin, end;
++	struct dm_cell_key virt_key;
++	struct dm_bio_prison_cell *virt_cell;
++
++	get_bio_block_range(tc, bio, &begin, &end);
++	if (begin == end) {
++		bio_endio(bio);
++		return;
++	}
++
++	build_key(tc->td, VIRTUAL, begin, end, &virt_key);
++	if (bio_detain(tc->pool, &virt_key, bio, &virt_cell))
++		return;
++
++	process_provision_cell(tc, virt_cell);
++}
++
+ static void process_bio(struct thin_c *tc, struct bio *bio)
+ {
+ 	struct pool *pool = tc->pool;
+@@ -2202,6 +2286,8 @@ static void process_thin_deferred_bios(struct thin_c *tc)
+ 
+ 		if (bio_op(bio) == REQ_OP_DISCARD)
+ 			pool->process_discard(tc, bio);
++		else if (bio_op(bio) == REQ_OP_PROVISION)
++			process_provision_bio(tc, bio);
+ 		else
+ 			pool->process_bio(tc, bio);
+ 
+@@ -2723,7 +2809,8 @@ static int thin_bio_map(struct dm_target *ti, struct bio *bio)
+ 		return DM_MAPIO_SUBMITTED;
+ 	}
+ 
+-	if (op_is_flush(bio->bi_opf) || bio_op(bio) == REQ_OP_DISCARD) {
++	if (op_is_flush(bio->bi_opf) || bio_op(bio) == REQ_OP_DISCARD ||
++	    bio_op(bio) == REQ_OP_PROVISION) {
+ 		thin_defer_bio_with_throttle(tc, bio);
+ 		return DM_MAPIO_SUBMITTED;
+ 	}
+@@ -3370,6 +3457,8 @@ static int pool_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	pt->adjusted_pf = pt->requested_pf = pf;
+ 	ti->num_flush_bios = 1;
+ 	ti->limit_swap_bios = true;
++	ti->num_provision_bios = 1;
++	ti->provision_supported = true;
+ 
+ 	/*
+ 	 * Only need to enable discards if the pool should pass
+@@ -4068,6 +4157,7 @@ static void pool_io_hints(struct dm_target *ti, struct queue_limits *limits)
+ 		blk_limits_io_opt(limits, pool->sectors_per_block << SECTOR_SHIFT);
+ 	}
+ 
++
+ 	/*
+ 	 * pt->adjusted_pf is a staging area for the actual features to use.
+ 	 * They get transferred to the live pool in bind_control_target()
+@@ -4261,6 +4351,9 @@ static int thin_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 		ti->num_discard_bios = 1;
+ 	}
+ 
++	ti->num_provision_bios = 1;
++	ti->provision_supported = true;
++
+ 	mutex_unlock(&dm_thin_pool_table.mutex);
+ 
+ 	spin_lock_irq(&tc->pool->lock);
+@@ -4475,6 +4568,7 @@ static void thin_io_hints(struct dm_target *ti, struct queue_limits *limits)
+ 
+ 	limits->discard_granularity = pool->sectors_per_block << SECTOR_SHIFT;
+ 	limits->max_discard_sectors = 2048 * 1024 * 16; /* 16G */
++	limits->max_provision_sectors = 2048 * 1024 * 16; /* 16G */
+ }
+ 
+ static struct target_type thin_target = {
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index dfde0088147a..d8f1803062b7 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1593,6 +1593,7 @@ static bool is_abnormal_io(struct bio *bio)
+ 		case REQ_OP_DISCARD:
+ 		case REQ_OP_SECURE_ERASE:
+ 		case REQ_OP_WRITE_ZEROES:
++		case REQ_OP_PROVISION:
+ 			return true;
+ 		default:
+ 			break;
+@@ -1617,6 +1618,9 @@ static blk_status_t __process_abnormal_io(struct clone_info *ci,
+ 	case REQ_OP_WRITE_ZEROES:
+ 		num_bios = ti->num_write_zeroes_bios;
  		break;
 +	case REQ_OP_PROVISION:
-+		if (!q->limits.max_provision_sectors)
-+			goto not_supported;
++		num_bios = ti->num_provision_bios;
 +		break;
  	default:
  		break;
  	}
-diff --git a/block/blk-lib.c b/block/blk-lib.c
-index e59c3069e835..647b6451660b 100644
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -343,3 +343,56 @@ int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
- 	return ret;
- }
- EXPORT_SYMBOL(blkdev_issue_secure_erase);
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 7975483816e4..e9f687521ae6 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -334,6 +334,12 @@ struct dm_target {
+ 	 */
+ 	unsigned int num_write_zeroes_bios;
+ 
++	/*
++	 * The number of PROVISION bios that will be submitted to the target.
++	 * The bio number can be accessed with dm_bio_get_target_bio_nr.
++	 */
++	unsigned int num_provision_bios;
 +
-+/**
-+ * blkdev_issue_provision - provision a block range
-+ * @bdev:	blockdev to write
-+ * @sector:	start sector
-+ * @nr_sects:	number of sectors to provision
-+ * @gfp_mask:	memory allocation flags (for bio_alloc)
-+ *
-+ * Description:
-+ *  Issues a provision request to the block device for the range of sectors.
-+ *  For thinly provisioned block devices, this acts as a signal for the
-+ *  underlying storage pool to allocate space for this block range.
-+ */
-+int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
-+		sector_t nr_sects, gfp_t gfp)
-+{
-+	sector_t bs_mask = (bdev_logical_block_size(bdev) >> 9) - 1;
-+	unsigned int max_sectors = bdev_max_provision_sectors(bdev);
-+	struct bio *bio = NULL;
-+	struct blk_plug plug;
-+	int ret = 0;
+ 	/*
+ 	 * The minimum number of extra bytes allocated in each io for the
+ 	 * target to use.
+@@ -358,6 +364,11 @@ struct dm_target {
+ 	 */
+ 	bool discards_supported:1;
+ 
++	/* Set if this target needs to receive provision requests regardless of
++	 * whether or not its underlying devices have support.
++	 */
++	bool provision_supported:1;
 +
-+	if (max_sectors == 0)
-+		return -EOPNOTSUPP;
-+	if ((sector | nr_sects) & bs_mask)
-+		return -EINVAL;
-+	if (bdev_read_only(bdev))
-+		return -EPERM;
-+
-+	blk_start_plug(&plug);
-+	for (;;) {
-+		unsigned int req_sects = min_t(sector_t, nr_sects, max_sectors);
-+
-+		bio = blk_next_bio(bio, bdev, 0, REQ_OP_PROVISION, gfp);
-+		bio->bi_iter.bi_sector = sector;
-+		bio->bi_iter.bi_size = req_sects << SECTOR_SHIFT;
-+
-+		sector += req_sects;
-+		nr_sects -= req_sects;
-+		if (!nr_sects) {
-+			ret = submit_bio_wait(bio);
-+			if (ret == -EOPNOTSUPP)
-+				ret = 0;
-+			bio_put(bio);
-+			break;
-+		}
-+		cond_resched();
-+	}
-+	blk_finish_plug(&plug);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(blkdev_issue_provision);
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 6460abdb2426..a3ffebb97a1d 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -158,6 +158,21 @@ static struct bio *bio_split_write_zeroes(struct bio *bio,
- 	return bio_split(bio, lim->max_write_zeroes_sectors, GFP_NOIO, bs);
- }
- 
-+static struct bio *bio_split_provision(struct bio *bio,
-+					const struct queue_limits *lim,
-+					unsigned int *nsegs, struct bio_set *bs)
-+{
-+	*nsegs = 0;
-+
-+	if (!lim->max_provision_sectors)
-+		return NULL;
-+
-+	if (bio_sectors(bio) <= lim->max_provision_sectors)
-+		return NULL;
-+
-+	return bio_split(bio, lim->max_provision_sectors, GFP_NOIO, bs);
-+}
-+
- /*
-  * Return the maximum number of sectors from the start of a bio that may be
-  * submitted as a single request to a block device. If enough sectors remain,
-@@ -366,6 +381,9 @@ struct bio *__bio_split_to_limits(struct bio *bio,
- 	case REQ_OP_WRITE_ZEROES:
- 		split = bio_split_write_zeroes(bio, lim, nr_segs, bs);
- 		break;
-+	case REQ_OP_PROVISION:
-+		split = bio_split_provision(bio, lim, nr_segs, bs);
-+		break;
- 	default:
- 		split = bio_split_rw(bio, lim, nr_segs, bs,
- 				get_max_io_size(bio, lim) << SECTOR_SHIFT);
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 896b4654ab00..d303e6614c36 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -59,6 +59,7 @@ void blk_set_default_limits(struct queue_limits *lim)
- 	lim->zoned = BLK_ZONED_NONE;
- 	lim->zone_write_granularity = 0;
- 	lim->dma_alignment = 511;
-+	lim->max_provision_sectors = 0;
- }
- 
- /**
-@@ -82,6 +83,7 @@ void blk_set_stacking_limits(struct queue_limits *lim)
- 	lim->max_dev_sectors = UINT_MAX;
- 	lim->max_write_zeroes_sectors = UINT_MAX;
- 	lim->max_zone_append_sectors = UINT_MAX;
-+	lim->max_provision_sectors = UINT_MAX;
- }
- EXPORT_SYMBOL(blk_set_stacking_limits);
- 
-@@ -208,6 +210,20 @@ void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
- }
- EXPORT_SYMBOL(blk_queue_max_write_zeroes_sectors);
- 
-+/**
-+ * blk_queue_max_provision_sectors - set max sectors for a single provision
-+ *
-+ * @q:  the request queue for the device
-+ * @max_provision_sectors: maximum number of sectors to provision per command
-+ **/
-+
-+void blk_queue_max_provision_sectors(struct request_queue *q,
-+		unsigned int max_provision_sectors)
-+{
-+	q->limits.max_provision_sectors = max_provision_sectors;
-+}
-+EXPORT_SYMBOL(blk_queue_max_provision_sectors);
-+
- /**
-  * blk_queue_max_zone_append_sectors - set max sectors for a single zone append
-  * @q:  the request queue for the device
-@@ -578,6 +594,9 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
- 	t->max_segment_size = min_not_zero(t->max_segment_size,
- 					   b->max_segment_size);
- 
-+	t->max_provision_sectors = min_not_zero(t->max_provision_sectors,
-+						b->max_provision_sectors);
-+
- 	t->misaligned |= b->misaligned;
- 
- 	alignment = queue_limit_alignment_offset(b, start);
-diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-index f1fce1c7fa44..202aa78f933e 100644
---- a/block/blk-sysfs.c
-+++ b/block/blk-sysfs.c
-@@ -132,6 +132,12 @@ static ssize_t queue_max_discard_segments_show(struct request_queue *q,
- 	return queue_var_show(queue_max_discard_segments(q), page);
- }
- 
-+static ssize_t queue_max_provision_sectors_show(struct request_queue *q,
-+		char *page)
-+{
-+	return queue_var_show(queue_max_provision_sectors(q), (page));
-+}
-+
- static ssize_t queue_max_integrity_segments_show(struct request_queue *q, char *page)
- {
- 	return queue_var_show(q->limits.max_integrity_segments, page);
-@@ -599,6 +605,7 @@ QUEUE_RO_ENTRY(queue_io_min, "minimum_io_size");
- QUEUE_RO_ENTRY(queue_io_opt, "optimal_io_size");
- 
- QUEUE_RO_ENTRY(queue_max_discard_segments, "max_discard_segments");
-+QUEUE_RO_ENTRY(queue_max_provision_sectors, "max_provision_sectors");
- QUEUE_RO_ENTRY(queue_discard_granularity, "discard_granularity");
- QUEUE_RO_ENTRY(queue_discard_max_hw, "discard_max_hw_bytes");
- QUEUE_RW_ENTRY(queue_discard_max, "discard_max_bytes");
-@@ -648,6 +655,7 @@ static struct attribute *queue_attrs[] = {
- 	&queue_max_sectors_entry.attr,
- 	&queue_max_segments_entry.attr,
- 	&queue_max_discard_segments_entry.attr,
-+	&queue_max_provision_sectors_entry.attr,
- 	&queue_max_integrity_segments_entry.attr,
- 	&queue_max_segment_size_entry.attr,
- 	&elv_iosched_entry.attr,
-diff --git a/block/bounce.c b/block/bounce.c
-index 7cfcb242f9a1..ab9d8723ae64 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -176,6 +176,7 @@ static struct bio *bounce_clone_bio(struct bio *bio_src)
- 	case REQ_OP_DISCARD:
- 	case REQ_OP_SECURE_ERASE:
- 	case REQ_OP_WRITE_ZEROES:
-+	case REQ_OP_PROVISION:
- 		break;
- 	default:
- 		bio_for_each_segment(bv, bio_src, iter)
-diff --git a/block/fops.c b/block/fops.c
-index d2e6be4e3d1c..f82da2fb8af0 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -625,7 +625,7 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 	int error;
- 
- 	/* Fail if we don't recognize the flags. */
--	if (mode & ~BLKDEV_FALLOC_FL_SUPPORTED)
-+	if (mode != 0 && mode & ~BLKDEV_FALLOC_FL_SUPPORTED)
- 		return -EOPNOTSUPP;
- 
- 	/* Don't go off the end of the device. */
-@@ -649,11 +649,17 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 	filemap_invalidate_lock(inode->i_mapping);
- 
- 	/* Invalidate the page cache, including dirty pages. */
--	error = truncate_bdev_range(bdev, file->f_mode, start, end);
--	if (error)
--		goto fail;
-+	if (mode != 0) {
-+		error = truncate_bdev_range(bdev, file->f_mode, start, end);
-+		if (error)
-+			goto fail;
-+	}
- 
- 	switch (mode) {
-+	case 0:
-+		error = blkdev_issue_provision(bdev, start >> SECTOR_SHIFT,
-+					       len >> SECTOR_SHIFT, GFP_KERNEL);
-+		break;
- 	case FALLOC_FL_ZERO_RANGE:
- 	case FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE:
- 		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index d766be7152e1..9820b3b039f2 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -57,7 +57,8 @@ static inline bool bio_has_data(struct bio *bio)
- 	    bio->bi_iter.bi_size &&
- 	    bio_op(bio) != REQ_OP_DISCARD &&
- 	    bio_op(bio) != REQ_OP_SECURE_ERASE &&
--	    bio_op(bio) != REQ_OP_WRITE_ZEROES)
-+	    bio_op(bio) != REQ_OP_WRITE_ZEROES &&
-+	    bio_op(bio) != REQ_OP_PROVISION)
- 		return true;
- 
- 	return false;
-@@ -67,7 +68,8 @@ static inline bool bio_no_advance_iter(const struct bio *bio)
- {
- 	return bio_op(bio) == REQ_OP_DISCARD ||
- 	       bio_op(bio) == REQ_OP_SECURE_ERASE ||
--	       bio_op(bio) == REQ_OP_WRITE_ZEROES;
-+	       bio_op(bio) == REQ_OP_WRITE_ZEROES ||
-+	       bio_op(bio) == REQ_OP_PROVISION;
- }
- 
- static inline void *bio_data(struct bio *bio)
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 99be590f952f..27bdf88f541c 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -385,7 +385,10 @@ enum req_op {
- 	REQ_OP_DRV_IN		= (__force blk_opf_t)34,
- 	REQ_OP_DRV_OUT		= (__force blk_opf_t)35,
- 
--	REQ_OP_LAST		= (__force blk_opf_t)36,
-+	/* request device to provision block */
-+	REQ_OP_PROVISION        = (__force blk_opf_t)37,
-+
-+	REQ_OP_LAST		= (__force blk_opf_t)38,
- };
- 
- enum req_flag_bits {
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 941304f17492..239e2f418b6e 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -303,6 +303,7 @@ struct queue_limits {
- 	unsigned int		discard_granularity;
- 	unsigned int		discard_alignment;
- 	unsigned int		zone_write_granularity;
-+	unsigned int		max_provision_sectors;
- 
- 	unsigned short		max_segments;
- 	unsigned short		max_integrity_segments;
-@@ -921,6 +922,8 @@ extern void blk_queue_max_discard_sectors(struct request_queue *q,
- 		unsigned int max_discard_sectors);
- extern void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
- 		unsigned int max_write_same_sectors);
-+extern void blk_queue_max_provision_sectors(struct request_queue *q,
-+		unsigned int max_provision_sectors);
- extern void blk_queue_logical_block_size(struct request_queue *, unsigned int);
- extern void blk_queue_max_zone_append_sectors(struct request_queue *q,
- 		unsigned int max_zone_append_sectors);
-@@ -1060,6 +1063,9 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
- int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
- 		sector_t nr_sects, gfp_t gfp);
- 
-+extern int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
-+		sector_t nr_sects, gfp_t gfp_mask);
-+
- #define BLKDEV_ZERO_NOUNMAP	(1 << 0)  /* do not free blocks */
- #define BLKDEV_ZERO_NOFALLBACK	(1 << 1)  /* don't write explicit zeroes */
- 
-@@ -1139,6 +1145,11 @@ static inline unsigned short queue_max_discard_segments(const struct request_que
- 	return q->limits.max_discard_segments;
- }
- 
-+static inline unsigned short queue_max_provision_sectors(const struct request_queue *q)
-+{
-+	return q->limits.max_provision_sectors;
-+}
-+
- static inline unsigned int queue_max_segment_size(const struct request_queue *q)
- {
- 	return q->limits.max_segment_size;
-@@ -1281,6 +1292,11 @@ static inline bool bdev_nowait(struct block_device *bdev)
- 	return test_bit(QUEUE_FLAG_NOWAIT, &bdev_get_queue(bdev)->queue_flags);
- }
- 
-+static inline unsigned int bdev_max_provision_sectors(struct block_device *bdev)
-+{
-+	return bdev_get_queue(bdev)->limits.max_provision_sectors;
-+}
-+
- static inline enum blk_zoned_model bdev_zoned_model(struct block_device *bdev)
- {
- 	return blk_queue_zoned_model(bdev_get_queue(bdev));
+ 	/*
+ 	 * Set if we need to limit the number of in-flight bios when swapping.
+ 	 */
 -- 
 2.40.0.634.g4ca3ef3211-goog
 
