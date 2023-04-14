@@ -2,53 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2049C6E2408
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 15:12:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3D8E6E2419
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 15:16:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbjDNNMF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 09:12:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48948 "EHLO
+        id S229713AbjDNNQS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 09:16:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbjDNNME (ORCPT
+        with ESMTP id S229494AbjDNNQR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 09:12:04 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 793673A9C;
-        Fri, 14 Apr 2023 06:12:03 -0700 (PDT)
+        Fri, 14 Apr 2023 09:16:17 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE69D3A8D;
+        Fri, 14 Apr 2023 06:16:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LL1q5+2/qoyTMAi0m5Inbcnk8ARxhmQA/eDmbuGrVFI=; b=Kh6UZuqbs5BYZHX/qXCrMWvBed
-        sJUUix+JdjmyxKIEMeJJtEqqZgKn8yyQULC6IyHM46/A2tyZ6xZJmpmn0RK+tr5XQ+tBkknUMz6Rl
-        p2VklbLcmZqQh5lqGXnQER9H/UtNUWCyo5itilat+q+I40osSQMULhltAr7xwqSL9sssNjHljay86
-        HNZArBFFZTEuoIJ4Oqj1FBvOOsOJ3wphSEgn4DWTi6FibfUTG1r3bN1o58zgJ7EseaJNEAtERayoj
-        Dhbi/isUG25Pm1jO3oSXXnCHeGtwr741SJfWpfZSQGyP5toHjMjdx/MdRmovRpqNYdkyefMjJfFjk
-        k5s7BE3w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pnJDc-009eNP-38;
-        Fri, 14 Apr 2023 13:12:00 +0000
-Date:   Fri, 14 Apr 2023 06:12:00 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [RFCv3 02/10] libfs: Add __generic_file_fsync_nolock
- implementation
-Message-ID: <ZDlRIEiEm+CRDJxG@infradead.org>
-References: <cover.1681365596.git.ritesh.list@gmail.com>
- <e65768eb0fe145c803ba4afdc869a1757d51d758.1681365596.git.ritesh.list@gmail.com>
- <ZDjrvCbCwxN+mRUS@infradead.org>
- <20230414125148.du7r6ljdyzckoysh@quack3>
+        bh=bewZGEzP35vOEXrv26we0KnfsWo+fadUsj5rz09UWlo=; b=M7yC6Q+jM2U3PddJlmSmpxqjld
+        f+Z4QA9pWdhgZxLjWmRlJ5QjWCC4IBiXjKiOp9Czax+yyheHN6U6AAs5w+eeZZl5JRQIcPIrPTMpt
+        atfU/GFREm+KcRjeyFYOewq3SCGANJFQJCAKi+KNd7GsZ/0v+Z3dHvby1AHmKs5xcuTKpIgDfRzKl
+        yLf+h27KHF2atKCDi94Or0Tz7m6+NNEB6iijcSd9vgSvjBHuXNC1CbwxKIj3WdXP6/AZBHZrj5rmG
+        LZH+ArxJCHV2tOdi3O9G1X1UXntJv2+fRwXVo038hiBQdgKweffqWqq4/z05EELHTnFv5/PFUqoyA
+        ap1zGQjA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pnJHd-008lmQ-Qx; Fri, 14 Apr 2023 13:16:09 +0000
+Date:   Fri, 14 Apr 2023 14:16:09 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Pankaj Raghav <p.raghav@samsung.com>
+Cc:     brauner@kernel.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mcgrof@kernel.org,
+        gost.dev@samsung.com, hare@suse.de
+Subject: Re: [RFC 3/4] fs/buffer: add folio_create_empty_buffers helper
+Message-ID: <ZDlSGRCKLcwyqMgU@casper.infradead.org>
+References: <20230414110821.21548-1-p.raghav@samsung.com>
+ <CGME20230414110827eucas1p1b872c350b7e81f01e65ba0985082ba20@eucas1p1.samsung.com>
+ <20230414110821.21548-4-p.raghav@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230414125148.du7r6ljdyzckoysh@quack3>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20230414110821.21548-4-p.raghav@samsung.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -59,19 +53,12 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 02:51:48PM +0200, Jan Kara wrote:
-> On Thu 13-04-23 22:59:24, Christoph Hellwig wrote:
-> > Still no fan of the naming and placement here.  This is specific
-> > to the fs/buffer.c infrastructure.
+On Fri, Apr 14, 2023 at 01:08:20PM +0200, Pankaj Raghav wrote:
+> Folio version of create_empty_buffers(). This is required to convert
+> create_page_buffers() to create_folio_buffers() later in the series.
 > 
-> I'm fine with moving generic_file_fsync() & friends to fs/buffer.c and
-> creating the new function there if it makes you happier. But I think
-> function names should be consistent (hence the new function would be named
-> __generic_file_fsync_nolock()). I agree the name is not ideal and would use
-> cleanup (along with transitioning everybody to not take i_rwsem) but I
-> don't want to complicate this series by touching 13+ callsites of
-> generic_file_fsync() and __generic_file_fsync(). That's for a separate
-> series.
+> It removes several calls to compound_head() as it works directly on folio
+> compared to create_empty_buffers().
 
-I would not change the existing function.  Just do the right thing for
-the new helper and slowly migrate over without complicating this series.
+Again, I would create a create_empty_buffers() wrapper, but this time I
+would put it in buffer.c.
