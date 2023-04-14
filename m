@@ -2,94 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCD4F6E2722
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 17:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ADC06E273D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 17:46:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230167AbjDNPgQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 11:36:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55602 "EHLO
+        id S230096AbjDNPql (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 11:46:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbjDNPgP (ORCPT
+        with ESMTP id S230112AbjDNPql (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 11:36:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 787E855A1;
-        Fri, 14 Apr 2023 08:36:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 14B876160E;
-        Fri, 14 Apr 2023 15:36:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E141C4339B;
-        Fri, 14 Apr 2023 15:36:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681486573;
-        bh=fQbshHMyenXjbLKMFET/GjpZqotL8SVaYFHwivrmZGc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EPOFVu/DuwyuZANHqHcIFm3updxEbeHUXzp/iRet476VBB6uNbMtHE1khP4Sh1gSE
-         Q6Y694QdGbv5cpKGotEUfJRvJFmAmSEOCyaATRoC+Yokm5MNHTdT1IGLIy/xBIH5zi
-         Stm+pAFlxwJkRhantTSMdg4sGEej5MG3L7DrM1oAQsogxP1WRzj6x/rfKNWXFN86I/
-         JlS0RrvRFAaR3ouKEs+sy9hsqIIaceSojg+zNfCUkEJDRaAO3UdU6vlJzG7Qch+KvH
-         wkp97f4xUGTIbmDQdTdWmg0VGlJsaciHwLK93XPh4PBN6K/LDYrQlWfmFnmq4/fqu+
-         4Q2Wnj0bxfFeA==
-Date:   Fri, 14 Apr 2023 08:36:12 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Bernd Schubert <bschubert@ddn.com>, axboe@kernel.dk,
-        io-uring@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        dsingh@ddn.com
-Subject: Re: [PATCH 1/2] fs: add FMODE_DIO_PARALLEL_WRITE flag
-Message-ID: <20230414153612.GB360881@frogsfrogsfrogs>
-References: <20230307172015.54911-2-axboe@kernel.dk>
- <20230412134057.381941-1-bschubert@ddn.com>
- <CAJfpegt_ZCVodOhQCzF9OqKnCr65mKax0Gu4OTN8M51zP+8TcA@mail.gmail.com>
- <ZDjggMCGautPUDpW@infradead.org>
+        Fri, 14 Apr 2023 11:46:41 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6410B44E;
+        Fri, 14 Apr 2023 08:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=SdeHLcTSYz3bBZMhAQ6oPKTfCX/tSinZf6P6S2VKpeo=; b=Ajmlv2sMHJot/zHME5xc3ImVtu
+        EEbrEFKpapweJn9RKKzPXOpoRCKhgOWqR9KpNE8m6bWO/t8LZYQI5IQiSgrIDw5i+iGa0udoGv8FB
+        0kIEieEcrmj0dn5+P1DUQrW8TklldItMIpKYVL+1c10FKxLr+pCldFtyxfo/oeByq+eP51CxDAtX7
+        L0vZ81HjRSs318WEspctN22uQcuKj7D8EwKoqsip/92zBLWKuy9icjM7nLFEjh1hh9TcmyO1klA8O
+        xuq0bdpmKL9sfmmt2tin8sSQKl77M5HQuh5npUAUo3cpuzCPfPOoZmlcCHaE29mwfGAcE1VitXMnD
+        fH09UGXg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pnLd9-0091E4-2H;
+        Fri, 14 Apr 2023 15:46:31 +0000
+Date:   Fri, 14 Apr 2023 16:46:31 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Luca Vizzarro <Luca.Vizzarro@arm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        David Laight <David.Laight@aculab.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        linux-fsdevel@vger.kernel.org, linux-morello@op-lists.linaro.org
+Subject: Re: [PATCH v2 1/5] fcntl: Cast commands with int args explicitly
+Message-ID: <20230414154631.GK3390869@ZenIV>
+References: <20230414152459.816046-1-Luca.Vizzarro@arm.com>
+ <20230414152459.816046-2-Luca.Vizzarro@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZDjggMCGautPUDpW@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230414152459.816046-2-Luca.Vizzarro@arm.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 13, 2023 at 10:11:28PM -0700, Christoph Hellwig wrote:
-> On Thu, Apr 13, 2023 at 09:40:29AM +0200, Miklos Szeredi wrote:
-> > fuse_direct_write_iter():
-> > 
-> > bool exclusive_lock =
-> >     !(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES) ||
-> >     iocb->ki_flags & IOCB_APPEND ||
-> >     fuse_direct_write_extending_i_size(iocb, from);
-> > 
-> > If the write is size extending, then it will take the lock exclusive.
-> > OTOH, I guess that it would be unusual for lots of  size extending
-> > writes to be done in parallel.
-> > 
-> > What would be the effect of giving the  FMODE_DIO_PARALLEL_WRITE hint
-> > and then still serializing the writes?
-> 
-> I have no idea how this flags work, but XFS also takes i_rwsem
-> exclusively for appends, when the positions and size aren't aligned to
-> the block size, and a few other cases.
+On Fri, Apr 14, 2023 at 04:24:55PM +0100, Luca Vizzarro wrote:
+>  	void __user *argp = (void __user *)arg;
+> +	int argi = (int)arg;
 
-IIUC uring wants to avoid the situation where someone sends 300 writes
-to the same file, all of which end up in background workers, and all of
-which then contend on exclusive i_rwsem.  Hence it has some hashing
-scheme that executes io requests serially if they hash to the same value
-(which iirc is the inode number?) to prevent resource waste.
+Strictly speaking, conversion from unsigned long to int is
+an undefined behaviour, unless the value fits into the
+range representable by int ;-)
 
-This flag turns off that hashing behavior on the assumption that each of
-those 300 writes won't serialize on the other 299 writes, hence it's ok
-to start up 300 workers.
+>  	case F_SETFD:
+>  		err = 0;
+> -		set_close_on_exec(fd, arg & FD_CLOEXEC);
+> +		set_close_on_exec(fd, argi & FD_CLOEXEC);
 
-(apologies for precoffee garbled response)
+Why?
 
---D
+>  	case F_SETSIG:
+>  		/* arg == 0 restores default behaviour. */
+> -		if (!valid_signal(arg)) {
+> +		if (!valid_signal(argi)) {
+
+Why???
+
+>  			break;
+>  		}
+>  		err = 0;
+> -		filp->f_owner.signum = arg;
+> +		filp->f_owner.signum = argi;
+>  		break;
+
+These two are clearly bogus and I'd like to see more details
+on the series rationale, please.
