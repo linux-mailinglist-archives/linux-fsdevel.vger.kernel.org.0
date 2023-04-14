@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CE6E6E25A4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:26:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B51E66E25A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231145AbjDNO0o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 10:26:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50266 "EHLO
+        id S231233AbjDNO0z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 10:26:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231140AbjDNO0Q (ORCPT
+        with ESMTP id S231182AbjDNO01 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 10:26:16 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E0B4CC21;
-        Fri, 14 Apr 2023 07:25:45 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id w11so18965495pjh.5;
-        Fri, 14 Apr 2023 07:25:45 -0700 (PDT)
+        Fri, 14 Apr 2023 10:26:27 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E88C144;
+        Fri, 14 Apr 2023 07:25:54 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id kh6so16856994plb.0;
+        Fri, 14 Apr 2023 07:25:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681482344; x=1684074344;
+        d=gmail.com; s=20221208; t=1681482353; x=1684074353;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kpWPxfuvaIk0mWPLrjy7A4XPzxhA7fLlfGdW1mVCUr4=;
-        b=hh51/J2GfHz8TwBXTTAD8ByIt7vqu+CJYMOv8Gn6VP6zDZ8jsx1AQK/YylhhDx4Yy+
-         0CRLCxANjdDWRbaxrpOrHOgnYRD+lcAf3QSkDS3YbWO/xcoE3Gbv43mriuPlxclwVTP9
-         phx5iCBpOFU3ljdbu0G2CPDJwoQgv/dk9OnKHsSHbvxVBZS7ab+FJCrdG2Pr8gDTkNbA
-         cLPqeTL9RK1Gw4vF6qbn/cWyXpQXTI1KYeztWpb3aEC0oy5a7FRBFGm+8ZwfNEXjkHbL
-         Rw88PFqPGh3pJ+S1C9QijWHos/UCC72XeH/rxFcOom0qMDyPSeMXOfp7PnqjaxjFryYV
-         7CUg==
+        bh=/tVFETdIXCOfqp++FbGXI8ZTRFNtRU4kz7mKWpQ0TKQ=;
+        b=V/L9mGM5vRCilsgFuug2qDo+tf+mz8X3NMe4ExWTkIzgp5PoriAleb9ABHiqBVuzoB
+         llo+kuyF6EvctKAWOk7/AgctLIF5nzoIZG8o22MemV1Trqr4GMU4SWQjs7lk4AFfxWZs
+         fEFh+J5+1k4h11tgMkVGCwcojSc3VhOk+jlEQkXDF+LG7ADIDJS5DzduuXdI5BA3XzGA
+         o5xxBjrwCkRjOkZx09CVQJsh7Y3tKhqCo7zRr9YQVNfXI9o2wXUwtf+xHKgwJyn/eUFx
+         DbBL8+08eqWZGvXOjPhYZPEEOFvmlvTmXp2I+hQAV+uqiFqt7yhXiTpblR0eG92ZfVyg
+         zMBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681482344; x=1684074344;
+        d=1e100.net; s=20221208; t=1681482353; x=1684074353;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kpWPxfuvaIk0mWPLrjy7A4XPzxhA7fLlfGdW1mVCUr4=;
-        b=TY1NK6FePlkw/ygUqZeuSi5bhpMlTOFr12TsPVicX2pxQHse6S2kys73OhatSfhYg7
-         YOkXrTpgk1o2OaK3aIBkMQH81ZDFXl7AABV80MWAFarAcTNtUuZpso98Hxh4SfJIdj2W
-         Y+Uwvqk1JhQRgn9MozLR/jBw0tgNtye0wobDSMLKnfb944MsvL/do19scY8/j+Te1ufl
-         nIHstgVc+bZh07ivfho9Eub+42zLtpxX31HWSgCJZ5KJEtc0mTJH5qJ1UJrvm6svgWxJ
-         +9gYS2bZm7UTXuGzjdmv6vSu3mDv7Y+q5JjnyUJAABXymbphTDWvlpgZWR91DZs1McUq
-         X3WA==
-X-Gm-Message-State: AAQBX9ePj4M6d7TEvndTtoGdrSAzGgThUcsztPCiutpWHNpOjr9inxWs
-        SlDwcUrM8+8iB+EhcsaJQ0Q=
-X-Google-Smtp-Source: AKy350aBdG9vJ3XmlVaPR+W/QhjaJcPhPOUy0mPoGFQqm07k6eNoRRTZfMByKXsSMfstD+2cplrm3g==
-X-Received: by 2002:a17:90a:4925:b0:23f:7ff6:eba with SMTP id c34-20020a17090a492500b0023f7ff60ebamr5879955pjh.0.1681482344318;
-        Fri, 14 Apr 2023 07:25:44 -0700 (PDT)
+        bh=/tVFETdIXCOfqp++FbGXI8ZTRFNtRU4kz7mKWpQ0TKQ=;
+        b=eAPdAV+Kwf65yINl2J7xlqvEhtlEmrmfgl7zcXjoRNq2ut85AxNxMm/B/qpkDvURqm
+         n70T0uvgHehhjQlbGgd2nc6usPdIBPLDOV9eDSPQEcHCxzYPMpeSyb462HDPLjw55tiB
+         VfBz7Bpl29QVEqOFgKivBwIXpIDP2rP1ZrZ6ref+UTVbZfXu6c2r026gBa8mXYDn4FSM
+         farVAKNMoiyvdclGlusE/lb2fi9HxisBp85pcMWutEb/R3ST/3yoLfISEeuLm3GifoPy
+         iaW4XTT6bMm/5F+N+ZEl/i8KUkHDD/pCEyrqUVBZ1YFJeHOWGRo272+Pa8Y8q7IvMCoq
+         +Ceg==
+X-Gm-Message-State: AAQBX9c+2cqRwF/sZoOKMFhddEReArpFrc2jGHH1sqGiSi5VW4vwSqu+
+        AMB0DmU8oSQYNN259RbfwXA=
+X-Google-Smtp-Source: AKy350bY4APGkMEn5jnT3hrPcgD0IFpWnxPux4TPQ74b4zdNFtZk3bMgcaFkmd5oasXe2ggPZ2CL0Q==
+X-Received: by 2002:a17:903:22ce:b0:1a5:f:a7c7 with SMTP id y14-20020a17090322ce00b001a5000fa7c7mr3342685plg.0.1681482353510;
+        Fri, 14 Apr 2023 07:25:53 -0700 (PDT)
 Received: from strix-laptop.. (2001-b011-20e0-1499-8303-7502-d3d7-e13b.dynamic-ip6.hinet.net. [2001:b011:20e0:1499:8303:7502:d3d7:e13b])
-        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.25.35
+        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.25.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Apr 2023 07:25:43 -0700 (PDT)
+        Fri, 14 Apr 2023 07:25:53 -0700 (PDT)
 From:   Chih-En Lin <shiyn.lin@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Qi Zheng <zhengqi.arch@bytedance.com>,
@@ -111,9 +111,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Pedro Fonseca <pfonseca@purdue.edu>,
         Jim Huang <jserv@ccns.ncku.edu.tw>,
         Huichun Feng <foxhoundsk.tw@gmail.com>
-Subject: [PATCH v5 09/17] mm/madvise: Handle COW-ed PTE with madvise()
-Date:   Fri, 14 Apr 2023 22:23:33 +0800
-Message-Id: <20230414142341.354556-10-shiyn.lin@gmail.com>
+Subject: [PATCH v5 10/17] mm/gup: Trigger break COW PTE before calling follow_pfn_pte()
+Date:   Fri, 14 Apr 2023 22:23:34 +0800
+Message-Id: <20230414142341.354556-11-shiyn.lin@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230414142341.354556-1-shiyn.lin@gmail.com>
 References: <20230414142341.354556-1-shiyn.lin@gmail.com>
@@ -129,61 +129,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Break COW PTE if madvise() modify the pte entry of COW-ed PTE.
-Following are the list of flags which need to break COW PTE. However,
-like MADV_HUGEPAGE and MADV_MERGEABLE, we should handle it respectively.
-
-- MADV_DONTNEED: It calls to zap_page_range() which already be handled.
-- MADV_FREE: It uses walk_page_range() with madvise_free_pte_range() to
-	     free the page by itself, so add break_cow_pte().
-- MADV_REMOVE: Same as MADV_FREE, it remove the page by itself, so add
-	       break_cow_pte_range().
-- MADV_COLD: Similar to MAD_FREE, break COW PTE before pageout.
-- MADV_POPULATE: Let GUP deal with it.
+In most of cases, GUP will not modify the page table, excluding
+follow_pfn_pte(). To deal with COW PTE, Trigger the break COW
+PTE fault before calling follow_pfn_pte().
 
 Signed-off-by: Chih-En Lin <shiyn.lin@gmail.com>
 ---
- mm/madvise.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ mm/gup.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 340125d08c03..71176edb751e 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -425,6 +425,9 @@ static int madvise_cold_or_pageout_pte_range(pmd_t *pmd,
- 	if (pmd_trans_unstable(pmd))
- 		return 0;
- #endif
-+	if (break_cow_pte(vma, pmd, addr))
-+		return 0;
-+
- 	tlb_change_page_size(tlb, PAGE_SIZE);
- 	orig_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
- 	flush_tlb_batched_pending(mm);
-@@ -625,6 +628,10 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
- 	if (pmd_trans_unstable(pmd))
- 		return 0;
+diff --git a/mm/gup.c b/mm/gup.c
+index eab18ba045db..325424c02ca6 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -544,7 +544,8 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+ 	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
+ 			 (FOLL_PIN | FOLL_GET)))
+ 		return ERR_PTR(-EINVAL);
+-	if (unlikely(pmd_bad(*pmd)))
++	/* COW-ed PTE has write protection which can trigger pmd_bad(). */
++	if (unlikely(pmd_write(*pmd) && pmd_bad(*pmd)))
+ 		return no_page_table(vma, flags);
  
-+	/* We should only allocate PTE. */
-+	if (break_cow_pte(vma, pmd, addr))
-+		goto next;
-+
- 	tlb_change_page_size(tlb, PAGE_SIZE);
- 	orig_pte = pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
- 	flush_tlb_batched_pending(mm);
-@@ -984,6 +991,12 @@ static long madvise_remove(struct vm_area_struct *vma,
- 	if ((vma->vm_flags & (VM_SHARED|VM_WRITE)) != (VM_SHARED|VM_WRITE))
- 		return -EACCES;
- 
-+	error = break_cow_pte_range(vma, start, end);
-+	if (error < 0)
-+		return error;
-+	else if (error > 0)
-+		return -ENOMEM;
-+
- 	offset = (loff_t)(start - vma->vm_start)
- 			+ ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
- 
+ 	ptep = pte_offset_map_lock(mm, pmd, address, &ptl);
+@@ -587,6 +588,11 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+ 		if (is_zero_pfn(pte_pfn(pte))) {
+ 			page = pte_page(pte);
+ 		} else {
++			if (test_bit(MMF_COW_PTE, &mm->flags) &&
++			    !pmd_write(*pmd)) {
++				page = ERR_PTR(-EMLINK);
++				goto out;
++			}
+ 			ret = follow_pfn_pte(vma, address, ptep, flags);
+ 			page = ERR_PTR(ret);
+ 			goto out;
 -- 
 2.34.1
 
