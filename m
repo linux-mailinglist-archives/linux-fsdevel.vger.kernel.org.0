@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 419956E259E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:26:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE16D6E25A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 16:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230477AbjDNO0F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 10:26:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49556 "EHLO
+        id S231148AbjDNO0U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 10:26:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230491AbjDNOZl (ORCPT
+        with ESMTP id S230516AbjDNOZ4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 10:25:41 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F0BC174;
-        Fri, 14 Apr 2023 07:25:17 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id n17so2474695pln.8;
-        Fri, 14 Apr 2023 07:25:17 -0700 (PDT)
+        Fri, 14 Apr 2023 10:25:56 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74E11CC09;
+        Fri, 14 Apr 2023 07:25:26 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id h24-20020a17090a9c1800b002404be7920aso18803455pjp.5;
+        Fri, 14 Apr 2023 07:25:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681482316; x=1684074316;
+        d=gmail.com; s=20221208; t=1681482326; x=1684074326;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NclmCECex/CFHpfM/6wkOB23PF4WtO4cEeKh/pps1Cs=;
-        b=V/AYfRJNaMRNYL9IFUoiq8cp7WDMTq2GdsZvRBqNgIQMjdcljye7UNo4NkMi4droC4
-         g5yT7eVZsB6DEJwhMaSh3Br5JzCqVkrbV1+D6X5yYOdeaazRSZc17CpFg5tcLGYOjwQT
-         97ybU/LG3FFdXqYCQI8mH9xuTMVWg1lxOxMNJFuV2OvfA9O6XB/Fg78pyV5CD0wc+3v4
-         BUCcN4TLNpn2PMDRaTahfhVrMZNCmzTbW/+ugSX+IsLMaYMGzhOgUaEZ+bYBSMuxem1z
-         mpC8ySmb9LnKke2HRfRgo/xQlUYMkO3YtXm14ThPJznVqyVcaH20JK5Gwte/rlNF4GH/
-         3Irw==
+        bh=TCxBEbp3Vh2LecugBLRL5yp+Vpy2XMoG5rUe/amD8/I=;
+        b=ZUkBFFgDZMzq0ei7OkZmTW87uX2xk5y2kJKyAYLp3lpS89qPRHDKJgz7tCSi6O1V6k
+         GrFbOBQFX/XypGH/c1yklfosrEHoIqzQ10mKCvEBfVArBFpSNqifnArvfV57Wofxfked
+         tQSdXPx2lkO9j+I9wB/qaUE15663ceimdY4la8QuwN52VLu4kI7OSpxGktPP3xTt05op
+         8/JPrXs0WD8ikj7mOCQTPzq3BQuATZD6Bj6rr4p7YEsHpV8Rg7fuN426Vq3Yjlwn5Htj
+         98xjWssljzirK0y11ZY7ToIsvcWt1GPlCV+66dUlZIWt1/ldVbpqyb0Vt9r3pd3avAS7
+         t9Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681482316; x=1684074316;
+        d=1e100.net; s=20221208; t=1681482326; x=1684074326;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NclmCECex/CFHpfM/6wkOB23PF4WtO4cEeKh/pps1Cs=;
-        b=hFRxCaokBTIcSxQPcIA8ssdBIleLZVURsfkAo3+eg5koiv6I7tsdJgF/FxlV3hAIEF
-         926WfCaRz3x2Rgsna1SaG8pP0Q24lG9+AMc1e8tPprb8ZKmArLzXaSc8uGOjdLCa4X23
-         H0BgOxcW+IszZaByY+uAR4NEbshXCJPXASzPRSaH/1x6HZosBQEHiHYxbhVixdoX3xd/
-         8b0ZiOj62d2ocl2FoWQszLZHSD1hGtG4Il3HY5NlX8R2Mpl3uUAKy8K9PD0vQU5W2KwV
-         M2DeFO5wsityzxZqVrotTRZ+u/Xb09uS0o9GusUMqbcjyFlJCf1fOj6azOwcUs1SpZmf
-         rwvw==
-X-Gm-Message-State: AAQBX9eB7tKWvfTWqfahePpz30Kbl9DJlrHw0/P+Ze2AGXO3/gD/vW+h
-        4JY1yJMAmQzCSLXC3AuBB+I=
-X-Google-Smtp-Source: AKy350ZPU+Edlq0VRRV3L/JnX2VakyMBg2O0FN77xU7rql7Qa95cBelgIKvLqgkAsYrK6MRTS18ulw==
-X-Received: by 2002:a17:90a:7382:b0:244:af48:c4f3 with SMTP id j2-20020a17090a738200b00244af48c4f3mr5780766pjg.7.1681482316538;
-        Fri, 14 Apr 2023 07:25:16 -0700 (PDT)
+        bh=TCxBEbp3Vh2LecugBLRL5yp+Vpy2XMoG5rUe/amD8/I=;
+        b=YVs5vOLVgAe5DagTU3OXVUWA9HSV7pUhn7AC7Bxe1tYjhaSh6KeNiqlmtIGuk3gH08
+         XHMbtyTFDybcJqWs6UedMQxC9d+cHsbZ3y83WJcKsToWGzF9WPQ2ew4nooBdUCMVhCAF
+         pLxFG74WYPXuiq9wuPsPkR0AKinxwLUL9bW9b0Bv/EGFtZnl84ZOHytt1zWb4AZBUqdA
+         /NHYlFHg1qoe4sNmQaEu6HiZSQ94q3RQ1gEAu8RvE1GvruKw4uRL6dAsj9fb3STfDaf0
+         VEnFmtqN9Eawfnrg+Q86HrDERlyzRiU+4zAuqXxzRrQmxoprNNirm7cg4h0LTi8tLxqa
+         vDUA==
+X-Gm-Message-State: AAQBX9dz4iMwNe2k2V6b5RpQXrEO8jzZ7I+Zl/BW1+x53G1jkkLAwFZy
+        1p4J16lNeVGcYg0jp+sAfZc=
+X-Google-Smtp-Source: AKy350apXLIP0kt5VCJQRQireZ4xb8EqK6nTeakZbNZ/7tzb6r5mGG/H+ghRbHSVVMAlJe/5ZJjFlQ==
+X-Received: by 2002:a17:90b:788:b0:246:896a:408d with SMTP id l8-20020a17090b078800b00246896a408dmr5981639pjz.14.1681482325813;
+        Fri, 14 Apr 2023 07:25:25 -0700 (PDT)
 Received: from strix-laptop.. (2001-b011-20e0-1499-8303-7502-d3d7-e13b.dynamic-ip6.hinet.net. [2001:b011:20e0:1499:8303:7502:d3d7:e13b])
-        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.25.07
+        by smtp.googlemail.com with ESMTPSA id h7-20020a17090ac38700b0022335f1dae2sm2952386pjt.22.2023.04.14.07.25.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Apr 2023 07:25:16 -0700 (PDT)
+        Fri, 14 Apr 2023 07:25:25 -0700 (PDT)
 From:   Chih-En Lin <shiyn.lin@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Qi Zheng <zhengqi.arch@bytedance.com>,
@@ -111,9 +111,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Pedro Fonseca <pfonseca@purdue.edu>,
         Jim Huang <jserv@ccns.ncku.edu.tw>,
         Huichun Feng <foxhoundsk.tw@gmail.com>
-Subject: [PATCH v5 06/17] mm/rmap: Break COW PTE in rmap walking
-Date:   Fri, 14 Apr 2023 22:23:30 +0800
-Message-Id: <20230414142341.354556-7-shiyn.lin@gmail.com>
+Subject: [PATCH v5 07/17] mm/khugepaged: Break COW PTE before scanning pte
+Date:   Fri, 14 Apr 2023 22:23:31 +0800
+Message-Id: <20230414142341.354556-8-shiyn.lin@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230414142341.354556-1-shiyn.lin@gmail.com>
 References: <20230414142341.354556-1-shiyn.lin@gmail.com>
@@ -129,116 +129,137 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some of the features (unmap, migrate, device exclusive, mkclean, etc)
-might modify the pte entry via rmap. Add a new page vma mapped walk
-flag, PVMW_BREAK_COW_PTE, to indicate the rmap walking to break COW PTE.
+We should not allow THP to collapse COW-ed PTE. So, break COW PTE
+before collapse_pte_mapped_thp() collapse to THP. Also, break COW
+PTE before khugepaged_scan_pmd() scan PTE.
 
 Signed-off-by: Chih-En Lin <shiyn.lin@gmail.com>
 ---
- include/linux/rmap.h | 2 ++
- mm/migrate.c         | 3 ++-
- mm/page_vma_mapped.c | 4 ++++
- mm/rmap.c            | 9 +++++----
- mm/vmscan.c          | 3 ++-
- 5 files changed, 15 insertions(+), 6 deletions(-)
+ include/trace/events/huge_memory.h |  1 +
+ mm/khugepaged.c                    | 35 +++++++++++++++++++++++++++++-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index b87d01660412..57e9b72dc63a 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -377,6 +377,8 @@ int make_device_exclusive_range(struct mm_struct *mm, unsigned long start,
- #define PVMW_SYNC		(1 << 0)
- /* Look for migration entries rather than present PTEs */
- #define PVMW_MIGRATION		(1 << 1)
-+/* Break COW-ed PTE during walking */
-+#define PVMW_BREAK_COW_PTE	(1 << 2)
- 
- struct page_vma_mapped_walk {
- 	unsigned long pfn;
-diff --git a/mm/migrate.c b/mm/migrate.c
-index db3f154446af..38933993af14 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -184,7 +184,8 @@ void putback_movable_pages(struct list_head *l)
- static bool remove_migration_pte(struct folio *folio,
- 		struct vm_area_struct *vma, unsigned long addr, void *old)
- {
--	DEFINE_FOLIO_VMA_WALK(pvmw, old, vma, addr, PVMW_SYNC | PVMW_MIGRATION);
-+	DEFINE_FOLIO_VMA_WALK(pvmw, old, vma, addr,
-+			      PVMW_SYNC | PVMW_MIGRATION | PVMW_BREAK_COW_PTE);
- 
- 	while (page_vma_mapped_walk(&pvmw)) {
- 		rmap_t rmap_flags = RMAP_NONE;
-diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-index 4e448cfbc6ef..1750b3460828 100644
---- a/mm/page_vma_mapped.c
-+++ b/mm/page_vma_mapped.c
-@@ -254,6 +254,10 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
- 			step_forward(pvmw, PMD_SIZE);
+diff --git a/include/trace/events/huge_memory.h b/include/trace/events/huge_memory.h
+index 3e6fb05852f9..5f2c39f61521 100644
+--- a/include/trace/events/huge_memory.h
++++ b/include/trace/events/huge_memory.h
+@@ -13,6 +13,7 @@
+ 	EM( SCAN_PMD_NULL,		"pmd_null")			\
+ 	EM( SCAN_PMD_NONE,		"pmd_none")			\
+ 	EM( SCAN_PMD_MAPPED,		"page_pmd_mapped")		\
++	EM( SCAN_COW_PTE,		"cowed_pte")			\
+ 	EM( SCAN_EXCEED_NONE_PTE,	"exceed_none_pte")		\
+ 	EM( SCAN_EXCEED_SWAP_PTE,	"exceed_swap_pte")		\
+ 	EM( SCAN_EXCEED_SHARED_PTE,	"exceed_shared_pte")		\
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 92e6f56a932d..3020fcb53691 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -31,6 +31,7 @@ enum scan_result {
+ 	SCAN_PMD_NULL,
+ 	SCAN_PMD_NONE,
+ 	SCAN_PMD_MAPPED,
++	SCAN_COW_PTE,
+ 	SCAN_EXCEED_NONE_PTE,
+ 	SCAN_EXCEED_SWAP_PTE,
+ 	SCAN_EXCEED_SHARED_PTE,
+@@ -886,7 +887,7 @@ static int find_pmd_or_thp_or_none(struct mm_struct *mm,
+ 		return SCAN_PMD_MAPPED;
+ 	if (pmd_devmap(pmde))
+ 		return SCAN_PMD_NULL;
+-	if (pmd_bad(pmde))
++	if (pmd_write(pmde) && pmd_bad(pmde))
+ 		return SCAN_PMD_NULL;
+ 	return SCAN_SUCCEED;
+ }
+@@ -937,6 +938,8 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
+ 			pte_unmap(vmf.pte);
  			continue;
  		}
-+		if (pvmw->flags & PVMW_BREAK_COW_PTE) {
-+			if (break_cow_pte(vma, pvmw->pmd, pvmw->address))
-+				return not_found(pvmw);
-+		}
- 		if (!map_pte(pvmw))
- 			goto next_pte;
- this_pte:
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 8632e02661ac..5582da6d72fc 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1006,7 +1006,8 @@ static int page_vma_mkclean_one(struct page_vma_mapped_walk *pvmw)
- static bool page_mkclean_one(struct folio *folio, struct vm_area_struct *vma,
- 			     unsigned long address, void *arg)
- {
--	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, PVMW_SYNC);
-+	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address,
-+			      PVMW_SYNC | PVMW_BREAK_COW_PTE);
- 	int *cleaned = arg;
- 
- 	*cleaned += page_vma_mkclean_one(&pvmw);
-@@ -1450,7 +1451,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
- 		     unsigned long address, void *arg)
- {
- 	struct mm_struct *mm = vma->vm_mm;
--	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
-+	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, PVMW_BREAK_COW_PTE);
- 	pte_t pteval;
- 	struct page *subpage;
- 	bool anon_exclusive, ret = true;
-@@ -1810,7 +1811,7 @@ static bool try_to_migrate_one(struct folio *folio, struct vm_area_struct *vma,
- 		     unsigned long address, void *arg)
- {
- 	struct mm_struct *mm = vma->vm_mm;
--	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
-+	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, PVMW_BREAK_COW_PTE);
- 	pte_t pteval;
- 	struct page *subpage;
- 	bool anon_exclusive, ret = true;
-@@ -2177,7 +2178,7 @@ static bool page_make_device_exclusive_one(struct folio *folio,
- 		struct vm_area_struct *vma, unsigned long address, void *priv)
- {
- 	struct mm_struct *mm = vma->vm_mm;
--	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
-+	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, PVMW_BREAK_COW_PTE);
- 	struct make_exclusive_args *args = priv;
- 	pte_t pteval;
- 	struct page *subpage;
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 9c1c5e8b24b8..4abbd036f927 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1892,7 +1892,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
++		if (break_cow_pte(vma, pmd, address))
++			return SCAN_COW_PTE;
+ 		ret = do_swap_page(&vmf);
  
  		/*
- 		 * The folio is mapped into the page tables of one or more
--		 * processes. Try to unmap it here.
-+		 * processes. Try to unmap it here. Also, since it will write
-+		 * to the page tables, break COW PTE if they are.
- 		 */
- 		if (folio_mapped(folio)) {
- 			enum ttu_flags flags = TTU_BATCH_FLUSH;
+@@ -1049,6 +1052,9 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
+ 	if (result != SCAN_SUCCEED)
+ 		goto out_up_write;
+ 
++	/* We should already handled COW-ed PTE. */
++	VM_WARN_ON(test_bit(MMF_COW_PTE, &mm->flags) && !pmd_write(*pmd));
++
+ 	anon_vma_lock_write(vma->anon_vma);
+ 
+ 	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, address,
+@@ -1159,6 +1165,13 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+ 
+ 	memset(cc->node_load, 0, sizeof(cc->node_load));
+ 	nodes_clear(cc->alloc_nmask);
++
++	/* Break COW PTE before we collapse the pages. */
++	if (break_cow_pte(vma, pmd, address)) {
++		result = SCAN_COW_PTE;
++		goto out;
++	}
++
+ 	pte = pte_offset_map_lock(mm, pmd, address, &ptl);
+ 	for (_address = address, _pte = pte; _pte < pte + HPAGE_PMD_NR;
+ 	     _pte++, _address += PAGE_SIZE) {
+@@ -1217,6 +1230,10 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+ 			goto out_unmap;
+ 		}
+ 
++		/*
++		 * If we only trigger the break COW PTE, the page usually
++		 * still in COW mapping, which it still be shared.
++		 */
+ 		if (page_mapcount(page) > 1) {
+ 			++shared;
+ 			if (cc->is_khugepaged &&
+@@ -1512,6 +1529,11 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+ 		goto drop_hpage;
+ 	}
+ 
++	/* We shouldn't let COW-ed PTE collapse. */
++	if (break_cow_pte(vma, pmd, haddr))
++		goto drop_hpage;
++	VM_WARN_ON(test_bit(MMF_COW_PTE, &mm->flags) && !pmd_write(*pmd));
++
+ 	/*
+ 	 * We need to lock the mapping so that from here on, only GUP-fast and
+ 	 * hardware page walks can access the parts of the page tables that
+@@ -1717,6 +1739,11 @@ static int retract_page_tables(struct address_space *mapping, pgoff_t pgoff,
+ 				result = SCAN_PTE_UFFD_WP;
+ 				goto unlock_next;
+ 			}
++			if (test_bit(MMF_COW_PTE, &mm->flags) &&
++			     !pmd_write(*pmd)) {
++				result = SCAN_COW_PTE;
++				goto unlock_next;
++			}
+ 			collapse_and_free_pmd(mm, vma, addr, pmd);
+ 			if (!cc->is_khugepaged && is_target)
+ 				result = set_huge_pmd(vma, addr, pmd, hpage);
+@@ -2154,6 +2181,11 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
+ 	swap = 0;
+ 	memset(cc->node_load, 0, sizeof(cc->node_load));
+ 	nodes_clear(cc->alloc_nmask);
++	if (break_cow_pte(find_vma(mm, addr), NULL, addr)) {
++		result = SCAN_COW_PTE;
++		goto out;
++	}
++
+ 	rcu_read_lock();
+ 	xas_for_each(&xas, page, start + HPAGE_PMD_NR - 1) {
+ 		if (xas_retry(&xas, page))
+@@ -2224,6 +2256,7 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
+ 	}
+ 	rcu_read_unlock();
+ 
++out:
+ 	if (result == SCAN_SUCCEED) {
+ 		if (cc->is_khugepaged &&
+ 		    present < HPAGE_PMD_NR - khugepaged_max_ptes_none) {
 -- 
 2.34.1
 
