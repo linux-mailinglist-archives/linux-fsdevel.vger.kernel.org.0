@@ -2,124 +2,257 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 478086E2AC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 21:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E3256E2AC8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 21:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229933AbjDNTtK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 15:49:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53160 "EHLO
+        id S229650AbjDNTwx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 15:52:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229937AbjDNTtI (ORCPT
+        with ESMTP id S229497AbjDNTww (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 15:49:08 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1476A49F7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 12:49:07 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id r184so4112853ybc.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 12:49:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1681501746; x=1684093746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ued8RPGYYYnTKpEa2LQkIv8m2xddx8+vhFWcpImfwlQ=;
-        b=tFpwAcRuO/oWarfIbQRGNUHywoAJAdE9Xr73K/XoYX/+lNNn90EfAngAnAUgZsn6K6
-         qqlnwgtqd4LExnuakpYn63uO+fhrxTuyWr64ifHof0eLfAnMocwgHB8vuefYoby+u8fg
-         BdeArXXzre+hm9KxIuaqyLhxfYpgUfp0h69B16oTP3FM5+oE/i9CmSfv6S2NK1u7L+EG
-         OTBmnQDRZLFAUumpp2AV1kYLnHuEKLls9qwqjESqhSvYrUrQiTMrhyTTeaDlrm5j8wL0
-         41rEK1DT0Ue4LSFHEvGsQQXGWnSdzqYM283OSgJMi10XGPXIrBPMSkI56q/Y8y+Pbf5U
-         11QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681501746; x=1684093746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ued8RPGYYYnTKpEa2LQkIv8m2xddx8+vhFWcpImfwlQ=;
-        b=FnY0ZTb8WDDcvvhI8dd+MUSAzkBmmKxPBuquGqjXhUUrXoLTCLrZCnUmJvkGZJ6o8v
-         wxiF6yjQmtBZv59OGZ1Tg1OSh84+NJ+zpSmXfW4asK3AbSwV/TNFLD7bEy/RrpOFuIpd
-         H0NkIITfs0fK5v7Q4A1b+cg7j8dEEYSEyvFfNMlGvvH1aFackx/c0YvJNi9u3DAJRDKF
-         SQjXqpS9vjX4+f0tF0wxVIKWyf03ADqUQ0pXoq9CShxtyZrz2RMvKbhzExj/o4DJHujE
-         mzdQ8uKoDX40vYswd0RYAPT/WSE+Ikut9GVNAldQzv0HHTnq5Iwi9XfN6w1HHbvjgDlb
-         No2g==
-X-Gm-Message-State: AAQBX9flzquKkAXj4dyzXPCBJW4MroSoDw23/+nDxftpsZkPHmT3V/Pa
-        OEgrUafFIYD2mt2rSIHSmY+mDvJLVuoX7PNwLs561A==
-X-Google-Smtp-Source: AKy350bcXIOSLr/r2359jbDN5GOP5UXH4qto8PUFwqeUA+xt82gxkvE3IT8IM15dZAvOWwSCO2EtaPkwUH3+8tAqCWI=
-X-Received: by 2002:a25:d057:0:b0:b8f:5c64:cc2e with SMTP id
- h84-20020a25d057000000b00b8f5c64cc2emr3418935ybg.12.1681501746075; Fri, 14
- Apr 2023 12:49:06 -0700 (PDT)
+        Fri, 14 Apr 2023 15:52:52 -0400
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92CFE4C06
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 12:52:50 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 30CD4320046E;
+        Fri, 14 Apr 2023 15:52:49 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 14 Apr 2023 15:52:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
+        1681501968; x=1681588368; bh=UwrEhkkjARKwmx+wt4KVFrRHwIPuRo3w6pp
+        5461mGg4=; b=VqOM8xKhsEQqlBuK3oQwjA63pW3LWO5qpXIwqyKUhswrvwsHlI4
+        q+Wk13Q/Ib5LoSBhXaUs1TAE9HSN/7Xz5xOxoEjvvLK7fN4Y+D5BGzAy6s8JpKDr
+        v9pfyBY9HLmpRud0LO2VcCC/8+UfCKLtvHfQhKcvKPudbqmutKZ479yrLET8Zg7C
+        sn4NL5/a/yxoWliz+a1TAA/M/v1s6zbP5CYBmkX4OVxqqnL+cWUJz+eWYCHenqzG
+        UaCF2dDmo0Kqf96rapTNuoTGUeg5ecNwaCDeR90LwQFLsLRx/R30DZRGio4R0Vno
+        7s/bK9T2bA4Pe+Dm2356d0RPHcIUm9YHCSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1681501968; x=1681588368; bh=UwrEhkkjARKwmx+wt4KVFrRHwIPuRo3w6pp
+        5461mGg4=; b=jpMzWBtZnuVNpku/BGufbZbAtRqSdB2Xv/A7bD360pEUhb4r6WZ
+        QyYWae1Nug+2Ujz++iUztjVdaXn3y5j/iTGDFwocNwKu5aEO4t23QGYIQHEBGk9L
+        G2rwoWEshRs025EkoYHcQOV7wsk5ze1KbGzT3hkn5IAYpVUdqqAXQqvJPWBZyjKs
+        cD5COVDdNI7snnAD5SI/46FGDYc4h7izjZfLglwWqEo/Fo3ERpcrMY/1CfBL6TTd
+        Erjlsq4skWoc0fZr34r4IZ1XWNPGF9bg8Qygcv+8SNddZLL9N21UwExzKGnvKeUe
+        GKhrAgGPGW55EXSZDcOiN5t8w6TZNKIm3Mg==
+X-ME-Sender: <xms:EK85ZACzbGbt8E8cy4pbo-MeW0K3JikSyPwv-ppfBtG9Kxcz8ivmkw>
+    <xme:EK85ZChTEJHNQhjzUvmnSykvalcm4k2aMPfkmrpXpVwkFWFHkfJ21TS1c_t9KuWVQ
+    MLVguk4PIVs1eXk>
+X-ME-Received: <xmr:EK85ZDmw6b7cphkzTGK5eFdOGF9ZSq5PHqUAsqB8KIj9RP0hYH3HMRM43VSYYzunOmdpyN8kTSxnf3D78tBfAUt-xlYLWUauCfP4oCAlPc-TmtWoTnqy>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeltddgudegfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefkffggfgfuhffvvehfjggtgfesthekredttdefjeenucfhrhhomhepuegv
+    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
+    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeduteejuedtvddtudfffeduudehvddvhfeg
+    leehteevgfekhfelgefhfffgtedutdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
+    rdhfmh
+X-ME-Proxy: <xmx:EK85ZGyqQmWpIZeNYNbO2f6ir37ankY5YklbH1RZ_ezdveq_Y2MKqQ>
+    <xmx:EK85ZFRcUwKMVM9Q8HFtP3WWz90ufF5zNcLgFdXo9D59ed9cnU5niQ>
+    <xmx:EK85ZBZkyFgGZX07YbgVoOEYRpTQASe5m3MClXd7777AkaqTrOocGg>
+    <xmx:EK85ZHf21O5St2DX_9YZsI5lv2y8AvXxLoeqXuCnM9yzcKkPTx7YCQ>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 14 Apr 2023 15:52:47 -0400 (EDT)
+Message-ID: <b8afbfba-a58d-807d-1bbc-3be4b5b08710@fastmail.fm>
+Date:   Fri, 14 Apr 2023 21:52:45 +0200
 MIME-Version: 1.0
-References: <20230414180043.1839745-1-surenb@google.com> <ZDmetaUdmlEz/W8Q@casper.infradead.org>
-In-Reply-To: <ZDmetaUdmlEz/W8Q@casper.infradead.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Fri, 14 Apr 2023 12:48:54 -0700
-Message-ID: <CAJuCfpFPNiZmqQPP+K7CAuiFP5qLdd6W9T84VQNdRsN-9ggm1w@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm: handle swap page faults if the faulting page can
- be locked
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: sequential 1MB mmap read ends in 1 page sync read-ahead
+Content-Language: en-US, de-DE
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
 To:     Matthew Wilcox <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@suse.com,
-        josef@toxicpanda.com, jack@suse.cz, ldufour@linux.ibm.com,
-        laurent.dufour@fr.ibm.com, michel@lespinasse.org,
-        liam.howlett@oracle.com, jglisse@google.com, vbabka@suse.cz,
-        minchan@google.com, dave@stgolabs.net, punit.agrawal@bytedance.com,
-        lstoakes@gmail.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+References: <aae918da-833f-7ec5-ac8a-115d66d80d0e@fastmail.fm>
+ <df5c4698-46e1-cbfe-b1f6-cc054b12f6fe@fastmail.fm>
+ <ZDjRayNGU1zYn1pw@casper.infradead.org>
+ <1e88b8ed-5f17-c42e-9646-6a97efd9f99c@fastmail.fm>
+In-Reply-To: <1e88b8ed-5f17-c42e-9646-6a97efd9f99c@fastmail.fm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 11:43=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Fri, Apr 14, 2023 at 11:00:43AM -0700, Suren Baghdasaryan wrote:
-> > When page fault is handled under VMA lock protection, all swap page
-> > faults are retried with mmap_lock because folio_lock_or_retry
-> > implementation has to drop and reacquire mmap_lock if folio could
-> > not be immediately locked.
-> > Instead of retrying all swapped page faults, retry only when folio
-> > locking fails.
->
-> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Thank you for the reviews!
 
->
-> Let's just review what can now be handled under the VMA lock instead of
-> the mmap_lock, in case somebody knows better than me that it's not safe.
->
->  - We can call migration_entry_wait().  This will wait for PG_locked to
->    become clear (in migration_entry_wait_on_locked()).  As previously
->    discussed offline, I think this is safe to do while holding the VMA
->    locked.
->  - We can call remove_device_exclusive_entry().  That calls
->    folio_lock_or_retry(), which will fail if it can't get the VMA lock.
->  - We can call pgmap->ops->migrate_to_ram().  Perhaps somebody familiar
->    with Nouveau and amdkfd could comment on how safe this is?
->  - I believe we can't call handle_pte_marker() because we exclude UFFD
->    VMAs earlier.
->  - We can call swap_readpage() if we allocate a new folio.  I haven't
->    traced through all this code to tell if it's OK.
->
-> So ... I believe this is all OK, but we're definitely now willing to
-> wait for I/O from the swap device while holding the VMA lock when we
-> weren't before.  And maybe we should make a bigger deal of it in the
-> changelog.
->
-> And maybe we shouldn't just be failing the folio_lock_or_retry(),
-> maybe we should be waiting for the folio lock with the VMA locked.
+On 4/14/23 17:05, Bernd Schubert wrote:
+> 
+> 
+> On 4/14/23 06:07, Matthew Wilcox wrote:
+>> On Thu, Apr 13, 2023 at 11:33:09PM +0200, Bernd Schubert wrote:
+>>> Sorry, forgot to add Andrew and linux-mm into CC.
+>>>
+>>> On 4/13/23 23:27, Bernd Schubert wrote:
+>>>> Hello,
+>>>>
+>>>> I found a weird mmap read behavior while benchmarking the fuse-uring
+>>>> patches.
+>>>> I did not verify yet, but it does not look fuse specific.
+>>>> Basically, I started to check because fio results were much lower
+>>>> than expected (better with the new code, though)
+>>>>
+>>>> fio cmd line:
+>>>> fio --size=1G --numjobs=1 --ioengine=mmap --output-format=normal,terse
+>>>> --directory=/scratch/dest/ --rw=read multi-file.fio
+>>>>
+>>>>
+>>>> bernd@squeeze1 test2>cat multi-file.fio
+>>>> [global]
+>>>> group_reporting
+>>>> bs=1M
+>>>> runtime=300
+>>>>
+>>>> [test]
+>>>>
+>>>> This sequential fio sets POSIX_MADV_SEQUENTIAL and then does memcpy
+>>>> beginning at offset 0 in 1MB steps (verified with additional
+>>>> logging in fios engines/mmap.c).
+>>>>
+>>>> And additional log in fuse_readahead() gives
+>>>>
+>>>> [ 1396.215084] fuse: 000000003fdec504 inode=00000000be0f29d3 count=64
+>>>> index=0
+>>>> [ 1396.237466] fuse: 000000003fdec504 inode=00000000be0f29d3 count=64
+>>>> index=255
+>>>> [ 1396.263175] fuse: 000000003fdec504 inode=00000000be0f29d3 count=1
+>>>> index=254
+>>>> [ 1396.282055] fuse: 000000003fdec504 inode=00000000be0f29d3 count=1
+>>>> index=253
+>>>> ... <count is always 1 page>
+>>>> [ 1496.353745] fuse: 000000003fdec504 inode=00000000be0f29d3 count=1
+>>>> index=64
+>>>> [ 1496.381105] fuse: 000000003fdec504 inode=00000000be0f29d3 count=64
+>>>> index=511
+>>>> [ 1496.397487] fuse: 000000003fdec504 inode=00000000be0f29d3 count=1
+>>>> index=510
+>>>> [ 1496.416385] fuse: 000000003fdec504 inode=00000000be0f29d3 count=1
+>>>> index=509
+>>>> ... <count is always 1 page>
+>>>>
+>>>> Logging in do_sync_mmap_readahead()
+>>>>
+>>>> [ 1493.130764] do_sync_mmap_readahead:3015 ino=132 index=0 count=0
+>>>> ras_start=0 ras_size=0 ras_async=0 ras_ra_pages=64 ras_mmap_miss=0
+>>>> ras_prev_pos=-1
+>>>> [ 1493.147173] do_sync_mmap_readahead:3015 ino=132 index=255 count=0
+>>>> ras_start=0 ras_size=64 ras_async=32 ras_ra_pages=64 ras_mmap_miss=0
+>>>> ras_prev_pos=-1
+>>>> [ 1493.165952] do_sync_mmap_readahead:3015 ino=132 index=254 count=0
+>>>> ras_start=0 ras_size=64 ras_async=32 ras_ra_pages=64 ras_mmap_miss=0
+>>>> ras_prev_pos=-1
+>>>> [ 1493.185566] do_sync_mmap_readahead:3015 ino=132 index=253 count=0
+>>>> ras_start=0 ras_size=64 ras_async=32 ras_ra_pages=64 ras_mmap_miss=0
+>>>> ras_prev_pos=-1
+>>>> ...
+>>>> [ 1496.341890] do_sync_mmap_readahead:3015 ino=132 index=64 count=0
+>>>> ras_start=0 ras_size=64 ras_async=32 ras_ra_pages=64 ras_mmap_miss=0
+>>>> ras_prev_pos=-1
+>>>> [ 1496.361385] do_sync_mmap_readahead:3015 ino=132 index=511 count=0
+>>>> ras_start=96 ras_size=64 ras_async=64 ras_ra_pages=64 ras_mmap_miss=0
+>>>> ras_prev_pos=-1
+>>>>
+>>>>
+>>>> So we can see from fuse that it starts to read at page index 0, wants
+>>>> 64 pages (which is actually the double of bdi read_ahead_kb), then
+>>>> skips index 64...254) and immediately goes to index 255. For the mmaped
+>>>> memcpy pages are missing and then it goes back in 1 page steps to get
+>>>> these.
+>>>>
+>>>> A workaround here is to set read_ahead_kb in the bdi to a larger
+>>>> value, another workaround might be (untested) to increase the 
+>>>> read-ahead
+>>>> window. Either of these two seem to be workarounds for the index order
+>>>> above.
+>>>>
+>>>> I understand that read-ahead gets limited by the bdi value (although
+>>>> exceeded above), but why does it go back in 1 page steps? My 
+>>>> expectation
+>>>> would have been
+>>>>
+>>>> index=0  count=32 (128kb read-head)
+>>>> index=32 count=32
+>>>> index=64 count=32
+>>
+>> What I see with XFS is:
+>>
+>>               fio-27518   [005] .....   276.565025: 
+>> mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x23a8c ofs=0 order=2
 
-Wouldn't that cause holding the VMA lock for the duration of swap I/O
-(something you said we want to avoid in the previous paragraph) and
-effectively undo d065bd810b6d ("mm: retry page fault when blocking on
-disk transfer") for VMA locks?
+...
 
->
+>> mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x15e40 ofs=786432 
+>> order=6
+>>
+>> ... it then gets "stuck" at order-6, which is expected for a 256kB
+>> readahead window.
+>>
+>> This is produced by:
+>>
+>> echo 1 
+>> >/sys/kernel/tracing/events/filemap/mm_filemap_add_to_page_cache/enable
+>> fio --size=1G --numjobs=1 --ioengine=mmap --output-format=normal,terse 
+>> --directory=/mnt/scratch/ --rw=read multi-file.fio
+>> echo 0 
+>> >/sys/kernel/tracing/events/filemap/mm_filemap_add_to_page_cache/enable
+>> less /sys/kernel/tracing/trace
+>>
+> 
+> Thanks for looking at it Matthew!
+> 
+> I see the same as on fuse on xfs - same output as I initially
+> posted (except the fuse logging, of course).
+> 
+> With tracing and reduced file size to 2M
+> 
+
+...
+
+>               fio-3459    [011] ..... 65055.436534: 
+> mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12cfb5 ofs=1052672 
+> order=0
+> 
+> And then it is stuck at order=0
+> 
+
+When I reduce bs to 4K I get similar results as you
+
+fio --size=10M --numjobs=1 --ioengine=mmap --output-format=normal,terse --directory=/scratch/source/ --rw=read multi-file.fio --bs=4K --group_reporting
+
+(so bs set to 4K)
+
+and a basically empty job file
+
+bernd@squeeze1 test2>cat multi-file.fio
+[global]
+
+[test]
+
+
+
+Up to bs=512K it works fine, 1M (and for what it matters
+already 768K) introduce the order=0 issue.
+
+
+Thanks,
+Bernd
+
