@@ -2,120 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7C466E265E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 17:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 356366E2668
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Apr 2023 17:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230481AbjDNPBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 11:01:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54348 "EHLO
+        id S229995AbjDNPF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 11:05:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbjDNPBy (ORCPT
+        with ESMTP id S229469AbjDNPF6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 11:01:54 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 332571710
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 08:01:51 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230414150150euoutp01f9c2ce4cd173db073347001cbd042426~V1UDFs4--0481704817euoutp01U
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 15:01:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230414150150euoutp01f9c2ce4cd173db073347001cbd042426~V1UDFs4--0481704817euoutp01U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1681484510;
-        bh=k2KMSY3rEPC/l3wXRBxqdB3ENhOA3GWRhLXn6UokrYg=;
-        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
-        b=Ncz0YzLo1qqj+ch4v7bUvJJXCgwLKsEPK9l45RyoZdy6Re9wKeeWsAPS7OUvNr9Tb
-         hluSI+0SskDxTDzCmAZpz3CVupM3qtk4E5ZHB3E1ymr06yODepqJ5QyRugAKxXnBdr
-         9NjW7NC41M1IBrwiAU1NtRlDHH0+AD7CaoecEfdY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230414150149eucas1p28c28debfd8970a58a0f7aad4911ed40e~V1UC3sMaI3175731757eucas1p2W;
-        Fri, 14 Apr 2023 15:01:49 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 19.16.09966.DDA69346; Fri, 14
-        Apr 2023 16:01:49 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230414150149eucas1p2530c12531599e6fd376a19f8a7d59740~V1UCcvLn-1376713767eucas1p21;
-        Fri, 14 Apr 2023 15:01:49 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230414150149eusmtrp2ffa4c4747cf08e810cdb7586e9c84a38~V1UCcMMtp2102421024eusmtrp2t;
-        Fri, 14 Apr 2023 15:01:49 +0000 (GMT)
-X-AuditID: cbfec7f4-d39ff700000026ee-3a-64396add5e29
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 0B.E9.34412.DDA69346; Fri, 14
-        Apr 2023 16:01:49 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230414150149eusmtip2609769cecb935de635342ecd39098ad9~V1UCPooxn2857528575eusmtip2U;
-        Fri, 14 Apr 2023 15:01:49 +0000 (GMT)
-Received: from [106.110.32.65] (106.110.32.65) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 14 Apr 2023 16:01:48 +0100
-Message-ID: <505f1aac-8348-56c2-b925-6a905af9be24@samsung.com>
-Date:   Fri, 14 Apr 2023 17:01:47 +0200
+        Fri, 14 Apr 2023 11:05:58 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3574E49
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 08:05:55 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id C9A7C5C00B4;
+        Fri, 14 Apr 2023 11:05:52 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Fri, 14 Apr 2023 11:05:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
+        1681484752; x=1681571152; bh=SvSUqmEsvFupJE6tQRM47OHCSsPtlynfWiJ
+        ZVp/hCdY=; b=cDMt6Di0uq212L8Gf3z3F6j5zA1d3T1wKTmvPHMORnrec8Z3UAb
+        vkYzS+1xxZiU71nrNF1OHz8m/CEyoEI3BWz1M+jlC3XKtQsi59WaJTp7Hp7j64FV
+        gzqD4mtxbiDjXtQgphl5pyajjGPwd92s0ltbdSgc5IiOwG96fev/yAv1CxdVmxyt
+        QhIVCWJOAbR/JsumkQnBvZGiVDnHkv92IfiIX+A68BdPua4n8fqP2IQf7/DRz1qB
+        nHs7fzZ0g05+CV/B0sjQUivtAF8yuqecInmHudVYVpzhWloms4DZq9lpVf8+fU3Q
+        4UDTTkeC7BvF5pudQt4mGJjiK+oeT8noMSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1681484752; x=1681571152; bh=SvSUqmEsvFupJE6tQRM47OHCSsPtlynfWiJ
+        ZVp/hCdY=; b=FkckNVrSaMR6/9503roHFmI0gJ73+TVOiEsxy6teo3CbIA6KUiE
+        4Iku2dIg0NCQkyN6GR/wwXiDs2pNVM6KmL6KAKToILV2bTFwRM+mcRjTA7Tak2vz
+        EqXhMah9ndN4us1xvNMHj99zJl9ySjD/6mgfM8y1NRj+JI3xfJWJBMpKcBfwiIbW
+        h5cPee6nIW4F1cKtG3enKUE3V6C2ECG1qZFwcEY8rGnqycL+b5ka+5IY8AQmZezK
+        7lyZYalBfQTzmVXMMUa3lYnYxXmemWqsV6phgpH4f/ZseEE76J1tHooE6daJlcp0
+        7IRhG7L8kZSrbEr642dffz22UqNv01RI7qg==
+X-ME-Sender: <xms:z2s5ZNv1Cs1mabjEnBNxkajxjYFmi1_vK7Z10yrFyBD-rCdkmWCXUw>
+    <xme:z2s5ZGeMZ_6QwIvTCwTO5QDS5Ss8VZ263is9nYn0sTRtR8ok5Lvdi4d8m0eLzX7gE
+    RMK4W_xl-C_YmLx>
+X-ME-Received: <xmr:z2s5ZAyqjxKVwNBTIqz_rxl1pEl6yC2X_miKHuvvSnhOXwloQw7HZ--zQDu-1ueb1TnNcEVByICjuMAGwJQcpyIszY0ea87dGJU_a7lW00CBjKMoviNB>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeltddgkeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepfffhtddvveeivdduuedujeetffekkeelgfdv
+    fefgueffieefjefgjeffhedttdefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:z2s5ZEOb5WlDf9NNpLZAuY_A5re4C65_edhFAl9XySm6LgRcZphfmg>
+    <xmx:z2s5ZN8RSdjyCJnpo4VQVAkKf2LbMyyfbXMVZSH30RFJp9g6zC3GTA>
+    <xmx:z2s5ZEWSpRm_LaKGlC0hwYkkatett--WKqOrJOf2Styt4kbqtOXhug>
+    <xmx:0Gs5ZIYb0gjTMoOj7nSLnltJrlyO9euPQTvCNHcPFs6sYrQkGvzHBg>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 14 Apr 2023 11:05:50 -0400 (EDT)
+Message-ID: <1e88b8ed-5f17-c42e-9646-6a97efd9f99c@fastmail.fm>
+Date:   Fri, 14 Apr 2023 17:05:48 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
-        Thunderbird/102.10.0
-Subject: Re: [RFC 2/4] buffer: add alloc_folio_buffers() helper
-Content-Language: en-US
+ Thunderbird/102.10.0
+Subject: Re: sequential 1MB mmap read ends in 1 page sync read-ahead
+Content-Language: en-US, de-DE
 To:     Matthew Wilcox <willy@infradead.org>
-CC:     <brauner@kernel.org>, <viro@zeniv.linux.org.uk>,
-        <akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>,
-        <gost.dev@samsung.com>, <hare@suse.de>
-From:   Pankaj Raghav <p.raghav@samsung.com>
-In-Reply-To: <ZDlP2fevtfD5gMPd@casper.infradead.org>
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [106.110.32.65]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMKsWRmVeSWpSXmKPExsWy7djPc7p3syxTDM691rWYs34Nm8Xrw58Y
-        LfYsmsRksWfvSRaLy7vmsFncmPCU0eL83+OsFr9/zGFz4PDYvELLY9OqTjaPEzN+s3hsPl3t
-        8XmTnMemJ2+ZAtiiuGxSUnMyy1KL9O0SuDK2zHvDWPCHrWJ+g1oD4yXWLkZODgkBE4nfc6Yy
-        dzFycQgJrGCUOP3zFwuE84VRYv7Tm+wQzmdGif+t/UwwLWsfvGWCSCxnlJj36CMjXNWMVQ/A
-        BgsJ7GSU+HcrF8TmFbCTWHmtkR3EZhFQlbj8so8RIi4ocXLmExYQW1QgWmLxvilgtrCAvUTH
-        iY3MIDazgLjErSfzgbZxcIgIaEi82WIEsotZ4AqjxNM7R1hA4mwCWhKNnWDjOYGOa1v4G6pV
-        XmL72znMEEcrSky6+R7q51qJU1tugT0gIdDNKfF5xkp2iISLxN8THxghbGGJV8e3QMVlJP7v
-        nA/1fbXE0xu/mSGaWxgl+neuZwM5QkLAWqLvTA6IySygKbF+lz5E1FHixFoeCJNP4sZbQYjL
-        +CQmbZvOPIFRdRZSOMxC8u8sJA/MQpi5gJFlFaN4amlxbnpqsVFearlecWJucWleul5yfu4m
-        RmA6Ov3v+JcdjMtffdQ7xMjEwXiIUYKDWUmEt8rSMkWINyWxsiq1KD++qDQntfgQozQHi5I4
-        r7btyWQhgfTEktTs1NSC1CKYLBMHp1QDk87CGwpHS45v+SqmPTFTba704n8vX05Wrb0rknP/
-        bUSd+pOoA8VnyqasKbWMWvrqjovIlGlairNcs3jF7GYsk7ax7/b9Kn9UuYytMcv12zs3kx6+
-        lV0JDTqc67l/Tnp9boPi4XvCeit8YtYtvWtq3vJhhZKB/pbeORbb3Beu4pz53CBC9kqnzZ0L
-        827a12kIKc3McGC2zPTcIhe6vmWH9zThP9uka3Ll9atFv24x2Xmv4xDH/VeFR0umZqpUNwh/
-        7xBuW7c8e5Lu74dMR02Wdly8/dL8tjjDons9mc9r1O1lA+68O//Ms+KK+LasoErnA3tZvS/O
-        us+mJxr7zULtrc6rPeWpRa2T57F0X519QYmlOCPRUIu5qDgRAOzELsa2AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xe7p3syxTDM694reYs34Nm8Xrw58Y
-        LfYsmsRksWfvSRaLy7vmsFncmPCU0eL83+OsFr9/zGFz4PDYvELLY9OqTjaPEzN+s3hsPl3t
-        8XmTnMemJ2+ZAtii9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMy
-        y1KL9O0S9DK2zHvDWPCHrWJ+g1oD4yXWLkZODgkBE4m1D94ydTFycQgJLGWU2P79O1RCRmLj
-        l6tQtrDEn2tdbBBFHxklFq0EKQJxdjJKTL63nBGkilfATmLltUZ2EJtFQFXi8ss+qLigxMmZ
-        T1hAbFGBaIkby78xgdjCAvYSHSc2MoPYzALiEreezAeKc3CICGhIvNliBDKfWeAKo8TTO0dY
-        IJY9Z5S4+2wmG0gRm4CWRGMn2C5OoBfaFv6GmqMp0br9NzuELS+x/e0cZogPFCUm3XwP9U2t
-        xOe/zxgnMIrOQnLeLCRnzEIyahaSUQsYWVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIERvO2
-        Yz+37GBc+eqj3iFGJg7GQ4wSHMxKIrxVlpYpQrwpiZVVqUX58UWlOanFhxhNgWE0kVlKNDkf
-        mE7ySuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4pRqYmOsTFhQdVZm6
-        WPOmSqBVaNTP6EiTG2u+vrQKOvT5pPjlT73yer7+OnO+9OmuV835eGC90vmgHQsf/n9w4pDe
-        3p7ZR0TZd0ucL5/ffXxe/ZYWBT5mwaJXtUuDnd5+vfbvw7ZE32Oc6o8udTnZt4tkSH25pxtS
-        6j93EpPS1679t4yduRaeafXedydmkZjHfOdXyxZ/uOFnOu9i+oLMU/8Cd/iqvfxZbpQ7Yauf
-        vkPi1GIJuwkLP+5lsG7LuTDp8e17gu29W00ZpTy/sylZebtsuG3otjTg3Ku3HzeaSj3VzJAJ
-        qk5I+jxrglbGm8yI3cUtLJ03O+K3pei+KHYpihW+urTl9v9vHOJPy2btDli3VYmlOCPRUIu5
-        qDgRACVJkUxvAwAA
-X-CMS-MailID: 20230414150149eucas1p2530c12531599e6fd376a19f8a7d59740
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230414110826eucas1p2c5afcbd64c536a803751b41d03eb9e99
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230414110826eucas1p2c5afcbd64c536a803751b41d03eb9e99
-References: <20230414110821.21548-1-p.raghav@samsung.com>
-        <CGME20230414110826eucas1p2c5afcbd64c536a803751b41d03eb9e99@eucas1p2.samsung.com>
-        <20230414110821.21548-3-p.raghav@samsung.com>
-        <ZDlP2fevtfD5gMPd@casper.infradead.org>
-X-Spam-Status: No, score=-9.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+References: <aae918da-833f-7ec5-ac8a-115d66d80d0e@fastmail.fm>
+ <df5c4698-46e1-cbfe-b1f6-cc054b12f6fe@fastmail.fm>
+ <ZDjRayNGU1zYn1pw@casper.infradead.org>
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <ZDjRayNGU1zYn1pw@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -124,29 +93,203 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-04-14 15:06, Matthew Wilcox wrote:
-> On Fri, Apr 14, 2023 at 01:08:19PM +0200, Pankaj Raghav wrote:
->> Folio version of alloc_page_buffers() helper. This is required to convert
->> create_page_buffers() to create_folio_buffers() later in the series.
->>
->> It removes one call to compound_head() compared to alloc_page_buffers().
-> 
-> I would convert alloc_page_buffers() to folio_alloc_buffers() and
-> add
-> 
-> static struct buffer_head *alloc_page_buffers(struct page *page,
-> 		unsigned long size, bool retry)
-> {
-> 	return folio_alloc_buffers(page_folio(page), size, retry);
-> }
-> 
-> in buffer_head.h
-> 
-> (there are only five callers, so this feels like a better tradeoff
-> than creating a new function)
-> 
-That is a good idea and follows the usual pattern for folio conversion. I will
-send a new version soon with your other comments as well.
 
---
-Pankaj
+
+On 4/14/23 06:07, Matthew Wilcox wrote:
+> On Thu, Apr 13, 2023 at 11:33:09PM +0200, Bernd Schubert wrote:
+>> Sorry, forgot to add Andrew and linux-mm into CC.
+>>
+>> On 4/13/23 23:27, Bernd Schubert wrote:
+>>> Hello,
+>>>
+>>> I found a weird mmap read behavior while benchmarking the fuse-uring
+>>> patches.
+>>> I did not verify yet, but it does not look fuse specific.
+>>> Basically, I started to check because fio results were much lower
+>>> than expected (better with the new code, though)
+>>>
+>>> fio cmd line:
+>>> fio --size=1G --numjobs=1 --ioengine=mmap --output-format=normal,terse
+>>> --directory=/scratch/dest/ --rw=read multi-file.fio
+>>>
+>>>
+>>> bernd@squeeze1 test2>cat multi-file.fio
+>>> [global]
+>>> group_reporting
+>>> bs=1M
+>>> runtime=300
+>>>
+>>> [test]
+>>>
+>>> This sequential fio sets POSIX_MADV_SEQUENTIAL and then does memcpy
+>>> beginning at offset 0 in 1MB steps (verified with additional
+>>> logging in fios engines/mmap.c).
+>>>
+>>> And additional log in fuse_readahead() gives
+>>>
+>>> [ 1396.215084] fuse: 000000003fdec504 inode=00000000be0f29d3 count=64
+>>> index=0
+>>> [ 1396.237466] fuse: 000000003fdec504 inode=00000000be0f29d3 count=64
+>>> index=255
+>>> [ 1396.263175] fuse: 000000003fdec504 inode=00000000be0f29d3 count=1
+>>> index=254
+>>> [ 1396.282055] fuse: 000000003fdec504 inode=00000000be0f29d3 count=1
+>>> index=253
+>>> ... <count is always 1 page>
+>>> [ 1496.353745] fuse: 000000003fdec504 inode=00000000be0f29d3 count=1
+>>> index=64
+>>> [ 1496.381105] fuse: 000000003fdec504 inode=00000000be0f29d3 count=64
+>>> index=511
+>>> [ 1496.397487] fuse: 000000003fdec504 inode=00000000be0f29d3 count=1
+>>> index=510
+>>> [ 1496.416385] fuse: 000000003fdec504 inode=00000000be0f29d3 count=1
+>>> index=509
+>>> ... <count is always 1 page>
+>>>
+>>> Logging in do_sync_mmap_readahead()
+>>>
+>>> [ 1493.130764] do_sync_mmap_readahead:3015 ino=132 index=0 count=0
+>>> ras_start=0 ras_size=0 ras_async=0 ras_ra_pages=64 ras_mmap_miss=0
+>>> ras_prev_pos=-1
+>>> [ 1493.147173] do_sync_mmap_readahead:3015 ino=132 index=255 count=0
+>>> ras_start=0 ras_size=64 ras_async=32 ras_ra_pages=64 ras_mmap_miss=0
+>>> ras_prev_pos=-1
+>>> [ 1493.165952] do_sync_mmap_readahead:3015 ino=132 index=254 count=0
+>>> ras_start=0 ras_size=64 ras_async=32 ras_ra_pages=64 ras_mmap_miss=0
+>>> ras_prev_pos=-1
+>>> [ 1493.185566] do_sync_mmap_readahead:3015 ino=132 index=253 count=0
+>>> ras_start=0 ras_size=64 ras_async=32 ras_ra_pages=64 ras_mmap_miss=0
+>>> ras_prev_pos=-1
+>>> ...
+>>> [ 1496.341890] do_sync_mmap_readahead:3015 ino=132 index=64 count=0
+>>> ras_start=0 ras_size=64 ras_async=32 ras_ra_pages=64 ras_mmap_miss=0
+>>> ras_prev_pos=-1
+>>> [ 1496.361385] do_sync_mmap_readahead:3015 ino=132 index=511 count=0
+>>> ras_start=96 ras_size=64 ras_async=64 ras_ra_pages=64 ras_mmap_miss=0
+>>> ras_prev_pos=-1
+>>>
+>>>
+>>> So we can see from fuse that it starts to read at page index 0, wants
+>>> 64 pages (which is actually the double of bdi read_ahead_kb), then
+>>> skips index 64...254) and immediately goes to index 255. For the mmaped
+>>> memcpy pages are missing and then it goes back in 1 page steps to get
+>>> these.
+>>>
+>>> A workaround here is to set read_ahead_kb in the bdi to a larger
+>>> value, another workaround might be (untested) to increase the read-ahead
+>>> window. Either of these two seem to be workarounds for the index order
+>>> above.
+>>>
+>>> I understand that read-ahead gets limited by the bdi value (although
+>>> exceeded above), but why does it go back in 1 page steps? My expectation
+>>> would have been
+>>>
+>>> index=0  count=32 (128kb read-head)
+>>> index=32 count=32
+>>> index=64 count=32
+> 
+> What I see with XFS is:
+> 
+>               fio-27518   [005] .....   276.565025: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x23a8c ofs=0 order=2
+>               fio-27518   [005] .....   276.565035: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x19868 ofs=16384 order=2
+>               fio-27518   [005] .....   276.565036: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x237fc ofs=32768 order=2
+>               fio-27518   [005] .....   276.565038: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x27518 ofs=49152 order=2
+>               fio-27518   [005] .....   276.565039: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x14c7c ofs=65536 order=2
+>               fio-27518   [005] .....   276.565040: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x14338 ofs=81920 order=2
+>               fio-27518   [005] .....   276.565041: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x201fc ofs=98304 order=2
+>               fio-27518   [005] .....   276.565042: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x1fb98 ofs=114688 order=2
+>               fio-27518   [005] .....   276.565044: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x14510 ofs=131072 order=2
+>               fio-27518   [005] .....   276.565045: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x1e88c ofs=147456 order=2
+>               fio-27518   [005] .....   276.565046: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x26f00 ofs=163840 order=2
+> 
+> ...
+> 
+>   dev 8:32 ino 44 pfn=0x14f30 ofs=262144 order=4
+>               fio-27518   [005] .....   276.567718: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x145a0 ofs=327680 order=4
+>               fio-27518   [005] .....   276.567720: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x15730 ofs=393216 order=4
+>               fio-27518   [005] .....   276.567722: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x15e30 ofs=458752 order=4
+>               fio-27518   [005] .....   276.567942: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x18b00 ofs=524288 order=6
+>               fio-27518   [005] .....   276.569982: mm_filemap_add_to_page_cache: dev 8:32 ino 44 pfn=0x15e40 ofs=786432 order=6
+> 
+> ... it then gets "stuck" at order-6, which is expected for a 256kB
+> readahead window.
+> 
+> This is produced by:
+> 
+> echo 1 >/sys/kernel/tracing/events/filemap/mm_filemap_add_to_page_cache/enable
+> fio --size=1G --numjobs=1 --ioengine=mmap --output-format=normal,terse --directory=/mnt/scratch/ --rw=read multi-file.fio
+> echo 0 >/sys/kernel/tracing/events/filemap/mm_filemap_add_to_page_cache/enable
+> less /sys/kernel/tracing/trace
+> 
+
+Thanks for looking at it Matthew!
+
+I see the same as on fuse on xfs - same output as I initially
+posted (except the fuse logging, of course).
+
+With tracing and reduced file size to 2M
+
+squeeze1:~# grep fio /sys/kernel/tracing/trace
+              fio-3459    [018] ..... 65055.425435: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c6b0 ofs=0 order=2
+              fio-3459    [018] ..... 65055.425456: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c6ac ofs=16384 order=2
+              fio-3459    [018] ..... 65055.425464: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c6a8 ofs=32768 order=2
+              fio-3459    [018] ..... 65055.425472: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c6a4 ofs=49152 order=2
+              fio-3459    [018] ..... 65055.425480: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c6a0 ofs=65536 order=2
+              fio-3459    [018] ..... 65055.425489: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c69c ofs=81920 order=2
+              fio-3459    [018] ..... 65055.425497: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c698 ofs=98304 order=2
+              fio-3459    [018] ..... 65055.425505: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c694 ofs=114688 order=2
+              fio-3459    [018] ..... 65055.425513: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c690 ofs=131072 order=2
+              fio-3459    [018] ..... 65055.425521: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c68c ofs=147456 order=2
+              fio-3459    [018] ..... 65055.425529: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c688 ofs=163840 order=2
+              fio-3459    [018] ..... 65055.425538: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c684 ofs=180224 order=2
+              fio-3459    [018] ..... 65055.425545: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c680 ofs=196608 order=2
+              fio-3459    [018] ..... 65055.425553: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c83c ofs=212992 order=2
+              fio-3459    [018] ..... 65055.425561: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c838 ofs=229376 order=2
+              fio-3459    [018] ..... 65055.425569: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c834 ofs=245760 order=2
+              fio-3459    [011] ..... 65055.436500: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12cfb8 ofs=1044480 order=0
+              fio-3459    [011] ..... 65055.436530: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12cfb9 ofs=1048576 order=0
+              fio-3459    [011] ..... 65055.436534: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12cfb5 ofs=1052672 order=0
+
+And then it is stuck at order=0
+
+              fio-3459    [002] ..... 65060.353420: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12afc2 ofs=1306624 order=0
+
+Not any different with increase file size to 10M.
+
+squeeze1:~# cat /proc/self/mountinfo |grep "252:16"
+88 28 252:16 / /scratch rw,relatime shared:44 - xfs /dev/vdb rw,attr2,inode64,logbufs=8,logbsize=32k,noquota
+
+
+squeeze1:~# cat /sys/class/bdi/252\:16/read_ahead_kb
+128
+
+
+
+With increased RA to 1024kb
+
+              fio-3568    [013] ..... 66481.269207: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12b8a0 ofs=0 order=2
+              fio-3568    [013] ..... 66481.269224: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12d5dc ofs=16384 order=2
+              fio-3568    [013] ..... 66481.269233: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12d8dc ofs=32768 order=2
+              fio-3568    [013] ..... 66481.269242: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12aae4 ofs=49152 order=2
+              fio-3568    [013] ..... 66481.269252: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12abb0 ofs=65536 order=2
+...
+              fio-3568    [013] ..... 66481.276736: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12da00 ofs=2097152 order=4
+              fio-3568    [013] ..... 66481.276758: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12d4f0 ofs=2162688 order=4
+              fio-3568    [013] ..... 66481.276785: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12d910 ofs=2228224 order=4
+              fio-3568    [013] ..... 66481.276812: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12c3c0 ofs=2293760 order=4
+              fio-3568    [013] ..... 66481.278920: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12d340 ofs=4194304 order=6
+              fio-3568    [013] ..... 66481.279033: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12db80 ofs=4456448 order=6
+              fio-3568    [013] ..... 66481.279183: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12dbc0 ofs=4718592 order=6
+              fio-3568    [013] ..... 66481.279302: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12e000 ofs=4980736 order=6
+              fio-3568    [013] ..... 66481.279422: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12e040 ofs=5242880 order=6
+              fio-3568    [013] ..... 66481.279521: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12e080 ofs=5505024 order=6
+              fio-3568    [013] ..... 66481.279938: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12e0c0 ofs=5767168 order=6
+              fio-3568    [013] ..... 66481.280038: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12e100 ofs=6029312 order=6
+              fio-3568    [013] ..... 66481.282445: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12e200 ofs=6291456 order=8
+              fio-3568    [013] ..... 66481.283986: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12e300 ofs=7340032 order=8
+              fio-3568    [013] ..... 66481.288688: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12dc00 ofs=8388608 order=9
+              fio-3568    [013] ..... 66481.291731: mm_filemap_add_to_page_cache: dev 252:16 ino 84 pfn=0x12de00 ofs=10485760 order=9
+
+
+Thanks,
+Bernd
