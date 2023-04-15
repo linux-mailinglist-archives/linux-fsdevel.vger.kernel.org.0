@@ -2,180 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C14176E314E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 14:13:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8895C6E315B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 14:18:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229752AbjDOMN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Apr 2023 08:13:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47808 "EHLO
+        id S229830AbjDOMSU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Apr 2023 08:18:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbjDOMNZ (ORCPT
+        with ESMTP id S229657AbjDOMSS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Apr 2023 08:13:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F570AD;
-        Sat, 15 Apr 2023 05:13:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D70C6615B9;
-        Sat, 15 Apr 2023 12:13:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D93C6C433EF;
-        Sat, 15 Apr 2023 12:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681560801;
-        bh=vISxtwgPDbbPk2EBE4+0qWc3uawfwrv6lg/w51U7c6M=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=TIZnNaCcjQcrtSjP8IynjFI1zOZE3ioOSGp+Xn3NEVkUwUEXcrwHvksQ98DP4NHpW
-         9Zx2SJ/mlVxxXSTmIGv/qSCXlFMtBnImrVbhnUv0Ur+hMnqUkmhE0Ks0XdjxDTc9uf
-         ceCXE1LxO4OkhkFijr5SUnlAgCAcvKjIsPnx0C4nU1OQDh+fnp1vd6vJ+0WCpvOXiC
-         3XGbuoH61TENPu8kv3jwKXweUll2mdc/qmkkIq1eUwOZr8dAAnvX7x6Xb2G+K9Qh5F
-         ZNn+GAhUJrngGxyhRHEc154VKiYwXivaxryFgHhYxlWV+B1QI2v2ivKCbTs6PASN7F
-         IhmSdcNSSglqQ==
-Message-ID: <e03485c02c6f9fefdaf76e93724978e4874d5442.camel@kernel.org>
-Subject: Re: [RFC PATCH 0/3][RESEND] fs: opportunistic high-res file
- timestamps
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>
-Date:   Sat, 15 Apr 2023 08:13:18 -0400
-In-Reply-To: <CAOQ4uxi9rz1GFP+jMJm482axyAPtAcB+jnZ5jCR++EYKA_iRpw@mail.gmail.com>
-References: <20230411143702.64495-1-jlayton@kernel.org>
-         <CAOQ4uxi9rz1GFP+jMJm482axyAPtAcB+jnZ5jCR++EYKA_iRpw@mail.gmail.com>
+        Sat, 15 Apr 2023 08:18:18 -0400
+Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A0BF30C1;
+        Sat, 15 Apr 2023 05:18:17 -0700 (PDT)
+Received: by mail-vs1-xe32.google.com with SMTP id y13so19278708vss.0;
+        Sat, 15 Apr 2023 05:18:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681561096; x=1684153096;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KSJMPcUMeTzCmFG5vIa5QVDKVDZ9UTF4q/kaI+qDjNw=;
+        b=gkNz5oGp/vBggcE1Met2bHglt3dt9PWfnChfy2+ApEf7KqYRLf6TCNkijT1w8SjNYB
+         5At1uoRq0NkrSKX90YOG+OM4yLzbFfyzEObN9SD/vX0WeqL+IdjXlH5GcOrLcoqgSHLu
+         orYv54APwg920xDK87Cu6vWeGTGxfgvgFW2W6RX8SWHvfj1Enmrt6D3bbq2YxgPZwDbN
+         KyQ2+V0s3Us4s52E4oqzn19EYVlsbF3moMLTvRQHVvK2CB11+5Q0RpapfeXrV+eJKWkO
+         6zpi0bK8dJ4bdNBOOGpIaKLhhQG2chyh+zLPZxyCaxMmX8gIJpqFisRKGukQAKNflGEu
+         +hiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681561096; x=1684153096;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KSJMPcUMeTzCmFG5vIa5QVDKVDZ9UTF4q/kaI+qDjNw=;
+        b=bkFZD8nk0RjKmqKgyYWlcEjPXpfaF+m9O/dnfzcbVKIVQh5mCGF0iPX5BhSlXqlmwB
+         VfcQVAZJiR8wq1pyk/f2lXTMC9VMEthDr73h5m3OGA+cvLAz8kx3HmHrqWoK0eyEF6ER
+         rwDPTwu+JFvSuVHk+dcDcLjE8OQnNmPYz2HryO4g6BaYFojDqI/Rccr/RP7TqSVEdECv
+         KxYm8JYnwvHSVyJwFsCwBAiLonq+Mu2aU/5xSON/S6oTdHFs5kYrzbZBTUK3XWt7oUpO
+         EM90Os7wuPaDC3jmw1DSPQ9deo2RDT5PnE8Uzd/oL/sNjjeynRGtCcoFDGZ1AhzOl82Z
+         ch5A==
+X-Gm-Message-State: AAQBX9eB/xllzbDaGBHgBKZBX1Veyf6LKRH4ezhUcu7ujxFByE8A62KJ
+        eppc97esHknHdRR1Ak655JvBiztTnQe3wB+RYUDliTjLM/4=
+X-Google-Smtp-Source: AKy350Zv/FpRe2kGL4keuqhS/Mwb6KH/4RHtGa+6+5n2BgBo6RIalKonvfwNksy6LSpTb+BCT+gqChysJTfXEP1hwq4=
+X-Received: by 2002:a67:d99e:0:b0:42e:63a5:c0d6 with SMTP id
+ u30-20020a67d99e000000b0042e63a5c0d6mr244704vsj.0.1681561096226; Sat, 15 Apr
+ 2023 05:18:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <Y/5ovz6HI2Z47jbk@magnolia>
+In-Reply-To: <Y/5ovz6HI2Z47jbk@magnolia>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 15 Apr 2023 15:18:05 +0300
+Message-ID: <CAOQ4uxj6mNbGQBSpg-KpSiDa2UugBFXki4HhM4DPvXeAQMnRWg@mail.gmail.com>
+Subject: Re: [Lsf-pc] [LSF TOPIC] online repair of filesystems: what next?
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        xfs <linux-xfs@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
-MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 2023-04-15 at 14:35 +0300, Amir Goldstein wrote:
-> On Tue, Apr 11, 2023 at 5:38=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
-wrote:
-> >=20
-> > (Apologies for the resend, but I didn't send this with a wide enough
-> > distribution list originally).
-> >=20
-> > A few weeks ago, during one of the discussions around i_version, Dave
-> > Chinner wrote this:
-> >=20
-> > "You've missed the part where I suggested lifting the "nfsd sampled
-> > i_version" state into an inode state flag rather than hiding it in
-> > the i_version field. At that point, we could optimise away the
-> > secondary ctime updates just like you are proposing we do with the
-> > i_version updates.  Further, we could also use that state it to
-> > decide whether we need to use high resolution timestamps when
-> > recording ctime updates - if the nfsd has not sampled the
-> > ctime/i_version, we don't need high res timestamps to be recorded
-> > for ctime...."
-> >=20
-> > While I don't think we can practically optimize away ctime updates
-> > like we do with i_version, I do like the idea of using this scheme to
-> > indicate when we need to use a high-res timestamp.
-> >=20
-> > This patchset is a first stab at a scheme to do this. It declares a new
-> > i_state flag for this purpose and adds two new vfs-layer functions to
-> > implement conditional high-res timestamp fetching. It then converts bot=
-h
-> > tmpfs and xfs to use it.
-> >=20
-> > This seems to behave fine under xfstests, but I haven't yet done
-> > any performance testing with it. I wouldn't expect it to create huge
-> > regressions though since we're only grabbing high res timestamps after
-> > each query.
-> >=20
-> > I like this scheme because we can potentially convert any filesystem to
-> > use it. No special storage requirements like with i_version field.  I
-> > think it'd potentially improve NFS cache coherency with a whole swath o=
-f
-> > exportable filesystems, and helps out NFSv3 too.
-> >=20
-> > This is really just a proof-of-concept. There are a number of things we
-> > could change:
-> >=20
-> > 1/ We could use the top bit in the tv_sec field as the flag. That'd giv=
-e
-> >    us different flags for ctime and mtime. We also wouldn't need to use
-> >    a spinlock.
-> >=20
-> > 2/ We could probably optimize away the high-res timestamp fetch in more
-> >    cases. Basically, always do a coarse-grained ts fetch and only fetch
-> >    the high-res ts when the QUERIED flag is set and the existing time
-> >    hasn't changed.
-> >=20
-> > If this approach looks reasonable, I'll plan to start working on
-> > converting more filesystems.
-> >=20
-> > One thing I'm not clear on is how widely available high res timestamps
-> > are. Is this something we need to gate on particular CONFIG_* options?
-> >=20
-> > Thoughts?
->=20
-> Jeff,
->=20
-> Considering that this proposal is pretty uncontroversial,
-> do you still want to discuss/lead a session on i_version changes in LSF/M=
-M?
->=20
-> I noticed that Chuck listed "timespamt resolution and i_version" as part
-> of his NFSD BoF topic proposal [1], but I do not think all of these topic=
-s
-> can fit in one 30 minute session.
->=20
+On Tue, Feb 28, 2023 at 10:49=E2=80=AFPM Darrick J. Wong <djwong@kernel.org=
+> wrote:
+>
+> Hello fsdevel people,
+>
+> Five years ago[0], we started a conversation about cross-filesystem
+> userspace tooling for online fsck.  I think enough time has passed for
+> us to have another one, since a few things have happened since then:
+>
+> 1. ext4 has gained the ability to send corruption reports to a userspace
+>    monitoring program via fsnotify.  Thanks, Collabora!
+>
+> 2. XFS now tracks successful scrubs and corruptions seen during runtime
+>    and during scrubs.  Userspace can query this information.
+>
+> 3. Directory parent pointers, which enable online repair of the
+>    directory tree, is nearing completion.
+>
+> 4. Dave and I are working on merging online repair of space metadata for
+>    XFS.  Online repair of directory trees is feature complete, but we
+>    still have one or two unresolved questions in the parent pointer
+>    code.
+>
+> 5. I've gotten a bit better[1] at writing systemd service descriptions
+>    for scheduling and performing background online fsck.
+>
+> Now that fsnotify_sb_error exists as a result of (1), I think we
+> should figure out how to plumb calls into the readahead and writeback
+> code so that IO failures can be reported to the fsnotify monitor.  I
+> suspect there may be a few difficulties here since fsnotify (iirc)
+> allocates memory and takes locks.
+>
+> As a result of (2), XFS now retains quite a bit of incore state about
+> its own health.  The structure that fsnotify gives to userspace is very
+> generic (superblock, inode, errno, errno count).  How might XFS export
+> a greater amount of information via this interface?  We can provide
+> details at finer granularity -- for example, a specific data structure
+> under an allocation group or an inode, or specific quota records.
+>
+> With (4) on the way, I can envision wanting a system service that would
+> watch for these fsnotify events, and transform the error reports into
+> targeted repair calls in the kernel.  This of course would be very
+> filesystem specific, but I would also like to hear from anyone pondering
+> other usecases for fsnotify filesystem error monitors.
+>
+> Once (3) lands, XFS gains the ability to translate a block device IO
+> error to an inode number and file offset, and then the inode number to a
+> path.  In other words, your file breaks and now we can tell applications
+> which file it was so they can failover or redownload it or whatever.
+> Ric Wheeler mentioned this in 2018's session.
+>
+> The final topic from that 2018 session concerned generic wrappers for
+> fsscrub.  I haven't pushed hard on that topic because XFS hasn't had
+> much to show for that.  Now that I'm better versed in systemd services,
+> I envision three ways to interact with online fsck:
+>
+> - A CLI program that can be run by anyone.
+>
+> - Background systemd services that fire up periodically.
+>
+> - A dbus service that programs can bind to and request a fsck.
+>
+> I still think there's an opportunity to standardize the naming to make
+> it easier to use a variety of filesystems.  I propose for the CLI:
+>
+> /usr/sbin/fsscrub $mnt that calls /usr/sbin/fsscrub.$FSTYP $mnt
+>
+> For systemd services, I propose "fsscrub@<escaped mountpoint>".  I
+> suspect we want a separate background service that itself runs
+> periodically and invokes the fsscrub@$mnt services.  xfsprogs already
+> has a xfs_scrub_all service that does that.  The services are nifty
+> because it's really easy to restrict privileges, implement resource
+> usage controls, and use private name/mountspaces to isolate the process
+> from the rest of the system.
+>
+> dbus is a bit trickier, since there's no precedent at all.  I guess
+> we'd have to define an interface for filesystem "object".  Then we could
+> write a service that establishes a well-known bus name and maintains
+> object paths for each mounted filesystem.  Each of those objects would
+> export the filesystem interface, and that's how programs would call
+> online fsck as a service.
+>
+> Ok, that's enough for a single session topic.  Thoughts? :)
 
-Agreed. I think we'll need an hour for the nfsd BoF.
+Darrick,
 
-I probably don't need a full 30 min slot for this topic, between the
-nfsd BoF and hallway track.
+Quick question.
+You indicated that you would like to discuss the topics:
+Atomic file contents exchange
+Atomic directio writes
 
-I've started a TOPIC email for this about 5 times now, and keep deleting
-it. I think most of the more controversial bits are pretty much settled
-at this point, and the rest (crash resilience) is still too embryonic
-for discussion.
+Are those intended to be in a separate session from online fsck?
+Both in the same session?
 
-I might want a lightning talk at some point about what I'd _really_ like
-to do long term with the i_version counter (basically: I want to be able
-to do a write that is gated on the i_version not having changed).
+I know you posted patches for FIEXCHANGE_RANGE [1],
+but they were hiding inside a huge DELUGE and people
+were on New Years holidays, so nobody commented.
 
+Perhaps you should consider posting an uptodate
+topic suggestion to let people have an opportunity to
+start a discussion before LSFMM.
 
-> Dave,
->=20
-> I would like to use this opportunity to invite you and any developers tha=
-t
-> are involved in fs development and not going to attend LSF/MM in-person,
-> to join LSF/MM virtually for some sessions that you may be interested in.
-> See this lore query [2] for TOPICs proposed this year.
->=20
-> You can let me know privately which sessions you are interested in
-> attending and your time zone and I will do my best to schedule those
-> sessions in time slots that would be more convenient for your time zone.
->=20
-> Obviously, I am referring to FS track sessions.
-> Cross track sessions are going to be harder to accommodate,
-> but I can try.
->=20
-> Thanks,
-> Amir.
->=20
-> [1] https://lore.kernel.org/linux-fsdevel/FF0202C3-7500-4BB3-914B-DBAA3E0=
-EA3D7@oracle.com/
-> [2] https://lore.kernel.org/linux-fsdevel/?q=3DLSF+TOPIC+-re+d%3A4.months=
-.ago..
+Thanks,
+Amir.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+[1] https://lore.kernel.org/linux-fsdevel/167243843494.699466.5163281976943=
+635014.stgit@magnolia/
