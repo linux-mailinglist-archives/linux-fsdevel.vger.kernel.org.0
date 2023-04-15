@@ -2,125 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C8706E318A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 15:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CADC6E323E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 18:03:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229930AbjDONPz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Apr 2023 09:15:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58766 "EHLO
+        id S229961AbjDOQDo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Apr 2023 12:03:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229894AbjDONPy (ORCPT
+        with ESMTP id S229752AbjDOQDn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Apr 2023 09:15:54 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED124C31
-        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Apr 2023 06:15:52 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-63b5312bd34so441559b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Apr 2023 06:15:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681564552; x=1684156552;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FDoeyOkk6TLcbWPLicxk2nAcFd4vulVwN1Th/ORcIBE=;
-        b=Ozs96uUdlsV0iLwm5FkjhtfWxZXFvC4NsM6s3QV+/Uck/NrbDym76dousQcXck9W/Z
-         nPM0AOkUDstn5Y0BEiBbeZBzxlpCk6tnVCTUhZwYfHs7ZjXv1m1Yxg3nYguITdjZPm7L
-         HOKKUc06HE5z9DMxRN44fOtuAb2lvQwCtpmOI3aLIwjxlCnMGDewtG28ZOqJ91KjzQ9N
-         knF+H2RjY8Mf4eIymjkzgf5jLvlLVPqwer9pyGaYB0vuX8MIH9KMkJO12mDetxNZuXjk
-         qIrW3nveZIEtE6Up0JdLcmsSzN1KRANcURzkTRy0cEZ9bVO+6Jn6tfrb495kenJud+7Z
-         +zTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681564552; x=1684156552;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FDoeyOkk6TLcbWPLicxk2nAcFd4vulVwN1Th/ORcIBE=;
-        b=JmsGCu8g6C9IS4cyKazjFX1cr31vx7LIIp+F5l53PP6n/LfRSs3pveqydP9izIOsuH
-         Qh9dY33gmAgzWUWoYfvEFG54AvwO2SLJ8lhnZXonG5M42SGWfE4NwjpwKgy8b6j88Kft
-         bRg0I2YLqJM3F0JLnEhGvTTwxrjsUL/HnGWu6Ln7NgYuhaM8gMJ22I6PFMdWjErL6kY7
-         wI4t4GBFymI7K5lSBdUg6OBRfhu/vsOBHBmVg5Tsh5JQevTHMg+osJK1IL8+8iII6QiK
-         2G60JP8byfqAizVVKP3eGz9gTCqU66UTip0quJX1VeLjuEqkZt6RV3mLTqbM0I6TPQ9S
-         tVMQ==
-X-Gm-Message-State: AAQBX9cdrsS6sbMuEPxkD6QEeujg6v2oZXXuNfuWOLPaksNbWBA3UKdQ
-        ICswymNbhIcpxCoHXEuNN5b71Q==
-X-Google-Smtp-Source: AKy350Y7yuybEO7Elj/aE+xeem9Ot8bNg6QT7Ni4yu0UNeS9Yxp/xv2tunXjAJR6POrQVtXXl+NBUw==
-X-Received: by 2002:a05:6a20:2448:b0:e3:6fdb:f6c6 with SMTP id t8-20020a056a20244800b000e36fdbf6c6mr7927795pzc.6.1681564551984;
-        Sat, 15 Apr 2023 06:15:51 -0700 (PDT)
-Received: from [192.168.4.201] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id a21-20020a1709027d9500b001a1cd6c5a88sm4661610plm.73.2023.04.15.06.15.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Apr 2023 06:15:51 -0700 (PDT)
-Message-ID: <cfeade24-81fc-ab73-1fd9-89f12a402486@kernel.dk>
-Date:   Sat, 15 Apr 2023 07:15:49 -0600
+        Sat, 15 Apr 2023 12:03:43 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3DFB3A8E;
+        Sat, 15 Apr 2023 09:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=IvR+KTULywCa9KcsMX/Vvku+X+SUD7cXl4deynP11rw=; b=NXgdWGOJ25IYCZlHiYT0mbyGZx
+        naD9urTP2DUiBJUjKQlNEH2DS40R77jvtbEq4XAy/5vWSl02rzMkRT5TAq0rbz2Nh0NH632JDAr+I
+        SJgPoAJEhkTTr5JtR5IUWePoHpwTwg/zFOJ2QMkyVic84BqzLYKT9cYZjFVgv8/TvC3I8irmVZcS9
+        7oJkfHnzWx/Xq5P3mWtQaBn1W5zG8JXNJivfnrkYUURJT+lI9WO0HvPCrF9WJUFjRIkrK9636g+gJ
+        rMxcVteiYdZnU9nRzXRm1p4BVkyPgZ0dQHkUZ3bvrFhzarIgT8TMdSujWFBKbERhlzwtNTA0nkRqP
+        BqL7H2NA==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pniMy-00CPZ1-07;
+        Sat, 15 Apr 2023 16:03:20 +0000
+Message-ID: <dac32cfb-6cb6-613d-169e-f1445492418c@infradead.org>
+Date:   Sat, 15 Apr 2023 09:03:17 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH 1/2] fs: add FMODE_DIO_PARALLEL_WRITE flag
+Subject: Re: [PATCH] fs/proc: add Kthread flag to /proc/$pid/status
 Content-Language: en-US
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Bernd Schubert <bschubert@ddn.com>, io-uring@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, dsingh@ddn.com
-References: <20230307172015.54911-2-axboe@kernel.dk>
- <20230412134057.381941-1-bschubert@ddn.com>
- <CAJfpegt_ZCVodOhQCzF9OqKnCr65mKax0Gu4OTN8M51zP+8TcA@mail.gmail.com>
- <ZDjggMCGautPUDpW@infradead.org> <20230414153612.GB360881@frogsfrogsfrogs>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230414153612.GB360881@frogsfrogsfrogs>
+To:     Chunguang Wu <fullspring2018@gmail.com>, akpm@linux-foundation.org,
+        corbet@lwn.net
+Cc:     adobriyan@gmail.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20230415082155.5298-1-fullspring2018@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20230415082155.5298-1-fullspring2018@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/14/23 9:36?AM, Darrick J. Wong wrote:
-> On Thu, Apr 13, 2023 at 10:11:28PM -0700, Christoph Hellwig wrote:
->> On Thu, Apr 13, 2023 at 09:40:29AM +0200, Miklos Szeredi wrote:
->>> fuse_direct_write_iter():
->>>
->>> bool exclusive_lock =
->>>     !(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES) ||
->>>     iocb->ki_flags & IOCB_APPEND ||
->>>     fuse_direct_write_extending_i_size(iocb, from);
->>>
->>> If the write is size extending, then it will take the lock exclusive.
->>> OTOH, I guess that it would be unusual for lots of  size extending
->>> writes to be done in parallel.
->>>
->>> What would be the effect of giving the  FMODE_DIO_PARALLEL_WRITE hint
->>> and then still serializing the writes?
->>
->> I have no idea how this flags work, but XFS also takes i_rwsem
->> exclusively for appends, when the positions and size aren't aligned to
->> the block size, and a few other cases.
-> 
-> IIUC uring wants to avoid the situation where someone sends 300 writes
-> to the same file, all of which end up in background workers, and all of
-> which then contend on exclusive i_rwsem.  Hence it has some hashing
-> scheme that executes io requests serially if they hash to the same value
-> (which iirc is the inode number?) to prevent resource waste.
-> 
-> This flag turns off that hashing behavior on the assumption that each of
-> those 300 writes won't serialize on the other 299 writes, hence it's ok
-> to start up 300 workers.
-> 
-> (apologies for precoffee garbled response)
+Hi,
 
-Yep, that is pretty much it. If all writes to that inode are serialized
-by a lock on the fs side, then we'll get a lot of contention on that
-mutex. And since, originally, nothing supported async writes, everything
-would get punted to the io-wq workers. io_uring added per-inode hashing
-for this, so that any punt to io-wq of a write would get serialized.
+On 4/15/23 01:21, Chunguang Wu wrote:
+> The command `ps -ef ` and `top -c` mark kernel thread by '['
+> and ']', but sometimes the result is not correct.
+> The task->flags in /proc/$pid/stat is good, but we need remember
+> the value of PF_KTHREAD is 0x00200000 and convert dec to hex.
+> If we have no binary program and shell script which read
+> /proc/$pid/stat, we can know it directly by
+> `cat /proc/$pid/status`.
+> 
+> Signed-off-by: Chunguang Wu <fullspring2018@gmail.com>
+> ---
+>  Documentation/filesystems/proc.rst | 2 ++
+>  fs/proc/array.c                    | 7 +++++++
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index 9d5fd9424e8b..8a563684586c 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -179,6 +179,7 @@ read the file /proc/PID/status::
+>    Gid:    100     100     100     100
+>    FDSize: 256
+>    Groups: 100 14 16
+> +  Kthread:    0
+>    VmPeak:     5004 kB
+>    VmSize:     5004 kB
+>    VmLck:         0 kB
+> @@ -256,6 +257,7 @@ It's slow but very precise.
+>   NSpid                       descendant namespace process ID hierarchy
+>   NSpgid                      descendant namespace process group ID hierarchy
+>   NSsid                       descendant namespace session ID hierarchy
+> + Kthread                     kernel thread flag, 1 is yes, 0 is no
+>   VmPeak                      peak virtual memory size
+>   VmSize                      total program size
+>   VmLck                       locked memory size
 
-IOW, it's an efficiency thing, not a correctness thing.
+The Documentation changes look good, except that they may need to be moved
+if you do the changes indicated below.
 
+
+Now that I have looked at the rest of the patch:
+
+> diff --git a/fs/proc/array.c b/fs/proc/array.c
+> index 9b0315d34c58..fde6a0b92728 100644
+> --- a/fs/proc/array.c
+> +++ b/fs/proc/array.c
+> @@ -434,6 +434,13 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+>  
+>  	task_state(m, ns, pid, task);
+>  
+> +	seq_puts(m, "Kthread:\t");
+> +	if (task->flags & PF_KTHREAD) {
+> +		seq_puts(m, "1\n");
+> +	} else {
+> +		seq_puts(m, "0\n");
+> +	}
+> +
+
+I would put that patch fragment inside task_state(), but I'll leave that
+to others to decide on.
+
+and condense it to one line, e.g.:
+
+	seq_puts(m, "Kthread: %c\n", task->flags & PF_KTHREAD ? '1' : '0');
+
+
+>  	if (mm) {
+>  		task_mem(m, mm);
+>  		task_core_dumping(m, task);
+
+
+Please add version info to your future patches.
+
+Thanks.
 -- 
-Jens Axboe
-
+~Randy
