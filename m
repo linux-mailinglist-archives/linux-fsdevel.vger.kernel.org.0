@@ -2,179 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8895C6E315B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 14:18:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04B2D6E3184
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 15:14:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbjDOMSU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Apr 2023 08:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49496 "EHLO
+        id S229795AbjDONOi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Apr 2023 09:14:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbjDOMSS (ORCPT
+        with ESMTP id S229678AbjDONOh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Apr 2023 08:18:18 -0400
-Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A0BF30C1;
-        Sat, 15 Apr 2023 05:18:17 -0700 (PDT)
-Received: by mail-vs1-xe32.google.com with SMTP id y13so19278708vss.0;
-        Sat, 15 Apr 2023 05:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681561096; x=1684153096;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KSJMPcUMeTzCmFG5vIa5QVDKVDZ9UTF4q/kaI+qDjNw=;
-        b=gkNz5oGp/vBggcE1Met2bHglt3dt9PWfnChfy2+ApEf7KqYRLf6TCNkijT1w8SjNYB
-         5At1uoRq0NkrSKX90YOG+OM4yLzbFfyzEObN9SD/vX0WeqL+IdjXlH5GcOrLcoqgSHLu
-         orYv54APwg920xDK87Cu6vWeGTGxfgvgFW2W6RX8SWHvfj1Enmrt6D3bbq2YxgPZwDbN
-         KyQ2+V0s3Us4s52E4oqzn19EYVlsbF3moMLTvRQHVvK2CB11+5Q0RpapfeXrV+eJKWkO
-         6zpi0bK8dJ4bdNBOOGpIaKLhhQG2chyh+zLPZxyCaxMmX8gIJpqFisRKGukQAKNflGEu
-         +hiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681561096; x=1684153096;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KSJMPcUMeTzCmFG5vIa5QVDKVDZ9UTF4q/kaI+qDjNw=;
-        b=bkFZD8nk0RjKmqKgyYWlcEjPXpfaF+m9O/dnfzcbVKIVQh5mCGF0iPX5BhSlXqlmwB
-         VfcQVAZJiR8wq1pyk/f2lXTMC9VMEthDr73h5m3OGA+cvLAz8kx3HmHrqWoK0eyEF6ER
-         rwDPTwu+JFvSuVHk+dcDcLjE8OQnNmPYz2HryO4g6BaYFojDqI/Rccr/RP7TqSVEdECv
-         KxYm8JYnwvHSVyJwFsCwBAiLonq+Mu2aU/5xSON/S6oTdHFs5kYrzbZBTUK3XWt7oUpO
-         EM90Os7wuPaDC3jmw1DSPQ9deo2RDT5PnE8Uzd/oL/sNjjeynRGtCcoFDGZ1AhzOl82Z
-         ch5A==
-X-Gm-Message-State: AAQBX9eB/xllzbDaGBHgBKZBX1Veyf6LKRH4ezhUcu7ujxFByE8A62KJ
-        eppc97esHknHdRR1Ak655JvBiztTnQe3wB+RYUDliTjLM/4=
-X-Google-Smtp-Source: AKy350Zv/FpRe2kGL4keuqhS/Mwb6KH/4RHtGa+6+5n2BgBo6RIalKonvfwNksy6LSpTb+BCT+gqChysJTfXEP1hwq4=
-X-Received: by 2002:a67:d99e:0:b0:42e:63a5:c0d6 with SMTP id
- u30-20020a67d99e000000b0042e63a5c0d6mr244704vsj.0.1681561096226; Sat, 15 Apr
- 2023 05:18:16 -0700 (PDT)
+        Sat, 15 Apr 2023 09:14:37 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0310A4C26;
+        Sat, 15 Apr 2023 06:14:35 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4AC481FDC5;
+        Sat, 15 Apr 2023 13:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1681564474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=h5k/RbS3a6kwtihmho3Q3mrYWrzOBkRjuXgoZbNNYHI=;
+        b=XYysb9Th9C57KmHRUhQg/Xw5Cm563xxANOV4YkugAv5E/0rianuE7RlkMAwnZ3FJNh3eXK
+        NU++4s6YOZQlHwlxkk5kDfpndBq7aR6cCqQL1Q3IipQZsSHsstNov6m9Zw9uPaXOmmGAhr
+        mj2WAUhPhJUEiTCl2TYnAK3XicOnm+c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1681564474;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=h5k/RbS3a6kwtihmho3Q3mrYWrzOBkRjuXgoZbNNYHI=;
+        b=S9v6bvc+eOJnhTovvE0tORWGe0nwUU7lfI9G+gDVn7mpKhy/QksaiuRZlHsoVMZzgKOuO/
+        tXVhupyvXQKqxoBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1CD7B1390E;
+        Sat, 15 Apr 2023 13:14:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id IfMcBTqjOmRIDgAAMHmgww
+        (envelope-from <hare@suse.de>); Sat, 15 Apr 2023 13:14:34 +0000
+Message-ID: <31765c8c-e895-4207-2b8c-39f6c7c83ece@suse.de>
+Date:   Sat, 15 Apr 2023 15:14:33 +0200
 MIME-Version: 1.0
-References: <Y/5ovz6HI2Z47jbk@magnolia>
-In-Reply-To: <Y/5ovz6HI2Z47jbk@magnolia>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 15 Apr 2023 15:18:05 +0300
-Message-ID: <CAOQ4uxj6mNbGQBSpg-KpSiDa2UugBFXki4HhM4DPvXeAQMnRWg@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSF TOPIC] online repair of filesystems: what next?
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        xfs <linux-xfs@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [RFC 0/4] convert create_page_buffers to create_folio_buffers
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Pankaj Raghav <p.raghav@samsung.com>, brauner@kernel.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gost.dev@samsung.com
+References: <CGME20230414110825eucas1p1ed4d16627889ef8542dfa31b1183063d@eucas1p1.samsung.com>
+ <20230414110821.21548-1-p.raghav@samsung.com>
+ <1e68a118-d177-a218-5139-c8f13793dbbf@suse.de>
+ <ZDn3XPMA024t+C1x@bombadil.infradead.org>
+ <ZDoMmtcwNTINAu3N@casper.infradead.org>
+ <ZDoZCJHQXhVE2KZu@bombadil.infradead.org>
+ <ZDodlnm2nvYxbvR4@casper.infradead.org>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <ZDodlnm2nvYxbvR4@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 28, 2023 at 10:49=E2=80=AFPM Darrick J. Wong <djwong@kernel.org=
-> wrote:
->
-> Hello fsdevel people,
->
-> Five years ago[0], we started a conversation about cross-filesystem
-> userspace tooling for online fsck.  I think enough time has passed for
-> us to have another one, since a few things have happened since then:
->
-> 1. ext4 has gained the ability to send corruption reports to a userspace
->    monitoring program via fsnotify.  Thanks, Collabora!
->
-> 2. XFS now tracks successful scrubs and corruptions seen during runtime
->    and during scrubs.  Userspace can query this information.
->
-> 3. Directory parent pointers, which enable online repair of the
->    directory tree, is nearing completion.
->
-> 4. Dave and I are working on merging online repair of space metadata for
->    XFS.  Online repair of directory trees is feature complete, but we
->    still have one or two unresolved questions in the parent pointer
->    code.
->
-> 5. I've gotten a bit better[1] at writing systemd service descriptions
->    for scheduling and performing background online fsck.
->
-> Now that fsnotify_sb_error exists as a result of (1), I think we
-> should figure out how to plumb calls into the readahead and writeback
-> code so that IO failures can be reported to the fsnotify monitor.  I
-> suspect there may be a few difficulties here since fsnotify (iirc)
-> allocates memory and takes locks.
->
-> As a result of (2), XFS now retains quite a bit of incore state about
-> its own health.  The structure that fsnotify gives to userspace is very
-> generic (superblock, inode, errno, errno count).  How might XFS export
-> a greater amount of information via this interface?  We can provide
-> details at finer granularity -- for example, a specific data structure
-> under an allocation group or an inode, or specific quota records.
->
-> With (4) on the way, I can envision wanting a system service that would
-> watch for these fsnotify events, and transform the error reports into
-> targeted repair calls in the kernel.  This of course would be very
-> filesystem specific, but I would also like to hear from anyone pondering
-> other usecases for fsnotify filesystem error monitors.
->
-> Once (3) lands, XFS gains the ability to translate a block device IO
-> error to an inode number and file offset, and then the inode number to a
-> path.  In other words, your file breaks and now we can tell applications
-> which file it was so they can failover or redownload it or whatever.
-> Ric Wheeler mentioned this in 2018's session.
->
-> The final topic from that 2018 session concerned generic wrappers for
-> fsscrub.  I haven't pushed hard on that topic because XFS hasn't had
-> much to show for that.  Now that I'm better versed in systemd services,
-> I envision three ways to interact with online fsck:
->
-> - A CLI program that can be run by anyone.
->
-> - Background systemd services that fire up periodically.
->
-> - A dbus service that programs can bind to and request a fsck.
->
-> I still think there's an opportunity to standardize the naming to make
-> it easier to use a variety of filesystems.  I propose for the CLI:
->
-> /usr/sbin/fsscrub $mnt that calls /usr/sbin/fsscrub.$FSTYP $mnt
->
-> For systemd services, I propose "fsscrub@<escaped mountpoint>".  I
-> suspect we want a separate background service that itself runs
-> periodically and invokes the fsscrub@$mnt services.  xfsprogs already
-> has a xfs_scrub_all service that does that.  The services are nifty
-> because it's really easy to restrict privileges, implement resource
-> usage controls, and use private name/mountspaces to isolate the process
-> from the rest of the system.
->
-> dbus is a bit trickier, since there's no precedent at all.  I guess
-> we'd have to define an interface for filesystem "object".  Then we could
-> write a service that establishes a well-known bus name and maintains
-> object paths for each mounted filesystem.  Each of those objects would
-> export the filesystem interface, and that's how programs would call
-> online fsck as a service.
->
-> Ok, that's enough for a single session topic.  Thoughts? :)
+On 4/15/23 05:44, Matthew Wilcox wrote:
+> On Fri, Apr 14, 2023 at 08:24:56PM -0700, Luis Chamberlain wrote:
+>> I thought of that but I saw that the loop that assigns the arr only
+>> pegs a bh if we don't "continue" for certain conditions, which made me
+>> believe that we only wanted to keep on the array as non-null items which
+>> meet the initial loop's criteria. If that is not accurate then yes,
+>> the simplication is nice!
+> 
+> Uh, right.  A little bit more carefully this time ... how does this
+> look?
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 5e67e21b350a..dff671079b02 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2282,7 +2282,7 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+>   {
+>   	struct inode *inode = folio->mapping->host;
+>   	sector_t iblock, lblock;
+> -	struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
+> +	struct buffer_head *bh, *head;
+>   	unsigned int blocksize, bbits;
+>   	int nr, i;
+>   	int fully_mapped = 1;
+> @@ -2335,7 +2335,7 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+>   			if (buffer_uptodate(bh))
+>   				continue;
+>   		}
+> -		arr[nr++] = bh;
+> +		nr++;
+>   	} while (i++, iblock++, (bh = bh->b_this_page) != head);
+>   
+>   	if (fully_mapped)
+> @@ -2352,25 +2352,29 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+>   		return 0;
+>   	}
+>   
+> -	/* Stage two: lock the buffers */
+> -	for (i = 0; i < nr; i++) {
+> -		bh = arr[i];
+> +	/*
+> +	 * Stage two: lock the buffers.  Recheck the uptodate flag under
+> +	 * the lock in case somebody else brought it uptodate first.
+> +	 */
+> +	bh = head;
+> +	do {
+> +		if (buffer_uptodate(bh))
+> +			continue;
+>   		lock_buffer(bh);
+> +		if (buffer_uptodate(bh)) {
+> +			unlock_buffer(bh);
+> +			continue;
+> +		}
+>   		mark_buffer_async_read(bh);
+> -	}
+> +	} while ((bh = bh->b_this_page) != head);
+>   
+> -	/*
+> -	 * Stage 3: start the IO.  Check for uptodateness
+> -	 * inside the buffer lock in case another process reading
+> -	 * the underlying blockdev brought it uptodate (the sct fix).
+> -	 */
+> -	for (i = 0; i < nr; i++) {
+> -		bh = arr[i];
+> -		if (buffer_uptodate(bh))
+> -			end_buffer_async_read(bh, 1);
+> -		else
+> +	/* Stage 3: start the IO */
+> +	bh = head;
+> +	do {
+> +		if (buffer_async_read(bh))
+>   			submit_bh(REQ_OP_READ, bh);
+> -	}
+> +	} while ((bh = bh->b_this_page) != head);
+> +
+>   	return 0;
+>   }
+>   EXPORT_SYMBOL(block_read_full_folio);
+> 
+> 
+> I do wonder how much it's worth doing this vs switching to non-BH methods.
+> I appreciate that's a lot of work still.
 
-Darrick,
+That's what I've been wondering, too.
 
-Quick question.
-You indicated that you would like to discuss the topics:
-Atomic file contents exchange
-Atomic directio writes
+I would _vastly_ prefer to switch over to iomap; however, the blasted
+sb_bread() is getting in the way. Currently iomap only runs on entire
+pages / folios, but a lot of (older) filesystems insist on doing 512
+byte I/O. While this seem logical (seeing that 512 bytes is the
+default, and, in most cases, the only supported sector size) question
+is whether _we_ from the linux side need to do that.
+We _could_ upgrade to always do full page I/O; there's a good
+chance we'll be using the entire page anyway eventually.
+And with storage bandwidth getting larger and larger we might even
+get a performance boost there.
 
-Are those intended to be in a separate session from online fsck?
-Both in the same session?
+And it would save us having to implement sub-page I/O for iomap.
 
-I know you posted patches for FIEXCHANGE_RANGE [1],
-but they were hiding inside a huge DELUGE and people
-were on New Years holidays, so nobody commented.
+Hmm?
 
-Perhaps you should consider posting an uptodate
-topic suggestion to let people have an opportunity to
-start a discussion before LSFMM.
+Cheers,
 
-Thanks,
-Amir.
+Hannes
+-- 
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
+Myers, Andrew McDonald, Martje Boudien Moerman
 
-[1] https://lore.kernel.org/linux-fsdevel/167243843494.699466.5163281976943=
-635014.stgit@magnolia/
