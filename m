@@ -2,122 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73F556E2E99
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 04:32:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C2A96E2EBC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 05:07:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230097AbjDOCcF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Apr 2023 22:32:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54352 "EHLO
+        id S229450AbjDODHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Apr 2023 23:07:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbjDOCcE (ORCPT
+        with ESMTP id S229461AbjDODHF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Apr 2023 22:32:04 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66B2D59D2;
-        Fri, 14 Apr 2023 19:32:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LKu44/7divD7drUoUvhwbQweIThwjY6Ox0fiwkad+8M=; b=jkOcp4tWYw5Dep25AqfvxqhTc4
-        GTCA3dP1WQgfymf/IooR40z7GLI6DLMgaeBasOvQVaaWYSmM4lh4dDW2fLel82NDzIZ54rPbUdBzF
-        xGvbNAmM5pdLlIE7sS9cxobQ9+7HClxopbNumnWDoEVWsA1Vh7b4iYmCT4yTIIRJSWCY67XcTm4rR
-        OxkafstpetKZvyEgWnM6lI1eEnlJ9+3hnMMXhm9n33RXXVT/l6PuA/Feqhjg1Xp4msf5SKcdVyT4F
-        VFOYthuGpidWVrHCEv54eK76yMlcnMoa8POrsHHhRZlL6Ar004znok/fKBak7xVhndNnL5tNnqVsF
-        1/RCzSfg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pnVhi-009Hpb-FL; Sat, 15 Apr 2023 02:31:54 +0000
-Date:   Sat, 15 Apr 2023 03:31:54 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Hannes Reinecke <hare@suse.de>,
-        Pankaj Raghav <p.raghav@samsung.com>, brauner@kernel.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        Fri, 14 Apr 2023 23:07:05 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94FE149EA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Apr 2023 20:07:04 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 33F36rCO005359
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Apr 2023 23:06:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1681528015; bh=eObovwA9jSzaeP3XHUX6/KxQAiJBxQg41IZIxE7s0Q0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=jErlg5NM7LmZsmcX84SUhdibWLszLqJPpxvHyKPiWxUtzOB9aN3xZPGmAr9r/VKco
+         Eb+h48b/SjuGZ/1Lea06rbUQ/gfw7AeYOWWsstBxjQ+lnCZC0Dy2t5R17vXO9D6jH1
+         wBGxtVasyLdqfQCJy+MWJ1kjjugJqb7O47mZZqPGyDuo6rjIs4QLQAN3gG20qPIFX6
+         +QxGSPAgRBmzwT/gVno923rmyWAwhTN1GcGPCE5Vx9TYeIa2RpgxfZyrErGMq6ZGCY
+         uOJRzLvdNZ1zfM7nBLP/15c6bM8L7bZmNRsZoudOAm4cEWX9GaoZdm/oj2AD5XLoeN
+         O8gJoMmv69oZQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id B107015C4935; Fri, 14 Apr 2023 23:06:53 -0400 (EDT)
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gost.dev@samsung.com
-Subject: Re: [RFC 0/4] convert create_page_buffers to create_folio_buffers
-Message-ID: <ZDoMmtcwNTINAu3N@casper.infradead.org>
-References: <CGME20230414110825eucas1p1ed4d16627889ef8542dfa31b1183063d@eucas1p1.samsung.com>
- <20230414110821.21548-1-p.raghav@samsung.com>
- <1e68a118-d177-a218-5139-c8f13793dbbf@suse.de>
- <ZDn3XPMA024t+C1x@bombadil.infradead.org>
+        Jan Kara <jack@suse.cz>, rookxu <brookxu.cn@gmail.com>
+Subject: Re: [PATCH v6 0/9] ext4: Convert inode preallocation list to an rbtree
+Date:   Fri, 14 Apr 2023 23:06:52 -0400
+Message-Id: <168152581960.510457.9877863491937008511.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <cover.1679731817.git.ojaswin@linux.ibm.com>
+References: <cover.1679731817.git.ojaswin@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZDn3XPMA024t+C1x@bombadil.infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 06:01:16PM -0700, Luis Chamberlain wrote:
-> a) dynamically allocate those now
-> b) do a cursory review of the users of that and prepare them
->    to grok buffer heads which are blocksize based rather than
->    PAGE_SIZE based. So we just try to kill MAX_BUF_PER_PAGE.
+
+On Sat, 25 Mar 2023 13:43:33 +0530, Ojaswin Mujoo wrote:
+> This patch series aim to improve the performance and scalability of
+> inode preallocation by changing inode preallocation linked list to an
+> rbtree. I've ran xfstests quick on this series and plan to run auto group
+> as well to confirm we have no regressions.
 > 
-> Without a) I think buffers after PAGE_SIZE won't get submit_bh() or lock for
-> bs > PAGE_SIZE right now.
+> ** Shortcomings of existing implementation **
+> 
+> [...]
 
-Worse, we'll overflow the array and corrupt the stack.
+Applied, thanks!
 
-This one is a simple fix ...
+[1/9] ext4: Stop searching if PA doesn't satisfy non-extent file
+      commit: e86a718228b61eef747b8deb446f807b2be73148
+[2/9] ext4: Refactor code related to freeing PAs
+      commit: 820897258ad342e78388ee9f5814fc485e79102a
+[3/9] ext4: Refactor code in ext4_mb_normalize_request() and ext4_mb_use_preallocated()
+      commit: bcf434992145dd08bb5c8d0bd4bf34811e0a5d78
+[4/9] ext4: Move overlap assert logic into a separate function
+      commit: 7692094ac513e48ee37d0f1fb057f3f7f8d53385
+[5/9] ext4: Abstract out overlap fix/check logic in ext4_mb_normalize_request()
+      commit: 0830344c953aeabee91ac88281585756d047df39
+[6/9] ext4: Fix best extent lstart adjustment logic in ext4_mb_new_inode_pa()
+      commit: 93cdf49f6eca5e23f6546b8f28457b2e6a6961d9
+[7/9] ext4: Convert pa->pa_inode_list and pa->pa_obj_lock into a union
+      commit: a8e38fd37cff911638ac288adb138265f71e50c0
+[8/9] ext4: Use rbtrees to manage PAs instead of inode i_prealloc_list
+      commit: 3872778664e36528caf8b27f355e75482f6d562d
+[9/9] ext4: Remove the logic to trim inode PAs
+      commit: 361eb69fc99f1a8f1d653d69ecd742f3cbb896be
 
-+++ b/fs/buffer.c
-@@ -2282,7 +2282,7 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
- {
-        struct inode *inode = folio->mapping->host;
-        sector_t iblock, lblock;
--       struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
-+       struct buffer_head *bh, *head;
-        unsigned int blocksize, bbits;
-        int nr, i;
-        int fully_mapped = 1;
-@@ -2335,7 +2335,6 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
-                        if (buffer_uptodate(bh))
-                                continue;
-                }
--               arr[nr++] = bh;
-        } while (i++, iblock++, (bh = bh->b_this_page) != head);
- 
-        if (fully_mapped)
-@@ -2353,24 +2352,27 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
-        }
- 
-        /* Stage two: lock the buffers */
--       for (i = 0; i < nr; i++) {
--               bh = arr[i];
-+       bh = head;
-+       do {
-                lock_buffer(bh);
-                mark_buffer_async_read(bh);
--       }
-+               bh = bh->b_this_page;
-+       } while (bh != head);
- 
-        /*
-         * Stage 3: start the IO.  Check for uptodateness
-         * inside the buffer lock in case another process reading
-         * the underlying blockdev brought it uptodate (the sct fix).
-         */
--       for (i = 0; i < nr; i++) {
--               bh = arr[i];
-+       bh = head;
-+       do {
-                if (buffer_uptodate(bh))
-                        end_buffer_async_read(bh, 1);
-                else
-                        submit_bh(REQ_OP_READ, bh);
--       }
-+               bh = bh->b_this_page;
-+       } while (bh != head);
-+
-        return 0;
- }
- EXPORT_SYMBOL(block_read_full_folio);
-
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
