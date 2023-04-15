@@ -2,184 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D8936E2F91
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 09:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F13766E2FB6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 10:22:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229845AbjDOHpf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Apr 2023 03:45:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45158 "EHLO
+        id S229894AbjDOIWQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Apr 2023 04:22:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbjDOHpH (ORCPT
+        with ESMTP id S229890AbjDOIWO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Apr 2023 03:45:07 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1FB483DF;
-        Sat, 15 Apr 2023 00:45:04 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id 98e67ed59e1d1-2467729fbc4so1604308a91.1;
-        Sat, 15 Apr 2023 00:45:04 -0700 (PDT)
+        Sat, 15 Apr 2023 04:22:14 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 301641BD9;
+        Sat, 15 Apr 2023 01:22:11 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id lh8so7681254plb.1;
+        Sat, 15 Apr 2023 01:22:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681544704; x=1684136704;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UC4njAHIv2ukYsLLd4EVfdpnd2WOl/cSebcSSE8kz+4=;
-        b=lUixrBJ6NdQUMytPXZ1OazICdL3ZRQqtjpnREVHTxuvO+3cwaNTOQi8JlPH7ziJXjw
-         gAixEj58woVhDJHLY79ZPgViDM7l01zPpreIu6KwkybqjD24w9ERRB3lNOdQyddxBAcR
-         P1sd6ptO2vGx4RBdI5VzIQc3Q5gf1knAHSehK6vW548clSgiNLCdVl3ahQSsxtYKp/F0
-         zEFR/OI1kkBdDnDhE/b32LaZshT1rWcMHvI4c7hyZOX8PiEoWVwWiwoAqlTf5rNA7IK1
-         pwsx8IsCkH4RXCaJwsQ8xFMJP9CNzrZ2lNGISc+r5XJPzLDcDxPvB/nqntF2QjzurXdx
-         rGFw==
+        d=gmail.com; s=20221208; t=1681546929; x=1684138929;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LrPwCHRKxX/7nUZU7PZjWjkHnyylgUC+HfUtdJ+I1OA=;
+        b=GmKn0pkY+y4gxAFJO8QRU2AssljFiRnHqLbkDjlQryQjgHRs366l0iqZE/+Zn1xOiO
+         WMkMnGDGN/dBIl6JfbefvxQeSkopMI5qtPC+rUt8UUk5z9/uITEsnkLIuD1PXyafC49r
+         /TsdyblUhi3ga8bQ/f+KY0E3wdCjEcmfk4VVSmj1yZUxW/OwWkysjXaL0lDypcsr1nJX
+         IH13ea1VH48ogvDimphguAOBOlAEnGM7kL5o82hA4NQsPohtQ2QeMR2bB7H5P0Y59wmr
+         NDzPPao+zgs2klPtDhmS1PKpFH9s0oTDB2U2FKcChNkF76hQfSlTpx8+/C1lDW16lb3j
+         OhkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681544704; x=1684136704;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UC4njAHIv2ukYsLLd4EVfdpnd2WOl/cSebcSSE8kz+4=;
-        b=Ea4QQWCCvJD5wDnkExBPDmiJJhpudWT+eQg2+A54lQ/cpqdXgk00EPawpMAdTeK3dD
-         1s2AEra/1Ea/OUUVWlLaezZvYRHqr/eeTszf8OYbDIws0ntvPYELU6vSjmOspKxfp27z
-         63YzxXoumoDl822oWGmh/pZzdmIZGOmpxfjDLZBB3OEbjwH4ntFPdaD0/Raw2uCi+3kP
-         LfgoSl7jAuAaOA7tR2Mua//+H38xEA3V2OWlkrMdOJjIbWBxeayc2OwZr1k7f6X/7vp9
-         gE6S4SCIaWeVGw1GR+HRVFb8P7vPipNvjoj3L/CNrBMDXbY+C+A6YZe7+2HwIeU6en/T
-         HgwQ==
-X-Gm-Message-State: AAQBX9d7/P+2DguGggExKV1JPmSKhMn3bLVr3jwh9B3eqKb+yBy3h7Qz
-        SKTxbGHjiaBbExMHQzpkEiPs6aWKtFw=
-X-Google-Smtp-Source: AKy350a3c4CsjCT+f51TqgC33BAfCBQ9QK0BFS6LLRgHszkgORkmXFaHt14gCkqYwE+6cBvppFffmQ==
-X-Received: by 2002:a05:6a00:1a09:b0:636:e52f:631e with SMTP id g9-20020a056a001a0900b00636e52f631emr11473833pfv.1.1681544703770;
-        Sat, 15 Apr 2023 00:45:03 -0700 (PDT)
-Received: from rh-tp.. ([2406:7400:63:2dd2:1827:1d70:2273:8ee0])
-        by smtp.gmail.com with ESMTPSA id e21-20020aa78255000000b0063b675f01a5sm2338789pfn.11.2023.04.15.00.45.01
+        d=1e100.net; s=20221208; t=1681546929; x=1684138929;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LrPwCHRKxX/7nUZU7PZjWjkHnyylgUC+HfUtdJ+I1OA=;
+        b=G7VYTXM9rnqxNB1vGWHtqP805RWTE9xWJHxafLcWdtOkhfvwFFbBEkilbsVfkqlGxo
+         tTMP340K53uGFpUWeHbrvQeAZQtx5zOp7/gFHWvP6nU4vVrUEVqGKVgllFA0SN2ObftL
+         OfcDR8tmc7fgjqclzBzMZR94uH9BQr6rCEV7crGI0nb1jz7CXfjhojddD2ooxmjC6iXZ
+         xOzgdbOqGl6MxIiU4fZnCVJWPpNRe53k/zZ17/FHRBdm/fVAv3txO1IkC6DI3iUHqEUB
+         3xpfeF8S0iorJfOm+5yQ7RW3ZM2tbG5EO1TK8I6nEml6PrshqANNCps+56n+/PiM8pOo
+         WzfA==
+X-Gm-Message-State: AAQBX9fWwkzKbQ7g/BxOTUACSgIONhdv9ZwGAEkknnw4OZX9dXkxOicQ
+        jlTD8w4oTOUWrwFjEwttiNfvL3PPpGD6mbBu4Fc=
+X-Google-Smtp-Source: AKy350YSz3vwB7wQXR4+sawo+URv8oaIToE1pI7vWvAkQXm3mUilnjYEnWDANYbg0bnktUmq3bF3xA==
+X-Received: by 2002:a17:902:ce81:b0:19a:b754:4053 with SMTP id f1-20020a170902ce8100b0019ab7544053mr7225719plg.26.1681546929572;
+        Sat, 15 Apr 2023 01:22:09 -0700 (PDT)
+Received: from localhost.localdomain ([45.137.97.138])
+        by smtp.gmail.com with ESMTPSA id jj14-20020a170903048e00b001a52c38350fsm762169plb.169.2023.04.15.01.22.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Apr 2023 00:45:03 -0700 (PDT)
-From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFCv4 9/9] iomap: Add couple of DIO tracepoints
-Date:   Sat, 15 Apr 2023 13:14:30 +0530
-Message-Id: <793d0cc2d49ef472038fca2cbe638e18be40cb0c.1681544352.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1681544352.git.ritesh.list@gmail.com>
-References: <cover.1681544352.git.ritesh.list@gmail.com>
+        Sat, 15 Apr 2023 01:22:09 -0700 (PDT)
+From:   Chunguang Wu <fullspring2018@gmail.com>
+To:     akpm@linux-foundation.org, corbet@lwn.net
+Cc:     adobriyan@gmail.com, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH] fs/proc: add Kthread flag to /proc/$pid/status
+Date:   Sat, 15 Apr 2023 16:21:55 +0800
+Message-Id: <20230415082155.5298-1-fullspring2018@gmail.com>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add iomap_dio_rw_queued and iomap_dio_complete tracepoint.
-iomap_dio_rw_queued is mostly only to know that the request was queued
-and -EIOCBQUEUED was returned. It is mostly iomap_dio_complete which has
-all the details.
+The command `ps -ef ` and `top -c` mark kernel thread by '['
+and ']', but sometimes the result is not correct.
+The task->flags in /proc/$pid/stat is good, but we need remember
+the value of PF_KTHREAD is 0x00200000 and convert dec to hex.
+If we have no binary program and shell script which read
+/proc/$pid/stat, we can know it directly by
+`cat /proc/$pid/status`.
 
-<output log>
-           a.out-1827  [004]   707.806763: iomap_dio_rw_queued:  dev 7:7 ino 0xd size 0x1000 offset 0x1000 length 0x0
-     ksoftirqd/3-31    [003]   707.806968: iomap_dio_complete:   dev 7:7 ino 0xd size 0x1000 offset 0x1000 flags DIRECT aio 1 error 0 ret 4096
-
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Signed-off-by: Chunguang Wu <fullspring2018@gmail.com>
 ---
- fs/iomap/direct-io.c |  5 ++++-
- fs/iomap/trace.c     |  1 +
- fs/iomap/trace.h     | 35 +++++++++++++++++++++++++++++++++++
- 3 files changed, 40 insertions(+), 1 deletion(-)
+ Documentation/filesystems/proc.rst | 2 ++
+ fs/proc/array.c                    | 7 +++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 36ab1152dbea..cef28cfd77b7 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -130,6 +130,7 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
- 	if (ret > 0)
- 		ret += dio->done_before;
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 9d5fd9424e8b..8a563684586c 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -179,6 +179,7 @@ read the file /proc/PID/status::
+   Gid:    100     100     100     100
+   FDSize: 256
+   Groups: 100 14 16
++  Kthread:    0
+   VmPeak:     5004 kB
+   VmSize:     5004 kB
+   VmLck:         0 kB
+@@ -256,6 +257,7 @@ It's slow but very precise.
+  NSpid                       descendant namespace process ID hierarchy
+  NSpgid                      descendant namespace process group ID hierarchy
+  NSsid                       descendant namespace session ID hierarchy
++ Kthread                     kernel thread flag, 1 is yes, 0 is no
+  VmPeak                      peak virtual memory size
+  VmSize                      total program size
+  VmLck                       locked memory size
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 9b0315d34c58..fde6a0b92728 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -434,6 +434,13 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
  
-+	trace_iomap_dio_complete(iocb, dio->error, ret);
- 	kfree(dio);
+ 	task_state(m, ns, pid, task);
  
- 	return ret;
-@@ -650,8 +651,10 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	 */
- 	dio->wait_for_completion = wait_for_completion;
- 	if (!atomic_dec_and_test(&dio->ref)) {
--		if (!wait_for_completion)
-+		if (!wait_for_completion) {
-+			trace_iomap_dio_rw_queued(inode, iomi.pos, iomi.len);
- 			return ERR_PTR(-EIOCBQUEUED);
-+		}
- 
- 		for (;;) {
- 			set_current_state(TASK_UNINTERRUPTIBLE);
-diff --git a/fs/iomap/trace.c b/fs/iomap/trace.c
-index da217246b1a9..728d5443daf5 100644
---- a/fs/iomap/trace.c
-+++ b/fs/iomap/trace.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2019 Christoph Hellwig
-  */
- #include <linux/iomap.h>
-+#include <linux/uio.h>
- 
- /*
-  * We include this last to have the helpers above available for the trace
-diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-index f6ea9540d082..9c017af93302 100644
---- a/fs/iomap/trace.h
-+++ b/fs/iomap/trace.h
-@@ -83,6 +83,7 @@ DEFINE_RANGE_EVENT(iomap_writepage);
- DEFINE_RANGE_EVENT(iomap_release_folio);
- DEFINE_RANGE_EVENT(iomap_invalidate_folio);
- DEFINE_RANGE_EVENT(iomap_dio_invalidate_fail);
-+DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
- 
- #define IOMAP_TYPE_STRINGS \
- 	{ IOMAP_HOLE,		"HOLE" }, \
-@@ -183,6 +184,40 @@ TRACE_EVENT(iomap_iter,
- 		   (void *)__entry->caller)
- );
- 
-+TRACE_EVENT(iomap_dio_complete,
-+	TP_PROTO(struct kiocb *iocb, int error, ssize_t ret),
-+	TP_ARGS(iocb, error, ret),
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(ino_t,	ino)
-+		__field(loff_t, isize)
-+		__field(loff_t, pos)
-+		__field(int,	ki_flags)
-+		__field(bool,	aio)
-+		__field(int,	error)
-+		__field(ssize_t, ret)
-+	),
-+	TP_fast_assign(
-+		__entry->dev = file_inode(iocb->ki_filp)->i_sb->s_dev;
-+		__entry->ino = file_inode(iocb->ki_filp)->i_ino;
-+		__entry->isize = file_inode(iocb->ki_filp)->i_size;
-+		__entry->pos = iocb->ki_pos;
-+		__entry->ki_flags = iocb->ki_flags;
-+		__entry->aio = !is_sync_kiocb(iocb);
-+		__entry->error = error;
-+		__entry->ret = ret;
-+	),
-+	TP_printk("dev %d:%d ino 0x%lx size 0x%llx offset 0x%llx flags %s aio %d error %d ret %zd",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  __entry->ino,
-+		  __entry->isize,
-+		  __entry->pos,
-+		  __print_flags(__entry->ki_flags, "|", TRACE_IOCB_STRINGS),
-+		  __entry->aio,
-+		  __entry->error,
-+		  __entry->ret)
-+);
++	seq_puts(m, "Kthread:\t");
++	if (task->flags & PF_KTHREAD) {
++		seq_puts(m, "1\n");
++	} else {
++		seq_puts(m, "0\n");
++	}
 +
- #endif /* _IOMAP_TRACE_H */
- 
- #undef TRACE_INCLUDE_PATH
+ 	if (mm) {
+ 		task_mem(m, mm);
+ 		task_core_dumping(m, task);
 -- 
-2.39.2
+2.39.1
 
