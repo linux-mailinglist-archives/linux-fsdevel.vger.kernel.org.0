@@ -2,69 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A5906E3108
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 13:07:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4349D6E3122
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Apr 2023 13:35:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230283AbjDOLHD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Apr 2023 07:07:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60906 "EHLO
+        id S229930AbjDOLfh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Apr 2023 07:35:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229922AbjDOLHB (ORCPT
+        with ESMTP id S229505AbjDOLfh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Apr 2023 07:07:01 -0400
-Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B132D73;
-        Sat, 15 Apr 2023 04:06:58 -0700 (PDT)
-Received: by mail-ua1-x930.google.com with SMTP id p12so1334943uak.13;
-        Sat, 15 Apr 2023 04:06:58 -0700 (PDT)
+        Sat, 15 Apr 2023 07:35:37 -0400
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921ED44BA;
+        Sat, 15 Apr 2023 04:35:35 -0700 (PDT)
+Received: by mail-vs1-xe35.google.com with SMTP id f10so7314863vsv.13;
+        Sat, 15 Apr 2023 04:35:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681556818; x=1684148818;
+        d=gmail.com; s=20221208; t=1681558534; x=1684150534;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kVGsSDU61/EuKltyjrXqAdX0XD2PqbdZCRx1bpZ6xCk=;
-        b=X5tzDCCejdJvbofekQqDCL6jYGXndkgENYffMcZyz0H8IghP1GJAU/5C960PWIaZor
-         kWzzrE/Sl2Rm0sIyY7uGJn8luAzLxsOArABMgNoUcJTv3kUQKxZSWgi3fZKSoX6ftE+G
-         i9HmXwnQoc3eJVYv4QFJneoxtiJwOwQwgPgbp6QL/2def5qyHBTgxZ4Ce/qaQ/Cs3P5G
-         BrkvUDoanJloSNDWwtYiG2NW8xBd4TtKvZhkd7K/+tTugljwssIm2+Ur033PQKd9A4fc
-         GFvOasrrxqKVCzkTWWEXUF3S77uPzGIOKGELEbxxZVR5XSH14SgPgT3/W64uH9COCqrF
-         8wsg==
+        bh=ZQuUOaQjNnI3LhQDwWrlJuNdVQ2r+6got/EIYQa54mo=;
+        b=hT8wjsnNTBtxNV9WKobkwO35hvbv+s93dkHMP++9f/1/yX96veY5u3ERIYT2T46NVk
+         KszWwLe9zlujxutksbHT6u2NeQBjlwdwLFftNaWqnjqjD1G6zgxNDZGv8ZJNX2oNgN8i
+         fT4HiGQiWIp0HZCXFnwKxN7+dfVSymYT3G8vggYn0UKwtU+DhbzPdgBP95gt4HGW9aBM
+         ZTBFHjRIY5BqF2DubsYiASXywhfP4L2sjB8g5o0YTDGt0W6mi1SBXPvv4+8/6lCGorOp
+         fhHMxv53wlfXEg/Kx7BN1S6K7+m8BwqYCQs11r0H+CdrBx2zz2z62OZi22t5QslJRQdY
+         JfTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681556818; x=1684148818;
+        d=1e100.net; s=20221208; t=1681558534; x=1684150534;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kVGsSDU61/EuKltyjrXqAdX0XD2PqbdZCRx1bpZ6xCk=;
-        b=FZobX4asFlPEPjKZh15jmJNAcaapVjhs3i9y97b1nJltDeuhDDk8sk5nllI4INJc28
-         mmKUaEINm2EPuz8Jnq+ch0ZweIaHGCrjaH4QbviQiyNRFP7J3KHFIeKpw7OYbcZYyIV0
-         aJ6/nY0cEzaERMLMUJmIK1OxpCZah70OkdIzWJ0VC7CpZZSUFXbFUhhXD/lAvG6ZdTKM
-         n32ukb9eDmlPRoIfHix3MvnKQAcew4nkdcrsZ+eAczZJGby4nT7qw97LKoK4sm1HIVvi
-         z0z6i86NZ4P6a5Y4GQLLJ8VGWL5Vbx95nRSzSKEK9GWNnbPMYtC6RE65qRin//8UPwHN
-         wuFA==
-X-Gm-Message-State: AAQBX9e1K8AbHsriYAyS61JT7qM7qTjvBXzDWEWxJ6a85HTJwbRSiW8F
-        2GlOivtFxt2+66ZL+078jweb+kUOFD2pw0PD2Bk=
-X-Google-Smtp-Source: AKy350ajYHddrdnQrEFILBzfyaG+m6smLJQW39SyhgN7Unq0V4I6LbZK1QtK2k9FHdVHmiIlf9FrM4R2FD5SH7cjuVY=
-X-Received: by 2002:a05:6122:17a1:b0:440:60e7:f8e6 with SMTP id
- o33-20020a05612217a100b0044060e7f8e6mr5162222vkf.0.1681556817879; Sat, 15 Apr
- 2023 04:06:57 -0700 (PDT)
+        bh=ZQuUOaQjNnI3LhQDwWrlJuNdVQ2r+6got/EIYQa54mo=;
+        b=XfwxR0SQ1VQF5imKRovVPqFswDJpBSGWS14isBq0Qxe/fRkc6EAoTy0Ln3v7oozuoT
+         BV75Yhg9E4kXXZDAetzpiEE0ogBSHy2BArQWMXDybRLCdxjjE4BIUDtTLh1aM63Zdfkw
+         xWYVhNbUYaKAHZZ3Rx1CwL6KStL2uEnMU+NvDV4z6xwcNqMeIwyJxUCwVDnPsmcXsHWG
+         AbaPASPzNdWKSKH+LOZMpARRz5KfSshKMLehbT1eKF/+lxPUA4E+8JscApvtL0yheSZW
+         CB7s7mC7hxP/JgyBBSM/PVXh6aTnWbWCxkDyuFuJmi00bnlXyXAyKPKcMjeeaClP+9xu
+         7Thw==
+X-Gm-Message-State: AAQBX9eZ4Dzv/NGtSttNVNy5JTQUe87iXaNhrNxcWkgk7fPh41tVjySl
+        DsfKU3GWuQwDJ3WUD2vlW8QS1BsTEGiO4+61YqM=
+X-Google-Smtp-Source: AKy350Za/ZW99Sc2eyyPRafhDAV9O3OPsz4ldcuWs1DITk9ZzkGG9vMclYoTfMfN65WHNKYQ3O0J3rDvritmjvle96g=
+X-Received: by 2002:a67:e04f:0:b0:42c:48e9:4fe0 with SMTP id
+ n15-20020a67e04f000000b0042c48e94fe0mr4869637vsl.0.1681558534297; Sat, 15 Apr
+ 2023 04:35:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <e57733cd-364d-84e0-cfe0-fd41de14f434@bytedance.com>
- <CAJfpegsVsnjUy2N+qO-j4ToScwev01AjwUA0Enp_DxroPQS30A@mail.gmail.com>
-In-Reply-To: <CAJfpegsVsnjUy2N+qO-j4ToScwev01AjwUA0Enp_DxroPQS30A@mail.gmail.com>
+References: <20230411143702.64495-1-jlayton@kernel.org>
+In-Reply-To: <20230411143702.64495-1-jlayton@kernel.org>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 15 Apr 2023 14:06:46 +0300
-Message-ID: <CAOQ4uxhYi2823GiVn9Sf-CRGrcigkbPw2x1VQRV3_Md92gJnrw@mail.gmail.com>
-Subject: Re: [LSF/MM TOPIC] fsinfo and mount namespace notifications
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Abel Wu <wuyun.abel@bytedance.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+Date:   Sat, 15 Apr 2023 14:35:23 +0300
+Message-ID: <CAOQ4uxi9rz1GFP+jMJm482axyAPtAcB+jnZ5jCR++EYKA_iRpw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3][RESEND] fs: opportunistic high-res file timestamps
+To:     Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -77,54 +77,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 14, 2022 at 2:36=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
+On Tue, Apr 11, 2023 at 5:38=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
 >
-> On Mon, 14 Nov 2022 at 10:00, Abel Wu <wuyun.abel@bytedance.com> wrote:
-> >
-> > Hi Miklos and anyone interested in this proposal, is there any update o=
-n
-> > this? Sorry that I didn't find any..
+> (Apologies for the resend, but I didn't send this with a wide enough
+> distribution list originally).
 >
-> No update.
+> A few weeks ago, during one of the discussions around i_version, Dave
+> Chinner wrote this:
 >
-> Which part are you interested in?
+> "You've missed the part where I suggested lifting the "nfsd sampled
+> i_version" state into an inode state flag rather than hiding it in
+> the i_version field. At that point, we could optimise away the
+> secondary ctime updates just like you are proposing we do with the
+> i_version updates.  Further, we could also use that state it to
+> decide whether we need to use high resolution timestamps when
+> recording ctime updates - if the nfsd has not sampled the
+> ctime/i_version, we don't need high res timestamps to be recorded
+> for ctime...."
 >
-> Getting mount attributes?  Or a generic key-value retrieval and
-> storage interface?
+> While I don't think we can practically optimize away ctime updates
+> like we do with i_version, I do like the idea of using this scheme to
+> indicate when we need to use a high-res timestamp.
 >
-> For the first one there are multiple proposals, one of them is adding
-> a new system call using binary structs.  The fsinfo(2) syscall was
-> deemed overdesigned and rejected.  Something simpler would probably be
-> fairly uncontroversial.
+> This patchset is a first stab at a scheme to do this. It declares a new
+> i_state flag for this purpose and adds two new vfs-layer functions to
+> implement conditional high-res timestamp fetching. It then converts both
+> tmpfs and xfs to use it.
 >
-> As for the other proposal it seems like some people would prefer a set
-> of new syscalls, while some others would like to reuse the xattr
-> syscalls.  No agreement seems to have been reached.
+> This seems to behave fine under xfstests, but I haven't yet done
+> any performance testing with it. I wouldn't expect it to create huge
+> regressions though since we're only grabbing high res timestamps after
+> each query.
 >
-> Also I think a notification system for mount related events is also a
-> much needed component.   I've tried to explore using the fsnotify
-> framework for this, but the code is pretty convoluted and I couldn't
-> get prototype working.
+> I like this scheme because we can potentially convert any filesystem to
+> use it. No special storage requirements like with i_version field.  I
+> think it'd potentially improve NFS cache coherency with a whole swath of
+> exportable filesystems, and helps out NFSv3 too.
 >
+> This is really just a proof-of-concept. There are a number of things we
+> could change:
+>
+> 1/ We could use the top bit in the tv_sec field as the flag. That'd give
+>    us different flags for ctime and mtime. We also wouldn't need to use
+>    a spinlock.
+>
+> 2/ We could probably optimize away the high-res timestamp fetch in more
+>    cases. Basically, always do a coarse-grained ts fetch and only fetch
+>    the high-res ts when the QUERIED flag is set and the existing time
+>    hasn't changed.
+>
+> If this approach looks reasonable, I'll plan to start working on
+> converting more filesystems.
+>
+> One thing I'm not clear on is how widely available high res timestamps
+> are. Is this something we need to gate on particular CONFIG_* options?
+>
+> Thoughts?
 
-Hi Miklos,
+Jeff,
 
-You indicated that you would like to discuss the topic of
-"mount info/mount notification" in LSF/MM, so I am resurrecting
-this thread [1] from last year's topic.
+Considering that this proposal is pretty uncontroversial,
+do you still want to discuss/lead a session on i_version changes in LSF/MM?
 
-Would you be interested to lead a session this year?
-So far, it felt like the topic was in a bit of a stalemate.
+I noticed that Chuck listed "timespamt resolution and i_version" as part
+of his NFSD BoF topic proposal [1], but I do not think all of these topics
+can fit in one 30 minute session.
 
-Do you have a concrete suggestion of how to escape this stalemate?
-I think it is better that we start discussing it a head of LSF/MM if we hop=
-e
-to reach consensus in LSF/MM, so that people will have a chance to
-get re-familiar with the problems and proposed solutions.
+Dave,
+
+I would like to use this opportunity to invite you and any developers that
+are involved in fs development and not going to attend LSF/MM in-person,
+to join LSF/MM virtually for some sessions that you may be interested in.
+See this lore query [2] for TOPICs proposed this year.
+
+You can let me know privately which sessions you are interested in
+attending and your time zone and I will do my best to schedule those
+sessions in time slots that would be more convenient for your time zone.
+
+Obviously, I am referring to FS track sessions.
+Cross track sessions are going to be harder to accommodate,
+but I can try.
 
 Thanks,
 Amir.
 
-[1] https://lore.kernel.org/linux-fsdevel/YnEeuw6fd1A8usjj@miu.piliscsaba.r=
-edhat.com/
+[1] https://lore.kernel.org/linux-fsdevel/FF0202C3-7500-4BB3-914B-DBAA3E0EA=
+3D7@oracle.com/
+[2] https://lore.kernel.org/linux-fsdevel/?q=3DLSF+TOPIC+-re+d%3A4.months.a=
+go..
