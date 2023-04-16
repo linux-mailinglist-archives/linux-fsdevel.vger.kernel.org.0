@@ -2,66 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0357D6E37C9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Apr 2023 13:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ACA66E37CB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Apr 2023 13:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbjDPLpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Apr 2023 07:45:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58502 "EHLO
+        id S229763AbjDPLvr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Apr 2023 07:51:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229711AbjDPLpm (ORCPT
+        with ESMTP id S229711AbjDPLvq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Apr 2023 07:45:42 -0400
-X-Greylist: delayed 801 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 16 Apr 2023 04:45:40 PDT
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48F231BD0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Apr 2023 04:45:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1681645537;
-        bh=HEn7uCmufleFzqhAfssVM6gFo6aBgBWRD2eGaMBDrYA=;
-        h=From:To:Cc:Subject:Date;
-        b=ZFOknG4OeXyL5Bwp+EqgF3HQd7iZTLsVMXIcGUftzXbudYv6k5PT9VCixlWA+7Cfr
-         l0SsZpeA8X7jFyQ7IOkAHNfk26a9PseIOkYb83hQ8OkdfhNeoMpEcKYczgu0vc7wFW
-         xIoxjmh/TqFM3S2vMwrDUFX6mQ10yDyNlafXhh6w=
-Received: from wen-VirtualBox.lan ([106.92.97.36])
-        by newxmesmtplogicsvrsza12-0.qq.com (NewEsmtp) with SMTP
-        id 8010569A; Sun, 16 Apr 2023 19:32:01 +0800
-X-QQ-mid: xmsmtpt1681644721tkwysbehx
-Message-ID: <tencent_AF886EF226FD9F39D28FE4D9A94A95FA2605@qq.com>
-X-QQ-XMAILINFO: NQR8mRxMnur9eZ/qO3bGnXWU67tnbfJ7f+MZu9EtuAFRQzCN6W51OV9NvuyvLQ
-         fre6s75Vv9BNPg1NyGHzB8iMlYlwS1YHsq6Ao67eJAwBMGLQrDqbczTytpdwKM1lRyop9kVQd/6U
-         RiBs1i1c1MVrP0cJU2f/wL7taVgbvYeDgAJEDkMveidUTGgpTFdnkORVW1p05BUrGWxryONwWx0p
-         g7dKJWq56kCu1gAa5Vjm/CJ6ecMwNXAc5gQZ/BskeVWZnHPSFkURkGF0T/m+oqjUfEmWJgfPwDRd
-         m9MuLWP+4UfLQG/t1BagvPBEk4pZv56xfRuoBNaOD/BLcE0uqD3Z2pm8JUjfhdgnsP7ZJnEOueEl
-         DB8p/L/o3At7RPhkfjgVEsPOZlQRyOzR912tOu7XBujPcR0FlPcSY5ryNSCECADgvP0O9RGtoJt+
-         uIq39QjmR/KBIQy1v25EULnNwvcjYgXCgPDFTziBYaKMnNxgEBwNldeOpUz/YznHM3oovOHCowXz
-         Xs5dRm1N2FaUzROlbN2DNEmr0v93+2AqdaCXhlg+ZObQwac4j7PVSkKHL/wWB7/eolproQPT//GK
-         eEODWXhUz4TX9ustd3jotBQSh382uQnCd4nQ6LDfsf3aNOZACrJ2K6kwOsWvYaagtzDkc0lCPsd4
-         ri5z8WI09/apg180fQivy2ZFyS/5XOq5l8CtaHJ9MoNqXUYZ3Bx/WeR7bdigYDKYC70QP20LvpYl
-         ncpINZLu9ie3g8TyNBXWdJExZax+ed3sZcWQsesBFywqNf+905bhD3STASf/iupfjpX8EJEFF7dx
-         vzfQ8S6/yOxVbMDyEmX23VM91mRWcCEd1fnIJZsWnA3v40faGSJSW3BRv7v4gFUf6huWjeGhVVbb
-         UBOmKTXZlUmgBIVqGIHlGrC8i1Cvb550ng+XqL516GudWFu92USu3fyi/AbSA41LT9uaF2PbQsg2
-         MNdFndHLHWq8Fxt8/49EIiF9K/TZTeUvJWpJFP3UfFh88M3hJeitytiQYXAKl7RijpBfsOdo6KLL
-         m2bdxTJ5EJTWeYH722CzC122dawV4=
-From:   wenyang.linux@foxmail.com
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Wen Yang <wenyang.linux@foxmail.com>,
-        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Paolo Bonzini <pbonzini@redhat.com>, Fu Wei <wefu@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] eventfd: support delayed wakeup for non-semaphore eventfd to reduce cpu utilization
-Date:   Sun, 16 Apr 2023 19:31:55 +0800
-X-OQ-MSGID: <20230416113155.18753-1-wenyang.linux@foxmail.com>
-X-Mailer: git-send-email 2.37.2
+        Sun, 16 Apr 2023 07:51:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3688E1FC7;
+        Sun, 16 Apr 2023 04:51:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BEB7E60CA3;
+        Sun, 16 Apr 2023 11:51:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80BCAC433EF;
+        Sun, 16 Apr 2023 11:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681645904;
+        bh=mNnJMm7iNNu8gLDmVbiscd/RfBID9+WEncb2zmYzGjg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=i9BiZCczvdmzyJkPfIDcpveGRoQRdSamjC6e+aWe8N52ntLjgBmV6mUkeRZaEL0tQ
+         4VtSSh8Jydovl2VTlCX4xOYGmBzNoYP7KJVHxTMdlOaUHF6qDX3rRdlBjtTm0UaHbf
+         LEbJfkjDsib609aHb9X3lJD997gUwaP9q0xNHUzS14O1cpAttawvLPowPhVFVQ4K6d
+         K5sOGyl5XKpxJRJcrKcf3I27NBQ6y/tY3ONEfZscNsQQd7ShUoNnqY5TDsc6xMCN1Q
+         FWoyQjWLhjrfPLymbQuUhrcAMxKm8bTomSo1QO+UFjKcNO5y2hcDHG4xaFI2N9Bokg
+         3nFxVBIdq2hOQ==
+Message-ID: <7246a80ae33244a4553bbc0ca9e771ce8143d97b.camel@kernel.org>
+Subject: Re: [PATCH] nfsd: don't use GFP_KERNEL from
+ nfsd_getxattr()/nfsd_listxattr()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Chuck Lever III <chuck.lever@oracle.com>
+Cc:     Frank van der Linden <fllinden@amazon.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Frank van der Linden <fllinden@amazon.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Sun, 16 Apr 2023 07:51:41 -0400
+In-Reply-To: <c310695e-4279-b1a7-5c2a-2771cc19aa66@I-love.SAKURA.ne.jp>
+References: <72bf692e-bb6b-c1f2-d1ba-3205ab649b43@I-love.SAKURA.ne.jp>
+         <4BC7955B-40E4-4A43-B2D1-2E9302E84337@oracle.com>
+         <b014047a-4a70-b38f-c5bb-01bc3c53d6f2@I-love.SAKURA.ne.jp>
+         <aee35d52ab19e7e95f69742be8329764db72cbf8.camel@kernel.org>
+         <c310695e-4279-b1a7-5c2a-2771cc19aa66@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        HELO_DYNAMIC_IPADDR,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,RDNS_DYNAMIC,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,328 +63,75 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Wen Yang <wenyang.linux@foxmail.com>
+On Sun, 2023-04-16 at 08:21 +0900, Tetsuo Handa wrote:
+> On 2023/04/16 3:40, Jeff Layton wrote:
+> > On Sun, 2023-04-16 at 02:11 +0900, Tetsuo Handa wrote:
+> > > On 2023/04/16 1:13, Chuck Lever III wrote:
+> > > > > On Apr 15, 2023, at 7:07 AM, Tetsuo Handa <penguin-kernel@I-love.=
+SAKURA.ne.jp> wrote:
+> > > > >=20
+> > > > > Since GFP_KERNEL is GFP_NOFS | __GFP_FS, usage like GFP_KERNEL | =
+GFP_NOFS
+> > > > > does not make sense. Drop __GFP_FS flag in order to avoid deadloc=
+k.
+> > > >=20
+> > > > The server side threads run in process context. GFP_KERNEL
+> > > > is safe to use here -- as Jeff said, this code is not in
+> > > > the server's reclaim path. Plenty of other call sites in
+> > > > the NFS server code use GFP_KERNEL.
+> > >=20
+> > > GFP_KERNEL memory allocation calls filesystem's shrinker functions
+> > > because of __GFP_FS flag. My understanding is
+> > >=20
+> > >   Whether this code is in memory reclaim path or not is irrelevant.
+> > >   Whether memory reclaim path might hold lock or not is relevant.
+> > >=20
+> > > . Therefore, question is, does nfsd hold i_rwsem during memory reclai=
+m path?
+> > >=20
+> >=20
+> > No. At the time of these allocations, the i_rwsem is not held.
+>=20
+> Excuse me? nfsd_getxattr()/nfsd_listxattr() _are_ holding i_rwsem
+> via inode_lock_shared(inode) before kvmalloc(GFP_KERNEL | GFP_NOFS) alloc=
+ation.
+> That's why
+>=20
+> 	/*
+> 	 * We're holding i_rwsem - use GFP_NOFS.
+> 	 */
+>=20
+> is explicitly there in nfsd_listxattr() side.
+>=20
+> If memory reclaim path (directly or indirectly via locking dependency) in=
+volves
+> inode_lock_shared(inode)/inode_lock(inode), it is not safe to use __GFP_F=
+S flag.
+>=20
 
-For the NON SEMAPHORE eventfd, if it's counter has a nonzero value,
-then a read(2) returns 8 bytes containing that value, and the counter's
-value is reset to zero. Therefore, in the NON SEMAPHORE scenario,
-N event_writes vs ONE event_read is possible.
+(cc'ing Frank V. who wrote this code and -fsdevel)
 
-However, the current implementation wakes up the read thread immediately
-in eventfd_write so that the cpu utilization increases unnecessarily.
+I stand corrected! You're absolutely right that it's taking the i_rwsem
+for read there. That seems pretty weird, actually. I don't believe we
+need to hold the inode_lock to call vfs_getxattr or vfs_listxattr, and
+certainly nothing else under there requires it.
 
-By adding a configurable delay after eventfd_write, these unnecessary
-wakeup operations are avoided, thereby reducing cpu utilization.
+Frank, was there some reason you decided you needed the inode_lock
+there? It looks like under the hood, the xattr code requires you to take
+it for write in setxattr and removexattr, but you don't need it at all
+in getxattr or listxattr. Go figure.
 
-We used the following test code:
+If there's no reason to keep it there, then in addition to removing
+GFP_NOFS there I think we probably ought to just remove the inode_lock
+from nfsd_getxattr and nfsd_listxattr altogether.
 
- #include <assert.h>
- #include <errno.h>
- #include <unistd.h>
- #include <stdio.h>
- #include <string.h>
- #include <poll.h>
- #include <sys/eventfd.h>
- #include <sys/prctl.h>
+Longer term, I wonder what the inode_lock is protecting in setxattr and
+removexattr operations, given that get and list don't require them?
+These are always delegated to the filesystem driver -- there is no
+generic xattr implementation.
 
-void publish(int fd)
-{
-	unsigned long long i = 0;
-	int ret;
-
-	prctl(PR_SET_NAME,"publish");
-	while (1) {
-		i++;
-		ret = write(fd, &i, sizeof(i));
-		if (ret < 0)
-			printf("XXX: write error: %s\n", strerror(errno));
-	}
-}
-
-void subscribe(int fd)
-{
-	unsigned long long i = 0;
-	struct pollfd pfds[1];
-	int ret;
-
-	prctl(PR_SET_NAME,"subscribe");
-	pfds[0].fd = fd;
-	pfds[0].events = POLLIN;
-
-	usleep(10);
-	while(1) {
-		ret = poll(pfds, 1, -1);
-		if (ret == -1)
-			printf("XXX: poll error: %s\n", strerror(errno));
-		if(pfds[0].revents & POLLIN)
-			read(fd, &i, sizeof(i));
-	}
-}
-
-int main(int argc, char *argv[])
-{
-	pid_t pid;
-	int fd;
-
-	fd = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK | EFD_NONBLOCK);
-	assert(fd);
-
-	pid = fork();
-	if (pid == 0)
-		subscribe(fd);
-	else if (pid > 0)
-		publish(fd);
-	else {
-		printf("XXX: fork error!\n");
-		return -1;
-	}
-
-	return 0;
-}
-
- # taskset -c 2-3 ./a.out
-
-The original cpu usage is as follows:
-07:02:55 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-07:02:57 PM  all   16.43    0.00   16.28    0.16    0.00    0.00    0.00    0.00    0.00   67.14
-07:02:57 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-07:02:57 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-07:02:57 PM    2   29.21    0.00   34.83    1.12    0.00    0.00    0.00    0.00    0.00   34.83
-07:02:57 PM    3   51.97    0.00   48.03    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-
-07:02:57 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-07:02:59 PM  all   18.75    0.00   17.47    2.56    0.00    0.32    0.00    0.00    0.00   60.90
-07:02:59 PM    0    6.88    0.00    1.59    5.82    0.00    0.00    0.00    0.00    0.00   85.71
-07:02:59 PM    1    1.04    0.00    1.04    2.59    0.00    0.00    0.00    0.00    0.00   95.34
-07:02:59 PM    2   26.09    0.00   35.87    0.00    0.00    1.09    0.00    0.00    0.00   36.96
-07:02:59 PM    3   52.00    0.00   47.33    0.00    0.00    0.67    0.00    0.00    0.00    0.00
-
-07:02:59 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-07:03:01 PM  all   16.15    0.00   16.77    0.00    0.00    0.00    0.00    0.00    0.00   67.08
-07:03:01 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-07:03:01 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-07:03:01 PM    2   27.47    0.00   36.26    0.00    0.00    0.00    0.00    0.00    0.00   36.26
-07:03:01 PM    3   51.30    0.00   48.70    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-
-Then settinga the new control parameter, as follows:
-echo 5 > /proc/sys/fs/eventfd_wakeup_delay_msec
-
-The cpu usagen was observed to decrease by more than 20% (cpu #2, 26% -> 0.x%),  as follows:
-
-07:03:01 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-07:03:03 PM  all   10.31    0.00    8.36    0.00    0.00    0.00    0.00    0.00    0.00   81.34
-07:03:03 PM    0    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.99
-07:03:03 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-07:03:03 PM    2    0.52    0.00    1.05    0.00    0.00    0.00    0.00    0.00    0.00   98.43
-07:03:03 PM    3   56.59    0.00   43.41    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-
-07:03:03 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-07:03:05 PM  all   10.61    0.00    7.82    0.00    0.00    0.00    0.00    0.00    0.00   81.56
-07:03:05 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-07:03:05 PM    1    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.99
-07:03:05 PM    2    0.53    0.00    0.53    0.00    0.00    0.00    0.00    0.00    0.00   98.94
-07:03:05 PM    3   58.59    0.00   41.41    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-
-07:03:05 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-07:03:07 PM  all    8.99    0.00    7.25    0.72    0.00    0.00    0.00    0.00    0.00   83.04
-07:03:07 PM    0    0.00    0.00    1.52    2.53    0.00    0.00    0.00    0.00    0.00   95.96
-07:03:07 PM    1    0.00    0.00    0.50    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-07:03:07 PM    2    0.54    0.00    0.54    0.00    0.00    0.00    0.00    0.00    0.00   98.92
-07:03:07 PM    3   57.55    0.00   42.45    0.00    0.00    0.00    0.00    0.00    0.00    0.00
-
-Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Dylan Yudaken <dylany@fb.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Fu Wei <wefu@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- Documentation/admin-guide/sysctl/fs.rst | 13 +++++
- fs/eventfd.c                            | 78 ++++++++++++++++++++++++-
- init/Kconfig                            | 19 ++++++
- 3 files changed, 109 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-index a321b84eccaa..7baf702c2f72 100644
---- a/Documentation/admin-guide/sysctl/fs.rst
-+++ b/Documentation/admin-guide/sysctl/fs.rst
-@@ -70,6 +70,19 @@ negative dentries which do not map to any files. Instead,
- they help speeding up rejection of non-existing files provided
- by the users.
- 
-+eventfd_wakeup_delay_msec
-+------------------
-+Frequent writing of an eventfd can also lead to frequent wakeup of the peer
-+read process, resulting in significant cpu overhead.
-+How ever for the NON SEMAPHORE eventfd, if it's counter has a nonzero value,
-+then a read(2) returns 8 bytes containing that value, and the counter's value
-+is reset to zero.
-+So it coule be optimized as follows: N event_writes vs ONE event_read.
-+By adding a configurable delay after eventfd_write, these unnecessary wakeup
-+operations are avoided.
-+The max value is 100 ms.
-+
-+Default: 0
- 
- file-max & file-nr
- ------------------
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 95850a13ce8d..c34fff843c48 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -41,6 +41,9 @@ struct eventfd_ctx {
- 	__u64 count;
- 	unsigned int flags;
- 	int id;
-+#ifdef CONFIG_EVENTFD_WAKEUP_DELAY
-+	struct delayed_work dwork;
-+#endif
- };
- 
- __u64 eventfd_signal_mask(struct eventfd_ctx *ctx, __u64 n, unsigned mask)
-@@ -95,6 +98,9 @@ static void eventfd_free_ctx(struct eventfd_ctx *ctx)
- {
- 	if (ctx->id >= 0)
- 		ida_simple_remove(&eventfd_ida, ctx->id);
-+#ifdef CONFIG_EVENTFD_WAKEUP_DELAY
-+	flush_delayed_work(&ctx->dwork);
-+#endif
- 	kfree(ctx);
- }
- 
-@@ -256,6 +262,28 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
- 	return sizeof(ucnt);
- }
- 
-+#ifdef CONFIG_EVENTFD_WAKEUP_DELAY
-+
-+static unsigned long eventfd_wake_delay_jiffies;
-+
-+static void eventfd_delayed_workfn(struct work_struct *work)
-+{
-+	struct delayed_work *dwork = to_delayed_work(work);
-+	struct eventfd_ctx *ctx = container_of(dwork, struct eventfd_ctx, dwork);
-+
-+	spin_lock_irq(&ctx->wqh.lock);
-+	current->in_eventfd = 1;
-+	if (ctx->count) {
-+		/* waitqueue_active is safe because ctx->wqh.lock is being held here. */
-+		if (waitqueue_active(&ctx->wqh))
-+			wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+	}
-+	current->in_eventfd = 0;
-+	spin_unlock_irq(&ctx->wqh.lock);
-+}
-+
-+#endif
-+
- static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t count,
- 			     loff_t *ppos)
- {
-@@ -282,8 +310,27 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
- 	if (likely(res > 0)) {
- 		ctx->count += ucnt;
- 		current->in_eventfd = 1;
--		if (waitqueue_active(&ctx->wqh))
-+
-+		/* waitqueue_active is safe because ctx->wqh.lock is being held here. */
-+		if (waitqueue_active(&ctx->wqh)) {
-+#ifdef CONFIG_EVENTFD_WAKEUP_DELAY
-+			if (ctx->flags & EFD_SEMAPHORE)
-+				wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+			else {
-+				unsigned long delay = eventfd_wake_delay_jiffies;
-+
-+				if (delay) {
-+					if (!delayed_work_pending(&ctx->dwork))
-+						queue_delayed_work(system_unbound_wq,
-+								&ctx->dwork, delay);
-+				} else
-+					wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+			}
-+#else
- 			wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-+#endif
-+		}
-+
- 		current->in_eventfd = 0;
- 	}
- 	spin_unlock_irq(&ctx->wqh.lock);
-@@ -406,6 +453,9 @@ static int do_eventfd(unsigned int count, int flags)
- 	ctx->count = count;
- 	ctx->flags = flags;
- 	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
-+#ifdef CONFIG_EVENTFD_WAKEUP_DELAY
-+	INIT_DELAYED_WORK(&ctx->dwork, eventfd_delayed_workfn);
-+#endif
- 
- 	flags &= EFD_SHARED_FCNTL_FLAGS;
- 	flags |= O_RDWR;
-@@ -438,3 +488,29 @@ SYSCALL_DEFINE1(eventfd, unsigned int, count)
- 	return do_eventfd(count, 0);
- }
- 
-+#ifdef CONFIG_EVENTFD_WAKEUP_DELAY
-+
-+static const unsigned long eventfd_wake_delay_max = HZ / 10;
-+
-+static struct ctl_table fs_eventfd_ctl[] = {
-+	{
-+		.procname      = "eventfd_wakeup_delay_msec",
-+		.data          = &eventfd_wake_delay_jiffies,
-+		.maxlen        = sizeof(eventfd_wake_delay_jiffies),
-+		.mode          = 0644,
-+		.proc_handler  = proc_doulongvec_ms_jiffies_minmax,
-+		.extra1        = SYSCTL_ZERO,
-+		.extra2        = (void *)&eventfd_wake_delay_max,
-+	},
-+	{ }
-+};
-+
-+static int __init init_fs_eventfd_sysctls(void)
-+{
-+	register_sysctl_init("fs", fs_eventfd_ctl);
-+	return 0;
-+}
-+
-+fs_initcall(init_fs_eventfd_sysctls);
-+
-+#endif /* CONFIG_EVENTFD_WAKEUP_DELAY */
-diff --git a/init/Kconfig b/init/Kconfig
-index 750d41a38574..23d68bcc1f19 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1629,6 +1629,25 @@ config EVENTFD
- 
- 	  If unsure, say Y.
- 
-+if EVENTFD
-+config EVENTFD_WAKEUP_DELAY
-+	bool "support delayed wakeup for the non-semaphore eventfd" if EXPERT
-+	default n
-+	depends on SYSCTL
-+	help
-+	  This option enables the delayed wakeup for the non-semaphore eventfd.
-+	  Frequent writing of an eventfd can also lead to frequent wakeup of
-+	  the peer read process, resulting in significant cpu overhead.
-+	  How ever for the NON SEMAPHORE eventfd, if it's counter has a
-+	  nonzero value, then a read(2) returns 8 bytes containing that value,
-+	  and the counter's value is reset to zero.
-+	  By adding a configurable delay after eventfd_write, these unnecessary
-+	  wakeup operations are avoided.
-+
-+	  If unsure, say N.
-+
-+endif # EVENTFD
-+
- config SHMEM
- 	bool "Use full shmem filesystem" if EXPERT
- 	default y
--- 
-2.37.2
-
+Maybe we ought to do a lock pushdown on those operations at some point?
+I'd bet that most of the setxattr/removexattr operations do their own
+locking and don't require the i_rwsem at all.
+--=20
+Jeff Layton <jlayton@kernel.org>
