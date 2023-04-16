@@ -2,130 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 794266E3C8C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 00:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4289F6E3CB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 00:57:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229967AbjDPWHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Apr 2023 18:07:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34708 "EHLO
+        id S230048AbjDPW5M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Apr 2023 18:57:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbjDPWHW (ORCPT
+        with ESMTP id S229967AbjDPW5K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Apr 2023 18:07:22 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D31CF2133;
-        Sun, 16 Apr 2023 15:07:19 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id E7085C01E; Mon, 17 Apr 2023 00:07:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1681682836; bh=xwB+nzBQW7d8TFoIztbHD75zt+9iiLx/9rkexbbWi80=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aR0/GeKZkEj80qvbNPgpHjKuZpudBE+0lJIURKv0KNQC+IzV9xJPxekEN/6UvlDpw
-         lsvv/AAfiJemDgUDxMC5PMG8HqpjIEasaJ5d65UDf66jkMN2U4UNxlp6cGMRxoGELE
-         fgiXyTKdDyUjoeTAabCIGWBJihvZapQtmQJ0vmJXW4TCN0ZIP42Tq0Iftm9+D6yegH
-         W8QdqZqxy2KY8FrZwNSr3rOsSOjFa3Hths41R5YPKY+jYmPje0WgWQOy251Nd0iV7m
-         QuzBM1XcNSuV2Fl2HTDaOJ94iWBOHtQSv5DrEc58nnbDV/4IYsLVVHhRFb50OwoX/c
-         sOYC7k+SdPFHg==
+        Sun, 16 Apr 2023 18:57:10 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB9892107
+        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Apr 2023 15:57:08 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id cm18-20020a17090afa1200b0024713adf69dso11650576pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Apr 2023 15:57:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1681685828; x=1684277828;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eMp1HyUScPg9e5OjsE4H6AdsNng50u3kqrZV1kuxuXY=;
+        b=aWAQXAI9lxWv380udXWiLplIbESigoZmgz5Gqm6HavbkFKoBlJM66dHBSEjSToJnRB
+         nLfOLF+fS2g2dP6yAYlwvMbVi80maMmppQRvL9saTtzYigfWsuwwLfN5O65SaQMEHlUI
+         d8dXpm2t8cLJBH7LohZDGTWK5SKv63WOFtxqueATaJilVY5r/YD7lmqYekI++v7K447v
+         3TrB9bIQotwg6Vhu33b6vw2xVVj07cidQLaoPkYbwMEEfqfoTv7MquM8tBQWNX/I8ji9
+         68qEVPGaxt03CI922g4ijudSHm6H2D6qum03jU5GbT0x5qipr3qf3d7qu2zdzUgVRGCA
+         aftw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681685828; x=1684277828;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eMp1HyUScPg9e5OjsE4H6AdsNng50u3kqrZV1kuxuXY=;
+        b=JLJ5wI3b7zk/3j0ykXMaSrAhOziUIGq3S3y2ni78i47yyUFX7A7kDGyqThu805Oa8E
+         NPXvPfhCTALn4abBHMhUup3ua05xZmTVCIFCCMbXOps+6S1lKgUQWSEMoCORHlKk5BG7
+         WC1RBA8WYksflxjv45yubBIOe6yW7ydQtc2T6zvG361zgljdlHxLNm1rrEjl/7sR7xRU
+         L+Jk3peot7UYF4ufUDa3Oy9KxxtIJdhaleWxBHPUuQRwbJIr4TAgl3/XvDRl6xsF2FBz
+         KPHTfSVe0XDEv5Wj+CZppb3zhBT5DJuKIEXY5fV1zXQAZrn7ACOLKjEGmthG6bzZSqQ9
+         ngHw==
+X-Gm-Message-State: AAQBX9fkDWQW7jp3STRyYPxGJgj6Ydhc3noIMJwB8Evtsc9qoj34bXJa
+        ZZWd/y+dDqODhIBTftAmY50tLQ==
+X-Google-Smtp-Source: AKy350ZeudXCuZi7xXENjltppKRAfXMucBbiT6+WeYco4vnS98h1Dg3TdMh8eu8hcpWak3694GqwMg==
+X-Received: by 2002:a17:902:f152:b0:1a1:ca37:525a with SMTP id d18-20020a170902f15200b001a1ca37525amr9361174plb.36.1681685828244;
+        Sun, 16 Apr 2023 15:57:08 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-41-174.pa.nsw.optusnet.com.au. [49.180.41.174])
+        by smtp.gmail.com with ESMTPSA id t5-20020a170902bc4500b001a1a82fc6d3sm6278141plz.268.2023.04.16.15.57.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Apr 2023 15:57:07 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1poBIu-004FMX-76; Mon, 17 Apr 2023 08:57:04 +1000
+Date:   Mon, 17 Apr 2023 08:57:04 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        "kbus @pop.gmail.com>> Keith Busch" <kbusch@kernel.org>,
+        brauner@kernel.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Subject: Re: [RFC 0/4] convert create_page_buffers to create_folio_buffers
+Message-ID: <20230416225704.GC447837@dread.disaster.area>
+References: <1e68a118-d177-a218-5139-c8f13793dbbf@suse.de>
+ <ZDn3XPMA024t+C1x@bombadil.infradead.org>
+ <ZDoMmtcwNTINAu3N@casper.infradead.org>
+ <ZDoZCJHQXhVE2KZu@bombadil.infradead.org>
+ <ZDodlnm2nvYxbvR4@casper.infradead.org>
+ <31765c8c-e895-4207-2b8c-39f6c7c83ece@suse.de>
+ <ZDraOHQHqeabyCvN@casper.infradead.org>
+ <ZDtPK5Qdts19bKY2@bombadil.infradead.org>
+ <ZDtuFux7FGlCMkC3@casper.infradead.org>
+ <ZDuHEolre/saj8iZ@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZDuHEolre/saj8iZ@bombadil.infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id EDF64C01A;
-        Mon, 17 Apr 2023 00:07:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1681682836; bh=xwB+nzBQW7d8TFoIztbHD75zt+9iiLx/9rkexbbWi80=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aR0/GeKZkEj80qvbNPgpHjKuZpudBE+0lJIURKv0KNQC+IzV9xJPxekEN/6UvlDpw
-         lsvv/AAfiJemDgUDxMC5PMG8HqpjIEasaJ5d65UDf66jkMN2U4UNxlp6cGMRxoGELE
-         fgiXyTKdDyUjoeTAabCIGWBJihvZapQtmQJ0vmJXW4TCN0ZIP42Tq0Iftm9+D6yegH
-         W8QdqZqxy2KY8FrZwNSr3rOsSOjFa3Hths41R5YPKY+jYmPje0WgWQOy251Nd0iV7m
-         QuzBM1XcNSuV2Fl2HTDaOJ94iWBOHtQSv5DrEc58nnbDV/4IYsLVVHhRFb50OwoX/c
-         sOYC7k+SdPFHg==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 95555fd8;
-        Sun, 16 Apr 2023 22:07:09 +0000 (UTC)
-Date:   Mon, 17 Apr 2023 07:06:54 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v7 0/3] io_uring: add getdents64 support
-Message-ID: <ZDxxfpADz6-T4-tS@codewreck.org>
-References: <20211221164004.119663-1-shr@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211221164004.119663-1-shr@fb.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Stefan Roesch wrote on Tue, Dec 21, 2021 at 08:40:01AM -0800:
-> This series adds support for getdents64 in liburing. The intent is to
-> provide a more complete I/O interface for io_uring.
+On Sat, Apr 15, 2023 at 10:26:42PM -0700, Luis Chamberlain wrote:
+> > > > Except ... we want to probe a dozen different
+> > > > filesystems, and half of them keep their superblock at the same offset
+> > > > from the start of the block device.  So we do want to keep it cached.
+> > > > That's arguing for using the page cache, at least to read it.
+> > > 
+> > > Do we currently share anything from the bdev cache with the fs for this?
+> > > Let's say that first block device blocksize in memory.
+> > 
+> > sb_bread() is used by most filesystems, and the buffer cache aliases
+> > into the page cache.
+> 
+> I see thanks. I checked what xfs does and its xfs_readsb() uses its own
+> xfs_buf_read_uncached(). It ends up calling xfs_buf_submit() and
+> xfs_buf_ioapply_map() does it's own submit_bio(). So I'm curious why
+> they did that.
 
-[reminder: This series was dropped a year ago after Al Viro rightly
-pointed out that we can't just pass an arbitrary offset to iterate_dir
-as offset validation is costly and not always possible at all]
+XFS has it's own metadata address space for caching - it does not
+use the block device page cache at all. This is not new, it never
+has.
 
-I'm digging an old topic here because I was looking at trying io_uring
-on a toy project (specifically, exporting infos out of /sys/fs/cgroup
-recursively), but was partly held back by the lack of getdents or
-equivalent interface for the crawler part -- and existing bricks like
-fts or nftw predate openat interfaces and just didn't appeal to me, but
-in general just mixing in io_uring and synchronous getdents sounded a
-bit of a pain.
+The xfs_buf buffer cache does not use the page cache, either. It
+does it's own thing, has it's own indexing, locking, shrinkers, etc.
+IOWs, it does not use the iomap infrastructure at all - iomap is
+used by XFS exclusively for data IO.
 
-Given it's been over a year I guess it's not such a much needed feature,
-but when you're centering your program loop around the ring having the
-occasional getdents/readdir call is a bit cumbersome.
+As for why we use an uncached buffer for the superblock? That's
+largely historic because prior to 2007 every modification that did
+allocation/free needed to lock and modify the superblock at
+transaction commit. Hence it's always needed in memory but a
+critical fast path, so it is always directly available without
+needing to do a cache lookup to callers that need it.
 
+In 2007, lazy superblock counters got rid of the requirement to lock
+the superblock buffer in every transaction commit, so the uncached
+buffer optimisation hasn't really been needed for the past decade.
+But if it ain't broke, don't try to fix it....
 
-This is probably a naive idea, but would it make sense discussing just
-making it fit the current getdents API:
-Given the problem seems to be revalidating the offset, since the main
-usecase is probably to just go through a directory, perhaps the file's
-offset could be updated just like the real call and offset validation be
-skipped if the parameter is equal to the file's offset?
-Giving a different offset would be equivalent to lseek + getdents and
-update the position as well, so e.g. rewinding the directory with a seek
-0 would work if an application needs to check a directory's content
-multiple times.
+> > > > Now, do we want userspace to be able to dd a new superblock into place
+> > > > and have the mounted filesystem see it? 
+> > > 
+> > > Not sure I follow this. dd a new super block?
+> > 
+> > In userspace, if I run 'dd if=blah of=/dev/sda1 bs=512 count=1 seek=N',
+> > I can overwrite the superblock.  Do we want filesystems to see that
+> > kind of vandalism, or do we want the mounted filesystem to have its
+> > own copy of the data and overwrite what userspace wrote the next time it
+> > updates the superblock?
+> 
+> Oh, what happens today?
 
-Heck, seek to any offset other than 0 could just be refused for any sane
-usage, it just doesn't make sense to use anything else in practice;
-that'd make it a defacto "dumb getdents + rewinddir".
-The API could be made simpler to use/clear about expectations by making
-the last parameter "bool rewind_first" instead of an offset (or I guess
-a flag with just a single valid bit if we were to really implement this)
+In XFS, it will completely ignore the fact the the superblock got
+trashed like this. When the fs goes idle, or the sb modified for
+some other reason, it will relog the in-memory superblock and write
+it back to disk, thereby fixing the corruption. i.e. while the
+filesystem is mounted, the superblock is _write-only_...
 
+> > (the trick is that this may not be vandalism, it might be the sysadmin
+> > updating the uuid or running some fsck-ish program or trying to update
+> > the superblock to support fabulous-new-feature on next mount.  does this
+> > change the answer?)
 
-This isn't very io_uring-like, but it'd allow for an io_uring-centric
-program to also handle some directory processing, and wouldn't expose
-anything that's not currently already possible to do (as long as each
-processed op brings in its own context, the only "race" I can see in
-iterate_dir is that file->f_pos can go back to a previously also valid
-position if some iterations are faster than others, assuming it's an
-atomic access, and that'd probably warrant a READ/WRITE_ONCE or
-something.. but that's not a new problem, user threads can already
-hammer getdents in parallel on a single fd if they want useless results)
+If you need to change anything in the superblock while the XFS fs is
+mounted, then you have to use ioctls to modify the superblock
+contents through the running transaction subsystem. Editting the
+block device directly breaks the security model of filesystems that
+assume they have exclusive access to the block device whilst the
+filesystem is mounted....
 
-
-What do you think?
-
-
-I'm just asking with a toy in mind so it's not like I have any strong
-opinion, but I'd be happy to rework Stefan's patches if it looks like it
-might make sense.
-(And if the consensus is that this will make hell break loose I'll just
-forget about it before sinking more time in it, just catching up was fun
-enough!)
-
-Cheers,
+-Dave.
 -- 
-Dominique Martinet | Asmadeus
+Dave Chinner
+david@fromorbit.com
