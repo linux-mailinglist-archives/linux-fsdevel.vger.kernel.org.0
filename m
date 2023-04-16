@@ -2,162 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4289F6E3CB4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 00:57:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 484DF6E3CBF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 01:14:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230048AbjDPW5M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Apr 2023 18:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43914 "EHLO
+        id S230048AbjDPXOK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Apr 2023 19:14:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229967AbjDPW5K (ORCPT
+        with ESMTP id S229484AbjDPXOJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Apr 2023 18:57:10 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB9892107
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Apr 2023 15:57:08 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id cm18-20020a17090afa1200b0024713adf69dso11650576pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Apr 2023 15:57:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1681685828; x=1684277828;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eMp1HyUScPg9e5OjsE4H6AdsNng50u3kqrZV1kuxuXY=;
-        b=aWAQXAI9lxWv380udXWiLplIbESigoZmgz5Gqm6HavbkFKoBlJM66dHBSEjSToJnRB
-         nLfOLF+fS2g2dP6yAYlwvMbVi80maMmppQRvL9saTtzYigfWsuwwLfN5O65SaQMEHlUI
-         d8dXpm2t8cLJBH7LohZDGTWK5SKv63WOFtxqueATaJilVY5r/YD7lmqYekI++v7K447v
-         3TrB9bIQotwg6Vhu33b6vw2xVVj07cidQLaoPkYbwMEEfqfoTv7MquM8tBQWNX/I8ji9
-         68qEVPGaxt03CI922g4ijudSHm6H2D6qum03jU5GbT0x5qipr3qf3d7qu2zdzUgVRGCA
-         aftw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681685828; x=1684277828;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eMp1HyUScPg9e5OjsE4H6AdsNng50u3kqrZV1kuxuXY=;
-        b=JLJ5wI3b7zk/3j0ykXMaSrAhOziUIGq3S3y2ni78i47yyUFX7A7kDGyqThu805Oa8E
-         NPXvPfhCTALn4abBHMhUup3ua05xZmTVCIFCCMbXOps+6S1lKgUQWSEMoCORHlKk5BG7
-         WC1RBA8WYksflxjv45yubBIOe6yW7ydQtc2T6zvG361zgljdlHxLNm1rrEjl/7sR7xRU
-         L+Jk3peot7UYF4ufUDa3Oy9KxxtIJdhaleWxBHPUuQRwbJIr4TAgl3/XvDRl6xsF2FBz
-         KPHTfSVe0XDEv5Wj+CZppb3zhBT5DJuKIEXY5fV1zXQAZrn7ACOLKjEGmthG6bzZSqQ9
-         ngHw==
-X-Gm-Message-State: AAQBX9fkDWQW7jp3STRyYPxGJgj6Ydhc3noIMJwB8Evtsc9qoj34bXJa
-        ZZWd/y+dDqODhIBTftAmY50tLQ==
-X-Google-Smtp-Source: AKy350ZeudXCuZi7xXENjltppKRAfXMucBbiT6+WeYco4vnS98h1Dg3TdMh8eu8hcpWak3694GqwMg==
-X-Received: by 2002:a17:902:f152:b0:1a1:ca37:525a with SMTP id d18-20020a170902f15200b001a1ca37525amr9361174plb.36.1681685828244;
-        Sun, 16 Apr 2023 15:57:08 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-41-174.pa.nsw.optusnet.com.au. [49.180.41.174])
-        by smtp.gmail.com with ESMTPSA id t5-20020a170902bc4500b001a1a82fc6d3sm6278141plz.268.2023.04.16.15.57.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Apr 2023 15:57:07 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1poBIu-004FMX-76; Mon, 17 Apr 2023 08:57:04 +1000
-Date:   Mon, 17 Apr 2023 08:57:04 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        "kbus @pop.gmail.com>> Keith Busch" <kbusch@kernel.org>,
-        brauner@kernel.org, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Subject: Re: [RFC 0/4] convert create_page_buffers to create_folio_buffers
-Message-ID: <20230416225704.GC447837@dread.disaster.area>
-References: <1e68a118-d177-a218-5139-c8f13793dbbf@suse.de>
- <ZDn3XPMA024t+C1x@bombadil.infradead.org>
- <ZDoMmtcwNTINAu3N@casper.infradead.org>
- <ZDoZCJHQXhVE2KZu@bombadil.infradead.org>
- <ZDodlnm2nvYxbvR4@casper.infradead.org>
- <31765c8c-e895-4207-2b8c-39f6c7c83ece@suse.de>
- <ZDraOHQHqeabyCvN@casper.infradead.org>
- <ZDtPK5Qdts19bKY2@bombadil.infradead.org>
- <ZDtuFux7FGlCMkC3@casper.infradead.org>
- <ZDuHEolre/saj8iZ@bombadil.infradead.org>
+        Sun, 16 Apr 2023 19:14:09 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2163C2116;
+        Sun, 16 Apr 2023 16:14:08 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id AAD36219D3;
+        Sun, 16 Apr 2023 23:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1681686846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=V8DKA8509LHQxSlYzEhSziVDmqQKZXLWw9DF/3aJfuc=;
+        b=VUjyirxqot9R4W4wuLD6TSP4odC6E+a8NFBFZlltfSe1PyQmdJTwiJZBaFkxDDW1W3prET
+        hGrKnDOWOi48S3rc8/9kL8vYaiua8W1+agGZaQBNP2LwAZUX/rmrh79MIYlOpR01lxg1iW
+        NjS7xhssr0a4Lcs0hE7vABxx103JOwU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1681686846;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=V8DKA8509LHQxSlYzEhSziVDmqQKZXLWw9DF/3aJfuc=;
+        b=o6hooudXI2clAK8AqcJZUU6icNrC/ZF7wBV7RzkyzOXdSmACUi1we7JtdsSzZ0vBkr1pYG
+        OsdRXFqotWMRJfBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E11E913498;
+        Sun, 16 Apr 2023 23:14:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Ra+lJTuBPGSMeAAAMHmgww
+        (envelope-from <neilb@suse.de>); Sun, 16 Apr 2023 23:14:03 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZDuHEolre/saj8iZ@bombadil.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Jeff Layton" <jlayton@kernel.org>
+Cc:     "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Christian Brauner" <brauner@kernel.org>,
+        "Dave Wysochanski" <dwysocha@redhat.com>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "linux-nfs" <linux-nfs@vger.kernel.org>,
+        "David Howells" <dhowells@redhat.com>,
+        "Christoph Hellwig" <hch@lst.de>
+Subject: [PATCH/RFC] VFS: LOOKUP_MOUNTPOINT should used cached info whenever possible.
+In-reply-to: <95ee689c76bf034fa2fe9fade0bccdb311f3a04f.camel@kernel.org>
+References: <95ee689c76bf034fa2fe9fade0bccdb311f3a04f.camel@kernel.org>
+Date:   Mon, 17 Apr 2023 09:13:52 +1000
+Message-id: <168168683217.24821.6260957092725278201@noble.neil.brown.name>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 15, 2023 at 10:26:42PM -0700, Luis Chamberlain wrote:
-> > > > Except ... we want to probe a dozen different
-> > > > filesystems, and half of them keep their superblock at the same offset
-> > > > from the start of the block device.  So we do want to keep it cached.
-> > > > That's arguing for using the page cache, at least to read it.
-> > > 
-> > > Do we currently share anything from the bdev cache with the fs for this?
-> > > Let's say that first block device blocksize in memory.
-> > 
-> > sb_bread() is used by most filesystems, and the buffer cache aliases
-> > into the page cache.
-> 
-> I see thanks. I checked what xfs does and its xfs_readsb() uses its own
-> xfs_buf_read_uncached(). It ends up calling xfs_buf_submit() and
-> xfs_buf_ioapply_map() does it's own submit_bio(). So I'm curious why
-> they did that.
 
-XFS has it's own metadata address space for caching - it does not
-use the block device page cache at all. This is not new, it never
-has.
+When performing a LOOKUP_MOUNTPOINT lookup we don't really want to
+engage with underlying systems at all.  Any mount point MUST be in the
+dcache with a complete direct path from the root to the mountpoint.
+That should be sufficient to find the mountpoint given a path name.
 
-The xfs_buf buffer cache does not use the page cache, either. It
-does it's own thing, has it's own indexing, locking, shrinkers, etc.
-IOWs, it does not use the iomap infrastructure at all - iomap is
-used by XFS exclusively for data IO.
+This becomes an issue when the filesystem changes unexpected, such as
+when a NFS server is changed to reject all access.  It then becomes
+impossible to unmount anything mounted on the filesystem which has
+changed.  We could simply lazy-unmount the changed filesystem and that
+will often be sufficient.  However if the target filesystem needs
+"umount -f" to complete the unmount properly, then the lazy unmount will
+leave it incompletely unmounted.  When "-f" is needed, we really need to
+be able to name the target filesystem.
 
-As for why we use an uncached buffer for the superblock? That's
-largely historic because prior to 2007 every modification that did
-allocation/free needed to lock and modify the superblock at
-transaction commit. Hence it's always needed in memory but a
-critical fast path, so it is always directly available without
-needing to do a cache lookup to callers that need it.
+We NEVER want to revalidate anything.  We already avoid the revalidation
+of the mountpoint itself, be we won't need to revalidate anything on the
+path either as thay might affect the cache, and the cache is what we are
+really looking in.
 
-In 2007, lazy superblock counters got rid of the requirement to lock
-the superblock buffer in every transaction commit, so the uncached
-buffer optimisation hasn't really been needed for the past decade.
-But if it ain't broke, don't try to fix it....
+Permission checks are a little less clear.  We currently allow any user
+to make the umount syscall and perform the path lookup and only reject
+unprivileged users once the target mount point has been found.  If we
+completely relax permission checks then an unprivileged user could probe
+inaccessible parts of the name space by examining the error returned
+from umount().
 
-> > > > Now, do we want userspace to be able to dd a new superblock into place
-> > > > and have the mounted filesystem see it? 
-> > > 
-> > > Not sure I follow this. dd a new super block?
-> > 
-> > In userspace, if I run 'dd if=blah of=/dev/sda1 bs=512 count=1 seek=N',
-> > I can overwrite the superblock.  Do we want filesystems to see that
-> > kind of vandalism, or do we want the mounted filesystem to have its
-> > own copy of the data and overwrite what userspace wrote the next time it
-> > updates the superblock?
-> 
-> Oh, what happens today?
+So we only relax permission check when the user has CAP_SYS_ADMIN
+(may_mount() succeeds).
 
-In XFS, it will completely ignore the fact the the superblock got
-trashed like this. When the fs goes idle, or the sb modified for
-some other reason, it will relog the in-memory superblock and write
-it back to disk, thereby fixing the corruption. i.e. while the
-filesystem is mounted, the superblock is _write-only_...
+Note that if the path given is not direct and for example uses symlinks
+or "..", then dentries or symlink content may not be cached and a remote
+server could cause problem.  We can only be certain of a safe unmount if
+a direct path is used.
 
-> > (the trick is that this may not be vandalism, it might be the sysadmin
-> > updating the uuid or running some fsck-ish program or trying to update
-> > the superblock to support fabulous-new-feature on next mount.  does this
-> > change the answer?)
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ fs/namei.c | 46 ++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 40 insertions(+), 6 deletions(-)
 
-If you need to change anything in the superblock while the XFS fs is
-mounted, then you have to use ioctls to modify the superblock
-contents through the running transaction subsystem. Editting the
-block device directly breaks the security model of filesystems that
-assume they have exclusive access to the block device whilst the
-filesystem is mounted....
+diff --git a/fs/namei.c b/fs/namei.c
+index edfedfbccaef..f2df1adae7c5 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -498,8 +498,8 @@ static int sb_permission(struct super_block *sb, struct i=
+node *inode, int mask)
+  *
+  * When checking for MAY_APPEND, MAY_WRITE must also be set in @mask.
+  */
+-int inode_permission(struct mnt_idmap *idmap,
+-		     struct inode *inode, int mask)
++int inode_permission_mp(struct mnt_idmap *idmap,
++			struct inode *inode, int mask, bool mp)
+ {
+ 	int retval;
+=20
+@@ -523,7 +523,14 @@ int inode_permission(struct mnt_idmap *idmap,
+ 			return -EACCES;
+ 	}
+=20
+-	retval =3D do_inode_permission(idmap, inode, mask);
++	if (mp)
++		/* We are looking for a mountpoint and so don't
++		 * want to interact with the filesystem at all, just
++		 * the dcache and icache.
++		 */
++		retval =3D generic_permission(idmap, inode, mask);
++	else
++		retval =3D do_inode_permission(idmap, inode, mask);
+ 	if (retval)
+ 		return retval;
+=20
+@@ -533,6 +540,24 @@ int inode_permission(struct mnt_idmap *idmap,
+=20
+ 	return security_inode_permission(inode, mask);
+ }
++
++/**
++ * inode_permission - Check for access rights to a given inode
++ * @idmap:	idmap of the mount the inode was found from
++ * @inode:	Inode to check permission on
++ * @mask:	Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC)
++ *
++ * Check for read/write/execute permissions on an inode.  We use fs[ug]id for
++ * this, letting us set arbitrary permissions for filesystem access without
++ * changing the "normal" UIDs which are used for other things.
++ *
++ * When checking for MAY_APPEND, MAY_WRITE must also be set in @mask.
++ */
++int inode_permission(struct mnt_idmap *idmap,
++		     struct inode *inode, int mask)
++{
++	return inode_permission_mp(idmap, inode, mask, false);
++}
+ EXPORT_SYMBOL(inode_permission);
+=20
+ /**
+@@ -589,6 +614,7 @@ struct nameidata {
+ #define ND_ROOT_PRESET 1
+ #define ND_ROOT_GRABBED 2
+ #define ND_JUMPED 4
++#define ND_SYS_ADMIN 8
+=20
+ static void __set_nameidata(struct nameidata *p, int dfd, struct filename *n=
+ame)
+ {
+@@ -853,7 +879,8 @@ static bool try_to_unlazy_next(struct nameidata *nd, stru=
+ct dentry *dentry)
+=20
+ static inline int d_revalidate(struct dentry *dentry, unsigned int flags)
+ {
+-	if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE))
++	if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE) &&
++	    likely(!(flags & LOOKUP_MOUNTPOINT)))
+ 		return dentry->d_op->d_revalidate(dentry, flags);
+ 	else
+ 		return 1;
+@@ -1708,12 +1735,17 @@ static struct dentry *lookup_slow(const struct qstr *=
+name,
+ static inline int may_lookup(struct mnt_idmap *idmap,
+ 			     struct nameidata *nd)
+ {
++	/* If we are looking for a mountpoint and we have the SYS_ADMIN
++	 * capability, then we will by-pass the filesys for permission checks
++	 * and just use generic_permission().
++	 */
++	bool mp =3D (nd->flags & LOOKUP_MOUNTPOINT) && (nd->state & ND_SYS_ADMIN);
+ 	if (nd->flags & LOOKUP_RCU) {
+-		int err =3D inode_permission(idmap, nd->inode, MAY_EXEC|MAY_NOT_BLOCK);
++		int err =3D inode_permission_mp(idmap, nd->inode, MAY_EXEC|MAY_NOT_BLOCK, =
+mp);
+ 		if (err !=3D -ECHILD || !try_to_unlazy(nd))
+ 			return err;
+ 	}
+-	return inode_permission(idmap, nd->inode, MAY_EXEC);
++	return inode_permission_mp(idmap, nd->inode, MAY_EXEC, mp);
+ }
+=20
+ static int reserve_stack(struct nameidata *nd, struct path *link)
+@@ -2501,6 +2533,8 @@ int filename_lookup(int dfd, struct filename *name, uns=
+igned flags,
+ 	if (IS_ERR(name))
+ 		return PTR_ERR(name);
+ 	set_nameidata(&nd, dfd, name, root);
++	if ((flags & LOOKUP_MOUNTPOINT) && may_mount())
++		nd.state =3D ND_SYS_ADMIN;
+ 	retval =3D path_lookupat(&nd, flags | LOOKUP_RCU, path);
+ 	if (unlikely(retval =3D=3D -ECHILD))
+ 		retval =3D path_lookupat(&nd, flags, path);
+--=20
+2.40.0
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
