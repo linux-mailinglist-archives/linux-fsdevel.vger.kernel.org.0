@@ -2,90 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34E466E34D9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Apr 2023 06:01:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E0476E34E8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Apr 2023 06:20:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229711AbjDPEBC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Apr 2023 00:01:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55426 "EHLO
+        id S229828AbjDPEUt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Apr 2023 00:20:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbjDPEBB (ORCPT
+        with ESMTP id S229462AbjDPEUr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Apr 2023 00:01:01 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 337962115;
-        Sat, 15 Apr 2023 21:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=cuwzBT/PH/2bD1KMYhwjwolg7uBkqqaygg8jxUvIEW8=; b=E6g9+pTcKZmVQ4Gzvsex6qFn3l
-        USkynvSgj/YkrT20LuIhB7WgIbmBQ+2Pk7KFEa6Bp0MwAz3MqpxzACxEbcFJLHE8zFs6V8X4R3Nf7
-        PFSupthNLfuVbDVMaYpInelAXUOBt7q9TwpWSr176vhMYH0FZFbyitG1MEcJX8aVsf4cqE+NWokwG
-        m6cuCyH27ivTxu0uxANfuaUBG4flqVVENs3QkqI8tCI4WddGVHu0kNm2oIgqVadr8qnnvrPOGqHnB
-        Hsayg4kLgEHoaOkb9BVVbS35yY/edw22seHGvlX79WFVn9Rqr7k/X2qzahpC3QKZWg2voX1n16pjL
-        8D+SXfaA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pntZQ-00A6OJ-GD; Sun, 16 Apr 2023 04:00:56 +0000
-Date:   Sun, 16 Apr 2023 05:00:56 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     Pankaj Raghav <p.raghav@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mcgrof@kernel.org
-Subject: Re: [PATCH] mm/filemap: allocate folios according to the blocksize
-Message-ID: <ZDty+PQfHkrGBojn@casper.infradead.org>
-References: <20230414134908.103932-1-hare@suse.de>
+        Sun, 16 Apr 2023 00:20:47 -0400
+Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDA6826A1;
+        Sat, 15 Apr 2023 21:20:45 -0700 (PDT)
+Received: by mail-vs1-xe2f.google.com with SMTP id a9so20697401vsh.3;
+        Sat, 15 Apr 2023 21:20:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681618845; x=1684210845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lFHaERV3/v3bDFIZruBezwk/pvpEOOlCaDNdvQPiJv4=;
+        b=Tbfx06QIYgFhSJv4aJf/RTKFaskZNh4V69TrGcS1W0bTzJN2Lq4rjaeyDRKy7m1nyh
+         QuAjyREzNP5jXQUOdzOegYc5fFPkdnSrPRJD8nQAT7njR7wkqahgXIGP7a3Qsxso86ZS
+         3dGmR0lN8Wy0+JeU5j6nhffJtr/U4myIxJxoLiOh7e30JthVfvCKTj6MRIX/P8Tdeq6F
+         hp/19Jt53B20/hC9C16N+iJIIykaNPsLRrN8B/xkmCL/sHBA6yH5YoZ8PSuelwTNrHxz
+         CzI7LZvW7LwHoU5A1wQBQ43FBFiDwNcyUmKp7zPkyivUPt74q7hNXBjKOe+J4pjr6u5Y
+         q+xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681618845; x=1684210845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lFHaERV3/v3bDFIZruBezwk/pvpEOOlCaDNdvQPiJv4=;
+        b=ix3uDzTl59uVP62ArEJNQd5CC8Pq5wvIXGNSZVlWZ997hEnincBe5hfuYUR/2ukRge
+         hzXuMiPA0ISoi6U/7F6TboqSKbhY0MWcDrJ90C2Y1HWOzHJf4sfTAstwycDpkv4GKgnw
+         iaGMqS71FnuDx4hCcf3qMhJ3sFfPfUA2mjIO4G4sEFjBVjuQUOj+lgQndNQZ7x5ZKnZ+
+         AaEgP0T0mfH9uB7Qk7gHRV6ahNdH2MOZGqrjYR5+Zslebe8QXd7QJRIVRtUs9Mmqa+Zn
+         6RLg16eFOWsV4HXv/DnoOrAahx4aKBIq3twGj4JNlZt9VuWtxynmZb4lHXAwt4sNcdpk
+         fJKQ==
+X-Gm-Message-State: AAQBX9eEx4r5jFjLTXwOHlocwAXK3T+va/RUvWbj8mhY9gIJSQVasftm
+        Ac+NRFLS4OW6Bgr8JH8Ldwi4cK5Gs8ARr9d4eFmEghdL
+X-Google-Smtp-Source: AKy350YwUT0qoDElgjTK7jHQGDM8gM5a9KY+2D71IXdS+YHUk/nZhzQsWXtt8t8gQtOOBl0/AgjltNjsXikMz/DJDnc=
+X-Received: by 2002:a67:ca1b:0:b0:425:d58d:557d with SMTP id
+ z27-20020a67ca1b000000b00425d58d557dmr6085623vsk.0.1681618844872; Sat, 15 Apr
+ 2023 21:20:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230414134908.103932-1-hare@suse.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+References: <FF0202C3-7500-4BB3-914B-DBAA3E0EA3D7@oracle.com> <45099985-B9DE-4842-9D0F-58A5205CD81D@oracle.com>
+In-Reply-To: <45099985-B9DE-4842-9D0F-58A5205CD81D@oracle.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 16 Apr 2023 07:20:33 +0300
+Message-ID: <CAOQ4uxj8b8gV02ybuBWMu7ppBc9phrd8J_XMK_bwOYb+Z5hxCg@mail.gmail.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] BoF for nfsd
+To:     Chuck Lever III <chuck.lever@oracle.com>
+Cc:     "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 03:49:08PM +0200, Hannes Reinecke wrote:
-> @@ -3607,14 +3611,16 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
->  		pgoff_t index, filler_t filler, struct file *file, gfp_t gfp)
->  {
->  	struct folio *folio;
-> -	int err;
-> +	int err, order = 0;
->  
-> +	if (mapping->host->i_blkbits > PAGE_SHIFT)
-> +		order = mapping->host->i_blkbits - PAGE_SHIFT;
+On Sat, Apr 15, 2023 at 7:35=E2=80=AFPM Chuck Lever III <chuck.lever@oracle=
+.com> wrote:
+>
+>
+> > On Apr 12, 2023, at 2:26 PM, Chuck Lever III <chuck.lever@oracle.com> w=
+rote:
+> >
+> > I'd like to request some time for those interested specifically
+> > in NFSD to gather and discuss some topics. Not a network file
+> > system free-for-all, but specifically for NFSD, because there
+> > is a long list of potential topics:
+> >
+> >    =E2=80=A2 Progress on using iomap for NFSD READ/READ_PLUS (anna)
+> >    =E2=80=A2 Replacing nfsd_splice_actor (all)
+> >    =E2=80=A2 Transition from page arrays to bvecs (dhowells, hch)
+> >    =E2=80=A2 tmpfs directory cookie stability (cel)
+> >    =E2=80=A2 timestamp resolution and i_version (jlayton)
+> >    =E2=80=A2 GSS Kerberos futures (dhowells)
+> >    =E2=80=A2 NFS/NFSD CI (jlayton)
+> >    =E2=80=A2 NFSD POSIX to NFSv4 ACL translation - writing down the rul=
+es (all)
+> >
+> > Some of these topics might be appealing to others not specifically
+> > involved with NFSD development. If there's something that should
+> > be moved to another track or session, please pipe up.
+>
+> It's been suggested that this is too many topics for a
+> single session. Let me propose some ways of breaking it
+> up.
+>
+> >    =E2=80=A2 Progress on using iomap for NFSD READ/READ_PLUS (anna)
+> >    =E2=80=A2 Replacing nfsd_splice_actor
+>
+>
+> This is probably worth its own session. We might want to
+> include how to convert NFSD to use folios, or maybe that
+> deserves its own conversation.
+>
+> >    =E2=80=A2 Transition from page arrays to bvecs (dhowells, hch)
+>
+>
+> This is something we can take to the hallway or discuss
+> over beers or a meal.
+>
+> >    =E2=80=A2 tmpfs directory cookie stability (cel)
+>
+> This could be a FS/MM session. Aside from directory
+> cookies, there are issues about exporting any shmemfs-
+> based filesystem (autofs is another).
+>
+> >    =E2=80=A2 timestamp resolution and i_version (jlayton)
+>
+> I'll let Jeff propose something here, and take this off
+> the NFSD-specific agenda.
 
-This pattern comes up a few times.  What I did in a patch I wrote back
-in December 2020 and never submitted (!) was this:
+Please do.
 
+>
+> >    =E2=80=A2 GSS Kerberos futures (dhowells)
+>
+> Perhaps this topic also requires us to be drunk first.
+> Seriously, though... it could be a pretty specialized
+> conversation, and thus left for the hallway track.
+>
+> Or, David and I could fold this into the bvecs discussion
+> above, as these two are somewhat related.
+>
+> >    =E2=80=A2 NFS/NFSD CI (jlayton)
+>
+> Network filesystems have special requirements for CI.
+> Jeff has been working on shaping kdevops to work for
+> our needs, and the work probably has broader appeal
+> than only to NFS. This could be its own 30-minute session,
+> or maybe we've got most everything worked out already?
+>
 
-@@ -198,9 +198,15 @@ enum mapping_flags {
-        AS_EXITING      = 4,    /* final truncate in progress */
-        /* writeback related tags are not used */
-        AS_NO_WRITEBACK_TAGS = 5,
--       AS_LARGE_FOLIO_SUPPORT = 6,
-+       AS_FOLIO_ORDER_MIN = 8,
-+       AS_FOLIO_ORDER_MAX = 13,
-+       /* 8-17 are used for FOLIO_ORDER */
- };
+Perhaps a guest speaker at Luis's kdevops session?
 
-+#define AS_FOLIO_ORDER_MIN_MASK        0x00001f00
-+#define AS_FOLIO_ORDER_MAX_MASK 0x0002e000
-+#define AS_FOLIO_ORDER_MASK (AS_FOLIO_ORDER_MIN_MASK | AS_FOLIO_ORDER_MAX_MASK)
+> >    =E2=80=A2 NFSD POSIX to NFSv4 ACL translation - writing down the rul=
+es (all)
+>
+>
+> Could be its own session, but it might have only a
+> handful of interested parties.
+>
 
-...
+Apropos interested parties. If there are any NFS developers/maintainers
+that are interested in attending the NFSD BoF virtually, please let me know
+and I will send you a code for the virtual registration option.
 
-+static inline unsigned mapping_min_folio_order(struct address_space *mapping)
-+{
-+	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
-+}
-
-(do we really need 5 bits for each, or can we get by with eg 3 or 4 bits?)
-
-Anyway, the point is that we could set this quite early in the creation
-of the mapping, and eliminate the conditional setting of order.
+Thanks,
+Amir.
