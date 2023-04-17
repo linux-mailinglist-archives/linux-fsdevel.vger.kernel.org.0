@@ -2,133 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BF826E4B5D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 16:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F2F6E4B69
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 16:25:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230347AbjDQOVy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 10:21:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48216 "EHLO
+        id S230295AbjDQOY7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 10:24:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230283AbjDQOVs (ORCPT
+        with ESMTP id S229706AbjDQOY6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 10:21:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A8FD1B0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 07:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681741257;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hXXWTVEI1mMsVSpGycpPWe1J+aRrdeZCdqy7/mR/vH0=;
-        b=Mbe9gMqv3KDIjrZYVgpGaok4s3fIhIVlR8W8qEkToGyFMP2DDwIU+vDkJBhAn0gn0jZJuZ
-        lLtoPIRqbCFjGKpAhZjbjoEhqeffP/gLfx/CkdnsI6ZIC49TaIndxSMrDea4hGz4FiuoED
-        f7wHMGfKJIBTn6kq4X9+1kEyyDa2R3c=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-660-p22VNDBIPO6cDuI96qbguw-1; Mon, 17 Apr 2023 10:20:56 -0400
-X-MC-Unique: p22VNDBIPO6cDuI96qbguw-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-2f92bd71f32so314416f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 07:20:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681741255; x=1684333255;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hXXWTVEI1mMsVSpGycpPWe1J+aRrdeZCdqy7/mR/vH0=;
-        b=ZuIO6sAUKwA2aBYo2opQ7vPID6b5c3G24VDkUiBknui5EbaVd/3poUvnL4ezC/BLEN
-         uM0hOTSTfoBZtfv0BuNMpMU8/tdBxFS8eyfv5H7aSB14gS+iezEt3sBGD1ZY1d58fA5S
-         un+uERKZ7/Wx6vW7zjiAQsZOl0xa5GsaVU6cynreeNgrVSeu66ccJGAhMCTP1Uo5vbRQ
-         PFSj7ij+klExPL+7bDCn3ud4b2eYzoXC2T96VDzju6AMSesUgth+B2HIjhOlgf+wAP9f
-         nSUELGelMDzZtUvobwp+Xv1HAvCiSr/pWr+zlhWhu6nxNexYwe96trpfniTdxUChTjXJ
-         1jrQ==
-X-Gm-Message-State: AAQBX9cys1vNcQtr0bCZqRUSLvVfDxRT1ZOZmh4g8uCyKLqvvirfjW0e
-        PlZMMBEp3aQfvScS3OBTLlm90jD1Of0rIEIwJg17i9DslEB5ubzALv7UQ8379eOH4qN/+Lk8IhV
-        Orm7Jw1qnNJkvbx5nerHVAson5Q==
-X-Received: by 2002:a5d:5248:0:b0:2f9:a75:b854 with SMTP id k8-20020a5d5248000000b002f90a75b854mr3792096wrc.59.1681741254928;
-        Mon, 17 Apr 2023 07:20:54 -0700 (PDT)
-X-Google-Smtp-Source: AKy350boMM0zmEGTfFZFjlk6c0N1TW//CLM7LqCyngTtQr2+J07kOHHTQAknS4PxsNoOPWRVKQQvfg==
-X-Received: by 2002:a5d:5248:0:b0:2f9:a75:b854 with SMTP id k8-20020a5d5248000000b002f90a75b854mr3792081wrc.59.1681741254560;
-        Mon, 17 Apr 2023 07:20:54 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c700:fc00:db07:68a9:6af5:ecdf? (p200300cbc700fc00db0768a96af5ecdf.dip0.t-ipconnect.de. [2003:cb:c700:fc00:db07:68a9:6af5:ecdf])
-        by smtp.gmail.com with ESMTPSA id u13-20020a05600c00cd00b003edf2dc7ca3sm12016562wmm.34.2023.04.17.07.20.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Apr 2023 07:20:53 -0700 (PDT)
-Message-ID: <b37d1876-0a74-aa52-7911-e6f78280caaa@redhat.com>
-Date:   Mon, 17 Apr 2023 16:20:52 +0200
+        Mon, 17 Apr 2023 10:24:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66C410C;
+        Mon, 17 Apr 2023 07:24:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4929A62056;
+        Mon, 17 Apr 2023 14:24:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CD7CC433EF;
+        Mon, 17 Apr 2023 14:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681741495;
+        bh=jEolfV4qSU824Qh1BjYwq6ZXkqOqKDIdGjk2dkb+EGE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YaMhaSxpNlU90+lE26jSBVParjfGKw78oIiSDU9/pwC3LGac19oXgYWT28tMN+fya
+         rEaHrM7RR+xnlZLXYu1NyaTq981wDLl8/0OF+0edqZDamdmKxqreACt1+uDS6lexEA
+         QXzR3ZBoZlp5dRHsh+UMR1LjdJ0AR5KvVDaxwkmxHZBjEMutp0gGQQEGA8sQzlp1mu
+         1rldU/wcyfaIYB9zHbSlZG7tYa1W4L9Wbqlj87H05ZVk4bmYDVOiG/Ba6XOjUc+VbP
+         7rpL9/ho0q6UuD/9lTP8rUtMm2vgT0Tto01oKinVfk+ZupnR77UR1BECLi0OdGZOrs
+         0DVUD0y+y7TLQ==
+Date:   Mon, 17 Apr 2023 16:24:50 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH/RFC] VFS: LOOKUP_MOUNTPOINT should used cached info
+ whenever possible.
+Message-ID: <20230417-relaxen-selektiert-4b4b4143d7f6@brauner>
+References: <95ee689c76bf034fa2fe9fade0bccdb311f3a04f.camel@kernel.org>
+ <168168683217.24821.6260957092725278201@noble.neil.brown.name>
+ <20230417-beisein-investieren-360fa20fb68a@brauner>
+ <6c08ad94ca949d0f3525f7e1fc24a72c50affd59.camel@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v3 0/7] Split a folio to any lower order folios
-Content-Language: en-US
-To:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Zi Yan <ziy@nvidia.com>, Zi Yan <zi.yan@sent.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        linux-mm@kvack.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Zach O'Keefe <zokeefe@google.com>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20230403201839.4097845-1-zi.yan@sent.com>
- <20230404144727.e613116684dbd65a4b4745c1@linux-foundation.org>
- <49ee481e-452f-61c7-2da5-28de2cf3de2@google.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <49ee481e-452f-61c7-2da5-28de2cf3de2@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6c08ad94ca949d0f3525f7e1fc24a72c50affd59.camel@kernel.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 16.04.23 20:11, Hugh Dickins wrote:
-> On Tue, 4 Apr 2023, Andrew Morton wrote:
->> On Mon,  3 Apr 2023 16:18:32 -0400 Zi Yan <zi.yan@sent.com> wrote:
->>
->>> File folio supports any order and people would like to support flexible orders
->>> for anonymous folio[1] too. Currently, split_huge_page() only splits a huge
->>> page to order-0 pages, but splitting to orders higher than 0 is also useful.
->>> This patchset adds support for splitting a huge page to any lower order pages
->>> and uses it during file folio truncate operations.
->>
->> This series (and its v1 & v2) don't appear to have much in the way of
->> detailed review.  As it's at v3 and has been fairly stable I'll queue
->> it up for some testing now, but I do ask that some reviewers go through
->> it please.
+On Mon, Apr 17, 2023 at 08:25:23AM -0400, Jeff Layton wrote:
+> On Mon, 2023-04-17 at 13:55 +0200, Christian Brauner wrote:
+> > On Mon, Apr 17, 2023 at 09:13:52AM +1000, NeilBrown wrote:
+> > > 
+> > > When performing a LOOKUP_MOUNTPOINT lookup we don't really want to
+> > > engage with underlying systems at all.  Any mount point MUST be in the
+> > > dcache with a complete direct path from the root to the mountpoint.
+> > > That should be sufficient to find the mountpoint given a path name.
+> > > 
+> > > This becomes an issue when the filesystem changes unexpected, such as
+> > > when a NFS server is changed to reject all access.  It then becomes
+> > > impossible to unmount anything mounted on the filesystem which has
+> > > changed.  We could simply lazy-unmount the changed filesystem and that
+> > > will often be sufficient.  However if the target filesystem needs
+> > > "umount -f" to complete the unmount properly, then the lazy unmount will
+> > > leave it incompletely unmounted.  When "-f" is needed, we really need to
+> > 
+> > I don't understand this yet. All I see is nfs_umount_begin() that's
+> > different for MNT_FORCE to kill remaining io. Why does that preclude
+> > MNT_DETACH? You might very well fail MNT_FORCE and the only way you can
+> > get rid is to use MNT_DETACH, no? So I don't see why that is an
+> > argument.
+> > 
+> > > be able to name the target filesystem.
+> > > 
+> > > We NEVER want to revalidate anything.  We already avoid the revalidation
+> > > of the mountpoint itself, be we won't need to revalidate anything on the
+> > > path either as thay might affect the cache, and the cache is what we are
+> > > really looking in.
+> > > 
+> > > Permission checks are a little less clear.  We currently allow any user
+> > 
+> > This is all very brittle.
+> > 
+> > First case that comes to mind is overlayfs where the permission checking
+> > is performed twice. Once on the overlayfs inode itself based on the
+> > caller's security context and a second time on the underlying inode with
+> > the security context of the mounter of the overlayfs instance.
+> > 
+> > A mounter could have dropped all privileges aside from CAP_SYS_ADMIN so
+> > they'd be able to mount the overlayfs instance but would be restricted
+> > from accessing certain directories or files. The task accessing the
+> > overlayfs instance however could have a completely different security
+> > context including CAP_DAC_READ_SEARCH and such. Both tasks could
+> > reasonably be in different user namespaces and so on.
+> > 
+> > The LSM hooks are also called twice and would now also be called once.
+> > 
+> > It also forgets that acl_permission() check may very well call into the
+> > filesystem via check_acl().
+> > 
+> > So umount could either be used to infer existence of files that the user
+> > wouldn't otherwise know they exist or in the worst case allow to umount
+> > something that they wouldn't have access to.
+> > 
+> > Aside from that this would break userspace assumptions and as Al and
+> > I've mentioned before in the other thread you'd need a new flag to
+> > umount2() for this. The permission model can't just change behind users
+> > back.
+> > 
+> > But I dislike it for the now even more special-cased umount path lookup
+> > alone tbh. I'd feel way more comfortable with a non-lookup related
+> > solution that doesn't have subtle implications for permission checking.
+> > 
 > 
-> Andrew, please don't let this series drift into 6.4-rc1.
+> These are good points.
 > 
-> I've seen a bug or two (I'll point out in response to those patches),
-> but overall I don't see what the justification for the series is: done
-> because it could be done, it seems to me, but liable to add surprises.
-> 
-> The cover letter says "splitting to orders higher than 0 is also useful",
-> but it's not clear why; and the infrastructure provided seems unsuited
-> to the one use provided - I'll say more on that truncation patch.
+> One way around the issues you point out might be to pass down a new
+> MAY_LOOKUP_MOUNTPOINT mask flag to ->permission. That would allow the
+> filesystem driver to decide whether it wants to avoid potentially
+> problematic activity when checking permissions. nfs_permission could
+> check for that and take a more hands-off approach to the permissions
+> check. Between that and skipping d_revalidate on LOOKUP_MOUNTPOINT, I
+> think that might do what we need.
 
-I agree. Maybe this patch set is something we want to have in the future 
-once actual consumers that can benefit are in place, such that we can 
-show actual performance numbers with/without.
+Yes, that's pretty obvious. I considered that, wrote the section and
+deleted it again because I still find this pretty ugly. It does leak
+very specific lookup information into filesystems that isn't generically
+useful like MAY_NOT_BLOCK is. Most filesystems don't need to check with
+a server like NFS does and so don't suffer from this issue.
 
-Until then, "365 insertions(+), 68 deletions(-)" certainly needs some 
-reasonable motivation.
+The crucial change in the patchset in its current form is that you're
+requesting from the VFS to significantly alter permission checking just
+because this is a umount request in a pretty fundamental way for roughly
+21 filesytems. Afaict, on the VFS level that doesn't make sense. The VFS
+can't just skip a filesystem's ->permission() handler with "well, it's
+just on a way to a umount so whatever". That's just not going to be
+correct and is just a source of subtle security bugs. So NAK on that.
 
--- 
-Thanks,
+And I'm curious why is it obvious that we don't want to revalidate _any_
+path component and not just the last one? Why is that generally safe?
+Why can't this be used to access files and directories the caller
+wouldn't otherwise be able to access? I would like to have this spelled
+out for slow people like me, please.
 
-David / dhildenb
+From my point of view, this would only be somewhat safe _generally_ if
+you'd allow circumvention for revalidation and permission checking if
+MNT_FORCE is specified and the caller has capable(CAP_DAC_READ_SEARCH).
+You'd still mess with overlayfs permission model in this case though.
 
+Plus, there are better options of solving this problem. Again, I'd
+rather build a separate api for unmounting then playing such potentially
+subtle security sensitive games with permission checking during path
+lookup.
