@@ -2,106 +2,273 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F71A6E4A50
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 15:48:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B41C96E4AB6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 16:05:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229980AbjDQNsl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 09:48:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44918 "EHLO
+        id S230401AbjDQOE7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 10:04:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230029AbjDQNsk (ORCPT
+        with ESMTP id S231185AbjDQOEz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 09:48:40 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 333E81BEA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 06:48:39 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-2473e4b63a2so176083a91.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 06:48:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681739318; x=1684331318;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UHg8YyCx2xNTrsopj4h1edhvH1uexqsIIEbf1PiCdJU=;
-        b=cTT1QFY3N3vCQgxN3UdgC4oWj8Nv/WABDvSZ4XliH7WQy6NObF7JURr0Nn0w5n8F5y
-         5vdR1p22xGRuKM1sO0lDiWRMCVkjPppZ5oz3ymUBOGjkPU9Yl6L0z8ksSkCMhWl/PdMD
-         Vd/uaIHE5/sMukmGe+x06ggs0hhu1NTB2GfprrTFDHytML+DHk1xGYNuXTrSTBbvmYU8
-         rAerxB2i9QooHWWqN9y//KklB2mhh0zW+rk3lKYYjgM/y6xt+DR8aJq+lfrfejX1FvmC
-         hphFA6Zjrs2RaZa7OqmLJo01jrneng6BjbhuShcHe7+BZas5pUaQRLqeRTULkZOekHY1
-         5oWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681739318; x=1684331318;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UHg8YyCx2xNTrsopj4h1edhvH1uexqsIIEbf1PiCdJU=;
-        b=ZoViIUZmLD0EEe2QB0AZLoqGCLTjceFrReNpyIKRq2kFSvTvS3x/TRsgb/Fdl1KgA0
-         7aoC27H8RVaL+l3cnhuDyhsfJrRTzXf4LfMZVR+vihgWgcuCPazu9mMF80HgT+u4Qo4f
-         Ag1k9ZudnZeP/zwXJHaoMyzHXA8ycdk03VzKx3/XfLz9LbtRB7U3deYHQavBmkIzyzzz
-         zGmXcpWyLhjrbLk2hJgc8+sBz8E26pdEW+cAydCH5SmppI36/SRCX9fDIrAts+mPwXcs
-         29cK1c+/2XE2sZpa2xPT8+eWZFjFV5uvFtfO9AniZ4CNtteDEw9mz1kQwKZompjSg8iX
-         +u5A==
-X-Gm-Message-State: AAQBX9cexo7AqmNowiFcnp6y4X85HOW95DmP3qJEqAkRM16MPxdweTOF
-        JWbq9SBI34JXv/+Tz3KBQX+rfQ==
-X-Google-Smtp-Source: AKy350ZsvqcPhW6H6wNx86fi0atUBZQkuxHTaZ57q1x/i9eRxrLUDxUCPD/Jiw09W1ZiGmH0vxoyxw==
-X-Received: by 2002:a17:90a:19d1:b0:240:c067:6f50 with SMTP id 17-20020a17090a19d100b00240c0676f50mr10207702pjj.0.1681739318596;
-        Mon, 17 Apr 2023 06:48:38 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id v14-20020a17090a088e00b0023cfdbb6496sm8927319pjc.1.2023.04.17.06.48.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 06:48:38 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     David Howells <dhowells@redhat.com>,
-        Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        David Hildenbrand <david@redhat.com>,
-        Yang Shi <shy828301@gmail.com>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-In-Reply-To: <2d5fa5e3-dac5-6973-74e5-eeedf36a42b@google.com>
-References: <2d5fa5e3-dac5-6973-74e5-eeedf36a42b@google.com>
-Subject: Re: [PATCH next] shmem: minor fixes to splice-read implementation
-Message-Id: <168173931746.319007.17265276905089710599.b4-ty@kernel.dk>
-Date:   Mon, 17 Apr 2023 07:48:37 -0600
+        Mon, 17 Apr 2023 10:04:55 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E63F76B3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 07:04:36 -0700 (PDT)
+Received: from fsav112.sakura.ne.jp (fsav112.sakura.ne.jp [27.133.134.239])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 33HE3Toj003234;
+        Mon, 17 Apr 2023 23:03:29 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav112.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp);
+ Mon, 17 Apr 2023 23:03:29 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 33HE3T8F003231
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 17 Apr 2023 23:03:29 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <bc30483b-7f9b-df4e-7143-8646aeb4b5a2@I-love.SAKURA.ne.jp>
+Date:   Mon, 17 Apr 2023 23:03:26 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: [PATCH] vfs: allow using kernel buffer during fiemap operation
+Content-Language: en-US
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     syzbot <syzbot+96cee7d33ca3f87eee86@syzkaller.appspotmail.com>,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
+        Mark Fasheh <mark@fasheh.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     Hillf Danton <hdanton@sina.com>, linux-mm <linux-mm@kvack.org>,
+        trix@redhat.com, ndesaulniers@google.com, nathan@kernel.org
+References: <000000000000e2102c05eeaf9113@google.com>
+ <00000000000031b80705ef5d33d1@google.com>
+ <f649c9c0-6c0c-dd0d-e3c9-f0c580a11cd9@I-love.SAKURA.ne.jp>
+In-Reply-To: <f649c9c0-6c0c-dd0d-e3c9-f0c580a11cd9@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-00303
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+syzbot is reporting circular locking dependency between ntfs_file_mmap()
+(which has mm->mmap_lock => ni->ni_lock => ni->file.run_lock dependency)
+and ntfs_fiemap() (which has ni->ni_lock => ni->file.run_lock =>
+mm->mmap_lock dependency), for commit c4b929b85bdb ("vfs: vfs-level fiemap
+interface") implemented fiemap_fill_next_extent() using copy_to_user()
+where direct mm->mmap_lock dependency is inevitable.
 
-On Sun, 16 Apr 2023 21:46:16 -0700, Hugh Dickins wrote:
-> generic_file_splice_read() makes a couple of preliminary checks (for
-> s_maxbytes and zero len), but shmem_file_splice_read() is called without
-> those: so check them inside it.  (But shmem does not support O_DIRECT,
-> so no need for that one here - and even if O_DIRECT support were stubbed
-> in, it would still just be using the page cache.)
-> 
-> HWPoison: my reading of folio_test_hwpoison() is that it only tests the
-> head page of a large folio, whereas splice_folio_into_pipe() will splice
-> as much of the folio as it can: so for safety we should also check the
-> has_hwpoisoned flag, set if any of the folio's pages are hwpoisoned.
-> (Perhaps that ugliness can be improved at the mm end later.)
-> 
-> [...]
+Since ntfs3 does not want to release ni->ni_lock and/or ni->file.run_lock
+in order to make sure that "struct ATTRIB" does not change during
+ioctl(FS_IOC_FIEMAP) request, let's make it possible to call
+fiemap_fill_next_extent() with filesystem locks held.
 
-Applied, thanks!
+This patch adds fiemap_fill_next_kernel_extent() which spools
+"struct fiemap_extent" to dynamically allocated kernel buffer, and
+fiemap_copy_kernel_extent() which copies spooled "struct fiemap_extent"
+to userspace buffer after filesystem locks are released.
 
-[1/1] shmem: minor fixes to splice-read implementation
-      commit: 72887c976a7c9ee7527f4a2e3d109576efea98ab
+Reported-by: syzbot <syzbot+96cee7d33ca3f87eee86@syzkaller.appspotmail.com>
+Link: https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
+Reported-by: syzbot <syzbot+c300ab283ba3bc072439@syzkaller.appspotmail.com>
+Link: https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
+Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ fs/ioctl.c             | 52 ++++++++++++++++++++++++++++++++++++------
+ fs/ntfs3/file.c        |  4 ++++
+ fs/ntfs3/frecord.c     | 10 ++++----
+ include/linux/fiemap.h | 24 +++++++++++++++++--
+ 4 files changed, 76 insertions(+), 14 deletions(-)
 
-Best regards,
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 5b2481cd4750..60ddc2760932 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -112,11 +112,10 @@ static int ioctl_fibmap(struct file *filp, int __user *p)
+ #define SET_UNKNOWN_FLAGS	(FIEMAP_EXTENT_DELALLOC)
+ #define SET_NO_UNMOUNTED_IO_FLAGS	(FIEMAP_EXTENT_DATA_ENCRYPTED)
+ #define SET_NOT_ALIGNED_FLAGS	(FIEMAP_EXTENT_DATA_TAIL|FIEMAP_EXTENT_DATA_INLINE)
+-int fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+-			    u64 phys, u64 len, u32 flags)
++int do_fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
++			       u64 phys, u64 len, u32 flags, bool is_kernel)
+ {
+ 	struct fiemap_extent extent;
+-	struct fiemap_extent __user *dest = fieinfo->fi_extents_start;
+ 
+ 	/* only count the extents */
+ 	if (fieinfo->fi_extents_max == 0) {
+@@ -140,16 +139,55 @@ int fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+ 	extent.fe_length = len;
+ 	extent.fe_flags = flags;
+ 
+-	dest += fieinfo->fi_extents_mapped;
+-	if (copy_to_user(dest, &extent, sizeof(extent)))
+-		return -EFAULT;
++	if (!is_kernel) {
++		struct fiemap_extent __user *dest = fieinfo->fi_extents_start;
++
++		dest += fieinfo->fi_extents_mapped;
++		if (copy_to_user(dest, &extent, sizeof(extent)))
++			return -EFAULT;
++	} else {
++		struct fiemap_extent_list *entry = kmalloc(sizeof(*entry), GFP_NOFS);
++
++		if (!entry)
++			return -ENOMEM;
++		memmove(&entry->extent, &extent, sizeof(extent));
++		list_add_tail(&entry->list, &fieinfo->fi_extents_list);
++	}
+ 
+ 	fieinfo->fi_extents_mapped++;
+ 	if (fieinfo->fi_extents_mapped == fieinfo->fi_extents_max)
+ 		return 1;
+ 	return (flags & FIEMAP_EXTENT_LAST) ? 1 : 0;
+ }
+-EXPORT_SYMBOL(fiemap_fill_next_extent);
++EXPORT_SYMBOL(do_fiemap_fill_next_extent);
++
++int fiemap_copy_kernel_extent(struct fiemap_extent_info *fieinfo, int err)
++{
++	struct fiemap_extent __user *dest;
++	struct fiemap_extent_list *entry, *tmp;
++	unsigned int len = 0;
++
++	list_for_each_entry(entry, &fieinfo->fi_extents_list, list)
++		len++;
++	if (!len)
++		return err;
++	fieinfo->fi_extents_mapped -= len;
++	dest = fieinfo->fi_extents_start + fieinfo->fi_extents_mapped;
++	list_for_each_entry(entry, &fieinfo->fi_extents_list, list) {
++		if (copy_to_user(dest, &entry->extent, sizeof(entry->extent))) {
++			err = -EFAULT;
++			break;
++		}
++		dest++;
++		fieinfo->fi_extents_mapped++;
++	}
++	list_for_each_entry_safe(entry, tmp, &fieinfo->fi_extents_list, list) {
++		list_del(&entry->list);
++		kfree(entry);
++	}
++	return err;
++}
++EXPORT_SYMBOL(fiemap_copy_kernel_extent);
+ 
+ /**
+  * fiemap_prep - check validity of requested flags for fiemap
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index e9bdc1ff08c9..1a3e28f71599 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -1145,12 +1145,16 @@ int ntfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	if (err)
+ 		return err;
+ 
++	INIT_LIST_HEAD(&fieinfo->fi_extents_list);
++
+ 	ni_lock(ni);
+ 
+ 	err = ni_fiemap(ni, fieinfo, start, len);
+ 
+ 	ni_unlock(ni);
+ 
++	err = fiemap_copy_kernel_extent(fieinfo, err);
++
+ 	return err;
+ }
+ 
+diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+index f1df52dfab74..b70f9dfb71ab 100644
+--- a/fs/ntfs3/frecord.c
++++ b/fs/ntfs3/frecord.c
+@@ -1941,8 +1941,7 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
+ 	}
+ 
+ 	if (!attr || !attr->non_res) {
+-		err = fiemap_fill_next_extent(
+-			fieinfo, 0, 0,
++		err = fiemap_fill_next_kernel_extent(fieinfo, 0, 0,
+ 			attr ? le32_to_cpu(attr->res.data_size) : 0,
+ 			FIEMAP_EXTENT_DATA_INLINE | FIEMAP_EXTENT_LAST |
+ 				FIEMAP_EXTENT_MERGED);
+@@ -2037,8 +2036,8 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
+ 			if (vbo + dlen >= end)
+ 				flags |= FIEMAP_EXTENT_LAST;
+ 
+-			err = fiemap_fill_next_extent(fieinfo, vbo, lbo, dlen,
+-						      flags);
++			err = fiemap_fill_next_kernel_extent(fieinfo, vbo, lbo,
++							     dlen, flags);
+ 			if (err < 0)
+ 				break;
+ 			if (err == 1) {
+@@ -2058,7 +2057,8 @@ int ni_fiemap(struct ntfs_inode *ni, struct fiemap_extent_info *fieinfo,
+ 		if (vbo + bytes >= end)
+ 			flags |= FIEMAP_EXTENT_LAST;
+ 
+-		err = fiemap_fill_next_extent(fieinfo, vbo, lbo, bytes, flags);
++		err = fiemap_fill_next_kernel_extent(fieinfo, vbo, lbo, bytes,
++						     flags);
+ 		if (err < 0)
+ 			break;
+ 		if (err == 1) {
+diff --git a/include/linux/fiemap.h b/include/linux/fiemap.h
+index c50882f19235..10cb33ed80a9 100644
+--- a/include/linux/fiemap.h
++++ b/include/linux/fiemap.h
+@@ -5,17 +5,37 @@
+ #include <uapi/linux/fiemap.h>
+ #include <linux/fs.h>
+ 
++struct fiemap_extent_list {
++	struct list_head list;
++	struct fiemap_extent extent;
++};
++
+ struct fiemap_extent_info {
+ 	unsigned int fi_flags;		/* Flags as passed from user */
+ 	unsigned int fi_extents_mapped;	/* Number of mapped extents */
+ 	unsigned int fi_extents_max;	/* Size of fiemap_extent array */
+ 	struct fiemap_extent __user *fi_extents_start; /* Start of
+ 							fiemap_extent array */
++	struct list_head fi_extents_list; /* List of fiemap_extent_list */
+ };
+ 
+ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		u64 start, u64 *len, u32 supported_flags);
+-int fiemap_fill_next_extent(struct fiemap_extent_info *info, u64 logical,
+-			    u64 phys, u64 len, u32 flags);
++int do_fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
++			       u64 phys, u64 len, u32 flags, bool is_kernel);
++
++static inline int fiemap_fill_next_extent(struct fiemap_extent_info *info,
++					  u64 logical, u64 phys, u64 len, u32 flags)
++{
++	return do_fiemap_fill_next_extent(info, logical, phys, len, flags, false);
++}
++
++static inline int fiemap_fill_next_kernel_extent(struct fiemap_extent_info *info,
++						 u64 logical, u64 phys, u64 len, u32 flags)
++{
++	return do_fiemap_fill_next_extent(info, logical, phys, len, flags, true);
++}
++
++int fiemap_copy_kernel_extent(struct fiemap_extent_info *info, int err);
+ 
+ #endif /* _LINUX_FIEMAP_H 1 */
 -- 
-Jens Axboe
-
-
+2.34.1
 
