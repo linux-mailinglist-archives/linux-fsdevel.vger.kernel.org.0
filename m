@@ -2,161 +2,446 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61EBA6E4FF7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 20:13:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC4EB6E50C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 21:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbjDQSNp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 14:13:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60910 "EHLO
+        id S230411AbjDQTXQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 15:23:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbjDQSNo (ORCPT
+        with ESMTP id S229568AbjDQTXP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 14:13:44 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07545BF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 11:13:42 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id a11so4543059ybm.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 11:13:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1681755221; x=1684347221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0G1smqROhOJ7yr3iTxiSLEp4+jC82RLUqqOubQo5XMc=;
-        b=3zXxcRHvFsY90TE/85r+bo0YJZ1ZhLfPehoMAZIOD15bfhqlzIoAnkXy6vHLOLn+kf
-         AxMg/O/8d7EH3bzxBsCJhqZniFjbb6ZMhfhiixsevNeFC8hYapBgWufdJwdkPHfInu2F
-         5sQ9AxhS6qngkqP35esEoVFHziw03k+cRXoKWtDHYrIJHkI4H9z+kkeRrwfQ8SmtU0YH
-         j0W7EPNMiJpiWQlGlFrMRnMLhBRhwnq6WOZPY6owN4BasFb3vvLVzC6W+B0yC+RHd7uk
-         jFL0a+gB/rjg2a7bNahnafQquY5cMoIErdOkNowXfLynT1OTPOvtIDLvuI1H+oevnguS
-         IaJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681755221; x=1684347221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0G1smqROhOJ7yr3iTxiSLEp4+jC82RLUqqOubQo5XMc=;
-        b=YDpacL8Gb0737XPCE6SJENpMRCCug3Kw2fnJJT9cYfqSZpkYMZDZMvkK1kj7Lm6UEb
-         56qU+wfOZ5wdCLRLfxMid075yL6782T5UYIMnxK1HxI1YFD8Q+H+YFv/ZMH6SVY9Q7Rz
-         /lw8VT3HWWfw8QdRgM+xQ4j4swjKfQDIwlfB3zFHXzXjtIIvSM+m97XweMaGuCGx3npL
-         CEJPFzmKuXCKo+XTRdQVkSTugtLsEtej8FtCBilqNoOrLN6Iwb0fpICiyyFr2XUwQirJ
-         qOxVggOrOFgRveDhp4JwsuvQxxlq/2y+T7IaoguE8FK6kMSftaPwlk+aS+VkzOqnrCxP
-         VDKw==
-X-Gm-Message-State: AAQBX9czvs0IhynSUIaZL9ta6Yp8KVhr3ccs34idIz6JqZ62YE98pIcS
-        UQFfAceuCiZDBAAoLwMz1UOOqXmwhLlKSqiIWmAGtQ==
-X-Google-Smtp-Source: AKy350bDZ4WatiA5Nyoyd1jAdec3Qs4mNUq6ylrXJpjMIGbzKLIBKh63kQLpakuVcIRtXj2ByKVVm4djzx1xsu8gEp8=
-X-Received: by 2002:a25:7411:0:b0:b8f:6d23:3c7a with SMTP id
- p17-20020a257411000000b00b8f6d233c7amr7880662ybc.12.1681755220792; Mon, 17
- Apr 2023 11:13:40 -0700 (PDT)
+        Mon, 17 Apr 2023 15:23:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 834074ECA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 12:23:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 16FD262035
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 19:23:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1AADC433EF;
+        Mon, 17 Apr 2023 19:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681759392;
+        bh=0VkY5T9KJxoLFAqkKIF1YpJyl/z5A8Xa54INiyeld6k=;
+        h=Subject:From:To:Cc:Date:From;
+        b=imQ+/UsXifoS5G7Ctbkj+YCwy9vnvlbQmuG1CjSQXDlf2RIw1KQW4CQSKNKXluD0Q
+         6PSIG4qJfvXAKncQygVOnN2n6MyCA6UjSH4ujBIyUJuNq7GW1PXpdBbgPzI5t7XM9+
+         b0e/IyzUMhJ1ys+Zi0gP8AFj2h9xjAP8BpOcWASs1VOqJh+WaLp7dqZBMGkkhMHIj+
+         7tlmbMYPkJwC/WavfTriHZbHR8d6Ihm4c6o8I+7DBLXsnVvuvCRVLlkUtueFWQ/WQN
+         jan5fUPoO/UOo7ryRsvSwvi2FiTljl8AbbKnR5jgGOaAm4Z3llQJdl+FMFo5MyvohJ
+         1Dy1hajv4+KXw==
+Subject: [PATCH v1] shmem: stable directory cookies
+From:   Chuck Lever <cel@kernel.org>
+To:     hughd@google.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Date:   Mon, 17 Apr 2023 15:23:10 -0400
+Message-ID: <168175931561.2843.16288612382874559384.stgit@manet.1015granger.net>
+User-Agent: StGit/1.5
 MIME-Version: 1.0
-References: <20230414180043.1839745-1-surenb@google.com> <ZDmetaUdmlEz/W8Q@casper.infradead.org>
- <87sfczuxkc.fsf@nvidia.com>
-In-Reply-To: <87sfczuxkc.fsf@nvidia.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 17 Apr 2023 11:13:29 -0700
-Message-ID: <CAJuCfpEV1OiM423bykYQTxDC1=bQAqhAwd5fiKYifsk=seP6yw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm: handle swap page faults if the faulting page can
- be locked
-To:     Alistair Popple <apopple@nvidia.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
-        hannes@cmpxchg.org, mhocko@suse.com, josef@toxicpanda.com,
-        jack@suse.cz, ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
-        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
-        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
-        punit.agrawal@bytedance.com, lstoakes@gmail.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 16, 2023 at 6:06=E2=80=AFPM Alistair Popple <apopple@nvidia.com=
-> wrote:
->
->
-> Matthew Wilcox <willy@infradead.org> writes:
->
-> > On Fri, Apr 14, 2023 at 11:00:43AM -0700, Suren Baghdasaryan wrote:
-> >> When page fault is handled under VMA lock protection, all swap page
-> >> faults are retried with mmap_lock because folio_lock_or_retry
-> >> implementation has to drop and reacquire mmap_lock if folio could
-> >> not be immediately locked.
-> >> Instead of retrying all swapped page faults, retry only when folio
-> >> locking fails.
-> >
-> > Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> >
-> > Let's just review what can now be handled under the VMA lock instead of
-> > the mmap_lock, in case somebody knows better than me that it's not safe=
-.
-> >
-> >  - We can call migration_entry_wait().  This will wait for PG_locked to
-> >    become clear (in migration_entry_wait_on_locked()).  As previously
-> >    discussed offline, I think this is safe to do while holding the VMA
-> >    locked.
->
-> Do we even need to be holding the VMA locked while in
-> migration_entry_wait()? My understanding is we're just waiting for
-> PG_locked to be cleared so we can return with a reasonable chance the
-> migration entry is gone. If for example it has been unmapped or
-> protections downgraded we will simply refault.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-If we drop VMA lock before migration_entry_wait() then we would need
-to lock_vma_under_rcu again after the wait. In which case it might be
-simpler to retry the fault with some special return code to indicate
-that VMA lock is not held anymore and we want to retry without taking
-mmap_lock. I think it's similar to the last options Matthew suggested
-earlier. In which case we can reuse the same retry mechanism for both
-cases, here and in __folio_lock_or_retry.
+The current cursor-based directory cookie mechanism doesn't work
+when a tmpfs filesystem is exported via NFS. This is because NFS
+clients do not open directories: each READDIR operation has to open
+the directory on the server, read it, then close it. The cursor
+state for that directory, being associated strictly with the opened
+struct file, is then discarded.
 
->
-> >  - We can call remove_device_exclusive_entry().  That calls
-> >    folio_lock_or_retry(), which will fail if it can't get the VMA lock.
->
-> Looks ok to me.
->
-> >  - We can call pgmap->ops->migrate_to_ram().  Perhaps somebody familiar
-> >    with Nouveau and amdkfd could comment on how safe this is?
->
-> Currently this won't work because drives assume mmap_lock is held during
-> pgmap->ops->migrate_to_ram(). Primarily this is because
-> migrate_vma_setup()/migrate_vma_pages() is used to handle the fault and
-> that asserts mmap_lock is taken in walk_page_range() and also
-> migrate_vma_insert_page().
->
-> So I don't think we can call that case without mmap_lock.
->
-> At a glance it seems it should be relatively easy to move to using
-> lock_vma_under_rcu(). Drivers will need updating as well though because
-> migrate_vma_setup() is called outside of fault handling paths so drivers
-> will currently take mmap_lock rather than vma lock when looking up the
-> vma. See for example nouveau_svmm_bind().
+Directory cookies are cached not only by NFS clients, but also by
+user space libraries on those clients. Essentially there is no way
+to invalidate those caches when directory offsets have changed on
+an NFS server after the offset-to-dentry mapping changes.
 
-Thanks for the pointers, Alistair! It does look like we need to be
-more careful with the migrate_to_ram() path. For now I can fallback to
-retrying with mmap_lock for this case, like with do with all cases
-today. Afterwards this path can be made ready for working under VMA
-lock and we can remove that retry. Does that sound good?
+The solution we've come up with is to make the directory cookie for
+each file in a tmpfs filesystem stable for the life of the directory
+entry it represents.
 
->
-> >  - I believe we can't call handle_pte_marker() because we exclude UFFD
-> >    VMAs earlier.
-> >  - We can call swap_readpage() if we allocate a new folio.  I haven't
-> >    traced through all this code to tell if it's OK.
-> >
-> > So ... I believe this is all OK, but we're definitely now willing to
-> > wait for I/O from the swap device while holding the VMA lock when we
-> > weren't before.  And maybe we should make a bigger deal of it in the
-> > changelog.
-> >
-> > And maybe we shouldn't just be failing the folio_lock_or_retry(),
-> > maybe we should be waiting for the folio lock with the VMA locked.
->
+Add a per-directory xarray. shmem_readdir() uses this to map each
+directory offset (an loff_t integer) to the memory address of a
+struct dentry.
+
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+---
+ include/linux/shmem_fs.h |    2 
+ mm/shmem.c               |  213 +++++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 201 insertions(+), 14 deletions(-)
+
+Changes since RFC:
+- Destroy xarray in shmem_destroy_inode() instead of free_in_core_inode()
+- A few cosmetic updates
+
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index 103d1000a5a2..682ef885aa89 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -26,6 +26,8 @@ struct shmem_inode_info {
+ 	atomic_t		stop_eviction;	/* hold when working on inode */
+ 	struct timespec64	i_crtime;	/* file creation time */
+ 	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
++	struct xarray		doff_map;	/* dir offset to entry mapping */
++	u32			next_doff;
+ 	struct inode		vfs_inode;
+ };
+ 
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 448f393d8ab2..ba4176499e5c 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -40,6 +40,8 @@
+ #include <linux/fs_parser.h>
+ #include <linux/swapfile.h>
+ #include <linux/iversion.h>
++#include <linux/xarray.h>
++
+ #include "swap.h"
+ 
+ static struct vfsmount *shm_mnt;
+@@ -234,6 +236,7 @@ static const struct super_operations shmem_ops;
+ const struct address_space_operations shmem_aops;
+ static const struct file_operations shmem_file_operations;
+ static const struct inode_operations shmem_inode_operations;
++static const struct file_operations shmem_dir_operations;
+ static const struct inode_operations shmem_dir_inode_operations;
+ static const struct inode_operations shmem_special_inode_operations;
+ static const struct vm_operations_struct shmem_vm_ops;
+@@ -2397,7 +2400,9 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
+ 			/* Some things misbehave if size == 0 on a directory */
+ 			inode->i_size = 2 * BOGO_DIRENT_SIZE;
+ 			inode->i_op = &shmem_dir_inode_operations;
+-			inode->i_fop = &simple_dir_operations;
++			inode->i_fop = &shmem_dir_operations;
++			xa_init_flags(&info->doff_map, XA_FLAGS_ALLOC1);
++			info->next_doff = 0;
+ 			break;
+ 		case S_IFLNK:
+ 			/*
+@@ -2917,6 +2922,71 @@ static int shmem_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	return 0;
+ }
+ 
++static struct xarray *shmem_doff_map(struct inode *dir)
++{
++	return &SHMEM_I(dir)->doff_map;
++}
++
++static int shmem_doff_add(struct inode *dir, struct dentry *dentry)
++{
++	struct shmem_inode_info *info = SHMEM_I(dir);
++	struct xa_limit limit = XA_LIMIT(2, U32_MAX);
++	u32 offset;
++	int ret;
++
++	if (dentry->d_fsdata)
++		return -EBUSY;
++
++	offset = 0;
++	ret = xa_alloc_cyclic(shmem_doff_map(dir), &offset, dentry, limit,
++			      &info->next_doff, GFP_KERNEL);
++	if (ret < 0)
++		return ret;
++
++	dentry->d_fsdata = (void *)(unsigned long)offset;
++	return 0;
++}
++
++static struct dentry *shmem_doff_find_after(struct dentry *dir,
++					    unsigned long *offset)
++{
++	struct xarray *xa = shmem_doff_map(d_inode(dir));
++	struct dentry *d, *found = NULL;
++
++	spin_lock(&dir->d_lock);
++	d = xa_find_after(xa, offset, ULONG_MAX, XA_PRESENT);
++	if (d) {
++		spin_lock_nested(&d->d_lock, DENTRY_D_LOCK_NESTED);
++		if (simple_positive(d))
++			found = dget_dlock(d);
++		spin_unlock(&d->d_lock);
++	}
++	spin_unlock(&dir->d_lock);
++	return found;
++}
++
++static void shmem_doff_remove(struct inode *dir, struct dentry *dentry)
++{
++	u32 offset = (u32)(unsigned long)dentry->d_fsdata;
++
++	if (!offset)
++		return;
++
++	xa_erase(shmem_doff_map(dir), offset);
++	dentry->d_fsdata = NULL;
++}
++
++/*
++ * During fs teardown (eg. umount), a directory's doff_map might still
++ * contain entries. xa_destroy() cleans out anything that remains.
++ */
++static void shmem_doff_map_destroy(struct inode *inode)
++{
++	struct xarray *xa = shmem_doff_map(inode);
++
++	xa_destroy(xa);
++}
++
+ /*
+  * File creation. Allocate an inode, and we're done..
+  */
+@@ -2938,6 +3008,10 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 		if (error && error != -EOPNOTSUPP)
+ 			goto out_iput;
+ 
++		error = shmem_doff_add(dir, dentry);
++		if (error)
++			goto out_iput;
++
+ 		error = 0;
+ 		dir->i_size += BOGO_DIRENT_SIZE;
+ 		dir->i_ctime = dir->i_mtime = current_time(dir);
+@@ -3015,6 +3089,10 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentr
+ 			goto out;
+ 	}
+ 
++	ret = shmem_doff_add(dir, dentry);
++	if (ret)
++		goto out;
++
+ 	dir->i_size += BOGO_DIRENT_SIZE;
+ 	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
+ 	inode_inc_iversion(dir);
+@@ -3033,6 +3111,8 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
+ 	if (inode->i_nlink > 1 && !S_ISDIR(inode->i_mode))
+ 		shmem_free_inode(inode->i_sb);
+ 
++	shmem_doff_remove(dir, dentry);
++
+ 	dir->i_size -= BOGO_DIRENT_SIZE;
+ 	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
+ 	inode_inc_iversion(dir);
+@@ -3091,24 +3171,37 @@ static int shmem_rename2(struct mnt_idmap *idmap,
+ {
+ 	struct inode *inode = d_inode(old_dentry);
+ 	int they_are_dirs = S_ISDIR(inode->i_mode);
++	int error;
+ 
+ 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
+ 		return -EINVAL;
+ 
+-	if (flags & RENAME_EXCHANGE)
++	if (flags & RENAME_EXCHANGE) {
++		shmem_doff_remove(old_dir, old_dentry);
++		shmem_doff_remove(new_dir, new_dentry);
++		error = shmem_doff_add(new_dir, old_dentry);
++		if (error)
++			return error;
++		error = shmem_doff_add(old_dir, new_dentry);
++		if (error)
++			return error;
+ 		return simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
++	}
+ 
+ 	if (!simple_empty(new_dentry))
+ 		return -ENOTEMPTY;
+ 
+ 	if (flags & RENAME_WHITEOUT) {
+-		int error;
+-
+ 		error = shmem_whiteout(idmap, old_dir, old_dentry);
+ 		if (error)
+ 			return error;
+ 	}
+ 
++	shmem_doff_remove(old_dir, old_dentry);
++	error = shmem_doff_add(new_dir, old_dentry);
++	if (error)
++		return error;
++
+ 	if (d_really_is_positive(new_dentry)) {
+ 		(void) shmem_unlink(new_dir, new_dentry);
+ 		if (they_are_dirs) {
+@@ -3149,26 +3242,22 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 
+ 	error = security_inode_init_security(inode, dir, &dentry->d_name,
+ 					     shmem_initxattrs, NULL);
+-	if (error && error != -EOPNOTSUPP) {
+-		iput(inode);
+-		return error;
+-	}
++	if (error && error != -EOPNOTSUPP)
++		goto out_iput;
+ 
+ 	inode->i_size = len-1;
+ 	if (len <= SHORT_SYMLINK_LEN) {
+ 		inode->i_link = kmemdup(symname, len, GFP_KERNEL);
+ 		if (!inode->i_link) {
+-			iput(inode);
+-			return -ENOMEM;
++			error = -ENOMEM;
++			goto out_iput;
+ 		}
+ 		inode->i_op = &shmem_short_symlink_operations;
+ 	} else {
+ 		inode_nohighmem(inode);
+ 		error = shmem_get_folio(inode, 0, &folio, SGP_WRITE);
+-		if (error) {
+-			iput(inode);
+-			return error;
+-		}
++		if (error)
++			goto out_iput;
+ 		inode->i_mapping->a_ops = &shmem_aops;
+ 		inode->i_op = &shmem_symlink_inode_operations;
+ 		memcpy(folio_address(folio), symname, len);
+@@ -3177,12 +3266,20 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+ 	}
++
++	error = shmem_doff_add(dir, dentry);
++	if (error)
++		goto out_iput;
++
+ 	dir->i_size += BOGO_DIRENT_SIZE;
+ 	dir->i_ctime = dir->i_mtime = current_time(dir);
+ 	inode_inc_iversion(dir);
+ 	d_instantiate(dentry, inode);
+ 	dget(dentry);
+ 	return 0;
++out_iput:
++	iput(inode);
++	return error;
+ }
+ 
+ static void shmem_put_link(void *arg)
+@@ -3224,6 +3321,77 @@ static const char *shmem_get_link(struct dentry *dentry,
+ 	return folio_address(folio);
+ }
+ 
++static loff_t shmem_dir_llseek(struct file *file, loff_t offset, int whence)
++{
++	switch (whence) {
++	case SEEK_CUR:
++		offset += file->f_pos;
++		fallthrough;
++	case SEEK_SET:
++		if (offset >= 0)
++			break;
++		fallthrough;
++	default:
++		return -EINVAL;
++	}
++	return vfs_setpos(file, offset, U32_MAX);
++}
++
++static bool shmem_dir_emit(struct dir_context *ctx, struct dentry *dentry)
++{
++	struct inode *inode = d_inode(dentry);
++
++	return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len,
++			  (loff_t)dentry->d_fsdata, inode->i_ino,
++			  fs_umode_to_dtype(inode->i_mode));
++}
++
++/**
++ * shmem_readdir - Emit entries starting at offset @ctx->pos
++ * @file: an open directory to iterate over
++ * @ctx: directory iteration context
++ *
++ * Caller must hold @file's i_rwsem to prevent insertion or removal of
++ * entries during this call.
++ *
++ * On entry, @ctx->pos contains an offset that represents the first entry
++ * to be read from the directory.
++ *
++ * The operation continues until there are no more entries to read, or
++ * until the ctx->actor indicates there is no more space in the caller's
++ * output buffer.
++ *
++ * On return, @ctx->pos contains an offset that will read the next entry
++ * in this directory when shmem_readdir() is called again with @ctx.
++ *
++ * Return values:
++ *   %0 - Complete
++ */
++static int shmem_readdir(struct file *file, struct dir_context *ctx)
++{
++	struct dentry *dentry, *dir = file->f_path.dentry;
++	unsigned long offset;
++
++	lockdep_assert_held(&d_inode(dir)->i_rwsem);
++
++	if (!dir_emit_dots(file, ctx))
++		goto out;
++	for (offset = ctx->pos - 1; offset < ULONG_MAX - 1;) {
++		dentry = shmem_doff_find_after(dir, &offset);
++		if (!dentry)
++			break;
++		if (!shmem_dir_emit(ctx, dentry)) {
++			dput(dentry);
++			break;
++		}
++		ctx->pos = offset + 1;
++		dput(dentry);
++	}
++
++out:
++	return 0;
++}
++
+ #ifdef CONFIG_TMPFS_XATTR
+ 
+ static int shmem_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+@@ -3742,6 +3910,12 @@ static int shmem_show_options(struct seq_file *seq, struct dentry *root)
+ 	return 0;
+ }
+ 
++#else /* CONFIG_TMPFS */
++
++static inline void shmem_doff_map_destroy(struct inode *dir)
++{
++}
++
+ #endif /* CONFIG_TMPFS */
+ 
+ static void shmem_put_super(struct super_block *sb)
+@@ -3888,6 +4062,8 @@ static void shmem_destroy_inode(struct inode *inode)
+ {
+ 	if (S_ISREG(inode->i_mode))
+ 		mpol_free_shared_policy(&SHMEM_I(inode)->policy);
++	if (S_ISDIR(inode->i_mode))
++		shmem_doff_map_destroy(inode);
+ }
+ 
+ static void shmem_init_inode(void *foo)
+@@ -3955,6 +4131,15 @@ static const struct inode_operations shmem_inode_operations = {
+ #endif
+ };
+ 
++static const struct file_operations shmem_dir_operations = {
++#ifdef CONFIG_TMPFS
++	.llseek		= shmem_dir_llseek,
++	.iterate_shared	= shmem_readdir,
++#endif
++	.read		= generic_read_dir,
++	.fsync		= noop_fsync,
++};
++
+ static const struct inode_operations shmem_dir_inode_operations = {
+ #ifdef CONFIG_TMPFS
+ 	.getattr	= shmem_getattr,
+
+
