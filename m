@@ -2,128 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5292F6E44B4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 12:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E87F6E44CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 12:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231199AbjDQKDl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 06:03:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36088 "EHLO
+        id S230211AbjDQKHL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 06:07:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231194AbjDQKDP (ORCPT
+        with ESMTP id S229898AbjDQKHJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 06:03:15 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D6046B0;
-        Mon, 17 Apr 2023 03:02:20 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d15so7830818pll.12;
-        Mon, 17 Apr 2023 03:02:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681725729; x=1684317729;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=60RYb0d0Yvrv2VTb/aW0qraeJwiiH8SAqHhNyRc8kXA=;
-        b=cn+729yhQfxJ/u8Op5AHVMVhF+y9hWlJ8aZF2/XW0rKWTgq3+5zPamciFhy8BZtFQY
-         0thDP8wtjhW/Di2zzfwRXkr3aVJ3aiUgZYti+7QMN/S3+5jnNFIK9OuzvEyQDNux8Yku
-         HJhqEK88iQ1CH7H+Pb53t5hDr/odNWBmfRvDKurVgnZu9Dz2KuxqqoZ4UzyVLdi4G5v5
-         VRiL7y4Er7GVV+eKRzis2eGyr48NEe5aUQjABdVUMoX5mAvjkmxUTvL1gHBxBC4FRTae
-         eVAHD5bXU9vvkbC3Z2PeMPR8layfKqjSXszVaNg/5NnPGvKQsNTsqSsx8wy4aorA3p6i
-         8B6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681725729; x=1684317729;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=60RYb0d0Yvrv2VTb/aW0qraeJwiiH8SAqHhNyRc8kXA=;
-        b=aJs9NwRFi9EImoIaDTCigaFyyquEySQtOihsJSNj9LIniBG+a2Xx3Vf+CIh9ymsebg
-         V/q9UUD2pscu66k6NELbr+x0nYWlh9vyxBXT7hKRtPNgPpAWyDzNSqovgcnCPTcnBfmn
-         sC25nO+37crkW1tA3bhKT4UjN7uDuIB+fRHz7D1EPH/uCCKGWZH2OT7emO5RssiwD8Hl
-         Ic7q0QVPgyxLN9MPm1zSRYQD2jo4TWlN41YsDAqV9727s0vGGfSs9c7PS51p/lrlqrFV
-         zVs7/XSDcsrWjfx74GjRHBpgdO1nc50T9aZsgzTgruPXb6x+Tp0+zO1gq0r0DRoVW0ry
-         8I3w==
-X-Gm-Message-State: AAQBX9e5WK2NLJNzLELjfWnYA0mow3DzoZQRIiuXOV23SgiZPes9jkO5
-        qTEMBHNd2iEhnQgQOI+Xaj0=
-X-Google-Smtp-Source: AKy350ZIwLLUUrZgeyEQx7AsxlVUYKnepmMbry5s7rrYXTLXOGnFzckCga6vFYntaX9DwyAZYoa1Qw==
-X-Received: by 2002:a05:6a20:7351:b0:ef:c4f6:9128 with SMTP id v17-20020a056a20735100b000efc4f69128mr3817033pzc.42.1681725728911;
-        Mon, 17 Apr 2023 03:02:08 -0700 (PDT)
-Received: from rh-tp ([2406:7400:63:2dd2:1827:1d70:2273:8ee0])
-        by smtp.gmail.com with ESMTPSA id fe25-20020a056a002f1900b0063b64f1d6e9sm5489854pfb.33.2023.04.17.03.02.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 03:02:08 -0700 (PDT)
-Date:   Mon, 17 Apr 2023 15:31:53 +0530
-Message-Id: <87r0sij08e.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [RFCv3 02/10] libfs: Add __generic_file_fsync_nolock implementation
-In-Reply-To: <20230417073255.kzauk5qwu5bjcsmh@quack3>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 17 Apr 2023 06:07:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6476D7ED1;
+        Mon, 17 Apr 2023 03:06:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8152E614BD;
+        Mon, 17 Apr 2023 10:05:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1DA0C433D2;
+        Mon, 17 Apr 2023 10:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681725906;
+        bh=nlMhgVd7pguxjkFgcrm5IWWYvfrdSdeliQ3gHwuSens=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=b7Wr1gVx1JAIPRvlVI2Vh+6Ckw9sh4l3MkAu5081Z4TVOtf7hfxtBuru6QnFVxa2Q
+         H1b+6CfjA7wys2oZ2WHiJgetHLEvaUV2YMS6vILvm9OSbwH9UBrimAh3vvf8BegXRb
+         hgNCTLR4S3Y1og3sdeYhYK5EvX+dZlgATgA6PFRuYNF9fK6Phgnx4hCWzEIp2TTgSM
+         M6VjkfNQkMZwlpEZxHWeGSGBvvz4T5+KQczGGmqTqbvyMeym8riZRxSKxNcA73AhgE
+         lF52ABKuSpyCdcZdjNE7KgaXR2e/EOY+xAR31H2uhTg2cvjiKEUAOIYN/6VXUmULgD
+         Sq8WYSMyqiP8w==
+Message-ID: <94c2aadfb2fe7830d0289ffe6084581b99505a58.camel@kernel.org>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM
+ after writes
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Paul Moore <paul@paul-moore.com>, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Date:   Mon, 17 Apr 2023 06:05:04 -0400
+In-Reply-To: <e2455c0e-5a17-7fc1-95e3-5f2aca2eb409@linux.ibm.com>
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+         <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
+         <e2455c0e-5a17-7fc1-95e3-5f2aca2eb409@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jan Kara <jack@suse.cz> writes:
+On Sun, 2023-04-16 at 21:57 -0400, Stefan Berger wrote:
+>=20
+> On 4/7/23 09:29, Jeff Layton wrote:
+> > > > > >=20
+> > > > > > I would ditch the original proposal in favor of this 2-line pat=
+ch shown here:
+> > > > > >=20
+> > > > > > https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468=
+-ecbde3b221af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
+> > >=20
+> > > We should cool it with the quick hacks to fix things. :)
+> > >=20
+> >=20
+> > Yeah. It might fix this specific testcase, but I think the way it uses
+> > the i_version is "gameable" in other situations. Then again, I don't
+> > know a lot about IMA in this regard.
+> >=20
+> > When is it expected to remeasure? If it's only expected to remeasure on
+> > a close(), then that's one thing. That would be a weird design though.
+>=20
+> IMA should remeasure the file when it has visibly changed for another thr=
+ead or process.
+>=20
+>=20
+> > > > -----------------------8<---------------------------
+> > > >=20
+> > > > [PATCH] IMA: use vfs_getattr_nosec to get the i_version
+> > > >=20
+> > > > IMA currently accesses the i_version out of the inode directly when=
+ it
+> > > > does a measurement. This is fine for most simple filesystems, but c=
+an be
+> > > > problematic with more complex setups (e.g. overlayfs).
+> > > >=20
+> > > > Make IMA instead call vfs_getattr_nosec to get this info. This allo=
+ws
+> > > > the filesystem to determine whether and how to report the i_version=
+, and
+> > > > should allow IMA to work properly with a broader class of filesyste=
+ms in
+> > > > the future.
+> > > >=20
+> > > > Reported-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > ---
+> > >=20
+> > > So, I think we want both; we want the ovl_copyattr() and the
+> > > vfs_getattr_nosec() change:
+> > >=20
+> > > (1) overlayfs should copy up the inode version in ovl_copyattr(). Tha=
+t
+> > >      is in line what we do with all other inode attributes. IOW, the
+> > >      overlayfs inode's i_version counter should aim to mirror the
+> > >      relevant layer's i_version counter. I wouldn't know why that
+> > >      shouldn't be the case. Asking the other way around there doesn't
+> > >      seem to be any use for overlayfs inodes to have an i_version tha=
+t
+> > >      isn't just mirroring the relevant layer's i_version.
+> >=20
+> > It's less than ideal to do this IMO, particularly with an IS_I_VERSION
+> > inode.
+> >=20
+> > You can't just copy=A0up the value from the upper. You'll need to call
+> > inode_query_iversion(upper_inode), which will flag the upper inode for =
+a
+> > logged i_version update on the next write. IOW, this could create some
+> > (probably minor) metadata write amplification in the upper layer inode
+> > with IS_I_VERSION inodes.
+> >=20
+> >=20
+> > > (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
+> > >      Currently, ima assumes that it will get the correct i_version fr=
+om
+> > >      an inode but that just doesn't hold for stacking filesystem.
+> > >=20
+> > > While (1) would likely just fix the immediate bug (2) is correct and
+> > > _robust_. If we change how attributes are handled vfs_*() helpers wil=
+l
+> > > get updated and ima with it. Poking at raw inodes without using
+> > > appropriate helpers is much more likely to get ima into trouble.
+> >=20
+> > This will fix it the right way, I think (assuming it actually works),
+> > and should open the door for IMA to work properly with networked
+> > filesystems that support i_version as well.
+> >=20
+> > Note that there Stephen is correct that calling getattr is probably
+> > going to be less efficient here since we're going to end up calling
+> > generic_fillattr unnecessarily, but I still think it's the right thing
+> > to do.
+>=20
+> I was wondering whether to use the existing inode_eq_iversion() for all
+> other filesystems than overlayfs, nfs, and possibly other ones (which one=
+s?)
+> where we would use the vfs_getattr_nosec() via a case on inode->i_sb->s_m=
+agic?
+> If so, would this function be generic enough to be a public function for =
+libfs.c?
+>=20
+> I'll hopefully be able to test the proposed patch tomorrow.
+>=20
+>=20
 
-> On Fri 14-04-23 19:59:42, Ritesh Harjani wrote:
->> Jan Kara <jack@suse.cz> writes:
->>
->> > On Fri 14-04-23 06:12:00, Christoph Hellwig wrote:
->> >> On Fri, Apr 14, 2023 at 02:51:48PM +0200, Jan Kara wrote:
->> >> > On Thu 13-04-23 22:59:24, Christoph Hellwig wrote:
->> >> > > Still no fan of the naming and placement here.  This is specific
->> >> > > to the fs/buffer.c infrastructure.
->> >> >
->> >> > I'm fine with moving generic_file_fsync() & friends to fs/buffer.c and
->> >> > creating the new function there if it makes you happier. But I think
->> >> > function names should be consistent (hence the new function would be named
->> >> > __generic_file_fsync_nolock()). I agree the name is not ideal and would use
->> >> > cleanup (along with transitioning everybody to not take i_rwsem) but I
->> >> > don't want to complicate this series by touching 13+ callsites of
->> >> > generic_file_fsync() and __generic_file_fsync(). That's for a separate
->> >> > series.
->> >>
->> >> I would not change the existing function.  Just do the right thing for
->> >> the new helper and slowly migrate over without complicating this series.
->> >
->> > OK, I can live with that temporary naming inconsistency I guess. So
->> > the function will be __buffer_file_fsync()?
->>
->> This name was suggested before, so if that's ok I will go with this -
->> "generic_buffer_fsync()". It's definition will lie in fs/buffer.c and
->> it's declaration in include/linux/buffer_head.h
->>
->> Is that ok?
->
-> Yes, that is fine by me. And I suppose this variant will also issue the
-> cache flush, won't it?
+No, you don't want to use inode_eq_iversion here because (as the comment
+over it says):
 
-No. We don't issue cache flush (REQ_PREFLUSH) in generic_buffer_fsync(),
-neither __generic_file_fsync() does that.
+ * Note that we don't need to set the QUERIED flag in this case, as the val=
+ue
+ * in the inode is not being recorded for later use.
 
-> But then we also need __generic_buffer_fsync()
-> without issuing the cache flush for ext4 (we need to sync parent before
-> issuing a cache flush) and FAT.
+The IMA code _does_ record the value for later use. Furthermore, it's
+not valid to use inode_eq_iversion on a non-IS_I_VERSION inode, so it's
+better to just use vfs_getattr_nosec which allows IMA to avoid all of
+those gory details.
 
-Yes, we do take care of that by -
-
-<simplified logic>
-ret = generic_buffer_fsync()
-if (!ret)
-   ret = ext4_sync_parent(inode)
-if (test_opt(inode->i_sb, BARRIER))
-   blkdev_issue_flush()
-
-Am I missing anything. I have sent a [v5] with all of the comments
-addressed. Could you please take a look and let me know if it looks
-good or is there anything required?
-
-[v5]: https://lore.kernel.org/linux-ext4/cover.1681639164.git.ritesh.list@gmail.com/T/#t
-
--ritesh
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
