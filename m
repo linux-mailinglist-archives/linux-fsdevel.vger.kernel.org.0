@@ -2,103 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 92E116E4272
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 10:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5AF36E427D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 10:23:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229781AbjDQIW3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 04:22:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38686 "EHLO
+        id S230456AbjDQIXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 04:23:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230505AbjDQIWR (ORCPT
+        with ESMTP id S230375AbjDQIX0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 04:22:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D889198B;
-        Mon, 17 Apr 2023 01:22:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 39DF262000;
-        Mon, 17 Apr 2023 08:22:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EC1AC433EF;
-        Mon, 17 Apr 2023 08:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681719733;
-        bh=MIG8Wmkr3JxNCkp7vK6igu8UUGrt17VNwrJGqRM2cyw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tdTbC/T5GadLou6Ias/lEIjL8gz3DcneQQK0tHfCCvZ3IVLeOOhgDxF3w6pxtfoK9
-         2GaXcPVp8U7SvxikBXiexyx63Hfha9cMs4OGGnyOmkF3572cZgdSd5hXf4sthe7RjL
-         GFMIJtAMOGrzEs+VJ0GpkuVNj2i7k+SbHD/4NZ4oQTdzmvqFsjJN2gVQ3COEhDa4Bn
-         XXv7XrGgOjVF9u2SwtA6WckCUOC6+XJc6Gt/0l4HNruvaxF2FeDkP0yl0PqPACzCgt
-         sTq6GyfD2bIcl8bJO6KgSF9lvPIQwDA6eioV9OkgKeYMy8PHnXziTV4XIUh8ihZg1T
-         TYtSoKFd5QawA==
-Date:   Mon, 17 Apr 2023 10:22:07 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Benjamin Coddington <bcodding@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Mon, 17 Apr 2023 04:23:26 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B3C4C28;
+        Mon, 17 Apr 2023 01:23:00 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id b2-20020a17090a6e0200b002470b249e59so14382636pjk.4;
+        Mon, 17 Apr 2023 01:23:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681719779; x=1684311779;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OuMyQcD7/2ZnEl2+NMcgJTRjzR7cTySjiosq/Hj/fns=;
+        b=njq8bqHT/tdLrEVkoZBCWvh2hUlvHjUEx6EOvIax20VxdE/vhi6LQmCiyTuNRQq72X
+         gALUfNuIE2dNztcmvy/ujuLOcby3rl1fWFyCb7jRXbcZTA4SzE2IQOrpgRUG7TSMci/J
+         RidMxJ03Fcv8CLINJ/RGG7460EChyk/iTySu3hNJ9N/ebYIN1GDbOT2nN4sVhTyEKqUm
+         I3hGXedtj5Xfh5vmdt0SKdQOvkqlJ7Ch1/w5LZAzZKl57VuhbzzlFzdT+zrAfVAj2WTT
+         qLKHAGbuUG5Hdg2QJKw3TbH/HAqYBtbI9LH44l7+CJ4zd9Oh8JUqRpQLpSQXnEqwiNzI
+         bKgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681719779; x=1684311779;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OuMyQcD7/2ZnEl2+NMcgJTRjzR7cTySjiosq/Hj/fns=;
+        b=Kd0M1bB8nMPvADolBv1MWWTLAiiAZqpVTJmeRgFoJ/4uPzip627f3/0iW8PmTiEl+U
+         r/K3gPK+8Nf/LnPagj2VKg+fJqCg4BF6HVMCYz809lg35zDncfMo59MJZNKbyrNax2bS
+         WtNMqkSX9J8pQGXU5jFxBeI37qvyWOjXvivJ9lpIf3EnhUHvGr0Y8RG+5LWSyzTAD6FX
+         /R3NaX/ixIpzXOItkHn7ix0ghTvQTYMJvIweAvpkNUndXDUCpq8c+SxltS+Z7jnUEMnU
+         NTc0rzzAQ5zxV1MeZOqj9ZqxtPgyJMCyw761zKHBho082AUGvpQuqtdVdJ1yIBrkE+l+
+         sKhg==
+X-Gm-Message-State: AAQBX9cibR8393jnYC/niz1t/VbPbFbgiyt1uxevpelsu5RWaQ/TQBjB
+        ON9JRw1fyFW8hxM8RRTEyDQ=
+X-Google-Smtp-Source: AKy350Z/hEvAm7HtoRsj4jxrcIfGcT8qQYlXImKQLR5g1RkBxqulxcirnWiiC4sjDZ/BeE02AQy86A==
+X-Received: by 2002:a17:90a:ec05:b0:23e:f855:79f2 with SMTP id l5-20020a17090aec0500b0023ef85579f2mr15485142pjy.12.1681719779393;
+        Mon, 17 Apr 2023 01:22:59 -0700 (PDT)
+Received: from debian.me (subs02-180-214-232-3.three.co.id. [180.214.232.3])
+        by smtp.gmail.com with ESMTPSA id u3-20020a17090282c300b001a1c721f7f8sm7101143plz.267.2023.04.17.01.22.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Apr 2023 01:22:58 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id CB7E3106852; Mon, 17 Apr 2023 15:22:55 +0700 (WIB)
+Date:   Mon, 17 Apr 2023 15:22:55 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     wenyang.linux@foxmail.com,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeffrey Layton <jlayton@kernel.org>,
-        Neil Brown <neilb@suse.de>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: allowing for a completely cached umount(2) pathwalk
-Message-ID: <20230417-schmecken-gurken-d477ec6d3331@brauner>
-References: <20230414024312.GF3390869@ZenIV>
- <2631cb9c05087ddd917679b7cebc58cb42cd2de6.camel@kernel.org>
- <20230414-sowas-unmittelbar-67fdae9ca5cd@brauner>
- <9192A185-03BF-4062-B12F-E7EF52578014@hammerspace.com>
- <20230414-leiht-lektion-18f5a7a38306@brauner>
- <91D4AC04-A016-48A9-8E3A-BBB6C38E8C4B@hammerspace.com>
- <4F4F5C98-AA06-40FB-AE51-79E860CD1D76@hammerspace.com>
- <20230414162253.GL3390869@ZenIV>
- <E746F6B4-779A-4184-A2A7-5879E3D3DAEE@hammerspace.com>
- <6F3DB6E1-F104-492B-9AF1-5AEC8C27D267@redhat.com>
+        Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Paolo Bonzini <pbonzini@redhat.com>, Fu Wei <wefu@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] eventfd: support delayed wakeup for non-semaphore
+ eventfd to reduce cpu utilization
+Message-ID: <ZD0B3wGasaWT0rsr@debian.me>
+References: <tencent_AF886EF226FD9F39D28FE4D9A94A95FA2605@qq.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="U4v5feeXuk+NIROB"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6F3DB6E1-F104-492B-9AF1-5AEC8C27D267@redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <tencent_AF886EF226FD9F39D28FE4D9A94A95FA2605@qq.com>
+X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_SORBS_WEB,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 03:01:01PM -0400, Benjamin Coddington wrote:
-> On 14 Apr 2023, at 12:41, Trond Myklebust wrote:
-> >
-> > I mean both cases. Doing a lazy umount with a hard mounted filesystem is a risk sport: if the server does become permanently borked, you can fill up your page cache with stuff that can’t be evicted. Most users don’t realise this, so they get confused when it happens (particularly since the filesystem is out-of-sight and hence out-of-mind).
-> 
-> I've been pecking away at a sysfs knob for this case.  Seemed a clearer path to destruction.
-> 
-> >>
-> >> Note, BTW, that hard vs. soft is a property of fs instance; if you have
-> >> it present elsewhere in the mount tree, flipping it would affect all
-> >> such places.  I don't see any good way to make it a per-mount thing, TBH…
-> >
-> >
-> > The main use case is for when the server is permanently down, so normally it shouldn’t be a problem with flipping the mode on all instances.
-> 
-> Is there another case?  Because, if so..
-> 
-> > That said, it might be nice to make it per-mountpoint at some time.
-> > We do have the ability to declare individual RPC calls to time out,
-> > so it’s doable at the RPC level. All we would really need is the
-> > ability to store a per-vfsmount flag.
 
-I would very much like to avoid having filesystem specific data in
-struct vfsmount. That sounds like a maintenance nightmare going forward.
-Mount structures should remain pure vfs constructs that only carry
-generic properties imho.
+--U4v5feeXuk+NIROB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> .. maybe vfsmount's mnt_root d_fsdata?
+On Sun, Apr 16, 2023 at 07:31:55PM +0800, wenyang.linux@foxmail.com wrote:
+> +eventfd_wakeup_delay_msec
+> +------------------
 
-I don't think that would work without having access to the vfsmount.
+Please match the section underline length as the section text above.
+
+> +Frequent writing of an eventfd can also lead to frequent wakeup of the p=
+eer
+> +read process, resulting in significant cpu overhead.
+> +How ever for the NON SEMAPHORE eventfd, if it's counter has a nonzero va=
+lue,
+> +then a read(2) returns 8 bytes containing that value, and the counter's =
+value
+
+reading eventfd?
+
+> +is reset to zero.
+> +So it coule be optimized as follows: N event_writes vs ONE event_read.
+> +By adding a configurable delay after eventfd_write, these unnecessary wa=
+keup
+> +operations are avoided.
+
+What is the connection from optimization you described to eventfd_write
+delay?
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--U4v5feeXuk+NIROB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZD0B2gAKCRD2uYlJVVFO
+ozmaAP9tfTu24qCrnMYGSI9F1chtlQWOM77qbPwGMbmnpimGWQD+Iy9HE5ts10sR
+EgsByMySCD2o4CVX6g+qpkkU/lkhAQU=
+=xVAv
+-----END PGP SIGNATURE-----
+
+--U4v5feeXuk+NIROB--
