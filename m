@@ -2,167 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F2F6E4B69
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 16:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B18F6E4BC9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 16:45:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230295AbjDQOY7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 10:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51592 "EHLO
+        id S230164AbjDQOpg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 10:45:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229706AbjDQOY6 (ORCPT
+        with ESMTP id S230012AbjDQOpe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 10:24:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66C410C;
-        Mon, 17 Apr 2023 07:24:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4929A62056;
-        Mon, 17 Apr 2023 14:24:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CD7CC433EF;
-        Mon, 17 Apr 2023 14:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681741495;
-        bh=jEolfV4qSU824Qh1BjYwq6ZXkqOqKDIdGjk2dkb+EGE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YaMhaSxpNlU90+lE26jSBVParjfGKw78oIiSDU9/pwC3LGac19oXgYWT28tMN+fya
-         rEaHrM7RR+xnlZLXYu1NyaTq981wDLl8/0OF+0edqZDamdmKxqreACt1+uDS6lexEA
-         QXzR3ZBoZlp5dRHsh+UMR1LjdJ0AR5KvVDaxwkmxHZBjEMutp0gGQQEGA8sQzlp1mu
-         1rldU/wcyfaIYB9zHbSlZG7tYa1W4L9Wbqlj87H05ZVk4bmYDVOiG/Ba6XOjUc+VbP
-         7rpL9/ho0q6UuD/9lTP8rUtMm2vgT0Tto01oKinVfk+ZupnR77UR1BECLi0OdGZOrs
-         0DVUD0y+y7TLQ==
-Date:   Mon, 17 Apr 2023 16:24:50 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH/RFC] VFS: LOOKUP_MOUNTPOINT should used cached info
- whenever possible.
-Message-ID: <20230417-relaxen-selektiert-4b4b4143d7f6@brauner>
-References: <95ee689c76bf034fa2fe9fade0bccdb311f3a04f.camel@kernel.org>
- <168168683217.24821.6260957092725278201@noble.neil.brown.name>
- <20230417-beisein-investieren-360fa20fb68a@brauner>
- <6c08ad94ca949d0f3525f7e1fc24a72c50affd59.camel@kernel.org>
+        Mon, 17 Apr 2023 10:45:34 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2502D59F6;
+        Mon, 17 Apr 2023 07:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681742731; x=1713278731;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=Ujpr3tfLBQ0cnHPJjNO9yDhomrzTInArxSoyy0XPMmc=;
+  b=RFxYA9mb3N958xjqlZWK7p5vwflz9NWJmTk/zFuMm2UlLd13ZRXVQtFd
+   z0vzigqicm867zaD9XAfsoT5bNIXsc9NBJlAUmq9l7/sBQd/xEuWaJ3xu
+   gEvJez25ZKJnyv7zcXtZYyp8dM5Ng8SFdfoqn1RHBSRhRH/qs+U22tTsL
+   D/VWLNTPchgJhQy4sSm59lHUmCrZpO0yN3W1ONGCUhy5Z1/dn/N6jGTuW
+   xJcH82CCuioRZ/Y+pWEY+cFYzlxpP+PLppDJ9GyAcP/kbmz5zC9kX0yew
+   /++/tudcI1yaSzLJHU5fKl3X/JkHFTVyaqSvMPVBQXkCdVob06uGDSFAs
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10683"; a="329079961"
+X-IronPort-AV: E=Sophos;i="5.99,204,1677571200"; 
+   d="scan'208";a="329079961"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2023 07:45:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10683"; a="780101935"
+X-IronPort-AV: E=Sophos;i="5.99,204,1677571200"; 
+   d="scan'208";a="780101935"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.105])
+  by FMSMGA003.fm.intel.com with ESMTP; 17 Apr 2023 07:45:16 -0700
+Date:   Mon, 17 Apr 2023 22:37:47 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Isaku Yamahata <isaku.yamahata@gmail.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
+Message-ID: <20230417143747.GA3639898@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <Y8H5Z3e4hZkFxAVS@google.com>
+ <20230119111308.GC2976263@ls.amr.corp.intel.com>
+ <Y8lg1G2lRIrI/hld@google.com>
+ <20230119223704.GD2976263@ls.amr.corp.intel.com>
+ <Y880FiYF7YCtsw/i@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6c08ad94ca949d0f3525f7e1fc24a72c50affd59.camel@kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <Y880FiYF7YCtsw/i@google.com>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 17, 2023 at 08:25:23AM -0400, Jeff Layton wrote:
-> On Mon, 2023-04-17 at 13:55 +0200, Christian Brauner wrote:
-> > On Mon, Apr 17, 2023 at 09:13:52AM +1000, NeilBrown wrote:
+On Tue, Jan 24, 2023 at 01:27:50AM +0000, Sean Christopherson wrote:
+> On Thu, Jan 19, 2023, Isaku Yamahata wrote:
+> > On Thu, Jan 19, 2023 at 03:25:08PM +0000,
+> > Sean Christopherson <seanjc@google.com> wrote:
+> > 
+> > > On Thu, Jan 19, 2023, Isaku Yamahata wrote:
+> > > > On Sat, Jan 14, 2023 at 12:37:59AM +0000,
+> > > > Sean Christopherson <seanjc@google.com> wrote:
+> > > > 
+> > > > > On Fri, Dec 02, 2022, Chao Peng wrote:
+> > > > > > This patch series implements KVM guest private memory for confidential
+> > > > > > computing scenarios like Intel TDX[1]. If a TDX host accesses
+> > > > > > TDX-protected guest memory, machine check can happen which can further
+> > > > > > crash the running host system, this is terrible for multi-tenant
+> > > > > > configurations. The host accesses include those from KVM userspace like
+> > > > > > QEMU. This series addresses KVM userspace induced crash by introducing
+> > > > > > new mm and KVM interfaces so KVM userspace can still manage guest memory
+> > > > > > via a fd-based approach, but it can never access the guest memory
+> > > > > > content.
+> > > > > > 
+> > > > > > The patch series touches both core mm and KVM code. I appreciate
+> > > > > > Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
+> > > > > > reviews are always welcome.
+> > > > > >   - 01: mm change, target for mm tree
+> > > > > >   - 02-09: KVM change, target for KVM tree
+> > > > > 
+> > > > > A version with all of my feedback, plus reworked versions of Vishal's selftest,
+> > > > > is available here:
+> > > > > 
+> > > > >   git@github.com:sean-jc/linux.git x86/upm_base_support
+> > > > > 
+> > > > > It compiles and passes the selftest, but it's otherwise barely tested.  There are
+> > > > > a few todos (2 I think?) and many of the commits need changelogs, i.e. it's still
+> > > > > a WIP.
+> > > > > 
+> > > > > As for next steps, can you (handwaving all of the TDX folks) take a look at what
+> > > > > I pushed and see if there's anything horrifically broken, and that it still works
+> > > > > for TDX?
+> > > > > 
+> > > > > Fuad (and pKVM folks) same ask for you with respect to pKVM.  Absolutely no rush
+> > > > > (and I mean that).
+> > > > > 
+> > > > > On my side, the two things on my mind are (a) tests and (b) downstream dependencies
+> > > > > (SEV and TDX).  For tests, I want to build a lists of tests that are required for
+> > > > > merging so that the criteria for merging are clear, and so that if the list is large
+> > > > > (haven't thought much yet), the work of writing and running tests can be distributed.
+> > > > > 
+> > > > > Regarding downstream dependencies, before this lands, I want to pull in all the
+> > > > > TDX and SNP series and see how everything fits together.  Specifically, I want to
+> > > > > make sure that we don't end up with a uAPI that necessitates ugly code, and that we
+> > > > > don't miss an opportunity to make things simpler.  The patches in the SNP series to
+> > > > > add "legacy" SEV support for UPM in particular made me slightly rethink some minor
+> > > > > details.  Nothing remotely major, but something that needs attention since it'll
+> > > > > be uAPI.
+> > > > 
+> > > > Although I'm still debuging with TDX KVM, I needed the following.
+> > > > kvm_faultin_pfn() is called without mmu_lock held.  the race to change
+> > > > private/shared is handled by mmu_seq.  Maybe dedicated function only for
+> > > > kvm_faultin_pfn().
 > > > 
-> > > When performing a LOOKUP_MOUNTPOINT lookup we don't really want to
-> > > engage with underlying systems at all.  Any mount point MUST be in the
-> > > dcache with a complete direct path from the root to the mountpoint.
-> > > That should be sufficient to find the mountpoint given a path name.
+> > > Gah, you're not on the other thread where this was discussed[*].  Simply deleting
+> > > the lockdep assertion is safe, for guest types that rely on the attributes to
+> > > define shared vs. private, KVM rechecks the attributes under the protection of
+> > > mmu_seq.
 > > > 
-> > > This becomes an issue when the filesystem changes unexpected, such as
-> > > when a NFS server is changed to reject all access.  It then becomes
-> > > impossible to unmount anything mounted on the filesystem which has
-> > > changed.  We could simply lazy-unmount the changed filesystem and that
-> > > will often be sufficient.  However if the target filesystem needs
-> > > "umount -f" to complete the unmount properly, then the lazy unmount will
-> > > leave it incompletely unmounted.  When "-f" is needed, we really need to
-> > 
-> > I don't understand this yet. All I see is nfs_umount_begin() that's
-> > different for MNT_FORCE to kill remaining io. Why does that preclude
-> > MNT_DETACH? You might very well fail MNT_FORCE and the only way you can
-> > get rid is to use MNT_DETACH, no? So I don't see why that is an
-> > argument.
-> > 
-> > > be able to name the target filesystem.
+> > > I'll get a fixed version pushed out today.
 > > > 
-> > > We NEVER want to revalidate anything.  We already avoid the revalidation
-> > > of the mountpoint itself, be we won't need to revalidate anything on the
-> > > path either as thay might affect the cache, and the cache is what we are
-> > > really looking in.
-> > > 
-> > > Permission checks are a little less clear.  We currently allow any user
+> > > [*] https://lore.kernel.org/all/Y8gpl+LwSuSgBFks@google.com
 > > 
-> > This is all very brittle.
-> > 
-> > First case that comes to mind is overlayfs where the permission checking
-> > is performed twice. Once on the overlayfs inode itself based on the
-> > caller's security context and a second time on the underlying inode with
-> > the security context of the mounter of the overlayfs instance.
-> > 
-> > A mounter could have dropped all privileges aside from CAP_SYS_ADMIN so
-> > they'd be able to mount the overlayfs instance but would be restricted
-> > from accessing certain directories or files. The task accessing the
-> > overlayfs instance however could have a completely different security
-> > context including CAP_DAC_READ_SEARCH and such. Both tasks could
-> > reasonably be in different user namespaces and so on.
-> > 
-> > The LSM hooks are also called twice and would now also be called once.
-> > 
-> > It also forgets that acl_permission() check may very well call into the
-> > filesystem via check_acl().
-> > 
-> > So umount could either be used to infer existence of files that the user
-> > wouldn't otherwise know they exist or in the worst case allow to umount
-> > something that they wouldn't have access to.
-> > 
-> > Aside from that this would break userspace assumptions and as Al and
-> > I've mentioned before in the other thread you'd need a new flag to
-> > umount2() for this. The permission model can't just change behind users
-> > back.
-> > 
-> > But I dislike it for the now even more special-cased umount path lookup
-> > alone tbh. I'd feel way more comfortable with a non-lookup related
-> > solution that doesn't have subtle implications for permission checking.
-> > 
+> > Now I have tdx kvm working. I've uploaded at the followings.
+> > It's rebased to v6.2-rc3.
+> >         git@github.com:yamahata/linux.git tdx/upm
+> >         git@github.com:yamahata/qemu.git tdx/upm
 > 
-> These are good points.
+> And I finally got a working, building version updated and pushed out (again to):
 > 
-> One way around the issues you point out might be to pass down a new
-> MAY_LOOKUP_MOUNTPOINT mask flag to ->permission. That would allow the
-> filesystem driver to decide whether it wants to avoid potentially
-> problematic activity when checking permissions. nfs_permission could
-> check for that and take a more hands-off approach to the permissions
-> check. Between that and skipping d_revalidate on LOOKUP_MOUNTPOINT, I
-> think that might do what we need.
+>   git@github.com:sean-jc/linux.git x86/upm_base_support
+> 
+> Took longer than expected to get the memslot restrictions sussed out.  I'm done
+> working on the code for now, my plan is to come back to it+TDX+SNP in 2-3 weeks
+> to resolves any remaining todos (that no one else tackles) and to do the whole
+> "merge the world" excersise.
 
-Yes, that's pretty obvious. I considered that, wrote the section and
-deleted it again because I still find this pretty ugly. It does leak
-very specific lookup information into filesystems that isn't generically
-useful like MAY_NOT_BLOCK is. Most filesystems don't need to check with
-a server like NFS does and so don't suffer from this issue.
+Hi Sean,
 
-The crucial change in the patchset in its current form is that you're
-requesting from the VFS to significantly alter permission checking just
-because this is a umount request in a pretty fundamental way for roughly
-21 filesytems. Afaict, on the VFS level that doesn't make sense. The VFS
-can't just skip a filesystem's ->permission() handler with "well, it's
-just on a way to a umount so whatever". That's just not going to be
-correct and is just a source of subtle security bugs. So NAK on that.
+In case you started working on the code again, I have a branch [1]
+originally planned as v11 candidate which I believe I addressed all the
+discussions we had for v10 except the very latest one [2] and integrated
+all the newly added selftests from Ackerley and myself. The branch was
+based on your original upm_base_support and then rebased to your
+kvm-x86/mmu head. Feel free to take anything you think useful( most of
+them are trivial things but also some fixes for bugs).
 
-And I'm curious why is it obvious that we don't want to revalidate _any_
-path component and not just the last one? Why is that generally safe?
-Why can't this be used to access files and directories the caller
-wouldn't otherwise be able to access? I would like to have this spelled
-out for slow people like me, please.
+[1] https://github.com/chao-p/linux/commits/privmem-v11.6
+[2] https://lore.kernel.org/all/20230413160405.h6ov2yl6l3i7mvsj@box.shutemov.name/
 
-From my point of view, this would only be somewhat safe _generally_ if
-you'd allow circumvention for revalidation and permission checking if
-MNT_FORCE is specified and the caller has capable(CAP_DAC_READ_SEARCH).
-You'd still mess with overlayfs permission model in this case though.
-
-Plus, there are better options of solving this problem. Again, I'd
-rather build a separate api for unmounting then playing such potentially
-subtle security sensitive games with permission checking during path
-lookup.
+Chao
+> 
+> > kvm_mmu_do_page_fault() needs the following change.
+> > kvm_mem_is_private() queries mem_attr_array.  kvm_faultin_pfn() also uses
+> > kvm_mem_is_private(). So the shared-private check in kvm_faultin_pfn() doesn't
+> > make sense. This change would belong to TDX KVM patches, though.
+> 
+> Yeah, SNP needs similar treatment.  Sorting that out is high up on the todo list.
