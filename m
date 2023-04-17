@@ -2,132 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6BA76E3EF7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 07:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D2636E3F43
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 08:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbjDQFez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 01:34:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55442 "EHLO
+        id S229658AbjDQGBO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 02:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230034AbjDQFew (ORCPT
+        with ESMTP id S229593AbjDQGBN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 01:34:52 -0400
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6664F35B7
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Apr 2023 22:34:45 -0700 (PDT)
-Received: by mail-il1-f208.google.com with SMTP id j14-20020a056e02154e00b0032ad2b5392fso1507840ilu.9
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Apr 2023 22:34:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681709684; x=1684301684;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4mgl0iZLcTdWd+tfMeHZVb9M8iD5ML58BVHDGKAeGLo=;
-        b=dYGcV23cRi2YdiWuca2pa+SiogtmWMjDYNQ/fgW3z5CC+Y8hRKowOl+FCZWTPsSkqZ
-         Vx8dgYpF3NtqhbnbxkFRXfzc5XnlyoJFPg5SQBqsW89D0jYp6nWeJaoBFKLFzcS95622
-         mhi1lx7EATiwNXhF6yIMDZ12Hb5GZpIfdD2MHx2w6mD8aOLsAjzOjcCn2dtZyMzPi125
-         ProDlko4bFgckROGxUu48CDyQB1CFxo+bcjpu9jXlS07a0oeC+FCF7KyBgUiYwWOZiq1
-         /5RW7ZKnVJOvLzFyCUEYfyp6/EFTI36KwR1bNL4z/XlE2uJm2EBFAXmzcv9I+nozCttS
-         l0qA==
-X-Gm-Message-State: AAQBX9fseFJWbNOyFnVGEt+gktmTDW/gy7J6Q1ERPb1iTBgYQ+HpU80k
-        voCaZqWLpAzPgDeg8QcQ9f3hSJWMNeJIhnL/tKSrFgTr/tkrRPhD3w==
-X-Google-Smtp-Source: AKy350Zb/xJjWaIBLmQjjBiYWDrZXrBGGgoCEjchA9t5OwcUkc99mCJUgSDW83l267KyejjaJ8qqWYwMz9PW6C4QGZSQZHNZ7dnp
+        Mon, 17 Apr 2023 02:01:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27D782D62;
+        Sun, 16 Apr 2023 23:01:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B745561492;
+        Mon, 17 Apr 2023 06:01:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CD47C433EF;
+        Mon, 17 Apr 2023 06:01:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1681711271;
+        bh=6FFhy1MA0NOpYvy0dbAS0WVVaRt74jiB9mX3xaybZMU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BBfAiKGIQNXZzznGHxErw8IweVa0cUcaGrMeeysVA7d/EPdxyZfT4HiFcIaVw/AVe
+         YqYAeRCen1uEK3QLjPj0QQTq9I6lu8FueKNcbc8aHwfJGoxsqNu2Yp0SVlpn854oHD
+         f5Vob/mo8ZYptXBxVLXb0OQgD+f+H/OVyj8BYAYQ=
+Date:   Mon, 17 Apr 2023 08:01:06 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kyle Sanderson <kyle.leet@gmail.com>
+Cc:     linux-btrfs@vger.kernel.org,
+        Linux-Kernal <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: btrfs induced data loss (on xfs) - 5.19.0-38-generic
+Message-ID: <ZDzgojYAZXS_D_OH@kroah.com>
+References: <CACsaVZJGPux1yhrMWnq+7nt3Zz5wZ6zEo2+S2pf=4czpYLFyjg@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:8481:0:b0:40f:a8e9:96ab with SMTP id
- f1-20020a028481000000b0040fa8e996abmr521317jai.5.1681709684551; Sun, 16 Apr
- 2023 22:34:44 -0700 (PDT)
-Date:   Sun, 16 Apr 2023 22:34:44 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005cf71b05f9818cc2@google.com>
-Subject: [syzbot] [hfs?] KASAN: wild-memory-access Read in hfsplus_bnode_dump
-From:   syzbot <syzbot+f687659f3c2acfa34201@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACsaVZJGPux1yhrMWnq+7nt3Zz5wZ6zEo2+S2pf=4czpYLFyjg@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sun, Apr 16, 2023 at 10:20:45PM -0700, Kyle Sanderson wrote:
+> The single btrfs disk was at 100% utilization and a wa of 50~, reading
+> back at around 2MB/s. df and similar would simply freeze. Leading up
+> to this I removed around 2T of data from a single btrfs disk. I
+> managed to get most of the services shutdown and disks unmounted, but
+> when the system came back up I had to use xfs_repair (for the first
+> time in a very long time) to boot into my system. I likely should have
+> just pulled the power...
+> 
+> [1147997.255020] INFO: task happywriter:3425205 blocked for more than
+> 120 seconds.
+> [1147997.255088]       Not tainted 5.19.0-38-generic #39~22.04.1-Ubuntu
 
-syzbot found the following issue on:
+This is a distro-specific kernel, sorry, nothing to do with our releases
+as the 5.19 kernel branch is long end-of-life.  Please work with your
+distro for this issue if you wish to stick to this kernel version.
 
-HEAD commit:    0d3eb744aed4 Merge tag 'urgent-rcu.2023.04.07a' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1662e1c3c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=759d5e665e47a55
-dashboard link: https://syzkaller.appspot.com/bug?extid=f687659f3c2acfa34201
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+good luck!
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0b9db4c3a583/disk-0d3eb744.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/462736705e85/vmlinux-0d3eb744.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8932ee360b94/bzImage-0d3eb744.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f687659f3c2acfa34201@syzkaller.appspotmail.com
-
-loop2: detected capacity change from 0 to 1024
-hfsplus: request for non-existent node 64 in B*Tree
-hfsplus: request for non-existent node 64 in B*Tree
-==================================================================
-BUG: KASAN: wild-memory-access in memcpy_from_page include/linux/highmem.h:391 [inline]
-BUG: KASAN: wild-memory-access in hfsplus_bnode_read fs/hfsplus/bnode.c:32 [inline]
-BUG: KASAN: wild-memory-access in hfsplus_bnode_read_u16 fs/hfsplus/bnode.c:45 [inline]
-BUG: KASAN: wild-memory-access in hfsplus_bnode_dump+0x403/0xba0 fs/hfsplus/bnode.c:305
-Read of size 2 at addr 000508800000103e by task syz-executor.2/9009
-
-CPU: 0 PID: 9009 Comm: syz-executor.2 Not tainted 6.3.0-rc6-syzkaller-00016-g0d3eb744aed4 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- print_report+0xe6/0x540 mm/kasan/report.c:433
- kasan_report+0x176/0x1b0 mm/kasan/report.c:536
- kasan_check_range+0x283/0x290 mm/kasan/generic.c:187
- __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
- memcpy_from_page include/linux/highmem.h:391 [inline]
- hfsplus_bnode_read fs/hfsplus/bnode.c:32 [inline]
- hfsplus_bnode_read_u16 fs/hfsplus/bnode.c:45 [inline]
- hfsplus_bnode_dump+0x403/0xba0 fs/hfsplus/bnode.c:305
- hfsplus_brec_remove+0x42c/0x4f0 fs/hfsplus/brec.c:229
- __hfsplus_delete_attr+0x275/0x450 fs/hfsplus/attributes.c:299
- hfsplus_delete_all_attrs+0x26b/0x3c0 fs/hfsplus/attributes.c:378
- hfsplus_delete_cat+0xb87/0xfc0 fs/hfsplus/catalog.c:425
- hfsplus_unlink+0x363/0x7f0 fs/hfsplus/dir.c:385
- vfs_unlink+0x35d/0x5f0 fs/namei.c:4250
- do_unlinkat+0x4a1/0x940 fs/namei.c:4316
- __do_sys_unlink fs/namei.c:4364 [inline]
- __se_sys_unlink fs/namei.c:4362 [inline]
- __x64_sys_unlink+0x49/0x50 fs/namei.c:4362
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f603de8c169
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f603eb66168 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 00007f603dfabf80 RCX: 00007f603de8c169
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000000
-RBP: 00007f603dee7ca1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fff75f7975f R14: 00007f603eb66300 R15: 0000000000022000
- </TASK>
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+greg k-h
