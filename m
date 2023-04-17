@@ -2,241 +2,282 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1743D6E3E7A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 06:35:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A1AE6E3ED8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 07:21:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229644AbjDQEfP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 00:35:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37616 "EHLO
+        id S229967AbjDQFVI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 01:21:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjDQEfO (ORCPT
+        with ESMTP id S229643AbjDQFU7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 00:35:14 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32CB21BF0;
-        Sun, 16 Apr 2023 21:35:12 -0700 (PDT)
-Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Q0DdP6HvMzSrTf;
-        Mon, 17 Apr 2023 12:31:05 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Mon, 17 Apr 2023 12:35:04 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     Miaohe Lin <linmiaohe@huawei.com>, <linux-kernel@vger.kernel.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Tong Tiangen <tongtiangen@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2] mm: hwpoison: coredump: support recovery from dump_user_range()
-Date:   Mon, 17 Apr 2023 12:53:23 +0800
-Message-ID: <20230417045323.11054-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.35.3
+        Mon, 17 Apr 2023 01:20:59 -0400
+Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3342F199C;
+        Sun, 16 Apr 2023 22:20:58 -0700 (PDT)
+Received: by mail-vs1-xe33.google.com with SMTP id g187so6834486vsc.10;
+        Sun, 16 Apr 2023 22:20:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681708857; x=1684300857;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FWIMVeJcxCIoiBHSDkBOm+Ya1JPbRMCH/iYS8X+ff7o=;
+        b=UfhBFTCGjJDtE4hG2gPAdUL/Jwn1itJg2HlqODibc9d5pA7Xz3Scu7/jrb3QU0sBxb
+         RBUSjqtNxOxhCzonDGBClaiFd1f2hWakzreDe7vR4tMj7n5KMN/kxTVzTLv2avY6Rn7R
+         n78yC+BcDzjHsUB3xlqW5Uo+dF7/suechbpSigvL1AzB07Dl5xKOr8UMwC2ZEvuMmLiB
+         Z++ocKqIbIEwwY5h65JqVT9zNnUiFyR9puMFWfU1tJful9DFRrYHP0N0CFNurqG6vek+
+         9KvBNDvOH14RcS9PO3EVrD+/PZ3aHK5KNMwSeeDLEPcJ2DgeSmMy4f740dnrsTOsrm38
+         zaGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681708857; x=1684300857;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FWIMVeJcxCIoiBHSDkBOm+Ya1JPbRMCH/iYS8X+ff7o=;
+        b=jsEZ10wAU+kllwpFbi+Jsl3hPKADvE0uJYrUqiP4FDEn//o3ZK6rkY5Yr7GxHTsynW
+         VI7QJ1tQ4IzeOjOMHcahVk0Y8FvmzH7hfxDu8FWPlxhDboOJLqf7NxqF+kupnIcyTIva
+         OKcerCmk6tgWKueeEyTqDb4t2xqVSn7yD+d/EFw66c5dxkJGtyIyHDHyAMwODcpxXqAi
+         GOeCsWhooo5Tg5uAGx9L2GMxcg0LObigpHpGdsXfh+T2lNGXbXxiWe6iYsesCfFDaJ2X
+         7O4feW/QOSl72/dPW/y+rk2p6vxTfArT9w1loebpztjE2n4a5IxAZ/9RbRBkrioK5PSY
+         meJg==
+X-Gm-Message-State: AAQBX9dGJcUoOpZaT04vR42U3tMSyL3zd48by/QRvsgDsWpfPZ0n9gOQ
+        GcvXHV4bpX3PLapt16a8LanJl8awbAQe8FLyB3PaoZW2pRw=
+X-Google-Smtp-Source: AKy350a7EtOV/FYuYDWym0qIG2vdPJ+z4uXcwiQmgQx+MJymS0N/ICHYMizAcoXHiO6UU5TsWvBfjGYzlgZs2wbhCxw=
+X-Received: by 2002:a67:d915:0:b0:42f:a82e:5289 with SMTP id
+ t21-20020a67d915000000b0042fa82e5289mr1339859vsj.5.1681708856979; Sun, 16 Apr
+ 2023 22:20:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+From:   Kyle Sanderson <kyle.leet@gmail.com>
+Date:   Sun, 16 Apr 2023 22:20:45 -0700
+Message-ID: <CACsaVZJGPux1yhrMWnq+7nt3Zz5wZ6zEo2+S2pf=4czpYLFyjg@mail.gmail.com>
+Subject: btrfs induced data loss (on xfs) - 5.19.0-38-generic
+To:     linux-btrfs@vger.kernel.org
+Cc:     Linux-Kernal <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The dump_user_range() is used to copy the user page to a coredump file,
-but if a hardware memory error occurred during copy, which called from
-__kernel_write_iter() in dump_user_range(), it crashes,
+The single btrfs disk was at 100% utilization and a wa of 50~, reading
+back at around 2MB/s. df and similar would simply freeze. Leading up
+to this I removed around 2T of data from a single btrfs disk. I
+managed to get most of the services shutdown and disks unmounted, but
+when the system came back up I had to use xfs_repair (for the first
+time in a very long time) to boot into my system. I likely should have
+just pulled the power...
 
-  CPU: 112 PID: 7014 Comm: mca-recover Not tainted 6.3.0-rc2 #425
- 
-  pc : __memcpy+0x110/0x260
-  lr : _copy_from_iter+0x3bc/0x4c8
-  ...
-  Call trace:
-   __memcpy+0x110/0x260
-   copy_page_from_iter+0xcc/0x130
-   pipe_write+0x164/0x6d8
-   __kernel_write_iter+0x9c/0x210
-   dump_user_range+0xc8/0x1d8
-   elf_core_dump+0x308/0x368
-   do_coredump+0x2e8/0xa40
-   get_signal+0x59c/0x788
-   do_signal+0x118/0x1f8
-   do_notify_resume+0xf0/0x280
-   el0_da+0x130/0x138
-   el0t_64_sync_handler+0x68/0xc0
-   el0t_64_sync+0x188/0x190
-
-Generally, the '->write_iter' of file ops will use copy_page_from_iter()
-and copy_page_from_iter_atomic(), change memcpy() to copy_mc_to_kernel()
-in both of them to handle #MC during source read, which stop coredump
-processing and kill the task instead of kernel panic, but the source
-address may not always a user address, so introduce a new copy_mc flag in
-struct iov_iter{} to indicate that the iter could do a safe memory copy,
-also introduce the helpers to set/cleck the flag, for now, it's only
-used in coredump's dump_user_range(), but it could expand to any other
-scenarios to fix the similar issue.
-
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Miaohe Lin <linmiaohe@huawei.com>
-Cc: Naoya Horiguchi <naoya.horiguchi@nec.com>
-Cc: Tong Tiangen <tongtiangen@huawei.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
-v2:
-- move the helper functions under pre-existing CONFIG_ARCH_HAS_COPY_MC
-- reposition the copy_mc in struct iov_iter for easy merge, suggested
-  by Andrew Morton
-- drop unnecessary clear flag helper
-- fix checkpatch warning
- fs/coredump.c       |  1 +
- include/linux/uio.h | 16 ++++++++++++++++
- lib/iov_iter.c      | 17 +++++++++++++++--
- 3 files changed, 32 insertions(+), 2 deletions(-)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 5df1e6e1eb2b..ece7badf701b 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -882,6 +882,7 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
- 	pos = file->f_pos;
- 	bvec_set_page(&bvec, page, PAGE_SIZE, 0);
- 	iov_iter_bvec(&iter, ITER_SOURCE, &bvec, 1, PAGE_SIZE);
-+	iov_iter_set_copy_mc(&iter);
- 	n = __kernel_write_iter(cprm->file, &iter, &pos);
- 	if (n != PAGE_SIZE)
- 		return 0;
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index c459e1d5772b..aa3a4c6ba585 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -40,6 +40,7 @@ struct iov_iter_state {
- 
- struct iov_iter {
- 	u8 iter_type;
-+	bool copy_mc;
- 	bool nofault;
- 	bool data_source;
- 	bool user_backed;
-@@ -241,8 +242,22 @@ size_t _copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i);
- 
- #ifdef CONFIG_ARCH_HAS_COPY_MC
- size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i);
-+static inline void iov_iter_set_copy_mc(struct iov_iter *i)
-+{
-+	i->copy_mc = true;
-+}
-+
-+static inline bool iov_iter_is_copy_mc(const struct iov_iter *i)
-+{
-+	return i->copy_mc;
-+}
- #else
- #define _copy_mc_to_iter _copy_to_iter
-+static inline void iov_iter_set_copy_mc(struct iov_iter *i) { }
-+static inline bool iov_iter_is_copy_mc(const struct iov_iter *i)
-+{
-+	return false;
-+}
- #endif
- 
- size_t iov_iter_zero(size_t bytes, struct iov_iter *);
-@@ -357,6 +372,7 @@ static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direction,
- 	WARN_ON(direction & ~(READ | WRITE));
- 	*i = (struct iov_iter) {
- 		.iter_type = ITER_UBUF,
-+		.copy_mc = false,
- 		.user_backed = true,
- 		.data_source = direction,
- 		.ubuf = buf,
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 08587feb94cc..7b9d8419fee7 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -288,6 +288,7 @@ void iov_iter_init(struct iov_iter *i, unsigned int direction,
- 	WARN_ON(direction & ~(READ | WRITE));
- 	*i = (struct iov_iter) {
- 		.iter_type = ITER_IOVEC,
-+		.copy_mc = false,
- 		.nofault = false,
- 		.user_backed = true,
- 		.data_source = direction,
-@@ -371,6 +372,14 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
- EXPORT_SYMBOL_GPL(_copy_mc_to_iter);
- #endif /* CONFIG_ARCH_HAS_COPY_MC */
- 
-+static void *memcpy_from_iter(struct iov_iter *i, void *to, const void *from,
-+				 size_t size)
-+{
-+	if (iov_iter_is_copy_mc(i))
-+		return (void *)copy_mc_to_kernel(to, from, size);
-+	return memcpy(to, from, size);
-+}
-+
- size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
- {
- 	if (WARN_ON_ONCE(!i->data_source))
-@@ -380,7 +389,7 @@ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
- 		might_fault();
- 	iterate_and_advance(i, bytes, base, len, off,
- 		copyin(addr + off, base, len),
--		memcpy(addr + off, base, len)
-+		memcpy_from_iter(i, addr + off, base, len)
- 	)
- 
- 	return bytes;
-@@ -571,7 +580,7 @@ size_t copy_page_from_iter_atomic(struct page *page, unsigned offset, size_t byt
- 	}
- 	iterate_and_advance(i, bytes, base, len, off,
- 		copyin(p + off, base, len),
--		memcpy(p + off, base, len)
-+		memcpy_from_iter(i, p + off, base, len)
- 	)
- 	kunmap_atomic(kaddr);
- 	return bytes;
-@@ -704,6 +713,7 @@ void iov_iter_kvec(struct iov_iter *i, unsigned int direction,
- 	WARN_ON(direction & ~(READ | WRITE));
- 	*i = (struct iov_iter){
- 		.iter_type = ITER_KVEC,
-+		.copy_mc = false,
- 		.data_source = direction,
- 		.kvec = kvec,
- 		.nr_segs = nr_segs,
-@@ -720,6 +730,7 @@ void iov_iter_bvec(struct iov_iter *i, unsigned int direction,
- 	WARN_ON(direction & ~(READ | WRITE));
- 	*i = (struct iov_iter){
- 		.iter_type = ITER_BVEC,
-+		.copy_mc = false,
- 		.data_source = direction,
- 		.bvec = bvec,
- 		.nr_segs = nr_segs,
-@@ -748,6 +759,7 @@ void iov_iter_xarray(struct iov_iter *i, unsigned int direction,
- 	BUG_ON(direction & ~1);
- 	*i = (struct iov_iter) {
- 		.iter_type = ITER_XARRAY,
-+		.copy_mc = false,
- 		.data_source = direction,
- 		.xarray = xarray,
- 		.xarray_start = start,
-@@ -771,6 +783,7 @@ void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count)
- 	BUG_ON(direction != READ);
- 	*i = (struct iov_iter){
- 		.iter_type = ITER_DISCARD,
-+		.copy_mc = false,
- 		.data_source = false,
- 		.count = count,
- 		.iov_offset = 0
--- 
-2.35.3
-
+[1147997.255020] INFO: task happywriter:3425205 blocked for more than
+120 seconds.
+[1147997.255088]       Not tainted 5.19.0-38-generic #39~22.04.1-Ubuntu
+[1147997.255114] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[1147997.255144] task:happywriter state:D stack:    0 pid:3425205
+ppid:557021 flags:0x00004000
+[1147997.255151] Call Trace:
+[1147997.255155]  <TASK>
+[1147997.255160]  __schedule+0x257/0x5d0
+[1147997.255169]  ? __schedule+0x25f/0x5d0
+[1147997.255173]  schedule+0x68/0x110
+[1147997.255176]  rwsem_down_write_slowpath+0x2ee/0x5a0
+[1147997.255180]  ? check_heap_object+0x100/0x1e0
+[1147997.255185]  down_write+0x4f/0x70
+[1147997.255189]  do_unlinkat+0x12b/0x2d0
+[1147997.255194]  __x64_sys_unlink+0x42/0x70
+[1147997.255197]  ? syscall_exit_to_user_mode+0x2a/0x50
+[1147997.255201]  do_syscall_64+0x59/0x90
+[1147997.255204]  ? do_syscall_64+0x69/0x90
+[1147997.255207]  ? sysvec_call_function_single+0x4e/0xb0
+[1147997.255211]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+[1147997.255216] RIP: 0033:0x1202a57
+[1147997.255220] RSP: 002b:00007fe467ffd4c8 EFLAGS: 00000246 ORIG_RAX:
+0000000000000057
+[1147997.255224] RAX: ffffffffffffffda RBX: 00007fe3a4e94d28 RCX:
+0000000001202a57
+[1147997.255226] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
+00007fe450054b60
+[1147997.255228] RBP: 00007fe450054b60 R08: 0000000000000000 R09:
+00000000000000e8
+[1147997.255231] R10: 0000000000000001 R11: 0000000000000246 R12:
+00007fe467ffd5b0
+[1147997.255233] R13: 00007fe467ffd5f0 R14: 00007fe467ffd5e0 R15:
+00007fe3a4e94d28
+[1147997.255239]  </TASK>
+[1148118.087966] INFO: task happywriter:3425205 blocked for more than
+241 seconds.
+[1148118.088022]       Not tainted 5.19.0-38-generic #39~22.04.1-Ubuntu
+[1148118.088048] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[1148118.088077] task:happywriter state:D stack:    0 pid:3425205
+ppid:557021 flags:0x00004000
+[1148118.088083] Call Trace:
+[1148118.088087]  <TASK>
+[1148118.088093]  __schedule+0x257/0x5d0
+[1148118.088101]  ? __schedule+0x25f/0x5d0
+[1148118.088105]  schedule+0x68/0x110
+[1148118.088108]  rwsem_down_write_slowpath+0x2ee/0x5a0
+[1148118.088113]  ? check_heap_object+0x100/0x1e0
+[1148118.088118]  down_write+0x4f/0x70
+[1148118.088121]  do_unlinkat+0x12b/0x2d0
+[1148118.088126]  __x64_sys_unlink+0x42/0x70
+[1148118.088129]  ? syscall_exit_to_user_mode+0x2a/0x50
+[1148118.088133]  do_syscall_64+0x59/0x90
+[1148118.088136]  ? do_syscall_64+0x69/0x90
+[1148118.088139]  ? sysvec_call_function_single+0x4e/0xb0
+[1148118.088142]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+[1148118.088148] RIP: 0033:0x1202a57
+[1148118.088151] RSP: 002b:00007fe467ffd4c8 EFLAGS: 00000246 ORIG_RAX:
+0000000000000057
+[1148118.088155] RAX: ffffffffffffffda RBX: 00007fe3a4e94d28 RCX:
+0000000001202a57
+[1148118.088158] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
+00007fe450054b60
+[1148118.088160] RBP: 00007fe450054b60 R08: 0000000000000000 R09:
+00000000000000e8
+[1148118.088162] R10: 0000000000000001 R11: 0000000000000246 R12:
+00007fe467ffd5b0
+[1148118.088164] R13: 00007fe467ffd5f0 R14: 00007fe467ffd5e0 R15:
+00007fe3a4e94d28
+[1148118.088170]  </TASK>
+[1148238.912688] INFO: task kcompactd0:70 blocked for more than 120 seconds.
+[1148238.912741]       Not tainted 5.19.0-38-generic #39~22.04.1-Ubuntu
+[1148238.912767] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[1148238.912796] task:kcompactd0      state:D stack:    0 pid:   70
+ppid:     2 flags:0x00004000
+[1148238.912803] Call Trace:
+[1148238.912806]  <TASK>
+[1148238.912812]  __schedule+0x257/0x5d0
+[1148238.912821]  schedule+0x68/0x110
+[1148238.912824]  io_schedule+0x46/0x80
+[1148238.912827]  folio_wait_bit_common+0x14c/0x3a0
+[1148238.912833]  ? filemap_invalidate_unlock_two+0x50/0x50
+[1148238.912838]  __folio_lock+0x17/0x30
+[1148238.912842]  __unmap_and_move.constprop.0+0x39c/0x640
+[1148238.912847]  ? free_unref_page+0xe3/0x190
+[1148238.912852]  ? move_freelist_tail+0xe0/0xe0
+[1148238.912855]  ? move_freelist_tail+0xe0/0xe0
+[1148238.912858]  unmap_and_move+0x7d/0x4e0
+[1148238.912862]  migrate_pages+0x3b8/0x770
+[1148238.912867]  ? move_freelist_tail+0xe0/0xe0
+[1148238.912870]  ? isolate_freepages+0x2f0/0x2f0
+[1148238.912874]  compact_zone+0x2ca/0x620
+[1148238.912878]  proactive_compact_node+0x8a/0xe0
+[1148238.912883]  kcompactd+0x21c/0x4e0
+[1148238.912886]  ? destroy_sched_domains_rcu+0x40/0x40
+[1148238.912892]  ? kcompactd_do_work+0x240/0x240
+[1148238.912896]  kthread+0xeb/0x120
+[1148238.912900]  ? kthread_complete_and_exit+0x20/0x20
+[1148238.912904]  ret_from_fork+0x1f/0x30
+[1148238.912911]  </TASK>
+[1148238.913163] INFO: task happywriter:3425205 blocked for more than
+362 seconds.
+[1148238.913195]       Not tainted 5.19.0-38-generic #39~22.04.1-Ubuntu
+[1148238.913220] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[1148238.913250] task:happywriter state:D stack:    0 pid:3425205
+ppid:557021 flags:0x00004000
+[1148238.913254] Call Trace:
+[1148238.913256]  <TASK>
+[1148238.913259]  __schedule+0x257/0x5d0
+[1148238.913264]  ? __schedule+0x25f/0x5d0
+[1148238.913267]  schedule+0x68/0x110
+[1148238.913270]  rwsem_down_write_slowpath+0x2ee/0x5a0
+[1148238.913276]  ? check_heap_object+0x100/0x1e0
+[1148238.913280]  down_write+0x4f/0x70
+[1148238.913284]  do_unlinkat+0x12b/0x2d0
+[1148238.913288]  __x64_sys_unlink+0x42/0x70
+[1148238.913292]  ? syscall_exit_to_user_mode+0x2a/0x50
+[1148238.913296]  do_syscall_64+0x59/0x90
+[1148238.913299]  ? do_syscall_64+0x69/0x90
+[1148238.913301]  ? sysvec_call_function_single+0x4e/0xb0
+[1148238.913305]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+[1148238.913310] RIP: 0033:0x1202a57
+[1148238.913315] RSP: 002b:00007fe467ffd4c8 EFLAGS: 00000246 ORIG_RAX:
+0000000000000057
+[1148238.913319] RAX: ffffffffffffffda RBX: 00007fe3a4e94d28 RCX:
+0000000001202a57
+[1148238.913321] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
+00007fe450054b60
+[1148238.913323] RBP: 00007fe450054b60 R08: 0000000000000000 R09:
+00000000000000e8
+[1148238.913325] R10: 0000000000000001 R11: 0000000000000246 R12:
+00007fe467ffd5b0
+[1148238.913328] R13: 00007fe467ffd5f0 R14: 00007fe467ffd5e0 R15:
+00007fe3a4e94d28
+[1148238.913333]  </TASK>
+[1148238.913429] INFO: task kworker/u16:20:3402199 blocked for more
+than 120 seconds.
+[1148238.913459]       Not tainted 5.19.0-38-generic #39~22.04.1-Ubuntu
+[1148238.913496] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[1148238.913527] task:kworker/u16:20  state:D stack:    0 pid:3402199
+ppid:     2 flags:0x00004000
+[1148238.913533] Workqueue: events_unbound io_ring_exit_work
+[1148238.913539] Call Trace:
+[1148238.913541]  <TASK>
+[1148238.913544]  __schedule+0x257/0x5d0
+[1148238.913548]  schedule+0x68/0x110
+[1148238.913551]  schedule_timeout+0x122/0x160
+[1148238.913556]  __wait_for_common+0x8f/0x190
+[1148238.913559]  ? usleep_range_state+0xa0/0xa0
+[1148238.913564]  wait_for_completion+0x24/0x40
+[1148238.913567]  io_ring_exit_work+0x186/0x1e9
+[1148238.913571]  ? io_uring_del_tctx_node+0xbf/0xbf
+[1148238.913576]  process_one_work+0x21c/0x400
+[1148238.913579]  worker_thread+0x50/0x3f0
+[1148238.913583]  ? rescuer_thread+0x3a0/0x3a0
+[1148238.913586]  kthread+0xeb/0x120
+[1148238.913590]  ? kthread_complete_and_exit+0x20/0x20
+[1148238.913594]  ret_from_fork+0x1f/0x30
+[1148238.913600]  </TASK>
+[1148238.913607] INFO: task stat:3434604 blocked for more than 120 seconds.
+[1148238.913633]       Not tainted 5.19.0-38-generic #39~22.04.1-Ubuntu
+[1148238.913658] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[1148238.913687] task:stat            state:D stack:    0 pid:3434604
+ppid:3396625 flags:0x00004004
+[1148238.913691] Call Trace:
+[1148238.913693]  <TASK>
+[1148238.913695]  __schedule+0x257/0x5d0
+[1148238.913699]  schedule+0x68/0x110
+[1148238.913703]  request_wait_answer+0x13f/0x220
+[1148238.913708]  ? destroy_sched_domains_rcu+0x40/0x40
+[1148238.913713]  fuse_simple_request+0x1bb/0x370
+[1148238.913717]  fuse_do_getattr+0xda/0x320
+[1148238.913720]  ? try_to_unlazy+0x5b/0xd0
+[1148238.913726]  fuse_update_get_attr+0xb3/0xf0
+[1148238.913730]  fuse_getattr+0x87/0xd0
+[1148238.913733]  vfs_getattr_nosec+0xba/0x100
+[1148238.913737]  vfs_statx+0xa9/0x140
+[1148238.913741]  vfs_fstatat+0x59/0x80
+[1148238.913744]  __do_sys_newlstat+0x38/0x80
+[1148238.913750]  __x64_sys_newlstat+0x16/0x20
+[1148238.913753]  do_syscall_64+0x59/0x90
+[1148238.913757]  ? handle_mm_fault+0xba/0x2a0
+[1148238.913761]  ? exit_to_user_mode_prepare+0xaf/0xd0
+[1148238.913765]  ? irqentry_exit_to_user_mode+0x9/0x20
+[1148238.913769]  ? irqentry_exit+0x43/0x50
+[1148238.913772]  ? exc_page_fault+0x92/0x1b0
+[1148238.913776]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+[1148238.913780] RIP: 0033:0x7fa76960d6ea
+[1148238.913783] RSP: 002b:00007ffe6d011878 EFLAGS: 00000246 ORIG_RAX:
+0000000000000006
+[1148238.913787] RAX: ffffffffffffffda RBX: 0000000000000001 RCX:
+00007fa76960d6ea
+[1148238.913789] RDX: 00007ffe6d011890 RSI: 00007ffe6d011890 RDI:
+00007ffe6d01290b
+[1148238.913791] RBP: 00007ffe6d011a70 R08: 0000000000000001 R09:
+0000000000000000
+[1148238.913793] R10: fffffffffffff3ce R11: 0000000000000246 R12:
+0000000000000000
+[1148238.913795] R13: 000055feff0d2960 R14: 00007ffe6d011a68 R15:
+00007ffe6d01290b
+[1148238.913800]  </TASK>
