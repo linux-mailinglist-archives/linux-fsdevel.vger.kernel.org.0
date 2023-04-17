@@ -2,126 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07A806E3F57
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 08:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F187F6E3F60
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 08:07:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbjDQGEr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 02:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45052 "EHLO
+        id S229936AbjDQGHP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 02:07:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbjDQGEp (ORCPT
+        with ESMTP id S229456AbjDQGHO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 02:04:45 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F732116;
-        Sun, 16 Apr 2023 23:04:44 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id CD91D21A36;
-        Mon, 17 Apr 2023 06:04:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1681711482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rrkQqEZwaf8aOA/KoAyOi6UrBxwxGW9M2sCoRTZStv0=;
-        b=WLod/41MS3MSM8lV3g7lnbAyQq7Oyz5uV1e6EO3ZzPMOgBYiP4qb3zeGAY1iqF1yl3QInK
-        1wfcMkSadpsWfIN6IdrFUmbGUgxZK5S0HQhByvg9DTFYj10OsKDTdEQgo/ue7+xF3NGxAD
-        Rzvzul7ksZPpwUAdKN5scAvVcK1aaEM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1681711482;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rrkQqEZwaf8aOA/KoAyOi6UrBxwxGW9M2sCoRTZStv0=;
-        b=QOOo96nLPf9dmolrUwN/eUK2w3JW7nfFX/L5MBQEDvOZRGNOvozSje6+KzChcEILrKk9bQ
-        FxSvSIP/VHgu04BA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8269E1390E;
-        Mon, 17 Apr 2023 06:04:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id f+h9HXrhPGQEegAAMHmgww
-        (envelope-from <hare@suse.de>); Mon, 17 Apr 2023 06:04:42 +0000
-Message-ID: <a04dc769-9c4a-15e6-ad88-1cf11c646299@suse.de>
-Date:   Mon, 17 Apr 2023 08:04:42 +0200
+        Mon, 17 Apr 2023 02:07:14 -0400
+Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 958C49C;
+        Sun, 16 Apr 2023 23:07:13 -0700 (PDT)
+Received: by mail-vs1-xe29.google.com with SMTP id f10so10399178vsv.13;
+        Sun, 16 Apr 2023 23:07:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681711632; x=1684303632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7FkOa290pQSu7Yiad6ob7YP0SrNBnVarBHAEhR+m7OY=;
+        b=ka5OEDfZi7wvCtTPIJPI/MJiqyFidxK1FSQERrW+7KhnsJIJ6x6gmw1O/KKP5YmscO
+         eqplWr9JSEAYM2XYuAQJSi9sLznG9mamx+Orb95GC2f+ONqBWCBKm8sI6Ihlw2BSKMtz
+         XOE9DMRAKCmUt0XVzHqzIohzOQx2ga2e3xlwhRfMwMlB8DkZL+yjfyUqhi0+VJg1Fki8
+         JoHow9BrgW8KV3J3sl7LsVyMX08df0HabftN7yTkhJ5Zxk8EBzChPcGhNIYh/TyaypYc
+         /vaHqeNMyTnUvklOFMD5ttf55m71/R9xQHqlv8e4xDEhZSZGpMbOCgo1BlRE6VEkfBNA
+         Wj3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681711632; x=1684303632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7FkOa290pQSu7Yiad6ob7YP0SrNBnVarBHAEhR+m7OY=;
+        b=YvWzd6aqQq/NXZOe8QO/4XjF8HEtri24CPJOZBTXtIUQTnUWvQis0KFe0SChE1f0VZ
+         jcrgD1al2VBLf6kSVK1erGkprNZPumApCvcfwIWWN7+g+dz4XqMCihQO/FlsI6g+D8Vy
+         306Rjhr9l5zqzxXVt+/5iUO/8U+5I7KNSWbXS6Xcg7X34u+VdYp8mQ41lG4SDe8Hika7
+         Zx8cBvx0A3ARHcV0H8PPMk946af30jpaIcBkcO6k/gNvkJlMn/L5teqdFXlJsRLD96xc
+         a0wVpu7nkopnCuNIqLHiaZH4ZibvACahrklVlB6C/qLJuEPXoA6at92nR0l5Oto3FbKV
+         BR2g==
+X-Gm-Message-State: AAQBX9dfHPODWGzuVlu8VGBcaudIEwVj2Sz6Q3Bz5eaIbyvENuDR4cxa
+        eBSrClvy+mPSfbeT+Xi6q7r+wFG/3PO2fjhvgqbyoytfzvE=
+X-Google-Smtp-Source: AKy350ZdNlrvY6SfEP/KQCnkty7ZUMlHpXigx3KCKfGjfdYNyKBei1uMesVBrTPoHvkyEMsJbfbQJ/7eM7/vxaPq/jQ=
+X-Received: by 2002:a67:d783:0:b0:42e:38a3:244b with SMTP id
+ q3-20020a67d783000000b0042e38a3244bmr6775628vsj.5.1681711632628; Sun, 16 Apr
+ 2023 23:07:12 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [RFC 0/4] convert create_page_buffers to create_folio_buffers
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Pankaj Raghav <p.raghav@samsung.com>, brauner@kernel.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gost.dev@samsung.com
-References: <CGME20230414110825eucas1p1ed4d16627889ef8542dfa31b1183063d@eucas1p1.samsung.com>
- <20230414110821.21548-1-p.raghav@samsung.com>
- <1e68a118-d177-a218-5139-c8f13793dbbf@suse.de>
- <ZDyuhmcc9OeJGUcJ@bombadil.infradead.org>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <ZDyuhmcc9OeJGUcJ@bombadil.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <CACsaVZJGPux1yhrMWnq+7nt3Zz5wZ6zEo2+S2pf=4czpYLFyjg@mail.gmail.com>
+ <ZDzgojYAZXS_D_OH@kroah.com>
+In-Reply-To: <ZDzgojYAZXS_D_OH@kroah.com>
+From:   Kyle Sanderson <kyle.leet@gmail.com>
+Date:   Sun, 16 Apr 2023 23:07:00 -0700
+Message-ID: <CACsaVZ+8iGR3sD7d4wO12LqKBZnJ+xhOs9+RXvqjrGKp35_-xg@mail.gmail.com>
+Subject: Re: btrfs induced data loss (on xfs) - 5.19.0-38-generic
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-btrfs@vger.kernel.org,
+        Linux-Kernal <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/17/23 04:27, Luis Chamberlain wrote:
-> On Fri, Apr 14, 2023 at 03:47:13PM +0200, Hannes Reinecke wrote:
->> @@ -2333,13 +2395,15 @@ int block_read_full_folio(struct folio *folio,
->> get_block_t *get_block)
->>          if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
->>                  limit = inode->i_sb->s_maxbytes;
->>
->> -       VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
->> -
->>          head = create_folio_buffers(folio, inode, 0);
->>          blocksize = head->b_size;
->>          bbits = block_size_bits(blocksize);
->>
->> -       iblock = (sector_t)folio->index << (PAGE_SHIFT - bbits);
->> +       if (WARN_ON(PAGE_SHIFT < bbits)) {
->> +               iblock = (sector_t)folio->index >> (bbits - PAGE_SHIFT);
->> +       } else {
->> +               iblock = (sector_t)folio->index << (PAGE_SHIFT - bbits);
->> +       }
->>          lblock = (limit+blocksize-1) >> bbits;
->>          bh = head;
->>          nr = 0;
-> 
-> BTW I See this pattern in:
-> 
-> fs/mpage.c: do_mpage_readpage()
-> fs/mpage.c: __mpage_writepage()
-> 
-> A helper might be in order.
-> 
+On Sun, Apr 16, 2023 at 11:01=E2=80=AFPM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+>
+> On Sun, Apr 16, 2023 at 10:20:45PM -0700, Kyle Sanderson wrote:
+> > The single btrfs disk was at 100% utilization and a wa of 50~, reading
+> > back at around 2MB/s. df and similar would simply freeze. Leading up
+> > to this I removed around 2T of data from a single btrfs disk. I
+> > managed to get most of the services shutdown and disks unmounted, but
+> > when the system came back up I had to use xfs_repair (for the first
+> > time in a very long time) to boot into my system. I likely should have
+> > just pulled the power...
+> >
+> > [1147997.255020] INFO: task happywriter:3425205 blocked for more than
+> > 120 seconds.
+> > [1147997.255088]       Not tainted 5.19.0-38-generic #39~22.04.1-Ubuntu
+>
+> This is a distro-specific kernel, sorry, nothing to do with our releases
+> as the 5.19 kernel branch is long end-of-life.  Please work with your
+> distro for this issue if you wish to stick to this kernel version.
+>
+> good luck!
+>
+> greg k-h
 
-But only _iff_ we decide to stick with buffer_heads and upgrade the 
-buffer_head code to handle multi-page block sizes.
-The idea was to move over to iomap, hence I'm not sure into which
-lengths we should go keeping buffer_heads alive ...
+Disappointing but fair (default kernel for Ubuntu Jammy, they offer no
+lts options unfortunately) - thanks for taking a look anyway.
 
-Cheers,
+K.
 
-Hannes
--- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
-Myers, Andrew McDonald, Martje Boudien Moerman
-
+On Sun, Apr 16, 2023 at 11:01=E2=80=AFPM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+>
+> On Sun, Apr 16, 2023 at 10:20:45PM -0700, Kyle Sanderson wrote:
+> > The single btrfs disk was at 100% utilization and a wa of 50~, reading
+> > back at around 2MB/s. df and similar would simply freeze. Leading up
+> > to this I removed around 2T of data from a single btrfs disk. I
+> > managed to get most of the services shutdown and disks unmounted, but
+> > when the system came back up I had to use xfs_repair (for the first
+> > time in a very long time) to boot into my system. I likely should have
+> > just pulled the power...
+> >
+> > [1147997.255020] INFO: task happywriter:3425205 blocked for more than
+> > 120 seconds.
+> > [1147997.255088]       Not tainted 5.19.0-38-generic #39~22.04.1-Ubuntu
+>
+> This is a distro-specific kernel, sorry, nothing to do with our releases
+> as the 5.19 kernel branch is long end-of-life.  Please work with your
+> distro for this issue if you wish to stick to this kernel version.
+>
+> good luck!
+>
+> greg k-h
