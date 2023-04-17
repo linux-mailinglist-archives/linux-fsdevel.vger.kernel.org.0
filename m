@@ -2,170 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00F7E6E4653
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 13:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA66C6E469D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 13:39:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbjDQLYq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 07:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47012 "EHLO
+        id S229690AbjDQLju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 07:39:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231152AbjDQLYp (ORCPT
+        with ESMTP id S229933AbjDQLjt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 07:24:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A32008682
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 04:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681730515;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mkcwhp5zTW1yRaiHiJTdOs9s0Tvzr5julsI/kTPOe68=;
-        b=HO0+YObt/3aVi67/IEtOuxKqjMnIa2b6AQnoxpD+Gcb6sAHnKpfwQKeHYCmROOwttBH0Jy
-        j/zqCpSjP+IljcpWrOpIGI8+jFP6J0ZJa1lV6L2w/fReU+M/zjYojNePlTpZNjj8v6fQxX
-        h3i/J92KNj0+x+slDLHNO1MCpcxW5JA=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-263-02r1UxWHNsWK8MV_3GeEpA-1; Mon, 17 Apr 2023 07:21:54 -0400
-X-MC-Unique: 02r1UxWHNsWK8MV_3GeEpA-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-2f6bd453dd0so677468f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 04:21:54 -0700 (PDT)
+        Mon, 17 Apr 2023 07:39:49 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69054135;
+        Mon, 17 Apr 2023 04:39:04 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id p8so25354969plk.9;
+        Mon, 17 Apr 2023 04:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681731543; x=1684323543;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qmQEBjavqVB6HGdUDxStraiihBR6XFWfttzFMuRixqY=;
+        b=PM+pGdu2dlyz2aKkOavasFaOKBkOf1MRnEchlnScs/Q8r+jAFr8IKCLHWnRRoCdAzf
+         GhNcoe0hg5c739179YnfhHz0S8MpKDVf3YJEca/c3KAqMCtWHeAiKO+Ydfo30O+yJqJK
+         I2jLqyBFdxB/5ghPNoMGF6dIJ1VAi1D7qTymhAMl9Wm89+Ffc0VK8wRNqYJi4qvNGco8
+         s8FRCvHYmkTxHjpLiG2s93+Okgx4Vm6f/UMpV2ep/MDriexlMdmh9pmHT8mHcVXSvz7S
+         UrYYx6hJL7HYAd0xz10h/kFqof3n8gn6T5jxrOZcIz6x8vMk4DElR4hHOPXulW/yKKmW
+         UH8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681730513; x=1684322513;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mkcwhp5zTW1yRaiHiJTdOs9s0Tvzr5julsI/kTPOe68=;
-        b=doHM5+87kjHrO/UfNJRHoHoQp5gNG7hAeAWxriFveweveefDHyYWZO+8FPphBy8/sD
-         bFKTsN3+yGVThx1O4ug97nXPGLNukXotX5RAg9nnFx6ymoMLuBHmyCtPI3a86tYPzvEH
-         +yvbrzMP7UL0ZHYTT1Yhh+Pc4dugQ2rNh/mpw6qxDkxGjwv4HY5TQF+wXQt6fpylzmtw
-         BLPbh/raK4AnKItJuxXVTl9qfontxGSjj3tdhYrz7/g5BTO0Z79VpDjh49z3sdylCeGY
-         nwOWPbNGBM7oOKsyWZxgv36oUbfUKHYCgvurG+ayqXpNj6ohfxY4V+5VUudy9y82F1ML
-         GOag==
-X-Gm-Message-State: AAQBX9dzwaJdnbpYl24Ex6VcwqwadP0/xVzDdTSmzvL5CN6xUXEHPOfy
-        IHoyigV4Et5oNkF6hOlDZAv6/HS+LQDzcZs60C8lYg1mFHRi/omEvgSQGMBUw8qFdC1+tB8strm
-        e1/AW0xjC6dhBXJAP1s/Ph+QtQQ==
-X-Received: by 2002:adf:ff85:0:b0:2f9:dfab:1b8c with SMTP id j5-20020adfff85000000b002f9dfab1b8cmr2581410wrr.50.1681730513174;
-        Mon, 17 Apr 2023 04:21:53 -0700 (PDT)
-X-Google-Smtp-Source: AKy350abZRZAOfdMv9lYJhbEZufnC86FDoAE2OKI65tR0JXtMEmI74JIW99/H3RyhX6ngBR4MbJnEg==
-X-Received: by 2002:adf:ff85:0:b0:2f9:dfab:1b8c with SMTP id j5-20020adfff85000000b002f9dfab1b8cmr2581395wrr.50.1681730512826;
-        Mon, 17 Apr 2023 04:21:52 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c700:fc00:db07:68a9:6af5:ecdf? (p200300cbc700fc00db0768a96af5ecdf.dip0.t-ipconnect.de. [2003:cb:c700:fc00:db07:68a9:6af5:ecdf])
-        by smtp.gmail.com with ESMTPSA id e6-20020adff346000000b002efac42ff35sm10294758wrp.37.2023.04.17.04.21.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Apr 2023 04:21:52 -0700 (PDT)
-Message-ID: <dfa218f9-1a99-f877-4c9d-a4d185b6ebd5@redhat.com>
-Date:   Mon, 17 Apr 2023 13:21:50 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH next] shmem: minor fixes to splice-read implementation
-Content-Language: en-US
-To:     Hugh Dickins <hughd@google.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Yang Shi <shy828301@gmail.com>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <2d5fa5e3-dac5-6973-74e5-eeedf36a42b@google.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <2d5fa5e3-dac5-6973-74e5-eeedf36a42b@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        d=1e100.net; s=20221208; t=1681731543; x=1684323543;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qmQEBjavqVB6HGdUDxStraiihBR6XFWfttzFMuRixqY=;
+        b=Z45Oib1OIpyo9N0COVNnSeJQnVtJNvpCR53fRV+1uaxmRcvNLJ931csYjlBIeLv19J
+         cvzDbI2aOvOdsegF3JKTZL4CW59sGBx8shgxdEsb9x7CXNlLR+LgNQ0lfyRnDWUwoMJx
+         BU2iogX2ZXZk7Q6ibH5lFo9wAsj8i+izdWASAVHOBIx+rhZpWJQUXfvGWVNZc7da4hTy
+         kOuy5ktghToeZyMICI7Hl3Xje1XzYp8p4AOVNwDo8w898G2s3SMNMVSFJvIp56NljjPo
+         1+shMgjvKkJnJnXVgBu/gkFMWZdXUordOlUgnMDoU+PkLXL4O33JHsIZIDI2X4ydoNyh
+         DJ6Q==
+X-Gm-Message-State: AAQBX9defEKviKCRAGMSl0mW0BKAq89x2XpsAHbvPZRDYF2cOr0SCD6U
+        2FjNsGSFOyJFziM5P6I90GA=
+X-Google-Smtp-Source: AKy350aZc6SQjtZEdF6S0ETm/ZLwE+OtbFIYmquXJbg5UiyjlGi5PXzv/av7qflfQ5L5ecJ9qhm7XA==
+X-Received: by 2002:a17:902:d2c3:b0:1a6:ed6f:d6b7 with SMTP id n3-20020a170902d2c300b001a6ed6fd6b7mr1640074plc.5.1681731543451;
+        Mon, 17 Apr 2023 04:39:03 -0700 (PDT)
+Received: from rh-tp ([2406:7400:63:2dd2:1827:1d70:2273:8ee0])
+        by smtp.gmail.com with ESMTPSA id bb6-20020a170902bc8600b001a4ee93efa2sm5698926plb.137.2023.04.17.04.39.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Apr 2023 04:39:03 -0700 (PDT)
+Date:   Mon, 17 Apr 2023 17:08:57 +0530
+Message-Id: <87o7nmivqm.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCHv5 2/9] fs/buffer.c: Add generic_buffer_fsync implementation
+In-Reply-To: <20230417110149.mhrksh4owqkfw5pa@quack3>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 17.04.23 06:46, Hugh Dickins wrote:
-> generic_file_splice_read() makes a couple of preliminary checks (for
-> s_maxbytes and zero len), but shmem_file_splice_read() is called without
-> those: so check them inside it.  (But shmem does not support O_DIRECT,
-> so no need for that one here - and even if O_DIRECT support were stubbed
-> in, it would still just be using the page cache.)
-> 
-> HWPoison: my reading of folio_test_hwpoison() is that it only tests the
-> head page of a large folio, whereas splice_folio_into_pipe() will splice
-> as much of the folio as it can: so for safety we should also check the
-> has_hwpoisoned flag, set if any of the folio's pages are hwpoisoned.
-> (Perhaps that ugliness can be improved at the mm end later.)
-> 
-> The call to splice_zeropage_into_pipe() risked overrunning past EOF:
-> ask it for "part" not "len".
-> 
-> Fixes: b81d7b89becc ("shmem: Implement splice-read")
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> ---
-> Thank you, David, for attending to tmpfs in your splice update:
-> yes, I too wish it could have just used the generic, but I'm sure
-> you're right that there's a number of reasons it needs its own.
-> 
->   mm/shmem.c | 14 +++++++++++---
->   1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2902,6 +2902,11 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
->   	loff_t isize;
->   	int error = 0;
->   
-> +	if (unlikely(*ppos >= MAX_LFS_FILESIZE))
-> +		return 0;
-> +	if (unlikely(!len))
-> +		return 0;
-> +
->   	/* Work out how much data we can actually add into the pipe */
->   	used = pipe_occupancy(pipe->head, pipe->tail);
->   	npages = max_t(ssize_t, pipe->max_usage - used, 0);
-> @@ -2911,7 +2916,8 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
->   		if (*ppos >= i_size_read(inode))
->   			break;
->   
-> -		error = shmem_get_folio(inode, *ppos / PAGE_SIZE, &folio, SGP_READ);
-> +		error = shmem_get_folio(inode, *ppos / PAGE_SIZE, &folio,
-> +					SGP_READ);
->   		if (error) {
->   			if (error == -EINVAL)
->   				error = 0;
-> @@ -2920,7 +2926,9 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
->   		if (folio) {
->   			folio_unlock(folio);
->   
-> -			if (folio_test_hwpoison(folio)) {
-> +			if (folio_test_hwpoison(folio) ||
-> +			    (folio_test_large(folio) &&
-> +			     folio_test_has_hwpoisoned(folio))) {
->   				error = -EIO;
->   				break;
->   			}
-> @@ -2956,7 +2964,7 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
->   			folio_put(folio);
->   			folio = NULL;
->   		} else {
-> -			n = splice_zeropage_into_pipe(pipe, *ppos, len);
-> +			n = splice_zeropage_into_pipe(pipe, *ppos, part);
->   		}
->   
->   		if (!n)
-> 
+Jan Kara <jack@suse.cz> writes:
 
-FWIW, looks good to me.
+> On Sun 16-04-23 15:38:37, Ritesh Harjani (IBM) wrote:
+>> Some of the higher layers like iomap takes inode_lock() when calling
+>> generic_write_sync().
+>> Also writeback already happens from other paths without inode lock,
+>> so it's difficult to say that we really need sync_mapping_buffers() to
+>> take any inode locking here. Having said that, let's add
+>> generic_buffer_fsync() implementation in buffer.c with no
+>> inode_lock/unlock() for now so that filesystems like ext2 and
+>> ext4's nojournal mode can use it.
+>>
+>> Ext4 when got converted to iomap for direct-io already copied it's own
+>> variant of __generic_file_fsync() without lock. Hence let's add a helper
+>> API and use it both in ext2 and ext4.
+>>
+>> Later we can review other filesystems as well to see if we can make
+>> generic_buffer_fsync() which does not take any inode_lock() as the
+>> default path.
+>>
+>> Tested-by: Disha Goel <disgoel@linux.ibm.com>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>
+> There is a problem with generic_buffer_fsync() that it does not call
+> blkdev_issue_flush() so the caller is responsible for doing that. That's
+> necessary for ext2 & ext4 so fine for now. But historically this was the
+> case with generic_file_fsync() as well and that led to many filesystem
+> forgetting to flush caches from fsync(2).
+
+Ok, thanks for the details.
+
+> What is our transition plan for
+> these filesystems that currently do the cache flush from
+> generic_file_fsync()? Do we want to eventually keep generic_file_fsync()
+> doing the cache flush and call generic_buffer_fsync() instead of
+> __generic_buffer_fsync() from it?
+
+Frankly speaking, I was thinking we will come back to this question
+maybe when we start working on those changes. At this point in time
+I only looked at it from ext2 DIO changes perspective.
+
+But since you asked, here is what I think we could do -
+
+Rename generic_file_fsync => generic_buffers_sync() to fs/buffers.c
+Then
+generic_buffers_sync() {
+    ret = generic_buffers_fsync()
+    if (!ret)
+       blkdev_issue_flush()
+}
+
+generic_buffers_fsync() is same as in this patch which does not have the
+cache flush operation.
+(will rename from generic_buffer_fsync() to generic_buffers_fsync())
+
+Note: The naming is kept such that-
+- sync means it will do fsync followed by cache flush.
+- fsync means it will only do the file fsync
+
+As I understand - we would eventually like to kill the
+inode_lock() variants of generic_file_fsync() and __generic_file_fsync()
+after auditing other filesystem code, right?
+
+Then for now what we need is generic_buffers_sync() function which does
+not take an inode_lock() and also does cache flush which is required for ext2.
+And generic_buffers_fsync() which does not do any cache flush operations
+required by filesystem like ext4.
+
+Does that sound good to you? Is the naming also proper?
+
+Is yes, then I can rename the below function to generic_buffers_fsync()
+and also create implementation of generic_buffers_sync().
+Then let ext2 and ext4 use them.
 
 
--- 
-Thanks,
+-ritesh
 
-David / dhildenb
 
+>
+> 								Honza
+>
+>> ---
+>>  fs/buffer.c                 | 43 +++++++++++++++++++++++++++++++++++++
+>>  include/linux/buffer_head.h |  2 ++
+>>  2 files changed, 45 insertions(+)
+>>
+>> diff --git a/fs/buffer.c b/fs/buffer.c
+>> index 9e1e2add541e..df98f1966a71 100644
+>> --- a/fs/buffer.c
+>> +++ b/fs/buffer.c
+>> @@ -593,6 +593,49 @@ int sync_mapping_buffers(struct address_space *mapping)
+>>  }
+>>  EXPORT_SYMBOL(sync_mapping_buffers);
+>>
+>> +/**
+>> + * generic_buffer_fsync - generic buffer fsync implementation
+>> + * for simple filesystems with no inode lock
+>> + *
+>> + * @file:	file to synchronize
+>> + * @start:	start offset in bytes
+>> + * @end:	end offset in bytes (inclusive)
+>> + * @datasync:	only synchronize essential metadata if true
+>> + *
+>> + * This is a generic implementation of the fsync method for simple
+>> + * filesystems which track all non-inode metadata in the buffers list
+>> + * hanging off the address_space structure.
+>> + */
+>> +int generic_buffer_fsync(struct file *file, loff_t start, loff_t end,
+>> +			 bool datasync)
+>> +{
+>> +	struct inode *inode = file->f_mapping->host;
+>> +	int err;
+>> +	int ret;
+>> +
+>> +	err = file_write_and_wait_range(file, start, end);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	ret = sync_mapping_buffers(inode->i_mapping);
+>> +	if (!(inode->i_state & I_DIRTY_ALL))
+>> +		goto out;
+>> +	if (datasync && !(inode->i_state & I_DIRTY_DATASYNC))
+>> +		goto out;
+>> +
+>> +	err = sync_inode_metadata(inode, 1);
+>> +	if (ret == 0)
+>> +		ret = err;
+>> +
+>> +out:
+>> +	/* check and advance again to catch errors after syncing out buffers */
+>> +	err = file_check_and_advance_wb_err(file);
+>> +	if (ret == 0)
+>> +		ret = err;
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL(generic_buffer_fsync);
+>> +
+>>  /*
+>>   * Called when we've recently written block `bblock', and it is known that
+>>   * `bblock' was for a buffer_boundary() buffer.  This means that the block at
+>> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+>> index 8f14dca5fed7..3170d0792d52 100644
+>> --- a/include/linux/buffer_head.h
+>> +++ b/include/linux/buffer_head.h
+>> @@ -211,6 +211,8 @@ int inode_has_buffers(struct inode *);
+>>  void invalidate_inode_buffers(struct inode *);
+>>  int remove_inode_buffers(struct inode *inode);
+>>  int sync_mapping_buffers(struct address_space *mapping);
+>> +int generic_buffer_fsync(struct file *file, loff_t start, loff_t end,
+>> +			 bool datasync);
+>>  void clean_bdev_aliases(struct block_device *bdev, sector_t block,
+>>  			sector_t len);
+>>  static inline void clean_bdev_bh_alias(struct buffer_head *bh)
+>> --
+>> 2.39.2
+>>
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
