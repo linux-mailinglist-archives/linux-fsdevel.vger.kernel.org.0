@@ -2,265 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F3156E4AE3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 16:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BF826E4B5D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Apr 2023 16:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230515AbjDQOIX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 10:08:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60834 "EHLO
+        id S230347AbjDQOVy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 10:21:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230285AbjDQOIF (ORCPT
+        with ESMTP id S230283AbjDQOVs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 10:08:05 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D517EDA;
-        Mon, 17 Apr 2023 07:07:33 -0700 (PDT)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33HCqiBF006625;
-        Mon, 17 Apr 2023 14:07:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=laoXS98o4L49IyYojK48ave0JpcBP4QNQBAEUKLJsqQ=;
- b=Yxk+/6UtyQ2VoxtSYIMywS5JS8/eo7yZIh49cUs3tiKaBPVzr2HoT1BAEm4W30JuHyM0
- 3w7NyJ4iC4wiKmB80IlpAWZMkh081xrcSokaJNaTy200tkb/i1juDRPy2KMm3tVgOVKq
- JxtEUqkAfUkVgw/TUu28gwtyY5O/ZuwQE5oIbO9Ly5iX0T3/tDy6SvkhxnWppzME/8wz
- wD6JDvdpbvl6h6lPcXTQ13ZASmXxSmyewCGLmiVq5xqqGFPa6Fvsh4unJAVFXc5oiDW3
- MO2847gxTIciCA6I5Ng7Jt9uKQYy/Ul0HHD/+ZtVVTmk0KvgEqctaEh1BqN2cqe3dARq YA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3q12vkg8cm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Apr 2023 14:07:10 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33HDQZSB024433;
-        Mon, 17 Apr 2023 14:07:10 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3q12vkg8c9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Apr 2023 14:07:10 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33HC5u5D029086;
-        Mon, 17 Apr 2023 14:07:09 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
-        by ppma04dal.us.ibm.com (PPS) with ESMTPS id 3pykj760v4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Apr 2023 14:07:09 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33HE77Gr8651388
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Apr 2023 14:07:07 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 971C858056;
-        Mon, 17 Apr 2023 14:07:07 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE94758062;
-        Mon, 17 Apr 2023 14:07:05 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Apr 2023 14:07:05 +0000 (GMT)
-Message-ID: <496ba5fc-9c0b-a906-2373-5ac061d6da3a@linux.ibm.com>
-Date:   Mon, 17 Apr 2023 10:07:05 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after
- writes
-Content-Language: en-US
-To:     Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        miklos@szeredi.hu, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        amir73il@gmail.com
-References: <20230405171449.4064321-1-stefanb@linux.ibm.com>
- <20230406-diffamieren-langhaarig-87511897e77d@brauner>
- <CAHC9VhQsnkLzT7eTwVr-3SvUs+mcEircwztfaRtA+4ZaAh+zow@mail.gmail.com>
- <a6c6e0e4-047f-444b-3343-28b71ddae7ae@linux.ibm.com>
- <CAHC9VhQyWa1OnsOvoOzD37EmDnESfo4Rxt2eCSUgu+9U8po-CA@mail.gmail.com>
- <20230406-wasser-zwanzig-791bc0bf416c@brauner>
- <546145ecbf514c4c1a997abade5f74e65e5b1726.camel@kernel.org>
- <45a9c575-0b7e-f66a-4765-884865d14b72@linux.ibm.com>
- <60339e3bd08a18358ac8c8a16dc67c74eb8ba756.camel@kernel.org>
- <d61ed13b-0fd2-0283-96d2-0ff9c5e0a2f9@linux.ibm.com>
- <4f739cc6847975991874d56ef9b9716c82cf62a3.camel@kernel.org>
- <7d8f05e26dc7152dfad771dfc867dec145aa054b.camel@kernel.org>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <7d8f05e26dc7152dfad771dfc867dec145aa054b.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vaSjj_r0eeuQAYQrTvAwNhKeBSsvRQyk
-X-Proofpoint-ORIG-GUID: 9Zb0X9YUjnhtVPWptrW6DyL4kDDUKdjv
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 17 Apr 2023 10:21:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A8FD1B0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 07:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681741257;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hXXWTVEI1mMsVSpGycpPWe1J+aRrdeZCdqy7/mR/vH0=;
+        b=Mbe9gMqv3KDIjrZYVgpGaok4s3fIhIVlR8W8qEkToGyFMP2DDwIU+vDkJBhAn0gn0jZJuZ
+        lLtoPIRqbCFjGKpAhZjbjoEhqeffP/gLfx/CkdnsI6ZIC49TaIndxSMrDea4hGz4FiuoED
+        f7wHMGfKJIBTn6kq4X9+1kEyyDa2R3c=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-660-p22VNDBIPO6cDuI96qbguw-1; Mon, 17 Apr 2023 10:20:56 -0400
+X-MC-Unique: p22VNDBIPO6cDuI96qbguw-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-2f92bd71f32so314416f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 07:20:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681741255; x=1684333255;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hXXWTVEI1mMsVSpGycpPWe1J+aRrdeZCdqy7/mR/vH0=;
+        b=ZuIO6sAUKwA2aBYo2opQ7vPID6b5c3G24VDkUiBknui5EbaVd/3poUvnL4ezC/BLEN
+         uM0hOTSTfoBZtfv0BuNMpMU8/tdBxFS8eyfv5H7aSB14gS+iezEt3sBGD1ZY1d58fA5S
+         un+uERKZ7/Wx6vW7zjiAQsZOl0xa5GsaVU6cynreeNgrVSeu66ccJGAhMCTP1Uo5vbRQ
+         PFSj7ij+klExPL+7bDCn3ud4b2eYzoXC2T96VDzju6AMSesUgth+B2HIjhOlgf+wAP9f
+         nSUELGelMDzZtUvobwp+Xv1HAvCiSr/pWr+zlhWhu6nxNexYwe96trpfniTdxUChTjXJ
+         1jrQ==
+X-Gm-Message-State: AAQBX9cys1vNcQtr0bCZqRUSLvVfDxRT1ZOZmh4g8uCyKLqvvirfjW0e
+        PlZMMBEp3aQfvScS3OBTLlm90jD1Of0rIEIwJg17i9DslEB5ubzALv7UQ8379eOH4qN/+Lk8IhV
+        Orm7Jw1qnNJkvbx5nerHVAson5Q==
+X-Received: by 2002:a5d:5248:0:b0:2f9:a75:b854 with SMTP id k8-20020a5d5248000000b002f90a75b854mr3792096wrc.59.1681741254928;
+        Mon, 17 Apr 2023 07:20:54 -0700 (PDT)
+X-Google-Smtp-Source: AKy350boMM0zmEGTfFZFjlk6c0N1TW//CLM7LqCyngTtQr2+J07kOHHTQAknS4PxsNoOPWRVKQQvfg==
+X-Received: by 2002:a5d:5248:0:b0:2f9:a75:b854 with SMTP id k8-20020a5d5248000000b002f90a75b854mr3792081wrc.59.1681741254560;
+        Mon, 17 Apr 2023 07:20:54 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c700:fc00:db07:68a9:6af5:ecdf? (p200300cbc700fc00db0768a96af5ecdf.dip0.t-ipconnect.de. [2003:cb:c700:fc00:db07:68a9:6af5:ecdf])
+        by smtp.gmail.com with ESMTPSA id u13-20020a05600c00cd00b003edf2dc7ca3sm12016562wmm.34.2023.04.17.07.20.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Apr 2023 07:20:53 -0700 (PDT)
+Message-ID: <b37d1876-0a74-aa52-7911-e6f78280caaa@redhat.com>
+Date:   Mon, 17 Apr 2023 16:20:52 +0200
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-17_08,2023-04-17_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- malwarescore=0 adultscore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0
- spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304170126
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v3 0/7] Split a folio to any lower order folios
+Content-Language: en-US
+To:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Zi Yan <ziy@nvidia.com>, Zi Yan <zi.yan@sent.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        linux-mm@kvack.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Zach O'Keefe <zokeefe@google.com>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20230403201839.4097845-1-zi.yan@sent.com>
+ <20230404144727.e613116684dbd65a4b4745c1@linux-foundation.org>
+ <49ee481e-452f-61c7-2da5-28de2cf3de2@google.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <49ee481e-452f-61c7-2da5-28de2cf3de2@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 16.04.23 20:11, Hugh Dickins wrote:
+> On Tue, 4 Apr 2023, Andrew Morton wrote:
+>> On Mon,  3 Apr 2023 16:18:32 -0400 Zi Yan <zi.yan@sent.com> wrote:
+>>
+>>> File folio supports any order and people would like to support flexible orders
+>>> for anonymous folio[1] too. Currently, split_huge_page() only splits a huge
+>>> page to order-0 pages, but splitting to orders higher than 0 is also useful.
+>>> This patchset adds support for splitting a huge page to any lower order pages
+>>> and uses it during file folio truncate operations.
+>>
+>> This series (and its v1 & v2) don't appear to have much in the way of
+>> detailed review.  As it's at v3 and has been fairly stable I'll queue
+>> it up for some testing now, but I do ask that some reviewers go through
+>> it please.
+> 
+> Andrew, please don't let this series drift into 6.4-rc1.
+> 
+> I've seen a bug or two (I'll point out in response to those patches),
+> but overall I don't see what the justification for the series is: done
+> because it could be done, it seems to me, but liable to add surprises.
+> 
+> The cover letter says "splitting to orders higher than 0 is also useful",
+> but it's not clear why; and the infrastructure provided seems unsuited
+> to the one use provided - I'll say more on that truncation patch.
 
+I agree. Maybe this patch set is something we want to have in the future 
+once actual consumers that can benefit are in place, such that we can 
+show actual performance numbers with/without.
 
-On 4/6/23 18:04, Jeff Layton wrote:
-> On Thu, 2023-04-06 at 17:24 -0400, Jeff Layton wrote:
->> On Thu, 2023-04-06 at 16:22 -0400, Stefan Berger wrote:
->>>
->>> On 4/6/23 15:37, Jeff Layton wrote:
->>>> On Thu, 2023-04-06 at 15:11 -0400, Stefan Berger wrote:
->>>>>
->>>>> On 4/6/23 14:46, Jeff Layton wrote:
->>>>>> On Thu, 2023-04-06 at 17:01 +0200, Christian Brauner wrote:
->>>>>>> On Thu, Apr 06, 2023 at 10:36:41AM -0400, Paul Moore wrote:
->>>>>
->>>>>>
->>>>>> Correct. As long as IMA is also measuring the upper inode then it seems
->>>>>> like you shouldn't need to do anything special here.
->>>>>
->>>>> Unfortunately IMA does not notice the changes. With the patch provided in the other email IMA works as expected.
->>>>>
->>>>
->>>>
->>>> It looks like remeasurement is usually done in ima_check_last_writer.
->>>> That gets called from __fput which is called when we're releasing the
->>>> last reference to the struct file.
->>>>
->>>> You've hooked into the ->release op, which gets called whenever
->>>> filp_close is called, which happens when we're disassociating the file
->>>> from the file descriptor table.
->>>>
->>>> So...I don't get it. Is ima_file_free not getting called on your file
->>>> for some reason when you go to close it? It seems like that should be
->>>> handling this.
->>>
->>> I would ditch the original proposal in favor of this 2-line patch shown here:
->>>
->>> https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468-ecbde3b221af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
->>>
->>>
->>
->> Ok, I think I get it. IMA is trying to use the i_version from the
->> overlayfs inode.
->>
->> I suspect that the real problem here is that IMA is just doing a bare
->> inode_query_iversion. Really, we ought to make IMA call
->> vfs_getattr_nosec (or something like it) to query the getattr routine in
->> the upper layer. Then overlayfs could just propagate the results from
->> the upper layer in its response.
->>
->> That sort of design may also eventually help IMA work properly with more
->> exotic filesystems, like NFS or Ceph.
->>
->>
->>
-> 
-> Maybe something like this? It builds for me but I haven't tested it. It
-> looks like overlayfs already should report the upper layer's i_version
-> in getattr, though I haven't tested that either:
-> 
-> -----------------------8<---------------------------
-> 
-> [PATCH] IMA: use vfs_getattr_nosec to get the i_version
-> 
-> IMA currently accesses the i_version out of the inode directly when it
-> does a measurement. This is fine for most simple filesystems, but can be
-> problematic with more complex setups (e.g. overlayfs).
-> 
-> Make IMA instead call vfs_getattr_nosec to get this info. This allows
-> the filesystem to determine whether and how to report the i_version, and
-> should allow IMA to work properly with a broader class of filesystems in
-> the future.
-> 
-> Reported-by: Stefan Berger <stefanb@linux.ibm.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   security/integrity/ima/ima_api.c  |  9 ++++++---
->   security/integrity/ima/ima_main.c | 12 ++++++++----
->   2 files changed, 14 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-> index d3662f4acadc..c45902e72044 100644
-> --- a/security/integrity/ima/ima_api.c
-> +++ b/security/integrity/ima/ima_api.c
-> @@ -13,7 +13,6 @@
->   #include <linux/fs.h>
->   #include <linux/xattr.h>
->   #include <linux/evm.h>
-> -#include <linux/iversion.h>
->   #include <linux/fsverity.h>
->   
->   #include "ima.h"
-> @@ -246,10 +245,11 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
->   	struct inode *inode = file_inode(file);
->   	const char *filename = file->f_path.dentry->d_name.name;
->   	struct ima_max_digest_data hash;
-> +	struct kstat stat;
->   	int result = 0;
->   	int length;
->   	void *tmpbuf;
-> -	u64 i_version;
-> +	u64 i_version = 0;
->   
->   	/*
->   	 * Always collect the modsig, because IMA might have already collected
-> @@ -268,7 +268,10 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
->   	 * to an initial measurement/appraisal/audit, but was modified to
->   	 * assume the file changed.
->   	 */
-> -	i_version = inode_query_iversion(inode);
-> +	result = vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
-> +				   AT_STATX_SYNC_AS_STAT);
-> +	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
-> +		i_version = stat.change_cookie;
->   	hash.hdr.algo = algo;
->   	hash.hdr.length = hash_digest_size[algo];
->   
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index d66a0a36415e..365db0e43d7c 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -24,7 +24,6 @@
->   #include <linux/slab.h>
->   #include <linux/xattr.h>
->   #include <linux/ima.h>
-> -#include <linux/iversion.h>
->   #include <linux/fs.h>
->   
->   #include "ima.h"
-> @@ -164,11 +163,16 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
->   
->   	mutex_lock(&iint->mutex);
->   	if (atomic_read(&inode->i_writecount) == 1) {
-> +		struct kstat stat;
-> +
->   		update = test_and_clear_bit(IMA_UPDATE_XATTR,
->   					    &iint->atomic_flags);
-> -		if (!IS_I_VERSION(inode) ||
-> -		    !inode_eq_iversion(inode, iint->version) ||
-> -		    (iint->flags & IMA_NEW_FILE)) {
-> +		if ((iint->flags & IMA_NEW_FILE) ||
-> +		    vfs_getattr_nosec(&file->f_path, &stat,
-> +				      STATX_CHANGE_COOKIE,
-> +				      AT_STATX_SYNC_AS_STAT) ||
-> +		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
-> +		    stat.change_cookie != iint->version) {
->   			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
->   			iint->measured_pcrs = 0;
->   			if (update)
+Until then, "365 insertions(+), 68 deletions(-)" certainly needs some 
+reasonable motivation.
 
-I tested this in the OpenBMC setup with overlayfs acting as rootfs. It works now as expected.
+-- 
+Thanks,
 
-Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+David / dhildenb
 
