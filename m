@@ -2,127 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 838E36E6C7D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Apr 2023 20:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 868596E6D3D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Apr 2023 22:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232594AbjDRS56 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Apr 2023 14:57:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44000 "EHLO
+        id S231355AbjDRUFQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Apr 2023 16:05:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232720AbjDRS54 (ORCPT
+        with ESMTP id S229838AbjDRUFP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Apr 2023 14:57:56 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3837AAB
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Apr 2023 11:57:49 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id b16so535486ejz.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Apr 2023 11:57:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1681844268; x=1684436268;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2GSERGVeyYy5gOumd7ZQabQRKLkbDoehFS3JN/G8r4M=;
-        b=SHe3bi91ejtLhjHnWeweNb/YLocrBc9gHmlQcjVirsvLkEanSEwODKFStZNvPnf/QD
-         3X467qTgK5CHzdCMWMYJcb1/IzjZT9+laquRt3c+eh08dPFbxjZERokjK/4ivTuGdj5v
-         c52kKCJEpjDCf4Ml7EVMzD4pP1ugoFf6ZKgjY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681844268; x=1684436268;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2GSERGVeyYy5gOumd7ZQabQRKLkbDoehFS3JN/G8r4M=;
-        b=Iq353WzEOUSQ2M3sMOcMRd5gwAnG1Lax1Dr4XR5Hf2tVKAOYVKD7FFO71D1rTHy8dz
-         ISF7BrrU2wEZFnW2Nm2qi7/dGojq9B5XXqu7zcEAbec1T9urQmBfu20h8WuV/DiDYG0H
-         HJIlYV2l1TGB6rYqiwUg3AG9SncCZsv//7Cjr8iE4aVrVq1Eqwocn7hkj45rvc2oIdZI
-         C/9ugM7KNULzsmHxV0IWWnPJS2tE7rYV4siWILCCc4LLpq7c3p3Tho/IBpMS7B6OCr+G
-         WOLFxQHxaoNa8wK/9Xr6Qqkd6YdNvwlo+XQau5DA4QppcSFlZtO0yUxLmvoZx14DDpcH
-         xypg==
-X-Gm-Message-State: AAQBX9fK/6RxCjuBlwJLe0F1lxgiC2rpihY1idjK4FlS50HNRM1/JVfC
-        o9X9cJkLt9wj5Cqct/8Cwd0Dp61bwLwNJqaM4RFkwzUOXfMZgWtiJ5k=
-X-Google-Smtp-Source: AKy350YKNG0gWlAmW1HGq2BBzOrP58IVGmMXpuSH5F3Sw9k4ZDfpQrxrolfeCWLetdjEuhw69ZMeBP//gAM8UGylI9U=
-X-Received: by 2002:a17:906:ae56:b0:932:1af9:7386 with SMTP id
- lf22-20020a170906ae5600b009321af97386mr11695725ejb.27.1681844268047; Tue, 18
- Apr 2023 11:57:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <e57733cd-364d-84e0-cfe0-fd41de14f434@bytedance.com>
- <CAJfpegsVsnjUy2N+qO-j4ToScwev01AjwUA0Enp_DxroPQS30A@mail.gmail.com>
- <CAOQ4uxhYi2823GiVn9Sf-CRGrcigkbPw2x1VQRV3_Md92gJnrw@mail.gmail.com>
- <CAJfpegsLD-OxYfqPR7AfWbgE1EAPfWs672omt+_u8sYCMFB5Fg@mail.gmail.com> <CAOQ4uxhz7g=N0V8iGiKa2+vupEuH_m9_27kas++6c0bLL2qRyA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhz7g=N0V8iGiKa2+vupEuH_m9_27kas++6c0bLL2qRyA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 18 Apr 2023 20:57:36 +0200
-Message-ID: <CAJfpegt38gHcNeEt1mwOYHeMYdVEbj0RhZEs-4iYG7VPJhYDzQ@mail.gmail.com>
-Subject: Re: [LSF/MM TOPIC] fsinfo and mount namespace notifications
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Abel Wu <wuyun.abel@bytedance.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Tue, 18 Apr 2023 16:05:15 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F16E51FD7;
+        Tue, 18 Apr 2023 13:05:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681848314; x=1713384314;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MESHOGE+6HB9L0+Pxz2Yf8K9mFxsBzR+eoMqR4IqWFE=;
+  b=DOEvAulM6XMvBVa2yWRE0tnzDL72XwND8mFCqIubQ4OPsiOfvuMf+DZ6
+   8dWTIrAF8dZYIkfLTOWFxQZVdT3yoP68oei4UZZrUVIxaocgF7v2IaeXU
+   QB11emoP2s/VjhD52cIOR+UqufWFwPPRK2ZjM0dVDzMZJryq3CqcWWfoQ
+   IVNSEcrBTDFD3yqXHoGi8DwsNAURKm3QMac0fOnVYhvXpgic/uDwSG2qO
+   YcG2uUcz4ABuDMkpUJebAXgZVuoZtRBvgL+0isfgDEDTJE8oYVDAGRDuf
+   cE6gItV1knfLXnMmRXmowxm48oiHBnPLY5wiP6fGhvva0jhPYdydfsEa2
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10684"; a="344024377"
+X-IronPort-AV: E=Sophos;i="5.99,207,1677571200"; 
+   d="scan'208";a="344024377"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2023 13:05:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10684"; a="780609861"
+X-IronPort-AV: E=Sophos;i="5.99,207,1677571200"; 
+   d="scan'208";a="780609861"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 18 Apr 2023 13:05:06 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1porZZ-000dzb-10;
+        Tue, 18 Apr 2023 20:05:05 +0000
+Date:   Wed, 19 Apr 2023 04:04:09 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
+Cc:     oe-kbuild-all@lists.linux.dev,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <skhan@linuxfoundation.org>,
         Christian Brauner <brauner@kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, Greg KH <greg@kroah.com>
+Subject: Re: [PATCH v14 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+Message-ID: <202304190331.VR44lj9J-lkp@intel.com>
+References: <20230418062008.1434826-3-usama.anjum@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230418062008.1434826-3-usama.anjum@collabora.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 18 Apr 2023 at 17:57, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, Apr 18, 2023 at 11:54=E2=80=AFAM Miklos Szeredi <miklos@szeredi.h=
-u> wrote:
+Hi Muhammad,
 
-> > - mount ID's do not uniquely identify a mount across time
-> >   o when a mount is deleted, the ID can be immediately reused
-> >
-> > The following are the minimal requirements needed to fix the above issu=
-es:
-> >
-> > 1) create a new ID for each mount that is unique across time; lets
-> > call this umntid
-> >
->
-> Do you reckon we just stop recycling mntid?
-> Do we also need to make it 64bit?
-> statx() has already allocated 64bit for stx_mnt_id.
-> In that case, should name_to_handle_at() return a truncated mnt_id?
+kernel test robot noticed the following build warnings:
 
-I'm not sure it's realistic to implement the new 64bit ID such that
-the truncated value retains the properties of the previous mount ID
-implementation.
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on next-20230417]
+[cannot apply to linus/master v6.3-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I think the only sane option is to leave the old mnt_id alone and add
-a new 64bit one that is assigned from an atomic counter at allocation
-and looked up using a hash table.
+url:    https://github.com/intel-lab-lkp/linux/commits/Muhammad-Usama-Anjum/userfaultfd-UFFD_FEATURE_WP_ASYNC/20230418-142225
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20230418062008.1434826-3-usama.anjum%40collabora.com
+patch subject: [PATCH v14 2/5] fs/proc/task_mmu: Implement IOCTL to get and optionally clear info about PTEs
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20230419/202304190331.VR44lj9J-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/4fe2396ba406868e01de910812e7e3c719ba11be
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Muhammad-Usama-Anjum/userfaultfd-UFFD_FEATURE_WP_ASYNC/20230418-142225
+        git checkout 4fe2396ba406868e01de910812e7e3c719ba11be
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash fs/proc/
 
-> > - mount notifications using watch_queue
-> >
-> > https://lore.kernel.org/all/159645997768.1779777.8286723139418624756.st=
-git@warthog.procyon.org.uk/
-> >
-> > I also explored fsnotify infrastructure for this.  I think the API is
-> > better fit, since we are talking about filesystem related events, but
-> > notifications l would need to be extended with the mount ID.
->
-> Like this? ;-)
->
-> https://lore.kernel.org/linux-fsdevel/20230414182903.1852019-1-amir73il@g=
-mail.com/
->
-> I was considering whether fanotify should report a 32bit mntid
-> (like name_to_handle_at()) or 64bit one (like statx()).
-> I should probably go with the latter then.
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202304190331.VR44lj9J-lkp@intel.com/
 
-Or a 32+64bit one, like I said.
+All warnings (new ones prefixed by >>):
 
-Thanks,
-Miklos
+   fs/proc/task_mmu.c: In function 'do_pagemap_scan':
+   fs/proc/task_mmu.c:2205:17: error: implicit declaration of function 'flush_tlb_mm_range'; did you mean 'flush_tlb_range'? [-Werror=implicit-function-declaration]
+    2205 |                 flush_tlb_mm_range(mm, start, end, PAGE_SHIFT, false);
+         |                 ^~~~~~~~~~~~~~~~~~
+         |                 flush_tlb_range
+   In file included from include/linux/highmem.h:14,
+                    from include/linux/bvec.h:10,
+                    from include/linux/blk_types.h:10,
+                    from include/linux/writeback.h:13,
+                    from include/linux/memcontrol.h:22,
+                    from include/linux/swap.h:9,
+                    from include/linux/mm_inline.h:7,
+                    from fs/proc/task_mmu.c:3:
+   include/linux/highmem-internal.h: In function 'pagemap_scan_pmd_entry':
+>> include/linux/highmem-internal.h:271:9: warning: 'orig_pte' is used uninitialized [-Wuninitialized]
+     271 |         __kunmap_atomic(__addr);                                \
+         |         ^~~~~~~~~~~~~~~
+   fs/proc/task_mmu.c:1934:22: note: 'orig_pte' was declared here
+    1934 |         pte_t *pte, *orig_pte;
+         |                      ^~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/orig_pte +271 include/linux/highmem-internal.h
+
+13f876ba77ebd5 Thomas Gleixner       2020-11-03  251  
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  252  /**
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  253   * kunmap_atomic - Unmap the virtual address mapped by kmap_atomic() - deprecated!
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  254   * @__addr:       Virtual address to be unmapped
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  255   *
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  256   * Unmaps an address previously mapped by kmap_atomic() and re-enables
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  257   * pagefaults. Depending on PREEMP_RT configuration, re-enables also
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  258   * migration and preemption. Users should not count on these side effects.
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  259   *
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  260   * Mappings should be unmapped in the reverse order that they were mapped.
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  261   * See kmap_local_page() for details on nesting.
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  262   *
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  263   * @__addr can be any address within the mapped page, so there is no need
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  264   * to subtract any offset that has been added. In contrast to kunmap(),
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  265   * this function takes the address returned from kmap_atomic(), not the
+e7392b4eca84e8 Fabio M. De Francesco 2022-05-13  266   * page passed to it. The compiler will warn you if you pass the page.
+13f876ba77ebd5 Thomas Gleixner       2020-11-03  267   */
+13f876ba77ebd5 Thomas Gleixner       2020-11-03  268  #define kunmap_atomic(__addr)					\
+13f876ba77ebd5 Thomas Gleixner       2020-11-03  269  do {								\
+13f876ba77ebd5 Thomas Gleixner       2020-11-03  270  	BUILD_BUG_ON(__same_type((__addr), struct page *));	\
+13f876ba77ebd5 Thomas Gleixner       2020-11-03 @271  	__kunmap_atomic(__addr);				\
+13f876ba77ebd5 Thomas Gleixner       2020-11-03  272  } while (0)
+13f876ba77ebd5 Thomas Gleixner       2020-11-03  273  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
