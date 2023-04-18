@@ -2,177 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 097296E676C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Apr 2023 16:48:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4A816E67F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Apr 2023 17:20:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230514AbjDROsL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Apr 2023 10:48:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46546 "EHLO
+        id S231415AbjDRPUi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Apr 2023 11:20:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbjDROsK (ORCPT
+        with ESMTP id S231338AbjDRPUh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Apr 2023 10:48:10 -0400
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BBE259E8;
-        Tue, 18 Apr 2023 07:48:07 -0700 (PDT)
-Received: from [192.168.2.142] (p4fdf4348.dip0.t-ipconnect.de [79.223.67.72])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        (Authenticated sender: buczek)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5C2E661E4052B;
-        Tue, 18 Apr 2023 16:48:04 +0200 (CEST)
-Message-ID: <1dc227d0-9528-9b77-63ff-b49b0579caa1@molgen.mpg.de>
-Date:   Tue, 18 Apr 2023 16:48:00 +0200
+        Tue, 18 Apr 2023 11:20:37 -0400
+Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C995118E1;
+        Tue, 18 Apr 2023 08:20:34 -0700 (PDT)
+Received: by mail-ua1-x931.google.com with SMTP id s13so7641007uaq.4;
+        Tue, 18 Apr 2023 08:20:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681831233; x=1684423233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OSIyxHkbZWd4wY1/3LPPdat82/dHSBlxl/GGpCWtFJg=;
+        b=Nhodw3P2ijhT/AkkpvNyKmgPrwHr/hAhUSZ3QuC+q7Z5zPu2e3XIqH6kp9ziBkemVH
+         95L4MePyoiTgSDvozGHlThI2YULg2Vu3DatgUXJ8dkezUeqOwhuYUW9CWClQgNUM7KJk
+         2BqOctW25dXEtAmOptHCyi3GfLBAGEHmOBmU/ArHPotb1vVwF8M2uTmHvxaDqPAybdrW
+         vcwQFnWfg8M3IkWdK7Vck04jz8XaauX8bfuMSCuqM0hfC3IpMcN8P82iz05gWt0rRY+S
+         HvwXs8ghXvL8es3Xg1CiGNtJBB53PqCXcKZdvd/oiznyxDTVXA0v1Ok/kb/oxCdJzZkv
+         saDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681831233; x=1684423233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OSIyxHkbZWd4wY1/3LPPdat82/dHSBlxl/GGpCWtFJg=;
+        b=f4T/eGAqmeqFbZd32B6TaR1SPRJ3UdzMfuUwqPWnZ3zzAGuxnW2Wac9PAIlXAaixZZ
+         MG2/GoTKcp8chQWuRHB/BBrzUksfxamGlLuhF+bo9KVRByJfpnlKo815TTsCYq7/kO9U
+         XHkcQd1gYrXkj77/TZ5ELuz/9VG9LN841VWdPVc00MTvM9MGfFIC6Jo4MppkADJia2oa
+         1LBr/7M7VqTbMTxs/fft56A/8qP/PBLpFfL5JlEX/PsFvQdNrC2IwuS9utZ4yR2GMbv8
+         tWJm+ak2+35LNeMh0T/oBBMFS+pdmKzPDJdYO5wtAuOO1SfOyU6hH62sF3cqQEcizJ79
+         CtQg==
+X-Gm-Message-State: AAQBX9fpj3N3zGMsOVen/CB5ulfAxAuiurjvzYYSNPSMj1mypYRDmDmm
+        C39mNhTe20S84gp/rMb051Ocfd1pJZnEJQKT3mc=
+X-Google-Smtp-Source: AKy350YtKCduYu/ofuHZ00n79aJkgmfE8hsABfJkr7+6IHtQlMt8bwyL0vLJYL1e6ziBTPOhKOBpOwxlz3Vj5LgTez8=
+X-Received: by 2002:a1f:a710:0:b0:40c:4d1:b550 with SMTP id
+ q16-20020a1fa710000000b0040c04d1b550mr9884648vke.0.1681831233515; Tue, 18 Apr
+ 2023 08:20:33 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
-Content-Language: en-US
-To:     Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk,
-        hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org,
-        kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org,
-        ming.lei@redhat.com, gregkh@linuxfoundation.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20230404140835.25166-1-sergei.shtepa@veeam.com>
- <20230404140835.25166-4-sergei.shtepa@veeam.com>
- <cb0cc2f1-48cb-8b15-35af-33a31ccc922c@molgen.mpg.de>
- <86068780-bab3-2fc2-3f6f-1868be119b38@veeam.com>
- <a1854604-cec1-abd5-1d49-6cf6a19ee7a1@veeam.com>
-From:   Donald Buczek <buczek@molgen.mpg.de>
-In-Reply-To: <a1854604-cec1-abd5-1d49-6cf6a19ee7a1@veeam.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+References: <20230414182903.1852019-1-amir73il@gmail.com> <20230418-diesmal-heimlaufen-ba2f2d1e1938@brauner>
+ <CAOQ4uxj5UwDhV7XxWZ-Os+fzM=_N1DDWHpjmt6UnHr96EDriMw@mail.gmail.com> <20230418-absegnen-sputen-11212a0615c7@brauner>
+In-Reply-To: <20230418-absegnen-sputen-11212a0615c7@brauner>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 18 Apr 2023 18:20:22 +0300
+Message-ID: <CAOQ4uxgM2x93UKcJ5D5tfoTt8s0ChTrEheTGqTcndGoyGwS=7w@mail.gmail.com>
+Subject: Re: [RFC][PATCH 0/2] Monitoring unmounted fs with fanotify
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/18/23 12:31, Sergei Shtepa wrote:
-> 
-> 
-> On 4/14/23 14:34, Sergei Shtepa wrote:
->> Subject:
->> Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
->> From:
->> Sergei Shtepa <sergei.shtepa@veeam.com>
->> Date:
->> 4/14/23, 14:34
->>
->> To:
->> Donald Buczek <buczek@molgen.mpg.de>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
->> CC:
->> viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org, kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org, ming.lei@redhat.com, gregkh@linuxfoundation.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
->>
->>
->>
->> On 4/12/23 21:38, Donald Buczek wrote:
->>> Subject:
->>> Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
->>> From:
->>> Donald Buczek <buczek@molgen.mpg.de>
->>> Date:
->>> 4/12/23, 21:38
->>>
->>> To:
->>> Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
->>> CC:
->>> viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org, kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org, ming.lei@redhat.com, gregkh@linuxfoundation.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
->>>
->>>
->>> I think, you can trigger all kind of user-after-free when userspace deletes a snapshot image or the snapshot image and the tracker while the disk device snapshot image is kept alive (mounted or just opened) and doing I/O.
->>>
->>> Here is what I did to provoke that:
->>>
->>> root@dose:~# s=$(blksnap snapshot_create -d /dev/vdb)
->>> root@dose:~# blksnap snapshot_appendstorage -i $s -f /scratch/local/test.dat
->>> device path: '/dev/block/253:2'
->>> allocate range: ofs=11264624 cnt=2097152
->>> root@dose:~# blksnap snapshot_take -i $s
->>> root@dose:~# mount /dev/blksnap-image_253\:16 /mnt
->>> root@dose:~# dd if=/dev/zero of=/mnt/x.x &
->>> [1] 2514
->>> root@dose:~# blksnap snapshot_destroy -i $s
->>> dd: writing to '/mnt/x.x': No space left on device
->>> 1996041+0 records in
->>> 1996040+0 records out
->>> 1021972480 bytes (1.0 GB, 975 MiB) copied, 8.48923 s, 120 MB/s
->>> [1]+  Exit 1                  dd if=/dev/zero of=/mnt/x.x
->>>
->> Thanks!
->> I am very glad that the blksnap tool turned out to be useful in the review.
->> This snapshot deletion scenario is not the most typical, but of course it is
->> quite possible.
->> I will need to solve this problem and add such a scenario to the test suite.
->>
-> 
-> Hi!
-> 
-> I have redesign the logic of ownership of the diff_area structure.
-> See patch in attach or commit.
-> Link: https://github.com/SergeiShtepa/linux/commit/7e927c381dcd2b2293be8315897a224d111b6f88
-> A test script for such a scenario has been added.
-> Link: https://github.com/veeam/blksnap/commit/fd0559dfedf094901d08bbf185fed288f0156433
-> 
-> I will be glad of any feedback.
+On Tue, Apr 18, 2023 at 5:12=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Tue, Apr 18, 2023 at 04:56:40PM +0300, Amir Goldstein wrote:
+> > On Tue, Apr 18, 2023 at 4:33=E2=80=AFPM Christian Brauner <brauner@kern=
+el.org> wrote:
+> > >
+> > > On Fri, Apr 14, 2023 at 09:29:01PM +0300, Amir Goldstein wrote:
+> > > > Jan,
+> > > >
+> > > > Followup on my quest to close the gap with inotify functionality,
+> > > > here is a proposal for FAN_UNMOUNT event.
+> > > >
+> > > > I have had many design questions about this:
+> > >
+> > > I'm going to humbly express what I feel makes sense to me when lookin=
+g
+> > > at this from a user perspective:
+> > >
+> > > > 1) Should we also report FAN_UNMOUNT for marked inodes and sb
+> > > >    on sb shutdown (same as IN_UNMOUNT)?
+> > >
+> > > My preference would be if this would be a separate event type.
+> > > FAN_SB_SHUTDOWN or something.
+> >
+> > If we implement an event for this at all, I would suggest FAN_IGNORED
+> > or FAN_EVICTED, which has the same meaning as IN_IGNORED.
+> > When you get an event that the watch went away, it could be because of:
+> > 1. watch removed by user
+> > 2. watch removed because inode was evicted (with FAN_MARK_EVICTABLE)
+> > 3. inode deleted
+> > 4. sb shutdown
+> >
+> > IN_IGNORED is generated in all of the above except for inode evict
+> > that is not possible with inotify.
+> >
+> > User can figure out on his own if the inode was deleted or if fs was un=
+mounted,
+> > so there is not really a need for FAN_SB_SHUTDOWN IMO.
+>
+> Ok, sounds good.
+>
+> >
+> > Actually, I think that FAN_IGNORED would be quite useful for the
+> > FAN_MARK_EVICTABLE case, but it is a bit less trivial to implement
+> > than FAN_UNMOUNT was.
+> >
+> > >
+> > > > 2) Should we also report FAN_UNMOUNT on sb mark for any unmounts
+> > > >    of that sb?
+> > >
+> > > I don't think so. It feels to me that if you watch an sb you don't
+> > > necessarily want to watch bind mounts of that sb.
+> > >
+> > > > 3) Should we report also the fid of the mount root? and if we do...
+> > > > 4) Should we report/consider FAN_ONDIR filter?
+> > > >
+> > > > All of the questions above I answered "not unless somebody requests=
+"
+> > > > in this first RFC.
+> > >
+> > > Fwiw, I agree.
+> > >
+> > > >
+> > > > Specifically, I did get a request for an unmount event for containe=
+rs
+> > > > use case.
+> > > >
+> > > > I have also had doubts regarding the info records.
+> > > > I decided that reporting fsid and mntid is minimum, but couldn't
+> > > > decide if they were better of in a single MNTID record or seprate
+> > > > records.
+> > > >
+> > > > I went with separate records, because:
+> > > > a) FAN_FS_ERROR has set a precendent of separate fid record with
+> > > >    fsid and empty fid, so I followed this precendent
+> > > > b) MNTID record we may want to add later with FAN_REPORT_MNTID
+> > > >    to all the path events, so better that it is independent
+> > >
+> >
+> > Just thought of another reason:
+> >  c) FAN_UNMOUNT does not need to require FAN_REPORT_FID
+> >      so it does not depend on filesystem having a valid f_fsid nor
+> >      exports_ops. In case of "pseudo" fs, FAN_UNMOUNT can report
+> >      only MNTID record (I will amend the patch with this minor change).
+>
+> I see some pseudo fses generate f_fsid, e.g., tmpfs in mm/shmem.c
 
-Great, Thanks!
+tmpfs is not "pseudo" in my eyes, because it implements a great deal of the
+vfs interfaces, including export_ops.
 
-However, there are two leftover calls to diff_area_free() with its old prototype:
+and also I fixed its f_fsid recently:
+59cda49ecf6c shmem: allow reporting fanotify events with file handles on tm=
+pfs
 
-  CC [M]  drivers/block/blksnap/diff_area.o
-drivers/block/blksnap/diff_area.c: In function ‘diff_area_new’:
-drivers/block/blksnap/diff_area.c:283:18: error: passing argument 1 of ‘diff_area_free’ from incompatible pointer type [-Werror=incompatible-pointer-types]
-   283 |   diff_area_free(diff_area);
-       |                  ^~~~~~~~~
-       |                  |
-       |                  struct diff_area *
-drivers/block/blksnap/diff_area.c:110:34: note: expected ‘struct kref *’ but argument is of type ‘struct diff_area *’
-   110 | void diff_area_free(struct kref *kref)
-       |                     ~~~~~~~~~~~~~^~~~
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:252: drivers/block/blksnap/diff_area.o] Error 1
-make[3]: *** [scripts/Makefile.build:494: drivers/block/blksnap] Error 2
-make[2]: *** [scripts/Makefile.build:494: drivers/block] Error 2
-make[1]: *** [scripts/Makefile.build:494: drivers] Error 2
-make: *** [Makefile:2025: .] Error 2
+> At the risk of putting my foot in my mouth, what's stopping us from
+> making them all support f_fsid?
 
-The other one:
+Nothing much. Jan had the same opinion [1].
 
-buczek@dose:/scratch/local/linux (blksnap-test)$ make drivers/block/blksnap/tracker.o
-   CALL    scripts/checksyscalls.sh
-   DESCEND objtool
-   INSTALL libsubcmd_headers
-   CC [M]  drivers/block/blksnap/tracker.o
-drivers/block/blksnap/tracker.c: In function ‘tracker_free’:
-drivers/block/blksnap/tracker.c:26:25: error: passing argument 1 of ‘diff_area_free’ from incompatible pointer type [-Werror=incompatible-pointer-types]
-    26 |   diff_area_free(tracker->diff_area);
-       |                  ~~~~~~~^~~~~~~~~~~
-       |                         |
-       |                         struct diff_area *
-In file included from drivers/block/blksnap/tracker.c:12:
-drivers/block/blksnap/diff_area.h:116:34: note: expected ‘struct kref *’ but argument is of type ‘struct diff_area *’
-   116 | void diff_area_free(struct kref *kref);
-       |                     ~~~~~~~~~~~~~^~~~
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:252: drivers/block/blksnap/tracker.o] Error 1
-make[3]: *** [scripts/Makefile.build:494: drivers/block/blksnap] Error 2
-make[2]: *** [scripts/Makefile.build:494: drivers/block] Error 2
-make[1]: *** [scripts/Makefile.build:494: drivers] Error 2
-make: *** [Makefile:2025: .] Error 2
+We could do either:
+1. use uuid_to_fsid() in vfs_statfs() if fs has set s_uuid and not set f_fs=
+id
+2. use s_dev as f_fsid in vfs_statfs() if fs did not set f_fsid nor s_uuid
+3. randomize s_uuid for simple fs (like tmpfs)
+4. any combination of the above and more
 
-Am I missing something?
+Note that we will also need to decide what to do with
+name_to_handle_at() for those pseudo fs.
 
-Best
-   Donald
+Quoting Jan from [1]:
+"But otherwise the proposal to make name_to_handle_at() work even for
+filesystems not exportable through NFS makes sense to me. But I guess we
+need some buy-in from VFS maintainers for this." (hint hint).
 
--- 
-Donald Buczek
-buczek@molgen.mpg.de
-Tel: +49 30 8413 1433
+Thanks,
+Amir.
+
+[1] https://lore.kernel.org/linux-fsdevel/20230417162721.ouzs33oh6mb7vtft@q=
+uack3/
