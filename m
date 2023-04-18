@@ -2,189 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B24C26E57BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Apr 2023 05:13:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2096E57D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Apr 2023 05:25:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbjDRDNQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Apr 2023 23:13:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46112 "EHLO
+        id S229872AbjDRDZc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Apr 2023 23:25:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjDRDNO (ORCPT
+        with ESMTP id S229901AbjDRDZ3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Apr 2023 23:13:14 -0400
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2069.outbound.protection.outlook.com [40.107.113.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B163595;
-        Mon, 17 Apr 2023 20:13:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Bw22XDPvCaxljH9Cmb7/c8NZqziaFFjDa2goBZ8q/cxLAg1j7jTntb3BMlQXiSm4GDu18otFDj9p05rszXiLz/obBuWi1isoy46V7mh5Rsrj4snD/vSwLvgFxzuaIbfcxoU1WD6d/860k8CwHREzbzkltq2g7EgVUI1AL77fO4AxV/lHGMsPiB2gD+vjbcrgmERV7Jtf3e4somfiHONJ92YyPh8WVBskryXafgn9O2tKVCrY+OwVqCbfFeldqMrA5mJS6bYDIs3ENJyZye1YkfQP6OMEOH7E2KDDaOROSNuvjwfAAcTyNv6ZMgbDZ5t0q83g1N8bwA/pqa57AmTPTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+q7cU4B1tMDYkJWqm40q8PY5Op4S2XqTEMtpFoYiAls=;
- b=NJq0uffZDI2pihvZxNApI29myi/lglMm+PcGXRqPT0kEyo6aygmFVVDHMla3o/mnSvsH20C4tXtrQ1WiPvjhoU5ib8AdcdAIp/DhUkiWDImB/SRO0Uq7dbKk+AYqdnLw15YqZpWxO+aB1EFuJGJj0tAZJ7B6c0DwA0wK5rJ1s6NOhCBumzGQg7lIhmKBhsUqguOvuP1/0zm2/UVaC5TPHrVSsEy4QtQrC/smWd49/aJow8cFblkevcf5P2KwjuWHqBe4Sr4RmbDHW1Fue+4LxO2TxXmaCGgwPx9IycAezisY7l2gwAKgjtd0437PlVIV3qE+bwALgXMpwBulJrDZag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nec.com; dmarc=pass action=none header.from=nec.com; dkim=pass
- header.d=nec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nec.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+q7cU4B1tMDYkJWqm40q8PY5Op4S2XqTEMtpFoYiAls=;
- b=RBXFjyA3C8W03N6z8v+hK5kJjnWiHkk6CpxP/YuQcgwC9zq/eVPQ36wesM+DaBXP+1pMUBtRlYPWm5Q1F/TC7byCaMxKY8Lkx39Q9Uv4wG9AkI1y9+Bzbz96Esl8oA68BueJ4YUXMXDxBujYcMmvRfRymo91UYIN4pX2Gffq2w8=
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com (2603:1096:400:13c::10)
- by TY3PR01MB10384.jpnprd01.prod.outlook.com (2603:1096:400:250::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.45; Tue, 18 Apr
- 2023 03:13:10 +0000
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::22a3:7e89:cc26:15c8]) by TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::22a3:7e89:cc26:15c8%7]) with mapi id 15.20.6298.045; Tue, 18 Apr 2023
- 03:13:10 +0000
-From:   =?utf-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPo+OAgOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tong Tiangen <tongtiangen@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v2] mm: hwpoison: coredump: support recovery from
- dump_user_range()
-Thread-Topic: [PATCH v2] mm: hwpoison: coredump: support recovery from
- dump_user_range()
-Thread-Index: AQHZcaO0la0PeSJsOESJfU1UoYMpbA==
-Date:   Tue, 18 Apr 2023 03:13:10 +0000
-Message-ID: <20230418031243.GA2845864@hori.linux.bs1.fc.nec.co.jp>
-References: <20230417045323.11054-1-wangkefeng.wang@huawei.com>
-In-Reply-To: <20230417045323.11054-1-wangkefeng.wang@huawei.com>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nec.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB8591:EE_|TY3PR01MB10384:EE_
-x-ms-office365-filtering-correlation-id: a8c100a1-2604-4bad-20ff-08db3fbad6b3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 5alKqzi1o7J2g2CUhNvcPdunFN47IFLDq0ZN450kS0MMt9DnmRoh7OnOWCJf2RX4SSu7Oll6r3ysZsjOdxhfce6DBY6uE4UEW8wVccelVhqU3XCFKsdE3ScO0pzXrXaxAbpMrmtbcJfONMutJa9wxB2tePiYsgu7qKTtboKiTqN0d+thfiy6y0zehy3L+MlTDqwM2XfWKiONHBuWC39ss5/8aGlDGGvYPnsus0TktxYJHqlrABrxjBAo565nPQUHhQJ56nXTg/YLcVGoXlsMMiKQClAujnwxpOSE2QQa1/uK+2dHvZ7Ti7oSqr8ST2nqb1t3ODgQVdlb0j/jAKaSx9rH1/b99+F1sjJALaxjxZNZG/7I6GL9KVanLNkeRephfGPj7M+1HA3+IQAHGpk8dquqQHHJavITE9s9Y5zxnMF4SbCNsiqYXeL8zxiGz9Rh7TNfY3gSj5Abq+QNUOXsyPKLXZoF98LennJ6/ylG+E6bm4yxBnz144MspwLq+l1SLlXJ/IRIUIXCAWubbrTZPg/8FomFRfOT62u52WtdKhCdKTWeflP2yBIDYf7/M67KYIy5x0SQIrilFy9qsfYMw1hJrGiF++jR+QRj1eXnNNSbd6ltudHFO5rpkuSyOR9P
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB8591.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(366004)(376002)(39860400002)(396003)(451199021)(38100700002)(8936002)(8676002)(122000001)(38070700005)(5660300002)(7416002)(2906002)(85182001)(33656002)(86362001)(478600001)(6486002)(71200400001)(54906003)(186003)(9686003)(6512007)(1076003)(66946007)(6506007)(76116006)(66476007)(66446008)(26005)(41300700001)(82960400001)(316002)(83380400001)(6916009)(4326008)(64756008)(66556008);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cHhpaVUvN0JiUmhCM3cyU3BBWDVScVV0eFVYdy9iVURxZ1M5aWlpQ0JUSUd4?=
- =?utf-8?B?VnNFUms2TW8yVUJ5K1J3VGNWUmVlRlRIYXhIR1FyMFFUMWFZZG9aR1l2UHB1?=
- =?utf-8?B?WW81N2dMWXlmUGJJSitjZnBza0FueVllTGFVUWNXaUJwRzZ0YTdNbTloRlFj?=
- =?utf-8?B?dVJLcUw5a0s4L011VUlHMWdGeDhteldGcWNmOCtKSzE4OU1hcXRpNGZvU1Fy?=
- =?utf-8?B?K1gyZmZybSttUTRlQVdIZHNiZTFXL3hWR2x0ZjNqVDFsalZDZjh4OXU5dFhE?=
- =?utf-8?B?SlZ4SWt0NlZCdmdqSnRMQmFXcGttSzZtWmRXVTRRbnMwTjhCSHVhWU4rSnY5?=
- =?utf-8?B?cENmaFNVU0YyRHRXU1FJd0lEWFN3cjhuL3JMd2dXaGkvVEYzdDh0RWtKYVo2?=
- =?utf-8?B?NjBVVkVodURaNDJMTXhORzl6RVVnL0k3YVltd3JPekJnUnAyS2NTdml6M2Nz?=
- =?utf-8?B?WnZrV3QrdGY1RzBsa2FCN1FlR2ZhQi9PNFhpNFZvU3c2Qnc1Qmlkblg0YXBD?=
- =?utf-8?B?TnhYVWEvdUUvMUVnc2xrcEF1Y1lwbHlMWEVidkM0OFBoemRCaFNBcGZyM2FC?=
- =?utf-8?B?akpjVDYxdDhrcnljSWxJbzVjWURzbVo5UWJXNnQ1dFFONVM1YzRKbzhNWWo3?=
- =?utf-8?B?OXhhdGRYSitVcEh4NDFlQVdxZElZbWFrckx0YUpWazJCYVlkYjY2MmprdDI5?=
- =?utf-8?B?RzRVTXFtUEVJeHdnOVZBRk5pUDVLajkzYjFQbVNXRnRnRlUrNVo5dmNKanBS?=
- =?utf-8?B?K1BMMy9Ub0VHV214dWVqTERmOUhaWHA4bGdLMlEwK21zOXJlRnRpYWZaZlVJ?=
- =?utf-8?B?eFQ1Z2JobVRhb09zeWlTaXZhUERwVEhza3Q5YVBxRkRpSE15dVhYY0JUMURM?=
- =?utf-8?B?SDVWSS85ZW1kRWFDVkNzZzdJMEdCa2c4OXBnNkhsd2dIU2ZIb0tCZGRqUmd4?=
- =?utf-8?B?RUpEc1VtZzR1RlFaNWtvS1NCY1kwamdOS1J3KzJqUjhQaklHU2cwaW5kOCtV?=
- =?utf-8?B?Q2VYN1NQMEozUEdxSytFZGwzdU9nVU15bFdZb2FEZStvUjZqWFpwaGxzV0ZY?=
- =?utf-8?B?ZElQc2NPMml0c1A2VDRxQ0FlSERNR3IzVlB1aEZvUE5vTzFidTJGMXdTZnk0?=
- =?utf-8?B?N05ySzlQQWdzQW1Bamo3WWJjMm5VRmswQklnVHBWc0hLQUthdDRmN0JuaU9l?=
- =?utf-8?B?WlRLR0M0bmR6blBzYWdkRWNrc0hGNjJRNDdpcDc5MlVENnlvNkFnU1JEbTFn?=
- =?utf-8?B?Z3dRT2dKYWp6TFU3WW43Y1ZVQkRzM3RsNHlvVWxlQ2paWFdIYXFZbDdGTmds?=
- =?utf-8?B?cE5pejVBaUdkdFZrMHorREN6SHpCQnVweWJBQWJwa0VNU2hkN3BqWVZwa2sr?=
- =?utf-8?B?cmZHTlRYU1gyRkNmTHFQSC9oQzA0T1c4L3V1OFVqN0tUQlVDeDg5K2NaMnNo?=
- =?utf-8?B?ZGpTM3JlYkdkUERHTng2djZRUE9hTEs2WGhyM000WkIwaFNrNy9BNHFuRnlZ?=
- =?utf-8?B?ZHZpamEzSWh6ckFJZjNvMEVGeVpyOXpmNE1WU083L0s2TTdtZStRcDQxdzB2?=
- =?utf-8?B?bEpPM2pZTEd3dDFhbHdzdUZ0ekhCd1BsS3JXY2RSZU10ODVxNXoyc2dCa2pu?=
- =?utf-8?B?RytyU3o5K0FxMXB1OWt4a2I0bStrdGtYSEdLODd5V2JEMFhiR2s3TUxhcEZz?=
- =?utf-8?B?MTFwd3Q1akVXa2lOdUZLQ2RxcHNZb0NpbHhlUncwNWJvVzArRFNGQWtXTFYz?=
- =?utf-8?B?R3J5TjhVWXJrdWc2T3o5NkFTNWJvZWZBSGttMytuRFRKZWFub3pKdGpyd1pz?=
- =?utf-8?B?anc3RVRnUkpmL2gvdzNZMWpGem80UWUzdzJ4OUcyeUpJK0JuWlROYUhZU2l6?=
- =?utf-8?B?YVBqQVIvVHdiNzlyUk4vc0Nad2FpUFFPQTlib0FYVVg3OGJDNGNpdmhnbVhn?=
- =?utf-8?B?YjducGJBQjFteXBGYTRHMnl0TWswS2g4NFhDd29USVFQRmlHQ0g5Qm1FV3dM?=
- =?utf-8?B?ZGlCWEpFcWtlbUVUN2tZcnBVUHhwV3JPMnhUYkNzZ0lobU5qMmhPNUZ1ZzhX?=
- =?utf-8?B?eWZUaWpZVHpBZlNDajh2WDdxUEJncm45cThsZ3VZeUQ3N3M0UHU5cDNWZjdR?=
- =?utf-8?B?eitHR2RZQVZmMWxVVWpwczQyQWhhUmhOWmZ1RksrbWtVUWFGYzBpN2R2ZVpu?=
- =?utf-8?B?akE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <30A01079343871419B8B0DF6B1A7FC89@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB8591.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8c100a1-2604-4bad-20ff-08db3fbad6b3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2023 03:13:10.1528
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e67df547-9d0d-4f4d-9161-51c6ed1f7d11
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: uEZx7SuTHOg3W9BsQJILgk92mXHVF43xCoEZfR75349nBfa/KVIdasqf7/mBnB9Cuj096wccSeyHSUGqkilYuA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10384
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 17 Apr 2023 23:25:29 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DCB6212F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 20:25:25 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1a667067275so13213415ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Apr 2023 20:25:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20221208.gappssmtp.com; s=20221208; t=1681788325; x=1684380325;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dc+z8UcT8gLBd7VEIREz6So3ovN0gIJ35zlOxamT89Q=;
+        b=3274Yui6rH0Nmf2GNT2U3kKf+v46ad2HN7CSmKxrgcHbVsZjIN2Q0QfJ0MrboMgcsB
+         cXpJK+AMfpuUXzBpsB6OQuZ2kypvD5kKuF/65nyfVt7qZuD/fEB2wagnEE5696Fxlf5M
+         n4nQwYppxsFhl6/oPzSttqtdY/6Kn5R+p03rWJq+4AlSlrh3kbRa00Gd+s4tCNUZJPtq
+         J2bzbOfVx9TOeOp7dpXV5yXY5MHV15Y+qQ0pc+QZtxUlDdJhuXtS8K+Yd8EYy8CrAP+K
+         dANfGVkUWYB0yLp0uaTfUSA/1OGCi5Px66c+U4lVDrsNdxseaeY4u5refNQy2Kn7g6Bl
+         qTJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681788325; x=1684380325;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dc+z8UcT8gLBd7VEIREz6So3ovN0gIJ35zlOxamT89Q=;
+        b=ka/N0bYsS4gebetqO8ZLZgWZX/rYQv0MxPJNRkrDfl/d5O8wb8HrhXgC7UjTHprM50
+         TU+JxyA7DB7aQtA7Zw+LrV3aDsKU3DCr8rQZS4kuQSafcZ0T9KMGNey//6vGcKwyLqn9
+         cukZU5G1WS2fk5vtNi4rEg9zYlvpYgyY2VCQH/UQXrXBDOBFZaWXuc1C497faTT/7KFh
+         1rfde8UobgDGqh8dSkXVj8loAyh42RukalC8/1H0ImoWTBloIAR0djSIh8DBxZXj3rDf
+         eYIOUTLEfQzdGBcfUXWHe9ye2hIIMdAcM2k0DnNIXypjVo0eGCIeQSIwt+97YQ5g+Gqc
+         aJNw==
+X-Gm-Message-State: AAQBX9eYYEOHgDdeTuiYgKmSBUghHBcLKi/nP3ho11CVYtRvmkYVKuT/
+        54kHyJlX3ZDxse5FKzGtzOcvDg==
+X-Google-Smtp-Source: AKy350ZXvC63ci+YEOlpHYFoSVBiObzFZEAeooGgAhHTKgLvqt6Qxfz75tFijyzCUui44AjCfBlB6g==
+X-Received: by 2002:a17:903:40cc:b0:1a6:c58e:2d57 with SMTP id t12-20020a17090340cc00b001a6c58e2d57mr655579pld.50.1681788324832;
+        Mon, 17 Apr 2023 20:25:24 -0700 (PDT)
+Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id c3-20020a170902724300b001a217a7a11csm8352037pll.131.2023.04.17.20.25.23
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Apr 2023 20:25:23 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <1AC965F2-BAC6-4D0F-A2A6-C414CDF110AF@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_581956D5-D9DE-48C3-929B-CAF6060706C3";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH/RFC] VFS: LOOKUP_MOUNTPOINT should used cached info
+ whenever possible.
+Date:   Mon, 17 Apr 2023 21:25:20 -0600
+In-Reply-To: <85774a5de74b2b7828c8b8f7e041f0e9e2bc6094.camel@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>, NeilBrown <neilb@suse.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Karel Zak <kzak@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>
+References: <95ee689c76bf034fa2fe9fade0bccdb311f3a04f.camel@kernel.org>
+ <168168683217.24821.6260957092725278201@noble.neil.brown.name>
+ <20230417-beisein-investieren-360fa20fb68a@brauner>
+ <6c08ad94ca949d0f3525f7e1fc24a72c50affd59.camel@kernel.org>
+ <20230417-relaxen-selektiert-4b4b4143d7f6@brauner>
+ <85774a5de74b2b7828c8b8f7e041f0e9e2bc6094.camel@kernel.org>
+X-Mailer: Apple Mail (2.3273)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gTW9uLCBBcHIgMTcsIDIwMjMgYXQgMTI6NTM6MjNQTSArMDgwMCwgS2VmZW5nIFdhbmcgd3Jv
-dGU6DQo+IFRoZSBkdW1wX3VzZXJfcmFuZ2UoKSBpcyB1c2VkIHRvIGNvcHkgdGhlIHVzZXIgcGFn
-ZSB0byBhIGNvcmVkdW1wIGZpbGUsDQo+IGJ1dCBpZiBhIGhhcmR3YXJlIG1lbW9yeSBlcnJvciBv
-Y2N1cnJlZCBkdXJpbmcgY29weSwgd2hpY2ggY2FsbGVkIGZyb20NCj4gX19rZXJuZWxfd3JpdGVf
-aXRlcigpIGluIGR1bXBfdXNlcl9yYW5nZSgpLCBpdCBjcmFzaGVzLA0KPiANCj4gICBDUFU6IDEx
-MiBQSUQ6IDcwMTQgQ29tbTogbWNhLXJlY292ZXIgTm90IHRhaW50ZWQgNi4zLjAtcmMyICM0MjUN
-Cj4gIA0KPiAgIHBjIDogX19tZW1jcHkrMHgxMTAvMHgyNjANCj4gICBsciA6IF9jb3B5X2Zyb21f
-aXRlcisweDNiYy8weDRjOA0KPiAgIC4uLg0KPiAgIENhbGwgdHJhY2U6DQo+ICAgIF9fbWVtY3B5
-KzB4MTEwLzB4MjYwDQo+ICAgIGNvcHlfcGFnZV9mcm9tX2l0ZXIrMHhjYy8weDEzMA0KPiAgICBw
-aXBlX3dyaXRlKzB4MTY0LzB4NmQ4DQo+ICAgIF9fa2VybmVsX3dyaXRlX2l0ZXIrMHg5Yy8weDIx
-MA0KPiAgICBkdW1wX3VzZXJfcmFuZ2UrMHhjOC8weDFkOA0KPiAgICBlbGZfY29yZV9kdW1wKzB4
-MzA4LzB4MzY4DQo+ICAgIGRvX2NvcmVkdW1wKzB4MmU4LzB4YTQwDQo+ICAgIGdldF9zaWduYWwr
-MHg1OWMvMHg3ODgNCj4gICAgZG9fc2lnbmFsKzB4MTE4LzB4MWY4DQo+ICAgIGRvX25vdGlmeV9y
-ZXN1bWUrMHhmMC8weDI4MA0KPiAgICBlbDBfZGErMHgxMzAvMHgxMzgNCj4gICAgZWwwdF82NF9z
-eW5jX2hhbmRsZXIrMHg2OC8weGMwDQo+ICAgIGVsMHRfNjRfc3luYysweDE4OC8weDE5MA0KPiAN
-Cj4gR2VuZXJhbGx5LCB0aGUgJy0+d3JpdGVfaXRlcicgb2YgZmlsZSBvcHMgd2lsbCB1c2UgY29w
-eV9wYWdlX2Zyb21faXRlcigpDQo+IGFuZCBjb3B5X3BhZ2VfZnJvbV9pdGVyX2F0b21pYygpLCBj
-aGFuZ2UgbWVtY3B5KCkgdG8gY29weV9tY190b19rZXJuZWwoKQ0KPiBpbiBib3RoIG9mIHRoZW0g
-dG8gaGFuZGxlICNNQyBkdXJpbmcgc291cmNlIHJlYWQsIHdoaWNoIHN0b3AgY29yZWR1bXANCj4g
-cHJvY2Vzc2luZyBhbmQga2lsbCB0aGUgdGFzayBpbnN0ZWFkIG9mIGtlcm5lbCBwYW5pYywgYnV0
-IHRoZSBzb3VyY2UNCj4gYWRkcmVzcyBtYXkgbm90IGFsd2F5cyBhIHVzZXIgYWRkcmVzcywgc28g
-aW50cm9kdWNlIGEgbmV3IGNvcHlfbWMgZmxhZyBpbg0KPiBzdHJ1Y3QgaW92X2l0ZXJ7fSB0byBp
-bmRpY2F0ZSB0aGF0IHRoZSBpdGVyIGNvdWxkIGRvIGEgc2FmZSBtZW1vcnkgY29weSwNCj4gYWxz
-byBpbnRyb2R1Y2UgdGhlIGhlbHBlcnMgdG8gc2V0L2NsZWNrIHRoZSBmbGFnLCBmb3Igbm93LCBp
-dCdzIG9ubHkNCj4gdXNlZCBpbiBjb3JlZHVtcCdzIGR1bXBfdXNlcl9yYW5nZSgpLCBidXQgaXQg
-Y291bGQgZXhwYW5kIHRvIGFueSBvdGhlcg0KPiBzY2VuYXJpb3MgdG8gZml4IHRoZSBzaW1pbGFy
-IGlzc3VlLg0KPiANCj4gQ2M6IEFsZXhhbmRlciBWaXJvIDx2aXJvQHplbml2LmxpbnV4Lm9yZy51
-az4NCj4gQ2M6IENocmlzdGlhbiBCcmF1bmVyIDxicmF1bmVyQGtlcm5lbC5vcmc+DQo+IENjOiBN
-aWFvaGUgTGluIDxsaW5taWFvaGVAaHVhd2VpLmNvbT4NCj4gQ2M6IE5hb3lhIEhvcmlndWNoaSA8
-bmFveWEuaG9yaWd1Y2hpQG5lYy5jb20+DQo+IENjOiBUb25nIFRpYW5nZW4gPHRvbmd0aWFuZ2Vu
-QGh1YXdlaS5jb20+DQo+IENjOiBKZW5zIEF4Ym9lIDxheGJvZUBrZXJuZWwuZGs+DQo+IFNpZ25l
-ZC1vZmYtYnk6IEtlZmVuZyBXYW5nIDx3YW5na2VmZW5nLndhbmdAaHVhd2VpLmNvbT4NCj4gLS0t
-DQo+IHYyOg0KPiAtIG1vdmUgdGhlIGhlbHBlciBmdW5jdGlvbnMgdW5kZXIgcHJlLWV4aXN0aW5n
-IENPTkZJR19BUkNIX0hBU19DT1BZX01DDQo+IC0gcmVwb3NpdGlvbiB0aGUgY29weV9tYyBpbiBz
-dHJ1Y3QgaW92X2l0ZXIgZm9yIGVhc3kgbWVyZ2UsIHN1Z2dlc3RlZA0KPiAgIGJ5IEFuZHJldyBN
-b3J0b24NCj4gLSBkcm9wIHVubmVjZXNzYXJ5IGNsZWFyIGZsYWcgaGVscGVyDQo+IC0gZml4IGNo
-ZWNrcGF0Y2ggd2FybmluZw0KPiAgZnMvY29yZWR1bXAuYyAgICAgICB8ICAxICsNCj4gIGluY2x1
-ZGUvbGludXgvdWlvLmggfCAxNiArKysrKysrKysrKysrKysrDQo+ICBsaWIvaW92X2l0ZXIuYyAg
-ICAgIHwgMTcgKysrKysrKysrKysrKysrLS0NCj4gIDMgZmlsZXMgY2hhbmdlZCwgMzIgaW5zZXJ0
-aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQouLi4NCj4gQEAgLTM3MSw2ICszNzIsMTQgQEAg
-c2l6ZV90IF9jb3B5X21jX3RvX2l0ZXIoY29uc3Qgdm9pZCAqYWRkciwgc2l6ZV90IGJ5dGVzLCBz
-dHJ1Y3QgaW92X2l0ZXIgKmkpDQo+ICBFWFBPUlRfU1lNQk9MX0dQTChfY29weV9tY190b19pdGVy
-KTsNCj4gICNlbmRpZiAvKiBDT05GSUdfQVJDSF9IQVNfQ09QWV9NQyAqLw0KPiAgDQo+ICtzdGF0
-aWMgdm9pZCAqbWVtY3B5X2Zyb21faXRlcihzdHJ1Y3QgaW92X2l0ZXIgKmksIHZvaWQgKnRvLCBj
-b25zdCB2b2lkICpmcm9tLA0KPiArCQkJCSBzaXplX3Qgc2l6ZSkNCj4gK3sNCj4gKwlpZiAoaW92
-X2l0ZXJfaXNfY29weV9tYyhpKSkNCj4gKwkJcmV0dXJuICh2b2lkICopY29weV9tY190b19rZXJu
-ZWwodG8sIGZyb20sIHNpemUpOw0KDQpJcyBpdCBoZWxwZnVsIHRvIGNhbGwgbWVtb3J5X2ZhaWx1
-cmVfcXVldWUoKSBpZiBjb3B5X21jX3RvX2tlcm5lbCgpIGZhaWxzDQpkdWUgdG8gYSBtZW1vcnkg
-ZXJyb3I/DQoNClRoYW5rcywNCk5hb3lhIEhvcmlndWNoaQ0KDQo+ICsJcmV0dXJuIG1lbWNweSh0
-bywgZnJvbSwgc2l6ZSk7DQo+ICt9DQo+ICsNCj4gIHNpemVfdCBfY29weV9mcm9tX2l0ZXIodm9p
-ZCAqYWRkciwgc2l6ZV90IGJ5dGVzLCBzdHJ1Y3QgaW92X2l0ZXIgKmkpDQo+ICB7DQo+ICAJaWYg
-KFdBUk5fT05fT05DRSghaS0+ZGF0YV9zb3VyY2UpKQ==
+
+--Apple-Mail=_581956D5-D9DE-48C3-929B-CAF6060706C3
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
+
+
+> On Apr 17, 2023, at 9:21 AM, Jeff Layton <jlayton@kernel.org> wrote:
+> 
+> On Mon, 2023-04-17 at 16:24 +0200, Christian Brauner wrote:
+>> And I'm curious why is it obvious that we don't want to revalidate _any_
+>> path component and not just the last one? Why is that generally safe?
+>> Why can't this be used to access files and directories the caller
+>> wouldn't otherwise be able to access? I would like to have this spelled
+>> out for slow people like me, please.
+>> 
+>> From my point of view, this would only be somewhat safe _generally_ if
+>> you'd allow circumvention for revalidation and permission checking if
+>> MNT_FORCE is specified and the caller has capable(CAP_DAC_READ_SEARCH).
+>> You'd still mess with overlayfs permission model in this case though.
+>> 
+>> Plus, there are better options of solving this problem. Again, I'd
+>> rather build a separate api for unmounting then playing such potentially
+>> subtle security sensitive games with permission checking during path
+>> lookup.
+> 
+> umount(2) is really a special case because the whole intent is to detach
+> a mount from the local hierarchy and stop using it. The unfortunate bit
+> is that it is a path-based syscall.
+> 
+> So usually we have to:
+> 
+> - determine the path: Maybe stat() it and to validate that it's the
+>   mountpoint we want to drop
+
+The stat() itself may hang because a remote server, or USB stick is
+inaccessible or having media errors.
+
+I've just been having a conversation with Karel Zak to change
+umount(1) to use statx() so that it interacts minimally with the fs.
+
+In particular, nfs_getattr() skips revalidate if only minimal attrs
+are fetched (STATX_TYPE | STATX_INO), and also skips revalidate if
+locally-cached attrs are still valid (STATX_MODE), so this will
+avoid yet one more place that unmount can hang.
+
+In theory, vfs_getattr() could get all of these attributes directly
+from the vfs_inode in the unmount case.
+
+> - then call umount with that path
+> 
+> The last thing we want in that case is for the server to decide to
+> change some intermediate dentry in between the two operations. Best
+> case, you'll get back ENOENT or something when the pathwalk fails. Worst
+> case, the server swaps what are two different mountpoints on your client
+> and you unmount the wrong one.
+> 
+> If we don't revaliate, then we're no worse off, and may be better off if
+> something hinky happens to the server of an intermediate dentry in the
+> path.
+> --
+> Jeff Layton <jlayton@kernel.org>
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_581956D5-D9DE-48C3-929B-CAF6060706C3
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmQ+DaAACgkQcqXauRfM
+H+D9bhAArwx6YZ1JWmKrSRDxkjrjKPXa7tALqsqaRKxRH9Ar2aZNhOsQNH/APN9G
++kLPKYXTveRbj2LEvRwkk+O2rpmJ+7u2UFb1/l+gCWnEmlrdS9yQZI4k6cnX/iNW
+gD6eXO7172P5ZHkOtQTxlRVt0gAk21h97xAkCF4D/+xgqRnTXUzkpsLmy3082cJH
+WHWoXenHnoVMKA1KXZedMS19wvPuoNsJJvVvXNN4K7q28G+PTbKHIamdXuoshW5N
+n7EnhCm7CxHpZyLybnrDUWCBDCxWfEv+geBomG/hofsk4IdctfkU0Se92vDtyu9U
+LchEF8rP1ckwGEX4Kl5mjePRXRn2eNNIi1Y8XpslmKzljQvdvPerM0NZbIxwz+JJ
+HkjBTC/GHBQ1dFUcxJdLb82fF5Lg7H0uqeEOgLgOhxei6C+YcgqnetXMp+VEMInn
+ZrqymJhpZWs5WQm3B4aLeA4u5918TBNPknZm1Vk3zl+y2khctkVlF4CE90kkGHC6
+fZrPKRk694rFE2l8y5f+tXDPBKsoHYwD6tP9E1bwKNqGatCwXRcX5b3hfqK6Vt0w
+znGX0sxxKKKM2drEeqJrIOzb5ztwAFca/FH7tnA1zJnxuq4GCeY6dkmKjqDjgVGe
+kT6dcKfsHNHj58FCFmT/yI/LFQJ+rVhqQTMV0uIhh0QmKqHVgEo=
+=bL3W
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_581956D5-D9DE-48C3-929B-CAF6060706C3--
