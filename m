@@ -2,144 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 712426E7FD9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 18:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55AE06E8038
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 19:19:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233099AbjDSQmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 12:42:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46874 "EHLO
+        id S231947AbjDSRTK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 13:19:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233382AbjDSQmV (ORCPT
+        with ESMTP id S229558AbjDSRTI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 12:42:21 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C2107AAE
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 09:42:19 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-63b875d0027so16848b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 09:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681922539; x=1684514539;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RxLjpyfcWNtlWOdh1ySH+g8hP125zqr+2pf1QMqfd8s=;
-        b=N23iIdeE3sO2uNX5THDu5Gry3LExo49/uDjzBM6b1AVEh/6nFahJ/kqhfY5yWCQsuz
-         44My5Ywz3SK0v1I69W6BaEE9El0SR6dv+4gkZ9DEciy0lShfozzh/q0Ofq4La/cCfJbd
-         hnv7Mw2F4Viu+fOXN+r/mFZj07Jae9aysr9vXW3heRV6OgMkuMtXnJNOkYdWq/90IzRA
-         Ntt/sdo16L3wcv4nPThKdagjTY54125CV9whX0uqZN0/wB4/qG5smC09cukmglJtLqvU
-         tu5RuxAmbYQZK8YLBwcLH2EoKRcZsbFCNuYeVRTAliEhrUYvEq42WCqlchFLU6AX9bsW
-         UCNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681922539; x=1684514539;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RxLjpyfcWNtlWOdh1ySH+g8hP125zqr+2pf1QMqfd8s=;
-        b=i4ylU5bUwvlWEveOwpxUZLAKr6gH0xSx1K4fg+2URzvSKMDOYg4kPPaj7Bo8lCjEWo
-         0wh05/M/TcO+/L21AH2m0LWE3tEaRHgwbneV5sMoO3jbVtUGghIcOzVbxlEl1uvtEKRR
-         zBnvUUCykGRSQWuG5wbgw8EPHGQ06NFjnA573jCUBgdtDH3yItNpAhy00LTH31ZYQCC0
-         tD3OWPLKiFo+LcyURLdwwyJM+xhHDR+kF6w49RZSE0k8HihbVzTCInX5Pq1DTWuCbYGv
-         SDTvH8zJM5wdY5Rotxdhx83RXtHEkjnEReHoMbLNe32J+LgUJ1WmvmDnUQRzagBGjU3x
-         lMkw==
-X-Gm-Message-State: AAQBX9d7XQHVD8Q3ZHfHC1QbOt7arKV4D0mdJHCdW8Nn4ZLh3UcLKs6c
-        8btJYJ8MUd4JN68xh5SWpSV2bg==
-X-Google-Smtp-Source: AKy350YsLJcgKXLSYcTK4M0eUET8e8S84/nLjBZ7/eTNMzty54gG8MA8d/Evst6SrrCrHkVKGziX5g==
-X-Received: by 2002:a05:6a00:4106:b0:635:4f6:2f38 with SMTP id bu6-20020a056a00410600b0063504f62f38mr18799098pfb.2.1681922538763;
-        Wed, 19 Apr 2023 09:42:18 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id g12-20020a62e30c000000b0063d2bb0d107sm4683674pfh.64.2023.04.19.09.42.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Apr 2023 09:42:18 -0700 (PDT)
-Message-ID: <868ceaa3-4854-345f-900e-52a79b924aa6@kernel.dk>
-Date:   Wed, 19 Apr 2023 10:42:17 -0600
+        Wed, 19 Apr 2023 13:19:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CBF67AA1;
+        Wed, 19 Apr 2023 10:19:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9BF4463B69;
+        Wed, 19 Apr 2023 17:19:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB9EC433D2;
+        Wed, 19 Apr 2023 17:19:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681924746;
+        bh=Jn2bDE/AiC/C5l1xHvCadqv/n3u1woFUW6d117MZ/R0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FYhtDNKq0O6I39tdZKi68ph54dC58iJXYdKG+aR0an0grsbfMblyXuJlXZT+dIE2t
+         hJfBwlC8311k/1DLleqSirI2g8vCppgV+8vq//IF0B7Zsdp/WRRekoLxJPZw4JTOvo
+         tkcD+YeeCGrZ+vG2LLJaozhz7IETH7o+DNvAaKXsosy+DdTVAW/O3bKHASBhrapAp7
+         g9ozYAjltLq8FOs6JNN1Oo8N+2DbMDcpXgF7GlmMOIqy38E3uMF8YOF3uFCNd+SSnO
+         wQ3PLlQyj7O1UBzigKGcpefa4Y9O01o8ISSI00eo6qIHMBvuf3VCrJKu/Co2cpqiwp
+         p7r5D2r5fPlcg==
+Date:   Wed, 19 Apr 2023 19:19:01 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [RFC][PATCH 0/2] Monitoring unmounted fs with fanotify
+Message-ID: <20230419-besungen-filzen-adad4a1f3247@brauner>
+References: <20230414182903.1852019-1-amir73il@gmail.com>
+ <20230418-diesmal-heimlaufen-ba2f2d1e1938@brauner>
+ <CAOQ4uxj5UwDhV7XxWZ-Os+fzM=_N1DDWHpjmt6UnHr96EDriMw@mail.gmail.com>
+ <20230418-absegnen-sputen-11212a0615c7@brauner>
+ <CAOQ4uxgM2x93UKcJ5D5tfoTt8s0ChTrEheTGqTcndGoyGwS=7w@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] eventfd: support delayed wakeup for non-semaphore eventfd
- to reduce cpu utilization
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Wen Yang <wenyang.linux@foxmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Paolo Bonzini <pbonzini@redhat.com>, Fu Wei <wefu@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <tencent_AF886EF226FD9F39D28FE4D9A94A95FA2605@qq.com>
- <817984a2-570c-cb23-4121-0d75005ebd4d@kernel.dk>
- <tencent_9D8583482619D25B9953FCA89E69AA92A909@qq.com>
- <7dded5a8-32c1-e994-52a0-ce32011d5e6b@kernel.dk>
- <20230419-blinzeln-sortieren-343826ee30ce@brauner>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230419-blinzeln-sortieren-343826ee30ce@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgM2x93UKcJ5D5tfoTt8s0ChTrEheTGqTcndGoyGwS=7w@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/19/23 3:12?AM, Christian Brauner wrote:
-> On Tue, Apr 18, 2023 at 08:15:03PM -0600, Jens Axboe wrote:
->> On 4/17/23 10:32?AM, Wen Yang wrote:
->>>
->>> ? 2023/4/17 22:38, Jens Axboe ??:
->>>> On 4/16/23 5:31?AM, wenyang.linux@foxmail.com wrote:
->>>>> From: Wen Yang <wenyang.linux@foxmail.com>
->>>>>
->>>>> For the NON SEMAPHORE eventfd, if it's counter has a nonzero value,
->>>>> then a read(2) returns 8 bytes containing that value, and the counter's
->>>>> value is reset to zero. Therefore, in the NON SEMAPHORE scenario,
->>>>> N event_writes vs ONE event_read is possible.
->>>>>
->>>>> However, the current implementation wakes up the read thread immediately
->>>>> in eventfd_write so that the cpu utilization increases unnecessarily.
->>>>>
->>>>> By adding a configurable delay after eventfd_write, these unnecessary
->>>>> wakeup operations are avoided, thereby reducing cpu utilization.
->>>> What's the real world use case of this, and what would the expected
->>>> delay be there? With using a delayed work item for this, there's
->>>> certainly a pretty wide grey zone in terms of delay where this would
->>>> perform considerably worse than not doing any delayed wakeups at all.
->>>
->>>
->>> Thanks for your comments.
->>>
->>> We have found that the CPU usage of the message middleware is high in
->>> our environment, because sensor messages from MCU are very frequent
->>> and constantly reported, possibly several hundred thousand times per
->>> second. As a result, the message receiving thread is frequently
->>> awakened to process short messages.
->>>
->>> The following is the simplified test code:
->>> https://github.com/w-simon/tests/blob/master/src/test.c
->>>
->>> And the test code in this patch is further simplified.
->>>
->>> Finally, only a configuration item has been added here, allowing users
->>> to make more choices.
->>
->> I think you'd have a higher chance of getting this in if the delay
->> setting was per eventfd context, rather than a global thing.
+On Tue, Apr 18, 2023 at 06:20:22PM +0300, Amir Goldstein wrote:
+> On Tue, Apr 18, 2023 at 5:12 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Tue, Apr 18, 2023 at 04:56:40PM +0300, Amir Goldstein wrote:
+> > > On Tue, Apr 18, 2023 at 4:33 PM Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > On Fri, Apr 14, 2023 at 09:29:01PM +0300, Amir Goldstein wrote:
+> > > > > Jan,
+> > > > >
+> > > > > Followup on my quest to close the gap with inotify functionality,
+> > > > > here is a proposal for FAN_UNMOUNT event.
+> > > > >
+> > > > > I have had many design questions about this:
+> > > >
+> > > > I'm going to humbly express what I feel makes sense to me when looking
+> > > > at this from a user perspective:
+> > > >
+> > > > > 1) Should we also report FAN_UNMOUNT for marked inodes and sb
+> > > > >    on sb shutdown (same as IN_UNMOUNT)?
+> > > >
+> > > > My preference would be if this would be a separate event type.
+> > > > FAN_SB_SHUTDOWN or something.
+> > >
+> > > If we implement an event for this at all, I would suggest FAN_IGNORED
+> > > or FAN_EVICTED, which has the same meaning as IN_IGNORED.
+> > > When you get an event that the watch went away, it could be because of:
+> > > 1. watch removed by user
+> > > 2. watch removed because inode was evicted (with FAN_MARK_EVICTABLE)
+> > > 3. inode deleted
+> > > 4. sb shutdown
+> > >
+> > > IN_IGNORED is generated in all of the above except for inode evict
+> > > that is not possible with inotify.
+> > >
+> > > User can figure out on his own if the inode was deleted or if fs was unmounted,
+> > > so there is not really a need for FAN_SB_SHUTDOWN IMO.
+> >
+> > Ok, sounds good.
+> >
+> > >
+> > > Actually, I think that FAN_IGNORED would be quite useful for the
+> > > FAN_MARK_EVICTABLE case, but it is a bit less trivial to implement
+> > > than FAN_UNMOUNT was.
+> > >
+> > > >
+> > > > > 2) Should we also report FAN_UNMOUNT on sb mark for any unmounts
+> > > > >    of that sb?
+> > > >
+> > > > I don't think so. It feels to me that if you watch an sb you don't
+> > > > necessarily want to watch bind mounts of that sb.
+> > > >
+> > > > > 3) Should we report also the fid of the mount root? and if we do...
+> > > > > 4) Should we report/consider FAN_ONDIR filter?
+> > > > >
+> > > > > All of the questions above I answered "not unless somebody requests"
+> > > > > in this first RFC.
+> > > >
+> > > > Fwiw, I agree.
+> > > >
+> > > > >
+> > > > > Specifically, I did get a request for an unmount event for containers
+> > > > > use case.
+> > > > >
+> > > > > I have also had doubts regarding the info records.
+> > > > > I decided that reporting fsid and mntid is minimum, but couldn't
+> > > > > decide if they were better of in a single MNTID record or seprate
+> > > > > records.
+> > > > >
+> > > > > I went with separate records, because:
+> > > > > a) FAN_FS_ERROR has set a precendent of separate fid record with
+> > > > >    fsid and empty fid, so I followed this precendent
+> > > > > b) MNTID record we may want to add later with FAN_REPORT_MNTID
+> > > > >    to all the path events, so better that it is independent
+> > > >
+> > >
+> > > Just thought of another reason:
+> > >  c) FAN_UNMOUNT does not need to require FAN_REPORT_FID
+> > >      so it does not depend on filesystem having a valid f_fsid nor
+> > >      exports_ops. In case of "pseudo" fs, FAN_UNMOUNT can report
+> > >      only MNTID record (I will amend the patch with this minor change).
+> >
+> > I see some pseudo fses generate f_fsid, e.g., tmpfs in mm/shmem.c
 > 
-> That patch seems really weird. Is that an established paradigm to
-> address problems like this through a configured wakeup delay? Because
-> naively this looks like a pretty brutal hack.
+> tmpfs is not "pseudo" in my eyes, because it implements a great deal of the
+> vfs interfaces, including export_ops.
 
-It is odd, and it is a brutal hack. My worries were outlined in an
-earlier reply, there's quite a big gap where no delay would be better
-and the delay approach would be miserable because it'd cause extra
-latency and extra context switches. It'd be much cleaner if you KNEW
-there'd be more events coming, as you could then get rid of that delayed
-work item completely. And I suspect, if this patch makes sense, that
-it'd be better to have a number+time limit as well and if you hit the
-event number count that you'd notify inline and put some smarts in the
-delayed work handling to just not do anything if nothing is pending.
+The term "pseudo" is somewhat well-defined though, no? It really just
+means that there's no backing device associated with it. So for example,
+anything that uses get_tree_nodev() including tmpfs. If erofs is
+compiled with fscache support it's even a pseudo fs (TIL).
 
--- 
-Jens Axboe
+> 
+> and also I fixed its f_fsid recently:
+> 59cda49ecf6c shmem: allow reporting fanotify events with file handles on tmpfs
 
+Well thank you for that this has been very useful in userspace already
+I've been told.
+
+> 
+> > At the risk of putting my foot in my mouth, what's stopping us from
+> > making them all support f_fsid?
+> 
+> Nothing much. Jan had the same opinion [1].
+
+I think that's what we should try to do without having thought too much
+about potential edge-cases.
+
+> 
+> We could do either:
+> 1. use uuid_to_fsid() in vfs_statfs() if fs has set s_uuid and not set f_fsid
+> 2. use s_dev as f_fsid in vfs_statfs() if fs did not set f_fsid nor s_uuid
+> 3. randomize s_uuid for simple fs (like tmpfs)
+> 4. any combination of the above and more
+> 
+> Note that we will also need to decide what to do with
+> name_to_handle_at() for those pseudo fs.
+
+Doing it on the fly during vfs_statfs() feels a bit messy and could
+cause bugs. One should never underestimate the possibility that there's
+some fs that somehow would get into trouble because of odd behavior.
+
+So switching each fs over to generate a s_uuid seems the prudent thing
+to do. Doing it the hard way also forces us to make sure that each
+filesystem can deal with this.
+
+It seems that for pseudo fses we can just allocate a new s_uuid for each
+instance. So each tmpfs instance - like your patch did - would just get
+a new s_uuid.
+
+For kernel internal filesystems - mostly those that use init_pseudo -
+the s_uuid would remain stable until the next reboot when it is
+regenerated.
+
+Looking around just a little there's some block-backed fses like fat
+that have an f_fsid but no s_uuid. So if we give those s_uuid then it'll
+mean that the f_fsid isn't generated based on the s_uuid. That should be
+ok though and shouldn't matter to userspace.
+
+Afterwards we could probably lift the ext4 and xfs specific ioctls to
+retrieve the s_uuid into a generic ioctl to allow userspace to get the
+s_uuid.
+
+That's my thinking without having crawled to all possible corner
+cases... Also needs documenting that s_uuid is not optional anymore and
+explain the difference between pseudo and device-backed fses. I hope
+that's not completely naive...
+
+> 
+> Quoting Jan from [1]:
+> "But otherwise the proposal to make name_to_handle_at() work even for
+> filesystems not exportable through NFS makes sense to me. But I guess we
+> need some buy-in from VFS maintainers for this." (hint hint).
+> 
+> Thanks,
+> Amir.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20230417162721.ouzs33oh6mb7vtft@quack3/
