@@ -2,132 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 041036E8180
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 20:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AED246E818C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 20:56:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231201AbjDSSwv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 14:52:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54988 "EHLO
+        id S231202AbjDSS4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 14:56:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230484AbjDSSwu (ORCPT
+        with ESMTP id S229824AbjDSS4I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 14:52:50 -0400
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 038CF4682
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 11:52:48 -0700 (PDT)
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-32aff212197so302125ab.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 11:52:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681930367; x=1684522367;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vZQm9ajXkGotCE4OxQ7g7sW/rOm7TAAFTPwqwxq0WKc=;
-        b=bO/YYzNz0hwEz4sfXqnPfXCev0LyduccaIGriz6CD+v/zxrvV/wsbjJlCOsWTmqr73
-         hIrwEjBezzpj/oLX7fPNkG+0UALobqPvvr6dxnCE2DDvWvMoVvVR8eTfv3T+risbXO5w
-         nkKcKXCzu8A4vbhBFShKPKm15rzLKn7pwlb7f8rTnwFK5qi82tMYsGkXVBoupsfFO8Ui
-         xXZMZDg5Rw+UiVWf1fkh3kESeOX9JfPvwMyCPS98n+Ph3Bz/Q4a81TaV991OWs2N8lzD
-         UJHzq8r87YyLJuBW5U5kmlFH02NtcKxgZ2ptnadDgcyzGv7s0mQ265F9krrOvfdShLbD
-         wLkw==
-X-Gm-Message-State: AAQBX9dthKxe3YKLXsm3IgcY4/s3RdxqA45tkmk9HppMxiua8Iz+Fe69
-        lV/jmhFlixo4/kuJ2lUnIjJYjRi1HDoAhhwQZd+cuVVB1Ntj
-X-Google-Smtp-Source: AKy350aloVDDl5G+HPKwo89i1D7agjSsVu6G7IrkD2bdBIsH+IvUhYRKiYoYh9s6nvo1ZrMxrK7m05j69InN0TR9Zv5spcF/Csse
+        Wed, 19 Apr 2023 14:56:08 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E614469A;
+        Wed, 19 Apr 2023 11:56:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681930567; x=1713466567;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QRGqBX37NR8aEdfN3qUrMJ+8qUa0XUBdBpWqWnI2SgM=;
+  b=Ug/MSnTrVgBnR27xaTHG0PYUn0eAu/B/8BW69EKX0LMM9yWOAPKQCH4h
+   VuWE2TrE29wv0uHqC4QxmSwNDSv5nmOXfzMZNGov6h3xvvRJ61b0pQFwJ
+   R7K2u8ZDcFb/Er5TVI/gtuPfw1doObPXUJrTrpb1ahl3vSH2ssE3lMAyD
+   YRJn5hFu67W24tuoNc98wWQPGK7PZt9CtJ1s+dTJNDO9aWX4wzkAErPR8
+   RnTH75irG/en2MKX05MI4ZAol7O5i0YKPE5OnIES1UoEd0ltAtKBd1Xwn
+   uc44sU3RH+0a7FyjSBuuxoEV870fZepELzHf7Yfpd/dLVW6+gIwt8tsUE
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10685"; a="343015569"
+X-IronPort-AV: E=Sophos;i="5.99,210,1677571200"; 
+   d="scan'208";a="343015569"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2023 11:56:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10685"; a="780939661"
+X-IronPort-AV: E=Sophos;i="5.99,210,1677571200"; 
+   d="scan'208";a="780939661"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 19 Apr 2023 11:56:01 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1ppCyH-000f74-01;
+        Wed, 19 Apr 2023 18:56:01 +0000
+Date:   Thu, 20 Apr 2023 02:55:53 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Nitesh Shetty <nj.shetty@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     oe-kbuild-all@lists.linux.dev, bvanassche@acm.org, hare@suse.de,
+        ming.lei@redhat.com, dlemoal@kernel.org, anuj20.g@samsung.com,
+        joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v10 6/9] nvmet: add copy command support for bdev and
+ file ns
+Message-ID: <202304200240.fsLkpzvk-lkp@intel.com>
+References: <20230419114320.13674-7-nj.shetty@samsung.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d482:0:b0:328:7b75:a5fe with SMTP id
- p2-20020a92d482000000b003287b75a5femr391854ilg.5.1681930367357; Wed, 19 Apr
- 2023 11:52:47 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 11:52:47 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000015760b05f9b4eee9@google.com>
-Subject: [syzbot] [ext4?] WARNING in ext4_iomap_overwrite_begin
-From:   syzbot <syzbot+08106c4b7d60702dbc14@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230419114320.13674-7-nj.shetty@samsung.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi Nitesh,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    7a934f4bd7d6 Merge tag 'riscv-for-linus-6.3-rc7' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d9b923c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=759d5e665e47a55
-dashboard link: https://syzkaller.appspot.com/bug?extid=08106c4b7d60702dbc14
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+[auto build test WARNING on next-20230418]
+[cannot apply to axboe-block/for-next device-mapper-dm/for-next linus/master v6.3-rc7 v6.3-rc6 v6.3-rc5 v6.3-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+url:    https://github.com/intel-lab-lkp/linux/commits/Nitesh-Shetty/block-Add-copy-offload-support-infrastructure/20230419-204352
+patch link:    https://lore.kernel.org/r/20230419114320.13674-7-nj.shetty%40samsung.com
+patch subject: [PATCH v10 6/9] nvmet: add copy command support for bdev and file ns
+config: m68k-randconfig-s032-20230416 (https://download.01.org/0day-ci/archive/20230420/202304200240.fsLkpzvk-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 12.1.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-39-gce1a6720-dirty
+        # https://github.com/intel-lab-lkp/linux/commit/420b04f7ba9a54898d62c1d60905f8cf952afde2
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Nitesh-Shetty/block-Add-copy-offload-support-infrastructure/20230419-204352
+        git checkout 420b04f7ba9a54898d62c1d60905f8cf952afde2
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=m68k olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=m68k SHELL=/bin/bash drivers/nvme/target/
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ef1965f1c04f/disk-7a934f4b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1ac35470cc62/vmlinux-7a934f4b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b0021ea0d165/bzImage-7a934f4b.xz
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202304200240.fsLkpzvk-lkp@intel.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+08106c4b7d60702dbc14@syzkaller.appspotmail.com
+sparse warnings: (new ones prefixed by >>)
+>> drivers/nvme/target/io-cmd-bdev.c:55:27: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] val @@     got restricted __le16 [usertype] mssrl @@
+   drivers/nvme/target/io-cmd-bdev.c:55:27: sparse:     expected unsigned int [usertype] val
+   drivers/nvme/target/io-cmd-bdev.c:55:27: sparse:     got restricted __le16 [usertype] mssrl
+>> drivers/nvme/target/io-cmd-bdev.c:55:27: sparse: sparse: cast from restricted __le16
+>> drivers/nvme/target/io-cmd-bdev.c:55:27: sparse: sparse: cast from restricted __le16
+>> drivers/nvme/target/io-cmd-bdev.c:55:27: sparse: sparse: cast from restricted __le16
+>> drivers/nvme/target/io-cmd-bdev.c:55:27: sparse: sparse: cast from restricted __le16
+   drivers/nvme/target/io-cmd-bdev.c:57:29: sparse: sparse: cast from restricted __le16
+   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] val @@     got restricted __le16 [usertype] mssrl @@
+   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse:     expected unsigned int [usertype] val
+   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse:     got restricted __le16 [usertype] mssrl
+   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse: sparse: cast from restricted __le16
+   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse: sparse: cast from restricted __le16
+   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse: sparse: cast from restricted __le16
+   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse: sparse: cast from restricted __le16
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 30014 at fs/ext4/inode.c:3574 ext4_iomap_overwrite_begin+0x7d/0xa0
-Modules linked in:
-CPU: 1 PID: 30014 Comm: syz-executor.1 Not tainted 6.3.0-rc6-syzkaller-00173-g7a934f4bd7d6 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
-RIP: 0010:ext4_iomap_overwrite_begin+0x7d/0xa0 fs/ext4/inode.c:3574
-Code: 2d 0f b7 1b bf 02 00 00 00 89 de e8 1d 15 52 ff 83 fb 02 75 10 e8 f3 11 52 ff 89 e8 5b 41 5c 41 5e 41 5f 5d c3 e8 e3 11 52 ff <0f> 0b eb ec 89 d9 80 e1 07 fe c1 38 c1 7c c8 48 89 df e8 3c d2 a7
-RSP: 0018:ffffc9000a4cf0b0 EFLAGS: 00010293
-RAX: ffffffff823864dd RBX: 0000000000000000 RCX: ffff88807d391d40
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
-RBP: 00000000ffffff8b R08: ffffffff823864c3 R09: ffffed100f18877a
-R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88803d4fd2f0
-R13: ffff88803d4fd2f0 R14: 0000000000010000 R15: 0000000000090000
-FS:  00007fe681b6e700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2767115dc9 CR3: 000000002b556000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- iomap_iter+0x677/0xec0 fs/iomap/iter.c:91
- __iomap_dio_rw+0xd74/0x20d0 fs/iomap/direct-io.c:594
- iomap_dio_rw+0x46/0xa0 fs/iomap/direct-io.c:683
- ext4_dio_write_iter fs/ext4/file.c:597 [inline]
- ext4_file_write_iter+0x1509/0x1930 fs/ext4/file.c:708
- do_iter_write+0x6ea/0xc50 fs/read_write.c:861
- iter_file_splice_write+0x843/0xfe0 fs/splice.c:778
- do_splice_from fs/splice.c:856 [inline]
- direct_splice_actor+0xe7/0x1c0 fs/splice.c:1022
- splice_direct_to_actor+0x4c4/0xbd0 fs/splice.c:977
- do_splice_direct+0x283/0x3d0 fs/splice.c:1065
- do_sendfile+0x620/0xff0 fs/read_write.c:1255
- __do_sys_sendfile64 fs/read_write.c:1323 [inline]
- __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1309
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fe680e8c169
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe681b6e168 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007fe680fabf80 RCX: 00007fe680e8c169
-RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000005
-RBP: 00007fe680ee7ca1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000008800000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffc42fc2daf R14: 00007fe681b6e300 R15: 0000000000022000
- </TASK>
+vim +55 drivers/nvme/target/io-cmd-bdev.c
 
+    12	
+    13	void nvmet_bdev_set_limits(struct block_device *bdev, struct nvme_id_ns *id)
+    14	{
+    15		/* Logical blocks per physical block, 0's based. */
+    16		const __le16 lpp0b = to0based(bdev_physical_block_size(bdev) /
+    17					      bdev_logical_block_size(bdev));
+    18	
+    19		/*
+    20		 * For NVMe 1.2 and later, bit 1 indicates that the fields NAWUN,
+    21		 * NAWUPF, and NACWU are defined for this namespace and should be
+    22		 * used by the host for this namespace instead of the AWUN, AWUPF,
+    23		 * and ACWU fields in the Identify Controller data structure. If
+    24		 * any of these fields are zero that means that the corresponding
+    25		 * field from the identify controller data structure should be used.
+    26		 */
+    27		id->nsfeat |= 1 << 1;
+    28		id->nawun = lpp0b;
+    29		id->nawupf = lpp0b;
+    30		id->nacwu = lpp0b;
+    31	
+    32		/*
+    33		 * Bit 4 indicates that the fields NPWG, NPWA, NPDG, NPDA, and
+    34		 * NOWS are defined for this namespace and should be used by
+    35		 * the host for I/O optimization.
+    36		 */
+    37		id->nsfeat |= 1 << 4;
+    38		/* NPWG = Namespace Preferred Write Granularity. 0's based */
+    39		id->npwg = lpp0b;
+    40		/* NPWA = Namespace Preferred Write Alignment. 0's based */
+    41		id->npwa = id->npwg;
+    42		/* NPDG = Namespace Preferred Deallocate Granularity. 0's based */
+    43		id->npdg = to0based(bdev_discard_granularity(bdev) /
+    44				    bdev_logical_block_size(bdev));
+    45		/* NPDG = Namespace Preferred Deallocate Alignment */
+    46		id->npda = id->npdg;
+    47		/* NOWS = Namespace Optimal Write Size */
+    48		id->nows = to0based(bdev_io_opt(bdev) / bdev_logical_block_size(bdev));
+    49	
+    50		/*Copy limits*/
+    51		if (bdev_max_copy_sectors(bdev)) {
+    52			id->msrc = id->msrc;
+    53			id->mssrl = cpu_to_le16((bdev_max_copy_sectors(bdev) <<
+    54					SECTOR_SHIFT) / bdev_logical_block_size(bdev));
+  > 55			id->mcl = cpu_to_le32(id->mssrl);
+    56		} else {
+    57			id->msrc = (u8)to0based(BIO_MAX_VECS - 1);
+    58			id->mssrl = cpu_to_le16((BIO_MAX_VECS << PAGE_SHIFT) /
+    59					bdev_logical_block_size(bdev));
+    60			id->mcl = cpu_to_le32(id->mssrl);
+    61		}
+    62	}
+    63	
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
