@@ -2,108 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CF9D6E70BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 03:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50BA86E70DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 03:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231590AbjDSB3y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Apr 2023 21:29:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34790 "EHLO
+        id S231714AbjDSBzT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Apr 2023 21:55:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230523AbjDSB3x (ORCPT
+        with ESMTP id S229633AbjDSBzS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Apr 2023 21:29:53 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D8857ED7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Apr 2023 18:29:52 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-63b621b1dabso1331237b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Apr 2023 18:29:52 -0700 (PDT)
+        Tue, 18 Apr 2023 21:55:18 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2706044B3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Apr 2023 18:55:17 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id 98e67ed59e1d1-247048f86c7so1492257a91.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Apr 2023 18:55:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681867792; x=1684459792;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CTWQHeFJ3ejIWTMeS4au4uWFQrR7IGwBMPklLJD51kM=;
-        b=iY7gk4ydmQXDkfNyu+MZGQblceMwQfO/z23bL/cPtba2iVUF4SzsDTs/xKVDOiBpUT
-         I0ltsqqaDT7SgbUVaANpQf+201Hzyy2FIuVXbK2SlZbDSIvw6bWL3pD7zFySlNYZvzb/
-         sx3OatojqqQpZPP6EWjo16Ds6J7w/ZPNXVLhKpNPLwXMeCuw+ckAC7WMmUuO+6431lOt
-         ebBE3LEupU+uIdn9IM6MqN7eumxHmVVW6V2sr+z7+4MSFnzphBV83lVJIO+jTPSUfdsl
-         uMCzKP39dKDyV1zjX1MjQnT2BhA7LwvYhQtq0pBrHmvB6HOjJKR6guyu11o5zochPLch
-         B+fg==
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1681869316; x=1684461316;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3yMx5fYxd9C175mfLe8lqRxl1QU04ZvuY5JHAMxvGXI=;
+        b=JTClS8+wTrBV1rxVUYS9q8uw6u8dxR78MWe0zSZtLpo7xGsS5N13qILbeTwPfuR0ar
+         tn5NCTU/65rxbpjaDHm7RZDl9/mBDWgcHrb1XHuhk9gxZAOWU4UtyHeMdlmWaoivNs6e
+         86hhFHd0CBqlgV4YhYI1FCmyfI1hEleIBZvwCGnclJ3ff7ARjN2lP7ffpEFpIn/McnFF
+         SEeteH+38HCv4YcfI/54X2QbUFxBS00XVyu3OVNCm8yZ9OhuqIUo3YhTaM9nPs1kgjFr
+         2An2ZPym3KKxd6fTJMmim9vYZGlzHgtPqcea3Vx76lWTShqGuRmLCJexaOceORZksQ+Z
+         7TZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681867792; x=1684459792;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CTWQHeFJ3ejIWTMeS4au4uWFQrR7IGwBMPklLJD51kM=;
-        b=X91zpqt++K8KwAr73JQbnVhtd7TTuootRc46Ur5qPFDatHnBhtMiSnywhB7LqjJvjB
-         lBeuKyw33ZPhAQtv0UZW/9RdeGLcmGgeU07KlUE7UaAeZ6o4Dg27rv0qTl+Mjip5otfL
-         FMDfJ441il4UOCikcehaTOo/mN3fIv1gUCHxXigYx2dqDa+uyCMmB1/cqy5ux2GDRtrI
-         USFToIhZmxCkhtyM9wxYD/99mFKLvuOQYx/cEDJeFoTDiCRITfx6vZbt6ZpGT5Pfw/re
-         3YibhIV/CIt5hlapJzRgyaKY9gdjBiD8JUzsRVlxC/7oHb7XTscGkVcoySSnxIpspgcx
-         OuJA==
-X-Gm-Message-State: AAQBX9cnRDj/t1k/CD7Pf62jDsc7DrrCOjykS4MIMvW8K+Alg5yMipaU
-        xzKDY7lTuloE9b2fKK/cHY+Ong==
-X-Google-Smtp-Source: AKy350YgGFc6D4OlqyGc33XUajSpTxBulscq4UQTfX2cwKFjfV1dXXkb1fTZFkeeErOvr00LW2LV5w==
-X-Received: by 2002:a05:6a21:339a:b0:cb:af96:9436 with SMTP id yy26-20020a056a21339a00b000cbaf969436mr18922152pzb.0.1681867791653;
-        Tue, 18 Apr 2023 18:29:51 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id q12-20020a631f4c000000b0051b8172fa68sm6508791pgm.38.2023.04.18.18.29.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Apr 2023 18:29:51 -0700 (PDT)
-Message-ID: <74244cb8-abf5-b559-5e9f-24d39c801855@kernel.dk>
-Date:   Tue, 18 Apr 2023 19:29:50 -0600
+        d=1e100.net; s=20221208; t=1681869316; x=1684461316;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3yMx5fYxd9C175mfLe8lqRxl1QU04ZvuY5JHAMxvGXI=;
+        b=l1bT+1nd3aeLkw3+hl+q9OQWUtvFcNigIeJHky1GNCu6beMtxMTEV+chvFzNttvSC2
+         BGSO/st44FbCIkO7jEjgRaK66VpbRA3YPxXDotdstoQjt68jphlCaXkTqrF5O6PvzbKR
+         rlSF4wbzTcn5idxeKO4ZoKo/9PTBgKto7vYsiCl4IQW7Iax08mbEoISGHa1gF3RHUxGL
+         zTKzWFDE+I2TxEoD19Wq5GzBxAJ33QAnpaaUt0KDCB9l+lDVAPIuQbrz815kGxu285fG
+         izsirNdy47SOJ1HdGH91hFaJtnyydAZ68EC/q5ipsjfbaFUSNLO8YMoxt08F9zoOi5Sp
+         NS1Q==
+X-Gm-Message-State: AAQBX9fZ9So3kHVxhk0HURtAEZppIAfNOjenD3xtdHKvP6cexRIZ/UKV
+        s7hpTfq4z1o0cgPHdPWI3R0WNQ==
+X-Google-Smtp-Source: AKy350ZkIYBC14VQSQlaDtDhGCzV/AiSdCVbEF8ylA2ILJmqON245CqgcSEfoq2eYAbHZoKwQcxWUg==
+X-Received: by 2002:a17:90a:a894:b0:23c:fef0:d441 with SMTP id h20-20020a17090aa89400b0023cfef0d441mr1301184pjq.33.1681869316634;
+        Tue, 18 Apr 2023 18:55:16 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-41-174.pa.nsw.optusnet.com.au. [49.180.41.174])
+        by smtp.gmail.com with ESMTPSA id k8-20020a634b48000000b0051ba4d6fe4fsm4796613pgl.56.2023.04.18.18.55.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Apr 2023 18:55:15 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pox2O-0055Sk-P8; Wed, 19 Apr 2023 11:55:12 +1000
+Date:   Wed, 19 Apr 2023 11:55:12 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Kyle Sanderson <kyle.leet@gmail.com>
+Cc:     linux-btrfs@vger.kernel.org,
+        Linux-Kernal <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: btrfs induced data loss (on xfs) - 5.19.0-38-generic
+Message-ID: <20230419015512.GI447837@dread.disaster.area>
+References: <CACsaVZJGPux1yhrMWnq+7nt3Zz5wZ6zEo2+S2pf=4czpYLFyjg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 1/2] fs: add FMODE_DIO_PARALLEL_WRITE flag
-Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Bernd Schubert <bschubert@ddn.com>, io-uring@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, dsingh@ddn.com
-References: <20230307172015.54911-2-axboe@kernel.dk>
- <20230412134057.381941-1-bschubert@ddn.com>
- <CAJfpegt_ZCVodOhQCzF9OqKnCr65mKax0Gu4OTN8M51zP+8TcA@mail.gmail.com>
- <ZDjggMCGautPUDpW@infradead.org> <20230414153612.GB360881@frogsfrogsfrogs>
- <ZDuNqQgpHUw+gi9G@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZDuNqQgpHUw+gi9G@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACsaVZJGPux1yhrMWnq+7nt3Zz5wZ6zEo2+S2pf=4czpYLFyjg@mail.gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/15/23 11:54?PM, Christoph Hellwig wrote:
-> On Fri, Apr 14, 2023 at 08:36:12AM -0700, Darrick J. Wong wrote:
->> IIUC uring wants to avoid the situation where someone sends 300 writes
->> to the same file, all of which end up in background workers, and all of
->> which then contend on exclusive i_rwsem.  Hence it has some hashing
->> scheme that executes io requests serially if they hash to the same value
->> (which iirc is the inode number?) to prevent resource waste.
->>
->> This flag turns off that hashing behavior on the assumption that each of
->> those 300 writes won't serialize on the other 299 writes, hence it's ok
->> to start up 300 workers.
->>
->> (apologies for precoffee garbled response)
-> 
-> It might be useful if someone (Jens?) could clearly document the
-> assumptions for this flag.
+On Sun, Apr 16, 2023 at 10:20:45PM -0700, Kyle Sanderson wrote:
+> The single btrfs disk was at 100% utilization and a wa of 50~, reading
+> back at around 2MB/s. df and similar would simply freeze. Leading up
+> to this I removed around 2T of data from a single btrfs disk. I
+> managed to get most of the services shutdown and disks unmounted, but
+> when the system came back up I had to use xfs_repair (for the first
 
-I guess it can be summed up as the common case should not be using
-exclusive (per file/inode) locking. If file extensions need exclusive
-locking that's less of a concern, as I don't think it's unreasonable to
-expect that to require stricter locking.
+What exactly was the error messages XFS emitted when it failed to
+mount, and what did xfs_repair fix to enable it to boot? Unless you
+have a broken disk (i.e. firmware either lies about cache flush
+completion or the implementation is broken), there is no reason for
+any amount of load on the disk to cause filesystem corruption....
 
+-Dave.
 -- 
-Jens Axboe
-
+Dave Chinner
+david@fromorbit.com
