@@ -2,159 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C48F6E794E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 14:06:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DF876E795C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 14:08:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233037AbjDSMGX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 08:06:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58530 "EHLO
+        id S233166AbjDSMIE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 08:08:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbjDSMGW (ORCPT
+        with ESMTP id S233165AbjDSMID (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 08:06:22 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 583F21991;
-        Wed, 19 Apr 2023 05:06:21 -0700 (PDT)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33JBmiVs034942;
-        Wed, 19 Apr 2023 12:05:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=XxQyWGNU20y3Wnv7oBYdxQVoyeJRqhv7cvwcPncLqqk=;
- b=MaUkKBXx8iVhZnQfi2RDt8faEETMnMKAbEzNZO+lpYZA4Qzm/42cfcABcujSIwghRV0X
- 3PeqNDRd4IaTppWUkLe9WhVR7DHaK67napzSWb0/fyAY5su8TJWCvhMrkWNBKYnZzWpL
- nrZow2Y7r/vmn90Ku0+11UMeCHt4krQqymOUrwysBfKhQ3gB8XVNTfmR2AisCvruWOoC
- HGrgnECisFQCMRlF+rKjlvt0AJiiXkbKhxoPOW9SAl/j9H94nYFHqgnk9sLjyUqIjTb9
- M4kh5I4Iraa1TWc6fPCqKtgixwG8fAM688OISqzSFuM22pbbenILF8ksGHq+DRGoNVxP lg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q2apmt6hp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Apr 2023 12:05:38 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33JBoDWh003607;
-        Wed, 19 Apr 2023 12:05:37 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q2apmt6g9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Apr 2023 12:05:37 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33J0WAFx000870;
-        Wed, 19 Apr 2023 12:05:34 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3pykj6jqcr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Apr 2023 12:05:34 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33JC5V2D45941078
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Apr 2023 12:05:31 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4647620040;
-        Wed, 19 Apr 2023 12:05:31 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 91F6F20043;
-        Wed, 19 Apr 2023 12:05:27 +0000 (GMT)
-Received: from [9.171.27.132] (unknown [9.171.27.132])
-        by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Apr 2023 12:05:27 +0000 (GMT)
-Message-ID: <ab586b59-7d62-2ea1-a617-ffbcf91f4037@linux.ibm.com>
-Date:   Wed, 19 Apr 2023 14:05:26 +0200
+        Wed, 19 Apr 2023 08:08:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E35112C9C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 05:07:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 20EA763E4A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 12:07:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EF81C433D2;
+        Wed, 19 Apr 2023 12:07:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681906059;
+        bh=28weUqf90yoOTBDAfH8y6WWRU18GLBYfAmL/4HiOwt0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mpw2lTXl8aSTZSOKR+wFvJzOJZTk2UIbPO/01ldpObgvn7xTR3FjQJngos9EOuH/s
+         RuPLipYjmNQWMKiGqNKRSWfZkSX3oS7qtea7A9JrdHvKeXMhQHO0pGncIzWg+hLytZ
+         w4t7b4BJOaXagVUuWCKXOaeKS1wIuCFcCTfD997pMZlHV48czO5/al3AFKbJv9MUqx
+         NvKtgEmXd+4siZo4ZNvLUCQCVDzZDViVPWIC7bNSQMbudbeugMZMn8t2H7PApBBjYn
+         LK/rwH4pOHG8jizJJPL9TIXS5TY0KDgS6UNLrGr7+VwXvqOudtPnwzb75mFp+LrRgg
+         gAavl/fFrVE8g==
+Date:   Wed, 19 Apr 2023 13:07:33 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, sfr@canb.auug.org.au,
+        hch@lst.de, Eric Biggers <ebiggers@kernel.org>,
+        syzbot+d1ae544e6e9dc29bcba5@syzkaller.appspotmail.com,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: Re: [PATCH] ext4: Handle error pointers being returned from
+ __filemap_get_folio
+Message-ID: <fa8f6c0a-9d72-4e13-880e-4e8865098a72@sirena.org.uk>
+References: <20230418200636.3006418-1-willy@infradead.org>
+ <20230418132321.4cfac3c19488c158a9e08281@linux-foundation.org>
+ <ZD8F3qV6eLHZpagX@casper.infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v4 3/6] mm/gup: remove vmas parameter from
- get_user_pages_remote()
-Content-Language: en-US
-To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <cover.1681831798.git.lstoakes@gmail.com>
- <7c6f1ae88320bf11d2f583178a3d9e653e06ac63.1681831798.git.lstoakes@gmail.com>
-From:   Janosch Frank <frankja@linux.ibm.com>
-In-Reply-To: <7c6f1ae88320bf11d2f583178a3d9e653e06ac63.1681831798.git.lstoakes@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: YoUBdd5kWLHDb-6WjYvIk2NpjLH1WX8c
-X-Proofpoint-GUID: aezbm9zbIzDKmcuHzP9oULlrIcksYyaJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-19_06,2023-04-18_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- suspectscore=0 priorityscore=1501 mlxlogscore=566 adultscore=0
- lowpriorityscore=0 mlxscore=0 impostorscore=0 bulkscore=0 malwarescore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304190108
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="QxdnLsMbm0UQRrpt"
+Content-Disposition: inline
+In-Reply-To: <ZD8F3qV6eLHZpagX@casper.infradead.org>
+X-Cookie: This is your fortune.
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/18/23 17:49, Lorenzo Stoakes wrote:
-> The only instances of get_user_pages_remote() invocations which used the
-> vmas parameter were for a single page which can instead simply look up the
-> VMA directly. In particular:-
-> 
-> - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
->    remove it.
-> 
-> - __access_remote_vm() was already using vma_lookup() when the original
->    lookup failed so by doing the lookup directly this also de-duplicates the
->    code.
-> 
-> We are able to perform these VMA operations as we already hold the
-> mmap_lock in order to be able to call get_user_pages_remote().
-> 
-> As part of this work we add get_user_page_vma_remote() which abstracts the
-> VMA lookup, error handling and decrementing the page reference count should
-> the VMA lookup fail.
-> 
-> This forms part of a broader set of patches intended to eliminate the vmas
-> parameter altogether.
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com> (for arm64)
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> ---
 
-For the s390 part:
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+--QxdnLsMbm0UQRrpt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Tue, Apr 18, 2023 at 10:04:30PM +0100, Matthew Wilcox wrote:
+> On Tue, Apr 18, 2023 at 01:23:21PM -0700, Andrew Morton wrote:
+
+> > Or linux-next can carry it as one of its merge/build/other resolution
+> > patches?
+
+> That was my expectation.  Very unfortunate collision.  I'm sure Linus
+> will love it.
+
+> (Hold off on this precise version; running xfstests against it finds
+> something wrong)
+
+I can carry something easily enough, just let me know.
+
+--QxdnLsMbm0UQRrpt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQ/2YUACgkQJNaLcl1U
+h9A8xgf+O2dJXLQbMYCDJYQu5K3hu7fj9FuteS4R4EQVCtmeTrrNMl5V2jRlvERR
+6mQ7E+Leu0U6BmsXW7U8FNnpzdNcgYGRIU9a0pNt1BYmYJX4gtiUtJKvBjT+NNXW
+R7HmdmvdWoJKfYG9z4He4zxFt2jaTED89H2b9ZX5dFu0Dn1D1SGgW6aj290dmDcN
+oa82yoaAOEWQAV1CjreyWkr1khOQ/F8PP8YSHDKE7RYIIi4I+ufvrD8aYUPRc43g
+EqF8fkt3SQs4bAa1yxbt8eVCju9eWQPDJ5Wqv6vc7/sxCkOd2XC8zAtTrUNwPnSl
+YZNk6KGDpwCNLnIYtQcKBI4OS3ygBg==
+=8CCO
+-----END PGP SIGNATURE-----
+
+--QxdnLsMbm0UQRrpt--
