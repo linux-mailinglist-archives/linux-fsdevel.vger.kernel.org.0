@@ -2,239 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1767D6E7946
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 14:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C48F6E794E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 14:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233096AbjDSMDP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 08:03:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55988 "EHLO
+        id S233037AbjDSMGX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 08:06:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233127AbjDSMDK (ORCPT
+        with ESMTP id S230141AbjDSMGW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 08:03:10 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D01C1A4;
-        Wed, 19 Apr 2023 05:03:07 -0700 (PDT)
-Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Q1fTH1PBlzSqnc;
-        Wed, 19 Apr 2023 19:58:59 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Wed, 19 Apr 2023 20:03:05 +0800
-Message-ID: <9fa67780-c48f-4675-731b-4e9a25cd29a0@huawei.com>
-Date:   Wed, 19 Apr 2023 20:03:05 +0800
+        Wed, 19 Apr 2023 08:06:22 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 583F21991;
+        Wed, 19 Apr 2023 05:06:21 -0700 (PDT)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33JBmiVs034942;
+        Wed, 19 Apr 2023 12:05:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=XxQyWGNU20y3Wnv7oBYdxQVoyeJRqhv7cvwcPncLqqk=;
+ b=MaUkKBXx8iVhZnQfi2RDt8faEETMnMKAbEzNZO+lpYZA4Qzm/42cfcABcujSIwghRV0X
+ 3PeqNDRd4IaTppWUkLe9WhVR7DHaK67napzSWb0/fyAY5su8TJWCvhMrkWNBKYnZzWpL
+ nrZow2Y7r/vmn90Ku0+11UMeCHt4krQqymOUrwysBfKhQ3gB8XVNTfmR2AisCvruWOoC
+ HGrgnECisFQCMRlF+rKjlvt0AJiiXkbKhxoPOW9SAl/j9H94nYFHqgnk9sLjyUqIjTb9
+ M4kh5I4Iraa1TWc6fPCqKtgixwG8fAM688OISqzSFuM22pbbenILF8ksGHq+DRGoNVxP lg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q2apmt6hp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Apr 2023 12:05:38 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33JBoDWh003607;
+        Wed, 19 Apr 2023 12:05:37 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q2apmt6g9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Apr 2023 12:05:37 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33J0WAFx000870;
+        Wed, 19 Apr 2023 12:05:34 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3pykj6jqcr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Apr 2023 12:05:34 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33JC5V2D45941078
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Apr 2023 12:05:31 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4647620040;
+        Wed, 19 Apr 2023 12:05:31 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 91F6F20043;
+        Wed, 19 Apr 2023 12:05:27 +0000 (GMT)
+Received: from [9.171.27.132] (unknown [9.171.27.132])
+        by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Apr 2023 12:05:27 +0000 (GMT)
+Message-ID: <ab586b59-7d62-2ea1-a617-ffbcf91f4037@linux.ibm.com>
+Date:   Wed, 19 Apr 2023 14:05:26 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v2] mm: hwpoison: coredump: support recovery from
- dump_user_range()
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v4 3/6] mm/gup: remove vmas parameter from
+ get_user_pages_remote()
 Content-Language: en-US
-To:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tong Tiangen <tongtiangen@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>
-References: <20230417045323.11054-1-wangkefeng.wang@huawei.com>
- <20230418031243.GA2845864@hori.linux.bs1.fc.nec.co.jp>
- <54d761bb-1bcc-21a2-6b53-9d797a3c076b@huawei.com>
- <20230419072557.GA2926483@hori.linux.bs1.fc.nec.co.jp>
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <20230419072557.GA2926483@hori.linux.bs1.fc.nec.co.jp>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.243]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+References: <cover.1681831798.git.lstoakes@gmail.com>
+ <7c6f1ae88320bf11d2f583178a3d9e653e06ac63.1681831798.git.lstoakes@gmail.com>
+From:   Janosch Frank <frankja@linux.ibm.com>
+In-Reply-To: <7c6f1ae88320bf11d2f583178a3d9e653e06ac63.1681831798.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: YoUBdd5kWLHDb-6WjYvIk2NpjLH1WX8c
+X-Proofpoint-GUID: aezbm9zbIzDKmcuHzP9oULlrIcksYyaJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-19_06,2023-04-18_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ suspectscore=0 priorityscore=1501 mlxlogscore=566 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 bulkscore=0 malwarescore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304190108
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2023/4/19 15:25, HORIGUCHI NAOYA(堀口 直也) wrote:
-> On Tue, Apr 18, 2023 at 05:45:06PM +0800, Kefeng Wang wrote:
->>
->>
->> On 2023/4/18 11:13, HORIGUCHI NAOYA(堀口 直也) wrote:
->>> On Mon, Apr 17, 2023 at 12:53:23PM +0800, Kefeng Wang wrote:
->>>> The dump_user_range() is used to copy the user page to a coredump file,
->>>> but if a hardware memory error occurred during copy, which called from
->>>> __kernel_write_iter() in dump_user_range(), it crashes,
->>>>
->>>>     CPU: 112 PID: 7014 Comm: mca-recover Not tainted 6.3.0-rc2 #425
->>>>     pc : __memcpy+0x110/0x260
->>>>     lr : _copy_from_iter+0x3bc/0x4c8
->>>>     ...
->>>>     Call trace:
->>>>      __memcpy+0x110/0x260
->>>>      copy_page_from_iter+0xcc/0x130
->>>>      pipe_write+0x164/0x6d8
->>>>      __kernel_write_iter+0x9c/0x210
->>>>      dump_user_range+0xc8/0x1d8
->>>>      elf_core_dump+0x308/0x368
->>>>      do_coredump+0x2e8/0xa40
->>>>      get_signal+0x59c/0x788
->>>>      do_signal+0x118/0x1f8
->>>>      do_notify_resume+0xf0/0x280
->>>>      el0_da+0x130/0x138
->>>>      el0t_64_sync_handler+0x68/0xc0
->>>>      el0t_64_sync+0x188/0x190
->>>>
->>>> Generally, the '->write_iter' of file ops will use copy_page_from_iter()
->>>> and copy_page_from_iter_atomic(), change memcpy() to copy_mc_to_kernel()
->>>> in both of them to handle #MC during source read, which stop coredump
->>>> processing and kill the task instead of kernel panic, but the source
->>>> address may not always a user address, so introduce a new copy_mc flag in
->>>> struct iov_iter{} to indicate that the iter could do a safe memory copy,
->>>> also introduce the helpers to set/cleck the flag, for now, it's only
->>>> used in coredump's dump_user_range(), but it could expand to any other
->>>> scenarios to fix the similar issue.
->>>>
->>>> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->>>> Cc: Christian Brauner <brauner@kernel.org>
->>>> Cc: Miaohe Lin <linmiaohe@huawei.com>
->>>> Cc: Naoya Horiguchi <naoya.horiguchi@nec.com>
->>>> Cc: Tong Tiangen <tongtiangen@huawei.com>
->>>> Cc: Jens Axboe <axboe@kernel.dk>
->>>> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->>>> ---
->>>> v2:
->>>> - move the helper functions under pre-existing CONFIG_ARCH_HAS_COPY_MC
->>>> - reposition the copy_mc in struct iov_iter for easy merge, suggested
->>>>     by Andrew Morton
->>>> - drop unnecessary clear flag helper
->>>> - fix checkpatch warning
->>>>    fs/coredump.c       |  1 +
->>>>    include/linux/uio.h | 16 ++++++++++++++++
->>>>    lib/iov_iter.c      | 17 +++++++++++++++--
->>>>    3 files changed, 32 insertions(+), 2 deletions(-)
->>>>
->>> ...
->>>> @@ -371,6 +372,14 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
->>>>    EXPORT_SYMBOL_GPL(_copy_mc_to_iter);
->>>>    #endif /* CONFIG_ARCH_HAS_COPY_MC */
->>>> +static void *memcpy_from_iter(struct iov_iter *i, void *to, const void *from,
->>>> +				 size_t size)
->>>> +{
->>>> +	if (iov_iter_is_copy_mc(i))
->>>> +		return (void *)copy_mc_to_kernel(to, from, size);
->>>
->>> Is it helpful to call memory_failure_queue() if copy_mc_to_kernel() fails
->>> due to a memory error?
->>
->> For dump_user_range(), the task is dying, if copy incomplete size, the
->> coredump will fail and task will exit, also memory_failure will
->> be called by kill_me_maybe(),
->>
->>   CPU: 0 PID: 1418 Comm: test Tainted: G   M               6.3.0-rc5 #29
->>   Call Trace:
->>    <TASK>
->>    dump_stack_lvl+0x37/0x50
->>    memory_failure+0x51/0x970
->>    kill_me_maybe+0x5b/0xc0
->>    task_work_run+0x5a/0x90
->>    exit_to_user_mode_prepare+0x194/0x1a0
->>    irqentry_exit_to_user_mode+0x9/0x30
->>    noist_exc_machine_check+0x40/0x80
->>    asm_exc_machine_check+0x33/0x40
+On 4/18/23 17:49, Lorenzo Stoakes wrote:
+> The only instances of get_user_pages_remote() invocations which used the
+> vmas parameter were for a single page which can instead simply look up the
+> VMA directly. In particular:-
 > 
-> Is this call trace printed out when copy_mc_to_kernel() failed by finding
-> a memory error (or in some testcase using error injection)?
-
-I add dump_stack() into memory_failure() to check whether the poisoned
-memory is called or not, and the call trace shows it do call
-memory_failure()， but I get confused when do the test.
-
-> In my understanding, an MCE should not be triggered when MC-safe copy tries
-> to access to a memory error.  So I feel that we might be talking about
-> different scenarios.
+> - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
+>    remove it.
 > 
-> When I questioned previously, I thought about the following scenario:
+> - __access_remote_vm() was already using vma_lookup() when the original
+>    lookup failed so by doing the lookup directly this also de-duplicates the
+>    code.
 > 
->    - a process terminates abnormally for any reason like segmentation fault,
->    - then, kernel tries to create a coredump,
->    - during this, the copying routine accesses to corrupted page to read.
+> We are able to perform these VMA operations as we already hold the
+> mmap_lock in order to be able to call get_user_pages_remote().
 > 
-Yes, we tested like your described,
-
-1) inject memory error into a process
-2) send a SIGABT/SIGBUS to process to trigger the coredump
-
-Without patch, the system panic, and with patch only process exits.
-
-> In this case the corrupted page should not be handled by memory_failure()
-> yet (because otherwise properly handled hwpoisoned page should be ignored
-> by coredump process).  The coredump process would exit with failure with
-> your patch, but then, the corrupted page is still left unhandled and can
-> be reused, so any other thread can easily access to it again.
-
-As shown above, the corrupted page will be handled by memory_failure(), 
-but what I'm wondering,
-1) memory_failure() is not always called
-2) look at the above call trace, it looks like from asynchronous
-    interrupt, not from synchronous exception, right?
-
+> As part of this work we add get_user_page_vma_remote() which abstracts the
+> VMA lookup, error handling and decrementing the page reference count should
+> the VMA lookup fail.
 > 
-> You can find a few other places (like __wp_page_copy_user and ksm_might_need_to_copy)
-> to call memory_failure_queue() to cope with such unhandled error pages.
-> So does memcpy_from_iter() do the same?
-
-I add some debug print in do_machine_check() on x86:
-
-1) COW,
-   m.kflags: MCE_IN_KERNEL_RECOV
-   fixup_type: EX_TYPE_DEFAULT_MCE_SAFE
-
-   CPU: 11 PID: 2038 Comm: einj_mem_uc
-   Call Trace:
-    <#MC>
-    dump_stack_lvl+0x37/0x50
-    do_machine_check+0x7ad/0x840
-    exc_machine_check+0x5a/0x90
-    asm_exc_machine_check+0x1e/0x40
-   RIP: 0010:copy_mc_fragile+0x35/0x62
-
-   if (m.kflags & MCE_IN_KERNEL_RECOV) {
-           if (!fixup_exception(regs, X86_TRAP_MC, 0, 0))
-                   mce_panic("Failed kernel mode recovery", &m, msg);
-   }
-
-   if (m.kflags & MCE_IN_KERNEL_COPYIN)
-           queue_task_work(&m, msg, kill_me_never);
-
-There is no memory_failure() called when
-EX_TYPE_DEFAULT_MCE_SAFE, also EX_TYPE_FAULT_MCE_SAFE too,
-so we manually add a memory_failure_queue() to handle with
-the poisoned page.
-
-2） Coredump,  nothing print about m.kflags and fixup_type,
-with above check, add a memory_failure_queue() or memory_failure() seems
-to be needed for memcpy_from_iter(), but it is totally different from
-the COW scenario
-
-
-Another question, other copy_mc_to_kernel() callers, eg,
-nvdimm/dm-writecache/dax, there are not call memory_failure_queue(),
-should they need a memory_failure_queue(), if so, why not add it into
-do_machine_check() ?
-
-Thanks.
-
-
-
+> This forms part of a broader set of patches intended to eliminate the vmas
+> parameter altogether.
 > 
-> Thanks,
-> Naoya Horiguchi
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com> (for arm64)
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
+
+For the s390 part:
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+
