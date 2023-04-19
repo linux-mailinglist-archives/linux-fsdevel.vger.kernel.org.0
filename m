@@ -2,188 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AED246E818C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 20:56:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 484886E8202
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 21:42:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231202AbjDSS4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 14:56:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56196 "EHLO
+        id S230152AbjDSTmM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 15:42:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbjDSS4I (ORCPT
+        with ESMTP id S229485AbjDSTmL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 14:56:08 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E614469A;
-        Wed, 19 Apr 2023 11:56:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681930567; x=1713466567;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QRGqBX37NR8aEdfN3qUrMJ+8qUa0XUBdBpWqWnI2SgM=;
-  b=Ug/MSnTrVgBnR27xaTHG0PYUn0eAu/B/8BW69EKX0LMM9yWOAPKQCH4h
-   VuWE2TrE29wv0uHqC4QxmSwNDSv5nmOXfzMZNGov6h3xvvRJ61b0pQFwJ
-   R7K2u8ZDcFb/Er5TVI/gtuPfw1doObPXUJrTrpb1ahl3vSH2ssE3lMAyD
-   YRJn5hFu67W24tuoNc98wWQPGK7PZt9CtJ1s+dTJNDO9aWX4wzkAErPR8
-   RnTH75irG/en2MKX05MI4ZAol7O5i0YKPE5OnIES1UoEd0ltAtKBd1Xwn
-   uc44sU3RH+0a7FyjSBuuxoEV870fZepELzHf7Yfpd/dLVW6+gIwt8tsUE
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10685"; a="343015569"
-X-IronPort-AV: E=Sophos;i="5.99,210,1677571200"; 
-   d="scan'208";a="343015569"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2023 11:56:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10685"; a="780939661"
-X-IronPort-AV: E=Sophos;i="5.99,210,1677571200"; 
-   d="scan'208";a="780939661"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 19 Apr 2023 11:56:01 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1ppCyH-000f74-01;
-        Wed, 19 Apr 2023 18:56:01 +0000
-Date:   Thu, 20 Apr 2023 02:55:53 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Nitesh Shetty <nj.shetty@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     oe-kbuild-all@lists.linux.dev, bvanassche@acm.org, hare@suse.de,
-        ming.lei@redhat.com, dlemoal@kernel.org, anuj20.g@samsung.com,
-        joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v10 6/9] nvmet: add copy command support for bdev and
- file ns
-Message-ID: <202304200240.fsLkpzvk-lkp@intel.com>
-References: <20230419114320.13674-7-nj.shetty@samsung.com>
+        Wed, 19 Apr 2023 15:42:11 -0400
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F215FDD;
+        Wed, 19 Apr 2023 12:42:08 -0700 (PDT)
+Received: from [192.168.2.142] (p4fdf4348.dip0.t-ipconnect.de [79.223.67.72])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: buczek)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id E4DDC61E4052B;
+        Wed, 19 Apr 2023 21:42:04 +0200 (CEST)
+Message-ID: <955ede49-bb69-2ab2-d256-a329fe1b728c@molgen.mpg.de>
+Date:   Wed, 19 Apr 2023 21:42:04 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230419114320.13674-7-nj.shetty@samsung.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
+Content-Language: en-US
+To:     Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk,
+        hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org,
+        kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org,
+        ming.lei@redhat.com, gregkh@linuxfoundation.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230404140835.25166-1-sergei.shtepa@veeam.com>
+ <20230404140835.25166-4-sergei.shtepa@veeam.com>
+ <cb0cc2f1-48cb-8b15-35af-33a31ccc922c@molgen.mpg.de>
+ <86068780-bab3-2fc2-3f6f-1868be119b38@veeam.com>
+ <a1854604-cec1-abd5-1d49-6cf6a19ee7a1@veeam.com>
+ <1dc227d0-9528-9b77-63ff-b49b0579caa1@molgen.mpg.de>
+ <c05fd3e7-5610-4f63-9012-df1b808d9536@veeam.com>
+From:   Donald Buczek <buczek@molgen.mpg.de>
+In-Reply-To: <c05fd3e7-5610-4f63-9012-df1b808d9536@veeam.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Nitesh,
+Dear Sergei,
 
-kernel test robot noticed the following build warnings:
+On 4/19/23 15:05, Sergei Shtepa wrote:
+> 
+> 
+> On 4/18/23 16:48, Donald Buczek wrote:
+>> Subject:
+>> Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
+>> From:
+>> Donald Buczek <buczek@molgen.mpg.de>
+>> Date:
+>> 4/18/23, 16:48
+>>
+>> To:
+>> Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
+>> CC:
+>> viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org, kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org, ming.lei@redhat.com, gregkh@linuxfoundation.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+>>
+>>
+>> On 4/18/23 12:31, Sergei Shtepa wrote:
+>>>
+>>>
+>>> On 4/14/23 14:34, Sergei Shtepa wrote:
+>>>> Subject:
+>>>> Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
+>>>> From:
+>>>> Sergei Shtepa <sergei.shtepa@veeam.com>
+>>>> Date:
+>>>> 4/14/23, 14:34
+>>>>
+>>>> To:
+>>>> Donald Buczek <buczek@molgen.mpg.de>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
+>>>> CC:
+>>>> viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org, kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org, ming.lei@redhat.com, gregkh@linuxfoundation.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+>>>>
+>>>>
+>>>>
+>>>> On 4/12/23 21:38, Donald Buczek wrote:
+>>>>> Subject:
+>>>>> Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
+>>>>> From:
+>>>>> Donald Buczek <buczek@molgen.mpg.de>
+>>>>> Date:
+>>>>> 4/12/23, 21:38
+>>>>>
+>>>>> To:
+>>>>> Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
+>>>>> CC:
+>>>>> viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org, kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org, ming.lei@redhat.com, gregkh@linuxfoundation.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+>>>>>
+>>>>>
+>>>>> I think, you can trigger all kind of user-after-free when userspace deletes a snapshot image or the snapshot image and the tracker while the disk device snapshot image is kept alive (mounted or just opened) and doing I/O.
+>>>>>
+>>>>> Here is what I did to provoke that:
+>>>>>
+>>>>> root@dose:~# s=$(blksnap snapshot_create -d /dev/vdb)
+>>>>> root@dose:~# blksnap snapshot_appendstorage -i $s -f /scratch/local/test.dat
+>>>>> device path: '/dev/block/253:2'
+>>>>> allocate range: ofs=11264624 cnt=2097152
+>>>>> root@dose:~# blksnap snapshot_take -i $s
+>>>>> root@dose:~# mount /dev/blksnap-image_253\:16 /mnt
+>>>>> root@dose:~# dd if=/dev/zero of=/mnt/x.x &
+>>>>> [1] 2514
+>>>>> root@dose:~# blksnap snapshot_destroy -i $s
+>>>>> dd: writing to '/mnt/x.x': No space left on device
+>>>>> 1996041+0 records in
+>>>>> 1996040+0 records out
+>>>>> 1021972480 bytes (1.0 GB, 975 MiB) copied, 8.48923 s, 120 MB/s
+>>>>> [1]+  Exit 1                  dd if=/dev/zero of=/mnt/x.x
+>>>>>
+>>>> Thanks!
+>>>> I am very glad that the blksnap tool turned out to be useful in the review.
+>>>> This snapshot deletion scenario is not the most typical, but of course it is
+>>>> quite possible.
+>>>> I will need to solve this problem and add such a scenario to the test suite.
+>>>>
+>>>
+>>> Hi!
+>>>
+>>> I have redesign the logic of ownership of the diff_area structure.
+>>> See patch in attach or commit.
+>>> Link: https://github.com/SergeiShtepa/linux/commit/7e927c381dcd2b2293be8315897a224d111b6f88
+>>> A test script for such a scenario has been added.
+>>> Link: https://github.com/veeam/blksnap/commit/fd0559dfedf094901d08bbf185fed288f0156433
+>>>
+>>> I will be glad of any feedback.
+>>
+>> Great, Thanks!
+>>
+>> However, there are two leftover calls to diff_area_free() with its old prototype:
+>>
+>>   CC [M]  drivers/block/blksnap/diff_area.o
+>> drivers/block/blksnap/diff_area.c: In function ‘diff_area_new’:
+>> drivers/block/blksnap/diff_area.c:283:18: error: passing argument 1 of ‘diff_area_free’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+>>    283 |   diff_area_free(diff_area);
+>>        |                  ^~~~~~~~~
+>>        |                  |
+>>        |                  struct diff_area *
+>> drivers/block/blksnap/diff_area.c:110:34: note: expected ‘struct kref *’ but argument is of type ‘struct diff_area *’
+>>    110 | void diff_area_free(struct kref *kref)
+>>        |                     ~~~~~~~~~~~~~^~~~
+>> cc1: some warnings being treated as errors
+>> make[4]: *** [scripts/Makefile.build:252: drivers/block/blksnap/diff_area.o] Error 1
+>> make[3]: *** [scripts/Makefile.build:494: drivers/block/blksnap] Error 2
+>> make[2]: *** [scripts/Makefile.build:494: drivers/block] Error 2
+>> make[1]: *** [scripts/Makefile.build:494: drivers] Error 2
+>> make: *** [Makefile:2025: .] Error 2
+>>
+>> The other one:
+>>
+>> buczek@dose:/scratch/local/linux (blksnap-test)$ make drivers/block/blksnap/tracker.o
+>>    CALL    scripts/checksyscalls.sh
+>>    DESCEND objtool
+>>    INSTALL libsubcmd_headers
+>>    CC [M]  drivers/block/blksnap/tracker.o
+>> drivers/block/blksnap/tracker.c: In function ‘tracker_free’:
+>> drivers/block/blksnap/tracker.c:26:25: error: passing argument 1 of ‘diff_area_free’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+>>     26 |   diff_area_free(tracker->diff_area);
+>>        |                  ~~~~~~~^~~~~~~~~~~
+>>        |                         |
+>>        |                         struct diff_area *
+>> In file included from drivers/block/blksnap/tracker.c:12:
+>> drivers/block/blksnap/diff_area.h:116:34: note: expected ‘struct kref *’ but argument is of type ‘struct diff_area *’
+>>    116 | void diff_area_free(struct kref *kref);
+>>        |                     ~~~~~~~~~~~~~^~~~
+>> cc1: some warnings being treated as errors
+>> make[4]: *** [scripts/Makefile.build:252: drivers/block/blksnap/tracker.o] Error 1
+>> make[3]: *** [scripts/Makefile.build:494: drivers/block/blksnap] Error 2
+>> make[2]: *** [scripts/Makefile.build:494: drivers/block] Error 2
+>> make[1]: *** [scripts/Makefile.build:494: drivers] Error 2
+>> make: *** [Makefile:2025: .] Error 2
+>>
+>> Am I missing something?
+> 
+> Thanks!
+> 
+> It seems to me that I missed something.
+> The biggest mystery for me is why I was able to build and test the kernel.
+> I think it's some kind of incremental build effect.
+> I was only able to see the problem after 'make clean'.
+> 
+> Patches in attach and https://github.com/SergeiShtepa/linux/tree/blksnap-master
 
-[auto build test WARNING on next-20230418]
-[cannot apply to axboe-block/for-next device-mapper-dm/for-next linus/master v6.3-rc7 v6.3-rc6 v6.3-rc5 v6.3-rc7]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks. I can confirm that this fixes the reported problem and I no longer can trigger the UAF. :-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nitesh-Shetty/block-Add-copy-offload-support-infrastructure/20230419-204352
-patch link:    https://lore.kernel.org/r/20230419114320.13674-7-nj.shetty%40samsung.com
-patch subject: [PATCH v10 6/9] nvmet: add copy command support for bdev and file ns
-config: m68k-randconfig-s032-20230416 (https://download.01.org/0day-ci/archive/20230420/202304200240.fsLkpzvk-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 12.1.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # apt-get install sparse
-        # sparse version: v0.6.4-39-gce1a6720-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/420b04f7ba9a54898d62c1d60905f8cf952afde2
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Nitesh-Shetty/block-Add-copy-offload-support-infrastructure/20230419-204352
-        git checkout 420b04f7ba9a54898d62c1d60905f8cf952afde2
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=m68k olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=m68k SHELL=/bin/bash drivers/nvme/target/
+Tested-Bny: Donald Buczek <buczek@molgen.mpg.de>
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304200240.fsLkpzvk-lkp@intel.com/
+Maybe you can add me to the cc list for v4 as I'm not subscribed to the lists.
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/nvme/target/io-cmd-bdev.c:55:27: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] val @@     got restricted __le16 [usertype] mssrl @@
-   drivers/nvme/target/io-cmd-bdev.c:55:27: sparse:     expected unsigned int [usertype] val
-   drivers/nvme/target/io-cmd-bdev.c:55:27: sparse:     got restricted __le16 [usertype] mssrl
->> drivers/nvme/target/io-cmd-bdev.c:55:27: sparse: sparse: cast from restricted __le16
->> drivers/nvme/target/io-cmd-bdev.c:55:27: sparse: sparse: cast from restricted __le16
->> drivers/nvme/target/io-cmd-bdev.c:55:27: sparse: sparse: cast from restricted __le16
->> drivers/nvme/target/io-cmd-bdev.c:55:27: sparse: sparse: cast from restricted __le16
-   drivers/nvme/target/io-cmd-bdev.c:57:29: sparse: sparse: cast from restricted __le16
-   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] val @@     got restricted __le16 [usertype] mssrl @@
-   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse:     expected unsigned int [usertype] val
-   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse:     got restricted __le16 [usertype] mssrl
-   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse: sparse: cast from restricted __le16
-   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse: sparse: cast from restricted __le16
-   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse: sparse: cast from restricted __le16
-   drivers/nvme/target/io-cmd-bdev.c:60:27: sparse: sparse: cast from restricted __le16
+Best
 
-vim +55 drivers/nvme/target/io-cmd-bdev.c
-
-    12	
-    13	void nvmet_bdev_set_limits(struct block_device *bdev, struct nvme_id_ns *id)
-    14	{
-    15		/* Logical blocks per physical block, 0's based. */
-    16		const __le16 lpp0b = to0based(bdev_physical_block_size(bdev) /
-    17					      bdev_logical_block_size(bdev));
-    18	
-    19		/*
-    20		 * For NVMe 1.2 and later, bit 1 indicates that the fields NAWUN,
-    21		 * NAWUPF, and NACWU are defined for this namespace and should be
-    22		 * used by the host for this namespace instead of the AWUN, AWUPF,
-    23		 * and ACWU fields in the Identify Controller data structure. If
-    24		 * any of these fields are zero that means that the corresponding
-    25		 * field from the identify controller data structure should be used.
-    26		 */
-    27		id->nsfeat |= 1 << 1;
-    28		id->nawun = lpp0b;
-    29		id->nawupf = lpp0b;
-    30		id->nacwu = lpp0b;
-    31	
-    32		/*
-    33		 * Bit 4 indicates that the fields NPWG, NPWA, NPDG, NPDA, and
-    34		 * NOWS are defined for this namespace and should be used by
-    35		 * the host for I/O optimization.
-    36		 */
-    37		id->nsfeat |= 1 << 4;
-    38		/* NPWG = Namespace Preferred Write Granularity. 0's based */
-    39		id->npwg = lpp0b;
-    40		/* NPWA = Namespace Preferred Write Alignment. 0's based */
-    41		id->npwa = id->npwg;
-    42		/* NPDG = Namespace Preferred Deallocate Granularity. 0's based */
-    43		id->npdg = to0based(bdev_discard_granularity(bdev) /
-    44				    bdev_logical_block_size(bdev));
-    45		/* NPDG = Namespace Preferred Deallocate Alignment */
-    46		id->npda = id->npdg;
-    47		/* NOWS = Namespace Optimal Write Size */
-    48		id->nows = to0based(bdev_io_opt(bdev) / bdev_logical_block_size(bdev));
-    49	
-    50		/*Copy limits*/
-    51		if (bdev_max_copy_sectors(bdev)) {
-    52			id->msrc = id->msrc;
-    53			id->mssrl = cpu_to_le16((bdev_max_copy_sectors(bdev) <<
-    54					SECTOR_SHIFT) / bdev_logical_block_size(bdev));
-  > 55			id->mcl = cpu_to_le32(id->mssrl);
-    56		} else {
-    57			id->msrc = (u8)to0based(BIO_MAX_VECS - 1);
-    58			id->mssrl = cpu_to_le16((BIO_MAX_VECS << PAGE_SHIFT) /
-    59					bdev_logical_block_size(bdev));
-    60			id->mcl = cpu_to_le32(id->mssrl);
-    61		}
-    62	}
-    63	
-
+   Donald
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Donald Buczek
+buczek@molgen.mpg.de
+Tel: +49 30 8413 1433
