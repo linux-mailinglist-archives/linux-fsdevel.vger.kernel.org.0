@@ -2,247 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 51A056E804C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 19:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 032D16E805F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 19:29:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232505AbjDSR0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 13:26:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40040 "EHLO
+        id S233025AbjDSR3k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 13:29:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230346AbjDSR0F (ORCPT
+        with ESMTP id S232771AbjDSR3j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 13:26:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEDEA659B;
-        Wed, 19 Apr 2023 10:26:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 53B6A64122;
-        Wed, 19 Apr 2023 17:26:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6ABC433EF;
-        Wed, 19 Apr 2023 17:26:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681925162;
-        bh=VFRws15p+q59RSTrU0VATjC0LQ6eFGIpuOjxTTSlgZA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UycFIy4d7bCijEj9Km8Xjqeq9Y7EDL81kXO55cTmYZWaCoWU32Dc670Zrnc7oLZIE
-         zohoopB6vvjwHWAIgZi2HjslXGgNOIJNhWwyycPnyOYwJZEXyC3u+30gOvOxZSPYmz
-         UoBxqtx/hq9Yb4HYkTl/ePo7blbSjZczejMiqCwIcKJRmGoEgpFxw635kJIa5LL6cK
-         fj7fBUFeirx+lzm/NNEwcg+rYsJHgsDOwXoE9yDM1+xQ7Vq0YueKHyzojjw0y6iVIo
-         MzRSXQLJPb3cF4Xqo1ry0NuHAPTGe48TEIN9UMSK0LxFIaOB2wSFR2bO9Zr4jBxkZj
-         6EldBf3ubjw1Q==
-Date:   Wed, 19 Apr 2023 10:26:02 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Mike Snitzer <snitzer@kernel.org>
-Cc:     Sarthak Kukreti <sarthakkukreti@chromium.org>, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Theodore Ts'o <tytso@mit.edu>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Bart Van Assche <bvanassche@google.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Daniil Lunev <dlunev@google.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>
-Subject: Re: [PATCH v4 1/4] block: Introduce provisioning primitives
-Message-ID: <20230419172602.GE360881@frogsfrogsfrogs>
-References: <20230414000219.92640-1-sarthakkukreti@chromium.org>
- <20230418221207.244685-1-sarthakkukreti@chromium.org>
- <20230418221207.244685-2-sarthakkukreti@chromium.org>
- <20230419153611.GE360885@frogsfrogsfrogs>
- <ZEAUHnWqt9cIiJRb@redhat.com>
+        Wed, 19 Apr 2023 13:29:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C14072A0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 10:28:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681925331;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ihiwXpDL+XFx0tVOaUHxeVnDzkDFebGV372mGDT2o5E=;
+        b=UMd6nm5Q8DAkkQyotpW4yD0/AiMPly1pFAJGy9Z2gYMPpF/jegFoGApgTjYR6dI6iqbC0d
+        8s+4ntXXHnAPbat9mvq+u1xmQA6frO7k58qh0Ri32izs2JT58rU9lX9Z04R6IBg4KjyMFH
+        f3Y4eONhuLRPhis8yL0CFm4XOMkcL84=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-650-_m36xuxvOAqLvY-UBHWSMQ-1; Wed, 19 Apr 2023 13:28:49 -0400
+X-MC-Unique: _m36xuxvOAqLvY-UBHWSMQ-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-74deffa28efso2447885a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 10:28:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681925328; x=1684517328;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ihiwXpDL+XFx0tVOaUHxeVnDzkDFebGV372mGDT2o5E=;
+        b=irh+J525CZ4FfE5UWb8rVsuXZwfE0NSIHhRm3GAsynPCC7ftVKmFiMkXD63MrKtXI7
+         onit40ofgsibYIgYgWMs/+SaGrSk1SLRXDfp87xw3nQbFBtdMKIh4n2WODMLLPYjuqu/
+         tbseh0Bv7XlLHRZA6dwxZeQ6edzbLqMHckpnHZPjDtlTEKZPnmopaxuvgihu+Z2j7Jx7
+         4J19KDtbYdZp0E2qJUKn6JAzRPDWIW5kHSE8CPbcCTHA6z1JJx1z2ZP+sNy570UrrZNL
+         at5FCPstw91Sod4iwbl/x4oxod+D5j1QN4TpqotEvW+HWPj8HIS9uOMiqw9SSqKOdUfz
+         4K/g==
+X-Gm-Message-State: AAQBX9cQ1H9BbB41FxI+Ay3fdHtaPiIOmrZsnnWOvsHwURW0O0UzUs6q
+        Jj9+5sxncEGLEAHW2lvt8p4OZRa5ai/vY6URYQvU8IzL7Aur4NCLBl66ndU9H+ETVCGevGxbNqv
+        mcuZ9UyZ+pY9OKS+pNtr0NRG1s4+uDOLmRw==
+X-Received: by 2002:a05:6214:500e:b0:5ef:5af7:a274 with SMTP id jo14-20020a056214500e00b005ef5af7a274mr26690610qvb.3.1681925328601;
+        Wed, 19 Apr 2023 10:28:48 -0700 (PDT)
+X-Google-Smtp-Source: AKy350asM+h7G5MMjSimWsVD+DFjH2XI8vVHaT4OnvURDMrVmhHolJvNacKwBHK5J6ePzWcfhhJ1yw==
+X-Received: by 2002:a05:6214:500e:b0:5ef:5af7:a274 with SMTP id jo14-20020a056214500e00b005ef5af7a274mr26690589qvb.3.1681925328379;
+        Wed, 19 Apr 2023 10:28:48 -0700 (PDT)
+Received: from [172.31.1.6] ([70.105.248.80])
+        by smtp.gmail.com with ESMTPSA id b10-20020a056214002a00b005f160622f3esm1016217qvr.85.2023.04.19.10.28.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Apr 2023 10:28:47 -0700 (PDT)
+Message-ID: <34b5dcb5-b559-8f18-d69b-0dcc8cacfbed@redhat.com>
+Date:   Wed, 19 Apr 2023 13:28:46 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZEAUHnWqt9cIiJRb@redhat.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+From:   Steve Dickson <steved@redhat.com>
+Subject: ANNOUNCE: nfs-utils-2.6.3 released.
+To:     Linux NFS Mailing list <linux-nfs@vger.kernel.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 19, 2023 at 12:17:34PM -0400, Mike Snitzer wrote:
-> On Wed, Apr 19 2023 at 11:36P -0400,
-> Darrick J. Wong <djwong@kernel.org> wrote:
-> 
-> > On Tue, Apr 18, 2023 at 03:12:04PM -0700, Sarthak Kukreti wrote:
-> > > Introduce block request REQ_OP_PROVISION. The intent of this request
-> > > is to request underlying storage to preallocate disk space for the given
-> > > block range. Block devices that support this capability will export
-> > > a provision limit within their request queues.
-> > > 
-> > > This patch also adds the capability to call fallocate() in mode 0
-> > > on block devices, which will send REQ_OP_PROVISION to the block
-> > > device for the specified range,
-> > > 
-> > > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
-> > > ---
-> > >  block/blk-core.c          |  5 ++++
-> > >  block/blk-lib.c           | 53 +++++++++++++++++++++++++++++++++++++++
-> > >  block/blk-merge.c         | 18 +++++++++++++
-> > >  block/blk-settings.c      | 19 ++++++++++++++
-> > >  block/blk-sysfs.c         |  8 ++++++
-> > >  block/bounce.c            |  1 +
-> > >  block/fops.c              | 25 +++++++++++++-----
-> > >  include/linux/bio.h       |  6 +++--
-> > >  include/linux/blk_types.h |  5 +++-
-> > >  include/linux/blkdev.h    | 16 ++++++++++++
-> > >  10 files changed, 147 insertions(+), 9 deletions(-)
-> > > 
-> > 
-> > <cut to the fallocate part; the block/ changes look fine to /me/ at
-> > first glance, but what do I know... ;)>
-> > 
-> > > diff --git a/block/fops.c b/block/fops.c
-> > > index d2e6be4e3d1c..e1775269654a 100644
-> > > --- a/block/fops.c
-> > > +++ b/block/fops.c
-> > > @@ -611,9 +611,13 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> > >  	return ret;
-> > >  }
-> > >  
-> > > +#define	BLKDEV_FALLOC_FL_TRUNCATE				\
-> > 
-> > At first I thought from this name that you were defining a new truncate
-> > mode for fallocate, then I realized that this is mask for deciding if we
-> > /want/ to truncate the pagecache.
-> > 
-> > #define		BLKDEV_FALLOC_TRUNCATE_MASK ?
-> > 
-> > > +		(FALLOC_FL_PUNCH_HOLE |	FALLOC_FL_ZERO_RANGE |	\
-> > 
-> > Ok, so discarding and writing zeroes truncates the page cache, makes
-> > sense since we're "writing" directly to the block device.
-> > 
-> > > +		 FALLOC_FL_NO_HIDE_STALE)
-> > 
-> > Here things get tricky -- some of the FALLOC_FL mode bits are really an
-> > opcode and cannot be specified together, whereas others select optional
-> > behavior for certain opcodes.
-> > 
-> > IIRC, the mutually exclusive opcodes are:
-> > 
-> > 	PUNCH_HOLE
-> > 	ZERO_RANGE
-> > 	COLLAPSE_RANGE
-> > 	INSERT_RANGE
-> > 	(none of the above, for allocation)
-> > 
-> > and the "variants on a theme are":
-> > 
-> > 	KEEP_SIZE
-> > 	NO_HIDE_STALE
-> > 	UNSHARE_RANGE
-> > 
-> > not all of which are supported by all the opcodes.
-> > 
-> > Does it make sense to truncate the page cache if userspace passes in
-> > mode == NO_HIDE_STALE?  There's currently no defined meaning for this
-> > combination, but I think this means we'll truncate the pagecache before
-> > deciding if we're actually going to issue any commands.
-> > 
-> > I think that's just a bug in the existing code -- it should be
-> > validating that @mode is any of the supported combinations *before*
-> > truncating the pagecache.
-> > 
-> > Otherwise you could have a mkfs program that starts writing new fs
-> > metadata, decides to provision the storage (say for a logging region),
-> > doesn't realize it's running on an old kernel, and then oops the
-> > provision attempt fails but have we now shredded the pagecache and lost
-> > all the writes?
-> 
-> While that just caused me to have an "oh shit, that's crazy" (in a
-> scary way) belly laugh...
+Hello,
 
-I just tried this and:
+In this release there is TLS-with-RPC support and re-export
+improvements, including a new daemon fsidd.
 
-# xfs_io -c 'pwrite -S 0x58 1m 1m' -c fsync -c 'pwrite -S 0x59 1m 4096' -c 'pread -v 1m 64' -c 'falloc 1m 4096' -c 'pread -v 1m 64' /dev/sda
-wrote 1048576/1048576 bytes at offset 1048576
-1 MiB, 256 ops; 0.0013 sec (723.589 MiB/sec and 185238.7844 ops/sec)
-wrote 4096/4096 bytes at offset 1048576
-4 KiB, 1 ops; 0.0000 sec (355.114 MiB/sec and 90909.0909 ops/sec)
-00100000:  59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  YYYYYYYYYYYYYYYY
-00100010:  59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  YYYYYYYYYYYYYYYY
-00100020:  59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  YYYYYYYYYYYYYYYY
-00100030:  59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  YYYYYYYYYYYYYYYY
-read 64/64 bytes at offset 1048576
-64.000000 bytes, 1 ops; 0.0000 sec (1.565 MiB/sec and 25641.0256 ops/sec)
-fallocate: Operation not supported
-00100000:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
-00100010:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
-00100020:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
-00100030:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
-read 64/64 bytes at offset 1048576
-64.000000 bytes, 1 ops; 0.0003 sec (176.554 KiB/sec and 2824.8588 ops/sec)
+A number of typos fixed in man pages and nfs.conf and
+the usual bug fixes.
 
-(Write 1MB of Xs, flush it to disk, write 4k of Ys, confirm the Y's are
-in the page cache, fail to fallocate, reread and spot the Xs that we
-supposedly overwrote.)
+Thank you for everyone who has contributed!
 
-oops.
+The tarballs can be found in
+   https://www.kernel.org/pub/linux/utils/nfs-utils/2.6.3/
+or
+   http://sourceforge.net/projects/nfs/files/nfs-utils/2.6.3
 
-> (And obviously needs fixing independent of this patchset)
-> 
-> Shouldn't mkfs first check that the underlying storage supports
-> REQ_OP_PROVISION by verifying
-> /sys/block/<dev>/queue/provision_max_bytes exists and is not 0?
-> (Just saying, we need to add new features more defensively.. you just
-> made the case based on this scenario's implications alone)
+The change log is in
+    https://www.kernel.org/pub/linux/utils/nfs-utils/2.6.3/2.6.3-Changelog
+or
+    http://sourceforge.net/projects/nfs/files/nfs-utils/2.6.3/
 
-Not for fallocate -- for regular files, there's no way to check if the
-filesystem actually supports the operation requested other than to try
-it and see if it succeeds.  We probably should've defined a DRY_RUN flag
-for that purpose back when it was introduced.
+The git tree is at:
+    git://linux-nfs.org/~steved/nfs-utils
 
-For fallocate calls to block devices, yes, the program can check the
-queue limits in sysfs if fstat says the supplied path is a block device,
-but I don't know that most programs are that thorough.  The fallocate(1)
-CLI program does not check.
+Please send comments/bugs to linux-nfs@vger.kernel.org
 
-Then I moved on to fs utilities:
+steved.
 
-ext4: For discard, mke2fs calls BLKDISCARD if it detects a block device
-via fstat, and falloc(PUNCH|KEEP_SIZE) for anything else.  For zeroing,
-it only uses falloc(ZERO) or falloc(PUNCH|KEEP_SIZE) and does not try to
-use BLKZEROOUT.  It does not check sysfs queue limits at all.
-
-XFS: mkfs.xfs issues BLKDISCARD before writing anything to the device,
-so that's fine.  It uses falloc(ZERO) to erase the log, but since
-xfsprogs provides its own buffer cache and uses O_DIRECT, pagecache
-coherency problems aren't an issue.
-
-btrfs: mkfs.btrfs only issues BLKDISCARD, and only before it starts
-writing the new fs, so no problems there.
-
---D
-
-> Sarthak, please note I said "provision_max_bytes": all other ops
-> (e.g. DISCARD, WRITE_ZEROES, etc) have <op>_max_bytes exported through
-> sysfs, not <op>_max_sectors.  Please export provision_max_bytes, e.g.:
-> 
-> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-> index 202aa78f933e..2e5ac7b1ffbd 100644
-> --- a/block/blk-sysfs.c
-> +++ b/block/blk-sysfs.c
-> @@ -605,12 +605,12 @@ QUEUE_RO_ENTRY(queue_io_min, "minimum_io_size");
->  QUEUE_RO_ENTRY(queue_io_opt, "optimal_io_size");
->  
->  QUEUE_RO_ENTRY(queue_max_discard_segments, "max_discard_segments");
-> -QUEUE_RO_ENTRY(queue_max_provision_sectors, "max_provision_sectors");
->  QUEUE_RO_ENTRY(queue_discard_granularity, "discard_granularity");
->  QUEUE_RO_ENTRY(queue_discard_max_hw, "discard_max_hw_bytes");
->  QUEUE_RW_ENTRY(queue_discard_max, "discard_max_bytes");
->  QUEUE_RO_ENTRY(queue_discard_zeroes_data, "discard_zeroes_data");
->  
-> +QUEUE_RO_ENTRY(queue_provision_max, "provision_max_bytes");
->  QUEUE_RO_ENTRY(queue_write_same_max, "write_same_max_bytes");
->  QUEUE_RO_ENTRY(queue_write_zeroes_max, "write_zeroes_max_bytes");
->  QUEUE_RO_ENTRY(queue_zone_append_max, "zone_append_max_bytes");
