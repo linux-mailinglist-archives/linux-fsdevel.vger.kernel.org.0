@@ -2,197 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 02EF76E7F66
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 18:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 712426E7FD9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 18:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231737AbjDSQSU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 12:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34344 "EHLO
+        id S233099AbjDSQmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 12:42:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232218AbjDSQST (ORCPT
+        with ESMTP id S233382AbjDSQmV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 12:18:19 -0400
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C04E273B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 09:17:37 -0700 (PDT)
-Received: by mail-qv1-f48.google.com with SMTP id o7so248078qvs.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 09:17:37 -0700 (PDT)
+        Wed, 19 Apr 2023 12:42:21 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C2107AAE
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 09:42:19 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-63b875d0027so16848b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 09:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681922539; x=1684514539;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RxLjpyfcWNtlWOdh1ySH+g8hP125zqr+2pf1QMqfd8s=;
+        b=N23iIdeE3sO2uNX5THDu5Gry3LExo49/uDjzBM6b1AVEh/6nFahJ/kqhfY5yWCQsuz
+         44My5Ywz3SK0v1I69W6BaEE9El0SR6dv+4gkZ9DEciy0lShfozzh/q0Ofq4La/cCfJbd
+         hnv7Mw2F4Viu+fOXN+r/mFZj07Jae9aysr9vXW3heRV6OgMkuMtXnJNOkYdWq/90IzRA
+         Ntt/sdo16L3wcv4nPThKdagjTY54125CV9whX0uqZN0/wB4/qG5smC09cukmglJtLqvU
+         tu5RuxAmbYQZK8YLBwcLH2EoKRcZsbFCNuYeVRTAliEhrUYvEq42WCqlchFLU6AX9bsW
+         UCNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681921056; x=1684513056;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z+h5fwYkvTPr/F+On2Hs94r2JzzOUgRtGOCFJcgB1Q4=;
-        b=Ux1ZGKTOyAc/SdLLLimvVbSEOZjrRbfnf2hLkv8zbSoToZ0II537g75IVPVBFWsUix
-         nADz2XSC+nNnsxuXj9cWKETITuy8SdzRzmR5LfH7BIidfs+w5F7zXhq8pvMYUVK73CPn
-         BIM6/6AXdjIwDEwsG5A3NEw/rrZplpY02yGi6UxC5FrGvLYHTa5tJ5OCbEoO6gR8K5Ni
-         50G9QsyUQao2P1lS+tISQWv5iHxl3L2LgYi1j0K3aww1pveNGezEonxciF7qgPrapJSs
-         WDbfCpe1uxoO8+pdV2yZfbvOZKWdGM03Guo2p2lLNFHe9STegOXg/ob1uk9nx/oRvhuN
-         fV/A==
-X-Gm-Message-State: AAQBX9dhdtyxFbVU1mv2CGBpVf9NvR+x9FP979PrlYuWrlLkX1FxlZQM
-        6+cbyDWAIZFq/okP8fseriZ9
-X-Google-Smtp-Source: AKy350ZIve4mrPgTdbna5Cjf8hcJps/K5ObL3J7QcbMVD+OWL/kHf3+Ovv9X5lr5nNp8ov9iF7wtcw==
-X-Received: by 2002:a05:6214:252a:b0:5ef:8004:e0b4 with SMTP id gg10-20020a056214252a00b005ef8004e0b4mr17326482qvb.48.1681921056440;
-        Wed, 19 Apr 2023 09:17:36 -0700 (PDT)
-Received: from localhost (pool-68-160-166-30.bstnma.fios.verizon.net. [68.160.166.30])
-        by smtp.gmail.com with ESMTPSA id b1-20020ac86bc1000000b003e65228ef54sm4902201qtt.86.2023.04.19.09.17.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Apr 2023 09:17:36 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 12:17:34 -0400
-From:   Mike Snitzer <snitzer@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        Sarthak Kukreti <sarthakkukreti@chromium.org>
-Cc:     dm-devel@redhat.com, linux-block@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Bart Van Assche <bvanassche@google.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Daniil Lunev <dlunev@google.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>
-Subject: Re: [PATCH v4 1/4] block: Introduce provisioning primitives
-Message-ID: <ZEAUHnWqt9cIiJRb@redhat.com>
-References: <20230414000219.92640-1-sarthakkukreti@chromium.org>
- <20230418221207.244685-1-sarthakkukreti@chromium.org>
- <20230418221207.244685-2-sarthakkukreti@chromium.org>
- <20230419153611.GE360885@frogsfrogsfrogs>
+        d=1e100.net; s=20221208; t=1681922539; x=1684514539;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RxLjpyfcWNtlWOdh1ySH+g8hP125zqr+2pf1QMqfd8s=;
+        b=i4ylU5bUwvlWEveOwpxUZLAKr6gH0xSx1K4fg+2URzvSKMDOYg4kPPaj7Bo8lCjEWo
+         0wh05/M/TcO+/L21AH2m0LWE3tEaRHgwbneV5sMoO3jbVtUGghIcOzVbxlEl1uvtEKRR
+         zBnvUUCykGRSQWuG5wbgw8EPHGQ06NFjnA573jCUBgdtDH3yItNpAhy00LTH31ZYQCC0
+         tD3OWPLKiFo+LcyURLdwwyJM+xhHDR+kF6w49RZSE0k8HihbVzTCInX5Pq1DTWuCbYGv
+         SDTvH8zJM5wdY5Rotxdhx83RXtHEkjnEReHoMbLNe32J+LgUJ1WmvmDnUQRzagBGjU3x
+         lMkw==
+X-Gm-Message-State: AAQBX9d7XQHVD8Q3ZHfHC1QbOt7arKV4D0mdJHCdW8Nn4ZLh3UcLKs6c
+        8btJYJ8MUd4JN68xh5SWpSV2bg==
+X-Google-Smtp-Source: AKy350YsLJcgKXLSYcTK4M0eUET8e8S84/nLjBZ7/eTNMzty54gG8MA8d/Evst6SrrCrHkVKGziX5g==
+X-Received: by 2002:a05:6a00:4106:b0:635:4f6:2f38 with SMTP id bu6-20020a056a00410600b0063504f62f38mr18799098pfb.2.1681922538763;
+        Wed, 19 Apr 2023 09:42:18 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id g12-20020a62e30c000000b0063d2bb0d107sm4683674pfh.64.2023.04.19.09.42.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Apr 2023 09:42:18 -0700 (PDT)
+Message-ID: <868ceaa3-4854-345f-900e-52a79b924aa6@kernel.dk>
+Date:   Wed, 19 Apr 2023 10:42:17 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230419153611.GE360885@frogsfrogsfrogs>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] eventfd: support delayed wakeup for non-semaphore eventfd
+ to reduce cpu utilization
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Wen Yang <wenyang.linux@foxmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Paolo Bonzini <pbonzini@redhat.com>, Fu Wei <wefu@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <tencent_AF886EF226FD9F39D28FE4D9A94A95FA2605@qq.com>
+ <817984a2-570c-cb23-4121-0d75005ebd4d@kernel.dk>
+ <tencent_9D8583482619D25B9953FCA89E69AA92A909@qq.com>
+ <7dded5a8-32c1-e994-52a0-ce32011d5e6b@kernel.dk>
+ <20230419-blinzeln-sortieren-343826ee30ce@brauner>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230419-blinzeln-sortieren-343826ee30ce@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 19 2023 at 11:36P -0400,
-Darrick J. Wong <djwong@kernel.org> wrote:
+On 4/19/23 3:12?AM, Christian Brauner wrote:
+> On Tue, Apr 18, 2023 at 08:15:03PM -0600, Jens Axboe wrote:
+>> On 4/17/23 10:32?AM, Wen Yang wrote:
+>>>
+>>> ? 2023/4/17 22:38, Jens Axboe ??:
+>>>> On 4/16/23 5:31?AM, wenyang.linux@foxmail.com wrote:
+>>>>> From: Wen Yang <wenyang.linux@foxmail.com>
+>>>>>
+>>>>> For the NON SEMAPHORE eventfd, if it's counter has a nonzero value,
+>>>>> then a read(2) returns 8 bytes containing that value, and the counter's
+>>>>> value is reset to zero. Therefore, in the NON SEMAPHORE scenario,
+>>>>> N event_writes vs ONE event_read is possible.
+>>>>>
+>>>>> However, the current implementation wakes up the read thread immediately
+>>>>> in eventfd_write so that the cpu utilization increases unnecessarily.
+>>>>>
+>>>>> By adding a configurable delay after eventfd_write, these unnecessary
+>>>>> wakeup operations are avoided, thereby reducing cpu utilization.
+>>>> What's the real world use case of this, and what would the expected
+>>>> delay be there? With using a delayed work item for this, there's
+>>>> certainly a pretty wide grey zone in terms of delay where this would
+>>>> perform considerably worse than not doing any delayed wakeups at all.
+>>>
+>>>
+>>> Thanks for your comments.
+>>>
+>>> We have found that the CPU usage of the message middleware is high in
+>>> our environment, because sensor messages from MCU are very frequent
+>>> and constantly reported, possibly several hundred thousand times per
+>>> second. As a result, the message receiving thread is frequently
+>>> awakened to process short messages.
+>>>
+>>> The following is the simplified test code:
+>>> https://github.com/w-simon/tests/blob/master/src/test.c
+>>>
+>>> And the test code in this patch is further simplified.
+>>>
+>>> Finally, only a configuration item has been added here, allowing users
+>>> to make more choices.
+>>
+>> I think you'd have a higher chance of getting this in if the delay
+>> setting was per eventfd context, rather than a global thing.
+> 
+> That patch seems really weird. Is that an established paradigm to
+> address problems like this through a configured wakeup delay? Because
+> naively this looks like a pretty brutal hack.
 
-> On Tue, Apr 18, 2023 at 03:12:04PM -0700, Sarthak Kukreti wrote:
-> > Introduce block request REQ_OP_PROVISION. The intent of this request
-> > is to request underlying storage to preallocate disk space for the given
-> > block range. Block devices that support this capability will export
-> > a provision limit within their request queues.
-> > 
-> > This patch also adds the capability to call fallocate() in mode 0
-> > on block devices, which will send REQ_OP_PROVISION to the block
-> > device for the specified range,
-> > 
-> > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
-> > ---
-> >  block/blk-core.c          |  5 ++++
-> >  block/blk-lib.c           | 53 +++++++++++++++++++++++++++++++++++++++
-> >  block/blk-merge.c         | 18 +++++++++++++
-> >  block/blk-settings.c      | 19 ++++++++++++++
-> >  block/blk-sysfs.c         |  8 ++++++
-> >  block/bounce.c            |  1 +
-> >  block/fops.c              | 25 +++++++++++++-----
-> >  include/linux/bio.h       |  6 +++--
-> >  include/linux/blk_types.h |  5 +++-
-> >  include/linux/blkdev.h    | 16 ++++++++++++
-> >  10 files changed, 147 insertions(+), 9 deletions(-)
-> > 
-> 
-> <cut to the fallocate part; the block/ changes look fine to /me/ at
-> first glance, but what do I know... ;)>
-> 
-> > diff --git a/block/fops.c b/block/fops.c
-> > index d2e6be4e3d1c..e1775269654a 100644
-> > --- a/block/fops.c
-> > +++ b/block/fops.c
-> > @@ -611,9 +611,13 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> >  	return ret;
-> >  }
-> >  
-> > +#define	BLKDEV_FALLOC_FL_TRUNCATE				\
-> 
-> At first I thought from this name that you were defining a new truncate
-> mode for fallocate, then I realized that this is mask for deciding if we
-> /want/ to truncate the pagecache.
-> 
-> #define		BLKDEV_FALLOC_TRUNCATE_MASK ?
-> 
-> > +		(FALLOC_FL_PUNCH_HOLE |	FALLOC_FL_ZERO_RANGE |	\
-> 
-> Ok, so discarding and writing zeroes truncates the page cache, makes
-> sense since we're "writing" directly to the block device.
-> 
-> > +		 FALLOC_FL_NO_HIDE_STALE)
-> 
-> Here things get tricky -- some of the FALLOC_FL mode bits are really an
-> opcode and cannot be specified together, whereas others select optional
-> behavior for certain opcodes.
-> 
-> IIRC, the mutually exclusive opcodes are:
-> 
-> 	PUNCH_HOLE
-> 	ZERO_RANGE
-> 	COLLAPSE_RANGE
-> 	INSERT_RANGE
-> 	(none of the above, for allocation)
-> 
-> and the "variants on a theme are":
-> 
-> 	KEEP_SIZE
-> 	NO_HIDE_STALE
-> 	UNSHARE_RANGE
-> 
-> not all of which are supported by all the opcodes.
-> 
-> Does it make sense to truncate the page cache if userspace passes in
-> mode == NO_HIDE_STALE?  There's currently no defined meaning for this
-> combination, but I think this means we'll truncate the pagecache before
-> deciding if we're actually going to issue any commands.
-> 
-> I think that's just a bug in the existing code -- it should be
-> validating that @mode is any of the supported combinations *before*
-> truncating the pagecache.
-> 
-> Otherwise you could have a mkfs program that starts writing new fs
-> metadata, decides to provision the storage (say for a logging region),
-> doesn't realize it's running on an old kernel, and then oops the
-> provision attempt fails but have we now shredded the pagecache and lost
-> all the writes?
+It is odd, and it is a brutal hack. My worries were outlined in an
+earlier reply, there's quite a big gap where no delay would be better
+and the delay approach would be miserable because it'd cause extra
+latency and extra context switches. It'd be much cleaner if you KNEW
+there'd be more events coming, as you could then get rid of that delayed
+work item completely. And I suspect, if this patch makes sense, that
+it'd be better to have a number+time limit as well and if you hit the
+event number count that you'd notify inline and put some smarts in the
+delayed work handling to just not do anything if nothing is pending.
 
-While that just caused me to have an "oh shit, that's crazy" (in a
-scary way) belly laugh...
-(And obviously needs fixing independent of this patchset)
+-- 
+Jens Axboe
 
-Shouldn't mkfs first check that the underlying storage supports
-REQ_OP_PROVISION by verifying
-/sys/block/<dev>/queue/provision_max_bytes exists and is not 0?
-(Just saying, we need to add new features more defensively.. you just
-made the case based on this scenario's implications alone)
-
-Sarthak, please note I said "provision_max_bytes": all other ops
-(e.g. DISCARD, WRITE_ZEROES, etc) have <op>_max_bytes exported through
-sysfs, not <op>_max_sectors.  Please export provision_max_bytes, e.g.:
-
-diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-index 202aa78f933e..2e5ac7b1ffbd 100644
---- a/block/blk-sysfs.c
-+++ b/block/blk-sysfs.c
-@@ -605,12 +605,12 @@ QUEUE_RO_ENTRY(queue_io_min, "minimum_io_size");
- QUEUE_RO_ENTRY(queue_io_opt, "optimal_io_size");
- 
- QUEUE_RO_ENTRY(queue_max_discard_segments, "max_discard_segments");
--QUEUE_RO_ENTRY(queue_max_provision_sectors, "max_provision_sectors");
- QUEUE_RO_ENTRY(queue_discard_granularity, "discard_granularity");
- QUEUE_RO_ENTRY(queue_discard_max_hw, "discard_max_hw_bytes");
- QUEUE_RW_ENTRY(queue_discard_max, "discard_max_bytes");
- QUEUE_RO_ENTRY(queue_discard_zeroes_data, "discard_zeroes_data");
- 
-+QUEUE_RO_ENTRY(queue_provision_max, "provision_max_bytes");
- QUEUE_RO_ENTRY(queue_write_same_max, "write_same_max_bytes");
- QUEUE_RO_ENTRY(queue_write_zeroes_max, "write_zeroes_max_bytes");
- QUEUE_RO_ENTRY(queue_zone_append_max, "zone_append_max_bytes");
