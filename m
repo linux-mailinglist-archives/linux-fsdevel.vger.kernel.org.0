@@ -2,213 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 484886E8202
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 21:42:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB816E83B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 23:29:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230152AbjDSTmM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 15:42:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48262 "EHLO
+        id S230148AbjDSV3R convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 17:29:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjDSTmL (ORCPT
+        with ESMTP id S229793AbjDSV3O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 15:42:11 -0400
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F215FDD;
-        Wed, 19 Apr 2023 12:42:08 -0700 (PDT)
-Received: from [192.168.2.142] (p4fdf4348.dip0.t-ipconnect.de [79.223.67.72])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: buczek)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id E4DDC61E4052B;
-        Wed, 19 Apr 2023 21:42:04 +0200 (CEST)
-Message-ID: <955ede49-bb69-2ab2-d256-a329fe1b728c@molgen.mpg.de>
-Date:   Wed, 19 Apr 2023 21:42:04 +0200
+        Wed, 19 Apr 2023 17:29:14 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6914010CC
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 14:29:13 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-68-QVCktaoHOri6oPTbBSwJ8A-1; Wed, 19 Apr 2023 22:29:09 +0100
+X-MC-Unique: QVCktaoHOri6oPTbBSwJ8A-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 19 Apr
+ 2023 22:29:08 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 19 Apr 2023 22:29:08 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Ameer Hamza' <ahamza@ixsystems.com>,
+        Christian Brauner <brauner@kernel.org>
+CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "guoren@kernel.org" <guoren@kernel.org>,
+        "palmer@rivosinc.com" <palmer@rivosinc.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "slark_xiao@163.com" <slark_xiao@163.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "awalker@ixsystems.com" <awalker@ixsystems.com>
+Subject: RE: [PATCH] Add new open(2) flag - O_EMPTY_PATH
+Thread-Topic: [PATCH] Add new open(2) flag - O_EMPTY_PATH
+Thread-Index: AQHZclx78K8aidFdnEuGd0zBlIXBda8zJNXg
+Date:   Wed, 19 Apr 2023 21:29:08 +0000
+Message-ID: <05845c12eab34567ae61466db36a0cef@AcuMS.aculab.com>
+References: <20221228160249.428399-1-ahamza@ixsystems.com>
+ <20230106130651.vxz7pjtu5gvchdgt@wittgenstein> <ZD9AsWMnNKJ4dpjm@hamza-pc>
+In-Reply-To: <ZD9AsWMnNKJ4dpjm@hamza-pc>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-To:     Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk,
-        hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org,
-        kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org,
-        ming.lei@redhat.com, gregkh@linuxfoundation.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20230404140835.25166-1-sergei.shtepa@veeam.com>
- <20230404140835.25166-4-sergei.shtepa@veeam.com>
- <cb0cc2f1-48cb-8b15-35af-33a31ccc922c@molgen.mpg.de>
- <86068780-bab3-2fc2-3f6f-1868be119b38@veeam.com>
- <a1854604-cec1-abd5-1d49-6cf6a19ee7a1@veeam.com>
- <1dc227d0-9528-9b77-63ff-b49b0579caa1@molgen.mpg.de>
- <c05fd3e7-5610-4f63-9012-df1b808d9536@veeam.com>
-From:   Donald Buczek <buczek@molgen.mpg.de>
-In-Reply-To: <c05fd3e7-5610-4f63-9012-df1b808d9536@veeam.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,PDS_BAD_THREAD_QP_64,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Sergei,
-
-On 4/19/23 15:05, Sergei Shtepa wrote:
+From: Ameer Hamza
+> Sent: 19 April 2023 02:15
 > 
+> On Fri, Jan 06, 2023 at 02:06:51PM +0100, Christian Brauner wrote:
+> > On Wed, Dec 28, 2022 at 09:02:49PM +0500, Ameer Hamza wrote:
+> > > This patch adds a new flag O_EMPTY_PATH that allows openat and open
+> > > system calls to open a file referenced by fd if the path is empty,
+> > > and it is very similar to the FreeBSD O_EMPTY_PATH flag. This can be
+> > > beneficial in some cases since it would avoid having to grant /proc
+> > > access to things like samba containers for reopening files to change
+> > > flags in a race-free way.
+> > >
+> > > Signed-off-by: Ameer Hamza <ahamza@ixsystems.com>
+> > > ---
+> >
+> > In general this isn't a bad idea and Aleksa and I proposed this as part
+> > of the openat2() patchset (see [1]).
+> >
+> > However, the reason we didn't do this right away was that we concluded
+> > that it shouldn't be simply adding a flag. Reopening file descriptors
+> > through procfs is indeed very useful and is often required. But it's
+> > also been an endless source of subtle bugs and security holes as it
+> > allows reopening file descriptors with more permissions than the
+> > original file descriptor had.
+> >
+> > The same lax behavior should not be encoded into O_EMPTYPATH. Ideally we
+> > would teach O_EMPTYPATH to adhere to magic link modes by default. This
+> > would be tied to the idea of upgrade mask in openat2() (cf. [2]). They
+> > allow a caller to specify the permissions that a file descriptor may be
+> > reopened with at the time the fd is opened.
+> >
+> > [1]: https://lore.kernel.org/lkml/20190930183316.10190-4-cyphar@cyphar.com/
+> > [2]: https://lore.kernel.org/all/20220526130355.fo6gzbst455fxywy@senku/Kk
 > 
-> On 4/18/23 16:48, Donald Buczek wrote:
->> Subject:
->> Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
->> From:
->> Donald Buczek <buczek@molgen.mpg.de>
->> Date:
->> 4/18/23, 16:48
->>
->> To:
->> Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
->> CC:
->> viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org, kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org, ming.lei@redhat.com, gregkh@linuxfoundation.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
->>
->>
->> On 4/18/23 12:31, Sergei Shtepa wrote:
->>>
->>>
->>> On 4/14/23 14:34, Sergei Shtepa wrote:
->>>> Subject:
->>>> Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
->>>> From:
->>>> Sergei Shtepa <sergei.shtepa@veeam.com>
->>>> Date:
->>>> 4/14/23, 14:34
->>>>
->>>> To:
->>>> Donald Buczek <buczek@molgen.mpg.de>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
->>>> CC:
->>>> viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org, kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org, ming.lei@redhat.com, gregkh@linuxfoundation.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
->>>>
->>>>
->>>>
->>>> On 4/12/23 21:38, Donald Buczek wrote:
->>>>> Subject:
->>>>> Re: [PATCH v3 03/11] documentation: Block Devices Snapshots Module
->>>>> From:
->>>>> Donald Buczek <buczek@molgen.mpg.de>
->>>>> Date:
->>>>> 4/12/23, 21:38
->>>>>
->>>>> To:
->>>>> Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
->>>>> CC:
->>>>> viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org, kch@nvidia.com, martin.petersen@oracle.com, vkoul@kernel.org, ming.lei@redhat.com, gregkh@linuxfoundation.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
->>>>>
->>>>>
->>>>> I think, you can trigger all kind of user-after-free when userspace deletes a snapshot image or the snapshot image and the tracker while the disk device snapshot image is kept alive (mounted or just opened) and doing I/O.
->>>>>
->>>>> Here is what I did to provoke that:
->>>>>
->>>>> root@dose:~# s=$(blksnap snapshot_create -d /dev/vdb)
->>>>> root@dose:~# blksnap snapshot_appendstorage -i $s -f /scratch/local/test.dat
->>>>> device path: '/dev/block/253:2'
->>>>> allocate range: ofs=11264624 cnt=2097152
->>>>> root@dose:~# blksnap snapshot_take -i $s
->>>>> root@dose:~# mount /dev/blksnap-image_253\:16 /mnt
->>>>> root@dose:~# dd if=/dev/zero of=/mnt/x.x &
->>>>> [1] 2514
->>>>> root@dose:~# blksnap snapshot_destroy -i $s
->>>>> dd: writing to '/mnt/x.x': No space left on device
->>>>> 1996041+0 records in
->>>>> 1996040+0 records out
->>>>> 1021972480 bytes (1.0 GB, 975 MiB) copied, 8.48923 s, 120 MB/s
->>>>> [1]+  Exit 1                  dd if=/dev/zero of=/mnt/x.x
->>>>>
->>>> Thanks!
->>>> I am very glad that the blksnap tool turned out to be useful in the review.
->>>> This snapshot deletion scenario is not the most typical, but of course it is
->>>> quite possible.
->>>> I will need to solve this problem and add such a scenario to the test suite.
->>>>
->>>
->>> Hi!
->>>
->>> I have redesign the logic of ownership of the diff_area structure.
->>> See patch in attach or commit.
->>> Link: https://github.com/SergeiShtepa/linux/commit/7e927c381dcd2b2293be8315897a224d111b6f88
->>> A test script for such a scenario has been added.
->>> Link: https://github.com/veeam/blksnap/commit/fd0559dfedf094901d08bbf185fed288f0156433
->>>
->>> I will be glad of any feedback.
->>
->> Great, Thanks!
->>
->> However, there are two leftover calls to diff_area_free() with its old prototype:
->>
->>   CC [M]  drivers/block/blksnap/diff_area.o
->> drivers/block/blksnap/diff_area.c: In function ‘diff_area_new’:
->> drivers/block/blksnap/diff_area.c:283:18: error: passing argument 1 of ‘diff_area_free’ from incompatible pointer type [-Werror=incompatible-pointer-types]
->>    283 |   diff_area_free(diff_area);
->>        |                  ^~~~~~~~~
->>        |                  |
->>        |                  struct diff_area *
->> drivers/block/blksnap/diff_area.c:110:34: note: expected ‘struct kref *’ but argument is of type ‘struct diff_area *’
->>    110 | void diff_area_free(struct kref *kref)
->>        |                     ~~~~~~~~~~~~~^~~~
->> cc1: some warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:252: drivers/block/blksnap/diff_area.o] Error 1
->> make[3]: *** [scripts/Makefile.build:494: drivers/block/blksnap] Error 2
->> make[2]: *** [scripts/Makefile.build:494: drivers/block] Error 2
->> make[1]: *** [scripts/Makefile.build:494: drivers] Error 2
->> make: *** [Makefile:2025: .] Error 2
->>
->> The other one:
->>
->> buczek@dose:/scratch/local/linux (blksnap-test)$ make drivers/block/blksnap/tracker.o
->>    CALL    scripts/checksyscalls.sh
->>    DESCEND objtool
->>    INSTALL libsubcmd_headers
->>    CC [M]  drivers/block/blksnap/tracker.o
->> drivers/block/blksnap/tracker.c: In function ‘tracker_free’:
->> drivers/block/blksnap/tracker.c:26:25: error: passing argument 1 of ‘diff_area_free’ from incompatible pointer type [-Werror=incompatible-pointer-types]
->>     26 |   diff_area_free(tracker->diff_area);
->>        |                  ~~~~~~~^~~~~~~~~~~
->>        |                         |
->>        |                         struct diff_area *
->> In file included from drivers/block/blksnap/tracker.c:12:
->> drivers/block/blksnap/diff_area.h:116:34: note: expected ‘struct kref *’ but argument is of type ‘struct diff_area *’
->>    116 | void diff_area_free(struct kref *kref);
->>        |                     ~~~~~~~~~~~~~^~~~
->> cc1: some warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:252: drivers/block/blksnap/tracker.o] Error 1
->> make[3]: *** [scripts/Makefile.build:494: drivers/block/blksnap] Error 2
->> make[2]: *** [scripts/Makefile.build:494: drivers/block] Error 2
->> make[1]: *** [scripts/Makefile.build:494: drivers] Error 2
->> make: *** [Makefile:2025: .] Error 2
->>
->> Am I missing something?
-> 
-> Thanks!
-> 
-> It seems to me that I missed something.
-> The biggest mystery for me is why I was able to build and test the kernel.
-> I think it's some kind of incremental build effect.
-> I was only able to see the problem after 'make clean'.
-> 
-> Patches in attach and https://github.com/SergeiShtepa/linux/tree/blksnap-master
+> Thank you for the detailed explanation and sorry for getting back late
+> at it. It seems like a pre-requisite for O_EMPTYPATH is to make it safe
+> and that depends on a patchset that Aleksa was working on. It would be
+> helpful to know the current status of that effort and if we could expect
+> it in the near future.
 
-Thanks. I can confirm that this fixes the reported problem and I no longer can trigger the UAF. :-)
+ISTM that reopening a file READ_WRITE shouldn't be unconditionally allowed.
+Checking the inode permissions of the file isn't enough to ensure
+that the process is allowed to open it.
+The 'x' (search) permissions on all the parent directories needs to
+be checked (going back as far as some directory the process has open).
 
-Tested-Bny: Donald Buczek <buczek@molgen.mpg.de>
+If a full pathname is generated this check is done.
+But the proposed O_EMTPY_PATH won't be doing it.
 
-Maybe you can add me to the cc list for v4 as I'm not subscribed to the lists.
+This all matters if a system is using restricted directory
+permissions to block a process from opening files in some
+part of the filesystem, but is also being passed an open
+fd (for reading) in that part of the filesystem.
+I'm sure there are systems that will be doing this.
 
-Best
+	David
 
-   Donald
--- 
-Donald Buczek
-buczek@molgen.mpg.de
-Tel: +49 30 8413 1433
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
